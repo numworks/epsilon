@@ -12,6 +12,28 @@
 #include "layout_cursor.h"
 
 namespace PoincareJ {
+using BeautifiedLayoutBuilder = Tree* (*)(Tree** parameters);
+
+struct BeautificationRule {
+  Aliases listOfBeautifiedAliases;
+  int numberOfParameters;
+  BeautifiedLayoutBuilder layoutBuilder;
+};
+
+template <BlockType type, BlockType layoutType>
+consteval static BeautificationRule ruleHelper() {
+  static_assert(TypeBlock::NumberOfChildren(type) ==
+                TypeBlock::NumberOfChildren(layoutType));
+  return BeautificationRule{
+      *Builtin::GetReservedFunction(type)->aliases(),
+      TypeBlock::NumberOfChildren(type), [](Tree** parameters) -> Tree* {
+        EditionReference ref = SharedEditionPool->push(layoutType);
+        for (int i = TypeBlock::NumberOfChildren(layoutType) - 1; i >= 0; i--) {
+          parameters[i]->detachTree();
+        }
+        return ref;
+      }};
+}
 
 class InputBeautification {
  public:
@@ -45,13 +67,7 @@ class InputBeautification {
                                                  Context* context);
 
  private:
-  using BeautifiedLayoutBuilder = Tree* (*)(Tree** parameters);
   constexpr static int k_maxNumberOfParameters = 4;
-  struct BeautificationRule {
-    Aliases listOfBeautifiedAliases;
-    int numberOfParameters;
-    BeautifiedLayoutBuilder layoutBuilder;
-  };
 
   /* TODO : Beautification input is applied within HorizontalLayouts only.
    * This excludes beautification of single char inputs that have not yet been
@@ -102,14 +118,8 @@ class InputBeautification {
         return KCodePointL<UCodePointGreekSmallLetterTheta>()->clone();
       }};
 
-  constexpr static BeautificationRule k_absoluteValueRule = {
-      // Builtin::GetReservedFunction(BlockType::Abs)->second,
-      "abs", 1, [](Tree** parameters) -> Tree* {
-        EditionReference abs =
-            SharedEditionPool->push(BlockType::AbsoluteValueLayout);
-        parameters[0]->detachTree();
-        return abs;
-      }};
+  constexpr static BeautificationRule k_absoluteValueRule =
+      ruleHelper<BlockType::Abs, BlockType::AbsoluteValueLayout>();
 
   constexpr static BeautificationRule k_derivativeRule = {
       "diff", 3, [](Tree** parameters) -> Tree* {
@@ -143,25 +153,15 @@ class InputBeautification {
 
   // simpleIdentifiersRules are included in identifiersRules
   constexpr static const BeautificationRule k_identifiersRules[] = {
-#if 0
       /* abs( */ k_absoluteValueRule,
-      {/* binomial( */
-       BinomialCoefficient::s_functionHelper.aliasesList(), 2,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
-             BinomialCoefficientLayout::Builder(parameters[0], parameters[1]));
-       }},
-      {/* ceil( */
-       Ceiling::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(CeilingLayout::Builder(parameters[0]));
-       }},
-      {/* conj( */
-       Conjugate::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(ConjugateLayout::Builder(parameters[0]));
-       }},
+      /* binomial( */
+      ruleHelper<BlockType::Binomial, BlockType::BinomialLayout>(),
+      /* ceil( */
+      ruleHelper<BlockType::Ceiling, BlockType::CeilingLayout>(),
+      /* conj( */
+      ruleHelper<BlockType::Conjugate, BlockType::ConjugateLayout>(),
       /* diff( */ k_derivativeRule,
+#if 0
       {/* exp( */
        Power::s_exponentialFunctionHelper.aliasesList(), 1,
        [](Layout* parameters) {
@@ -171,12 +171,11 @@ class InputBeautification {
                  parameters[0],
                  VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
        }},
-      {/* floor( */
-       Floor::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(FloorLayout::Builder(parameters[0]));
-       }},
+#endif
+      /* floor( */
+      ruleHelper<BlockType::Floor, BlockType::FloorLayout>(),
       /* inf */ k_infRule,
+#if 0
       {/* int( */
        Integral::s_functionHelper.aliasesList(), 4,
        [](Layout* parameters) {
@@ -187,12 +186,11 @@ class InputBeautification {
          return static_cast<Layout>(IntegralLayout::Builder(
              parameters[0], parameters[1], parameters[2], parameters[3]));
        }},
-      {/* norm( */
-       VectorNorm::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(VectorNormLayout::Builder(parameters[0]));
-       }},
+#endif
+      /* norm( */
+      ruleHelper<BlockType::Norm, BlockType::VectorNormLayout>(),
       /* pi */ k_piRule,
+#if 0
       {/* piecewise( */
        PiecewiseOperator::s_functionHelper.aliasesList(), 2,
        [](Layout* parameters) {
@@ -227,17 +225,13 @@ class InputBeautification {
          return static_cast<Layout>(
              NthRootLayout::Builder(parameters[0], parameters[1]));
        }},
-      {/* sqrt( */
-       SquareRoot::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(NthRootLayout::Builder(parameters[0]));
-       }},
-      /* theta */ k_thetaRule
 #endif
-  };
+      /* sqrt( */
+      ruleHelper<BlockType::SquareRoot, BlockType::SquareRootLayout>(),
+      /* theta */ k_thetaRule};
 
-  constexpr static size_t k_lenOfIdentifiersRules = 0;
-  //      std::size(k_identifiersRules);
+  constexpr static size_t k_lenOfIdentifiersRules =
+      std::size(k_identifiersRules);
 
 #if 0
   constexpr static BeautificationRule k_sumRule = {

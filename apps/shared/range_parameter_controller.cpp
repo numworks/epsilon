@@ -78,7 +78,7 @@ void RangeParameterController::fillCells() {
           Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = 0;
     }
-    ParameterCell *cell = axis == Axis::X ? &m_xRangeCell : &m_yRangeCell;
+    MenuCell *cell = axis == Axis::X ? &m_xRangeCell : &m_yRangeCell;
     cell->subLabel()->setText(buffer);
   }
 
@@ -134,14 +134,14 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if ((cell == &m_xRangeCell || cell == &m_yRangeCell) &&
-      static_cast<ParameterCell *>(cell)->canBeActivatedByEvent(event)) {
+      static_cast<MenuCell *>(cell)->canBeActivatedByEvent(event)) {
     m_singleInteractiveCurveViewRangeController.setAxis(
         cell == &m_xRangeCell ? Axis::X : Axis::Y);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
   }
   if (cell == &m_gridTypeCell &&
-      static_cast<ParameterCell *>(cell)->canBeActivatedByEvent(event)) {
+      static_cast<MenuCell *>(cell)->canBeActivatedByEvent(event)) {
     stackController()->push(&m_gridTypeController);
     return true;
   }

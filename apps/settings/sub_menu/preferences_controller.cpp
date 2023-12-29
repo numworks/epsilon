@@ -87,7 +87,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char *text = "a+ib";
       return LayoutHelper::String(text, strlen(text));
     }
-    case I18n::Message::Polar: {
+    case I18n::Message::Exponential: {
       const char *base = "re";
       const char *superscript = "iθ";
       return HorizontalLayout::Builder(

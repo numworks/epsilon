@@ -32,7 +32,7 @@ class RackParser {
              ParsingContext::ParsingMethod parsingMethod =
                  ParsingContext::ParsingMethod::Classic)
       : m_parsingContext(/*context,*/ parsingMethod),
-        m_tokenizer(node, &m_parsingContext, textEnd),
+        m_tokenizer(node, &m_parsingContext, 0, textEnd),
         m_currentToken(Token(Token::Type::Undefined)),
         m_nextToken(Token(Token::Type::Undefined)),
         m_pendingImplicitOperator(false),

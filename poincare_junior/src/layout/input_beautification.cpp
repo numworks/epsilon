@@ -231,7 +231,8 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
    * beautify each token. */
   ParsingContext parsingContext(/*context, */
                                 ParsingContext::ParsingMethod::Classic);
-  Tokenizer tokenizer = Tokenizer(h /* TODO start */, &parsingContext);
+  Tokenizer tokenizer = Tokenizer(h, &parsingContext, firstIndexOfIdentifier,
+                                  rightmostIndexToBeautify + 1);
   Token currentIdentifier = Token(Token::Type::Undefined);
   Token nextIdentifier = tokenizer.popToken();
   bool layoutsWereBeautified = false;

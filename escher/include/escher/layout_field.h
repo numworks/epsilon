@@ -97,7 +97,7 @@ class LayoutField : public EditableField {
   bool didHandleEvent(bool didHandleEvent, bool layoutDidChange,
                       bool shouldUpdateCursor, KDSize previousSize);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::OLayout layoutR,
+  void insertLayoutAtCursor(Poincare::JuniorLayout layoutR,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
   TextCursorView::CursorFieldView* cursorCursorFieldView() override {

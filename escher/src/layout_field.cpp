@@ -647,7 +647,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect);
 }
 
-void LayoutField::insertLayoutAtCursor(OLayout layout,
+void LayoutField::insertLayoutAtCursor(JuniorLayout layout,
                                        bool forceCursorRightOfLayout,
                                        bool forceCursorLeftOfLayout) {
   if (layout.isUninitialized()) {
@@ -655,8 +655,8 @@ void LayoutField::insertLayoutAtCursor(OLayout layout,
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  cursor()->insertLayout(JuniorLayout::Juniorize(layout).tree(), context(),
-                         forceCursorRightOfLayout, forceCursorLeftOfLayout);
+  cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
+                         forceCursorLeftOfLayout);
 
   // Reload
   reload(previousSize);

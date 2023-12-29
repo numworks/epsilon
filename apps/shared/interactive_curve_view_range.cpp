@@ -277,7 +277,8 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(
 void InteractiveCurveViewRange::setGridType(GridType grid) {
   m_gridType = grid;
 
-  // Dirty the memoized auto range, as it may depend on the grid type.
+  /* Reset memoized auto range as it may depend on the grid type: polar grid
+   * needs normalization, which is delegated to m_delegate::optimalRange.*/
   m_checksumOfMemoizedAutoRange = 0;
 }
 

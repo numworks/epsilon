@@ -16,7 +16,7 @@ GridTypeController::GridTypeController(
     : UniformSelectableListController<
           MenuCell<MessageTextView, EmptyCellWidget, TransparentImageView>, 2>(
           parentResponder, this),
-      m_viewRange(interactiveCurveViewRange) {
+      m_interactiveCurveViewRange(interactiveCurveViewRange) {
   cell(0)->label()->setMessage(I18n::Message::CartesianGrid);
   cell(1)->label()->setMessage(I18n::Message::PolarGrid);
 
@@ -29,15 +29,16 @@ const char *GridTypeController::title() {
 }
 
 void GridTypeController::viewWillAppear() {
-  selectRow(m_viewRange->gridType() == GridType::Cartesian ? 0 : 1);
+  selectRow(m_interactiveCurveViewRange->gridType() == GridType::Cartesian ? 0
+                                                                           : 1);
 }
 
 bool GridTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Update the view range before ViewWillAppear is
      * called. */
-    m_viewRange->setGridType(selectedRow() == 0 ? GridType::Cartesian
-                                                : GridType::Polar);
+    m_interactiveCurveViewRange->setGridType(
+        selectedRow() == 0 ? GridType::Cartesian : GridType::Polar);
     stackController()->pop();
     return true;
   }

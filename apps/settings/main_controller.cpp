@@ -22,7 +22,7 @@ constexpr MessageTree s_modelFloatDisplayModeChildren[4] = {
     MessageTree(I18n::Message::SignificantFigures)};
 constexpr MessageTree s_modelComplexFormatChildren[3] = {
     MessageTree(I18n::Message::Real), MessageTree(I18n::Message::Cartesian),
-    MessageTree(I18n::Message::Polar)};
+    MessageTree(I18n::Message::Exponential)};
 constexpr MessageTree s_modelFontChildren[2] = {
     MessageTree(I18n::Message::LargeFont),
     MessageTree(I18n::Message::SmallFont)};

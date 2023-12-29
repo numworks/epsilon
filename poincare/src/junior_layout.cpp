@@ -31,6 +31,13 @@ size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
 
 OLayout JuniorLayoutNode::makeEditable() { return OLayout(this); }
 
+bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) {
+  if (l.type() != LayoutNode::Type::JuniorLayout) {
+    return false;
+  }
+  return tree()->treeIsIdenticalTo(static_cast<const JuniorLayout&>(l).tree());
+}
+
 JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
   size_t size = tree->treeSize();
   void* bufferNode =

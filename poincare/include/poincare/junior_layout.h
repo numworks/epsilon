@@ -52,6 +52,8 @@ class JuniorLayoutNode final : public LayoutNode {
   }
   OLayout makeEditable() override;
 
+  bool protectedIsIdenticalTo(OLayout l) override;
+
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
             PoincareJ::LayoutCursor* cursor,
             KDColor selectionColor = KDColorRed);

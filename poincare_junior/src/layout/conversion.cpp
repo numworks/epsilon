@@ -223,6 +223,10 @@ void PushPoincareLayout(Poincare::OLayout l) {
       }
       if (c.moveFirstToLast) {
         tree->nextTree()->moveTreeBeforeNode(tree->child(0));
+        if (c.junior == LayoutType::NthDerivative) {
+          // nthderivative is an exception : sub-expr is second to last
+          tree->child(2)->moveTreeBeforeNode(tree->child(3));
+        }
       }
       return;
     }

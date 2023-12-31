@@ -134,19 +134,26 @@ constexpr
         0x327,  //  ̧ // COMBINING CEDILLA
         0x338,  // ◌̸ // COMBINING LONG SOLIDUS OVERLAY
 
-        0x393,   // Γ // GREEK CAPITAL LETTER GAMMA
-        0x394,   // Δ // GREEK CAPITAL LETTER DELTA
-        0x3a9,   // Ω // GREEK CAPITAL LETTER OMEGA
-        0x3b1,   // α // GREEK SMALL LETTER ALPHA
-        0x3b2,   // β // GREEK SMALL LETTER BETA
-        0x3b5,   // ε // GREEK SMALL LETTER EPSILON
-        0x3b8,   // θ // GREEK SMALL LETTER THETA
-        0x3bb,   // λ // GREEK SMALL LETTER LAMDA
-        0x3bc,   // μ // GREEK SMALL LETTER MU
-        0x3c0,   // π // GREEK SMALL LETTER PI
-        0x3c1,   // ρ // GREEK SMALL LETTER RHO
-        0x3c3,   // σ // GREEK SMALL LETTER SIGMA
-        0x3C7,   // χ // GREEK SMALL LETTER CHI
+        0x393,  // Γ // GREEK CAPITAL LETTER GAMMA
+        0x394,  // Δ // GREEK CAPITAL LETTER DELTA
+        0x3a3,  // Σ // GREEK CAPITAL LETTER SIGMA
+        0x3a9,  // Ω // GREEK CAPITAL LETTER OMEGA
+        0x3b1,  // α // GREEK SMALL LETTER ALPHA
+        0x3b2,  // β // GREEK SMALL LETTER BETA
+        0x3b3,  // γ // GREEK SMALL LETTER GAMMA
+        0x3b4,  // δ // GREEK SMALL LETTER DELTA
+        0x3b5,  // ε // GREEK SMALL LETTER EPSILON
+        0x3b6,  // ζ // GREEK SMALL LETTER ZETA
+        0x3b7,  // η // GREEK SMALL LETTER ETA
+        0x3b8,  // θ // GREEK SMALL LETTER THETA
+        0x3bb,  // λ // GREEK SMALL LETTER LAMDA
+        0x3bc,  // μ // GREEK SMALL LETTER MU
+        0x3c0,  // π // GREEK SMALL LETTER PI
+        0x3c1,  // ρ // GREEK SMALL LETTER RHO
+        0x3c3,  // σ // GREEK SMALL LETTER SIGMA
+        0x3C7,  // χ // GREEK SMALL LETTER CHI
+        0x3C9,  // ω // GREEK SMALL LETTER OMEGA
+
         0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E
         0x2192,  // → // RIGHTWARDS ARROW
         0x2197,  // ↗ // NORTH EAST ARROW

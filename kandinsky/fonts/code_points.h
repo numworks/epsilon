@@ -153,7 +153,6 @@ constexpr
         0x3c3,   // σ // GREEK SMALL LETTER SIGMA
         0x3C7,   // χ // GREEK SMALL LETTER CHI
         0x3C9,   // ω // GREEK SMALL LETTER OMEGA
-
         0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E
         0x2192,  // → // RIGHTWARDS ARROW
         0x2197,  // ↗ // NORTH EAST ARROW

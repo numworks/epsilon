@@ -122,16 +122,13 @@ def add_sections_to_targets(targets, sections, elf_file, verbose):
         address = address - 0x00200000 + 0x08000000
 
     # Extract the section datas
+    command = ["arm-none-eabi-objcopy", "-O", "binary"]
+    for s in sections:
+        command.append("-j")
+        command.append(s["name"])
     bin_file = bin_file_for_path(elf_file)
-    subprocess.call(
-        ["arm-none-eabi-objcopy", "-O", "binary"]
-        + [
-            item
-            for sublist in [["-j", s["name"]] for s in sections]
-            for item in sublist
-        ]
-        + [elf_file, bin_file]
-    )
+    command += [elf_file, bin_file]
+    subprocess.call(command)
     data = open(bin_file, "rb").read()
 
     # Append to targets

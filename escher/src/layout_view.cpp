@@ -31,6 +31,8 @@ KDSize LayoutView::minimalSizeForOptimalDisplay() const {
     return KDSizeZero;
   }
   KDSize layoutSize = layout().layoutSize(font());
+  // TODO forward cursor through the size API
+  PoincareJ::RackLayout::layoutCursor = cursor();
   return KDSize(layoutSize.width() + 2 * m_horizontalMargin,
                 layoutSize.height());
 }

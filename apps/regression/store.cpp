@@ -467,9 +467,7 @@ void Store::storeRegressionFunction(int series, Expression expression) const {
 
 void Store::deleteRegressionFunction(int series) const {
   Ion::Storage::Record r = functionRecord(series);
-  if (!r.isNull()) {
-    r.destroy();
-  }
+  r.destroy();
 }
 
 }  // namespace Regression

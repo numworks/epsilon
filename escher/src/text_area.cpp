@@ -29,8 +29,8 @@ static inline void InsertSpacesAtLocation(int spacesCount, char *buffer,
   memmove(buffer + spacesLength, buffer, sizeToMove);
   for (int i = 0; i < spacesCount; i++) {
     int spaceOffset = i * spaceCharSize;
-    Poincare::SerializationHelper::CodePoint(buffer + spaceOffset,
-                                             bufferSize - spaceOffset, ' ');
+    UTF8Decoder::CodePointToChars(' ', buffer + spaceOffset,
+                                  bufferSize - spaceOffset);
   }
 }
 

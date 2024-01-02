@@ -105,7 +105,6 @@ jobs:
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@v3
-        if: ${{ (github.repository != 'numworks/epsilon-internal') }}
         with:
           name: epsilon.html
           path: output/release/simulator/web/epsilon.html

@@ -15,9 +15,10 @@ struct RestrictiveExtension {
 };
 
 constexpr static RestrictiveExtension k_restrictiveExtensions[] = {
-    {Ion::Storage::regExtension, 1}, {Ion::Storage::funcExtension, 2},
-    {Ion::Storage::seqExtension, 2}, {Ion::Storage::expExtension, 3},
-    {Ion::Storage::lisExtension, 3}, {Ion::Storage::matExtension, 3},
+    {Ion::Storage::regExtension, 1},  {Ion::Storage::pcExtension, 1},
+    {Ion::Storage::funcExtension, 2}, {Ion::Storage::seqExtension, 2},
+    {Ion::Storage::expExtension, 3},  {Ion::Storage::lisExtension, 3},
+    {Ion::Storage::matExtension, 3},
 };
 constexpr static int k_numberOfRestrictiveExtensions =
     std::size(k_restrictiveExtensions);

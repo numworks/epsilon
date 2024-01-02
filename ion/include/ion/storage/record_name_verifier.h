@@ -102,7 +102,7 @@ class RecordNameVerifier {
   };
 
   // This can be changed if you need more restrictive extensions
-  constexpr static int k_maxNumberOfRestrictiveExtensions = 6;
+  constexpr static int k_maxNumberOfRestrictiveExtensions = 7;
   // This can be changed if you need more reserved names arrays
   constexpr static int k_maxNumberOfReservedNamesArrays = 4;
 

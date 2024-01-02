@@ -85,7 +85,7 @@ void RangeParameterController::fillCells() {
   I18n::Message gridTypeCellSubMessage =
       m_tempInteractiveRange.gridType() ==
               GridTypeController::GridType::Cartesian
-          ? I18n::Message::CartesianGrid
+          ? I18n::Message::Cartesian
           : I18n::Message::Polar;
 
   m_gridTypeCell.subLabel()->setText(I18n::translate(gridTypeCellSubMessage));

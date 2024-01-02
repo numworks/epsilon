@@ -320,7 +320,7 @@ bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
     return false;
   }
   NAry::RemoveChildAtIndex(h, indexOfPipeKey);
-  Tree *parameter = KRackL()->clone();
+  EditionReference parameter = KRackL()->clone();
   EditionReference toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
   LayoutBufferCursor::EditionPoolCursor cursorForInsertion =
       *static_cast<LayoutBufferCursor::EditionPoolCursor *>(cursor);
@@ -475,7 +475,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
          h->child(endIndex + 1)->isParenthesisLayout());
   int currentNumberOfChildren = h->numberOfChildren();
   // Create pattern layout
-  Tree *parameters[k_maxNumberOfParameters] = {};
+  EditionReference parameters[k_maxNumberOfParameters] = {};
   if (preProcessedParameter) {
     assert(indexOfPreProcessedParameter < k_maxNumberOfParameters);
     parameters[indexOfPreProcessedParameter] = preProcessedParameter;
@@ -534,7 +534,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
 }
 
 bool InputBeautification::CreateParametersList(
-    Tree **parameters, Tree *h, int parenthesisIndexInParent,
+    EditionReference *parameters, Tree *h, int parenthesisIndexInParent,
     BeautificationRule beautificationRule, LayoutCursor *layoutCursor) {
   EditionReference parenthesis = h->child(parenthesisIndexInParent);
   assert(parenthesis->isParenthesisLayout());

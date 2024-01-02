@@ -12,7 +12,7 @@
 #include "layout_cursor.h"
 
 namespace PoincareJ {
-using BeautifiedLayoutBuilder = Tree* (*)(Tree** parameters);
+using BeautifiedLayoutBuilder = Tree* (*)(EditionReference* parameters);
 
 struct BeautificationRule {
   Aliases listOfBeautifiedAliases;
@@ -26,7 +26,8 @@ consteval static BeautificationRule ruleHelper() {
                 TypeBlock::NumberOfChildren(layoutType));
   return BeautificationRule{
       *Builtin::GetReservedFunction(type)->aliases(),
-      TypeBlock::NumberOfChildren(type), [](Tree** parameters) -> Tree* {
+      TypeBlock::NumberOfChildren(type),
+      [](EditionReference* parameters) -> Tree* {
         EditionReference ref = SharedEditionPool->push(layoutType);
         for (int i = TypeBlock::NumberOfChildren(layoutType) - 1; i >= 0; i--) {
           parameters[i]->detachTree();
@@ -95,26 +96,26 @@ class InputBeautification {
 #endif
       // Special char
       {"->", 0,
-       [](Tree** parameters) {
+       [](EditionReference* parameters) {
          return KCodePointL<UCodePointRightwardsArrow>()->clone();
        }},
       {"*", 0,
-       [](Tree** parameters) {
+       [](EditionReference* parameters) {
          return KCodePointL<UCodePointMultiplicationSign>()->clone();
        }},
   };
 
   constexpr static BeautificationRule k_infRule = {
-      "inf", 0, [](Tree** parameters) {
+      "inf", 0, [](EditionReference* parameters) {
         return KCodePointL<UCodePointInfinity>()->clone();
       }};
 
   constexpr static BeautificationRule k_piRule = {
-      "pi", 0, [](Tree** parameters) {
+      "pi", 0, [](EditionReference* parameters) {
         return KCodePointL<UCodePointGreekSmallLetterPi>()->clone();
       }};
   constexpr static BeautificationRule k_thetaRule = {
-      "theta", 0, [](Tree** parameters) {
+      "theta", 0, [](EditionReference* parameters) {
         return KCodePointL<UCodePointGreekSmallLetterTheta>()->clone();
       }};
 
@@ -122,7 +123,7 @@ class InputBeautification {
       ruleHelper<BlockType::Abs, BlockType::AbsoluteValueLayout>();
 
   constexpr static BeautificationRule k_derivativeRule = {
-      "diff", 3, [](Tree** parameters) -> Tree* {
+      "diff", 3, [](EditionReference* parameters) -> Tree* {
         EditionReference diff =
             SharedEditionPool->push(BlockType::DerivativeLayout);
         SharedEditionPool->push(0);
@@ -294,7 +295,7 @@ class InputBeautification {
       int indexOfPreProcessedParameter = -1);
 
   // Return false if there are too many parameters
-  static bool CreateParametersList(Tree** parameters, Tree* rack,
+  static bool CreateParametersList(EditionReference* parameters, Tree* rack,
                                    int parenthesisIndexInParent,
                                    BeautificationRule beautificationRule,
                                    LayoutCursor* layoutCursor);

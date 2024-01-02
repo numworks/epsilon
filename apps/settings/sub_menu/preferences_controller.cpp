@@ -83,7 +83,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     // Complex format
     case I18n::Message::Real:
       return CodePointLayout::Builder('x');
-    case I18n::Message::Cartesian: {
+    case I18n::Message::Algebraic: {
       const char *text = "a+ib";
       return LayoutHelper::String(text, strlen(text));
     }

@@ -35,7 +35,7 @@ ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
 ion_src += ion/src/shared/telemetry_console.cpp
 endif
 
-DEFAULT = epsilon.zip
+DEFAULT = epsilon.html
 
 $(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css): ion/src/simulator/shared/layout.json ion/src/simulator/web/css_html_layout.py | $$(@D)/.
 	$(call rule_label,LAYOUT)

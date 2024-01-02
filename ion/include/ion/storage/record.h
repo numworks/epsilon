@@ -67,7 +67,7 @@ class Record {
    * false if it's not the case. */
   void destroy();
   bool tryToDestroy();
-  bool hasExtension(const char* extension) {
+  bool hasExtension(const char* extension) const {
     const char* thisExtension = name().extension;
     return thisExtension ? strcmp(thisExtension, extension) == 0 : false;
   }

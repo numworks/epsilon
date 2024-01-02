@@ -33,6 +33,7 @@ class ListController : public Shared::FunctionListController,
   bool handleEvent(Ion::Events::Event event) override;
   // ExpressionModelListController
   void editExpression(Ion::Events::Event event) override;
+  bool editSelectedRecordWithText(const char* text) override;
   KDCoordinate expressionRowHeight(int row) override;
   KDCoordinate editableRowHeight() override;
   Shared::ListParameterController* parameterController() override;
@@ -64,6 +65,9 @@ class ListController : public Shared::FunctionListController,
   Escher::LayoutField* layoutField() override {
     return m_editableCell.expressionCell()->layoutField();
   }
+
+  void deleteParametricComponentsOfSelectedModel();
+  void storeParametricComponentsOfSelectedModel();
 
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;

@@ -182,6 +182,13 @@ void ListController::editExpression(Ion::Events::Event event) {
   m_editableCell.setHighlighted(true);
 }
 
+bool ListController::editSelectedRecordWithText(const char *text) {
+  deleteParametricComponentsOfSelectedModel();
+  bool result = FunctionListController::editSelectedRecordWithText(text);
+  storeParametricComponentsOfSelectedModel();
+  return result;
+}
+
 /* Responder */
 
 KDCoordinate ListController::expressionRowHeight(int row) {
@@ -299,4 +306,57 @@ ContinuousFunctionStore *ListController::modelStore() const {
   return App::app()->functionStore();
 }
 
+static void addSuffixForParametricComponent(char *baseName,
+                                            size_t baseNameLength,
+                                            size_t bufferSize, bool first) {
+  SerializationHelper::CodePoint(baseName + baseNameLength,
+                                 bufferSize - baseNameLength,
+                                 first ? 'x' : 'y');
+}
+
+static void deleteParametricComponent(char *baseName, size_t baseNameLength,
+                                      size_t bufferSize, bool first) {
+  addSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
+  Ion::Storage::Record record =
+      Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
+          baseName, Ion::Storage::pcExtension);
+  record.destroy();
+}
+
+static void storeParametricComponent(char *baseName, size_t baseNameLength,
+                                     size_t bufferSize, const Expression &e,
+                                     bool first) {
+  assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Matrix &&
+         e.numberOfChildren() == 2);
+  Expression child = e.childAtIndex(first ? 0 : 1).clone();
+  addSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
+  child.storeWithNameAndExtension(baseName, Ion::Storage::pcExtension);
+}
+
+void ListController::deleteParametricComponentsOfSelectedModel() {
+  ExpiringPointer<ContinuousFunction> f =
+      modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  if (!f->properties().isParametric()) {
+    return;
+  }
+  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+  char buffer[bufferSize];
+  size_t length = f->name(buffer, bufferSize);
+  deleteParametricComponent(buffer, length, bufferSize, true);
+  deleteParametricComponent(buffer, length, bufferSize, false);
+}
+
+void ListController::storeParametricComponentsOfSelectedModel() {
+  ExpiringPointer<ContinuousFunction> f =
+      modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  if (!f->properties().isParametric()) {
+    return;
+  }
+  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+  char buffer[bufferSize];
+  size_t length = f->name(buffer, bufferSize);
+  Expression e = f->expressionClone();
+  storeParametricComponent(buffer, length, bufferSize, e, true);
+  storeParametricComponent(buffer, length, bufferSize, e, false);
+}
 }  // namespace Graph

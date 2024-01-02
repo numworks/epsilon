@@ -40,7 +40,7 @@ BlockType ExpressionType(LayoutType type) {
     case LayoutType::SquareRoot:
       return BlockType::SquareRoot;
     case LayoutType::NthRoot:
-      // TODO
+      return BlockType::NthRoot;
     default:
       assert(false);
   }

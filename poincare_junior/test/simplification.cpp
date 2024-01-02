@@ -258,6 +258,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("0^3.1", "0");
   simplifies_to("0^(-4.2)", "undef");
   simplifies_to("0^(1+x^2)", "0");
+  simplifies_to("sqrt(9)", "3");
+  simplifies_to("root(-8,3)", "-2");
   // Complexes
   simplifies_to("2×i×i", "-2", cartesianCtx);
   simplifies_to("1+i×(1+i×(1+i))", "0", cartesianCtx);

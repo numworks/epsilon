@@ -113,6 +113,9 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   if (  // Sqrt(A) -> A^0.5
       PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf)) ||
+      // NthRoot(A, B) -> A^(1/B)
+      PatternMatching::MatchAndReplace(ref, KNthRoot(KA, KB),
+                                       KPow(KA, KPow(KB, -1_e))) ||
       // log(A, e) -> ln(e)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
       // Sec(A) -> 1/cos(A)

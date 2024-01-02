@@ -74,6 +74,7 @@ constexpr auto KRound = KBinary<BlockType::Round>();
 constexpr auto KMean = KBinary<BlockType::Mean>();
 constexpr auto KBinomial = KBinary<BlockType::Binomial>();
 constexpr auto KPermute = KBinary<BlockType::Permute>();
+constexpr auto KNthRoot = KBinary<BlockType::NthRoot>();
 
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
 constexpr auto KSum = KFixedArity<4, BlockType::Sum>();

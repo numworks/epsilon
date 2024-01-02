@@ -38,6 +38,7 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Log, "log"},
     {BlockType::Ln, "ln"},
     {BlockType::SquareRoot, BuiltinsAliases::k_squareRootAliases},
+    {BlockType::NthRoot, "root"},
     {BlockType::Cross, "cross"},
     {BlockType::Det, "det"},
     {BlockType::Dim, "dim"},

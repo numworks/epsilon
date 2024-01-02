@@ -56,7 +56,11 @@ Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
         c[i] = ToPoincareLayout(l->child(i));
       }
       if (cr.moveFirstToLast) {
-        // TODO
+        Poincare::OLayout cLast = c[l->numberOfChildren() - 1];
+        for (int i = l->numberOfChildren() - 1; i > 0; i--) {
+          c[i] = c[i - 1];
+        }
+        c[0] = cLast;
       }
       switch (cr.junior) {
         using namespace Poincare;
@@ -89,7 +93,7 @@ Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
         case LT::Derivative:
           return FirstOrderDerivativeLayout::Builder(c[0], c[1], c[2]);
         case LT::NthDerivative:
-          return HigherOrderDerivativeLayout::Builder(c[0], c[1], c[2], c[3]);
+          return HigherOrderDerivativeLayout::Builder(c[3], c[1], c[2], c[0]);
         case LT::Integral:
           return IntegralLayout::Builder(c[0], c[1], c[2], c[3]);
         case LT::Sum:

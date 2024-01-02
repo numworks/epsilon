@@ -99,6 +99,11 @@ static int NumberOfFunctions() {
       Ion::Storage::funcExtension);
 }
 
+static int NumberOfParametricComponents() {
+  return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+      Storage::pcExtension);
+}
+
 int MathVariableBoxController::numberOfElements(Page page) const {
   if (page == Page::RootMenu) {
     int numberOfRows = 1;  // Define a variable
@@ -110,7 +115,7 @@ int MathVariableBoxController::numberOfElements(Page page) const {
     return numberOfRows;
   }
   if (page == Page::Function) {
-    return NumberOfFunctions() +
+    return NumberOfFunctions() + NumberOfParametricComponents() +
            Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
                Storage::regExtension);
   }
@@ -160,6 +165,8 @@ void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
     if (record.hasExtension(Storage::funcExtension)) {
       symbol = GlobalContext::continuousFunctionStore->modelForRecord(record)
                    ->symbol();
+    } else if (record.hasExtension(Storage::pcExtension)) {
+      symbol = ContinuousFunctionProperties::k_parametricSymbol;
     } else {
       assert(record.hasExtension(Storage::regExtension));
       symbol = ContinuousFunctionProperties::k_cartesianSymbol;
@@ -392,15 +399,22 @@ Storage::Record MathVariableBoxController::recordAtIndex(int row) {
   assert(m_currentPage != Page::RootMenu);
   Storage::Record record;
   if (m_currentPage == Page::Function) {
-    if (row < NumberOfFunctions()) {
+    int numberOfFunctions = NumberOfFunctions();
+    int numberOfParametricComponents = NumberOfParametricComponents();
+    if (row < numberOfFunctions) {
       record = Storage::FileSystem::sharedFileSystem
                    ->recordWithExtensionAtIndexStartingWithout(
                        ContinuousFunction::k_unnamedRecordFirstChar,
                        Storage::funcExtension, row);
+    } else if (row < numberOfFunctions + numberOfParametricComponents) {
+      record =
+          Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
+              Storage::pcExtension, row - numberOfFunctions);
     } else {
       record =
           Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
-              Storage::regExtension, row - NumberOfFunctions());
+              Storage::regExtension,
+              row - numberOfFunctions - numberOfParametricComponents);
     }
   } else {
     record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
@@ -420,7 +434,8 @@ void MathVariableBoxController::resetVarBoxMemoization() {
 bool MathVariableBoxController::destroyRecordAtRow(int row) {
   {
     Storage::Record record = recordAtIndex(row);
-    if (record.hasExtension(Ion::Storage::regExtension)) {
+    if (record.hasExtension(Ion::Storage::pcExtension) ||
+        record.hasExtension(Ion::Storage::regExtension)) {
       return false;
     }
     Shared::AppWithStoreMenu *app =

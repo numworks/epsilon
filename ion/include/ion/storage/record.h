@@ -15,6 +15,7 @@ constexpr static char lisExtension[] = "lis";
 constexpr static char seqExtension[] = "seq";
 constexpr static char matExtension[] = "mat";
 constexpr static char regExtension[] = "reg";
+constexpr static char pcExtension[] = "pc";  // Parametric component
 
 /*  * A record's fullName is baseName.extension.
  * A Record is identified by the CRC32 on its fullName because:

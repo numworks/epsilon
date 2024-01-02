@@ -43,11 +43,17 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record),
                                          context);
   } else if (record.hasExtension(Ion::Storage::funcExtension) ||
+             record.hasExtension(Ion::Storage::pcExtension) ||
              record.hasExtension(Ion::Storage::regExtension)) {
-    CodePoint symbol = ContinuousFunctionProperties::k_cartesianSymbol;
+    CodePoint symbol = UCodePointNull;
     if (record.hasExtension(Ion::Storage::funcExtension)) {
       symbol = GlobalContext::continuousFunctionStore->modelForRecord(record)
                    ->symbol();
+    } else if (record.hasExtension(Ion::Storage::pcExtension)) {
+      symbol = ContinuousFunctionProperties::k_parametricSymbol;
+    } else {
+      assert(record.hasExtension(Ion::Storage::regExtension));
+      symbol = ContinuousFunctionProperties::k_cartesianSymbol;
     }
     return PoincareHelpers::CreateLayout(
         ExpressionForFunction(Symbol::Builder(symbol), record), context);
@@ -80,6 +86,7 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
              strcmp(extension, Ion::Storage::matExtension) == 0) {
     return Context::SymbolAbstractType::Symbol;
   } else if (strcmp(extension, Ion::Storage::funcExtension) == 0 ||
+             strcmp(extension, Ion::Storage::pcExtension) == 0 ||
              strcmp(extension, Ion::Storage::regExtension) == 0) {
     return Context::SymbolAbstractType::Function;
   } else if (strcmp(extension, Ion::Storage::lisExtension) == 0) {
@@ -165,7 +172,8 @@ const Expression GlobalContext::ExpressionForActualSymbol(
 const Expression GlobalContext::ExpressionForFunction(
     const Expression &parameter, Ion::Storage::Record r) {
   Expression e;
-  if (r.hasExtension(Ion::Storage::regExtension)) {
+  if (r.hasExtension(Ion::Storage::pcExtension) ||
+      r.hasExtension(Ion::Storage::regExtension)) {
     // A regression record value is the expression itself
     Ion::Storage::Record::Data d = r.value();
     e = Expression::ExpressionFromAddress(d.buffer, d.size);

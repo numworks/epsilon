@@ -23,7 +23,8 @@ class GlobalContext final : public Poincare::Context {
   constexpr static const char *k_extensions[] = {
       Ion::Storage::expExtension,  Ion::Storage::matExtension,
       Ion::Storage::funcExtension, Ion::Storage::lisExtension,
-      Ion::Storage::seqExtension,  Ion::Storage::regExtension};
+      Ion::Storage::seqExtension,  Ion::Storage::regExtension,
+      Ion::Storage::pcExtension};
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
 
   // Storage information

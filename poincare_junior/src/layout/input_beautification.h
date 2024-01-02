@@ -29,7 +29,7 @@ consteval static BeautificationRule ruleHelper() {
       TypeBlock::NumberOfChildren(type),
       [](EditionReference* parameters) -> Tree* {
         EditionReference ref = SharedEditionPool->push(layoutType);
-        for (int i = TypeBlock::NumberOfChildren(layoutType) - 1; i >= 0; i--) {
+        for (int i = 0; i < TypeBlock::NumberOfChildren(layoutType); i++) {
           parameters[i]->detachTree();
         }
         return ref;
@@ -127,12 +127,11 @@ class InputBeautification {
         EditionReference diff =
             SharedEditionPool->push(BlockType::DerivativeLayout);
         SharedEditionPool->push(0);
-        diff->moveTreeAfterNode(parameters[2]);
-        diff->moveTreeAfterNode(parameters[1]);
-        EditionReference var = parameters[0];
-        diff->moveTreeAfterNode(parameters[0]);
-        if (RackLayout::IsEmpty(var)) {  // This preserves cursor
-          NAry::AddChildAtIndex(var, "x"_cl->clone(), 0);
+        parameters[1]->detachTree();
+        parameters[2]->detachTree();
+        parameters[0]->detachTree();
+        if (RackLayout::IsEmpty(parameters[1])) {
+          NAry::AddChildAtIndex(parameters[1], "x"_cl->clone(), 0);
         }
         return diff;
       }};

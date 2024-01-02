@@ -887,8 +887,9 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
           GetVariableSlot(node) == VariableSlot::Fraction
               ? variableAssignmentPosition
               : positionOfVariableInFractionSlot(node, style.font);
-      Draw(node->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
-           font, expressionColor, backgroundColor);
+      PrivateDraw(node->child(k_variableIndex), ctx,
+                  copyPosition.translatedBy(p), expressionColor,
+                  backgroundColor, {});
 
       if (node->isNthDerivativeLayout()) {
         // Draw the copy of the order
@@ -896,8 +897,9 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
             GetOrderSlot(node) == OrderSlot::Denominator
                 ? positionOfOrderInNumerator(node, style.font)
                 : positionOfOrderInDenominator(node, style.font);
-        Draw(node->child(k_orderIndex), ctx, copyPosition.translatedBy(p), font,
-             expressionColor, backgroundColor);
+        PrivateDraw(node->child(k_orderIndex), ctx,
+                    copyPosition.translatedBy(p), expressionColor,
+                    backgroundColor, {});
       }
       return;
     }

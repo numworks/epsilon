@@ -233,17 +233,21 @@ class InputBeautification {
   constexpr static size_t k_lenOfIdentifiersRules =
       std::size(k_identifiersRules);
 
-#if 0
   constexpr static BeautificationRule k_sumRule = {
-      Sum::s_functionHelper.aliasesList(), 4, [](Layout* parameters) {
-        if (parameters[1].isEmpty()) {  // This preserves cursor
-          parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('k'), 0,
-                                               0);
+      "sum", 4, [](EditionReference* parameters) -> Tree* {
+        // TODO factorize with diff and int
+        EditionReference sum = SharedEditionPool->push(BlockType::SumLayout);
+        parameters[1]->detachTree();
+        parameters[2]->detachTree();
+        parameters[3]->detachTree();
+        parameters[0]->detachTree();
+        if (RackLayout::IsEmpty(parameters[1])) {
+          NAry::AddChildAtIndex(parameters[1], "k"_cl->clone(), 0);
         }
-        return static_cast<Layout>(SumLayout::Builder(
-            parameters[0], parameters[1], parameters[2], parameters[3]));
+        return sum;
       }};
 
+#if 0
   constexpr static BeautificationRule k_logarithmRule = {
       Logarithm::s_functionHelper.aliasesList(), 2, [](Layout* parameters) {
         return static_cast<Layout>(

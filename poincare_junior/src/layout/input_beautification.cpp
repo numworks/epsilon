@@ -392,33 +392,32 @@ bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
    *  - "sum|" -> insert "(" -> "sum(" -> do not beautify
    *  - "sum(k^2|" -> insert "," -> "sum(k^2,|" -> beautify with a big sigma
    * */
-#if 0
-  assert(!h.isUninitialized());
-  assert(indexOfComma < h.numberOfChildren() && indexOfComma >= 0);
-  EditionReference comma = h.child(indexOfComma);
-  if (!CodePointLayoutNode::IsCodePoint(comma, ',')) {
+  assert(h);
+  assert(indexOfComma < h->numberOfChildren() && indexOfComma >= 0);
+  EditionReference comma = h->child(indexOfComma);
+  if (!CodePointLayout::IsCodePoint(comma, ',')) {
     return false;
   }
-  EditionReference parenthesis = h.parent();
-  if (parenthesis.isUninitialized() ||
-      parenthesis.type() != LayoutNode::Type::ParenthesisLayout) {
+  EditionReference parenthesis = h->parent(layoutCursor->rootNode());
+  if (parenthesis.isUninitialized() || !parenthesis->isParenthesisLayout()) {
     return false;
   }
-  EditionReference horizontalParent = parenthesis.parent();
-  if (horizontalParent.isUninitialized() || !horizontalParent.isHorizontal()) {
+  EditionReference horizontalParent =
+      parenthesis->parent(layoutCursor->rootNode());
+  if (horizontalParent.isUninitialized() || !horizontalParent->isRackLayout()) {
     return false;
   }
-  constexpr AliasesList k_sumName =
-      Sum::s_functionHelper.aliasesList().mainAlias();
+  constexpr Aliases k_sumName =
+      *Builtin::GetReservedFunction(BlockType::Sum)->aliases();
   int nameLen = strlen(k_sumName);
-  int indexOfParenthesis = horizontalParent.indexOfChild(parenthesis);
+  int indexOfParenthesis = horizontalParent->indexOfChild(parenthesis);
   if (indexOfParenthesis < nameLen) {
     return false;
   }
   // Check if "sum" is written before the parenthesis
   for (int i = 0; i < nameLen; i++) {
-    if (!CodePointLayoutNode::IsCodePoint(
-            horizontalParent.child(i + indexOfParenthesis - nameLen),
+    if (!CodePointLayout::IsCodePoint(
+            horizontalParent->child(i + indexOfParenthesis - nameLen),
             k_sumName[i])) {
       return false;
     }
@@ -426,25 +425,21 @@ bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
   /* The whole identifier string needs to be tokenized, to ensure that sum
    * can be beautified. For example, "asum(3," can't be beautified if "asum"
    * is a user-defined function. */
-  bool result = TokenizeAndBeautifyIdentifiers(
-      static_cast<HorizontalLayout &>(horizontalParent), indexOfParenthesis - 1,
-      &k_sumRule, 1, context, layoutCursor);
+  bool result =
+      TokenizeAndBeautifyIdentifiers(horizontalParent, indexOfParenthesis - 1,
+                                     &k_sumRule, 1, context, layoutCursor);
   if (result) {
     // Replace the cursor if it's in variable slot
-    EditionReference parent = layoutCursor->layout().parent();
-    assert(!parent.isUninitialized() &&
-           parent.type() == LayoutNode::Type::SumLayout);
-    if (parent.indexOfChild(layoutCursor->layout()) ==
-        SequenceLayoutNode::k_variableLayoutIndex) {
-      layoutCursor->safeSetLayout(
-          parent.child(SumLayoutNode::k_lowerBoundLayoutIndex),
-          OMG::Direction::Left());
+    EditionReference parent =
+        layoutCursor->cursorNode()->parent(layoutCursor->rootNode());
+    assert(!parent.isUninitialized() && parent->isSumLayout());
+    if (parent->indexOfChild(layoutCursor->cursorNode()) ==
+        Parametric::k_variableIndex) {
+      layoutCursor->setLayout(parent->child(Parametric::k_lowerBoundIndex),
+                              OMG::Direction::Left());
     }
   }
   return result;
-#else
-  return false;
-#endif
 }
 
 bool InputBeautification::CompareAndBeautifyIdentifier(

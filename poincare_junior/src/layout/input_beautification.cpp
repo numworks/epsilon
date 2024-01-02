@@ -1,6 +1,7 @@
 #include "input_beautification.h"
 
 #include "autocompleted_pair.h"
+#include "indices.h"
 #include "parsing/tokenizer.h"
 
 namespace PoincareJ {
@@ -349,39 +350,32 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
 
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
     Tree *h, int indexOfSuperscript, LayoutCursor *layoutCursor) {
-#if 0
   EditionReference superscript = h->child(indexOfSuperscript);
-  if (superscript.type() != LayoutNode::Type::VerticalOffsetLayout ||
-      static_cast<VerticalOffsetLayout &>(superscript).verticalPosition() !=
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript) {
+  if (!superscript->isVerticalOffsetLayout() ||
+      !VerticalOffset::IsSuffixSuperscript(superscript)) {
     return false;
   }
-  EditionReference firstOrderDerivative = h.parent();
+  int childIndex;
+  EditionReference firstOrderDerivative =
+      layoutCursor->rootNode()->parentOfDescendant(h, &childIndex);
   if (firstOrderDerivative.isUninitialized() ||
-      firstOrderDerivative.type() !=
-          LayoutNode::Type::FirstOrderDerivativeLayout ||
-      firstOrderDerivative.indexOfChild(h) !=
-          DerivativeLayoutNode::k_variableLayoutIndex ||
-      static_cast<DerivativeLayoutNode *>(firstOrderDerivative.node())
-              ->variableSlot() !=
-          DerivativeLayoutNode::VariableSlot::Fraction) {
+      !firstOrderDerivative->isDerivativeLayout() ||
+      childIndex != Derivative::k_variableIndex ||
+      Derivative::GetVariableSlot(firstOrderDerivative) !=
+          Derivative::VariableSlot::Fraction) {
     return false;
   }
-  EditionReference derivativeOrder = superscript.child(0);
-  h.removeChildAtIndexInPlace(indexOfSuperscript);
-  if (layoutCursor->layout() == h &&
-      layoutCursor->position() > h.numberOfChildren()) {
-    layoutCursor->safeSetLayout(derivativeOrder, OMG::Direction::Right());
+  EditionReference derivativeOrder = superscript->child(0);
+  EditionReference detached = NAry::DetachChildAtIndex(h, indexOfSuperscript);
+  EditionReference inserted =
+      firstOrderDerivative->nextTree()->cloneTreeBeforeNode(derivativeOrder);
+  if (layoutCursor->cursorNode() == h &&
+      layoutCursor->position() > h->numberOfChildren()) {
+    layoutCursor->setLayout(inserted, OMG::Direction::Right());
   }
-  HigherOrderDerivativeLayout newDerivative =
-      HigherOrderDerivativeLayout::Builder(
-          firstOrderDerivative.child(0), firstOrderDerivative.child(1),
-          firstOrderDerivative.child(2), derivativeOrder);
-  firstOrderDerivative.replaceWithInPlace(newDerivative);
+  detached->removeTree();
+  firstOrderDerivative->cloneNodeOverNode(KNthDerivativeL);
   return true;
-#else
-  return false;
-#endif
 }
 
 bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,

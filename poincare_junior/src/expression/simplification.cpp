@@ -46,6 +46,23 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   return shallowModified || modified;
 }
 
+/* Approximate all children if one of them is already float. Return true if the
+ * entire tree have been approximated. */
+bool CanApproximateTree(Tree* u, bool* changed) {
+  for (Tree* child : u->children()) {
+    if (child->isFloat()) {
+      if (Approximation::ApproximateAndReplaceEveryScalar(u)) {
+        *changed = true;
+        if (u->isFloat()) {
+          return true;
+        }
+      }
+      break;
+    }
+  }
+  return false;
+}
+
 bool Simplification::ShallowSystematicReduce(Tree* u) {
   // This assert is quite costly, should be an assert level 2 ?
   assert(Dimension::DeepCheckDimensions(u));
@@ -57,14 +74,8 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
   /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
    * with KA a Float and KB a UserVariable. We need to
    * ApproximateAndReplaceEveryScalar again on ShallowSystematicReduce. */
-  for (Tree* child : u->children()) {
-    if (child->isFloat()) {
-      changed = Approximation::ApproximateAndReplaceEveryScalar(u) || changed;
-      if (changed && u->isFloat()) {
-        return true;
-      }
-      break;
-    }
+  if (CanApproximateTree(u, &changed)) {
+    return true;
   }
   changed |= SimplifySwitch(u);
   if (Dependency::ShallowBubbleUpDependencies(u)) {
@@ -473,21 +484,11 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
 
 bool Simplification::SimplifyMultiplication(Tree* u) {
   assert(u->isMultiplication());
-  bool changed = false;
-  if (NAry::Flatten(u)) {
-    /* We need to approximateAndReplaceEveryScalar again here so that floats
-    are
-     * properly propagated after a flatten. */
-    for (Tree* child : u->children()) {
-      if (child->isFloat()) {
-        if (Approximation::ApproximateAndReplaceEveryScalar(u) &&
-            u->isFloat()) {
-          return true;
-        }
-        break;
-      }
-    }
-    changed = true;
+  bool changed = NAry::Flatten(u);
+  if (changed && CanApproximateTree(u, &changed)) {
+    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
+     * tried again to properly handle possible new float children. */
+    return true;
   }
   if (NAry::SquashIfUnary(u) || NAry::SquashIfEmpty(u)) {
     return true;
@@ -580,20 +581,11 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
 
 bool Simplification::SimplifyAddition(Tree* u) {
   assert(u->isAddition());
-  bool modified = false;
-  if (NAry::Flatten(u)) {
-    /* We need to approximateAndReplaceEveryScalar again here so that floats are
-     * properly propagated after a flatten. */
-    for (Tree* child : u->children()) {
-      if (child->isFloat()) {
-        if (Approximation::ApproximateAndReplaceEveryScalar(u) &&
-            u->isFloat()) {
-          return true;
-        }
-        break;
-      }
-    }
-    modified = true;
+  bool modified = NAry::Flatten(u);
+  if (modified && CanApproximateTree(u, &modified)) {
+    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
+     * tried again to properly handle possible new float children. */
+    return true;
   }
   if (NAry::SquashIfUnary(u)) {
     return true;

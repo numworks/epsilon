@@ -17,7 +17,7 @@ GridTypeController::GridTypeController(
           MenuCell<MessageTextView, EmptyCellWidget, TransparentImageView>, 2>(
           parentResponder, nullptr),
       m_interactiveCurveViewRange(interactiveCurveViewRange) {
-  cell(0)->label()->setMessage(I18n::Message::CartesianGrid);
+  cell(0)->label()->setMessage(I18n::Message::Cartesian);
   cell(1)->label()->setMessage(I18n::Message::Polar);
 
   cell(0)->accessory()->setImage(ImageStore::CartesianGridIcon);

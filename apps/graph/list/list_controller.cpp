@@ -123,7 +123,7 @@ bool ListController::completeEquation(LayoutField *equationField,
 }
 
 void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
-  m_editableCell.update();
+  m_editableCell.updateButton();
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,

@@ -1,6 +1,7 @@
 #ifndef ESCHER_EDITABLE_FUNCTION_CELL_H
 #define ESCHER_EDITABLE_FUNCTION_CELL_H
 
+#include <escher/button_cell.h>
 #include <escher/editable_expression_model_cell.h>
 
 #include "function_cell.h"
@@ -17,15 +18,22 @@ class EditableFunctionCell
     m_expressionBackground = backgroundColor();
   }
 
-  void update() {
+  bool isEmpty() { return expressionCell()->layoutField()->isEmpty(); }
+
+  void updateButton() {
     layoutSubviews();
-    markWholeFrameAsDirty();
+    markRectAsDirty(m_buttonCell.bounds());
+    markRectAsDirty(expressionCell()->layoutField()->bounds());
   }
 
  private:
-  int numberOfSubviews() const override { return 2; }
+  int numberOfSubviews() const override { return 3; }
   void layoutSubviews(bool force = false) override;
+  Escher::View* subviewAtIndex(int index) override;
+
   static constexpr KDCoordinate k_expressionMargin = 5;
+  static constexpr KDCoordinate k_templateButtonMargin = 5;
+  Escher::ButtonCell m_buttonCell;
 };
 
 }  // namespace Graph

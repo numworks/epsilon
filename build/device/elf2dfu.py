@@ -112,27 +112,6 @@ def print_block(sections, address, dataSize):
     print("\n")
 
 
-def elf2target_single_block(elf_file, verbose):
-    single_block = {"sections": loadable_sections(elf_file)}
-    # Early escape for empty blocks
-    if not single_block["sections"]:
-        sys.stderr.write(
-            "Error: the elf file " + elf_file + "has no loadable section\n"
-        )
-        sys.exit(-1)
-    subprocess.call(
-        ["arm-none-eabi-objcopy", "-O", "binary", elf_file, bin_file_for_path(elf_file)]
-    )
-    address = min([section["lma"] for section in single_block["sections"]])
-
-    data = open(bin_file_for_path(elf_file), "rb").read()
-    target = {"address": address, "data": data}
-    if verbose:
-        print_block(single_block, address, len(data))
-    subprocess.call(["rm", bin_file_for_path(elf_file)])
-    return target
-
-
 def add_sections_to_targets(targets, sections, elf_file, verbose):
     # Find the section address
     address = min([s["lma"] for s in sections])

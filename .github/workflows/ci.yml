@@ -84,6 +84,9 @@ jobs:
       - uses: msys2/setup-msys2@v2
         with:
           update: true
+          install: >-
+            git
+            mingw-w64-x86_64-arm-none-eabi-gcc
       - uses: actions/checkout@v3
       - run: build/setup.sh
       - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe

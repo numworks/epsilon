@@ -38,22 +38,11 @@ QUIZ_CASE(pcj_simplification_contraction) {
   quiz_assert(Simplification::DeepContract(ref1));
   assert_trees_are_equal(ref1, KExp(KAdd("x"_e, "y"_e, "z"_e)));
 
-#if 0  // TODO: NewAdvanceReduceHugo
-  EditionReference ref2(  // 4_e,
-      KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 0_e), KTrig("z"_e, 0_e)));
+  EditionReference ref2(KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)));
   quiz_assert(Simplification::DeepContract(ref2));
   assert_trees_are_equal(
-      ref2,
-      KMult(KHalf,
-            KAdd(KMult(KHalf, KAdd(KTrig(KAdd("x"_e, "y"_e, "z"_e), 1_e),
-                                   KTrig(KAdd("x"_e, "y"_e, KMult(-1_e, "z"_e)),
-                                         1_e))),
-                 KMult(KHalf,
-                       KAdd(KTrig(KAdd("x"_e, KMult(-1_e, "y"_e), "z"_e), 1_e),
-                            KTrig(KAdd("x"_e, KMult(-1_e, "y"_e),
-                                       KMult(-1_e, "z"_e)),
-                                  1_e))))));
-#endif
+      ref2, KMult(KHalf, KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
+                              KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e))));
 
   EditionReference ref3(KMult(KAbs("x"_e), KAbs("y"_e), KExp("x"_e),
                               KExp("y"_e), KTrig("x"_e, 1_e),
@@ -171,7 +160,7 @@ QUIZ_CASE(pcj_basic_simplification) {
                 "3×y^(4)×e^(3×y)×ln(y)+(e^(3×y)+4×e^(3×y)×ln(y))×y^(3)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*abs(x), x, y)", "y×diff(abs(x),x,y)+1+abs(y)");
-  // TODO: NewAdvanceReduceHugo - 3×abs(x)
+  // TODO: Metric: 3×abs(x)
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
   simplifies_to("0.1875", "3/16");
@@ -210,28 +199,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("π*(-π)/π", "-π");
   simplifies_to("π+1/π-π", "1/π");
 
-  // Trigonometry identities
-  simplifies_to("cos(0)", "1");
-  simplifies_to("sin(π)", "0");
-  simplifies_to("cos(π)", "-1");
-  simplifies_to("cos(7×π/12)", "-(2^(-1/2)×(-1+√(3)))/2");
-  simplifies_to("cos(13×π/12)", "-(2^(-1/2)×(1+√(3)))/2");
-  simplifies_to("sin(π/3)", "√(3)/2");
-  simplifies_to("cos(π×2/3)", "-1/2");
-  simplifies_to("cos(π×15/4)", "2^(-1/2)");
-#if 0  // TODO: NewAdvanceReduceHugo
-  simplifies_to("2×sin(2y)×sin(y)", "cos(y)-cos(3×y)");
-  simplifies_to("2×sin(2y)×cos(y)", "sin(y)+sin(3×y)");
-  simplifies_to("2×cos(2y)×sin(y)", "-sin(y)+sin(3×y)");
-  simplifies_to("2×cos(2y)×cos(y)", "cos(y)+cos(3×y)");
-#endif
-  simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0",
-                {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to(
-      "{cos(π×7/10),cos(π×7/5),cos(π×-7/8),cos(π×11/12),cos(π×13/6),sin(π×7/"
-      "10),sin(π×7/5),sin(π×-7/8),sin(π×11/12),sin(π×13/6)}",
-      "{-√((5-√(5))/8),-(-1+√(5))/4,-√(2+√(2))/2,-(2^(-1/2)×(1+√(3)))/2,√(3)/"
-      "2,(1+√(5))/4,-√((5+√(5))/8),-√(2-√(2))/2,(2^(-1/2)×(-1+√(3)))/2,1/2}");
   simplifies_to("ln(0)", "nonreal");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1",
@@ -260,9 +227,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("[[2]]+[[3]]", "[[5]]");
   simplifies_to("2×[[3]]", "[[6]]");
   simplifies_to("[[1,2][3,4]]×[[2,3][4,5]]", "[[10,13][22,29]]");
-#if 0  // TODO: NewAdvanceReduceHugo
   simplifies_to("norm([[2,3,6]])", "7");
-#endif
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   // Power
@@ -462,14 +427,11 @@ QUIZ_CASE(pcj_power_simplification) {
   // Complex Power
   simplifies_to("√(x)^2", "x", {.m_complexFormat = ComplexFormat::Cartesian});
 
-#if 0  // TODO: NewAdvanceReduceHugo
-  // Power expand
-  simplifies_to("√(12)", "2√(3)");
+  // Power expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");
-  // TODO : improve with metric :
-  simplifies_to("123^(1/3)", "3^(1/3)×41^(1/3)");
-  simplifies_to("√(14)", "√(2)*√(7)");
-#endif
+  simplifies_to("√(12)-2×√(3)", "0");
+  simplifies_to("3^(1/3)×41^(1/3)-123^(1/3)", "0");
+  simplifies_to("√(2)*√(7)-√(14)", "0");
 }
 
 QUIZ_CASE(pcj_variables) {
@@ -581,6 +543,31 @@ QUIZ_CASE(pcj_infinity) {
   // simplifies_to("1^∞", "1"); // TODO false on device
   simplifies_to("∞^0", "1");
   simplifies_to("log(inf,-3)", "undef");
+}
+
+QUIZ_CASE(pcj_trigonometry) {
+  // Trigonometry identities
+  simplifies_to("cos(0)", "1");
+  simplifies_to("sin(π)", "0");
+  simplifies_to("cos(π)", "-1");
+  simplifies_to("cos(7×π/12)", "-(2^(-1/2)×(-1+√(3)))/2");
+  simplifies_to("cos(13×π/12)", "-(2^(-1/2)×(1+√(3)))/2");
+  simplifies_to("sin(π/3)", "√(3)/2");
+  simplifies_to("cos(π×2/3)", "-1/2");
+  simplifies_to("cos(π×15/4)", "2^(-1/2)");
+
+  simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "cos(y)");
+  simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
+  simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
+  simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
+  simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+
+  simplifies_to(
+      "{cos(π×7/10),cos(π×7/5),cos(π×-7/8),cos(π×11/12),cos(π×13/6),sin(π×7/"
+      "10),sin(π×7/5),sin(π×-7/8),sin(π×11/12),sin(π×13/6)}",
+      "{-√((5-√(5))/8),-(-1+√(5))/4,-√(2+√(2))/2,-(2^(-1/2)×(1+√(3)))/2,√(3)/"
+      "2,(1+√(5))/4,-√((5+√(5))/8),-√(2-√(2))/2,(2^(-1/2)×(-1+√(3)))/2,1/2}");
 }
 
 QUIZ_CASE(pcj_inverse_trigonometry) {

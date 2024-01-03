@@ -433,6 +433,14 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("abs(a)*abs(bc)-abs(ab)*abs(c)", "0");
   simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
   simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^(2)+e^((a+b)×c)");
+#if 0
+  /* TODO: This can Expand/contract infinitely and overflow the pool on any
+   * strategy */
+  simplifies_to(
+      "cos(a+b)-cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/"
+      "2×cos(b)×cos(a)+1/4×cos(b+a)-1/4×cos(b-a)",
+      "0");
+#endif
 }
 
 QUIZ_CASE(pcj_power_simplification) {
@@ -609,10 +617,10 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-90,-60,-45,-30,0,30,45,60,90}",
                 {.m_angleUnit = AngleUnit::Degree});
-#if 0  // TODO: NewAdvanceReduceHugo
-                {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("cos(1+asin(x))", "cos(91-arccos(x))",
-                {.m_angleUnit = AngleUnit::Degree});
+#if 0
+  // TODO: asin(x) = π/2 - acos(x) advanced reduction safe from infinite loops.
+  simplifies_to("asin(x)-π/2", "-arccos(x)");
+  simplifies_to("90-acos(x)", "arcsin(x)", {.m_angleUnit = AngleUnit::Degree});
 #endif
   // TODO: Improve output with better advanced reduction.
   simplifies_to("(y*π+z/180)*asin(x)", "(π×y+z/180)×arcsin(x)",

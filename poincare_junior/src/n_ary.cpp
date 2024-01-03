@@ -186,4 +186,16 @@ void NAry::SortedInsertChild(Tree* nary, Tree* child, Comparison::Order order) {
   AddChildAtIndex(nary, child, a);
 }
 
+Tree* NAry::CloneSubRange(const Tree* nary, int startIndex, int endIndex) {
+  Tree* result = nary->cloneNode();
+  int nb = endIndex - startIndex;
+  SetNumberOfChildren(result, nb);
+  const Tree* child = nary->child(startIndex);
+  for (int i = 0; i < nb; i++) {
+    child->clone();
+    child = child->nextTree();
+  }
+  return result;
+}
+
 }  // namespace PoincareJ

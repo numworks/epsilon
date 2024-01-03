@@ -1,4 +1,5 @@
 #include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/n_ary.h>
 #include <quiz.h>
@@ -89,4 +90,8 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   NAry::SortedInsertChild(sorted, EditionReference(2_e));
   NAry::SortedInsertChild(sorted, EditionReference(5_e));
   assert_trees_are_equal(sorted, KAdd(0_e, 1_e, 2_e, 2_e, 3_e, 5_e));
+
+  // CloneSubRange
+  Tree* subRange = NAry::CloneSubRange("abcdef"_l, 1, 4);
+  assert_trees_are_equal(subRange, "bcd"_l);
 }

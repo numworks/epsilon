@@ -30,6 +30,7 @@ class NAry {
   static void SortedInsertChild(
       Tree* nary, Tree* child,
       Comparison::Order order = Comparison::Order::System);
+  static Tree* CloneSubRange(const Tree* nary, int startIndex, int endIndex);
   EDITION_REF_WRAP(Flatten);
   EDITION_REF_WRAP(SquashIfPossible);
   EDITION_REF_WRAP(SquashIfEmpty);

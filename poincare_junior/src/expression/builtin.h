@@ -93,6 +93,7 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Product, "product"},
     {BlockType::Derivative, "diff"},
     {BlockType::Integral, "int"},
+    {BlockType::Exponential, "exp"},
     {BlockType::Logarithm, "log"},
     {BlockType::Log, "log"},
     {BlockType::Ln, "ln"},

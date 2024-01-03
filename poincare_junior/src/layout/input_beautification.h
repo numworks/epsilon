@@ -161,32 +161,30 @@ class InputBeautification {
       /* conj( */
       ruleHelper<BlockType::Conjugate, BlockType::ConjugateLayout>(),
       /* diff( */ k_derivativeRule,
-#if 0
       {/* exp( */
-       Power::s_exponentialFunctionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(HorizontalLayout::Builder(
-             CodePointLayout::Builder('e'),
-             VerticalOffsetLayout::Builder(
-                 parameters[0],
-                 VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
+       "exp", 1,
+       [](EditionReference* parameters) -> Tree* {
+         EditionReference exp = KRackL("e"_cl, KVertOffL(KRackL()))->clone();
+         exp->child(1)->child(0)->moveTreeOverTree(parameters[0]);
+         return exp;
        }},
-#endif
       /* floor( */
       ruleHelper<BlockType::Floor, BlockType::FloorLayout>(),
       /* inf */ k_infRule,
-#if 0
       {/* int( */
-       Integral::s_functionHelper.aliasesList(), 4,
-       [](Layout* parameters) {
-         if (parameters[1].isEmpty()) {  // This preserves cursor
-           parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('x'),
-                                                0, 0);
+       "int", 4,
+       [](EditionReference* parameters) -> Tree* {
+         EditionReference integral =
+             SharedEditionPool->push(BlockType::IntegralLayout);
+         parameters[1]->detachTree();
+         parameters[2]->detachTree();
+         parameters[3]->detachTree();
+         parameters[0]->detachTree();
+         if (RackLayout::IsEmpty(parameters[1])) {
+           NAry::AddChildAtIndex(parameters[1], "x"_cl->clone(), 0);
          }
-         return static_cast<Layout>(IntegralLayout::Builder(
-             parameters[0], parameters[1], parameters[2], parameters[3]));
+         return integral;
        }},
-#endif
       /* norm( */
       ruleHelper<BlockType::Norm, BlockType::VectorNormLayout>(),
       /* pi */ k_piRule,
@@ -209,23 +207,24 @@ class InputBeautification {
                        parameters[1].isEmpty() ? Layout() : parameters[1]);
          return static_cast<Layout>(layout);
        }},
-      {/* product( */
-       Product::s_functionHelper.aliasesList(), 4,
-       [](Layout* parameters) {
-         if (parameters[1].isEmpty()) {  // This preserves cursor
-           parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('k'),
-                                                0, 0);
-         }
-         return static_cast<Layout>(ProductLayout::Builder(
-             parameters[0], parameters[1], parameters[2], parameters[3]));
-       }},
-      {/* root( */
-       NthRoot::s_functionHelper.aliasesList(), 2,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
-             NthRootLayout::Builder(parameters[0], parameters[1]));
-       }},
 #endif
+      {/* product( */
+       "product", 4,
+       [](EditionReference* parameters) -> Tree* {
+         // TODO factorize with diff and int
+         EditionReference product =
+             SharedEditionPool->push(BlockType::ProductLayout);
+         parameters[1]->detachTree();
+         parameters[2]->detachTree();
+         parameters[3]->detachTree();
+         parameters[0]->detachTree();
+         if (RackLayout::IsEmpty(parameters[1])) {
+           NAry::AddChildAtIndex(parameters[1], "k"_cl->clone(), 0);
+         }
+         return product;
+       }},
+      /* root( */
+      ruleHelper<BlockType::NthRoot, BlockType::NthRootLayout>(),
       /* sqrt( */
       ruleHelper<BlockType::SquareRoot, BlockType::SquareRootLayout>(),
       /* theta */ k_thetaRule};

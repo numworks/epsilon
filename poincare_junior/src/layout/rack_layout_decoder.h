@@ -89,6 +89,52 @@ class CPL {
   char m_content[k_codePointLayoutSize];
 };
 
+class EditableRackLayoutDecoder : public UnicodeDecoder {
+ public:
+  EditableRackLayoutDecoder(Tree* layout, size_t initialPosition = 0,
+                            size_t layoutEnd = 0)
+      : UnicodeDecoder(initialPosition,
+                       layoutEnd ? layoutEnd : layout->numberOfChildren()),
+        m_layout(layout) {
+    assert(layout->isRackLayout());
+    if (m_position > m_end) {
+      m_position = m_end;
+    }
+  }
+  Tree* mainLayout() const { return m_layout; }
+  Tree* nextLayout() { return layoutAt(m_position++); }
+  bool nextLayoutIsCodePoint() {
+    return m_position == m_end ||
+           (m_position < m_end &&
+            m_layout->child(m_position)->isCodePointLayout());
+  }
+  CodePoint nextCodePoint() { return codePointAt(m_position++); }
+  CodePoint previousCodePoint() { return codePointAt(--m_position); }
+  void setPosition(size_t index) {
+    assert(0 <= index && index <= m_end);
+    m_position = index;
+  }
+  void setPosition(const Tree* child) {
+    m_position =
+        m_layout->hasChild(child) ? m_layout->indexOfChild(child) : m_end;
+  }
+  Tree* layoutAt(size_t index) {
+    assert(0 <= index && index < m_end);
+    return m_layout->child(index);
+  }
+  CodePoint codePointAt(size_t index) const {
+    if (index == m_end) {
+      return UCodePointNull;
+    }
+    assert(0 <= index && index < m_end);
+    assert(m_layout->child(index)->isCodePointLayout());
+    return CodePointLayout::GetCodePoint(m_layout->child(index));
+  }
+
+ private:
+  mutable EditionReference m_layout;
+};
+
 /* Unlike RackLayoutDecoder that iters children of a parent rack, this points to
  * a CodePointLayout and iter its siblings until a non-codepoint layout is
  * reached. Thus the API is more similar to const char *. */

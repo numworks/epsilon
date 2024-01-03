@@ -12,7 +12,7 @@ using namespace PoincareJ;
 
 QUIZ_CASE(pcj_layout_tokenize) {
   ParsingContext context(ParsingContext::ParsingMethod::Classic);
-  Tokenizer tokenizer("ab*123.45"_l, &context);
+  Tokenizer tokenizer("ab*123.45"_l->clone(), &context);
   Token token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::CustomIdentifier &&
               token.length() == 1);
@@ -26,28 +26,28 @@ QUIZ_CASE(pcj_layout_tokenize) {
   token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::EndOfStream);
 
-  token = Tokenizer("log2"_l, &context).popToken();
+  token = Tokenizer("log2"_l->clone(), &context).popToken();
   quiz_assert(token.type() == Token::Type::ReservedFunction &&
               token.length() == 3);
 
-  token = Tokenizer("tantan"_l, &context).popToken();
+  token = Tokenizer("tantan"_l->clone(), &context).popToken();
   quiz_assert(token.type() == Token::Type::ReservedFunction &&
               token.length() == 3);
 
-  token = Tokenizer("atan"_l, &context).popToken();
+  token = Tokenizer("atan"_l->clone(), &context).popToken();
   quiz_assert(token.type() == Token::Type::ReservedFunction &&
               token.length() == 4);
 }
 
 bool is_parsable(const Tree* layout) {
-  EditionReference expression = RackParser(layout).parse();
+  EditionReference expression = RackParser(layout->clone()).parse();
   return !expression.isUninitialized();
 }
 
 // TODO import all the parsing tests from poincare
 
 QUIZ_CASE(pcj_layout_parse) {
-  assert_trees_are_equal(RackParser("2^(3+1)^4"_l).parse(),
+  assert_trees_are_equal(RackParser("2^(3+1)^4"_l->clone()).parse(),
                          KPow(2_e, KPow(KAdd(3_e, 1_e), 4_e)));
   quiz_assert(is_parsable("12(123 +  0x2a+2*0b0101)"_l));
   // TODO _l with non-ascii codepoints

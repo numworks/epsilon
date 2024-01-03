@@ -266,7 +266,7 @@ Token Tokenizer::popToken() {
   }
 
   // All the remaining cases are single codepoint tokens
-  const Tree* layout = m_decoder.layoutAt(start);
+  Tree* layout = m_decoder.layoutAt(start);
   switch (c) {
     case UCodePointMultiplicationSign:
     case UCodePointMiddleDot:

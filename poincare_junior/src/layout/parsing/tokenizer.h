@@ -18,8 +18,8 @@ class Tokenizer {
   friend class InputBeautification;
 
  public:
-  Tokenizer(const Tree* node, ParsingContext* parsingContext,
-            size_t textStart = 0, size_t textEnd = 0)
+  Tokenizer(Tree* node, ParsingContext* parsingContext, size_t textStart = 0,
+            size_t textEnd = 0)
       : m_decoder(node, textStart, textEnd),
         m_parsingContext(parsingContext),
         m_numberOfStoredIdentifiers(0) {}
@@ -117,7 +117,7 @@ class Tokenizer {
    * Same for "2h30mincos(x) = 2*h30*min*cos(x)". */
   size_t popImplicitAdditionBetweenUnits();
 
-  RackLayoutDecoder m_decoder;
+  EditableRackLayoutDecoder m_decoder;
   ParsingContext* m_parsingContext;
   /* This list is used to memoize the identifiers we already parsed.
    * Ex: When parsing abc, we first turn it into ab*c and store "c",

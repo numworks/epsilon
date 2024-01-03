@@ -62,7 +62,7 @@ class Token {
 
   Token(Type type = Type::Undefined)
       : m_type(type), m_firstLayout(), m_length(0){};
-  Token(Type type, const Tree* layout, size_t length = 1)
+  Token(Type type, Tree* layout, size_t length = 1)
       : m_type(type), m_firstLayout(layout), m_length(length){};
 
   Type type() const { return m_type; }
@@ -74,10 +74,10 @@ class Token {
   }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
-  const Tree* firstLayout() const { return m_firstLayout; }
+  Tree* firstLayout() const { return m_firstLayout; }
   size_t length() const { return m_length; }
 
-  void setRange(const Tree* firstLayout, size_t length) {
+  void setRange(Tree* firstLayout, size_t length) {
     m_firstLayout = firstLayout;
     m_length = length;
   }
@@ -90,7 +90,7 @@ class Token {
 
  private:
   Type m_type;
-  const Tree* m_firstLayout;
+  EditionReference m_firstLayout;
   size_t m_length;
 };
 

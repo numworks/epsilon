@@ -577,6 +577,10 @@ QUIZ_CASE(pcj_infinity) {
 }
 
 QUIZ_CASE(pcj_inverse_trigonometry) {
+  // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
+  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}");
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
@@ -585,10 +589,10 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
                 "{tan(arccos(x)),tan(arcsin(x)),tan(arctan(x))}");
 
   simplifies_to("acos(cos(x))", "acos(cos(x))");
-#if 0  // TODO: NewAdvanceReduceHugo
   simplifies_to("acos({cos(-23*π/7), sin(-23*π/7)})/π", "{5/7,3/14}");
-  simplifies_to("asin({cos(-23*π/7), sin(-23*π/7)})/π", "{-3/14,2/7}");
   simplifies_to("acos({cos(π*23/7), sin(π*23/7)})/π", "{5/7,11/14}");
+#if 0  // TODO: NewAdvanceReduceHugo
+  simplifies_to("asin({cos(-23*π/7), sin(-23*π/7)})/π", "{-3/14,2/7}");
   simplifies_to("asin({cos(π*23/7), sin(π*23/7)})/π", "{-3/14,-2/7}");
 #endif
   simplifies_to("acos({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
@@ -596,20 +600,18 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
 
-#if 0  // TODO: NewAdvanceReduceHugo
   // Other angle units :
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
-                "{x,√(-x^2+1),√(-(x/√(x^2+1))^2+1)}",
+                "{x,√(-x^2+1),cos(arctan(x))}",
                 {.m_angleUnit = AngleUnit::Degree});
-  // TODO : Output should be acos(cos(x))
-  simplifies_to("acos(cos(x))", "90-arcsin(cos(x))",
+  simplifies_to("acos(cos(x))", "acos(cos(x))",
                 {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos({cos(683), sin(683)})/200", "{117/200,183/200}",
                 {.m_angleUnit = AngleUnit::Gradian});
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-90,-60,-45,-30,0,30,45,60,90}",
                 {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("cos(1+π*asin(x))", "cos(1+90×π-π×arccos(x))",
+#if 0  // TODO: NewAdvanceReduceHugo
                 {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(1+asin(x))", "cos(91-arccos(x))",
                 {.m_angleUnit = AngleUnit::Degree});

@@ -42,6 +42,8 @@ class EditableFunctionCell
     markRectAsDirty(expressionCell()->layoutField()->bounds());
   }
 
+  Escher::ButtonCell* buttonCell() { return &m_buttonCell; }
+
  private:
   int numberOfSubviews() const override { return 3; }
   void layoutSubviews(bool force = false) override;
@@ -54,8 +56,12 @@ class EditableFunctionCell
         : Escher::ButtonCell(parentResponder, I18n::Message::UseFunctionModel,
                              invocation, Escher::Palette::WallScreen, 0,
                              KDFont::Size::Small) {}
+    bool handleEvent(Ion::Events::Event event) override;
 
    private:
+    Escher::LayoutField* layoutField() const {
+      return static_cast<Escher::LayoutField*>(parentResponder());
+    }
   };
 
   static constexpr KDCoordinate k_expressionMargin = 5;

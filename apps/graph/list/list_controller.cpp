@@ -123,12 +123,24 @@ bool ListController::completeEquation(LayoutField *equationField,
 }
 
 void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
+  if (!layoutField->isEmpty() &&
+      App::app()->firstResponder() == m_editableCell.buttonCell()) {
+    App::app()->setFirstResponder(layoutField);
+  }
   m_editableCell.updateButton();
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   m_parameterColumnSelected = false;
+
+  if (event == Ion::Events::Right && m_editableCell.isEmpty()) {
+    App::app()->setFirstResponder(m_editableCell.buttonCell());
+    m_editableCell.selectTemplateButton();
+    layoutField->setEditing(false);
+    return true;
+  }
+
   return ExpressionModelListController::layoutFieldDidReceiveEvent(layoutField,
                                                                    event);
 }

@@ -249,15 +249,19 @@ class InputBeautification {
         return sum;
       }};
 
-#if 0
   constexpr static BeautificationRule k_logarithmRule = {
-      Logarithm::s_functionHelper.aliasesList(), 2, [](Layout* parameters) {
-        return static_cast<Layout>(
-            LayoutHelper::Logarithm(parameters[0], parameters[1])
-                .makeEditable());
+      "log", 2, [](EditionReference* parameters) -> Tree* {
+        // TODO handle NL-log cf LayoutHelper::Logarithm
+        EditionReference log = "log"_l->clone();
+        NAry::SetNumberOfChildren(log, 5);
+        SharedEditionPool->push<BlockType::VerticalOffsetLayout>(true, false);
+        parameters[1]->detachTree();
+        // TODO would be nicer with a temporary parenthesis ?
+        SharedEditionPool->push<BlockType::ParenthesisLayout>(false, false);
+        parameters[0]->detachTree();
+        return log;
       }};
   constexpr static int k_indexOfBaseOfLog = 1;
-#endif
 
   static bool LayoutIsIdentifierMaterial(const Tree* l);
 

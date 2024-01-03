@@ -269,7 +269,6 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
       }
     }
 
-#if 0
     /* The log beautification is using a bool in the signature of this method
      * which is a bit too specific, but this ensures that, when beautifying
      * after a parenthesis insertion, the identifiers string is tokenized
@@ -284,31 +283,30 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
         // Check if current token is a function
         currentIdentifier.type() == Token::Type::ReservedFunction &&
         // Check if logN is at the end of the identifiers string
-        *(nextIdentifier.text() + nextIdentifier.length()) == 0 &&
-        // Check if N is integer
-        nextIdentifier.expression().type() ==
-            ExpressionNode::Type::BasedInteger &&
-        // Check if function is "log"
-        k_logarithmRule.listOfBeautifiedAliases.contains(
-            currentIdentifier.text(), currentIdentifier.length())) {
-      EditionReference baseOfLog =
-          nextIdentifier.expression()
-              .createLayout(Preferences::PrintFloatMode::Decimal,
-                            Preferences::LargeNumberOfSignificantDigits,
-                            context)
-              .makeEditable();
-      layoutsWereBeautified =
-          RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-              h, firstIndexOfIdentifier,
-              firstIndexOfIdentifier + currentIdentifier.length() +
-                  nextIdentifier.length() - 1,
-              k_logarithmRule, layoutCursor,
-              &numberOfLayoutsAddedOrRemovedLastLoop, baseOfLog,
-              k_indexOfBaseOfLog) ||
-          layoutsWereBeautified;
-      break;
+        tokenizer.currentPosition() == tokenizer.endPosition()) {
+      RackLayoutDecoder decoder(
+          h, h->indexOfChild(currentIdentifier.firstLayout()),
+          h->indexOfChild(currentIdentifier.firstLayout()) +
+              currentIdentifier.length());
+      // TODO Check if N is integer
+      // Check if function is "log"
+      if (k_logarithmRule.listOfBeautifiedAliases.contains(&decoder)) {
+        EditionReference baseOfLog = NAry::CloneSubRange(
+            h, h->indexOfChild(nextIdentifier.firstLayout()),
+            h->indexOfChild(nextIdentifier.firstLayout()) +
+                nextIdentifier.length());
+        layoutsWereBeautified =
+            RemoveLayoutsBetweenIndexAndReplaceWithPattern(
+                h, firstIndexOfIdentifier,
+                firstIndexOfIdentifier + currentIdentifier.length() +
+                    nextIdentifier.length() - 1,
+                k_logarithmRule, layoutCursor,
+                &numberOfLayoutsAddedOrRemovedLastLoop, baseOfLog,
+                k_indexOfBaseOfLog) ||
+            layoutsWereBeautified;
+        break;
+      }
     }
-#endif
   }
   return layoutsWereBeautified;
 }

@@ -19,8 +19,19 @@ class EditableFunctionCell
   }
 
   bool isEmpty() { return expressionCell()->layoutField()->isEmpty(); }
+  bool isEditing() { return expressionCell()->layoutField()->isEditing(); }
+
+  void setHighlighted(bool highlighted) override {
+    if (!highlighted) {
+      m_buttonCell.setHighlighted(false);
+    }
+    AbstractFunctionCell::setHighlighted(highlighted);
+  }
 
   void updateButton() {
+    if (!isEmpty() || isEditing()) {
+      m_buttonCell.setHighlighted(false);
+    }
     layoutSubviews();
     markRectAsDirty(m_buttonCell.bounds());
     markRectAsDirty(expressionCell()->layoutField()->bounds());

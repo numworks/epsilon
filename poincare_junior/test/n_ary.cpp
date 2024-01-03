@@ -11,8 +11,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   EditionReference rackLayout1 =
       SharedEditionPool->push<BlockType::RackLayout>(3);
   SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('x');
-  SharedEditionPool->push(BlockType::VerticalOffsetLayout);
-  SharedEditionPool->push(0);
+  SharedEditionPool->push<BlockType::VerticalOffsetLayout>(false, false);
   SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('2');
   SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('+');
   // rackLayout1 is x^2+
@@ -36,8 +35,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   EditionReference rackLayout3 =
       SharedEditionPool->push<BlockType::RackLayout>(5);
   SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('x');
-  SharedEditionPool->push(BlockType::VerticalOffsetLayout);
-  SharedEditionPool->push(0);
+  SharedEditionPool->push<BlockType::VerticalOffsetLayout>(false, false);
   SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('2');
   SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('-');
   SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('3');

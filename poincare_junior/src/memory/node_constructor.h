@@ -184,6 +184,15 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
 }
 
 template <>
+constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
+    BlockType::VerticalOffsetLayout>(Block* block, size_t blockIndex,
+                                     bool isSubscript, bool isPrefix) {
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
+                                            BlockType::CodePointLayout,
+                                            isSubscript | (0b10 && isPrefix));
+}
+
+template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Variable>(
     Block* block, size_t blockIndex, uint8_t id, ComplexSign sign) {

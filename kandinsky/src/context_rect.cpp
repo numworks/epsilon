@@ -80,8 +80,14 @@ void KDContext::fillRectWithMask(KDRect rect, KDColor color, KDColor background,
    * has been clipped. Therefore we cannot assume that the mask can be read as a
    * continuous area. */
 
-  KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
-  KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
+  KDCoordinate startingI =
+      horizontalFlip
+          ? rect.translatedBy(m_origin).right() - m_clippingRect.right()
+          : m_clippingRect.x() - rect.translatedBy(m_origin).x();
+  KDCoordinate startingJ =
+      verticalFlip
+          ? rect.translatedBy(m_origin).bottom() - m_clippingRect.bottom()
+          : m_clippingRect.y() - rect.translatedBy(m_origin).y();
   startingI = std::max<KDCoordinate>(0, startingI);
   startingJ = std::max<KDCoordinate>(0, startingJ);
   KDColor *currentPixelAddress = workingBuffer;
@@ -89,13 +95,11 @@ void KDContext::fillRectWithMask(KDRect rect, KDColor color, KDColor background,
   int deltaRow = 0;  // columns increment rows naturally
   if (horizontalFlip) {
     currentPixelAddress += absoluteRect.width() - 1;
-    startingI += rect.width() - absoluteRect.width();
     deltaCol = -1;
     deltaRow = 2;
   }
   if (verticalFlip) {
     currentPixelAddress += absoluteRect.width() * (absoluteRect.height() - 1);
-    startingJ += rect.height() - absoluteRect.height();
     deltaRow -= 2;
   }
   deltaRow *= absoluteRect.width();

@@ -227,11 +227,13 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
         KMult(-1_e, KATrig(KMult(-1_e, KA, KTB), 1_e)), ctx));
     return true;
   }
-  if (PatternMatching::Match(KATrig(KTrig(KA, KB), KB), u, &ctx)) {
+  if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
     const Tree* piFactor = getPiFactor(ctx.getNode(KA));
     if (!piFactor) {
       return false;
     }
+    // We can simplify but functions do not match. Use acos(x) = π/2 - asin(x)
+    bool swapATrig = (!ctx.getNode(KB)->treeIsIdenticalTo(ctx.getNode(KC)));
     // atrig(trig(π*piFactor, i), i)
     bool isSin = ctx.getNode(KB)->isOne();
     // Compute k = ⌊piFactor⌋ for acos, ⌊piFactor + π/2⌋ for asin.
@@ -250,6 +252,10 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
         res->moveTreeOverTree(
             PatternMatching::CreateAndSimplify(KAdd(1_e, KA), {.KA = res}));
       }
+    }
+    if (swapATrig) {
+      res->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+          KAdd(KHalf, KMult(-1_e, KA)), {.KA = res}));
     }
     res->moveTreeOverTree(
         PatternMatching::CreateAndSimplify(KMult(π_e, KA), {.KA = res}));
@@ -332,11 +338,16 @@ bool Trigonometry::ContractTrigonometric(Tree* ref) {
 }
 
 bool Trigonometry::ExpandATrigonometric(Tree* ref) {
+#if 0
   // Only expand in one way to avoid infinite expansion.
   // arccos(x) = π/2 - arcsin(x)
   return PatternMatching::MatchReplaceAndSimplify(
       ref, KATrig(KA, 0_e),
       KAdd(KMult(π_e, KHalf), KMult(-1_e, KATrig(KA, 1_e))));
+#else
+  // Deactivated to only be handled in systematic reduction with x being Trig.
+  return false;
+#endif
 }
 
 }  // namespace PoincareJ

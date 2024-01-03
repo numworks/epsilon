@@ -591,10 +591,8 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
   simplifies_to("acos(cos(x))", "acos(cos(x))");
   simplifies_to("acos({cos(-23*π/7), sin(-23*π/7)})/π", "{5/7,3/14}");
   simplifies_to("acos({cos(π*23/7), sin(π*23/7)})/π", "{5/7,11/14}");
-#if 0  // TODO: NewAdvanceReduceHugo
   simplifies_to("asin({cos(-23*π/7), sin(-23*π/7)})/π", "{-3/14,2/7}");
   simplifies_to("asin({cos(π*23/7), sin(π*23/7)})/π", "{-3/14,-2/7}");
-#endif
   simplifies_to("acos({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",

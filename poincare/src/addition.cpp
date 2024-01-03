@@ -16,6 +16,7 @@
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
+#include <poincare_junior/src/layout/app_helpers.h>
 
 #include <utility>
 
@@ -64,20 +65,8 @@ Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode,
                                       numberOfSignificantDigits, "+", context);
   if (displayImplicitAdditionBetweenUnits(result)) {
-#if 0
     // Remove the '+'
-    int i = result.numberOfChildren() - 1;
-    while (i >= 0) {
-      Layout child = result.childAtIndex(i);
-      if (child.type() == LayoutNode::Type::CodePointLayout &&
-          static_cast<CodePointLayout&>(child).codePoint() == '+') {
-        assert(result.type() == LayoutNode::Type::HorizontalLayout);
-        result.removeChildAtIndexInPlace(i);
-      }
-      i--;
-    }
-    assert(i == -1);
-#endif
+    PoincareJ::AppHelpers::MakeAdditionImplicit(result);
   }
   return result;
 }
@@ -113,24 +102,12 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
   if (nChildrenExpression < 2) {
     return false;
   }
-#if 0
   /* Step 1: Check if the layout of the addtion contains an 'ᴇ'.
    * If it's the case, return false, since implicit
    * addition should not contain any 'ᴇ'.
    * */
-  int nChildrenLayout = l.numberOfChildren();
-  for (int i = 0; i < nChildrenLayout; i++) {
-    Layout child = l.childAtIndex(i);
-    if ((child.type() == LayoutNode::Type::CodePointLayout &&
-         static_cast<CodePointLayout&>(child).codePoint() ==
-             UCodePointLatinLetterSmallCapitalE) ||
-        (child.type() == LayoutNode::Type::StringLayout &&
-         UTF8Helper::CountOccurrences(
-             static_cast<StringLayout&>(child).string(),
-             UCodePointLatinLetterSmallCapitalE) > 0)) {
-      // layout contains 'ᴇ'.
-      return false;
-    }
+  if (PoincareJ::AppHelpers::ContainsSmallCapitalE(l.tree())) {
+    return false;
   }
   // Step 2: Check if units can be implicitly added
   const Unit::Representative* storedUnitRepresentative = nullptr;
@@ -152,8 +129,6 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
     storedUnitRepresentative = unitOfChild.representative();
   }
   return true;
-#endif
-  return false;
 }
 
 // Addition

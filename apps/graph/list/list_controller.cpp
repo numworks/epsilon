@@ -255,6 +255,11 @@ Shared::ListParameterController *ListController::parameterController() {
   return m_parameterController;
 }
 
+bool ListController::removeModelRow(Ion::Storage::Record record) {
+  deleteParametricComponentsOfSelectedModel();
+  return FunctionListController::removeModelRow(record);
+}
+
 int ListController::maxNumberOfDisplayableRows() const {
   return k_maxNumberOfDisplayableRows;
 }
@@ -359,4 +364,5 @@ void ListController::storeParametricComponentsOfSelectedModel() {
   storeParametricComponent(buffer, length, bufferSize, e, true);
   storeParametricComponent(buffer, length, bufferSize, e, false);
 }
+
 }  // namespace Graph

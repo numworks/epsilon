@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
+#include <apps/graph/list/list_controller.h>
 #include <apps/shared/app_with_store_menu.h>
 #include <apps/shared/sequence.h>
 #include <assert.h>
@@ -438,6 +439,18 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
         record.hasExtension(Ion::Storage::regExtension)) {
       return false;
     }
+    bool isParametricFunction = false;
+    constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+    char buffer[bufferSize];
+    size_t length = 0;
+    if (record.hasExtension(Storage::funcExtension)) {
+      ExpiringPointer<ContinuousFunction> f =
+          GlobalContext::continuousFunctionStore->modelForRecord(record);
+      if (f->properties().isParametric()) {
+        isParametricFunction = true;
+        length = f->name(buffer, bufferSize);
+      }
+    }
     Shared::AppWithStoreMenu *app =
         static_cast<Shared::AppWithStoreMenu *>(App::app());
     app->prepareForIntrusiveStorageChange();
@@ -445,6 +458,10 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
     app->concludeIntrusiveStorageChange();
     if (!canDestroy) {
       return false;
+    }
+    if (isParametricFunction) {
+      Graph::ListController::DeleteParametricComponentsWithBaseName(
+          buffer, length, bufferSize);
     }
   }
   // Shift the memoization if needed

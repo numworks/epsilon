@@ -613,13 +613,12 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
                 {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(1+asin(x))", "cos(91-arccos(x))",
                 {.m_angleUnit = AngleUnit::Degree});
-  // TODO: Improve output with better advanced reduction.
-  simplifies_to("(y*π+z/180)*asin(x)",
-                "(180×(π×y+z/180)×(π/2-(π×arccos(x))/180))/π",
-                {.m_angleUnit = AngleUnit::Degree});
 #endif
+  // TODO: Improve output with better advanced reduction.
+  simplifies_to("(y*π+z/180)*asin(x)", "(π×y+z/180)×arcsin(x)",
+                {.m_angleUnit = AngleUnit::Degree});
 #if 0
-  // TODO
+  // TODO: Add more exact values.
   simplifies_to(
       "acos({-(√(6)+√(2))/4, -(√(6)-√(2))/4, (√(6)-√(2))/4, (√(6)+√(2))/4})",
       "{11π/12,7π/12,5π/12,π/12}");

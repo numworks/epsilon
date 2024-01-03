@@ -122,6 +122,10 @@ bool ListController::completeEquation(LayoutField *equationField,
   return handled;
 }
 
+void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
+  m_editableCell.update();
+}
+
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   m_parameterColumnSelected = false;

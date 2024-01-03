@@ -200,7 +200,6 @@ const Tree* Tree::nextNode() const {
 #if ASSERTIONS
   assert(!isTreeBorder());
 #endif
-  assert(this + nodeSize() != CachePool::SharedCachePool->firstBlock());
   assert(this != SharedEditionPool->lastBlock());
 #if !PLATFORM_DEVICE
   if (SharedEditionPool->firstBlock() <= this &&

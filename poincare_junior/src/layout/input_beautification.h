@@ -76,24 +76,23 @@ class InputBeautification {
    * means that BeautificationRule on 1 char aliases isn't always ensured.
    * Currently, "*" is the only beautification affected. */
   constexpr static const BeautificationRule k_symbolsRules[] = {
-  // Comparison operators
-#if 0
+      // Comparison operators
       {"<=", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
-             ComparisonNode::OperatorType::InferiorEqual));
+       [](EditionReference* parameters) -> Tree* {
+         // TODO factorise the comparison operators once we have them in PCJ
+         return KCodePointL<u'≤'>()->clone();
        }},
       {">=", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
-             ComparisonNode::OperatorType::SuperiorEqual));
+       [](EditionReference* parameters) {
+         return KCodePointL<u'≥'>()->clone();
        }},
       {"!=", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
-             ComparisonNode::OperatorType::NotEqual));
+       [](EditionReference* parameters) {
+         // ≠
+         return KRackL("="_cl,
+                       KCodePointL<UCodePointCombiningLongSolidusOverlay>())
+             ->clone();
        }},
-#endif
       // Special char
       {"->", 0,
        [](EditionReference* parameters) {

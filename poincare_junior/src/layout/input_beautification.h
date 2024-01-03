@@ -188,10 +188,9 @@ class InputBeautification {
       /* norm( */
       ruleHelper<BlockType::Norm, BlockType::VectorNormLayout>(),
       /* pi */ k_piRule,
-#if 0
       {/* piecewise( */
-       PiecewiseOperator::s_functionHelper.aliasesList(), 2,
-       [](Layout* parameters) {
+       "piecewise", 2,
+       [](EditionReference* parameters) -> Tree* {
          /* WARNING: The implementation of ReplaceEmptyLayoutsWithParameters
           * needs the created layout to have empty layouts where the
           * parameters should be inserted. Since Piecewise operator does not
@@ -202,12 +201,17 @@ class InputBeautification {
           * layout does not have 3 empty children. This is a fringe case
           * though, and everything works fine when "piecewise(" is inserted
           * with nothing on its right. */
-         PiecewiseOperatorLayout layout = PiecewiseOperatorLayout::Builder();
-         layout.addRow(parameters[0],
-                       parameters[1].isEmpty() ? Layout() : parameters[1]);
-         return static_cast<Layout>(layout);
+         EditionReference ref =
+             SharedEditionPool->push(BlockType::PiecewiseLayout);
+         // TODO we need a builder to make this safe
+         SharedEditionPool->push(2);
+         SharedEditionPool->push(2);
+         parameters[0]->detachTree();
+         parameters[1]->detachTree();
+         KRackL()->clone();
+         KRackL()->clone();
+         return ref;
        }},
-#endif
       {/* product( */
        "product", 4,
        [](EditionReference* parameters) -> Tree* {

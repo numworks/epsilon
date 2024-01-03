@@ -51,4 +51,22 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   setChildFrame(&m_buttonCell, templateButtonRect, force);
 }
 
+// EditableFunctionCell::ButtonCell
+bool EditableFunctionCell::ButtonCell::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Back) {
+    layoutField()->setEditing(true);
+    return false;
+  }
+  if (event == Ion::Events::Up || event == Ion::Events::Down) {
+    return true;
+  } else if (event == Ion::Events::Left || event == Ion::Events::Backspace) {
+    setHighlighted(false);
+    layoutField()->setEditing(true);
+    App::app()->setFirstResponder(layoutField());
+    return true;
+  }
+
+  return Escher::ButtonCell::handleEvent(event);
+}
+
 }  // namespace Graph

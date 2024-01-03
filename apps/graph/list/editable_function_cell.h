@@ -18,6 +18,11 @@ class EditableFunctionCell
     m_expressionBackground = backgroundColor();
   }
 
+  void selectTemplateButton() {
+    assert(isEmpty());
+    m_buttonCell.setHighlighted(true);
+  }
+
   bool isEmpty() { return expressionCell()->layoutField()->isEmpty(); }
   bool isEditing() { return expressionCell()->layoutField()->isEditing(); }
 

@@ -20,6 +20,11 @@ class ListController : public Shared::FunctionListController,
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer,
                  FunctionParameterController* functionParameterController);
+
+  static void DeleteParametricComponentsWithBaseName(char* baseName,
+                                                     size_t baseNameLength,
+                                                     size_t bufferSize);
+
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;
   // ViewController

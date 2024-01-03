@@ -338,6 +338,12 @@ static void storeParametricComponent(char *baseName, size_t baseNameLength,
   child.storeWithNameAndExtension(baseName, Ion::Storage::pcExtension);
 }
 
+void ListController::DeleteParametricComponentsWithBaseName(
+    char *baseName, size_t baseNameLength, size_t bufferSize) {
+  deleteParametricComponent(baseName, baseNameLength, bufferSize, true);
+  deleteParametricComponent(baseName, baseNameLength, bufferSize, false);
+}
+
 void ListController::deleteParametricComponentsOfSelectedModel() {
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
@@ -347,8 +353,7 @@ void ListController::deleteParametricComponentsOfSelectedModel() {
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = f->name(buffer, bufferSize);
-  deleteParametricComponent(buffer, length, bufferSize, true);
-  deleteParametricComponent(buffer, length, bufferSize, false);
+  DeleteParametricComponentsWithBaseName(buffer, length, bufferSize);
 }
 
 void ListController::storeParametricComponentsOfSelectedModel() {

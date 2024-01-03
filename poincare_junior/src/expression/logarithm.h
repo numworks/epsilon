@@ -14,8 +14,6 @@ class Logarithm final {
   EDITION_REF_WRAP(ContractLn);
   static bool ExpandLn(Tree* node);
   EDITION_REF_WRAP(ExpandLn);
-  static bool ExpandSingleChildLn(Tree* node);
-  EDITION_REF_WRAP(ExpandSingleChildLn);
   // ln(12/5)->2*ln(2)+ln(3)-ln(5)
   static bool ExpandLnOnRational(Tree* expr);
 

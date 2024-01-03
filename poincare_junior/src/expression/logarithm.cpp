@@ -36,12 +36,12 @@ bool Logarithm::SimplifyLn(Tree* u) {
 }
 
 bool Logarithm::ContractLn(Tree* ref) {
-  // A? + B*ln(C) + D? = A + ln(C^B) + D if B is an integer.
+  // A*ln(B) = ln(B^A) if A is an integer.
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KAdd(KTA, KMult(KB, KLn(KC)), KTD), ref, &ctx) &&
-      ctx.getNode(KB)->isInteger()) {
-    ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KAdd(KTA, KLn(KPow(KC, KB)), KTD), ctx));
+  if (PatternMatching::Match(KMult(KA, KLn(KB)), ref, &ctx) &&
+      ctx.getNode(KA)->isInteger()) {
+    ref->moveTreeOverTree(
+        PatternMatching::CreateAndSimplify(KLn(KPow(KB, KA)), ctx));
     return true;
   }
   // A? + ln(B) + C? + ln(D) + E? = A + C + ln(BD) + E
@@ -51,19 +51,15 @@ bool Logarithm::ContractLn(Tree* ref) {
 }
 
 bool Logarithm::ExpandLn(Tree* ref) {
-  // ln(A*B*...) = ln(A) + ln(B) + ...
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KLn(KMult(KA, KTB)), KAdd(KLn(KA), KLn(KMult(KTB))));
-}
-
-bool Logarithm::ExpandSingleChildLn(Tree* ref) {
   return
       // ln(12/7) = 2*ln(2) + ln(3) - ln(7)
       ExpandLnOnRational(ref) ||
+      // ln(A*B*...) = ln(A) + ln(B) + ...
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KLn(KMult(KA, KTB)), KAdd(KLn(KA), KLn(KMult(KTB)))) ||
       // ln(A^B) = B*ln(A)
       PatternMatching::MatchReplaceAndSimplify(ref, KLn(KPow(KA, KB)),
-                                               KMult(KB, KLn(KA))) ||
-      SimplifyLn(ref);
+                                               KMult(KB, KLn(KA)));
 }
 
 bool Logarithm::ExpandLnOnRational(Tree* e) {

@@ -186,12 +186,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("5.0", "5");
   simplifies_to("5.", "5");
   simplifies_to("5.ᴇ1", "50");
-  // TODO: NewAdvanceReduceHugo - 2×ln(2)+π×ln(2)
-  simplifies_to("(2+π)*ln(2)", "(2+π)×ln(2)");
+  simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
   simplifies_to("undef", "undef");
-  // TODO: NewAdvanceReduceHugo - 1+ln(x×y)
+  // TODO: Metric: 1+ln(x×y)
   simplifies_to("1+ln(x)+ln(y)", "1+ln(x)+ln(y)");
-  simplifies_to("ln(x)-ln(1/x)", "2×ln(x)");
+  // TODO: Metric: 2×ln(x)
+  simplifies_to("ln(x)-ln(1/x)", "ln(x^2)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "1+ln(1/x)");
   simplifies_to("1-ln(x)", "1+ln(1/x)");
   // TODO : Simplify to 1/√(1+x^2).
@@ -335,8 +335,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("cot(x)", "cos(x)/sin(x)");
   simplifies_to("arcsec(sec(π/6))", "π/6");
   simplifies_to("arccsc(csc(π/6))", "π/6");
-  // TODO: Should simplify to π/6
-  simplifies_to("arccot(cot(π/6))", "π/2-arctan(√(3))");
+  simplifies_to("arccot(cot(π/6))", "π/6");
   simplifies_to("sec(arcsec(x))", "x");
   simplifies_to("csc(arccsc(x))", "x");
   // TODO: Should simplify to x

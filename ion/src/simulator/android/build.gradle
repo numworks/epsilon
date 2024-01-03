@@ -68,7 +68,7 @@ android {
       res.srcDir BUILD_DIR + '/res'
       java.srcDir 'src'
       jniLibs.srcDir BUILD_DIR + '/libs/' + System.getenv('EPSILON_VARIANT')
-      assets.srcDirs = ['../assets', EPSILON_BUILD_DIR + 'ion/src/simulator/assets']
+      assets.srcDirs = ['../assets', EPSILON_BUILD_DIR + '/ion/src/simulator/assets']
     }
   }
   lintOptions {

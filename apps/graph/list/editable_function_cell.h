@@ -17,6 +17,11 @@ class EditableFunctionCell
     m_expressionBackground = backgroundColor();
   }
 
+  void update() {
+    layoutSubviews();
+    markWholeFrameAsDirty();
+  }
+
  private:
   int numberOfSubviews() const override { return 2; }
   void layoutSubviews(bool force = false) override;

@@ -123,6 +123,8 @@ class LayoutCursor {
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
 
+  virtual bool beautifyRightOfRack(Tree* rack, Context* context) = 0;
+
   // Cursor's horizontal position
   int m_position;
   /* -1 if no current selection. If m_startOfSelection >= 0, the selection is
@@ -217,6 +219,8 @@ class LayoutBufferCursor final : public LayoutCursor {
     void setCursorNode(Tree* node) override {
       m_cursorReference = EditionReference(node);
     }
+    bool beautifyRightOfRack(Tree* rack, Context* context) override;
+    void beautifyRightOfRackAction(Context* context, const void* rack);
 
     EditionReference m_cursorReference;
   };
@@ -238,6 +242,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     // Don't use node here as it may be invalid during execute
     m_cursorNode = node - rootNode();
   }
+  bool beautifyRightOfRack(Tree* rack, Context* context) override;
 
   // Buffer of cursor's layout
   Poincare::JuniorLayout m_layout;

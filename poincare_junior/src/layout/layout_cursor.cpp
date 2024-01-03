@@ -97,9 +97,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   if (selecting && !isSelecting()) {
     privateStartSelecting();
   }
-#if 0
-  LayoutCursor cloneCursor = *this;
-#endif
+  Tree *oldRack = cursorNode();
   bool moved = false;
   bool wasEmpty = RackLayout::IsEmpty(cursorNode());
   const Tree *oldGridParent = mostNestedGridParent(cursorNode(), rootNode());
@@ -116,17 +114,11 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
         selecting || wasEmpty || isEmpty || *shouldRedrawLayout ||
         // Redraw to show/hide the empty gray squares of the parent grid
         mostNestedGridParent(cursorNode(), rootNode()) != oldGridParent;
-#if 0
-    if (cloneCursor.layout() != m_layout) {
+    if (cursorNode() != oldRack) {
       // Beautify the layout that was just left
-      LayoutCursor rightmostPositionOfPreviousLayout(cloneCursor.layout(),
-                                                     OMG::Direction::Right());
       *shouldRedrawLayout =
-          InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
-              &rightmostPositionOfPreviousLayout, context) ||
-          *shouldRedrawLayout;
+          beautifyRightOfRack(oldRack, context) || *shouldRedrawLayout;
     }
-#endif
   }
 
   if (isSelecting() && selection().isEmpty()) {
@@ -137,6 +129,27 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
     invalidateSizesAndPositions();
   }
   return moved;
+}
+
+bool LayoutBufferCursor::beautifyRightOfRack(Tree *rack, Context *context) {
+  execute(&EditionPoolCursor::beautifyRightOfRackAction, context,
+          reinterpret_cast<const void *>(rack - cursorNode()));
+  // TODO return shouldRedrawLayout through execute
+  return true;
+}
+
+bool LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRack(
+    Tree *targetRack, Context *context) {
+  LayoutBufferCursor::EditionPoolCursor tempCursor = *this;
+  tempCursor.setLayout(targetRack, OMG::Direction::Right());
+  return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(&tempCursor,
+                                                                   context);
+}
+
+void LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRackAction(
+    Context *context, const void *rackOffset) {
+  Tree *targetRack = cursorNode() + reinterpret_cast<long int>(rackOffset);
+  beautifyRightOfRack(targetRack, context);
 }
 
 bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
@@ -981,6 +994,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     int newIndex =
         grid->indexAtRowColumn(currentRow - 1, grid->numberOfColumns() - 2);
     setLayout(grid->child(newIndex), OMG::HorizontalDirection::Right());
+    // TODO trigger beautification here ?
     return;
   }
   if (deletionMethod == DeletionMethod::GridLayoutDeleteColumn ||

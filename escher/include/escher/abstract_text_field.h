@@ -146,7 +146,6 @@ class AbstractTextField : public TextInput {
   }
 
   virtual void removeWholeText();
-  void removePreviousGlyphIfRepetition(bool defaultXNTHasChanged);
   bool handleMoveEvent(Ion::Events::Event event);
   bool handleSelectEvent(Ion::Events::Event event);
   bool handleStoreEvent() override;

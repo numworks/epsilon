@@ -317,19 +317,6 @@ void AbstractTextField::setText(const char *text) {
   }
 }
 
-void AbstractTextField::removePreviousGlyphIfRepetition(
-    bool defaultXNTHasChanged) {
-  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor() > 0 &&
-      isEditing() && contentView()->selectionIsEmpty()) {
-    // Since XNT is cycling on simple glyphs, remove the last inserted one
-    bool success = removePreviousGlyph();
-    assert(success);
-    (void)success;  // Silence compilation warnings
-    /* TODO: Handle cycling with non-default layouts and Fix issues with
-     * repetition over a syntax error dismissal */
-  }
-}
-
 // TODO : Handle cycling with non-default layouts.
 size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
                                          char *buffer, size_t bufferLength) {
@@ -355,7 +342,14 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
       return parameterLength;
     }
   }
-  removePreviousGlyphIfRepetition(defaultXNTHasChanged);
+  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor() > 0 &&
+      isEditing() && contentView()->selectionIsEmpty()) {
+    // Since XNT is cycling on simple glyphs, remove the last inserted one
+    bool success = removePreviousGlyph();
+    assert(success);
+    (void)success;  // Silence compilation warnings
+    // TODO: Fix issues with repetition over a syntax error dismissal
+  }
   return Poincare::SerializationHelper::CodePoint(buffer, bufferLength,
                                                   defaultXNTCodePoint);
 }

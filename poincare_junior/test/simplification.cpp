@@ -401,8 +401,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   /* TODO: This can Expand/contract infinitely and overflow the pool on any
    * strategy */
   simplifies_to(
-      "cos(a+b)-cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/"
-      "2×cos(b)×cos(a)+1/4×cos(b+a)-1/4×cos(b-a)",
+      "cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/2×cos(b)×cos(a)+1/"
+      "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
       "0");
 #endif
 }

@@ -339,6 +339,7 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
             decoder.stringPosition(), &parameterText, &parameterLength) &&
         bufferSize - 1 >= parameterLength) {
       memcpy(buffer, parameterText, parameterLength);
+      buffer[parameterLength] = 0;
       return parameterLength;
     }
   }
@@ -363,7 +364,7 @@ bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
   size_t length = insertXNTChars(xnt, buffer, bufferSize);
 
   assert(length < bufferSize);
-  buffer[length] = 0;
+  assert(buffer[length] == 0);
   return handleEventWithText(buffer, false, true);
 }
 

@@ -276,7 +276,10 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     static_cast<FunctionCell *>(functionCell)
         ->setParameterSelected(m_parameterColumnSelected);
   }
-  KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;
+
+  // f can be null if the entry was just created and is still empty.
+  KDColor functionColor =
+      (!f->isNull() && f->isActive()) ? f->color() : Palette::GrayDark;
   static_cast<AbstractFunctionCell *>(cell)->setColor(functionColor);
   cell->reloadCell();
 }

@@ -332,21 +332,11 @@ void AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
   }
   assert(text() == draftText());
   UTF8Decoder decoder(text(), cursorLocation());
-  bool defaultXNTHasChanged = false;
-  if (XNTHelpers::FindXNTSymbol(decoder, &defaultXNTHasChanged,
-                                &defaultXNTCodePoint)) {
-    const char *parameterText;
-    size_t parameterLength = bufferSize;
-    if (ParameteredExpression::ParameterText(
-            decoder.stringPosition(), &parameterText, &parameterLength) &&
-        bufferSize - 1 >= parameterLength) {
-      memcpy(buffer, parameterText, parameterLength);
-      buffer[parameterLength] = 0;
-      return;
-    }
+  if (XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize)) {
+    return;
   }
   assert(isEditing());
-  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor() > 0) {
+  if (Ion::Events::repetitionFactor() > 0) {
     assert(contentView()->selectionIsEmpty());
     // Since XNT is cycling on simple glyphs, remove the last inserted one
     bool success = removePreviousGlyph();

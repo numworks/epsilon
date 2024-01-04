@@ -95,8 +95,7 @@ static bool findParameteredFunction(UnicodeDecoder& decoder,
   return functionFound;
 }
 
-bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
-                   CodePoint* defaultXNTCodePoint) {
+bool FindXNTSymbol(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
   constexpr int k_numberOfFunctions = 4;
   constexpr static const char* k_functionsAlias[k_numberOfFunctions] = {
       Derivative::s_functionHelper.aliasesList().mainAlias(),
@@ -114,14 +113,25 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
   constexpr static const int k_indexOfParameter = 1;
   int functionIndex;
   int childIndex;
+  buffer[0] = 0;
   if (findParameteredFunction(decoder, k_functionsAlias, k_numberOfFunctions,
                               k_indexOfParameter, &functionIndex,
                               &childIndex)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     assert(0 <= childIndex && childIndex <= k_indexOfParameter);
-    *defaultXNTCodePoint = CodePoint(k_functionsXNT[functionIndex]);
-    *defaultXNTHasChanged = true;
-    return childIndex == k_indexOfMainExpression;
+    SerializationHelper::CodePoint(buffer, bufferSize,
+                                   k_functionsXNT[functionIndex]);
+    if (childIndex == k_indexOfMainExpression) {
+      size_t parameterStart;
+      size_t parameterLength;
+      if (ParameteredExpression::ParameterText(decoder, &parameterStart,
+                                               &parameterLength) &&
+          bufferSize - 1 >= parameterLength) {
+        decoder.printInBuffer(buffer, bufferSize, parameterLength);
+        assert(buffer[parameterLength] == 0);
+      }
+    }
+    return true;
   }
   return false;
 }

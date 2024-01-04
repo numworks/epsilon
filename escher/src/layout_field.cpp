@@ -223,8 +223,6 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     // Query bottom-most layout
     xnt = layout.XNTLayout();
   }
-  /* TODO : Cycle default XNT and local XNT layouts in parametered expressions
-   * such as derivative, sum, integral or layouts. */
   assert(isEditing());
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);

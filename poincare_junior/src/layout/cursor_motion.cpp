@@ -26,9 +26,11 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     case LayoutType::Piecewise: {
       const Grid* grid = Grid::From(node);
       if (currentIndex == k_outsideIndex) {
+        int row = grid->numberOfRows() - 1 - !grid->numberOfRowsIsFixed();
+        int col = grid->numberOfColumns() - 1 - !grid->numberOfColumnsIsFixed();
         return direction.isLeft()
                    // last real child
-                   ? grid->numberOfColumns() * (grid->numberOfRows() - 1) - 2
+                   ? grid->indexAtRowColumn(row, col)
                    : 0;
       }
       if ((direction.isLeft() && grid->childIsLeftOfGrid(currentIndex)) ||

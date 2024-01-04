@@ -63,7 +63,7 @@ class AbstractTextField : public TextInput {
     contentView()->setTextColor(textColor);
   }
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char *buffer,
-                        size_t bufferLength);
+                        size_t bufferSize);
   bool cursorAtEndOfText() const {
     return isEditing() && cursorLocation() == draftTextEnd();
   }

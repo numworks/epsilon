@@ -281,7 +281,9 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
 bool Simplification::AdvancedReduction(Tree* u) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
-   * will be explored. */
+   * will be explored.
+   * This means calling AdvancedReduction on an equivalent but different
+   * expression could yield different results if limits have been reached. */
   int bestMetric = GetMetric(u);
   Path bestPath;
   Path currentPath;
@@ -1078,9 +1080,6 @@ bool Simplification::SimplifyLastTree(Tree* ref,
             ref, [](Tree* e) -> bool { return ShallowSystematicReduce(e); }) ||
         changed;
     changed = AdvancedReduction(ref) || changed;
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 0
-    assert(!AdvancedReduction(ref));
-#endif
 
     if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
       // Approximate again in case exact numbers appeared during simplification.

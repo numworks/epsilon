@@ -232,6 +232,14 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
    * beautify each token. */
   ParsingContext parsingContext(/*context, */
                                 ParsingContext::ParsingMethod::Classic);
+
+  /* The content of h will be modified if token match which would break the
+   * tokenizer. To avoid this we run the tokenizer of h and modifications on a
+   * copy of h. */
+  Tree *clone = h->clone();
+  /* The cursor is inside h and we need to move it inside clone for it to follow
+   * editions. Since they are the still the same, we swap them. */
+  PoincareJ::SwapTrees(h, clone);
   Tokenizer tokenizer = Tokenizer(h, &parsingContext, firstIndexOfIdentifier,
                                   rightmostIndexToBeautify + 1);
   Token currentIdentifier = Token(Token::Type::Undefined);
@@ -261,7 +269,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
       layoutsWereBeautified =
           CompareAndBeautifyIdentifier(
               currentIdentifier.firstLayout(), currentIdentifier.length(),
-              beautificationRule, h, firstIndexOfIdentifier, layoutCursor,
+              beautificationRule, clone, firstIndexOfIdentifier, layoutCursor,
               &comparison, &numberOfLayoutsAddedOrRemovedLastLoop) ||
           layoutsWereBeautified;
       if (comparison <= 0) {  // Break if equal or past the alphabetical order
@@ -297,7 +305,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
                 nextIdentifier.length());
         layoutsWereBeautified =
             RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-                h, firstIndexOfIdentifier,
+                clone, firstIndexOfIdentifier,
                 firstIndexOfIdentifier + currentIdentifier.length() +
                     nextIdentifier.length() - 1,
                 k_logarithmRule, layoutCursor,
@@ -308,6 +316,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
       }
     }
   }
+  h->moveTreeOverTree(clone);
   return layoutsWereBeautified;
 }
 

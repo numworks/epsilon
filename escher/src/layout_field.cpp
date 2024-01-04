@@ -249,11 +249,10 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
 
   // Do not insert layout if it has too many descendants
   if (m_contentView.layoutView()->numberOfLayouts() +
-          xnt.numberOfDescendants(true) >=
+          xnt.numberOfDescendants(true) <
       k_maxNumberOfLayouts) {
-    return true;
+    insertLayoutAtCursor(xnt, true);
   }
-  insertLayoutAtCursor(xnt, true);
   return true;
 }
 

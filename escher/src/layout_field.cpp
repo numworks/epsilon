@@ -209,37 +209,26 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     setEditing(true);
   }
   Layout layout = cursor()->layout();
-  Layout xnt;
+  constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
+  char buffer[bufferSize];
   if (linearMode()) {
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
     LinearLayoutDecoder decoder(horizontalLayout, cursor()->position());
-    constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
-    char buffer[bufferSize];
-    if (XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize)) {
-      xnt = StringLayout::Builder(buffer);
-    }
+    XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize);
   } else {
-    // Query bottom-most layout
-    xnt = layout.XNTLayout();
+    layout.XNTLayout().serializeForParsing(buffer, bufferSize);
   }
   assert(isEditing());
-  if (xnt.isUninitialized()) {
-    xnt = CodePointLayout::Builder(defaultXNTCodePoint);
+  if (strlen(buffer) == 0) {
+    SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
     if (Ion::Events::repetitionFactor() > 0) {
       assert(cursor()->selection().isEmpty());
       // XNT is Cycling, remove the last inserted character
       cursor()->performBackspace();
     }
   }
-
-  // Do not insert layout if it has too many descendants
-  if (m_contentView.layoutView()->numberOfLayouts() +
-          xnt.numberOfDescendants(true) <
-      k_maxNumberOfLayouts) {
-    insertLayoutAtCursor(xnt, true);
-  }
-  return true;
+  return handleEventWithText(buffer, false, true);
 }
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {

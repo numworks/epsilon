@@ -94,8 +94,8 @@ void SystemOfEquations::autoComputeApproximateResolutionRange(
   zoom.setBounds(-k_maxFloat, k_maxFloat);
   void *model[2] = {static_cast<void *>(&equationStandardForm),
                     static_cast<void *>(m_variables[0])};
-  zoom.fitPointsOfInterest(evaluator<float>, static_cast<void *>(model), false,
-                           evaluator<double>);
+  zoom.fitRoots(evaluator<float>, static_cast<void *>(model), false,
+                evaluator<double>);
   zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
   Range2D finalRange = zoom.range(false, false);
   m_approximateResolutionMinimum = finalRange.x()->min();

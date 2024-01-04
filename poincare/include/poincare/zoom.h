@@ -61,6 +61,10 @@ class Zoom {
                            bool vertical = false,
                            Function2DWithContext<double> fDouble = nullptr,
                            bool *finiteNumberOfPoints = nullptr);
+  void fitRoots(Function2DWithContext<float> f, const void *model,
+                bool vertical = false,
+                Function2DWithContext<double> fDouble = nullptr,
+                bool *finiteNumberOfPoints = nullptr);
   void fitIntersections(Function2DWithContext<float> f1, const void *model1,
                         Function2DWithContext<float> f2, const void *model2,
                         bool vertical = false);
@@ -138,6 +142,10 @@ class Zoom {
                                        const void *aux, float a, float b,
                                        Solver<float>::Interest, float precision,
                                        TrinaryBoolean discontinuous);
+  static Coordinate2D<float> HoneRoot(Solver<float>::FunctionEvaluation f,
+                                      const void *aux, float a, float b,
+                                      Solver<float>::Interest, float precision,
+                                      TrinaryBoolean discontinuous);
   static Coordinate2D<float> HoneIntersection(
       Solver<float>::FunctionEvaluation f, const void *aux, float a, float b,
       Solver<float>::Interest, float precision, TrinaryBoolean discontinuous);

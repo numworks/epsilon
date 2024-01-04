@@ -191,6 +191,39 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
   }
 }
 
+void Zoom::fitRoots(Function2DWithContext<float> f, const void *model,
+                    bool vertical, Function2DWithContext<double> fDouble,
+                    bool *finiteNumberOfPoints) {
+  float (Coordinate2D<float>::*ordinate)() const =
+      vertical ? &Coordinate2D<float>::x : &Coordinate2D<float>::y;
+  double (Coordinate2D<double>::*ordinateDouble)() const =
+      vertical ? &Coordinate2D<double>::x : &Coordinate2D<double>::y;
+  InterestParameters params = {.f = f,
+                               .fDouble = fDouble,
+                               .model = model,
+                               .context = m_context,
+                               .asymptotes = nullptr,
+                               .ordinate = ordinate,
+                               .ordinateDouble = ordinateDouble};
+  Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
+    const InterestParameters *p = static_cast<const InterestParameters *>(aux);
+    return (p->f(t, p->model, p->context).*p->ordinate)();
+  };
+  Solver<double>::FunctionEvaluation evaluatorDouble = [](double t,
+                                                          const void *aux) {
+    const InterestParameters *p = static_cast<const InterestParameters *>(aux);
+    return (p->fDouble(t, p->model, p->context).*p->ordinateDouble)();
+  };
+  bool leftInterrupted, rightInterrupted;
+  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params,
+                Solver<float>::EvenOrOddRootInBracket, HoneRoot, vertical,
+                evaluatorDouble);
+  if (finiteNumberOfPoints) {
+    *finiteNumberOfPoints =
+        *finiteNumberOfPoints && !leftInterrupted && !rightInterrupted;
+  }
+}
+
 void Zoom::fitIntersections(Function2DWithContext<float> f1, const void *model1,
                             Function2DWithContext<float> f2, const void *model2,
                             bool vertical) {
@@ -433,6 +466,21 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
                                          ? 0.f
                                      : isDiscontinuous ? NAN
                                                        : pb.y());
+}
+
+Coordinate2D<float> Zoom::HoneRoot(Solver<float>::FunctionEvaluation f,
+                                   const void *aux, float a, float b,
+                                   Solver<float>::Interest interest,
+                                   float precision,
+                                   TrinaryBoolean discontinuous) {
+  Coordinate2D<float> pa, pu, pv, pb;
+  honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
+             &pu, &pv, &pb);
+  // Discard local minimums and maximums
+  return interest == Solver<float>::Interest::Root ||
+                 std::fabs(pb.y()) < Solver<float>::NullTolerance(pb.x())
+             ? Coordinate2D<float>(pb.x(), 0.)
+             : Coordinate2D<float>();
 }
 
 Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,

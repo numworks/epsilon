@@ -219,21 +219,18 @@ void SolutionsController::didEnterResponderChain(
 }
 
 bool SolutionsController::handleEvent(Ion::Events::Event event) {
-  if (!approximateSolutions()) {
+  SystemOfEquations *system = App::app()->system();
+  if (!approximateSolutions() || system->numberOfSolutions() == 0) {
     return false;
   }
-  SystemOfEquations *system = App::app()->system();
-  if (event == Ion::Events::Down && system->numberOfSolutions() &&
-      selectedRow() == -1) {
+  if (event == Ion::Events::Down && selectedRow() == -1) {
     header()->setSelectedButton(-1);
     m_contentView.selectableTableView()->selectCellAtLocation(0, 0);
     App::app()->setFirstResponder(m_contentView.selectableTableView());
     return true;
   }
-  if (event == Ion::Events::Up) {
-    m_contentView.selectableTableView()->deselectTable();
-    header()->setSelectedButton(0);
-    selectRow(-1);
+  if (event == Ion::Events::Up && selectedRow() >= 0) {
+    selectIntervalButton();
     return true;
   }
   return false;
@@ -476,7 +473,15 @@ void SolutionsController::didBecomeFirstResponder() {
   SystemOfEquations *system = App::app()->system();
   if (system->numberOfSolutions() > 0) {
     App::app()->setFirstResponder(m_contentView.selectableTableView());
+  } else if (approximateSolutions()) {
+    selectIntervalButton();
   }
+}
+
+void SolutionsController::selectIntervalButton() {
+  m_contentView.selectableTableView()->deselectTable();
+  header()->setSelectedButton(0);
+  selectRow(-1);
 }
 
 bool SolutionsController::approximateSolutions() const {

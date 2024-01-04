@@ -35,42 +35,33 @@ constexpr static KDCoordinate k_minimalChildHeight =
 
 constexpr static uint8_t k_temporaryBlendAlpha = 0x60;
 
-static bool ChildHeightDictatesHeight(KDCoordinate childHeight) {
-  return childHeight >= k_minimalChildHeight;
+static KDCoordinate VerticalMargin(KDCoordinate childHeight,
+                                   KDCoordinate minVerticalMargin) {
+  /* If the child height is below the threshold, make it bigger so that
+   * The bracket pair maintains the right height */
+  KDCoordinate verticalMargin = minVerticalMargin;
+
+  if (childHeight < k_minimalChildHeight) {
+    verticalMargin += (k_minimalChildHeight - childHeight) / 2;
+  }
+  return verticalMargin;
 }
-static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight,
-                                           KDCoordinate verticalMargin) {
-  return (ChildHeightDictatesHeight(childHeight) ? childHeight
-                                                 : k_minimalChildHeight) +
-         verticalMargin * 2;
-}
-static KDCoordinate BaselineGivenChildHeightAndBaseline(
-    KDCoordinate childHeight, KDCoordinate childBaseline,
-    KDCoordinate verticalMargin) {
-  return childBaseline + verticalMargin +
-         (ChildHeightDictatesHeight(childHeight)
-              ? 0
-              : (k_minimalChildHeight - childHeight) / 2);
-}
-static KDPoint ChildOffset(KDCoordinate verticalMargin,
-                           KDCoordinate bracketWidth) {
-  return KDPoint(bracketWidth, verticalMargin);
-}
-static KDPoint PositionGivenChildHeightAndBaseline(
-    bool left, KDCoordinate bracketWidth, KDSize childSize,
-    KDCoordinate childBaseline, KDCoordinate verticalMargin) {
-  return KDPoint(
-      left ? -bracketWidth : childSize.width(),
-      ChildHeightDictatesHeight(childSize.height())
-          ? -verticalMargin
-          : childBaseline -
-                HeightGivenChildHeight(childSize.height(), verticalMargin) / 2);
-}
-static KDCoordinate OptimalChildHeightGivenLayoutHeight(
-    KDCoordinate layoutHeight, KDCoordinate verticalMargin) {
-  return layoutHeight - verticalMargin * 2;
+static KDCoordinate Height(KDCoordinate childHeight,
+                           KDCoordinate minVerticalMargin) {
+  return childHeight + 2 * VerticalMargin(childHeight, minVerticalMargin);
 }
 
+static KDCoordinate Baseline(KDCoordinate childHeight,
+                             KDCoordinate childBaseline,
+                             KDCoordinate minVerticalMargin) {
+  return childBaseline + VerticalMargin(childHeight, minVerticalMargin);
+}
+
+static KDPoint ChildOffset(KDCoordinate minVerticalMargin,
+                           KDCoordinate bracketWidth,
+                           KDCoordinate childHeight) {
+  return KDPoint(bracketWidth, VerticalMargin(childHeight, minVerticalMargin));
+}
 }  // namespace Pair
 
 namespace SquareBracketPair {
@@ -79,16 +70,15 @@ constexpr static KDCoordinate k_internalWidthMargin = 5;
 constexpr static KDCoordinate k_externalWidthMargin = 2;
 constexpr static KDCoordinate k_bracketWidth =
     k_internalWidthMargin + k_lineThickness + k_externalWidthMargin;
-constexpr static KDCoordinate k_verticalMargin = 1;
+constexpr static KDCoordinate k_minVerticalMargin = 1;
 constexpr static KDCoordinate k_doubleBarMargin = 2;
 
 static KDSize SizeGivenChildSize(KDSize childSize) {
-  return KDSize(
-      2 * k_bracketWidth + childSize.width(),
-      Pair::HeightGivenChildHeight(childSize.height(), k_verticalMargin));
+  return KDSize(2 * k_bracketWidth + childSize.width(),
+                Pair::Height(childSize.height(), k_minVerticalMargin));
 }
-static KDPoint ChildOffset() {
-  return Pair::ChildOffset(k_verticalMargin, k_bracketWidth);
+static KDPoint ChildOffset(KDCoordinate childHeight) {
+  return Pair::ChildOffset(k_minVerticalMargin, k_bracketWidth, childHeight);
 }
 
 }  // namespace SquareBracketPair
@@ -98,7 +88,7 @@ constexpr static KDCoordinate k_k_innerWidthMargin = 2;
 constexpr static KDCoordinate k_bracketWidth =
     Pair::k_lineThickness + k_k_innerWidthMargin +
     SquareBracketPair::k_externalWidthMargin;
-constexpr static KDCoordinate k_verticalMargin = 0;
+constexpr static KDCoordinate k_minVerticalMargin = 0;
 }  // namespace AbsoluteValue
 
 namespace VectorNorm {
@@ -106,7 +96,7 @@ constexpr static KDCoordinate k_innerWidthMargin = 2;
 constexpr static KDCoordinate k_bracketWidth =
     2 * Pair::k_lineThickness + SquareBracketPair::k_doubleBarMargin +
     k_innerWidthMargin + SquareBracketPair::k_externalWidthMargin;
-constexpr static KDCoordinate k_verticalMargin = 0;
+constexpr static KDCoordinate k_minVerticalMargin = 0;
 }  // namespace VectorNorm
 
 namespace CurlyBrace {
@@ -116,22 +106,15 @@ constexpr static KDCoordinate k_curveWidth = 5;
 constexpr static KDCoordinate k_centerHeight = 3;
 constexpr static KDCoordinate k_centerWidth = 3;
 constexpr static KDCoordinate k_widthMargin = 1;
-constexpr static KDCoordinate k_verticalMargin = 1;
+constexpr static KDCoordinate k_minVerticalMargin = 1;
 constexpr static KDCoordinate k_curlyBraceWidth =
     2 * k_widthMargin + k_centerWidth + k_curveWidth - k_lineThickness;
-
-static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
-  return Pair::HeightGivenChildHeight(childHeight, k_verticalMargin);
+static KDCoordinate Height(KDCoordinate childHeight) {
+  return Pair::Height(childHeight, k_minVerticalMargin);
 }
-static KDCoordinate BaselineGivenChildHeightAndBaseline(
-    KDCoordinate childHeight, KDCoordinate childBaseline) {
-  return Pair::BaselineGivenChildHeightAndBaseline(childHeight, childBaseline,
-                                                   k_verticalMargin);
-}
-static KDPoint PositionGivenChildHeightAndBaseline(bool left, KDSize childSize,
-                                                   KDCoordinate childBaseline) {
-  return Pair::PositionGivenChildHeightAndBaseline(
-      left, k_curlyBraceWidth, childSize, childBaseline, k_verticalMargin);
+static KDCoordinate Baseline(KDCoordinate childHeight,
+                             KDCoordinate childBaseline) {
+  return Pair::Baseline(childHeight, childBaseline, k_minVerticalMargin);
 }
 }  // namespace CurlyBrace
 
@@ -139,23 +122,18 @@ namespace Parenthesis {
 constexpr static KDCoordinate k_widthMargin = 1;
 constexpr static KDCoordinate k_curveWidth = 5;
 constexpr static KDCoordinate k_curveHeight = 7;
-constexpr static KDCoordinate k_verticalMargin = 2;
+constexpr static KDCoordinate k_minVerticalMargin = 2;
 constexpr static KDCoordinate k_parenthesisWidth =
     2 * k_widthMargin + k_curveWidth;
 
-static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
-  return Pair::HeightGivenChildHeight(childHeight, k_verticalMargin);
+static KDCoordinate Height(KDCoordinate childHeight) {
+  return Pair::Height(childHeight, k_minVerticalMargin);
 }
-static KDCoordinate BaselineGivenChildHeightAndBaseline(
-    KDCoordinate childHeight, KDCoordinate childBaseline) {
-  return Pair::BaselineGivenChildHeightAndBaseline(childHeight, childBaseline,
-                                                   k_verticalMargin);
+static KDCoordinate Baseline(KDCoordinate childHeight,
+                             KDCoordinate childBaseline) {
+  return Pair::Baseline(childHeight, childBaseline, k_minVerticalMargin);
 }
-static KDPoint PositionGivenChildHeightAndBaseline(bool left, KDSize childSize,
-                                                   KDCoordinate childBaseline) {
-  return Pair::PositionGivenChildHeightAndBaseline(
-      left, k_parenthesisWidth, childSize, childBaseline, k_verticalMargin);
-}
+
 }  // namespace Parenthesis
 
 namespace Pair {
@@ -177,19 +155,19 @@ static KDCoordinate BracketWidth(const Tree* node) {
   }
 }
 
-static KDCoordinate VerticalMargin(const Tree* node) {
+static KDCoordinate MinVerticalMargin(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Ceiling:
     case LayoutType::Floor:
-      return SquareBracketPair::k_verticalMargin;
+      return SquareBracketPair::k_minVerticalMargin;
     case LayoutType::AbsoluteValue:
-      return AbsoluteValue::k_verticalMargin;
+      return AbsoluteValue::k_minVerticalMargin;
     case LayoutType::VectorNorm:
-      return VectorNorm::k_verticalMargin;
+      return VectorNorm::k_minVerticalMargin;
     case LayoutType::CurlyBrace:
-      return CurlyBrace::k_verticalMargin;
+      return CurlyBrace::k_minVerticalMargin;
     case LayoutType::Parenthesis:
-      return Parenthesis::k_verticalMargin;
+      return Parenthesis::k_minVerticalMargin;
     default:
       assert(false);
   }
@@ -269,6 +247,33 @@ KDCoordinate completeLowerBoundX(const Tree* node, KDFont::Size font) {
                    (upperBoundSize.width() -
                     lowerBoundSizeWithVariableEquals(node, font).width()) /
                        2});
+}
+
+KDCoordinate upperBoundWidth(const Tree* node, KDFont::Size font) {
+  return Render::Width(node->child(k_upperBoundIndex));
+}
+
+KDPoint leftParenthesisPosition(const Tree* node, KDFont::Size font) {
+  KDSize argumentSize = Render::Size(node->child(k_argumentIndex));
+  KDCoordinate argumentBaseline =
+      Render::Baseline(node->child(k_argumentIndex));
+  KDCoordinate lowerboundWidth =
+      lowerBoundSizeWithVariableEquals(node, font).width();
+
+  KDCoordinate x = std::max({SymbolWidth(font), lowerboundWidth,
+                             upperBoundWidth(node, font)}) +
+                   ArgumentHorizontalMargin(font);
+  KDCoordinate y =
+      Render::Baseline(node) -
+      Parenthesis::Baseline(argumentSize.height(), argumentBaseline);
+  return {x, y};
+}
+
+KDPoint rightParenthesisPosition(const Tree* node, KDFont::Size font,
+                                 KDSize argumentSize) {
+  return leftParenthesisPosition(node, font)
+      .translatedBy(
+          KDPoint(Parenthesis::k_parenthesisWidth + argumentSize.width(), 0));
 }
 
 }  // namespace Parametric
@@ -362,9 +367,8 @@ KDPoint positionOfVariableInAssignmentSlot(const Tree* node,
 }
 
 KDCoordinate parenthesisBaseline(const Tree* node, KDFont::Size font) {
-  return Parenthesis::BaselineGivenChildHeightAndBaseline(
-      Render::Height(node->child(k_derivandIndex)),
-      Render::Baseline(node->child(k_derivandIndex)));
+  return Parenthesis::Baseline(Render::Height(node->child(k_derivandIndex)),
+                               Render::Baseline(node->child(k_derivandIndex)));
 }
 
 KDPoint positionOfLeftParenthesis(const Tree* node, KDFont::Size font) {
@@ -571,12 +575,11 @@ constexpr static KDCoordinate k_variableHorizontalMargin = 1;
 constexpr static KDCoordinate k_variableBaselineOffset = 2;
 
 KDCoordinate variableSlotBaseline(const Tree* node, KDFont::Size font) {
-  return std::max(
-      {KDCoordinate(CurlyBrace::HeightGivenChildHeight(
-                        Render::Height(node->child(k_functionIndex))) +
-                    k_variableBaselineOffset),
-       Render::Baseline(node->child(k_upperBoundIndex)),
-       Render::Baseline(node->child(k_variableIndex))});
+  return std::max({KDCoordinate(CurlyBrace::Height(Render::Height(
+                                    node->child(k_functionIndex))) +
+                                k_variableBaselineOffset),
+                   Render::Baseline(node->child(k_upperBoundIndex)),
+                   Render::Baseline(node->child(k_variableIndex))});
 }
 
 KDCoordinate bracesWidth(const Tree* node, KDFont::Size font) {

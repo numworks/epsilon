@@ -319,7 +319,7 @@ void AbstractTextField::setText(const char *text) {
 
 // TODO : Handle cycling with non-default layouts.
 size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
-                                         char *buffer, size_t bufferLength) {
+                                         char *buffer, size_t bufferSize) {
   assert(isEditable());
   if (!isEditing()) {
     reinitDraftTextBuffer();
@@ -334,10 +334,10 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
   if (Poincare::FindXNTSymbol(decoder, &defaultXNTHasChanged,
                               &defaultXNTCodePoint)) {
     const char *parameterText;
-    size_t parameterLength = bufferLength + 1;
+    size_t parameterLength = bufferSize;
     if (Poincare::ParameteredExpression::ParameterText(
             decoder.stringPosition(), &parameterText, &parameterLength) &&
-        bufferLength >= parameterLength) {
+        bufferSize - 1 >= parameterLength) {
       memcpy(buffer, parameterText, parameterLength);
       return parameterLength;
     }
@@ -350,7 +350,7 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
     (void)success;  // Silence compilation warnings
     // TODO: Fix issues with repetition over a syntax error dismissal
   }
-  return Poincare::SerializationHelper::CodePoint(buffer, bufferLength,
+  return Poincare::SerializationHelper::CodePoint(buffer, bufferSize - 1,
                                                   defaultXNTCodePoint);
 }
 
@@ -360,7 +360,7 @@ bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
   }
   constexpr int bufferSize = Poincare::SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
-  size_t length = insertXNTChars(xnt, buffer, bufferSize - 1);
+  size_t length = insertXNTChars(xnt, buffer, bufferSize);
 
   assert(length < bufferSize);
   buffer[length] = 0;

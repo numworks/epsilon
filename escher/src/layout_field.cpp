@@ -207,9 +207,9 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (!isEditing()) {
     setEditing(true);
   }
+  Layout layout = cursor()->layout();
   Layout xnt;
   if (linearMode()) {
-    Layout layout = cursor()->layout();
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
     int position = cursor()->position();
@@ -233,7 +233,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     }
   } else {
     // Query bottom-most layout
-    xnt = cursor()->layout().XNTLayout();
+    xnt = layout.XNTLayout();
   }
   /* TODO : Cycle default XNT and local XNT layouts in parametered expressions
    * such as derivative, sum, integral or layouts. */

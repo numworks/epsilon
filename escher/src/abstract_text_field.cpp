@@ -350,7 +350,7 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
     (void)success;  // Silence compilation warnings
     // TODO: Fix issues with repetition over a syntax error dismissal
   }
-  return Poincare::SerializationHelper::CodePoint(buffer, bufferSize - 1,
+  return Poincare::SerializationHelper::CodePoint(buffer, bufferSize,
                                                   defaultXNTCodePoint);
 }
 

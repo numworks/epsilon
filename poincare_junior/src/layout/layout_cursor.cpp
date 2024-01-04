@@ -301,17 +301,17 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
     }
   }
 
-  // - Step 6 - Find position to point to if layout will me merged
+  // - Step 6 - Find position to point to if layout will be merged
   EditionPoolCursor previousCursor = *this;
   EditionReference childToPoint;
   if (ref->numberOfChildren() != 1) {
     childToPoint = (forceRight || forceLeft)
                        ? nullptr
                        : CursorMotion::DeepChildToPointToWhenInserting(ref);
-    // if (!childToPoint.isUninitialized() &&
-    // childToPoint->isAutocompletedPair()) {
-    // childToPoint = childToPoint->child(0);
-    // }
+    if (!childToPoint.isUninitialized() &&
+        childToPoint->isAutocompletedPair()) {
+      childToPoint = childToPoint->child(0);
+    }
   }
 
   // - Step 7 - Insert layout

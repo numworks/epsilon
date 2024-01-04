@@ -394,11 +394,10 @@ Tree* CursorMotion::DeepChildToPointToWhenInserting(Tree* node) {
     if (d->isRackLayout() && RackLayout::IsEmpty(d)) {
       return d;
     }
-    if (d->isAutocompletedPair() &&
-        AutocompletedPair::IsTemporary(d, Side::Left)) {
+    if (d->isAutocompletedPair()) {
       /* If the inserted bracket is temp on the left, do not put cursor
        * inside it so that the cursor is put right when inserting ")". */
-      return node;
+      return AutocompletedPair::IsTemporary(d, Side::Left) ? node : d;
     }
   }
   return node;

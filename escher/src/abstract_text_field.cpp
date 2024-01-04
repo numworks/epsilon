@@ -320,8 +320,8 @@ void AbstractTextField::setText(const char *text) {
 }
 
 // TODO : Handle cycling with non-default layouts.
-size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
-                                         char *buffer, size_t bufferSize) {
+void AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
+                                       char *buffer, size_t bufferSize) {
   assert(isEditable());
   if (!isEditing()) {
     reinitDraftTextBuffer();
@@ -342,7 +342,7 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
         bufferSize - 1 >= parameterLength) {
       memcpy(buffer, parameterText, parameterLength);
       buffer[parameterLength] = 0;
-      return parameterLength;
+      return;
     }
   }
   assert(isEditing());
@@ -354,8 +354,8 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
     (void)success;  // Silence compilation warnings
     // TODO: Fix issues with repetition over a syntax error dismissal
   }
-  return SerializationHelper::CodePoint(buffer, bufferSize,
-                                        defaultXNTCodePoint);
+  SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
+  return;
 }
 
 bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
@@ -364,10 +364,7 @@ bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
   }
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
-  size_t length = insertXNTChars(xnt, buffer, bufferSize);
-
-  assert(length < bufferSize);
-  assert(buffer[length] == 0);
+  insertXNTChars(xnt, buffer, bufferSize);
   return handleEventWithText(buffer, false, true);
 }
 

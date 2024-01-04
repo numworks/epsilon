@@ -14,6 +14,8 @@
 
 #include <algorithm>
 
+using namespace Poincare;
+
 namespace Escher {
 
 /* Draft text used when editing, in order to save previous text
@@ -108,8 +110,8 @@ void AbstractTextField::ContentView::setText(const char *text) {
   strlcpy(buffer, text, maxBufferSize);
   /* Replace System parentheses (used to keep layout tree structure) by normal
    * parentheses */
-  Poincare::SerializationHelper::
-      ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
+  SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
+      buffer);
   markWholeFrameAsDirty();
 }
 
@@ -331,11 +333,11 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
   assert(text() == draftText());
   UTF8Decoder decoder(text(), cursorLocation());
   bool defaultXNTHasChanged = false;
-  if (Poincare::XNTHelpers::FindXNTSymbol(decoder, &defaultXNTHasChanged,
-                                          &defaultXNTCodePoint)) {
+  if (XNTHelpers::FindXNTSymbol(decoder, &defaultXNTHasChanged,
+                                &defaultXNTCodePoint)) {
     const char *parameterText;
     size_t parameterLength = bufferSize;
-    if (Poincare::ParameteredExpression::ParameterText(
+    if (ParameteredExpression::ParameterText(
             decoder.stringPosition(), &parameterText, &parameterLength) &&
         bufferSize - 1 >= parameterLength) {
       memcpy(buffer, parameterText, parameterLength);
@@ -351,15 +353,15 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
     (void)success;  // Silence compilation warnings
     // TODO: Fix issues with repetition over a syntax error dismissal
   }
-  return Poincare::SerializationHelper::CodePoint(buffer, bufferSize,
-                                                  defaultXNTCodePoint);
+  return SerializationHelper::CodePoint(buffer, bufferSize,
+                                        defaultXNTCodePoint);
 }
 
 bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
   if (!isEditable()) {
     return false;
   }
-  constexpr int bufferSize = Poincare::SymbolAbstractNode::k_maxNameSize;
+  constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = insertXNTChars(xnt, buffer, bufferSize);
 
@@ -595,8 +597,8 @@ bool AbstractTextField::privateHandleEventWithText(
     }
     /* Replace System parentheses (used to keep layout tree structure) by normal
      * parentheses */
-    Poincare::SerializationHelper::
-        ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
+    SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
+        buffer);
 
     if (insertTextAtLocation(buffer, const_cast<char *>(cursorLocation()))) {
       /* The cursor position depends on the text as we sometimes want to

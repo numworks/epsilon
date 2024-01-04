@@ -331,13 +331,13 @@ bool AbstractTextField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     }
   }
   assert(text() == draftText());
+  assert(isEditing());
   UTF8Decoder decoder(text(), cursorLocation());
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
-  if (XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize)) {
-    assert(strlen(buffer) > 0);
-  } else {
-    assert(isEditing());
+  XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize);
+  if (strlen(buffer) == 0) {
+    SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
     if (Ion::Events::repetitionFactor() > 0) {
       assert(contentView()->selectionIsEmpty());
       // Since XNT is cycling on simple glyphs, remove the last inserted one
@@ -346,7 +346,6 @@ bool AbstractTextField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
       (void)success;  // Silence compilation warnings
       // TODO: Fix issues with repetition over a syntax error dismissal
     }
-    SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
   }
   return handleEventWithText(buffer, false, true);
 }

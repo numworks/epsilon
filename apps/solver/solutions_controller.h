@@ -49,7 +49,7 @@ class SolutionsController : public Escher::ViewController,
       int index,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
-    assert(m_approximateSolutions);
+    assert(approximateSolutions());
     return const_cast<Escher::AbstractButtonCell *>(&m_searchIntervalCell);
   }
 
@@ -71,10 +71,6 @@ class SolutionsController : public Escher::ViewController,
 
   // Responder
   void didBecomeFirstResponder() override;
-
-  void setApproximateSolutions(bool approximate) {
-    m_approximateSolutions = approximate;
-  }
 
  private:
   // TableViewDataSource
@@ -219,6 +215,7 @@ class SolutionsController : public Escher::ViewController,
   constexpr static int k_numberOfMessageCells = 2;
   constexpr static int k_numberOfEmptyCells = 2;
 
+  bool approximateSolutions() const;
   bool usedUserVariables() const;
   int userVariablesMessageRow() const;
   I18n::Message noSolutionMessage();
@@ -234,7 +231,6 @@ class SolutionsController : public Escher::ViewController,
   Escher::SolidColorCell m_emptyCell[k_numberOfEmptyCells];
   ContentView m_contentView;
   Escher::AbstractButtonCell m_searchIntervalCell;
-  bool m_approximateSolutions;
 };
 
 }  // namespace Solver

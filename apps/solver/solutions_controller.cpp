@@ -120,8 +120,7 @@ SolutionsController::SolutionsController(Responder *parentResponder,
                 App::app()->openIntervalController();
                 return true;
               },
-              this)),
-      m_approximateSolutions(false) {
+              this)) {
   const char *delta =
       GlobalPreferences::sharedGlobalPreferences->discriminantSymbol();
   size_t lenDelta = strlen(delta);
@@ -219,7 +218,7 @@ void SolutionsController::didEnterResponderChain(
 }
 
 bool SolutionsController::handleEvent(Ion::Events::Event event) {
-  if (!m_approximateSolutions) {
+  if (!approximateSolutions()) {
     return false;
   }
   SystemOfEquations *system = App::app()->system();
@@ -479,6 +478,11 @@ void SolutionsController::didBecomeFirstResponder() {
   }
 }
 
+bool SolutionsController::approximateSolutions() const {
+  return App::app()->system()->type() ==
+         SystemOfEquations::Type::GeneralMonovariable;
+}
+
 bool SolutionsController::usedUserVariables() const {
   return !App::app()->system()->overrideUserVariables();
 }
@@ -499,8 +503,7 @@ int SolutionsController::userVariablesMessageRow() const {
 }
 
 I18n::Message SolutionsController::noSolutionMessage() {
-  if (App::app()->system()->type() ==
-      SystemOfEquations::Type::GeneralMonovariable) {
+  if (approximateSolutions()) {
     return I18n::Message::NoSolutionInterval;
   }
   if (App::app()->equationStore()->numberOfDefinedModels() <= 1) {

@@ -215,6 +215,7 @@ class SolutionsController : public Escher::ViewController,
   constexpr static int k_numberOfMessageCells = 2;
   constexpr static int k_numberOfEmptyCells = 2;
 
+  void selectIntervalButton();
   bool approximateSolutions() const;
   bool usedUserVariables() const;
   int userVariablesMessageRow() const;

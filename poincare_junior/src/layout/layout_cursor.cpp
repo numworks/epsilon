@@ -553,6 +553,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
         CursorMotion::DeletionMethodForCursorLeftOfChild(p, index);
     privateDelete(deletionMethod, true);
   }
+  balanceAutocompletedBracketsAndKeepAValidCursor();
   removeEmptyRowOrColumnOfGridParentIfNeeded();
 }
 

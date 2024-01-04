@@ -36,7 +36,6 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
 }
 
 void App::openSolutionsController(bool approximateSolve) {
-  m_solutionsController.setApproximateSolutions(approximateSolve);
   if (!approximateSolve) {
     m_stackViewController.push(&m_solutionsController);
     return;

@@ -931,8 +931,8 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       offsetY = offsetY + centralArgHeight;
       KDRect bottomSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
       ctx->fillRectWithMask(bottomSymbolFrame, expressionColor, backgroundColor,
-                            (const uint8_t*)topSymbolPixel,
-                            (KDColor*)workingBuffer, true, true);
+                            (const uint8_t*)bottomSymbolPixel,
+                            (KDColor*)workingBuffer, false, false);
 
       // Render "d"
       KDPoint dPosition =

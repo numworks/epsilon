@@ -225,7 +225,7 @@
 "USBEnumeration",
 "USBPlug",
 "BatteryCharging",
-"External",
+"ExternalText",
 "Idle",
 "",
 "",

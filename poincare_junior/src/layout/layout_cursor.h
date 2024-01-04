@@ -89,6 +89,10 @@ class LayoutCursor {
   /* Layout deletion */
   void stopSelecting() { m_startOfSelection = -1; }
 
+  /* This moves the cursor to a location that will stay valid after exiting the
+   * field */
+  void prepareForExitingPosition();
+
   bool isAtNumeratorOfEmptyFraction() const;
 
 #if 0

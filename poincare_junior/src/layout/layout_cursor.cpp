@@ -574,6 +574,23 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
   removeEmptyRowOrColumnOfGridParentIfNeeded();
 }
 
+void LayoutCursor::prepareForExitingPosition() {
+  int childIndex;
+  Tree *parent = parentLayout(&childIndex);
+  if (!parent || !parent->isGridLayout()) {
+    return;
+  }
+  Grid *grid = Grid::From(parent);
+  if (!grid->childIsPlaceholder(childIndex)) {
+    return;
+  }
+  /* When exiting a grid, the gray columns and rows will disappear, so
+   * before leaving the grid, set the cursor position to a layout that will
+   * stay valid when the grid will be re-entered. */
+  setLayout(grid->child(grid->closestNonGrayIndex(childIndex)),
+            OMG::Direction::Right());
+}
+
 bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
   if (cursorNode()->numberOfChildren() != 0) {
     return false;

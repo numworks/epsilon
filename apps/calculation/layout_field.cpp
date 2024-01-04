@@ -28,7 +28,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       m_insertionCursor = *cursor();
       /* Ensure insertion cursor will stay valid even when the current layout is
        * exited */
-      // m_insertionCursor.prepareForExitingPosition();
+      m_insertionCursor.prepareForExitingPosition();
     }
   } else if (event.isKeyPress()) {
     resetInsertionCursor();

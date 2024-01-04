@@ -75,6 +75,10 @@ KDPoint LayoutCursor::middleLeftPoint(KDFont::Size font) const {
   return KDPoint(origin.x(), origin.y() + cursorHeight(font) / 2);
 }
 
+KDCoordinate LayoutCursor::cursorBaseline(KDFont::Size font) const {
+  return Render::Baseline(cursorNode());
+}
+
 static const Tree *mostNestedGridParent(const Tree *node, const Tree *root) {
   while (node != root) {
     if (node->isGridLayout()) {

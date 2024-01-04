@@ -165,8 +165,7 @@ void LayoutField::clearAndSetEditing(bool isEditing) {
 
 void LayoutField::scrollToCursor() {
   KDRect cursorRect = m_contentView.cursorRect();
-  KDCoordinate cursorBaseline = cursor()->cursorHeight(m_contentView.font());
-  // cursor()->layout().baseline(m_contentView.font());
+  KDCoordinate cursorBaseline = cursor()->cursorBaseline(m_contentView.font());
   scrollToBaselinedRect(cursorRect, cursorBaseline);
 }
 

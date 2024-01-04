@@ -23,7 +23,6 @@ FunctionModelsParameterController::FunctionModelsParameterController(
     Responder* parentResponder, ListController* listController)
     : ExplicitSelectableListViewController(parentResponder),
       m_listController(listController) {
-  m_emptyModelCell.label()->setMessage(I18n::Message::Empty);
   m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
   const Model* models = Models();
@@ -43,12 +42,8 @@ FunctionModelsParameterController::FunctionModelsParameterController(
 }
 
 Escher::HighlightCell* FunctionModelsParameterController::cell(int row) {
-  if (row == 0) {
-    return &m_emptyModelCell;
-  }
-  int i = row - 1;
-  assert(0 <= i && i < k_numberOfExpressionCells);
-  return &m_modelCells[i];
+  assert(0 <= row && row < k_numberOfExpressionCells);
+  return &m_modelCells[row];
 }
 
 const char* FunctionModelsParameterController::title() {
@@ -97,11 +92,8 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
 
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    char buffer[k_maxSizeOfNamedModel] = "";
-    if (selectedRow() > 0) {
-      m_layouts[selectedRow() - 1].serializeForParsing(buffer,
-                                                       k_maxSizeOfNamedModel);
-    }
+    char buffer[k_maxSizeOfNamedModel];
+    m_layouts[selectedRow()].serializeForParsing(buffer, k_maxSizeOfNamedModel);
     bool success = m_listController->editSelectedRecordWithText(buffer);
     assert(success);
     (void)success;  // Silence warnings
@@ -116,7 +108,7 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int FunctionModelsParameterController::numberOfRows() const {
-  return 1 + k_numberOfExpressionCells;
+  return k_numberOfExpressionCells;
 };
 
 const FunctionModelsParameterController::Model*

@@ -7,15 +7,6 @@ namespace Poincare {
 
 namespace XNTHelpers {
 
-static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
-  while (CodePoint c = pattern.nextCodePoint()) {
-    if (string.nextCodePoint() != c) {
-      return false;
-    }
-  }
-  return true;
-}
-
 bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
                    CodePoint* defaultXNTCodePoint) {
   /* If cursor is in one of the following functions, and everything before the
@@ -66,13 +57,15 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
         // Identify one of the functions
         for (size_t i = 0; i < std::size(sFunctions); i++) {
           const char* name = sFunctions[i].aliasesList.mainAlias();
-          size_t length = UTF8Helper::StringCodePointLength(name);
+          size_t length = strlen(name);
           if (location >= textStart + length) {
-            UTF8Decoder nameDecoder(name);
             size_t savePosition = decoder.position();
             // Move the decoder where the function name could start
             decoder.unsafeSetPosition(savePosition - length);
-            if (Contains(decoder, nameDecoder)) {
+            constexpr size_t bufferSize = 10;
+            char buffer[bufferSize];
+            decoder.printInBuffer(buffer, bufferSize, length);
+            if (strcmp(buffer, name) == 0) {
               functionFound = true;
               // Update default code point
               *defaultXNTCodePoint = CodePoint(sFunctions[i].xnt);

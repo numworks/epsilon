@@ -46,7 +46,7 @@ BlockType ExpressionType(LayoutType type) {
   }
 }
 
-Tree* Parser::Parse(Tree* node) {
+Tree* Parser::Parse(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Rack:
       return RackParser(node).parse();

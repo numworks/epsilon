@@ -1164,9 +1164,8 @@ Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
       m_nextToken.firstLayout()->isParenthesisLayout()) {
     assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
-    RackParser subParser(
-        const_cast<Tree *>(m_nextToken.firstLayout()->nextNode()), 0,
-        ParsingContext::ParsingMethod::CommaSeparatedList);
+    RackParser subParser(m_nextToken.firstLayout()->nextNode(), 0,
+                         ParsingContext::ParsingMethod::CommaSeparatedList);
     popToken();
     return subParser.parse();
   }
@@ -1224,7 +1223,7 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   // ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   // }
   assert(m_currentToken.length() == 1);
-  Tree *layout = m_currentToken.firstLayout();
+  const Tree *layout = m_currentToken.firstLayout();
   /* Only layouts that can't be standalone are handled in this switch, others
    * are in Parser::Parse */
   switch (layout->layoutType()) {

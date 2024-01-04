@@ -212,8 +212,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (linearMode()) {
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
-    int position = cursor()->position();
-    LinearLayoutDecoder decoder(horizontalLayout, position);
+    LinearLayoutDecoder decoder(horizontalLayout, cursor()->position());
     bool defaultXNTHasChanged = false;
     if (XNTHelpers::FindXNTSymbol(decoder, &defaultXNTHasChanged,
                                   &defaultXNTCodePoint)) {
@@ -222,12 +221,9 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
       if (ParameteredExpression::ParameterText(decoder, &parameterStart,
                                                &parameterLength)) {
         HorizontalLayout parameter = HorizontalLayout::Builder();
-        for (size_t childIndex = 0; childIndex < parameterLength;
-             childIndex++) {
+        for (size_t i = 0; i < parameterLength; i++) {
           parameter.addChildAtIndexInPlace(
-              horizontalLayout.childAtIndex(childIndex + parameterStart)
-                  .clone(),
-              childIndex, childIndex);
+              horizontalLayout.childAtIndex(parameterStart + i).clone(), i, i);
         }
         xnt = parameter;
       }

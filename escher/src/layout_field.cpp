@@ -238,9 +238,10 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   }
   /* TODO : Cycle default XNT and local XNT layouts in parametered expressions
    * such as derivative, sum, integral or layouts. */
+  assert(isEditing());
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);
-    if (Ion::Events::repetitionFactor() > 0 && isEditing()) {
+    if (Ion::Events::repetitionFactor() > 0) {
       assert(cursor()->selection().isEmpty());
       // XNT is Cycling, remove the last inserted character
       cursor()->performBackspace();

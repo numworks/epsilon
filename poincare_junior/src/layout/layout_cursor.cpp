@@ -266,13 +266,15 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
   if (leftL && leftL->isAutocompletedPair()) {
     AutocompletedPair::MakeChildrenPermanent(
         leftL, Side::Right,
-        !IsTemporaryAutocompletedBracketPair(ref->child(0), Side::Left));
+        leftL->type() != ref->child(0)->type() ||
+            !IsTemporaryAutocompletedBracketPair(ref->child(0), Side::Left));
   }
   if (rightL && rightL->isAutocompletedPair()) {
     AutocompletedPair::MakeChildrenPermanent(
         rightL, Side::Left,
-        !IsTemporaryAutocompletedBracketPair(
-            ref->child(ref->numberOfChildren() - 1), Side::Right));
+        rightL->type() != ref->lastChild()->type() ||
+            !IsTemporaryAutocompletedBracketPair(ref->lastChild(),
+                                                 Side::Right));
   }
 
   /* - Step 5 - Add parenthesis around vertical offset

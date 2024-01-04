@@ -319,10 +319,10 @@ void AbstractTextField::setText(const char *text) {
   }
 }
 
-// TODO : Handle cycling with non-default layouts.
-void AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
-                                       char *buffer, size_t bufferSize) {
-  assert(isEditable());
+bool AbstractTextField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+  if (!isEditable()) {
+    return false;
+  }
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
@@ -332,29 +332,22 @@ void AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
   }
   assert(text() == draftText());
   UTF8Decoder decoder(text(), cursorLocation());
-  if (XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize)) {
-    return;
-  }
-  assert(isEditing());
-  if (Ion::Events::repetitionFactor() > 0) {
-    assert(contentView()->selectionIsEmpty());
-    // Since XNT is cycling on simple glyphs, remove the last inserted one
-    bool success = removePreviousGlyph();
-    assert(success);
-    (void)success;  // Silence compilation warnings
-    // TODO: Fix issues with repetition over a syntax error dismissal
-  }
-  SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
-  return;
-}
-
-bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
-  if (!isEditable()) {
-    return false;
-  }
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
-  insertXNTChars(xnt, buffer, bufferSize);
+  if (XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize)) {
+    assert(strlen(buffer) > 0);
+  } else {
+    assert(isEditing());
+    if (Ion::Events::repetitionFactor() > 0) {
+      assert(contentView()->selectionIsEmpty());
+      // Since XNT is cycling on simple glyphs, remove the last inserted one
+      bool success = removePreviousGlyph();
+      assert(success);
+      (void)success;  // Silence compilation warnings
+      // TODO: Fix issues with repetition over a syntax error dismissal
+    }
+    SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
+  }
   return handleEventWithText(buffer, false, true);
 }
 

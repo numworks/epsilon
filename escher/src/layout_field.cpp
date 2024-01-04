@@ -187,18 +187,16 @@ PoincareJ::Context *LayoutField::context() const {
 size_t LayoutField::dumpContent(char *buffer, size_t bufferSize,
                                 int *cursorOffset, int *position) {
   assert(layoutHasNode());
-  size_t size = layout().size();
+  size_t size = layout().tree()->treeSize();
   if (size > bufferSize) {
     buffer[0] = 0;
     size = 0;
     *cursorOffset = -1;
   } else {
-    memcpy(buffer, reinterpret_cast<char *>(layout().node()), size);
-#if 0
-    *cursorOffset = reinterpret_cast<char *>(cursor()->layout().node()) -
-                    reinterpret_cast<char *>(layout().node());
+    memcpy(buffer, reinterpret_cast<char *>(layout().tree()), size);
+    *cursorOffset = reinterpret_cast<char *>(cursor()->cursorNode()) -
+                    reinterpret_cast<char *>(layout().tree());
     *position = cursor()->position();
-#endif
   }
   return size;
 }
@@ -410,16 +408,15 @@ void LayoutField::restoreContent(const char *buffer, size_t size,
   if (size == 0) {
     return;
   }
-#if 0
-  setLayout(OLayout::LayoutFromAddress(buffer, size));
+  JuniorLayout l =
+      JuniorLayout::Builder(reinterpret_cast<const PoincareJ::Tree *>(buffer));
+  setLayout(l);
   if (*cursorOffset != -1) {
-    const LayoutNode *cursorNode = reinterpret_cast<const LayoutNode *>(
-        reinterpret_cast<char *>(layout().node()) + *cursorOffset);
-    LayoutCursor restoredCursor = LayoutCursor(OLayout(cursorNode));
-    restoredCursor.safeSetPosition(*position);
-    *cursor() = restoredCursor;
+    *cursor() = PoincareJ::LayoutBufferCursor(l, l.tree() + *cursorOffset);
+    cursor()->setPosition(*position);
+  } else {
+    *cursor() = PoincareJ::LayoutBufferCursor(l, l.tree());
   }
-#endif
 }
 
 void LayoutField::setTextEditionBuffer(char *buffer, size_t bufferSize) {

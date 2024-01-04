@@ -346,8 +346,8 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
     }
   }
   assert(isEditing());
-  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor() > 0 &&
-      contentView()->selectionIsEmpty()) {
+  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor() > 0) {
+    assert(contentView()->selectionIsEmpty());
     // Since XNT is cycling on simple glyphs, remove the last inserted one
     bool success = removePreviousGlyph();
     assert(success);

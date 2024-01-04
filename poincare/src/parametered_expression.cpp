@@ -158,6 +158,7 @@ bool ParameteredExpression::ParameterText(UnicodeDecoder& varDecoder,
   if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
     return false;
   }
+  varDecoder.unsafeSetPosition(startOfVariable);
   *parameterLength = lengthOfVariable;
   *parameterStart = startOfVariable;
   return true;

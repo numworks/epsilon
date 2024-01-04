@@ -10,6 +10,7 @@
 #include <poincare/linear_layout_decoder.h>
 #include <poincare/parametered_expression.h>
 #include <poincare/parenthesis_layout.h>
+#include <poincare/string_layout.h>
 #include <poincare/symbol.h>
 #include <poincare/xnt_helpers.h>
 #include <string.h>
@@ -213,20 +214,10 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
     LinearLayoutDecoder decoder(horizontalLayout, cursor()->position());
-    bool defaultXNTHasChanged = false;
-    if (XNTHelpers::FindXNTSymbol(decoder, &defaultXNTHasChanged,
-                                  &defaultXNTCodePoint)) {
-      size_t parameterStart;
-      size_t parameterLength;
-      if (ParameteredExpression::ParameterText(decoder, &parameterStart,
-                                               &parameterLength)) {
-        HorizontalLayout parameter = HorizontalLayout::Builder();
-        for (size_t i = 0; i < parameterLength; i++) {
-          parameter.addChildAtIndexInPlace(
-              horizontalLayout.childAtIndex(parameterStart + i).clone(), i, i);
-        }
-        xnt = parameter;
-      }
+    constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
+    char buffer[bufferSize];
+    if (XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize)) {
+      xnt = StringLayout::Builder(buffer);
     }
   } else {
     // Query bottom-most layout

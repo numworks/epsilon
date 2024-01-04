@@ -34,6 +34,8 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
       {Integral::s_functionHelper.aliasesList(), Integral::k_defaultXNTChar},
       {Product::s_functionHelper.aliasesList(), Product::k_defaultXNTChar},
       {Sum::s_functionHelper.aliasesList(), Sum::k_defaultXNTChar}};
+  constexpr static const int k_indexOfMainExpression = 0;
+  constexpr static const int k_indexOfParameter = 1;
   // Step 1 : Identify the function the cursor is in
   size_t textStart = decoder.start();
   size_t location = decoder.position();
@@ -44,7 +46,7 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
     location = decoder.position();
   }
   int functionLevel = 0;
-  bool cursorInVariableField = false;
+  int numberOfCommas = 0;
   bool functionFound = false;
   while (location > textStart && !functionFound) {
     switch (c) {
@@ -81,17 +83,18 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
         }
         if (!functionFound) {
           // No function found, reset search parameters
-          cursorInVariableField = false;
+          numberOfCommas = 0;
         }
         break;
       case ',':
         if (functionLevel == 0) {
-          if (cursorInVariableField) {
-            // Cursor is out of context, skip to the next matching '('
+          numberOfCommas++;
+          if (numberOfCommas > k_indexOfParameter) {
+            /* We are only interested in the 2 first children.
+             * Look for one in level. */
             functionLevel++;
+            numberOfCommas = 0;
           }
-          // Update cursor's position status
-          cursorInVariableField = !cursorInVariableField;
         }
         break;
       case ')':
@@ -110,7 +113,7 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
     } while (c == ' ');
     assert(c == '(');
   }
-  return functionFound && !cursorInVariableField;
+  return functionFound && numberOfCommas == k_indexOfMainExpression;
 }
 
 }  // namespace XNTHelpers

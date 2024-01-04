@@ -7,26 +7,13 @@ namespace Poincare {
 
 namespace XNTHelpers {
 
-bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
-                   CodePoint* defaultXNTCodePoint) {
-  /* If cursor is in one of the following functions, and everything before the
-   * cursor is correctly nested, the default XNTCodePoint will be improved.
-   * These functions all have the following structure :
-   * functionName(argument, variable, additonalOutOfContextFields ...)
-   * If the cursor is in an argument field, and the variable is well nested and
-   * defined, the variable will be inserted into the given buffer. Otherwise,
-   * the (improved or not) defaultXNTCodePoint is inserted. */
-  constexpr static struct {
-    AliasesList aliasesList;
-    char xnt;
-  } sFunctions[] = {
-      {Derivative::s_functionHelper.aliasesList(),
-       Derivative::k_defaultXNTChar},
-      {Integral::s_functionHelper.aliasesList(), Integral::k_defaultXNTChar},
-      {Product::s_functionHelper.aliasesList(), Product::k_defaultXNTChar},
-      {Sum::s_functionHelper.aliasesList(), Sum::k_defaultXNTChar}};
-  constexpr static const int k_indexOfMainExpression = 0;
-  constexpr static const int k_indexOfParameter = 1;
+static bool findParameteredFunction(UnicodeDecoder& decoder,
+                                    const char* const* functionsAlias,
+                                    int numberOfFuctions, int maxChildIndex,
+                                    int* functionIndex, int* childIndex) {
+  assert(functionIndex && childIndex);
+  *functionIndex = -1;
+  *childIndex = -1;
   // Step 1 : Identify the function the cursor is in
   size_t textStart = decoder.start();
   size_t location = decoder.position();
@@ -55,8 +42,8 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
         decoder.nextCodePoint();
         location = decoder.position();
         // Identify one of the functions
-        for (size_t i = 0; i < std::size(sFunctions); i++) {
-          const char* name = sFunctions[i].aliasesList.mainAlias();
+        for (size_t i = 0; i < numberOfFuctions; i++) {
+          const char* name = functionsAlias[i];
           size_t length = strlen(name);
           if (location >= textStart + length) {
             size_t savePosition = decoder.position();
@@ -66,10 +53,9 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
             char buffer[bufferSize];
             decoder.printInBuffer(buffer, bufferSize, length);
             if (strcmp(buffer, name) == 0) {
+              *functionIndex = i;
+              *childIndex = numberOfCommas;
               functionFound = true;
-              // Update default code point
-              *defaultXNTCodePoint = CodePoint(sFunctions[i].xnt);
-              *defaultXNTHasChanged = true;
             }
             decoder.unsafeSetPosition(savePosition);
           }
@@ -82,7 +68,7 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
       case ',':
         if (functionLevel == 0) {
           numberOfCommas++;
-          if (numberOfCommas > k_indexOfParameter) {
+          if (numberOfCommas > maxChildIndex) {
             /* We are only interested in the 2 first children.
              * Look for one in level. */
             functionLevel++;
@@ -106,7 +92,38 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
     } while (c == ' ');
     assert(c == '(');
   }
-  return functionFound && numberOfCommas == k_indexOfMainExpression;
+  return functionFound;
+}
+
+bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
+                   CodePoint* defaultXNTCodePoint) {
+  constexpr int k_numberOfFunctions = 4;
+  constexpr static const char* k_functionsAlias[k_numberOfFunctions] = {
+      Derivative::s_functionHelper.aliasesList().mainAlias(),
+      Integral::s_functionHelper.aliasesList().mainAlias(),
+      Product::s_functionHelper.aliasesList().mainAlias(),
+      Sum::s_functionHelper.aliasesList().mainAlias(),
+  };
+  constexpr static const char k_functionsXNT[k_numberOfFunctions] = {
+      Derivative::k_defaultXNTChar,
+      Integral::k_defaultXNTChar,
+      Product::k_defaultXNTChar,
+      Sum::k_defaultXNTChar,
+  };
+  constexpr static const int k_indexOfMainExpression = 0;
+  constexpr static const int k_indexOfParameter = 1;
+  int functionIndex;
+  int childIndex;
+  if (findParameteredFunction(decoder, k_functionsAlias, k_numberOfFunctions,
+                              k_indexOfParameter, &functionIndex,
+                              &childIndex)) {
+    assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
+    assert(0 <= childIndex && childIndex <= k_indexOfParameter);
+    *defaultXNTCodePoint = CodePoint(k_functionsXNT[functionIndex]);
+    *defaultXNTHasChanged = true;
+    return childIndex == k_indexOfMainExpression;
+  }
+  return false;
 }
 
 }  // namespace XNTHelpers

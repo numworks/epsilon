@@ -205,11 +205,6 @@ bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
   return isCollapsable(&numberOfOpenParentheses, OMG::Direction::Left());
 }
 
-Layout LayoutNode::XNTLayout(int childIndex) const {
-  LayoutNode *p = parent();
-  return p == nullptr ? Layout() : p->XNTLayout(p->indexOfChild(this));
-}
-
 bool LayoutNode::createGraySquaresAfterEnteringGrid(Layout layoutToExclude) {
   return changeGraySquaresOfAllGridRelatives(true, true, layoutToExclude);
 }

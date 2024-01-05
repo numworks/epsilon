@@ -27,7 +27,6 @@ class ListSequenceLayoutNode final : public LayoutNode {
                                      bool* shouldRedrawLayout) override;
   DeletionMethod deletionMethodForCursorLeftOfChild(
       int childIndex) const override;
-  Layout XNTLayout(int childIndex = -1) const override;
 
  private:
   constexpr static int k_functionLayoutIndex = 0;

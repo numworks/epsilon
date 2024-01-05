@@ -87,16 +87,6 @@ size_t IntegralLayoutNode::serialize(
       SerializationHelper::ParenthesisType::System);
 }
 
-Layout IntegralLayoutNode::XNTLayout(int childIndex) const {
-  if (childIndex == k_integrandLayoutIndex) {
-    return Layout(childAtIndex(k_differentialLayoutIndex)).clone();
-  }
-  if (childIndex == k_differentialLayoutIndex) {
-    return CodePointLayout::Builder(CodePoint(Integral::k_defaultXNTChar));
-  }
-  return LayoutNode::XNTLayout();
-}
-
 /* Return pointer to the first or the last integral from left to right
  * (considering multiple integrals in a row). */
 IntegralLayoutNode *IntegralLayoutNode::mostNestedIntegral(

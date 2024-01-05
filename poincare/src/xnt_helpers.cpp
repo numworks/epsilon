@@ -1,7 +1,10 @@
+#include <poincare/linear_layout_decoder.h>
 #include <poincare/xnt_helpers.h>
 #include <poincare_expressions.h>
 
 #include <array>
+
+#include "parsing/tokenizer.h"
 
 namespace Poincare {
 
@@ -129,6 +132,82 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
           bufferSize - 1 >= parameterLength) {
         decoder.printInBuffer(buffer, bufferSize, parameterLength);
         assert(buffer[parameterLength] == 0);
+      }
+    }
+    return true;
+  }
+  return false;
+}
+
+static Layout xntLayout(Layout parameterLayout) {
+  if (parameterLayout.isUninitialized()) {
+    return Layout();
+  }
+  Layout xnt = parameterLayout.clone();
+  if (!xnt.isCodePointsString() &&
+      xnt.type() != LayoutNode::Type::CodePointLayout &&
+      xnt.type() != LayoutNode::Type::CombinedCodePointsLayout) {
+    return Layout();
+  }
+  if (!xnt.isHorizontal()) {
+    xnt = HorizontalLayout::Builder(xnt.clone());
+  }
+  LinearLayoutDecoder decoder(static_cast<HorizontalLayout&>(xnt));
+  if (!Tokenizer::CanBeCustomIdentifier(decoder)) {
+    return Layout();
+  }
+  return xnt;
+}
+
+bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize) {
+  constexpr int k_numberOfFunctions = 6;
+  constexpr static LayoutNode::Type k_functionsType[k_numberOfFunctions] = {
+      LayoutNode::Type::FirstOrderDerivativeLayout,
+      LayoutNode::Type::HigherOrderDerivativeLayout,
+      LayoutNode::Type::IntegralLayout,
+      LayoutNode::Type::ProductLayout,
+      LayoutNode::Type::SumLayout,
+      LayoutNode::Type::ListSequenceLayout,
+  };
+  constexpr static const char k_functionsXNT[k_numberOfFunctions] = {
+      Derivative::k_defaultXNTChar, Derivative::k_defaultXNTChar,
+      Integral::k_defaultXNTChar,   Product::k_defaultXNTChar,
+      Sum::k_defaultXNTChar,        ListSequence::k_defaultXNTChar,
+  };
+  constexpr static const int k_indexOfMainExpression = 0;
+  constexpr static const int k_indexOfParameter = 1;
+  int functionIndex = -1;
+  int childIndex = -1;
+  Layout parameterLayout;
+  assert(!layout.isUninitialized());
+  Layout child = layout;
+  Layout parent = child.parent();
+  bool functionFound = false;
+  while (!parent.isUninitialized() && !functionFound) {
+    childIndex = parent.indexOfChild(child);
+    if (childIndex <= k_indexOfParameter) {
+      for (size_t i = 0; i < k_numberOfFunctions; i++) {
+        if (parent.type() == k_functionsType[i]) {
+          functionIndex = i;
+          parameterLayout = parent.childAtIndex(k_indexOfParameter);
+          functionFound = true;
+          break;
+        }
+      }
+    }
+    child = parent;
+    parent = child.parent();
+  }
+  buffer[0] = 0;
+  if (functionFound) {
+    assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
+    assert(0 <= childIndex && childIndex <= k_indexOfParameter);
+    SerializationHelper::CodePoint(buffer, bufferSize,
+                                   k_functionsXNT[functionIndex]);
+    if (childIndex == k_indexOfMainExpression) {
+      parameterLayout = xntLayout(parameterLayout);
+      if (!parameterLayout.isUninitialized()) {
+        parameterLayout.serializeForParsing(buffer, bufferSize);
       }
     }
     return true;

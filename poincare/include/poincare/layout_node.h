@@ -158,7 +158,6 @@ class LayoutNode : public TreeNode {
    * returns false, because +'something' nevers means +*'something'. */
   bool canBeOmittedMultiplicationLeftFactor() const;
   virtual bool hasUpperLeftIndex() const { return false; }
-  virtual Layout XNTLayout(int childIndex = -1) const;
 
   virtual Layout makeEditable();
 

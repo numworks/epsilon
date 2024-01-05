@@ -57,16 +57,6 @@ SequenceLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
       childIndex, k_argumentLayoutIndex);
 }
 
-Layout SequenceLayoutNode::XNTLayout(int childIndex) const {
-  if (childIndex == k_argumentLayoutIndex) {
-    return Layout(childAtIndex(k_variableLayoutIndex)).clone();
-  }
-  if (childIndex == k_variableLayoutIndex) {
-    return CodePointLayout::Builder(CodePoint(SumAndProduct::k_defaultXNTChar));
-  }
-  return LayoutNode::XNTLayout();
-}
-
 // Protected
 
 KDSize SequenceLayoutNode::lowerBoundSizeWithVariableEquals(KDFont::Size font) {

@@ -34,7 +34,6 @@ class DerivativeLayoutNode : public LayoutNode {
                                    bool* shouldRedrawLayout) override;
   DeletionMethod deletionMethodForCursorLeftOfChild(
       int childIndex) const override;
-  Layout XNTLayout(int childIndex = -1) const override;
 
   VariableSlot variableSlot() const { return m_variableSlot; }
 

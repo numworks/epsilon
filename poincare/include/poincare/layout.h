@@ -86,8 +86,6 @@ class Layout : public TreeHandle {
         numberOfOpenParenthesis, direction);
   }
 
-  Layout XNTLayout() const;
-
   // Layout modification
   int indexOfChildToPointToWhenInserting() {
     return node()->indexOfChildToPointToWhenInserting();

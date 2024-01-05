@@ -335,7 +335,7 @@ bool AbstractTextField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   UTF8Decoder decoder(text(), cursorLocation());
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
-  XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize);
+  XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize);
   if (strlen(buffer) == 0) {
     SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
     if (Ion::Events::repetitionFactor() > 0) {

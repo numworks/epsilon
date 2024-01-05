@@ -9,11 +9,10 @@
 namespace Poincare {
 
 namespace XNTHelpers {
-
-static bool findParameteredFunction(UnicodeDecoder& decoder,
-                                    const char* const* functionsAlias,
-                                    int numberOfFuctions, int maxChildIndex,
-                                    int* functionIndex, int* childIndex) {
+static bool findParameteredFunction1D(UnicodeDecoder& decoder,
+                                      const char* const* functionsAlias,
+                                      int numberOfFuctions, int maxChildIndex,
+                                      int* functionIndex, int* childIndex) {
   assert(functionIndex && childIndex);
   *functionIndex = -1;
   *childIndex = -1;
@@ -98,7 +97,7 @@ static bool findParameteredFunction(UnicodeDecoder& decoder,
   return functionFound;
 }
 
-bool FindXNTSymbol(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
+bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
   constexpr int k_numberOfFunctions = 5;
   constexpr static const char* k_functionsAlias[k_numberOfFunctions] = {
       Derivative::s_functionHelper.aliasesList().mainAlias(),
@@ -117,9 +116,9 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
   int functionIndex;
   int childIndex;
   buffer[0] = 0;
-  if (findParameteredFunction(decoder, k_functionsAlias, k_numberOfFunctions,
-                              k_indexOfParameter, &functionIndex,
-                              &childIndex)) {
+  if (findParameteredFunction1D(decoder, k_functionsAlias, k_numberOfFunctions,
+                                k_indexOfParameter, &functionIndex,
+                                &childIndex)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     assert(0 <= childIndex && childIndex <= k_indexOfParameter);
     SerializationHelper::CodePoint(buffer, bufferSize,

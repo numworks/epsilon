@@ -96,18 +96,18 @@ static bool findParameteredFunction(UnicodeDecoder& decoder,
 }
 
 bool FindXNTSymbol(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
-  constexpr int k_numberOfFunctions = 4;
+  constexpr int k_numberOfFunctions = 5;
   constexpr static const char* k_functionsAlias[k_numberOfFunctions] = {
       Derivative::s_functionHelper.aliasesList().mainAlias(),
       Integral::s_functionHelper.aliasesList().mainAlias(),
       Product::s_functionHelper.aliasesList().mainAlias(),
       Sum::s_functionHelper.aliasesList().mainAlias(),
+      ListSequence::s_functionHelper.aliasesList().mainAlias(),
   };
   constexpr static const char k_functionsXNT[k_numberOfFunctions] = {
-      Derivative::k_defaultXNTChar,
-      Integral::k_defaultXNTChar,
-      Product::k_defaultXNTChar,
-      Sum::k_defaultXNTChar,
+      Derivative::k_defaultXNTChar,   Integral::k_defaultXNTChar,
+      Product::k_defaultXNTChar,      Sum::k_defaultXNTChar,
+      ListSequence::k_defaultXNTChar,
   };
   constexpr static const int k_indexOfMainExpression = 0;
   constexpr static const int k_indexOfParameter = 1;

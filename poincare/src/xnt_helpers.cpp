@@ -5,6 +5,8 @@
 
 namespace Poincare {
 
+namespace XNTHelpers {
+
 static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
   while (CodePoint c = pattern.nextCodePoint()) {
     if (string.nextCodePoint() != c) {
@@ -110,5 +112,7 @@ bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
   }
   return functionFound && !cursorInVariableField;
 }
+
+}  // namespace XNTHelpers
 
 }  // namespace Poincare

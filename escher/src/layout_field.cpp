@@ -215,7 +215,8 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     int position = cursor()->position();
     LinearLayoutDecoder decoder(horizontalLayout, position);
     bool defaultXNTHasChanged = false;
-    if (FindXNTSymbol(decoder, &defaultXNTHasChanged, &defaultXNTCodePoint)) {
+    if (XNTHelpers::FindXNTSymbol(decoder, &defaultXNTHasChanged,
+                                  &defaultXNTCodePoint)) {
       size_t parameterStart;
       size_t parameterLength;
       if (ParameteredExpression::ParameterText(decoder, &parameterStart,

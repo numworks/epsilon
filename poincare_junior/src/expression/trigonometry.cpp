@@ -142,9 +142,12 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
       assert(Integer::Is<uint8_t>(multipleTree));
       uint8_t n = Integer::Handler(multipleTree).to<uint8_t>();
       multipleTree->removeTree();
-      u->cloneTreeOverTree(ExactFormula(n, isSin, &isOpposed));
-      Simplification::DeepSystematicReduce(u);
-      changed = true;
+      const Tree* exactFormula = ExactFormula(n, isSin, &isOpposed);
+      if (exactFormula) {
+        u->cloneTreeOverTree(exactFormula);
+        Simplification::DeepSystematicReduce(u);
+        changed = true;
+      }
     } else {
       multipleTree->removeTree();
     }
@@ -156,11 +159,10 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
     // sin(asin(x))=cos(acos(x))=x, sin(acos(x))=cos(asin(x))=sqrt(1-x^2)
     changed = true;
   }
-  if (isOpposed) {
-    u->moveTreeAtNode((-1_e)->clone());
+  if (isOpposed && changed) {
+    u->cloneTreeAtNode(-1_e);
     u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
     Simplification::SimplifyMultiplication(u);
-    changed = true;
   }
   return changed;
 }
@@ -168,15 +170,22 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
 bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
   // Trig second element is always expected to be a reduced integer.
   assert(u->isInteger() && !Simplification::DeepSystematicReduce(u));
+  bool changed = false;
   IntegerHandler i = Integer::Handler(u);
   Tree* remainder = IntegerHandler::Remainder(i, IntegerHandler(4));
   if (Comparison::Compare(remainder, 2_e) >= 0) {
+    changed = true;
     *isOpposed = !*isOpposed;
     remainder->moveTreeOverTree(
         IntegerHandler::Remainder(i, IntegerHandler(2)));
+    assert(!remainder->treeIsIdenticalTo(u));
   }
-  bool changed = Comparison::Compare(remainder, u) != 0;
-  u->moveTreeOverTree(remainder);
+  changed |= !remainder->treeIsIdenticalTo(u);
+  if (changed) {
+    u->moveTreeOverTree(remainder);
+  } else {
+    remainder->removeTree();
+  }
   // Simplified second element should have only two possible values.
   assert(u->isZero() || u->isOne());
   return changed;

@@ -34,12 +34,10 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
   m_isEditing = isEditing;
   markWholeFrameAsDirty();
   bool layoutChanged = false;
-  if (isEditing) {
-    // layoutChanged = m_cursor.didEnterCurrentPosition();
-  } else {
-    // We're leaving the edition of the current layout
-    // layoutChanged = m_cursor.didExitPosition();
-  }
+  m_layoutView.setEditing(isEditing);
+  // TODO only useful if empty racks or matrices are changed
+  layoutView()->layout().invalidAllSizesPositionsAndBaselines();
+  layoutChanged = true;
   layoutSubviews();
   markWholeFrameAsDirty();
   return layoutChanged;

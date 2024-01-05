@@ -53,14 +53,21 @@ class LayoutViewWithCursor : public LayoutView {
  public:
   LayoutViewWithCursor(PoincareJ::LayoutBufferCursor* cursor,
                        KDGlyph::Format format = {})
-      : LayoutView(format), m_cursor(cursor) {
+      : LayoutView(format), m_cursor(cursor), m_editing(true) {
     assert(cursor);
+  }
+  void setEditing(bool isEditing) {
+    m_editing = isEditing;
+    markWholeFrameAsDirty();
   }
 
  private:
   Poincare::Layout layout() const override { return m_cursor->layoutBuffer(); }
-  PoincareJ::LayoutCursor* cursor() const override { return m_cursor; }
+  PoincareJ::LayoutCursor* cursor() const override {
+    return m_editing ? m_cursor : nullptr;
+  }
   PoincareJ::LayoutBufferCursor* m_cursor;
+  bool m_editing;
 };
 
 }  // namespace Escher

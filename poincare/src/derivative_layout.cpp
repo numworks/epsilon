@@ -180,16 +180,6 @@ DerivativeLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
       childIndex, k_derivandLayoutIndex);
 }
 
-Layout DerivativeLayoutNode::XNTLayout(int childIndex) const {
-  if (childIndex == k_derivandLayoutIndex) {
-    return Layout(childAtIndex(k_variableLayoutIndex)).clone();
-  }
-  if (childIndex == k_variableLayoutIndex) {
-    return CodePointLayout::Builder(CodePoint(Derivative::k_defaultXNTChar));
-  }
-  return LayoutNode::XNTLayout();
-}
-
 KDSize DerivativeLayoutNode::computeSize(KDFont::Size font) {
   /* The derivative layout could overflow KDCoordinate if the variable or the
    * order layouts are too large. Since they are duplicated, if there are nested

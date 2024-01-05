@@ -217,7 +217,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     LinearLayoutDecoder decoder(horizontalLayout, cursor()->position());
     XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize);
   } else {
-    layout.XNTLayout().serializeForParsing(buffer, bufferSize);
+    XNTHelpers::FindXNTSymbol2D(layout, buffer, bufferSize);
   }
   assert(isEditing());
   if (strlen(buffer) == 0) {

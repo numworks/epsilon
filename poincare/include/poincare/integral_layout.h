@@ -35,7 +35,6 @@ class IntegralLayoutNode final : public LayoutNode {
   int indexOfChildToPointToWhenInserting() override {
     return k_lowerBoundLayoutIndex;
   }
-  Layout XNTLayout(int childIndex = -1) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(IntegralLayoutNode); }

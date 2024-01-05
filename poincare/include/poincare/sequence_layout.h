@@ -38,7 +38,6 @@ class SequenceLayoutNode : public LayoutNode {
   int indexOfChildToPointToWhenInserting() override {
     return k_lowerBoundLayoutIndex;
   }
-  Layout XNTLayout(int childIndex = -1) const override;
 
   // TreeNode
   int numberOfChildren() const override { return 4; }

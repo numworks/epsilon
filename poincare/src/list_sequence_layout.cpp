@@ -44,16 +44,6 @@ ListSequenceLayoutNode::deletionMethodForCursorLeftOfChild(
       childIndex, k_functionLayoutIndex);
 }
 
-Layout ListSequenceLayoutNode::XNTLayout(int childIndex) const {
-  if (childIndex == k_functionLayoutIndex) {
-    return Layout(childAtIndex(k_variableLayoutIndex)).clone();
-  }
-  if (childIndex == k_variableLayoutIndex) {
-    return CodePointLayout::Builder(CodePoint(ListSequence::k_defaultXNTChar));
-  }
-  return LayoutNode::XNTLayout();
-}
-
 KDSize ListSequenceLayoutNode::computeSize(KDFont::Size font) {
   KDPoint upperBoundPosition = positionOfChild(upperBoundLayout(), font);
   KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);

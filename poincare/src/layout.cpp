@@ -11,8 +11,6 @@
 #include <poincare/square_bracket_pair_layout.h>
 #include <poincare/symbol_abstract.h>
 
-#include "parsing/tokenizer.h"
-
 namespace Poincare {
 
 Layout Layout::clone() const {
@@ -93,26 +91,6 @@ Layout Layout::recursivelyMatches(LayoutTest test) const {
     }
   }
   return Layout();
-}
-
-Layout Layout::XNTLayout() const {
-  Layout xntLayout = const_cast<Layout *>(this)->node()->XNTLayout();
-  assert(xntLayout.isUninitialized() ||
-         xntLayout.numberOfDescendants(true) >= 0);
-  if (xntLayout.isUninitialized() ||
-      (!xntLayout.isCodePointsString() &&
-       xntLayout.type() != LayoutNode::Type::CodePointLayout &&
-       xntLayout.type() != LayoutNode::Type::CombinedCodePointsLayout)) {
-    return Layout();
-  }
-  if (!xntLayout.isHorizontal()) {
-    xntLayout = HorizontalLayout::Builder(xntLayout.clone());
-  }
-  LinearLayoutDecoder decoder(static_cast<HorizontalLayout &>(xntLayout));
-  if (!Tokenizer::CanBeCustomIdentifier(decoder)) {
-    return Layout();
-  }
-  return xntLayout;
 }
 
 bool Layout::shouldCollapseSiblingsOnRight() const {

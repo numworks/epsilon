@@ -80,6 +80,7 @@ class ConstantNode final : public ExpressionNode {
       ConstantInfo{k_exponentialEName, 2, M_E, nullptr},
       ConstantInfo{"_c", 3, 299792458.0, "_m/_s"},
       ConstantInfo{"_e", 3, 1.602176634e-19, "_C"},
+      ConstantInfo{"_F", 3, 96485.3321233, "_C*_mol^-1"},
       ConstantInfo{"_G", 3, 6.67430e-11, "_m^3*_kg^-1*_s^-2"},
       ConstantInfo{"_g0", 3, 9.80665, "_m/_s^2"},
       ConstantInfo{"_k", 3, 1.380649e-23, "_J/_K"},

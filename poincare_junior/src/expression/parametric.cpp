@@ -26,39 +26,44 @@ uint8_t Parametric::FunctionIndex(const Tree* t) {
 }
 
 bool Parametric::SimplifySumOrProduct(Tree* expr) {
+  /* TODO:
+   * - Handle upperBound < lowerBound -> 0
+   * - Distribute multiplicative constant : sum(a*f(k),k,m,n) ->
+   *                                        a*(n-m)*sum(f(k),k,m,n)
+   */
+  // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
+  if (PatternMatching::MatchReplaceAndSimplify(
+          expr, KSum(KA, KB, KC, KVar<0>),
+          KMult(KHalf, KAdd(KMult(KC, KAdd(1_e, KC)),
+                            KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
+    return true;
+  }
+  // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
+  if (PatternMatching::MatchReplaceAndSimplify(
+          expr, KSum(KA, KB, KC, KPow(KVar<0>, 2_e)),
+          KMult(KPow(6_e, -1_e),
+                KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
+                     KMult(-1_e, KAdd(-1_e, KB), KB,
+                           KAdd(KMult(2_e, KB), -1_e)))))) {
+    return true;
+  }
   bool isSum = expr->isSum();
   Tree* lowerBound = expr->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   Tree* child = upperBound->nextTree();
-  // TODO: Also skip if there are random nodes.
-  if (!Variables::HasVariable(child, k_localVariableId)) {
-    // TODO : add ceil around bounds
-    constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
-    Variables::LeaveScope(child);
-    Tree* result = PatternMatching::CreateAndSimplify(
-        isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
-        {.KA = upperBound, .KB = lowerBound, .KC = child});
-    expr->moveTreeOverTree(result);
-    return true;
+  // HasVariable and HasLocalRandom could be factorized.
+  if (Variables::HasVariable(child, k_localVariableId) ||
+      HasLocalRandom(expr)) {
+    return false;
   }
-  // TODO upperBound < lowerBound -> 0
-  // TODO distribute multiplicative constant
-  if (isSum) {
-    return
-        // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
-        PatternMatching::MatchReplaceAndSimplify(
-            expr, KSum(KA, KB, KC, KVar<0>),
-            KMult(KHalf, KAdd(KMult(KC, KAdd(1_e, KC)),
-                              KMult(-1_e, KB, KAdd(-1_e, KB))))) ||
-        // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
-        PatternMatching::MatchReplaceAndSimplify(
-            expr, KSum(KA, KB, KC, KPow(KVar<0>, 2_e)),
-            KMult(KPow(6_e, -1_e),
-                  KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
-                       KMult(-1_e, KAdd(-1_e, KB), KB,
-                             KAdd(KMult(2_e, KB), -1_e)))));
-  }
-  return false;
+  // TODO : add ceil around bounds
+  constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
+  Variables::LeaveScope(child);
+  Tree* result = PatternMatching::CreateAndSimplify(
+      isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
+      {.KA = upperBound, .KB = lowerBound, .KC = child});
+  expr->moveTreeOverTree(result);
+  return true;
 }
 
 bool Parametric::ExpandSum(Tree* expr) {
@@ -105,8 +110,20 @@ bool Parametric::ContractProduct(Tree* expr) {
   return false;
 }
 
+bool Parametric::HasLocalRandom(Tree* expr) {
+  for (Tree* u : expr->selfAndDescendants()) {
+    if (u->isRandomNode()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Parametric::Explicit(Tree* expr) {
   assert(expr->isSum() || expr->isProduct());
+  if (HasLocalRandom(expr)) {
+    return false;
+  }
   bool isSum = expr->isSum();
   const Tree* lowerBound = expr->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
@@ -135,7 +152,6 @@ bool Parametric::Explicit(Tree* expr) {
     Simplification::ShallowSystematicReduce(value);
     // Clone the child and replace k with its value
     Tree* clone = child->clone();
-    // TODO: Also distinguish random nodes seeds.
     Variables::Replace(clone, k_localVariableId, value);
     value->removeTree();
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);

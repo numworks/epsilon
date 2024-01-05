@@ -6,7 +6,9 @@
 
 namespace PoincareJ {
 
-/* TODO: To handle random in Sums or ListSequences :
+/* For now, random node prevent some simplifications in parametric trees.
+ *
+ * TODO: If we want to explicit parametric trees containing random nodes:
  * - Random nodes should have a System node equivalent, handling the seed
  *   -> This will also prevent from layouting them, and remove some edge cases
  *      in builtins.
@@ -20,13 +22,6 @@ namespace PoincareJ {
  * - Before approximation, optimize the seeds :
  *   -> Remove seed if there are no duplicates (and handle approximation)
  *   -> Shift seeds to a lower unused seed is possible
- *
- * Some alternatives :
- *  - Do not explicit sums/products, nor project listSequences containing random
- *    Handle it on approximation.
- *    -> We still need to account for seeds within the global/local context.
- *  - Just approximate all random nodes instead of seeding them
- *    -> We can't do that because of Grapher
  */
 
 class Random {

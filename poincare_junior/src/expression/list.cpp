@@ -19,6 +19,9 @@ bool List::ProjectToNthElement(Tree* expr, int n,
       expr->moveTreeOverTree(expr->child(n));
       return true;
     case BlockType::ListSequence: {
+      if (Parametric::HasLocalRandom(expr)) {
+        return false;
+      }
       EditionReference value = Integer::Push(n + 1);
       Variables::Replace(expr->child(2), 0, value);
       value->removeTree();

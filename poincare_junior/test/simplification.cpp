@@ -168,6 +168,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
                 "3×y^(4)×e^(3×y)×ln(y)+e^(3×y)×y^3+4×y^3×e^(3×y)×ln(y)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
+  simplifies_to("diff(x+x*abs(x), x, y)", "y×diff(abs(x),x,y)+1+abs(y)");
   simplifies_to("abs(abs(abs((-3)×x)))", "3×abs(x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
   simplifies_to("0.1875", "3/16");
@@ -337,11 +338,13 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("sequence(k,k,{1,2})", "undef");
 
   // Random
-  simplifies_to("diff(random(), x, 2)", "undef");
   // TODO : Handle them with {.m_strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
   simplifies_to("random()", "random()");
   simplifies_to("randint(1,10)", "randint(1,10)");
+  simplifies_to("diff(random()+1,x,2)", "diff(random(),x,2)");
+  simplifies_to("sum(k+randint(1,10),k,2,5)", "14+sum(randint(1,10),k,2,5)");
+  simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
 
   // TODO works but rejected by metric
   // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");

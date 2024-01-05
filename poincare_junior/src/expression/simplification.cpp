@@ -288,6 +288,9 @@ bool Simplification::AdvancedReduction(Tree* u) {
   Path bestPath;
   Path currentPath;
   CrcCollection crcCollection;
+  // Add initial root
+  crcCollection.add(
+      Ion::crc32Byte(reinterpret_cast<const uint8_t*>(u), u->treeSize()));
   Tree* editedExpression = u->clone();
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   std::cout << "\nAdvancedReduction\nInitial tree (" << bestMetric << ") is : ";

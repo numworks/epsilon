@@ -215,7 +215,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
     LinearLayoutDecoder decoder(horizontalLayout, cursor()->position());
-    XNTHelpers::FindXNTSymbol(decoder, buffer, bufferSize);
+    XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize);
   } else {
     XNTHelpers::FindXNTSymbol2D(layout, buffer, bufferSize);
   }

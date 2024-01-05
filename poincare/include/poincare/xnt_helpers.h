@@ -8,7 +8,7 @@ namespace Poincare {
 
 namespace XNTHelpers {
 
-bool FindXNTSymbol(UnicodeDecoder& decoder, char* buffer, size_t bufferSize);
+bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize);
 
 bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize);
 

@@ -215,6 +215,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2×sin(2y)×cos(y)", "sin(y)+sin(3×y)");
   simplifies_to("2×cos(2y)×sin(y)", "-sin(y)+sin(3×y)");
   simplifies_to("2×cos(2y)×cos(y)", "cos(y)+cos(3×y)");
+  // Both must approximate to -1.68648611086611210677890965279755492140054557
+  simplifies_to(
+      "cos(π×7/10)+cos(π×7/5)+cos(π×-7/8)+cos(π×11/12)+cos(π×13/6)+sin(π×7/"
+      "10)+sin(π×7/5)+sin(π×-7/8)+sin(π×11/12)+sin(π×13/6)",
+      "1+√(3)/2-(√(2+√(2))+√(2-√(2)))/2-(2^(-1/2)+√(5/8-√(5)/8)+√(5/8+√(5)/"
+      "8))");
   simplifies_to("ln(0)", "nonreal");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1",
@@ -509,10 +515,10 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
                 "{tan(arccos(x)),tan(arcsin(x)),tan(arctan(x))}");
 
   simplifies_to("acos(cos(x))", "acos(cos(x))");
-  simplifies_to("acos({cos(-21*π/5), sin(-21*π/5)})/π", "{1/5,7/10}");
-  simplifies_to("asin({cos(-21*π/5), sin(-21*π/5)})/π", "{3/10,-1/5}");
-  simplifies_to("acos({cos(π*17/5), sin(π*17/5)})/π", "{3/5,9/10}");
-  simplifies_to("asin({cos(π*17/5), sin(π*17/5)})/π", "{-1/10,-2/5}");
+  simplifies_to("acos({cos(-23*π/7), sin(-23*π/7)})/π", "{5/7,3/14}");
+  simplifies_to("asin({cos(-23*π/7), sin(-23*π/7)})/π", "{-3/14,2/7}");
+  simplifies_to("acos({cos(π*23/7), sin(π*23/7)})/π", "{5/7,11/14}");
+  simplifies_to("asin({cos(π*23/7), sin(π*23/7)})/π", "{-3/14,-2/7}");
 
   simplifies_to("acos({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
@@ -526,7 +532,7 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
   // TODO : Output should be acos(cos(x))
   simplifies_to("acos(cos(x))", "90-arcsin(cos(x))",
                 {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("acos({cos(680), sin(680)})/200", "{3/5,9/10}",
+  simplifies_to("acos({cos(683), sin(683)})/200", "{117/200,183/200}",
                 {.m_angleUnit = AngleUnit::Gradian});
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-90,-60,-45,-30,0,30,45,60,90}",

@@ -9,8 +9,6 @@
 
 namespace PoincareJ {
 
-// TODO: tests
-
 bool Trigonometry::IsDirect(const Tree* node) {
   switch (node->type()) {
     case BlockType::Cosine:
@@ -34,40 +32,68 @@ bool Trigonometry::IsInverse(const Tree* node) {
 }
 
 const Tree* Trigonometry::ExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
-  // Sin and cos are 2pi periodic. With sin(n*π/12), n goes from 0 to 23.
-  n = n % 24;
+  // Sin and cos are 2pi periodic. With sin(n*π/120), n goes from 0 to 239.
+  n = n % 240;
   // Formula is opposed depending on the quadrant
-  if ((isSin && n >= 12) || (!isSin && n >= 6 && n < 18)) {
+  if ((isSin && n >= 120) || (!isSin && n >= 60 && n < 180)) {
     *isOpposed = !*isOpposed;
   }
   // Last two quadrant are now equivalent to the first two ones.
-  n = n % 12;
+  n = n % 120;
   /* In second half of first quadrant and in first half of second quadrant,
    * we can simply swap Sin/Cos formulas. */
-  if (n > 3 && n <= 9) {
+  if (n > 30 && n <= 90) {
     isSin = !isSin;
   }
   // Second quadrant is now equivalent to the first one.
-  n = n % 6;
+  n = n % 60;
   // Second half of the first quadrant is the first half mirrored.
-  if (n > 3) {
-    n = 6 - n;
+  if (n > 30) {
+    n = 60 - n;
   }
-  // Only 4 formulas are left for angles 0, π/12, π/6 and π/4.
-  assert(n >= 0 && n < 4);
+  /* Only 7 exact formulas are left to handle. */
+  assert(n >= 0 && n <= 30);
   switch (n) {
-    case 0:  // sin(0) / cos(0)
+    case 0:  // 0
       return isSin ? 0_e : 1_e;
-    case 1:  // sin(π/12) / cos(π/12)
+    case 10:  // π/12
       return isSin
                  ? KMult(KAdd(KExp(KMult(KHalf, KLn(3_e))), -1_e),
                          KPow(KMult(KExp(KMult(KHalf, KLn(2_e))), 2_e), -1_e))
                  : KMult(KAdd(KExp(KMult(KHalf, KLn(3_e))), 1_e),
                          KPow(KMult(KExp(KMult(KHalf, KLn(2_e))), 2_e), -1_e));
-    case 2:  // sin(π/6) / cos(π/6)
+    case 12:  // π/10
+      return isSin ? KMult(1_e / 4_e, KAdd(-1_e, KExp(KMult(KHalf, KLn(5_e)))))
+                   : KExp(KMult(
+                         KHalf,
+                         KLn(KMult(1_e / 8_e,
+                                   KAdd(5_e, KExp(KMult(KHalf, KLn(5_e))))))));
+    case 15:  // π/8
+      return isSin
+                 ? KMult(
+                       KHalf,
+                       KExp(KMult(
+                           KHalf,
+                           KLn(KAdd(2_e, KMult(-1_e, KExp(KMult(KHalf,
+                                                                KLn(2_e)))))))))
+                 : KMult(KHalf,
+                         KExp(KMult(
+                             KHalf,
+                             KLn(KAdd(2_e, KExp(KMult(KHalf, KLn(2_e))))))));
+    case 20:  // π/6
       return isSin ? KHalf : KMult(KExp(KMult(KHalf, KLn(3_e))), KHalf);
-    default:  // sin(π/4) = cos(π/4)
+    case 24:  // π/5
+      return isSin ? KExp(KMult(
+                         KHalf,
+                         KLn(KMult(
+                             1_e / 8_e,
+                             KAdd(5_e,
+                                  KMult(-1_e, KExp(KMult(KHalf, KLn(5_e)))))))))
+                   : KMult(1_e / 4_e, KAdd(1_e, KExp(KMult(KHalf, KLn(5_e)))));
+    case 30:  // π/4
       return KExp(KMult(-1_e, KHalf, KLn(2_e)));
+    default:
+      return nullptr;
   }
 }
 
@@ -132,13 +158,12 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   }
   const Tree* piFactor = getPiFactor(firstArgument);
   if (piFactor) {
-    // TODO: Also handle (n/10)*π and (n/8)*π
-    // Find n to match Trig((n/12)*π, ...) with exact value.
-    Tree* multipleTree = Rational::Multiplication(12_e, piFactor);
+    // Find n to match Trig((n/120)*π, ...) with exact value.
+    Tree* multipleTree = Rational::Multiplication(120_e, piFactor);
     if (multipleTree->isInteger()) {
       // Trig is 2pi periodic, n can be retrieved as a uint8_t.
       multipleTree->moveTreeOverTree(IntegerHandler::Remainder(
-          Integer::Handler(multipleTree), IntegerHandler(24)));
+          Integer::Handler(multipleTree), IntegerHandler(240)));
       assert(Integer::Is<uint8_t>(multipleTree));
       uint8_t n = Integer::Handler(multipleTree).to<uint8_t>();
       multipleTree->removeTree();
@@ -243,8 +268,8 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
         KMult(π_e, KPow(KA, -1_e)), {.KA = isAsin ? 6_e : 3_e}));
     changed = true;
   } else if (arg->isMultiplication()) {
-    // TODO: Also handle (n/10)*π and (n/8)*π
-    // TODO : Find a better implementation for these special cases.
+    /* TODO: Handle the same angles as ExactFormula (π/12, π/10, π/8 and π/5 are
+     * missing) and find a better implementation for these special cases. */
     changed =
         // acos(√2/2) = asin(√2/2) = π/4
         PatternMatching::MatchReplaceAndSimplify(
@@ -258,7 +283,6 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
         PatternMatching::MatchReplaceAndSimplify(
             u, KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(3_e)))), 1_e),
             KMult(π_e, KPow(3_e, -1_e))) ||
-        // TODO: Add (√6-√2)/4, (√6+√2)/4 and their opposites.
         changed;
   }
   if (argIsOpposed) {

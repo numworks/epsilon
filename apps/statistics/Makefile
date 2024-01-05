@@ -49,7 +49,7 @@ tests_src += $(addprefix apps/statistics/test/,\
 
 $(eval $(call depends_on_image,apps/statistics/app.cpp,apps/statistics/stat_icon.png))
 
-$(eval $(call depends_on_transparent_image,apps/statistics/graph/graph_view_model.cpp,$(addprefix apps/statistics/,\
+$(eval $(call depends_on_transparent_image,apps/statistics/graph/graph_view_model.cpp,$(addprefix apps/statistics/images/,\
   box_icon.png \
   histogram_icon.png \
   cumulative_icon.png \

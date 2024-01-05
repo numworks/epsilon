@@ -812,8 +812,11 @@ static void ScoreCursorInDescendants(KDPoint p, Tree *rack, KDFont::Size font,
   KDCoordinate currentDistance =
       p.squareDistanceTo(result->middleLeftPoint(font));
   LayoutBufferCursor tempCursor(result->layoutBuffer(), rack);
-  for (int i = 0; i <= rack->numberOfChildren(); i++) {
-    tempCursor.setPosition(i);
+  int n = rack->numberOfChildren();
+  for (int i = 0; i <= n; i++) {
+    /* In order to favor the ends in case of equality, we test the first, the
+     * last and then the middle from left to right. */
+    tempCursor.setPosition(i == 0 ? 0 : i == 1 ? n : i - 1);
     KDCoordinate distance =
         p.squareDistanceTo(tempCursor.middleLeftPoint(font));
     if (currentDistance > distance) {

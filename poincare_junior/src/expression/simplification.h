@@ -82,6 +82,8 @@ class Simplification {
     Path() : m_length(0) {}
     // Pop NextNode directions one at a time.
     void popBaseDirection();
+    // Return if any base direction can be added.
+    bool canAddNewDirection() const { return m_length < k_size; }
     bool append(Direction direction);
     Direction direction(size_t index) const {
       assert(index < m_length);
@@ -91,7 +93,7 @@ class Simplification {
 
    private:
     // Path max length (~= 2 * max number of allowed Expand/Contract)
-    constexpr static size_t k_size = 64;
+    constexpr static size_t k_size = 12;
     Direction m_stack[k_size];
     size_t m_length;
   };

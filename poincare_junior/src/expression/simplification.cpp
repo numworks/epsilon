@@ -160,47 +160,83 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
   std::cout << "AdvancedReductionRec on subtree: ";
   u->logSerialize();
 #endif
-  bool isLeaf = true;
-  for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
-    Direction dir = Direction::SingleDirectionForIndex(i);
-    Tree* target = u;
-    // Apply direction if effective:
-    bool rootChanged = false;
-    if (!CanApplyDirection(target, root, dir)) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-      LogIndent();
-      std::cout << "Can't apply ";
-      dir.log();
-      std::cout << ".\n";
+  if (!path->canAddNewDirection()) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+    LogIndent();
+    std::cout << "Full path.\n";
 #endif
-      continue;
-    }
-    if (!ApplyDirection(&target, root, dir, &rootChanged)) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-      LogIndent();
-      std::cout << "Nothing to ";
-      dir.log();
-      std::cout << ".\n";
+  } else if (crcCollection->isFull()) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+    LogIndent();
+    std::cout << "Full CRC collection.\n";
 #endif
-      continue;
-    }
-    bool exploreFurther = !rootChanged;
-    if (!exploreFurther) {
-      /* Ensure the new tree has never been explored before and that
-       * crcCollection isn't full. */
-      uint32_t crc32 = Ion::crc32Byte(reinterpret_cast<const uint8_t*>(root),
-                                      root->treeSize());
-      exploreFurther = crcCollection->add(crc32);
-      if (!exploreFurther && crcCollection->isFull()) {
-        // Nothing more to do, escape.
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
+  } else {
+    bool isLeaf = true;
+    for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
+      Direction dir = Direction::SingleDirectionForIndex(i);
+      Tree* target = u;
+      // Apply direction if effective:
+      bool rootChanged = false;
+      if (!CanApplyDirection(target, root, dir)) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         LogIndent();
-        std::cout << "Full CRC collection.\n";
-        return;
+        std::cout << "Can't apply ";
+        dir.log();
+        std::cout << ".\n";
+#endif
+        continue;
+      }
+      if (!ApplyDirection(&target, root, dir, &rootChanged)) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+        LogIndent();
+        std::cout << "Nothing to ";
+        dir.log();
+        std::cout << ".\n";
+#endif
+        continue;
+      }
+      /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
+       * not go further. */
+      if (!rootChanged ||
+          crcCollection->add(Ion::crc32Byte(
+              reinterpret_cast<const uint8_t*>(root), root->treeSize()))) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+        bool shouldLog = true;
+#else
+        bool shouldLog = !dir.isNextNode();
+#endif
+        if (shouldLog) {
+          LogIndent();
+          std::cout << "Apply ";
+          dir.log();
+          std::cout << ": ";
+          if (rootChanged) {
+            root->logSerialize();
+          } else {
+            std::cout << "\n";
+          }
+          s_indent++;
+        }
+#endif
+        isLeaf = false;
+        bool canAddDir = path->append(dir);
+        assert(canAddDir);
+        AdvancedReductionRec(target, root, original, path, bestPath, bestMetric,
+                             crcCollection);
+        path->popBaseDirection();
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
+        if (shouldLog) {
+          assert(s_indent > 0);
+          s_indent--;
+        }
 #endif
       }
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-      if (!exploreFurther) {
+      else if (crcCollection->isFull()) {
+        LogIndent();
+        std::cout << "Full CRC collection.\n";
+      } else {
         LogIndent();
         std::cout << "Already applied ";
         dir.log();
@@ -208,73 +244,32 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
         root->logSerialize();
       }
 #endif
-    }
-    if (exploreFurther) {
-      // Ensure path is not full.
-      exploreFurther = path->append(dir);
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-      if (!exploreFurther) {
-        LogIndent();
-        std::cout << "Full path.\n";
+      // Undo changes on root.
+      // TODO : Many times, undoing changes is unnecessary here.
+      if (rootChanged) {
+        root->cloneTreeOverTree(original);
+        ApplyPath(root, path);
       }
-#endif
     }
-    /* If unexplored or unchanged, recursively advanced reduce. If crcCollection
-     * is full or path is full, do not go further. */
-    if (exploreFurther) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-      bool shouldLog = true;
-#else
-      bool shouldLog = !dir.isNextNode();
-#endif
-      if (shouldLog) {
-        LogIndent();
-        std::cout << "Apply ";
-        dir.log();
-        std::cout << ": ";
-        if (rootChanged) {
-          root->logSerialize();
-        } else {
-          std::cout << "\n";
-        }
-        s_indent++;
-      }
-#endif
-      isLeaf = false;
-      AdvancedReductionRec(target, root, original, path, bestPath, bestMetric,
-                           crcCollection);
-      path->popBaseDirection();
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
-      if (shouldLog) {
-        assert(s_indent > 0);
-        s_indent--;
-      }
-#endif
-    }
-    // Undo changes on root.
-    if (rootChanged) {
-      root->cloneTreeOverTree(original);
-      ApplyPath(root, path);
+    if (!isLeaf) {
+      return;
     }
   }
-  if (isLeaf) {
-    // All directions are impossible, we are at a leaf. Compare metrics.
-    int metric = GetMetric(root);
+  // All directions are impossible, we are at a leaf. Compare metrics.
+  int metric = GetMetric(root);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-    LogIndent();
-    std::cout << "Leaf reached (" << metric << " VS " << *bestMetric << ")";
+  LogIndent();
+  std::cout << "Leaf reached (" << metric << " VS " << *bestMetric << ")";
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE <= 1
-    std::cout << ": ";
-    root->logSerialize();
+  std::cout << ": ";
+  root->logSerialize();
 #else
-    std::cout << "\n";
+  std::cout << "\n";
 #endif
 #endif
-    if (metric < *bestMetric) {
-      *bestMetric = metric;
-      *bestPath = *path;
-    }
+  if (metric < *bestMetric) {
+    *bestMetric = metric;
+    *bestPath = *path;
   }
 }
 

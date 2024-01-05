@@ -5,9 +5,13 @@
 
 namespace Poincare {
 
+namespace XNTHelpers {
+
 bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
                    CodePoint* defaultXNTCodePoint);
 
 }
+
+}  // namespace Poincare
 
 #endif

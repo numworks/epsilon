@@ -331,8 +331,8 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
   assert(text() == draftText());
   UTF8Decoder decoder(text(), cursorLocation());
   bool defaultXNTHasChanged = false;
-  if (Poincare::FindXNTSymbol(decoder, &defaultXNTHasChanged,
-                              &defaultXNTCodePoint)) {
+  if (Poincare::XNTHelpers::FindXNTSymbol(decoder, &defaultXNTHasChanged,
+                                          &defaultXNTCodePoint)) {
     const char *parameterText;
     size_t parameterLength = bufferSize;
     if (Poincare::ParameteredExpression::ParameterText(

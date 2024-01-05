@@ -14,7 +14,7 @@ static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
   return true;
 }
 
-bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
+bool FindXNTSymbol(UnicodeDecoder& decoder, bool* defaultXNTHasChanged,
                    CodePoint* defaultXNTCodePoint) {
   /* If cursor is in one of the following functions, and everything before the
    * cursor is correctly nested, the default XNTCodePoint will be improved.
@@ -33,13 +33,13 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
       {Product::s_functionHelper.aliasesList(), Product::k_defaultXNTChar},
       {Sum::s_functionHelper.aliasesList(), Sum::k_defaultXNTChar}};
   // Step 1 : Identify the function the cursor is in
-  size_t textStart = functionDecoder.start();
-  size_t location = functionDecoder.position();
+  size_t textStart = decoder.start();
+  size_t location = decoder.position();
   CodePoint c = UCodePointUnknown;
   // Analyze glyphs on the left of the cursor
   if (location > textStart) {
-    c = functionDecoder.previousCodePoint();
-    location = functionDecoder.position();
+    c = decoder.previousCodePoint();
+    location = decoder.position();
   }
   int functionLevel = 0;
   bool cursorInVariableField = false;
@@ -53,29 +53,28 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
           break;
         }
         // Skip over whitespace.
-        while (location > textStart &&
-               functionDecoder.previousCodePoint() == ' ') {
-          location = functionDecoder.position();
+        while (location > textStart && decoder.previousCodePoint() == ' ') {
+          location = decoder.position();
         }
         // Move back right before the last non whitespace code-point
-        functionDecoder.nextCodePoint();
-        location = functionDecoder.position();
+        decoder.nextCodePoint();
+        location = decoder.position();
         // Identify one of the functions
         for (size_t i = 0; i < std::size(sFunctions); i++) {
           const char* name = sFunctions[i].aliasesList.mainAlias();
           size_t length = UTF8Helper::StringCodePointLength(name);
           if (location >= textStart + length) {
             UTF8Decoder nameDecoder(name);
-            size_t savePosition = functionDecoder.position();
+            size_t savePosition = decoder.position();
             // Move the decoder where the function name could start
-            functionDecoder.unsafeSetPosition(savePosition - length);
-            if (Contains(functionDecoder, nameDecoder)) {
+            decoder.unsafeSetPosition(savePosition - length);
+            if (Contains(decoder, nameDecoder)) {
               functionFound = true;
               // Update default code point
               *defaultXNTCodePoint = CodePoint(sFunctions[i].xnt);
               *defaultXNTHasChanged = true;
             }
-            functionDecoder.unsafeSetPosition(savePosition);
+            decoder.unsafeSetPosition(savePosition);
           }
         }
         if (!functionFound) {
@@ -98,14 +97,14 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
         functionLevel++;
         break;
     }
-    c = functionDecoder.previousCodePoint();
-    location = functionDecoder.position();
+    c = decoder.previousCodePoint();
+    location = decoder.position();
   }
   if (functionFound) {
     // Put decoder at the beginning of the argument
-    c = functionDecoder.nextCodePoint();
+    c = decoder.nextCodePoint();
     do {
-      c = functionDecoder.nextCodePoint();
+      c = decoder.nextCodePoint();
     } while (c == ' ');
     assert(c == '(');
   }

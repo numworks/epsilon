@@ -30,15 +30,13 @@ KDSize LayoutView::minimalSizeForOptimalDisplay() const {
   if (layout().isUninitialized()) {
     return KDSizeZero;
   }
-  KDSize layoutSize = layout().layoutSize(font());
-  // TODO forward cursor through the size API
-  PoincareJ::RackLayout::layoutCursor = cursor();
+  KDSize layoutSize = layout().layoutSize(font(), cursor());
   return KDSize(layoutSize.width() + 2 * m_horizontalMargin,
                 layoutSize.height());
 }
 
 KDPoint LayoutView::drawingOrigin() const {
-  KDSize layoutSize = layout().layoutSize(font());
+  KDSize layoutSize = layout().layoutSize(font(), cursor());
   return KDPoint(
       m_horizontalMargin +
           m_glyphFormat.horizontalAlignment *

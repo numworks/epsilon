@@ -10,10 +10,23 @@
 #include <poincare/linear_layout_decoder.h>
 #include <poincare/square_bracket_pair_layout.h>
 #include <poincare/symbol_abstract.h>
+#include <poincare_junior/src/layout/rack_layout.h>
 
 namespace Poincare {
 
 #define Layout OLayout
+
+KDSize Layout::layoutSize(KDFont::Size font,
+                          PoincareJ::LayoutCursor *cursor) const {
+  PoincareJ::RackLayout::layoutCursor = cursor;
+  return node()->layoutSize(font);
+}
+
+KDCoordinate Layout::baseline(KDFont::Size font,
+                              PoincareJ::LayoutCursor *cursor) {
+  PoincareJ::RackLayout::layoutCursor = cursor;
+  return node()->baseline(font);
+}
 
 Layout Layout::clone() const {
   if (isUninitialized()) {

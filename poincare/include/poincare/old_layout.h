@@ -8,6 +8,10 @@
 #include <poincare/tree_handle.h>
 #include <poincare/trinary_boolean.h>
 
+namespace PoincareJ {
+class LayoutCursor;
+}
+
 namespace Poincare {
 
 class OLayout : public TreeHandle {
@@ -44,13 +48,13 @@ class OLayout : public TreeHandle {
   void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
     return node()->render(ctx, p, style);
   }
-  KDSize layoutSize(KDFont::Size font) const {
-    return node()->layoutSize(font);
-  }
+  KDSize layoutSize(KDFont::Size font,
+                    PoincareJ::LayoutCursor *cursor = nullptr) const;
   KDPoint absoluteOrigin(KDFont::Size font) const {
     return node()->absoluteOrigin(font);
   }
-  KDCoordinate baseline(KDFont::Size font) { return node()->baseline(font); }
+  KDCoordinate baseline(KDFont::Size font,
+                        PoincareJ::LayoutCursor *cursor = nullptr);
   void invalidAllSizesPositionsAndBaselines() {
     return node()->invalidAllSizesPositionsAndBaselines();
   }

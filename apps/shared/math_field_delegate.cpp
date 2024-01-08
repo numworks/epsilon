@@ -3,7 +3,6 @@
 #include <apps/constant.h>
 #include <apps/i18n.h>
 #include <poincare/expression.h>
-#include <poincare/xnt_helpers.h>
 
 #include "continuous_function.h"
 #include "poincare_helpers.h"
@@ -17,9 +16,7 @@ namespace Shared {
 bool AbstractMathFieldDelegate::handleEventForField(EditableField *field,
                                                     Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
-    CodePoint xnt = XNTHelpers::CodePointAtIndexInCycle(
-        Ion::Events::repetitionFactor(), defaultXNT());
-    return field->insertXNT(xnt);
+    return field->handleXNT(defaultXNT());
   }
   return false;
 }

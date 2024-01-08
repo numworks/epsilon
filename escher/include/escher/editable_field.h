@@ -21,7 +21,7 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
     return false;
   }
   virtual bool handleStoreEvent() { return false; }
-  bool addXNTCodePoint(CodePoint defaultXNTCodePoint);
+  bool insertXNT(CodePoint defaultXNTCodePoint);
 
  protected:
   bool privateHandleBoxEvent(Ion::Events::Event event);

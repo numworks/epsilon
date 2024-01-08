@@ -25,7 +25,7 @@ bool EditableField::privateHandleBoxEvent(Ion::Events::Event event) {
   return true;
 }
 
-bool EditableField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+bool EditableField::insertXNT(CodePoint defaultXNTCodePoint) {
   if (!prepareToEdit()) {
     return false;
   }

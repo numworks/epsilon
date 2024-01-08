@@ -34,7 +34,7 @@ bool AbstractMathFieldDelegate::handleEventForField(EditableField *field,
       }
       xnt = XNTCodePoints[XNTIndex % k_numberOfCodePoints];
     }
-    return field->addXNTCodePoint(xnt);
+    return field->insertXNT(xnt);
   }
   return false;
 }

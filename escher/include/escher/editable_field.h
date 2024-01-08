@@ -25,6 +25,7 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
 
  protected:
   bool privateHandleBoxEvent(Ion::Events::Event event);
+  virtual bool prepareToEdit() { return true; }
 };
 
 }  // namespace Escher

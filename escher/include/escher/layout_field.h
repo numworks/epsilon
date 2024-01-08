@@ -102,6 +102,7 @@ class LayoutField : public EditableField {
   TextCursorView::CursorFieldView* cursorCursorFieldView() override {
     return &m_contentView;
   }
+  bool prepareToEdit() override;
 
   class ContentView : public TextCursorView::CursorFieldView {
    public:

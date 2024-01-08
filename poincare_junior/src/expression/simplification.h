@@ -102,7 +102,8 @@ class Simplification {
   // Recursive advanced reduction
   static void AdvancedReductionRec(Tree *u, Tree *root, const Tree *original,
                                    Path *path, Path *bestPath, int *bestMetric,
-                                   CrcCollection *crcCollection);
+                                   CrcCollection *crcCollection,
+                                   bool *didOverflowPath);
   // Return true if tree has changed. path is expected to be valid.
   static bool ApplyPath(Tree *u, const Path *path);
   // Return true if direction was applied.

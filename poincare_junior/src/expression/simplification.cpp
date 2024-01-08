@@ -163,13 +163,15 @@ bool Simplification::ApplyPath(Tree* u, const Path* path) {
 void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
                                           const Tree* original, Path* path,
                                           Path* bestPath, int* bestMetric,
-                                          CrcCollection* crcCollection) {
+                                          CrcCollection* crcCollection,
+                                          bool* didOverflowPath) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
   std::cout << "AdvancedReductionRec on subtree: ";
   u->logSerialize();
 #endif
   if (!path->canAddNewDirection()) {
+    *didOverflowPath = true;
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
     LogIndent();
     std::cout << "Full path.\n";
@@ -204,13 +206,15 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
 #endif
         continue;
       }
+      uint32_t crc32;
+      if (rootChanged) {
+        // No need for crc32 if root did not change.
+        crc32 = Ion::crc32Byte(reinterpret_cast<const uint8_t*>(root),
+                               root->treeSize());
+      }
       /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
        * not go further. */
-      if (!rootChanged ||
-          crcCollection->add(
-              Ion::crc32Byte(reinterpret_cast<const uint8_t*>(root),
-                             root->treeSize()),
-              path->length())) {
+      if (!rootChanged || crcCollection->add(crc32, path->length())) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         bool shouldLog = true;
@@ -233,8 +237,14 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
         isLeaf = false;
         bool canAddDir = path->append(dir);
         assert(canAddDir);
+        bool didOverflowPathRec = false;
         AdvancedReductionRec(target, root, original, path, bestPath, bestMetric,
-                             crcCollection);
+                             crcCollection, &didOverflowPathRec);
+        if (rootChanged && !didOverflowPathRec) {
+          // No need to explore this again, even at smaller lengths.
+          crcCollection->add(crc32, 0);
+        }
+        *didOverflowPath |= didOverflowPathRec;
         path->popBaseDirection();
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
         if (shouldLog) {
@@ -303,8 +313,10 @@ bool Simplification::AdvancedReduction(Tree* u) {
   u->logSerialize();
   s_indent = 1;
 #endif
+  bool didOverflowPath = false;
   AdvancedReductionRec(editedExpression, editedExpression, u, &currentPath,
-                       &bestPath, &bestMetric, &crcCollection);
+                       &bestPath, &bestMetric, &crcCollection,
+                       &didOverflowPath);
   editedExpression->removeTree();
   bool result = ApplyPath(u, &bestPath);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1

@@ -142,6 +142,7 @@ class AbstractTextField : public TextInput {
     contentView()->setStalled(alteration ==
                               FirstResponderAlteration::WillSpoil);
   }
+  bool prepareToEdit() override;
 
   virtual void removeWholeText();
   bool handleMoveEvent(Ion::Events::Event event);

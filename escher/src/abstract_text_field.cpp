@@ -319,7 +319,7 @@ void AbstractTextField::setText(const char *text) {
   }
 }
 
-bool AbstractTextField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+bool AbstractTextField::prepareToEdit() {
   if (!isEditable()) {
     return false;
   }
@@ -332,6 +332,13 @@ bool AbstractTextField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   }
   assert(text() == draftText());
   assert(isEditing());
+  return true;
+}
+
+bool AbstractTextField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+  if (!prepareToEdit()) {
+    return false;
+  }
   UTF8Decoder decoder(text(), cursorLocation());
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
@@ -445,10 +452,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   // Enter edition
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     const char *previousText = text();
-    setEditing(true);
-    if (m_delegate) {
-      m_delegate->textFieldDidStartEditing(this);
-    }
+    prepareToEdit();
     setText(previousText);
     *textDidChange = true;
     return true;
@@ -544,15 +548,7 @@ bool AbstractTextField::handleSelectEvent(Ion::Events::Event event) {
 
 bool AbstractTextField::privateHandleEventWithText(
     const char *eventText, bool indentation, bool forceCursorRightOfText) {
-  assert(isEditable());
-  if (!isEditing()) {
-    reinitDraftTextBuffer();
-    setEditing(true);
-    if (m_delegate) {
-      m_delegate->textFieldDidStartEditing(this);
-    }
-  }
-
+  prepareToEdit();
   assert(isEditing());
 
   // Delete the selected text if needed

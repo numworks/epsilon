@@ -204,9 +204,17 @@ void LayoutField::setBackgroundColor(KDColor c) {
   m_contentView.setBackgroundColor(c);
 }
 
-bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+bool LayoutField::prepareToEdit() {
   if (!isEditing()) {
     setEditing(true);
+  }
+  assert(isEditing());
+  return true;
+}
+
+bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+  if (!prepareToEdit()) {
+    return false;
   }
   Layout layout = cursor()->layout();
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
@@ -219,7 +227,6 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   } else {
     XNTHelpers::FindXNTSymbol2D(layout, buffer, bufferSize);
   }
-  assert(isEditing());
   if (strlen(buffer) == 0) {
     SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
     if (Ion::Events::repetitionFactor() > 0) {
@@ -458,9 +465,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle move and selection
   if (handleMoveEvent(event, shouldRedrawLayout)) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
+    prepareToEdit();
     return true;
   }
 
@@ -474,7 +479,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
       cursor()->beautifyLeft(context());
       setEditing(false);
       if (!m_delegate->layoutFieldDidFinishEditing(this, event)) {
-        setEditing(true);
+        prepareToEdit();
       }
       return true;
     }
@@ -484,9 +489,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   constexpr const size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
   char buffer[bufferSize] = {0};
   if (eventHasText(event, buffer, bufferSize)) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
+    prepareToEdit();
     bool didHandleEvent = insertText(buffer);
     *shouldRedrawLayout = didHandleEvent;
     return didHandleEvent;
@@ -508,9 +511,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle boxes
   if (privateHandleBoxEvent(event)) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
+    prepareToEdit();
     *shouldUpdateCursor = false;
     return true;
   }
@@ -528,9 +529,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle paste
   if (event == Ion::Events::Paste) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
+    prepareToEdit();
     bool didHandleEvent =
         insertText(Clipboard::SharedClipboard()->storedText(), false, true);
     *shouldRedrawLayout = didHandleEvent;
@@ -539,7 +538,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
 
   // Enter edition
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
-    setEditing(true);
+    prepareToEdit();
     return true;
   }
 
@@ -554,9 +553,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle backspace
   if (event == Ion::Events::Backspace) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
+    prepareToEdit();
     cursor()->performBackspace();
     *shouldRedrawLayout = true;
     return true;

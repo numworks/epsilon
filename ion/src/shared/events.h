@@ -12,7 +12,7 @@ class State {
  public:
   State()
       : m_lastEvent(Events::None),
-        m_lastKeyboardState(0),
+        m_lastKeypress(Keyboard::Key::None),
         m_currentKeyboardState(0),
         m_keysSeenUp(-1),
         m_lastEventShift(false),
@@ -25,7 +25,7 @@ class State {
   Event privateSharedGetEvent(int* timeout);
 
   Event m_lastEvent;
-  Keyboard::State m_lastKeyboardState;
+  Keyboard::Key m_lastKeypress;
   Keyboard::State m_currentKeyboardState;
   uint64_t m_keysSeenUp;
   bool m_lastEventShift;

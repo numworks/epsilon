@@ -89,10 +89,10 @@ Event State::privateSharedGetEvent(int* timeout) {
     Event platformEvent = getPlatformEvent();
     if (platformEvent != None) {
       /* WARNING: events that can repeat should not be handled here since
-       * m_lastKeyboardState is not updated and is used to know if the event
+       * m_lastKeypress is not updated and is used to know if the event
        * is repeated at line "bool isRepeatableEvent = ..."
        * On device this is not a problem.
-       * On simulator, most repeating events are handled as Keyboard::States
+       * On simulator, most repeating events are handled as Keyboard::Key
        * because they are listed in Keyboard::sKeyPairs, except for Backspace.
        * This can lead to Backspace repeating infinitely.
        * Namely, if you start a simulator and press Backspace as your first
@@ -100,7 +100,7 @@ Event State::privateSharedGetEvent(int* timeout) {
        * TODO: Find a solution. Either add Backspace to sKeyPairs and find
        * another solution for the shift+backspace issue (see comment in
        * keyboard.cpp). Or find a way to register computer keyboard state
-       * in m_lastKeyboardState, by using SDL_Event::type::KEY_UP */
+       * in m_lastKeypress, by using SDL_Event::type::KEY_UP */
       SharedModifierState->incrementOrResetRepetition(platformEvent ==
                                                       m_lastEvent);
       m_lastEvent = platformEvent;
@@ -129,18 +129,17 @@ Event State::privateSharedGetEvent(int* timeout) {
          * many processors have an instruction (ARM thumb uses CLZ).
          * Unfortunately there's no way to express this in standard C, so we
          * have to resort to using a builtin function. */
-        Keyboard::Key key = (Keyboard::Key)(
+        m_lastKeypress = (Keyboard::Key)(
             63 - __builtin_clzll(keysSeenTransitioningFromUpToDown));
         didPressNewKey();
         m_lastEventShift =
             SharedModifierState->shiftAlphaStatus()->shiftIsActive();
         m_lastEventAlpha =
             SharedModifierState->shiftAlphaStatus()->alphaIsActive();
-        Event event(key, m_lastEventShift, m_lastEventAlpha, lock);
+        Event event(m_lastKeypress, m_lastEventShift, m_lastEventAlpha, lock);
         SharedModifierState->updateModifiersFromEvent(event, state);
         SharedModifierState->incrementOrResetRepetition(event == m_lastEvent);
         m_lastEvent = event;
-        m_lastKeyboardState = state;
         return event;
       }
     }
@@ -149,7 +148,7 @@ Event State::privateSharedGetEvent(int* timeout) {
     int delayForRepeat = INT_MAX;
     bool isRepeatableEvent =
         m_lastEvent.isRepeatable() &&
-        m_lastKeyboardState == m_currentKeyboardState &&
+        m_currentKeyboardState.keyDown(m_lastKeypress) &&
         m_lastEventShift ==
             (m_currentKeyboardState.keyDown(Keyboard::Key::Shift) ||
              (m_lastEventShift && lock)) &&
@@ -196,8 +195,7 @@ Event State::sharedGetEvent(int* timeout) {
 
 void State::resetKeyboardState() {
   m_keysSeenUp = -1;
-  /* Set the keyboard state of reference to -1 to prevent event repetition. */
-  m_lastKeyboardState = -1;
+  m_lastKeypress = Keyboard::Key::None;
 }
 
 Event sharedGetEvent(int* timeout) {

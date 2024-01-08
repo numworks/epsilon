@@ -72,18 +72,18 @@ bool Parametric::ExpandSum(Tree* expr) {
   return expr->isSum() &&
          (PatternMatching::MatchReplaceAndSimplify(
               expr, KSum(KA, KB, KC, KAdd(KD, KTE)),
-              KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KTE))) ||
+              KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KTE)))) ||
           Explicit(expr));
 }
 
 bool Parametric::ExpandProduct(Tree* expr) {
   // prod(f*g,k,a,b) = prod(f,k,a,b) * prod(g,k,a,b)
   // prod(x_k, k, 0, n) = x_0 * ... * x_n
-  return expr->isProduct() &&
-         (PatternMatching::MatchReplaceAndSimplify(
-              expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
-              KMult(KProduct(KA, KB, KC, KD), KProduct(KA, KB, KC, KTE))) ||
-          Explicit(expr));
+  return expr->isProduct() && (PatternMatching::MatchReplaceAndSimplify(
+                                   expr, KProduct(KA, KB, KC, KMult(KD, KTE)),
+                                   KMult(KProduct(KA, KB, KC, KD),
+                                         KProduct(KA, KB, KC, KMult(KTE)))) ||
+                               Explicit(expr));
 }
 
 // TODO try swapping sigmas

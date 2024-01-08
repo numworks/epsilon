@@ -13,12 +13,14 @@ namespace PoincareJ {
 
 class Render final {
   friend class RackLayout;
+  friend class LayoutCursor;
 
  public:
   // TODO hide overloads without font from the external API
   static KDSize Size(const Tree* node);
   static KDSize Size(const Tree* node, KDFont::Size fontSize) {
     font = fontSize;
+    showEmptyRack = false;
     return Size(node);
   }
   static KDCoordinate Height(const Tree* node) { return Size(node).height(); }
@@ -27,6 +29,7 @@ class Render final {
   static KDCoordinate Baseline(const Tree* node);
   static KDCoordinate Baseline(const Tree* node, KDFont::Size fontSize) {
     font = fontSize;
+    showEmptyRack = false;
     return Baseline(node);
   }
 
@@ -46,6 +49,7 @@ class Render final {
                          KDColor expressionColor, KDColor backgroundColor);
 
   static KDFont::Size font;
+  static bool showEmptyRack;
 };
 
 }  // namespace PoincareJ

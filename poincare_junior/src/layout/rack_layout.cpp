@@ -108,16 +108,13 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
 }
 
 bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
-  // TODO: complete this method
+  if (node->numberOfChildren() != 0 || !Render::showEmptyRack) {
+    return false;
+  }
   if (!RackLayout::layoutCursor) {
-    return false;
+    return true;
   }
-  if (node->numberOfChildren() != 0 || node == layoutCursor->cursorNode()) {
-    return false;
-  }
-  // TODO : avoid access to parent
-  const Tree* parent = layoutCursor->rootNode()->parentOfDescendant(node);
-  if (!parent || parent->isAutocompletedPair()) {
+  if (node == layoutCursor->cursorNode()) {
     return false;
   }
   return true;

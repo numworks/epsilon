@@ -17,10 +17,15 @@
 namespace PoincareJ {
 
 KDFont::Size Render::font = KDFont::Size::Large;
+bool Render::showEmptyRack;
 
 constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
 
 KDSize Render::Size(const Tree* node) {
+  bool hadShowEmptyRack = showEmptyRack;
+  showEmptyRack =
+      node->isRackLayout() ? hadShowEmptyRack : !node->isAutocompletedPair();
+
   KDCoordinate width = 0;
   KDCoordinate height = 0;
 
@@ -229,10 +234,14 @@ KDSize Render::Size(const Tree* node) {
       break;
     }
   }
+  showEmptyRack = hadShowEmptyRack;
   return KDSize(width, height);
 }
 
 KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root) {
+  bool hadShowEmptyRack = showEmptyRack;
+  showEmptyRack =
+      root->isRackLayout() ? hadShowEmptyRack : !root->isAutocompletedPair();
   assert(root <= node && root->nextTree() > node);
   assert(node->isLayout());
   if (node == root) {
@@ -244,8 +253,10 @@ KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root) {
     const Tree* nextChild = child->nextTree();
     if (nextChild > node) {
       // node is a descendant of child
-      return AbsoluteOrigin(node, child)
-          .translatedBy(PositionOfChild(root, childIndex));
+      KDPoint value = AbsoluteOrigin(node, child)
+                          .translatedBy(PositionOfChild(root, childIndex));
+      showEmptyRack = hadShowEmptyRack;
+      return value;
     }
     child = nextChild;
     childIndex++;
@@ -588,6 +599,7 @@ void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
                   KDColor backgroundColor, const LayoutCursor* cursor,
                   LayoutSelection selection) {
   Render::font = font;
+  showEmptyRack = false;
   RackLayout::layoutCursor = cursor;
   /* TODO all screenshots work fine without the fillRect except labels on graphs
    * when they overlap. We could add a flag to draw it only when necessary. */
@@ -598,6 +610,9 @@ void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
 void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
                          KDColor expressionColor, KDColor backgroundColor,
                          LayoutSelection selection) {
+  bool hadShowEmptyRack = showEmptyRack;
+  showEmptyRack =
+      node->isRackLayout() ? hadShowEmptyRack : !node->isAutocompletedPair();
   assert(node->isLayout());
   KDColor selectionColor = Escher::Palette::Select;
   if (selection.layout() == node) {
@@ -615,6 +630,7 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
       size.height() > KDCOORDINATE_MAX - p.y() ||
       size.width() > KDCOORDINATE_MAX - p.x()) {
     // Layout size overflows KDCoordinate
+    showEmptyRack = hadShowEmptyRack;
     return;
   }
   KDColor childBackground = backgroundColor;
@@ -633,6 +649,7 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
     PrivateDraw(child, ctx, PositionOfChild(node, index).translatedBy(p),
                 expressionColor, childBackground, selection);
   }
+  showEmptyRack = hadShowEmptyRack;
 }
 
 void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,

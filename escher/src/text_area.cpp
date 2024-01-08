@@ -266,7 +266,9 @@ void TextArea::setText(char *textBuffer, size_t textBufferSize) {
 }
 
 bool TextArea::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
-  return handleEventWithText("x");
+  // Never called: shortcut by PythonTextForEvent
+  assert(false);
+  return false;
 }
 
 int TextArea::indentationBeforeCursor() const {

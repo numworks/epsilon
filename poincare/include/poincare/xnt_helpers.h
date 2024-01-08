@@ -1,6 +1,8 @@
 #ifndef POINCARE_XNT_HELPERS_H
 #define POINCARE_XNT_HELPERS_H
 
+#include <apps/shared/continuous_function.h>
+#include <apps/shared/sequence.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_expressions.h>
 #include <poincare_layouts.h>
@@ -8,6 +10,15 @@
 namespace Poincare {
 
 namespace XNTHelpers {
+
+constexpr static CodePoint k_defaultXNTCycle[] = {
+    Shared::ContinuousFunction::k_cartesianSymbol,
+    Shared::Sequence::k_sequenceSymbol,
+    Shared::ContinuousFunction::k_parametricSymbol,
+    Shared::ContinuousFunction::k_polarSymbol,
+};
+
+CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint);
 
 constexpr static char k_defaultContinuousXNT = 'x';
 constexpr static char k_defaultDiscreteXNT = 'k';

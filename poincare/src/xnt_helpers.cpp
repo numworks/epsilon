@@ -139,31 +139,40 @@ static Layout xntLayout(Layout parameterLayout) {
   return xnt;
 }
 
-bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize) {
-  int functionIndex = -1;
-  int childIndex = -1;
-  Layout parameterLayout;
+static bool findParameteredFunction2D(Layout layout, int* functionIndex,
+                                      int* childIndex,
+                                      Layout* parameterLayout) {
+  assert(functionIndex && childIndex && parameterLayout);
+  *functionIndex = -1;
+  *childIndex = -1;
+  *parameterLayout = Layout();
   assert(!layout.isUninitialized());
   Layout child = layout;
   Layout parent = child.parent();
-  bool functionFound = false;
-  while (!parent.isUninitialized() && !functionFound) {
-    childIndex = parent.indexOfChild(child);
-    if (childIndex <= k_indexOfParameter) {
+  while (!parent.isUninitialized()) {
+    *childIndex = parent.indexOfChild(child);
+    if (*childIndex <= k_indexOfParameter) {
       for (size_t i = 0; i < k_numberOfFunctions; i++) {
         if (parent.type() == k_parameteredFunctions[i].layoutType) {
-          functionIndex = i;
-          parameterLayout = parent.childAtIndex(k_indexOfParameter);
-          functionFound = true;
-          break;
+          *functionIndex = i;
+          *parameterLayout = parent.childAtIndex(k_indexOfParameter);
+          return true;
         }
       }
     }
     child = parent;
     parent = child.parent();
   }
+  return false;
+}
+
+bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize) {
+  int functionIndex;
+  int childIndex;
+  Layout parameterLayout;
   buffer[0] = 0;
-  if (functionFound) {
+  if (findParameteredFunction2D(layout, &functionIndex, &childIndex,
+                                &parameterLayout)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     assert(0 <= childIndex && childIndex <= k_indexOfParameter);
     SerializationHelper::CodePoint(

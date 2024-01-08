@@ -52,7 +52,6 @@ class Product final : public SumAndProduct {
 
   constexpr static Expression::FunctionHelper s_functionHelper =
       Expression::FunctionHelper("product", 4, &UntypedBuilder);
-  constexpr static char k_defaultXNTChar = SumAndProduct::k_defaultXNTChar;
 };
 
 }  // namespace Poincare

@@ -64,7 +64,6 @@ class ListSequence : public ParameteredExpression {
   static Expression UntypedBuilder(Expression children);
   constexpr static Expression::FunctionHelper s_functionHelper =
       Expression::FunctionHelper("sequence", 3, &UntypedBuilder);
-  constexpr static char k_defaultXNTChar = 'k';
 
   Expression shallowReduce(ReductionContext reductionContext);
 };

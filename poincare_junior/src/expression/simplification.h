@@ -31,13 +31,15 @@ class Simplification {
    public:
     CrcCollection() : m_length(0) {}
     // Return false if CRC was already explored
-    bool add(uint32_t crc);
+    bool add(uint32_t crc, uint8_t depth);
     bool isFull() const { return m_length >= k_size; }
 
    private:
     // Max Expand/Contract combination possibilities
     constexpr static size_t k_size = 128;
-    uint32_t collection[k_size];
+    uint32_t m_collection[k_size];
+    // Depth at which each crc has been explored
+    uint8_t m_depth[k_size];
     size_t m_length;
   };
 

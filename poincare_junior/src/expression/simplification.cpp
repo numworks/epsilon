@@ -40,27 +40,36 @@ void LogIndent() {
 
 #endif
 
-bool Simplification::CrcCollection::add(uint32_t crc) {
+bool Simplification::CrcCollection::add(uint32_t crc, uint8_t depth) {
   if (isFull()) {
     // Behave as if all trees had already been tested.
     return false;
   }
+  // TODO: Maybe use a dichotomic search.
   for (size_t i = 0; i < m_length; i++) {
-    uint32_t crc_i = collection[i];
+    uint32_t crc_i = m_collection[i];
     if (crc_i < crc) {
       continue;
     }
     if (crc_i == crc) {
-      return false;
+      if (m_depth[i] <= depth) {
+        return false;
+      }
+      // There might be new nodes to explore if more resources are available.
+      m_depth[i] = depth;
+      return true;
     }
-    // Insert CRC32
-    memmove(collection + i + 1, collection + i,
+    // Insert CRC32 and depth
+    memmove(m_collection + i + 1, m_collection + i,
             sizeof(uint32_t) * (m_length - i));
+    memmove(m_depth + i + 1, m_depth + i, sizeof(uint8_t) * (m_length - i));
     m_length++;
-    collection[i] = crc;
+    m_collection[i] = crc;
+    m_depth[i] = depth;
     return true;
   }
-  collection[m_length++] = crc;
+  m_depth[m_length] = depth;
+  m_collection[m_length++] = crc;
   return true;
 }
 
@@ -198,8 +207,10 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
       /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
        * not go further. */
       if (!rootChanged ||
-          crcCollection->add(Ion::crc32Byte(
-              reinterpret_cast<const uint8_t*>(root), root->treeSize()))) {
+          crcCollection->add(
+              Ion::crc32Byte(reinterpret_cast<const uint8_t*>(root),
+                             root->treeSize()),
+              path->length())) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         bool shouldLog = true;
@@ -285,7 +296,7 @@ bool Simplification::AdvancedReduction(Tree* u) {
   CrcCollection crcCollection;
   // Add initial root
   crcCollection.add(
-      Ion::crc32Byte(reinterpret_cast<const uint8_t*>(u), u->treeSize()));
+      Ion::crc32Byte(reinterpret_cast<const uint8_t*>(u), u->treeSize()), 0);
   Tree* editedExpression = u->clone();
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   std::cout << "\nAdvancedReduction\nInitial tree (" << bestMetric << ") is : ";

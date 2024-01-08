@@ -99,8 +99,6 @@ class Derivative final : public ParameteredExpression {
   constexpr static Expression::FunctionHelper s_functionHelperFirstOrder =
       Expression::FunctionHelper("diff", 3, &UntypedBuilder);
 
-  constexpr static char k_defaultXNTChar = 'x';
-
   static void DerivateUnaryFunction(Expression function, Symbol symbol,
                                     Expression symbolValue,
                                     const ReductionContext& reductionContext);

@@ -52,7 +52,6 @@ class Sum final : public SumAndProduct {
 
   constexpr static Expression::FunctionHelper s_functionHelper =
       Expression::FunctionHelper("sum", 4, &UntypedBuilder);
-  constexpr static char defaultXNTChar = SumAndProduct::k_defaultXNTChar;
 };
 
 }  // namespace Poincare

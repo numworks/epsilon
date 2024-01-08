@@ -9,25 +9,26 @@ namespace Poincare {
 
 namespace XNTHelpers {
 
+constexpr static char k_defaultContinuousXNT = 'x';
+constexpr static char k_defaultDiscreteXNT = 'k';
+
 constexpr static struct {
   AliasesList aliasesList;
   LayoutNode::Type layoutType;
   char defaultXNT;
 } k_parameteredFunctions[] = {
     {Derivative::s_functionHelper.aliasesList(),
-     LayoutNode::Type::FirstOrderDerivativeLayout,
-     Derivative::k_defaultXNTChar},
+     LayoutNode::Type::FirstOrderDerivativeLayout, k_defaultContinuousXNT},
     {Derivative::s_functionHelper.aliasesList(),
-     LayoutNode::Type::HigherOrderDerivativeLayout,
-     Derivative::k_defaultXNTChar},
+     LayoutNode::Type::HigherOrderDerivativeLayout, k_defaultContinuousXNT},
     {Integral::s_functionHelper.aliasesList(), LayoutNode::Type::IntegralLayout,
-     Integral::k_defaultXNTChar},
+     k_defaultContinuousXNT},
     {Sum::s_functionHelper.aliasesList(), LayoutNode::Type::SumLayout,
-     Sum::k_defaultXNTChar},
+     k_defaultDiscreteXNT},
     {Product::s_functionHelper.aliasesList(), LayoutNode::Type::ProductLayout,
-     Product::k_defaultXNTChar},
+     k_defaultDiscreteXNT},
     {ListSequence::s_functionHelper.aliasesList(),
-     LayoutNode::Type::ListSequenceLayout, ListSequence::k_defaultXNTChar},
+     LayoutNode::Type::ListSequenceLayout, k_defaultDiscreteXNT},
 };
 constexpr static int k_numberOfFunctions = std::size(k_parameteredFunctions);
 constexpr static int k_indexOfMainExpression = 0;

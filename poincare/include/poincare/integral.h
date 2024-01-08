@@ -119,7 +119,6 @@ class Integral final : public ParameteredExpression {
 
   constexpr static Expression::FunctionHelper s_functionHelper =
       Expression::FunctionHelper("int", 4, &UntypedBuilder);
-  constexpr static char k_defaultXNTChar = 'x';
 
   // Expression
   void deepReduceChildren(const ReductionContext& reductionContext);

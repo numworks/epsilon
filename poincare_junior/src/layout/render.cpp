@@ -233,14 +233,23 @@ KDSize Render::Size(const Tree* node) {
 }
 
 KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root) {
+  assert(root <= node && root->nextTree() > node);
   assert(node->isLayout());
   if (node == root) {
     return KDPointZero;
   }
-  int index;
-  const Tree* parent = root->parentOfDescendant(node, &index);
-  return AbsoluteOrigin(parent, root)
-      .translatedBy(PositionOfChild(parent, index));
+  const Tree* child = root->child(0);
+  int childIndex = 0;
+  while (true) {
+    const Tree* nextChild = child->nextTree();
+    if (nextChild > node) {
+      // node is a descendant of child
+      return AbsoluteOrigin(node, child)
+          .translatedBy(PositionOfChild(root, childIndex));
+    }
+    child = nextChild;
+    childIndex++;
+  }
 }
 
 KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {

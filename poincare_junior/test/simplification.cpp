@@ -360,51 +360,6 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(random()+1,x,2)", "undef");
   simplifies_to("sum(k+randint(1,10),k,2,5)-14", "sum(randint(1,10),k,2,5)");
   simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
-
-  // TODO works but rejected by metric
-  // simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
-  // simplifies_to("sum(k+1, k, n, n+2)", "6+3×n");
-  // simplifies_to("sum(k+1, k, n-2, n)", "1");  // FIXME
-  // simplifies_to("product(k×π, k, 1, 12)", "479001600×π^(12)");
-
-  // TODO SimplifyAddition on matrices
-  // simplifies_to("sum([[k][n]], k, 1, 4)", "[[10],[4×n]]");
-
-  // Not working yet
-  // simplifies_to("abs(x^2)", "x^2");
-
-  // simplifies_to("diff(√(4-x^2),x,x)", "-x/√(4-x^2)");
-  // simplifies_to("1/x + 1/y - (x+y)/(x×y)", "0");
-  // simplifies_to("(x^2 - 1) / (x - 1)", "x+1");
-  // simplifies_to("1 / (1/a + c/(a×b)) + (a×b×c+a×c^2)/(b+c)^2", "a");
-
-  // simplifies_to("sin(x)^3+cos(x+π/6)^3-sin(x+π/3)^3+sin(3×x)×3/4", "0");
-  // simplifies_to("sin(x)+sin(y)-2×sin(x/2 + y/2)×cos(x/2 - y/2)", "0");
-  // simplifies_to("(√(10)-√(2))×√(5-√(5))-4×√(5-2×√(5))", "0");
-
-  // simplifies_to("1/(1 - (1/(1 - (1/(1-x)))))", "x");
-  // simplifies_to(
-  // "abs(diff(diff(√(4-x^2),x,x),x,x))/(1+diff(√(4-x^2),x,x)^2)^(3/2)",
-  // "1/2");
-
-  // simplifies_to("((abs(x)^(1/2))^(1/2))^8", "abs(x)^2");
-  // simplifies_to("((x×y)^(1/2)×z^2)^2", "x×y×z^(4)");
-  // simplifies_to("1-cos(x)^2-sin(x)^2", "0");
-  // simplifies_to("1-cos(x)^2", "sin(x)^2");
-
-  // Advanced simplification
-  simplifies_to("(a+b)^2", "(a+b)^2");
-  simplifies_to("abs(a)*abs(bc)-abs(ab)*abs(c)", "0");
-  simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
-  simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^(2)+e^((a+b)×c)");
-#if 0
-  /* TODO: This can Expand/contract infinitely and overflow the pool on any
-   * strategy */
-  simplifies_to(
-      "cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/2×cos(b)×cos(a)+1/"
-      "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
-      "0");
-#endif
 }
 
 QUIZ_CASE(pcj_power_simplification) {
@@ -619,5 +574,53 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
   simplifies_to(
       "asin({-(√(6)+√(2))/4, -(√(6)-√(2))/4, (√(6)-√(2))/4, (√(6)+√(2))/4})",
       "{-5π/12,-π/12,π/12,5π/12}");
+#endif
+}
+
+QUIZ_CASE(pcj_advanced_reduction) {
+#if 0
+  // TODO works but rejected by metric
+  simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
+  simplifies_to("sum(k+1, k, n, n+2)", "6+3×n");
+  simplifies_to("sum(k+1, k, n-2, n)", "1");  // FIXME
+  simplifies_to("product(k×π, k, 1, 12)", "479001600×π^(12)");
+
+  // TODO SimplifyAddition on matrices
+  simplifies_to("sum([[k][n]], k, 1, 4)", "[[10][4×n]]");
+
+
+  // Not working yet
+  simplifies_to("abs(x^2)", "x^2");
+
+  simplifies_to("diff(√(4-x^2),x,x)", "-x/√(4-x^2)");
+  simplifies_to("1/x + 1/y - (x+y)/(x×y)", "0");
+  simplifies_to("(x^2 - 1) / (x - 1)", "x+1");
+  simplifies_to("1 / (1/a + c/(a×b)) + (a×b×c+a×c^2)/(b+c)^2", "a");
+
+  simplifies_to("sin(x)^3+cos(x+π/6)^3-sin(x+π/3)^3+sin(3×x)×3/4", "0");
+  simplifies_to("sin(x)+sin(y)-2×sin(x/2 + y/2)×cos(x/2 - y/2)", "0");
+  simplifies_to("(√(10)-√(2))×√(5-√(5))-4×√(5-2×√(5))", "0");
+
+  simplifies_to("1/(1 - (1/(1 - (1/(1-x)))))", "x");
+  simplifies_to(
+      "abs(diff(diff(√(4-x^2),x,x),x,x))/(1+diff(√(4-x^2),x,x)^2)^(3/2)",
+      "1/2");
+
+  simplifies_to("((abs(x)^(1/2))^(1/2))^8", "abs(x)^2");
+  simplifies_to("((x×y)^(1/2)×z^2)^2", "x×y×z^4");
+  simplifies_to("1-cos(x)^2", "sin(x)^2");
+#endif
+  simplifies_to("1-cos(x)^2-sin(x)^2", "0");
+  simplifies_to("(a+b)^2", "(a+b)^2");
+  simplifies_to("abs(a)*abs(bc)-abs(ab)*abs(c)", "0");
+  simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
+  simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^(2)+e^((a+b)×c)");
+#if 0
+  /* TODO: This can Expand/contract infinitely and overflow the pool on any
+   * strategy */
+  simplifies_to(
+      "cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/2×cos(b)×cos(a)+1/"
+      "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
+      "0");
 #endif
 }

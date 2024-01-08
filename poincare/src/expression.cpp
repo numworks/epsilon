@@ -1689,6 +1689,7 @@ void Expression::deepApproximateChildrenKeepingSymbols(
   const int childrenCount = numberOfChildren();
   bool parameteredExpression = isParameteredExpression();
   bool storeExpression = type() == ExpressionNode::Type::Store;
+
   for (int i = 0; i < childrenCount; i++) {
     Expression child = childAtIndex(i);
     /* Do not approximate:
@@ -1714,6 +1715,21 @@ void Expression::deepApproximateChildrenKeepingSymbols(
       *shouldReduce = *shouldReduce || thisShouldReduce;
     }
   }
+
+  if (parameteredExpression) {
+    /* We didn't check in the previous for loop if ParameteredChild and
+     * ParameterChildIndex contained symbols. */
+    char variables[Poincare::Expression::k_maxNumberOfVariables]
+                  [Poincare::SymbolAbstractNode::k_maxNameSize] = {""};
+    int nVariables = getVariables(
+        reductionContext.context(),
+        [](const char *, Context *) { return true; }, variables[0],
+        SymbolAbstractNode::k_maxNameSize);
+    if (nVariables != 0) {
+      *canApproximate = false;
+    }
+  }
+
   if (storeExpression) {
     *canApproximate = false;
     *shouldReduce = false;

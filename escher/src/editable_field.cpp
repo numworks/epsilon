@@ -4,6 +4,7 @@
 #include <escher/toolbox.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
+#include <poincare/xnt_helpers.h>
 
 using namespace Poincare;
 
@@ -25,15 +26,19 @@ bool EditableField::privateHandleBoxEvent(Ion::Events::Event event) {
   return true;
 }
 
-bool EditableField::insertXNT(CodePoint defaultXNTCodePoint) {
+bool EditableField::handleXNT(CodePoint startingXNT) {
   if (!prepareToEdit()) {
     return false;
   }
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
+  // Find special XNT
   findXNT(buffer, bufferSize);
   if (strlen(buffer) == 0) {
-    SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
+    // Use default XNT cycle
+    CodePoint xnt = XNTHelpers::CodePointAtIndexInCycle(
+        Ion::Events::repetitionFactor(), startingXNT);
+    SerializationHelper::CodePoint(buffer, bufferSize, xnt);
     if (Ion::Events::repetitionFactor() > 0) {
       // TODO: Fix issues with repetition over a syntax error dismissal
       removePreviousXNT();

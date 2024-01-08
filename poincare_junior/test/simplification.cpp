@@ -342,7 +342,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
   simplifies_to("random()", "random()");
   simplifies_to("randint(1,10)", "randint(1,10)");
-  simplifies_to("diff(random()+1,x,2)", "diff(random(),x,2)");
+  simplifies_to("diff(random()+1,x,2)", "undef");
   simplifies_to("sum(k+randint(1,10),k,2,5)", "14+sum(randint(1,10),k,2,5)");
   simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
 

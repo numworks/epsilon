@@ -31,7 +31,7 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue,
   }
   if (derivand->isRandomNode()) {
     // Do not handle random nodes in derivation.
-    return nullptr;
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
   int numberOfChildren = derivand->numberOfChildren();
   if (numberOfChildren == 0) {

@@ -21,7 +21,6 @@ class TextArea : public TextInput {
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
   void setText(char* textBuffer, size_t textBufferSize);
-  bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
 
  protected:
   int indentationBeforeCursor() const;

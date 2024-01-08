@@ -265,12 +265,6 @@ void TextArea::setText(char *textBuffer, size_t textBufferSize) {
   contentView()->moveCursorGeo(0, 0);
 }
 
-bool TextArea::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
-  // Never called: shortcut by PythonTextForEvent
-  assert(false);
-  return false;
-}
-
 int TextArea::indentationBeforeCursor() const {
   int indentationSize = 0;
   /* Compute the number of spaces at the beginning of the line. Increase the

@@ -212,13 +212,8 @@ bool LayoutField::prepareToEdit() {
   return true;
 }
 
-bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
-  if (!prepareToEdit()) {
-    return false;
-  }
+void LayoutField::findXNT(char *buffer, size_t bufferSize) {
   Layout layout = cursor()->layout();
-  constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
-  char buffer[bufferSize];
   if (linearMode()) {
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
@@ -227,15 +222,12 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   } else {
     XNTHelpers::FindXNTSymbol2D(layout, buffer, bufferSize);
   }
-  if (strlen(buffer) == 0) {
-    SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
-    if (Ion::Events::repetitionFactor() > 0) {
-      assert(cursor()->selection().isEmpty());
-      // XNT is Cycling, remove the last inserted character
-      cursor()->performBackspace();
-    }
-  }
-  return handleEventWithText(buffer, false, true);
+}
+
+void LayoutField::removePreviousXNT() {
+  assert(cursor()->selection().isEmpty());
+  // XNT is Cycling, remove the last inserted character
+  cursor()->performBackspace();
 }
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {

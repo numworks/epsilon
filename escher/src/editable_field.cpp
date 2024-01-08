@@ -2,6 +2,10 @@
 #include <escher/editable_field.h>
 #include <escher/metric.h>
 #include <escher/toolbox.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/symbol.h>
+
+using namespace Poincare;
 
 namespace Escher {
 
@@ -19,6 +23,23 @@ bool EditableField::privateHandleBoxEvent(Ion::Events::Event event) {
   box->setSender(this);
   box->open();
   return true;
+}
+
+bool EditableField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
+  if (!prepareToEdit()) {
+    return false;
+  }
+  constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
+  char buffer[bufferSize];
+  findXNT(buffer, bufferSize);
+  if (strlen(buffer) == 0) {
+    SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
+    if (Ion::Events::repetitionFactor() > 0) {
+      // TODO: Fix issues with repetition over a syntax error dismissal
+      removePreviousXNT();
+    }
+  }
+  return handleEventWithText(buffer, false, true);
 }
 
 }  // namespace Escher

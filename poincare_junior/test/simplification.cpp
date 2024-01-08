@@ -215,12 +215,14 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2×sin(2y)×cos(y)", "sin(y)+sin(3×y)");
   simplifies_to("2×cos(2y)×sin(y)", "-sin(y)+sin(3×y)");
   simplifies_to("2×cos(2y)×cos(y)", "cos(y)+cos(3×y)");
-  // Both must approximate to -1.68648611086611210677890965279755492140054557
+  simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0",
+                {.m_complexFormat = ComplexFormat::Cartesian});
   simplifies_to(
-      "cos(π×7/10)+cos(π×7/5)+cos(π×-7/8)+cos(π×11/12)+cos(π×13/6)+sin(π×7/"
-      "10)+sin(π×7/5)+sin(π×-7/8)+sin(π×11/12)+sin(π×13/6)",
-      "1+√(3)/2-(√(2+√(2))+√(2-√(2)))/2-(2^(-1/2)+√(5/8-√(5)/8)+√(5/8+√(5)/"
-      "8))");
+      "{cos(π×7/10),cos(π×7/5),cos(π×-7/8),cos(π×11/12),cos(π×13/6),sin(π×7/"
+      "10),sin(π×7/5),sin(π×-7/8),sin(π×11/12),sin(π×13/6)}",
+      "{-√(5/8-√(5)/8),1/4-√(5)/4,-√(2+√(2))/2,-2^(-1/2)/2-(2^(-1/2)×√(3))/"
+      "2,√(3)/2,1/4+√(5)/4,-√(5/8+√(5)/8),-√(2-√(2))/2,-2^(-1/2)/2+(2^(-1/"
+      "2)×√(3))/2,1/2}");
   simplifies_to("ln(0)", "nonreal");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1",

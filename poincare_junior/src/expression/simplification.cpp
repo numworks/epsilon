@@ -744,7 +744,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     }
     bool changed = false;
     // Seed random nodes before anything is merged/duplicated.
-    changed = Random::SeedTreeNodes(ref);
+    changed = Random::SeedTreeNodes(ref) > 0;
     changed =
         Projection::DeepSystemProjection(ref, projectionContext) || changed;
     Tree* variables = Variables::GetUserSymbols(ref);

@@ -46,8 +46,9 @@ class Random {
     Context& operator=(const Context& other);
     Context& operator=(Context&& other);
   };
-  // Takes a Tree containing un-seeded random nodes only, and seed them.
-  static bool SeedTreeNodes(Tree* tree);
+  /* Takes a Tree containing un-seeded random nodes only, and seed them. Return
+   * the last seed. */
+  static uint8_t SeedTreeNodes(Tree* tree, uint8_t seedOffset = 0);
   static uint8_t GetSeed(const Tree* randomTree) {
     assert(randomTree->isRandomNode());
     return randomTree->nodeValue(0);

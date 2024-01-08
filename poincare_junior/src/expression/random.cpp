@@ -3,6 +3,7 @@
 #include <math.h>
 #include <poincare/random.h>
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -16,16 +17,34 @@ Random::Context::Context()
 
 Random::Context::~Context() { m_list->removeTree(); }
 
-bool Random::SeedTreeNodes(Tree* tree) {
-  uint8_t currentSeed = 0;
-  for (Tree* u : tree->selfAndDescendants()) {
+uint8_t Random::SeedTreeNodes(Tree* tree, uint8_t seedOffset) {
+  uint8_t currentSeed = seedOffset;
+  Tree* u = tree;
+  int descendants = 1;
+  while (descendants > 0) {
+    descendants--;
     if (u->isRandomNode()) {
       assert(currentSeed < UINT8_MAX);
       currentSeed += 1;
       SetSeed(u, currentSeed);
+    } else if (u->isParametric()) {
+      /* Function expression in parametric expressions must keep unseeded nodes
+       * for approximation. */
+      const Tree* parametricTree = u;
+      int numberOfChildren = parametricTree->numberOfChildren();
+      u = u->nextNode();
+      for (int i = 0; i < numberOfChildren; i++) {
+        if (i != Parametric::FunctionIndex(parametricTree)) {
+          currentSeed = SeedTreeNodes(u, currentSeed);
+        }
+        u = u->nextTree();
+      }
+      continue;
     }
+    descendants += u->numberOfChildren();
+    u = u->nextNode();
   }
-  return currentSeed > 0;
+  return currentSeed;
 }
 
 template <typename T>

@@ -107,6 +107,9 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return std::round(To<T>(node->nextNode(), context) * err) / err;
     }
     default:
+      if (node->isParametric()) {
+        // TODO: Explicit tree if it contains random nodes.
+      }
       // TODO: Implement more BlockTypes
       return NAN;
   };

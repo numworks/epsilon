@@ -9,6 +9,28 @@ namespace Poincare {
 
 namespace XNTHelpers {
 
+static int indexOfCodePointInCycle(CodePoint codePoint) {
+  constexpr size_t k_numberOfCodePoints = std::size(k_defaultXNTCycle);
+  for (size_t i = 0; i < k_numberOfCodePoints; i++) {
+    if (k_defaultXNTCycle[i] == codePoint) {
+      return i;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
+CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint) {
+  CodePoint codePoint = startingCodePoint;
+  if (index > 0) {
+    int startingIndex = indexOfCodePointInCycle(startingCodePoint);
+    constexpr size_t k_numberOfCodePoints = std::size(k_defaultXNTCycle);
+    codePoint =
+        k_defaultXNTCycle[(startingIndex + index) % k_numberOfCodePoints];
+  }
+  return codePoint;
+}
+
 static bool findParameteredFunction1D(UnicodeDecoder& decoder,
                                       int* functionIndex, int* childIndex) {
   assert(functionIndex && childIndex);

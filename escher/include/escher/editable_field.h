@@ -21,11 +21,15 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
     return false;
   }
   virtual bool handleStoreEvent() { return false; }
-  virtual bool addXNTCodePoint(CodePoint defaultXNTCodePoint) = 0;
+  virtual bool addXNTCodePoint(CodePoint defaultXNTCodePoint);
 
  protected:
   bool privateHandleBoxEvent(Ion::Events::Event event);
   virtual bool prepareToEdit() { return true; }
+
+ private:
+  virtual void findXNT(char* buffer, size_t bufferSize) {}
+  virtual void removePreviousXNT() {}
 };
 
 }  // namespace Escher

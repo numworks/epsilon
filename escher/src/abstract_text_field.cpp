@@ -335,26 +335,17 @@ bool AbstractTextField::prepareToEdit() {
   return true;
 }
 
-bool AbstractTextField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
-  if (!prepareToEdit()) {
-    return false;
-  }
+void AbstractTextField::findXNT(char *buffer, size_t bufferSize) {
   UTF8Decoder decoder(text(), cursorLocation());
-  constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
-  char buffer[bufferSize];
   XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize);
-  if (strlen(buffer) == 0) {
-    SerializationHelper::CodePoint(buffer, bufferSize, defaultXNTCodePoint);
-    if (Ion::Events::repetitionFactor() > 0) {
-      assert(contentView()->selectionIsEmpty());
-      // Since XNT is cycling on simple glyphs, remove the last inserted one
-      bool success = removePreviousGlyph();
-      assert(success);
-      (void)success;  // Silence compilation warnings
-      // TODO: Fix issues with repetition over a syntax error dismissal
-    }
-  }
-  return handleEventWithText(buffer, false, true);
+}
+
+void AbstractTextField::removePreviousXNT() {
+  assert(selectionIsEmpty());
+  // Since XNT is cycling on simple glyphs, remove the last inserted one
+  bool success = removePreviousGlyph();
+  assert(success);
+  (void)success;  // Silence compilation warnings
 }
 
 void AbstractTextField::willResignFirstResponder() {

@@ -35,7 +35,6 @@ class AbstractTextField : public TextInput {
   // EditableField
   bool handleEventWithText(const char *text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
-  bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void setEditing(bool isEditing) {
     assert(!isEditing || isEditable());
     contentView()->setEditing(isEditing);
@@ -143,6 +142,8 @@ class AbstractTextField : public TextInput {
                               FirstResponderAlteration::WillSpoil);
   }
   bool prepareToEdit() override;
+  void findXNT(char *buffer, size_t bufferSize) override;
+  void removePreviousXNT() override;
 
   virtual void removeWholeText();
   bool handleMoveEvent(Ion::Events::Event event);

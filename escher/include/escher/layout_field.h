@@ -31,7 +31,6 @@ class LayoutField : public EditableField {
   bool layoutHasNode() const {
     return m_contentView.layoutView()->layoutHasNode();
   }
-  bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void putCursorOnOneSide(OMG::HorizontalDirection side);
   void setLayout(Poincare::Layout newLayout);
   size_t dumpContent(char* buffer, size_t bufferSize, int* cursorOffset,
@@ -103,6 +102,8 @@ class LayoutField : public EditableField {
     return &m_contentView;
   }
   bool prepareToEdit() override;
+  void findXNT(char* buffer, size_t bufferSize) override;
+  void removePreviousXNT() override;
 
   class ContentView : public TextCursorView::CursorFieldView {
    public:

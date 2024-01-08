@@ -85,17 +85,17 @@ class Simplification {
     // Return if any base direction can be added.
     bool canAddNewDirection() const { return m_length < k_size; }
     bool append(Direction direction);
-    Direction direction(size_t index) const {
+    Direction direction(uint8_t index) const {
       assert(index < m_length);
       return m_stack[index];
     }
-    size_t length() const { return m_length; }
+    uint8_t length() const { return m_length; }
 
    private:
     // Path max length (~= 2 * max number of allowed Expand/Contract)
-    constexpr static size_t k_size = 12;
+    constexpr static uint8_t k_size = 12;
     Direction m_stack[k_size];
-    size_t m_length;
+    uint8_t m_length;
   };
   // Recursive advanced reduction
   static void AdvancedReductionRec(Tree *u, Tree *root, const Tree *original,

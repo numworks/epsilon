@@ -105,7 +105,7 @@ void Simplification::Path::popBaseDirection() {
 }
 
 bool Simplification::Path::append(Direction direction) {
-  if (!m_stack[m_length - 1].combine(direction)) {
+  if (m_length == 0 || !m_stack[m_length - 1].combine(direction)) {
     if (m_length >= k_size) {
       return false;
     }
@@ -144,7 +144,7 @@ bool Simplification::ApplyDirection(Tree** u, Tree* root, Direction direction,
 bool Simplification::ApplyPath(Tree* u, const Path* path) {
   Tree* root = u;
   bool rootChanged = false;
-  for (size_t i = 0; i < path->length(); i++) {
+  for (uint8_t i = 0; i < path->length(); i++) {
     bool didApply = ApplyDirection(&u, root, path->direction(i), &rootChanged);
     assert(didApply);
   }

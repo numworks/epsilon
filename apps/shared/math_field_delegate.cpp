@@ -15,10 +15,17 @@ namespace Shared {
 
 bool AbstractMathFieldDelegate::handleEventForField(EditableField *field,
                                                     Ion::Events::Event event) {
+  updateXNTIndex(event);
   if (event == Ion::Events::XNT) {
-    return field->handleXNT(defaultXNT());
+    return field->handleXNT(m_currentXNTIndex, defaultXNT());
   }
   return false;
+}
+
+void AbstractMathFieldDelegate::updateXNTIndex(Ion::Events::Event event) {
+  if (event.isKeyPress()) {
+    m_currentXNTIndex = event == Ion::Events::XNT ? m_currentXNTIndex + 1 : -1;
+  }
 }
 
 CodePoint AbstractMathFieldDelegate::defaultXNT() {

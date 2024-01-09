@@ -10,6 +10,9 @@
 namespace Shared {
 
 class AbstractMathFieldDelegate {
+ public:
+  AbstractMathFieldDelegate() : m_currentXNTIndex(-1) {}
+
  protected:
   virtual bool isAcceptableExpression(const Poincare::Expression expression,
                                       Poincare::Context* context);
@@ -17,11 +20,16 @@ class AbstractMathFieldDelegate {
   virtual CodePoint defaultXNT();
   bool handleEventForField(Escher::EditableField* field,
                            Ion::Events::Event event);
+  void updateXNTIndex(Ion::Events::Event event);
+
+ private:
+  int m_currentXNTIndex;
 };
 
 class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
                                 public Escher::LayoutFieldDelegate {
  public:
+  using AbstractMathFieldDelegate::AbstractMathFieldDelegate;
   static MathLayoutFieldDelegate* Default();
 
   // LayoutFieldDelegate
@@ -36,6 +44,7 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
 class MathTextFieldDelegate : public AbstractMathFieldDelegate,
                               public Escher::TextFieldDelegate {
  public:
+  using AbstractMathFieldDelegate::AbstractMathFieldDelegate;
   static MathTextFieldDelegate* Default();
 
   // TextFieldDelegate

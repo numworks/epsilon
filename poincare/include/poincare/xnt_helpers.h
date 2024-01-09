@@ -20,9 +20,10 @@ constexpr static CodePoint k_defaultXNTCycle[] = {
     UCodePointNull,
 };
 
-CodePoint CodePointAtIndexInDefaultCycle(int index,
-                                         CodePoint startingCodePoint);
-CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle);
+CodePoint CodePointAtIndexInDefaultCycle(int index, CodePoint startingCodePoint,
+                                         size_t* cycleSize);
+CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle,
+                                  size_t* cycleSize);
 
 constexpr static char k_defaultContinuousXNT = 'x';
 constexpr static char k_defaultDiscreteXNT = 'k';
@@ -49,9 +50,11 @@ constexpr static int k_numberOfFunctions = std::size(k_parameteredFunctions);
 constexpr static int k_indexOfMainExpression = 0;
 constexpr static int k_indexOfParameter = 1;
 
-bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize);
+bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
+                     size_t* cycleSize);
 
-bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize);
+bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize,
+                     size_t* cycleSize);
 
 }  // namespace XNTHelpers
 

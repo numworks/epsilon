@@ -25,21 +25,25 @@ static size_t sizeOfCycle(const CodePoint* cycle) {
 }
 
 static CodePoint codePointAtIndexInCycle(int index, int startingIndex,
-                                         const CodePoint* cycle) {
-  size_t cycleSize = sizeOfCycle(cycle);
-  assert(0 <= startingIndex && startingIndex < cycleSize);
-  return cycle[(startingIndex + index) % cycleSize];
+                                         const CodePoint* cycle,
+                                         size_t* cycleSize) {
+  assert(cycleSize);
+  *cycleSize = sizeOfCycle(cycle);
+  assert(0 <= startingIndex && startingIndex < *cycleSize);
+  return cycle[(startingIndex + index) % *cycleSize];
 }
 
-CodePoint CodePointAtIndexInDefaultCycle(int index,
-                                         CodePoint startingCodePoint) {
+CodePoint CodePointAtIndexInDefaultCycle(int index, CodePoint startingCodePoint,
+                                         size_t* cycleSize) {
   int startingIndex =
       indexOfCodePointInCycle(startingCodePoint, k_defaultXNTCycle);
-  return codePointAtIndexInCycle(index, startingIndex, k_defaultXNTCycle);
+  return codePointAtIndexInCycle(index, startingIndex, k_defaultXNTCycle,
+                                 cycleSize);
 }
 
-CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle) {
-  return codePointAtIndexInCycle(index, 0, cycle);
+CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle,
+                                  size_t* cycleSize) {
+  return codePointAtIndexInCycle(index, 0, cycle, cycleSize);
 }
 
 static bool findParameteredFunction1D(UnicodeDecoder& decoder,
@@ -128,10 +132,13 @@ static bool findParameteredFunction1D(UnicodeDecoder& decoder,
   return functionFound;
 }
 
-bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
+bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
+                     size_t* cycleSize) {
+  assert(cycleSize);
   int functionIndex;
   int childIndex;
   buffer[0] = 0;
+  *cycleSize = 0;
   if (findParameteredFunction1D(decoder, &functionIndex, &childIndex)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     assert(0 <= childIndex && childIndex <= k_indexOfParameter);
@@ -147,6 +154,7 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
       }
     }
     assert(strlen(buffer) > 0);
+    *cycleSize = 1;
     return true;
   }
   assert(strlen(buffer) == 0);
@@ -200,11 +208,14 @@ static bool findParameteredFunction2D(Layout layout, int* functionIndex,
   return false;
 }
 
-bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize) {
+bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize,
+                     size_t* cycleSize) {
+  assert(cycleSize);
   int functionIndex;
   int childIndex;
   Layout parameterLayout;
   buffer[0] = 0;
+  *cycleSize = 0;
   if (findParameteredFunction2D(layout, &functionIndex, &childIndex,
                                 &parameterLayout)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
@@ -218,6 +229,7 @@ bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize) {
       }
     }
     assert(strlen(buffer) > 0);
+    *cycleSize = 1;
     return true;
   }
   assert(strlen(buffer) == 0);

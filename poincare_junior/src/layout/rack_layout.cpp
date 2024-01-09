@@ -25,17 +25,30 @@ KDCoordinate RackLayout::Baseline(const Tree* node) {
   return BaselineBetweenIndexes(node, 0, node->numberOfChildren());
 }
 
+/* Return -1 if base is unavailable */
+int baseForChild(const Tree* rack, const Tree* child, int childIndex) {
+  int baseIndex = childIndex + (VerticalOffset::IsSuffix(child) ? -1 : 1);
+  if (baseIndex == -1 && baseIndex == rack->numberOfChildren()) {
+    return -1;
+  }
+  const Tree* base = rack->child(baseIndex);
+  if (base->isVerticalOffsetLayout() &&
+      (VerticalOffset::IsSuffix(child) != VerticalOffset::IsSuffix(base))) {
+    // Break infinite loop
+    return -1;
+  }
+  return baseIndex;
+}
+
 KDCoordinate RackLayout::ChildBaseline(const Tree* node, int i) {
   const Tree* childI = node->child(i);
   if (!childI->isVerticalOffsetLayout()) {
     return Render::Baseline(childI);
   }
-  // TODO prevent infinite loop with prefix of suffix
-  int baseIndex = VerticalOffset::IsSuffix(childI) ? i - 1 : i + 1;
-  KDCoordinate baseBaseline =
-      (baseIndex == -1 || baseIndex == node->numberOfChildren())
-          ? KDFont::GlyphHeight(Render::font) / 2
-          : ChildBaseline(node, baseIndex);
+  int baseIndex = baseForChild(node, childI, i);
+  KDCoordinate baseBaseline = baseIndex == -1
+                                  ? KDFont::GlyphHeight(Render::font) / 2
+                                  : ChildBaseline(node, baseIndex);
   if (!VerticalOffset::IsSuperscript(childI)) {
     return baseBaseline;
   }
@@ -48,10 +61,9 @@ KDCoordinate RackLayout::ChildYPosition(const Tree* node, int i) {
       VerticalOffset::IsSuperscript(childI)) {
     return Baseline(node) - RackLayout::ChildBaseline(node, i);
   }
-  int baseIndex = VerticalOffset::IsSuffix(childI) ? i - 1 : i + 1;
-
+  int baseIndex = baseForChild(node, childI, i);
   KDCoordinate baseHeight =
-      (baseIndex == -1 || baseIndex == node->numberOfChildren())
+      baseIndex == -1
           ? KDFont::GlyphHeight(Render::font)
           : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
   return Baseline(node) - RackLayout::ChildBaseline(node, i) + baseHeight -
@@ -75,9 +87,9 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
     const Tree* childI = node->child(i);
     KDSize childSize = Render::Size(childI);
     if (childI->isVerticalOffsetLayout()) {
-      int baseIndex = VerticalOffset::IsSuffix(childI) ? i - 1 : i + 1;
+      int baseIndex = baseForChild(node, childI, i);
       KDCoordinate baseHeight =
-          (baseIndex == -1 || baseIndex == node->numberOfChildren())
+          baseIndex == -1
               ? KDFont::GlyphHeight(Render::font)
               : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
       childSize =

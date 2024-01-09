@@ -24,16 +24,21 @@ static size_t sizeOfCycle(const CodePoint* cycle) {
   return indexOfCodePointInCycle(UCodePointNull, cycle);
 }
 
+static CodePoint codePointAtIndexInCycle(int index, int startingIndex,
+                                         const CodePoint* cycle) {
+  size_t cycleSize = sizeOfCycle(cycle);
+  assert(0 <= startingIndex && startingIndex < cycleSize);
+  return cycle[(startingIndex + index) % cycleSize];
+}
+
 CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint,
                                   const CodePoint* cycle) {
-  size_t cycleSize = sizeOfCycle(cycle);
-  CodePoint codePoint = startingCodePoint;
-  if (index > 0) {
-    int startingIndex = indexOfCodePointInCycle(startingCodePoint, cycle);
-    assert(0 <= startingIndex && startingIndex < cycleSize);
-    codePoint = cycle[(startingIndex + index) % cycleSize];
-  }
-  return codePoint;
+  int startingIndex = indexOfCodePointInCycle(startingCodePoint, cycle);
+  return codePointAtIndexInCycle(index, startingIndex, cycle);
+}
+
+CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle) {
+  return codePointAtIndexInCycle(index, 0, cycle);
 }
 
 static bool findParameteredFunction1D(UnicodeDecoder& decoder,

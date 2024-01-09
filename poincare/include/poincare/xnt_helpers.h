@@ -22,6 +22,8 @@ constexpr static CodePoint k_defaultXNTCycle[] = {
 
 CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint,
                                   const CodePoint* cycle = k_defaultXNTCycle);
+CodePoint CodePointAtIndexInCycle(int currentIndex,
+                                  const CodePoint* cycle = k_defaultXNTCycle);
 
 constexpr static char k_defaultContinuousXNT = 'x';
 constexpr static char k_defaultDiscreteXNT = 'k';

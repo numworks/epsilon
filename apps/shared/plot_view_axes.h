@@ -78,6 +78,9 @@ class WithPolarGrid {
 
   static void DrawPolarCircles(const AbstractPlotView *plotView, KDContext *ctx,
                                KDRect rect);
+
+  static void ComputeRadiusBounds(const AbstractPlotView *plotView, KDRect rect,
+                                  float &min, float &max);
 };
 
 class NoAxis {

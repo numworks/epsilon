@@ -49,9 +49,9 @@ void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
 
 // WithPolarGrid
 
-void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
-                                     KDContext* ctx, KDRect rect) {
-  float step = plotView->range()->xGridUnit();
+void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
+                                        KDRect rect, float& radiusMin,
+                                        float& radiusMax) {
   /* We translate the pixel coordinates into floats, adding/subtracting 1 to
    * account for conversion errors. */
   float xMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal,
@@ -67,12 +67,28 @@ void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
   float yAbsoluteMin = std::fabs(std::max(yMin, -yMax));
   float xAbsoluteMax = std::max(-xMin, xMax);
   float yAbsoluteMax = std::max(-yMin, yMax);
-  const int start = ((xMin * xMax <= 0) ? yAbsoluteMin : xAbsoluteMin) / step;
-  const int end =
-      std::sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax) /
-      step;
-  bool originInFrame = (xMin * xMax <= 0) && (yMin * yMax <= 0);
-  for (int i = originInFrame ? 1 : start; i <= end; i++) {
+
+  if (xMin * xMax <= 0 && yMin * yMax <= 0) {
+    // The origin is inside the rect
+    radiusMin = 0;
+  } else {
+    radiusMin = ((xMin * xMax <= 0) ? yAbsoluteMin : xAbsoluteMin);
+  }
+
+  radiusMax =
+      std::sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax);
+}
+
+void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
+                                     KDContext* ctx, KDRect rect) {
+  float radiusMin, radiusMax;
+
+  ComputeRadiusBounds(plotView, rect, radiusMin, radiusMax);
+
+  float step = plotView->range()->xGridUnit();
+
+  for (int i = std::min<int>(1, std::floor(radiusMin / step));
+       i <= std::ceil(radiusMax / step); i++) {
     plotView->drawCircle(ctx, rect, {0.f, 0.f}, i * step,
                          i % 2 ? k_lightColor : k_boldColor);
   }

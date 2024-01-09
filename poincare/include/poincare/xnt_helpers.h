@@ -11,14 +11,17 @@ namespace Poincare {
 
 namespace XNTHelpers {
 
+constexpr static int k_maxCycleSize = 5;
 constexpr static CodePoint k_defaultXNTCycle[] = {
     Shared::ContinuousFunction::k_cartesianSymbol,
     Shared::Sequence::k_sequenceSymbol,
     Shared::ContinuousFunction::k_parametricSymbol,
     Shared::ContinuousFunction::k_polarSymbol,
+    UCodePointNull,
 };
 
-CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint);
+CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint,
+                                  const CodePoint* cycle = k_defaultXNTCycle);
 
 constexpr static char k_defaultContinuousXNT = 'x';
 constexpr static char k_defaultDiscreteXNT = 'k';

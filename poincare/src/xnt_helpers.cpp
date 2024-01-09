@@ -9,10 +9,10 @@ namespace Poincare {
 
 namespace XNTHelpers {
 
-static int indexOfCodePointInCycle(CodePoint codePoint) {
-  constexpr size_t k_numberOfCodePoints = std::size(k_defaultXNTCycle);
-  for (size_t i = 0; i < k_numberOfCodePoints; i++) {
-    if (k_defaultXNTCycle[i] == codePoint) {
+static int indexOfCodePointInCycle(CodePoint codePoint,
+                                   const CodePoint* cycle) {
+  for (size_t i = 0; i < k_maxCycleSize; i++) {
+    if (cycle[i] == codePoint) {
       return i;
     }
   }
@@ -20,13 +20,18 @@ static int indexOfCodePointInCycle(CodePoint codePoint) {
   return -1;
 }
 
-CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint) {
+static size_t sizeOfCycle(const CodePoint* cycle) {
+  return indexOfCodePointInCycle(UCodePointNull, cycle);
+}
+
+CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint,
+                                  const CodePoint* cycle) {
+  size_t cycleSize = sizeOfCycle(cycle);
   CodePoint codePoint = startingCodePoint;
   if (index > 0) {
-    int startingIndex = indexOfCodePointInCycle(startingCodePoint);
-    constexpr size_t k_numberOfCodePoints = std::size(k_defaultXNTCycle);
-    codePoint =
-        k_defaultXNTCycle[(startingIndex + index) % k_numberOfCodePoints];
+    int startingIndex = indexOfCodePointInCycle(startingCodePoint, cycle);
+    assert(0 <= startingIndex && startingIndex < cycleSize);
+    codePoint = cycle[(startingIndex + index) % cycleSize];
   }
   return codePoint;
 }

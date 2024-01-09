@@ -37,7 +37,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   if (strlen(buffer) == 0) {
     // Use default XNT cycle
     CodePoint xnt =
-        XNTHelpers::CodePointAtIndexInCycle(currentIndex, startingXNT);
+        XNTHelpers::CodePointAtIndexInDefaultCycle(currentIndex, startingXNT);
     SerializationHelper::CodePoint(buffer, bufferSize, xnt);
     if (currentIndex > 0) {
       removePreviousXNT();

@@ -31,10 +31,11 @@ static CodePoint codePointAtIndexInCycle(int index, int startingIndex,
   return cycle[(startingIndex + index) % cycleSize];
 }
 
-CodePoint CodePointAtIndexInCycle(int index, CodePoint startingCodePoint,
-                                  const CodePoint* cycle) {
-  int startingIndex = indexOfCodePointInCycle(startingCodePoint, cycle);
-  return codePointAtIndexInCycle(index, startingIndex, cycle);
+CodePoint CodePointAtIndexInDefaultCycle(int index,
+                                         CodePoint startingCodePoint) {
+  int startingIndex =
+      indexOfCodePointInCycle(startingCodePoint, k_defaultXNTCycle);
+  return codePointAtIndexInCycle(index, startingIndex, k_defaultXNTCycle);
 }
 
 CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle) {

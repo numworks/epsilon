@@ -10,6 +10,11 @@ using namespace Poincare;
 namespace Shared {
 namespace PlotPolicy {
 
+struct Vector2 {
+  float x, y;
+  float norm() const { return std::sqrt(x * x + y * y); }
+};
+
 // WithCartesianGrid
 
 void WithCartesianGrid::DrawGrid(const AbstractPlotView* plotView,
@@ -76,19 +81,14 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
      * This circle is centered in ((xMin + xMax)/2, (yMin + yMax)/2)
      * and its radius is sqrt(((xMax - xMin)^2 + (yMax - yMin)^2)) /2 .  */
 
-    float screenCircleRadius = std::sqrt((xMax - xMin) * (xMax - xMin) +
-                                         (yMax - yMin) * (yMax - yMin)) /
-                               2;
+    float screenCircleRadius = Vector2{xMax - xMin, yMax - yMin}.norm() / 2;
 
     // Distance from the origin to the screen center.
-    float screenCenterDistance = std::sqrt((xMin + xMax) * (xMin + xMax) +
-                                           (yMin + yMax) * (yMin + yMax)) /
-                                 2;
+    float screenCenterDistance = Vector2{xMin + xMax, yMin + yMax}.norm() / 2;
 
     radiusMin = screenCenterDistance - screenCircleRadius;
   }
-  radiusMax =
-      std::sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax);
+  radiusMax = Vector2{xAbsoluteMax, yAbsoluteMax}.norm();
 }
 
 void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,

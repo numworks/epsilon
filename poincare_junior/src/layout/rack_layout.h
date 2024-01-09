@@ -18,12 +18,14 @@ class RackLayout {
   static KDSize Size(const Tree* node);
   static KDCoordinate Baseline(const Tree* node);
   static KDCoordinate ChildBaseline(const Tree* node, int i);
+  static KDPoint ChildPosition(const Tree* node, int i);
   static KDCoordinate ChildYPosition(const Tree* node, int i);
   static KDSize SizeBetweenIndexes(const Tree* node, int leftPosition,
                                    int rightPosition);
   static KDCoordinate BaselineBetweenIndexes(const Tree* node, int leftPosition,
                                              int rightPosition);
   static bool ShouldDrawEmptyRectangle(const Tree* node);
+  static bool ShouldDrawEmptyBaseAt(const Tree* node, int childIndex);
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                          bool isGridPlaceholder = false);
 

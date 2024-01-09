@@ -429,15 +429,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
     }
 
     case LayoutType::Rack: {
-      KDCoordinate x = 0;
-      for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-        if (index == childIndex) {
-          break;
-        }
-        x += Width(child);
-      }
-      KDCoordinate y = RackLayout::ChildYPosition(node, childIndex);
-      return KDPoint(x, y);
+      return RackLayout::ChildPosition(node, childIndex);
     }
     case LayoutType::Fraction: {
       KDCoordinate x =
@@ -621,8 +613,10 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
     KDCoordinate subBase = RackLayout::BaselineBetweenIndexes(
         node, selection.leftPosition(), selection.rightPosition());
     KDCoordinate base = RackLayout::Baseline(node);
-    KDPoint start(Render::PositionOfChild(node, selection.leftPosition()).x(),
-                  base - subBase);
+    KDPoint start(
+        RackLayout::SizeBetweenIndexes(node, 0, selection.leftPosition())
+            .width(),
+        base - subBase);
     ctx->fillRect(KDRect(p.translatedBy(start), size), selectionColor);
   }
   KDSize size = Size(node);

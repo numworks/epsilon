@@ -33,8 +33,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
   // Find special XNT
-  findXNT(buffer, bufferSize);
-  if (strlen(buffer) == 0) {
+  if (!findXNT(buffer, bufferSize)) {
     // Use default XNT cycle
     CodePoint xnt =
         XNTHelpers::CodePointAtIndexInDefaultCycle(currentIndex, startingXNT);

@@ -142,7 +142,7 @@ class AbstractTextField : public TextInput {
                               FirstResponderAlteration::WillSpoil);
   }
   bool prepareToEdit() override;
-  void findXNT(char *buffer, size_t bufferSize) override;
+  bool findXNT(char *buffer, size_t bufferSize) override;
   void removePreviousXNT() override;
 
   virtual void removeWholeText();

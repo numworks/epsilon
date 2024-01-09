@@ -146,8 +146,10 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
         assert(buffer[parameterLength] == 0);
       }
     }
+    assert(strlen(buffer) > 0);
     return true;
   }
+  assert(strlen(buffer) == 0);
   return false;
 }
 
@@ -215,8 +217,10 @@ bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize) {
         parameterLayout.serializeForParsing(buffer, bufferSize);
       }
     }
+    assert(strlen(buffer) > 0);
     return true;
   }
+  assert(strlen(buffer) == 0);
   return false;
 }
 

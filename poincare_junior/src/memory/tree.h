@@ -24,7 +24,7 @@ namespace PoincareJ {
 
 class Tree : public TypeBlock {
  public:
-#if !PLATFORM_DEVICE
+#if PCJ_METRICS
   static uint32_t nextNodeCount;
   static uint32_t nextNodeInPoolCount;
 #endif

@@ -191,7 +191,7 @@ void Tree::copyTreeTo(void* address) const {
  * - Source node is always expected to be defined. Allowing checks on
  *   nextNode's destination. */
 
-#if !PLATFORM_DEVICE
+#if PCJ_METRICS
 uint32_t Tree::nextNodeCount = 0;
 uint32_t Tree::nextNodeInPoolCount = 0;
 #endif
@@ -201,7 +201,7 @@ const Tree* Tree::nextNode() const {
   assert(!isTreeBorder());
 #endif
   assert(this != SharedEditionPool->lastBlock());
-#if !PLATFORM_DEVICE
+#if PCJ_METRICS
   if (SharedEditionPool->firstBlock() <= this &&
       this <= SharedEditionPool->lastBlock()) {
     nextNodeInPoolCount++;

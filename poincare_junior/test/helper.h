@@ -103,6 +103,9 @@ inline void assertionsWarn() {
 #endif
 }
 
+#define PCJ_METRICS 0
+
+#if PCJ_METRICS
 #define METRICS(F)                                                          \
   {                                                                         \
     Tree::nextNodeCount = 0;                                                \
@@ -135,6 +138,7 @@ inline void assertionsWarn() {
               << std::endl;                                                 \
     assertionsWarn();                                                       \
   }
+#endif
 #endif
 
 Tree* parse(const char* input);

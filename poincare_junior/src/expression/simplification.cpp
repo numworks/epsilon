@@ -126,8 +126,12 @@ bool Simplification::Path::append(Direction direction) {
 
 bool Simplification::CanApplyDirection(const Tree* u, const Tree* root,
                                        Direction direction) {
-  // TODO: Optimize this check
-  return !direction.isNextNode() || u->nextNode()->hasAncestor(root, false);
+  // Optimization: No trees are expected after root, so we can use lastBlock()
+  assert(!direction.isNextNode() ||
+         (u->nextNode()->block() < SharedEditionPool->lastBlock()) ==
+             u->nextNode()->hasAncestor(root, false));
+  return !direction.isNextNode() ||
+         u->nextNode()->block() < SharedEditionPool->lastBlock();
 }
 
 bool Simplification::ApplyDirection(Tree** u, Tree* root, Direction direction,

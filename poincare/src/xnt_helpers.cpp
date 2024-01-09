@@ -130,8 +130,7 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize) {
       size_t parameterStart;
       size_t parameterLength;
       if (ParameteredExpression::ParameterText(decoder, &parameterStart,
-                                               &parameterLength) &&
-          bufferSize - 1 >= parameterLength) {
+                                               &parameterLength)) {
         decoder.printInBuffer(buffer, bufferSize, parameterLength);
         assert(buffer[parameterLength] == 0);
       }

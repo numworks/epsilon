@@ -107,15 +107,14 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
+    if (cursorPositionNeedsEmptyBase(node, i) &&
+        ShouldDrawEmptyBaseAt(node, i)) {
+      totalWidth += EmptyRectangle::RectangleSize(Render::font).width();
+    }
     const Tree* childI = node->child(i);
     KDSize childSize = Render::Size(childI);
     if (childI->isVerticalOffsetLayout()) {
       int baseIndex = baseForChild(node, childI, i);
-      if (baseIndex == -1 && ShouldDrawEmptyBaseAt(node, i)) {
-        childSize =
-            childSize +
-            KDSize(EmptyRectangle::RectangleSize(Render::font).width(), 0);
-      }
       KDCoordinate baseHeight =
           baseIndex == -1
               ? KDFont::GlyphHeight(Render::font)
@@ -175,7 +174,9 @@ void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint pos,
         EmptyRectangle::DrawEmptyRectangle(
             ctx,
             pos.translatedBy(KDPoint(
-                SizeBetweenIndexes(node, 0, p).width(),
+                SizeBetweenIndexes(node, 0, p).width() -
+                    (false ? EmptyRectangle::RectangleSize(Render::font).width()
+                           : 0),
                 Baseline(node) - KDFont::GlyphHeight(Render::font) / 2)),
             Render::font,
             isGridPlaceholder ? EmptyRectangle::Color::Gray

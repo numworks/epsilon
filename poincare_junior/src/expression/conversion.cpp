@@ -60,6 +60,30 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
         return Poincare::ArcSine::Builder(child);
       case BlockType::ArcTangent:
         return Poincare::ArcTangent::Builder(child);
+      case BlockType::Secant:
+        return Poincare::Secant::Builder(child);
+      case BlockType::Cosecant:
+        return Poincare::Cosecant::Builder(child);
+      case BlockType::Cotangent:
+        return Poincare::Cotangent::Builder(child);
+      case BlockType::ArcSecant:
+        return Poincare::ArcSecant::Builder(child);
+      case BlockType::ArcCosecant:
+        return Poincare::ArcCosecant::Builder(child);
+      case BlockType::ArcCotangent:
+        return Poincare::ArcCotangent::Builder(child);
+      case BlockType::HyperbolicCosine:
+        return Poincare::HyperbolicCosine::Builder(child);
+      case BlockType::HyperbolicSine:
+        return Poincare::HyperbolicSine::Builder(child);
+      case BlockType::HyperbolicTangent:
+        return Poincare::HyperbolicTangent::Builder(child);
+      case BlockType::HyperbolicArcCosine:
+        return Poincare::HyperbolicArcCosine::Builder(child);
+      case BlockType::HyperbolicArcSine:
+        return Poincare::HyperbolicArcSine::Builder(child);
+      case BlockType::HyperbolicArcTangent:
+        return Poincare::HyperbolicArcTangent::Builder(child);
       case BlockType::Abs:
         return Poincare::AbsoluteValue::Builder(child);
       case BlockType::Log:
@@ -261,6 +285,42 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ArcTangent:
       SharedEditionPool->push(BlockType::ArcTangent);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Cosecant:
+      SharedEditionPool->push(BlockType::Cosecant);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Secant:
+      SharedEditionPool->push(BlockType::Secant);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Cotangent:
+      SharedEditionPool->push(BlockType::Cotangent);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ArcCosecant:
+      SharedEditionPool->push(BlockType::ArcCosecant);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ArcSecant:
+      SharedEditionPool->push(BlockType::ArcSecant);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ArcCotangent:
+      SharedEditionPool->push(BlockType::ArcCotangent);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::HyperbolicCosine:
+      SharedEditionPool->push(BlockType::HyperbolicCosine);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::HyperbolicSine:
+      SharedEditionPool->push(BlockType::HyperbolicSine);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::HyperbolicTangent:
+      SharedEditionPool->push(BlockType::HyperbolicTangent);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::HyperbolicArcCosine:
+      SharedEditionPool->push(BlockType::HyperbolicArcCosine);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::HyperbolicArcSine:
+      SharedEditionPool->push(BlockType::HyperbolicArcSine);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::HyperbolicArcTangent:
+      SharedEditionPool->push(BlockType::HyperbolicArcTangent);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::NaperianLogarithm:
       SharedEditionPool->push(BlockType::Ln);

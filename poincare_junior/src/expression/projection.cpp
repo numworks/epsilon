@@ -130,6 +130,50 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       // log(A, B) -> ln(A) * ln(B)^(-1)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, KB),
                                        KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
+      // Sec(A) -> 1/cos(A) (Add 1* to properly project power function)
+      PatternMatching::MatchAndReplace(ref, KSec(KA),
+                                       KMult(1_e, KPow(KCos(KA), -1_e))) ||
+      // Csc(A) -> 1/sin(A) (Add 1* to properly project power function)
+      PatternMatching::MatchAndReplace(ref, KCsc(KA),
+                                       KMult(1_e, KPow(KSin(KA), -1_e))) ||
+      // Cot(A) -> cos(A)/sin(A) (Avoid tan to for dependencies)
+      PatternMatching::MatchAndReplace(ref, KCot(KA),
+                                       KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
+      // ArcSec(A) -> 1*acos(1/A) (Add 1* to properly project inverse function)
+      PatternMatching::MatchAndReplace(ref, KArcSec(KA),
+                                       KMult(1_e, KACos(KPow(KA, -1_e)))) ||
+      // ArcCsc(A) -> 1*asin(1/A) (Add 1* to properly project inverse function)
+      PatternMatching::MatchAndReplace(ref, KArcCsc(KA),
+                                       KMult(1_e, KASin(KPow(KA, -1_e)))) ||
+      /* ArcCot(A) -> π/2 - atan(A) with
+       *  - acos(0) instead of π/2 to handle angle unit
+       *  - Instead of atan(1/A) to handle ArcCot(0) */
+      PatternMatching::MatchAndReplace(
+          ref, KArcCot(KA), KAdd(KACos(0_e), KMult(-1_e, KATan(KA)))) ||
+      // Cosh(A) -> (exp(A)+exp(-A))*1/2
+      PatternMatching::MatchAndReplace(
+          ref, KCosh(KA),
+          KMult(KHalf, KAdd(KExp(KA), KExp(KMult(-1_e, KA))))) ||
+      // Sinh(A) -> (exp(A)-exp(-A))*1/2
+      PatternMatching::MatchAndReplace(
+          ref, KSinh(KA),
+          KMult(KHalf, KAdd(KExp(KA), KMult(-1_e, KExp(KMult(-1_e, KA)))))) ||
+      // Tanh(A) -> (exp(2A)-1)/(exp(2A)+1)
+      PatternMatching::MatchAndReplace(
+          ref, KTanh(KA),
+          KMult(KAdd(KExp(KMult(2_e, KA)), -1_e),
+                KPow(KAdd(KExp(KMult(2_e, KA)), 1_e), -1_e))) ||
+      // ArCosh(A) -> ln(A+sqrt(A^2-1))
+      PatternMatching::MatchAndReplace(
+          ref, KArCosh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), -1_e))))) ||
+      // ArSinh(A) -> ln(A+sqrt(A^2+1))
+      PatternMatching::MatchAndReplace(
+          ref, KArSinh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e))))) ||
+      // ArTanh(A) -> (ln(1+A)-ln(1-A))*1/2
+      PatternMatching::MatchAndReplace(
+          ref, KArTanh(KA),
+          KMult(KHalf, KAdd(KLn(KAdd(1_e, KA)),
+                            KMult(-1_e, KLn(KAdd(1_e, KMult(-1_e, KA))))))) ||
       changed;
 }
 

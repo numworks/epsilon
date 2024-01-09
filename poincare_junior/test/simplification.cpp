@@ -291,6 +291,51 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("sum(k^2, k, 2, 5)", "54");
   simplifies_to("2×sum(k, k, 0, n)+n", "n^2 + 2n");
   simplifies_to("2×sum(k, k, 3, n)+n", "n^2+2×n-6");
+  // Hyperbolic trigonometry
+  simplifies_to("cosh(-x)+sinh(x)", "e^x");
+  // TODO: Should simplify to 1
+  simplifies_to(
+      "cosh(x)^2-sinh(-x)^2",
+      "-(e^(-2×x)-2×e^x×e^(-x)+e^(2×x))/4+(e^(-2×x)+2×e^x×e^(-x)+e^(2×x))/4");
+  // TODO: Should simplify to 0
+  simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
+                "((-1+e^(4×x))×(1+(1-2×e^(2×x)+e^(4×x))/(1+e^(2×x))^2))/"
+                "(2×(1+e^(4×x)))+1/(1+e^(2×x))-e^(2×x)/(1+e^(2×x))");
+  // TODO: Should simplify to log(5+√(6))
+  simplifies_to("arcosh(5)", "ln(5+2^(3/2)×√(3))",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  // TODO: Should simplify to x
+  simplifies_to("arsinh(sinh(x))",
+                "ln((e^x-e^(-x))/2+√(1+(e^(-2×x)-2×e^x×e^(-x)+e^(2×x))/4))",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  // TODO: Should simplify to x
+  simplifies_to("artanh(tanh(x))",
+                "(-ln(1+1/(1+e^(2×x))-e^(2×x)/(1+e^(2×x)))+ln(1+(-1+e^(2×x))/"
+                "(1+e^(2×x))))/2",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  // TODO: Should simplify to x
+  simplifies_to("cosh(arcosh(x))", "(x+√(x^2-1)+1/(x+√(x^2-1)))/2",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  // TODO: Should simplify to x
+  simplifies_to("sinh(arsinh(x))", "(x+√(x^2+1)-1/(x+√(x^2+1)))/2",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  // TODO: Should simplify to x
+  simplifies_to("tanh(artanh(x))",
+                "(x/(-x+1)-1+1/(-x+1))/(x/(-x+1)+1+1/(-x+1))",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  // Advanced trigonometry
+  simplifies_to("sec(x)", "1/cos(x)");
+  simplifies_to("csc(x)", "1/sin(x)");
+  simplifies_to("cot(x)", "cos(x)/sin(x)");
+  simplifies_to("arcsec(sec(π/6))", "π/6");
+  simplifies_to("arccsc(csc(π/6))", "π/6");
+  // TODO: Should simplify to π/6
+  simplifies_to("arccot(cot(π/6))", "π/2-arctan(√(3))");
+  simplifies_to("sec(arcsec(x))", "x");
+  simplifies_to("csc(arccsc(x))", "x");
+  // TODO: Should simplify to x
+  simplifies_to("cot(arccot(x))", "x/√(x^2+1)×(-(x/√(x^2+1))^2+1)^(-1/2)",
+                {.m_complexFormat = ComplexFormat::Cartesian});
 
   // Arithmetic
   simplifies_to("quo(23,5)", "4");

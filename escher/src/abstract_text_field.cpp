@@ -358,6 +358,9 @@ void AbstractTextField::willResignFirstResponder() {
 bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   assert(!contentView()->isStalled());
   bool textDidChange;
+  if (m_delegate) {
+    m_delegate->updateRepetitionIndexes(event);
+  }
   bool didHandleEvent = privateHandleEvent(event, &textDidChange);
   if (didHandleEvent && textDidChange && m_delegate) {
     m_delegate->textFieldDidHandleEvent(this);

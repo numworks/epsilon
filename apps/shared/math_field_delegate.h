@@ -37,6 +37,9 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
                                   Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
+  void updateRepetitionIndexes(Ion::Events::Event event) override {
+    updateXNTIndex(event);
+  }
 
   bool isAcceptableLayout(Poincare::Layout layout, Poincare::Context* context);
 };
@@ -52,6 +55,9 @@ class MathTextFieldDelegate : public AbstractMathFieldDelegate,
                                 Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
+  void updateRepetitionIndexes(Ion::Events::Event event) override {
+    updateXNTIndex(event);
+  }
 
   template <typename T>
   static T ParseInputFloatValue(const char* text);

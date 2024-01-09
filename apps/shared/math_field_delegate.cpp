@@ -15,7 +15,6 @@ namespace Shared {
 
 bool AbstractMathFieldDelegate::handleEventForField(EditableField *field,
                                                     Ion::Events::Event event) {
-  updateXNTIndex(event);
   if (event == Ion::Events::XNT) {
     return field->handleXNT(m_currentXNTIndex, defaultXNT());
   }

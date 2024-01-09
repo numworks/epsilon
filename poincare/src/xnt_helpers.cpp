@@ -27,6 +27,7 @@ static size_t sizeOfCycle(const CodePoint* cycle) {
 static CodePoint codePointAtIndexInCycle(int index, int startingIndex,
                                          const CodePoint* cycle,
                                          size_t* cycleSize) {
+  assert(index >= 0);
   assert(cycleSize);
   *cycleSize = sizeOfCycle(cycle);
   assert(0 <= startingIndex && startingIndex < *cycleSize);

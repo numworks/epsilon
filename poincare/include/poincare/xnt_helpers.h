@@ -11,6 +11,7 @@ namespace Poincare {
 
 namespace XNTHelpers {
 
+// Cycles
 constexpr static int k_maxCycleSize = 5;
 constexpr static CodePoint k_defaultXNTCycle[] = {
     Shared::ContinuousFunction::k_cartesianSymbol,
@@ -19,42 +20,52 @@ constexpr static CodePoint k_defaultXNTCycle[] = {
     Shared::ContinuousFunction::k_polarSymbol,
     UCodePointNull,
 };
+constexpr CodePoint k_defaultContinuousXNTCycle[] = {
+    Shared::ContinuousFunction::k_cartesianSymbol,
+    Shared::ContinuousFunction::k_parametricSymbol,
+    Shared::ContinuousFunction::k_polarSymbol,
+    UCodePointNull,
+};
+constexpr CodePoint k_defaultDiscreteXNTCycle[] = {
+    'k',
+    'n',
+    UCodePointNull,
+};
 
 CodePoint CodePointAtIndexInDefaultCycle(int index, CodePoint startingCodePoint,
                                          size_t* cycleSize);
 CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle,
                                   size_t* cycleSize);
 
-constexpr static char k_defaultContinuousXNT = 'x';
-constexpr static char k_defaultDiscreteXNT = 'k';
-
+// Parametered functions
 constexpr static struct {
   AliasesList aliasesList;
   LayoutNode::Type layoutType;
-  char defaultXNT;
+  const CodePoint* XNTcycle;
 } k_parameteredFunctions[] = {
     {Derivative::s_functionHelper.aliasesList(),
-     LayoutNode::Type::FirstOrderDerivativeLayout, k_defaultContinuousXNT},
+     LayoutNode::Type::FirstOrderDerivativeLayout, k_defaultContinuousXNTCycle},
     {Derivative::s_functionHelper.aliasesList(),
-     LayoutNode::Type::HigherOrderDerivativeLayout, k_defaultContinuousXNT},
+     LayoutNode::Type::HigherOrderDerivativeLayout,
+     k_defaultContinuousXNTCycle},
     {Integral::s_functionHelper.aliasesList(), LayoutNode::Type::IntegralLayout,
-     k_defaultContinuousXNT},
+     k_defaultContinuousXNTCycle},
     {Sum::s_functionHelper.aliasesList(), LayoutNode::Type::SumLayout,
-     k_defaultDiscreteXNT},
+     k_defaultDiscreteXNTCycle},
     {Product::s_functionHelper.aliasesList(), LayoutNode::Type::ProductLayout,
-     k_defaultDiscreteXNT},
+     k_defaultDiscreteXNTCycle},
     {ListSequence::s_functionHelper.aliasesList(),
-     LayoutNode::Type::ListSequenceLayout, k_defaultDiscreteXNT},
+     LayoutNode::Type::ListSequenceLayout, k_defaultDiscreteXNTCycle},
 };
 constexpr static int k_numberOfFunctions = std::size(k_parameteredFunctions);
 constexpr static int k_indexOfMainExpression = 0;
 constexpr static int k_indexOfParameter = 1;
 
 bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
-                     size_t* cycleSize);
+                     int xntIndex, size_t* cycleSize);
 
 bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize,
-                     size_t* cycleSize);
+                     int xntIndex, size_t* cycleSize);
 
 }  // namespace XNTHelpers
 

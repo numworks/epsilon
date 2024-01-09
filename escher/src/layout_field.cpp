@@ -212,15 +212,18 @@ bool LayoutField::prepareToEdit() {
   return true;
 }
 
-bool LayoutField::findXNT(char *buffer, size_t bufferSize, size_t *cycleSize) {
+bool LayoutField::findXNT(char *buffer, size_t bufferSize, int xntIndex,
+                          size_t *cycleSize) {
   Layout layout = cursor()->layout();
   if (linearMode()) {
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
     LinearLayoutDecoder decoder(horizontalLayout, cursor()->position());
-    return XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize, cycleSize);
+    return XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
+                                       cycleSize);
   }
-  return XNTHelpers::FindXNTSymbol2D(layout, buffer, bufferSize, cycleSize);
+  return XNTHelpers::FindXNTSymbol2D(layout, buffer, bufferSize, xntIndex,
+                                     cycleSize);
 }
 
 void LayoutField::removePreviousXNT() {

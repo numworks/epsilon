@@ -234,10 +234,7 @@ int Comparison::CompareChildren(const Tree* node0, const Tree* node1,
 }
 
 int Comparison::CompareLastChild(const Tree* node0, const Tree* node1) {
-  int m = node0->numberOfChildren();
-  // Otherwise, node0 should be sanitized beforehand.
-  assert(m > 0);
-  int comparisonWithChild = Compare(node0->child(m - 1), node1);
+  int comparisonWithChild = Compare(node0->lastChild(), node1);
   if (comparisonWithChild != 0) {
     return comparisonWithChild;
   }

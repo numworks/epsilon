@@ -305,7 +305,7 @@ int Tree::numberOfDescendants(bool includeSelf) const {
 }
 
 const Tree* Tree::child(int i) const {
-  assert(i < numberOfChildren());
+  assert(i >= 0 && i < numberOfChildren());
   const Tree* child = nextNode();
   for (; i > 0; i--) {
     child = child->nextTree();

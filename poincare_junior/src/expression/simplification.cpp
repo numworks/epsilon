@@ -535,7 +535,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     return true;
   }
   // u^n
-  EditionReference n = u->child(1);
+  EditionReference n = v->nextTree();
   // After systematic reduction, a power can only have integer index.
   if (!n->isInteger()) {
     // TODO: Handle 0^x with x > 0 before to avoid ln(0)
@@ -648,7 +648,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
    *   * -|x|^y if p is odd
    */
   Tree* x = u->child(0);
-  Tree* y = u->child(1);
+  Tree* y = x->nextTree();
   bool xIsNumber = x->isNumber();
   bool xIsPositiveNumber = xIsNumber && Number::Sign(x).isPositive();
   bool xIsNegativeNumber = xIsNumber && !xIsPositiveNumber;

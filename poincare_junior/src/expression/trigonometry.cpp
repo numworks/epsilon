@@ -142,13 +142,13 @@ const Tree* getPiFactor(const Tree* u) {
 bool Trigonometry::SimplifyTrig(Tree* u) {
   assert(u->isTrig());
   // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
-  Tree* secondArgument = u->child(1);
+  Tree* firstArgument = u->child(0);
+  Tree* secondArgument = firstArgument->nextTree();
   bool isOpposed = false;
   bool changed = SimplifyTrigSecondElement(secondArgument, &isOpposed);
   assert(secondArgument->isZero() || secondArgument->isOne());
   bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
-  Tree* firstArgument = u->child(0);
   if (PatternMatching::MatchReplaceAndSimplify(
           firstArgument, KMult(KTA, -1_e, KTB), KMult(KTA, KTB))) {
     changed = true;
@@ -262,8 +262,8 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
     u->moveTreeOverTree(res);
     return true;
   }
-  bool isAsin = u->child(1)->isOne();
   const Tree* arg = u->child(0);
+  bool isAsin = arg->nextTree()->isOne();
   if (arg->isZero()) {
     u->cloneTreeOverTree(isAsin ? 0_e : KMult(KHalf, π_e));
     return true;

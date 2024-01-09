@@ -183,6 +183,11 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
 
 bool PatternMatching::Match(const Tree* pattern, const Tree* source,
                             Context* context) {
+  /* Since we use Match a lot with pattern's type not matching source, escape
+   * early here to optimize a costly MatchContext constructor. */
+  if (pattern->type() != source->type() && !pattern->isPlaceholder()) {
+    return false;
+  }
   // Use a temporary context to preserve context in case no match is found.
   Context tempContext = *context;
   // Match nodes between the tree's bounds.

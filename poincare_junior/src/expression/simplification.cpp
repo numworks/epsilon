@@ -168,7 +168,8 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
                                           const Tree* original, Path* path,
                                           Path* bestPath, int* bestMetric,
                                           CrcCollection* crcCollection,
-                                          bool* didOverflowPath) {
+                                          bool* didOverflowPath,
+                                          bool* mustResetRoot) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
   std::cout << "AdvancedReductionRec on subtree: ";
@@ -189,8 +190,13 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
     bool isLeaf = true;
     for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
       Direction dir = Direction::SingleDirectionForIndex(i);
+      if (*mustResetRoot) {
+        // Reset root to current path
+        root->cloneTreeOverTree(original);
+        ApplyPath(root, path);
+        *mustResetRoot = false;
+      }
       Tree* target = u;
-      // Apply direction if effective:
       bool rootChanged = false;
       if (!CanApplyDirection(target, root, dir)) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
@@ -243,7 +249,7 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
         assert(canAddDir);
         bool didOverflowPathRec = false;
         AdvancedReductionRec(target, root, original, path, bestPath, bestMetric,
-                             crcCollection, &didOverflowPathRec);
+                             crcCollection, &didOverflowPathRec, mustResetRoot);
         if (rootChanged && !didOverflowPathRec) {
           // No need to explore this again, even at smaller lengths.
           crcCollection->add(crc32, 0);
@@ -269,17 +275,17 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
         root->logSerialize();
       }
 #endif
-      // Undo changes on root.
-      // TODO : Many times, undoing changes is unnecessary here.
       if (rootChanged) {
-        root->cloneTreeOverTree(original);
-        ApplyPath(root, path);
+        // root will be reset to current path if needed later.
+        *mustResetRoot = true;
       }
     }
     if (!isLeaf) {
       return;
     }
   }
+  // Otherwise, root should be reset to current path.
+  assert(!*mustResetRoot);
   // All directions are impossible, we are at a leaf. Compare metrics.
   int metric = GetMetric(root);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
@@ -318,9 +324,10 @@ bool Simplification::AdvancedReduction(Tree* u) {
   s_indent = 1;
 #endif
   bool didOverflowPath = false;
+  bool mustResetRoot = false;
   AdvancedReductionRec(editedExpression, editedExpression, u, &currentPath,
-                       &bestPath, &bestMetric, &crcCollection,
-                       &didOverflowPath);
+                       &bestPath, &bestMetric, &crcCollection, &didOverflowPath,
+                       &mustResetRoot);
   editedExpression->removeTree();
   bool result = ApplyPath(u, &bestPath);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1

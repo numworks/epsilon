@@ -103,7 +103,7 @@ class Simplification {
   static void AdvancedReductionRec(Tree *u, Tree *root, const Tree *original,
                                    Path *path, Path *bestPath, int *bestMetric,
                                    CrcCollection *crcCollection,
-                                   bool *didOverflowPath);
+                                   bool *didOverflowPath, bool *mustResetRoot);
   // Return true if tree has changed. path is expected to be valid.
   static bool ApplyPath(Tree *u, const Path *path);
   // Return true if direction was applied.

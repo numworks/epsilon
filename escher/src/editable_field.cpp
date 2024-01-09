@@ -26,7 +26,7 @@ bool EditableField::privateHandleBoxEvent(Ion::Events::Event event) {
   return true;
 }
 
-bool EditableField::handleXNT(CodePoint startingXNT) {
+bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   if (!prepareToEdit()) {
     return false;
   }
@@ -36,11 +36,10 @@ bool EditableField::handleXNT(CodePoint startingXNT) {
   findXNT(buffer, bufferSize);
   if (strlen(buffer) == 0) {
     // Use default XNT cycle
-    CodePoint xnt = XNTHelpers::CodePointAtIndexInCycle(
-        Ion::Events::repetitionFactor(), startingXNT);
+    CodePoint xnt =
+        XNTHelpers::CodePointAtIndexInCycle(currentIndex, startingXNT);
     SerializationHelper::CodePoint(buffer, bufferSize, xnt);
-    if (Ion::Events::repetitionFactor() > 0) {
-      // TODO: Fix issues with repetition over a syntax error dismissal
+    if (currentIndex > 0) {
       removePreviousXNT();
     }
   }

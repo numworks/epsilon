@@ -442,6 +442,9 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
 }
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
+  if (m_delegate) {
+    m_delegate->updateRepetitionIndexes(event);
+  }
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRedrawLayout;
   bool shouldUpdateCursor;

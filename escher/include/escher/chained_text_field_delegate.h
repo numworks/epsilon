@@ -25,6 +25,7 @@ class ChainedTextFieldDelegate : public TextFieldDelegate {
   void textFieldDidStartEditing(AbstractTextField* textField) override;
   bool textFieldIsEditable(AbstractTextField* textField) override;
   bool textFieldIsStorable(AbstractTextField* textField) override;
+  void updateRepetitionIndexes(Ion::Events::Event event) override;
 
  private:
   TextFieldDelegate* m_parentDelegate;

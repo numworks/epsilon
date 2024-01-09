@@ -33,6 +33,7 @@ class LayoutFieldDelegate : public ContextProvider {
   virtual bool insertTextForAnsEvent(Escher::LayoutField* layoutField) const {
     return false;
   }
+  virtual void updateRepetitionIndexes(Ion::Events::Event event) {}
 };
 
 }  // namespace Escher

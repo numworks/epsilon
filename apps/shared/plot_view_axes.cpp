@@ -63,8 +63,6 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
   float yMax =
       plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.top() - 1);
 
-  float xAbsoluteMin = std::fabs(std::max(xMin, -xMax));
-  float yAbsoluteMin = std::fabs(std::max(yMin, -yMax));
   float xAbsoluteMax = std::max(-xMin, xMax);
   float yAbsoluteMax = std::max(-yMin, yMax);
 
@@ -72,9 +70,23 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
     // The origin is inside the rect
     radiusMin = 0;
   } else {
-    radiusMin = ((xMin * xMax <= 0) ? yAbsoluteMin : xAbsoluteMin);
-  }
+    /* Consider the smallest circle that contains the whole screen. The
+     * radiuses of visible arcs are bounded by the distance between the origin
+     * and this circle.
+     * This circle is centered in ((xMin + xMax)/2, (yMin + yMax)/2)
+     * and its radius is sqrt(((xMax - xMin)^2 + (yMax - yMin)^2)) /2 .  */
 
+    float screenCircleRadius = std::sqrt((xMax - xMin) * (xMax - xMin) +
+                                         (yMax - yMin) * (yMax - yMin)) /
+                               2;
+
+    // Distance from the origin to the screen center.
+    float screenCenterDistance = std::sqrt((xMin + xMax) * (xMin + xMax) +
+                                           (yMin + yMax) * (yMin + yMax)) /
+                                 2;
+
+    radiusMin = screenCenterDistance - screenCircleRadius;
+  }
   radiusMax =
       std::sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax);
 }
@@ -87,7 +99,7 @@ void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
 
   float step = plotView->range()->xGridUnit();
 
-  for (int i = std::min<int>(1, std::floor(radiusMin / step));
+  for (int i = std::max<int>(1, std::floor(radiusMin / step));
        i <= std::ceil(radiusMax / step); i++) {
     plotView->drawCircle(ctx, rect, {0.f, 0.f}, i * step,
                          i % 2 ? k_lightColor : k_boldColor);

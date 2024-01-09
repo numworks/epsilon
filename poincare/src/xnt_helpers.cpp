@@ -133,7 +133,7 @@ static bool findParameteredFunction1D(UnicodeDecoder& decoder,
 }
 
 bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
-                     size_t* cycleSize) {
+                     int xntIndex, size_t* cycleSize) {
   assert(cycleSize);
   int functionIndex;
   int childIndex;
@@ -142,8 +142,9 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
   if (findParameteredFunction1D(decoder, &functionIndex, &childIndex)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     assert(0 <= childIndex && childIndex <= k_indexOfParameter);
-    SerializationHelper::CodePoint(
-        buffer, bufferSize, k_parameteredFunctions[functionIndex].defaultXNT);
+    CodePoint xnt = CodePointAtIndexInCycle(
+        xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
+    SerializationHelper::CodePoint(buffer, bufferSize, xnt);
     if (childIndex == k_indexOfMainExpression) {
       size_t parameterStart;
       size_t parameterLength;
@@ -151,10 +152,10 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
                                                &parameterLength)) {
         decoder.printInBuffer(buffer, bufferSize, parameterLength);
         assert(buffer[parameterLength] == 0);
+        *cycleSize = 1;
       }
     }
     assert(strlen(buffer) > 0);
-    *cycleSize = 1;
     return true;
   }
   assert(strlen(buffer) == 0);
@@ -209,7 +210,7 @@ static bool findParameteredFunction2D(Layout layout, int* functionIndex,
 }
 
 bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize,
-                     size_t* cycleSize) {
+                     int xntIndex, size_t* cycleSize) {
   assert(cycleSize);
   int functionIndex;
   int childIndex;
@@ -220,16 +221,17 @@ bool FindXNTSymbol2D(Layout layout, char* buffer, size_t bufferSize,
                                 &parameterLayout)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     assert(0 <= childIndex && childIndex <= k_indexOfParameter);
-    SerializationHelper::CodePoint(
-        buffer, bufferSize, k_parameteredFunctions[functionIndex].defaultXNT);
+    CodePoint xnt = CodePointAtIndexInCycle(
+        xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
+    SerializationHelper::CodePoint(buffer, bufferSize, xnt);
     if (childIndex == k_indexOfMainExpression) {
       parameterLayout = xntLayout(parameterLayout);
       if (!parameterLayout.isUninitialized()) {
         parameterLayout.serializeForParsing(buffer, bufferSize);
+        *cycleSize = 1;
       }
     }
     assert(strlen(buffer) > 0);
-    *cycleSize = 1;
     return true;
   }
   assert(strlen(buffer) == 0);

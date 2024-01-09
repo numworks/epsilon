@@ -335,10 +335,11 @@ bool AbstractTextField::prepareToEdit() {
   return true;
 }
 
-bool AbstractTextField::findXNT(char *buffer, size_t bufferSize,
+bool AbstractTextField::findXNT(char *buffer, size_t bufferSize, int xntIndex,
                                 size_t *cycleSize) {
   UTF8Decoder decoder(text(), cursorLocation());
-  return XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize, cycleSize);
+  return XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
+                                     cycleSize);
 }
 
 void AbstractTextField::removePreviousXNT() {

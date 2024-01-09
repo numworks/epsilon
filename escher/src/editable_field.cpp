@@ -34,7 +34,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   char buffer[bufferSize];
   size_t cycleSize;
   // Find special XNT
-  if (!findXNT(buffer, bufferSize, &cycleSize)) {
+  if (!findXNT(buffer, bufferSize, currentIndex, &cycleSize)) {
     // Use default XNT cycle
     CodePoint xnt = XNTHelpers::CodePointAtIndexInDefaultCycle(
         currentIndex, startingXNT, &cycleSize);

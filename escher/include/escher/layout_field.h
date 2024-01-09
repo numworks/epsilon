@@ -102,7 +102,7 @@ class LayoutField : public EditableField {
     return &m_contentView;
   }
   bool prepareToEdit() override;
-  bool findXNT(char* buffer, size_t bufferSize) override;
+  bool findXNT(char* buffer, size_t bufferSize, size_t* cycleSize) override;
   void removePreviousXNT() override;
 
   class ContentView : public TextCursorView::CursorFieldView {

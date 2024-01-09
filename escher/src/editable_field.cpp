@@ -32,15 +32,16 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   }
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
+  size_t cycleSize;
   // Find special XNT
-  if (!findXNT(buffer, bufferSize)) {
+  if (!findXNT(buffer, bufferSize, &cycleSize)) {
     // Use default XNT cycle
-    CodePoint xnt =
-        XNTHelpers::CodePointAtIndexInDefaultCycle(currentIndex, startingXNT);
+    CodePoint xnt = XNTHelpers::CodePointAtIndexInDefaultCycle(
+        currentIndex, startingXNT, &cycleSize);
     SerializationHelper::CodePoint(buffer, bufferSize, xnt);
-    if (currentIndex > 0) {
-      removePreviousXNT();
-    }
+  }
+  if (cycleSize > 1 && currentIndex > 0) {
+    removePreviousXNT();
   }
   return handleEventWithText(buffer, false, true);
 }

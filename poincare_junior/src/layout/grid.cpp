@@ -205,6 +205,31 @@ KDCoordinate Grid::width(KDFont::Size font) const {
   return totalWidth;
 }
 
+void Grid::computePositions(KDFont::Size font, KDCoordinate* columns,
+                            KDCoordinate* rows) const {
+  for (int c = 0; c < numberOfColumns(); c++) {
+    columns[c] = 0;
+  }
+  for (int r = 0; r < numberOfRows(); r++) {
+    rows[r] = 0;
+  }
+  for (int i = 0; const Tree* child : children()) {
+    KDSize size = Render::Size(child);
+    int c = columnAtChildIndex(i);
+    int r = rowAtChildIndex(i);
+    columns[c] = std::max(columns[c], size.width());
+    rows[r] = std::max(rows[r], size.height());
+    i++;
+  }
+  // Accumulate and add margins
+  for (int c = 1; c < numberOfColumns(); c++) {
+    columns[c] += columns[c - 1] + horizontalGridEntryMargin(font);
+  }
+  for (int r = 1; r < numberOfRows(); r++) {
+    rows[r] += rows[r - 1] + verticalGridEntryMargin(font);
+  }
+}
+
 bool Grid::isColumnOrRowEmpty(bool column, int index) const {
   assert(index >= 0 && index < (column ? numberOfColumns() : numberOfRows()));
   int number = column ? numberOfRows() : numberOfColumns();

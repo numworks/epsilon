@@ -65,6 +65,8 @@ class Grid : public Tree {
   KDCoordinate height(KDFont::Size font) const;
   KDCoordinate columnWidth(int column, KDFont::Size font) const;
   KDCoordinate width(KDFont::Size font) const;
+  void computePositions(KDFont::Size font, KDCoordinate* columns,
+                        KDCoordinate* rows) const;
   KDSize size(KDFont::Size font) const {
     return KDSize(width(font), height(font));
   }

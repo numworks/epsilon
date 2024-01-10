@@ -1268,12 +1268,12 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
     }
     case LayoutType::Matrix: {
       const Grid* grid = Grid::From(node);
-      RenderSquareBracketPair(true, grid->height(font), ctx, p,
-                              style.glyphColor, style.backgroundColor);
+      KDCoordinate height = grid->height(font);
+      RenderSquareBracketPair(true, height, ctx, p, style.glyphColor,
+                              style.backgroundColor);
       KDCoordinate rightOffset =
-          SquareBracketPair::ChildOffset(grid->height(font)).x() +
-          grid->width(font);
-      RenderSquareBracketPair(false, grid->height(font), ctx,
+          SquareBracketPair::ChildOffset(height).x() + grid->width(font);
+      RenderSquareBracketPair(false, height, ctx,
                               p.translatedBy(KDPoint(rightOffset, 0)),
                               style.glyphColor, style.backgroundColor);
       return;

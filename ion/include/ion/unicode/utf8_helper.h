@@ -70,9 +70,9 @@ void RemoveCodePoint(char *buffer, CodePoint c,
 /* Slides a string by a number of chars. If slidingSize < 0, the string is
  * slided to the left losing the first chars. Returns true if successful.
  * Exemples :
- * SlideStringByNumberOfChar("12345", 2, 7) gives "1212345" and returns true.
- * SlideStringByNumberOfChar("12345", 2, 5) gives "12345" and returns false.
- * SlideStringByNumberOfChar("12345", -2, 5) gives "345" and returns true.*/
+ * SlideStringByNumberOfChar("12345", 2, 8) gives "1212345" and returns true.
+ * SlideStringByNumberOfChar("12345", 2, 6) gives "12345" and returns false.
+ * SlideStringByNumberOfChar("12345", -2, 6) gives "345" and returns true.*/
 bool SlideStringByNumberOfChar(char *text, int slidingSize, size_t bufferSize);
 
 /* Looks for patterns in a string. If a pattern is found, it is replaced by
@@ -85,7 +85,7 @@ bool SlideStringByNumberOfChar(char *text, int slidingSize, size_t bufferSize);
  *
  * Ensure null termination of the string or set the value of stoppingPosition*/
 void TryAndReplacePatternsInStringByPatterns(
-    char *text, int textMaxSize, const TextPair *textPairs, int numberOfPairs,
+    char *text, int bufferSize, const TextPair *textPairs, int numberOfPairs,
     bool firstToSecond, const char **indexToUpdate = nullptr,
     const char *stoppingPosition = nullptr);
 

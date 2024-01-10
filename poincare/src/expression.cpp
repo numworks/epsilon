@@ -1698,42 +1698,45 @@ void Expression::deepApproximateChildrenKeepingSymbols(
      * - if child is e and it's the base of a log (so that `log(...,e)` can
      *   be later beautified into `ln(...)`).
      */
-    if (!((parameteredExpression &&
-           i == ParameteredExpression::ParameterChildIndex()) ||
-          (storeExpression && i == 1) ||
-          (type() == ExpressionNode::Type::Logarithm && i == 1 &&
-           child.type() == ExpressionNode::Type::ConstantMaths &&
-           static_cast<Constant &>(child).isExponentialE()))) {
-      bool thisCanApproximate, thisShouldReduce;
-      childAtIndex(i).deepApproximateKeepingSymbols(
-          reductionContext, &thisCanApproximate, &thisShouldReduce);
-      if (!thisCanApproximate && parameteredExpression &&
-          i == ParameteredExpression::ParameteredChildIndex()) {
-        /* When approximating ParameteredChild keeping symbols,
-         * thisCanApproximate will yield to false if the child contains the
-         * symbol of the parametered expression. But if it contains no other
-         * symbols, it can be approximated. So we re-check if it contains
-         * symbols with getVariables.
-         * Example:
-         * - sum(1, k, 0, 10) -> thisCanApproximate == true, no problem
-         * - sum(k, k, 0, 10) -> thisCanApproximate == false, but should be
-         * true. getVariables() == 0
-         * - sum(kx, k, 0, 10) -> thisCanApproximate == false, and should stay
-         * false. getVariables() == 1 */
-        char variables[Poincare::Expression::k_maxNumberOfVariables]
-                      [Poincare::SymbolAbstractNode::k_maxNameSize] = {""};
-        int nVariables = getVariables(
-            reductionContext.context(),
-            [](const char *, Context *) { return true; }, variables[0],
-            SymbolAbstractNode::k_maxNameSize);
-        thisCanApproximate = (nVariables == 0);
-      }
-      /* If at least 1 child failed approximation, no need to approximate: it
-       * means it has symbols */
-      *canApproximate = *canApproximate && thisCanApproximate;
-      /* If at least 1 child changed, re-reduce its parent. */
-      *shouldReduce = *shouldReduce || thisShouldReduce;
+    if ((parameteredExpression &&
+         i == ParameteredExpression::ParameterChildIndex()) ||
+        (storeExpression && i == 1) ||
+        (type() == ExpressionNode::Type::Logarithm && i == 1 &&
+         child.type() == ExpressionNode::Type::ConstantMaths &&
+         static_cast<Constant &>(child).isExponentialE())) {
+      continue;
     }
+
+    bool thisCanApproximate, thisShouldReduce;
+    childAtIndex(i).deepApproximateKeepingSymbols(
+        reductionContext, &thisCanApproximate, &thisShouldReduce);
+
+    if (!thisCanApproximate && parameteredExpression &&
+        i == ParameteredExpression::ParameteredChildIndex()) {
+      /* When approximating ParameteredChild keeping symbols,
+       * thisCanApproximate will yield to false if the child contains the
+       * symbol of the parametered expression. But if it contains no other
+       * symbols, it can be approximated. So we re-check if it contains
+       * symbols with getVariables.
+       * Example:
+       * - sum(1, k, 0, 10) -> thisCanApproximate == true, no problem
+       * - sum(k, k, 0, 10) -> thisCanApproximate == false, but should be
+       * true. getVariables() == 0
+       * - sum(kx, k, 0, 10) -> thisCanApproximate == false, and should stay
+       * false. getVariables() == 1 */
+      char variables[Poincare::Expression::k_maxNumberOfVariables]
+                    [Poincare::SymbolAbstractNode::k_maxNameSize] = {""};
+      int nVariables = getVariables(
+          reductionContext.context(),
+          [](const char *, Context *) { return true; }, variables[0],
+          SymbolAbstractNode::k_maxNameSize);
+      thisCanApproximate = (nVariables == 0);
+    }
+    /* If at least 1 child failed approximation, no need to approximate: it
+     * means it has symbols */
+    *canApproximate = *canApproximate && thisCanApproximate;
+    /* If at least 1 child changed, re-reduce its parent. */
+    *shouldReduce = *shouldReduce || thisShouldReduce;
   }
 
   if (storeExpression) {

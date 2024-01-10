@@ -70,9 +70,9 @@ void RemoveCodePoint(char *buffer, CodePoint c,
 /* Slides a string by a number of chars. If slidingSize < 0, the string is
  * slided to the left losing the first chars. Returns true if successful.
  * Exemples :
- * SlideStringByNumberOfChar("12345", 2, 7) gives "1212345"
- * SlideStringByNumberOfChar("12345", 2, 5) gives "12123"
- * SlideStringByNumberOfChar("12345", -2, 5) gives "34545"*/
+ * SlideStringByNumberOfChar("12345", 2, 7) gives "1212345" and returns true.
+ * SlideStringByNumberOfChar("12345", 2, 5) gives "12345" and returns false.
+ * SlideStringByNumberOfChar("12345", -2, 5) gives "345" and returns true.*/
 bool SlideStringByNumberOfChar(char *text, int slidingSize,
                                size_t textMaxLength);
 

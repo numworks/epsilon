@@ -172,7 +172,7 @@ void RemoveCodePoint(char *buffer, CodePoint c, const char **pointerToUpdate,
   assert(codePointCharSize < patternMaxSize);
   pattern[codePointCharSize] = '\0';
   TextPair pair(pattern, "");
-  TryAndReplacePatternsInStringByPatterns(buffer, strlen(buffer), &pair, 1,
+  TryAndReplacePatternsInStringByPatterns(buffer, strlen(buffer) + 1, &pair, 1,
                                           true, pointerToUpdate,
                                           stoppingPosition);
 }
@@ -209,7 +209,7 @@ static bool replaceFirstCharsByPattern(char *text,
   return false;
 }
 
-void TryAndReplacePatternsInStringByPatterns(char *text, int textMaxLength,
+void TryAndReplacePatternsInStringByPatterns(char *text, int bufferSize,
                                              const TextPair *textPairs,
                                              int numberOfPairs,
                                              bool firstToSecond,
@@ -248,10 +248,9 @@ void TryAndReplacePatternsInStringByPatterns(char *text, int textMaxLength,
       assert(matchedStringLength > 0);
 
       if (strncmp(&text[i], matchedString, matchedStringLength) == 0 &&
-          p.shouldReplace(text, textMaxLength, i)) {
-        didReplace =
-            replaceFirstCharsByPattern(&text[i], matchedStringLength,
-                                       replacingString, textMaxLength - i + 1);
+          p.shouldReplace(text, bufferSize - 1, i)) {
+        didReplace = replaceFirstCharsByPattern(
+            &text[i], matchedStringLength, replacingString, bufferSize - i);
         if (didReplace) {
           int delta = replacingStringLength - matchedStringLength;
           textLength += delta;

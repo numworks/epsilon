@@ -174,8 +174,7 @@ SystemOfEquations::Error SystemOfEquations::privateExactSolve(
   error = solvePolynomial(context, simplifiedEquations);
   if (error == Error::RequireApproximateSolution) {
     m_type = Type::GeneralMonovariable;
-    m_approximateResolutionMinimum = -k_defaultApproximateSearchRange;
-    m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
+    resetApproximateResolutionRange();
   }
   assert(error != Error::NoError || m_type == Type::PolynomialMonovariable);
   return error;

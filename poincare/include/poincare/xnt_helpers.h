@@ -58,8 +58,10 @@ constexpr static struct {
      LayoutNode::Type::ListSequenceLayout, k_defaultDiscreteXNTCycle},
 };
 constexpr static int k_numberOfFunctions = std::size(k_parameteredFunctions);
-constexpr static int k_indexOfMainExpression = 0;
-constexpr static int k_indexOfParameter = 1;
+constexpr static int k_indexOfMainExpression =
+    ParameteredExpression::ParameteredChildIndex();
+constexpr static int k_indexOfParameter =
+    ParameteredExpression::ParameterChildIndex();
 
 bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
                      int xntIndex, size_t* cycleSize);

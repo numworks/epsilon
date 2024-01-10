@@ -66,7 +66,7 @@
 "Comma",
 "Power",
 "Sine",
-"Cosine",
+"AlphaLock",
 "Cut",
 "Copy",
 "Paste",

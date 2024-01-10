@@ -44,6 +44,17 @@ class Render final {
   static void PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
                           KDColor expressionColor, KDColor backgroundColor,
                           LayoutSelection selection);
+  static void PrivateDrawSimpleLayout(const Tree* node, KDContext* ctx,
+                                      KDPoint p, KDColor expressionColor,
+                                      KDColor backgroundColor,
+                                      LayoutSelection selection);
+  static void PrivateDrawGridLayout(const Tree* node, KDContext* ctx, KDPoint p,
+                                    KDColor expressionColor,
+                                    KDColor backgroundColor,
+                                    LayoutSelection selection);
+  static void PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
+                              KDColor expressionColor, KDColor backgroundColor,
+                              LayoutSelection selection);
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                          KDColor expressionColor, KDColor backgroundColor);
 

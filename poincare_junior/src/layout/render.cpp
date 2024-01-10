@@ -606,6 +606,21 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
   showEmptyRack =
       node->isRackLayout() ? hadShowEmptyRack : !node->isAutocompletedPair();
   assert(node->isLayout());
+  if (node->isRackLayout()) {
+    PrivateDrawRack(node, ctx, p, expressionColor, backgroundColor, selection);
+  } else if (node->isGridLayout()) {
+    PrivateDrawGridLayout(node, ctx, p, expressionColor, backgroundColor,
+                          selection);
+  } else {
+    PrivateDrawSimpleLayout(node, ctx, p, expressionColor, backgroundColor,
+                            selection);
+  }
+  showEmptyRack = hadShowEmptyRack;
+}
+
+void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
+                             KDColor expressionColor, KDColor backgroundColor,
+                             LayoutSelection selection) {
   KDColor selectionColor = Escher::Palette::Select;
   if (selection.layout() == node) {
     KDSize size = RackLayout::SizeBetweenIndexes(node, selection.leftPosition(),
@@ -621,97 +636,103 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
   }
 #if 0
   // TODO_PCJ
-  KDSize size = Size(node);
+  KDSize size = Size(node, childSizes);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||
       size.width() > KDCOORDINATE_MAX - p.x()) {
     // Layout size overflows KDCoordinate
-    showEmptyRack = hadShowEmptyRack;
     return;
   }
 #endif
   KDColor childBackground = backgroundColor;
   RenderNode(node, ctx, p, expressionColor, backgroundColor);
-  if (node->isRackLayout()) {
-    for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-      if (selection.layout() == node) {
-        if (index == selection.leftPosition()) {
-          childBackground = selectionColor;
-        } else if (index == selection.rightPosition()) {
-          childBackground = backgroundColor;
-        }
+  for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
+    if (selection.layout() == node) {
+      if (index == selection.leftPosition()) {
+        childBackground = selectionColor;
+      } else if (index == selection.rightPosition()) {
+        childBackground = backgroundColor;
       }
-      PrivateDraw(child, ctx, PositionOfChild(node, index).translatedBy(p),
-                  expressionColor, childBackground, selection);
     }
-  } else if (node->isGridLayout()) {
-    const Grid* grid = Grid::From(node);
-    int rows = grid->numberOfRows();
-    int columns = grid->numberOfColumns();
-    bool editing = grid->isEditing();
-    KDCoordinate columsCumulatedWidth[columns];
-    KDCoordinate rowCumulatedHeight[rows];
-    grid->computePositions(font, columsCumulatedWidth, rowCumulatedHeight);
-    KDSize size(
-        columsCumulatedWidth[columns - 1 -
-                             (!grid->numberOfColumnsIsFixed() && !editing)],
-        rowCumulatedHeight[rows - 1 - !editing]);
-    KDPoint offset = KDPointZero;
-    if (node->isMatrixLayout()) {
-      size =
-          SquareBracketPair::SizeGivenChildSize(Grid::From(node)->size(font));
-      offset = SquareBracketPair::ChildOffset(size.height());
-    } else {
-      if (node->numberOfChildren() == 4 && !grid->isEditing() &&
-          RackLayout::IsEmpty(node->child(1))) {
-        // If there is only 1 row and the condition is empty, shrink the size
-        size = KDSize(grid->columnWidth(0, font), size.height());
-      }
-      // Add a right margin of size k_curlyBraceWidth
-      size = KDSize(size.width() + 2 * CurlyBrace::k_curlyBraceWidth,
-                    CurlyBrace::Height(size.height()));
-      offset =
-          KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness);
-    }
-    offset = offset.translatedBy(p);
-    int rowBaseline = 0;
-    for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-      if (!editing && grid->childIsPlaceholder(index)) {
-        continue;
-      }
-      int c = grid->columnAtChildIndex(index);
-      int r = grid->rowAtChildIndex(index);
+    PrivateDraw(child, ctx, PositionOfChild(node, index).translatedBy(p),
+                expressionColor, childBackground, selection);
+  }
+}
 
-      KDCoordinate x = c > 0 ? columsCumulatedWidth[c - 1]
-                             : -grid->horizontalGridEntryMargin(font);
-      x += ((columsCumulatedWidth[c] - x -
-             grid->horizontalGridEntryMargin(font)) -
-            Width(child)) /
-               2 +
-           grid->horizontalGridEntryMargin(font);
-      KDCoordinate y = r > 0 ? rowCumulatedHeight[r - 1]
-                             : -grid->verticalGridEntryMargin(font);
-      if (c == 0) {
-        rowBaseline = grid->rowBaseline(r, font);
-      }
-      y += rowBaseline - Render::Baseline(child) +
-           grid->verticalGridEntryMargin(font);
-      KDPoint pc = KDPoint(x, y).translatedBy(offset);
-      if (grid->childIsPlaceholder(index)) {
-        RackLayout::RenderNode(child, ctx, pc, true);
-      } else {
-        PrivateDraw(child, ctx, pc, expressionColor, childBackground,
-                    selection);
-      }
-    }
+void Render::PrivateDrawSimpleLayout(const Tree* node, KDContext* ctx,
+                                     KDPoint p, KDColor expressionColor,
+                                     KDColor backgroundColor,
+                                     LayoutSelection selection) {
+  assert(node->numberOfChildren() <= 4);
+  RenderNode(node, ctx, p, expressionColor, backgroundColor);
+  for (int i = 0; const Tree* child : node->children()) {
+    PrivateDraw(child, ctx, PositionOfChild(node, i++).translatedBy(p),
+                expressionColor, backgroundColor, selection);
+  }
+}
+
+void Render::PrivateDrawGridLayout(const Tree* node, KDContext* ctx, KDPoint p,
+                                   KDColor expressionColor,
+                                   KDColor backgroundColor,
+                                   LayoutSelection selection) {
+  RenderNode(node, ctx, p, expressionColor, backgroundColor);
+  const Grid* grid = Grid::From(node);
+  int rows = grid->numberOfRows();
+  int columns = grid->numberOfColumns();
+  bool editing = grid->isEditing();
+  KDCoordinate columsCumulatedWidth[columns];
+  KDCoordinate rowCumulatedHeight[rows];
+  grid->computePositions(font, columsCumulatedWidth, rowCumulatedHeight);
+  KDSize size(
+      columsCumulatedWidth[columns - 1 -
+                           (!grid->numberOfColumnsIsFixed() && !editing)],
+      rowCumulatedHeight[rows - 1 - !editing]);
+  KDPoint offset = KDPointZero;
+  if (node->isMatrixLayout()) {
+    size = SquareBracketPair::SizeGivenChildSize(size);
+    offset = SquareBracketPair::ChildOffset(size.height());
   } else {
-    assert(node->numberOfChildren() <= 4);
-    for (int i = 0; const Tree* child : node->children()) {
-      PrivateDraw(child, ctx, PositionOfChild(node, i++).translatedBy(p),
-                  expressionColor, childBackground, selection);
+    if (node->numberOfChildren() == 4 && !grid->isEditing() &&
+        RackLayout::IsEmpty(node->child(1))) {
+      // If there is only 1 row and the condition is empty, shrink the size
+      size = KDSize(grid->columnWidth(0, font), size.height());
+    }
+    // Add a right margin of size k_curlyBraceWidth
+    size = KDSize(size.width() + 2 * CurlyBrace::k_curlyBraceWidth,
+                  CurlyBrace::Height(size.height()));
+    offset =
+        KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness);
+  }
+  offset = offset.translatedBy(p);
+  int rowBaseline = 0;
+  for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
+    if (!editing && grid->childIsPlaceholder(index)) {
+      continue;
+    }
+    int c = grid->columnAtChildIndex(index);
+    int r = grid->rowAtChildIndex(index);
+
+    KDCoordinate x = c > 0 ? columsCumulatedWidth[c - 1]
+                           : -grid->horizontalGridEntryMargin(font);
+    x +=
+        ((columsCumulatedWidth[c] - x - grid->horizontalGridEntryMargin(font)) -
+         Width(child)) /
+            2 +
+        grid->horizontalGridEntryMargin(font);
+    KDCoordinate y = r > 0 ? rowCumulatedHeight[r - 1]
+                           : -grid->verticalGridEntryMargin(font);
+    if (c == 0) {
+      rowBaseline = grid->rowBaseline(r, font);
+    }
+    y += rowBaseline - Render::Baseline(child) +
+         grid->verticalGridEntryMargin(font);
+    KDPoint pc = KDPoint(x, y).translatedBy(offset);
+    if (grid->childIsPlaceholder(index)) {
+      RackLayout::RenderNode(child, ctx, pc, true);
+    } else {
+      PrivateDraw(child, ctx, pc, expressionColor, backgroundColor, selection);
     }
   }
-  showEmptyRack = hadShowEmptyRack;
 }
 
 void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,

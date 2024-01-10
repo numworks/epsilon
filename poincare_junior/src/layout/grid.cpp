@@ -179,13 +179,7 @@ KDCoordinate Grid::rowHeight(int row, KDFont::Size font) const {
 }
 
 KDCoordinate Grid::height(KDFont::Size font) const {
-  KDCoordinate totalHeight = 0;
-  int nb = numberOfRows() - !isEditing();
-  for (int row = 0; row < nb; row++) {
-    totalHeight += rowHeight(row, font);
-  }
-  totalHeight += nb > 0 ? (nb - 1) * verticalGridEntryMargin(font) : 0;
-  return totalHeight;
+  return size(font).height();
 }
 
 KDCoordinate Grid::columnWidth(int column, KDFont::Size font) const {
@@ -197,15 +191,7 @@ KDCoordinate Grid::columnWidth(int column, KDFont::Size font) const {
   return columnWidth;
 }
 
-KDCoordinate Grid::width(KDFont::Size font) const {
-  KDCoordinate totalWidth = 0;
-  int nb = numberOfColumns() - (!numberOfColumnsIsFixed() && !isEditing());
-  for (int j = 0; j < nb; j++) {
-    totalWidth += columnWidth(j, font);
-  }
-  totalWidth += nb > 0 ? (nb - 1) * horizontalGridEntryMargin(font) : 0;
-  return totalWidth;
-}
+KDCoordinate Grid::width(KDFont::Size font) const { return size(font).width(); }
 
 void Grid::computePositions(KDFont::Size font, KDCoordinate* columns,
                             KDCoordinate* rows) const {

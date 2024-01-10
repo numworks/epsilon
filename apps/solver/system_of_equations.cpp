@@ -86,7 +86,7 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
 void SystemOfEquations::autoComputeApproximateResolutionRange(
     Expression equationStandardForm, Context *context) {
   // Draft find bounds directly
-  constexpr static float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
+  constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
 

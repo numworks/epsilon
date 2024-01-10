@@ -23,7 +23,97 @@ namespace PoincareJ {
 
 class Simplification {
  public:
-  /* New advanced reduction */
+  static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
+  EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
+
+  static bool AdvancedReduction(Tree *u);
+  EDITION_REF_WRAP(AdvancedReduction);
+
+  /* Ignoring EDITION_REF_WRAP_1 wrapper here so ternary can be used on these
+   * methods. TODO: Remove other EditionReference wrappers on private methods if
+   * they are indeed unused. */
+  static bool ShallowContract(Tree *e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperations)(
+        e, k_contractOperations, std::size(k_contractOperations));
+  }
+  static bool ShallowExpand(Tree *e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperations)(
+        e, k_expandOperations, std::size(k_expandOperations));
+  }
+
+  // Bottom-up deep contract
+  static bool DeepContract(Tree *e);
+  EDITION_REF_WRAP(DeepContract);
+  // Top-Bottom deep expand
+  static bool DeepExpand(Tree *e);
+  EDITION_REF_WRAP(DeepExpand);
+
+  static bool ShallowApplyMatrixOperators(Tree *u, void *context = nullptr);
+  EDITION_REF_WRAP_1D(ShallowApplyMatrixOperators, void *, nullptr);
+  static bool DeepApplyMatrixOperators(Tree *u);
+  EDITION_REF_WRAP(DeepApplyMatrixOperators);
+
+  static bool ShallowSystematicReduce(Tree *u);
+  EDITION_REF_WRAP(ShallowSystematicReduce);
+  static bool DeepSystematicReduce(Tree *u);
+  EDITION_REF_WRAP(DeepSystematicReduce);
+
+  static bool SimplifyAbs(Tree *u);
+  EDITION_REF_WRAP(SimplifyAbs);
+  static bool SimplifyAddition(Tree *u);
+  EDITION_REF_WRAP(SimplifyAddition);
+  static bool SimplifyMultiplication(Tree *u);
+  EDITION_REF_WRAP(SimplifyMultiplication);
+  static bool SimplifyPower(Tree *u);
+  EDITION_REF_WRAP(SimplifyPower);
+  static bool SimplifyPowerReal(Tree *u);
+  EDITION_REF_WRAP(SimplifyPowerReal);
+  static bool SimplifyExp(Tree *u);
+  EDITION_REF_WRAP(SimplifyExp);
+  static bool SimplifyComplex(Tree *t);
+  EDITION_REF_WRAP(SimplifyComplex);
+  static bool SimplifyComplexArgument(Tree *t);
+  EDITION_REF_WRAP(SimplifyComplexArgument);
+  static bool SimplifyRealPart(Tree *t);
+  EDITION_REF_WRAP(SimplifyRealPart);
+  static bool SimplifyImaginaryPart(Tree *t);
+  EDITION_REF_WRAP(SimplifyImaginaryPart);
+  static bool SimplifySign(Tree *t);
+  EDITION_REF_WRAP(SimplifySign);
+
+  typedef bool (*Operation)(Tree *node);
+  /* Replace target(..., naryTarget(A, B, ...), ...)
+   * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
+  static bool DistributeOverNAry(Tree *node, BlockType target,
+                                 BlockType naryTarget, BlockType naryOutput,
+                                 Operation operation = ShallowSystematicReduce,
+                                 int childIndex = 0);
+
+ private:
+  static bool SimplifyLastTree(Tree *node,
+                               ProjectionContext projectionContext = {});
+  static bool SimplifySwitch(Tree *u);
+  EDITION_REF_WRAP(SimplifySwitch);
+  /* The following methods should not be called with EditionReferences.
+   * TODO : ensure it cannot. */
+  // Return true if child has been merged with next sibling.
+  static bool MergeAdditionChildWithNext(Tree *child, Tree *next);
+  // Return true if child has been merged with next sibling.
+  static bool MergeMultiplicationChildWithNext(Tree *child);
+  // Return true if child has been merged with one or more next siblings.
+  static bool MergeMultiplicationChildrenFrom(Tree *child, int index,
+                                              int *numberOfSiblings,
+                                              bool *zero);
+  /* Return true if child has been merged with siblings. Recursively merge next
+   * siblings. */
+  static bool SimplifyMultiplicationChildRec(Tree *child, int index,
+                                             int *numberOfSiblings, bool *zero,
+                                             bool *multiplicationChanged);
+  // Simplify a sorted and sanitized multiplication.
+  static bool SimplifySortedMultiplication(Tree *multiplication);
+  static void ConvertPowerRealToPower(Tree *u);
+
+  /* Advanced reduction methods */
 
   // Ordered list of CRC encountered during advanced reduction.
   class CrcCollection {
@@ -111,98 +201,10 @@ class Simplification {
   // Return true if can apply direction.
   static bool CanApplyDirection(const Tree *u, const Tree *root,
                                 Direction direction);
-  static bool AdvancedReduction(Tree *u);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystematicReduction(Tree *root, const Tree *tree);
 
-  /* End of new advanced reduction */
-
-  static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
-  EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
-
-  /* Ignoring EDITION_REF_WRAP_1 wrapper here so ternary can be used on these
-   * methods. TODO: Remove other EditionReference wrappers on private methods if
-   * they are indeed unused. */
-  static bool ShallowContract(Tree *e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperations)(
-        e, k_contractOperations, std::size(k_contractOperations));
-  }
-  static bool ShallowExpand(Tree *e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperations)(
-        e, k_expandOperations, std::size(k_expandOperations));
-  }
-
-  // Bottom-up deep contract
-  static bool DeepContract(Tree *e);
-  EDITION_REF_WRAP(DeepContract);
-  // Top-Bottom deep expand
-  static bool DeepExpand(Tree *e);
-  EDITION_REF_WRAP(DeepExpand);
-
-  static bool ShallowApplyMatrixOperators(Tree *u, void *context = nullptr);
-  EDITION_REF_WRAP_1D(ShallowApplyMatrixOperators, void *, nullptr);
-  static bool DeepApplyMatrixOperators(Tree *u);
-  EDITION_REF_WRAP(DeepApplyMatrixOperators);
-
-  static bool ShallowSystematicReduce(Tree *u);
-  EDITION_REF_WRAP(ShallowSystematicReduce);
-  static bool DeepSystematicReduce(Tree *u);
-  EDITION_REF_WRAP(DeepSystematicReduce);
-
-  static bool SimplifyAbs(Tree *u);
-  EDITION_REF_WRAP(SimplifyAbs);
-  static bool SimplifyAddition(Tree *u);
-  EDITION_REF_WRAP(SimplifyAddition);
-  static bool SimplifyMultiplication(Tree *u);
-  EDITION_REF_WRAP(SimplifyMultiplication);
-  static bool SimplifyPower(Tree *u);
-  EDITION_REF_WRAP(SimplifyPower);
-  static bool SimplifyPowerReal(Tree *u);
-  EDITION_REF_WRAP(SimplifyPowerReal);
-  static bool SimplifyExp(Tree *u);
-  EDITION_REF_WRAP(SimplifyExp);
-  static bool SimplifyComplex(Tree *t);
-  EDITION_REF_WRAP(SimplifyComplex);
-  static bool SimplifyComplexArgument(Tree *t);
-  EDITION_REF_WRAP(SimplifyComplexArgument);
-  static bool SimplifyRealPart(Tree *t);
-  EDITION_REF_WRAP(SimplifyRealPart);
-  static bool SimplifyImaginaryPart(Tree *t);
-  EDITION_REF_WRAP(SimplifyImaginaryPart);
-  static bool SimplifySign(Tree *t);
-  EDITION_REF_WRAP(SimplifySign);
-
-  typedef bool (*Operation)(Tree *node);
-  /* Replace target(..., naryTarget(A, B, ...), ...)
-   * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
-  static bool DistributeOverNAry(Tree *node, BlockType target,
-                                 BlockType naryTarget, BlockType naryOutput,
-                                 Operation operation = ShallowSystematicReduce,
-                                 int childIndex = 0);
-
- private:
-  static bool SimplifyLastTree(Tree *node,
-                               ProjectionContext projectionContext = {});
-  static bool SimplifySwitch(Tree *u);
-  EDITION_REF_WRAP(SimplifySwitch);
-  /* The following methods should not be called with EditionReferences.
-   * TODO : ensure it cannot. */
-  // Return true if child has been merged with next sibling.
-  static bool MergeAdditionChildWithNext(Tree *child, Tree *next);
-  // Return true if child has been merged with next sibling.
-  static bool MergeMultiplicationChildWithNext(Tree *child);
-  // Return true if child has been merged with one or more next siblings.
-  static bool MergeMultiplicationChildrenFrom(Tree *child, int index,
-                                              int *numberOfSiblings,
-                                              bool *zero);
-  /* Return true if child has been merged with siblings. Recursively merge next
-   * siblings. */
-  static bool SimplifyMultiplicationChildRec(Tree *child, int index,
-                                             int *numberOfSiblings, bool *zero,
-                                             bool *multiplicationChanged);
-  // Simplify a sorted and sanitized multiplication.
-  static bool SimplifySortedMultiplication(Tree *multiplication);
-  static void ConvertPowerRealToPower(Tree *u);
+  /* End of advanced reduction methods */
 
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree *node, const Operation *operations,

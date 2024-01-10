@@ -451,7 +451,7 @@ Ion::Storage::Record Store::functionRecord(int series) const {
   char name[k_functionNameSize];
   BuildFunctionName(series, name, k_functionNameSize);
   return Ion::Storage::FileSystem::sharedFileSystem
-      ->recordBaseNamedWithExtension(name, Ion::Storage::regExtension);
+      ->recordBaseNamedWithExtension(name, Ion::Storage::regressionExtension);
 }
 
 void Store::storeRegressionFunction(int series, Expression expression) const {
@@ -462,7 +462,7 @@ void Store::storeRegressionFunction(int series, Expression expression) const {
   BuildFunctionName(series, name, k_functionNameSize);
   expression = expression.replaceSymbolWithExpression(
       Symbol::Builder(Model::k_xSymbol), Symbol::SystemSymbol());
-  expression.storeWithNameAndExtension(name, Ion::Storage::regExtension);
+  expression.storeWithNameAndExtension(name, Ion::Storage::regressionExtension);
 }
 
 void Store::deleteRegressionFunction(int series) const {

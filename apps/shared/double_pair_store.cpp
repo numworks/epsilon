@@ -38,7 +38,7 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       // Get the data of X1, Y1, X2, Y2, V1, V2, etc. from storage
       fillColumnName(s, i, listName);
-      Record r = Record(listName, lisExtension);
+      Record r = Record(listName, listExtension);
       Record::Data listData = r.value();
       if (listData.size == 0) {
         continue;
@@ -426,7 +426,7 @@ bool DoublePairStore::storeColumn(int series, int i) const {
   char name[k_columnNamesLength + 1];
   size_t nameLength = fillColumnName(series, i, name);
   if (lengthOfColumn(series, i) == 0) {
-    Record(name, lisExtension).destroy();
+    Record(name, listExtension).destroy();
     return true;
   }
   Symbol listSymbol = Symbol::Builder(name, nameLength);

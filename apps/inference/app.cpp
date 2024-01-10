@@ -158,7 +158,7 @@ void App::Snapshot::reset() {
 bool App::storageCanChangeForRecordName(
     const Ion::Storage::Record::Name recordName) const {
   return !m_intrusiveStorageChangeFlag ||
-         strcmp(recordName.extension, Ion::Storage::lisExtension) != 0;
+         strcmp(recordName.extension, Ion::Storage::listExtension) != 0;
 }
 
 }  // namespace Inference

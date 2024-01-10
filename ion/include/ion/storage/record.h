@@ -8,14 +8,14 @@ namespace Ion {
 
 namespace Storage {
 
-constexpr static char eqExtension[] = "eq";
-constexpr static char expExtension[] = "exp";
-constexpr static char funcExtension[] = "func";
-constexpr static char lisExtension[] = "lis";
-constexpr static char seqExtension[] = "seq";
-constexpr static char matExtension[] = "mat";
-constexpr static char regExtension[] = "reg";
-constexpr static char pcExtension[] = "pc";  // Parametric component
+constexpr static char equationExtension[] = "eq";
+constexpr static char expressionExtension[] = "exp";
+constexpr static char functionExtension[] = "func";
+constexpr static char listExtension[] = "lis";
+constexpr static char sequenceExtension[] = "seq";
+constexpr static char matrixExtension[] = "mat";
+constexpr static char regressionExtension[] = "reg";
+constexpr static char parametricComponentExtension[] = "pc";
 
 /*  * A record's fullName is baseName.extension.
  * A Record is identified by the CRC32 on its fullName because:

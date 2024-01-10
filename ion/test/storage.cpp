@@ -601,15 +601,15 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   Ion::Storage::RecordNameVerifier *recordNameVerifier =
       Storage::FileSystem::sharedFileSystem->recordNameVerifier();
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(
-      Storage::funcExtension, 1);
+      Storage::functionExtension, 1);
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(
-      Storage::seqExtension, 1);
+      Storage::sequenceExtension, 1);
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(
-      Storage::expExtension, 2);
+      Storage::expressionExtension, 2);
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(
-      Storage::lisExtension, 2);
+      Storage::listExtension, 2);
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(
-      Storage::matExtension, 2);
+      Storage::matrixExtension, 2);
 
   const char *varName0 = "A";
   const char *varName1 = "A1";
@@ -618,64 +618,65 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   const char *data1 = "Bonjour Hello";
 
   // Test if record does not overrides itself if same name and extension
-  createTestRecordWithErrorStatus(varName1, Storage::expExtension, data1);
-  createTestRecordWithErrorStatus(varName1, Storage::expExtension, data0,
+  createTestRecordWithErrorStatus(varName1, Storage::expressionExtension,
+                                  data1);
+  createTestRecordWithErrorStatus(varName1, Storage::expressionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  quiz_assert(isDataOfRecord(varName1, Storage::expExtension, data1));
+  quiz_assert(isDataOfRecord(varName1, Storage::expressionExtension, data1));
 
   // Test if record does not overrides if name slightly differs
-  createTestRecordWithErrorStatus(varName0, Storage::expExtension);
-  quiz_assert(isDataOfRecord(varName1, Storage::expExtension, data1));
+  createTestRecordWithErrorStatus(varName0, Storage::expressionExtension);
+  quiz_assert(isDataOfRecord(varName1, Storage::expressionExtension, data1));
 
-  createTestRecordWithErrorStatus(varName2, Storage::expExtension);
-  quiz_assert(isDataOfRecord(varName1, Storage::expExtension, data1));
+  createTestRecordWithErrorStatus(varName2, Storage::expressionExtension);
+  quiz_assert(isDataOfRecord(varName1, Storage::expressionExtension, data1));
 
   Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Test if record overrides itself if same name and more important extension
-  createTestRecordWithErrorStatus(varName0, Storage::expExtension);
-  createTestRecordWithErrorStatus(varName1, Storage::matExtension);
-  createTestRecordWithErrorStatus(varName2, Storage::lisExtension);
+  createTestRecordWithErrorStatus(varName0, Storage::expressionExtension);
+  createTestRecordWithErrorStatus(varName1, Storage::matrixExtension);
+  createTestRecordWithErrorStatus(varName2, Storage::listExtension);
 
-  createTestRecordWithErrorStatus(varName0, Storage::funcExtension);
-  createTestRecordWithErrorStatus(varName1, Storage::seqExtension);
-  createTestRecordWithErrorStatus(varName2, Storage::funcExtension);
+  createTestRecordWithErrorStatus(varName0, Storage::functionExtension);
+  createTestRecordWithErrorStatus(varName1, Storage::sequenceExtension);
+  createTestRecordWithErrorStatus(varName2, Storage::functionExtension);
 
-  quiz_assert(getRecord(varName0, Storage::expExtension).isNull());
-  quiz_assert(!getRecord(varName0, Storage::funcExtension).isNull());
+  quiz_assert(getRecord(varName0, Storage::expressionExtension).isNull());
+  quiz_assert(!getRecord(varName0, Storage::functionExtension).isNull());
 
-  quiz_assert(getRecord(varName1, Storage::matExtension).isNull());
-  quiz_assert(!getRecord(varName1, Storage::seqExtension).isNull());
+  quiz_assert(getRecord(varName1, Storage::matrixExtension).isNull());
+  quiz_assert(!getRecord(varName1, Storage::sequenceExtension).isNull());
 
-  quiz_assert(getRecord(varName2, Storage::lisExtension).isNull());
-  quiz_assert(!getRecord(varName2, Storage::funcExtension).isNull());
+  quiz_assert(getRecord(varName2, Storage::listExtension).isNull());
+  quiz_assert(!getRecord(varName2, Storage::functionExtension).isNull());
 
   // Test if record with more important extension can't be overriden
-  createTestRecordWithErrorStatus(varName0, Storage::expExtension, data0,
+  createTestRecordWithErrorStatus(varName0, Storage::expressionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  createTestRecordWithErrorStatus(varName1, Storage::matExtension, data0,
+  createTestRecordWithErrorStatus(varName1, Storage::matrixExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  createTestRecordWithErrorStatus(varName2, Storage::lisExtension, data0,
+  createTestRecordWithErrorStatus(varName2, Storage::listExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
 
   Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Test if record with same precedence extension can be overriden
-  createTestRecordWithErrorStatus(varName0, Storage::expExtension);
-  createTestRecordWithErrorStatus(varName0, Storage::lisExtension);
-  quiz_assert(getRecord(varName0, Storage::expExtension).isNull());
+  createTestRecordWithErrorStatus(varName0, Storage::expressionExtension);
+  createTestRecordWithErrorStatus(varName0, Storage::listExtension);
+  quiz_assert(getRecord(varName0, Storage::expressionExtension).isNull());
 
   // Test if record with non-competing extension can always be created
   const char *testExtension = "py";
   createTestRecordWithErrorStatus(varName0, testExtension);
-  quiz_assert(!getRecord(varName0, Storage::lisExtension).isNull());
+  quiz_assert(!getRecord(varName0, Storage::listExtension).isNull());
   quiz_assert(!getRecord(varName0, testExtension).isNull());
 
   Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   createTestRecordWithErrorStatus(varName0, testExtension);
-  createTestRecordWithErrorStatus(varName0, Storage::expExtension);
-  quiz_assert(!getRecord(varName0, Storage::expExtension).isNull());
+  createTestRecordWithErrorStatus(varName0, Storage::expressionExtension);
+  quiz_assert(!getRecord(varName0, Storage::expressionExtension).isNull());
   quiz_assert(!getRecord(varName0, testExtension).isNull());
 
   Storage::FileSystem::sharedFileSystem->destroyAllRecords();
@@ -685,62 +686,62 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   const char *statisticsReservedNames[] = {"N", "V"};
   const char *sequencesReservedNames[] = {"u", "v", "w"};
 
-  recordNameVerifier->registerArrayOfReservedNames(regressionReservedNames,
-                                                   Storage::lisExtension, 3, 2);
-  recordNameVerifier->registerArrayOfReservedNames(statisticsReservedNames,
-                                                   Storage::lisExtension, 3, 2);
-  recordNameVerifier->registerArrayOfReservedNames(sequencesReservedNames,
-                                                   Storage::seqExtension, 0, 3);
+  recordNameVerifier->registerArrayOfReservedNames(
+      regressionReservedNames, Storage::listExtension, 3, 2);
+  recordNameVerifier->registerArrayOfReservedNames(
+      statisticsReservedNames, Storage::listExtension, 3, 2);
+  recordNameVerifier->registerArrayOfReservedNames(
+      sequencesReservedNames, Storage::sequenceExtension, 0, 3);
 
   // Regression/stats reserved names
-  createTestRecordWithErrorStatus("X1", Storage::funcExtension);
-  createTestRecordWithErrorStatus("Y1", Storage::funcExtension);
-  createTestRecordWithErrorStatus("V2", Storage::funcExtension);
-  createTestRecordWithErrorStatus("N3", Storage::funcExtension);
-  createTestRecordWithErrorStatus("Y5", Storage::funcExtension);
-  createTestRecordWithErrorStatus("N", Storage::funcExtension);
+  createTestRecordWithErrorStatus("X1", Storage::functionExtension);
+  createTestRecordWithErrorStatus("Y1", Storage::functionExtension);
+  createTestRecordWithErrorStatus("V2", Storage::functionExtension);
+  createTestRecordWithErrorStatus("N3", Storage::functionExtension);
+  createTestRecordWithErrorStatus("Y5", Storage::functionExtension);
+  createTestRecordWithErrorStatus("N", Storage::functionExtension);
 
-  createTestRecordWithErrorStatus("X1", Storage::lisExtension);
-  quiz_assert(getRecord("X1", Storage::funcExtension).isNull());
-  createTestRecordWithErrorStatus("Y1", Storage::lisExtension);
-  quiz_assert(getRecord("Y1", Storage::funcExtension).isNull());
-  createTestRecordWithErrorStatus("V2", Storage::lisExtension);
-  quiz_assert(getRecord("V2", Storage::funcExtension).isNull());
-  createTestRecordWithErrorStatus("N3", Storage::lisExtension);
-  quiz_assert(getRecord("N3", Storage::funcExtension).isNull());
-  createTestRecordWithErrorStatus("Y5", Storage::lisExtension, data0,
+  createTestRecordWithErrorStatus("X1", Storage::listExtension);
+  quiz_assert(getRecord("X1", Storage::functionExtension).isNull());
+  createTestRecordWithErrorStatus("Y1", Storage::listExtension);
+  quiz_assert(getRecord("Y1", Storage::functionExtension).isNull());
+  createTestRecordWithErrorStatus("V2", Storage::listExtension);
+  quiz_assert(getRecord("V2", Storage::functionExtension).isNull());
+  createTestRecordWithErrorStatus("N3", Storage::listExtension);
+  quiz_assert(getRecord("N3", Storage::functionExtension).isNull());
+  createTestRecordWithErrorStatus("Y5", Storage::listExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  quiz_assert(!getRecord("Y5", Storage::funcExtension).isNull());
-  createTestRecordWithErrorStatus("N", Storage::lisExtension, data0,
+  quiz_assert(!getRecord("Y5", Storage::functionExtension).isNull());
+  createTestRecordWithErrorStatus("N", Storage::listExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  quiz_assert(!getRecord("N", Storage::funcExtension).isNull());
+  quiz_assert(!getRecord("N", Storage::functionExtension).isNull());
 
-  createTestRecordWithErrorStatus("X1", Storage::funcExtension, data0,
+  createTestRecordWithErrorStatus("X1", Storage::functionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  createTestRecordWithErrorStatus("Y1", Storage::funcExtension, data0,
+  createTestRecordWithErrorStatus("Y1", Storage::functionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  createTestRecordWithErrorStatus("V2", Storage::funcExtension, data0,
+  createTestRecordWithErrorStatus("V2", Storage::functionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  createTestRecordWithErrorStatus("N3", Storage::funcExtension, data0,
+  createTestRecordWithErrorStatus("N3", Storage::functionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
 
   // Sequences reserved names
-  createTestRecordWithErrorStatus("u", Storage::funcExtension);
-  createTestRecordWithErrorStatus("v", Storage::funcExtension);
-  createTestRecordWithErrorStatus("w", Storage::funcExtension);
+  createTestRecordWithErrorStatus("u", Storage::functionExtension);
+  createTestRecordWithErrorStatus("v", Storage::functionExtension);
+  createTestRecordWithErrorStatus("w", Storage::functionExtension);
 
-  createTestRecordWithErrorStatus("u", Storage::seqExtension);
-  quiz_assert(getRecord("u", Storage::funcExtension).isNull());
-  createTestRecordWithErrorStatus("v", Storage::seqExtension);
-  quiz_assert(getRecord("v", Storage::funcExtension).isNull());
-  createTestRecordWithErrorStatus("w", Storage::seqExtension);
-  quiz_assert(getRecord("w", Storage::funcExtension).isNull());
+  createTestRecordWithErrorStatus("u", Storage::sequenceExtension);
+  quiz_assert(getRecord("u", Storage::functionExtension).isNull());
+  createTestRecordWithErrorStatus("v", Storage::sequenceExtension);
+  quiz_assert(getRecord("v", Storage::functionExtension).isNull());
+  createTestRecordWithErrorStatus("w", Storage::sequenceExtension);
+  quiz_assert(getRecord("w", Storage::functionExtension).isNull());
 
-  createTestRecordWithErrorStatus("u", Storage::funcExtension, data0,
+  createTestRecordWithErrorStatus("u", Storage::functionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  createTestRecordWithErrorStatus("v", Storage::funcExtension, data0,
+  createTestRecordWithErrorStatus("v", Storage::functionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
-  createTestRecordWithErrorStatus("w", Storage::funcExtension, data0,
+  createTestRecordWithErrorStatus("w", Storage::functionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
   createTestRecordWithErrorStatus("u", testExtension);
 

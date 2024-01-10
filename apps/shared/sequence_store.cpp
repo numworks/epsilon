@@ -20,7 +20,7 @@ const char* SequenceStore::FirstAvailableName(size_t* nameIndex) {
   while (currentNameIndex < k_maxNumberOfSequences) {
     const char* name = k_sequenceNames[currentNameIndex];
     if (Storage::FileSystem::sharedFileSystem
-            ->recordBaseNamedWithExtension(name, Storage::seqExtension)
+            ->recordBaseNamedWithExtension(name, Storage::sequenceExtension)
             .isNull()) {
       if (nameIndex) {
         *nameIndex = currentNameIndex;

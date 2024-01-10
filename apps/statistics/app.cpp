@@ -30,7 +30,7 @@ App::Snapshot::Snapshot()
                 "Number of reserved lists in statistics changed.");
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
-          DoublePairStore::k_statisticsColumNames, Ion::Storage::lisExtension,
+          DoublePairStore::k_statisticsColumNames, Ion::Storage::listExtension,
           Shared::DoublePairStore::k_numberOfSeries,
           std::size(DoublePairStore::k_statisticsColumNames));
 }

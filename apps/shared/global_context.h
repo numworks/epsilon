@@ -21,10 +21,13 @@ namespace Shared {
 class GlobalContext final : public Poincare::Context {
  public:
   constexpr static const char *k_extensions[] = {
-      Ion::Storage::expExtension,  Ion::Storage::matExtension,
-      Ion::Storage::funcExtension, Ion::Storage::lisExtension,
-      Ion::Storage::seqExtension,  Ion::Storage::regExtension,
-      Ion::Storage::pcExtension};
+      Ion::Storage::expressionExtension,
+      Ion::Storage::matrixExtension,
+      Ion::Storage::functionExtension,
+      Ion::Storage::listExtension,
+      Ion::Storage::sequenceExtension,
+      Ion::Storage::regressionExtension,
+      Ion::Storage::parametricComponentExtension};
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
 
   // Storage information

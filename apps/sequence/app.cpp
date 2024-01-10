@@ -29,7 +29,8 @@ App::Snapshot::Snapshot()
   // Register u, v and w as reserved names to the sharedStorage.
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
-          Shared::SequenceStore::k_sequenceNames, Ion::Storage::seqExtension, 0,
+          Shared::SequenceStore::k_sequenceNames,
+          Ion::Storage::sequenceExtension, 0,
           std::size(Shared::SequenceStore::k_sequenceNames));
 }
 

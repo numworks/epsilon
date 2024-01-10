@@ -129,7 +129,7 @@ int FormulaTemplateMenuController::relativeCellIndex(int index, CellType type) {
 bool FormulaTemplateMenuController::shouldDisplayOtherAppCell() const {
   char columnName[DoublePairStore::k_columnNamesLength + 1];
   fillOtherAppColumnName(columnName);
-  Ion::Storage::Record r(columnName, Ion::Storage::lisExtension);
+  Ion::Storage::Record r(columnName, Ion::Storage::listExtension);
   return r.value().size;
 }
 

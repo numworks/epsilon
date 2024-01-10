@@ -45,11 +45,11 @@ ContinuousFunction ContinuousFunction::NewModel(
    * of the name, so that the baseName variable is not needed anymore after
    * calling the method "createRecordWithExtension". */
   Ion::Storage::Record record =
-      Ion::Storage::Record(baseName, Ion::Storage::funcExtension);
+      Ion::Storage::Record(baseName, Ion::Storage::functionExtension);
   RecordDataBuffer data(color);
   *error =
       Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-          baseName, Ion::Storage::funcExtension, &data, sizeof(data));
+          baseName, Ion::Storage::functionExtension, &data, sizeof(data));
   // Return the ContinuousFunction with the new record
   return ContinuousFunction(
       *error == Ion::Storage::Record::ErrorStatus::None ? record : Record());
@@ -847,7 +847,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
      * correctly named by GlobalContext. */
     return error;
   }
-  if (record->hasExtension(Ion::Storage::funcExtension)) {
+  if (record->hasExtension(Ion::Storage::functionExtension)) {
     ComparisonNode::OperatorType newOperatorType;
     if (ComparisonNode::IsBinaryComparison(newExpression, &newOperatorType) &&
         isValidNamedLeftExpression(newExpression.childAtIndex(0),
@@ -855,7 +855,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
       Expression function = newExpression.childAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(
           record, static_cast<SymbolAbstract &>(function).name(),
-          Ion::Storage::funcExtension);
+          Ion::Storage::functionExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         return error;
       }
@@ -868,12 +868,12 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
     }
     // Rename record with a hidden record name.
     char name[k_maxDefaultNameSize];
-    const char *const extensions[1] = {Ion::Storage::funcExtension};
+    const char *const extensions[1] = {Ion::Storage::functionExtension};
     name[0] = k_unnamedRecordFirstChar;
     Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
         name, 1, k_maxDefaultNameSize, extensions, 1, 99);
     error = Ion::Storage::Record::SetBaseNameWithExtension(
-        record, name, Ion::Storage::funcExtension);
+        record, name, Ion::Storage::functionExtension);
   }
   return error;
 }

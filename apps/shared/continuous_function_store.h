@@ -106,7 +106,7 @@ class ContinuousFunctionStore : public FunctionStore {
     return k_maxNumberOfMemoizedModels;
   }
   const char *modelExtension() const override {
-    return Ion::Storage::funcExtension;
+    return Ion::Storage::functionExtension;
   }
   ExpressionModelHandle *setMemoizedModelAtIndex(
       int cacheIndex, Ion::Storage::Record record) const override;

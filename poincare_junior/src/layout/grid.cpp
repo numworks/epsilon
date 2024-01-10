@@ -232,6 +232,19 @@ void Grid::computePositions(KDFont::Size font, KDCoordinate* columns,
   }
 }
 
+KDSize Grid::size(KDFont::Size font) const {
+  int rows = numberOfRows();
+  int columns = numberOfColumns();
+  bool editing = isEditing();
+  KDCoordinate columsCumulatedWidth[columns];
+  KDCoordinate rowCumulatedHeight[rows];
+  computePositions(font, columsCumulatedWidth, rowCumulatedHeight);
+  KDSize size(columsCumulatedWidth[columns - 1 -
+                                   (!numberOfColumnsIsFixed() && !isEditing())],
+              rowCumulatedHeight[rows - 1 - !editing]);
+  return size;
+}
+
 bool Grid::isColumnOrRowEmpty(bool column, int index) const {
   assert(index >= 0 && index < (column ? numberOfColumns() : numberOfRows()));
   int number = column ? numberOfRows() : numberOfColumns();

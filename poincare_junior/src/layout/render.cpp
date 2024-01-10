@@ -649,8 +649,10 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
     KDCoordinate columsCumulatedWidth[columns];
     KDCoordinate rowCumulatedHeight[rows];
     grid->computePositions(font, columsCumulatedWidth, rowCumulatedHeight);
-    KDSize size(columsCumulatedWidth[columns - 1],
-                rowCumulatedHeight[rows - 1]);
+    KDSize size(
+        columsCumulatedWidth[columns - 1 -
+                             (!grid->numberOfColumnsIsFixed() && !editing)],
+        rowCumulatedHeight[rows - 1 - !editing]);
     KDPoint offset = KDPointZero;
     if (node->isMatrixLayout()) {
       size =

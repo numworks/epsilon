@@ -67,9 +67,7 @@ class Grid : public Tree {
   KDCoordinate width(KDFont::Size font) const;
   void computePositions(KDFont::Size font, KDCoordinate* columns,
                         KDCoordinate* rows) const;
-  KDSize size(KDFont::Size font) const {
-    return KDSize(width(font), height(font));
-  }
+  KDSize size(KDFont::Size font) const;
   KDPoint positionOfChildAt(int column, int row, KDFont::Size font) const;
 
   constexpr static int k_minimalNumberOfRowsAndColumnsWhileEditing = 2;

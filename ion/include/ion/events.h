@@ -221,7 +221,7 @@ constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::Right);
 constexpr Event ShiftUp = Event::ShiftKey(Keyboard::Key::Up);
 constexpr Event ShiftDown = Event::ShiftKey(Keyboard::Key::Down);
 
-constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::Alpha);
+constexpr Event AlphaCaps = Event::ShiftKey(Keyboard::Key::Alpha);
 constexpr Event Cut = Event::ShiftKey(Keyboard::Key::XNT);
 constexpr Event Copy = Event::ShiftKey(Keyboard::Key::Var);
 constexpr Event Paste = Event::ShiftKey(Keyboard::Key::Toolbox);

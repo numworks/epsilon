@@ -669,6 +669,7 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
           KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness);
     }
     offset = offset.translatedBy(p);
+    int rowBaseline = 0;
     for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
       if (!editing && grid->childIsPlaceholder(index)) {
         continue;
@@ -685,7 +686,10 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
            grid->horizontalGridEntryMargin(font);
       KDCoordinate y = r > 0 ? rowCumulatedHeight[r - 1]
                              : -grid->verticalGridEntryMargin(font);
-      y += grid->rowBaseline(r, font) - Render::Baseline(child) +
+      if (c == 0) {
+        rowBaseline = grid->rowBaseline(r, font);
+      }
+      y += rowBaseline - Render::Baseline(child) +
            grid->verticalGridEntryMargin(font);
       KDPoint pc = KDPoint(x, y).translatedBy(offset);
       if (grid->childIsPlaceholder(index)) {

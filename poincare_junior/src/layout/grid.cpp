@@ -157,8 +157,10 @@ int Grid::closestNonGrayIndex(int index) const {
 KDCoordinate Grid::rowBaseline(int row, KDFont::Size font) const {
   assert(numberOfColumns() > 0);
   KDCoordinate rowBaseline = 0;
+  const Tree* child = childAt(0, row);
   for (int column = 0; column < numberOfColumns(); column++) {
-    rowBaseline = std::max(rowBaseline, Render::Baseline(childAt(column, row)));
+    rowBaseline = std::max(rowBaseline, Render::Baseline(child));
+    child = child->nextTree();
   }
   return rowBaseline;
 }

@@ -73,8 +73,7 @@ void RemoveCodePoint(char *buffer, CodePoint c,
  * SlideStringByNumberOfChar("12345", 2, 7) gives "1212345" and returns true.
  * SlideStringByNumberOfChar("12345", 2, 5) gives "12345" and returns false.
  * SlideStringByNumberOfChar("12345", -2, 5) gives "345" and returns true.*/
-bool SlideStringByNumberOfChar(char *text, int slidingSize,
-                               size_t textMaxLength);
+bool SlideStringByNumberOfChar(char *text, int slidingSize, size_t bufferSize);
 
 /* Looks for patterns in a string. If a pattern is found, it is replaced by
  * the one associated in the TextPair struct.

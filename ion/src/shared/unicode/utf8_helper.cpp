@@ -177,16 +177,15 @@ void RemoveCodePoint(char *buffer, CodePoint c, const char **pointerToUpdate,
                                           stoppingPosition);
 }
 
-bool SlideStringByNumberOfChar(char *text, int slidingSize,
-                               size_t textMaxLength) {
-  const size_t textLen = strlen(text);
-  if (textLen + slidingSize > textMaxLength || textLen + slidingSize < 0) {
+bool SlideStringByNumberOfChar(char *text, int slidingSize, size_t bufferSize) {
+  const size_t textSize = strlen(text) + 1;
+  if (textSize + slidingSize > bufferSize || textSize + slidingSize < 1) {
     return false;
   }
   if (slidingSize > 0) {
-    memmove(text + slidingSize, text, textLen + 1);
+    memmove(text + slidingSize, text, textSize);
   } else if (slidingSize < 0) {
-    memmove(text, text - slidingSize, textLen + slidingSize + 1);
+    memmove(text, text - slidingSize, textSize + slidingSize);
   }
   // In case slidingSize = 0, there is nothing to do
   return true;
@@ -203,7 +202,7 @@ static bool replaceFirstCharsByPattern(char *text,
   if (lengthOfPatternToRemove <= strlen(text) &&
       SlideStringByNumberOfChar(
           text, lengthOfReplacementPattern - lengthOfPatternToRemove,
-          textMaxLength)) {
+          textMaxLength + 1)) {
     for (size_t i = 0; i < lengthOfReplacementPattern; i++) {
       text[i] = replacementPattern[i];
     }

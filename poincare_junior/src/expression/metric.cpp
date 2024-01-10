@@ -1,54 +1,67 @@
+#if 0
 #include "metric.h"
 
-#include <poincare_junior/src/expression/polynomial.h>
+#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 
 namespace PoincareJ {
 
-bool Metric::hasImproved() const {
-  assert(m_algebraicRoot == AlgebraicRoot(m_tree, m_root));
-  // Warning: m_algebraicRoot may not be simplified, even if m_tree is.
-  int numberOfVariables = NumberOfVariables(m_algebraicRoot);
-  if (numberOfVariables != m_numberOfVariables) {
-    return numberOfVariables < m_numberOfVariables;
-  }
-  BlockType type = m_tree->type();
-  if (type != m_type) {
-    // Addition > Multiplication > Anything.
-    for (BlockType betterType :
-         {BlockType::Addition, BlockType::Complex, BlockType::Multiplication}) {
-      if (m_type == betterType || type == betterType) {
-        return type == betterType;
+int Metric::GetMetric(const Tree* u) {
+  int result = GetMetric(u->type());
+  switch (u->type()) {
+    case BlockType::Multiplication: {
+      // Ignore (-1) in multiplications
+      PatternMatching::Context ctx;
+      if (u->nextNode()->isMinusOne()) {
+        result -= GetMetric(BlockType::MinusOne);
+        if (u->numberOfChildren() == 2) {
+          result -= GetMetric(BlockType::Multiplication);
+        }
       }
+      break;
     }
-  }
-  int treeSize = m_tree->treeSize();
-  if (treeSize != m_treeSize) {
-    return treeSize < m_treeSize;
-  }
-  /* Use the type order as order of preference. In case of identical type, false
-   * must be returned to prevent any further simplification loop (A->B->A->...)
-   */
-  return static_cast<uint8_t>(type) < static_cast<uint8_t>(m_type);
-}
-
-const Tree* Metric::AlgebraicRoot(const Tree* tree, const Tree* root) {
-  const Tree* parent = root->parentOfDescendant(tree);
-  if (parent) {
-    if (parent->isAddition() || parent->isComplex()) {
-      return parent;
+    case BlockType::Exponential: {
+      // exp(A*ln(B)) -> Root(B,A) exception
+      PatternMatching::Context ctx;
+      if (PatternMatching::Match(KExp(KMult(KTA, KLn(KB))), u, &ctx)) {
+        if (!ctx.getNode(KA)->isHalf()) {
+          result += GetMetric(ctx.getNode(KA));
+        }
+        return result + GetMetric(ctx.getNode(KB));
+      }
+      break;
     }
-    if (parent->isMultiplication()) {
-      return AlgebraicRoot(parent, root);
-    }
+    case BlockType::Trig:
+    case BlockType::ATrig:
+      // Ignore second child
+      return result + GetMetric(u->nextNode());
+    default:
+      break;
   }
-  return tree;
-}
-
-int Metric::NumberOfVariables(const Tree* tree) {
-  Tree* variables = PolynomialParser::GetVariables(tree);
-  int result = variables->numberOfChildren();
-  variables->removeTree();
+  for (const Tree* child : u->children()) {
+    result += GetMetric(child);
+  }
   return result;
 }
 
+int Metric::GetMetric(BlockType type) {
+  switch (type) {
+    case BlockType::Zero:
+    case BlockType::One:
+    case BlockType::Two:
+    case BlockType::MinusOne:
+      return k_defaultMetric / 3;
+    default:
+      return k_defaultMetric;
+    case BlockType::PowerReal:
+    case BlockType::Random:
+    case BlockType::RandInt:
+      return k_defaultMetric * 2;
+    case BlockType::Sum:
+    case BlockType::Variable:
+      return k_defaultMetric * 3;
+  }
+}
+
 }  // namespace PoincareJ
+#endif

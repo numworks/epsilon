@@ -5,7 +5,6 @@
 #include <poincare_junior/src/expression/arithmetic.h>
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/logarithm.h>
-#include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/expression/trigonometry.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
@@ -113,8 +112,6 @@ class Simplification {
   static bool CanApplyDirection(const Tree *u, const Tree *root,
                                 Direction direction);
   static bool AdvancedReduction(Tree *u);
-  // Metric of given tree. The smaller is the better.
-  static float GetMetric(const Tree *u) { return u->treeSize(); }
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystematicReduction(Tree *root, const Tree *tree);
 
@@ -184,8 +181,6 @@ class Simplification {
                                  int childIndex = 0);
 
  private:
-  static bool ApplyIfMetricImproved(Tree *ref, const Tree *root,
-                                    Operation operation, const Metric metric);
   static bool SimplifyLastTree(Tree *node,
                                ProjectionContext projectionContext = {});
   static bool SimplifySwitch(Tree *u);

@@ -7,29 +7,17 @@ namespace PoincareJ {
 
 class Metric {
  public:
-  Metric(const Tree* tree, const Tree* root)
-      : m_tree(tree),
-        m_root(root),
-        m_algebraicRoot(AlgebraicRoot(tree, root)),
-        m_numberOfVariables(NumberOfVariables(m_algebraicRoot)),
-        m_treeSize(tree->treeSize()),
-        m_type(tree->type()) {}
+  // Metric of given tree. The smaller is the better.
+  static int GetMetric(const Tree* u) { return u->treeSize(); }
 
-  // Return true if m_tree is better reduced.
-  bool hasImproved() const;
+#if 0
+  static int GetMetric(const Tree* u);
 
  private:
-  // Find the nearest algebraic root
-  static const Tree* AlgebraicRoot(const Tree* tree, const Tree* root);
-  // Number of polynomial variables
-  static int NumberOfVariables(const Tree* tree);
+  constexpr static int k_defaultMetric = 2 * 3 * 5;
 
-  const Tree* m_tree;
-  const Tree* m_root;
-  const Tree* m_algebraicRoot;
-  int m_numberOfVariables;
-  int m_treeSize;
-  BlockType m_type;
+  static int GetMetric(BlockType type);
+#endif
 };
 
 }  // namespace PoincareJ

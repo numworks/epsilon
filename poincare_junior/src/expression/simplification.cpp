@@ -13,6 +13,7 @@
 #include <poincare_junior/src/expression/list.h>
 #include <poincare_junior/src/expression/logarithm.h>
 #include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/expression/random.h>
@@ -287,7 +288,7 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
   // Otherwise, root should be reset to current path.
   assert(!*mustResetRoot);
   // All directions are impossible, we are at a leaf. Compare metrics.
-  int metric = GetMetric(root);
+  int metric = Metric::GetMetric(root);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   LogIndent();
   std::cout << "Leaf reached (" << metric << " VS " << *bestMetric << ")";
@@ -310,7 +311,7 @@ bool Simplification::AdvancedReduction(Tree* u) {
    * will be explored.
    * This means calling AdvancedReduction on an equivalent but different
    * expression could yield different results if limits have been reached. */
-  int bestMetric = GetMetric(u);
+  int bestMetric = Metric::GetMetric(u);
   Path bestPath;
   Path currentPath;
   CrcCollection crcCollection;

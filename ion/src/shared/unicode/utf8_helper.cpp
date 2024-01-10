@@ -197,12 +197,12 @@ bool SlideStringByNumberOfChar(char *text, int slidingSize, size_t bufferSize) {
 static bool replaceFirstCharsByPattern(char *text,
                                        size_t lengthOfPatternToRemove,
                                        const char *replacementPattern,
-                                       size_t textMaxLength) {
+                                       size_t bufferSize) {
   size_t lengthOfReplacementPattern = strlen(replacementPattern);
   if (lengthOfPatternToRemove <= strlen(text) &&
       SlideStringByNumberOfChar(
           text, lengthOfReplacementPattern - lengthOfPatternToRemove,
-          textMaxLength + 1)) {
+          bufferSize)) {
     memcpy(text, replacementPattern, lengthOfReplacementPattern);
     return true;
   }
@@ -249,8 +249,9 @@ void TryAndReplacePatternsInStringByPatterns(char *text, int textMaxLength,
 
       if (strncmp(&text[i], matchedString, matchedStringLength) == 0 &&
           p.shouldReplace(text, textMaxLength, i)) {
-        didReplace = replaceFirstCharsByPattern(
-            &text[i], matchedStringLength, replacingString, textMaxLength - i);
+        didReplace =
+            replaceFirstCharsByPattern(&text[i], matchedStringLength,
+                                       replacingString, textMaxLength - i + 1);
         if (didReplace) {
           int delta = replacingStringLength - matchedStringLength;
           textLength += delta;

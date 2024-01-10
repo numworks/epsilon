@@ -201,12 +201,21 @@ void Grid::computePositions(KDFont::Size font, KDCoordinate* columns,
   for (int r = 0; r < numberOfRows(); r++) {
     rows[r] = 0;
   }
+  KDCoordinate underBaseline = 0;
+  KDCoordinate aboveBaseline = 0;
   for (int i = 0; const Tree* child : children()) {
     KDSize size = Render::Size(child);
+    KDCoordinate baseline = Render::Baseline(child);
     int c = columnAtChildIndex(i);
     int r = rowAtChildIndex(i);
+    if (c == 0) {
+      underBaseline = aboveBaseline = 0;
+    }
+    aboveBaseline = std::max(aboveBaseline, baseline);
+    underBaseline =
+        std::max<KDCoordinate>(underBaseline, size.height() - baseline);
     columns[c] = std::max(columns[c], size.width());
-    rows[r] = std::max(rows[r], size.height());
+    rows[r] = std::max<KDCoordinate>(rows[r], aboveBaseline + underBaseline);
     i++;
   }
   // Accumulate and add margins

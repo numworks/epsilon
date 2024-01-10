@@ -199,7 +199,6 @@ void ListController::resolveEquations() {
         App::app()->displayWarning(I18n::Message::DisabledFeatureInExamMode);
         return;
       case Error::RequireApproximateSolution:
-        App::app()->system()->resetApproximateResolutionRange();
         App::app()->system()->approximateSolve(App::app()->localContext());
       default: {
         assert(e == Error::NoError || e == Error::RequireApproximateSolution);

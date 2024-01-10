@@ -91,7 +91,6 @@ class SystemOfEquations {
 
  private:
   constexpr static char k_parameterPrefix = 't';
-  constexpr static double k_defaultApproximateSearchRange = 10.;
 
   class ContextWithoutT : public Poincare::ContextWithParent {
    public:

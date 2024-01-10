@@ -476,24 +476,11 @@ Coordinate2D<float> Zoom::HoneRoot(Solver<float>::FunctionEvaluation f,
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
              &pu, &pv, &pb);
-  // Discard local minimums and maximums
-  return interest == Solver<float>::Interest::Root ||
-                 std::fabs(pb.y()) < Solver<float>::NullTolerance(pb.x())
-             ? Coordinate2D<float>(pb.x(), 0.)
-             : Coordinate2D<float>();
-}
-
-Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
-                                           const void *aux, float a, float b,
-                                           Solver<float>::Interest interest,
-                                           float precision,
-                                           TrinaryBoolean discontinuous) {
-  Coordinate2D<float> pa, pu, pv, pb;
-  honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
-             &pu, &pv, &pb);
 /* The following if condition was supposed to discard vertical asymptotes but it
  * seems to be irrelevant for now since the autozoom also focuses on asymptotes.
- * Removing it thus changes nothing and avoids discarding false positives. */
+ * Removing it thus changes nothing and avoids discarding false positives.
+ * EDIT: It might become relevant again for the solver app, that also uses
+ * the autozoom to set its range when finding an approximate solution ? */
 #if 0
   /* We must make sure the "root" we've found is not an odd vertical asymptote.
    * We thus discard roots that change direction.
@@ -507,9 +494,26 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
     return Coordinate2D<float>();
   }
 #endif
+  // Discard local minimums and maximums
+  return interest == Solver<float>::Interest::Root ||
+                 std::fabs(pb.y()) < Solver<float>::NullTolerance(pb.x())
+             ? Coordinate2D<float>(pb.x(), 0.)
+             : Coordinate2D<float>();
+}
+
+Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
+                                           const void *aux, float a, float b,
+                                           Solver<float>::Interest interest,
+                                           float precision,
+                                           TrinaryBoolean discontinuous) {
+  Coordinate2D<float> result =
+      HoneRoot(f, aux, a, b, interest, precision, discontinuous);
+  if (std::isnan(result.x())) {
+    return result;
+  }
   const IntersectionParameters *p =
       static_cast<const IntersectionParameters *>(aux);
-  return p->f1(pb.x(), p->model1, p->context);
+  return p->f1(result.x(), p->model1, p->context);
 }
 
 static Range1D sanitation1DHelper(Range1D range, Range1D forcedRange,

@@ -67,7 +67,7 @@
 "",
 "",
 "",
-"AlphaLock",
+"AlphaCaps",
 "Cut",
 "Copy",
 "Paste",

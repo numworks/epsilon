@@ -105,6 +105,8 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
         return Poincare::MatrixIdentity::Builder(child);
       case BlockType::Inverse:
         return Poincare::MatrixInverse::Builder(child);
+      case BlockType::Ln:
+        return Poincare::NaperianLogarithm::Builder(child);
       case BlockType::Norm:
         return Poincare::AbsoluteValue::Builder(child);
       case BlockType::Ref:
@@ -217,9 +219,6 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     case BlockType::Decimal:
     case BlockType::Unit:
       return ToPoincareExpressionViaParse(exp);
-    case BlockType::Ln:
-      return Poincare::NaperianLogarithm::Builder(
-          ToPoincareExpression(exp->child(0)));
     case BlockType::UserSymbol: {
       char buffer[20];
       Symbol::GetName(exp, buffer, std::size(buffer));
@@ -243,6 +242,8 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       return Poincare::Factorial::Builder(ToPoincareExpression(exp->child(0)));
     case BlockType::Nonreal:
       return Poincare::Nonreal::Builder();
+    case BlockType::Opposite:
+      return Poincare::Opposite::Builder(ToPoincareExpression(exp->child(0)));
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Set:

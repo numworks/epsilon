@@ -682,9 +682,6 @@ bool Zoom::fitWithSolverHelper(float start, float end,
                                const void *aux, Solver<float>::BracketTest test,
                                Solver<float>::HoneResult hone, bool vertical,
                                Solver<double>::FunctionEvaluation fDouble) {
-  constexpr int k_maxPointsOnOneSide = 20;
-  constexpr int k_thresholdForSavedRange = 3;
-
   /* Search for points of interest in one direction, up to a certain number.
    * - k_maxPointsOnOneSide is the absolute maximum number of points we are
    *   allowed to find. It is high enough to correctly zoom on a tenth degree
@@ -723,11 +720,12 @@ bool Zoom::fitWithSolverHelper(float start, float end,
     } else {
       nOthers++;
     }
-    if (!savedRangeIsInit && (nRoots >= k_thresholdForSavedRange ||
-                              nOthers >= k_thresholdForSavedRange)) {
+    if (!savedRangeIsInit &&
+        (nRoots >= m_thresholdForFunctionsExceedingNbOfPoints ||
+         nOthers >= m_thresholdForFunctionsExceedingNbOfPoints)) {
       savedRangeIsInit = true;
       savedRange = m_interestingRange;
-    } else if (nRoots + nOthers >= k_maxPointsOnOneSide) {
+    } else if (nRoots + nOthers >= m_maxPointsOnOneSide) {
       assert(savedRangeIsInit);
       m_interestingRange = savedRange;
       return true;

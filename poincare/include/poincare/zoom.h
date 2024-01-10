@@ -37,7 +37,10 @@ class Zoom {
         m_context(context),
         m_defaultHalfLength(Range1D::k_defaultHalfLength),
         m_normalRatio(normalRatio),
-        m_maxFloat(maxFloat) {
+        m_maxFloat(maxFloat),
+        m_maxPointsOnOneSide(k_defaultMaxPointsOnOneSide),
+        m_thresholdForFunctionsExceedingNbOfPoints(
+            k_defaultThresholdForFunctionsExceedingNbOfPoints) {
     /* The calculator screen is wider than it is high, but nothing in Zoom
      * relies on this assumption. */
     // assert(m_normalRatio < 1.f);
@@ -53,6 +56,12 @@ class Zoom {
     m_bounds = Range1D(min, max, m_maxFloat);
   }
   void setForcedRange(Range2D range) { m_forcedRange = range; }
+  void setMaxPointsOneSide(int maxPointOnOneSide,
+                           int thresholdForFunctionsExceedingNbOfPoints) {
+    m_maxPointsOnOneSide = maxPointOnOneSide;
+    m_thresholdForFunctionsExceedingNbOfPoints =
+        thresholdForFunctionsExceedingNbOfPoints;
+  }
   /* These four functions will extend both X and Y axes. */
   void fitPoint(Coordinate2D<float> xy, bool flipped = false,
                 float leftMargin = 0.f, float rightMargin = 0.f,
@@ -134,6 +143,9 @@ class Zoom {
 
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
 
+  constexpr static int k_defaultMaxPointsOnOneSide = 20;
+  constexpr static int k_defaultThresholdForFunctionsExceedingNbOfPoints = 3;
+
   static Solver<float>::Interest PointIsInteresting(Coordinate2D<float> a,
                                                     Coordinate2D<float> b,
                                                     Coordinate2D<float> c,
@@ -185,6 +197,8 @@ class Zoom {
   float m_defaultHalfLength;
   float m_normalRatio;
   const float m_maxFloat;
+  int m_maxPointsOnOneSide;
+  int m_thresholdForFunctionsExceedingNbOfPoints;
 };
 
 }  // namespace Poincare

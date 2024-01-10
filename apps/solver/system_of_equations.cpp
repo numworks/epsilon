@@ -92,6 +92,8 @@ void SystemOfEquations::autoComputeApproximateResolutionRange(
 
   // Use the intersection between the definition domain of f and the bounds
   zoom.setBounds(-k_maxFloat, k_maxFloat);
+  zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
+                           k_maxNumberOfApproximateSolutions / 2);
   void *model[2] = {static_cast<void *>(&equationStandardForm),
                     static_cast<void *>(m_variables[0])};
   zoom.fitRoots(evaluator<float>, static_cast<void *>(model), false,

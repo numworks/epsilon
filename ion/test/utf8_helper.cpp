@@ -224,7 +224,7 @@ void assert_try_and_replace_pattern_in_string_by_pattern_gives(
     const char *indexToUpdateResult = nullptr,
     const char *stoppingPosition = nullptr) {
   UTF8Helper::TryAndReplacePatternsInStringByPatterns(
-      buffer, bufferSize, textPairs, numberOfPairs, firstToSecond,
+      buffer, bufferSize - 1, textPairs, numberOfPairs, firstToSecond,
       indexToUpdate, stoppingPosition);
   quiz_assert(strncmp(buffer, stringResult, bufferSize) == 0);
   if (indexToUpdateResult != nullptr) {

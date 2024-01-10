@@ -645,6 +645,7 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
     const Grid* grid = Grid::From(node);
     int rows = grid->numberOfRows();
     int columns = grid->numberOfColumns();
+    bool editing = grid->isEditing();
     KDCoordinate columsCumulatedWidth[columns];
     KDCoordinate rowCumulatedHeight[rows];
     grid->computePositions(font, columsCumulatedWidth, rowCumulatedHeight);
@@ -669,25 +670,29 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
     }
     offset = offset.translatedBy(p);
     for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-      if (grid->childIsPlaceholder(index)) {
+      if (!editing && grid->childIsPlaceholder(index)) {
         continue;
-      } else {
-        int c = grid->columnAtChildIndex(index);
-        int r = grid->rowAtChildIndex(index);
+      }
+      int c = grid->columnAtChildIndex(index);
+      int r = grid->rowAtChildIndex(index);
 
-        KDCoordinate x = c > 0 ? columsCumulatedWidth[c - 1]
-                               : -grid->horizontalGridEntryMargin(font);
-        x += ((columsCumulatedWidth[c] - x -
-               grid->horizontalGridEntryMargin(font)) -
-              Width(child)) /
-                 2 +
-             grid->horizontalGridEntryMargin(font);
-        KDCoordinate y = r > 0 ? rowCumulatedHeight[r - 1]
-                               : -grid->verticalGridEntryMargin(font);
-        y += grid->rowBaseline(r, font) - Render::Baseline(child) +
-             grid->verticalGridEntryMargin(font);
-        PrivateDraw(child, ctx, KDPoint(x, y).translatedBy(offset),
-                    expressionColor, childBackground, selection);
+      KDCoordinate x = c > 0 ? columsCumulatedWidth[c - 1]
+                             : -grid->horizontalGridEntryMargin(font);
+      x += ((columsCumulatedWidth[c] - x -
+             grid->horizontalGridEntryMargin(font)) -
+            Width(child)) /
+               2 +
+           grid->horizontalGridEntryMargin(font);
+      KDCoordinate y = r > 0 ? rowCumulatedHeight[r - 1]
+                             : -grid->verticalGridEntryMargin(font);
+      y += grid->rowBaseline(r, font) - Render::Baseline(child) +
+           grid->verticalGridEntryMargin(font);
+      KDPoint pc = KDPoint(x, y).translatedBy(offset);
+      if (grid->childIsPlaceholder(index)) {
+        RackLayout::RenderNode(child, ctx, pc, true);
+      } else {
+        PrivateDraw(child, ctx, pc, expressionColor, childBackground,
+                    selection);
       }
     }
   } else {
@@ -1261,60 +1266,47 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       }
       return;
     }
-    case LayoutType::Matrix:
+    case LayoutType::Matrix: {
+      const Grid* grid = Grid::From(node);
+      RenderSquareBracketPair(true, grid->height(font), ctx, p,
+                              style.glyphColor, style.backgroundColor);
+      KDCoordinate rightOffset =
+          SquareBracketPair::ChildOffset(grid->height(font)).x() +
+          grid->width(font);
+      RenderSquareBracketPair(false, grid->height(font), ctx,
+                              p.translatedBy(KDPoint(rightOffset, 0)),
+                              style.glyphColor, style.backgroundColor);
+      return;
+    }
     case LayoutType::Piecewise: {
       const Grid* grid = Grid::From(node);
+      // Piecewise
+      assert(grid->numberOfColumns() == 2);
 
-      if (node->isMatrixLayout()) {
-        // Matrix
-        RenderSquareBracketPair(true, grid->height(font), ctx, p,
-                                style.glyphColor, style.backgroundColor);
-        KDCoordinate rightOffset =
-            SquareBracketPair::ChildOffset(grid->height(font)).x() +
-            grid->width(font);
-        RenderSquareBracketPair(false, grid->height(font), ctx,
-                                p.translatedBy(KDPoint(rightOffset, 0)),
-                                style.glyphColor, style.backgroundColor);
-      } else {
-        // Piecewise
-        assert(grid->numberOfColumns() == 2);
+      // Draw the curly brace
+      RenderCurlyBraceWithChildHeight(true, grid->height(style.font), ctx, p,
+                                      style.glyphColor, style.backgroundColor);
 
-        // Draw the curly brace
-        RenderCurlyBraceWithChildHeight(true, grid->height(style.font), ctx, p,
-                                        style.glyphColor,
-                                        style.backgroundColor);
-
-        // Draw the commas
-        KDCoordinate commaAbscissa = CurlyBrace::k_curlyBraceWidth +
-                                     grid->columnWidth(0, style.font) +
-                                     k_gridEntryMargin;
-        int nbRows = grid->numberOfRows() - !grid->isEditing();
-        for (int i = 0; i < nbRows; i++) {
-          const Tree* leftChild = node->child(i * 2);
-          int rightChildIndex = i * 2 + 1;
-          KDPoint leftChildPosition = PositionOfChild(node, i * 2);
-          KDPoint commaPosition = KDPoint(
-              commaAbscissa, leftChildPosition.y() + Baseline(leftChild) -
-                                 KDFont::GlyphHeight(style.font) / 2);
-          KDGlyph::Style commaStyle = style;
-          if (grid->childIsPlaceholder(rightChildIndex)) {
-            if (!grid->isEditing()) {
-              continue;
-            }
-            commaStyle.glyphColor = Escher::Palette::GrayDark;
-          }
-          ctx->drawString(",", commaPosition.translatedBy(p), commaStyle);
-        }
-      }
-      if (grid->isEditing()) {
-        // Draw gray squares
-        for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-          if (!Grid::From(node)->childIsPlaceholder(index)) {
+      // Draw the commas
+      KDCoordinate commaAbscissa = CurlyBrace::k_curlyBraceWidth +
+                                   grid->columnWidth(0, style.font) +
+                                   k_gridEntryMargin;
+      int nbRows = grid->numberOfRows() - !grid->isEditing();
+      for (int i = 0; i < nbRows; i++) {
+        const Tree* leftChild = node->child(i * 2);
+        int rightChildIndex = i * 2 + 1;
+        KDPoint leftChildPosition = PositionOfChild(node, i * 2);
+        KDPoint commaPosition =
+            KDPoint(commaAbscissa, leftChildPosition.y() + Baseline(leftChild) -
+                                       KDFont::GlyphHeight(style.font) / 2);
+        KDGlyph::Style commaStyle = style;
+        if (grid->childIsPlaceholder(rightChildIndex)) {
+          if (!grid->isEditing()) {
             continue;
           }
-          RackLayout::RenderNode(
-              child, ctx, p.translatedBy(PositionOfChild(node, index)), true);
+          commaStyle.glyphColor = Escher::Palette::GrayDark;
         }
+        ctx->drawString(",", commaPosition.translatedBy(p), commaStyle);
       }
       return;
     }

@@ -203,9 +203,7 @@ static bool replaceFirstCharsByPattern(char *text,
       SlideStringByNumberOfChar(
           text, lengthOfReplacementPattern - lengthOfPatternToRemove,
           textMaxLength + 1)) {
-    for (size_t i = 0; i < lengthOfReplacementPattern; i++) {
-      text[i] = replacementPattern[i];
-    }
+    memcpy(text, replacementPattern, lengthOfReplacementPattern);
     return true;
   }
   return false;

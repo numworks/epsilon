@@ -149,6 +149,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   assert(secondArgument->isZero() || secondArgument->isOne());
   bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
+  // TODO : Maybe factorize even/odd functions logic
   if (PatternMatching::MatchReplaceAndSimplify(
           firstArgument, KMult(KTA, -1_e, KTB), KMult(KTA, KTB))) {
     changed = true;
@@ -157,6 +158,8 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
     }
   }
   const Tree* piFactor = getPiFactor(firstArgument);
+  /* TODO : Maybe the exact trigonometric values should be replaced in advanced
+   *        reduction. */
   if (piFactor) {
     // Find n to match Trig((n/120)*π, ...) with exact value.
     Tree* multipleTree = Rational::Multiplication(120_e, piFactor);
@@ -222,9 +225,10 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
   if (PatternMatching::Match(KATrig(KMult(KA, KTB), 1_e), u, &ctx) &&
       ctx.getNode(KA)->isNumber() &&
       Number::Sign(ctx.getNode(KA)).isStrictlyNegative()) {
-    // arcsin(-x) -> arcsin(x)
+    // arcsin(-x) -> -arcsin(x)
     u->moveTreeOverTree(PatternMatching::CreateAndSimplify(
         KMult(-1_e, KATrig(KMult(-1_e, KA, KTB), 1_e)), ctx));
+    // CreateAndSimplify called SimplifyATrig on the ATrig tree.
     return true;
   }
   if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {

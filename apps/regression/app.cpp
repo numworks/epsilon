@@ -35,14 +35,14 @@ App::Snapshot::Snapshot()
                 "Number of reserved lists in regression changed.");
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
-          DoublePairStore::k_regressionColumNames, Ion::Storage::lisExtension,
+          DoublePairStore::k_regressionColumNames, Ion::Storage::listExtension,
           Shared::DoublePairStore::k_numberOfSeries,
           std::size(DoublePairStore::k_regressionColumNames));
 
   // Register R1, R2, and R3 as reserved functions to the sharedStorage.
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
-          &Store::k_functionName, Ion::Storage::regExtension,
+          &Store::k_functionName, Ion::Storage::regressionExtension,
           Shared::DoublePairStore::k_numberOfSeries, 1);
 }
 

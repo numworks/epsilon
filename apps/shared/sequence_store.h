@@ -54,7 +54,7 @@ class SequenceStore : public FunctionStore {
     return SequenceStore::k_maxNumberOfSequences;
   }
   const char *modelExtension() const override {
-    return Ion::Storage::seqExtension;
+    return Ion::Storage::sequenceExtension;
   }
   /* We don't use model memoization for two reasons:
    * - the number of Sequence is capped so we keep enough Sequences to store

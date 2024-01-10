@@ -13,7 +13,7 @@ class EquationStore : public Shared::ExpressionModelStore {
  public:
   constexpr static int k_maxNumberOfEquations =
       Poincare::Expression::k_maxNumberOfVariables;
-  constexpr static const char* k_extension = Ion::Storage::eqExtension;
+  constexpr static const char* k_extension = Ion::Storage::equationExtension;
 
   // ExpressionModelStore
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;

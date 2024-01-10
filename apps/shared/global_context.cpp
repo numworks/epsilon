@@ -37,28 +37,29 @@ bool GlobalContext::SymbolAbstractNameIsFree(const char *baseName) {
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
   Context *context = Escher::App::app()->localContext();
-  if (record.hasExtension(Ion::Storage::expExtension) ||
-      record.hasExtension(Ion::Storage::lisExtension) ||
-      record.hasExtension(Ion::Storage::matExtension)) {
+  if (record.hasExtension(Ion::Storage::expressionExtension) ||
+      record.hasExtension(Ion::Storage::listExtension) ||
+      record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record),
                                          context);
-  } else if (record.hasExtension(Ion::Storage::funcExtension) ||
-             record.hasExtension(Ion::Storage::pcExtension) ||
-             record.hasExtension(Ion::Storage::regExtension)) {
+  } else if (record.hasExtension(Ion::Storage::functionExtension) ||
+             record.hasExtension(Ion::Storage::parametricComponentExtension) ||
+             record.hasExtension(Ion::Storage::regressionExtension)) {
     CodePoint symbol = UCodePointNull;
-    if (record.hasExtension(Ion::Storage::funcExtension)) {
+    if (record.hasExtension(Ion::Storage::functionExtension)) {
       symbol = GlobalContext::continuousFunctionStore->modelForRecord(record)
                    ->symbol();
-    } else if (record.hasExtension(Ion::Storage::pcExtension)) {
+    } else if (record.hasExtension(
+                   Ion::Storage::parametricComponentExtension)) {
       symbol = ContinuousFunctionProperties::k_parametricSymbol;
     } else {
-      assert(record.hasExtension(Ion::Storage::regExtension));
+      assert(record.hasExtension(Ion::Storage::regressionExtension));
       symbol = ContinuousFunctionProperties::k_cartesianSymbol;
     }
     return PoincareHelpers::CreateLayout(
         ExpressionForFunction(Symbol::Builder(symbol), record), context);
   } else {
-    assert(record.hasExtension(Ion::Storage::seqExtension));
+    assert(record.hasExtension(Ion::Storage::sequenceExtension));
     return Sequence(record).layout();
   }
 }
@@ -82,17 +83,18 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
               identifier, length, k_extensions, k_numberOfExtensions);
   if (extension == nullptr) {
     return Context::SymbolAbstractType::None;
-  } else if (strcmp(extension, Ion::Storage::expExtension) == 0 ||
-             strcmp(extension, Ion::Storage::matExtension) == 0) {
+  } else if (strcmp(extension, Ion::Storage::expressionExtension) == 0 ||
+             strcmp(extension, Ion::Storage::matrixExtension) == 0) {
     return Context::SymbolAbstractType::Symbol;
-  } else if (strcmp(extension, Ion::Storage::funcExtension) == 0 ||
-             strcmp(extension, Ion::Storage::pcExtension) == 0 ||
-             strcmp(extension, Ion::Storage::regExtension) == 0) {
+  } else if (strcmp(extension, Ion::Storage::functionExtension) == 0 ||
+             strcmp(extension, Ion::Storage::parametricComponentExtension) ==
+                 0 ||
+             strcmp(extension, Ion::Storage::regressionExtension) == 0) {
     return Context::SymbolAbstractType::Function;
-  } else if (strcmp(extension, Ion::Storage::lisExtension) == 0) {
+  } else if (strcmp(extension, Ion::Storage::listExtension) == 0) {
     return Context::SymbolAbstractType::List;
   } else {
-    assert(strcmp(extension, Ion::Storage::seqExtension) == 0);
+    assert(strcmp(extension, Ion::Storage::sequenceExtension) == 0);
     return Context::SymbolAbstractType::Sequence;
   }
 }
@@ -159,9 +161,9 @@ const Expression GlobalContext::expressionForSymbolAndRecord(
 
 const Expression GlobalContext::ExpressionForActualSymbol(
     Ion::Storage::Record r) {
-  if (!r.hasExtension(Ion::Storage::expExtension) &&
-      !r.hasExtension(Ion::Storage::lisExtension) &&
-      !r.hasExtension(Ion::Storage::matExtension)) {
+  if (!r.hasExtension(Ion::Storage::expressionExtension) &&
+      !r.hasExtension(Ion::Storage::listExtension) &&
+      !r.hasExtension(Ion::Storage::matrixExtension)) {
     return Expression();
   }
   // An expression record value is the expression itself
@@ -172,12 +174,12 @@ const Expression GlobalContext::ExpressionForActualSymbol(
 const Expression GlobalContext::ExpressionForFunction(
     const Expression &parameter, Ion::Storage::Record r) {
   Expression e;
-  if (r.hasExtension(Ion::Storage::pcExtension) ||
-      r.hasExtension(Ion::Storage::regExtension)) {
+  if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
+      r.hasExtension(Ion::Storage::regressionExtension)) {
     // A regression record value is the expression itself
     Ion::Storage::Record::Data d = r.value();
     e = Expression::ExpressionFromAddress(d.buffer, d.size);
-  } else if (r.hasExtension(Ion::Storage::funcExtension)) {
+  } else if (r.hasExtension(Ion::Storage::functionExtension)) {
     /* A function record value has metadata before the expression. To get the
      * expression, use the function record handle. */
     e = ContinuousFunction(r).expressionClone();
@@ -190,7 +192,7 @@ const Expression GlobalContext::ExpressionForFunction(
 
 const Expression GlobalContext::expressionForSequence(
     const SymbolAbstract &symbol, Ion::Storage::Record r, Context *ctx) {
-  if (!r.hasExtension(Ion::Storage::seqExtension)) {
+  if (!r.hasExtension(Ion::Storage::sequenceExtension)) {
     return Expression();
   }
   /* An function record value has metadata before the expression. To get the
@@ -241,11 +243,11 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
   ExpressionNode::Type type = expression.type();
   const char *extension;
   if (type == ExpressionNode::Type::List) {
-    extension = Ion::Storage::lisExtension;
+    extension = Ion::Storage::listExtension;
   } else if (type == ExpressionNode::Type::Matrix) {
-    extension = Ion::Storage::matExtension;
+    extension = Ion::Storage::matrixExtension;
   } else {
-    extension = Ion::Storage::expExtension;
+    extension = Ion::Storage::expressionExtension;
   }
   /* If there is another record competing with this one for its name,
    * it is destroyed directly in Storage, through the record_name_verifier. */
@@ -260,7 +262,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
-  if (!previousRecord.hasExtension(Ion::Storage::funcExtension)) {
+  if (!previousRecord.hasExtension(Ion::Storage::functionExtension)) {
     // The previous record was not a function. Create a new model.
     ContinuousFunction newModel =
         continuousFunctionStore->newModel(symbol.name(), &error);

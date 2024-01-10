@@ -44,7 +44,7 @@ class StoreApp : public MathApp {
   bool storageCanChangeForRecordName(
       const Ion::Storage::Record::Name recordName) const override {
     return !m_intrusiveStorageChangeFlag ||
-           strcmp(recordName.extension, Ion::Storage::lisExtension) != 0;
+           strcmp(recordName.extension, Ion::Storage::listExtension) != 0;
   }
 };
 

@@ -97,12 +97,12 @@ int MathVariableBoxController::numberOfRows() const {
 static int NumberOfFunctions() {
   return Storage::FileSystem::sharedFileSystem->numberOfRecordsStartingWithout(
       ContinuousFunction::k_unnamedRecordFirstChar,
-      Ion::Storage::funcExtension);
+      Ion::Storage::functionExtension);
 }
 
 static int NumberOfParametricComponents() {
   return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
-      Storage::pcExtension);
+      Storage::parametricComponentExtension);
 }
 
 int MathVariableBoxController::numberOfElements(Page page) const {
@@ -118,7 +118,7 @@ int MathVariableBoxController::numberOfElements(Page page) const {
   if (page == Page::Function) {
     return NumberOfFunctions() + NumberOfParametricComponents() +
            Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
-               Storage::regExtension);
+               Storage::regressionExtension);
   }
   return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
       Extension(page));
@@ -163,13 +163,13 @@ void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
         symbolName, SymbolAbstractNode::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
     CodePoint symbol = UCodePointNull;
-    if (record.hasExtension(Storage::funcExtension)) {
+    if (record.hasExtension(Storage::functionExtension)) {
       symbol = GlobalContext::continuousFunctionStore->modelForRecord(record)
                    ->symbol();
-    } else if (record.hasExtension(Storage::pcExtension)) {
+    } else if (record.hasExtension(Storage::parametricComponentExtension)) {
       symbol = ContinuousFunctionProperties::k_parametricSymbol;
     } else {
-      assert(record.hasExtension(Storage::regExtension));
+      assert(record.hasExtension(Storage::regressionExtension));
       symbol = ContinuousFunctionProperties::k_cartesianSymbol;
     }
     symbolLength = Function::NameWithArgument(
@@ -385,14 +385,14 @@ const char *MathVariableBoxController::Extension(Page page) {
   assert(page != Page::RootMenu && page != Page::Function);
   switch (page) {
     case Page::Expression:
-      return Ion::Storage::expExtension;
+      return Ion::Storage::expressionExtension;
     case Page::List:
-      return Ion::Storage::lisExtension;
+      return Ion::Storage::listExtension;
     case Page::Matrix:
-      return Ion::Storage::matExtension;
+      return Ion::Storage::matrixExtension;
     default:
       assert(page == Page::Sequence);
-      return Ion::Storage::seqExtension;
+      return Ion::Storage::sequenceExtension;
   }
 }
 
@@ -406,15 +406,15 @@ Storage::Record MathVariableBoxController::recordAtIndex(int row) {
       record = Storage::FileSystem::sharedFileSystem
                    ->recordWithExtensionAtIndexStartingWithout(
                        ContinuousFunction::k_unnamedRecordFirstChar,
-                       Storage::funcExtension, row);
+                       Storage::functionExtension, row);
     } else if (row < numberOfFunctions + numberOfParametricComponents) {
       record =
           Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
-              Storage::pcExtension, row - numberOfFunctions);
+              Storage::parametricComponentExtension, row - numberOfFunctions);
     } else {
       record =
           Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
-              Storage::regExtension,
+              Storage::regressionExtension,
               row - numberOfFunctions - numberOfParametricComponents);
     }
   } else {
@@ -435,15 +435,15 @@ void MathVariableBoxController::resetVarBoxMemoization() {
 bool MathVariableBoxController::destroyRecordAtRow(int row) {
   {
     Storage::Record record = recordAtIndex(row);
-    if (record.hasExtension(Ion::Storage::pcExtension) ||
-        record.hasExtension(Ion::Storage::regExtension)) {
+    if (record.hasExtension(Ion::Storage::parametricComponentExtension) ||
+        record.hasExtension(Ion::Storage::regressionExtension)) {
       return false;
     }
     bool isParametricFunction = false;
     constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
     char buffer[bufferSize];
     size_t length = 0;
-    if (record.hasExtension(Storage::funcExtension)) {
+    if (record.hasExtension(Storage::functionExtension)) {
       ExpiringPointer<ContinuousFunction> f =
           GlobalContext::continuousFunctionStore->modelForRecord(record);
       if (f->properties().isParametric()) {

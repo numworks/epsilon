@@ -324,7 +324,7 @@ static void deleteParametricComponent(char *baseName, size_t baseNameLength,
   addSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
   Ion::Storage::Record record =
       Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
-          baseName, Ion::Storage::pcExtension);
+          baseName, Ion::Storage::parametricComponentExtension);
   record.destroy();
 }
 
@@ -335,7 +335,8 @@ static void storeParametricComponent(char *baseName, size_t baseNameLength,
          e.numberOfChildren() == 2);
   Expression child = e.childAtIndex(first ? 0 : 1).clone();
   addSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
-  child.storeWithNameAndExtension(baseName, Ion::Storage::pcExtension);
+  child.storeWithNameAndExtension(baseName,
+                                  Ion::Storage::parametricComponentExtension);
 }
 
 void ListController::DeleteParametricComponentsWithBaseName(

@@ -1693,14 +1693,13 @@ void Expression::deepApproximateChildrenKeepingSymbols(
   for (int i = 0; i < childrenCount; i++) {
     Expression child = childAtIndex(i);
     /* Do not approximate:
-     * - inside a parametered expression.
+     * - the parameter of parametered expression.
      * - right of a store.
      * - if child is e and it's the base of a log (so that `log(...,e)` can
      *   be later beautified into `ln(...)`).
      */
     if (!((parameteredExpression &&
-           (i == ParameteredExpression::ParameterChildIndex() ||
-            i == ParameteredExpression::ParameteredChildIndex())) ||
+           i == ParameteredExpression::ParameterChildIndex()) ||
           (storeExpression && i == 1) ||
           (type() == ExpressionNode::Type::Logarithm && i == 1 &&
            child.type() == ExpressionNode::Type::ConstantMaths &&
@@ -1708,25 +1707,32 @@ void Expression::deepApproximateChildrenKeepingSymbols(
       bool thisCanApproximate, thisShouldReduce;
       childAtIndex(i).deepApproximateKeepingSymbols(
           reductionContext, &thisCanApproximate, &thisShouldReduce);
+      if (!thisCanApproximate && parameteredExpression &&
+          i == ParameteredExpression::ParameteredChildIndex()) {
+        /* When approximating ParameteredChild keeping symbols,
+         * thisCanApproximate will yield to false if the child contains the
+         * symbol of the parametered expression. But if it contains no other
+         * symbols, it can be approximated. So we re-check if it contains
+         * symbols with getVariables.
+         * Example:
+         * - sum(1, k, 0, 10) -> thisCanApproximate == true, no problem
+         * - sum(k, k, 0, 10) -> thisCanApproximate == false, but should be
+         * true. getVariables() == 0
+         * - sum(kx, k, 0, 10) -> thisCanApproximate == false, and should stay
+         * false. getVariables() == 1 */
+        char variables[Poincare::Expression::k_maxNumberOfVariables]
+                      [Poincare::SymbolAbstractNode::k_maxNameSize] = {""};
+        int nVariables = getVariables(
+            reductionContext.context(),
+            [](const char *, Context *) { return true; }, variables[0],
+            SymbolAbstractNode::k_maxNameSize);
+        thisCanApproximate = (nVariables == 0);
+      }
       /* If at least 1 child failed approximation, no need to approximate: it
        * means it has symbols */
       *canApproximate = *canApproximate && thisCanApproximate;
       /* If at least 1 child changed, re-reduce its parent. */
       *shouldReduce = *shouldReduce || thisShouldReduce;
-    }
-  }
-
-  if (parameteredExpression) {
-    /* We didn't check in the previous for loop if ParameteredChild and
-     * ParameterChildIndex contained symbols. */
-    char variables[Poincare::Expression::k_maxNumberOfVariables]
-                  [Poincare::SymbolAbstractNode::k_maxNameSize] = {""};
-    int nVariables = getVariables(
-        reductionContext.context(),
-        [](const char *, Context *) { return true; }, variables[0],
-        SymbolAbstractNode::k_maxNameSize);
-    if (nVariables != 0) {
-      *canApproximate = false;
     }
   }
 

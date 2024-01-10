@@ -18,7 +18,7 @@ class JuniorLayoutNode final : public LayoutNode {
 
  public:
   JuniorLayoutNode(const PoincareJ::Tree* tree, size_t treeSize) {
-    memcpy(m_blocks, tree, treeSize);
+    memcpy(m_blocks, tree->block(), treeSize);
   }
 
   // Layout

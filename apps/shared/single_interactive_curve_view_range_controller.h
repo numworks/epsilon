@@ -7,7 +7,8 @@
 
 namespace Shared {
 
-class SingleInteractiveCurveViewRangeController : public SingleRangeController {
+class SingleInteractiveCurveViewRangeController
+    : public SingleRangeController<float> {
  public:
   using Axis = InteractiveCurveViewRange::Axis;
 

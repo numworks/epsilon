@@ -11,21 +11,22 @@
 
 namespace Shared {
 
-class SingleRangeController : public FloatParameterController<float> {
+template <typename T>
+class SingleRangeController : public FloatParameterController<T> {
  public:
-  SingleRangeController(Escher::Responder* parentResponder,
-                        MessagePopUpController* confirmPopUpController);
+  SingleRangeController<T>(Escher::Responder* parentResponder,
+                           MessagePopUpController* confirmPopUpController);
   void viewWillAppear() override;
 
   int numberOfRows() const override { return k_numberOfTextCells + 2; }
   int typeAtRow(int row) const override {
     return row == 0 ? k_autoCellType
-                    : FloatParameterController<float>::typeAtRow(row);
+                    : FloatParameterController<T>::typeAtRow(row);
   }
   int reusableCellCount(int type) const override {
     return type == k_autoCellType
                ? 1
-               : FloatParameterController<float>::reusableCellCount(type);
+               : FloatParameterController<T>::reusableCellCount(type);
   }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
@@ -39,26 +40,26 @@ class SingleRangeController : public FloatParameterController<float> {
   constexpr static int k_numberOfTextCells = 2;
   constexpr static int k_autoCellType = 2;
   static_assert(k_autoCellType !=
-                        FloatParameterController<float>::k_parameterCellType &&
+                        FloatParameterController<T>::k_parameterCellType &&
                     k_autoCellType !=
-                        FloatParameterController<float>::k_buttonCellType,
+                        FloatParameterController<T>::k_buttonCellType,
                 "k_autoCellType value already taken.");
 
   virtual I18n::Message parameterMessage(int index) const = 0;
   virtual bool parametersAreDifferent() = 0;
   virtual void extractParameters() = 0;
-  float parameterAtIndex(int index) override;
+  T parameterAtIndex(int index) override;
   void setAutoStatus(bool autoParam);
   virtual void setAutoRange() = 0;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
-  void setRange(float min, float max);
-  virtual float limit() const = 0;
+  bool setParameterAtIndex(int parameterIndex, T f) override;
+  void setRange(T min, T max);
+  virtual T limit() const = 0;
   virtual void confirmParameters() = 0;
   virtual void pop(bool onConfirmation) = 0;
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView>
       m_boundsCells[k_numberOfTextCells];
-  Poincare::Range1D<float> m_rangeParam;
+  Poincare::Range1D<T> m_rangeParam;
   bool m_autoParam;
 
  private:

@@ -10,7 +10,7 @@
 namespace Graph {
 
 class DomainParameterController
-    : public Shared::SingleRangeController,
+    : public Shared::SingleRangeController<float>,
       public Shared::MathToolboxExtraCellsDataSource {
  public:
   DomainParameterController(Escher::Responder* parentResponder);

@@ -12,7 +12,8 @@ using namespace Poincare;
 namespace Graph {
 
 DomainParameterController::DomainParameterController(Responder* parentResponder)
-    : Shared::SingleRangeController(parentResponder, &m_confirmPopUpController),
+    : Shared::SingleRangeController<float>(parentResponder,
+                                           &m_confirmPopUpController),
       m_confirmPopUpController(Invocation::Builder<DomainParameterController>(
           [](DomainParameterController* controller, void* sender) {
             controller->pop(false);

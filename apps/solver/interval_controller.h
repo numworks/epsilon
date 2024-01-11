@@ -9,7 +9,7 @@
 
 namespace Solver {
 
-class IntervalController : public Shared::SingleRangeController {
+class IntervalController : public Shared::SingleRangeController<float> {
  public:
   IntervalController(Escher::Responder* parentResponder);
   const char* title() override;

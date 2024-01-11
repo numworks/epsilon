@@ -4,9 +4,9 @@ namespace Escher {
 
 ButtonCell::ButtonCell(Responder* parentResponder, I18n::Message textBody,
                        Escher::Invocation invocation, KDColor backgroundColor,
-                       KDCoordinate horizontalMargins)
-    : AbstractButtonCell(parentResponder, textBody, invocation,
-                         KDFont::Size::Large, KDColorBlack),
+                       KDCoordinate horizontalMargins, KDFont::Size fontSize)
+    : AbstractButtonCell(parentResponder, textBody, invocation, fontSize,
+                         KDColorBlack),
       m_backgroundColor(backgroundColor),
       m_horizontalMargins(horizontalMargins) {}
 

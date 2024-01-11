@@ -106,7 +106,7 @@ class SolutionsController : public Escher::ViewController,
         .horizontalAlignment = KDGlyph::k_alignCenter};
 
     bool hideTableView() const {
-      return m_selectableTableView.numberOfDisplayableRows() == 0;
+      return m_selectableTableView.totalNumberOfRows() == 0;
     }
     int numberOfSubviews() const override;
     Escher::View *subviewAtIndex(int index) override;

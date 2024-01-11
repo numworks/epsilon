@@ -86,7 +86,7 @@ class SolutionsController : public Escher::ViewController,
 
   class ContentView : public Escher::View {
    public:
-    constexpr static KDCoordinate k_topMargin = 50;
+    constexpr static KDCoordinate k_bottomMessageSpace = 50;
     constexpr static KDColor k_backgroundColor =
         Escher::Palette::WallScreenDark;
     ContentView(SolutionsController *controller);

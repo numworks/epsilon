@@ -52,13 +52,13 @@ It's expected to :
 | Match | Replace |
 |---|---|
 | unit | 1 |
-| Decimal<b>(A) | 10^(-n)*A |
-| cos(A) | trig(A * RadToAngleUnit, 0) |
-| sin(A) | trig(A * RadToAngleUnit, 1) |
-| tan(A) | tanRad(A * RadToAngleUnit) |
-| acos(A) | atrig(A, 0) * RadToAngleUnit |
-| asin(A) | atrig(A, 1) * RadToAngleUnit |
-| atan(A) | atanRad(A) * RadToAngleUnit |
+| Decimal<b>(A) | 10^(-n)×A |
+| cos(A) | trig(A × RadToAngleUnit, 0) |
+| sin(A) | trig(A × RadToAngleUnit, 1) |
+| tan(A) | tanRad(A × RadToAngleUnit) |
+| acos(A) | atrig(A, 0) × RadToAngleUnit |
+| asin(A) | atrig(A, 1) × RadToAngleUnit |
+| atan(A) | atanRad(A) × RadToAngleUnit |
 | sqrt(A) | A^0.5 |
 | e^A | exp(A) |
 | A^B (with A matrix) | powerMatrix(A, B) |
@@ -66,14 +66,14 @@ It's expected to :
 | ceil(A) | -floor(-A) |
 | frac(A) | A - floor(A) |
 | e | exp(1) |
-| conj(A) | re(A)-i*re(A) |
+| conj(A) | re(A)-i×re(A) |
 | i | complex(0,1) |
-| - A | (-1)*A |
-| A - B | A + (-1)*B |
-| A / B | A * B^-1 |
+| - A | (-1)×A |
+| A - B | A + (-1)×B |
+| A / B | A × B^-1 |
 | log(A, e) | ln(e) |
-| log(A) | ln(A) * ln(10)^(-1) |
-| log(A, B) | ln(A) * ln(B)^(-1) |
+| log(A) | ln(A) × ln(10)^(-1) |
+| log(A, B) | ln(A) × ln(B)^(-1) |
 
 TODO
 
@@ -96,9 +96,36 @@ It's expected to :
 
 | Match | Replace |
 |---|---|
-| A^B (with B not an integer) | exp(B*ln(A)) |
-| exp(B*ln(A)) (with B an integer) | A^B |
-| (A?×B)^C | A^C × B^C |
+| A+(B+C) | A+B+C |
+| A×(B×C) | A×B×C |
+| A+Dep(B, C) | Dep(A+B, C) |
+| 1^x | 1 |
+| 0^B (with B > 0) | 0 |
+| A^B (with B not an integer) | exp(B×ln(A)) |
+| A^0 (with A != 0) | 1 |
+| A^1 | A |
+| (0 + A×i)^n | ±(A^n) or (0±(A^n)×i) |
+| (w^p)^n | w^(p×n) |
+| (w1×...×wk)^n | w1^n × ... × wk^n |
+| exp(a)^b | exp(a×b) |
+| +(A) | A |
+| +() | 0 |
+| B + A | A + B |
+| 0 + A + B | A + B |
+| 2 + 4.1 | 6.1 |
+| 2 × a + 4.1 × a | 6.1 × a |
+| (A+B×i)+(C+D×i) | ((A+C)+(B+D)×i) |
+| ×(A) | A |
+| ×() | 1 |
+| B × A | A × B |
+| 2 × 4.1 | 8.2 |
+| 0 × A | 0 |
+| 1 × A × B | A × B |
+| t^m × t^n | t^(m+n) |
+| (A+B×i)×(C+D×i) | ((AC-BD)+(AD+BC)×i) |
+| ### | ### |
+| ### | ### |
+| exp(B×ln(A)) (with B an integer) | A^B |
 | A! | Prod(k, 1, A, k) |
 | ### | ### |
 

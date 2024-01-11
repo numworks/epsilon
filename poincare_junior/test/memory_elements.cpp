@@ -667,6 +667,23 @@ QUIZ_CASE(pcj_node_size) {
   quiz_assert(node->nodeSize() == 4);
 }
 
+QUIZ_CASE(pcj_tree_ancestors) {
+  const Tree* root = KMult(1_e, KAdd(2_e, KCos(KAdd(3_e, 4_e))));
+  const Tree* add1 = root->child(1);
+  const Tree* cos = add1->child(1);
+  const Tree* add2 = cos->child(0);
+  const Tree* tree = add2->child(0);
+  quiz_assert(tree->treeIsIdenticalTo(3_e));
+  for (int i = 0; const Tree* ancestor : tree->ancestors(root)) {
+    quiz_assert(i != 0 || ancestor == root);
+    quiz_assert(i != 1 || ancestor == add1);
+    quiz_assert(i != 2 || ancestor == cos);
+    quiz_assert(i != 3 || ancestor == add2);
+    quiz_assert(i != 4);
+    i++;
+  }
+}
+
 QUIZ_CASE(pcj_constructor) {
   assert_tree_equals_blocks(
       KRackL("1+"_l,

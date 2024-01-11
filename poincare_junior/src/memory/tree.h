@@ -276,11 +276,55 @@ class Tree : public TypeBlock {
     }
   };
 
+  template <typename T>
+  class RootToNodeIterator {
+   public:
+    using Type = T;
+    RootToNodeIterator(Type root, Type node) : m_root(root), m_node(node) {
+      assert(root <= node && node < root->nextTree());
+    }
+    Type operator*() { return m_root; }
+    bool operator!=(const RootToNodeIterator& it) const {
+      // Assume iterators with different targets are never compared
+      return m_root != it.m_root;
+    }
+    RootToNodeIterator<T>& operator++() {
+      T child = m_root->child(0);
+      while (true) {
+        T nextChild = child->nextTree();
+        if (nextChild > m_node) {
+          m_root = child;
+          return *this;
+        }
+        child = nextChild;
+      }
+    }
+
+   private:
+    T m_root;
+    T m_node;
+  };
+
+  template <class Iterator>
+  class TargetList final {
+    using Type = typename Iterator::Type;
+
+   public:
+    TargetList(Type begin, Type end) : m_begin(begin), m_end(end) {}
+    Iterator begin() const { return Iterator(m_begin, m_end); }
+    Iterator end() const { return Iterator(m_end, m_end); }
+
+   private:
+    Type m_begin;
+    Type m_end;
+  };
+
  public:
   using ConstTrees = ElementList<ChildrenIterator<const Tree*>>;
   using Trees = ElementList<ChildrenIterator<Tree*>>;
   using ConstNodes = ElementList<DescendantsIterator<const Tree*>>;
   using Nodes = ElementList<DescendantsIterator<Tree*>>;
+  using ConstAncestors = TargetList<RootToNodeIterator<const Tree*>>;
 
   ConstNodes selfAndDescendants() const { return {this, 1}; }
   // Do not alter number of children while iterating
@@ -292,6 +336,8 @@ class Tree : public TypeBlock {
   Trees children() { return {nextNode(), numberOfChildren()}; }
   // Do not alter number of children while iterating
   Nodes descendants() { return {nextNode(), numberOfChildren()}; }
+
+  ConstAncestors ancestors(const Tree* root) const { return {root, this}; }
 
  private:
   Tree* cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,

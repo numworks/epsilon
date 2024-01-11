@@ -11,7 +11,8 @@ class ButtonCell : public Escher::AbstractButtonCell {
   ButtonCell(Responder* parentResponder, I18n::Message textBody,
              Escher::Invocation invocation,
              KDColor backgroundColor = Escher::Palette::WallScreen,
-             KDCoordinate horizontalMargins = 0);
+             KDCoordinate horizontalMargins = 0,
+             KDFont::Size fontSize = KDFont::Size::Large);
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 

@@ -11,7 +11,8 @@ WarningController::ContentView::ContentView()
                  {.style = {.glyphColor = KDColorWhite,
                             .backgroundColor = KDColorBlack,
                             .font = KDFont::Size::Small},
-                  .horizontalAlignment = KDGlyph::k_alignCenter}) {}
+                  .horizontalAlignment = KDGlyph::k_alignCenter,
+                  .verticalAlignment = KDGlyph::k_alignCenter}) {}
 
 void WarningController::ContentView::setLabel(I18n::Message label) {
   m_textView.setMessage(label);
@@ -26,7 +27,6 @@ View* WarningController::ContentView::subviewAtIndex(int index) {
 
 void WarningController::ContentView::layoutSubviews(bool force) {
   setChildFrame(&m_textView, bounds(), force);
-  m_textView.setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
 }
 
 KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const {

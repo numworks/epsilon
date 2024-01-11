@@ -57,7 +57,7 @@ class ContinuousFunction : public Function {
                     bool symbolValue = false) override;
   // Return true if the ContinuousFunction is active
   bool isActive() const override {
-    return Function::isActive() && properties().canBeActive();
+    return Function::isActive() && properties().isEnabled();
   };
   // If the ContinuousFunction has y for unknown symbol
   bool isAlongY() const override { return properties().isAlongY(); }

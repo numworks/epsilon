@@ -16,7 +16,7 @@ namespace Shared {
 
 ContinuousFunctionProperties::CurveParameter
 ContinuousFunctionProperties::getCurveParameter(int index) const {
-  assert(canBeActive());
+  assert(isEnabled());
   using namespace I18n;
   switch (getCurveParameterType()) {
     case CurveParameterType::CartesianFunction:
@@ -58,7 +58,7 @@ ContinuousFunctionProperties::getCurveParameter(int index) const {
 ContinuousFunctionProperties::AreaType ContinuousFunctionProperties::areaType()
     const {
   assert(isInitialized());
-  if (!canBeActive() || equationType() == ComparisonNode::OperatorType::Equal) {
+  if (!isEnabled() || equationType() == ComparisonNode::OperatorType::Equal) {
     return AreaType::None;
   }
   // To draw y^2>a, the area plotted should be Outside and not Above.
@@ -309,7 +309,7 @@ void ContinuousFunctionProperties::update(
 void ContinuousFunctionProperties::setCartesianFunctionProperties(
     const Expression& analyzedExpression, Context* context) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
-  assert(status() == Status::Enabled && isCartesian());
+  assert(isEnabled() && isCartesian());
 
   setCurveParameterType(CurveParameterType::CartesianFunction);
 
@@ -407,7 +407,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
     Preferences::ComplexFormat complexFormat, int xDeg, int yDeg,
     TrinaryBoolean highestCoefficientIsPositive) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
-  assert(status() == Status::Enabled && isCartesian());
+  assert(isEnabled() && isCartesian());
 
   /* We can rely on x and y degree to identify plot type :
    * | y  | x  | Status
@@ -492,7 +492,7 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
     const Expression& analyzedExpression, Context* context,
     Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
-  assert(status() == Status::Enabled && isPolar());
+  assert(isEnabled() && isPolar());
 
   setCurveParameterType(CurveParameterType::Polar);
 
@@ -562,7 +562,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
     const Poincare::Expression& analyzedExpression, Poincare::Context* context,
     Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
-  assert(status() == Status::Enabled && isParametric());
+  assert(isEnabled() && isParametric());
   assert(analyzedExpression.type() == ExpressionNode::Type::Matrix &&
          static_cast<const Matrix&>(analyzedExpression).numberOfColumns() ==
              1 &&

@@ -56,8 +56,7 @@ class SystemOfEquations {
   Type type() const { return m_type; }
   int degree() const { return m_degree; }
   const char* variable(size_t index) const {
-    assert(index < m_numberOfResolutionVariables &&
-           m_variables[index][0] != '\0');
+    assert(index < m_numberOfSolvingVariables && m_variables[index][0] != '\0');
     return m_variables[index];
   }
   size_t numberOfUserVariables() const { return m_numberOfUserVariables; }
@@ -68,16 +67,16 @@ class SystemOfEquations {
   }
   bool overrideUserVariables() const { return m_overrideUserVariables; }
 
-  // Resolution methods
-  double approximateResolutionMinimum() const {
-    return m_approximateResolutionMinimum;
+  // Solving methods
+  double approximateSolvingRangeMinimum() const {
+    return m_approximateSolvingRangeMinimum;
   }
-  double approximateResolutionMaximum() const {
-    return m_approximateResolutionMaximum;
+  double approximateSolvingRangeMaximum() const {
+    return m_approximateSolvingRangeMaximum;
   }
-  void setApproximateResolutionMinimum(double value);
-  void setApproximateResolutionMaximum(double value);
-  void setAutoApproximateRange(bool autoRange);
+  void setApproximateSolvingRangeMinimum(double value);
+  void setApproximateSolvingRangeMaximum(double value);
+  void setAutoApproximateSolvingRange(bool autoRange);
 
   Error exactSolve(Poincare::Context* context);
   void approximateSolve(Poincare::Context* context);
@@ -105,8 +104,8 @@ class SystemOfEquations {
         Poincare::ContextWithParent* lastDescendantContext) override;
   };
 
-  void setMaxApproximateRange();
-  void autoComputeApproximateResolutionRange(
+  void setWidestApproximateSolvingRange();
+  void autoComputeApproximateSolvingRange(
       Poincare::Expression equationStandardForm, Poincare::Context* context);
 
   Error privateExactSolve(Poincare::Context* context);
@@ -129,9 +128,9 @@ class SystemOfEquations {
   void registerSolution(double f);
 
   Solution m_solutions[k_maxNumberOfSolutions];
-  double m_approximateResolutionMinimum;
-  double m_approximateResolutionMaximum;
-  size_t m_numberOfResolutionVariables;
+  double m_approximateSolvingRangeMinimum;
+  double m_approximateSolvingRangeMaximum;
+  size_t m_numberOfSolvingVariables;
   size_t m_numberOfUserVariables;
   size_t m_numberOfSolutions;
   EquationStore* m_store;
@@ -144,7 +143,7 @@ class SystemOfEquations {
   Poincare::Preferences::ComplexFormat m_complexFormat;
   bool m_overrideUserVariables;
   bool m_hasMoreSolutions;
-  bool m_autoApproximateRange;
+  bool m_autoApproximateSolvingRange;
 };
 
 }  // namespace Solver

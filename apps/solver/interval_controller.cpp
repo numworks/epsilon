@@ -56,14 +56,14 @@ int IntervalController::reusableParameterCellCount(int type) const {
 
 double IntervalController::parameterAtIndex(int index) {
   SystemOfEquations *system = App::app()->system();
-  return index == 0 ? system->approximateResolutionMinimum()
-                    : system->approximateResolutionMaximum();
+  return index == 0 ? system->approximateSolvingRangeMinimum()
+                    : system->approximateSolvingRangeMaximum();
 }
 
 bool IntervalController::setParameterAtIndex(int parameterIndex, double f) {
   SystemOfEquations *system = App::app()->system();
-  parameterIndex == 0 ? system->setApproximateResolutionMinimum(f)
-                      : system->setApproximateResolutionMaximum(f);
+  parameterIndex == 0 ? system->setApproximateSolvingRangeMinimum(f)
+                      : system->setApproximateSolvingRangeMaximum(f);
   return true;
 }
 

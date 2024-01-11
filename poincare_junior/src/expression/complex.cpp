@@ -17,9 +17,7 @@ namespace PoincareJ {
 bool Complex::IsReal(const Tree* tree) {
   if (tree->isOfType({
           BlockType::Addition, BlockType::Multiplication,
-          BlockType::Exponential, BlockType::Power,
-          // TODO: Handle Ln so that reduced abs(z) is always real.
-          // BlockType::Ln,
+          BlockType::Exponential, BlockType::Power, BlockType::Ln,
           // BlockType::Cross,
           // BlockType::Derivative,  BlockType::Det,
           // BlockType::Dot,         BlockType::Inverse,
@@ -40,15 +38,18 @@ bool Complex::IsReal(const Tree* tree) {
       assert(index->isNumber());
       return Number::Sign(index).isStrictlyPositive();
     }
+    if (tree->isLn()) {
+      return Number::Sign(tree->child(0)).isStrictlyPositive();
+    }
     return true;
   }
-  return tree->isNumber() || tree->isOfType({
-                                 BlockType::ImaginaryPart, BlockType::RealPart,
-                                 // BlockType::Abs,
-                                 // BlockType::ComplexArgument, BlockType::Dim,
-                                 // BlockType::Factorial, BlockType::Identity,
-                                 // BlockType::Norm, BlockType::TrigDiff
-                             });
+  return tree->isNumber() ||
+         tree->isOfType({
+             BlockType::ImaginaryPart, BlockType::RealPart, BlockType::Abs,
+             // BlockType::ComplexArgument, BlockType::Dim,
+             // BlockType::Factorial, BlockType::Identity, BlockType::Norm,
+             // BlockType::TrigDiff
+         });
 }
 
 }  // namespace PoincareJ

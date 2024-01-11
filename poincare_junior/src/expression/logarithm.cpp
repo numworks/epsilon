@@ -96,6 +96,7 @@ bool Logarithm::ExpandLnOnRational(Tree* e) {
 }
 
 Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
+  bool isNegative = m.strictSign() == StrictSign::Negative;
   Arithmetic::FactorizedInteger factorization =
       Arithmetic::PrimeFactorization(m);
   if (escapeIfPrime && (factorization.numberOfFactors == 0 ||
@@ -114,6 +115,11 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
   }
   NAry::SetNumberOfChildren(result, factorization.numberOfFactors);
   NAry::SquashIfPossible(result);
+  if (isNegative) {
+    // ln(-1) = iπ using the principal complex logarithm.
+    result->cloneNodeBeforeNode(KComplex);
+    π_e->clone();
+  }
   assert(!Simplification::DeepSystematicReduce(result));
   return result;
 }

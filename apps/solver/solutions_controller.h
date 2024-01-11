@@ -84,7 +84,8 @@ class SolutionsController : public Escher::ViewController,
         parentResponder()->parentResponder());
   }
 
-  class ContentView : public Escher::View {
+  class ContentView : public Escher::View,
+                      public Escher::SelectableTableViewDelegate {
    public:
     constexpr static KDCoordinate k_bottomMessageSpace = 50;
     constexpr static KDColor k_backgroundColor =
@@ -97,6 +98,11 @@ class SolutionsController : public Escher::ViewController,
     Escher::SelectableTableView *selectableTableView() {
       return &m_selectableTableView;
     }
+    // SelectableTableViewDelegate
+    void tableViewDidChangeSelectionAndDidScroll(
+        Escher::SelectableTableView *t, int previousSelectedCol,
+        int previousSelectedRow, KDPoint previousOffset,
+        bool withinTemporarySelection = false) override;
 
    private:
     constexpr static KDFont::Size k_warningMessageFont = KDFont::Size::Small;
@@ -110,7 +116,10 @@ class SolutionsController : public Escher::ViewController,
     }
     int numberOfSubviews() const override;
     Escher::View *subviewAtIndex(int index) override;
+
+    bool tableIsTooLargeForWarningMessage() const;
     void layoutSubviews(bool force = false) override;
+
     Escher::MultipleLinesBufferTextView<KDFont::Size::Small, 3>
         m_warningMessageView;
     Escher::SelectableTableView m_selectableTableView;

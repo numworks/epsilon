@@ -86,13 +86,20 @@ bool Parametric::ExpandProduct(Tree* expr) {
                                Explicit(expr));
 }
 
-// TODO try swapping sigmas
-// different children equal bounds
-// identical children where leftUpperBound + 1 = rightLowerBound
-// product from/to factorial
-// expand and contract distribution with exp/log
+/* TODO :
+ * - Try swapping sigmas
+ * - Different children equal bounds
+ * - Identical children where leftUpperBound + 1 = rightLowerBound
+ * - Product from/to factorial
+ * - Expand and contract distribution with exp/log
+ * - Prod(A, B, C, D) / Prod(A, B, F, G) =
+ *              Prod(A, B, C, min(F, D)) * Prod(A, B, max(C, G), D)
+ *           / Prod(A, B, F, min(G, C)) * Prod(A, B, max(F, D), G)
+ *   Same with Sum(A, B, C, D) - Sum(A, B, F, G)
+ */
 
 bool Parametric::ContractProduct(Tree* expr) {
+  // Used to simplify simplified and projected permute and binomials.
   // Prod(u(k), k, a, b) / Prod(u(k), k, a, c) -> Prod(u(k), k, c+1, b) if c < b
   PatternMatching::Context ctx;
   if (PatternMatching::Match(

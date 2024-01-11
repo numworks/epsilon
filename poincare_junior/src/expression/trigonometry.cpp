@@ -341,17 +341,7 @@ bool Trigonometry::ContractTrigonometric(Tree* ref) {
                 KTG));
 }
 
-bool Trigonometry::ExpandATrigonometric(Tree* ref) {
-#if 0
-  // Only expand in one way to avoid infinite expansion.
-  // arccos(x) = π/2 - arcsin(x)
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KATrig(KA, 0_e),
-      KAdd(KMult(π_e, KHalf), KMult(-1_e, KATrig(KA, 1_e))));
-#else
-  // Deactivated to only be handled in systematic reduction with x being Trig.
-  return false;
-#endif
-}
+/* TODO : Maybe expand arccos(x) = π/2 - arcsin(x).
+ * Beware of infinite expansion. */
 
 }  // namespace PoincareJ

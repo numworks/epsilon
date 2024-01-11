@@ -19,8 +19,6 @@ class Trigonometry final {
   EDITION_REF_WRAP(ContractTrigonometric);
   static bool ExpandTrigonometric(Tree *node);
   EDITION_REF_WRAP(ExpandTrigonometric);
-  static bool ExpandATrigonometric(Tree *node);
-  EDITION_REF_WRAP(ExpandATrigonometric);
 
  private:
   // Given n, return the exact expression of sin(n*π/120).

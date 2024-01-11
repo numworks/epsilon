@@ -106,6 +106,7 @@ bool Arithmetic::SimplifyFactorial(Tree* expr) {
 }
 
 bool Arithmetic::ExpandFactorial(Tree* expr) {
+  // A! = Prod(k, 1, A, k)
   return PatternMatching::MatchReplaceAndSimplify(
       expr, KFact(KA), KProduct("k"_e, 1_e, KA, KVar<0>));
 }

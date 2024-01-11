@@ -247,7 +247,6 @@ class Simplification {
       Logarithm::ExpandLn,
       ExpandExp,
       Trigonometry::ExpandTrigonometric,
-      Trigonometry::ExpandATrigonometric,
       Parametric::ExpandSum,
       Parametric::ExpandProduct,
       Arithmetic::ExpandBinomial,

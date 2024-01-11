@@ -526,8 +526,7 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
     multiplication->cloneTreeOverTree(0_e);
     return true;
   }
-  if (!changed || NAry::SquashIfUnary(multiplication) ||
-      NAry::SquashIfEmpty(multiplication)) {
+  if (!changed || NAry::SquashIfPossible(multiplication)) {
     return changed;
   }
   /* Merging children can un-sort the multiplication. It must then be simplified
@@ -547,7 +546,7 @@ bool Simplification::SimplifyMultiplication(Tree* u) {
      * tried again to properly handle possible new float children. */
     return true;
   }
-  if (NAry::SquashIfUnary(u) || NAry::SquashIfEmpty(u)) {
+  if (NAry::SquashIfPossible(u)) {
     return true;
   }
   changed = NAry::Sort(u, Comparison::Order::PreserveMatrices) || changed;
@@ -590,7 +589,7 @@ Tree* PushTerm(const Tree* u) {
   Tree* c = u->clone();
   if (u->isMultiplication() && u->child(0)->isRational()) {
     NAry::RemoveChildAtIndex(c, 0);
-    NAry::SquashIfUnary(c);
+    NAry::SquashIfPossible(c);
   }
   return c;
 }
@@ -644,7 +643,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
      * tried again to properly handle possible new float children. */
     return true;
   }
-  if (NAry::SquashIfUnary(u)) {
+  if (NAry::SquashIfPossible(u)) {
     return true;
   }
   modified = NAry::Sort(u) || modified;
@@ -676,7 +675,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
     return modified;
   }
   NAry::SetNumberOfChildren(u, n);
-  if (NAry::SquashIfUnary(u) || NAry::SquashIfEmpty(u)) {
+  if (NAry::SquashIfPossible(u)) {
     return true;
   }
   /* TODO: SimplifyAddition may encounter the same issues as the multiplication.

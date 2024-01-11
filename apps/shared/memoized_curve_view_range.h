@@ -30,23 +30,23 @@ class MemoizedCurveViewRange : public CurveViewRange {
   virtual void setYRange(float min, float max) { protectedSetYRange(min, max); }
 
  protected:
-  Poincare::Range2D memoizedRange() const { return m_range; }
+  Poincare::Range2D<float> memoizedRange() const { return m_range; }
 
   void protectedSetXRange(float min, float max,
-                          float limit = Poincare::Range1D::k_maxFloat) {
+                          float limit = Poincare::Range1D<float>::k_maxFloat) {
     privateSet(min, max, limit, true);
   }
   void protectedSetYRange(float min, float max,
-                          float limit = Poincare::Range1D::k_maxFloat) {
+                          float limit = Poincare::Range1D<float>::k_maxFloat) {
     privateSet(min, max, limit, false);
   }
 
-  void protectedSetXRange(Poincare::Range1D range,
-                          float limit = Poincare::Range1D::k_maxFloat) {
+  void protectedSetXRange(Poincare::Range1D<float> range,
+                          float limit = Poincare::Range1D<float>::k_maxFloat) {
     protectedSetXRange(range.min(), range.max(), limit);
   }
-  void protectedSetYRange(Poincare::Range1D range,
-                          float limit = Poincare::Range1D::k_maxFloat) {
+  void protectedSetYRange(Poincare::Range1D<float> range,
+                          float limit = Poincare::Range1D<float>::k_maxFloat) {
     protectedSetYRange(range.min(), range.max(), limit);
   }
 
@@ -56,7 +56,7 @@ class MemoizedCurveViewRange : public CurveViewRange {
   void privateSet(float min, float max, float limit, bool x);
 
   // Window bounds of the data
-  Poincare::Range2D m_range;
+  Poincare::Range2D<float> m_range;
   float m_xGridUnit;
   float m_yGridUnit;
 };

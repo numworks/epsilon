@@ -160,8 +160,9 @@ class DoublePairStore {
    * updates the valid series, and stores the lists in the storage. */
   virtual bool updateSeries(int series, bool delayUpdate = false);
   virtual bool valueValidInColumn(double value, int relativeColumn) const {
-    return !std::isnan(value) && value >= -Poincare::Range1D::k_maxFloat &&
-           value <= Poincare::Range1D::k_maxFloat;
+    return !std::isnan(value) &&
+           value >= -Poincare::Range1D<float>::k_maxFloat &&
+           value <= Poincare::Range1D<float>::k_maxFloat;
   }
 
   bool listWasErasedByException(int i) const {

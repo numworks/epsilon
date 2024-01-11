@@ -62,8 +62,8 @@ class Inference : public MemoizedCurveViewRange {
   virtual double *parametersArray() = 0;
 
  private:
-  static const Poincare::Range1D DefaultYRange() {
-    return Poincare::Range1D(-k_displayBottomMarginRatio, 1);
+  static const Poincare::Range1D<float> DefaultYRange() {
+    return Poincare::Range1D<float>(-k_displayBottomMarginRatio, 1);
   }
 };
 

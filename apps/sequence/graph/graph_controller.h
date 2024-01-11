@@ -34,9 +34,9 @@ class GraphController final : public Shared::FunctionGraphController {
                                  Ion::Events::Event event) override;
 
   // InteractiveCurveViewRangeDelegate
-  Poincare::Range2D optimalRange(
+  Poincare::Range2D<float> optimalRange(
       bool computeX, bool computeY,
-      Poincare::Range2D originalRange) const override;
+      Poincare::Range2D<float> originalRange) const override;
 
   TermSumController *termSumController() { return &m_termSumController; }
   float interestingXMin() const;

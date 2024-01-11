@@ -64,7 +64,7 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
                  Preferences::sharedPreferences->angleUnit())));
 }
 
-Range1D SystemOfEquations::autoApproximateSolvingRange(
+Range1D<float> SystemOfEquations::autoApproximateSolvingRange(
     Expression equationStandardForm, Context *context) {
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
@@ -84,7 +84,7 @@ Range1D SystemOfEquations::autoApproximateSolvingRange(
    * displayed. We still want to notify the user that more solutions exist. */
   m_hasMoreSolutions = !finiteNumberOfSolutions;
   zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
-  Range2D finalRange = zoom.range(false, false);
+  Range2D<float> finalRange = zoom.range(false, false);
   return *finalRange.x();
 }
 
@@ -99,7 +99,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
                          ReductionTarget::SystemForApproximation);
   m_numberOfSolutions = 0;
 
-  Range1D solvingRange =
+  Range1D<float> solvingRange =
       m_autoApproximateSolvingRange
           ? autoApproximateSolvingRange(undevelopedExpression, context)
           : m_approximateSolvingRange;

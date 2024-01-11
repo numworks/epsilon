@@ -7,7 +7,7 @@ namespace Statistics {
 BoxRange::BoxRange(Store* store) : m_store(store) {}
 
 float BoxRange::computeMinMax(bool isMax) const {
-  Range1D range1D = Range1D::ValidRangeBetween(
+  Range1D<float> range1D = Range1D<float>::ValidRangeBetween(
       m_store->minValueForAllSeries(
           false, Shared::DoublePairStore::DefaultActiveSeriesTest),
       m_store->maxValueForAllSeries(

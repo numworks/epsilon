@@ -122,9 +122,9 @@ bool HistogramParameterController::authorizedParameters(
     return false;
   }
   // TODO: Histogram range is in float so we can't go over k_maxFloat
-  if (firstDrawnBarAbscissa > Poincare::Range1D::k_maxFloat ||
-      firstDrawnBarAbscissa < -Poincare::Range1D::k_maxFloat ||
-      barWidth > Poincare::Range1D::k_maxFloat) {
+  if (firstDrawnBarAbscissa > Poincare::Range1D<float>::k_maxFloat ||
+      firstDrawnBarAbscissa < -Poincare::Range1D<float>::k_maxFloat ||
+      barWidth > Poincare::Range1D<float>::k_maxFloat) {
     return false;
   }
   assert(DoublePairStore::k_numberOfSeries > 0);

@@ -91,7 +91,7 @@ bool SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
 }
 
 void SingleRangeController::setRange(float min, float max) {
-  m_rangeParam = Range1D::ValidRangeBetween(min, max, limit());
+  m_rangeParam = Range1D<float>::ValidRangeBetween(min, max, limit());
 }
 
 TextField *SingleRangeController::textFieldOfCellAtIndex(HighlightCell *cell,

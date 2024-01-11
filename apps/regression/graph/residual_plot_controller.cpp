@@ -107,8 +107,8 @@ void ResidualPlotController::viewWillAppear() {
   }
   if (yMax == DBL_MIN) {
     // This happens if every y is NAN
-    yMin = -Poincare::Range1D::k_defaultHalfLength;
-    yMax = Poincare::Range1D::k_defaultHalfLength;
+    yMin = -Poincare::Range1D<float>::k_defaultHalfLength;
+    yMax = Poincare::Range1D<float>::k_defaultHalfLength;
   }
   assert(xMin <= xMax && yMin <= yMax);
   updateCursor();

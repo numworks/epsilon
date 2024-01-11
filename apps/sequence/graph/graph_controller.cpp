@@ -86,12 +86,12 @@ void GraphController::moveToRank(int n) {
   m_view.reload();
 }
 
-Range2D GraphController::optimalRange(bool computeX, bool computeY,
-                                      Range2D originalRange) const {
-  Range2D result;
+Range2D<float> GraphController::optimalRange(
+    bool computeX, bool computeY, Range2D<float> originalRange) const {
+  Range2D<float> result;
   if (computeX) {
     float xMin = interestingXMin();
-    *result.x() = Range1D(xMin, xMin + k_defaultXHalfRange, k_maxFloat);
+    *result.x() = Range1D<float>(xMin, xMin + k_defaultXHalfRange, k_maxFloat);
   } else {
     *result.x() = *originalRange.x();
   }

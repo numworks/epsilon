@@ -191,10 +191,10 @@ void HistogramController::initRangeParameters() {
   }
 
   // TODO: Set the histogram range to double.
-  float min = std::clamp(static_cast<float>(xMin), -Range1D::k_maxFloat,
-                         Range1D::k_maxFloat);
-  float max = std::clamp(static_cast<float>(xMax), -Range1D::k_maxFloat,
-                         Range1D::k_maxFloat);
+  float min = std::clamp(static_cast<float>(xMin), -Range1D<float>::k_maxFloat,
+                         Range1D<float>::k_maxFloat);
+  float max = std::clamp(static_cast<float>(xMax), -Range1D<float>::k_maxFloat,
+                         Range1D<float>::k_maxFloat);
 
   m_histogramRange.setHistogramRange(
       min - HistogramRange::k_displayLeftMarginRatio * (max - min),

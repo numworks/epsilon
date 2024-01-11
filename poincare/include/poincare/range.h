@@ -11,29 +11,32 @@
 
 namespace Poincare {
 
+template <typename T>
 class Range1D {
  public:
-  constexpr static float k_maxFloat = 1e35f;
-  constexpr static float k_minLength = 1e-4f;
-  constexpr static float k_defaultHalfLength = 10.f;
+  constexpr static T k_defaultHalfLength = static_cast<T>(10.);
+  // Ad hoc values
+  constexpr static T k_maxFloat = sizeof(T) == sizeof(float) ? 1e35f : 1e300;
+  constexpr static T k_minLength = sizeof(T) == sizeof(float) ? 1e-4f : 1e-30;
 
-  static float DefaultLengthAt(float t) {
+  static T DefaultLengthAt(T t) {
     return std::max(
-        std::pow(10.f, OMG::IEEE754<float>::exponentBase10(t) - 2.f),
-        k_minLength + Float<float>::EpsilonLax());
+        std::pow(static_cast<T>(10.),
+                 OMG::IEEE754<T>::exponentBase10(t) - static_cast<T>(2.)),
+        k_minLength + Float<T>::EpsilonLax());
   }
 
   /* Given any two numbers, ValidRangeBetween will return a range with bounds no
    * more than limit, and length no less than k_minLength. */
-  static Range1D ValidRangeBetween(float a, float b, float limit = k_maxFloat);
+  static Range1D<T> ValidRangeBetween(T a, T b, T limit = k_maxFloat);
 
-  constexpr Range1D(float min = NAN, float max = NAN, float limit = k_maxFloat)
+  constexpr Range1D<T>(T min = NAN, T max = NAN, T limit = k_maxFloat)
       : m_min(std::clamp(min, -limit, limit)),
         m_max(std::clamp(max, -limit, limit)) {
     assert(m_min <= m_max || (std::isnan(m_min) && std::isnan(max)));
   }
 
-  bool operator!=(const Range1D& other) const {
+  bool operator!=(const Range1D<T>& other) const {
     return m_min != other.m_min || m_max != other.m_max;
   }
 
@@ -44,72 +47,74 @@ class Range1D {
   bool isValid() const { return !isNan() && length() >= k_minLength; }
   bool isEmpty() const { return m_min == m_max; }
 
-  float min() const { return m_min; }
-  float max() const { return m_max; }
+  T min() const { return m_min; }
+  T max() const { return m_max; }
 
-  float length() const { return m_max - m_min; }
-  float center() const { return 0.5f * (m_min + m_max); }
+  T length() const { return m_max - m_min; }
+  T center() const { return static_cast<T>(0.5) * (m_min + m_max); }
 
   /* These two methods will prioritize changing the other bound to keep the
    * interval valid.  */
-  void setMinKeepingValid(float t, float limit = k_maxFloat) {
+  void setMinKeepingValid(T t, T limit = k_maxFloat) {
     privateSetKeepingValid(t, true, limit);
   }
-  void setMaxKeepingValid(float t, float limit = k_maxFloat) {
+  void setMaxKeepingValid(T t, T limit = k_maxFloat) {
     privateSetKeepingValid(t, false, limit);
   }
 
-  void extend(float t, float limit);
-  void zoom(float ratio, float center);
-  void stretchEachBoundBy(float shift, float limit = k_maxFloat);
-  void stretchIfTooSmall(float shift = -1, float limit = k_maxFloat);
+  void extend(T t, T limit);
+  void zoom(T ratio, T center);
+  void stretchEachBoundBy(T shift, T limit = k_maxFloat);
+  void stretchIfTooSmall(T shift = static_cast<T>(-1.), T limit = k_maxFloat);
 
  private:
-  void privateSetKeepingValid(float t, bool isMin, float limit);
+  constexpr static T k_zero = static_cast<T>(0.);
+  void privateSetKeepingValid(T t, bool isMin, T limit);
 
-  float m_min, m_max;
+  T m_min, m_max;
 };
 
+template <typename T>
 class Range2D {
  public:
-  constexpr Range2D(Range1D x, Range1D y) : m_x(x), m_y(y) {}
-  constexpr Range2D(float xMin = NAN, float xMax = NAN, float yMin = NAN,
-                    float yMax = NAN)
-      : Range2D(Range1D(xMin, xMax), Range1D(yMin, yMax)) {}
+  constexpr Range2D<T>(Range1D<T> x, Range1D<T> y) : m_x(x), m_y(y) {}
+  constexpr Range2D<T>(T xMin = NAN, T xMax = NAN, T yMin = NAN, T yMax = NAN)
+      : Range2D<T>(Range1D<T>(xMin, xMax), Range1D<T>(yMin, yMax)) {}
 
   bool operator!=(const Range2D& other) const {
     return m_x != other.m_x || m_y != other.m_y;
   }
 
-  float xMin() const { return m_x.min(); }
-  float xMax() const { return m_x.max(); }
-  float yMin() const { return m_y.min(); }
-  float yMax() const { return m_y.max(); }
+  T xMin() const { return m_x.min(); }
+  T xMax() const { return m_x.max(); }
+  T yMin() const { return m_y.min(); }
+  T yMax() const { return m_y.max(); }
 
-  Range1D* x() { return &m_x; }
-  Range1D* y() { return &m_y; }
-  const Range1D* x() const { return &m_x; }
-  const Range1D* y() const { return &m_y; }
+  Range1D<T>* x() { return &m_x; }
+  Range1D<T>* y() { return &m_y; }
+  const Range1D<T>* x() const { return &m_x; }
+  const Range1D<T>* y() const { return &m_y; }
 
-  Coordinate2D<float> center() const {
-    return Coordinate2D<float>(m_x.center(), m_y.center());
+  Coordinate2D<T> center() const {
+    return Coordinate2D<T>(m_x.center(), m_y.center());
   }
-  float ratio() const { return m_y.length() / m_x.length(); }
-  bool ratioIs(float r) const;
-  void extend(Coordinate2D<float> p, float limit) {
+  T ratio() const { return m_y.length() / m_x.length(); }
+  bool ratioIs(T r) const;
+  void extend(Coordinate2D<T> p, T limit) {
     m_x.extend(p.x(), limit);
     m_y.extend(p.y(), limit);
   }
-  void zoom(float ratio, Coordinate2D<float> p) {
+  void zoom(T ratio, Coordinate2D<T> p) {
     m_x.zoom(ratio, p.x());
     m_y.zoom(ratio, p.y());
   }
   // Return false if failed
-  bool setRatio(float r, bool shrink, float limit);
+  bool setRatio(T r, bool shrink, T limit);
 
  private:
-  Range1D m_x;
-  Range1D m_y;
+  static int NormalizationSignificantBits(T xMin, T xMax, T yMin, T yMax);
+  Range1D<T> m_x;
+  Range1D<T> m_y;
 };
 
 }  // namespace Poincare

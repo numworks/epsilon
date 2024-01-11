@@ -10,10 +10,9 @@ EditableFunctionCell::EditableFunctionCell(
     Escher::Responder* parentResponder,
     Escher::LayoutFieldDelegate* layoutFieldDelegate)
     : TemplatedFunctionCell<Shared::WithEditableExpressionCell>(),
-      m_buttonCell(
-          expressionCell()->layoutField(), I18n::Message::UseFunctionModel,
-          Invocation::Builder<void>([](void*, void*) { return true; }, nullptr),
-          Escher::Palette::WallScreen, 0, KDFont::Size::Small) {
+      m_buttonCell(expressionCell()->layoutField(),
+                   Invocation::Builder<void>([](void*, void*) { return true; },
+                                             nullptr)) {
   // Initialize expression cell
   expressionCell()->layoutField()->setParentResponder(parentResponder);
   expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);

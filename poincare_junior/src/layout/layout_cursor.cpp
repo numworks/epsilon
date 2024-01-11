@@ -81,13 +81,13 @@ KDCoordinate LayoutCursor::cursorBaseline(KDFont::Size font) const {
 }
 
 static const Tree *mostNestedGridParent(const Tree *node, const Tree *root) {
-  while (node != root) {
-    if (node->isGridLayout()) {
-      return node;
+  const Tree *ancestorGrid = nullptr;
+  for (const Tree *ancestor : node->ancestors(root)) {
+    if (ancestor->isGridLayout()) {
+      ancestorGrid = ancestor;
     }
-    node = node->parent(root);
   }
-  return nullptr;
+  return ancestorGrid;
 }
 
 /* Move */

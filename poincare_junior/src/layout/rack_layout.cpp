@@ -118,6 +118,9 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
 
 KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
                                       int rightIndex) {
+  if (IsTrivial(node) && leftIndex == 0 && rightIndex == 1) {
+    return Render::Size(node->child(0));
+  }
   struct Context {
     KDCoordinate maxUnderBaseline;
     KDCoordinate maxAboveBaseline;
@@ -139,6 +142,9 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
 }
 
 KDPoint RackLayout::ChildPosition(const Tree* node, int i) {
+  if (IsTrivial(node)) {
+    return KDPointZero;
+  }
   KDCoordinate baseline = Baseline(node);
   struct Context {
     KDCoordinate x;
@@ -157,6 +163,9 @@ KDPoint RackLayout::ChildPosition(const Tree* node, int i) {
 
 KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
                                                 int rightIndex) {
+  if (IsTrivial(node) && leftIndex == 0 && rightIndex == 1) {
+    return Render::Baseline(node->child(0));
+  }
   struct Context {
     KDCoordinate maxUnderBaseline;
     KDCoordinate maxAboveBaseline;

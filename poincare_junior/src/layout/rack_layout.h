@@ -15,6 +15,10 @@ class RackLayout {
     assert(node->isRackLayout());
     return node->numberOfChildren() == 0;
   }
+  static bool IsTrivial(const Tree* node) {
+    return node->numberOfChildren() == 1 &&
+           !node->child(0)->isVerticalOffsetLayout();
+  }
   static KDSize Size(const Tree* node);
   static KDCoordinate Baseline(const Tree* node);
   static KDPoint ChildPosition(const Tree* node, int i);

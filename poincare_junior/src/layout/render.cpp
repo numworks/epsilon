@@ -621,6 +621,11 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
 void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
                              KDColor expressionColor, KDColor backgroundColor,
                              LayoutSelection selection) {
+  if (RackLayout::IsTrivial(node) && selection.layout() != node) {
+    PrivateDraw(node->child(0), ctx, p, expressionColor, backgroundColor,
+                selection);
+    return;
+  }
   KDCoordinate baseline = RackLayout::Baseline(node);
   static constexpr KDColor selectionColor = Escher::Palette::Select;
   if (selection.layout() == node) {

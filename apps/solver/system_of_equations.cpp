@@ -51,32 +51,32 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
   return secondError;
 }
 
-void SystemOfEquations::setApproximateResolutionMinimum(double value) {
-  m_approximateResolutionMinimum = value;
-  setAutoApproximateRange(false);
-  if (m_approximateResolutionMinimum >= m_approximateResolutionMaximum) {
-    m_approximateResolutionMaximum = m_approximateResolutionMinimum + 1;
+void SystemOfEquations::setApproximateSolvingRangeMinimum(double value) {
+  m_approximateSolvingRangeMinimum = value;
+  setAutoApproximateSolvingRange(false);
+  if (m_approximateSolvingRangeMinimum >= m_approximateSolvingRangeMaximum) {
+    m_approximateSolvingRangeMaximum = m_approximateSolvingRangeMinimum + 1;
   }
 }
 
-void SystemOfEquations::setApproximateResolutionMaximum(double value) {
-  m_approximateResolutionMaximum = value;
-  setAutoApproximateRange(false);
-  if (m_approximateResolutionMinimum >= m_approximateResolutionMaximum) {
-    m_approximateResolutionMinimum = m_approximateResolutionMaximum - 1;
+void SystemOfEquations::setApproximateSolvingRangeMaximum(double value) {
+  m_approximateSolvingRangeMaximum = value;
+  setAutoApproximateSolvingRange(false);
+  if (m_approximateSolvingRangeMinimum >= m_approximateSolvingRangeMaximum) {
+    m_approximateSolvingRangeMinimum = m_approximateSolvingRangeMaximum - 1;
   }
 }
 
-void SystemOfEquations::setAutoApproximateRange(bool autoRange) {
-  m_autoApproximateRange = autoRange;
-  if (m_autoApproximateRange) {
-    setMaxApproximateRange();
+void SystemOfEquations::setAutoApproximateSolvingRange(bool autoRange) {
+  m_autoApproximateSolvingRange = autoRange;
+  if (m_autoApproximateSolvingRange) {
+    setWidestApproximateSolvingRange();
   }
 }
 
-void SystemOfEquations::setMaxApproximateRange() {
-  m_approximateResolutionMaximum = k_maxFloat;
-  m_approximateResolutionMinimum = -k_maxFloat;
+void SystemOfEquations::setWidestApproximateSolvingRange() {
+  m_approximateSolvingRangeMaximum = k_maxFloat;
+  m_approximateSolvingRangeMinimum = -k_maxFloat;
 }
 
 template <typename T>
@@ -92,7 +92,7 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
                  Preferences::sharedPreferences->angleUnit())));
 }
 
-void SystemOfEquations::autoComputeApproximateResolutionRange(
+void SystemOfEquations::autoComputeApproximateSolvingRange(
     Expression equationStandardForm, Context *context) {
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
@@ -113,13 +113,13 @@ void SystemOfEquations::autoComputeApproximateResolutionRange(
   m_hasMoreSolutions = !finiteNumberOfSolutions;
   zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
   Range2D finalRange = zoom.range(false, false);
-  m_approximateResolutionMinimum = finalRange.x()->min();
-  m_approximateResolutionMaximum = finalRange.x()->max();
+  m_approximateSolvingRangeMinimum = finalRange.x()->min();
+  m_approximateSolvingRangeMaximum = finalRange.x()->max();
 }
 
 void SystemOfEquations::approximateSolve(Context *context) {
   assert(m_type == Type::GeneralMonovariable);
-  assert(m_numberOfResolutionVariables == 1);
+  assert(m_numberOfSolvingVariables == 1);
 
   m_hasMoreSolutions = false;
   Expression undevelopedExpression =
@@ -128,24 +128,24 @@ void SystemOfEquations::approximateSolve(Context *context) {
                          ReductionTarget::SystemForApproximation);
   m_numberOfSolutions = 0;
 
-  if (m_autoApproximateRange) {
-    autoComputeApproximateResolutionRange(undevelopedExpression, context);
+  if (m_autoApproximateSolvingRange) {
+    autoComputeApproximateSolvingRange(undevelopedExpression, context);
   }
 
-  assert(m_approximateResolutionMinimum <= m_approximateResolutionMaximum &&
-         std::isfinite(m_approximateResolutionMaximum) &&
-         std::isfinite(m_approximateResolutionMinimum));
+  assert(m_approximateSolvingRangeMinimum <= m_approximateSolvingRangeMaximum &&
+         std::isfinite(m_approximateSolvingRangeMaximum) &&
+         std::isfinite(m_approximateSolvingRangeMinimum));
   Poincare::Solver<double> solver = PoincareHelpers::Solver(
-      m_approximateResolutionMinimum, m_approximateResolutionMaximum,
+      m_approximateSolvingRangeMinimum, m_approximateSolvingRangeMaximum,
       m_variables[0], context);
   solver.stretch();
 
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
     double root = solver.nextRoot(undevelopedExpression).x();
-    if (root < m_approximateResolutionMinimum) {
+    if (root < m_approximateSolvingRangeMinimum) {
       i--;
       continue;
-    } else if (root > m_approximateResolutionMaximum) {
+    } else if (root > m_approximateSolvingRangeMaximum) {
       root = NAN;
     }
 
@@ -159,10 +159,10 @@ void SystemOfEquations::approximateSolve(Context *context) {
     }
   }
 
-  if (m_autoApproximateRange && !m_hasMoreSolutions) {
+  if (m_autoApproximateSolvingRange && !m_hasMoreSolutions) {
     /* We want the user to understand we search on the whole interval, so we
      * display the max range. */
-    setMaxApproximateRange();
+    setWidestApproximateSolvingRange();
   }
 }
 
@@ -185,14 +185,14 @@ SystemOfEquations::Error SystemOfEquations::privateExactSolve(
     return error;
   }
   error = solveLinearSystem(context, simplifiedEquations);
-  if (error != Error::NonLinearSystem || m_numberOfResolutionVariables > 1 ||
+  if (error != Error::NonLinearSystem || m_numberOfSolvingVariables > 1 ||
       m_store->numberOfDefinedModels() > 1) {
     return error;
   }
   error = solvePolynomial(context, simplifiedEquations);
   if (error == Error::RequireApproximateSolution) {
     m_type = Type::GeneralMonovariable;
-    setAutoApproximateRange(true);
+    setAutoApproximateSolvingRange(true);
   }
   assert(error != Error::NoError || m_type == Type::PolynomialMonovariable);
   return error;
@@ -200,7 +200,7 @@ SystemOfEquations::Error SystemOfEquations::privateExactSolve(
 
 SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     Context *context, Expression *simplifiedEquations) {
-  m_numberOfResolutionVariables = 0;
+  m_numberOfSolvingVariables = 0;
   m_numberOfUserVariables = 0;
   m_variables[0][0] = 0;
   m_userVariables[0][0] = 0;
@@ -255,22 +255,22 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
         m_complexFormat, simplifiedEquations[i], nullptr);
 
-    // Gather resolution variables
-    int nbResolutionVariables = simplifiedEquations[i].getVariables(
+    // Gather solving variables
+    int nbSolvingVariables = simplifiedEquations[i].getVariables(
         context, [](const char *, Context *) { return true; },
         &m_variables[0][0], SymbolAbstractNode::k_maxNameSize,
-        m_numberOfResolutionVariables);
+        m_numberOfSolvingVariables);
     /* The equation has been parsed, so there should not be any variable with a
      * name that is too long. */
     // FIXME Special return values of getVariables should be named.
-    assert(nbResolutionVariables != -2);
-    if (nbResolutionVariables == -1) {
+    assert(nbSolvingVariables != -2);
+    if (nbSolvingVariables == -1) {
       return Error::TooManyVariables;
     }
-    m_numberOfResolutionVariables = nbResolutionVariables;
+    m_numberOfSolvingVariables = nbSolvingVariables;
   }
 
-  if (forbidSimultaneousEquation && m_numberOfResolutionVariables > 1) {
+  if (forbidSimultaneousEquation && m_numberOfSolvingVariables > 1) {
     return Error::DisabledInExamMode;
   }
   return Error::NoError;
@@ -305,7 +305,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 
   m_hasMoreSolutions = false;
   // n unknown variables and m equations
-  int n = m_numberOfResolutionVariables;
+  int n = m_numberOfSolvingVariables;
   // Create the matrix (A|b) for the equation Ax=b;
   Matrix ab = Matrix::Builder();
   int abChildren = 0;
@@ -478,7 +478,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 
 SystemOfEquations::Error SystemOfEquations::solvePolynomial(
     Context *context, Expression *simplifiedEquations) {
-  assert(m_numberOfResolutionVariables == 1 &&
+  assert(m_numberOfSolvingVariables == 1 &&
          m_store->numberOfDefinedModels() == 1);
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
@@ -674,7 +674,7 @@ void SystemOfEquations::registerSolution(double f) {
 
 uint32_t SystemOfEquations::tagParametersUsedAsVariables() const {
   uint32_t tags = 0;
-  for (size_t i = 0; i < m_numberOfResolutionVariables; i++) {
+  for (size_t i = 0; i < m_numberOfSolvingVariables; i++) {
     tagVariableIfParameter(variable(i), &tags);
   }
   for (size_t i = 0; i < m_numberOfUserVariables; i++) {

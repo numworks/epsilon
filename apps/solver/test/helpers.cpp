@@ -149,8 +149,8 @@ void assert_solves_numerically_to(const char *equation, double min, double max,
         Shared::GlobalContext globalContext;
         SolverContext solverContext(&globalContext);
         quiz_assert(e == RequireApproximateSolution);
-        system->setApproximateResolutionMinimum(min);
-        system->setApproximateResolutionMaximum(max);
+        system->setApproximateSolvingRangeMinimum(min);
+        system->setApproximateSolvingRangeMaximum(max);
         system->approximateSolve(&solverContext);
 
         quiz_assert(strcmp(system->variable(0), variable) == 0);

@@ -17,9 +17,10 @@ using namespace Poincare;
 namespace Shared {
 
 bool InteractiveCurveViewRange::isOrthonormal() const {
-  Range2D range = memoizedRange();
-  range = Range2D(*range.x(),
-                  Range1D(range.yMin(), range.yMax() + offscreenYAxis()));
+  Range2D<float> range = memoizedRange();
+  range = Range2D<float>(
+      *range.x(),
+      Range1D<float>(range.yMin(), range.yMax() + offscreenYAxis()));
   return range.ratioIs(NormalYXRatio());
 }
 
@@ -102,9 +103,10 @@ float InteractiveCurveViewRange::yGridUnit() const {
 }
 
 void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
-  Range2D thisRange = memoizedRange();
+  Range2D<float> thisRange = memoizedRange();
   float dy = thisRange.y()->length();
-  if (ratio * std::min(thisRange.x()->length(), dy) < Range1D::k_minLength) {
+  if (ratio * std::min(thisRange.x()->length(), dy) <
+      Range1D<float>::k_minLength) {
     return;
   }
   Coordinate2D<float> center(std::isfinite(x) ? x : thisRange.x()->center(),
@@ -128,21 +130,23 @@ static float vectorLengthForMove(float v, float x) {
 }
 
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
-  Range1D xRange(xMin(), xMax(), k_maxFloat);
+  Range1D<float> xRange(xMin(), xMax(), k_maxFloat);
   if (x != 0.f) {
     x = OMG::WithGreatestAbs(vectorLengthForMove(x, xMin()),
                              vectorLengthForMove(x, xMax()));
-    xRange = Range1D::ValidRangeBetween(xMin() + x, xMax() + x, k_maxFloat);
+    xRange =
+        Range1D<float>::ValidRangeBetween(xMin() + x, xMax() + x, k_maxFloat);
     if (xRange.min() != xMin() + x || xRange.max() != xMax() + x) {
       return;
     }
   }
 
-  Range1D yRange(yMin(), yMax(), k_maxFloat);
+  Range1D<float> yRange(yMin(), yMax(), k_maxFloat);
   if (y != 0.f) {
     y = OMG::WithGreatestAbs(vectorLengthForMove(y, yMin()),
                              vectorLengthForMove(y, yMax()));
-    yRange = Range1D::ValidRangeBetween(yMin() + y, yMax() + y, k_maxFloat);
+    yRange =
+        Range1D<float>::ValidRangeBetween(yMin() + y, yMax() + y, k_maxFloat);
     if (yRange.min() != yMin() + y || yRange.max() != yMax() + y) {
       return;
     }
@@ -171,7 +175,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   if (axis == Axis::X) {
     float range = xMax() - xMin();
     if (std::fabs(position / range) > k_maxRatioPositionRange) {
-      range = Range1D::DefaultLengthAt(position);
+      range = Range1D<float>::DefaultLengthAt(position);
     }
     float newXMax = position + range / 2.0f;
     if (xMax() != newXMax) {
@@ -181,7 +185,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   } else {
     float range = yMax() - yMin();
     if (std::fabs(position / range) > k_maxRatioPositionRange) {
-      range = Range1D::DefaultLengthAt(position);
+      range = Range1D<float>::DefaultLengthAt(position);
     }
     float newYMax = position + range / 2.0f;
     if (yMax() != newYMax) {
@@ -258,7 +262,7 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(
   zoom.fitPoint(Coordinate2D<float>(xMax(), yMax()));
   zoom.fitPoint(Coordinate2D<float>(x, y), false, leftMarginRatio,
                 rightMarginRatio, bottomMarginRatio, topMarginRatio);
-  Range2D newRange = zoom.range(false, false);
+  Range2D<float> newRange = zoom.range(false, false);
 
   bool move = newRange != memoizedRange();
   protectedSetXRange(*newRange.x(), k_maxFloat);
@@ -293,7 +297,7 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX,
     return;
   }
 
-  Range2D thisRange = memoizedRange();
+  Range2D<float> thisRange = memoizedRange();
 
   /* We try to normalize by expanding instead of shrinking as much as possible,
    * since shrinking can hide parts of the curve. If the axis we would like to
@@ -332,7 +336,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
    * normalized. */
   setZoomNormalize(false);
   if (m_delegate && (computeX || computeY)) {
-    Range2D newRange;
+    Range2D<float> newRange;
     bool useMemoizedAutoRange = computeX && computeY;
     {
       CircuitBreakerCheckpoint checkpoint(
@@ -368,12 +372,12 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
      * update the bottom margin (which depends on the banner height). */
     m_delegate->refreshCursorAfterComputingRange();
 
-    Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
+    Range2D<float> newRangeWithMargins = m_delegate->addMargins(newRange);
     newRangeWithMargins =
-        Range2D(computeX ? *newRangeWithMargins.x()
-                         : Range1D(xMin(), xMax(), k_maxFloat),
-                computeY ? *newRangeWithMargins.y()
-                         : Range1D(yMin(), yMax(), k_maxFloat));
+        Range2D<float>(computeX ? *newRangeWithMargins.x()
+                                : Range1D<float>(xMin(), xMax(), k_maxFloat),
+                       computeY ? *newRangeWithMargins.y()
+                                : Range1D<float>(yMin(), yMax(), k_maxFloat));
     if (newRange.ratioIs(NormalYXRatio())) {
       bool canSetRatio =
           newRangeWithMargins.setRatio(NormalYXRatio(), false, k_maxFloat);

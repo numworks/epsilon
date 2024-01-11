@@ -85,8 +85,8 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
   return Coordinate2D<T>(t, value);
 }
 
-Range2D GraphController::optimalRange(bool computeX, bool computeY,
-                                      Range2D originalRange) const {
+Range2D<float> GraphController::optimalRange(
+    bool computeX, bool computeY, Range2D<float> originalRange) const {
   Context *context = App::app()->localContext();
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
@@ -94,23 +94,25 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
   if (store->memoizationOverflows()) {
     /* Do not compute autozoom if store is full because the computation is too
      * slow. */
-    Range1D xRange(-Range1D::k_defaultHalfLength, Range1D::k_defaultHalfLength);
-    Range2D defaultRange(xRange, xRange);
+    Range1D<float> xRange(-Range1D<float>::k_defaultHalfLength,
+                          Range1D<float>::k_defaultHalfLength);
+    Range2D<float> defaultRange(xRange, xRange);
     defaultRange.setRatio(InteractiveCurveViewRange::NormalYXRatio(), true,
                           k_maxFloat);
-    return Range2D(*(computeX ? defaultRange : originalRange).x(),
-                   *(computeY ? defaultRange : originalRange).y());
+    return Range2D<float>(*(computeX ? defaultRange : originalRange).x(),
+                          *(computeY ? defaultRange : originalRange).y());
   }
   bool canComputeIntersections
       [ContinuousFunctionStore::k_maxNumberOfMemoizedModels];
   int nbFunctions = store->numberOfActiveFunctions();
   assert(nbFunctions <= ContinuousFunctionStore::k_maxNumberOfMemoizedModels);
-  Range1D xBounds =
-      computeX ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.x();
-  Range1D yBounds =
-      computeY ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.y();
-  Range2D forcedRange = Range2D(computeX ? Range1D() : *originalRange.x(),
-                                computeY ? Range1D() : *originalRange.y());
+  Range1D<float> xBounds =
+      computeX ? Range1D<float>(-k_maxFloat, k_maxFloat) : *originalRange.x();
+  Range1D<float> yBounds =
+      computeY ? Range1D<float>(-k_maxFloat, k_maxFloat) : *originalRange.y();
+  Range2D<float> forcedRange =
+      Range2D<float>(computeX ? Range1D<float>() : *originalRange.x(),
+                     computeY ? Range1D<float>() : *originalRange.y());
   zoom.setForcedRange(forcedRange);
 
   for (int i = 0; i < nbFunctions; i++) {
@@ -153,7 +155,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
               e.childAtIndex(0).type() == ExpressionNode::Type::Point));
 
       // Compute the ordinate range of x(t) and y(t)
-      Range1D ranges[2];
+      Range1D<float> ranges[2];
       Zoom::Function2DWithContext<float> floatEvaluators[2] = {
           parametricExpressionEvaluator<float, 0>,
           parametricExpressionEvaluator<float, 1>};
@@ -184,7 +186,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
       assert(f->properties().isCartesian());
       canComputeIntersections[i] = true;
       bool alongY = f->isAlongY();
-      Range1D *bounds = alongY ? &yBounds : &xBounds;
+      Range1D<float> *bounds = alongY ? &yBounds : &xBounds;
       // Use the intersection between the definition domain of f and the bounds
       zoom.setBounds(std::clamp(f->tMin(), bounds->min(), bounds->max()),
                      std::clamp(f->tMax(), bounds->min(), bounds->max()));
@@ -268,9 +270,9 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
     }
   }
 
-  Range2D newRange = zoom.range(true, defaultRangeIsNormalized());
-  return Range2D(*(computeX ? newRange : originalRange).x(),
-                 *(computeY ? newRange : originalRange).y());
+  Range2D<float> newRange = zoom.range(true, defaultRangeIsNormalized());
+  return Range2D<float>(*(computeX ? newRange : originalRange).x(),
+                        *(computeY ? newRange : originalRange).y());
 }
 
 PointsOfInterestCache *GraphController::pointsOfInterestForRecord(

@@ -9,7 +9,7 @@ void Inference::computeCurveViewRange() {
   protectedSetXRange(computeXMin(), computeXMax());
 
   // y range
-  Poincare::Range1D yRange(computeYMin(), computeYMax());
+  Poincare::Range1D<float> yRange(computeYMin(), computeYMax());
   if (yRange.isNan()) {
     yRange = DefaultYRange();
   }

@@ -25,7 +25,8 @@ void Zoom::HorizontalAsymptoteHelper::update(Coordinate2D<float> p,
 
 // Zoom - Public
 
-Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
+Range2D<float> Zoom::Sanitize(Range2D<float> range, float normalYXRatio,
+                              float maxFloat) {
   /* Values for tMin and tMax actually do not matter here, as no function will
    * be evaluated to generate this zoom. */
   Zoom zoom(-maxFloat, maxFloat, normalYXRatio, nullptr, maxFloat);
@@ -34,8 +35,8 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
 }
 
 #if ASSERTIONS
-static bool rangeIsValidZoom(Range1D range, Range1D interestingRange,
-                             float maxFloat) {
+static bool rangeIsValidZoom(Range1D<float> range,
+                             Range1D<float> interestingRange, float maxFloat) {
   float tolerance =
       Float<float>::Epsilon() * std::max(std::fabs(interestingRange.min()),
                                          std::fabs(interestingRange.max()));
@@ -49,15 +50,15 @@ static bool rangeIsValidZoom(Range1D range, Range1D interestingRange,
 }
 #endif
 
-Range2D Zoom::range(bool beautify, bool forceNormalization) const {
-  Range2D result;
-  Range2D pretty =
+Range2D<float> Zoom::range(bool beautify, bool forceNormalization) const {
+  Range2D<float> result;
+  Range2D<float> pretty =
       beautify ? prettyRange(forceNormalization) : sanitizedRange();
   assert(!pretty.x()->isNan() && !pretty.y()->isNan());
-  *(result.x()) =
-      Range1D::ValidRangeBetween(pretty.xMin(), pretty.xMax(), m_maxFloat);
-  *(result.y()) =
-      Range1D::ValidRangeBetween(pretty.yMin(), pretty.yMax(), m_maxFloat);
+  *(result.x()) = Range1D<float>::ValidRangeBetween(pretty.xMin(),
+                                                    pretty.xMax(), m_maxFloat);
+  *(result.y()) = Range1D<float>::ValidRangeBetween(pretty.yMin(),
+                                                    pretty.yMax(), m_maxFloat);
 #if ASSERTIONS
   bool xRangeIsForced = !m_forcedRange.x()->isNan();
   bool yRangeIsForced = !m_forcedRange.y()->isNan();
@@ -75,9 +76,11 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   return result;
 }
 
-static Range1D computeNewBoundsAfterZoomingOut(float t, Range1D oldRange,
-                                               float minMargin, float maxMargin,
-                                               float limit) {
+static Range1D<float> computeNewBoundsAfterZoomingOut(float t,
+                                                      Range1D<float> oldRange,
+                                                      float minMargin,
+                                                      float maxMargin,
+                                                      float limit) {
   oldRange.extend(t, limit);
   /* When we zoom out, we want to recompute both the xMin and xMax so that
    * previous values that where within margins bounds stay in it, even if
@@ -100,22 +103,22 @@ static Range1D computeNewBoundsAfterZoomingOut(float t, Range1D oldRange,
   float k = oldRange.length() / (1.f - (minMargin + maxMargin));
   float newMin = oldRange.min() - k * minMargin;
   float newMax = oldRange.max() + k * maxMargin;
-  return Range1D(newMin, newMax, limit);
+  return Range1D<float>(newMin, newMax, limit);
 }
 
 void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped, float leftMargin,
                     float rightMargin, float bottomMargin, float topMargin) {
   float xL = m_interestingRange.x()->length(),
         yL = m_interestingRange.y()->length();
-  Range1D xRWithoutMargins(m_interestingRange.xMin() + leftMargin * xL,
-                           m_interestingRange.xMax() - rightMargin * xL,
-                           m_maxFloat);
-  Range1D yRWithoutMargins(m_interestingRange.yMin() + bottomMargin * yL,
-                           m_interestingRange.yMax() - topMargin * yL,
-                           m_maxFloat);
-  Range1D xR = computeNewBoundsAfterZoomingOut(
+  Range1D<float> xRWithoutMargins(m_interestingRange.xMin() + leftMargin * xL,
+                                  m_interestingRange.xMax() - rightMargin * xL,
+                                  m_maxFloat);
+  Range1D<float> yRWithoutMargins(m_interestingRange.yMin() + bottomMargin * yL,
+                                  m_interestingRange.yMax() - topMargin * yL,
+                                  m_maxFloat);
+  Range1D<float> xR = computeNewBoundsAfterZoomingOut(
       xy.x(), xRWithoutMargins, leftMargin, rightMargin, m_maxFloat);
-  Range1D yR = computeNewBoundsAfterZoomingOut(
+  Range1D<float> yR = computeNewBoundsAfterZoomingOut(
       xy.y(), yRWithoutMargins, bottomMargin, topMargin, m_maxFloat);
   privateFitPoint(Coordinate2D<float>(xR.min(), yR.min()), flipped);
   privateFitPoint(Coordinate2D<float>(xR.max(), yR.max()), flipped);
@@ -302,14 +305,14 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
   /* We compute the log mean value of the expression, which gives an idea of the
    * order of magnitude of the function, to crop the Y axis. */
   constexpr float aboutZero = Solver<float>::k_minimalAbsoluteStep;
-  Range1D sample;
+  Range1D<float> sample;
   float nSum = 0.f, pSum = 0.f;
   int nPop = 0, pPop = 0;
 
   float (Coordinate2D<float>::*ordinate)() const =
       vertical ? &Coordinate2D<float>::x : &Coordinate2D<float>::y;
-  Range2D saneRange = sanitizedRange();
-  Range1D xRange = *(vertical ? saneRange.y() : saneRange.x());
+  Range2D<float> saneRange = sanitizedRange();
+  Range1D<float> xRange = *(vertical ? saneRange.y() : saneRange.x());
   float step = xRange.length() / (k_sampleSize - 1);
 
   for (size_t i = 0; i < k_sampleSize; i++) {
@@ -333,7 +336,7 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
     }
   }
 
-  Range1D *magnitudeRange =
+  Range1D<float> *magnitudeRange =
       vertical ? m_magnitudeRange.x() : m_magnitudeRange.y();
   float yMax = sample.max();
   if (pPop > 0) {
@@ -516,25 +519,26 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
   return p->f1(result.x(), p->model1, p->context);
 }
 
-static Range1D sanitation1DHelper(Range1D range, Range1D forcedRange,
-                                  float defaultHalfLength, float limit) {
+static Range1D<float> sanitation1DHelper(Range1D<float> range,
+                                         Range1D<float> forcedRange,
+                                         float defaultHalfLength, float limit) {
   if (!forcedRange.isNan()) {
     return forcedRange;
   }
   if (range.isNan()) {
-    range = Range1D(0.f, 0.f, limit);
+    range = Range1D<float>(0.f, 0.f, limit);
   }
   range.stretchIfTooSmall(defaultHalfLength, limit);
   return range;
 }
 
-Range2D Zoom::sanitize2DHelper(Range2D range) const {
-  Range1D xRange = sanitation1DHelper(*range.x(), *m_forcedRange.x(),
-                                      m_defaultHalfLength, m_maxFloat);
-  Range1D yRange =
+Range2D<float> Zoom::sanitize2DHelper(Range2D<float> range) const {
+  Range1D<float> xRange = sanitation1DHelper(*range.x(), *m_forcedRange.x(),
+                                             m_defaultHalfLength, m_maxFloat);
+  Range1D<float> yRange =
       sanitation1DHelper(*range.y(), *m_forcedRange.y(),
                          xRange.length() * 0.5f * m_normalRatio, m_maxFloat);
-  return Range2D(xRange, yRange);
+  return Range2D<float>(xRange, yRange);
 }
 
 static bool lengthCompatibleWithNormalization(float length,
@@ -572,12 +576,12 @@ bool Zoom::yLengthCompatibleWithNormalization(float yLength,
           m_magnitudeRange.y()->length() <= yLengthNormalized);
 }
 
-Range2D Zoom::prettyRange(bool forceNormalization) const {
+Range2D<float> Zoom::prettyRange(bool forceNormalization) const {
   bool xRangeIsForced = !m_forcedRange.x()->isNan();
   bool yRangeIsForced = !m_forcedRange.y()->isNan();
   assert(!forceNormalization || !xRangeIsForced || !yRangeIsForced);
 
-  Range2D saneRange = m_interestingRange;
+  Range2D<float> saneRange = m_interestingRange;
   saneRange.extend(
       Coordinate2D<float>(m_magnitudeRange.xMin(), m_magnitudeRange.yMin()),
       m_maxFloat);
@@ -608,8 +612,8 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   }
   assert(normalizeX != normalizeY);
 
-  Range1D *rangeToEdit;
-  const Range1D *interestingRange;
+  Range1D<float> *rangeToEdit;
+  const Range1D<float> *interestingRange;
   float normalLength;
   if (normalizeX) {
     rangeToEdit = saneRange.x();
@@ -631,15 +635,17 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   float lengthUnderCenter = normalLength - lengthOverCenter;
   if (!interestingRange->isNan() &&
       interestingCenter - lengthUnderCenter > interestingRange->min()) {
-    *rangeToEdit = Range1D(interestingRange->min(),
-                           interestingRange->min() + normalLength, m_maxFloat);
+    *rangeToEdit =
+        Range1D<float>(interestingRange->min(),
+                       interestingRange->min() + normalLength, m_maxFloat);
   } else if (!interestingRange->isNan() &&
              interestingCenter + lengthOverCenter < interestingRange->max()) {
-    *rangeToEdit = Range1D(interestingRange->max() - normalLength,
-                           interestingRange->max(), m_maxFloat);
+    *rangeToEdit = Range1D<float>(interestingRange->max() - normalLength,
+                                  interestingRange->max(), m_maxFloat);
   } else {
-    *rangeToEdit = Range1D(interestingCenter - lengthUnderCenter,
-                           interestingCenter + lengthOverCenter, m_maxFloat);
+    *rangeToEdit =
+        Range1D<float>(interestingCenter - lengthUnderCenter,
+                       interestingCenter + lengthOverCenter, m_maxFloat);
   }
 
   return saneRange;
@@ -699,7 +705,7 @@ bool Zoom::fitWithSolverHelper(float start, float end,
    *         fixed number of points of interest. */
 
   Solver<float> solver(start, end);
-  Range2D savedRange;
+  Range2D<float> savedRange;
   bool savedRangeIsInit = false;
   int nRoots = 0;
   int nOthers = 0;

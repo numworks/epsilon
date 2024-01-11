@@ -15,7 +15,7 @@ class FunctionStore;
 class InteractiveCurveViewRangeDelegate {
  public:
   constexpr static float k_defaultXHalfRange =
-      Poincare::Range1D::k_defaultHalfLength;
+      Poincare::Range1D<float>::k_defaultHalfLength;
 
   static float DefaultAddMargin(float x, float range, bool isVertical,
                                 bool isMin, float top, float bottom, float left,
@@ -28,11 +28,12 @@ class InteractiveCurveViewRangeDelegate {
            static_cast<uint64_t>(Poincare::Preferences::sharedPreferences
                                      ->mathPreferencesCheckSum());
   }
-  virtual Poincare::Range2D optimalRange(
-      bool computeX, bool computeY, Poincare::Range2D originalRange) const = 0;
+  virtual Poincare::Range2D<float> optimalRange(
+      bool computeX, bool computeY,
+      Poincare::Range2D<float> originalRange) const = 0;
   virtual float addMargin(float x, float range, bool isVertical,
                           bool isMin) const = 0;
-  Poincare::Range2D addMargins(Poincare::Range2D range) const;
+  Poincare::Range2D<float> addMargins(Poincare::Range2D<float> range) const;
   virtual void refreshCursorAfterComputingRange() = 0;
   virtual void updateZoomButtons() = 0;
   virtual void tidyModels(Poincare::TreeNode* treePoolCursor) = 0;

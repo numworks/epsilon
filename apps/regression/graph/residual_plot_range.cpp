@@ -12,9 +12,9 @@ void ResidualPlotRange::calibrate(double xMin, double xMax, double yMin,
 void ResidualPlotRange::calibrateXorY(bool isX, double min, double max,
                                       KDCoordinate height,
                                       KDCoordinate bannerHeight) {
-  Poincare::Range1D range(min, max);
+  Poincare::Range1D<float> range(min, max);
   if (std::isnan(range.length())) {
-    range = Poincare::Range1D(-1, 1);
+    range = Poincare::Range1D<float>(-1, 1);
   }
 
   /* Proportional model handles datasets with a single abscissa value. Residuals
@@ -22,7 +22,7 @@ void ResidualPlotRange::calibrateXorY(bool isX, double min, double max,
    * (impactful on very small values) and abs(max) * k_relativeMargin
    * (impactful on large values) in order to properly display them. */
   range.stretchIfTooSmall(std::fabs(range.max()) * k_relativeMargin +
-                          Poincare::Range1D::k_minLength);
+                          Poincare::Range1D<float>::k_minLength);
 
   // Stretch range for margins
   range.stretchEachBoundBy(range.length() * k_relativeMargin);

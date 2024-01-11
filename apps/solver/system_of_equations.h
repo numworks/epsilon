@@ -52,8 +52,9 @@ class SystemOfEquations {
       std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
   constexpr static float k_maxFloat =
       Shared::InteractiveCurveViewRange::k_maxFloat;
-  constexpr static Poincare::Range1D k_defaultAutoApproximateSolvingRange =
-      Poincare::Range1D(-k_maxFloat, k_maxFloat);
+  constexpr static Poincare::Range1D<float>
+      k_defaultAutoApproximateSolvingRange =
+          Poincare::Range1D<float>(-k_maxFloat, k_maxFloat);
 
   // System analysis
   Type type() const { return m_type; }
@@ -71,13 +72,14 @@ class SystemOfEquations {
   bool overrideUserVariables() const { return m_overrideUserVariables; }
 
   // Approximate range
-  Poincare::Range1D approximateSolvingRange() const {
+  Poincare::Range1D<float> approximateSolvingRange() const {
     return m_approximateSolvingRange;
   }
   bool autoApproximateSolvingRange() const {
     return m_autoApproximateSolvingRange;
   }
-  void setApproximateSolvingRange(Poincare::Range1D approximateSolvingRange) {
+  void setApproximateSolvingRange(
+      Poincare::Range1D<float> approximateSolvingRange) {
     m_approximateSolvingRange = approximateSolvingRange;
   }
   void setAutoApproximateSolvingRange(bool autoRange) {
@@ -111,7 +113,7 @@ class SystemOfEquations {
         Poincare::ContextWithParent* lastDescendantContext) override;
   };
 
-  Poincare::Range1D autoApproximateSolvingRange(
+  Poincare::Range1D<float> autoApproximateSolvingRange(
       Poincare::Expression equationStandardForm, Poincare::Context* context);
 
   Error privateExactSolve(Poincare::Context* context);
@@ -139,7 +141,7 @@ class SystemOfEquations {
   size_t m_numberOfSolutions;
   EquationStore* m_store;
   int m_degree;
-  Poincare::Range1D m_approximateSolvingRange;
+  Poincare::Range1D<float> m_approximateSolvingRange;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables]
                   [Poincare::SymbolAbstractNode::k_maxNameSize];
   char m_userVariables[Poincare::Expression::k_maxNumberOfVariables]

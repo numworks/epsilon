@@ -26,16 +26,17 @@ class Zoom {
 
   /* Sanitize will turn any random range into a range fit for display (see
    * comment on range() method below), that includes the original range. */
-  static Range2D Sanitize(Range2D range, float normalRatio, float maxFloat);
-  static Range2D DefaultRange(float normalRatio, float maxFloat) {
-    return Sanitize(Range2D(), normalRatio, maxFloat);
+  static Range2D<float> Sanitize(Range2D<float> range, float normalRatio,
+                                 float maxFloat);
+  static Range2D<float> DefaultRange(float normalRatio, float maxFloat) {
+    return Sanitize(Range2D<float>(), normalRatio, maxFloat);
   }
 
   Zoom(float tMin, float tMax, float normalRatio, Context *context,
        float maxFloat)
       : m_bounds(tMin, tMax),
         m_context(context),
-        m_defaultHalfLength(Range1D::k_defaultHalfLength),
+        m_defaultHalfLength(Range1D<float>::k_defaultHalfLength),
         m_normalRatio(normalRatio),
         m_maxFloat(maxFloat),
         m_maxPointsOnOneSide(k_defaultMaxPointsOnOneSide),
@@ -51,11 +52,11 @@ class Zoom {
    * bounds smaller than maxFloat in absolute value.
    * If beautify is false, the range will only be sanitized, without attempting
    * to improve its ratio. */
-  Range2D range(bool beautify, bool forceNormalization) const;
+  Range2D<float> range(bool beautify, bool forceNormalization) const;
   void setBounds(float min, float max) {
-    m_bounds = Range1D(min, max, m_maxFloat);
+    m_bounds = Range1D<float>(min, max, m_maxFloat);
   }
-  void setForcedRange(Range2D range) { m_forcedRange = range; }
+  void setForcedRange(Range2D<float> range) { m_forcedRange = range; }
   void setMaxPointsOneSide(int maxPointOnOneSide,
                            int thresholdForFunctionsExceedingNbOfPoints) {
     m_maxPointsOnOneSide = maxPointOnOneSide;
@@ -162,15 +163,15 @@ class Zoom {
       Solver<float>::FunctionEvaluation f, const void *aux, float a, float b,
       Solver<float>::Interest, float precision, TrinaryBoolean discontinuous);
 
-  Range2D sanitize2DHelper(Range2D range) const;
-  Range2D sanitizedRange() const {
+  Range2D<float> sanitize2DHelper(Range2D<float> range) const;
+  Range2D<float> sanitizedRange() const {
     return sanitize2DHelper(m_interestingRange);
   }
   bool xLengthCompatibleWithNormalization(float xLength,
                                           float xLengthNormalized) const;
   bool yLengthCompatibleWithNormalization(float yLength,
                                           float yLengthNormalized) const;
-  Range2D prettyRange(bool forceNormalization) const;
+  Range2D<float> prettyRange(bool forceNormalization) const;
   void fitWithSolver(
       bool *leftInterrupted, bool *rightInterrupted,
       Solver<float>::FunctionEvaluation evaluator, const void *aux,
@@ -189,10 +190,10 @@ class Zoom {
   /* m_interestingRange is edited by fitPointsOfInterest and fitIntersections,
    * and will always be included in the final range, up to values of
    * ±m_floatMax. */
-  Range2D m_interestingRange;
-  Range2D m_magnitudeRange;
-  Range2D m_forcedRange;
-  Range1D m_bounds;
+  Range2D<float> m_interestingRange;
+  Range2D<float> m_magnitudeRange;
+  Range2D<float> m_forcedRange;
+  Range1D<float> m_bounds;
   Context *m_context;
   float m_defaultHalfLength;
   float m_normalRatio;

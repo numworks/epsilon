@@ -33,13 +33,15 @@ void SingleInteractiveCurveViewRangeController::extractParameters() {
   m_autoParam = m_range->isAuto(m_axis);
 
   if (m_axis == Axis::X) {
-    m_rangeParam = Range1D::ValidRangeBetween(m_range->xMin(), m_range->xMax());
+    m_rangeParam =
+        Range1D<float>::ValidRangeBetween(m_range->xMin(), m_range->xMax());
   } else {
     assert(m_axis == Axis::Y);
-    m_rangeParam = Range1D::ValidRangeBetween(m_range->yMin(), m_range->yMax());
+    m_rangeParam =
+        Range1D<float>::ValidRangeBetween(m_range->yMin(), m_range->yMax());
   }
   // Reset m_secondaryRangeParam
-  m_secondaryRangeParam = Range1D();
+  m_secondaryRangeParam = Range1D<float>();
 }
 
 void SingleInteractiveCurveViewRangeController::setAutoRange() {
@@ -56,12 +58,12 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
 
     float min = m_axis == Axis::X ? tempRange.xMin() : tempRange.yMin();
     float max = m_axis == Axis::X ? tempRange.xMax() : tempRange.yMax();
-    m_rangeParam = Range1D::ValidRangeBetween(min, max);
+    m_rangeParam = Range1D<float>::ValidRangeBetween(min, max);
     if (m_axis == Axis::X) {
       /* The y range has been updated too and must be stored for
        * confirmParameters. */
       m_secondaryRangeParam =
-          Range1D::ValidRangeBetween(tempRange.yMin(), tempRange.yMax());
+          Range1D<float>::ValidRangeBetween(tempRange.yMin(), tempRange.yMax());
     }
   }
 }

@@ -45,9 +45,9 @@ class GraphController : public Shared::InteractiveCurveViewController {
   uint64_t autoZoomChecksum() const override {
     return static_cast<uint64_t>(m_store->storeChecksum());
   }
-  Poincare::Range2D optimalRange(
+  Poincare::Range2D<float> optimalRange(
       bool computeX, bool computeY,
-      Poincare::Range2D originalRange) const override;
+      Poincare::Range2D<float> originalRange) const override;
   void tidyModels(Poincare::TreeNode *treePoolCursor) override {}
 
   void selectRegressionCurve() { *m_selectedDotIndex = -1; }

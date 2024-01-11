@@ -393,9 +393,9 @@ void GraphController::setRoundCrossCursorView() {
   m_cursorView.setColor(Palette::DataColor[selectedSeriesIndex()], &m_view);
 }
 
-Range2D GraphController::optimalRange(bool computeX, bool computeY,
-                                      Range2D originalRange) const {
-  Range1D xRange, yRange;
+Range2D<float> GraphController::optimalRange(
+    bool computeX, bool computeY, Range2D<float> originalRange) const {
+  Range1D<float> xRange, yRange;
   const int nbOfCurves = numberOfCurves();
   for (int curve = 0; curve < nbOfCurves; curve++) {
     const int numberOfDots = numberOfDotsOfCurve(curve);
@@ -409,8 +409,8 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
       }
     }
   }
-  Range2D result(computeX ? xRange : *originalRange.x(),
-                 computeY ? yRange : *originalRange.y());
+  Range2D<float> result(computeX ? xRange : *originalRange.x(),
+                        computeY ? yRange : *originalRange.y());
   return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(),
                         k_maxFloat);
 }

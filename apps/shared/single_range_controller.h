@@ -58,7 +58,7 @@ class SingleRangeController : public FloatParameterController<float> {
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView>
       m_boundsCells[k_numberOfTextCells];
-  Poincare::Range1D m_rangeParam;
+  Poincare::Range1D<float> m_rangeParam;
   bool m_autoParam;
 
  private:

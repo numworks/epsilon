@@ -37,7 +37,7 @@ class SingleInteractiveCurveViewRangeController : public SingleRangeController {
 
   InteractiveCurveViewRange* m_range;
   // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.
-  Poincare::Range1D m_secondaryRangeParam;
+  Poincare::Range1D<float> m_secondaryRangeParam;
 
   Axis m_axis;
 };

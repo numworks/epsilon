@@ -22,15 +22,15 @@ class __attribute__((packed)) PackedRange1D final {
   float min() const { return m_min; }
   float max() const { return m_max; }
   void setMinKeepingValid(float t, float limit = INFINITY) {
-    privateSet(t, limit, &Poincare::Range1D::setMinKeepingValid);
+    privateSet(t, limit, &Poincare::Range1D<float>::setMinKeepingValid);
   }
   void setMaxKeepingValid(float t, float limit = INFINITY) {
-    privateSet(t, limit, &Poincare::Range1D::setMaxKeepingValid);
+    privateSet(t, limit, &Poincare::Range1D<float>::setMaxKeepingValid);
   }
 
  private:
   void privateSet(float t, float limit,
-                  void (Poincare::Range1D::*setter)(float, float));
+                  void (Poincare::Range1D<float>::*setter)(float, float));
 
 #if __EMSCRIPTEN__
   /* See comment about emscripten alignment in
@@ -46,7 +46,7 @@ class __attribute__((packed)) PackedRange1D final {
 };
 
 static_assert(
-    Poincare::Range1D::k_minLength >= FLT_EPSILON,
+    Poincare::Range1D<float>::k_minLength >= FLT_EPSILON,
     "InteractiveCurveViewRange's minimal float range is lower than float "
     "precision, it might draw uglily curves such as cos(x)^2+sin(x)^2");
 

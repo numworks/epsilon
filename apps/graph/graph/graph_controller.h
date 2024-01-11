@@ -35,9 +35,9 @@ class GraphController : public Shared::FunctionGraphController,
   I18n::Message emptyMessage() override;
 
   // InteractiveCurveViewRangeDelegate
-  Poincare::Range2D optimalRange(
+  Poincare::Range2D<float> optimalRange(
       bool computeX, bool computeY,
-      Poincare::Range2D originalRange) const override;
+      Poincare::Range2D<float> originalRange) const override;
 
   // TextFieldDelegate
   bool textFieldIsEditable(Escher::AbstractTextField *) override {

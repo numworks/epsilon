@@ -39,7 +39,7 @@ I18n::Message IntervalController::parameterMessage(int index) const {
   return index == 0 ? I18n::Message::XMin : I18n::Message::XMax;
 }
 
-float IntervalController::limit() const {
+double IntervalController::limit() const {
   return SystemOfEquations::k_maxFloat;
 }
 

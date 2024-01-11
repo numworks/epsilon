@@ -122,6 +122,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   Expression childSymbol = symbol.childAtIndex(0);
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol &>(childSymbol), Symbol::SystemSymbol());
+  SymbolAbstract symbolToStore = symbol;
   if (!(childSymbol.isIdenticalTo(
             Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) ||
         childSymbol.isIdenticalTo(
@@ -130,11 +131,9 @@ bool GlobalContext::setExpressionForSymbolAbstract(
     Expression symbolInX = symbol.clone();
     symbolInX.replaceChildAtIndexInPlace(
         0, Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
-    return setExpressionForFunction(
-               finalExpression, static_cast<const SymbolAbstract &>(symbolInX),
-               record) == Ion::Storage::Record::ErrorStatus::None;
+    symbolToStore = static_cast<const SymbolAbstract &>(symbolInX);
   }
-  return setExpressionForFunction(finalExpression, symbol, record) ==
+  return setExpressionForFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
 }
 

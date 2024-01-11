@@ -3,7 +3,6 @@
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
-#include <apps/shared/interactive_curve_view_range.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/matrix.h>
 #include <poincare/polynomial.h>
@@ -54,20 +53,30 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
 
 void SystemOfEquations::setApproximateResolutionMinimum(double value) {
   m_approximateResolutionMinimum = value;
+  setAutoApproximateRange(false);
   if (m_approximateResolutionMinimum >= m_approximateResolutionMaximum) {
     m_approximateResolutionMaximum = m_approximateResolutionMinimum + 1;
   }
 }
+
 void SystemOfEquations::setApproximateResolutionMaximum(double value) {
   m_approximateResolutionMaximum = value;
+  setAutoApproximateRange(false);
   if (m_approximateResolutionMinimum >= m_approximateResolutionMaximum) {
     m_approximateResolutionMinimum = m_approximateResolutionMaximum - 1;
   }
 }
 
-void SystemOfEquations::resetApproximateResolutionRange() {
-  m_approximateResolutionMinimum = NAN;
-  m_approximateResolutionMaximum = NAN;
+void SystemOfEquations::setAutoApproximateRange(bool autoRange) {
+  m_autoApproximateRange = autoRange;
+  if (m_autoApproximateRange) {
+    setMaxApproximateRange();
+  }
+}
+
+void SystemOfEquations::setMaxApproximateRange() {
+  m_approximateResolutionMaximum = k_maxFloat;
+  m_approximateResolutionMinimum = -k_maxFloat;
 }
 
 template <typename T>
@@ -85,7 +94,6 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
 
 void SystemOfEquations::autoComputeApproximateResolutionRange(
     Expression equationStandardForm, Context *context) {
-  constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
   // Use the intersection between the definition domain of f and the bounds
@@ -120,8 +128,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
                          ReductionTarget::SystemForApproximation);
   m_numberOfSolutions = 0;
 
-  if (std::isnan(m_approximateResolutionMaximum) ||
-      std::isnan(m_approximateResolutionMinimum)) {
+  if (m_autoApproximateRange) {
     autoComputeApproximateResolutionRange(undevelopedExpression, context);
   }
 
@@ -151,6 +158,12 @@ void SystemOfEquations::approximateSolve(Context *context) {
       registerSolution(root);
     }
   }
+
+  if (m_autoApproximateRange && !m_hasMoreSolutions) {
+    /* We want the user to understand we search on the whole interval, so we
+     * display the max range. */
+    setMaxApproximateRange();
+  }
 }
 
 void SystemOfEquations::tidy(TreeNode *treePoolCursor) {
@@ -179,7 +192,7 @@ SystemOfEquations::Error SystemOfEquations::privateExactSolve(
   error = solvePolynomial(context, simplifiedEquations);
   if (error == Error::RequireApproximateSolution) {
     m_type = Type::GeneralMonovariable;
-    resetApproximateResolutionRange();
+    setAutoApproximateRange(true);
   }
   assert(error != Error::NoError || m_type == Type::PolynomialMonovariable);
   return error;

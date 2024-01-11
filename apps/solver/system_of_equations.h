@@ -1,6 +1,7 @@
 #ifndef SOLVER_SYSTEM_OF_EQUATIONS_H
 #define SOLVER_SYSTEM_OF_EQUATIONS_H
 
+#include <apps/shared/interactive_curve_view_range.h>
 #include <poincare/context_with_parent.h>
 #include <poincare/symbol_abstract.h>
 
@@ -48,6 +49,8 @@ class SystemOfEquations {
   constexpr static int k_maxNumberOfApproximateSolutions = 10;
   constexpr static int k_maxNumberOfSolutions =
       std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
+  constexpr static float k_maxFloat =
+      Shared::InteractiveCurveViewRange::k_maxFloat;
 
   // System analysis
   Type type() const { return m_type; }
@@ -74,7 +77,7 @@ class SystemOfEquations {
   }
   void setApproximateResolutionMinimum(double value);
   void setApproximateResolutionMaximum(double value);
-  void resetApproximateResolutionRange();
+  void setAutoApproximateRange(bool autoRange);
 
   Error exactSolve(Poincare::Context* context);
   void approximateSolve(Poincare::Context* context);
@@ -102,6 +105,7 @@ class SystemOfEquations {
         Poincare::ContextWithParent* lastDescendantContext) override;
   };
 
+  void setMaxApproximateRange();
   void autoComputeApproximateResolutionRange(
       Poincare::Expression equationStandardForm, Poincare::Context* context);
 
@@ -140,6 +144,7 @@ class SystemOfEquations {
   Poincare::Preferences::ComplexFormat m_complexFormat;
   bool m_overrideUserVariables;
   bool m_hasMoreSolutions;
+  bool m_autoApproximateRange;
 };
 
 }  // namespace Solver

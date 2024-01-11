@@ -92,15 +92,15 @@ Event State::privateSharedGetEvent(int* timeout) {
        * m_lastKeypress is not updated and is used to know if the event
        * is repeated at line "bool isRepeatableEvent = ..."
        * On device this is not a problem.
-       * On simulator, most repeating events are handled as Keyboard::Key
-       * because they are listed in Keyboard::sKeyPairs, except for Backspace.
-       * This can lead to Backspace repeating infinitely.
-       * Namely, if you start a simulator and press Backspace as your first
-       * input, it will repeat infinitely.
+       * On simulator, most repeating events can be handled by remembering the
+       * last pressed Keyboard::Key because they are listed in
+       * Keyboard::sKeyPairs, except for Backspace. This can lead to Backspace
+       * repeating infinitely. Namely, if you start a simulator and press
+       * Backspace as your first input, it might repeat infinitely.
        * TODO: Find a solution. Either add Backspace to sKeyPairs and find
        * another solution for the shift+backspace issue (see comment in
-       * keyboard.cpp). Or find a way to register computer keyboard state
-       * in m_lastKeypress, by using SDL_Event::type::KEY_UP */
+       * keyboard.cpp). Or find a way to register computer key press in
+       * m_lastKeypress, by using SDL_Event::type::KEY_UP */
       SharedModifierState->incrementOrResetRepetition(platformEvent ==
                                                       m_lastEvent);
       m_lastEvent = platformEvent;

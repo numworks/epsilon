@@ -91,10 +91,8 @@ void App::displayModalViewController(ViewController* vc,
       vc, verticalAlignment, horizontalAlignment, margins, growingOnly);
 }
 
-void App::displayWarning(I18n::Message warningMessage1,
-                         I18n::Message warningMessage2, bool specialExitKeys) {
-  m_warningController.setLabel(warningMessage1, warningMessage2,
-                               specialExitKeys);
+void App::displayWarning(I18n::Message warningMessage, bool specialExitKeys) {
+  m_warningController.setLabel(warningMessage, specialExitKeys);
   displayModalViewController(&m_warningController, KDGlyph::k_alignCenter,
                              KDGlyph::k_alignCenter);
 }

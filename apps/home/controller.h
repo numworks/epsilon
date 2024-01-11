@@ -51,7 +51,7 @@ class Controller : public Escher::ViewController,
   Escher::SelectableTableViewDataSource* selectionDataSource() const;
   void switchToSelectedApp();
   bool appIsForbidden(I18n::Message appName) const;
-  I18n::Message forbiddenAppMessage(int line) const;
+  I18n::Message forbiddenAppMessage() const;
 
   // Conversion index <--> column/row
   int columnOfIconAtIndex(int iconIndex) const {

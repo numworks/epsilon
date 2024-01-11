@@ -178,8 +178,7 @@ void Controller::switchToSelectedApp() {
     ::App::Snapshot *selectedSnapshot =
         container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));
     if (appIsForbidden(selectedSnapshot->descriptor()->name())) {
-      App::app()->displayWarning(forbiddenAppMessage(0),
-                                 forbiddenAppMessage(1));
+      App::app()->displayWarning(forbiddenAppMessage());
     } else {
       container->switchToBuiltinApp(selectedSnapshot);
     }
@@ -201,18 +200,13 @@ bool Controller::appIsForbidden(I18n::Message appName) const {
          (appName == I18n::Message::SolverApp && examMode.forbidSolverApp());
 }
 
-I18n::Message Controller::forbiddenAppMessage(int line) const {
+I18n::Message Controller::forbiddenAppMessage() const {
   ExamMode mode = Preferences::sharedPreferences->examMode();
   if (mode.ruleset() == ExamMode::Ruleset::PressToTest) {
-    constexpr I18n::Message messages[] = {
-        I18n::Message::ForbiddenAppInPressToTestMode1,
-        I18n::Message::ForbiddenAppInPressToTestMode2};
-    return messages[line];
+    return I18n::Message::ForbiddenAppInPressToTestMode;
   }
   assert(mode.isActive());
-  constexpr I18n::Message messages[] = {I18n::Message::ForbiddenAppInExamMode1,
-                                        I18n::Message::ForbiddenAppInExamMode2};
-  return messages[line];
+  return I18n::Message::ForbiddenAppInExamMode;
 }
 
 }  // namespace Home

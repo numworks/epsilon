@@ -78,8 +78,7 @@ class App : public Responder {
                                   float horizontalAlignment,
                                   KDMargins margins = {},
                                   bool growingOnly = false);
-  void displayWarning(I18n::Message warningMessage1,
-                      I18n::Message warningMessage2 = (I18n::Message)0,
+  void displayWarning(I18n::Message warningMessage,
                       bool specialExitKeys = false);
 
   virtual void didBecomeActive(Window* window);

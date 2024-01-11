@@ -3,6 +3,7 @@
 
 #include <apps/shared/interactive_curve_view_range.h>
 #include <poincare/context_with_parent.h>
+#include <poincare/range.h>
 #include <poincare/symbol_abstract.h>
 
 #include "equation.h"
@@ -51,6 +52,8 @@ class SystemOfEquations {
       std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
   constexpr static float k_maxFloat =
       Shared::InteractiveCurveViewRange::k_maxFloat;
+  constexpr static Poincare::Range1D k_defaultAutoApproximateSolvingRange =
+      Poincare::Range1D(-k_maxFloat, k_maxFloat);
 
   // System analysis
   Type type() const { return m_type; }
@@ -67,17 +70,21 @@ class SystemOfEquations {
   }
   bool overrideUserVariables() const { return m_overrideUserVariables; }
 
-  // Solving methods
-  double approximateSolvingRangeMinimum() const {
-    return m_approximateSolvingRangeMinimum;
+  // Approximate range
+  Poincare::Range1D approximateSolvingRange() const {
+    return m_approximateSolvingRange;
   }
-  double approximateSolvingRangeMaximum() const {
-    return m_approximateSolvingRangeMaximum;
+  bool autoApproximateSolvingRange() const {
+    return m_autoApproximateSolvingRange;
   }
-  void setApproximateSolvingRangeMinimum(double value);
-  void setApproximateSolvingRangeMaximum(double value);
-  void setAutoApproximateSolvingRange(bool autoRange);
+  void setApproximateSolvingRange(Poincare::Range1D approximateSolvingRange) {
+    m_approximateSolvingRange = approximateSolvingRange;
+  }
+  void setAutoApproximateSolvingRange(bool autoRange) {
+    m_autoApproximateSolvingRange = autoRange;
+  }
 
+  // Solving methods
   Error exactSolve(Poincare::Context* context);
   void approximateSolve(Poincare::Context* context);
 
@@ -104,8 +111,7 @@ class SystemOfEquations {
         Poincare::ContextWithParent* lastDescendantContext) override;
   };
 
-  void setWidestApproximateSolvingRange();
-  void autoComputeApproximateSolvingRange(
+  Poincare::Range1D autoApproximateSolvingRange(
       Poincare::Expression equationStandardForm, Poincare::Context* context);
 
   Error privateExactSolve(Poincare::Context* context);
@@ -128,13 +134,12 @@ class SystemOfEquations {
   void registerSolution(double f);
 
   Solution m_solutions[k_maxNumberOfSolutions];
-  double m_approximateSolvingRangeMinimum;
-  double m_approximateSolvingRangeMaximum;
   size_t m_numberOfSolvingVariables;
   size_t m_numberOfUserVariables;
   size_t m_numberOfSolutions;
   EquationStore* m_store;
   int m_degree;
+  Poincare::Range1D m_approximateSolvingRange;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables]
                   [Poincare::SymbolAbstractNode::k_maxNameSize];
   char m_userVariables[Poincare::Expression::k_maxNumberOfVariables]

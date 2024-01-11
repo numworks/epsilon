@@ -93,20 +93,19 @@ bool RackLayout::ShouldDrawEmptyBaseAt(const Tree* node, int p) {
            layoutCursor->position() == p);
 }
 
-KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
-                                      int rightIndex) {
+void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
+                                    int rightIndex, Callback callback,
+                                    void* context) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
-  if (node->numberOfChildren() == 0) {
-    KDSize emptyRectangleSize = EmptyRectangle::RectangleSize(Render::font);
-    KDCoordinate width =
-        ShouldDrawEmptyRectangle(node) ? emptyRectangleSize.width() : 0;
-    return KDSize(width, emptyRectangleSize.height());
-  }
-  KDCoordinate totalWidth = 0;
-  KDCoordinate maxUnderBaseline = 0;
-  KDCoordinate maxAboveBaseline = 0;
   int numberOfChildren = node->numberOfChildren();
+  if (numberOfChildren == 0) {
+    KDSize emptySize = EmptyRectangle::RectangleSize(Render::font);
+    KDCoordinate width = ShouldDrawEmptyRectangle(node) ? emptySize.width() : 0;
+    callback(nullptr, KDSize(width, emptySize.height()),
+             EmptyRectangle::RectangleBaseLine(Render::font), context);
+    return;
+  }
   const Tree* lastBase = nullptr;
   const Tree* child = node->child(0);
   for (int i = 0; i < leftIndex; i++) {
@@ -145,7 +144,8 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
       if (!base) {
         // Add an empty base
         if (ShouldDrawEmptyBaseAt(node, i)) {
-          totalWidth += EmptyRectangle::RectangleSize(Render::font).width();
+          callback(nullptr, EmptyRectangle::RectangleSize(Render::font),
+                   EmptyRectangle::RectangleBaseLine(Render::font), context);
         }
         baseHeight = EmptyRectangle::RectangleSize(Render::font).height();
         baseBaseline = EmptyRectangle::RectangleBaseLine(Render::font);
@@ -165,13 +165,31 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
     } else {
       lastBase = child;
     }
+    callback(child, childSize, childBaseline, context);
     child = child->nextTree();
-    totalWidth += childSize.width();
-    maxUnderBaseline = std::max<KDCoordinate>(
-        maxUnderBaseline, childSize.height() - childBaseline);
-    maxAboveBaseline = std::max(maxAboveBaseline, childBaseline);
   }
-  return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
+}
+
+KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
+                                      int rightIndex) {
+  struct Context {
+    KDCoordinate maxUnderBaseline;
+    KDCoordinate maxAboveBaseline;
+    KDCoordinate totalWidth;
+  };
+  auto iter = [](const Tree* child, KDSize childSize,
+                 KDCoordinate childBaseline, void* ctx) {
+    Context* context = static_cast<Context*>(ctx);
+    context->totalWidth += childSize.width();
+    context->maxUnderBaseline = std::max<KDCoordinate>(
+        context->maxUnderBaseline, childSize.height() - childBaseline);
+    context->maxAboveBaseline =
+        std::max(context->maxAboveBaseline, childBaseline);
+  };
+  Context context = {};
+  IterBetweenIndexes(node, leftIndex, rightIndex, iter, &context);
+  return KDSize(context.totalWidth,
+                context.maxUnderBaseline + context.maxAboveBaseline);
 }
 
 KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,

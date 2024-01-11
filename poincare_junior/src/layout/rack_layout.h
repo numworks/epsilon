@@ -20,6 +20,11 @@ class RackLayout {
   static KDCoordinate ChildBaseline(const Tree* node, int i);
   static KDPoint ChildPosition(const Tree* node, int i);
   static KDCoordinate ChildYPosition(const Tree* node, int i);
+  using Callback = void(const Tree* child, KDSize childSize,
+                        KDCoordinate childBaseline, void* context);
+  static void IterBetweenIndexes(const Tree* node, int leftPosition,
+                                 int rightPosition, Callback callback,
+                                 void* context);
   static KDSize SizeBetweenIndexes(const Tree* node, int leftPosition,
                                    int rightPosition);
   static KDCoordinate BaselineBetweenIndexes(const Tree* node, int leftPosition,

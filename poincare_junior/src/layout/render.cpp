@@ -621,18 +621,18 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
 void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
                              KDColor expressionColor, KDColor backgroundColor,
                              LayoutSelection selection) {
-  KDColor selectionColor = Escher::Palette::Select;
+  KDCoordinate baseline = RackLayout::Baseline(node);
+  static constexpr KDColor selectionColor = Escher::Palette::Select;
   if (selection.layout() == node) {
-    KDSize size = RackLayout::SizeBetweenIndexes(node, selection.leftPosition(),
-                                                 selection.rightPosition());
-    KDCoordinate subBase = RackLayout::BaselineBetweenIndexes(
+    KDSize selectedSize = RackLayout::SizeBetweenIndexes(
         node, selection.leftPosition(), selection.rightPosition());
-    KDCoordinate base = RackLayout::Baseline(node);
+    KDCoordinate selectedBaseline = RackLayout::BaselineBetweenIndexes(
+        node, selection.leftPosition(), selection.rightPosition());
     KDPoint start(
         RackLayout::SizeBetweenIndexes(node, 0, selection.leftPosition())
             .width(),
-        base - subBase);
-    ctx->fillRect(KDRect(p.translatedBy(start), size), selectionColor);
+        baseline - selectedBaseline);
+    ctx->fillRect(KDRect(p.translatedBy(start), selectedSize), selectionColor);
   }
 #if 0
   // TODO_PCJ
@@ -644,19 +644,43 @@ void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
     return;
   }
 #endif
-  KDColor childBackground = backgroundColor;
-  RenderNode(node, ctx, p, expressionColor, backgroundColor);
-  for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-    if (selection.layout() == node) {
-      if (index == selection.leftPosition()) {
-        childBackground = selectionColor;
-      } else if (index == selection.rightPosition()) {
-        childBackground = backgroundColor;
-      }
+  struct Context {
+    KDContext* ctx;
+    KDPoint rackPosition;
+    KDColor expressionColor;
+    KDColor backgroundColor;
+    LayoutSelection selection;
+    KDCoordinate rackBaseline;
+    int index;
+  };
+  Context context{ctx,
+                  p,
+                  expressionColor,
+                  backgroundColor,
+                  selection.layout() == node ? selection : LayoutSelection(),
+                  baseline,
+                  0};
+  auto iter = [](const Tree* child, KDSize childSize,
+                 KDCoordinate childBaseline, KDPoint position, void* ctx) {
+    Context* context = static_cast<Context*>(ctx);
+    KDPoint p(position.x(), context->rackBaseline - position.y());
+    p = p.translatedBy(context->rackPosition);
+    KDColor backgroundColor = context->backgroundColor;
+    if (context->index >= context->selection.leftPosition() &&
+        context->index < context->selection.rightPosition()) {
+      backgroundColor = selectionColor;
     }
-    PrivateDraw(child, ctx, PositionOfChild(node, index).translatedBy(p),
-                expressionColor, childBackground, selection);
-  }
+    if (child) {
+      PrivateDraw(child, context->ctx, p, context->expressionColor,
+                  backgroundColor, context->selection);
+    } else if (childSize.width()) {
+      EmptyRectangle::DrawEmptyRectangle(context->ctx, p, Render::font,
+                                         EmptyRectangle::Color::Yellow);
+    }
+    context->index++;
+  };
+  RackLayout::IterBetweenIndexes(node, 0, node->numberOfChildren(), iter,
+                                 &context);
 }
 
 void Render::PrivateDrawSimpleLayout(const Tree* node, KDContext* ctx,

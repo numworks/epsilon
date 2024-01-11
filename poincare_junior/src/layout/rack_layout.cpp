@@ -25,15 +25,6 @@ KDCoordinate RackLayout::Baseline(const Tree* node) {
   return BaselineBetweenIndexes(node, 0, node->numberOfChildren());
 }
 
-bool cursorPositionNeedsEmptyBase(const Tree* node, int p) {
-  bool leftIsBase = p > 0 && (!node->child(p - 1)->isVerticalOffsetLayout() ||
-                              !VerticalOffset::IsPrefix(node->child(p - 1)));
-  bool rightIsBase = p < node->numberOfChildren() &&
-                     (!node->child(p)->isVerticalOffsetLayout() ||
-                      !VerticalOffset::IsSuffix(node->child(p)));
-  return !leftIsBase && !rightIsBase;
-}
-
 bool RackLayout::ShouldDrawEmptyBaseAt(const Tree* node, int p) {
   return !(layoutCursor && layoutCursor->cursorNode() == node &&
            layoutCursor->position() == p);
@@ -205,21 +196,6 @@ void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint pos,
                                        isGridPlaceholder
                                            ? EmptyRectangle::Color::Gray
                                            : EmptyRectangle::Color::Yellow);
-  }
-  if (node->numberOfChildren() > 0) {
-    for (int p = 0; p <= node->numberOfChildren(); p++) {
-      if (cursorPositionNeedsEmptyBase(node, p) &&
-          ShouldDrawEmptyBaseAt(node, p)) {
-        EmptyRectangle::DrawEmptyRectangle(
-            ctx,
-            pos.translatedBy(KDPoint(
-                SizeBetweenIndexes(node, 0, p).width(),
-                Baseline(node) - KDFont::GlyphHeight(Render::font) / 2)),
-            Render::font,
-            isGridPlaceholder ? EmptyRectangle::Color::Gray
-                              : EmptyRectangle::Color::Yellow);
-      }
-    }
   }
 }
 

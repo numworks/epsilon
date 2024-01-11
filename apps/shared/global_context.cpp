@@ -126,6 +126,8 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   if (!(childSymbol.isIdenticalTo(
             Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) ||
         childSymbol.isIdenticalTo(
+            Symbol::Builder(ContinuousFunction::k_polarSymbol)) ||
+        childSymbol.isIdenticalTo(
             Symbol::Builder(ContinuousFunction::k_parametricSymbol)))) {
     // Unsupported symbol. Fall back to the default cartesain function symbol
     Expression symbolInX = symbol.clone();

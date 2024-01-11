@@ -106,25 +106,67 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
   KDCoordinate totalWidth = 0;
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
-  for (int i = leftIndex; i < rightIndex; i++) {
-    if (cursorPositionNeedsEmptyBase(node, i) &&
-        ShouldDrawEmptyBaseAt(node, i)) {
-      totalWidth += EmptyRectangle::RectangleSize(Render::font).width();
+  int numberOfChildren = node->numberOfChildren();
+  const Tree* lastBase = nullptr;
+  const Tree* child = node->child(0);
+  for (int i = 0; i < leftIndex; i++) {
+    if (!child->isVerticalOffsetLayout()) {
+      lastBase = child;
     }
-    const Tree* childI = node->child(i);
-    KDSize childSize = Render::Size(childI);
-    if (childI->isVerticalOffsetLayout()) {
-      int baseIndex = baseForChild(node, childI, i);
-      KDCoordinate baseHeight =
-          baseIndex == -1
-              ? KDFont::GlyphHeight(Render::font)
-              : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
+    child = child->nextTree();
+  }
+  for (int i = leftIndex; i < rightIndex; i++) {
+    KDSize childSize = Render::Size(child);
+    KDCoordinate childBaseline = Render::Baseline(child);
+    if (child->isVerticalOffsetLayout()) {
+      const Tree* base = nullptr;
+      if (VerticalOffset::IsSuffix(child)) {
+        // Use base
+        base = lastBase;
+      } else {
+        // Find base forward
+        int j = i;
+        const Tree* candidateBase = child->nextTree();
+        while (j < numberOfChildren) {
+          if (!candidateBase->isVerticalOffsetLayout()) {
+            base = candidateBase;
+            break;
+          }
+          if (VerticalOffset::IsSuffix(candidateBase)) {
+            // Add an empty base
+            base = nullptr;
+            break;
+          }
+          candidateBase = candidateBase->nextTree();
+          j++;
+        }
+      }
+      KDCoordinate baseHeight, baseBaseline;
+      if (!base) {
+        // Add an empty base
+        if (ShouldDrawEmptyBaseAt(node, i)) {
+          totalWidth += EmptyRectangle::RectangleSize(Render::font).width();
+        }
+        baseHeight = EmptyRectangle::RectangleSize(Render::font).height();
+        baseBaseline = EmptyRectangle::RectangleBaseLine(Render::font);
+      } else {
+        // TODO successive offsets
+        baseHeight = Render::Height(base);
+        baseBaseline = Render::Baseline(base);
+      }
+      if (!VerticalOffset::IsSuperscript(child)) {
+        childBaseline = baseBaseline;
+      } else {
+        childBaseline =
+            baseBaseline + childSize.height() - VerticalOffset::IndiceHeight;
+      }
       childSize =
           childSize + KDSize(0, baseHeight - VerticalOffset::IndiceHeight);
+    } else {
+      lastBase = child;
     }
-    // TODO k_separationMargin
+    child = child->nextTree();
     totalWidth += childSize.width();
-    KDCoordinate childBaseline = ChildBaseline(node, i);
     maxUnderBaseline = std::max<KDCoordinate>(
         maxUnderBaseline, childSize.height() - childBaseline);
     maxAboveBaseline = std::max(maxAboveBaseline, childBaseline);

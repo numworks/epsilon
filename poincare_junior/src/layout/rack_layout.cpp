@@ -25,51 +25,6 @@ KDCoordinate RackLayout::Baseline(const Tree* node) {
   return BaselineBetweenIndexes(node, 0, node->numberOfChildren());
 }
 
-/* Return -1 if base is unavailable */
-int baseForChild(const Tree* rack, const Tree* child, int childIndex) {
-  int baseIndex = childIndex + (VerticalOffset::IsSuffix(child) ? -1 : 1);
-  if (baseIndex == -1 || baseIndex == rack->numberOfChildren()) {
-    return -1;
-  }
-  const Tree* base = rack->child(baseIndex);
-  if (base->isVerticalOffsetLayout() &&
-      (VerticalOffset::IsSuffix(child) != VerticalOffset::IsSuffix(base))) {
-    // Break infinite loop
-    return -1;
-  }
-  return baseIndex;
-}
-
-KDCoordinate RackLayout::ChildBaseline(const Tree* node, int i) {
-  const Tree* childI = node->child(i);
-  if (!childI->isVerticalOffsetLayout()) {
-    return Render::Baseline(childI);
-  }
-  int baseIndex = baseForChild(node, childI, i);
-  KDCoordinate baseBaseline = baseIndex == -1
-                                  ? KDFont::GlyphHeight(Render::font) / 2
-                                  : ChildBaseline(node, baseIndex);
-  if (!VerticalOffset::IsSuperscript(childI)) {
-    return baseBaseline;
-  }
-  return baseBaseline + Render::Height(childI) - VerticalOffset::IndiceHeight;
-}
-
-KDCoordinate RackLayout::ChildYPosition(const Tree* node, int i) {
-  const Tree* childI = node->child(i);
-  if (!childI->isVerticalOffsetLayout() ||
-      VerticalOffset::IsSuperscript(childI)) {
-    return Baseline(node) - RackLayout::ChildBaseline(node, i);
-  }
-  int baseIndex = baseForChild(node, childI, i);
-  KDCoordinate baseHeight =
-      baseIndex == -1
-          ? KDFont::GlyphHeight(Render::font)
-          : SizeBetweenIndexes(node, baseIndex, baseIndex + 1).height();
-  return Baseline(node) - RackLayout::ChildBaseline(node, i) + baseHeight -
-         VerticalOffset::IndiceHeight;
-}
-
 bool cursorPositionNeedsEmptyBase(const Tree* node, int p) {
   bool leftIsBase = p > 0 && (!node->child(p - 1)->isVerticalOffsetLayout() ||
                               !VerticalOffset::IsPrefix(node->child(p - 1)));
@@ -77,15 +32,6 @@ bool cursorPositionNeedsEmptyBase(const Tree* node, int p) {
                      (!node->child(p)->isVerticalOffsetLayout() ||
                       !VerticalOffset::IsSuffix(node->child(p)));
   return !leftIsBase && !rightIsBase;
-}
-
-KDPoint RackLayout::ChildPosition(const Tree* node, int i) {
-  KDCoordinate x = SizeBetweenIndexes(node, 0, i).width();
-  if (cursorPositionNeedsEmptyBase(node, i) && ShouldDrawEmptyBaseAt(node, i)) {
-    x += EmptyRectangle::RectangleSize(Render::font).width();
-  }
-  KDCoordinate y = ChildYPosition(node, i);
-  return KDPoint(x, y);
 }
 
 bool RackLayout::ShouldDrawEmptyBaseAt(const Tree* node, int p) {
@@ -103,7 +49,8 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
     KDSize emptySize = EmptyRectangle::RectangleSize(Render::font);
     KDCoordinate width = ShouldDrawEmptyRectangle(node) ? emptySize.width() : 0;
     callback(nullptr, KDSize(width, emptySize.height()),
-             EmptyRectangle::RectangleBaseLine(Render::font), context);
+             EmptyRectangle::RectangleBaseLine(Render::font),
+             {0, EmptyRectangle::RectangleBaseLine(Render::font)}, context);
     return;
   }
   const Tree* lastBase = nullptr;
@@ -114,9 +61,11 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
     }
     child = child->nextTree();
   }
+  KDCoordinate x = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
     KDSize childSize = Render::Size(child);
     KDCoordinate childBaseline = Render::Baseline(child);
+    KDCoordinate y = childBaseline;
     if (child->isVerticalOffsetLayout()) {
       const Tree* base = nullptr;
       if (VerticalOffset::IsSuffix(child)) {
@@ -145,7 +94,10 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
         // Add an empty base
         if (ShouldDrawEmptyBaseAt(node, i)) {
           callback(nullptr, EmptyRectangle::RectangleSize(Render::font),
-                   EmptyRectangle::RectangleBaseLine(Render::font), context);
+                   EmptyRectangle::RectangleBaseLine(Render::font),
+                   {x, EmptyRectangle::RectangleBaseLine(Render::font)},
+                   context);
+          x += EmptyRectangle::RectangleSize(Render::font).width();
         }
         baseHeight = EmptyRectangle::RectangleSize(Render::font).height();
         baseBaseline = EmptyRectangle::RectangleBaseLine(Render::font);
@@ -154,18 +106,21 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
         baseHeight = Render::Height(base);
         baseBaseline = Render::Baseline(base);
       }
-      if (!VerticalOffset::IsSuperscript(child)) {
-        childBaseline = baseBaseline;
-      } else {
+      if (VerticalOffset::IsSuperscript(child)) {
         childBaseline =
             baseBaseline + childSize.height() - VerticalOffset::IndiceHeight;
+        y = childBaseline;
+      } else {
+        childBaseline = baseBaseline;
+        y = baseBaseline - baseHeight + VerticalOffset::IndiceHeight;
       }
       childSize =
           childSize + KDSize(0, baseHeight - VerticalOffset::IndiceHeight);
     } else {
       lastBase = child;
     }
-    callback(child, childSize, childBaseline, context);
+    callback(child, childSize, childBaseline, {x, y}, context);
+    x += childSize.width();
     child = child->nextTree();
   }
 }
@@ -178,7 +133,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
     KDCoordinate totalWidth;
   };
   auto iter = [](const Tree* child, KDSize childSize,
-                 KDCoordinate childBaseline, void* ctx) {
+                 KDCoordinate childBaseline, KDPoint, void* ctx) {
     Context* context = static_cast<Context*>(ctx);
     context->totalWidth += childSize.width();
     context->maxUnderBaseline = std::max<KDCoordinate>(
@@ -192,18 +147,42 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
                 context.maxUnderBaseline + context.maxAboveBaseline);
 }
 
+KDPoint RackLayout::ChildPosition(const Tree* node, int i) {
+  KDCoordinate baseline = Baseline(node);
+  struct Context {
+    KDCoordinate x;
+    KDCoordinate baseline;
+  };
+  auto iter2 = [](const Tree* child, KDSize childSize, KDCoordinate,
+                  KDPoint position, void* ctx) {
+    Context* context = static_cast<Context*>(ctx);
+    context->x = position.x();
+    context->baseline = position.y();
+  };
+  Context context;
+  IterBetweenIndexes(node, 0, i + 1, iter2, &context);
+  return KDPoint(context.x, baseline - context.baseline);
+}
+
 KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
                                                 int rightIndex) {
-  assert(0 <= leftIndex && leftIndex <= rightIndex &&
-         rightIndex <= node->numberOfChildren());
-  if (node->numberOfChildren() == 0) {
-    return EmptyRectangle::RectangleBaseLine(Render::font);
-  }
-  KDCoordinate result = 0;
-  for (int i = leftIndex; i < rightIndex; i++) {
-    result = std::max(result, ChildBaseline(node, i));
-  }
-  return result;
+  struct Context {
+    KDCoordinate maxUnderBaseline;
+    KDCoordinate maxAboveBaseline;
+    KDCoordinate totalWidth;
+  };
+  auto iter = [](const Tree* child, KDSize childSize,
+                 KDCoordinate childBaseline, KDPoint, void* ctx) {
+    Context* context = static_cast<Context*>(ctx);
+    context->totalWidth += childSize.width();
+    context->maxUnderBaseline = std::max<KDCoordinate>(
+        context->maxUnderBaseline, childSize.height() - childBaseline);
+    context->maxAboveBaseline =
+        std::max(context->maxAboveBaseline, childBaseline);
+  };
+  Context context = {};
+  IterBetweenIndexes(node, leftIndex, rightIndex, iter, &context);
+  return context.maxAboveBaseline;
 }
 
 bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {

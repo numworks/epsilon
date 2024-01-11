@@ -88,8 +88,8 @@ class ContinuousFunctionProperties {
   // Getters
   I18n::Message caption() const {
     assert(m_isInitialized);
-    return (!isEquality() && canBeActive()) ? I18n::Message::InequalityType
-                                            : m_caption;
+    return (!isEquality() && isEnabled()) ? I18n::Message::InequalityType
+                                          : m_caption;
   }
   Status status() const {
     assert(m_isInitialized);
@@ -137,7 +137,7 @@ class ContinuousFunctionProperties {
               SymbolType precomputedFunctionSymbol, bool isCartesianEquation);
 
   // Properties
-  bool canBeActive() const { return status() == Status::Enabled; }
+  bool isEnabled() const { return status() == Status::Enabled; }
 
   bool isCartesian() const { return symbolType() == SymbolType::X; }
   bool isParametric() const { return symbolType() == SymbolType::T; }

@@ -473,8 +473,7 @@ Expression ContinuousFunction::Model::expressionReduced(
     // Retrieve the expression equation's expression.
     m_expression = expressionReducedForAnalysis(record, context);
     ContinuousFunctionProperties thisProperties = properties();
-    if (thisProperties.status() !=
-        ContinuousFunctionProperties::Status::Enabled) {
+    if (!thisProperties.isEnabled()) {
       m_expression = Undefined::Builder();
       return m_expression;
     }

@@ -50,11 +50,12 @@ class SystemOfEquations {
   constexpr static int k_maxNumberOfApproximateSolutions = 10;
   constexpr static int k_maxNumberOfSolutions =
       std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
-  constexpr static float k_maxFloat =
-      Shared::InteractiveCurveViewRange::k_maxFloat;
+
+  constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
   constexpr static Poincare::Range1D<double>
-      k_defaultAutoApproximateSolvingRange =
-          Poincare::Range1D<double>(-k_maxFloat, k_maxFloat);
+      k_defaultAutoApproximateSolvingRange = Poincare::Range1D<double>(
+          -static_cast<double>(k_maxFloatForAutoApproximateSolvingRange),
+          static_cast<double>(k_maxFloatForAutoApproximateSolvingRange));
 
   // System analysis
   Type type() const { return m_type; }

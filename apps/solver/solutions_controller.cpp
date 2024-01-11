@@ -25,7 +25,7 @@ namespace Solver {
 constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 
 SolutionsController::ContentView::ContentView(SolutionsController *controller)
-    : m_warningMessageView(I18n::Message::Default, k_warningFormat),
+    : m_warningMessageView(k_warningFormat),
       m_selectableTableView(controller, controller, controller),
       m_displayWarningMoreSolutions(false) {
   m_selectableTableView.setBackgroundColor(k_backgroundColor);
@@ -59,7 +59,12 @@ void SolutionsController::ContentView::setWarning(bool warning) {
 
 void SolutionsController::ContentView::setWarningMessage(
     I18n::Message message) {
-  m_warningMessageView.setMessage(message);
+  m_warningMessageView.setMessageWithPlaceholders(message);
+}
+
+void SolutionsController::ContentView::setWarningMessageWithNumber(
+    I18n::Message message, int n) {
+  m_warningMessageView.setMessageWithPlaceholders(message, n);
 }
 
 int SolutionsController::ContentView::numberOfSubviews() const {
@@ -174,9 +179,11 @@ void SolutionsController::viewWillAppear() {
     // There are no solutions
     m_contentView.setWarningMessage(noSolutionMessage());
   } else if (approximateSolutions()) {
-    m_contentView.setWarningMessage(
-        system->hasMoreSolutions() ? I18n::Message::OnlyFirstSolutionsDisplayed
-                                   : I18n::Message::OtherSolutionsMayExist);
+    system->hasMoreSolutions() ? m_contentView.setWarningMessageWithNumber(
+                                     I18n::Message::OnlyFirstSolutionsDisplayed,
+                                     system->numberOfSolutions())
+                               : m_contentView.setWarningMessage(
+                                     I18n::Message::OtherSolutionsMayExist);
   } else if (system->type() ==
                  SystemOfEquations::Type::PolynomialMonovariable &&
              system->numberOfSolutions() == 1) {

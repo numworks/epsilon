@@ -85,18 +85,24 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
 
 void SystemOfEquations::autoComputeApproximateResolutionRange(
     Expression equationStandardForm, Context *context) {
-  constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
+  constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
-
   // Use the intersection between the definition domain of f and the bounds
   zoom.setBounds(-k_maxFloat, k_maxFloat);
   zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
                            k_maxNumberOfApproximateSolutions / 2);
   void *model[2] = {static_cast<void *>(&equationStandardForm),
                     static_cast<void *>(m_variables[0])};
+  bool finiteNumberOfSolutions = true;
   zoom.fitRoots(evaluator<float>, static_cast<void *>(model), false,
-                evaluator<double>);
+                evaluator<double>, &finiteNumberOfSolutions);
+  /* When there are more than k_maxNumberOfApproximateSolutions on one side of
+   * 0, the zoom is setting the interval to have a maximum of 5 solutions left
+   * of 0 and 5 solutions right of zero. This means that sometimes, for a
+   * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
+   * displayed. We still want to notify the user that more solutions exist. */
+  m_hasMoreSolutions = !finiteNumberOfSolutions;
   zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
   Range2D finalRange = zoom.range(false, false);
   m_approximateResolutionMinimum = finalRange.x()->min();

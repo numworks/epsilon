@@ -34,24 +34,18 @@ SolutionsController::ContentView::ContentView(SolutionsController *controller)
 
 void SolutionsController::ContentView::drawRect(KDContext *ctx,
                                                 KDRect rect) const {
+  // TODO
+  ctx->fillRect(KDRect(KDPointZero, bounds().size()), k_backgroundColor);
   if (hideTableView()) {
     // No selectable table, fill the entire bound for background
     ctx->fillRect(KDRect(KDPointZero, bounds().size()), k_backgroundColor);
   } else if (m_displayWarningMoreSolutions) {
     // Fill the top margin for additional warnings
-    ctx->fillRect(KDRect(KDPointZero, bounds().width(), k_topMargin),
-                  k_backgroundColor);
   }
 }
 
 void SolutionsController::ContentView::setWarning(bool warning) {
   m_displayWarningMoreSolutions = warning;
-  KDCoordinate topMargin =
-      m_displayWarningMoreSolutions ? 0 : Metric::CommonMargins.top();
-  m_selectableTableView.margins()->setTop(topMargin);
-  // Fit m_selectableTableView scroll to content size
-  m_selectableTableView.decorator()->setVerticalMargins(
-      {topMargin, Metric::CommonMargins.bottom()});
   /* m_displayWarningMoreSolutions might stay the same, but number of rows and
    * messages have changed. */
   layoutSubviews();
@@ -69,46 +63,56 @@ void SolutionsController::ContentView::setWarningMessageWithNumber(
 
 int SolutionsController::ContentView::numberOfSubviews() const {
   // Exclude selectableTableView if there are no rows to display
-  return (hideTableView() ? 0 : 1) + m_displayWarningMoreSolutions;
+  return hideTableView() + m_displayWarningMoreSolutions;
 }
 
 View *SolutionsController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
-  if (m_displayWarningMoreSolutions && index == 0) {
-    return &m_warningMessageView;
-  }
-  return &m_selectableTableView;
+  return index == 0 && !hideTableView()
+             ? static_cast<View *>(&m_selectableTableView)
+             : static_cast<View *>(&m_warningMessageView);
 }
 
 void SolutionsController::ContentView::layoutSubviews(bool force) {
-  if (m_displayWarningMoreSolutions) {
-    KDCoordinate topMargin;
-    // Empty warning messages are handled to center both single or double lines
-    KDCoordinate warningMessageHeight =
-        m_warningMessageView.text()[0] == 0
-            ? 0
-            : m_warningMessageView.minimalSizeForOptimalDisplay().height();
-    // Warning messages are vertically centered.
-    if (hideTableView()) {
-      // Warning messages must fit into the entire bound height
-      topMargin = (bounds().height() - warningMessageHeight) / 2;
+  if (!hideTableView()) {
+    if (!m_displayWarningMoreSolutions ||
+        m_selectableTableView.minimalSizeForOptimalDisplay().height() >=
+            bounds().height() - k_bottomMessageSpace) {
+      // TODO: Scroll when betweend height and height - bottomMessageSpace
+      // Table frame occupy the entire view
+      setChildFrame(&m_selectableTableView, bounds(), force);
+      return;
     } else {
-      // Warning messages must fit into a k_topMargin height bound
-      topMargin = (k_topMargin - warningMessageHeight) / 2;
-      // Set table frame
       setChildFrame(&m_selectableTableView,
-                    KDRect(0, k_topMargin, bounds().width(),
-                           bounds().height() - k_topMargin),
+                    KDRect(bounds().origin(), bounds().width(),
+                           bounds().height() - k_bottomMessageSpace),
                     force);
     }
-    assert(topMargin >= 0);
-    setChildFrame(&m_warningMessageView,
-                  KDRect(0, topMargin, bounds().width(), warningMessageHeight),
-                  force);
-  } else {
-    // Table frame occupy the entire view
-    setChildFrame(&m_selectableTableView, bounds(), force);
   }
+
+  if (!m_displayWarningMoreSolutions) {
+    return;
+  }
+  KDCoordinate warningTopMargin = 0;
+  // Empty warning messages are handled to center both single or double lines
+  KDCoordinate warningMessageHeight =
+      m_warningMessageView.text()[0] == 0
+          ? 0
+          : m_warningMessageView.minimalSizeForOptimalDisplay().height();
+  // Warning messages are vertically centered.
+  if (hideTableView()) {
+    // Warning messages must fit into the entire bound height
+    warningTopMargin = (bounds().height() - warningMessageHeight) / 2;
+  } else {
+    // Warning messages must fit into a k_bottomMessageSpace height bound
+    warningTopMargin = bounds().height() - k_bottomMessageSpace +
+                       (k_bottomMessageSpace - warningMessageHeight) / 2;
+  }
+  assert(warningTopMargin >= 0);
+  setChildFrame(
+      &m_warningMessageView,
+      KDRect(0, warningTopMargin, bounds().width(), warningMessageHeight),
+      force);
 }
 
 SolutionsController::SolutionsController(Responder *parentResponder,

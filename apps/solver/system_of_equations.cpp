@@ -64,7 +64,7 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
                  Preferences::sharedPreferences->angleUnit())));
 }
 
-Range1D<float> SystemOfEquations::autoApproximateSolvingRange(
+Range1D<double> SystemOfEquations::autoApproximateSolvingRange(
     Expression equationStandardForm, Context *context) {
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
@@ -85,7 +85,8 @@ Range1D<float> SystemOfEquations::autoApproximateSolvingRange(
   m_hasMoreSolutions = !finiteNumberOfSolutions;
   zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
   Range2D<float> finalRange = zoom.range(false, false);
-  return *finalRange.x();
+  return Range1D<double>(static_cast<double>(finalRange.x()->min()),
+                         static_cast<double>(finalRange.x()->max()));
 }
 
 void SystemOfEquations::approximateSolve(Context *context) {
@@ -99,14 +100,14 @@ void SystemOfEquations::approximateSolve(Context *context) {
                          ReductionTarget::SystemForApproximation);
   m_numberOfSolutions = 0;
 
-  Range1D<float> solvingRange =
+  Range1D<double> solvingRange =
       m_autoApproximateSolvingRange
           ? autoApproximateSolvingRange(undevelopedExpression, context)
           : m_approximateSolvingRange;
 
   assert(solvingRange.isValid());
-  double rangeMin = static_cast<double>(solvingRange.min());
-  double rangeMax = static_cast<double>(solvingRange.max());
+  double rangeMin = solvingRange.min();
+  double rangeMax = solvingRange.max();
   Poincare::Solver<double> solver =
       PoincareHelpers::Solver(rangeMin, rangeMax, m_variables[0], context);
   solver.stretch();

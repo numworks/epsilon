@@ -9,7 +9,7 @@
 
 namespace Solver {
 
-class IntervalController : public Shared::SingleRangeController<float> {
+class IntervalController : public Shared::SingleRangeController<double> {
  public:
   IntervalController(Escher::Responder* parentResponder);
   const char* title() override;
@@ -18,7 +18,7 @@ class IntervalController : public Shared::SingleRangeController<float> {
 
  private:
   I18n::Message parameterMessage(int index) const override;
-  float limit() const override;
+  double limit() const override;
   void extractParameters() override;
   void confirmParameters() override;
   bool parametersAreDifferent() override;

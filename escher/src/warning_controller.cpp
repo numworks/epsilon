@@ -69,10 +69,9 @@ KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const {
 }
 
 WarningController::WarningController(Responder* parentResponder,
-                                     I18n::Message warningMessage1,
-                                     I18n::Message warningMessage2)
+                                     I18n::Message titleMessage)
     : ViewController(parentResponder),
-      m_warningMessage1(warningMessage1),
+      m_titleMessage(titleMessage),
       m_exitOnOKBackEXEOnly(false) {}
 
 void WarningController::setLabel(I18n::Message label1, I18n::Message label2,
@@ -82,7 +81,7 @@ void WarningController::setLabel(I18n::Message label1, I18n::Message label2,
 }
 
 const char* WarningController::title() {
-  return I18n::translate(m_warningMessage1);
+  return I18n::translate(m_titleMessage);
 }
 
 View* WarningController::view() { return &m_contentView; }

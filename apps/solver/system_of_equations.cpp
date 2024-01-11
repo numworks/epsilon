@@ -67,9 +67,10 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
 Range1D<double> SystemOfEquations::autoApproximateSolvingRange(
     Expression equationStandardForm, Context *context) {
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
-            k_maxFloat);
+            k_maxFloatForAutoApproximateSolvingRange);
   // Use the intersection between the definition domain of f and the bounds
-  zoom.setBounds(-k_maxFloat, k_maxFloat);
+  zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
+                 k_maxFloatForAutoApproximateSolvingRange);
   zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
                            k_maxNumberOfApproximateSolutions / 2);
   void *model[2] = {static_cast<void *>(&equationStandardForm),

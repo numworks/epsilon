@@ -40,7 +40,7 @@ I18n::Message IntervalController::parameterMessage(int index) const {
 }
 
 double IntervalController::limit() const {
-  return SystemOfEquations::k_maxFloat;
+  return Poincare::Range1D<double>::k_maxFloat;
 }
 
 void IntervalController::extractParameters() {

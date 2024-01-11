@@ -27,19 +27,6 @@ uint8_t Random::SeedTreeNodes(Tree* tree, uint8_t seedOffset) {
       assert(currentSeed < UINT8_MAX);
       currentSeed += 1;
       SetSeed(u, currentSeed);
-    } else if (u->isParametric()) {
-      /* Function expression in parametric expressions must keep unseeded nodes
-       * for approximation. */
-      const Tree* parametricTree = u;
-      int numberOfChildren = parametricTree->numberOfChildren();
-      u = u->nextNode();
-      for (int i = 0; i < numberOfChildren; i++) {
-        if (i != Parametric::FunctionIndex(parametricTree)) {
-          currentSeed = SeedTreeNodes(u, currentSeed);
-        }
-        u = u->nextTree();
-      }
-      continue;
     }
     descendants += u->numberOfChildren();
     u = u->nextNode();

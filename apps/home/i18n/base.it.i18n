@@ -1,4 +1,3 @@
 Apps = "Applicazioni"
 AppsCapital = "APPLICAZIONI"
-ForbiddenAppInExamMode1 = "Questa applicazione è"
-ForbiddenAppInExamMode2 = "proibita nella modalità d'esame."
+ForbiddenAppInExamMode = "Questa applicazione è\nproibita nella modalità d'esame."

@@ -247,8 +247,7 @@ void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
   switchToBuiltinApp(homeAppSnapshot());
   assert(activeApp());
   if (!appStart) {
-    activeApp()->displayWarning(I18n::Message::ExternalAppIncompatible1,
-                                I18n::Message::ExternalAppIncompatible2, true);
+    activeApp()->displayWarning(I18n::Message::ExternalAppIncompatible, true);
   }
 }
 
@@ -330,8 +329,7 @@ void AppsContainer::run() {
     TreePool::Lock();
     handleRunException();
     TreePool::Unlock();
-    activeApp()->displayWarning(I18n::Message::PoolMemoryFull1,
-                                I18n::Message::PoolMemoryFull2, true);
+    activeApp()->displayWarning(I18n::Message::PoolMemoryFull, true);
   }
 
   Container::run();
@@ -407,8 +405,7 @@ void AppsContainer::storageDidChangeForRecord(
 
 void AppsContainer::storageIsFull() {
   if (activeApp()) {
-    activeApp()->displayWarning(I18n::Message::StorageMemoryFull1,
-                                I18n::Message::StorageMemoryFull2, true);
+    activeApp()->displayWarning(I18n::Message::StorageMemoryFull, true);
   }
 }
 

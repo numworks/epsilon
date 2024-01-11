@@ -310,8 +310,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
   } else if (error == Script::ErrorStatus::NameTaken) {
     App::app()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Script::ErrorStatus::NonCompliantName) {
-    App::app()->displayWarning(I18n::Message::AllowedCharactersaz09,
-                               I18n::Message::NameCannotStartWithNumber);
+    App::app()->displayWarning(I18n::Message::NonCompliantName);
   } else {
     assert(error == Script::ErrorStatus::NotEnoughSpaceAvailable);
     App::app()->displayWarning(I18n::Message::NameTooLong);

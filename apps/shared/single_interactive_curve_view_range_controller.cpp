@@ -11,7 +11,7 @@ SingleInteractiveCurveViewRangeController::
     SingleInteractiveCurveViewRangeController(
         Responder* parentResponder, InteractiveCurveViewRange* interactiveRange,
         Shared::MessagePopUpController* confirmPopUpController)
-    : SingleRangeController(parentResponder, confirmPopUpController),
+    : SingleRangeController<float>(parentResponder, confirmPopUpController),
       m_range(interactiveRange) {}
 
 void SingleInteractiveCurveViewRangeController::setAxis(Axis axis) {

@@ -16,7 +16,6 @@ NoSolutionInterval = "No solution found in the interval.\n\nSome solutions may e
 OtherSolutionsMayExist = "Other solutions may exist. You can modify\nthe search interval manually."
 EnterEquation = "Enter an equation"
 InfiniteNumberOfSolutions = "There are an infinite number of solutions"
-ApproximateSolutionIntervalInstruction = "Enter the interval to search\nfor an approximate solution"
 OnlyFirstSolutionsDisplayed = "Only the first %i solutions\nare displayed"
 PolynomeHasNoRealSolution = "The polynomial has no\nreal root"
 PredefinedVariablesUsedLeft = "Used "

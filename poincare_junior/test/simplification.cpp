@@ -199,7 +199,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("π*(-π)/π", "-π");
   simplifies_to("π+1/π-π", "1/π");
 
-  simplifies_to("ln(0)", "nonreal");
+  simplifies_to("ln(0)", "undef");
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1",
                 {.m_complexFormat = ComplexFormat::Cartesian});
@@ -241,6 +241,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("cos(π×a×a^(-1))^(b×b^(-2)×b)", "dep(-1,{1/a,1/b})");
   simplifies_to("2^(64)", "18446744073709551616");
   simplifies_to("2^(64)/2^(63)", "2");
+  simplifies_to("0^3.1", "0");
+  simplifies_to("0^(-4.2)", "undef");
+  // TODO : Should be 0
+  simplifies_to("0^(1+x^2)", "undef");
   // Complexes
   simplifies_to("2×i×i", "-2");
   simplifies_to("1+i×(1+i×(1+i))", "0");

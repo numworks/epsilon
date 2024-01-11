@@ -271,7 +271,15 @@ bool Simplification::SimplifyPower(Tree* u) {
   EditionReference n = v->nextTree();
   // After systematic reduction, a power can only have integer index.
   if (!n->isInteger()) {
-    // TODO: Handle 0^x with x > 0 before to avoid ln(0)
+    // 0^n -> 0
+    if (v->isZero()) {
+      if (Sign::GetSign(n).isStrictlyPositive()) {
+        u->cloneTreeOverTree(0_e);
+        return true;
+      }
+      // TODO : return dep(0, n>0)
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
     return PatternMatching::MatchReplaceAndSimplify(u, KPow(KA, KB),
                                                     KExp(KMult(KLn(KA), KB)));
   }

@@ -30,7 +30,7 @@ bool Logarithm::SimplifyLn(Tree* u) {
     u->cloneTreeOverTree(0_e);
     return true;
   } else if (child->isZero()) {
-    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
   return false;
 }

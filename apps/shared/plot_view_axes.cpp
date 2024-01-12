@@ -128,12 +128,43 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                              bounds.bottom() - graduationVerticalMargin);
   float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
                                       bounds.top() + graduationVerticalMargin);
+
   float length = 2.f * std::max({-xMin, xMax, -yMin, yMax});
   KDPoint from = KDPoint(plotView->floatToKDCoordinatePixel(
                              AbstractPlotView::Axis::Horizontal, 0.f),
                          plotView->floatToKDCoordinatePixel(
                              AbstractPlotView::Axis::Vertical, 0.f));
-  for (int angle = 0; angle <= 360; angle += k_angleStepInDegree) {
+
+  float angleBegin = 0;
+  float angleEnd = 2 * M_PI;
+
+  /* The strategy is to only draw lines that intersect with a circle that
+   * surrounds the window rect. To do so, we select the range of visible
+   * angles. */
+  Vector2 screenCenter = {(xMin + xMax) / 2, (yMin + yMax) / 2};
+  float screenCircleRadius = Vector2{xMax - xMin, yMax - yMin}.norm() / 2;
+  float screenCenterDistance = screenCenter.norm();
+  if (screenCenterDistance > screenCircleRadius) {
+    // The origin is not contained in the circle surrounding the screen.
+
+    /* angle between the X axis and the line from the origin to the center
+     * of visible rect. */
+    float alpha = std::atan2(screenCenter.y, screenCenter.x);
+    /* Angle between the line from the origin to the center of the visible rect
+     * and both lines tangent to the circle which pass to the origin. */
+    float theta = atan2(screenCircleRadius, screenCenterDistance);
+
+    angleBegin = alpha - theta;
+    angleEnd = alpha + theta;
+  }
+
+  float k_angleStep = k_angleStepInDegree * M_PI / 180;
+
+  for (int i = std::floor(angleBegin / k_angleStep);
+       i <= std::ceil(angleEnd / k_angleStep); i++) {
+    // Little trick to handle negative angles.
+    int angle = (i * k_angleStepInDegree + 360) % 360;
+
     float angleRadian = angle * M_PI / 180.f;
     float cos = std::cos(angleRadian);
     float sin = std::sin(angleRadian);
@@ -190,6 +221,15 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                  2)) {
       plotView->drawLabel(ctx, rect, buffer, {x, y}, horizontalRelativePosition,
                           verticalRelativePosition, k_boldColor);
+
+      if (angle == 0) {
+        // Show 360° as well
+        plotView->drawLabel(
+            ctx, rect, "360°",
+            {x, y + AbstractPlotView::k_labelMargin * plotView->pixelHeight()},
+            horizontalRelativePosition,
+            AbstractPlotView::RelativePosition::After, k_boldColor);
+      }
     }
     /* TODO: don't print labels if the origin is off-screen and they end up on
      * the other side */

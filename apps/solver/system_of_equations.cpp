@@ -64,8 +64,17 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
                  Preferences::sharedPreferences->angleUnit())));
 }
 
-Range1D<double> SystemOfEquations::autoApproximateSolvingRange(
-    Expression equationStandardForm, Context *context) {
+void SystemOfEquations::setApproximateSolvingRange(
+    Poincare::Range1D<double> approximateSolvingRange) {
+  m_autoApproximateSolvingRange = false;
+  m_hasMoreSolutions = false;
+  m_approximateSolvingRange = approximateSolvingRange;
+}
+
+void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
+  Expression equationStandardForm =
+      equationStandardFormForApproximateSolve(context);
+  constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloatForAutoApproximateSolvingRange);
   // Use the intersection between the definition domain of f and the bounds
@@ -86,29 +95,23 @@ Range1D<double> SystemOfEquations::autoApproximateSolvingRange(
   m_hasMoreSolutions = !finiteNumberOfSolutions;
   zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
   Range2D<float> finalRange = zoom.range(false, false);
-  return Range1D<double>(static_cast<double>(finalRange.x()->min()),
-                         static_cast<double>(finalRange.x()->max()));
+  m_autoApproximateSolvingRange = true;
+  m_approximateSolvingRange =
+      Range1D<double>(static_cast<double>(finalRange.x()->min()),
+                      static_cast<double>(finalRange.x()->max()));
 }
 
 void SystemOfEquations::approximateSolve(Context *context) {
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfSolvingVariables == 1);
 
-  m_hasMoreSolutions = false;
   Expression undevelopedExpression =
-      m_store->modelForRecord(m_store->definedRecordAtIndex(0))
-          ->standardForm(context, m_overrideUserVariables,
-                         ReductionTarget::SystemForApproximation);
+      equationStandardFormForApproximateSolve(context);
   m_numberOfSolutions = 0;
 
-  Range1D<double> solvingRange =
-      m_autoApproximateSolvingRange
-          ? autoApproximateSolvingRange(undevelopedExpression, context)
-          : m_approximateSolvingRange;
-
-  assert(solvingRange.isValid());
-  double rangeMin = solvingRange.min();
-  double rangeMax = solvingRange.max();
+  assert(m_approximateSolvingRange.isValid());
+  double rangeMin = m_approximateSolvingRange.min();
+  double rangeMax = m_approximateSolvingRange.max();
   Poincare::Solver<double> solver =
       PoincareHelpers::Solver(rangeMin, rangeMax, m_variables[0], context);
   solver.stretch();
@@ -131,11 +134,6 @@ void SystemOfEquations::approximateSolve(Context *context) {
       registerSolution(root);
     }
   }
-
-  if (m_autoApproximateSolvingRange) {
-    // We want the user to see the limited interval we used to find solutions.
-    m_approximateSolvingRange = solvingRange;
-  }
 }
 
 void SystemOfEquations::tidy(TreeNode *treePoolCursor) {
@@ -146,6 +144,13 @@ void SystemOfEquations::tidy(TreeNode *treePoolCursor) {
       m_solutions[i] = Solution();
     }
   }
+}
+
+Expression SystemOfEquations::equationStandardFormForApproximateSolve(
+    Context *context) {
+  return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
+      ->standardForm(context, m_overrideUserVariables,
+                     ReductionTarget::SystemForApproximation);
 }
 
 SystemOfEquations::Error SystemOfEquations::privateExactSolve(
@@ -164,8 +169,6 @@ SystemOfEquations::Error SystemOfEquations::privateExactSolve(
   error = solvePolynomial(context, simplifiedEquations);
   if (error == Error::RequireApproximateSolution) {
     m_type = Type::GeneralMonovariable;
-    m_autoApproximateSolvingRange = true;
-    m_approximateSolvingRange = k_defaultAutoApproximateSolvingRange;
   }
   assert(error != Error::NoError || m_type == Type::PolynomialMonovariable);
   return error;

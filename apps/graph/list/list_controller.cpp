@@ -339,10 +339,25 @@ static void storeParametricComponent(char *baseName, size_t baseNameLength,
                                   Ion::Storage::parametricComponentExtension);
 }
 
+static bool parametricComponentNameIsFree(char *baseName, size_t baseNameLength,
+                                          size_t bufferSize, bool first) {
+  addSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
+  return Shared::GlobalContext::SymbolAbstractNameIsFree(baseName);
+}
+
 void ListController::DeleteParametricComponentsWithBaseName(
     char *baseName, size_t baseNameLength, size_t bufferSize) {
   deleteParametricComponent(baseName, baseNameLength, bufferSize, true);
   deleteParametricComponent(baseName, baseNameLength, bufferSize, false);
+}
+
+bool ListController::ParametricComponentsNamesAreFree(char *baseName,
+                                                      size_t baseNameLength,
+                                                      size_t bufferSize) {
+  return parametricComponentNameIsFree(baseName, baseNameLength, bufferSize,
+                                       true) &&
+         parametricComponentNameIsFree(baseName, baseNameLength, bufferSize,
+                                       false);
 }
 
 void ListController::deleteParametricComponentsOfSelectedModel() {

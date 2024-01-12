@@ -213,6 +213,8 @@ class Simplification {
   static bool TryOneOperation(Tree *node, const Operation *operations,
                               int numberOfOperations);
 
+  static bool ExpandImRe(Tree *node);
+  EDITION_REF_WRAP(ExpandImRe);
   static bool ContractAbs(Tree *node);
   EDITION_REF_WRAP(ContractAbs);
   static bool ExpandAbs(Tree *node);
@@ -255,6 +257,7 @@ class Simplification {
       ExpandPower,
       ExpandPowerComplex,
       ExpandMult,
+      ExpandImRe,
   };
 };
 

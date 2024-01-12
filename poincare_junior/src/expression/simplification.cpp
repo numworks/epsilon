@@ -738,11 +738,7 @@ bool Simplification::SimplifyRealPart(Tree* tree) {
     tree->cloneTreeOverTree(Complex::UnSanitizedRealPart(child));
     return true;
   }
-  // re(x+y) = re(x)+re(z)
-  return (child->isAddition()) &&
-         Simplification::DistributeOverNAry(
-             tree, BlockType::RealPart, BlockType::Addition,
-             BlockType::Addition, SimplifyRealPart);
+  return false;
 }
 
 bool Simplification::SimplifyImaginaryPart(Tree* tree) {
@@ -754,11 +750,7 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
     tree->cloneTreeOverTree(Complex::UnSanitizedImagPart(child));
     return true;
   }
-  // im(x+y) = im(x)+im(z)
-  return (child->isAddition()) &&
-         Simplification::DistributeOverNAry(
-             tree, BlockType::ImaginaryPart, BlockType::Addition,
-             BlockType::Addition, SimplifyImaginaryPart);
+  return false;
 }
 
 bool Simplification::SimplifySign(Tree* expr) {
@@ -1251,6 +1243,16 @@ bool Simplification::DeepExpand(Tree* e) {
     return true;
   }
   return false;
+}
+
+bool Simplification::ExpandImRe(Tree* ref) {
+  return
+      // im(A+B) = im(A) + im(B)
+      PatternMatching::MatchReplaceAndSimplify(ref, KIm(KAdd(KA, KTB)),
+                                               KAdd(KIm(KA), KIm(KAdd(KTB)))) ||
+      // re(A+B) = re(A) + re(B)
+      PatternMatching::MatchReplaceAndSimplify(ref, KRe(KAdd(KA, KTB)),
+                                               KAdd(KRe(KA), KRe(KAdd(KTB))));
 }
 
 bool Simplification::ContractAbs(Tree* ref) {

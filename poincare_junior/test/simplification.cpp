@@ -257,11 +257,11 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("conj(2+i×π)", "2-π×i");
   simplifies_to("re(conj(x))-re(x)", "0");
   simplifies_to("conj(conj(x))", "x");
-  simplifies_to("re(x+im(y))", "im(y)+re(x)");
+  simplifies_to("re(x+im(y))-im(y)", "re(x)");
   simplifies_to("re(x)+i×im(x)", "x");
-  simplifies_to("re(x+i×y)", "-im(y)+re(x)");
+  simplifies_to("re(x+i×y)+im(y)", "re(x)");
   simplifies_to("im(x+i×y)", "im(x)+re(y)");
-  simplifies_to("conj(x+i×y)", "-im(y)+re(x)-(im(x)+re(y))×i");
+  simplifies_to("i×(conj(x+i×y)+im(y)-re(x))", "im(x)+re(y)");
   simplifies_to("im(re(x)+i×im(x))", "im(x)");
   simplifies_to("re(re(x)+i×im(x))", "re(x)");
   simplifies_to("abs(x+i×y)", "√((-im(y)+re(x))^2+(im(x)+re(y))^2)");

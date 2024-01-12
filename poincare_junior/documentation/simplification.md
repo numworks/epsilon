@@ -160,10 +160,8 @@ It's expected to:
 | arg(x) with x negative | π |
 | im(complex(x, y)) | y |
 | im(x) (with x real) | 0 |
-| im(x + y) | im(x) + im(z) |
 | re(complex(x, y)) | x |
 | re(x) (with x real) | x |
-| re(x + y) | re(x) + re(z) |
 | sum(k, k, m, n) | n(n + 1)/2 - (m - 1)m/2 |
 | sum(k^2, k, m, n) | n(n + 1)(2n + 1)/6 - (m - 1)(m)(2m - 1)/6 |
 | sum(f, k, m, n) (with f independent of k or random nodes) | f×(1 + n - m) |
@@ -242,6 +240,8 @@ It's expected to:
 | permute(n, k) | n! / (n - k)! |
 | tan(A) | sin(A) / cos(A) |
 | atan(A) | asin(A / Sqrt(1 + A^2)) |
+| im(x + y) | im(x) + im(z) |
+| re(x + y) | re(x) + re(z) |
 
 ### Examples
 

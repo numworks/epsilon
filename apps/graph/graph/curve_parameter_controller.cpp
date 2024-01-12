@@ -98,7 +98,7 @@ double CurveParameterController::parameterAtIndex(int index) {
   Poincare::Context *ctx = App::app()->localContext();
   if (isDerivative(index)) {
     assert(function()->canDisplayDerivative());
-    return function()->approximateDerivative(m_cursor->x(), ctx);
+    return function()->approximateDerivative(m_cursor->t(), ctx);
   }
   double t = m_cursor->t();
   double x = m_cursor->x();

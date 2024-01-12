@@ -192,7 +192,7 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
   double derivative =
-      function->approximateDerivative(cursor->x(), App::app()->localContext());
+      function->approximateDerivative(cursor->t(), App::app()->localContext());
 
   /* Force derivative to 0 if cursor is at an extremum where the function is
    * differentiable. */

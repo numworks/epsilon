@@ -151,8 +151,8 @@ class ContinuousFunction : public Function {
   }
   // Insert derivative name with argument in buffer (f'(x) or y')
   size_t derivativeNameWithArgument(char *buffer, size_t bufferSize);
-  // Approximate derivative at x, on given sub curve if there is one
-  double approximateDerivative(double x, Poincare::Context *context,
+  // Approximate derivative at t, on given sub curve if there is one
+  double approximateDerivative(double t, Poincare::Context *context,
                                int subCurveIndex = 0,
                                bool useDomain = true) const;
   Poincare::Layout derivativeTitleLayout();

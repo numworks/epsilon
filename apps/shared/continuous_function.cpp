@@ -274,12 +274,12 @@ size_t ContinuousFunction::derivativeNameWithArgument(char *buffer,
   return numberOfChars + derivativeSize;
 }
 
-double ContinuousFunction::approximateDerivative(double x, Context *context,
+double ContinuousFunction::approximateDerivative(double t, Context *context,
                                                  int subCurveIndex,
                                                  bool useDomain) const {
   assert(canDisplayDerivative());
   assert(subCurveIndex < numberOfSubCurves());
-  if ((useDomain && (x < tMin() || x > tMax())) || isAlongY() ||
+  if ((useDomain && (t < tMin() || t > tMax())) || isAlongY() ||
       numberOfSubCurves() > 1) {
     return NAN;
   }
@@ -287,7 +287,7 @@ double ContinuousFunction::approximateDerivative(double x, Context *context,
   Expression derivate = expressionDerivateReduced(context);
   assert(subCurveIndex == 0);
   ApproximationContext approximationContext(context, complexFormat(context));
-  return derivate.approximateWithValueForSymbol(k_unknownName, x,
+  return derivate.approximateWithValueForSymbol(k_unknownName, t,
                                                 approximationContext);
 }
 

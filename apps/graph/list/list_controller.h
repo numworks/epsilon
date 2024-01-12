@@ -24,6 +24,9 @@ class ListController : public Shared::FunctionListController,
   static void DeleteParametricComponentsWithBaseName(char* baseName,
                                                      size_t baseNameLength,
                                                      size_t bufferSize);
+  static bool ParametricComponentsNamesAreFree(char* baseName,
+                                               size_t baseNameLength,
+                                               size_t bufferSize);
 
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;

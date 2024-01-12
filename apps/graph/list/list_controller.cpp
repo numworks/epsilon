@@ -76,8 +76,8 @@ void ListController::fillWithDefaultFunctionEquation(char *buffer,
     length = SerializationHelper::CodePoint(
         buffer, bufferSize, ContinuousFunction::k_ordinateSymbol);
   } else {
-    length = m_modelsParameterController.DefaultName(
-        buffer, bufferSize, symbol == ContinuousFunction::k_polarSymbol);
+    length =
+        m_modelsParameterController.DefaultName(buffer, bufferSize, symbol);
     assert(0 < length && length < bufferSize - 1);
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, '(');

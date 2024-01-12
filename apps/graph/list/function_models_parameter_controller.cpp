@@ -73,13 +73,16 @@ void FunctionModelsParameterController::viewWillAppear() {
 
 int FunctionModelsParameterController::DefaultName(char buffer[],
                                                    size_t bufferSize,
-                                                   bool polar) {
+                                                   CodePoint symbol) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
       'f', 'g', 'h', 'p'};
   /* First default names the first of theses names f, g, h, p and then f1, f2,
    * that does not exist yet in the storage. */
-  if (!polar) {
+  if (symbol == Shared::ContinuousFunction::k_polarSymbol) {
+    // Try r1, r2, ...
+    buffer[0] = Shared::ContinuousFunctionProperties::k_radiusSymbol;
+  } else {
     size_t constantNameLength = 1;  // 'f', no null-terminating char
     assert(bufferSize > constantNameLength + 1);
     // Find the next available name
@@ -92,9 +95,6 @@ int FunctionModelsParameterController::DefaultName(char buffer[],
     }
     // f, g, h and p are already taken. Try f1, f2, ...
     buffer[0] = k_defaultLetterNames[0];
-  } else {
-    // Try r1, r2, ...
-    buffer[0] = Shared::ContinuousFunctionProperties::k_radiusSymbol;
   }
   buffer[1] = 0;
   assert(bufferSize >= Shared::ContinuousFunction::k_maxDefaultNameSize);
@@ -113,9 +113,11 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
   bool polar = modelString[0] == 'r';
   size_t constantNameLength = 1 + polar;
   assert(modelString[constantNameLength] == '(');
+  CodePoint symbol = polar ? Shared::ContinuousFunction::k_polarSymbol
+                           : CodePoint(modelString[constantNameLength + 1]);
   /* Model starts with a named function. If that name is already taken, use
    * another one. */
-  int functionNameLength = DefaultName(buffer, k_maxSizeOfNamedModel, polar);
+  int functionNameLength = DefaultName(buffer, k_maxSizeOfNamedModel, symbol);
   assert(strlen(modelString + constantNameLength) + functionNameLength <
          k_maxSizeOfNamedModel);
   strlcpy(buffer + functionNameLength, modelString + constantNameLength,

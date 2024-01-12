@@ -221,7 +221,7 @@ void ListController::reloadButtonMessage() {
                                       0);
 }
 
-void ListController::addModel() {
+void ListController::addNewModelAction() {
   App::app()->displayModalViewController(&m_modelsStackController, 0.f, 0.f,
                                          Metric::PopUpMarginsNoBottom);
 }

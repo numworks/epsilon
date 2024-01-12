@@ -63,7 +63,7 @@ class ExpressionModelListController
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
   // Responder
-  virtual void addModel();
+  virtual void addNewModelAction();
   /* TODO: This should only update cells that changed instead of reloading the
    * whole memoization, which is time-consuming. */
   virtual void didChangeModelsList() {

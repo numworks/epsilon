@@ -398,7 +398,7 @@ KDCoordinate ListController::baseline(int j, HighlightCell *cell) {
          layout.baseline(k_font);
 }
 
-void ListController::addModel() {
+void ListController::addNewModelAction() {
   App::app()->displayModalViewController(&m_typeStackController, 0.f, 0.f,
                                          Metric::PopUpMarginsNoBottom);
 }

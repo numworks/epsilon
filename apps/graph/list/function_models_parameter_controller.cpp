@@ -81,22 +81,23 @@ int FunctionModelsParameterController::DefaultName(char buffer[],
    * that does not exist yet in the storage. */
   if (symbol == Shared::ContinuousFunction::k_polarSymbol) {
     // Try r1, r2, ...
-    buffer[0] = Shared::ContinuousFunctionProperties::k_radiusSymbol;
+    SerializationHelper::CodePoint(
+        buffer, bufferSize,
+        Shared::ContinuousFunctionProperties::k_radiusSymbol);
   } else {
     size_t constantNameLength = 1;  // 'f', no null-terminating char
     assert(bufferSize > constantNameLength + 1);
     // Find the next available name
     for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
-      buffer[0] = k_defaultLetterNames[i];
-      buffer[1] = 0;
+      SerializationHelper::CodePoint(buffer, bufferSize,
+                                     k_defaultLetterNames[i]);
       if (Shared::GlobalContext::SymbolAbstractNameIsFree(buffer)) {
         return constantNameLength;
       }
     }
     // f, g, h and p are already taken. Try f1, f2, ...
-    buffer[0] = k_defaultLetterNames[0];
+    SerializationHelper::CodePoint(buffer, bufferSize, k_defaultLetterNames[0]);
   }
-  buffer[1] = 0;
   assert(bufferSize >= Shared::ContinuousFunction::k_maxDefaultNameSize);
   return Ion::Storage::FileSystem::sharedFileSystem
       ->firstAvailableNameFromPrefix(

@@ -3,6 +3,8 @@ name: Continuous Integration
 on:
   push:
     branches: [ master, 'version-*' ]
+    paths-ignore:
+      - 'poincare-junior/doc/**'
 
   workflow_dispatch:
     inputs:

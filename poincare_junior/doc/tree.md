@@ -90,8 +90,9 @@ otherTree->clone()
 // add now points to 1 + cloneOfWhatEverOtherTreeWas
 ```
 
-Be careful with `Tree *` they are easily broken when changing something above
-them in the pool :
+> [!CAUTION]
+> Be careful with `Tree *` they are easily broken when changing something above
+> them in the pool :
 
 ```cpp
 Tree * a = someTree->clone();

@@ -51,12 +51,6 @@ class SystemOfEquations {
   constexpr static int k_maxNumberOfSolutions =
       std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
 
-  constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
-  constexpr static Poincare::Range1D<double>
-      k_defaultAutoApproximateSolvingRange = Poincare::Range1D<double>(
-          -static_cast<double>(k_maxFloatForAutoApproximateSolvingRange),
-          static_cast<double>(k_maxFloatForAutoApproximateSolvingRange));
-
   // System analysis
   Type type() const { return m_type; }
   int degree() const { return m_degree; }
@@ -80,12 +74,8 @@ class SystemOfEquations {
     return m_autoApproximateSolvingRange;
   }
   void setApproximateSolvingRange(
-      Poincare::Range1D<double> approximateSolvingRange) {
-    m_approximateSolvingRange = approximateSolvingRange;
-  }
-  void setAutoApproximateSolvingRange(bool autoRange) {
-    m_autoApproximateSolvingRange = autoRange;
-  }
+      Poincare::Range1D<double> approximateSolvingRange);
+  void autoComputeApproximateSolvingRange(Poincare::Context* context);
 
   // Solving methods
   Error exactSolve(Poincare::Context* context);
@@ -114,9 +104,8 @@ class SystemOfEquations {
         Poincare::ContextWithParent* lastDescendantContext) override;
   };
 
-  Poincare::Range1D<double> autoApproximateSolvingRange(
-      Poincare::Expression equationStandardForm, Poincare::Context* context);
-
+  Poincare::Expression equationStandardFormForApproximateSolve(
+      Poincare::Context* context);
   Error privateExactSolve(Poincare::Context* context);
   Error simplifyAndFindVariables(Poincare::Context* context,
                                  Poincare::Expression* simplifiedEquations);

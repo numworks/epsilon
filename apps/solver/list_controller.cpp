@@ -177,11 +177,12 @@ void ListController::resolveEquations() {
   // Tidy model before checkpoint, during which older TreeNodes can't be altered
   modelStore()->tidyDownstreamPoolFrom();
   App::app()->system()->tidy();
+  Poincare::Context *context = App::app()->localContext();
   Poincare::CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     using Error = SystemOfEquations::Error;
-    Error e = App::app()->system()->exactSolve(App::app()->localContext());
+    Error e = App::app()->system()->exactSolve(context);
     switch (e) {
       case Error::EquationUndefined:
         App::app()->displayWarning(I18n::Message::UndefinedEquation);
@@ -199,7 +200,8 @@ void ListController::resolveEquations() {
         App::app()->displayWarning(I18n::Message::DisabledFeatureInExamMode);
         return;
       case Error::RequireApproximateSolution:
-        App::app()->system()->approximateSolve(App::app()->localContext());
+        App::app()->system()->autoComputeApproximateSolvingRange(context);
+        App::app()->system()->approximateSolve(context);
       default: {
         assert(e == Error::NoError || e == Error::RequireApproximateSolution);
         App::app()->openSolutionsController(e ==

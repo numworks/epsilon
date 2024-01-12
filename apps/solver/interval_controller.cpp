@@ -51,18 +51,20 @@ void IntervalController::extractParameters() {
 
 void IntervalController::confirmParameters() {
   SystemOfEquations *system = App::app()->system();
-  system->setApproximateSolvingRange(m_rangeParam);
-  system->setAutoApproximateSolvingRange(m_autoParam);
+  if (system->autoApproximateSolvingRange()) {
+    system->setApproximateSolvingRange(m_rangeParam);
+  }
 }
 
 bool IntervalController::parametersAreDifferent() {
   SystemOfEquations *system = App::app()->system();
-  return m_rangeParam != system->approximateSolvingRange() ||
-         m_autoParam != system->autoApproximateSolvingRange();
+  return m_rangeParam != system->approximateSolvingRange();
 }
 
 void IntervalController::setAutoRange() {
-  m_rangeParam = SystemOfEquations::k_defaultAutoApproximateSolvingRange;
+  SystemOfEquations *system = App::app()->system();
+  system->autoComputeApproximateSolvingRange(App::app()->localContext());
+  m_rangeParam = system->approximateSolvingRange();
 }
 
 void IntervalController::pop(bool onConfirmation) {

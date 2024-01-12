@@ -79,29 +79,29 @@ int FunctionModelsParameterController::DefaultName(char buffer[],
       'f', 'g', 'h', 'p'};
   /* First default names the first of theses names f, g, h, p and then f1, f2,
    * that does not exist yet in the storage. */
+  size_t length = 0;
   if (symbol == Shared::ContinuousFunction::k_polarSymbol) {
     // Try r1, r2, ...
-    SerializationHelper::CodePoint(
+    length = SerializationHelper::CodePoint(
         buffer, bufferSize,
         Shared::ContinuousFunctionProperties::k_radiusSymbol);
   } else {
-    size_t constantNameLength = 1;  // 'f', no null-terminating char
-    assert(bufferSize > constantNameLength + 1);
     // Find the next available name
     for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
-      SerializationHelper::CodePoint(buffer, bufferSize,
-                                     k_defaultLetterNames[i]);
+      length = SerializationHelper::CodePoint(buffer, bufferSize,
+                                              k_defaultLetterNames[i]);
       if (Shared::GlobalContext::SymbolAbstractNameIsFree(buffer)) {
-        return constantNameLength;
+        return length;
       }
     }
     // f, g, h and p are already taken. Try f1, f2, ...
-    SerializationHelper::CodePoint(buffer, bufferSize, k_defaultLetterNames[0]);
+    length = SerializationHelper::CodePoint(buffer, bufferSize,
+                                            k_defaultLetterNames[0]);
   }
   assert(bufferSize >= Shared::ContinuousFunction::k_maxDefaultNameSize);
   return Ion::Storage::FileSystem::sharedFileSystem
       ->firstAvailableNameFromPrefix(
-          buffer, 1, bufferSize, Shared::GlobalContext::k_extensions,
+          buffer, length, bufferSize, Shared::GlobalContext::k_extensions,
           Shared::GlobalContext::k_numberOfExtensions, 99);
 }
 

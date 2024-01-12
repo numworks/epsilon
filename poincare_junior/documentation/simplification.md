@@ -75,12 +75,6 @@ It's expected to :
 | log(A) | ln(A) × ln(10)^(-1) |
 | log(A, B) | ln(A) × ln(B)^(-1) |
 
-TODO
-
-```
-
-```
-
 ## 5 - User symbols
 
 TODO
@@ -114,7 +108,7 @@ It's expected to :
 | 0 + A + B | A + B |
 | 2 + 4.1 | 6.1 |
 | 2 × a + 4.1 × a | 6.1 × a |
-| (A+B×i)+(C+D×i) | ((A+C)+(B+D)×i) |
+| complex(A, B) + complex(C, D) | complex((A + C), (B + D)) |
 | ×(A) | A |
 | ×() | 1 |
 | B × A | A × B |
@@ -122,12 +116,86 @@ It's expected to :
 | 0 × A | 0 |
 | 1 × A × B | A × B |
 | t^m × t^n | t^(m+n) |
-| (A+B×i)×(C+D×i) | ((AC-BD)+(AD+BC)×i) |
-| ### | ### |
-| ### | ### |
+| complex(A, B)×complex(C, D) | complex(AC - BD, AD + BC) |
+| powerReal(A, B) (with A complex or positive, or B integer) | A^B |
+| powerReal(A, B) (with A negative, B negative rational p/q, q even) | unreal |
+| powerReal(A, B) (with A negative, B rational p/q, q odd) | ±|A|^B |
+| abs(abs(y)) | abs(x) |
+| abs(complex(x, y)) | √(x^2+y^2) |
+| abs(x) | ±x |
+| trigDiff({1,1,0,0}, {1,0,1,0}) | {0, 1, 3, 0} |
+| trig(-x,y) | ±trig(-x,y) |
+| trig(πn/120, B) (with some values of n) | exact value |
+| trig(atrig(A,B), B) | A |
+| trig(atrig(A,B), C) | sqrt(1-A^2) |
+| atrig(trig(π*y, i), j) | π/2 - atrig(trig(π*y, i), i) |
+| atrig(trig(π*y, 0), 0) (with ⌊y + π/2⌋ even) | π*(y - ⌊y + π/2⌋) |
+| atrig(trig(π*y, 0), 0) (with ⌊y + π/2⌋ odd) | π*(⌊y + π/2⌋ - y) |
+| atrig(trig(π*y, 1), 1) (with ⌊y⌋ even) | π*(y - ⌊y⌋) |
+| atrig(trig(π*y, 1), 1) (with ⌊y⌋ odd) | π*(y - ⌊y⌋ + 1) |
+| atrig(A,B) (with A one of the exact values) | exact value |
+| arcsin(-x) | -arcsin(x) |
+| arccos(-x) | π - arccos(x) |
+| D(f(g0(x), g1(x), ...)) (With Di the partial derivative of f on parameter i) | Sum(D(gi(x))*Di(f)(g0(x), g1(x), ...)) |
+| Di(x0 * x1 * ... * xi * ...) | x0 * x1 * ... * xi-1 * xi+1 * ... |
+| Di(x0 + x1 + ... + xi + ...) | 1 |
+| D0(exp(x)) | exp(x) |
+| D0(ln(x)) | 1/x |
+| D0(Trig(x, n)) | Trig(x, n - 1) |
+| D1(Trig(x, n)) | 0 |
+| D0(x^n) | n*x^(n - 1) |
+| D1(x^n) | 0 |
+| ln(exp(x)) | x |
+| ln(-1) | iπ |
+| ln(0) | undef |
+| ln(1) | 0 |
+| exp(ln(x)) | x |
+| exp(0) | 1 |
 | exp(B×ln(A)) (with B an integer) | A^B |
-| A! | Prod(k, 1, A, k) |
-| ### | ### |
+| complex(A, 0) | A |
+| complex(re(x), im(x)) | x |
+| complex(x, y) (with x or y non real) | complex(re(x) - im(y), im(x) + re(y)) |
+| arg(0) | undef |
+| arg(x) with x positive | 0 |
+| arg(x) with x negative | π |
+| im(complex(x, y)) | y |
+| im(x) (with x real) | 0 |
+| im(x + y) | im(x) + im(z) |
+| re(complex(x, y)) | x |
+| re(x) (with x real) | x |
+| re(x + y) | re(x) + re(z) |
+| sum(k, k, m, n) | n(n + 1)/2 - (m - 1)m/2 |
+| sum(k^2, k, m, n) | n(n + 1)(2n + 1)/6 - (m - 1)(m)(2m - 1)/6 |
+| sum(f, k, m, n) (with f independent of k or random nodes) | (1 + n - m)*f |
+| prod(f, k, m, n) (with f independent of k or random nodes) | f^(1 + n - m) |
+| gcd(B, gcd(C, A)) | gcd(A, B, C) |
+| lcm(B, lcm(C, A)) | lcm(A, B, C) |
+| gcd(A) | A |
+| lcm(A) | A |
+| gcd(A, B) (with A, B integers) | exact value if A, B integers, undef otherwise |
+| lcm(A, B) (with A, B integers) | exact value if A, B integers, undef otherwise |
+| rem(A, 0) | undef |
+| quo(A, 0) | undef |
+| rem(A, B) (with A, B integers) | exact value |
+| quo(A, B) (with A, B integers) | exact value |
+| A! (with A positive integer) | Prod(k, 1, A, k) |
+| binomial(n,k) (with valid n, k) | (n - 0)/(k - 0)*...*(n - j)/(k - j)*...*(n - k - 1)/(k - k + 1) |
+| permute(n, k) (with valid n, k) | n!/(n-k)! |
+| sign(A) | 0 / 1 / -1 if A sign is known |
+| ⌊A⌋ (with A rational) | exact value |
+| round(A, B) (with valid A, B) | floor(A * 10^B + 1/2) * 10^-B |
+| listSort(L) | Apply sort |
+| median(L) | result |
+| dim(A) | result |
+| L(n) | result |
+| mean(L) | result |
+| stddev(L) | result |
+| variance(L) | result |
+| sampleStdDev(L) | result |
+| minimum(L) | result |
+| maximum(L) | result |
+| sum(L) | result |
+| prod(L) | result |
 
 ## 7 - Matrix operators
 

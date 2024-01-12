@@ -50,11 +50,11 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
          rightIndex <= node->numberOfChildren());
   int numberOfChildren = node->numberOfChildren();
   if (numberOfChildren == 0) {
-    KDSize emptySize = EmptyRectangle::RectangleSize(Render::font);
+    KDSize emptySize = EmptyRectangle::Size(Render::font);
     KDCoordinate width = ShouldDrawEmptyRectangle(node) ? emptySize.width() : 0;
     callback(nullptr, KDSize(width, emptySize.height()),
-             EmptyRectangle::RectangleBaseLine(Render::font),
-             {0, EmptyRectangle::RectangleBaseLine(Render::font)}, context);
+             EmptyRectangle::Baseline(Render::font),
+             {0, EmptyRectangle::Baseline(Render::font)}, context);
     return;
   }
   const Tree* lastBase = nullptr;
@@ -99,14 +99,13 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
       if (!base) {
         // Add an empty base
         if (ShouldDrawEmptyBaseAt(node, i)) {
-          callback(nullptr, EmptyRectangle::RectangleSize(Render::font),
-                   EmptyRectangle::RectangleBaseLine(Render::font),
-                   {x, EmptyRectangle::RectangleBaseLine(Render::font)},
-                   context);
-          x += EmptyRectangle::RectangleSize(Render::font).width();
+          callback(nullptr, EmptyRectangle::Size(Render::font),
+                   EmptyRectangle::Baseline(Render::font),
+                   {x, EmptyRectangle::Baseline(Render::font)}, context);
+          x += EmptyRectangle::Size(Render::font).width();
         }
-        baseHeight = EmptyRectangle::RectangleSize(Render::font).height();
-        baseBaseline = EmptyRectangle::RectangleBaseLine(Render::font);
+        baseHeight = EmptyRectangle::Size(Render::font).height();
+        baseBaseline = EmptyRectangle::Baseline(Render::font);
       } else {
         // TODO successive offsets
         baseHeight = Render::Height(base);

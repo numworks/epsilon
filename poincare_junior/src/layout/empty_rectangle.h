@@ -14,9 +14,9 @@ class EmptyRectangle {
  public:
   enum class Color : bool { Yellow, Gray };
   enum class State : bool { Hidden, Visible };
-  static KDSize RectangleSize(KDFont::Size font, bool withMargins = true);
-  static KDCoordinate RectangleBaseLine(KDFont::Size font) {
-    return RectangleSize(font).height() / 2;
+  static KDSize Size(KDFont::Size font, bool withMargins = true);
+  static KDCoordinate Baseline(KDFont::Size font) {
+    return Size(font).height() / 2;
   }
 
   static void DrawEmptyRectangle(KDContext* ctx, KDPoint p, KDFont::Size font,

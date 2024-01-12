@@ -1,5 +1,5 @@
 AddScript = "Skript hinzufügen"
-NonCompliantName = "Erlaubte Zeichen: a-z, 0-9, _\nName darf nicht mit Zahl beginnen"
+NonCompliantName = "Erlaubte Zeichen: a-z, 0-9, _\nName darf nicht mit Zahl beginnen."
 Autocomplete = "Autovervollständigung"
 AutoImportScript = "Automatischer Import"
 AutoImportScriptSubLabel = "Skript Import in Konsole"

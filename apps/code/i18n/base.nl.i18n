@@ -1,5 +1,5 @@
 AddScript = "Script toevoegen"
-NonCompliantName = "Toegestane tekens: a-z, 0-9, _\nEen naam kan niet beginnen met een getal"
+NonCompliantName = "Toegestane tekens: a-z, 0-9, _\nEen naam kan niet beginnen met een getal."
 Autocomplete = "Autocomplete"
 AutoImportScript = "Automatisch importeren"
 AutoImportScriptSubLabel = "Importeer het script in de shell"

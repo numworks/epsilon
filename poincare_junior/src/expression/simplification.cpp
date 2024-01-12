@@ -1317,6 +1317,7 @@ bool Simplification::ExpandPower(Tree* ref) {
       KAdd(KPow(KAdd(KTA), 2_e), KMult(2_e, KAdd(KTA), KB), KPow(KB, 2_e)));
 }
 
+// TODO: Properly integrate this within systematic simplification.
 bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
   if (tree->numberOfChildren() < 1) {
     return false;

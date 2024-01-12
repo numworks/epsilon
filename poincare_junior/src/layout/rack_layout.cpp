@@ -30,6 +30,19 @@ bool RackLayout::ShouldDrawEmptyBaseAt(const Tree* node, int p) {
            layoutCursor->position() == p);
 }
 
+void UpdateChildWithBase(bool isSuperscript, KDCoordinate baseHeight,
+                         KDCoordinate baseBaseline, KDCoordinate* childBaseline,
+                         KDCoordinate* childHeight, KDCoordinate* childY) {
+  if (isSuperscript) {
+    *childBaseline = baseBaseline + *childHeight - VerticalOffset::IndiceHeight;
+    *childY = *childBaseline;
+  } else {
+    *childBaseline = baseBaseline;
+    *childY = baseBaseline - baseHeight + VerticalOffset::IndiceHeight;
+  }
+  *childHeight += baseHeight - VerticalOffset::IndiceHeight;
+}
+
 void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
                                     int rightIndex, Callback callback,
                                     void* context) {
@@ -55,6 +68,8 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
   KDCoordinate x = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
     KDSize childSize = Render::Size(child);
+    KDCoordinate childWidth = childSize.width();
+    KDCoordinate childHeight = childSize.height();
     KDCoordinate childBaseline = Render::Baseline(child);
     KDCoordinate y = childBaseline;
     if (child->isVerticalOffsetLayout()) {
@@ -97,21 +112,13 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
         baseHeight = Render::Height(base);
         baseBaseline = Render::Baseline(base);
       }
-      if (VerticalOffset::IsSuperscript(child)) {
-        childBaseline =
-            baseBaseline + childSize.height() - VerticalOffset::IndiceHeight;
-        y = childBaseline;
-      } else {
-        childBaseline = baseBaseline;
-        y = baseBaseline - baseHeight + VerticalOffset::IndiceHeight;
-      }
-      childSize =
-          childSize + KDSize(0, baseHeight - VerticalOffset::IndiceHeight);
+      UpdateChildWithBase(VerticalOffset::IsSuperscript(child), baseHeight,
+                          baseBaseline, &childBaseline, &childHeight, &y);
     } else {
       lastBase = child;
     }
-    callback(child, childSize, childBaseline, {x, y}, context);
-    x += childSize.width();
+    callback(child, {childWidth, childHeight}, childBaseline, {x, y}, context);
+    x += childWidth;
     child = child->nextTree();
   }
 }

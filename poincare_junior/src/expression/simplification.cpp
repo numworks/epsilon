@@ -237,8 +237,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
     changed = true;
   }
   if (child->isComplex()) {
-    assert(Complex::IsSanitized(child));
-    // |x+iy| = √(x^2+y^2) if x and y are reals
+    // |x+iy| = √(x^2+y^2)
     return PatternMatching::MatchReplaceAndSimplify(
                u, KAbs(KComplex(KA, KB)),
                KExp(KMult(KHalf, KLn(KAdd(KPow(KA, 2_e), KPow(KB, 2_e)))))) ||
@@ -733,8 +732,7 @@ bool Simplification::SimplifyRealPart(Tree* tree) {
   assert(tree->isRealPart());
   Tree* child = tree->child(0);
   if (child->isComplex() || Complex::IsReal(child)) {
-    assert(Complex::IsSanitized(child));
-    // re(x+i*y) = x if x and y are reals
+    // re(x+i*y) = x
     tree->cloneTreeOverTree(Complex::UnSanitizedRealPart(child));
     return true;
   }
@@ -745,8 +743,7 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
   assert(tree->isImaginaryPart());
   Tree* child = tree->child(0);
   if (child->isComplex() || Complex::IsReal(child)) {
-    assert(Complex::IsSanitized(child));
-    // im(x+i*y) = y if x and y are reals
+    // im(x+i*y) = y
     tree->cloneTreeOverTree(Complex::UnSanitizedImagPart(child));
     return true;
   }

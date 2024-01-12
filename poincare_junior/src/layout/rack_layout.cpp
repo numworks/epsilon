@@ -32,15 +32,48 @@ bool RackLayout::ShouldDrawEmptyBaseAt(const Tree* node, int p) {
 
 void UpdateChildWithBase(bool isSuperscript, KDCoordinate baseHeight,
                          KDCoordinate baseBaseline, KDCoordinate* childBaseline,
-                         KDCoordinate* childHeight, KDCoordinate* childY) {
+                         KDCoordinate* childHeight,
+                         KDCoordinate* childY = nullptr) {
   if (isSuperscript) {
     *childBaseline = baseBaseline + *childHeight - VerticalOffset::IndiceHeight;
-    *childY = *childBaseline;
+    if (childY) {
+      *childY = *childBaseline;
+    }
   } else {
     *childBaseline = baseBaseline;
-    *childY = baseBaseline - baseHeight + VerticalOffset::IndiceHeight;
+    if (childY) {
+      *childY = baseBaseline - baseHeight + VerticalOffset::IndiceHeight;
+    }
   }
   *childHeight += baseHeight - VerticalOffset::IndiceHeight;
+}
+
+void FindBaseForward(const Tree* child, int maxDepth, KDCoordinate* baseHeight,
+                     KDCoordinate* baseBaseline, KDFont::Size font) {
+  if (maxDepth == 0) {
+    *baseBaseline = EmptyRectangle::Baseline(font);
+    *baseHeight = EmptyRectangle::Size(font).width();
+  }
+  const Tree* candidateBase = child->nextTree();
+  if (candidateBase->isVerticalOffsetLayout()) {
+    if (VerticalOffset::IsSuffix(candidateBase)) {
+      // Add an empty base
+      return FindBaseForward(child, 0, baseHeight, baseBaseline, font);
+    }
+    /* This case is there to support successive prefix offsets that are never
+     * useful, we could delete it and simplify the code. */
+    KDCoordinate baseBaseHeight;
+    KDCoordinate baseBaseBaseline;
+    FindBaseForward(candidateBase, maxDepth - 1, &baseBaseHeight,
+                    &baseBaseBaseline, font);
+    UpdateChildWithBase(VerticalOffset::IsSuperscript(candidateBase),
+                        baseBaseHeight, baseBaseBaseline, baseBaseline,
+                        baseHeight);
+    return;
+  }
+  BSize baseBSize = Render::Size(candidateBase);
+  *baseHeight = baseBSize.height();
+  *baseBaseline = baseBSize.baseline;
 }
 
 void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
@@ -107,9 +140,22 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
         baseHeight = EmptyRectangle::Size(Render::font).height();
         baseBaseline = EmptyRectangle::Baseline(Render::font);
       } else {
-        // TODO successive offsets
         baseHeight = Render::Height(base);
         baseBaseline = Render::Baseline(base);
+        base = base->nextTree();
+        while (base < child) {
+          KDCoordinate oldBaseHeight = baseHeight;
+          KDCoordinate oldBaseBaseline = baseBaseline;
+          KDSize baseSize = Render::Size(base);
+          baseHeight = baseSize.height();
+          baseBaseline = Render::Baseline(base);
+          baseHeight = childHeight;
+          baseBaseline = childBaseline;
+          UpdateChildWithBase(VerticalOffset::IsSuperscript(base),
+                              oldBaseHeight, oldBaseBaseline, &baseBaseline,
+                              &baseHeight);
+          base = base->nextTree();
+        }
       }
       UpdateChildWithBase(VerticalOffset::IsSuperscript(child), baseHeight,
                           baseBaseline, &childBaseline, &childHeight, &y);

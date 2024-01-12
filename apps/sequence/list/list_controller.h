@@ -77,7 +77,7 @@ class ListController : public Shared::FunctionListController {
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
   KDCoordinate baseline(int j, Escher::HighlightCell* cell);
-  void addModel() override;
+  void addNewModelAction() override;
   bool editSelectedRecordWithText(const char* text) override;
   void getTextForSelectedRecord(char* text, size_t size) const override;
   bool removeModelRow(Ion::Storage::Record record) override;

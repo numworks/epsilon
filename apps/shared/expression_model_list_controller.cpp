@@ -94,7 +94,7 @@ bool ExpressionModelListController::handleEventOnExpression(
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (isAddEmptyRow(selectedRow())) {
-      addModel();
+      addNewModelAction();
       return true;
     }
     editExpression(event);
@@ -135,7 +135,7 @@ bool ExpressionModelListController::handleEventOnExpression(
   return false;
 }
 
-void ExpressionModelListController::addModel() {
+void ExpressionModelListController::addNewModelAction() {
   if (addEmptyModel()) {
     editExpression(Ion::Events::OK);
   }

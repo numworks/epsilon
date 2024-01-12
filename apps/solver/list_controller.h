@@ -61,7 +61,7 @@ class ListController : public Shared::ExpressionModelListController,
     return &m_editableCell;
   }
   void reloadButtonMessage();
-  void addModel() override;
+  void addNewModelAction() override;
   bool removeModelRow(Ion::Storage::Record record) override;
   void reloadBrace();
   EquationStore* modelStore() const override;

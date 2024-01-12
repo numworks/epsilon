@@ -222,15 +222,6 @@ bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
 bool Trigonometry::SimplifyATrig(Tree* u) {
   assert(u->isATrig());
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KATrig(KMult(KA, KTB), 1_e), u, &ctx) &&
-      ctx.getNode(KA)->isNumber() &&
-      Number::Sign(ctx.getNode(KA)).isStrictlyNegative()) {
-    // arcsin(-x) -> -arcsin(x)
-    u->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KMult(-1_e, KATrig(KMult(-1_e, KA, KTB), 1_e)), ctx));
-    // CreateAndSimplify called SimplifyATrig on the ATrig tree.
-    return true;
-  }
   if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
     const Tree* piFactor = getPiFactor(ctx.getNode(KA));
     if (!piFactor) {
@@ -238,11 +229,11 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
     }
     // We can simplify but functions do not match. Use acos(x) = π/2 - asin(x)
     bool swapATrig = (!ctx.getNode(KB)->treeIsIdenticalTo(ctx.getNode(KC)));
-    // atrig(trig(π*piFactor, i), i)
+    // atrig(trig(π*y, i), i)
     bool isSin = ctx.getNode(KB)->isOne();
-    // Compute k = ⌊piFactor⌋ for acos, ⌊piFactor + π/2⌋ for asin.
-    // acos(cos(π*r)) = π*(y-k) if k even, π*(k-y+1) otherwise.
-    // asin(sin(π*r)) = π*(y-k) if k even, π*(k-y) otherwise.
+    // Compute k = ⌊y⌋ for acos, ⌊y + π/2⌋ for asin.
+    // acos(cos(π*y)) = π*(y-k) if k even, π*(k-y+1) otherwise.
+    // asin(sin(π*y)) = π*(y-k) if k even, π*(k-y) otherwise.
     Tree* res = PatternMatching::CreateAndSimplify(
         isSin ? KFloor(KAdd(KA, KHalf)) : KFloor(KA), {.KA = piFactor});
     assert(res->isInteger());

@@ -715,16 +715,40 @@ bool Simplification::SimplifyComplex(Tree* tree) {
 
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
   assert(tree->isComplexArgument());
-  Tree* child = tree->child(0);
-  if (child->isNumber()) {
-    Sign::Sign sign = Number::Sign(child);
-    if (sign.isZero()) {
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+  const Tree* child = tree->child(0);
+  if (child->isComplex() || Complex::IsReal(child)) {
+    // arg(x + iy) = atan2(y, x)
+    const Tree* real = Complex::UnSanitizedRealPart(child);
+    Sign::Sign realSign = Sign::GetSign(real);
+    if (realSign.isStrict()) {
+      const Tree* imag = Complex::UnSanitizedImagPart(child);
+      Sign::Sign imagSign = Sign::GetSign(imag);
+      if (realSign.isZero() && imagSign.isStrict()) {
+        if (imagSign.isZero()) {
+          // atan2(0, 0) = undef
+          ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+        }
+        // atan2(y, 0) = π/2 if y > 0, -π/2 if y < 0
+        tree->cloneTreeOverTree(imagSign.isStrictlyPositive()
+                                    ? KMult(KHalf, π_e)
+                                    : KMult(-1_e / 2_e, π_e));
+        return true;
+      } else if (realSign.isStrictlyPositive() || imagSign.isPositive() ||
+                 imagSign.isStrictlyNegative()) {
+        /* atan2(y, x) = arctan(y/x)      if x > 0
+         *               arctan(y/x) + π  if y >= 0 and x < 0
+         *               arctan(y/x) - π  if y < 0  and x < 0 */
+        tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+            KAdd(KATanRad(KMult(KA, KPow(KB, -1_e))), KMult(KC, π_e)),
+            {.KA = imag,
+             .KB = real,
+             .KC = realSign.isStrictlyPositive()
+                       ? 0_e
+                       : (imagSign.isPositive() ? 1_e : -1_e)}));
+        return true;
+      }
     }
-    tree->cloneTreeOverTree(sign.isStrictlyPositive() ? 0_e : π_e);
-    return true;
   }
-  // TODO: Implement for complexes
   return false;
 }
 

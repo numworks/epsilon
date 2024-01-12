@@ -182,8 +182,10 @@ It's expected to:
 | complex(re(x), im(x)) | x |
 | complex(x, y) (with x or y non real) | complex(re(x) - im(y), im(x) + re(y)) |
 | arg(0) | undef |
-| arg(x) with x positive | 0 |
-| arg(x) with x negative | π |
+| arg(complex(0, y)) | π/2 if y > 0, -π/2 if y < 0 |
+| arg(complex(x, y)) (with x > 0) | arctan(y/x) |
+| arg(complex(x, y)) (with x < 0 and y >= 0) | arctan(y/x) + π |
+| arg(complex(x, y)) (with x < 0 and y < 0) | arctan(y/x) - π |
 | im(complex(x, y)) | y |
 | im(x) (with x real) | 0 |
 | re(complex(x, y)) | x |

@@ -265,6 +265,13 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("im(re(x)+i×im(x))", "im(x)");
   simplifies_to("re(re(x)+i×im(x))", "re(x)");
   simplifies_to("abs(x+i×y)", "√((-im(y)+re(x))^2+(im(x)+re(y))^2)");
+  simplifies_to("arg(re(x)+i×re(y))", "arg(re(x)+re(y)×i)");
+  simplifies_to("arg(π+i×2)", "arctan(2/π)");
+  simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)");
+  simplifies_to("arg(i×2)", "π/2");
+  simplifies_to("arg(-i×2)", "-π/2");
+  simplifies_to("arg(0)", "undef");
+  simplifies_to("arg(-π+i×abs(y))", "π+arctan(-abs(y)/π)");
   // Parametrics
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");

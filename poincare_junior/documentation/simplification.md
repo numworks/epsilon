@@ -53,12 +53,12 @@ It's expected to:
 |---|---|
 | unit | 1 |
 | decimal{n}(A) | 10^(-n)×A |
-| cos(A) | trig(A × RadToAngleUnit, 0) |
-| sin(A) | trig(A × RadToAngleUnit, 1) |
-| tan(A) | tanRad(A × RadToAngleUnit) |
-| acos(A) | atrig(A, 0) × RadToAngleUnit |
-| asin(A) | atrig(A, 1) × RadToAngleUnit |
-| atan(A) | atanRad(A) × RadToAngleUnit |
+| cos(A) | trig(A×RadToAngleUnit, 0) |
+| sin(A) | trig(A×RadToAngleUnit, 1) |
+| tan(A) | tanRad(A×RadToAngleUnit) |
+| acos(A) | atrig(A, 0)×RadToAngleUnit |
+| asin(A) | atrig(A, 1)×RadToAngleUnit |
+| atan(A) | atanRad(A)×RadToAngleUnit |
 | sqrt(A) | A^0.5 |
 | e^A | exp(A) |
 | A^B (with A matrix) | powerMatrix(A, B) |
@@ -70,10 +70,10 @@ It's expected to:
 | i | complex(0,1) |
 | - A | (-1)×A |
 | A - B | A + (-1)×B |
-| A / B | A × B^-1 |
+| A / B | A×B^-1 |
 | log(A, e) | ln(e) |
-| log(A) | ln(A) × ln(10)^(-1) |
-| log(A, B) | ln(A) × ln(B)^(-1) |
+| log(A) | ln(A)×ln(10)^(-1) |
+| log(A, B) | ln(A)×ln(B)^(-1) |
 
 ## 5 - User symbols
 
@@ -100,22 +100,22 @@ It's expected to:
 | A^1 | A |
 | (0 + A×i)^n | ±(A^n) or (0±(A^n)×i) |
 | (w^p)^n | w^(p×n) |
-| (w1×...×wk)^n | w1^n × ... × wk^n |
+| (w1×...×wk)^n | w1^n×...×wk^n |
 | exp(a)^b | exp(a×b) |
 | +(A) | A |
 | +() | 0 |
 | B + A | A + B |
 | 0 + A + B | A + B |
 | 2 + 4.1 | 6.1 |
-| 2 × a + 4.1 × a | 6.1 × a |
+| 2×a + 4.1×a | 6.1×a |
 | complex(A, B) + complex(C, D) | complex((A + C), (B + D)) |
 | ×(A) | A |
 | ×() | 1 |
-| B × A | A × B |
-| 2 × 4.1 | 8.2 |
-| 0 × A | 0 |
-| 1 × A × B | A × B |
-| t^m × t^n | t^(m+n) |
+| B×A | A×B |
+| 2×4.1 | 8.2 |
+| 0×A | 0 |
+| 1×A×B | A×B |
+| t^m×t^n | t^(m+n) |
 | complex(A, B)×complex(C, D) | complex(AC - BD, AD + BC) |
 | powerReal(A, B) (with A complex or positive, or B integer) | A^B |
 | powerReal(A, B) (with A negative, B negative rational p/q, q even) | unreal |
@@ -128,11 +128,11 @@ It's expected to:
 | trig(πn/120, B) (with some values of n) | exact value |
 | trig(atrig(A,B), B) | A |
 | trig(atrig(A,B), C) | sqrt(1-A^2) |
-| atrig(trig(π*y, i), j) | π/2 - atrig(trig(π*y, i), i) |
-| atrig(trig(π*y, 0), 0) (with ⌊y + π/2⌋ even) | π*(y - ⌊y + π/2⌋) |
-| atrig(trig(π*y, 0), 0) (with ⌊y + π/2⌋ odd) | π*(⌊y + π/2⌋ - y) |
-| atrig(trig(π*y, 1), 1) (with ⌊y⌋ even) | π*(y - ⌊y⌋) |
-| atrig(trig(π*y, 1), 1) (with ⌊y⌋ odd) | π*(y - ⌊y⌋ + 1) |
+| atrig(trig(π×y, i), j) | π/2 - atrig(trig(π×y, i), i) |
+| atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ even) | π×(y - ⌊y + π/2⌋) |
+| atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ odd) | π×(⌊y + π/2⌋ - y) |
+| atrig(trig(π×y, 1), 1) (with ⌊y⌋ even) | π×(y - ⌊y⌋) |
+| atrig(trig(π×y, 1), 1) (with ⌊y⌋ odd) | π×(y - ⌊y⌋ + 1) |
 | atrig(A,B) (with A one of the exact values) | exact value |
 | arcsin(-x) | -arcsin(x) |
 | arccos(-x) | π - arccos(x) |
@@ -166,7 +166,7 @@ It's expected to:
 | re(x + y) | re(x) + re(z) |
 | sum(k, k, m, n) | n(n + 1)/2 - (m - 1)m/2 |
 | sum(k^2, k, m, n) | n(n + 1)(2n + 1)/6 - (m - 1)(m)(2m - 1)/6 |
-| sum(f, k, m, n) (with f independent of k or random nodes) | (1 + n - m)*f |
+| sum(f, k, m, n) (with f independent of k or random nodes) | f×(1 + n - m) |
 | prod(f, k, m, n) (with f independent of k or random nodes) | f^(1 + n - m) |
 | gcd(B, gcd(C, A)) | gcd(A, B, C) |
 | lcm(B, lcm(C, A)) | lcm(A, B, C) |
@@ -179,11 +179,11 @@ It's expected to:
 | rem(A, B) (with A, B integers) | exact value |
 | quo(A, B) (with A, B integers) | exact value |
 | A! (with A positive integer) | Prod(k, 1, A, k) |
-| binomial(n,k) (with valid n, k) | (n - 0)/(k - 0)*...*(n - j)/(k - j)*...*(n - k - 1)/(k - k + 1) |
+| binomial(n,k) (with valid n, k) | (n - 0)/(k - 0) × ... × (n - j)/(k - j) × ... × (n - k - 1)/(k - k + 1) |
 | permute(n, k) (with valid n, k) | n!/(n-k)! |
 | sign(A) | 0 / 1 / -1 if A sign is known |
 | ⌊A⌋ (with A rational) | exact value |
-| round(A, B) (with valid A, B) | floor(A * 10^B + 1/2) * 10^-B |
+| round(A, B) (with valid A, B) | floor(A×10^B + 1/2)×10^-B |
 | listSort(L) | Apply sort |
 | median(L) | result |
 | dim(A) | result |
@@ -219,8 +219,8 @@ It's expected to:
 | A?×\|B\|×\|C\|×D? | A×\|BC\|×D |
 | \|A×B?\| | \|A\|×\|B\| |
 | exp(A + iB) | exp(A)×(cos(B) + i×sin(B)) |
-| exp(A + B?) | exp(A) × exp(B) |
-| A? × exp(B) × exp(C) × D? | A × exp(B + C) × D |
+| exp(A + B?) | exp(A)×exp(B) |
+| A?×exp(B)×exp(C)×D? | A×exp(B + C)×D |
 | A?×(B + C?)×D? | A×B×D + A×C×D |
 | A? + B?×C×D? + E? + F?×C×G? + H? | A + C×(B×D + F×G) + E + H |
 | (A + B×i)^2 | (A^2 - 2×B^2 + 2×A×B×i) |
@@ -235,8 +235,8 @@ It's expected to:
 | Trig(A? + B, C) | Trig(A, 0)×Trig(B, C) + Trig(A, 1)×Trig(B, C-1) |
 | sum(f + g, k, a, b) | sum(f, k, a, b) + sum(g, k, a, b) |
 | sum(x_k, k, 0, n) | x_0 + ... + x_n |
-| prod(f×g, k, a, b) | prod(f, k, a, b) × prod(g, k, a, b) |
-| prod(x_k, k, 0, n) | x_0 × ... × x_n |
+| prod(f×g, k, a, b) | prod(f, k, a, b)×prod(g, k, a, b) |
+| prod(x_k, k, 0, n) | x_0×...×x_n |
 | Prod(u(k), k, a, b) / Prod(u(k), k, a, c) (with c < b) | Prod(u(k), k, c+1, b) |
 | binomial(n, k) | n! / (k!(n - k)!) |
 | permute(n, k) | n! / (n - k)! |

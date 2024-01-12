@@ -49,6 +49,8 @@ It's expected to:
 
 ### Effects
 
+<details>
+
 | Match | Replace |
 |---|---|
 | unit | 1 |
@@ -75,6 +77,8 @@ It's expected to:
 | log(A) | ln(A)×ln(10)^(-1) |
 | log(A, B) | ln(A)×ln(B)^(-1) |
 
+</details>
+
 ## 5 - User symbols
 
 TODO
@@ -87,6 +91,8 @@ It's expected to:
 - Do nothing if applied a second time
 
 ### Effects
+
+<details>
 
 | Match | Replace |
 |---|---|
@@ -195,6 +201,8 @@ It's expected to:
 | sum(L) | result |
 | prod(L) | result |
 
+</details>
+
 ## 7 - Matrix operators
 
 TODO
@@ -211,6 +219,8 @@ It's expected to:
 - Be deterministic
 
 ### Effects
+
+<details>
 
 | Match | Replace |
 |---|---|
@@ -243,7 +253,11 @@ It's expected to:
 | im(x + y) | im(x) + im(z) |
 | re(x + y) | re(x) + re(z) |
 
+</details>
+
 ### Examples
+
+<details>
 
 Unsuccessful advanced reduction on simple tree $a+b$.
 
@@ -338,3 +352,5 @@ graph TD;
       CA-->|Contract|CAA["a^2+b^2-(a^2+b^2)+a(2b+(c+d)^2)"]
         CAA-->X28["42 VS 19"]
 ```
+
+</details>

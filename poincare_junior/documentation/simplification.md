@@ -136,15 +136,15 @@ It's expected to:
 | atrig(A,B) (with A one of the exact values) | exact value |
 | arcsin(-x) | -arcsin(x) |
 | arccos(-x) | π - arccos(x) |
-| D(f(g0(x), g1(x), ...)) (With Di the partial derivative of f on parameter i) | Sum(D(gi(x))*Di(f)(g0(x), g1(x), ...)) |
-| Di(x0 * x1 * ... * xi * ...) | x0 * x1 * ... * xi-1 * xi+1 * ... |
-| Di(x0 + x1 + ... + xi + ...) | 1 |
-| D0(exp(x)) | exp(x) |
-| D0(ln(x)) | 1/x |
-| D0(Trig(x, n)) | Trig(x, n - 1) |
-| D1(Trig(x, n)) | 0 |
-| D0(x^n) | n*x^(n - 1) |
-| D1(x^n) | 0 |
+| diff(A) (with all n children of A having a known partial derivative) | diff(child(A, 0))×partialDiff(A, 0) + ... + diff(child(A, n))×partialDiff(A, n) |
+| partialDiff(A×B×C×D, 2) | A×B×D |
+| partialDiff(A + B + C + D, 2) | 1 |
+| partialDiff(exp(x), 0) | exp(x) |
+| partialDiff(ln(x), 0) | 1/x |
+| partialDiff(Trig(x, n), 0) | Trig(x, n - 1) |
+| partialDiff(Trig(x, n), 1) | 0 |
+| partialDiff(x^n, 0) | n×x^(n - 1) |
+| partialDiff(x^n, 1) | 0 |
 | ln(exp(x)) | x |
 | ln(-1) | iπ |
 | ln(0) | undef |

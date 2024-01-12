@@ -2,7 +2,7 @@
 
 ## General view
 
-From a parsed user input expression, the simplification algorithm does :
+From a parsed user input expression, the simplification algorithm does:
 1. Ensure the expression has a valid dimension (units, matrices, lists ...)
 2. Adjust the approximation strategy if the expression's dimension requires it (units)
 3. Seed the random nodes
@@ -42,7 +42,7 @@ Therefore, we seed each random in this step with an id. On approximation, random
 
 ## 4 - Projection
 
-It's expected to :
+It's expected to:
 - Reduce the number of equivalent representations of an expression (Div(A,B) -> Mult(A, Pow(B, -1)))
 - Un-contextualize the expression (remove unit, complex format and angle units considerations from reduction algorithm)
 - Do nothing if applied a second time
@@ -81,7 +81,7 @@ TODO
 
 ## 6 - Systematic reduction
 
-It's expected to :
+It's expected to:
 - Be efficient and simple
 - Apply obvious and definitive changes
 - Do nothing if applied a second time
@@ -207,7 +207,7 @@ TODO
 
 ## 9 - Advanced Reduction
 
-It's expected to :
+It's expected to:
 - Reduce any reducible expression if given enough ressources
 - Do its best with reduced ressources
 - Be deterministic

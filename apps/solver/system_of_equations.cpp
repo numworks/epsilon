@@ -132,7 +132,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
     }
   }
 
-  if (m_autoApproximateSolvingRange && m_hasMoreSolutions) {
+  if (m_autoApproximateSolvingRange) {
     // We want the user to see the limited interval we used to find solutions.
     m_approximateSolvingRange = solvingRange;
   }

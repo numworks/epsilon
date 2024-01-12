@@ -1,5 +1,5 @@
 AddScript = "Ajouter un script"
-NonCompliantName = "Caractères autorisés : a-z, 0-9, _\nUn nom ne peut pas commencer par un chiffre"
+NonCompliantName = "Caractères autorisés : a-z, 0-9, _\nUn nom ne peut pas commencer par un chiffre."
 Autocomplete = "Auto-complétion"
 AutoImportScript = "Importation auto"
 AutoImportScriptSubLabel = "Importe le script dans la console"

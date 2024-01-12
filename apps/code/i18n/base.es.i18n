@@ -1,5 +1,5 @@
 AddScript = "Agregar un archivo"
-NonCompliantName = "Caracteres permitidos : a-z, 0-9, _\nUn nombre no puede empezar con un número"
+NonCompliantName = "Caracteres permitidos : a-z, 0-9, _\nUn nombre no puede empezar con un número."
 Autocomplete = "Autocompleción"
 AutoImportScript = "Importación auto"
 AutoImportScriptSubLabel = "Importa el archivo en intérprete"

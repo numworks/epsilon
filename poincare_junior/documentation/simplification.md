@@ -35,7 +35,7 @@ To ensure a constant context, we simply raise until the approximation strategy i
 
 Since the next steps may duplicate parts of the expression, we need to seed each random node. a duplicated random node should evaluate to the same random number.
 
-For example, with this projection, both random should never approximate to a different value.
+For example, with this projection, both random should never approximate to different values.
 $$sinh(random())=\frac{e^{random()}-e^{-random()}}{2}$$
 
 Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
@@ -52,7 +52,7 @@ It's expected to:
 | Match | Replace |
 |---|---|
 | unit | 1 |
-| Decimal<b>(A) | 10^(-n)×A |
+| decimal{n}(A) | 10^(-n)×A |
 | cos(A) | trig(A × RadToAngleUnit, 0) |
 | sin(A) | trig(A × RadToAngleUnit, 1) |
 | tan(A) | tanRad(A × RadToAngleUnit) |

@@ -28,6 +28,11 @@ bool Sign::isPositive() const {
   return !canBeNegative;
 }
 
+bool Sign::isStrict() const {
+  assert(isValid());
+  return isZero() || isStrictlyPositive() || isStrictlyNegative();
+}
+
 Sign Mult(Sign s1, Sign s2) {
   return {
       .canBeNull = s1.canBeNull || s2.canBeNull,

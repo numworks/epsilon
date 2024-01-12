@@ -18,6 +18,7 @@ struct Sign {
   bool isStrictlyNegative() const;
   bool isNegative() const;
   bool isPositive() const;
+  bool isStrict() const;
 
   bool operator==(const Sign&) const = default;
 };

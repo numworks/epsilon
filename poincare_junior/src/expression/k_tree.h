@@ -12,6 +12,8 @@ namespace PoincareJ {
 // Constructors
 
 constexpr auto KUndef = KTree<BlockType::Undefined>();
+/* TODO: Remove KHalf and use 1_e/2_e. Also ensure unreduced KTree rational are
+ * either forbidden or properly handled. */
 constexpr auto KHalf = KTree<BlockType::Half>();
 constexpr auto KNonreal = KTree<BlockType::Nonreal>();
 constexpr auto KInf = KTree<BlockType::Infinity>();

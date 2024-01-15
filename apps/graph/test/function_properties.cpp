@@ -324,12 +324,10 @@ QUIZ_CASE(graph_function_properties) {
         noInequations
             ? k_bannedProperties
             : FunctionProperties{
-                  .m_caption = I18n::Message::InequalityType,
+                  .m_status = ContinuousFunctionProperties::Status::Unhandled,
+                  .m_caption = I18n::Message::UnhandledType,
                   .m_equationType =
-                      Poincare::ComparisonNode::OperatorType::Superior,
-                  .m_curveParameterType = ContinuousFunctionProperties::
-                      CurveParameterType::CartesianFunction,
-                  .m_areaType = ContinuousFunctionProperties::AreaType::Above});
+                      Poincare::ComparisonNode::OperatorType::Superior});
     assert_check_function_properties(
         "x^2+y^2=12",
         noImplicitPlot

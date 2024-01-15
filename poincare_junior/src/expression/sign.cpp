@@ -2,6 +2,7 @@
 
 #include "dimension.h"
 #include "number.h"
+#include "variables.h"
 
 namespace PoincareJ {
 
@@ -112,6 +113,8 @@ Sign GetSign(const Tree* t) {
       return Positive;
     case BlockType::Factorial:
       return NonZeroNatural;
+    case BlockType::Variable:
+      return Variables::GetSign(t);
     default:
       return Unknown;
   }

@@ -77,8 +77,8 @@ NODE(UserSequence, 0, 1)
 RANGE(UserNamed, UserSymbol, UserSequence)
 
 /* - Variable V
- * | V TAG | ID | */
-NODE(Variable, 0, 1)
+ * | V TAG | ID | Sign | */
+NODE(Variable, 0, 2)
 NODE(Infinity)
 
 // 3 - Other expressions in Alphabetic order

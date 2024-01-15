@@ -6,6 +6,7 @@
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 
 #include "value_block.h"
@@ -169,6 +170,14 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, BlockType::CodePointLayout,
       leftIsTemporary | (0b10 && rightIsTemporary));
+}
+
+template <>
+constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Variable>(
+    Block* block, size_t blockIndex, uint8_t id, Sign::Sign sign) {
+  return CreateBlockAtIndexForNthBlocksNode(
+      block, blockIndex, BlockType::Variable, id, Sign::GetValue(sign));
 }
 
 template <>

@@ -13,8 +13,7 @@ QUIZ_CASE(pcj_compare) {
 }
 
 QUIZ_CASE(pcj_compare_for_addition_beautification) {
-  Tree *e = KAdd(KVar<0>, KPow(KVar<0>, 2_e), KPow(KVar<0>, KHalf))->clone();
+  Tree *e = KAdd(KVarX, KPow(KVarX, 2_e), KPow(KVarX, KHalf))->clone();
   NAry::Sort(e, Comparison::Order::AdditionBeautification);
-  assert_trees_are_equal(
-      e, KAdd(KPow(KVar<0>, 2_e), KVar<0>, KPow(KVar<0>, KHalf)));
+  assert_trees_are_equal(e, KAdd(KPow(KVarX, 2_e), KVarX, KPow(KVarX, KHalf)));
 }

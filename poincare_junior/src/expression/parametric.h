@@ -3,6 +3,8 @@
 
 #include <poincare_junior/src/memory/tree.h>
 
+#include "sign.h"
+
 namespace PoincareJ {
 
 /* In nodes that introduce a variable, the variable is the first child, the
@@ -19,6 +21,11 @@ class Parametric {
   static bool HasLocalRandom(Tree* t);
 
   static uint8_t FunctionIndex(const Tree* t);
+  static Sign::Sign VariableSign(const Tree* t);
+
+  constexpr static Sign::Sign k_discreteVariableSign = Sign::Integer;
+  // TODO: [COMPLEXSIGN] Distinguish real and complex unknown
+  constexpr static Sign::Sign k_continuousVariableSign = Sign::Unknown;
 
   static constexpr uint8_t k_localVariableId = 0;
   static constexpr uint8_t k_variableIndex = 0;

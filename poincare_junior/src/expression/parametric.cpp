@@ -25,6 +25,20 @@ uint8_t Parametric::FunctionIndex(const Tree* t) {
   }
 }
 
+Sign::Sign Parametric::VariableSign(const Tree* t) {
+  switch (t->type()) {
+    case BlockType::Derivative:
+    case BlockType::Integral:
+      return k_continuousVariableSign;
+    case BlockType::ListSequence:
+    case BlockType::Sum:
+    case BlockType::Product:
+      return k_discreteVariableSign;
+    default:
+      assert(false);
+  }
+}
+
 bool Parametric::SimplifySumOrProduct(Tree* expr) {
   /* TODO:
    * - Handle upperBound < lowerBound -> 0
@@ -33,14 +47,14 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
    */
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
   if (PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, KB, KC, KVar<0>),
+          expr, KSum(KA, KB, KC, KVarK),
           KMult(KHalf, KAdd(KMult(KC, KAdd(1_e, KC)),
                             KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
     return true;
   }
   // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
   if (PatternMatching::MatchReplaceAndSimplify(
-          expr, KSum(KA, KB, KC, KPow(KVar<0>, 2_e)),
+          expr, KSum(KA, KB, KC, KPow(KVarK, 2_e)),
           KMult(KPow(6_e, -1_e),
                 KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
                      KMult(-1_e, KAdd(-1_e, KB), KB,

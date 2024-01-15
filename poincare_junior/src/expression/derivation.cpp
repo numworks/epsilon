@@ -26,7 +26,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
 
 Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue,
                            const Tree *symbol) {
-  if (derivand->treeIsIdenticalTo(KVar<0>)) {
+  if (derivand->treeIsIdenticalTo(KVarX)) {
     return (1_e)->clone();
   }
   if (derivand->isRandomNode()) {

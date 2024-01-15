@@ -3,6 +3,8 @@
 
 #include <poincare_junior/src/memory/tree.h>
 
+#include "sign.h"
+
 namespace PoincareJ {
 
 /* Textual UserSymbols in expressions are projected into de Bruijn indices.  The
@@ -11,14 +13,16 @@ namespace PoincareJ {
  * are shifted by one which leaves room to represent the new local variable with
  * the index \0. The user symbol of the local variable is kept as an hint for
  * the beautification.
- * For instance:  x + sum(x + 2k, k, 0, n) => \0 + sum(\1 + 2*\0, k, 0, \1) */
+ * For instance:  x + sum(x + 2k, k, 0, n) => \0 + sum(\1 + 2*\0, k, 0, \1)
+ *
+ * Variable are also given a context restrained by the context. */
 
 class Variables {
  public:
   // Used to store a Variable constant tree on the stack.
   class Variable {
    public:
-    Variable(uint8_t id);
+    Variable(uint8_t id, Sign::Sign sign);
     operator const Tree*() const { return Tree::FromBlocks(m_blocks); }
 
    private:
@@ -28,9 +32,11 @@ class Variables {
   };
   // Push a Set with the free user symbols of the expression
   static Tree* GetUserSymbols(const Tree* t);
-  static void ProjectToId(Tree* t, const Tree* variables, uint8_t depth = 0);
+  static void ProjectToId(Tree* t, const Tree* variables, Sign::Sign sign,
+                          uint8_t depth = 0);
   static void BeautifyToName(Tree* t, const Tree* variables, uint8_t depth = 0);
   static uint8_t Id(const Tree* variable);
+  static Sign::Sign GetSign(const Tree* variable);
 
   // On projected expressions
   static bool HasVariables(const Tree* t);
@@ -54,7 +60,8 @@ class Variables {
 
  private:
   static void GetUserSymbols(const Tree* t, Tree* set);
-  static bool ReplaceSymbol(Tree* expr, const Tree* symbol, int id);
+  static bool ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
+                            Sign::Sign sign);
   static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);
 };

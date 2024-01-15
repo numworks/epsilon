@@ -3,6 +3,8 @@
 
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/expression/parametric.h>
+#include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/memory/k_tree.h>
 
 #include <bit>
@@ -82,8 +84,17 @@ constexpr auto KMult = KNAry<BlockType::Multiplication>();
 constexpr auto KList = KNAry<BlockType::List>();
 constexpr auto KSet = KNAry<BlockType::Set>();
 
-template <uint8_t Id>
-constexpr auto KVar = KTree<BlockType::Variable, Id>();
+template <uint8_t Id, Sign::Sign sign>
+constexpr auto KVar = KTree<BlockType::Variable, Id, GetValue(sign)>();
+
+// Discrete local variable
+constexpr auto KVarK =
+    KVar<Parametric::k_localVariableId, Parametric::k_discreteVariableSign>;
+
+// Continuous local variable
+constexpr auto KVarX =
+    KVar<Parametric::k_localVariableId, Parametric::k_continuousVariableSign>;
+;
 
 template <uint8_t Rows, uint8_t Cols>
 class KMatrix {

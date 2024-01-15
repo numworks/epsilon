@@ -844,7 +844,8 @@ bool Simplification::SimplifyLastTree(Tree* ref,
         Projection::DeepSystemProjection(ref, projectionContext) || changed;
     Tree* variables = Variables::GetUserSymbols(ref);
     SwapTrees(&ref, &variables);
-    Variables::ProjectToId(ref, variables);
+    // TODO: [COMPLEXSIGN] Real or complex unknown depending on context
+    Variables::ProjectToId(ref, variables, Sign::Unknown);
     changed = DeepSystematicReduce(ref) || changed;
     changed = DeepApplyMatrixOperators(ref) || changed;
     assert(!DeepSystematicReduce(ref));

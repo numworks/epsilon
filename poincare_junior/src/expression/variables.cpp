@@ -10,8 +10,8 @@
 
 namespace PoincareJ {
 
-Variables::Variable::Variable(uint8_t id) {
-  Tree* temp = SharedEditionPool->push<BlockType::Variable>(id);
+Variables::Variable::Variable(uint8_t id, Sign::Sign sign) {
+  Tree* temp = SharedEditionPool->push<BlockType::Variable>(id, sign);
   assert(k_size == temp->treeSize());
   temp->copyTreeTo(m_blocks);
   temp->removeTree();
@@ -20,6 +20,11 @@ Variables::Variable::Variable(uint8_t id) {
 uint8_t Variables::Id(const Tree* variable) {
   assert(variable->isVariable());
   return variable->nodeValue(0);
+}
+
+Sign::Sign Variables::GetSign(const Tree* variable) {
+  assert(variable->isVariable());
+  return Sign::GetSign(variable->nodeValue(1));
 }
 
 uint8_t Variables::ToId(const Tree* variables, const char* name,
@@ -96,10 +101,11 @@ bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave) {
   return changed;
 }
 
-bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
+bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
+                              Sign::Sign sign) {
   if (expr->isUserSymbol() && expr->treeIsIdenticalTo(symbol)) {
-    Tree* var =
-        SharedEditionPool->push<BlockType::Variable>(static_cast<uint8_t>(id));
+    Tree* var = SharedEditionPool->push<BlockType::Variable>(
+        static_cast<uint8_t>(id), sign);
     expr->moveTreeOverTree(var);
     return true;
   }
@@ -111,34 +117,37 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id) {
       Tree* newSymbol = expr->child(Parametric::k_variableIndex);
       // No need to continue if symbol is hidden by a local definition
       if (!newSymbol->treeIsIdenticalTo(symbol)) {
-        changed = ReplaceSymbol(child, symbol, id + 1) || changed;
+        changed = ReplaceSymbol(child, symbol, id + 1, sign) || changed;
       }
     } else {
-      changed = ReplaceSymbol(child, symbol, id) || changed;
+      changed = ReplaceSymbol(child, symbol, id, sign) || changed;
     }
     i++;
   }
   return changed;
 }
 
-void Variables::ProjectToId(Tree* expr, const Tree* variables, uint8_t depth) {
+void Variables::ProjectToId(Tree* expr, const Tree* variables, Sign::Sign sign,
+                            uint8_t depth) {
   assert(SharedEditionPool->isAfter(variables, expr));
   if (expr->isUserSymbol()) {
-    Tree* var =
-        SharedEditionPool->push<BlockType::Variable>(static_cast<uint8_t>(
-            ToId(variables, Symbol::NonNullTerminatedName(expr),
-                 Symbol::Length(expr)) +
-            depth));
+    Tree* var = SharedEditionPool->push<BlockType::Variable>(
+        static_cast<uint8_t>(ToId(variables,
+                                  Symbol::NonNullTerminatedName(expr),
+                                  Symbol::Length(expr)) +
+                             depth),
+        sign);
     expr->moveTreeOverTree(var);
   }
   bool isParametric = expr->isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
-      ReplaceSymbol(child, expr->child(Parametric::k_variableIndex), 0);
-      ProjectToId(child, variables, depth + 1);
+      ReplaceSymbol(child, expr->child(Parametric::k_variableIndex), 0,
+                    Parametric::VariableSign(expr));
+      ProjectToId(child, variables, sign, depth + 1);
     } else {
-      ProjectToId(child, variables, depth);
+      ProjectToId(child, variables, sign, depth);
     }
     i++;
   }

@@ -108,7 +108,7 @@ bool Arithmetic::SimplifyFactorial(Tree* expr) {
 bool Arithmetic::ExpandFactorial(Tree* expr) {
   // A! = Prod(k, 1, A, k)
   return PatternMatching::MatchReplaceAndSimplify(
-      expr, KFact(KA), KProduct("k"_e, 1_e, KA, KVar<0>));
+      expr, KFact(KA), KProduct("k"_e, 1_e, KA, KVarK));
 }
 
 bool Arithmetic::SimplifyPermute(Tree* expr) {
@@ -189,8 +189,8 @@ bool Arithmetic::SimplifyBinomial(Tree* expr) {
   PatternMatching::MatchReplaceAndSimplify(
       expr, KBinomial(KA, KB),
       KProduct("j"_e, 0_e, KAdd(KB, -1_e),
-               KMult(KAdd(KA, KMult(-1_e, KVar<0>)),
-                     KPow(KAdd(KB, KMult(-1_e, KVar<0>)), -1_e))));
+               KMult(KAdd(KA, KMult(-1_e, KVarK)),
+                     KPow(KAdd(KB, KMult(-1_e, KVarK)), -1_e))));
   Parametric::Explicit(expr);
   return true;
 }

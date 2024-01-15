@@ -676,7 +676,7 @@ Expression ContinuousFunction::Model::originalEquation(
       Symbol::SystemSymbol(), Symbol::Builder(symbol));
 }
 
-static bool isFunctionAssignment(const Expression e) {
+bool ContinuousFunction::IsFunctionAssignment(const Expression e) {
   if (!ComparisonNode::IsBinaryEquality(e)) {
     return false;
   }
@@ -736,7 +736,7 @@ Expression ContinuousFunction::Model::expressionEquation(
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
 
-  if (isFunctionAssignment(result)) {
+  if (IsFunctionAssignment(result)) {
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     assert(leftExpression.type() == Poincare::ExpressionNode::Type::Function);
@@ -846,7 +846,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
     return error;
   }
   if (record->hasExtension(Ion::Storage::functionExtension)) {
-    if (isFunctionAssignment(newExpression)) {
+    if (IsFunctionAssignment(newExpression)) {
       Expression function = newExpression.childAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(
           record, static_cast<SymbolAbstract &>(function).name(),
@@ -889,7 +889,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
     return expressionToStore;
   }
   // Check if the equation is of the form f(x)=...
-  if (isFunctionAssignment(expressionToStore)) {
+  if (IsFunctionAssignment(expressionToStore)) {
     Expression functionSymbol =
         expressionToStore.childAtIndex(0).childAtIndex(0);
     // Extract the CodePoint function's symbol. We know it is either x, t or θ

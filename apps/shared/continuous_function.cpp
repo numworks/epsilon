@@ -917,7 +917,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
                    ? k_radiusSymbol
                    : k_polarSymbol;
     }
-    // Fallback on normal parsing
+    // Fallback on normal parsing (replace symbol with unknown)
     expressionToStore =
         ExpressionModel::buildExpressionFromText(c, symbol, context);
   }

@@ -79,10 +79,8 @@ void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
 void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
                             PoincareJ::LayoutCursor* cursor,
                             KDColor selectionColor) {
-  PoincareJ::LayoutSelection selection =
-      cursor ? cursor->selection() : PoincareJ::LayoutSelection();
   PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
-                          style.backgroundColor, cursor, selection);
+                          style.backgroundColor, cursor);
 }
 
 }  // namespace Poincare

@@ -55,8 +55,7 @@ class JuniorLayoutNode final : public LayoutNode {
   bool protectedIsIdenticalTo(OLayout l) override;
 
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            PoincareJ::LayoutCursor* cursor,
-            KDColor selectionColor = KDColorRed);
+            PoincareJ::LayoutCursor* cursor, KDColor selectionColor);
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   const PoincareJ::Tree* tree() const {

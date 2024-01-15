@@ -588,15 +588,15 @@ KDCoordinate Render::Baseline(const Tree* node) {
 
 void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
                   KDFont::Size font, KDColor expressionColor,
-                  KDColor backgroundColor, const LayoutCursor* cursor,
-                  LayoutSelection selection) {
+                  KDColor backgroundColor, const LayoutCursor* cursor) {
   Render::font = font;
   showEmptyRack = false;
   RackLayout::layoutCursor = cursor;
   /* TODO all screenshots work fine without the fillRect except labels on graphs
    * when they overlap. We could add a flag to draw it only when necessary. */
   ctx->fillRect(KDRect(p, Size(node)), backgroundColor);
-  PrivateDraw(node, ctx, p, expressionColor, backgroundColor, selection);
+  PrivateDraw(node, ctx, p, expressionColor, backgroundColor,
+              cursor ? cursor->selection() : LayoutSelection());
 }
 
 void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,

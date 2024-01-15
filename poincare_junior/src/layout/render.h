@@ -38,8 +38,7 @@ class Render final {
   static void Draw(const Tree* node, KDContext* ctx, KDPoint p,
                    KDFont::Size font, KDColor expressionColor = KDColorBlack,
                    KDColor backgroundColor = KDColorWhite,
-                   const LayoutCursor* cursor = nullptr,
-                   LayoutSelection selection = {});
+                   const LayoutCursor* cursor = nullptr);
 
  private:
   static void PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,

@@ -886,38 +886,33 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
   Expression expressionToStore;
   bool isFunctionAssignment = false;
   // if c = "", we want to reinit the Expression
-  if (c && c[0] != 0) {
-    /* Parse the expression to store as possible function assignment. */
-    expressionToStore = Expression::Parse(c, context, true, true);
-    if (expressionToStore.isUninitialized()) {
-      return expressionToStore;
-    }
-    // Check if the equation is of the form f(x)=...
-    ComparisonNode::OperatorType comparisonType;
-    if (ComparisonNode::IsBinaryComparison(expressionToStore,
-                                           &comparisonType) &&
-        isValidNamedLeftExpression(expressionToStore.childAtIndex(0),
-                                   comparisonType)) {
-      isFunctionAssignment = true;
-      Expression functionSymbol =
-          expressionToStore.childAtIndex(0).childAtIndex(0);
-      // Extract the CodePoint function's symbol. We know it is either x, t or θ
-      assert(functionSymbol.type() == ExpressionNode::Type::Symbol);
-      // Override the symbol so that it can be replaced in the right expression
-      if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
-        symbol = k_cartesianSymbol;
-      } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
-        symbol = k_polarSymbol;
-      } else {
-        assert(
-            functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));
-        symbol = k_parametricSymbol;
-      }
-    }
+  if (!c || c[0] == 0) {
+    return expressionToStore;
   }
-
+  /* Parse the expression to store as possible function assignment. */
+  expressionToStore = Expression::Parse(c, context, true, true);
   if (expressionToStore.isUninitialized()) {
     return expressionToStore;
+  }
+  // Check if the equation is of the form f(x)=...
+  ComparisonNode::OperatorType comparisonType;
+  if (ComparisonNode::IsBinaryComparison(expressionToStore, &comparisonType) &&
+      isValidNamedLeftExpression(expressionToStore.childAtIndex(0),
+                                 comparisonType)) {
+    isFunctionAssignment = true;
+    Expression functionSymbol =
+        expressionToStore.childAtIndex(0).childAtIndex(0);
+    // Extract the CodePoint function's symbol. We know it is either x, t or θ
+    assert(functionSymbol.type() == ExpressionNode::Type::Symbol);
+    // Override the symbol so that it can be replaced in the right expression
+    if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
+      symbol = k_cartesianSymbol;
+    } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
+      symbol = k_polarSymbol;
+    } else {
+      assert(functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));
+      symbol = k_parametricSymbol;
+    }
   }
 
   if (isFunctionAssignment) {

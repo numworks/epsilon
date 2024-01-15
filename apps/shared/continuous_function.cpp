@@ -744,7 +744,8 @@ Expression ContinuousFunction::Model::expressionEquation(
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
 
-  if (isValidNamedLeftExpression(leftExpression, equationType)) {
+  if (isValidNamedLeftExpression(leftExpression, equationType) &&
+      equationType == ComparisonNode::OperatorType::Equal) {
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     assert(leftExpression.type() == Poincare::ExpressionNode::Type::Function);

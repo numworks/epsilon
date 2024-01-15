@@ -720,10 +720,10 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
     // arg(x + iy) = atan2(y, x)
     const Tree* real = Complex::UnSanitizedRealPart(child);
     Sign::Sign realSign = Sign::GetSign(real);
-    if (realSign.isStrict()) {
+    if (realSign.isKnown()) {
       const Tree* imag = Complex::UnSanitizedImagPart(child);
       Sign::Sign imagSign = Sign::GetSign(imag);
-      if (realSign.isZero() && imagSign.isStrict()) {
+      if (realSign.isZero() && imagSign.isKnown()) {
         if (imagSign.isZero()) {
           // atan2(0, 0) = undef
           ExceptionCheckpoint::Raise(ExceptionType::Unhandled);

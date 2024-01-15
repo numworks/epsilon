@@ -28,7 +28,7 @@ bool Sign::isPositive() const {
   return !canBeNegative;
 }
 
-bool Sign::isStrict() const {
+bool Sign::isKnown() const {
   assert(isValid());
   return isZero() || isStrictlyPositive() || isStrictlyNegative();
 }

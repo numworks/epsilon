@@ -694,6 +694,13 @@ static bool isValidNamedLeftExpression(
                Symbol::Builder(ContinuousFunction::k_polarSymbol))));
 }
 
+static bool isFunctionAssignment(const Expression e) {
+  ComparisonNode::OperatorType comparisonType;
+  return ComparisonNode::IsBinaryComparison(e, &comparisonType) &&
+         comparisonType == ComparisonNode::OperatorType::Equal &&
+         isValidNamedLeftExpression(e.childAtIndex(0), comparisonType);
+}
+
 Expression ContinuousFunction::Model::expressionEquation(
     const Ion::Storage::Record *record, Context *context,
     ComparisonNode::OperatorType *computedEquationType,
@@ -847,10 +854,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
     return error;
   }
   if (record->hasExtension(Ion::Storage::functionExtension)) {
-    ComparisonNode::OperatorType newOperatorType;
-    if (ComparisonNode::IsBinaryComparison(newExpression, &newOperatorType) &&
-        isValidNamedLeftExpression(newExpression.childAtIndex(0),
-                                   newOperatorType)) {
+    if (isFunctionAssignment(newExpression)) {
       Expression function = newExpression.childAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(
           record, static_cast<SymbolAbstract &>(function).name(),

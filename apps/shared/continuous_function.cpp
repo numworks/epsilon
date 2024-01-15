@@ -744,8 +744,7 @@ Expression ContinuousFunction::Model::expressionEquation(
         static_cast<Poincare::Function &>(leftExpression).name();
     const size_t functionNameLength = strlen(functionName);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
-        (record->fullName()[0] != k_unnamedRecordFirstChar &&
-         strncmp(record->fullName(), functionName, functionNameLength) == 0)) {
+        strncmp(record->fullName(), functionName, functionNameLength) == 0) {
       Expression functionSymbol = leftExpression.childAtIndex(0);
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {

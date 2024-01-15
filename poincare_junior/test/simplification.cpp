@@ -530,6 +530,7 @@ QUIZ_CASE(pcj_trigonometry) {
   simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
   simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0",
                 {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
 
   simplifies_to(
       "{cos(π×7/10),cos(π×7/5),cos(π×-7/8),cos(π×11/12),cos(π×13/6),sin(π×7/"

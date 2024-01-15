@@ -50,17 +50,18 @@ JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
   return static_cast<JuniorLayout&>(h);
 }
 
-JuniorLayout JuniorLayout::Juniorize(OLayout l) {
-  if (l.isUninitialized()) {
-    return static_cast<JuniorLayout&>(l);
-  }
-  if (l.type() == LayoutNode::Type::JuniorLayout) {
-    return static_cast<JuniorLayout&>(l);
-  }
-  PoincareJ::Tree* tree = PoincareJ::Layout::FromPoincareLayout(l);
-  JuniorLayout j = Builder(tree);
+JuniorLayout JuniorLayout::Builder(PoincareJ::Tree* tree) {
+  JuniorLayout result = Builder(const_cast<const PoincareJ::Tree*>(tree));
   tree->removeTree();
-  return j;
+  return result;
+}
+
+JuniorLayout JuniorLayout::Juniorize(OLayout l) {
+  if (l.isUninitialized() || l.type() == LayoutNode::Type::JuniorLayout) {
+    // l is already a junior layout
+    return static_cast<JuniorLayout&>(l);
+  }
+  return Builder(PoincareJ::Layout::FromPoincareLayout(l));
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,

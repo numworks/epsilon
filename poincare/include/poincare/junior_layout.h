@@ -73,6 +73,8 @@ class JuniorLayout final
   JuniorLayout(const OLayout& other) { *this = other; }
 
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
+  // Eat the tree
+  static JuniorLayout Builder(PoincareJ::Tree* tree);
   static JuniorLayout Juniorize(OLayout l);
   PoincareJ::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();

@@ -69,7 +69,6 @@ void LayoutField::ContentView::copySelection(PoincareJ::Context *context,
   char buffer[bufferSize];
   PoincareJ::Tree *t = selection.cloneSelection();
   Layout layoutToParse = JuniorLayout::Builder(t);
-  t->removeTree();
 
   layoutToParse.serializeParsedExpression(buffer, bufferSize,
                                           /* TODO context */ nullptr);

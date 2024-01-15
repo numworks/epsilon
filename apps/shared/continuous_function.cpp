@@ -676,29 +676,21 @@ Expression ContinuousFunction::Model::originalEquation(
       Symbol::SystemSymbol(), Symbol::Builder(symbol));
 }
 
-static bool isValidNamedLeftExpression(
-    const Expression e, ComparisonNode::OperatorType equationType) {
-  /* Examples of valid named expression : f(x)=, f(x)<, f(θ)=, f(t)=
-   * Examples of invalid named expression : cos(x)=, f(θ)<, f(t)<  */
-  if (e.type() != ExpressionNode::Type::Function ||
-      equationType == ComparisonNode::OperatorType::NotEqual) {
+static bool isFunctionAssignment(const Expression e) {
+  if (!ComparisonNode::IsBinaryEquality(e)) {
     return false;
   }
-  Expression functionSymbol = e.childAtIndex(0);
+  Expression leftExpression = e.childAtIndex(0);
+  if (leftExpression.type() != ExpressionNode::Type::Function) {
+    return false;
+  }
+  Expression functionSymbol = leftExpression.childAtIndex(0);
   return functionSymbol.isIdenticalTo(
              Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) ||
-         (equationType == ComparisonNode::OperatorType::Equal &&
-          (functionSymbol.isIdenticalTo(
-               Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
-           functionSymbol.isIdenticalTo(
-               Symbol::Builder(ContinuousFunction::k_polarSymbol))));
-}
-
-static bool isFunctionAssignment(const Expression e) {
-  ComparisonNode::OperatorType comparisonType;
-  return ComparisonNode::IsBinaryComparison(e, &comparisonType) &&
-         comparisonType == ComparisonNode::OperatorType::Equal &&
-         isValidNamedLeftExpression(e.childAtIndex(0), comparisonType);
+         functionSymbol.isIdenticalTo(
+             Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
+         functionSymbol.isIdenticalTo(
+             Symbol::Builder(ContinuousFunction::k_polarSymbol));
 }
 
 Expression ContinuousFunction::Model::expressionEquation(

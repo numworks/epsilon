@@ -41,7 +41,7 @@ class EditionPool final : public Pool {
   void executeAndDump(ActionWithContext action, void *context, const void *data,
                       void *address, int maxSize, Relax relax = k_defaultRelax);
   void executeAndStoreLayout(ActionWithContext action, void *context,
-                             const void *data, Poincare::JuniorLayout &layout,
+                             const void *data, Poincare::JuniorLayout *layout,
                              Relax relax = k_defaultRelax);
   uint16_t executeAndCache(ActionWithContext action, void *context,
                            const void *data, Relax relax = k_defaultRelax);

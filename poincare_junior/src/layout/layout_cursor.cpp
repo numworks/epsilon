@@ -1186,7 +1186,7 @@ void LayoutBufferCursor::execute(Action action, Context *context,
         /* The resulting EditionPool tree will be loaded back into
          * m_layoutBuffer and EditionPool will be flushed. */
       },
-      &executionContext, data, m_layout,
+      &executionContext, data, &m_layout,
       [](void *context) {
         // Default implementation illustrating how the context could be
         // relaxed ExecutionContext * executionContext =

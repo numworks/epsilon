@@ -39,7 +39,7 @@ void MakeAdditionImplicit(Poincare::JuniorLayout& layout) {
       [](void* context, const void* data) {
         MakeAdditionImplicit(static_cast<const Tree*>(data)->clone());
       },
-      nullptr, layout.tree(), layout);
+      nullptr, layout.tree(), &layout);
 }
 
 bool ContainsSmallCapitalE(const Tree* rack) {

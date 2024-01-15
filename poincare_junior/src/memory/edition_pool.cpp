@@ -132,12 +132,12 @@ void EditionPool::executeAndDump(ActionWithContext action, void *context,
 
 void EditionPool::executeAndStoreLayout(ActionWithContext action, void *context,
                                         const void *data,
-                                        Poincare::JuniorLayout &layout,
+                                        Poincare::JuniorLayout *layout,
                                         Relax relax) {
   assert(numberOfTrees() == 0);
   execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
   assert(Tree::FromBlocks(firstBlock())->isLayout());
-  layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(firstBlock()));
+  *layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(firstBlock()));
   flush();
 }
 

@@ -34,6 +34,10 @@ constexpr Sign Unknown{
 
 constexpr Sign PositiveInteger{.canBePositive = true, .isInteger = true};
 constexpr Sign NegativeInteger{.canBeNegative = true, .isInteger = true};
+constexpr Sign Integer{.canBeNull = true,
+                       .canBePositive = true,
+                       .canBeNegative = true,
+                       .isInteger = true};
 
 Sign Add(Sign s1, Sign s2);
 Sign Mult(Sign s1, Sign s2);

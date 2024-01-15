@@ -883,7 +883,6 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
   assert(symbol == k_unnamedExpressionSymbol);
-  bool isFunctionAssignment = false;
   // if c = "", we want to reinit the Expression
   if (!c || c[0] == 0) {
     return Expression();
@@ -898,7 +897,6 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
   if (ComparisonNode::IsBinaryComparison(expressionToStore, &comparisonType) &&
       isValidNamedLeftExpression(expressionToStore.childAtIndex(0),
                                  comparisonType)) {
-    isFunctionAssignment = true;
     Expression functionSymbol =
         expressionToStore.childAtIndex(0).childAtIndex(0);
     // Extract the CodePoint function's symbol. We know it is either x, t or θ
@@ -912,9 +910,6 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
       assert(functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));
       symbol = k_parametricSymbol;
     }
-  }
-
-  if (isFunctionAssignment) {
     // Do not replace symbol in f(x)=
     ExpressionModel::ReplaceSymbolWithUnknown(expressionToStore.childAtIndex(1),
                                               symbol);

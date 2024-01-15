@@ -129,20 +129,13 @@ class LayoutField : public EditableField {
 
     KDRect cursorRect() const override;
 
-    // PoincareJ::Tree* node() {
-    // return PoincareJ::Tree::FromBlocks(m_layoutBuffer.blocks());
-    // }
-
    private:
     int numberOfSubviews() const override {
       return 1 + TextCursorView::CursorFieldView::numberOfSubviews();
     }
     View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    // PoincareJ::BlockBuffer<PoincareJ::LayoutCursor::k_layoutBufferSize>
-    // m_layoutBuffer;
     PoincareJ::LayoutBufferCursor m_cursor;
-    // mutable Poincare::LayoutCursor m_cursor;
     LayoutViewWithCursor m_layoutView;
     bool m_isEditing;
   };

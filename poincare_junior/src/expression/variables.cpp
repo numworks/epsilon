@@ -149,14 +149,14 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables,
   assert(SharedEditionPool->isAfter(variables, expr));
   if (expr->isVariable()) {
     assert(depth <= Id(expr));
-    expr->cloneTreeOverTree(Variables::ToSymbol(variables, Id(expr) - depth));
+    expr->cloneTreeOverTree(ToSymbol(variables, Id(expr) - depth));
   }
   bool isParametric = expr->isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i++ == Parametric::FunctionIndex(expr)) {
       // beautify variable introduced by this scope
       // TODO check that name is available here or make new name
-      Variables::Replace(child, 0, expr->child(Parametric::k_variableIndex));
+      Replace(child, 0, expr->child(Parametric::k_variableIndex));
       // beautify outer variables
       BeautifyToName(child, variables, depth + 1);
       continue;

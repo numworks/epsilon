@@ -883,14 +883,13 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
   assert(symbol == k_unnamedExpressionSymbol);
-  Expression expressionToStore;
   bool isFunctionAssignment = false;
   // if c = "", we want to reinit the Expression
   if (!c || c[0] == 0) {
-    return expressionToStore;
+    return Expression();
   }
   /* Parse the expression to store as possible function assignment. */
-  expressionToStore = Expression::Parse(c, context, true, true);
+  Expression expressionToStore = Expression::Parse(c, context, true, true);
   if (expressionToStore.isUninitialized()) {
     return expressionToStore;
   }

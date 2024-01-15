@@ -897,10 +897,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
     return expressionToStore;
   }
   // Check if the equation is of the form f(x)=...
-  ComparisonNode::OperatorType comparisonType;
-  if (ComparisonNode::IsBinaryComparison(expressionToStore, &comparisonType) &&
-      isValidNamedLeftExpression(expressionToStore.childAtIndex(0),
-                                 comparisonType)) {
+  if (isFunctionAssignment(expressionToStore)) {
     Expression functionSymbol =
         expressionToStore.childAtIndex(0).childAtIndex(0);
     // Extract the CodePoint function's symbol. We know it is either x, t or θ

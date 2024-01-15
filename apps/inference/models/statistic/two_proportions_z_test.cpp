@@ -24,27 +24,18 @@ double TwoProportionsZTest::estimateValue(int index) {
 }
 
 Poincare::Layout TwoProportionsZTest::estimateLayout(int index) const {
-  // contains the layout p1-p2 in which we pick p1, p2 and p
-  Poincare::Layout layout = TwoProportions::EstimateLayout(&m_p1p2Layout);
-  switch (static_cast<EstimatesOrder>(index)) {
-    case EstimatesOrder::P1:  // p̂1
-    case EstimatesOrder::P2:  // p̂2
-      return Poincare::HorizontalLayout::Builder(
-          Poincare::CombinedCodePointsLayout::Builder(
-              'p', UCodePointCombiningCircumflex),
-          Poincare::VerticalOffsetLayout::Builder(
-              Poincare::CodePointLayout::Builder(
-                  static_cast<EstimatesOrder>(index) == EstimatesOrder::P1
-                      ? '1'
-                      : '2'),
-              Poincare::VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-    case EstimatesOrder::Pooled:  // p̂
-      return Poincare::CombinedCodePointsLayout::Builder(
-          'p', UCodePointCombiningCircumflex);
-    default:
-      assert(false);
-      return Poincare::Layout();
+  Poincare::Layout pHat = Poincare::CombinedCodePointsLayout::Builder(
+      'p', UCodePointCombiningCircumflex);
+  if (static_cast<EstimatesOrder>(index) == EstimatesOrder::Pooled) {
+    return pHat;  // p̂
   }
+  return Poincare::HorizontalLayout::Builder(
+      pHat,
+      Poincare::VerticalOffsetLayout::Builder(
+          Poincare::CodePointLayout::Builder(
+              static_cast<EstimatesOrder>(index) == EstimatesOrder::P1 ? '1'
+                                                                       : '2'),
+          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
 I18n::Message TwoProportionsZTest::estimateDescription(int index) {

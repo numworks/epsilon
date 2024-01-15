@@ -39,6 +39,9 @@ bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) {
 }
 
 JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
+  if (!tree) {
+    return JuniorLayout();
+  }
   size_t size = tree->treeSize();
   void* bufferNode =
       TreePool::sharedPool->alloc(sizeof(JuniorLayoutNode) + size);

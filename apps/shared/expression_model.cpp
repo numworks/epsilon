@@ -219,14 +219,13 @@ void ExpressionModel::tidyDownstreamPoolFrom(TreeNode* treePoolCursor) const {
 
 Poincare::Expression ExpressionModel::buildExpressionFromText(
     const char* c, CodePoint symbol, Poincare::Context* context) const {
-  Expression expressionToStore;
   // if c = "", we want to reinit the Expression
-  if (c && *c != 0) {
-    // Compute the expression to store, without replacing symbols
-    expressionToStore = Expression::Parse(c, context);
-    expressionToStore = ReplaceSymbolWithUnknown(expressionToStore, symbol);
+  if (!c || c[0] == 0) {
+    return Expression();
   }
-  return expressionToStore;
+  // Compute the expression to store, without replacing symbols
+  Expression expressionToStore = Expression::Parse(c, context);
+  return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 
 Poincare::Expression ExpressionModel::ReplaceSymbolWithUnknown(

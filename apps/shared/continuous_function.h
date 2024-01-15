@@ -34,6 +34,8 @@ class ContinuousFunction : public Function {
   // Create a record with baseName
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus *error,
                                      const char *baseName, KDColor color);
+  static bool IsFunctionAssignment(const Poincare::Expression e);
+
   // Builder
   ContinuousFunction(Ion::Storage::Record record = Record());
 

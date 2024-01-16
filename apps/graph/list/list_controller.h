@@ -74,6 +74,7 @@ class ListController : public Shared::FunctionListController,
   Escher::LayoutField* layoutField() override {
     return m_editableCell.expressionCell()->layoutField();
   }
+  bool isValidExpressionModel(Poincare::Expression expression) override;
 
   void deleteParametricComponentsOfSelectedModel();
   void storeParametricComponentsOfSelectedModel();

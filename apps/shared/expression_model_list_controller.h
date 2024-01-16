@@ -97,6 +97,9 @@ class ExpressionModelListController
     assert(false);
     return true;
   }
+  virtual bool isValidExpressionModel(Poincare::Expression expression) {
+    return true;
+  }
 };
 
 }  // namespace Shared

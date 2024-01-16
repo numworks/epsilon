@@ -12,8 +12,8 @@ namespace Poincare {
 namespace XNTHelpers {
 
 // Cycles
-constexpr static int k_maxCycleSize = 5;
-constexpr static CodePoint k_defaultXNTCycle[] = {
+constexpr int k_maxCycleSize = 5;
+constexpr CodePoint k_defaultXNTCycle[] = {
     Shared::ContinuousFunction::k_cartesianSymbol,
     Shared::Sequence::k_sequenceSymbol,
     Shared::ContinuousFunction::k_parametricSymbol,
@@ -38,7 +38,7 @@ CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle,
                                   size_t* cycleSize);
 
 // Parametered functions
-constexpr static struct {
+constexpr struct {
   AliasesList aliasesList;
   LayoutNode::Type layoutType;
   const CodePoint* XNTcycle;
@@ -57,11 +57,10 @@ constexpr static struct {
     {ListSequence::s_functionHelper.aliasesList(),
      LayoutNode::Type::ListSequenceLayout, k_defaultDiscreteXNTCycle},
 };
-constexpr static int k_numberOfFunctions = std::size(k_parameteredFunctions);
-constexpr static int k_indexOfMainExpression =
+constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
+constexpr int k_indexOfMainExpression =
     ParameteredExpression::ParameteredChildIndex();
-constexpr static int k_indexOfParameter =
-    ParameteredExpression::ParameterChildIndex();
+constexpr int k_indexOfParameter = ParameteredExpression::ParameterChildIndex();
 
 bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
                      int xntIndex, size_t* cycleSize);

@@ -13,7 +13,7 @@ class StackView : public View {
 
   using Mask = uint8_t;
 
-  static constexpr uint8_t k_maxNumberOfStacks = sizeof(Mask) * 8;
+  static constexpr uint8_t k_maxDepth = sizeof(Mask) * 8;
 
   StackView(Style style, bool extendVertically);
   int8_t numberOfStacks() const { return m_stackHeaderViews.length(); }
@@ -40,7 +40,7 @@ class StackView : public View {
   // Returns the index in m_stackViews for a given display index
   int stackHeaderIndex(int displayIndex);
 
-  Ion::RingBuffer<StackHeaderView, k_maxNumberOfStacks> m_stackHeaderViews;
+  Ion::RingBuffer<StackHeaderView, k_maxDepth> m_stackHeaderViews;
   SolidColorView m_borderView;
   View* m_contentView;
   Style m_style;

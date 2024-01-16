@@ -31,9 +31,10 @@ class InputSlopeController : public InputCategoricalController {
   void viewWillAppear() override;
 
  private:
-  class PrivateStackViewController : public Escher::StackViewController {
+  class PrivateStackViewController
+      : public Escher::StackViewController::Default {
    public:
-    using Escher::StackViewController::StackViewController;
+    using Escher::StackViewController::Default::Default;
     TitlesDisplay titlesDisplay() override { return m_titlesDisplay; }
     void setTitlesDisplay(TitlesDisplay titlesDisplay) {
       m_titlesDisplay = titlesDisplay;

@@ -80,7 +80,7 @@ class App : public Shared::StoreApp {
     }
     StoreController m_storeController;
     Escher::ButtonRowController m_storeHeader;
-    Escher::StackViewController m_storeStackViewController;
+    Escher::StackViewController::Default m_storeStackViewController;
   };
   struct GraphTab : public Escher::Tab {
     GraphTab();
@@ -91,7 +91,7 @@ class App : public Shared::StoreApp {
     GraphController m_graphController;
     Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
     Escher::ButtonRowController m_graphHeader;
-    Escher::StackViewController m_graphStackViewController;
+    Escher::StackViewController::Default m_graphStackViewController;
   };
   struct CalculationTab : public Escher::Tab {
     CalculationTab();

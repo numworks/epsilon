@@ -26,8 +26,8 @@ void ExpressionsListController::InnerListController::didBecomeFirstResponder() {
 ExpressionsListController::ExpressionsListController(
     EditExpressionController* editExpressionController,
     bool highlightWholeCells, SelectableListViewDelegate* delegate)
-    : StackViewController(nullptr, &m_listController,
-                          StackViewController::Style::PurpleWhite),
+    : StackViewController::Default(nullptr, &m_listController,
+                                   StackViewController::Style::PurpleWhite),
       m_listController(this, delegate),
       m_editExpressionController(editExpressionController) {
   for (int i = 0; i < k_maxNumberOfRows; i++) {

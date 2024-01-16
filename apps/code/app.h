@@ -78,7 +78,7 @@ class App : public Shared::SharedApp {
   ConsoleController m_consoleController;
   Escher::ButtonRowController m_listFooter;
   MenuController m_menuController;
-  Escher::StackViewController m_codeStackViewController;
+  Escher::StackViewController::Default m_codeStackViewController;
   PythonToolboxController m_toolbox;
   PythonVariableBoxController m_variableBox;
 #if PLATFORM_DEVICE

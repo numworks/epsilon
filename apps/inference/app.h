@@ -123,7 +123,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   HypothesisController m_hypothesisController;
   TestController m_testController;
   Shared::MenuController m_menuController;
-  Escher::StackViewController m_stackViewController;
+  Escher::StackViewController::Default m_stackViewController;
   Escher::InputViewController m_inputViewController;
   /* Buffer used for allocating table cells to avoid duplicating required
    * space for these memory-needy tables. */

@@ -60,7 +60,7 @@ class App : public Shared::MathApp {
   IntervalController m_intervalController;
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
-  Escher::StackViewController m_stackViewController;
+  Escher::StackViewController::Default m_stackViewController;
   SystemOfEquations m_system;
   SolverContext m_context;
 };

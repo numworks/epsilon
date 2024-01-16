@@ -73,7 +73,7 @@ class App : public Shared::MathApp {
   ParametersController m_parametersController;
   InterestMenuController m_interestMenuController;
   MenuController m_menuController;
-  Escher::StackViewController m_stackViewController;
+  Escher::StackViewController::Default m_stackViewController;
 };
 
 }  // namespace Finance

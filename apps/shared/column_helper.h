@@ -100,7 +100,7 @@ class StoreColumnHelper {
   ClearColumnHelper* m_clearColumnHelper;
   /* Fill with formula */
   FormulaTemplateMenuController m_templateController;
-  Escher::StackViewController m_templateStackController;
+  Escher::StackViewController::Default m_templateStackController;
   Poincare::Context* m_parentContext;
 };
 

@@ -80,7 +80,7 @@ class ListController : public Shared::FunctionListController,
   EditableFunctionCell m_editableCell;
   FunctionParameterController* m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
-  Escher::StackViewController m_modelsStackController;
+  Escher::StackViewController::Default m_modelsStackController;
   bool m_parameterColumnSelected;
 };
 

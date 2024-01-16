@@ -13,12 +13,20 @@ static_assert(
     k_maxNumberOfStacks < 8,
     "Bit mask representation relies on less than 8 stacks (uint8_t).");
 
+/* Use StackViewController::Default when possible. If the app needs more
+ * view stack depth, use StackViewController::Custom<N> to have a custom
+ * depth between 1 and 8. Always use pointers on StackViewController. */
+
+template <unsigned Capacity>
+class CustomSizeStackViewController;
+
 class StackViewController : public ViewController {
  public:
+  using Default = CustomSizeStackViewController<7>;
+  template <int Depth>
+  using Custom = CustomSizeStackViewController<Depth>;
+
   typedef StackView::Style Style;
-  StackViewController(Responder* parentResponder,
-                      ViewController* rootViewController,
-                      StackView::Style style, bool extendVertically = true);
 
   /* Push creates a new StackView and adds it */
   void push(ViewController* vc);
@@ -43,7 +51,12 @@ class StackViewController : public ViewController {
                                         headersOverlapContent,
                                         headersContentBorderColor);
   }
-  constexpr static uint8_t k_maxNumberOfChildren = k_maxNumberOfStacks;
+
+ protected:
+  StackViewController(int capacity, ViewController** stackBase,
+                      Responder* parentResponder,
+                      ViewController* rootViewController,
+                      StackView::Style style, bool extendVertically);
 
  private:
   StackView m_view;
@@ -54,7 +67,6 @@ class StackViewController : public ViewController {
   void dismissPotentialModal();
   virtual void didExitPage(ViewController* controller) const;
   virtual void willOpenPage(ViewController* controller) const;
-  ViewController* m_childrenController[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;
   bool m_displayedAsModal;
@@ -62,6 +74,28 @@ class StackViewController : public ViewController {
    * m_headersDisplayMask = 0b11111011   ->  shouldn't display
    * m_stackViews[numberOfStacks - 1 - 2]. */
   uint8_t m_headersDisplayMask;
+
+ private:
+  const int m_capacity;
+  ViewController** const m_childrenController;
+};
+
+template <unsigned Capacity>
+class CustomSizeStackViewController : public StackViewController {
+ public:
+  static_assert(Capacity <= k_maxNumberOfStacks);
+
+  constexpr static int k_maxNumberOfChildren = Capacity;
+
+  CustomSizeStackViewController(Responder* parentResponder,
+                                ViewController* rootViewController,
+                                StackView::Style style,
+                                bool extendVertically = true)
+      : StackViewController(Capacity, m_stack, parentResponder,
+                            rootViewController, style, extendVertically) {}
+
+ private:
+  ViewController* m_stack[Capacity];
 };
 
 }  // namespace Escher

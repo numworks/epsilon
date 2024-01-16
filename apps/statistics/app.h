@@ -84,7 +84,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     }
     StoreController m_storeController;
     Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
-    Escher::StackViewController m_storeStackViewController;
+    Escher::StackViewController::Default m_storeStackViewController;
   };
 
   struct GraphTab : public Escher::Tab {
@@ -107,7 +107,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     Escher::ButtonRowController m_histogramHeader;
     GraphTypeController m_graphTypeController;
     Escher::AlternateViewController m_graphController;
-    Escher::StackViewController m_graphMenuStackViewController;
+    Escher::StackViewController::Default m_graphMenuStackViewController;
     Escher::AlternateEmptyViewController
         m_graphMenuAlternateEmptyViewController;
   };

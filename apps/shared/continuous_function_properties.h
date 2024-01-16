@@ -146,6 +146,7 @@ class ContinuousFunctionProperties {
   bool isEquality() const {
     return equationType() == Poincare::ComparisonNode::OperatorType::Equal;
   }
+  bool isEnabledParametric() const { return isEnabled() && isParametric(); }
 
   bool canBeActiveInTable() const {
     return !isAlongY() && !isOfDegreeTwo() && isEquality() && !isScatterPlot();

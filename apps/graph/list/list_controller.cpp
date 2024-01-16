@@ -363,7 +363,7 @@ bool ListController::ParametricComponentsNamesAreFree(char *baseName,
 void ListController::deleteParametricComponentsOfSelectedModel() {
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
-  if (!f->properties().isParametric() || !f->properties().isEnabled()) {
+  if (!f->properties().isEnabledParametric()) {
     return;
   }
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
@@ -375,7 +375,7 @@ void ListController::deleteParametricComponentsOfSelectedModel() {
 void ListController::storeParametricComponentsOfSelectedModel() {
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
-  if (!f->properties().isParametric() || !f->properties().isEnabled()) {
+  if (!f->properties().isEnabledParametric()) {
     return;
   }
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;

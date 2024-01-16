@@ -23,10 +23,6 @@ class StackViewController : public ViewController {
 
   typedef StackView::Style Style;
 
-  static_assert(
-      StackView::k_maxNumberOfStacks <= 8,
-      "masks are too small to represent k_maxNumberOfStacks elements.");
-
   /* Push creates a new StackView and adds it */
   void push(ViewController* vc);
   void pop();
@@ -72,7 +68,7 @@ class StackViewController : public ViewController {
   /* Represents the stacks to display, _starting from the end_.
    * m_headersDisplayMask = 0b11111011   ->  shouldn't display
    * m_stackViews[numberOfStacks - 1 - 2]. */
-  uint8_t m_headersDisplayMask;
+  StackView::Mask m_headersDisplayMask;
 
  private:
   const int m_capacity;

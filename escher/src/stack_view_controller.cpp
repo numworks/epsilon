@@ -166,7 +166,7 @@ void StackViewController::updateStack(
     ViewController::TitlesDisplay titleDisplay) {
   /* Update the header display mask */
   // If NeverDisplayOwnTitle, we show all other headers -> DisplayAllTitles
-  m_headersDisplayMask = static_cast<uint8_t>(titleDisplay);
+  m_headersDisplayMask = static_cast<StackView::Mask>(titleDisplay);
 
   /* Load the stack view */
   m_view.resetStack();

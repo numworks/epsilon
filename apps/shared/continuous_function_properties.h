@@ -6,6 +6,7 @@
 #include <poincare/comparison.h>
 #include <poincare/conic.h>
 #include <poincare/helpers.h>
+#include <poincare/symbol.h>
 
 /* ContinuousFunctionProperties is an object containing:
  *  - A pointer to a const function type
@@ -17,11 +18,14 @@ namespace Shared {
 class ContinuousFunctionProperties {
  public:
   // === Symbols ===
-  constexpr static CodePoint k_cartesianSymbol = 'x';
-  constexpr static CodePoint k_parametricSymbol = 't';
-  constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
-  constexpr static CodePoint k_radiusSymbol = 'r';
-  constexpr static CodePoint k_ordinateSymbol = 'y';
+  constexpr static CodePoint k_cartesianSymbol =
+      Poincare::Symbol::k_cartesianSymbol;
+  constexpr static CodePoint k_parametricSymbol =
+      Poincare::Symbol::k_parametricSymbol;
+  constexpr static CodePoint k_polarSymbol = Poincare::Symbol::k_polarSymbol;
+  constexpr static CodePoint k_radiusSymbol = Poincare::Symbol::k_radiusSymbol;
+  constexpr static CodePoint k_ordinateSymbol =
+      Poincare::Symbol::k_ordinateSymbol;
   constexpr static char k_ordinateName[2] = {k_ordinateSymbol, '\0'};
 
   /* Units are not handled when plotting function. The default unit does not

@@ -3,9 +3,10 @@
 
 #include <escher/bordered.h>
 #include <escher/view.h>
-#include <escher/view_controller.h>
 
 namespace Escher {
+
+class ViewController;
 
 class StackHeaderView : public View, public Bordered {
  public:

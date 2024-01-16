@@ -76,7 +76,7 @@ class ListController : public Shared::ExpressionModelListController,
   Escher::EditableExpressionModelCell m_editableCell;
   Escher::AbstractButtonCell m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
-  Escher::StackViewController m_modelsStackController;
+  Escher::StackViewController::Default m_modelsStackController;
 };
 
 }  // namespace Solver

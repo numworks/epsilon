@@ -16,7 +16,7 @@ namespace Calculation {
 class EditExpressionController;
 
 class ExpressionsListController
-    : public Escher::StackViewController,
+    : public Escher::StackViewController::Default,
       public Escher::StandardMemoizedListViewDataSource,
       public Escher::SelectableListViewDataSource {
  public:

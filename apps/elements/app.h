@@ -57,7 +57,7 @@ class App : public Shared::AppWithStoreMenu {
  private:
   App(Snapshot *snapshot);
 
-  Escher::StackViewController m_stackController;
+  Escher::StackViewController::Default m_stackController;
   MainController m_mainController;
   ElementsViewDataSource m_dataSource;
 };

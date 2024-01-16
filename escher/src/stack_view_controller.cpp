@@ -8,7 +8,9 @@ extern "C" {
 
 namespace Escher {
 
-StackViewController::StackViewController(Responder* parentResponder,
+StackViewController::StackViewController(int capacity,
+                                         ViewController** stackBase,
+                                         Responder* parentResponder,
                                          ViewController* rootViewController,
                                          StackView::Style style,
                                          bool extendVertically)
@@ -17,7 +19,10 @@ StackViewController::StackViewController(Responder* parentResponder,
       m_numberOfChildren(0),
       m_isVisible(false),
       m_displayedAsModal(false),
-      m_headersDisplayMask(~0) {
+      m_headersDisplayMask(~0),
+      m_capacity(capacity),
+      m_childrenController(stackBase) {
+  assert(m_numberOfChildren + 1 < capacity);
   m_childrenController[m_numberOfChildren++] = rootViewController;
   rootViewController->setParentResponder(this);
 }
@@ -35,7 +40,7 @@ ViewController* StackViewController::topViewController() {
 }
 
 void StackViewController::push(ViewController* vc) {
-  assert(m_numberOfChildren < k_maxNumberOfStacks);
+  assert(m_numberOfChildren < m_capacity);
   /* Add the frame to the model */
   pushModel(vc);
   if (!m_isVisible) {

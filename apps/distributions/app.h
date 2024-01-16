@@ -66,7 +66,7 @@ class App : public Shared::MathApp {
   CalculationController m_calculationController;
   ParametersController m_parameterController;
   DistributionController m_distributionController;
-  Escher::StackViewController m_stackViewController;
+  Escher::StackViewController::Default m_stackViewController;
 };
 
 }  // namespace Distributions

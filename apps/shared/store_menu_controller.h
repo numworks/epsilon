@@ -67,7 +67,7 @@ class StoreMenuController : public Escher::ModalViewController,
   void openAbortWarning();
 
   char m_savedDraftTextBuffer[Escher::AbstractTextField::MaxBufferSize()];
-  Escher::StackViewController m_stackViewController;
+  Escher::StackViewController::Default m_stackViewController;
   InnerListController m_listController;
   Escher::EditableExpressionCell m_cell;
   Escher::MessagePopUpControllerWithCustomCancel m_abortController;

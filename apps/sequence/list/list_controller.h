@@ -91,7 +91,7 @@ class ListController : public Shared::FunctionListController {
   EditableSequenceCell m_editableCell;
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
-  Escher::StackViewController m_typeStackController;
+  Escher::StackViewController::Default m_typeStackController;
   SequenceToolboxDataSource m_sequenceToolboxDataSource;
   KDCoordinate m_titlesColumnWidth;
   bool m_parameterColumnSelected;

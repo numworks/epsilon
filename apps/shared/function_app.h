@@ -59,7 +59,7 @@ class FunctionApp : public MathApp {
     }
     Escher::ButtonRowController m_listFooter;
     Escher::ButtonRowController m_listHeader;
-    Escher::StackViewController m_listStackViewController;
+    Escher::StackViewController::Default m_listStackViewController;
   };
   struct GraphTab : public Escher::Tab {
     static constexpr I18n::Message k_title = I18n::Message::GraphTab;
@@ -69,7 +69,7 @@ class FunctionApp : public MathApp {
     }
     Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
     Escher::ButtonRowController m_graphHeader;
-    Escher::StackViewController m_graphStackViewController;
+    Escher::StackViewController::Default m_graphStackViewController;
   };
   struct ValuesTab : public Escher::Tab {
     static constexpr I18n::Message k_title = I18n::Message::ValuesTab;
@@ -79,7 +79,7 @@ class FunctionApp : public MathApp {
     }
     Escher::AlternateEmptyViewController m_valuesAlternateEmptyViewController;
     Escher::ButtonRowController m_valuesHeader;
-    Escher::StackViewController m_valuesStackViewController;
+    Escher::StackViewController::Default m_valuesStackViewController;
   };
 
   Escher::TabUnionViewController m_tabViewController;

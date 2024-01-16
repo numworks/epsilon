@@ -25,7 +25,7 @@ class App : public Shared::SharedApp {
  private:
   App(Snapshot* snapshot);
   MainController m_mainController;
-  Escher::StackViewController m_stackViewController;
+  Escher::StackViewController::Default m_stackViewController;
 };
 
 }  // namespace Settings

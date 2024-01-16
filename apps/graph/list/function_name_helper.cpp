@@ -34,8 +34,9 @@ bool ParametricComponentsNamesAreFree(char *baseName, size_t baseNameLength,
                                        false);
 }
 
-static bool functionNameIsFree(char *buffer, size_t length, size_t bufferSize,
+static bool functionNameIsFree(char *buffer, size_t bufferSize,
                                CodePoint symbol) {
+  size_t length = strlen(buffer);
   return GlobalContext::SymbolAbstractNameIsFree(buffer) &&
          (symbol != ContinuousFunction::k_parametricSymbol ||
           ParametricComponentsNamesAreFree(buffer, length, bufferSize));
@@ -57,7 +58,7 @@ int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
     for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
       length = SerializationHelper::CodePoint(buffer, bufferSize,
                                               k_defaultLetterNames[i]);
-      if (functionNameIsFree(buffer, length, bufferSize, symbol)) {
+      if (functionNameIsFree(buffer, bufferSize, symbol)) {
         return length;
       }
     }
@@ -71,7 +72,7 @@ int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
         Poincare::PrintInt::Left(i, buffer + length, bufferSize - length);
     length += l;
     buffer[length] = 0;
-    if (functionNameIsFree(buffer, length, bufferSize, symbol)) {
+    if (functionNameIsFree(buffer, bufferSize, symbol)) {
       return length;
     }
     length -= l;

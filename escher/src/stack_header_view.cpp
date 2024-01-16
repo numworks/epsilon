@@ -1,5 +1,6 @@
 #include <escher/metric.h>
 #include <escher/stack_header_view.h>
+#include <escher/view_controller.h>
 extern "C" {
 #include <assert.h>
 }

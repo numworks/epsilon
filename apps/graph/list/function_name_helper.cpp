@@ -80,6 +80,46 @@ int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
   return 0;
 }
 
+bool ParametricComponentsNameError(Expression expression,
+                                   ContinuousFunction *f) {
+  /* Check that parametric components name are free if we are defining a
+   * parametric function. */
+  if (!ContinuousFunction::IsFunctionAssignment(expression)) {
+    // The user is not defining a function
+    return false;
+  }
+  Expression function = expression.childAtIndex(0);
+  Expression functionSymbol = function.childAtIndex(0);
+  Expression matrix = expression.childAtIndex(1);
+  if (!functionSymbol.isIdenticalTo(
+          Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
+      matrix.type() != ExpressionNode::Type::Matrix ||
+      static_cast<const Matrix &>(matrix).numberOfRows() != 2 ||
+      static_cast<const Matrix &>(matrix).numberOfColumns() != 1) {
+    // The user is not defining a parametric function
+    return false;
+  }
+  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+  char functionName[bufferSize];
+  assert(function.type() == ExpressionNode::Type::Function);
+  strlcpy(functionName, static_cast<Poincare::Function &>(function).name(),
+          bufferSize);
+  size_t functionNameLength = strlen(functionName);
+  assert(f->fullName() != nullptr);
+  bool willDefineNewParametricComponents =
+      GlobalContext::SymbolAbstractNameIsFree(functionName) ||
+      (strncmp(f->fullName(), functionName, functionNameLength) == 0 &&
+       !f->properties().isEnabledParametric());
+  if (willDefineNewParametricComponents &&
+      !FunctionNameHelper::ParametricComponentsNamesAreFree(
+          functionName, functionNameLength, bufferSize)) {
+    // Parametric components names are not free
+    return true;
+  }
+  // Parametric components names are free
+  return false;
+}
+
 }  // namespace FunctionNameHelper
 
 }  // namespace Graph

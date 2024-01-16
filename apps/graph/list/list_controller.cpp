@@ -368,45 +368,13 @@ void ListController::storeParametricComponentsOfSelectedModel() {
 }
 
 bool ListController::isValidExpressionModel(Expression expression) {
-  /* Check that parametric components name are free if we are defining a
-   * parametric function. */
-  if (!ContinuousFunction::IsFunctionAssignment(expression)) {
-    // The user is not defining a function --> no problem
-    return true;
-  }
-  Expression function = expression.childAtIndex(0);
-  Expression functionSymbol = function.childAtIndex(0);
-  Expression matrix = expression.childAtIndex(1);
-  if (!functionSymbol.isIdenticalTo(
-          Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
-      matrix.type() != ExpressionNode::Type::Matrix ||
-      static_cast<const Matrix &>(matrix).numberOfRows() != 2 ||
-      static_cast<const Matrix &>(matrix).numberOfColumns() != 1) {
-    // The user is not defining a parametric function --> no problem
-    return true;
-  }
-  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
-  char functionName[bufferSize];
-  assert(function.type() == ExpressionNode::Type::Function);
-  strlcpy(functionName, static_cast<Poincare::Function &>(function).name(),
-          bufferSize);
-  size_t functionNameLength = strlen(functionName);
-  Ion::Storage::Record record = modelStore()->recordAtIndex(selectedRow());
-  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(record);
-  assert(record.fullName() != nullptr);
-  bool willDefineNewParametricComponents =
-      Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
-      (strncmp(record.fullName(), functionName, functionNameLength) == 0 &&
-       !f->properties().isEnabledParametric());
-  if (willDefineNewParametricComponents &&
-      !FunctionNameHelper::ParametricComponentsNamesAreFree(
-          functionName, functionNameLength, bufferSize)) {
-    /* Parametric components names are not free --> the user needs to change the
-     * name of the function */
+  ExpiringPointer<ContinuousFunction> f =
+      modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  if (FunctionNameHelper::ParametricComponentsNameError(expression,
+                                                        f.pointer())) {
     App::app()->displayWarning(I18n::Message::ParametricNameError);
     return false;
   }
-  /* Parametric components names are free --> no problem */
   return true;
 }
 

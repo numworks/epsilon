@@ -81,7 +81,7 @@ class StackViewController : public ViewController {
 template <unsigned Capacity>
 class CustomSizeStackViewController : public StackViewController {
  public:
-  static_assert(Capacity <= StackView::k_maxNumberOfStacks);
+  static_assert(Capacity <= StackView::k_maxDepth);
 
   constexpr static int k_maxNumberOfChildren = Capacity;
 

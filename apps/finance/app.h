@@ -30,19 +30,18 @@ class App : public Shared::MathApp {
    public:
     /* At most 3 nested menus from MenuController :
      * InterestMenuController, ParametersController and ResultController */
-    constexpr static uint8_t k_maxNumberOfStacks = 3;
+    constexpr static uint8_t k_maxDepth = 3;
 
     App *unpack(Escher::Container *container) override;
     const Descriptor *descriptor() const override;
     void reset() override;
-    Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfStacks>
-        *pageQueue() {
+    Ion::RingBuffer<Escher::ViewController *, k_maxDepth> *pageQueue() {
       return &m_pageQueue;
     }
     Data *data() { return &m_data; }
 
    private:
-    Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfStacks> m_pageQueue;
+    Ion::RingBuffer<Escher::ViewController *, k_maxDepth> m_pageQueue;
     Data m_data;
   };
   TELEMETRY_ID("Finance");

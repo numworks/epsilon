@@ -21,6 +21,13 @@ bool ResultsGoodnessTabController::handleEvent(Ion::Events::Event event) {
   return Escher::TabViewController::handleEvent(event);
 }
 
+// ResultsGoodnessTabController::MainResultsController
+
+const char* ResultsGoodnessTabController::MainResultsController::title() {
+  m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), true);
+  return m_titleBuffer;
+}
+
 // ResultsGoodnessTabController::ContributionsController
 
 ResultsGoodnessTabController::ContributionsController::ContributionsController(

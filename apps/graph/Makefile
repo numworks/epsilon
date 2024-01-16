@@ -1,6 +1,10 @@
 apps += Graph::App
 app_headers += apps/graph/app.h
 
+app_graph_test_src = $(addprefix apps/graph/,\
+  list/function_name_helper.cpp \
+)
+
 app_graph_src = $(addprefix apps/graph/,\
   app.cpp \
   graph/area_between_curves_graph_controller.cpp \
@@ -40,6 +44,7 @@ i18n_files += $(call i18n_without_universal_for,graph/i18n/base)
 tests_src += $(addprefix apps/graph/test/,\
   caching.cpp \
   helper.cpp \
+  function_names.cpp \
   function_properties.cpp \
 )
 

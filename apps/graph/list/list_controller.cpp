@@ -8,6 +8,7 @@
 #include <poincare/symbol_abstract.h>
 
 #include "../app.h"
+#include "function_name_helper.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -76,8 +77,7 @@ void ListController::fillWithDefaultFunctionEquation(char *buffer,
     length = SerializationHelper::CodePoint(
         buffer, bufferSize, ContinuousFunction::k_ordinateSymbol);
   } else {
-    length =
-        m_modelsParameterController.DefaultName(buffer, bufferSize, symbol);
+    length = FunctionNameHelper::DefaultName(buffer, bufferSize, symbol);
     assert(0 < length && length < bufferSize - 1);
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, '(');
@@ -311,17 +311,10 @@ ContinuousFunctionStore *ListController::modelStore() const {
   return App::app()->functionStore();
 }
 
-static void addSuffixForParametricComponent(char *baseName,
-                                            size_t baseNameLength,
-                                            size_t bufferSize, bool first) {
-  SerializationHelper::CodePoint(baseName + baseNameLength,
-                                 bufferSize - baseNameLength,
-                                 first ? 'x' : 'y');
-}
-
 static void deleteParametricComponent(char *baseName, size_t baseNameLength,
                                       size_t bufferSize, bool first) {
-  addSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
+  FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
+                                                      bufferSize, first);
   Ion::Storage::Record record =
       Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
           baseName, Ion::Storage::parametricComponentExtension);
@@ -334,30 +327,16 @@ static void storeParametricComponent(char *baseName, size_t baseNameLength,
   assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Matrix &&
          e.numberOfChildren() == 2);
   Expression child = e.childAtIndex(first ? 0 : 1).clone();
-  addSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
+  FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
+                                                      bufferSize, first);
   child.storeWithNameAndExtension(baseName,
                                   Ion::Storage::parametricComponentExtension);
-}
-
-static bool parametricComponentNameIsFree(char *baseName, size_t baseNameLength,
-                                          size_t bufferSize, bool first) {
-  addSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
-  return Shared::GlobalContext::SymbolAbstractNameIsFree(baseName);
 }
 
 void ListController::DeleteParametricComponentsWithBaseName(
     char *baseName, size_t baseNameLength, size_t bufferSize) {
   deleteParametricComponent(baseName, baseNameLength, bufferSize, true);
   deleteParametricComponent(baseName, baseNameLength, bufferSize, false);
-}
-
-bool ListController::ParametricComponentsNamesAreFree(char *baseName,
-                                                      size_t baseNameLength,
-                                                      size_t bufferSize) {
-  return parametricComponentNameIsFree(baseName, baseNameLength, bufferSize,
-                                       true) &&
-         parametricComponentNameIsFree(baseName, baseNameLength, bufferSize,
-                                       false);
 }
 
 void ListController::deleteParametricComponentsOfSelectedModel() {
@@ -381,7 +360,8 @@ void ListController::storeParametricComponentsOfSelectedModel() {
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = f->name(buffer, bufferSize);
-  assert(ParametricComponentsNamesAreFree(buffer, length, bufferSize));
+  assert(FunctionNameHelper::ParametricComponentsNamesAreFree(buffer, length,
+                                                              bufferSize));
   Expression e = f->expressionClone();
   storeParametricComponent(buffer, length, bufferSize, e, true);
   storeParametricComponent(buffer, length, bufferSize, e, false);
@@ -419,8 +399,8 @@ bool ListController::isValidExpressionModel(Expression expression) {
       (strncmp(record.fullName(), functionName, functionNameLength) == 0 &&
        !f->properties().isEnabledParametric());
   if (willDefineNewParametricComponents &&
-      !ParametricComponentsNamesAreFree(functionName, functionNameLength,
-                                        bufferSize)) {
+      !FunctionNameHelper::ParametricComponentsNamesAreFree(
+          functionName, functionNameLength, bufferSize)) {
     /* Parametric components names are not free --> the user needs to change the
      * name of the function */
     App::app()->displayWarning(I18n::Message::ParametricNameError);

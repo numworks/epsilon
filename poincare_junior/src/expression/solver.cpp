@@ -67,8 +67,9 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
       SimplifyAndFindVariables(simplifiedEquationSet, *context, error);
   uint8_t numberOfVariables = variables->numberOfChildren();
   SwapTrees(&simplifiedEquationSet, &variables);
-  // TODO: [COMPLEXSIGN] Real or complex unknown depending on context
-  Variables::ProjectToId(simplifiedEquationSet, variables, Sign::Unknown);
+  // TODO: Use user settings for a RealUnkown sign ?
+  Variables::ProjectToId(simplifiedEquationSet, variables,
+                         Sign::ComplexUnknown);
   EditionReference result;
   if (*error == Error::NoError) {
     result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables,
@@ -199,9 +200,9 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
   EditionReference tree = equation->clone();
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
-    // TODO: [COMPLEXSIGN] Real or complex unknown depending on context
-    Tree* polynomial =
-        PolynomialParser::Parse(tree, Variables::Variable(i, Sign::Unknown));
+    // TODO: Use user settings for a RealUnkown sign ?
+    Tree* polynomial = PolynomialParser::Parse(
+        tree, Variables::Variable(i, Sign::ComplexUnknown));
     if (!polynomial->isPolynomial()) {
       // tree did not depend on variable. Continue.
       tree = polynomial;
@@ -256,9 +257,9 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
    * - Handle Nonreal and Undefined solutions.
    * - Handle approximate display.
    */
-  // TODO: [COMPLEXSIGN] Real or complex unknown depending on context
-  solution->moveTreeBeforeNode(
-      SharedEditionPool->push<BlockType::Variable>(variableId, Sign::Unknown));
+  // TODO: Use user settings for a RealUnkown sign ?
+  solution->moveTreeBeforeNode(SharedEditionPool->push<BlockType::Variable>(
+      variableId, Sign::ComplexUnknown));
   solution->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
   Simplification::DeepSystematicReduce(solution);
   Simplification::AdvancedReduction(solution);

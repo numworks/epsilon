@@ -25,7 +25,7 @@ uint8_t Parametric::FunctionIndex(const Tree* t) {
   }
 }
 
-Sign::Sign Parametric::VariableSign(const Tree* t) {
+Sign::ComplexSign Parametric::VariableSign(const Tree* t) {
   switch (t->type()) {
     case BlockType::Derivative:
     case BlockType::Integral:

@@ -175,7 +175,7 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
 template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Variable>(
-    Block* block, size_t blockIndex, uint8_t id, Sign::Sign sign) {
+    Block* block, size_t blockIndex, uint8_t id, Sign::ComplexSign sign) {
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, BlockType::Variable, id, Sign::GetValue(sign));
 }

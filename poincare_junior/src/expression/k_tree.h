@@ -84,7 +84,7 @@ constexpr auto KMult = KNAry<BlockType::Multiplication>();
 constexpr auto KList = KNAry<BlockType::List>();
 constexpr auto KSet = KNAry<BlockType::Set>();
 
-template <uint8_t Id, Sign::Sign sign>
+template <uint8_t Id, Sign::ComplexSign sign>
 constexpr auto KVar = KTree<BlockType::Variable, Id, GetValue(sign)>();
 
 // Discrete local variable

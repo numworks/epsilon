@@ -22,7 +22,7 @@ class Variables {
   // Used to store a Variable constant tree on the stack.
   class Variable {
    public:
-    Variable(uint8_t id, Sign::Sign sign);
+    Variable(uint8_t id, Sign::ComplexSign sign);
     operator const Tree*() const { return Tree::FromBlocks(m_blocks); }
 
    private:
@@ -32,11 +32,11 @@ class Variables {
   };
   // Push a Set with the free user symbols of the expression
   static Tree* GetUserSymbols(const Tree* t);
-  static void ProjectToId(Tree* t, const Tree* variables, Sign::Sign sign,
-                          uint8_t depth = 0);
+  static void ProjectToId(Tree* t, const Tree* variables,
+                          Sign::ComplexSign sign, uint8_t depth = 0);
   static void BeautifyToName(Tree* t, const Tree* variables, uint8_t depth = 0);
   static uint8_t Id(const Tree* variable);
-  static Sign::Sign GetSign(const Tree* variable);
+  static Sign::ComplexSign GetComplexSign(const Tree* variable);
 
   // On projected expressions
   static bool HasVariables(const Tree* t);
@@ -61,7 +61,7 @@ class Variables {
  private:
   static void GetUserSymbols(const Tree* t, Tree* set);
   static bool ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
-                            Sign::Sign sign);
+                            Sign::ComplexSign sign);
   static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);
 };

@@ -22,7 +22,8 @@ class Sequence : public Function {
   friend class SequenceStore;
 
  public:
-  constexpr static CodePoint k_sequenceSymbol = 'n';
+  constexpr static CodePoint k_sequenceSymbol =
+      Poincare::Symbol::k_sequenceSymbol;
   enum class Type : uint8_t {
     Explicit = 0,
     SingleRecurrence = 1,

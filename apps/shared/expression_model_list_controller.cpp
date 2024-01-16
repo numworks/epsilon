@@ -227,6 +227,9 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
                                                             event)) {
     return false;
   }
+  if (!isValidExpressionModel(parsedExpression)) {
+    return false;
+  }
   editSelectedRecordWithText(layoutField->text());
   finishEdition();
   layoutField->clearLayout();

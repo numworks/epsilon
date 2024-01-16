@@ -6,6 +6,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/matrix.h>
 #include <poincare/polynomial.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 
 #include "app.h"
@@ -16,13 +17,14 @@ using namespace Shared;
 namespace Solver {
 
 Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
-  char name[3];
+  constexpr size_t bufferSize = 3;
+  char name[bufferSize];
   static_assert(k_maxNumberOfEquations < 9,
                 "Equation name record might not fit");
   const char *const extensions[1] = {Ion::Storage::equationExtension};
-  name[0] = 'e';
+  size_t length = SerializationHelper::CodePoint(name, bufferSize, 'e');
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
-      name, 1, 3, extensions, 1, k_maxNumberOfEquations);
+      name, length, bufferSize, extensions, 1, k_maxNumberOfEquations);
   return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       name, Ion::Storage::equationExtension, nullptr, 0);
 }

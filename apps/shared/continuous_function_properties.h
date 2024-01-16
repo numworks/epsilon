@@ -22,7 +22,6 @@ class ContinuousFunctionProperties {
   constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
   constexpr static CodePoint k_radiusSymbol = 'r';
   constexpr static CodePoint k_ordinateSymbol = 'y';
-  constexpr static CodePoint k_noSymbol = UCodePointEmpty;  // TODO
   constexpr static char k_ordinateName[2] = {k_ordinateSymbol, '\0'};
 
   /* Units are not handled when plotting function. The default unit does not

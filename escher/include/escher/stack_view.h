@@ -10,7 +10,10 @@ namespace Escher {
 class StackView : public View {
  public:
   enum class Style { GrayGradation, PurpleWhite, WhiteUniform };
-  static constexpr uint8_t k_maxNumberOfStacks = 7;
+
+  using Mask = uint8_t;
+
+  static constexpr uint8_t k_maxNumberOfStacks = sizeof(Mask) * 8;
 
   StackView(Style style, bool extendVertically);
   int8_t numberOfStacks() const { return m_stackHeaderViews.length(); }

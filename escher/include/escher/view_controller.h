@@ -30,6 +30,7 @@ extern "C" {
  * and laying it out. */
 
 #include <escher/responder.h>
+#include <escher/stack_view.h>
 #include <escher/view.h>
 #include <stdint.h>
 
@@ -39,20 +40,20 @@ class ViewController : public Responder {
  public:
   /* TitlesDisplay is only used within StackViewController for now. It
    * modifies the stack headers display. */
-  enum class TitlesDisplay : uint8_t {
-    DisplayAllTitles = 0b11111111,
+  enum class TitlesDisplay : StackView::Mask {
+    DisplayAllTitles = StackView::Mask(~0u),  // 0b11111111
     /* NeverDisplayOwnHeader is a special value, which not only hides the
      * current title, but also does not add it to the stack headers. */
-    NeverDisplayOwnTitle = 0b11111110,
+    NeverDisplayOwnTitle = StackView::Mask(~1u),  // 0b11111110
     /* Hide all previous headers but the last one. */
-    DisplayLastFourTitles = 0b00001111,
-    DisplayLastThreeTitles = 0b00000111,
-    DisplaySecondAndThirdToLast = 0b00000110,
-    DisplayLastAndThirdToLast = 0b00000101,
-    DisplayLastTwoTitles = 0b00000011,
-    DisplaySecondToLast = 0b00000010,
-    DisplayLastTitle = 0b00000001,
-    DisplayNoTitle = 0b00000000
+    DisplayLastFourTitles = StackView::Mask(0b00001111),
+    DisplayLastThreeTitles = StackView::Mask(0b00000111),
+    DisplaySecondAndThirdToLast = StackView::Mask(0b00000110),
+    DisplayLastAndThirdToLast = StackView::Mask(0b00000101),
+    DisplayLastTwoTitles = StackView::Mask(0b00000011),
+    DisplaySecondToLast = StackView::Mask(0b00000010),
+    DisplayLastTitle = StackView::Mask(0b00000001),
+    DisplayNoTitle = StackView::Mask(0b00000000)
   };
 
   ViewController(Responder* parentResponder) : Responder(parentResponder) {}

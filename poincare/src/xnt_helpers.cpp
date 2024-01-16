@@ -11,13 +11,13 @@ namespace XNTHelpers {
 
 static int indexOfCodePointInCycle(CodePoint codePoint,
                                    const CodePoint* cycle) {
-  for (size_t i = 0; i < k_maxCycleSize; i++) {
+  for (size_t i = 0; i < k_maxCycleSize - 1; i++) {
     if (cycle[i] == codePoint) {
       return i;
     }
   }
-  assert(false);
-  return -1;
+  assert(cycle[k_maxCycleSize - 1] == codePoint);
+  return k_maxCycleSize - 1;
 }
 
 static size_t sizeOfCycle(const CodePoint* cycle) {

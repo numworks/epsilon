@@ -258,6 +258,7 @@ void assert_expression_approximates_to(const char *expression,
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) {
         T value = PoincareJ::Approximation::RootTreeTo<T>(e);
+        e->removeTree();
         return SharedEditionPool->push<FloatType<T>::type>(value);
       },
       numberOfSignificantDigits);

@@ -231,6 +231,7 @@ poincare_src += $(addprefix poincare/src/parsing/,\
 
 tests_src += $(addprefix poincare/test/,\
   helper.cpp\
+  approximation.cpp\
   simplification.cpp\
 )
 

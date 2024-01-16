@@ -36,6 +36,8 @@ class ResultsGoodnessTabController : public Escher::TabViewController,
       tabController()->stackOpenPage(nextPage);
     }
 
+    const char *title() override;
+
     Escher::TabViewController *tabController() {
       return static_cast<Escher::TabViewController *>(parentResponder());
     }

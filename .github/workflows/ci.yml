@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.android == 'true') }}
     steps:
-      - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
+      - run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 test.apk

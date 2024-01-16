@@ -22,7 +22,7 @@ void assert_default_name_for_symbol_is(CodePoint symbol,
   quiz_assert(strcmp(expectedName, buffer) == 0);
 }
 
-QUIZ_CASE(graph_list_function_names) {
+QUIZ_CASE(graph_list_default_function_name) {
   GlobalContext context;
   ContinuousFunctionStore store;
 
@@ -75,6 +75,121 @@ QUIZ_CASE(graph_list_function_names) {
   addFunction("f1(t)=t", &store, &context);
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f");
   assert_default_name_for_symbol_is(k_parametricSymbol, "f2");
+  store.removeAll();
+}
+
+void assert_will_display_parametric_name_error(const char* definition,
+                                               ContinuousFunction* f,
+                                               bool expectedHasError) {
+  Expression expression = Expression::Parse(definition, nullptr);
+  bool hasError =
+      FunctionNameHelper::ParametricComponentsNameError(expression, f);
+  quiz_assert(hasError == expectedHasError);
+}
+
+QUIZ_CASE(graph_list_valid_function_name) {
+  GlobalContext context;
+  ContinuousFunctionStore store;
+
+  /******     Case A: function was not parametric     ******/
+
+  // Case A.1: name taken by current record
+  // Case A.1.1: parametric components name are free
+  ContinuousFunction* f = addFunction("f(x)=x", &store, &context);
+  assert_will_display_parametric_name_error("f(x)=x+1", f, false);
+  assert_will_display_parametric_name_error("f(t)=t+1", f, false);
+  assert_will_display_parametric_name_error("f(t)=[[cos(t)][sin(t)]]", f,
+                                            false);
+  assert_will_display_parametric_name_error("f(θ)=θ+1", f, false);
+  // Case A.1.2: parametric components name are not free
+  addFunction("fx(x)=x", &store, &context);
+  assert_will_display_parametric_name_error("f(x)=x+1", f, false);
+  assert_will_display_parametric_name_error("f(t)=t+1", f, false);
+  assert_will_display_parametric_name_error("f(t)=[[cos(t)][sin(t)]]", f, true);
+  assert_will_display_parametric_name_error("f(θ)=θ+1", f, false);
+
+  // Case A.2: name taken by another record
+  // Case A.2.1: parametric components name are free
+  addFunction("g(x)=x", &store, &context);
+  ContinuousFunction* h = addFunction("h(x)=x", &store, &context);
+  assert_will_display_parametric_name_error("g(x)=x+1", h, false);
+  assert_will_display_parametric_name_error("g(t)=t+1", h, false);
+  assert_will_display_parametric_name_error("g(t)=[[cos(t)][sin(t)]]", h,
+                                            false);
+  assert_will_display_parametric_name_error("g(θ)=θ+1", h, false);
+  // Case A.2.2: parametric components name are not free
+  addFunction("gx(x)=x", &store, &context);
+  assert_will_display_parametric_name_error("g(x)=x+1", h, false);
+  assert_will_display_parametric_name_error("g(t)=t+1", h, false);
+  assert_will_display_parametric_name_error("g(t)=[[cos(t)][sin(t)]]", h,
+                                            false);
+  assert_will_display_parametric_name_error("g(θ)=θ+1", h, false);
+
+  // Case A.3: name free
+  // Case A.3.1: parametric components name are free
+  assert_will_display_parametric_name_error("p(x)=x+1", h, false);
+  assert_will_display_parametric_name_error("p(t)=t+1", h, false);
+  assert_will_display_parametric_name_error("p(t)=[[cos(t)][sin(t)]]", h,
+                                            false);
+  assert_will_display_parametric_name_error("p(θ)=θ+1", h, false);
+  // Case A.3.2: parametric components name are not free
+  addFunction("py(x)=x", &store, &context);
+  assert_will_display_parametric_name_error("p(x)=x+1", h, false);
+  assert_will_display_parametric_name_error("p(t)=t+1", h, false);
+  assert_will_display_parametric_name_error("p(t)=[[cos(t)][sin(t)]]", h, true);
+  assert_will_display_parametric_name_error("p(θ)=θ+1", h, false);
+
+  store.removeAll();
+
+  /******       Case B: function was parametric       ******/
+
+  // Case B.1: name taken by current record
+  // Case B.1.1: parametric components name are free
+  f = addFunction("f(t)=[[cos(t)][sin(t)]]", &store, &context);
+  assert_will_display_parametric_name_error("f(x)=x+1", f, false);
+  assert_will_display_parametric_name_error("f(t)=t+1", f, false);
+  assert_will_display_parametric_name_error("f(t)=[[cos(t)][sin(t)]]", f,
+                                            false);
+  assert_will_display_parametric_name_error("f(θ)=θ+1", f, false);
+  // Case B.1.2: parametric components name are not free
+  addFunction("fx(x)=x", &store, &context);
+  assert_will_display_parametric_name_error("f(x)=x+1", f, false);
+  assert_will_display_parametric_name_error("f(t)=t+1", f, false);
+  assert_will_display_parametric_name_error("f(t)=[[cos(t)][sin(t)]]", f,
+                                            false);
+  assert_will_display_parametric_name_error("f(θ)=θ+1", f, false);
+
+  // Case B.2: name taken by another record
+  // Case B.2.1: parametric components name are free
+  addFunction("g(x)=x", &store, &context);
+  h = addFunction("h(t)=[[cos(t)][sin(t)]]", &store, &context);
+  assert_will_display_parametric_name_error("g(x)=x+1", h, false);
+  assert_will_display_parametric_name_error("g(t)=t+1", h, false);
+  assert_will_display_parametric_name_error("g(t)=[[cos(t)][sin(t)]]", h,
+                                            false);
+  assert_will_display_parametric_name_error("g(θ)=θ+1", h, false);
+  // Case B.2.2: parametric components name are not free
+  addFunction("gx(x)=x", &store, &context);
+  assert_will_display_parametric_name_error("g(x)=x+1", h, false);
+  assert_will_display_parametric_name_error("g(t)=t+1", h, false);
+  assert_will_display_parametric_name_error("g(t)=[[cos(t)][sin(t)]]", h,
+                                            false);
+  assert_will_display_parametric_name_error("g(θ)=θ+1", h, false);
+
+  // Case B.3: name free
+  // Case B.3.1: parametric components name are free
+  assert_will_display_parametric_name_error("p(x)=x+1", h, false);
+  assert_will_display_parametric_name_error("p(t)=t+1", h, false);
+  assert_will_display_parametric_name_error("p(t)=[[cos(t)][sin(t)]]", h,
+                                            false);
+  assert_will_display_parametric_name_error("p(θ)=θ+1", h, false);
+  // Case B.3.2: parametric components name are not free
+  addFunction("py(x)=x", &store, &context);
+  assert_will_display_parametric_name_error("p(x)=x+1", h, false);
+  assert_will_display_parametric_name_error("p(t)=t+1", h, false);
+  assert_will_display_parametric_name_error("p(t)=[[cos(t)][sin(t)]]", h, true);
+  assert_will_display_parametric_name_error("p(θ)=θ+1", h, false);
+
   store.removeAll();
 }
 

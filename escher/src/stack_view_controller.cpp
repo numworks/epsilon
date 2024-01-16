@@ -16,47 +16,49 @@ StackViewController::StackViewController(int capacity,
                                          bool extendVertically)
     : ViewController(parentResponder),
       m_view(style, extendVertically),
-      m_numberOfChildren(0),
+      m_size(0),
       m_isVisible(false),
       m_displayedAsModal(false),
       m_headersDisplayMask(~0),
+#ifndef NDEBUG
       m_capacity(capacity),
-      m_childrenController(stackBase) {
-  assert(m_numberOfChildren + 1 < capacity);
-  m_childrenController[m_numberOfChildren++] = rootViewController;
+#endif
+      m_stack(stackBase) {
+  assert(m_size + 1 < capacity);
+  m_stack[m_size++] = rootViewController;
   rootViewController->setParentResponder(this);
 }
 
 const char* StackViewController::title() {
-  ViewController* vc = m_childrenController[0];
+  ViewController* vc = m_stack[0];
   return vc->title();
 }
 
 ViewController* StackViewController::topViewController() {
-  if (m_numberOfChildren < 1) {
+  if (m_size < 1) {
     return nullptr;
   }
-  return m_childrenController[m_numberOfChildren - 1];
+  return m_stack[m_size - 1];
 }
 
 void StackViewController::push(ViewController* vc) {
-  assert(m_numberOfChildren < m_capacity);
+  assert(m_size < m_capacity);
   /* Add the frame to the model */
   pushModel(vc);
   if (!m_isVisible) {
     return;
   }
   setupActiveViewController();
-  if (m_numberOfChildren > 1) {
-    m_childrenController[m_numberOfChildren - 2]->viewDidDisappear();
+  if (m_size > 1) {
+    m_stack[m_size - 2]->viewDidDisappear();
   }
 }
 
 void StackViewController::pop() {
-  assert(m_numberOfChildren > 0);
+  assert(m_size > 0);
   dismissPotentialModal();
   ViewController* vc = topViewController();
-  m_numberOfChildren--;
+  m_size--;
   setupActiveViewController();
   vc->setParentResponder(nullptr);
   vc->viewDidDisappear();
@@ -70,15 +72,15 @@ void StackViewController::popUntilDepth(int depth,
    * For example, shouldSetupTopViewController should be set to false if push,
    * viewDidDisappear, viewWillAppear or pop are called afterward. */
   assert(depth >= 0);
-  if (depth >= m_numberOfChildren) {
+  if (depth >= m_size) {
     return;
   }
   dismissPotentialModal();
-  int numberOfFramesReleased = m_numberOfChildren - depth;
+  int numberOfFramesReleased = m_size - depth;
   ViewController* vc;
   for (int i = 0; i < numberOfFramesReleased; i++) {
     vc = topViewController();
-    m_numberOfChildren--;
+    m_size--;
     if (shouldSetupTopViewController && i == numberOfFramesReleased - 1) {
       setupActiveViewController();
     }
@@ -92,7 +94,7 @@ void StackViewController::popUntilDepth(int depth,
 
 void StackViewController::pushModel(ViewController* controller) {
   willOpenPage(controller);
-  m_childrenController[m_numberOfChildren++] = controller;
+  m_stack[m_size++] = controller;
 }
 
 void StackViewController::setupActiveView() {
@@ -127,14 +129,14 @@ void StackViewController::didBecomeFirstResponder() {
 }
 
 bool StackViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back && m_numberOfChildren > 1) {
+  if (event == Ion::Events::Back && m_size > 1) {
     pop();
     return true;
   }
   return false;
 }
 
-void StackViewController::initView() { m_childrenController[0]->initView(); }
+void StackViewController::initView() { m_stack[0]->initView(); }
 
 void StackViewController::viewWillAppear() {
   /* Load the visible controller view */
@@ -158,8 +160,7 @@ bool StackViewController::shouldStoreHeaderOnStack(ViewController* vc,
   return vc->title() != nullptr &&
          vc->titlesDisplay() !=
              ViewController::TitlesDisplay::NeverDisplayOwnTitle &&
-         OMG::BitHelper::bitAtIndex(m_headersDisplayMask,
-                                    m_numberOfChildren - 1 - index);
+         OMG::BitHelper::bitAtIndex(m_headersDisplayMask, m_size - 1 - index);
 }
 
 void StackViewController::updateStack(
@@ -170,10 +171,10 @@ void StackViewController::updateStack(
 
   /* Load the stack view */
   m_view.resetStack();
-  for (int i = 0; i < m_numberOfChildren; i++) {
-    ViewController* childrenVC = m_childrenController[i];
+  for (int i = 0; i < m_size; i++) {
+    ViewController* childrenVC = m_stack[i];
     if (shouldStoreHeaderOnStack(childrenVC, i)) {
-      m_view.pushStack(m_childrenController[i]);
+      m_view.pushStack(m_stack[i]);
     }
   }
 }

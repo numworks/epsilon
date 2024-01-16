@@ -10,10 +10,10 @@ bool Script::DefaultName(char buffer[], size_t bufferSize) {
   constexpr static int k_defaultScriptNameLength =
       sizeof(k_defaultScriptName) - 1;
   strlcpy(buffer, k_defaultScriptName, bufferSize);
-  const char* const extensions[1] = {ScriptStore::k_scriptExtension};
   return Ion::Storage::FileSystem::sharedFileSystem
              ->firstAvailableNameFromPrefix(
-                 buffer, k_defaultScriptNameLength, bufferSize, extensions, 1,
+                 buffer, k_defaultScriptNameLength, bufferSize,
+                 ScriptStore::k_scriptExtension,
                  k_maxNumberOfDefaultScriptNames) > k_defaultScriptNameLength;
 }
 

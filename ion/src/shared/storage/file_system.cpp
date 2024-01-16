@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <ion.h>
 #include <poincare/integer.h>
+#include <poincare/print_int.h>
 #include <string.h>
 
 #include <new>
@@ -76,24 +77,35 @@ Record::ErrorStatus FileSystem::notifyFullnessToDelegate() const {
 
 int FileSystem::firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
                                              size_t bufferSize,
-                                             const char *const extensions[],
-                                             size_t numberOfExtensions,
-                                             int maxId) {
+                                             IsFreeNameTest test,
+                                             void *auxiliary, int maxId) {
   /* With '?' being the prefix, fill buffer with the first available name for
    * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */
-  int id = 1;
-  while (id <= maxId) {
-    size_t length = Poincare::Integer(id).serialize(buffer + prefixLength,
-                                                    bufferSize - prefixLength);
-    assert(buffer[prefixLength + length] == 0);
-    if (recordBaseNamedWithExtensions(buffer, extensions, numberOfExtensions)
-            .isNull()) {
+  for (int i = 1; i <= maxId; i++) {
+    size_t length = Poincare::PrintInt::Left(i, buffer + prefixLength,
+                                             bufferSize - prefixLength);
+    buffer[prefixLength + length] = 0;
+    if (test(buffer, bufferSize, auxiliary)) {
       return prefixLength + length;
     }
-    id++;
   }
   assert(false);
-  return prefixLength;
+  return 0;
+}
+
+int FileSystem::firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
+                                             size_t bufferSize,
+                                             const char *extension, int maxId) {
+  return firstAvailableNameFromPrefix(
+      buffer, prefixLength, bufferSize,
+      [](char *buffer, size_t bufferSize, void *auxiliary) {
+        const char **extension = static_cast<const char **>(auxiliary);
+        const char *const extensions[1] = {*extension};
+        return Ion::Storage::FileSystem::sharedFileSystem
+            ->recordBaseNamedWithExtensions(buffer, extensions, 1)
+            .isNull();
+      },
+      &extension, maxId);
 }
 
 Record::ErrorStatus FileSystem::createRecordWithFullNameAndDataChunks(

@@ -21,10 +21,10 @@ Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
   char name[bufferSize];
   static_assert(k_maxNumberOfEquations < 9,
                 "Equation name record might not fit");
-  const char *const extensions[1] = {Ion::Storage::equationExtension};
   size_t length = SerializationHelper::CodePoint(name, bufferSize, 'e');
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
-      name, length, bufferSize, extensions, 1, k_maxNumberOfEquations);
+      name, length, bufferSize, Ion::Storage::equationExtension,
+      k_maxNumberOfEquations);
   return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       name, Ion::Storage::equationExtension, nullptr, 0);
 }

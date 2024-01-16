@@ -73,11 +73,10 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   constexpr size_t bufferSize = ContinuousFunction::k_maxDefaultNameSize;
   char name[bufferSize];
-  const char* const extensions[1] = {modelExtension()};
   size_t length = Poincare::SerializationHelper::CodePoint(
       name, bufferSize, ContinuousFunction::k_unnamedRecordFirstChar);
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
-      name, length, bufferSize, extensions, 1, 99);
+      name, length, bufferSize, modelExtension());
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::RecordDoesNotExist;
 

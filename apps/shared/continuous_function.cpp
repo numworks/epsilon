@@ -861,11 +861,10 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
     }
     // Rename record with a hidden record name.
     char name[k_maxDefaultNameSize];
-    const char *const extensions[1] = {Ion::Storage::functionExtension};
     size_t length = SerializationHelper::CodePoint(name, k_maxDefaultNameSize,
                                                    k_unnamedRecordFirstChar);
     Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
-        name, length, k_maxDefaultNameSize, extensions, 1, 99);
+        name, length, k_maxDefaultNameSize, Ion::Storage::functionExtension);
     error = Ion::Storage::Record::SetBaseNameWithExtension(
         record, name, Ion::Storage::functionExtension);
   }

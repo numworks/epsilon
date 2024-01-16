@@ -63,10 +63,14 @@ class FileSystem {
   }
 
   // Record names helper
+  typedef bool (*IsFreeNameTest)(char *buffer, size_t bufferSize,
+                                 void *auxiliary);
   int firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
-                                   size_t bufferSize,
-                                   const char *const extensions[],
-                                   size_t numberOfExtensions, int maxId);
+                                   size_t bufferSize, IsFreeNameTest test,
+                                   void *auxiliary = nullptr, int maxId = 99);
+  int firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
+                                   size_t bufferSize, const char *extension,
+                                   int maxId = 99);
 
   // Record creation
   Record::ErrorStatus createRecordWithExtension(

@@ -1,7 +1,6 @@
 #include "function_name_helper.h"
 
 #include <apps/shared/global_context.h>
-#include <poincare/print_int.h>
 #include <poincare/serialization_helper.h>
 
 using namespace Poincare;
@@ -67,18 +66,15 @@ int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
                                             k_defaultLetterNames[0]);
   }
   assert(bufferSize >= ContinuousFunction::k_maxDefaultNameSize);
-  for (int i = 1; i <= 99; i++) {
-    size_t l =
-        Poincare::PrintInt::Left(i, buffer + length, bufferSize - length);
-    length += l;
-    buffer[length] = 0;
-    if (functionNameIsFree(buffer, bufferSize, symbol)) {
-      return length;
-    }
-    length -= l;
-  }
-  assert(false);
-  return 0;
+  CodePoint aux = symbol;
+  return Ion::Storage::FileSystem::sharedFileSystem
+      ->firstAvailableNameFromPrefix(
+          buffer, length, bufferSize,
+          [](char *buffer, size_t bufferSize, void *auxiliary) {
+            CodePoint *symbol = static_cast<CodePoint *>(auxiliary);
+            return functionNameIsFree(buffer, bufferSize, *symbol);
+          },
+          &aux);
 }
 
 bool ParametricComponentsNameError(Expression expression,

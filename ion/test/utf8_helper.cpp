@@ -192,14 +192,14 @@ QUIZ_CASE(ion_utf8_remove_code_point) {
 
 void assert_slide_string_by_number_of_char_gives(
     const char *string, int slidingSize, bool successResult,
-    const char *stringResult = nullptr) {
-  char buffer[bufferSize];
-  strlcpy(buffer, string, bufferSize);
-  bool success = UTF8Helper::SlideStringByNumberOfChar((char *)buffer,
-                                                       slidingSize, bufferSize);
+    const char *stringResult = nullptr, int textBufferSize = bufferSize) {
+  char buffer[textBufferSize];
+  strlcpy(buffer, string, textBufferSize);
+  bool success = UTF8Helper::SlideStringByNumberOfChar(
+      (char *)buffer, slidingSize, textBufferSize);
   quiz_assert(success == successResult);
   if (successResult) {
-    quiz_assert(strncmp(buffer, stringResult, bufferSize) == 0);
+    quiz_assert(strncmp(buffer, stringResult, textBufferSize) == 0);
   }
 }
 
@@ -215,6 +215,10 @@ QUIZ_CASE(ion_utf8_move_string_from_index_by_number_of_char) {
   assert_slide_string_by_number_of_char_gives(string3, -(strlen(string3) + 3),
                                               false);
   assert_slide_string_by_number_of_char_gives(string3, -8, true, "");
+
+  assert_slide_string_by_number_of_char_gives("12345", 2, true, "1212345", 8);
+  assert_slide_string_by_number_of_char_gives("12345", 2, false, "", 6);
+  assert_slide_string_by_number_of_char_gives("12345", -2, true, "345", 6);
 }
 
 void assert_try_and_replace_pattern_in_string_by_pattern_gives(

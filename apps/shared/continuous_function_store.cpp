@@ -1,6 +1,7 @@
 #include "continuous_function_store.h"
 
 #include <ion.h>
+#include <poincare/serialization_helper.h>
 
 using namespace Escher;
 
@@ -70,11 +71,13 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
-  char name[ContinuousFunction::k_maxDefaultNameSize];
+  constexpr size_t bufferSize = ContinuousFunction::k_maxDefaultNameSize;
+  char name[bufferSize];
   const char* const extensions[1] = {modelExtension()};
-  name[0] = ContinuousFunction::k_unnamedRecordFirstChar;
+  size_t length = Poincare::SerializationHelper::CodePoint(
+      name, bufferSize, ContinuousFunction::k_unnamedRecordFirstChar);
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
-      name, 1, ContinuousFunction::k_maxDefaultNameSize, extensions, 1, 99);
+      name, length, bufferSize, extensions, 1, 99);
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::RecordDoesNotExist;
 

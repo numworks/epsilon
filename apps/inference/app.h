@@ -27,6 +27,8 @@
 namespace Inference {
 
 class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
+  using StackViewController = Escher::StackViewController::Default;
+
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {
@@ -48,7 +50,8 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 
     Statistic *statistic() { return m_statisticBuffer.statistic(); }
 
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
+    Ion::RingBuffer<Escher::ViewController *,
+                    StackViewController::k_maxNumberOfChildren>
         *pageQueue() {
       return &m_pageQueue;
     }
@@ -56,7 +59,8 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
    private:
     friend App;
     // TODO: optimize size of Stack
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
+    Ion::RingBuffer<Escher::ViewController *,
+                    StackViewController::k_maxNumberOfChildren>
         m_pageQueue;
     StatisticBuffer m_statisticBuffer;
   };
@@ -123,7 +127,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   HypothesisController m_hypothesisController;
   TestController m_testController;
   Shared::MenuController m_menuController;
-  Escher::StackViewController::Default m_stackViewController;
+  StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
   /* Buffer used for allocating table cells to avoid duplicating required
    * space for these memory-needy tables. */

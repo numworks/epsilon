@@ -8,11 +8,6 @@
 
 namespace Escher {
 
-constexpr uint8_t k_maxNumberOfStacks = StackView::k_maxNumberOfStacks;
-static_assert(
-    k_maxNumberOfStacks < 8,
-    "Bit mask representation relies on less than 8 stacks (uint8_t).");
-
 /* Use StackViewController::Default when possible. If the app needs more
  * view stack depth, use StackViewController::Custom<N> to have a custom
  * depth between 1 and 8. Always use pointers on StackViewController. */
@@ -27,6 +22,10 @@ class StackViewController : public ViewController {
   using Custom = CustomSizeStackViewController<Depth>;
 
   typedef StackView::Style Style;
+
+  static_assert(
+      StackView::k_maxNumberOfStacks <= 8,
+      "masks are too small to represent k_maxNumberOfStacks elements.");
 
   /* Push creates a new StackView and adds it */
   void push(ViewController* vc);
@@ -83,7 +82,7 @@ class StackViewController : public ViewController {
 template <unsigned Capacity>
 class CustomSizeStackViewController : public StackViewController {
  public:
-  static_assert(Capacity <= k_maxNumberOfStacks);
+  static_assert(Capacity <= StackView::k_maxNumberOfStacks);
 
   constexpr static int k_maxNumberOfChildren = Capacity;
 

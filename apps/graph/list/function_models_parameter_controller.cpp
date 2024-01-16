@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "../app.h"
+#include "function_name_helper.h"
 #include "list_controller.h"
 
 using namespace Poincare;
@@ -72,55 +73,6 @@ void FunctionModelsParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-static bool functionNameIsFree(char* buffer, size_t length, size_t bufferSize,
-                               CodePoint symbol) {
-  return Shared::GlobalContext::SymbolAbstractNameIsFree(buffer) &&
-         (symbol != Shared::ContinuousFunction::k_parametricSymbol ||
-          ListController::ParametricComponentsNamesAreFree(buffer, length,
-                                                           bufferSize));
-}
-
-int FunctionModelsParameterController::DefaultName(char buffer[],
-                                                   size_t bufferSize,
-                                                   CodePoint symbol) {
-  constexpr int k_maxNumberOfDefaultLetterNames = 4;
-  constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
-      'f', 'g', 'h', 'p'};
-  /* First default names the first of theses names f, g, h, p and then f1, f2,
-   * that does not exist yet in the storage. */
-  size_t length = 0;
-  if (symbol == Shared::ContinuousFunction::k_polarSymbol) {
-    // Try r1, r2, ...
-    length = SerializationHelper::CodePoint(
-        buffer, bufferSize,
-        Shared::ContinuousFunctionProperties::k_radiusSymbol);
-  } else {
-    // Find the next available name
-    for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
-      length = SerializationHelper::CodePoint(buffer, bufferSize,
-                                              k_defaultLetterNames[i]);
-      if (functionNameIsFree(buffer, length, bufferSize, symbol)) {
-        return length;
-      }
-    }
-    // f, g, h and p are already taken. Try f1, f2, ...
-    length = SerializationHelper::CodePoint(buffer, bufferSize,
-                                            k_defaultLetterNames[0]);
-  }
-  assert(bufferSize >= Shared::ContinuousFunction::k_maxDefaultNameSize);
-  for (int i = 1; i <= 99; i++) {
-    size_t l = PrintInt::Left(i, buffer + length, bufferSize - length);
-    length += l;
-    buffer[length] = 0;
-    if (functionNameIsFree(buffer, length, bufferSize, symbol)) {
-      return length;
-    }
-    length -= l;
-  }
-  assert(false);
-  return 0;
-}
-
 const char* FunctionModelsParameterController::ModelWithDefaultName(
     Model model, char buffer[], size_t bufferSize) {
   const char* modelString = ModelString(model);
@@ -134,7 +86,8 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
                            : CodePoint(modelString[constantNameLength + 1]);
   /* Model starts with a named function. If that name is already taken, use
    * another one. */
-  int functionNameLength = DefaultName(buffer, k_maxSizeOfNamedModel, symbol);
+  int functionNameLength =
+      FunctionNameHelper::DefaultName(buffer, k_maxSizeOfNamedModel, symbol);
   assert(strlen(modelString + constantNameLength) + functionNameLength <
          k_maxSizeOfNamedModel);
   strlcpy(buffer + functionNameLength, modelString + constantNameLength,

@@ -28,7 +28,7 @@ class StackViewController : public ViewController {
   void pop();
   void popUntilDepth(int depth, bool shouldSetupTopViewController);
 
-  int depth() const { return m_numberOfChildren; }
+  int depth() const { return m_size; }
   StackView* view() override { return &m_view; }
   ViewController* topViewController();
   const char* title() override;
@@ -62,7 +62,7 @@ class StackViewController : public ViewController {
   void dismissPotentialModal();
   virtual void didExitPage(ViewController* controller) const;
   virtual void willOpenPage(ViewController* controller) const;
-  uint8_t m_numberOfChildren;
+  uint8_t m_size;
   bool m_isVisible;
   bool m_displayedAsModal;
   /* Represents the stacks to display, _starting from the end_.
@@ -71,8 +71,11 @@ class StackViewController : public ViewController {
   StackView::Mask m_headersDisplayMask;
 
  private:
+#ifndef NDEBUG
+  // Only used for an assertion in pushModel()
   const int m_capacity;
-  ViewController** const m_childrenController;
+#endif
+  ViewController** const m_stack;
 };
 
 template <unsigned Capacity>

@@ -102,8 +102,8 @@ class PrefacedTableView : public View,
      * Else, it should be overriden.*/
     int nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY) override;
 
-    virtual int columnInMainDataSource(int i) { return i; }
-    virtual int rowInMainDataSource(int j) { return j; }
+    virtual int columnInMainDataSource(int i) const { return i; }
+    virtual int rowInMainDataSource(int j) const { return j; }
 
     TableViewDataSource* m_mainDataSource;
   };
@@ -127,7 +127,7 @@ class PrefacedTableView : public View,
     KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row) override;
     int nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY) override;
 
-    int rowInMainDataSource(int j) override {
+    int rowInMainDataSource(int j) const override {
       assert(j == 0 || j == 1);
       assert(m_prefaceRow >= 0);
       return m_prefaceRow + j;

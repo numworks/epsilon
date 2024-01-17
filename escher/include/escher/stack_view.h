@@ -11,7 +11,7 @@ class StackView : public View {
  public:
   enum class Style { GrayGradation, PurpleWhite, WhiteUniform };
 
-  using Mask = uint8_t;
+  using Mask = uint16_t;
 
   static constexpr uint8_t k_maxDepth = sizeof(Mask) * 8;
 

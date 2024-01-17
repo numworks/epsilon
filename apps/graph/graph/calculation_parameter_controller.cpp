@@ -38,11 +38,11 @@ CalculationParameterController::CalculationParameterController(
   m_preimageCell.label()->setMessage(I18n::Message::Preimage);
 }
 
-HighlightCell *CalculationParameterController::cell(int index) {
+HighlightCell *CalculationParameterController::cell(int row) {
   HighlightCell *cells[k_numberOfRows] = {
       &m_preimageCell, &m_intersectionCell, &m_maximumCell,  &m_minimumCell,
       &m_rootCell,     &m_tangentCell,      &m_integralCell, &m_areaCell};
-  return cells[index];
+  return cells[row];
 }
 
 const char *CalculationParameterController::title() {

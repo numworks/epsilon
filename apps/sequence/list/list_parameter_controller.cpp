@@ -71,11 +71,11 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-HighlightCell *ListParameterController::cell(int index) {
-  assert(0 <= index && index < numberOfRows());
+HighlightCell *ListParameterController::cell(int row) {
+  assert(0 <= row && row < numberOfRows());
   HighlightCell *const cells[] = {&m_typeCell, &m_firstRankCell, &m_enableCell,
                                   &m_colorCell, &m_deleteCell};
-  return cells[index];
+  return cells[row];
 }
 
 void ListParameterController::viewWillAppear() {

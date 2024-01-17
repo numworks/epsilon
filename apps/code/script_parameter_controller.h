@@ -32,7 +32,7 @@ class ScriptParameterController
   TELEMETRY_ID("ScriptParameter");
 
   /* MemoizedListViewDataSource */
-  Escher::AbstractMenuCell* cell(int index) override;
+  Escher::AbstractMenuCell* cell(int row) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
 
  private:

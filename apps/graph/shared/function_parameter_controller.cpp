@@ -33,13 +33,13 @@ const char *FunctionParameterController::title() {
                           : I18n::translate(I18n::Message::Options);
 }
 
-HighlightCell *FunctionParameterController::cell(int index) {
-  assert(0 <= index && index < numberOfRows());
+HighlightCell *FunctionParameterController::cell(int row) {
+  assert(0 <= row && row < numberOfRows());
   HighlightCell *const cells[] = {&m_detailsCell,    &m_colorCell,
                                   &m_derivativeCell, &m_functionDomainCell,
                                   &m_enableCell,     &m_deleteCell};
   static_assert(std::size(cells) == k_numberOfRows);
-  return cells[index];
+  return cells[row];
 }
 
 void FunctionParameterController::setRecord(Ion::Storage::Record record) {

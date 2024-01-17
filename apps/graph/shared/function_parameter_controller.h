@@ -25,7 +25,7 @@ class FunctionParameterController : public Shared::ListParameterController,
                               I18n::Message deleteFunctionMessage);
   void setRecord(Ion::Storage::Record record) override;
   // MemoizedListViewDataSource
-  Escher::HighlightCell* cell(int index) override;
+  Escher::HighlightCell* cell(int row) override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }

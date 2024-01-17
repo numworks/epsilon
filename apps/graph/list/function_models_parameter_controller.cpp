@@ -40,11 +40,11 @@ FunctionModelsParameterController::FunctionModelsParameterController(
   }
 }
 
-Escher::HighlightCell* FunctionModelsParameterController::cell(int index) {
-  if (index == 0) {
+Escher::HighlightCell* FunctionModelsParameterController::cell(int row) {
+  if (row == 0) {
     return &m_emptyModelCell;
   }
-  int i = index - 1;
+  int i = row - 1;
   assert(0 <= i && i < k_numberOfExpressionCells);
   return &m_modelCells[i];
 }

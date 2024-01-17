@@ -44,14 +44,14 @@ ColumnNameHelper* ValuesParameterController::columnNameHelper() {
   return m_valuesController;
 }
 
-HighlightCell* ValuesParameterController::cell(int index) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCell);
+HighlightCell* ValuesParameterController::cell(int row) {
+  assert(row >= 0);
+  assert(row < k_totalNumberOfCell);
   HighlightCell* cells[] = {&m_clearColumn, &m_setInterval};
   static_assert(
       std::size(cells) == k_totalNumberOfCell,
       "Shared::ValuesParameterController::k_totalNumberOfCell is deprecated.");
-  return cells[index];
+  return cells[row];
 }
 
 }  // namespace Shared

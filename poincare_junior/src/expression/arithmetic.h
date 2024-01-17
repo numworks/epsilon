@@ -35,6 +35,9 @@ class Arithmetic {
 
   static FactorizedInteger PrimeFactorization(IntegerHandler m);
 
+  static uint32_t GCD(uint32_t a, uint32_t b);
+  static uint32_t LCM(uint32_t a, uint32_t b, bool* hasOverflown);
+
  private:
   static bool SimplifyGCDOrLCM(Tree* expr, bool isGCD);
   static Tree* PushPrimeFactorization(IntegerHandler m);

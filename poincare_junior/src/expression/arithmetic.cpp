@@ -1,5 +1,6 @@
 #include "arithmetic.h"
 
+#include <limits.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
@@ -394,6 +395,38 @@ bool Arithmetic::BeautifyFactor(Tree* expr) {
   }
   expr->moveTreeOverTree(result);
   return true;
+}
+
+uint32_t Arithmetic::GCD(uint32_t a, uint32_t b) {
+  assert(a >= 0 && b >= 0);
+  if (b > a) {
+    uint32_t temp = b;
+    b = a;
+    a = temp;
+  }
+  uint32_t r = 0;
+  while (b != 0) {
+    r = a - (a / b) * b;
+    a = b;
+    b = r;
+  }
+  return a;
+}
+
+uint32_t Arithmetic::LCM(uint32_t a, uint32_t b, bool* hasOverflown) {
+  assert(a >= 0 && b >= 0);
+  assert(hasOverflown && !*hasOverflown);
+  if (a == 0 || b == 0) {
+    return 0;
+  }
+  uint32_t gcd = GCD(a, b);
+  if (b / gcd >= UINT32_MAX / a) {
+    // LCM will overflow uint32_t
+    *hasOverflown = true;
+    return INT_MAX;
+  }
+  // Using LCM(a,b) = a * b / GCD(a,b)
+  return a * (b / gcd);
 }
 
 }  // namespace PoincareJ

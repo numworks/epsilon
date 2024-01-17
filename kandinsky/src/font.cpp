@@ -10,7 +10,8 @@ extern "C" {
 
 constexpr static int k_tabCharacterWidth = 4;
 
-KDSize KDFont::stringSizeUntil(const char* text, const char* limit) const {
+KDSize KDFont::stringSizeUntil(const char* text, const char* limit,
+                               KDCoordinate lineSpacing) const {
   if (text == nullptr || (limit != nullptr && text >= limit)) {
     return KDSizeZero;
   }
@@ -25,7 +26,7 @@ KDSize KDFont::stringSizeUntil(const char* text, const char* limit) const {
     if (codePoint == UCodePointLineFeed) {
       stringWidth = std::max<KDCoordinate>(stringWidth, lineStringWidth);
       lineStringWidth = 0;
-      stringHeight += m_glyphSize.height();
+      stringHeight += m_glyphSize.height() + lineSpacing;
     } else if (codePoint == UCodePointTabulation) {
       lineStringWidth += k_tabCharacterWidth * m_glyphSize.width();
     } else if (!codePoint.isCombining()) {

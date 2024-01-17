@@ -9,8 +9,8 @@ namespace Escher {
 class MessageTextView : public TextView {
  public:
   MessageTextView(I18n::Message message = (I18n::Message)0,
-                  KDGlyph::Format format = {})
-      : TextView(format), m_message(message) {}
+                  KDGlyph::Format format = {}, KDCoordinate lineSpacing = 0)
+      : TextView(format, lineSpacing), m_message(message) {}
 
   void setText(const char* text) override;
   void setMessage(I18n::Message message);

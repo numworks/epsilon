@@ -28,6 +28,7 @@ class WarningController : public ViewController {
 
    private:
     constexpr static KDCoordinate k_margin = 15;
+    constexpr static KDCoordinate k_lineSpacing = 3;
     MessageTextView m_textView;
   };
 

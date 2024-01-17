@@ -7,7 +7,8 @@ namespace Escher {
 
 class TextView : public GlyphsView {
  public:
-  using GlyphsView::GlyphsView;
+  TextView(KDGlyph::Format format = {}, KDCoordinate lineSpacing = 0)
+      : GlyphsView(format), m_lineSpacing(lineSpacing) {}
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -19,6 +20,9 @@ class TextView : public GlyphsView {
  protected:
   const char* className() const override { return "TextView"; }
 #endif
+
+ private:
+  KDCoordinate m_lineSpacing;
 };
 
 }  // namespace Escher

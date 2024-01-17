@@ -1,15 +1,30 @@
 #ifndef POINCARE_EXPRESSION_APPROXIMATION_H
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
+#include <float.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/tree.h>
 
 #include <cmath>
 
+#include "arithmetic.h"
 #include "context.h"
 #include "random.h"
 
 namespace PoincareJ {
+
+template <typename T>
+bool IsIntegerRepresentationAccurate(T x) {
+  /* Float and double's precision to represent integers is limited by the size
+   * of their mantissa. If an integer requires more digits than there is in the
+   * mantissa, there will be a loss on precision that can be fatal on operations
+   * such as GCD and LCM. */
+  int digits = 0;
+  // Compute number of digits (base 2) required to represent x
+  std::frexp(x, &digits);
+  // Compare it to the maximal number of digits that can be represented with <T>
+  return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
+}
 
 /* Approximation is implemented on all block types.
  * We could have asserted that we reduce before approximating (and thus
@@ -73,6 +88,38 @@ class Approximation final {
     return a == 0 ? NAN : std::log2(a) / std::log2(b);
   }
   template <typename T>
+  static T PositiveIntegerApproximation(T s) {
+    s = std::abs(s);
+    /* Conversion from uint32 to float changes UINT32_MAX from 4294967295 to
+     * 4294967296. */
+    if (std::isnan(s) || s != std::round(s) ||
+        s >= static_cast<T>(UINT32_MAX) ||
+        !IsIntegerRepresentationAccurate(s)) {
+      /* PositiveIntegerApproximationIfPossible returns undefined result if
+       * scalar cannot be accurately represented as an unsigned integer. */
+      return NAN;
+    }
+    return s;
+  }
+
+  template <typename T>
+  static T FloatGCD(T a, T b) {
+    T result = Arithmetic::GCD(a, b);
+    if (!IsIntegerRepresentationAccurate(result)) {
+      return NAN;
+    }
+    return result;
+  }
+  template <typename T>
+  static T FloatLCM(T a, T b) {
+    bool overflow = false;
+    T result = Arithmetic::LCM(a, b, &overflow);
+    if (overflow || !IsIntegerRepresentationAccurate(result)) {
+      return NAN;
+    }
+    return result;
+  }
+  template <typename T>
   static T FloatTrig(T a, T b) {
     // Otherwise, handle any b, multiply by -1 if b%4 >= 2 then use b%2.
     assert(b == 0.0 || b == 1.0);
@@ -94,8 +141,10 @@ class Approximation final {
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T>
+  using Mapper = T (*)(T);
+  template <typename T>
   static T MapAndReduce(const Tree* node, Reductor<T> reductor,
-                        Random::Context* context);
+                        Random::Context* context, Mapper<T> mapper = nullptr);
   template <typename T>
   static bool ApproximateAndReplaceEveryScalarT(Tree* tree, bool collapse);
 

@@ -1,10 +1,12 @@
 #include "arithmetic.h"
 
 #include <limits.h>
+#include <poincare/approximation_helper.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
+#include "approximation.h"
 #include "k_tree.h"
 #include "parametric.h"
 #include "rational.h"

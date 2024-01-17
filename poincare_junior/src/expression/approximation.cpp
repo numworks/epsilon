@@ -62,6 +62,12 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return MapAndReduce(node, FloatTrig<T>, context);
     case BlockType::ATrig:
       return MapAndReduce(node, FloatATrig<T>, context);
+    case BlockType::GCD:
+      return MapAndReduce(node, FloatGCD<T>, context,
+                          PositiveIntegerApproximation<T>);
+    case BlockType::LCM:
+      return MapAndReduce(node, FloatLCM<T>, context,
+                          PositiveIntegerApproximation<T>);
     case BlockType::ArcCosine:
       return ConvertFromRadian(std::acos(To<T>(node->nextNode(), context)));
     case BlockType::ArcSine:
@@ -265,10 +271,16 @@ Tree* Approximation::ToList(const Tree* node, AngleUnit angleUnit) {
 
 template <typename T>
 T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor,
-                              Random::Context* context) {
+                              Random::Context* context, Mapper<T> mapper) {
   T res;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
     T app = To<T>(child, context);
+    if (mapper) {
+      app = mapper(app);
+    }
+    if (std::isnan(app)) {
+      return NAN;
+    }
     if (index == 0) {
       res = app;
     } else {

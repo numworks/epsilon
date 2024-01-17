@@ -47,6 +47,15 @@ CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle,
   return codePointAtIndexInCycle(index, 0, cycle, cycleSize);
 }
 
+static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
+  while (CodePoint c = pattern.nextCodePoint()) {
+    if (string.nextCodePoint() != c) {
+      return false;
+    }
+  }
+  return true;
+}
+
 static bool findParameteredFunction1D(UnicodeDecoder& decoder,
                                       int* functionIndex, int* childIndex) {
   assert(functionIndex && childIndex);
@@ -82,15 +91,13 @@ static bool findParameteredFunction1D(UnicodeDecoder& decoder,
         // Identify one of the functions
         for (size_t i = 0; i < k_numberOfFunctions; i++) {
           const char* name = k_parameteredFunctions[i].aliasesList.mainAlias();
-          size_t length = strlen(name);
+          size_t length = UTF8Helper::StringCodePointLength(name);
           if (location >= textStart + length) {
+            UTF8Decoder nameDecoder(name);
             size_t savePosition = decoder.position();
             // Move the decoder where the function name could start
             decoder.unsafeSetPosition(savePosition - length);
-            constexpr size_t bufferSize = 10;
-            char buffer[bufferSize];
-            decoder.printInBuffer(buffer, bufferSize, length);
-            if (strcmp(buffer, name) == 0) {
+            if (Contains(decoder, nameDecoder)) {
               *functionIndex = i;
               *childIndex = numberOfCommas;
               functionFound = true;

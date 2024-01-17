@@ -10,8 +10,7 @@ bool check_sign(const char* input, Sign::Sign expectedSign,
   expectedSign.isInteger = shouldBeInteger;
   Tree* expression = TextToTree(input);
   Projection::DeepSystemProjection(expression);
-  bool result =
-      Sign::GetValue(Sign::GetSign(expression)) == Sign::GetValue(expectedSign);
+  bool result = Sign::GetSign(expression) == expectedSign;
   expression->removeTree();
   return result;
 }

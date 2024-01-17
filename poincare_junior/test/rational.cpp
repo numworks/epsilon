@@ -18,7 +18,7 @@ static void assert_properties(const Tree* numerator, const Tree* denominator,
                               BlockType expectedBlockType, Sign::Sign sign) {
   Tree* r = Rational::Push(numerator, denominator);
   quiz_assert(r->type() == expectedBlockType);
-  quiz_assert(Sign::GetValue(sign) == Sign::GetValue(Rational::Sign(r)));
+  quiz_assert(sign == Rational::Sign(r));
   integer_handler_same_absolute_value(Integer::Handler(numerator),
                                       Rational::Numerator(r));
   integer_handler_same_absolute_value(Integer::Handler(denominator),

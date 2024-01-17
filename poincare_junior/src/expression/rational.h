@@ -18,12 +18,8 @@ class Rational final {
   static IntegerHandler Denominator(const Tree* node);
   static Sign::Sign Sign(const Tree* node) {
     StrictSign s = Numerator(node).strictSign();
-    return {
-        .canBeNull = s == StrictSign::Null,
-        .canBePositive = s == StrictSign::Positive,
-        .canBeNegative = s == StrictSign::Negative,
-        .isInteger = node->isInteger(),
-    };
+    return Sign::Sign(s == StrictSign::Null, s == StrictSign::Positive,
+                      s == StrictSign::Negative, node->isInteger());
   }
   static void SetSign(Tree* reference, NonStrictSign sign);
 

@@ -18,10 +18,18 @@ struct Sign {
   bool canBeNull : 1 = false;
   bool canBePositive : 1 = false;
   bool canBeNegative : 1 = false;
-  bool isInteger : 1 = false;  // = !canBeNonIntegral, not always true when zero
+  bool isInteger : 1 = false;  // = !canBeNonIntegral
 
+  constexpr Sign(bool canBeNull, bool canBePositive, bool canBeNegative,
+                 bool isInteger = false)
+      : canBeNull(canBeNull),
+        canBePositive(canBePositive),
+        canBeNegative(canBeNegative),
+        isInteger(isInteger || !(canBePositive || canBeNegative)) {
+    assert(isValid());
+  }
   constexpr bool isValid() const {
-    return canBePositive || canBeNegative || canBeNull;
+    return canBePositive || canBeNegative || (canBeNull && isInteger);
   }
   bool isZero() const;
   bool isStrictlyPositive() const;
@@ -32,38 +40,21 @@ struct Sign {
   bool isUnknown() const;
   // It's either strictly positive, strictly negative or null.
   bool isKnown() const;
-  bool isIntegerOrNull() const;
-  // Return true if sign is equal or more restrictive than other sign.
-  constexpr bool isSameOrMoreRestrictiveThan(Sign other) {
-    assert(isValid() && other.isValid());
-    return (other.canBeNegative || !canBeNegative) &&
-           (other.canBeNull || !canBeNull) &&
-           (other.canBePositive || !canBePositive) &&
-           (isInteger || !other.isInteger);
-  }
+
+  bool operator==(const Sign&) const = default;
 };
 
 static_assert(sizeof(Sign) == sizeof(uint8_t));
 
-/* Warning : These representations are not unique because of optional isInteger.
- * We could either ensure isInteger is always true when isZero, or allow both
- * representations to exist and limit == and value comparisons to strict
- * minimum. */
-constexpr Sign Zero{.canBeNull = true, .isInteger = true};
-constexpr Sign Positive{.canBePositive = true};
-constexpr Sign PositiveOrNull{.canBeNull = true, .canBePositive = true};
-constexpr Sign Negative{.canBeNegative = true};
-constexpr Sign NegativeOrNull{.canBeNull = true, .canBeNegative = true};
-constexpr Sign Unknown{
-    .canBeNull = true, .canBePositive = true, .canBeNegative = true};
-// These representation are unique
-constexpr Sign NonZeroNatural{.canBePositive = true, .isInteger = true};
-constexpr Sign PositiveInteger{.canBePositive = true, .isInteger = true};
-constexpr Sign NegativeInteger{.canBeNegative = true, .isInteger = true};
-constexpr Sign Integer{.canBeNull = true,
-                       .canBePositive = true,
-                       .canBeNegative = true,
-                       .isInteger = true};
+constexpr Sign Zero(true, false, false);
+constexpr Sign Positive(false, true, false);
+constexpr Sign PositiveOrNull(true, true, false);
+constexpr Sign Negative(false, false, true);
+constexpr Sign NegativeOrNull(true, false, true);
+constexpr Sign Unknown(true, true, true);
+constexpr Sign PositiveInteger(false, true, false, true);
+constexpr Sign NegativeInteger(false, false, true, true);
+constexpr Sign Integer(true, true, true, true);
 
 // Set isInteger to false unless sign isZero
 Sign NoIntegers(Sign s);
@@ -77,10 +68,8 @@ constexpr uint8_t GetValue(Sign s) {
 }
 
 constexpr Sign GetSign(uint8_t value) {
-  return Sign{.canBeNull = ((value >> 0) & 1) == 1,
-              .canBePositive = ((value >> 1) & 1) == 1,
-              .canBeNegative = ((value >> 2) & 1) == 1,
-              .isInteger = ((value >> 3) & 1) == 1};
+  return Sign(((value >> 0) & 1) == 1, ((value >> 1) & 1) == 1,
+              ((value >> 2) & 1) == 1, ((value >> 3) & 1) == 1);
 }
 
 struct ComplexSign {
@@ -102,13 +91,13 @@ struct ComplexSign {
   // Anything is possible
   bool isUnknown() const;
   bool canBeNull() const;
-  // Also return true if zero
   bool isInteger() const;
+
+  bool operator==(const ComplexSign&) const = default;
 };
 
 static_assert(sizeof(ComplexSign) == sizeof(uint8_t));
 
-// Warning : These representations are not unique
 constexpr ComplexSign RealInteger(Integer, Zero);
 constexpr ComplexSign RealUnknown(Unknown, Zero);
 constexpr ComplexSign ComplexUnknown(Unknown, Unknown);
@@ -131,10 +120,10 @@ constexpr ComplexSign GetComplexSign(uint8_t value) {
   return ComplexSign(GetSign(value), GetSign(value >> 4));
 }
 
-// static_assert(GetComplexSign(GetValue(RealInteger)) == RealInteger);
-// static_assert(GetComplexSign(GetValue(RealInteger)) == RealInteger);
-// static_assert(GetComplexSign(GetValue(RealUnknown)) == RealUnknown);
-// static_assert(GetComplexSign(GetValue(ComplexUnknown)) == ComplexUnknown);
+static_assert(GetComplexSign(GetValue(RealInteger)) == RealInteger);
+static_assert(GetComplexSign(GetValue(RealInteger)) == RealInteger);
+static_assert(GetComplexSign(GetValue(RealUnknown)) == RealUnknown);
+static_assert(GetComplexSign(GetValue(ComplexUnknown)) == ComplexUnknown);
 // static_assert(ComplexUnknown.isUnknown());
 // static_assert(RealUnknown.isReal());
 // static_assert(RealInteger.isReal() && RealInteger.isInteger());

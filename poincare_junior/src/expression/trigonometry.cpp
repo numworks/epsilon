@@ -259,11 +259,15 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
   }
   const Tree* arg = u->child(0);
   bool isAsin = arg->nextTree()->isOne();
-  if (arg->isZero()) {
+  Sign::ComplexSign argSign = Sign::GetComplexSign(arg);
+  if (argSign.isZero()) {
     u->cloneTreeOverTree(isAsin ? 0_e : KMult(KHalf, π_e));
     return true;
   }
-  bool argIsOpposed = Sign::GetSign(arg).isStrictlyNegative();
+  if (!argSign.isReal()) {
+    return false;
+  }
+  bool argIsOpposed = argSign.realSign().isNegative();
   bool changed = argIsOpposed;
   if (argIsOpposed) {
     u->child(0)->moveTreeOverTree(

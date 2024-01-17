@@ -77,10 +77,66 @@ T Approximation::To(const Tree* node, Random::Context* context) {
     // TODO: Handle AngleUnits in context as well.
     case BlockType::Cosine:
       return std::cos(To<T>(node->nextNode(), context));
+      // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+      // res, angleInput);
+
     case BlockType::Sine:
       return std::sin(To<T>(node->nextNode(), context));
-    case BlockType::Tangent:
-      return std::tan(To<T>(node->nextNode(), context));
+      // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+      // res, angleInput);
+
+    case BlockType::Tangent: {
+      T angle = To<T>(node->nextNode(), context);
+      /* tan should be undefined at (2n+1)*pi/2 for any integer n.
+       * std::tan is not reliable at these values because it is diverging and
+       * any approximation errors on pi could easily yield a finite result. At
+       * these values, cos yields 0, but is also greatly affected by
+       * approximation error and could yield a non-null value : cos(pi/2+e) ~=
+       * -e On the other hand, sin, which should yield either 1 or -1 around
+       * these values is much more resilient : sin(pi/2+e) ~= 1 - (e^2)/2. We
+       * therefore use sin to identify values at which tan should be undefined.
+       */
+      T sin = std::sin(angle);
+      if (sin == 1 || sin == -1) {
+        return NAN;
+      }
+      return std::tan(angle);
+      // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+      // res, angleInput);
+    }
+    case BlockType::Cosecant: {
+      T c = To<T>(node->nextNode(), context);
+      // std::complex<T> denominator =
+      // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+      T denominator = std::sin(c);
+      if (denominator == static_cast<T>(0.0)) {
+        return NAN;  // complexNAN<T>();
+      }
+      return /*std::complex<T>(1)*/ 1 / denominator;
+    }
+    case BlockType::Cotangent: {
+      T c = To<T>(node->nextNode(), context);
+      // std::complex<T> denominator =
+      // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+      // std::complex<T> numerator =
+      // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+      T denominator = std::sin(c);
+      T numerator = std::cos(c);
+      if (denominator == static_cast<T>(0.0)) {
+        return NAN;  // complexNAN<T>();
+      }
+      return numerator / denominator;
+    }
+    case BlockType::Secant: {
+      T c = To<T>(node->nextNode(), context);
+      // std::complex<T> denominator =
+      // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+      T denominator = std::cos(c);
+      if (denominator == static_cast<T>(0.0)) {
+        return NAN;  // complexNAN<T>();
+      }
+      return /*std::complex<T>(1)*/ 1 / denominator;
+    }
     case BlockType::Decimal:
       return To<T>(node->nextNode(), context) *
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));

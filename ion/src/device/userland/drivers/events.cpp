@@ -21,10 +21,6 @@ ShiftAlphaStatus SVC_ATTRIBUTES shiftAlphaStatus() {
   SVC_RETURNING_R0(SVC_EVENTS_SHIFT_ALPHA_STATUS, ShiftAlphaStatus)
 }
 
-int SVC_ATTRIBUTES repetitionFactor() {
-  SVC_RETURNING_R0(SVC_EVENTS_REPETITION_FACTOR, int)
-}
-
 int SVC_ATTRIBUTES longPressCounter(){
     SVC_RETURNING_R0(SVC_EVENTS_LONG_PRESS_COUNTER, int)}
 

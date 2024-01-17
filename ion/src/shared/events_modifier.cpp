@@ -16,8 +16,6 @@ void setShiftAlphaStatus(ShiftAlphaStatus s) {
   *SharedModifierState->shiftAlphaStatus() = s;
 }
 
-int repetitionFactor() { return SharedModifierState->repetitionFactor(); }
-
 int longPressCounter() { return SharedModifierState->longPressCounter(); }
 
 // Internal functions
@@ -66,10 +64,6 @@ void ModifierState::updateModifiersFromEvent(Event e, Keyboard::State state) {
   if (!alphaKeyDown) {
     m_shiftAlphaStatus.removeAlpha();
   }
-}
-
-void ModifierState::incrementOrResetRepetition(bool increment) {
-  m_repetitionCounter = increment ? m_repetitionCounter + 1 : 0;
 }
 
 }  // namespace Events

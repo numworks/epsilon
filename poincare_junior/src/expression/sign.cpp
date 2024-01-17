@@ -41,6 +41,32 @@ Sign NoIntegers(Sign s) {
   return Sign(s.canBeNull, s.canBeNegative, s.canBePositive);
 }
 
+Sign DecimalFunction(Sign s, BlockType type) {
+  bool canBeNull = s.canBeNull;
+  bool canBePositive = s.canBePositive;
+  bool canBeNegative = s.canBeNegative;
+  bool isInteger = s.isInteger;
+  switch (type) {
+    case BlockType::Ceiling:
+      canBeNull |= canBeNegative;
+      isInteger = true;
+      break;
+    case BlockType::Floor:
+      canBeNull |= canBePositive;
+      isInteger = true;
+      break;
+    case BlockType::FracPart:
+      canBeNull = true;
+      canBePositive = !isInteger;
+      canBeNegative = false;
+    case BlockType::Round:
+      canBeNull = true;
+    default:
+      assert(false);
+  }
+  return Sign(canBeNull, canBePositive, canBeNegative, isInteger);
+}
+
 Sign Oppose(Sign s) {
   return Sign(s.canBeNull, s.canBeNegative, s.canBePositive, s.isInteger);
 }
@@ -133,10 +159,11 @@ ComplexSign GetComplexSign(const Tree* t) {
       }
       return s;
     }
+    case BlockType::PowerReal:
     case BlockType::Power: {
       ComplexSign base = GetComplexSign(t->firstChild());
       ComplexSign exp = GetComplexSign(t->child(1));
-      // If this assert can;t be maintained, escape with Unknown.
+      // If this assert can't be maintained, escape with Unknown.
       assert(exp.isReal() && exp.isInteger());
       if (base.isZero()) {
         return ComplexZero;
@@ -184,9 +211,10 @@ ComplexSign GetComplexSign(const Tree* t) {
     case BlockType::Ln: {
       ComplexSign s = GetComplexSign(t->firstChild());
       bool lnIsReal = s.isReal() && s.realSign().isPositive();
-      return ComplexSign(Unknown,
-                         Sign(lnIsReal, s.imagSign().isPositive() && !lnIsReal,
-                              s.imagSign().isStrictlyNegative()));
+      return ComplexSign(
+          Unknown, lnIsReal ? Zero
+                            : Sign(false, !s.imagSign().isStrictlyNegative(),
+                                   s.imagSign().canBeNegative));
     }
     case BlockType::Factorial:
       assert(GetComplexSign(t->firstChild()).isReal() &&
@@ -200,6 +228,37 @@ ComplexSign GetComplexSign(const Tree* t) {
     }
     case BlockType::Variable:
       return Variables::GetComplexSign(t);
+    case BlockType::Ceiling:
+    case BlockType::Floor:
+    case BlockType::FracPart:
+    case BlockType::Round: {
+      ComplexSign s = GetComplexSign(t->firstChild());
+      return ComplexSign(DecimalFunction(s.realSign(), t->type()),
+                         DecimalFunction(s.imagSign(), t->type()));
+    }
+    case BlockType::Complex: {
+      ComplexSign s0 = GetComplexSign(t->child(0));
+      ComplexSign s1 = GetComplexSign(t->child(1));
+      assert(s0.isReal() && s1.isReal());
+      return ComplexSign(s0.realSign(), s1.realSign());
+    }
+    case BlockType::Trig: {
+      ComplexSign s = GetComplexSign(t->firstChild());
+      if (s.realSign().isZero()) {
+        bool isSin = t->child(1)->isOne();
+        assert(isSin || t->child(1)->isZero());
+        return isSin ? ComplexSign(Zero, s.imagSign())
+                     : ComplexSign(Positive, Zero);
+      }
+      return ComplexSign(Unknown, s.isReal() ? Zero : Unknown);
+    }
+    case BlockType::ComplexArgument: {
+      ComplexSign s = GetComplexSign(t->firstChild());
+      return ComplexSign(
+          Sign(s.imagSign().canBeNull && s.realSign().canBePositive, true,
+               true),
+          Zero);
+    }
     default:
       return ComplexUnknown;
   }

@@ -189,8 +189,8 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-HighlightCell *GraphOptionsController::cell(int index) {
-  assert(index >= 0 && index < k_maxNumberOfRows);
+HighlightCell *GraphOptionsController::cell(int row) {
+  assert(row >= 0 && row < k_maxNumberOfRows);
   if (GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
       CountryPreferences::RegressionApp::Default) {
     HighlightCell *cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
@@ -201,7 +201,7 @@ HighlightCell *GraphOptionsController::cell(int index) {
                                                &m_yParameterCell,
                                                &m_residualPlotCell,
                                                &m_removeRegressionCell};
-    return cells[index];
+    return cells[row];
   }
   assert(GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
          CountryPreferences::RegressionApp::Variant1);
@@ -213,7 +213,7 @@ HighlightCell *GraphOptionsController::cell(int index) {
                                              &m_xParameterCell,
                                              &m_yParameterCell,
                                              &m_removeRegressionCell};
-  return cells[index];
+  return cells[row];
 }
 bool GraphOptionsController::displayRegressionEquationCell() const {
   return m_store->coefficientsAreDefined(

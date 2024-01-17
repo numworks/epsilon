@@ -58,13 +58,13 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-AbstractMenuCell* StoreParameterController::cell(int index) {
-  assert(index >= 0 && index < k_numberOfCells);
+AbstractMenuCell* StoreParameterController::cell(int row) {
+  assert(row >= 0 && row < k_numberOfCells);
   AbstractMenuCell* cells[] = {&m_sortCell, &m_fillFormula, &m_hideCell,
                                &m_clearColumn};
   static_assert(std::size(cells) == k_numberOfCells,
                 "StoreParameterController::k_numberOfCells is deprecated");
-  return cells[index];
+  return cells[row];
 }
 
 void StoreParameterController::viewWillAppear() {

@@ -39,7 +39,7 @@ class CalculationParameterController
     return TitlesDisplay::DisplayLastTwoTitles;
   }
 
-  Escher::HighlightCell* cell(int index) override;
+  Escher::HighlightCell* cell(int row) override;
   void setRecord(Ion::Storage::Record record);
 
  private:

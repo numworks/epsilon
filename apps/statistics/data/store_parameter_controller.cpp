@@ -73,15 +73,14 @@ int StoreParameterController::numberOfRows() const {
              : Shared::StoreParameterController::numberOfRows() + 1;
 }
 
-Escher::AbstractMenuCell* StoreParameterController::cell(int index) {
-  assert(index >= 0 && index < numberOfRows());
-  if (m_isCumulatedFrequencyColumnSelected && index == k_hideCFIndex) {
+Escher::AbstractMenuCell* StoreParameterController::cell(int row) {
+  assert(row >= 0 && row < numberOfRows());
+  if (m_isCumulatedFrequencyColumnSelected && row == k_hideCFIndex) {
     return &m_hideCumulatedFrequencyCell;
-  } else if (!m_isCumulatedFrequencyColumnSelected &&
-             index == k_displayCFIndex) {
+  } else if (!m_isCumulatedFrequencyColumnSelected && row == k_displayCFIndex) {
     return &m_displayCumulatedFrequencyCell;
   }
-  return Shared::StoreParameterController::cell(index);
+  return Shared::StoreParameterController::cell(row);
 }
 
 void StoreParameterController::viewWillAppear() {

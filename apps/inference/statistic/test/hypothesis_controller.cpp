@@ -109,9 +109,9 @@ const char* HypothesisController::symbolPrefix() {
   return m_test->hypothesisSymbol();
 }
 
-HighlightCell* HypothesisController::cell(int index) {
+HighlightCell* HypothesisController::cell(int row) {
   HighlightCell* cells[] = {&m_h0, &m_ha, &m_next};
-  return cells[index];
+  return cells[row];
 }
 
 void HypothesisController::didBecomeFirstResponder() {

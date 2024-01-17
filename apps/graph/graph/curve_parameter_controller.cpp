@@ -33,12 +33,12 @@ CurveParameterController::CurveParameterController(
   m_derivativeNumberCell.setEditable(false);
 }
 
-Escher::HighlightCell *CurveParameterController::cell(int index) {
-  assert(0 <= index && index < k_numberOfRows);
+Escher::HighlightCell *CurveParameterController::cell(int row) {
+  assert(0 <= row && row < k_numberOfRows);
   HighlightCell *cells[k_numberOfRows] = {&m_abscissaCell, &m_imageCell,
                                           &m_derivativeNumberCell,
                                           &m_calculationCell, &m_optionsCell};
-  return cells[index];
+  return cells[row];
 }
 
 Shared::ExpiringPointer<Shared::ContinuousFunction>

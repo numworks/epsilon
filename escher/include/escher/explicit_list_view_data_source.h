@@ -26,7 +26,7 @@ class ExplicitListViewDataSource : public ListViewDataSource {
   void initWidth(TableView* tableView) override;
 
  protected:
-  virtual HighlightCell* cell(int index) = 0;
+  virtual HighlightCell* cell(int row) = 0;
   KDCoordinate nonMemoizedRowHeight(int row) override final;
 
  private:

@@ -19,7 +19,7 @@ class ValuesParameterController : public ColumnParameterController {
                             ValuesController* valuesController);
   int numberOfRows() const override { return k_totalNumberOfCell; }
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::HighlightCell* cell(int index) override;
+  Escher::HighlightCell* cell(int row) override;
   void initializeColumnParameters() override;
 
  private:

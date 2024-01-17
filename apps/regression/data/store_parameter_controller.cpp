@@ -28,13 +28,13 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::StoreParameterController::handleEvent(event);
 }
 
-AbstractMenuCell *StoreParameterController::cell(int index) {
-  assert(index >= 0 && index < numberOfRows());
-  if (index == k_changeRegressionCellIndex) {
+AbstractMenuCell *StoreParameterController::cell(int row) {
+  assert(row >= 0 && row < numberOfRows());
+  if (row == k_changeRegressionCellIndex) {
     return &m_changeRegressionCell;
   }
   return Shared::StoreParameterController::cell(
-      index - (index > k_changeRegressionCellIndex));
+      row - (row > k_changeRegressionCellIndex));
 }
 
 void StoreParameterController::viewWillAppear() {

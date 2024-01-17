@@ -18,7 +18,7 @@ class StoreParameterController : public Shared::StoreParameterController {
   void initializeColumnParameters() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  Escher::AbstractMenuCell* cell(int index) override;
+  Escher::AbstractMenuCell* cell(int row) override;
   void viewWillAppear() override;
 
  private:

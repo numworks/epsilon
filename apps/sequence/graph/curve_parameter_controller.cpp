@@ -66,11 +66,11 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return ExplicitSelectableListViewController::handleEvent(event);
 }
 
-HighlightCell *CurveParameterController::cell(int index) {
-  assert(0 <= index && index < k_numberOfRows);
+HighlightCell *CurveParameterController::cell(int row) {
+  assert(0 <= row && row < k_numberOfRows);
   HighlightCell *cells[k_numberOfRows] = {&m_sumCell, &m_cobwebCell,
                                           &m_goToCell};
-  return cells[index];
+  return cells[row];
 }
 
 }  // namespace Sequence

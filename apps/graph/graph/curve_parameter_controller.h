@@ -49,7 +49,7 @@ class CurveParameterController
     return function()->properties().numberOfCurveParameters() +
            shouldDisplayDerivative();
   }
-  Escher::HighlightCell* cell(int index) override;
+  Escher::HighlightCell* cell(int row) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   Escher::TextField* textFieldOfCellAtRow(int row) override;

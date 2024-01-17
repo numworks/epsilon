@@ -256,7 +256,17 @@ void assert_expression_approximates_to(const char *expression,
       expression, approximation, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
-      [](Tree *e, ReductionContext reductionContext) {
+      [](Tree *e, ReductionContext reductionContext) -> Tree * {
+        if (!PoincareJ::Dimension::DeepCheckDimensions(e) ||
+            !PoincareJ::Dimension::DeepCheckListLength(e)) {
+          e->removeTree();
+          return KUndef->clone();
+        }
+        if (PoincareJ::Dimension::GetListLength(e) != -1) {
+          EditionReference r = PoincareJ::Approximation::ToList<T>(e);
+          e->removeTree();
+          return r;
+        }
         T value = PoincareJ::Approximation::RootTreeTo<T>(e);
         e->removeTree();
         return SharedEditionPool->push<FloatType<T>::type>(value);

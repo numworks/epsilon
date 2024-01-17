@@ -27,6 +27,9 @@ class Approximation final {
   static T To(const Tree* node, Random::Context* context);
 
   template <typename T>
+  static Tree* ToList(const Tree* node);
+
+  template <typename T>
   static T FloatAddition(T a, T b) {
     return a + b;
   }

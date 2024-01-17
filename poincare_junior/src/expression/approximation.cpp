@@ -8,6 +8,7 @@
 #include "constant.h"
 #include "decimal.h"
 #include "float.h"
+#include "list.h"
 #include "random.h"
 #include "rational.h"
 
@@ -232,6 +233,15 @@ T Approximation::To(const Tree* node, Random::Context* context) {
 }
 
 template <typename T>
+Tree* Approximation::ToList(const Tree* node) {
+  Tree* l = node->clone();
+  List::BubbleUp(l, [](Tree* e) -> bool {
+    return Approximation::ApproximateAndReplaceEveryScalarT<T>(e, true);
+  });
+  return l;
+}
+
+template <typename T>
 T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor,
                               Random::Context* context) {
   T res;
@@ -297,6 +307,9 @@ template double Approximation::RootTreeTo<double>(const Tree*);
 
 template float Approximation::To<float>(const Tree*, Random::Context*);
 template double Approximation::To<double>(const Tree*, Random::Context*);
+
+template Tree* Approximation::ToList<float>(const Tree*);
+template Tree* Approximation::ToList<double>(const Tree*);
 
 template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*,
                                                                       bool);

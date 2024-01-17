@@ -145,7 +145,6 @@ bool isDefined(uint8_t eventId);
 ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
 void setSpinner(bool spinner);
-int repetitionFactor();
 int longPressCounter();
 inline bool isRepeating() { return longPressCounter() > 0; }
 inline int longPressFactor() {

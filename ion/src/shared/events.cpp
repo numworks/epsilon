@@ -101,8 +101,6 @@ Event State::privateSharedGetEvent(int* timeout) {
        * another solution for the shift+backspace issue (see comment in
        * keyboard.cpp). Or find a way to register computer key press in
        * m_lastKeypress, by using SDL_Event::type::KEY_UP */
-      SharedModifierState->incrementOrResetRepetition(platformEvent ==
-                                                      m_lastEvent);
       m_lastEvent = platformEvent;
       return platformEvent;
     }
@@ -138,7 +136,6 @@ Event State::privateSharedGetEvent(int* timeout) {
             SharedModifierState->shiftAlphaStatus()->alphaIsActive();
         Event event(m_lastKeypress, m_lastEventShift, m_lastEventAlpha, lock);
         SharedModifierState->updateModifiersFromEvent(event, state);
-        SharedModifierState->incrementOrResetRepetition(event == m_lastEvent);
         m_lastEvent = event;
         return event;
       }

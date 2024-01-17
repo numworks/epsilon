@@ -23,7 +23,7 @@ class Toolbox : public NestedMenuController {
   bool returnToPreviousMenu() override;
   bool returnToRootMenu() override;
   bool isToolbox() const override { return true; }
-  virtual int maxNumberOfDisplayedRows() = 0;
+  virtual int maxNumberOfDisplayedRows() const = 0;
   virtual const ToolboxMessageTree* rootModel() const = 0;
   /* indexAfterFork is called when a fork-node is encountered to choose which
    * of its children should be selected, based on external context. */

@@ -1135,7 +1135,7 @@ NestedMenuController::NodeCell *PythonToolboxController::nodeCellAtIndex(
   return &m_nodeCells[index];
 }
 
-int PythonToolboxController::maxNumberOfDisplayedRows() {
+int PythonToolboxController::maxNumberOfDisplayedRows() const {
   return k_maxNumberOfDisplayedRows;
 }
 

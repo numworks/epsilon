@@ -46,7 +46,7 @@ class MathToolboxController : public Escher::Toolbox {
   Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override;
   const Escher::ToolboxMessageTree* messageTreeModelAtIndex(
       int index) const override;
-  int maxNumberOfDisplayedRows() override;
+  int maxNumberOfDisplayedRows() const override;
   int controlChecksum() const override;
   constexpr static int k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(

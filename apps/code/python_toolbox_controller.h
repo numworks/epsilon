@@ -32,7 +32,7 @@ class PythonToolboxController : public Escher::Toolbox {
   const Escher::ToolboxMessageTree* rootModel() const override;
   ToolboxLeafCell* leafCellAtIndex(int index) override;
   Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override;
-  int maxNumberOfDisplayedRows() override;
+  int maxNumberOfDisplayedRows() const override;
   constexpr static int k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,

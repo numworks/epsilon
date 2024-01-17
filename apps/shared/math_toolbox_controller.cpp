@@ -1063,7 +1063,7 @@ MathToolboxController::messageTreeModelAtIndex(int index) const {
                                           numberOfExtraCellsInCurrentMenu());
 }
 
-int MathToolboxController::maxNumberOfDisplayedRows() {
+int MathToolboxController::maxNumberOfDisplayedRows() const {
   return k_maxNumberOfDisplayedRows;
 }
 

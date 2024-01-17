@@ -42,7 +42,7 @@ std::complex<T> TangentNode::computeOnComplex(
   /* We use std::sin/std::cos instead of std::tan for 3 reasons:
    * - we do not want tan(π/2) to be infinity
    * - we have the same approximation when computing sin/cos or tan
-   * - we have the same approximation across platforms (linux uses sin/cos) */
+   * - we homogenize approximation across platforms */
   std::complex<T> res = std::sin(angleInput) / std::cos(angleInput);
   return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
       res, angleInput);

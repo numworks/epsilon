@@ -70,23 +70,18 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
 
   float xAbsoluteMax = std::max(-xMin, xMax);
   float yAbsoluteMax = std::max(-yMin, yMax);
+  float xAbsoluteMin = std::min(-xMin, xMax);
+  float yAbsoluteMin = std::min(-yMin, yMax);
 
   if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
     // The origin is inside the rect
     radiusMin = 0;
+  } else if (xMin <= 0 && xMax >= 0) {
+    radiusMin = yAbsoluteMin;
+  } else if (yMin <= 0 && yMax >= 0) {
+    radiusMin = xAbsoluteMin;
   } else {
-    /* Consider the smallest circle that contains the whole screen. The
-     * radiuses of visible arcs are bounded by the distance between the origin
-     * and this circle.
-     * This circle is centered in ((xMin + xMax)/2, (yMin + yMax)/2)
-     * and its radius is sqrt(((xMax - xMin)^2 + (yMax - yMin)^2)) /2 .  */
-
-    float screenCircleRadius = Vector2{xMax - xMin, yMax - yMin}.norm() / 2;
-
-    // Distance from the origin to the screen center.
-    float screenCenterDistance = Vector2{xMin + xMax, yMin + yMax}.norm() / 2;
-
-    radiusMin = screenCenterDistance - screenCircleRadius;
+    radiusMin = sqrt(xAbsoluteMin * xAbsoluteMin + yAbsoluteMin * yAbsoluteMin);
   }
   radiusMax = Vector2{xAbsoluteMax, yAbsoluteMax}.norm();
 }
@@ -144,8 +139,8 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
     /* angle between the X axis and the line from the origin to the center
      * of visible rect. */
     float alpha = std::atan2(screenCenter.y, screenCenter.x);
-    /* Angle between the line from the origin to the center of the visible rect
-     * and both lines tangent to the circle which pass to the origin. */
+    /* Angle between the line from the origin to the center of the visible
+     * rect and both lines tangent to the circle which pass to the origin. */
     float theta = atan2(screenCircleRadius, screenCenterDistance);
 
     angleBegin = alpha - theta;

@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/float.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include <bit>
@@ -190,25 +191,33 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
     case BlockType::Sign: {
       // TODO why no epsilon in Poincare ?
+      if (std::isnan(child[0])) {
+        return NAN;
+      }
       return child[0] == 0 ? 0 : child[0] < 0 ? -1 : 1;
     }
     case BlockType::Floor:
-      // TODO low deviation
-      return std::floor(child[0]);
-    case BlockType::Ceiling:
-      // TODO low deviation
-      return std::ceil(child[0]);
+    case BlockType::Ceiling: {
+      /* Assume low deviation from natural numbers are errors */
+      T delta = std::fabs((std::round(child[0]) - child[0]) / child[0]);
+      if (delta <= Poincare::Float<T>::Epsilon()) {
+        return std::round(child[0]);
+      }
+      return node->isFloor() ? std::floor(child[0]) : std::ceil(child[0]);
+    }
     case BlockType::FracPart: {
       return child[0] - std::floor(child[0]);
     }
     case BlockType::Round: {
-      // TODO digits is integer
+      if (std::isnan(child[1]) || child[1] != std::round(child[1])) {
+        return NAN;
+      }
       T err = std::pow(10, std::round(child[1]));
       return std::round(child[0] * err) / err;
     }
     case BlockType::Factorial: {
       T n = child[0];
-      if (/*c.imag() != 0 ||*/ std::isnan(n) || n != (int)n || n < 0) {
+      if (std::isnan(n) || n != std::round(n) || n < 0) {
         return NAN;
       }
       T result = 1;
@@ -241,7 +250,7 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
           return result;
         }
       }
-      // If not generalized, the output must be round
+      // If not generalized, the output must be rounded
       return generalized ? result : std::round(result);
     }
     case BlockType::Permute: {

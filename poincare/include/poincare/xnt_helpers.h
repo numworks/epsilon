@@ -14,16 +14,16 @@ namespace XNTHelpers {
 // Cycles
 constexpr int k_maxCycleSize = 5;
 constexpr CodePoint k_defaultXNTCycle[] = {
-    Poincare::Symbol::k_cartesianSymbol,
-    Poincare::Symbol::k_sequenceSymbol,
-    Poincare::Symbol::k_parametricSymbol,
-    Poincare::Symbol::k_polarSymbol,
+    Symbol::k_cartesianSymbol,
+    Symbol::k_sequenceSymbol,
+    Symbol::k_parametricSymbol,
+    Symbol::k_polarSymbol,
     UCodePointNull,
 };
 constexpr CodePoint k_defaultContinuousXNTCycle[] = {
-    Poincare::Symbol::k_cartesianSymbol,
-    Poincare::Symbol::k_parametricSymbol,
-    Poincare::Symbol::k_polarSymbol,
+    Symbol::k_cartesianSymbol,
+    Symbol::k_parametricSymbol,
+    Symbol::k_polarSymbol,
     UCodePointNull,
 };
 constexpr CodePoint k_defaultDiscreteXNTCycle[] = {

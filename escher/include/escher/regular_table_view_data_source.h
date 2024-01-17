@@ -44,7 +44,7 @@ class SimpleTableViewDataSource : public RegularTableViewDataSource {
     assert(type == 0);
     return reusableCellCount();
   }
-  int typeAtLocation(int column, int row) override final { return 0; }
+  int typeAtLocation(int column, int row) const override final { return 0; }
 };
 
 }  // namespace Escher

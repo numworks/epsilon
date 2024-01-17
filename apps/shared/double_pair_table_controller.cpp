@@ -80,7 +80,7 @@ int DoublePairTableController::reusableCellCount(int type) {
   }
 }
 
-int DoublePairTableController::typeAtLocation(int column, int row) {
+int DoublePairTableController::typeAtLocation(int column, int row) const {
   assert(0 <= column && column < numberOfColumns());
   assert(0 <= row && row < numberOfRows());
   if (column <= 1 && row == 0) {

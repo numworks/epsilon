@@ -112,7 +112,7 @@ void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
   Shared::ValuesController::fillCellForLocation(cell, column, row);
 }
 
-int ValuesController::typeAtLocation(int column, int row) {
+int ValuesController::typeAtLocation(int column, int row) const {
   symbolTypeAtColumn(&column);
   return Shared::ValuesController::typeAtLocation(column, row);
 }

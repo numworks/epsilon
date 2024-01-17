@@ -39,7 +39,7 @@ HighlightCell *HomogeneityTableDataSource::reusableCell(int i, int type) {
   return innerCell(i);
 }
 
-int HomogeneityTableDataSource::typeAtLocation(int column, int row) {
+int HomogeneityTableDataSource::typeAtLocation(int column, int row) const {
   if (column == 0 && row == 0) {
     return k_typeOfTopLeftCell;
   }

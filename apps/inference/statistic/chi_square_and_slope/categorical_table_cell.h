@@ -135,7 +135,7 @@ class DoubleColumnTableCell
   int numberOfColumns() const override { return m_numberOfColumns; }
   int reusableCellCount(int type) override;
   Escher::HighlightCell *reusableCell(int i, int type) override;
-  int typeAtLocation(int column, int row) override {
+  int typeAtLocation(int column, int row) const override {
     return row == 0 ? k_typeOfHeaderCells : k_typeOfInnerCells;
   }
   void fillCellForLocation(Escher::HighlightCell *cell, int column,

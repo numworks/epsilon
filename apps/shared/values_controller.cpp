@@ -172,7 +172,7 @@ int ValuesController::reusableCellCount(int type) {
   }
 }
 
-int ValuesController::typeAtLocation(int column, int row) {
+int ValuesController::typeAtLocation(int column, int row) const {
   static_assert(k_abscissaTitleCellType == 0 && k_functionTitleCellType == 1 &&
                     k_editableValueCellType == 2 &&
                     k_notEditableValueCellType == 3,

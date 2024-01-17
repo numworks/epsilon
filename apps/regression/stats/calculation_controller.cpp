@@ -343,7 +343,7 @@ int CalculationController::reusableCellCount(int type) {
   return DoublePairTableController::reusableCellCount(type);
 }
 
-int CalculationController::typeAtLocation(int column, int row) {
+int CalculationController::typeAtLocation(int column, int row) const {
   if (column > 1 && row > 0 && row <= k_numberOfDoubleBufferCalculations) {
     return k_doubleBufferCalculationCellType;
   }

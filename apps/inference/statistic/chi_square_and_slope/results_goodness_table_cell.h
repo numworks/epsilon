@@ -53,7 +53,7 @@ class ResultGoodnessContributionsTable
     return 1 + m_statistic->numberOfValuePairs();
   }
   int numberOfColumns() const override { return 3; }
-  int typeAtLocation(int column, int row) override { return 0; }
+  int typeAtLocation(int column, int row) const override { return 0; }
 
   static constexpr int ContributionColumnIndex = 2;
 

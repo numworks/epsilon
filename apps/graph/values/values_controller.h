@@ -34,7 +34,7 @@ class ValuesController : public Shared::ValuesController,
   // TableViewDataSource
   void fillCellForLocation(Escher::HighlightCell *cell, int column,
                            int row) override;
-  int typeAtLocation(int column, int row) override;
+  int typeAtLocation(int column, int row) const override;
   KDCoordinate separatorBeforeColumn(int column) override;
 
   // ButtonRowDelegate

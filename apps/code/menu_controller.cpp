@@ -219,7 +219,7 @@ int MenuController::reusableCellCount(int type) {
   return 1;
 }
 
-int MenuController::typeAtLocation(int column, int row) {
+int MenuController::typeAtLocation(int column, int row) const {
   assert(column >= 0 && column < numberOfColumns());
   assert(row >= 0 && row < numberOfRows());
   if (column == 0) {

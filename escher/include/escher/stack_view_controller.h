@@ -17,7 +17,7 @@ class CustomSizeStackViewController;
 
 class StackViewController : public ViewController {
  public:
-  using Default = CustomSizeStackViewController<7>;
+  using Default = CustomSizeStackViewController<4>;
   template <int Depth>
   using Custom = CustomSizeStackViewController<Depth>;
 

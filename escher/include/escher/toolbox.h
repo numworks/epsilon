@@ -13,7 +13,7 @@ class Toolbox : public NestedMenuController {
   // MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override;
   int numberOfRows() const override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   void fillCellForRow(HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override;
 

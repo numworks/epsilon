@@ -16,7 +16,7 @@ class DisplayModeController : public PreferencesController,
   TELEMETRY_ID("DisplayMode");
   KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   int typeAtRow(int row) const override {
     return (row == numberOfRows() - 1) ? k_significantDigitsType
                                        : k_resultFormatType;

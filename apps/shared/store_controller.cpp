@@ -80,7 +80,7 @@ HighlightCell *StoreController::reusableCell(int index, int type) {
   }
 }
 
-int StoreController::reusableCellCount(int type) {
+int StoreController::reusableCellCount(int type) const {
   return type == k_titleCellType ? k_maxNumberOfDisplayableColumns
                                  : k_maxNumberOfDisplayableCells;
 }

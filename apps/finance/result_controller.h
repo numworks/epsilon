@@ -25,7 +25,7 @@ class ResultController : public Escher::ListWithTopAndBottomController {
     return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
   }
   int numberOfRows() const override { return 1; }
-  int reusableCellCount(int type) override { return 1; }
+  int reusableCellCount(int type) const override { return 1; }
   Escher::HighlightCell* reusableCell(int i, int type) override {
     assert(type == 0 && i == 0);
     return &m_cell;

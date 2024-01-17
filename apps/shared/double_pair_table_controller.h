@@ -53,7 +53,7 @@ class DoublePairTableController
     return 2 + store()->numberOfActiveSeries();
   }
   Escher::HighlightCell *reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   KDCoordinate separatorBeforeColumn(int index) override;
 

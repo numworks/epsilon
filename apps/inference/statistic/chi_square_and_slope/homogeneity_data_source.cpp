@@ -20,7 +20,7 @@ void HomogeneityTableDataSource::initCell(InferenceEvenOddBufferCell,
   static_cast<InferenceEvenOddBufferCell *>(cell)->setFont(KDFont::Size::Small);
 }
 
-int HomogeneityTableDataSource::reusableCellCount(int type) {
+int HomogeneityTableDataSource::reusableCellCount(int type) const {
   if (type == k_typeOfTopLeftCell) {
     return 1;
   } else if (type == k_typeOfHeaderCells) {

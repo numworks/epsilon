@@ -26,7 +26,7 @@ class InterestMenuController : public Escher::ListWithTopAndBottomController {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   int numberOfRows() const override;
-  int reusableCellCount(int type) override {
+  int reusableCellCount(int type) const override {
     return InterestData::k_maxNumberOfUnknowns;
   }
   Escher::HighlightCell* reusableCell(int i, int type) override {

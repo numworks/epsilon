@@ -41,7 +41,7 @@ class TableViewDataSource {
   virtual KDCoordinate separatorBeforeRow(int row) { return 0; }
 
   virtual HighlightCell* reusableCell(int index, int type) = 0;
-  virtual int reusableCellCount(int type) = 0;
+  virtual int reusableCellCount(int type) const = 0;
   virtual int typeAtLocation(int column, int row) const = 0;
 
   void lockSizeMemoization(bool state);

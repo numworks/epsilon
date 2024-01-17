@@ -55,7 +55,7 @@ class GraphController final : public Shared::FunctionGraphController {
              index < Shared::SequenceStore::k_maxNumberOfSequences);
       return m_cells + index;
     }
-    int reusableCellCount(int type) override {
+    int reusableCellCount(int type) const override {
       return Shared::SequenceStore::k_maxNumberOfSequences;
     }
 

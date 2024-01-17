@@ -107,7 +107,7 @@ HighlightCell *ResultsController::reusableCell(int index, int type) {
   return &m_next;
 }
 
-int ResultsController::reusableCellCount(int type) {
+int ResultsController::reusableCellCount(int type) const {
   if (type == k_resultCellType) {
     return k_numberOfReusableCells;
   }

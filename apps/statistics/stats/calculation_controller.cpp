@@ -178,7 +178,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
   }
 }
 
-int CalculationController::reusableCellCount(int type) {
+int CalculationController::reusableCellCount(int type) const {
   if (type == k_calculationModeTitleCellType ||
       type == k_calculationModeSymbolCellType) {
     return k_maxNumberOfDisplayableRows;

@@ -40,7 +40,9 @@ class DetailsParameterController
   KDCoordinate nonMemoizedRowHeight(int row) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   DetailCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override { return k_numberOfDataPoints; }
+  int reusableCellCount(int type) const override {
+    return k_numberOfDataPoints;
+  }
   int typeAtRow(int row) const override { return 0; }
   bool canStoreCellAtRow(int row) override {
     return row != k_indexOfCurveTypeRow;

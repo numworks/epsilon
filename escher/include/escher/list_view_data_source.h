@@ -15,7 +15,7 @@ class ListViewDataSource : public TableViewDataSource {
   virtual void initWidth(TableView* tableView);
   /* reusableCellCount have a default implementation for specific simple
    * lists. Most implementations should override them.*/
-  int reusableCellCount(int type) override { return numberOfRows(); }
+  int reusableCellCount(int type) const override { return numberOfRows(); }
   virtual void fillCellForRow(HighlightCell* cell, int row) {}
   virtual int typeAtRow(int row) const { return 0; }
   virtual bool canSelectCellAtRow(int row) { return true; }
@@ -93,7 +93,7 @@ class SimpleListViewDataSource : public RegularListViewDataSource {
     assert(type == 0);
     return reusableCell(index);
   }
-  int reusableCellCount(int type) override final {
+  int reusableCellCount(int type) const override final {
     assert(type == 0);
     return reusableCellCount();
   }

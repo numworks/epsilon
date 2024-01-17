@@ -16,7 +16,7 @@ class ChainableExpressionsListController : public ExpressionsListController {
   int typeAtRow(int row) const override final {
     return ExpressionsListController::typeAtRow(row);
   }
-  int reusableCellCount(int type) override final {
+  int reusableCellCount(int type) const override final {
     return ExpressionsListController::reusableCellCount(type);
   }
   Escher::HighlightCell* reusableCell(int index, int type) override final {

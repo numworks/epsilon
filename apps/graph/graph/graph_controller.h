@@ -64,7 +64,7 @@ class GraphController : public Shared::FunctionGraphController,
       assert(index >= 0 && index < k_maxNumberOfDisplayableFunctions);
       return m_cells + index;
     }
-    int reusableCellCount(int type) override {
+    int reusableCellCount(int type) const override {
       return k_maxNumberOfDisplayableFunctions;
     }
 

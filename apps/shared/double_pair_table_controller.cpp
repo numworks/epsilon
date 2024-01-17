@@ -64,7 +64,7 @@ HighlightCell* DoublePairTableController::reusableCell(int index, int type) {
   }
 }
 
-int DoublePairTableController::reusableCellCount(int type) {
+int DoublePairTableController::reusableCellCount(int type) const {
   switch (type) {
     case k_hideableCellType:
       return k_numberOfHeaderColumns;

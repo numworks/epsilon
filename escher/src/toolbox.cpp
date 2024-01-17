@@ -16,7 +16,9 @@ int Toolbox::numberOfRows() const {
   return m_messageTreeModel->numberOfChildren();
 }
 
-int Toolbox::reusableCellCount(int type) { return maxNumberOfDisplayedRows(); }
+int Toolbox::reusableCellCount(int type) const {
+  return maxNumberOfDisplayedRows();
+}
 
 void Toolbox::fillCellForRow(HighlightCell *cell, int row) {
   assert(typeAtRow(row) == k_nodeCellType);

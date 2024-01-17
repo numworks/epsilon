@@ -399,7 +399,7 @@ HighlightCell *SolutionsController::reusableCell(int index, int type) {
   }
 }
 
-int SolutionsController::reusableCellCount(int type) {
+int SolutionsController::reusableCellCount(int type) const {
   switch (type) {
     case k_symbolCellType:
       return k_numberOfSymbolCells;

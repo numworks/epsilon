@@ -39,7 +39,7 @@ HighlightCell* ListWithTopAndBottomDataSource::reusableCell(int index,
   return m_innerDataSource->reusableCell(index, type - k_cellTypeOffset);
 }
 
-int ListWithTopAndBottomDataSource::reusableCellCount(int type) {
+int ListWithTopAndBottomDataSource::reusableCellCount(int type) const {
   if (type == k_topCellType || type == k_bottomCellType) {
     return 1;
   }

@@ -163,7 +163,7 @@ HighlightCell *MainController::reusableCell(int index, int type) {
   return &m_brightnessCell;
 }
 
-int MainController::reusableCellCount(int type) {
+int MainController::reusableCellCount(int type) const {
   if (type == k_defaultCellType) {
     return k_numberOfSimpleChevronCells;
   }

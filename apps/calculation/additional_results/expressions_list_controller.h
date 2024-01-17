@@ -40,7 +40,7 @@ class ExpressionsListController
   void viewDidDisappear() override;
 
   // MemoizedListViewDataSource
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;

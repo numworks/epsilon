@@ -83,7 +83,7 @@ void ExpressionsListController::tidy() {
   }
 }
 
-int ExpressionsListController::reusableCellCount(int type) {
+int ExpressionsListController::reusableCellCount(int type) const {
   return k_maxNumberOfRows;
 }
 

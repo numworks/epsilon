@@ -35,7 +35,7 @@ HighlightCell *DisplayModeController::reusableCell(int index, int type) {
   return PreferencesController::reusableCell(index, type);
 }
 
-int DisplayModeController::reusableCellCount(int type) {
+int DisplayModeController::reusableCellCount(int type) const {
   if (type == k_resultFormatType) {
     return PreferencesController::k_totalNumberOfCell;
   }

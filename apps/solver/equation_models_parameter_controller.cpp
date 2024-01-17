@@ -82,7 +82,7 @@ HighlightCell* EquationModelsParameterController::reusableCell(int index,
   return &m_modelCells[index];
 }
 
-int EquationModelsParameterController::reusableCellCount(int type) {
+int EquationModelsParameterController::reusableCellCount(int type) const {
   if (type == k_emptyModelCellType) {
     return 1;
   }

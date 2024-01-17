@@ -41,7 +41,7 @@ class SolutionsController : public Escher::ViewController,
   void fillCellForLocation(Escher::HighlightCell *cell, int column,
                            int row) override;
   Escher::HighlightCell *reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   bool canSelectCellAtLocation(int column, int row) override {
     return typeAtLocation(column, row) != k_messageCellType &&

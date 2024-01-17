@@ -30,7 +30,7 @@ class CalculationController : public Shared::DoublePairTableController {
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
 
   bool showModeFrequency() const { return m_store->totalNumberOfModes() > 0; }

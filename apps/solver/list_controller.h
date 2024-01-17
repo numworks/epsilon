@@ -26,7 +26,7 @@ class ListController : public Shared::ExpressionModelListController,
       int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;

@@ -26,7 +26,7 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
   Escher::HighlightCell *reusableCell(int index, int type) override {
     return m_cells + index;
   }
-  int reusableCellCount(int type) override {
+  int reusableCellCount(int type) const override {
     return k_maxNumberOfDisplayedRows;
   }
   KDCoordinate separatorBeforeRow(int row) override;

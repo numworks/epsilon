@@ -156,7 +156,7 @@ HighlightCell *ValuesController::reusableCell(int index, int type) {
   }
 }
 
-int ValuesController::reusableCellCount(int type) {
+int ValuesController::reusableCellCount(int type) const {
   switch (type) {
     case k_abscissaTitleCellType:
       return abscissaTitleCellsCount();

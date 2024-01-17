@@ -20,7 +20,7 @@ UnitListController::UnitListController(
       m_referenceValues{nullptr, nullptr},
       m_SIValue(0.0) {}
 
-int UnitListController::reusableCellCount(int type) {
+int UnitListController::reusableCellCount(int type) const {
   if (type == k_expressionCellType) {
     return m_numberOfExpressionCells;
   }

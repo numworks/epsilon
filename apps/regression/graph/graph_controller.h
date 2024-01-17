@@ -72,7 +72,9 @@ class GraphController : public Shared::InteractiveCurveViewController {
       assert(index >= 0 && index < Store::k_numberOfSeries);
       return m_cells + index;
     }
-    int reusableCellCount(int type) override { return Store::k_numberOfSeries; }
+    int reusableCellCount(int type) const override {
+      return Store::k_numberOfSeries;
+    }
     void fillCellForRow(Escher::HighlightCell *cell, int row) override;
 
    private:

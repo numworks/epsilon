@@ -22,7 +22,7 @@ void ChainedExpressionsListController::didBecomeFirstResponder() {
   ExpressionsListController::didBecomeFirstResponder();
 }
 
-int ChainedExpressionsListController::reusableCellCount(int type) {
+int ChainedExpressionsListController::reusableCellCount(int type) const {
   return (type == k_expressionCellType ? k_maxNumberOfRows : 0) +
          (m_tail ? m_tail->reusableCellCount(type) : 0);
 }

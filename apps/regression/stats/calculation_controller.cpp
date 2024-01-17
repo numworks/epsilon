@@ -336,7 +336,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
   }
 }
 
-int CalculationController::reusableCellCount(int type) {
+int CalculationController::reusableCellCount(int type) const {
   if (type == k_doubleBufferCalculationCellType) {
     return k_numberOfDoubleCalculationCells;
   }

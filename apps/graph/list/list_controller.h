@@ -57,7 +57,7 @@ class ListController : public Shared::FunctionListController,
   bool shouldCompleteEquation(Poincare::Expression expression) override;
   bool completeEquation(Escher::LayoutField* equationField) override;
   void addModel() override;
-  int maxNumberOfDisplayableRows() override;
+  int maxNumberOfDisplayableRows() const override;
   Escher::HighlightCell* functionCells(int index) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   Shared::ContinuousFunctionStore* modelStore() const override;

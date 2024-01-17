@@ -248,7 +248,7 @@ Shared::ListParameterController *ListController::parameterController() {
   return m_parameterController;
 }
 
-int ListController::maxNumberOfDisplayableRows() {
+int ListController::maxNumberOfDisplayableRows() const {
   return k_maxNumberOfDisplayableRows;
 }
 

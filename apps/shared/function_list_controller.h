@@ -50,7 +50,7 @@ class FunctionListController : public ExpressionModelListController,
 
  private:
   virtual ListParameterController* parameterController() = 0;
-  virtual int maxNumberOfDisplayableRows() = 0;
+  virtual int maxNumberOfDisplayableRows() const = 0;
   virtual Escher::HighlightCell* functionCells(int index) = 0;
   Escher::SelectableListView m_selectableListView;
   Escher::AbstractButtonCell m_plotButton;

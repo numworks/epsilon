@@ -65,7 +65,7 @@ class ListController : public Shared::FunctionListController {
   ListParameterController* parameterController() override {
     return &m_parameterController;
   }
-  int maxNumberOfDisplayableRows() override { return k_maxNumberOfRows; }
+  int maxNumberOfDisplayableRows() const override { return k_maxNumberOfRows; }
   Escher::HighlightCell* titleCells(int index);
   Escher::HighlightCell* functionCells(int index) override;
   void willDisplayTitleCellAtIndex(VerticalSequenceTitleCell* cell, int j,

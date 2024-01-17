@@ -1,9 +1,11 @@
 #include "approximation.h"
 
 #include <math.h>
+#include <poincare/approximation_helper.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 #include <bit>
+#include <complex>
 
 #include "constant.h"
 #include "decimal.h"
@@ -16,9 +18,12 @@ namespace PoincareJ {
 
 // TODO: tests
 
+AngleUnit Approximation::angleUnit;
+
 template <typename T>
-T Approximation::RootTreeTo(const Tree* node) {
+T Approximation::RootTreeTo(const Tree* node, AngleUnit angleUnit) {
   Random::Context context;
+  Approximation::angleUnit = angleUnit;
   return To<T>(node, &context);
 }
 
@@ -58,11 +63,11 @@ T Approximation::To(const Tree* node, Random::Context* context) {
     case BlockType::ATrig:
       return MapAndReduce(node, FloatATrig<T>, context);
     case BlockType::ArcCosine:
-      return std::acos(To<T>(node->nextNode(), context));
+      return ConvertFromRadian(std::acos(To<T>(node->nextNode(), context)));
     case BlockType::ArcSine:
-      return std::asin(To<T>(node->nextNode(), context));
+      return ConvertToRadian(std::asin(To<T>(node->nextNode(), context)));
     case BlockType::ArcTangent:
-      return std::atan(To<T>(node->nextNode(), context));
+      return ConvertFromRadian(std::atan(To<T>(node->nextNode(), context)));
     case BlockType::SquareRoot:
       return std::sqrt(To<T>(node->nextNode(), context));
     case BlockType::Exponential:
@@ -77,17 +82,17 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return std::fabs(To<T>(node->nextNode(), context));
     // TODO: Handle AngleUnits in context as well.
     case BlockType::Cosine:
-      return std::cos(To<T>(node->nextNode(), context));
+      return std::cos(ConvertToRadian(To<T>(node->nextNode(), context)));
       // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
       // res, angleInput);
 
     case BlockType::Sine:
-      return std::sin(To<T>(node->nextNode(), context));
+      return std::sin(ConvertToRadian(To<T>(node->nextNode(), context)));
       // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
       // res, angleInput);
 
     case BlockType::Tangent: {
-      T angle = To<T>(node->nextNode(), context);
+      T angle = ConvertToRadian(To<T>(node->nextNode(), context));
       /* tan should be undefined at (2n+1)*pi/2 for any integer n.
        * std::tan is not reliable at these values because it is diverging and
        * any approximation errors on pi could easily yield a finite result. At
@@ -106,7 +111,7 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       // res, angleInput);
     }
     case BlockType::Cosecant: {
-      T c = To<T>(node->nextNode(), context);
+      T c = ConvertToRadian(To<T>(node->nextNode(), context));
       // std::complex<T> denominator =
       // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
       T denominator = std::sin(c);
@@ -116,7 +121,7 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return /*std::complex<T>(1)*/ 1 / denominator;
     }
     case BlockType::Cotangent: {
-      T c = To<T>(node->nextNode(), context);
+      T c = ConvertToRadian(To<T>(node->nextNode(), context));
       // std::complex<T> denominator =
       // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
       // std::complex<T> numerator =
@@ -129,7 +134,7 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return numerator / denominator;
     }
     case BlockType::Secant: {
-      T c = To<T>(node->nextNode(), context);
+      T c = ConvertToRadian(To<T>(node->nextNode(), context));
       // std::complex<T> denominator =
       // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
       T denominator = std::cos(c);
@@ -233,8 +238,25 @@ T Approximation::To(const Tree* node, Random::Context* context) {
 }
 
 template <typename T>
-Tree* Approximation::ToList(const Tree* node) {
+T Approximation::ConvertToRadian(T angle) {
+  if (angleUnit == AngleUnit::Radian) {
+    return angle;
+  }
+  return angle * (angleUnit == AngleUnit::Degree ? M_PI / 180.0 : M_PI / 200.0);
+}
+
+template <typename T>
+T Approximation::ConvertFromRadian(T angle) {
+  if (angleUnit == AngleUnit::Radian) {
+    return angle;
+  }
+  return angle * (angleUnit == AngleUnit::Degree ? 180.0 / M_PI : 200.0 / M_PI);
+}
+
+template <typename T>
+Tree* Approximation::ToList(const Tree* node, AngleUnit angleUnit) {
   Tree* l = node->clone();
+  Approximation::angleUnit = angleUnit;
   List::BubbleUp(l, [](Tree* e) -> bool {
     return Approximation::ApproximateAndReplaceEveryScalarT<T>(e, true);
   });
@@ -302,14 +324,14 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
   return true;
 }
 
-template float Approximation::RootTreeTo<float>(const Tree*);
-template double Approximation::RootTreeTo<double>(const Tree*);
+template float Approximation::RootTreeTo<float>(const Tree*, AngleUnit);
+template double Approximation::RootTreeTo<double>(const Tree*, AngleUnit);
 
 template float Approximation::To<float>(const Tree*, Random::Context*);
 template double Approximation::To<double>(const Tree*, Random::Context*);
 
-template Tree* Approximation::ToList<float>(const Tree*);
-template Tree* Approximation::ToList<double>(const Tree*);
+template Tree* Approximation::ToList<float>(const Tree*, AngleUnit);
+template Tree* Approximation::ToList<double>(const Tree*, AngleUnit);
 
 template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*,
                                                                       bool);

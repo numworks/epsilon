@@ -6,6 +6,7 @@
 
 #include <cmath>
 
+#include "context.h"
 #include "random.h"
 
 namespace PoincareJ {
@@ -21,13 +22,14 @@ class Approximation final {
  public:
   // Approximate an entire tree, isolated from any outer context.
   template <typename T>
-  static T RootTreeTo(const Tree* node);
+  static T RootTreeTo(const Tree* node,
+                      AngleUnit angleUnit = AngleUnit::Radian);
   // Approximate any tree. With a nullptr context, seeded random will be undef.
   template <typename T>
   static T To(const Tree* node, Random::Context* context);
 
   template <typename T>
-  static Tree* ToList(const Tree* node);
+  static Tree* ToList(const Tree* node, AngleUnit angleUnit);
 
   template <typename T>
   static T FloatAddition(T a, T b) {
@@ -96,6 +98,13 @@ class Approximation final {
                         Random::Context* context);
   template <typename T>
   static bool ApproximateAndReplaceEveryScalarT(Tree* tree, bool collapse);
+
+  template <typename T>
+  static T ConvertToRadian(T angle);
+
+  template <typename T>
+  static T ConvertFromRadian(T angle);
+  static AngleUnit angleUnit;
 };
 
 }  // namespace PoincareJ

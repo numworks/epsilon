@@ -263,11 +263,13 @@ void assert_expression_approximates_to(const char *expression,
           return KUndef->clone();
         }
         if (PoincareJ::Dimension::GetListLength(e) != -1) {
-          EditionReference r = PoincareJ::Approximation::ToList<T>(e);
+          EditionReference r = PoincareJ::Approximation::ToList<T>(
+              e, PoincareJ::AngleUnit(reductionContext.angleUnit()));
           e->removeTree();
           return r;
         }
-        T value = PoincareJ::Approximation::RootTreeTo<T>(e);
+        T value = PoincareJ::Approximation::RootTreeTo<T>(
+            e, PoincareJ::AngleUnit(reductionContext.angleUnit()));
         e->removeTree();
         return SharedEditionPool->push<FloatType<T>::type>(value);
       },

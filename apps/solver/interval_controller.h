@@ -21,7 +21,7 @@ class IntervalController : public Shared::FloatParameterController<double> {
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;
-  int reusableParameterCellCount(int type) override;
+  int reusableParameterCellCount(int type) const override;
   void buttonAction() override;
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;

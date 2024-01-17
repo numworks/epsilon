@@ -29,7 +29,9 @@ class HistogramParameterController
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;
-  int reusableParameterCellCount(int type) override { return k_numberOfCells; }
+  int reusableParameterCellCount(int type) const override {
+    return k_numberOfCells;
+  }
   void buttonAction() override;
   bool authorizedParameters(double tempBarWidth,
                             double tempFirstDrawnBarAbscissa);

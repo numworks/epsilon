@@ -57,7 +57,7 @@ class FloatParameterController : public Escher::ListWithTopAndBottomController,
   virtual InfinityTolerance infinityAllowanceForRow(int row) const {
     return InfinityTolerance::None;
   }
-  virtual int reusableParameterCellCount(int type) = 0;
+  virtual int reusableParameterCellCount(int type) const = 0;
   virtual Escher::HighlightCell *reusableParameterCell(int index, int type) = 0;
   virtual Escher::TextField *textFieldOfCellAtIndex(Escher::HighlightCell *cell,
                                                     int index) = 0;

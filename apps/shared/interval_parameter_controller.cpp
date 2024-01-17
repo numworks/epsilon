@@ -118,7 +118,7 @@ bool IntervalParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int IntervalParameterController::reusableParameterCellCount(int type) {
+int IntervalParameterController::reusableParameterCellCount(int type) const {
   return k_totalNumberOfCell;
 }
 

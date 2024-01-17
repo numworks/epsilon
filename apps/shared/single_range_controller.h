@@ -62,7 +62,7 @@ class SingleRangeController : public FloatParameterController<float> {
   bool m_autoParam;
 
  private:
-  int reusableParameterCellCount(int type) override {
+  int reusableParameterCellCount(int type) const override {
     return k_numberOfTextCells;
   }
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;

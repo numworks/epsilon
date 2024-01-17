@@ -56,7 +56,7 @@ class InputController
   }
 
  private:
-  int reusableParameterCellCount(int type) override;
+  int reusableParameterCellCount(int type) const override;
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;

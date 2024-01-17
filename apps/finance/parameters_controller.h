@@ -36,7 +36,7 @@ class ParametersController : public Shared::FloatParameterController<double>,
   uint8_t interestParamaterAtIndex(int index) const;
 
   // Shared::FloatParameterController<double>
-  int reusableParameterCellCount(int type) override;
+  int reusableParameterCellCount(int type) const override;
   Escher::HighlightCell* reusableParameterCell(int i, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;

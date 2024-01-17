@@ -115,7 +115,7 @@ uint8_t ParametersController::interestParamaterAtIndex(int index) const {
   return index;
 }
 
-int ParametersController::reusableParameterCellCount(int type) {
+int ParametersController::reusableParameterCellCount(int type) const {
   if (type == k_inputCellType) {
     return k_numberOfReusableInputs;
   }

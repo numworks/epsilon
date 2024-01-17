@@ -98,7 +98,7 @@ TextField *ParametersController::textFieldOfCellAtIndex(HighlightCell *cell,
       ->textField();
 }
 
-int ParametersController::reusableParameterCellCount(int type) {
+int ParametersController::reusableParameterCellCount(int type) const {
   return m_distribution->numberOfParameters();
 }
 

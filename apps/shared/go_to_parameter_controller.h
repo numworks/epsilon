@@ -39,7 +39,7 @@ class GoToParameterController : public FloatParameterController<double> {
 
  private:
   void buttonAction() override;
-  int reusableParameterCellCount(int type) override { return 1; }
+  int reusableParameterCellCount(int type) const override { return 1; }
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;

@@ -133,7 +133,7 @@ KDCoordinate InputController::separatorBeforeRow(int row) {
              : FloatParameterController<double>::separatorBeforeRow(row);
 }
 
-int InputController::reusableParameterCellCount(int type) {
+int InputController::reusableParameterCellCount(int type) const {
   if (type == k_parameterCellType) {
     return k_numberOfReusableCells;
   }

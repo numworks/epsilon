@@ -50,7 +50,7 @@ TextField *IntervalController::textFieldOfCellAtIndex(HighlightCell *cell,
       ->textField();
 }
 
-int IntervalController::reusableParameterCellCount(int type) {
+int IntervalController::reusableParameterCellCount(int type) const {
   return k_maxNumberOfCells;
 }
 

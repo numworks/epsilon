@@ -108,6 +108,64 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       T err = std::pow(10, std::round(To<T>(node->child(1), context)));
       return std::round(To<T>(node->nextNode(), context) * err) / err;
     }
+    case BlockType::Factorial: {
+      T n = To<T>(node->nextNode(), context);
+      if (/*c.imag() != 0 ||*/ std::isnan(n) || n != (int)n || n < 0) {
+        return NAN;
+      }
+      T result = 1;
+      for (int i = 1; i <= (int)n; i++) {
+        result *= static_cast<T>(i);
+        if (std::isinf(result)) {
+          return result;
+        }
+      }
+      return std::round(result);
+    }
+    case BlockType::Binomial: {
+      T n = To<T>(node->child(0), context);
+      T k = To<T>(node->child(1), context);
+      if (std::isnan(n) || std::isnan(k) || k != std::round(k)) {
+        return NAN;
+      }
+      if (k < 0) {
+        return 0;
+      }
+      // Generalized definition allows any n value
+      bool generalized = (n != std::round(n) || n < k);
+      // Take advantage of symmetry
+      k = (!generalized && k > (n - k)) ? n - k : k;
+
+      T result = 1;
+      for (T i = 0; i < k; i++) {
+        result *= (n - i) / (k - i);
+        if (std::isinf(result) || std::isnan(result)) {
+          return result;
+        }
+      }
+      // If not generalized, the output must be round
+      return generalized ? result : std::round(result);
+    }
+    case BlockType::Permute: {
+      T n = To<T>(node->child(0), context);
+      T k = To<T>(node->child(1), context);
+      if (std::isnan(n) || std::isnan(k) || n != std::round(n) ||
+          k != std::round(k) || n < 0.0f || k < 0.0f) {
+        return NAN;
+      }
+      if (k > n) {
+        return 0.0;
+      }
+      T result = 1;
+      for (int i = (int)n - (int)k + 1; i <= (int)n; i++) {
+        result *= i;
+        if (std::isinf(result) || std::isnan(result)) {
+          return result;
+        }
+      }
+      return std::round(result);
+    }
+
     default:
       if (node->isParametric()) {
         // TODO: Explicit tree if it contains random nodes.

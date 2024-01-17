@@ -66,7 +66,6 @@ int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
                                             k_defaultLetterNames[0]);
   }
   assert(bufferSize >= ContinuousFunction::k_maxDefaultNameSize);
-  CodePoint aux = symbol;
   return Ion::Storage::FileSystem::sharedFileSystem
       ->firstAvailableNameFromPrefix(
           buffer, length, bufferSize,
@@ -74,7 +73,7 @@ int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
             CodePoint *symbol = static_cast<CodePoint *>(auxiliary);
             return functionNameIsFree(buffer, bufferSize, *symbol);
           },
-          &aux);
+          &symbol);
 }
 
 bool ParametricComponentsNameError(Expression expression,

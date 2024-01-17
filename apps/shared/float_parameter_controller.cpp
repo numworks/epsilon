@@ -43,7 +43,7 @@ int FloatParameterController<T>::typeAtRow(int row) const {
 }
 
 template <typename T>
-int FloatParameterController<T>::reusableCellCount(int type) {
+int FloatParameterController<T>::reusableCellCount(int type) const {
   if (type == k_buttonCellType) {
     return 1;
   }

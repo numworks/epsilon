@@ -87,7 +87,7 @@ HighlightCell *ExamModeController::reusableCell(int index, int type) {
   return &m_cell[index];
 }
 
-int ExamModeController::reusableCellCount(int type) {
+int ExamModeController::reusableCellCount(int type) const {
   return k_maxNumberOfCells;
 }
 

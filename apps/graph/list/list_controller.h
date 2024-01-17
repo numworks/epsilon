@@ -21,7 +21,7 @@ class ListController : public Shared::FunctionListController,
                  Escher::ButtonRowController* footer,
                  FunctionParameterController* functionParameterController);
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   // ViewController
   void viewWillAppear() override;
   void viewDidDisappear() override;

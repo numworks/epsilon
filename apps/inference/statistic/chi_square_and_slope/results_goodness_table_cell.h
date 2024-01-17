@@ -31,7 +31,7 @@ class ResultGoodnessContributionsTable
   Escher::HighlightCell *reusableCell(int index, int type) override {
     return cell(index);
   }
-  int reusableCellCount(int type) override {
+  int reusableCellCount(int type) const override {
     return k_goodnessContributionsTableNumberOfReusableCells;
   }
 

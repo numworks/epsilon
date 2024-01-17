@@ -14,7 +14,7 @@ class PreferencesController : public GenericSubController {
   PreferencesController(Escher::Responder* parentResponder);
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   TELEMETRY_ID("Other");

@@ -25,7 +25,7 @@ class FloatParameterController : public Escher::ListWithTopAndBottomController,
 
   // MemoizedListViewDataSource
   int typeAtRow(int row) const override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   Escher::HighlightCell *reusableCell(int index, int type) override;
   void fillCellForRow(Escher::HighlightCell *cell, int row) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;

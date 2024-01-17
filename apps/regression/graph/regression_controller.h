@@ -31,7 +31,7 @@ class RegressionController : public Escher::SelectableListViewController<
   // MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override { return k_numberOfCells; }
+  int reusableCellCount(int type) const override { return k_numberOfCells; }
   int numberOfRows() const override {
     return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
                    CountryPreferences::RegressionApp::Default

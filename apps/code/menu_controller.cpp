@@ -208,7 +208,7 @@ HighlightCell *MenuController::reusableCell(int index, int type) {
   return &m_emptyCell;
 }
 
-int MenuController::reusableCellCount(int type) {
+int MenuController::reusableCellCount(int type) const {
   if (type == k_addScriptCellType) {
     return 1;
   }

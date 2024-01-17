@@ -130,7 +130,7 @@ HighlightCell *PythonVariableBoxController::reusableCell(int index, int type) {
   return m_subtitleCells + index;
 }
 
-int PythonVariableBoxController::reusableCellCount(int type) {
+int PythonVariableBoxController::reusableCellCount(int type) const {
   if (type == k_subtitleCellType) {
     assert(m_displaySubtitles);
     return k_maxNumberOfDisplayedSubtitles;

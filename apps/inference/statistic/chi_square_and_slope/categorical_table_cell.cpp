@@ -233,7 +233,7 @@ DoubleColumnTableCell::DoubleColumnTableCell(Escher::Responder *parentResponder,
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_doubleColumnTableNumberOfReusableCells>(this) {}
 
-int DoubleColumnTableCell::reusableCellCount(int type) {
+int DoubleColumnTableCell::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
     return k_maxNumberOfColumns;
   }

@@ -32,7 +32,7 @@ class AreaBetweenCurvesParameterController
     assert(index >= 0 && index < reusableCellCount(type));
     return m_cells + index;
   }
-  int reusableCellCount(int type) override {
+  int reusableCellCount(int type) const override {
     return k_maxNumberOfDisplayableRows;
   }
 

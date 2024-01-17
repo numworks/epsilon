@@ -40,7 +40,7 @@ HighlightCell *PreferencesController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
-int PreferencesController::reusableCellCount(int type) {
+int PreferencesController::reusableCellCount(int type) const {
   return k_totalNumberOfCell;
 }
 

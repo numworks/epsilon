@@ -118,7 +118,7 @@ int MathVariableBoxController::numberOfElements(Page page) const {
       Extension(page));
 }
 
-int MathVariableBoxController::reusableCellCount(int type) {
+int MathVariableBoxController::reusableCellCount(int type) const {
   assert(type < 3);
   if (type == k_defineVariableCellType) {
     assert(m_currentPage == Page::RootMenu);

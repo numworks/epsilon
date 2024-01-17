@@ -22,7 +22,7 @@ class SingleRangeController : public FloatParameterController<float> {
     return row == 0 ? k_autoCellType
                     : FloatParameterController<float>::typeAtRow(row);
   }
-  int reusableCellCount(int type) override {
+  int reusableCellCount(int type) const override {
     return type == k_autoCellType
                ? 1
                : FloatParameterController<float>::reusableCellCount(type);

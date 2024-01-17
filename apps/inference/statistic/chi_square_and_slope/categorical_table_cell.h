@@ -133,7 +133,7 @@ class DoubleColumnTableCell
     return m_numberOfRows + 1;
   }  // Add header
   int numberOfColumns() const override { return m_numberOfColumns; }
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   Escher::HighlightCell *reusableCell(int i, int type) override;
   int typeAtLocation(int column, int row) const override {
     return row == 0 ? k_typeOfHeaderCells : k_typeOfInnerCells;

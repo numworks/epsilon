@@ -30,7 +30,7 @@ class StoreController : public Shared::StoreController {
                ? &m_nonEditableCells[index]
                : Shared::StoreController::reusableCell(index, type);
   }
-  int reusableCellCount(int type) override {
+  int reusableCellCount(int type) const override {
     return type == k_nonEditableCellType
                ? k_maxNumberOfNonEditableCells
                : Shared::StoreController::reusableCellCount(type);

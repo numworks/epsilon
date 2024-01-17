@@ -93,7 +93,7 @@ HighlightCell *FormulaTemplateMenuController::reusableCell(int index,
   return &m_templatesWithBuffer[index];
 }
 
-int FormulaTemplateMenuController::reusableCellCount(int type) {
+int FormulaTemplateMenuController::reusableCellCount(int type) const {
   if (type == static_cast<int>(CellType::EmptyTemplate)) {
     return 1;
   }

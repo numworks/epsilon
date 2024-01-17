@@ -28,7 +28,7 @@ class HistoryController : public Escher::ViewController,
   void reload();
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell,
                               int previousSelectedRow = -1) override;

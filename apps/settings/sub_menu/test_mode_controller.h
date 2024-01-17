@@ -20,7 +20,7 @@ class TestModeController : public GenericSubController {
   KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
-  int reusableCellCount(int type) override { return k_numberOfCells; };
+  int reusableCellCount(int type) const override { return k_numberOfCells; };
   void didBecomeFirstResponder() override;
 
  private:

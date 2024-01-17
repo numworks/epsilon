@@ -27,7 +27,7 @@ class HomogeneityTableDataSource
   // TableViewDataSource
   int numberOfRows() const override { return innerNumberOfRows() + 1; }
   int numberOfColumns() const override { return innerNumberOfColumns() + 1; }
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
   void fillCellForLocation(Escher::HighlightCell* cell, int column,

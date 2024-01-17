@@ -40,7 +40,7 @@ class SimpleTableViewDataSource : public RegularTableViewDataSource {
     assert(type == 0);
     return reusableCell(index);
   }
-  int reusableCellCount(int type) override final {
+  int reusableCellCount(int type) const override final {
     assert(type == 0);
     return reusableCellCount();
   }

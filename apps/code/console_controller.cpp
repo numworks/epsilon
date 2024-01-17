@@ -241,7 +241,7 @@ HighlightCell *ConsoleController::reusableCell(int index, int type) {
   }
 }
 
-int ConsoleController::reusableCellCount(int type) {
+int ConsoleController::reusableCellCount(int type) const {
   if (type == k_lineCellType) {
     return k_numberOfLineCells;
   } else {

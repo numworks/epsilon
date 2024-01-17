@@ -73,7 +73,7 @@ class PrefacedTableView : public View,
           cell, columnInMainDataSource(column), rowInMainDataSource(row));
     }
     HighlightCell* reusableCell(int index, int type) override;
-    int reusableCellCount(int type) override {
+    int reusableCellCount(int type) const override {
       return m_mainDataSource->reusableCellCount(type);
     }
     int typeAtLocation(int column, int row) const override {

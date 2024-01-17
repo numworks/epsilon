@@ -214,7 +214,7 @@ HighlightCell *PressToTestController::reusableCell(int index, int type) {
   return &m_switchCells[index];
 }
 
-int PressToTestController::reusableCellCount(int type) {
+int PressToTestController::reusableCellCount(int type) const {
   return type == k_buttonCellType ? 1 : k_numberOfReusableSwitchCells;
 }
 

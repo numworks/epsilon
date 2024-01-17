@@ -175,7 +175,7 @@ HighlightCell *HistoryController::reusableCell(int index, int type) {
   return &m_calculationHistory[index];
 }
 
-int HistoryController::reusableCellCount(int type) {
+int HistoryController::reusableCellCount(int type) const {
   assert(type == 0);
   return k_maxNumberOfDisplayedRows;
 }

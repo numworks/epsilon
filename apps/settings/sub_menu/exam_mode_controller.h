@@ -23,7 +23,7 @@ class ExamModeController : public GenericSubController {
       Escher::Responder* previousFirstResponder) override;
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  private:

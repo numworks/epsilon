@@ -30,7 +30,7 @@ int IllustratedExpressionsListController::numberOfRows() const {
   return ChainedExpressionsListController::numberOfRows() + 1;
 }
 
-int IllustratedExpressionsListController::reusableCellCount(int type) {
+int IllustratedExpressionsListController::reusableCellCount(int type) const {
   if (type == k_illustrationCellType) {
     return 1;
   }

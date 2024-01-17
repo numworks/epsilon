@@ -75,7 +75,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   }
 }
 
-int ListController::reusableCellCount(int type) {
+int ListController::reusableCellCount(int type) const {
   if (type == k_expressionCellType) {
     return k_maxNumberOfRows;
   }

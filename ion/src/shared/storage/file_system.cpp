@@ -100,9 +100,8 @@ int FileSystem::firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
       buffer, prefixLength, bufferSize,
       [](char *buffer, size_t bufferSize, void *auxiliary) {
         const char **extension = static_cast<const char **>(auxiliary);
-        const char *const extensions[1] = {*extension};
         return Ion::Storage::FileSystem::sharedFileSystem
-            ->recordBaseNamedWithExtensions(buffer, extensions, 1)
+            ->recordBaseNamedWithExtensions(buffer, extension, 1)
             .isNull();
       },
       &extension, maxId);

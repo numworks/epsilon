@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_SIGN_H
 
 #include <assert.h>
+#include <omgpj/bit.h>
 #include <stdint.h>
 
 namespace PoincareJ {
@@ -11,7 +12,7 @@ namespace Sign {
 
 /* Note: The expressions handled here are assumed to have been systematic
  * reduced beforehand. Otherwise, we would have to deal with unprojected
- * expressions, as well as powers of non-integers.
+ * expressions, as well as powers of non-integers and other unreduced trees.
  * TODO: Some logic could be optimized using this constraint. */
 
 struct Sign {
@@ -56,20 +57,20 @@ constexpr Sign PositiveInteger(false, true, false, true);
 constexpr Sign NegativeInteger(false, false, true, true);
 constexpr Sign Integer(true, true, true, true);
 
-// Set isInteger to false unless sign isZero
 Sign NoIntegers(Sign s);
 Sign Oppose(Sign s);
 Sign Add(Sign s1, Sign s2);
 Sign Mult(Sign s1, Sign s2);
 
 constexpr uint8_t GetValue(Sign s) {
+  // Cannot use bit_cast because it doesn't handle bitfields.
   return s.canBeNull << 0 | s.canBePositive << 1 | s.canBeNegative << 2 |
          s.isInteger << 3;
 }
 
 constexpr Sign GetSign(uint8_t value) {
-  return Sign(((value >> 0) & 1) == 1, ((value >> 1) & 1) == 1,
-              ((value >> 2) & 1) == 1, ((value >> 3) & 1) == 1);
+  return Sign(Bit::getBitRange(value, 0, 0), Bit::getBitRange(value, 1, 1),
+              Bit::getBitRange(value, 2, 2), Bit::getBitRange(value, 3, 3));
 }
 
 struct ComplexSign {
@@ -113,11 +114,12 @@ ComplexSign GetComplexSign(const Tree* t);
 Sign GetSign(const Tree* t);
 
 constexpr uint8_t GetValue(ComplexSign s) {
-  return (s.realValue & 15) | s.imagValue << 4;
+  return Bit::getBitRange(s.realValue, 3, 0) | s.imagValue << 4;
 }
 
 constexpr ComplexSign GetComplexSign(uint8_t value) {
-  return ComplexSign(GetSign(value), GetSign(value >> 4));
+  return ComplexSign(GetSign(Bit::getBitRange(value, 3, 0)),
+                     GetSign(Bit::getBitRange(value, 7, 4)));
 }
 
 static_assert(GetComplexSign(GetValue(RealInteger)) == RealInteger);

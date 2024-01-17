@@ -35,7 +35,7 @@ class StoreController : public Shared::StoreController {
                ? k_maxNumberOfNonEditableCells
                : Shared::StoreController::reusableCellCount(type);
   }
-  int typeAtLocation(int column, int row) override {
+  int typeAtLocation(int column, int row) const override {
     return row != 0 && isCumulatedFrequencyColumn(column)
                ? k_nonEditableCellType
                : Shared::StoreController::typeAtLocation(column, row);

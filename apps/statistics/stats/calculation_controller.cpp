@@ -186,7 +186,7 @@ int CalculationController::reusableCellCount(int type) {
   return DoublePairTableController::reusableCellCount(type);
 }
 
-int CalculationController::typeAtLocation(int column, int row) {
+int CalculationController::typeAtLocation(int column, int row) const {
   if (column <= 1 && fixedNumberOfRows() <= row && row <= numberOfRows() - 2) {
     assert(showModeFrequency());
     return column == 0 ? k_calculationModeTitleCellType

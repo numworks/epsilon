@@ -47,7 +47,7 @@ class CalculationController : public Escher::ViewController,
   int numberOfColumns() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }
-  int typeAtLocation(int column, int row) override { return column; }
+  int typeAtLocation(int column, int row) const override { return column; }
 
   /* TextField delegate */
   void textFieldDidHandleEvent(Escher::AbstractTextField* textField) override;

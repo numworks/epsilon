@@ -417,7 +417,7 @@ int SolutionsController::reusableCellCount(int type) {
   }
 }
 
-int SolutionsController::typeAtLocation(int column, int row) {
+int SolutionsController::typeAtLocation(int column, int row) const {
   const int rowOfUserVariableMessage = userVariablesMessageRow();
   SystemOfEquations *system = App::app()->system();
   if (row == rowOfUserVariableMessage - 1) {

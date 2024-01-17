@@ -41,7 +41,7 @@ class ListViewDataSource : public TableViewDataSource {
       fillCellForRow(cell, row);
     }
   }
-  int typeAtLocation(int column, int row) override final {
+  int typeAtLocation(int column, int row) const override final {
     assert(column == 0);
     return typeAtRow(row);
   }

@@ -76,7 +76,7 @@ class PrefacedTableView : public View,
     int reusableCellCount(int type) override {
       return m_mainDataSource->reusableCellCount(type);
     }
-    int typeAtLocation(int column, int row) override {
+    int typeAtLocation(int column, int row) const override {
       return m_mainDataSource->typeAtLocation(columnInMainDataSource(column),
                                               rowInMainDataSource(row));
     }

@@ -85,7 +85,7 @@ int StoreController::reusableCellCount(int type) {
                                  : k_maxNumberOfDisplayableCells;
 }
 
-int StoreController::typeAtLocation(int column, int row) {
+int StoreController::typeAtLocation(int column, int row) const {
   return row == 0 ? k_titleCellType : k_editableCellType;
 }
 

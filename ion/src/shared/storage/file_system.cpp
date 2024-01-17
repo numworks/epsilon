@@ -77,7 +77,7 @@ Record::ErrorStatus FileSystem::notifyFullnessToDelegate() const {
 
 int FileSystem::firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
                                              size_t bufferSize,
-                                             IsFreeNameTest test,
+                                             IsNameAvailableTest test,
                                              void *auxiliary, int maxId) {
   /* With '?' being the prefix, fill buffer with the first available name for
    * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */

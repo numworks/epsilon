@@ -6,6 +6,7 @@
 #include <poincare_junior/src/memory/tree.h>
 
 #include <cmath>
+#include <complex>
 
 #include "arithmetic.h"
 #include "context.h"
@@ -37,11 +38,26 @@ class Approximation final {
  public:
   // Approximate an entire tree, isolated from any outer context.
   template <typename T>
+  static std::complex<T> ComplexRootTreeTo(
+      const Tree* node, AngleUnit angleUnit = AngleUnit::Radian);
+
+  // Approximate an entire tree, isolated from any outer context.
+  template <typename T>
   static T RootTreeTo(const Tree* node,
-                      AngleUnit angleUnit = AngleUnit::Radian);
+                      AngleUnit angleUnit = AngleUnit::Radian) {
+    std::complex<T> value = ComplexRootTreeTo<T>(node);
+    return value.imag() == 0 ? value.real() : NAN;
+  }
+
   // Approximate any tree. With a nullptr context, seeded random will be undef.
   template <typename T>
-  static T To(const Tree* node, Random::Context* context);
+  static std::complex<T> ComplexTo(const Tree* node, Random::Context* context);
+
+  template <typename T>
+  static T To(const Tree* node, Random::Context* context) {
+    std::complex<T> value = ComplexTo<T>(node, context);
+    return value.imag() == 0 ? value.real() : NAN;
+  }
 
   template <typename T>
   static Tree* ToList(const Tree* node, AngleUnit angleUnit);
@@ -81,11 +97,11 @@ class Approximation final {
   }
   template <typename T>
   static T FloatLn(T a) {
-    return a == 0 ? NAN : std::log(a);
+    return a == static_cast<T>(0) ? NAN : std::log(a);
   }
   template <typename T>
   static T FloatLog(T a, T b) {
-    return a == 0 ? NAN : std::log2(a) / std::log2(b);
+    return a == static_cast<T>(0) ? NAN : std::log(a) / std::log(b);
   }
   template <typename T>
   static T PositiveIntegerApproximation(T s) {
@@ -122,13 +138,13 @@ class Approximation final {
   template <typename T>
   static T FloatTrig(T a, T b) {
     // Otherwise, handle any b, multiply by -1 if b%4 >= 2 then use b%2.
-    assert(b == 0.0 || b == 1.0);
-    return (b == 0.0) ? std::cos(a) : std::sin(a);
+    assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
+    return (b == static_cast<T>(0.0)) ? std::cos(a) : std::sin(a);
   }
   template <typename T>
   static T FloatATrig(T a, T b) {
-    assert(b == 0.0 || b == 1.0);
-    return (b == 0.0) ? std::acos(a) : std::asin(a);
+    assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
+    return (b == static_cast<T>(0.0)) ? std::acos(a) : std::asin(a);
   }
   // If collapse is true, approximate parents if all children have approximated.
   static bool ApproximateAndReplaceEveryScalar(Tree* tree,
@@ -143,8 +159,10 @@ class Approximation final {
   template <typename T>
   using Mapper = T (*)(T);
   template <typename T>
-  static T MapAndReduce(const Tree* node, Reductor<T> reductor,
-                        Random::Context* context, Mapper<T> mapper = nullptr);
+  static std::complex<T> MapAndReduce(const Tree* node,
+                                      Reductor<std::complex<T>> reductor,
+                                      Random::Context* context,
+                                      Mapper<std::complex<T>> mapper = nullptr);
   template <typename T>
   static bool ApproximateAndReplaceEveryScalarT(Tree* tree, bool collapse);
 

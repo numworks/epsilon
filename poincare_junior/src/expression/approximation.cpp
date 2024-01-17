@@ -21,14 +21,16 @@ namespace PoincareJ {
 AngleUnit Approximation::angleUnit;
 
 template <typename T>
-T Approximation::RootTreeTo(const Tree* node, AngleUnit angleUnit) {
+std::complex<T> Approximation::ComplexRootTreeTo(const Tree* node,
+                                                 AngleUnit angleUnit) {
   Random::Context context;
   Approximation::angleUnit = angleUnit;
-  return To<T>(node, &context);
+  return ComplexTo<T>(node, &context);
 }
 
 template <typename T>
-T Approximation::To(const Tree* node, Random::Context* context) {
+std::complex<T> Approximation::ComplexTo(const Tree* node,
+                                         Random::Context* context) {
   assert(node->isExpression());
   if (node->isRational()) {
     return Rational::Numerator(node).to<T>() /
@@ -39,66 +41,73 @@ T Approximation::To(const Tree* node, Random::Context* context) {
   }
   switch (node->type()) {
     case BlockType::Constant:
+      if (Constant::Type(node) == Constant::Type::I) {
+        return std::complex<T>(0, 1);
+      }
       return Constant::To<T>(Constant::Type(node));
     case BlockType::SingleFloat:
       return Float::FloatTo(node);
     case BlockType::DoubleFloat:
       return Float::DoubleTo(node);
     case BlockType::Addition:
-      return MapAndReduce(node, FloatAddition<T>, context);
+      return MapAndReduce(node, FloatAddition<std::complex<T>>, context);
     case BlockType::Multiplication:
-      return MapAndReduce(node, FloatMultiplication<T>, context);
+      return MapAndReduce(node, FloatMultiplication<std::complex<T>>, context);
     case BlockType::Division:
-      return MapAndReduce(node, FloatDivision<T>, context);
+      return MapAndReduce(node, FloatDivision<std::complex<T>>, context);
     case BlockType::Subtraction:
-      return MapAndReduce(node, FloatSubtraction<T>, context);
-    case BlockType::PowerReal:
-      return MapAndReduce(node, FloatPowerReal<T>, context);
+      return MapAndReduce(node, FloatSubtraction<std::complex<T>>, context);
+    // case BlockType::PowerReal:
+    // return MapAndReduce(node, FloatPowerReal<std::complex<T>>, context);
     case BlockType::Power:
-      return MapAndReduce(node, FloatPower<T>, context);
+      return MapAndReduce(node, FloatPower<std::complex<T>>, context);
     case BlockType::Logarithm:
-      return MapAndReduce(node, FloatLog<T>, context);
+      return MapAndReduce(node, FloatLog<std::complex<T>>, context);
     case BlockType::Trig:
-      return MapAndReduce(node, FloatTrig<T>, context);
+      return MapAndReduce(node, FloatTrig<std::complex<T>>, context);
     case BlockType::ATrig:
-      return MapAndReduce(node, FloatATrig<T>, context);
-    case BlockType::GCD:
-      return MapAndReduce(node, FloatGCD<T>, context,
-                          PositiveIntegerApproximation<T>);
-    case BlockType::LCM:
-      return MapAndReduce(node, FloatLCM<T>, context,
-                          PositiveIntegerApproximation<T>);
+      return MapAndReduce(node, FloatATrig<std::complex<T>>, context);
+    // case BlockType::GCD:
+    // return MapAndReduce(node, FloatGCD<std::complex<T>>, context,
+    // PositiveIntegerApproximation<std::complex<T>>);
+    // case BlockType::LCM:
+    // return MapAndReduce(node, FloatLCM<std::complex<T>>, context,
+    // PositiveIntegerApproximation<std::complex<T>>);
     case BlockType::ArcCosine:
-      return ConvertFromRadian(std::acos(To<T>(node->nextNode(), context)));
+      return ConvertFromRadian(
+          std::acos(ComplexTo<T>(node->nextNode(), context)));
     case BlockType::ArcSine:
-      return ConvertToRadian(std::asin(To<T>(node->nextNode(), context)));
+      return ConvertToRadian(
+          std::asin(ComplexTo<T>(node->nextNode(), context)));
     case BlockType::ArcTangent:
-      return ConvertFromRadian(std::atan(To<T>(node->nextNode(), context)));
+      return ConvertFromRadian(
+          std::atan(ComplexTo<T>(node->nextNode(), context)));
     case BlockType::SquareRoot:
-      return std::sqrt(To<T>(node->nextNode(), context));
+      return std::sqrt(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Exponential:
-      return std::exp(To<T>(node->nextNode(), context));
+      return std::exp(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Log:
-      return std::log10(To<T>(node->nextNode(), context));
+      return std::log10(ComplexTo<T>(node->nextNode(), context));
     case BlockType::LnReal:
       return FloatLnReal<T>(To<T>(node->nextNode(), context));
     case BlockType::Ln:
-      return FloatLn<T>(To<T>(node->nextNode(), context));
+      return FloatLn<std::complex<T>>(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Abs:
-      return std::fabs(To<T>(node->nextNode(), context));
+      return std::abs(ComplexTo<T>(node->nextNode(), context));
     // TODO: Handle AngleUnits in context as well.
     case BlockType::Cosine:
-      return std::cos(ConvertToRadian(To<T>(node->nextNode(), context)));
+      return std::cos(ConvertToRadian(ComplexTo<T>(node->nextNode(), context)));
       // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
       // res, angleInput);
 
     case BlockType::Sine:
-      return std::sin(ConvertToRadian(To<T>(node->nextNode(), context)));
+      return std::sin(ConvertToRadian(ComplexTo<T>(node->nextNode(), context)));
       // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
       // res, angleInput);
 
     case BlockType::Tangent: {
-      T angle = ConvertToRadian(To<T>(node->nextNode(), context));
+      std::complex<T> angle =
+          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
       /* tan should be undefined at (2n+1)*pi/2 for any integer n.
        * std::tan is not reliable at these values because it is diverging and
        * any approximation errors on pi could easily yield a finite result. At
@@ -108,8 +117,8 @@ T Approximation::To(const Tree* node, Random::Context* context) {
        * these values is much more resilient : sin(pi/2+e) ~= 1 - (e^2)/2. We
        * therefore use sin to identify values at which tan should be undefined.
        */
-      T sin = std::sin(angle);
-      if (sin == 1 || sin == -1) {
+      std::complex<T> sin = std::sin(angle);
+      if (sin == std::complex<T>(1) || sin == std::complex<T>(-1)) {
         return NAN;
       }
       return std::tan(angle);
@@ -117,67 +126,88 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       // res, angleInput);
     }
     case BlockType::Cosecant: {
-      T c = ConvertToRadian(To<T>(node->nextNode(), context));
+      std::complex<T> c =
+          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
       // std::complex<T> denominator =
       // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      T denominator = std::sin(c);
+      std::complex<T> denominator = std::sin(c);
       if (denominator == static_cast<T>(0.0)) {
         return NAN;  // complexNAN<T>();
       }
-      return /*std::complex<T>(1)*/ 1 / denominator;
+      return std::complex<T>(1) / denominator;
     }
     case BlockType::Cotangent: {
-      T c = ConvertToRadian(To<T>(node->nextNode(), context));
+      std::complex<T> c =
+          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
       // std::complex<T> denominator =
       // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
       // std::complex<T> numerator =
       // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      T denominator = std::sin(c);
-      T numerator = std::cos(c);
+      std::complex<T> denominator = std::sin(c);
+      std::complex<T> numerator = std::cos(c);
       if (denominator == static_cast<T>(0.0)) {
         return NAN;  // complexNAN<T>();
       }
       return numerator / denominator;
     }
     case BlockType::Secant: {
-      T c = ConvertToRadian(To<T>(node->nextNode(), context));
+      std::complex<T> c =
+          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
       // std::complex<T> denominator =
       // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      T denominator = std::cos(c);
+      std::complex<T> denominator = std::cos(c);
       if (denominator == static_cast<T>(0.0)) {
         return NAN;  // complexNAN<T>();
       }
-      return /*std::complex<T>(1)*/ 1 / denominator;
+      return std::complex<T>(1) / denominator;
     }
-    case BlockType::Decimal:
-      return To<T>(node->nextNode(), context) *
-             std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
     case BlockType::Infinity:
       return INFINITY;
     case BlockType::Opposite:
-      return -To<T>(node->nextNode(), context);
+      return -ComplexTo<T>(node->nextNode(), context);
+    case BlockType::RealPart:
+      return ComplexTo<T>(node->nextNode(), context).real();
+    case BlockType::ImaginaryPart:
+      return ComplexTo<T>(node->nextNode(), context).imag();
+  }
+
+  // The remaining operators are defined only on reals
+  // assert(node->numberOfChildren() <= 2);
+  if (node->numberOfChildren() > 2) {
+    return NAN;
+  }
+  T child[2];
+  for (int i = 0; const Tree* childNode : node->children()) {
+    std::complex<T> app = ComplexTo<T>(childNode, context);
+    if (app.imag() != 0) {
+      return NAN;
+    }
+    child[i++] = app.real();
+  }
+  switch (node->type()) {
+    case BlockType::Decimal:
+      return child[0] *
+             std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
     case BlockType::Sign: {
-      T c = To<T>(node->nextNode(), context);
       // TODO why no epsilon in Poincare ?
-      return c == 0 ? 0 : c < 0 ? -1 : 1;
+      return child[0] == 0 ? 0 : child[0] < 0 ? -1 : 1;
     }
     case BlockType::Floor:
       // TODO low deviation
-      return std::floor(To<T>(node->nextNode(), context));
+      return std::floor(child[0]);
     case BlockType::Ceiling:
       // TODO low deviation
-      return std::ceil(To<T>(node->nextNode(), context));
+      return std::ceil(child[0]);
     case BlockType::FracPart: {
-      T child = To<T>(node->nextNode(), context);
-      return child - std::floor(child);
+      return child[0] - std::floor(child[0]);
     }
     case BlockType::Round: {
       // TODO digits is integer
-      T err = std::pow(10, std::round(To<T>(node->child(1), context)));
-      return std::round(To<T>(node->nextNode(), context) * err) / err;
+      T err = std::pow(10, std::round(child[1]));
+      return std::round(child[0] * err) / err;
     }
     case BlockType::Factorial: {
-      T n = To<T>(node->nextNode(), context);
+      T n = child[0];
       if (/*c.imag() != 0 ||*/ std::isnan(n) || n != (int)n || n < 0) {
         return NAN;
       }
@@ -191,8 +221,8 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return std::round(result);
     }
     case BlockType::Binomial: {
-      T n = To<T>(node->child(0), context);
-      T k = To<T>(node->child(1), context);
+      T n = child[0];
+      T k = child[1];
       if (std::isnan(n) || std::isnan(k) || k != std::round(k)) {
         return NAN;
       }
@@ -215,8 +245,8 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return generalized ? result : std::round(result);
     }
     case BlockType::Permute: {
-      T n = To<T>(node->child(0), context);
-      T k = To<T>(node->child(1), context);
+      T n = child[0];
+      T k = child[1];
       if (std::isnan(n) || std::isnan(k) || n != std::round(n) ||
           k != std::round(k) || n < 0.0f || k < 0.0f) {
         return NAN;
@@ -248,7 +278,9 @@ T Approximation::ConvertToRadian(T angle) {
   if (angleUnit == AngleUnit::Radian) {
     return angle;
   }
-  return angle * (angleUnit == AngleUnit::Degree ? M_PI / 180.0 : M_PI / 200.0);
+  return angle * (angleUnit == AngleUnit::Degree
+                      ? static_cast<T>(M_PI / 180.0)
+                      : static_cast<T>(M_PI / 200.0));
 }
 
 template <typename T>
@@ -256,7 +288,9 @@ T Approximation::ConvertFromRadian(T angle) {
   if (angleUnit == AngleUnit::Radian) {
     return angle;
   }
-  return angle * (angleUnit == AngleUnit::Degree ? 180.0 / M_PI : 200.0 / M_PI);
+  return angle * (angleUnit == AngleUnit::Degree
+                      ? static_cast<T>(180.0 / M_PI)
+                      : static_cast<T>(200.0 / M_PI));
 }
 
 template <typename T>
@@ -270,15 +304,17 @@ Tree* Approximation::ToList(const Tree* node, AngleUnit angleUnit) {
 }
 
 template <typename T>
-T Approximation::MapAndReduce(const Tree* node, Reductor<T> reductor,
-                              Random::Context* context, Mapper<T> mapper) {
-  T res;
+std::complex<T> Approximation::MapAndReduce(const Tree* node,
+                                            Reductor<std::complex<T>> reductor,
+                                            Random::Context* context,
+                                            Mapper<std::complex<T>> mapper) {
+  std::complex<T> res;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-    T app = To<T>(child, context);
+    std::complex<T> app = ComplexTo<T>(child, context);
     if (mapper) {
       app = mapper(app);
     }
-    if (std::isnan(app)) {
+    if (std::isnan(app.real()) || std::isnan(app.imag())) {
       return NAN;
     }
     if (index == 0) {
@@ -336,11 +372,15 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
   return true;
 }
 
-template float Approximation::RootTreeTo<float>(const Tree*, AngleUnit);
-template double Approximation::RootTreeTo<double>(const Tree*, AngleUnit);
+template std::complex<float> Approximation::ComplexRootTreeTo<float>(
+    const Tree*, AngleUnit);
+template std::complex<double> Approximation::ComplexRootTreeTo<double>(
+    const Tree*, AngleUnit);
 
-template float Approximation::To<float>(const Tree*, Random::Context*);
-template double Approximation::To<double>(const Tree*, Random::Context*);
+template std::complex<float> Approximation::ComplexTo<float>(const Tree*,
+                                                             Random::Context*);
+template std::complex<double> Approximation::ComplexTo<double>(
+    const Tree*, Random::Context*);
 
 template Tree* Approximation::ToList<float>(const Tree*, AngleUnit);
 template Tree* Approximation::ToList<double>(const Tree*, AngleUnit);

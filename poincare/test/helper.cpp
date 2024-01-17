@@ -5,6 +5,7 @@
 #include <poincare/src/parsing/parser.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
@@ -268,10 +269,24 @@ void assert_expression_approximates_to(const char *expression,
           e->removeTree();
           return r;
         }
-        T value = PoincareJ::Approximation::RootTreeTo<T>(
+        std::complex<T> value = PoincareJ::Approximation::ComplexRootTreeTo<T>(
             e, PoincareJ::AngleUnit(reductionContext.angleUnit()));
         e->removeTree();
-        return SharedEditionPool->push<FloatType<T>::type>(value);
+        if (value.imag() == 0) {
+          return SharedEditionPool->push<FloatType<T>::type>(value.real());
+        }
+        if (value.real() == 0) {
+          Tree *result = SharedEditionPool->push<BlockType::Multiplication>(2);
+          SharedEditionPool->push<FloatType<T>::type>(value.imag());
+          SharedEditionPool->push<BlockType::Constant>(u'i');
+          return result;
+        }
+        Tree *result = SharedEditionPool->push<BlockType::Addition>(2);
+        SharedEditionPool->push<FloatType<T>::type>(value.real());
+        SharedEditionPool->push<BlockType::Multiplication>(2);
+        SharedEditionPool->push<FloatType<T>::type>(value.imag());
+        SharedEditionPool->push<BlockType::Constant>(u'i');
+        return result;
       },
       numberOfSignificantDigits);
 }

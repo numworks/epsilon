@@ -50,10 +50,15 @@ uint8_t SlotsExamMode::FetchSlotExamMode(const char * version, const char * Slot
       start = getSlotAStartExamAddress(0);
       end = getSlotAEndExamAddress(0);
     }
-    // Else get new addresses
-    else {
+    // Else versions before 22
+    else if (version[0] == '2' && version[1] < '2') {
       start = getSlotAStartExamAddress(1);
       end = getSlotAEndExamAddress(1);
+    }
+    // Else Epsilon 22 +
+    else {
+      start = getSlotAStartExamAddress(2);
+      end = getSlotAEndExamAddress(2);
     }
   }
   else if (Slot == "B") {
@@ -62,10 +67,15 @@ uint8_t SlotsExamMode::FetchSlotExamMode(const char * version, const char * Slot
       start = getSlotBStartExamAddress(0);
       end = getSlotBEndExamAddress(0);
     }
-    // Else get new
-    else {
+    // Else versions before 22
+    else if (version[0] == '2' && version[1] < '2') {
       start = getSlotBStartExamAddress(1);
       end = getSlotBEndExamAddress(1);
+    }
+    // Else Epsilon 22 +
+    else {
+      start = getSlotBStartExamAddress(2);
+      end = getSlotBEndExamAddress(2);
     }
   } else if (Slot == "Khi") {
     // We directly get the address of the Khi exam mode without checking the
@@ -171,38 +181,63 @@ uint8_t SlotsExamMode::examFetch19(uint32_t start, uint32_t end) {
 
 uint32_t SlotsExamMode::getSlotAStartExamAddress(int ExamVersion) {
   if (ExamVersion == 0) {
-        return SlotAExamModeBufferStartOldVersions;
+        return SlotAExamModeBufferStartBefore16;
   }
-  else {
-    return SlotAExamModeBufferStartNewVersions;
+  if (ExamVersion == 1) {
+    return SlotAExamModeBufferStartEpsilon16;
   }
+  if (ExamVersion == 2) {
+    return SlotAExamModeBufferStartEpsilon22;
+  }
+  assert(false);
+  // Should not happen
+  return SlotAExamModeBufferStartEpsilon22;
 }
 
 uint32_t SlotsExamMode::getSlotAEndExamAddress(int ExamVersion) {
   if (ExamVersion == 0) {
-    return SlotAExamModeBufferEndOldVersions;
+    return SlotAExamModeBufferEndBefore16;
   }
-  else {
-        return SlotAExamModeBufferEndNewVersions;;
+  if (ExamVersion == 1) {
+    return SlotAExamModeBufferEndEpsilon16;
   }
+  if (ExamVersion == 2) {
+    return SlotAExamModeBufferEndEpsilon22;
+  }
+  assert(false);
+  // Should not happen
+  return SlotAExamModeBufferEndEpsilon22;
+
 }
 
 uint32_t SlotsExamMode::getSlotBStartExamAddress(int ExamVersion) {
   if (ExamVersion == 0) {
-    return SlotBExamModeBufferStartOldVersions;
+    return SlotBExamModeBufferStartBeforeEpsilon16;
   }
-  else {
-    return SlotBExamModeBufferStartNewVersions;
+  if (ExamVersion == 1) {
+    return SlotBExamModeBufferStartEpsilon16;
   }
+  if (ExamVersion == 2) {
+    return SlotBExamModeBufferStartEpsilon22;
+  }
+  assert(false);
+  // Should not happen
+  return SlotBExamModeBufferStartEpsilon22;
 }
 
 uint32_t SlotsExamMode::getSlotBEndExamAddress(int ExamVersion) {
   if (ExamVersion == 0) {
-    return SlotBExamModeBufferEndOldVersions;
+    return SlotBExamModeBufferEndBeforeEpsilon16;
   }
-  else {
-    return SlotBExamModeBufferEndNewVersions;
+  if (ExamVersion == 1) {
+    return SlotBExamModeBufferEndEpsilon16;
   }
+  if (ExamVersion == 2) {
+    return SlotBExamModeBufferEndEpsilon22;
+  }
+  assert(false);
+  // Should not happen
+  return SlotBExamModeBufferEndEpsilon22;
 }
 
 uint32_t SlotsExamMode::getSlotKhiStartExamAddress() {

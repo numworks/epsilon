@@ -8,17 +8,23 @@ extern "C" {
 namespace Bootloader {
 namespace ExamMode {
 
-static const uint32_t SlotAExamModeBufferStartOldVersions = 0x90001000;
-static const uint32_t SlotAExamModeBufferEndOldVersions = 0x90003000;
+static const uint32_t SlotAExamModeBufferStartBefore16 = 0x90001000;
+static const uint32_t SlotAExamModeBufferEndBefore16 = 0x90003000;
 
-static const uint32_t SlotAExamModeBufferStartNewVersions = 0x903f0000;
-static const uint32_t SlotAExamModeBufferEndNewVersions = 0x90400000;
+static const uint32_t SlotAExamModeBufferStartEpsilon16 = 0x903f0000;
+static const uint32_t SlotAExamModeBufferEndEpsilon16 = 0x90400000;
 
-static const uint32_t SlotBExamModeBufferStartOldVersions = 0x90401000;
-static const uint32_t SlotBExamModeBufferEndOldVersions = 0x90403000;
+static const uint32_t SlotAExamModeBufferStartEpsilon22 = 0x903f0400;
+static const uint32_t SlotAExamModeBufferEndEpsilon22 = 0x90400000;
 
-static const uint32_t SlotBExamModeBufferStartNewVersions = 0x907f0000;
-static const uint32_t SlotBExamModeBufferEndNewVersions = 0x90800000;
+static const uint32_t SlotBExamModeBufferStartBeforeEpsilon16 = 0x90401000;
+static const uint32_t SlotBExamModeBufferEndBeforeEpsilon16 = 0x90403000;
+
+static const uint32_t SlotBExamModeBufferStartEpsilon16 = 0x907f0000;
+static const uint32_t SlotBExamModeBufferEndEpsilon16 = 0x90800000;
+
+static const uint32_t SlotBExamModeBufferStartEpsilon22 = 0x907f0400;
+static const uint32_t SlotBExamModeBufferEndEpsilon22 = 0x90800000;
 
 static const uint32_t SlotKhiExamModeBufferStart = 0x90181000;
 static const uint32_t SlotKhiExamModeBufferEnd = 0x90183000;

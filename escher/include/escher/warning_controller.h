@@ -27,8 +27,7 @@ class WarningController : public ViewController {
     KDSize minimalSizeForOptimalDisplay() const override;
 
    private:
-    constexpr static KDCoordinate k_topAndBottomMargin = 20;
-    constexpr static KDCoordinate k_horizontalMargin = 20;
+    constexpr static KDCoordinate k_margin = 15;
     MessageTextView m_textView;
   };
 

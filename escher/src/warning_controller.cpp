@@ -31,8 +31,8 @@ void WarningController::ContentView::layoutSubviews(bool force) {
 
 KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_textView.minimalSizeForOptimalDisplay();
-  return KDSize(textSize.width() + k_horizontalMargin,
-                textSize.height() + 2 * k_topAndBottomMargin);
+  return KDSize(textSize.width() + 2 * k_margin,
+                textSize.height() + 2 * k_margin);
 }
 
 WarningController::WarningController(Responder* parentResponder,

@@ -36,16 +36,21 @@ size_t TangentNode::serialize(char* buffer, size_t bufferSize,
 
 template <typename T>
 std::complex<T> TangentNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
+    const std::complex<T> c, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit) {
-  std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
-  /* We use std::sin/std::cos instead of std::tan for 3 reasons:
+  /* We use std::sin/std::cos instead of std::tan for 4 reasons:
    * - we do not want tan(π/2) to be infinity
    * - we have the same approximation when computing sin/cos or tan
-   * - we homogenize approximation across platforms */
-  std::complex<T> res = std::sin(angleInput) / std::cos(angleInput);
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
-      res, angleInput);
+   * - we homogenize approximation across platforms
+   * - we have a symmetrical computation to cotangent */
+  std::complex<T> denominator =
+      CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+  std::complex<T> numerator =
+      SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+  if (denominator == static_cast<T>(0.0)) {
+    return complexNAN<T>();
+  }
+  return numerator / denominator;
 }
 
 Expression TangentNode::shallowReduce(

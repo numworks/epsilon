@@ -1112,9 +1112,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                            Gradian, MetricUnitFormat, Cartesian,
                                            6);
   // tan(π/2)
-  // due to approximation errors of π, tan(π/2) is not undef but the calculator
-  // will give undef as exact output thanks to trigonometry cheat table
-  assert_expression_approximates_to<double>("tan(π/2)", "1.6331239353195ᴇ16",
+  assert_expression_approximates_to<double>("tan(π/2)", Undefined::Name(),
                                             Radian);
   assert_expression_approximates_to<double>("sin(π/2)/cos(π/2)",
                                             Undefined::Name(), Radian);
@@ -1137,10 +1135,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                            Radian, MetricUnitFormat, Cartesian,
                                            6);
   // cot(π/2)
-  // due to approximation errors of π, 1/tan(π/2) is not undef but the
-  // calculator will give undef as exact output thanks to trigonometry cheat
-  // table
-  assert_expression_approximates_to<double>("1/tan(π/2)", "6.1232339957368ᴇ-17",
+  assert_expression_approximates_to<double>("1/tan(π/2)", Undefined::Name(),
                                             Radian);
   assert_expression_approximates_to<double>("cos(π/2)/sin(π/2)", "0", Radian);
   assert_expression_approximates_to<double>("cot(π/2)", "0", Radian);

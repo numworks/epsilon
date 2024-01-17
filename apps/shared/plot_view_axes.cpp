@@ -71,7 +71,7 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
   float xAbsoluteMax = std::max(-xMin, xMax);
   float yAbsoluteMax = std::max(-yMin, yMax);
 
-  if (xMin * xMax <= 0 && yMin * yMax <= 0) {
+  if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
     // The origin is inside the rect
     radiusMin = 0;
   } else {

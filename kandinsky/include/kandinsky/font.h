@@ -69,10 +69,13 @@ class KDFont {
 
   static bool CanBeWrittenWithGlyphs(const char* text);
 
-  KDSize stringSize(const char* text, int textLength = -1) const {
-    return stringSizeUntil(text, textLength < 0 ? nullptr : text + textLength);
+  KDSize stringSize(const char* text, int textLength = -1,
+                    KDCoordinate lineSpacing = 0) const {
+    return stringSizeUntil(text, textLength < 0 ? nullptr : text + textLength,
+                           lineSpacing);
   }
-  KDSize stringSizeUntil(const char* text, const char* limit) const;
+  KDSize stringSizeUntil(const char* text, const char* limit,
+                         KDCoordinate lineSpacing = 0) const;
 
   union GlyphBuffer {
    public:

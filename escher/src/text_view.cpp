@@ -3,7 +3,8 @@
 namespace Escher {
 
 KDSize TextView::minimalSizeForOptimalDisplay() const {
-  return KDFont::Font(m_glyphFormat.style.font)->stringSize(text());
+  return KDFont::Font(m_glyphFormat.style.font)
+      ->stringSize(text(), -1, m_lineSpacing);
 }
 
 void TextView::drawRect(KDContext* ctx, KDRect rect) const {
@@ -11,7 +12,8 @@ void TextView::drawRect(KDContext* ctx, KDRect rect) const {
     return;
   }
   ctx->fillRect(bounds(), m_glyphFormat.style.backgroundColor);
-  ctx->alignAndDrawString(text(), KDPointZero, bounds().size(), m_glyphFormat);
+  ctx->alignAndDrawString(text(), KDPointZero, bounds().size(), m_glyphFormat,
+                          -1, m_lineSpacing);
 }
 
 }  // namespace Escher

@@ -23,14 +23,15 @@ KDPoint KDContext::alignAndDrawSingleLineString(const char* text, KDPoint p,
 }
 
 KDPoint KDContext::alignAndDrawString(const char* text, KDPoint p, KDSize frame,
-                                      KDGlyph::Format format, int maxLength) {
+                                      KDGlyph::Format format, int maxLength,
+                                      KDCoordinate lineSpacing) {
   assert(format.horizontalAlignment >= 0.0f &&
          format.horizontalAlignment <= 1.0f &&
          format.verticalAlignment >= 0.0f && format.verticalAlignment <= 1.0f);
   /* Align vertically
    * Then split lines and horizontal-align each independently */
   KDSize textSize =
-      KDFont::Font(format.style.font)->stringSize(text, maxLength);
+      KDFont::Font(format.style.font)->stringSize(text, maxLength, lineSpacing);
   assert(textSize.width() <= frame.width() &&
          textSize.height() <= frame.height());
   // We ceil vertical alignment to prefer shifting down than up.
@@ -51,7 +52,8 @@ KDPoint KDContext::alignAndDrawString(const char* text, KDPoint p, KDSize frame,
                                    format.horizontalAlignment, format.style,
                                    codePointPointer - startLine - 1);
       startLine = codePointPointer;
-      origin = KDPoint(origin.x(), origin.y() + lineFrame.height());
+      origin =
+          KDPoint(origin.x(), origin.y() + lineFrame.height() + lineSpacing);
     }
     codePoint = decoder.nextCodePoint();
     codePointPointer = decoder.stringPosition();

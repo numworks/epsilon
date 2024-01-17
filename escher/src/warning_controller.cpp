@@ -12,7 +12,8 @@ WarningController::ContentView::ContentView()
                             .backgroundColor = KDColorBlack,
                             .font = KDFont::Size::Small},
                   .horizontalAlignment = KDGlyph::k_alignCenter,
-                  .verticalAlignment = KDGlyph::k_alignCenter}) {}
+                  .verticalAlignment = KDGlyph::k_alignCenter},
+                 k_lineSpacing) {}
 
 void WarningController::ContentView::setLabel(I18n::Message label) {
   m_textView.setMessage(label);

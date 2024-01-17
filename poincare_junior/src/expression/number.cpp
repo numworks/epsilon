@@ -37,15 +37,15 @@ Tree* Number::Multiplication(const Tree* i, const Tree* j) {
   return result;
 }
 
-Sign::Sign Number::Sign(const Tree* node) {
+Sign Number::Sign(const Tree* node) {
   switch (node->type()) {
     case BlockType::Constant:
-      return Sign::Positive;
+      return Sign::Positive();
     case BlockType::DoubleFloat:
     case BlockType::SingleFloat: {
       double value = Float::To(node);
       // Floats are not considered integer since they may have been rounded
-      return {value == 0, value > 0, value < 0, false};
+      return PoincareJ::Sign(value == 0, value > 0, value < 0, false);
     }
     default:
       assert(node->isRational());

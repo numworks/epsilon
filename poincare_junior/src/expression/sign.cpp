@@ -6,46 +6,15 @@
 
 namespace PoincareJ {
 
-namespace Sign {
-
-bool Sign::isZero() const {
-  assert(isValid());
-  return !(canBePositive || canBeNegative);
-}
-bool Sign::isStrictlyPositive() const {
-  assert(isValid());
-  return !(canBeNull || canBeNegative);
-}
-bool Sign::isStrictlyNegative() const {
-  assert(isValid());
-  return !(canBeNull || canBePositive);
-}
-bool Sign::isNegative() const {
-  assert(isValid());
-  return !canBePositive;
-}
-bool Sign::isPositive() const {
-  assert(isValid());
-  return !canBeNegative;
-}
-bool Sign::isUnknown() const {
-  assert(isValid());
-  return canBeNull && canBePositive && canBeNegative;
-}
-bool Sign::isKnown() const {
-  assert(isValid());
-  return isZero() || isStrictlyPositive() || isStrictlyNegative();
-}
-
 Sign NoIntegers(Sign s) {
-  return Sign(s.canBeNull, s.canBeNegative, s.canBePositive);
+  return Sign(s.canBeNull(), s.canBeNegative(), s.canBePositive());
 }
 
 Sign DecimalFunction(Sign s, BlockType type) {
-  bool canBeNull = s.canBeNull;
-  bool canBePositive = s.canBePositive;
-  bool canBeNegative = s.canBeNegative;
-  bool isInteger = s.isInteger;
+  bool canBeNull = s.canBeNull();
+  bool canBePositive = s.canBePositive();
+  bool canBeNegative = s.canBeNegative();
+  bool isInteger = s.isInteger();
   switch (type) {
     case BlockType::Ceiling:
       canBeNull |= canBeNegative;
@@ -68,55 +37,87 @@ Sign DecimalFunction(Sign s, BlockType type) {
 }
 
 Sign Oppose(Sign s) {
-  return Sign(s.canBeNull, s.canBeNegative, s.canBePositive, s.isInteger);
+  return Sign(s.canBeNull(), s.canBeNegative(), s.canBePositive(),
+              s.isInteger());
 }
 
 Sign Mult(Sign s1, Sign s2) {
-  return Sign(s1.canBeNull || s2.canBeNull,
-              (s1.canBePositive && s2.canBePositive) ||
-                  (s1.canBeNegative && s2.canBeNegative),
-              (s1.canBePositive && s2.canBeNegative) ||
-                  (s1.canBeNegative && s2.canBePositive),
-              s1.isInteger && s2.isInteger);
+  return Sign(s1.canBeNull() || s2.canBeNull(),
+              (s1.canBePositive() && s2.canBePositive()) ||
+                  (s1.canBeNegative() && s2.canBeNegative()),
+              (s1.canBePositive() && s2.canBeNegative()) ||
+                  (s1.canBeNegative() && s2.canBePositive()),
+              s1.isInteger() && s2.isInteger());
 }
 
 Sign Add(Sign s1, Sign s2) {
-  return Sign((s1.canBeNull && s2.canBeNull) ||
-                  (s1.canBePositive && s2.canBeNegative) ||
-                  (s1.canBeNegative && s2.canBePositive),
-              s1.canBePositive || s2.canBePositive,
-              s1.canBeNegative || s2.canBeNegative,
-              s1.isInteger && s2.isInteger);
+  return Sign((s1.canBeNull() && s2.canBeNull()) ||
+                  (s1.canBePositive() && s2.canBeNegative()) ||
+                  (s1.canBeNegative() && s2.canBePositive()),
+              s1.canBePositive() || s2.canBePositive(),
+              s1.canBeNegative() || s2.canBeNegative(),
+              s1.isInteger() && s2.isInteger());
 }
 
-Sign GetSign(const Tree* t) {
-  assert(GetComplexSign(t).isReal());
-  return GetComplexSign(t).realSign();
-}
-
-bool ComplexSign::isReal() const {
-  assert(isValid());
-  return imagSign().isZero();
-}
-bool ComplexSign::isZero() const {
-  assert(isValid());
-  return realSign().isZero() && imagSign().isZero();
-}
-bool ComplexSign::isUnknown() const {
-  assert(isValid());
-  return realSign().isUnknown() && imagSign().isUnknown();
-}
-bool ComplexSign::canBeNull() const {
-  assert(isValid());
-  return realSign().canBeNull && imagSign().canBeNull;
-}
-bool ComplexSign::isInteger() const {
-  assert(isValid());
-  return realSign().isInteger && imagSign().isInteger;
+Sign Sign::Get(const Tree* t) {
+  assert(ComplexSign::Get(t).isReal());
+  return ComplexSign::Get(t).realSign();
 }
 
 ComplexSign NoIntegers(ComplexSign s) {
   return ComplexSign(NoIntegers(s.realSign()), NoIntegers(s.imagSign()));
+}
+
+ComplexSign Abs(ComplexSign s) {
+  return ComplexSign(
+      Sign(s.canBeNull(), !s.isZero(), false,
+           s.isInteger() && (s.isReal() || s.realSign().isZero())),
+      Sign::Zero());
+}
+
+ComplexSign ArcCosine(ComplexSign s) {
+  return ComplexSign(
+      Sign(s.realSign().canBePositive(), true, false),
+      Sign(s.imagSign().canBeNull(),
+           s.imagSign().canBeNegative() ||
+               (s.imagSign().canBeNull() && s.realSign().canBePositive()),
+           s.imagSign().canBePositive() ||
+               (s.imagSign().canBeNull() && s.realSign().canBeNegative())));
+}
+
+ComplexSign Exponential(ComplexSign s) {
+  bool childIsReal = s.isReal();
+  return ComplexSign(Sign(!childIsReal, childIsReal, !childIsReal),
+                     Sign(true, !childIsReal, !childIsReal));
+}
+
+ComplexSign Ln(ComplexSign s) {
+  bool lnIsReal = s.isReal() && s.realSign().isPositive();
+  return ComplexSign(Sign::Unknown(),
+                     lnIsReal ? Sign::Zero()
+                              : Sign(false, !s.imagSign().isStrictlyNegative(),
+                                     s.imagSign().canBeNegative()));
+}
+
+ComplexSign ComplexArgument(ComplexSign s) {
+  return ComplexSign(
+      Sign(s.imagSign().canBeNull() && s.realSign().canBePositive(), true,
+           true),
+      Sign::Zero());
+}
+
+ComplexSign DecimalFunction(ComplexSign s, BlockType type) {
+  return ComplexSign(DecimalFunction(s.realSign(), type),
+                     DecimalFunction(s.imagSign(), type));
+}
+
+ComplexSign Trig(ComplexSign s, bool isSin) {
+  if (s.realSign().isZero()) {
+    return isSin ? ComplexSign(Sign::Zero(), s.imagSign())
+                 : ComplexSign(Sign::Positive(), Sign::Zero());
+  }
+  return ComplexSign(Sign::Unknown(),
+                     s.isReal() ? Sign::Zero() : Sign::Unknown());
 }
 
 ComplexSign Mult(ComplexSign s1, ComplexSign s2) {
@@ -132,17 +133,39 @@ ComplexSign Add(ComplexSign s1, ComplexSign s2) {
                      Add(s1.imagSign(), s2.imagSign()));
 }
 
+ComplexSign Power(ComplexSign base, ComplexSign exp) {
+  // If this assert can't be maintained, escape with Unknown.
+  assert(exp.isReal() && exp.isInteger());
+  if (base.isZero()) {
+    return ComplexSign::ComplexZero();
+  }
+  if (exp.isZero()) {
+    return ComplexSign::ComplexOne();
+  }
+  bool isInteger = (base.isInteger() && !exp.realSign().isPositive());
+  bool baseIsReal = base.isReal();
+  return ComplexSign(
+      Sign(base.realSign().canBeNull(), true,
+           !(baseIsReal && base.realSign().isPositive()), isInteger),
+      Sign(base.imagSign().canBeNull(), !baseIsReal, !baseIsReal, isInteger));
+}
+
+ComplexSign Complex(ComplexSign s0, ComplexSign s1) {
+  assert(s0.isReal() && s1.isReal());
+  return ComplexSign(s0.realSign(), s1.realSign());
+}
+
 // Note: A complex function plotter can be used to fill in these methods.
-ComplexSign GetComplexSign(const Tree* t) {
+ComplexSign ComplexSign::Get(const Tree* t) {
   assert(Dimension::GetDimension(t).isScalar());
   if (t->isNumber()) {
-    return ComplexSign(Number::Sign(t), Zero);
+    return ComplexSign(Number::Sign(t), Sign::Zero());
   }
   switch (t->type()) {
     case BlockType::Multiplication: {
-      ComplexSign s = ComplexOne;
+      ComplexSign s = ComplexOne();
       for (const Tree* c : t->children()) {
-        s = Mult(s, GetComplexSign(c));
+        s = Mult(s, Get(c));
         if (s.isUnknown() || s.isZero()) {
           break;
         }
@@ -150,9 +173,9 @@ ComplexSign GetComplexSign(const Tree* t) {
       return s;
     }
     case BlockType::Addition: {
-      ComplexSign s = ComplexZero;
+      ComplexSign s = ComplexZero();
       for (const Tree* c : t->children()) {
-        s = Add(s, GetComplexSign(c));
+        s = Add(s, Get(c));
         if (s.isUnknown()) {
           break;
         }
@@ -160,109 +183,47 @@ ComplexSign GetComplexSign(const Tree* t) {
       return s;
     }
     case BlockType::PowerReal:
-    case BlockType::Power: {
-      ComplexSign base = GetComplexSign(t->firstChild());
-      ComplexSign exp = GetComplexSign(t->child(1));
-      // If this assert can't be maintained, escape with Unknown.
-      assert(exp.isReal() && exp.isInteger());
-      if (base.isZero()) {
-        return ComplexZero;
-      }
-      if (exp.isZero()) {
-        return ComplexOne;
-      }
-      bool isInteger = (base.isInteger() && !exp.realSign().isPositive());
-      bool baseIsReal = base.isReal();
-      return ComplexSign(
-          Sign(base.realSign().canBeNull, true,
-               !(baseIsReal && base.realSign().isPositive()), isInteger),
-          Sign(base.imagSign().canBeNull, !baseIsReal, !baseIsReal, isInteger));
-    }
+    case BlockType::Power:
+      return Power(Get(t->firstChild()), Get(t->child(1)));
     case BlockType::Norm:
       // Child isn't a scalar
-      return ComplexSign(PositiveOrNull, Zero);
-    case BlockType::Abs: {
-      ComplexSign s = GetComplexSign(t->firstChild());
-      return ComplexSign(
-          Sign(s.canBeNull(), !s.isZero(), false,
-               s.isInteger() && (s.isReal() || s.realSign().isZero())),
-          Zero);
-    }
+      return ComplexSign(Sign::PositiveOrNull(), Sign::Zero());
+    case BlockType::Abs:
+      return Abs(Get(t->firstChild()));
     case BlockType::ArcSine:
     case BlockType::ArcTangent:
       // Both real and imaginary part keep the same sign
-      return NoIntegers(GetComplexSign(t->firstChild()));
-    case BlockType::ArcCosine: {
-      ComplexSign s = GetComplexSign(t->firstChild());
-      return ComplexSign(
-          Sign(s.realSign().canBePositive, true, false),
-          Sign(s.imagSign().canBeNull,
-               s.imagSign().canBeNegative ||
-                   (s.imagSign().canBeNull && s.realSign().canBePositive),
-               s.imagSign().canBePositive ||
-                   (s.imagSign().canBeNull && s.realSign().canBeNegative)));
-    }
-    case BlockType::Exponential: {
-      ComplexSign s = GetComplexSign(t->firstChild());
-      bool childIsReal = s.isReal();
-      return ComplexSign(Sign(!childIsReal, childIsReal, !childIsReal),
-                         Sign(true, !childIsReal, !childIsReal));
-    }
-    case BlockType::Ln: {
-      ComplexSign s = GetComplexSign(t->firstChild());
-      bool lnIsReal = s.isReal() && s.realSign().isPositive();
-      return ComplexSign(
-          Unknown, lnIsReal ? Zero
-                            : Sign(false, !s.imagSign().isStrictlyNegative(),
-                                   s.imagSign().canBeNegative));
-    }
+      return NoIntegers(Get(t->firstChild()));
+    case BlockType::ArcCosine:
+      return ArcCosine(Get(t->firstChild()));
+    case BlockType::Exponential:
+      return Exponential(Get(t->firstChild()));
+    case BlockType::Ln:
+      return Ln(Get(t->firstChild()));
     case BlockType::Factorial:
-      assert(GetComplexSign(t->firstChild()).isReal() &&
-             GetComplexSign(t->firstChild()).isInteger());
-      return ComplexOne;
+      assert(Get(t->firstChild()).isReal() && Get(t->firstChild()).isInteger());
+      return ComplexOne();
     case BlockType::RealPart:
-    case BlockType::ImaginaryPart: {
-      ComplexSign childSign = GetComplexSign(t->firstChild());
-      return ComplexSign(
-          t->isRealPart() ? childSign.realSign() : childSign.imagSign(), Zero);
-    }
+      return ComplexSign(Get(t->firstChild()).realSign(), Sign::Zero());
+    case BlockType::ImaginaryPart:
+      return ComplexSign(Get(t->firstChild()).imagSign(), Sign::Zero());
     case BlockType::Variable:
       return Variables::GetComplexSign(t);
     case BlockType::Ceiling:
     case BlockType::Floor:
     case BlockType::FracPart:
-    case BlockType::Round: {
-      ComplexSign s = GetComplexSign(t->firstChild());
-      return ComplexSign(DecimalFunction(s.realSign(), t->type()),
-                         DecimalFunction(s.imagSign(), t->type()));
-    }
-    case BlockType::Complex: {
-      ComplexSign s0 = GetComplexSign(t->child(0));
-      ComplexSign s1 = GetComplexSign(t->child(1));
-      assert(s0.isReal() && s1.isReal());
-      return ComplexSign(s0.realSign(), s1.realSign());
-    }
-    case BlockType::Trig: {
-      ComplexSign s = GetComplexSign(t->firstChild());
-      if (s.realSign().isZero()) {
-        bool isSin = t->child(1)->isOne();
-        assert(isSin || t->child(1)->isZero());
-        return isSin ? ComplexSign(Zero, s.imagSign())
-                     : ComplexSign(Positive, Zero);
-      }
-      return ComplexSign(Unknown, s.isReal() ? Zero : Unknown);
-    }
-    case BlockType::ComplexArgument: {
-      ComplexSign s = GetComplexSign(t->firstChild());
-      return ComplexSign(
-          Sign(s.imagSign().canBeNull && s.realSign().canBePositive, true,
-               true),
-          Zero);
-    }
+    case BlockType::Round:
+      return DecimalFunction(Get(t->firstChild()), t->type());
+    case BlockType::Complex:
+      return Complex(Get(t->firstChild()), Get(t->child(1)));
+    case BlockType::Trig:
+      assert(t->child(1)->isOne() || t->child(1)->isZero());
+      return Trig(Get(t->firstChild()), t->child(1)->isOne());
+    case BlockType::ComplexArgument:
+      return ComplexArgument(Get(t->firstChild()));
     default:
-      return ComplexUnknown;
+      return ComplexUnknown();
   }
 }
 
-}  // namespace Sign
 }  // namespace PoincareJ

@@ -352,8 +352,8 @@ template Tree *EditionPool::push<BlockType::Set>(uint8_t);
 template Tree *EditionPool::push<BlockType::Polynomial, int>(int);
 template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
     const char *, size_t);
-template Tree *EditionPool::push<BlockType::Variable, uint8_t,
-                                 Sign::ComplexSign>(uint8_t, Sign::ComplexSign);
+template Tree *EditionPool::push<BlockType::Variable, uint8_t, ComplexSign>(
+    uint8_t, ComplexSign);
 template Tree *EditionPool::push<BlockType::List, int>(int);
 template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
 template Tree *EditionPool::push<BlockType::CodePointLayout, CodePoint>(

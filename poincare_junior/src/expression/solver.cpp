@@ -69,7 +69,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   SwapTrees(&simplifiedEquationSet, &variables);
   // TODO: Use user settings for a RealUnkown sign ?
   Variables::ProjectToId(simplifiedEquationSet, variables,
-                         Sign::ComplexUnknown);
+                         ComplexSign::ComplexUnknown());
   EditionReference result;
   if (*error == Error::NoError) {
     result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables,
@@ -151,12 +151,12 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
   for (uint8_t row = 0; row < rows; row++) {
     bool allCoefficientsNull = true;
     for (uint8_t col = 0; col < n; col++) {
-      if (allCoefficientsNull && !Sign::GetSign(coefficient).isZero()) {
+      if (allCoefficientsNull && !Sign::Get(coefficient).isZero()) {
         allCoefficientsNull = false;
       }
       coefficient = coefficient->nextTree();
     }
-    if (allCoefficientsNull && !Sign::GetSign(coefficient).isZero()) {
+    if (allCoefficientsNull && !Sign::Get(coefficient).isZero()) {
       /* Row j describes an equation of the form '0=b', the system has no
        * solution. */
       matrix->removeTree();
@@ -202,7 +202,7 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?
     Tree* polynomial = PolynomialParser::Parse(
-        tree, Variables::Variable(i, Sign::ComplexUnknown));
+        tree, Variables::Variable(i, ComplexSign::ComplexUnknown()));
     if (!polynomial->isPolynomial()) {
       // tree did not depend on variable. Continue.
       tree = polynomial;
@@ -259,7 +259,7 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
    */
   // TODO: Use user settings for a RealUnkown sign ?
   solution->moveTreeBeforeNode(SharedEditionPool->push<BlockType::Variable>(
-      variableId, Sign::ComplexUnknown));
+      variableId, ComplexSign::ComplexUnknown()));
   solution->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
   Simplification::DeepSystematicReduce(solution);
   Simplification::AdvancedReduction(solution);

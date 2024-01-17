@@ -21,11 +21,12 @@ class Parametric {
   static bool HasLocalRandom(Tree* t);
 
   static uint8_t FunctionIndex(const Tree* t);
-  static Sign::ComplexSign VariableSign(const Tree* t);
+  static ComplexSign VariableSign(const Tree* t);
 
-  constexpr static Sign::ComplexSign k_discreteVariableSign = Sign::RealInteger;
-  constexpr static Sign::ComplexSign k_continuousVariableSign =
-      Sign::RealUnknown;
+  constexpr static ComplexSign k_discreteVariableSign =
+      ComplexSign::RealInteger();
+  constexpr static ComplexSign k_continuousVariableSign =
+      ComplexSign::RealUnknown();
 
   static constexpr uint8_t k_localVariableId = 0;
   static constexpr uint8_t k_variableIndex = 0;

@@ -84,16 +84,16 @@ constexpr auto KMult = KNAry<BlockType::Multiplication>();
 constexpr auto KList = KNAry<BlockType::List>();
 constexpr auto KSet = KNAry<BlockType::Set>();
 
-template <uint8_t Id, Sign::ComplexSign sign>
-constexpr auto KVar = KTree<BlockType::Variable, Id, GetValue(sign)>();
+template <uint8_t Id, uint8_t sign>
+constexpr auto KVar = KTree<BlockType::Variable, Id, sign>();
 
 // Discrete local variable
-constexpr auto KVarK =
-    KVar<Parametric::k_localVariableId, Parametric::k_discreteVariableSign>;
+constexpr auto KVarK = KVar<Parametric::k_localVariableId,
+                            Parametric::k_discreteVariableSign.getValue()>;
 
 // Continuous local variable
-constexpr auto KVarX =
-    KVar<Parametric::k_localVariableId, Parametric::k_continuousVariableSign>;
+constexpr auto KVarX = KVar<Parametric::k_localVariableId,
+                            Parametric::k_continuousVariableSign.getValue()>;
 ;
 
 template <uint8_t Rows, uint8_t Cols>

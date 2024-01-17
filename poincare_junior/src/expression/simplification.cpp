@@ -272,7 +272,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   if (!n->isInteger()) {
     // 0^n -> 0
     if (v->isZero()) {
-      if (Sign::GetSign(n).isStrictlyPositive()) {
+      if (Sign::Get(n).isStrictlyPositive()) {
         u->cloneTreeOverTree(0_e);
         return true;
       }
@@ -719,10 +719,10 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
   if (child->isComplex() || Complex::IsReal(child)) {
     // arg(x + iy) = atan2(y, x)
     const Tree* real = Complex::UnSanitizedRealPart(child);
-    Sign::Sign realSign = Sign::GetSign(real);
+    Sign realSign = Sign::Get(real);
     if (realSign.isKnown()) {
       const Tree* imag = Complex::UnSanitizedImagPart(child);
-      Sign::Sign imagSign = Sign::GetSign(imag);
+      Sign imagSign = Sign::Get(imag);
       if (realSign.isZero() && imagSign.isKnown()) {
         if (imagSign.isZero()) {
           // atan2(0, 0) = undef
@@ -776,7 +776,7 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
 
 bool Simplification::SimplifySign(Tree* expr) {
   assert(expr->isSign());
-  Sign::Sign sign = Sign::GetSign(expr->firstChild());
+  Sign sign = Sign::Get(expr->firstChild());
   const Tree* result;
   if (sign.isZero()) {
     result = 0_e;
@@ -847,8 +847,8 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     Variables::ProjectToId(
         ref, variables,
         projectionContext.m_complexFormat == ComplexFormat::Real
-            ? Sign::RealUnknown
-            : Sign::ComplexUnknown);
+            ? ComplexSign::RealUnknown()
+            : ComplexSign::ComplexUnknown());
     changed = DeepSystematicReduce(ref) || changed;
     changed = DeepApplyMatrixOperators(ref) || changed;
     assert(!DeepSystematicReduce(ref));

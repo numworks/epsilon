@@ -16,7 +16,7 @@ class Number {
 
   static Tree* Addition(const Tree* i, const Tree* j);
   static Tree* Multiplication(const Tree* i, const Tree* j);
-  static Sign::Sign Sign(const Tree* node);
+  static Sign Sign(const Tree* node);
 };
 
 }  // namespace PoincareJ

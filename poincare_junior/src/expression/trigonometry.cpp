@@ -259,7 +259,7 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
   }
   const Tree* arg = u->child(0);
   bool isAsin = arg->nextTree()->isOne();
-  Sign::ComplexSign argSign = Sign::GetComplexSign(arg);
+  ComplexSign argSign = ComplexSign::Get(arg);
   if (argSign.isZero()) {
     u->cloneTreeOverTree(isAsin ? 0_e : KMult(KHalf, π_e));
     return true;

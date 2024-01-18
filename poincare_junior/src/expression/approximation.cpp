@@ -265,27 +265,17 @@ std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
       std::complex<T> res = std::tan(angleInput);
       return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
     }
-    case BlockType::Cosecant: {
-      std::complex<T> denominator = TrigonometricTo(BlockType::Sine, value);
-      if (denominator == static_cast<T>(0.0)) {
-        return NAN;  // complexNAN<T>();
-      }
-      return std::complex<T>(1) / denominator;
-    }
+    case BlockType::Secant:
+    case BlockType::Cosecant:
     case BlockType::Cotangent: {
-      std::complex<T> denominator = TrigonometricTo(BlockType::Sine, value);
-      std::complex<T> numerator = TrigonometricTo(BlockType::Cosine, value);
+      std::complex<T> denominator = TrigonometricTo(
+          type.isSecant() ? BlockType::Cosine : BlockType::Sine, value);
+      std::complex<T> numerator =
+          type.isCotangent() ? TrigonometricTo(BlockType::Cosine, value) : 1;
       if (denominator == static_cast<T>(0.0)) {
-        return NAN;  // complexNAN<T>();
+        return NAN;
       }
       return numerator / denominator;
-    }
-    case BlockType::Secant: {
-      std::complex<T> denominator = TrigonometricTo(BlockType::Cosine, value);
-      if (denominator == static_cast<T>(0.0)) {
-        return NAN;  // complexNAN<T>();
-      }
-      return std::complex<T>(1) / denominator;
     }
 
     case BlockType::ArcCosine:

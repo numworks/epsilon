@@ -56,8 +56,8 @@ void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
 // WithPolarGrid
 
 void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
-                                        KDRect rect, float& radiusMin,
-                                        float& radiusMax) {
+                                        KDRect rect, float* radiusMin,
+                                        float* radiusMax) {
   /* We translate the pixel coordinates into floats, adding/subtracting 1 to
    * account for conversion errors. */
   float xMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal,
@@ -76,22 +76,23 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
 
   if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
     // The origin is inside the rect
-    radiusMin = 0;
+    *radiusMin = 0;
   } else if (xMin <= 0 && xMax >= 0) {
-    radiusMin = yAbsoluteMin;
+    *radiusMin = yAbsoluteMin;
   } else if (yMin <= 0 && yMax >= 0) {
-    radiusMin = xAbsoluteMin;
+    *radiusMin = xAbsoluteMin;
   } else {
-    radiusMin = sqrt(xAbsoluteMin * xAbsoluteMin + yAbsoluteMin * yAbsoluteMin);
+    *radiusMin =
+        sqrt(xAbsoluteMin * xAbsoluteMin + yAbsoluteMin * yAbsoluteMin);
   }
-  radiusMax = Vector2{xAbsoluteMax, yAbsoluteMax}.norm();
+  *radiusMax = Vector2{xAbsoluteMax, yAbsoluteMax}.norm();
 }
 
 void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
                                      KDContext* ctx, KDRect rect) {
   float radiusMin, radiusMax;
 
-  ComputeRadiusBounds(plotView, rect, radiusMin, radiusMax);
+  ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
 
   float step = plotView->range()->xGridUnit();
 

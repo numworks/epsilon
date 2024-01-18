@@ -87,6 +87,10 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
                                 PositiveIntegerApproximation<T>);
     case BlockType::SquareRoot:
       return std::sqrt(ComplexTo<T>(node->nextNode(), context));
+    case BlockType::NthRoot:
+      return std::pow(
+          ComplexTo<T>(node->nextNode(), context),
+          static_cast<T>(1) / ComplexTo<T>(node->child(1), context));
     case BlockType::Exponential:
       return std::exp(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Log:

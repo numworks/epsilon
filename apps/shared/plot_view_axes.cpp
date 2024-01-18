@@ -12,7 +12,8 @@ namespace PlotPolicy {
 
 struct Vector2 {
   float x, y;
-  float norm() const { return std::sqrt(x * x + y * y); }
+  float norm2() const { return x * x + y * y; }
+  float norm() const { return std::sqrt(norm2()); }
 };
 
 // WithCartesianGrid
@@ -124,27 +125,43 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
   float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
                                       bounds.top() + graduationVerticalMargin);
 
-  float angleBegin = 0;
-  float angleEnd = 2 * M_PI;
+  float xAbsoluteMax = xMax > -xMin ? xMax : xMin;
+  float yAbsoluteMax = yMax > -yMin ? yMax : yMin;
+  float xAbsoluteMin = xMin > -xMax ? xMin : xMax;
+  float yAbsoluteMin = yMin > -yMax ? yMin : yMax;
 
-  /* The strategy is to only draw lines that intersect with a circle that
-   * surrounds the window rect. To do so, we select the range of visible
-   * angles. */
-  Vector2 screenCenter = {(xMin + xMax) / 2, (yMin + yMax) / 2};
   float screenCircleRadius = Vector2{xMax - xMin, yMax - yMin}.norm() / 2;
-  float screenCenterDistance = screenCenter.norm();
-  if (screenCenterDistance > screenCircleRadius) {
-    // The origin is not contained in the circle surrounding the screen.
+  float screenCenterDistance = Vector2{xMin + xMax, yMin + yMax}.norm() / 2;
 
-    /* angle between the X axis and the line from the origin to the center
-     * of visible rect. */
-    float alpha = std::atan2(screenCenter.y, screenCenter.x);
-    /* Angle between the line from the origin to the center of the visible
-     * rect and both lines tangent to the circle which pass to the origin. */
-    float theta = atan2(screenCircleRadius, screenCenterDistance);
+  // Find angle bounds.
+  float angleBegin;
+  float angleEnd;
 
-    angleBegin = alpha - theta;
-    angleEnd = alpha + theta;
+  if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
+    // The rect contains the origin.
+    angleBegin = 0;
+    angleEnd = 2 * M_PI;
+  } else if ((xMin <= 0 && 0 <= xMax)) {
+    // The rect crosses the Y Axis.
+    angleBegin = atan2(yAbsoluteMin, xMin);
+    angleEnd = atan2(yAbsoluteMin, xMax);
+  } else if ((yMin <= 0 && 0 <= yMax)) {
+    // The rect crosses the X axis.
+    angleBegin = atan2(yMin, xAbsoluteMin);
+    angleEnd = atan2(yMax, xAbsoluteMin);
+
+    if (xMax < 0) {
+      /* The rect crosses the -Ox ray. as atan2 outputs in the rage [-pi,pi],
+       * the [a0, a1] arc must be complemented. */
+      angleBegin += 2.f * M_PI;
+    }
+  } else {
+    angleBegin = atan2(yAbsoluteMin, xAbsoluteMax);
+    angleEnd = atan2(yAbsoluteMax, xAbsoluteMin);
+  }
+
+  if (angleBegin > angleEnd) {
+    std::swap(angleBegin, angleEnd);
   }
 
   float k_angleStep = k_angleStepInDegree * M_PI / 180;

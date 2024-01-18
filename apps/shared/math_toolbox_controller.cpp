@@ -474,6 +474,8 @@ constexpr ToolboxMessageTree ConstantsChildren[] = {
                              I18n::Message::SpeedOfLight),
     ToolboxMessageTree::Leaf(I18n::Message::ElementaryChargeSymbol,
                              I18n::Message::ElementaryCharge),
+    ToolboxMessageTree::Leaf(I18n::Message::FaradaySymbol,
+                             I18n::Message::FaradayConstant),
     ToolboxMessageTree::Leaf(I18n::Message::GravitationalConstantSymbol,
                              I18n::Message::GravitationalConstant),
     ToolboxMessageTree::Leaf(I18n::Message::AccelerationOfGravitySymbol,

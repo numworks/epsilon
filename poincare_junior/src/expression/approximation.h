@@ -73,8 +73,27 @@ class Approximation final {
     return a + b;
   }
   template <typename T>
-  static T FloatMultiplication(T a, T b) {
-    return a * b;
+  static std::complex<T> FloatMultiplication(std::complex<T> c,
+                                             std::complex<T> d) {
+    // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
+    if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
+      constexpr T zero = static_cast<T>(0.0);
+      // Handle case of pure imaginary/real multiplications
+      if (c.imag() == zero && d.imag() == zero) {
+        return {c.real() * d.real(), zero};
+      }
+      if (c.real() == zero && d.real() == zero) {
+        return {-c.imag() * d.imag(), zero};
+      }
+      if (c.imag() == zero && d.real() == zero) {
+        return {zero, c.real() * d.imag()};
+      }
+      if (c.real() == zero && d.imag() == zero) {
+        return {zero, c.imag() * d.real()};
+      }
+      // Other cases are left to the standard library, and might return NaN.
+    }
+    return c * d;
   }
   template <typename T>
   static T FloatPower(T a, T b) {
@@ -97,8 +116,29 @@ class Approximation final {
     return a - b;
   }
   template <typename T>
-  static T FloatDivision(T a, T b) {
-    return a / b;
+  static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
+    constexpr T zero = static_cast<T>(0.0);
+    if (d.real() == zero && d.imag() == zero) {
+      return NAN;
+    }
+    // Special case to prevent (inf,0)/(1,0) from returning (inf, nan).
+    if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
+      // Handle case of pure imaginary/real divisions
+      if (c.imag() == zero && d.imag() == zero) {
+        return {c.real() / d.real(), zero};
+      }
+      if (c.real() == zero && d.real() == zero) {
+        return {c.imag() / d.imag(), zero};
+      }
+      if (c.imag() == zero && d.real() == zero) {
+        return {zero, -c.real() / d.imag()};
+      }
+      if (c.real() == zero && d.imag() == zero) {
+        return {zero, c.imag() / d.real()};
+      }
+      // Other cases are left to the standard library, and might return NaN.
+    }
+    return c / d;
   }
   template <typename T>
   static T FloatLog(T a, T b) {

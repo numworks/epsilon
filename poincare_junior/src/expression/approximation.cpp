@@ -57,11 +57,10 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       return MapAndReduce<T, std::complex<T>>(
           node, FloatAddition<std::complex<T>>, context);
     case BlockType::Multiplication:
-      return MapAndReduce<T, std::complex<T>>(
-          node, FloatMultiplication<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(node, FloatMultiplication<T>,
+                                              context);
     case BlockType::Division:
-      return MapAndReduce<T, std::complex<T>>(
-          node, FloatDivision<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(node, FloatDivision<T>, context);
     case BlockType::Subtraction:
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>, context);

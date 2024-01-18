@@ -68,8 +68,8 @@ I18n::Message ComplexListController::messageAtIndex(int index) {
   switch(index){
     case 0:
       return complexFormToDisplay() == Preferences::ComplexFormat::Cartesian
-                  ? I18n::Message::CartesianForm
-                  : I18n::Message::ExponentialForm;
+                   ? I18n::Message::CartesianForm
+                   : I18n::Message::ExponentialForm;
     case 1: return I18n::Message::ComplexAbsoluteValue;
     case 2: return I18n::Message::Argument;
     case 3: return I18n::Message::RealPart;

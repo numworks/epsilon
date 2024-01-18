@@ -122,6 +122,9 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::HyperbolicSine:
     case BlockType::HyperbolicCosine:
     case BlockType::HyperbolicTangent:
+    case BlockType::HyperbolicArcSine:
+    case BlockType::HyperbolicArcCosine:
+    case BlockType::HyperbolicArcTangent:
       return HyperbolicTo(node->type(),
                           ComplexTo<T>(node->nextNode(), context));
   }
@@ -384,6 +387,39 @@ std::complex<T> Approximation::HyperbolicTo(TypeBlock type,
           value);
     case BlockType::HyperbolicTangent:
       return NeglectRealOrImaginaryPartIfNeglectable(std::tanh(value), value);
+
+    case BlockType::HyperbolicArcSine: {
+      std::complex<T> result = std::asinh(value);
+      /* asinh has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then
+       * multivalued on this cut. We followed the convention chosen by the lib
+       * c++ of llvm on ]+i+0, +i*inf+0[ (warning: atanh takes the other side of
+       * the cut values on ]+i-0, +i*inf+0[) and choose the values on ]-inf*i,
+       * -i[ to comply with asinh(-x) = -asinh(x). */
+      if (value.real() == 0 && value.imag() < 1) {
+        result.real(-result.real());  // other side of the cut
+      }
+      return NeglectRealOrImaginaryPartIfNeglectable(result, value);
+    }
+    case BlockType::HyperbolicArcCosine: {
+      std::complex<T> result = std::acosh(value);
+      /* acosh has a branch cut on ]-inf, 1]: it is then multivalued on this
+       * cut. We followed the convention chosen by the lib c++ of llvm on
+       * ]-inf+0i, 1+0i] (warning: atanh takes the other side of the cut values
+       * on ]-inf-0i, 1-0i[).*/
+      return NeglectRealOrImaginaryPartIfNeglectable(result, value);
+    }
+    case BlockType::HyperbolicArcTangent: {
+      std::complex<T> result = std::atanh(value);
+      /* atanh has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued
+       * on this cut. We followed the convention chosen by the lib c++ of llvm
+       * on ]-inf+0i, -1+0i[ (warning: atanh takes the other side of the cut
+       * values on ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to
+       * comply with atanh(-x) = -atanh(x) and sin(artanh(x)) = x/sqrt(1-x^2) */
+      if (value.imag() == 0 && value.real() > 1) {
+        result.imag(-result.imag());  // other side of the cut
+      }
+      return NeglectRealOrImaginaryPartIfNeglectable(result, value);
+    }
 
     default:
       assert(false);

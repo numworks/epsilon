@@ -776,13 +776,17 @@ bool Simplification::SimplifyImaginaryPart(Tree* tree) {
 
 bool Simplification::SimplifySign(Tree* expr) {
   assert(expr->isSign());
-  Sign sign = Sign::Get(expr->firstChild());
+  ComplexSign sign = ComplexSign::Get(expr->firstChild());
+  if (!sign.isReal()) {
+    // We could use the generalization of sign : sign(z) = exp(i*arg(z))
+    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+  }
   const Tree* result;
-  if (sign.isZero()) {
+  if (sign.realSign().isZero()) {
     result = 0_e;
-  } else if (sign.isStrictlyPositive()) {
+  } else if (sign.realSign().isStrictlyPositive()) {
     result = 1_e;
-  } else if (sign.isStrictlyNegative()) {
+  } else if (sign.realSign().isStrictlyNegative()) {
     result = -1_e;
   } else {
     return false;

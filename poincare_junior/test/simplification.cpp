@@ -126,6 +126,8 @@ void simplifies_to(const char* input, const char* output,
 }
 
 QUIZ_CASE(pcj_basic_simplification) {
+  ProjectionContext cartesianCtx = {.m_complexFormat =
+                                        ComplexFormat::Cartesian};
   simplifies_to("x", "x");
   simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
@@ -203,8 +205,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("ln(-10)-ln(5)", "ln(-2)");
   simplifies_to("im(ln(-120))", "π");
-  simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});
   // Matrices
@@ -245,33 +246,33 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("2^(64)/2^(63)", "2");
   simplifies_to("0^3.1", "0");
   simplifies_to("0^(-4.2)", "undef");
-  // TODO : Should be 0
-  simplifies_to("0^(1+x^2)", "undef");
+  simplifies_to("0^(1+x^2)", "0");
   // Complexes
-  simplifies_to("2×i×i", "-2");
-  simplifies_to("1+i×(1+i×(1+i))", "0");
-  simplifies_to("(1+i)×(3+2i)", "1+5×i");
-  simplifies_to("√(-1)", "i", {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("re(2+i×π)", "2");
-  simplifies_to("im(2+i×π)", "π");
-  simplifies_to("conj(2+i×π)", "2-π×i");
-  simplifies_to("re(conj(x))-re(x)", "0");
-  simplifies_to("conj(conj(x))", "x");
-  simplifies_to("re(x+im(y))-im(y)", "re(x)");
-  simplifies_to("re(x)+i×im(x)", "x");
-  simplifies_to("re(x+i×y)+im(y)", "re(x)");
-  simplifies_to("im(x+i×y)", "im(x)+re(y)");
-  simplifies_to("i×(conj(x+i×y)+im(y)-re(x))", "im(x)+re(y)");
-  simplifies_to("im(re(x)+i×im(x))", "im(x)");
-  simplifies_to("re(re(x)+i×im(x))", "re(x)");
-  simplifies_to("abs(x+i×y)", "√((-im(y)+re(x))^2+(im(x)+re(y))^2)");
-  simplifies_to("arg(re(x)+i×re(y))", "arg(re(x)+re(y)×i)");
-  simplifies_to("arg(π+i×2)", "arctan(2/π)");
-  simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)");
-  simplifies_to("arg(i×2)", "π/2");
-  simplifies_to("arg(-i×2)", "-π/2");
-  simplifies_to("arg(0)", "undef");
-  simplifies_to("arg(-π+i×abs(y))", "π+arctan(-abs(y)/π)");
+  simplifies_to("2×i×i", "-2", cartesianCtx);
+  simplifies_to("1+i×(1+i×(1+i))", "0", cartesianCtx);
+  simplifies_to("(1+i)×(3+2i)", "1+5×i", cartesianCtx);
+  simplifies_to("√(-1)", "i", cartesianCtx);
+  simplifies_to("re(2+i×π)", "2", cartesianCtx);
+  simplifies_to("im(2+i×π)", "π", cartesianCtx);
+  simplifies_to("conj(2+i×π)", "2-π×i", cartesianCtx);
+  simplifies_to("re(conj(x))-re(x)", "0", cartesianCtx);
+  simplifies_to("conj(conj(x))", "x", cartesianCtx);
+  simplifies_to("re(x+im(y))-im(y)", "re(x)", cartesianCtx);
+  simplifies_to("re(x)+i×im(x)", "x", cartesianCtx);
+  simplifies_to("re(x+i×y)+im(y)", "re(x)", cartesianCtx);
+  simplifies_to("im(x+i×y)", "im(x)+re(y)", cartesianCtx);
+  simplifies_to("i×(conj(x+i×y)+im(y)-re(x))", "im(x)+re(y)", cartesianCtx);
+  simplifies_to("im(re(x)+i×im(x))", "im(x)", cartesianCtx);
+  simplifies_to("re(re(x)+i×im(x))", "re(x)", cartesianCtx);
+  simplifies_to("abs(x+i×y)", "√((-im(y)+re(x))^2+(im(x)+re(y))^2)",
+                cartesianCtx);
+  simplifies_to("arg(re(x)+i×re(y))", "arg(re(x)+re(y)×i)", cartesianCtx);
+  simplifies_to("arg(π+i×2)", "arctan(2/π)", cartesianCtx);
+  simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", cartesianCtx);
+  simplifies_to("arg(i×2)", "π/2", cartesianCtx);
+  simplifies_to("arg(-i×2)", "-π/2", cartesianCtx);
+  simplifies_to("arg(0)", "undef", cartesianCtx);
+  simplifies_to("arg(-π+i×abs(y))", "π+arctan(-abs(y)/π)", cartesianCtx);
   // Parametrics
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");

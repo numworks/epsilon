@@ -61,6 +61,7 @@ class Sign {
   }
 
   constexpr static Sign Zero() { return Sign(true, false, false); }
+  constexpr static Sign NonNull() { return Sign(false, true, true); }
   constexpr static Sign Positive() { return Sign(false, true, false); }
   constexpr static Sign PositiveOrNull() { return Sign(true, true, false); }
   constexpr static Sign Negative() { return Sign(false, false, true); }
@@ -72,6 +73,10 @@ class Sign {
   constexpr static Sign NegativeInteger() {
     return Sign(false, false, true, true);
   }
+  constexpr static Sign NonNullInteger() {
+    return Sign(false, true, true, true);
+  }
+
   constexpr static Sign Integer() { return Sign(true, true, true, true); }
 
   static Sign Get(const Tree* t);

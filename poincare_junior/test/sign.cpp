@@ -29,7 +29,27 @@ void assert_sign(const char* input, Sign expectedSign) {
 QUIZ_CASE(pcj_sign) {
   assert_sign("2", Sign::PositiveInteger());
   assert_sign("2+π", Sign::Positive());
-  assert_sign("2-floor(π)", Sign::Integer());
+  assert_sign("2-π", Sign::Unknown());
   assert_sign("3 * abs(cos(x)) * -2", Sign::NegativeOrNull());
-  // TODO : Add tests
+
+  assert_sign("5+i*x", ComplexSign::ComplexUnknown());
+  assert_sign("5+i*im(x)",
+              ComplexSign(Sign::PositiveInteger(), Sign::Unknown()));
+  assert_sign("5+i*x", ComplexSign::ComplexUnknown());
+  assert_sign("re(x)^2", ComplexSign(Sign::PositiveOrNull(), Sign::Zero()));
+  assert_sign("re(x)^2+im(x)^2",
+              ComplexSign(Sign::PositiveOrNull(), Sign::Zero()));
+  assert_sign("0.5*ln(re(x)^2+im(x)^2)",
+              ComplexSign(Sign::Unknown(), Sign::Zero()));
+  assert_sign("e^(0.5*ln(re(x)^2+im(x)^2))",
+              ComplexSign(Sign::Positive(), Sign::Zero()));
+  assert_sign("(abs(x)+i)*abs(x-i)",
+              ComplexSign(Sign::PositiveOrNull(), Sign::Positive()));
+  assert_sign("(5+i)^3",
+              ComplexSign(Sign::NonNullInteger(), Sign::NonNullInteger()));
+  assert_sign("(5-i)^(-1)", ComplexSign(Sign::NonNull(), Sign::NonNull()));
+  assert_sign("e^(0.5*ln(12))+i*re(ln(2+i))",
+              ComplexSign(Sign::Positive(), Sign::Unknown()));
+  assert_sign("re(abs(x)-i)+i*arg(2+i)",
+              ComplexSign(Sign::PositiveOrNull(), Sign::Positive()));
 }

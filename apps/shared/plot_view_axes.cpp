@@ -82,6 +82,43 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
   *radiusMax = sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax);
 }
 
+void WithPolarGrid::ComputeAngleBounds(const AbstractPlotView* plotView,
+                                       KDRect rect, float xMin, float xMax,
+                                       float yMin, float yMax, float* radiusMin,
+                                       float* radiusMax) {
+  float xAbsoluteMax = xMax > -xMin ? xMax : xMin;
+  float yAbsoluteMax = yMax > -yMin ? yMax : yMin;
+  float xAbsoluteMin = xMin > -xMax ? xMin : xMax;
+  float yAbsoluteMin = yMin > -yMax ? yMin : yMax;
+
+  if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
+    // The rect contains the origin.
+    *radiusMin = 0;
+    *radiusMax = 2 * M_PI;
+  } else if ((xMin <= 0 && 0 <= xMax)) {
+    // The rect crosses the Y Axis.
+    *radiusMin = atan2(yAbsoluteMin, xMin);
+    *radiusMax = atan2(yAbsoluteMin, xMax);
+  } else if ((yMin <= 0 && 0 <= yMax)) {
+    // The rect crosses the X axis.
+    *radiusMin = atan2(yMin, xAbsoluteMin);
+    *radiusMax = atan2(yMax, xAbsoluteMin);
+
+    if (xMax < 0) {
+      /* The rect crosses the -Ox ray. as atan2 outputs in the rage [-pi,pi],
+       * the [a0, a1] arc must be complemented. */
+      *radiusMin += 2.f * M_PI;
+    }
+  } else {
+    *radiusMin = atan2(yAbsoluteMin, xAbsoluteMax);
+    *radiusMax = atan2(yAbsoluteMax, xAbsoluteMin);
+  }
+
+  if (*radiusMin > *radiusMax) {
+    std::swap(*radiusMin, *radiusMax);
+  }
+}
+
 void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
                                      KDContext* ctx, KDRect rect) {
   float radiusMin, radiusMax;
@@ -120,45 +157,14 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
   float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
                                       bounds.top() + graduationVerticalMargin);
 
-  float xAbsoluteMax = xMax > -xMin ? xMax : xMin;
-  float yAbsoluteMax = yMax > -yMin ? yMax : yMin;
-  float xAbsoluteMin = xMin > -xMax ? xMin : xMax;
-  float yAbsoluteMin = yMin > -yMax ? yMin : yMax;
-
-  float radiusMin, radiusMax;
-
-  ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
-
   // Find angle bounds.
   float angleBegin;
   float angleEnd;
+  float radiusMin, radiusMax;
 
-  if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
-    // The rect contains the origin.
-    angleBegin = 0;
-    angleEnd = 2 * M_PI;
-  } else if ((xMin <= 0 && 0 <= xMax)) {
-    // The rect crosses the Y Axis.
-    angleBegin = atan2(yAbsoluteMin, xMin);
-    angleEnd = atan2(yAbsoluteMin, xMax);
-  } else if ((yMin <= 0 && 0 <= yMax)) {
-    // The rect crosses the X axis.
-    angleBegin = atan2(yMin, xAbsoluteMin);
-    angleEnd = atan2(yMax, xAbsoluteMin);
-
-    if (xMax < 0) {
-      /* The rect crosses the -Ox ray. as atan2 outputs in the rage [-pi,pi],
-       * the [a0, a1] arc must be complemented. */
-      angleBegin += 2.f * M_PI;
-    }
-  } else {
-    angleBegin = atan2(yAbsoluteMin, xAbsoluteMax);
-    angleEnd = atan2(yAbsoluteMax, xAbsoluteMin);
-  }
-
-  if (angleBegin > angleEnd) {
-    std::swap(angleBegin, angleEnd);
-  }
+  ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
+  ComputeAngleBounds(plotView, rect, xMin, xMax, yMin, yMax, &angleBegin,
+                     &angleEnd);
 
   float k_angleStep = k_angleStepInDegree * M_PI / 180;
 

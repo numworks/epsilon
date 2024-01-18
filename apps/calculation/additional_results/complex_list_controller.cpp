@@ -69,7 +69,19 @@ I18n::Message ComplexListController::messageAtIndex(int index) {
              ? complexFormToDisplay() == Preferences::ComplexFormat::Cartesian
                    ? I18n::Message::CartesianForm
                    : I18n::Message::ExponentialForm
-             : I18n::Message::Default;
+             : 
+          index == 1
+            ? I18n::Message::ComplexAbsoluteValue
+            :
+          index == 2
+            ? I18n::Message::Argument
+            :
+          index == 3
+            ? I18n::Message::RealPart
+            :
+          index == 4
+            ? I18n::Message::ImaginaryPart
+            : I18n::Message::Default;;
 };
 
 Preferences::ComplexFormat ComplexListController::complexFormToDisplay() const {

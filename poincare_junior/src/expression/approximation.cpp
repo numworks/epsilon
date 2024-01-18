@@ -84,70 +84,6 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::LCM:
       return MapAndReduce<T, T>(node, FloatLCM<T>, context,
                                 PositiveIntegerApproximation<T>);
-    case BlockType::ArcCosine:
-    case BlockType::ArcSine: {
-      std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
-      std::complex<T> result;
-      if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
-        /* asin/acos: [-1;1] -> R
-         * In these cases we rather use reals because asin/acos on
-         * complexes is not as precise in std library.
-         * For instance,
-         * - asin(complex<double>(0.03,0.0) = complex(0.0300045,1.11022e-16)
-         * - asin(0.03) = 0.0300045
-         * - acos(complex<double>(0.03,0.0) = complex(1.54079,-1.11022e-16)
-         * - acos(0.03) = 1.54079 */
-        result = node->isArcSine() ? std::asin(c.real()) : std::acos(c.real());
-      } else {
-        result = node->isArcSine() ? std::asin(c) : std::acos(c);
-        /* asin and acos have a branch cut on ]-inf, -1[U]1, +inf[
-         * We followed the convention chosen by the lib c++ of llvm on
-         * ]-inf+0i, -1+0i[ (warning: it takes the other side of the cut values
-         * on * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to
-         * comply with :
-         *   asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2)     for asin
-         *   acos(-x) = π - acos(x) and tan(acos(x)) = sqrt(1-x^2)/x  for acos
-         */
-        if (c.imag() == 0 && c.real() > 1) {
-          result.imag(-result.imag());  // other side of the cut
-        }
-      }
-      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
-      return ConvertFromRadian(result);
-    }
-    case BlockType::ArcTangent: {
-      std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
-      std::complex<T> result;
-      if (c.imag() == static_cast<T>(0.) &&
-          std::fabs(c.real()) <= static_cast<T>(1.)) {
-        /* atan: R -> R
-         * In these cases we rather use std::atan(double) because atan on
-         * complexes is not as precise as atan on double in std library.
-         * For instance,
-         * - atan(complex<double>(0.01,0.0) =
-         *       complex(9.9996666866652E-3,5.5511151231258E-17)
-         * - atan(0.03) = 9.9996666866652E-3 */
-        result = std::atan(c.real());
-      } else if (c.real() == static_cast<T>(0.) &&
-                 std::abs(c.imag()) == static_cast<T>(1.)) {
-        /* The case c = ±i is caught here because std::atan(i) return i*inf when
-         * it should be undef. (same as log(0) in Logarithm::computeOnComplex)*/
-        result = std::complex<T>(NAN, NAN);
-      } else {
-        result = std::atan(c);
-        /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then
-         * multivalued on this cut. We followed the convention chosen by the lib
-         * c++ of llvm on ]-i+0, -i*inf+0[ (warning: atan takes the other side
-         * of the cut values on ]-i+0, -i*inf+0[) and choose the values on
-         * ]-inf*i, -i[ to comply with atan(-x) = -atan(x) and sin(atan(x)) =
-         * x/sqrt(1+x^2). */
-        if (c.real() == 0 && c.imag() < -1) {
-          result.real(-result.real());  // other side of the cut
-        }
-      }
-      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
-      return ConvertFromRadian(result);
-    }
     case BlockType::SquareRoot:
       return std::sqrt(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Exponential:
@@ -160,70 +96,6 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       return FloatLn<std::complex<T>>(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Abs:
       return std::abs(ComplexTo<T>(node->nextNode(), context));
-    // TODO: Handle AngleUnits in context as well.
-    case BlockType::Cosine:
-    case BlockType::Sine: {
-      std::complex<T> angleInput =
-          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
-      std::complex<T> res =
-          node->isCosine() ? std::cos(angleInput) : std::sin(angleInput);
-      return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
-    }
-    case BlockType::Tangent: {
-      std::complex<T> angleInput =
-          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
-      /* tan should be undefined at (2n+1)*pi/2 for any integer n.
-       * std::tan is not reliable at these values because it is diverging and
-       * any approximation errors on pi could easily yield a finite result. At
-       * these values, cos yields 0, but is also greatly affected by
-       * approximation error and could yield a non-null value : cos(pi/2+e) ~=
-       * -e On the other hand, sin, which should yield either 1 or -1 around
-       * these values is much more resilient : sin(pi/2+e) ~= 1 - (e^2)/2. We
-       * therefore use sin to identify values at which tan should be undefined.
-       */
-      std::complex<T> sin = std::sin(angleInput);
-      if (sin == std::complex<T>(1) || sin == std::complex<T>(-1)) {
-        return NAN;
-      }
-      std::complex<T> res = std::tan(angleInput);
-      return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
-    }
-    case BlockType::Cosecant: {
-      std::complex<T> c =
-          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
-      // std::complex<T> denominator =
-      // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      std::complex<T> denominator = std::sin(c);
-      if (denominator == static_cast<T>(0.0)) {
-        return NAN;  // complexNAN<T>();
-      }
-      return std::complex<T>(1) / denominator;
-    }
-    case BlockType::Cotangent: {
-      std::complex<T> c =
-          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
-      // std::complex<T> denominator =
-      // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      // std::complex<T> numerator =
-      // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      std::complex<T> denominator = std::sin(c);
-      std::complex<T> numerator = std::cos(c);
-      if (denominator == static_cast<T>(0.0)) {
-        return NAN;  // complexNAN<T>();
-      }
-      return numerator / denominator;
-    }
-    case BlockType::Secant: {
-      std::complex<T> c =
-          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
-      // std::complex<T> denominator =
-      // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      std::complex<T> denominator = std::cos(c);
-      if (denominator == static_cast<T>(0.0)) {
-        return NAN;  // complexNAN<T>();
-      }
-      return std::complex<T>(1) / denominator;
-    }
     case BlockType::Infinity:
       return INFINITY;
     case BlockType::Opposite:
@@ -232,8 +104,18 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       return ComplexTo<T>(node->nextNode(), context).real();
     case BlockType::ImaginaryPart:
       return ComplexTo<T>(node->nextNode(), context).imag();
+    case BlockType::Cosine:
+    case BlockType::Sine:
+    case BlockType::Tangent:
+    case BlockType::Secant:
+    case BlockType::Cosecant:
+    case BlockType::Cotangent:
+    case BlockType::ArcCosine:
+    case BlockType::ArcSine:
+    case BlockType::ArcTangent:
+      return TrigonometricTo(node->type(),
+                             ComplexTo<T>(node->nextNode(), context));
   }
-
   // The remaining operators are defined only on reals
   // assert(node->numberOfChildren() <= 2);
   if (node->numberOfChildren() > 2) {
@@ -352,6 +234,138 @@ T Approximation::ConvertToRadian(T angle) {
   return angle * (angleUnit == AngleUnit::Degree
                       ? static_cast<T>(M_PI / 180.0)
                       : static_cast<T>(M_PI / 200.0));
+}
+
+template <typename T>
+std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
+                                               std::complex<T> value) {
+  switch (type) {
+    case BlockType::Cosine:
+    case BlockType::Sine: {
+      std::complex<T> angleInput = ConvertToRadian(value);
+      std::complex<T> res =
+          type.isCosine() ? std::cos(angleInput) : std::sin(angleInput);
+      return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
+    }
+    case BlockType::Tangent: {
+      std::complex<T> angleInput = ConvertToRadian(value);
+      /* tan should be undefined at (2n+1)*pi/2 for any integer n.
+       * std::tan is not reliable at these values because it is diverging and
+       * any approximation errors on pi could easily yield a finite result. At
+       * these values, cos yields 0, but is also greatly affected by
+       * approximation error and could yield a non-null value : cos(pi/2+e) ~=
+       * -e On the other hand, sin, which should yield either 1 or -1 around
+       * these values is much more resilient : sin(pi/2+e) ~= 1 - (e^2)/2. We
+       * therefore use sin to identify values at which tan should be undefined.
+       */
+      std::complex<T> sin = std::sin(angleInput);
+      if (sin == std::complex<T>(1) || sin == std::complex<T>(-1)) {
+        return NAN;
+      }
+      std::complex<T> res = std::tan(angleInput);
+      return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
+    }
+    case BlockType::Cosecant: {
+      std::complex<T> c = ConvertToRadian(value);
+      // std::complex<T> denominator =
+      // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+      std::complex<T> denominator = std::sin(c);
+      if (denominator == static_cast<T>(0.0)) {
+        return NAN;  // complexNAN<T>();
+      }
+      return std::complex<T>(1) / denominator;
+    }
+    case BlockType::Cotangent: {
+      std::complex<T> c = ConvertToRadian(value);
+      // std::complex<T> denominator =
+      // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+      // std::complex<T> numerator =
+      // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+      std::complex<T> denominator = std::sin(c);
+      std::complex<T> numerator = std::cos(c);
+      if (denominator == static_cast<T>(0.0)) {
+        return NAN;  // complexNAN<T>();
+      }
+      return numerator / denominator;
+    }
+    case BlockType::Secant: {
+      std::complex<T> c = ConvertToRadian(value);
+      // std::complex<T> denominator =
+      // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
+      std::complex<T> denominator = std::cos(c);
+      if (denominator == static_cast<T>(0.0)) {
+        return NAN;  // complexNAN<T>();
+      }
+      return std::complex<T>(1) / denominator;
+    }
+
+    case BlockType::ArcCosine:
+    case BlockType::ArcSine: {
+      std::complex<T> c = value;
+      std::complex<T> result;
+      if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
+        /* asin/acos: [-1;1] -> R
+         * In these cases we rather use reals because asin/acos on
+         * complexes is not as precise in std library.
+         * For instance,
+         * - asin(complex<double>(0.03,0.0) = complex(0.0300045,1.11022e-16)
+         * - asin(0.03) = 0.0300045
+         * - acos(complex<double>(0.03,0.0) = complex(1.54079,-1.11022e-16)
+         * - acos(0.03) = 1.54079 */
+        result = type.isArcSine() ? std::asin(c.real()) : std::acos(c.real());
+      } else {
+        result = type.isArcSine() ? std::asin(c) : std::acos(c);
+        /* asin and acos have a branch cut on ]-inf, -1[U]1, +inf[
+         * We followed the convention chosen by the lib c++ of llvm on
+         * ]-inf+0i, -1+0i[ (warning: it takes the other side of the cut values
+         * on * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to
+         * comply with :
+         *   asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2)     for asin
+         *   acos(-x) = π - acos(x) and tan(acos(x)) = sqrt(1-x^2)/x  for acos
+         */
+        if (c.imag() == 0 && c.real() > 1) {
+          result.imag(-result.imag());  // other side of the cut
+        }
+      }
+      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      return ConvertFromRadian(result);
+    }
+    case BlockType::ArcTangent: {
+      std::complex<T> c = value;
+      std::complex<T> result;
+      if (c.imag() == static_cast<T>(0.) &&
+          std::fabs(c.real()) <= static_cast<T>(1.)) {
+        /* atan: R -> R
+         * In these cases we rather use std::atan(double) because atan on
+         * complexes is not as precise as atan on double in std library.
+         * For instance,
+         * - atan(complex<double>(0.01,0.0) =
+         *       complex(9.9996666866652E-3,5.5511151231258E-17)
+         * - atan(0.03) = 9.9996666866652E-3 */
+        result = std::atan(c.real());
+      } else if (c.real() == static_cast<T>(0.) &&
+                 std::abs(c.imag()) == static_cast<T>(1.)) {
+        /* The case c = ±i is caught here because std::atan(i) return i*inf when
+         * it should be undef. (same as log(0) in Logarithm::computeOnComplex)*/
+        result = std::complex<T>(NAN, NAN);
+      } else {
+        result = std::atan(c);
+        /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then
+         * multivalued on this cut. We followed the convention chosen by the lib
+         * c++ of llvm on ]-i+0, -i*inf+0[ (warning: atan takes the other side
+         * of the cut values on ]-i+0, -i*inf+0[) and choose the values on
+         * ]-inf*i, -i[ to comply with atan(-x) = -atan(x) and sin(atan(x)) =
+         * x/sqrt(1+x^2). */
+        if (c.real() == 0 && c.imag() < -1) {
+          result.real(-result.real());  // other side of the cut
+        }
+      }
+      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      return ConvertFromRadian(result);
+    }
+    default:
+      assert(false);
+  }
 }
 
 template <typename T>

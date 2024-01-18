@@ -94,11 +94,18 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::Exponential:
       return std::exp(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Log:
-      return std::log10(ComplexTo<T>(node->nextNode(), context));
-    case BlockType::LnReal:
-      return FloatLnReal<T>(To<T>(node->nextNode(), context));
-    case BlockType::Ln:
-      return FloatLn<std::complex<T>>(ComplexTo<T>(node->nextNode(), context));
+    case BlockType::Ln: {
+      std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
+      /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut.
+       * We followed the convention chosen by the lib c++ of llvm on ]-inf+0i,
+       * 0+0i] (warning: log takes the other side of the cut values on ]-inf-0i,
+       * 0-0i]). We manually handle the case where the argument is null, as the
+       * lib c++ gives log(0) = -inf, which is only a generous shorthand for the
+       * limit. */
+      return c == std::complex<T>(0) ? NAN
+             : node->isLog()         ? std::log10(c)
+                                     : std::log(c);
+    }
     case BlockType::Abs:
       return std::abs(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Infinity:
@@ -156,6 +163,9 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       }
       return child[0] == 0 ? 0 : child[0] < 0 ? -1 : 1;
     }
+    case BlockType::LnReal:
+      // TODO unreal
+      return child[0] <= 0 ? NAN : std::log(child[0]);
     case BlockType::Floor:
     case BlockType::Ceiling: {
       /* Assume low deviation from natural numbers are errors */

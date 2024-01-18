@@ -179,7 +179,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp) {
   if (exp.isZero()) {
     return ComplexSign::ComplexOne();
   }
-  bool isInteger = (base.isInteger() && !exp.realSign().isPositive());
+  bool isInteger = (base.isInteger() && exp.realSign().isPositive());
   bool baseIsReal = base.isReal();
   return ComplexSign(
       Sign(base.realSign().canBeNull(), true,

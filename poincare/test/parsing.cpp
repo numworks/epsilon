@@ -824,6 +824,11 @@ QUIZ_CASE(poincare_parsing_identifiers) {
                                               Symbol::Builder("yb", 2),
                                               Symbol::Builder("xa", 2)),
                           Symbol::Builder("xa", 2), BasedInteger::Builder(3)));
+  Expression m0[] = {BasedInteger::Builder(2), Symbol::Builder("t", 1)};
+  assert_parsed_expression_is(
+      "diff([[2,t]],t,4)",
+      Derivative::Builder(BuildMatrix(1, 2, m0), Symbol::Builder("t", 1),
+                          BasedInteger::Builder(4)));
   assert_parsed_expression_is("dim(1)",
                               Dimension::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("conj(1)",

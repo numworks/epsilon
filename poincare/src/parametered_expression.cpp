@@ -108,11 +108,13 @@ bool ParameteredExpression::ParameterText(UnicodeDecoder& varDecoder,
     switch (c) {
       case '(':
       case '{':
+      case '[':
       case UCodePointLeftSystemParenthesis:
         cursorLevel++;
         break;
       case ')':
       case '}':
+      case ']':
       case UCodePointRightSystemParenthesis:
         cursorLevel--;
         break;

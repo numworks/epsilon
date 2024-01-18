@@ -318,7 +318,7 @@ std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
          *   asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2)     for asin
          *   acos(-x) = π - acos(x) and tan(acos(x)) = sqrt(1-x^2)/x  for acos
          */
-        if (c.imag() == 0 && c.real() > 1) {
+        if (c.imag() == 0 && !std::signbit(c.imag()) && c.real() > 1) {
           result.imag(-result.imag());  // other side of the cut
         }
       }
@@ -351,7 +351,7 @@ std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
          * of the cut values on ]-i+0, -i*inf+0[) and choose the values on
          * ]-inf*i, -i[ to comply with atan(-x) = -atan(x) and sin(atan(x)) =
          * x/sqrt(1+x^2). */
-        if (c.real() == 0 && c.imag() < -1) {
+        if (c.real() == 0 && !std::signbit(c.real()) && c.imag() < -1) {
           result.real(-result.real());  // other side of the cut
         }
       }
@@ -399,7 +399,8 @@ std::complex<T> Approximation::HyperbolicTo(TypeBlock type,
        * c++ of llvm on ]+i+0, +i*inf+0[ (warning: atanh takes the other side of
        * the cut values on ]+i-0, +i*inf+0[) and choose the values on ]-inf*i,
        * -i[ to comply with asinh(-x) = -asinh(x). */
-      if (value.real() == 0 && value.imag() < 1) {
+      if (value.real() == 0 && !std::signbit(value.real()) &&
+          value.imag() < 1) {
         result.real(-result.real());  // other side of the cut
       }
       return NeglectRealOrImaginaryPartIfNeglectable(result, value);
@@ -419,7 +420,8 @@ std::complex<T> Approximation::HyperbolicTo(TypeBlock type,
        * on ]-inf+0i, -1+0i[ (warning: atanh takes the other side of the cut
        * values on ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to
        * comply with atanh(-x) = -atanh(x) and sin(artanh(x)) = x/sqrt(1-x^2) */
-      if (value.imag() == 0 && value.real() > 1) {
+      if (value.imag() == 0 && !std::signbit(value.imag()) &&
+          value.real() > 1) {
         result.imag(-result.imag());  // other side of the cut
       }
       return NeglectRealOrImaginaryPartIfNeglectable(result, value);

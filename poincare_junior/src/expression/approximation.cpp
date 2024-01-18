@@ -84,15 +84,93 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::LCM:
       return MapAndReduce<T, T>(node, FloatLCM<T>, context,
                                 PositiveIntegerApproximation<T>);
-    case BlockType::ArcCosine:
-      return ConvertFromRadian(
-          std::acos(ComplexTo<T>(node->nextNode(), context)));
-    case BlockType::ArcSine:
-      return ConvertToRadian(
-          std::asin(ComplexTo<T>(node->nextNode(), context)));
-    case BlockType::ArcTangent:
-      return ConvertFromRadian(
-          std::atan(ComplexTo<T>(node->nextNode(), context)));
+    case BlockType::ArcCosine: {
+      std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
+      std::complex<T> result;
+      if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
+        /* acos: [-1;1] -> R
+         * In these cases we rather use std::acos(double) because acos on
+         * complexes is not as precise as pow on double in std library. For
+         * instance,
+         * - acos(complex<double>(0.03,0.0) = complex(1.54079,-1.11022e-16)
+         * - acos(0.03) = 1.54079 */
+        result = std::acos(c.real());
+      } else {
+        result = std::acos(c);
+        /* acos has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued
+         * on this cut. We followed the convention chosen by the lib c++ of llvm
+         * on
+         * ]-inf+0i, -1+0i[ (warning: acos takes the other side of the cut
+         * values on
+         * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply
+         * with acos(-x) = π - acos(x) and tan(acos(x)) = sqrt(1-x^2)/x. */
+        if (c.imag() == 0 && c.real() > 1) {
+          result.imag(-result.imag());  // other side of the cut
+        }
+      }
+      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      return ConvertFromRadian(result);
+    }
+    case BlockType::ArcSine: {
+      std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
+      std::complex<T> result;
+      if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
+        /* asin: [-1;1] -> R
+         * In these cases we rather use std::asin(double) because asin on
+         * complexes is not as precise as asin on double in std library. For
+         * instance,
+         * - asin(complex<double>(0.03,0.0) = complex(0.0300045,1.11022e-16)
+         * - asin(0.03) = 0.0300045 */
+        result = std::asin(c.real());
+      } else {
+        result = std::asin(c);
+        /* asin has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued
+         * on this cut. We followed the convention chosen by the lib c++ of llvm
+         * on
+         * ]-inf+0i, -1+0i[ (warning: asin takes the other side of the cut
+         * values on
+         * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply
+         * with asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2). */
+        if (c.imag() == 0 && c.real() > 1) {
+          result.imag(-result.imag());  // other side of the cut
+        }
+      }
+      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      return ConvertFromRadian(result);
+    }
+    case BlockType::ArcTangent: {
+      std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
+      std::complex<T> result;
+      if (c.imag() == static_cast<T>(0.) &&
+          std::fabs(c.real()) <= static_cast<T>(1.)) {
+        /* atan: R -> R
+         * In these cases we rather use std::atan(double) because atan on
+         * complexes is not as precise as atan on double in std library.
+         * For instance,
+         * - atan(complex<double>(0.01,0.0) =
+         *       complex(9.9996666866652E-3,5.5511151231258E-17)
+         * - atan(0.03) = 9.9996666866652E-3 */
+        result = std::atan(c.real());
+      } else if (c.real() == static_cast<T>(0.) &&
+                 std::abs(c.imag()) == static_cast<T>(1.)) {
+        /* The case c = ±i is caught here because std::atan(i) return i*inf when
+         * it should be undef. (same as log(0) in Logarithm::computeOnComplex)*/
+        result = std::complex<T>(NAN, NAN);
+      } else {
+        result = std::atan(c);
+        /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then
+         * multivalued on this cut. We followed the convention chosen by the lib
+         * c++ of llvm on ]-i+0, -i*inf+0[ (warning: atan takes the other side
+         * of the cut values on ]-i+0, -i*inf+0[) and choose the values on
+         * ]-inf*i, -i[ to comply with atan(-x) = -atan(x) and sin(atan(x)) =
+         * x/sqrt(1+x^2). */
+        if (c.real() == 0 && c.imag() < -1) {
+          result.real(-result.real());  // other side of the cut
+        }
+      }
+      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      return ConvertFromRadian(result);
+    }
     case BlockType::SquareRoot:
       return std::sqrt(ComplexTo<T>(node->nextNode(), context));
     case BlockType::Exponential:

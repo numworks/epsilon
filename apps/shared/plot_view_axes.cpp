@@ -131,8 +131,9 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
   float xAbsoluteMin = xMin > -xMax ? xMin : xMax;
   float yAbsoluteMin = yMin > -yMax ? yMin : yMax;
 
-  float screenCircleRadius = Vector2{xMax - xMin, yMax - yMin}.norm() / 2;
-  float screenCenterDistance = Vector2{xMin + xMax, yMin + yMax}.norm() / 2;
+  float radiusMin, radiusMax;
+
+  ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
 
   // Find angle bounds.
   float angleBegin;
@@ -178,24 +179,16 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
     bool shouldHaveGraduation = angle % (2 * k_angleStepInDegree) == 0;
     // Don't draw under the axes.
     if (angle % 90) {
-      Vector2 from = {0, 0};
-      Vector2 to = {cos * (screenCenterDistance + screenCircleRadius),
-                    sin * (screenCenterDistance + screenCircleRadius)};
-      if (screenCenterDistance > screenCircleRadius) {
-        // prune the ray to the circle bounds
-        from = {cos * (screenCenterDistance - screenCircleRadius),
-                sin * (screenCenterDistance - screenCircleRadius)};
-      }
-
-      KDPoint pixelFrom = {plotView->floatToKDCoordinatePixel(
-                               AbstractPlotView::Axis::Horizontal, from.x),
-                           plotView->floatToKDCoordinatePixel(
-                               AbstractPlotView::Axis::Vertical, from.y)};
-
-      KDPoint pixelTo = {plotView->floatToKDCoordinatePixel(
-                             AbstractPlotView::Axis::Horizontal, to.x),
-                         plotView->floatToKDCoordinatePixel(
-                             AbstractPlotView::Axis::Vertical, to.y)};
+      KDPoint pixelFrom = {
+          plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal,
+                                             cos * radiusMin),
+          plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical,
+                                             sin * radiusMin)};
+      KDPoint pixelTo = {
+          plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal,
+                                             cos * radiusMax),
+          plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical,
+                                             sin * radiusMax)};
       ctx->drawAntialiasedLine(
           pixelFrom, pixelTo, shouldHaveGraduation ? k_boldColor : k_lightColor,
           plotView->k_backgroundColor);

@@ -74,7 +74,7 @@ I18n::Message ComplexListController::messageAtIndex(int index) {
     case 2: return I18n::Message::Argument;
     case 3: return I18n::Message::RealPart;
     case 4: return I18n::Message::ImaginaryPart;
-    default: I18n::Message::Default;
+    default: return I18n::Message::Default;
   }
 };
 

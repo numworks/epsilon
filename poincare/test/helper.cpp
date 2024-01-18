@@ -139,7 +139,8 @@ void assert_parsed_expression_process_to(
     Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
                                           angleUnit, unitFormat, target,
                                           symbolicComputation, unitConversion));
-    Tree *l = PoincareJ::Layoutter::LayoutExpression(m, true);
+    Tree *l = PoincareJ::Layoutter::LayoutExpression(m, true,
+                                                     numberOfSignificantDigits);
     *PoincareJ::Layout::Serialize(l, buffer, buffer + bufferSize) = 0;
     l->removeTree();
     bad = strcmp(buffer, result) != 0;

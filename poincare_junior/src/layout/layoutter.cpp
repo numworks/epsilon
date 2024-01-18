@@ -53,14 +53,15 @@ static constexpr int OperatorPriority(TypeBlock type) {
 // Commas have no associated block but behave like an operator
 static constexpr int k_commaPriority = OperatorPriority(BlockType::Set);
 
-Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode) {
+Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
+                                  int numberOfSignificantDigits) {
   assert(expression->isExpression());
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
    * layoutParent's root. */
   EditionReference layoutParent =
       SharedEditionPool->push<BlockType::RackLayout>(0);
-  Layoutter layoutter(linearMode);
+  Layoutter layoutter(linearMode, numberOfSignificantDigits);
   layoutter.layoutExpression(layoutParent, expression, k_maxPriority);
   return layoutParent;
 }
@@ -305,7 +306,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       Poincare::PrintFloat::ConvertFloatToText(
           Float::To(expression), buffer, std::size(buffer),
           Poincare::PrintFloat::k_maxFloatGlyphLength,
-          type == BlockType::SingleFloat
+          m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
+          : type == BlockType::SingleFloat
               ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
               : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
           Poincare::Preferences::PrintFloatMode::Decimal);

@@ -8,10 +8,13 @@ namespace PoincareJ {
 
 class Layoutter {
  public:
-  static Tree* LayoutExpression(Tree* expression, bool linearMode = false);
+  static Tree* LayoutExpression(Tree* expression, bool linearMode = false,
+                                int numberOfSignificantDigits = -1);
 
  private:
-  Layoutter(bool linearMode) : m_linearMode(linearMode) {}
+  Layoutter(bool linearMode, int numberOfSignificantDigits)
+      : m_linearMode(linearMode),
+        m_numberOfSignificantDigits(numberOfSignificantDigits) {}
   void layoutText(EditionReference& layoutParent, const char* text);
   void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
   void layoutFunctionCall(EditionReference& layoutParent, Tree* expression,
@@ -26,6 +29,7 @@ class Layoutter {
   void layoutExpression(EditionReference& layoutParent, Tree* expression,
                         int parentPriority);
   bool m_linearMode;
+  int m_numberOfSignificantDigits;
 };
 }  // namespace PoincareJ
 

@@ -131,6 +131,19 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduce_and_store("cos(t)^2→f(t)");
   assert_reduces_to_formal_expression("diff(f(t),t,t)", "-2×sin(t)×cos(t)");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("t.func").destroy();
+
+  // Parametric 2D
+  assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,t)",
+                                      "(cos(t),-sin(t))");
+  assert_reduce_and_store("(3t,-2t^2)→f(t)");
+  assert_reduces_to_formal_expression("diff(f(t),t,t)", "(3,-4×t)");
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+
+  // Undefined on matrix
+  assert_reduces_to_formal_expression("diff([[x]],x,x)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff([[2t,3t]],t,t)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff([[2t][3t]],t,t)",
+                                      Undefined::Name());
 }
 
 QUIZ_CASE(poincare_derivative_formal_higher_order) {
@@ -152,6 +165,12 @@ QUIZ_CASE(poincare_derivative_formal_higher_order) {
   // Parametric 1D
   assert_reduces_to_formal_expression("diff(t^4,t,t,2)", "12×t^2");
   assert_reduces_to_formal_expression("diff(cos(t),t,t,4)", "cos(t)");
+
+  // Parametric 2D
+  assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,t,2)",
+                                      "(-sin(t),-cos(t))");
+  assert_reduces_to_formal_expression("diff((t,2t^2),t,t,3)",
+                                      "\U00000014dep((0,0),{t})");
 }
 
 void assert_reduces_for_approximation(
@@ -205,6 +224,11 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   // Parametric 1D
   assert_reduces_for_approximation("diff(t^3/7,t,3)", "27/7");
   assert_reduces_for_approximation("diff(cos(t),t,π/3)", "-√(3)/2");
+
+  // Parametric 2D
+  assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,π/6)",
+                                      "(√(3)/2,-1/2)");
+  assert_reduces_to_formal_expression("diff((1,2),t,1)", "(0,0)");
 }
 
 void assert_approximate_to(const char* expression, const char* result,
@@ -242,6 +266,9 @@ QUIZ_CASE(poincare_derivative_approximation) {
 
   // Parametric 1D
   assert_approximate_to("diff(cos(t),t,π/6)", "-0.5");
+
+  // Parametric 2D
+  assert_approximate_to("diff((sin(t),cos(t)),t,π/2)", "(0,-1)");
 }
 
 QUIZ_CASE(poincare_derivative_approximation_higher_order) {
@@ -260,4 +287,8 @@ QUIZ_CASE(poincare_derivative_approximation_higher_order) {
 
   // Parametric 1D
   assert_expression_approximates_to<double>("diff(t^3,t,1,4)", "0");
+
+  // Parametric 2D
+  assert_expression_approximates_to<double>("diff((2t,ln(t)),t,2,2)",
+                                            "(0,-0.25)");
 }

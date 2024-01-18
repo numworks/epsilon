@@ -81,6 +81,9 @@ class WithPolarGrid {
 
   static void ComputeRadiusBounds(const AbstractPlotView *plotView, KDRect rect,
                                   float *min, float *max);
+  static void ComputeAngleBounds(const AbstractPlotView *plotView, KDRect rect,
+                                 float xMin, float xMax, float yMin, float yMax,
+                                 float *radiusMin, float *radiusMax);
 };
 
 class NoAxis {

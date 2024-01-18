@@ -4,6 +4,10 @@
 #include "number.h"
 #include "variables.h"
 
+#if POINCARE_MEMORY_TREE_LOG
+#include <iostream>
+#endif
+
 namespace PoincareJ {
 
 /* Must at least handle Addition, Multiplications, Numbers and Real/Imaginary
@@ -69,6 +73,33 @@ Sign Sign::Get(const Tree* t) {
   assert(ComplexSign::Get(t).isReal());
   return ComplexSign::Get(t).realSign();
 }
+
+#if POINCARE_MEMORY_TREE_LOG
+void Sign::log(bool endOfLine) const {
+  if (isZero()) {
+    std::cout << "Zero";
+  } else {
+    if (m_isInteger) {
+      std::cout << "Integer and ";
+    }
+    if (isUnknown()) {
+      std::cout << "Unknown";
+    } else {
+      if (m_canBePositive && m_canBeNegative) {
+        std::cout << "Non Null";
+      } else {
+        std::cout << (m_canBeNegative ? "Negative" : "Positive");
+        if (m_canBeNull) {
+          std::cout << " or Null";
+        }
+      }
+    }
+  }
+  if (endOfLine) {
+    std::cout << "\n";
+  }
+}
+#endif
 
 ComplexSign NoIntegers(ComplexSign s) {
   return ComplexSign(NoIntegers(s.realSign()), NoIntegers(s.imagSign()));
@@ -196,30 +227,16 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ComplexSign(Sign::PositiveOrNull(), Sign::Zero());
     case BlockType::Abs:
       return Abs(Get(t->firstChild()));
-    case BlockType::ArcSine:
-    case BlockType::ArcTangent:
-      // Both real and imaginary part keep the same sign
-      return NoIntegers(Get(t->firstChild()));
-    case BlockType::ArcCosine:
-      return ArcCosine(Get(t->firstChild()));
     case BlockType::Exponential:
       return Exponential(Get(t->firstChild()));
     case BlockType::Ln:
       return Ln(Get(t->firstChild()));
-    case BlockType::Factorial:
-      assert(Get(t->firstChild()).isReal() && Get(t->firstChild()).isInteger());
-      return ComplexOne();
     case BlockType::RealPart:
       return ComplexSign(Get(t->firstChild()).realSign(), Sign::Zero());
     case BlockType::ImaginaryPart:
       return ComplexSign(Get(t->firstChild()).imagSign(), Sign::Zero());
     case BlockType::Variable:
       return Variables::GetComplexSign(t);
-    case BlockType::Ceiling:
-    case BlockType::Floor:
-    case BlockType::FracPart:
-    case BlockType::Round:
-      return DecimalFunction(Get(t->firstChild()), t->type());
     case BlockType::Complex:
       return Complex(Get(t->firstChild()), Get(t->child(1)));
     case BlockType::Trig:
@@ -227,9 +244,36 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return Trig(Get(t->firstChild()), t->child(1)->isOne());
     case BlockType::ComplexArgument:
       return ComplexArgument(Get(t->firstChild()));
+#if 0
+    // Activate these cases if necessary
+    case BlockType::ArcSine:
+    case BlockType::ArcTangent:
+      // Both real and imaginary part keep the same sign
+      return NoIntegers(Get(t->firstChild()));
+    case BlockType::ArcCosine:
+      return ArcCosine(Get(t->firstChild()));
+    case BlockType::Factorial:
+      assert(Get(t->firstChild()).isReal() && Get(t->firstChild()).isInteger());
+      return ComplexOne();
+    case BlockType::Ceiling:
+    case BlockType::Floor:
+    case BlockType::FracPart:
+    case BlockType::Round:
+      return DecimalFunction(Get(t->firstChild()), t->type());
+#endif
     default:
       return ComplexUnknown();
   }
 }
+
+#if POINCARE_MEMORY_TREE_LOG
+void ComplexSign::log() const {
+  std::cout << "(";
+  realSign().log(false);
+  std::cout << ") + i*(";
+  imagSign().log(false);
+  std::cout << ")\n";
+}
+#endif
 
 }  // namespace PoincareJ

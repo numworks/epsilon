@@ -9,7 +9,14 @@ void assert_sign(const char* input, ComplexSign expectedSign) {
   Tree* expression = TextToTree(input);
   Projection::DeepSystemProjection(expression);
   Simplification::DeepSystematicReduce(expression);
-  QUIZ_ASSERT(ComplexSign::Get(expression) == expectedSign);
+  bool result = ComplexSign::Get(expression) == expectedSign;
+  if (!result) {
+    std::cout << "\t\t\tWrong Sign: ";
+    ComplexSign::Get(expression).log();
+    std::cout << "\t\t\tInstead of: ";
+    expectedSign.log();
+  }
+  quiz_assert(result);
   expression->removeTree();
 }
 

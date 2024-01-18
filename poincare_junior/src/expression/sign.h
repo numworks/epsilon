@@ -76,6 +76,10 @@ class Sign {
 
   static Sign Get(const Tree* t);
 
+#if POINCARE_MEMORY_TREE_LOG
+  void log(bool endOfLine = true) const;
+#endif
+
  private:
   constexpr bool isValid() const {
     return m_canBePositive || m_canBeNegative || (m_canBeNull && m_isInteger);
@@ -136,6 +140,10 @@ struct ComplexSign {
   }
 
   static ComplexSign Get(const Tree* t);
+
+#if POINCARE_MEMORY_TREE_LOG
+  void log() const;
+#endif
 
  private:
   uint8_t m_realValue : 4;

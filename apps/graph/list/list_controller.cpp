@@ -357,12 +357,16 @@ void ListController::storeParametricComponentsOfSelectedModel() {
   if (!f->properties().isEnabledParametric()) {
     return;
   }
+  Expression e = f->expressionClone();
+  if (e.type() != ExpressionNode::Type::Matrix) {
+    // We might have a function of the form lambda * matrix
+    return;
+  }
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = f->name(buffer, bufferSize);
   assert(FunctionNameHelper::ParametricComponentsNamesAreFree(buffer, length,
                                                               bufferSize));
-  Expression e = f->expressionClone();
   storeParametricComponent(buffer, length, bufferSize, e, true);
   storeParametricComponent(buffer, length, bufferSize, e, false);
 }

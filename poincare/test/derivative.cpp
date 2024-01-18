@@ -123,6 +123,14 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduce_and_store("cos(θ)^2→r1(θ)");
   assert_reduces_to_formal_expression("diff(r1(θ),θ,θ)", "-2×sin(θ)×cos(θ)");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("r1.func").destroy();
+
+  // Parametric 1D
+  assert_reduces_to_formal_expression("diff(3t^2,t,t)", "6×t");
+  assert_reduces_to_formal_expression("diff(cos(t),t,t)",
+                                      "\U00000014dep(-sin(t),{cos(t)})");
+  assert_reduce_and_store("cos(t)^2→f(t)");
+  assert_reduces_to_formal_expression("diff(f(t),t,t)", "-2×sin(t)×cos(t)");
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("t.func").destroy();
 }
 
 QUIZ_CASE(poincare_derivative_formal_higher_order) {
@@ -140,6 +148,10 @@ QUIZ_CASE(poincare_derivative_formal_higher_order) {
   // Polar
   assert_reduces_to_formal_expression("diff(θ^3,θ,θ,2)", "6×θ");
   assert_reduces_to_formal_expression("diff(sin(θ),θ,θ,4)", "sin(θ)");
+
+  // Parametric 1D
+  assert_reduces_to_formal_expression("diff(t^4,t,t,2)", "12×t^2");
+  assert_reduces_to_formal_expression("diff(cos(t),t,t,4)", "cos(t)");
 }
 
 void assert_reduces_for_approximation(
@@ -189,6 +201,10 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   // Polar
   assert_reduces_for_approximation("diff(θ^3/5,θ,3)", "27/5");
   assert_reduces_for_approximation("diff(sin(θ),θ,π/6)", "√(3)/2");
+
+  // Parametric 1D
+  assert_reduces_for_approximation("diff(t^3/7,t,3)", "27/7");
+  assert_reduces_for_approximation("diff(cos(t),t,π/3)", "-√(3)/2");
 }
 
 void assert_approximate_to(const char* expression, const char* result,
@@ -223,6 +239,9 @@ QUIZ_CASE(poincare_derivative_approximation) {
 
   // Polar
   assert_approximate_to("diff(sin(θ),θ,π/3)", "0.5");
+
+  // Parametric 1D
+  assert_approximate_to("diff(cos(t),t,π/6)", "-0.5");
 }
 
 QUIZ_CASE(poincare_derivative_approximation_higher_order) {
@@ -238,4 +257,7 @@ QUIZ_CASE(poincare_derivative_approximation_higher_order) {
 
   // Polar
   assert_expression_approximates_to<double>("diff(θ^3,θ,10,2)", "60");
+
+  // Parametric 1D
+  assert_expression_approximates_to<double>("diff(t^3,t,1,4)", "0");
 }

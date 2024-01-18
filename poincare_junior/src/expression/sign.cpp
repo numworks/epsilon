@@ -136,6 +136,19 @@ ComplexSign Ln(ComplexSign s) {
                                      s.imagSign().canBeNegative()));
 }
 
+ComplexSign ArcTangentRad(ComplexSign s) {
+  Sign realSign = s.realSign();
+  if (!realSign.canBeNull()) {
+    return s;
+  }
+  // re(atan(i*y) = { -π/2 if y < 1, 0 if y in ]-1, 1[ and π/2 if y > 1 }
+  Sign imagSign = s.imagSign();
+  return ComplexSign(
+      Sign(true, realSign.canBePositive() || imagSign.canBePositive(),
+           realSign.canBeNegative() || imagSign.canBeNegative()),
+      imagSign);
+}
+
 ComplexSign ComplexArgument(ComplexSign s) {
   return ComplexSign(
       Sign(s.imagSign().canBeNull() && s.realSign().canBePositive(), true,
@@ -170,7 +183,7 @@ ComplexSign Add(ComplexSign s1, ComplexSign s2) {
                      Add(s1.imagSign(), s2.imagSign()));
 }
 
-ComplexSign Power(ComplexSign base, ComplexSign exp) {
+ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   // If this assert can't be maintained, escape with Unknown.
   assert(exp.isReal() && exp.isInteger());
   if (base.isZero()) {
@@ -181,6 +194,11 @@ ComplexSign Power(ComplexSign base, ComplexSign exp) {
   }
   bool isInteger = (base.isInteger() && exp.realSign().isPositive());
   bool baseIsReal = base.isReal();
+  if (baseIsReal && expIsTwo) {
+    return ComplexSign(
+        Sign(base.realSign().canBeNull(), true, false, isInteger),
+        Sign::Zero());
+  }
   return ComplexSign(
       Sign(base.realSign().canBeNull(), true,
            !(baseIsReal && base.realSign().isPositive()), isInteger),
@@ -221,7 +239,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     }
     case BlockType::PowerReal:
     case BlockType::Power:
-      return Power(Get(t->firstChild()), Get(t->child(1)));
+      return Power(Get(t->firstChild()), Get(t->child(1)),
+                   t->child(1)->isTwo());
     case BlockType::Norm:
       // Child isn't a scalar
       return ComplexSign(Sign::PositiveOrNull(), Sign::Zero());
@@ -242,6 +261,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case BlockType::Trig:
       assert(t->child(1)->isOne() || t->child(1)->isZero());
       return Trig(Get(t->firstChild()), t->child(1)->isOne());
+    case BlockType::ArcTangentRad:
+      return ArcTangentRad(Get(t->firstChild()));
     case BlockType::ComplexArgument:
       return ComplexArgument(Get(t->firstChild()));
 #if 0

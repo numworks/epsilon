@@ -15,6 +15,7 @@
 #include "random.h"
 #include "rational.h"
 
+using Poincare::ApproximationHelper::MakeResultRealIfInputIsReal;
 using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
 
 namespace PoincareJ {
@@ -118,6 +119,11 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::ArcCotangent:
       return TrigonometricTo(node->type(),
                              ComplexTo<T>(node->nextNode(), context));
+    case BlockType::HyperbolicSine:
+    case BlockType::HyperbolicCosine:
+    case BlockType::HyperbolicTangent:
+      return HyperbolicTo(node->type(),
+                          ComplexTo<T>(node->nextNode(), context));
   }
   // The remaining operators are defined only on reals
   // assert(node->numberOfChildren() <= 2);
@@ -358,6 +364,27 @@ std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
         return ConvertFromRadian(M_PI_2);
       }
       return TrigonometricTo(BlockType::ArcTangent, static_cast<T>(1) / value);
+    default:
+      assert(false);
+  }
+}
+
+template <typename T>
+std::complex<T> Approximation::HyperbolicTo(TypeBlock type,
+                                            std::complex<T> value) {
+  switch (type) {
+    case BlockType::HyperbolicCosine:
+    case BlockType::HyperbolicSine:
+      /* If c is real and large (over 100.0), the float evaluation of std::cosh
+       * will return image = NaN when it should be 0.0. */
+      return MakeResultRealIfInputIsReal<T>(
+          NeglectRealOrImaginaryPartIfNeglectable(
+              type.isHyperbolicSine() ? std::sinh(value) : std::cosh(value),
+              value),
+          value);
+    case BlockType::HyperbolicTangent:
+      return NeglectRealOrImaginaryPartIfNeglectable(std::tanh(value), value);
+
     default:
       assert(false);
   }

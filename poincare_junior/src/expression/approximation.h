@@ -57,6 +57,9 @@ class Approximation final {
   static std::complex<T> TrigonometricTo(TypeBlock type, std::complex<T> value);
 
   template <typename T>
+  static std::complex<T> HyperbolicTo(TypeBlock type, std::complex<T> value);
+
+  template <typename T>
   static T To(const Tree* node, Random::Context* context) {
     std::complex<T> value = ComplexTo<T>(node, context);
     return value.imag() == 0 ? value.real() : NAN;

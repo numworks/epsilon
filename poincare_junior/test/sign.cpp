@@ -5,9 +5,11 @@
 #include "helper.h"
 using namespace PoincareJ;
 
-void assert_sign(const char* input, ComplexSign expectedSign) {
+void assert_sign(const char* input, ComplexSign expectedSign,
+                 ComplexFormat complexFormat = ComplexFormat::Cartesian) {
   Tree* expression = TextToTree(input);
-  Projection::DeepSystemProjection(expression);
+  Projection::DeepSystemProjection(expression,
+                                   {.m_complexFormat = complexFormat});
   Simplification::DeepSystematicReduce(expression);
   bool result = ComplexSign::Get(expression) == expectedSign;
   if (!result) {

@@ -175,6 +175,18 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       T err = std::pow(10, std::round(child[1]));
       return std::round(child[0] * err) / err;
     }
+    case BlockType::Quotient:
+    case BlockType::Remainder: {
+      T a = child[0];
+      T b = child[1];
+      if (std::isnan(a) || std::isnan(b) || a != (int)a || b != (int)b) {
+        return NAN;
+      }
+      // TODO : is this really better than std::remainder ?
+      T quotient = b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
+      return node->isQuotient() ? quotient : std::round(a - b * quotient);
+    }
+
     case BlockType::Factorial: {
       T n = child[0];
       if (std::isnan(n) || n != std::round(n) || n < 0) {

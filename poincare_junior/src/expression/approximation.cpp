@@ -84,53 +84,30 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::LCM:
       return MapAndReduce<T, T>(node, FloatLCM<T>, context,
                                 PositiveIntegerApproximation<T>);
-    case BlockType::ArcCosine: {
-      std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
-      std::complex<T> result;
-      if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
-        /* acos: [-1;1] -> R
-         * In these cases we rather use std::acos(double) because acos on
-         * complexes is not as precise as pow on double in std library. For
-         * instance,
-         * - acos(complex<double>(0.03,0.0) = complex(1.54079,-1.11022e-16)
-         * - acos(0.03) = 1.54079 */
-        result = std::acos(c.real());
-      } else {
-        result = std::acos(c);
-        /* acos has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued
-         * on this cut. We followed the convention chosen by the lib c++ of llvm
-         * on
-         * ]-inf+0i, -1+0i[ (warning: acos takes the other side of the cut
-         * values on
-         * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply
-         * with acos(-x) = π - acos(x) and tan(acos(x)) = sqrt(1-x^2)/x. */
-        if (c.imag() == 0 && c.real() > 1) {
-          result.imag(-result.imag());  // other side of the cut
-        }
-      }
-      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
-      return ConvertFromRadian(result);
-    }
+    case BlockType::ArcCosine:
     case BlockType::ArcSine: {
       std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
       std::complex<T> result;
       if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
-        /* asin: [-1;1] -> R
-         * In these cases we rather use std::asin(double) because asin on
-         * complexes is not as precise as asin on double in std library. For
-         * instance,
+        /* asin/acos: [-1;1] -> R
+         * In these cases we rather use reals because asin/acos on
+         * complexes is not as precise in std library.
+         * For instance,
          * - asin(complex<double>(0.03,0.0) = complex(0.0300045,1.11022e-16)
-         * - asin(0.03) = 0.0300045 */
-        result = std::asin(c.real());
+         * - asin(0.03) = 0.0300045
+         * - acos(complex<double>(0.03,0.0) = complex(1.54079,-1.11022e-16)
+         * - acos(0.03) = 1.54079 */
+        result = node->isArcSine() ? std::asin(c.real()) : std::acos(c.real());
       } else {
-        result = std::asin(c);
-        /* asin has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued
-         * on this cut. We followed the convention chosen by the lib c++ of llvm
-         * on
-         * ]-inf+0i, -1+0i[ (warning: asin takes the other side of the cut
-         * values on
-         * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply
-         * with asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2). */
+        result = node->isArcSine() ? std::asin(c) : std::acos(c);
+        /* asin and acos have a branch cut on ]-inf, -1[U]1, +inf[
+         * We followed the convention chosen by the lib c++ of llvm on
+         * ]-inf+0i, -1+0i[ (warning: it takes the other side of the cut values
+         * on * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to
+         * comply with :
+         *   asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2)     for asin
+         *   acos(-x) = π - acos(x) and tan(acos(x)) = sqrt(1-x^2)/x  for acos
+         */
         if (c.imag() == 0 && c.real() > 1) {
           result.imag(-result.imag());  // other side of the cut
         }

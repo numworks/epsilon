@@ -406,7 +406,7 @@ constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
 };
 
 constexpr ToolboxMessageTree unitEnergyChildren[] = {
-    ToolboxMessageTree::Node(I18n::Message::UnitEnergyCalorieMenu,
+    ToolboxMessageTree::Node(I18n::Message::UnitEnergyCalorie,
                              unitEnergyCalorieChildren),
     ToolboxMessageTree::Node(I18n::Message::UnitEnergyJoule,
                              unitEnergyJouleChildren),

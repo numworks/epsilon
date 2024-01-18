@@ -113,6 +113,9 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::ArcCosine:
     case BlockType::ArcSine:
     case BlockType::ArcTangent:
+    case BlockType::ArcSecant:
+    case BlockType::ArcCosecant:
+    case BlockType::ArcCotangent:
       return TrigonometricTo(node->type(),
                              ComplexTo<T>(node->nextNode(), context));
   }
@@ -342,6 +345,19 @@ std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
       result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
       return ConvertFromRadian(result);
     }
+    case BlockType::ArcSecant:
+    case BlockType::ArcCosecant:
+      if (value == static_cast<T>(0)) {
+        return NAN;
+      }
+      return TrigonometricTo(
+          type.isArcSecant() ? BlockType::ArcCosine : BlockType::ArcSine,
+          static_cast<T>(1) / value);
+    case BlockType::ArcCotangent:
+      if (value == static_cast<T>(0)) {
+        return ConvertFromRadian(M_PI_2);
+      }
+      return TrigonometricTo(BlockType::ArcTangent, static_cast<T>(1) / value);
     default:
       assert(false);
   }

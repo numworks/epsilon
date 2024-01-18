@@ -1094,13 +1094,13 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                             Radian);
   assert_expression_approximates_to<float>("tan(-2×i)", "-0.03489241×i",
                                            Degree);
-  assert_expression_approximates_to<float>("tan(-2×i)", "-0.0314056×i",
+  assert_expression_approximates_to<float>("tan(-3×i)", "-0.04708904×i",
                                            Gradian);
   // Symmetry: odd
   assert_expression_approximates_to<double>("tan(2×i)", "0.96402758007582×i",
                                             Radian);
   assert_expression_approximates_to<float>("tan(2×i)", "0.03489241×i", Degree);
-  assert_expression_approximates_to<float>("tan(2×i)", "0.0314056×i", Gradian);
+  assert_expression_approximates_to<float>("tan(3×i)", "0.04708904×i", Gradian);
   // On C
   assert_expression_approximates_to<float>("tan(i-4)", "-0.273553+1.00281×i",
                                            Radian, MetricUnitFormat, Cartesian,

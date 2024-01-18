@@ -266,33 +266,22 @@ std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
       return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
     }
     case BlockType::Cosecant: {
-      std::complex<T> c = ConvertToRadian(value);
-      // std::complex<T> denominator =
-      // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      std::complex<T> denominator = std::sin(c);
+      std::complex<T> denominator = TrigonometricTo(BlockType::Sine, value);
       if (denominator == static_cast<T>(0.0)) {
         return NAN;  // complexNAN<T>();
       }
       return std::complex<T>(1) / denominator;
     }
     case BlockType::Cotangent: {
-      std::complex<T> c = ConvertToRadian(value);
-      // std::complex<T> denominator =
-      // SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      // std::complex<T> numerator =
-      // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      std::complex<T> denominator = std::sin(c);
-      std::complex<T> numerator = std::cos(c);
+      std::complex<T> denominator = TrigonometricTo(BlockType::Sine, value);
+      std::complex<T> numerator = TrigonometricTo(BlockType::Cosine, value);
       if (denominator == static_cast<T>(0.0)) {
         return NAN;  // complexNAN<T>();
       }
       return numerator / denominator;
     }
     case BlockType::Secant: {
-      std::complex<T> c = ConvertToRadian(value);
-      // std::complex<T> denominator =
-      // CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-      std::complex<T> denominator = std::cos(c);
+      std::complex<T> denominator = TrigonometricTo(BlockType::Cosine, value);
       if (denominator == static_cast<T>(0.0)) {
         return NAN;  // complexNAN<T>();
       }

@@ -104,8 +104,8 @@ class Approximation final {
     return a == static_cast<T>(0) ? NAN : std::log(a) / std::log(b);
   }
   template <typename T>
-  static T PositiveIntegerApproximation(T s) {
-    s = std::abs(s);
+  static T PositiveIntegerApproximation(std::complex<T> c) {
+    T s = std::abs(c);
     /* Conversion from uint32 to float changes UINT32_MAX from 4294967295 to
      * 4294967296. */
     if (std::isnan(s) || s != std::round(s) ||
@@ -156,13 +156,12 @@ class Approximation final {
  private:
   template <typename T>
   using Reductor = T (*)(T, T);
-  template <typename T>
-  using Mapper = T (*)(T);
-  template <typename T>
-  static std::complex<T> MapAndReduce(const Tree* node,
-                                      Reductor<std::complex<T>> reductor,
-                                      Random::Context* context,
-                                      Mapper<std::complex<T>> mapper = nullptr);
+  template <typename T, typename U>
+  using Mapper = U (*)(T);
+  template <typename T, typename U>
+  static U MapAndReduce(const Tree* node, Reductor<U> reductor,
+                        Random::Context* context,
+                        Mapper<std::complex<T>, U> mapper = nullptr);
   template <typename T>
   static bool ApproximateAndReplaceEveryScalarT(Tree* tree, bool collapse);
 

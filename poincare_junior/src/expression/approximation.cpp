@@ -51,29 +51,37 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::DoubleFloat:
       return Float::DoubleTo(node);
     case BlockType::Addition:
-      return MapAndReduce(node, FloatAddition<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(
+          node, FloatAddition<std::complex<T>>, context);
     case BlockType::Multiplication:
-      return MapAndReduce(node, FloatMultiplication<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(
+          node, FloatMultiplication<std::complex<T>>, context);
     case BlockType::Division:
-      return MapAndReduce(node, FloatDivision<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(
+          node, FloatDivision<std::complex<T>>, context);
     case BlockType::Subtraction:
-      return MapAndReduce(node, FloatSubtraction<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(
+          node, FloatSubtraction<std::complex<T>>, context);
     // case BlockType::PowerReal:
     // return MapAndReduce(node, FloatPowerReal<std::complex<T>>, context);
     case BlockType::Power:
-      return MapAndReduce(node, FloatPower<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(node, FloatPower<std::complex<T>>,
+                                              context);
     case BlockType::Logarithm:
-      return MapAndReduce(node, FloatLog<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>,
+                                              context);
     case BlockType::Trig:
-      return MapAndReduce(node, FloatTrig<std::complex<T>>, context);
+      return MapAndReduce<T, std::complex<T>>(node, FloatTrig<std::complex<T>>,
+                                              context);
     case BlockType::ATrig:
-      return MapAndReduce(node, FloatATrig<std::complex<T>>, context);
-    // case BlockType::GCD:
-    // return MapAndReduce(node, FloatGCD<std::complex<T>>, context,
-    // PositiveIntegerApproximation<std::complex<T>>);
-    // case BlockType::LCM:
-    // return MapAndReduce(node, FloatLCM<std::complex<T>>, context,
-    // PositiveIntegerApproximation<std::complex<T>>);
+      return MapAndReduce<T, std::complex<T>>(node, FloatATrig<std::complex<T>>,
+                                              context);
+    case BlockType::GCD:
+      return MapAndReduce<T, T>(node, FloatGCD<T>, context,
+                                PositiveIntegerApproximation<T>);
+    case BlockType::LCM:
+      return MapAndReduce<T, T>(node, FloatLCM<T>, context,
+                                PositiveIntegerApproximation<T>);
     case BlockType::ArcCosine:
       return ConvertFromRadian(
           std::acos(ComplexTo<T>(node->nextNode(), context)));
@@ -312,24 +320,30 @@ Tree* Approximation::ToList(const Tree* node, AngleUnit angleUnit) {
   return l;
 }
 
-template <typename T>
-std::complex<T> Approximation::MapAndReduce(const Tree* node,
-                                            Reductor<std::complex<T>> reductor,
-                                            Random::Context* context,
-                                            Mapper<std::complex<T>> mapper) {
-  std::complex<T> res;
+template <typename T, typename U>
+U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
+                              Random::Context* context,
+                              Mapper<std::complex<T>, U> mapper) {
+  U res;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
     std::complex<T> app = ComplexTo<T>(child, context);
-    if (mapper) {
-      app = mapper(app);
-    }
     if (std::isnan(app.real()) || std::isnan(app.imag())) {
       return NAN;
     }
-    if (index == 0) {
-      res = app;
+    U mapped;
+    if constexpr (std::is_same_v<std::complex<T>, U>) {
+      mapped = app;
     } else {
-      res = reductor(res, app);
+      assert(mapper);
+      mapped = mapper(app);
+      if (std::isnan(mapped)) {
+        return NAN;
+      }
+    }
+    if (index == 0) {
+      res = mapped;
+    } else {
+      res = reductor(res, mapped);
     }
   }
   return res;

@@ -65,23 +65,17 @@ void ComplexListController::computeAdditionalResults(
 }
 
 I18n::Message ComplexListController::messageAtIndex(int index) {
-  return index == 0
-             ? complexFormToDisplay() == Preferences::ComplexFormat::Cartesian
+  switch(index){
+    case 0:
+      return complexFormToDisplay() == Preferences::ComplexFormat::Cartesian
                    ? I18n::Message::CartesianForm
-                   : I18n::Message::ExponentialForm
-             : 
-          index == 1
-            ? I18n::Message::ComplexAbsoluteValue
-            :
-          index == 2
-            ? I18n::Message::Argument
-            :
-          index == 3
-            ? I18n::Message::RealPart
-            :
-          index == 4
-            ? I18n::Message::ImaginaryPart
-            : I18n::Message::Default;;
+                   : I18n::Message::ExponentialForm;
+    case 1: return I18n::Message::ComplexAbsoluteValue;
+    case 2: return I18n::Message::Argument;
+    case 3: return I18n::Message::RealPart;
+    case 4: return I18n::Message::ImaginaryPart;
+    default: I18n::Message::Default;
+  }
 };
 
 Preferences::ComplexFormat ComplexListController::complexFormToDisplay() const {

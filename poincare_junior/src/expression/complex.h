@@ -4,6 +4,7 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 
 #include "k_tree.h"
+#include "sign.h"
 
 namespace PoincareJ {
 
@@ -19,7 +20,7 @@ struct Complex {
     return tree->isComplex() ? tree->child(1) : 0_e;
   }
   // Return true if tree is real and false if unknown or complex
-  static bool IsReal(const Tree* tree);
+  static bool IsReal(const Tree* tree) { return ComplexSign::Get(tree).isReal(); }
   // Both its real and imaginary parts are real numbers.
   static bool IsSanitized(const Tree* tree) {
     return IsReal(UnSanitizedRealPart(tree)) &&

@@ -15,6 +15,8 @@
 #include "random.h"
 #include "rational.h"
 
+using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
+
 namespace PoincareJ {
 
 // TODO: tests
@@ -105,17 +107,15 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       return std::abs(ComplexTo<T>(node->nextNode(), context));
     // TODO: Handle AngleUnits in context as well.
     case BlockType::Cosine:
-      return std::cos(ConvertToRadian(ComplexTo<T>(node->nextNode(), context)));
-      // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
-      // res, angleInput);
-
-    case BlockType::Sine:
-      return std::sin(ConvertToRadian(ComplexTo<T>(node->nextNode(), context)));
-      // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
-      // res, angleInput);
-
+    case BlockType::Sine: {
+      std::complex<T> angleInput =
+          ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
+      std::complex<T> res =
+          node->isCosine() ? std::cos(angleInput) : std::sin(angleInput);
+      return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
+    }
     case BlockType::Tangent: {
-      std::complex<T> angle =
+      std::complex<T> angleInput =
           ConvertToRadian(ComplexTo<T>(node->nextNode(), context));
       /* tan should be undefined at (2n+1)*pi/2 for any integer n.
        * std::tan is not reliable at these values because it is diverging and
@@ -126,13 +126,12 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
        * these values is much more resilient : sin(pi/2+e) ~= 1 - (e^2)/2. We
        * therefore use sin to identify values at which tan should be undefined.
        */
-      std::complex<T> sin = std::sin(angle);
+      std::complex<T> sin = std::sin(angleInput);
       if (sin == std::complex<T>(1) || sin == std::complex<T>(-1)) {
         return NAN;
       }
-      return std::tan(angle);
-      // return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
-      // res, angleInput);
+      std::complex<T> res = std::tan(angleInput);
+      return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
     }
     case BlockType::Cosecant: {
       std::complex<T> c =

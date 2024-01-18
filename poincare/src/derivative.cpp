@@ -7,6 +7,7 @@
 #include <poincare/float.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
+#include <poincare/point.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
@@ -107,6 +108,11 @@ Evaluation<T> DerivativeNode::templatedApproximate(
   // No complex/matrix version of Derivative
   if (std::isnan(evaluationArgument)) {
     return Complex<T>::RealUndefined();
+  }
+  // Distribute over point if parametric function
+  Expression point = Derivative(this).distributePointIfParametric();
+  if (!point.isUninitialized()) {
+    return point.node()->approximate(T(), approximationContext);
   }
   return Complex<T>::Builder(scalarApproximateWithValueForArgumentAndOrder<T>(
       evaluationArgument, order, approximationContext));
@@ -261,10 +267,23 @@ Expression Derivative::shallowReduce(ReductionContext reductionContext) {
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists);
+        SimplificationHelper::ListReduction::DistributeOverLists,
+        SimplificationHelper::PointReduction::DefinedOnPoint);
     if (!e.isUninitialized()) {
       return e;
     }
+  }
+
+  // Distribute over point
+  Expression point = distributePointIfParametric();
+  if (!point.isUninitialized()) {
+    int n = point.numberOfChildren();
+    assert(n == 2);
+    for (int i = 0; i < n; i++) {
+      point.childAtIndex(i).shallowReduce(reductionContext);
+    }
+    replaceWithInPlace(point);
+    return point.shallowReduce(reductionContext);
   }
 
   int derivationOrder;
@@ -404,6 +423,32 @@ Expression Derivative::UntypedBuilder(Expression children) {
                    children.childAtIndex(1).convert<Symbol>(),
                    children.childAtIndex(2), children.childAtIndex(3));
   }
+}
+
+Expression Derivative::distributePointIfParametric() {
+  // Distribute over point if parametric function
+  Expression derivand = childAtIndex(0);
+  Symbol symbol = childAtIndex(1).convert<Symbol>();
+  if (strcmp("t", symbol.name()) == 0 &&
+      (derivand.type() == ExpressionNode::Type::Point ||
+       (derivand.type() == ExpressionNode::Type::Dependency &&
+        derivand.childAtIndex(0).type() == ExpressionNode::Type::Point))) {
+    bool hasDep = derivand.type() == ExpressionNode::Type::Dependency;
+    Expression point = hasDep ? derivand.childAtIndex(0) : derivand;
+    Expression pointParent = hasDep ? derivand : *this;
+    pointParent.replaceChildAtIndexWithGhostInPlace(0);
+    int n = point.numberOfChildren();
+    assert(n == 2);
+    for (int i = 0; i < n; i++) {
+      Expression newDerivand = clone();
+      Expression ghostParent =
+          hasDep ? newDerivand.childAtIndex(0) : newDerivand;
+      ghostParent.replaceChildAtIndexInPlace(0, point.childAtIndex(i));
+      point.replaceChildAtIndexInPlace(i, newDerivand);
+    }
+    return point;
+  }
+  return Expression();
 }
 
 }  // namespace Poincare

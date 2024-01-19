@@ -100,6 +100,11 @@ bool ExpressionModelListController::handleEventOnExpression(
     editExpression(event);
     return true;
   }
+  if (!inTemplateMenu && m_editedCellIndex > -1 && event == Ion::Events::Back) {
+    finishEdition();
+    layoutField()->clearLayout();
+    return true;
+  }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
     Ion::Storage::Record record =
         modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));

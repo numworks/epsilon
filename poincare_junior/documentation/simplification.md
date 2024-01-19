@@ -81,7 +81,7 @@ It's expected to:
 
 ## 5 - User symbols
 
-TODO
+TO COMPLETE
 
 ## 6 - Systematic reduction
 
@@ -205,11 +205,13 @@ It's expected to:
 
 ## 7 - Matrix operators
 
-TODO
+TODO : Apply matrix operators in Systematic Reduction section.
 
-## 8 - Matrix operators
+TO COMPLETE
 
-TODO
+## 8 - List operators
+
+TO COMPLETE
 
 ## 9 - Advanced Reduction
 

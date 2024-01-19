@@ -27,6 +27,19 @@ EditableFunctionCell::EditableFunctionCell(
   expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);
 }
 
+void EditableFunctionCell::updateButton() {
+  bool empty = isEmpty();
+  bool wasEmpty = m_buttonCell.isVisible();
+
+  if (wasEmpty && !empty) {
+    m_buttonCell.setHighlighted(false);
+    App::app()->setFirstResponder(expressionCell()->layoutField());
+  }
+  if (wasEmpty != empty) {
+    m_buttonCell.setVisible(empty);
+  }
+}
+
 View* EditableFunctionCell::subviewAtIndex(int index) {
   assert(index < numberOfSubviews());
   if (index == AbstractFunctionCell::numberOfSubviews()) {
@@ -64,12 +77,7 @@ void EditableFunctionCell::ButtonCell::deselect() {
 }
 
 bool EditableFunctionCell::ButtonCell::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up || event == Ion::Events::Down) {
-    return true;
-  } else if (event == Ion::Events::Left || event == Ion::Events::Backspace) {
-    setHighlighted(false);
-    layoutField()->setEditing(true);
-    App::app()->setFirstResponder(layoutField());
+  if (event == Ion::Events::Backspace) {
     return true;
   }
 

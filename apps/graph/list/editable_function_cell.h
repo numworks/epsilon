@@ -20,11 +20,6 @@ class EditableFunctionCell
     m_expressionBackground = backgroundColor();
   }
 
-  void selectTemplateButton() {
-    assert(isEmpty());
-    m_buttonCell.setHighlighted(true);
-  }
-
   bool isEmpty() { return expressionCell()->layoutField()->isEmpty(); }
   bool isEditing() { return expressionCell()->layoutField()->isEditing(); }
 
@@ -35,17 +30,7 @@ class EditableFunctionCell
     AbstractFunctionCell::setHighlighted(highlighted);
   }
 
-  void updateButton() {
-    bool empty = isEmpty();
-    bool wasEmpty = m_buttonCell.isVisible();
-
-    if (wasEmpty && !empty) {
-      m_buttonCell.setHighlighted(false);
-    }
-    if (wasEmpty != empty) {
-      m_buttonCell.setVisible(empty);
-    }
-  }
+  void updateButton();
 
   Escher::ButtonCell* buttonCell() { return &m_buttonCell; }
 

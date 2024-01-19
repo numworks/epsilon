@@ -12,12 +12,14 @@ void assert_sign(const char* input, ComplexSign expectedSign,
                                    {.m_complexFormat = complexFormat});
   Simplification::DeepSystematicReduce(expression);
   bool result = ComplexSign::Get(expression) == expectedSign;
+#if POINCARE_MEMORY_TREE_LOG
   if (!result) {
     std::cout << "\t\t\tWrong Sign: ";
     ComplexSign::Get(expression).log();
     std::cout << "\t\t\tInstead of: ";
     expectedSign.log();
   }
+#endif
   quiz_assert(result);
   expression->removeTree();
 }

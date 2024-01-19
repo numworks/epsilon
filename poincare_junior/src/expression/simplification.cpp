@@ -545,7 +545,6 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
         {.KA = Constant(child), .KB = Constant(next), .KC = term});
     term->removeTree();
     merge = term;
-    assert(!merge->isAddition());
   } else if (child->isComplex() || next->isComplex()) {
     // (A+B*i)+(C+D*i) -> ((A+C)+(B+D)*i)
     merge = PatternMatching::CreateAndSimplify(
@@ -582,7 +581,13 @@ bool Simplification::SimplifyAddition(Tree* u) {
     }
     Tree* next = child->nextTree();
     if (i + 1 < n && MergeAdditionChildWithNext(child, next)) {
-      assert(!child->isAddition());
+      // 1 + (a + b)/2 + (a + b)/2 -> 1 + a + b
+      if (child->isAddition()) {
+        n += child->numberOfChildren() - 1;
+        child->removeNode();
+        // n may remain equal to u->numberOfChildren()
+        modified = true;
+      }
       n--;
     } else {
       child = next;

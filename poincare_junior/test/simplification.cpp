@@ -196,6 +196,8 @@ QUIZ_CASE(pcj_basic_simplification) {
   // TODO : Simplify to x
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",
                 "(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)");
+  simplifies_to("(a+b)/2+(a+b)/2", "a+b");
+  simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
 
   // Sort order
   simplifies_to("π*floor(π)/π", "floor(π)");

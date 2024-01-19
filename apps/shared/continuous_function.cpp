@@ -111,22 +111,23 @@ size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
   return length;
 }
 
-size_t ContinuousFunction::printValue(double cursorT, double cursorX,
-                                      double cursorY, char *buffer,
-                                      size_t bufferSize, int precision,
-                                      Context *context, bool symbolValue) {
+size_t ContinuousFunction::printAbscissaValue(double cursorT, double cursorX,
+                                              char *buffer, size_t bufferSize,
+                                              int precision) {
   ContinuousFunctionProperties thisProperties = properties();
+  /* With Vertical curves, cursorT != cursorX .
+   * We need the value for symbol=... */
+  return PoincareHelpers::ConvertFloatToText<double>(
+      thisProperties.isCartesian() || thisProperties.isScatterPlot() ? cursorX
+                                                                     : cursorT,
+      buffer, bufferSize, precision);
+}
 
-  if (symbolValue) {
-    /* With Vertical curves, cursorT != cursorX .
-     * We need the value for symbol=... */
-    return PoincareHelpers::ConvertFloatToText<double>(
-        thisProperties.isCartesian() || thisProperties.isScatterPlot()
-            ? cursorX
-            : cursorT,
-        buffer, bufferSize, precision);
-  }
-
+size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
+                                              double cursorY, char *buffer,
+                                              size_t bufferSize, int precision,
+                                              Context *context) {
+  ContinuousFunctionProperties thisProperties = properties();
   if (thisProperties.isParametric()) {
     Preferences::PrintFloatMode mode =
         Poincare::Preferences::sharedPreferences->displayMode();

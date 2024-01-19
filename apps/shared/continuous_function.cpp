@@ -135,13 +135,11 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
                                          cursorX, mode, precision, cursorY,
                                          mode, precision);
   }
-  if (thisProperties.isPolar() || thisProperties.isInversePolar()) {
-    return PoincareHelpers::ConvertFloatToText<double>(
-        evaluate2DAtParameter(cursorT, context).y(), buffer, bufferSize,
-        precision);
-  }
-  return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer,
-                                                     bufferSize, precision);
+  double value = thisProperties.isPolar() || thisProperties.isInversePolar()
+                     ? evaluate2DAtParameter(cursorT, context).y()
+                     : cursorY;
+  return PoincareHelpers::ConvertFloatToText<double>(value, buffer, bufferSize,
+                                                     precision);
 }
 
 Poincare::Layout ContinuousFunction::titleLayout(Poincare::Context *context,

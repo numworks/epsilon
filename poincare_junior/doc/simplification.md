@@ -134,7 +134,7 @@ It's expected to:
 | 0 + A + B | A + B |
 | 2 + 4.1 | 6.1 |
 | 2×a + 4.1×a | 6.1×a |
-| complex(A, B) + complex(C, D) | complex((A + C), (B + D)) |
+| complex(A, B) + C | complex(A + re(C), B + Im(C)) |
 | ×(A) | A |
 | ×() | 1 |
 | B×A | A×B |
@@ -142,7 +142,7 @@ It's expected to:
 | 0×A | 0 |
 | 1×A×B | A×B |
 | t^m×t^n | t^(m+n) |
-| complex(A, B)×complex(C, D) | complex(AC - BD, AD + BC) |
+| complex(A, B)×C | complex(A×re(C) - B×im(C), A×im(C) + B×re(C)) |
 | powerReal(A, B) (with A complex or positive, or B integer) | A^B |
 | powerReal(A, B) (with A negative, B negative rational p/q, q even) | unreal |
 | powerReal(A, B) (with A negative, B rational p/q, q odd) | ±|A|^B |

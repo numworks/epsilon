@@ -21,12 +21,14 @@ namespace PoincareJ {
 
 AngleUnit Approximation::angleUnit;
 Approximation::VariableType Approximation::s_variables[k_maxNumberOfVariables];
+int Approximation::s_listElement;
 
 template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
                                                  AngleUnit angleUnit) {
   Random::Context context;
   Approximation::angleUnit = angleUnit;
+  s_listElement = -1;
   // TODO we should rather assume variable projection has already been done
   Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
@@ -61,6 +63,16 @@ std::complex<T> Approximation::ToComplex(const Tree* node,
       return Float::FloatTo(node);
     case BlockType::DoubleFloat:
       return Float::DoubleTo(node);
+    case BlockType::List:
+      return ToComplex<T>(node->child(s_listElement), context);
+    case BlockType::ListSequence: {
+      ShiftVariables();
+      // epsilon sequences starts at one
+      setXValue(s_listElement + 1);
+      std::complex<T> result = ToComplex<T>(node->child(2), context);
+      UnshiftVariables();
+      return result;
+    }
     case BlockType::Addition:
       return MapAndReduce<T, std::complex<T>>(
           node, FloatAddition<std::complex<T>>, context);
@@ -340,13 +352,40 @@ std::complex<T> Approximation::ToComplex(const Tree* node,
 }
 
 template <typename T>
-Tree* Approximation::ToList(const Tree* node, AngleUnit angleUnit) {
-  Tree* l = node->clone();
+Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit) {
   Approximation::angleUnit = angleUnit;
-  List::BubbleUp(l, [](Tree* e) -> bool {
-    return Approximation::ApproximateAndReplaceEveryScalarT<T>(e, true);
-  });
-  return l;
+  s_listElement = -1;
+  for (int i = 0; i < k_maxNumberOfVariables; i++) {
+    s_variables[i] = NAN;
+  }
+  // TODO we should rather assume variable projection has already been done
+  Tree* variables = Variables::GetUserSymbols(node);
+  Tree* clone = node->clone();
+  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  {
+    // Be careful to nest Random::Context since they create trees
+    Random::Context context;
+    ToList<T>(clone, &context);
+  }
+  clone->removeTree();
+  variables->removeTree();
+  return variables;
+}
+
+template <typename T>
+Tree* Approximation::ToList(const Tree* node, Random::Context* context) {
+  int length = Dimension::GetListLength(node);
+  int old = s_listElement;
+  Tree* list = SharedEditionPool->push<BlockType::List>(length);
+  for (int i = 0; i < length; i++) {
+    s_listElement = i;
+    std::complex<T> k = ToComplex<T>(node, context);
+    SharedEditionPool->push(BlockType::Complex);
+    SharedEditionPool->push<FloatType<T>::type>(k.real());
+    SharedEditionPool->push<FloatType<T>::type>(k.imag());
+  }
+  s_listElement = old;
+  return list;
 }
 
 template <typename T, typename U>
@@ -434,8 +473,8 @@ template std::complex<float> Approximation::ToComplex<float>(const Tree*,
 template std::complex<double> Approximation::ToComplex<double>(
     const Tree*, Random::Context*);
 
-template Tree* Approximation::ToList<float>(const Tree*, AngleUnit);
-template Tree* Approximation::ToList<double>(const Tree*, AngleUnit);
+template Tree* Approximation::RootTreeToList<float>(const Tree*, AngleUnit);
+template Tree* Approximation::RootTreeToList<double>(const Tree*, AngleUnit);
 
 template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*,
                                                                       bool);

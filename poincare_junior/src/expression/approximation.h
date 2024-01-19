@@ -75,7 +75,11 @@ class Approximation final {
   }
 
   template <typename T>
-  static Tree* ToList(const Tree* node, AngleUnit angleUnit);
+  static Tree* RootTreeToList(const Tree* node,
+                              AngleUnit angleUnit = AngleUnit::Radian);
+
+  template <typename T>
+  static Tree* ToList(const Tree* node, Random::Context* context);
 
   template <typename T>
   static T FloatAddition(T a, T b) {
@@ -234,6 +238,8 @@ class Approximation final {
     memmove(&s_variables[0], &s_variables[1],
             (k_maxNumberOfVariables - 1) * sizeof(VariableType));
   }
+  // are we approximating to get the nth-element of a list ?
+  static int s_listElement;
 
   template <typename T>
   static T approximateIntegral(const Tree* integral);

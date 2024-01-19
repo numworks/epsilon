@@ -265,7 +265,7 @@ void assert_expression_approximates_to(const char *expression,
           return KUndef->clone();
         }
         if (PoincareJ::Dimension::GetListLength(e) != -1) {
-          EditionReference r = PoincareJ::Approximation::ToList<T>(
+          EditionReference r = PoincareJ::Approximation::RootTreeToList<T>(
               e, PoincareJ::AngleUnit(reductionContext.angleUnit()));
           e->removeTree();
           return r;

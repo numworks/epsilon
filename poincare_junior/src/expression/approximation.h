@@ -194,6 +194,8 @@ class Approximation final {
   }
   EDITION_REF_WRAP_1D(ApproximateAndReplaceEveryScalar, bool, true)
 
+  static void setXValue(double value) { s_variables[0] = value; }
+
  private:
   template <typename T>
   using Reductor = T (*)(T, T);
@@ -223,6 +225,9 @@ class Approximation final {
     memmove(&s_variables[0], &s_variables[1],
             (k_maxNumberOfVariables - 1) * sizeof(VariableType));
   }
+
+  template <typename T>
+  static T approximateDerivative(const Tree* function, T at, int order);
 };
 
 }  // namespace PoincareJ

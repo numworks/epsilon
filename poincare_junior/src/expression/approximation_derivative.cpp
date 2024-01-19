@@ -8,17 +8,18 @@ namespace PoincareJ {
 class ApproximationContext;
 
 template <typename T>
-T scalarApproximateWithValueForArgumentAndOrder(
-    T evaluationArgument, int order,
-    const ApproximationContext& approximationContext);
+T Approximation::approximateDerivative(const Tree* child, T at, int order) {
+  return scalarApproximateWithValueForArgumentAndOrder(at, order, child);
+}
 
 template <typename T>
-T growthRateAroundAbscissa(T x, T h, int order,
-                           const ApproximationContext& approximationContext);
+T scalarApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order,
+                                                const Tree* child);
+
 template <typename T>
-T riddersApproximation(int order,
-                       const ApproximationContext& approximationContext, T x,
-                       T h, T* error);
+T growthRateAroundAbscissa(T x, T h, int order);
+template <typename T>
+T riddersApproximation(int order, const Tree* child, T x, T h, T* error);
 // TODO: Change coefficients?
 constexpr static double k_maxErrorRateOnApproximation = 0.001;
 constexpr static double k_minInitialRate = 0.01;
@@ -26,18 +27,17 @@ constexpr static double k_rateStepSize = 1.4;
 constexpr static double k_minSignificantError = 3e-11;
 
 template <typename T>
-T scalarApproximateWithValueForArgumentAndOrder(
-    T evaluationArgument, int order,
-    const ApproximationContext& approximationContext) {
+T scalarApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order,
+                                                const Tree* child) {
   /* TODO : Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   assert(order >= 0);
   if (order == 0) {
-    return firstChildScalarValueForArgument(evaluationArgument,
-                                            approximationContext);
+    Approximation::setXValue(evaluationArgument);
+    return Approximation::To<T>(child, nullptr);
   }
   T functionValue = scalarApproximateWithValueForArgumentAndOrder(
-      evaluationArgument, order - 1, approximationContext);
+      evaluationArgument, order - 1, child);
   if (std::isnan(functionValue)) {
     return NAN;
   }
@@ -48,8 +48,8 @@ T scalarApproximateWithValueForArgumentAndOrder(
   constexpr T tenEpsilon = static_cast<T>(10.0) * Poincare::Float<T>::Epsilon();
   do {
     T currentError;
-    T currentResult = riddersApproximation(
-        order, approximationContext, evaluationArgument, h, &currentError);
+    T currentResult = riddersApproximation(order, child, evaluationArgument, h,
+                                           &currentError);
     h /= static_cast<T>(10.0);
     if (std::isnan(currentError) || currentError > error) {
       continue;
@@ -88,19 +88,16 @@ T scalarApproximateWithValueForArgumentAndOrder(
 }
 
 template <typename T>
-T growthRateAroundAbscissa(T x, T h, int order,
-                           const ApproximationContext& approximationContext) {
-  T expressionPlus = scalarApproximateWithValueForArgumentAndOrder(
-      x + h, order - 1, approximationContext);
-  T expressionMinus = scalarApproximateWithValueForArgumentAndOrder(
-      x - h, order - 1, approximationContext);
+T growthRateAroundAbscissa(T x, T h, int order, const Tree* child) {
+  T expressionPlus =
+      scalarApproximateWithValueForArgumentAndOrder(x + h, order - 1, child);
+  T expressionMinus =
+      scalarApproximateWithValueForArgumentAndOrder(x - h, order - 1, child);
   return (expressionPlus - expressionMinus) / (h + h);
 }
 
 template <typename T>
-T riddersApproximation(int order,
-                       const ApproximationContext& approximationContext, T x,
-                       T h, T* error) {
+T riddersApproximation(int order, const Tree* child, T x, T h, T* error) {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,
@@ -119,7 +116,7 @@ T riddersApproximation(int order,
       a[i][j] = 1;
     }
   }
-  a[0][0] = growthRateAroundAbscissa(x, hh, order, approximationContext);
+  a[0][0] = growthRateAroundAbscissa(x, hh, order, child);
   T ans = 0;
   T errt = 0;
   // Loop on i: change the step size
@@ -128,7 +125,7 @@ T riddersApproximation(int order,
     // Make hh an exactly representable number
     volatile T temp = x + hh;
     hh = temp - x;
-    a[0][i] = growthRateAroundAbscissa(x, hh, order, approximationContext);
+    a[0][i] = growthRateAroundAbscissa(x, hh, order, child);
     T fac = k_rateStepSize * k_rateStepSize;
     // Loop on j: compute extrapolation for several orders
     for (int j = 1; j < 10; j++) {
@@ -151,5 +148,10 @@ T riddersApproximation(int order,
   }
   return ans;
 }
+
+template float Approximation::approximateDerivative(const Tree* child, float at,
+                                                    int order);
+template double Approximation::approximateDerivative(const Tree* child,
+                                                     double at, int order);
 
 }  // namespace PoincareJ

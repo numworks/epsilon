@@ -183,6 +183,38 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       UnshiftVariables();
       return result;
     }
+    case BlockType::Derivative: {
+      constexpr static int k_maxOrderForApproximation = 4;
+      int order = 1;  // TODO nth diff
+      if (order < 0) {
+        return NAN;
+      }
+      if (order > k_maxOrderForApproximation) {
+        /* FIXME:
+         * Since approximation of higher order derivative is exponentially
+         * complex, we set a threshold above which we won't compute the
+         * derivative.
+         *
+         * The method we use for now for the higher order derivatives is to
+         * recursively approximate the derivatives of lower levels.
+         * It's as if we approximated diff(diff(diff(diff(..(diff(f(x)))))))
+         * But this is method is way too expensive in time and memory.
+         *
+         * Other methods exists for approximating higher order derivative.
+         * This should be investigated
+         * */
+        return NAN;
+      }
+      std::complex<T> at = ComplexTo<T>(node->child(1), context);
+      if (std::isnan(at.real()) || at.imag() != 0) {
+        return NAN;
+      }
+      ShiftVariables();
+      T result = approximateDerivative(node->child(2), at.real(), order);
+      UnshiftVariables();
+      return result;
+    }
+    default:;
   }
   // The remaining operators are defined only on reals
   // assert(node->numberOfChildren() <= 2);

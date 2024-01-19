@@ -285,8 +285,8 @@ double ContinuousFunction::approximateDerivative(double t, Context *context,
   Expression derivate = expressionDerivateReduced(context);
   assert(subCurveIndex == 0);
   ApproximationContext approximationContext(context, complexFormat(context));
-  return derivate.approximateWithValueForSymbol(k_unknownName, t,
-                                                approximationContext);
+  return derivate.approximateToScalarWithValueForSymbol(k_unknownName, t,
+                                                        approximationContext);
 }
 
 Poincare::Layout ContinuousFunction::derivativeTitleLayout() {
@@ -439,8 +439,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     } else {
       assert(subCurveIndex == 0);
     }
-    T value =
-        e.approximateWithValueForSymbol(k_unknownName, t, approximationContext);
+    T value = e.approximateToScalarWithValueForSymbol(k_unknownName, t,
+                                                      approximationContext);
     if (isAlongY()) {
       // Invert x and y with vertical lines so it can be scrolled vertically
       return Coordinate2D<T>(value, t);
@@ -455,10 +455,11 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   }
   assert(e.type() == ExpressionNode::Type::Point);
   assert(e.numberOfChildren() == 2);
-  return Coordinate2D<T>(e.childAtIndex(0).approximateWithValueForSymbol(
-                             k_unknownName, t, approximationContext),
-                         e.childAtIndex(1).approximateWithValueForSymbol(
-                             k_unknownName, t, approximationContext));
+  return Coordinate2D<T>(
+      e.childAtIndex(0).approximateToScalarWithValueForSymbol(
+          k_unknownName, t, approximationContext),
+      e.childAtIndex(1).approximateToScalarWithValueForSymbol(
+          k_unknownName, t, approximationContext));
 }
 
 /* ContinuousFunction::Model */

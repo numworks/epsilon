@@ -60,13 +60,14 @@ Coordinate2D<T> expressionEvaluator(T t, const void *model, Context *context) {
   const Expression *e = static_cast<const Expression *>(model);
   ApproximationContext approximationContext(context, Real, Radian);
   if (e->type() == ExpressionNode::Type::Matrix) {
-    return Coordinate2D<T>(e->childAtIndex(0).approximateWithValueForSymbol(
-                               k_symbol, t, approximationContext),
-                           e->childAtIndex(1).approximateWithValueForSymbol(
-                               k_symbol, t, approximationContext));
+    return Coordinate2D<T>(
+        e->childAtIndex(0).approximateToScalarWithValueForSymbol(
+            k_symbol, t, approximationContext),
+        e->childAtIndex(1).approximateToScalarWithValueForSymbol(
+            k_symbol, t, approximationContext));
   }
-  return Coordinate2D<T>(
-      t, e->approximateWithValueForSymbol(k_symbol, t, approximationContext));
+  return Coordinate2D<T>(t, e->approximateToScalarWithValueForSymbol(
+                                k_symbol, t, approximationContext));
 }
 
 void assert_points_of_interest_range_is(const char *expression,

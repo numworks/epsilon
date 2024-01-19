@@ -498,7 +498,7 @@ class Expression : public TreeHandle {
   template <typename U>
   U approximateToScalar(const ApproximationContext& approximationContext) const;
   template <typename U>
-  U approximateWithValueForSymbol(
+  U approximateToScalarWithValueForSymbol(
       const char* symbol, U x,
       const ApproximationContext& approximationContext) const;
   // This also reduces the expression. Approximation is in double.

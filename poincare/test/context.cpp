@@ -17,8 +17,8 @@ void assert_parsed_expression_approximates_with_value_for_symbol(
   Shared::GlobalContext globalContext;
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
-  T result = expression.approximateWithValueForSymbol(symbol, value,
-                                                      approximationContext);
+  T result = expression.approximateToScalarWithValueForSymbol(
+      symbol, value, approximationContext);
   assert_roughly_equal(result, approximation, Poincare::Float<T>::Epsilon(),
                        true);
 }

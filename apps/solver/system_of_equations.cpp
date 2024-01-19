@@ -57,7 +57,7 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
   const Expression *e = reinterpret_cast<const Expression *>(modelArray[0]);
   const char *variable = reinterpret_cast<const char *>(modelArray[1]);
   return Coordinate2D<T>(
-      t, e->approximateWithValueForSymbol<T>(
+      t, e->approximateToScalarWithValueForSymbol<T>(
              variable, t,
              ApproximationContext(
                  context, Preferences::sharedPreferences->complexFormat(),

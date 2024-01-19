@@ -54,6 +54,10 @@ class Approximation final {
   static std::complex<T> ToComplex(const Tree* node, Random::Context* context);
 
   template <typename T>
+  static Tree* PushBeautifiedComplex(std::complex<T> value,
+                                     ComplexFormat complexFormat);
+
+  template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,
                                                 std::complex<T> value);
 

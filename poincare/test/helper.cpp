@@ -273,43 +273,8 @@ void assert_expression_approximates_to(const char *expression,
         std::complex<T> value = PoincareJ::Approximation::RootTreeToComplex<T>(
             e, PoincareJ::AngleUnit(reductionContext.angleUnit()));
         e->removeTree();
-        if (std::isnan(value.real()) || std::isnan(value.imag())) {
-          return SharedEditionPool->push(BlockType::Undefined);
-        }
-        if (value.imag() == 0.0) {
-          return SharedEditionPool->push<FloatType<T>::type>(value.real());
-        }
-        if (PoincareJ::ComplexFormat(reductionContext.complexFormat()) ==
-            PoincareJ::ComplexFormat::Real) {
-          return SharedEditionPool->push(BlockType::Nonreal);
-        }
-        if (value.real() == 0.0) {
-          if (value.imag() == 1) {
-            return SharedEditionPool->push<BlockType::Constant>(u'i');
-          }
-          if (value.imag() == -1) {
-            Tree *result = SharedEditionPool->push(BlockType::Opposite);
-            SharedEditionPool->push<BlockType::Constant>(u'i');
-            return result;
-          }
-          Tree *result = SharedEditionPool->push<BlockType::Multiplication>(2);
-          SharedEditionPool->push<FloatType<T>::type>(value.imag());
-          SharedEditionPool->push<BlockType::Constant>(u'i');
-          return result;
-        }
-        Tree *result = SharedEditionPool->push<BlockType::Addition>(2);
-        SharedEditionPool->push<FloatType<T>::type>(value.real());
-        if (value.imag() < 0) {
-          SharedEditionPool->push(BlockType::Opposite);
-        }
-        if (value.imag() == 1 || value.imag() == -1) {
-          SharedEditionPool->push<BlockType::Constant>(u'i');
-          return result;
-        }
-        SharedEditionPool->push<BlockType::Multiplication>(2);
-        SharedEditionPool->push<FloatType<T>::type>(std::abs(value.imag()));
-        SharedEditionPool->push<BlockType::Constant>(u'i');
-        return result;
+        return Approximation::PushBeautifiedComplex(
+            value, PoincareJ::ComplexFormat(reductionContext.complexFormat()));
       },
       numberOfSignificantDigits);
 }

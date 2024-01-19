@@ -373,6 +373,47 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit) {
 }
 
 template <typename T>
+Tree* Approximation::PushBeautifiedComplex(std::complex<T> value,
+                                           ComplexFormat complexFormat) {
+  if (std::isnan(value.real()) || std::isnan(value.imag())) {
+    return SharedEditionPool->push(BlockType::Undefined);
+  }
+  if (value.imag() == 0.0) {
+    return SharedEditionPool->push<FloatType<T>::type>(value.real());
+  }
+  if (complexFormat == PoincareJ::ComplexFormat::Real) {
+    return SharedEditionPool->push(BlockType::Nonreal);
+  }
+  if (value.real() == 0.0) {
+    if (value.imag() == 1) {
+      return SharedEditionPool->push<BlockType::Constant>(u'i');
+    }
+    if (value.imag() == -1) {
+      Tree* result = SharedEditionPool->push(BlockType::Opposite);
+      SharedEditionPool->push<BlockType::Constant>(u'i');
+      return result;
+    }
+    Tree* result = SharedEditionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->push<FloatType<T>::type>(value.imag());
+    SharedEditionPool->push<BlockType::Constant>(u'i');
+    return result;
+  }
+  Tree* result = SharedEditionPool->push<BlockType::Addition>(2);
+  SharedEditionPool->push<FloatType<T>::type>(value.real());
+  if (value.imag() < 0) {
+    SharedEditionPool->push(BlockType::Opposite);
+  }
+  if (value.imag() == 1 || value.imag() == -1) {
+    SharedEditionPool->push<BlockType::Constant>(u'i');
+    return result;
+  }
+  SharedEditionPool->push<BlockType::Multiplication>(2);
+  SharedEditionPool->push<FloatType<T>::type>(std::abs(value.imag()));
+  SharedEditionPool->push<BlockType::Constant>(u'i');
+  return result;
+}
+
+template <typename T>
 Tree* Approximation::ToList(const Tree* node, Random::Context* context) {
   int length = Dimension::GetListLength(node);
   int old = s_listElement;
@@ -380,9 +421,8 @@ Tree* Approximation::ToList(const Tree* node, Random::Context* context) {
   for (int i = 0; i < length; i++) {
     s_listElement = i;
     std::complex<T> k = ToComplex<T>(node, context);
-    SharedEditionPool->push(BlockType::Complex);
-    SharedEditionPool->push<FloatType<T>::type>(k.real());
-    SharedEditionPool->push<FloatType<T>::type>(k.imag());
+    // TODO pass correct complex format
+    PushBeautifiedComplex(k, ComplexFormat::Cartesian);
   }
   s_listElement = old;
   return list;

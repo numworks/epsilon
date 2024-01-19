@@ -27,7 +27,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
       cursor->t(), cursor->x(), buffer, k_textBufferSize,
       numberOfSignificantDigits(cappedNumberOfSignificantDigits));
 
-  assert(numberOfChar < k_textBufferSize);
+  assert(numberOfChar < k_textBufferSize - 1);
   buffer[numberOfChar++] = 0;
   bannerView()->abscissaValue()->setEditing(false);
   bannerView()->abscissaValue()->setText(buffer);
@@ -40,7 +40,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
       cursor->t(), cursor->x(), cursor->y(), buffer + numberOfChar,
       k_textBufferSize - numberOfChar,
       numberOfSignificantDigits(cappedNumberOfSignificantDigits), context);
-  assert(numberOfChar < k_textBufferSize);
+  assert(numberOfChar < k_textBufferSize - 1);
   buffer[numberOfChar++] = 0;
   bannerView()->ordinateView()->setText(buffer);
 

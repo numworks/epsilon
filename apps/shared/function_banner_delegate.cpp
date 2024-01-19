@@ -23,10 +23,9 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
       buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
   bannerView()->abscissaSymbol()->setText(buffer);
 
-  numberOfChar = function->printValue(
-      cursor->t(), cursor->x(), cursor->y(), buffer, k_textBufferSize,
-      numberOfSignificantDigits(cappedNumberOfSignificantDigits), context,
-      true);
+  numberOfChar = function->printAbscissaValue(
+      cursor->t(), cursor->x(), buffer, k_textBufferSize,
+      numberOfSignificantDigits(cappedNumberOfSignificantDigits));
 
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = 0;
@@ -37,11 +36,10 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
   assert(numberOfChar <= k_textBufferSize);
   numberOfChar += SerializationHelper::CodePoint(
       buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
-  numberOfChar += function->printValue(
+  numberOfChar += function->printFunctionValue(
       cursor->t(), cursor->x(), cursor->y(), buffer + numberOfChar,
       k_textBufferSize - numberOfChar,
-      numberOfSignificantDigits(cappedNumberOfSignificantDigits), context,
-      false);
+      numberOfSignificantDigits(cappedNumberOfSignificantDigits), context);
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = 0;
   bannerView()->ordinateView()->setText(buffer);

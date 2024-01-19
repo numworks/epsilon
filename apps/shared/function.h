@@ -53,11 +53,14 @@ class Function : public ExpressionModelHandle {
   size_t name(char* buffer, size_t bufferSize) const;
   size_t withArgument(char* buffer, size_t bufferSize) const;
   virtual size_t nameWithArgument(char* buffer, size_t bufferSize);
-  // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
-  virtual size_t printValue(double cursorT, double cursorX, double cursorY,
-                            char* buffer, size_t bufferSize, int precision,
-                            Poincare::Context* context,
-                            bool symbolValue = false);
+  virtual size_t printAbscissaValue(double cursorT, double cursorX,
+                                    char* buffer, size_t bufferSize,
+                                    int precision);
+  // Insert the value of the evaluation in buffer
+  virtual size_t printFunctionValue(double cursorT, double cursorX,
+                                    double cursorY, char* buffer,
+                                    size_t bufferSize, int precision,
+                                    Poincare::Context* context);
   virtual I18n::Message parameterMessageName() const = 0;
 
   // Evaluation

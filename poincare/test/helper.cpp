@@ -270,7 +270,7 @@ void assert_expression_approximates_to(const char *expression,
           e->removeTree();
           return r;
         }
-        std::complex<T> value = PoincareJ::Approximation::ComplexRootTreeTo<T>(
+        std::complex<T> value = PoincareJ::Approximation::RootTreeToComplex<T>(
             e, PoincareJ::AngleUnit(reductionContext.angleUnit()));
         e->removeTree();
         if (std::isnan(value.real()) || std::isnan(value.imag())) {

@@ -27,7 +27,7 @@ AngleUnit Approximation::angleUnit;
 Approximation::VariableType Approximation::s_variables[k_maxNumberOfVariables];
 
 template <typename T>
-std::complex<T> Approximation::ComplexRootTreeTo(const Tree* node,
+std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
                                                  AngleUnit angleUnit) {
   Random::Context context;
   Approximation::angleUnit = angleUnit;
@@ -35,7 +35,7 @@ std::complex<T> Approximation::ComplexRootTreeTo(const Tree* node,
   Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
   Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
-  std::complex<T> result = ComplexTo<T>(clone, &context);
+  std::complex<T> result = ToComplex<T>(clone, &context);
   clone->removeTree();
   variables->removeTree();
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
@@ -45,7 +45,7 @@ std::complex<T> Approximation::ComplexRootTreeTo(const Tree* node,
 }
 
 template <typename T>
-std::complex<T> Approximation::ComplexTo(const Tree* node,
+std::complex<T> Approximation::ToComplex(const Tree* node,
                                          Random::Context* context) {
   assert(node->isExpression());
   if (node->isRational()) {
@@ -97,16 +97,16 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       return MapAndReduce<T, T>(node, FloatLCM<T>, context,
                                 PositiveIntegerApproximation<T>);
     case BlockType::SquareRoot:
-      return std::sqrt(ComplexTo<T>(node->nextNode(), context));
+      return std::sqrt(ToComplex<T>(node->nextNode(), context));
     case BlockType::NthRoot:
       return std::pow(
-          ComplexTo<T>(node->nextNode(), context),
-          static_cast<T>(1) / ComplexTo<T>(node->child(1), context));
+          ToComplex<T>(node->nextNode(), context),
+          static_cast<T>(1) / ToComplex<T>(node->child(1), context));
     case BlockType::Exponential:
-      return std::exp(ComplexTo<T>(node->nextNode(), context));
+      return std::exp(ToComplex<T>(node->nextNode(), context));
     case BlockType::Log:
     case BlockType::Ln: {
-      std::complex<T> c = ComplexTo<T>(node->nextNode(), context);
+      std::complex<T> c = ToComplex<T>(node->nextNode(), context);
       /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut.
        * We followed the convention chosen by the lib c++ of llvm on ]-inf+0i,
        * 0+0i] (warning: log takes the other side of the cut values on ]-inf-0i,
@@ -118,15 +118,15 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
                                      : std::log(c);
     }
     case BlockType::Abs:
-      return std::abs(ComplexTo<T>(node->nextNode(), context));
+      return std::abs(ToComplex<T>(node->nextNode(), context));
     case BlockType::Infinity:
       return INFINITY;
     case BlockType::Opposite:
-      return -ComplexTo<T>(node->nextNode(), context);
+      return -ToComplex<T>(node->nextNode(), context);
     case BlockType::RealPart:
-      return ComplexTo<T>(node->nextNode(), context).real();
+      return ToComplex<T>(node->nextNode(), context).real();
     case BlockType::ImaginaryPart:
-      return ComplexTo<T>(node->nextNode(), context).imag();
+      return ToComplex<T>(node->nextNode(), context).imag();
     case BlockType::Cosine:
     case BlockType::Sine:
     case BlockType::Tangent:
@@ -139,27 +139,27 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::ArcSecant:
     case BlockType::ArcCosecant:
     case BlockType::ArcCotangent:
-      return TrigonometricTo(node->type(),
-                             ComplexTo<T>(node->nextNode(), context));
+      return TrigonometricToComplex(node->type(),
+                                    ToComplex<T>(node->nextNode(), context));
     case BlockType::HyperbolicSine:
     case BlockType::HyperbolicCosine:
     case BlockType::HyperbolicTangent:
     case BlockType::HyperbolicArcSine:
     case BlockType::HyperbolicArcCosine:
     case BlockType::HyperbolicArcTangent:
-      return HyperbolicTo(node->type(),
-                          ComplexTo<T>(node->nextNode(), context));
+      return HyperbolicToComplex(node->type(),
+                                 ToComplex<T>(node->nextNode(), context));
     case BlockType::Variable:
       return s_variables[Variables::Id(node)];
     case BlockType::Sum:
     case BlockType::Product: {
       const Tree* lowerBoundChild = node->child(Parametric::k_lowerBoundIndex);
-      std::complex<T> low = ComplexTo<T>(lowerBoundChild, context);
+      std::complex<T> low = ToComplex<T>(lowerBoundChild, context);
       if (low.imag() != 0 || (int)low.real() != low.real()) {
         return NAN;
       }
       const Tree* upperBoundChild = lowerBoundChild->nextTree();
-      std::complex<T> up = ComplexTo<T>(upperBoundChild, context);
+      std::complex<T> up = ToComplex<T>(upperBoundChild, context);
       if (up.imag() != 0 || (int)up.real() != up.real()) {
         return NAN;
       }
@@ -170,7 +170,7 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       std::complex<T> result = node->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
         s_variables[0] = k;
-        std::complex<T> value = ComplexTo<T>(child, context);
+        std::complex<T> value = ToComplex<T>(child, context);
         if (node->isSum()) {
           result += value;
         } else {
@@ -205,7 +205,7 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
          * */
         return NAN;
       }
-      std::complex<T> at = ComplexTo<T>(node->child(1), context);
+      std::complex<T> at = ToComplex<T>(node->child(1), context);
       if (std::isnan(at.real()) || at.imag() != 0) {
         return NAN;
       }
@@ -225,7 +225,7 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
   }
   T child[2];
   for (int i = 0; const Tree* childNode : node->children()) {
-    std::complex<T> app = ComplexTo<T>(childNode, context);
+    std::complex<T> app = ToComplex<T>(childNode, context);
     if (app.imag() != 0) {
       return NAN;
     }
@@ -354,8 +354,8 @@ T Approximation::ConvertToRadian(T angle) {
 }
 
 template <typename T>
-std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
-                                               std::complex<T> value) {
+std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
+                                                      std::complex<T> value) {
   switch (type) {
     case BlockType::Cosine:
     case BlockType::Sine: {
@@ -385,10 +385,11 @@ std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
     case BlockType::Secant:
     case BlockType::Cosecant:
     case BlockType::Cotangent: {
-      std::complex<T> denominator = TrigonometricTo(
+      std::complex<T> denominator = TrigonometricToComplex(
           type.isSecant() ? BlockType::Cosine : BlockType::Sine, value);
       std::complex<T> numerator =
-          type.isCotangent() ? TrigonometricTo(BlockType::Cosine, value) : 1;
+          type.isCotangent() ? TrigonometricToComplex(BlockType::Cosine, value)
+                             : 1;
       if (denominator == static_cast<T>(0.0)) {
         return NAN;
       }
@@ -464,22 +465,23 @@ std::complex<T> Approximation::TrigonometricTo(TypeBlock type,
       if (value == static_cast<T>(0)) {
         return NAN;
       }
-      return TrigonometricTo(
+      return TrigonometricToComplex(
           type.isArcSecant() ? BlockType::ArcCosine : BlockType::ArcSine,
           static_cast<T>(1) / value);
     case BlockType::ArcCotangent:
       if (value == static_cast<T>(0)) {
         return ConvertFromRadian(M_PI_2);
       }
-      return TrigonometricTo(BlockType::ArcTangent, static_cast<T>(1) / value);
+      return TrigonometricToComplex(BlockType::ArcTangent,
+                                    static_cast<T>(1) / value);
     default:
       assert(false);
   }
 }
 
 template <typename T>
-std::complex<T> Approximation::HyperbolicTo(TypeBlock type,
-                                            std::complex<T> value) {
+std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
+                                                   std::complex<T> value) {
   switch (type) {
     case BlockType::HyperbolicCosine:
     case BlockType::HyperbolicSine:
@@ -559,7 +561,7 @@ U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
                               Mapper<std::complex<T>, U> mapper) {
   U res;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-    std::complex<T> app = ComplexTo<T>(child, context);
+    std::complex<T> app = ToComplex<T>(child, context);
     if (std::isnan(app.real()) || std::isnan(app.imag())) {
       return NAN;
     }
@@ -628,14 +630,14 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
   return true;
 }
 
-template std::complex<float> Approximation::ComplexRootTreeTo<float>(
+template std::complex<float> Approximation::RootTreeToComplex<float>(
     const Tree*, AngleUnit);
-template std::complex<double> Approximation::ComplexRootTreeTo<double>(
+template std::complex<double> Approximation::RootTreeToComplex<double>(
     const Tree*, AngleUnit);
 
-template std::complex<float> Approximation::ComplexTo<float>(const Tree*,
+template std::complex<float> Approximation::ToComplex<float>(const Tree*,
                                                              Random::Context*);
-template std::complex<double> Approximation::ComplexTo<double>(
+template std::complex<double> Approximation::ToComplex<double>(
     const Tree*, Random::Context*);
 
 template Tree* Approximation::ToList<float>(const Tree*, AngleUnit);

@@ -38,37 +38,39 @@ class Approximation final {
  public:
   // Approximate an entire tree, isolated from any outer context.
   template <typename T>
-  static std::complex<T> ComplexRootTreeTo(
+  static std::complex<T> RootTreeToComplex(
       const Tree* node, AngleUnit angleUnit = AngleUnit::Radian);
 
   // Approximate an entire tree, isolated from any outer context.
   template <typename T>
   static T RootTreeTo(const Tree* node,
                       AngleUnit angleUnit = AngleUnit::Radian) {
-    std::complex<T> value = ComplexRootTreeTo<T>(node);
+    std::complex<T> value = RootTreeToComplex<T>(node);
     return value.imag() == 0 ? value.real() : NAN;
   }
 
   // Approximate any tree. With a nullptr context, seeded random will be undef.
   template <typename T>
-  static std::complex<T> ComplexTo(const Tree* node, Random::Context* context);
+  static std::complex<T> ToComplex(const Tree* node, Random::Context* context);
 
   template <typename T>
-  static std::complex<T> TrigonometricTo(TypeBlock type, std::complex<T> value);
+  static std::complex<T> TrigonometricToComplex(TypeBlock type,
+                                                std::complex<T> value);
 
   template <typename T>
-  static std::complex<T> HyperbolicTo(TypeBlock type, std::complex<T> value);
+  static std::complex<T> HyperbolicToComplex(TypeBlock type,
+                                             std::complex<T> value);
 
   template <typename T>
   static T To(const Tree* node, Random::Context* context) {
-    std::complex<T> value = ComplexTo<T>(node, context);
+    std::complex<T> value = ToComplex<T>(node, context);
     return value.imag() == 0 ? value.real() : NAN;
   }
 
   template <typename T>
   static T To(const Tree* node, Random::Context* context, T at) {
     setXValue(at);
-    std::complex<T> value = ComplexTo<T>(node, context);
+    std::complex<T> value = ToComplex<T>(node, context);
     return value.imag() == 0 ? value.real() : NAN;
   }
 

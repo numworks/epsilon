@@ -29,7 +29,7 @@ EditableFunctionCell::EditableFunctionCell(
 
 View* EditableFunctionCell::subviewAtIndex(int index) {
   assert(index < numberOfSubviews());
-  if (index == numberOfSubviews() - 1) {
+  if (index == AbstractFunctionCell::numberOfSubviews()) {
     return &m_buttonCell;
   }
   return AbstractFunctionCell::subviewAtIndex(index);

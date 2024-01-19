@@ -36,18 +36,23 @@ class EditableFunctionCell
   }
 
   void updateButton() {
-    if (!isEmpty() || isEditing()) {
+    bool empty = isEmpty();
+    bool wasEmpty = m_buttonCell.isVisible();
+
+    if (wasEmpty && !empty) {
       m_buttonCell.setHighlighted(false);
     }
-    layoutSubviews();
-    markRectAsDirty(m_buttonCell.bounds());
-    markRectAsDirty(expressionCell()->layoutField()->bounds());
+    if (wasEmpty != empty) {
+      m_buttonCell.setVisible(empty);
+    }
   }
 
   Escher::ButtonCell* buttonCell() { return &m_buttonCell; }
 
  private:
-  int numberOfSubviews() const override { return 3; }
+  int numberOfSubviews() const override {
+    return AbstractFunctionCell::numberOfSubviews() + m_buttonCell.isVisible();
+  }
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
 

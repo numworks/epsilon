@@ -159,6 +159,7 @@ CodePoint ListController::defaultXNT() {
 void ListController::editExpression(Ion::Events::Event event) {
   ExpressionModelListController::editExpression(event);
   m_editableCell.setHighlighted(true);
+  m_editableCell.updateButton();
 }
 
 bool ListController::editSelectedRecordWithText(const char *text) {

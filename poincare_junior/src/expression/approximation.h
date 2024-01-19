@@ -66,6 +66,13 @@ class Approximation final {
   }
 
   template <typename T>
+  static T To(const Tree* node, Random::Context* context, T at) {
+    setXValue(at);
+    std::complex<T> value = ComplexTo<T>(node, context);
+    return value.imag() == 0 ? value.real() : NAN;
+  }
+
+  template <typename T>
   static Tree* ToList(const Tree* node, AngleUnit angleUnit);
 
   template <typename T>
@@ -226,6 +233,8 @@ class Approximation final {
             (k_maxNumberOfVariables - 1) * sizeof(VariableType));
   }
 
+  template <typename T>
+  static T approximateIntegral(const Tree* integral);
   template <typename T>
   static T approximateDerivative(const Tree* function, T at, int order);
 };

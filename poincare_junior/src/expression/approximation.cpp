@@ -214,6 +214,8 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
       UnshiftVariables();
       return result;
     }
+    case BlockType::Integral:
+      return approximateIntegral<T>(node);
     default:;
   }
   // The remaining operators are defined only on reals

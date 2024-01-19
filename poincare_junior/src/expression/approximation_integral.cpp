@@ -1,77 +1,78 @@
+#include <poincare/float.h>
+
 #include "approximation.h"
+#include "parametric.h"
+#include "simplification.h"
+#include "variables.h"
 
 namespace PoincareJ {
 
-Evaluation<T> templatedApproximate(
-    const ApproximationContext& approximationContext) const;
 template <typename T>
 struct DetailedResult {
   T integral;
   T absoluteError;
 };
+
 template <typename T>
 static bool DetailedResultIsValid(DetailedResult<T> result);
+
 constexpr static int k_maxNumberOfIterations = 20;
 
 template <typename T>
-class Substitution {
- public:
+struct Substitution {
   enum class Type { None, LeftOpen, RightOpen, RealLine };
   Type type;
   T originA;
   T originB;
 };
-class AlternativeIntegrand {
- public:
+
+struct AlternativeIntegrand {
   double a;
   double b;
-  Expression integrandNearA;
-  Expression integrandNearB;
+  Tree* integrandNearA = nullptr;
+  Tree* integrandNearB = nullptr;
 };
 
-Expression rewriteIntegrandNear(Expression bound,
-                                const ReductionContext& reductionContext) const;
-template <typename T>
-T integrand(T x, Substitution<T> substitution,
-            const ApproximationContext& approximationContext) const;
-template <typename T>
-T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand,
-                     const ApproximationContext& approximationContext) const;
-template <typename T>
-DetailedResult<T> tanhSinhQuadrature(
-    int level, AlternativeIntegrand alternativeIntegrand,
-    const ApproximationContext& approximationContext) const;
-template <typename T>
-DetailedResult<T> kronrodGaussQuadrature(
-    T a, T b, Substitution<T> substitution,
-    const ApproximationContext& approximationContext) const;
-template <typename T>
-DetailedResult<T> adaptiveQuadrature(
-    T a, T b, T eps, int numberOfIterations, Substitution<T> substitution,
-    const ApproximationContext& approximationContext) const;
-template <typename T>
-DetailedResult<T> iterateAdaptiveQuadrature(
-    DetailedResult<T> quadKG, T a, T b, T eps, int numberOfIterations,
-    Substitution<T> substitution,
-    const ApproximationContext& approximationContext) const;
+Tree* rewriteIntegrandNear(const Tree* integrand, const Tree* bound);
 
-Evaluation<T> IntegralNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
+template <typename T>
+T integrand(T x, Substitution<T> substitution);
+
+template <typename T>
+T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand);
+
+template <typename T>
+DetailedResult<T> tanhSinhQuadrature(int level,
+                                     AlternativeIntegrand alternativeIntegrand);
+template <typename T>
+DetailedResult<T> kronrodGaussQuadrature(T a, T b,
+                                         Substitution<T> substitution);
+template <typename T>
+DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations,
+                                     Substitution<T> substitution);
+template <typename T>
+DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
+                                            T eps, int numberOfIterations,
+                                            Substitution<T> substitution);
+
+const Tree* integrandExpression;
+
+template <typename T>
+T Approximation::approximateIntegral(const Tree* integral) {
   /* TODO : Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
-  Evaluation<T> aInput =
-      childAtIndex(2)->approximate(T(), approximationContext);
-  Evaluation<T> bInput =
-      childAtIndex(3)->approximate(T(), approximationContext);
-  T a = aInput.toScalar();
-  T b = bInput.toScalar();
+  const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
+  const Tree* upperBound = lowerBound->nextTree();
+  const Tree* integrand = upperBound->nextTree();
+  integrandExpression = integrand;
+  T a = To<T>(lowerBound, nullptr);
+  T b = To<T>(upperBound, nullptr);
   if (std::isnan(a) || std::isnan(b)) {
-    return Complex<T>::RealUndefined();
+    return NAN;
   }
-  bool fIsNanInA =
-      std::isnan(firstChildScalarValueForArgument(a, approximationContext));
-  bool fIsNanInB =
-      std::isnan(firstChildScalarValueForArgument(b, approximationContext));
+  ShiftVariables();
+  bool fIsNanInA = std::isnan(To(integrand, nullptr, a));
+  bool fIsNanInB = std::isnan(To(integrand, nullptr, b));
   /* The integrand has a singularity on a bound of the interval, use tanh-sinh
    * quadrature */
   if (fIsNanInA || fIsNanInB) {
@@ -81,37 +82,44 @@ Evaluation<T> IntegralNode::templatedApproximate(
      * the integrand can be evaluated is 1-1e-15. However by using reduction to
      * simplify the expression near one 1/sqrt(1-(1-dx)) = 1/sqrt(dx) we can
      * evaluate the integrand really close to 1 (about 1-1e-300). */
-    AlternativeIntegrand alternativeIntegrand;
-    alternativeIntegrand.a = a;
-    alternativeIntegrand.b = b;
+    AlternativeIntegrand alternativeIntegrand = {.a = a, .b = b};
+#if 0
     /* We need SystemForAnalysis to remove the constant part by expanding
      * polynomials introduced by the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */
     const ReductionContext reductionContext(
         approximationContext.context(), approximationContext.complexFormat(),
         approximationContext.angleUnit(), Preferences::UnitFormat::Metric,
         ReductionTarget::SystemForAnalysis);
+#endif
     /* Rewrite the integrand to be able to compute it directly at abscissa a + x
      */
     if (fIsNanInA && a != 0) {
       alternativeIntegrand.integrandNearA =
-          rewriteIntegrandNear(childAtIndex(2), reductionContext);
+          rewriteIntegrandNear(integrand, lowerBound);
     }
     // Same near b - x
     if (fIsNanInB && b != 0) {
       alternativeIntegrand.integrandNearB =
-          rewriteIntegrandNear(childAtIndex(3), reductionContext);
+          rewriteIntegrandNear(integrand, upperBound);
     }
     /* We are using 4 levels of refinement which means ≈ 64 integrand
      * evaluations = 2 (R- and R+) * 2^4 (ticks/unit) * 4 (typical decay on the
      * examples) It could be increased but precision is likely lost somewhere
      * else in hard examples. */
     DetailedResult<T> detailedResult =
-        tanhSinhQuadrature<T>(4, alternativeIntegrand, approximationContext);
+        tanhSinhQuadrature<T>(4, alternativeIntegrand);
+    // Clear alternativeIntegrands
+    if (alternativeIntegrand.integrandNearB) {
+      alternativeIntegrand.integrandNearB->removeTree();
+    }
+    if (alternativeIntegrand.integrandNearA) {
+      alternativeIntegrand.integrandNearA->removeTree();
+    }
     // Arbitrary value to have the best choice of quadrature on the examples
     constexpr T insufficientPrecision = 0.001;
     if (!std::isnan(detailedResult.integral) &&
         detailedResult.absoluteError < insufficientPrecision) {
-      return Complex<T>::Builder(detailedResult.integral);
+      return detailedResult.integral;
     }
   }
   /* Choose the right substitution to use in Gauss-Konrod.
@@ -156,41 +164,34 @@ Evaluation<T> IntegralNode::templatedApproximate(
   }
   /* The tolerance sqrt(eps) estimated by the method is an upper bound and the
    * real is error is typically eps */
-  constexpr T precision = Float<T>::SqrtEpsilonLax();
-  DetailedResult<T> detailedResult =
-      adaptiveQuadrature<T>(start, end, precision, k_maxNumberOfIterations,
-                            substitution, approximationContext);
-  T result = DetailedResultIsValid(detailedResult)
-                 ? scale * detailedResult.integral
-                 : NAN;
-  return Complex<T>::Builder(result);
+  constexpr T precision = Poincare::Float<T>::SqrtEpsilonLax();
+  DetailedResult<T> detailedResult = adaptiveQuadrature<T>(
+      start, end, precision, k_maxNumberOfIterations, substitution);
+  return DetailedResultIsValid(detailedResult) ? scale * detailedResult.integral
+                                               : NAN;
 }
 
 template <typename T>
-bool IntegralNode::DetailedResultIsValid(DetailedResult<T> result) {
+bool DetailedResultIsValid(DetailedResult<T> result) {
   constexpr T maximumErrorForDisplay = 0.1;
   return !std::isnan(result.integral) &&
          result.absoluteError < maximumErrorForDisplay;
 }
 
 template <typename T>
-T IntegralNode::integrand(
-    T x, Substitution<T> substitution,
-    const ApproximationContext& approximationContext) const {
+T integrand(T x, Substitution<T> substitution) {
   switch (substitution.type) {
     case Substitution<T>::Type::None:
-      return firstChildScalarValueForArgument(x, approximationContext);
+      return Approximation::To(integrandExpression, nullptr, x);
     case Substitution<T>::Type::LeftOpen: {
       T z = 1.0 / (x + 1.0);
       T arg = substitution.originB - (2.0 * z - 1.0);
-      return firstChildScalarValueForArgument(arg, approximationContext) * z *
-             z;
+      return Approximation::To(integrandExpression, nullptr, arg) * z * z;
     }
     case Substitution<T>::Type::RightOpen: {
       T z = 1.0 / (x + 1);
       T arg = 2.0 * z + substitution.originA - 1.0;
-      return firstChildScalarValueForArgument(arg, approximationContext) * z *
-             z;
+      return Approximation::To(integrandExpression, nullptr, arg) * z * z;
     }
     default: {
       assert(substitution.type == Substitution<T>::Type::RealLine);
@@ -198,58 +199,55 @@ T IntegralNode::integrand(
       T inv = 1.0 / (1.0 - x2);
       T w = (1.0 + x2) * inv * inv;
       T arg = x * inv;
-      return firstChildScalarValueForArgument(arg, approximationContext) * w;
+      return Approximation::To(integrandExpression, nullptr, arg) * w;
     }
   }
 }
 
-Expression IntegralNode::rewriteIntegrandNear(
-    Expression bound, const ReductionContext& reductionContext) const {
-  Expression integrand = Expression(childAtIndex(0)).clone();
-  Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
-  integrand.replaceSymbolWithExpression(
-      symbol, Addition::Builder(bound.clone(), symbol));
-  return integrand.deepReduce(reductionContext);
+Tree* rewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
+  Tree* value = SharedEditionPool->push<BlockType::Addition>(2);
+  bound->clone();
+  KVarX->clone();
+  Tree* tree = integrand->clone();
+  /* TODO :
+   * - The tree needs to be projected which is not the case currently
+   * - Replace does a systematic simplification already, do we need something
+   * more powerful ? */
+  Variables::Replace(tree, 0, value);
+  value->removeTree();
+  return value;
 }
 
 template <typename T>
-T IntegralNode::integrandNearBound(
-    T x, T xc, AlternativeIntegrand alternativeIntegrand,
-    const ApproximationContext& approximationContext) const {
+T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand) {
   T scale = (alternativeIntegrand.b - alternativeIntegrand.a) / 2.0;
   T arg = xc * scale;
   if (x < 0) {
-    if (!alternativeIntegrand.integrandNearA.isUninitialized()) {
-      return approximateExpressionWithArgument(
-                 alternativeIntegrand.integrandNearA.node(), arg,
-                 approximationContext)
-                 .toScalar() *
+    if (alternativeIntegrand.integrandNearA) {
+      return Approximation::To(alternativeIntegrand.integrandNearA, nullptr,
+                               arg) *
              scale;
     }
     arg = arg + alternativeIntegrand.a;
   } else {
-    if (!alternativeIntegrand.integrandNearB.isUninitialized()) {
-      return approximateExpressionWithArgument(
-                 alternativeIntegrand.integrandNearB.node(), -arg,
-                 approximationContext)
-                 .toScalar() *
+    if (alternativeIntegrand.integrandNearB) {
+      return Approximation::To(alternativeIntegrand.integrandNearB, nullptr,
+                               -arg) *
              scale;
     }
     arg = alternativeIntegrand.b - arg;
   }
-  return firstChildScalarValueForArgument(arg, approximationContext) * scale;
+  return Approximation::To(integrandExpression, nullptr, arg) * scale;
 }
 
 /* Tanh-Sinh quadrature
  * cf https://www.davidhbailey.com/dhbpapers/dhb-tanh-sinh.pdf */
 template <typename T>
-IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(
-    int level, AlternativeIntegrand alternativeIntegrand,
-    const ApproximationContext& approximationContext) const {
+DetailedResult<T> tanhSinhQuadrature(
+    int level, AlternativeIntegrand alternativeIntegrand) {
   T h = 2.0;
   // j=0
-  T result = M_PI_2 * integrandNearBound(0.0, 1.0, alternativeIntegrand,
-                                         approximationContext);
+  T result = M_PI_2 * integrandNearBound(0.0, 1.0, alternativeIntegrand);
   int j = 1;
   T sn2 = 0, sn1 = 0;
   T maxWjFj = 0;
@@ -267,9 +265,8 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(
       T abscissa = std::tanh(sinh);
       T distanceToBound = 1.0 / (std::exp(sinh) * std::cosh(sinh));
       if (leftOk) {
-        T leftValue =
-            integrandNearBound(-abscissa, distanceToBound, alternativeIntegrand,
-                               approximationContext);
+        T leftValue = integrandNearBound(-abscissa, distanceToBound,
+                                         alternativeIntegrand);
         if (std::isnan(leftValue)) {
           leftOk = false;
         } else {
@@ -280,20 +277,19 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(
          * abs(y * weights) > abs(L1_I0 * tail_tolerance)
          * but L1_IO is abs(pi/2 * f(0)) before the first row and
          * tail_tolerance = tolerance^2 */
-        if (std::abs(weight * leftValue) < Float<T>::EpsilonLax())
+        if (std::abs(weight * leftValue) < Poincare::Float<T>::EpsilonLax())
           leftOk = false;
       }
       if (rightOk) {
         T rightValue =
-            integrandNearBound(abscissa, distanceToBound, alternativeIntegrand,
-                               approximationContext);
+            integrandNearBound(abscissa, distanceToBound, alternativeIntegrand);
         if (std::isnan(rightValue)) {
           rightOk = false;
         } else {
           maxWjFj = std::max(maxWjFj, std::abs(weight * rightValue));
           result += weight * rightValue;
         }
-        if (std::abs(weight * rightValue) < Float<T>::EpsilonLax())
+        if (std::abs(weight * rightValue) < Poincare::Float<T>::EpsilonLax())
           rightOk = false;
       }
       // computing only odd ticks after the first level
@@ -324,10 +320,9 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(
 }
 
 template <typename T>
-IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(
-    T a, T b, Substitution<T> substitution,
-    const ApproximationContext& approximationContext) const {
-  constexpr T epsilon = Float<T>::Epsilon();
+DetailedResult<T> kronrodGaussQuadrature(T a, T b,
+                                         Substitution<T> substitution) {
+  constexpr T epsilon = Poincare::Float<T>::Epsilon();
   constexpr T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
    * The abscissa and weights are taken from QUADPACK library. */
@@ -368,7 +363,7 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(
   errorResult.absoluteError = 0;
 
   T gaussIntegral = 0;
-  T fCenter = integrand(center, substitution, approximationContext);
+  T fCenter = integrand(center, substitution);
   if (std::isnan(fCenter)) {
     return errorResult;
   }
@@ -376,11 +371,11 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(
   T absKronrodIntegral = std::fabs(kronrodIntegral);
   for (int j = 0; j < 10; j++) {
     T xDelta = halfLength * x[j];
-    T fval1 = integrand(center - xDelta, substitution, approximationContext);
+    T fval1 = integrand(center - xDelta, substitution);
     if (std::isnan(fval1)) {
       return errorResult;
     }
-    T fval2 = integrand(center + xDelta, substitution, approximationContext);
+    T fval2 = integrand(center + xDelta, substitution);
     if (std::isnan(fval2)) {
       return errorResult;
     }
@@ -425,29 +420,24 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(
 }
 
 template <typename T>
-IntegralNode::DetailedResult<T> IntegralNode::adaptiveQuadrature(
-    T a, T b, T eps, int numberOfIterations, Substitution<T> substitution,
-    const ApproximationContext& approximationContext) const {
-  DetailedResult<T> quadKG =
-      kronrodGaussQuadrature(a, b, substitution, approximationContext);
+DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations,
+                                     Substitution<T> substitution) {
+  DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, substitution);
   return iterateAdaptiveQuadrature(quadKG, a, b, eps, numberOfIterations,
-                                   substitution, approximationContext);
+                                   substitution);
 }
 
 template <typename T>
-IntegralNode::DetailedResult<T> IntegralNode::iterateAdaptiveQuadrature(
-    DetailedResult<T> quadKG, T a, T b, T eps, int numberOfIterations,
-    Substitution<T> substitution,
-    const ApproximationContext& approximationContext) const {
+DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
+                                            T eps, int numberOfIterations,
+                                            Substitution<T> substitution) {
   if (quadKG.absoluteError <= eps || numberOfIterations == 1) {
     return quadKG;
   }
 
   T m = (a + b) / 2;
-  DetailedResult<T> left =
-      kronrodGaussQuadrature(a, m, substitution, approximationContext);
-  DetailedResult<T> right =
-      kronrodGaussQuadrature(m, b, substitution, approximationContext);
+  DetailedResult<T> left = kronrodGaussQuadrature(a, m, substitution);
+  DetailedResult<T> right = kronrodGaussQuadrature(m, b, substitution);
 
   /* Start by the side with the biggest error to reach maximumError faster if
    * it can be reached. */
@@ -457,9 +447,9 @@ IntegralNode::DetailedResult<T> IntegralNode::iterateAdaptiveQuadrature(
     DetailedResult<T>* current = currentIsLeft ? &left : &right;
     T lowerBound = currentIsLeft ? a : m;
     T upperBound = currentIsLeft ? m : b;
-    *current = iterateAdaptiveQuadrature(*current, lowerBound, upperBound,
-                                         eps / 2, numberOfIterations - 1,
-                                         substitution, approximationContext);
+    *current =
+        iterateAdaptiveQuadrature(*current, lowerBound, upperBound, eps / 2,
+                                  numberOfIterations - 1, substitution);
     if (!DetailedResultIsValid(*current)) {
       return {NAN, NAN};
     }
@@ -469,5 +459,8 @@ IntegralNode::DetailedResult<T> IntegralNode::iterateAdaptiveQuadrature(
       .absoluteError = left.absoluteError + right.absoluteError};
   return result;
 }
+
+template float Approximation::approximateIntegral(const Tree* integral);
+template double Approximation::approximateIntegral(const Tree* integral);
 
 }  // namespace PoincareJ

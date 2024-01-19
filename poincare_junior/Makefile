@@ -16,6 +16,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/arithmetic.cpp \
   expression/approximation.cpp \
   expression/approximation_derivative.cpp \
+  expression/approximation_integral.cpp \
   expression/beautification.cpp \
   expression/builtin.cpp \
   expression/comparison.cpp \

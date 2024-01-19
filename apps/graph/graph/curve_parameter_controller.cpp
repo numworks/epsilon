@@ -212,7 +212,7 @@ void CurveParameterController::viewWillAppear() {
 }
 
 bool CurveParameterController::shouldDisplayCalculation() const {
-  return function()->canDisplayDerivative();
+  return function()->canCalculateOnCurve();
 }
 
 bool CurveParameterController::shouldDisplayDerivative() const {

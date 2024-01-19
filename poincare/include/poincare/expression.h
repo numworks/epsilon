@@ -498,6 +498,10 @@ class Expression : public TreeHandle {
   template <typename U>
   U approximateToScalar(const ApproximationContext& approximationContext) const;
   template <typename U>
+  Evaluation<U> approximateWithValueForSymbol(
+      const char* symbol, U x,
+      const ApproximationContext& approximationContext) const;
+  template <typename U>
   U approximateToScalarWithValueForSymbol(
       const char* symbol, U x,
       const ApproximationContext& approximationContext) const;

@@ -1614,7 +1614,7 @@ U Expression::ParseAndSimplifyAndApproximateToScalar(
 }
 
 template <typename U>
-U Expression::approximateToScalarWithValueForSymbol(
+Evaluation<U> Expression::approximateWithValueForSymbol(
     const char *symbol, U x,
     const ApproximationContext &approximationContext) const {
   VariableContext variableContext =
@@ -1622,7 +1622,15 @@ U Expression::approximateToScalarWithValueForSymbol(
   variableContext.setApproximationForVariable<U>(x);
   ApproximationContext newContext = approximationContext;
   newContext.setContext(&variableContext);
-  return approximateToScalar<U>(newContext);
+  return approximateToEvaluation<U>(newContext);
+}
+
+template <typename U>
+U Expression::approximateToScalarWithValueForSymbol(
+    const char *symbol, U x,
+    const ApproximationContext &approximationContext) const {
+  return approximateWithValueForSymbol<U>(symbol, x, approximationContext)
+      .toScalar();
 }
 
 Expression Expression::cloneAndApproximateKeepingSymbols(
@@ -1975,6 +1983,13 @@ template double Expression::ParseAndSimplifyAndApproximateToScalar<double>(
 template Evaluation<float> Expression::approximateToEvaluation(
     const ApproximationContext &approximationContext) const;
 template Evaluation<double> Expression::approximateToEvaluation(
+    const ApproximationContext &approximationContext) const;
+
+template Evaluation<float> Expression::approximateWithValueForSymbol(
+    const char *symbol, float x,
+    const ApproximationContext &approximationContext) const;
+template Evaluation<double> Expression::approximateWithValueForSymbol(
+    const char *symbol, double x,
     const ApproximationContext &approximationContext) const;
 
 template float Expression::approximateToScalarWithValueForSymbol(

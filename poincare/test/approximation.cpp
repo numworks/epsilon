@@ -2175,8 +2175,8 @@ void assert_expression_approximates_with_value_for_symbol(
   Expression e = parse_expression(expression, &globalContext, false);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
-  T result = e.approximateWithValueForSymbol<T>(symbol, symbolValue,
-                                                approximationContext);
+  T result = e.approximateToScalarWithValueForSymbol<T>(symbol, symbolValue,
+                                                        approximationContext);
   quiz_assert_print_if_failure(
       roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(),
                     true),

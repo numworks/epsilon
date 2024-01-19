@@ -636,24 +636,25 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(
   if (isOfType({ExpressionNode::Type::Ceiling, ExpressionNode::Type::Floor,
                 ExpressionNode::Type::Round})) {
     // is discontinuous if it changes value
-    isDiscontinuous =
-        approximateWithValueForSymbol<float>(symbol, x1,
-                                             approximationContext) !=
-        approximateWithValueForSymbol<float>(symbol, x2, approximationContext);
+    isDiscontinuous = approximateToScalarWithValueForSymbol<float>(
+                          symbol, x1, approximationContext) !=
+                      approximateToScalarWithValueForSymbol<float>(
+                          symbol, x2, approximationContext);
   } else if (type() == ExpressionNode::Type::FracPart) {
     // is discontinuous if the child changes int value
     isDiscontinuous =
-        std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(
+        std::floor(childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
             symbol, x1, approximationContext)) !=
-        std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(
+        std::floor(childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
             symbol, x2, approximationContext));
   } else if (isOfType({ExpressionNode::Type::AbsoluteValue,
                        ExpressionNode::Type::SignFunction})) {
     // is discontinuous if the child changes sign
-    isDiscontinuous = (childAtIndex(0).approximateWithValueForSymbol<float>(
-                           symbol, x1, approximationContext) > 0.0) !=
-                      (childAtIndex(0).approximateWithValueForSymbol<float>(
-                           symbol, x2, approximationContext) > 0.0);
+    isDiscontinuous =
+        (childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
+             symbol, x1, approximationContext) > 0.0) !=
+        (childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
+             symbol, x2, approximationContext) > 0.0);
   } else if (type() == ExpressionNode::Type::PiecewiseOperator) {
     PiecewiseOperator pieceWiseExpression = convert<PiecewiseOperator>();
     isDiscontinuous =
@@ -1613,7 +1614,7 @@ U Expression::ParseAndSimplifyAndApproximateToScalar(
 }
 
 template <typename U>
-U Expression::approximateWithValueForSymbol(
+U Expression::approximateToScalarWithValueForSymbol(
     const char *symbol, U x,
     const ApproximationContext &approximationContext) const {
   VariableContext variableContext =
@@ -1976,10 +1977,10 @@ template Evaluation<float> Expression::approximateToEvaluation(
 template Evaluation<double> Expression::approximateToEvaluation(
     const ApproximationContext &approximationContext) const;
 
-template float Expression::approximateWithValueForSymbol(
+template float Expression::approximateToScalarWithValueForSymbol(
     const char *symbol, float x,
     const ApproximationContext &approximationContext) const;
-template double Expression::approximateWithValueForSymbol(
+template double Expression::approximateToScalarWithValueForSymbol(
     const char *symbol, double x,
     const ApproximationContext &approximationContext) const;
 

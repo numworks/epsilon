@@ -98,8 +98,8 @@ Coordinate2D<T> Solver<T>::next(const Expression &e, BracketTest test,
   FunctionEvaluation f = [](T x, const void *aux) {
     const FunctionEvaluationParameters *p =
         reinterpret_cast<const FunctionEvaluationParameters *>(aux);
-    return p->expression.approximateWithValueForSymbol(p->unknown, x,
-                                                       p->approximationContext);
+    return p->expression.approximateToScalarWithValueForSymbol(
+        p->unknown, x, p->approximationContext);
   };
 
   return next(f, &parameters, test, hone, &DiscontinuityTestForExpression);
@@ -182,10 +182,10 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Expression &e1,
   ApproximationContext approxContext(m_context, m_complexFormat, m_angleUnit);
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
-    T y1 =
-        e1.approximateWithValueForSymbol<T>(m_unknown, m_xStart, approxContext);
-    T y2 =
-        e2.approximateWithValueForSymbol<T>(m_unknown, m_xStart, approxContext);
+    T y1 = e1.approximateToScalarWithValueForSymbol<T>(m_unknown, m_xStart,
+                                                       approxContext);
+    T y2 = e2.approximateToScalarWithValueForSymbol<T>(m_unknown, m_xStart,
+                                                       approxContext);
     if (!std::isfinite(y1) || !std::isfinite(y2)) {
       /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
        * or undef expressions in specific points like x^2/x, the root of the
@@ -549,7 +549,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
     ApproximationContext approxContext(m_context, m_complexFormat, m_angleUnit);
-    if (std::fabs(ebis.approximateWithValueForSymbol<T>(
+    if (std::fabs(ebis.approximateToScalarWithValueForSymbol<T>(
             m_unknown, xRoot, approxContext)) < NullTolerance(xRoot)) {
       return Coordinate2D<T>(xRoot, k_zero);
     }

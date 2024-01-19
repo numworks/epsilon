@@ -100,7 +100,7 @@ inline T ApproximateWithValueForSymbol(
     const Poincare::Expression e, const char* symbol, T x,
     Poincare::Context* context,
     const ApproximationParameters& approximationParameters = {}) {
-  return e.approximateWithValueForSymbol<T>(
+  return e.approximateToScalarWithValueForSymbol<T>(
       symbol, x,
       ApproximationContextForParameters(e, context, approximationParameters));
 }

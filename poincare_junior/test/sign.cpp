@@ -1,15 +1,17 @@
 #include <poincare_junior/src/expression/projection.h>
 #include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/expression/variables.h>
 
 #include "helper.h"
 using namespace PoincareJ;
 
-void assert_sign(const char* input, ComplexSign expectedSign,
-                 ComplexFormat complexFormat = ComplexFormat::Cartesian) {
+void assert_sign(const char* input, ComplexSign expectedSign) {
   Tree* expression = TextToTree(input);
-  Projection::DeepSystemProjection(expression,
-                                   {.m_complexFormat = complexFormat});
+  /* TODO: Factorize this with SimplifyLastTree to have properly projected
+   * variables, random trees, ... */
+  Projection::DeepSystemProjection(
+      expression, {.m_complexFormat = ComplexFormat::Cartesian});
   Simplification::DeepSystematicReduce(expression);
   bool result = ComplexSign::Get(expression) == expectedSign;
 #if POINCARE_MEMORY_TREE_LOG
@@ -45,7 +47,7 @@ QUIZ_CASE(pcj_sign) {
               ComplexSign(Sign::Unknown(), Sign::Zero()));
   assert_sign("e^(0.5*ln(re(x)^2+im(x)^2))",
               ComplexSign(Sign::Positive(), Sign::Zero()));
-  assert_sign("(abs(x)+i)*abs(x-i)",
+  assert_sign("(abs(x)+i)*abs(abs(x)-i)",
               ComplexSign(Sign::PositiveOrNull(), Sign::Positive()));
   assert_sign("(5+i)^3",
               ComplexSign(Sign::NonNullInteger(), Sign::NonNullInteger()));

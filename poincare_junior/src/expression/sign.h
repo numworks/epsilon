@@ -115,6 +115,10 @@ struct ComplexSign {
   constexpr bool isZero() const {
     return realSign().isZero() && imagSign().isZero();
   }
+  // Is either zero, real or imaginary pure.
+  constexpr bool isPure() const {
+    return imagSign().isZero() || realSign().isZero();
+  }
   // Anything is possible
   constexpr bool isUnknown() const {
     return realSign().isUnknown() && imagSign().isUnknown();

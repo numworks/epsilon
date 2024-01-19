@@ -74,10 +74,8 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyComplex);
   static bool SimplifyComplexArgument(Tree *t);
   EDITION_REF_WRAP(SimplifyComplexArgument);
-  static bool SimplifyRealPart(Tree *t);
-  EDITION_REF_WRAP(SimplifyRealPart);
-  static bool SimplifyImaginaryPart(Tree *t);
-  EDITION_REF_WRAP(SimplifyImaginaryPart);
+  static bool SimplifyComplexPart(Tree *t);
+  EDITION_REF_WRAP(SimplifyComplexPart);
   static bool SimplifySign(Tree *t);
   EDITION_REF_WRAP(SimplifySign);
 

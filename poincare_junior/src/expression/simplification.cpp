@@ -163,9 +163,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case BlockType::ComplexArgument:
       return SimplifyComplexArgument(u);
     case BlockType::ImaginaryPart:
-      return SimplifyImaginaryPart(u);
     case BlockType::RealPart:
-      return SimplifyRealPart(u);
+      return SimplifyComplexPart(u);
     case BlockType::Sum:
     case BlockType::Product:
       return Parametric::SimplifySumOrProduct(u);
@@ -446,14 +445,12 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
     assert(!merge->isMultiplication());
   } else if (child->isComplex() || next->isComplex()) {
+    // TODO: Move this in advanced reduction (not easy, many implications)
     // (A+B*i)*(C+D*i) -> ((AC-BD)+(AD+BC)*i)
     merge = PatternMatching::CreateAndSimplify(
-        KComplex(KAdd(KMult(KA, KC), KMult(-1_e, KB, KD)),
-                 KAdd(KMult(KA, KD), KMult(KB, KC))),
-        {.KA = Complex::UnSanitizedRealPart(child),
-         .KB = Complex::UnSanitizedImagPart(child),
-         .KC = Complex::UnSanitizedRealPart(next),
-         .KD = Complex::UnSanitizedImagPart(next)});
+        KComplex(KAdd(KMult(KRe(KA), KRe(KB)), KMult(-1_e, KIm(KA), KIm(KB))),
+                 KAdd(KMult(KRe(KA), KIm(KB)), KMult(KIm(KA), KRe(KB)))),
+        {.KA = child, .KB = next});
   }
   if (!merge) {
     return false;
@@ -617,13 +614,11 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
     term->removeTree();
     merge = term;
   } else if (child->isComplex() || next->isComplex()) {
+    // TODO: Move this in advanced reduction (not easy, many implications)
     // (A+B*i)+(C+D*i) -> ((A+C)+(B+D)*i)
     merge = PatternMatching::CreateAndSimplify(
-        KComplex(KAdd(KA, KC), KAdd(KB, KD)),
-        {.KA = Complex::UnSanitizedRealPart(child),
-         .KB = Complex::UnSanitizedImagPart(child),
-         .KC = Complex::UnSanitizedRealPart(next),
-         .KD = Complex::UnSanitizedImagPart(next)});
+        KComplex(KAdd(KRe(KA), KRe(KB)), KAdd(KIm(KA), KIm(KB))),
+        {.KA = child, .KB = next});
   }
   if (!merge) {
     return false;
@@ -716,12 +711,12 @@ bool Simplification::SimplifyComplex(Tree* tree) {
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
   assert(tree->isComplexArgument());
   const Tree* child = tree->child(0);
-  if (child->isComplex() || Complex::IsReal(child)) {
+  if (Complex::CanExtractParts(child)) {
     // arg(x + iy) = atan2(y, x)
-    const Tree* real = Complex::UnSanitizedRealPart(child);
+    const Tree* real = Complex::RealPart(child);
     Sign realSign = Sign::Get(real);
     if (realSign.isKnown()) {
-      const Tree* imag = Complex::UnSanitizedImagPart(child);
+      const Tree* imag = Complex::ImagPart(child);
       Sign imagSign = Sign::Get(imag);
       if (realSign.isZero() && imagSign.isKnown()) {
         if (imagSign.isZero()) {
@@ -752,26 +747,16 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
   return false;
 }
 
-bool Simplification::SimplifyRealPart(Tree* tree) {
-  assert(tree->isRealPart());
+bool Simplification::SimplifyComplexPart(Tree* tree) {
+  assert(tree->isRealPart() || tree->isImaginaryPart());
   Tree* child = tree->child(0);
-  if (child->isComplex() || Complex::IsReal(child)) {
-    // re(x+i*y) = x
-    tree->cloneTreeOverTree(Complex::UnSanitizedRealPart(child));
-    return true;
+  if (!Complex::CanExtractParts(child)) {
+    return false;
   }
-  return false;
-}
-
-bool Simplification::SimplifyImaginaryPart(Tree* tree) {
-  assert(tree->isImaginaryPart());
-  Tree* child = tree->child(0);
-  if (child->isComplex() || Complex::IsReal(child)) {
-    // im(x+i*y) = y
-    tree->cloneTreeOverTree(Complex::UnSanitizedImagPart(child));
-    return true;
-  }
-  return false;
+  // re(x+i*y) = x, im(x+i*y) = y
+  tree->cloneTreeOverTree(
+      (tree->isRealPart() ? Complex::RealPart : Complex::ImagPart)(child));
+  return true;
 }
 
 bool Simplification::SimplifySign(Tree* expr) {

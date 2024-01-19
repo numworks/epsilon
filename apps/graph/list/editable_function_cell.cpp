@@ -48,16 +48,13 @@ void EditableFunctionCell::layoutSubviews(bool force) {
                 force);
   setChildFrame(&m_messageTextView, KDRectZero, force);
 
-  KDRect templateButtonRect = KDRectZero;
-  if (isEmpty()) {
-    // Only draw the button if the expression is empty
-    KDSize buttonSize = m_buttonCell.minimalSizeForOptimalDisplay();
-    templateButtonRect =
-        KDRect(bounds().width() - rightMargin - buttonSize.width() -
-                   k_templateButtonMargin,
-               (bounds().height() - buttonSize.height()) / 2, buttonSize);
-  }
-  setChildFrame(&m_buttonCell, templateButtonRect, force);
+  KDSize buttonSize = m_buttonCell.minimalSizeForOptimalDisplay();
+  setChildFrame(
+      &m_buttonCell,
+      KDRect(bounds().width() - rightMargin - buttonSize.width() -
+                 k_templateButtonMargin,
+             (bounds().height() - buttonSize.height()) / 2, buttonSize),
+      force);
 }
 
 // EditableFunctionCell::ButtonCell

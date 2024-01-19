@@ -64,10 +64,6 @@ void EditableFunctionCell::ButtonCell::deselect() {
 }
 
 bool EditableFunctionCell::ButtonCell::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back) {
-    layoutField()->setEditing(true);
-    return false;
-  }
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     return true;
   } else if (event == Ion::Events::Left || event == Ion::Events::Backspace) {

@@ -49,18 +49,7 @@ class EditableFunctionCell
                              invocation, Escher::Palette::WallScreen, 0,
                              KDFont::Size::Small) {}
     bool handleEvent(Ion::Events::Event event) override;
-
     void deselect();
-
-    void didEnterResponderChain(Responder* previousFirstResponder) override {
-      // This is called when pressing Back from the template menu.
-      layoutField()->setEditing(true);
-    }
-
-   private:
-    Escher::LayoutField* layoutField() const {
-      return static_cast<Escher::LayoutField*>(parentResponder());
-    }
   };
 
   static constexpr KDCoordinate k_expressionMargin = 5;

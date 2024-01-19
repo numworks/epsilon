@@ -72,8 +72,7 @@ void EditableFunctionCell::layoutSubviews(bool force) {
 
 // EditableFunctionCell::ButtonCell
 void EditableFunctionCell::ButtonCell::deselect() {
-  layoutField()->setEditing(true);
-  App::app()->setFirstResponder(layoutField());
+  parentResponder()->handleEvent(Ion::Events::Left);
 }
 
 bool EditableFunctionCell::ButtonCell::handleEvent(Ion::Events::Event event) {

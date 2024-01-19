@@ -62,8 +62,8 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::Subtraction:
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>, context);
-    // case BlockType::PowerReal:
-    // return MapAndReduce(node, FloatPowerReal<std::complex<T>>, context);
+    case BlockType::PowerReal:
+      return MapAndReduce<T, std::complex<T>>(node, FloatPowerReal<T>, context);
     case BlockType::Power:
       return MapAndReduce<T, std::complex<T>>(node, FloatPower<std::complex<T>>,
                                               context);

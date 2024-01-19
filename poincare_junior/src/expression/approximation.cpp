@@ -14,6 +14,7 @@
 #include "list.h"
 #include "random.h"
 #include "rational.h"
+#include "variables.h"
 
 using Poincare::ApproximationHelper::MakeResultRealIfInputIsReal;
 using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
@@ -23,13 +24,24 @@ namespace PoincareJ {
 // TODO: tests
 
 AngleUnit Approximation::angleUnit;
+Approximation::VariableType Approximation::s_variables[k_maxNumberOfVariables];
 
 template <typename T>
 std::complex<T> Approximation::ComplexRootTreeTo(const Tree* node,
                                                  AngleUnit angleUnit) {
   Random::Context context;
   Approximation::angleUnit = angleUnit;
-  return ComplexTo<T>(node, &context);
+  // TODO we should rather assume variable projection has already been done
+  Tree* variables = Variables::GetUserSymbols(node);
+  Tree* clone = node->clone();
+  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  std::complex<T> result = ComplexTo<T>(clone, &context);
+  clone->removeTree();
+  variables->removeTree();
+  for (int i = 0; i < k_maxNumberOfVariables; i++) {
+    s_variables[i] = NAN;
+  }
+  return result;
 }
 
 template <typename T>
@@ -137,6 +149,40 @@ std::complex<T> Approximation::ComplexTo(const Tree* node,
     case BlockType::HyperbolicArcTangent:
       return HyperbolicTo(node->type(),
                           ComplexTo<T>(node->nextNode(), context));
+    case BlockType::Variable:
+      return s_variables[Variables::Id(node)];
+    case BlockType::Sum:
+    case BlockType::Product: {
+      const Tree* lowerBoundChild = node->child(Parametric::k_lowerBoundIndex);
+      std::complex<T> low = ComplexTo<T>(lowerBoundChild, context);
+      if (low.imag() != 0 || (int)low.real() != low.real()) {
+        return NAN;
+      }
+      const Tree* upperBoundChild = lowerBoundChild->nextTree();
+      std::complex<T> up = ComplexTo<T>(upperBoundChild, context);
+      if (up.imag() != 0 || (int)up.real() != up.real()) {
+        return NAN;
+      }
+      int lowerBound = low.real();
+      int upperBound = up.real();
+      const Tree* child = upperBoundChild->nextTree();
+      ShiftVariables();
+      std::complex<T> result = node->isSum() ? 0 : 1;
+      for (int k = lowerBound; k <= upperBound; k++) {
+        s_variables[0] = k;
+        std::complex<T> value = ComplexTo<T>(child, context);
+        if (node->isSum()) {
+          result += value;
+        } else {
+          result *= value;
+        }
+        if (std::isnan(result.real()) || std::isnan(result.imag())) {
+          break;
+        }
+      }
+      UnshiftVariables();
+      return result;
+    }
   }
   // The remaining operators are defined only on reals
   // assert(node->numberOfChildren() <= 2);

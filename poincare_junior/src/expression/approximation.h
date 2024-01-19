@@ -212,6 +212,17 @@ class Approximation final {
   template <typename T>
   static T ConvertFromRadian(T angle);
   static AngleUnit angleUnit;
+  static constexpr int k_maxNumberOfVariables = 16;
+  using VariableType = double;
+  static VariableType s_variables[k_maxNumberOfVariables];
+  static void ShiftVariables() {
+    memmove(&s_variables[1], &s_variables[0],
+            (k_maxNumberOfVariables - 1) * sizeof(VariableType));
+  }
+  static void UnshiftVariables() {
+    memmove(&s_variables[0], &s_variables[1],
+            (k_maxNumberOfVariables - 1) * sizeof(VariableType));
+  }
 };
 
 }  // namespace PoincareJ

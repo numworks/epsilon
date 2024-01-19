@@ -255,6 +255,9 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
 size_t ContinuousFunction::derivativeNameWithArgument(char *buffer,
                                                       size_t bufferSize) {
   if (!isNamed()) {
+    if (properties().isPolar()) {
+      return strlcpy(buffer, "r'", bufferSize);
+    }
     return strlcpy(buffer, "y'", bufferSize);
   }
   const CodePoint derivative = '\'';

@@ -42,7 +42,7 @@ KDCoordinate TableViewDataSource::rowHeight(int row, bool withSeparator) {
 KDCoordinate TableViewDataSource::nonMemoizedColumnWidth(int column,
                                                          bool withSeparator) {
   KDCoordinate result = nonMemoizedColumnWidth(column);
-  if (result > 0 && withSeparator) {
+  if (result >= 0 && withSeparator) {
     result += separatorBeforeColumn(column);
   }
   assert(result >= 0);
@@ -52,7 +52,7 @@ KDCoordinate TableViewDataSource::nonMemoizedColumnWidth(int column,
 KDCoordinate TableViewDataSource::nonMemoizedRowHeight(int row,
                                                        bool withSeparator) {
   KDCoordinate result = nonMemoizedRowHeight(row);
-  if (result > 0 && withSeparator) {
+  if (result >= 0 && withSeparator) {
     result += separatorBeforeRow(row);
   }
   assert(result >= 0);

@@ -125,15 +125,15 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
     // TODO
     // return Rational::NaturalOrder(node0, node1);
   }
-  float approximation = Approximation::To<float>(node0, nullptr) -
-                        Approximation::To<float>(node1, nullptr);
+  float approximation =
+      Approximation::To<float>(node0) - Approximation::To<float>(node1);
   if (approximation == 0.0f) {
     if (node0->treeIsIdenticalTo(node1)) {
       return 0;
     }
     // Trees are different but float approximation is not precise enough.
-    double doubleApproximation = Approximation::To<double>(node0, nullptr) -
-                                 Approximation::To<double>(node1, nullptr);
+    double doubleApproximation =
+        Approximation::To<double>(node0) - Approximation::To<double>(node1);
     assert(doubleApproximation != 0);
     return doubleApproximation > 0.0f ? 1 : -1;
   }

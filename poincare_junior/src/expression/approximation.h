@@ -49,9 +49,9 @@ class Approximation final {
     return value.imag() == 0 ? value.real() : NAN;
   }
 
-  // Approximate any tree. With a nullptr context, seeded random will be undef.
+  // Approximate any tree.
   template <typename T>
-  static std::complex<T> ToComplex(const Tree* node, Random::Context* context);
+  static std::complex<T> ToComplex(const Tree* node);
 
   template <typename T>
   static Tree* PushBeautifiedComplex(std::complex<T> value,
@@ -66,15 +66,15 @@ class Approximation final {
                                              std::complex<T> value);
 
   template <typename T>
-  static T To(const Tree* node, Random::Context* context) {
-    std::complex<T> value = ToComplex<T>(node, context);
+  static T To(const Tree* node) {
+    std::complex<T> value = ToComplex<T>(node);
     return value.imag() == 0 ? value.real() : NAN;
   }
 
   template <typename T>
-  static T To(const Tree* node, Random::Context* context, T at) {
+  static T To(const Tree* node, T at) {
     setXValue(at);
-    std::complex<T> value = ToComplex<T>(node, context);
+    std::complex<T> value = ToComplex<T>(node);
     return value.imag() == 0 ? value.real() : NAN;
   }
 
@@ -83,7 +83,7 @@ class Approximation final {
                               AngleUnit angleUnit = AngleUnit::Radian);
 
   template <typename T>
-  static Tree* ToList(const Tree* node, Random::Context* context);
+  static Tree* ToList(const Tree* node);
 
   template <typename T>
   static T FloatAddition(T a, T b) {
@@ -220,7 +220,6 @@ class Approximation final {
   using Mapper = U (*)(T);
   template <typename T, typename U>
   static U MapAndReduce(const Tree* node, Reductor<U> reductor,
-                        Random::Context* context,
                         Mapper<std::complex<T>, U> mapper = nullptr);
   template <typename T>
   static bool ApproximateAndReplaceEveryScalarT(Tree* tree, bool collapse);
@@ -244,6 +243,7 @@ class Approximation final {
   }
   // are we approximating to get the nth-element of a list ?
   static int s_listElement;
+  static Random::Context* s_context;
 
   template <typename T>
   static T approximateIntegral(const Tree* integral);

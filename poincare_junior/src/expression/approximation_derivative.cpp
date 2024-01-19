@@ -34,7 +34,7 @@ T scalarApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order,
   assert(order >= 0);
   if (order == 0) {
     Approximation::setXValue(evaluationArgument);
-    return Approximation::To<T>(child, nullptr);
+    return Approximation::To<T>(child);
   }
   T functionValue = scalarApproximateWithValueForArgumentAndOrder(
       evaluationArgument, order - 1, child);

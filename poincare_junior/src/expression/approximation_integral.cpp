@@ -65,14 +65,14 @@ T Approximation::approximateIntegral(const Tree* integral) {
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* integrand = upperBound->nextTree();
   integrandExpression = integrand;
-  T a = To<T>(lowerBound, nullptr);
-  T b = To<T>(upperBound, nullptr);
+  T a = To<T>(lowerBound);
+  T b = To<T>(upperBound);
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }
   ShiftVariables();
-  bool fIsNanInA = std::isnan(To(integrand, nullptr, a));
-  bool fIsNanInB = std::isnan(To(integrand, nullptr, b));
+  bool fIsNanInA = std::isnan(To(integrand, a));
+  bool fIsNanInB = std::isnan(To(integrand, b));
   /* The integrand has a singularity on a bound of the interval, use tanh-sinh
    * quadrature */
   if (fIsNanInA || fIsNanInB) {
@@ -182,16 +182,16 @@ template <typename T>
 T integrand(T x, Substitution<T> substitution) {
   switch (substitution.type) {
     case Substitution<T>::Type::None:
-      return Approximation::To(integrandExpression, nullptr, x);
+      return Approximation::To(integrandExpression, x);
     case Substitution<T>::Type::LeftOpen: {
       T z = 1.0 / (x + 1.0);
       T arg = substitution.originB - (2.0 * z - 1.0);
-      return Approximation::To(integrandExpression, nullptr, arg) * z * z;
+      return Approximation::To(integrandExpression, arg) * z * z;
     }
     case Substitution<T>::Type::RightOpen: {
       T z = 1.0 / (x + 1);
       T arg = 2.0 * z + substitution.originA - 1.0;
-      return Approximation::To(integrandExpression, nullptr, arg) * z * z;
+      return Approximation::To(integrandExpression, arg) * z * z;
     }
     default: {
       assert(substitution.type == Substitution<T>::Type::RealLine);
@@ -199,7 +199,7 @@ T integrand(T x, Substitution<T> substitution) {
       T inv = 1.0 / (1.0 - x2);
       T w = (1.0 + x2) * inv * inv;
       T arg = x * inv;
-      return Approximation::To(integrandExpression, nullptr, arg) * w;
+      return Approximation::To(integrandExpression, arg) * w;
     }
   }
 }
@@ -224,20 +224,18 @@ T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand) {
   T arg = xc * scale;
   if (x < 0) {
     if (alternativeIntegrand.integrandNearA) {
-      return Approximation::To(alternativeIntegrand.integrandNearA, nullptr,
-                               arg) *
+      return Approximation::To(alternativeIntegrand.integrandNearA, arg) *
              scale;
     }
     arg = arg + alternativeIntegrand.a;
   } else {
     if (alternativeIntegrand.integrandNearB) {
-      return Approximation::To(alternativeIntegrand.integrandNearB, nullptr,
-                               -arg) *
+      return Approximation::To(alternativeIntegrand.integrandNearB, -arg) *
              scale;
     }
     arg = alternativeIntegrand.b - arg;
   }
-  return Approximation::To(integrandExpression, nullptr, arg) * scale;
+  return Approximation::To(integrandExpression, arg) * scale;
 }
 
 /* Tanh-Sinh quadrature

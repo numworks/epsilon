@@ -49,7 +49,7 @@ T Random::Approximate(const Tree* randomTree, Context* context) {
     }
     approximationForSeed = context->m_list->child(seed - 1);
     if (!approximationForSeed->isUndefined()) {
-      return Approximation::To<T>(approximationForSeed, nullptr);
+      return Approximation::To<T>(approximationForSeed);
     }
   }
   T result = Approximate<T>(randomTree);
@@ -65,8 +65,8 @@ template <typename T>
 T Random::Approximate(const Tree* randomTree) {
   switch (randomTree->type()) {
     case BlockType::RandInt:
-      return RandomInt<T>(Approximation::To<T>(randomTree->child(0), nullptr),
-                          Approximation::To<T>(randomTree->child(1), nullptr));
+      return RandomInt<T>(Approximation::To<T>(randomTree->child(0)),
+                          Approximation::To<T>(randomTree->child(1)));
     case BlockType::Random:
       return Poincare::Random::random<T>();
     default:

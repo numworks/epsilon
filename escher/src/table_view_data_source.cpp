@@ -10,10 +10,10 @@ KDCoordinate TableViewDataSource::columnWidth(int column, bool withSeparator) {
   KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (columnWidthManager()) {
     result = columnWidthManager()->computeSizeAtIndex(column);
-  }
-  if (result > 0 && !withSeparator) {
-    // Remove the separator from the memoized size
-    result -= separatorBeforeColumn(column);
+    if (result > 0 && !withSeparator) {
+      // Remove the separator from the memoized size
+      result -= separatorBeforeColumn(column);
+    }
   }
   if (result == TableSize1DManager::k_undefinedSize) {
     result = nonMemoizedColumnWidth(column, withSeparator);
@@ -27,10 +27,10 @@ KDCoordinate TableViewDataSource::rowHeight(int row, bool withSeparator) {
   KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (rowHeightManager()) {
     result = rowHeightManager()->computeSizeAtIndex(row);
-  }
-  if (result > 0 && !withSeparator) {
-    // Remove the separator from the memoized size
-    result -= separatorBeforeRow(row);
+    if (result > 0 && !withSeparator) {
+      // Remove the separator from the memoized size
+      result -= separatorBeforeRow(row);
+    }
   }
   if (result == TableSize1DManager::k_undefinedSize) {
     result = nonMemoizedRowHeight(row, withSeparator);

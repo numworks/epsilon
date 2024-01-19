@@ -323,47 +323,6 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(
   return detailedResult;
 }
 
-#ifdef LAGRANGE_METHOD
-
-template <typename T>
-T IntegralNode::lagrangeGaussQuadrature(
-    T a, T b, const ApproximationContext& approximationContext) const {
-  /* We here use Gauss-Legendre quadrature with n = 5
-   * Gauss-Legendre abscissae and weights can be found in
-   * C/C++ library source code. */
-  constexpr T x[10] = {
-      0.0765265211334973337546404, 0.2277858511416450780804962,
-      0.3737060887154195606725482, 0.5108670019508270980043641,
-      0.6360536807265150254528367, 0.7463319064601507926143051,
-      0.8391169718222188233945291, 0.9122344282513259058677524,
-      0.9639719272779137912676661, 0.9931285991850949247861224};
-  constexpr T w[10] = {
-      0.1527533871307258506980843, 0.1491729864726037467878287,
-      0.1420961093183820513292983, 0.1316886384491766268984945,
-      0.1181945319615184173123774, 0.1019301198172404350367501,
-      0.0832767415767047487247581, 0.0626720483341090635695065,
-      0.0406014298003869413310400, 0.0176140071391521183118620};
-  T xm = 0.5 * (a + b);
-  T xr = 0.5 * (b - a);
-  T result = 0;
-  for (int j = 0; j < 10; j++) {
-    T dx = xr * x[j];
-    T evaluationAfterX = integrand(xm + dx, approximationContext);
-    if (std::isnan(evaluationAfterX)) {
-      return NAN;
-    }
-    T evaluationBeforeX = integrand(xm - dx, approximationContext);
-    if (std::isnan(evaluationBeforeX)) {
-      return NAN;
-    }
-    result += w[j] * (evaluationAfterX + evaluationBeforeX);
-  }
-  result *= xr;
-  return result;
-}
-
-#else
-
 template <typename T>
 IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(
     T a, T b, Substitution<T> substitution,
@@ -510,6 +469,5 @@ IntegralNode::DetailedResult<T> IntegralNode::iterateAdaptiveQuadrature(
       .absoluteError = left.absoluteError + right.absoluteError};
   return result;
 }
-#endif
 
 }  // namespace PoincareJ

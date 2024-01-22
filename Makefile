@@ -79,7 +79,7 @@ help:
 	@echo "Format files modified since <ref>"
 	@echo "  make format BASE=<ref>"
 	@echo "Format given files"
-	@echo "  make format FILES='file1 file2'"
+	@echo "  make format CXXFILES='file1.cpp file2.cpp' PYFILES='file3.py'"
 	@echo ""
 	@echo "Visualize the coverage of the unary tests or the screenshot tests"
 	@echo "  make PLATFORM=simulator ARCH=arm64 coverage"

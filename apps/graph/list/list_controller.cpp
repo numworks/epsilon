@@ -130,9 +130,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   m_parameterColumnSelected = false;
 
-  bool empty = m_editableCell.isEmpty();
-
-  if (empty) {
+  if (m_editableCell.buttonIsVisible()) {
     bool editing = m_editableCell.isEditing();
 
     if (event == Ion::Events::Right && editing) {

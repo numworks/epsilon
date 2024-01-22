@@ -23,6 +23,9 @@ class EditableFunctionCell
   bool isEmpty() { return expressionCell()->layoutField()->isEmpty(); }
   bool isEditing() { return expressionCell()->layoutField()->isEditing(); }
 
+  bool buttonShouldBeVisible() { return isEmpty(); }
+  bool buttonIsVisible() { return m_buttonCell.isVisible(); }
+
   void setHighlighted(bool highlighted) override {
     if (!highlighted) {
       m_buttonCell.setHighlighted(false);

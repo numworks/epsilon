@@ -103,9 +103,15 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
        m_rowPrefaceDataSource.cumulatedHeightAtPrefaceRow(false));
 
   // Main table
-  m_mainTableView->margins()->setTop(hideRowPreface ? m_mainTableViewTopMargin
-                                                    : 0);
-  KDCoordinate prefaceHeight = hideRowPreface ? 0 : rowPrefaceHeight;
+  KDCoordinate prefaceHeight, topMargin;
+  if (hideRowPreface) {
+    topMargin = m_mainTableViewTopMargin;
+    prefaceHeight = 0;
+  } else {
+    topMargin = 0;
+    prefaceHeight = rowPrefaceHeight;
+  }
+  m_mainTableView->margins()->setTop(topMargin);
   setChildFrame(m_mainTableView,
                 KDRect(rect.x(), rect.y() + prefaceHeight, rect.width(),
                        rect.height() - prefaceHeight),

@@ -9,26 +9,17 @@ extern "C" {
 namespace Escher {
 
 StackViewController::StackViewController(
-    int capacity, ViewController** stackBase, Responder* parentResponder,
-    ViewController* rootViewController, StackView::Style style,
-    bool extendVertically, Ion::AbstractStack<StackHeaderView>* headerViewStack)
+    Responder* parentResponder, StackView::Style style, bool extendVertically,
+    Ion::AbstractStack<StackHeaderView>* headerViewStack)
     : ViewController(parentResponder),
       m_view(style, extendVertically, headerViewStack),
-      m_size(0),
+      m_size(1),
       m_isVisible(false),
       m_displayedAsModal(false),
-      m_headersDisplayMask(~0),
-#ifndef NDEBUG
-      m_capacity(capacity),
-#endif
-      m_stack(stackBase) {
-  assert(m_size + 1 < capacity);
-  m_stack[m_size++] = rootViewController;
-  rootViewController->setParentResponder(this);
-}
+      m_headersDisplayMask(~0) {}
 
 const char* StackViewController::title() {
-  ViewController* vc = m_stack[0];
+  ViewController* vc = *stackSlot(0);
   return vc->title();
 }
 
@@ -36,11 +27,10 @@ ViewController* StackViewController::topViewController() {
   if (m_size < 1) {
     return nullptr;
   }
-  return m_stack[m_size - 1];
+  return *stackSlot(m_size - 1);
 }
 
 void StackViewController::push(ViewController* vc) {
-  assert(m_size < m_capacity);
   /* Add the frame to the model */
   pushModel(vc);
   if (!m_isVisible) {
@@ -48,7 +38,7 @@ void StackViewController::push(ViewController* vc) {
   }
   setupActiveViewController();
   if (m_size > 1) {
-    m_stack[m_size - 2]->viewDidDisappear();
+    (*stackSlot(m_size - 2))->viewDidDisappear();
   }
 }
 
@@ -92,7 +82,7 @@ void StackViewController::popUntilDepth(int depth,
 
 void StackViewController::pushModel(ViewController* controller) {
   willOpenPage(controller);
-  m_stack[m_size++] = controller;
+  *stackSlot(m_size++) = controller;
 }
 
 void StackViewController::setupActiveView() {
@@ -134,7 +124,7 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void StackViewController::initView() { m_stack[0]->initView(); }
+void StackViewController::initView() { (*stackSlot(0))->initView(); }
 
 void StackViewController::viewWillAppear() {
   /* Load the visible controller view */
@@ -170,9 +160,9 @@ void StackViewController::updateStack(
   /* Load the stack view */
   m_view.resetStack();
   for (int i = 0; i < m_size; i++) {
-    ViewController* childrenVC = m_stack[i];
+    ViewController* childrenVC = *stackSlot(i);
     if (shouldStoreHeaderOnStack(childrenVC, i)) {
-      m_view.pushStack(m_stack[i]);
+      m_view.pushStack(*stackSlot(i));
     }
   }
 }

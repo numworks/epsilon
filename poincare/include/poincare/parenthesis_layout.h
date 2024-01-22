@@ -27,6 +27,10 @@ class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
     return BracketPairLayoutNode::Baseline(childHeight, childBaseline,
                                            k_minVerticalMargin);
   }
+  static KDCoordinate VerticalMargin(KDCoordinate childHeight) {
+    return BracketPairLayoutNode::VerticalMargin(childHeight,
+                                                 k_minVerticalMargin);
+  }
 
   // LayoutNode
   Type type() const override { return Type::ParenthesisLayout; }

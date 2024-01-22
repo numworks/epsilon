@@ -28,11 +28,13 @@ poincare_src += $(addprefix poincare/src/,\
   nth_root_layout.cpp \
   parenthesis_layout.cpp \
   piecewise_operator_layout.cpp \
+  point_2D_layout.cpp \
   product_layout.cpp \
   sequence_layout.cpp \
   square_bracket_pair_layout.cpp \
   string_layout.cpp \
   sum_layout.cpp \
+  two_rows_layout.cpp \
   vertical_offset_layout.cpp \
 )
 

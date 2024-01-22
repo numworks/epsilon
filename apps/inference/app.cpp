@@ -72,7 +72,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
 
 void App::didBecomeActive(Window *window) {
   Ion::RingBuffer<Escher::ViewController *,
-                  StackViewController::k_maxNumberOfChildren> *queue =
+                  LargeStackViewController::k_maxNumberOfChildren> *queue =
       snapshot()->pageQueue();
   int queueLength = queue->length();
   Escher::ViewController *currentController = &m_menuController;

@@ -4,6 +4,7 @@
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/simple_interactive_curve_view_controller.h>
+#include <ion/ring_buffer.h>
 #include <poincare/point_of_interest.h>
 
 #include "banner_view.h"

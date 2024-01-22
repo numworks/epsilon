@@ -8,14 +8,12 @@ extern "C" {
 
 namespace Escher {
 
-StackViewController::StackViewController(int capacity,
-                                         ViewController** stackBase,
-                                         Responder* parentResponder,
-                                         ViewController* rootViewController,
-                                         StackView::Style style,
-                                         bool extendVertically)
+StackViewController::StackViewController(
+    int capacity, ViewController** stackBase, Responder* parentResponder,
+    ViewController* rootViewController, StackView::Style style,
+    bool extendVertically, Ion::AbstractStack<StackHeaderView>* headerViewStack)
     : ViewController(parentResponder),
-      m_view(style, extendVertically),
+      m_view(style, extendVertically, headerViewStack),
       m_size(0),
       m_isVisible(false),
       m_displayedAsModal(false),

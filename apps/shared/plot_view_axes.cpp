@@ -74,8 +74,8 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
 
 void WithPolarGrid::ComputeAngleBounds(const AbstractPlotView* plotView,
                                        KDRect rect, float xMin, float xMax,
-                                       float yMin, float yMax, float* radiusMin,
-                                       float* radiusMax) {
+                                       float yMin, float yMax, float* angleMin,
+                                       float* angleMax) {
   float xAbsoluteMax = xMax > -xMin ? xMax : xMin;
   float yAbsoluteMax = yMax > -yMin ? yMax : yMin;
   float xAbsoluteMin = xMin > -xMax ? xMin : xMax;
@@ -83,29 +83,29 @@ void WithPolarGrid::ComputeAngleBounds(const AbstractPlotView* plotView,
 
   if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
     // The rect contains the origin.
-    *radiusMin = 0;
-    *radiusMax = 2 * M_PI;
-  } else if ((xMin <= 0 && 0 <= xMax)) {
+    *angleMin = 0;
+    *angleMax = 2 * M_PI;
+  } else if (xMin <= 0 && 0 <= xMax) {
     // The rect crosses the Y Axis.
-    *radiusMin = atan2(yAbsoluteMin, xMin);
-    *radiusMax = atan2(yAbsoluteMin, xMax);
-  } else if ((yMin <= 0 && 0 <= yMax)) {
+    *angleMin = atan2(yAbsoluteMin, xMin);
+    *angleMax = atan2(yAbsoluteMin, xMax);
+  } else if (yMin <= 0 && 0 <= yMax) {
     // The rect crosses the X axis.
-    *radiusMin = atan2(yMin, xAbsoluteMin);
-    *radiusMax = atan2(yMax, xAbsoluteMin);
+    *angleMin = atan2(yMin, xAbsoluteMin);
+    *angleMax = atan2(yMax, xAbsoluteMin);
 
     if (xMax < 0) {
-      /* The rect crosses the -Ox ray. as atan2 outputs in the rage [-pi,pi],
+      /* The rect crosses the -Ox ray. As atan2 outputs in the range [-pi,pi],
        * the [a0, a1] arc must be complemented. */
-      *radiusMin += 2.f * M_PI;
+      *angleMin += 2.f * M_PI;
     }
   } else {
-    *radiusMin = atan2(yAbsoluteMin, xAbsoluteMax);
-    *radiusMax = atan2(yAbsoluteMax, xAbsoluteMin);
+    *angleMin = atan2(yAbsoluteMin, xAbsoluteMax);
+    *angleMax = atan2(yAbsoluteMax, xAbsoluteMin);
   }
 
-  if (*radiusMin > *radiusMax) {
-    std::swap(*radiusMin, *radiusMax);
+  if (*angleMin > *angleMax) {
+    std::swap(*angleMin, *angleMax);
   }
 }
 

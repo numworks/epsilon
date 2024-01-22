@@ -185,8 +185,10 @@ ComplexSign Add(ComplexSign s1, ComplexSign s2) {
 }
 
 ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
-  // If this assert can't be maintained, escape with Unknown.
-  assert(exp.isReal() && !exp.canBeNonInteger());
+  if (!exp.isReal() || exp.canBeNonInteger()) {
+    // PowerReal(x, 0.5)
+    return ComplexSign::Unknown();
+  }
   if (base.isZero()) {
     return ComplexSign::Zero();
   }

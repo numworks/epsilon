@@ -388,11 +388,10 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
    */
   Tree* x = u->child(0);
   Tree* y = x->nextTree();
-  bool xIsNumber = x->isNumber();
-  bool xIsPositiveNumber = xIsNumber && Number::Sign(x).isPositive();
-  bool xIsNegativeNumber = xIsNumber && !xIsPositiveNumber;
-  if (xIsPositiveNumber || x->isComplex() || y->isInteger()) {
-    // TODO : Handle sign and complex status not only on numbers
+  ComplexSign xSign = ComplexSign::Get(x);
+  ComplexSign ySign = ComplexSign::Get(y);
+  if (!ySign.canBeNonInteger() ||
+      (xSign.isReal() && xSign.realSign().isPositive())) {
     ConvertPowerRealToPower(u);
     return true;
   }
@@ -407,13 +406,15 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   // y is simplified, both p and q can't be even
   assert(!qIsEven || !pIsEven);
 
-  if (!pIsEven && !xIsNumber) {
+  bool xNegative = xSign.realSign().isStrictlyNegative();
+
+  if (!pIsEven && !xNegative) {
     // We don't know enough to simplify further.
     return false;
   }
-  assert(xIsNegativeNumber || pIsEven);
+  assert(xNegative || pIsEven);
 
-  if (xIsNegativeNumber && qIsEven) {
+  if (xNegative && qIsEven) {
     ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
   }
 
@@ -422,7 +423,7 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   SimplifyAbs(x);
   ConvertPowerRealToPower(u);
 
-  if (xIsNegativeNumber && !pIsEven) {
+  if (xNegative && !pIsEven) {
     // -|x|^y
     u->cloneTreeAtNode(KMult(-1_e));
     NAry::SetNumberOfChildren(u, 2);

@@ -186,12 +186,12 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "1+ln(1/x)");
   simplifies_to("1-ln(x)", "1+ln(1/x)");
   // TODO : Simplify to 1/√(1+x^2).
-  simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/√(x^2+1)^2+1)");
+  simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/(x^2+1)+1)");
   // TODO : Simplify to x/√(-x^2+1)
   simplifies_to("x×(-x^2+1)^(-1/2)", "x×(-x^2+1)^(-1/2)");
   // TODO : Simplify to x
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",
-                "(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)");
+                "x×(x^2+1)^(-1/2)×(-x^2/(x^2+1)+1)^(-1/2)");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
 

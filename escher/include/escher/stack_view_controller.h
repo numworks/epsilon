@@ -51,7 +51,8 @@ class StackViewController : public ViewController {
   StackViewController(int capacity, ViewController** stackBase,
                       Responder* parentResponder,
                       ViewController* rootViewController,
-                      StackView::Style style, bool extendVertically);
+                      StackView::Style style, bool extendVertically,
+                      Ion::AbstractStack<StackHeaderView>* headerViewStack);
 
  private:
   StackView m_view;
@@ -83,6 +84,8 @@ class CustomSizeStackViewController : public StackViewController {
  public:
   static_assert(Capacity <= StackView::k_maxDepth);
 
+  using Stack = Ion::Stack<StackHeaderView, Capacity>;
+
   constexpr static int k_maxNumberOfChildren = Capacity;
 
   CustomSizeStackViewController(Responder* parentResponder,
@@ -90,10 +93,12 @@ class CustomSizeStackViewController : public StackViewController {
                                 StackView::Style style,
                                 bool extendVertically = true)
       : StackViewController(Capacity, m_stack, parentResponder,
-                            rootViewController, style, extendVertically) {}
+                            rootViewController, style, extendVertically,
+                            &m_headerViewStack) {}
 
  private:
   ViewController* m_stack[Capacity];
+  Ion::Stack<StackHeaderView, Capacity> m_headerViewStack;
 };
 
 }  // namespace Escher

@@ -15,15 +15,16 @@ class StackView : public View {
 
   static constexpr uint8_t k_maxDepth = sizeof(Mask) * 8;
 
-  StackView(Style style, bool extendVertically);
-  int8_t numberOfStacks() const { return m_stackHeaderViews.length(); }
+  StackView(Style style, bool extendVertically,
+            Ion::AbstractStack<StackHeaderView>* headerViewStack);
+  int8_t numberOfStacks() const { return m_stackHeaderViews->length(); }
   void setContentView(View* view);
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders,
                                     bool headersOverlapContent,
                                     KDColor headersContentBorderColor);
   void pushStack(ViewController* controller);
   void reload() { markWholeFrameAsDirty(); }
-  void resetStack() { m_stackHeaderViews.reset(); }
+  void resetStack() { m_stackHeaderViews->reset(); }
 
  protected:
 #if ESCHER_VIEW_LOGGING
@@ -40,7 +41,7 @@ class StackView : public View {
   // Returns the index in m_stackViews for a given display index
   int stackHeaderIndex(int displayIndex);
 
-  Ion::Stack<StackHeaderView, k_maxDepth> m_stackHeaderViews;
+  Ion::AbstractStack<StackHeaderView>* m_stackHeaderViews;
   SolidColorView m_borderView;
   View* m_contentView;
   Style m_style;

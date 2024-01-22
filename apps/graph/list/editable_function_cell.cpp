@@ -28,15 +28,15 @@ EditableFunctionCell::EditableFunctionCell(
 }
 
 void EditableFunctionCell::updateButton() {
-  bool empty = isEmpty();
-  bool wasEmpty = m_buttonCell.isVisible();
+  bool visible = buttonIsVisible();
+  bool shouldBeVisible = buttonShouldBeVisible();
 
-  if (wasEmpty && !empty) {
+  if (visible && !shouldBeVisible) {
     m_buttonCell.setHighlighted(false);
     App::app()->setFirstResponder(expressionCell()->layoutField());
   }
-  if (wasEmpty != empty) {
-    m_buttonCell.setVisible(empty);
+  if (visible != shouldBeVisible) {
+    m_buttonCell.setVisible(shouldBeVisible);
     layoutSubviews();
   }
 }

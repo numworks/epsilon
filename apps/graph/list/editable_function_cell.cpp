@@ -37,12 +37,13 @@ void EditableFunctionCell::updateButton() {
   }
   if (wasEmpty != empty) {
     m_buttonCell.setVisible(empty);
+    layoutSubviews();
   }
 }
 
 View* EditableFunctionCell::subviewAtIndex(int index) {
   assert(index < numberOfSubviews());
-  if (index == AbstractFunctionCell::numberOfSubviews()) {
+  if (index == numberOfSubviews() - 1) {
     return &m_buttonCell;
   }
   return AbstractFunctionCell::subviewAtIndex(index);
@@ -61,13 +62,16 @@ void EditableFunctionCell::layoutSubviews(bool force) {
                 force);
   setChildFrame(&m_messageTextView, KDRectZero, force);
 
-  KDSize buttonSize = m_buttonCell.minimalSizeForOptimalDisplay();
-  setChildFrame(
-      &m_buttonCell,
-      KDRect(bounds().width() - rightMargin - buttonSize.width() -
-                 k_templateButtonMargin,
-             (bounds().height() - buttonSize.height()) / 2, buttonSize),
-      force);
+  KDRect templateButtonRect = KDRectZero;
+  if (isEmpty()) {
+    // Only draw the button if the expression is empty
+    KDSize buttonSize = m_buttonCell.minimalSizeForOptimalDisplay();
+    templateButtonRect =
+        KDRect(bounds().width() - rightMargin - buttonSize.width() -
+                   k_templateButtonMargin,
+               (bounds().height() - buttonSize.height()) / 2, buttonSize);
+  }
+  setChildFrame(&m_buttonCell, templateButtonRect, force);
 }
 
 // EditableFunctionCell::ButtonCell

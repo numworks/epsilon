@@ -36,7 +36,7 @@ class EditableFunctionCell
 
  private:
   int numberOfSubviews() const override {
-    return AbstractFunctionCell::numberOfSubviews() + m_buttonCell.isVisible();
+    return AbstractFunctionCell::numberOfSubviews() + 1;
   }
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;

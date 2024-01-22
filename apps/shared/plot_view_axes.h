@@ -83,7 +83,7 @@ class WithPolarGrid {
                                   float *min, float *max);
   static void ComputeAngleBounds(const AbstractPlotView *plotView, KDRect rect,
                                  float xMin, float xMax, float yMin, float yMax,
-                                 float *radiusMin, float *radiusMax);
+                                 float *angleMin, float *angleMax);
 };
 
 class NoAxis {

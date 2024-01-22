@@ -1101,15 +1101,16 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
   }
 
   if (deletionMethod ==
-          LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN ||
+          LayoutNode::DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper ||
       deletionMethod == LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow) {
     assert(deletionAppliedToParent);
     int newIndex = -1;
     if (deletionMethod ==
-        LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN) {
+        LayoutNode::DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper) {
       assert(m_layout.parent().type() ==
-             LayoutNode::Type::BinomialCoefficientLayout);
-      newIndex = BinomialCoefficientLayoutNode::k_nLayoutIndex;
+                 LayoutNode::Type::BinomialCoefficientLayout ||
+             m_layout.parent().type() == LayoutNode::Type::Point2DLayout);
+      newIndex = TwoRowsLayoutNode::k_upperLayoutIndex;
     } else {
       assert(deletionMethod ==
              LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow);

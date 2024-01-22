@@ -35,9 +35,9 @@ class PointNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int significantDigits) const override;
 
- private:
   constexpr static char k_prefix[] = "";
 
+ private:
   template <typename T>
   Evaluation<T> templatedApproximate(const ApproximationContext&) const;
 };

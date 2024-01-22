@@ -185,13 +185,12 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
   KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
 
   // Special case for parametric functions
-  int tempI = column;
-  ContinuousFunctionProperties::SymbolType symbol = symbolTypeAtColumn(&tempI);
-  if (!m_exactValuesAreActivated && tempI > 0 &&
+  int tempCol = column;
+  ContinuousFunctionProperties::SymbolType symbol =
+      symbolTypeAtColumn(&tempCol);
+  if (!m_exactValuesAreActivated && tempCol > 0 &&
       symbol == ContinuousFunctionProperties::SymbolType::T) {
-    if (tempI > 0) {
-      columnWidth = ApproximatedParametricCellSize().width();
-    }
+    columnWidth = ApproximatedParametricCellSize().width();
     if (cellHasValue(column, row, false) && row > 0) {
       rowHeight = ApproximatedParametricCellSize().height();
     }

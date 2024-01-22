@@ -1,5 +1,6 @@
 #include <poincare/layout_helper.h>
 #include <poincare/point.h>
+#include <poincare/point_2D_layout.h>
 #include <poincare/point_evaluation.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -43,6 +44,15 @@ Expression Point::shallowReduce(ReductionContext reductionContext) {
     return e;
   }
   return *this;
+}
+
+Layout Point::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
+                             int significantDigits, Context* context) const {
+  Layout child0 = childAtIndex(0).createLayout(floatDisplayMode,
+                                               significantDigits, context);
+  Layout child1 = childAtIndex(1).createLayout(floatDisplayMode,
+                                               significantDigits, context);
+  return Point2DLayout::Builder(child0, child1);
 }
 
 }  // namespace Poincare

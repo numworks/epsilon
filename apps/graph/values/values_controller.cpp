@@ -9,6 +9,7 @@
 #include <poincare/decimal.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix_layout.h>
+#include <poincare/point_2D_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/square_bracket_pair_layout.h>
 #include <poincare/string_layout.h>
@@ -156,11 +157,11 @@ int ValuesController::columnToFreeze() {
 /* PRIVATE */
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
-  KDSize layoutSize = SquareBracketPairLayoutNode::SizeGivenChildSize(KDSize(
+  KDSize layoutSize = Point2DLayoutNode::SizeGivenChildSize(
       PrintFloat::glyphLengthForFloatWithPrecision(
           Preferences::sharedPreferences->numberOfSignificantDigits()) *
           KDFont::GlyphWidth(k_cellFont),
-      2 * KDFont::GlyphHeight(k_cellFont) + GridLayoutNode::k_gridEntryMargin));
+      KDFont::GlyphHeight(k_cellFont));
   return layoutSize +
          KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }
@@ -374,9 +375,17 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       result = approximation;
     }
   }
-  *memoizedLayoutAtIndex(index) =
-      result.createLayout(preferences->displayMode(),
-                          preferences->numberOfSignificantDigits(), context);
+  Layout layout;
+  if (result.type() == ExpressionNode::Type::Point) {
+    layout = static_cast<const Point &>(result).create2DLayout(
+        preferences->displayMode(), preferences->numberOfSignificantDigits(),
+        context);
+  } else {
+    layout =
+        result.createLayout(preferences->displayMode(),
+                            preferences->numberOfSignificantDigits(), context);
+  }
+  *memoizedLayoutAtIndex(index) = layout;
 }
 
 int ValuesController::numberOfColumnsForAbscissaColumn(int column) {

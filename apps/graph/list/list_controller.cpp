@@ -122,7 +122,23 @@ bool ListController::completeEquation(LayoutField *equationField,
   return handled;
 }
 
+void ListController::selectTemplateButton(bool select) {
+  m_editableCell.buttonCell()->setHighlighted(select);
+  layoutField()->setEditing(!select);
+
+  if (select) {
+    App::app()->setFirstResponder(m_editableCell.buttonCell());
+  } else {
+    App::app()->setFirstResponder(layoutField());
+  }
+}
+
 void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
+  if (!m_editableCell.buttonShouldBeVisible() &&
+      m_editableCell.buttonIsHighlighted()) {
+    // Deselect the button when it is about to disappear.
+    selectTemplateButton(false);
+  }
   m_editableCell.updateButton();
 }
 
@@ -134,15 +150,11 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     bool editing = m_editableCell.isEditing();
 
     if (event == Ion::Events::Right && editing) {
-      App::app()->setFirstResponder(m_editableCell.buttonCell());
-      m_editableCell.buttonCell()->setHighlighted(true);
-      layoutField->setEditing(false);
+      selectTemplateButton(true);
       return true;
     }
     if (event == Ion::Events::Left && !editing) {
-      App::app()->setFirstResponder(layoutField);
-      m_editableCell.buttonCell()->setHighlighted(false);
-      layoutField->setEditing(true);
+      selectTemplateButton(false);
       return true;
     }
   }
@@ -167,9 +179,9 @@ CodePoint ListController::defaultXNT() {
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
+  selectTemplateButton(false);
   ExpressionModelListController::editExpression(event);
   m_editableCell.setHighlighted(true);
-  m_editableCell.updateButton();
 }
 
 bool ListController::editSelectedRecordWithText(const char *text) {

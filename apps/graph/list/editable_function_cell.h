@@ -25,13 +25,7 @@ class EditableFunctionCell
 
   bool buttonShouldBeVisible() { return isEmpty(); }
   bool buttonIsVisible() { return m_buttonCell.isVisible(); }
-
-  void setHighlighted(bool highlighted) override {
-    if (!highlighted) {
-      m_buttonCell.setHighlighted(false);
-    }
-    AbstractFunctionCell::setHighlighted(highlighted);
-  }
+  bool buttonIsHighlighted() { return m_buttonCell.isHighlighted(); }
 
   void updateButton();
 
@@ -52,7 +46,8 @@ class EditableFunctionCell
                              invocation, Escher::Palette::WallScreen, 0,
                              KDFont::Size::Small) {}
     bool handleEvent(Ion::Events::Event event) override;
-    void deselect();
+
+    using HighlightCell::isHighlighted;
   };
 
   static constexpr KDCoordinate k_expressionMargin = 5;

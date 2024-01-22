@@ -55,6 +55,9 @@ class Point : public ExpressionTwoChildren<Point, PointNode> {
         childAtIndex(0).approximateToScalar<T>(approximationContext),
         childAtIndex(1).approximateToScalar<T>(approximationContext));
   }
+
+  Layout create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
+                        int significantDigits, Context* context) const;
 };
 
 }  // namespace Poincare

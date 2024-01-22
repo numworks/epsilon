@@ -320,7 +320,7 @@ static void deleteParametricComponent(char *baseName, size_t baseNameLength,
 static void storeParametricComponent(char *baseName, size_t baseNameLength,
                                      size_t bufferSize, const Expression &e,
                                      bool first) {
-  assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Matrix &&
+  assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point &&
          e.numberOfChildren() == 2);
   Expression child = e.childAtIndex(first ? 0 : 1).clone();
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
@@ -354,10 +354,6 @@ void ListController::storeParametricComponentsOfSelectedModel() {
     return;
   }
   Expression e = f->expressionClone();
-  if (e.type() != ExpressionNode::Type::Matrix) {
-    // We might have a function of the form lambda * matrix
-    return;
-  }
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = f->name(buffer, bufferSize);

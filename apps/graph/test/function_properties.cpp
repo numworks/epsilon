@@ -569,7 +569,7 @@ QUIZ_CASE(graph_function_properties) {
     // === Parametric functions ===
 
     assert_check_function_properties(
-        "g(t)=[[cos(t)][t]]",
+        "g(t)=(cos(t),t)",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricEquationType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -577,7 +577,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
 
     assert_check_function_properties(
-        "g(t)=[[-3][2ln(t)]]",
+        "g(t)=(-3,2ln(t))",
         FunctionProperties{
             .m_caption = I18n::Message::VerticalLineType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -585,7 +585,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
 
     assert_check_function_properties(
-        "g(t)=[[3cos(t)][2]]",
+        "g(t)=(3cos(t),2)",
         FunctionProperties{
             .m_caption = I18n::Message::HorizontalLineType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -593,7 +593,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
 
     assert_check_function_properties(
-        "g(t)=[[3t-4][t/π]]",
+        "g(t)=(3t-4,t/π)",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricLineType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -601,7 +601,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
 
     assert_check_function_properties(
-        "g(t)=[[3cos(t)][-5cos(t)]]",
+        "g(t)=(3cos(t),-5cos(t))",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricLineType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -609,7 +609,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
 
     assert_check_function_properties(
-        "g(t)=[[4cos(5t-2)+6][3cos(5t-2)-20]]",
+        "g(t)=(4cos(5t-2)+6,3cos(5t-2)-20)",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricLineType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -617,7 +617,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
 
     assert_check_function_properties(
-        "g(t)=[[5+t-3.1t^2][-2t+1]]",
+        "g(t)=(5+t-3.1t^2,-2t+1)",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricParabolaType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -626,7 +626,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_conicShape = Poincare::Conic::Shape::Parabola});
 
     assert_check_function_properties(
-        "g(t)=[[3(ln(t))^2][-2ln(t)]]",
+        "g(t)=(3(ln(t))^2,-2ln(t))",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricParabolaType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -635,7 +635,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_conicShape = Poincare::Conic::Shape::Parabola});
 
     assert_check_function_properties(
-        "g(t)=[[4cos(5t-2)+6][3cos(5t+6)-20]]",
+        "g(t)=(4cos(5t-2)+6,3cos(5t+6)-20)",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricEllipseType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -644,7 +644,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_conicShape = Poincare::Conic::Shape::Ellipse});
 
     assert_check_function_properties(
-        "g(t)=[[3cos(5t-2)+6][-3sin(5t-2)-20]]",
+        "g(t)=(3cos(5t-2)+6,-3sin(5t-2)-20)",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricCircleType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -653,7 +653,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_conicShape = Poincare::Conic::Shape::Circle});
 
     assert_check_function_properties(
-        "g(t)=[[diff(x,x,t)][t]]",
+        "g(t)=(diff(x,x,t),t)",
         FunctionProperties{
             .m_caption = I18n::Message::ParametricEquationType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
@@ -706,13 +706,13 @@ QUIZ_CASE(graph_function_properties) {
             .m_status = ContinuousFunctionProperties::Status::Undefined,
             .m_caption = I18n::Message::UndefinedType});
     assert_check_function_properties(
-        "f(t)=[[cos(t)][t]]*log(0)",
+        "f(t)=(cos(t),t)*log(0)",
         FunctionProperties{
             .m_status = ContinuousFunctionProperties::Status::Undefined,
             .m_caption = I18n::Message::UndefinedType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T});
     assert_check_function_properties(
-        "r=θ+[[0][0]]",
+        "r=θ+(0,0)",
         FunctionProperties{
             .m_status = ContinuousFunctionProperties::Status::Undefined,
             .m_caption = I18n::Message::UndefinedType,

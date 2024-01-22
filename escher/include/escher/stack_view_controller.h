@@ -21,7 +21,7 @@ class StackViewController : public ViewController {
   template <int Depth>
   using Custom = CustomSizeStackViewController<Depth>;
 
-  typedef StackView::Style Style;
+  using Style = StackView::Style;
 
   /* Push creates a new StackView and adds it */
   void push(ViewController* vc);
@@ -48,10 +48,8 @@ class StackViewController : public ViewController {
   }
 
  protected:
-  StackViewController(int capacity, ViewController** stackBase,
-                      Responder* parentResponder,
-                      ViewController* rootViewController,
-                      StackView::Style style, bool extendVertically,
+  StackViewController(Responder* parentResponder, StackView::Style style,
+                      bool extendVertically,
                       Ion::AbstractStack<StackHeaderView>* headerViewStack);
 
  private:
@@ -72,11 +70,7 @@ class StackViewController : public ViewController {
   StackView::Mask m_headersDisplayMask;
 
  private:
-#ifndef NDEBUG
-  // Only used for an assertion in pushModel()
-  const int m_capacity;
-#endif
-  ViewController** const m_stack;
+  virtual ViewController** stackSlot(int index) = 0;
 };
 
 template <unsigned Capacity>
@@ -92,11 +86,18 @@ class CustomSizeStackViewController : public StackViewController {
                                 ViewController* rootViewController,
                                 StackView::Style style,
                                 bool extendVertically = true)
-      : StackViewController(Capacity, m_stack, parentResponder,
-                            rootViewController, style, extendVertically,
-                            &m_headerViewStack) {}
+      : StackViewController(parentResponder, style, extendVertically,
+                            &m_headerViewStack) {
+    m_stack[0] = rootViewController;
+    rootViewController->setParentResponder(this);
+  }
 
  private:
+  ViewController** stackSlot(int index) override {
+    assert(index >= 0 && index < Capacity);
+    return &m_stack[index];
+  }
+
   ViewController* m_stack[Capacity];
   Ion::Stack<StackHeaderView, Capacity> m_headerViewStack;
 };

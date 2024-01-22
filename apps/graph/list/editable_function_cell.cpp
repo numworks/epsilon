@@ -15,7 +15,6 @@ EditableFunctionCell::EditableFunctionCell(
       m_buttonCell(expressionCell()->layoutField(),
                    Invocation::Builder<ViewController>(
                        [](ViewController* controller, void* sender) {
-                         static_cast<ButtonCell*>(sender)->deselect();
                          App::app()->displayModalViewController(
                              controller, 0.f, 0.f,
                              Metric::PopUpMarginsNoBottom);
@@ -31,10 +30,6 @@ void EditableFunctionCell::updateButton() {
   bool visible = buttonIsVisible();
   bool shouldBeVisible = buttonShouldBeVisible();
 
-  if (visible && !shouldBeVisible) {
-    m_buttonCell.setHighlighted(false);
-    App::app()->setFirstResponder(expressionCell()->layoutField());
-  }
   if (visible != shouldBeVisible) {
     m_buttonCell.setVisible(shouldBeVisible);
     layoutSubviews();
@@ -72,11 +67,6 @@ void EditableFunctionCell::layoutSubviews(bool force) {
                (bounds().height() - buttonSize.height()) / 2, buttonSize);
   }
   setChildFrame(&m_buttonCell, templateButtonRect, force);
-}
-
-// EditableFunctionCell::ButtonCell
-void EditableFunctionCell::ButtonCell::deselect() {
-  parentResponder()->handleEvent(Ion::Events::Left);
 }
 
 bool EditableFunctionCell::ButtonCell::handleEvent(Ion::Events::Event event) {

@@ -3,7 +3,7 @@
 
 #include <escher/solid_color_view.h>
 #include <escher/stack_header_view.h>
-#include <ion/ring_buffer.h>
+#include <ion/stack.h>
 
 namespace Escher {
 
@@ -40,7 +40,7 @@ class StackView : public View {
   // Returns the index in m_stackViews for a given display index
   int stackHeaderIndex(int displayIndex);
 
-  Ion::RingBuffer<StackHeaderView, k_maxDepth> m_stackHeaderViews;
+  Ion::Stack<StackHeaderView, k_maxDepth> m_stackHeaderViews;
   SolidColorView m_borderView;
   View* m_contentView;
   Style m_style;

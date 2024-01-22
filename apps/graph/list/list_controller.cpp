@@ -79,12 +79,8 @@ void ListController::fillWithDefaultFunctionEquation(char *buffer,
   } else {
     length = FunctionNameHelper::DefaultName(buffer, bufferSize, symbol);
     assert(0 < length && length < bufferSize - 1);
-    length += SerializationHelper::CodePoint(buffer + length,
-                                             bufferSize - length, '(');
-    length += SerializationHelper::CodePoint(buffer + length,
-                                             bufferSize - length, symbol);
-    length += SerializationHelper::CodePoint(buffer + length,
-                                             bufferSize - length, ')');
+    length += Shared::Function::WithArgument(symbol, buffer + length,
+                                             bufferSize - length);
   }
   length +=
       SerializationHelper::CodePoint(buffer + length, bufferSize - length, '=');

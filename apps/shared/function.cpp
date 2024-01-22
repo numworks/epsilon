@@ -18,18 +18,22 @@ using namespace Poincare;
 
 namespace Shared {
 
-size_t Function::NameWithArgument(Ion::Storage::Record record,
-                                  CodePoint argument, char *buffer,
-                                  size_t bufferSize) {
-  size_t length = record.nameWithoutExtension(buffer, bufferSize);
-  length +=
-      SerializationHelper::CodePoint(buffer + length, bufferSize - length, '(');
+size_t Function::WithArgument(CodePoint argument, char *buffer,
+                              size_t bufferSize) {
+  size_t length = SerializationHelper::CodePoint(buffer, bufferSize, '(');
   assert(UTF8Decoder::CharSizeOfCodePoint(argument) <= 2);
   length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
                                            argument);
   length +=
       SerializationHelper::CodePoint(buffer + length, bufferSize - length, ')');
   return length;
+}
+
+size_t Function::NameWithArgument(Ion::Storage::Record record,
+                                  CodePoint argument, char *buffer,
+                                  size_t bufferSize) {
+  size_t length = record.nameWithoutExtension(buffer, bufferSize);
+  return length + WithArgument(argument, buffer + length, bufferSize - length);
 }
 
 bool Function::isActive() const { return recordData()->isActive(); }
@@ -54,6 +58,10 @@ size_t Function::printValue(double cursorT, double cursorX, double cursorY,
 
 size_t Function::name(char *buffer, size_t bufferSize) const {
   return nameWithoutExtension(buffer, bufferSize);
+}
+
+size_t Function::withArgument(char *buffer, size_t bufferSize) const {
+  return Function::WithArgument(symbol(), buffer, bufferSize);
 }
 
 size_t Function::nameWithArgument(char *buffer, size_t bufferSize) {

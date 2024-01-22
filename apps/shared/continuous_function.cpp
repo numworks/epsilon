@@ -453,10 +453,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   if (e.isUndefined()) {
     return Coordinate2D<T>(NAN, NAN);
   }
-  // TODO : This should maybe be a List instead of a Matrix
-  assert(e.type() == ExpressionNode::Type::Matrix);
-  assert(static_cast<Matrix &>(e).numberOfRows() == 2);
-  assert(static_cast<Matrix &>(e).numberOfColumns() == 1);
+  assert(e.type() == ExpressionNode::Type::Point);
+  assert(e.numberOfChildren() == 2);
   return Coordinate2D<T>(e.childAtIndex(0).approximateWithValueForSymbol(
                              k_unknownName, t, approximationContext),
                          e.childAtIndex(1).approximateWithValueForSymbol(
@@ -556,14 +554,10 @@ Expression ContinuousFunction::Model::expressionReduced(
         if (solutions <= 1) {
           m_expression = root1;
         } else {
-          // SubCurves are stored in a 2x1 matrix
-          Matrix newExpr = Matrix::Builder();
+          // SubCurves are stored in a point
           // Roots are ordered so that the first one is superior to the second
-          newExpr.addChildAtIndexInPlace(root2, 0, 0);
-          newExpr.addChildAtIndexInPlace(root1, 1, 1);
-          newExpr.setDimensions(2, 1);
-          /* Shallow reduce the matrix in case the equation could approximate to
-           * a list. */
+          Point newExpr = Point::Builder(root2, root1);
+          /* Shallow reduce in case the equation could approximate to a list. */
           m_expression = newExpr.shallowReduce(reductionContext);
         }
       } else {
@@ -940,12 +934,10 @@ int ContinuousFunction::Model::numberOfSubCurves(
   if (properties().isCartesian()) {
     Expression e = expressionReduced(
         record, AppsContainerHelper::sharedAppsContainerGlobalContext());
-    if (e.type() == ExpressionNode::Type::Matrix) {
+    if (e.type() == ExpressionNode::Type::Point) {
       assert(properties().isOfDegreeTwo());
-      assert(static_cast<Matrix &>(e).numberOfColumns() == 1);
-      // We could handle any number of subcurves and any number of rows
-      assert(static_cast<Matrix &>(e).numberOfRows() == 2);
-      return static_cast<Matrix &>(e).numberOfRows();
+      // We could handle any number of subcurves and any number of children
+      return e.numberOfChildren();
     }
   }
   return 1;

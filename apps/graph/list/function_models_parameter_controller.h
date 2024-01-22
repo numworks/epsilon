@@ -86,7 +86,7 @@ class FunctionModelsParameterController
           "x+y≤0",
           "x=√(y)",
           "x^2+y^2+x*y+x+y=0",
-          "f(t)=[[cos(t)][sin(t)]]",
+          "f(t)=(cos(t),sin(t))",
           "r1(θ)=cos(θ)",
           "f(x)=piecewise(-x,x<0,x,x≥0)",
           "(2,3)",

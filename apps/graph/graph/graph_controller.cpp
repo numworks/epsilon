@@ -125,38 +125,32 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
       Expression e = f->expressionApproximated(context);
       if (f->properties().isPolar() || f->properties().isInversePolar()) {
-        Expression firstRow, secondRow;
+        Expression x, y;
         Expression unknown =
             Symbol::Builder(ContinuousFunction::k_unknownName,
                             strlen(ContinuousFunction::k_unknownName));
         if (f->properties().isPolar()) {
-          /* Turn r(theta) into f(theta) = [x(theta), y(theta)]
+          /* Turn r(theta) into f(theta) = (x(theta), y(theta))
            *   x(theta) = cos(theta)*r(theta) */
-          firstRow = Multiplication::Builder(Cosine::Builder(unknown.clone()),
-                                             e.clone());
+          x = Multiplication::Builder(Cosine::Builder(unknown.clone()),
+                                      e.clone());
           //   y(theta) = sin(theta)*r(theta)
-          secondRow = Multiplication::Builder(Sine::Builder(unknown.clone()),
-                                              e.clone());
+          y = Multiplication::Builder(Sine::Builder(unknown.clone()),
+                                      e.clone());
         } else {
-          /* Turn theta(r) into f(r) = [x(r), y(r)]
+          /* Turn theta(r) into f(r) = (x(r), y(r))
            *   x(r) = r*cos(theta(r)) */
-          firstRow = Multiplication::Builder(unknown.clone(),
-                                             Cosine::Builder(e.clone()));
+          x = Multiplication::Builder(unknown.clone(),
+                                      Cosine::Builder(e.clone()));
           //  y(theta) = r*sin(theta(r))
-          secondRow = Multiplication::Builder(unknown.clone(),
-                                              Sine::Builder(e.clone()));
+          y = Multiplication::Builder(unknown.clone(),
+                                      Sine::Builder(e.clone()));
         }
-        Matrix parametricExpression = Matrix::Builder();
-        parametricExpression.addChildAtIndexInPlace(firstRow, 0, 0);
-        parametricExpression.addChildAtIndexInPlace(secondRow, 1, 1);
-        parametricExpression.setDimensions(2, 1);
-        e = parametricExpression;
+        e = Point::Builder(x, y);
       }
-      assert((e.type() == ExpressionNode::Type::Matrix &&
-              e.numberOfChildren() == 2) ||
+      assert(e.type() == ExpressionNode::Type::Point ||
              (e.type() == ExpressionNode::Type::Dependency &&
-              e.childAtIndex(0).type() == ExpressionNode::Type::Matrix &&
-              e.childAtIndex(0).numberOfChildren() == 2));
+              e.childAtIndex(0).type() == ExpressionNode::Type::Point));
 
       // Compute the ordinate range of x(t) and y(t)
       Range1D ranges[2];

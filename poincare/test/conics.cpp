@@ -269,29 +269,25 @@ void quiz_assert_parametric_shape(const char* expression, Shape expectedShape) {
 }
 
 QUIZ_CASE(poincare_conics_parametric_shape) {
-  quiz_assert_parametric_shape("[[t] [t]]", Shape::Undefined);
-  quiz_assert_parametric_shape("[[cos(t)] [t]]", Shape::Undefined);
-  quiz_assert_parametric_shape("[[4t^2-2t+3] [-t+1]]", Shape::Parabola);
-  quiz_assert_parametric_shape("[[0.2ln(t)] [-8ln(t)^2]]", Shape::Parabola);
+  quiz_assert_parametric_shape("(t,t)", Shape::Undefined);
+  quiz_assert_parametric_shape("(cos(t),t)", Shape::Undefined);
+  quiz_assert_parametric_shape("(4t^2-2t+3,-t+1)", Shape::Parabola);
+  quiz_assert_parametric_shape("(0.2ln(t),-8ln(t)^2)", Shape::Parabola);
   /* Not implemented:
-   * quiz_assert_parametric_shape("[[0.2ln(t)] [-(π+2)ln(t)^2]]",
+   * quiz_assert_parametric_shape("(0.2ln(t),-(π+2)ln(t)^2)",
    Shape::Parabola);
-   * quiz_assert_parametric_shape("[[0.2ln(t)+3] [-(π+2)ln(t)^2+5]]",
+   * quiz_assert_parametric_shape("(0.2ln(t)+3,-(π+2)ln(t)^2+5)",
    Shape::Parabola); */
 
-  quiz_assert_parametric_shape("[[2cos(-t+3)+π] [2sin(-t+3)+0.1]]",
-                               Shape::Circle);
-  quiz_assert_parametric_shape("[[2sin(-t+3)+π] [2cos(-t+3)+0.1]]",
-                               Shape::Circle);
-  quiz_assert_parametric_shape("[[2cos(-t+3)+π] [2sin(-t+2)+0.1]]",
+  quiz_assert_parametric_shape("(2cos(-t+3)+π,2sin(-t+3)+0.1)", Shape::Circle);
+  quiz_assert_parametric_shape("(2sin(-t+3)+π,2cos(-t+3)+0.1)", Shape::Circle);
+  quiz_assert_parametric_shape("(2cos(-t+3)+π,2sin(-t+2)+0.1)", Shape::Ellipse);
+  quiz_assert_parametric_shape("(3cos(-t+3)+π,2sin(-t+2)+0.1)", Shape::Ellipse);
+  quiz_assert_parametric_shape("((2+π)cos(-t+3)+π,(2+π)sin(-t+2)+0.1)",
                                Shape::Ellipse);
-  quiz_assert_parametric_shape("[[3cos(-t+3)+π] [2sin(-t+2)+0.1]]",
-                               Shape::Ellipse);
-  quiz_assert_parametric_shape("[[(2+π)cos(-t+3)+π] [(2+π)sin(-t+2)+0.1]]",
-                               Shape::Ellipse);
-  quiz_assert_parametric_shape("[[2cos(-t+3)+π] [2sin(5t+2)+0.1]]",
+  quiz_assert_parametric_shape("(2cos(-t+3)+π,2sin(5t+2)+0.1)",
                                Shape::Undefined);
   /* Not implemented:
-   * quiz_assert_parametric_shape("[A*sec(B*t+C)+D , G*tan(B*t+E)+F]",
+   * quiz_assert_parametric_shape("(A*sec(B*t+C)+D,G*tan(B*t+E)+F)",
                                   Shape::Hyperbola); */
 }

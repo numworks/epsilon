@@ -89,9 +89,7 @@ bool ParametricComponentsNameError(Expression expression,
   Expression matrix = expression.childAtIndex(1);
   if (!functionSymbol.isIdenticalTo(
           Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
-      matrix.type() != ExpressionNode::Type::Matrix ||
-      static_cast<const Matrix &>(matrix).numberOfRows() != 2 ||
-      static_cast<const Matrix &>(matrix).numberOfColumns() != 1) {
+      matrix.type() != ExpressionNode::Type::Point) {
     // The user is not defining a parametric function
     return false;
   }

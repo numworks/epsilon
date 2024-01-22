@@ -206,18 +206,13 @@ void ContinuousFunctionProperties::update(
     assert(precomputedOperatorType == ComparisonNode::OperatorType::Equal);
 
     if (precomputedFunctionSymbol == SymbolType::T) {
-      if (analyzedExpression.type() != ExpressionNode::Type::Matrix ||
-          static_cast<const Matrix&>(analyzedExpression).numberOfRows() != 2 ||
-          static_cast<const Matrix&>(analyzedExpression).numberOfColumns() !=
-              1) {
+      if (analyzedExpression.type() != ExpressionNode::Type::Point) {
         // Invalid parametric format
         setErrorStatusAndUpdateCaption(Status::Unhandled);
         return;
       }
       if (analyzedExpression.hasMatrixOrListChild(context, false)) {
-        /* Reduction might have failed.
-         * When reduction doesn't fail, a matrix containing
-         * a matrix or a list is reduced to undef. */
+        /* Reduction might have failed. */
         setErrorStatusAndUpdateCaption(Status::Undefined);
         return;
       }
@@ -563,10 +558,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
     Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isParametric());
-  assert(analyzedExpression.type() == ExpressionNode::Type::Matrix &&
-         static_cast<const Matrix&>(analyzedExpression).numberOfColumns() ==
-             1 &&
-         static_cast<const Matrix&>(analyzedExpression).numberOfRows() == 2);
+  assert(analyzedExpression.type() == ExpressionNode::Type::Point);
+  assert(analyzedExpression.numberOfChildren() == 2);
   assert(!analyzedExpression.hasMatrixOrListChild(context, false));
 
   setCurveParameterType(CurveParameterType::Parametric);

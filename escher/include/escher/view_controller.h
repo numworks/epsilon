@@ -46,14 +46,14 @@ class ViewController : public Responder {
      * current title, but also does not add it to the stack headers. */
     NeverDisplayOwnTitle = StackView::Mask(~1u),  // 0b11111110
     /* Hide all previous headers but the last one. */
-    DisplayLastFourTitles = StackView::Mask(0b00001111),
-    DisplayLastThreeTitles = StackView::Mask(0b00000111),
-    DisplaySecondAndThirdToLast = StackView::Mask(0b00000110),
-    DisplayLastAndThirdToLast = StackView::Mask(0b00000101),
-    DisplayLastTwoTitles = StackView::Mask(0b00000011),
-    DisplaySecondToLast = StackView::Mask(0b00000010),
-    DisplayLastTitle = StackView::Mask(0b00000001),
-    DisplayNoTitle = StackView::Mask(0b00000000)
+    DisplayLastFourTitles = StackView::Mask(0b1111),
+    DisplayLastThreeTitles = StackView::Mask(0b111),
+    DisplaySecondAndThirdToLast = StackView::Mask(0b110),
+    DisplayLastAndThirdToLast = StackView::Mask(0b101),
+    DisplayLastTwoTitles = StackView::Mask(0b11),
+    DisplaySecondToLast = StackView::Mask(0b10),
+    DisplayLastTitle = StackView::Mask(0b1),
+    DisplayNoTitle = StackView::Mask(0)
   };
 
   ViewController(Responder* parentResponder) : Responder(parentResponder) {}

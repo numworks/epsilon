@@ -91,15 +91,24 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
   return m_model.renameRecordIfNeeded(this, context);
 }
 
-size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
+size_t ContinuousFunction::nameWithoutArgument(char *buffer,
+                                               size_t bufferSize) {
   if (isNamed()) {
-    return Function::nameWithArgument(buffer, bufferSize);
+    return Function::name(buffer, bufferSize);
   }
   return SerializationHelper::CodePoint(
       buffer, bufferSize,
       properties().isPolar()
           ? k_radiusSymbol
           : (properties().isInversePolar() ? k_polarSymbol : k_ordinateSymbol));
+}
+
+size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
+  size_t length = nameWithoutArgument(buffer, bufferSize);
+  if (isNamed()) {
+    length += withArgument(buffer + length, bufferSize - length);
+  }
+  return length;
 }
 
 size_t ContinuousFunction::printValue(double cursorT, double cursorX,
@@ -254,27 +263,14 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
 
 size_t ContinuousFunction::derivativeNameWithArgument(char *buffer,
                                                       size_t bufferSize) {
-  if (!isNamed()) {
-    if (properties().isPolar()) {
-      return strlcpy(buffer, "r'", bufferSize);
-    }
-    return strlcpy(buffer, "y'", bufferSize);
-  }
   const CodePoint derivative = '\'';
-  size_t derivativeSize = UTF8Decoder::CharSizeOfCodePoint(derivative);
-  // Fill buffer with f(x). Keep size for derivative sign.
-  size_t numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize);
-  assert(numberOfChars + derivativeSize < bufferSize);
-  // Find (x)
-  char *firstParenthesis =
-      const_cast<char *>(UTF8Helper::CodePointSearch(buffer, '('));
-  assert(UTF8Helper::CodePointIs(firstParenthesis, '('));
-  // Move parentheses to fit derivative CodePoint
-  memmove(firstParenthesis + derivativeSize, firstParenthesis,
-          numberOfChars - (firstParenthesis - buffer) + 1);
-  // Insert derivative CodePoint
-  UTF8Decoder::CodePointToChars(derivative, firstParenthesis, derivativeSize);
-  return numberOfChars + derivativeSize;
+  size_t length = nameWithoutArgument(buffer, bufferSize);
+  length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
+                                           derivative);
+  if (isNamed()) {
+    length += withArgument(buffer + length, bufferSize - length);
+  }
+  return length;
 }
 
 double ContinuousFunction::approximateDerivative(double t, Context *context,

@@ -27,6 +27,8 @@ class Function : public ExpressionModelHandle {
   ;
 
   constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
+  static size_t WithArgument(CodePoint argument, char* buffer,
+                             size_t bufferSize);
   static size_t NameWithArgument(Ion::Storage::Record record,
                                  CodePoint argument, char* buffer,
                                  size_t bufferSize);
@@ -49,6 +51,7 @@ class Function : public ExpressionModelHandle {
 
   // Name
   size_t name(char* buffer, size_t bufferSize) const;
+  size_t withArgument(char* buffer, size_t bufferSize) const;
   virtual size_t nameWithArgument(char* buffer, size_t bufferSize);
   // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
   virtual size_t printValue(double cursorT, double cursorX, double cursorY,

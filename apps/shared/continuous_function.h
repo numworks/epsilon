@@ -50,6 +50,7 @@ class ContinuousFunction : public Function {
   I18n::Message parameterMessageName() const override {
     return properties().symbolMessage();
   }
+  size_t nameWithoutArgument(char *buffer, size_t bufferSize);
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
   size_t nameWithArgument(char *buffer, size_t bufferSize) override;
   // Insert the value of the evaluation (or the symbol if symbolValue) in buffer

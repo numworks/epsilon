@@ -190,9 +190,10 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
       symbolTypeAtColumn(&tempCol);
   if (!m_exactValuesAreActivated && tempCol > 0 &&
       symbol == ContinuousFunctionProperties::SymbolType::T) {
-    columnWidth = ApproximatedParametricCellSize().width();
+    KDSize parametricSize = ApproximatedParametricCellSize();
+    columnWidth = parametricSize.width();
     if (cellHasValue(column, row, false) && row > 0) {
-      rowHeight = ApproximatedParametricCellSize().height();
+      rowHeight = parametricSize.height();
     }
   }
 

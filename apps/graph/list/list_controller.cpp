@@ -98,22 +98,16 @@ bool ListController::layoutRepresentsPolarFunction(Layout l) const {
   return !match.isUninitialized();
 }
 
-/* Return true if given layout contains a Matrix of correct dimensions as first
- * child. Note: A more precise detection would require an expression reduction
- * to distinguish:
- * - sum(1,t,0,100) : Cartesian
- * - norm([[4][5]]) : Cartesian
- * - 31*[[4][5]]*10 : Parametric */
+// Return true if given layout contains t
 bool ListController::layoutRepresentsParametricFunction(Layout l) const {
-  if (l.type() == LayoutNode::Type::HorizontalLayout &&
-      l.numberOfChildren() > 0) {
-    l = l.childAtIndex(0);
-  }
-  if (l.type() != LayoutNode::Type::MatrixLayout) {
-    return false;
-  }
-  MatrixLayout m = static_cast<MatrixLayout &>(l);
-  return m.numberOfColumns() == 1 && m.numberOfRows() == 2;
+  Layout match = l.recursivelyMatches([](Layout layout) {
+    return layout.type() == LayoutNode::Type::CodePointLayout &&
+                   static_cast<CodePointLayout &>(layout).codePoint() ==
+                       ContinuousFunction::k_parametricSymbol
+               ? TrinaryBoolean::True
+               : TrinaryBoolean::Unknown;
+  });
+  return !match.isUninitialized();
 }
 
 bool ListController::shouldCompleteEquation(Poincare::Expression expression) {

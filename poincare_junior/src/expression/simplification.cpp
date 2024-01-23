@@ -206,6 +206,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
 bool Simplification::SimplifyExp(Tree* u) {
   Tree* child = u->nextNode();
   if (child->isLn()) {
+    // TODO : Unreal with x negative and Real complex format
     // exp(ln(x)) -> x
     u->removeNode();
     u->removeNode();
@@ -219,6 +220,7 @@ bool Simplification::SimplifyExp(Tree* u) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
       ctx.getNode(KA)->isInteger()) {
+    // TODO : Unreal with x negative and Real complex format
     // exp(n*ln(x)) -> x^n with n an integer
     u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
     return true;

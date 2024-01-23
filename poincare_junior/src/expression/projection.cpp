@@ -1,10 +1,25 @@
 #include "projection.h"
 
+#include <apps/global_preferences.h>
+#include <poincare/preferences.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 
 namespace PoincareJ {
+
+ProjectionContext Projection::ContextFromSettings() {
+  return ProjectionContext{
+      .m_complexFormat = static_cast<ComplexFormat>(
+          Poincare::Preferences::SharedPreferences()->complexFormat()),
+      .m_angleUnit = static_cast<AngleUnit>(
+          Poincare::Preferences::SharedPreferences()->angleUnit()),
+      .m_strategy = Strategy::Default,
+      .m_dimension = Dimension(),
+      .m_unitFormat = static_cast<UnitFormat>(
+          GlobalPreferences::SharedGlobalPreferences()->unitFormat()),
+  };
+}
 
 bool Projection::DeepSystemProjection(Tree* ref,
                                       ProjectionContext projectionContext) {

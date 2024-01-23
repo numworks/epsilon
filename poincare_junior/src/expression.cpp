@@ -1,6 +1,7 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/projection.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
@@ -27,8 +28,11 @@ Expression Expression::Parse(const Layout *layout) {
 }
 
 Expression Expression::Simplify(const Expression *input) {
-  return Expression([](Tree *input) { Simplification::Simplify(input); },
-                    input);
+  return Expression(
+      [](Tree *input) {
+        Simplification::Simplify(input, Projection::ContextFromSettings());
+      },
+      input);
 }
 
 Expression Expression::CreateSimplifyReduction(void *expressionAddress) {

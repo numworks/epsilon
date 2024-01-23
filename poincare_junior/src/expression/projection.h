@@ -18,6 +18,7 @@ struct ProjectionContext {
 
 class Projection {
  public:
+  static ProjectionContext ContextFromSettings();
   static bool DeepSystemProjection(Tree *reference,
                                    ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(DeepSystemProjection, ProjectionContext, {});

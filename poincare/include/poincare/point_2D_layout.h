@@ -32,6 +32,8 @@ class Point2DLayoutNode final : public TwoRowsLayoutNode {
 #endif
 
  private:
+  constexpr static KDCoordinate k_rowsSeparator = 2;
+
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
   KDCoordinate upperMargin(KDFont::Size font) override {
     return ParenthesisLayoutNode::VerticalMargin(
@@ -41,6 +43,7 @@ class Point2DLayoutNode final : public TwoRowsLayoutNode {
     return ParenthesisLayoutNode::VerticalMargin(
         lowerLayout()->layoutSize(font).height());
   }
+  KDCoordinate rowsSeparator() override { return k_rowsSeparator; }
 };
 
 class Point2DLayout final

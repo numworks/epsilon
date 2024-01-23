@@ -29,8 +29,6 @@ class TwoRowsLayoutNode : public LayoutNode {
   int numberOfChildren() const override final { return 2; }
 
  protected:
-  constexpr static KDCoordinate k_rowsSeparator =
-      GridLayoutNode::k_gridEntryMargin;
   constexpr static KDCoordinate k_parenthesisWidth =
       ParenthesisLayoutNode::k_parenthesisWidth;
 
@@ -44,7 +42,7 @@ class TwoRowsLayoutNode : public LayoutNode {
                     lowerLayout()->layoutSize(font).width());
   }
   KDCoordinate rowsHeight(KDFont::Size font) {
-    return upperLayout()->layoutSize(font).height() + k_rowsSeparator +
+    return upperLayout()->layoutSize(font).height() + rowsSeparator() +
            lowerLayout()->layoutSize(font).height();
   }
   LayoutNode* upperLayout() const { return childAtIndex(k_upperLayoutIndex); }
@@ -52,6 +50,9 @@ class TwoRowsLayoutNode : public LayoutNode {
 
   virtual KDCoordinate upperMargin(KDFont::Size font) { return 0; }
   virtual KDCoordinate lowerMargin(KDFont::Size font) { return 0; }
+  virtual KDCoordinate rowsSeparator() {
+    return GridLayoutNode::k_gridEntryMargin;
+  }
 };
 
 }  // namespace Poincare

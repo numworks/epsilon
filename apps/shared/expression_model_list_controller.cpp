@@ -207,6 +207,20 @@ void ExpressionModelListController::finishEdition() {
   selectableListView()->reloadData();
 }
 
+static CodePoint symbolForEquation(Expression expression) {
+  if (expression.recursivelyMatches([](const Expression e) {
+        return e.isIdenticalTo(Symbol::Builder(Symbol::k_polarSymbol));
+      })) {
+    return Symbol::k_polarSymbol;
+  } else if (expression.recursivelyMatches([](const Expression e) {
+               return e.isIdenticalTo(
+                   Symbol::Builder(Symbol::k_parametricSymbol));
+             })) {
+    return Symbol::k_parametricSymbol;
+  }
+  return Symbol::k_cartesianSymbol;
+}
+
 bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
@@ -217,8 +231,9 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
-  if (shouldCompleteEquation(parsedExpression)) {
-    if (!completeEquation(layoutField)) {
+  CodePoint symbol = symbolForEquation(parsedExpression);
+  if (shouldCompleteEquation(parsedExpression, symbol)) {
+    if (!completeEquation(layoutField, symbol)) {
       App::app()->displayWarning(I18n::Message::RequireEquation);
       return false;
     }

@@ -125,7 +125,8 @@ void ListController::didEnterResponderChain(Responder *previousFirstResponder) {
   reloadBrace();
 }
 
-bool ListController::completeEquation(LayoutField *equationField) {
+bool ListController::completeEquation(LayoutField *equationField,
+                                      CodePoint symbol) {
   equationField->putCursorOnOneSide(OMG::Direction::Right());
   return equationField->handleEventWithText("=0");
 }

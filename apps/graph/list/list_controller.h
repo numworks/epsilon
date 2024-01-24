@@ -59,10 +59,10 @@ class ListController : public Shared::FunctionListController,
   }
   void fillWithDefaultFunctionEquation(char* buffer, size_t bufferSize,
                                        CodePoint Symbol) const;
-  bool layoutRepresentsPolarFunction(Poincare::Layout l) const;
-  bool layoutRepresentsParametricFunction(Poincare::Layout l) const;
-  bool shouldCompleteEquation(Poincare::Expression expression) override;
-  bool completeEquation(Escher::LayoutField* equationField) override;
+  bool shouldCompleteEquation(Poincare::Expression expression,
+                              CodePoint symbol) override;
+  bool completeEquation(Escher::LayoutField* equationField,
+                        CodePoint symbol) override;
   void addModel() override;
   int maxNumberOfDisplayableRows() const override;
   Escher::HighlightCell* functionCells(int index) override;

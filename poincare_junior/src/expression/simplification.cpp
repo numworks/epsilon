@@ -41,12 +41,13 @@ void LogIndent() {
 
 #endif
 
-bool Simplification::AdvancedReduction(Tree* u) {
+bool Simplification::AdvancedReduction(Tree* origin) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored.
    * This means calling AdvancedReduction on an equivalent but different
    * expression could yield different results if limits have been reached. */
+  Tree* u = origin->isDependency() ? origin->child(0) : origin;
   int bestMetric = Metric::GetMetric(u);
   Path bestPath;
   Path currentPath;
@@ -66,12 +67,16 @@ bool Simplification::AdvancedReduction(Tree* u) {
                        &bestPath, &bestMetric, &crcCollection, &didOverflowPath,
                        &mustResetRoot);
   editedExpression->removeTree();
-  bool result = ApplyPath(u, &bestPath);
+  bool result = ApplyPath(u, &bestPath, true);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   s_indent = 0;
   std::cout << "Final result (" << bestMetric << ") is : ";
   u->logSerialize();
 #endif
+  if (origin->isDependency()) {
+    // Bubble-up any other dependency that appeared.
+    Dependency::ShallowBubbleUpDependencies(origin);
+  }
   return result;
 }
 
@@ -1022,7 +1027,7 @@ bool Simplification::CanApplyDirection(const Tree* u, const Tree* root,
 }
 
 bool Simplification::ApplyDirection(Tree** u, Tree* root, Direction direction,
-                                    bool* rootChanged) {
+                                    bool* rootChanged, bool keepDependencies) {
   if (direction.isNextNode()) {
     do {
       *u = (*u)->nextNode();
@@ -1035,17 +1040,28 @@ bool Simplification::ApplyDirection(Tree** u, Tree* root, Direction direction,
   }
   // Apply a deep systematic reduction starting from (*u)
   UpwardSystematicReduction(root, *u);
-  // Move back to root so we only move down trees.
+  // Move back to root so we only move down trees. Ignore dependencies
   *u = root;
+  if (root->isDependency()) {
+    if (keepDependencies) {
+      *u = root->child(0);
+    } else {
+      root->child(1)->removeTree();
+      root->removeNode();
+    }
+  }
   *rootChanged = true;
   return true;
 }
 
-bool Simplification::ApplyPath(Tree* u, const Path* path) {
-  Tree* root = u;
+bool Simplification::ApplyPath(Tree* root, const Path* path,
+                               bool keepDependencies) {
+  assert(!root->isDependency());
+  Tree* u = root;
   bool rootChanged = false;
   for (uint8_t i = 0; i < path->length(); i++) {
-    bool didApply = ApplyDirection(&u, root, path->direction(i), &rootChanged);
+    bool didApply = ApplyDirection(&u, root, path->direction(i), &rootChanged,
+                                   keepDependencies);
     assert(didApply);
   }
   return rootChanged;
@@ -1080,7 +1096,7 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
       if (*mustResetRoot) {
         // Reset root to current path
         root->cloneTreeOverTree(original);
-        ApplyPath(root, path);
+        ApplyPath(root, path, false);
         *mustResetRoot = false;
       }
       Tree* target = u;
@@ -1094,7 +1110,7 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
 #endif
         continue;
       }
-      if (!ApplyDirection(&target, root, dir, &rootChanged)) {
+      if (!ApplyDirection(&target, root, dir, &rootChanged, false)) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         LogIndent();
         std::cout << "Nothing to ";

@@ -192,10 +192,10 @@ class Simplification {
                                    CrcCollection *crcCollection,
                                    bool *didOverflowPath, bool *mustResetRoot);
   // Return true if tree has changed. path is expected to be valid.
-  static bool ApplyPath(Tree *u, const Path *path);
+  static bool ApplyPath(Tree *root, const Path *path, bool keepDependencies);
   // Return true if direction was applied.
   static bool ApplyDirection(Tree **u, Tree *root, Direction direction,
-                             bool *rootChanged);
+                             bool *rootChanged, bool keepDependencies);
   // Return true if can apply direction.
   static bool CanApplyDirection(const Tree *u, const Tree *root,
                                 Direction direction);

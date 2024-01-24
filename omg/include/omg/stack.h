@@ -36,6 +36,7 @@ class Stack : public AbstractStack<T> {
 
   virtual T* elementAtIndex(int i) {
     assert(i < N);
+    assert(i >= 0);
     return &m_content[i];
   }
 

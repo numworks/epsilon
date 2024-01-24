@@ -58,7 +58,7 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   setChildFrame(&m_messageTextView, KDRectZero, force);
 
   KDRect templateButtonRect = KDRectZero;
-  if (isEmpty()) {
+  if (m_buttonCell.isVisible()) {
     // Only draw the button if the expression is empty
     KDSize buttonSize = m_buttonCell.minimalSizeForOptimalDisplay();
     templateButtonRect =

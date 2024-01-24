@@ -86,31 +86,8 @@ void ListController::fillWithDefaultFunctionEquation(char *buffer,
       SerializationHelper::CodePoint(buffer + length, bufferSize - length, '=');
 }
 
-// Return true if given layout contains θ
-bool ListController::layoutRepresentsPolarFunction(Layout l) const {
-  Layout match = l.recursivelyMatches([](Layout layout) {
-    return layout.type() == LayoutNode::Type::CodePointLayout &&
-                   static_cast<CodePointLayout &>(layout).codePoint() ==
-                       ContinuousFunction::k_polarSymbol
-               ? TrinaryBoolean::True
-               : TrinaryBoolean::Unknown;
-  });
-  return !match.isUninitialized();
-}
-
-// Return true if given layout contains t
-bool ListController::layoutRepresentsParametricFunction(Layout l) const {
-  Layout match = l.recursivelyMatches([](Layout layout) {
-    return layout.type() == LayoutNode::Type::CodePointLayout &&
-                   static_cast<CodePointLayout &>(layout).codePoint() ==
-                       ContinuousFunction::k_parametricSymbol
-               ? TrinaryBoolean::True
-               : TrinaryBoolean::Unknown;
-  });
-  return !match.isUninitialized();
-}
-
-bool ListController::shouldCompleteEquation(Poincare::Expression expression) {
+bool ListController::shouldCompleteEquation(Poincare::Expression expression,
+                                            CodePoint symbol) {
   /* We do not want to complete equation if expression is already an
    * (in)equation, a point or a list (of points). */
   return expression.type() != ExpressionNode::Type::Comparison &&
@@ -118,7 +95,8 @@ bool ListController::shouldCompleteEquation(Poincare::Expression expression) {
          !expression.deepIsList(nullptr);
 }
 
-bool ListController::completeEquation(LayoutField *equationField) {
+bool ListController::completeEquation(LayoutField *equationField,
+                                      CodePoint symbol) {
   equationField->putCursorOnOneSide(OMG::Direction::Left());
   // Retrieve the edited function
   ExpiringPointer<ContinuousFunction> f =
@@ -130,12 +108,6 @@ bool ListController::completeEquation(LayoutField *equationField) {
                          ContinuousFunctionProperties::Status::Undefined) {
     // Function is new or undefined, complete the equation with a default name
     // Insert "f(x)=", with f the default function name and x the symbol
-    CodePoint symbol =
-        layoutRepresentsPolarFunction(equationField->layout())
-            ? ContinuousFunction::k_polarSymbol
-            : (layoutRepresentsParametricFunction(equationField->layout())
-                   ? ContinuousFunction::k_parametricSymbol
-                   : ContinuousFunction::k_cartesianSymbol);
     fillWithDefaultFunctionEquation(buffer, k_bufferSize, symbol);
   } else {
     // Insert the name, symbol and equation symbol of the existing function

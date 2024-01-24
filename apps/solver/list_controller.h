@@ -66,10 +66,12 @@ class ListController : public Shared::ExpressionModelListController,
   void reloadBrace();
   EquationStore* modelStore() const override;
   Escher::StackViewController* stackController() const;
-  bool shouldCompleteEquation(Poincare::Expression expression) override {
+  bool shouldCompleteEquation(Poincare::Expression expression,
+                              CodePoint symbol) override {
     return expression.type() != Poincare::ExpressionNode::Type::Comparison;
   }
-  bool completeEquation(Escher::LayoutField* equationField) override;
+  bool completeEquation(Escher::LayoutField* equationField,
+                        CodePoint symbol) override;
 
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];

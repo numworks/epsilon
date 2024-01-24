@@ -90,10 +90,12 @@ class ExpressionModelListController
  private:
   void finishEdition();
   bool addEmptyModel();
-  virtual bool shouldCompleteEquation(Poincare::Expression expression) {
+  virtual bool shouldCompleteEquation(Poincare::Expression expression,
+                                      CodePoint symbol) {
     return false;
   }
-  virtual bool completeEquation(Escher::LayoutField* equationField) {
+  virtual bool completeEquation(Escher::LayoutField* equationField,
+                                CodePoint symbol) {
     assert(false);
     return true;
   }

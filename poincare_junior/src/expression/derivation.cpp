@@ -16,6 +16,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
   const Tree *symbol = node->child(0);
   const Tree *symbolValue = symbol->nextTree();
   const Tree *derivand = symbolValue->nextTree();
+  // TODO : Add a dependency to ensure the derivand is both defined and real.
   Tree *result = Derivate(derivand, symbolValue, symbol);
   if (!result) {
     return false;
@@ -106,6 +107,7 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
       // Di(exp(x)) = exp(x)
       CloneReplacingSymbol(derivand, symbolValue);
       return true;
+    case BlockType::LnReal:
     case BlockType::Ln: {
       // Di(ln(x)) = 1/x
       Tree *power = SharedEditionPool->push(BlockType::Power);

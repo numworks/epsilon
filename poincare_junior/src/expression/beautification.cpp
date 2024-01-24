@@ -281,6 +281,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   }
 
 #if 0
+  // TODO: handle lnReal too
   // ln(A)      * ln(B)^(-1) -> log(A, B)
   // ln(A)^(-1) * ln(B)      -> log(B, A)
   changed = PatternMatching::MatchAndReplace(
@@ -317,6 +318,8 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     return true;
   }
   return
+      // lnReal(x) -> ln(x)
+      PatternMatching::MatchAndReplace(ref, KLnReal(KA), KLn(KA)) ||
       // Complex(0,1) -> i
       PatternMatching::MatchAndReplace(ref, KComplex(0_e, 1_e), i_e) ||
       // Complex(0,A) -> A*i

@@ -31,6 +31,7 @@ constexpr auto KATan = KUnary<BlockType::ArcTangent>();
 constexpr auto KATanRad = KUnary<BlockType::ArcTangentRad>();
 constexpr auto KLog = KUnary<BlockType::Log>();
 constexpr auto KLn = KUnary<BlockType::Ln>();
+constexpr auto KLnReal = KUnary<BlockType::LnReal>();
 constexpr auto KExp = KUnary<BlockType::Exponential>();
 constexpr auto KFact = KUnary<BlockType::Factorial>();
 constexpr auto KSqrt = KUnary<BlockType::SquareRoot>();

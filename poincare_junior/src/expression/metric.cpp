@@ -31,6 +31,7 @@ int Metric::GetMetric(const Tree* u) {
       }
       break;
     }
+    case BlockType::Dependency:
     case BlockType::Trig:
     case BlockType::ATrig:
       // Ignore second child

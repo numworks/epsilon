@@ -68,6 +68,8 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyPower);
   static bool SimplifyPowerReal(Tree *u);
   EDITION_REF_WRAP(SimplifyPowerReal);
+  static bool SimplifyLnReal(Tree *u);
+  EDITION_REF_WRAP(SimplifyLnReal);
   static bool SimplifyExp(Tree *u);
   EDITION_REF_WRAP(SimplifyExp);
   static bool SimplifyComplex(Tree *t);

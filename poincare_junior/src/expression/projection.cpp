@@ -55,7 +55,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 
   if (ref->isDecimal()) {
     Decimal::Project(ref);
-    return true;
+    changed = true;
   }
 
   // Project angles depending on context
@@ -92,13 +92,13 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
     ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
   }
 
-  // Sqrt(A) -> A^0.5
-  changed = PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf));
+  // Under Real complex format, use node alternative to properly handle nonreal.
+  bool realMode = projectionContext->m_complexFormat == ComplexFormat::Real;
   if (ref->isPower()) {
     if (PatternMatching::MatchAndReplace(ref, KPow(e_e, KA), KExp(KA))) {
     } else if (Dimension::GetDimension(ref->nextNode()).isMatrix()) {
       ref->cloneNodeOverNode(KPowMatrix);
-    } else if (projectionContext->m_complexFormat == ComplexFormat::Real) {
+    } else if (realMode) {
       ref->cloneNodeOverNode(KPowReal);
     } else {
       return changed;
@@ -106,8 +106,38 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
     return true;
   }
 
-  /* In following replacements, ref node isn't supposed to be replaced with a
-   * node needing further projection. */
+  if (realMode && ref->isLn()) {
+    ref->cloneNodeOverNode(KLnReal);
+    return true;
+  }
+
+  if (  // Sqrt(A) -> A^0.5
+      PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf)) ||
+      // log(A, e) -> ln(e)
+      PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
+      // Sec(A) -> 1/cos(A)
+      PatternMatching::MatchAndReplace(ref, KSec(KA), KPow(KCos(KA), -1_e)) ||
+      // Csc(A) -> 1/sin(A)
+      PatternMatching::MatchAndReplace(ref, KCsc(KA), KPow(KSin(KA), -1_e)) ||
+      // ArcSec(A) -> 1*acos(1/A)
+      PatternMatching::MatchAndReplace(ref, KArcSec(KA),
+                                       KACos(KPow(KA, -1_e))) ||
+      // ArcCsc(A) -> 1*asin(1/A)
+      PatternMatching::MatchAndReplace(ref, KArcCsc(KA),
+                                       KASin(KPow(KA, -1_e))) ||
+      // ArCosh(A) -> ln(A+sqrt(A^2-1))
+      PatternMatching::MatchAndReplace(
+          ref, KArCosh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), -1_e))))) ||
+      // ArSinh(A) -> ln(A+sqrt(A^2+1))
+      PatternMatching::MatchAndReplace(
+          ref, KArSinh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e)))))) {
+    // Ref node may need to be projected again.
+    ShallowSystemProjection(ref, context);
+    return true;
+  }
+
+  /* In following replacements, ref node isn't supposed to be replaced with
+   * a node needing further projection. */
   return
       // ceil(A)  -> -floor(-A)
       PatternMatching::MatchAndReplace(ref, KCeil(KA),
@@ -136,8 +166,6 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(ref, KSin(KA), KTrig(KA, 1_e)) ||
       // tan(A) -> tanRad(A, 1)
       PatternMatching::MatchAndReplace(ref, KTan(KA), KTanRad(KA)) ||
-      // log(A, e) -> ln(e)
-      PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
       // log(A) -> ln(A) * ln(10)^(-1)
       // TODO: Maybe log(A) -> log(A, 10) and rely on next matchAndReplace
       PatternMatching::MatchAndReplace(ref, KLog(KA),
@@ -145,21 +173,9 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       // log(A, B) -> ln(A) * ln(B)^(-1)
       PatternMatching::MatchAndReplace(ref, KLogarithm(KA, KB),
                                        KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
-      // Sec(A) -> 1/cos(A) (Add 1* to properly project power function)
-      PatternMatching::MatchAndReplace(ref, KSec(KA),
-                                       KMult(1_e, KPow(KCos(KA), -1_e))) ||
-      // Csc(A) -> 1/sin(A) (Add 1* to properly project power function)
-      PatternMatching::MatchAndReplace(ref, KCsc(KA),
-                                       KMult(1_e, KPow(KSin(KA), -1_e))) ||
       // Cot(A) -> cos(A)/sin(A) (Avoid tan to for dependencies)
       PatternMatching::MatchAndReplace(ref, KCot(KA),
                                        KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
-      // ArcSec(A) -> 1*acos(1/A) (Add 1* to properly project inverse function)
-      PatternMatching::MatchAndReplace(ref, KArcSec(KA),
-                                       KMult(1_e, KACos(KPow(KA, -1_e)))) ||
-      // ArcCsc(A) -> 1*asin(1/A) (Add 1* to properly project inverse function)
-      PatternMatching::MatchAndReplace(ref, KArcCsc(KA),
-                                       KMult(1_e, KASin(KPow(KA, -1_e)))) ||
       /* ArcCot(A) -> π/2 - atan(A) with
        *  - acos(0) instead of π/2 to handle angle unit
        *  - Instead of atan(1/A) to handle ArcCot(0) */
@@ -178,12 +194,6 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
           ref, KTanh(KA),
           KMult(KAdd(KExp(KMult(2_e, KA)), -1_e),
                 KPow(KAdd(KExp(KMult(2_e, KA)), 1_e), -1_e))) ||
-      // ArCosh(A) -> ln(A+sqrt(A^2-1))
-      PatternMatching::MatchAndReplace(
-          ref, KArCosh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), -1_e))))) ||
-      // ArSinh(A) -> ln(A+sqrt(A^2+1))
-      PatternMatching::MatchAndReplace(
-          ref, KArSinh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e))))) ||
       // ArTanh(A) -> (ln(1+A)-ln(1-A))*1/2
       PatternMatching::MatchAndReplace(
           ref, KArTanh(KA),

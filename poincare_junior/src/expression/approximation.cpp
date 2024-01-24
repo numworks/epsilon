@@ -69,6 +69,7 @@ T Approximation::To(const Tree* node, Random::Context* context) {
     case BlockType::Log:
       return std::log10(To<T>(node->nextNode(), context));
     case BlockType::Ln:
+    case BlockType::LnReal:
       return std::log(To<T>(node->nextNode(), context));
     case BlockType::Abs:
       return std::fabs(To<T>(node->nextNode(), context));

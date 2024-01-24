@@ -36,7 +36,7 @@ bool Logarithm::SimplifyLn(Tree* u) {
 }
 
 bool Logarithm::ContractLn(Tree* ref) {
-  // TODO: Only if B has a positive real value : ln(x^2) != 2ln(x)
+  // TODO: Only if B has a positive real value : ln(x^2) != 2ln(x), or A=-1
   // A*ln(B) = ln(B^A) if A is an integer.
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KMult(KA, KLn(KB)), ref, &ctx) &&
@@ -60,7 +60,7 @@ bool Logarithm::ExpandLn(Tree* ref) {
       // ln(A*B?) = ln(A) + ln(B)
       PatternMatching::MatchReplaceAndSimplify(
           ref, KLn(KMult(KA, KTB)), KAdd(KLn(KA), KLn(KMult(KTB)))) ||
-      // TODO: Only if A has a positive real value : ln(x^2) != 2ln(x)
+      // TODO: Only if A has a positive real value : ln(x^2) != 2ln(x), or B=-1
       // ln(A^B) = B*ln(A)
       PatternMatching::MatchReplaceAndSimplify(ref, KLn(KPow(KA, KB)),
                                                KMult(KB, KLn(KA)));

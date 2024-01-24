@@ -126,6 +126,7 @@ void simplifies_to(const char* input, const char* output,
 }
 
 QUIZ_CASE(pcj_basic_simplification) {
+  // Default context is Real
   ProjectionContext cartesianCtx = {.m_complexFormat =
                                         ComplexFormat::Cartesian};
   simplifies_to("x", "x");
@@ -151,8 +152,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×(d+f)×g");
   simplifies_to("a*x*y+b*x*y+c*x", "x×(c+(a+b)×y)");
   simplifies_to("(e^(x))^2", "e^(2×x)");
-  simplifies_to("e^(ln(x))", "x");
-  simplifies_to("e^(ln(x+x))", "2×x");
+  simplifies_to("e^(ln(x))", "e^(ln(x))");
+  simplifies_to("e^(ln(1+x^2))", "x^2+1");
+  simplifies_to("e^(ln(x))", "dep(x,{ln(x)})", cartesianCtx);
+  simplifies_to("e^(ln(x+x))", "dep(2×x,{ln(2×x)})", cartesianCtx);
   simplifies_to("diff(x, x, 2)", "1");
   simplifies_to("diff(a×x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
@@ -162,6 +165,8 @@ QUIZ_CASE(pcj_basic_simplification) {
                 "3×y^(4)×e^(3×y)×ln(y)+(e^(3×y)+4×e^(3×y)×ln(y))×y^(3)");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*abs(x), x, y)", "y×diff(abs(x),x,y)+1+abs(y)");
+  // TODO: Should be undef
+  simplifies_to("diff(ln(x), x, -1)", "-1");
   // TODO: Metric: 3×abs(x)
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
@@ -181,10 +186,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("undef", "undef");
   // TODO: Metric: 1+ln(x×y)
   simplifies_to("1+ln(x)+ln(y)", "1+ln(x)+ln(y)");
-  // TODO: Metric: 2×ln(x)
-  simplifies_to("ln(x)-ln(1/x)", "ln(x^2)");
-  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "1+ln(1/x)");
-  simplifies_to("1-ln(x)", "1+ln(1/x)");
+  // TODO: Metric: 2×ln(π)
+  simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
+  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "1-ln(x)");
+  simplifies_to("1-ln(x)", "1+ln(1/x)", cartesianCtx);
   // TODO : Simplify to 1/√(1+x^2).
   simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/(x^2+1)+1)");
   // TODO : Simplify to x/√(-x^2+1)
@@ -202,9 +207,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("π+1/π-π", "1/π");
 
   simplifies_to("ln(0)", "undef");
+  simplifies_to("ln(0)", "undef", cartesianCtx);
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
-  simplifies_to("ln(-10)-ln(5)", "ln(-2)");
-  simplifies_to("im(ln(-120))", "π");
+  simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
+  simplifies_to("im(ln(-120))", "π", cartesianCtx);
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});
@@ -288,26 +294,27 @@ QUIZ_CASE(pcj_basic_simplification) {
                 "-(-1+e^(2×x))/(1+e^(2×x))+((1+(-1+e^(2×x))^2/"
                 "(1+e^(2×x))^2)×(-1+e^(4×x)))/(2×(1+e^(4×x)))");
   // TODO: Should simplify to log(5+2√(6))
-  simplifies_to("arcosh(5)", "ln(5+√(24))",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("arsinh(sinh(x))",
-                "ln((e^x-e^(-x))/2+√(1/2+(e^(-2×x)+e^(2×x))/4))",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+                "ln((e^x-e^(-x))/2+√(1/2+(e^(-2×x)+e^(2×x))/4))", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to(
       "artanh(tanh(x))",
       "ln((1+(-1+e^(2×x))/(1+e^(2×x)))/(1-(-1+e^(2×x))/(1+e^(2×x))))/2",
-      {.m_complexFormat = ComplexFormat::Cartesian});
+      cartesianCtx);
   // TODO: Should simplify to x
-  simplifies_to("cosh(arcosh(x))", "(x+√(x^2-1)+1/(x+√(x^2-1)))/2",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("cosh(arcosh(x))",
+                "dep((x+√(x^2-1)+1/(x+√(x^2-1)))/2,{ln(x+√(x^2-1))})",
+                cartesianCtx);
   // TODO: Should simplify to x
-  simplifies_to("sinh(arsinh(x))", "(x+√(x^2+1)-1/(x+√(x^2+1)))/2",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("sinh(arsinh(x))",
+                "dep((x+√(x^2+1)-1/(x+√(x^2+1)))/2,{ln(x+√(x^2+1))})",
+                cartesianCtx);
   // TODO: Should simplify to x
-  simplifies_to("tanh(artanh(x))", "(-1+(x+1)/(-x+1))/(1+(x+1)/(-x+1))",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("tanh(artanh(x))",
+                "dep((-1+(x+1)/(-x+1))/(1+(x+1)/(-x+1)),{ln(x+1)})",
+                cartesianCtx);
   // Advanced trigonometry
   simplifies_to("sec(x)", "1/cos(x)");
   simplifies_to("csc(x)", "1/sin(x)");
@@ -319,7 +326,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("csc(arccsc(x))", "x");
   // TODO: Should simplify to x
   simplifies_to("cot(arccot(x))", "sin(arctan(x))/cos(arctan(x))",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+                cartesianCtx);
 
   // Arithmetic
   simplifies_to("quo(23,5)", "4");
@@ -394,7 +401,8 @@ QUIZ_CASE(pcj_power_simplification) {
 
   simplifies_to("√(x)^2", "√(x)^2", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
-  simplifies_to("√(x)^2", "x", {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("√(x)^2", "dep(x,{ln(x)})",
+                {.m_complexFormat = ComplexFormat::Cartesian});
 
   // Power expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");

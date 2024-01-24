@@ -149,6 +149,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifyMultiplication(u);
     case BlockType::PowerReal:
       return SimplifyPowerReal(u);
+    case BlockType::LnReal:
+      return SimplifyLnReal(u);
     case BlockType::Abs:
       return SimplifyAbs(u);
     case BlockType::TrigDiff:
@@ -211,8 +213,11 @@ bool Simplification::SimplifySwitch(Tree* u) {
 bool Simplification::SimplifyExp(Tree* u) {
   Tree* child = u->nextNode();
   if (child->isLn()) {
-    // TODO : Unreal with x negative and Real complex format
-    // exp(ln(x)) -> x
+    if (ComplexSign::Get(child->child(0)).canBeNull()) {
+      return PatternMatching::MatchAndReplace(u, KExp(KLn(KA)),
+                                              KDep(KA, KSet(KLn(KA))));
+    }
+    // exp(ln(x)) -> x if x is never null
     u->removeNode();
     u->removeNode();
     return true;
@@ -225,7 +230,6 @@ bool Simplification::SimplifyExp(Tree* u) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
       ctx.getNode(KA)->isInteger()) {
-    // TODO : Unreal with x negative and Real complex format
     // exp(n*ln(x)) -> x^n with n an integer
     u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
     return true;
@@ -303,14 +307,12 @@ bool Simplification::SimplifyPower(Tree* u) {
   assert(n->isInteger());
   // v^0 -> 1
   if (n->isZero()) {
-    if (Variables::HasVariables(v)) {
+    if (ComplexSign::Get(v).canBeNull()) {
       return PatternMatching::MatchAndReplace(u, KPow(KA, 0_e),
                                               KDep(1_e, KSet(KPow(KA, -1_e))));
-    } else {
-      // TODO use sign to check if it may be null
-      u->cloneTreeOverTree(1_e);
-      return true;
     }
+    u->cloneTreeOverTree(1_e);
+    return true;
   }
   // v^1 -> v
   if (n->isOne()) {
@@ -436,6 +438,26 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
     NAry::SetNumberOfChildren(u, 2);
     SimplifyMultiplication(u);
   }
+  return true;
+}
+
+bool Simplification::SimplifyLnReal(Tree* u) {
+  assert(u->isLnReal());
+  // Under real mode, inputted ln(x) must return nonreal if x < 0
+  ComplexSign childSign = ComplexSign::Get(u->child(0));
+  if (childSign.realSign().isStrictlyNegative() ||
+      !childSign.imagSign().canBeNull()) {
+    // Child can't be real, positive or null
+    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+  }
+  if (childSign.realSign().canBeNegative() || !childSign.imagSign().isZero()) {
+    // Child can be nonreal or negative
+    // TODO: Add a dependency to raise unreal if x complex or x < 0.
+    return false;
+  }
+  // Fallback to complex logarithm.
+  u->cloneNodeOverNode(KLn);
+  Logarithm::SimplifyLn(u);
   return true;
 }
 

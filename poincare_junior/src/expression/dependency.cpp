@@ -9,7 +9,12 @@ namespace PoincareJ {
 
 bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   if (expr->isDependency()) {
-    return false;
+    if (!expr->child(0)->isDependency()) {
+      return false;
+    }
+    Set::Union(expr->child(0)->child(1), expr->child(1));
+    expr->removeNode();
+    return true;
   }
   EditionReference end = expr->nextTree();
   int numberOfSets = 0;

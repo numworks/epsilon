@@ -1,10 +1,10 @@
-#ifndef ION_STACK_H
-#define ION_STACK_H
+#ifndef OMG_STACK_H
+#define OMG_STACK_H
 
 #include <assert.h>
 #include <stddef.h>
 
-namespace Ion {
+namespace OMG {
 
 // All implementations are in header to avoid having to specify templates
 
@@ -43,6 +43,6 @@ class Stack : public AbstractStack<T> {
   T m_content[N];
 };
 
-}  // namespace Ion
+}  // namespace OMG
 
 #endif

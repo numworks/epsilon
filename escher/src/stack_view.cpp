@@ -5,7 +5,7 @@
 namespace Escher {
 
 StackView::StackView(Style style, bool extendVertically,
-                     Ion::AbstractStack<StackHeaderView>* headerViewStack)
+                     OMG::AbstractStack<StackHeaderView>* headerViewStack)
     : View(),
       m_borderView(Palette::GrayBright),
       m_contentView(nullptr),

@@ -3,7 +3,7 @@
 
 #include <escher/solid_color_view.h>
 #include <escher/stack_header_view.h>
-#include <ion/stack.h>
+#include <omg/stack.h>
 
 namespace Escher {
 
@@ -16,7 +16,7 @@ class StackView : public View {
   static constexpr uint8_t k_maxDepth = sizeof(Mask) * 8;
 
   StackView(Style style, bool extendVertically,
-            Ion::AbstractStack<StackHeaderView>* headerViewStack);
+            OMG::AbstractStack<StackHeaderView>* headerViewStack);
   int8_t numberOfStacks() const { return m_stackHeaderViews->length(); }
   void setContentView(View* view);
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders,
@@ -41,7 +41,7 @@ class StackView : public View {
   // Returns the index in m_stackViews for a given display index
   int stackHeaderIndex(int displayIndex);
 
-  Ion::AbstractStack<StackHeaderView>* m_stackHeaderViews;
+  OMG::AbstractStack<StackHeaderView>* m_stackHeaderViews;
   SolidColorView m_borderView;
   View* m_contentView;
   Style m_style;

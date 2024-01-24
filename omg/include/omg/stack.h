@@ -20,7 +20,7 @@ class AbstractStack {
     return *elementAtIndex(--m_size);
   }
 
-  size_t length() const { return m_size; }
+  size_t size() const { return m_size; }
   void reset() { m_size = 0; }
 
  private:

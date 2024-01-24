@@ -17,7 +17,7 @@ class StackView : public View {
 
   StackView(Style style, bool extendVertically,
             OMG::AbstractStack<StackHeaderView>* headerViewStack);
-  int8_t numberOfStacks() const { return m_stackHeaderViews->length(); }
+  int8_t numberOfStacks() const { return m_stackHeaderViews->size(); }
   void setContentView(View* view);
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders,
                                     bool headersOverlapContent,

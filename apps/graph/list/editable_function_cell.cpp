@@ -33,23 +33,15 @@ void EditableFunctionCell::setTemplateButtonState(State state) {
   }
 
   if (m_templateButtonState == State::Highlighted) {
-    // Highlighted -> {Hidden, Visible}
     App::app()->setFirstResponder(expressionCell()->layoutField());
     m_buttonCell.setHighlighted(false);
   }
 
-  if (state == State::Hidden) {
-    // {Visible, Highlighted} -> Hidden
-    m_buttonCell.setVisible(false);
-    layoutSubviews();
-  } else if (state == State::Highlighted) {
-    // {Visible, Hidden} -> Highlighted
+  if (state == State::Highlighted) {
     m_buttonCell.setHighlighted(true);
     App::app()->setFirstResponder(&m_buttonCell);
   } else {
-    // {Highlighted, Hidden} -> Visible
-    assert(state == State::Visible);
-    m_buttonCell.setVisible(true);
+    m_buttonCell.setVisible(state == State::Visible);
     layoutSubviews();
   }
 

@@ -20,10 +20,11 @@ class EditableFunctionCell
     m_expressionBackground = backgroundColor();
   }
 
-  bool isEmpty() { return expressionCell()->layoutField()->isEmpty(); }
   bool isEditing() { return expressionCell()->layoutField()->isEditing(); }
 
-  bool buttonShouldBeVisible() { return isEmpty(); }
+  bool buttonShouldBeVisible() {
+    return expressionCell()->layoutField()->isEmpty();
+  }
 
   Escher::ButtonCell* buttonCell() { return &m_buttonCell; }
 

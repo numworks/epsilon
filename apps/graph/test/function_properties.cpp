@@ -747,6 +747,43 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("y=piecewise(3y,x<2,x)",
                                      k_unhandledCartesian);
 
+    assert_check_function_properties(
+        "f(x)=[[x]]",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::X});
+    assert_check_function_properties(
+        "f(t)=[[t]]",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::T});
+    assert_check_function_properties(
+        "f(θ)=[[θ]]",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta});
+    assert_check_function_properties(
+        "f(x)={x}",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::X});
+    assert_check_function_properties(
+        "f(t)={t}",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::T});
+    assert_check_function_properties(
+        "f(θ)={θ}",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta});
+
     // === Updated complex format ===
 
     assert(Poincare::Preferences::sharedPreferences->complexFormat() ==

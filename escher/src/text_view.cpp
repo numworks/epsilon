@@ -3,9 +3,6 @@
 namespace Escher {
 
 KDSize TextView::minimalSizeForOptimalDisplay() const {
-  if (text() == nullptr) {
-    return KDSizeZero;
-  }
   return KDFont::Font(m_glyphFormat.style.font)->stringSize(text());
 }
 

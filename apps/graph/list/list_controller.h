@@ -77,8 +77,6 @@ class ListController : public Shared::FunctionListController,
   void deleteParametricComponentsOfSelectedModel();
   void storeParametricComponentsOfSelectedModel();
 
-  void selectTemplateButton(bool select);
-
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;
   FunctionParameterController* m_parameterController;

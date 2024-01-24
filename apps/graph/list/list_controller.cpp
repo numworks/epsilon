@@ -122,39 +122,37 @@ bool ListController::completeEquation(LayoutField *equationField,
   return handled;
 }
 
-void ListController::selectTemplateButton(bool select) {
-  m_editableCell.buttonCell()->setHighlighted(select);
-  layoutField()->setEditing(!select);
-
-  if (select) {
-    App::app()->setFirstResponder(m_editableCell.buttonCell());
-  } else {
-    App::app()->setFirstResponder(layoutField());
-  }
-}
-
 void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
-  if (!m_editableCell.buttonShouldBeVisible() &&
-      m_editableCell.buttonIsHighlighted()) {
-    // Deselect the button when it is about to disappear.
-    selectTemplateButton(false);
+  EditableFunctionCell::State templateButtonState =
+      m_editableCell.templateButtonState();
+
+  if (m_editableCell.buttonShouldBeVisible() &&
+      templateButtonState == EditableFunctionCell::State::Hidden) {
+    m_editableCell.setTemplateButtonState(EditableFunctionCell::State::Visible);
+  } else if (!m_editableCell.buttonShouldBeVisible()) {
+    m_editableCell.setTemplateButtonState(EditableFunctionCell::State::Hidden);
   }
-  m_editableCell.updateButton();
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   m_parameterColumnSelected = false;
 
-  if (m_editableCell.buttonIsVisible()) {
-    bool editing = m_editableCell.isEditing();
+  EditableFunctionCell::State templateButtonState =
+      m_editableCell.templateButtonState();
 
-    if (event == Ion::Events::Right && editing) {
-      selectTemplateButton(true);
+  if (templateButtonState != EditableFunctionCell::State::Hidden) {
+    bool onButtonCell =
+        templateButtonState == EditableFunctionCell::State::Highlighted;
+
+    if (event == Ion::Events::Right && !onButtonCell) {
+      m_editableCell.setTemplateButtonState(
+          EditableFunctionCell::State::Highlighted);
       return true;
     }
-    if (event == Ion::Events::Left && !editing) {
-      selectTemplateButton(false);
+    if (event == Ion::Events::Left && onButtonCell) {
+      m_editableCell.setTemplateButtonState(
+          EditableFunctionCell::State::Visible);
       return true;
     }
   }
@@ -179,8 +177,11 @@ CodePoint ListController::defaultXNT() {
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
-  selectTemplateButton(false);
   ExpressionModelListController::editExpression(event);
+  m_editableCell.setTemplateButtonState(
+      m_editableCell.buttonShouldBeVisible()
+          ? EditableFunctionCell::State::Visible
+          : EditableFunctionCell::State::Hidden);
   m_editableCell.setHighlighted(true);
 }
 

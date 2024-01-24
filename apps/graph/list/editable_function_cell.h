@@ -24,14 +24,20 @@ class EditableFunctionCell
   bool isEditing() { return expressionCell()->layoutField()->isEditing(); }
 
   bool buttonShouldBeVisible() { return isEmpty(); }
-  bool buttonIsVisible() { return m_buttonCell.isVisible(); }
-  bool buttonIsHighlighted() { return m_buttonCell.isHighlighted(); }
-
-  void updateButton();
 
   Escher::ButtonCell* buttonCell() { return &m_buttonCell; }
 
+  enum class State : uint8_t {
+    Hidden,
+    Visible,
+    Highlighted,
+  };
+
+  void setTemplateButtonState(State state);
+  State templateButtonState() const { return m_templateButtonState; }
+
  private:
+  State m_templateButtonState;
   int numberOfSubviews() const override {
     return AbstractFunctionCell::numberOfSubviews() + 1;
   }
@@ -46,8 +52,6 @@ class EditableFunctionCell
                              invocation, Escher::Palette::WallScreen, 0,
                              KDFont::Size::Small) {}
     bool handleEvent(Ion::Events::Event event) override;
-
-    using HighlightCell::isHighlighted;
   };
 
   static constexpr KDCoordinate k_expressionMargin = 5;

@@ -10,8 +10,9 @@ EditableFunctionCell::EditableFunctionCell(
     Escher::Responder* parentResponder,
     Escher::LayoutFieldDelegate* layoutFieldDelegate,
     Escher::StackViewController* modelsStackController)
-
     : TemplatedFunctionCell<Shared::WithEditableExpressionCell>(),
+      m_templateButtonState(
+          State::Visible),  // ButtonCell is visible by default.
       m_buttonCell(expressionCell()->layoutField(),
                    Invocation::Builder<ViewController>(
                        [](ViewController* controller, void* sender) {
@@ -26,14 +27,33 @@ EditableFunctionCell::EditableFunctionCell(
   expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);
 }
 
-void EditableFunctionCell::updateButton() {
-  bool visible = buttonIsVisible();
-  bool shouldBeVisible = buttonShouldBeVisible();
+void EditableFunctionCell::setTemplateButtonState(State state) {
+  if (m_templateButtonState == state) {
+    return;
+  }
 
-  if (visible != shouldBeVisible) {
-    m_buttonCell.setVisible(shouldBeVisible);
+  if (m_templateButtonState == State::Highlighted) {
+    // Highlighted -> {Hidden, Visible}
+    App::app()->setFirstResponder(expressionCell()->layoutField());
+    m_buttonCell.setHighlighted(false);
+  }
+
+  if (state == State::Hidden) {
+    // {Visible, Highlighted} -> Hidden
+    m_buttonCell.setVisible(false);
+    layoutSubviews();
+  } else if (state == State::Highlighted) {
+    // {Visible, Hidden} -> Highlighted
+    m_buttonCell.setHighlighted(true);
+    App::app()->setFirstResponder(&m_buttonCell);
+  } else {
+    // {Highlighted, Hidden} -> Visible
+    assert(state == State::Visible);
+    m_buttonCell.setVisible(true);
     layoutSubviews();
   }
+
+  m_templateButtonState = state;
 }
 
 View* EditableFunctionCell::subviewAtIndex(int index) {

@@ -86,8 +86,13 @@ void Dependency::deepReduceChildren(const ReductionContext &reductionContext) {
 }
 
 Expression Dependency::shallowReduce(ReductionContext reductionContext) {
-  Expression e =
-      SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
+  Expression e = SimplificationHelper::defaultShallowReduce(
+      *this, &reductionContext,
+      SimplificationHelper::BooleanReduction::DefinedOnBooleans,
+      SimplificationHelper::UnitReduction::KeepUnits,
+      SimplificationHelper::MatrixReduction::DefinedOnMatrix,
+      SimplificationHelper::ListReduction::DoNotDistributeOverLists,
+      SimplificationHelper::PointReduction::DefinedOnPoint);
   if (!e.isUninitialized()) {
     return e;
   }

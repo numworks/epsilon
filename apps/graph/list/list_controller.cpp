@@ -91,7 +91,8 @@ bool ListController::shouldCompleteEquation(Poincare::Expression expression,
   /* We do not want to complete equation if expression is already an
    * (in)equation, a point or a list (of points). */
   return expression.type() != ExpressionNode::Type::Comparison &&
-         expression.type() != ExpressionNode::Type::Point &&
+         (expression.type() != ExpressionNode::Type::Point ||
+          symbol == Symbol::k_parametricSymbol) &&
          !expression.deepIsList(nullptr);
 }
 

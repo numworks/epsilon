@@ -101,8 +101,7 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
     m_listController->editExpression(Ion::Events::OK);
     return true;
   } else if (event == Ion::Events::Backspace) {
-    // Don't allow removing a row while in the template menu.
-    return false;
+    return true;
   }
   return m_listController->handleEventOnExpressionInTemplateMenu(event);
 }

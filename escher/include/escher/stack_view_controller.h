@@ -99,7 +99,7 @@ class CustomSizeStackViewController : public StackViewController {
   }
 
   ViewController* m_stack[Capacity];
-  OMG::Stack<StackHeaderView, Capacity> m_headerViewStack;
+  Stack m_headerViewStack;
 };
 
 }  // namespace Escher

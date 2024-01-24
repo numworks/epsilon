@@ -11,6 +11,7 @@
 #include <algorithm>
 
 using namespace Escher;
+using namespace Poincare;
 
 namespace Shared {
 
@@ -211,8 +212,7 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   char buffer[TextField::MaxBufferSize()];
   layoutField->layout().serializeForParsing(buffer, TextField::MaxBufferSize());
-  Poincare::Expression parsedExpression =
-      Poincare::Expression::Parse(buffer, nullptr);
+  Expression parsedExpression = Expression::Parse(buffer, nullptr);
   if (parsedExpression.isUninitialized()) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;

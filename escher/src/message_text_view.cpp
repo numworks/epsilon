@@ -14,8 +14,4 @@ void MessageTextView::setMessage(I18n::Message message) {
   }
 }
 
-KDSize MessageTextView::minimalSizeForOptimalDisplay() const {
-  return KDFont::Font(font())->stringSize(text());
-}
-
 }  // namespace Escher

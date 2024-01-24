@@ -190,12 +190,14 @@ void ContinuousFunctionProperties::update(
       return;
     }
 
+    if (analyzedExpression.deepIsMatrix(context, true, false) ||
+        (precomputedFunctionSymbol != SymbolType::NoSymbol &&
+         analyzedExpression.deepIsList(context))) {
+      setErrorStatusAndUpdateCaption(Status::Undefined);
+      return;
+    }
+
     if (precomputedFunctionSymbol == SymbolType::X) {
-      if (analyzedExpression.deepIsMatrix(context) ||
-          analyzedExpression.deepIsList(context)) {
-        setErrorStatusAndUpdateCaption(Status::Undefined);
-        return;
-      }
       setCartesianFunctionProperties(analyzedExpression, context);
       if (genericCaptionOnly) {
         setCaption(I18n::Message::Function);
@@ -209,11 +211,6 @@ void ContinuousFunctionProperties::update(
       if (analyzedExpression.type() != ExpressionNode::Type::Point) {
         // Invalid parametric format
         setErrorStatusAndUpdateCaption(Status::Unhandled);
-        return;
-      }
-      if (analyzedExpression.hasMatrixOrListChild(context, false)) {
-        /* Reduction might have failed. */
-        setErrorStatusAndUpdateCaption(Status::Undefined);
         return;
       }
       setParametricFunctionProperties(analyzedExpression, context,

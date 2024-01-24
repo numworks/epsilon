@@ -11,8 +11,6 @@ EditableFunctionCell::EditableFunctionCell(
     Escher::LayoutFieldDelegate* layoutFieldDelegate,
     Escher::StackViewController* modelsStackController)
     : TemplatedFunctionCell<Shared::WithEditableExpressionCell>(),
-      m_templateButtonState(
-          State::Visible),  // ButtonCell is visible by default.
       m_buttonCell(expressionCell()->layoutField(),
                    Invocation::Builder<ViewController>(
                        [](ViewController* controller, void* sender) {
@@ -28,11 +26,11 @@ EditableFunctionCell::EditableFunctionCell(
 }
 
 void EditableFunctionCell::setTemplateButtonState(State state) {
-  if (m_templateButtonState == state) {
+  if (m_buttonCell.getState() == state) {
     return;
   }
 
-  if (m_templateButtonState == State::Highlighted) {
+  if (m_buttonCell.getState() == State::Highlighted) {
     App::app()->setFirstResponder(expressionCell()->layoutField());
     m_buttonCell.setHighlighted(false);
   }
@@ -44,8 +42,6 @@ void EditableFunctionCell::setTemplateButtonState(State state) {
     m_buttonCell.setVisible(state == State::Visible);
     layoutSubviews();
   }
-
-  m_templateButtonState = state;
 }
 
 View* EditableFunctionCell::subviewAtIndex(int index) {

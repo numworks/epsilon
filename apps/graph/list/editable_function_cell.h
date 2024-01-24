@@ -12,6 +12,8 @@ namespace Graph {
 class EditableFunctionCell
     : public TemplatedFunctionCell<Shared::WithEditableExpressionCell> {
  public:
+  using State = HighlightCell::State;
+
   EditableFunctionCell(Escher::Responder* parentResponder,
                        Escher::LayoutFieldDelegate* layoutFieldDelegate,
                        Escher::StackViewController* modelsStackController);
@@ -28,17 +30,10 @@ class EditableFunctionCell
 
   Escher::ButtonCell* buttonCell() { return &m_buttonCell; }
 
-  enum class State : uint8_t {
-    Hidden,
-    Visible,
-    Highlighted,
-  };
-
   void setTemplateButtonState(State state);
-  State templateButtonState() const { return m_templateButtonState; }
+  State templateButtonState() const { return m_buttonCell.getState(); }
 
  private:
-  State m_templateButtonState;
   int numberOfSubviews() const override {
     return AbstractFunctionCell::numberOfSubviews() + 1;
   }
@@ -53,6 +48,8 @@ class EditableFunctionCell
                              invocation, Escher::Palette::WallScreen, 0,
                              KDFont::Size::Small) {}
     bool handleEvent(Ion::Events::Event event) override;
+
+    using HighlightCell::getState;
   };
 
   static constexpr KDCoordinate k_expressionMargin = 5;

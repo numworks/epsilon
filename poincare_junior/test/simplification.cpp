@@ -305,7 +305,7 @@ QUIZ_CASE(pcj_basic_simplification) {
       cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("cosh(arcosh(x))",
-                "dep((x+√(x^2-1)+1/(x+√(x^2-1)))/2,{ln(x+√(x^2-1))})",
+                "dep((x+√(x-1)×√(x+1)+1/(x+√(x^2-1)))/2,{ln(x+√(x-1)×√(x+1))})",
                 cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("sinh(arsinh(x))",
@@ -402,6 +402,9 @@ QUIZ_CASE(pcj_power_simplification) {
   simplifies_to("√(x)^2", "√(x)^2", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
   simplifies_to("√(x)^2", "dep(x,{ln(x)})",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  // TODO : Should be 0
+  simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "2×√(-2)",
                 {.m_complexFormat = ComplexFormat::Cartesian});
 
   // Power expand/Contract

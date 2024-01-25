@@ -125,9 +125,10 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       // ArcCsc(A) -> 1*asin(1/A)
       PatternMatching::MatchAndReplace(ref, KArcCsc(KA),
                                        KASin(KPow(KA, -1_e))) ||
-      // ArCosh(A) -> ln(A+sqrt(A^2-1))
+      // ArCosh(A) -> ln(A+sqrt(A-1)*sqrt(A+1))
       PatternMatching::MatchAndReplace(
-          ref, KArCosh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), -1_e))))) ||
+          ref, KArCosh(KA),
+          KLn(KAdd(KA, KMult(KSqrt(KAdd(KA, -1_e)), KSqrt(KAdd(KA, 1_e)))))) ||
       // ArSinh(A) -> ln(A+sqrt(A^2+1))
       PatternMatching::MatchAndReplace(
           ref, KArSinh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e)))))) {

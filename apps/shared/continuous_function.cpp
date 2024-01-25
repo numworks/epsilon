@@ -936,7 +936,6 @@ int ContinuousFunction::Model::numberOfSubCurves(
         record, AppsContainerHelper::sharedAppsContainerGlobalContext());
     if (e.type() == ExpressionNode::Type::Point) {
       assert(properties().isOfDegreeTwo());
-      // We could handle any number of subcurves and any number of children
       return e.numberOfChildren();
     }
   }

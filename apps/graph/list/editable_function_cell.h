@@ -53,8 +53,6 @@ class EditableFunctionCell
                              invocation, Escher::Palette::WallScreen, 0,
                              KDFont::Size::Small) {}
     bool handleEvent(Ion::Events::Event event) override;
-
-    using HighlightCell::isHighlighted;
   };
 
   static constexpr KDCoordinate k_expressionMargin = 5;

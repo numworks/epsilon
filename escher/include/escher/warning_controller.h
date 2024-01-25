@@ -10,9 +10,8 @@ namespace Escher {
 
 class WarningController : public ViewController {
  public:
-  WarningController(Responder* parentResponder, I18n::Message titleMessage);
+  WarningController(Responder* parentResponder);
   void setLabel(I18n::Message message, bool specialExitKeys);
-  const char* title() override;
   View* view() override;
   bool handleEvent(Ion::Events::Event event) override;
 
@@ -34,7 +33,6 @@ class WarningController : public ViewController {
   };
 
   ContentView m_contentView;
-  I18n::Message m_titleMessage;
   bool m_exitOnOKBackEXEOnly;
 };
 

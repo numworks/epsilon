@@ -37,19 +37,12 @@ KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const {
                 textSize.height() + 2 * k_margin);
 }
 
-WarningController::WarningController(Responder* parentResponder,
-                                     I18n::Message titleMessage)
-    : ViewController(parentResponder),
-      m_titleMessage(titleMessage),
-      m_exitOnOKBackEXEOnly(false) {}
+WarningController::WarningController(Responder* parentResponder)
+    : ViewController(parentResponder), m_exitOnOKBackEXEOnly(false) {}
 
 void WarningController::setLabel(I18n::Message label, bool specialExitKeys) {
   m_contentView.setLabel(label);
   m_exitOnOKBackEXEOnly = specialExitKeys;
-}
-
-const char* WarningController::title() {
-  return I18n::translate(m_titleMessage);
 }
 
 View* WarningController::view() { return &m_contentView; }

@@ -110,13 +110,12 @@ class App : public Responder {
   static App* app();
 
  protected:
-  App(Snapshot* snapshot, ViewController* rootViewController,
-      I18n::Message warningMessage = (I18n::Message)0)
+  App(Snapshot* snapshot, ViewController* rootViewController)
       : Responder(nullptr),
         m_modalViewController(this, rootViewController),
         m_firstResponder(this),
         m_snapshot(snapshot),
-        m_warningController(this, warningMessage) {}
+        m_warningController(this) {}
   ModalViewController m_modalViewController;
 
  private:

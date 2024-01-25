@@ -38,8 +38,6 @@ class HighlightCell : public View {
     return isHighlighted() ? Palette::Select : KDColorWhite;
   }
 
-  State getState() const { return m_state; }
-
  private:
   /* Not all cells keep m_state up to date, as they may not rely on it for
    * drawing. As such, controllers should not read this value to get the

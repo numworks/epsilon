@@ -30,8 +30,13 @@ class EditableFunctionCell
 
   Escher::ButtonCell* buttonCell() { return &m_buttonCell; }
 
-  void setTemplateButtonState(State state);
-  State templateButtonState() const { return m_buttonCell.getState(); }
+  void templateButtonSetVisible(bool visible);
+  void templateButtonSetHighlighted(bool highlighted);
+
+  bool templateButtonIsVisible() const { return m_buttonCell.isVisible(); }
+  bool templateButtonIsHighlighted() const {
+    return m_buttonCell.isHighlighted();
+  }
 
  private:
   int numberOfSubviews() const override {
@@ -49,7 +54,7 @@ class EditableFunctionCell
                              KDFont::Size::Small) {}
     bool handleEvent(Ion::Events::Event event) override;
 
-    using HighlightCell::getState;
+    using HighlightCell::isHighlighted;
   };
 
   static constexpr KDCoordinate k_expressionMargin = 5;

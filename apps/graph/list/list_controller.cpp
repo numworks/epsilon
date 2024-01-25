@@ -123,10 +123,10 @@ bool ListController::completeEquation(LayoutField *equationField,
 }
 
 void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
-  if (m_editableCell.buttonShouldBeVisible() !=
+  if (m_editableCell.templateButtonShouldBeVisible() !=
       m_editableCell.templateButtonIsVisible()) {
-    m_editableCell.templateButtonSetVisible(
-        m_editableCell.buttonShouldBeVisible());
+    m_editableCell.setTemplateButtonVisible(
+        m_editableCell.templateButtonShouldBeVisible());
   }
 }
 
@@ -135,14 +135,14 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
   m_parameterColumnSelected = false;
 
   if (m_editableCell.templateButtonIsVisible()) {
-    bool onButtonCell = m_editableCell.templateButtonIsHighlighted();
+    bool onTemplateButton = m_editableCell.templateButtonIsHighlighted();
 
-    if (event == Ion::Events::Right && !onButtonCell) {
-      m_editableCell.templateButtonSetHighlighted(true);
+    if (event == Ion::Events::Right && !onTemplateButton) {
+      m_editableCell.setTemplateButtonHighlighted(true);
       return true;
     }
-    if (event == Ion::Events::Left && onButtonCell) {
-      m_editableCell.templateButtonSetHighlighted(false);
+    if (event == Ion::Events::Left && onTemplateButton) {
+      m_editableCell.setTemplateButtonHighlighted(false);
       return true;
     }
   }
@@ -168,8 +168,8 @@ CodePoint ListController::defaultXNT() {
 
 void ListController::editExpression(Ion::Events::Event event) {
   ExpressionModelListController::editExpression(event);
-  m_editableCell.templateButtonSetVisible(
-      m_editableCell.buttonShouldBeVisible());
+  m_editableCell.setTemplateButtonVisible(
+      m_editableCell.templateButtonShouldBeVisible());
   m_editableCell.setHighlighted(true);
 }
 

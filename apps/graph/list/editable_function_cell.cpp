@@ -26,13 +26,11 @@ EditableFunctionCell::EditableFunctionCell(
 }
 
 void EditableFunctionCell::templateButtonSetVisible(bool visible) {
-  if (!m_buttonCell.isHighlighted() && m_buttonCell.isVisible() == visible) {
-    return;
-  }
-
   if (m_buttonCell.isHighlighted()) {
-    App::app()->setFirstResponder(expressionCell()->layoutField());
-    m_buttonCell.setHighlighted(false);
+    templateButtonSetHighlighted(false);
+  }
+  if (m_buttonCell.isVisible() == visible) {
+    return;
   }
 
   m_buttonCell.setVisible(visible);
@@ -40,13 +38,16 @@ void EditableFunctionCell::templateButtonSetVisible(bool visible) {
 }
 
 void EditableFunctionCell::templateButtonSetHighlighted(bool highlighted) {
-  assert(highlighted);
-  if (m_buttonCell.isHighlighted()) {
+  if (m_buttonCell.isHighlighted() == highlighted) {
     return;
   }
 
-  m_buttonCell.setHighlighted(true);
-  App::app()->setFirstResponder(&m_buttonCell);
+  m_buttonCell.setHighlighted(highlighted);
+  if (highlighted) {
+    App::app()->setFirstResponder(&m_buttonCell);
+  } else {
+    App::app()->setFirstResponder(expressionCell()->layoutField());
+  }
 }
 
 View* EditableFunctionCell::subviewAtIndex(int index) {

@@ -142,7 +142,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       return true;
     }
     if (event == Ion::Events::Left && onButtonCell) {
-      m_editableCell.templateButtonSetVisible(true);
+      m_editableCell.templateButtonSetHighlighted(false);
       return true;
     }
   }

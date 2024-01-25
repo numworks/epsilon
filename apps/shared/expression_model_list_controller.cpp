@@ -208,17 +208,24 @@ void ExpressionModelListController::finishEdition() {
 }
 
 static CodePoint symbolForEquation(Expression expression) {
-  if (expression.recursivelyMatches([](const Expression e) {
-        return e.isIdenticalTo(Symbol::Builder(Symbol::k_polarSymbol));
-      })) {
-    return Symbol::k_polarSymbol;
-  } else if (expression.recursivelyMatches([](const Expression e) {
-               return e.isIdenticalTo(
-                   Symbol::Builder(Symbol::k_parametricSymbol));
-             })) {
-    return Symbol::k_parametricSymbol;
-  }
-  return Symbol::k_cartesianSymbol;
+  CodePoint symbol = Symbol::k_cartesianSymbol;
+  expression.recursivelyMatches(
+      [](const Expression e, Context *context, void *auxiliary) {
+        CodePoint *symbol = static_cast<CodePoint *>(auxiliary);
+        assert(symbol);
+        if (e.isIdenticalTo(Symbol::Builder(Symbol::k_polarSymbol))) {
+          *symbol = Symbol::k_polarSymbol;
+          return true;
+        }
+        if (e.isIdenticalTo(Symbol::Builder(Symbol::k_parametricSymbol))) {
+          *symbol = Symbol::k_parametricSymbol;
+          return true;
+        }
+        return false;
+      },
+      nullptr, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      &symbol);
+  return symbol;
 }
 
 bool ExpressionModelListController::layoutFieldDidFinishEditing(

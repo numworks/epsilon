@@ -102,7 +102,6 @@ bool ExpressionModelListController::handleEventOnExpression(
   }
   if (!inTemplateMenu && m_editedCellIndex > -1 && event == Ion::Events::Back) {
     finishEdition();
-    layoutField()->clearLayout();
     return true;
   }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {

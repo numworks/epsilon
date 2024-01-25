@@ -25,7 +25,7 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 }
 
 App::App(Snapshot* snapshot)
-    : Escher::App(snapshot, &m_controller, I18n::Message::Warning),
+    : Escher::App(snapshot, &m_controller),
       m_controller(&m_modalViewController, snapshot) {}
 
 }  // namespace Home

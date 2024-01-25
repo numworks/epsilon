@@ -29,7 +29,7 @@ void SharedApp::Snapshot::reset() {
 }
 
 SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
-    : ::App(snapshot, rootViewController, I18n::Message::Warning) {}
+    : ::App(snapshot, rootViewController) {}
 
 Context* SharedApp::localContext() {
   return AppsContainerHelper::sharedAppsContainerGlobalContext();

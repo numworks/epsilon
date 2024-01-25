@@ -29,6 +29,7 @@ void EditableFunctionCell::setTemplateButtonVisible(bool visible) {
   if (m_templateButton.isVisible() == visible) {
     return;
   }
+  assert(visible || !m_templateButton.isHighlighted());
 
   m_templateButton.setVisible(visible);
   layoutSubviews();

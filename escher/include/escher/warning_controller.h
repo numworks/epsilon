@@ -29,6 +29,7 @@ class WarningController : public ViewController {
    private:
     constexpr static KDCoordinate k_margin = 15;
     constexpr static KDCoordinate k_lineSpacing = 3;
+    constexpr static KDCoordinate k_maxTextWidth = 238;  // 34 glyphs
     MessageTextView m_textView;
   };
 

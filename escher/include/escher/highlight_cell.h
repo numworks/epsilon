@@ -31,9 +31,9 @@ class HighlightCell : public View {
     Visible,
     Highlighted,
   };
+  bool isHighlighted() const { return m_state == State::Highlighted; }
 
  protected:
-  bool isHighlighted() const { return m_state == State::Highlighted; }
   KDColor defaultBackgroundColor() const {
     return isHighlighted() ? Palette::Select : KDColorWhite;
   }

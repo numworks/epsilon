@@ -118,7 +118,7 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
 }
 
 void EditExpressionController::layoutFieldDidHandleEvent(
-    Escher::LayoutField *layoutField) {
+    Escher::LayoutField *layoutField, bool layoutDidChange) {
   assert(m_contentView.layoutField() == layoutField);
   /* Memoize on all handled event, even if the text did not change, to properly
    * update the cursor position. */

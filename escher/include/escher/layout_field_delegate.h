@@ -24,7 +24,8 @@ class LayoutFieldDelegate : public ContextProvider {
     return false;
   }
   virtual void layoutFieldDidAbortEditing(LayoutField* layoutField) {}
-  virtual void layoutFieldDidHandleEvent(LayoutField* layoutField) {}
+  virtual void layoutFieldDidHandleEvent(LayoutField* layoutField,
+                                         bool layoutDidChange) {}
   virtual void layoutFieldDidChangeSize(LayoutField* layoutField) {}
 
   virtual bool insertTextForStoEvent(Escher::LayoutField* layoutField) const {

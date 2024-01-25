@@ -26,9 +26,6 @@ EditableFunctionCell::EditableFunctionCell(
 }
 
 void EditableFunctionCell::setTemplateButtonVisible(bool visible) {
-  if (m_templateButton.isHighlighted()) {
-    setTemplateButtonHighlighted(false);
-  }
   if (m_templateButton.isVisible() == visible) {
     return;
   }

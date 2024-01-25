@@ -124,11 +124,11 @@ bool ListController::completeEquation(LayoutField *equationField,
 
 void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField,
                                                bool layoutDidChange) {
-  if (m_editableCell.templateButtonShouldBeVisible() !=
-      m_editableCell.templateButtonIsVisible()) {
-    m_editableCell.setTemplateButtonVisible(
-        m_editableCell.templateButtonShouldBeVisible());
+  if (layoutDidChange) {
+    m_editableCell.setTemplateButtonHighlighted(false);
   }
+  m_editableCell.setTemplateButtonVisible(
+      m_editableCell.templateButtonShouldBeVisible());
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
@@ -169,6 +169,7 @@ CodePoint ListController::defaultXNT() {
 
 void ListController::editExpression(Ion::Events::Event event) {
   ExpressionModelListController::editExpression(event);
+  m_editableCell.setTemplateButtonHighlighted(false);
   m_editableCell.setTemplateButtonVisible(
       m_editableCell.templateButtonShouldBeVisible());
   m_editableCell.setHighlighted(true);

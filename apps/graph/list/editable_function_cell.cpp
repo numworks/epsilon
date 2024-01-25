@@ -11,40 +11,40 @@ EditableFunctionCell::EditableFunctionCell(
     Escher::LayoutFieldDelegate* layoutFieldDelegate,
     Escher::StackViewController* modelsStackController)
     : TemplatedFunctionCell<Shared::WithEditableExpressionCell>(),
-      m_buttonCell(expressionCell()->layoutField(),
-                   Invocation::Builder<ViewController>(
-                       [](ViewController* controller, void* sender) {
-                         App::app()->displayModalViewController(
-                             controller, 0.f, 0.f,
-                             Metric::PopUpMarginsNoBottom);
-                         return true;
-                       },
-                       modelsStackController)) {
+      m_templateButton(expressionCell()->layoutField(),
+                       Invocation::Builder<ViewController>(
+                           [](ViewController* controller, void* sender) {
+                             App::app()->displayModalViewController(
+                                 controller, 0.f, 0.f,
+                                 Metric::PopUpMarginsNoBottom);
+                             return true;
+                           },
+                           modelsStackController)) {
   // Initialize expression cell
   expressionCell()->layoutField()->setParentResponder(parentResponder);
   expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);
 }
 
-void EditableFunctionCell::templateButtonSetVisible(bool visible) {
-  if (m_buttonCell.isHighlighted()) {
-    templateButtonSetHighlighted(false);
+void EditableFunctionCell::setTemplateButtonVisible(bool visible) {
+  if (m_templateButton.isHighlighted()) {
+    setTemplateButtonHighlighted(false);
   }
-  if (m_buttonCell.isVisible() == visible) {
+  if (m_templateButton.isVisible() == visible) {
     return;
   }
 
-  m_buttonCell.setVisible(visible);
+  m_templateButton.setVisible(visible);
   layoutSubviews();
 }
 
-void EditableFunctionCell::templateButtonSetHighlighted(bool highlighted) {
-  if (m_buttonCell.isHighlighted() == highlighted) {
+void EditableFunctionCell::setTemplateButtonHighlighted(bool highlighted) {
+  if (m_templateButton.isHighlighted() == highlighted) {
     return;
   }
 
-  m_buttonCell.setHighlighted(highlighted);
+  m_templateButton.setHighlighted(highlighted);
   if (highlighted) {
-    App::app()->setFirstResponder(&m_buttonCell);
+    App::app()->setFirstResponder(&m_templateButton);
   } else {
     App::app()->setFirstResponder(expressionCell()->layoutField());
   }
@@ -53,7 +53,7 @@ void EditableFunctionCell::templateButtonSetHighlighted(bool highlighted) {
 View* EditableFunctionCell::subviewAtIndex(int index) {
   assert(index < numberOfSubviews());
   if (index == numberOfSubviews() - 1) {
-    return &m_buttonCell;
+    return &m_templateButton;
   }
   return AbstractFunctionCell::subviewAtIndex(index);
 }
@@ -72,15 +72,15 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   setChildFrame(&m_messageTextView, KDRectZero, force);
 
   KDRect templateButtonRect = KDRectZero;
-  if (m_buttonCell.isVisible()) {
+  if (m_templateButton.isVisible()) {
     // Only draw the button if the expression is empty
-    KDSize buttonSize = m_buttonCell.minimalSizeForOptimalDisplay();
+    KDSize buttonSize = m_templateButton.minimalSizeForOptimalDisplay();
     templateButtonRect =
         KDRect(bounds().width() - rightMargin - buttonSize.width() -
                    k_templateButtonMargin,
                (bounds().height() - buttonSize.height()) / 2, buttonSize);
   }
-  setChildFrame(&m_buttonCell, templateButtonRect, force);
+  setChildFrame(&m_templateButton, templateButtonRect, force);
 }
 
 bool EditableFunctionCell::ButtonCell::handleEvent(Ion::Events::Event event) {

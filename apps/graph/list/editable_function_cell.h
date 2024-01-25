@@ -24,18 +24,16 @@ class EditableFunctionCell
 
   bool isEditing() { return expressionCell()->layoutField()->isEditing(); }
 
-  bool buttonShouldBeVisible() {
+  bool templateButtonShouldBeVisible() {
     return expressionCell()->layoutField()->isEmpty();
   }
 
-  Escher::ButtonCell* buttonCell() { return &m_buttonCell; }
+  void setTemplateButtonVisible(bool visible);
+  void setTemplateButtonHighlighted(bool highlighted);
 
-  void templateButtonSetVisible(bool visible);
-  void templateButtonSetHighlighted(bool highlighted);
-
-  bool templateButtonIsVisible() const { return m_buttonCell.isVisible(); }
+  bool templateButtonIsVisible() const { return m_templateButton.isVisible(); }
   bool templateButtonIsHighlighted() const {
-    return m_buttonCell.isHighlighted();
+    return m_templateButton.isHighlighted();
   }
 
  private:
@@ -57,7 +55,7 @@ class EditableFunctionCell
 
   static constexpr KDCoordinate k_expressionMargin = 5;
   static constexpr KDCoordinate k_templateButtonMargin = 5;
-  ButtonCell m_buttonCell;
+  ButtonCell m_templateButton;
 };
 
 }  // namespace Graph

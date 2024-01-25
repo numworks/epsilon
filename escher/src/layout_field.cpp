@@ -446,22 +446,22 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     m_delegate->updateRepetitionIndexes(event);
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  bool shouldRedrawLayout;
+  bool layoutDidChange;
   bool shouldUpdateCursor;
   bool didHandle =
-      privateHandleEvent(event, &shouldRedrawLayout, &shouldUpdateCursor);
-  return didHandleEvent(didHandle, shouldRedrawLayout, shouldUpdateCursor,
+      privateHandleEvent(event, &layoutDidChange, &shouldUpdateCursor);
+  return didHandleEvent(didHandle, layoutDidChange, shouldUpdateCursor,
                         previousSize);
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
-                                     bool *shouldRedrawLayout,
+                                     bool *layoutDidChange,
                                      bool *shouldUpdateCursor) {
-  *shouldRedrawLayout = false;
+  *layoutDidChange = false;
   *shouldUpdateCursor = true;
 
   // Handle move and selection
-  if (handleMoveEvent(event, shouldRedrawLayout)) {
+  if (handleMoveEvent(event, layoutDidChange)) {
     prepareToEdit();
     return true;
   }
@@ -488,7 +488,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   if (eventHasText(event, buffer, bufferSize)) {
     prepareToEdit();
     bool didHandleEvent = insertText(buffer);
-    *shouldRedrawLayout = didHandleEvent;
+    *layoutDidChange = didHandleEvent;
     return didHandleEvent;
   }
 
@@ -519,7 +519,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     m_contentView.copySelection(context(), false);
     if (event == Ion::Events::Cut && !cursor()->selection().isEmpty()) {
       cursor()->performBackspace();
-      *shouldRedrawLayout = true;
+      *layoutDidChange = true;
     }
     return true;
   }
@@ -529,7 +529,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     prepareToEdit();
     bool didHandleEvent =
         insertText(Clipboard::SharedClipboard()->storedText(), false, true);
-    *shouldRedrawLayout = didHandleEvent;
+    *layoutDidChange = didHandleEvent;
     return didHandleEvent;
   }
 
@@ -552,14 +552,14 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   if (event == Ion::Events::Backspace) {
     prepareToEdit();
     cursor()->performBackspace();
-    *shouldRedrawLayout = true;
+    *layoutDidChange = true;
     return true;
   }
 
   // Handle clear
   if (event == Ion::Events::Clear && isEditing()) {
     clearLayout();
-    *shouldRedrawLayout = true;
+    *layoutDidChange = true;
     return true;
   }
 
@@ -595,7 +595,7 @@ bool LayoutField::handleStoreEvent() {
 }
 
 bool LayoutField::handleMoveEvent(Ion::Events::Event event,
-                                  bool *shouldRedrawLayout) {
+                                  bool *layoutDidChange) {
   bool isMoveEvent = event.isMoveEvent();
   bool isSelectionEvent = event.isSelectionEvent();
   if (!isMoveEvent && !isSelectionEvent) {
@@ -603,12 +603,12 @@ bool LayoutField::handleMoveEvent(Ion::Events::Event event,
   }
   return cursor()->moveMultipleSteps(
       OMG::Direction(event), Ion::Events::longPressFactor(), isSelectionEvent,
-      shouldRedrawLayout, context());
+      layoutDidChange, context());
 }
 
-bool LayoutField::didHandleEvent(bool didHandleEvent, bool shouldRedrawLayout,
+bool LayoutField::didHandleEvent(bool didHandleEvent, bool layoutDidChange,
                                  bool shouldUpdateCursor, KDSize previousSize) {
-  if (!shouldRedrawLayout) {
+  if (!layoutDidChange) {
     if (shouldUpdateCursor) {
       m_contentView.cursorPositionChanged();
       scrollToCursor();

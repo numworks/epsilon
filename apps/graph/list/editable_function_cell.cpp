@@ -26,16 +26,17 @@ EditableFunctionCell::EditableFunctionCell(
 }
 
 void EditableFunctionCell::setTemplateButtonVisible(bool visible) {
+  assert(!m_templateButton.isHighlighted());
   if (m_templateButton.isVisible() == visible) {
     return;
   }
-  assert(visible || !m_templateButton.isHighlighted());
 
   m_templateButton.setVisible(visible);
   layoutSubviews();
 }
 
 void EditableFunctionCell::setTemplateButtonHighlighted(bool highlighted) {
+  assert(m_templateButton.isVisible());
   if (m_templateButton.isHighlighted() == highlighted) {
     return;
   }

@@ -31,8 +31,8 @@ class EditableFunctionCell
   void setTemplateButtonVisible(bool visible);
   void setTemplateButtonHighlighted(bool highlighted);
 
-  bool templateButtonIsVisible() const { return m_templateButton.isVisible(); }
-  bool templateButtonIsHighlighted() const {
+  bool isTemplateButtonVisible() const { return m_templateButton.isVisible(); }
+  bool isTemplateButtonHighlighted() const {
     return m_templateButton.isHighlighted();
   }
 

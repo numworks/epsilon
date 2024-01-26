@@ -124,13 +124,14 @@ bool ListController::completeEquation(LayoutField *equationField,
 
 void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField,
                                                bool layoutDidChange) {
-  if (layoutDidChange && m_editableCell.isTemplateButtonHighlighted()) {
+  if (!layoutDidChange) {
+    return;
+  }
+  if (m_editableCell.isTemplateButtonHighlighted()) {
     m_editableCell.setTemplateButtonHighlighted(false);
   }
-  if (!m_editableCell.isTemplateButtonHighlighted()) {
-    m_editableCell.setTemplateButtonVisible(
-        m_editableCell.templateButtonShouldBeVisible());
-  }
+  m_editableCell.setTemplateButtonVisible(
+      m_editableCell.templateButtonShouldBeVisible());
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,

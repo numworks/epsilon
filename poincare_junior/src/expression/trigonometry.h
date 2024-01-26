@@ -15,6 +15,8 @@ class Trigonometry final {
   EDITION_REF_WRAP(SimplifyTrigDiff);
   static bool SimplifyATrig(Tree *u);
   EDITION_REF_WRAP(SimplifyATrig);
+  static bool SimplifyArcTangentRad(Tree *u);
+  EDITION_REF_WRAP(SimplifyArcTangentRad);
   static bool ContractTrigonometric(Tree *node);
   EDITION_REF_WRAP(ContractTrigonometric);
   static bool ExpandTrigonometric(Tree *node);

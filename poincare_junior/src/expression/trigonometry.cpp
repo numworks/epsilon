@@ -307,6 +307,23 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
   return changed;
 }
 
+bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
+  // TODO: Add more exact values (√3, 1/√3, ...)
+  switch (u->child(0)->type()) {
+    case BlockType::Zero:
+      u->cloneTreeOverTree(0_e);
+      return true;
+    case BlockType::One:
+      u->cloneTreeOverTree(KMult(1_e / 4_e, π_e));
+      return true;
+    case BlockType::MinusOne:
+      u->cloneTreeOverTree(KMult(-1_e / 4_e, π_e));
+      return true;
+    default:
+      return false;
+  }
+}
+
 /* TODO : Find an easier solution for nested expand/contract smart shallow
  * simplification. */
 

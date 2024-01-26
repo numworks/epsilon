@@ -223,8 +223,7 @@ static CodePoint symbolForEquation(Expression expression) {
         }
         return false;
       },
-      nullptr, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      &symbol);
+      nullptr, SymbolicComputation::DoNotReplaceAnySymbol, &symbol);
   return symbol;
 }
 

@@ -135,6 +135,7 @@ void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField,
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
+  assert(layoutField == this->layoutField());
   m_parameterColumnSelected = false;
 
   if (m_editableCell.isTemplateButtonVisible()) {
@@ -172,6 +173,7 @@ CodePoint ListController::defaultXNT() {
 void ListController::editExpression(Ion::Events::Event event) {
   ExpressionModelListController::editExpression(event);
   if (m_editableCell.isTemplateButtonHighlighted()) {
+    // TODO: should be done in layoutFieldDidStartEditing
     m_editableCell.setTemplateButtonHighlighted(false);
   }
   m_editableCell.setTemplateButtonVisible(

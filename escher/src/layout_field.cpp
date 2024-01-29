@@ -617,7 +617,7 @@ bool LayoutField::didHandleEvent(bool didHandleEvent, bool layoutDidChange,
     reload(previousSize);
   }
   if (didHandleEvent && m_delegate) {
-    m_delegate->layoutFieldDidHandleEvent(this, layoutDidChange);
+    m_delegate->layoutFieldDidHandleEvent(this);
   }
   return didHandleEvent;
 }

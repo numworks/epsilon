@@ -36,8 +36,7 @@ class EditExpressionController : public Escher::ViewController,
   /* MathLayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
-  void layoutFieldDidHandleEvent(Escher::LayoutField* layoutField,
-                                 bool layoutDidChange) override;
+  void layoutFieldDidHandleEvent(Escher::LayoutField* layoutField) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;

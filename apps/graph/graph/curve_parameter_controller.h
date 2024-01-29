@@ -66,6 +66,8 @@ class CurveParameterController
    * CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
+  static constexpr int k_numberOfParameterRows = 3;
+
   char m_title[k_titleSize];
   Escher::MenuCellWithEditableText<
       Escher::OneLineBufferTextView<KDFont::Size::Large>>

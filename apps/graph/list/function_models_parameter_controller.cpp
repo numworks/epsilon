@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include "../app.h"
-#include "function_name_helper.h"
+#include "../shared/function_name_helper.h"
 #include "list_controller.h"
 
 using namespace Poincare;

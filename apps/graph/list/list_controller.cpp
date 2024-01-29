@@ -8,7 +8,7 @@
 #include <poincare/symbol_abstract.h>
 
 #include "../app.h"
-#include "function_name_helper.h"
+#include "../shared/function_name_helper.h"
 
 using namespace Shared;
 using namespace Escher;

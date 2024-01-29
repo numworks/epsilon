@@ -122,8 +122,7 @@ bool ListController::completeEquation(LayoutField *equationField,
   return handled;
 }
 
-void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField,
-                                               bool layoutDidChange) {
+void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
   bool isVisible = m_editableCell.isTemplateButtonVisible();
   bool shouldBeVisible = m_editableCell.templateButtonShouldBeVisible();
 

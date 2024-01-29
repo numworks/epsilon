@@ -6,6 +6,7 @@
 #include "poincare_junior/src/expression/variables.h"
 #include "poincare_junior/src/memory/block.h"
 #include "poincare_junior/src/memory/edition_reference.h"
+#include "poincare_junior/src/n_ary.h"
 
 namespace PoincareJ {
 
@@ -30,21 +31,25 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
          * but we would have to handle them along the simplification process
          * (especially difficult in the advanced and systematic reduction). */
         Tree* exprChildDep = exprChild->child(1);
-        for (const Tree* exprChildDepChild : exprChildDep->children()) {
-          Tree* dependency = SharedEditionPool->push<BlockType::Set>(1);
-          if (Variables::HasVariable(exprChildDepChild,
+        int numberOfDependencies = exprChildDep->numberOfChildren();
+        for (int j = 0; j < numberOfDependencies; j++) {
+          EditionReference dependency =
+              SharedEditionPool->push<BlockType::Set>(1);
+          if (Variables::HasVariable(exprChildDep->firstChild(),
                                      Parametric::k_localVariableId)) {
-            /* Clone the entire parametric tree with exprChildDepChild instead
+            /* Clone the entire parametric tree with detached dependency instead
              * of exprChild */
             expr->cloneNode();
             for (const Tree* exprChild2 : expr->children()) {
-              (exprChild2 != exprChild ? exprChild2 : exprChildDepChild)
-                  ->clone();
+              if (exprChild2 != exprChild) {
+                exprChild2->clone();
+              } else {
+                NAry::DetachChildAtIndex(exprChildDep, 0);
+              }
             }
           } else {
-            // Dependency can be cloned out of parametric's scope.
-            Tree* result = exprChildDepChild->clone();
-            Variables::LeaveScope(result);
+            // Dependency can be detached out of parametric's scope.
+            Variables::LeaveScope(NAry::DetachChildAtIndex(exprChildDep, 0));
           }
           MoveTreeBeforeNode(end, dependency);
           numberOfSets++;

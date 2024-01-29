@@ -5,6 +5,7 @@
 #include <poincare/print.h>
 
 #include "../app.h"
+#include "../shared/function_name_helper.h"
 #include "apps/shared/color_names.h"
 #include "graph_controller.h"
 
@@ -83,11 +84,16 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
     constexpr size_t bufferSize =
         Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
     char buffer[bufferSize];
-    if (row == k_indexOfImageCell) {
-      function()->nameWithArgument(buffer, bufferSize);
+    if (function()->properties().isParametric()) {
+      FunctionNameHelper::ParametricComponentNameWithArgument(
+          function().pointer(), buffer, bufferSize, row == k_indexOfImageCell);
     } else {
-      assert(row == k_indexOfDerivativeCell);
-      function()->derivativeNameWithArgument(buffer, bufferSize);
+      if (row == k_indexOfImageCell) {
+        function()->nameWithArgument(buffer, bufferSize);
+      } else {
+        assert(row == k_indexOfDerivativeCell);
+        function()->derivativeNameWithArgument(buffer, bufferSize);
+      }
     }
     m_parameterCells[row].label()->setText(buffer);
   }

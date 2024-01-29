@@ -10,11 +10,23 @@ namespace Graph {
 
 namespace FunctionNameHelper {
 
-void AddSuffixForParametricComponent(char *baseName, size_t baseNameLength,
-                                     size_t bufferSize, bool first) {
-  SerializationHelper::CodePoint(baseName + baseNameLength,
-                                 bufferSize - baseNameLength,
-                                 first ? 'x' : 'y');
+size_t AddSuffixForParametricComponent(char *baseName, size_t baseNameLength,
+                                       size_t bufferSize, bool first) {
+  return SerializationHelper::CodePoint(baseName + baseNameLength,
+                                        bufferSize - baseNameLength,
+                                        first ? 'x' : 'y');
+}
+
+size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction *f,
+                                           char *buffer, size_t bufferSize,
+                                           bool first) {
+  size_t length = f->name(buffer, bufferSize);
+  length += FunctionNameHelper::AddSuffixForParametricComponent(
+      buffer, length, bufferSize, first);
+  length +=
+      Shared::Function::WithArgument(ContinuousFunction::k_parametricSymbol,
+                                     buffer + length, bufferSize - length);
+  return length;
 }
 
 static bool parametricComponentNameIsFree(char *baseName, size_t baseNameLength,

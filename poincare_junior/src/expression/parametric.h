@@ -25,6 +25,8 @@ class Parametric {
 
   constexpr static ComplexSign k_discreteVariableSign =
       ComplexSign::RealInteger();
+  /* TODO: Should instead depend on the bounds for integral and symbol value for
+   * derivation */
   constexpr static ComplexSign k_continuousVariableSign =
       ComplexSign::RealUnknown();
 

@@ -225,8 +225,7 @@ void CurveParameterController::didBecomeFirstResponder() {
 
 void CurveParameterController::updateNumberOfParameterCells() {
   m_parameterCells[k_indexOfDerivativeCell].setVisible(
-      shouldDisplayDerivative() ||
-      function()->properties().numberOfCurveParameters() == 3);
+      shouldDisplayDerivative() || function()->properties().isParametric());
 }
 
 }  // namespace Graph

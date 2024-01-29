@@ -412,6 +412,8 @@ QUIZ_CASE(pcj_power_simplification) {
   simplifies_to("√(12)-2×√(3)", "0");
   simplifies_to("3^(1/3)×41^(1/3)-123^(1/3)", "0");
   simplifies_to("√(2)*√(7)-√(14)", "0");
+
+  simplifies_to("x^(1-y^0)", "dep(1,{1/x,1/y})");
 }
 
 QUIZ_CASE(pcj_variables) {

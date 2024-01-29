@@ -88,6 +88,10 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
     assert(!child->isUndefined());
+    if (u->isDependency()) {
+      // Skip systematic simplification of Dependencies.
+      break;
+    }
   }
 #if ASSERTIONS
   EditionReference previousTree = u->clone();
@@ -133,7 +137,9 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
   }
   changed |= SimplifySwitch(u);
   if (Dependency::ShallowBubbleUpDependencies(u)) {
-    ShallowSystematicReduce(u->nextNode());
+    ShallowSystematicReduce(u->child(0));
+    // f(dep(a, ...)) -> dep(f(a), ...) -> dep(dep(b, ...), ...) -> dep(b, ...)
+    Dependency::ShallowBubbleUpDependencies(u);
     changed = true;
   }
   return changed;
@@ -1059,6 +1065,7 @@ bool Simplification::ApplyDirection(Tree** u, Tree* root, Direction direction,
     return true;
   }
   assert(direction.isContract() || direction.isExpand());
+  assert(!(*u)->isDependency());
   if (!(direction.isContract() ? ShallowContract : ShallowExpand)(*u, false)) {
     return false;
   }

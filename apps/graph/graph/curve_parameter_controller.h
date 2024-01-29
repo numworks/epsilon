@@ -15,6 +15,9 @@ namespace Graph {
 
 class GraphController;
 
+using ParameterCell = Escher::MenuCellWithEditableText<
+    Escher::OneLineBufferTextView<KDFont::Size::Large>>;
+
 class CurveParameterController
     : public Shared::ExplicitFloatParameterController,
       public Shared::WithRecord {
@@ -69,15 +72,9 @@ class CurveParameterController
   static constexpr int k_numberOfParameterRows = 3;
 
   char m_title[k_titleSize];
-  Escher::MenuCellWithEditableText<
-      Escher::OneLineBufferTextView<KDFont::Size::Large>>
-      m_abscissaCell;
-  Escher::MenuCellWithEditableText<
-      Escher::OneLineBufferTextView<KDFont::Size::Large>>
-      m_imageCell;
-  Escher::MenuCellWithEditableText<
-      Escher::OneLineBufferTextView<KDFont::Size::Large>>
-      m_derivativeNumberCell;
+  ParameterCell m_abscissaCell;
+  ParameterCell m_imageCell;
+  ParameterCell m_derivativeNumberCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>
       m_calculationCell;

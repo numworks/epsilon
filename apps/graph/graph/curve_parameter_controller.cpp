@@ -67,9 +67,8 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
     return;
   }
   I18n::Message name = I18n::Message::Default;
-  MenuCellWithEditableText<OneLineBufferTextView<KDFont::Size::Large>>
-      *parameterCells[] = {&m_abscissaCell, &m_imageCell,
-                           &m_derivativeNumberCell};
+  ParameterCell *parameterCells[] = {&m_abscissaCell, &m_imageCell,
+                                     &m_derivativeNumberCell};
   if (row < function()->properties().numberOfCurveParameters()) {
     ContinuousFunctionProperties::CurveParameter parameter =
         function()->properties().getCurveParameter(row);
@@ -159,9 +158,7 @@ bool CurveParameterController::textFieldDidFinishEditing(
 TextField *CurveParameterController::textFieldOfCellAtRow(int row) {
   assert(cell(row) == &m_abscissaCell || cell(row) == &m_imageCell ||
          cell(row) == &m_derivativeNumberCell);
-  return static_cast<MenuCellWithEditableText<
-      OneLineBufferTextView<KDFont::Size::Large>> *>(cell(row))
-      ->textField();
+  return static_cast<ParameterCell *>(cell(row))->textField();
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {

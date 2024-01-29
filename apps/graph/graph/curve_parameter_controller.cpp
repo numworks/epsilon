@@ -18,9 +18,6 @@ CurveParameterController::CurveParameterController(
     CurveViewCursor *cursor, GraphView *graphView,
     GraphController *graphController)
     : ExplicitFloatParameterController(parentResponder()),
-      m_abscissaCell(&m_selectableListView, this),
-      m_imageCell(&m_selectableListView, this),
-      m_derivativeNumberCell(&m_selectableListView, this),
       m_graphRange(graphRange),
       m_cursor(cursor),
       m_preimageGraphController(nullptr, graphView, bannerView, graphRange,
@@ -28,17 +25,23 @@ CurveParameterController::CurveParameterController(
       m_calculationParameterController(this, graphView, bannerView, graphRange,
                                        cursor),
       m_graphController(graphController) {
+  for (int i = 0; i < k_numberOfParameterRows; i++) {
+    m_parameterCells[i].setParentResponder(&m_selectableListView);
+    m_parameterCells[i].setDelegate(this);
+    m_parameterCells[i].setEditable(false);
+  }
   m_calculationCell.label()->setMessage(I18n::Message::Find);
   m_optionsCell.label()->setMessage(I18n::Message::Options);
-  m_derivativeNumberCell.setEditable(false);
 }
 
 Escher::HighlightCell *CurveParameterController::cell(int row) {
   assert(0 <= row && row < k_numberOfRows);
-  HighlightCell *cells[k_numberOfRows] = {&m_abscissaCell, &m_imageCell,
-                                          &m_derivativeNumberCell,
-                                          &m_calculationCell, &m_optionsCell};
-  return cells[row];
+  if (row < k_numberOfParameterRows) {
+    return &m_parameterCells[row];
+  }
+  HighlightCell *cells[k_numberOfRows - k_numberOfParameterRows] = {
+      &m_calculationCell, &m_optionsCell};
+  return cells[row - k_numberOfParameterRows];
 }
 
 Shared::ExpiringPointer<Shared::ContinuousFunction>
@@ -67,29 +70,26 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
     return;
   }
   I18n::Message name = I18n::Message::Default;
-  ParameterCell *parameterCells[] = {&m_abscissaCell, &m_imageCell,
-                                     &m_derivativeNumberCell};
   if (row < function()->properties().numberOfCurveParameters()) {
     ContinuousFunctionProperties::CurveParameter parameter =
         function()->properties().getCurveParameter(row);
     name = parameter.parameterName;
-    parameterCells[row]->setEditable(parameter.editable);
+    m_parameterCells[row].setEditable(parameter.editable);
   }
   if (name != I18n::Message::Default) {
-    parameterCells[row]->label()->setMessageWithPlaceholders(name);
-  } else if (cell(row) == &m_imageCell ||
-             cell(row) == &m_derivativeNumberCell) {
+    m_parameterCells[row].label()->setMessageWithPlaceholders(name);
+  } else if (row == k_indexOfImageCell || row == k_indexOfDerivativeCell) {
     // The parameter requires a custom name built from the function name
     constexpr size_t bufferSize =
         Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
     char buffer[bufferSize];
-    if (cell(row) == &m_imageCell) {
+    if (row == k_indexOfImageCell) {
       function()->nameWithArgument(buffer, bufferSize);
     } else {
-      assert(cell(row) == &m_derivativeNumberCell);
+      assert(row == k_indexOfDerivativeCell);
       function()->derivativeNameWithArgument(buffer, bufferSize);
     }
-    parameterCells[row]->label()->setText(buffer);
+    m_parameterCells[row].label()->setText(buffer);
   }
   ExplicitFloatParameterController::fillParameterCellAtRow(row);
 }
@@ -156,8 +156,7 @@ bool CurveParameterController::textFieldDidFinishEditing(
 }
 
 TextField *CurveParameterController::textFieldOfCellAtRow(int row) {
-  assert(cell(row) == &m_abscissaCell || cell(row) == &m_imageCell ||
-         cell(row) == &m_derivativeNumberCell);
+  assert(0 <= row && row <= k_numberOfParameterRows);
   return static_cast<ParameterCell *>(cell(row))->textField();
 }
 
@@ -189,7 +188,7 @@ bool CurveParameterController::editableParameter(int index) {
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
-  m_derivativeNumberCell.setVisible(
+  m_parameterCells[k_indexOfDerivativeCell].setVisible(
       shouldDisplayDerivative() ||
       function()->properties().numberOfCurveParameters() == 3);
   m_calculationCell.setVisible(shouldDisplayCalculation());
@@ -203,7 +202,7 @@ void CurveParameterController::viewWillAppear() {
   /* We need to update the visibility of the derivativeCell both when the
    * function changes (in setRecord) and here since show derivative can be
    * toggled from a sub-menu of this one. */
-  m_derivativeNumberCell.setVisible(
+  m_parameterCells[k_indexOfDerivativeCell].setVisible(
       shouldDisplayDerivative() ||
       function()->properties().numberOfCurveParameters() == 3);
   ExplicitFloatParameterController::viewWillAppear();

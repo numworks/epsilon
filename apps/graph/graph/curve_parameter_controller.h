@@ -61,7 +61,7 @@ class CurveParameterController
   bool shouldDisplayCalculation() const;
   bool shouldDisplayDerivative() const;
   bool isDerivative(int index) {
-    return cell(index) == &m_derivativeNumberCell &&
+    return index == k_indexOfDerivativeCell &&
            function()->properties().numberOfCurveParameters() == 2;
   };
   void fillParameterCellAtRow(int row) override;
@@ -69,12 +69,12 @@ class CurveParameterController
    * CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
+  static constexpr int k_indexOfImageCell = 1;
+  static constexpr int k_indexOfDerivativeCell = 2;
   static constexpr int k_numberOfParameterRows = 3;
 
   char m_title[k_titleSize];
-  ParameterCell m_abscissaCell;
-  ParameterCell m_imageCell;
-  ParameterCell m_derivativeNumberCell;
+  ParameterCell m_parameterCells[k_numberOfParameterRows];
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>
       m_calculationCell;

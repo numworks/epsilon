@@ -109,8 +109,8 @@ Evaluation<T> DerivativeNode::templatedApproximate(
   if (std::isnan(evaluationArgument)) {
     return Complex<T>::RealUndefined();
   }
-  // Distribute over point if parametric function
-  Expression point = Derivative(this).distributePointIfParametric();
+  // Distribute over point
+  Expression point = Derivative(this).distributeOverPoint();
   if (!point.isUninitialized()) {
     return point.node()->approximate(T(), approximationContext);
   }
@@ -275,7 +275,7 @@ Expression Derivative::shallowReduce(ReductionContext reductionContext) {
   }
 
   // Distribute over point
-  Expression point = distributePointIfParametric();
+  Expression point = distributeOverPoint();
   if (!point.isUninitialized()) {
     int n = point.numberOfChildren();
     assert(n == 2);
@@ -425,14 +425,11 @@ Expression Derivative::UntypedBuilder(Expression children) {
   }
 }
 
-Expression Derivative::distributePointIfParametric() {
-  // Distribute over point if parametric function
+Expression Derivative::distributeOverPoint() {
   Expression derivand = childAtIndex(0);
-  Symbol symbol = childAtIndex(1).convert<Symbol>();
-  if (strcmp("t", symbol.name()) == 0 &&
-      (derivand.type() == ExpressionNode::Type::Point ||
-       (derivand.type() == ExpressionNode::Type::Dependency &&
-        derivand.childAtIndex(0).type() == ExpressionNode::Type::Point))) {
+  if (derivand.type() == ExpressionNode::Type::Point ||
+      (derivand.type() == ExpressionNode::Type::Dependency &&
+       derivand.childAtIndex(0).type() == ExpressionNode::Type::Point)) {
     bool hasDep = derivand.type() == ExpressionNode::Type::Dependency;
     Expression point = hasDep ? derivand.childAtIndex(0) : derivand;
     Expression pointParent = hasDep ? derivand : *this;

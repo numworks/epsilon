@@ -109,7 +109,7 @@ class Derivative final : public ParameteredExpression {
   void deepReduceChildren(const ReductionContext& reductionContext);
   Expression shallowReduce(ReductionContext reductionContext);
 
-  Expression distributePointIfParametric();
+  Expression distributeOverPoint();
 };
 
 }  // namespace Poincare

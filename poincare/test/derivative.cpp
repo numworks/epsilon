@@ -133,10 +133,12 @@ QUIZ_CASE(poincare_derivative_formal) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("t.func").destroy();
 
   // Parametric 2D
-  assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,t)",
-                                      "(cos(t),-sin(t))");
+  assert_reduces_to_formal_expression(
+      "diff((sin(t),cos(t)),t,t)",
+      "(\U00000014dep(cos(t),{sin(t)}),\U00000014dep(-sin(t),{cos(t)}))");
   assert_reduce_and_store("(3t,-2t^2)→f(t)");
-  assert_reduces_to_formal_expression("diff(f(t),t,t)", "(3,-4×t)");
+  assert_reduces_to_formal_expression("diff(f(t),t,t)",
+                                      "(\U00000014dep(3,{t}),-4×t)");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   // Undefined on matrix
@@ -169,8 +171,8 @@ QUIZ_CASE(poincare_derivative_formal_higher_order) {
   // Parametric 2D
   assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,t,2)",
                                       "(-sin(t),-cos(t))");
-  assert_reduces_to_formal_expression("diff((t,2t^2),t,t,3)",
-                                      "\U00000014dep((0,0),{t})");
+  assert_reduces_to_formal_expression(
+      "diff((t,2t^2),t,t,3)", "(\U00000014dep(0,{t}),\U00000014dep(0,{t}))");
 }
 
 void assert_reduces_for_approximation(

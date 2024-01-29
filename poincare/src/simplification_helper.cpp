@@ -42,7 +42,8 @@ Expression SimplificationHelper::defaultShallowReduce(
     Expression e, ReductionContext* reductionContext,
     BooleanReduction booleanParameter, UnitReduction unitParameter,
     MatrixReduction matrixParameter, ListReduction listParameter,
-    PointReduction pointParameter, UndefReduction undefParameter) {
+    PointReduction pointParameter, UndefReduction undefParameter,
+    DependencyReduction dependencyParameter) {
   Expression res;
   // Step 1: Shallow reduce undefined
   if (undefParameter == UndefReduction::BubbleUpUndef) {
@@ -52,7 +53,9 @@ Expression SimplificationHelper::defaultShallowReduce(
     return res;
   }
   // Step 2: Bubble up dependencies
-  res = bubbleUpDependencies(e, *reductionContext);
+  if (dependencyParameter == DependencyReduction::BubbleUp) {
+    res = bubbleUpDependencies(e, *reductionContext);
+  }
   if (!res.isUninitialized()) {
     return res;
   }

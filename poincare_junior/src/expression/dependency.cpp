@@ -24,18 +24,18 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   int i = 0;
   for (Tree* exprChild : expr->children()) {
     if (exprChild->isDependency()) {
+      Tree* exprChildSet = exprChild->child(1);
       if (expr->isParametric() && Parametric::FunctionIndex(expr) == i) {
         /* diff(dep(x, {ln(x), z}), x, y) ->
          * dep(diff(x, x, y), {diff(ln(x), x, y), z})
          * TODO: Keeping the dependency in the parametric would be more optimal,
          * but we would have to handle them along the simplification process
          * (especially difficult in the advanced and systematic reduction). */
-        Tree* exprChildDep = exprChild->child(1);
-        int numberOfDependencies = exprChildDep->numberOfChildren();
+        int numberOfDependencies = exprChildSet->numberOfChildren();
+        EditionReference set =
+            SharedEditionPool->push<BlockType::Set>(numberOfDependencies);
         for (int j = 0; j < numberOfDependencies; j++) {
-          EditionReference dependency =
-              SharedEditionPool->push<BlockType::Set>(1);
-          if (Variables::HasVariable(exprChildDep->firstChild(),
+          if (Variables::HasVariable(exprChildSet->firstChild(),
                                      Parametric::k_localVariableId)) {
             /* Clone the entire parametric tree with detached dependency instead
              * of exprChild */
@@ -44,22 +44,20 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
               if (exprChild2 != exprChild) {
                 exprChild2->clone();
               } else {
-                NAry::DetachChildAtIndex(exprChildDep, 0);
+                NAry::DetachChildAtIndex(exprChildSet, 0);
               }
             }
           } else {
             // Dependency can be detached out of parametric's scope.
-            Variables::LeaveScope(NAry::DetachChildAtIndex(exprChildDep, 0));
+            Variables::LeaveScope(NAry::DetachChildAtIndex(exprChildSet, 0));
           }
-          MoveTreeBeforeNode(end, dependency);
-          numberOfSets++;
         }
-        exprChildDep->removeTree();
-      } else {
-        // Move dependency list at the end
-        MoveTreeBeforeNode(end, exprChild->child(1));
-        numberOfSets++;
+        exprChildSet->removeTree();
+        exprChildSet = set;
       }
+      // Move dependency list at the end
+      MoveTreeBeforeNode(end, exprChildSet);
+      numberOfSets++;
       // Remove Dependency block in child
       exprChild->removeNode();
     }

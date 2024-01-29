@@ -459,12 +459,14 @@ bool Simplification::SimplifyLnReal(Tree* u) {
     ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
   }
   if (childSign.realSign().canBeNegative() || !childSign.imagSign().isZero()) {
-    // Child can be nonreal or negative
-    // TODO: Add a dependency to raise unreal if x complex or x < 0.
-    return false;
+    // Child can be nonreal or negative, add a dependency in case.
+    u->moveTreeOverTree(PatternMatching::Create(
+        KDep(KLn(KA), KSet(KLnReal(KA))), {.KA = u->child(0)}));
+    u = u->child(0);
+  } else {
+    // Safely fallback to complex logarithm.
+    u->cloneNodeOverNode(KLn);
   }
-  // Fallback to complex logarithm.
-  u->cloneNodeOverNode(KLn);
   Logarithm::SimplifyLn(u);
   return true;
 }

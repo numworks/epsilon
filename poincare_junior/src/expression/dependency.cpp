@@ -28,9 +28,12 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
       if (expr->isParametric() && Parametric::FunctionIndex(expr) == i) {
         /* diff(dep(x, {ln(x), z}), x, y) ->
          * dep(diff(x, x, y), {diff(ln(x), x, y), z})
-         * TODO: Keeping the dependency in the parametric would be more optimal,
-         * but we would have to handle them along the simplification process
-         * (especially difficult in the advanced and systematic reduction). */
+         * TODO:
+         * - Keeping the dependency in the parametric would be more optimal, but
+         *   we would have to handle them along the simplification process
+         *   (especially difficult in the advanced and systematic reduction).
+         * - In the case of derivatives only, we could simply bubble up
+         *   dependency and replace local variable with symbol value. */
         int numberOfDependencies = exprChildSet->numberOfChildren();
         EditionReference set =
             SharedEditionPool->push<BlockType::Set>(numberOfDependencies);

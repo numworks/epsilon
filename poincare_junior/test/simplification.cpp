@@ -152,7 +152,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×(d+f)×g");
   simplifies_to("a*x*y+b*x*y+c*x", "x×(c+(a+b)×y)");
   simplifies_to("(e^(x))^2", "e^(2×x)");
-  simplifies_to("e^(ln(x))", "e^(ln(x))");
+  simplifies_to("e^(ln(x))", "dep(x,{ln(x),ln(x)})");
   simplifies_to("e^(ln(1+x^2))", "x^2+1");
   simplifies_to("e^(ln(x))", "dep(x,{ln(x)})", cartesianCtx);
   simplifies_to("e^(ln(x+x))", "dep(2×x,{ln(2×x)})", cartesianCtx);
@@ -160,13 +160,15 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("diff(a×x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "1");
-  simplifies_to("diff(sin(ln(x)), x, y)", "cos(ln(y))/y");
+  simplifies_to("diff(sin(ln(x)), x, y)",
+                "dep(cos(ln(y))/y,{diff(ln(x),x,y)})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "3×y^(4)×e^(3×y)×ln(y)+(e^(3×y)+4×e^(3×y)×ln(y))×y^(3)");
+                "dep(3×y^4×e^(3×y)×ln(y)+(e^(3×y)+4×e^(3×y)×ln(y))×y^3,{diff("
+                "ln(x),x,y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*abs(x), x, y)", "y×diff(abs(x),x,y)+1+abs(y)");
   // TODO: Should be undef
-  simplifies_to("diff(ln(x), x, -1)", "-1");
+  simplifies_to("diff(ln(x), x, -1)", "dep(-1,{diff(ln(x),x,-1)})");
   // TODO: Metric: 3×abs(x)
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
@@ -185,10 +187,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
   simplifies_to("undef", "undef");
   // TODO: Metric: 1+ln(x×y)
-  simplifies_to("1+ln(x)+ln(y)", "1+ln(x)+ln(y)");
+  simplifies_to("1+ln(x)+ln(y)", "dep(1+ln(x)+ln(y),{ln(x),ln(y)})");
   // TODO: Metric: 2×ln(π)
   simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
-  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "1-ln(x)");
+  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "dep(1+ln(1/x),{ln(x)})");
   simplifies_to("1-ln(x)", "1+ln(1/x)", cartesianCtx);
   // TODO : Simplify to 1/√(1+x^2).
   simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/(x^2+1)+1)");
@@ -523,7 +525,7 @@ QUIZ_CASE(pcj_infinity) {
   simplifies_to("0^∞", "0");
   simplifies_to("e^-∞", "0");
   simplifies_to("inf^x", "e^(∞×x)");
-  simplifies_to("log(inf,x)", "∞/ln(x)");
+  simplifies_to("log(inf,x)", "dep(∞/ln(x),{ln(x)})");
   simplifies_to("0×∞", "undef");
   simplifies_to("∞-∞", "undef");
   simplifies_to("cos(∞)", "undef");

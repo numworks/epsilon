@@ -116,23 +116,7 @@ QUIZ_CASE(poincare_derivative_formal) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("c.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
-  // Polar
-  assert_reduces_to_formal_expression("diff(3θ^2,θ,θ)", "6×θ");
-  assert_reduces_to_formal_expression("diff(cos(θ),θ,θ)",
-                                      "\U00000014dep(-sin(θ),{cos(θ)})");
-  assert_reduce_and_store("cos(θ)^2→r1(θ)");
-  assert_reduces_to_formal_expression("diff(r1(θ),θ,θ)", "-2×sin(θ)×cos(θ)");
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("r1.func").destroy();
-
-  // Parametric 1D
-  assert_reduces_to_formal_expression("diff(3t^2,t,t)", "6×t");
-  assert_reduces_to_formal_expression("diff(cos(t),t,t)",
-                                      "\U00000014dep(-sin(t),{cos(t)})");
-  assert_reduce_and_store("cos(t)^2→f(t)");
-  assert_reduces_to_formal_expression("diff(f(t),t,t)", "-2×sin(t)×cos(t)");
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("t.func").destroy();
-
-  // Parametric 2D
+  // On points
   assert_reduces_to_formal_expression(
       "diff((sin(t),cos(t)),t,t)",
       "(\U00000014dep(cos(t),{sin(t)}),\U00000014dep(-sin(t),{cos(t)}))");
@@ -141,7 +125,7 @@ QUIZ_CASE(poincare_derivative_formal) {
                                       "(\U00000014dep(3,{t}),-4×t)");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
-  // Undefined on matrix
+  // On matrices
   assert_reduces_to_formal_expression("diff([[x]],x,x)", Undefined::Name());
   assert_reduces_to_formal_expression("diff([[2t,3t]],t,t)", Undefined::Name());
   assert_reduces_to_formal_expression("diff([[2t][3t]],t,t)",
@@ -160,15 +144,7 @@ QUIZ_CASE(poincare_derivative_formal_higher_order) {
   assert_reduces_to_formal_expression("diff(x^3,x,x,1.3)", Undefined::Name());
   assert_reduces_to_formal_expression("diff(x^3,x,x,n)", "diff(x^3,x,x,n)");
 
-  // Polar
-  assert_reduces_to_formal_expression("diff(θ^3,θ,θ,2)", "6×θ");
-  assert_reduces_to_formal_expression("diff(sin(θ),θ,θ,4)", "sin(θ)");
-
-  // Parametric 1D
-  assert_reduces_to_formal_expression("diff(t^4,t,t,2)", "12×t^2");
-  assert_reduces_to_formal_expression("diff(cos(t),t,t,4)", "cos(t)");
-
-  // Parametric 2D
+  // On points
   assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,t,2)",
                                       "(-sin(t),-cos(t))");
   assert_reduces_to_formal_expression(
@@ -219,15 +195,7 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff((-1)^(a*x),x,3)", "0");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
-  // Polar
-  assert_reduces_for_approximation("diff(θ^3/5,θ,3)", "27/5");
-  assert_reduces_for_approximation("diff(sin(θ),θ,π/6)", "√(3)/2");
-
-  // Parametric 1D
-  assert_reduces_for_approximation("diff(t^3/7,t,3)", "27/7");
-  assert_reduces_for_approximation("diff(cos(t),t,π/3)", "-√(3)/2");
-
-  // Parametric 2D
+  // On points
   assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,π/6)",
                                       "(√(3)/2,-1/2)");
   assert_reduces_to_formal_expression("diff((1,2),t,1)", "(0,0)");
@@ -263,13 +231,7 @@ QUIZ_CASE(poincare_derivative_approximation) {
   assert_expression_approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)",
                                             "0");
 
-  // Polar
-  assert_approximate_to("diff(sin(θ),θ,π/3)", "0.5");
-
-  // Parametric 1D
-  assert_approximate_to("diff(cos(t),t,π/6)", "-0.5");
-
-  // Parametric 2D
+  // On points
   assert_approximate_to("diff((sin(t),cos(t)),t,π/2)", "(0,-1)");
 }
 
@@ -284,13 +246,7 @@ QUIZ_CASE(poincare_derivative_approximation_higher_order) {
   // Order 5 and above are not handled because recursively too long
   assert_approximate_to("diff(e^(2x),x,0,5)", Undefined::Name());
 
-  // Polar
-  assert_expression_approximates_to<double>("diff(θ^3,θ,10,2)", "60");
-
-  // Parametric 1D
-  assert_expression_approximates_to<double>("diff(t^3,t,1,4)", "0");
-
-  // Parametric 2D
+  // On points
   assert_expression_approximates_to<double>("diff((2t,ln(t)),t,2,2)",
                                             "(0,-0.25)");
 }

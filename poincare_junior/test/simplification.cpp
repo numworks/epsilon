@@ -505,6 +505,12 @@ QUIZ_CASE(pcj_dependencies) {
   const Tree* r3 = KDep(3_e, KSet(KDiv(1_e, "a"_e)));
   Simplification::Simplify(e3);
   QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
+
+  Tree* e4 =
+      KDiff("x"_e, "y"_e, KDep("x"_e, KSet(KAbs("x"_e), "z"_e)))->clone();
+  const Tree* r4 = KDep(1_e, KSet("z"_e, KDiff("x"_e, "y"_e, KAbs("x"_e))));
+  Simplification::Simplify(e4);
+  QUIZ_ASSERT(e4->treeIsIdenticalTo(r4));
 }
 
 QUIZ_CASE(pcj_infinity) {

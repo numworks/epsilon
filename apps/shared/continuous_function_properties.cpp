@@ -39,7 +39,7 @@ ContinuousFunctionProperties::getCurveParameter(int index) const {
                                             : Message::Default,
               .editable = index == 0};
     case CurveParameterType::Polar:
-      return {.parameterName = index == 0 ? Message::Theta : Message::R,
+      return {.parameterName = index == 0 ? Message::Theta : Message::Default,
               .editable = index == 0};
     case CurveParameterType::InversePolar:
       return {.parameterName = index == 0 ? Message::R : Message::Theta,

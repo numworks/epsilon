@@ -269,6 +269,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ArcTangentRad(Get(t->firstChild()));
     case BlockType::ComplexArgument:
       return ComplexArgument(Get(t->firstChild()));
+    case BlockType::Dependency:
+      return ComplexArgument(Get(t->firstChild()));
 #if 0
     // Activate these cases if necessary
     case BlockType::ArcSine:

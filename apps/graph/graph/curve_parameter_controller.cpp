@@ -188,9 +188,7 @@ bool CurveParameterController::editableParameter(int index) {
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
-  m_parameterCells[k_indexOfDerivativeCell].setVisible(
-      shouldDisplayDerivative() ||
-      function()->properties().numberOfCurveParameters() == 3);
+  updateNumberOfParameterCells();
   m_calculationCell.setVisible(shouldDisplayCalculation());
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
@@ -202,9 +200,7 @@ void CurveParameterController::viewWillAppear() {
   /* We need to update the visibility of the derivativeCell both when the
    * function changes (in setRecord) and here since show derivative can be
    * toggled from a sub-menu of this one. */
-  m_parameterCells[k_indexOfDerivativeCell].setVisible(
-      shouldDisplayDerivative() ||
-      function()->properties().numberOfCurveParameters() == 3);
+  updateNumberOfParameterCells();
   ExplicitFloatParameterController::viewWillAppear();
 }
 
@@ -225,6 +221,12 @@ void CurveParameterController::didBecomeFirstResponder() {
     return;
   }
   Shared::ExplicitFloatParameterController::didBecomeFirstResponder();
+}
+
+void CurveParameterController::updateNumberOfParameterCells() {
+  m_parameterCells[k_indexOfDerivativeCell].setVisible(
+      shouldDisplayDerivative() ||
+      function()->properties().numberOfCurveParameters() == 3);
 }
 
 }  // namespace Graph

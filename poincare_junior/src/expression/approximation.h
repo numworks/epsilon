@@ -38,14 +38,16 @@ class Approximation final {
  public:
   // Approximate an entire tree, isolated from any outer context.
   template <typename T>
-  static std::complex<T> RootTreeToComplex(
-      const Tree* node, AngleUnit angleUnit = AngleUnit::Radian);
+  static std::complex<T> RootTreeToComplex(const Tree* node,
+                                           AngleUnit angleUnit,
+                                           ComplexFormat complexFormat);
 
   // Approximate an entire tree, isolated from any outer context.
   template <typename T>
-  static T RootTreeTo(const Tree* node,
-                      AngleUnit angleUnit = AngleUnit::Radian) {
-    std::complex<T> value = RootTreeToComplex<T>(node);
+  static T RootTreeTo(const Tree* node, AngleUnit angleUnit = AngleUnit::Radian,
+                      ComplexFormat complexFormat = ComplexFormat::Real) {
+    std::complex<T> value =
+        RootTreeToComplex<T>(node, angleUnit, complexFormat);
     return value.imag() == 0 ? value.real() : NAN;
   }
 
@@ -80,8 +82,8 @@ class Approximation final {
   }
 
   template <typename T>
-  static Tree* RootTreeToList(const Tree* node,
-                              AngleUnit angleUnit = AngleUnit::Radian);
+  static Tree* RootTreeToList(const Tree* node, AngleUnit angleUnit,
+                              ComplexFormat complexFormat);
 
   template <typename T>
   static Tree* ToList(const Tree* node);
@@ -176,6 +178,7 @@ class Approximation final {
   template <typename T>
   static T ConvertFromRadian(T angle);
   static AngleUnit s_angleUnit;
+  static ComplexFormat s_complexFormat;
   static constexpr int k_maxNumberOfVariables = 16;
   using VariableType = double;
   static VariableType s_variables[k_maxNumberOfVariables];

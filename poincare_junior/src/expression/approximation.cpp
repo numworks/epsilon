@@ -20,6 +20,7 @@ namespace PoincareJ {
 // TODO: tests
 
 AngleUnit Approximation::s_angleUnit;
+ComplexFormat Approximation::s_complexFormat;
 Approximation::VariableType Approximation::s_variables[k_maxNumberOfVariables];
 uint8_t Approximation::s_variablesOffset = 0;
 int Approximation::s_listElement;
@@ -92,10 +93,12 @@ std::complex<T> Approximation::FloatDivision(std::complex<T> c,
 
 template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
-                                                 AngleUnit angleUnit) {
+                                                 AngleUnit angleUnit,
+                                                 ComplexFormat complexFormat) {
   Random::Context context;
   s_context = &context;
-  Approximation::s_angleUnit = angleUnit;
+  s_angleUnit = angleUnit;
+  s_complexFormat = complexFormat;
   s_listElement = -1;
   // TODO we should rather assume variable projection has already been done
   Tree* variables = Variables::GetUserSymbols(node);
@@ -150,7 +153,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
     case BlockType::Power:
-      return approximatePower<T>(node, /* TODO */ ComplexFormat::Real);
+      return approximatePower<T>(node, s_complexFormat);
     case BlockType::Logarithm:
       return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>);
     case BlockType::Trig:
@@ -417,8 +420,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 }
 
 template <typename T>
-Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit) {
-  Approximation::s_angleUnit = angleUnit;
+Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
+                                    ComplexFormat complexFormat) {
+  s_angleUnit = angleUnit;
+  s_complexFormat = complexFormat;
   s_listElement = -1;
   ClearVariables();
   // TODO we should rather assume variable projection has already been done
@@ -486,8 +491,7 @@ Tree* Approximation::ToList(const Tree* node) {
   for (int i = 0; i < length; i++) {
     s_listElement = i;
     std::complex<T> k = ToComplex<T>(node);
-    // TODO pass correct complex format
-    PushBeautifiedComplex(k, ComplexFormat::Cartesian);
+    PushBeautifiedComplex(k, s_complexFormat);
   }
   s_listElement = old;
   return list;
@@ -568,15 +572,17 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
 }
 
 template std::complex<float> Approximation::RootTreeToComplex<float>(
-    const Tree*, AngleUnit);
+    const Tree*, AngleUnit, ComplexFormat);
 template std::complex<double> Approximation::RootTreeToComplex<double>(
-    const Tree*, AngleUnit);
+    const Tree*, AngleUnit, ComplexFormat);
 
 template std::complex<float> Approximation::ToComplex<float>(const Tree*);
 template std::complex<double> Approximation::ToComplex<double>(const Tree*);
 
-template Tree* Approximation::RootTreeToList<float>(const Tree*, AngleUnit);
-template Tree* Approximation::RootTreeToList<double>(const Tree*, AngleUnit);
+template Tree* Approximation::RootTreeToList<float>(const Tree*, AngleUnit,
+                                                    ComplexFormat);
+template Tree* Approximation::RootTreeToList<double>(const Tree*, AngleUnit,
+                                                     ComplexFormat);
 
 template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*,
                                                                       bool);

@@ -266,12 +266,14 @@ void assert_expression_approximates_to(const char *expression,
         }
         if (PoincareJ::Dimension::GetListLength(e) != -1) {
           EditionReference r = PoincareJ::Approximation::RootTreeToList<T>(
-              e, PoincareJ::AngleUnit(reductionContext.angleUnit()));
+              e, PoincareJ::AngleUnit(reductionContext.angleUnit()),
+              PoincareJ::ComplexFormat(reductionContext.complexFormat()));
           e->removeTree();
           return r;
         }
         std::complex<T> value = PoincareJ::Approximation::RootTreeToComplex<T>(
-            e, PoincareJ::AngleUnit(reductionContext.angleUnit()));
+            e, PoincareJ::AngleUnit(reductionContext.angleUnit()),
+            PoincareJ::ComplexFormat(reductionContext.complexFormat()));
         e->removeTree();
         return Approximation::PushBeautifiedComplex(
             value, PoincareJ::ComplexFormat(reductionContext.complexFormat()));

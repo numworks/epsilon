@@ -11,6 +11,7 @@
 
 using namespace Shared;
 using namespace Escher;
+using namespace Poincare;
 
 namespace Graph {
 
@@ -70,21 +71,19 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   if (row >= k_numberOfParameterRows) {
     return;
   }
-  I18n::Message name = I18n::Message::Default;
-  if (row < function()->properties().numberOfCurveParameters()) {
-    ContinuousFunctionProperties::CurveParameter parameter =
-        function()->properties().getCurveParameter(row);
-    name = parameter.parameterName;
-    m_parameterCells[row].setEditable(parameter.editable);
+  ContinuousFunctionProperties properties = function()->properties();
+  if (row < properties.numberOfCurveParameters()) {
+    m_parameterCells[row].setEditable(
+        properties.getCurveParameter(row).editable);
   }
-  if (name != I18n::Message::Default) {
-    m_parameterCells[row].label()->setMessageWithPlaceholders(name);
-  } else if (row == k_indexOfImageCell || row == k_indexOfDerivativeCell) {
-    // The parameter requires a custom name built from the function name
-    constexpr size_t bufferSize =
-        Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
-    char buffer[bufferSize];
-    if (function()->properties().isParametric()) {
+  constexpr size_t bufferSize =
+      Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
+  char buffer[bufferSize];
+  if (row == k_indexOfAbscissaCell) {
+    SerializationHelper::CodePoint(buffer, bufferSize, properties.symbol());
+  } else {
+    assert(row == k_indexOfImageCell || row == k_indexOfDerivativeCell);
+    if (properties.isParametric()) {
       FunctionNameHelper::ParametricComponentNameWithArgument(
           function().pointer(), buffer, bufferSize, row == k_indexOfImageCell);
     } else {
@@ -95,8 +94,8 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
         function()->derivativeNameWithArgument(buffer, bufferSize);
       }
     }
-    m_parameterCells[row].label()->setText(buffer);
   }
+  m_parameterCells[row].label()->setText(buffer);
   ExplicitFloatParameterController::fillParameterCellAtRow(row);
 }
 

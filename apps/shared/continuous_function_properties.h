@@ -190,7 +190,6 @@ class ContinuousFunctionProperties {
   }
 
   struct CurveParameter {
-    I18n::Message parameterName;
     bool editable;
     bool isPreimage;
   };

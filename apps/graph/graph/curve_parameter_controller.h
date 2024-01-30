@@ -70,6 +70,7 @@ class CurveParameterController
    * CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
+  static constexpr int k_indexOfAbscissaCell = 0;
   static constexpr int k_indexOfImageCell = 1;
   static constexpr int k_indexOfDerivativeCell = 2;
   static constexpr int k_numberOfParameterRows = 3;

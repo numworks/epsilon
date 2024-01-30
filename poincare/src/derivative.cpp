@@ -426,26 +426,28 @@ Expression Derivative::UntypedBuilder(Expression children) {
 }
 
 Expression Derivative::distributeOverPoint() {
-  Expression derivand = childAtIndex(0);
-  if (derivand.type() == ExpressionNode::Type::Point ||
-      (derivand.type() == ExpressionNode::Type::Dependency &&
-       derivand.childAtIndex(0).type() == ExpressionNode::Type::Point)) {
-    bool hasDep = derivand.type() == ExpressionNode::Type::Dependency;
-    Expression point = hasDep ? derivand.childAtIndex(0) : derivand;
-    Expression pointParent = hasDep ? derivand : *this;
-    pointParent.replaceChildAtIndexWithGhostInPlace(0);
-    int n = point.numberOfChildren();
-    assert(n == 2);
-    for (int i = 0; i < n; i++) {
-      Expression newDerivand = clone();
-      Expression ghostParent =
-          hasDep ? newDerivand.childAtIndex(0) : newDerivand;
-      ghostParent.replaceChildAtIndexInPlace(0, point.childAtIndex(i));
-      point.replaceChildAtIndexInPlace(i, newDerivand);
-    }
-    return point;
+  Expression pointParent = *this;
+  Expression point = childAtIndex(0);
+  bool hasDependency = false;
+  if (point.type() == ExpressionNode::Type::Dependency) {
+    pointParent = point;
+    point = pointParent.childAtIndex(0);
+    hasDependency = true;
   }
-  return Expression();
+  if (point.type() != ExpressionNode::Type::Point) {
+    return Expression();
+  }
+  pointParent.replaceChildAtIndexWithGhostInPlace(0);
+  int n = point.numberOfChildren();
+  assert(n == 2);
+  for (int i = 0; i < n; i++) {
+    Expression newDerivand = clone();
+    Expression ghostParent =
+        hasDependency ? newDerivand.childAtIndex(0) : newDerivand;
+    ghostParent.replaceChildAtIndexInPlace(0, point.childAtIndex(i));
+    point.replaceChildAtIndexInPlace(i, newDerivand);
+  }
+  return point;
 }
 
 }  // namespace Poincare

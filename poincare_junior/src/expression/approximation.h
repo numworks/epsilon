@@ -119,8 +119,8 @@ class Approximation final {
   template <typename T>
   static std::complex<T> FloatPowerReal(std::complex<T> a, std::complex<T> b) {
     /* PowerReal could not be reduced, b's reductions cannot be safely
-     * interpreted as a rational. As a consequence, return NAN a is negative and
-     *  b isn't an integer. */
+     * interpreted as a rational. As a consequence, return NAN if a is negative
+     * and b isn't an integer. */
     if (a.imag() != 0 || b.imag() != 0) {
       return NAN;
     }

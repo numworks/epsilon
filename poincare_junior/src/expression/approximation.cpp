@@ -41,6 +41,56 @@ void Approximation::ShiftVariables() { s_variablesOffset--; }
 void Approximation::UnshiftVariables() { s_variablesOffset++; }
 
 template <typename T>
+std::complex<T> Approximation::FloatMultiplication(std::complex<T> c,
+                                                   std::complex<T> d) {
+  // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
+  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
+    constexpr T zero = static_cast<T>(0.0);
+    // Handle case of pure imaginary/real multiplications
+    if (c.imag() == zero && d.imag() == zero) {
+      return {c.real() * d.real(), zero};
+    }
+    if (c.real() == zero && d.real() == zero) {
+      return {-c.imag() * d.imag(), zero};
+    }
+    if (c.imag() == zero && d.real() == zero) {
+      return {zero, c.real() * d.imag()};
+    }
+    if (c.real() == zero && d.imag() == zero) {
+      return {zero, c.imag() * d.real()};
+    }
+    // Other cases are left to the standard library, and might return NaN.
+  }
+  return c * d;
+}
+
+template <typename T>
+std::complex<T> Approximation::FloatDivision(std::complex<T> c,
+                                             std::complex<T> d) {
+  if (d.real() == 0 && d.imag() == 0) {
+    return NAN;
+  }
+  // Special case to prevent (inf,0)/(1,0) from returning (inf, nan).
+  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
+    // Handle case of pure imaginary/real divisions
+    if (c.imag() == 0 && d.imag() == 0) {
+      return {c.real() / d.real(), 0};
+    }
+    if (c.real() == 0 && d.real() == 0) {
+      return {c.imag() / d.imag(), 0};
+    }
+    if (c.imag() == 0 && d.real() == 0) {
+      return {0, -c.real() / d.imag()};
+    }
+    if (c.real() == 0 && d.imag() == 0) {
+      return {0, c.imag() / d.real()};
+    }
+    // Other cases are left to the standard library, and might return NaN.
+  }
+  return c / d;
+}
+
+template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
                                                  AngleUnit angleUnit) {
   Random::Context context;

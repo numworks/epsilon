@@ -70,7 +70,9 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       std::complex<T> numerator =
           type.isCotangent() ? TrigonometricToComplex(BlockType::Cosine, value)
                              : 1;
-      if (denominator == static_cast<T>(0.0)) {
+      if (type.isCotangent() && (numerator == static_cast<T>(1.0) ||
+                                 numerator == static_cast<T>(-1.0))) {
+        // cf comment for Tangent
         return NAN;
       }
       return numerator / denominator;

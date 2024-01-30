@@ -10,6 +10,7 @@ class ParsingContext {
   /* We do not always understand identifiers like m or abc the same way.
    * This enum values are used by the IdentifierTokenizer to know how to
    * handle some ambiguous cases. */
+  // TODO: break the enum class in bools because they should be orthogonal
   enum class ParsingMethod {
     /* Classic: Default method. */
     Classic,

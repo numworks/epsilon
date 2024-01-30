@@ -96,6 +96,19 @@ It's expected to:
 | log(A, e) | ln(e) |
 | log(A) | ln(A)×ln(10)^(-1) |
 | log(A, B) | ln(A)×ln(B)^(-1) |
+| ln(A) (with real complex format) | lnReal(A) |
+| sec(A) | 1/cos(A) |
+| csc(A) | 1/sin(A) |
+| cot(A) | cos(A)/sin(A) |
+| arcsec(A) | acos(1/A) |
+| arccsc(A) | asin(1/A) |
+| arccot(A) | acos(0) - atan(A) |
+| cosh(A) | (exp(A)+exp(-A))*1/2 |
+| sinh(A) | (exp(A)-exp(-A))*1/2 |
+| tanh(A) | (exp(2A)-1)/(exp(2A)+1) |
+| arcosh(A) | ln(A + sqrt(A - 1)×sqrt(A + 1)) |
+| arsinh(A) | ln(A + sqrt(A^2 + 1)) |
+| artanh(A) | (ln(1+A)-ln(1-A))*1/2 |
 
 </details>
 
@@ -109,6 +122,7 @@ It's expected to:
 - Be efficient and simple
 - Apply obvious and definitive changes
 - Do nothing if applied a second time
+- Ignore second term of dependencies
 
 ### Effects
 
@@ -122,7 +136,7 @@ It's expected to:
 | 1^x | 1 |
 | 0^B (with B > 0) | 0 |
 | A^B (with B not an integer) | exp(B×ln(A)) |
-| A^0 (with A != 0) | 1 |
+| A^0 | 1 (dependency on 1/A if  A can be null) |
 | A^1 | A |
 | (0 + A×i)^n | ±(A^n) or (0±(A^n)×i) |
 | (w^p)^n | w^(p×n) |
@@ -162,6 +176,7 @@ It's expected to:
 | atrig(A,B) (with A one of the exact values) | exact value |
 | arcsin(-x) | -arcsin(x) |
 | arccos(-x) | π - arccos(x) |
+| atan({-1, 0, 1}) | {-π/4, 0, π/4} |
 | diff(A) (with all n children of A having a known partial derivative) | diff(child(A, 0))×partialDiff(A, 0) + ... + diff(child(A, n))×partialDiff(A, n) |
 | partialDiff(A×B×C×D, 2) | A×B×D |
 | partialDiff(A + B + C + D, 2) | 1 |
@@ -171,9 +186,10 @@ It's expected to:
 | partialDiff(Trig(x, n), 1) | 0 |
 | partialDiff(x^n, 0) | n×x^(n - 1) |
 | partialDiff(x^n, 1) | 0 |
-| ln(exp(x)) | x |
+| lnReal(x) with x negative or complex | nonreal |
+| lnReal(x) | ln(x) (dependency on lnReal(x) if x can be negative) |
+| ln(exp(x)) | x (dependency on ln(x) if it can be null) |
 | ln(-1) | iπ |
-| ln(0) | undef |
 | ln(1) | 0 |
 | exp(ln(x)) | x |
 | exp(0) | 1 |
@@ -222,6 +238,7 @@ It's expected to:
 | maximum(L) | result |
 | sum(L) | result |
 | prod(L) | result |
+| diff(dep(x, {ln(x), z}), x, y) | dep(diff(x, x, y), {diff(ln(x), x, y), z}) |
 
 </details>
 
@@ -241,6 +258,7 @@ It's expected to:
 - Reduce any reducible expression if given enough ressources
 - Do its best with reduced ressources
 - Be deterministic
+- Ignore second term of dependencies
 
 ### Effects
 

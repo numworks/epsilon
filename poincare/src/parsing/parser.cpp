@@ -936,7 +936,6 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
     m_status = Status::Error;  // Identifier name too long.
     return;
   }
-  bool poppedParenthesisIsSystem = false;
 
   /* Check the context: if the identifier does not already exist as a function,
    * seq or list, interpret it as a symbol, even if there are parentheses
@@ -978,6 +977,7 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
   }
 
   // If the identifier is not followed by parentheses, it is a symbol
+  bool poppedParenthesisIsSystem = false;
   if (!popTokenIfType(Token::Type::LeftParenthesis)) {
     if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
       leftHandSide = Symbol::Builder(name, length);

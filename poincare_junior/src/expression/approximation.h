@@ -71,9 +71,10 @@ class Approximation final {
     return value.imag() == 0 ? value.real() : NAN;
   }
 
+  // Approximate expression at KVarX/K = x
   template <typename T>
-  static T To(const Tree* node, T at) {
-    setXValue(at);
+  static T To(const Tree* node, T x) {
+    setXValue(x);
     std::complex<T> value = ToComplex<T>(node);
     return value.imag() == 0 ? value.real() : NAN;
   }
@@ -241,7 +242,7 @@ class Approximation final {
     memmove(&s_variables[0], &s_variables[1],
             (k_maxNumberOfVariables - 1) * sizeof(VariableType));
   }
-  // are we approximating to get the nth-element of a list ?
+  // If we are approximating to get the nth-element of a list, s_listElement = n
   static int s_listElement;
   static Random::Context* s_context;
 

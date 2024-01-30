@@ -16,6 +16,7 @@ namespace Shared {
 
 bool ContinuousFunctionProperties::parameterAtIndexIsEditable(int index) const {
   assert(isEnabled());
+  assert(index < numberOfCurveParameters());
   CurveParameterType curveParameterType = getCurveParameterType();
   switch (curveParameterType) {
     case CurveParameterType::CartesianFunction:
@@ -35,6 +36,7 @@ bool ContinuousFunctionProperties::parameterAtIndexIsEditable(int index) const {
 
 bool ContinuousFunctionProperties::parameterAtIndexIsPreimage(int index) const {
   assert(isEnabled());
+  assert(index < numberOfCurveParameters());
   CurveParameterType curveParameterType = getCurveParameterType();
   return (curveParameterType == CurveParameterType::CartesianFunction ||
           curveParameterType == CurveParameterType::Line) &&

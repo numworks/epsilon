@@ -189,12 +189,9 @@ class ContinuousFunctionProperties {
            equationType() == Poincare::ComparisonNode::OperatorType::Inferior;
   }
 
-  struct CurveParameter {
-    bool editable;
-    bool isPreimage;
-  };
   int numberOfCurveParameters() const { return isParametric() ? 3 : 2; }
-  CurveParameter getCurveParameter(int index) const;
+  bool parameterAtIndexIsEditable(int index) const;
+  bool parameterAtIndexIsPreimage(int index) const;
 
   CodePoint symbol() const;
 

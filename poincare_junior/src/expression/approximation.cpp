@@ -21,10 +21,24 @@ namespace PoincareJ {
 
 AngleUnit Approximation::s_angleUnit;
 Approximation::VariableType Approximation::s_variables[k_maxNumberOfVariables];
+uint8_t Approximation::s_variablesOffset = 0;
 int Approximation::s_listElement;
 
 // With a nullptr context, seeded random will be undef.
 Random::Context* Approximation::s_context = nullptr;
+
+void Approximation::ClearVariables() {
+  for (int i = 0; i < k_maxNumberOfVariables; i++) {
+    s_variables[i] = NAN;
+  }
+  s_variablesOffset = 0;
+}
+// with sum(sum(l,l,1,k),k,1,n) s_variables stores [n, NaN, …, NaN, l, k]
+double& Approximation::Variable(size_t index) {
+  return s_variables[(index + s_variablesOffset) % k_maxNumberOfVariables];
+}
+void Approximation::ShiftVariables() { s_variablesOffset--; }
+void Approximation::UnshiftVariables() { s_variablesOffset++; }
 
 template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
@@ -40,9 +54,7 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   std::complex<T> result = ToComplex<T>(clone);
   clone->removeTree();
   variables->removeTree();
-  for (int i = 0; i < k_maxNumberOfVariables; i++) {
-    s_variables[i] = NAN;
-  }
+  ClearVariables();
   s_context = nullptr;
   return result;
 }
@@ -157,7 +169,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::HyperbolicArcTangent:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
     case BlockType::Variable:
-      return s_variables[Variables::Id(node)];
+      return Variable(Variables::Id(node));
     case BlockType::Sum:
     case BlockType::Product: {
       const Tree* lowerBoundChild = node->child(Parametric::k_lowerBoundIndex);
@@ -176,7 +188,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       ShiftVariables();
       std::complex<T> result = node->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
-        s_variables[0] = k;
+        Variable(0) = k;
         std::complex<T> value = ToComplex<T>(child);
         if (node->isSum()) {
           result += value;
@@ -353,9 +365,7 @@ template <typename T>
 Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit) {
   Approximation::s_angleUnit = angleUnit;
   s_listElement = -1;
-  for (int i = 0; i < k_maxNumberOfVariables; i++) {
-    s_variables[i] = NAN;
-  }
+  ClearVariables();
   // TODO we should rather assume variable projection has already been done
   Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();

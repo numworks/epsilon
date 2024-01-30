@@ -20,38 +20,25 @@ ContinuousFunctionProperties::getCurveParameter(int index) const {
   using namespace I18n;
   switch (getCurveParameterType()) {
     case CurveParameterType::CartesianFunction:
-      return {.parameterName = index == 0 ? Message::X : Message::Default,
-              .editable = true,
-              .isPreimage = index == 1};
+      return {.editable = true, .isPreimage = index == 1};
     case CurveParameterType::Line:
-      return {.parameterName = index == 0 ? Message::X : Message::Y,
-              .editable = true,
-              .isPreimage = index == 1};
+      return {.editable = true, .isPreimage = index == 1};
     case CurveParameterType::HorizontalLine:
-      return {.parameterName = index == 0 ? Message::X : Message::Y,
-              .editable = index == 0};
+      return {.editable = index == 0};
     case CurveParameterType::VerticalLine:
-      return {.parameterName = index == 0 ? Message::X : Message::Y,
-              .editable = index == 1};
+      return {.editable = index == 1};
     case CurveParameterType::Parametric:
-      return {.parameterName = index == 0   ? Message::T
-                               : index == 1 ? Message::Default
-                                            : Message::Default,
-              .editable = index == 0};
+      return {.editable = index == 0};
     case CurveParameterType::Polar:
-      return {.parameterName = index == 0 ? Message::Theta : Message::Default,
-              .editable = index == 0};
+      return {.editable = index == 0};
     case CurveParameterType::InversePolar:
-      return {.parameterName = index == 0 ? Message::R : Message::Theta,
-              .editable = index == 0};
+      return {.editable = index == 0};
     case CurveParameterType::ScatterPlot:
-      return {.parameterName = index == 0 ? Message::X : Message::Default,
-              .editable = false};
+      return {.editable = false};
     default:
       assert(getCurveParameterType() == CurveParameterType::Default);
       // Conics
-      return {.parameterName = index == 0 ? Message::X : Message::Y,
-              .editable = false};
+      return {.editable = false};
   }
 }
 

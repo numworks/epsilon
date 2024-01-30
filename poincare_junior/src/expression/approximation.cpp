@@ -68,9 +68,10 @@ T Approximation::To(const Tree* node, Random::Context* context) {
       return std::exp(To<T>(node->nextNode(), context));
     case BlockType::Log:
       return std::log10(To<T>(node->nextNode(), context));
-    case BlockType::Ln:
     case BlockType::LnReal:
-      return std::log(To<T>(node->nextNode(), context));
+      return FloatLnReal<T>(To<T>(node->nextNode(), context));
+    case BlockType::Ln:
+      return FloatLn<T>(To<T>(node->nextNode(), context));
     case BlockType::Abs:
       return std::fabs(To<T>(node->nextNode(), context));
     // TODO: Handle AngleUnits in context as well.

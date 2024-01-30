@@ -208,14 +208,17 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("π*(-π)/π", "-π");
   simplifies_to("π+1/π-π", "1/π");
 
-  simplifies_to("ln(0)", "undef");
-  simplifies_to("ln(0)", "undef", cartesianCtx);
+  // TODO : Should simplify to undef
+  simplifies_to("ln(0)", "ln(0)");
+  simplifies_to("ln(0)", "ln(0)", cartesianCtx);
+
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
   // Matrices
   simplifies_to("[[1+2]]", "[[3]]");
   simplifies_to("trace([[1,2][3,4]])", "5");

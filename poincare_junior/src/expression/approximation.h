@@ -55,8 +55,17 @@ class Approximation final {
     return a / b;
   }
   template <typename T>
+  static T FloatLnReal(T a) {
+    // TODO: Unreal.
+    return a < 0 ? NAN : FloatLn(a);
+  }
+  template <typename T>
+  static T FloatLn(T a) {
+    return a == 0 ? NAN : std::log(a);
+  }
+  template <typename T>
   static T FloatLog(T a, T b) {
-    return std::log2(a) / std::log2(b);
+    return a == 0 ? NAN : std::log2(a) / std::log2(b);
   }
   template <typename T>
   static T FloatTrig(T a, T b) {

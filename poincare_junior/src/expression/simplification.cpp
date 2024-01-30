@@ -221,11 +221,12 @@ bool Simplification::SimplifySwitch(Tree* u) {
 bool Simplification::SimplifyExp(Tree* u) {
   Tree* child = u->nextNode();
   if (child->isLn()) {
+    // exp(ln(x)) -> x
     if (ComplexSign::Get(child->child(0)).canBeNull()) {
+      // TODO: Add that dependency on user-inputted ln only.
       return PatternMatching::MatchAndReplace(u, KExp(KLn(KA)),
                                               KDep(KA, KSet(KLn(KA))));
     }
-    // exp(ln(x)) -> x if x is never null
     u->removeNode();
     u->removeNode();
     return true;
@@ -237,8 +238,8 @@ bool Simplification::SimplifyExp(Tree* u) {
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
-      ctx.getNode(KA)->isInteger()) {
-    // exp(n*ln(x)) -> x^n with n an integer
+      (ctx.getNode(KA)->isInteger() || ctx.getNode(KB)->isZero())) {
+    // exp(n*ln(x)) -> x^n with n an integer or x null.
     u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
     return true;
   }

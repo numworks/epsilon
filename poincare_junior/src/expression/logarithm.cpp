@@ -29,9 +29,8 @@ bool Logarithm::SimplifyLn(Tree* u) {
   } else if (child->isOne()) {
     u->cloneTreeOverTree(0_e);
     return true;
-  } else if (child->isZero()) {
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
+  // TODO: Raise Unhandled if child is zero and ln is user-inputted.
   return false;
 }
 

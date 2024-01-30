@@ -152,10 +152,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×(d+f)×g");
   simplifies_to("a*x*y+b*x*y+c*x", "x×(c+(a+b)×y)");
   simplifies_to("(e^(x))^2", "e^(2×x)");
-  simplifies_to("e^(ln(x))", "dep(x,{ln(x),ln(x)})");
+  simplifies_to("e^(ln(x))", "dep(x,{ln(x)})");
   simplifies_to("e^(ln(1+x^2))", "x^2+1");
-  simplifies_to("e^(ln(x))", "dep(x,{ln(x)})", cartesianCtx);
-  simplifies_to("e^(ln(x+x))", "dep(2×x,{ln(2×x)})", cartesianCtx);
+  simplifies_to("e^(ln(x))", "x", cartesianCtx);
+  simplifies_to("e^(ln(x+x))", "2×x", cartesianCtx);
   simplifies_to("diff(x, x, 2)", "1");
   simplifies_to("diff(a×x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
@@ -246,13 +246,13 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   // Power
   simplifies_to("1/a", "1/a");
-  simplifies_to("a×a^(-1)", "dep(1,{1/a})");
+  simplifies_to("a×a^(-1)", "dep(1,{a^0})");
   simplifies_to("a×a^(1+1)", "a^3");
-  simplifies_to("a×a^(-1)", "dep(1,{1/a})",
+  simplifies_to("a×a^(-1)", "dep(1,{a^0})",
                 {.m_complexFormat = ComplexFormat::Real});
   simplifies_to("a×a^(1+1)", "a^3", {.m_complexFormat = ComplexFormat::Real});
-  simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{1/a})");
-  simplifies_to("cos(π×a×a^(-1))^(b×b^(-2)×b)", "dep(-1,{1/a,1/b})");
+  simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{a^0})");
+  simplifies_to("cos(π×a×a^(-1))^(b×b^(-2)×b)", "dep(-1,{a^0,b^0})");
   simplifies_to("2^(64)", "18446744073709551616");
   simplifies_to("2^(64)/2^(63)", "2");
   simplifies_to("0^3.1", "0");
@@ -309,16 +309,13 @@ QUIZ_CASE(pcj_basic_simplification) {
       "ln((1+(-1+e^(2×x))/(1+e^(2×x)))/(1-(-1+e^(2×x))/(1+e^(2×x))))/2",
       cartesianCtx);
   // TODO: Should simplify to x
-  simplifies_to("cosh(arcosh(x))",
-                "dep((x+√(x-1)×√(x+1)+1/(x+√(x^2-1)))/2,{ln(x+√(x-1)×√(x+1))})",
+  simplifies_to("cosh(arcosh(x))", "(x+√(x-1)×√(x+1)+1/(x+√(x^2-1)))/2",
                 cartesianCtx);
   // TODO: Should simplify to x
-  simplifies_to("sinh(arsinh(x))",
-                "dep((x+√(x^2+1)-1/(x+√(x^2+1)))/2,{ln(x+√(x^2+1))})",
+  simplifies_to("sinh(arsinh(x))", "(x+√(x^2+1)-1/(x+√(x^2+1)))/2",
                 cartesianCtx);
   // TODO: Should simplify to x
-  simplifies_to("tanh(artanh(x))",
-                "dep((-1+(x+1)/(-x+1))/(1+(x+1)/(-x+1)),{ln(x+1)})",
+  simplifies_to("tanh(artanh(x))", "(-1+(x+1)/(-x+1))/(1+(x+1)/(-x+1))",
                 cartesianCtx);
   // Advanced trigonometry
   simplifies_to("sec(x)", "1/cos(x)");
@@ -406,8 +403,7 @@ QUIZ_CASE(pcj_power_simplification) {
 
   simplifies_to("√(x)^2", "√(x)^2", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
-  simplifies_to("√(x)^2", "dep(x,{ln(x)})",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("√(x)^2", "x", {.m_complexFormat = ComplexFormat::Cartesian});
   // TODO : Should be 0
   simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "2×√(-2)",
                 {.m_complexFormat = ComplexFormat::Cartesian});
@@ -418,7 +414,7 @@ QUIZ_CASE(pcj_power_simplification) {
   simplifies_to("3^(1/3)×41^(1/3)-123^(1/3)", "0");
   simplifies_to("√(2)*√(7)-√(14)", "0");
 
-  simplifies_to("x^(1-y^0)", "dep(1,{1/x,1/y})");
+  simplifies_to("x^(1-y^0)", "dep(1,{x^0,y^0})");
 }
 
 QUIZ_CASE(pcj_variables) {
@@ -507,7 +503,7 @@ QUIZ_CASE(pcj_dependencies) {
   QUIZ_ASSERT(e2->treeIsIdenticalTo(r2));
 
   Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->clone();
-  const Tree* r3 = KDep(3_e, KSet(KDiv(1_e, "a"_e)));
+  const Tree* r3 = KDep(3_e, KSet(KPow("a"_e, 0_e)));
   Simplification::Simplify(e3);
   QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
 

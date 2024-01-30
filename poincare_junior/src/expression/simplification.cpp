@@ -221,12 +221,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
 bool Simplification::SimplifyExp(Tree* u) {
   Tree* child = u->nextNode();
   if (child->isLn()) {
+    // TODO: Add a ln(x) dependency on user-inputted ln only when x can be null.
     // exp(ln(x)) -> x
-    if (ComplexSign::Get(child->child(0)).canBeNull()) {
-      // TODO: Add that dependency on user-inputted ln only.
-      return PatternMatching::MatchAndReplace(u, KExp(KLn(KA)),
-                                              KDep(KA, KSet(KLn(KA))));
-    }
     u->removeNode();
     u->removeNode();
     return true;
@@ -239,8 +235,11 @@ bool Simplification::SimplifyExp(Tree* u) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
       (ctx.getNode(KA)->isInteger() || ctx.getNode(KB)->isZero())) {
+    /* To ensure there is only one way of representing x^n. Also handle 0^y with
+     * Power logic. */
     // exp(n*ln(x)) -> x^n with n an integer or x null.
     u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
+    assert(!u->isExponential());
     return true;
   }
   return false;
@@ -285,40 +284,36 @@ bool Simplification::SimplifyPower(Tree* u) {
     u->cloneTreeOverTree(1_e);
     return true;
   }
-  // u^n
+  // v^n
   EditionReference n = v->nextTree();
-  // After systematic reduction, a power can only have integer index.
-  if (!n->isInteger()) {
-    // 0^n -> 0
-    if (v->isZero()) {
-      if (Sign::Get(n).isStrictlyPositive()) {
-        u->cloneTreeOverTree(0_e);
-        return true;
-      }
-      // TODO : return dep(0, n>0)
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
-    }
-    return PatternMatching::MatchReplaceAndSimplify(u, KPow(KA, KB),
-                                                    KExp(KMult(KLn(KA), KB)));
-  }
-  // 0^n -> 0
   if (v->isZero()) {
-    if (!n->isZero() && Rational::Sign(n).isStrictlyPositive()) {
+    ComplexSign indexSing = ComplexSign::Get(n);
+    if (indexSing.realSign().isStrictlyPositive()) {
+      // 0^x is always defined.
       u->cloneTreeOverTree(0_e);
       return true;
     }
-    ExceptionCheckpoint::Raise(ExceptionType::ZeroPowerZero);
+    if (!indexSing.realSign().canBePositive()) {
+      // 0^x cannot be defined
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
+    // Use a dependency as a fallback.
+    return PatternMatching::MatchAndReplace(u, KA, KDep(0_e, KSet(KA)));
+  }
+  // After systematic reduction, a power can only have integer index.
+  if (!n->isInteger()) {
+    // v^n -> exp(n*ln(v))
+    return PatternMatching::MatchReplaceAndSimplify(u, KPow(KA, KB),
+                                                    KExp(KMult(KLn(KA), KB)));
   }
   if (v->isRational()) {
     u->moveTreeOverTree(Rational::IntegerPower(v, n));
     return true;
   }
-  assert(n->isInteger());
   // v^0 -> 1
   if (n->isZero()) {
     if (ComplexSign::Get(v).canBeNull()) {
-      return PatternMatching::MatchAndReplace(u, KPow(KA, 0_e),
-                                              KDep(1_e, KSet(KPow(KA, -1_e))));
+      return PatternMatching::MatchAndReplace(u, KA, KDep(1_e, KSet(KA)));
     }
     u->cloneTreeOverTree(1_e);
     return true;

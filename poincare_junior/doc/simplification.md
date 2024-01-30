@@ -134,9 +134,12 @@ It's expected to:
 | A×(B×C) | A×B×C |
 | A+Dep(B, C) | Dep(A+B, C) |
 | 1^x | 1 |
-| 0^B (with B > 0) | 0 |
+| 0^B (with re(B) <= 0) | undef |
+| 0^B (with re(B) > 0) | 0 |
+| 0^B | Dep(0, 0^B) |
 | A^B (with B not an integer) | exp(B×ln(A)) |
-| A^0 | 1 (dependency on 1/A if  A can be null) |
+| A^0 (with A != 0) | 1 |
+| A^0 | Dep(1, A^0) |
 | A^1 | A |
 | (0 + A×i)^n | ±(A^n) or (0±(A^n)×i) |
 | (w^p)^n | w^(p×n) |
@@ -186,9 +189,10 @@ It's expected to:
 | partialDiff(Trig(x, n), 1) | 0 |
 | partialDiff(x^n, 0) | n×x^(n - 1) |
 | partialDiff(x^n, 1) | 0 |
-| lnReal(x) with x negative or complex | nonreal |
-| lnReal(x) | ln(x) (dependency on lnReal(x) if x can be negative) |
-| ln(exp(x)) | x (dependency on ln(x) if it can be null) |
+| lnReal(x) (with x > 0) | ln(x) |
+| lnReal(x) (with x <= 0 or complex) | nonreal |
+| lnReal(x) | Dep(ln(x), lnReal(x)) |
+| ln(exp(x)) | x |
 | ln(-1) | iπ |
 | ln(1) | 0 |
 | exp(ln(x)) | x |

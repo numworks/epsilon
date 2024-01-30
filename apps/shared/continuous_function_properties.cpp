@@ -14,32 +14,31 @@ using namespace Poincare;
 
 namespace Shared {
 
-ContinuousFunctionProperties::CurveParameter
-ContinuousFunctionProperties::getCurveParameter(int index) const {
+bool ContinuousFunctionProperties::parameterAtIndexIsEditable(int index) const {
   assert(isEnabled());
-  using namespace I18n;
-  switch (getCurveParameterType()) {
+  CurveParameterType curveParameterType = getCurveParameterType();
+  switch (curveParameterType) {
     case CurveParameterType::CartesianFunction:
-      return {.editable = true, .isPreimage = index == 1};
     case CurveParameterType::Line:
-      return {.editable = true, .isPreimage = index == 1};
-    case CurveParameterType::HorizontalLine:
-      return {.editable = index == 0};
+      return true;
     case CurveParameterType::VerticalLine:
-      return {.editable = index == 1};
+      return index == 1;
+    case CurveParameterType::HorizontalLine:
     case CurveParameterType::Parametric:
-      return {.editable = index == 0};
     case CurveParameterType::Polar:
-      return {.editable = index == 0};
     case CurveParameterType::InversePolar:
-      return {.editable = index == 0};
-    case CurveParameterType::ScatterPlot:
-      return {.editable = false};
+      return index == 0;
     default:
-      assert(getCurveParameterType() == CurveParameterType::Default);
-      // Conics
-      return {.editable = false};
+      return false;
   }
+}
+
+bool ContinuousFunctionProperties::parameterAtIndexIsPreimage(int index) const {
+  assert(isEnabled());
+  CurveParameterType curveParameterType = getCurveParameterType();
+  return (curveParameterType == CurveParameterType::CartesianFunction ||
+          curveParameterType == CurveParameterType::Line) &&
+         index == 1;
 }
 
 ContinuousFunctionProperties::AreaType ContinuousFunctionProperties::areaType()

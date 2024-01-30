@@ -74,7 +74,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   ContinuousFunctionProperties properties = function()->properties();
   if (row < properties.numberOfCurveParameters()) {
     m_parameterCells[row].setEditable(
-        properties.getCurveParameter(row).editable);
+        properties.parameterAtIndexIsEditable(row));
   }
   constexpr size_t bufferSize =
       Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
@@ -125,7 +125,7 @@ double CurveParameterController::parameterAtIndex(int index) {
 
 bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
                                                        double f) {
-  if (function()->properties().getCurveParameter(parameterIndex).isPreimage) {
+  if (function()->properties().parameterAtIndexIsPreimage(parameterIndex)) {
     m_preimageGraphController.setImage(f);
     return true;
   }
@@ -154,7 +154,7 @@ bool CurveParameterController::textFieldDidFinishEditing(
       static_cast<StackViewController *>(parentResponder());
   stack->popUntilDepth(
       InteractiveCurveViewController::k_graphControllerStackDepth, true);
-  if (function()->properties().getCurveParameter(index).isPreimage) {
+  if (function()->properties().parameterAtIndexIsPreimage(index)) {
     stack->push(&m_preimageGraphController);
   }
   return true;
@@ -188,7 +188,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 
 bool CurveParameterController::editableParameter(int index) {
   return !isDerivative(index) &&
-         function()->properties().getCurveParameter(index).editable;
+         function()->properties().parameterAtIndexIsEditable(index);
 }
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {

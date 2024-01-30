@@ -7,13 +7,13 @@ namespace Escher {
 StackView::StackView(Style style, bool extendVertically,
                      OMG::AbstractStack<StackHeaderView>* headerViewStack)
     : View(),
+      m_stackHeaderViews(headerViewStack),
       m_borderView(Palette::GrayBright),
       m_contentView(nullptr),
       m_style(style),
       m_headersOverlapHeaders(true),
       m_headersOverlapContent(false),
-      m_extendVertically(extendVertically),
-      m_stackHeaderViews(headerViewStack) {}
+      m_extendVertically(extendVertically) {}
 
 void StackView::setContentView(View* view) {
   m_contentView = view;

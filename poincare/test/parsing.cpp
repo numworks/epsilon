@@ -1088,6 +1088,42 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
+QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
+  Unit apostropheUnit = Unit::Builder(
+      Unit::k_angleRepresentatives + Unit::k_arcMinuteRepresentativeIndex,
+      Unit::Prefix::EmptyPrefix());
+
+  // Reserved function
+  assert_text_not_parsable("cos'(x)");
+
+  // No symbols defined
+  assert_parsed_expression_is(
+      "f'(x)",
+      Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
+                              Parenthesis::Builder(Symbol::Builder("x", 1))));
+  assert_parsed_expression_is(
+      "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
+
+  // Function defined
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      "f", "func", "", 0);
+  assert_parsed_expression_is(
+      "f'(x)",
+      Derivative::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)),
+                          Symbol::Builder("x", 1), Symbol::Builder("x", 1),
+                          BasedInteger::Builder(1)));
+  assert_parsed_expression_is(
+      "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Expression defined
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      "f", "exp", "", 0);
+  assert_parsed_expression_is(
+      "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+}
+
 QUIZ_CASE(poincare_parsing_parse_store) {
   Expression ton = Expression::Parse("_t", nullptr);
   assert_parsed_expression_is(

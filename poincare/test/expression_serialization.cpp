@@ -313,3 +313,12 @@ QUIZ_CASE(poincare_serialization_power) {
                          BasedInteger::Builder(3), BasedInteger::Builder(4),
                          BinaryLogicalOperatorNode::OperatorType::Or))));
 }
+
+QUIZ_CASE(poincare_serialization_derivative) {
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      "f", "func", "", 0);
+  assert_expression_parses_and_serializes_to_itself("f(x)");
+  // TODO: assert_expression_parses_and_serializes_to_itself("f'(x)");
+  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a)");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+}

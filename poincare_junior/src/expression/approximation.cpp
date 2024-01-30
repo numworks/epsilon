@@ -236,6 +236,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     if (app.imag() != 0) {
       return NAN;
     }
+    if (std::isnan(app.real())) {
+      return NAN;
+    }
     child[i++] = app.real();
   }
   switch (node->type()) {
@@ -244,9 +247,6 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
     case BlockType::Sign: {
       // TODO why no epsilon in Poincare ?
-      if (std::isnan(child[0])) {
-        return NAN;
-      }
       return child[0] == 0 ? 0 : child[0] < 0 ? -1 : 1;
     }
     case BlockType::LnReal:
@@ -265,7 +265,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return child[0] - std::floor(child[0]);
     }
     case BlockType::Round: {
-      if (std::isnan(child[1]) || child[1] != std::round(child[1])) {
+      if (child[1] != std::round(child[1])) {
         return NAN;
       }
       T err = std::pow(10, std::round(child[1]));
@@ -275,7 +275,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Remainder: {
       T a = child[0];
       T b = child[1];
-      if (std::isnan(a) || std::isnan(b) || a != (int)a || b != (int)b) {
+      if (a != (int)a || b != (int)b) {
         return NAN;
       }
       // TODO : is this really better than std::remainder ?
@@ -285,7 +285,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 
     case BlockType::Factorial: {
       T n = child[0];
-      if (std::isnan(n) || n != std::round(n) || n < 0) {
+      if (n != std::round(n) || n < 0) {
         return NAN;
       }
       T result = 1;
@@ -300,7 +300,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Binomial: {
       T n = child[0];
       T k = child[1];
-      if (std::isnan(n) || std::isnan(k) || k != std::round(k)) {
+      if (k != std::round(k)) {
         return NAN;
       }
       if (k < 0) {
@@ -324,8 +324,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Permute: {
       T n = child[0];
       T k = child[1];
-      if (std::isnan(n) || std::isnan(k) || n != std::round(n) ||
-          k != std::round(k) || n < 0.0f || k < 0.0f) {
+      if (n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
         return NAN;
       }
       if (k > n) {

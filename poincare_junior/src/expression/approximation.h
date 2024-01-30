@@ -118,18 +118,6 @@ class Approximation final {
     return std::pow(a, b);
   }
   template <typename T>
-  static std::complex<T> FloatPowerReal(std::complex<T> a, std::complex<T> b) {
-    /* PowerReal could not be reduced, b's reductions cannot be safely
-     * interpreted as a rational. As a consequence, return NAN if a is negative
-     * and b isn't an integer. */
-    if (a.imag() != 0 || b.imag() != 0) {
-      return NAN;
-    }
-    return (a.real() < static_cast<T>(0.0) && b.real() != std::round(b.real()))
-               ? NAN
-               : std::pow(a.real(), b.real());
-  }
-  template <typename T>
   static T FloatSubtraction(T a, T b) {
     return a - b;
   }

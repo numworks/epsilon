@@ -99,8 +99,6 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Subtraction:
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
-    case BlockType::PowerReal:
-      return MapAndReduce<T, std::complex<T>>(node, FloatPowerReal<T>);
     case BlockType::Power:
       return MapAndReduce<T, std::complex<T>>(node,
                                               FloatPower<std::complex<T>>);
@@ -257,6 +255,14 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Decimal:
       return child[0] *
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
+    case BlockType::PowerReal: {
+      T a = child[0];
+      T b = child[1];
+      /* PowerReal could not be reduced, b's reductions cannot be safely
+       * interpreted as a rational. As a consequence, return NAN if a is
+       * negative and b isn't an integer. */
+      return (a < 0.0 && b != std::round(b)) ? NAN : std::pow(a, b);
+    }
     case BlockType::Sign: {
       // TODO why no epsilon in Poincare ?
       return child[0] == 0 ? 0 : child[0] < 0 ? -1 : 1;

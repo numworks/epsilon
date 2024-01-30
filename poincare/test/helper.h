@@ -191,6 +191,7 @@ void assert_expression_serializes_to(
 
 void assert_expression_serializes_and_parses_to_itself(
     Poincare::Expression expression);
+void assert_expression_parses_and_serializes_to_itself(const char* expression);
 
 // Layout serializing
 

@@ -240,6 +240,21 @@ void assert_expression_serializes_and_parses_to_itself(Expression expression) {
   assert_parsed_expression_is(buffer, expression);
 }
 
+void assert_expression_parses_and_serializes_to_itself(const char *expression) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, false);
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  e.serialize(buffer, bufferSize);
+  const bool test = strcmp(buffer, expression) == 0;
+  char information[bufferSize] = "";
+  if (!test) {
+    build_failure_infos(information, bufferSize, expression, buffer,
+                        expression);
+  }
+  quiz_assert_print_if_failure(test, information);
+}
+
 void assert_layout_serializes_to(Layout layout, const char *serialization) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];

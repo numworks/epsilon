@@ -162,6 +162,10 @@ class Parser {
       const Expression::FunctionHelper* const* functionHelper);
   void privateParseCustomIdentifier(Expression& leftHandSide, const char* name,
                                     size_t length, Token::Type stoppingType);
+  bool privateParseCustomIdentifierWithParameters(
+      Expression& leftHandSide, const char* name, size_t length,
+      Token::Type stoppingType, Context::SymbolAbstractType idType,
+      bool parseApostropheAsDerivative);
   void parseSequence(Expression& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
   void defaultParseLeftParenthesis(bool isSystemParenthesis,

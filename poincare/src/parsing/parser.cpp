@@ -976,12 +976,43 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
     return;
   }
 
+  Token storedNextToken;
+  Token storedCurrentToken;
+  const char *tokenizerPosition;
+  rememberCurrentParsingPosition(&tokenizerPosition, &storedCurrentToken,
+                                 &storedNextToken);
+  // Try to parse aspostrophe as derivative
+  if (privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
+                                                 stoppingType, idType, true)) {
+    return;
+  }
+  // Parse aspostrophe as unit (default parsing)
+  restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken,
+                                 storedNextToken);
+  privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
+                                             stoppingType, idType, false);
+}
+
+bool Parser::privateParseCustomIdentifierWithParameters(
+    Expression &leftHandSide, const char *name, size_t length,
+    Token::Type stoppingType, Context::SymbolAbstractType idType,
+    bool parseApostropheAsDerivative) {
+  int derivativeOrder = 0;
+  if (parseApostropheAsDerivative && popTokenIfType(Token::Type::Unit)) {
+    if (m_currentToken.length() == 1 && m_currentToken.text()[0] == '\'') {
+      derivativeOrder = 1;
+    }
+  }
+
   // If the identifier is not followed by parentheses, it is a symbol
   bool poppedParenthesisIsSystem = false;
   if (!popTokenIfType(Token::Type::LeftParenthesis)) {
     if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
+      if (derivativeOrder > 0) {
+        return false;
+      }
       leftHandSide = Symbol::Builder(name, length);
-      return;
+      return true;
     }
     poppedParenthesisIsSystem = true;
   }
@@ -991,13 +1022,16 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
    * - an access to a list element   */
   Expression parameter = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
-    return;
+    return true;
   }
   assert(!parameter.isUninitialized());
 
   int numberOfParameters = parameter.numberOfChildren();
   Expression result;
   if (numberOfParameters == 2) {
+    if (derivativeOrder > 0) {
+      return false;
+    }
     /* If you change how list accesses are parsed, change it also in parseList
      * or factorize it. */
     result =
@@ -1010,15 +1044,26 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
                 length) == 0) {
       m_status =
           Status::Error;  // Function and variable must have distinct names.
-      return;
+      return true;
     } else if (idType == Context::SymbolAbstractType::List) {
+      if (derivativeOrder > 0) {
+        return false;
+      }
       result = ListElement::Builder(parameter, Symbol::Builder(name, length));
     } else {
-      result = Function::Builder(name, length, parameter);
+      if (derivativeOrder > 0) {
+        Expression derivand = Function::Builder(
+            name, length, Symbol::Builder(Symbol::k_cartesianSymbol));
+        result = Derivative::Builder(
+            derivand, Symbol::Builder(Symbol::k_cartesianSymbol), parameter,
+            BasedInteger::Builder(derivativeOrder));
+      } else {
+        result = Function::Builder(name, length, parameter);
+      }
     }
   } else {
     m_status = Status::Error;
-    return;
+    return true;
   }
 
   Token::Type correspondingRightParenthesis =
@@ -1026,7 +1071,7 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
                                 : Token::Type::RightParenthesis;
   if (!popTokenIfType(correspondingRightParenthesis)) {
     m_status = Status::Error;
-    return;
+    return true;
   }
   if (result.type() == ExpressionNode::Type::Function &&
       parameter.type() == ExpressionNode::Type::Symbol &&
@@ -1045,9 +1090,10 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
      * functionAssignmentContext pointer. */
     leftHandSide = parseUntil(stoppingType, result);
     m_parsingContext.setContext(previousContext);
-    return;
+    return true;
   }
   leftHandSide = result;
+  return true;
 }
 
 Expression Parser::parseFunctionParameters() {

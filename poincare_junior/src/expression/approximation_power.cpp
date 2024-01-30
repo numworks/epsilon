@@ -1,6 +1,7 @@
 #include <poincare/approximation_helper.h>
 
 #include "approximation.h"
+#include "rational.h"
 
 using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
 
@@ -35,7 +36,7 @@ std::complex<T> computeNotPrincipalRealRootOfRationalPow(
                ? -absCPowD
                : absCPowD;
   }
-  return NAN;  // complexNAN<T>();
+  return NAN;
 }
 
 template <typename T>
@@ -47,7 +48,7 @@ std::complex<T> computeOnComplex(const std::complex<T> c,
        (d.real() == -INFINITY && c.real() >= static_cast<T>(-1.0)))) {
     /* x^inf with x <= -1 and x^(-inf) with -1 <= x <= 0 are approximated to
      * complex infinity, which we don't handle. We decide to return undef. */
-    return NAN;  // complexNAN<T>();
+    return NAN;
   }
   std::complex<T> result;
   if (c.imag() == static_cast<T>(0.0) && d.imag() == static_cast<T>(0.0) &&
@@ -58,7 +59,7 @@ std::complex<T> computeOnComplex(const std::complex<T> c,
         std::fabs(d.real()) == INFINITY) {
       /* On simulator, std::pow(1,Inf) is approximated to 1, which is not the
        * behavior we want. */
-      return NAN;  // complexRealNAN<T>();
+      return NAN;
     }
 #endif
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
@@ -104,28 +105,25 @@ template <typename T>
 std::complex<T> Approximation::approximatePower(const Tree *power,
                                                 ComplexFormat complexFormat) {
   const Tree *base = power->child(0);
-  const Tree *expo = power->child(1);
+  const Tree *exponent = power->child(1);
   std::complex<T> c = ToComplex<T>(base);
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
    * root. We return this value in that case to avoid returning "nonreal". */
-  if (complexFormat == ComplexFormat::Real
-      /* && base.type() == EvaluationNode<T>::Type::Complex*/) {
-    // std::complex<T> c = b.complexAtIndex(0);
+  if (complexFormat == ComplexFormat::Real) {
     T p = NAN;
     T q = NAN;
     // If the power has been reduced, we look for a rational index
-    if (expo->isRational()) {
-      // const RationalNode *r = static_cast<const RationalNode *>(child(1));
-      // p = r->signedNumerator().approximate<T>();
-      // q = r->denominator().approximate<T>();
+    if (exponent->isRational()) {
+      p = Rational::Numerator(exponent).to<T>();
+      q = Rational::Denominator(exponent).to<T>();
     }
     /* If the power has been simplified (reduced + beautified), we look for an
      * index of the for Division(Rational,Rational). */
-    if (expo->isDivision() && expo->child(0)->isInteger() &&
-        expo->child(1)->isInteger()) {
-      p = To<T>(expo->child(0));
-      q = To<T>(expo->child(1));
+    if (exponent->isDivision() && exponent->child(0)->isInteger() &&
+        exponent->child(1)->isInteger()) {
+      p = To<T>(exponent->child(0));
+      q = To<T>(exponent->child(1));
     }
     /* We don't handle power that haven't been reduced or simplified as the
      * index can take to many forms and still be equivalent to p/q,
@@ -133,15 +131,10 @@ std::complex<T> Approximation::approximatePower(const Tree *power,
     if (std::isnan(p) || std::isnan(q)) {
       goto defaultApproximation;
     }
-    std::complex<T> result = computeNotPrincipalRealRootOfRationalPow(c, p, q);
-    // if (!result.isUndefined()) {
-    return std::move(result);
-    // }
+    return computeNotPrincipalRealRootOfRationalPow(c, p, q);
   }
 defaultApproximation:
-  std::complex<T> result =
-      computeOnComplex<T>(c, ToComplex<T>(expo), complexFormat);
-  return /*result.isUndefined() ? Complex<T>::Undefined() :*/ result;
+  return computeOnComplex<T>(c, ToComplex<T>(exponent), complexFormat);
 }
 
 template std::complex<float> Approximation::approximatePower(

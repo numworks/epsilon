@@ -192,6 +192,9 @@ class Approximation final {
   static T approximateIntegral(const Tree* integral);
   template <typename T>
   static T approximateDerivative(const Tree* function, T at, int order);
+  template <typename T>
+  static std::complex<T> approximatePower(const Tree* power,
+                                          ComplexFormat complexFormat);
 };
 
 }  // namespace PoincareJ

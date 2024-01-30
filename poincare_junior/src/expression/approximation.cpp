@@ -150,8 +150,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
     case BlockType::Power:
-      return MapAndReduce<T, std::complex<T>>(node,
-                                              FloatPower<std::complex<T>>);
+      return approximatePower<T>(node, /* TODO */ ComplexFormat::Real);
     case BlockType::Logarithm:
       return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>);
     case BlockType::Trig:

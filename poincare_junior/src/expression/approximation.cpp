@@ -19,7 +19,7 @@ namespace PoincareJ {
 
 // TODO: tests
 
-AngleUnit Approximation::angleUnit;
+AngleUnit Approximation::s_angleUnit;
 Approximation::VariableType Approximation::s_variables[k_maxNumberOfVariables];
 int Approximation::s_listElement;
 
@@ -31,7 +31,7 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
                                                  AngleUnit angleUnit) {
   Random::Context context;
   s_context = &context;
-  Approximation::angleUnit = angleUnit;
+  Approximation::s_angleUnit = angleUnit;
   s_listElement = -1;
   // TODO we should rather assume variable projection has already been done
   Tree* variables = Variables::GetUserSymbols(node);
@@ -352,7 +352,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 
 template <typename T>
 Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit) {
-  Approximation::angleUnit = angleUnit;
+  Approximation::s_angleUnit = angleUnit;
   s_listElement = -1;
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
     s_variables[i] = NAN;

@@ -15,20 +15,20 @@ namespace PoincareJ {
 
 template <typename T>
 T Approximation::ConvertToRadian(T angle) {
-  if (angleUnit == AngleUnit::Radian) {
+  if (s_angleUnit == AngleUnit::Radian) {
     return angle;
   }
-  return angle * (angleUnit == AngleUnit::Degree
+  return angle * (s_angleUnit == AngleUnit::Degree
                       ? static_cast<T>(M_PI / 180.0)
                       : static_cast<T>(M_PI / 200.0));
 }
 
 template <typename T>
 T Approximation::ConvertFromRadian(T angle) {
-  if (angleUnit == AngleUnit::Radian) {
+  if (s_angleUnit == AngleUnit::Radian) {
     return angle;
   }
-  return angle * (angleUnit == AngleUnit::Degree
+  return angle * (s_angleUnit == AngleUnit::Degree
                       ? static_cast<T>(180.0 / M_PI)
                       : static_cast<T>(200.0 / M_PI));
 }

@@ -229,7 +229,7 @@ class Approximation final {
 
   template <typename T>
   static T ConvertFromRadian(T angle);
-  static AngleUnit angleUnit;
+  static AngleUnit s_angleUnit;
   static constexpr int k_maxNumberOfVariables = 16;
   using VariableType = double;
   static VariableType s_variables[k_maxNumberOfVariables];

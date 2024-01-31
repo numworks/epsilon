@@ -28,7 +28,8 @@ const char *IntervalController::title() {
 
 bool IntervalController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left &&
-      typeAtRow(selectedRow()) != k_autoCellType) {
+      !(typeAtRow(selectedRow()) == k_autoCellType &&
+        m_autoCell.canBeActivatedByEvent(event))) {
     // Bypass the Left == Back of single range controller
     return false;
   }

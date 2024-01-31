@@ -135,7 +135,7 @@ def type_from_filename(filename):
     return re.match(r".*\/([a-z_]+)\.[a-z]+\.i18n", filename).group(1)
 
 
-def message_exceeds_length_limit(definition, type):
+def line_over_length_limit(definition, type):
     if not (type in message_length_limit_for_type):
         type = "default"
     length_limit = message_length_limit_for_type[type]
@@ -150,8 +150,8 @@ def message_exceeds_length_limit(definition, type):
             len([c for c in definition_line if not unicodedata.combining(c)])
             > length_limit
         ):
-            return True
-    return False
+            return definition_line
+    return None
 
 
 def check_redundancy(messages, data, locales):
@@ -287,16 +287,14 @@ def parse_files(files):
                         )
                         sys.exit(-1)
                     messages.add(name)
-                if (
-                    message_exceeds_length_limit(definition, type)
-                    and name != "TermsOfUseLink"
-                ):
+                line_over_limit = line_over_length_limit(definition, type)
+                if line_over_limit and name != "TermsOfUseLink":
                     sys.stderr.write(
-                        "Error: Message exceeds length limits for "
+                        "Error: Message line exceeds length limits for "
                         + type
-                        + " : "
-                        + definition.decode("utf-8")
-                        + " ("
+                        + ' : "'
+                        + line_over_limit
+                        + '" ('
                         + name
                         + ")\n"
                     )

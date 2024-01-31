@@ -30,12 +30,10 @@ class TableView : public ScrollView {
   int numberOfDisplayableColumns() const {
     return m_contentView.numberOfDisplayableColumns();
   }
-  int totalNumberOfRows() const { return constDataSource()->numberOfRows(); }
-  int totalNumberOfColumns() const {
-    return constDataSource()->numberOfColumns();
-  }
-  const TableViewDataSource *constDataSource() const {
-    return m_contentView.constDataSource();
+  int totalNumberOfRows() const { return dataSource()->numberOfRows(); }
+  int totalNumberOfColumns() const { return dataSource()->numberOfColumns(); }
+  const TableViewDataSource *dataSource() const {
+    return m_contentView.dataSource();
   }
 
   /* This method computes the minimal scrolling needed to properly display the
@@ -98,7 +96,7 @@ class TableView : public ScrollView {
     void reloadCellAtLocation(int col, int row, bool forceSetFrame);
     HighlightCell *cellAtLocation(int row, int col);
     TableViewDataSource *dataSource() { return m_dataSource; }
-    const TableViewDataSource *constDataSource() const { return m_dataSource; }
+    const TableViewDataSource *dataSource() const { return m_dataSource; }
     KDCoordinate invisibleHeight() const {
       return m_tableView->invisibleHeight();
     }

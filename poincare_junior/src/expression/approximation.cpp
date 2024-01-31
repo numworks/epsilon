@@ -204,6 +204,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return std::abs(ToComplex<T>(node->nextNode()));
     case BlockType::Infinity:
       return INFINITY;
+    case BlockType::Conjugate:
+      return std::conj(ToComplex<T>(node->nextNode()));
     case BlockType::Opposite:
       return -ToComplex<T>(node->nextNode());
     case BlockType::RealPart:
@@ -515,6 +517,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       return std::round(result);
     }
+    case BlockType::Factor:
+      // Useful for the beautification only
+      return child[0];
 
     default:
       if (node->isParametric()) {

@@ -22,6 +22,8 @@ class DerivativeNode final : public ParameteredExpressionNode {
   Type type() const override { return Type::Derivative; }
   int polynomialDegree(Context* context, const char* symbolName) const override;
 
+  constexpr static CodePoint k_derivativeSymbol = '\'';
+
  private:
   bool isFirstOrder() const {
     return Expression(childAtIndex(numberOfChildren() - 1)).isOne();
@@ -76,6 +78,8 @@ class DerivativeNode final : public ParameteredExpressionNode {
   constexpr static double k_minSignificantError = 3e-11;
 
   constexpr static int k_maxOrderForApproximation = 4;
+
+  bool displayInCondensedForm() const;
 };
 
 class Derivative final : public ParameteredExpression {

@@ -3,9 +3,11 @@
 #include <poincare/comparison.h>
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/factorial.h>
 #include <poincare/float.h>
+#include <poincare/function.h>
 #include <poincare/infinity.h>
 #include <poincare/logical_operator.h>
 #include <poincare/opposite.h>
@@ -315,10 +317,20 @@ QUIZ_CASE(poincare_serialization_power) {
 }
 
 QUIZ_CASE(poincare_serialization_derivative) {
+  assert_expression_serializes_to(
+      Derivative::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)),
+                          Symbol::Builder("x", 1), Symbol::Builder("x", 1),
+                          BasedInteger::Builder(1)),
+      "diff(f(x),x,x)");
+  assert_expression_serializes_to(
+      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
+                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
+                          BasedInteger::Builder(1)),
+      "f'(x)");
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "func", "", 0);
   assert_expression_parses_and_serializes_to_itself("f(x)");
-  // TODO: assert_expression_parses_and_serializes_to_itself("f'(x)");
+  assert_expression_parses_and_serializes_to_itself("f'(x+1)");
   assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a)");
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

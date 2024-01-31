@@ -52,9 +52,7 @@ void IntervalController::extractParameters() {
 
 void IntervalController::confirmParameters() {
   SystemOfEquations *system = App::app()->system();
-  if (system->autoApproximateSolvingRange()) {
-    system->setApproximateSolvingRange(m_rangeParam);
-  }
+  system->setApproximateSolvingRange(m_rangeParam);
 }
 
 bool IntervalController::parametersAreDifferent() {

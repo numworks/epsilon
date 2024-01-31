@@ -7,6 +7,7 @@
 #include <bit>
 #include <complex>
 
+#include "../n_ary.h"
 #include "constant.h"
 #include "decimal.h"
 #include "float.h"
@@ -368,6 +369,15 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
         }
       }
       s_listElement = old;
+      return result;
+    }
+    case BlockType::ListSort: {
+      /* TODO we are computing all elements and sorting the list for all
+       * elements, this is awful */
+      Tree* list = ToList<T>(node->child(0));
+      NAry::Sort(list);
+      std::complex<T> result = ToComplex<T>(list);
+      list->removeTree();
       return result;
     }
     default:;

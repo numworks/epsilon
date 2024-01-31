@@ -664,6 +664,13 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       result->moveTreeOverTree(Matrix::Power(result, value));
       return result;
     }
+    case BlockType::Inverse:
+    case BlockType::Transpose: {
+      Tree* result = ToMatrix<T>(node->child(0));
+      result->moveTreeOverTree(node->isInverse() ? Matrix::Inverse(result)
+                                                 : Matrix::Transpose(result));
+      return result;
+    }
     case BlockType::Dim: {
       Dimension dim = Dimension::GetDimension(node->child(0));
       assert(dim.isMatrix());

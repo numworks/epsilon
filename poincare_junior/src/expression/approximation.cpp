@@ -324,6 +324,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       m->removeTree();
       return v;
     }
+    case BlockType::Dim: {
+      int n = Dimension::GetListLength(node->child(0));
+      return n >= 0 ? n : NAN;
+    }
     case BlockType::ListSum:
     case BlockType::ListProduct: {
       const Tree* values = node->child(0);
@@ -642,6 +646,15 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       result->moveTreeOverTree(Matrix::Power(result, value));
       return result;
     }
+    case BlockType::Dim: {
+      Dimension dim = Dimension::GetDimension(node->child(0));
+      assert(dim.isMatrix());
+      Tree* result = SharedEditionPool->push<BlockType::Matrix>(1, 2);
+      SharedEditionPool->push<FloatType<T>::type>(T(dim.matrix.rows));
+      SharedEditionPool->push<FloatType<T>::type>(T(dim.matrix.cols));
+      return result;
+    }
+    default:;
   }
   return KUndef->clone();
 }

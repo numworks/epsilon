@@ -59,6 +59,9 @@ class SingleRangeController : public FloatParameterController<T> {
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView>
       m_boundsCells[k_numberOfTextCells];
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::SwitchView>
+      m_autoCell;
   Poincare::Range1D<T> m_rangeParam;
   bool m_autoParam;
 
@@ -71,9 +74,6 @@ class SingleRangeController : public FloatParameterController<T> {
                                             int index) override;
   void buttonAction() override;
 
-  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                   Escher::SwitchView>
-      m_autoCell;
   Shared::MessagePopUpController* m_confirmPopUpController;
 };
 

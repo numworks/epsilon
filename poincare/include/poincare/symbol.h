@@ -60,7 +60,7 @@ class SymbolNode final : public SymbolAbstractNode {
     return templatedApproximate<double>(approximationContext);
   }
 
-  bool isUnknown() const;
+  bool isSystemSymbol() const;
 
  private:
   size_t nodeSize() const override { return sizeof(SymbolNode); }
@@ -94,7 +94,7 @@ class Symbol final : public SymbolAbstract {
   }
 
   // Symbol properties
-  bool isSystemSymbol() const { return node()->isUnknown(); }
+  bool isSystemSymbol() const { return node()->isSystemSymbol(); }
   const char* name() const { return node()->name(); }
 
   // Expression

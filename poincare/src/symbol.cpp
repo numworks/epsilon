@@ -71,7 +71,7 @@ int SymbolNode::getVariables(Context* context, isVariableTest isVariable,
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits,
                                 Context* context) const {
-  assert(!isUnknown());
+  assert(!isSystemSymbol());
   return LayoutHelper::String(m_name, strlen(m_name));
 }
 
@@ -105,7 +105,7 @@ Evaluation<T> SymbolNode::templatedApproximate(
   return e.node()->approximate(T(), approximationContext);
 }
 
-bool SymbolNode::isUnknown() const {
+bool SymbolNode::isSystemSymbol() const {
   bool result = UTF8Helper::CodePointIs(m_name, UCodePointUnknown);
   if (result) {
     assert(m_name[1] == 0);

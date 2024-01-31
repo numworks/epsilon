@@ -324,6 +324,40 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       m->removeTree();
       return v;
     }
+    case BlockType::ListSum:
+    case BlockType::ListProduct: {
+      const Tree* values = node->child(0);
+      int length = Dimension::GetListLength(values);
+      int old = s_listElement;
+      std::complex<T> result = node->isListSum() ? 0 : 1;
+      for (int i = 0; i < length; i++) {
+        s_listElement = i;
+        std::complex<T> v = ToComplex<T>(values);
+        result = node->isListSum() ? result + v : result * v;
+      }
+      s_listElement = old;
+      return result;
+    }
+    case BlockType::Minimum:
+    case BlockType::Maximum: {
+      const Tree* values = node->child(0);
+      int length = Dimension::GetListLength(values);
+      int old = s_listElement;
+      T result;
+      for (int i = 0; i < length; i++) {
+        s_listElement = i;
+        std::complex<T> v = ToComplex<T>(values);
+        if (v.imag() != 0 || std::isnan(v.real())) {
+          return NAN;
+        }
+        if (i == 0 ||
+            (node->isMinimum() ? (v.real() < result) : (v.real() > result))) {
+          result = v.real();
+        }
+      }
+      s_listElement = old;
+      return result;
+    }
     default:;
   }
   // The remaining operators are defined only on reals

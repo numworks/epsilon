@@ -41,7 +41,8 @@ float InteractiveCurveViewRangeDelegate::DefaultAddMargin(
   return x + ratio * range;
 }
 
-Range2D<float> InteractiveCurveViewRangeDelegate::addMargins(Range2D<float> range) const {
+Range2D<float> InteractiveCurveViewRangeDelegate::addMargins(
+    Range2D<float> range) const {
   float dx = range.x()->length();
   float xMin = addMargin(range.xMin(), dx, false, true);
   float xMax = addMargin(range.xMax(), dx, false, false);

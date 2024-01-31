@@ -259,24 +259,11 @@ void assert_expression_approximates_to(const char *expression,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) -> Tree * {
-        if (!PoincareJ::Dimension::DeepCheckDimensions(e) ||
-            !PoincareJ::Dimension::DeepCheckListLength(e)) {
-          e->removeTree();
-          return KUndef->clone();
-        }
-        if (PoincareJ::Dimension::GetListLength(e) != -1) {
-          EditionReference r = PoincareJ::Approximation::RootTreeToList<T>(
-              e, PoincareJ::AngleUnit(reductionContext.angleUnit()),
-              PoincareJ::ComplexFormat(reductionContext.complexFormat()));
-          e->removeTree();
-          return r;
-        }
-        std::complex<T> value = PoincareJ::Approximation::RootTreeToComplex<T>(
+        EditionReference result = PoincareJ::Approximation::RootTreeToTree<T>(
             e, PoincareJ::AngleUnit(reductionContext.angleUnit()),
             PoincareJ::ComplexFormat(reductionContext.complexFormat()));
         e->removeTree();
-        return Approximation::PushBeautifiedComplex(
-            value, PoincareJ::ComplexFormat(reductionContext.complexFormat()));
+        return result;
       },
       numberOfSignificantDigits);
 }

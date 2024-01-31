@@ -92,6 +92,21 @@ std::complex<T> Approximation::FloatDivision(std::complex<T> c,
 }
 
 template <typename T>
+Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
+                                    ComplexFormat complexFormat) {
+  if (!Dimension::DeepCheckDimensions(node) ||
+      !Dimension::DeepCheckListLength(node)) {
+    return KUndef->clone();
+  }
+  if (Dimension::GetListLength(node) != -1) {
+    return Approximation::RootTreeToList<T>(node, angleUnit, complexFormat);
+  }
+  std::complex<T> value =
+      Approximation::RootTreeToComplex<T>(node, angleUnit, complexFormat);
+  return Approximation::PushBeautifiedComplex(value, complexFormat);
+}
+
+template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
                                                  AngleUnit angleUnit,
                                                  ComplexFormat complexFormat) {
@@ -582,6 +597,11 @@ template std::complex<double> Approximation::ToComplex<double>(const Tree*);
 template Tree* Approximation::RootTreeToList<float>(const Tree*, AngleUnit,
                                                     ComplexFormat);
 template Tree* Approximation::RootTreeToList<double>(const Tree*, AngleUnit,
+                                                     ComplexFormat);
+
+template Tree* Approximation::RootTreeToTree<float>(const Tree*, AngleUnit,
+                                                    ComplexFormat);
+template Tree* Approximation::RootTreeToTree<double>(const Tree*, AngleUnit,
                                                      ComplexFormat);
 
 template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*,

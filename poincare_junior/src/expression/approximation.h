@@ -51,6 +51,11 @@ class Approximation final {
     return value.imag() == 0 ? value.real() : NAN;
   }
 
+  // Approximate a tree with any dimension
+  template <typename T>
+  static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
+                              ComplexFormat complexFormat);
+
   // Approximate any tree.
   template <typename T>
   static std::complex<T> ToComplex(const Tree* node);

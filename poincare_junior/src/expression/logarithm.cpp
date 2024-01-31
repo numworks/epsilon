@@ -34,35 +34,221 @@ bool Logarithm::SimplifyLn(Tree* u) {
   return false;
 }
 
+/* Using integers to represent bounds around multiples of π/2.
+ *       -2     -1      0      1      2
+ *  ------|------|------|------|------|------
+ *       -π    -π/2     0     π/2     π
+ * For both bounds, we store the integer and a boolean for inclusive/exclusive.
+ * For example, ]-π, π/2] is ({-2, false},{1, true}) */
+class PiInterval {
+ public:
+  static PiInterval Add(PiInterval a, PiInterval b) {
+    return PiInterval(
+        a.m_min + b.m_min, a.m_minIsInclusive && b.m_minIsInclusive,
+        a.m_max + b.m_max, a.m_maxIsInclusive && b.m_maxIsInclusive);
+  }
+  static PiInterval Mult(PiInterval a, int b) {
+    return PiInterval(a.m_min * b, a.m_minIsInclusive, a.m_max * b,
+                      a.m_maxIsInclusive);
+  }
+  static PiInterval Arg(ComplexSign sign) {
+    PiInterval result;
+    bool realCanBeNegative = sign.realSign().canBeNegative();
+    bool realCanBeNull = sign.realSign().canBeNull();
+    bool realCanBePositive = sign.realSign().canBePositive();
+    if (sign.imagSign().canBeNegative()) {
+      if (realCanBeNegative) {
+        result.unionWith(PiInterval(-2, false, -1, false));
+      }
+      if (realCanBeNull) {
+        result.unionWith(PiInterval(-1, true, -1, true));
+      }
+      if (realCanBePositive) {
+        result.unionWith(PiInterval(-1, false, 0, false));
+      }
+    }
+    if (sign.imagSign().canBeNull()) {
+      if (realCanBeNegative) {
+        result.unionWith(PiInterval(2, true, 2, true));
+      }
+      if (realCanBeNull) {
+        // Ignore this case
+      }
+      if (realCanBePositive) {
+        result.unionWith(PiInterval(0, true, 0, true));
+      }
+    }
+    if (sign.imagSign().canBePositive()) {
+      if (realCanBeNegative) {
+        result.unionWith(PiInterval(1, false, 2, false));
+      }
+      if (realCanBeNull) {
+        result.unionWith(PiInterval(1, true, 1, true));
+      }
+      if (realCanBePositive) {
+        result.unionWith(PiInterval(0, false, 1, false));
+      }
+    }
+    return result;
+  }
+  // Return k such that max bound is in ]-π + 2kπ, π + 2kπ]
+  int maxK() const {
+    // m_maxIsInclusive doesn't matter.
+    return DivideRoundDown(m_max + 1, 4);
+  }
+  // Return k such that min bound is in ]-π + 2kπ, π + 2kπ]
+  int minK() const {
+    // ]-π, ...] {-2, false} is 0 and [-π, ...] {-2, true} is -1
+    return DivideRoundDown(m_min + !m_minIsInclusive + 1, 4);
+  }
+
+ private:
+  // We want DivideRoundDown(-1, 4) to be -1
+  inline static int DivideRoundDown(int num, int den) {
+    return (num / den) + ((num % den) >> 31);
+  }
+  PiInterval() : PiInterval(INT_MAX, true, INT_MIN, true) {}
+  PiInterval(int min, bool minIsInclusive, int max, bool maxIsInclusive)
+      : m_min(min),
+        m_minIsInclusive(minIsInclusive),
+        m_max(max),
+        m_maxIsInclusive(maxIsInclusive) {}
+  void unionWith(PiInterval other) {
+    if (m_min > other.m_min) {
+      m_min = other.m_min;
+      m_minIsInclusive = other.m_minIsInclusive;
+    } else if (m_min == other.m_min && other.m_minIsInclusive) {
+      m_minIsInclusive = true;
+    }
+    if (m_max < other.m_max) {
+      m_max = other.m_max;
+      m_maxIsInclusive = other.m_maxIsInclusive;
+    } else if (m_max == other.m_max && other.m_maxIsInclusive) {
+      m_maxIsInclusive = true;
+    }
+  }
+  int m_min;
+  bool m_minIsInclusive;
+  int m_max;
+  bool m_maxIsInclusive;
+};
+
+// If possible, find k such that arg(A) + arg(B) = arg(AB) + 2iπk
+bool CanGetArgSumModulo(const Tree* a, const Tree* b, int* k) {
+  // a and b are not always known, find an interval for the sum of their arg.
+  assert(!a->isZero() && !b->isZero());
+  PiInterval interval = PiInterval::Add(PiInterval::Arg(ComplexSign::Get(a)),
+                                        PiInterval::Arg(ComplexSign::Get(b)));
+  assert(interval.maxK() <= 1 && interval.minK() >= -1);
+  *k = interval.maxK();
+  return *k == interval.minK();
+}
+
+// If possible, find k such that B*arg(A) = arg(A^B) + 2iπk
+bool CanGetArgProdModulo(const Tree* a, const Tree* b, int* k) {
+  assert(b->isInteger() && !a->isZero() && !b->isOne());
+  int bValue = Integer::Handler(b).to<int>();
+  PiInterval interval =
+      PiInterval::Mult(PiInterval::Arg(ComplexSign::Get(a)), bValue);
+  *k = interval.maxK();
+  return *k == interval.minK();
+}
+
+Tree* PushIK2Pi(int k) {
+  // Push i*k*2π
+  Tree* result = (KComplex)->cloneNode();
+  (0_e)->clone();
+  (KMult.node<3>)->cloneNode();
+  (2_e)->clone();
+  Integer::Push(k);
+  (π_e)->clone();
+  Simplification::DeepSystematicReduce(result);
+  return result;
+}
+
+Tree* PushProductCorrection(const Tree* a, const Tree* b) {
+  // B*ln(A) - ln(A^B) = i*k*2π = i*(B*arg(A) - arg(A^B))
+  int k;
+  if (CanGetArgProdModulo(a, b, &k)) {
+    return PushIK2Pi(k);
+  }
+  // Push B*arg(A) - arg(A^B)
+  return PatternMatching::CreateAndSimplify(
+      KComplex(0_e, KAdd(KMult(KB, KArg(KA)), KMult(-1_e, KArg(KPow(KA, KB))))),
+      {.KA = a, .KB = b});
+}
+
+Tree* PushAdditionCorrection(const Tree* a, const Tree* b) {
+  // ln(A) + ln(B) - ln(A*B) = i*k*2π = i*(arg(A) + arg(B) - arg(A*B))
+  int k;
+  if (CanGetArgSumModulo(a, b, &k)) {
+    return PushIK2Pi(k);
+  }
+  // Push arg(A) + arg(B) - arg(AB)
+  return PatternMatching::CreateAndSimplify(
+      KComplex(0_e, KAdd(KArg(KA), KArg(KB), KMult(-1_e, KArg(KMult(KA, KB))))),
+      {.KA = a, .KB = b});
+}
+
 bool Logarithm::ContractLn(Tree* ref) {
-  // TODO: Only if B has a positive real value : ln(x^2) != 2ln(x), or A=-1
-  // A*ln(B) = ln(B^A) if A is an integer.
   PatternMatching::Context ctx;
+  // A*ln(B) = ln(B^A) + i*(A*arg(B) - arg(B^A)) if A is an integer.
   if (PatternMatching::Match(KMult(KA, KLn(KB)), ref, &ctx) &&
       ctx.getNode(KA)->isInteger()) {
+    const Tree* a = ctx.getNode(KB);
+    const Tree* b = ctx.getNode(KA);
+    EditionReference c = PushProductCorrection(a, b);
+    ctx.setNode(KC, c, 1, false);
     ref->moveTreeOverTree(
-        PatternMatching::CreateAndSimplify(KLn(KPow(KB, KA)), ctx));
+        PatternMatching::CreateAndSimplify(KAdd(KLn(KPow(KB, KA)), KC), ctx));
+    c->removeTree();
     return true;
   }
-  // TODO: Only if B and D have a positive real value : ln(x*x) != ln(x)+ln(x)
-  // A? + ln(B) + C? + ln(D) + E? = A + C + ln(BD) + E
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KAdd(KTA, KLn(KB), KTC, KLn(KD), KTE),
-      KAdd(KTA, KTC, KLn(KMult(KB, KD)), KTE));
+  // A?+ ln(B) +C?+ ln(D) +E? = A+C+ ln(BD) +E+ i*(arg(B) + arg(D) - arg(BD))
+  if (PatternMatching::Match(KAdd(KTA, KLn(KB), KTC, KLn(KD), KTE), ref,
+                             &ctx)) {
+    const Tree* a = ctx.getNode(KB);
+    const Tree* b = ctx.getNode(KD);
+    EditionReference c = PushAdditionCorrection(a, b);
+    ctx.setNode(KF, c, 1, false);
+    ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KAdd(KTA, KTC, KLn(KMult(KB, KD)), KTE, KF), ctx));
+    c->removeTree();
+    return true;
+  }
+  return false;
 }
 
 bool Logarithm::ExpandLn(Tree* ref) {
-  return
-      // ln(12/7) = 2*ln(2) + ln(3) - ln(7)
-      ExpandLnOnRational(ref) ||
-      // TODO: Only if A has a positive real value : ln(x*x) != ln(x)+ln(x)
-      // ln(A*B?) = ln(A) + ln(B)
-      PatternMatching::MatchReplaceAndSimplify(
-          ref, KLn(KMult(KA, KTB)), KAdd(KLn(KA), KLn(KMult(KTB)))) ||
-      // TODO: Only if A has a positive real value : ln(x^2) != 2ln(x), or B=-1
-      // ln(A^B) = B*ln(A)
-      PatternMatching::MatchReplaceAndSimplify(ref, KLn(KPow(KA, KB)),
-                                               KMult(KB, KLn(KA)));
+  // ln(12/7) = 2*ln(2) + ln(3) - ln(7)
+  if (ExpandLnOnRational(ref)) {
+    return true;
+  }
+  PatternMatching::Context ctx;
+  // ln(A*B?) = ln(A) + ln(B) - i*(arg(A) + arg(B) - arg(AB))
+  if (PatternMatching::Match(KLn(KMult(KA, KTB)), ref, &ctx)) {
+    // Since KTB can match multiple trees, we need them as a single tree.
+    const Tree* a = ctx.getNode(KA);
+    EditionReference b = PatternMatching::CreateAndSimplify(KMult(KTB), ctx);
+    EditionReference c = PushAdditionCorrection(a, b);
+    ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KAdd(KLn(KA), KLn(KB), KMult(-1_e, KC)), {.KA = a, .KB = b, .KC = c}));
+    c->removeTree();
+    b->removeTree();
+    return true;
+  }
+  // ln(A^B) = B*ln(A) - i*( B*arg(A) - arg(A^B))
+  if (PatternMatching::Match(KLn(KPow(KA, KB)), ref, &ctx)) {
+    const Tree* a = ctx.getNode(KA);
+    const Tree* b = ctx.getNode(KB);
+    EditionReference c = PushProductCorrection(a, b);
+    ctx.setNode(KC, c, 1, false);
+    ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KAdd(KMult(KB, KLn(KA)), KMult(-1_e, KC)), ctx));
+    c->removeTree();
+    return true;
+  }
+  return false;
 }
 
 bool Logarithm::ExpandLnOnRational(Tree* e) {

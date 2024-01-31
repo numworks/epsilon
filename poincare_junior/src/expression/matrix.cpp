@@ -161,7 +161,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
 
 bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
   // The matrix children have to be reduced to be able to spot 0
-  assert(!Simplification::DeepSystematicReduce(matrix));
+  // assert(!Simplification::DeepSystematicReduce(matrix));
 
   EditionReference det;
   if (determinant) {
@@ -186,8 +186,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
       Tree* pivotChild = Child(matrix, iPivot_temp, k);
-      // TODO use Abs node when there are complexes
-      float pivot = abs(Approximation::To<float>(pivotChild));
+      float pivot = std::abs(Approximation::ToComplex<float>(pivotChild));
       // Handle very low pivots
       if (pivot == 0.0f && !pivotChild->isZero()) {
         pivot = FLT_MIN;
@@ -209,7 +208,10 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
      * output a mathematically wrong result (and divide expressions by a null
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
-    if (Child(matrix, iPivot, k)->isZero()) {
+    Tree* candidate = Child(matrix, iPivot, k);
+    if (candidate->isZero() ||
+        (candidate->isFloat() &&
+         std::abs(Approximation::ToComplex<float>(candidate)) == 0)) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {

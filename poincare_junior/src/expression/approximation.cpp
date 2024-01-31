@@ -11,9 +11,11 @@
 #include "decimal.h"
 #include "float.h"
 #include "list.h"
+#include "matrix.h"
 #include "random.h"
 #include "rational.h"
 #include "variables.h"
+#include "vector.h"
 
 namespace PoincareJ {
 
@@ -98,6 +100,9 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
       !Dimension::DeepCheckListLength(node)) {
     return KUndef->clone();
   }
+  if (Dimension::GetDimension(node).isMatrix()) {
+    return Approximation::RootTreeToMatrix<T>(node, angleUnit, complexFormat);
+  }
   if (Dimension::GetListLength(node) != -1) {
     return Approximation::RootTreeToList<T>(node, angleUnit, complexFormat);
   }
@@ -147,6 +152,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return Float::FloatTo(node);
     case BlockType::DoubleFloat:
       return Float::DoubleTo(node);
+    case BlockType::Complex:
+      return std::complex<T>(To<T>(node->child(0)), To<T>(node->child(1)));
     case BlockType::List:
       return ToComplex<T>(node->child(s_listElement));
     case BlockType::ListSequence: {
@@ -300,6 +307,23 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     }
     case BlockType::Integral:
       return approximateIntegral<T>(node);
+    case BlockType::Norm:
+    case BlockType::Trace:
+    case BlockType::Det: {
+      Tree* m = ToMatrix<T>(node->child(0));
+      Tree* value;
+      if (node->isDet()) {
+        Matrix::RowCanonize(m, true, &value);
+      } else if (node->isNorm()) {
+        value = Vector::Norm(m);
+      } else {
+        value = Matrix::Trace(m);
+      }
+      std::complex<T> v = ToComplex<T>(value);
+      value->removeTree();
+      m->removeTree();
+      return v;
+    }
     default:;
   }
   // The remaining operators are defined only on reals
@@ -458,6 +482,40 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
 }
 
 template <typename T>
+Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
+                                      ComplexFormat complexFormat) {
+  s_angleUnit = angleUnit;
+  s_complexFormat = complexFormat;
+  s_listElement = -1;
+  ClearVariables();
+  // TODO we should rather assume variable projection has already been done
+  Tree* variables = Variables::GetUserSymbols(node);
+  Tree* clone = node->clone();
+  Variables::ProjectToId(clone, variables);
+  {
+    // Be careful to nest Random::Context since they create trees
+    Random::Context context;
+    s_context = &context;
+    ToMatrix<T>(clone);
+    s_context = nullptr;
+  }
+  clone->removeTree();
+  variables->removeTree();
+  return variables;
+}
+
+template <typename T>
+Tree* PushComplex(std::complex<T> value) {
+  if (value.imag() == 0.0) {
+    return SharedEditionPool->push<FloatType<T>::type>(value.real());
+  }
+  Tree* result = SharedEditionPool->push(BlockType::Complex);
+  SharedEditionPool->push<FloatType<T>::type>(value.real());
+  SharedEditionPool->push<FloatType<T>::type>(value.imag());
+  return result;
+}
+
+template <typename T>
 Tree* Approximation::PushBeautifiedComplex(std::complex<T> value,
                                            ComplexFormat complexFormat) {
   if (std::isnan(value.real()) || std::isnan(value.imag())) {
@@ -512,6 +570,48 @@ Tree* Approximation::ToList(const Tree* node) {
   return list;
 }
 
+template <typename T>
+Tree* Approximation::ToMatrix(const Tree* node) {
+  /* TODO : Normal matrix nodes and operations with approximated children are
+   * used to carry matrix approximation. A dedicated node that knows its
+   * children have a fixed size would be more efficient. */
+  if (node->isMatrix()) {
+    Tree* m = node->cloneNode();
+    for (const Tree* child : node->children()) {
+      std::complex<T> v = ToComplex<T>(child);
+      PushComplex(v);
+    }
+    return m;
+  }
+  switch (node->type()) {
+    case BlockType::Addition: {
+      const Tree* child = node->child(0);
+      int n = node->numberOfChildren() - 1;
+      Tree* result = ToMatrix<T>(child);
+      while (n--) {
+        child = child->nextTree();
+        Tree* approximatedChild = ToMatrix<T>(child);
+        Matrix::Addition(result, approximatedChild);
+        approximatedChild->removeTree();
+        result->removeTree();
+      }
+      return result;
+    }
+    case BlockType::PowerMatrix: {
+      const Tree* base = node->child(0);
+      const Tree* index = base->nextTree();
+      T value = To<T>(index);
+      if (std::isnan(value) || value != std::round(value)) {
+        return KUndef->clone();
+      }
+      Tree* result = ToMatrix<T>(base);
+      result->moveTreeOverTree(Matrix::Power(result, value));
+      return result;
+    }
+  }
+  return KUndef->clone();
+}
+
 template <typename T, typename U>
 U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
                               Mapper<std::complex<T>, U> mapper) {
@@ -562,7 +662,7 @@ template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
                                                       bool collapse) {
   // These types are either already approximated or impossible to approximate.
-  if (tree->type() == FloatType<T>::type || tree->isRandomNode() ||
+  if (tree->isFloat() || tree->isRandomNode() ||
       tree->isOfType(
           {BlockType::UserSymbol, BlockType::Variable, BlockType::Unit})) {
     return false;

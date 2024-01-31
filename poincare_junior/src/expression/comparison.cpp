@@ -134,7 +134,9 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
     // Trees are different but float approximation is not precise enough.
     double doubleApproximation =
         Approximation::To<double>(node0) - Approximation::To<double>(node1);
-    assert(doubleApproximation != 0);
+    if (doubleApproximation == 0) {
+      return 0;
+    }
     return doubleApproximation > 0.0f ? 1 : -1;
   }
   assert(!node0->treeIsIdenticalTo(node1));

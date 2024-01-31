@@ -56,6 +56,11 @@ class Approximation final {
   static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                               ComplexFormat complexFormat);
 
+  // Approximate a matrix
+  template <typename T>
+  static Tree* RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
+                                ComplexFormat complexFormat);
+
   // Approximate any tree.
   template <typename T>
   static std::complex<T> ToComplex(const Tree* node);
@@ -92,6 +97,9 @@ class Approximation final {
 
   template <typename T>
   static Tree* ToList(const Tree* node);
+
+  template <typename T>
+  static Tree* ToMatrix(const Tree* node);
 
   template <typename T>
   static T FloatAddition(T a, T b) {

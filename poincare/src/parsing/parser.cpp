@@ -998,11 +998,10 @@ bool Parser::privateParseCustomIdentifierWithParameters(
     Token::Type stoppingType, Context::SymbolAbstractType idType,
     bool parseApostropheAsDerivative) {
   int derivativeOrder = 0;
-  if (parseApostropheAsDerivative && (popTokenIfType(Token::Type::Unit) ||
-                                      popTokenIfType(Token::Type::Undefined))) {
-    if (m_currentToken.length() == 1 && m_currentToken.text()[0] == '\'') {
-      derivativeOrder = 1;
-    }
+  if (parseApostropheAsDerivative && m_nextToken.length() == 1 &&
+      m_nextToken.text()[0] == '\'') {
+    popToken();
+    derivativeOrder = 1;
   }
 
   // If the identifier is not followed by parentheses, it is a symbol

@@ -442,14 +442,18 @@ QUIZ_CASE(calculation_symbolic_computation) {
                                 &store);
   assertMainCalculationOutputIs("f(x)", "undef", &globalContext, &store);
   assertMainCalculationOutputIs("f'(x)", "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f\"(x)", "undef", &globalContext, &store);
   assertMainCalculationOutputIs("1+x→f(x)", "1+x", &globalContext, &store);
   assertMainCalculationOutputIs("f(x)", "undef", &globalContext, &store);
   assertMainCalculationOutputIs("f'(x)", "undef", &globalContext, &store);
+  assertMainCalculationOutputIs("f\"(x)", "undef", &globalContext, &store);
   assertMainCalculationOutputIs("f(2)", "3", &globalContext, &store);
   assertMainCalculationOutputIs("f'(2)", "1", &globalContext, &store);
+  assertMainCalculationOutputIs("f\"(2)", "0", &globalContext, &store);
   assertMainCalculationOutputIs("2→x", "2", &globalContext, &store);
   assertMainCalculationOutputIs("f(x)", "3", &globalContext, &store);
   assertMainCalculationOutputIs("f'(x)", "1", &globalContext, &store);
+  assertMainCalculationOutputIs("f\"(x)", "0", &globalContext, &store);
   assertMainCalculationOutputIs("x+x+1+3+√(π)", "8+√(π)", &globalContext,
                                 &store);
   // Destroy records

@@ -1092,9 +1092,13 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   Unit apostropheUnit = Unit::Builder(
       Unit::k_angleRepresentatives + Unit::k_arcMinuteRepresentativeIndex,
       Unit::Prefix::EmptyPrefix());
+  Unit quoteUnit = Unit::Builder(
+      Unit::k_angleRepresentatives + Unit::k_arcSecondRepresentativeIndex,
+      Unit::Prefix::EmptyPrefix());
 
   // Reserved function
   assert_text_not_parsable("cos'(x)");
+  assert_text_not_parsable("cos\"(x)");
 
   // No symbols defined
   assert_parsed_expression_is(
@@ -1102,7 +1106,13 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
                               Parenthesis::Builder(Symbol::Builder("x", 1))));
   assert_parsed_expression_is(
+      "f\"(x)",
+      Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit,
+                              Parenthesis::Builder(Symbol::Builder("x", 1))));
+  assert_parsed_expression_is(
       "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
+  assert_parsed_expression_is(
+      "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
 
   // Function defined
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
@@ -1113,7 +1123,14 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
                           Symbol::SystemSymbol(), Symbol::Builder("x", 1),
                           BasedInteger::Builder(1)));
   assert_parsed_expression_is(
+      "f\"(x)",
+      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
+                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
+                          BasedInteger::Builder(2)));
+  assert_parsed_expression_is(
       "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
+  assert_parsed_expression_is(
+      "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Expression defined
@@ -1121,6 +1138,8 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       "f", "exp", "", 0);
   assert_parsed_expression_is(
       "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
+  assert_parsed_expression_is(
+      "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 

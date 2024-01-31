@@ -85,6 +85,9 @@ void assert_same_function_properties(const char* expression1,
 }
 
 QUIZ_CASE(graph_function_properties) {
+  Poincare::Preferences::sharedPreferences->setComplexFormat(
+      Preferences::ComplexFormat::Cartesian);
+
   // Test the plot type under different Press-to-test parameters :
   const ExamMode examModes[] = {
       ExamMode(ExamMode::Ruleset::Off),

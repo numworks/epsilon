@@ -178,9 +178,15 @@ void ContinuousFunctionProperties::update(
       return;
     }
 
+    /* Matrices, lists and points are not handled except:
+     * - lists for SymbolType::NoSymbol
+     * - points for SymbolType::NoSymbol and SymbolType::T */
     if (analyzedExpression.deepIsMatrix(context, true, false) ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
-         analyzedExpression.deepIsList(context))) {
+         analyzedExpression.deepIsList(context)) ||
+        ((precomputedFunctionSymbol != SymbolType::NoSymbol &&
+          precomputedFunctionSymbol != SymbolType::T) &&
+         analyzedExpression.type() == ExpressionNode::Type::Point)) {
       setErrorStatusAndUpdateCaption(Status::Undefined);
       return;
     }

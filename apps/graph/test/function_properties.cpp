@@ -783,6 +783,18 @@ QUIZ_CASE(graph_function_properties) {
             .m_status = ContinuousFunctionProperties::Status::Undefined,
             .m_caption = I18n::Message::UndefinedType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta});
+    assert_check_function_properties(
+        "f(x)=(x,x)",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::X});
+    assert_check_function_properties(
+        "f(θ)=(θ,θ)",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType,
+            .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta});
 
     // === Updated complex format ===
 

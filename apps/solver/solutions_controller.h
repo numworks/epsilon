@@ -122,7 +122,7 @@ class SolutionsController : public Escher::ViewController,
     bool tableIsTooLargeForWarningMessage() const;
     void layoutSubviews(bool force = false) override;
 
-    Escher::MultipleLinesBufferTextView<KDFont::Size::Small, 3>
+    Escher::MultipleLinesBufferTextView<KDFont::Size::Small, 4>
         m_warningMessageView;
     Escher::SelectableTableView m_selectableTableView;
     bool m_displayWarningMoreSolutions;

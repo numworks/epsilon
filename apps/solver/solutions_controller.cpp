@@ -228,7 +228,7 @@ void SolutionsController::viewWillAppear() {
   if (system->numberOfSolutions() == 0) {
     // There are no solutions
     m_contentView.setWarningMessage(noSolutionMessage());
-  } else if (approximateSolutions()) {
+  } else if (solutionsAreApproximate()) {
     system->hasMoreSolutions() ? m_contentView.setWarningMessageWithNumber(
                                      I18n::Message::OnlyFirstSolutionsDisplayed,
                                      system->numberOfSolutions())
@@ -277,7 +277,7 @@ void SolutionsController::didEnterResponderChain(
 
 bool SolutionsController::handleEvent(Ion::Events::Event event) {
   SystemOfEquations *system = App::app()->system();
-  if (!approximateSolutions() || system->numberOfSolutions() == 0) {
+  if (!solutionsAreApproximate() || system->numberOfSolutions() == 0) {
     return false;
   }
   if (event == Ion::Events::Down && selectedRow() == -1) {
@@ -530,7 +530,7 @@ void SolutionsController::didBecomeFirstResponder() {
   SystemOfEquations *system = App::app()->system();
   if (system->numberOfSolutions() > 0) {
     App::app()->setFirstResponder(m_contentView.selectableTableView());
-  } else if (approximateSolutions()) {
+  } else if (solutionsAreApproximate()) {
     selectIntervalButton();
   }
 }
@@ -541,7 +541,7 @@ void SolutionsController::selectIntervalButton() {
   selectRow(-1);
 }
 
-bool SolutionsController::approximateSolutions() const {
+bool SolutionsController::solutionsAreApproximate() const {
   return App::app()->system()->type() ==
          SystemOfEquations::Type::GeneralMonovariable;
 }
@@ -566,7 +566,7 @@ int SolutionsController::userVariablesMessageRow() const {
 }
 
 I18n::Message SolutionsController::noSolutionMessage() {
-  if (approximateSolutions()) {
+  if (solutionsAreApproximate()) {
     return I18n::Message::NoSolutionInterval;
   }
   if (App::app()->equationStore()->numberOfDefinedModels() <= 1) {

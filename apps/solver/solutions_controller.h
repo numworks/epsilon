@@ -50,6 +50,8 @@ class SolutionsController : public Escher::ViewController,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
     assert(approximateSolutions());
+    /* const_cast is valid here as long as a const SolutionsController is never
+     * needed. */
     return const_cast<Escher::AbstractButtonCell *>(&m_searchIntervalCell);
   }
 

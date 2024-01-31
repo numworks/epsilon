@@ -154,16 +154,6 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return Float::DoubleTo(node);
     case BlockType::Complex:
       return std::complex<T>(To<T>(node->child(0)), To<T>(node->child(1)));
-    case BlockType::List:
-      return ToComplex<T>(node->child(s_listElement));
-    case BlockType::ListSequence: {
-      ShiftVariables();
-      // epsilon sequences starts at one
-      setXValue(s_listElement + 1);
-      std::complex<T> result = ToComplex<T>(node->child(2));
-      UnshiftVariables();
-      return result;
-    }
     case BlockType::Addition:
       return MapAndReduce<T, std::complex<T>>(node,
                                               FloatAddition<std::complex<T>>);
@@ -219,6 +209,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return ToComplex<T>(node->nextNode()).real();
     case BlockType::ImaginaryPart:
       return ToComplex<T>(node->nextNode()).imag();
+
+    /* Trigonometry */
     case BlockType::Cosine:
     case BlockType::Sine:
     case BlockType::Tangent:
@@ -242,6 +234,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
     case BlockType::Variable:
       return Variable(Variables::Id(node));
+
+    /* Analysis */
     case BlockType::Sum:
     case BlockType::Product: {
       const Tree* lowerBoundChild = node->child(Parametric::k_lowerBoundIndex);
@@ -307,6 +301,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     }
     case BlockType::Integral:
       return approximateIntegral<T>(node);
+
+    /* Matrices */
     case BlockType::Norm:
     case BlockType::Trace:
     case BlockType::Det: {
@@ -323,6 +319,18 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       value->removeTree();
       m->removeTree();
       return v;
+    }
+
+    /* Lists */
+    case BlockType::List:
+      return ToComplex<T>(node->child(s_listElement));
+    case BlockType::ListSequence: {
+      ShiftVariables();
+      // epsilon sequences starts at one
+      setXValue(s_listElement + 1);
+      std::complex<T> result = ToComplex<T>(node->child(2));
+      UnshiftVariables();
+      return result;
     }
     case BlockType::Dim: {
       int n = Dimension::GetListLength(node->child(0));

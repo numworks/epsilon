@@ -118,7 +118,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
 
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
     double root = solver.nextRoot(undevelopedExpression).x();
-    if (root < static_cast<double>(m_approximateSolvingRange.min())) {
+    if (root < rangeMin) {
       i--;
       continue;
     } else if (root > rangeMax) {

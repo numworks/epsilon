@@ -384,6 +384,48 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_listElement = old;
       return result;
     }
+    case BlockType::Mean:
+    case BlockType::StdDev:
+    case BlockType::SampleStdDev:
+    case BlockType::Variance: {
+      const Tree* values = node->child(0);
+      const Tree* coefficients = node->child(1);
+      int length = Dimension::GetListLength(values);
+      int old = s_listElement;
+      std::complex<T> sum = 0;
+      std::complex<T> sumOfSquares = 0;
+      T coefficientsSum = 0;
+      for (int i = 0; i < length; i++) {
+        s_listElement = i;
+        std::complex<T> v = ToComplex<T>(values);
+        std::complex<T> c = ToComplex<T>(coefficients);
+        if (c.imag() != 0 || c.real() < 0) {
+          return NAN;
+        }
+        sum += c.real() * v;
+        sumOfSquares += c.real() * v * v;
+        coefficientsSum += c.real();
+      }
+      s_listElement = old;
+      if (coefficientsSum == 0) {
+        return NAN;
+      }
+      sum /= coefficientsSum;
+      if (node->isMean()) {
+        return sum;
+      }
+      sumOfSquares /= coefficientsSum;
+      std::complex<T> var = sumOfSquares - sum * sum;
+      if (node->isVariance()) {
+        return var;
+      }
+      std::complex<T> stdDev = std::pow(var, std::complex<T>(0.5));
+      if (node->isStdDev()) {
+        return stdDev;
+      }
+      T sampleStdDevCoef = std::pow(1 + 1 / (coefficientsSum - 1), 0.5);
+      return stdDev * sampleStdDevCoef;
+    }
     case BlockType::ListSort: {
       /* TODO we are computing all elements and sorting the list for all
        * elements, this is awful */

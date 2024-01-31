@@ -202,6 +202,7 @@ void ListController::resolveEquations() {
       case Error::RequireApproximateSolution:
         App::app()->system()->autoComputeApproximateSolvingRange(context);
         App::app()->system()->approximateSolve(context);
+        // break; intentionally omitted
       default: {
         assert(e == Error::NoError || e == Error::RequireApproximateSolution);
         App::app()->openSolutionsController(e ==

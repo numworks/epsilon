@@ -46,7 +46,10 @@ Layout DerivativeNode::createLayout(
     const char* functionName =
         static_cast<SymbolAbstractNode*>(childAtIndex(0))->name();
     Layout name = LayoutHelper::String(functionName, strlen(functionName));
-    Layout derivative = CodePointLayout::Builder(k_derivativeSymbol);
+    int order = extractIntegerOrder();
+    assert(0 < order && order <= 2);
+    Layout derivative = CodePointLayout::Builder(
+        order == 1 ? k_firstDerivativeSymbol : k_secondDerivativeSymbol);
     Layout argument = childAtIndex(2)->createLayout(
         floatDisplayMode, numberOfSignificantDigits, context);
     return HorizontalLayout::Builder(name, derivative,
@@ -83,8 +86,11 @@ size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
     size_t length = strlen(name);
     assert(bufferSize > length);
     strlcpy(buffer, name, bufferSize);
+    int order = extractIntegerOrder();
+    assert(0 < order && order <= 2);
     length += SerializationHelper::CodePoint(
-        buffer + length, bufferSize - length, k_derivativeSymbol);
+        buffer + length, bufferSize - length,
+        order == 1 ? k_firstDerivativeSymbol : k_secondDerivativeSymbol);
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, '(');
     length +=
@@ -288,10 +294,19 @@ bool DerivativeNode::displayInCondensedForm() const {
                ExpressionNode::Type::Symbol &&
            static_cast<SymbolNode*>(childAtIndex(0)->childAtIndex(0))
                ->isSystemSymbol());
-    assert(isFirstOrder());
     return true;
   }
   return false;
+}
+
+int DerivativeNode::extractIntegerOrder() const {
+  int derivationOrder;
+  bool orderIsSymbol;
+  bool orderIsInteger = SimplificationHelper::extractIntegerChildAtIndex(
+      Derivative(this), numberOfChildren() - 1, &derivationOrder,
+      &orderIsSymbol);
+  assert(!orderIsSymbol && orderIsInteger && derivationOrder >= 0);
+  return derivationOrder;
 }
 
 void Derivative::deepReduceChildren(const ReductionContext& reductionContext) {

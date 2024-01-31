@@ -999,9 +999,9 @@ bool Parser::privateParseCustomIdentifierWithParameters(
     bool parseApostropheAsDerivative) {
   int derivativeOrder = 0;
   if (parseApostropheAsDerivative && m_nextToken.length() == 1 &&
-      m_nextToken.text()[0] == '\'') {
+      (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
     popToken();
-    derivativeOrder = 1;
+    derivativeOrder = m_currentToken.text()[0] == '\'' ? 1 : 2;
   }
 
   // If the identifier is not followed by parentheses, it is a symbol

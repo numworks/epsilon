@@ -323,14 +323,26 @@ QUIZ_CASE(poincare_serialization_derivative) {
                           BasedInteger::Builder(1)),
       "diff(f(x),x,x)");
   assert_expression_serializes_to(
+      Derivative::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)),
+                          Symbol::Builder("x", 1), Symbol::Builder("x", 1),
+                          BasedInteger::Builder(2)),
+      "diff(f(x),x,x,2)");
+  assert_expression_serializes_to(
       Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
                           Symbol::SystemSymbol(), Symbol::Builder("x", 1),
                           BasedInteger::Builder(1)),
       "f'(x)");
+  assert_expression_serializes_to(
+      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
+                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
+                          BasedInteger::Builder(2)),
+      "f\"(x)");
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "func", "", 0);
   assert_expression_parses_and_serializes_to_itself("f(x)");
   assert_expression_parses_and_serializes_to_itself("f'(x+1)");
+  assert_expression_parses_and_serializes_to_itself("f\"(x+1)");
   assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a)");
+  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,2)");
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

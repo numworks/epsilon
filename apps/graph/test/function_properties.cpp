@@ -771,6 +771,8 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("f(t)={t}", k_undefinedParametric);
     assert_check_function_properties("f(θ)={θ}", k_undefinedPolar);
     assert_check_function_properties("f(x)=(x,x)", k_undefinedCartesian);
+    assert_check_function_properties("f(x)=diff((x^2,x^2),x,x,1)",
+                                     k_undefinedCartesian);
     assert_check_function_properties("f(θ)=(θ,θ)", k_undefinedPolar);
 
     // === Updated complex format ===

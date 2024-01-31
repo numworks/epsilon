@@ -321,6 +321,17 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       m->removeTree();
       return v;
     }
+    case BlockType::Dot: {
+      // TODO use complex conjugate ?
+      Tree* u = ToMatrix<T>(node->child(0));
+      Tree* v = ToMatrix<T>(node->child(1));
+      Tree* r = Vector::Dot(u, v);
+      std::complex<T> result = ToComplex<T>(r);
+      r->removeTree();
+      v->removeTree();
+      u->removeTree();
+      return result;
+    }
 
     /* Lists */
     case BlockType::List:
@@ -678,6 +689,14 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       SharedEditionPool->push<FloatType<T>::type>(T(dim.matrix.rows));
       SharedEditionPool->push<FloatType<T>::type>(T(dim.matrix.cols));
       return result;
+    }
+    case BlockType::Cross: {
+      Tree* u = ToMatrix<T>(node->child(0));
+      Tree* v = ToMatrix<T>(node->child(1));
+      Vector::Cross(u, v);
+      u->removeTree();
+      u->removeTree();
+      return u;
     }
     default:;
   }

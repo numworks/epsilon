@@ -1109,8 +1109,8 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       "f", "func", "", 0);
   assert_parsed_expression_is(
       "f'(x)",
-      Derivative::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)),
-                          Symbol::Builder("x", 1), Symbol::Builder("x", 1),
+      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
+                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
                           BasedInteger::Builder(1)));
   assert_parsed_expression_is(
       "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));

@@ -998,7 +998,8 @@ bool Parser::privateParseCustomIdentifierWithParameters(
     Token::Type stoppingType, Context::SymbolAbstractType idType,
     bool parseApostropheAsDerivative) {
   int derivativeOrder = 0;
-  if (parseApostropheAsDerivative && popTokenIfType(Token::Type::Unit)) {
+  if (parseApostropheAsDerivative && (popTokenIfType(Token::Type::Unit) ||
+                                      popTokenIfType(Token::Type::Undefined))) {
     if (m_currentToken.length() == 1 && m_currentToken.text()[0] == '\'') {
       derivativeOrder = 1;
     }
@@ -1052,11 +1053,11 @@ bool Parser::privateParseCustomIdentifierWithParameters(
       result = ListElement::Builder(parameter, Symbol::Builder(name, length));
     } else {
       if (derivativeOrder > 0) {
-        Expression derivand = Function::Builder(
-            name, length, Symbol::Builder(Symbol::k_cartesianSymbol));
-        result = Derivative::Builder(
-            derivand, Symbol::Builder(Symbol::k_cartesianSymbol), parameter,
-            BasedInteger::Builder(derivativeOrder));
+        Expression derivand =
+            Function::Builder(name, length, Symbol::SystemSymbol());
+        result =
+            Derivative::Builder(derivand, Symbol::SystemSymbol(), parameter,
+                                BasedInteger::Builder(derivativeOrder));
       } else {
         result = Function::Builder(name, length, parameter);
       }

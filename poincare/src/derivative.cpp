@@ -1,12 +1,14 @@
 #include <assert.h>
 #include <float.h>
 #include <omg/ieee754.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/derivative_layout.h>
 #include <poincare/float.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
+#include <poincare/parenthesis_layout.h>
 #include <poincare/point.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -39,6 +41,18 @@ int DerivativeNode::polynomialDegree(Context* context,
 Layout DerivativeNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
+  // Case 1: layout is f'(a)
+  if (displayInCondensedForm()) {
+    const char* functionName =
+        static_cast<SymbolAbstractNode*>(childAtIndex(0))->name();
+    Layout name = LayoutHelper::String(functionName, strlen(functionName));
+    Layout derivative = CodePointLayout::Builder(k_derivativeSymbol);
+    Layout argument = childAtIndex(2)->createLayout(
+        floatDisplayMode, numberOfSignificantDigits, context);
+    return HorizontalLayout::Builder(name, derivative,
+                                     ParenthesisLayout::Builder(argument));
+  }
+  // Case 2: layout is d^n(f(x))/dx|x=a
   if (isFirstOrder()) {
     return FirstOrderDerivativeLayout::Builder(
         childAtIndex(0)->createLayout(floatDisplayMode,
@@ -62,6 +76,25 @@ Layout DerivativeNode::createLayout(
 size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {
+  // Case 1: serialize as f'(a)
+  if (displayInCondensedForm()) {
+    const char* name =
+        static_cast<SymbolAbstractNode*>(childAtIndex(0))->name();
+    size_t length = strlen(name);
+    assert(bufferSize > length);
+    strlcpy(buffer, name, bufferSize);
+    length += SerializationHelper::CodePoint(
+        buffer + length, bufferSize - length, k_derivativeSymbol);
+    length += SerializationHelper::CodePoint(buffer + length,
+                                             bufferSize - length, '(');
+    length +=
+        childAtIndex(2)->serialize(buffer + length, bufferSize - length,
+                                   floatDisplayMode, numberOfSignificantDigits);
+    length += SerializationHelper::CodePoint(buffer + length,
+                                             bufferSize - length, ')');
+    return length;
+  }
+  // Case 2: serialize as diff(f(x),x,a,n)
   int lastChildIndex =
       isFirstOrder() ? numberOfChildren() - 2 : numberOfChildren() - 1;
   return SerializationHelper::Prefix(
@@ -244,6 +277,21 @@ T DerivativeNode::riddersApproximation(
     }
   }
   return ans;
+}
+
+bool DerivativeNode::displayInCondensedForm() const {
+  // Returns true if of the form diff(f(SystemSymbol),SystemSymbol,x)
+  assert(childAtIndex(1)->type() == ExpressionNode::Type::Symbol);
+  if (static_cast<SymbolNode*>(childAtIndex(1))->isSystemSymbol()) {
+    assert(childAtIndex(0)->type() == ExpressionNode::Type::Function);
+    assert(childAtIndex(0)->childAtIndex(0)->type() ==
+               ExpressionNode::Type::Symbol &&
+           static_cast<SymbolNode*>(childAtIndex(0)->childAtIndex(0))
+               ->isSystemSymbol());
+    assert(isFirstOrder());
+    return true;
+  }
+  return false;
 }
 
 void Derivative::deepReduceChildren(const ReductionContext& reductionContext) {

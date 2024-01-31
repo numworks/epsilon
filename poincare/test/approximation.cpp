@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/constant.h>
 #include <poincare/infinity.h>
+#include <poincare/print.h>
 #include <poincare/undefined.h>
 #include <poincare_junior/src/expression/approximation.h>
 
@@ -25,6 +26,15 @@ void assert_expression_approximates_to_scalar(
   e->removeTree();
   bool test = roughly_equal(result, approximation,
                             Poincare::Float<T>::EpsilonLax(), true);
+  bool crash = false;
+  bool bad = !test;
+  constexpr int bufferSize = 500;
+  char information[bufferSize] = "";
+  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s\t%*.*ed",
+                                      crash ? "CRASH" : (bad ? "BAD" : "OK"),
+                                      expression, result,
+                                      Preferences::PrintFloatMode::Decimal, 7);
+  quiz_print(information);
   // quiz_assert_print_if_failure(
   // test,
   // expression);

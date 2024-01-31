@@ -49,7 +49,7 @@ class SolutionsController : public Escher::ViewController,
       int index,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
-    assert(approximateSolutions());
+    assert(solutionsAreApproximate());
     /* const_cast is valid here as long as a const SolutionsController is never
      * needed. */
     return const_cast<Escher::AbstractButtonCell *>(&m_searchIntervalCell);
@@ -229,7 +229,7 @@ class SolutionsController : public Escher::ViewController,
   constexpr static int k_numberOfEmptyCells = 2;
 
   void selectIntervalButton();
-  bool approximateSolutions() const;
+  bool solutionsAreApproximate() const;
   bool usedUserVariables() const;
   int userVariablesMessageRow() const;
   I18n::Message noSolutionMessage();

@@ -709,6 +709,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Factor:
       // Useful for the beautification only
       return child[0];
+    case BlockType::PercentSimple:
+      return child[0] / 100.0;
+    case BlockType::PercentAddition:
+      return child[0] * (1.0 + child[1] / 100.0);
 
     default:
       if (node->isParametric()) {

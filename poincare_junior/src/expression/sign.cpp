@@ -287,6 +287,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case BlockType::FracPart:
     case BlockType::Round:
       return DecimalFunction(Get(t->firstChild()), t->type());
+    case BlockType::PercentSimple:
+      return NoIntegers(Get(t->firstChild()));
 #endif
     default:
       return Unknown();

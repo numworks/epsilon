@@ -124,6 +124,8 @@ NODE(LnReal, 1)
 NODE(Log, 1)
 NODE(Logarithm, 2)
 NODE(Opposite, 1)
+NODE(PercentSimple, 1)
+NODE(PercentAddition, 2)
 NODE(Permute, 2)
 
 /* - Polynomial P = a1*x^e1 + ... + an*x^en

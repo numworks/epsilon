@@ -128,6 +128,11 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
         return Poincare::ImaginaryPart::Builder(child);
       case BlockType::RealPart:
         return Poincare::RealPart::Builder(child);
+      case BlockType::PercentSimple:
+        return Poincare::PercentSimple::Builder(child);
+      case BlockType::PercentAddition:
+        return Poincare::PercentAddition::Builder(
+            child, ToPoincareExpression(exp->child(1)));
       case BlockType::Derivative: {
         Poincare::Expression symbol = child;
         if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
@@ -391,6 +396,13 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::RealPart:
       SharedEditionPool->push(BlockType::RealPart);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::PercentSimple:
+      SharedEditionPool->push(BlockType::PercentSimple);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::PercentAddition:
+      SharedEditionPool->push(BlockType::PercentAddition);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
     case OT::Logarithm:
       if (exp.numberOfChildren() == 2) {
         SharedEditionPool->push(BlockType::Logarithm);

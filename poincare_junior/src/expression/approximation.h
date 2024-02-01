@@ -36,6 +36,11 @@ bool IsIntegerRepresentationAccurate(T x) {
 
 class Approximation final {
  public:
+  // Approximate a tree with any dimension
+  template <typename T>
+  static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
+                              ComplexFormat complexFormat);
+
   // Approximate an entire tree, isolated from any outer context.
   template <typename T>
   static std::complex<T> RootTreeToComplex(const Tree* node,
@@ -51,21 +56,15 @@ class Approximation final {
     return value.imag() == 0 ? value.real() : NAN;
   }
 
-  // Helper to replace a tree by its approximation
-  static bool SimplifyComplex(Tree* node);
-  EDITION_REF_WRAP(SimplifyComplex);
-
-  // Approximate a tree with any dimension
-  template <typename T>
-  static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
-                              ComplexFormat complexFormat);
-
   // Approximate a matrix
   template <typename T>
   static Tree* RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
                                 ComplexFormat complexFormat);
 
-  // Approximate any tree.
+  // Helper to replace a tree by its approximation
+  static bool SimplifyComplex(Tree* node);
+  EDITION_REF_WRAP(SimplifyComplex);
+
   template <typename T>
   static std::complex<T> ToComplex(const Tree* node);
 

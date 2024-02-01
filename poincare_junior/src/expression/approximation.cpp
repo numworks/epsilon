@@ -130,6 +130,52 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
 }
 
 template <typename T>
+Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
+                                    ComplexFormat complexFormat) {
+  Context context(angleUnit, complexFormat);
+  s_context = &context;
+  // TODO we should rather assume variable projection has already been done
+  Tree* variables = Variables::GetUserSymbols(node);
+  Tree* clone = node->clone();
+  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  {
+    // Be careful to nest Random::Context since they create trees
+    Random::Context randomContext;
+    s_randomContext = &randomContext;
+    ToList<T>(clone);
+    s_randomContext = nullptr;
+  }
+  clone->removeTree();
+  variables->removeTree();
+  return variables;
+}
+
+template <typename T>
+Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
+                                      ComplexFormat complexFormat) {
+  Context context(angleUnit, complexFormat);
+  s_context = &context;
+  // TODO we should rather assume variable projection has already been done
+  Tree* variables = Variables::GetUserSymbols(node);
+  Tree* clone = node->clone();
+  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  {
+    // Be careful to nest Random::Context since they create trees
+    Random::Context randomContext;
+    s_randomContext = &randomContext;
+    Tree* m = ToMatrix<T>(clone);
+    for (Tree* child : m->children()) {
+      child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
+          ToComplex<T>(child), complexFormat));
+    }
+    s_randomContext = nullptr;
+  }
+  clone->removeTree();
+  variables->removeTree();
+  return variables;
+}
+
+template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* node) {
   /* TODO : the second part of this function and several ifs in different cases
    * act differently / more precisely on reals. We should have a dedicated,
@@ -570,52 +616,6 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       // TODO: Implement more BlockTypes
       return NAN;
   };
-}
-
-template <typename T>
-Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
-                                    ComplexFormat complexFormat) {
-  Context context(angleUnit, complexFormat);
-  s_context = &context;
-  // TODO we should rather assume variable projection has already been done
-  Tree* variables = Variables::GetUserSymbols(node);
-  Tree* clone = node->clone();
-  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
-  {
-    // Be careful to nest Random::Context since they create trees
-    Random::Context context;
-    s_randomContext = &context;
-    ToList<T>(clone);
-    s_randomContext = nullptr;
-  }
-  clone->removeTree();
-  variables->removeTree();
-  return variables;
-}
-
-template <typename T>
-Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
-                                      ComplexFormat complexFormat) {
-  Context context(angleUnit, complexFormat);
-  s_context = &context;
-  // TODO we should rather assume variable projection has already been done
-  Tree* variables = Variables::GetUserSymbols(node);
-  Tree* clone = node->clone();
-  Variables::ProjectToId(clone, variables);
-  {
-    // Be careful to nest Random::Context since they create trees
-    Random::Context context;
-    s_randomContext = &context;
-    Tree* m = ToMatrix<T>(clone);
-    for (Tree* child : m->children()) {
-      child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
-          ToComplex<T>(child), complexFormat));
-    }
-    s_randomContext = nullptr;
-  }
-  clone->removeTree();
-  variables->removeTree();
-  return variables;
 }
 
 template <typename T>

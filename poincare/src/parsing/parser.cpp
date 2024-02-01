@@ -63,7 +63,6 @@ Expression Parser::parseExpressionWithRightwardsArrow(
   }
   // Failed to parse as unit conversion
   restorePreviousParsingPosition(startingPosition);
-  m_status = Status::Progress;
 
   // Step 2. Parse as assignment, starting with rightHandSide.
   m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
@@ -79,7 +78,6 @@ Expression Parser::parseExpressionWithRightwardsArrow(
         rightHandSide.childAtIndex(0).type() ==
             ExpressionNode::Type::Symbol))) {
     restorePreviousParsingPosition(startingPosition);
-    m_status = Status::Progress;
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
     EmptyContext tempContext = EmptyContext();
     /* This is instatiated outside the condition so that the pointer is not
@@ -1345,6 +1343,7 @@ void Parser::restorePreviousParsingPosition(const char *tokenizerPosition,
   m_tokenizer.goToPosition(tokenizerPosition);
   m_currentToken = storedCurrentToken;
   m_nextToken = storedNextToken;
+  m_status = Status::Progress;
 }
 
 }  // namespace Poincare

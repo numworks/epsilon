@@ -733,6 +733,30 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       a->removeTree();
       return a;
     }
+    case BlockType::Multiplication: {
+      bool resultIsMatrix = false;
+      Tree* result = nullptr;
+      for (const Tree* child : node->children()) {
+        bool childIsMatrix = Dimension::GetDimension(child).isMatrix();
+        Tree* approx = childIsMatrix ? ToMatrix<T>(child)
+                                     : PushComplex(ToComplex<T>(child));
+        if (result == nullptr) {
+          resultIsMatrix = childIsMatrix;
+          result = approx;
+          continue;
+        }
+        if (resultIsMatrix && childIsMatrix) {
+          Matrix::Multiplication(result, approx, true);
+        } else if (resultIsMatrix) {
+          Matrix::ScalarMultiplication(approx, result, true);
+        } else {
+          Matrix::ScalarMultiplication(result, approx, true);
+        }
+        approx->removeTree();
+        result->removeTree();
+      }
+      return result;
+    }
     case BlockType::Division: {
       Tree* a = ToMatrix<T>(node->child(0));
       Tree* s = PushComplex(static_cast<T>(1) / ToComplex<T>(node->child(1)));

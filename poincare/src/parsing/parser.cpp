@@ -56,14 +56,14 @@ Expression Parser::parseExpressionWithRightwardsArrow(
   // Step 1. Parse as unitConversion
   m_parsingContext.setParsingMethod(
       ParsingContext::ParsingMethod::UnitConversion);
-  const char *startingPosition;
-  rememberCurrentParsingPosition(&startingPosition);
+  Tokenizer::State tokenizerState;
+  rememberCurrentParsingPosition(&tokenizerState);
   Expression result = initializeFirstTokenAndParseUntilEnd();
   if (m_status == Status::Success) {
     return result;
   }
   // Failed to parse as unit conversion
-  restorePreviousParsingPosition(startingPosition);
+  restorePreviousParsingPosition(tokenizerState);
 
   // Step 2. Parse as assignment, starting with rightHandSide.
   m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
@@ -78,7 +78,7 @@ Expression Parser::parseExpressionWithRightwardsArrow(
        (rightHandSide.type() == ExpressionNode::Type::Function &&
         rightHandSide.childAtIndex(0).type() ==
             ExpressionNode::Type::Symbol))) {
-    restorePreviousParsingPosition(startingPosition);
+    restorePreviousParsingPosition(tokenizerState);
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
     EmptyContext tempContext = EmptyContext();
     /* This is instatiated outside the condition so that the pointer is not
@@ -960,8 +960,8 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
 
   Token storedNextToken;
   Token storedCurrentToken;
-  const char *tokenizerPosition;
-  rememberCurrentParsingPosition(&tokenizerPosition, &storedCurrentToken,
+  Tokenizer::State tokenizerState;
+  rememberCurrentParsingPosition(&tokenizerState, &storedCurrentToken,
                                  &storedNextToken);
   // Try to parse aspostrophe as derivative
   if (privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
@@ -969,7 +969,7 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
     return;
   }
   // Parse aspostrophe as unit (default parsing)
-  restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken,
+  restorePreviousParsingPosition(tokenizerState, storedCurrentToken,
                                  storedNextToken);
   privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
                                              stoppingType, idType, false);
@@ -1319,8 +1319,8 @@ bool Parser::generateMixedFractionIfNeeded(Expression &leftHandSide) {
   }
   Token storedNextToken;
   Token storedCurrentToken;
-  const char *tokenizerPosition;
-  rememberCurrentParsingPosition(&tokenizerPosition, &storedCurrentToken,
+  Tokenizer::State tokenizerState;
+  rememberCurrentParsingPosition(&tokenizerState, &storedCurrentToken,
                                  &storedNextToken);
   // Check for mixed fraction. There is a mixed fraction if :
   if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
@@ -1341,12 +1341,12 @@ bool Parser::generateMixedFractionIfNeeded(Expression &leftHandSide) {
       return true;
     }
   }
-  restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken,
+  restorePreviousParsingPosition(tokenizerState, storedCurrentToken,
                                  storedNextToken);
   return false;
 }
 
-void Parser::rememberCurrentParsingPosition(const char **tokenizerPosition,
+void Parser::rememberCurrentParsingPosition(Tokenizer::State *tokenizerState,
                                             Token *storedCurrentToken,
                                             Token *storedNextToken) {
   if (storedCurrentToken) {
@@ -1355,13 +1355,14 @@ void Parser::rememberCurrentParsingPosition(const char **tokenizerPosition,
   if (storedNextToken) {
     *storedNextToken = m_nextToken;
   }
-  *tokenizerPosition = m_tokenizer.currentPosition();
+  assert(tokenizerState);
+  *tokenizerState = m_tokenizer.currentState();
 }
 
-void Parser::restorePreviousParsingPosition(const char *tokenizerPosition,
+void Parser::restorePreviousParsingPosition(Tokenizer::State tokenizerState,
                                             Token storedCurrentToken,
                                             Token storedNextToken) {
-  m_tokenizer.goToPosition(tokenizerPosition);
+  m_tokenizer.setState(tokenizerState);
   m_currentToken = storedCurrentToken;
   m_nextToken = storedNextToken;
   m_status = Status::Progress;

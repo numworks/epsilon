@@ -175,11 +175,11 @@ class Parser {
                                           int* caretIntegerValue);
   bool generateMixedFractionIfNeeded(Expression& leftHandSide);
   // Allows you to rewind to previous position
-  void rememberCurrentParsingPosition(const char** tokenizerPosition,
+  void rememberCurrentParsingPosition(Tokenizer::State* tokenizerState,
                                       Token* storedCurrentToken = nullptr,
                                       Token* storedNextToken = nullptr);
   void restorePreviousParsingPosition(
-      const char* tokenizerPosition,
+      Tokenizer::State tokenizerState,
       Token storedCurrentToken = Token(Token::Type::Undefined),
       Token storedNextToken = Token(Token::Type::Undefined));
   // Data members

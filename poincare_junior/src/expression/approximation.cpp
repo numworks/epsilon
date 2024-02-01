@@ -758,6 +758,12 @@ Tree* Approximation::ToMatrix(const Tree* node) {
                                                  : Matrix::Transpose(result));
       return result;
     }
+    case BlockType::Ref:
+    case BlockType::Rref: {
+      Tree* result = ToMatrix<T>(node->child(0));
+      Matrix::RowCanonize(result, node->isRref(), nullptr, true);
+      return result;
+    }
     case BlockType::Dim: {
       Dimension dim = Dimension::GetDimension(node->child(0));
       assert(dim.isMatrix());

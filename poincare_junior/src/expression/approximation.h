@@ -86,7 +86,7 @@ class Approximation final {
   // Approximate expression at KVarX/K = x
   template <typename T>
   static T To(const Tree* node, T x) {
-    setXValue(x);
+    s_context->setXValue(x);
     std::complex<T> value = ToComplex<T>(node);
     return value.imag() == 0 ? value.real() : NAN;
   }
@@ -172,8 +172,6 @@ class Approximation final {
   }
   EDITION_REF_WRAP_1D(ApproximateAndReplaceEveryScalar, bool, true)
 
-  static void setXValue(double value) { Variable(0) = value; }
-
  private:
   template <typename T>
   using Reductor = T (*)(T, T);
@@ -190,19 +188,6 @@ class Approximation final {
 
   template <typename T>
   static T ConvertFromRadian(T angle);
-  static AngleUnit s_angleUnit;
-  static ComplexFormat s_complexFormat;
-  static constexpr int k_maxNumberOfVariables = 16;
-  using VariableType = double;
-  static VariableType s_variables[k_maxNumberOfVariables];
-  static uint8_t s_variablesOffset;
-  static void ClearVariables();
-  static double& Variable(size_t index);
-  static void ShiftVariables();
-  static void UnshiftVariables();
-  // If we are approximating to get the nth-element of a list, s_listElement = n
-  static int s_listElement;
-  static Random::Context* s_context;
 
   template <typename T>
   static T approximateIntegral(const Tree* integral);
@@ -211,6 +196,33 @@ class Approximation final {
   template <typename T>
   static std::complex<T> approximatePower(const Tree* power,
                                           ComplexFormat complexFormat);
+
+  struct Context {
+    Context(AngleUnit angleUnit, ComplexFormat complexFormat);
+
+    double& variable(size_t index);
+    void shiftVariables();
+    void unshiftVariables();
+
+    void setXValue(double value) { variable(0) = value; }
+
+    AngleUnit m_angleUnit;
+    ComplexFormat m_complexFormat;
+
+    static constexpr int k_maxNumberOfVariables = 16;
+    using VariableType = double;
+    VariableType m_variables[k_maxNumberOfVariables];
+    uint8_t m_variablesOffset;
+
+    // Tells if we are approximating to get the nth-element of a list
+    int m_listElement;
+  };
+
+  /* Approximation context is created by entry points RootTreeTo* and passed
+   * down to the function hierarchy using a static pointer to avoid carrying an
+   * extra argument everywhere. */
+  static Context* s_context;
+  static Random::Context* s_randomContext;
 };
 
 }  // namespace PoincareJ

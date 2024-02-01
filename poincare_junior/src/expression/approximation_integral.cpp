@@ -70,7 +70,7 @@ T Approximation::approximateIntegral(const Tree* integral) {
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }
-  ShiftVariables();
+  s_context->shiftVariables();
   bool fIsNanInA = std::isnan(To(integrand, a));
   bool fIsNanInB = std::isnan(To(integrand, b));
   /* The integrand has a singularity on a bound of the interval, use tanh-sinh

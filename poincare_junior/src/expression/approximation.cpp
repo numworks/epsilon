@@ -20,27 +20,27 @@
 
 namespace PoincareJ {
 
-AngleUnit Approximation::s_angleUnit;
-ComplexFormat Approximation::s_complexFormat;
-Approximation::VariableType Approximation::s_variables[k_maxNumberOfVariables];
-uint8_t Approximation::s_variablesOffset = 0;
-int Approximation::s_listElement;
+Approximation::Context* Approximation::s_context;
 
 // With a nullptr context, seeded random will be undef.
-Random::Context* Approximation::s_context = nullptr;
+Random::Context* Approximation::s_randomContext = nullptr;
 
-void Approximation::ClearVariables() {
+Approximation::Context::Context(AngleUnit angleUnit,
+                                ComplexFormat complexFormat)
+    : m_angleUnit(angleUnit),
+      m_complexFormat(complexFormat),
+      m_variablesOffset(0) {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
-    s_variables[i] = NAN;
+    m_variables[i] = NAN;
   }
-  s_variablesOffset = 0;
 }
+
 // with sum(sum(l,l,1,k),k,1,n) s_variables stores [n, NaN, …, NaN, l, k]
-double& Approximation::Variable(size_t index) {
-  return s_variables[(index + s_variablesOffset) % k_maxNumberOfVariables];
+double& Approximation::Context::variable(size_t index) {
+  return m_variables[(index + m_variablesOffset) % k_maxNumberOfVariables];
 }
-void Approximation::ShiftVariables() { s_variablesOffset--; }
-void Approximation::UnshiftVariables() { s_variablesOffset++; }
+void Approximation::Context::shiftVariables() { m_variablesOffset--; }
+void Approximation::Context::unshiftVariables() { m_variablesOffset++; }
 
 template <typename T>
 std::complex<T> Approximation::FloatMultiplication(std::complex<T> c,
@@ -114,11 +114,10 @@ template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
                                                  AngleUnit angleUnit,
                                                  ComplexFormat complexFormat) {
-  Random::Context context;
+  Random::Context randomContext;
+  s_randomContext = &randomContext;
+  Context context(angleUnit, complexFormat);
   s_context = &context;
-  s_angleUnit = angleUnit;
-  s_complexFormat = complexFormat;
-  s_listElement = -1;
   // TODO we should rather assume variable projection has already been done
   Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
@@ -126,8 +125,7 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   std::complex<T> result = ToComplex<T>(clone);
   clone->removeTree();
   variables->removeTree();
-  ClearVariables();
-  s_context = nullptr;
+  s_randomContext = nullptr;
   return result;
 }
 
@@ -143,7 +141,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
            Rational::Denominator(node).to<T>();
   }
   if (node->isRandomNode()) {
-    return Random::Approximate<T>(node, s_context);
+    return Random::Approximate<T>(node, s_randomContext);
   }
   switch (node->type()) {
     case BlockType::Constant:
@@ -168,7 +166,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
     case BlockType::Power:
-      return approximatePower<T>(node, s_complexFormat);
+      return approximatePower<T>(node, s_context->m_complexFormat);
     case BlockType::Logarithm:
       return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>);
     case BlockType::Trig:
@@ -238,7 +236,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::HyperbolicArcTangent:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
     case BlockType::Variable:
-      return Variable(Variables::Id(node));
+      return s_context->variable(Variables::Id(node));
 
     /* Analysis */
     case BlockType::Sum:
@@ -256,10 +254,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       int lowerBound = low.real();
       int upperBound = up.real();
       const Tree* child = upperBoundChild->nextTree();
-      ShiftVariables();
+      s_context->shiftVariables();
       std::complex<T> result = node->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
-        Variable(0) = k;
+        s_context->variable(0) = k;
         std::complex<T> value = ToComplex<T>(child);
         if (node->isSum()) {
           result += value;
@@ -270,7 +268,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
           break;
         }
       }
-      UnshiftVariables();
+      s_context->unshiftVariables();
       return result;
     }
     case BlockType::Derivative: {
@@ -299,9 +297,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       if (std::isnan(at.real()) || at.imag() != 0) {
         return NAN;
       }
-      ShiftVariables();
+      s_context->shiftVariables();
       T result = approximateDerivative(node->child(2), at.real(), order);
-      UnshiftVariables();
+      s_context->unshiftVariables();
       return result;
     }
     case BlockType::Integral:
@@ -339,13 +337,13 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 
     /* Lists */
     case BlockType::List:
-      return ToComplex<T>(node->child(s_listElement));
+      return ToComplex<T>(node->child(s_context->m_listElement));
     case BlockType::ListSequence: {
-      ShiftVariables();
+      s_context->shiftVariables();
       // epsilon sequences starts at one
-      setXValue(s_listElement + 1);
+      s_context->setXValue(s_context->m_listElement + 1);
       std::complex<T> result = ToComplex<T>(node->child(2));
-      UnshiftVariables();
+      s_context->unshiftVariables();
       return result;
     }
     case BlockType::Dim: {
@@ -356,24 +354,24 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::ListProduct: {
       const Tree* values = node->child(0);
       int length = Dimension::GetListLength(values);
-      int old = s_listElement;
+      int old = s_context->m_listElement;
       std::complex<T> result = node->isListSum() ? 0 : 1;
       for (int i = 0; i < length; i++) {
-        s_listElement = i;
+        s_context->m_listElement = i;
         std::complex<T> v = ToComplex<T>(values);
         result = node->isListSum() ? result + v : result * v;
       }
-      s_listElement = old;
+      s_context->m_listElement = old;
       return result;
     }
     case BlockType::Minimum:
     case BlockType::Maximum: {
       const Tree* values = node->child(0);
       int length = Dimension::GetListLength(values);
-      int old = s_listElement;
+      int old = s_context->m_listElement;
       T result;
       for (int i = 0; i < length; i++) {
-        s_listElement = i;
+        s_context->m_listElement = i;
         std::complex<T> v = ToComplex<T>(values);
         if (v.imag() != 0 || std::isnan(v.real())) {
           return NAN;
@@ -383,7 +381,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
           result = v.real();
         }
       }
-      s_listElement = old;
+      s_context->m_listElement = old;
       return result;
     }
     case BlockType::Mean:
@@ -393,12 +391,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       const Tree* values = node->child(0);
       const Tree* coefficients = node->child(1);
       int length = Dimension::GetListLength(values);
-      int old = s_listElement;
+      int old = s_context->m_listElement;
       std::complex<T> sum = 0;
       std::complex<T> sumOfSquares = 0;
       T coefficientsSum = 0;
       for (int i = 0; i < length; i++) {
-        s_listElement = i;
+        s_context->m_listElement = i;
         std::complex<T> v = ToComplex<T>(values);
         std::complex<T> c = ToComplex<T>(coefficients);
         if (c.imag() != 0 || c.real() < 0) {
@@ -408,7 +406,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
         sumOfSquares += c.real() * v * v;
         coefficientsSum += c.real();
       }
-      s_listElement = old;
+      s_context->m_listElement = old;
       if (coefficientsSum == 0) {
         return NAN;
       }
@@ -577,10 +575,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 template <typename T>
 Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
-  s_angleUnit = angleUnit;
-  s_complexFormat = complexFormat;
-  s_listElement = -1;
-  ClearVariables();
+  Context context(angleUnit, complexFormat);
+  s_context = &context;
   // TODO we should rather assume variable projection has already been done
   Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
@@ -588,9 +584,9 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
   {
     // Be careful to nest Random::Context since they create trees
     Random::Context context;
-    s_context = &context;
+    s_randomContext = &context;
     ToList<T>(clone);
-    s_context = nullptr;
+    s_randomContext = nullptr;
   }
   clone->removeTree();
   variables->removeTree();
@@ -600,10 +596,8 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
 template <typename T>
 Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
                                       ComplexFormat complexFormat) {
-  s_angleUnit = angleUnit;
-  s_complexFormat = complexFormat;
-  s_listElement = -1;
-  ClearVariables();
+  Context context(angleUnit, complexFormat);
+  s_context = &context;
   // TODO we should rather assume variable projection has already been done
   Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
@@ -611,13 +605,13 @@ Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
   {
     // Be careful to nest Random::Context since they create trees
     Random::Context context;
-    s_context = &context;
+    s_randomContext = &context;
     Tree* m = ToMatrix<T>(clone);
     for (Tree* child : m->children()) {
       child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
           ToComplex<T>(child), complexFormat));
     }
-    s_context = nullptr;
+    s_randomContext = nullptr;
   }
   clone->removeTree();
   variables->removeTree();
@@ -643,14 +637,14 @@ bool Approximation::SimplifyComplex(Tree* node) {
 template <typename T>
 Tree* Approximation::ToList(const Tree* node) {
   int length = Dimension::GetListLength(node);
-  int old = s_listElement;
+  int old = s_context->m_listElement;
   Tree* list = SharedEditionPool->push<BlockType::List>(length);
   for (int i = 0; i < length; i++) {
-    s_listElement = i;
+    s_context->m_listElement = i;
     std::complex<T> k = ToComplex<T>(node);
-    Beautification::PushBeautifiedComplex(k, s_complexFormat);
+    Beautification::PushBeautifiedComplex(k, s_context->m_complexFormat);
   }
-  s_listElement = old;
+  s_context->m_listElement = old;
   return list;
 }
 

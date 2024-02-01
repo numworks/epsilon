@@ -118,6 +118,14 @@ void assert_parsed_expression_is(
   quiz_assert_print_if_failure(e.isIdenticalTo(r), expression);
 }
 
+void assert_parse_to_same_expression(const char *expression1,
+                                     const char *expression2) {
+  Shared::GlobalContext context;
+  Expression e1 = parse_expression(expression1, &context, false);
+  Expression e2 = parse_expression(expression2, &context, false);
+  quiz_assert(e1.isIdenticalTo(e2));
+}
+
 void assert_reduce_and_store(const char *expression,
                              Preferences::AngleUnit angleUnit,
                              Preferences::UnitFormat unitFormat,
@@ -240,19 +248,23 @@ void assert_expression_serializes_and_parses_to_itself(Expression expression) {
   assert_parsed_expression_is(buffer, expression);
 }
 
-void assert_expression_parses_and_serializes_to_itself(const char *expression) {
+void assert_expression_parses_and_serializes_to(const char *expression,
+                                                const char *result) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   e.serialize(buffer, bufferSize);
-  const bool test = strcmp(buffer, expression) == 0;
+  const bool test = strcmp(buffer, result) == 0;
   char information[bufferSize] = "";
   if (!test) {
-    build_failure_infos(information, bufferSize, expression, buffer,
-                        expression);
+    build_failure_infos(information, bufferSize, expression, buffer, result);
   }
   quiz_assert_print_if_failure(test, information);
+}
+
+void assert_expression_parses_and_serializes_to_itself(const char *expression) {
+  return assert_expression_parses_and_serializes_to(expression, expression);
 }
 
 void assert_layout_serializes_to(Layout layout, const char *serialization) {

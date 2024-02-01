@@ -1110,9 +1110,48 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit,
                               Parenthesis::Builder(Symbol::Builder("x", 1))));
   assert_parsed_expression_is(
+      "f^(1)(x)",
+      Multiplication::Builder(
+          Power::Builder(Symbol::Builder("f", 1),
+                         Parenthesis::Builder(BasedInteger::Builder(1))),
+          Parenthesis::Builder(Symbol::Builder("x", 1))));
+  assert_parsed_expression_is(
+      "f^(2)(x)",
+      Multiplication::Builder(
+          Power::Builder(Symbol::Builder("f", 1),
+                         Parenthesis::Builder(BasedInteger::Builder(2))),
+          Parenthesis::Builder(Symbol::Builder("x", 1))));
+  assert_parsed_expression_is(
+      "f^(3)(x)",
+      Multiplication::Builder(
+          Power::Builder(Symbol::Builder("f", 1),
+                         Parenthesis::Builder(BasedInteger::Builder(3))),
+          Parenthesis::Builder(Symbol::Builder("x", 1))));
+  assert_parsed_expression_is(
+      "f^1(x)",
+      Multiplication::Builder(
+          Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(1)),
+          Parenthesis::Builder(Symbol::Builder("x", 1))));
+  assert_parsed_expression_is(
+      "f^2(x)",
+      Multiplication::Builder(
+          Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(2)),
+          Parenthesis::Builder(Symbol::Builder("x", 1))));
+  assert_parsed_expression_is(
+      "f^3(x)",
+      Multiplication::Builder(
+          Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(3)),
+          Parenthesis::Builder(Symbol::Builder("x", 1))));
+  assert_parsed_expression_is(
       "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
   assert_parsed_expression_is(
       "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
+  assert_parsed_expression_is(
+      "f^\u00121\u0013",
+      Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is(
+      "f^(2)", Power::Builder(Symbol::Builder("f", 1),
+                              Parenthesis::Builder(BasedInteger::Builder(2))));
 
   // Function defined
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
@@ -1127,10 +1166,33 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
                           Symbol::SystemSymbol(), Symbol::Builder("x", 1),
                           BasedInteger::Builder(2)));
+  assert_parse_to_same_expression("f'(x)", "f^(1)(x)");
+  assert_parse_to_same_expression("f\"(x)", "f^(2)(x)");
+  assert_parse_to_same_expression("f^\u00121\u0013(x)", "f^(1)(x)");
+  assert_parse_to_same_expression("f^\u00122\u0013(x)", "f^(2)(x)");
+  assert_parse_to_same_expression("f^\u00123\u0013(x)", "f^(3)(x)");
+  assert_parsed_expression_is(
+      "f^(3)(x)",
+      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
+                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
+                          BasedInteger::Builder(3)));
+  assert_parsed_expression_is(
+      "f^(3/2)(x)", Multiplication::Builder(
+                        Power::Builder(Symbol::Builder("f", 1),
+                                       Parenthesis::Builder(Division::Builder(
+                                           BasedInteger::Builder(3),
+                                           BasedInteger::Builder(2)))),
+                        Parenthesis::Builder(Symbol::Builder("x", 1))));
   assert_parsed_expression_is(
       "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
   assert_parsed_expression_is(
       "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
+  assert_parsed_expression_is(
+      "f^\u00121\u0013",
+      Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is(
+      "f^(2)", Power::Builder(Symbol::Builder("f", 1),
+                              Parenthesis::Builder(BasedInteger::Builder(2))));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Expression defined
@@ -1140,6 +1202,15 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
   assert_parsed_expression_is(
       "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
+  assert_parsed_expression_is(
+      "f^(1)", Power::Builder(Symbol::Builder("f", 1),
+                              Parenthesis::Builder(BasedInteger::Builder(1))));
+  assert_parsed_expression_is(
+      "f^(2)", Power::Builder(Symbol::Builder("f", 1),
+                              Parenthesis::Builder(BasedInteger::Builder(2))));
+  assert_parsed_expression_is(
+      "f^(3)", Power::Builder(Symbol::Builder("f", 1),
+                              Parenthesis::Builder(BasedInteger::Builder(3))));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 

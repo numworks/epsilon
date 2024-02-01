@@ -48,6 +48,9 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     switch (type) {
       case BlockType::SquareRoot:
         return Poincare::SquareRoot::Builder(child);
+      case BlockType::NthRoot:
+        return Poincare::NthRoot::Builder(child,
+                                          ToPoincareExpression(exp->child(1)));
       case BlockType::Cosine:
         return Poincare::Cosine::Builder(child);
       case BlockType::Sine:
@@ -134,6 +137,17 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
             ToPoincareExpression(exp->child(2)),
             static_cast<Poincare::Symbol &>(symbol),
             ToPoincareExpression(exp->child(1)));
+      }
+      case BlockType::Integral: {
+        Poincare::Expression symbol = child;
+        if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
+          return Poincare::Undefined::Builder();
+        }
+        return Poincare::Integral::Builder(
+            ToPoincareExpression(exp->child(3)),
+            static_cast<Poincare::Symbol &>(symbol),
+            ToPoincareExpression(exp->child(1)),
+            ToPoincareExpression(exp->child(2)));
       }
       case BlockType::Sum: {
         Poincare::Expression symbol = child;
@@ -269,6 +283,10 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::SquareRoot:
       SharedEditionPool->push(BlockType::SquareRoot);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::NthRoot:
+      SharedEditionPool->push(BlockType::NthRoot);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
     case OT::Cosine:
       SharedEditionPool->push(BlockType::Cosine);
       return PushPoincareExpression(exp.childAtIndex(0));
@@ -388,6 +406,13 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       SharedEditionPool->push(BlockType::Derivative);
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
+      PushPoincareExpression(exp.childAtIndex(0));
+      return;
+    case OT::Integral:
+      SharedEditionPool->push(BlockType::Integral);
+      PushPoincareExpression(exp.childAtIndex(1));
+      PushPoincareExpression(exp.childAtIndex(2));
+      PushPoincareExpression(exp.childAtIndex(3));
       PushPoincareExpression(exp.childAtIndex(0));
       return;
     case OT::Sum:

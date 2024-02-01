@@ -72,8 +72,6 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyLnReal);
   static bool SimplifyExp(Tree *u);
   EDITION_REF_WRAP(SimplifyExp);
-  static bool SimplifyComplex(Tree *t);
-  EDITION_REF_WRAP(SimplifyComplex);
   static bool SimplifyComplexArgument(Tree *t);
   EDITION_REF_WRAP(SimplifyComplexArgument);
   static bool SimplifyComplexPart(Tree *t);
@@ -231,8 +229,6 @@ class Simplification {
     return SimplifyMultiplication(node) + ExpandMult(node);
   }
   EDITION_REF_WRAP(ExpandMultSubOperation);
-  static bool ExpandPowerComplex(Tree *node);
-  EDITION_REF_WRAP(ExpandPowerComplex);
   static bool ExpandPower(Tree *node);
   EDITION_REF_WRAP(ExpandPower);
 
@@ -255,7 +251,6 @@ class Simplification {
       Arithmetic::ExpandPermute,
       Projection::Expand,
       ExpandPower,
-      ExpandPowerComplex,
       ExpandMult,
       ExpandImRe,
   };

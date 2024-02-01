@@ -209,11 +209,6 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
            canBeNonInteger));
 }
 
-ComplexSign Complex(ComplexSign s0, ComplexSign s1) {
-  assert(s0.isReal() && s1.isReal());
-  return ComplexSign(s0.realSign(), s1.realSign());
-}
-
 // Note: A complex function plotter can be used to fill in these methods.
 ComplexSign ComplexSign::Get(const Tree* t) {
   assert(Dimension::GetDimension(t).isScalar());
@@ -260,8 +255,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ComplexSign(Get(t->firstChild()).imagSign(), Sign::Zero());
     case BlockType::Variable:
       return Variables::GetComplexSign(t);
-    case BlockType::Complex:
-      return Complex(Get(t->firstChild()), Get(t->child(1)));
+    case BlockType::ComplexI:
+      return ComplexSign(Sign::Zero(), Sign::PositiveInteger());
     case BlockType::Trig:
       assert(t->child(1)->isOne() || t->child(1)->isZero());
       return Trig(Get(t->firstChild()), t->child(1)->isOne());

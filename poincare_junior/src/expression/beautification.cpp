@@ -349,16 +349,6 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   return
       // lnReal(x) -> ln(x)
       PatternMatching::MatchAndReplace(ref, KLnReal(KA), KLn(KA)) ||
-      // Complex(0,1) -> i
-      PatternMatching::MatchAndReplace(ref, KComplex(0_e, 1_e), i_e) ||
-      // Complex(0,A) -> A*i
-      PatternMatching::MatchAndReplace(ref, KComplex(0_e, KA),
-                                       KMult(KA, i_e)) ||
-      // Complex(A,1) -> A+i
-      PatternMatching::MatchAndReplace(ref, KComplex(KA, 1_e), KAdd(KA, i_e)) ||
-      // Complex(A,B) -> A+B*i
-      PatternMatching::MatchAndReplace(ref, KComplex(KA, KB),
-                                       KAdd(KA, KMult(KB, i_e))) ||
       // exp(1) -> e
       PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
       // exp(A) -> e^A
@@ -367,6 +357,8 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(
           ref, KMult(-1_e, KTA, KFloor(KMult(-1_e, KB)), KTC),
           KMult(KTA, KCeil(KB), KTC)) ||
+      // i -> i
+      PatternMatching::MatchAndReplace(ref, KI, i_e) ||
       // A - floor(A) -> frac(A)
       PatternMatching::MatchAndReplace(
           ref, KAdd(KTA, KB, KTC, KMult(-1_e, KFloor(KB)), KTD),

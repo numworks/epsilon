@@ -19,6 +19,7 @@ constexpr auto KUndef = KTree<BlockType::Undefined>();
 constexpr auto KHalf = KTree<BlockType::Half>();
 constexpr auto KNonreal = KTree<BlockType::Nonreal>();
 constexpr auto KInf = KTree<BlockType::Infinity>();
+constexpr auto KI = KTree<BlockType::ComplexI>();
 
 constexpr auto KAbs = KUnary<BlockType::Abs>();
 constexpr auto KCos = KUnary<BlockType::Cosine>();
@@ -61,7 +62,6 @@ constexpr auto KArTanh = KUnary<BlockType::HyperbolicArcTangent>();
 constexpr auto KPercentSimple = KUnary<BlockType::PercentSimple>();
 
 constexpr auto KATrig = KBinary<BlockType::ATrig>();
-constexpr auto KComplex = KBinary<BlockType::Complex>();
 constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();
 constexpr auto KTrig = KBinary<BlockType::Trig>();
 constexpr auto KTrigDiff = KBinary<BlockType::TrigDiff>();

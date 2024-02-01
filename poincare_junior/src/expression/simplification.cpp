@@ -4,7 +4,6 @@
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/arithmetic.h>
 #include <poincare_junior/src/expression/comparison.h>
-#include <poincare_junior/src/expression/complex.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/dependency.h>
 #include <poincare_junior/src/expression/derivation.h>
@@ -173,8 +172,6 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Logarithm::SimplifyLn(u);
     case BlockType::Exponential:
       return SimplifyExp(u);
-    case BlockType::Complex:
-      return SimplifyComplex(u);
     case BlockType::ComplexArgument:
       return SimplifyComplexArgument(u);
     case BlockType::ImaginaryPart:
@@ -248,21 +245,14 @@ bool Simplification::SimplifyExp(Tree* u) {
 bool Simplification::SimplifyAbs(Tree* u) {
   assert(u->isAbs());
   Tree* child = u->nextNode();
-  bool changed = false;
   if (child->isAbs()) {
     // ||x|| -> |x|
     child->removeNode();
-    changed = true;
-  }
-  if (child->isComplex()) {
-    // |x+iy| = √(x^2+y^2)
-    return PatternMatching::MatchReplaceAndSimplify(
-               u, KAbs(KComplex(KA, KB)),
-               KExp(KMult(KHalf, KLn(KAdd(KPow(KA, 2_e), KPow(KB, 2_e)))))) ||
-           changed;
+    assert(!SimplifyAbs(u));
+    return true;
   }
   if (!child->isNumber()) {
-    return changed;
+    return false;
   }
   if (Number::Sign(child).isPositive()) {
     // |3| -> 3
@@ -323,28 +313,15 @@ bool Simplification::SimplifyPower(Tree* u) {
     u->moveTreeOverTree(v);
     return true;
   }
-  if (v->isComplex() && v->nextNode()->isZero()) {
-    // (0 + A*i)^n -> ±(A^n) or (0±(A^n)*i)
+  if (v->isComplexI()) {
+    // i^n -> ±1 or ±i
     Tree* remainder =
         IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
     int rem = Integer::Handler(remainder).to<uint8_t>();
     remainder->removeTree();
-    v->nextNode()->removeTree();
-    v->removeNode();
-    // A^n
-    SimplifyPower(u);
-    // u could be any tree from this point forward
-    if (rem > 1) {
-      // -u
-      u->moveTreeAtNode((-1_e)->clone());
-      u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
-      SimplifyMultiplication(u);
-    }
-    if (rem % 2 == 1) {
-      // u is a pure imaginary
-      u->moveTreeAtNode((0_e)->clone());
-      u->moveNodeAtNode(SharedEditionPool->push(BlockType::Complex));
-      assert(!SimplifyComplex(u));
+    if (rem != 1) {
+      u->cloneTreeOverTree(rem == 0 ? 1_e
+                                    : (rem == 2 ? -1_e : KMult(-1_e, KI)));
     }
     return true;
   }
@@ -480,13 +457,6 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
         KPow(KA, KAdd(KB, KC)),
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
     assert(!merge->isMultiplication());
-  } else if (child->isComplex() || next->isComplex()) {
-    // TODO: Move this in advanced reduction (not easy, many implications)
-    // (A+B*i)*(C+D*i) -> ((AC-BD)+(AD+BC)*i)
-    merge = PatternMatching::CreateAndSimplify(
-        KComplex(KAdd(KMult(KRe(KA), KRe(KB)), KMult(-1_e, KIm(KA), KIm(KB))),
-                 KAdd(KMult(KRe(KA), KIm(KB)), KMult(KIm(KA), KRe(KB)))),
-        {.KA = child, .KB = next});
   }
   if (!merge) {
     return false;
@@ -649,12 +619,6 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
         {.KA = Constant(child), .KB = Constant(next), .KC = term});
     term->removeTree();
     merge = term;
-  } else if (child->isComplex() || next->isComplex()) {
-    // TODO: Move this in advanced reduction (not easy, many implications)
-    // (A+B*i)+(C+D*i) -> ((A+C)+(B+D)*i)
-    merge = PatternMatching::CreateAndSimplify(
-        KComplex(KAdd(KRe(KA), KRe(KB)), KAdd(KIm(KA), KIm(KB))),
-        {.KA = child, .KB = next});
   }
   if (!merge) {
     return false;
@@ -720,78 +684,61 @@ bool Simplification::SimplifyAddition(Tree* u) {
   return true;
 }
 
-bool Simplification::SimplifyComplex(Tree* tree) {
-  assert(tree->isComplex());
-  Tree* imag = tree->child(1);
-  if (imag->isZero()) {
-    // (A+0*i) -> A
-    imag->removeTree();
-    tree->removeNode();
-    return true;
-  }
-  if (PatternMatching::MatchAndReplace(tree, KComplex(KRe(KA), KIm(KA)), KA)) {
-    // re(x)+i*im(x) = x
-    return true;
-  }
-  if (Complex::IsSanitized(tree)) {
-    return false;
-  }
-  // x+iy = (re(x)-im(y)) + i*(im(x)+re(y))
-  bool result = PatternMatching::MatchReplaceAndSimplify(
-      tree, KComplex(KA, KB),
-      KComplex(KAdd(KRe(KA), KMult(-1_e, KIm(KB))), KAdd(KIm(KA), KRe(KB))));
-  assert(result && Complex::IsSanitized(tree));
-  return result;
-}
-
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
   assert(tree->isComplexArgument());
   const Tree* child = tree->child(0);
-  if (Complex::CanExtractParts(child)) {
-    // arg(x + iy) = atan2(y, x)
-    const Tree* real = Complex::RealPart(child);
-    Sign realSign = Sign::Get(real);
-    if (realSign.isKnown()) {
-      const Tree* imag = Complex::ImagPart(child);
-      Sign imagSign = Sign::Get(imag);
-      if (realSign.isZero() && imagSign.isKnown()) {
-        if (imagSign.isZero()) {
-          // atan2(0, 0) = undef
-          ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
-        }
-        // atan2(y, 0) = π/2 if y > 0, -π/2 if y < 0
-        tree->cloneTreeOverTree(imagSign.isStrictlyPositive()
-                                    ? KMult(KHalf, π_e)
-                                    : KMult(-1_e / 2_e, π_e));
-        return true;
-      } else if (realSign.isStrictlyPositive() || imagSign.isPositive() ||
-                 imagSign.isStrictlyNegative()) {
-        /* atan2(y, x) = arctan(y/x)      if x > 0
-         *               arctan(y/x) + π  if y >= 0 and x < 0
-         *               arctan(y/x) - π  if y < 0  and x < 0 */
-        tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-            KAdd(KATanRad(KMult(KA, KPow(KB, -1_e))), KMult(KC, π_e)),
-            {.KA = imag,
-             .KB = real,
-             .KC = realSign.isStrictlyPositive()
-                       ? 0_e
-                       : (imagSign.isPositive() ? 1_e : -1_e)}));
-        return true;
-      }
-    }
+  ComplexSign childSign = ComplexSign::Get(child);
+  // arg(x + iy) = atan2(y, x)
+  Sign realSign = childSign.realSign();
+  if (!realSign.isKnown()) {
+    return false;
   }
-  return false;
+  Sign imagSign = childSign.imagSign();
+  if (realSign.isZero() && imagSign.isKnown()) {
+    if (imagSign.isZero()) {
+      // atan2(0, 0) = undef
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
+    // atan2(y, 0) = π/2 if y > 0, -π/2 if y < 0
+    tree->cloneTreeOverTree(imagSign.isStrictlyPositive()
+                                ? KMult(KHalf, π_e)
+                                : KMult(-1_e / 2_e, π_e));
+  } else if (realSign.isStrictlyPositive() || imagSign.isPositive() ||
+             imagSign.isStrictlyNegative()) {
+    /* atan2(y, x) = arctan(y/x)      if x > 0
+     *               arctan(y/x) + π  if y >= 0 and x < 0
+     *               arctan(y/x) - π  if y < 0  and x < 0 */
+    tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KAdd(KATanRad(KMult(KIm(KA), KPow(KRe(KA), -1_e))), KMult(KB, π_e)),
+        {.KA = child,
+         .KB = realSign.isStrictlyPositive()
+                   ? 0_e
+                   : (imagSign.isPositive() ? 1_e : -1_e)}));
+  } else {
+    return false;
+  }
+  return true;
 }
 
 bool Simplification::SimplifyComplexPart(Tree* tree) {
   assert(tree->isRealPart() || tree->isImaginaryPart());
   Tree* child = tree->child(0);
-  if (!Complex::CanExtractParts(child)) {
+  ComplexSign childSign = ComplexSign::Get(child);
+  if (!childSign.isPure()) {
+    // Rely on advanced reduction re(x+iy) -> re(x) + re(iy)
     return false;
   }
-  // re(x+i*y) = x, im(x+i*y) = y
-  tree->cloneTreeOverTree(
-      (tree->isRealPart() ? Complex::RealPart : Complex::ImagPart)(child));
+  if (tree->isRealPart() != childSign.isReal()) {
+    // re(x) = 0 or im(x) = 0
+    tree->cloneTreeOverTree(0_e);
+  } else if (tree->isRealPart()) {
+    // re(x) = x
+    tree->removeNode();
+  } else {
+    // im(x) = -i*x
+    tree->moveTreeOverTree(
+        PatternMatching::CreateAndSimplify(KMult(-1_e, KI, KA), {.KA = child}));
+  }
   return true;
 }
 
@@ -1311,7 +1258,36 @@ bool Simplification::ExpandImRe(Tree* ref) {
                                                KAdd(KIm(KA), KIm(KAdd(KTB)))) ||
       // re(A+B) = re(A) + re(B)
       PatternMatching::MatchReplaceAndSimplify(ref, KRe(KAdd(KA, KTB)),
-                                               KAdd(KRe(KA), KRe(KAdd(KTB))));
+                                               KAdd(KRe(KA), KRe(KAdd(KTB)))) ||
+      // im(A*B) = im(A)re(B) + re(A)im(B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KIm(KMult(KA, KTB)),
+          KAdd(KMult(KIm(KA), KRe(KMult(KTB))),
+               KMult(KRe(KA), KIm(KMult(KTB))))) ||
+      // re(A*B) = re(A)*re(B) - im(A)*im(B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KRe(KMult(KA, KTB)),
+          KAdd(KMult(KRe(KA), KRe(KMult(KTB))),
+               KMult(-1_e, KIm(KA), KIm(KMult(KTB))))) ||
+      // Replace im and re in additions only to prevent infinitely expanding
+      // A? + B?*im(C)*D? + E? = A - i*B*C*D + i*B*re(C)*D + E
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KMult(KTB, KIm(KC), KTD), KTE),
+          KAdd(KTA, KMult(-1_e, KI, KTB, KC, KTD), KMult(KI, KTB, KRe(KC), KTD),
+               KTE)) ||
+      // A? + B?*re(C)*D? + E? = A + B*C*D - B*im(C)*D + E
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KMult(KTB, KRe(KC), KTD), KTE),
+          KAdd(KTA, KMult(KTB, KC, KTD), KMult(-1_e, KTB, KIm(KC), KTD),
+               KTE)) ||
+      // A? + im(B) + C? = A - i*B + i*re(B) + C
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KIm(KB), KTC),
+          KAdd(KTA, KMult(-1_e, KI, KB), KMult(KI, KRe(KB)), KTC)) ||
+      // A? + re(B) + C? = A + B - i*im(B) + C
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KRe(KB), KTC),
+          KAdd(KTA, KB, KMult(-1_e, KI, KIm(KB)), KTC));
 }
 
 bool Simplification::ContractAbs(Tree* ref) {
@@ -1322,27 +1298,39 @@ bool Simplification::ContractAbs(Tree* ref) {
 }
 
 bool Simplification::ExpandAbs(Tree* ref) {
-  // |A*B?| = |A|*|B|
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KAbs(KMult(KA, KTB)), KMult(KAbs(KA), KAbs(KMult(KTB))));
+  return
+      // |A*B?| = |A|*|B|
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAbs(KMult(KA, KTB)), KMult(KAbs(KA), KAbs(KMult(KTB)))) ||
+      // |x| = √(re(x)^2+im(x)^2)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAbs(KA),
+          KExp(
+              KMult(KHalf, KLn(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e))))));
 }
 
 bool Simplification::ExpandExp(Tree* ref) {
   return
-      // exp(A+iB) = exp(A)*(cos(B) + i*sin(B))
+      // exp(A?*i*B?) = cos(B*C) + i*sin(B*C)
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KExp(KComplex(KA, KB)),
-          KMult(KExp(KA), KComplex(KTrig(KB, 0_e), KTrig(KB, 1_e)))) ||
+          ref, KExp(KMult(KTA, KI, KTB)),
+          KAdd(KTrig(KMult(KTA, KTB), 0_e),
+               KMult(KI, KTrig(KMult(KTA, KTB), 1_e)))) ||
       // exp(A+B?) = exp(A) * exp(B)
       PatternMatching::MatchReplaceAndSimplify(
           ref, KExp(KAdd(KA, KTB)), KMult(KExp(KA), KExp(KAdd(KTB))));
 }
 
 bool Simplification::ContractExpMult(Tree* ref) {
-  // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KMult(KTA, KExp(KB), KExp(KC), KTD),
-      KMult(KTA, KExp(KAdd(KB, KC)), KTD));
+  return
+      // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KMult(KTA, KExp(KB), KExp(KC), KTD),
+          KMult(KTA, KExp(KAdd(KB, KC)), KTD)) ||
+      // A? + cos(B) + C? + i*sin(B) + D? = A + C + D + exp(i*B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KTrig(KB, 0_e), KTC, KMult(KI, KTrig(KB, 1_e)), KTD),
+          KAdd(KTA, KTC, KTD, KExp(KMult(KI, KB))));
 }
 
 bool Simplification::ExpandMult(Tree* ref) {
@@ -1359,14 +1347,6 @@ bool Simplification::ContractMult(Tree* ref) {
   return PatternMatching::MatchReplaceAndSimplify(
       ref, KAdd(KTA, KMult(KTB, KC, KTD), KTE, KMult(KTF, KC, KTG), KTH),
       KAdd(KTA, KMult(KC, KAdd(KMult(KTB, KTD), KMult(KTF, KTG))), KTE, KTH));
-}
-
-bool Simplification::ExpandPowerComplex(Tree* ref) {
-  // (A + B*i)^2 = (A^2 -2*B^2 + 2*A*B*i)
-  return PatternMatching::MatchReplaceAndSimplify(
-      ref, KPow(KComplex(KA, KB), 2_e),
-      KComplex(KAdd(KPow(KA, 2_e), KMult(-1_e, KPow(KB, 2_e))),
-               KMult(2_e, KA, KB)));
 }
 
 bool Simplification::ExpandPower(Tree* ref) {

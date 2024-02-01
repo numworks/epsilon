@@ -302,6 +302,9 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       PushCodePoint(layoutParent,
                     Constant::ToCodePoint(Constant::Type(expression)));
       break;
+    case BlockType::ComplexI:
+      PushCodePoint(layoutParent, 'i');
+      break;
     case BlockType::UserSymbol:
       assert(Symbol::Length(expression) == 1);
       PushCodePoint(layoutParent, *Symbol::NonNullTerminatedName(expression));

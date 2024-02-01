@@ -90,15 +90,6 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
       }
       return true;
     }
-    case BlockType::Complex:
-      // TODO: Should we actually handle this ?
-      if (index == 1) {
-        SharedEditionPool->push(BlockType::Complex);
-        SharedEditionPool->push(BlockType::Zero);
-        SharedEditionPool->push(BlockType::One);
-        return true;
-      }
-      // Fall through Addition
     case BlockType::Addition:
       // Di(x0 + x1 + ... + xi + ...) = 1
       SharedEditionPool->push(BlockType::One);

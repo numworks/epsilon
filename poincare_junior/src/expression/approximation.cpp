@@ -636,62 +636,45 @@ Tree* PushComplex(std::complex<T> value) {
 template <typename T>
 Tree* Approximation::PushBeautifiedComplex(std::complex<T> value,
                                            ComplexFormat complexFormat) {
-  if (complexFormat == ComplexFormat::Polar) {
-    T abs = std::abs(value);
-    T arg = std::arg(value);
-    if (arg == 0) {
-      return SharedEditionPool->push<FloatType<T>::type>(abs);
+  constexpr BlockType Type = FloatType<T>::type;
+  T re = value.real(), im = value.imag();
+  if (std::isnan(re) || std::isnan(im)) {
+    return SharedEditionPool->push(BlockType::Undefined);
+  }
+  if (im != 0 && complexFormat == PoincareJ::ComplexFormat::Real) {
+    return SharedEditionPool->push(BlockType::Nonreal);
+  }
+  if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
+    return SharedEditionPool->push<Type>(re);
+  }
+  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  // Real part and separator
+  if (complexFormat == ComplexFormat::Cartesian) {
+    // [re+]
+    if (re != 0) {
+      SharedEditionPool->push<BlockType::Addition>(2);
+      SharedEditionPool->push<Type>(re);
     }
-    Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  } else {
+    // [abs×]e^
+    T abs = std::abs(value);
     if (abs != 1) {
       SharedEditionPool->push<BlockType::Multiplication>(2);
-      SharedEditionPool->push<FloatType<T>::type>(abs);
+      SharedEditionPool->push<Type>(abs);
     }
     SharedEditionPool->push(BlockType::Power);
     SharedEditionPool->push<BlockType::Constant>(u'e');
-    if (arg != 1 && arg != -1) {
-      SharedEditionPool->push<BlockType::Multiplication>(2);
-      SharedEditionPool->push<FloatType<T>::type>(arg);
-    } else if (arg == -1) {
-      SharedEditionPool->push(BlockType::Opposite);
-    }
-    SharedEditionPool->push<BlockType::Constant>(u'i');
-    return result;
+    im = std::arg(value);
   }
-  if (std::isnan(value.real()) || std::isnan(value.imag())) {
-    return SharedEditionPool->push(BlockType::Undefined);
-  }
-  if (value.imag() == 0.0) {
-    return SharedEditionPool->push<FloatType<T>::type>(value.real());
-  }
-  if (complexFormat == PoincareJ::ComplexFormat::Real) {
-    return SharedEditionPool->push(BlockType::Nonreal);
-  }
-  if (value.real() == 0.0) {
-    if (value.imag() == 1) {
-      return SharedEditionPool->push<BlockType::Constant>(u'i');
-    }
-    if (value.imag() == -1) {
-      Tree* result = SharedEditionPool->push(BlockType::Opposite);
-      SharedEditionPool->push<BlockType::Constant>(u'i');
-      return result;
-    }
-    Tree* result = SharedEditionPool->push<BlockType::Multiplication>(2);
-    SharedEditionPool->push<FloatType<T>::type>(value.imag());
-    SharedEditionPool->push<BlockType::Constant>(u'i');
-    return result;
-  }
-  Tree* result = SharedEditionPool->push<BlockType::Addition>(2);
-  SharedEditionPool->push<FloatType<T>::type>(value.real());
-  if (value.imag() < 0) {
+  // Complex part ±[im×]i
+  if (im < 0) {
     SharedEditionPool->push(BlockType::Opposite);
+    im = -im;
   }
-  if (value.imag() == 1 || value.imag() == -1) {
-    SharedEditionPool->push<BlockType::Constant>(u'i');
-    return result;
+  if (im != 1) {
+    SharedEditionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->push<Type>(im);
   }
-  SharedEditionPool->push<BlockType::Multiplication>(2);
-  SharedEditionPool->push<FloatType<T>::type>(std::abs(value.imag()));
   SharedEditionPool->push<BlockType::Constant>(u'i');
   return result;
 }

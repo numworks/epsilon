@@ -1113,11 +1113,6 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
     LogIndent();
     std::cout << "Full path.\n";
 #endif
-  } else if (crcCollection->isFull()) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-    LogIndent();
-    std::cout << "Full CRC collection.\n";
-#endif
   } else {
     bool isLeaf = true;
     for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
@@ -1195,11 +1190,14 @@ void Simplification::AdvancedReductionRec(Tree* u, Tree* root,
         }
 #endif
       }
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
       else if (crcCollection->isFull()) {
         LogIndent();
         std::cout << "Full CRC collection.\n";
-      } else {
+      }
+#endif
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+      else {
         LogIndent();
         std::cout << "Already applied ";
         dir.log();

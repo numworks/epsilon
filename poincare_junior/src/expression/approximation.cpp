@@ -636,6 +636,28 @@ Tree* PushComplex(std::complex<T> value) {
 template <typename T>
 Tree* Approximation::PushBeautifiedComplex(std::complex<T> value,
                                            ComplexFormat complexFormat) {
+  if (complexFormat == ComplexFormat::Polar) {
+    T abs = std::abs(value);
+    T arg = std::arg(value);
+    if (arg == 0) {
+      return SharedEditionPool->push<FloatType<T>::type>(abs);
+    }
+    Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+    if (abs != 1) {
+      SharedEditionPool->push<BlockType::Multiplication>(2);
+      SharedEditionPool->push<FloatType<T>::type>(abs);
+    }
+    SharedEditionPool->push(BlockType::Power);
+    SharedEditionPool->push<BlockType::Constant>(u'e');
+    if (arg != 1 && arg != -1) {
+      SharedEditionPool->push<BlockType::Multiplication>(2);
+      SharedEditionPool->push<FloatType<T>::type>(arg);
+    } else if (arg == -1) {
+      SharedEditionPool->push(BlockType::Opposite);
+    }
+    SharedEditionPool->push<BlockType::Constant>(u'i');
+    return result;
+  }
   if (std::isnan(value.real()) || std::isnan(value.imag())) {
     return SharedEditionPool->push(BlockType::Undefined);
   }

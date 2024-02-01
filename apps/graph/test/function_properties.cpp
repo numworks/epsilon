@@ -872,6 +872,47 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
   store.removeAll();
+
+  // For derivatives
+  addFunction("f(x)=3x", &store, &context);
+  assert_same_function_properties("f1(x)=f'(x)", "f2(x)=diff(f(x),x,x)");
+  assert_same_function_properties("f1(x)=f\"(x)", "f2(x)=diff(f(x),x,x,2)");
+  assert_same_function_properties("f1(x)=f^(3)(x)", "f2(x)=diff(f(x),x,x,3)");
+  assert_same_function_properties("y=f'(x)", "y=diff(f(x),x,x)");
+  assert_same_function_properties("y=f\"(x)", "y=diff(f(x),x,x,2)");
+  assert_same_function_properties("y=f^(3)(x)", "y=diff(f(x),x,x,3)");
+  addFunction("r1(θ)=cos(θ)", &store, &context);
+  assert_same_function_properties("r2(θ)=r1'(θ)", "r3(θ)=diff(r1(θ),θ,θ)");
+  assert_same_function_properties("r2(θ)=r1\"(θ)", "r3(θ)=diff(r1(θ),θ,θ,2)");
+  assert_same_function_properties("r2(θ)=r1^(3)(θ)", "r3(θ)=diff(r1(θ),θ,θ,3)");
+  assert_same_function_properties("r=r1'(θ)", "r=diff(r1(θ),θ,θ)");
+  assert_same_function_properties("r=r1\"(θ)", "r=diff(r1(θ),θ,θ,2)");
+  assert_same_function_properties("r=r1^(3)(θ)", "r=diff(r1(θ),θ,θ,3)");
+  addFunction("g(t)=(-t,t)", &store, &context);
+  assert_same_function_properties("g1(t)=g'(t)", "g2(t)=diff(g(t),t,t)");
+  assert_same_function_properties("g1(t)=g\"(t)", "g2(t)=diff(g(t),t,t,2)");
+  assert_same_function_properties("g1(t)=g^(3)(t)", "g2(t)=diff(g(t),t,t,3)");
+
+  // We do not distibute operations on points
+  assert_check_function_properties(
+      "h(t)=g(t)",
+      FunctionProperties{
+          .m_caption = I18n::Message::ParametricLineType,
+          .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+          .m_curveParameterType =
+              ContinuousFunctionProperties::CurveParameterType::Parametric});
+  constexpr static FunctionProperties k_unhandledParametric =
+      FunctionProperties{
+          .m_status = ContinuousFunctionProperties::Status::Unhandled,
+          .m_caption = I18n::Message::UnhandledType,
+          .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+          .m_curveParameterType =
+              ContinuousFunctionProperties::CurveParameterType::Parametric};
+  assert_check_function_properties("h(t)=g'(t)", k_unhandledParametric);
+  assert_check_function_properties("h(t)=2g(t)", k_unhandledParametric);
+  assert_check_function_properties("h(t)=2g'(t)", k_unhandledParametric);
+
+  store.removeAll();
 }
 
 }  // namespace Graph

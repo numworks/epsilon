@@ -689,6 +689,10 @@ Tree* Approximation::ToList(const Tree* node) {
   return list;
 }
 
+/* Using our consteval operator- inside a template<float> does not work with
+ * llvm14 it works with 17. */
+constexpr KTree minusOne = -1_e;
+
 template <typename T>
 Tree* Approximation::ToMatrix(const Tree* node) {
   /* TODO : Normal matrix nodes and operations with approximated children are
@@ -715,6 +719,22 @@ Tree* Approximation::ToMatrix(const Tree* node) {
         result->removeTree();
       }
       return result;
+    }
+    case BlockType::Subtraction: {
+      Tree* a = ToMatrix<T>(node->child(0));
+      Tree* b = ToMatrix<T>(node->child(1));
+      b->moveTreeOverTree(Matrix::ScalarMultiplication(minusOne, b, true));
+      Matrix::Addition(a, b);
+      a->removeTree();
+      a->removeTree();
+      return a;
+    }
+    case BlockType::Division: {
+      Tree* a = ToMatrix<T>(node->child(0));
+      Tree* s = PushComplex(static_cast<T>(1) / ToComplex<T>(node->child(1)));
+      s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true));
+      a->removeTree();
+      return a;
     }
     case BlockType::PowerMatrix: {
       const Tree* base = node->child(0);

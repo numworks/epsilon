@@ -280,23 +280,20 @@ Expression SimplificationHelper::reduceAfterBubblingUpDependencies(
   return d.shallowReduce(reductionContext);
 }
 
-bool SimplificationHelper::extractIntegerChildAtIndex(
-    Expression e, int integerChildIndex, int* integerChildReturnValue,
-    bool* isSymbolReturnValue) {
-  assert(e.numberOfChildren() > integerChildIndex);
-  Expression child = e.childAtIndex(integerChildIndex);
+bool SimplificationHelper::extractInteger(Expression e, int* integerReturnValue,
+                                          bool* isSymbolReturnValue) {
   *isSymbolReturnValue = false;
   int coef;
   Expression numberExpression;
-  if (child.isNumber()) {
+  if (e.isNumber()) {
     coef = 1;
-    numberExpression = child;
-  } else if (child.type() == ExpressionNode::Type::Opposite &&
-             child.childAtIndex(0).isNumber()) {
+    numberExpression = e;
+  } else if (e.type() == ExpressionNode::Type::Opposite &&
+             e.childAtIndex(0).isNumber()) {
     coef = -1;
-    numberExpression = child.childAtIndex(0);
+    numberExpression = e.childAtIndex(0);
   } else {
-    if (child.type() != ExpressionNode::Type::Symbol) {
+    if (e.type() != ExpressionNode::Type::Symbol) {
       return false;
     }
     *isSymbolReturnValue = true;
@@ -310,8 +307,16 @@ bool SimplificationHelper::extractIntegerChildAtIndex(
   if (!integer.isExtractable()) {
     return false;
   }
-  *integerChildReturnValue = coef * integer.extractedInt();
+  *integerReturnValue = coef * integer.extractedInt();
   return true;
+}
+
+bool SimplificationHelper::extractIntegerChildAtIndex(
+    Expression e, int integerChildIndex, int* integerChildReturnValue,
+    bool* isSymbolReturnValue) {
+  assert(e.numberOfChildren() > integerChildIndex);
+  Expression child = e.childAtIndex(integerChildIndex);
+  return extractInteger(child, integerChildReturnValue, isSymbolReturnValue);
 }
 
 }  // namespace Poincare

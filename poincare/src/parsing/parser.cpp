@@ -2,6 +2,7 @@
 
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/empty_context.h>
+#include <poincare/simplification_helper.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -791,13 +792,14 @@ void Parser::privateParseReservedFunction(
 
   // Parse cos^n(x)
   bool powerFunction = false;
-  Expression base = parseIntegerCaretForFunction();
+  int powerValue;
+  Expression base = parseIntegerCaretForFunction(&powerValue);
   if (m_status != Status::Progress) {
     return;
   }
   if (!base.isUninitialized()) {
     assert(base.isInteger());
-    if (base.isMinusOne()) {
+    if (powerValue == -1) {
       // Detect cos^-1(x) --> arccos(x)
       const char *mainAlias = aliasesList.mainAlias();
       functionHelper =
@@ -1254,7 +1256,7 @@ bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
          e.type() == ExpressionNode::Type::EmptyExpression;
 }
 
-Expression Parser::parseIntegerCaretForFunction() {
+Expression Parser::parseIntegerCaretForFunction(int *caretIntegerValue) {
   // Parse f^n(x)
   Token::Type endDelimiterOfPower;
   if (popTokenIfType(Token::Type::CaretWithParenthesis)) {
@@ -1276,7 +1278,11 @@ Expression Parser::parseIntegerCaretForFunction() {
     m_status = Status::Error;
     return Expression();
   }
-  if (base.isInteger()) {
+  bool isSymbol;
+  assert(caretIntegerValue);
+  if (SimplificationHelper::extractInteger(base, caretIntegerValue,
+                                           &isSymbol) &&
+      !isSymbol) {
     return base;
   }
   m_status = Status::Error;

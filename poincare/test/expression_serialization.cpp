@@ -349,6 +349,9 @@ QUIZ_CASE(poincare_serialization_derivative) {
       "f^(3)(x)");
   assert_expression_parses_and_serializes_to("f'(x)", "f×_'×(x)");
   assert_expression_parses_and_serializes_to("f\"(x)", "f×_\"×(x)");
+  assert_expression_parses_and_serializes_to("f''(x)", "f×_'×_'×(x)");
+  assert_expression_parses_and_serializes_to("f'\"(x)", "f×_'×_\"×(x)");
+  assert_expression_parses_and_serializes_to("f\"\"(x)", "f×_\"×_\"×(x)");
   assert_expression_parses_and_serializes_to("f^(1)(x)", "f^(1)×(x)");
   assert_expression_parses_and_serializes_to("f^(2)(x)", "f^(2)×(x)");
   assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)×(x)");
@@ -364,6 +367,10 @@ QUIZ_CASE(poincare_serialization_derivative) {
   assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a)");
   assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,2)");
   assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,3)");
+  assert_expression_parses_and_serializes_to("f''(x)", "f\"(x)");
+  assert_expression_parses_and_serializes_to("f'''(x)", "f^(3)(x)");
+  assert_expression_parses_and_serializes_to("f'\"(x)", "f^(3)(x)");
+  assert_expression_parses_and_serializes_to("f\"\"(x)", "f^(4)(x)");
   assert_expression_parses_and_serializes_to("f^(1)(x)", "f'(x)");
   assert_expression_parses_and_serializes_to("f^(2)(x)", "f\"(x)");
   assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)(x)");

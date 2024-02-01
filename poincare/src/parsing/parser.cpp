@@ -981,11 +981,14 @@ bool Parser::privateParseCustomIdentifierWithParameters(
     bool parseApostropheAsDerivative) {
   int derivativeOrder = 0;
   if (parseApostropheAsDerivative) {
-    if (m_nextToken.length() == 1 &&
-        (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
+    // Case 1: parse f'''(x)
+    while (m_nextToken.length() == 1 &&
+           (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
       popToken();
-      derivativeOrder = m_currentToken.text()[0] == '\'' ? 1 : 2;
-    } else {
+      derivativeOrder += m_currentToken.text()[0] == '\'' ? 1 : 2;
+    }
+    // Case 2: parse f^(3)(x)
+    if (derivativeOrder == 0) {
       Expression base = parseIntegerCaretForFunction(true, &derivativeOrder);
       if (m_status != Status::Progress || base.isUninitialized() ||
           derivativeOrder < 0) {

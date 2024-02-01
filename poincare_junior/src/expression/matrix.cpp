@@ -38,7 +38,7 @@ Tree* Matrix::Identity(const Tree* n) {
   return result;
 }
 
-Tree* Matrix::Trace(const Tree* matrix) {
+Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   int n = NumberOfRows(matrix);
   assert(n == NumberOfColumns(matrix));
   Tree* result = SharedEditionPool->push<BlockType::Addition>(n);
@@ -50,7 +50,11 @@ Tree* Matrix::Trace(const Tree* matrix) {
     }
   }
   child->clone();
-  Simplification::SimplifyAddition(result);
+  if (approximate) {
+    Approximation::SimplifyComplex(result);
+  } else {
+    Simplification::SimplifyAddition(result);
+  }
   return result;
 }
 
@@ -81,7 +85,7 @@ Tree* Matrix::Transpose(const Tree* m) {
   return result;
 }
 
-Tree* Matrix::Addition(const Tree* u, const Tree* v) {
+Tree* Matrix::Addition(const Tree* u, const Tree* v, bool approximate) {
   // should be an assert after dimensional analysis
   assert(NumberOfRows(u) == NumberOfRows(v) &&
          NumberOfColumns(u) == NumberOfColumns(v));
@@ -93,25 +97,34 @@ Tree* Matrix::Addition(const Tree* u, const Tree* v) {
     Tree* child = KAdd.node<2>->cloneNode();
     childU->clone();
     childV->clone();
-    Simplification::SimplifyAddition(child);
+    if (approximate) {
+      Approximation::SimplifyComplex(child);
+    } else {
+      Simplification::SimplifyAddition(child);
+    }
     childU = childU->nextTree();
     childV = childV->nextTree();
   }
   return result;
 }
 
-Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m) {
+Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
+                                   bool approximate) {
   Tree* result = m->cloneNode();
   for (const Tree* child : m->children()) {
     Tree* mult = SharedEditionPool->push<BlockType::Multiplication>(2);
     scalar->clone();
     child->clone();
-    Simplification::SimplifyMultiplication(mult);
+    if (approximate) {
+      Approximation::SimplifyComplex(mult);
+    } else {
+      Simplification::SimplifyMultiplication(mult);
+    }
   }
   return result;
 }
 
-Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
+Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
   assert(NumberOfColumns(u) == NumberOfRows(v));
   uint8_t rows = NumberOfRows(u);
   uint8_t internal = NumberOfColumns(u);
@@ -145,9 +158,17 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
         assert(rowsV[k] == Child(v, k, col));
         rowsV[k]->clone();
         rowsV[k] = rowsV[k]->nextTree();
-        Simplification::SimplifyMultiplication(mult);
+        if (approximate) {
+          Approximation::SimplifyComplex(mult);
+        } else {
+          Simplification::SimplifyMultiplication(mult);
+        }
       }
-      Simplification::SimplifyAddition(add);
+      if (approximate) {
+        Approximation::SimplifyComplex(add);
+      } else {
+        Simplification::SimplifyAddition(add);
+      }
     }
     childURow0 = childURowK;
     // Since each row has moved cols times we can shift them to restore them
@@ -159,9 +180,10 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v) {
   return result;
 }
 
-bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
+bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
+                         bool approximate) {
   // The matrix children have to be reduced to be able to spot 0
-  // assert(!Simplification::DeepSystematicReduce(matrix));
+  assert(approximate || !Simplification::DeepSystematicReduce(matrix));
 
   EditionReference det;
   if (determinant) {
@@ -210,7 +232,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
     Tree* candidate = Child(matrix, iPivot, k);
     if (candidate->isZero() ||
-        (candidate->isFloat() &&
+        (approximate &&
          std::abs(Approximation::ToComplex<float>(candidate)) == 0)) {
       // No non-null coefficient in this column, skip
       k++;
@@ -238,8 +260,15 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
       Tree* opHJ = divisor;
       for (int j = k + 1; j < n; j++) {
         opHJ = opHJ->nextTree();
-        opHJ->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-            KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
+        if (approximate) {
+          Tree* newOpHJ = PatternMatching::Create(KMult(KA, KPow(KB, -1_e)),
+                                                  {.KA = opHJ, .KB = divisor});
+          Approximation::SimplifyComplex(newOpHJ);
+          opHJ->moveTreeOverTree(newOpHJ);
+        } else {
+          opHJ->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+              KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
+        }
         // TODO : Dependency
       }
       divisor->cloneTreeOverTree(1_e);
@@ -258,9 +287,17 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
         for (int j = k + 1; j < n; j++) {
           opIJ = opIJ->nextTree();
           opHJ = opHJ->nextTree();
-          opIJ->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-              KAdd(KA, KMult(-1_e, KB, KC)),
-              {.KA = opIJ, .KB = opHJ, .KC = factor}));
+          if (approximate) {
+            Tree* newOpIJ =
+                PatternMatching::Create(KAdd(KA, KMult(-1_e, KB, KC)),
+                                        {.KA = opIJ, .KB = opHJ, .KC = factor});
+            Approximation::SimplifyComplex(newOpIJ);
+            opIJ->moveTreeOverTree(newOpIJ);
+          } else {
+            opIJ->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+                KAdd(KA, KMult(-1_e, KB, KC)),
+                {.KA = opIJ, .KB = opHJ, .KC = factor}));
+          }
           // TODO : Dependency
         }
         factor->cloneTreeOverTree(0_e);
@@ -270,7 +307,11 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant) {
     }
   }
   if (determinant) {
-    Simplification::ShallowSystematicReduce(det);
+    if (approximate) {
+      Approximation::SimplifyComplex(det);
+    } else {
+      Simplification::ShallowSystematicReduce(det);
+    }
     *determinant = det;
   }
   return true;
@@ -308,7 +349,7 @@ int Matrix::RankOfCanonized(const Tree* m) {
   return rank;
 }
 
-Tree* Matrix::Inverse(const Tree* m) {
+Tree* Matrix::Inverse(const Tree* m, bool approximate) {
   assert(NumberOfRows(m) == NumberOfColumns(m));
   int dim = NumberOfRows(m);
   /* Create the matrix (A|I) with A is the input matrix and I the dim
@@ -325,7 +366,7 @@ Tree* Matrix::Inverse(const Tree* m) {
     }
   }
   // Compute the inverse
-  RowCanonize(matrixAI);
+  RowCanonize(matrixAI, true, nullptr, approximate);
   // Check inversibility
   for (int i = 0; i < dim; i++) {
     if (!Child(matrixAI, i, i)->isOne()) {
@@ -346,12 +387,12 @@ Tree* Matrix::Inverse(const Tree* m) {
   return matrixAI;
 }
 
-Tree* Matrix::Power(const Tree* m, int p) {
+Tree* Matrix::Power(const Tree* m, int p, bool approximate) {
   assert(NumberOfRows(m) == NumberOfColumns(m));
   if (p < 0) {
     Tree* result = Power(m, -p);
     // TODO is it worth to compute inverse first ?
-    result->moveTreeOverTree(Inverse(result));
+    result->moveTreeOverTree(Inverse(result, approximate));
     return result;
   }
   if (p == 0) {
@@ -367,9 +408,9 @@ Tree* Matrix::Power(const Tree* m, int p) {
   }
   // Quick exponentiation
   Tree* result = Power(m, p / 2);
-  result->moveTreeOverTree(Multiplication(result, result));
+  result->moveTreeOverTree(Multiplication(result, result, approximate));
   if (p % 2 == 1) {
-    result->moveTreeOverTree(Multiplication(m, result));
+    result->moveTreeOverTree(Multiplication(m, result, approximate));
   }
   return result;
 }

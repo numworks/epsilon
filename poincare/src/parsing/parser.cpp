@@ -1273,7 +1273,9 @@ Expression Parser::parseIntegerCaretForFunction(bool allowParenthesis,
   } else if (popTokenIfType(Token::Type::Caret)) {
     endDelimiterOfPower = Token::Type::RightParenthesis;
     if (!popTokenIfType(Token::Type::LeftParenthesis)) {
-      m_status = Status::Error;  // Exponent should be parenthesed
+      // Exponent should be parenthesed
+      // TODO: allow without parenthesis?
+      m_status = Status::Error;
       return Expression();
     }
   } else {

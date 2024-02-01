@@ -156,6 +156,9 @@ class PatternMatching {
     /* From a local pattern and source node, sets the local context (node's
      * parents) */
     void setLocalFromChild(const Tree* source, const Tree* pattern);
+#if POINCARE_MEMORY_TREE_LOG
+    __attribute__((__used__)) void log() const;
+#endif
 
    private:
     static bool ReachedLimit(const Tree* node, const Block* end) {

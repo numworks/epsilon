@@ -37,6 +37,37 @@ void PatternMatching::Context::log() const {
   }
   std::cout << "</Context>\n";
 }
+
+void logGlobal(const Tree* globalRoot, const Block* globalRootEnd,
+               const Tree* localRoot, const Block* localRootEnd) {
+  bool localEndPrinted = false;
+  for (const Tree* u : globalRoot->selfAndDescendants()) {
+    assert(u != globalRootEnd);
+    if (u == localRoot) {
+      std::cout << " ( ";
+    }
+    if (u == localRootEnd) {
+      localEndPrinted = true;
+      std::cout << " ) ";
+    }
+    std::cout << "[";
+    u->logName(std::cout);
+    u->logAttributes(std::cout);
+    std::cout << "]";
+  }
+  if (!localEndPrinted) {
+    std::cout << " ) ";
+  }
+}
+
+void PatternMatching::MatchContext::log() const {
+  std::cout << "\tSource  : ";
+  logGlobal(m_globalSourceRoot, m_globalSourceEnd, m_localSourceRoot,
+            m_localSourceEnd);
+  std::cout << "\n\tPattern : ";
+  logGlobal(m_globalPatternRoot, m_globalPatternEnd, nullptr,
+            m_localPatternEnd);
+}
 #endif
 
 PatternMatching::MatchContext::MatchContext(const Tree* source,

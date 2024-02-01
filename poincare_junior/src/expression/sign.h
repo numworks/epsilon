@@ -144,7 +144,7 @@ struct ComplexSign {
   static constexpr ComplexSign ComplexZero() {
     return ComplexSign(Sign::Zero(), Sign::Zero());
   }
-  static constexpr ComplexSign ComplexOne() {
+  static constexpr ComplexSign RealPositiveInteger() {
     return ComplexSign(Sign::PositiveInteger(), Sign::Zero());
   }
 

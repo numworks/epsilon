@@ -190,7 +190,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
     return ComplexSign::ComplexZero();
   }
   if (exp.isZero()) {
-    return ComplexSign::ComplexOne();
+    return ComplexSign::RealPositiveInteger();  // 1
   }
   bool isInteger = (base.isInteger() && exp.realSign().isPositive());
   bool baseIsReal = base.isReal();
@@ -218,7 +218,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
   }
   switch (t->type()) {
     case BlockType::Multiplication: {
-      ComplexSign s = ComplexOne();
+      ComplexSign s = RealPositiveInteger();  // 1
       for (const Tree* c : t->children()) {
         s = Mult(s, Get(c));
         if (s.isUnknown() || s.isZero()) {
@@ -275,7 +275,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ArcCosine(Get(t->firstChild()));
     case BlockType::Factorial:
       assert(Get(t->firstChild()).isReal() && Get(t->firstChild()).isInteger());
-      return ComplexOne();
+      return RealPositiveInteger();
     case BlockType::Ceiling:
     case BlockType::Floor:
     case BlockType::FracPart:

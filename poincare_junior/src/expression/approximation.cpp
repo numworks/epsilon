@@ -312,7 +312,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       Tree* m = ToMatrix<T>(node->child(0));
       Tree* value;
       if (node->isDet()) {
-        Matrix::RowCanonize(m, true, &value);
+        Matrix::RowCanonize(m, true, &value, true);
       } else if (node->isNorm()) {
         value = Vector::Norm(m);
       } else {
@@ -710,7 +710,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       while (n--) {
         child = child->nextTree();
         Tree* approximatedChild = ToMatrix<T>(child);
-        Matrix::Addition(result, approximatedChild);
+        Matrix::Addition(result, approximatedChild, true);
         approximatedChild->removeTree();
         result->removeTree();
       }
@@ -724,13 +724,13 @@ Tree* Approximation::ToMatrix(const Tree* node) {
         return KUndef->clone();
       }
       Tree* result = ToMatrix<T>(base);
-      result->moveTreeOverTree(Matrix::Power(result, value));
+      result->moveTreeOverTree(Matrix::Power(result, value, true));
       return result;
     }
     case BlockType::Inverse:
     case BlockType::Transpose: {
       Tree* result = ToMatrix<T>(node->child(0));
-      result->moveTreeOverTree(node->isInverse() ? Matrix::Inverse(result)
+      result->moveTreeOverTree(node->isInverse() ? Matrix::Inverse(result, true)
                                                  : Matrix::Transpose(result));
       return result;
     }

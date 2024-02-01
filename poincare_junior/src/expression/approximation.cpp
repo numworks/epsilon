@@ -20,8 +20,6 @@
 
 namespace PoincareJ {
 
-// TODO: tests
-
 AngleUnit Approximation::s_angleUnit;
 ComplexFormat Approximation::s_complexFormat;
 Approximation::VariableType Approximation::s_variables[k_maxNumberOfVariables];
@@ -135,6 +133,10 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
 
 template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* node) {
+  /* TODO : the second part of this function and several ifs in different cases
+   * act differently / more precisely on reals. We should have a dedicated,
+   * faster, simpler and more precise real approximation to be used in every
+   * cases where we know for sure there are no complexes. */
   assert(node->isExpression());
   if (node->isRational()) {
     return Rational::Numerator(node).to<T>() /
@@ -273,7 +275,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     }
     case BlockType::Derivative: {
       constexpr static int k_maxOrderForApproximation = 4;
-      int order = 1;  // TODO nth diff
+      int order = 1;  // TODO PCJ nth diff
       if (order < 0) {
         return NAN;
       }
@@ -817,6 +819,10 @@ Tree* Approximation::ToMatrix(const Tree* node) {
 template <typename T, typename U>
 U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
                               Mapper<std::complex<T>, U> mapper) {
+  /* TODO : this function, the use of function pointers and the general
+   * recursive design of ToComplex incurs some overhead when approximating. For
+   * instance (a+b)*c, will execute nextNode() on a twice (one for + and one
+   * for *). We should use a non-recursive and more C-like algorithm. */
   U res;
   for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
     std::complex<T> app = ToComplex<T>(child);
@@ -887,6 +893,11 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
       SharedEditionPool->push<FloatType<T>::type>(To<T>(tree)));
   return true;
 }
+
+/* TODO : not all this functions are worth templating on float and
+ * double. ToComplex needs it but ToMatrix could take a bool and call the
+ * correct ToComplex<T> as needed since the code is mostly independant of the
+ * float type used in the tree. */
 
 template std::complex<float> Approximation::RootTreeToComplex<float>(
     const Tree*, AngleUnit, ComplexFormat);

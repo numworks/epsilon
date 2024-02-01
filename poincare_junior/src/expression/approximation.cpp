@@ -610,7 +610,11 @@ Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
     // Be careful to nest Random::Context since they create trees
     Random::Context context;
     s_context = &context;
-    ToMatrix<T>(clone);
+    Tree* m = ToMatrix<T>(clone);
+    for (Tree* child : m->children()) {
+      child->moveTreeOverTree(
+          PushBeautifiedComplex(ToComplex<T>(child), complexFormat));
+    }
     s_context = nullptr;
   }
   clone->removeTree();

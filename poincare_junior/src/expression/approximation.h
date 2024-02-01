@@ -14,19 +14,6 @@
 
 namespace PoincareJ {
 
-template <typename T>
-bool IsIntegerRepresentationAccurate(T x) {
-  /* Float and double's precision to represent integers is limited by the size
-   * of their mantissa. If an integer requires more digits than there is in the
-   * mantissa, there will be a loss on precision that can be fatal on operations
-   * such as GCD and LCM. */
-  int digits = 0;
-  // Compute number of digits (base 2) required to represent x
-  std::frexp(x, &digits);
-  // Compare it to the maximal number of digits that can be represented with <T>
-  return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
-}
-
 /* Approximation is implemented on all block types.
  * We could have asserted that we reduce before approximating (and thus
  * implemented the approximation only on internal types) but this increases the
@@ -61,20 +48,17 @@ class Approximation final {
   static Tree* RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
                                 ComplexFormat complexFormat);
 
+  // Approximate a list
+  template <typename T>
+  static Tree* RootTreeToList(const Tree* node, AngleUnit angleUnit,
+                              ComplexFormat complexFormat);
+
   // Helper to replace a tree by its approximation
   static bool SimplifyComplex(Tree* node);
   EDITION_REF_WRAP(SimplifyComplex);
 
   template <typename T>
   static std::complex<T> ToComplex(const Tree* node);
-
-  template <typename T>
-  static std::complex<T> TrigonometricToComplex(TypeBlock type,
-                                                std::complex<T> value);
-
-  template <typename T>
-  static std::complex<T> HyperbolicToComplex(TypeBlock type,
-                                             std::complex<T> value);
 
   template <typename T>
   static T To(const Tree* node) {
@@ -91,79 +75,11 @@ class Approximation final {
   }
 
   template <typename T>
-  static Tree* RootTreeToList(const Tree* node, AngleUnit angleUnit,
-                              ComplexFormat complexFormat);
-
-  template <typename T>
   static Tree* ToList(const Tree* node);
 
   template <typename T>
   static Tree* ToMatrix(const Tree* node);
 
-  template <typename T>
-  static T FloatAddition(T a, T b) {
-    return a + b;
-  }
-  template <typename T>
-  static std::complex<T> FloatMultiplication(std::complex<T> c,
-                                             std::complex<T> d);
-  template <typename T>
-  static T FloatPower(T a, T b) {
-    return std::pow(a, b);
-  }
-  template <typename T>
-  static T FloatSubtraction(T a, T b) {
-    return a - b;
-  }
-  template <typename T>
-  static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d);
-  template <typename T>
-  static T FloatLog(T a, T b) {
-    return a == static_cast<T>(0) ? NAN : std::log(a) / std::log(b);
-  }
-  template <typename T>
-  static T PositiveIntegerApproximation(std::complex<T> c) {
-    T s = std::abs(c);
-    /* Conversion from uint32 to float changes UINT32_MAX from 4294967295 to
-     * 4294967296. */
-    if (std::isnan(s) || s != std::round(s) ||
-        s >= static_cast<T>(UINT32_MAX) ||
-        !IsIntegerRepresentationAccurate(s)) {
-      /* PositiveIntegerApproximationIfPossible returns undefined result if
-       * scalar cannot be accurately represented as an unsigned integer. */
-      return NAN;
-    }
-    return s;
-  }
-
-  template <typename T>
-  static T FloatGCD(T a, T b) {
-    T result = Arithmetic::GCD(a, b);
-    if (!IsIntegerRepresentationAccurate(result)) {
-      return NAN;
-    }
-    return result;
-  }
-  template <typename T>
-  static T FloatLCM(T a, T b) {
-    bool overflow = false;
-    T result = Arithmetic::LCM(a, b, &overflow);
-    if (overflow || !IsIntegerRepresentationAccurate(result)) {
-      return NAN;
-    }
-    return result;
-  }
-  template <typename T>
-  static T FloatTrig(T a, T b) {
-    // Otherwise, handle any b, multiply by -1 if b%4 >= 2 then use b%2.
-    assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
-    return (b == static_cast<T>(0.0)) ? std::cos(a) : std::sin(a);
-  }
-  template <typename T>
-  static T FloatATrig(T a, T b) {
-    assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
-    return (b == static_cast<T>(0.0)) ? std::acos(a) : std::asin(a);
-  }
   // If collapse is true, approximate parents if all children have approximated.
   static bool ApproximateAndReplaceEveryScalar(Tree* tree,
                                                bool collapse = true) {
@@ -188,6 +104,12 @@ class Approximation final {
   template <typename T>
   static T ConvertFromRadian(T angle);
 
+  template <typename T>
+  static std::complex<T> TrigonometricToComplex(TypeBlock type,
+                                                std::complex<T> value);
+  template <typename T>
+  static std::complex<T> HyperbolicToComplex(TypeBlock type,
+                                             std::complex<T> value);
   template <typename T>
   static T ApproximateIntegral(const Tree* integral);
   template <typename T>

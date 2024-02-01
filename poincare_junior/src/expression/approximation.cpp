@@ -20,10 +20,14 @@
 
 namespace PoincareJ {
 
+/* Static members */
+
 Approximation::Context* Approximation::s_context;
 
 // With a nullptr context, seeded random will be undef.
 Random::Context* Approximation::s_randomContext = nullptr;
+
+/* Approximation::Context */
 
 Approximation::Context::Context(AngleUnit angleUnit,
                                 ComplexFormat complexFormat)
@@ -43,56 +47,6 @@ void Approximation::Context::shiftVariables() { m_variablesOffset--; }
 void Approximation::Context::unshiftVariables() { m_variablesOffset++; }
 
 template <typename T>
-std::complex<T> Approximation::FloatMultiplication(std::complex<T> c,
-                                                   std::complex<T> d) {
-  // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
-  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
-    constexpr T zero = static_cast<T>(0.0);
-    // Handle case of pure imaginary/real multiplications
-    if (c.imag() == zero && d.imag() == zero) {
-      return {c.real() * d.real(), zero};
-    }
-    if (c.real() == zero && d.real() == zero) {
-      return {-c.imag() * d.imag(), zero};
-    }
-    if (c.imag() == zero && d.real() == zero) {
-      return {zero, c.real() * d.imag()};
-    }
-    if (c.real() == zero && d.imag() == zero) {
-      return {zero, c.imag() * d.real()};
-    }
-    // Other cases are left to the standard library, and might return NaN.
-  }
-  return c * d;
-}
-
-template <typename T>
-std::complex<T> Approximation::FloatDivision(std::complex<T> c,
-                                             std::complex<T> d) {
-  if (d.real() == 0 && d.imag() == 0) {
-    return NAN;
-  }
-  // Special case to prevent (inf,0)/(1,0) from returning (inf, nan).
-  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
-    // Handle case of pure imaginary/real divisions
-    if (c.imag() == 0 && d.imag() == 0) {
-      return {c.real() / d.real(), 0};
-    }
-    if (c.real() == 0 && d.real() == 0) {
-      return {c.imag() / d.imag(), 0};
-    }
-    if (c.imag() == 0 && d.real() == 0) {
-      return {0, -c.real() / d.imag()};
-    }
-    if (c.real() == 0 && d.imag() == 0) {
-      return {0, c.imag() / d.real()};
-    }
-    // Other cases are left to the standard library, and might return NaN.
-  }
-  return c / d;
-}
-
-template <typename T>
 Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
   if (!Dimension::DeepCheckDimensions(node) ||
@@ -109,6 +63,14 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
       Approximation::RootTreeToComplex<T>(node, angleUnit, complexFormat);
   return Beautification::PushBeautifiedComplex(value, complexFormat);
 }
+
+/* Entry points */
+
+/* TODO rework and factorize entry points :
+ *   - move beautification out of the approximation
+ *   - move variable projection and other reductions (integral substitution)
+ *     inside a PrepareForApproximation method
+ */
 
 template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
@@ -173,6 +135,134 @@ Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
   clone->removeTree();
   variables->removeTree();
   return variables;
+}
+
+/* Helpers */
+
+template <typename T>
+bool IsIntegerRepresentationAccurate(T x) {
+  /* Float and double's precision to represent integers is limited by the size
+   * of their mantissa. If an integer requires more digits than there is in the
+   * mantissa, there will be a loss on precision that can be fatal on operations
+   * such as GCD and LCM. */
+  int digits = 0;
+  // Compute number of digits (base 2) required to represent x
+  std::frexp(x, &digits);
+  // Compare it to the maximal number of digits that can be represented with <T>
+  return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
+}
+
+template <typename T>
+static T FloatAddition(T a, T b) {
+  return a + b;
+}
+
+template <typename T>
+static T FloatPower(T a, T b) {
+  return std::pow(a, b);
+}
+
+template <typename T>
+static T FloatSubtraction(T a, T b) {
+  return a - b;
+}
+
+template <typename T>
+static T FloatLog(T a, T b) {
+  return a == static_cast<T>(0) ? NAN : std::log(a) / std::log(b);
+}
+template <typename T>
+static T PositiveIntegerApproximation(std::complex<T> c) {
+  T s = std::abs(c);
+  /* Conversion from uint32 to float changes UINT32_MAX from 4294967295 to
+   * 4294967296. */
+  if (std::isnan(s) || s != std::round(s) || s >= static_cast<T>(UINT32_MAX) ||
+      !IsIntegerRepresentationAccurate(s)) {
+    /* PositiveIntegerApproximationIfPossible returns undefined result if
+     * scalar cannot be accurately represented as an unsigned integer. */
+    return NAN;
+  }
+  return s;
+}
+
+template <typename T>
+static T FloatGCD(T a, T b) {
+  T result = Arithmetic::GCD(a, b);
+  if (!IsIntegerRepresentationAccurate(result)) {
+    return NAN;
+  }
+  return result;
+}
+
+template <typename T>
+static T FloatLCM(T a, T b) {
+  bool overflow = false;
+  T result = Arithmetic::LCM(a, b, &overflow);
+  if (overflow || !IsIntegerRepresentationAccurate(result)) {
+    return NAN;
+  }
+  return result;
+}
+
+template <typename T>
+static T FloatTrig(T a, T b) {
+  // Otherwise, handle any b, multiply by -1 if b%4 >= 2 then use b%2.
+  assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
+  return (b == static_cast<T>(0.0)) ? std::cos(a) : std::sin(a);
+}
+
+template <typename T>
+static T FloatATrig(T a, T b) {
+  assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
+  return (b == static_cast<T>(0.0)) ? std::acos(a) : std::asin(a);
+}
+
+template <typename T>
+std::complex<T> FloatMultiplication(std::complex<T> c, std::complex<T> d) {
+  // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
+  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
+    constexpr T zero = static_cast<T>(0.0);
+    // Handle case of pure imaginary/real multiplications
+    if (c.imag() == zero && d.imag() == zero) {
+      return {c.real() * d.real(), zero};
+    }
+    if (c.real() == zero && d.real() == zero) {
+      return {-c.imag() * d.imag(), zero};
+    }
+    if (c.imag() == zero && d.real() == zero) {
+      return {zero, c.real() * d.imag()};
+    }
+    if (c.real() == zero && d.imag() == zero) {
+      return {zero, c.imag() * d.real()};
+    }
+    // Other cases are left to the standard library, and might return NaN.
+  }
+  return c * d;
+}
+
+template <typename T>
+std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
+  if (d.real() == 0 && d.imag() == 0) {
+    return NAN;
+  }
+  // Special case to prevent (inf,0)/(1,0) from returning (inf, nan).
+  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
+    // Handle case of pure imaginary/real divisions
+    if (c.imag() == 0 && d.imag() == 0) {
+      return {c.real() / d.real(), 0};
+    }
+    if (c.real() == 0 && d.real() == 0) {
+      return {c.imag() / d.imag(), 0};
+    }
+    if (c.imag() == 0 && d.real() == 0) {
+      return {0, -c.real() / d.imag()};
+    }
+    if (c.real() == 0 && d.imag() == 0) {
+      return {0, c.imag() / d.real()};
+    }
+    // Other cases are left to the standard library, and might return NaN.
+  }
+  return c / d;
 }
 
 template <typename T>

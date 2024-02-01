@@ -6,6 +6,19 @@
 #include "helper.h"
 using namespace PoincareJ;
 
+static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
+              ComplexSign::RealInteger());
+static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
+              ComplexSign::RealInteger());
+static_assert(ComplexSign(ComplexSign::RealUnknown().getValue()) ==
+              ComplexSign::RealUnknown());
+static_assert(ComplexSign(ComplexSign::ComplexUnknown().getValue()) ==
+              ComplexSign::ComplexUnknown());
+static_assert(ComplexSign::ComplexUnknown().isUnknown());
+static_assert(ComplexSign::RealUnknown().isReal());
+static_assert(ComplexSign::RealInteger().isReal() &&
+              ComplexSign::RealInteger().isInteger());
+
 void assert_sign(const char* input, ComplexSign expectedSign) {
   Tree* expression = TextToTree(input);
   /* TODO: Factorize this with SimplifyLastTree to have properly projected

@@ -10,7 +10,7 @@
 
 namespace PoincareJ {
 
-/* Must at least handle Addition, Multiplications, Numbers and Real/Imaginary
+/* Must at least handle Additions, Multiplications, Numbers and Real/Imaginary
  * parts so that any simplified complex is sanitized. Also handle Exp, Ln and
  * Powers of positive integers so that abs(z) remains real after reduction.
  * Handling trig, exp, ln, abs and arg may also greatly help the polar complex
@@ -38,8 +38,10 @@ Sign DecimalFunction(Sign s, BlockType type) {
       canBeNull = true;
       canBePositive = !isInteger;
       canBeNegative = false;
+      break;
     case BlockType::Round:
       canBeNull = true;
+      break;
     default:
       assert(false);
   }
@@ -107,8 +109,7 @@ ComplexSign NoIntegers(ComplexSign s) {
 
 ComplexSign Abs(ComplexSign s) {
   return ComplexSign(
-      Sign(s.canBeNull(), !s.isZero(), false,
-           s.isInteger() && (s.isReal() || s.realSign().isZero())),
+      Sign(s.canBeNull(), !s.isZero(), false, s.isInteger() && s.isPure()),
       Sign::Zero());
 }
 

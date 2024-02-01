@@ -90,13 +90,13 @@ class Sign {
     return m_canBePositive || m_canBeNegative || (m_canBeNull && m_isInteger);
   }
 
-  bool m_canBeNull : 1 = false;
-  bool m_canBePositive : 1 = false;
-  bool m_canBeNegative : 1 = false;
-  bool m_isInteger : 1 = false;  // = !canBeNonIntegral
+  bool m_canBeNull : 1;
+  bool m_canBePositive : 1;
+  bool m_canBeNegative : 1;
+  bool m_isInteger : 1;  // = !canBeNonIntegral
 };
 
-struct ComplexSign {
+class ComplexSign {
  public:
   constexpr ComplexSign(Sign realSign, Sign imagSign)
       : m_realValue(realSign.getValue()), m_imagValue(imagSign.getValue()) {}
@@ -161,19 +161,6 @@ struct ComplexSign {
 
 static_assert(sizeof(Sign) == sizeof(uint8_t));
 static_assert(sizeof(ComplexSign) == sizeof(uint8_t));
-
-static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
-              ComplexSign::RealInteger());
-static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
-              ComplexSign::RealInteger());
-static_assert(ComplexSign(ComplexSign::RealUnknown().getValue()) ==
-              ComplexSign::RealUnknown());
-static_assert(ComplexSign(ComplexSign::ComplexUnknown().getValue()) ==
-              ComplexSign::ComplexUnknown());
-static_assert(ComplexSign::ComplexUnknown().isUnknown());
-static_assert(ComplexSign::RealUnknown().isReal());
-static_assert(ComplexSign::RealInteger().isReal() &&
-              ComplexSign::RealInteger().isInteger());
 
 }  // namespace PoincareJ
 

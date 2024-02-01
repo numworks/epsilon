@@ -286,14 +286,23 @@ bool SimplificationHelper::extractIntegerChildAtIndex(
   assert(e.numberOfChildren() > integerChildIndex);
   Expression child = e.childAtIndex(integerChildIndex);
   *isSymbolReturnValue = false;
-  if (!child.isNumber()) {
+  int coef;
+  Expression numberExpression;
+  if (child.isNumber()) {
+    coef = 1;
+    numberExpression = child;
+  } else if (child.type() == ExpressionNode::Type::Opposite &&
+             child.childAtIndex(0).isNumber()) {
+    coef = -1;
+    numberExpression = child.childAtIndex(0);
+  } else {
     if (child.type() != ExpressionNode::Type::Symbol) {
       return false;
     }
     *isSymbolReturnValue = true;
     return true;
   }
-  Number number = static_cast<Number&>(child);
+  Number number = static_cast<Number&>(numberExpression);
   if (!number.isInteger()) {
     return false;
   }
@@ -301,7 +310,7 @@ bool SimplificationHelper::extractIntegerChildAtIndex(
   if (!integer.isExtractable()) {
     return false;
   }
-  *integerChildReturnValue = integer.extractedInt();
+  *integerChildReturnValue = coef * integer.extractedInt();
   return true;
 }
 

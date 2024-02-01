@@ -12,6 +12,7 @@
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/expression/variables.h>
+#include <poincare_junior/src/memory/placeholder.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "k_tree.h"
@@ -339,6 +340,17 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       PushCodePoint(layoutParent, '}');
       break;
 #if POINCARE_MEMORY_TREE_LOG
+    case BlockType::Placeholder: {
+      PushCodePoint(layoutParent, 'K');
+      if (Placeholder::NodeToFilter(expression) ==
+          Placeholder::Filter::AnyTrees) {
+        PushCodePoint(layoutParent, 'T');
+      }
+      uint8_t offset = Placeholder::NodeToTag(expression);
+      char name = 'A' + offset;
+      PushCodePoint(layoutParent, name);
+      break;
+    }
     case BlockType::Exponential:
       layoutFunctionCall(layoutParent, expression, "exp");
       break;

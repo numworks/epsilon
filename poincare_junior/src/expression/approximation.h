@@ -51,6 +51,10 @@ class Approximation final {
     return value.imag() == 0 ? value.real() : NAN;
   }
 
+  // Helper to replace a tree by its approximation
+  static bool SimplifyComplex(Tree* node);
+  EDITION_REF_WRAP(SimplifyComplex);
+
   // Approximate a tree with any dimension
   template <typename T>
   static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,

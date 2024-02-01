@@ -670,6 +670,11 @@ Tree* Approximation::PushBeautifiedComplex(std::complex<T> value,
   return result;
 }
 
+bool Approximation::SimplifyComplex(Tree* node) {
+  node->moveTreeOverTree(PushComplex(ToComplex<double>(node)));
+  return true;
+}
+
 template <typename T>
 Tree* Approximation::ToList(const Tree* node) {
   int length = Dimension::GetListLength(node);

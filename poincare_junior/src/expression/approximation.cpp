@@ -212,7 +212,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
     case BlockType::Power:
-      return approximatePower<T>(node, s_context->m_complexFormat);
+      return ApproximatePower<T>(node, s_context->m_complexFormat);
     case BlockType::Logarithm:
       return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>);
     case BlockType::Trig:
@@ -344,12 +344,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
         return NAN;
       }
       s_context->shiftVariables();
-      T result = approximateDerivative(node->child(2), at.real(), order);
+      T result = ApproximateDerivative(node->child(2), at.real(), order);
       s_context->unshiftVariables();
       return result;
     }
     case BlockType::Integral:
-      return approximateIntegral<T>(node);
+      return ApproximateIntegral<T>(node);
 
     /* Matrices */
     case BlockType::Norm:

@@ -8,7 +8,7 @@ namespace PoincareJ {
 class ApproximationContext;
 
 template <typename T>
-T Approximation::approximateDerivative(const Tree* child, T at, int order) {
+T Approximation::ApproximateDerivative(const Tree* child, T at, int order) {
   return scalarApproximateWithValueForArgumentAndOrder(at, order, child);
 }
 
@@ -148,9 +148,9 @@ T riddersApproximation(int order, const Tree* child, T x, T h, T* error) {
   return ans;
 }
 
-template float Approximation::approximateDerivative(const Tree* child, float at,
+template float Approximation::ApproximateDerivative(const Tree* child, float at,
                                                     int order);
-template double Approximation::approximateDerivative(const Tree* child,
+template double Approximation::ApproximateDerivative(const Tree* child,
                                                      double at, int order);
 
 }  // namespace PoincareJ

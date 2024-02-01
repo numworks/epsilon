@@ -58,7 +58,7 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
 const Tree* integrandExpression;
 
 template <typename T>
-T Approximation::approximateIntegral(const Tree* integral) {
+T Approximation::ApproximateIntegral(const Tree* integral) {
   /* TODO : Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
@@ -458,7 +458,7 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
   return result;
 }
 
-template float Approximation::approximateIntegral(const Tree* integral);
-template double Approximation::approximateIntegral(const Tree* integral);
+template float Approximation::ApproximateIntegral(const Tree* integral);
+template double Approximation::ApproximateIntegral(const Tree* integral);
 
 }  // namespace PoincareJ

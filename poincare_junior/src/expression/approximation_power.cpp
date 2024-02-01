@@ -102,7 +102,7 @@ std::complex<T> computeOnComplex(const std::complex<T> c,
 }
 
 template <typename T>
-std::complex<T> Approximation::approximatePower(const Tree *power,
+std::complex<T> Approximation::ApproximatePower(const Tree *power,
                                                 ComplexFormat complexFormat) {
   const Tree *base = power->child(0);
   const Tree *exponent = power->child(1);
@@ -137,9 +137,9 @@ defaultApproximation:
   return computeOnComplex<T>(c, ToComplex<T>(exponent), complexFormat);
 }
 
-template std::complex<float> Approximation::approximatePower(
+template std::complex<float> Approximation::ApproximatePower(
     const Tree *child, ComplexFormat complexFormat);
-template std::complex<double> Approximation::approximatePower(
+template std::complex<double> Approximation::ApproximatePower(
     const Tree *child, ComplexFormat complexFormat);
 
 }  // namespace PoincareJ

@@ -189,11 +189,11 @@ class Approximation final {
   static T ConvertFromRadian(T angle);
 
   template <typename T>
-  static T approximateIntegral(const Tree* integral);
+  static T ApproximateIntegral(const Tree* integral);
   template <typename T>
-  static T approximateDerivative(const Tree* function, T at, int order);
+  static T ApproximateDerivative(const Tree* function, T at, int order);
   template <typename T>
-  static std::complex<T> approximatePower(const Tree* power,
+  static std::complex<T> ApproximatePower(const Tree* power,
                                           ComplexFormat complexFormat);
 
   struct Context {

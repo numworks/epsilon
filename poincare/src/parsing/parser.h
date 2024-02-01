@@ -171,6 +171,7 @@ class Parser {
   void defaultParseLeftParenthesis(bool isSystemParenthesis,
                                    Expression& leftHandSide,
                                    Token::Type stoppingType);
+  Expression parseIntegerCaretForFunction();
   bool generateMixedFractionIfNeeded(Expression& leftHandSide);
   // Allows you to rewind to previous position
   void rememberCurrentParsingPosition(const char** tokenizerPosition,

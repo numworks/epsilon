@@ -792,29 +792,14 @@ void Parser::privateParseReservedFunction(
   }
 
   // Parse cos^n(x)
-  Token::Type endDelimiterOfPower;
-  bool hasCaret = false;
   bool powerFunction = false;
-  if (popTokenIfType(Token::Type::CaretWithParenthesis)) {
-    hasCaret = true;
-    endDelimiterOfPower = Token::Type::RightSystemParenthesis;
-  } else if (popTokenIfType(Token::Type::Caret)) {
-    hasCaret = true;
-    endDelimiterOfPower = Token::Type::RightParenthesis;
-    if (!popTokenIfType(Token::Type::LeftParenthesis)) {
-      m_status = Status::Error;  // Exponent should be parenthesed
-      return;
-    }
+  Expression base = parseIntegerCaretForFunction();
+  if (m_status != Status::Progress) {
+    return;
   }
-  Expression base;
-  if (hasCaret) {
-    base = parseUntil(endDelimiterOfPower);
-    if (m_status != Status::Progress) {
-      return;
-    } else if (!popTokenIfType(endDelimiterOfPower)) {
-      m_status = Status::Error;
-      return;
-    } else if (base.isMinusOne()) {
+  if (!base.isUninitialized()) {
+    assert(base.isInteger());
+    if (base.isMinusOne()) {
       // Detect cos^-1(x) --> arccos(x)
       const char *mainAlias = aliasesList.mainAlias();
       functionHelper =
@@ -824,16 +809,13 @@ void Parser::privateParseReservedFunction(
         return;
       }
       aliasesList = (**functionHelper).aliasesList();
-    } else if (base.isInteger()) {
+    } else {
       // Detect cos^n(x) with n!=-1 --> (cos(x))^n
       if (!ParsingHelper::IsPowerableFunction(*functionHelper)) {
         m_status = Status::Error;  // This function can't be powered
         return;
       }
       powerFunction = true;
-    } else {
-      m_status = Status::Error;
-      return;
     }
   }
 
@@ -1273,6 +1255,36 @@ bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
           static_cast<BasedInteger &>(e).base() == OMG::Base::Decimal) ||
          e.type() == ExpressionNode::Type::EmptyExpression;
 }
+
+Expression Parser::parseIntegerCaretForFunction() {
+  // Parse f^n(x)
+  Token::Type endDelimiterOfPower;
+  if (popTokenIfType(Token::Type::CaretWithParenthesis)) {
+    endDelimiterOfPower = Token::Type::RightSystemParenthesis;
+  } else if (popTokenIfType(Token::Type::Caret)) {
+    endDelimiterOfPower = Token::Type::RightParenthesis;
+    if (!popTokenIfType(Token::Type::LeftParenthesis)) {
+      m_status = Status::Error;  // Exponent should be parenthesed
+      return Expression();
+    }
+  } else {
+    return Expression();
+  }
+  Expression base = parseUntil(endDelimiterOfPower);
+  if (m_status != Status::Progress) {
+    return Expression();
+  }
+  if (!popTokenIfType(endDelimiterOfPower)) {
+    m_status = Status::Error;
+    return Expression();
+  }
+  if (base.isInteger()) {
+    return base;
+  }
+  m_status = Status::Error;
+  return Expression();
+}
+
 bool Parser::generateMixedFractionIfNeeded(Expression &leftHandSide) {
   if (m_parsingContext.context() &&
       !Preferences::sharedPreferences->mixedFractionsAreEnabled()) {

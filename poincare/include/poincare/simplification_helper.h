@@ -67,6 +67,9 @@ class SimplificationHelper {
   static Expression distributeReductionOverLists(
       Expression e, const ReductionContext& reductionContext);
 
+  // Returns true if expression is a symbol or an integer.
+  static bool extractInteger(Expression e, int* integerReturnValue,
+                             bool* isSymbolReturnValue);
   // Returns true if the child is a symbol or an integer.
   static bool extractIntegerChildAtIndex(Expression e, int integerChildIndex,
                                          int* integerChildReturnValue,

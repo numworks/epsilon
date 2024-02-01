@@ -345,4 +345,56 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       changed;
 }
 
+template <typename T>
+Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
+                                            ComplexFormat complexFormat) {
+  // TODO : factorize with the code above somehow ?
+  constexpr BlockType Type = FloatType<T>::type;
+  T re = value.real(), im = value.imag();
+  if (std::isnan(re) || std::isnan(im)) {
+    return SharedEditionPool->push(BlockType::Undefined);
+  }
+  if (im != 0 && complexFormat == PoincareJ::ComplexFormat::Real) {
+    return SharedEditionPool->push(BlockType::Nonreal);
+  }
+  if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
+    return SharedEditionPool->push<Type>(re);
+  }
+  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  // Real part and separator
+  if (complexFormat == ComplexFormat::Cartesian) {
+    // [re+]
+    if (re != 0) {
+      SharedEditionPool->push<BlockType::Addition>(2);
+      SharedEditionPool->push<Type>(re);
+    }
+  } else {
+    // [abs×]e^
+    T abs = std::abs(value);
+    if (abs != 1) {
+      SharedEditionPool->push<BlockType::Multiplication>(2);
+      SharedEditionPool->push<Type>(abs);
+    }
+    SharedEditionPool->push(BlockType::Power);
+    SharedEditionPool->push<BlockType::Constant>(u'e');
+    im = std::arg(value);
+  }
+  // Complex part ±[im×]i
+  if (im < 0) {
+    SharedEditionPool->push(BlockType::Opposite);
+    im = -im;
+  }
+  if (im != 1) {
+    SharedEditionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->push<Type>(im);
+  }
+  SharedEditionPool->push<BlockType::Constant>(u'i');
+  return result;
+}
+
+template Tree* Beautification::PushBeautifiedComplex(
+    std::complex<float>, ComplexFormat complexFormat);
+template Tree* Beautification::PushBeautifiedComplex(
+    std::complex<double>, ComplexFormat complexFormat);
+
 }  // namespace PoincareJ

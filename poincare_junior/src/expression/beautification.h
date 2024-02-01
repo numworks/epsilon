@@ -22,6 +22,12 @@ class Beautification {
                            ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
 
+  /* Create a Tree to represent a complex value according to the format, for
+   * instance 0+1*i => <Constant i> in Cartesian mode. */
+  template <typename T>
+  static Tree* PushBeautifiedComplex(std::complex<T> value,
+                                     ComplexFormat complexFormat);
+
  private:
   static bool DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
                                          bool* simplifyParent);

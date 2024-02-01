@@ -107,7 +107,7 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
   }
   std::complex<T> value =
       Approximation::RootTreeToComplex<T>(node, angleUnit, complexFormat);
-  return Approximation::PushBeautifiedComplex(value, complexFormat);
+  return Beautification::PushBeautifiedComplex(value, complexFormat);
 }
 
 template <typename T>
@@ -614,8 +614,8 @@ Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
     s_context = &context;
     Tree* m = ToMatrix<T>(clone);
     for (Tree* child : m->children()) {
-      child->moveTreeOverTree(
-          PushBeautifiedComplex(ToComplex<T>(child), complexFormat));
+      child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
+          ToComplex<T>(child), complexFormat));
     }
     s_context = nullptr;
   }
@@ -635,52 +635,6 @@ Tree* PushComplex(std::complex<T> value) {
   return result;
 }
 
-template <typename T>
-Tree* Approximation::PushBeautifiedComplex(std::complex<T> value,
-                                           ComplexFormat complexFormat) {
-  constexpr BlockType Type = FloatType<T>::type;
-  T re = value.real(), im = value.imag();
-  if (std::isnan(re) || std::isnan(im)) {
-    return SharedEditionPool->push(BlockType::Undefined);
-  }
-  if (im != 0 && complexFormat == PoincareJ::ComplexFormat::Real) {
-    return SharedEditionPool->push(BlockType::Nonreal);
-  }
-  if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
-    return SharedEditionPool->push<Type>(re);
-  }
-  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
-  // Real part and separator
-  if (complexFormat == ComplexFormat::Cartesian) {
-    // [re+]
-    if (re != 0) {
-      SharedEditionPool->push<BlockType::Addition>(2);
-      SharedEditionPool->push<Type>(re);
-    }
-  } else {
-    // [abs×]e^
-    T abs = std::abs(value);
-    if (abs != 1) {
-      SharedEditionPool->push<BlockType::Multiplication>(2);
-      SharedEditionPool->push<Type>(abs);
-    }
-    SharedEditionPool->push(BlockType::Power);
-    SharedEditionPool->push<BlockType::Constant>(u'e');
-    im = std::arg(value);
-  }
-  // Complex part ±[im×]i
-  if (im < 0) {
-    SharedEditionPool->push(BlockType::Opposite);
-    im = -im;
-  }
-  if (im != 1) {
-    SharedEditionPool->push<BlockType::Multiplication>(2);
-    SharedEditionPool->push<Type>(im);
-  }
-  SharedEditionPool->push<BlockType::Constant>(u'i');
-  return result;
-}
-
 bool Approximation::SimplifyComplex(Tree* node) {
   node->moveTreeOverTree(PushComplex(ToComplex<double>(node)));
   return true;
@@ -694,7 +648,7 @@ Tree* Approximation::ToList(const Tree* node) {
   for (int i = 0; i < length; i++) {
     s_listElement = i;
     std::complex<T> k = ToComplex<T>(node);
-    PushBeautifiedComplex(k, s_complexFormat);
+    Beautification::PushBeautifiedComplex(k, s_complexFormat);
   }
   s_listElement = old;
   return list;

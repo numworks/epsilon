@@ -206,7 +206,8 @@ void assertCalculationIs(const char *input, DisplayOutput display,
                          EqualSign sign, const char *exactOutput,
                          const char *displayedApproximateOutput,
                          const char *storedApproximateOutput, Context *context,
-                         CalculationStore *store) {
+                         CalculationStore *store,
+                         const char *storedInput = nullptr) {
   store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
@@ -214,6 +215,10 @@ void assertCalculationIs(const char *input, DisplayOutput display,
   if (sign != EqualSign::Unknown && display != DisplayOutput::ApproximateOnly &&
       display != DisplayOutput::ExactOnly) {
     quiz_assert(lastCalculation->equalSign(context) == sign);
+  }
+  if (storedInput) {
+    quiz_assert_print_if_failure(
+        strcmp(lastCalculation->inputText(), storedInput) == 0, input);
   }
   if (exactOutput) {
     quiz_assert_print_if_failure(
@@ -441,24 +446,45 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("x+x+1+3+√(π)", "undef", &globalContext,
                                 &store);
   assertMainCalculationOutputIs("f(x)", "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("f'(x)", "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("f\"(x)", "undef", &globalContext, &store);
   assertMainCalculationOutputIs("1+x→f(x)", "1+x", &globalContext, &store);
   assertMainCalculationOutputIs("f(x)", "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("f'(x)", "undef", &globalContext, &store);
-  assertMainCalculationOutputIs("f\"(x)", "undef", &globalContext, &store);
   assertMainCalculationOutputIs("f(2)", "3", &globalContext, &store);
-  assertMainCalculationOutputIs("f'(2)", "1", &globalContext, &store);
-  assertMainCalculationOutputIs("f\"(2)", "0", &globalContext, &store);
   assertMainCalculationOutputIs("2→x", "2", &globalContext, &store);
   assertMainCalculationOutputIs("f(x)", "3", &globalContext, &store);
-  assertMainCalculationOutputIs("f'(x)", "1", &globalContext, &store);
-  assertMainCalculationOutputIs("f\"(x)", "0", &globalContext, &store);
   assertMainCalculationOutputIs("x+x+1+3+√(π)", "8+√(π)", &globalContext,
                                 &store);
+
   // Destroy records
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
+
+  // Derivatives
+  assertCalculationIs("foo'(1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, "undef", "undef", "undef",
+                      &globalContext, &store, "f×o×o×_'×(1)");
+  assertCalculationIs("foo\"(1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, "undef", "undef", "undef",
+                      &globalContext, &store, "f×o×o×_\"×(1)");
+  assertCalculationIs("foo^(3)(1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, "undef", "undef", "undef",
+                      &globalContext, &store, "f×o×o^(3)×(1)");
+  assertMainCalculationOutputIs("x^4→foo(x)", "x^4", &globalContext, &store);
+  assertCalculationIs("foo'(1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, "4", "4", "4", &globalContext, &store,
+                      "foo'(1)");
+  assertCalculationIs("foo^(1)(1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, "4", "4", "4", &globalContext, &store,
+                      "foo'(1)");
+  assertCalculationIs("foo\"(1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, "12", "12", "12", &globalContext,
+                      &store, "foo\"(1)");
+  assertCalculationIs("foo^(2)(1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, "12", "12", "12", &globalContext,
+                      &store, "foo\"(1)");
+  assertCalculationIs("foo^(3)(1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, "24", "24", "24", &globalContext,
+                      &store, "foo^(3)(1)");
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("foo.func").destroy();
 
   // 1 - Predefined variable in fraction in integral
   assertMainCalculationOutputIs("int(x+1/x,x,1,2)", "2.193147181",

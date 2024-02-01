@@ -1212,8 +1212,8 @@ bool Simplification::TryAllOperations(Tree* e, const Operation* operations,
   return i > numberOfOperations;
 }
 
-bool Simplification::TryOneOperations(Tree* e, const Operation* operations,
-                                      int numberOfOperations) {
+bool Simplification::TryOneOperation(Tree* e, const Operation* operations,
+                                     int numberOfOperations) {
   assert(!DeepSystematicReduce(e));
   for (size_t i = 0; i < numberOfOperations; i++) {
     if (operations[i](e)) {

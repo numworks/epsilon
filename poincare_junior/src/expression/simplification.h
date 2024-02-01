@@ -33,11 +33,11 @@ class Simplification {
    * methods. TODO: Remove other EditionReference wrappers on private methods if
    * they are indeed unused. */
   static bool ShallowContract(Tree *e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperations)(
+    return (tryAll ? TryAllOperations : TryOneOperation)(
         e, k_contractOperations, std::size(k_contractOperations));
   }
   static bool ShallowExpand(Tree *e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperations)(
+    return (tryAll ? TryAllOperations : TryOneOperation)(
         e, k_expandOperations, std::size(k_expandOperations));
   }
 
@@ -210,8 +210,8 @@ class Simplification {
   static bool TryAllOperations(Tree *node, const Operation *operations,
                                int numberOfOperations);
   // Try all Operations until one of them succeed.
-  static bool TryOneOperations(Tree *node, const Operation *operations,
-                               int numberOfOperations);
+  static bool TryOneOperation(Tree *node, const Operation *operations,
+                              int numberOfOperations);
 
   static bool ContractAbs(Tree *node);
   EDITION_REF_WRAP(ContractAbs);

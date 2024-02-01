@@ -96,6 +96,8 @@ void assert_parsed_expression_is(
     bool parseForAssignment = false,
     Poincare::Preferences::MixedFractions mixedFractionsParameter =
         Poincare::Preferences::MixedFractions::Enabled);
+void assert_parse_to_same_expression(const char* expression1,
+                                     const char* expression2);
 
 // Simplification
 
@@ -191,6 +193,8 @@ void assert_expression_serializes_to(
 
 void assert_expression_serializes_and_parses_to_itself(
     Poincare::Expression expression);
+void assert_expression_parses_and_serializes_to(const char* expression,
+                                                const char* result);
 void assert_expression_parses_and_serializes_to_itself(const char* expression);
 
 // Layout serializing

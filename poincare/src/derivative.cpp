@@ -47,9 +47,17 @@ Layout DerivativeNode::createLayout(
         static_cast<SymbolAbstractNode*>(childAtIndex(0))->name();
     Layout name = LayoutHelper::String(functionName, strlen(functionName));
     int order = extractIntegerOrder();
-    assert(0 < order && order <= 2);
-    Layout derivative = CodePointLayout::Builder(
-        order == 1 ? k_firstDerivativeSymbol : k_secondDerivativeSymbol);
+    assert(order > 0);
+    Layout derivative;
+    if (order <= 2) {
+      derivative = CodePointLayout::Builder(
+          order == 1 ? k_firstDerivativeSymbol : k_secondDerivativeSymbol);
+    } else {
+      derivative = VerticalOffsetLayout::Builder(
+          ParenthesisLayout::Builder(childAtIndex(3)->createLayout(
+              floatDisplayMode, numberOfSignificantDigits, context)),
+          VerticalOffsetLayoutNode::VerticalPosition::Superscript);
+    }
     Layout argument = childAtIndex(2)->createLayout(
         floatDisplayMode, numberOfSignificantDigits, context);
     return HorizontalLayout::Builder(name, derivative,
@@ -87,10 +95,22 @@ size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
     assert(bufferSize > length);
     strlcpy(buffer, name, bufferSize);
     int order = extractIntegerOrder();
-    assert(0 < order && order <= 2);
-    length += SerializationHelper::CodePoint(
-        buffer + length, bufferSize - length,
-        order == 1 ? k_firstDerivativeSymbol : k_secondDerivativeSymbol);
+    assert(order > 0);
+    if (order <= 2) {
+      length += SerializationHelper::CodePoint(
+          buffer + length, bufferSize - length,
+          order == 1 ? k_firstDerivativeSymbol : k_secondDerivativeSymbol);
+    } else {
+      length += SerializationHelper::CodePoint(buffer + length,
+                                               bufferSize - length, '^');
+      length += SerializationHelper::CodePoint(buffer + length,
+                                               bufferSize - length, '(');
+      length += childAtIndex(3)->serialize(buffer + length, bufferSize - length,
+                                           floatDisplayMode,
+                                           numberOfSignificantDigits);
+      length += SerializationHelper::CodePoint(buffer + length,
+                                               bufferSize - length, ')');
+    }
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, '(');
     length +=

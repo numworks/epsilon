@@ -793,7 +793,7 @@ void Parser::privateParseReservedFunction(
   // Parse cos^n(x)
   bool powerFunction = false;
   int powerValue;
-  Expression base = parseIntegerCaretForFunction(&powerValue);
+  Expression base = parseIntegerCaretForFunction(false, &powerValue);
   if (m_status != Status::Progress) {
     return;
   }
@@ -980,10 +980,18 @@ bool Parser::privateParseCustomIdentifierWithParameters(
     Token::Type stoppingType, Context::SymbolAbstractType idType,
     bool parseApostropheAsDerivative) {
   int derivativeOrder = 0;
-  if (parseApostropheAsDerivative && m_nextToken.length() == 1 &&
-      (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
-    popToken();
-    derivativeOrder = m_currentToken.text()[0] == '\'' ? 1 : 2;
+  if (parseApostropheAsDerivative) {
+    if (m_nextToken.length() == 1 &&
+        (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
+      popToken();
+      derivativeOrder = m_currentToken.text()[0] == '\'' ? 1 : 2;
+    } else {
+      Expression base = parseIntegerCaretForFunction(true, &derivativeOrder);
+      if (m_status != Status::Progress || base.isUninitialized() ||
+          derivativeOrder < 0) {
+        return false;
+      }
+    }
   }
 
   // If the identifier is not followed by parentheses, it is a symbol
@@ -1256,7 +1264,8 @@ bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
          e.type() == ExpressionNode::Type::EmptyExpression;
 }
 
-Expression Parser::parseIntegerCaretForFunction(int *caretIntegerValue) {
+Expression Parser::parseIntegerCaretForFunction(bool allowParenthesis,
+                                                int *caretIntegerValue) {
   // Parse f^n(x)
   Token::Type endDelimiterOfPower;
   if (popTokenIfType(Token::Type::CaretWithParenthesis)) {
@@ -1280,10 +1289,14 @@ Expression Parser::parseIntegerCaretForFunction(int *caretIntegerValue) {
   }
   bool isSymbol;
   assert(caretIntegerValue);
-  if (SimplificationHelper::extractInteger(base, caretIntegerValue,
+  Expression result =
+      allowParenthesis && base.type() == ExpressionNode::Type::Parenthesis
+          ? base.childAtIndex(0)
+          : base;
+  if (SimplificationHelper::extractInteger(result, caretIntegerValue,
                                            &isSymbol) &&
       !isSymbol) {
-    return base;
+    return result;
   }
   m_status = Status::Error;
   return Expression();

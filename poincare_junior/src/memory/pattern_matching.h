@@ -153,9 +153,8 @@ class PatternMatching {
     // Return the number of siblings right of node in local context.
     int remainingLocalTrees(const Tree* node) const;
     void setLocal(const Tree* source, const Tree* pattern);
-    /* From a local pattern and source node, sets the local context (node's
-     * parents) */
-    void setLocalFromChild(const Tree* source, const Tree* pattern);
+    // Sets the local context to local root parents.
+    void setLocalToParent();
 #if POINCARE_MEMORY_TREE_LOG
     __attribute__((__used__)) void log() const;
 #endif
@@ -169,6 +168,7 @@ class PatternMatching {
     // Local context
     const Tree* m_localSourceRoot;
     const Block* m_localSourceEnd;
+    const Tree* m_localPatternRoot;
     const Block* m_localPatternEnd;
     // Global context
     const Tree* const m_globalSourceRoot;

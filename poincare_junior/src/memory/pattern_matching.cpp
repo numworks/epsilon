@@ -65,7 +65,7 @@ void PatternMatching::MatchContext::log() const {
   logGlobal(m_globalSourceRoot, m_globalSourceEnd, m_localSourceRoot,
             m_localSourceEnd);
   std::cout << "\n\tPattern : ";
-  logGlobal(m_globalPatternRoot, m_globalPatternEnd, nullptr,
+  logGlobal(m_globalPatternRoot, m_globalPatternEnd, m_localPatternRoot,
             m_localPatternEnd);
 }
 #endif
@@ -74,6 +74,7 @@ PatternMatching::MatchContext::MatchContext(const Tree* source,
                                             const Tree* pattern)
     : m_localSourceRoot(source),
       m_localSourceEnd(source->nextTree()->block()),
+      m_localPatternRoot(pattern),
       m_localPatternEnd(pattern->nextTree()->block()),
       m_globalSourceRoot(source),
       m_globalPatternRoot(pattern),
@@ -97,20 +98,15 @@ void PatternMatching::MatchContext::setLocal(const Tree* source,
                                              const Tree* pattern) {
   m_localSourceRoot = source;
   m_localSourceEnd = source->nextTree()->block();
+  m_localPatternRoot = pattern;
   m_localPatternEnd = pattern->nextTree()->block();
 }
 
-void PatternMatching::MatchContext::setLocalFromChild(const Tree* source,
-                                                      const Tree* pattern) {
-  // If global context limits are reached, set local context back to global.
+void PatternMatching::MatchContext::setLocalToParent() {
   const Tree* sourceParent =
-      ReachedLimit(source, m_globalSourceEnd)
-          ? m_globalSourceRoot
-          : m_globalSourceRoot->parentOfDescendant(source);
+      m_globalSourceRoot->parentOfDescendant(m_localSourceRoot);
   const Tree* patternParent =
-      ReachedLimit(pattern, m_globalPatternEnd)
-          ? m_globalPatternRoot
-          : m_globalPatternRoot->parentOfDescendant(pattern);
+      m_globalPatternRoot->parentOfDescendant(m_localPatternRoot);
   assert(sourceParent && patternParent);
   setLocal(sourceParent, patternParent);
 }
@@ -149,7 +145,9 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
         return false;
       }
       // Update the local pattern.
-      matchContext.setLocalFromChild(source, pattern);
+      matchContext.setLocalToParent();
+      // Continue in case parents also reached limits.
+      continue;
     }
     /* If source has been entirely checked but pattern nodes are remaining it
      * can only be empty tree placeholders. */

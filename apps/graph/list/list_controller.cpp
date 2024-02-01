@@ -368,6 +368,10 @@ void ListController::storeParametricComponentsOfSelectedModel() {
     return;
   }
   Expression e = f->expressionClone();
+  if (e.type() != ExpressionNode::Type::Point) {
+    // For example: g(t)=f'(t) or g(t)=diff(f(t),t,t)
+    return;
+  }
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = f->name(buffer, bufferSize);

@@ -186,11 +186,6 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool CurveParameterController::editableParameter(int index) {
-  return index != k_indexOfDerivativeCell &&
-         function()->properties().parameterAtIndexIsEditable(index);
-}
-
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
   updateNumberOfParameterCells();

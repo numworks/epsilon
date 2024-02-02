@@ -89,7 +89,6 @@ It's expected to:
 | frac(A) | A - floor(A) |
 | e | exp(1) |
 | conj(A) | re(A)-i×re(A) |
-| i | complex(0,1) |
 | - A | (-1)×A |
 | A - B | A + (-1)×B |
 | A / B | A×B^-1 |
@@ -103,12 +102,12 @@ It's expected to:
 | arcsec(A) | acos(1/A) |
 | arccsc(A) | asin(1/A) |
 | arccot(A) | acos(0) - atan(A) |
-| cosh(A) | (exp(A)+exp(-A))*1/2 |
-| sinh(A) | (exp(A)-exp(-A))*1/2 |
+| cosh(A) | (exp(A)+exp(-A))×1/2 |
+| sinh(A) | (exp(A)-exp(-A))×1/2 |
 | tanh(A) | (exp(2A)-1)/(exp(2A)+1) |
 | arcosh(A) | ln(A + sqrt(A - 1)×sqrt(A + 1)) |
 | arsinh(A) | ln(A + sqrt(A^2 + 1)) |
-| artanh(A) | (ln(1+A)-ln(1-A))*1/2 |
+| artanh(A) | (ln(1+A)-ln(1-A))×1/2 |
 
 </details>
 
@@ -141,7 +140,7 @@ It's expected to:
 | A^0 (with A != 0) | 1 |
 | A^0 | Dep(1, A^0) |
 | A^1 | A |
-| (0 + A×i)^n | ±(A^n) or (0±(A^n)×i) |
+| i^n | 1, i, -1 or -i |
 | (w^p)^n | w^(p×n) |
 | (w1×...×wk)^n | w1^n×...×wk^n |
 | exp(a)^b | exp(a×b) |
@@ -151,7 +150,6 @@ It's expected to:
 | 0 + A + B | A + B |
 | 2 + 4.1 | 6.1 |
 | 2×a + 4.1×a | 6.1×a |
-| complex(A, B) + C | complex(A + re(C), B + Im(C)) |
 | ×(A) | A |
 | ×() | 1 |
 | B×A | A×B |
@@ -159,13 +157,11 @@ It's expected to:
 | 0×A | 0 |
 | 1×A×B | A×B |
 | t^m×t^n | t^(m+n) |
-| complex(A, B)×C | complex(A×re(C) - B×im(C), A×im(C) + B×re(C)) |
 | powerReal(A, B) (with A complex or positive, or B integer) | A^B |
 | powerReal(A, B) (with A negative, B negative rational p/q, q even) | unreal |
 | powerReal(A, B) (with A negative, B rational p/q, q odd) | ±|A|^B |
-| abs(abs(y)) | abs(x) |
-| abs(complex(x, y)) | √(x^2+y^2) |
-| abs(x) | ±x |
+| abs(abs(x)) | abs(x) |
+| abs(x) (when x is a number) | ±x |
 | trigDiff({1,1,0,0}, {1,0,1,0}) | {0, 1, 3, 0} |
 | trig(-x,y) | ±trig(-x,y) |
 | trig(πn/120, B) (with some values of n) | exact value |
@@ -198,18 +194,15 @@ It's expected to:
 | exp(ln(x)) | x |
 | exp(0) | 1 |
 | exp(B×ln(A)) (with B an integer) | A^B |
-| complex(A, 0) | A |
-| complex(re(x), im(x)) | x |
-| complex(x, y) (with x or y non real) | complex(re(x) - im(y), im(x) + re(y)) |
 | arg(0) | undef |
-| arg(complex(0, y)) | π/2 if y > 0, -π/2 if y < 0 |
-| arg(complex(x, y)) (with x > 0) | arctan(y/x) |
-| arg(complex(x, y)) (with x < 0 and y >= 0) | arctan(y/x) + π |
-| arg(complex(x, y)) (with x < 0 and y < 0) | arctan(y/x) - π |
-| im(complex(x, y)) | y |
-| im(x) (with x real) | 0 |
-| re(complex(x, y)) | x |
-| re(x) (with x real) | x |
+| arg(x) (with re(x) = 0)| π/2 if im(x) > 0, -π/2 if im(x) < 0 |
+| arg(x) (with re(x) > 0) | arctan(im(x)/re(x)) |
+| arg(x) (with re(x) < 0 and im(x) >= 0) | arctan(im(x)/re(x)) + π |
+| arg(x) (with re(x) < 0 and im(x) < 0) | arctan(im(x)/re(x)) - π |
+| im(x) (with re(x) = 0) | -ix |
+| im(x) (with im(x) = 0) | 0 |
+| re(x) (with re(x) = 0) | 0 |
+| re(x) (with im(x) = 0) | x |
 | sum(k, k, m, n) | n(n + 1)/2 - (m - 1)m/2 |
 | sum(k^2, k, m, n) | n(n + 1)(2n + 1)/6 - (m - 1)(m)(2m - 1)/6 |
 | sum(f, k, m, n) (with f independent of k or random nodes) | f×(1 + n - m) |
@@ -272,18 +265,21 @@ It's expected to:
 |---|---|
 | A?×\|B\|×\|C\|×D? | A×\|BC\|×D |
 | \|A×B?\| | \|A\|×\|B\| |
-| exp(A + iB) | exp(A)×(cos(B) + i×sin(B)) |
+| \|A\| | exp(ln(re(A)^2+im(A)^2)/2) |
+| exp(A?×i×B?) | cos(A×B) + i×sin(A×B) |
 | exp(A + B?) | exp(A)×exp(B) |
 | A?×exp(B)×exp(C)×D? | A×exp(B + C)×D |
+| A? + cos(B) + C? + i×sin(B) + D? | A + C + D + exp(i×B) |
 | A?×(B + C?)×D? | A×B×D + A×C×D |
 | A? + B?×C×D? + E? + F?×C×G? + H? | A + C×(B×D + F×G) + E + H |
-| (A + B×i)^2 | (A^2 - 2×B^2 + 2×A×B×i) |
 | (A? + B)^2 | (A^2 + 2×A×B + B^2) |
-| A×ln(B) (with A integer) | ln(B^A) |
-|A? + ln(B) + C? + ln(D) + E? | A + C + ln(BD) + E |
+| A×ln(B) (with A integer) | ln(B^A) + i×(A×arg(B) - arg(B^A)) |
+| A? + ln(B) + C? + ln(D) + E? | A + C + ln(BD) + E + i×(arg(B) + arg(D) - arg(BD)) |
 | ln(12/7) | 2×ln(2) + ln(3) - ln(7) |
-| ln(A×B?) | ln(A) + ln(B) |
-| ln(A^B) | B×ln(A) |
+| ln(A×B?) | ln(A) + ln(B) - i×(arg(A) + arg(B) - arg(AB)) |
+| ln(A^B) | B×ln(A) - i×( B×arg(A) - arg(A^B)) |
+| i×(B×arg(A) - arg(A^B)) | i×k×2π (when k can be found) |
+| i×(arg(A) + arg(B) - arg(A×B)) | i×k×2π (when k can be found) |
 | A? + cos(B)^2 + C? + sin(D)^2 + E? | 1 + A + C + E |
 | A?×Trig(B, C)×D?×Trig(E, F)×G? | 0.5×A×D×(Trig(B - E, TrigDiff(C, F)) + Trig(B + E, C + F))×G |
 | Trig(A? + B, C) | Trig(A, 0)×Trig(B, C) + Trig(A, 1)×Trig(B, C-1) |
@@ -298,6 +294,10 @@ It's expected to:
 | atan(A) | asin(A / Sqrt(1 + A^2)) |
 | im(x + y) | im(x) + im(z) |
 | re(x + y) | re(x) + re(z) |
+| im(x×y) | im(x)re(y) + re(x)im(y) |
+| re(x×y) | re(x)re(y) - im(x)im(y) |
+| A? + B?×im(C)×D? + E? | A - i×BCD + i×B×re(C)×D + E |
+| A? + B?×re(C)×D? + E? | A + BCD - i×B×im(C)×D + E |
 
 </details>
 

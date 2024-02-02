@@ -19,7 +19,7 @@ class Rational final {
   static PoincareJ::Sign Sign(const Tree* node) {
     StrictSign s = Numerator(node).strictSign();
     return PoincareJ::Sign(s == StrictSign::Null, s == StrictSign::Positive,
-                           s == StrictSign::Negative, node->isInteger());
+                           s == StrictSign::Negative, !node->isInteger());
   }
   static void SetSign(Tree* reference, NonStrictSign sign);
 

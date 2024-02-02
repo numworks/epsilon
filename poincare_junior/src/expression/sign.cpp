@@ -24,19 +24,19 @@ Sign DecimalFunction(Sign s, BlockType type) {
   bool canBeNull = s.canBeNull();
   bool canBePositive = s.canBePositive();
   bool canBeNegative = s.canBeNegative();
-  bool isInteger = s.isInteger();
+  bool canBeNonInteger = s.canBeNonInteger();
   switch (type) {
     case BlockType::Ceiling:
       canBeNull |= canBeNegative;
-      isInteger = true;
+      canBeNonInteger = false;
       break;
     case BlockType::Floor:
       canBeNull |= canBePositive;
-      isInteger = true;
+      canBeNonInteger = false;
       break;
     case BlockType::FracPart:
       canBeNull = true;
-      canBePositive = !isInteger;
+      canBePositive = canBeNonInteger;
       canBeNegative = false;
       break;
     case BlockType::Round:
@@ -45,12 +45,12 @@ Sign DecimalFunction(Sign s, BlockType type) {
     default:
       assert(false);
   }
-  return Sign(canBeNull, canBePositive, canBeNegative, isInteger);
+  return Sign(canBeNull, canBePositive, canBeNegative, canBeNonInteger);
 }
 
 Sign Oppose(Sign s) {
   return Sign(s.canBeNull(), s.canBeNegative(), s.canBePositive(),
-              s.isInteger());
+              s.canBeNonInteger());
 }
 
 Sign Mult(Sign s1, Sign s2) {
@@ -59,7 +59,7 @@ Sign Mult(Sign s1, Sign s2) {
                   (s1.canBeNegative() && s2.canBeNegative()),
               (s1.canBePositive() && s2.canBeNegative()) ||
                   (s1.canBeNegative() && s2.canBePositive()),
-              s1.isInteger() && s2.isInteger());
+              s1.canBeNonInteger() || s2.canBeNonInteger());
 }
 
 Sign Add(Sign s1, Sign s2) {
@@ -68,7 +68,7 @@ Sign Add(Sign s1, Sign s2) {
                   (s1.canBeNegative() && s2.canBePositive()),
               s1.canBePositive() || s2.canBePositive(),
               s1.canBeNegative() || s2.canBeNegative(),
-              s1.isInteger() && s2.isInteger());
+              s1.canBeNonInteger() || s2.canBeNonInteger());
 }
 
 Sign Sign::Get(const Tree* t) {
@@ -81,7 +81,7 @@ void Sign::log(bool endOfLine) const {
   if (isZero()) {
     std::cout << "Zero";
   } else {
-    if (m_isInteger) {
+    if (!m_canBeNonInteger) {
       std::cout << "Integer and ";
     }
     if (isUnknown()) {
@@ -108,9 +108,9 @@ ComplexSign NoIntegers(ComplexSign s) {
 }
 
 ComplexSign Abs(ComplexSign s) {
-  return ComplexSign(
-      Sign(s.canBeNull(), !s.isZero(), false, s.isInteger() && s.isPure()),
-      Sign::Zero());
+  return ComplexSign(Sign(s.canBeNull(), !s.isZero(), false,
+                          s.canBeNonInteger() || !s.isPure()),
+                     Sign::Zero());
 }
 
 ComplexSign ArcCosine(ComplexSign s) {
@@ -186,24 +186,25 @@ ComplexSign Add(ComplexSign s1, ComplexSign s2) {
 
 ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   // If this assert can't be maintained, escape with Unknown.
-  assert(exp.isReal() && exp.isInteger());
+  assert(exp.isReal() && !exp.canBeNonInteger());
   if (base.isZero()) {
     return ComplexSign::ComplexZero();
   }
   if (exp.isZero()) {
     return ComplexSign::RealPositiveInteger();  // 1
   }
-  bool isInteger = (base.isInteger() && exp.realSign().isPositive());
+  bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
   bool baseIsReal = base.isReal();
   if (baseIsReal && expIsTwo) {
     return ComplexSign(
-        Sign(base.realSign().canBeNull(), true, false, isInteger),
+        Sign(base.realSign().canBeNull(), true, false, canBeNonInteger),
         Sign::Zero());
   }
   return ComplexSign(
       Sign(base.realSign().canBeNull(), true,
-           !(baseIsReal && base.realSign().isPositive()), isInteger),
-      Sign(base.imagSign().canBeNull(), !baseIsReal, !baseIsReal, isInteger));
+           !(baseIsReal && base.realSign().isPositive()), canBeNonInteger),
+      Sign(base.imagSign().canBeNull(), !baseIsReal, !baseIsReal,
+           canBeNonInteger));
 }
 
 ComplexSign Complex(ComplexSign s0, ComplexSign s1) {
@@ -275,7 +276,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case BlockType::ArcCosine:
       return ArcCosine(Get(t->firstChild()));
     case BlockType::Factorial:
-      assert(Get(t->firstChild()).isReal() && Get(t->firstChild()).isInteger());
+      assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());
       return RealPositiveInteger();
     case BlockType::Ceiling:
     case BlockType::Floor:

@@ -45,7 +45,7 @@ Sign Number::Sign(const Tree* node) {
     case BlockType::SingleFloat: {
       double value = Float::To(node);
       // Floats are not considered integer since they may have been rounded
-      return PoincareJ::Sign(value == 0, value > 0, value < 0, false);
+      return PoincareJ::Sign(value == 0, value > 0, value < 0, true);
     }
     default:
       assert(node->isRational());

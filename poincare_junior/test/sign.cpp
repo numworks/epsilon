@@ -17,7 +17,7 @@ static_assert(ComplexSign(ComplexSign::ComplexUnknown().getValue()) ==
 static_assert(ComplexSign::ComplexUnknown().isUnknown());
 static_assert(ComplexSign::RealUnknown().isReal());
 static_assert(ComplexSign::RealInteger().isReal() &&
-              ComplexSign::RealInteger().isInteger());
+              !ComplexSign::RealInteger().canBeNonInteger());
 
 void assert_sign(const char* input, ComplexSign expectedSign) {
   Tree* expression = TextToTree(input);

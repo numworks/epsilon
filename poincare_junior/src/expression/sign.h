@@ -16,11 +16,11 @@ class Tree;
 class Sign {
  public:
   constexpr Sign(bool canBeNull, bool canBePositive, bool canBeNegative,
-                 bool isInteger = false)
+                 bool canBeNonInteger = true)
       : m_canBeNull(canBeNull),
         m_canBePositive(canBePositive),
         m_canBeNegative(canBeNegative),
-        m_isInteger(isInteger || !(canBePositive || canBeNegative)) {
+        m_canBeNonInteger(canBeNonInteger && (canBePositive || canBeNegative)) {
     // By ensuring its members can't be modified, a Sign is always valid.
     assert(isValid());
   }
@@ -31,7 +31,7 @@ class Sign {
   constexpr bool canBeNull() const { return m_canBeNull; }
   constexpr bool canBePositive() const { return m_canBePositive; }
   constexpr bool canBeNegative() const { return m_canBeNegative; }
-  constexpr bool isInteger() const { return m_isInteger; }
+  constexpr bool canBeNonInteger() const { return m_canBeNonInteger; }
   constexpr bool isZero() const {
     return !(m_canBePositive || m_canBeNegative);
   }
@@ -57,7 +57,7 @@ class Sign {
   constexpr uint8_t getValue() {
     // Cannot use bit_cast because it doesn't handle bitfields.
     return m_canBeNull << 0 | m_canBePositive << 1 | m_canBeNegative << 2 |
-           m_isInteger << 3;
+           m_canBeNonInteger << 3;
   }
 
   constexpr static Sign Zero() { return Sign(true, false, false); }
@@ -68,16 +68,16 @@ class Sign {
   constexpr static Sign NegativeOrNull() { return Sign(true, false, true); }
   constexpr static Sign Unknown() { return Sign(true, true, true); }
   constexpr static Sign PositiveInteger() {
-    return Sign(false, true, false, true);
+    return Sign(false, true, false, false);
   }
   constexpr static Sign NegativeInteger() {
-    return Sign(false, false, true, true);
+    return Sign(false, false, true, false);
   }
   constexpr static Sign NonNullInteger() {
-    return Sign(false, true, true, true);
+    return Sign(false, true, true, false);
   }
 
-  constexpr static Sign Integer() { return Sign(true, true, true, true); }
+  constexpr static Sign Integer() { return Sign(true, true, true, false); }
 
   static Sign Get(const Tree* t);
 
@@ -87,13 +87,14 @@ class Sign {
 
  private:
   constexpr bool isValid() const {
-    return m_canBePositive || m_canBeNegative || (m_canBeNull && m_isInteger);
+    return m_canBePositive || m_canBeNegative ||
+           (m_canBeNull && !m_canBeNonInteger);
   }
 
   bool m_canBeNull : 1;
   bool m_canBePositive : 1;
   bool m_canBeNegative : 1;
-  bool m_isInteger : 1;  // = !canBeNonIntegral
+  bool m_canBeNonInteger : 1;
 };
 
 class ComplexSign {
@@ -126,8 +127,8 @@ class ComplexSign {
   constexpr bool canBeNull() const {
     return realSign().canBeNull() && imagSign().canBeNull();
   }
-  constexpr bool isInteger() const {
-    return realSign().isInteger() && imagSign().isInteger();
+  constexpr bool canBeNonInteger() const {
+    return realSign().canBeNonInteger() || imagSign().canBeNonInteger();
   }
 
   bool operator==(const ComplexSign&) const = default;

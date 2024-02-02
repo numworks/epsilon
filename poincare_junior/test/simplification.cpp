@@ -279,7 +279,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("abs(x+i×y)^2-(-im(y)+re(x))^2-(im(x)+re(y))^2",
                 "abs(x+y×i)^2-((-im(y)+re(x))^2+(im(x)+re(y))^2)",
                 cartesianCtx);
-  simplifies_to("arg(re(x)+i×re(y))", "arg(re(x)+i×re(y))", cartesianCtx);
+  simplifies_to("arg(re(x)+re(y)×i)", "arg(re(x)+re(y)×i)", cartesianCtx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", cartesianCtx);
   simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", cartesianCtx);
   simplifies_to("arg(i×2)", "π/2", cartesianCtx);
@@ -312,14 +312,14 @@ QUIZ_CASE(pcj_basic_simplification) {
   //     cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("cosh(arcosh(x))",
-                "(x+e^(ln(x-1)/2+ln(x+1)/2)+1/(x+e^((ln(x-1)+ln(x+1))/2)))/2",
+                "(x+√(x-1)×√(x+1)+1/(x+e^((ln(x-1)+ln(x+1))/2)))/2",
                 cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("sinh(arsinh(x))", "(x+√(x^2+1)-1/(x+√(x^2+1)))/2",
                 cartesianCtx);
-  // TODO: Should simplify to x and overflow the pool
-  // simplifies_to("tanh(artanh(x))", "(-1+(x+1)/(-x+1))/(1+(x+1)/(-x+1))",
-  //               cartesianCtx);
+  // TODO: Should simplify to x
+  simplifies_to("tanh(artanh(x))", "(-1+e^(ln(x+1)-ln(-x+1)))/(1+(x+1)/(-x+1))",
+                cartesianCtx);
   // Advanced trigonometry
   simplifies_to("sec(x)", "1/cos(x)");
   simplifies_to("csc(x)", "1/sin(x)");

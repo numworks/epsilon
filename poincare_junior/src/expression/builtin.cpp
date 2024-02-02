@@ -90,6 +90,7 @@ constexpr static Aliases s_customIdentifiers[] = {
 constexpr static Builtin s_specialIdentifiers[] = {
     {BlockType::Undefined, "undef"},
     {BlockType::Nonreal, "nonreal"},
+    {BlockType::ComplexI, "i"},
     {BlockType::Infinity, BuiltinsAliases::k_infinityAliases},
 };
 

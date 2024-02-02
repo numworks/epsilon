@@ -243,10 +243,9 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       Symbol::GetName(exp, buffer, std::size(buffer));
       return Poincare::Symbol::Builder(buffer, Symbol::Length(exp));
     }
+    case BlockType::ComplexI:
+      return Poincare::Constant::ComplexIBuilder();
     case BlockType::Constant: {
-      if (Constant::Type(exp) == Constant::Type::I) {
-        return Poincare::Constant::ComplexIBuilder();
-      }
       if (Constant::Type(exp) == Constant::Type::Pi) {
         return Poincare::Constant::PiBuilder();
       }

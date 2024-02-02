@@ -69,8 +69,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
       // w^2 < x < y^2
       return comparePowerChild;
     }
-    if (type0 == BlockType::Constant &&
-        Constant::Type(node0) == Constant::Type::I) {
+    if (type0 == BlockType::ComplexI) {
       return 1;
     }
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication

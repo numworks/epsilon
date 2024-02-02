@@ -414,8 +414,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
     return Token::Type::SpecialIdentifier;
   }
 #endif
-  if (*length == 1 && (m_decoder.codePointAt(string) == 'e' ||
-                       m_decoder.codePointAt(string) == 'i')) {
+  if (*length == 1 && m_decoder.codePointAt(string) == 'e') {
     return Token::Type::Constant;
   }
 #if 0

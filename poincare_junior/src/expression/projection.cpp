@@ -155,8 +155,6 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       // conj(A) -> re(A)-i*re(A)
       PatternMatching::MatchAndReplace(
           ref, KConj(KA), KAdd(KRe(KA), KMult(-1_e, i_e, KIm(KA)))) ||
-      // i -> Complex(0,1)
-      PatternMatching::MatchAndReplace(ref, i_e, KI) ||
       // - A  -> (-1)*A
       PatternMatching::MatchAndReplace(ref, KOpposite(KA), KMult(-1_e, KA)) ||
       // A - B -> A + (-1)*B

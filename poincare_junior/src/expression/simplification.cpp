@@ -321,7 +321,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     remainder->removeTree();
     if (rem != 1) {
       u->cloneTreeOverTree(rem == 0 ? 1_e
-                                    : (rem == 2 ? -1_e : KMult(-1_e, KI)));
+                                    : (rem == 2 ? -1_e : KMult(-1_e, i_e)));
     }
     return true;
   }
@@ -744,8 +744,8 @@ bool Simplification::SimplifyComplexPart(Tree* tree) {
     tree->removeNode();
   } else {
     // im(x) = -i*x
-    tree->moveTreeOverTree(
-        PatternMatching::CreateAndSimplify(KMult(-1_e, KI, KA), {.KA = child}));
+    tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+        KMult(-1_e, i_e, KA), {.KA = child}));
   }
   return true;
 }
@@ -1281,21 +1281,21 @@ bool Simplification::ExpandImRe(Tree* ref) {
       // A? + B?*im(C)*D? + E? = A - i*B*C*D + i*B*re(C)*D + E
       PatternMatching::MatchReplaceAndSimplify(
           ref, KAdd(KTA, KMult(KTB, KIm(KC), KTD), KTE),
-          KAdd(KTA, KMult(-1_e, KI, KTB, KC, KTD), KMult(KI, KTB, KRe(KC), KTD),
-               KTE)) ||
+          KAdd(KTA, KMult(-1_e, i_e, KTB, KC, KTD),
+               KMult(i_e, KTB, KRe(KC), KTD), KTE)) ||
       // A? + B?*re(C)*D? + E? = A + B*C*D - i*B*im(C)*D + E
       PatternMatching::MatchReplaceAndSimplify(
           ref, KAdd(KTA, KMult(KTB, KRe(KC), KTD), KTE),
-          KAdd(KTA, KMult(KTB, KC, KTD), KMult(-1_e, KI, KTB, KIm(KC), KTD),
+          KAdd(KTA, KMult(KTB, KC, KTD), KMult(-1_e, i_e, KTB, KIm(KC), KTD),
                KTE)) ||
       // A? + im(B) + C? = A - i*B + i*re(B) + C
       PatternMatching::MatchReplaceAndSimplify(
           ref, KAdd(KTA, KIm(KB), KTC),
-          KAdd(KTA, KMult(-1_e, KI, KB), KMult(KI, KRe(KB)), KTC)) ||
+          KAdd(KTA, KMult(-1_e, i_e, KB), KMult(i_e, KRe(KB)), KTC)) ||
       // A? + re(B) + C? = A + B - i*im(B) + C
       PatternMatching::MatchReplaceAndSimplify(
           ref, KAdd(KTA, KRe(KB), KTC),
-          KAdd(KTA, KB, KMult(-1_e, KI, KIm(KB)), KTC));
+          KAdd(KTA, KB, KMult(-1_e, i_e, KIm(KB)), KTC));
 }
 
 bool Simplification::ContractAbs(Tree* ref) {
@@ -1321,9 +1321,9 @@ bool Simplification::ExpandExp(Tree* ref) {
   return
       // exp(A?*i*B?) = cos(B*C) + i*sin(B*C)
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KExp(KMult(KTA, KI, KTB)),
+          ref, KExp(KMult(KTA, i_e, KTB)),
           KAdd(KTrig(KMult(KTA, KTB), 0_e),
-               KMult(KI, KTrig(KMult(KTA, KTB), 1_e)))) ||
+               KMult(i_e, KTrig(KMult(KTA, KTB), 1_e)))) ||
       // exp(A+B?) = exp(A) * exp(B)
       PatternMatching::MatchReplaceAndSimplify(
           ref, KExp(KAdd(KA, KTB)), KMult(KExp(KA), KExp(KAdd(KTB))));
@@ -1337,8 +1337,8 @@ bool Simplification::ContractExpMult(Tree* ref) {
           KMult(KTA, KExp(KAdd(KB, KC)), KTD)) ||
       // A? + cos(B) + C? + i*sin(B) + D? = A + C + D + exp(i*B)
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KAdd(KTA, KTrig(KB, 0_e), KTC, KMult(KI, KTrig(KB, 1_e)), KTD),
-          KAdd(KTA, KTC, KTD, KExp(KMult(KI, KB))));
+          ref, KAdd(KTA, KTrig(KB, 0_e), KTC, KMult(i_e, KTrig(KB, 1_e)), KTD),
+          KAdd(KTA, KTC, KTD, KExp(KMult(i_e, KB))));
 }
 
 bool Simplification::ExpandMult(Tree* ref) {

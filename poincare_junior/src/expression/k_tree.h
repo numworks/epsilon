@@ -19,7 +19,7 @@ constexpr auto KUndef = KTree<BlockType::Undefined>();
 constexpr auto KHalf = KTree<BlockType::Half>();
 constexpr auto KNonreal = KTree<BlockType::Nonreal>();
 constexpr auto KInf = KTree<BlockType::Infinity>();
-constexpr auto KI = KTree<BlockType::ComplexI>();
+constexpr auto i_e = KTree<BlockType::ComplexI>();
 
 constexpr auto KAbs = KUnary<BlockType::Abs>();
 constexpr auto KCos = KUnary<BlockType::Cosine>();
@@ -251,9 +251,6 @@ constexpr KTree π_e =
 
 constexpr KTree e_e =
     KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::E)>();
-
-constexpr KTree i_e =
-    KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::I)>();
 
 // TODO: move in OMG?
 /* Read decimal number in str as an int, ignoring decimal point "1.2" => 12 */

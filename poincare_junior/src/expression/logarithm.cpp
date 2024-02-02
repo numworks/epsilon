@@ -24,7 +24,7 @@ bool Logarithm::SimplifyLn(Tree* u) {
   }
   if (child->isMinusOne()) {
     // ln(-1) -> iπ - Necessary so that sqrt(-1)->i
-    u->cloneTreeOverTree(KMult(π_e, KI));
+    u->cloneTreeOverTree(KMult(π_e, i_e));
     return true;
   } else if (child->isOne()) {
     u->cloneTreeOverTree(0_e);
@@ -157,7 +157,7 @@ bool CanGetArgProdModulo(const Tree* a, const Tree* b, int* k) {
 Tree* PushIK2Pi(int k) {
   // Push i*k*2π
   Tree* result = (KMult.node<4>)->cloneNode();
-  (KI)->clone();
+  (i_e)->clone();
   (2_e)->clone();
   Integer::Push(k);
   (π_e)->clone();
@@ -173,7 +173,7 @@ Tree* PushProductCorrection(const Tree* a, const Tree* b) {
   }
   // Push B*arg(A) - arg(A^B)
   return PatternMatching::CreateAndSimplify(
-      KMult(KI, KAdd(KMult(KB, KArg(KA)), KMult(-1_e, KArg(KPow(KA, KB))))),
+      KMult(i_e, KAdd(KMult(KB, KArg(KA)), KMult(-1_e, KArg(KPow(KA, KB))))),
       {.KA = a, .KB = b});
 }
 
@@ -185,7 +185,7 @@ Tree* PushAdditionCorrection(const Tree* a, const Tree* b) {
   }
   // Push arg(A) + arg(B) - arg(AB)
   return PatternMatching::CreateAndSimplify(
-      KMult(KI, KAdd(KArg(KA), KArg(KB), KMult(-1_e, KArg(KMult(KA, KB))))),
+      KMult(i_e, KAdd(KArg(KA), KArg(KB), KMult(-1_e, KArg(KMult(KA, KB))))),
       {.KA = a, .KB = b});
 }
 
@@ -293,10 +293,6 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
     return nullptr;
   }
   Tree* result = KAdd.node<0>->cloneNode();
-  if (isNegative) {
-    // ln(-1) = iπ using the principal complex logarithm.
-    KMult(π_e, KI)->clone();
-  }
   for (int i = 0; i < factorization.numberOfFactors; i++) {
     if (factorization.coefficients[i] > 1) {
       KMult.node<2>->cloneNode();
@@ -304,6 +300,10 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
     }
     KLn->cloneNode();
     Integer::Push(factorization.factors[i]);
+  }
+  if (isNegative) {
+    // ln(-1) = iπ using the principal complex logarithm.
+    KMult(π_e, i_e)->clone();
   }
   NAry::SetNumberOfChildren(result, factorization.numberOfFactors + isNegative);
   NAry::SquashIfPossible(result);

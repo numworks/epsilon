@@ -439,8 +439,8 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle paste
   if (event == Ion::Events::Paste) {
-    bool didHandleEvent = privateHandleEventWithText(
-        Clipboard::SharedClipboard()->storedText(), false, true);
+    bool didHandleEvent =
+        insertText(Clipboard::SharedClipboard()->storedText(), false, true);
     *textDidChange = didHandleEvent;
     return didHandleEvent;
   }
@@ -491,7 +491,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   constexpr const size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
   char buffer[bufferSize] = {0};
   if (eventHasText(event, buffer, bufferSize)) {
-    bool didHandleEvent = privateHandleEventWithText(buffer);
+    bool didHandleEvent = insertText(buffer);
     *textDidChange = didHandleEvent;
     return didHandleEvent;
   }
@@ -552,8 +552,8 @@ bool AbstractTextField::handleSelectEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool AbstractTextField::privateHandleEventWithText(
-    const char *eventText, bool indentation, bool forceCursorRightOfText) {
+bool AbstractTextField::insertText(const char *eventText, bool indentation,
+                                   bool forceCursorRightOfText) {
   prepareToEdit();
   assert(isEditing());
 
@@ -602,9 +602,8 @@ bool AbstractTextField::handleEventWithText(const char *eventText,
                                             bool indentation,
                                             bool forceCursorRightOfText) {
   /* TODO: this method should not exist, we should only have
-   * privateHandleEventWithText and always call handleEvent. */
-  if (privateHandleEventWithText(eventText, indentation,
-                                 forceCursorRightOfText)) {
+   * insertText and always call handleEvent. */
+  if (insertText(eventText, indentation, forceCursorRightOfText)) {
     if (m_delegate) {
       m_delegate->textFieldDidHandleEvent(this);
     }

@@ -82,12 +82,12 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   if (row == k_indexOfAbscissaCell) {
     SerializationHelper::CodePoint(buffer, bufferSize, properties.symbol());
   } else {
-    assert(row == k_indexOfImageCell || row == k_indexOfDerivativeCell);
     if (properties.isParametric()) {
+      assert(row == k_indexOfImageCell1 || row == k_indexOfImageCell2);
       FunctionNameHelper::ParametricComponentNameWithArgument(
-          function().pointer(), buffer, bufferSize, row == k_indexOfImageCell);
+          function().pointer(), buffer, bufferSize, row == k_indexOfImageCell1);
     } else {
-      if (row == k_indexOfImageCell) {
+      if (row == k_indexOfImageCell1) {
         function()->nameWithArgument(buffer, bufferSize);
       } else {
         assert(row == k_indexOfDerivativeCell);
@@ -229,8 +229,10 @@ void CurveParameterController::didBecomeFirstResponder() {
 }
 
 void CurveParameterController::updateNumberOfParameterCells() {
+  m_parameterCells[k_indexOfImageCell2].setVisible(
+      function()->properties().isParametric());
   m_parameterCells[k_indexOfDerivativeCell].setVisible(
-      shouldDisplayDerivative() || function()->properties().isParametric());
+      shouldDisplayDerivative());
 }
 
 }  // namespace Graph

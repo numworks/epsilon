@@ -272,19 +272,21 @@ size_t ContinuousFunction::derivativeNameWithArgument(char *buffer,
   return length;
 }
 
-double ContinuousFunction::approximateDerivative(double t, Context *context,
-                                                 bool useDomain) const {
+Evaluation<double> ContinuousFunction::approximateDerivative(
+    double t, Context *context, bool useDomain) const {
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
-  if (useDomain && (t < tMin() || t > tMax())) {
-    return NAN;
-  }
   // Derivative is simplified once and for all
   Expression derivate = expressionDerivateReduced(context);
   ApproximationContext approximationContext(context, complexFormat(context));
-  return derivate.approximateToScalarWithValueForSymbol(k_unknownName, t,
-                                                        approximationContext);
+  Evaluation<double> result = derivate.approximateWithValueForSymbol(
+      k_unknownName, t, approximationContext);
+  if (useDomain && (t < tMin() || t > tMax())) {
+    assert(result.type() == EvaluationNode<double>::Type::Complex);
+    return Complex<double>::RealUndefined();
+  }
+  return result;
 }
 
 Poincare::Layout ContinuousFunction::derivativeTitleLayout() {

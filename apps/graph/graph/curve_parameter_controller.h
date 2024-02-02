@@ -34,7 +34,6 @@ class CurveParameterController
   }
 
  private:
-  constexpr static int k_numberOfRows = 5;
   KDCoordinate separatorBeforeRow(int row) override {
     return cell(row) == &m_calculationCell ? k_defaultRowSeparator : 0;
   }
@@ -71,6 +70,7 @@ class CurveParameterController
   static constexpr int k_indexOfImageCell = 1;
   static constexpr int k_indexOfDerivativeCell = 2;
   static constexpr int k_numberOfParameterRows = 3;
+  constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
 
   using ParameterCell = Escher::MenuCellWithEditableText<
       Escher::OneLineBufferTextView<KDFont::Size::Large>>;

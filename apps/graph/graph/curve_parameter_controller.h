@@ -56,7 +56,6 @@ class CurveParameterController
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
   bool shouldDisplayDerivative() const;
-  bool isDerivative(int index) { return index == k_indexOfDerivativeCell; };
   void fillParameterCellAtRow(int row) override;
   void updateNumberOfParameterCells();
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,

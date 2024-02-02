@@ -101,7 +101,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 
 double CurveParameterController::parameterAtIndex(int index) {
   Poincare::Context *ctx = App::app()->localContext();
-  if (isDerivative(index)) {
+  if (index == k_indexOfDerivativeCell) {
     assert(function()->canDisplayDerivative());
     return function()->approximateDerivative(m_cursor->t(), ctx).toScalar();
   }
@@ -187,7 +187,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 bool CurveParameterController::editableParameter(int index) {
-  return !isDerivative(index) &&
+  return index != k_indexOfDerivativeCell &&
          function()->properties().parameterAtIndexIsEditable(index);
 }
 

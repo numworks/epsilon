@@ -355,6 +355,10 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("binomial(4,2)", "6");
   // simplifies_to("(n+1)!/n!", "n+1");
 
+  simplifies_to("(π^2)%", "(π^2)%");
+  simplifies_to("2↗30%", "2↗30%");
+  simplifies_to("π+1+30%+2", "2+(1+π)↗30%");
+
   // Lists
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");

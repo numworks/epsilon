@@ -27,6 +27,7 @@ static constexpr int k_maxPriority = 10;
 static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
     case BlockType::Factorial:
+    case BlockType::PercentSimple:
       return 0;
     case BlockType::Power:
       return 1;
@@ -34,12 +35,14 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 2;
     case BlockType::Multiplication:
       return 3;
+    case BlockType::PercentAddition:
+      return 4;
     case BlockType::Opposite:
     // Opposite could be higher but we prefer to display 2^(-1) instead of 2^-1
     case BlockType::Subtraction:
-      return 4;
-    case BlockType::Addition:
       return 5;
+    case BlockType::Addition:
+      return 6;
     case BlockType::Set:
     case BlockType::List:
       return 9;
@@ -248,6 +251,20 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       PushCodePoint(layoutParent, '!');
+      break;
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      PushCodePoint(layoutParent, '%');
+      break;
+    case BlockType::PercentAddition:
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      PushCodePoint(layoutParent, UCodePointNorthEastArrow);
+      // continue
+    case BlockType::PercentSimple:
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      PushCodePoint(layoutParent, '%');
       break;
     case BlockType::Zero:
     case BlockType::MinusOne:

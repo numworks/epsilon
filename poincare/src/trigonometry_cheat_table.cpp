@@ -245,6 +245,8 @@ const TrigonometryCheatTable* TrigonometryCheatTable::Table() {
           Row::Pair(""), Row::Pair("")),
       Row(Row::Pair("π", 3.141592653589793f), Row::Pair("-1", -1.0f),
           Row::Pair("0", 0.0f), Row::Pair("0", 0.0f))};
+  static_assert(sizeof(sTableRows) ==
+                k_numberOfEntries * sizeof(sTableRows[0]));
   static const TrigonometryCheatTable sTable(sTableRows);
   return &sTable;
 }

@@ -19,8 +19,8 @@ class Render final {
   // TODO hide overloads without font from the external API
   static KDSize Size(const Tree* node);
   static KDSize Size(const Tree* node, KDFont::Size fontSize) {
-    font = fontSize;
-    showEmptyRack = false;
+    s_font = fontSize;
+    s_showEmptyRack = false;
     return Size(node);
   }
   static KDCoordinate Height(const Tree* node) { return Size(node).height(); }
@@ -28,8 +28,8 @@ class Render final {
 
   static KDCoordinate Baseline(const Tree* node);
   static KDCoordinate Baseline(const Tree* node, KDFont::Size fontSize) {
-    font = fontSize;
-    showEmptyRack = false;
+    s_font = fontSize;
+    s_showEmptyRack = false;
     return Baseline(node);
   }
 
@@ -58,8 +58,8 @@ class Render final {
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                          KDColor expressionColor, KDColor backgroundColor);
 
-  static KDFont::Size font;
-  static bool showEmptyRack;
+  static KDFont::Size s_font;
+  static bool s_showEmptyRack;
 };
 
 }  // namespace PoincareJ

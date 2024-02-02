@@ -71,9 +71,8 @@ void FindBaseForward(const Tree* child, int maxDepth, KDCoordinate* baseHeight,
                         baseHeight);
     return;
   }
-  BSize baseBSize = Render::Size(candidateBase);
-  *baseHeight = baseBSize.height();
-  *baseBaseline = baseBSize.baseline;
+  *baseHeight = Render::Size(candidateBase).height();
+  *baseBaseline = Render::Baseline(candidateBase);
 }
 
 void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
@@ -83,11 +82,11 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
          rightIndex <= node->numberOfChildren());
   int numberOfChildren = node->numberOfChildren();
   if (numberOfChildren == 0) {
-    KDSize emptySize = EmptyRectangle::Size(Render::font);
+    KDSize emptySize = EmptyRectangle::Size(Render::s_font);
     KDCoordinate width = ShouldDrawEmptyRectangle(node) ? emptySize.width() : 0;
     callback(nullptr, KDSize(width, emptySize.height()),
-             EmptyRectangle::Baseline(Render::font),
-             {0, EmptyRectangle::Baseline(Render::font)}, context);
+             EmptyRectangle::Baseline(Render::s_font),
+             {0, EmptyRectangle::Baseline(Render::s_font)}, context);
     return;
   }
   const Tree* lastBase = nullptr;
@@ -132,13 +131,13 @@ void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
       if (!base) {
         // Add an empty base
         if (ShouldDrawEmptyBaseAt(node, i)) {
-          callback(nullptr, EmptyRectangle::Size(Render::font),
-                   EmptyRectangle::Baseline(Render::font),
-                   {x, EmptyRectangle::Baseline(Render::font)}, context);
-          x += EmptyRectangle::Size(Render::font).width();
+          callback(nullptr, EmptyRectangle::Size(Render::s_font),
+                   EmptyRectangle::Baseline(Render::s_font),
+                   {x, EmptyRectangle::Baseline(Render::s_font)}, context);
+          x += EmptyRectangle::Size(Render::s_font).width();
         }
-        baseHeight = EmptyRectangle::Size(Render::font).height();
-        baseBaseline = EmptyRectangle::Baseline(Render::font);
+        baseHeight = EmptyRectangle::Size(Render::s_font).height();
+        baseBaseline = EmptyRectangle::Baseline(Render::s_font);
       } else {
         baseHeight = Render::Height(base);
         baseBaseline = Render::Baseline(base);
@@ -238,7 +237,7 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Tree* node, int leftIndex,
 }
 
 bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
-  if (node->numberOfChildren() != 0 || !Render::showEmptyRack) {
+  if (node->numberOfChildren() != 0 || !Render::s_showEmptyRack) {
     return false;
   }
   if (!RackLayout::s_layoutCursor) {
@@ -253,7 +252,7 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
 void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint pos,
                             bool isGridPlaceholder) {
   if (ShouldDrawEmptyRectangle(node)) {
-    EmptyRectangle::DrawEmptyRectangle(ctx, pos, Render::font,
+    EmptyRectangle::DrawEmptyRectangle(ctx, pos, Render::s_font,
                                        isGridPlaceholder
                                            ? EmptyRectangle::Color::Gray
                                            : EmptyRectangle::Color::Yellow);

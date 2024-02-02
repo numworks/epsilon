@@ -234,7 +234,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
                                 ParsingContext::ParsingMethod::Classic);
 
   /* The content of h will be modified if token match which would break the
-   * tokenizer. To avoid this we run the tokenizer of h and modifications on a
+   * tokenizer. To avoid this we run the tokenizer on h and modifications on a
    * copy of h. */
   Tree *clone = h->clone();
   /* The cursor is inside h and we need to move it inside clone for it to follow
@@ -373,14 +373,13 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
     return false;
   }
   EditionReference derivativeOrder = superscript->child(0);
-  EditionReference detached = NAry::DetachChildAtIndex(h, indexOfSuperscript);
+  NAry::RemoveChildAtIndex(h, indexOfSuperscript);
   EditionReference inserted =
       firstOrderDerivative->nextTree()->cloneTreeBeforeNode(derivativeOrder);
   if (layoutCursor->cursorNode() == h &&
       layoutCursor->position() > h->numberOfChildren()) {
     layoutCursor->setLayout(inserted, OMG::Direction::Right());
   }
-  detached->removeTree();
   firstOrderDerivative->cloneNodeOverNode(KNthDerivativeL);
   return true;
 }

@@ -167,16 +167,14 @@ void RackLayout::RenderNode(const Tree* node, KDContext* ctx, KDPoint pos,
                                            ? EmptyRectangle::Color::Gray
                                            : EmptyRectangle::Color::Yellow);
   }
-  if (node->numberOfChildren()) {
+  if (node->numberOfChildren() > 0) {
     for (int p = 0; p <= node->numberOfChildren(); p++) {
       if (cursorPositionNeedsEmptyBase(node, p) &&
           ShouldDrawEmptyBaseAt(node, p)) {
         EmptyRectangle::DrawEmptyRectangle(
             ctx,
             pos.translatedBy(KDPoint(
-                SizeBetweenIndexes(node, 0, p).width() -
-                    (false ? EmptyRectangle::RectangleSize(Render::font).width()
-                           : 0),
+                SizeBetweenIndexes(node, 0, p).width(),
                 Baseline(node) - KDFont::GlyphHeight(Render::font) / 2)),
             Render::font,
             isGridPlaceholder ? EmptyRectangle::Color::Gray

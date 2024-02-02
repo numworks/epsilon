@@ -641,12 +641,14 @@ bool Simplification::SimplifyAddition(Tree* u) {
     return true;
   }
   modified = NAry::Sort(u) || modified;
+  bool didSquashChildren = false;
   int n = u->numberOfChildren();
   int i = 0;
   Tree* child = u->nextNode();
   while (i < n) {
     if (child->isZero()) {
       child->removeTree();
+      modified = true;
       n--;
       continue;
     }
@@ -656,21 +658,27 @@ bool Simplification::SimplifyAddition(Tree* u) {
       if (child->isAddition()) {
         n += child->numberOfChildren() - 1;
         child->removeNode();
-        // n may remain equal to u->numberOfChildren()
-        modified = true;
+        didSquashChildren = true;
       }
+      modified = true;
       n--;
     } else {
       child = next;
       i++;
     }
   }
-  if (n == u->numberOfChildren()) {
-    return modified;
+  if (n != u->numberOfChildren()) {
+    assert(modified);
+    NAry::SetNumberOfChildren(u, n);
+    if (NAry::SquashIfPossible(u)) {
+      return true;
+    }
   }
-  NAry::SetNumberOfChildren(u, n);
-  if (NAry::SquashIfPossible(u)) {
-    return true;
+  if (didSquashChildren) {
+    /* Newly squashed children should be sorted again and they may allow new
+     * simplifications. NOTE: Further simplification could theoretically be
+     * unlocked, see following assertion. */
+    NAry::Sort(u);
   }
   /* TODO: SimplifyAddition may encounter the same issues as the multiplication.
    * If this assert can't be preserved, SimplifyAddition must handle one or both
@@ -679,9 +687,9 @@ bool Simplification::SimplifyAddition(Tree* u) {
    * of merging children a and b (with MergeAdditionChildWithNext) if it exists.
    * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
    * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
-   *   merging again when child merged with nextCHild) */
-  assert(!SimplifyAddition(u));
-  return true;
+   * merging again when child merged with nextCHild) */
+  assert(!modified || !SimplifyAddition(u));
+  return modified;
 }
 
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
@@ -1275,10 +1283,10 @@ bool Simplification::ExpandImRe(Tree* ref) {
           ref, KAdd(KTA, KMult(KTB, KIm(KC), KTD), KTE),
           KAdd(KTA, KMult(-1_e, KI, KTB, KC, KTD), KMult(KI, KTB, KRe(KC), KTD),
                KTE)) ||
-      // A? + B?*re(C)*D? + E? = A + B*C*D - B*im(C)*D + E
+      // A? + B?*re(C)*D? + E? = A + B*C*D - i*B*im(C)*D + E
       PatternMatching::MatchReplaceAndSimplify(
           ref, KAdd(KTA, KMult(KTB, KRe(KC), KTD), KTE),
-          KAdd(KTA, KMult(KTB, KC, KTD), KMult(-1_e, KTB, KIm(KC), KTD),
+          KAdd(KTA, KMult(KTB, KC, KTD), KMult(-1_e, KI, KTB, KIm(KC), KTD),
                KTE)) ||
       // A? + im(B) + C? = A - i*B + i*re(B) + C
       PatternMatching::MatchReplaceAndSimplify(

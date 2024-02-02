@@ -267,8 +267,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("im(2+i×π)", "π", cartesianCtx);
   simplifies_to("conj(2+i×π)", "2-π×i", cartesianCtx);
   simplifies_to("re(conj(x))-re(x)", "0", cartesianCtx);
-  // TODO : Overflows CRC32 collection
-  simplifies_to("conj(conj(x))", "i×im(x)+re(x)", cartesianCtx);
+  simplifies_to("conj(conj(x))", "x", cartesianCtx);
   simplifies_to("re(x+im(y))-im(y)", "re(x)", cartesianCtx);
   simplifies_to("re(x)+i×im(x)", "x", cartesianCtx);
   simplifies_to("re(x+i×y)+im(y)", "re(x)", cartesianCtx);

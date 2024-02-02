@@ -277,13 +277,13 @@ bool Simplification::SimplifyPower(Tree* u) {
   // v^n
   EditionReference n = v->nextTree();
   if (v->isZero()) {
-    ComplexSign indexSing = ComplexSign::Get(n);
-    if (indexSing.realSign().isStrictlyPositive()) {
+    ComplexSign indexSign = ComplexSign::Get(n);
+    if (indexSign.realSign().isStrictlyPositive()) {
       // 0^x is always defined.
       u->cloneTreeOverTree(0_e);
       return true;
     }
-    if (!indexSing.realSign().canBePositive()) {
+    if (!indexSign.realSign().canBePositive()) {
       // 0^x cannot be defined
       ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
     }

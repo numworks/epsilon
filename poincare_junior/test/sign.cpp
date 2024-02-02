@@ -12,9 +12,9 @@ static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
               ComplexSign::RealInteger());
 static_assert(ComplexSign(ComplexSign::RealUnknown().getValue()) ==
               ComplexSign::RealUnknown());
-static_assert(ComplexSign(ComplexSign::ComplexUnknown().getValue()) ==
-              ComplexSign::ComplexUnknown());
-static_assert(ComplexSign::ComplexUnknown().isUnknown());
+static_assert(ComplexSign(ComplexSign::Unknown().getValue()) ==
+              ComplexSign::Unknown());
+static_assert(ComplexSign::Unknown().isUnknown());
 static_assert(ComplexSign::RealUnknown().isReal());
 static_assert(ComplexSign::RealInteger().isReal() &&
               !ComplexSign::RealInteger().canBeNonInteger());
@@ -49,10 +49,10 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("2-π", Sign::Unknown());
   assert_sign("3 * abs(cos(x)) * -2", Sign::NegativeOrNull());
 
-  assert_sign("5+i*x", ComplexSign::ComplexUnknown());
+  assert_sign("5+i*x", ComplexSign::Unknown());
   assert_sign("5+i*im(x)",
               ComplexSign(Sign::PositiveInteger(), Sign::Unknown()));
-  assert_sign("5+i*x", ComplexSign::ComplexUnknown());
+  assert_sign("5+i*x", ComplexSign::Unknown());
   assert_sign("re(x)^2", ComplexSign(Sign::PositiveOrNull(), Sign::Zero()));
   assert_sign("re(x)^2+im(x)^2",
               ComplexSign(Sign::PositiveOrNull(), Sign::Zero()));

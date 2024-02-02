@@ -139,10 +139,10 @@ class ComplexSign {
   static constexpr ComplexSign RealUnknown() {
     return ComplexSign(Sign::Unknown(), Sign::Zero());
   }
-  static constexpr ComplexSign ComplexUnknown() {
+  static constexpr ComplexSign Unknown() {
     return ComplexSign(Sign::Unknown(), Sign::Unknown());
   }
-  static constexpr ComplexSign ComplexZero() {
+  static constexpr ComplexSign Zero() {
     return ComplexSign(Sign::Zero(), Sign::Zero());
   }
   static constexpr ComplexSign RealPositiveInteger() {

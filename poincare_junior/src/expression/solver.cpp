@@ -69,7 +69,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   SwapTrees(&simplifiedEquationSet, &variables);
   // TODO: Use user settings for a RealUnkown sign ?
   Variables::ProjectToId(simplifiedEquationSet, variables,
-                         ComplexSign::ComplexUnknown());
+                         ComplexSign::Unknown());
   EditionReference result;
   if (*error == Error::NoError) {
     result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables,
@@ -202,7 +202,7 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?
     Tree* polynomial = PolynomialParser::Parse(
-        tree, Variables::Variable(i, ComplexSign::ComplexUnknown()));
+        tree, Variables::Variable(i, ComplexSign::Unknown()));
     if (!polynomial->isPolynomial()) {
       // tree did not depend on variable. Continue.
       tree = polynomial;
@@ -259,7 +259,7 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
    */
   // TODO: Use user settings for a RealUnkown sign ?
   solution->moveTreeBeforeNode(SharedEditionPool->push<BlockType::Variable>(
-      variableId, ComplexSign::ComplexUnknown()));
+      variableId, ComplexSign::Unknown()));
   solution->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
   Simplification::DeepSystematicReduce(solution);
   Simplification::AdvancedReduction(solution);

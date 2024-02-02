@@ -188,7 +188,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   // If this assert can't be maintained, escape with Unknown.
   assert(exp.isReal() && !exp.canBeNonInteger());
   if (base.isZero()) {
-    return ComplexSign::ComplexZero();
+    return ComplexSign::Zero();
   }
   if (exp.isZero()) {
     return ComplexSign::RealPositiveInteger();  // 1
@@ -230,7 +230,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return s;
     }
     case BlockType::Addition: {
-      ComplexSign s = ComplexZero();
+      ComplexSign s = Zero();
       for (const Tree* c : t->children()) {
         s = Add(s, Get(c));
         if (s.isUnknown()) {
@@ -285,7 +285,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return DecimalFunction(Get(t->firstChild()), t->type());
 #endif
     default:
-      return ComplexUnknown();
+      return Unknown();
   }
 }
 

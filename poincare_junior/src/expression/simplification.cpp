@@ -836,7 +836,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
         ref, variables,
         projectionContext.m_complexFormat == ComplexFormat::Real
             ? ComplexSign::RealUnknown()
-            : ComplexSign::ComplexUnknown());
+            : ComplexSign::Unknown());
     changed = DeepSystematicReduce(ref) || changed;
     changed = DeepApplyMatrixOperators(ref) || changed;
     assert(!DeepSystematicReduce(ref));

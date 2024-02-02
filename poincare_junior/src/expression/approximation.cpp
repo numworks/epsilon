@@ -33,7 +33,7 @@ Approximation::Context::Context(AngleUnit angleUnit,
                                 ComplexFormat complexFormat)
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
-      m_variablesOffset(0) {
+      m_variablesOffset(k_maxNumberOfVariables) {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
     m_variables[i] = NAN;
   }
@@ -41,6 +41,7 @@ Approximation::Context::Context(AngleUnit angleUnit,
 
 // with sum(sum(l,l,1,k),k,1,n) s_variables stores [n, NaN, …, NaN, l, k]
 double& Approximation::Context::variable(size_t index) {
+  assert(index < k_maxNumberOfVariables);
   return m_variables[(index + m_variablesOffset) % k_maxNumberOfVariables];
 }
 void Approximation::Context::shiftVariables() { m_variablesOffset--; }

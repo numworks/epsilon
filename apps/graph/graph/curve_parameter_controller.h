@@ -56,10 +56,7 @@ class CurveParameterController
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
   bool shouldDisplayDerivative() const;
-  bool isDerivative(int index) {
-    return index == k_indexOfDerivativeCell &&
-           function()->properties().numberOfCurveParameters() == 2;
-  };
+  bool isDerivative(int index) { return index == k_indexOfDerivativeCell; };
   void fillParameterCellAtRow(int row) override;
   void updateNumberOfParameterCells();
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,
@@ -67,9 +64,10 @@ class CurveParameterController
   static constexpr size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
   static constexpr int k_indexOfAbscissaCell = 0;
-  static constexpr int k_indexOfImageCell = 1;
-  static constexpr int k_indexOfDerivativeCell = 2;
-  static constexpr int k_numberOfParameterRows = 3;
+  static constexpr int k_indexOfImageCell1 = 1;
+  static constexpr int k_indexOfImageCell2 = 2;
+  static constexpr int k_indexOfDerivativeCell = 3;
+  static constexpr int k_numberOfParameterRows = 4;
   constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
 
   using ParameterCell = Escher::MenuCellWithEditableText<

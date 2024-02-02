@@ -18,13 +18,13 @@ namespace Poincare {
 
 KDSize Layout::layoutSize(KDFont::Size font,
                           PoincareJ::LayoutCursor *cursor) const {
-  PoincareJ::RackLayout::layoutCursor = cursor;
+  PoincareJ::RackLayout::s_layoutCursor = cursor;
   return node()->layoutSize(font);
 }
 
 KDCoordinate Layout::baseline(KDFont::Size font,
                               PoincareJ::LayoutCursor *cursor) {
-  PoincareJ::RackLayout::layoutCursor = cursor;
+  PoincareJ::RackLayout::s_layoutCursor = cursor;
   return node()->baseline(font);
 }
 

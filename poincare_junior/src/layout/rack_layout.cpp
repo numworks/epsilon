@@ -15,7 +15,7 @@ namespace VerticalOffset {
 constexpr static KDCoordinate IndiceHeight = 10;
 }  // namespace VerticalOffset
 
-const LayoutCursor* RackLayout::layoutCursor = nullptr;
+const LayoutCursor* RackLayout::s_layoutCursor = nullptr;
 
 KDSize RackLayout::Size(const Tree* node) {
   return SizeBetweenIndexes(node, 0, node->numberOfChildren());
@@ -26,8 +26,8 @@ KDCoordinate RackLayout::Baseline(const Tree* node) {
 }
 
 bool RackLayout::ShouldDrawEmptyBaseAt(const Tree* node, int p) {
-  return !(layoutCursor && layoutCursor->cursorNode() == node &&
-           layoutCursor->position() == p);
+  return !(s_layoutCursor && s_layoutCursor->cursorNode() == node &&
+           s_layoutCursor->position() == p);
 }
 
 void UpdateChildWithBase(bool isSuperscript, KDCoordinate baseHeight,
@@ -241,10 +241,10 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Tree* node) {
   if (node->numberOfChildren() != 0 || !Render::showEmptyRack) {
     return false;
   }
-  if (!RackLayout::layoutCursor) {
+  if (!RackLayout::s_layoutCursor) {
     return true;
   }
-  if (node == layoutCursor->cursorNode()) {
+  if (node == s_layoutCursor->cursorNode()) {
     return false;
   }
   return true;

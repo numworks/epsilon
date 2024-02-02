@@ -37,7 +37,7 @@ class RackLayout {
   static void RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                          bool isGridPlaceholder = false);
 
-  static const LayoutCursor* layoutCursor;
+  static const LayoutCursor* s_layoutCursor;
 };
 
 }  // namespace PoincareJ

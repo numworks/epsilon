@@ -99,7 +99,7 @@ void LayoutField::ContentView::layoutSubviews(bool force) {
 
 KDRect LayoutField::ContentView::cursorRect() const {
   // TODO forward cursor through the API
-  PoincareJ::RackLayout::layoutCursor = &m_cursor;
+  PoincareJ::RackLayout::s_layoutCursor = &m_cursor;
   KDPoint cursorTopLeftPosition = m_layoutView.drawingOrigin().translatedBy(
       m_cursor.cursorAbsoluteOrigin(font()));
   if (!m_isEditing) {
@@ -115,7 +115,7 @@ KDRect LayoutField::ContentView::cursorRect() const {
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
     : m_cursor(), m_layoutView(&m_cursor, format), m_isEditing(false) {
-  PoincareJ::RackLayout::layoutCursor = &m_cursor;
+  PoincareJ::RackLayout::s_layoutCursor = &m_cursor;
   clearLayout();
 }
 

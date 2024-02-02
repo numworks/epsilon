@@ -591,7 +591,7 @@ void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
                   KDColor backgroundColor, const LayoutCursor* cursor) {
   Render::font = font;
   showEmptyRack = false;
-  RackLayout::layoutCursor = cursor;
+  RackLayout::s_layoutCursor = cursor;
   /* TODO all screenshots work fine without the fillRect except labels on graphs
    * when they overlap. We could add a flag to draw it only when necessary. */
   ctx->fillRect(KDRect(p, Size(node)), backgroundColor);

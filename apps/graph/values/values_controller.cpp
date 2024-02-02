@@ -346,8 +346,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Expression result;
   if (isDerivative) {
     // Compute derivative approximate result
-    result = Float<double>::Builder(
-        function->approximateDerivative(abscissa, context, false).toScalar());
+    result = function->approximateDerivative(abscissa, context, false)
+                 .complexToExpression(Preferences::ComplexFormat::Real);
   } else {
     // Compute exact result
     result = function->expressionReduced(context);

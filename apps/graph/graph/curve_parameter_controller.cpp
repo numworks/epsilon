@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
+#include <poincare/point_evaluation.h>
 #include <poincare/print.h>
 
 #include "../app.h"
@@ -83,14 +84,18 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
     SerializationHelper::CodePoint(buffer, bufferSize, properties.symbol());
   } else {
     if (properties.isParametric()) {
-      assert(row == k_indexOfImageCell1 || row == k_indexOfImageCell2);
+      bool firstComponent =
+          row == k_indexOfImageCell1 || row == k_indexOfDerivativeCell1;
+      int derivationOrder =
+          row == k_indexOfImageCell1 || row == k_indexOfImageCell2 ? 0 : 1;
       FunctionNameHelper::ParametricComponentNameWithArgument(
-          function().pointer(), buffer, bufferSize, row == k_indexOfImageCell1);
+          function().pointer(), buffer, bufferSize, firstComponent,
+          derivationOrder);
     } else {
       if (row == k_indexOfImageCell1) {
         function()->nameWithArgument(buffer, bufferSize);
       } else {
-        assert(row == k_indexOfDerivativeCell);
+        assert(row == k_indexOfDerivativeCell1);
         function()->derivativeNameWithArgument(buffer, bufferSize);
       }
     }
@@ -101,9 +106,18 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 
 double CurveParameterController::parameterAtIndex(int index) {
   Poincare::Context *ctx = App::app()->localContext();
-  if (index == k_indexOfDerivativeCell) {
+  if (index == k_indexOfDerivativeCell1 || index == k_indexOfDerivativeCell2) {
     assert(function()->canDisplayDerivative());
-    return function()->approximateDerivative(m_cursor->t(), ctx).toScalar();
+    Evaluation<double> derivative =
+        function()->approximateDerivative(m_cursor->t(), ctx);
+    if (derivative.type() == EvaluationNode<double>::Type::Complex) {
+      assert(index == k_indexOfDerivativeCell1);
+      return derivative.toScalar();
+    }
+    assert(derivative.type() == EvaluationNode<double>::Type::PointEvaluation);
+    Coordinate2D<double> xy =
+        static_cast<PointEvaluation<double> &>(derivative).xy();
+    return index == k_indexOfDerivativeCell1 ? xy.x() : xy.y();
   }
   double t = m_cursor->t();
   double x = m_cursor->x();
@@ -226,8 +240,10 @@ void CurveParameterController::didBecomeFirstResponder() {
 void CurveParameterController::updateNumberOfParameterCells() {
   m_parameterCells[k_indexOfImageCell2].setVisible(
       function()->properties().isParametric());
-  m_parameterCells[k_indexOfDerivativeCell].setVisible(
+  m_parameterCells[k_indexOfDerivativeCell1].setVisible(
       shouldDisplayDerivative());
+  m_parameterCells[k_indexOfDerivativeCell2].setVisible(
+      function()->properties().isParametric() && shouldDisplayDerivative());
 }
 
 }  // namespace Graph

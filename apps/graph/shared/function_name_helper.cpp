@@ -19,10 +19,15 @@ size_t AddSuffixForParametricComponent(char *baseName, size_t baseNameLength,
 
 size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction *f,
                                            char *buffer, size_t bufferSize,
-                                           bool first) {
+                                           bool first, int derivationOrder) {
   size_t length = f->name(buffer, bufferSize);
   length += FunctionNameHelper::AddSuffixForParametricComponent(
       buffer, length, bufferSize, first);
+  if (derivationOrder > 0) {
+    assert(derivationOrder == 1);
+    length += SerializationHelper::CodePoint(buffer + length,
+                                             bufferSize - length, '\'');
+  }
   length +=
       Shared::Function::WithArgument(ContinuousFunction::k_parametricSymbol,
                                      buffer + length, bufferSize - length);

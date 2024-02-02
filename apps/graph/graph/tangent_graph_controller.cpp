@@ -79,9 +79,11 @@ void TangentGraphController::reloadBannerView() {
   char buffer[bufferSize];
   int precision = numberOfSignificantDigits();
 
-  double coefficientA =
-      reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record)
-          .toScalar();
+  Evaluation<double> derivative =
+      reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
+  assert(derivative.type() == EvaluationNode<double>::Type::Complex);
+  double coefficientA = derivative.toScalar();
+
   Poincare::Print::CustomPrintf(
       buffer, bufferSize, "a=%*.*ed", coefficientA,
       Poincare::Preferences::sharedPreferences->displayMode(), precision);

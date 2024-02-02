@@ -9,6 +9,7 @@
 #include <poincare/integral.h>
 #include <poincare/list_sort.h>
 #include <poincare/matrix.h>
+#include <poincare/point_evaluation.h>
 #include <poincare/polynomial.h>
 #include <poincare/print.h>
 #include <poincare/serialization_helper.h>
@@ -283,8 +284,11 @@ Evaluation<double> ContinuousFunction::approximateDerivative(
   Evaluation<double> result = derivate.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
   if (useDomain && (t < tMin() || t > tMax())) {
-    assert(result.type() == EvaluationNode<double>::Type::Complex);
-    return Complex<double>::RealUndefined();
+    if (result.type() == EvaluationNode<double>::Type::Complex) {
+      return Complex<double>::RealUndefined();
+    }
+    assert(result.type() == EvaluationNode<double>::Type::PointEvaluation);
+    return PointEvaluation<double>::Builder(NAN, NAN);
   }
   return result;
 }

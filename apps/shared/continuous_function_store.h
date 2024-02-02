@@ -18,7 +18,7 @@ class ContinuousFunctionStore : public FunctionStore {
   static bool IsFunctionActiveAndDerivable(ExpressionModelHandle *model,
                                            void *context) {
     return IsFunctionActive(model, context) &&
-           static_cast<ContinuousFunction *>(model)->canDisplayDerivative();
+           static_cast<ContinuousFunction *>(model)->canCalculateOnCurve();
   }
 
   ContinuousFunctionStore() : FunctionStore() {}

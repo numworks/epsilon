@@ -61,14 +61,13 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     double slopeMultiplicator = 1.0;
     if (function->canDisplayDerivative()) {
       // Use the local derivative to slow down the cursor's step if needed
-      double slope = function->approximateDerivative(
-          tCursor, context, subCurveIndex ? *subCurveIndex : 0);
+      assert(!subCurveIndex || *subCurveIndex == 0);
+      double slope = function->approximateDerivative(tCursor, context);
       if (std::isnan(slope)) {
         /* If the derivative could not bet computed, compute the derivative one
          * step further. */
         slope = function->approximateDerivative(
-            tCursor + dir * step * pixelWidth, context,
-            subCurveIndex ? *subCurveIndex : 0);
+            tCursor + dir * step * pixelWidth, context);
         if (std::isnan(slope)) {
           /* If the derivative is still NAN, it might mean that it's NAN
            * everywhere, so just set slope to a default value */

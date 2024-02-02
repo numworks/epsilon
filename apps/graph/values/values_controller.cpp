@@ -347,7 +347,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   if (isDerivative) {
     // Compute derivative approximate result
     result = Float<double>::Builder(
-        function->approximateDerivative(abscissa, context, 0, false));
+        function->approximateDerivative(abscissa, context, false));
   } else {
     // Compute exact result
     result = function->expressionReduced(context);

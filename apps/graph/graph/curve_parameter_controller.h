@@ -43,7 +43,6 @@ class CurveParameterController
     return confirmParameterAtIndex(parameterIndex, f);
   }
   void setRecord(Ion::Storage::Record record) override;
-  bool editableParameter(int index);
   int numberOfParameters() const {
     return function()->properties().numberOfCurveParameters() +
            shouldDisplayDerivative();

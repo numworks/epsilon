@@ -30,6 +30,7 @@ class TextFieldDelegate {
     return true;
   }
   virtual void updateRepetitionIndexes(Ion::Events::Event event) {}
+  virtual bool useDoubleQuotesDeviceKeyForSingleQuote() { return true; }
 };
 
 }  // namespace Escher

@@ -502,7 +502,8 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 bool AbstractTextField::eventHasText(Ion::Events::Event event, char *buffer,
                                      size_t bufferSize) {
   size_t eventTextLength = 0;
-  if (event == Ion::Events::DoubleQuotes) {
+  if (event == Ion::Events::DoubleQuotes && m_delegate &&
+      m_delegate->useDoubleQuotesDeviceKeyForSingleQuote()) {
     eventTextLength = SerializationHelper::CodePoint(buffer, bufferSize, '\'');
   } else {
     eventTextLength =

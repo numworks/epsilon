@@ -299,7 +299,8 @@ KDCoordinate ValuesController::defaultColumnWidth() {
   KDCoordinate width =
       PrintFloat::glyphLengthForFloatWithPrecision(
           Preferences::sharedPreferences->numberOfSignificantDigits()) *
-      KDFont::GlyphWidth(k_cellFont);
+          KDFont::GlyphWidth(k_cellFont) +
+      2 * Escher::Metric::SmallCellMargin;
   return std::max(EditableCellTableViewController::defaultColumnWidth(), width);
 }
 

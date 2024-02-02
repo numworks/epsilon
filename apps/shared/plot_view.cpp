@@ -201,6 +201,9 @@ void AbstractPlotView::drawLayout(KDContext *ctx, KDRect rect, Layout layout,
 
 KDRect AbstractPlotView::dotRect(Dots::Size size,
                                  Poincare::Coordinate2D<float> xy) const {
+  if (!std::isfinite(xy.x()) || !std::isfinite(xy.y())) {
+    return KDRectZero;
+  }
   KDCoordinate diameter = 0;
   switch (size) {
     case Dots::Size::Tiny:

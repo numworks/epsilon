@@ -582,6 +582,8 @@ bool LayoutField::eventHasText(Ion::Events::Event event, char *buffer,
              m_delegate->insertTextForAnsEvent(this)) {
     eventTextLength =
         strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
+  } else if (event == Ion::Events::DoubleQuotes) {
+    eventTextLength = SerializationHelper::CodePoint(buffer, bufferSize, '\'');
   } else {
     eventTextLength =
         Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);

@@ -488,17 +488,27 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   }
 
   // Handle special events with text
-  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t eventTextLength =
-      Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
-                            Ion::Events::EventData::k_maxDataSize);
-  if (eventTextLength > 0) {
+  constexpr const size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
+  char buffer[bufferSize] = {0};
+  if (eventHasText(event, buffer, bufferSize)) {
     bool didHandleEvent = privateHandleEventWithText(buffer);
     *textDidChange = didHandleEvent;
     return didHandleEvent;
   }
 
   return false;
+}
+
+bool AbstractTextField::eventHasText(Ion::Events::Event event, char *buffer,
+                                     size_t bufferSize) {
+  size_t eventTextLength = 0;
+  if (event == Ion::Events::DoubleQuotes) {
+    eventTextLength = SerializationHelper::CodePoint(buffer, bufferSize, '\'');
+  } else {
+    eventTextLength =
+        Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
+  }
+  return eventTextLength > 0;
 }
 
 void AbstractTextField::scrollToCursor() {

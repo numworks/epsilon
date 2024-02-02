@@ -154,6 +154,7 @@ class AbstractTextField : public TextInput {
   bool privateHandleEvent(Ion::Events::Event event, bool *textDidChange);
   bool privateHandleEventWithText(const char *text, bool indentation = false,
                                   bool forceCursorRightOfText = false);
+  bool eventHasText(Ion::Events::Event event, char *buffer, size_t bufferSize);
 
   TextFieldDelegate *m_delegate;
 };

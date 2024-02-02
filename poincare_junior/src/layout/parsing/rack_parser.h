@@ -142,6 +142,9 @@ class RackParser {
                                 Token::Type stoppingType = (Token::Type)0);
   void privateParseEastArrow(EditionReference& leftHandSide, bool north,
                              Token::Type stoppingType = (Token::Type)0);
+  bool mergeIntoPercentAdditionIfNeeded(EditionReference& leftHandSide,
+                                        EditionReference& rightHandSide,
+                                        bool plus);
   // void parseBinaryLogicalOperator(
   // BinaryLogicalOperatorNode::OperatorType operatorType,
   // EditionReference& leftHandSide, Token::Type stoppingType);

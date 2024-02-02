@@ -428,15 +428,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
   }
   EditionReference rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus);
-  if (rightHandSide->isPercentSimple() &&
-      !rightHandSide->child(0)->isPercentSimple()) {
-    /* The condition checks if the percent does not contain a percent because
-     * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
-    CloneNodeAtNode(leftHandSide, KTree<BlockType::PercentAddition>());
-    MoveNodeOverNode(rightHandSide, rightHandSide->child(0));
-    if (!plus) {
-      CloneNodeAtNode(rightHandSide, KTree<BlockType::Opposite>());
-    }
+  if (mergeIntoPercentAdditionIfNeeded(leftHandSide, rightHandSide, plus)) {
     return;
   }
   assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
@@ -464,17 +456,28 @@ void RackParser::parseSouthEastArrow(EditionReference &leftHandSide,
 
 void RackParser::privateParseEastArrow(EditionReference &leftHandSide,
                                        bool north, Token::Type stoppingType) {
-#if 0
   EditionReference rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus);
-  if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-      rightHandSide.child(0).type() != ExpressionNode::Type::PercentSimple) {
-    leftHandSide = PercentAddition::Builder(
-        leftHandSide, north ? rightHandSide.child(0)
-                            : Opposite::Builder(rightHandSide.child(0)));
+  if (!mergeIntoPercentAdditionIfNeeded(leftHandSide, rightHandSide, north)) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-#endif
-  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+}
+
+bool RackParser::mergeIntoPercentAdditionIfNeeded(
+    EditionReference &leftHandSide, EditionReference &rightHandSide,
+    bool north) {
+  /* The condition checks if the percent does not contain a percent because
+   * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
+  if (!rightHandSide->isPercentSimple() ||
+      rightHandSide->child(0)->isPercentSimple()) {
+    return false;
+  }
+  CloneNodeAtNode(leftHandSide, KTree<BlockType::PercentAddition>());
+  MoveNodeOverNode(rightHandSide, rightHandSide->child(0));
+  if (!north) {
+    CloneNodeAtNode(rightHandSide, KTree<BlockType::Opposite>());
+  }
+  return true;
 }
 
 void RackParser::parseTimes(EditionReference &leftHandSide,

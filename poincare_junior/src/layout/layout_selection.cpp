@@ -10,11 +10,7 @@ Tree* LayoutSelection::cloneSelection() const {
   if (!m_node) {
     return KRackL()->clone();
   }
-  Tree* copy = KRackL()->clone();
-  for (int i = leftPosition(); i < rightPosition(); i++) {
-    NAry::AddChild(copy, m_node->child(i)->clone());
-  }
-  return copy;
+  return NAry::CloneSubRange(m_node, leftPosition(), rightPosition());
 }
 
 }  // namespace PoincareJ

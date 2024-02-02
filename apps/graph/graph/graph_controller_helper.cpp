@@ -189,24 +189,25 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
   return true;
 }
 
-double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
+Evaluation<double>
+GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
     Shared::CurveViewCursor* cursor, Ion::Storage::Record record) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
-  double derivative =
-      function->approximateDerivative(cursor->t(), App::app()->localContext())
-          .toScalar();
+  Evaluation<double> derivative =
+      function->approximateDerivative(cursor->t(), App::app()->localContext());
+  double derivativeScalar = derivative.toScalar();
 
   /* Force derivative to 0 if cursor is at an extremum where the function is
    * differentiable. */
   PointsOfInterestCache* pointsOfInterest =
       App::app()->graphController()->pointsOfInterestForRecord(record);
-  if (std::isfinite(derivative) &&
+  if (std::isfinite(derivativeScalar) &&
       (pointsOfInterest->hasInterestAtCoordinates(
            cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum) ||
        pointsOfInterest->hasInterestAtCoordinates(
            cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum))) {
-    derivative = 0.;
+    derivativeScalar = 0.;
   }
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
@@ -215,8 +216,8 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       function->derivativeNameWithArgument(buffer, bufferSize);
   assert(function->canDisplayDerivative());
   Poincare::Print::CustomPrintf(
-      buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed", derivative,
-      Poincare::Preferences::sharedPreferences->displayMode(),
+      buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed",
+      derivativeScalar, Poincare::Preferences::sharedPreferences->displayMode(),
       Preferences::sharedPreferences->numberOfSignificantDigits());
   bannerView()->derivativeView()->setText(buffer);
   bannerView()->reload();

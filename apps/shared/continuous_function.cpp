@@ -277,8 +277,9 @@ double ContinuousFunction::approximateDerivative(double t, Context *context,
                                                  bool useDomain) const {
   assert(canDisplayDerivative());
   assert(subCurveIndex < numberOfSubCurves());
-  if ((useDomain && (t < tMin() || t > tMax())) || isAlongY() ||
-      numberOfSubCurves() > 1) {
+  assert(!isAlongY());
+  assert(numberOfSubCurves() == 1);
+  if (useDomain && (t < tMin() || t > tMax())) {
     return NAN;
   }
   // Derivative is simplified once and for all
@@ -805,25 +806,22 @@ Expression ContinuousFunction::Model::expressionEquation(
 
 Expression ContinuousFunction::Model::expressionDerivateReduced(
     const Ion::Storage::Record *record, Context *context) const {
+  // Derivative isn't available on curves with multiple subcurves
+  assert(numberOfSubCurves(record) == 1);
   // m_expressionDerivate might already be memmoized.
   if (m_expressionDerivate.isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
-    // Derivative isn't available on curves with multiple subcurves
-    if (numberOfSubCurves(record) > 1) {
-      m_expressionDerivate = Undefined::Builder();
-    } else {
-      m_expressionDerivate = Derivative::Builder(
-          expression, Symbol::SystemSymbol(), Symbol::SystemSymbol());
-      /* On complex functions, this step can take a significant time.
-       * A workaround could be to identify big functions to skip simplification
-       * at the cost of possible inaccurate evaluations (such as
-       * diff(abs(x),x,0) not being undefined). */
-      PoincareHelpers::CloneAndSimplify(
-          &m_expressionDerivate, context,
-          {.complexFormat = complexFormat(record, context),
-           .updateComplexFormatWithExpression = false,
-           .target = ReductionTarget::SystemForApproximation});
-    }
+    m_expressionDerivate = Derivative::Builder(
+        expression, Symbol::SystemSymbol(), Symbol::SystemSymbol());
+    /* On complex functions, this step can take a significant time.
+     * A workaround could be to identify big functions to skip simplification
+     * at the cost of possible inaccurate evaluations (such as
+     * diff(abs(x),x,0) not being undefined). */
+    PoincareHelpers::CloneAndSimplify(
+        &m_expressionDerivate, context,
+        {.complexFormat = complexFormat(record, context),
+         .updateComplexFormatWithExpression = false,
+         .target = ReductionTarget::SystemForApproximation});
   }
   return m_expressionDerivate;
 }

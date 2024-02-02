@@ -539,6 +539,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
           return NAN;
         }
         sum += c.real() * v;
+        // TODO v * conj(v) ?
         sumOfSquares += c.real() * v * v;
         coefficientsSum += c.real();
       }

@@ -797,6 +797,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
         } else {
           Matrix::ScalarMultiplication(result, approx, true);
         }
+        resultIsMatrix |= childIsMatrix;
         approx->removeTree();
         result->removeTree();
       }

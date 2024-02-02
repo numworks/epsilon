@@ -1535,6 +1535,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(√(3))", "60", User, Degree);
   assert_parsed_expression_simplify_to("atan(∞)", "π/2", User, Radian);
   assert_parsed_expression_simplify_to("atan(-∞)", "-π/2", User, Radian);
+  assert_parsed_expression_simplify_to("tan(atan(∞))", Undefined::Name(), User,
+                                       Radian);
   assert_parsed_expression_simplify_to(
       "atan(1/x)", "\u0014dep(\u0012π×sign(x)-2×arctan(x)\u0013/2,{1/x})");
   assert_parsed_expression_simplify_to(

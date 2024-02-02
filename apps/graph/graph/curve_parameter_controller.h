@@ -64,8 +64,9 @@ class CurveParameterController
   static constexpr int k_indexOfAbscissaCell = 0;
   static constexpr int k_indexOfImageCell1 = 1;
   static constexpr int k_indexOfImageCell2 = 2;
-  static constexpr int k_indexOfDerivativeCell = 3;
-  static constexpr int k_numberOfParameterRows = 4;
+  static constexpr int k_indexOfDerivativeCell1 = 3;
+  static constexpr int k_indexOfDerivativeCell2 = 4;
+  static constexpr int k_numberOfParameterRows = 5;
   constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
 
   using ParameterCell = Escher::MenuCellWithEditableText<

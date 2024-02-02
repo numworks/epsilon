@@ -80,8 +80,7 @@ class ContinuousFunction : public Function {
 
   // Wether or not we can display the derivative
   bool canDisplayDerivative() const {
-    return properties().canBeActiveInTable() &&
-           (properties().isCartesian() || properties().isPolar());
+    return properties().canBeActiveInTable() && !properties().isInversePolar();
   }
   bool canCalculateOnCurve() const {
     return canDisplayDerivative() && properties().isCartesian();

@@ -3,6 +3,7 @@
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/ieee754.h>
+#include <poincare/point_evaluation.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -215,10 +216,22 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   size_t numberOfChar =
       function->derivativeNameWithArgument(buffer, bufferSize);
   assert(function->canDisplayDerivative());
-  Poincare::Print::CustomPrintf(
-      buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed",
-      derivativeScalar, Poincare::Preferences::sharedPreferences->displayMode(),
-      Preferences::sharedPreferences->numberOfSignificantDigits());
+  Preferences::PrintFloatMode mode =
+      Poincare::Preferences::sharedPreferences->displayMode();
+  int precision = Preferences::sharedPreferences->numberOfSignificantDigits();
+  if (function->properties().isParametric()) {
+    assert(derivative.type() == EvaluationNode<double>::Type::PointEvaluation);
+    Coordinate2D<double> xy =
+        static_cast<PointEvaluation<double>&>(derivative).xy();
+    Poincare::Print::CustomPrintf(
+        buffer + numberOfChar, bufferSize - numberOfChar, "=(%*.*ed;%*.*ed)",
+        xy.x(), mode, precision, xy.y(), mode, precision);
+  } else {
+    assert(derivative.type() == EvaluationNode<double>::Type::Complex);
+    Poincare::Print::CustomPrintf(buffer + numberOfChar,
+                                  bufferSize - numberOfChar, "=%*.*ed",
+                                  derivativeScalar, mode, precision);
+  }
   bannerView()->derivativeView()->setText(buffer);
   bannerView()->reload();
 

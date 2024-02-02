@@ -272,11 +272,13 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
 
   // - Draw tangent
   if (m_tangentDisplay && m_selectedRecord == record) {
-    assert(f->canDisplayDerivative());
+    assert(f->canCalculateOnCurve());
     /* TODO : We could handle tangent on second curve here by finding out
      * which of the two curves is selected. */
-    float tangentParameterA =
-        f->approximateDerivative(m_cursor->t(), context()).toScalar();
+    Evaluation<double> derivative =
+        f->approximateDerivative(m_cursor->t(), context());
+    assert(derivative.type() == EvaluationNode<double>::Type::Complex);
+    float tangentParameterA = derivative.toScalar();
     float tangentParameterB =
         -tangentParameterA * m_cursor->x() +
         f->evaluateXYAtParameter(m_cursor->x(), context(), 0).y();

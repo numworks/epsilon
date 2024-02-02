@@ -105,9 +105,7 @@ class ComplexSign {
       : m_realValue(Bit::getBitRange(value, 3, 0)),
         m_imagValue(Bit::getBitRange(value, 7, 4)) {}
 
-  constexpr uint8_t getValue() const {
-    return Bit::getBitRange(m_realValue, 3, 0) | m_imagValue << 4;
-  }
+  constexpr uint8_t getValue() const { return m_realValue | m_imagValue << 4; }
 
   constexpr Sign realSign() const { return Sign(m_realValue); }
   constexpr Sign imagSign() const { return Sign(m_imagValue); }

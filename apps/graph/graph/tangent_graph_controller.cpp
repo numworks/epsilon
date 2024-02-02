@@ -80,7 +80,8 @@ void TangentGraphController::reloadBannerView() {
   int precision = numberOfSignificantDigits();
 
   double coefficientA =
-      reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
+      reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record)
+          .toScalar();
   Poincare::Print::CustomPrintf(
       buffer, bufferSize, "a=%*.*ed", coefficientA,
       Poincare::Preferences::sharedPreferences->displayMode(), precision);

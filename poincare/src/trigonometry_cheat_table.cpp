@@ -64,14 +64,18 @@ Expression TrigonometryCheatTable::simplify(
   }
 
   // Avoid looping if we can exclude quickly that e is in the table
-  if ((!isIndirectType && exp.type() != ExpressionNode::Type::Rational &&
-       exp.type() != ExpressionNode::Type::Multiplication &&
-       exp.type() != ExpressionNode::Type::ConstantMaths) ||
-      (isIndirectType && exp.type() != ExpressionNode::Type::Rational &&
-       exp.type() != ExpressionNode::Type::Multiplication &&
-       exp.type() != ExpressionNode::Type::Power &&
-       exp.type() != ExpressionNode::Type::Addition &&
-       exp.type() != ExpressionNode::Type::Infinity)) {
+  if ((!isIndirectType && !exp.isOfType({
+                              ExpressionNode::Type::Rational,
+                              ExpressionNode::Type::Multiplication,
+                              ExpressionNode::Type::ConstantMaths,
+                          })) ||
+      (isIndirectType && !exp.isOfType({
+                             ExpressionNode::Type::Rational,
+                             ExpressionNode::Type::Multiplication,
+                             ExpressionNode::Type::Power,
+                             ExpressionNode::Type::Addition,
+                             ExpressionNode::Type::Infinity,
+                         }))) {
     return Expression();
   }
 

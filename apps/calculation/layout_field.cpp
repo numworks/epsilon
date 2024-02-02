@@ -7,6 +7,9 @@
 
 using namespace Poincare;
 
+// TODO decide how apps should use import this
+using PoincareJ::operator""_l;
+
 namespace Calculation {
 
 void LayoutField::updateCursorBeforeInsertion() {
@@ -46,7 +49,8 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     insertText(Symbol::k_ansAliases.mainAlias());
   }
   if (event == Ion::Events::Minus && isEditing() &&
-      fieldContainsSingleMinusSymbol()) {
+      layout().tree()->treeIsIdenticalTo("-"_l)) {
+    // Turn single - to Ans -
     setText(Symbol::k_ansAliases.mainAlias());
     // The Minus symbol will be addded by Escher::LayoutField::handleEvent
   }
@@ -59,11 +63,6 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     return handleDivision();
   }
   return Escher::LayoutField::handleEvent(event);
-}
-
-bool LayoutField::fieldContainsSingleMinusSymbol() const {
-  using PoincareJ::operator""_l;
-  return layout().tree()->treeIsIdenticalTo("-"_l);
 }
 
 bool LayoutField::handleDivision() {

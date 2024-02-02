@@ -32,7 +32,6 @@ class LayoutField : public Escher::LayoutField {
   void resetInsertionCursor() {
     m_insertionCursor = PoincareJ::LayoutBufferCursor();
   }
-  bool fieldContainsSingleMinusSymbol() const;
   bool handleDivision();
 
   PoincareJ::LayoutBufferCursor m_insertionCursor;

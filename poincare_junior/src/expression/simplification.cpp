@@ -701,6 +701,7 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
   if (!realSign.isKnown()) {
     return false;
   }
+  // TODO: Maybe move this in advanced reduction
   Sign imagSign = childSign.imagSign();
   if (realSign.isZero() && imagSign.isKnown()) {
     if (imagSign.isZero()) {
@@ -1318,8 +1319,9 @@ bool Simplification::ExpandAbs(Tree* ref) {
 }
 
 bool Simplification::ExpandExp(Tree* ref) {
+  // TODO: Also handle exp(i)
   return
-      // exp(A?*i*B?) = cos(B*C) + i*sin(B*C)
+      // exp(A?*i*B?) = cos(A*B) + i*sin(A*B)
       PatternMatching::MatchReplaceAndSimplify(
           ref, KExp(KMult(KTA, i_e, KTB)),
           KAdd(KTrig(KMult(KTA, KTB), 0_e),

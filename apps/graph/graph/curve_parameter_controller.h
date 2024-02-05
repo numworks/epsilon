@@ -53,6 +53,9 @@ class CurveParameterController
   bool shouldDisplayFirstDerivative() const;
   void fillParameterCellAtRow(int row) override;
   void updateNumberOfParameterCells();
+  bool parameterAtRowIsFirstComponent(int row) const;
+  int derivationOrderOfParameterAtRow(int row) const;
+
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,
    * CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize =

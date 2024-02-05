@@ -27,28 +27,23 @@ bool AdvancedSimplification::AdvancedReduce(Tree* origin) {
    * This means calling AdvancedReduce on an equivalent but different
    * expression could yield different results if limits have been reached. */
   Tree* u = origin->isDependency() ? origin->child(0) : origin;
-  int bestMetric = Metric::GetMetric(u);
-  Path bestPath;
-  Path currentPath;
-  CrcCollection crcCollection;
-  // Add initial root
-  crcCollection.add(CrcCollection::Hash(u), 0);
   Tree* editedExpression = u->clone();
+  Context ctx(editedExpression, u, Metric::GetMetric(u));
+  // Add initial root
+  ctx.m_crcCollection.add(CrcCollection::Hash(u), 0);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-  std::cout << "\nAdvancedReduce\nInitial tree (" << bestMetric << ") is : ";
+  std::cout << "\nAdvancedReduce\nInitial tree (" << ctx.m_bestMetric
+            << ") is : ";
   u->logSerialize();
   s_indent = 1;
 #endif
   bool didOverflowPath = false;
-  bool mustResetRoot = false;
-  AdvancedReduceRec(editedExpression, editedExpression, u, &currentPath,
-                    &bestPath, &bestMetric, &crcCollection, &didOverflowPath,
-                    &mustResetRoot);
+  AdvancedReduceRec(editedExpression, &ctx, &didOverflowPath);
   editedExpression->removeTree();
-  bool result = ApplyPath(u, &bestPath, true);
+  bool result = ApplyPath(u, &ctx.m_bestPath, true);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   s_indent = 0;
-  std::cout << "Final result (" << bestMetric << ") is : ";
+  std::cout << "Final result (" << ctx.m_bestMetric << ") is : ";
   u->logSerialize();
 #endif
   if (origin->isDependency()) {
@@ -201,18 +196,14 @@ bool AdvancedSimplification::ApplyPath(Tree* root, const Path* path,
   return rootChanged;
 }
 
-void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
-                                               const Tree* original, Path* path,
-                                               Path* bestPath, int* bestMetric,
-                                               CrcCollection* crcCollection,
-                                               bool* didOverflowPath,
-                                               bool* mustResetRoot) {
+void AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx,
+                                               bool* didOverflowPath) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
   std::cout << "AdvancedReduceRec on subtree: ";
   u->logSerialize();
 #endif
-  if (!path->canAddNewDirection()) {
+  if (!ctx->m_path.canAddNewDirection()) {
     *didOverflowPath = true;
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
     LogIndent();
@@ -222,15 +213,15 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
     bool isLeaf = true;
     for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
       Direction dir = Direction::SingleDirectionForIndex(i);
-      if (*mustResetRoot) {
+      if (ctx->m_mustResetRoot) {
         // Reset root to current path
-        root->cloneTreeOverTree(original);
-        ApplyPath(root, path, false);
-        *mustResetRoot = false;
+        ctx->m_root->cloneTreeOverTree(ctx->m_original);
+        ApplyPath(ctx->m_root, &ctx->m_path, false);
+        ctx->m_mustResetRoot = false;
       }
       Tree* target = u;
       bool rootChanged = false;
-      if (!CanApplyDirection(target, root, dir)) {
+      if (!CanApplyDirection(target, ctx->m_root, dir)) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         LogIndent();
         std::cout << "Can't apply ";
@@ -239,7 +230,7 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
 #endif
         continue;
       }
-      if (!ApplyDirection(&target, root, dir, &rootChanged, false)) {
+      if (!ApplyDirection(&target, ctx->m_root, dir, &rootChanged, false)) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         LogIndent();
         std::cout << "Nothing to ";
@@ -251,11 +242,12 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
       uint32_t hash;
       if (rootChanged) {
         // No need to recompute hash if root did not change.
-        hash = CrcCollection::Hash(root);
+        hash = CrcCollection::Hash(ctx->m_root);
       }
       /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
        * not go further. */
-      if (!rootChanged || crcCollection->add(hash, path->length())) {
+      if (!rootChanged ||
+          ctx->m_crcCollection.add(hash, ctx->m_path.length())) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         bool shouldLog = true;
@@ -268,7 +260,7 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
           dir.log();
           std::cout << ": ";
           if (rootChanged) {
-            root->logSerialize();
+            ctx->m_root->logSerialize();
           } else {
             std::cout << "\n";
           }
@@ -276,17 +268,16 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
         }
 #endif
         isLeaf = false;
-        bool canAddDir = path->append(dir);
+        bool canAddDir = ctx->m_path.append(dir);
         assert(canAddDir);
         bool didOverflowPathRec = false;
-        AdvancedReduceRec(target, root, original, path, bestPath, bestMetric,
-                          crcCollection, &didOverflowPathRec, mustResetRoot);
+        AdvancedReduceRec(target, ctx, &didOverflowPathRec);
         if (rootChanged && !didOverflowPathRec) {
           // No need to explore this again, even at smaller lengths.
-          crcCollection->add(hash, 0);
+          ctx->m_crcCollection.add(hash, 0);
         }
         *didOverflowPath |= didOverflowPathRec;
-        path->popBaseDirection();
+        ctx->m_path.popBaseDirection();
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
         if (shouldLog) {
           assert(s_indent > 0);
@@ -295,7 +286,7 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
 #endif
       }
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-      else if (crcCollection->isFull()) {
+      else if (ctx->m_crcCollection.isFull()) {
         LogIndent();
         std::cout << "Full CRC collection.\n";
       }
@@ -306,12 +297,12 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
         std::cout << "Already applied ";
         dir.log();
         std::cout << ": ";
-        root->logSerialize();
+        ctx->m_root->logSerialize();
       }
 #endif
       if (rootChanged) {
         // root will be reset to current path if needed later.
-        *mustResetRoot = true;
+        ctx->m_mustResetRoot = true;
       }
     }
     if (!isLeaf) {
@@ -319,22 +310,22 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
     }
   }
   // Otherwise, root should be reset to current path.
-  assert(!*mustResetRoot);
+  assert(!ctx->m_mustResetRoot);
   // All directions are impossible, we are at a leaf. Compare metrics.
-  int metric = Metric::GetMetric(root);
+  int metric = Metric::GetMetric(ctx->m_root);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   LogIndent();
-  std::cout << "Leaf reached (" << metric << " VS " << *bestMetric << ")";
+  std::cout << "Leaf reached (" << metric << " VS " << ctx->m_bestMetric << ")";
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE <= 1
   std::cout << ": ";
-  root->logSerialize();
+  ctx->m_root->logSerialize();
 #else
   std::cout << "\n";
 #endif
 #endif
-  if (metric < *bestMetric) {
-    *bestMetric = metric;
-    *bestPath = *path;
+  if (metric < ctx->m_bestMetric) {
+    ctx->m_bestMetric = metric;
+    ctx->m_bestPath = ctx->m_path;
   }
 }
 

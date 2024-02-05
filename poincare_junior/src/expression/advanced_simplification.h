@@ -87,11 +87,23 @@ class AdvancedSimplification {
     uint8_t m_length;
   };
 
+  struct Context {
+    Context(Tree *root, const Tree *original, int bestMetric)
+        : m_root(root),
+          m_original(original),
+          m_bestMetric(bestMetric),
+          m_mustResetRoot(false) {}
+
+    Tree *m_root;
+    const Tree *m_original;
+    Path m_path;
+    Path m_bestPath;
+    int m_bestMetric;
+    CrcCollection m_crcCollection;
+    bool m_mustResetRoot;
+  };
   // Recursive advanced reduction
-  static void AdvancedReduceRec(Tree *u, Tree *root, const Tree *original,
-                                Path *path, Path *bestPath, int *bestMetric,
-                                CrcCollection *crcCollection,
-                                bool *didOverflowPath, bool *mustResetRoot);
+  static void AdvancedReduceRec(Tree *u, Context *ctx, bool *didOverflowPath);
   // Return true if tree has changed. path is expected to be valid.
   static bool ApplyPath(Tree *root, const Path *path, bool keepDependencies);
   // Return true if direction was applied.

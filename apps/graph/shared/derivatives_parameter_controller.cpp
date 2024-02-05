@@ -39,7 +39,17 @@ void DerivativesParameterController::viewWillAppear() {
   for (int row = 0; row < k_numberOfCells; row++) {
     updateSwitch(row);
   }
+  m_selectableListView.reloadData();
   UniformSelectableListController::viewWillAppear();
+}
+
+void DerivativesParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
+  if (!m_record.isNull()) {
+    bool visible = function()->canCalculateOnCurve();
+    cell(k_indexOfFirstDerivativePlot)->setVisible(visible);
+    cell(k_indexOfSecondDerivativePlot)->setVisible(visible);
+  }
 }
 
 StackViewController *DerivativesParameterController::stackController() const {

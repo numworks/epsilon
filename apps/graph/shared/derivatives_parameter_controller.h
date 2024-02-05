@@ -26,7 +26,7 @@ class DerivativesParameterController
   }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void setRecord(Ion::Storage::Record record) { m_record = record; }
+  void setRecord(Ion::Storage::Record record);
 
  private:
   Escher::StackViewController* stackController() const;

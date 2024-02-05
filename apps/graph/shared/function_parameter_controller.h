@@ -5,11 +5,10 @@
 #include <apps/shared/list_parameter_controller.h>
 #include <escher/buffer_text_view.h>
 #include <escher/chevron_view.h>
-#include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/switch_view.h>
 
 #include "../graph/graph_controller.h"
+#include "derivatives_parameter_controller.h"
 #include "details_parameter_controller.h"
 #include "domain_parameter_controller.h"
 
@@ -56,21 +55,18 @@ class FunctionParameterController : public Shared::ListParameterController,
   void initializeColumnParameters() override;
   Shared::ColumnNameHelper* columnNameHelper() override;
 
-  void updateDerivaticeCellSwitch() {
-    m_derivativeCell.accessory()->setState(function()->displayDerivative());
-  }
-
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_detailsCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
                    Escher::ChevronView>
       m_functionDomainCell;
-  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                   Escher::SwitchView>
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::ChevronView>
       m_derivativeCell;
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
+  DerivativesParameterController m_derivativesParameterController;
   bool m_useColumnTitle;
 };
 

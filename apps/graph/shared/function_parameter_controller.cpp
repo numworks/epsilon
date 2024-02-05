@@ -22,6 +22,7 @@ FunctionParameterController::FunctionParameterController(
                                       deleteFunctionMessage),
       m_detailsParameterController(nullptr),
       m_domainParameterController(nullptr),
+      m_derivativesParameterController(nullptr),
       m_useColumnTitle(false) {
   m_detailsCell.label()->setMessage(I18n::Message::Details);
   m_derivativeCell.label()->setMessage(I18n::Message::GraphDerivative);
@@ -48,6 +49,7 @@ void FunctionParameterController::setRecord(Ion::Storage::Record record) {
    * displayed. */
   m_detailsParameterController.setRecord(m_record);
   m_domainParameterController.setRecord(m_record);
+  m_derivativesParameterController.setRecord(m_record);
   bool displayDerivative = !m_record.isNull() && App::app()
                                                      ->functionStore()
                                                      ->modelForRecord(m_record)
@@ -76,7 +78,6 @@ int writeInterval(char *buffer, int bufferSize, double min, double max,
 }
 
 void FunctionParameterController::viewWillAppear() {
-  updateDerivaticeCellSwitch();
   if (!m_record.isNull()) {
     App *myApp = App::app();
     Shared::ExpiringPointer<ContinuousFunction> function =
@@ -110,9 +111,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (cell == &m_derivativeCell &&
       m_derivativeCell.canBeActivatedByEvent(event)) {
-    function()->setDisplayDerivative(!function()->displayDerivative());
-    updateDerivaticeCellSwitch();
-    m_selectableListView.reloadSelectedCell();
+    stack->push(&m_derivativesParameterController);
     return true;
   }
   bool result = Shared::ListParameterController::handleEvent(event);

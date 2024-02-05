@@ -208,12 +208,12 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
 bool Projection::Expand(Tree* tree) {
   return
       // tan(A) -> sin(A) * cos(A)^(-1)
-      PatternMatching::MatchReplaceAndSimplifyAdvanced(
+      PatternMatching::MatchReplaceAndSimplify(
           tree, KTanRad(KA),
           KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
       // TODO: This expansion introduces KPow when KPowReal could be needed.
       // atan(A) -> asin(A/Sqrt(1 + A^2))
-      PatternMatching::MatchReplaceAndSimplifyAdvanced(
+      PatternMatching::MatchReplaceAndSimplify(
           tree, KATanRad(KA),
           KATrig(KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, KHalf))),
                  1_e));

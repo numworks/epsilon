@@ -229,8 +229,7 @@ bool PatternMatching::Match(const Tree* pattern, const Tree* source,
 }
 
 Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
-                                  Tree* insertedNAry, bool simplify,
-                                  bool advanced) {
+                                  Tree* insertedNAry, bool simplify) {
   Tree* top = Tree::FromBlocks(SharedEditionPool->lastBlock());
   const Block* lastStructureBlock = structure->nextTree()->block();
   const bool withinNAry = insertedNAry != nullptr;
@@ -245,12 +244,9 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         Tree* insertedNode = SharedEditionPool->clone(node, false);
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
-        CreateTree(node, context, insertedNode, simplify, advanced);
+        CreateTree(node, context, insertedNode, simplify);
         if (simplify) {
           Simplification::ShallowSystematicReduce(insertedNode);
-          if (advanced) {
-            // TODO: Advanced shallow reduction
-          }
         } else {
           // TODO proper fix
           if (!insertedNode->isSet()) {
@@ -260,20 +256,17 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         node = node->nextTree();
       } else if (withinNAry && numberOfChildren > 0) {
         // Insert the tree recursively to locally remove insertedNAry
-        CreateTree(node, context, nullptr, simplify, advanced);
+        CreateTree(node, context, nullptr, simplify);
         node = node->nextTree();
       } else {
         Tree* result = SharedEditionPool->clone(node, false);
         node = node->nextNode();
         if (simplify) {
           for (size_t i = 0; i < numberOfChildren; i++) {
-            CreateTree(node, context, nullptr, simplify, advanced);
+            CreateTree(node, context, nullptr, simplify);
             node = node->nextTree();
           }
           Simplification::ShallowSystematicReduce(result);
-          if (advanced) {
-            // TODO: Advanced shallow reduction
-          }
         }
       }
       continue;
@@ -326,7 +319,7 @@ Tree* PatternMatching::MatchAndCreate(const Tree* source, const Tree* pattern,
 
 bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
                                              const Tree* structure,
-                                             bool simplify, bool advanced) {
+                                             bool simplify) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
    * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
@@ -349,7 +342,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
   // Escape case for full matches like A -> cos(A)
   if (pattern->isPlaceholder()) {
     ctx.setNode(Placeholder::NodeToTag(pattern), node, 1, false);
-    node->moveTreeOverTree(Create(structure, ctx, simplify, advanced));
+    node->moveTreeOverTree(Create(structure, ctx, simplify));
     return true;
   }
 
@@ -437,7 +430,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
   }
 
   // Step 5 - Build the PatternMatching replacement
-  Tree* created = Create(structure, ctx, simplify, advanced);
+  Tree* created = Create(structure, ctx, simplify);
 
   // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 

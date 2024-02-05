@@ -225,7 +225,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
   if (tree->isTrig() || tree->isTangentRad()) {
     if (angleUnit != PoincareJ::AngleUnit::Radian) {
       Tree* child = tree->child(0);
-      child->moveTreeOverTree(PatternMatching::CreateAndSimplifyAdvanced(
+      child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
       /* This adds new potential multiplication expansions. Another advanced
        * reduction in DeepBeautify may be needed.

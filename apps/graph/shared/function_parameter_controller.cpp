@@ -20,7 +20,7 @@ FunctionParameterController::FunctionParameterController(
     I18n::Message deleteFunctionMessage)
     : Shared::ListParameterController(parentResponder, functionColorMessage,
                                       deleteFunctionMessage),
-      m_detailsParameterController(this),
+      m_detailsParameterController(nullptr),
       m_domainParameterController(nullptr),
       m_useColumnTitle(false) {
   m_detailsCell.label()->setMessage(I18n::Message::Details);

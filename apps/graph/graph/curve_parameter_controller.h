@@ -43,10 +43,6 @@ class CurveParameterController
     return confirmParameterAtIndex(parameterIndex, f);
   }
   void setRecord(Ion::Storage::Record record) override;
-  int numberOfParameters() const {
-    return function()->properties().numberOfCurveParameters() +
-           shouldDisplayFirstDerivative();
-  }
   Escher::HighlightCell* cell(int row) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;

@@ -7,8 +7,8 @@ QUIZ_CASE(pcj_projection) {
   EditionReference ref(KCos(KSin(
       KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),
            3_e))));
-  Projection::DeepSystemProjection(
-      ref, {.m_complexFormat = ComplexFormat::Cartesian});
+  Projection::DeepSystemProject(ref,
+                                {.m_complexFormat = ComplexFormat::Cartesian});
   assert_trees_are_equal(
       ref,
       KTrig(KTrig(KPow(KPow(KExp(KLn(KMult(
@@ -20,32 +20,31 @@ QUIZ_CASE(pcj_projection) {
             0_e));
 
   CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow("x"_e, 2_e)));
-  Projection::DeepSystemProjection(ref,
-                                   {.m_complexFormat = ComplexFormat::Cartesian,
-                                    .m_strategy = Strategy::NumbersToFloat});
+  Projection::DeepSystemProject(ref,
+                                {.m_complexFormat = ComplexFormat::Cartesian,
+                                 .m_strategy = Strategy::NumbersToFloat});
   assert_trees_are_equal(
       ref,
       KAdd(KTrig(KAdd(2065_de, KMult(-1_e, 2065_de)), 0_e), KPow("x"_e, 2_e)));
 
   CloneTreeOverTree(ref, KAdd(KCos(KSub(2065_e, 2065_e)), KPow(2_e, "x"_e),
                               KPow(KLn(e_e), KDiv(1_e, 10_e))));
-  Projection::DeepSystemProjection(
-      ref, {.m_complexFormat = ComplexFormat::Cartesian,
-            .m_strategy = Strategy::ApproximateToFloat});
+  Projection::DeepSystemProject(ref,
+                                {.m_complexFormat = ComplexFormat::Cartesian,
+                                 .m_strategy = Strategy::ApproximateToFloat});
   assert_trees_are_equal(ref, KAdd(1_de, KPow(2_de, "x"_e), 1_de));
 
   CloneTreeOverTree(ref, KCos(100_e));
-  Projection::DeepSystemProjection(ref, {.m_angleUnit = AngleUnit::Degree});
+  Projection::DeepSystemProject(ref, {.m_angleUnit = AngleUnit::Degree});
   assert_trees_are_equal(ref, KTrig(KMult(100_e, 1_e / 180_e, π_e), 0_e));
 
   CloneTreeOverTree(ref, KSqrt("y"_e));
-  Projection::DeepSystemProjection(
-      ref, {.m_complexFormat = ComplexFormat::Cartesian});
+  Projection::DeepSystemProject(ref,
+                                {.m_complexFormat = ComplexFormat::Cartesian});
   assert_trees_are_equal(ref, KPow("y"_e, KHalf));
 
   CloneTreeOverTree(ref, KSqrt("y"_e));
-  Projection::DeepSystemProjection(ref,
-                                   {.m_complexFormat = ComplexFormat::Real});
+  Projection::DeepSystemProject(ref, {.m_complexFormat = ComplexFormat::Real});
   assert_trees_are_equal(ref, KPowReal("y"_e, KHalf));
 
   ref->removeTree();

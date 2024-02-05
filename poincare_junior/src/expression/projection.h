@@ -19,13 +19,13 @@ struct ProjectionContext {
 class Projection {
  public:
   static ProjectionContext ContextFromSettings();
-  static bool DeepSystemProjection(Tree *reference,
-                                   ProjectionContext projectionContext = {});
-  EDITION_REF_WRAP_1D(DeepSystemProjection, ProjectionContext, {});
+  static bool DeepSystemProject(Tree *reference,
+                                ProjectionContext projectionContext = {});
+  EDITION_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
 
-  static bool ShallowSystemProjection(Tree *reference,
-                                      void *projectionContext = nullptr);
-  EDITION_REF_WRAP_1D(ShallowSystemProjection, void *, nullptr);
+  static bool ShallowSystemProject(Tree *reference,
+                                   void *projectionContext = nullptr);
+  EDITION_REF_WRAP_1D(ShallowSystemProject, void *, nullptr);
 
   /* Some projections are performed during advanced reduction instead so the
    * metric can cancel it if unecessary. */

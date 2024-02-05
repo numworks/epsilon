@@ -21,8 +21,8 @@ ProjectionContext Projection::ContextFromSettings() {
   };
 }
 
-bool Projection::DeepSystemProjection(Tree* ref,
-                                      ProjectionContext projectionContext) {
+bool Projection::DeepSystemProject(Tree* ref,
+                                   ProjectionContext projectionContext) {
   bool changed = false;
   if (projectionContext.m_strategy != Strategy::Default) {
     assert((projectionContext.m_strategy == Strategy::ApproximateToFloat ||
@@ -31,14 +31,14 @@ bool Projection::DeepSystemProjection(Tree* ref,
         ref, projectionContext.m_strategy == Strategy::ApproximateToFloat,
         &projectionContext);
   }
-  return Tree::ApplyShallowInDepth(ref, ShallowSystemProjection,
+  return Tree::ApplyShallowInDepth(ref, ShallowSystemProject,
                                    &projectionContext) ||
          changed;
 }
 
 /* The order of nodes in NAry is not a concern here. They will be sorted before
  * SystemReduction. */
-bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
+bool Projection::ShallowSystemProject(Tree* ref, void* context) {
   /* TODO: Most of the projections could be optimized by simply replacing and
    * inserting nodes. This optimization could be applied in matchAndReplace. See
    * comment in matchAndReplace. */
@@ -137,7 +137,7 @@ bool Projection::ShallowSystemProjection(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(
           ref, KArSinh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e)))))) {
     // Ref node may need to be projected again.
-    ShallowSystemProjection(ref, context);
+    ShallowSystemProject(ref, context);
     return true;
   }
 

@@ -44,10 +44,10 @@ class Simplification {
   static bool DeepApplyMatrixOperators(Tree *u);
   EDITION_REF_WRAP(DeepApplyMatrixOperators);
 
-  static bool ShallowSystematicReduce(Tree *u);
-  EDITION_REF_WRAP(ShallowSystematicReduce);
-  static bool DeepSystematicReduce(Tree *u);
-  EDITION_REF_WRAP(DeepSystematicReduce);
+  static bool ShallowSystemReduce(Tree *u);
+  EDITION_REF_WRAP(ShallowSystemReduce);
+  static bool DeepSystemReduce(Tree *u);
+  EDITION_REF_WRAP(DeepSystemReduce);
 
   static bool SimplifyAbs(Tree *u);
   EDITION_REF_WRAP(SimplifyAbs);
@@ -75,7 +75,7 @@ class Simplification {
    * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
   static bool DistributeOverNAry(Tree *node, BlockType target,
                                  BlockType naryTarget, BlockType naryOutput,
-                                 Operation operation = ShallowSystematicReduce,
+                                 Operation operation = ShallowSystemReduce,
                                  int childIndex = 0);
 
  private:

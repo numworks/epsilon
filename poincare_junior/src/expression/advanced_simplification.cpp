@@ -20,11 +20,11 @@ void LogIndent() {
 
 #endif
 
-bool AdvancedSimplification::AdvancedReduction(Tree* origin) {
+bool AdvancedSimplification::AdvancedReduce(Tree* origin) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored.
-   * This means calling AdvancedReduction on an equivalent but different
+   * This means calling AdvancedReduce on an equivalent but different
    * expression could yield different results if limits have been reached. */
   Tree* u = origin->isDependency() ? origin->child(0) : origin;
   int bestMetric = Metric::GetMetric(u);
@@ -36,15 +36,15 @@ bool AdvancedSimplification::AdvancedReduction(Tree* origin) {
       Ion::crc32Byte(reinterpret_cast<const uint8_t*>(u), u->treeSize()), 0);
   Tree* editedExpression = u->clone();
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-  std::cout << "\nAdvancedReduction\nInitial tree (" << bestMetric << ") is : ";
+  std::cout << "\nAdvancedReduce\nInitial tree (" << bestMetric << ") is : ";
   u->logSerialize();
   s_indent = 1;
 #endif
   bool didOverflowPath = false;
   bool mustResetRoot = false;
-  AdvancedReductionRec(editedExpression, editedExpression, u, &currentPath,
-                       &bestPath, &bestMetric, &crcCollection, &didOverflowPath,
-                       &mustResetRoot);
+  AdvancedReduceRec(editedExpression, editedExpression, u, &currentPath,
+                    &bestPath, &bestMetric, &crcCollection, &didOverflowPath,
+                    &mustResetRoot);
   editedExpression->removeTree();
   bool result = ApplyPath(u, &bestPath, true);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
@@ -170,7 +170,7 @@ bool AdvancedSimplification::ApplyDirection(Tree** u, Tree* root,
     return false;
   }
   // Apply a deep systematic reduction starting from (*u)
-  UpwardSystematicReduction(root, *u);
+  UpwardSystemReduce(root, *u);
   // Move back to root so we only move down trees. Ignore dependencies
   *u = root;
   if (root->isDependency()) {
@@ -198,13 +198,15 @@ bool AdvancedSimplification::ApplyPath(Tree* root, const Path* path,
   return rootChanged;
 }
 
-void AdvancedSimplification::AdvancedReductionRec(
-    Tree* u, Tree* root, const Tree* original, Path* path, Path* bestPath,
-    int* bestMetric, CrcCollection* crcCollection, bool* didOverflowPath,
-    bool* mustResetRoot) {
+void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
+                                               const Tree* original, Path* path,
+                                               Path* bestPath, int* bestMetric,
+                                               CrcCollection* crcCollection,
+                                               bool* didOverflowPath,
+                                               bool* mustResetRoot) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
-  std::cout << "AdvancedReductionRec on subtree: ";
+  std::cout << "AdvancedReduceRec on subtree: ";
   u->logSerialize();
 #endif
   if (!path->canAddNewDirection()) {
@@ -275,8 +277,8 @@ void AdvancedSimplification::AdvancedReductionRec(
         bool canAddDir = path->append(dir);
         assert(canAddDir);
         bool didOverflowPathRec = false;
-        AdvancedReductionRec(target, root, original, path, bestPath, bestMetric,
-                             crcCollection, &didOverflowPathRec, mustResetRoot);
+        AdvancedReduceRec(target, root, original, path, bestPath, bestMetric,
+                          crcCollection, &didOverflowPathRec, mustResetRoot);
         if (rootChanged && !didOverflowPathRec) {
           // No need to explore this again, even at smaller lengths.
           crcCollection->add(crc32, 0);
@@ -334,16 +336,15 @@ void AdvancedSimplification::AdvancedReductionRec(
   }
 }
 
-bool AdvancedSimplification::UpwardSystematicReduction(Tree* root,
-                                                       const Tree* tree) {
+bool AdvancedSimplification::UpwardSystemReduce(Tree* root, const Tree* tree) {
   if (root == tree) {
-    assert(!Simplification::DeepSystematicReduce(root));
+    assert(!Simplification::DeepSystemReduce(root));
     return true;
   }
   assert(root < tree);
   for (Tree* child : root->children()) {
-    if (UpwardSystematicReduction(child, tree)) {
-      Simplification::ShallowSystematicReduce(root);
+    if (UpwardSystemReduce(child, tree)) {
+      Simplification::ShallowSystemReduce(root);
       return true;
     }
   }

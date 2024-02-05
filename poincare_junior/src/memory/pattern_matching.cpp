@@ -246,7 +246,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode, simplify);
         if (simplify) {
-          Simplification::ShallowSystematicReduce(insertedNode);
+          Simplification::ShallowSystemReduce(insertedNode);
         } else {
           // TODO proper fix
           if (!insertedNode->isSet()) {
@@ -266,7 +266,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
             CreateTree(node, context, nullptr, simplify);
             node = node->nextTree();
           }
-          Simplification::ShallowSystematicReduce(result);
+          Simplification::ShallowSystemReduce(result);
         }
       }
       continue;
@@ -297,12 +297,12 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
         Tree* inserted = SharedEditionPool->clone(nodeToInsert, true);
-        assert(!(simplify && Simplification::DeepSystematicReduce(inserted)));
+        assert(!(simplify && Simplification::DeepSystemReduce(inserted)));
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
     Tree* inserted = SharedEditionPool->clone(nodeToInsert, true);
-    assert(!(simplify && Simplification::DeepSystematicReduce(inserted)));
+    assert(!(simplify && Simplification::DeepSystemReduce(inserted)));
     node = node->nextNode();
   }
   return top;

@@ -168,14 +168,14 @@ bool Parametric::Explicit(Tree* expr) {
     Tree* value = SharedEditionPool->push<BlockType::Addition>(2);
     lowerBound->clone();
     Integer::Push(step);
-    Simplification::ShallowSystematicReduce(value);
+    Simplification::ShallowSystemReduce(value);
     // Clone the child and replace k with its value
     Tree* clone = child->clone();
     Variables::Replace(clone, k_localVariableId, value);
     value->removeTree();
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);
     // Terms are simplified one at a time to avoid overflowing the pool
-    Simplification::ShallowSystematicReduce(result);
+    Simplification::ShallowSystemReduce(result);
   }
   expr->moveTreeOverTree(result);
   return true;

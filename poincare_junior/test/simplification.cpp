@@ -14,7 +14,7 @@ QUIZ_CASE(pcj_simplification_expansion) {
   assert_trees_are_equal(ref1, KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
 
   EditionReference ref2(KTrig(KAdd(π_e, "x"_e, "y"_e), 0_e));
-  Simplification::DeepSystematicReduce(ref2);
+  Simplification::DeepSystemReduce(ref2);
   quiz_assert(Simplification::DeepExpand(ref2));
   assert_trees_are_equal(ref2,
                          KAdd(KMult(-1_e, KTrig("x"_e, 0_e), KTrig("y"_e, 0_e)),
@@ -449,9 +449,9 @@ QUIZ_CASE(pcj_float_simplification) {
 
   // This was raising asserts because of float approximation on flatten.
   Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->clone();
-  Simplification::ShallowSystematicReduce(u->child(0));
-  QUIZ_ASSERT(Simplification::ShallowSystematicReduce(u));
-  QUIZ_ASSERT(!Simplification::ShallowSystematicReduce(u));
+  Simplification::ShallowSystemReduce(u->child(0));
+  QUIZ_ASSERT(Simplification::ShallowSystemReduce(u));
+  QUIZ_ASSERT(!Simplification::ShallowSystemReduce(u));
 }
 
 QUIZ_CASE(pcj_unit_simplification) {

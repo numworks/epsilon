@@ -61,8 +61,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
   }
   for (int i = 0; i < size; i++) {
     Tree* element = list->clone();
-    if (!ProjectToNthElement(element, i,
-                             Simplification::ShallowSystematicReduce)) {
+    if (!ProjectToNthElement(element, i, Simplification::ShallowSystemReduce)) {
       assert(false);
     }
     if (i == 0) {
@@ -71,7 +70,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
     if (type.isListSum() || type.isListProduct()) {
       const Tree* node = type.isListSum() ? KAdd.node<2> : KMult.node<2>;
       result->cloneNodeBeforeNode(node);
-      Simplification::ShallowSystematicReduce(result);
+      Simplification::ShallowSystemReduce(result);
     } else {
       assert(type.isMinimum() || type.isMaximum());
       // TODO_PCJ: we need a natural order not a comparison
@@ -117,7 +116,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
     Tree* result = KMult.node<2>->cloneNode();
     Fold(list, BlockType::ListSum);
     Rational::Push(1, Dimension::GetListLength(list));
-    Simplification::ShallowSystematicReduce(result);
+    Simplification::ShallowSystemReduce(result);
     return result;
   }
   return PatternMatching::CreateAndSimplify(
@@ -165,7 +164,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case BlockType::ListSort:
     case BlockType::Median: {
       Tree* list = e->child(0);
-      BubbleUp(list, Simplification::ShallowSystematicReduce);
+      BubbleUp(list, Simplification::ShallowSystemReduce);
       NAry::Sort(list);
       if (e->isMedian()) {
         if (!e->child(1)->isOne()) {
@@ -189,7 +188,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case BlockType::ListAccess: {
       if (!ProjectToNthElement(e->child(0),
                                Integer::Handler(e->child(1)).to<uint8_t>(),
-                               Simplification::ShallowSystematicReduce)) {
+                               Simplification::ShallowSystemReduce)) {
         return false;
       }
       e->moveTreeOverTree(e->child(0));

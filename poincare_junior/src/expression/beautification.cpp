@@ -180,7 +180,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     units = SharedEditionPool->push<BlockType::Multiplication>(2);
     ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();
-    Simplification::DeepSystematicReduce(units);
+    Simplification::DeepSystemReduce(units);
     Units::Unit::ChooseBestRepresentativeAndPrefixForValue(
         units, &value, projectionContext.m_unitFormat);
     Tree* approximated = SharedEditionPool->push<BlockType::DoubleFloat>(
@@ -201,21 +201,21 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
 bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
                                                 bool* simplifyParent) {
   bool modified = false;
-  bool mustSystematicReduce = false;
+  bool mustSystemReduce = false;
   for (Tree* child : tree->children()) {
-    bool tempMustSystematicReduce = false;
+    bool tempMustSystemReduce = false;
     modified |=
-        DeepBeautifyAngleFunctions(child, angleUnit, &tempMustSystematicReduce);
-    mustSystematicReduce |= tempMustSystematicReduce;
+        DeepBeautifyAngleFunctions(child, angleUnit, &tempMustSystemReduce);
+    mustSystemReduce |= tempMustSystemReduce;
   }
   // A parent simplification is required after inverse trigonometry beautify
   *simplifyParent = (angleUnit != PoincareJ::AngleUnit::Radian &&
                      (tree->isATrig() || tree->isArcTangentRad()));
   if (ShallowBeautifyAngleFunctions(tree, angleUnit)) {
     return true;
-  } else if (mustSystematicReduce) {
+  } else if (mustSystemReduce) {
     assert(modified);
-    *simplifyParent = Simplification::ShallowSystematicReduce(tree);
+    *simplifyParent = Simplification::ShallowSystemReduce(tree);
   }
   return modified;
 }
@@ -231,7 +231,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
       /* This adds new potential multiplication expansions. Another advanced
        * reduction in DeepBeautify may be needed.
-       * TODO: Call AdvancedReduction in DeepBeautify only if we went here. */
+       * TODO: Call AdvancedReduce in DeepBeautify only if we went here. */
     }
     PatternMatching::MatchAndReplace(tree, KTrig(KA, 0_e), KCos(KA)) ||
         PatternMatching::MatchAndReplace(tree, KTrig(KA, 1_e), KSin(KA)) ||
@@ -287,7 +287,7 @@ bool Beautification::DeepBeautify(Tree* expr,
       DeepBeautifyAngleFunctions(expr, projectionContext.m_angleUnit, &dummy);
   if (changed && projectionContext.m_angleUnit != AngleUnit::Radian) {
     // A ShallowBeautifyAngleFunctions may have added expands possibilities.
-    AdvancedSimplification::AdvancedReduction(expr);
+    AdvancedSimplification::AdvancedReduce(expr);
   }
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify, nullptr, false) ||
             changed;

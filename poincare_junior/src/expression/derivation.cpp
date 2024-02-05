@@ -127,10 +127,10 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
       Tree *addition = SharedEditionPool->push<BlockType::Addition>(2);
       SharedEditionPool->clone(derivand->child(1));
       SharedEditionPool->push(BlockType::MinusOne);
-      Simplification::ShallowSystematicReduce(addition);
-      Simplification::ShallowSystematicReduce(newNode);
+      Simplification::ShallowSystemReduce(addition);
+      Simplification::ShallowSystemReduce(newNode);
       if (derivand->isPower()) {
-        Simplification::ShallowSystematicReduce(multiplication);
+        Simplification::ShallowSystemReduce(multiplication);
       }
       return true;
     }

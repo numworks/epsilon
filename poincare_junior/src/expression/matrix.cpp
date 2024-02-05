@@ -183,7 +183,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
 bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
                          bool approximate) {
   // The matrix children have to be reduced to be able to spot 0
-  assert(approximate || !Simplification::DeepSystematicReduce(matrix));
+  assert(approximate || !Simplification::DeepSystemReduce(matrix));
 
   EditionReference det;
   if (determinant) {
@@ -310,7 +310,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
     if (approximate) {
       Approximation::SimplifyComplex(det);
     } else {
-      Simplification::ShallowSystematicReduce(det);
+      Simplification::ShallowSystemReduce(det);
     }
     *determinant = det;
   }

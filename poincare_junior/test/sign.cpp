@@ -23,9 +23,9 @@ void assert_sign(const char* input, ComplexSign expectedSign) {
   Tree* expression = TextToTree(input);
   /* TODO: Factorize this with SimplifyLastTree to have properly projected
    * variables, random trees, ... */
-  Projection::DeepSystemProjection(
-      expression, {.m_complexFormat = ComplexFormat::Cartesian});
-  Simplification::DeepSystematicReduce(expression);
+  Projection::DeepSystemProject(expression,
+                                {.m_complexFormat = ComplexFormat::Cartesian});
+  Simplification::DeepSystemReduce(expression);
   bool result = ComplexSign::Get(expression) == expectedSign;
 #if POINCARE_MEMORY_TREE_LOG
   if (!result) {

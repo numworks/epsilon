@@ -8,8 +8,8 @@ namespace PoincareJ {
 
 class AdvancedSimplification {
  public:
-  static bool AdvancedReduction(Tree *u);
-  EDITION_REF_WRAP(AdvancedReduction);
+  static bool AdvancedReduce(Tree *u);
+  EDITION_REF_WRAP(AdvancedReduce);
 
  private:
   // Ordered list of CRC encountered during advanced reduction.
@@ -85,11 +85,12 @@ class AdvancedSimplification {
     Direction m_stack[k_size];
     uint8_t m_length;
   };
+
   // Recursive advanced reduction
-  static void AdvancedReductionRec(Tree *u, Tree *root, const Tree *original,
-                                   Path *path, Path *bestPath, int *bestMetric,
-                                   CrcCollection *crcCollection,
-                                   bool *didOverflowPath, bool *mustResetRoot);
+  static void AdvancedReduceRec(Tree *u, Tree *root, const Tree *original,
+                                Path *path, Path *bestPath, int *bestMetric,
+                                CrcCollection *crcCollection,
+                                bool *didOverflowPath, bool *mustResetRoot);
   // Return true if tree has changed. path is expected to be valid.
   static bool ApplyPath(Tree *root, const Path *path, bool keepDependencies);
   // Return true if direction was applied.
@@ -99,7 +100,7 @@ class AdvancedSimplification {
   static bool CanApplyDirection(const Tree *u, const Tree *root,
                                 Direction direction);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
-  static bool UpwardSystematicReduction(Tree *root, const Tree *tree);
+  static bool UpwardSystemReduce(Tree *root, const Tree *tree);
 };
 
 }  // namespace PoincareJ

@@ -91,7 +91,8 @@ class LayoutCursor {
   void stopSelecting() { m_startOfSelection = -1; }
 
   /* This moves the cursor to a location that will stay valid after exiting the
-   * field */
+   * field. Currently only used to move the cursor from grid gray squares to
+   * grid normal squares when returning from calculation's history. */
   void prepareForExitingPosition();
 
   bool isAtNumeratorOfEmptyFraction() const;

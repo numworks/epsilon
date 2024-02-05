@@ -4,8 +4,10 @@
 #include <poincare_junior/src/memory/tree.h>
 #include <poincare_junior/src/n_ary.h>
 
+#include "advanced_simplification.h"
 #include "approximation.h"
 #include "arithmetic.h"
+#include "float.h"
 #include "number.h"
 #include "rational.h"
 #include "simplification.h"
@@ -285,7 +287,7 @@ bool Beautification::DeepBeautify(Tree* expr,
       DeepBeautifyAngleFunctions(expr, projectionContext.m_angleUnit, &dummy);
   if (changed && projectionContext.m_angleUnit != AngleUnit::Radian) {
     // A ShallowBeautifyAngleFunctions may have added expands possibilities.
-    Simplification::AdvancedReduction(expr);
+    AdvancedSimplification::AdvancedReduction(expr);
   }
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify, nullptr, false) ||
             changed;

@@ -3,11 +3,12 @@
 #include <math.h>
 #include <poincare/float.h>
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/src/n_ary.h>
 
 #include <bit>
 #include <complex>
 
-#include "../n_ary.h"
+#include "beautification.h"
 #include "constant.h"
 #include "decimal.h"
 #include "float.h"

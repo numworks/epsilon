@@ -5,7 +5,6 @@
 #include <poincare/src/parsing/parser.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>

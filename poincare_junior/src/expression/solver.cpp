@@ -1,5 +1,7 @@
 #include "solver.h"
 
+#include <poincare_junior/src/expression/advanced_simplification.h>
+#include <poincare_junior/src/expression/beautification.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/set.h>
@@ -113,7 +115,7 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
     }
     Projection::DeepSystemProjection(equation);
     Simplification::DeepSystematicReduce(equation);
-    Simplification::AdvancedReduction(equation);
+    AdvancedSimplification::AdvancedReduction(equation);
   }
   SwapTrees(&variables, &equationsSet);
   return variables;
@@ -262,7 +264,7 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
       variableId, ComplexSign::Unknown()));
   solution->moveNodeBeforeNode(SharedEditionPool->push<BlockType::Addition>(2));
   Simplification::DeepSystematicReduce(solution);
-  Simplification::AdvancedReduction(solution);
+  AdvancedSimplification::AdvancedReduction(solution);
   Beautification::DeepBeautify(solution);
   return Error::NoError;
 }

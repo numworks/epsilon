@@ -242,12 +242,16 @@ int StoreController::numberOfElementsInColumn(int column) const {
   return m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(column));
 }
 
+void StoreController::resetMemoizedFormulaOfColumn(int series, int column) {
+  memoizeFormula(Layout(),
+                 series * DoublePairStore::k_numberOfColumnsPerSeries + column);
+}
+
 void StoreController::resetMemoizedFormulasOfEmptyColumns(int series) {
   assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
   for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
     if (m_store->lengthOfColumn(series, i) == 0) {
-      memoizeFormula(Layout(),
-                     series * DoublePairStore::k_numberOfColumnsPerSeries + i);
+      resetMemoizedFormulaOfColumn(series, i);
     }
   }
 }

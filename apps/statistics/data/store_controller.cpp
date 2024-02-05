@@ -137,7 +137,10 @@ void StoreController::clearSelectedColumn() {
     selectCellAtLocation(selectedColumn(), 1);
     resetMemoizedFormulasOfEmptyColumns(series);
   } else {
+    assert(column == 1);
+    // Column won't be empty, all values are set to 1
     m_store->resetColumn(series, column);
+    resetMemoizedFormulaOfColumn(series, column);
   }
 }
 

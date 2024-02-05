@@ -102,8 +102,9 @@ class AdvancedSimplification {
     CrcCollection m_crcCollection;
     bool m_mustResetRoot;
   };
-  // Recursive advanced reduction
-  static void AdvancedReduceRec(Tree *u, Context *ctx, bool *didOverflowPath);
+  /* Recursive advanced reduction. Return true if advanced reduction
+   * possibilities have all been explored. */
+  static bool AdvancedReduceRec(Tree *u, Context *ctx);
   // Return true if tree has changed. path is expected to be valid.
   static bool ApplyPath(Tree *root, const Path *path, bool keepDependencies);
   // Return true if direction was applied.

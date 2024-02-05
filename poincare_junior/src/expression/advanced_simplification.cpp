@@ -37,8 +37,7 @@ bool AdvancedSimplification::AdvancedReduce(Tree* origin) {
   u->logSerialize();
   s_indent = 1;
 #endif
-  bool didOverflowPath = false;
-  AdvancedReduceRec(editedExpression, &ctx, &didOverflowPath);
+  AdvancedReduceRec(editedExpression, &ctx);
   editedExpression->removeTree();
   bool result = ApplyPath(u, &ctx.m_bestPath, true);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
@@ -196,15 +195,15 @@ bool AdvancedSimplification::ApplyPath(Tree* root, const Path* path,
   return rootChanged;
 }
 
-void AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx,
-                                               bool* didOverflowPath) {
+bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
+  bool fullExploration = true;
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
   std::cout << "AdvancedReduceRec on subtree: ";
   u->logSerialize();
 #endif
   if (!ctx->m_path.canAddNewDirection()) {
-    *didOverflowPath = true;
+    fullExploration = false;
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
     LogIndent();
     std::cout << "Full path.\n";
@@ -270,13 +269,12 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx,
         isLeaf = false;
         bool canAddDir = ctx->m_path.append(dir);
         assert(canAddDir);
-        bool didOverflowPathRec = false;
-        AdvancedReduceRec(target, ctx, &didOverflowPathRec);
-        if (rootChanged && !didOverflowPathRec) {
+        if (!AdvancedReduceRec(target, ctx)) {
+          fullExploration = false;
+        } else if (rootChanged) {
           // No need to explore this again, even at smaller lengths.
           ctx->m_crcCollection.add(hash, 0);
         }
-        *didOverflowPath |= didOverflowPathRec;
         ctx->m_path.popBaseDirection();
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
         if (shouldLog) {
@@ -306,7 +304,7 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx,
       }
     }
     if (!isLeaf) {
-      return;
+      return fullExploration;
     }
   }
   // Otherwise, root should be reset to current path.
@@ -327,6 +325,7 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx,
     ctx->m_bestMetric = metric;
     ctx->m_bestPath = ctx->m_path;
   }
+  return fullExploration;
 }
 
 bool AdvancedSimplification::UpwardSystemReduce(Tree* root, const Tree* tree) {

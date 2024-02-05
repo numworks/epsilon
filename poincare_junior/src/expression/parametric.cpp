@@ -71,7 +71,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     return false;
   }
   // sum(f, k, m, n) = (1+n-m)*f and prod(f, k, m, n) = f^(1 + n - m)
-  // TODO : add ceil around bounds
+  // TODO: add ceil around bounds
   constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
   Variables::LeaveScope(child);
   Tree* result = PatternMatching::CreateAndSimplify(
@@ -101,7 +101,7 @@ bool Parametric::ExpandProduct(Tree* expr) {
                                Explicit(expr));
 }
 
-/* TODO :
+/* TODO:
  * - Try swapping sigmas
  * - Different children equal bounds
  * - Identical children where leftUpperBound + 1 = rightLowerBound

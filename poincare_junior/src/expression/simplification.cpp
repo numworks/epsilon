@@ -1354,7 +1354,7 @@ bool Simplification::ExpandMult(Tree* ref) {
 }
 
 bool Simplification::ContractMult(Tree* ref) {
-  /* TODO : With  N and M positive, contract
+  /* TODO: With  N and M positive, contract
    * A + B*A*C + A^N + D*A^M*E into A*(1 + B*C + A^(N-1) + D*A^(M-1)*E) */
   // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
   return PatternMatching::MatchReplaceAndSimplify(

@@ -683,7 +683,7 @@ IntegerHandler IntegerHandler::multiplyByPowerOfBase(
 Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
   assert(j.sign() == NonStrictSign::Positive);
   if (j.isZero()) {
-    // TODO : handle 0^0.
+    // TODO: handle 0^0.
     assert(!i.isZero());
     return Integer::Push(1);
   }

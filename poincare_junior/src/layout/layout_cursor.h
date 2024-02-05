@@ -32,16 +32,16 @@ namespace PoincareJ {
  *
  * */
 
-// TODO : reimplement Context
+// TODO: reimplement Context
 class Context {};
 
 class LayoutCursor {
  public:
   constexpr static KDCoordinate k_cursorWidth = 1;
-  // Cursor navigation // TODO : Do not duplicate them everywhere
+  // Cursor navigation // TODO: Do not duplicate them everywhere
   constexpr static int k_outsideIndex = -1;
   constexpr static int k_cantMoveIndex = -2;
-  // TODO : Find a better value and store it at the right place
+  // TODO: Find a better value and store it at the right place
   constexpr static int k_layoutBufferSize = 220;
   static_assert(k_layoutBufferSize == Escher::TextField::MaxBufferSize(),
                 "Maximal number of layouts in a layout field should be equal "

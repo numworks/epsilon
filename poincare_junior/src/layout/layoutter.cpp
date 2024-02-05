@@ -157,7 +157,7 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
 }
 
 void Layoutter::layoutMatrix(EditionReference &layoutParent, Tree *expression) {
-  // TODO : matrix layout
+  // TODO: matrix layout
   PushCodePoint(layoutParent, '[');
   int cols = Matrix::NumberOfColumns(expression);
   int rows = Matrix::NumberOfRows(expression);

@@ -6,7 +6,7 @@
 
 namespace PoincareJ {
 
-// TODO : A RackLayout shouldn't have RackLayout children.
+// TODO: A RackLayout shouldn't have RackLayout children.
 constexpr auto KRackL = KNAry<BlockType::RackLayout>();
 constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();

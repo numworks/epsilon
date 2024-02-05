@@ -149,7 +149,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   assert(secondArgument->isZero() || secondArgument->isOne());
   bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
-  // TODO : Maybe factorize even/odd functions logic
+  // TODO: Maybe factorize even/odd functions logic
   if (PatternMatching::MatchReplaceAndSimplify(
           firstArgument, KMult(KTA, -1_e, KTB), KMult(KTA, KTB))) {
     changed = true;
@@ -158,7 +158,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
     }
   }
   const Tree* piFactor = getPiFactor(firstArgument);
-  /* TODO : Maybe the exact trigonometric values should be replaced in advanced
+  /* TODO: Maybe the exact trigonometric values should be replaced in advanced
    *        reduction. */
   if (piFactor) {
     // Find n to match Trig((n/120)*π, ...) with exact value.
@@ -324,7 +324,7 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
   }
 }
 
-/* TODO : Find an easier solution for nested expand/contract smart shallow
+/* TODO: Find an easier solution for nested expand/contract smart shallow
  * simplification. */
 
 bool Trigonometry::ExpandTrigonometric(Tree* ref) {
@@ -353,7 +353,7 @@ bool Trigonometry::ContractTrigonometric(Tree* ref) {
                 KTG));
 }
 
-/* TODO : Maybe expand arccos(x) = π/2 - arcsin(x).
+/* TODO: Maybe expand arccos(x) = π/2 - arcsin(x).
  * Beware of infinite expansion. */
 
 }  // namespace PoincareJ

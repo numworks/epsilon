@@ -241,7 +241,7 @@ It's expected to:
 
 ## 7 - Matrix operators
 
-TODO : Apply matrix operators in Systematic Reduction section.
+TODO: Apply matrix operators in Systematic Reduction section.
 
 TO COMPLETE
 

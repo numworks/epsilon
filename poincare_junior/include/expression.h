@@ -14,7 +14,7 @@ class Expression final : public Reference {
     assert(tree->isExpression());
   }
   using Reference::Reference;
-  // TODO : Delete this method and adapt tests ?
+  // TODO: Delete this method and adapt tests ?
   static Expression Parse(const char* text);
   static Expression Parse(const Layout* layout);
   static Expression Simplify(const Expression* input);

@@ -13,7 +13,7 @@ void assert_no_match(const Tree* source, const Tree* pattern) {
   quiz_assert(ctx.isUninitialized());
 }
 
-// TODO : Factorize more tests with assert_match_and_create
+// TODO: Factorize more tests with assert_match_and_create
 void assert_match_and_create(const Tree* source, const Tree* pattern,
                              const Tree* structure, const Tree* output) {
   int numberOfTrees = SharedEditionPool->numberOfTrees();

@@ -189,11 +189,11 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "dep(1-ln(x),{ln(x)})");
   simplifies_to("1-ln(x)", "1-ln(x)", cartesianCtx);
-  // TODO : Simplify to 1/√(1+x^2).
+  // TODO: Simplify to 1/√(1+x^2).
   simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/(x^2+1)+1)");
-  // TODO : Simplify to x/√(-x^2+1)
+  // TODO: Simplify to x/√(-x^2+1)
   simplifies_to("x×(-x^2+1)^(-1/2)", "x×(-x^2+1)^(-1/2)");
-  // TODO : Simplify to x
+  // TODO: Simplify to x
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",
                 "x×(x^2+1)^(-1/2)×(-x^2/(x^2+1)+1)^(-1/2)");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
@@ -206,7 +206,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("π*(-π)/π", "-π");
   simplifies_to("π+1/π-π", "1/π");
 
-  // TODO : Should simplify to undef
+  // TODO: Should simplify to undef
   simplifies_to("ln(0)", "ln(0)");
   simplifies_to("ln(0)", "ln(0)", cartesianCtx);
 
@@ -276,7 +276,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("i×(conj(x+i×y)+im(y)-re(x))", "im(x)+re(y)", cartesianCtx);
   simplifies_to("im(re(x)+i×im(x))", "im(x)", cartesianCtx);
   simplifies_to("re(re(x)+i×im(x))", "re(x)", cartesianCtx);
-  // TODO : Overflows CRC32 collection
+  // TODO: Overflows CRC32 collection
   simplifies_to("abs(x+i×y)^2-(-im(y)+re(x))^2-(im(x)+re(y))^2",
                 "abs(x+y×i)^2-((-im(y)+re(x))^2+(im(x)+re(y))^2)",
                 cartesianCtx);
@@ -385,7 +385,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("sequence(k,k,{1,2})", "undef");
 
   // Random
-  // TODO : Handle them with {.m_strategy = Strategy::ApproximateToFloat}
+  // TODO: Handle them with {.m_strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
   simplifies_to("random()", "random()");
   simplifies_to("randint(1,10)", "randint(1,10)");
@@ -413,7 +413,7 @@ QUIZ_CASE(pcj_power_simplification) {
   simplifies_to("√(x)^2", "√(x)^2", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
   simplifies_to("√(x)^2", "x", {.m_complexFormat = ComplexFormat::Cartesian});
-  // TODO : 0 (exp(i*(arg(A) + arg(B) - arg(A*B))) should be simplified to 1)
+  // TODO: 0 (exp(i*(arg(A) + arg(B) - arg(A*B))) should be simplified to 1)
   simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))",
                 "√(-2)+e^((ln(-1-i)+ln(1-i))/2)",
                 {.m_complexFormat = ComplexFormat::Cartesian});

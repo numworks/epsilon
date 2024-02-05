@@ -160,7 +160,7 @@ static bool IsTemporaryAutocompletedBracketPair(const Tree *l, Side tempSide) {
 static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
     EditionReference rack, int index) {
   int leftParenthesisIndex = index;
-  // TODO : Use Iterator
+  // TODO: Use Iterator
   while (leftParenthesisIndex > 0 &&
          CursorMotion::IsCollapsable(rack->child(leftParenthesisIndex), rack,
                                      OMG::Direction::Left())) {

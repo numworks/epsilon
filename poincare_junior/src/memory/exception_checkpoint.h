@@ -57,7 +57,7 @@ enum class ExceptionType : int {
   BadType,             // non-integers in gcd,lcm,...
   Undefined,           // arg(0)
   // Misc
-  ParseFail,  // Used by parser, TODO : Use more distinct errors.
+  ParseFail,  // Used by parser, TODO: Use more distinct errors.
   Other,      // Used internally for Unit tests.
 };
 

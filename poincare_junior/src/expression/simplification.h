@@ -17,7 +17,7 @@
 
 namespace PoincareJ {
 
-/* TODO : Implement PolynomialInterpretation. Prepare the expression for
+/* TODO: Implement PolynomialInterpretation. Prepare the expression for
  * Polynomial interpretation (expand TranscendentalOnRationals and algebraic
  * trees.) */
 
@@ -93,7 +93,7 @@ class Simplification {
   static bool SimplifySwitch(Tree *u);
   EDITION_REF_WRAP(SimplifySwitch);
   /* The following methods should not be called with EditionReferences.
-   * TODO : ensure it cannot. */
+   * TODO: ensure it cannot. */
   // Return true if child has been merged with next sibling.
   static bool MergeAdditionChildWithNext(Tree *child, Tree *next);
   // Return true if child has been merged with next sibling.

@@ -68,6 +68,32 @@ const char *CurveParameterController::title() {
   return m_title;
 }
 
+bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
+  switch (row) {
+    case k_indexOfImageCell1:
+    case k_indexOfFirstDerivativeCell1:
+      return true;
+    default:
+      assert(row == k_indexOfImageCell2 ||
+             row == k_indexOfFirstDerivativeCell2);
+      return false;
+  }
+}
+
+int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
+  switch (row) {
+    case k_indexOfAbscissaCell:
+      return -1;
+    case k_indexOfImageCell1:
+    case k_indexOfImageCell2:
+      return 0;
+    default:
+      assert(row == k_indexOfFirstDerivativeCell1 ||
+             row == k_indexOfFirstDerivativeCell2);
+      return 1;
+  }
+}
+
 void CurveParameterController::fillParameterCellAtRow(int row) {
   if (row >= k_numberOfParameterRows) {
     return;
@@ -83,19 +109,18 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   if (row == k_indexOfAbscissaCell) {
     SerializationHelper::CodePoint(buffer, bufferSize, properties.symbol());
   } else {
+    bool firstComponent = parameterAtRowIsFirstComponent(row);
+    int derivationOrder = derivationOrderOfParameterAtRow(row);
     if (properties.isParametric()) {
-      bool firstComponent =
-          row == k_indexOfImageCell1 || row == k_indexOfFirstDerivativeCell1;
-      int derivationOrder =
-          row == k_indexOfImageCell1 || row == k_indexOfImageCell2 ? 0 : 1;
       FunctionNameHelper::ParametricComponentNameWithArgument(
           function().pointer(), buffer, bufferSize, firstComponent,
           derivationOrder);
     } else {
-      if (row == k_indexOfImageCell1) {
+      assert(firstComponent);
+      if (derivationOrder == 0) {
         function()->nameWithArgument(buffer, bufferSize);
       } else {
-        assert(row == k_indexOfFirstDerivativeCell1);
+        assert(derivationOrder == 1);
         function()->derivativeNameWithArgument(buffer, bufferSize);
       }
     }
@@ -106,19 +131,20 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 
 double CurveParameterController::parameterAtIndex(int index) {
   Poincare::Context *ctx = App::app()->localContext();
-  if (index == k_indexOfFirstDerivativeCell1 ||
-      index == k_indexOfFirstDerivativeCell2) {
+  int derivationOrder = derivationOrderOfParameterAtRow(index);
+  if (derivationOrder == 1) {
     assert(function()->canDisplayDerivative());
+    bool firstComponent = parameterAtRowIsFirstComponent(index);
     Evaluation<double> derivative =
         function()->approximateDerivative(m_cursor->t(), ctx);
     if (derivative.type() == EvaluationNode<double>::Type::Complex) {
-      assert(index == k_indexOfFirstDerivativeCell1);
+      assert(firstComponent);
       return derivative.toScalar();
     }
     assert(derivative.type() == EvaluationNode<double>::Type::PointEvaluation);
     Coordinate2D<double> xy =
         static_cast<PointEvaluation<double> &>(derivative).xy();
-    return index == k_indexOfFirstDerivativeCell1 ? xy.x() : xy.y();
+    return firstComponent ? xy.x() : xy.y();
   }
   double t = m_cursor->t();
   double x = m_cursor->x();

@@ -37,7 +37,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   }
 
  private:
-  // Shared cells + m_detailsCell + m_functionDomainCell + m_derivativeCell
+  // Shared cells + m_detailsCell + m_functionDomainCell + m_derivativesCell
   static constexpr int k_numberOfRows =
       Shared::ListParameterController::k_numberOfSharedCells + 3;
   bool displayDetails() const {
@@ -63,7 +63,7 @@ class FunctionParameterController : public Shared::ListParameterController,
       m_functionDomainCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
-      m_derivativeCell;
+      m_derivativesCell;
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
   DerivativesParameterController m_derivativesParameterController;

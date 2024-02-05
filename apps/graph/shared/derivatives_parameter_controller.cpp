@@ -9,7 +9,7 @@ namespace Graph {
 DerivativesParameterController::DerivativesParameterController(
     Responder *parentResponder)
     : UniformSelectableListController(parentResponder) {
-  cell(0)->label()->setMessage(I18n::Message::GraphDerivative);
+  cell(0)->label()->setMessage(I18n::Message::FirstDerivativeValue);
 }
 
 bool DerivativesParameterController::handleEvent(Ion::Events::Event event) {

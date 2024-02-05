@@ -12,13 +12,14 @@ class AdvancedSimplification {
   EDITION_REF_WRAP(AdvancedReduce);
 
  private:
-  // Ordered list of CRC encountered during advanced reduction.
+  // Ordered list of hashes encountered during advanced reduction.
   class CrcCollection {
    public:
     CrcCollection() : m_length(0) {}
-    // Return false if CRC was already explored
+    // Return false if hash was already explored
     bool add(uint32_t crc, uint8_t depth);
     bool isFull() const { return m_length >= k_size; }
+    static uint32_t Hash(const Tree *tree);
 
    private:
     // Max Expand/Contract combination possibilities

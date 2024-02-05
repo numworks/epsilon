@@ -32,8 +32,7 @@ bool AdvancedSimplification::AdvancedReduce(Tree* origin) {
   Path currentPath;
   CrcCollection crcCollection;
   // Add initial root
-  crcCollection.add(
-      Ion::crc32Byte(reinterpret_cast<const uint8_t*>(u), u->treeSize()), 0);
+  crcCollection.add(CrcCollection::Hash(u), 0);
   Tree* editedExpression = u->clone();
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   std::cout << "\nAdvancedReduce\nInitial tree (" << bestMetric << ") is : ";
@@ -90,6 +89,10 @@ bool AdvancedSimplification::CrcCollection::add(uint32_t crc, uint8_t depth) {
   m_depth[m_length] = depth;
   m_collection[m_length++] = crc;
   return true;
+}
+
+uint32_t AdvancedSimplification::CrcCollection::Hash(const Tree* u) {
+  return Ion::crc32Byte(reinterpret_cast<const uint8_t*>(u), u->treeSize());
 }
 
 #if POINCARE_MEMORY_TREE_LOG
@@ -245,15 +248,14 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
 #endif
         continue;
       }
-      uint32_t crc32;
+      uint32_t hash;
       if (rootChanged) {
-        // No need for crc32 if root did not change.
-        crc32 = Ion::crc32Byte(reinterpret_cast<const uint8_t*>(root),
-                               root->treeSize());
+        // No need to recompute hash if root did not change.
+        hash = CrcCollection::Hash(root);
       }
       /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
        * not go further. */
-      if (!rootChanged || crcCollection->add(crc32, path->length())) {
+      if (!rootChanged || crcCollection->add(hash, path->length())) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         bool shouldLog = true;
@@ -281,7 +283,7 @@ void AdvancedSimplification::AdvancedReduceRec(Tree* u, Tree* root,
                           crcCollection, &didOverflowPathRec, mustResetRoot);
         if (rootChanged && !didOverflowPathRec) {
           // No need to explore this again, even at smaller lengths.
-          crcCollection->add(crc32, 0);
+          crcCollection->add(hash, 0);
         }
         *didOverflowPath |= didOverflowPathRec;
         path->popBaseDirection();

@@ -218,7 +218,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
 bool Simplification::SimplifyExp(Tree* u) {
   Tree* child = u->nextNode();
   if (child->isLn()) {
-    // TODO: Add a ln(x) dependency on user-inputted ln only when x can be null.
+    /* TODO_PCJ: Add a ln(x) dependency on user-inputted ln only when x can be
+     * null. */
     // exp(ln(x)) -> x
     u->removeNode();
     u->removeNode();
@@ -1254,7 +1255,7 @@ bool Simplification::DeepExpand(Tree* e) {
           e, [](Tree* e, void* context) { return ShallowExpand(e, true); })) {
     // Bottom-up systematic reduce is necessary.
     DeepSystematicReduce(e);
-    // TODO: Find a solution so we don't have to run this twice.
+    // TODO_PCJ: Find a solution so we don't have to run this twice.
     bool temp = DeepExpand(e);
     assert(!temp || !DeepExpand(e));
     return true;

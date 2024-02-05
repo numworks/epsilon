@@ -121,8 +121,7 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
   }
   assert(!node0->isConstant());
   if (node0->isRational() && node1->isRational()) {
-    // TODO
-    // return Rational::NaturalOrder(node0, node1);
+    // TODO_PCJ: return Rational::NaturalOrder(node0, node1);
   }
   float approximation =
       Approximation::To<float>(node0) - Approximation::To<float>(node1);

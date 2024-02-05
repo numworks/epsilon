@@ -74,7 +74,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
       Simplification::ShallowSystematicReduce(result);
     } else {
       assert(type.isMinimum() || type.isMaximum());
-      // TODO we need a natural order not a comparison
+      // TODO_PCJ: we need a natural order not a comparison
       if (Comparison::Compare(element, result) ==
           ((type.isMaximum()) ? 1 : -1)) {
         result->removeTree();
@@ -169,7 +169,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       NAry::Sort(list);
       if (e->isMedian()) {
         if (!e->child(1)->isOne()) {
-          // TODO : not implemeted yet
+          // TODO_PCJ: not implemeted yet
           // Median with coefficients needs statistics_dataset
           assert(false);
         }

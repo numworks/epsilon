@@ -5,7 +5,8 @@
 
 namespace PoincareJ {
 
-// TODO : Metric should never return a same score for two different expressions
+/* TODO_PCJ: Metric should never return a same score for two different
+ * expressions. */
 class Metric {
  public:
   // Metric of given tree. The smaller is the better.

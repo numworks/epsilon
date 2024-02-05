@@ -89,6 +89,7 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   clone->removeTree();
   variables->removeTree();
   s_randomContext = nullptr;
+  s_context = nullptr;
   return result;
 }
 
@@ -110,6 +111,7 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
   }
   clone->removeTree();
   variables->removeTree();
+  s_context = nullptr;
   return variables;
 }
 
@@ -135,6 +137,7 @@ Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
   }
   clone->removeTree();
   variables->removeTree();
+  s_context = nullptr;
   return variables;
 }
 
@@ -303,7 +306,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
     case BlockType::Power:
-      return ApproximatePower<T>(node, s_context->m_complexFormat);
+      return ApproximatePower<T>(node, s_context ? s_context->m_complexFormat
+                                                 : ComplexFormat::Cartesian);
     case BlockType::Logarithm:
       return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>);
     case BlockType::Trig:

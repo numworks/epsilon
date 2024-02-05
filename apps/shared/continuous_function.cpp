@@ -262,11 +262,14 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
 }
 
 size_t ContinuousFunction::derivativeNameWithArgument(char *buffer,
-                                                      size_t bufferSize) {
+                                                      size_t bufferSize,
+                                                      bool firstOrder) {
   size_t length = nameWithoutArgument(buffer, bufferSize);
-  length +=
-      SerializationHelper::CodePoint(buffer + length, bufferSize - length,
-                                     DerivativeNode::k_firstDerivativeSymbol);
+  const CodePoint derivative = firstOrder
+                                   ? DerivativeNode::k_firstDerivativeSymbol
+                                   : DerivativeNode::k_secondDerivativeSymbol;
+  length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
+                                           derivative);
   if (isNamed()) {
     length += withArgument(buffer + length, bufferSize - length);
   }

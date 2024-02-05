@@ -158,7 +158,8 @@ class ContinuousFunction : public Function {
     return recordData()->setDisplayFirstDerivative(display);
   }
   // Insert derivative name with argument in buffer (f'(x) or y')
-  size_t derivativeNameWithArgument(char *buffer, size_t bufferSize);
+  size_t derivativeNameWithArgument(char *buffer, size_t bufferSize,
+                                    bool firstOrder = true);
   // Approximate derivative at t, on given sub curve if there is one
   Poincare::Evaluation<double> approximateDerivative(
       double t, Poincare::Context *context, bool useDomain = true) const;

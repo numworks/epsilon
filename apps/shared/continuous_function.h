@@ -150,12 +150,12 @@ class ContinuousFunction : public Function {
   /* Derivative */
 
   // If derivative should be displayed
-  bool displayDerivative() const {
-    return canDisplayDerivative() && recordData()->displayDerivative();
+  bool displayFirstDerivative() const {
+    return canDisplayDerivative() && recordData()->displayFirstDerivative();
   }
   // Set derivative display status
-  void setDisplayDerivative(bool display) {
-    return recordData()->setDisplayDerivative(display);
+  void setDisplayFirstDerivative(bool display) {
+    return recordData()->setDisplayFirstDerivative(display);
   }
   // Insert derivative name with argument in buffer (f'(x) or y')
   size_t derivativeNameWithArgument(char *buffer, size_t bufferSize);
@@ -261,10 +261,12 @@ class ContinuousFunction : public Function {
     RecordDataBuffer(KDColor color)
         : Shared::Function::RecordDataBuffer(color),
           m_domain(-INFINITY, INFINITY),
-          m_displayDerivative(false),
+          m_displayFirstDerivative(false),
           m_tAuto(true) {}
-    bool displayDerivative() const { return m_displayDerivative; }
-    void setDisplayDerivative(bool display) { m_displayDerivative = display; }
+    bool displayFirstDerivative() const { return m_displayFirstDerivative; }
+    void setDisplayFirstDerivative(bool display) {
+      m_displayFirstDerivative = display;
+    }
     float tMin() const {
       assert(!m_tAuto);
       return m_domain.min();
@@ -286,10 +288,10 @@ class ContinuousFunction : public Function {
 
    private:
     PackedRange1D m_domain;
-    bool m_displayDerivative;
+    bool m_displayFirstDerivative;
     bool m_tAuto;
-    /* In the record, after the boolean flag about displayDerivative, there is
-     * the expression of the function, directly copied from the pool. */
+    /* In the record, after the boolean flag about displayFirstDerivative, there
+     * is the expression of the function, directly copied from the pool. */
     // char m_expression[0];
   };
 

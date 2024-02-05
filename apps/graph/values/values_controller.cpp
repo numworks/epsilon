@@ -522,7 +522,7 @@ int ValuesController::numberOfColumnsForRecord(
     Ion::Storage::Record record) const {
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
-  return 1 + f->displayDerivative();
+  return 1 + f->displayFirstDerivative();
 }
 
 int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {

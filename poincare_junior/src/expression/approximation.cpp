@@ -42,7 +42,7 @@ Approximation::Context::Context(AngleUnit angleUnit,
 
 // with sum(sum(l,l,1,k),k,1,n) s_variables stores [n, NaN, …, NaN, l, k]
 double& Approximation::Context::variable(size_t index) {
-  assert(index < k_maxNumberOfVariables);
+  assert(index < m_variablesOffset);
   return m_variables[(index + m_variablesOffset) % k_maxNumberOfVariables];
 }
 void Approximation::Context::shiftVariables() { m_variablesOffset--; }
@@ -378,6 +378,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::HyperbolicArcTangent:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
     case BlockType::Variable:
+      if (!s_context) {
+        // TODO PCJ: this should be catched when preparing the expression
+        return NAN;
+      }
       return s_context->variable(Variables::Id(node));
 
     /* Analysis */

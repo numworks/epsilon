@@ -154,26 +154,30 @@ static consteval auto KPol(Exp exponents, CTS... args) {
  * 2_e) temporarily before they are cast to Trees, to allow writing -2_e. */
 
 template <int64_t V>
-class IntegerLitteral : public TreeCompatible<IntegerLitteral<V>> {
- public:
+struct IntegerRepresentation;
+
+template <int64_t V>
+struct IntegerLitteral : IntegerRepresentation<V> {
+  // IntegerLitteral inherits KTree via IntegerRepresentation
   consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
   // Note : we could decide to implement constant propagation operators here
 };
 
-// template <int8_t V> using Inti = Tree<BlockType::IntegerShort, V,
-// BlockType::IntegerShort>; template <int8_t V> Tree(Immediate<V>)->Inti<V>; //
-// only GCC accepts this one
+/* Specializations of IntegerRepresentation to create the smallest Tree that can
+ * represent the Litteral */
 
-// Deduction guides to create the smallest Tree that can represent the Immediate
-
-KTree(IntegerLitteral<-1>)->KTree<BlockType::MinusOne>;
-KTree(IntegerLitteral<0>)->KTree<BlockType::Zero>;
-KTree(IntegerLitteral<1>)->KTree<BlockType::One>;
-KTree(IntegerLitteral<2>)->KTree<BlockType::Two>;
+template <>
+struct IntegerRepresentation<0> : KTree<BlockType::Zero> {};
+template <>
+struct IntegerRepresentation<1> : KTree<BlockType::One> {};
+template <>
+struct IntegerRepresentation<-1> : KTree<BlockType::MinusOne> {};
+template <>
+struct IntegerRepresentation<2> : KTree<BlockType::Two> {};
 
 template <int64_t V>
   requires(V >= INT8_MIN && V <= INT8_MAX)
-KTree(IntegerLitteral<V>) -> KTree<BlockType::IntegerShort, V>;
+struct IntegerRepresentation<V> : KTree<BlockType::IntegerShort, V> {};
 
 /* This macro generated code adds deduction guides to construct an IntegerBig
  * with N blocks when V needs N bytes to be represented, for N from 1 to 8 and
@@ -183,10 +187,10 @@ KTree(IntegerLitteral<V>) -> KTree<BlockType::IntegerShort, V>;
  *
  *  template <int64_t V>
  *  requires(V > INT8_MAX && Integer::NumberOfDigits(V) == N)
- *      KTree(IntegerLitteral<V>)
- *  ->KTree<BlockType::IntegerPosBig, N, Bit::getByteAtIndex(V, 0),
- *                                       ...
- *                                       Bit::getByteAtIndex(V, N-1)>;
+ *  struct IntegerRepresentation<V>
+ *      : KTree<BlockType::IntegerPosBig, N, Bit::getByteAtIndex(V, 0),
+ *                                           ...
+ *                                           Bit::getByteAtIndex(V, N-1)> {};
  */
 
 #define SPECIALIZATIONS                               \
@@ -203,8 +207,8 @@ KTree(IntegerLitteral<V>) -> KTree<BlockType::IntegerShort, V>;
 #define GUIDE(N, ...)                                         \
   template <int64_t V>                                        \
     requires(V > INT8_MAX && Integer::NumberOfDigits(V) == N) \
-  KTree(IntegerLitteral<V>)                                   \
-      -> KTree<BlockType::IntegerPosBig, N, __VA_ARGS__>;
+  struct IntegerRepresentation<V>                             \
+      : KTree<BlockType::IntegerPosBig, N, __VA_ARGS__> {};
 
 #define B(I) Bit::getByteAtIndex(V, I)
 
@@ -217,8 +221,8 @@ SPECIALIZATIONS;
 #define GUIDE(N, ...)                                          \
   template <int64_t V>                                         \
     requires(V < INT8_MIN && Integer::NumberOfDigits(-V) == N) \
-  KTree(IntegerLitteral<V>)                                    \
-      -> KTree<BlockType::IntegerNegBig, N, __VA_ARGS__>;
+  struct IntegerRepresentation<V>                              \
+      : KTree<BlockType::IntegerNegBig, N, __VA_ARGS__> {};
 
 #define B(I) Bit::getByteAtIndex(-V, I)
 

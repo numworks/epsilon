@@ -13,6 +13,7 @@
 #include "float.h"
 #include "list.h"
 #include "matrix.h"
+#include "projection.h"
 #include "random.h"
 #include "rational.h"
 #include "variables.h"
@@ -909,6 +910,16 @@ bool interruptApproximation(TypeBlock type, int childIndex,
     default:
       return false;
   }
+}
+
+bool Approximation::ApproximateAndReplaceEveryScalar(
+    Tree* tree, bool collapse, const ProjectionContext* ctx) {
+  Context context(ctx ? ctx->m_angleUnit : AngleUnit::Radian,
+                  ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
+  s_context = &context;
+  bool result = ApproximateAndReplaceEveryScalarT<double>(tree, collapse);
+  s_context = nullptr;
+  return result;
 }
 
 template <typename T>

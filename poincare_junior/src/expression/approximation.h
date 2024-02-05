@@ -14,6 +14,8 @@
 
 namespace PoincareJ {
 
+struct ProjectionContext;
+
 /* Approximation is implemented on all block types.
  * We could have asserted that we reduce before approximating (and thus
  * implemented the approximation only on internal types) but this increases the
@@ -81,11 +83,10 @@ class Approximation final {
   static Tree* ToMatrix(const Tree* node);
 
   // If collapse is true, approximate parents if all children have approximated.
-  static bool ApproximateAndReplaceEveryScalar(Tree* tree,
-                                               bool collapse = true) {
-    return ApproximateAndReplaceEveryScalarT<double>(tree, collapse);
-  }
-  EDITION_REF_WRAP_1D(ApproximateAndReplaceEveryScalar, bool, true)
+  static bool ApproximateAndReplaceEveryScalar(
+      Tree* tree, bool collapse = true, const ProjectionContext* ctx = nullptr);
+  EDITION_REF_WRAP_2D(ApproximateAndReplaceEveryScalar, bool, true,
+                      const ProjectionContext*, nullptr);
 
  private:
   template <typename T>

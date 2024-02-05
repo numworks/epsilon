@@ -124,10 +124,16 @@ inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
     return ApplyPreservingReference(F, r, a1);   \
   }
 
-/* Two argument */
+/* Two arguments */
 #define EDITION_REF_WRAP_2(F, T1, T2)                \
   static bool F(EditionReference& r, T1 u1, T2 u2) { \
     return ApplyPreservingReference(F, r, u1, u2);   \
+  }
+
+/* Two arguments with default value */
+#define EDITION_REF_WRAP_2D(F, T1, D1, T2, D2)                 \
+  static bool F(EditionReference& r, T1 u1 = D1, T2 u2 = D2) { \
+    return ApplyPreservingReference(F, r, u1, u2);             \
   }
 
 void SwapTrees(EditionReference& u, EditionReference& v);

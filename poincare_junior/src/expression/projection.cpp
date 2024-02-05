@@ -28,7 +28,8 @@ bool Projection::DeepSystemProjection(Tree* ref,
     assert((projectionContext.m_strategy == Strategy::ApproximateToFloat ||
             projectionContext.m_strategy == Strategy::NumbersToFloat));
     changed = Approximation::ApproximateAndReplaceEveryScalar(
-        ref, projectionContext.m_strategy == Strategy::ApproximateToFloat);
+        ref, projectionContext.m_strategy == Strategy::ApproximateToFloat,
+        &projectionContext);
   }
   return Tree::ApplyShallowInDepth(ref, ShallowSystemProjection,
                                    &projectionContext) ||

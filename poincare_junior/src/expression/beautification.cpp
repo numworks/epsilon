@@ -249,6 +249,35 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
   return false;
 }
 
+bool Beautification::ShallowBeautifyPercent(Tree* ref) {
+  // A% -> A / 100
+  if (PatternMatching::MatchAndReplace(ref, KPercentSimple(KA),
+                                       KDiv(KA, 100_e))) {
+    return true;
+  }
+  // TODO PCJ PercentAddition had a deepBeautify to preserve addition order
+  PatternMatching::Context ctx;
+  if (!PatternMatching::Match(KPercentAddition(KA, KB), ref, &ctx)) {
+    return false;
+  }
+  // A + -B% -> A * (1 - B / 100)
+  if (ctx.getNode(KB)->isRational() &&
+      Rational::Sign(ctx.getNode(KB)).isStrictlyNegative()) {
+    /* TODO can we avoid this special case with finer control on when this
+     * shallow is applied ? */
+    EditionReference B =
+        PatternMatching::CreateAndSimplify(KMult(-1_e, KB), ctx);
+    ref->moveTreeOverTree(PatternMatching::Create(
+        KMult(KA, KAdd(1_e, KOpposite(KDiv(KB, 100_e)))),
+        {.KA = ctx.getNode(KA), .KB = B}));
+    B->removeTree();
+    return true;
+  }
+  // A + B% -> A * (1 + B / 100)
+  return PatternMatching::MatchAndReplace(
+      ref, KPercentAddition(KA, KB), KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));
+}
+
 bool Beautification::DeepBeautify(Tree* expr,
                                   ProjectionContext projectionContext) {
   bool dummy = false;
@@ -342,7 +371,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(
           ref, KAdd(KTA, KB, KTC, KMult(-1_e, KFloor(KB)), KTD),
           KAdd(KTA, KTC, KFrac(KB), KTD)) ||
-      changed;
+      ShallowBeautifyPercent(ref) || changed;
 }
 
 template <typename T>

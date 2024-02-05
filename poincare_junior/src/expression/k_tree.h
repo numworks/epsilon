@@ -58,6 +58,7 @@ constexpr auto KTanh = KUnary<BlockType::HyperbolicTangent>();
 constexpr auto KArCosh = KUnary<BlockType::HyperbolicArcCosine>();
 constexpr auto KArSinh = KUnary<BlockType::HyperbolicArcSine>();
 constexpr auto KArTanh = KUnary<BlockType::HyperbolicArcTangent>();
+constexpr auto KPercentSimple = KUnary<BlockType::PercentSimple>();
 
 constexpr auto KATrig = KBinary<BlockType::ATrig>();
 constexpr auto KComplex = KBinary<BlockType::Complex>();
@@ -75,6 +76,7 @@ constexpr auto KMean = KBinary<BlockType::Mean>();
 constexpr auto KBinomial = KBinary<BlockType::Binomial>();
 constexpr auto KPermute = KBinary<BlockType::Permute>();
 constexpr auto KNthRoot = KBinary<BlockType::NthRoot>();
+constexpr auto KPercentAddition = KBinary<BlockType::PercentAddition>();
 
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
 constexpr auto KSum = KFixedArity<4, BlockType::Sum>();

@@ -32,6 +32,8 @@ class Beautification {
   static bool DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
                                          bool* simplifyParent);
   static bool ShallowBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit);
+  static bool ShallowBeautifyPercent(Tree* tree);
+  EDITION_REF_WRAP(ShallowBeautifyPercent);
 };
 
 }  // namespace PoincareJ

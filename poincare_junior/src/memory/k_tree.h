@@ -236,13 +236,10 @@ struct String {
 };
 
 template <Placeholder::Tag T, Placeholder::Filter F>
-struct KPlaceholderFilter : public TreeCompatible<KPlaceholderFilter<T, F>> {
+struct KPlaceholderFilter
+    : public KTree<BlockType::Placeholder, Placeholder::ParamsToValue(T, F)> {
   static constexpr Placeholder::Tag k_tag = T;
 };
-
-template <Placeholder::Tag T, Placeholder::Filter F>
-KTree(KPlaceholderFilter<T, F>)
-    -> KTree<BlockType::Placeholder, Placeholder::ParamsToValue(T, F)>;
 
 template <Placeholder::Tag Tag>
 using KPlaceholder = KPlaceholderFilter<Tag, Placeholder::Filter::None>;

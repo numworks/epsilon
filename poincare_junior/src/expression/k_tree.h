@@ -153,6 +153,10 @@ static consteval auto KPol(Exp exponents, CTS... args) {
 /* Integer litterals are used to represent numerical constants of the code (like
  * 2_e) temporarily before they are cast to Trees, to allow writing -2_e. */
 
+/* Each litteral is defined with a Representation empty struct that is in charge
+ * of inheriting the correct KTree according to the template value and a
+ * Litteral struct that adds features on top of Representation. */
+
 template <int64_t V>
 struct IntegerRepresentation;
 
@@ -235,8 +239,10 @@ SPECIALIZATIONS;
 /* Rationals litterals are written 2_e / 3_e */
 
 template <int64_t N, int64_t D>
-class RationalLitteral : public TreeCompatible<RationalLitteral<N, D>> {
- public:
+struct RationalRepresentation;
+
+template <int64_t N, int64_t D>
+struct RationalLitteral : RationalRepresentation<N, D> {
   consteval auto operator-() { return RationalLitteral<-N, D>(); }
 };
 
@@ -246,13 +252,14 @@ consteval auto operator/(IntegerLitteral<N> a, IntegerLitteral<D> b) {
   return RationalLitteral<N, D>();
 }
 
-KTree(RationalLitteral<1, 2>)->KTree<BlockType::Half>;
+template <>
+struct RationalRepresentation<1, 2> : KTree<BlockType::Half> {};
 
 template <int64_t N, int64_t D>
   requires(N >= INT8_MIN && N <= INT8_MAX && D > 0 && D <= UINT8_MAX)
-KTree(RationalLitteral<N, D>) -> KTree<BlockType::RationalShort, N, D>;
+struct RationalRepresentation<N, D> : KTree<BlockType::RationalShort, N, D> {};
 
-// TODO guides for RationalNegBig and RationalPosBig
+// TODO specializations for RationalNegBig and RationalPosBig
 
 /* Named constants */
 
@@ -317,37 +324,30 @@ constexpr static Float FloatValue(const char* str, size_t size) {
 
 /* A template <float V> would be cool but support for this is poor yet so we
  * have to store the bit representation of the float as an Int. */
+
 template <class Int, Int V>
-class FloatLitteral : public AbstractTreeCompatible {
- public:
-  template <Block... B>
-  consteval operator KTree<B...>() {
-    return KTree<B...>();
-  }
+struct FloatRepresentation;
 
-  constexpr operator const Tree*() const {
-    return KTree(FloatLitteral<Int, V>());
-  }
-  const Tree* operator->() const { return KTree(FloatLitteral<Int, V>()); }
-
+template <class Int, Int V>
+struct FloatLitteral : FloatRepresentation<Int, V> {
   // Since we are using the representation we have to manually flip the sign bit
   static constexpr Int SignBitMask = Int(1) << (sizeof(Int) * 8 - 1);
   consteval auto operator-() { return FloatLitteral<Int, V ^ SignBitMask>(); }
 };
 
 template <uint32_t V>
-KTree(FloatLitteral<uint32_t, V>)
-    -> KTree<BlockType::SingleFloat, Bit::getByteAtIndex(V, 0),
-             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-             Bit::getByteAtIndex(V, 3)>;
+struct FloatRepresentation<uint32_t, V>
+    : KTree<BlockType::SingleFloat, Bit::getByteAtIndex(V, 0),
+            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
+            Bit::getByteAtIndex(V, 3)> {};
 
 template <uint64_t V>
-KTree(FloatLitteral<uint64_t, V>)
-    -> KTree<BlockType::DoubleFloat, Bit::getByteAtIndex(V, 0),
-             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-             Bit::getByteAtIndex(V, 3), Bit::getByteAtIndex(V, 4),
-             Bit::getByteAtIndex(V, 5), Bit::getByteAtIndex(V, 6),
-             Bit::getByteAtIndex(V, 7)>;
+struct FloatRepresentation<uint64_t, V>
+    : KTree<BlockType::DoubleFloat, Bit::getByteAtIndex(V, 0),
+            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
+            Bit::getByteAtIndex(V, 3), Bit::getByteAtIndex(V, 4),
+            Bit::getByteAtIndex(V, 5), Bit::getByteAtIndex(V, 6),
+            Bit::getByteAtIndex(V, 7)> {};
 
 template <class Float, class Int, char... C>
 consteval auto FloatLitteralOperator() {

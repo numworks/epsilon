@@ -19,7 +19,7 @@ class DerivativesParameterController
   DerivativesParameterController(Escher::Responder* parentResponder);
 
   const char* title() override {
-    return I18n::translate(I18n::Message::GraphDerivative);
+    return I18n::translate(I18n::Message::GraphDerivatives);
   }
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastThreeTitles;

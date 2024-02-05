@@ -25,7 +25,7 @@ FunctionParameterController::FunctionParameterController(
       m_derivativesParameterController(nullptr),
       m_useColumnTitle(false) {
   m_detailsCell.label()->setMessage(I18n::Message::Details);
-  m_derivativeCell.label()->setMessage(I18n::Message::GraphDerivative);
+  m_derivativesCell.label()->setMessage(I18n::Message::GraphDerivatives);
   m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
 }
 
@@ -36,9 +36,9 @@ const char *FunctionParameterController::title() {
 
 HighlightCell *FunctionParameterController::cell(int row) {
   assert(0 <= row && row < numberOfRows());
-  HighlightCell *const cells[] = {&m_detailsCell,    &m_colorCell,
-                                  &m_derivativeCell, &m_functionDomainCell,
-                                  &m_enableCell,     &m_deleteCell};
+  HighlightCell *const cells[] = {&m_detailsCell,     &m_colorCell,
+                                  &m_derivativesCell, &m_functionDomainCell,
+                                  &m_enableCell,      &m_deleteCell};
   static_assert(std::size(cells) == k_numberOfRows);
   return cells[row];
 }
@@ -54,7 +54,7 @@ void FunctionParameterController::setRecord(Ion::Storage::Record record) {
                                                      ->functionStore()
                                                      ->modelForRecord(m_record)
                                                      ->canDisplayDerivative();
-  m_derivativeCell.setVisible(displayDerivative);
+  m_derivativesCell.setVisible(displayDerivative);
   m_detailsCell.setVisible(displayDetails());
   m_functionDomainCell.setVisible(displayDomain());
   m_selectableListView.resetSizeAndOffsetMemoization();
@@ -109,8 +109,8 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
     stack->push(&m_domainParameterController);
     return true;
   }
-  if (cell == &m_derivativeCell &&
-      m_derivativeCell.canBeActivatedByEvent(event)) {
+  if (cell == &m_derivativesCell &&
+      m_derivativesCell.canBeActivatedByEvent(event)) {
     stack->push(&m_derivativesParameterController);
     return true;
   }

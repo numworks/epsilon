@@ -13,7 +13,7 @@ class EditionReference {
       : m_identifier(EditionPool::ReferenceTable::NoNodeIdentifier) {}
   EditionReference(Tree* node);
 
-  template <TreeCompatibleConcept T>
+  template <TreeConcept T>
   EditionReference(T t) : EditionReference(static_cast<const Tree*>(t)) {}
 
   EditionReference(Block* blocks)

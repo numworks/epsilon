@@ -196,7 +196,7 @@ class Representative {
 
  protected:
   // TODO it may be marked consteval with Clang but not with GCC
-  template <TreeCompatibleConcept T>
+  template <TreeConcept T>
   constexpr Representative(Aliases rootSymbol, T ratioExpression,
                            Prefixable inputPrefixable,
                            Prefixable outputPrefixable)

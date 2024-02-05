@@ -101,11 +101,11 @@ constexpr auto KVarX = KVar<Parametric::k_localVariableId,
 ;
 
 template <uint8_t Rows, uint8_t Cols>
-class KMatrix {
- public:
-  template <TreeCompatibleConcept... CTS>
-  consteval auto operator()(CTS... args) const {
-    return concat(KTree(args)...);
+struct KMatrix {
+  template <TreeConcept... CTS>
+    requires(sizeof...(CTS) == Rows * Cols)
+  consteval auto operator()(CTS...) const {
+    return Concat<decltype(node), CTS...>();
   }
 
   static constexpr KTree<BlockType::Matrix, Rows, Cols> node{};
@@ -114,13 +114,6 @@ class KMatrix {
     requires HasATreeConcept<Args...>
   consteval const Tree* operator()(Args... args) const {
     return KTree<>();
-  }
-
- private:
-  template <TreeConcept... CTS>
-    requires(sizeof...(CTS) == Rows * Cols)
-  consteval auto concat(CTS...) const {
-    return Concat<decltype(node), CTS...>();
   }
 };
 
@@ -131,23 +124,13 @@ class KMatrix {
 template <uint8_t... Values>
 using Exponents = KTree<Values...>;
 
-/* The first function is responsible of building the actual representation from
- * Trees while the other one is just here to allow the function to take
- * TreeCompatible arguments like integer litterals. */
-
 template <TreeConcept Exp, TreeConcept... CTS>
-static consteval auto __Pol(Exp exponents, CTS...) {
-  constexpr uint8_t Size = sizeof...(CTS);
-  return Concat<KTree<BlockType::Polynomial, Size>, Exp, CTS...>();
-}
-
-template <TreeConcept Exp, TreeCompatibleConcept... CTS>
-static consteval auto KPol(Exp exponents, CTS... args) {
+static consteval auto KPol(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
   static_assert(
       Exp::k_size == Size - 1,
       "Number of children and exponents do not match in constant polynomial");
-  return __Pol(exponents, KTree(args)...);
+  return Concat<KTree<BlockType::Polynomial, Size>, Exp, CTS...>();
 }
 
 /* Integer litterals are used to represent numerical constants of the code (like

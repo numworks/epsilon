@@ -15,19 +15,9 @@ namespace PoincareJ {
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
-/* These two abstract classes and their associated concepts are here to allow
- * templated functions using Tree to be called with any TreeCompatible which
- * then casted to Tree and its template arguments deduced. */
+/* Concept that gathers all KTrees */
 
-class AbstractTreeCompatible {};
-
-template <class C>
-concept TreeCompatibleConcept =
-    Concept::is_derived_from<C, AbstractTreeCompatible>;
-
-class AbstractTree : AbstractTreeCompatible {
-  // TODO add operator-> here if you dare
-};
+class AbstractTree {};
 
 template <class C>
 concept TreeConcept = Concept::is_derived_from<C, AbstractTree>;
@@ -56,21 +46,6 @@ class KTree : public AbstractTree {
     return Tree::FromBlocks(static_cast<const Block*>(*this));
   }
   const Tree* operator->() const { return operator const Tree*(); }
-};
-
-/* Inherit this class using "class A : public AbstractTreeCompatible<A>" to
- * creates types that can be mixed with KTrees and their representation defined
- * with deduction guides. */
-template <typename T>
-class TreeCompatible : public AbstractTreeCompatible {
- public:
-  // Once a deduction guide has chosen the KTree for the litteral, build it
-  template <Block... B>
-  consteval operator KTree<B...>() const {
-    return KTree<B...>();
-  }
-  constexpr operator const Tree*() const { return KTree(T()); }
-  const Tree* operator->() const { return KTree(T()); }
 };
 
 /* Helper to concatenate KTrees */
@@ -113,17 +88,12 @@ struct KUnary : public KTree<Tag, ExtraValues...> {
     return KTree<Tag, ExtraValues..., B1...>();
   }
 
-  template <TreeCompatibleConcept A>
-  consteval auto operator()(A a) const {
-    return KUnary<Tag, ExtraValues...>()(KTree(a));
-  }
-
   /* The following dummy constructor is here to make the error message clearer
    * when someone tries to use a Tree* inside a KTree constructor.  Without
-   * these you get "no matching function for call to 'Unary'" and details on why
-   * each candidate concept is unmatched.  With these constructors, they match
-   * and then you get a "call to consteval function ... is not a constant
-   * expression" since they are marked consteval. */
+   * these you get "no matching function for call to 'Unary'" and details on
+   * why each candidate concept is unmatched.  With these constructors, they
+   * match and then you get a "call to consteval function ... is not a
+   * constant expression" since they are marked consteval. */
   consteval const Tree* operator()(const Tree* a) const { return KTree<>(); }
 };
 
@@ -132,11 +102,6 @@ struct KBinary : public KTree<Tag> {
   template <Block... B1, Block... B2>
   consteval auto operator()(KTree<B1...>, KTree<B2...>) const {
     return KTree<Tag, B1..., B2...>();
-  }
-
-  template <TreeCompatibleConcept A, TreeCompatibleConcept B>
-  consteval auto operator()(A a, B b) const {
-    return KBinary<Tag>()(KTree(a), KTree(b));
   }
 
   consteval const Tree* operator()(const Tree* a, const Tree* b) const {
@@ -149,11 +114,10 @@ concept HasATreeConcept = (false || ... ||
                            std::is_same<const Tree*, Args>::value);
 
 template <Block Tag>
-class KNAry {
- public:
-  template <TreeCompatibleConcept... CTS>
-  consteval auto operator()(CTS... args) const {
-    return concat(KTree(args)...);
+struct KNAry {
+  template <TreeConcept... CTS>
+  consteval auto operator()(CTS...) const {
+    return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
   }
 
   template <size_t Nb>
@@ -164,34 +128,20 @@ class KNAry {
   consteval const Tree* operator()(Args... args) const {
     return KTree<>();
   }
-
- private:
-  template <TreeConcept... CTS>
-  consteval auto concat(CTS...) const {
-    return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
-  }
 };
 
 template <size_t Nb, Block Tag>
-class KFixedArity {
- public:
-  template <TreeCompatibleConcept... CTS>
+struct KFixedArity {
+  template <TreeConcept... CTS>
     requires(sizeof...(CTS) == Nb)
-  consteval auto operator()(CTS... args) const {
-    return concat(KTree(args)...);
+  consteval auto operator()(CTS...) const {
+    return Concat<KTree<Tag>, CTS...>();
   }
 
   template <class... Args>
     requires(HasATreeConcept<Args...> && sizeof...(Args) == Nb)
   consteval const Tree* operator()(Args... args) const {
     return KTree<>();
-  }
-
- private:
-  template <TreeConcept... CTS>
-    requires(sizeof...(CTS) == Nb)
-  consteval auto concat(CTS...) const {
-    return Concat<KTree<Tag>, CTS...>();
   }
 };
 

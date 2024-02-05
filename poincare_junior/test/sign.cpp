@@ -29,6 +29,8 @@ void assert_sign(const char* input, ComplexSign expectedSign) {
   bool result = ComplexSign::Get(expression) == expectedSign;
 #if POINCARE_MEMORY_TREE_LOG
   if (!result) {
+    std::cout << input << " -> ";
+    expression->logSerialize();
     std::cout << "\t\t\tWrong Sign: ";
     ComplexSign::Get(expression).log();
     std::cout << "\t\t\tInstead of: ";

@@ -198,6 +198,7 @@ QUIZ_CASE(pcj_basic_simplification) {
                 "x×(x^2+1)^(-1/2)×(-x^2/(x^2+1)+1)^(-1/2)");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
+  simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
 
   // Sort order
   simplifies_to("π*floor(π)/π", "floor(π)");
@@ -571,6 +572,7 @@ QUIZ_CASE(pcj_trigonometry) {
 }
 
 QUIZ_CASE(pcj_inverse_trigonometry) {
+  simplifies_to("acos(1)", "0");
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
   simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0",
                 {.m_complexFormat = ComplexFormat::Cartesian});

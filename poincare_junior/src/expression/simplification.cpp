@@ -251,18 +251,25 @@ bool Simplification::SimplifyAbs(Tree* u) {
     assert(!SimplifyAbs(u));
     return true;
   }
-  if (!child->isNumber()) {
+  ComplexSign complexSign = ComplexSign::Get(child);
+  if (!complexSign.isPure()) {
     return false;
   }
-  if (Number::Sign(child).isPositive()) {
-    // |3| -> 3
-    u->removeNode();
-  } else {
-    // |-3| -> (-1)*(-3)
-    u->cloneTreeOverNode(KMult(-1_e));
-    NAry::SetNumberOfChildren(u, 2);
-    SimplifyMultiplication(u);
+  bool isReal = complexSign.isReal();
+  Sign sign = isReal ? complexSign.realSign() : complexSign.imagSign();
+  if (sign.canBeNegative() && sign.canBePositive()) {
+    return false;
   }
+  /* TODO PCJ: static_cast shouldn't be necessary but there is a bug :
+   * (condition ? i_e : 1_e) returns i_e when condition is false. */
+  const Tree* minusOne = (isReal == sign.canBeNegative())
+                             ? static_cast<const Tree*>(-1_e)
+                             : static_cast<const Tree*>(1_e);
+  const Tree* complexI =
+      (isReal ? static_cast<const Tree*>(1_e) : static_cast<const Tree*>(i_e));
+  // |3| = |-3| = |3i| = |-3i| = 3
+  u->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+      KMult(KA, KB, KC), {.KA = minusOne, .KB = complexI, .KC = child}));
   return true;
 }
 

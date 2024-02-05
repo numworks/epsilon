@@ -34,11 +34,14 @@ class AdvancedSimplification {
   class Direction {
    public:
     constexpr static uint8_t k_numberOfBaseDirections = 3;
+    // Return true if direction was applied.
+    bool apply(Tree **u, Tree *root, bool *rootChanged,
+               bool keepDependencies) const;
+    // Return true if can apply direction.
+    bool canApply(const Tree *u, const Tree *root) const;
     // Constructor needed for Path::m_stack
     Direction() : m_type(0) {}
     bool isNextNode() const { return !isContract() && !isExpand(); }
-    bool isContract() const { return m_type == k_contractType; }
-    bool isExpand() const { return m_type == k_expandType; }
 #if POINCARE_MEMORY_TREE_LOG
     void log();
 #endif
@@ -60,7 +63,11 @@ class AdvancedSimplification {
     constexpr static uint8_t k_contractType = 0;
     constexpr static uint8_t k_baseNextNodeType = 1;
     constexpr static uint8_t k_expandType = UINT8_MAX;
+
     Direction(uint8_t type) : m_type(type) {}
+    bool isContract() const { return m_type == k_contractType; }
+    bool isExpand() const { return m_type == k_expandType; }
+
     uint8_t m_type;
   };
   static_assert(sizeof(uint8_t) == sizeof(Direction));
@@ -69,15 +76,14 @@ class AdvancedSimplification {
   class Path {
    public:
     Path() : m_length(0) {}
+    // Return true if tree has changed. Path is expected to be valid on root.
+    bool apply(Tree *root, bool keepDependencies) const;
     // Pop NextNode directions one at a time.
     void popBaseDirection();
     // Return if any base direction can be added.
     bool canAddNewDirection() const { return m_length < k_size; }
+    // Return true if direction was appended
     bool append(Direction direction);
-    Direction direction(uint8_t index) const {
-      assert(index < m_length);
-      return m_stack[index];
-    }
     uint8_t length() const { return m_length; }
 
    private:
@@ -105,14 +111,6 @@ class AdvancedSimplification {
   /* Recursive advanced reduction. Return true if advanced reduction
    * possibilities have all been explored. */
   static bool AdvancedReduceRec(Tree *u, Context *ctx);
-  // Return true if tree has changed. path is expected to be valid.
-  static bool ApplyPath(Tree *root, const Path *path, bool keepDependencies);
-  // Return true if direction was applied.
-  static bool ApplyDirection(Tree **u, Tree *root, Direction direction,
-                             bool *rootChanged, bool keepDependencies);
-  // Return true if can apply direction.
-  static bool CanApplyDirection(const Tree *u, const Tree *root,
-                                Direction direction);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystemReduce(Tree *root, const Tree *tree);
 };

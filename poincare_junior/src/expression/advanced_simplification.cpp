@@ -39,7 +39,7 @@ bool AdvancedSimplification::AdvancedReduce(Tree* origin) {
 #endif
   AdvancedReduceRec(editedExpression, &ctx);
   editedExpression->removeTree();
-  bool result = ApplyPath(u, &ctx.m_bestPath, true);
+  bool result = ctx.m_bestPath.apply(u, true);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   s_indent = 0;
   std::cout << "Final result (" << ctx.m_bestMetric << ") is : ";
@@ -89,6 +89,48 @@ uint32_t AdvancedSimplification::CrcCollection::Hash(const Tree* u) {
   return Ion::crc32Byte(reinterpret_cast<const uint8_t*>(u), u->treeSize());
 }
 
+bool AdvancedSimplification::Direction::canApply(const Tree* u,
+                                                 const Tree* root) const {
+  // Optimization: No trees are expected after root, so we can use lastBlock()
+  assert(!isNextNode() ||
+         (u->nextNode()->block() < SharedEditionPool->lastBlock()) ==
+             u->nextNode()->hasAncestor(root, false));
+  return !isNextNode() ||
+         u->nextNode()->block() < SharedEditionPool->lastBlock();
+}
+
+bool AdvancedSimplification::Direction::apply(Tree** u, Tree* root,
+                                              bool* rootChanged,
+                                              bool keepDependencies) const {
+  if (isNextNode()) {
+    assert(m_type >= k_baseNextNodeType);
+    for (uint8_t i = m_type; i >= k_baseNextNodeType; i--) {
+      *u = (*u)->nextNode();
+    }
+    return true;
+  }
+  assert(isContract() || isExpand());
+  assert(!(*u)->isDependency());
+  if (!(isContract() ? Simplification::ShallowContract
+                     : Simplification::ShallowExpand)(*u, false)) {
+    return false;
+  }
+  // Apply a deep systematic reduction starting from (*u)
+  UpwardSystemReduce(root, *u);
+  // Move back to root so we only move down trees. Ignore dependencies
+  *u = root;
+  if (root->isDependency()) {
+    if (keepDependencies) {
+      *u = root->child(0);
+    } else {
+      root->child(1)->removeTree();
+      root->removeNode();
+    }
+  }
+  *rootChanged = true;
+  return true;
+}
+
 #if POINCARE_MEMORY_TREE_LOG
 void AdvancedSimplification::Direction::log() {
   if (isNextNode()) {
@@ -122,6 +164,18 @@ bool AdvancedSimplification::Direction::decrement() {
   return true;
 }
 
+bool AdvancedSimplification::Path::apply(Tree* root,
+                                         bool keepDependencies) const {
+  assert(!root->isDependency());
+  Tree* u = root;
+  bool rootChanged = false;
+  for (uint8_t i = 0; i < length(); i++) {
+    bool didApply = m_stack[i].apply(&u, root, &rootChanged, keepDependencies);
+    assert(didApply);
+  }
+  return rootChanged;
+}
+
 void AdvancedSimplification::Path::popBaseDirection() {
   assert(m_length > 0);
   if (!m_stack[m_length - 1].decrement()) {
@@ -138,61 +192,6 @@ bool AdvancedSimplification::Path::append(Direction direction) {
     m_length += 1;
   }
   return true;
-}
-
-bool AdvancedSimplification::CanApplyDirection(const Tree* u, const Tree* root,
-                                               Direction direction) {
-  // Optimization: No trees are expected after root, so we can use lastBlock()
-  assert(!direction.isNextNode() ||
-         (u->nextNode()->block() < SharedEditionPool->lastBlock()) ==
-             u->nextNode()->hasAncestor(root, false));
-  return !direction.isNextNode() ||
-         u->nextNode()->block() < SharedEditionPool->lastBlock();
-}
-
-bool AdvancedSimplification::ApplyDirection(Tree** u, Tree* root,
-                                            Direction direction,
-                                            bool* rootChanged,
-                                            bool keepDependencies) {
-  if (direction.isNextNode()) {
-    do {
-      *u = (*u)->nextNode();
-    } while (direction.decrement());
-    return true;
-  }
-  assert(direction.isContract() || direction.isExpand());
-  assert(!(*u)->isDependency());
-  if (!(direction.isContract() ? Simplification::ShallowContract
-                               : Simplification::ShallowExpand)(*u, false)) {
-    return false;
-  }
-  // Apply a deep systematic reduction starting from (*u)
-  UpwardSystemReduce(root, *u);
-  // Move back to root so we only move down trees. Ignore dependencies
-  *u = root;
-  if (root->isDependency()) {
-    if (keepDependencies) {
-      *u = root->child(0);
-    } else {
-      root->child(1)->removeTree();
-      root->removeNode();
-    }
-  }
-  *rootChanged = true;
-  return true;
-}
-
-bool AdvancedSimplification::ApplyPath(Tree* root, const Path* path,
-                                       bool keepDependencies) {
-  assert(!root->isDependency());
-  Tree* u = root;
-  bool rootChanged = false;
-  for (uint8_t i = 0; i < path->length(); i++) {
-    bool didApply = ApplyDirection(&u, root, path->direction(i), &rootChanged,
-                                   keepDependencies);
-    assert(didApply);
-  }
-  return rootChanged;
 }
 
 bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
@@ -215,12 +214,12 @@ bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
       if (ctx->m_mustResetRoot) {
         // Reset root to current path
         ctx->m_root->cloneTreeOverTree(ctx->m_original);
-        ApplyPath(ctx->m_root, &ctx->m_path, false);
+        ctx->m_path.apply(ctx->m_root, false);
         ctx->m_mustResetRoot = false;
       }
       Tree* target = u;
       bool rootChanged = false;
-      if (!CanApplyDirection(target, ctx->m_root, dir)) {
+      if (!dir.canApply(target, ctx->m_root)) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         LogIndent();
         std::cout << "Can't apply ";
@@ -229,7 +228,7 @@ bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
 #endif
         continue;
       }
-      if (!ApplyDirection(&target, ctx->m_root, dir, &rootChanged, false)) {
+      if (!dir.apply(&target, ctx->m_root, &rootChanged, false)) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
         LogIndent();
         std::cout << "Nothing to ";

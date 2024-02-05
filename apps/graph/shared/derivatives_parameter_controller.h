@@ -14,7 +14,7 @@ class DerivativesParameterController
     : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::SwitchView>,
-          1> {
+          4> {
  public:
   DerivativesParameterController(Escher::Responder* parentResponder);
 
@@ -31,7 +31,14 @@ class DerivativesParameterController
  private:
   Escher::StackViewController* stackController() const;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
-  void updateSwitch();
+  void updateSwitch(int row);
+  void invertSwitchState(int row);
+  bool switchState(int row) const;
+
+  constexpr static int k_indexOfFirstDerivativeValue = 0;
+  constexpr static int k_indexOfFirstDerivativePlot = 1;
+  constexpr static int k_indexOfSecondDerivativeValue = 2;
+  constexpr static int k_indexOfSecondDerivativePlot = 3;
 
   Ion::Storage::Record m_record;
 };

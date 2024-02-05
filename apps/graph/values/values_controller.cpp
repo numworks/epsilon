@@ -31,7 +31,7 @@ ValuesController::ValuesController(
       m_tableSizeManager(this),
       m_functionParameterController(functionParameterController),
       m_intervalParameterController(this),
-      m_derivativeParameterController(this),
+      m_derivativeColumnParameterController(this),
       m_setIntervalButton(
           this, I18n::Message::IntervalSet,
           Invocation::Builder<ValuesController>(
@@ -445,8 +445,8 @@ T *ValuesController::parameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
   if (isDerivative) {
-    m_derivativeParameterController.setRecord(record);
-    return &m_derivativeParameterController;
+    m_derivativeColumnParameterController.setRecord(record);
+    return &m_derivativeColumnParameterController;
   }
   m_functionParameterController->setRecord(record);
   return m_functionParameterController;

@@ -14,7 +14,7 @@
 #include <escher/toggleable_dot_view.h>
 #include <omg/round.h>
 
-#include "derivative_parameter_controller.h"
+#include "derivative_column_parameter_controller.h"
 #include "interval_parameter_selector_controller.h"
 
 namespace Graph {
@@ -188,7 +188,7 @@ class ValuesController : public Shared::ValuesController,
   FunctionParameterController *m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
-  DerivativeParameterController m_derivativeParameterController;
+  DerivativeColumnParameterController m_derivativeColumnParameterController;
   Escher::AbstractButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;

@@ -45,7 +45,7 @@ class CurveParameterController
   void setRecord(Ion::Storage::Record record) override;
   int numberOfParameters() const {
     return function()->properties().numberOfCurveParameters() +
-           shouldDisplayDerivative();
+           shouldDisplayFirstDerivative();
   }
   Escher::HighlightCell* cell(int row) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
@@ -54,7 +54,7 @@ class CurveParameterController
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
-  bool shouldDisplayDerivative() const;
+  bool shouldDisplayFirstDerivative() const;
   void fillParameterCellAtRow(int row) override;
   void updateNumberOfParameterCells();
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,
@@ -64,8 +64,8 @@ class CurveParameterController
   static constexpr int k_indexOfAbscissaCell = 0;
   static constexpr int k_indexOfImageCell1 = 1;
   static constexpr int k_indexOfImageCell2 = 2;
-  static constexpr int k_indexOfDerivativeCell1 = 3;
-  static constexpr int k_indexOfDerivativeCell2 = 4;
+  static constexpr int k_indexOfFirstDerivativeCell1 = 3;
+  static constexpr int k_indexOfFirstDerivativeCell2 = 4;
   static constexpr int k_numberOfParameterRows = 5;
   constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
 

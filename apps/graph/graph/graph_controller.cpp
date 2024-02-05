@@ -321,11 +321,11 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
 
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  bool displayDerivative =
-      functionStore()->modelForRecord(record)->displayDerivative();
-  m_bannerView.setDisplayParameters(true, displayDerivative, false);
+  bool displayFirstDerivative =
+      functionStore()->modelForRecord(record)->displayFirstDerivative();
+  m_bannerView.setDisplayParameters(true, displayFirstDerivative, false);
   FunctionGraphController::reloadBannerView();
-  if (!displayDerivative) {
+  if (!displayFirstDerivative) {
     return;
   }
   reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record);

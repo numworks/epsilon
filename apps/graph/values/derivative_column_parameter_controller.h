@@ -16,7 +16,7 @@ class DerivativeColumnParameterController
  private:
   void hideCalculusColumn() override {
     Shared::GlobalContext::continuousFunctionStore->modelForRecord(m_record)
-        ->setDisplayDerivative(false);
+        ->setDisplayFirstDerivative(false);
   }
 };
 

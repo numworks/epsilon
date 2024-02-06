@@ -103,7 +103,7 @@ class Tokenizer {
   size_t popIdentifiersString();
   void fillIdentifiersList();
   Token popLongestRightMostIdentifier(size_t stringStart, size_t* stringEnd);
-  Token::Type stringTokenType(size_t string, size_t* length) const;
+  Token::Type stringTokenType(const CPL* string, size_t* length) const;
 
   /* ========== IMPLICIT ADDITION BETWEEN UNITS ==========
    * An implicit addition between units is an expression like "3h40min32.5s".

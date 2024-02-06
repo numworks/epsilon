@@ -340,7 +340,8 @@ Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart,
   while (tokenType == Token::Type::Undefined && nextTokenStart < *stringEnd) {
     stringStart = nextTokenStart;
     tokenLength = *stringEnd - stringStart;
-    tokenType = stringTokenType(stringStart, &tokenLength);
+    tokenType = stringTokenType(
+        CPL::FromRack(m_decoder.mainLayout(), stringStart), &tokenLength);
     decoder.nextCodePoint();
     nextTokenStart = decoder.position();
   }
@@ -358,15 +359,15 @@ Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart,
   return Token(tokenType, m_decoder.layoutAt(stringStart), tokenLength);
 }
 
-static bool stringIsACodePointFollowedByNumbers(const Tree* layout,
-                                                size_t string, size_t length) {
-  RackLayoutDecoder tempDecoder(layout, string);
-  CodePoint c = tempDecoder.nextCodePoint();
+static bool stringIsACodePointFollowedByNumbers(const CPL* string,
+                                                size_t length) {
+  const CPL* end = string + length;
+  CodePoint c = *string++;
   if (!IsNonDigitalIdentifierMaterial(c)) {
     return false;
   }
-  while (tempDecoder.position() < string + length) {
-    CodePoint c = tempDecoder.nextCodePoint();
+  while (string < end) {
+    CodePoint c = *string++;
     if (!c.isDecimalDigit()) {
       return false;
     }
@@ -375,12 +376,11 @@ static bool stringIsACodePointFollowedByNumbers(const Tree* layout,
 }
 
 static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
-    const Tree* layout, size_t string, size_t* length,
-    Token::Type* returnType) {
-  RackLayoutDecoder tempDecoder(layout, string);
+    const CPL* string, size_t* length, Token::Type* returnType) {
   size_t identifierLength = 0;
+  const CPL* temp = string;
   while (identifierLength < *length) {
-    CodePoint c = tempDecoder.nextCodePoint();
+    CodePoint c = *temp++;
     if (c.isDecimalDigit()) {
       break;
     }
@@ -389,7 +389,7 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
   if (identifierLength == *length) {
     return false;
   }
-  RackLayoutDecoder subString(layout, string, string + identifierLength);
+  CPLayoutDecoder subString(string, 0, identifierLength);
   if (Builtin::ReservedFunctionName(BlockType::Logarithm)
           .contains(&subString)) {
     *returnType = Token::Type::ReservedFunction;
@@ -399,14 +399,13 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
   return false;
 }
 
-Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
+Token::Type Tokenizer::stringTokenType(const CPL* string,
+                                       size_t* length) const {
   // If there are two \" around an identifier, it is a forced custom identifier
-  size_t lastCharOfString = string + *length - 1;
-  RackLayoutDecoder insideQuotes(m_decoder.mainLayout(), string + 1,
-                                 lastCharOfString);
-  if (*length > 2 && m_decoder.codePointAt(string) == '"' &&
-      m_decoder.codePointAt(lastCharOfString) == '"' &&
-      OMG::CodePointSearch(&insideQuotes, '"') == lastCharOfString) {
+  const CPL* lastCharOfString = string + *length - 1;
+  if (*length > 2 && string[0] == '"' && *lastCharOfString == '"' &&
+      OMG::CodePointLSearch(string + 1, '"', lastCharOfString) ==
+          lastCharOfString) {
     return Token::Type::CustomIdentifier;
   }
 #if 0
@@ -414,7 +413,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
     return Token::Type::SpecialIdentifier;
   }
 #endif
-  if (*length == 1 && m_decoder.codePointAt(string) == 'e') {
+  if (*length == 1 && *string == 'e') {
     return Token::Type::Constant;
   }
 #if 0
@@ -423,7 +422,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
   }
 #endif
 
-  RackLayoutDecoder subString(m_decoder.mainLayout(), string, string + *length);
+  CPLayoutDecoder subString(string, 0, *length);
   if (Builtin::HasCustomIdentifier(&subString)) {
     return Token::Type::CustomIdentifier;
   }
@@ -436,7 +435,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
     return logicalOperatorType;
   }
 #endif
-  if (m_decoder.codePointAt(string) == '_') {
+  if (string[0] == '_') {
     if (Units::Unit::CanParse(&subString, nullptr, nullptr)) {
       return Token::Type::Unit;
     }
@@ -494,14 +493,14 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
 // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
 #endif
   Token::Type type;
-  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(
-          m_decoder.mainLayout(), string, length, &type)) {
+  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(string, length,
+                                                        &type)) {
     // If true, the length has been modified to match the end of the identifier
     return type;
   }
   // "x12" should not be parsed as "x*12" but "x12"
-  if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(
-                                   m_decoder.mainLayout(), string, *length)) {
+  if (!hasUnitOnlyCodePoint &&
+      stringIsACodePointFollowedByNumbers(string, *length)) {
     return Token::Type::CustomIdentifier;
   }
   return Token::Type::Undefined;

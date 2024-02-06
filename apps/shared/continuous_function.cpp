@@ -814,22 +814,22 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(
     const Ion::Storage::Record *record, Context *context) const {
   // Derivative isn't available on curves with multiple subcurves
   assert(numberOfSubCurves(record) == 1);
-  // m_expressionDerivate might already be memmoized.
-  if (m_expressionDerivate.isUninitialized()) {
+  // m_expressionFirstDerivate might already be memmoized.
+  if (m_expressionFirstDerivate.isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
-    m_expressionDerivate = Derivative::Builder(
+    m_expressionFirstDerivate = Derivative::Builder(
         expression, Symbol::SystemSymbol(), Symbol::SystemSymbol());
     /* On complex functions, this step can take a significant time.
      * A workaround could be to identify big functions to skip simplification
      * at the cost of possible inaccurate evaluations (such as
      * diff(abs(x),x,0) not being undefined). */
     PoincareHelpers::CloneAndSimplify(
-        &m_expressionDerivate, context,
+        &m_expressionFirstDerivate, context,
         {.complexFormat = complexFormat(record, context),
          .updateComplexFormatWithExpression = false,
          .target = ReductionTarget::SystemForApproximation});
   }
-  return m_expressionDerivate;
+  return m_expressionFirstDerivate;
 }
 
 Ion::Storage::Record::ErrorStatus
@@ -929,8 +929,8 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(
     TreeNode *treePoolCursor) const {
   if (treePoolCursor == nullptr ||
-      m_expressionDerivate.isDownstreamOf(treePoolCursor)) {
-    m_expressionDerivate = Expression();
+      m_expressionFirstDerivate.isDownstreamOf(treePoolCursor)) {
+    m_expressionFirstDerivate = Expression();
   }
   if (treePoolCursor == nullptr ||
       m_expressionApproximated.isDownstreamOf(treePoolCursor)) {

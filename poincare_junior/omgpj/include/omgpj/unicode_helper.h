@@ -13,6 +13,8 @@ size_t CodePointSearch(UnicodeDecoder* decoder, CodePoint c);
 int CompareDecoders(UnicodeDecoder* a, UnicodeDecoder* b);
 int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
                                            const char* string);
+int CompareCPLWithNullTerminatedString(const PoincareJ::CPL* s, int length,
+                                       const char* string);
 const PoincareJ::CPL* CodePointLSearch(const PoincareJ::CPL* s, CodePoint c,
                                        const PoincareJ::CPL* stop);
 

@@ -215,9 +215,10 @@ RANGE(ListToScalar, ListAccess, ListProduct)
 
 // 7 - Booleans
 
-/* - Boolean B
- * | B TAG | BOOL VALUE | */
-NODE(Boolean, 0, 1)
+NODE(False)
+NODE(True)
+
+RANGE(Boolean, False, True)
 
 NODE(LogicalNot, 1)
 NODE(LogicalAnd, 2)

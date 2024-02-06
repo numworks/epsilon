@@ -629,12 +629,11 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
   // Parse until Not so that not A and B = (not A) and B
   EditionReference rightHandSide =
       parseUntil(std::max(stoppingType, Token::Type::Not));
-#if 0
-leftHandSide = LogicalOperatorNot::Builder(rightHandSide);
-#else
-  // FIXME
-  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
+  if (rightHandSide.isUninitialized()) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  CloneNodeAtNode(rightHandSide, KLogicalNot);
+  leftHandSide = rightHandSide;
 }
 
 void RackParser::parseBinaryLogicalOperator(BlockType operatorType,

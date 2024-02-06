@@ -21,6 +21,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/approximation_power.cpp \
   expression/approximation_trigonometry.cpp \
   expression/beautification.cpp \
+  expression/binary.cpp \
   expression/builtin.cpp \
   expression/comparison.cpp \
   expression/conversion.cpp \
@@ -58,6 +59,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/layout_cursor.cpp \
   layout/layoutter.cpp \
   layout/parser.cpp \
+  layout/parsing/helper.cpp \
   layout/parsing/rack_parser.cpp \
   layout/parsing/tokenizer.cpp \
   layout/rack_layout.cpp \

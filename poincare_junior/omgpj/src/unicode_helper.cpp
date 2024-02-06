@@ -44,4 +44,11 @@ int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
   return result;
 }
 
+int CompareCPLWithNullTerminatedString(const PoincareJ::CPL* s, int length,
+                                       const char* string) {
+  PoincareJ::CPLayoutDecoder decoder(
+      reinterpret_cast<const PoincareJ::Tree*>(s), 0, length);
+  return CompareDecoderWithNullTerminatedString(&decoder, string);
+}
+
 }  // namespace OMG

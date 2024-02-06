@@ -1,5 +1,6 @@
 #include "tokenizer.h"
-// #include "helper.h"
+
+#include "helper.h"
 // #include "parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <omgpj/unicode_helper.h>
@@ -429,12 +430,10 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
   if (Builtin::HasSpecialIdentifier(&subString)) {
     return Token::Type::SpecialIdentifier;
   }
-#if 0
   Token::Type logicalOperatorType;
   if (ParsingHelper::IsLogicalOperator(string, *length, &logicalOperatorType)) {
     return logicalOperatorType;
   }
-#endif
   if (string[0] == '_') {
     if (Units::Unit::CanParse(&subString, nullptr, nullptr)) {
       return Token::Type::Unit;

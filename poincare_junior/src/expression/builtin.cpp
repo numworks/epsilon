@@ -92,6 +92,8 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {BlockType::Nonreal, "nonreal"},
     {BlockType::ComplexI, "i"},
     {BlockType::Infinity, BuiltinsAliases::k_infinityAliases},
+    {BlockType::False, BuiltinsAliases::k_falseAliases},
+    {BlockType::True, BuiltinsAliases::k_trueAliases},
 };
 
 Tree *Builtin::pushNode() const {

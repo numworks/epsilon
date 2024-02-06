@@ -20,8 +20,6 @@ constexpr auto KHalf = KTree<BlockType::Half>();
 constexpr auto KNonreal = KTree<BlockType::Nonreal>();
 constexpr auto KInf = KTree<BlockType::Infinity>();
 constexpr auto i_e = KTree<BlockType::ComplexI>();
-constexpr auto KFalse = KTree<BlockType::Boolean, false>();
-constexpr auto KTrue = KTree<BlockType::Boolean, true>();
 
 constexpr auto KAbs = KUnary<BlockType::Abs>();
 constexpr auto KCos = KUnary<BlockType::Cosine>();
@@ -100,7 +98,18 @@ constexpr auto KVarK = KVar<Parametric::k_localVariableId,
 // Continuous local variable
 constexpr auto KVarX = KVar<Parametric::k_localVariableId,
                             Parametric::k_continuousVariableSign.getValue()>;
-;
+
+// Booleans
+constexpr auto KFalse = KTree<BlockType::False>();
+constexpr auto KTrue = KTree<BlockType::True>();
+
+constexpr auto KLogicalNot = KUnary<BlockType::LogicalNot>();
+
+constexpr auto KLogicalAnd = KBinary<BlockType::LogicalAnd>();
+constexpr auto KLogicalOr = KBinary<BlockType::LogicalOr>();
+constexpr auto KLogicalXor = KBinary<BlockType::LogicalXor>();
+constexpr auto KLogicalNor = KBinary<BlockType::LogicalNor>();
+constexpr auto KLogicalNand = KBinary<BlockType::LogicalNand>();
 
 template <uint8_t Rows, uint8_t Cols>
 struct KMatrix {

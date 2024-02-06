@@ -52,7 +52,7 @@ struct AdditionalResultsType {
   static bool HasInverseTrigo(
       const Poincare::Expression input, const Poincare::Expression exactOutput,
       const Poincare::Preferences::ComplexFormat complexFormat,
-      const Poincare::Preferences::AngleUnit angleUnitî);
+      const Poincare::Preferences::AngleUnit angleUnit);
   static bool HasUnit(const Poincare::Expression exactOutput,
                       const Poincare::Preferences::ComplexFormat complexFormat,
                       const Poincare::Preferences::AngleUnit angleUnit);

@@ -11,8 +11,7 @@ namespace PoincareJ {
 
 Tree* List::PushEmpty() { return KList.node<0>->cloneNode(); }
 
-bool List::ProjectToNthElement(Tree* expr, int n,
-                               Simplification::Operation reduction) {
+bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
   switch (expr->type()) {
     case BlockType::List:
       assert(n < expr->numberOfChildren());
@@ -124,7 +123,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
       {.KA = list, .KB = coefficients});
 }
 
-bool List::BubbleUp(Tree* expr, Simplification::Operation reduction) {
+bool List::BubbleUp(Tree* expr, Tree::Operation reduction) {
   int length = Dimension::GetListLength(expr);
   if (length < 0 || expr->isList()) {
     return false;

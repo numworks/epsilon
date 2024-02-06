@@ -144,6 +144,7 @@ class Tree : public TypeBlock {
     return static_cast<LayoutType>(static_cast<BlockType>(type().type()));
   }
 
+  typedef bool (*Operation)(Tree* node);
   // Apply Shallow operation in a Top Down manner.
   typedef bool (*ShallowOperation)(Tree* node, void* context);
   static bool ApplyShallowInDepth(Tree* node, ShallowOperation shallowOperation,

@@ -4,6 +4,9 @@
 #include <poincare_junior/src/expression/dependency.h>
 #include <poincare_junior/src/expression/metric.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
+
+#include "k_tree.h"
 
 namespace PoincareJ {
 
@@ -111,8 +114,7 @@ bool AdvancedSimplification::Direction::apply(Tree** u, Tree* root,
   }
   assert(isContract() || isExpand());
   assert(!(*u)->isDependency());
-  if (!(isContract() ? Simplification::ShallowContract(*u, false)
-                     : Simplification::ShallowExpand(*u, false))) {
+  if (!(isContract() ? ShallowContract : ShallowExpand)(*u, false)) {
     return false;
   }
   // Apply a deep systematic reduction starting from (*u)
@@ -340,6 +342,173 @@ bool AdvancedSimplification::UpwardSystemReduce(Tree* root, const Tree* tree) {
     }
   }
   return false;
+}
+
+/* Expand/Contract operations */
+
+bool AdvancedSimplification::DeepContract(Tree* e) {
+  bool changed = false;
+  for (Tree* child : e->children()) {
+    changed = DeepContract(child) || changed;
+  }
+  // TODO: Assert !DeepContract(e)
+  return ShallowContract(e, true) || changed;
+}
+
+bool AdvancedSimplification::DeepExpand(Tree* e) {
+  if (Tree::ApplyShallowInDepth(
+          e, [](Tree* e, void* context) { return ShallowExpand(e, true); })) {
+    // Bottom-up systematic reduce is necessary.
+    Simplification::DeepSystemReduce(e);
+    // TODO_PCJ: Find a solution so we don't have to run this twice.
+    bool temp = DeepExpand(e);
+    assert(!temp || !DeepExpand(e));
+    return true;
+  }
+  return false;
+}
+
+bool AdvancedSimplification::TryAllOperations(Tree* e,
+                                              const Tree::Operation* operations,
+                                              int numberOfOperations) {
+  /* For example :
+   * Most contraction operations are very shallow.
+   * exp(A)*exp(B)*exp(C)*|D|*|E| = exp(A+B)*exp(C)*|D|*|E|
+   *                              = exp(A+B)*exp(C)*|D*E|
+   *                              = exp(A+B+C)*|D*E|
+   * Most expansion operations have to handle themselves smartly.
+   * exp(A+B+C) = exp(A)*exp(B)*exp(C) */
+  int failures = 0;
+  int i = 0;
+  assert(!Simplification::DeepSystemReduce(e));
+  while (failures < numberOfOperations) {
+    failures = operations[i % numberOfOperations](e) ? 0 : failures + 1;
+    // EveryOperation should preserve e's reduced status
+    assert(!Simplification::DeepSystemReduce(e));
+    i++;
+  }
+  return i > numberOfOperations;
+}
+
+bool AdvancedSimplification::TryOneOperation(Tree* e,
+                                             const Tree::Operation* operations,
+                                             int numberOfOperations) {
+  assert(!Simplification::DeepSystemReduce(e));
+  for (size_t i = 0; i < numberOfOperations; i++) {
+    if (operations[i](e)) {
+      assert(!Simplification::DeepSystemReduce(e));
+      return true;
+    }
+  }
+  return false;
+}
+
+bool AdvancedSimplification::ExpandImRe(Tree* ref) {
+  return
+      // im(A+B) = im(A) + im(B)
+      PatternMatching::MatchReplaceAndSimplify(ref, KIm(KAdd(KA, KTB)),
+                                               KAdd(KIm(KA), KIm(KAdd(KTB)))) ||
+      // re(A+B) = re(A) + re(B)
+      PatternMatching::MatchReplaceAndSimplify(ref, KRe(KAdd(KA, KTB)),
+                                               KAdd(KRe(KA), KRe(KAdd(KTB)))) ||
+      // im(A*B) = im(A)re(B) + re(A)im(B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KIm(KMult(KA, KTB)),
+          KAdd(KMult(KIm(KA), KRe(KMult(KTB))),
+               KMult(KRe(KA), KIm(KMult(KTB))))) ||
+      // re(A*B) = re(A)*re(B) - im(A)*im(B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KRe(KMult(KA, KTB)),
+          KAdd(KMult(KRe(KA), KRe(KMult(KTB))),
+               KMult(-1_e, KIm(KA), KIm(KMult(KTB))))) ||
+      // Replace im and re in additions only to prevent infinitely expanding
+      // A? + B?*im(C)*D? + E? = A - i*B*C*D + i*B*re(C)*D + E
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KMult(KTB, KIm(KC), KTD), KTE),
+          KAdd(KTA, KMult(-1_e, i_e, KTB, KC, KTD),
+               KMult(i_e, KTB, KRe(KC), KTD), KTE)) ||
+      // A? + B?*re(C)*D? + E? = A + B*C*D - i*B*im(C)*D + E
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KMult(KTB, KRe(KC), KTD), KTE),
+          KAdd(KTA, KMult(KTB, KC, KTD), KMult(-1_e, i_e, KTB, KIm(KC), KTD),
+               KTE)) ||
+      // A? + im(B) + C? = A - i*B + i*re(B) + C
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KIm(KB), KTC),
+          KAdd(KTA, KMult(-1_e, i_e, KB), KMult(i_e, KRe(KB)), KTC)) ||
+      // A? + re(B) + C? = A + B - i*im(B) + C
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KRe(KB), KTC),
+          KAdd(KTA, KB, KMult(-1_e, i_e, KIm(KB)), KTC));
+}
+
+bool AdvancedSimplification::ContractAbs(Tree* ref) {
+  // A?*|B|*|C|*D? = A*|BC|*D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KMult(KTA, KAbs(KB), KAbs(KC), KTD),
+      KMult(KTA, KAbs(KMult(KB, KC)), KTD));
+}
+
+bool AdvancedSimplification::ExpandAbs(Tree* ref) {
+  return
+      // |A*B?| = |A|*|B|
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAbs(KMult(KA, KTB)), KMult(KAbs(KA), KAbs(KMult(KTB)))) ||
+      // |x| = √(re(x)^2+im(x)^2)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAbs(KA),
+          KExp(
+              KMult(KHalf, KLn(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e))))));
+}
+
+bool AdvancedSimplification::ExpandExp(Tree* ref) {
+  // TODO: Also handle exp(i)
+  return
+      // exp(A?*i*B?) = cos(A*B) + i*sin(A*B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KExp(KMult(KTA, i_e, KTB)),
+          KAdd(KTrig(KMult(KTA, KTB), 0_e),
+               KMult(i_e, KTrig(KMult(KTA, KTB), 1_e)))) ||
+      // exp(A+B?) = exp(A) * exp(B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KExp(KAdd(KA, KTB)), KMult(KExp(KA), KExp(KAdd(KTB))));
+}
+
+bool AdvancedSimplification::ContractExpMult(Tree* ref) {
+  return
+      // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KMult(KTA, KExp(KB), KExp(KC), KTD),
+          KMult(KTA, KExp(KAdd(KB, KC)), KTD)) ||
+      // A? + cos(B) + C? + i*sin(B) + D? = A + C + D + exp(i*B)
+      PatternMatching::MatchReplaceAndSimplify(
+          ref, KAdd(KTA, KTrig(KB, 0_e), KTC, KMult(i_e, KTrig(KB, 1_e)), KTD),
+          KAdd(KTA, KTC, KTD, KExp(KMult(i_e, KB))));
+}
+
+bool AdvancedSimplification::ExpandMult(Tree* ref) {
+  // A?*(B+C?)*D? = A*B*D + A*C*D
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KMult(KTA, KAdd(KB, KTC), KTD),
+      KAdd(KMult(KTA, KB, KTD), KMult(KTA, KAdd(KTC), KTD)));
+}
+
+bool AdvancedSimplification::ContractMult(Tree* ref) {
+  /* TODO: With  N and M positive, contract
+   * A + B*A*C + A^N + D*A^M*E into A*(1 + B*C + A^(N-1) + D*A^(M-1)*E) */
+  // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KAdd(KTA, KMult(KTB, KC, KTD), KTE, KMult(KTF, KC, KTG), KTH),
+      KAdd(KTA, KMult(KC, KAdd(KMult(KTB, KTD), KMult(KTF, KTG))), KTE, KTH));
+}
+
+bool AdvancedSimplification::ExpandPower(Tree* ref) {
+  // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
+  // (A? + B)^2 = (A^2 + 2*A*B + B^2)
+  // TODO: Implement a more general (A + B)^C expand.
+  return PatternMatching::MatchReplaceAndSimplify(
+      ref, KPow(KAdd(KTA, KB), 2_e),
+      KAdd(KPow(KAdd(KTA), 2_e), KMult(2_e, KAdd(KTA), KB), KPow(KB, 2_e)));
 }
 
 }  // namespace PoincareJ

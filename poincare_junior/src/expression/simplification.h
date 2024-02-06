@@ -3,11 +3,7 @@
 
 #include <poincare_junior/src/memory/edition_reference.h>
 
-#include "arithmetic.h"
-#include "logarithm.h"
-#include "parametric.h"
 #include "projection.h"
-#include "trigonometry.h"
 
 namespace PoincareJ {
 
@@ -51,26 +47,6 @@ class Simplification {
   static bool SimplifySign(Tree *t);
   EDITION_REF_WRAP(SimplifySign);
 
-  static bool ShallowContract(Tree *e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperation)(
-        e, k_contractOperations, std::size(k_contractOperations));
-  }
-  EDITION_REF_WRAP_1(ShallowContract, bool);
-  static bool ShallowExpand(Tree *e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperation)(
-        e, k_expandOperations, std::size(k_expandOperations));
-  }
-  EDITION_REF_WRAP_1(ShallowExpand, bool);
-
-  // Bottom-up deep contract
-  static bool DeepContract(Tree *e);
-  EDITION_REF_WRAP(DeepContract);
-  // Top-Bottom deep expand
-  static bool DeepExpand(Tree *e);
-  EDITION_REF_WRAP(DeepExpand);
-
-  typedef bool (*Operation)(Tree *node);
-
  private:
   /* These private methods should never be called on EditionReferences.
    * TODO: ensure it cannot. */
@@ -93,47 +69,6 @@ class Simplification {
   // Simplify a sorted and sanitized multiplication.
   static bool SimplifySortedMultiplication(Tree *multiplication);
   static void ConvertPowerRealToPower(Tree *u);
-
-  /* Expand/Contract operations */
-
-  // Try all Operations until they all fail consecutively.
-  static bool TryAllOperations(Tree *node, const Operation *operations,
-                               int numberOfOperations);
-  // Try all Operations until one of them succeed.
-  static bool TryOneOperation(Tree *node, const Operation *operations,
-                              int numberOfOperations);
-
-  static bool ExpandImRe(Tree *node);
-  static bool ContractAbs(Tree *node);
-  static bool ExpandAbs(Tree *node);
-  static bool ContractExpMult(Tree *node);
-  static bool ExpandExp(Tree *node);
-  static bool ContractMult(Tree *node);
-  static bool ExpandMult(Tree *node);
-  static bool ExpandPower(Tree *node);
-
-  constexpr static Operation k_contractOperations[] = {
-      Logarithm::ContractLn,
-      ContractAbs,
-      ContractExpMult,
-      Trigonometry::ContractTrigonometric,
-      Parametric::ContractProduct,
-      ContractMult,
-  };
-  constexpr static Operation k_expandOperations[] = {
-      ExpandAbs,
-      Logarithm::ExpandLn,
-      ExpandExp,
-      Trigonometry::ExpandTrigonometric,
-      Parametric::ExpandSum,
-      Parametric::ExpandProduct,
-      Arithmetic::ExpandBinomial,
-      Arithmetic::ExpandPermute,
-      Projection::Expand,
-      ExpandPower,
-      ExpandMult,
-      ExpandImRe,
-  };
 };
 
 }  // namespace PoincareJ

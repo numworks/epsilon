@@ -4,12 +4,25 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/tree.h>
 
+#include "arithmetic.h"
+#include "logarithm.h"
+#include "parametric.h"
+#include "projection.h"
+#include "trigonometry.h"
+
 namespace PoincareJ {
 
 class AdvancedSimplification {
  public:
   static bool AdvancedReduce(Tree *u);
   EDITION_REF_WRAP(AdvancedReduce);
+
+  // Bottom-up deep contract
+  static bool DeepContract(Tree *e);
+  EDITION_REF_WRAP(DeepContract);
+  // Top-Bottom deep expand
+  static bool DeepExpand(Tree *e);
+  EDITION_REF_WRAP(DeepExpand);
 
  private:
   // Ordered list of hashes encountered during advanced reduction.
@@ -113,6 +126,55 @@ class AdvancedSimplification {
   static bool AdvancedReduceRec(Tree *u, Context *ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystemReduce(Tree *root, const Tree *tree);
+
+  /* Expand/Contract operations */
+  static bool ShallowContract(Tree *e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperation)(
+        e, k_contractOperations, std::size(k_contractOperations));
+  }
+  static bool ShallowExpand(Tree *e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperation)(
+        e, k_expandOperations, std::size(k_expandOperations));
+  }
+
+  // Try all Operations until they all fail consecutively.
+  static bool TryAllOperations(Tree *node, const Tree::Operation *operations,
+                               int numberOfOperations);
+  // Try all Operations until one of them succeed.
+  static bool TryOneOperation(Tree *node, const Tree::Operation *operations,
+                              int numberOfOperations);
+
+  static bool ExpandImRe(Tree *node);
+  static bool ContractAbs(Tree *node);
+  static bool ExpandAbs(Tree *node);
+  static bool ContractExpMult(Tree *node);
+  static bool ExpandExp(Tree *node);
+  static bool ContractMult(Tree *node);
+  static bool ExpandMult(Tree *node);
+  static bool ExpandPower(Tree *node);
+
+  constexpr static Tree::Operation k_contractOperations[] = {
+      Logarithm::ContractLn,
+      ContractAbs,
+      ContractExpMult,
+      Trigonometry::ContractTrigonometric,
+      Parametric::ContractProduct,
+      ContractMult,
+  };
+  constexpr static Tree::Operation k_expandOperations[] = {
+      ExpandAbs,
+      Logarithm::ExpandLn,
+      ExpandExp,
+      Trigonometry::ExpandTrigonometric,
+      Parametric::ExpandSum,
+      Parametric::ExpandProduct,
+      Arithmetic::ExpandBinomial,
+      Arithmetic::ExpandPermute,
+      Projection::Expand,
+      ExpandPower,
+      ExpandMult,
+      ExpandImRe,
+  };
 };
 
 }  // namespace PoincareJ

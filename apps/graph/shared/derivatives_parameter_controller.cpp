@@ -77,6 +77,8 @@ void DerivativesParameterController::invertSwitchState(int row) {
     case k_indexOfFirstDerivativePlot:
       break;
     case k_indexOfSecondDerivativeValue:
+      function()->setDisplaySecondDerivative(
+          !function()->displaySecondDerivative());
       break;
     default:
       assert(row == k_indexOfSecondDerivativePlot);
@@ -93,7 +95,7 @@ bool DerivativesParameterController::switchState(int row) const {
     case k_indexOfFirstDerivativePlot:
       return false;
     case k_indexOfSecondDerivativeValue:
-      return false;
+      return function()->displaySecondDerivative();
     default:
       assert(row == k_indexOfSecondDerivativePlot);
       return false;

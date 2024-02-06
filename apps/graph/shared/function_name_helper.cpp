@@ -24,9 +24,10 @@ size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction *f,
   length += FunctionNameHelper::AddSuffixForParametricComponent(
       buffer, length, bufferSize, first);
   if (derivationOrder > 0) {
-    assert(derivationOrder == 1);
+    assert(derivationOrder == 1 || derivationOrder == 2);
+    const CodePoint derivative = derivationOrder == 1 ? '\'' : '\"';
     length += SerializationHelper::CodePoint(buffer + length,
-                                             bufferSize - length, '\'');
+                                             bufferSize - length, derivative);
   }
   length +=
       Shared::Function::WithArgument(ContinuousFunction::k_parametricSymbol,

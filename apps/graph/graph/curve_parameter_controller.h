@@ -51,6 +51,7 @@ class CurveParameterController
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
   bool shouldDisplayFirstDerivative() const;
+  bool shouldDisplaySecondDerivative() const;
   void fillParameterCellAtRow(int row) override;
   void updateNumberOfParameterCells();
   bool parameterAtRowIsFirstComponent(int row) const;
@@ -65,7 +66,9 @@ class CurveParameterController
   static constexpr int k_indexOfImageCell2 = 2;
   static constexpr int k_indexOfFirstDerivativeCell1 = 3;
   static constexpr int k_indexOfFirstDerivativeCell2 = 4;
-  static constexpr int k_numberOfParameterRows = 5;
+  static constexpr int k_indexOfSecondDerivativeCell1 = 5;
+  static constexpr int k_indexOfSecondDerivativeCell2 = 6;
+  static constexpr int k_numberOfParameterRows = 7;
   constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
 
   using ParameterCell = Escher::MenuCellWithEditableText<

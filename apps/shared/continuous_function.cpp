@@ -297,11 +297,11 @@ Evaluation<double> ContinuousFunction::approximateDerivative(
   return result;
 }
 
-Poincare::Layout ContinuousFunction::derivativeTitleLayout() {
+Poincare::Layout ContinuousFunction::derivativeTitleLayout(bool firstOrder) {
   constexpr size_t bufferNameSize =
       ContinuousFunction::k_maxNameWithArgumentSize + 1;
   char buffer[bufferNameSize];
-  derivativeNameWithArgument(buffer, bufferNameSize);
+  derivativeNameWithArgument(buffer, bufferNameSize, firstOrder);
   return StringLayout::Builder(buffer);
 }
 

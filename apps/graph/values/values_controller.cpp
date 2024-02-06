@@ -296,8 +296,9 @@ Layout ValuesController::functionTitleLayout(int column,
   Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
-  if (derivationOrder == 1) {
-    return function->derivativeTitleLayout();
+  if (derivationOrder >= 1) {
+    assert(derivationOrder == 1 || derivationOrder == 2);
+    return function->derivativeTitleLayout(derivationOrder == 1);
   }
   assert(derivationOrder == 0);
   return function->titleLayout(App::app()->localContext(),
@@ -345,9 +346,12 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       functionAtIndex(column, row, &abscissa, &derivationOrder);
   Context *context = App::app()->localContext();
   Expression result;
-  if (derivationOrder == 1) {
+  if (derivationOrder >= 1) {
     // Compute derivative approximate result
-    result = function->approximateDerivative(abscissa, context, true, false)
+    assert(derivationOrder == 1 || derivationOrder == 2);
+    result = function
+                 ->approximateDerivative(abscissa, context,
+                                         derivationOrder == 1, false)
                  .complexToExpression(Preferences::ComplexFormat::Real);
   } else {
     // Compute exact result
@@ -447,8 +451,11 @@ T *ValuesController::parameterController() {
   int derivationOrder;
   Ion::Storage::Record record =
       recordAtColumn(selectedColumn(), &derivationOrder);
-  if (derivationOrder == 1) {
+  if (derivationOrder >= 1) {
+    assert(derivationOrder == 1 || derivationOrder == 2);
     m_derivativeColumnParameterController.setRecord(record);
+    m_derivativeColumnParameterController.setDerivationOrder(derivationOrder ==
+                                                             1);
     return &m_derivativeColumnParameterController;
   }
   assert(derivationOrder == 0);
@@ -505,8 +512,16 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
       ExpiringPointer<ContinuousFunction> f =
           functionStore()->modelForRecord(record);
-      assert(i == index || f->displayFirstDerivative());
-      *derivationOrder = i != index ? 1 : 0;
+      if (i == index) {
+        *derivationOrder = 0;
+      } else if (i == index + 1) {
+        assert(f->displayFirstDerivative() || f->displaySecondDerivative());
+        *derivationOrder = f->displayFirstDerivative() ? 1 : 2;
+      } else {
+        assert(i == index + 2);
+        assert(f->displayFirstDerivative() && f->displaySecondDerivative());
+        *derivationOrder = 2;
+      }
       return record;
     }
     index += numberOfColumnsForCurrentRecord;
@@ -527,7 +542,7 @@ int ValuesController::numberOfColumnsForRecord(
     Ion::Storage::Record record) const {
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
-  return 1 + f->displayFirstDerivative();
+  return 1 + f->displayFirstDerivative() + f->displaySecondDerivative();
 }
 
 int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {

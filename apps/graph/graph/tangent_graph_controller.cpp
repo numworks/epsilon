@@ -80,7 +80,7 @@ void TangentGraphController::reloadBannerView() {
   int precision = numberOfSignificantDigits();
 
   Evaluation<double> derivative =
-      reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
+      reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record, true);
   assert(derivative.type() == EvaluationNode<double>::Type::Complex);
   double coefficientA = derivative.toScalar();
 

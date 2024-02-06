@@ -582,6 +582,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       list->removeTree();
       return result;
     }
+    case BlockType::Median:
+      // TODO PCJ
+      return NAN;
     default:;
   }
   // The remaining operators are defined only on reals

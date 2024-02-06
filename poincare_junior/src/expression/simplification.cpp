@@ -808,6 +808,8 @@ bool Simplification::SimplifyLastTree(Tree* ref,
         ExceptionCheckpoint::Raise(type);
     }
   }
+  // Silence warning
+  return false;
 }
 
 // TODO: Properly integrate this within systematic simplification.

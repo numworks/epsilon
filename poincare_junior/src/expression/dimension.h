@@ -23,13 +23,17 @@ struct Dimension {
     Scalar,
     Matrix,
     Unit,
+    Boolean,
   };
 
-  Dimension() : type(Type::Scalar){};
+  Dimension(Type type = Type::Scalar) : type(type) {
+    assert(type == Type::Scalar || type == Type::Boolean);
+  };
   Dimension(MatrixDimension iMatrix) : type(Type::Matrix), matrix(iMatrix){};
   Dimension(UnitDimension iUnit) : type(Type::Unit), unit(iUnit){};
 
-  static Dimension Scalar() { return Dimension(); }
+  static Dimension Scalar() { return Dimension(Type::Scalar); }
+  static Dimension Boolean() { return Dimension(Type::Boolean); }
   static Dimension Matrix(uint8_t rows, uint8_t cols) {
     return Dimension({.rows = rows, .cols = cols});
   }
@@ -50,6 +54,7 @@ struct Dimension {
   bool isScalar() const { return type == Type::Scalar; }
   bool isMatrix() const { return type == Type::Matrix; }
   bool isUnit() const { return type == Type::Unit; }
+  bool isBoolean() const { return type == Type::Boolean; }
   bool isSquareMatrix() const {
     return isMatrix() && matrix.rows == matrix.cols;
   }

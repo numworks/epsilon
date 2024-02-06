@@ -228,6 +228,7 @@ NODE(LogicalNor, 2)
 NODE(LogicalNand, 2)
 
 RANGE(LogicalOperator, LogicalNot, LogicalNand)
+RANGE(LogicalOperatorOrBoolean, False, LogicalNand)
 
 // 8 - Order dependant expressions
 /* - Unit U

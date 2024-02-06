@@ -1,5 +1,6 @@
 #include "logarithm.h"
 
+#include <limits.h>
 #include <poincare_junior/src/expression/arithmetic.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/number.h>

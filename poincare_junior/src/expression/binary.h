@@ -14,15 +14,16 @@ class Binary {
   static bool SimplifyBooleanOperator(Tree* tree);
   EDITION_REF_WRAP(SimplifyBooleanOperator);
 
-  constexpr static const char* k_logicalNotName = "not";
+  static const char* OperatorName(TypeBlock type);
 
  private:
   constexpr static int k_numberOfOperators = 5;
-  struct OperatorName {
+  constexpr static const char* k_logicalNotName = "not";
+  struct TypeAndName {
     BlockType type;
     const char* name;
   };
-  constexpr static OperatorName k_operatorNames[] = {
+  constexpr static TypeAndName k_operatorNames[] = {
       {BlockType::LogicalAnd, "and"},
       {BlockType::LogicalOr, "or"},
       {BlockType::LogicalXor, "xor"},

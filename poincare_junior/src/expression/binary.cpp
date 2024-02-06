@@ -22,6 +22,18 @@ bool Binary::IsBinaryLogicalOperator(const CPL *name, int nameLength,
   return false;
 }
 
+const char *Binary::OperatorName(TypeBlock type) {
+  if (type.isLogicalNot()) {
+    return k_logicalNotName;
+  }
+  for (const TypeAndName &name : k_operatorNames) {
+    if (type == name.type) {
+      return name.name;
+    }
+  }
+  assert(false);
+}
+
 bool Binary::SimplifyBooleanOperator(Tree *tree) {
   return
       // not true -> false

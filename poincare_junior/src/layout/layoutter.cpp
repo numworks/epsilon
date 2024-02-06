@@ -2,6 +2,7 @@
 
 #include <poincare/print_float.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/decimal.h>
@@ -23,7 +24,7 @@ namespace PoincareJ {
 static constexpr int k_tokenPriority = -1;
 
 // MaxPriority is to be used when there is no parent that could cause confusion
-static constexpr int k_maxPriority = 10;
+static constexpr int k_maxPriority = 20;
 
 static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
@@ -44,11 +45,20 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 5;
     case BlockType::Addition:
       return 6;
+
+    case BlockType::LogicalNot:
+      return 12;
+    case BlockType::LogicalAnd:
+      return 13;
+    // TODO PCJ force parentheses on equality
+    case BlockType::LogicalOr:
+    case BlockType::LogicalXor:
+      return 14;
     case BlockType::Set:
     case BlockType::List:
-      return 9;
+      return 19;
     case BlockType::RackLayout:
-      return 10;
+      return 20;
     default:
       return k_tokenPriority;
   }
@@ -335,6 +345,26 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       layoutText(layoutParent, buffer);
       break;
     }
+    case BlockType::True:
+      layoutText(layoutParent, BuiltinsAliases::k_trueAliases.mainAlias());
+      break;
+    case BlockType::False:
+      layoutText(layoutParent, BuiltinsAliases::k_falseAliases.mainAlias());
+      break;
+    case BlockType::LogicalAnd:
+    case BlockType::LogicalOr:
+    case BlockType::LogicalXor:
+    case BlockType::LogicalNot:
+      if (!type.isLogicalNot()) {
+        layoutExpression(layoutParent, expression->nextNode(),
+                         OperatorPriority(type));
+        PushCodePoint(layoutParent, ' ');
+      }
+      layoutText(layoutParent, Binary::OperatorName(type));
+      PushCodePoint(layoutParent, ' ');
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      break;
     // TODO make list and set different
     case BlockType::List:
     case BlockType::Set:

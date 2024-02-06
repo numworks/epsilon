@@ -253,8 +253,8 @@ void ValuesController::setTitleCellStyle(HighlightCell *cell, int column) {
 // Shared::ValuesController
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {
-  bool isDerivative = false;
-  return recordAtColumn(i, &isDerivative);
+  int derivationOrder;
+  return recordAtColumn(i, &derivationOrder);
 }
 
 void ValuesController::updateNumberOfColumns() {
@@ -292,13 +292,14 @@ Layout *ValuesController::memoizedLayoutAtIndex(int i) {
 Layout ValuesController::functionTitleLayout(int column,
                                              bool forceShortVersion) {
   assert(typeAtLocation(column, 0) == k_functionTitleCellType);
-  bool isDerivative = false;
-  Ion::Storage::Record record = recordAtColumn(column, &isDerivative);
+  int derivationOrder;
+  Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
-  if (isDerivative) {
+  if (derivationOrder == 1) {
     return function->derivativeTitleLayout();
   }
+  assert(derivationOrder == 0);
   return function->titleLayout(App::app()->localContext(),
                                forceShortVersion || function->isNamed());
 }
@@ -339,17 +340,18 @@ void ValuesController::setStartEndMessages(
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Preferences *preferences = Preferences::sharedPreferences;
   double abscissa;
-  bool isDerivative = false;
+  int derivationOrder;
   Shared::ExpiringPointer<ContinuousFunction> function =
-      functionAtIndex(column, row, &abscissa, &isDerivative);
+      functionAtIndex(column, row, &abscissa, &derivationOrder);
   Context *context = App::app()->localContext();
   Expression result;
-  if (isDerivative) {
+  if (derivationOrder == 1) {
     // Compute derivative approximate result
     result = function->approximateDerivative(abscissa, context, true, false)
                  .complexToExpression(Preferences::ComplexFormat::Real);
   } else {
     // Compute exact result
+    assert(derivationOrder == 0);
     result = function->expressionReduced(context);
     VariableContext abscissaContext =
         VariableContext(Shared::Function::k_unknownName, context);
@@ -442,12 +444,14 @@ Escher::EvenOddMessageTextCell *ValuesController::abscissaTitleCells(int j) {
 
 template <class T>
 T *ValuesController::parameterController() {
-  bool isDerivative = false;
-  Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
-  if (isDerivative) {
+  int derivationOrder;
+  Ion::Storage::Record record =
+      recordAtColumn(selectedColumn(), &derivationOrder);
+  if (derivationOrder == 1) {
     m_derivativeColumnParameterController.setRecord(record);
     return &m_derivativeColumnParameterController;
   }
+  assert(derivationOrder == 0);
   m_functionParameterController->setRecord(record);
   return m_functionParameterController;
 }
@@ -487,7 +491,7 @@ void ValuesController::activateExactValues(bool activate) {
 }
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i,
-                                                      bool *isDerivative) {
+                                                      int *derivationOrder) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtColumn(&i);
   int index = 1;
@@ -501,7 +505,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
       ExpiringPointer<ContinuousFunction> f =
           functionStore()->modelForRecord(record);
-      *isDerivative = i != index && f->canDisplayDerivative();
+      *derivationOrder = i != index && f->canDisplayDerivative() ? 1 : 0;
       return record;
     }
     index += numberOfColumnsForCurrentRecord;
@@ -511,10 +515,10 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
 }
 
 Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(
-    int column, int row, double *abscissa, bool *isDerivative) {
+    int column, int row, double *abscissa, int *derivationOrder) {
   *abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
-  Ion::Storage::Record record = recordAtColumn(column, isDerivative);
+  Ion::Storage::Record record = recordAtColumn(column, derivationOrder);
   return functionStore()->modelForRecord(record);
 }
 

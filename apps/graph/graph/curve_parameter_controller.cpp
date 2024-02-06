@@ -72,10 +72,12 @@ bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
   switch (row) {
     case k_indexOfImageCell1:
     case k_indexOfFirstDerivativeCell1:
+    case k_indexOfSecondDerivativeCell1:
       return true;
     default:
       assert(row == k_indexOfImageCell2 ||
-             row == k_indexOfFirstDerivativeCell2);
+             row == k_indexOfFirstDerivativeCell2 ||
+             row == k_indexOfSecondDerivativeCell2);
       return false;
   }
 }
@@ -87,10 +89,13 @@ int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
     case k_indexOfImageCell1:
     case k_indexOfImageCell2:
       return 0;
-    default:
-      assert(row == k_indexOfFirstDerivativeCell1 ||
-             row == k_indexOfFirstDerivativeCell2);
+    case k_indexOfFirstDerivativeCell1:
+    case k_indexOfFirstDerivativeCell2:
       return 1;
+    default:
+      assert(row == k_indexOfSecondDerivativeCell1 ||
+             row == k_indexOfSecondDerivativeCell2);
+      return 2;
   }
 }
 
@@ -120,8 +125,9 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
       if (derivationOrder == 0) {
         function()->nameWithArgument(buffer, bufferSize);
       } else {
-        assert(derivationOrder == 1);
-        function()->derivativeNameWithArgument(buffer, bufferSize);
+        assert(derivationOrder == 1 || derivationOrder == 2);
+        function()->derivativeNameWithArgument(buffer, bufferSize,
+                                               derivationOrder == 1);
       }
     }
   }
@@ -132,11 +138,12 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 double CurveParameterController::parameterAtIndex(int index) {
   Poincare::Context *ctx = App::app()->localContext();
   int derivationOrder = derivationOrderOfParameterAtRow(index);
-  if (derivationOrder == 1) {
+  if (derivationOrder >= 1) {
+    assert(derivationOrder == 1 || derivationOrder == 2);
     assert(function()->canDisplayDerivative());
     bool firstComponent = parameterAtRowIsFirstComponent(index);
-    Evaluation<double> derivative =
-        function()->approximateDerivative(m_cursor->t(), ctx);
+    Evaluation<double> derivative = function()->approximateDerivative(
+        m_cursor->t(), ctx, derivationOrder == 1);
     if (derivative.type() == EvaluationNode<double>::Type::Complex) {
       assert(firstComponent);
       return derivative.toScalar();
@@ -253,6 +260,10 @@ bool CurveParameterController::shouldDisplayFirstDerivative() const {
   return function()->displayFirstDerivative();
 }
 
+bool CurveParameterController::shouldDisplaySecondDerivative() const {
+  return function()->displaySecondDerivative();
+}
+
 void CurveParameterController::didBecomeFirstResponder() {
   if (!function()->isActive()) {
     static_cast<StackViewController *>(parentResponder())
@@ -272,6 +283,11 @@ void CurveParameterController::updateNumberOfParameterCells() {
   m_parameterCells[k_indexOfFirstDerivativeCell2].setVisible(
       function()->properties().isParametric() &&
       shouldDisplayFirstDerivative());
+  m_parameterCells[k_indexOfSecondDerivativeCell1].setVisible(
+      shouldDisplaySecondDerivative());
+  m_parameterCells[k_indexOfSecondDerivativeCell2].setVisible(
+      function()->properties().isParametric() &&
+      shouldDisplaySecondDerivative());
 }
 
 }  // namespace Graph

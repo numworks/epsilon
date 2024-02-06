@@ -192,29 +192,34 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
 
 Evaluation<double>
 GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
-    Shared::CurveViewCursor* cursor, Ion::Storage::Record record) {
+    Shared::CurveViewCursor* cursor, Ion::Storage::Record record,
+    bool firstOrder) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
-  Evaluation<double> derivative =
-      function->approximateDerivative(cursor->t(), App::app()->localContext());
+  Evaluation<double> derivative = function->approximateDerivative(
+      cursor->t(), App::app()->localContext(), firstOrder);
   double derivativeScalar = derivative.toScalar();
 
   /* Force derivative to 0 if cursor is at an extremum where the function is
    * differentiable. */
-  PointsOfInterestCache* pointsOfInterest =
-      App::app()->graphController()->pointsOfInterestForRecord(record);
-  if (std::isfinite(derivativeScalar) &&
-      (pointsOfInterest->hasInterestAtCoordinates(
-           cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum) ||
-       pointsOfInterest->hasInterestAtCoordinates(
-           cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum))) {
-    derivativeScalar = 0.;
+  if (firstOrder) {
+    PointsOfInterestCache* pointsOfInterest =
+        App::app()->graphController()->pointsOfInterestForRecord(record);
+    if (std::isfinite(derivativeScalar) &&
+        (pointsOfInterest->hasInterestAtCoordinates(
+             cursor->x(), cursor->y(),
+             Solver<double>::Interest::LocalMaximum) ||
+         pointsOfInterest->hasInterestAtCoordinates(
+             cursor->x(), cursor->y(),
+             Solver<double>::Interest::LocalMinimum))) {
+      derivativeScalar = 0.;
+    }
   }
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   size_t numberOfChar =
-      function->derivativeNameWithArgument(buffer, bufferSize);
+      function->derivativeNameWithArgument(buffer, bufferSize, firstOrder);
   assert(function->canDisplayDerivative());
   Preferences::PrintFloatMode mode =
       Poincare::Preferences::sharedPreferences->displayMode();
@@ -232,7 +237,11 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
                                   bufferSize - numberOfChar, "=%*.*ed",
                                   derivativeScalar, mode, precision);
   }
-  bannerView()->firstDerivativeView()->setText(buffer);
+  if (firstOrder) {
+    bannerView()->firstDerivativeView()->setText(buffer);
+  } else {
+    bannerView()->secondDerivativeView()->setText(buffer);
+  }
   bannerView()->reload();
 
   return derivative;

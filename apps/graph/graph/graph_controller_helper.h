@@ -24,7 +24,8 @@ class GraphControllerHelper {
                                      int subCurveIndex);
   // Returns the derivative displayed in banner
   Poincare::Evaluation<double> reloadDerivativeInBannerViewForCursorOnFunction(
-      Shared::CurveViewCursor* cursor, Ion::Storage::Record record);
+      Shared::CurveViewCursor* cursor, Ion::Storage::Record record,
+      bool firstOrder);
   virtual BannerView* bannerView() = 0;
   virtual GraphView* graphView() = 0;
   virtual Shared::FunctionBannerDelegate* functionBannerDelegate() = 0;

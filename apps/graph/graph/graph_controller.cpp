@@ -323,12 +323,17 @@ void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   bool displayFirstDerivative =
       functionStore()->modelForRecord(record)->displayFirstDerivative();
-  m_bannerView.setDisplayParameters(true, displayFirstDerivative, false, false);
+  bool displaySecondDerivative =
+      functionStore()->modelForRecord(record)->displaySecondDerivative();
+  m_bannerView.setDisplayParameters(true, displayFirstDerivative,
+                                    displaySecondDerivative, false);
   FunctionGraphController::reloadBannerView();
-  if (!displayFirstDerivative) {
-    return;
+  if (displayFirstDerivative) {
+    reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, true);
   }
-  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record);
+  if (displaySecondDerivative) {
+    reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, false);
+  }
 }
 
 bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,

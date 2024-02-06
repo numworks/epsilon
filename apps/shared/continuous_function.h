@@ -153,9 +153,15 @@ class ContinuousFunction : public Function {
   bool displayFirstDerivative() const {
     return canDisplayDerivative() && recordData()->displayFirstDerivative();
   }
+  bool displaySecondDerivative() const {
+    return canDisplayDerivative() && recordData()->displaySecondDerivative();
+  }
   // Set derivative display status
   void setDisplayFirstDerivative(bool display) {
     return recordData()->setDisplayFirstDerivative(display);
+  }
+  void setDisplaySecondDerivative(bool display) {
+    return recordData()->setDisplaySecondDerivative(display);
   }
   // Insert derivative name with argument in buffer (f'(x) or y')
   size_t derivativeNameWithArgument(char *buffer, size_t bufferSize,
@@ -164,7 +170,7 @@ class ContinuousFunction : public Function {
   Poincare::Evaluation<double> approximateDerivative(
       double t, Poincare::Context *context, bool firstOrder = true,
       bool useDomain = true) const;
-  Poincare::Layout derivativeTitleLayout();
+  Poincare::Layout derivativeTitleLayout(bool firstOrder);
 
   /* tMin, tMax and tAuto */
 
@@ -264,10 +270,15 @@ class ContinuousFunction : public Function {
         : Shared::Function::RecordDataBuffer(color),
           m_domain(-INFINITY, INFINITY),
           m_displayFirstDerivative(false),
+          m_displaySecondDerivative(false),
           m_tAuto(true) {}
     bool displayFirstDerivative() const { return m_displayFirstDerivative; }
+    bool displaySecondDerivative() const { return m_displaySecondDerivative; }
     void setDisplayFirstDerivative(bool display) {
       m_displayFirstDerivative = display;
+    }
+    void setDisplaySecondDerivative(bool display) {
+      m_displaySecondDerivative = display;
     }
     float tMin() const {
       assert(!m_tAuto);
@@ -291,6 +302,7 @@ class ContinuousFunction : public Function {
    private:
     PackedRange1D m_domain;
     bool m_displayFirstDerivative;
+    bool m_displaySecondDerivative;
     bool m_tAuto;
     /* In the record, after the boolean flag about displayFirstDerivative, there
      * is the expression of the function, directly copied from the pool. */

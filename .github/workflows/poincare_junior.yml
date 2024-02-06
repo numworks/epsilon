@@ -61,6 +61,7 @@ jobs:
         run: "! grep --silent broken comment.md"
       - name: Upload logs
         uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: test_results.zip
           path: |

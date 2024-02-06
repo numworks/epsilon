@@ -367,7 +367,7 @@ class ContinuousFunction : public Function {
      * interest.
      */
     mutable Poincare::Expression m_expressionApproximated;
-    mutable Poincare::Expression m_expressionDerivate;
+    mutable Poincare::Expression m_expressionFirstDerivate;
   };
 
   // Return model pointer

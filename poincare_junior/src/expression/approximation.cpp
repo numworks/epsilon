@@ -285,17 +285,14 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     return Random::Approximate<T>(node, s_randomContext);
   }
   switch (node->type()) {
+    case BlockType::ComplexI:
+      return std::complex<T>(0, 1);
     case BlockType::Constant:
-      if (Constant::Type(node) == Constant::Type::I) {
-        return std::complex<T>(0, 1);
-      }
       return Constant::To<T>(Constant::Type(node));
     case BlockType::SingleFloat:
       return Float::FloatTo(node);
     case BlockType::DoubleFloat:
       return Float::DoubleTo(node);
-    case BlockType::Complex:
-      return std::complex<T>(To<T>(node->child(0)), To<T>(node->child(1)));
     case BlockType::Addition:
       return MapAndReduce<T, std::complex<T>>(node,
                                               FloatAddition<std::complex<T>>);
@@ -731,9 +728,13 @@ Tree* PushComplex(std::complex<T> value) {
   if (value.imag() == 0.0) {
     return SharedEditionPool->push<FloatType<T>::type>(value.real());
   }
-  Tree* result = SharedEditionPool->push(BlockType::Complex);
+  Tree* result = SharedEditionPool->push<BlockType::Addition>(2);
   SharedEditionPool->push<FloatType<T>::type>(value.real());
-  SharedEditionPool->push<FloatType<T>::type>(value.imag());
+  if (value.imag() != 1.0) {
+    Tree* result = SharedEditionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->push<FloatType<T>::type>(value.imag());
+  }
+  SharedEditionPool->push(BlockType::ComplexI);
   return result;
 }
 

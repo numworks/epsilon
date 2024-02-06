@@ -505,7 +505,8 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
       ExpiringPointer<ContinuousFunction> f =
           functionStore()->modelForRecord(record);
-      *derivationOrder = i != index && f->canDisplayDerivative() ? 1 : 0;
+      assert(i == index || f->displayFirstDerivative());
+      *derivationOrder = i != index ? 1 : 0;
       return record;
     }
     index += numberOfColumnsForCurrentRecord;

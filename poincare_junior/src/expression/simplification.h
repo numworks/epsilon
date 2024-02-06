@@ -71,12 +71,6 @@ class Simplification {
   EDITION_REF_WRAP(SimplifySign);
 
   typedef bool (*Operation)(Tree *node);
-  /* Replace target(..., naryTarget(A, B, ...), ...)
-   * into    naryOutput(target(..., A, ...), target(..., B, ...), ...) */
-  static bool DistributeOverNAry(Tree *node, BlockType target,
-                                 BlockType naryTarget, BlockType naryOutput,
-                                 Operation operation = ShallowSystemReduce,
-                                 int childIndex = 0);
 
  private:
   static bool SimplifyLastTree(Tree *node,

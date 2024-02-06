@@ -810,58 +810,6 @@ bool Simplification::SimplifyLastTree(Tree* ref,
   }
 }
 
-bool Simplification::DistributeOverNAry(Tree* ref, BlockType target,
-                                        BlockType naryTarget,
-                                        BlockType naryOutput,
-                                        Operation operation, int childIndex) {
-  assert(naryTarget == BlockType::Addition ||
-         naryTarget == BlockType::Multiplication);
-  assert(naryOutput == BlockType::Addition ||
-         naryOutput == BlockType::Multiplication);
-  if (ref->type() != target) {
-    return false;
-  }
-  int numberOfChildren = ref->numberOfChildren();
-  assert(childIndex < numberOfChildren);
-  EditionReference children = ref->child(childIndex);
-  if (children->type() != naryTarget) {
-    // Apply operation anyway, as if it was in a squashed NAry
-    // f(A,E) -> f'(A,E)
-    return operation(ref);
-  }
-  int numberOfGrandChildren = children->numberOfChildren();
-  size_t childIndexOffset = children->block() - ref->block();
-  // f(+(A,B,C),E)
-  children->cloneTreeBeforeNode(0_e);
-  children = children->detachTree();
-  // f(0,E) ... +(A,B,C)
-  Tree* grandChild = children->nextNode();
-  EditionReference output =
-      naryOutput == BlockType::Addition
-          ? SharedEditionPool->push<BlockType::Addition>(numberOfGrandChildren)
-          : SharedEditionPool->push<BlockType::Multiplication>(
-                numberOfGrandChildren);
-  // f(0,E) ... +(A,B,C) ... *(,,)
-  for (int i = 0; i < numberOfGrandChildren; i++) {
-    EditionReference clone = ref->clone();
-    // f(0,E) ... +(A,B,C) ... *(f(0,E),,)
-    /* Since it is constant, use a childIndexOffset to avoid child calls:
-     * clone.child(childIndex)=Tree(clone.block()+childIndexOffset) */
-    EditionReference(clone->block() + childIndexOffset)
-        ->moveTreeOverTree(grandChild);
-    // f(0,E) ... +(,B,C) ... *(f(A,E),,)
-    operation(clone);
-    // f(0,E) ... +(,B,C) ... *(f'(A,E),,)
-  }
-  // f(0,E) ... +(,,) ... *(f'(A,E), f'(B,E), f'(C,E))
-  children->removeNode();
-  // f(0,E) ... *(f'(A,E), f'(B,E), f'(C,E))
-  ref = ref->moveTreeOverTree(output);
-  // *(f'(A,E), f'(B,E), f'(C,E)) ...
-  ShallowSystemReduce(ref);
-  return true;
-}
-
 bool Simplification::TryAllOperations(Tree* e, const Operation* operations,
                                       int numberOfOperations) {
   /* For example :

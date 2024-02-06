@@ -7,6 +7,7 @@
 #include "advanced_simplification.h"
 #include "approximation.h"
 #include "beautification.h"
+#include "binary.h"
 #include "comparison.h"
 #include "dependency.h"
 #include "derivation.h"
@@ -154,6 +155,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
     default:
       if (u->type().isListToScalar()) {
         return List::ShallowApplyListOperators(u);
+      }
+      if (u->type().isLogicalOperator()) {
+        return Binary::SimplifyBooleanOperator(u);
       }
       return false;
   }

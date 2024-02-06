@@ -682,3 +682,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("√(0)", "0", cartesianCtx);
   simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", cartesianCtx);
 }
+
+QUIZ_CASE(pcj_simplification_boolean) {
+  simplifies_to("true", "true");
+  simplifies_to("true and false", "false");
+}

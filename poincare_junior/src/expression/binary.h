@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_BINARY_H
 
 #include <poincare_junior/src/layout/rack_layout_decoder.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 
 namespace PoincareJ {
 
@@ -10,6 +10,9 @@ class Binary {
  public:
   static bool IsBinaryLogicalOperator(const CPL* name, int nameLength,
                                       BlockType* type);
+
+  static bool SimplifyBooleanOperator(Tree* tree);
+  EDITION_REF_WRAP(SimplifyBooleanOperator);
 
   constexpr static const char* k_logicalNotName = "not";
 

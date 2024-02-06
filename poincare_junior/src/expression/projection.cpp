@@ -202,6 +202,12 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
           ref, KArTanh(KA),
           KMult(KHalf, KAdd(KLn(KAdd(1_e, KA)),
                             KMult(-1_e, KLn(KAdd(1_e, KMult(-1_e, KA))))))) ||
+      // A nor B -> not (A or B)
+      PatternMatching::MatchAndReplace(ref, KLogicalNor(KA, KB),
+                                       KLogicalNot(KLogicalOr(KA, KB))) ||
+      // A nand B -> not (A and B)
+      PatternMatching::MatchAndReplace(ref, KLogicalNand(KA, KB),
+                                       KLogicalNot(KLogicalAnd(KA, KB))) ||
       changed;
 }
 

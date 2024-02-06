@@ -123,10 +123,6 @@ class Simplification {
   EDITION_REF_WRAP(ContractMult);
   static bool ExpandMult(Tree *node);
   EDITION_REF_WRAP(ExpandMult);
-  static bool ExpandMultSubOperation(Tree *node) {
-    return SimplifyMultiplication(node) + ExpandMult(node);
-  }
-  EDITION_REF_WRAP(ExpandMultSubOperation);
   static bool ExpandPower(Tree *node);
   EDITION_REF_WRAP(ExpandPower);
 

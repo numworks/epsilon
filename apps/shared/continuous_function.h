@@ -162,7 +162,8 @@ class ContinuousFunction : public Function {
                                     bool firstOrder = true);
   // Approximate derivative at t, on given sub curve if there is one
   Poincare::Evaluation<double> approximateDerivative(
-      double t, Poincare::Context *context, bool useDomain = true) const;
+      double t, Poincare::Context *context, bool firstOrder = true,
+      bool useDomain = true) const;
   Poincare::Layout derivativeTitleLayout();
 
   /* tMin, tMax and tAuto */
@@ -238,9 +239,9 @@ class ContinuousFunction : public Function {
     return m_model.expressionReducedForAnalysis(this, context);
   }
   // Return reduced curve expression derivative
-  Poincare::Expression expressionDerivateReduced(
-      Poincare::Context *context) const {
-    return m_model.expressionDerivateReduced(this, context);
+  Poincare::Expression expressionDerivateReduced(Poincare::Context *context,
+                                                 bool firstOrder) const {
+    return m_model.expressionDerivateReduced(this, context, firstOrder);
   }
 
   /* Evaluation */
@@ -336,7 +337,8 @@ class ContinuousFunction : public Function {
         bool *isCartesianEquation = nullptr) const;
     // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(
-        const Ion::Storage::Record *record, Poincare::Context *context) const;
+        const Ion::Storage::Record *record, Poincare::Context *context,
+        bool firstOrder) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
         Ion::Storage::Record *record, Poincare::Context *context) const;
@@ -368,6 +370,7 @@ class ContinuousFunction : public Function {
      */
     mutable Poincare::Expression m_expressionApproximated;
     mutable Poincare::Expression m_expressionFirstDerivate;
+    mutable Poincare::Expression m_expressionSecondDerivate;
   };
 
   // Return model pointer

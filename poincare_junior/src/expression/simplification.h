@@ -20,17 +20,16 @@ class Simplification {
   static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
 
-  /* Ignoring EDITION_REF_WRAP_1 wrapper here so ternary can be used on these
-   * methods. TODO: Remove other EditionReference wrappers on private methods if
-   * they are indeed unused. */
   static bool ShallowContract(Tree *e, bool tryAll) {
     return (tryAll ? TryAllOperations : TryOneOperation)(
         e, k_contractOperations, std::size(k_contractOperations));
   }
+  EDITION_REF_WRAP_1(ShallowContract, bool);
   static bool ShallowExpand(Tree *e, bool tryAll) {
     return (tryAll ? TryAllOperations : TryOneOperation)(
         e, k_expandOperations, std::size(k_expandOperations));
   }
+  EDITION_REF_WRAP_1(ShallowExpand, bool);
 
   // Bottom-up deep contract
   static bool DeepContract(Tree *e);
@@ -73,12 +72,11 @@ class Simplification {
   typedef bool (*Operation)(Tree *node);
 
  private:
+  /* These private methods should never be called on EditionReferences.
+   * TODO: ensure it cannot. */
   static bool SimplifyLastTree(Tree *node,
                                ProjectionContext projectionContext = {});
   static bool SimplifySwitch(Tree *u);
-  EDITION_REF_WRAP(SimplifySwitch);
-  /* The following methods should not be called with EditionReferences.
-   * TODO: ensure it cannot. */
   // Return true if child has been merged with next sibling.
   static bool MergeAdditionChildWithNext(Tree *child, Tree *next);
   // Return true if child has been merged with next sibling.
@@ -104,21 +102,13 @@ class Simplification {
                               int numberOfOperations);
 
   static bool ExpandImRe(Tree *node);
-  EDITION_REF_WRAP(ExpandImRe);
   static bool ContractAbs(Tree *node);
-  EDITION_REF_WRAP(ContractAbs);
   static bool ExpandAbs(Tree *node);
-  EDITION_REF_WRAP(ExpandAbs);
   static bool ContractExpMult(Tree *node);
-  EDITION_REF_WRAP(ContractExpMult);
   static bool ExpandExp(Tree *node);
-  EDITION_REF_WRAP(ExpandExp);
   static bool ContractMult(Tree *node);
-  EDITION_REF_WRAP(ContractMult);
   static bool ExpandMult(Tree *node);
-  EDITION_REF_WRAP(ExpandMult);
   static bool ExpandPower(Tree *node);
-  EDITION_REF_WRAP(ExpandPower);
 
   constexpr static Operation k_contractOperations[] = {
       Logarithm::ContractLn,

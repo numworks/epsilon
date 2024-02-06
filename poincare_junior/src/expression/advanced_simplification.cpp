@@ -111,8 +111,8 @@ bool AdvancedSimplification::Direction::apply(Tree** u, Tree* root,
   }
   assert(isContract() || isExpand());
   assert(!(*u)->isDependency());
-  if (!(isContract() ? Simplification::ShallowContract
-                     : Simplification::ShallowExpand)(*u, false)) {
+  if (!(isContract() ? Simplification::ShallowContract(*u, false)
+                     : Simplification::ShallowExpand(*u, false))) {
     return false;
   }
   // Apply a deep systematic reduction starting from (*u)

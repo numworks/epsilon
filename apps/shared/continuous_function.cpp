@@ -2,6 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
+#include <poincare/based_integer.h>
 #include <poincare/derivative.h>
 #include <poincare/float.h>
 #include <poincare/function.h>
@@ -277,12 +278,12 @@ size_t ContinuousFunction::derivativeNameWithArgument(char *buffer,
 }
 
 Evaluation<double> ContinuousFunction::approximateDerivative(
-    double t, Context *context, bool useDomain) const {
+    double t, Context *context, bool firstOrder, bool useDomain) const {
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
   // Derivative is simplified once and for all
-  Expression derivate = expressionDerivateReduced(context);
+  Expression derivate = expressionDerivateReduced(context, firstOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
   Evaluation<double> result = derivate.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
@@ -811,25 +812,28 @@ Expression ContinuousFunction::Model::expressionEquation(
 }
 
 Expression ContinuousFunction::Model::expressionDerivateReduced(
-    const Ion::Storage::Record *record, Context *context) const {
+    const Ion::Storage::Record *record, Context *context,
+    bool firstOrder) const {
   // Derivative isn't available on curves with multiple subcurves
   assert(numberOfSubCurves(record) == 1);
-  // m_expressionFirstDerivate might already be memmoized.
-  if (m_expressionFirstDerivate.isUninitialized()) {
+  Expression *derivative =
+      firstOrder ? &m_expressionFirstDerivate : &m_expressionSecondDerivate;
+  if (derivative->isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
-    m_expressionFirstDerivate = Derivative::Builder(
-        expression, Symbol::SystemSymbol(), Symbol::SystemSymbol());
+    *derivative = Derivative::Builder(
+        expression, Symbol::SystemSymbol(), Symbol::SystemSymbol(),
+        BasedInteger::Builder(firstOrder ? 1 : 2));
     /* On complex functions, this step can take a significant time.
      * A workaround could be to identify big functions to skip simplification
      * at the cost of possible inaccurate evaluations (such as
      * diff(abs(x),x,0) not being undefined). */
     PoincareHelpers::CloneAndSimplify(
-        &m_expressionFirstDerivate, context,
+        derivative, context,
         {.complexFormat = complexFormat(record, context),
          .updateComplexFormatWithExpression = false,
          .target = ReductionTarget::SystemForApproximation});
   }
-  return m_expressionFirstDerivate;
+  return *derivative;
 }
 
 Ion::Storage::Record::ErrorStatus
@@ -931,6 +935,10 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
   if (treePoolCursor == nullptr ||
       m_expressionFirstDerivate.isDownstreamOf(treePoolCursor)) {
     m_expressionFirstDerivate = Expression();
+  }
+  if (treePoolCursor == nullptr ||
+      m_expressionSecondDerivate.isDownstreamOf(treePoolCursor)) {
+    m_expressionSecondDerivate = Expression();
   }
   if (treePoolCursor == nullptr ||
       m_expressionApproximated.isDownstreamOf(treePoolCursor)) {

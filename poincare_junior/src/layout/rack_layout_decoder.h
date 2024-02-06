@@ -31,8 +31,8 @@ class RackLayoutDecoder : public UnicodeDecoder {
            (m_position < m_end &&
             m_layout->child(m_position)->isCodePointLayout());
   }
-  CodePoint nextCodePoint() { return codePointAt(m_position++); }
-  CodePoint previousCodePoint() { return codePointAt(--m_position); }
+  CodePoint nextCodePoint() override { return codePointAt(m_position++); }
+  CodePoint previousCodePoint() override { return codePointAt(--m_position); }
   void setPosition(size_t index) {
     assert(0 <= index && index <= m_end);
     m_position = index;
@@ -58,15 +58,72 @@ class RackLayoutDecoder : public UnicodeDecoder {
   const Tree* m_layout;
 };
 
-class RackLayoutRange {
-  RackLayoutRange(const Tree* start, const Tree* end)
-      : m_start(start), m_end(end) {}
-  RackLayoutRange(const Tree* rack, size_t startIndex, size_t endIndex)
-      : m_start(rack->child(startIndex)), m_end(rack->child(endIndex)) {}
+class CPL {
+ public:
+  static const CPL* FromRack(const Tree* rack, int start = 0) {
+    // -> or better rack into begin() end() with CPLs
+    return reinterpret_cast<const CPL*>(rack->child(start));
+  }
+
+  operator CodePoint() const {
+    (void)m_content;
+    const Tree* tree = reinterpret_cast<const Tree*>(this);
+    if (!tree->isCodePointLayout()) {
+      return UCodePointNull;
+    }
+    return CodePointLayout::GetCodePoint(tree);
+  }
+
+  bool operator==(const CodePoint& other) const {
+    return static_cast<CodePoint>(*this) == other;
+  }
 
  private:
-  const Tree* m_start;
-  const Tree* m_end;
+  static constexpr int k_codePointLayoutSize =
+      TypeBlock::NumberOfMetaBlocks(BlockType::CodePointLayout);
+  char m_content[k_codePointLayoutSize];
+};
+
+/* Unlike RackLayoutDecoder that iters children of a parent rack, this points to
+ * a CodePointLayout and iter its siblings until a non-codepoint layout is
+ * reached. Thus the API is more similar to const char *. */
+class CPLayoutDecoder : public UnicodeDecoder {
+ public:
+  CPLayoutDecoder(const Tree* firstCodePoint, size_t initialPosition = 0,
+                  size_t layoutEnd = k_noSize)
+      : UnicodeDecoder(initialPosition, layoutEnd),
+        m_firstCodePoint(firstCodePoint) {
+    if (m_position > m_end) {
+      m_position = m_end;
+    }
+  }
+  CPLayoutDecoder(const CPL* firstCodePoint, size_t initialPosition = 0,
+                  size_t layoutEnd = k_noSize)
+      : CPLayoutDecoder(reinterpret_cast<const Tree*>(firstCodePoint),
+                        initialPosition, layoutEnd) {}
+
+  CodePoint nextCodePoint() override { return codePointAt(m_position++); }
+  CodePoint previousCodePoint() override { return codePointAt(--m_position); }
+  CodePoint codePointAt(size_t index) const {
+    if (index == m_end) {
+      return UCodePointNull;
+    }
+    assert(0 <= index && index < m_end);
+    const Tree* codePoint = m_firstCodePoint + index * k_codePointLayoutSize;
+    if (!codePoint->isCodePointLayout()) {
+      return UCodePointNull;
+    }
+    return CodePointLayout::GetCodePoint(codePoint);
+  }
+  const Tree* codePointLayoutAt(size_t index) {
+    assert(0 <= index && index < m_end);
+    return m_firstCodePoint + index * k_codePointLayoutSize;
+  }
+
+ private:
+  static constexpr int k_codePointLayoutSize =
+      TypeBlock::NumberOfMetaBlocks(BlockType::CodePointLayout);
+  const Tree* m_firstCodePoint;
 };
 
 }  // namespace PoincareJ

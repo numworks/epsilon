@@ -1,4 +1,5 @@
 #include <omgpj/unicode_helper.h>
+#include <poincare_junior/src/layout/rack_layout_decoder.h>
 
 namespace OMG {
 
@@ -10,6 +11,17 @@ size_t CodePointSearch(UnicodeDecoder* decoder, CodePoint c) {
   }
   decoder->previousCodePoint();
   return decoder->position();
+}
+
+const PoincareJ::CPL* CodePointLSearch(const PoincareJ::CPL* s, CodePoint c,
+                                       const PoincareJ::CPL* stop) {
+  while (s != stop && *s != 0) {
+    if (*s == c) {
+      return s;
+    }
+    s++;
+  }
+  return s;
 }
 
 int CompareDecoders(UnicodeDecoder* a, UnicodeDecoder* b) {

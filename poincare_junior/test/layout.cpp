@@ -1,4 +1,5 @@
 #include <kandinsky/ion_context.h>
+#include <omgpj/unicode_helper.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/k_tree.h>
@@ -34,6 +35,21 @@ QUIZ_CASE(pcj_expression_to_layout) {
   assert_trees_are_equal(
       Layoutter::LayoutExpression(KPow(KMult("x"_e, "y"_e), 2_e)->clone()),
       KRackL(KParenthesisL("x×y"_l), KVertOffL("2"_l)));
+}
+
+QUIZ_CASE(pcj_layout_decoder) {
+  const Tree* l = "123"_l;
+  CPLayoutDecoder d(l->child(0), 0, 3);
+  assert(d.nextCodePoint() == '1');
+  assert(d.nextCodePoint() == '2');
+  assert(d.nextCodePoint() == '3');
+  assert(d.nextCodePoint() == 0);
+}
+
+QUIZ_CASE(pcj_omg_code_point) {
+  const CPL* l = CPL::FromRack("123"_l);
+  assert(OMG::CodePointLSearch(l, '2', l + 3) == l + 1);
+  assert(OMG::CodePointLSearch(l, '4', l + 3) == l + 3);
 }
 
 #if 0

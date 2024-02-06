@@ -29,7 +29,7 @@ void TangentGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
   m_graphView->setTangentDisplay(true);
   m_graphView->setFocus(true);
-  m_bannerView->setDisplayParameters(false, true, true);
+  m_bannerView->setDisplayParameters(false, true, false, true);
   reloadBannerView();
   panToMakeCursorVisible();
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();

@@ -323,7 +323,7 @@ void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   bool displayFirstDerivative =
       functionStore()->modelForRecord(record)->displayFirstDerivative();
-  m_bannerView.setDisplayParameters(true, displayFirstDerivative, false);
+  m_bannerView.setDisplayParameters(true, displayFirstDerivative, false, false);
   FunctionGraphController::reloadBannerView();
   if (!displayFirstDerivative) {
     return;

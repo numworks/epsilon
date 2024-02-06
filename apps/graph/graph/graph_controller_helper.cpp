@@ -232,7 +232,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
                                   bufferSize - numberOfChar, "=%*.*ed",
                                   derivativeScalar, mode, precision);
   }
-  bannerView()->derivativeView()->setText(buffer);
+  bannerView()->firstDerivativeView()->setText(buffer);
   bannerView()->reload();
 
   return derivative;

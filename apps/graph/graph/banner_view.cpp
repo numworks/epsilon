@@ -10,7 +10,8 @@ namespace Graph {
 BannerView::BannerView(Responder* parentResponder,
                        TextFieldDelegate* textFieldDelegate)
     : Shared::XYBannerView(parentResponder, textFieldDelegate),
-      m_derivativeView(k_bannerFieldFormat),
+      m_firstDerivativeView(k_bannerFieldFormat),
+      m_secondDerivativeView(k_bannerFieldFormat),
       m_tangentEquationView(I18n::Message::LinearRegressionFormula,
                             k_bannerFieldFormat),
       m_aView(k_bannerFieldFormat),
@@ -38,10 +39,13 @@ void BannerView::emptyInterestMessages(Shared::CursorView* cursor) {
   cursor->setHighlighted(false);
 }
 
-void BannerView::setDisplayParameters(bool showInterest, bool showDerivative,
+void BannerView::setDisplayParameters(bool showInterest,
+                                      bool showFirstDerivative,
+                                      bool showSecondDerivative,
                                       bool showTangent) {
   m_showInterest = showInterest;
-  m_showDerivative = showDerivative;
+  m_showFirstDerivative = showFirstDerivative;
+  m_showSecondDerivative = showSecondDerivative;
   m_showTangent = showTangent;
 }
 
@@ -59,10 +63,15 @@ View* BannerView::subviewAtIndex(int index) {
   }
   index -= Shared::XYBannerView::k_numberOfSubviews;
   // - First derivative
-  if (m_showDerivative && index == 0) {
-    return &m_derivativeView;
+  if (m_showFirstDerivative && index == 0) {
+    return &m_firstDerivativeView;
   }
-  index -= m_showDerivative;
+  index -= m_showFirstDerivative;
+  // - Second derivative
+  if (m_showSecondDerivative && index == 0) {
+    return &m_secondDerivativeView;
+  }
+  index -= m_showSecondDerivative;
   // - Tangent subviews
   assert(m_showTangent);
   assert(0 <= index && index < 3);

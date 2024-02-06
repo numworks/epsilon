@@ -40,14 +40,16 @@ View* BannerView::subviewAtIndex(int index) {
   if (index < XYBannerView::k_numberOfSubviews) {
     return XYBannerView::subviewAtIndex(index);
   }
+  index -= XYBannerView::k_numberOfSubviews;
   // - OtherView if not first and displayed
-  if (m_displayOtherView && !m_otherViewIsFirst &&
-      index == XYBannerView::k_numberOfSubviews) {
+  bool displayOtherViewNotFirst = m_displayOtherView && !m_otherViewIsFirst;
+  if (displayOtherViewNotFirst && index == 0) {
     return &m_otherView;
   }
+  index -= displayOtherViewNotFirst;
   // - DataNotSuitable if displayed
-  assert(m_displayDataNotSuitable &&
-         index + m_otherViewIsFirst == numberOfSubviews() - 1);
+  assert(m_displayDataNotSuitable);
+  assert(index == 0);
   return &m_dataNotSuitableView;
 }
 

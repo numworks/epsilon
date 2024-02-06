@@ -47,18 +47,27 @@ void BannerView::setDisplayParameters(bool showInterest, bool showDerivative,
 
 View* BannerView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
+  // - Interest messages
   int n = numberOfInterestMessages();
   if (index < n) {
     return m_interestMessageView + index;
   }
   index -= n;
-
+  // - XYBanner subviews
   if (index < Shared::XYBannerView::k_numberOfSubviews) {
     return Shared::XYBannerView::subviewAtIndex(index);
   }
-  View* subviews[] = {&m_derivativeView, &m_tangentEquationView, &m_aView,
-                      &m_bView};
-  return subviews[index - Shared::XYBannerView::k_numberOfSubviews];
+  index -= Shared::XYBannerView::k_numberOfSubviews;
+  // - First derivative
+  if (m_showDerivative && index == 0) {
+    return &m_derivativeView;
+  }
+  index -= m_showDerivative;
+  // - Tangent subviews
+  assert(m_showTangent);
+  assert(0 <= index && index < 3);
+  View* subviews[] = {&m_tangentEquationView, &m_aView, &m_bView};
+  return subviews[index];
 }
 
 bool BannerView::lineBreakBeforeSubview(View* subview) const {

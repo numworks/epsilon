@@ -20,24 +20,6 @@ class Simplification {
   static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
 
-  static bool ShallowContract(Tree *e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperation)(
-        e, k_contractOperations, std::size(k_contractOperations));
-  }
-  EDITION_REF_WRAP_1(ShallowContract, bool);
-  static bool ShallowExpand(Tree *e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperation)(
-        e, k_expandOperations, std::size(k_expandOperations));
-  }
-  EDITION_REF_WRAP_1(ShallowExpand, bool);
-
-  // Bottom-up deep contract
-  static bool DeepContract(Tree *e);
-  EDITION_REF_WRAP(DeepContract);
-  // Top-Bottom deep expand
-  static bool DeepExpand(Tree *e);
-  EDITION_REF_WRAP(DeepExpand);
-
   static bool ShallowApplyMatrixOperators(Tree *u, void *context = nullptr);
   EDITION_REF_WRAP_1D(ShallowApplyMatrixOperators, void *, nullptr);
   static bool DeepApplyMatrixOperators(Tree *u);
@@ -69,6 +51,24 @@ class Simplification {
   static bool SimplifySign(Tree *t);
   EDITION_REF_WRAP(SimplifySign);
 
+  static bool ShallowContract(Tree *e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperation)(
+        e, k_contractOperations, std::size(k_contractOperations));
+  }
+  EDITION_REF_WRAP_1(ShallowContract, bool);
+  static bool ShallowExpand(Tree *e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperation)(
+        e, k_expandOperations, std::size(k_expandOperations));
+  }
+  EDITION_REF_WRAP_1(ShallowExpand, bool);
+
+  // Bottom-up deep contract
+  static bool DeepContract(Tree *e);
+  EDITION_REF_WRAP(DeepContract);
+  // Top-Bottom deep expand
+  static bool DeepExpand(Tree *e);
+  EDITION_REF_WRAP(DeepExpand);
+
   typedef bool (*Operation)(Tree *node);
 
  private:
@@ -93,6 +93,8 @@ class Simplification {
   // Simplify a sorted and sanitized multiplication.
   static bool SimplifySortedMultiplication(Tree *multiplication);
   static void ConvertPowerRealToPower(Tree *u);
+
+  /* Expand/Contract operations */
 
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree *node, const Operation *operations,

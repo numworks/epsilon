@@ -77,7 +77,7 @@ void CalculationGraphController::viewWillAppear() {
                      pointOfInterest.y());
     m_graphView->cursorView()->setHighlighted(specialInterest() !=
                                               Solver<double>::Interest::None);
-    m_bannerView->setDisplayParameters(false, false, false);
+    m_bannerView->setDisplayParameters(false, false, false, false);
     reloadBannerView();
     panToMakeCursorVisible();
   }

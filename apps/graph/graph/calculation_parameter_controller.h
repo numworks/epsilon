@@ -49,6 +49,8 @@ class CalculationParameterController
   static bool ShouldDisplayIntersection();
   static bool ShouldDisplayAreaBetweenCurves();
   static bool ShouldDisplayChevronInAreaCell();
+  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+
   // This class is used for the AreaBetweenCurves cell
   class HideableChevron : public Escher::ChevronView {
    public:

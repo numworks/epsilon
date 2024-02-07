@@ -61,7 +61,7 @@ template <class T>
 void CalculationParameterController::push(T *controller, bool pop) {
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
-  assert(App::app()->functionStore()->modelForRecord(m_record)->isActive());
+  assert(function()->isActive());
   controller->setRecord(m_record);
   if (pop) {
     stack->popUntilDepth(
@@ -118,8 +118,7 @@ void CalculationParameterController::fillAreaCell() {
   // If there is only two derivable functions, hide the chevron
   m_areaCell.accessory()->displayChevron(ShouldDisplayChevronInAreaCell());
   // Get the name of the selected function
-  ExpiringPointer<ContinuousFunction> mainFunction =
-      App::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<ContinuousFunction> mainFunction = function();
   constexpr static size_t bufferSize =
       Shared::Function::k_maxNameWithArgumentSize;
   char mainFunctionName[bufferSize];
@@ -186,6 +185,11 @@ bool CalculationParameterController::ShouldDisplayAreaBetweenCurves() {
 bool CalculationParameterController::ShouldDisplayChevronInAreaCell() {
   /* Area between curves row does not always have a chevron. */
   return App::app()->functionStore()->numberOfAreaCompatibleFunctions() > 2;
+}
+
+Shared::ExpiringPointer<Shared::ContinuousFunction>
+CalculationParameterController::function() const {
+  return App::app()->functionStore()->modelForRecord(m_record);
 }
 
 }  // namespace Graph

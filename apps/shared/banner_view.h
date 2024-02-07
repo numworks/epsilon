@@ -47,7 +47,8 @@ class BannerView : public Escher::View {
   }
 
  private:
-  constexpr static KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;
+  constexpr static KDCoordinate k_lineSpacing =
+      Escher::Metric::BannerTextMargin;
   // Width of '  '
   constexpr static KDCoordinate k_minimalSpaceBetweenSubviews =
       2 * KDFont::GlyphWidth(k_font);

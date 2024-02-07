@@ -6,16 +6,17 @@
 namespace Shared {
 
 KDCoordinate BannerView::HeightGivenNumberOfLines(int linesCount) {
-  return LineSpacing + (KDFont::GlyphHeight(k_font) + LineSpacing) * linesCount;
+  return k_lineSpacing +
+         (KDFont::GlyphHeight(k_font) + k_lineSpacing) * linesCount;
 }
 
 void BannerView::drawRect(KDContext *ctx, KDRect rect) const {
   assert(!bounds().isEmpty());
   const KDCoordinate frameHeight = bounds().height();
-  const KDCoordinate lineHeight = KDFont::GlyphHeight(k_font) + LineSpacing;
+  const KDCoordinate lineHeight = KDFont::GlyphHeight(k_font) + k_lineSpacing;
   const KDCoordinate lineWidth = bounds().width();
   for (KDCoordinate y = 0; y < frameHeight; y += lineHeight) {
-    ctx->fillRect(KDRect(0, y, lineWidth, LineSpacing),
+    ctx->fillRect(KDRect(0, y, lineWidth, k_lineSpacing),
                   k_bannerFieldFormat.style.backgroundColor);
   }
 }
@@ -36,7 +37,7 @@ void BannerView::layoutSubviews(bool force) {
   }
   const KDCoordinate width = bounds().width();
   int firstSubview = 0;
-  KDCoordinate y = LineSpacing;
+  KDCoordinate y = k_lineSpacing;
   while (firstSubview < numberOfSubviews()) {
     KDCoordinate remainingWidth;
     int numberOfSubviewsCurrentLine =
@@ -61,7 +62,7 @@ void BannerView::layoutSubviews(bool force) {
                     true);
       x += width;
     }
-    y += maxHeight + LineSpacing;
+    y += maxHeight + k_lineSpacing;
     firstSubview += numberOfSubviewsCurrentLine;
   }
 }

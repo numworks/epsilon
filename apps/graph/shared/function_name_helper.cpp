@@ -98,10 +98,10 @@ bool ParametricComponentsNameError(Expression expression,
   }
   Expression function = expression.childAtIndex(0);
   Expression functionSymbol = function.childAtIndex(0);
-  Expression matrix = expression.childAtIndex(1);
+  Expression point = expression.childAtIndex(1);
   if (!functionSymbol.isIdenticalTo(
           Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
-      matrix.type() != ExpressionNode::Type::Point) {
+      point.type() != ExpressionNode::Type::Point) {
     // The user is not defining a parametric function
     return false;
   }

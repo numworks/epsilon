@@ -82,7 +82,13 @@ class ContinuousFunction : public Function {
   bool canDisplayDerivative() const {
     return properties().canBeActiveInTable() && !properties().isInversePolar();
   }
-  bool canCalculateOnCurve() const {
+  bool canComputeArea() const {
+    return canDisplayDerivative() && properties().isCartesian();
+  }
+  bool canPlotDerivatives() const {
+    return canDisplayDerivative() && properties().isCartesian();
+  }
+  bool canComputeTangent() const {
     return canDisplayDerivative() && properties().isCartesian();
   }
   // If the ContinuousFunction should be considered active in table

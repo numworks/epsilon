@@ -236,6 +236,8 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
                   ->modelForRecord(m_secondSelectedRecord)
                   .
                   operator->();
+          assert(f->canComputeArea());
+          assert(otherModel->canComputeArea());
           patternLower = Curve2D(evaluateXY, otherModel);
           pattern = Pattern(m_areaIndex,
                             KDColor::HSVBlend(f->color(), otherModel->color()));
@@ -272,7 +274,7 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
 
   // - Draw tangent
   if (m_tangentDisplay && m_selectedRecord == record) {
-    assert(f->canCalculateOnCurve());
+    assert(f->canComputeTangent());
     /* TODO : We could handle tangent on second curve here by finding out
      * which of the two curves is selected. */
     Evaluation<double> derivative =

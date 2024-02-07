@@ -18,7 +18,7 @@ class ContinuousFunctionStore : public FunctionStore {
   static bool IsFunctionAreaCompatible(ExpressionModelHandle *model,
                                        void *context) {
     return IsFunctionActive(model, context) &&
-           static_cast<ContinuousFunction *>(model)->canCalculateOnCurve();
+           static_cast<ContinuousFunction *>(model)->canComputeArea();
   }
 
   ContinuousFunctionStore() : FunctionStore() {}

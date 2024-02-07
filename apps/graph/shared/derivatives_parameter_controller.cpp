@@ -46,7 +46,7 @@ void DerivativesParameterController::viewWillAppear() {
 void DerivativesParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   if (!m_record.isNull()) {
-    bool visible = function()->canCalculateOnCurve();
+    bool visible = function()->canPlotDerivatives();
     cell(k_indexOfFirstDerivativePlot)->setVisible(visible);
     cell(k_indexOfSecondDerivativePlot)->setVisible(visible);
   }

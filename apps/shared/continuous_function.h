@@ -174,6 +174,7 @@ class ContinuousFunction : public Function {
   Poincare::Evaluation<double> approximateDerivative(
       double t, Poincare::Context *context, bool firstOrder = true,
       bool useDomain = true) const;
+  double approximateSlope(double t, Poincare::Context *context) const;
   Poincare::Layout derivativeTitleLayout(bool firstOrder);
 
   /* tMin, tMax and tAuto */
@@ -252,6 +253,11 @@ class ContinuousFunction : public Function {
   Poincare::Expression expressionDerivateReduced(Poincare::Context *context,
                                                  bool firstOrder) const {
     return m_model.expressionDerivateReduced(this, context, firstOrder);
+  }
+  // Return reduced curve expression slope (dy/dx)
+  Poincare::Expression expressionSlopeReduced(
+      Poincare::Context *context) const {
+    return m_model.expressionSlopeReduced(this, context);
   }
 
   /* Evaluation */
@@ -355,6 +361,9 @@ class ContinuousFunction : public Function {
     Poincare::Expression expressionDerivateReduced(
         const Ion::Storage::Record *record, Poincare::Context *context,
         bool firstOrder) const;
+    // Return the slope (dy/dx)
+    Poincare::Expression expressionSlopeReduced(
+        const Ion::Storage::Record *record, Poincare::Context *context) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
         Ion::Storage::Record *record, Poincare::Context *context) const;
@@ -390,6 +399,7 @@ class ContinuousFunction : public Function {
     mutable Poincare::Expression m_expressionApproximated;
     mutable Poincare::Expression m_expressionFirstDerivate;
     mutable Poincare::Expression m_expressionSecondDerivate;
+    mutable Poincare::Expression m_expressionSlope;
   };
 
   // Return model pointer

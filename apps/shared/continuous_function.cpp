@@ -5,6 +5,7 @@
 #include <poincare/based_integer.h>
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
+#include <poincare/division.h>
 #include <poincare/float.h>
 #include <poincare/function.h>
 #include <poincare/helpers.h>
@@ -298,6 +299,20 @@ Evaluation<double> ContinuousFunction::approximateDerivative(
     return PointEvaluation<double>::Builder(NAN, NAN);
   }
   return result;
+}
+
+double ContinuousFunction::approximateSlope(double t,
+                                            Poincare::Context *context) const {
+  // Slope is simplified once and for all
+  Expression slope = expressionSlopeReduced(context);
+  ApproximationContext approximationContext(context, complexFormat(context));
+  Evaluation<double> result = slope.approximateWithValueForSymbol(
+      k_unknownName, t, approximationContext);
+  assert(result.type() == EvaluationNode<double>::Type::Complex);
+  if (t < tMin() || t > tMax()) {
+    return NAN;
+  }
+  return result.toScalar();
 }
 
 Poincare::Layout ContinuousFunction::derivativeTitleLayout(bool firstOrder) {
@@ -839,6 +854,35 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(
   return *derivative;
 }
 
+Expression ContinuousFunction::Model::expressionSlopeReduced(
+    const Ion::Storage::Record *record, Context *context) const {
+  /* Slope is only needed for parametric and polar functions.
+   * For cartesian function, it is the same as the derivative.
+   * For curves with multiple subcurves and for inverse polar,
+   * it is not available. */
+  assert(properties().isParametric() || properties().isPolar());
+  if (m_expressionSlope.isUninitialized()) {
+    Expression expression = parametricForm(record, context);
+    assert(expression.type() == ExpressionNode::Type::Point);
+    assert(expression.numberOfChildren() == 2);
+    m_expressionSlope = Division::Builder(
+        Derivative::Builder(expression.childAtIndex(1), Symbol::SystemSymbol(),
+                            Symbol::SystemSymbol()),
+        Derivative::Builder(expression.childAtIndex(0), Symbol::SystemSymbol(),
+                            Symbol::SystemSymbol()));
+    /* On complex functions, this step can take a significant time.
+     * A workaround could be to identify big functions to skip simplification
+     * at the cost of possible inaccurate evaluations (such as
+     * diff(abs(x),x,0) not being undefined). */
+    PoincareHelpers::CloneAndSimplify(
+        &m_expressionSlope, context,
+        {.complexFormat = complexFormat(record, context),
+         .updateComplexFormatWithExpression = false,
+         .target = ReductionTarget::SystemForApproximation});
+  }
+  return m_expressionSlope;
+}
+
 Ion::Storage::Record::ErrorStatus
 ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
                                                 Context *context) const {
@@ -942,6 +986,10 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
   if (treePoolCursor == nullptr ||
       m_expressionSecondDerivate.isDownstreamOf(treePoolCursor)) {
     m_expressionSecondDerivate = Expression();
+  }
+  if (treePoolCursor == nullptr ||
+      m_expressionSlope.isDownstreamOf(treePoolCursor)) {
+    m_expressionSlope = Expression();
   }
   if (treePoolCursor == nullptr ||
       m_expressionApproximated.isDownstreamOf(treePoolCursor)) {

@@ -65,14 +65,13 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   Expression e = f->expressionApproximated(context());
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   assert(f->numberOfSubCurves() <= 2);
-  bool hasTwoCurves = (f->numberOfSubCurves() == 2);
   if (area == ContinuousFunctionProperties::AreaType::None) {
     if (e.type() == ExpressionNode::Type::Dependency) {
       e = e.childAtIndex(0);
     }
     bool isUndefined = e.isUndefined();
     if (!isUndefined && e.type() == ExpressionNode::Type::Point) {
-      assert(f->properties().isParametric() || hasTwoCurves ||
+      assert(f->properties().isParametric() || f->numberOfSubCurves() == 2 ||
              f->properties().isScatterPlot());
       assert(e.numberOfChildren() == 2);
       isUndefined =

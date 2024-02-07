@@ -237,7 +237,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
   updateNumberOfParameterCells();
-  m_calculationCell.setVisible(shouldDisplayCalculation());
+  m_calculationCell.setVisible(function()->canCalculateOnCurve());
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);
@@ -252,18 +252,6 @@ void CurveParameterController::viewWillAppear() {
   ExplicitFloatParameterController::viewWillAppear();
 }
 
-bool CurveParameterController::shouldDisplayCalculation() const {
-  return function()->canCalculateOnCurve();
-}
-
-bool CurveParameterController::shouldDisplayFirstDerivative() const {
-  return function()->displayFirstDerivative();
-}
-
-bool CurveParameterController::shouldDisplaySecondDerivative() const {
-  return function()->displaySecondDerivative();
-}
-
 void CurveParameterController::didBecomeFirstResponder() {
   if (!function()->isActive()) {
     static_cast<StackViewController *>(parentResponder())
@@ -276,18 +264,18 @@ void CurveParameterController::didBecomeFirstResponder() {
 }
 
 void CurveParameterController::updateNumberOfParameterCells() {
-  m_parameterCells[k_indexOfImageCell2].setVisible(
-      function()->properties().isParametric());
+  bool isParametric = function()->properties().isParametric();
+  bool displayFirstDerivative = function()->displayFirstDerivative();
+  bool displaySecondDerivative = function()->displaySecondDerivative();
+  m_parameterCells[k_indexOfImageCell2].setVisible(isParametric);
   m_parameterCells[k_indexOfFirstDerivativeCell1].setVisible(
-      shouldDisplayFirstDerivative());
+      displayFirstDerivative);
   m_parameterCells[k_indexOfFirstDerivativeCell2].setVisible(
-      function()->properties().isParametric() &&
-      shouldDisplayFirstDerivative());
+      isParametric && displayFirstDerivative);
   m_parameterCells[k_indexOfSecondDerivativeCell1].setVisible(
-      shouldDisplaySecondDerivative());
+      displaySecondDerivative);
   m_parameterCells[k_indexOfSecondDerivativeCell2].setVisible(
-      function()->properties().isParametric() &&
-      shouldDisplaySecondDerivative());
+      isParametric && displaySecondDerivative);
 }
 
 }  // namespace Graph

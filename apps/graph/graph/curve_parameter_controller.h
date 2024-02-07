@@ -49,9 +49,6 @@ class CurveParameterController
   Escher::TextField* textFieldOfCellAtRow(int row) override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool confirmParameterAtIndex(int parameterIndex, double f);
-  bool shouldDisplayCalculation() const;
-  bool shouldDisplayFirstDerivative() const;
-  bool shouldDisplaySecondDerivative() const;
   void fillParameterCellAtRow(int row) override;
   void updateNumberOfParameterCells();
   bool parameterAtRowIsFirstComponent(int row) const;

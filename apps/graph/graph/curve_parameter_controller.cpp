@@ -247,22 +247,6 @@ void CurveParameterController::viewWillAppear() {
   /* We need to update the visibility of the derivativeCell here (and not in
    * setRecord) in since show derivative can be toggled from a sub-menu of
    * this one. */
-  updateNumberOfParameterCells();
-  ExplicitFloatParameterController::viewWillAppear();
-}
-
-void CurveParameterController::didBecomeFirstResponder() {
-  if (!function()->isActive()) {
-    static_cast<StackViewController *>(parentResponder())
-        ->popUntilDepth(
-            Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
-            true);
-    return;
-  }
-  Shared::ExplicitFloatParameterController::didBecomeFirstResponder();
-}
-
-void CurveParameterController::updateNumberOfParameterCells() {
   bool isParametric = function()->properties().isParametric();
   bool displayFirstDerivative = function()->displayFirstDerivative();
   bool displaySecondDerivative = function()->displaySecondDerivative();
@@ -275,6 +259,18 @@ void CurveParameterController::updateNumberOfParameterCells() {
       displaySecondDerivative);
   m_parameterCells[k_indexOfSecondDerivativeCell2].setVisible(
       isParametric && displaySecondDerivative);
+  ExplicitFloatParameterController::viewWillAppear();
+}
+
+void CurveParameterController::didBecomeFirstResponder() {
+  if (!function()->isActive()) {
+    static_cast<StackViewController *>(parentResponder())
+        ->popUntilDepth(
+            Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+            true);
+    return;
+  }
+  Shared::ExplicitFloatParameterController::didBecomeFirstResponder();
 }
 
 }  // namespace Graph

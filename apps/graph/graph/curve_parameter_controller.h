@@ -50,7 +50,6 @@ class CurveParameterController
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   void fillParameterCellAtRow(int row) override;
-  void updateNumberOfParameterCells();
   bool parameterAtRowIsFirstComponent(int row) const;
   int derivationOrderOfParameterAtRow(int row) const;
 

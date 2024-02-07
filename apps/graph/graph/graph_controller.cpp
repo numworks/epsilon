@@ -1,11 +1,8 @@
 #include "graph_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/cosine.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
-#include <poincare/multiplication.h>
-#include <poincare/sine.h>
 #include <poincare/symbol.h>
 
 #include <algorithm>
@@ -125,35 +122,7 @@ Range2D<float> GraphController::optimalRange(
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      Expression e = f->expressionApproximated(context);
-      if (f->properties().isPolar() || f->properties().isInversePolar()) {
-        Expression x, y;
-        Expression unknown =
-            Symbol::Builder(ContinuousFunction::k_unknownName,
-                            strlen(ContinuousFunction::k_unknownName));
-        if (f->properties().isPolar()) {
-          /* Turn r(theta) into f(theta) = (x(theta), y(theta))
-           *   x(theta) = cos(theta)*r(theta) */
-          x = Multiplication::Builder(Cosine::Builder(unknown.clone()),
-                                      e.clone());
-          //   y(theta) = sin(theta)*r(theta)
-          y = Multiplication::Builder(Sine::Builder(unknown.clone()),
-                                      e.clone());
-        } else {
-          /* Turn theta(r) into f(r) = (x(r), y(r))
-           *   x(r) = r*cos(theta(r)) */
-          x = Multiplication::Builder(unknown.clone(),
-                                      Cosine::Builder(e.clone()));
-          //  y(theta) = r*sin(theta(r))
-          y = Multiplication::Builder(unknown.clone(),
-                                      Sine::Builder(e.clone()));
-        }
-        e = Point::Builder(x, y);
-      }
-      assert(e.type() == ExpressionNode::Type::Point ||
-             (e.type() == ExpressionNode::Type::Dependency &&
-              e.childAtIndex(0).type() == ExpressionNode::Type::Point));
-
+      Expression e = f->parametricForm(context, true);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];
       Zoom::Function2DWithContext<float> floatEvaluators[2] = {

@@ -5,6 +5,7 @@
 #include <ion/unicode/utf8_helper.h>
 #include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/expression/aliases.h>
+#include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/unit.h>
 
@@ -239,17 +240,15 @@ Token Tokenizer::popToken() {
     return Token(typeForCodePoint[c - '('], m_decoder.layoutAt(start));
   }
 
-#if 0
-  ComparisonNode::OperatorType comparisonOperatorType;
+  BlockType comparisonOperatorType;
   size_t comparisonOperatorLength;
-  if (ComparisonNode::IsComparisonOperatorString(start, m_decoder.stringEnd(),
-                                                 &comparisonOperatorType,
-                                                 &comparisonOperatorLength)) {
+  if (Binary::IsComparisonOperatorString(
+          CPL::FromRack(m_decoder.mainLayout(), start), m_decoder.end() - start,
+          &comparisonOperatorType, &comparisonOperatorLength)) {
     /* Change precedence of equal when assigning a function.
      * This ensures that "f(x) = x and 1" is parsed as "f(x) = (x and 1)" and
      * not "(f(x) = x) and 1" */
-    Token result(comparisonOperatorType ==
-                             ComparisonNode::OperatorType::Equal &&
+    Token result(comparisonOperatorType == BlockType::Equal &&
                          m_parsingContext->parsingMethod() ==
                              ParsingContext::ParsingMethod::Assignment
                      ? Token::Type::AssignmentEqual
@@ -260,7 +259,6 @@ Token Tokenizer::popToken() {
     m_decoder.setPosition(start + comparisonOperatorLength);
     return result;
   }
-#endif
 
   if (c == 0) {
     return Token(Token::Type::EndOfStream);

@@ -4,6 +4,7 @@
 // #include <poincare/empty_context.h>
 #include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/list.h>
@@ -544,24 +545,25 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
     // Comparison operator must have a left operand
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  // EditionReference rightHandSide;
-  // ComparisonNode::OperatorType operatorType;
-  // size_t operatorLength;
-  // bool check = ComparisonNode::IsComparisonOperatorString(
-  // m_currentToken.text(), m_currentToken.text() + m_currentToken.length(),
-  // &operatorType, &operatorLength);
-  // assert(check);
-  // assert(m_currentToken.length() == operatorLength);
-  // (void)check;
-  // parseBinaryOperator(leftHandSide, rightHandSide,
-  // Token::Type::ComparisonOperator);
-  // if (leftHandSide.type() == ExpressionNode::Type::Comparison) {
-  // Comparison leftComparison = static_cast<Comparison &>(leftHandSide);
-  // leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
-  // } else {
-  // leftHandSide =
-  // Comparison::Builder(leftHandSide, operatorType, rightHandSide);
-  // }
+  EditionReference rightHandSide;
+  BlockType operatorType;
+  size_t operatorLength;
+  bool check = Binary::IsComparisonOperatorString(
+      reinterpret_cast<const CPL *>(m_currentToken.firstLayout()),
+      m_currentToken.length(), &operatorType, &operatorLength);
+  assert(check);
+  assert(m_currentToken.length() == operatorLength);
+  (void)check;
+  parseBinaryOperator(leftHandSide, rightHandSide,
+                      Token::Type::ComparisonOperator);
+  if (leftHandSide->isComparison()) {
+    // TODO
+    // Comparison leftComparison = static_cast<Comparison &>(leftHandSide);
+    // leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
+  } else {
+    Tree *node = SharedEditionPool->push(operatorType);
+    MoveNodeAtNode(leftHandSide, node);
+  }
 }
 
 void RackParser::parseAssignmentEqual(EditionReference &leftHandSide,

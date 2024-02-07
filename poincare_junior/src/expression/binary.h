@@ -10,19 +10,22 @@ class Binary {
  public:
   static bool IsBinaryLogicalOperator(const CPL* name, int nameLength,
                                       BlockType* type);
+  static const char* OperatorName(TypeBlock type);
+
+  static bool IsComparisonOperatorString(const CPL* s, int nameLength,
+                                         BlockType* returnType,
+                                         size_t* returnLength);
 
   static bool SimplifyBooleanOperator(Tree* tree);
   EDITION_REF_WRAP(SimplifyBooleanOperator);
 
-  static const char* OperatorName(TypeBlock type);
-
  private:
-  constexpr static int k_numberOfOperators = 5;
   constexpr static const char* k_logicalNotName = "not";
   struct TypeAndName {
     BlockType type;
     const char* name;
   };
+  constexpr static int k_numberOfOperators = 5;
   constexpr static TypeAndName k_operatorNames[] = {
       {BlockType::LogicalAnd, "and"},
       {BlockType::LogicalOr, "or"},
@@ -31,6 +34,23 @@ class Binary {
       {BlockType::LogicalNor, "nor"}};
   static_assert(std::size(k_operatorNames) == k_numberOfOperators,
                 "Wrong number of binary logical operators");
+
+  struct OperatorString {
+    BlockType type;
+    const char* mainString;
+    const char* alternativeString;
+  };
+
+  constexpr static int k_numberOfComparisons = 6;
+  constexpr static OperatorString k_operatorStrings[] = {
+      {BlockType::Equal, "=", nullptr},
+      {BlockType::NotEqual, "≠", "!="},  // NFKD norm on "≠"
+      {BlockType::Superior, ">", nullptr},
+      {BlockType::Inferior, "<", nullptr},
+      {BlockType::SuperiorEqual, "≥", ">="},
+      {BlockType::InferiorEqual, "≤", "<="}};
+  static_assert(std::size(k_operatorStrings) == k_numberOfComparisons,
+                "Missing string for comparison operator.");
 };
 
 }  // namespace PoincareJ

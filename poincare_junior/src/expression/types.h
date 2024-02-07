@@ -230,6 +230,15 @@ NODE(LogicalNand, 2)
 RANGE(LogicalOperator, LogicalNot, LogicalNand)
 RANGE(LogicalOperatorOrBoolean, False, LogicalNand)
 
+NODE(Equal, 2)
+NODE(NotEqual, 2)
+NODE(Superior, 2)
+NODE(Inferior, 2)
+NODE(SuperiorEqual, 2)
+NODE(InferiorEqual, 2)
+
+RANGE(Comparison, Equal, InferiorEqual)
+
 // 8 - Order dependant expressions
 /* - Unit U
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */

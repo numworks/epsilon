@@ -4,6 +4,7 @@
 #include <ion/unicode/utf8_decoder.h>
 
 #include "code_point_layout.h"
+#include "k_tree.h"
 #include "rack_layout.h"
 
 namespace PoincareJ {
@@ -62,6 +63,10 @@ class CPL {
  public:
   static const CPL* FromRack(const Tree* rack, int start = 0) {
     // -> or better rack into begin() end() with CPLs
+    if (rack->numberOfChildren() <= start) {
+      // Anything that is not a code point is like a 0
+      return reinterpret_cast<const CPL*>(static_cast<const Tree*>(KRackL()));
+    }
     return reinterpret_cast<const CPL*>(rack->child(start));
   }
 

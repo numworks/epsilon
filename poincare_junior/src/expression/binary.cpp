@@ -34,6 +34,39 @@ const char *Binary::OperatorName(TypeBlock type) {
   assert(false);
 }
 
+bool Binary::IsComparisonOperatorString(const CPL *s, int length,
+                                        BlockType *returnType,
+                                        size_t *returnLength) {
+  int maxOperatorLength = length;
+  int lengthOfFoundOperator = 0;
+  BlockType typeOfFoundOperator;
+  for (int i = 0; i < k_numberOfComparisons; i++) {
+    const char *currentOperatorString = k_operatorStrings[i].mainString;
+    // Loop twice, once on the main string, the other on the alternative string
+    for (int k = 0; k < 2; k++) {
+      int operatorLength = UTF8Helper::StringGlyphLength(currentOperatorString);
+      if (  // operatorLength <= maxOperatorLength &&
+          operatorLength > lengthOfFoundOperator &&
+          OMG::CompareCPLWithNullTerminatedString(s, operatorLength,
+
+                                                  currentOperatorString) == 0) {
+        lengthOfFoundOperator = operatorLength;
+        typeOfFoundOperator = k_operatorStrings[i].type;
+      }
+      currentOperatorString = k_operatorStrings[i].alternativeString;
+      if (!currentOperatorString) {
+        break;
+      }
+    }
+  }
+  if (lengthOfFoundOperator == 0) {
+    return false;
+  }
+  *returnLength = lengthOfFoundOperator;
+  *returnType = typeOfFoundOperator;
+  return true;
+}
+
 bool Binary::SimplifyBooleanOperator(Tree *tree) {
   return
       // not true -> false

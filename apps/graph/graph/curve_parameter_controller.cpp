@@ -236,8 +236,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
-  m_calculationCell.setVisible(function()->canDisplayDerivative() &&
-                               function()->properties().isCartesian());
+  m_calculationCell.setVisible(function()->canDisplayDerivative());
   m_parameterCells[k_indexOfImageCell2].setVisible(
       function()->properties().isParametric());
   selectRow(0);

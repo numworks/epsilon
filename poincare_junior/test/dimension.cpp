@@ -22,6 +22,7 @@ bool len(const char* input, int n) {
 QUIZ_CASE(pcj_dimension) {
   auto Scalar = Dimension::Scalar();
   auto Matrix = Dimension::Matrix;
+  auto Boolean = Dimension::Boolean();
 
   QUIZ_ASSERT(!dim("[[1][[[2]]]]"));
   QUIZ_ASSERT(!dim("[[1,2][3,4]]+[[2]]"));
@@ -38,6 +39,10 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("cross([[1,2,3]],[[1,2,3]])", Matrix(1, 3)));
   QUIZ_ASSERT(dim("transpose([[1,2]])*[[1,2,3]]", Matrix(2, 3)));
   QUIZ_ASSERT(dim("sum([[k,2]], k, 1, n)", Matrix(1, 2)));
+
+  QUIZ_ASSERT(dim("True and False", Boolean));
+  QUIZ_ASSERT(!dim("0 and False"));
+  QUIZ_ASSERT(dim("0 < 3 and False", Boolean));
 
   QUIZ_ASSERT(len("1", -1));
   QUIZ_ASSERT(len("{1,2}", 2));

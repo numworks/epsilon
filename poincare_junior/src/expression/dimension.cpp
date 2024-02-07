@@ -358,7 +358,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::ArcTangent:
       // Note: Angle units could be returned here.
     default:
-      if (t->isLogicalOperatorOrBoolean()) {
+      if (t->isLogicalOperatorOrBoolean() || t->isComparison()) {
         return Boolean();
       }
       return Scalar();

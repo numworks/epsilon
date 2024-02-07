@@ -991,9 +991,7 @@ Expression ContinuousFunction::Model::parametricForm(
     assert(properties().isParametric());
     e = e.clone();
   }
-  assert(e.type() == ExpressionNode::Type::Point ||
-         (e.type() == ExpressionNode::Type::Dependency &&
-          e.childAtIndex(0).type() == ExpressionNode::Type::Point));
+  assert(e.type() == ExpressionNode::Type::Point);
   return e;
 }
 

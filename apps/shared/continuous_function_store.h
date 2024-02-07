@@ -15,8 +15,8 @@ class ContinuousFunctionStore : public FunctionStore {
     return numberOfModels() > maxNumberOfMemoizedModels();
   }
 
-  static bool IsFunctionActiveAndDerivable(ExpressionModelHandle *model,
-                                           void *context) {
+  static bool IsFunctionAreaCompatible(ExpressionModelHandle *model,
+                                       void *context) {
     return IsFunctionActive(model, context) &&
            static_cast<ContinuousFunction *>(model)->canCalculateOnCurve();
   }
@@ -41,8 +41,8 @@ class ContinuousFunctionStore : public FunctionStore {
   int numberOfIntersectableFunctions() const {
     return numberOfModelsSatisfyingTest(&IsFunctionIntersectable, nullptr);
   }
-  int numberOfActiveDerivableFunctions() const {
-    return numberOfModelsSatisfyingTest(&IsFunctionActiveAndDerivable, nullptr);
+  int numberOfAreaCompatibleFunctions() const {
+    return numberOfModelsSatisfyingTest(&IsFunctionAreaCompatible, nullptr);
   }
   Ion::Storage::Record activeRecordInTableAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &IsFunctionActiveInTable, nullptr);

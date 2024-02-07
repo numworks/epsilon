@@ -236,7 +236,6 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
-  updateNumberOfParameterCells();
   m_calculationCell.setVisible(function()->canCalculateOnCurve());
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
@@ -245,9 +244,9 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
 
 void CurveParameterController::viewWillAppear() {
   m_preimageGraphController.setImage(m_cursor->y());
-  /* We need to update the visibility of the derivativeCell both when the
-   * function changes (in setRecord) and here since show derivative can be
-   * toggled from a sub-menu of this one. */
+  /* We need to update the visibility of the derivativeCell here (and not in
+   * setRecord) in since show derivative can be toggled from a sub-menu of
+   * this one. */
   updateNumberOfParameterCells();
   ExplicitFloatParameterController::viewWillAppear();
 }

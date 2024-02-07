@@ -237,6 +237,8 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
   m_calculationCell.setVisible(function()->canCalculateOnCurve());
+  m_parameterCells[k_indexOfImageCell2].setVisible(
+      function()->properties().isParametric());
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);
@@ -250,7 +252,6 @@ void CurveParameterController::viewWillAppear() {
   bool isParametric = function()->properties().isParametric();
   bool displayFirstDerivative = function()->displayFirstDerivative();
   bool displaySecondDerivative = function()->displaySecondDerivative();
-  m_parameterCells[k_indexOfImageCell2].setVisible(isParametric);
   m_parameterCells[k_indexOfFirstDerivativeCell1].setVisible(
       displayFirstDerivative);
   m_parameterCells[k_indexOfFirstDerivativeCell2].setVisible(

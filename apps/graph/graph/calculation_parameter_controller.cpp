@@ -33,6 +33,7 @@ CalculationParameterController::CalculationParameterController(
   m_minimumCell.label()->setMessage(I18n::Message::Minimum);
   m_maximumCell.label()->setMessage(I18n::Message::Maximum);
   m_integralCell.label()->setMessage(I18n::Message::Integral);
+  m_slopeCell.label()->setMessage(I18n::Message::CartesianSlopeFormula);
   m_tangentCell.label()->setMessage(I18n::Message::Tangent);
   m_rootCell.label()->setMessage(I18n::Message::Zeros);
   m_preimageCell.label()->setMessage(I18n::Message::Preimage);
@@ -40,8 +41,9 @@ CalculationParameterController::CalculationParameterController(
 
 HighlightCell *CalculationParameterController::cell(int row) {
   HighlightCell *cells[k_numberOfRows] = {
-      &m_preimageCell, &m_intersectionCell, &m_maximumCell,  &m_minimumCell,
-      &m_rootCell,     &m_tangentCell,      &m_integralCell, &m_areaCell};
+      &m_preimageCell, &m_intersectionCell, &m_maximumCell,
+      &m_minimumCell,  &m_rootCell,         &m_slopeCell,
+      &m_tangentCell,  &m_integralCell,     &m_areaCell};
   return cells[row];
 }
 
@@ -83,23 +85,33 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (cell == &m_preimageCell) {
+    assert(function()->properties().isCartesian());
     push(&m_preimageParameterController, false);
+  } else if (cell == &m_slopeCell) {
+    assert(function()->properties().isPolar() ||
+           function()->properties().isParametric());
+    return true;
   } else if (cell == &m_tangentCell) {
+    assert(function()->properties().isCartesian());
     push(&m_tangentGraphController, true);
   } else if (cell == &m_integralCell) {
+    assert(function()->properties().isCartesian());
     push(&m_integralGraphController, true);
   } else if (cell == &m_minimumCell) {
+    assert(function()->properties().isCartesian());
     push(&m_minimumGraphController, true);
   } else if (cell == &m_maximumCell) {
+    assert(function()->properties().isCartesian());
     push(&m_maximumGraphController, true);
   } else if (cell == &m_intersectionCell) {
-    assert(ShouldDisplayIntersectionCell());
+    assert(shouldDisplayIntersectionCell());
     push(&m_intersectionGraphController, true);
   } else if (cell == &m_rootCell) {
+    assert(function()->properties().isCartesian());
     push(&m_rootGraphController, true);
   } else {
     assert(cell == &m_areaCell);
-    assert(ShouldDisplayAreaCell());
+    assert(shouldDisplayAreaCell());
     if (!ShouldDisplayChevronInAreaCell()) {
       Ion::Storage::Record secondRecord =
           AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
@@ -114,7 +126,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationParameterController::fillAreaCell() {
-  assert(ShouldDisplayAreaCell());
+  assert(shouldDisplayAreaCell());
   // If there is only two derivable functions, hide the chevron
   m_areaCell.accessory()->displayChevron(ShouldDisplayChevronInAreaCell());
   // Get the name of the selected function
@@ -160,26 +172,39 @@ void CalculationParameterController::fillAreaCell() {
 
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
+  assert(function()->canDisplayDerivative());
   selectRow(0);
-  m_intersectionCell.setVisible(ShouldDisplayIntersectionCell());
-  m_areaCell.setVisible(ShouldDisplayAreaCell());
+  bool isCartesian = function()->properties().isCartesian();
+  assert(isCartesian || function()->properties().isPolar() ||
+         function()->properties().isParametric());
+  m_preimageCell.setVisible(isCartesian);
+  m_intersectionCell.setVisible(shouldDisplayIntersectionCell());
+  m_maximumCell.setVisible(isCartesian);
+  m_minimumCell.setVisible(isCartesian);
+  m_rootCell.setVisible(isCartesian);
+  m_slopeCell.setVisible(!isCartesian);
+  m_tangentCell.setVisible(isCartesian);
+  m_integralCell.setVisible(isCartesian);
+  m_areaCell.setVisible(shouldDisplayAreaCell());
   m_selectableListView.resetSizeAndOffsetMemoization();
 }
 
-bool CalculationParameterController::ShouldDisplayIntersectionCell() {
+bool CalculationParameterController::shouldDisplayIntersectionCell() const {
   /* Intersection is handled between all active functions having one subcurve,
    * except Polar and Parametric. */
   ContinuousFunctionStore *store = App::app()->functionStore();
   /* Intersection row is displayed if there is at least two intersectable
    * functions. */
-  return store->numberOfIntersectableFunctions() > 1;
+  return function()->properties().isCartesian() &&
+         store->numberOfIntersectableFunctions() > 1;
 }
 
-bool CalculationParameterController::ShouldDisplayAreaCell() {
+bool CalculationParameterController::shouldDisplayAreaCell() const {
   ContinuousFunctionStore *store = App::app()->functionStore();
   /* Area between curves is displayed if there is at least two derivable
    * functions. */
-  return store->numberOfAreaCompatibleFunctions() > 1;
+  return function()->properties().isCartesian() &&
+         store->numberOfAreaCompatibleFunctions() > 1;
 }
 
 bool CalculationParameterController::ShouldDisplayChevronInAreaCell() {

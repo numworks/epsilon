@@ -555,9 +555,13 @@ Expression ContinuousFunction::Model::expressionReduced(
         if (solutions <= 1) {
           m_expression = root1;
         } else {
-          // SubCurves are stored in a point
+          // SubCurves are stored in a list
           // Roots are ordered so that the first one is superior to the second
-          Point newExpr = Point::Builder(root2, root1);
+          List newExpr = List::Builder();
+          newExpr.addChildAtIndexInPlace(root2, newExpr.numberOfChildren(),
+                                         newExpr.numberOfChildren());
+          newExpr.addChildAtIndexInPlace(root1, newExpr.numberOfChildren(),
+                                         newExpr.numberOfChildren());
           /* Shallow reduce in case the equation could approximate to a list.
            * Example: x^2={}(a) */
           m_expression = newExpr.shallowReduce(reductionContext);
@@ -936,7 +940,7 @@ int ContinuousFunction::Model::numberOfSubCurves(
   if (properties().isCartesian()) {
     Expression e = expressionReduced(
         record, AppsContainerHelper::sharedAppsContainerGlobalContext());
-    if (e.type() == ExpressionNode::Type::Point) {
+    if (e.type() == ExpressionNode::Type::List) {
       assert(properties().isOfDegreeTwo());
       return e.numberOfChildren();
     }

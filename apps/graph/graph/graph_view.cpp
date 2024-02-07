@@ -71,8 +71,13 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     }
     bool isUndefined = e.isUndefined();
     if (!isUndefined && e.type() == ExpressionNode::Type::Point) {
-      assert(f->properties().isParametric() || f->numberOfSubCurves() == 2 ||
-             f->properties().isScatterPlot());
+      assert(f->properties().isParametric() || f->properties().isScatterPlot());
+      assert(e.numberOfChildren() == 2);
+      isUndefined =
+          e.childAtIndex(0).isUndefined() || e.childAtIndex(1).isUndefined();
+    }
+    if (!isUndefined && f->numberOfSubCurves() == 2) {
+      assert(e.type() == ExpressionNode::Type::List);
       assert(e.numberOfChildren() == 2);
       isUndefined =
           e.childAtIndex(0).isUndefined() && e.childAtIndex(1).isUndefined();

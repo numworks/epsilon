@@ -46,8 +46,8 @@ class CalculationParameterController
   static constexpr int k_numberOfRows = 8;
   template <class T>
   void push(T* controller, bool pop);
-  static bool ShouldDisplayIntersection();
-  static bool ShouldDisplayAreaBetweenCurves();
+  static bool ShouldDisplayIntersectionCell();
+  static bool ShouldDisplayAreaCell();
   static bool ShouldDisplayChevronInAreaCell();
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
 

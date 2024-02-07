@@ -3,6 +3,7 @@
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
 #include <poincare/based_integer.h>
+#include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/float.h>
 #include <poincare/function.h>
@@ -10,10 +11,12 @@
 #include <poincare/integral.h>
 #include <poincare/list_sort.h>
 #include <poincare/matrix.h>
+#include <poincare/multiplication.h>
 #include <poincare/point_evaluation.h>
 #include <poincare/polynomial.h>
 #include <poincare/print.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/sine.h>
 #include <poincare/string_layout.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
@@ -958,6 +961,40 @@ int ContinuousFunction::Model::numberOfSubCurves(
     }
   }
   return 1;
+}
+
+Expression ContinuousFunction::Model::parametricForm(
+    const Ion::Storage::Record *record, Poincare::Context *context,
+    bool approximated) const {
+  assert(properties().isPolar() || properties().isInversePolar() ||
+         properties().isParametric());
+  Expression e = approximated ? expressionApproximated(record, context)
+                              : expressionReduced(record, context);
+  if (properties().isPolar() || properties().isInversePolar()) {
+    Expression x, y;
+    Expression unknown = Symbol::SystemSymbol();
+    if (properties().isPolar()) {
+      /* Turn r(θ) into f(θ) = (x(θ), y(θ)) with
+       * - x(θ) = r(θ) * cos(θ)
+       * - y(θ) = r(θ) * sin(θ) */
+      x = Multiplication::Builder(e.clone(), Cosine::Builder(unknown.clone()));
+      y = Multiplication::Builder(e.clone(), Sine::Builder(unknown.clone()));
+    } else {
+      /* Turn θ(r) into f(r) = (x(r), y(r)) with
+       * - x(r) = r * cos(θ(r))
+       * - y(r) = r * sin(θ(r)) */
+      x = Multiplication::Builder(unknown.clone(), Cosine::Builder(e.clone()));
+      y = Multiplication::Builder(unknown.clone(), Sine::Builder(e.clone()));
+    }
+    e = Point::Builder(x, y);
+  } else {
+    assert(properties().isParametric());
+    e = e.clone();
+  }
+  assert(e.type() == ExpressionNode::Type::Point ||
+         (e.type() == ExpressionNode::Type::Dependency &&
+          e.childAtIndex(0).type() == ExpressionNode::Type::Point));
+  return e;
 }
 
 void *ContinuousFunction::Model::expressionAddress(

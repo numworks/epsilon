@@ -125,6 +125,10 @@ class ContinuousFunction : public Function {
       Poincare::Context *context) const {
     return m_model.expressionApproximated(this, context);
   }
+  Poincare::Expression parametricForm(Poincare::Context *context,
+                                      bool approximated = false) const {
+    return m_model.parametricForm(this, context, approximated);
+  }
 
   /* Evaluation */
 
@@ -366,6 +370,9 @@ class ContinuousFunction : public Function {
     int numberOfSubCurves(const Ion::Storage::Record *record) const;
     // Reset m_plotType to Uninitialized type
     void resetProperties() const { m_properties.reset(); }
+    Poincare::Expression parametricForm(const Ion::Storage::Record *record,
+                                        Poincare::Context *context,
+                                        bool approximated = false) const;
 
    private:
     // Return address of the record's expression

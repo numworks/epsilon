@@ -15,7 +15,7 @@ namespace Graph {
 
 TangentGraphController::TangentGraphController(
     Responder *parentResponder, GraphView *graphView, BannerView *bannerView,
-    Shared::InteractiveCurveViewRange *curveViewRange, CurveViewCursor *cursor)
+    InteractiveCurveViewRange *curveViewRange, CurveViewCursor *cursor)
     : SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_graphView(graphView),
       m_bannerView(bannerView),
@@ -26,13 +26,13 @@ const char *TangentGraphController::title() {
 }
 
 void TangentGraphController::viewWillAppear() {
-  Shared::SimpleInteractiveCurveViewController::viewWillAppear();
+  SimpleInteractiveCurveViewController::viewWillAppear();
   m_graphView->setTangentDisplay(true);
   m_graphView->setFocus(true);
   m_bannerView->setDisplayParameters(false, true, false, true);
   reloadBannerView();
   panToMakeCursorVisible();
-  Shared::SimpleInteractiveCurveViewController::viewWillAppear();
+  SimpleInteractiveCurveViewController::viewWillAppear();
 }
 
 void TangentGraphController::didBecomeFirstResponder() {
@@ -72,7 +72,7 @@ void TangentGraphController::reloadBannerView() {
     return;
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
-      m_cursor, m_record, Shared::FunctionApp::app()->functionStore(),
+      m_cursor, m_record, FunctionApp::app()->functionStore(),
       AppsContainerHelper::sharedAppsContainerGlobalContext());
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
@@ -84,15 +84,13 @@ void TangentGraphController::reloadBannerView() {
   assert(derivative.type() == EvaluationNode<double>::Type::Complex);
   double coefficientA = derivative.toScalar();
 
-  Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "a=%*.*ed", coefficientA,
-      Poincare::Preferences::sharedPreferences->displayMode(), precision);
+  Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA,
+                      Preferences::sharedPreferences->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
   double coefficientB = -coefficientA * m_cursor->x() + m_cursor->y();
-  Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "b=%*.*ed", coefficientB,
-      Poincare::Preferences::sharedPreferences->displayMode(), precision);
+  Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", coefficientB,
+                      Preferences::sharedPreferences->displayMode(), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

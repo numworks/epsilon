@@ -93,11 +93,13 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   } else if (cell == &m_maximumCell) {
     push(&m_maximumGraphController, true);
   } else if (cell == &m_intersectionCell) {
+    assert(ShouldDisplayIntersection());
     push(&m_intersectionGraphController, true);
   } else if (cell == &m_rootCell) {
     push(&m_rootGraphController, true);
   } else {
     assert(cell == &m_areaCell);
+    assert(ShouldDisplayAreaBetweenCurves());
     if (!ShouldDisplayChevronInAreaCell()) {
       Ion::Storage::Record secondRecord =
           AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(

@@ -93,13 +93,13 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   } else if (cell == &m_maximumCell) {
     push(&m_maximumGraphController, true);
   } else if (cell == &m_intersectionCell) {
-    assert(ShouldDisplayIntersection());
+    assert(ShouldDisplayIntersectionCell());
     push(&m_intersectionGraphController, true);
   } else if (cell == &m_rootCell) {
     push(&m_rootGraphController, true);
   } else {
     assert(cell == &m_areaCell);
-    assert(ShouldDisplayAreaBetweenCurves());
+    assert(ShouldDisplayAreaCell());
     if (!ShouldDisplayChevronInAreaCell()) {
       Ion::Storage::Record secondRecord =
           AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
@@ -114,7 +114,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationParameterController::fillAreaCell() {
-  assert(ShouldDisplayAreaBetweenCurves());
+  assert(ShouldDisplayAreaCell());
   // If there is only two derivable functions, hide the chevron
   m_areaCell.accessory()->displayChevron(ShouldDisplayChevronInAreaCell());
   // Get the name of the selected function
@@ -161,12 +161,12 @@ void CalculationParameterController::fillAreaCell() {
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   selectRow(0);
-  m_intersectionCell.setVisible(ShouldDisplayIntersection());
-  m_areaCell.setVisible(ShouldDisplayAreaBetweenCurves());
+  m_intersectionCell.setVisible(ShouldDisplayIntersectionCell());
+  m_areaCell.setVisible(ShouldDisplayAreaCell());
   m_selectableListView.resetSizeAndOffsetMemoization();
 }
 
-bool CalculationParameterController::ShouldDisplayIntersection() {
+bool CalculationParameterController::ShouldDisplayIntersectionCell() {
   /* Intersection is handled between all active functions having one subcurve,
    * except Polar and Parametric. */
   ContinuousFunctionStore *store = App::app()->functionStore();
@@ -175,7 +175,7 @@ bool CalculationParameterController::ShouldDisplayIntersection() {
   return store->numberOfIntersectableFunctions() > 1;
 }
 
-bool CalculationParameterController::ShouldDisplayAreaBetweenCurves() {
+bool CalculationParameterController::ShouldDisplayAreaCell() {
   ContinuousFunctionStore *store = App::app()->functionStore();
   /* Area between curves is displayed if there is at least two derivable
    * functions. */

@@ -558,7 +558,8 @@ Expression ContinuousFunction::Model::expressionReduced(
           // SubCurves are stored in a point
           // Roots are ordered so that the first one is superior to the second
           Point newExpr = Point::Builder(root2, root1);
-          /* Shallow reduce in case the equation could approximate to a list. */
+          /* Shallow reduce in case the equation could approximate to a list.
+           * Example: x^2={}(a) */
           m_expression = newExpr.shallowReduce(reductionContext);
         }
       } else {

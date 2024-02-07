@@ -11,7 +11,7 @@ namespace Graph {
 class AreaBetweenCurvesParameterController
     : public Escher::ListWithTopAndBottomController {
  public:
-  static Ion::Storage::Record DerivableActiveFunctionAtIndex(
+  static Ion::Storage::Record AreaCompatibleFunctionAtIndex(
       int index, Ion::Storage::Record excludedRecord);
   AreaBetweenCurvesParameterController(
       Escher::Responder* parentResponder,

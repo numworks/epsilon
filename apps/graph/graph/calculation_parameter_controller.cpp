@@ -107,7 +107,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     assert(cell == &m_areaCell);
     if (!ShouldDisplayChevronInAreaCell()) {
       Ion::Storage::Record secondRecord =
-          AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
+          AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
               0, m_record);
       m_areaGraphController.setSecondRecord(secondRecord);
       push(&m_areaGraphController, true);
@@ -136,7 +136,7 @@ void CalculationParameterController::fillAreaCell() {
     size_t numberOfChars = Poincare::SerializationHelper::CodePoint(
         secondPlaceHolder, bufferSize, ' ');
     Ion::Storage::Record secondRecord =
-        AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
+        AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
             0, m_record);
     ExpiringPointer<ContinuousFunction> secondFunction =
         App::app()->functionStore()->modelForRecord(secondRecord);
@@ -185,12 +185,12 @@ bool CalculationParameterController::ShouldDisplayAreaBetweenCurves() {
   ContinuousFunctionStore *store = App::app()->functionStore();
   /* Area between curves is displayed if there is at least two derivable
    * functions. */
-  return store->numberOfActiveDerivableFunctions() > 1;
+  return store->numberOfAreaCompatibleFunctions() > 1;
 }
 
 bool CalculationParameterController::ShouldDisplayChevronInAreaCell() {
   /* Area between curves row does not always have a chevron. */
-  return App::app()->functionStore()->numberOfActiveDerivableFunctions() > 2;
+  return App::app()->functionStore()->numberOfAreaCompatibleFunctions() > 2;
 }
 
 }  // namespace Graph

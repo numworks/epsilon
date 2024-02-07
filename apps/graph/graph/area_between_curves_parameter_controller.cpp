@@ -9,10 +9,10 @@ using namespace Shared;
 namespace Graph {
 
 Ion::Storage::Record
-AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
+AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
     int index, Ion::Storage::Record excludedRecord) {
   ContinuousFunctionStore *store = App::app()->functionStore();
-  assert(index < store->numberOfActiveDerivableFunctions());
+  assert(index < store->numberOfAreaCompatibleFunctions());
   int maxNumberOfFonctions = store->numberOfActiveFunctions();
   int numberOfDerivableActiveFunctionsFound = 0;
   for (int i = 0; i < maxNumberOfFonctions; i++) {
@@ -22,8 +22,8 @@ AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
     }
     ExpiringPointer<ContinuousFunction> function =
         store->modelForRecord(currentRecord);
-    if (ContinuousFunctionStore::IsFunctionActiveAndDerivable(
-            function.operator->(), nullptr)) {
+    if (ContinuousFunctionStore::IsFunctionAreaCompatible(function.operator->(),
+                                                          nullptr)) {
       if (index == numberOfDerivableActiveFunctionsFound) {
         return currentRecord;
       }
@@ -47,14 +47,14 @@ const char *AreaBetweenCurvesParameterController::title() {
 }
 
 int AreaBetweenCurvesParameterController::numberOfRows() const {
-  return App::app()->functionStore()->numberOfActiveDerivableFunctions() - 1;
+  return App::app()->functionStore()->numberOfAreaCompatibleFunctions() - 1;
 }
 
 KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
     int row) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(
-          DerivableActiveFunctionAtIndex(row, m_mainRecord));
+          AreaCompatibleFunctionAtIndex(row, m_mainRecord));
   CurveSelectionCell tempCell;
   tempCell.label()->setLayout(function->layout());
   return tempCell.labelView()->minimalSizeForOptimalDisplay().height() +
@@ -65,7 +65,7 @@ void AreaBetweenCurvesParameterController::fillCellForRow(
     Escher::HighlightCell *cell, int row) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(
-          DerivableActiveFunctionAtIndex(row, m_mainRecord));
+          AreaCompatibleFunctionAtIndex(row, m_mainRecord));
   CurveSelectionCell *curveSelectionCell =
       static_cast<CurveSelectionCell *>(cell);
   curveSelectionCell->setColor(function->color());
@@ -82,7 +82,7 @@ bool AreaBetweenCurvesParameterController::handleEvent(
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record secondRecord =
-        DerivableActiveFunctionAtIndex(innerSelectedRow(), m_mainRecord);
+        AreaCompatibleFunctionAtIndex(innerSelectedRow(), m_mainRecord);
     assert(
         App::app()->functionStore()->modelForRecord(m_mainRecord)->isActive() &&
         App::app()->functionStore()->modelForRecord(secondRecord)->isActive());

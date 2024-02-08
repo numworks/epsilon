@@ -46,7 +46,9 @@ class EditionReference {
     return *this;
   }
 
-  ~EditionReference() {
+  ~EditionReference() { stopTracking(); }
+
+  void stopTracking() {
     SharedEditionPool->deleteIdentifier(m_identifier);
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
   }
@@ -100,7 +102,7 @@ inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
   Tree* location = ref;
   /* ref will be overriden after treeFunction and is no longer worth preserving.
    * Any Raise could also corrupt the previous identifier. */
-  ref.~EditionReference();
+  ref.stopTracking();
   Result result = treeFunction(location, args...);
   ref = location;
   return result;

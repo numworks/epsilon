@@ -12,6 +12,7 @@ BannerView::BannerView(Responder* parentResponder,
     : Shared::XYBannerView(parentResponder, textFieldDelegate),
       m_firstDerivativeView(k_bannerFieldFormat),
       m_secondDerivativeView(k_bannerFieldFormat),
+      m_slopeView(k_bannerFieldFormat),
       m_tangentEquationView(I18n::Message::LinearRegressionFormula,
                             k_bannerFieldFormat),
       m_aView(k_bannerFieldFormat),
@@ -41,11 +42,12 @@ void BannerView::emptyInterestMessages(Shared::CursorView* cursor) {
 
 void BannerView::setDisplayParameters(bool showInterest,
                                       bool showFirstDerivative,
-                                      bool showSecondDerivative,
+                                      bool showSecondDerivative, bool showSlope,
                                       bool showTangent) {
   m_showInterest = showInterest;
   m_showFirstDerivative = showFirstDerivative;
   m_showSecondDerivative = showSecondDerivative;
+  m_showSlope = showSlope;
   m_showTangent = showTangent;
 }
 
@@ -72,6 +74,11 @@ View* BannerView::subviewAtIndex(int index) {
     return &m_secondDerivativeView;
   }
   index -= m_showSecondDerivative;
+  // - Slope (dx/dy)
+  if (m_showSlope && index == 0) {
+    return &m_slopeView;
+  }
+  index -= m_showSlope;
   // - Tangent subviews
   assert(m_showTangent);
   assert(0 <= index && index < 3);

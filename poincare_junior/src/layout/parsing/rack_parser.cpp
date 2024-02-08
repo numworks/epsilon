@@ -557,12 +557,17 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
   parseBinaryOperator(leftHandSide, rightHandSide,
                       Token::Type::ComparisonOperator);
   if (leftHandSide->isComparison()) {
-    // TODO
-    // Comparison leftComparison = static_cast<Comparison &>(leftHandSide);
-    // leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
+    /* TODO a < b = c was parsed in Comparison[<,=](a,b,c)
+     * It is now parsed as (a < b and b < c) to simplify code which is not the
+     * same in some corner cases. */
+    /* TODO PCJ: fix code with a < b < c < d */
+    CloneTreeAtNode(rightHandSide, leftHandSide->child(1));
+    Tree *comparison = SharedEditionPool->push(operatorType);
+    MoveNodeAtNode(rightHandSide, comparison);
+    CloneNodeAtNode(leftHandSide, KLogicalAnd);
   } else {
-    Tree *node = SharedEditionPool->push(operatorType);
-    MoveNodeAtNode(leftHandSide, node);
+    Tree *comparison = SharedEditionPool->push(operatorType);
+    MoveNodeAtNode(leftHandSide, comparison);
   }
 }
 

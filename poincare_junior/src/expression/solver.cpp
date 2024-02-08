@@ -200,6 +200,9 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
                                     Context context) {
   EditionReference result = SharedEditionPool->push<BlockType::List>(0);
   EditionReference tree = equation->clone();
+  /* TODO : y*(1+x) is not handled by PolynomialParser. We expand everything as
+   * temporary workaround. */
+  AdvancedSimplification::DeepExpand(tree);
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?

@@ -189,6 +189,7 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
                               float tEnd, float tStep,
                               DiscontinuityTest discontinuity,
                               Axis axis) const {
+  assert(f->properties().isCartesian());
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   bool hasTwoCurves = (f->numberOfSubCurves() == 2);
 
@@ -369,6 +370,7 @@ static float polarThetaFromCoordinates(float x, float y,
 void GraphView::drawPolar(KDContext *ctx, KDRect rect, ContinuousFunction *f,
                           float tStart, float tEnd, float tStep,
                           DiscontinuityTest discontinuity) const {
+  assert(f->properties().isPolar());
   // Compute rect limits
   float rectLeft =
       pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
@@ -491,6 +493,8 @@ void GraphView::drawPolar(KDContext *ctx, KDRect rect, ContinuousFunction *f,
 void GraphView::drawFunction(KDContext *ctx, KDRect rect, ContinuousFunction *f,
                              float tStart, float tEnd, float tStep,
                              DiscontinuityTest discontinuity) const {
+  assert(f->properties().isParametric() || f->properties().isInversePolar() ||
+         f->properties().isPolar());
   CurveDrawing plot(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd,
                     tStep, f->color());
   plot.setPrecisionOptions(false, nullptr, discontinuity);
@@ -499,6 +503,7 @@ void GraphView::drawFunction(KDContext *ctx, KDRect rect, ContinuousFunction *f,
 
 void GraphView::drawScatterPlot(KDContext *ctx, KDRect rect,
                                 ContinuousFunction *f) const {
+  assert(f->properties().isScatterPlot());
   // TODO Handle limiting tMax and tMin ?
   ApproximationContext approximationContext(context());
   for (Point p : f->iterateScatterPlot(context())) {

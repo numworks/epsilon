@@ -108,9 +108,11 @@ constexpr
         0x7d,  // } // RIGHT CURLY BRACKET
         0x7e,  // ~ // TILDE
 
+        0xaa,  // ª // Feminine Ordinal Indicator
         0xb0,  // ° // DEGREE SIGN
         0xb1,  // ± // PLUS OR MINUS SIGN
         0xb7,  // · // MIDDLE DOT
+        0xba,  // º // Masculine Ordinal Indicator
 
         0xc6,  // Æ // LATIN CAPITAL LETTER AE
         0xd0,  // Ð // LATIN CAPITAL LETTER ETH

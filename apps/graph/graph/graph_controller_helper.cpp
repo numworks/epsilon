@@ -245,6 +245,24 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   return derivative;
 }
 
+double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
+    CurveViewCursor* cursor, Ion::Storage::Record record) {
+  ExpiringPointer<ContinuousFunction> function =
+      App::app()->functionStore()->modelForRecord(record);
+  double slope =
+      function->approximateSlope(cursor->t(), App::app()->localContext());
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
+  char buffer[bufferSize];
+  Print::CustomPrintf(
+      buffer, bufferSize, "%s=%*.*ed",
+      I18n::translate(I18n::Message::CartesianSlopeFormula), slope,
+      Preferences::sharedPreferences->displayMode(),
+      Preferences::sharedPreferences->numberOfSignificantDigits());
+  bannerView()->slopeView()->setText(buffer);
+  bannerView()->reload();
+  return slope;
+}
+
 bool GraphControllerHelper::snapToInterestAndUpdateCursor(
     CurveViewCursor* cursor, double start, double end, int subCurveIndex) {
   PointOfInterest nextPointOfInterest =

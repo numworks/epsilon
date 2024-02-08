@@ -19,7 +19,8 @@ TangentGraphController::TangentGraphController(
     : SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_graphView(graphView),
       m_bannerView(bannerView),
-      m_graphRange(curveViewRange) {}
+      m_graphRange(curveViewRange),
+      m_drawTangent(false) {}
 
 const char *TangentGraphController::title() {
   return I18n::translate(I18n::Message::Tangent);
@@ -27,11 +28,11 @@ const char *TangentGraphController::title() {
 
 void TangentGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
-  m_graphView->setTangentDisplay(true);
+  m_graphView->setTangentDisplay(m_drawTangent);
   m_graphView->setFocus(true);
   bool isCartesian = function()->properties().isCartesian();
   m_bannerView->setDisplayParameters(false, isCartesian, false, !isCartesian,
-                                     true);
+                                     m_drawTangent);
   reloadBannerView();
   panToMakeCursorVisible();
   SimpleInteractiveCurveViewController::viewWillAppear();

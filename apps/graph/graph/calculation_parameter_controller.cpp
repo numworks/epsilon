@@ -90,8 +90,10 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   } else if (cell == &m_slopeCell) {
     assert(function()->properties().isPolar() ||
            function()->properties().isParametric());
-    return true;
+    m_tangentGraphController.setDrawTangent(false);
+    push(&m_tangentGraphController, true);
   } else if (cell == &m_tangentCell) {
+    m_tangentGraphController.setDrawTangent(true);
     push(&m_tangentGraphController, true);
   } else if (cell == &m_integralCell) {
     assert(function()->properties().isCartesian());

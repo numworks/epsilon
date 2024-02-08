@@ -43,6 +43,21 @@ QUIZ_CASE(pcj_simplification_expansion) {
   expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
             KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
   expand_to(KLn(KMult(2_e, π_e)), KAdd(KLn(2_e), KLn(π_e)));
+  // Algebraic expand
+  // A?*(B+C)*D? = A*D*B + A*D*C
+  expand_to(KMult("a"_e, KAdd("b"_e, "c"_e, "d"_e), "e"_e),
+            KAdd(KMult("a"_e, "b"_e, "e"_e), KMult("a"_e, "c"_e, "e"_e),
+                 KMult("a"_e, "d"_e, "e"_e)));
+  // (A + B)^2 = (A^2 + 2*A*B + B^2)
+  expand_to(KPow(KAdd(KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)), 2_e),
+            KAdd(KPow(KTrig("x"_e, 0_e), 2_e),
+                 KMult(2_e, KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)),
+                 KPow(KTrig("x"_e, 1_e), 2_e)));
+  // (A + B + C)^2 = (A^2 + 2*A*B + B^2 + 2*A*C + 2*B*C + C^2)
+  expand_to(KPow(KAdd("x"_e, "y"_e, "z"_e), 2_e),
+            KAdd(KPow("x"_e, 2_e), KMult(2_e, "x"_e, "y"_e), KPow("y"_e, 2_e),
+                 KMult(2_e, "x"_e, "z"_e), KMult(2_e, "y"_e, "z"_e),
+                 KPow("z"_e, 2_e)));
 }
 
 QUIZ_CASE(pcj_simplification_contraction) {
@@ -68,23 +83,6 @@ QUIZ_CASE(pcj_simplification_contraction) {
   contract_to(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
                    KPow(KTrig("x"_e, 1_e), 2_e)),
               KAdd(1_e, "b"_e, "c"_e, "d"_e));
-}
-
-QUIZ_CASE(pcj_simplification_algebraic_expansion) {
-  // A?*(B+C)*D? = A*D*B + A*D*C
-  expand_to(KMult("a"_e, KAdd("b"_e, "c"_e, "d"_e), "e"_e),
-            KAdd(KMult("a"_e, "b"_e, "e"_e), KMult("a"_e, "c"_e, "e"_e),
-                 KMult("a"_e, "d"_e, "e"_e)));
-  // (A + B)^2 = (A^2 + 2*A*B + B^2)
-  expand_to(KPow(KAdd(KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)), 2_e),
-            KAdd(KPow(KTrig("x"_e, 0_e), 2_e),
-                 KMult(2_e, KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)),
-                 KPow(KTrig("x"_e, 1_e), 2_e)));
-  // (A + B + C)^2 = (A^2 + 2*A*B + B^2 + 2*A*C + 2*B*C + C^2)
-  expand_to(KPow(KAdd("x"_e, "y"_e, "z"_e), 2_e),
-            KAdd(KPow("x"_e, 2_e), KMult(2_e, "x"_e, "y"_e), KPow("y"_e, 2_e),
-                 KMult(2_e, "x"_e, "z"_e), KMult(2_e, "y"_e, "z"_e),
-                 KPow("z"_e, 2_e)));
 }
 
 QUIZ_CASE(pcj_simplification_variables) {

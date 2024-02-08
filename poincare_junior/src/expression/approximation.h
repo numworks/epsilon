@@ -45,6 +45,11 @@ class Approximation final {
     return value.imag() == 0 ? value.real() : NAN;
   }
 
+  // Approximate an entire tree, isolated from any outer context.
+  template <typename T>
+  static bool RootTreeToBoolean(const Tree* node, AngleUnit angleUnit,
+                                ComplexFormat complexFormat);
+
   // Approximate a matrix
   template <typename T>
   static Tree* RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
@@ -75,6 +80,9 @@ class Approximation final {
     std::complex<T> value = ToComplex<T>(node);
     return value.imag() == 0 ? value.real() : NAN;
   }
+
+  template <typename T>
+  static bool ToBoolean(const Tree* node);
 
   template <typename T>
   static Tree* ToList(const Tree* node);

@@ -56,7 +56,13 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
       !Dimension::DeepCheckListLength(node)) {
     return KUndef->clone();
   }
-  if (Dimension::GetDimension(node).isMatrix()) {
+  Dimension dim = Dimension::GetDimension(node);
+  if (dim.isBoolean()) {
+    bool result =
+        Approximation::RootTreeToBoolean<T>(node, angleUnit, complexFormat);
+    return (result ? KTrue : KFalse)->clone();
+  }
+  if (dim.isMatrix()) {
     return Approximation::RootTreeToMatrix<T>(node, angleUnit, complexFormat);
   }
   if (Dimension::GetListLength(node) != -1) {
@@ -88,6 +94,25 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   Tree* clone = node->clone();
   Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
   std::complex<T> result = ToComplex<T>(clone);
+  clone->removeTree();
+  variables->removeTree();
+  s_randomContext = nullptr;
+  s_context = nullptr;
+  return result;
+}
+
+template <typename T>
+bool Approximation::RootTreeToBoolean(const Tree* node, AngleUnit angleUnit,
+                                      ComplexFormat complexFormat) {
+  Random::Context randomContext;
+  s_randomContext = &randomContext;
+  Context context(angleUnit, complexFormat);
+  s_context = &context;
+  // TODO we should rather assume variable projection has already been done
+  Tree* variables = Variables::GetUserSymbols(node);
+  Tree* clone = node->clone();
+  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  bool result = ToBoolean<T>(clone);
   clone->removeTree();
   variables->removeTree();
   s_randomContext = nullptr;
@@ -742,6 +767,57 @@ Tree* PushComplex(std::complex<T> value) {
 bool Approximation::SimplifyComplex(Tree* node) {
   node->moveTreeOverTree(PushComplex(ToComplex<double>(node)));
   return true;
+}
+
+template <typename T>
+bool Approximation::ToBoolean(const Tree* node) {
+  if (node->isTrue()) {
+    return true;
+  }
+  if (node->isFalse()) {
+    return false;
+  }
+  if (node->isInequality()) {
+    T a = To<T>(node->child(0));
+    T b = To<T>(node->child(1));
+    if (node->isInferior()) {
+      return a < b;
+    }
+    if (node->isInferiorEqual()) {
+      return a <= b;
+    }
+    if (node->isSuperior()) {
+      return a > b;
+    }
+    assert(node->isSuperiorEqual());
+    return a >= b;
+  }
+  if (node->isComparison()) {
+    assert(node->isEqual() || node->isNotEqual());
+    std::complex<T> a = ToComplex<T>(node->child(0));
+    std::complex<T> b = ToComplex<T>(node->child(1));
+    return node->isNotEqual() ^ (a == b);
+  }
+  assert(node->isLogicalOperator());
+  bool a = ToBoolean<T>(node->child(0));
+  if (node->isLogicalNot()) {
+    return !a;
+  }
+  bool b = ToBoolean<T>(node->child(1));
+  switch (node->type()) {
+    case BlockType::LogicalAnd:
+      return a && b;
+    case BlockType::LogicalNand:
+      return !(a && b);
+    case BlockType::LogicalOr:
+      return a || b;
+    case BlockType::LogicalNor:
+      return !(a || b);
+    case BlockType::LogicalXor:
+      return a ^ b;
+    default:
+      assert(false);
+  }
 }
 
 template <typename T>

@@ -243,6 +243,20 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Round:
       return (childDim[0].isScalar() || childDim[0].isUnit()) &&
              childDim[1].isScalar();
+    case BlockType::List:
+      // Lists can contain points or scalars but not both
+      for (int i = 0; i < t->numberOfChildren(); i++) {
+        if (!(childDim[i].isScalar() || childDim[i].isPoint()) ||
+            childDim[i] != childDim[0]) {
+          return false;
+        }
+      }
+      return true;
+    case BlockType::ListSequence:
+      if (childDim[2].isPoint()) {
+        childDim[2] = Scalar();
+        // continue to default
+      }
     case BlockType::Abs:
     case BlockType::Floor:
     case BlockType::Ceiling:
@@ -353,6 +367,14 @@ Dimension Dimension::GetDimension(const Tree* t) {
     }
     case BlockType::Unit:
       return Dimension::Unit(t);
+    case BlockType::Point:
+      return Point();
+    case BlockType::List:
+      // Points inside lists are always written directly
+      return t->numberOfChildren() > 0 && t->child(0)->isPoint() ? Point()
+                                                                 : Scalar();
+    case BlockType::ListSequence:
+      return t->child(2)->isPoint() ? Point() : Scalar();
     case BlockType::ArcCosine:
     case BlockType::ArcSine:
     case BlockType::ArcTangent:

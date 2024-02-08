@@ -23,12 +23,15 @@ QUIZ_CASE(pcj_dimension) {
   auto Scalar = Dimension::Scalar();
   auto Matrix = Dimension::Matrix;
   auto Boolean = Dimension::Boolean();
+  auto Point = Dimension::Point();
 
   QUIZ_ASSERT(!dim("[[1][[[2]]]]"));
   QUIZ_ASSERT(!dim("[[1,2][3,4]]+[[2]]"));
   QUIZ_ASSERT(!dim("cos([[2]])"));
   QUIZ_ASSERT(!dim("1/[[1][3]]"));
   QUIZ_ASSERT(!dim("product([[k,2]], k, 1, n)"));
+  QUIZ_ASSERT(!dim("(True, False)"));
+  QUIZ_ASSERT(!dim("{2,(1,3)}"));
 
   QUIZ_ASSERT(dim("1", Scalar));
   QUIZ_ASSERT(dim("cos(sin(1+3))*2^3", Scalar));
@@ -39,6 +42,12 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("cross([[1,2,3]],[[1,2,3]])", Matrix(1, 3)));
   QUIZ_ASSERT(dim("transpose([[1,2]])*[[1,2,3]]", Matrix(2, 3)));
   QUIZ_ASSERT(dim("sum([[k,2]], k, 1, n)", Matrix(1, 2)));
+  QUIZ_ASSERT(dim("(2,3)", Point));
+  QUIZ_ASSERT(dim("{(2,3)}", Point));
+  QUIZ_ASSERT(dim("(2,{1,3})", Point));
+  QUIZ_ASSERT(dim("{}", Scalar));
+  QUIZ_ASSERT(dim("sequence(k,k,3)", Scalar));
+  QUIZ_ASSERT(dim("sequence((k,2),k,3)", Point));
 
   QUIZ_ASSERT(dim("True and False", Boolean));
   QUIZ_ASSERT(!dim("0 and False"));

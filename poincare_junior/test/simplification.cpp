@@ -715,3 +715,9 @@ QUIZ_CASE(pcj_simplification_boolean) {
   simplifies_to("1<2<=2", "True");
   simplifies_to("x≥2", "x>=2");
 }
+
+QUIZ_CASE(pcj_simplification_point) {
+  simplifies_to("(1,2)", "(1,2)");
+  simplifies_to("({1,3},{2,4})", "{(1,2),(3,4)}");
+  // simplifies_to("sequence((k,k+1),k,3)", "{(1,2),(2,3),(3,4)}");
+}

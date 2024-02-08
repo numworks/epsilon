@@ -13,85 +13,76 @@ ProjectionContext cartesianCtx = {.m_complexFormat = ComplexFormat::Cartesian};
 // Default complex format
 ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 
+void deepSystematicReduce_and_operation_to(const Tree* input,
+                                           Tree::Operation operation,
+                                           const Tree* output) {
+  Tree* tree = input->clone();
+  // Expand / contract expects a deep systematic reduced tree
+  Simplification::DeepSystematicReduce(tree);
+  quiz_assert(operation(tree));
+  assert_trees_are_equal(tree, output);
+  tree->removeTree();
+}
+
+void expand_to(const Tree* input, const Tree* output) {
+  deepSystematicReduce_and_operation_to(
+      input, AdvancedSimplification::DeepExpand, output);
+}
+
+void contract_to(const Tree* input, const Tree* output) {
+  deepSystematicReduce_and_operation_to(
+      input, AdvancedSimplification::DeepContract, output);
+}
+
 QUIZ_CASE(pcj_simplification_expansion) {
-  EditionReference ref1(KExp(KAdd("x"_e, "y"_e, "z"_e)));
-  quiz_assert(AdvancedSimplification::DeepExpand(ref1));
-  assert_trees_are_equal(ref1, KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
-
-  EditionReference ref2(KTrig(KAdd(π_e, "x"_e, "y"_e), 0_e));
-  Simplification::DeepSystematicReduce(ref2);
-  quiz_assert(AdvancedSimplification::DeepExpand(ref2));
-  assert_trees_are_equal(ref2,
-                         KAdd(KMult(-1_e, KTrig("x"_e, 0_e), KTrig("y"_e, 0_e)),
-                              KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 1_e))));
-
-  EditionReference ref3(KExp(KAdd("x"_e, "y"_e, "z"_e)));
-  quiz_assert(AdvancedSimplification::DeepExpand(ref3));
-  assert_trees_are_equal(ref3, KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
-
-  EditionReference ref4(KLn(KMult(2_e, π_e)));
-  quiz_assert(AdvancedSimplification::DeepExpand(ref4));
-  assert_trees_are_equal(ref4, KAdd(KLn(2_e), KLn(π_e)));
+  expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
+            KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
+  expand_to(KTrig(KAdd(π_e, "x"_e, "y"_e), 0_e),
+            KAdd(KMult(-1_e, KTrig("x"_e, 0_e), KTrig("y"_e, 0_e)),
+                 KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 1_e))));
+  expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
+            KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
+  expand_to(KLn(KMult(2_e, π_e)), KAdd(KLn(2_e), KLn(π_e)));
 }
 
 QUIZ_CASE(pcj_simplification_contraction) {
-  EditionReference ref1(KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
-  quiz_assert(AdvancedSimplification::DeepContract(ref1));
-  assert_trees_are_equal(ref1, KExp(KAdd("x"_e, "y"_e, "z"_e)));
+  contract_to(KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)),
+              KExp(KAdd("x"_e, "y"_e, "z"_e)));
+  contract_to(KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)),
+              KMult(KHalf, KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
+                                KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e))));
+  contract_to(KMult(KAbs("x"_e), KAbs("y"_e), KExp("x"_e), KExp("y"_e),
+                    KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)),
 
-  EditionReference ref2(KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)));
-  quiz_assert(AdvancedSimplification::DeepContract(ref2));
-  assert_trees_are_equal(
-      ref2, KMult(KHalf, KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
-                              KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e))));
+              KMult(KHalf, KAbs(KMult("x"_e, "y"_e)), KExp(KAdd("x"_e, "y"_e)),
+                    KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
+                         KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e))));
+  contract_to(KMult(KAbs("a"_e), KAbs(KMult("b"_e, "c"_e)), KAbs("d"_e),
+                    KAbs(KMult("e"_e, "f"_e))),
 
-  EditionReference ref3(KMult(KAbs("x"_e), KAbs("y"_e), KExp("x"_e),
-                              KExp("y"_e), KTrig("x"_e, 1_e),
-                              KTrig("y"_e, 0_e)));
-  quiz_assert(AdvancedSimplification::DeepContract(ref3));
-  assert_trees_are_equal(
-      ref3, KMult(KHalf, KAbs(KMult("x"_e, "y"_e)), KExp(KAdd("x"_e, "y"_e)),
-                  KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
-                       KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e))));
-
-  EditionReference ref4(KMult(KAbs("a"_e), KAbs(KMult("b"_e, "c"_e)),
-                              KAbs("d"_e), KAbs(KMult("e"_e, "f"_e))));
-  quiz_assert(AdvancedSimplification::DeepContract(ref4));
-  assert_trees_are_equal(ref4,
-                         KAbs(KMult("a"_e, "b"_e, "c"_e, "d"_e, "e"_e, "f"_e)));
-
+              KAbs(KMult("a"_e, "b"_e, "c"_e, "d"_e, "e"_e, "f"_e)));
   // TODO: Raise an assertion in addition simplification
-  // EditionReference ref5(
-  //     KAdd("e"_e, "f"_e, KLn("a"_e), KLn("b"_e), KLn(KMult("c"_e, "d"_e))));
-  // quiz_assert(AdvancedSimplification::DeepContract(ref5));
-  // assert_trees_are_equal(
-  //     ref5, KAdd("e"_e, "f"_e, KLn(KMult("a"_e, "b"_e, "c"_e, "d"_e))));
-
-  EditionReference ref7(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
-                             KPow(KTrig("x"_e, 1_e), 2_e)));
-  quiz_assert(AdvancedSimplification::DeepContract(ref7));
-  assert_trees_are_equal(ref7, KAdd(1_e, "b"_e, "c"_e, "d"_e));
+  // contract_to(
+  //     KAdd("e"_e, "f"_e, KLn("a"_e), KLn("b"_e), KLn(KMult("c"_e, "d"_e))),
+  //     KAdd("e"_e, "f"_e, KLn(KMult("a"_e, "b"_e, "c"_e, "d"_e))));
+  contract_to(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
+                   KPow(KTrig("x"_e, 1_e), 2_e)),
+              KAdd(1_e, "b"_e, "c"_e, "d"_e));
 }
 
 QUIZ_CASE(pcj_simplification_algebraic_expansion) {
   // A?*(B+C)*D? = A*D*B + A*D*C
-  EditionReference ref1(KMult("a"_e, KAdd("b"_e, "c"_e, "d"_e), "e"_e));
-  quiz_assert(AdvancedSimplification::DeepExpand(ref1));
-  assert_trees_are_equal(
-      ref1, KAdd(KMult("a"_e, "b"_e, "e"_e), KMult("a"_e, "c"_e, "e"_e),
+  expand_to(KMult("a"_e, KAdd("b"_e, "c"_e, "d"_e), "e"_e),
+            KAdd(KMult("a"_e, "b"_e, "e"_e), KMult("a"_e, "c"_e, "e"_e),
                  KMult("a"_e, "d"_e, "e"_e)));
   // (A + B)^2 = (A^2 + 2*A*B + B^2)
-  EditionReference ref3(KPow(KAdd(KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)), 2_e));
-  quiz_assert(AdvancedSimplification::DeepExpand(ref3));
-  assert_trees_are_equal(ref3,
-                         KAdd(KPow(KTrig("x"_e, 0_e), 2_e),
-                              KMult(2_e, KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)),
-                              KPow(KTrig("x"_e, 1_e), 2_e)));
+  expand_to(KPow(KAdd(KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)), 2_e),
+            KAdd(KPow(KTrig("x"_e, 0_e), 2_e),
+                 KMult(2_e, KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)),
+                 KPow(KTrig("x"_e, 1_e), 2_e)));
   // (A + B + C)^2 = (A^2 + 2*A*B + B^2 + 2*A*C + 2*B*C + C^2)
-  EditionReference ref4(KPow(KAdd("x"_e, "y"_e, "z"_e), 2_e));
-  quiz_assert(AdvancedSimplification::DeepExpand(ref4));
-  assert_trees_are_equal(
-      ref4, KAdd(KPow("x"_e, 2_e), KMult(2_e, "x"_e, "y"_e), KPow("y"_e, 2_e),
+  expand_to(KPow(KAdd("x"_e, "y"_e, "z"_e), 2_e),
+            KAdd(KPow("x"_e, 2_e), KMult(2_e, "x"_e, "y"_e), KPow("y"_e, 2_e),
                  KMult(2_e, "x"_e, "z"_e), KMult(2_e, "y"_e, "z"_e),
                  KPow("z"_e, 2_e)));
 }

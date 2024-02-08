@@ -218,7 +218,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
-  // Matrices
+}
+
+QUIZ_CASE(pcj_matrix_simplification) {
   simplifies_to("[[1+2]]", "[[3]]");
   simplifies_to("trace([[1,2][3,4]])", "5");
   simplifies_to("identity(2)", "[[1,0][0,1]]");
@@ -243,7 +245,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("norm([[2,3,6]])", "7");
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
-  // Power
+}
+
+QUIZ_CASE(pcj_power_simplification) {
   simplifies_to("1/a", "1/a");
   simplifies_to("a×a^(-1)", "dep(1,{a^0})");
   simplifies_to("a×a^(1+1)", "a^3");
@@ -259,7 +263,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("0^(1+x^2)", "0");
   simplifies_to("sqrt(9)", "3");
   simplifies_to("root(-8,3)", "-2");
-  // Complexes
+}
+
+QUIZ_CASE(pcj_complex_simplification) {
   simplifies_to("i×im(x)+re(x)", "x", cartesianCtx);
   simplifies_to("2×i×i", "-2", cartesianCtx);
   simplifies_to("1+i×(1+i×(1+i))", "0", cartesianCtx);
@@ -288,14 +294,18 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("arg(-i×2)", "-π/2", cartesianCtx);
   simplifies_to("arg(0)", "undef", cartesianCtx);
   simplifies_to("arg(-π+i×abs(y))", "π+arctan(-abs(y)/π)", cartesianCtx);
-  // Parametrics
+}
+
+QUIZ_CASE(pcj_parametric_simplification) {
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
   simplifies_to("sum(k^2, k, 2, 5)", "54");
   simplifies_to("2×sum(k, k, 0, n)+n", "n^2 + 2n");
   simplifies_to("2×sum(k, k, 3, n)+n", "n^2+2×n-6");
-  // Hyperbolic trigonometry
+}
+
+QUIZ_CASE(pcj_hyperbolic_trigonometry_simplification) {
   simplifies_to("cosh(-x)+sinh(x)", "e^x");
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0
@@ -322,7 +332,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   // TODO: Should simplify to x
   simplifies_to("tanh(artanh(x))", "(-1+e^(ln(x+1)-ln(-x+1)))/(1+(x+1)/(-x+1))",
                 cartesianCtx);
-  // Advanced trigonometry
+}
+
+QUIZ_CASE(pcj_advanced_trigonometry_simplification) {
   simplifies_to("sec(x)", "1/cos(x)");
   simplifies_to("csc(x)", "1/sin(x)");
   simplifies_to("cot(x)", "cos(x)/sin(x)");
@@ -334,8 +346,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   // TODO: Should simplify to x
   simplifies_to("cot(arccot(x))", "sin(arctan(x))/cos(arctan(x))",
                 cartesianCtx);
+}
 
-  // Arithmetic
+QUIZ_CASE(pcj_arithmetic_simplification) {
   simplifies_to("quo(23,5)", "4");
   simplifies_to("rem(23,5)", "3");
   simplifies_to("gcd(14,28,21)", "7");
@@ -357,13 +370,16 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("permute(4,2)", "12");
   simplifies_to("binomial(4,2)", "6");
   // simplifies_to("(n+1)!/n!", "n+1");
+}
 
+QUIZ_CASE(pcj_percent_simplification) {
   // % are left unreduced on purpose to show their exact formula
   simplifies_to("-25%", "-25/100");
   simplifies_to("2↗30%", "2×(1+30/100)");
   simplifies_to("-2-30%", "(-2)×(1-30/100)");
+}
 
-  // Lists
+QUIZ_CASE(pcj_basic_list) {
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
   simplifies_to("sequence(2*k, k, 3)+1", "{3,5,7}");
@@ -384,8 +400,9 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("{dim({2,4})}", "{2}");
   simplifies_to("min({})", "undef");
   simplifies_to("sequence(k,k,{1,2})", "undef");
+}
 
-  // Random
+QUIZ_CASE(pcj_random_simplification) {
   // TODO: Handle them with {.m_strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
   simplifies_to("random()", "random()");
@@ -395,7 +412,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
 }
 
-QUIZ_CASE(pcj_power_simplification) {
+QUIZ_CASE(pcj_power_simplification_2) {
   // Real powers
   // - x^y if x is complex or positive
   simplifies_to("41^(1/3)", "41^(1/3)");

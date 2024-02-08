@@ -696,12 +696,23 @@ void RackParser::parseLeftParenthesis(EditionReference &leftHandSide,
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   Token::Type endToken = Token::Type::RightParenthesis;
-  leftHandSide = parseUntil(endToken);
+
+  EditionReference list = parseCommaSeparatedList();
+  if (!list.isUninitialized() && list->numberOfChildren() == 2) {
+    CloneNodeOverNode(list, KPoint);
+    leftHandSide = list;
+  } else if (!list.isUninitialized() && list->numberOfChildren() == 1) {
+    MoveTreeOverTree(list, list->child(0));
+    leftHandSide = list;
+  } else {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+    return;
+  }
+
   if (!popTokenIfType(endToken)) {
     // Right parenthesis missing.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  // leftHandSide = Parenthesis::Builder(leftHandSide);
   isThereImplicitOperator();
 }
 

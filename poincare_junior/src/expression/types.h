@@ -213,6 +213,8 @@ NODE(ListProduct, 1)
 
 RANGE(ListToScalar, ListAccess, ListProduct)
 
+NODE(Point, 2)
+
 // 7 - Booleans
 
 NODE(False)

@@ -30,6 +30,8 @@ void Layout::EditionPoolTextToLayoutRec(UTF8Decoder *decoder, Tree *parent,
       case UCodePointEmpty:
         child = KRackL()->clone();
         break;
+#if 0
+      // TODO PCJ: renable and treat braces the same way
       case '(': {
         /* Insert a ParenthesisLayout even if there are no matching right
          * parenthesis */
@@ -43,6 +45,7 @@ void Layout::EditionPoolTextToLayoutRec(UTF8Decoder *decoder, Tree *parent,
           return;
         }
         // Insert ')' codepoint if it has no matching left parenthesis
+#endif
       default:
         child = SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
             codePoint);

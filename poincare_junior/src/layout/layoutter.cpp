@@ -54,6 +54,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case BlockType::LogicalOr:
     case BlockType::LogicalXor:
       return 14;
+    case BlockType::Point:
     case BlockType::Set:
     case BlockType::List:
       return 19;
@@ -368,9 +369,10 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     // TODO make list and set different
     case BlockType::List:
     case BlockType::Set:
-      PushCodePoint(layoutParent, '{');
+    case BlockType::Point:
+      PushCodePoint(layoutParent, type.isPoint() ? '(' : '{');
       layoutInfixOperator(layoutParent, expression, ',');
-      PushCodePoint(layoutParent, '}');
+      PushCodePoint(layoutParent, type.isPoint() ? ')' : '}');
       break;
 #if POINCARE_MEMORY_TREE_LOG
     case BlockType::Placeholder: {

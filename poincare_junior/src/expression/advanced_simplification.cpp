@@ -118,7 +118,7 @@ bool AdvancedSimplification::Direction::apply(Tree** u, Tree* root,
     return false;
   }
   // Apply a deep systematic reduction starting from (*u)
-  UpwardSystemReduce(root, *u);
+  UpwardSystematicReduce(root, *u);
   // Move back to root so we only move down trees. Ignore dependencies
   *u = root;
   if (root->isDependency()) {
@@ -329,15 +329,16 @@ bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
   return fullExploration;
 }
 
-bool AdvancedSimplification::UpwardSystemReduce(Tree* root, const Tree* tree) {
+bool AdvancedSimplification::UpwardSystematicReduce(Tree* root,
+                                                    const Tree* tree) {
   if (root == tree) {
-    assert(!Simplification::DeepSystemReduce(root));
+    assert(!Simplification::DeepSystematicReduce(root));
     return true;
   }
   assert(root < tree);
   for (Tree* child : root->children()) {
-    if (UpwardSystemReduce(child, tree)) {
-      Simplification::ShallowSystemReduce(root);
+    if (UpwardSystematicReduce(child, tree)) {
+      Simplification::ShallowSystematicReduce(root);
       return true;
     }
   }
@@ -359,7 +360,7 @@ bool AdvancedSimplification::DeepExpand(Tree* e) {
   if (Tree::ApplyShallowInDepth(
           e, [](Tree* e, void* context) { return ShallowExpand(e, true); })) {
     // Bottom-up systematic reduce is necessary.
-    Simplification::DeepSystemReduce(e);
+    Simplification::DeepSystematicReduce(e);
     // TODO_PCJ: Find a solution so we don't have to run this twice.
     bool temp = DeepExpand(e);
     assert(!temp || !DeepExpand(e));
@@ -380,11 +381,11 @@ bool AdvancedSimplification::TryAllOperations(Tree* e,
    * exp(A+B+C) = exp(A)*exp(B)*exp(C) */
   int failures = 0;
   int i = 0;
-  assert(!Simplification::DeepSystemReduce(e));
+  assert(!Simplification::DeepSystematicReduce(e));
   while (failures < numberOfOperations) {
     failures = operations[i % numberOfOperations](e) ? 0 : failures + 1;
     // EveryOperation should preserve e's reduced status
-    assert(!Simplification::DeepSystemReduce(e));
+    assert(!Simplification::DeepSystematicReduce(e));
     i++;
   }
   return i > numberOfOperations;
@@ -393,10 +394,10 @@ bool AdvancedSimplification::TryAllOperations(Tree* e,
 bool AdvancedSimplification::TryOneOperation(Tree* e,
                                              const Tree::Operation* operations,
                                              int numberOfOperations) {
-  assert(!Simplification::DeepSystemReduce(e));
+  assert(!Simplification::DeepSystematicReduce(e));
   for (size_t i = 0; i < numberOfOperations; i++) {
     if (operations[i](e)) {
-      assert(!Simplification::DeepSystemReduce(e));
+      assert(!Simplification::DeepSystematicReduce(e));
       return true;
     }
   }

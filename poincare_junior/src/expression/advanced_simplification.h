@@ -125,7 +125,7 @@ class AdvancedSimplification {
    * possibilities have all been explored. */
   static bool AdvancedReduceRec(Tree *u, Context *ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
-  static bool UpwardSystemReduce(Tree *root, const Tree *tree);
+  static bool UpwardSystematicReduce(Tree *root, const Tree *tree);
 
   /* Expand/Contract operations */
   static bool ShallowContract(Tree *e, bool tryAll) {

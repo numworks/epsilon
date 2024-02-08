@@ -173,7 +173,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
       const Tree* exactFormula = ExactFormula(n, isSin, &isOpposed);
       if (exactFormula) {
         u->cloneTreeOverTree(exactFormula);
-        Simplification::DeepSystemReduce(u);
+        Simplification::DeepSystematicReduce(u);
         changed = true;
       }
     } else {
@@ -197,7 +197,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
 
 bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
   // Trig second element is always expected to be a reduced integer.
-  assert(u->isInteger() && !Simplification::DeepSystemReduce(u));
+  assert(u->isInteger() && !Simplification::DeepSystematicReduce(u));
   bool changed = false;
   IntegerHandler i = Integer::Handler(u);
   Tree* remainder = IntegerHandler::Remainder(i, IntegerHandler(4));

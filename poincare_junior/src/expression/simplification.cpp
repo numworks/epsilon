@@ -23,13 +23,13 @@
 
 namespace PoincareJ {
 
-bool Simplification::DeepSystemReduce(Tree* u) {
-  /* Although they are also flattened in ShallowSystemReduce, flattening
-   * here could save multiple ShallowSystemReduce and flatten calls. */
+bool Simplification::DeepSystematicReduce(Tree* u) {
+  /* Although they are also flattened in ShallowSystematicReduce, flattening
+   * here could save multiple ShallowSystematicReduce and flatten calls. */
   bool modified =
       (u->isMultiplication() || u->isAddition()) && NAry::Flatten(u);
   for (Tree* child : u->children()) {
-    modified |= DeepSystemReduce(child);
+    modified |= DeepSystematicReduce(child);
     assert(!child->isUndefined());
     if (u->isDependency()) {
       // Skip systematic simplification of Dependencies.
@@ -39,7 +39,7 @@ bool Simplification::DeepSystemReduce(Tree* u) {
 #if ASSERTIONS
   EditionReference previousTree = u->clone();
 #endif
-  bool shallowModified = ShallowSystemReduce(u);
+  bool shallowModified = ShallowSystematicReduce(u);
 #if ASSERTIONS
   assert(shallowModified != u->treeIsIdenticalTo(previousTree));
   previousTree->removeTree();
@@ -64,7 +64,7 @@ bool CanApproximateTree(Tree* u, bool* changed) {
   return false;
 }
 
-bool Simplification::ShallowSystemReduce(Tree* u) {
+bool Simplification::ShallowSystematicReduce(Tree* u) {
   // This assert is quite costly, should be an assert level 2 ?
   assert(Dimension::DeepCheckDimensions(u));
   if (u->numberOfChildren() == 0) {
@@ -74,13 +74,13 @@ bool Simplification::ShallowSystemReduce(Tree* u) {
   bool changed = false;
   /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
    * with KA a Float and KB a UserVariable. We need to
-   * ApproximateAndReplaceEveryScalar again on ShallowSystemReduce. */
+   * ApproximateAndReplaceEveryScalar again on ShallowSystematicReduce. */
   if (CanApproximateTree(u, &changed)) {
     return true;
   }
   changed |= SimplifySwitch(u);
   if (Dependency::ShallowBubbleUpDependencies(u)) {
-    ShallowSystemReduce(u->child(0));
+    ShallowSystematicReduce(u->child(0));
     // f(dep(a, ...)) -> dep(f(a), ...) -> dep(dep(b, ...), ...) -> dep(b, ...)
     Dependency::ShallowBubbleUpDependencies(u);
     changed = true;
@@ -774,11 +774,11 @@ bool Simplification::SimplifyLastTree(Tree* ref,
         projectionContext.m_complexFormat == ComplexFormat::Real
             ? ComplexSign::RealUnknown()
             : ComplexSign::Unknown());
-    changed = DeepSystemReduce(ref) || changed;
+    changed = DeepSystematicReduce(ref) || changed;
     changed = DeepApplyMatrixOperators(ref) || changed;
-    assert(!DeepSystemReduce(ref));
+    assert(!DeepSystematicReduce(ref));
     assert(!DeepApplyMatrixOperators(ref));
-    changed = List::BubbleUp(ref, ShallowSystemReduce) || changed;
+    changed = List::BubbleUp(ref, ShallowSystematicReduce) || changed;
     changed = AdvancedSimplification::AdvancedReduce(ref) || changed;
 
     if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {

@@ -21,10 +21,10 @@ class Simplification {
   static bool DeepApplyMatrixOperators(Tree *u);
   EDITION_REF_WRAP(DeepApplyMatrixOperators);
 
-  static bool ShallowSystemReduce(Tree *u);
-  EDITION_REF_WRAP(ShallowSystemReduce);
-  static bool DeepSystemReduce(Tree *u);
-  EDITION_REF_WRAP(DeepSystemReduce);
+  static bool ShallowSystematicReduce(Tree *u);
+  EDITION_REF_WRAP(ShallowSystematicReduce);
+  static bool DeepSystematicReduce(Tree *u);
+  EDITION_REF_WRAP(DeepSystematicReduce);
 
   static bool SimplifyAbs(Tree *u);
   EDITION_REF_WRAP(SimplifyAbs);

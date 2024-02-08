@@ -130,7 +130,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, BlockType blockType,
       EditionReference polARef(polA);
       op->moveTreeAfterNode(polB);
       op->moveTreeAfterNode(polARef);
-      Simplification::DeepSystemReduce(op);
+      Simplification::DeepSystematicReduce(op);
       return op;
     }
     return Operation(polB, polA, blockType, operationMonomial,
@@ -453,7 +453,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
         /* TODO: if the previous assertion is wrong, we have to multiply
          * children coefficients and addition children exponents. */
         child->moveTreeOverTree(childCoefficient);
-        Simplification::DeepSystemReduce(expression);
+        Simplification::DeepSystematicReduce(expression);
         return std::make_pair(expression, childExponent);
       }
       childCoefficient->removeTree();

@@ -25,7 +25,7 @@ void assert_sign(const char* input, ComplexSign expectedSign) {
    * variables, random trees, ... */
   Projection::DeepSystemProject(expression,
                                 {.m_complexFormat = ComplexFormat::Cartesian});
-  Simplification::DeepSystemReduce(expression);
+  Simplification::DeepSystematicReduce(expression);
   bool result = ComplexSign::Get(expression) == expectedSign;
 #if POINCARE_MEMORY_TREE_LOG
   if (!result) {

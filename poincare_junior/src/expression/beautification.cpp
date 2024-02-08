@@ -180,7 +180,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     units = SharedEditionPool->push<BlockType::Multiplication>(2);
     ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();
-    Simplification::DeepSystemReduce(units);
+    Simplification::DeepSystematicReduce(units);
     Units::Unit::ChooseBestRepresentativeAndPrefixForValue(
         units, &value, projectionContext.m_unitFormat);
     Tree* approximated = SharedEditionPool->push<BlockType::DoubleFloat>(
@@ -201,21 +201,21 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
 bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
                                                 bool* simplifyParent) {
   bool modified = false;
-  bool mustSystemReduce = false;
+  bool mustSystematicReduce = false;
   for (Tree* child : tree->children()) {
-    bool tempMustSystemReduce = false;
+    bool tempMustSystematicReduce = false;
     modified |=
-        DeepBeautifyAngleFunctions(child, angleUnit, &tempMustSystemReduce);
-    mustSystemReduce |= tempMustSystemReduce;
+        DeepBeautifyAngleFunctions(child, angleUnit, &tempMustSystematicReduce);
+    mustSystematicReduce |= tempMustSystematicReduce;
   }
   // A parent simplification is required after inverse trigonometry beautify
   *simplifyParent = (angleUnit != PoincareJ::AngleUnit::Radian &&
                      (tree->isATrig() || tree->isArcTangentRad()));
   if (ShallowBeautifyAngleFunctions(tree, angleUnit)) {
     return true;
-  } else if (mustSystemReduce) {
+  } else if (mustSystematicReduce) {
     assert(modified);
-    *simplifyParent = Simplification::ShallowSystemReduce(tree);
+    *simplifyParent = Simplification::ShallowSystematicReduce(tree);
   }
   return modified;
 }

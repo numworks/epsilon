@@ -26,6 +26,9 @@ class GraphControllerHelper {
   Poincare::Evaluation<double> reloadDerivativeInBannerViewForCursorOnFunction(
       Shared::CurveViewCursor* cursor, Ion::Storage::Record record,
       bool firstOrder);
+  // Returns the slope displayed in banner
+  double reloadSlopeInBannerViewForCursorOnFunction(
+      Shared::CurveViewCursor* cursor, Ion::Storage::Record record);
   virtual BannerView* bannerView() = 0;
   virtual GraphView* graphView() = 0;
   virtual Shared::FunctionBannerDelegate* functionBannerDelegate() = 0;

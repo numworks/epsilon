@@ -709,6 +709,9 @@ QUIZ_CASE(pcj_simplification_boolean) {
   simplifies_to("true", "true");
   simplifies_to("true and false", "false");
 
-  simplifies_to("2!=3", "2!=3");
+  simplifies_to("1+1=2", "True");
+  simplifies_to("2!=3", "True");
+  simplifies_to("2<1", "False");
+  simplifies_to("1<2<=2", "True");
   simplifies_to("x≥2", "x>=2");
 }

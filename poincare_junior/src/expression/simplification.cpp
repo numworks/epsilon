@@ -159,6 +159,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
       if (u->type().isLogicalOperator()) {
         return Binary::SimplifyBooleanOperator(u);
       }
+      if (u->type().isComparison()) {
+        return Binary::SimplifyComparison(u);
+      }
       return false;
   }
 }

@@ -111,6 +111,7 @@ class ComplexSign {
   constexpr Sign imagSign() const { return Sign(m_imagValue); }
 
   constexpr bool isReal() const { return imagSign().isZero(); }
+  constexpr bool isComplex() const { return !imagSign().canBeNull(); }
   constexpr bool isZero() const {
     return realSign().isZero() && imagSign().isZero();
   }

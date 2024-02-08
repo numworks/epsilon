@@ -237,6 +237,7 @@ NODE(Inferior, 2)
 NODE(SuperiorEqual, 2)
 NODE(InferiorEqual, 2)
 
+RANGE(Inequality, Superior, InferiorEqual)
 RANGE(Comparison, Equal, InferiorEqual)
 
 // 8 - Order dependant expressions

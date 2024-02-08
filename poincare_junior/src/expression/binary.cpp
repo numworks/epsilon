@@ -114,4 +114,78 @@ bool Binary::SimplifyBooleanOperator(Tree *tree) {
  *   distribute or on and etc
  */
 
+bool Binary::SimplifyComparison(Tree *tree) {
+  assert(tree->numberOfChildren() == 2);
+  // a < b => a - b < 0 ?
+  if (tree->isInequality()) {
+    ComplexSign signA = ComplexSign::Get(tree->child(0));
+    ComplexSign signB = ComplexSign::Get(tree->child(1));
+    if (signA.isComplex() || signB.isComplex()) {
+      tree->cloneTreeOverTree(KUndef);
+      return true;
+    }
+    // Do not reduce inequalities if we are not sure to have reals
+    if (!(signA.isReal() && signB.isReal())) {
+      return false;
+    }
+  }
+  Tree *subtraction = PatternMatching::CreateAndSimplify(
+      KAdd(KA, KMult(-1_e, KB)), {.KA = tree->child(0), .KB = tree->child(1)});
+  Sign sign = Sign::Get(subtraction);
+  subtraction->removeTree();
+  switch (tree->type()) {
+    case BlockType::NotEqual:
+    case BlockType::Equal:
+      if (sign.isZero()) {
+        tree->cloneTreeOverTree(tree->isEqual() ? KTrue : KFalse);
+        return true;
+      }
+      if (sign.isStrictlyNegative() || sign.isStrictlyPositive()) {
+        tree->cloneTreeOverTree(tree->isEqual() ? KFalse : KTrue);
+        return true;
+      }
+      return false;
+    case BlockType::InferiorEqual:
+      if (sign.isNegative()) {
+        goto return_true;
+      }
+      if (!sign.canBeNegative() && !sign.canBeNull()) {
+        goto return_false;
+      }
+      return false;
+    case BlockType::SuperiorEqual:
+      if (sign.isPositive()) {
+        goto return_true;
+      }
+      if (!sign.canBePositive() && !sign.canBeNull()) {
+        goto return_false;
+      }
+      return false;
+    case BlockType::Inferior:
+      if (sign.isStrictlyNegative()) {
+        goto return_true;
+      }
+      if (!sign.canBeNegative()) {
+        goto return_false;
+      }
+      return false;
+    case BlockType::Superior:
+      if (sign.isStrictlyPositive()) {
+        goto return_true;
+      }
+      if (!sign.canBePositive()) {
+        goto return_false;
+      }
+      return false;
+    default:;
+  }
+  return false;
+return_true:
+  tree->cloneTreeOverTree(KTrue);
+  return true;
+return_false:
+  tree->cloneTreeOverTree(KFalse);
+  return true;
+}
+
 }  // namespace PoincareJ

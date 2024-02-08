@@ -10,6 +10,8 @@
 using namespace PoincareJ;
 
 ProjectionContext cartesianCtx = {.m_complexFormat = ComplexFormat::Cartesian};
+// Default complex format
+ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 
 QUIZ_CASE(pcj_simplification_expansion) {
   EditionReference ref1(KExp(KAdd("x"_e, "y"_e, "z"_e)));
@@ -134,7 +136,6 @@ void simplifies_to(const char* input, const char* output,
 }
 
 QUIZ_CASE(pcj_simplification_basic) {
-  // Default context is Real
   simplifies_to("x", "x");
   simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
@@ -162,19 +163,6 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("e^(ln(1+x^2))", "x^2+1");
   simplifies_to("e^(ln(x))", "x", cartesianCtx);
   simplifies_to("e^(ln(x+x))", "2×x", cartesianCtx);
-  simplifies_to("diff(x, x, 2)", "1");
-  simplifies_to("diff(a×x, x, 1)", "a");
-  simplifies_to("diff(23, x, 1)", "0");
-  simplifies_to("diff(1+x, x, y)", "1");
-  simplifies_to("diff(sin(ln(x)), x, y)",
-                "dep(cos(ln(y))/y,{diff(ln(x),x,y)})");
-  simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "dep(3×y^4×e^(3×y)×ln(y)+(e^(3×y)+4×e^(3×y)×ln(y))×y^3,{diff("
-                "ln(x),x,y)})");
-  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
-  simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
-  // TODO: Should be undef
-  simplifies_to("diff(ln(x), x, -1)", "dep(-1,{diff(ln(x),x,-1)})");
   // TODO: Metric: 3×abs(x)
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
@@ -190,14 +178,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("5.0", "5");
   simplifies_to("5.", "5");
   simplifies_to("5.ᴇ1", "50");
-  simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
   simplifies_to("undef", "undef");
-  // TODO: Metric: 1+ln(x×y)
-  simplifies_to("1+ln(x)+ln(y)", "dep(1+ln(x)+ln(y),{ln(x),ln(y)})");
-  // TODO: Metric: 2×ln(π)
-  simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
-  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "dep(1-ln(x),{ln(x)})");
-  simplifies_to("1-ln(x)", "1-ln(x)", cartesianCtx);
   // TODO: Simplify to 1/√(1+x^2).
   simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/(x^2+1)+1)");
   // TODO: Simplify to x/√(-x^2+1)
@@ -208,24 +189,27 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
-
   // Sort order
   simplifies_to("π*floor(π)/π", "floor(π)");
   simplifies_to("π+floor(π)-π", "floor(π)");
   simplifies_to("π*(-π)/π", "-π");
   simplifies_to("π+1/π-π", "1/π");
+}
 
-  // TODO: Should simplify to undef
-  simplifies_to("ln(0)", "ln(0)");
-  simplifies_to("ln(0)", "ln(0)", cartesianCtx);
-
-  simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
-  simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
-  simplifies_to("im(ln(-120))", "π", cartesianCtx);
-  simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
-  simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
+QUIZ_CASE(pcj_simplification_derivative) {
+  simplifies_to("diff(x, x, 2)", "1");
+  simplifies_to("diff(a×x, x, 1)", "a");
+  simplifies_to("diff(23, x, 1)", "0");
+  simplifies_to("diff(1+x, x, y)", "1");
+  simplifies_to("diff(sin(ln(x)), x, y)",
+                "dep(cos(ln(y))/y,{diff(ln(x),x,y)})");
+  simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
+                "dep(3×y^4×e^(3×y)×ln(y)+(e^(3×y)+4×e^(3×y)×ln(y))×y^3,{diff("
+                "ln(x),x,y)})");
+  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
+  simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
+  // TODO: Should be undef
+  simplifies_to("diff(ln(x), x, -1)", "dep(-1,{diff(ln(x),x,-1)})");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {
@@ -253,24 +237,6 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("norm([[2,3,6]])", "7");
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
-}
-
-QUIZ_CASE(pcj_simplification_power) {
-  simplifies_to("1/a", "1/a");
-  simplifies_to("a×a^(-1)", "dep(1,{a^0})");
-  simplifies_to("a×a^(1+1)", "a^3");
-  simplifies_to("a×a^(-1)", "dep(1,{a^0})",
-                {.m_complexFormat = ComplexFormat::Real});
-  simplifies_to("a×a^(1+1)", "a^3", {.m_complexFormat = ComplexFormat::Real});
-  simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{a^0})");
-  simplifies_to("cos(π×a×a^(-1))^(b×b^(-2)×b)", "dep(-1,{a^0,b^0})");
-  simplifies_to("2^(64)", "18446744073709551616");
-  simplifies_to("2^(64)/2^(63)", "2");
-  simplifies_to("0^3.1", "0");
-  simplifies_to("0^(-4.2)", "undef");
-  simplifies_to("0^(1+x^2)", "0");
-  simplifies_to("sqrt(9)", "3");
-  simplifies_to("root(-8,3)", "-2");
 }
 
 QUIZ_CASE(pcj_simplification_complex) {
@@ -363,17 +329,14 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("lcm(14,6)", "42");
   simplifies_to("factor(42*3)", "2×3^2×7");
   simplifies_to("gcd(6,y,2,x,4)", "gcd(2,x,y)");
-
   simplifies_to("sign(-2)", "-1");
   simplifies_to("ceil(8/3)", "3");
   simplifies_to("frac(8/3)", "2/3");
   simplifies_to("round(1/3,2)", "33/100");
   simplifies_to("round(3.3_m)", "3×_m");
-
   // simplifies_to("ceil(x)", "ceil(x)"); // pb metric
   simplifies_to("ceil(-x)", "-floor(x)");
   simplifies_to("floor(x)+frac(x)", "x");
-
   simplifies_to("4!", "24");
   simplifies_to("permute(4,2)", "12");
   simplifies_to("binomial(4,2)", "6");
@@ -420,8 +383,25 @@ QUIZ_CASE(pcj_simplification_random) {
   simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
 }
 
-QUIZ_CASE(pcj_simplification_power_2) {
+QUIZ_CASE(pcj_simplification_power) {
+  simplifies_to("1/a", "1/a");
+  simplifies_to("a×a^(-1)", "dep(1,{a^0})");
+  simplifies_to("a×a^(1+1)", "a^3");
+  simplifies_to("a×a^(-1)", "dep(1,{a^0})", realCtx);
+  simplifies_to("a×a^(1+1)", "a^3", realCtx);
+  simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{a^0})");
+  simplifies_to("cos(π×a×a^(-1))^(b×b^(-2)×b)", "dep(-1,{a^0,b^0})");
+  simplifies_to("2^(64)", "18446744073709551616");
+  simplifies_to("2^(64)/2^(63)", "2");
+  simplifies_to("0^3.1", "0");
+  simplifies_to("0^(-4.2)", "undef");
+  simplifies_to("0^(1+x^2)", "0");
+  simplifies_to("sqrt(9)", "3");
+  simplifies_to("root(-8,3)", "-2");
+  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
+
   // Real powers
+  simplifies_to("√(x)^2", "√(x)^2", realCtx);
   // - x^y if x is complex or positive
   simplifies_to("41^(1/3)", "41^(1/3)");
   // - PowerReal(x,y) y is not a rational
@@ -436,14 +416,13 @@ QUIZ_CASE(pcj_simplification_power_2) {
   //   * -|x|^y if p is odd
   simplifies_to("(-41)^(5/7)", "-41^(5/7)");
 
-  simplifies_to("√(x)^2", "√(x)^2", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
   simplifies_to("√(x)^2", "x", cartesianCtx);
   // TODO: 0 (exp(i*(arg(A) + arg(B) - arg(A*B))) should be simplified to 1)
   simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))",
                 "√(-2)+e^((ln(-1-i)+ln(1-i))/2)", cartesianCtx);
 
-  // Power expand/Contract
+  // Expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");
   simplifies_to("√(12)-2×√(3)", "0");
   simplifies_to("3^(1/3)×41^(1/3)-123^(1/3)", "0");
@@ -481,18 +460,20 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("2×_m/_m", "2");
   simplifies_to("1234_g", "1.234×_kg");
   simplifies_to("cos(0_rad)", "1");
+  simplifies_to("sum(_s,x,0,1)", "2×_s");
 
+  // Temperature
   simplifies_to("4_°C", "4×_°C");
   // Note: this used to be undef in previous Poincare.
   simplifies_to("((4-2)_°C)×2", "4×_°C");
   simplifies_to("((4-2)_°F)×2", "4×_°F");
   simplifies_to("8_°C/2", "4×_°C");
-
   simplifies_to("2_K+2_K", "4×_K");
   simplifies_to("2_K×2_K", "4×_K^2");
   simplifies_to("1/_K", "1×_K^(-1)");
   simplifies_to("(2_K)^2", "4×_K^2");
 
+  // Undefined
   simplifies_to("2_°C-1_°C", "undef");
   simplifies_to("2_°C+2_K", "undef");
   simplifies_to("2_K+2_°C", "undef");
@@ -502,8 +483,6 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("tan(2_m)", "undef");
   simplifies_to("tan(2_rad^2)", "undef");
   simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
-
-  simplifies_to("sum(_s,x,0,1)", "2×_s");
 
   // BestRepresentative
   simplifies_to("1_m+1_km", "1.001×_km");
@@ -572,7 +551,6 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(π/3)", "√(3)/2");
   simplifies_to("cos(π×2/3)", "-1/2");
   simplifies_to("cos(π×15/4)", "2^(-1/2)");
-
   simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "cos(y)");
   simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
   simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
@@ -580,26 +558,27 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
   // TODO: Undetected magic value.
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "arctan(3^(-1/2))");
-
   simplifies_to(
       "{cos(π×7/10),cos(π×7/5),cos(π×-7/8),cos(π×11/12),cos(π×13/6),sin(π×7/"
       "10),sin(π×7/5),sin(π×-7/8),sin(π×11/12),sin(π×13/6)}",
       "{-√((5-√(5))/8),-(-1+√(5))/4,-√(2+√(2))/2,-(2^(-1/2)×(1+√(3)))/2,√(3)/"
       "2,(1+√(5))/4,-√((5+√(5))/8),-√(2-√(2))/2,(2^(-1/2)×(-1+√(3)))/2,1/2}");
+  simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
+  // Other angle units :
+  simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});
 }
 
 QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
   simplifies_to("acos(1)", "0");
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
   simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0", cartesianCtx);
-
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}");
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1),x,sin(arctan(x))}");
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
                 "{tan(arccos(x)),tan(arcsin(x)),tan(arctan(x))}");
-
   simplifies_to("acos(cos(x))", "acos(cos(x))");
   simplifies_to("acos({cos(-23*π/7), sin(-23*π/7)})/π", "{5/7,3/14}");
   simplifies_to("acos({cos(π*23/7), sin(π*23/7)})/π", "{5/7,11/14}");
@@ -609,7 +588,6 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
                 "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
-
   // Other angle units :
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}",
@@ -688,15 +666,30 @@ QUIZ_CASE(pcj_simplification_advanced) {
 #endif
 }
 
-QUIZ_CASE(pcj_simplification_complex_logarithm) {
-  simplifies_to("√(re(x)^2)", "√(re(x)^2)", cartesianCtx);
-  simplifies_to("√(abs(x)^2)", "abs(x)", cartesianCtx);
-  simplifies_to("√(0)", "0", cartesianCtx);
-  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", cartesianCtx);
+QUIZ_CASE(pcj_simplification_logarithm) {
+  simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
+  // TODO: Metric: 1+ln(x×y)
+  simplifies_to("1+ln(x)+ln(y)", "dep(1+ln(x)+ln(y),{ln(x),ln(y)})");
+  // TODO: Metric: 2×ln(π)
+  simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
+  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "dep(1-ln(x),{ln(x)})");
+  simplifies_to("1-ln(x)", "1-ln(x)", cartesianCtx);
+  // TODO: Should simplify to undef
+  simplifies_to("ln(0)", "ln(0)");
+  simplifies_to("ln(0)", "ln(0)", cartesianCtx);
+  simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
+  simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
+  simplifies_to("im(ln(-120))", "π", cartesianCtx);
   simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
   simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)", cartesianCtx);
   simplifies_to("ln(re(x))+ln(re(y))-ln(re(x)×re(y))",
                 "ln(re(x))+ln(re(y))-ln(re(x)×re(y))", cartesianCtx);
   simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))", "0", cartesianCtx);
+
+  // Use complex logarithm internally
+  simplifies_to("√(re(x)^2)", "√(re(x)^2)", cartesianCtx);
+  simplifies_to("√(abs(x)^2)", "abs(x)", cartesianCtx);
+  simplifies_to("√(0)", "0", cartesianCtx);
+  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", cartesianCtx);
 }

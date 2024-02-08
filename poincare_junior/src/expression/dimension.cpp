@@ -157,7 +157,6 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
   switch (t->type()) {
     case BlockType::Addition:
     case BlockType::Subtraction:
-      assert(t->numberOfChildren() > 0);
       for (int i = 1; i < t->numberOfChildren(); i++) {
         if (childDim[0] != childDim[i]) {
           return false;
@@ -169,7 +168,6 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Multiplication: {
       /* TODO: Forbid Complex * units. Units are already forbidden in complex
        * builtins. */
-      assert(t->numberOfChildren() > 0);
       uint8_t cols = 0;
       Units::DimensionVector unitVector = Units::DimensionVector::Empty();
       for (int i = 0; i < t->numberOfChildren(); i++) {

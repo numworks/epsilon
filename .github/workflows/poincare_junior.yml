@@ -38,7 +38,9 @@ jobs:
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 ASSERTIONCHECKPOINT=1 test.bin
         # TODO this LD_LIBRARY_PATH is quite dirty
       - name: Run head
-        run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
+        run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage > out
+      - name: Filter output
+        run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
       - name: Compare logs
         id: compare_logs
         run: python3 poincare_junior/test/compare.py --markdown ancestor.csv head.csv > comment.md

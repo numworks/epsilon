@@ -29,7 +29,9 @@ void TangentGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
   m_graphView->setTangentDisplay(true);
   m_graphView->setFocus(true);
-  m_bannerView->setDisplayParameters(false, true, false, false, true);
+  bool isCartesian = function()->properties().isCartesian();
+  m_bannerView->setDisplayParameters(false, isCartesian, false, !isCartesian,
+                                     true);
   reloadBannerView();
   panToMakeCursorVisible();
   SimpleInteractiveCurveViewController::viewWillAppear();
@@ -50,7 +52,6 @@ bool TangentGraphController::textFieldDidFinishEditing(
     return false;
   }
   ExpiringPointer<ContinuousFunction> f = function();
-  assert(f->properties().isCartesian());
   double y =
       f->evaluate2DAtParameter(floatBody, App::app()->localContext()).y();
   m_cursor->moveTo(floatBody, floatBody, y);
@@ -77,10 +78,18 @@ void TangentGraphController::reloadBannerView() {
   char buffer[bufferSize];
   int precision = numberOfSignificantDigits();
 
-  Evaluation<double> derivative =
-      reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record, true);
-  assert(derivative.type() == EvaluationNode<double>::Type::Complex);
-  double coefficientA = derivative.toScalar();
+  double coefficientA;
+  if (m_bannerView->showFirstDerivative()) {
+    Evaluation<double> derivative =
+        reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record,
+                                                        true);
+    assert(derivative.type() == EvaluationNode<double>::Type::Complex);
+    coefficientA = derivative.toScalar();
+  } else {
+    assert(m_bannerView->showSlope());
+    coefficientA =
+        reloadSlopeInBannerViewForCursorOnFunction(m_cursor, m_record);
+  }
 
   Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA,
                       Preferences::sharedPreferences->displayMode(), precision);

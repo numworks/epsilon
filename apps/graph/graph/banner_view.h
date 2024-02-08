@@ -25,6 +25,8 @@ class BannerView : public Shared::XYBannerView {
   void setDisplayParameters(bool showInterest, bool showFirstDerivative,
                             bool showSecondDerivative, bool showSlope,
                             bool showTangent);
+  bool showFirstDerivative() const { return m_showFirstDerivative; }
+  bool showSlope() const { return m_showSlope; }
 
  private:
   constexpr static int k_maxNumberOfInterests = 3;

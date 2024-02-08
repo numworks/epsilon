@@ -67,6 +67,22 @@ bool Binary::IsComparisonOperatorString(const CPL *s, int length,
   return true;
 }
 
+/* TODO:
+ * - advanced simplifications such as:
+ *   not A and A => false
+ *   A or not A => true
+ *   not (A and B) => not A or not B
+ *   not (A or B) => not A and not B
+ *   A xor B => (not A and B) or (A and not B)
+ *   distribute or on and etc
+ *
+ * - logical operators should be n-ary
+ *
+ * - introduce boolean unknowns
+ *
+ * - hook a SAT solver
+ */
+
 bool Binary::SimplifyBooleanOperator(Tree *tree) {
   return
       // not true -> false
@@ -104,15 +120,6 @@ bool Binary::SimplifyBooleanOperator(Tree *tree) {
       // A xor A -> false
       PatternMatching::MatchAndReplace(tree, KLogicalXor(KA, KA), KFalse);
 }
-
-/* TODO advanced simplifications such as:
- *   not A and A => false
- *   A or not A => true
- *   not (A and B) => not A or not B
- *   not (A or B) => not A and not B
- *   A xor B => (not A and B) or (A and not B)
- *   distribute or on and etc
- */
 
 bool Binary::SimplifyComparison(Tree *tree) {
   assert(tree->numberOfChildren() == 2);

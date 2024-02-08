@@ -9,6 +9,8 @@
 
 using namespace PoincareJ;
 
+ProjectionContext cartesianCtx = {.m_complexFormat = ComplexFormat::Cartesian};
+
 QUIZ_CASE(pcj_simplification_expansion) {
   EditionReference ref1(KExp(KAdd("x"_e, "y"_e, "z"_e)));
   quiz_assert(AdvancedSimplification::DeepExpand(ref1));
@@ -125,8 +127,6 @@ void simplifies_to(const char* input, const char* output,
 
 QUIZ_CASE(pcj_basic_simplification) {
   // Default context is Real
-  ProjectionContext cartesianCtx = {.m_complexFormat =
-                                        ComplexFormat::Cartesian};
   simplifies_to("x", "x");
   simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
@@ -413,11 +413,10 @@ QUIZ_CASE(pcj_power_simplification) {
 
   simplifies_to("√(x)^2", "√(x)^2", {.m_complexFormat = ComplexFormat::Real});
   // Complex Power
-  simplifies_to("√(x)^2", "x", {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("√(x)^2", "x", cartesianCtx);
   // TODO: 0 (exp(i*(arg(A) + arg(B) - arg(A*B))) should be simplified to 1)
   simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))",
-                "√(-2)+e^((ln(-1-i)+ln(1-i))/2)",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+                "√(-2)+e^((ln(-1-i)+ln(1-i))/2)", cartesianCtx);
 
   // Power expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");
@@ -561,8 +560,7 @@ QUIZ_CASE(pcj_trigonometry) {
   simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
   simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
   simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
-  simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
   // TODO: Undetected magic value.
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "arctan(3^(-1/2))");
 
@@ -576,8 +574,7 @@ QUIZ_CASE(pcj_trigonometry) {
 QUIZ_CASE(pcj_inverse_trigonometry) {
   simplifies_to("acos(1)", "0");
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
-  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0", cartesianCtx);
 
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}");
@@ -675,22 +672,14 @@ QUIZ_CASE(pcj_advanced_reduction) {
 }
 
 QUIZ_CASE(pcj_complex_logarithm) {
-  simplifies_to("√(re(x)^2)", "√(re(x)^2)",
-                {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("√(abs(x)^2)", "abs(x)",
-                {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("√(0)", "0", {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0",
-                {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)",
-                {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))",
-                {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to("√(re(x)^2)", "√(re(x)^2)", cartesianCtx);
+  simplifies_to("√(abs(x)^2)", "abs(x)", cartesianCtx);
+  simplifies_to("√(0)", "0", cartesianCtx);
+  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", cartesianCtx);
+  simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
+  simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
+  simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)", cartesianCtx);
   simplifies_to("ln(re(x))+ln(re(y))-ln(re(x)×re(y))",
-                "ln(re(x))+ln(re(y))-ln(re(x)×re(y))",
-                {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))", "0",
-                {.m_complexFormat = ComplexFormat::Cartesian});
+                "ln(re(x))+ln(re(y))-ln(re(x)×re(y))", cartesianCtx);
+  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))", "0", cartesianCtx);
 }

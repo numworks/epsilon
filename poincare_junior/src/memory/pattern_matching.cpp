@@ -58,13 +58,14 @@ void logGlobal(const Tree* globalRoot, const Block* globalRootEnd,
   if (!localEndPrinted) {
     std::cout << " ) ";
   }
+  std::cout << "\n";
 }
 
 void PatternMatching::MatchContext::log() const {
   std::cout << "\tSource  : ";
   logGlobal(m_globalSourceRoot, m_globalSourceEnd, m_localSourceRoot,
             m_localSourceEnd);
-  std::cout << "\n\tPattern : ";
+  std::cout << "\tPattern : ";
   logGlobal(m_globalPatternRoot, m_globalPatternEnd, m_localPatternRoot,
             m_localPatternEnd);
 }

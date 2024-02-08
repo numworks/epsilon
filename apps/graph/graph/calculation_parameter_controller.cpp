@@ -92,7 +92,6 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
            function()->properties().isParametric());
     return true;
   } else if (cell == &m_tangentCell) {
-    assert(function()->properties().isCartesian());
     push(&m_tangentGraphController, true);
   } else if (cell == &m_integralCell) {
     assert(function()->properties().isCartesian());
@@ -183,7 +182,6 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_minimumCell.setVisible(isCartesian);
   m_rootCell.setVisible(isCartesian);
   m_slopeCell.setVisible(!isCartesian);
-  m_tangentCell.setVisible(isCartesian);
   m_integralCell.setVisible(isCartesian);
   m_areaCell.setVisible(shouldDisplayAreaCell());
   m_selectableListView.resetSizeAndOffsetMemoization();

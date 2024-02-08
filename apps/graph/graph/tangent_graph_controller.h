@@ -26,6 +26,7 @@ class TangentGraphController
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);
+  void setDrawTangent(bool drawTangent) { m_drawTangent = drawTangent; }
 
  private:
   float cursorBottomMarginRatio() const override {
@@ -51,6 +52,7 @@ class TangentGraphController
   BannerView* m_bannerView;
   Shared::InteractiveCurveViewRange* m_graphRange;
   Ion::Storage::Record m_record;
+  bool m_drawTangent;
 };
 
 }  // namespace Graph

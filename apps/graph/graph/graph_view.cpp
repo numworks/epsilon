@@ -273,6 +273,11 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
   }
 
   // - Draw tangent
+  drawTangent(ctx, rect, f, record);
+}
+
+void GraphView::drawTangent(KDContext *ctx, KDRect rect, ContinuousFunction *f,
+                            Ion::Storage::Record record) const {
   if (m_tangentDisplay && m_selectedRecord == record) {
     assert(f->canComputeTangent());
     /* TODO : We could handle tangent on second curve here by finding out

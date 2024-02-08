@@ -295,7 +295,7 @@ void GraphController::reloadBannerView() {
   bool displaySecondDerivative =
       functionStore()->modelForRecord(record)->displaySecondDerivative();
   m_bannerView.setDisplayParameters(true, displayFirstDerivative,
-                                    displaySecondDerivative, false);
+                                    displaySecondDerivative, false, false);
   FunctionGraphController::reloadBannerView();
   if (displayFirstDerivative) {
     reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, true);

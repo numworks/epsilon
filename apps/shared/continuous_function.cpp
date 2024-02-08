@@ -286,32 +286,31 @@ Evaluation<double> ContinuousFunction::approximateDerivative(
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
+  if (useDomain && (t < tMin() || t > tMax())) {
+    if (properties().isParametric()) {
+      return PointEvaluation<double>::Builder(NAN, NAN);
+    }
+    return Complex<double>::RealUndefined();
+  }
   // Derivative is simplified once and for all
   Expression derivate = expressionDerivateReduced(context, firstOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
   Evaluation<double> result = derivate.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
-  if (useDomain && (t < tMin() || t > tMax())) {
-    if (result.type() == EvaluationNode<double>::Type::Complex) {
-      return Complex<double>::RealUndefined();
-    }
-    assert(result.type() == EvaluationNode<double>::Type::PointEvaluation);
-    return PointEvaluation<double>::Builder(NAN, NAN);
-  }
   return result;
 }
 
 double ContinuousFunction::approximateSlope(double t,
                                             Poincare::Context *context) const {
+  if (t < tMin() || t > tMax()) {
+    return NAN;
+  }
   // Slope is simplified once and for all
   Expression slope = expressionSlopeReduced(context);
   ApproximationContext approximationContext(context, complexFormat(context));
   Evaluation<double> result = slope.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
   assert(result.type() == EvaluationNode<double>::Type::Complex);
-  if (t < tMin() || t > tMax()) {
-    return NAN;
-  }
   return result.toScalar();
 }
 

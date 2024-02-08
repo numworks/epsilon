@@ -94,6 +94,14 @@ QUIZ_CASE(pcj_simplification_algebraic_expansion) {
                  KPow("z"_e, 2_e)));
 }
 
+QUIZ_CASE(pcj_simplification_variables) {
+  QUIZ_ASSERT(Variables::GetUserSymbols(0_e)->treeIsIdenticalTo(KSet()));
+  const Tree* e = KMult(
+      KAdd(KSin("y"_e), KSum("x"_e, 2_e, 4_e, KPow("z"_e, "x"_e))), "m"_e);
+  QUIZ_ASSERT(Variables::GetUserSymbols(e)->treeIsIdenticalTo(
+      KSet("m"_e, "y"_e, "z"_e)));
+}
+
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
   EditionReference expected = TextToTree(output);
@@ -125,7 +133,7 @@ void simplifies_to(const char* input, const char* output,
   assert(SharedEditionPool->numberOfTrees() == 0);
 }
 
-QUIZ_CASE(pcj_basic_simplification) {
+QUIZ_CASE(pcj_simplification_basic) {
   // Default context is Real
   simplifies_to("x", "x");
   simplifies_to("x-x", "0");
@@ -220,7 +228,7 @@ QUIZ_CASE(pcj_basic_simplification) {
   simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
 }
 
-QUIZ_CASE(pcj_matrix_simplification) {
+QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("[[1+2]]", "[[3]]");
   simplifies_to("trace([[1,2][3,4]])", "5");
   simplifies_to("identity(2)", "[[1,0][0,1]]");
@@ -247,7 +255,7 @@ QUIZ_CASE(pcj_matrix_simplification) {
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
 }
 
-QUIZ_CASE(pcj_power_simplification) {
+QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1/a", "1/a");
   simplifies_to("a×a^(-1)", "dep(1,{a^0})");
   simplifies_to("a×a^(1+1)", "a^3");
@@ -265,7 +273,7 @@ QUIZ_CASE(pcj_power_simplification) {
   simplifies_to("root(-8,3)", "-2");
 }
 
-QUIZ_CASE(pcj_complex_simplification) {
+QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("i×im(x)+re(x)", "x", cartesianCtx);
   simplifies_to("2×i×i", "-2", cartesianCtx);
   simplifies_to("1+i×(1+i×(1+i))", "0", cartesianCtx);
@@ -296,7 +304,7 @@ QUIZ_CASE(pcj_complex_simplification) {
   simplifies_to("arg(-π+i×abs(y))", "π+arctan(-abs(y)/π)", cartesianCtx);
 }
 
-QUIZ_CASE(pcj_parametric_simplification) {
+QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
@@ -305,7 +313,7 @@ QUIZ_CASE(pcj_parametric_simplification) {
   simplifies_to("2×sum(k, k, 3, n)+n", "n^2+2×n-6");
 }
 
-QUIZ_CASE(pcj_hyperbolic_trigonometry_simplification) {
+QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(-x)+sinh(x)", "e^x");
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0
@@ -334,7 +342,7 @@ QUIZ_CASE(pcj_hyperbolic_trigonometry_simplification) {
                 cartesianCtx);
 }
 
-QUIZ_CASE(pcj_advanced_trigonometry_simplification) {
+QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("sec(x)", "1/cos(x)");
   simplifies_to("csc(x)", "1/sin(x)");
   simplifies_to("cot(x)", "cos(x)/sin(x)");
@@ -348,7 +356,7 @@ QUIZ_CASE(pcj_advanced_trigonometry_simplification) {
                 cartesianCtx);
 }
 
-QUIZ_CASE(pcj_arithmetic_simplification) {
+QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("quo(23,5)", "4");
   simplifies_to("rem(23,5)", "3");
   simplifies_to("gcd(14,28,21)", "7");
@@ -372,14 +380,14 @@ QUIZ_CASE(pcj_arithmetic_simplification) {
   // simplifies_to("(n+1)!/n!", "n+1");
 }
 
-QUIZ_CASE(pcj_percent_simplification) {
+QUIZ_CASE(pcj_simplification_percent) {
   // % are left unreduced on purpose to show their exact formula
   simplifies_to("-25%", "-25/100");
   simplifies_to("2↗30%", "2×(1+30/100)");
   simplifies_to("-2-30%", "(-2)×(1-30/100)");
 }
 
-QUIZ_CASE(pcj_basic_list) {
+QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
   simplifies_to("sequence(2*k, k, 3)+1", "{3,5,7}");
@@ -402,7 +410,7 @@ QUIZ_CASE(pcj_basic_list) {
   simplifies_to("sequence(k,k,{1,2})", "undef");
 }
 
-QUIZ_CASE(pcj_random_simplification) {
+QUIZ_CASE(pcj_simplification_random) {
   // TODO: Handle them with {.m_strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
   simplifies_to("random()", "random()");
@@ -412,7 +420,7 @@ QUIZ_CASE(pcj_random_simplification) {
   simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
 }
 
-QUIZ_CASE(pcj_power_simplification_2) {
+QUIZ_CASE(pcj_simplification_power_2) {
   // Real powers
   // - x^y if x is complex or positive
   simplifies_to("41^(1/3)", "41^(1/3)");
@@ -445,15 +453,7 @@ QUIZ_CASE(pcj_power_simplification_2) {
   simplifies_to("i^5+i^10+i^15+i^20", "0");
 }
 
-QUIZ_CASE(pcj_variables) {
-  QUIZ_ASSERT(Variables::GetUserSymbols(0_e)->treeIsIdenticalTo(KSet()));
-  const Tree* e = KMult(
-      KAdd(KSin("y"_e), KSum("x"_e, 2_e, 4_e, KPow("z"_e, "x"_e))), "m"_e);
-  QUIZ_ASSERT(Variables::GetUserSymbols(e)->treeIsIdenticalTo(
-      KSet("m"_e, "y"_e, "z"_e)));
-}
-
-QUIZ_CASE(pcj_float_simplification) {
+QUIZ_CASE(pcj_simplification_float) {
   simplifies_to("2", "2", {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("2.3", "2.3", {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π", "4.1415926535898",
@@ -471,7 +471,7 @@ QUIZ_CASE(pcj_float_simplification) {
   QUIZ_ASSERT(!Simplification::ShallowSystematicReduce(u));
 }
 
-QUIZ_CASE(pcj_unit_simplification) {
+QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("12_m", "12×_m");
   simplifies_to("1_s", "1×_s");
   simplifies_to("1_m+1_s", "undef");
@@ -518,7 +518,7 @@ QUIZ_CASE(pcj_unit_simplification) {
   simplifies_to("1609.344_m", "1×_mi", {.m_unitFormat = UnitFormat::Imperial});
 }
 
-QUIZ_CASE(pcj_dependencies) {
+QUIZ_CASE(pcj_simplification_dependencies) {
   Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KSet(0_e)), 4_e)->clone();
   const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KSet(0_e));
   Dependency::ShallowBubbleUpDependencies(e1);
@@ -542,7 +542,7 @@ QUIZ_CASE(pcj_dependencies) {
   QUIZ_ASSERT(e4->treeIsIdenticalTo(r4));
 }
 
-QUIZ_CASE(pcj_infinity) {
+QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("∞", "∞");
   simplifies_to("-∞+1", "-∞");
   simplifies_to("∞*(-π)", "-∞");
@@ -562,7 +562,7 @@ QUIZ_CASE(pcj_infinity) {
   simplifies_to("log(inf,-3)", "undef");
 }
 
-QUIZ_CASE(pcj_trigonometry) {
+QUIZ_CASE(pcj_simplification_trigonometry) {
   // Trigonometry identities
   simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");
@@ -588,7 +588,7 @@ QUIZ_CASE(pcj_trigonometry) {
       "2,(1+√(5))/4,-√((5+√(5))/8),-√(2-√(2))/2,(2^(-1/2)×(-1+√(3)))/2,1/2}");
 }
 
-QUIZ_CASE(pcj_inverse_trigonometry) {
+QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
   simplifies_to("acos(1)", "0");
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
   simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0", cartesianCtx);
@@ -640,7 +640,7 @@ QUIZ_CASE(pcj_inverse_trigonometry) {
 #endif
 }
 
-QUIZ_CASE(pcj_advanced_reduction) {
+QUIZ_CASE(pcj_simplification_advanced) {
 #if 0
   // TODO works but rejected by metric
   simplifies_to("sum(k+n, k, 1, n)", "sum(k, 1, n, k)+n^2");
@@ -688,7 +688,7 @@ QUIZ_CASE(pcj_advanced_reduction) {
 #endif
 }
 
-QUIZ_CASE(pcj_complex_logarithm) {
+QUIZ_CASE(pcj_simplification_complex_logarithm) {
   simplifies_to("√(re(x)^2)", "√(re(x)^2)", cartesianCtx);
   simplifies_to("√(abs(x)^2)", "abs(x)", cartesianCtx);
   simplifies_to("√(0)", "0", cartesianCtx);

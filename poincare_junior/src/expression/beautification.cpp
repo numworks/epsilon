@@ -407,7 +407,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     SharedEditionPool->push<BlockType::Multiplication>(2);
     SharedEditionPool->push<Type>(im);
   }
-  SharedEditionPool->push<BlockType::Constant>(u'i');
+  SharedEditionPool->push(BlockType::ComplexI);
   return result;
 }
 

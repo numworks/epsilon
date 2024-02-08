@@ -496,7 +496,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       } else if (c.isPi()) {
         SharedEditionPool->push<BlockType::Constant>(u'π');
       } else if (c.isComplexI()) {
-        SharedEditionPool->push<BlockType::Constant>(u'i');
+        SharedEditionPool->push(BlockType::ComplexI);
       } else {
         SharedEditionPool->push(BlockType::Undefined);
       }

@@ -49,12 +49,10 @@ bool TangentGraphController::textFieldDidFinishEditing(
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
-  ExpiringPointer<ContinuousFunction> function =
-      App::app()->functionStore()->modelForRecord(m_record);
-  assert(function->properties().isCartesian());
+  ExpiringPointer<ContinuousFunction> f = function();
+  assert(f->properties().isCartesian());
   double y =
-      function->evaluate2DAtParameter(floatBody, App::app()->localContext())
-          .y();
+      f->evaluate2DAtParameter(floatBody, App::app()->localContext()).y();
   m_cursor->moveTo(floatBody, floatBody, y);
   panToMakeCursorVisible();
   reloadBannerView();
@@ -107,6 +105,10 @@ bool TangentGraphController::handleEnter() {
       static_cast<StackViewController *>(parentResponder());
   stack->pop();
   return true;
+}
+
+ExpiringPointer<ContinuousFunction> TangentGraphController::function() const {
+  return App::app()->functionStore()->modelForRecord(m_record);
 }
 
 }  // namespace Graph

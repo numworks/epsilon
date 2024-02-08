@@ -17,8 +17,8 @@ using namespace Poincare;
 namespace Graph {
 
 bool GraphControllerHelper::privateMoveCursorHorizontally(
-    Shared::CurveViewCursor* cursor, OMG::HorizontalDirection direction,
-    Shared::InteractiveCurveViewRange* range, int numberOfStepsInGradUnit,
+    CurveViewCursor* cursor, OMG::HorizontalDirection direction,
+    InteractiveCurveViewRange* range, int numberOfStepsInGradUnit,
     Ion::Storage::Record record, float pixelWidth, int scrollSpeed,
     int* subCurveIndex) {
   ExpiringPointer<ContinuousFunction> function =
@@ -37,7 +37,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     jumpToLeftRightCurve(tCursor, direction, functionsCount, record);
     return true;
   }
-  Poincare::Context* context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   // Reload the expiring pointer
   function = App::app()->functionStore()->modelForRecord(record);
   double dir = (direction.isRight() ? 1.0 : -1.0);
@@ -165,7 +165,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       double previousT = t;
       int tries = 0;
       int maxTries = std::ceil(numberOfStepsInGradUnit *
-                               Shared::CurveViewRange::k_maxNumberOfXGridUnits);
+                               CurveViewRange::k_maxNumberOfXGridUnits);
       do {
         // Try to jump out of the undefined section
         t += dir * step;
@@ -192,8 +192,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
 
 Evaluation<double>
 GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
-    Shared::CurveViewCursor* cursor, Ion::Storage::Record record,
-    bool firstOrder) {
+    CurveViewCursor* cursor, Ion::Storage::Record record, bool firstOrder) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
   Evaluation<double> derivative = function->approximateDerivative(
@@ -222,20 +221,19 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       function->derivativeNameWithArgument(buffer, bufferSize, firstOrder);
   assert(function->canDisplayDerivative());
   Preferences::PrintFloatMode mode =
-      Poincare::Preferences::sharedPreferences->displayMode();
+      Preferences::sharedPreferences->displayMode();
   int precision = Preferences::sharedPreferences->numberOfSignificantDigits();
   if (function->properties().isParametric()) {
     assert(derivative.type() == EvaluationNode<double>::Type::PointEvaluation);
     Coordinate2D<double> xy =
         static_cast<PointEvaluation<double>&>(derivative).xy();
-    Poincare::Print::CustomPrintf(
-        buffer + numberOfChar, bufferSize - numberOfChar, "=(%*.*ed;%*.*ed)",
-        xy.x(), mode, precision, xy.y(), mode, precision);
+    Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
+                        "=(%*.*ed;%*.*ed)", xy.x(), mode, precision, xy.y(),
+                        mode, precision);
   } else {
     assert(derivative.type() == EvaluationNode<double>::Type::Complex);
-    Poincare::Print::CustomPrintf(buffer + numberOfChar,
-                                  bufferSize - numberOfChar, "=%*.*ed",
-                                  derivativeScalar, mode, precision);
+    Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
+                        "=%*.*ed", derivativeScalar, mode, precision);
   }
   if (firstOrder) {
     bannerView()->firstDerivativeView()->setText(buffer);
@@ -248,14 +246,12 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
 }
 
 bool GraphControllerHelper::snapToInterestAndUpdateCursor(
-    Shared::CurveViewCursor* cursor, double start, double end,
-    int subCurveIndex) {
+    CurveViewCursor* cursor, double start, double end, int subCurveIndex) {
   PointOfInterest nextPointOfInterest =
       App::app()
           ->graphController()
           ->pointsOfInterestForSelectedRecord()
-          ->firstPointInDirection(start, end,
-                                  Poincare::Solver<double>::Interest::None,
+          ->firstPointInDirection(start, end, Solver<double>::Interest::None,
                                   subCurveIndex);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x())) {

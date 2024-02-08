@@ -279,83 +279,84 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
 
 void GraphView::drawTangent(KDContext *ctx, KDRect rect, ContinuousFunction *f,
                             Ion::Storage::Record record) const {
-  if (m_tangentDisplay && m_selectedRecord == record) {
-    assert(f->canComputeTangent());
-    /* TODO : We could handle tangent on second curve here by finding out
-     * which of the two curves is selected. */
-    Evaluation<double> derivative =
-        f->approximateDerivative(m_cursor->t(), context());
-    assert(derivative.type() == EvaluationNode<double>::Type::Complex);
-    float tangentParameterA = derivative.toScalar();
-    float tangentParameterB =
-        -tangentParameterA * m_cursor->x() +
-        f->evaluateXYAtParameter(m_cursor->x(), context(), 0).y();
+  if (!m_tangentDisplay || m_selectedRecord != record) {
+    return;
+  }
+  assert(f->canComputeTangent());
+  /* TODO : We could handle tangent on second curve here by finding out
+   * which of the two curves is selected. */
+  Evaluation<double> derivative =
+      f->approximateDerivative(m_cursor->t(), context());
+  assert(derivative.type() == EvaluationNode<double>::Type::Complex);
+  float tangentParameterA = derivative.toScalar();
+  float tangentParameterB =
+      -tangentParameterA * m_cursor->x() +
+      f->evaluateXYAtParameter(m_cursor->x(), context(), 0).y();
 
-    /* To represent the tangent, we draw segment between the intersections
-     * of the tangent and the drawnRect.
-     *
-     *        here
-     *  _______x_____           _____________                    _____________
-     * |      /      |         |             |             here x             |
-     * |     /       | or here x-------------x and here or      |\            |
-     * |____/________|         |_____________|                  |_\___________|
-     *      x                                                     x
-     * and here                                             and here
-     *
-     * These dots are taken instead of just taking the dots with the max and
-     * min abscissa, in case the tangent is too vertical. Indeed, if the dots
-     * are too far away outside of the current window, the tangent would be
-     * drawn shifted away from the curve of the function because of
-     * approximations errors.
-     * */
-    float minAbscissa =
-        pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
-    float maxAbscissa =
-        pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-    float minOrdinate =
-        pixelToFloat(Axis::Vertical, rect.bottom() + k_externRectMargin);
-    float maxOrdinate =
-        pixelToFloat(Axis::Vertical, rect.top() - k_externRectMargin);
+  /* To represent the tangent, we draw segment between the intersections
+   * of the tangent and the drawnRect.
+   *
+   *        here
+   *  _______x_____           _____________                    _____________
+   * |      /      |         |             |             here x             |
+   * |     /       | or here x-------------x and here or      |\            |
+   * |____/________|         |_____________|                  |_\___________|
+   *      x                                                     x
+   * and here                                             and here
+   *
+   * These dots are taken instead of just taking the dots with the max and
+   * min abscissa, in case the tangent is too vertical. Indeed, if the dots
+   * are too far away outside of the current window, the tangent would be
+   * drawn shifted away from the curve of the function because of
+   * approximations errors.
+   * */
+  float minAbscissa =
+      pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+  float maxAbscissa =
+      pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+  float minOrdinate =
+      pixelToFloat(Axis::Vertical, rect.bottom() + k_externRectMargin);
+  float maxOrdinate =
+      pixelToFloat(Axis::Vertical, rect.top() - k_externRectMargin);
 
-    Coordinate2D<float> leftIntersection(
-        minAbscissa, tangentParameterA * minAbscissa + tangentParameterB);
-    Coordinate2D<float> rightIntersection(
-        maxAbscissa, tangentParameterA * maxAbscissa + tangentParameterB);
-    int numberOfCandidateDots = 2;
-    Coordinate2D<float> bottomIntersection(NAN, NAN);
-    Coordinate2D<float> topIntersection(NAN, NAN);
-    if (tangentParameterA != 0.) {
-      bottomIntersection = Coordinate2D<float>(
-          (minOrdinate - tangentParameterB) / tangentParameterA, minOrdinate);
-      topIntersection = Coordinate2D<float>(
-          (maxOrdinate - tangentParameterB) / tangentParameterA, maxOrdinate);
-      numberOfCandidateDots += 2;
+  Coordinate2D<float> leftIntersection(
+      minAbscissa, tangentParameterA * minAbscissa + tangentParameterB);
+  Coordinate2D<float> rightIntersection(
+      maxAbscissa, tangentParameterA * maxAbscissa + tangentParameterB);
+  int numberOfCandidateDots = 2;
+  Coordinate2D<float> bottomIntersection(NAN, NAN);
+  Coordinate2D<float> topIntersection(NAN, NAN);
+  if (tangentParameterA != 0.) {
+    bottomIntersection = Coordinate2D<float>(
+        (minOrdinate - tangentParameterB) / tangentParameterA, minOrdinate);
+    topIntersection = Coordinate2D<float>(
+        (maxOrdinate - tangentParameterB) / tangentParameterA, maxOrdinate);
+    numberOfCandidateDots += 2;
+  }
+
+  /* After computing the 4 intersections, choose the two that are visible
+   * in the window to ensure their coordinates are not too far appart. */
+  Coordinate2D<float> candidateDots[] = {leftIntersection, rightIntersection,
+                                         bottomIntersection, topIntersection};
+  Coordinate2D<float> firstVisibleDot;
+  bool foundFirstVisibleDot = false;
+  for (int i = 0; i < numberOfCandidateDots; i++) {
+    Coordinate2D<float> currentDot = candidateDots[i];
+    if (!currentDot.xIsIn(minAbscissa, maxAbscissa, true, true) ||
+        !currentDot.yIsIn(minOrdinate, maxOrdinate, true, true)) {
+      // Dot is not in window
+      continue;
     }
-
-    /* After computing the 4 intersections, choose the two that are visible
-     * in the window to ensure their coordinates are not too far appart. */
-    Coordinate2D<float> candidateDots[] = {leftIntersection, rightIntersection,
-                                           bottomIntersection, topIntersection};
-    Coordinate2D<float> firstVisibleDot;
-    bool foundFirstVisibleDot = false;
-    for (int i = 0; i < numberOfCandidateDots; i++) {
-      Coordinate2D<float> currentDot = candidateDots[i];
-      if (!currentDot.xIsIn(minAbscissa, maxAbscissa, true, true) ||
-          !currentDot.yIsIn(minOrdinate, maxOrdinate, true, true)) {
-        // Dot is not in window
-        continue;
-      }
-      if (!foundFirstVisibleDot) {
-        // First dot in window found
-        firstVisibleDot = currentDot;
-        foundFirstVisibleDot = true;
-        continue;
-      }
-      // Second dot in window found
-      drawSegment(ctx, rect, firstVisibleDot, currentDot, Palette::GrayVeryDark,
-                  false);
-      break;
+    if (!foundFirstVisibleDot) {
+      // First dot in window found
+      firstVisibleDot = currentDot;
+      foundFirstVisibleDot = true;
+      continue;
     }
+    // Second dot in window found
+    drawSegment(ctx, rect, firstVisibleDot, currentDot, Palette::GrayVeryDark,
+                false);
+    break;
   }
 }
 

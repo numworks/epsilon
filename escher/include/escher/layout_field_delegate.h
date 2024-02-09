@@ -35,6 +35,7 @@ class LayoutFieldDelegate : public ContextProvider {
       Escher::LayoutField* layoutField) const {
     return false;
   }
+  virtual bool useDoubleQuotesDeviceKeyForSingleQuote() { return true; }
   virtual void updateRepetitionIndexes(Ion::Events::Event event) {}
 };
 

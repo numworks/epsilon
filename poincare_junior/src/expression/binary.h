@@ -22,6 +22,9 @@ class Binary {
   static bool SimplifyComparison(Tree* tree);
   EDITION_REF_WRAP(SimplifyComparison);
 
+  static bool SimplifyPiecewise(Tree* tree);
+  EDITION_REF_WRAP(SimplifyPiecewise);
+
  private:
   constexpr static const char* k_logicalNotName = "not";
   struct TypeAndName {

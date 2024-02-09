@@ -723,3 +723,14 @@ QUIZ_CASE(pcj_simplification_point) {
   simplifies_to("({1,3},{2,4})", "{(1,2),(3,4)}");
   simplifies_to("sequence((k,k+1),k,3)", "{(1,2),(2,3),(3,4)}");
 }
+
+QUIZ_CASE(pcj_simplification_piecewise) {
+  simplifies_to("piecewise(x)", "x");
+  simplifies_to("piecewise(x, True, y)", "x");
+  simplifies_to("piecewise(x, False, y)", "y");
+  simplifies_to("piecewise(x, u<1, y, 2<1, z)", "piecewise(x, u<1, z)");
+  simplifies_to("piecewise(x, u<1 and 1<2, y, 1<3, z, u<3, w)",
+                "piecewise(x, u<1, y)");
+  simplifies_to("piecewise(x, u<1, y, True)", "piecewise(x, u<1, y)");
+  simplifies_to("piecewise(1, True, undef)", "undef");  // TODO -> 1
+}

@@ -152,6 +152,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
         return false;
       }
       return List::ShallowApplyListOperators(u);
+    case BlockType::Piecewise:
+      return Binary::SimplifyPiecewise(u);
     default:
       if (u->type().isListToScalar()) {
         return List::ShallowApplyListOperators(u);

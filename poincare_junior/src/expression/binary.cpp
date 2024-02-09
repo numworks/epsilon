@@ -3,6 +3,7 @@
 #include <ion/unicode/utf8_helper.h>
 #include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare_junior/src/n_ary.h>
 
 #include "k_tree.h"
 
@@ -186,6 +187,46 @@ bool Binary::SimplifyComparison(Tree *tree) {
   }
   tree->cloneTreeOverTree(result);
   return true;
+}
+
+bool Binary::SimplifyPiecewise(Tree *piecewise) {
+  int n = piecewise->numberOfChildren();
+  int i = 0;
+  Tree *child = piecewise->child(0);
+  while (i + 1 < n) {
+    Tree *condition = child->nextTree();
+    if (condition->isFalse()) {
+      // Remove this clause
+      child->removeTree();
+      child->removeTree();
+      n -= 2;
+      continue;
+    }
+    if (condition->isTrue()) {
+      // Drop remaining clauses
+      for (int j = i + 1; j < n; j++) {
+        condition->removeTree();
+      }
+      n = i + 1;
+      break;
+    }
+    /* TODO: We could simplify conditions under the assumption that the previous
+     * conditions are false. */
+    i += 2;
+    child = condition->nextTree();
+  }
+  bool changed = n != piecewise->numberOfChildren();
+  if (changed) {
+    NAry::SetNumberOfChildren(piecewise, n);
+  }
+  if (n == 1) {
+    piecewise->removeNode();
+    return true;
+  }
+  if (n == 0) {
+    piecewise->cloneTreeOverTree(KUndef);
+  }
+  return changed;
 }
 
 }  // namespace PoincareJ

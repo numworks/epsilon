@@ -52,7 +52,8 @@ class Function : public ExpressionModelHandle {
   // Name
   size_t name(char* buffer, size_t bufferSize) const;
   size_t withArgument(char* buffer, size_t bufferSize) const;
-  virtual size_t nameWithArgument(char* buffer, size_t bufferSize);
+  virtual size_t nameWithArgument(char* buffer, size_t bufferSize,
+                                  int derivationOrder = 0);
   virtual size_t printAbscissaValue(double cursorT, double cursorX,
                                     char* buffer, size_t bufferSize,
                                     int precision);

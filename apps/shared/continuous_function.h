@@ -52,7 +52,8 @@ class ContinuousFunction : public Function {
   }
   size_t nameWithoutArgument(char *buffer, size_t bufferSize);
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
-  size_t nameWithArgument(char *buffer, size_t bufferSize) override;
+  size_t nameWithArgument(char *buffer, size_t bufferSize,
+                          int derivationOrder = 0) override;
   // Insert the value of the symbol in buffer
   size_t printAbscissaValue(double cursorT, double cursorX, char *buffer,
                             size_t bufferSize, int precision) override;
@@ -171,9 +172,6 @@ class ContinuousFunction : public Function {
   void setDisplaySecondDerivative(bool display) {
     return recordData()->setDisplaySecondDerivative(display);
   }
-  // Insert derivative name with argument in buffer (f'(x) or y')
-  size_t derivativeNameWithArgument(char *buffer, size_t bufferSize,
-                                    bool firstOrder = true);
   // Approximate derivative at t, on given sub curve if there is one
   Poincare::Evaluation<double> approximateDerivative(
       double t, Poincare::Context *context, bool firstOrder = true,

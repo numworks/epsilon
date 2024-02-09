@@ -109,8 +109,17 @@ size_t ContinuousFunction::nameWithoutArgument(char *buffer,
           : (properties().isInversePolar() ? k_polarSymbol : k_ordinateSymbol));
 }
 
-size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
+size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize,
+                                            int derivationOrder) {
+  assert(0 <= derivationOrder && derivationOrder <= 2);
   size_t length = nameWithoutArgument(buffer, bufferSize);
+  if (derivationOrder > 0) {
+    const CodePoint derivative = derivationOrder == 1
+                                     ? DerivativeNode::k_firstDerivativeSymbol
+                                     : DerivativeNode::k_secondDerivativeSymbol;
+    length += SerializationHelper::CodePoint(buffer + length,
+                                             bufferSize - length, derivative);
+  }
   if (isNamed()) {
     length += withArgument(buffer + length, bufferSize - length);
   }
@@ -266,21 +275,6 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
   }
 }
 
-size_t ContinuousFunction::derivativeNameWithArgument(char *buffer,
-                                                      size_t bufferSize,
-                                                      bool firstOrder) {
-  size_t length = nameWithoutArgument(buffer, bufferSize);
-  const CodePoint derivative = firstOrder
-                                   ? DerivativeNode::k_firstDerivativeSymbol
-                                   : DerivativeNode::k_secondDerivativeSymbol;
-  length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
-                                           derivative);
-  if (isNamed()) {
-    length += withArgument(buffer + length, bufferSize - length);
-  }
-  return length;
-}
-
 Evaluation<double> ContinuousFunction::approximateDerivative(
     double t, Context *context, bool firstOrder, bool useDomain) const {
   assert(canDisplayDerivative());
@@ -318,7 +312,7 @@ Poincare::Layout ContinuousFunction::derivativeTitleLayout(bool firstOrder) {
   constexpr size_t bufferNameSize =
       ContinuousFunction::k_maxNameWithArgumentSize + 1;
   char buffer[bufferNameSize];
-  derivativeNameWithArgument(buffer, bufferNameSize, firstOrder);
+  nameWithArgument(buffer, bufferNameSize, firstOrder ? 1 : 2);
   return StringLayout::Builder(buffer);
 }
 

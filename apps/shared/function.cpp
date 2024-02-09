@@ -72,7 +72,9 @@ size_t Function::withArgument(char *buffer, size_t bufferSize) const {
   return Function::WithArgument(symbol(), buffer, bufferSize);
 }
 
-size_t Function::nameWithArgument(char *buffer, size_t bufferSize) {
+size_t Function::nameWithArgument(char *buffer, size_t bufferSize,
+                                  int derivationOrder) {
+  assert(derivationOrder == 0);
   return Function::NameWithArgument(*this, symbol(), buffer, bufferSize);
 }
 

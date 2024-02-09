@@ -122,13 +122,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
           derivationOrder);
     } else {
       assert(firstComponent);
-      if (derivationOrder == 0) {
-        function()->nameWithArgument(buffer, bufferSize);
-      } else {
-        assert(derivationOrder == 1 || derivationOrder == 2);
-        function()->derivativeNameWithArgument(buffer, bufferSize,
-                                               derivationOrder == 1);
-      }
+      function()->nameWithArgument(buffer, bufferSize, derivationOrder);
     }
   }
   m_parameterCells[row].label()->setText(buffer);

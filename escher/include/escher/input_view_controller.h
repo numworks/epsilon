@@ -33,7 +33,8 @@ class InputViewController : public ModalViewController, LayoutFieldDelegate {
                                    Ion::Events::Event event) override;
   void layoutFieldDidAbortEditing(LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(LayoutField* layoutField) override;
-  void updateRepetitionIndexes(Ion::Events::Event event) override;
+  void updateRepetitionIndexes(LayoutField* layoutField,
+                               Ion::Events::Event event) override;
 
  private:
   class ExpressionInputBarController : public ViewController {

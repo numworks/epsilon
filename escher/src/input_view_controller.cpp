@@ -81,8 +81,9 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField* layoutField) {
   }
 }
 
-void InputViewController::updateRepetitionIndexes(Ion::Events::Event event) {
-  return m_layoutFieldDelegate->updateRepetitionIndexes(event);
+void InputViewController::updateRepetitionIndexes(LayoutField* layoutField,
+                                                  Ion::Events::Event event) {
+  return m_layoutFieldDelegate->updateRepetitionIndexes(layoutField, event);
 }
 
 }  // namespace Escher

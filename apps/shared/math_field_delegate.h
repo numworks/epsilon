@@ -37,7 +37,8 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
                                   Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Ion::Events::Event event) override;
-  void updateRepetitionIndexes(Ion::Events::Event event) override {
+  void updateRepetitionIndexes(Escher::LayoutField* layoutField,
+                               Ion::Events::Event event) override {
     updateXNTIndex(event);
   }
 
@@ -55,7 +56,8 @@ class MathTextFieldDelegate : public AbstractMathFieldDelegate,
                                 Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  void updateRepetitionIndexes(Ion::Events::Event event) override {
+  void updateRepetitionIndexes(Escher::AbstractTextField* textField,
+                               Ion::Events::Event event) override {
     updateXNTIndex(event);
   }
 

@@ -69,7 +69,10 @@ class ConsoleController : public Escher::ViewController,
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
-  bool shouldInsertSingleQuoteInsteadOfDoubleQuotes() override { return false; }
+  bool shouldInsertSingleQuoteInsteadOfDoubleQuotes(
+      Escher::AbstractTextField* textField) override {
+    return false;
+  }
 
   // MicroPython::ExecutionEnvironment
   Escher::ViewController* sandbox() override { return &m_sandboxController; }

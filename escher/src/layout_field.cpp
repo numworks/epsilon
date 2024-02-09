@@ -443,7 +443,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   if (m_delegate) {
-    m_delegate->updateRepetitionIndexes(event);
+    m_delegate->updateRepetitionIndexes(this, event);
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool layoutDidChange;
@@ -584,7 +584,7 @@ size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char *buffer,
     return strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
   }
   if (event == Ion::Events::DoubleQuotes && m_delegate &&
-      m_delegate->shouldInsertSingleQuoteInsteadOfDoubleQuotes()) {
+      m_delegate->shouldInsertSingleQuoteInsteadOfDoubleQuotes(this)) {
     return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
   }
   return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);

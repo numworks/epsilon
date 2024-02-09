@@ -65,7 +65,7 @@ class GraphView : public Shared::FunctionGraphView,
   void drawScatterPlot(KDContext *ctx, KDRect rect,
                        Shared::ContinuousFunction *f) const;
   void drawPointsOfInterest(KDContext *ctx, KDRect rect);
-  void drawTangent(KDContext *ctx, KDRect rect, Shared::ContinuousFunction *f,
+  void drawTangent(KDContext *ctx, KDRect rect,
                    Ion::Storage::Record record) const;
 
   KDRect boundsWithoutBanner() const;

@@ -220,14 +220,13 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
 
 size_t ValuesController::fillColumnName(int column, char *buffer) {
   if (typeAtLocation(column, 0) == k_functionTitleCellType) {
-    Layout functionTitle = functionTitleLayout(column, true);
+    int derivationOrder;
+    Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
+    Shared::ExpiringPointer<ContinuousFunction> function =
+        functionStore()->modelForRecord(record);
     constexpr size_t bufferNameSize =
         ContinuousFunction::k_maxNameWithArgumentSize + 1;
-    size_t size = functionTitle.serializeForParsing(buffer, bufferNameSize);
-    // Serialization may have introduced system parentheses.
-    SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
-        buffer, bufferNameSize - 1);
-    return size;
+    return function->nameWithArgument(buffer, bufferNameSize, derivationOrder);
   }
   return Shared::ValuesController::fillColumnName(column, buffer);
 }

@@ -608,6 +608,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Median:
       // TODO PCJ
       return NAN;
+    case BlockType::Piecewise:
+      return ToComplex<T>(SelectPiecewiseBranch<T>(node));
     default:;
   }
   // The remaining operators are defined only on reals
@@ -798,6 +800,9 @@ bool Approximation::ToBoolean(const Tree* node) {
     std::complex<T> b = ToComplex<T>(node->child(1));
     return node->isEqual() == (a == b);
   }
+  if (node->isPiecewise()) {
+    return ToBoolean<T>(SelectPiecewiseBranch<T>(node));
+  }
   assert(node->isLogicalOperator());
   bool a = ToBoolean<T>(node->child(0));
   if (node->isLogicalNot()) {
@@ -946,9 +951,29 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       u->removeTree();
       return u;
     }
+    case BlockType::Piecewise:
+      return ToMatrix<T>(SelectPiecewiseBranch<T>(node));
     default:;
   }
   return KUndef->clone();
+}
+
+template <typename T>
+const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise) {
+  int n = piecewise->numberOfChildren();
+  int i = 0;
+  const Tree* child = piecewise->child(0);
+  while (i < n) {
+    const Tree* condition = child->nextTree();
+    i++;
+    if (i == n || ToBoolean<T>(condition)) {
+      return child;
+    }
+    child = condition->nextTree();
+    i++;
+  }
+  // No clause matched
+  return KUndef;
 }
 
 template <typename T, typename U>

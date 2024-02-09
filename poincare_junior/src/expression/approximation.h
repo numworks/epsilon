@@ -127,6 +127,11 @@ class Approximation final {
   static std::complex<T> ApproximatePower(const Tree* power,
                                           ComplexFormat complexFormat);
 
+  /* Approximate the conditions of a piecewise and return the tree corresponding
+   * to the matching branch */
+  template <typename T>
+  static const Tree* SelectPiecewiseBranch(const Tree* piecewise);
+
   struct Context {
     Context(AngleUnit angleUnit, ComplexFormat complexFormat);
 

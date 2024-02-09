@@ -218,7 +218,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   size_t numberOfChar =
-      function->derivativeNameWithArgument(buffer, bufferSize, firstOrder);
+      function->nameWithArgument(buffer, bufferSize, firstOrder ? 1 : 2);
   assert(function->canDisplayDerivative());
   Preferences::PrintFloatMode mode =
       Preferences::sharedPreferences->displayMode();

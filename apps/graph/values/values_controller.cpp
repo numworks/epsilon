@@ -294,12 +294,15 @@ Layout ValuesController::functionTitleLayout(int column) {
   Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
-  if (derivationOrder >= 1) {
-    assert(derivationOrder == 1 || derivationOrder == 2);
-    return function->derivativeTitleLayout(derivationOrder == 1);
+  constexpr size_t bufferNameSize =
+      ContinuousFunction::k_maxNameWithArgumentSize + 1;
+  char buffer[bufferNameSize];
+  if (derivationOrder == 0 && !function->isNamed()) {
+    return PoincareHelpers::CreateLayout(function->originalEquation(),
+                                         App::app()->localContext());
   }
-  assert(derivationOrder == 0);
-  return function->titleLayout(App::app()->localContext());
+  function->nameWithArgument(buffer, bufferNameSize, derivationOrder);
+  return StringLayout::Builder(buffer);
 }
 
 int ValuesController::numberOfAbscissaColumnsBeforeAbsoluteColumn(

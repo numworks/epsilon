@@ -502,7 +502,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 size_t AbstractTextField::getTextFromEvent(Ion::Events::Event event,
                                            char *buffer, size_t bufferSize) {
   if (event == Ion::Events::DoubleQuotes && m_delegate &&
-      m_delegate->useDoubleQuotesDeviceKeyForSingleQuote()) {
+      m_delegate->shouldInsertSingleQuoteInsteadOfDoubleQuotes()) {
     return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
   }
   return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);

@@ -576,11 +576,11 @@ size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char *buffer,
     return strlcpy(buffer, k_logWithBase10, bufferSize);
   }
   if (event == Ion::Events::Sto && m_delegate &&
-      m_delegate->insertTextForStoEvent(this)) {
+      m_delegate->shouldInsertTextForStoEvent(this)) {
     return strlcpy(buffer, "→", bufferSize);
   }
   if (event == Ion::Events::Ans && m_delegate &&
-      m_delegate->insertTextForAnsEvent(this)) {
+      m_delegate->shouldInsertTextForAnsEvent(this)) {
     return strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
   }
   if (event == Ion::Events::DoubleQuotes) {

@@ -45,7 +45,8 @@ class StoreMenuController : public Escher::ModalViewController,
                                    Ion::Events::Event event) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
-  bool insertTextForStoEvent(Escher::LayoutField* layoutField) const override {
+  bool shouldInsertTextForStoEvent(
+      Escher::LayoutField* layoutField) const override {
     return true;
   }
 

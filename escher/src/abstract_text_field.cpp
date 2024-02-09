@@ -488,7 +488,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   }
 
   // Handle special events with text
-  constexpr const size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
+  constexpr size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
   char buffer[bufferSize] = {0};
   if (eventHasText(event, buffer, bufferSize)) {
     bool didHandleEvent = insertText(buffer);

@@ -36,7 +36,7 @@ class AdvancedSimplification {
 
    private:
     // Max Expand/Contract combination possibilities
-    constexpr static size_t k_size = 128;
+    constexpr static size_t k_size = 64;
     uint32_t m_collection[k_size];
     // Depth at which each crc has been explored
     uint8_t m_depth[k_size];
@@ -101,7 +101,7 @@ class AdvancedSimplification {
 
    private:
     // Path max length (~= 2 * max number of allowed Expand/Contract)
-    constexpr static uint8_t k_size = 12;
+    constexpr static uint8_t k_size = 6;
     Direction m_stack[k_size];
     uint8_t m_length;
   };

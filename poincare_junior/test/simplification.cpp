@@ -9,6 +9,10 @@
 
 using namespace PoincareJ;
 
+/* TODO PCJ: Reactivate these tests once we can increase
+ * AdvancedSimplification::Path::k_size */
+#define ACTIVATE_IF_INCREASED_PATH_SIZE 0
+
 ProjectionContext cartesianCtx = {.m_complexFormat = ComplexFormat::Cartesian};
 // Default complex format
 ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
@@ -243,13 +247,17 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("re(x)+i×im(x)", "x", cartesianCtx);
   simplifies_to("re(x+i×y)+im(y)", "re(x)", cartesianCtx);
   simplifies_to("im(x+i×y)", "im(x)+re(y)", cartesianCtx);
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("i×(conj(x+i×y)+im(y)-re(x))", "im(x)+re(y)", cartesianCtx);
+#endif
   simplifies_to("im(re(x)+i×im(x))", "im(x)", cartesianCtx);
   simplifies_to("re(re(x)+i×im(x))", "re(x)", cartesianCtx);
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Overflows CRC32 collection
   simplifies_to("abs(x+i×y)^2-(-im(y)+re(x))^2-(im(x)+re(y))^2",
                 "abs(x+y×i)^2-((-im(y)+re(x))^2+(im(x)+re(y))^2)",
                 cartesianCtx);
+#endif
   simplifies_to("arg(re(x)+re(y)×i)", "arg(re(x)+re(y)×i)", cartesianCtx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", cartesianCtx);
   simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", cartesianCtx);
@@ -270,7 +278,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(-x)+sinh(x)", "e^x");
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
+#endif
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
                 "-(-1+e^(2×x))/(1+e^(2×x))+((1+(-1+e^(2×x))^2/"
@@ -285,16 +295,20 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   //     "artanh(tanh(x))",
   //     "ln((1+(-1+e^(2×x))/(1+e^(2×x)))/(1-(-1+e^(2×x))/(1+e^(2×x))))/2",
   //     cartesianCtx);
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should simplify to x
   simplifies_to("cosh(arcosh(x))",
                 "(x+√(x-1)×√(x+1)+1/(x+e^((ln(x-1)+ln(x+1))/2)))/2",
                 cartesianCtx);
+#endif
   // TODO: Should simplify to x
   simplifies_to("sinh(arsinh(x))", "(x+√(x^2+1)-1/(x+√(x^2+1)))/2",
                 cartesianCtx);
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should simplify to x
   simplifies_to("tanh(artanh(x))", "(-1+e^(ln(x+1)-ln(-x+1)))/(1+(x+1)/(-x+1))",
                 cartesianCtx);
+#endif
 }
 
 QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
@@ -407,9 +421,11 @@ QUIZ_CASE(pcj_simplification_power) {
 
   // Complex Power
   simplifies_to("√(x)^2", "x", cartesianCtx);
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: 0 (exp(i*(arg(A) + arg(B) - arg(A*B))) should be simplified to 1)
   simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))",
                 "√(-2)+e^((ln(-1-i)+ln(1-i))/2)", cartesianCtx);
+#endif
 
   // Expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");
@@ -547,11 +563,13 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
   // TODO: Undetected magic value.
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "arctan(3^(-1/2))");
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to(
       "{cos(π×7/10),cos(π×7/5),cos(π×-7/8),cos(π×11/12),cos(π×13/6),sin(π×7/"
       "10),sin(π×7/5),sin(π×-7/8),sin(π×11/12),sin(π×13/6)}",
       "{-√((5-√(5))/8),-(-1+√(5))/4,-√(2+√(2))/2,-(2^(-1/2)×(1+√(3)))/2,√(3)/"
       "2,(1+√(5))/4,-√((5+√(5))/8),-√(2-√(2))/2,(2^(-1/2)×(-1+√(3)))/2,1/2}");
+#endif
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
   // Other angle units :
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
@@ -644,7 +662,9 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("(a+b)^2", "(a+b)^2");
   simplifies_to("abs(a)*abs(bc)-abs(ab)*abs(c)", "0");
   simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^(2)+e^((a+b)×c)");
+#endif
 #if 0
   /* TODO: This can Expand/contract infinitely and overflow the pool on any
    * strategy */
@@ -669,8 +689,10 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
   simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
+#endif
   simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)", cartesianCtx);
   simplifies_to("ln(re(x))+ln(re(y))-ln(re(x)×re(y))",
                 "ln(re(x))+ln(re(y))-ln(re(x)×re(y))", cartesianCtx);

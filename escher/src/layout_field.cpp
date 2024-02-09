@@ -483,7 +483,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   }
 
   // Handle events that have text
-  constexpr const size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
+  constexpr size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
   char buffer[bufferSize] = {0};
   if (eventHasText(event, buffer, bufferSize)) {
     prepareToEdit();

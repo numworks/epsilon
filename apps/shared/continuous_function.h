@@ -88,9 +88,7 @@ class ContinuousFunction : public Function {
   bool canPlotDerivatives() const {
     return canDisplayDerivative() && properties().isCartesian();
   }
-  bool canComputeTangent() const {
-    return canDisplayDerivative() && properties().isCartesian();
-  }
+  bool canComputeTangent() const { return canDisplayDerivative(); }
   // If the ContinuousFunction should be considered active in table
   bool isActiveInTable() const {
     return properties().canBeActiveInTable() && isActive();

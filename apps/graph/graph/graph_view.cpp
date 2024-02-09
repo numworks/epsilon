@@ -128,20 +128,21 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   if (f->properties().isCartesian()) {
     drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tStep,
                   discontinuityEvaluation, axis);
-    return;
-  }
-  if (f->properties().isPolar()) {
+
+  } else if (f->properties().isPolar()) {
     drawPolar(ctx, rect, f.operator->(), tCacheMin, tmax, tStep,
               discontinuityEvaluation);
-    return;
-  }
-  if (f->properties().isScatterPlot()) {
+
+  } else if (f->properties().isScatterPlot()) {
     drawScatterPlot(ctx, rect, f.operator->());
-    return;
+  } else {
+    assert(f->properties().isParametric() || f->properties().isInversePolar());
+    drawFunction(ctx, rect, f.operator->(), tCacheMin, tmax, tStep,
+                 discontinuityEvaluation);
   }
-  assert(f->properties().isParametric() || f->properties().isInversePolar());
-  drawFunction(ctx, rect, f.operator->(), tCacheMin, tmax, tStep,
-               discontinuityEvaluation);
+
+  // Draw tangent
+  drawTangent(ctx, rect, f.operator->(), record);
 }
 
 void GraphView::tidyModel(int i, TreeNode *treePoolCursor) const {
@@ -272,9 +273,6 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
                                   axis);
     secondCurve.draw(this, ctx, rect);
   }
-
-  // - Draw tangent
-  drawTangent(ctx, rect, f, record);
 }
 
 void GraphView::drawTangent(KDContext *ctx, KDRect rect, ContinuousFunction *f,
@@ -285,13 +283,10 @@ void GraphView::drawTangent(KDContext *ctx, KDRect rect, ContinuousFunction *f,
   assert(f->canComputeTangent());
   /* TODO : We could handle tangent on second curve here by finding out
    * which of the two curves is selected. */
-  Evaluation<double> derivative =
-      f->approximateDerivative(m_cursor->t(), context());
-  assert(derivative.type() == EvaluationNode<double>::Type::Complex);
-  float tangentParameterA = derivative.toScalar();
+  float tangentParameterA = f->approximateSlope(m_cursor->t(), context());
   float tangentParameterB =
       -tangentParameterA * m_cursor->x() +
-      f->evaluateXYAtParameter(m_cursor->x(), context(), 0).y();
+      f->evaluateXYAtParameter(m_cursor->t(), context(), 0).y();
 
   /* To represent the tangent, we draw segment between the intersections
    * of the tangent and the drawnRect.

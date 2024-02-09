@@ -859,16 +859,21 @@ Expression ContinuousFunction::Model::expressionSlopeReduced(
    * For cartesian function, it is the same as the derivative.
    * For curves with multiple subcurves and for inverse polar,
    * it is not available. */
-  assert(properties().isParametric() || properties().isPolar());
+  // TODO: assert(canComputeTangent());
   if (m_expressionSlope.isUninitialized()) {
-    Expression expression = parametricForm(record, context);
-    assert(expression.type() == ExpressionNode::Type::Point);
-    assert(expression.numberOfChildren() == 2);
-    m_expressionSlope = Division::Builder(
-        Derivative::Builder(expression.childAtIndex(1), Symbol::SystemSymbol(),
-                            Symbol::SystemSymbol()),
-        Derivative::Builder(expression.childAtIndex(0), Symbol::SystemSymbol(),
-                            Symbol::SystemSymbol()));
+    if (properties().isCartesian()) {
+      m_expressionSlope = expressionDerivateReduced(record, context, true);
+    } else {
+      assert(properties().isParametric() || properties().isPolar());
+      Expression expression = parametricForm(record, context);
+      assert(expression.type() == ExpressionNode::Type::Point);
+      assert(expression.numberOfChildren() == 2);
+      m_expressionSlope = Division::Builder(
+          Derivative::Builder(expression.childAtIndex(1),
+                              Symbol::SystemSymbol(), Symbol::SystemSymbol()),
+          Derivative::Builder(expression.childAtIndex(0),
+                              Symbol::SystemSymbol(), Symbol::SystemSymbol()));
+    }
     /* On complex functions, this step can take a significant time.
      * A workaround could be to identify big functions to skip simplification
      * at the cost of possible inaccurate evaluations (such as

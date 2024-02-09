@@ -806,6 +806,8 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       case ExceptionType::UnhandledDimension:
       case ExceptionType::Unhandled:
       case ExceptionType::Undefined:
+        /* TODO PCJ: We need to catch undefs when reducing children of lists and
+         * points since (undef,0) and {undef,0} should be allowed. */
         (type == ExceptionType::Nonreal ? KNonreal : KUndef)->clone();
         return true;
       default:

@@ -68,8 +68,6 @@ class ContinuousFunction : public Function {
   // If the ContinuousFunction has y for unknown symbol
   bool isAlongY() const override { return properties().isAlongY(); }
 
-  Poincare::Layout titleLayout(Poincare::Context *context);
-
   /* ExpressionModelHandle */
 
   Ion::Storage::Record::ErrorStatus setContent(
@@ -177,7 +175,6 @@ class ContinuousFunction : public Function {
       double t, Poincare::Context *context, bool firstOrder = true,
       bool useDomain = true) const;
   double approximateSlope(double t, Poincare::Context *context) const;
-  Poincare::Layout derivativeTitleLayout(bool firstOrder);
 
   /* tMin, tMax and tAuto */
 

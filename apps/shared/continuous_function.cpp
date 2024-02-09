@@ -157,16 +157,6 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
                                                      precision);
 }
 
-Poincare::Layout ContinuousFunction::titleLayout(Poincare::Context *context) {
-  if (isNamed()) {
-    constexpr size_t bufferNameSize = k_maxNameWithArgumentSize + 1;
-    char buffer[bufferNameSize];
-    nameWithArgument(buffer, bufferNameSize);
-    return StringLayout::Builder(buffer);
-  }
-  return PoincareHelpers::CreateLayout(originalEquation(), context);
-}
-
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
     const char *c, Context *context) {
   setCache(nullptr);
@@ -305,14 +295,6 @@ double ContinuousFunction::approximateSlope(double t,
       k_unknownName, t, approximationContext);
   assert(result.type() == EvaluationNode<double>::Type::Complex);
   return result.toScalar();
-}
-
-Poincare::Layout ContinuousFunction::derivativeTitleLayout(bool firstOrder) {
-  constexpr size_t bufferNameSize =
-      ContinuousFunction::k_maxNameWithArgumentSize + 1;
-  char buffer[bufferNameSize];
-  nameWithArgument(buffer, bufferNameSize, firstOrder ? 1 : 2);
-  return StringLayout::Builder(buffer);
 }
 
 void ContinuousFunction::setTMin(float tMin) {

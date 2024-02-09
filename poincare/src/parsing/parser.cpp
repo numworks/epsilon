@@ -793,12 +793,12 @@ void Parser::privateParseReservedFunction(
   // Parse cos^n(x)
   bool powerFunction = false;
   int powerValue;
-  Expression base = parseIntegerCaretForFunction(false, &powerValue);
+  Expression power = parseIntegerCaretForFunction(false, &powerValue);
   if (m_status != Status::Progress) {
     return;
   }
-  if (!base.isUninitialized()) {
-    assert(base.isInteger());
+  if (!power.isUninitialized()) {
+    assert(power.isInteger());
     if (powerValue == -1) {
       // Detect cos^-1(x) --> arccos(x)
       const char *mainAlias = aliasesList.mainAlias();
@@ -872,7 +872,7 @@ void Parser::privateParseReservedFunction(
     return;
   }
   if (powerFunction) {
-    leftHandSide = Power::Builder(leftHandSide, base);
+    leftHandSide = Power::Builder(leftHandSide, power);
   }
 }
 

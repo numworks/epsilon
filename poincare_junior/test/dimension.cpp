@@ -24,6 +24,7 @@ QUIZ_CASE(pcj_dimension) {
   auto Matrix = Dimension::Matrix;
   auto Boolean = Dimension::Boolean();
   auto Point = Dimension::Point();
+  QUIZ_ASSERT(dim("piecewise([[2]],True,[[3]])", Matrix(1, 1)));
 
   QUIZ_ASSERT(!dim("[[1][[[2]]]]"));
   QUIZ_ASSERT(!dim("[[1,2][3,4]]+[[2]]"));

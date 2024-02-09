@@ -143,7 +143,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       hasUnitChild = true;
     }
-    if (childDim[i].isBoolean() != t->isLogicalOperatorOrBoolean()) {
+    if (!t->isPiecewise() &&
+        childDim[i].isBoolean() != t->isLogicalOperatorOrBoolean()) {
       /* Only booleans operators can have boolean child yet. */
       return false;
     }
@@ -249,6 +250,22 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Round:
       return (childDim[0].isScalar() || childDim[0].isUnit()) &&
              childDim[1].isScalar();
+    case BlockType::Piecewise: {
+      /* A piecewise can contain any type provided it is the same everywhere
+       * Conditions are stored on odd indices and should be booleans */
+      for (int i = 0; i < t->numberOfChildren(); i++) {
+        if (i % 2 == 1) {
+          if (!childDim[i].isBoolean()) {
+            return false;
+          }
+          continue;
+        }
+        if (childDim[i] != childDim[0]) {
+          return false;
+        }
+      }
+      return true;
+    }
     case BlockType::List:
       // Lists can contain points or scalars but not both
       for (int i = 0; i < t->numberOfChildren(); i++) {
@@ -364,6 +381,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Inverse:
     case BlockType::Ref:
     case BlockType::Rref:
+    case BlockType::Piecewise:
       return GetDimension(t->nextNode());
     case BlockType::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));

@@ -248,6 +248,7 @@ RANGE(Comparison, Equal, InferiorEqual)
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
 NODE(Unit, 0, 2)
 NODE(Dependency, 2)
+NODE(Piecewise, NARY)
 NODE(Set, NARY)
 NODE(Nonreal)
 NODE(Undefined)

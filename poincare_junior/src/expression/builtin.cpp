@@ -81,6 +81,7 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Random, "random"},
     {BlockType::RandInt, "randint"},
     {BlockType::RandIntNoRep, "randintnorep"},
+    {BlockType::Piecewise, "piecewise"},
 };
 
 constexpr static Aliases s_customIdentifiers[] = {
@@ -165,6 +166,8 @@ bool Builtin::CheckNumberOfParameters(BlockType type, int n) {
     case BlockType::GCD:
     case BlockType::LCM:
       return 2 <= n && n <= UINT8_MAX;
+    case BlockType::Piecewise:
+      return 1 <= n && n <= UINT8_MAX;
     default:
       return n == TypeBlock::NumberOfChildren(type);
   }
@@ -172,7 +175,8 @@ bool Builtin::CheckNumberOfParameters(BlockType type, int n) {
 
 bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
   TypeBlock type = builtin->blockType();
-  if (type == BlockType::GCD || type == BlockType::LCM) {
+  if (type == BlockType::GCD || type == BlockType::LCM ||
+      type == BlockType::Piecewise) {
     // GCD and LCM are n-ary, skip moveNodeOverNode to keep the nb of children
     *parameterList->block() = type;
     return true;

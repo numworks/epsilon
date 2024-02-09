@@ -286,9 +286,7 @@ void GraphView::drawTangent(KDContext *ctx, KDRect rect,
   /* TODO : We could handle tangent on second curve here by finding out
    * which of the two curves is selected. */
   float tangentParameterA = f->approximateSlope(m_cursor->t(), context());
-  float tangentParameterB =
-      -tangentParameterA * m_cursor->x() +
-      f->evaluateXYAtParameter(m_cursor->t(), context(), 0).y();
+  float tangentParameterB = -tangentParameterA * m_cursor->x() + m_cursor->y();
 
   /* To represent the tangent, we draw segment between the intersections
    * of the tangent and the drawnRect.

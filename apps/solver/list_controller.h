@@ -40,6 +40,10 @@ class ListController : public Shared::ExpressionModelListController,
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
+  bool shouldInsertSingleQuoteInsteadOfDoubleQuotes(
+      Escher::LayoutField* layoutField) override {
+    return false;
+  }
   bool isAcceptableExpression(const Poincare::Expression expression,
                               Poincare::Context* context) override;
   /* ExpressionModelListController */

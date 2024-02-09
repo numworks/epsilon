@@ -490,7 +490,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   // Handle special events with text
   constexpr size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
   char buffer[bufferSize] = {0};
-  if (eventHasText(event, buffer, bufferSize)) {
+  if (getTextFromEvent(event, buffer, bufferSize) > 0) {
     bool didHandleEvent = insertText(buffer);
     *textDidChange = didHandleEvent;
     return didHandleEvent;
@@ -499,17 +499,13 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   return false;
 }
 
-bool AbstractTextField::eventHasText(Ion::Events::Event event, char *buffer,
-                                     size_t bufferSize) {
-  size_t eventTextLength = 0;
+size_t AbstractTextField::getTextFromEvent(Ion::Events::Event event,
+                                           char *buffer, size_t bufferSize) {
   if (event == Ion::Events::DoubleQuotes && m_delegate &&
       m_delegate->useDoubleQuotesDeviceKeyForSingleQuote()) {
-    eventTextLength = SerializationHelper::CodePoint(buffer, bufferSize, '\'');
-  } else {
-    eventTextLength =
-        Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
+    return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
   }
-  return eventTextLength > 0;
+  return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
 }
 
 void AbstractTextField::scrollToCursor() {

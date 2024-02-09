@@ -485,7 +485,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   // Handle events that have text
   constexpr size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
   char buffer[bufferSize] = {0};
-  if (eventHasText(event, buffer, bufferSize)) {
+  if (getTextFromEvent(event, buffer, bufferSize) > 0) {
     prepareToEdit();
     bool didHandleEvent = insertText(buffer);
     *layoutDidChange = didHandleEvent;
@@ -567,28 +567,26 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   return false;
 }
 
-bool LayoutField::eventHasText(Ion::Events::Event event, char *buffer,
-                               size_t bufferSize) {
-  size_t eventTextLength = 0;
+size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char *buffer,
+                                     size_t bufferSize) {
   if (event == Ion::Events::Log &&
       Poincare::Preferences::sharedPreferences->logarithmKeyEvent() ==
           Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
     constexpr const char *k_logWithBase10 = "log(\x11,10)";
-    eventTextLength = strlcpy(buffer, k_logWithBase10, bufferSize);
-  } else if (event == Ion::Events::Sto && m_delegate &&
-             m_delegate->insertTextForStoEvent(this)) {
-    eventTextLength = strlcpy(buffer, "→", bufferSize);
-  } else if (event == Ion::Events::Ans && m_delegate &&
-             m_delegate->insertTextForAnsEvent(this)) {
-    eventTextLength =
-        strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
-  } else if (event == Ion::Events::DoubleQuotes) {
-    eventTextLength = SerializationHelper::CodePoint(buffer, bufferSize, '\'');
-  } else {
-    eventTextLength =
-        Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
+    return strlcpy(buffer, k_logWithBase10, bufferSize);
   }
-  return eventTextLength > 0;
+  if (event == Ion::Events::Sto && m_delegate &&
+      m_delegate->insertTextForStoEvent(this)) {
+    return strlcpy(buffer, "→", bufferSize);
+  }
+  if (event == Ion::Events::Ans && m_delegate &&
+      m_delegate->insertTextForAnsEvent(this)) {
+    return strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
+  }
+  if (event == Ion::Events::DoubleQuotes) {
+    return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
+  }
+  return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
 }
 
 bool LayoutField::handleStoreEvent() {

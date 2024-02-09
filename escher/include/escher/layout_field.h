@@ -90,7 +90,8 @@ class LayoutField : public EditableField {
                 "to max number of char in text field");
   bool privateHandleEvent(Ion::Events::Event event, bool* layoutDidChange,
                           bool* shouldUpdateCursor);
-  bool eventHasText(Ion::Events::Event event, char* buffer, size_t bufferSize);
+  size_t getTextFromEvent(Ion::Events::Event event, char* buffer,
+                          size_t bufferSize);
   bool handleMoveEvent(Ion::Events::Event event, bool* layoutDidChange);
   bool didHandleEvent(bool didHandleEvent, bool layoutDidChange,
                       bool shouldUpdateCursor, KDSize previousSize);

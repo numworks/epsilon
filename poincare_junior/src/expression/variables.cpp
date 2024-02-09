@@ -77,6 +77,16 @@ bool Variables::Replace(Tree* expr, const Tree* variable, const Tree* value) {
 }
 
 bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave) {
+  /* TODO We need to track the replacement value only if it is in the pool and
+   * after expr. Cloning is overkill but easy. */
+  EditionReference valueRef = value->clone();
+  bool result = Replace(expr, id, valueRef, leave);
+  valueRef->removeTree();
+  return result;
+}
+
+bool Variables::Replace(Tree* expr, int id, const EditionReference& value,
+                        bool leave) {
   if (expr->isVariable()) {
     if (Id(expr) == id) {
       expr->cloneTreeOverTree(value);

@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_VARIABLES_H
 #define POINCARE_EXPRESSION_VARIABLES_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 
 #include "sign.h"
 
@@ -48,6 +48,8 @@ class Variables {
   // Replace occurrences of variable with value and simplify inside expr
   static bool Replace(Tree* expr, const Tree* variable, const Tree* value);
   static bool Replace(Tree* expr, int id, const Tree* value,
+                      bool leave = false);
+  static bool Replace(Tree* expr, int id, const EditionReference& value,
                       bool leave = false);
 
   // Increment variables indexes

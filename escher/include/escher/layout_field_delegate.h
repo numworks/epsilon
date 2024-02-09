@@ -27,10 +27,12 @@ class LayoutFieldDelegate : public ContextProvider {
   virtual void layoutFieldDidHandleEvent(LayoutField* layoutField) {}
   virtual void layoutFieldDidChangeSize(LayoutField* layoutField) {}
 
-  virtual bool insertTextForStoEvent(Escher::LayoutField* layoutField) const {
+  virtual bool shouldInsertTextForStoEvent(
+      Escher::LayoutField* layoutField) const {
     return false;
   }
-  virtual bool insertTextForAnsEvent(Escher::LayoutField* layoutField) const {
+  virtual bool shouldInsertTextForAnsEvent(
+      Escher::LayoutField* layoutField) const {
     return false;
   }
   virtual void updateRepetitionIndexes(Ion::Events::Event event) {}

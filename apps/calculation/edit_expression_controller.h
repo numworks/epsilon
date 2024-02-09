@@ -42,10 +42,12 @@ class EditExpressionController : public Escher::ViewController,
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   bool isAcceptableExpression(const Poincare::Expression expression,
                               Poincare::Context* context) override;
-  bool insertTextForStoEvent(Escher::LayoutField* layoutField) const override {
+  bool shouldInsertTextForStoEvent(
+      Escher::LayoutField* layoutField) const override {
     return true;
   }
-  bool insertTextForAnsEvent(Escher::LayoutField* layoutField) const override {
+  bool shouldInsertTextForAnsEvent(
+      Escher::LayoutField* layoutField) const override {
     return true;
   }
 

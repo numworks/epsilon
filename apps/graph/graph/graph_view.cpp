@@ -142,7 +142,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   }
 
   // Draw tangent
-  drawTangent(ctx, rect, f.operator->(), record);
+  drawTangent(ctx, rect, record);
 }
 
 void GraphView::tidyModel(int i, TreeNode *treePoolCursor) const {
@@ -275,11 +275,13 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
   }
 }
 
-void GraphView::drawTangent(KDContext *ctx, KDRect rect, ContinuousFunction *f,
+void GraphView::drawTangent(KDContext *ctx, KDRect rect,
                             Ion::Storage::Record record) const {
   if (!m_tangentDisplay || m_selectedRecord != record) {
     return;
   }
+  ExpiringPointer<ContinuousFunction> f =
+      functionStore()->modelForRecord(record);
   assert(f->canComputeTangent());
   /* TODO : We could handle tangent on second curve here by finding out
    * which of the two curves is selected. */

@@ -75,8 +75,7 @@ class ValuesController : public Shared::ValuesController,
   Ion::Storage::Record recordAtColumn(int i, bool *isSumColumn);
   void updateNumberOfColumns() override;
   Poincare::Layout *memoizedLayoutAtIndex(int i) override;
-  Poincare::Layout functionTitleLayout(int column,
-                                       bool forceShortVersion = false) override;
+  Poincare::Layout functionTitleLayout(int column) override;
   void setStartEndMessages(Shared::IntervalParameterController *controller,
                            int column) override {
     setDefaultStartEndMessages();

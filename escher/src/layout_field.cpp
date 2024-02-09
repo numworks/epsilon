@@ -583,7 +583,8 @@ size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char *buffer,
       m_delegate->shouldInsertTextForAnsEvent(this)) {
     return strlcpy(buffer, Symbol::k_ansAliases.mainAlias(), bufferSize);
   }
-  if (event == Ion::Events::DoubleQuotes) {
+  if (event == Ion::Events::DoubleQuotes && m_delegate &&
+      m_delegate->useDoubleQuotesDeviceKeyForSingleQuote()) {
     return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
   }
   return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);

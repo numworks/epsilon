@@ -130,10 +130,10 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(ref, KSec(KA), KPow(KCos(KA), -1_e)) ||
       // Csc(A) -> 1/sin(A)
       PatternMatching::MatchAndReplace(ref, KCsc(KA), KPow(KSin(KA), -1_e)) ||
-      // ArcSec(A) -> 1*acos(1/A)
+      // ArcSec(A) -> acos(1/A)
       PatternMatching::MatchAndReplace(ref, KArcSec(KA),
                                        KACos(KPow(KA, -1_e))) ||
-      // ArcCsc(A) -> 1*asin(1/A)
+      // ArcCsc(A) -> asin(1/A)
       PatternMatching::MatchAndReplace(ref, KArcCsc(KA),
                                        KASin(KPow(KA, -1_e))) ||
       // ArCosh(A) -> ln(A+sqrt(A-1)*sqrt(A+1))

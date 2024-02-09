@@ -1,9 +1,10 @@
+#include "poisson_distribution.h"
+
 #include <assert.h>
 #include <float.h>
-#include <poincare/distribution.h>
+#include "distribution.h"
 #include <poincare/domain.h>
 #include <poincare/float.h>
-#include <poincare/poisson_distribution.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/solver.h>
 

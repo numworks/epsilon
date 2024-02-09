@@ -2,8 +2,9 @@
 #define POINCARE_JUNIOR_CHI2_DISTRIBUTION_H
 
 #include <float.h>
-#include <poincare/continuous_distribution.h>
 #include <poincare/expression.h>
+
+#include "continuous_distribution.h"
 
 namespace PoincareJ {
 

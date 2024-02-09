@@ -1,6 +1,7 @@
+#include "pdf_method.h"
+
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
-#include <poincare/pdf_method.h>
 #include <poincare/rational.h>
 
 namespace PoincareJ {

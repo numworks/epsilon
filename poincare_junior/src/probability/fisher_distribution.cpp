@@ -1,8 +1,9 @@
+#include "fisher_distribution.h"
+
 #include <assert.h>
 #include <float.h>
 #include <poincare/beta_function.h>
 #include <poincare/domain.h>
-#include <poincare/fisher_distribution.h>
 #include <poincare/float.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 

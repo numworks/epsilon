@@ -1,9 +1,10 @@
+#include "hypergeometric_distribution.h"
+
 #include <assert.h>
 #include <float.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/domain.h>
 #include <poincare/float.h>
-#include <poincare/hypergeometric_distribution.h>
 #include <poincare/solver_algorithms.h>
 
 #include <cmath>

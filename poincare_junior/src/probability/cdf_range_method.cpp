@@ -1,4 +1,5 @@
-#include <poincare/cdf_range_method.h>
+#include "cdf_range_method.h"
+
 #include <poincare/distribution_dispatcher.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>

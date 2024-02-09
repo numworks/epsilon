@@ -1,10 +1,11 @@
+#include "uniform_distribution.h"
+
 #include <assert.h>
 #include <float.h>
 #include <poincare/beta_function.h>
 #include <poincare/domain.h>
 #include <poincare/float.h>
 #include <poincare/regularized_incomplete_beta_function.h>
-#include <poincare/uniform_distribution.h>
 
 #include <cmath>
 

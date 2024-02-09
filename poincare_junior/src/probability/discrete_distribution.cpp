@@ -1,4 +1,4 @@
-#include <poincare/discrete_distribution.h>
+#include "discrete_distribution.h"
 
 namespace PoincareJ {
 

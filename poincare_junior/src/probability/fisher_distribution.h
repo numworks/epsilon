@@ -1,9 +1,10 @@
 #ifndef POINCARE_JUNIOR_FISHER_DISTRIBUTION_H
 #define POINCARE_JUNIOR_FISHER_DISTRIBUTION_H
 
-#include <poincare/continuous_distribution.h>
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
+
+#include "continuous_distribution.h"
 
 namespace PoincareJ {
 

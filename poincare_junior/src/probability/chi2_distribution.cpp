@@ -1,4 +1,5 @@
-#include <poincare/chi2_distribution.h>
+#include "chi2_distribution.h"
+
 #include <poincare/domain.h>
 #include <poincare/regularized_gamma_function.h>
 

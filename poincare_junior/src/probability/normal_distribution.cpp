@@ -1,9 +1,10 @@
+#include "normal_distribution.h"
+
 #include <assert.h>
 #include <float.h>
 #include <poincare/domain.h>
 #include <poincare/erf_inv.h>
 #include <poincare/float.h>
-#include <poincare/normal_distribution.h>
 
 #include <cmath>
 

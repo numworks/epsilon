@@ -1,6 +1,7 @@
+#include "binomial_distribution.h"
+
 #include <assert.h>
 #include <float.h>
-#include <poincare/binomial_distribution.h>
 #include <poincare/domain.h>
 #include <poincare/float.h>
 #include <poincare/regularized_incomplete_beta_function.h>

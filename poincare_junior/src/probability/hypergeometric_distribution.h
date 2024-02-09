@@ -1,8 +1,9 @@
 #ifndef POINCARE_JUNIOR_HYPERGEOMETRIC_DISTRIBUTION_H
 #define POINCARE_JUNIOR_HYPERGEOMETRIC_DISTRIBUTION_H
 
-#include <poincare/discrete_distribution.h>
 #include <poincare/expression.h>
+
+#include "discrete_distribution.h"
 
 namespace PoincareJ {
 

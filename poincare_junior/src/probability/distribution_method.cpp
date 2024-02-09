@@ -1,8 +1,9 @@
-#include <poincare/cdf_method.h>
-#include <poincare/cdf_range_method.h>
-#include <poincare/distribution_method.h>
-#include <poincare/inv_method.h>
-#include <poincare/pdf_method.h>
+#include "distribution_method.h"
+
+#include "cdf_method.h"
+#include "cdf_range_method.h"
+#include "inv_method.h"
+#include "pdf_method.h"
 
 namespace PoincareJ {
 

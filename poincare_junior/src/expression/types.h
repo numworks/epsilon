@@ -200,7 +200,8 @@ RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 NODE(List, NARY)
 NODE(ListSort, 1)
 
-NODE(ListAccess, 2)
+NODE(ListElement, 2)
+NODE(ListSlice, 3)
 NODE(Mean, 2)
 NODE(StdDev, 2)
 NODE(Median, 2)
@@ -211,7 +212,7 @@ NODE(Maximum, 1)
 NODE(ListSum, 1)
 NODE(ListProduct, 1)
 
-RANGE(ListToScalar, ListAccess, ListProduct)
+RANGE(ListToScalar, ListElement, ListProduct)
 
 NODE(Point, 2)
 

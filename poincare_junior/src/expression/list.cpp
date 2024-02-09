@@ -185,15 +185,22 @@ bool List::ShallowApplyListOperators(Tree* e) {
       }
       return true;
     }
-    case BlockType::ListAccess: {
-      if (!ProjectToNthElement(e->child(0),
-                               Integer::Handler(e->child(1)).to<uint8_t>(),
+    case BlockType::ListElement: {
+      int i = Integer::Handler(e->child(1)).to<uint8_t>();
+      if (i < 1 || i > e->child(0)->numberOfChildren()) {
+        e->cloneTreeOverTree(KUndef);
+        return true;
+      }
+      if (!ProjectToNthElement(e->child(0), i - 1,
                                Simplification::ShallowSystematicReduce)) {
         return false;
       }
       e->moveTreeOverTree(e->child(0));
       return true;
     }
+    case BlockType::ListSlice:
+      // TODO PCJ
+      return false;
     case BlockType::Dim:
       e->moveTreeOverTree(Integer::Push(Dimension::GetListLength(e->child(0))));
       return true;

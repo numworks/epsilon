@@ -131,7 +131,7 @@ struct KNAry {
 };
 
 template <size_t Nb, Block Tag>
-struct KFixedArity {
+struct KFixedArity : public KTree<Tag> {
   template <TreeConcept... CTS>
     requires(sizeof...(CTS) == Nb)
   consteval auto operator()(CTS...) const {

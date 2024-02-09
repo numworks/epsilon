@@ -72,6 +72,7 @@ constexpr auto KPowReal = KBinary<BlockType::PowerReal>();
 constexpr auto KPowMatrix = KBinary<BlockType::PowerMatrix>();
 constexpr auto KDep = KBinary<BlockType::Dependency>();
 constexpr auto KRound = KBinary<BlockType::Round>();
+constexpr auto KListElement = KBinary<BlockType::ListElement>();
 constexpr auto KMean = KBinary<BlockType::Mean>();
 constexpr auto KBinomial = KBinary<BlockType::Binomial>();
 constexpr auto KPermute = KBinary<BlockType::Permute>();
@@ -80,6 +81,8 @@ constexpr auto KPercentAddition = KBinary<BlockType::PercentAddition>();
 constexpr auto KPoint = KBinary<BlockType::Point>();
 
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
+constexpr auto KListSlice = KFixedArity<3, BlockType::ListSlice>();
+
 constexpr auto KSum = KFixedArity<4, BlockType::Sum>();
 constexpr auto KProduct = KFixedArity<4, BlockType::Product>();
 constexpr auto KIntegral = KFixedArity<4, BlockType::Integral>();

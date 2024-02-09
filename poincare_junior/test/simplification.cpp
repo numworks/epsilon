@@ -374,6 +374,8 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{dim({2,4})}", "{2}");
   simplifies_to("min({})", "undef");
   simplifies_to("sequence(k,k,{1,2})", "undef");
+  simplifies_to("{3,4}(2)", "4");
+  simplifies_to("{3,4}(1,3)", "{3,4}(1,3)");
 }
 
 QUIZ_CASE(pcj_simplification_random) {

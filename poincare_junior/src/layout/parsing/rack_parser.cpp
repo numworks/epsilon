@@ -1198,14 +1198,13 @@ void RackParser::parseList(EditionReference &leftHandSide,
     }
     int numberOfParameters = parameter->numberOfChildren();
     if (numberOfParameters == 2) {
-      // leftHandSide = ListSlice::Builder(parameter.child(0),
-      // parameter.child(1), leftHandSide);
+      CloneNodeAtNode(leftHandSide, KListSlice);
     } else if (numberOfParameters == 1) {
-      parameter = parameter->child(0);
-      // leftHandSide = ListElement::Builder(parameter, leftHandSide);
+      CloneNodeAtNode(leftHandSide, KListElement);
     } else {
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
+    parameter->removeNode();
   }
   isThereImplicitOperator();
 }

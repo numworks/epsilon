@@ -42,9 +42,11 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     case BlockType::ListProduct:
     case BlockType::ListSort:
       return childLength[0] >= 0;
-    case BlockType::ListAccess:
-      // TODO: Also handle third argument dimension for slices
+    case BlockType::ListElement:
       return childLength[0] >= 0 && childLength[1] == -1;
+    case BlockType::ListSlice:
+      return childLength[0] >= 0 && childLength[1] == -1 &&
+             childLength[2] == -1;
     case BlockType::List: {
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (childLength[i++] >= 0) {
@@ -89,7 +91,7 @@ int Dimension::GetListLength(const Tree* t) {
     case BlockType::ListSum:
     case BlockType::ListProduct:
     case BlockType::Dim:
-    case BlockType::ListAccess:
+    case BlockType::ListElement:
       return -1;
     case BlockType::ListSort:
       return GetListLength(t->child(0));
@@ -98,6 +100,10 @@ int Dimension::GetListLength(const Tree* t) {
     case BlockType::ListSequence:
       // TODO: Handle undef Approximation.
       return Approximation::To<float>(t->child(1));
+    case BlockType::ListSlice:
+      // TODO: Handle undef Approximation.
+      return Approximation::To<float>(t->child(2)) -
+             Approximation::To<float>(t->child(1));
     case BlockType::RandIntNoRep:
       // TODO: Handle undef Approximation.
       return Approximation::To<float>(t->child(2));

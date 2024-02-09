@@ -1,11 +1,11 @@
-#ifndef POINCARE_UNIFORM_DISTRIBUTION_H
-#define POINCARE_UNIFORM_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_UNIFORM_DISTRIBUTION_H
+#define POINCARE_JUNIOR_UNIFORM_DISTRIBUTION_H
 
 #include <poincare/continuous_distribution.h>
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class UniformDistribution final : public ContinuousDistribution {
  public:
@@ -77,6 +77,6 @@ class UniformDistribution final : public ContinuousDistribution {
   static bool D1AndD2AreOK(T d1, T d2);
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

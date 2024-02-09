@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T PoissonDistribution::EvaluateAtAbscissa(T x, T lambda) {
@@ -74,4 +74,4 @@ PoissonDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool PoissonDistribution::LambdaIsOK(float);
 template bool PoissonDistribution::LambdaIsOK(double);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

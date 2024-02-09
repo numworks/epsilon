@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T FisherDistribution::EvaluateAtAbscissa(T x, T d1, T d2) {
@@ -82,4 +82,4 @@ template double FisherDistribution::CumulativeDistributiveInverseForProbability<
 template bool FisherDistribution::D1AndD2AreOK(float d1, float d2);
 template bool FisherDistribution::D1AndD2AreOK(double d1, double d2);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

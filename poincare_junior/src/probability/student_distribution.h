@@ -1,11 +1,11 @@
-#ifndef POINCARE_STUDENT_DISTRIBUTION_H
-#define POINCARE_STUDENT_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_STUDENT_DISTRIBUTION_H
+#define POINCARE_JUNIOR_STUDENT_DISTRIBUTION_H
 
 #include <poincare/continuous_distribution.h>
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class StudentDistribution final : public ContinuousDistribution {
  public:
@@ -70,6 +70,6 @@ class StudentDistribution final : public ContinuousDistribution {
   static bool KIsOK(T k);
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

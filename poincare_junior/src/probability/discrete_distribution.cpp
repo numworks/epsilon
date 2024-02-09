@@ -1,6 +1,6 @@
 #include <poincare/discrete_distribution.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa(
@@ -32,4 +32,4 @@ template float DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<
 template double DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<
     double>(double, const double *) const;
 
-}  // namespace Poincare
+}  // namespace PoincareJ

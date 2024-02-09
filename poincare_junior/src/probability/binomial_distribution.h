@@ -1,11 +1,11 @@
-#ifndef POINCARE_BINOMIAL_DISTRIBUTION_H
-#define POINCARE_BINOMIAL_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_BINOMIAL_DISTRIBUTION_H
+#define POINCARE_JUNIOR_BINOMIAL_DISTRIBUTION_H
 
 #include <poincare/discrete_distribution.h>
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class BinomialDistribution final : public DiscreteDistribution {
  public:
@@ -76,6 +76,6 @@ class BinomialDistribution final : public DiscreteDistribution {
   }
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

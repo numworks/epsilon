@@ -3,7 +3,7 @@
 #include <poincare/integer.h>
 #include <poincare/rational.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 Expression CDFMethod::shallowReduce(Expression* abscissae,
                                     const Distribution* distribution,
@@ -27,4 +27,4 @@ Expression CDFMethod::shallowReduce(Expression* abscissae,
   return *expression;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

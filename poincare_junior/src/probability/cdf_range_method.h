@@ -1,10 +1,10 @@
-#ifndef POINCARE_CDF_RANGE_METHOD_H
-#define POINCARE_CDF_RANGE_METHOD_H
+#ifndef POINCARE_JUNIOR_CDF_RANGE_METHOD_H
+#define POINCARE_JUNIOR_CDF_RANGE_METHOD_H
 
 #include <poincare/distribution.h>
 #include <poincare/distribution_method.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class CDFRangeMethod final : public DistributionMethod {
   float EvaluateAtAbscissa(float* x, const Distribution* distribution,
@@ -26,6 +26,6 @@ class CDFRangeMethod final : public DistributionMethod {
                            Expression* expression) const override;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

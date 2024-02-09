@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
@@ -136,4 +136,4 @@ BinomialDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool BinomialDistribution::ParametersAreOK(float, float);
 template bool BinomialDistribution::ParametersAreOK(double, double);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

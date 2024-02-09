@@ -1,10 +1,10 @@
-#ifndef POINCARE_DISTRIBUTION_METHOD_H
-#define POINCARE_DISTRIBUTION_METHOD_H
+#ifndef POINCARE_JUNIOR_DISTRIBUTION_METHOD_H
+#define POINCARE_JUNIOR_DISTRIBUTION_METHOD_H
 
 #include <poincare/distribution.h>
 #include <poincare/expression.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class DistributionMethod {
  public:
@@ -44,6 +44,6 @@ class DistributionMethod {
   }
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

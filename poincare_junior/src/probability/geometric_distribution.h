@@ -1,11 +1,11 @@
-#ifndef POINCARE_GEOMETRIC_DISTRIBUTION_H
-#define POINCARE_GEOMETRIC_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_GEOMETRIC_DISTRIBUTION_H
+#define POINCARE_JUNIOR_GEOMETRIC_DISTRIBUTION_H
 
 #include <poincare/discrete_distribution.h>
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* We chose the definition:
  * 0 < p <= 1 for distribution of success
@@ -60,6 +60,6 @@ class GeometricDistribution final : public DiscreteDistribution {
   static bool PIsOK(T p);
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

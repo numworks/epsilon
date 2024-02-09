@@ -4,7 +4,7 @@
 #include <poincare/inv_method.h>
 #include <poincare/pdf_method.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 const DistributionMethod* DistributionMethod::Get(Type type) {
   switch (type) {
@@ -24,4 +24,4 @@ const DistributionMethod* DistributionMethod::Get(Type type) {
   }
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

@@ -1,10 +1,10 @@
-#ifndef POINCARE_HYPERGEOMETRIC_DISTRIBUTION_H
-#define POINCARE_HYPERGEOMETRIC_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_HYPERGEOMETRIC_DISTRIBUTION_H
+#define POINCARE_JUNIOR_HYPERGEOMETRIC_DISTRIBUTION_H
 
 #include <poincare/discrete_distribution.h>
 #include <poincare/expression.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class HypergeometricDistribution final : public DiscreteDistribution {
  public:
@@ -65,6 +65,6 @@ class HypergeometricDistribution final : public DiscreteDistribution {
   static bool nIsOK(T p);
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

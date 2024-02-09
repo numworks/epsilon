@@ -1,11 +1,11 @@
-#ifndef POINCARE_EXPONENTIAL_DISTRIBUTION_H
-#define POINCARE_EXPONENTIAL_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_EXPONENTIAL_DISTRIBUTION_H
+#define POINCARE_JUNIOR_EXPONENTIAL_DISTRIBUTION_H
 
 #include <poincare/continuous_distribution.h>
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class ExponentialDistribution final : public ContinuousDistribution {
  public:
@@ -67,6 +67,6 @@ class ExponentialDistribution final : public ContinuousDistribution {
   static bool LambdaIsOK(T lambda);
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

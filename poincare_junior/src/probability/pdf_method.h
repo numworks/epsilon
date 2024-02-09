@@ -1,10 +1,10 @@
-#ifndef POINCARE_PDF_METHOD_H
-#define POINCARE_PDF_METHOD_H
+#ifndef POINCARE_JUNIOR_PDF_METHOD_H
+#define POINCARE_JUNIOR_PDF_METHOD_H
 
 #include <poincare/distribution.h>
 #include <poincare/distribution_method.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class PDFMethod final : public DistributionMethod {
   float EvaluateAtAbscissa(float* x, const Distribution* distribution,
@@ -24,6 +24,6 @@ class PDFMethod final : public DistributionMethod {
                            Expression* expression) const override;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

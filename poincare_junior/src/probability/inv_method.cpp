@@ -3,7 +3,7 @@
 #include <poincare/inv_method.h>
 #include <poincare/rational.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 Expression InverseMethod::shallowReduce(Expression *x,
                                         const Distribution *distribution,
@@ -99,4 +99,4 @@ Expression InverseMethod::shallowReduce(Expression *x,
   return *expression;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

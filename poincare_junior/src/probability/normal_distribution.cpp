@@ -9,7 +9,7 @@
 
 #define M_SQRT_2PI 2.506628274631000502415765284811
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T sigma) {
@@ -154,4 +154,4 @@ NormalDistribution::CumulativeDistributiveInverseForProbability<double>(double,
 template bool NormalDistribution::MuAndSigmaAreOK(float mu, float sigma);
 template bool NormalDistribution::MuAndSigmaAreOK(double mu, double sigma);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

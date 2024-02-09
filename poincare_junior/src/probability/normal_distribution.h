@@ -1,11 +1,11 @@
-#ifndef POINCARE_NORMAL_DISTRIBUTION_H
-#define POINCARE_NORMAL_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_NORMAL_DISTRIBUTION_H
+#define POINCARE_JUNIOR_NORMAL_DISTRIBUTION_H
 
 #include <poincare/continuous_distribution.h>
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class NormalDistribution final : public ContinuousDistribution {
  public:
@@ -91,6 +91,6 @@ class NormalDistribution final : public ContinuousDistribution {
   static bool MuAndSigmaAreOK(T mu, T sigma);
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

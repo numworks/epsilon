@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T GeometricDistribution::EvaluateAtAbscissa(T x, T p) {
@@ -82,4 +82,4 @@ GeometricDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool GeometricDistribution::PIsOK(float);
 template bool GeometricDistribution::PIsOK(double);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

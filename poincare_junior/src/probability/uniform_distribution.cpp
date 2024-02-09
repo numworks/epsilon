@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T UniformDistribution::EvaluateAtAbscissa(T x, T d1, T d2) {
@@ -87,4 +87,4 @@ UniformDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool UniformDistribution::D1AndD2AreOK(float d1, float d2);
 template bool UniformDistribution::D1AndD2AreOK(double d1, double d2);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

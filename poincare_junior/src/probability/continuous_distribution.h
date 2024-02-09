@@ -1,9 +1,9 @@
-#ifndef POINCARE_CONTINUOUS_DISTRIBUTION_H
-#define POINCARE_CONTINUOUS_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_CONTINUOUS_DISTRIBUTION_H
+#define POINCARE_JUNIOR_CONTINUOUS_DISTRIBUTION_H
 
 #include <poincare/distribution.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class ContinuousDistribution : public Distribution {
  public:
@@ -29,6 +29,6 @@ class ContinuousDistribution : public Distribution {
   }
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

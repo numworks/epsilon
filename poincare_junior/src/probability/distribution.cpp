@@ -13,7 +13,7 @@
 
 #include <algorithm>
 
-namespace Poincare {
+namespace PoincareJ {
 
 const Distribution *Distribution::Get(Type type) {
   switch (type) {
@@ -133,4 +133,4 @@ template void Distribution::FindBoundsForBinarySearch<float>(
 template void Distribution::FindBoundsForBinarySearch<double>(
     Solver<double>::FunctionEvaluation, void const *, double &, double &);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

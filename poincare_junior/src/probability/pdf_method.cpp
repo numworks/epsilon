@@ -3,7 +3,7 @@
 #include <poincare/pdf_method.h>
 #include <poincare/rational.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 Expression PDFMethod::shallowReduce(Expression *abscissae,
                                     const Distribution *distribution,
@@ -44,4 +44,4 @@ Expression PDFMethod::shallowReduce(Expression *abscissae,
   return *expression;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

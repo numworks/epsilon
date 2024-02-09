@@ -4,7 +4,7 @@
 #include <poincare/integer.h>
 #include <poincare/rational.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 Expression CDFRangeMethod::shallowReduce(Expression* abscissae,
                                          const Distribution* distribution,
@@ -29,4 +29,4 @@ Expression CDFRangeMethod::shallowReduce(Expression* abscissae,
   return *expression;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

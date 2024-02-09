@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T Chi2Distribution::EvaluateAtAbscissa(T x, T k) {
@@ -94,4 +94,4 @@ Chi2Distribution::CumulativeDistributiveInverseForProbability<double>(double,
 template bool Chi2Distribution::KIsOK(float k);
 template bool Chi2Distribution::KIsOK(double k);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

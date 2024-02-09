@@ -1,9 +1,9 @@
-#ifndef POINCARE_DISCRETE_DISTRIBUTION_H
-#define POINCARE_DISCRETE_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_DISCRETE_DISTRIBUTION_H
+#define POINCARE_JUNIOR_DISCRETE_DISTRIBUTION_H
 
 #include <poincare/distribution.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 // More precisely distributions deriving from this should be defined on N
 class DiscreteDistribution : public Distribution {
@@ -41,6 +41,6 @@ class DiscreteDistribution : public Distribution {
   }
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

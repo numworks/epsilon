@@ -1,11 +1,11 @@
-#ifndef POINCARE_CHI2_DISTRIBUTION_H
-#define POINCARE_CHI2_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_CHI2_DISTRIBUTION_H
+#define POINCARE_JUNIOR_CHI2_DISTRIBUTION_H
 
 #include <float.h>
 #include <poincare/continuous_distribution.h>
 #include <poincare/expression.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Chi2Distribution final : public ContinuousDistribution {
  public:
@@ -65,6 +65,6 @@ class Chi2Distribution final : public ContinuousDistribution {
   static bool KIsOK(T k);
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

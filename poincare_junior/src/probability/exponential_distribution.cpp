@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T ExponentialDistribution::EvaluateAtAbscissa(T x, T lambda) {
@@ -66,4 +66,4 @@ ExponentialDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool ExponentialDistribution::LambdaIsOK(float);
 template bool ExponentialDistribution::LambdaIsOK(double);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

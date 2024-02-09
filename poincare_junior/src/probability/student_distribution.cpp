@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 T StudentDistribution::EvaluateAtAbscissa(T x, T k) {
@@ -100,4 +100,4 @@ StudentDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool StudentDistribution::KIsOK(float k);
 template bool StudentDistribution::KIsOK(double k);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

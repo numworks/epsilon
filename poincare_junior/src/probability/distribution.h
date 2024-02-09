@@ -1,9 +1,9 @@
-#ifndef POINCARE_DISTRIBUTION_H
-#define POINCARE_DISTRIBUTION_H
+#ifndef POINCARE_JUNIOR_DISTRIBUTION_H
+#define POINCARE_JUNIOR_DISTRIBUTION_H
 
 #include <poincare/solver_algorithms.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Distribution {
  public:
@@ -104,6 +104,6 @@ class Distribution {
       double p, double ax, double bx, double* parameters) const;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

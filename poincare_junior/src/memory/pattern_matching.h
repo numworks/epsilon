@@ -176,6 +176,13 @@ class PatternMatching {
   // Create structure tree with context's placeholder nodes in EditionPool
   static Tree* CreateTree(const Tree* structure, const Context context,
                           Tree* insertedNAry, bool simplify);
+  /* If pattern could be squashed, return the only non-empty child:
+   *                                          KMult(KA, KTB) -> KA
+   * Return pattern if there are none:        KMult(KTA) -> KMult(KTA)
+   * Return nullptr if it cannot be squashed: KMUlt(KA, KTB, KC) -> nullptr */
+  static const Tree* ChildToSquashPatternTo(const Tree* source,
+                                            const Tree* pattern,
+                                            Context* context);
 };
 
 // Aliases for convenience

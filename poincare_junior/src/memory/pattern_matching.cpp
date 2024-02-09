@@ -108,7 +108,20 @@ void PatternMatching::MatchContext::setLocalToParent() {
       m_globalSourceRoot->parentOfDescendant(m_localSourceRoot);
   const Tree* patternParent =
       m_globalPatternRoot->parentOfDescendant(m_localPatternRoot);
-  assert(sourceParent && patternParent);
+  assert(patternParent);
+  if (!sourceParent || (sourceParent->type() != patternParent->type())) {
+#if ASSERTIONS
+    /* When pattern is "squashed", we simply set m_localPatternRoot to the only
+     * child of the squashed NAry. When setting back to local parent, we must
+     * only restore m_localPatternRoot to it's parent (the squashed NAry). We
+     * ensure here this is the only case when source and pattern are not
+     * synchronized. TODO: Having the actual context would be better since some
+     * AnyTree Placeholders may not be empty. */
+    Context context;
+    assert(ChildToSquashPatternTo(nullptr, patternParent, &context));
+#endif
+    sourceParent = m_localSourceRoot;
+  }
   setLocal(sourceParent, patternParent);
 }
 
@@ -133,6 +146,44 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
   }
   *context = newResult;
   return true;
+}
+
+bool CanBeSquashed(const Tree* pattern) {
+  return pattern->isAddition() || pattern->isMultiplication();
+}
+
+const Tree* PatternMatching::ChildToSquashPatternTo(const Tree* source,
+                                                    const Tree* pattern,
+                                                    Context* context) {
+  assert(CanBeSquashed(pattern));
+  // Use a temporary context to preserve context in case no match is found.
+  Context tempContext = *context;
+  const Tree* result = nullptr;
+  for (const Tree* child : pattern->children()) {
+    if (child->isPlaceholder() &&
+        (Placeholder::NodeToFilter(child) == Placeholder::Filter::AnyTrees)) {
+      Placeholder::Tag tag = Placeholder::NodeToTag(child);
+      if (!tempContext.getNode(tag)) {
+        tempContext.setNode(tag, source, 0, true);
+      }
+      int numberOfTrees = tempContext.getNumberOfTrees(tag);
+      if (numberOfTrees == 0) {
+        continue;
+      } else if (numberOfTrees > 1) {
+        return nullptr;
+      }
+    }
+    if (result) {
+      return nullptr;
+    }
+    result = child;
+  }
+  if (!result) {
+    result = pattern;
+  }
+  // Apply temporary context
+  *context = tempContext;
+  return result;
 }
 
 bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
@@ -194,28 +245,68 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
      * The number of children is therefore not expected to match. */
     bool simpleNAryMatch =
         source->isSimpleNAry() && pattern->type() == source->type();
-    if (!simpleNAryMatch && !source->nodeIsIdenticalTo(pattern)) {
-      // Tree* should match exactly, but it doesn't.
-      return false;
+    if (simpleNAryMatch || source->nodeIsIdenticalTo(pattern)) {
+      if (source->numberOfChildren() > 0) {
+        // Set the new local context so that AnyTrees placeholder cannot match
+        // consecutive Trees inside and outside this node.
+        matchContext.setLocal(source, pattern);
+      }
+      source = source->nextNode();
+      pattern = pattern->nextNode();
+      continue;
+    } else if (CanBeSquashed(pattern)) {
+      // Match x with KTA*x*KTB
+      const Tree* patternChild =
+          ChildToSquashPatternTo(source, pattern, context);
+      if (patternChild) {
+        if (pattern != patternChild) {
+          pattern = patternChild;
+          continue;
+        }
+        // With empty KTA, Match 1 with Mult(KTA) and 0 with Add(KTA)
+        if ((pattern->isAddition() && source->isZero()) ||
+            (pattern->isMultiplication() && source->isOne())) {
+          source = source->nextTree();
+          pattern = pattern->nextTree();
+          continue;
+        }
+      }
     }
-    if (source->numberOfChildren() > 0) {
-      // Set the new local context so that AnyTrees placeholder cannot match
-      // consecutive Trees inside and outside this node.
-      matchContext.setLocal(source, pattern);
-    }
-    source = source->nextNode();
-    pattern = pattern->nextNode();
+    // Tree* cannot match exactly.
+    return false;
   }
   /* Pattern has been entirely and successfully matched.
    * Return false if source has not been entirely checked. */
   return matchContext.reachedLimit(source, true, true);
 }
 
+/* Since we use Match a lot with pattern's type not matching source, escape
+ * early here to optimize a costly MatchContext constructor. */
+bool CanEarlyEscape(const Tree* pattern, const Tree* source) {
+  if (pattern->type() == source->type() || pattern->isPlaceholder()) {
+    return false;
+  }
+  if (!CanBeSquashed(pattern)) {
+    return true;
+  }
+  // We can still match x wit KTA*KB
+  bool canHaveNonEmptyChildren = false;
+  for (const Tree* child : pattern->children()) {
+    if (child->isPlaceholder() &&
+        (Placeholder::NodeToFilter(child) == Placeholder::Filter::AnyTrees)) {
+      continue;
+    }
+    if (canHaveNonEmptyChildren) {
+      return true;
+    }
+    canHaveNonEmptyChildren = true;
+  }
+  return false;
+}
+
 bool PatternMatching::Match(const Tree* pattern, const Tree* source,
                             Context* context) {
-  /* Since we use Match a lot with pattern's type not matching source, escape
-   * early here to optimize a costly MatchContext constructor. */
-  if (pattern->type() != source->type() && !pattern->isPlaceholder()) {
+  if (CanEarlyEscape(pattern, source)) {
     return false;
   }
   // Use a temporary context to preserve context in case no match is found.

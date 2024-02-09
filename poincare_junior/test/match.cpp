@@ -97,6 +97,48 @@ QUIZ_CASE(pcj_match) {
   PatternMatching::Context ctx11;
   const Tree* n11 = KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(3_e)))), 0_e);
   quiz_assert(PatternMatching::Match(n11, n11, &ctx11));
+
+  PatternMatching::Context ctx12;
+  quiz_assert(PatternMatching::Match(KMult(KTA, "x"_e, KTB), "x"_e, &ctx12));
+  quiz_assert(ctx12.getNumberOfTrees(Placeholder::A) == 0);
+  quiz_assert(ctx12.getNumberOfTrees(Placeholder::B) == 0);
+
+  PatternMatching::Context ctx13;
+  quiz_assert(PatternMatching::Match(KMult(KTA, KB, KTC), "x"_e, &ctx13));
+  quiz_assert(ctx13.getNumberOfTrees(Placeholder::A) == 0);
+  assert_trees_are_equal(ctx13.getNode(Placeholder::B), "x"_e);
+  quiz_assert(ctx13.getNumberOfTrees(Placeholder::C) == 0);
+
+  PatternMatching::Context ctx14;
+  quiz_assert(
+      PatternMatching::Match(KAdd(KMult(KTA, "x"_e), KTB), "x"_e, &ctx14));
+  quiz_assert(ctx14.getNumberOfTrees(Placeholder::A) == 0);
+  quiz_assert(ctx14.getNumberOfTrees(Placeholder::B) == 0);
+
+  PatternMatching::Context ctx15;
+  quiz_assert(
+      PatternMatching::Match(KAdd(KMult(KTA, "x"_e), KTB), "x"_e, &ctx15));
+  quiz_assert(ctx15.getNumberOfTrees(Placeholder::A) == 0);
+  quiz_assert(ctx15.getNumberOfTrees(Placeholder::B) == 0);
+
+  PatternMatching::Context ctx16;
+  quiz_assert(
+      PatternMatching::Match(KAdd(KTA, KMult(KTB, "x"_e), KTC, KMult(KTB)),
+                             KAdd("x"_e, KMult(2_e, "x"_e), 2_e), &ctx16));
+  quiz_assert(ctx16.getNumberOfTrees(Placeholder::A) == 1);
+  assert_trees_are_equal(ctx16.getNode(Placeholder::A), "x"_e);
+  quiz_assert(ctx16.getNumberOfTrees(Placeholder::B) == 1);
+  assert_trees_are_equal(ctx16.getNode(Placeholder::B), 2_e);
+  quiz_assert(ctx16.getNumberOfTrees(Placeholder::C) == 0);
+
+  PatternMatching::Context ctx17;
+  quiz_assert(
+      PatternMatching::Match(KAdd(KTA, KMult(KTB, "x"_e), KTC, KMult(KTB)),
+                             KAdd("x"_e, KMult(2_e, "x"_e), 1_e), &ctx17));
+  quiz_assert(ctx17.getNumberOfTrees(Placeholder::A) == 0);
+  quiz_assert(ctx17.getNumberOfTrees(Placeholder::B) == 0);
+  quiz_assert(ctx17.getNumberOfTrees(Placeholder::C) == 1);
+  assert_trees_are_equal(ctx17.getNode(Placeholder::C), KMult(2_e, "x"_e));
 }
 
 QUIZ_CASE(pcj_rewrite_replace) {

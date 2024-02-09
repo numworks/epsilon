@@ -29,8 +29,12 @@ class TextFieldDelegate {
   virtual bool textFieldIsStorable(AbstractTextField* textField) {
     return true;
   }
-  virtual void updateRepetitionIndexes(Ion::Events::Event event) {}
-  virtual bool shouldInsertSingleQuoteInsteadOfDoubleQuotes() { return true; }
+  virtual void updateRepetitionIndexes(AbstractTextField* textField,
+                                       Ion::Events::Event event) {}
+  virtual bool shouldInsertSingleQuoteInsteadOfDoubleQuotes(
+      AbstractTextField* textField) {
+    return true;
+  }
 };
 
 }  // namespace Escher

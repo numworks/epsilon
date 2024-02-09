@@ -57,9 +57,10 @@ bool ChainedTextFieldDelegate::textFieldIsStorable(
 }
 
 void ChainedTextFieldDelegate::updateRepetitionIndexes(
-    Ion::Events::Event event) {
-  return m_parentDelegate ? m_parentDelegate->updateRepetitionIndexes(event)
-                          : TextFieldDelegate::updateRepetitionIndexes(event);
+    AbstractTextField* textField, Ion::Events::Event event) {
+  return m_parentDelegate
+             ? m_parentDelegate->updateRepetitionIndexes(textField, event)
+             : TextFieldDelegate::updateRepetitionIndexes(textField, event);
 }
 
 }  // namespace Escher

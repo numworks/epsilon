@@ -35,8 +35,12 @@ class LayoutFieldDelegate : public ContextProvider {
       Escher::LayoutField* layoutField) const {
     return false;
   }
-  virtual bool shouldInsertSingleQuoteInsteadOfDoubleQuotes() { return true; }
-  virtual void updateRepetitionIndexes(Ion::Events::Event event) {}
+  virtual bool shouldInsertSingleQuoteInsteadOfDoubleQuotes(
+      LayoutField* layoutField) {
+    return true;
+  }
+  virtual void updateRepetitionIndexes(LayoutField* layoutField,
+                                       Ion::Events::Event event) {}
 };
 
 }  // namespace Escher

@@ -111,8 +111,7 @@ class ValuesController : public EditableCellTableViewController,
   Escher::SelectableViewController* columnParameterController() override;
   Shared::ColumnParameters* columnParameters() override;
 
-  virtual Poincare::Layout functionTitleLayout(
-      int column, bool forceShortVersion = false) = 0;
+  virtual Poincare::Layout functionTitleLayout(int column) = 0;
   size_t fillColumnName(int column, char* buffer) override;
   void setTitleCellText(Escher::HighlightCell* titleCell, int column) override;
   void setTitleCellStyle(Escher::HighlightCell* titleCell, int column) override;

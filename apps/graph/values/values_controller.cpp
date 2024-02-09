@@ -288,8 +288,7 @@ Layout *ValuesController::memoizedLayoutAtIndex(int i) {
   return &m_memoizedLayouts[i];
 }
 
-Layout ValuesController::functionTitleLayout(int column,
-                                             bool forceShortVersion) {
+Layout ValuesController::functionTitleLayout(int column) {
   assert(typeAtLocation(column, 0) == k_functionTitleCellType);
   int derivationOrder;
   Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
@@ -300,8 +299,7 @@ Layout ValuesController::functionTitleLayout(int column,
     return function->derivativeTitleLayout(derivationOrder == 1);
   }
   assert(derivationOrder == 0);
-  return function->titleLayout(App::app()->localContext(),
-                               forceShortVersion || function->isNamed());
+  return function->titleLayout(App::app()->localContext());
 }
 
 int ValuesController::numberOfAbscissaColumnsBeforeAbsoluteColumn(

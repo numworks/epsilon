@@ -147,8 +147,7 @@ Layout *ValuesController::memoizedLayoutAtIndex(int i) {
   return &m_memoizedLayouts[i];
 }
 
-Layout ValuesController::functionTitleLayout(int column,
-                                             bool forceShortVersion) {
+Layout ValuesController::functionTitleLayout(int column) {
   Preferences *preferences = Preferences::sharedPreferences;
   bool isSumColumn = false;
   Shared::Sequence *sequence =

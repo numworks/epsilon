@@ -68,7 +68,7 @@ class ContinuousFunction : public Function {
   // If the ContinuousFunction has y for unknown symbol
   bool isAlongY() const override { return properties().isAlongY(); }
 
-  Poincare::Layout titleLayout(Poincare::Context *context, bool shortVersion);
+  Poincare::Layout titleLayout(Poincare::Context *context);
 
   /* ExpressionModelHandle */
 

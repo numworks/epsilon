@@ -157,9 +157,8 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
                                                      precision);
 }
 
-Poincare::Layout ContinuousFunction::titleLayout(Poincare::Context *context,
-                                                 bool shortVersion) {
-  if (shortVersion) {
+Poincare::Layout ContinuousFunction::titleLayout(Poincare::Context *context) {
+  if (isNamed()) {
     constexpr size_t bufferNameSize = k_maxNameWithArgumentSize + 1;
     char buffer[bufferNameSize];
     nameWithArgument(buffer, bufferNameSize);

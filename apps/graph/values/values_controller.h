@@ -123,8 +123,7 @@ class ValuesController : public Shared::ValuesController,
   Ion::Storage::Record recordAtColumn(int i) override;
   void updateNumberOfColumns() override;
   Poincare::Layout *memoizedLayoutAtIndex(int i) override;
-  Poincare::Layout functionTitleLayout(int column,
-                                       bool forceShortVersion = false) override;
+  Poincare::Layout functionTitleLayout(int column) override;
   int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const override;
   int numberOfAbscissaColumnsBeforeValuesColumn(int column) const override;
   void setStartEndMessages(Shared::IntervalParameterController *controller,

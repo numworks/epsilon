@@ -67,6 +67,7 @@ class SingleRangeController : public FloatParameterController<T> {
 
  private:
   int reusableParameterCellCount(int type) const override {
+    assert(type == this->k_parameterCellType);
     return k_numberOfBoundsCells;
   }
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;

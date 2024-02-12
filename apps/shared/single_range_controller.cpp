@@ -87,6 +87,7 @@ bool SingleRangeController<T>::handleEvent(Ion::Events::Event event) {
 template <typename T>
 HighlightCell* SingleRangeController<T>::reusableParameterCell(int index,
                                                                int type) {
+  assert(type == this->k_parameterCellType);
   int i = index - 1;
   assert(0 <= i && i < k_numberOfBoundsCells);
   return &m_boundsCells[i];

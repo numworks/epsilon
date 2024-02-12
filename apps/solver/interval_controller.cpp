@@ -37,6 +37,7 @@ bool IntervalController::handleEvent(Ion::Events::Event event) {
 }
 
 I18n::Message IntervalController::parameterMessage(int index) const {
+  assert(index == 0 || index == 1);
   return index == 0 ? I18n::Message::XMin : I18n::Message::XMax;
 }
 

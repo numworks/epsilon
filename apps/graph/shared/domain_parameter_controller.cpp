@@ -58,6 +58,7 @@ void DomainParameterController::textFieldDidAbortEditing(
 }
 
 I18n::Message DomainParameterController::parameterMessage(int index) const {
+  assert(index == 0 || index == 1);
   ContinuousFunctionProperties plotProperties = function()->properties();
   if (plotProperties.isParametric()) {
     return index == 0 ? I18n::Message::TMin : I18n::Message::TMax;

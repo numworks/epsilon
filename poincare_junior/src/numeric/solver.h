@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <poincare/expression.h>
-#include <poincare/float.h>
+#include <poincare_junior/src/numeric/float.h>
 
 namespace PoincareJ {
 

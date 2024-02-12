@@ -1,9 +1,9 @@
 #include "unit.h"
 
 #include <omg/round.h>
-#include <poincare/float.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
+#include <poincare_junior/src/numeric/float.h>
 
 #include "approximation.h"
 #include "poincare_junior/src/expression/unit_representatives.h"
@@ -295,7 +295,7 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
   order = OMG::LaxToZero(order);
   otherOrder = OMG::LaxToZero(otherOrder);
   if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) <=
-          3.0f + Poincare::Float<float>::EpsilonLax() &&
+          3.0f + Float<float>::EpsilonLax() &&
       order * otherOrder < 0.0f) {
     /* If the two values are close, and their sign are opposed, the positive
      * order is preferred */
@@ -442,7 +442,7 @@ const Prefix* Representative::findBestPrefix(double value,
   if (!isOutputPrefixable()) {
     return Prefix::EmptyPrefix();
   }
-  if (value < Poincare::Float<double>::EpsilonLax()) {
+  if (value < Float<double>::EpsilonLax()) {
     return Prefix::EmptyPrefix();
   }
   const Prefix* res = Prefix::EmptyPrefix();

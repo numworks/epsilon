@@ -1,4 +1,4 @@
-#include <poincare/float.h>
+#include <poincare_junior/src/numeric/float.h>
 
 #include <algorithm>
 
@@ -166,7 +166,7 @@ T Approximation::ApproximateIntegral(const Tree* integral) {
   }
   /* The tolerance sqrt(eps) estimated by the method is an upper bound and the
    * real is error is typically eps */
-  constexpr T precision = Poincare::Float<T>::SqrtEpsilonLax();
+  constexpr T precision = Float<T>::SqrtEpsilonLax();
   DetailedResult<T> detailedResult = adaptiveQuadrature<T>(
       start, end, precision, k_maxNumberOfIterations, substitution);
   return DetailedResultIsValid(detailedResult) ? scale * detailedResult.integral
@@ -277,7 +277,7 @@ DetailedResult<T> tanhSinhQuadrature(
          * abs(y * weights) > abs(L1_I0 * tail_tolerance)
          * but L1_IO is abs(pi/2 * f(0)) before the first row and
          * tail_tolerance = tolerance^2 */
-        if (std::abs(weight * leftValue) < Poincare::Float<T>::EpsilonLax())
+        if (std::abs(weight * leftValue) < Float<T>::EpsilonLax())
           leftOk = false;
       }
       if (rightOk) {
@@ -289,7 +289,7 @@ DetailedResult<T> tanhSinhQuadrature(
           maxWjFj = std::max(maxWjFj, std::abs(weight * rightValue));
           result += weight * rightValue;
         }
-        if (std::abs(weight * rightValue) < Poincare::Float<T>::EpsilonLax())
+        if (std::abs(weight * rightValue) < Float<T>::EpsilonLax())
           rightOk = false;
       }
       // computing only odd ticks after the first level
@@ -322,7 +322,7 @@ DetailedResult<T> tanhSinhQuadrature(
 template <typename T>
 DetailedResult<T> kronrodGaussQuadrature(T a, T b,
                                          Substitution<T> substitution) {
-  constexpr T epsilon = Poincare::Float<T>::Epsilon();
+  constexpr T epsilon = Float<T>::Epsilon();
   constexpr T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
    * The abscissa and weights are taken from QUADPACK library. */

@@ -2,7 +2,7 @@
 #define POINCARE_JUNIOR_DOMAIN_H
 
 #include <omgpj/troolean.h>
-#include <poincare/float.h>
+#include <poincare_junior/src/numeric/float.h>
 #include <poincare/rational.h>
 #include <poincare_junior/src/memory/tree.h>
 #include <stdint.h>

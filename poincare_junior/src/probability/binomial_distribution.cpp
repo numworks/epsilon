@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
-#include <poincare/float.h>
+#include <poincare_junior/src/numeric/float.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 
 #include <cmath>
@@ -16,7 +16,7 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
   if (std::isnan(x) || std::isinf(x) || !ParametersAreOK(n, p)) {
     return NAN;
   }
-  constexpr T precision = Poincare::Float<T>::Epsilon();
+  constexpr T precision = Float<T>::Epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - static_cast<T>(1.0)) < precision;
@@ -74,7 +74,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(
       probability > static_cast<T>(1.0)) {
     return NAN;
   }
-  constexpr T precision = Poincare::Float<T>::Epsilon();
+  constexpr T precision = Float<T>::Epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - static_cast<T>(1.0)) < precision;

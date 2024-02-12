@@ -1,9 +1,9 @@
 #include "approximation.h"
 
 #include <math.h>
-#include <poincare/float.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
+#include <poincare_junior/src/numeric/float.h>
 #include <poincare_junior/src/probability/distribution_method.h>
 
 #include <bit>
@@ -685,7 +685,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Ceiling: {
       /* Assume low deviation from natural numbers are errors */
       T delta = std::fabs((std::round(child[0]) - child[0]) / child[0]);
-      if (delta <= Poincare::Float<T>::Epsilon()) {
+      if (delta <= Float<T>::Epsilon()) {
         return std::round(child[0]);
       }
       return node->isFloor() ? std::floor(child[0]) : std::ceil(child[0]);

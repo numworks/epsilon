@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
-#include <poincare/float.h>
+#include <poincare_junior/src/numeric/float.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/solver.h>
 
@@ -34,7 +34,7 @@ T PoissonDistribution::CumulativeDistributiveInverseForProbability(
       probability > static_cast<T>(1.0)) {
     return NAN;
   }
-  constexpr T precision = Poincare::Float<T>::Epsilon();
+  constexpr T precision = Float<T>::Epsilon();
   if (std::abs(probability) < precision) {
     return NAN;
   }

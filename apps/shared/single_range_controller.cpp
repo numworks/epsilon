@@ -35,9 +35,6 @@ HighlightCell* SingleRangeController<T>::reusableCell(int index, int type) {
   if (type == k_autoCellType) {
     return &m_autoCell;
   }
-  if (type == this->k_parameterCellType) {
-    return m_boundsCells + index;
-  }
   return FloatParameterController<T>::reusableCell(index, type);
 }
 
@@ -88,9 +85,8 @@ template <typename T>
 HighlightCell* SingleRangeController<T>::reusableParameterCell(int index,
                                                                int type) {
   assert(type == this->k_parameterCellType);
-  int i = index - 1;
-  assert(0 <= i && i < k_numberOfBoundsCells);
-  return &m_boundsCells[i];
+  assert(0 <= index && index < k_numberOfBoundsCells);
+  return &m_boundsCells[index];
 }
 
 template <typename T>

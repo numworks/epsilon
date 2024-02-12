@@ -3,6 +3,7 @@
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
+#include <poincare_junior/src/probability/distribution_method.h>
 
 #include "advanced_simplification.h"
 #include "approximation.h"
@@ -154,6 +155,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return List::ShallowApplyListOperators(u);
     case BlockType::Piecewise:
       return Binary::SimplifyPiecewise(u);
+    case BlockType::Distribution:
+      return SimplifyDistribution(u);
     default:
       if (u->type().isListToScalar()) {
         return List::ShallowApplyListOperators(u);
@@ -724,6 +727,35 @@ bool Simplification::SimplifySign(Tree* expr) {
   }
   expr->cloneTreeOverTree(result);
   return true;
+}
+
+bool Simplification::SimplifyDistribution(Tree* expr) {
+  const Tree* child = expr->child(0);
+  const Tree* abscissae[DistributionMethod::k_maxNumberOfParameters];
+  DistributionMethod::Type methodType = DistributionMethod::Get(expr);
+  for (int i = 0; i < DistributionMethod::numberOfParameters(methodType); i++) {
+    abscissae[i] = child;
+    child = child->nextTree();
+  }
+  Distribution::Type distributionType = Distribution::Get(expr);
+  const Tree* parameters[Distribution::k_maxNumberOfParameters];
+  for (int i = 0; i < Distribution::numberOfParameters(distributionType); i++) {
+    parameters[i] = child;
+    child = child->nextTree();
+  }
+  const DistributionMethod* method = DistributionMethod::Get(methodType);
+  const Distribution* distribution = Distribution::Get(distributionType);
+  bool parametersAreOk;
+  bool couldCheckParameters = distribution->expressionParametersAreOK(
+      &parametersAreOk, parameters, nullptr);
+  if (!couldCheckParameters) {
+    return false;
+  }
+  if (!parametersAreOk) {
+    expr->cloneTreeOverTree(KUndef);
+    return true;
+  }
+  return method->shallowReduce(abscissae, distribution, parameters, expr);
 }
 
 bool ShouldApproximateOnSimplify(Dimension dimension) {

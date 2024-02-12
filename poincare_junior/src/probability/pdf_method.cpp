@@ -30,14 +30,13 @@ bool PDFMethod::shallowReduce(const Tree** abscissae,
     return true;
   }
 
-  if (!distribution->isContinuous()) {
-#if 0
-    // TODO PCJ: replace x
-    Tree* div = IntegerHandler::Quotient(Rational::Numerator(x),
-                                         Rational::Denominator(x));
-    x->moveTreeOverTree(div);
+  if (!distribution->isContinuous() && !x->isInteger()) {
+    Tree* floorX = IntegerHandler::Quotient(Rational::Numerator(x),
+                                            Rational::Denominator(x));
+    // Replacing x in expression by its floor
+    assert(x == expression->child(0));
+    expression->child(0)->moveTreeOverTree(floorX);
     return true;
-#endif
   }
 
   return false;

@@ -741,5 +741,6 @@ QUIZ_CASE(pcj_simplification_piecewise) {
 
 QUIZ_CASE(pcj_distributions) {
   simplifies_to("binomcdf(3,5,0.4)", "binomcdf(3,5,2/5)");
+  simplifies_to("binompdf(3.5,5,0.4)", "binompdf(3,5,2/5)");
   simplifies_to("normcdf(inf,5,0.4)", "1");
 }

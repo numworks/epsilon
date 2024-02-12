@@ -46,6 +46,8 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyComplexPart);
   static bool SimplifySign(Tree *t);
   EDITION_REF_WRAP(SimplifySign);
+  static bool SimplifyDistribution(Tree *t);
+  EDITION_REF_WRAP(SimplifyDistribution);
 
  private:
   /* These private methods should never be called on EditionReferences.

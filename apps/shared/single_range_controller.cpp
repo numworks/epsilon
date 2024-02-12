@@ -86,15 +86,17 @@ bool SingleRangeController<T>::handleEvent(Ion::Events::Event event) {
 template <typename T>
 HighlightCell* SingleRangeController<T>::reusableParameterCell(int index,
                                                                int type) {
-  assert(index >= 1 && index < k_numberOfBoundsCells + 1);
-  return &m_boundsCells[index - 1];
+  int i = index - 1;
+  assert(0 <= i && i < k_numberOfBoundsCells);
+  return &m_boundsCells[i];
 }
 
 template <typename T>
 bool SingleRangeController<T>::setParameterAtIndex(int parameterIndex, T f) {
-  assert(parameterIndex == 1 || parameterIndex == 2);
-  parameterIndex == 1 ? m_rangeParam.setMinKeepingValid(f, limit())
-                      : m_rangeParam.setMaxKeepingValid(f, limit());
+  int i = parameterIndex - 1;
+  assert(0 <= i && i < k_numberOfBoundsCells);
+  i == 0 ? m_rangeParam.setMinKeepingValid(f, limit())
+         : m_rangeParam.setMaxKeepingValid(f, limit());
   return true;
 }
 
@@ -130,8 +132,9 @@ bool SingleRangeController<T>::textFieldDidFinishEditing(
 
 template <typename T>
 T SingleRangeController<T>::parameterAtIndex(int index) {
-  assert(index >= 1 && index < k_numberOfBoundsCells + 1);
-  return (index == 1 ? m_rangeParam.min() : m_rangeParam.max());
+  int i = index - 1;
+  assert(0 <= i && i < k_numberOfBoundsCells);
+  return i == 0 ? m_rangeParam.min() : m_rangeParam.max();
 }
 
 template <typename T>

@@ -58,11 +58,11 @@ constexpr inline double Float<double>::Epsilon() {
 }
 template <>
 constexpr inline float Float<float>::SqrtEpsilonLax() {
-  return 1e-3f;
+  return SquareRoot(EpsilonLax());
 }
 template <>
 constexpr inline double Float<double>::SqrtEpsilonLax() {
-  return 3e-8f;
+  return SquareRoot(EpsilonLax());
 }
 template <>
 constexpr inline float Float<float>::Min() {

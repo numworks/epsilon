@@ -4,6 +4,8 @@
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/type_block.h>
 #include <poincare_junior/src/n_ary.h>
+#include <poincare_junior/src/probability/distribution.h>
+#include <poincare_junior/src/probability/distribution_method.h>
 
 namespace PoincareJ {
 
@@ -97,15 +99,75 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {BlockType::True, BuiltinsAliases::k_trueAliases},
 };
 
-Tree *Builtin::pushNode() const {
+class DistributionBuiltin : public Builtin {
+ public:
+  constexpr DistributionBuiltin(Distribution::Type distribution,
+                                DistributionMethod::Type method,
+                                Aliases aliases)
+      : Builtin(BlockType::Distribution, aliases),
+        m_distribution(distribution),
+        m_method(method) {}
+
+  Tree *pushNode(int numberOfChildren) const override;
+  bool checkNumberOfParameters(int n) const override;
+
+ private:
+  Distribution::Type m_distribution;
+  DistributionMethod::Type m_method;
+};
+
+constexpr static DistributionBuiltin s_distributionsBuiltins[] = {
+    {Distribution::Type::Normal, DistributionMethod::Type::CDF, "normcdf"},
+    {Distribution::Type::Normal, DistributionMethod::Type::CDFRange,
+     "normcdfrange"},
+    {Distribution::Type::Normal, DistributionMethod::Type::PDF, "normpdf"},
+    {Distribution::Type::Normal, DistributionMethod::Type::Inverse, "invnorm"},
+    {Distribution::Type::Student, DistributionMethod::Type::CDF, "tcdf"},
+    {Distribution::Type::Student, DistributionMethod::Type::CDFRange,
+     "tcdfrange"},
+    {Distribution::Type::Student, DistributionMethod::Type::PDF, "tpdf"},
+    {Distribution::Type::Student, DistributionMethod::Type::Inverse, "invt"},
+    {Distribution::Type::Binomial, DistributionMethod::Type::CDF, "binomcdf"},
+    {Distribution::Type::Binomial, DistributionMethod::Type::PDF, "binompdf"},
+    {Distribution::Type::Binomial, DistributionMethod::Type::Inverse,
+     "invbinom"},
+    {Distribution::Type::Poisson, DistributionMethod::Type::CDF, "poissoncdf"},
+    {Distribution::Type::Poisson, DistributionMethod::Type::PDF, "poissonpdf"},
+    {Distribution::Type::Geometric, DistributionMethod::Type::CDF, "geomcdf"},
+    {Distribution::Type::Geometric, DistributionMethod::Type::CDFRange,
+     "geomcdfrange"},
+    {Distribution::Type::Geometric, DistributionMethod::Type::PDF, "geompdf"},
+    {Distribution::Type::Geometric, DistributionMethod::Type::Inverse,
+     "invgeom"},
+    {Distribution::Type::Hypergeometric, DistributionMethod::Type::CDF,
+     "hgeomcdf"},
+    {Distribution::Type::Hypergeometric, DistributionMethod::Type::CDFRange,
+     "hgeomcdfrange"},
+    {Distribution::Type::Hypergeometric, DistributionMethod::Type::PDF,
+     "hgeompdf"},
+    {Distribution::Type::Hypergeometric, DistributionMethod::Type::Inverse,
+     "invhgeom"},
+};
+
+Tree *Builtin::pushNode(int numberOfChildren) const {
   Tree *result = SharedEditionPool->push(m_blockType);
-  if (TypeBlock(m_blockType).isRandomNode()) {
+  if (TypeBlock(m_blockType).isNAry()) {
+    SharedEditionPool->push(numberOfChildren);
+  } else if (TypeBlock(m_blockType).isRandomNode()) {
     // Add random seeds
     assert(result->nodeSize() == 2);
     SharedEditionPool->push(BlockType::Zero);
   } else {
     assert(result->nodeSize() == 1);
   }
+  return result;
+}
+
+Tree *DistributionBuiltin::pushNode(int numberOfChildren) const {
+  Tree *result = SharedEditionPool->push(BlockType::Distribution);
+  SharedEditionPool->push(numberOfChildren);
+  SharedEditionPool->push(BlockType(m_distribution));
+  SharedEditionPool->push(BlockType(m_method));
   return result;
 }
 
@@ -124,10 +186,16 @@ const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
       return &builtin;
     }
   }
+  for (const DistributionBuiltin &builtin : s_distributionsBuiltins) {
+    if (builtin.m_aliases.contains(name)) {
+      return &builtin;
+    }
+  }
   return nullptr;
 }
 
 const Builtin *Builtin::GetReservedFunction(BlockType type) {
+  assert(type != BlockType::Distribution);
   for (const Builtin &builtin : s_builtins) {
     if (builtin.m_blockType == type) {
       return &builtin;
@@ -173,15 +241,15 @@ bool Builtin::checkNumberOfParameters(int n) const {
   }
 }
 
+bool DistributionBuiltin::checkNumberOfParameters(int n) const {
+  return n == Distribution::numberOfParameters(m_distribution) +
+                  DistributionMethod::numberOfParameters(m_method);
+}
+
 bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
   TypeBlock type = builtin->blockType();
-  if (type == BlockType::GCD || type == BlockType::LCM ||
-      type == BlockType::Piecewise) {
-    // GCD and LCM are n-ary, skip moveNodeOverNode to keep the nb of children
-    *parameterList->block() = type;
-    return true;
-  }
-  if (parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
+  if (!type.isNAry() &&
+      parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
     // Add default parameters
     if (type == BlockType::Round) {
       NAry::AddChild(parameterList, (0_e)->clone());
@@ -191,7 +259,8 @@ bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
       NAry::AddChild(parameterList, (1_e)->clone());
     }
   }
-  parameterList->moveNodeOverNode(builtin->pushNode());
+  parameterList->moveNodeOverNode(
+      builtin->pushNode(parameterList->numberOfChildren()));
   if (TypeBlock(type).isParametric()) {
     // Move sub-expression at the end
     parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));

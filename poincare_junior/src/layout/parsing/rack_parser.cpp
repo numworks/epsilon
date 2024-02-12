@@ -946,7 +946,7 @@ void RackParser::parseSpecialIdentifier(EditionReference &leftHandSide,
   RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
   const Builtin *builtin = Builtin::GetSpecialIdentifier(&decoder);
   assert(builtin);
-  leftHandSide = builtin->pushNode();
+  leftHandSide = builtin->pushNode(0);
   assert(leftHandSide->numberOfChildren() == 0);
   isThereImplicitOperator();
 }

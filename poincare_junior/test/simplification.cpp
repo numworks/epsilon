@@ -738,3 +738,8 @@ QUIZ_CASE(pcj_simplification_piecewise) {
   simplifies_to("piecewise(x, u<1, y, True)", "piecewise(x, u<1, y)");
   simplifies_to("piecewise(1, True, undef)", "undef");  // TODO -> 1
 }
+
+QUIZ_CASE(pcj_distributions) {
+  simplifies_to("binomcdf(3,5,0.4)", "binomcdf(3,5,2/5)");
+  simplifies_to("normcdf(inf,5,0.4)", "1");
+}

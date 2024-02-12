@@ -16,8 +16,8 @@ class Builtin {
 
   const BlockType blockType() const { return m_blockType; }
   const Aliases* aliases() const { return &m_aliases; }
-  Tree* pushNode() const;
-  bool checkNumberOfParameters(int n) const;
+  virtual Tree* pushNode(int numberOfChildren) const;
+  virtual bool checkNumberOfParameters(int n) const;
   static bool IsReservedFunction(BlockType type) {
     return GetReservedFunction(type) != nullptr;
   }

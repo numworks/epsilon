@@ -42,6 +42,11 @@ class Distribution {
     }
   }
 
+  static Type Get(const Tree* tree) {
+    assert(tree->isDistribution());
+    return tree->nodeValueBlock(1)->get<Type>();
+  }
+
   static const Distribution* Get(Type type);
 
   virtual Type type() const = 0;

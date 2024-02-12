@@ -286,6 +286,12 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return DecimalFunction(Get(t->firstChild()), t->type());
     case BlockType::PercentSimple:
       return NoIntegers(Get(t->firstChild()));
+    case BlockType::Distribution:
+      return ComplexSign(
+          DistributionMethod::Get(t) != DistributionMethod::Type::Inverse
+              ? Sign::PositiveOrNull()
+              : Sign::Unknown(),
+          Sign::Zero());
 #endif
     default:
       return Unknown();

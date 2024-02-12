@@ -107,6 +107,10 @@ NODE(Cotangent, 1)
 /* - Decimal DC
  * | DC TAG | NUMBER DIGITS AFTER ZERO | */
 NODE(Decimal, 1, 1)
+
+/* - Distribution DS
+ * | DS TAG | Distribution::Type | DistributionMethod::Type | */
+NODE(Distribution, NARY, 2)
 NODE(Division, 2)
 NODE(Exponential, 1)
 NODE(Factorial, 1)

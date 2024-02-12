@@ -29,6 +29,11 @@ class DistributionMethod {
     }
   }
 
+  static Type Get(const Tree* tree) {
+    assert(tree->isDistribution());
+    return tree->nodeValueBlock(2)->get<Type>();
+  }
+
   static const DistributionMethod* Get(Type type);
 
   virtual float EvaluateAtAbscissa(float* x, const Distribution* distribution,

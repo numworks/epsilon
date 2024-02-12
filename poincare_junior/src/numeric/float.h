@@ -13,6 +13,7 @@ class Float {
   constexpr static T EpsilonLax();
   constexpr static T Epsilon();
   constexpr static T SqrtEpsilonLax();
+  constexpr static T SqrtEpsilon();
   constexpr static T Min();
   constexpr static T Max();
 
@@ -63,6 +64,14 @@ constexpr inline float Float<float>::SqrtEpsilonLax() {
 template <>
 constexpr inline double Float<double>::SqrtEpsilonLax() {
   return SquareRoot(EpsilonLax());
+}
+template <>
+constexpr inline float Float<float>::SqrtEpsilon() {
+  return SquareRoot(Epsilon());
+}
+template <>
+constexpr inline double Float<double>::SqrtEpsilon() {
+  return SquareRoot(Epsilon());
 }
 template <>
 constexpr inline float Float<float>::Min() {

@@ -1,8 +1,10 @@
 #ifndef POINCARE_JUNIOR_NUMERIC_SOLVER_ALGORITHMS_H
 #define POINCARE_JUNIOR_NUMERIC_SOLVER_ALGORITHMS_H
 
-#include <poincare/helpers.h>
 #include <poincare/solver.h>
+
+#include "coordinate_2D.h"
+#include "float.h"
 
 namespace PoincareJ {
 
@@ -43,8 +45,7 @@ class SolverAlgorithms {
 
  private:
   constexpr static int k_numberOfIterationsBrent = 100;
-  constexpr static double k_sqrtEps =
-      Helpers::SquareRoot(Float<double>::Epsilon());
+  constexpr static double k_sqrtEps = Float<double>::SqrtEpsilon();
   static_assert(k_sqrtEps == 1.4901161193847656E-8,
                 "Wrong value for sqrt(DBL_EPSILON");
   constexpr static int k_numberOfIterationsProbability = 1000000;

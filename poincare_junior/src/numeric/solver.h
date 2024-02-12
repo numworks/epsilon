@@ -35,11 +35,11 @@ class Solver {
 
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
   constexpr static T k_minimalAbsoluteStep =
-      2. * Helpers::SquareRoot(2. * k_relativePrecision);
+      2. * Float<T>::SquareRoot(2. * k_relativePrecision);
 
   static T NullTolerance(T x) {
     return std::max(k_relativePrecision,
-                    Helpers::SquareRoot(k_relativePrecision) * std::fabs(x));
+                    Float<T>::SquareRoot(k_relativePrecision) * std::fabs(x));
   }
   static T MaximalStep(T intervalAmplitude);
 

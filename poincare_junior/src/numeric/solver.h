@@ -2,8 +2,12 @@
 #define POINCARE_JUNIOR_NUMERIC_SOLVER_H
 
 #include <math.h>
-#include <poincare/expression.h>
-#include <poincare_junior/src/numeric/float.h>
+#include <omgpj/troolean.h>
+
+#include <algorithm>
+
+#include "coordinate_2D.h"
+#include "float.h"
 
 namespace PoincareJ {
 
@@ -30,7 +34,7 @@ class Solver {
   typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>,
                                   Coordinate2D<T>, const void *);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T,
-                                        Interest, T, TrinaryBoolean);
+                                        Interest, T, Troolean);
   typedef bool (*DiscontinuityEvaluation)(T, T, const void *);
 
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
@@ -50,9 +54,9 @@ class Solver {
   }
   static Interest OddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                    Coordinate2D<T> c, const void *) {
-    return BoolToInterest((a.y() < k_zero && k_zero < c.y()) ||
-                              (c.y() < k_zero && k_zero < a.y()),
-                          Interest::Root);
+    return BoolToInterest(
+        (a.y() < 0. && 0. < c.y()) || (c.y() < 0. && 0. < a.y()),
+        Interest::Root);
   }
   static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                          Coordinate2D<T> c, const void *);
@@ -73,6 +77,7 @@ class Solver {
                           Interest::Discontinuity);
   }
 
+#if 0
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
   Solver(T xStart, T xEnd, const char *unknown = nullptr,
@@ -124,7 +129,6 @@ class Solver {
   };
 
   constexpr static T k_NAN = static_cast<T>(NAN);
-  constexpr static T k_zero = static_cast<T>(0.);
   /* We use k_minimalPracticalStep (10^-6) when stepping around zero instead of
    * k_minimalAbsoluteStep (~10^-8), to avoid wasting time with too many very
    * precise computations. */
@@ -179,6 +183,7 @@ class Solver {
   Preferences::AngleUnit m_angleUnit;
   Interest m_lastInterest;
   GrowthSpeed m_growthSpeed;
+#endif
 };
 
 }  // namespace PoincareJ

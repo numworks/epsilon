@@ -1,4 +1,6 @@
-#include <poincare/solver_algorithms.h>
+#include "solver_algorithms.h"
+
+#include <assert.h>
 
 namespace PoincareJ {
 

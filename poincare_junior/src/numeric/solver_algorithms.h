@@ -1,10 +1,9 @@
 #ifndef POINCARE_JUNIOR_NUMERIC_SOLVER_ALGORITHMS_H
 #define POINCARE_JUNIOR_NUMERIC_SOLVER_ALGORITHMS_H
 
-#include <poincare/solver.h>
-
 #include "coordinate_2D.h"
 #include "float.h"
+#include "solver.h"
 
 namespace PoincareJ {
 

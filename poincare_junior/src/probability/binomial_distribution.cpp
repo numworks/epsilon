@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <float.h>
 #include <poincare_junior/src/numeric/float.h>
-#include <poincare/regularized_incomplete_beta_function.h>
+#include <poincare_junior/src/numeric/regularized_incomplete_beta_function.h>
 
 #include <cmath>
 
@@ -62,8 +62,7 @@ T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n,
     return static_cast<T>(1.0);
   }
   T floorX = std::floor(x);
-  return Poincare::RegularizedIncompleteBetaFunction(n - floorX, floorX + 1.0,
-                                                     1.0 - p);
+  return RegularizedIncompleteBetaFunction(n - floorX, floorX + 1.0, 1.0 - p);
 }
 
 template <typename T>
@@ -92,17 +91,15 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(
   }
   T proba = probability;
   const void *pack[2] = {&n, &p};
-  return Poincare::SolverAlgorithms::
-      CumulativeDistributiveInverseForNDefinedFunction<T>(
-          &proba,
-          [](T x, const void *auxiliary) {
-            const void *const *pack =
-                static_cast<const void *const *>(auxiliary);
-            T n = *static_cast<const T *>(pack[0]);
-            T p = *static_cast<const T *>(pack[1]);
-            return BinomialDistribution::EvaluateAtAbscissa(x, n, p);
-          },
-          pack);
+  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
+      &proba,
+      [](T x, const void *auxiliary) {
+        const void *const *pack = static_cast<const void *const *>(auxiliary);
+        T n = *static_cast<const T *>(pack[0]);
+        T p = *static_cast<const T *>(pack[1]);
+        return BinomialDistribution::EvaluateAtAbscissa(x, n, p);
+      },
+      pack);
 }
 
 template <typename T>

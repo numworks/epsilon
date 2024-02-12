@@ -1,7 +1,7 @@
 #ifndef POINCARE_JUNIOR_DISTRIBUTION_METHOD_H
 #define POINCARE_JUNIOR_DISTRIBUTION_METHOD_H
 
-#include <poincare/expression.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include "distribution.h"
 

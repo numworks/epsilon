@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
-#include <poincare/erf_inv.h>
+#include <poincare_junior/src/numeric/erf_inv.h>
 #include <poincare_junior/src/numeric/float.h>
 
 #include <cmath>
@@ -100,8 +100,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
         (static_cast<T>(1.0)) - probability);
   }
   return static_cast<T>(M_SQRT2) *
-         Poincare::erfInv((static_cast<T>(2.0)) * probability -
-                          static_cast<T>(1.0));
+         erfInv((static_cast<T>(2.0)) * probability - static_cast<T>(1.0));
 }
 
 double NormalDistribution::evaluateParameterForProbabilityAndBound(

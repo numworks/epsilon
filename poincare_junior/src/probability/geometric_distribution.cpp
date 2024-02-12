@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <float.h>
 #include <poincare_junior/src/numeric/float.h>
-#include <poincare/regularized_incomplete_beta_function.h>
-#include <poincare/solver.h>
+#include <poincare_junior/src/numeric/regularized_incomplete_beta_function.h>
+#include <poincare_junior/src/numeric/solver_algorithms.h>
 
 #include <cmath>
 
@@ -51,16 +51,14 @@ T GeometricDistribution::CumulativeDistributiveInverseForProbability(
   const void *pack[1] = {&p};
   /* It works even if G(p) is defined on N* and not N because G(0) returns 0 and
    * not undef */
-  return Poincare::SolverAlgorithms::
-      CumulativeDistributiveInverseForNDefinedFunction<T>(
-          &proba,
-          [](T x, const void *auxiliary) {
-            const void *const *pack =
-                static_cast<const void *const *>(auxiliary);
-            T p = *static_cast<const T *>(pack[0]);
-            return GeometricDistribution::EvaluateAtAbscissa(x, p);
-          },
-          pack);
+  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
+      &proba,
+      [](T x, const void *auxiliary) {
+        const void *const *pack = static_cast<const void *const *>(auxiliary);
+        T p = *static_cast<const T *>(pack[0]);
+        return GeometricDistribution::EvaluateAtAbscissa(x, p);
+      },
+      pack);
 }
 
 template <typename T>

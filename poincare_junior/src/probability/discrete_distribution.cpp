@@ -15,18 +15,16 @@ T DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa(
     return static_cast<T>(0.0);
   }
   const void *pack[2] = {this, parameters};
-  return Poincare::SolverAlgorithms::
-      CumulativeDistributiveFunctionForNDefinedFunction<T>(
-          x,
-          [](T k, const void *auxiliary) {
-            const void *const *pack =
-                static_cast<const void *const *>(auxiliary);
-            Distribution *distribution = const_cast<Distribution *>(
-                static_cast<const Distribution *>(pack[0]));
-            const T *parameters = static_cast<const T *>(pack[1]);
-            return distribution->evaluateAtAbscissa(k, parameters);
-          },
-          pack);
+  return SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction<T>(
+      x,
+      [](T k, const void *auxiliary) {
+        const void *const *pack = static_cast<const void *const *>(auxiliary);
+        Distribution *distribution = const_cast<Distribution *>(
+            static_cast<const Distribution *>(pack[0]));
+        const T *parameters = static_cast<const T *>(pack[1]);
+        return distribution->evaluateAtAbscissa(k, parameters);
+      },
+      pack);
 }
 
 template float DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<

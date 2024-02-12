@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <float.h>
 #include <poincare_junior/src/numeric/float.h>
-#include <poincare/regularized_incomplete_beta_function.h>
-#include <poincare/solver.h>
+#include <poincare_junior/src/numeric/regularized_incomplete_beta_function.h>
+#include <poincare_junior/src/numeric/solver_algorithms.h>
 
 #include <cmath>
 
@@ -43,16 +43,14 @@ T PoissonDistribution::CumulativeDistributiveInverseForProbability(
   }
   T proba = probability;
   const void *pack[1] = {&lambda};
-  return Poincare::SolverAlgorithms::
-      CumulativeDistributiveInverseForNDefinedFunction<T>(
-          &proba,
-          [](T x, const void *auxiliary) {
-            const void *const *pack =
-                static_cast<const void *const *>(auxiliary);
-            T lambda = *static_cast<const T *>(pack[0]);
-            return PoissonDistribution::EvaluateAtAbscissa(x, lambda);
-          },
-          pack);
+  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
+      &proba,
+      [](T x, const void *auxiliary) {
+        const void *const *pack = static_cast<const void *const *>(auxiliary);
+        T lambda = *static_cast<const T *>(pack[0]);
+        return PoissonDistribution::EvaluateAtAbscissa(x, lambda);
+      },
+      pack);
 }
 
 template <typename T>

@@ -1,7 +1,7 @@
 #include "exponential_distribution.h"
 
 #include <float.h>
-#include <poincare/regularized_incomplete_beta_function.h>
+#include <poincare_junior/src/numeric/regularized_incomplete_beta_function.h>
 
 #include <cmath>
 

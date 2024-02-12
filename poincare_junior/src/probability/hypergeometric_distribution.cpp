@@ -4,7 +4,7 @@
 #include <float.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare_junior/src/numeric/float.h>
-#include <poincare/solver_algorithms.h>
+#include <poincare_junior/src/numeric/solver_algorithms.h>
 
 #include <cmath>
 
@@ -53,18 +53,16 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(
   }
   T proba = probability;
   const void *pack[3] = {&N, &K, &n};
-  return Poincare::SolverAlgorithms::
-      CumulativeDistributiveInverseForNDefinedFunction<T>(
-          &proba,
-          [](T x, const void *auxiliary) {
-            const void *const *pack =
-                static_cast<const void *const *>(auxiliary);
-            T N = *static_cast<const T *>(pack[0]);
-            T K = *static_cast<const T *>(pack[1]);
-            T n = *static_cast<const T *>(pack[2]);
-            return HypergeometricDistribution::EvaluateAtAbscissa(x, N, K, n);
-          },
-          pack);
+  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
+      &proba,
+      [](T x, const void *auxiliary) {
+        const void *const *pack = static_cast<const void *const *>(auxiliary);
+        T N = *static_cast<const T *>(pack[0]);
+        T K = *static_cast<const T *>(pack[1]);
+        T n = *static_cast<const T *>(pack[2]);
+        return HypergeometricDistribution::EvaluateAtAbscissa(x, N, K, n);
+      },
+      pack);
 }
 
 template <typename T>

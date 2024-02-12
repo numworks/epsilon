@@ -55,7 +55,7 @@ void RangeParameterController::fillCells() {
   char buffer[bufferSize];
   for (int i = 0; i < 2; ++i) {
     Axis axis = i == 0 ? Axis::X : Axis::Y;
-    bool isAuto = m_tempInteractiveRange.isAuto(axis);
+    bool isAuto = m_tempInteractiveRange.zoomAuto(axis);
 
     if (isAuto) {
       strlcpy(buffer, I18n::translate(I18n::Message::DefaultSetting),
@@ -118,10 +118,10 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back &&
       (m_interactiveRange->rangeChecksum() !=
            m_tempInteractiveRange.rangeChecksum() ||
-       m_interactiveRange->isAuto(Axis::X) !=
-           m_tempInteractiveRange.isAuto(Axis::X) ||
-       m_interactiveRange->isAuto(Axis::Y) !=
-           m_tempInteractiveRange.isAuto(Axis::Y) ||
+       m_interactiveRange->zoomAuto(Axis::X) !=
+           m_tempInteractiveRange.zoomAuto(Axis::X) ||
+       m_interactiveRange->zoomAuto(Axis::Y) !=
+           m_tempInteractiveRange.zoomAuto(Axis::Y) ||
        m_interactiveRange->gridType() != m_tempInteractiveRange.gridType())) {
     // Open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();

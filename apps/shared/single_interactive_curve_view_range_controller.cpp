@@ -25,12 +25,12 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
   float min = m_axis == Axis::X ? m_range->xMin() : m_range->yMin();
   float max = m_axis == Axis::X ? m_range->xMax() : m_range->yMax();
 
-  return m_autoParam != m_range->isAuto(m_axis) || m_rangeParam.min() != min ||
-         m_rangeParam.max() != max;
+  return m_autoParam != m_range->zoomAuto(m_axis) ||
+         m_rangeParam.min() != min || m_rangeParam.max() != max;
 }
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {
-  m_autoParam = m_range->isAuto(m_axis);
+  m_autoParam = m_range->zoomAuto(m_axis);
 
   if (m_axis == Axis::X) {
     m_rangeParam =
@@ -46,14 +46,14 @@ void SingleInteractiveCurveViewRangeController::extractParameters() {
 
 void SingleInteractiveCurveViewRangeController::setAutoRange() {
   assert(m_autoParam);
-  if (m_range->isAuto(m_axis)) {
+  if (m_range->zoomAuto(m_axis)) {
     // Parameters are already computed in m_range
     extractParameters();
   } else {
     /* Create and update a temporary InteractiveCurveViewRange to recompute
      * parameters. */
     Shared::InteractiveCurveViewRange tempRange(*m_range);
-    tempRange.setAuto(m_axis, m_autoParam);
+    tempRange.setZoomAuto(m_axis, m_autoParam);
     tempRange.computeRanges();
 
     float min = m_axis == Axis::X ? tempRange.xMin() : tempRange.yMin();
@@ -73,27 +73,27 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
     return;
   }
   // Deactivate auto status before updating values.
-  m_range->setAuto(m_axis, false);
+  m_range->setZoomAuto(m_axis, false);
 
   if (m_axis == Axis::X) {
     m_range->setXRange(m_rangeParam.min(), m_rangeParam.max());
-    m_range->setAuto(m_axis, m_autoParam);
-    if (m_autoParam && m_range->isAuto(Axis::Y)) {
+    m_range->setZoomAuto(m_axis, m_autoParam);
+    if (m_autoParam && m_range->zoomAuto(Axis::Y)) {
       /* yMin and yMax must also be updated. We could avoid having to store
        * these values if we called m_range->computeRanges() instead, but it
        * would cost a significant computation time. */
       assert(!std::isnan(m_secondaryRangeParam.min()) &&
              !std::isnan(m_secondaryRangeParam.max()));
 
-      m_range->setAuto(Axis::Y, false);
+      m_range->setZoomAuto(Axis::Y, false);
       m_range->setYRange(m_secondaryRangeParam.min(),
                          m_secondaryRangeParam.max());
-      m_range->setAuto(Axis::Y, true);
+      m_range->setZoomAuto(Axis::Y, true);
     }
   } else {
     assert(m_axis == Axis::Y);
     m_range->setYRange(m_rangeParam.min(), m_rangeParam.max());
-    m_range->setAuto(m_axis, m_autoParam);
+    m_range->setZoomAuto(m_axis, m_autoParam);
   }
   assert(!parametersAreDifferent());
 }

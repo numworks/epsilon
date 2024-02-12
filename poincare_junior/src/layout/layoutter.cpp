@@ -397,7 +397,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::SingleFloat: {
       char buffer[20];
       Poincare::PrintFloat::ConvertFloatToText(
-          Float::To(expression), buffer, std::size(buffer),
+          FloatNode::To(expression), buffer, std::size(buffer),
           Poincare::PrintFloat::k_maxFloatGlyphLength,
           m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
           : type == BlockType::SingleFloat

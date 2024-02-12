@@ -117,8 +117,10 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::SingleFloat>(
   static_assert(sizeof(float) / sizeof(uint8_t) == 4);
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, BlockType::SingleFloat,
-      Float::SubFloatAtIndex(value, 0), Float::SubFloatAtIndex(value, 1),
-      Float::SubFloatAtIndex(value, 2), Float::SubFloatAtIndex(value, 3));
+      FloatNode::SubFloatAtIndex(value, 0),
+      FloatNode::SubFloatAtIndex(value, 1),
+      FloatNode::SubFloatAtIndex(value, 2),
+      FloatNode::SubFloatAtIndex(value, 3));
 }
 
 template <>
@@ -128,10 +130,14 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::DoubleFloat>(
   static_assert(sizeof(double) / sizeof(uint8_t) == 8);
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, BlockType::DoubleFloat,
-      Float::SubFloatAtIndex(value, 0), Float::SubFloatAtIndex(value, 1),
-      Float::SubFloatAtIndex(value, 2), Float::SubFloatAtIndex(value, 3),
-      Float::SubFloatAtIndex(value, 4), Float::SubFloatAtIndex(value, 5),
-      Float::SubFloatAtIndex(value, 6), Float::SubFloatAtIndex(value, 7));
+      FloatNode::SubFloatAtIndex(value, 0),
+      FloatNode::SubFloatAtIndex(value, 1),
+      FloatNode::SubFloatAtIndex(value, 2),
+      FloatNode::SubFloatAtIndex(value, 3),
+      FloatNode::SubFloatAtIndex(value, 4),
+      FloatNode::SubFloatAtIndex(value, 5),
+      FloatNode::SubFloatAtIndex(value, 6),
+      FloatNode::SubFloatAtIndex(value, 7));
 }
 
 template <>

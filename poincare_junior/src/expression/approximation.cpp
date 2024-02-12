@@ -319,9 +319,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::ExponentialE:
       return M_E;
     case BlockType::SingleFloat:
-      return Float::FloatTo(node);
+      return FloatNode::FloatTo(node);
     case BlockType::DoubleFloat:
-      return Float::DoubleTo(node);
+      return FloatNode::DoubleTo(node);
     case BlockType::Addition:
       return MapAndReduce<T, std::complex<T>>(node,
                                               FloatAddition<std::complex<T>>);

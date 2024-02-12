@@ -8,7 +8,7 @@
 
 namespace PoincareJ {
 
-class Float {
+class FloatNode {
  public:
   constexpr static uint8_t SubFloatAtIndex(float value, int index) {
     return Bit::getByteAtIndex(std::bit_cast<uint32_t>(value), index);

@@ -40,7 +40,7 @@ Sign Number::Sign(const Tree* node) {
       return Sign::Positive();
     case BlockType::DoubleFloat:
     case BlockType::SingleFloat: {
-      double value = Float::To(node);
+      double value = FloatNode::To(node);
       // Floats are not considered integer since they may have been rounded
       return PoincareJ::Sign(value == 0, value > 0, value < 0, true);
     }

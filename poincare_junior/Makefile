@@ -81,6 +81,27 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   poincare.cpp \
 )
 
+poincare_junior_src += $(addprefix poincare_junior/src/probability/,\
+  binomial_distribution.cpp \
+  cdf_method.cpp \
+  cdf_range_method.cpp \
+  chi2_distribution.cpp \
+  discrete_distribution.cpp \
+  distribution.cpp \
+  distribution_method.cpp \
+  domain.cpp \
+  exponential_distribution.cpp \
+  fisher_distribution.cpp \
+  geometric_distribution.cpp \
+  hypergeometric_distribution.cpp \
+  inv_method.cpp \
+  normal_distribution.cpp \
+  pdf_method.cpp \
+  poisson_distribution.cpp \
+  student_distribution.cpp \
+  uniform_distribution.cpp \
+)
+
 tests_src += $(addprefix poincare_junior/test/,\
   approximation.cpp \
   beautification.cpp \

@@ -38,7 +38,8 @@ class ParametersController : public Shared::FloatParameterController<double> {
 
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  bool hasUndefinedValue(const char* text, double floatValue) const override;
+  bool hasUndefinedValue(const char* text, double floatValue,
+                         int row) const override;
 
   constexpr static int k_maxNumberOfCells = 3;
   Escher::MessageTextView m_headerView;

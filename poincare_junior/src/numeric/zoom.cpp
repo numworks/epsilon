@@ -3,7 +3,7 @@
 #include <poincare/zoom.h>
 #include <string.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 // HorizontalAsymptoteHelper
 
@@ -745,4 +745,4 @@ void Zoom::privateFitPoint(Coordinate2D<float> xy, bool flipped) {
                             m_maxFloat);
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

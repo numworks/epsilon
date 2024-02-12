@@ -1,5 +1,5 @@
-#ifndef POINCARE_RANGE_H
-#define POINCARE_RANGE_H
+#ifndef POINCARE_JUNIOR_NUMERIC_RANGE_H
+#define POINCARE_JUNIOR_NUMERIC_RANGE_H
 
 #include <assert.h>
 #include <omg/ieee754.h>
@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 class Range1D {
@@ -117,6 +117,6 @@ class Range2D {
   Range1D<T> m_y;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

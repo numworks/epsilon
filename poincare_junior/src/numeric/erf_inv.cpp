@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -115,4 +115,4 @@ double erfInv(double x) {
   return p * x;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

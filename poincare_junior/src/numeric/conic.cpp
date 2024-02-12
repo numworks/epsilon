@@ -15,7 +15,7 @@
  * round the values of coefficients to 0 (or 1) before and after manipulating
  * them. */
 
-namespace Poincare {
+namespace PoincareJ {
 
 // Return smallest positive number between x and y, assuming at least one is > 0
 double smallestPositive(double x, double y) {
@@ -611,4 +611,4 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
   m_shape = Shape::Undefined;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

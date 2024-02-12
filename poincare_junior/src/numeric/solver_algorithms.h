@@ -1,10 +1,10 @@
-#ifndef POINCARE_SOLVER_ALGORITHMS_H
-#define POINCARE_SOLVER_ALGORITHMS_H
+#ifndef POINCARE_JUNIOR_NUMERIC_SOLVER_ALGORITHMS_H
+#define POINCARE_JUNIOR_NUMERIC_SOLVER_ALGORITHMS_H
 
 #include <poincare/helpers.h>
 #include <poincare/solver.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class SolverAlgorithms {
  public:
@@ -51,6 +51,6 @@ class SolverAlgorithms {
   constexpr static double k_maxProbability = 0.9999995;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

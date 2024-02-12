@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 void increaseIfTooSmall(double* d) {
   assert(!std::isinf(*d) && !std::isnan(*d));
@@ -167,4 +167,4 @@ double RegularizedGammaFunction(double s, double x, double epsilon,
   return true;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

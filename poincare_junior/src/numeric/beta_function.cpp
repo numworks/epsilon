@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-namespace Poincare {
+namespace PoincareJ {
 
 double BetaFunction(double a, double b) {
   if (a < 0.0 || b < 0.0) {
@@ -12,4 +12,4 @@ double BetaFunction(double a, double b) {
   return std::exp(std::lgamma(a) + std::lgamma(b) - std::lgamma(a + b));
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

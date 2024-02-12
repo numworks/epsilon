@@ -1,10 +1,10 @@
-#ifndef POINCARE_CONIC_H
-#define POINCARE_CONIC_H
+#ifndef POINCARE_JUNIOR_NUMERIC_CONIC_H
+#define POINCARE_JUNIOR_NUMERIC_CONIC_H
 
 #include <float.h>
 #include <poincare/expression.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Conic {
  public:
@@ -154,6 +154,6 @@ class ParametricConic : public Conic {
   }
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

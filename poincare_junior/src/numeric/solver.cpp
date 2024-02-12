@@ -4,7 +4,7 @@
 #include <poincare/solver_algorithms.h>
 #include <poincare/subtraction.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 Solver<T>::Solver(T xStart, T xEnd, const char *unknown, Context *context,
@@ -740,4 +740,4 @@ template Coordinate2D<float> Solver<float>::next(
     DiscontinuityEvaluation discontinuityTest);
 template float Solver<float>::MaximalStep(float);
 
-}  // namespace Poincare
+}  // namespace PoincareJ

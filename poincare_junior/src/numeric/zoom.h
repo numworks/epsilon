@@ -1,5 +1,5 @@
-#ifndef POINCARE_ZOOM_H
-#define POINCARE_ZOOM_H
+#ifndef POINCARE_JUNIOR_NUMERIC_ZOOM_H
+#define POINCARE_JUNIOR_NUMERIC_ZOOM_H
 
 #include <ion/display.h>
 #include <poincare/piecewise_operator.h>
@@ -11,7 +11,7 @@
  * getters for those as it would weaken the Zoom API. */
 class ZoomTest;
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Zoom {
   friend class ::ZoomTest;
@@ -202,6 +202,6 @@ class Zoom {
   int m_thresholdForFunctionsExceedingNbOfPoints;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

@@ -1,6 +1,6 @@
 #include <poincare/solver_algorithms.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
     double ax, double bx, double resultPrecision,
@@ -314,4 +314,4 @@ SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
 template double
 SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
     double x, Solver<double>::FunctionEvaluation f, const void* aux);
-}  // namespace Poincare
+}  // namespace PoincareJ

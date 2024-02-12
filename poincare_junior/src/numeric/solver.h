@@ -1,11 +1,11 @@
-#ifndef POINCARE_SOLVER_H
-#define POINCARE_SOLVER_H
+#ifndef POINCARE_JUNIOR_NUMERIC_SOLVER_H
+#define POINCARE_JUNIOR_NUMERIC_SOLVER_H
 
 #include <math.h>
 #include <poincare/expression.h>
 #include <poincare/float.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 class Solver {
@@ -181,6 +181,6 @@ class Solver {
   GrowthSpeed m_growthSpeed;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

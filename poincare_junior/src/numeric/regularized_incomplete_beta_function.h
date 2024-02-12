@@ -1,5 +1,5 @@
-#ifndef POINCARE_REGULARIZED_INCOMPLETE_BETA_FUNCTION_H
-#define POINCARE_REGULARIZED_INCOMPLETE_BETA_FUNCTION_H
+#ifndef POINCARE_JUNIOR_NUMERIC_REGULARIZED_INCOMPLETE_BETA_FUNCTION_H
+#define POINCARE_JUNIOR_NUMERIC_REGULARIZED_INCOMPLETE_BETA_FUNCTION_H
 
 /*
  * zlib License
@@ -27,7 +27,7 @@
  */
 
 // WARNING: this code has been modified
-namespace Poincare {
+namespace PoincareJ {
 
 double RegularizedIncompleteBetaFunction(double a, double b, double x);
 

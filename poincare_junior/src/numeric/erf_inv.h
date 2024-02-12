@@ -1,7 +1,7 @@
-#ifndef POINCARE_ERFINV_H
-#define POINCARE_ERFINV_H
+#ifndef POINCARE_JUNIOR_NUMERIC_ERFINV_H
+#define POINCARE_JUNIOR_NUMERIC_ERFINV_H
 
-namespace Poincare {
+namespace PoincareJ {
 
 double erfInv(double y);
 

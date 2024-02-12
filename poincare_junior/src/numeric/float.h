@@ -1,11 +1,11 @@
-#ifndef POINCARE_FLOAT_H
-#define POINCARE_FLOAT_H
+#ifndef POINCARE_JUNIOR_NUMERIC_FLOAT_H
+#define POINCARE_JUNIOR_NUMERIC_FLOAT_H
 
 #include <float.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/number.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* Float represents an approximated number. This class is use to avoid turning
  * float/double into Decimal back and forth because performances are
@@ -166,6 +166,6 @@ constexpr inline double Float<double>::Max() {
   return DBL_MAX;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

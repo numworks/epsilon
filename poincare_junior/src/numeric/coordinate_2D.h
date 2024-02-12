@@ -1,10 +1,10 @@
-#ifndef POINCARE_COORDINATE_2D_H
-#define POINCARE_COORDINATE_2D_H
+#ifndef POINCARE_JUNIOR_NUMERIC_COORDINATE_2D_H
+#define POINCARE_JUNIOR_NUMERIC_COORDINATE_2D_H
 
 #include <math.h>
 #include <poincare/helpers.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 template <typename T>
 class Coordinate2D final {
@@ -48,6 +48,6 @@ class Coordinate2D final {
   T m_y;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

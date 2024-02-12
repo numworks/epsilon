@@ -210,4 +210,8 @@ bool Rational::IsIrreducible(const Tree* i) {
   return result;
 }
 
+bool Rational::IsGreaterThanOne(const Tree* r) {
+  return IntegerHandler::Compare(Numerator(r), Denominator(r)) > 0;
+}
+
 }  // namespace PoincareJ

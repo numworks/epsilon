@@ -1,56 +1,55 @@
-#include <poincare/domain.h>
+#include "domain.h"
 
-namespace Poincare {
+#include <poincare_junior/src/expression/rational.h>
+#include <poincare_junior/src/expression/sign.h>
 
-TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type,
-                                      Context *context) {
-  if (expression.deepIsMatrix(context)) {
-    return TrinaryBoolean::False;
+namespace PoincareJ {
+
+Troolean Domain::ExpressionIsIn(const Tree *expression, Type type,
+                                Context *context) {
+  if (expression->isUndefined() || expression->isInfinity()) {
+    return Troolean::False;
   }
 
-  if (expression.isUndefined() || Expression::IsInfinity(expression)) {
-    return TrinaryBoolean::False;
-  }
+  ComplexSign sign = ComplexSign::Get(expression);
 
+  Troolean isPositive = sign.realSign().isPositive()      ? Troolean::True
+                        : sign.realSign().canBePositive() ? Troolean::Unknown
+                                                          : Troolean::False;
   if (type & k_onlyPositive) {
-    TrinaryBoolean isPositive = expression.isPositive(context);
-    if (isPositive != TrinaryBoolean::True) {
+    if (isPositive != Troolean::True) {
       return isPositive;
     }
   }
 
   if (type & k_onlyNegative) {
-    TrinaryBoolean isPositive = expression.isPositive(context);
-    if (isPositive != TrinaryBoolean::False) {
-      return isPositive == TrinaryBoolean::True ? TrinaryBoolean::False
-                                                : TrinaryBoolean::Unknown;
+    if (isPositive != Troolean::False) {
+      return isPositive == Troolean::True ? Troolean::False : Troolean::Unknown;
     }
   }
 
-  if (!expression.isReal(context, false)) {
-    return TrinaryBoolean::Unknown;
+  if (!sign.isReal()) {
+    return Troolean::Unknown;
   }
 
-  if (expression.type() != ExpressionNode::Type::Rational) {
-    return TrinaryBoolean::Unknown;
+  if (!expression->isRational()) {
+    return Troolean::Unknown;
   }
 
-  const Rational rational = static_cast<const Rational &>(expression);
-
-  if (type & k_onlyIntegers && !rational.isInteger()) {
-    return TrinaryBoolean::False;
+  if (type & k_onlyIntegers && !expression->isInteger()) {
+    return Troolean::False;
   }
 
-  if (type & k_nonZero && rational.isZero()) {
-    return TrinaryBoolean::False;
+  if (type & k_nonZero && expression->isZero()) {
+    return Troolean::False;
   }
 
   if (type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment) &&
-      rational.isGreaterThanOne()) {
-    return TrinaryBoolean::False;
+      Rational::IsGreaterThanOne(expression)) {
+    return Troolean::False;
   }
 
-  return TrinaryBoolean::True;
+  return Troolean::True;
 }
 
-}  // namespace Poincare
+}  // namespace PoincareJ

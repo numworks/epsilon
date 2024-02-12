@@ -1,14 +1,17 @@
-#ifndef POINCARE_DOMAIN_H
-#define POINCARE_DOMAIN_H
+#ifndef POINCARE_JUNIOR_DOMAIN_H
+#define POINCARE_JUNIOR_DOMAIN_H
 
-#include <poincare/expression.h>
+#include <omgpj/troolean.h>
 #include <poincare/float.h>
 #include <poincare/rational.h>
+#include <poincare_junior/src/memory/tree.h>
 #include <stdint.h>
 
 #include <algorithm>
 
-namespace Poincare {
+namespace PoincareJ {
+
+class Context;
 
 class Domain {
  public:
@@ -63,48 +66,47 @@ class Domain {
     return true;
   }
 
-  static TrinaryBoolean ExpressionIsIn(const Expression &expression,
-                                       Type domain, Context *context);
+  static Troolean ExpressionIsIn(const Tree *expression, Type domain,
+                                 Context *context);
 
-  static bool ExpressionIsIn(bool *result, const Expression &expression,
-                             Type domain, Context *context) {
+  static bool ExpressionIsIn(bool *result, const Tree *expression, Type domain,
+                             Context *context) {
     assert(result != nullptr);
-    TrinaryBoolean expressionsIsIn =
-        ExpressionIsIn(expression, domain, context);
+    Troolean expressionsIsIn = ExpressionIsIn(expression, domain, context);
     switch (expressionsIsIn) {
-      case TrinaryBoolean::Unknown:
+      case Troolean::Unknown:
         return false;
-      case TrinaryBoolean::True:
+      case Troolean::True:
         *result = true;
         return true;
       default:
-        assert(expressionsIsIn == TrinaryBoolean::False);
+        assert(expressionsIsIn == Troolean::False);
         *result = false;
         return true;
     }
   }
 
-  static bool ExpressionsAreIn(bool *result, const Expression &expression1,
-                               Type domain1, const Expression &expression2,
+  static bool ExpressionsAreIn(bool *result, const Tree *expression1,
+                               Type domain1, const Tree *expression2,
                                Type domain2, Context *context) {
     assert(result != nullptr);
-    TrinaryBoolean expressionsAreIn =
+    Troolean expressionsAreIn =
         TrinaryAnd(ExpressionIsIn(expression1, domain1, context),
                    ExpressionIsIn(expression2, domain2, context));
     switch (expressionsAreIn) {
-      case TrinaryBoolean::Unknown:
+      case Troolean::Unknown:
         return false;
-      case TrinaryBoolean::True:
+      case Troolean::True:
         *result = true;
         return true;
       default:
-        assert(expressionsAreIn == TrinaryBoolean::False);
+        assert(expressionsAreIn == Troolean::False);
         *result = false;
         return true;
     }
   }
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

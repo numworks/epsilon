@@ -28,6 +28,8 @@ class Rational final {
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
   static Tree* IntegerPower(const Tree* i, const Tree* j);
 
+  static bool IsGreaterThanOne(const Tree* r);
+
  private:
   static bool IsIrreducible(const Tree* i);
   static Tree* PushIrreducible(IntegerHandler numerator,

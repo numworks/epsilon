@@ -79,8 +79,7 @@ class Distribution {
 
   /* expressionParametersAreOK returns true if the expression could be verified.
    * The result of the verification is *result. */
-  virtual bool expressionParametersAreOK(bool* result,
-                                         const Expression* parameters,
+  virtual bool expressionParametersAreOK(bool* result, const Tree** parameters,
                                          Context* context) const = 0;
 
   virtual double evaluateParameterForProbabilityAndBound(

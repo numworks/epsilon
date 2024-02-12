@@ -1,7 +1,7 @@
 #ifndef POINCARE_JUNIOR_HYPERGEOMETRIC_DISTRIBUTION_H
 #define POINCARE_JUNIOR_HYPERGEOMETRIC_DISTRIBUTION_H
 
-#include <poincare/expression.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include "discrete_distribution.h"
 
@@ -44,13 +44,10 @@ class HypergeometricDistribution final : public DiscreteDistribution {
     return NIsOK(parameters[0]) && KIsOK(parameters[1]) && nIsOK(parameters[2]);
   }
 
-  static bool ExpressionNIsOK(bool *result, const Expression &N,
-                              Context *context);
-  static bool ExpressionKIsOK(bool *result, const Expression &K,
-                              Context *context);
-  static bool ExpressionnIsOK(bool *result, const Expression &n,
-                              Context *context);
-  bool expressionParametersAreOK(bool *result, const Expression *parameters,
+  static bool ExpressionNIsOK(bool *result, const Tree *N, Context *context);
+  static bool ExpressionKIsOK(bool *result, const Tree *K, Context *context);
+  static bool ExpressionnIsOK(bool *result, const Tree *n, Context *context);
+  bool expressionParametersAreOK(bool *result, const Tree **parameters,
                                  Context *context) const override {
     return ExpressionNIsOK(result, parameters[0], context) ||
            ExpressionKIsOK(result, parameters[1], context) ||

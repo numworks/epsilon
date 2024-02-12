@@ -1,8 +1,8 @@
 #ifndef POINCARE_JUNIOR_NORMAL_DISTRIBUTION_H
 #define POINCARE_JUNIOR_NORMAL_DISTRIBUTION_H
 
-#include <poincare/expression.h>
 #include <poincare/preferences.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include "continuous_distribution.h"
 
@@ -61,10 +61,9 @@ class NormalDistribution final : public ContinuousDistribution {
     return MuAndSigmaAreOK(parameters[0], parameters[1]);
   }
 
-  static bool ExpressionMuAndSigmaAreOK(bool* result, const Expression& mu,
-                                        const Expression& sigma,
-                                        Context* context);
-  bool expressionParametersAreOK(bool* result, const Expression* parameters,
+  static bool ExpressionMuAndSigmaAreOK(bool* result, const Tree* mu,
+                                        const Tree* sigma, Context* context);
+  bool expressionParametersAreOK(bool* result, const Tree** parameters,
                                  Context* context) const override {
     return ExpressionMuAndSigmaAreOK(result, parameters[0], parameters[1],
                                      context);

@@ -1,8 +1,8 @@
 #ifndef POINCARE_JUNIOR_FISHER_DISTRIBUTION_H
 #define POINCARE_JUNIOR_FISHER_DISTRIBUTION_H
 
-#include <poincare/expression.h>
 #include <poincare/preferences.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include "continuous_distribution.h"
 
@@ -57,9 +57,9 @@ class FisherDistribution final : public ContinuousDistribution {
     return D1AndD2AreOK(parameters[0], parameters[1]);
   }
 
-  static bool ExpressionD1AndD2AreOK(bool* result, const Expression& d1,
-                                     const Expression& d2, Context* context);
-  bool expressionParametersAreOK(bool* result, const Expression* parameters,
+  static bool ExpressionD1AndD2AreOK(bool* result, const Tree* d1,
+                                     const Tree* d2, Context* context);
+  bool expressionParametersAreOK(bool* result, const Tree** parameters,
                                  Context* context) const override {
     return ExpressionD1AndD2AreOK(result, parameters[0], parameters[1],
                                   context);

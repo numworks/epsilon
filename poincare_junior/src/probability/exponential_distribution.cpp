@@ -43,7 +43,7 @@ bool ExponentialDistribution::LambdaIsOK(T lambda) {
 }
 
 bool ExponentialDistribution::ExpressionLambdaIsOK(bool* result,
-                                                   const Expression& lambda,
+                                                   const Tree* lambda,
                                                    Context* context) {
   return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlus, context);
 }

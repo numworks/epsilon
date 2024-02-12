@@ -1,8 +1,8 @@
 #ifndef POINCARE_JUNIOR_POISSON_DISTRIBUTION_H
 #define POINCARE_JUNIOR_POISSON_DISTRIBUTION_H
 
-#include <poincare/expression.h>
 #include <poincare/preferences.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include "discrete_distribution.h"
 
@@ -42,9 +42,9 @@ class PoissonDistribution final : public DiscreteDistribution {
     return LambdaIsOK(parameters[0]);
   }
 
-  static bool ExpressionLambdaIsOK(bool* result, const Expression& lambda,
+  static bool ExpressionLambdaIsOK(bool* result, const Tree* lambda,
                                    Context* context);
-  bool expressionParametersAreOK(bool* result, const Expression* parameters,
+  bool expressionParametersAreOK(bool* result, const Tree** parameters,
                                  Context* context) const override {
     return ExpressionLambdaIsOK(result, parameters[0], context);
   }

@@ -79,20 +79,17 @@ bool HypergeometricDistribution::nIsOK(T n) {
   return Domain::Contains(n, Domain::Type::N);  // && n <= N
 }
 
-bool HypergeometricDistribution::ExpressionNIsOK(bool *result,
-                                                 const Expression &N,
+bool HypergeometricDistribution::ExpressionNIsOK(bool *result, const Tree *N,
                                                  Context *context) {
   return Domain::ExpressionIsIn(result, N, Domain::Type::N, context);
 }
 
-bool HypergeometricDistribution::ExpressionKIsOK(bool *result,
-                                                 const Expression &K,
+bool HypergeometricDistribution::ExpressionKIsOK(bool *result, const Tree *K,
                                                  Context *context) {
   return Domain::ExpressionIsIn(result, K, Domain::Type::N, context);
 }
 
-bool HypergeometricDistribution::ExpressionnIsOK(bool *result,
-                                                 const Expression &n,
+bool HypergeometricDistribution::ExpressionnIsOK(bool *result, const Tree *n,
                                                  Context *context) {
   return Domain::ExpressionIsIn(result, n, Domain::Type::N, context);
 }

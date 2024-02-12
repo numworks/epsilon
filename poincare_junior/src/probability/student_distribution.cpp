@@ -70,7 +70,7 @@ bool StudentDistribution::KIsOK(T k) {
   // We cannot draw the curve for k > 200 (coefficient() is too small)
 }
 
-bool StudentDistribution::ExpressionKIsOK(bool *result, const Expression &k,
+bool StudentDistribution::ExpressionKIsOK(bool *result, const Tree *k,
                                           Context *context) {
   return Domain::ExpressionIsIn(result, k, Domain::Type::RPlusStar, context);
 }

@@ -2,13 +2,14 @@
 
 #include <assert.h>
 #include <float.h>
-#include "distribution.h"
 #include <poincare/domain.h>
 #include <poincare/float.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/solver.h>
 
 #include <cmath>
+
+#include "distribution.h"
 
 namespace PoincareJ {
 
@@ -57,8 +58,7 @@ bool PoissonDistribution::LambdaIsOK(T lambda) {
   return Domain::Contains(lambda, Domain::Type::RPlusStar);
 }
 
-bool PoissonDistribution::ExpressionLambdaIsOK(bool *result,
-                                               const Expression &lambda,
+bool PoissonDistribution::ExpressionLambdaIsOK(bool *result, const Tree *lambda,
                                                Context *context) {
   return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlusStar,
                                 context);

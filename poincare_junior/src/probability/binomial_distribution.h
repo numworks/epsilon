@@ -1,8 +1,8 @@
 #ifndef POINCARE_JUNIOR_BINOMIAL_DISTRIBUTION_H
 #define POINCARE_JUNIOR_BINOMIAL_DISTRIBUTION_H
 
-#include <poincare/expression.h>
 #include <poincare/preferences.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include "discrete_distribution.h"
 
@@ -58,9 +58,9 @@ class BinomialDistribution final : public DiscreteDistribution {
     return ParametersAreOK(parameters[0], parameters[1]);
   }
 
-  static bool expressionParametersAreOK(bool* result, const Expression& n,
-                                        const Expression& p, Context* context);
-  bool expressionParametersAreOK(bool* result, const Expression* parameters,
+  static bool expressionParametersAreOK(bool* result, const Tree* n,
+                                        const Tree* p, Context* context);
+  bool expressionParametersAreOK(bool* result, const Tree** parameters,
                                  Context* context) const override {
     return expressionParametersAreOK(result, parameters[0], parameters[1],
                                      context);

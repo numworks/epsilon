@@ -52,9 +52,8 @@ bool NormalDistribution::MuAndSigmaAreOK(T mu, T sigma) {
          Domain::Contains(sigma, Domain::Type::RPlusStar);
 }
 
-bool NormalDistribution::ExpressionMuAndSigmaAreOK(bool* result,
-                                                   const Expression& mu,
-                                                   const Expression& sigma,
+bool NormalDistribution::ExpressionMuAndSigmaAreOK(bool* result, const Tree* mu,
+                                                   const Tree* sigma,
                                                    Context* context) {
   return Domain::ExpressionsAreIn(result, mu, Domain::Type::R, sigma,
                                   Domain::Type::RPlusStar, context);

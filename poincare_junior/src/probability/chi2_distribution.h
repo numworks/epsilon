@@ -2,7 +2,7 @@
 #define POINCARE_JUNIOR_CHI2_DISTRIBUTION_H
 
 #include <float.h>
-#include <poincare/expression.h>
+#include <poincare_junior/src/memory/tree.h>
 
 #include "continuous_distribution.h"
 
@@ -52,9 +52,8 @@ class Chi2Distribution final : public ContinuousDistribution {
     return KIsOK(parameters[0]);
   }
 
-  static bool ExpressionKIsOK(bool *result, const Expression &k,
-                              Context *context);
-  bool expressionParametersAreOK(bool *result, const Expression *parameters,
+  static bool ExpressionKIsOK(bool *result, const Tree *k, Context *context);
+  bool expressionParametersAreOK(bool *result, const Tree **parameters,
                                  Context *context) const override {
     return ExpressionKIsOK(result, parameters[0], context);
   }

@@ -58,9 +58,8 @@ bool UniformDistribution::D1AndD2AreOK(T d1, T d2) {
          Domain::Contains(d2, Domain::Type::R) && d1 <= d2;
 }
 
-bool UniformDistribution::ExpressionD1AndD2AreOK(bool* result,
-                                                 const Expression& d1,
-                                                 const Expression& d2,
+bool UniformDistribution::ExpressionD1AndD2AreOK(bool* result, const Tree* d1,
+                                                 const Tree* d2,
                                                  Context* context) {
   return Domain::ExpressionsAreIn(result, d2, Domain::Type::R, d1,
                                   Domain::Type::R, context);

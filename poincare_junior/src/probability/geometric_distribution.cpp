@@ -2,13 +2,14 @@
 
 #include <assert.h>
 #include <float.h>
-#include "distribution.h"
 #include <poincare/domain.h>
 #include <poincare/float.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 #include <poincare/solver.h>
 
 #include <cmath>
+
+#include "distribution.h"
 
 namespace PoincareJ {
 
@@ -65,7 +66,7 @@ bool GeometricDistribution::PIsOK(T p) {
   return Domain::Contains(p, Domain::Type::LeftOpenUnitSegment);
 }
 
-bool GeometricDistribution::ExpressionPIsOK(bool *result, const Expression &p,
+bool GeometricDistribution::ExpressionPIsOK(bool *result, const Tree *p,
                                             Context *context) {
   return Domain::ExpressionIsIn(result, p, Domain::Type::LeftOpenUnitSegment,
                                 context);

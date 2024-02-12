@@ -98,8 +98,8 @@ constexpr static Builtin s_specialIdentifiers[] = {
 };
 
 Tree *Builtin::pushNode() const {
-  Tree *result = SharedEditionPool->push(first);
-  if (TypeBlock(first).isRandomNode()) {
+  Tree *result = SharedEditionPool->push(m_blockType);
+  if (TypeBlock(m_blockType).isRandomNode()) {
     // Add random seeds
     assert(result->nodeSize() == 2);
     SharedEditionPool->push(BlockType::Zero);
@@ -120,7 +120,7 @@ bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {
 
 const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
   for (const Builtin &builtin : s_builtins) {
-    if (builtin.second.contains(name)) {
+    if (builtin.m_aliases.contains(name)) {
       return &builtin;
     }
   }
@@ -129,7 +129,7 @@ const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
 
 const Builtin *Builtin::GetReservedFunction(BlockType type) {
   for (const Builtin &builtin : s_builtins) {
-    if (builtin.first == type) {
+    if (builtin.m_blockType == type) {
       return &builtin;
     }
   }
@@ -138,7 +138,7 @@ const Builtin *Builtin::GetReservedFunction(BlockType type) {
 
 const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
   for (const Builtin &builtin : s_specialIdentifiers) {
-    if (builtin.second.contains(name)) {
+    if (builtin.m_aliases.contains(name)) {
       return &builtin;
     }
   }
@@ -147,7 +147,7 @@ const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
 
 const Builtin *Builtin::GetSpecialIdentifier(BlockType type) {
   for (const Builtin &builtin : s_specialIdentifiers) {
-    if (builtin.first == type) {
+    if (builtin.m_blockType == type) {
       return &builtin;
     }
   }

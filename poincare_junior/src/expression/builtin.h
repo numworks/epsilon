@@ -9,22 +9,24 @@ namespace PoincareJ {
 
 // TODO: Reorganize this class to avoid the duplication of many methods.
 
-class Builtin : public std::pair<BlockType, Aliases> {
+class Builtin {
  public:
-  using pair::pair;
-  const BlockType blockType() const { return first; }
-  const Aliases* aliases() const { return &second; }
+  constexpr Builtin(BlockType blockType, Aliases aliases)
+      : m_blockType(blockType), m_aliases(aliases) {}
+
+  const BlockType blockType() const { return m_blockType; }
+  const Aliases* aliases() const { return &m_aliases; }
   Tree* pushNode() const;
   static bool IsReservedFunction(BlockType type) {
     return GetReservedFunction(type) != nullptr;
   }
   static Aliases ReservedFunctionName(BlockType type) {
     assert(GetReservedFunction(type));
-    return GetReservedFunction(type)->second;
+    return GetReservedFunction(type)->m_aliases;
   }
   static Aliases SpecialIdentifierName(BlockType type) {
     assert(GetSpecialIdentifier(type));
-    return GetSpecialIdentifier(type)->second;
+    return GetSpecialIdentifier(type)->m_aliases;
   }
   static bool HasReservedFunction(UnicodeDecoder* name) {
     return GetReservedFunction(name) != nullptr;
@@ -40,6 +42,10 @@ class Builtin : public std::pair<BlockType, Aliases> {
   static bool CheckNumberOfParameters(BlockType type, int n);
   static bool Promote(Tree* parameterList, const Builtin* builtin);
   EDITION_REF_WRAP_1(Promote, const Builtin*);
+
+ private:
+  BlockType m_blockType;
+  Aliases m_aliases;
 };
 
 namespace BuiltinsAliases {

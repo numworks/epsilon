@@ -895,13 +895,13 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
 #endif
 
   if (numberOfParameters == 1 && builtin->blockType() == BlockType::Logarithm) {
-    builtin = Builtin::GetReservedFunction(BlockType::Log);
+    builtin = Builtin::GetReservedFunction(KLog);
   } else if (numberOfParameters == 2 &&
              builtin->blockType() == BlockType::Log) {
-    builtin = Builtin::GetReservedFunction(BlockType::Logarithm);
+    builtin = Builtin::GetReservedFunction(KLogarithm);
   } else if (numberOfParameters == 1 &&
              builtin->blockType() == BlockType::Sum) {
-    builtin = Builtin::GetReservedFunction(BlockType::ListSum);
+    builtin = Builtin::GetReservedFunction(KListSum);
   }
   assert(builtin);
 

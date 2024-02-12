@@ -18,12 +18,12 @@ class Builtin {
   const Aliases* aliases() const { return &m_aliases; }
   virtual Tree* pushNode(int numberOfChildren) const;
   virtual bool checkNumberOfParameters(int n) const;
-  static bool IsReservedFunction(BlockType type) {
-    return GetReservedFunction(type) != nullptr;
+  static bool IsReservedFunction(const Tree* tree) {
+    return GetReservedFunction(tree) != nullptr;
   }
-  static Aliases ReservedFunctionName(BlockType type) {
-    assert(GetReservedFunction(type));
-    return GetReservedFunction(type)->m_aliases;
+  static Aliases ReservedFunctionName(const Tree* tree) {
+    assert(GetReservedFunction(tree));
+    return GetReservedFunction(tree)->m_aliases;
   }
   static Aliases SpecialIdentifierName(BlockType type) {
     assert(GetSpecialIdentifier(type));
@@ -37,7 +37,7 @@ class Builtin {
   }
   static bool HasCustomIdentifier(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(UnicodeDecoder* name);
-  static const Builtin* GetReservedFunction(BlockType type);
+  static const Builtin* GetReservedFunction(const Tree* tree);
   static const Builtin* GetSpecialIdentifier(UnicodeDecoder* name);
   static const Builtin* GetSpecialIdentifier(BlockType type);
   static bool Promote(Tree* parameterList, const Builtin* builtin);

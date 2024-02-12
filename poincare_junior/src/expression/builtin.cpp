@@ -108,6 +108,8 @@ class DistributionBuiltin : public Builtin {
         m_distribution(distribution),
         m_method(method) {}
 
+  Distribution::Type distribution() const { return m_distribution; }
+  DistributionMethod::Type method() const { return m_method; }
   Tree *pushNode(int numberOfChildren) const override;
   bool checkNumberOfParameters(int n) const override;
 
@@ -194,11 +196,20 @@ const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
   return nullptr;
 }
 
-const Builtin *Builtin::GetReservedFunction(BlockType type) {
-  assert(type != BlockType::Distribution);
+const Builtin *Builtin::GetReservedFunction(const Tree *tree) {
   for (const Builtin &builtin : s_builtins) {
-    if (builtin.m_blockType == type) {
+    if (builtin.m_blockType == tree->type()) {
       return &builtin;
+    }
+  }
+  if (tree->isDistribution()) {
+    DistributionMethod::Type method = DistributionMethod::Get(tree);
+    Distribution::Type distribution = Distribution::Get(tree);
+    for (const DistributionBuiltin &builtin : s_distributionsBuiltins) {
+      if (builtin.method() == method &&
+          builtin.distribution() == distribution) {
+        return &builtin;
+      }
     }
   }
   return nullptr;

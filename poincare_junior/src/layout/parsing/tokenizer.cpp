@@ -390,8 +390,7 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
     return false;
   }
   CPLayoutDecoder subString(string, 0, identifierLength);
-  if (Builtin::ReservedFunctionName(BlockType::Logarithm)
-          .contains(&subString)) {
+  if (Builtin::ReservedFunctionName(KLogarithm).contains(&subString)) {
     *returnType = Token::Type::ReservedFunction;
     *length = identifierLength;
     return true;

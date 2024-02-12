@@ -104,10 +104,9 @@ void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
 
 void Layoutter::layoutBuiltin(EditionReference &layoutParent,
                               Tree *expression) {
-  assert(Builtin::IsReservedFunction(expression->type()));
-  layoutFunctionCall(
-      layoutParent, expression,
-      Builtin::ReservedFunctionName(expression->type()).mainAlias());
+  assert(Builtin::IsReservedFunction(expression));
+  layoutFunctionCall(layoutParent, expression,
+                     Builtin::ReservedFunctionName(expression).mainAlias());
 }
 
 void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
@@ -406,7 +405,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
 #endif
     case BlockType::Polynomial:
     default:
-      if (Builtin::IsReservedFunction(type)) {
+      if (Builtin::IsReservedFunction(expression)) {
         if (type.isParametric()) {
           // Move sub-expression first
           expression->child(0)->moveTreeBeforeNode(

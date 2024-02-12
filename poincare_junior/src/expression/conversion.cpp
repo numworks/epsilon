@@ -42,7 +42,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
   // NOTE: Make sure new BlockTypes are handled here.
   BlockType type = exp->type();
 
-  if (Builtin::IsReservedFunction(type)) {
+  if (Builtin::IsReservedFunction(exp)) {
     Poincare::Expression child = ToPoincareExpression(exp->child(0));
     switch (type) {
       case BlockType::SquareRoot:

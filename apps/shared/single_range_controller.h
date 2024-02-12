@@ -18,7 +18,7 @@ class SingleRangeController : public FloatParameterController<T> {
                         MessagePopUpController* confirmPopUpController);
   void viewWillAppear() override;
 
-  int numberOfRows() const override { return k_numberOfTextCells + 2; }
+  int numberOfRows() const override { return k_numberOfBoundsCells + 2; }
   int typeAtRow(int row) const override {
     return row == 0 ? k_autoCellType
                     : FloatParameterController<T>::typeAtRow(row);
@@ -37,7 +37,7 @@ class SingleRangeController : public FloatParameterController<T> {
                                  Ion::Events::Event event) override;
 
  protected:
-  constexpr static int k_numberOfTextCells = 2;
+  constexpr static int k_numberOfBoundsCells = 2;
   constexpr static int k_autoCellType = 2;
   static_assert(k_autoCellType !=
                         FloatParameterController<T>::k_parameterCellType &&
@@ -58,7 +58,7 @@ class SingleRangeController : public FloatParameterController<T> {
   virtual void pop(bool onConfirmation) = 0;
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView>
-      m_boundsCells[k_numberOfTextCells];
+      m_boundsCells[k_numberOfBoundsCells];
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::SwitchView>
       m_autoCell;
@@ -67,7 +67,7 @@ class SingleRangeController : public FloatParameterController<T> {
 
  private:
   int reusableParameterCellCount(int type) const override {
-    return k_numberOfTextCells;
+    return k_numberOfBoundsCells;
   }
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,

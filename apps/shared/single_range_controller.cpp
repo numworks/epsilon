@@ -14,7 +14,7 @@ SingleRangeController<T>::SingleRangeController(
     : FloatParameterController<T>(parentResponder),
       m_autoParam(false),
       m_confirmPopUpController(confirmPopUpController) {
-  for (int i = 0; i < k_numberOfTextCells; i++) {
+  for (int i = 0; i < k_numberOfBoundsCells; i++) {
     m_boundsCells[i].setParentResponder(&this->m_selectableListView);
     m_boundsCells[i].setDelegate(this);
   }
@@ -86,7 +86,7 @@ bool SingleRangeController<T>::handleEvent(Ion::Events::Event event) {
 template <typename T>
 HighlightCell* SingleRangeController<T>::reusableParameterCell(int index,
                                                                int type) {
-  assert(index >= 1 && index < k_numberOfTextCells + 1);
+  assert(index >= 1 && index < k_numberOfBoundsCells + 1);
   return &m_boundsCells[index - 1];
 }
 
@@ -130,7 +130,7 @@ bool SingleRangeController<T>::textFieldDidFinishEditing(
 
 template <typename T>
 T SingleRangeController<T>::parameterAtIndex(int index) {
-  assert(index >= 1 && index < k_numberOfTextCells + 1);
+  assert(index >= 1 && index < k_numberOfBoundsCells + 1);
   return (index == 1 ? m_rangeParam.min() : m_rangeParam.max());
 }
 

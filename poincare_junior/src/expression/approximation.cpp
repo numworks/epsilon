@@ -4,6 +4,7 @@
 #include <poincare/float.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
+#include <poincare_junior/src/probability/distribution_method.h>
 
 #include <bit>
 #include <complex>
@@ -618,6 +619,31 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return NAN;
     case BlockType::Piecewise:
       return ToComplex<T>(SelectPiecewiseBranch<T>(node));
+    case BlockType::Distribution: {
+      const Tree* child = node->child(0);
+      T abscissa[DistributionMethod::k_maxNumberOfParameters];
+      DistributionMethod::Type method = DistributionMethod::Get(node);
+      for (int i = 0; i < DistributionMethod::numberOfParameters(method); i++) {
+        std::complex<T> c = ToComplex<T>(child);
+        if (c.imag() != 0) {
+          return NAN;
+        }
+        abscissa[i] = c.real();
+        child = child->nextTree();
+      }
+      T parameters[Distribution::k_maxNumberOfParameters];
+      Distribution::Type distribution = Distribution::Get(node);
+      for (int i = 0; i < Distribution::numberOfParameters(distribution); i++) {
+        std::complex<T> c = ToComplex<T>(child);
+        if (c.imag() != 0) {
+          return NAN;
+        }
+        parameters[i] = c.real();
+        child = child->nextTree();
+      }
+      return DistributionMethod::Get(method)->EvaluateAtAbscissa(
+          abscissa, Distribution::Get(distribution), parameters);
+    }
     default:;
   }
   // The remaining operators are defined only on reals

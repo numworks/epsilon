@@ -9,10 +9,14 @@ namespace Shared {
 
 SingleInteractiveCurveViewRangeController::
     SingleInteractiveCurveViewRangeController(
-        Responder* parentResponder, InteractiveCurveViewRange* interactiveRange,
-        Shared::MessagePopUpController* confirmPopUpController)
+        Responder *parentResponder, InteractiveCurveViewRange *interactiveRange,
+        Shared::MessagePopUpController *confirmPopUpController)
     : SingleRangeController<float>(parentResponder, confirmPopUpController),
-      m_range(interactiveRange) {}
+      m_range(interactiveRange),
+      m_gridUnitCell(&this->m_selectableListView, this),
+      m_gridUnitParam(0.f) {
+  m_gridUnitCell.label()->setMessage(I18n::Message::Step);
+}
 
 void SingleInteractiveCurveViewRangeController::setAxis(Axis axis) {
   m_axis = axis;
@@ -96,6 +100,67 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
     m_range->setZoomAuto(m_axis, m_autoParam);
   }
   assert(!parametersAreDifferent());
+}
+
+bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
+    int parameterIndex, float f) {
+  if (typeAtRow(parameterIndex) == k_gridUnitCellType) {
+    if (f <= 0.0f) {
+      App::app()->displayWarning(I18n::Message::ForbiddenValue);
+      return false;
+    }
+    m_gridUnitParam = f;
+    return true;
+  }
+  return SingleRangeController<float>::setParameterAtIndex(parameterIndex, f);
+}
+
+int SingleInteractiveCurveViewRangeController::typeAtRow(int row) const {
+  return row == 3 ? k_gridUnitCellType
+                  : SingleRangeController<float>::typeAtRow(row);
+}
+
+KDCoordinate SingleInteractiveCurveViewRangeController::nonMemoizedRowHeight(
+    int row) {
+  return typeAtRow(row) == k_gridUnitCellType
+             ? m_gridUnitCell.minimalSizeForOptimalDisplay().height()
+             : SingleRangeController<float>::nonMemoizedRowHeight(row);
+}
+
+KDCoordinate SingleInteractiveCurveViewRangeController::separatorBeforeRow(
+    int row) {
+  return typeAtRow(row) == k_gridUnitCellType
+             ? k_defaultRowSeparator
+             : SingleRangeController<float>::separatorBeforeRow(row);
+}
+
+int SingleInteractiveCurveViewRangeController::reusableParameterCellCount(
+    int type) const {
+  return type == k_gridUnitCellType
+             ? 1
+             : SingleRangeController<float>::reusableParameterCellCount(type);
+}
+
+HighlightCell *SingleInteractiveCurveViewRangeController::reusableParameterCell(
+    int index, int type) {
+  return type == k_gridUnitCellType
+             ? &m_gridUnitCell
+             : SingleRangeController<float>::reusableParameterCell(index, type);
+}
+
+TextField *SingleInteractiveCurveViewRangeController::textFieldOfCellAtIndex(
+    HighlightCell *cell, int index) {
+  if (typeAtRow(index) == k_gridUnitCellType) {
+    assert(cell == &m_gridUnitCell);
+    return m_gridUnitCell.textField();
+  }
+  return SingleRangeController<float>::textFieldOfCellAtIndex(cell, index);
+}
+
+float SingleInteractiveCurveViewRangeController::parameterAtIndex(int index) {
+  return typeAtRow(index) == k_gridUnitCellType
+             ? m_gridUnitParam
+             : SingleRangeController<float>::parameterAtIndex(index);
 }
 
 }  // namespace Shared

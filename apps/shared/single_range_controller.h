@@ -56,6 +56,13 @@ class SingleRangeController : public FloatParameterController<T> {
   virtual T limit() const = 0;
   virtual void confirmParameters() = 0;
   virtual void pop(bool onConfirmation) = 0;
+  int reusableParameterCellCount(int type) const override {
+    assert(type == this->k_parameterCellType);
+    return k_numberOfBoundsCells;
+  }
+  Escher::HighlightCell* reusableParameterCell(int index, int type) override;
+  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
+                                            int index) override;
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView>
       m_boundsCells[k_numberOfBoundsCells];
@@ -66,13 +73,6 @@ class SingleRangeController : public FloatParameterController<T> {
   bool m_autoParam;
 
  private:
-  int reusableParameterCellCount(int type) const override {
-    assert(type == this->k_parameterCellType);
-    return k_numberOfBoundsCells;
-  }
-  Escher::HighlightCell* reusableParameterCell(int index, int type) override;
-  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
-                                            int index) override;
   void buttonAction() override;
 
   Shared::MessagePopUpController* m_confirmPopUpController;

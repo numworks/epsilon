@@ -58,7 +58,6 @@ void SingleRangeController<T>::fillCellForRow(Escher::HighlightCell* cell,
     m_autoCell.accessory()->setState(m_autoParam);
     return;
   }
-  assert(type == this->k_buttonCellType || type == this->k_parameterCellType);
   FloatParameterController<T>::fillCellForRow(cell, row);
 }
 

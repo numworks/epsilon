@@ -17,6 +17,7 @@ class Builtin {
   const BlockType blockType() const { return m_blockType; }
   const Aliases* aliases() const { return &m_aliases; }
   Tree* pushNode() const;
+  bool checkNumberOfParameters(int n) const;
   static bool IsReservedFunction(BlockType type) {
     return GetReservedFunction(type) != nullptr;
   }
@@ -39,7 +40,6 @@ class Builtin {
   static const Builtin* GetReservedFunction(BlockType type);
   static const Builtin* GetSpecialIdentifier(UnicodeDecoder* name);
   static const Builtin* GetSpecialIdentifier(BlockType type);
-  static bool CheckNumberOfParameters(BlockType type, int n);
   static bool Promote(Tree* parameterList, const Builtin* builtin);
   EDITION_REF_WRAP_1(Promote, const Builtin*);
 

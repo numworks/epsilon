@@ -154,8 +154,8 @@ const Builtin *Builtin::GetSpecialIdentifier(BlockType type) {
   return nullptr;
 }
 
-bool Builtin::CheckNumberOfParameters(BlockType type, int n) {
-  switch (type) {
+bool Builtin::checkNumberOfParameters(int n) const {
+  switch (m_blockType) {
     case BlockType::Round:
     case BlockType::Mean:
     case BlockType::Variance:
@@ -169,7 +169,7 @@ bool Builtin::CheckNumberOfParameters(BlockType type, int n) {
     case BlockType::Piecewise:
       return 1 <= n && n <= UINT8_MAX;
     default:
-      return n == TypeBlock::NumberOfChildren(type);
+      return n == TypeBlock::NumberOfChildren(m_blockType);
   }
 }
 

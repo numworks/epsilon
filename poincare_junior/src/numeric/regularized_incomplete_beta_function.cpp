@@ -25,8 +25,7 @@
 
 // WARNING: this code has been modified
 
-#include <math.h>
-#include <poincare/regularized_incomplete_beta_function.h>
+#include "regularized_incomplete_beta_function.h"
 
 #include <cmath>
 

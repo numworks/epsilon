@@ -89,6 +89,14 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   poincare.cpp \
 )
 
+poincare_junior_src += $(addprefix poincare_junior/src/numeric/,\
+  beta_function.cpp \
+  erf_inv.cpp \
+  range.cpp \
+  regularized_gamma_function.cpp \
+  regularized_incomplete_beta_function.cpp \
+)
+
 poincare_junior_src += $(addprefix poincare_junior/src/probability/,\
   binomial_distribution.cpp \
   cdf_method.cpp \

@@ -1,6 +1,6 @@
+#include "regularized_gamma_function.h"
+
 #include <assert.h>
-#include <math.h>
-#include <poincare/regularized_gamma_function.h>
 
 #include <cmath>
 

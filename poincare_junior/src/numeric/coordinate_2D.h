@@ -1,8 +1,7 @@
 #ifndef POINCARE_JUNIOR_NUMERIC_COORDINATE_2D_H
 #define POINCARE_JUNIOR_NUMERIC_COORDINATE_2D_H
 
-#include <math.h>
-#include <poincare/helpers.h>
+#include <cmath>
 
 namespace PoincareJ {
 

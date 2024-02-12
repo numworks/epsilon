@@ -1,5 +1,4 @@
-#include <math.h>
-#include <poincare/beta_function.h>
+#include "beta_function.h"
 
 #include <cmath>
 

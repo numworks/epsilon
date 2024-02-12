@@ -33,7 +33,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(
                          navigationButtonInvocation(), k_buttonFont),
       m_calculusButton(this, calculusButtonMessage, calculusButtonInvocation(),
                        k_buttonFont) {
-  m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_autoButton.setState(m_interactiveRange->zoomAndGridUnitAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
 }
 
@@ -341,7 +341,7 @@ float InteractiveCurveViewController::addMargin(float y, float range,
 }
 
 void InteractiveCurveViewController::updateZoomButtons() {
-  m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_autoButton.setState(m_interactiveRange->zoomAndGridUnitAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
   header()->reloadButtons();
 }
@@ -359,8 +359,13 @@ void InteractiveCurveViewController::setCurveViewAsMainView(
 Invocation InteractiveCurveViewController::autoButtonInvocation() {
   return Invocation::Builder<InteractiveCurveViewController>(
       [](InteractiveCurveViewController* graphController, void* sender) {
-        bool newAuto = !graphController->m_interactiveRange->zoomAuto();
+        bool newAuto =
+            !graphController->m_interactiveRange->zoomAndGridUnitAuto();
         graphController->m_interactiveRange->setZoomAuto(newAuto);
+        if (newAuto) {
+          // Only set grid unit auto to false when user gives a step
+          graphController->m_interactiveRange->setGridUnitAuto(true);
+        }
         graphController->m_interactiveRange->computeRanges();
         if (newAuto) {
           graphController->setCurveViewAsMainView(true, true);

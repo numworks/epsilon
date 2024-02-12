@@ -162,6 +162,7 @@ void RangeParameterController::buttonAction() {
 
   /* Use setZoomAuto to refresh the Auto button on the graph. */
   m_interactiveRange->setZoomAuto(m_tempInteractiveRange.zoomAuto());
+  m_interactiveRange->setGridUnitAuto(m_tempInteractiveRange.gridUnitAuto());
   m_interactiveRange->setZoomNormalize(m_tempInteractiveRange.zoomNormalize());
   *m_interactiveRange = m_tempInteractiveRange;
 

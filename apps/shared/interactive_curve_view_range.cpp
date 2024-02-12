@@ -318,10 +318,29 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX,
 }
 
 void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
-  bool oldAuto = zoomAuto();
+  bool oldAuto = zoomAndGridUnitAuto();
   m_zoomAuto.x = xAuto;
   m_zoomAuto.y = yAuto;
-  if (m_delegate && (oldAuto != zoomAuto())) {
+  if (m_delegate && oldAuto != zoomAndGridUnitAuto()) {
+    m_delegate->updateZoomButtons();
+  }
+}
+
+void InteractiveCurveViewRange::privateSetGridUnitAuto(bool xAuto, bool yAuto) {
+  bool oldAuto = zoomAndGridUnitAuto();
+  m_gridUnitAuto.x = xAuto;
+  m_gridUnitAuto.y = yAuto;
+  if (m_delegate && oldAuto != zoomAndGridUnitAuto()) {
+    m_delegate->updateZoomButtons();
+  }
+}
+
+void InteractiveCurveViewRange::privateSetUserGridUnit(float xValue,
+                                                       float yValue) {
+  bool oldAuto = zoomAndGridUnitAuto();
+  m_userGridUnit.x = xValue;
+  m_userGridUnit.y = yValue;
+  if (m_delegate && oldAuto != zoomAndGridUnitAuto()) {
     m_delegate->updateZoomButtons();
   }
 }

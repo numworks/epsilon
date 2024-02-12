@@ -27,6 +27,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
         m_offscreenYAxis(0.f),
         m_gridType(GridType::Cartesian),
         m_zoomAuto{true, true},
+        m_gridUnitAuto{true, true},
+        m_userGridUnit{0.f, 0.f},
         m_zoomNormalize(false) {}
 
   constexpr static float NormalYXRatio() {
@@ -38,6 +40,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
   void setDelegate(InteractiveCurveViewRangeDelegate* delegate);
 
+  bool zoomAndGridUnitAuto() const { return zoomAuto() && gridUnitAuto(); }
   bool zoomAuto() const { return m_zoomAuto.x && m_zoomAuto.y; }
   void setZoomAuto(bool v) { privateSetZoomAuto(v, v); }
   bool zoomAuto(Axis axis) const { return m_zoomAuto(axis); }
@@ -45,6 +48,20 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
     AxisInformation<bool> newAuto = m_zoomAuto;
     newAuto.set(axis, v);
     privateSetZoomAuto(newAuto.x, newAuto.y);
+  }
+  bool gridUnitAuto() const { return m_gridUnitAuto.x && m_gridUnitAuto.y; }
+  void setGridUnitAuto(bool v) { privateSetGridUnitAuto(v, v); }
+  bool gridUnitAuto(Axis axis) const { return m_gridUnitAuto(axis); }
+  void setGridUnitAuto(Axis axis, bool v) {
+    AxisInformation<bool> newAuto = m_gridUnitAuto;
+    newAuto.set(axis, v);
+    privateSetGridUnitAuto(newAuto.x, newAuto.y);
+  }
+  float userGridUnit(Axis axis) const { return m_userGridUnit(axis); }
+  void setUserGridUnit(Axis axis, float v) {
+    AxisInformation<float> newGridUnit = m_userGridUnit;
+    newGridUnit.set(axis, v);
+    privateSetUserGridUnit(newGridUnit.x, newGridUnit.y);
   }
   bool zoomNormalize() const { return m_zoomNormalize; }
   void setZoomNormalize(bool v);
@@ -110,6 +127,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
  private:
   void privateSetZoomAuto(bool xAuto, bool yAuto);
+  void privateSetGridUnitAuto(bool xAuto, bool yAuto);
+  void privateSetUserGridUnit(float xValue, float yValue);
   void privateComputeRanges(bool computeX, bool computeY);
 
   Poincare::Range2D<float> m_memoizedAutoRange;
@@ -125,6 +144,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
     void set(Axis axis, T value) { (axis == Axis::X ? x : y) = value; }
   };
   AxisInformation<bool> m_zoomAuto;
+  AxisInformation<bool> m_gridUnitAuto;
+  AxisInformation<float> m_userGridUnit;
   bool m_zoomNormalize;
 };
 

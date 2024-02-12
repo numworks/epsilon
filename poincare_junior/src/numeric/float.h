@@ -3,6 +3,8 @@
 
 #include <float.h>
 
+#include <cmath>
+
 namespace PoincareJ {
 
 template <typename T>
@@ -13,6 +15,18 @@ class Float {
   constexpr static T SqrtEpsilonLax();
   constexpr static T Min();
   constexpr static T Max();
+
+  consteval static T SquareRoot(T x) {
+    return x >= 0 ? SquareRootHelper(x, x, static_cast<T>(0.))
+                  : static_cast<T>(NAN);
+  }
+
+ private:
+  // Helper for the compile-time square root
+  consteval static T SquareRootHelper(T x, T a, T b) {
+    return a == b ? a
+                  : SquareRootHelper(x, static_cast<T>(0.5) * (a + x / a), a);
+  };
 };
 
 /* To prevent incorrect approximations, such as cos(1.5707963267949) = 0

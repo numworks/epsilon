@@ -1,46 +1,46 @@
 #include "pdf_method.h"
 
-#include <poincare/infinity.h>
-#include <poincare/integer.h>
-#include <poincare/rational.h>
+#include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/rational.h>
 
 namespace PoincareJ {
 
 bool PDFMethod::shallowReduce(const Tree** abscissae,
                               const Distribution* distribution,
                               const Tree** parameters, Tree* expression) const {
-  Expression x = abscissae[0];
+  const Tree* x = abscissae[0];
 
-  if (x.type() == ExpressionNode::Type::Infinity) {
-    Expression result = Rational::Builder(0);
-    expression->replaceWithInPlace(result);
-    return result;
+  // TODO PCJ: -inf
+  if (x->isInfinity()) {
+    expression->cloneTreeOverTree(0_e);
+    return true;
   }
 
-  if (x.type() != ExpressionNode::Type::Rational) {
-    return *expression;
+  if (!x->isRational()) {
+    return false;
   }
 
-  if (static_cast<Rational&>(x).isNegative() &&
+  if (Rational::Sign(x).isStrictlyNegative() &&
       (distribution->hasType(Distribution::Type::Binomial) ||
        distribution->hasType(Distribution::Type::Poisson) ||
        distribution->hasType(Distribution::Type::Geometric) ||
        distribution->hasType(Distribution::Type::Hypergeometric))) {
-    Expression result = Rational::Builder(0);
-    expression->replaceWithInPlace(result);
-    return result;
+    expression->cloneTreeOverTree(0_e);
+    return true;
   }
 
   if (!distribution->isContinuous()) {
-    Rational r = static_cast<Rational&>(x);
-    IntegerDivision div =
-        Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-    assert(!div.quotient.isOverflow());
-    Expression result = Rational::Builder(div.quotient);
-    x.replaceWithInPlace(result);
+#if 0
+    // TODO PCJ: replace x
+    Tree* div = IntegerHandler::Quotient(Rational::Numerator(x),
+                                         Rational::Denominator(x));
+    x->moveTreeOverTree(div);
+    return true;
+#endif
   }
 
-  return *expression;
+  return false;
 }
 
 }  // namespace PoincareJ

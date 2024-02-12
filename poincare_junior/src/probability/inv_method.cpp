@@ -1,8 +1,7 @@
 #include "inv_method.h"
 
-#include <poincare/infinity.h>
-#include <poincare/integer.h>
-#include <poincare/rational.h>
+#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare_junior/src/expression/rational.h>
 
 namespace PoincareJ {
 
@@ -10,93 +9,89 @@ bool InverseMethod::shallowReduce(const Tree **x,
                                   const Distribution *distribution,
                                   const Tree **parameters,
                                   Tree *expression) const {
-  Expression a = x[0];
+  const Tree *a = x[0];
   // Check a
-  if (a.type() != ExpressionNode::Type::Rational) {
-    return *expression;
+  if (!a->isRational()) {
+    return false;
   }
 
   // Special values
 
   // Undef if a < 0 or a > 1
-  Rational rationalA = static_cast<Rational &>(a);
-  if (rationalA.isNegative()) {
-    return expression->replaceWithUndefinedInPlace();
+  if (Rational::Sign(a).isStrictlyNegative()) {
+    expression->cloneTreeOverTree(KUndef);
+    return true;
   }
-  Integer num = rationalA.unsignedIntegerNumerator();
-  Integer den = rationalA.integerDenominator();
-  if (den.isLowerThan(num)) {
-    return expression->replaceWithUndefinedInPlace();
+  if (Rational::IsGreaterThanOne(a)) {
+    expression->cloneTreeOverTree(KUndef);
+    return true;
   }
 
-  bool is0 = rationalA.isZero();
-  bool is1 = !is0 && rationalA.isOne();
+  bool is0 = a->isZero();
+  bool is1 = !is0 && a->isOne();
 
   if (is0 || is1) {
     // TODO: for all distributions with finite support
     if (distribution->hasType(Distribution::Type::Binomial)) {
       if (is0) {
-        Expression p = parameters[1];
-        if (p.type() != ExpressionNode::Type::Rational) {
-          return *expression;
+        const Tree *p = parameters[1];
+        if (!p->isRational()) {
+          return false;
         }
-        if (static_cast<Rational &>(p).isOne()) {
-          Expression result = Rational::Builder(0);
-          expression->replaceWithInPlace(result);
-          return result;
+        if (p->isOne()) {
+          expression->cloneTreeOverTree(0_e);
+          return true;
         }
-        return expression->replaceWithUndefinedInPlace();
+        expression->cloneTreeOverTree(KUndef);
+        return true;
       }
       // n if a == 1 (TODO: false if p == 0 ?)
-      Expression n = parameters[0];
-      expression->replaceWithInPlace(n);
-      return n;
+      const Tree *n = parameters[0];
+      expression->cloneTreeOverTree(n);
+      return true;
     }
 
     if (distribution->hasType(Distribution::Type::Geometric)) {
       if (is0) {
-        return expression->replaceWithUndefinedInPlace();
+        expression->cloneTreeOverTree(KUndef);
+        return true;
       }
 
       // is1
-      Expression p = parameters[0];
-      if (p.type() != ExpressionNode::Type::Rational) {
-        return *expression;
+      const Tree *p = parameters[0];
+      if (!p->isRational()) {
+        return false;
       }
-      if (static_cast<Rational &>(p).isOne()) {
-        Expression result = Rational::Builder(1);
-        expression->replaceWithInPlace(result);
-        return result;
+      if (p->isOne()) {
+        expression->cloneTreeOverTree(1_e);
+        return true;
       }
-      Expression result = Infinity::Builder(false);
-      expression->replaceWithInPlace(result);
-      return result;
+      expression->cloneTreeOverTree(KInf);
+      return true;
     }
 
     if (distribution->hasType(Distribution::Type::Normal) ||
         distribution->hasType(Distribution::Type::Student)) {
       // Normal and Student (all distributions with real line support)
-      Expression result = Infinity::Builder(is0);
-      expression->replaceWithInPlace(result);
-      return result;
+      expression->cloneTreeOverTree(is0 ? KMult(-1_e, KInf) : KInf);
+      return true;
     }
   }
 
   // expectedValue if a == 0.5 and continuous and symmetrical
-  if (rationalA.isHalf()) {
+  if (a->isHalf()) {
     if (distribution->hasType(Distribution::Type::Normal)) {
-      Expression mu = parameters[0];
-      expression->replaceWithInPlace(mu);
-      return mu;
+      const Tree *mu = parameters[0];
+      expression->cloneTreeOverTree(mu);
+      return true;
     }
     if (distribution->hasType(Distribution::Type::Student)) {
-      Expression zero = Rational::Builder(0);
-      expression->replaceWithInPlace(zero);
-      return zero;
+      expression->cloneTreeOverTree(0_e);
+      return true;
     }
   }
 
-  return *expression;
+  return false;
 }
 
 }  // namespace PoincareJ

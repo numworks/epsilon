@@ -28,9 +28,9 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
   if (k > K || (n - k) > (N - K)) {
     return 0;
   }
-  return BinomialCoefficientNode::compute(k, K) *
-         BinomialCoefficientNode::compute(n - k, N - K) /
-         BinomialCoefficientNode::compute(n, N);
+  return Poincare::BinomialCoefficientNode::compute(k, K) *
+         Poincare::BinomialCoefficientNode::compute(n - k, N - K) /
+         Poincare::BinomialCoefficientNode::compute(n, N);
 }
 
 template <typename T>
@@ -40,7 +40,7 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(
       probability > static_cast<T>(1.0)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = Poincare::Float<T>::Epsilon();
   if (probability < precision) {
     // We can have 0 successes only if there are enough failures
     if (n > N - K) {
@@ -53,16 +53,18 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(
   }
   T proba = probability;
   const void *pack[3] = {&N, &K, &n};
-  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
-      &proba,
-      [](T x, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        T N = *static_cast<const T *>(pack[0]);
-        T K = *static_cast<const T *>(pack[1]);
-        T n = *static_cast<const T *>(pack[2]);
-        return HypergeometricDistribution::EvaluateAtAbscissa(x, N, K, n);
-      },
-      pack);
+  return Poincare::SolverAlgorithms::
+      CumulativeDistributiveInverseForNDefinedFunction<T>(
+          &proba,
+          [](T x, const void *auxiliary) {
+            const void *const *pack =
+                static_cast<const void *const *>(auxiliary);
+            T N = *static_cast<const T *>(pack[0]);
+            T K = *static_cast<const T *>(pack[1]);
+            T n = *static_cast<const T *>(pack[2]);
+            return HypergeometricDistribution::EvaluateAtAbscissa(x, N, K, n);
+          },
+          pack);
 }
 
 template <typename T>

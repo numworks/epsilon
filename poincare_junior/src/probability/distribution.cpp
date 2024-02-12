@@ -1,4 +1,5 @@
 #include "distribution.h"
+
 #include <poincare/solver_algorithms.h>
 
 #include <algorithm>
@@ -54,7 +55,8 @@ const Distribution *Distribution::Get(Type type) {
 
 template <typename T>
 void Distribution::FindBoundsForBinarySearch(
-    typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
+    typename Poincare::Solver<T>::FunctionEvaluation
+        cumulativeDistributionEvaluation,
     const void *auxiliary, T &xmin, T &xmax) {
   /* We'll simply test [0, 10], [10, 100], [100, 1000] ... until we find a
    * working interval, or symmetrically if the zero is on the left. This
@@ -99,20 +101,22 @@ double Distribution::
     return -INFINITY;
   }
   const void *pack[3] = {this, &p, parameters};
-  Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
-      ax, bx, DBL_EPSILON,
-      [](double x, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        const Distribution *distribution =
-            static_cast<const Distribution *>(pack[0]);
-        const double *proba = static_cast<const double *>(pack[1]);
-        const double *parameters = static_cast<const double *>(pack[2]);
-        // This needs to be an increasing function
-        return distribution->cumulativeDistributiveFunctionAtAbscissa(
-                   x, parameters) -
-               *proba;
-      },
-      pack);
+  Poincare::Coordinate2D<double> result =
+      Poincare::SolverAlgorithms::IncreasingFunctionRoot(
+          ax, bx, DBL_EPSILON,
+          [](double x, const void *auxiliary) {
+            const void *const *pack =
+                static_cast<const void *const *>(auxiliary);
+            const Distribution *distribution =
+                static_cast<const Distribution *>(pack[0]);
+            const double *proba = static_cast<const double *>(pack[1]);
+            const double *parameters = static_cast<const double *>(pack[2]);
+            // This needs to be an increasing function
+            return distribution->cumulativeDistributiveFunctionAtAbscissa(
+                       x, parameters) -
+                   *proba;
+          },
+          pack);
   /* Either no result was found, the precision is ok or the result was outside
    * the given ax bx bounds */
   if (!(std::isnan(result.y()) || std::fabs(result.y()) <= FLT_EPSILON ||
@@ -130,8 +134,10 @@ double Distribution::
 }
 
 template void Distribution::FindBoundsForBinarySearch<float>(
-    Solver<float>::FunctionEvaluation, void const *, float &, float &);
+    Poincare::Solver<float>::FunctionEvaluation, void const *, float &,
+    float &);
 template void Distribution::FindBoundsForBinarySearch<double>(
-    Solver<double>::FunctionEvaluation, void const *, double &, double &);
+    Poincare::Solver<double>::FunctionEvaluation, void const *, double &,
+    double &);
 
 }  // namespace PoincareJ

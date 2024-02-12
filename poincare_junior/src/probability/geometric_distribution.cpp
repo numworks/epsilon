@@ -37,7 +37,7 @@ T GeometricDistribution::CumulativeDistributiveInverseForProbability(
       probability < static_cast<T>(0.0) || probability > static_cast<T>(1.0)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = Poincare::Float<T>::Epsilon();
   if (std::abs(probability) < precision) {
     return NAN;
   }
@@ -51,14 +51,16 @@ T GeometricDistribution::CumulativeDistributiveInverseForProbability(
   const void *pack[1] = {&p};
   /* It works even if G(p) is defined on N* and not N because G(0) returns 0 and
    * not undef */
-  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
-      &proba,
-      [](T x, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        T p = *static_cast<const T *>(pack[0]);
-        return GeometricDistribution::EvaluateAtAbscissa(x, p);
-      },
-      pack);
+  return Poincare::SolverAlgorithms::
+      CumulativeDistributiveInverseForNDefinedFunction<T>(
+          &proba,
+          [](T x, const void *auxiliary) {
+            const void *const *pack =
+                static_cast<const void *const *>(auxiliary);
+            T p = *static_cast<const T *>(pack[0]);
+            return GeometricDistribution::EvaluateAtAbscissa(x, p);
+          },
+          pack);
 }
 
 template <typename T>

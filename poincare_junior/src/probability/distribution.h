@@ -2,8 +2,11 @@
 #define POINCARE_JUNIOR_DISTRIBUTION_H
 
 #include <poincare/solver_algorithms.h>
+#include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {
+
+class Context;
 
 class Distribution {
  public:
@@ -97,7 +100,8 @@ class Distribution {
    */
   template <typename T>
   static void FindBoundsForBinarySearch(
-      typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
+      typename Poincare::Solver<T>::FunctionEvaluation
+          cumulativeDistributionEvaluation,
       const void* auxiliary, T& xmin, T& xmax);
   double cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(
       double p, double ax, double bx, double* parameters) const;

@@ -16,7 +16,7 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
   if (std::isnan(x) || std::isinf(x) || !ParametersAreOK(n, p)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = Poincare::Float<T>::Epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - static_cast<T>(1.0)) < precision;
@@ -62,7 +62,8 @@ T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n,
     return static_cast<T>(1.0);
   }
   T floorX = std::floor(x);
-  return RegularizedIncompleteBetaFunction(n - floorX, floorX + 1.0, 1.0 - p);
+  return Poincare::RegularizedIncompleteBetaFunction(n - floorX, floorX + 1.0,
+                                                     1.0 - p);
 }
 
 template <typename T>
@@ -73,7 +74,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(
       probability > static_cast<T>(1.0)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = Poincare::Float<T>::Epsilon();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - static_cast<T>(1.0)) < precision;
@@ -91,15 +92,17 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(
   }
   T proba = probability;
   const void *pack[2] = {&n, &p};
-  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
-      &proba,
-      [](T x, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        T n = *static_cast<const T *>(pack[0]);
-        T p = *static_cast<const T *>(pack[1]);
-        return BinomialDistribution::EvaluateAtAbscissa(x, n, p);
-      },
-      pack);
+  return Poincare::SolverAlgorithms::
+      CumulativeDistributiveInverseForNDefinedFunction<T>(
+          &proba,
+          [](T x, const void *auxiliary) {
+            const void *const *pack =
+                static_cast<const void *const *>(auxiliary);
+            T n = *static_cast<const T *>(pack[0]);
+            T p = *static_cast<const T *>(pack[1]);
+            return BinomialDistribution::EvaluateAtAbscissa(x, n, p);
+          },
+          pack);
 }
 
 template <typename T>

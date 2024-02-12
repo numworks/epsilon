@@ -88,7 +88,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
       std::isnan(probability) || std::isinf(probability)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = Poincare::Float<T>::Epsilon();
   if ((static_cast<T>(1.0)) - probability < precision) {
     return INFINITY;
   }
@@ -100,7 +100,8 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
         (static_cast<T>(1.0)) - probability);
   }
   return static_cast<T>(M_SQRT2) *
-         erfInv((static_cast<T>(2.0)) * probability - static_cast<T>(1.0));
+         Poincare::erfInv((static_cast<T>(2.0)) * probability -
+                          static_cast<T>(1.0));
 }
 
 double NormalDistribution::evaluateParameterForProbabilityAndBound(

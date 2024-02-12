@@ -24,8 +24,9 @@ SingleRangeController<T>::SingleRangeController(
 template <typename T>
 void SingleRangeController<T>::viewWillAppear() {
   extractParameters();
-  m_boundsCells[0].label()->setMessage(parameterMessage(0));
-  m_boundsCells[1].label()->setMessage(parameterMessage(1));
+  for (int i = 0; i < k_numberOfBoundsCells; i++) {
+    m_boundsCells[i].label()->setMessage(parameterMessage(i));
+  }
   FloatParameterController<T>::viewWillAppear();
 }
 

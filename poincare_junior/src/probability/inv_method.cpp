@@ -6,11 +6,10 @@
 
 namespace PoincareJ {
 
-Expression InverseMethod::shallowReduce(Expression *x,
-                                        const Distribution *distribution,
-                                        Expression *parameters,
-                                        ReductionContext reductionContext,
-                                        Expression *expression) const {
+bool InverseMethod::shallowReduce(const Tree **x,
+                                  const Distribution *distribution,
+                                  const Tree **parameters,
+                                  Tree *expression) const {
   Expression a = x[0];
   // Check a
   if (a.type() != ExpressionNode::Type::Rational) {

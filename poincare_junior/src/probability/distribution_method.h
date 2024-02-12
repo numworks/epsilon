@@ -1,8 +1,9 @@
 #ifndef POINCARE_JUNIOR_DISTRIBUTION_METHOD_H
 #define POINCARE_JUNIOR_DISTRIBUTION_METHOD_H
 
-#include "distribution.h"
 #include <poincare/expression.h>
+
+#include "distribution.h"
 
 namespace PoincareJ {
 
@@ -35,12 +36,10 @@ class DistributionMethod {
   virtual double EvaluateAtAbscissa(double* x, const Distribution* distribution,
                                     const double* parameters) const = 0;
 
-  virtual Expression shallowReduce(Expression* abscissae,
-                                   const Distribution* distribution,
-                                   Expression* parameters,
-                                   ReductionContext context,
-                                   Expression* expression) const {
-    return *expression;
+  virtual bool shallowReduce(const Tree** abscissae,
+                             const Distribution* distribution,
+                             const Tree** parameters, Tree* expression) const {
+    return false;
   }
 };
 

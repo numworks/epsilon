@@ -6,11 +6,9 @@
 
 namespace PoincareJ {
 
-Expression PDFMethod::shallowReduce(Expression *abscissae,
-                                    const Distribution *distribution,
-                                    Expression *parameters,
-                                    ReductionContext reductionContext,
-                                    Expression *expression) const {
+bool PDFMethod::shallowReduce(const Tree** abscissae,
+                              const Distribution* distribution,
+                              const Tree** parameters, Tree* expression) const {
   Expression x = abscissae[0];
 
   if (x.type() == ExpressionNode::Type::Infinity) {
@@ -23,7 +21,7 @@ Expression PDFMethod::shallowReduce(Expression *abscissae,
     return *expression;
   }
 
-  if (static_cast<Rational &>(x).isNegative() &&
+  if (static_cast<Rational&>(x).isNegative() &&
       (distribution->hasType(Distribution::Type::Binomial) ||
        distribution->hasType(Distribution::Type::Poisson) ||
        distribution->hasType(Distribution::Type::Geometric) ||
@@ -34,7 +32,7 @@ Expression PDFMethod::shallowReduce(Expression *abscissae,
   }
 
   if (!distribution->isContinuous()) {
-    Rational r = static_cast<Rational &>(x);
+    Rational r = static_cast<Rational&>(x);
     IntegerDivision div =
         Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
     assert(!div.quotient.isOverflow());

@@ -6,11 +6,9 @@
 
 namespace PoincareJ {
 
-Expression CDFMethod::shallowReduce(Expression* abscissae,
-                                    const Distribution* distribution,
-                                    Expression* parameters,
-                                    ReductionContext reductionContext,
-                                    Expression* expression) const {
+bool CDFMethod::shallowReduce(const Tree** abscissae,
+                              const Distribution* distribution,
+                              const Tree** parameters, Tree* expression) const {
   Expression x = abscissae[0];
 
   if (x.type() == ExpressionNode::Type::Infinity) {

@@ -2,7 +2,6 @@
 #define POINCARE_JUNIOR_PDF_METHOD_H
 
 #include "distribution.h"
-
 #include "distribution_method.h"
 
 namespace PoincareJ {
@@ -18,11 +17,8 @@ class PDFMethod final : public DistributionMethod {
     return distribution->evaluateAtAbscissa(x[0], parameters);
   }
 
-  Expression shallowReduce(Expression* abscissae,
-                           const Distribution* distribution,
-                           Expression* parameters,
-                           ReductionContext reductionContext,
-                           Expression* expression) const override;
+  bool shallowReduce(const Tree** abscissae, const Distribution* distribution,
+                     const Tree** parameters, Tree* expression) const override;
 };
 
 }  // namespace PoincareJ

@@ -7,11 +7,10 @@
 
 namespace PoincareJ {
 
-Expression CDFRangeMethod::shallowReduce(Expression* abscissae,
-                                         const Distribution* distribution,
-                                         Expression* parameters,
-                                         ReductionContext reductionContext,
-                                         Expression* expression) const {
+bool CDFRangeMethod::shallowReduce(const Tree** abscissae,
+                                   const Distribution* distribution,
+                                   const Tree** parameters,
+                                   Tree* expression) const {
   Expression x = abscissae[0];
   Expression y = abscissae[1];
 

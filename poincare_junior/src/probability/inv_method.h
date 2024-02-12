@@ -2,7 +2,6 @@
 #define POINCARE_JUNIOR_INV_METHOD_H
 
 #include "distribution.h"
-
 #include "distribution_method.h"
 
 namespace PoincareJ {
@@ -20,11 +19,8 @@ class InverseMethod final : public DistributionMethod {
         x[0], parameters);
   }
 
-  Expression shallowReduce(Expression* abscissae,
-                           const Distribution* distribution,
-                           Expression* parameters,
-                           ReductionContext reductionContext,
-                           Expression* expression) const override;
+  bool shallowReduce(const Tree** abscissae, const Distribution* distribution,
+                     const Tree** parameters, Tree* expression) const override;
 };
 
 }  // namespace PoincareJ

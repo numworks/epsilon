@@ -359,10 +359,10 @@ void InteractiveCurveViewController::setCurveViewAsMainView(
 Invocation InteractiveCurveViewController::autoButtonInvocation() {
   return Invocation::Builder<InteractiveCurveViewController>(
       [](InteractiveCurveViewController* graphController, void* sender) {
-        graphController->m_interactiveRange->setZoomAuto(
-            !graphController->m_interactiveRange->zoomAuto());
+        bool newAuto = !graphController->m_interactiveRange->zoomAuto();
+        graphController->m_interactiveRange->setZoomAuto(newAuto);
         graphController->m_interactiveRange->computeRanges();
-        if (graphController->m_interactiveRange->zoomAuto()) {
+        if (newAuto) {
           graphController->setCurveViewAsMainView(true, true);
         }
         return true;

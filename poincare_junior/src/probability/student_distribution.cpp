@@ -1,10 +1,11 @@
 #include "student_distribution.h"
 
 #include <float.h>
-#include <poincare/domain.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 
 #include <cmath>
+
+#include "domain.h"
 
 namespace PoincareJ {
 

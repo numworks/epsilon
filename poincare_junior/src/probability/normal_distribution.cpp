@@ -2,11 +2,12 @@
 
 #include <assert.h>
 #include <float.h>
-#include <poincare/domain.h>
 #include <poincare/erf_inv.h>
 #include <poincare/float.h>
 
 #include <cmath>
+
+#include "domain.h"
 
 #define M_SQRT_2PI 2.506628274631000502415765284811
 

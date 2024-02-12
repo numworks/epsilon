@@ -1,9 +1,10 @@
 #include "chi2_distribution.h"
 
-#include <poincare/domain.h>
 #include <poincare/regularized_gamma_function.h>
 
 #include <cmath>
+
+#include "domain.h"
 
 namespace PoincareJ {
 

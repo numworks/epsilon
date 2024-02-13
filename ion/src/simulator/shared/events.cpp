@@ -5,6 +5,7 @@
 #include <ion/circuit_breaker.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
+#include <ion/src/shared/dummy/usb.h>
 #include <ion/src/shared/events.h>
 #include <ion/src/shared/events_modifier.h>
 #include <ion/src/shared/keyboard.h>
@@ -106,6 +107,10 @@ Event getEvent(int *timeout) {
 
   if (nextEvent == Events::None) {
     nextEvent = sharedGetEvent(timeout);
+  }
+  if (nextEvent == Events::USBPlug) {
+    /* Keep track of whever the simulator is plugged or unplugged. */
+    Ion::USB::togglePlug();
   }
   if (sDestinationJournal != nullptr) {
     sDestinationJournal->pushEvent(nextEvent);

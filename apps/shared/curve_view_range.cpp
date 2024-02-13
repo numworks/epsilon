@@ -20,9 +20,18 @@ uint32_t CurveViewRange::rangeChecksum() const {
                               dataLengthInBytes / sizeof(uint32_t));
 }
 
-float CurveViewRange::computeGridUnit(float minNumberOfUnits,
-                                      float maxNumberOfUnits,
-                                      float range) const {
+float CurveViewRange::computeGridUnit(Axis axis) const {
+  float minNumberOfUnits, maxNumberOfUnits, range;
+  if (axis == Axis::X) {
+    minNumberOfUnits = k_minNumberOfXGridUnits;
+    maxNumberOfUnits = k_maxNumberOfXGridUnits;
+    range = xMax() - xMin();
+  } else {
+    assert(axis == Axis::Y);
+    minNumberOfUnits = k_minNumberOfYGridUnits;
+    maxNumberOfUnits = k_maxNumberOfYGridUnits;
+    range = yMax() - yMin() + offscreenYAxis();
+  }
   int a = 0;
   int b = 0;
   constexpr int unitsCount = 3;

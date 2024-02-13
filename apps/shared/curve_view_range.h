@@ -16,14 +16,8 @@ class CurveViewRange {
   virtual float yMax() const = 0;
   float xCenter() const { return (xMin() + xMax()) / 2; }
   float yCenter() const { return (yMin() + yMax()) / 2; }
-  virtual float xGridUnit() const {
-    return computeGridUnit(k_minNumberOfXGridUnits, k_maxNumberOfXGridUnits,
-                           xMax() - xMin());
-  }
-  virtual float yGridUnit() const {
-    return computeGridUnit(k_minNumberOfYGridUnits, k_maxNumberOfYGridUnits,
-                           yMax() - yMin() + offscreenYAxis());
-  }
+  virtual float xGridUnit() const { return computeGridUnit(Axis::X); }
+  virtual float yGridUnit() const { return computeGridUnit(Axis::Y); }
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
   constexpr static float k_maxNumberOfYGridUnits = 13.0f;
 
@@ -39,8 +33,7 @@ class CurveViewRange {
   constexpr static float k_smallGridUnitMantissa = 1.f;
   constexpr static float k_mediumGridUnitMantissa = 2.f;
   constexpr static float k_largeGridUnitMantissa = 5.f;
-  float computeGridUnit(float minNumberOfUnits, float maxNumberOfUnits,
-                        float range) const;
+  float computeGridUnit(Axis axis) const;
 };
 
 }  // namespace Shared

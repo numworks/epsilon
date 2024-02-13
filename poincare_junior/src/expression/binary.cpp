@@ -61,6 +61,9 @@ bool Binary::SimplifyBooleanOperator(Tree *tree) {
       PatternMatching::MatchReplaceAndSimplify(tree, KLogicalXor(KA, KTrue),
                                                KLogicalNot(KA)) ||
 
+      // not (not A) -> A
+      PatternMatching::MatchAndReplace(tree, KLogicalNot(KLogicalNot(KA)),
+                                       KA) ||
       // A or A -> A
       PatternMatching::MatchAndReplace(tree, KLogicalOr(KA, KA), KA) ||
       // A and A -> A
@@ -73,6 +76,8 @@ bool Binary::SimplifyBooleanOperator(Tree *tree) {
  *   not A and A => false
  *   A or not A => true
  *   not (A and B) => not A or not B
+ *   not (A or B) => not A and not B
+ *   A xor B => (not A and B) or (A and not B)
  *   distribute or on and etc
  */
 

@@ -30,12 +30,13 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
   float max = m_axis == Axis::X ? m_range->xMax() : m_range->yMax();
 
   return m_autoParam != m_range->zoomAuto(m_axis) ||
+         m_gridUnitParam != m_range->userGridUnit(m_axis) ||
          m_rangeParam.min() != min || m_rangeParam.max() != max;
 }
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {
   m_autoParam = m_range->zoomAuto(m_axis);
-
+  m_gridUnitParam = m_range->userGridUnit(m_axis);
   if (m_axis == Axis::X) {
     m_rangeParam =
         Range1D<float>::ValidRangeBetween(m_range->xMin(), m_range->xMax());
@@ -76,6 +77,7 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
   if (!parametersAreDifferent()) {
     return;
   }
+  m_range->setUserGridUnit(m_axis, m_gridUnitParam);
   // Deactivate auto status before updating values.
   m_range->setZoomAuto(m_axis, false);
 

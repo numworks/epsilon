@@ -1,6 +1,5 @@
-#include <poincare/solver_algorithms.h>
-#include <poincare/trinary_boolean.h>
-#include <poincare/zoom.h>
+#include "solver_algorithms.h"
+#include "zoom.h"
 #include <string.h>
 
 namespace PoincareJ {
@@ -249,36 +248,40 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void *model1,
                 Solver<float>::OddRootInBracket, HoneIntersection, vertical);
 }
 
-void Zoom::fitConditions(PiecewiseOperator p,
+void Zoom::fitConditions(const Tree *piecewise,
                          Function2DWithContext<float> fullFunction,
                          const void *model, const char *symbol,
-                         Preferences::ComplexFormat complexFormat,
-                         Preferences::AngleUnit angleUnit, bool vertical) {
+                         ComplexFormat complexFormat, AngleUnit angleUnit,
+                         bool vertical) {
   struct ConditionsParameters {
     Zoom *zoom;
-    PiecewiseOperator p;
+    const Tree *piecewise;
     const char *symbol;
-    const ApproximationContext &approximationContext;
+    // const ApproximationContext &approximationContext;
     Function2DWithContext<float> fullFunction;
     const void *model;
     bool vertical;
   };
-  ApproximationContext approximationContext(m_context, complexFormat,
-                                            angleUnit);
+  // ApproximationContext approximationContext(m_context, complexFormat,
+  // angleUnit);
   const ConditionsParameters params = {
       .zoom = this,
-      .p = p,
+      .piecewise = piecewise,
       .symbol = symbol,
-      .approximationContext = approximationContext,
+      // .approximationContext = approximationContext,
       .fullFunction = fullFunction,
       .model = model,
       .vertical = vertical};
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
+#if 0  // TODO PCJ
     const ConditionsParameters *params =
         static_cast<const ConditionsParameters *>(aux);
     return static_cast<float>(
-        params->p.indexOfFirstTrueConditionWithValueForSymbol(
+        params->piecewise->indexOfFirstTrueConditionWithValueForSymbol(
             params->symbol, t, params->approximationContext));
+#else
+    return static_cast<float>(0);
+#endif
   };
   Solver<float>::BracketTest test = [](Coordinate2D<float> a,
                                        Coordinate2D<float>,
@@ -288,7 +291,7 @@ void Zoom::fitConditions(PiecewiseOperator p,
   };
   Solver<float>::HoneResult hone =
       [](Solver<float>::FunctionEvaluation, const void *aux, float a, float b,
-         Solver<float>::Interest, float, TrinaryBoolean) {
+         Solver<float>::Interest, float, Troolean) {
         const ConditionsParameters *params =
             static_cast<const ConditionsParameters *>(aux);
         params->zoom->fitPoint(
@@ -448,8 +451,7 @@ static void honeHelper(Solver<float>::FunctionEvaluation f, const void *aux,
 Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
                                     const void *aux, float a, float b,
                                     Solver<float>::Interest interest,
-                                    float precision,
-                                    TrinaryBoolean discontinuous) {
+                                    float precision, Troolean discontinuous) {
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, pointIsInterestingHelper, &pa, &pu, &pv,
              &pb);
@@ -458,7 +460,7 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
   /* Most functions will taper off near a local extremum. If the slope
    * diverges, it is more likely we have found an even vertical asymptote. */
   bool isDiscontinuous =
-      discontinuous == TrinaryBoolean::True ||
+      discontinuous == Troolean::True ||
       ((interest == Solver<float>::Interest::LocalMinimum ||
         interest == Solver<float>::Interest::LocalMaximum) &&
        (std::max((pu.y() - pa.y()) / (pu.x() - pa.x()),
@@ -474,8 +476,7 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
 Coordinate2D<float> Zoom::HoneRoot(Solver<float>::FunctionEvaluation f,
                                    const void *aux, float a, float b,
                                    Solver<float>::Interest interest,
-                                   float precision,
-                                   TrinaryBoolean discontinuous) {
+                                   float precision, Troolean discontinuous) {
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
              &pu, &pv, &pb);
@@ -508,7 +509,7 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
                                            const void *aux, float a, float b,
                                            Solver<float>::Interest interest,
                                            float precision,
-                                           TrinaryBoolean discontinuous) {
+                                           Troolean discontinuous) {
   Coordinate2D<float> result =
       HoneRoot(f, aux, a, b, interest, precision, discontinuous);
   if (std::isnan(result.x())) {

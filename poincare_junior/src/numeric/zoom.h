@@ -2,9 +2,11 @@
 #define POINCARE_JUNIOR_NUMERIC_ZOOM_H
 
 #include <ion/display.h>
-#include <poincare/piecewise_operator.h>
-#include <poincare/range.h>
-#include <poincare/solver.h>
+#include <poincare_junior/src/expression/context.h>
+#include <poincare_junior/src/memory/tree.h>
+
+#include "range.h"
+#include "solver.h"
 
 /* The unit tests need to be able to read the working values of
  * m_interestingRange and m_magnitudeYRange, but we do not want to make public
@@ -78,11 +80,11 @@ class Zoom {
   void fitIntersections(Function2DWithContext<float> f1, const void *model1,
                         Function2DWithContext<float> f2, const void *model2,
                         bool vertical = false);
-  void fitConditions(PiecewiseOperator p,
+  void fitConditions(const Tree *piecewise,
                      Function2DWithContext<float> fullFunction,
                      const void *model, const char *symbol,
-                     Preferences::ComplexFormat complexFormat,
-                     Preferences::AngleUnit angleUnit, bool vertical = false);
+                     ComplexFormat complexFormat, AngleUnit angleUnit,
+                     bool vertical = false);
   /* This function will only touch the Y axis. */
   void fitMagnitude(Function2DWithContext<float> f, const void *model,
                     bool cropOutliers, bool vertical = false);
@@ -154,14 +156,14 @@ class Zoom {
   static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f,
                                        const void *aux, float a, float b,
                                        Solver<float>::Interest, float precision,
-                                       TrinaryBoolean discontinuous);
+                                       Troolean discontinuous);
   static Coordinate2D<float> HoneRoot(Solver<float>::FunctionEvaluation f,
                                       const void *aux, float a, float b,
                                       Solver<float>::Interest, float precision,
-                                      TrinaryBoolean discontinuous);
+                                      Troolean discontinuous);
   static Coordinate2D<float> HoneIntersection(
       Solver<float>::FunctionEvaluation f, const void *aux, float a, float b,
-      Solver<float>::Interest, float precision, TrinaryBoolean discontinuous);
+      Solver<float>::Interest, float precision, Troolean discontinuous);
 
   Range2D<float> sanitize2DHelper(Range2D<float> range) const;
   Range2D<float> sanitizedRange() const {

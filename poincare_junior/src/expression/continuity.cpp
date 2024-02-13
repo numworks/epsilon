@@ -25,14 +25,8 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree *e,
     isDiscontinuous = (Approximation::To<float>(e->child(0), x1) > 0.0) !=
                       (Approximation::To<float>(e->child(0), x2) > 0.0);
   } else if (e->isPiecewise()) {
-#if 0
-    PiecewiseOperator pieceWiseExpression = convert<PiecewiseOperator>();
-    isDiscontinuous =
-        pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
-            symbol, x1, approximationContext) !=
-        pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
-            symbol, x2, approximationContext);
-#endif
+    isDiscontinuous = Approximation::IndexOfActivePiecewiseBranchAt(e, x1) !=
+                      Approximation::IndexOfActivePiecewiseBranchAt(e, x2);
   }
   if (isDiscontinuous) {
     return true;

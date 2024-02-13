@@ -96,6 +96,10 @@ class Approximation final {
   EDITION_REF_WRAP_2D(ApproximateAndReplaceEveryScalar, bool, true,
                       const ProjectionContext*, nullptr);
 
+  // Returns -1 if every condition is false
+  template <typename T>
+  static int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
+
  private:
   template <typename T>
   using Reductor = T (*)(T, T);

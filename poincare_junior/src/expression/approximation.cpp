@@ -1019,6 +1019,18 @@ const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise) {
   return KUndef;
 }
 
+/* TODO: users of this function just want to test equality of branch and do not
+ * need the index */
+template <typename T>
+int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
+  s_context->setXValue(x);
+  const Tree* branch = SelectPiecewiseBranch<T>(piecewise);
+  if (branch == KUndef) {
+    return -1;
+  }
+  return piecewise->indexOfChild(branch);
+}
+
 template <typename T, typename U>
 U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
                               Mapper<std::complex<T>, U> mapper) {

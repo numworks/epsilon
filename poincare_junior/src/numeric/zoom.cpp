@@ -1,6 +1,9 @@
-#include "solver_algorithms.h"
 #include "zoom.h"
+
+#include <poincare_junior/src/expression/approximation.h>
 #include <string.h>
+
+#include "solver_algorithms.h"
 
 namespace PoincareJ {
 
@@ -273,15 +276,10 @@ void Zoom::fitConditions(const Tree *piecewise,
       .model = model,
       .vertical = vertical};
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
-#if 0  // TODO PCJ
     const ConditionsParameters *params =
         static_cast<const ConditionsParameters *>(aux);
-    return static_cast<float>(
-        params->piecewise->indexOfFirstTrueConditionWithValueForSymbol(
-            params->symbol, t, params->approximationContext));
-#else
-    return static_cast<float>(0);
-#endif
+    return static_cast<float>(Approximation::IndexOfActivePiecewiseBranchAt(
+        params->piecewise, t));  // TODO symbol
   };
   Solver<float>::BracketTest test = [](Coordinate2D<float> a,
                                        Coordinate2D<float>,

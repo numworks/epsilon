@@ -116,7 +116,6 @@ int Dimension::GetListLength(const Tree* t) {
 
 bool Dimension::DeepCheckDimensions(const Tree* t) {
   Dimension childDim[t->numberOfChildren()];
-  bool hasBooleanChild = false;
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
   for (int i = 0; const Tree* child : t->children()) {
@@ -138,20 +137,12 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       hasUnitChild = true;
     }
-    hasBooleanChild |= childDim[i].isBoolean();
+    if (childDim[i].isBoolean() != t->isLogicalOperatorOrBoolean()) {
+      /* Only booleans operators can have boolean child yet. */
+      return false;
+    }
     assert(childDim[i].isSanitized());
     i++;
-  }
-  if (t->isLogicalOperatorOrBoolean()) {
-    for (int i = 0; i < t->numberOfChildren(); i++) {
-      if (!childDim[i].isBoolean()) {
-        return false;
-      }
-    }
-    return true;
-  } else if (hasBooleanChild) {
-    /* Only booleans operators can have boolean child yet. */
-    return false;
   }
   bool unitsAllowed = false;
   bool angleUnitsAllowed = false;
@@ -265,6 +256,9 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case BlockType::Trig:
       angleUnitsAllowed = true;
     default:
+      if (t->isLogicalOperatorOrBoolean()) {
+        return true;
+      }
       assert(t->isScalarOnly());
     case BlockType::Matrix:
       if (hasNonKelvinChild ||

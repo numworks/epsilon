@@ -26,12 +26,16 @@ class SingleInteractiveCurveViewRangeController
   }
   int typeAtRow(int row) const override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   KDCoordinate separatorBeforeRow(int row) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
+                                Ion::Events::Event event) override;
   Axis axis() const { return m_axis; }
   void setAxis(Axis axis);
 
  private:
   constexpr static int k_gridUnitCellType = 3;
+  constexpr static float k_autoGridUnitValue = -1.f;
   I18n::Message parameterMessage(int index) const override {
     assert(index == 0 || index == 1);
     return index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum;
@@ -48,6 +52,9 @@ class SingleInteractiveCurveViewRangeController
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;
   float parameterAtIndex(int index) override;
+  bool hasUndefinedValue(const char* text, float floatValue,
+                         int row) const override;
+  bool gridUnitIsAuto() const { return m_gridUnitParam == k_autoGridUnitValue; }
 
   InteractiveCurveViewRange* m_range;
   // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.

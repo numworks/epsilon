@@ -14,7 +14,7 @@ SingleInteractiveCurveViewRangeController::
     : SingleRangeController<float>(parentResponder, confirmPopUpController),
       m_range(interactiveRange),
       m_gridUnitCell(&this->m_selectableListView, this),
-      m_gridUnitParam(0.f) {
+      m_gridUnitParam(k_autoGridUnitValue) {
   m_gridUnitCell.label()->setMessage(I18n::Message::Step);
 }
 
@@ -109,7 +109,7 @@ bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_gridUnitParam = f;
+    m_gridUnitParam = std::isnan(f) ? k_autoGridUnitValue : f;
     return true;
   }
   return SingleRangeController<float>::setParameterAtIndex(parameterIndex, f);
@@ -161,6 +161,37 @@ float SingleInteractiveCurveViewRangeController::parameterAtIndex(int index) {
   return typeAtRow(index) == k_gridUnitCellType
              ? m_gridUnitParam
              : SingleRangeController<float>::parameterAtIndex(index);
+}
+
+bool SingleInteractiveCurveViewRangeController::hasUndefinedValue(
+    const char *text, float floatValue, int row) const {
+  if (text[0] == 0 && typeAtRow(row) == k_gridUnitCellType) {
+    // Accept empty inputs for grid unit cell
+    return false;
+  }
+  return SingleRangeController<float>::hasUndefinedValue(text, floatValue, row);
+}
+
+void SingleInteractiveCurveViewRangeController::fillCellForRow(
+    HighlightCell *cell, int row) {
+  if (typeAtRow(row) == k_gridUnitCellType && gridUnitIsAuto()) {
+    textFieldOfCellAtIndex(cell, row)->setText(
+        I18n::translate(I18n::Message::DefaultSetting));
+    return;
+  }
+  SingleRangeController<float>::fillCellForRow(cell, row);
+}
+
+bool SingleInteractiveCurveViewRangeController::textFieldDidReceiveEvent(
+    Escher::AbstractTextField *textField, Ion::Events::Event event) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
+      !textField->isEditing() &&
+      typeAtRow(selectedRow()) == k_gridUnitCellType && gridUnitIsAuto()) {
+    // Remove "Auto" text to start edition
+    textField->setText("");
+  }
+  return SingleRangeController<float>::textFieldDidReceiveEvent(textField,
+                                                                event);
 }
 
 }  // namespace Shared

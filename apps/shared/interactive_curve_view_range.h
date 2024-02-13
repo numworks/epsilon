@@ -15,6 +15,7 @@ namespace Shared {
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
+  constexpr static float k_autoGridUnitValue = -1.f;
   using GridType = GridTypeController::GridType;
 
   InteractiveCurveViewRange(
@@ -27,8 +28,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
         m_offscreenYAxis(0.f),
         m_gridType(GridType::Cartesian),
         m_zoomAuto{true, true},
-        m_gridUnitAuto{true, true},
-        m_userGridUnit{0.f, 0.f},
+        m_userGridUnit{k_autoGridUnitValue, k_autoGridUnitValue},
         m_zoomNormalize(false) {}
 
   constexpr static float NormalYXRatio() {
@@ -49,13 +49,16 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
     newAuto.set(axis, v);
     privateSetZoomAuto(newAuto.x, newAuto.y);
   }
-  bool gridUnitAuto() const { return m_gridUnitAuto.x && m_gridUnitAuto.y; }
-  void setGridUnitAuto(bool v) { privateSetGridUnitAuto(v, v); }
-  bool gridUnitAuto(Axis axis) const { return m_gridUnitAuto(axis); }
-  void setGridUnitAuto(Axis axis, bool v) {
-    AxisInformation<bool> newAuto = m_gridUnitAuto;
-    newAuto.set(axis, v);
-    privateSetGridUnitAuto(newAuto.x, newAuto.y);
+  bool gridUnitAuto() const {
+    return gridUnitAuto(Axis::X) && gridUnitAuto(Axis::Y);
+  }
+  void setGridUnitAuto(bool v) {
+    if (v) {
+      privateSetUserGridUnit(k_autoGridUnitValue, k_autoGridUnitValue);
+    }
+  }
+  bool gridUnitAuto(Axis axis) const {
+    return m_userGridUnit(axis) == k_autoGridUnitValue;
   }
   float userGridUnit(Axis axis) const { return m_userGridUnit(axis); }
   void setUserGridUnit(Axis axis, float v) {
@@ -144,7 +147,6 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
     void set(Axis axis, T value) { (axis == Axis::X ? x : y) = value; }
   };
   AxisInformation<bool> m_zoomAuto;
-  AxisInformation<bool> m_gridUnitAuto;
   AxisInformation<float> m_userGridUnit;
   bool m_zoomNormalize;
 };

@@ -35,7 +35,8 @@ class SingleInteractiveCurveViewRangeController
 
  private:
   constexpr static int k_gridUnitCellType = 3;
-  constexpr static float k_autoGridUnitValue = -1.f;
+  constexpr static float k_autoGridUnitValue =
+      InteractiveCurveViewRange::k_autoGridUnitValue;
   I18n::Message parameterMessage(int index) const override {
     assert(index == 0 || index == 1);
     return index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum;

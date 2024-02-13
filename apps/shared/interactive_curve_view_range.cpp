@@ -326,15 +326,6 @@ void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
   }
 }
 
-void InteractiveCurveViewRange::privateSetGridUnitAuto(bool xAuto, bool yAuto) {
-  bool oldAuto = zoomAndGridUnitAuto();
-  m_gridUnitAuto.x = xAuto;
-  m_gridUnitAuto.y = yAuto;
-  if (m_delegate && oldAuto != zoomAndGridUnitAuto()) {
-    m_delegate->updateZoomButtons();
-  }
-}
-
 void InteractiveCurveViewRange::privateSetUserGridUnit(float xValue,
                                                        float yValue) {
   bool oldAuto = zoomAndGridUnitAuto();

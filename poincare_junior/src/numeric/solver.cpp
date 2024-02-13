@@ -1,6 +1,7 @@
 #include "solver.h"
 
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/continuity.h>
 #include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 
@@ -310,8 +311,8 @@ template <typename T>
 bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void *aux) {
   const Solver<T>::FunctionEvaluationParameters *p =
       reinterpret_cast<const Solver<T>::FunctionEvaluationParameters *>(aux);
-  return p->expression.isDiscontinuousBetweenValuesForSymbol(
-      p->unknown, x1, x2, p->approximationContext);
+  return Continuity::IsDiscontinuousBetweenValuesForSymbol(p->expression,
+                                                           p->unknown, x1, x2);
 };
 
 template <typename T>

@@ -42,7 +42,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   void setZoomAuto(bool v) { privateSetZoomAuto(v, v); }
   bool zoomAuto(Axis axis) const { return m_zoomAuto(axis); }
   void setZoomAuto(Axis axis, bool v) {
-    BoolPair newAuto = m_zoomAuto;
+    AxisInformation<bool> newAuto = m_zoomAuto;
     newAuto.set(axis, v);
     privateSetZoomAuto(newAuto.x, newAuto.y);
   }
@@ -118,12 +118,13 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
   GridType m_gridType;
 
-  struct BoolPair {
-    bool x, y;
-    bool operator()(Axis axis) const { return axis == Axis::X ? x : y; }
-    void set(Axis axis, bool value) { (axis == Axis::X ? x : y) = value; }
+  template <typename T>
+  struct AxisInformation {
+    T x, y;
+    T operator()(Axis axis) const { return axis == Axis::X ? x : y; }
+    void set(Axis axis, T value) { (axis == Axis::X ? x : y) = value; }
   };
-  BoolPair m_zoomAuto;
+  AxisInformation<bool> m_zoomAuto;
   bool m_zoomNormalize;
 };
 

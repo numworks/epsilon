@@ -63,6 +63,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/parsing/rack_parser.cpp \
   layout/parsing/tokenizer.cpp \
   layout/rack_layout.cpp \
+  layout/rack_layout_decoder.cpp \
   layout/render.cpp \
   layout.cpp \
   memory/cache_pool.cpp \

@@ -80,7 +80,7 @@ class CPL {
 
  private:
   static constexpr int k_codePointLayoutSize =
-      TypeBlock::NumberOfMetaBlocks(BlockType::CodePointLayout);
+      TypeBlock(BlockType::CodePointLayout).nodeSize();
   char m_content[k_codePointLayoutSize];
 };
 
@@ -104,17 +104,7 @@ class CPLayoutDecoder : public UnicodeDecoder {
 
   CodePoint nextCodePoint() override { return codePointAt(m_position++); }
   CodePoint previousCodePoint() override { return codePointAt(--m_position); }
-  CodePoint codePointAt(size_t index) const {
-    if (index == m_end) {
-      return UCodePointNull;
-    }
-    assert(0 <= index && index < m_end);
-    const Tree* codePoint = m_firstCodePoint + index * k_codePointLayoutSize;
-    if (!codePoint->isCodePointLayout()) {
-      return UCodePointNull;
-    }
-    return CodePointLayout::GetCodePoint(codePoint);
-  }
+  CodePoint codePointAt(size_t index) const;
   const Tree* codePointLayoutAt(size_t index) {
     assert(0 <= index && index < m_end);
     return m_firstCodePoint + index * k_codePointLayoutSize;

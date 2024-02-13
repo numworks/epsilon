@@ -19,14 +19,6 @@ template <class _A1> inline constexpr typename enable_if<is_floating_point<_A1>:
   return __builtin_isfinite(__lcpp_x);
 }
 
-inline float abs(float __lcpp_x) noexcept {
-  return fabsf(__lcpp_x);
-}
-
-inline double abs(double __lcpp_x) noexcept {
-  return fabs(__lcpp_x);
-}
-
 }
 
 #endif

@@ -108,6 +108,7 @@ inline constexpr bool isnan(float x) { return __builtin_isnan(x); }
 inline constexpr bool isnormal(float x) { return __builtin_isnormal(x); }
 inline constexpr bool signbit(float x) { return __builtin_signbit(x); }
 
+inline constexpr float abs(float x) { return __builtin_fabsf(x); }
 inline constexpr float acos(float x) { return __builtin_acosf(x); }
 inline constexpr float acosh(float x) { return __builtin_acoshf(x); }
 inline constexpr float asin(float x) { return __builtin_asinf(x); }
@@ -178,6 +179,7 @@ inline constexpr bool isnan(double x) { return __builtin_isnan(x); }
 inline constexpr bool isnormal(double x) { return __builtin_isnormal(x); }
 inline constexpr bool signbit(double x) { return __builtin_signbit(x); }
 
+inline constexpr double abs(double x) { return __builtin_fabs(x); }
 inline constexpr double acos(double x) { return __builtin_acos(x); }
 inline constexpr double acosh(double x) { return __builtin_acosh(x); }
 inline constexpr double asin(double x) { return __builtin_asin(x); }

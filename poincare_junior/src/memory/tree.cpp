@@ -349,6 +349,15 @@ bool Tree::ApplyShallowInDepth(Tree* ref, ShallowOperation shallowOperation,
   return changed;
 }
 
+bool Tree::recursivelyMatches(Predicate predicate) const {
+  for (const Tree* d : selfAndDescendants()) {
+    if (predicate(d)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Tree* Tree::clone() const { return SharedEditionPool->clone(this); }
 Tree* Tree::cloneNode() const { return SharedEditionPool->clone(this, false); }
 

@@ -1,15 +1,16 @@
-#include <poincare/piecewise_operator.h>
-#include <poincare/rational.h>
-#include <poincare/solver.h>
-#include <poincare/solver_algorithms.h>
-#include <poincare/subtraction.h>
+#include "solver.h"
+
+#include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/sign.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
+
+#include "solver_algorithms.h"
 
 namespace PoincareJ {
 
 template <typename T>
 Solver<T>::Solver(T xStart, T xEnd, const char *unknown, Context *context,
-                  Preferences::ComplexFormat complexFormat,
-                  Preferences::AngleUnit angleUnit)
+                  ComplexFormat complexFormat, AngleUnit angleUnit)
     : m_xStart(xStart),
       m_xEnd(xEnd),
       m_maximalXStep(MaximalStep(xEnd - xStart)),
@@ -83,62 +84,65 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::next(const Expression &e, BracketTest test,
+Coordinate2D<T> Solver<T>::next(const Tree *e, BracketTest test,
                                 HoneResult hone) {
   assert(m_unknown && m_unknown[0] != '\0');
-  if (e.recursivelyMatches(Expression::IsRandom, m_context)) {
+  if (e->recursivelyMatches([](const Tree *e) { return e->isRandomNode(); })) {
     return Coordinate2D<T>(NAN, NAN);
   }
+#if 0
   ApproximationContext approximationContext(m_context, m_complexFormat,
                                             m_angleUnit);
+#endif
   FunctionEvaluationParameters parameters = {
-      .approximationContext = approximationContext,
-      .unknown = m_unknown,
-      .expression = e};
+#if 0
+    .approximationContext = approximationContext,
+#endif
+    .unknown = m_unknown,
+    .expression = e
+  };
   FunctionEvaluation f = [](T x, const void *aux) {
     const FunctionEvaluationParameters *p =
         reinterpret_cast<const FunctionEvaluationParameters *>(aux);
-    return p->expression.approximateWithValueForSymbol(p->unknown, x,
-                                                       p->approximationContext);
+    return Approximation::To<T>(p->expression, x);  // m_unknown
   };
 
   return next(f, &parameters, test, hone, &DiscontinuityTestForExpression);
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRoot(const Expression &e) {
-  if (e.recursivelyMatches(Expression::IsRandom, m_context)) {
+Coordinate2D<T> Solver<T>::nextRoot(const Tree *e) {
+  if (e->recursivelyMatches([](const Tree *e) { return e->isRandomNode(); })) {
     return Coordinate2D<T>(NAN, NAN);
   }
-  ExpressionNode::Type type = e.type();
 
-  switch (type) {
-    case ExpressionNode::Type::Multiplication:
+  switch (e->type()) {
+    case BlockType::Multiplication:
       /* x*y = 0 => x = 0 or y = 0 */
       registerSolution(nextRootInMultiplication(e), Interest::Root);
       return result();
 
-    case ExpressionNode::Type::Addition:
-    case ExpressionNode::Type::Subtraction:
+    case BlockType::Addition:
+    case BlockType::Subtraction:
       registerSolution(nextRootInAddition(e), Interest::Root);
       return result();
 
-    case ExpressionNode::Type::Power:
-    case ExpressionNode::Type::NthRoot:
-    case ExpressionNode::Type::Division:
+    case BlockType::Power:
+    case BlockType::NthRoot:
+    case BlockType::Division:
       /* f(x,y) = 0 => x = 0 */
       registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
       return result();
 
-    case ExpressionNode::Type::AbsoluteValue:
-    case ExpressionNode::Type::HyperbolicSine:
-    case ExpressionNode::Type::Opposite:
-    case ExpressionNode::Type::SquareRoot:
+    case BlockType::Abs:
+    case BlockType::HyperbolicSine:
+    case BlockType::Opposite:
+    case BlockType::SquareRoot:
       /* f(x) = 0 <=> x = 0 */
-      return nextRoot(e.childAtIndex(0));
+      return nextRoot(e->child(0));
 
     default:
-      if (e.isNull(m_context) == TrinaryBoolean::False) {
+      if (!ComplexSign::Get(e).canBeNull()) {
         registerSolution(Coordinate2D<T>(), Interest::None);
         return Coordinate2D<T>();
       }
@@ -153,7 +157,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Expression &e) {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextMinimum(const Expression &e) {
+Coordinate2D<T> Solver<T>::nextMinimum(const Tree *e) {
   /* TODO We could add a layer of formal resolution:
    * - use the derivative (could be an optional argument to avoid recomputing
    *   it every time)
@@ -163,29 +167,32 @@ Coordinate2D<T> Solver<T>::nextMinimum(const Expression &e) {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextIntersection(const Expression &e1,
-                                            const Expression &e2,
-                                            Expression *memoizedDifference) {
+Coordinate2D<T> Solver<T>::nextIntersection(const Tree *e1, const Tree *e2,
+                                            const Tree **memoizedDifference) {
   if (!memoizedDifference) {
-    Expression diff;
-    return nextIntersection(e1, e2, &diff);
+    Tree *diff = nullptr;
+    Coordinate2D<T> result =
+        nextIntersection(e1, e2, const_cast<const Tree **>(&diff));
+    diff->removeTree();
+    return result;
   }
   assert(memoizedDifference);
-  if (memoizedDifference->isUninitialized()) {
+  if (*memoizedDifference == nullptr) {
+#if 0
     ReductionContext reductionContext(m_context, m_complexFormat, m_angleUnit,
-                                      Preferences::UnitFormat::Metric,
+                                      UnitFormat::Metric,
                                       ReductionTarget::SystemForAnalysis);
-    *memoizedDifference = Subtraction::Builder(e1.clone(), e2.clone())
-                              .cloneAndSimplify(reductionContext);
+#endif
+    *memoizedDifference = PatternMatching::CreateAndSimplify(
+        KAdd(KA, KMult(-1_e, KB)), {.KA = e1, .KB = e2});
   }
   nextRoot(*memoizedDifference);
-  ApproximationContext approxContext(m_context, m_complexFormat, m_angleUnit);
+  // ApproximationContext approxContext(m_context, m_complexFormat,
+  // m_angleUnit);
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
-    T y1 =
-        e1.approximateWithValueForSymbol<T>(m_unknown, m_xStart, approxContext);
-    T y2 =
-        e2.approximateWithValueForSymbol<T>(m_unknown, m_xStart, approxContext);
+    T y1 = Approximation::To<T>(e1, m_xStart);  // m_unknown
+    T y2 = Approximation::To<T>(e2, m_xStart);  // m_unknown
     if (!std::isfinite(y1) || !std::isfinite(y2)) {
       /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
        * or undef expressions in specific points like x^2/x, the root of the
@@ -227,7 +234,7 @@ template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
                                             const void *aux, T xMin, T xMax,
                                             Interest interest, T precision,
-                                            TrinaryBoolean discontinuous) {
+                                            Troolean discontinuous) {
   if (xMax < xMin) {
     return SafeBrentMinimum(f, aux, xMax, xMin, interest, precision,
                             discontinuous);
@@ -248,7 +255,7 @@ template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
                                             const void *aux, T xMin, T xMax,
                                             Interest interest, T precision,
-                                            TrinaryBoolean discontinuous) {
+                                            Troolean discontinuous) {
   const void *pack[] = {&f, aux};
   FunctionEvaluation minusF = [](T x, const void *aux) {
     const void *const *param = reinterpret_cast<const void *const *>(aux);
@@ -266,7 +273,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
                                                  const void *aux, T xMin,
                                                  T xMax, Interest interest,
                                                  T precision,
-                                                 TrinaryBoolean discontinuous) {
+                                                 Troolean discontinuous) {
   if (interest == Interest::Root) {
     Coordinate2D<T> solution =
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
@@ -276,7 +283,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
      *   > f(x) = floor(x) - 0.5 for x == 1
      *   > f(x) = x / abs(x) for x == 0
      * */
-    if (discontinuous == TrinaryBoolean::True &&
+    if (discontinuous == Troolean::True &&
         std::fabs(solution.y()) > NullTolerance(solution.x())) {
       return Coordinate2D<T>();
     }
@@ -529,10 +536,10 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
+Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree *e,
                                                    int childIndex) const {
   Solver<T> solver = *this;
-  Expression child = e.childAtIndex(childIndex);
+  const Tree *child = e->child(childIndex);
   T xRoot;
   while (std::isfinite(
       xRoot = solver.nextRoot(child).x())) {  // assignment in condition
@@ -544,13 +551,16 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
      * sometimes we find cos(xRoot) = -0.0..01, so sqrt(cos(xRoot)) = undef.
      * To avoid this problem, clone e and replace cos(xRoot) by 0.
      * */
-    Expression ebis = e.clone();
-    ebis.replaceChildAtIndexInPlace(childIndex, Rational::Builder(0));
+    Tree *ebis = e->clone();
+    ebis->child(childIndex)->cloneTreeOverTree(0_e);
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
+#if 0
     ApproximationContext approxContext(m_context, m_complexFormat, m_angleUnit);
-    if (std::fabs(ebis.approximateWithValueForSymbol<T>(
-            m_unknown, xRoot, approxContext)) < NullTolerance(xRoot)) {
+#endif
+    T value = Approximation::To(ebis, xRoot);  // m_unknown
+    ebis->removeTree();
+    if (std::fabs(value) < NullTolerance(xRoot)) {
       return Coordinate2D<T>(xRoot, k_zero);
     }
   }
@@ -558,13 +568,13 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInChildren(
-    const Expression &e, Expression::ExpressionTestAuxiliary test,
-    void *aux) const {
+Coordinate2D<T> Solver<T>::nextRootInChildren(const Tree *e,
+                                              ExpressionTestAuxiliary test,
+                                              void *aux) const {
   T xRoot = k_NAN;
-  int n = e.numberOfChildren();
+  int n = e->numberOfChildren();
   for (int i = 0; i < n; i++) {
-    if (test(e.childAtIndex(i), m_context, aux)) {
+    if (test(e->child(i), m_context, aux)) {
       T xRootChild = nextPossibleRootInChild(e, i).x();
       if (std::isfinite(xRootChild) &&
           (!std::isfinite(xRoot) ||
@@ -577,14 +587,14 @@ Coordinate2D<T> Solver<T>::nextRootInChildren(
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Expression &e) const {
-  assert(e.type() == ExpressionNode::Type::Multiplication);
+Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Tree *e) const {
+  assert(e->isMultiplication());
   return nextRootInChildren(
-      e, [](const Expression, Context *, void *) { return true; }, nullptr);
+      e, [](const Tree *, Context *, void *) { return true; }, nullptr);
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression &e) const {
+Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree *e) const {
   /* Special case for expressions of the form "f(x)^a+g(x)", with:
    * - f(x) and g(x) sharing a root x0
    * - f(x) being defined only on one side of x0
@@ -592,23 +602,20 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression &e) const {
    * Since the expression does not change sign around x0, the usual numerical
    * schemes won't work. We instead look for the zeroes of f, and check whether
    * they are zeroes of the whole expression. */
-  Expression::ExpressionTestAuxiliary test = [](const Expression e,
-                                                Context *context, void *aux) {
-    return e.recursivelyMatches(
-        [](const Expression e, Context *context, void *aux) {
+  ExpressionTestAuxiliary test = [](const Tree *e, Context *context,
+                                    void *aux) -> bool {
+    return e->recursivelyMatches(
+        [](const Tree *e, Context *context, void *aux) {
           const Solver<T> *solver = static_cast<const Solver<T> *>(aux);
           T exponent = k_NAN;
-          ApproximationContext approximationContext(
-              context, solver->m_complexFormat, solver->m_angleUnit);
-          if (e.type() == ExpressionNode::Type::SquareRoot) {
+          // ApproximationContext approximationContext(
+          // context, solver->m_complexFormat, solver->m_angleUnit);
+          if (e->type() == BlockType::SquareRoot) {
             exponent = static_cast<T>(0.5);
-          } else if (e.type() == ExpressionNode::Type::Power) {
-            exponent =
-                e.childAtIndex(1).approximateToScalar<T>(approximationContext);
-          } else if (e.type() == ExpressionNode::Type::NthRoot) {
-            exponent =
-                static_cast<T>(1.) /
-                e.childAtIndex(1).approximateToScalar<T>(approximationContext);
+          } else if (e->type() == BlockType::Power) {
+            exponent = Approximation::To<T>(e->child(1));
+          } else if (e->type() == BlockType::NthRoot) {
+            exponent = static_cast<T>(1.) / Approximation::To<T>(e->child(1));
           }
           if (std::isnan(exponent)) {
             return false;
@@ -633,10 +640,10 @@ template <typename T>
 Coordinate2D<T> Solver<T>::honeAndRoundSolution(
     FunctionEvaluation f, const void *aux, T start, T end, Interest interest,
     HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
-  TrinaryBoolean discontinuous = TrinaryBoolean::Unknown;
+  Troolean discontinuous = Troolean::Unknown;
   if (discontinuityTest) {
-    discontinuous = discontinuityTest(start, end, aux) ? TrinaryBoolean::True
-                                                       : TrinaryBoolean::False;
+    discontinuous =
+        discontinuityTest(start, end, aux) ? Troolean::True : Troolean::False;
   }
   /* WARNING: This is a hack for discontinuous functions. BrentForRoot
    * needs to be very precise to find a root that is on the discontinuity bound.
@@ -646,7 +653,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
    */
   constexpr T precisionForDiscontinuousFunctions =
       k_relativePrecision * k_minimalAbsoluteStep;
-  T precision = discontinuous == TrinaryBoolean::True
+  T precision = discontinuous == Troolean::True
                     ? precisionForDiscontinuousFunctions
                     : NullTolerance(start);
   Coordinate2D<T> solution =
@@ -707,19 +714,19 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
 // Explicit template instanciations
 
 template Solver<double>::Solver(double, double, const char *, Context *,
-                                Preferences::ComplexFormat,
-                                Preferences::AngleUnit);
+                                ComplexFormat, AngleUnit);
 template Coordinate2D<double> Solver<double>::next(
     FunctionEvaluation, const void *, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);
-template Coordinate2D<double> Solver<double>::nextRoot(const Expression &);
-template Coordinate2D<double> Solver<double>::nextMinimum(const Expression &);
-template Coordinate2D<double> Solver<double>::nextIntersection(
-    const Expression &, const Expression &, Expression *);
+template Coordinate2D<double> Solver<double>::nextRoot(const Tree *);
+template Coordinate2D<double> Solver<double>::nextMinimum(const Tree *);
+template Coordinate2D<double> Solver<double>::nextIntersection(const Tree *,
+                                                               const Tree *,
+                                                               const Tree **);
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
     FunctionEvaluation, const void *, double, double, Interest, double,
-    TrinaryBoolean);
+    Troolean);
 template double Solver<double>::MaximalStep(double);
 template void Solver<double>::ExcludeUndefinedFromBracket(
     Coordinate2D<double> *p1, Coordinate2D<double> *p2,
@@ -733,8 +740,7 @@ template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(
     Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>,
     const void *);
 template Solver<float>::Solver(float, float, const char *, Context *,
-                               Preferences::ComplexFormat,
-                               Preferences::AngleUnit);
+                               ComplexFormat, AngleUnit);
 template Coordinate2D<float> Solver<float>::next(
     FunctionEvaluation, const void *, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);

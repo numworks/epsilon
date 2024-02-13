@@ -364,7 +364,7 @@ Invocation InteractiveCurveViewController::autoButtonInvocation() {
         graphController->m_interactiveRange->setZoomAuto(newAuto);
         if (newAuto) {
           // Only set grid unit auto to false when user gives a step
-          graphController->m_interactiveRange->setGridUnitAuto(true);
+          graphController->m_interactiveRange->setGridUnitAuto();
         }
         graphController->m_interactiveRange->computeRanges();
         if (newAuto) {

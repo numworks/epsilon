@@ -18,6 +18,13 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   constexpr static float k_autoGridUnitValue = -1.f;
   using GridType = GridTypeController::GridType;
 
+  template <typename T>
+  struct AxisInformation {
+    T x, y;
+    T operator()(Axis axis) const { return axis == Axis::X ? x : y; }
+    void set(Axis axis, T value) { (axis == Axis::X ? x : y) = value; }
+  };
+
   InteractiveCurveViewRange(
       InteractiveCurveViewRangeDelegate* delegate = nullptr)
       : MemoizedCurveViewRange(),
@@ -52,13 +59,15 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   bool gridUnitAuto() const {
     return gridUnitAuto(Axis::X) && gridUnitAuto(Axis::Y);
   }
-  void setGridUnitAuto(bool v) {
-    if (v) {
-      privateSetUserGridUnit(k_autoGridUnitValue, k_autoGridUnitValue);
-    }
+  void setGridUnitAuto() {
+    privateSetUserGridUnit(k_autoGridUnitValue, k_autoGridUnitValue);
   }
   bool gridUnitAuto(Axis axis) const {
     return m_userGridUnit(axis) == k_autoGridUnitValue;
+  }
+  AxisInformation<float> userGridUnit() const { return m_userGridUnit; }
+  void setUserGridUnit(AxisInformation<float> userGridUnit) {
+    privateSetUserGridUnit(userGridUnit.x, userGridUnit.y);
   }
   float userGridUnit(Axis axis) const { return m_userGridUnit(axis); }
   void setUserGridUnit(Axis axis, float v) {
@@ -139,13 +148,6 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   float m_offscreenYAxis;
 
   GridType m_gridType;
-
-  template <typename T>
-  struct AxisInformation {
-    T x, y;
-    T operator()(Axis axis) const { return axis == Axis::X ? x : y; }
-    void set(Axis axis, T value) { (axis == Axis::X ? x : y) = value; }
-  };
   AxisInformation<bool> m_zoomAuto;
   AxisInformation<float> m_userGridUnit;
   bool m_zoomNormalize;

@@ -1,0 +1,57 @@
+#ifndef INFERENCE_CATEGORICAL_CELL_H
+#define INFERENCE_CATEGORICAL_CELL_H
+
+#include <apps/i18n.h>
+#include <escher/menu_cell_with_editable_text.h>
+
+namespace Inference {
+
+// Cell with left and right margins for InputCategoricalController
+
+class AbstractCategoricalCell : public Escher::HighlightCell {
+ public:
+  using HighlightCell::HighlightCell;
+
+  // View
+  KDSize minimalSizeForOptimalDisplay() const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+
+  // HighlightCell
+  void setHighlighted(bool highlight) override;
+  Escher::Responder* responder() override { return innerCell()->responder(); }
+  const char* text() const override { return innerCell()->text(); }
+  Poincare::Layout layout() const override { return innerCell()->layout(); }
+
+ private:
+  // View
+  int numberOfSubviews() const override { return 1; }
+  HighlightCell* subviewAtIndex(int index) override = 0;
+  void layoutSubviews(bool force) override;
+
+  HighlightCell* innerCell() { return subviewAtIndex(0); }
+  const HighlightCell* innerCell() const {
+    return const_cast<AbstractCategoricalCell*>(this)->innerCell();
+  }
+};
+
+class InputCategoricalCell : public AbstractCategoricalCell {
+ public:
+  InputCategoricalCell(Escher::Responder* parent = nullptr,
+                       Escher::TextFieldDelegate* textFieldDelegate = nullptr)
+      : AbstractCategoricalCell(), m_innerCell(parent, textFieldDelegate) {}
+
+  Escher::TextField* textField() { return m_innerCell.textField(); }
+  void setMessages(I18n::Message labelMessage,
+                   I18n::Message subLabelMessage = I18n::Message::Default);
+
+ private:
+  HighlightCell* subviewAtIndex(int i) override { return &m_innerCell; }
+
+  Escher::MenuCellWithEditableText<Escher::MessageTextView,
+                                   Escher::MessageTextView>
+      m_innerCell;
+};
+
+}  // namespace Inference
+
+#endif

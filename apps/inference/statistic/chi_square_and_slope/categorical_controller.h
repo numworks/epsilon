@@ -11,7 +11,7 @@
 
 #include "inference/models/statistic/chi2_test.h"
 #include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
-#include "inference/statistic/chi_square_and_slope/input_categorical_cell.h"
+#include "inference/statistic/chi_square_and_slope/categorical_cell.h"
 
 namespace Inference {
 

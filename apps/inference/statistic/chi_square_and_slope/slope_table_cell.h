@@ -34,7 +34,8 @@ class SlopeTableCell : public DoubleColumnTableCell,
 
   // ClearColumnHelper
   size_t fillColumnName(int column, char *buffer) override {
-    return fillColumnNameFromStore(column, buffer);
+    return fillColumnNameFromStore(
+        k_maxNumberOfColumns * store()->series() + column, buffer);
   }
   Escher::InputViewController *inputViewController() override;
   void reload() override;

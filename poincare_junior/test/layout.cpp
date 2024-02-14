@@ -5,6 +5,7 @@
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layoutter.h>
+#include <poincare_junior/src/layout/multiplication_symbol.h>
 #include <poincare_junior/src/layout/render.h>
 
 #include "helper.h"
@@ -64,3 +65,9 @@ QUIZ _CASE(pcj_layout_render) {
   l.draw(ctx, KDPoint(10, 100), KDFont::Size::Large);
 }
 #endif
+
+QUIZ_CASE(pcj_layout_multiplication_symbol) {
+  quiz_assert(MultiplicationSymbol(KMult(2_e, 3_e)) == u'×');
+  quiz_assert(MultiplicationSymbol(KMult(2_e, "a"_e)) == UCodePointNull);
+  quiz_assert(MultiplicationSymbol(KMult(2_e, KCos(π_e), KSqrt(2_e))) == u'·');
+}

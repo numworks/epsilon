@@ -2,7 +2,26 @@
 
 #include <poincare_junior/src/expression/builtin.h>
 
+#include <algorithm>
+
 namespace PoincareJ {
+
+/* LayoutShape is used to check if the multiplication sign can be omitted
+ * between two expressions. It depends on the "layout style" on the right of the
+ * left expression. */
+enum class LayoutShape {
+  Decimal,
+  Integer,
+  OneLetter,
+  MoreLetters,
+  BoundaryPunctuation,  // ( [ ∫
+  Brace,
+  Root,
+  NthRoot,
+  Fraction,
+  RightOfPower,
+  Default
+};
 
 using enum LayoutShape;
 
@@ -204,6 +223,142 @@ LayoutShape RightLayoutShape(const Tree* expr) {
     default:
       return LeftLayoutShape(expr);
   }
+}
+
+enum class Symbol : uint8_t {
+  // The order matters !
+  Empty = 0,
+  MiddleDot = 1,
+  MultiplicationSign = 2,
+};
+
+using enum Symbol;
+
+CodePoint CodePointForOperatorSymbol(Symbol symbol) {
+  switch (symbol) {
+    case Empty:
+      return UCodePointNull;
+    case MiddleDot:
+      return UCodePointMiddleDot;
+    default:
+      assert(symbol == MultiplicationSign);
+      return UCodePointMultiplicationSign;
+  }
+}
+
+// clang-format off
+/* Operative symbol between two expressions depends on the layout shape on the
+ * left and the right of the operator:
+ *
+ * Left  \ Right | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Unit |   Default
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * Decimal       |    ×    |    ×    |     ø     |      ×      |       ×       |  ×   |    ×    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * Integer       |    ×    |    ×    |     ø     |      •      |       ø       |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * OneLetter     |    ×    |    •    |     •     |      •      |       •       |  ø   |    •    |    ø     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * MoreLetters   |    ×    |    •    |     •     |      •      |       •       |  ø   |    •    |    ø     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * BundaryPunct. |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * Brace         |    •    |    •    |     •     |      •      |       ×       |  •   |    •    |    •     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * Root          |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * Fraction      |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
+ * Default       |    •    |    •    |     •     |      •      |       •       |  •   |    •    |    •     |  ø   |      •
+ *
+ * Two Units are separated by a •, Unit on the left is treated according to its type
+ * */
+// clang-format on
+
+Symbol OperatorSymbolBetween(LayoutShape left, LayoutShape right) {
+  if (left == Default || right == Default || right == Brace) {
+    return MiddleDot;
+  }
+  switch (left) {
+    case Decimal:
+      switch (right) {
+        case OneLetter:
+          return Empty;
+        default:
+          return MultiplicationSign;
+      }
+    case Integer:
+      switch (right) {
+        case Integer:
+        case Decimal:
+        case Fraction:
+          return MultiplicationSign;
+        case MoreLetters:
+        case NthRoot:
+          return MiddleDot;
+        default:
+          return Empty;
+      }
+    case OneLetter:
+    case MoreLetters:
+      switch (right) {
+        case Decimal:
+          return MultiplicationSign;
+        case Fraction:
+        case Root:
+          return Empty;
+        default:
+          return MiddleDot;
+      }
+    case Brace:
+      switch (right) {
+        case BoundaryPunctuation:
+          return MultiplicationSign;
+        default:
+          return MiddleDot;
+      }
+    // fall-through
+    case BoundaryPunctuation:
+    case Fraction:
+    case Root:
+      switch (right) {
+        case Decimal:
+        case Integer:
+        case Fraction:
+          return MultiplicationSign;
+        case NthRoot:
+          return MiddleDot;
+        default:
+          return Empty;
+      }
+    default:
+      assert(false);
+  }
+}
+
+CodePoint MultiplicationSymbol(const Tree* mult) {
+  int sign = -1;
+  int childrenNumber = mult->numberOfChildren();
+  for (int i = 0; i < childrenNumber - 1; i++) {
+    /* The operator symbol must be the same for all operands of the
+     * multiplication. If one operator has to be '×', they will all be '×'. Idem
+     * for '·'. */
+    const Tree* left = mult->child(i);
+    const Tree* right = mult->child(i + 1);
+    Symbol symbol;
+#if O  // TODO PCJ
+    if (ExpressionIsUnit(right)) {
+      symbol = ExpressionIsUnit(left) ? MiddleDot : Empty;
+    } else {
+#else
+    if (true) {
+#endif
+      symbol =
+          OperatorSymbolBetween(RightLayoutShape(left), LeftLayoutShape(right));
+    }
+    sign = std::max(sign, static_cast<int>(symbol));
+  }
+  assert(sign >= 0);
+  return CodePointForOperatorSymbol(static_cast<Symbol>(sign));
 }
 
 }  // namespace PoincareJ

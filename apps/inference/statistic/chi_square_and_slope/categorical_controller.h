@@ -54,8 +54,6 @@ class CategoricalController
   void initView() override;
 
  protected:
-  constexpr static int k_marginVertical = 5;
-
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
   virtual int indexOfTableCell() const { return 0; }

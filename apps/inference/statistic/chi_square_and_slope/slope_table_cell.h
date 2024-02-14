@@ -22,6 +22,11 @@ class SlopeTableCell : public DoubleColumnTableCell,
 
   void fillColumnsNames();
 
+  // StoreColumnHelper
+  SlopeTStatistic *store() override {
+    return static_cast<SlopeTStatistic *>(tableModel());
+  }
+
  private:
   Escher::HighlightCell *headerCell(int index) override {
     return &m_header[index];
@@ -30,10 +35,6 @@ class SlopeTableCell : public DoubleColumnTableCell,
   // ClearColumnHelper
   size_t fillColumnName(int column, char *buffer) override {
     return fillColumnNameFromStore(column, buffer);
-  }
-  // StoreColumnHelper
-  Shared::DoublePairStore *store() override {
-    return static_cast<SlopeTStatistic *>(tableModel());
   }
   Escher::InputViewController *inputViewController() override;
   void reload() override;

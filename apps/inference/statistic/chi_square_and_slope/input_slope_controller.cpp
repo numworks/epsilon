@@ -10,7 +10,8 @@ InputSlopeController::InputSlopeController(StackViewController* parent,
                                            ViewController* resultsController,
                                            Statistic* statistic,
                                            Poincare::Context* context)
-    : InputNamedListsCategoricalController(parent, resultsController, statistic),
+    : InputNamedListsCategoricalController(parent, resultsController,
+                                           statistic),
       m_slopeTableCell(&m_selectableListView, statistic, context, this),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
@@ -37,6 +38,11 @@ bool InputSlopeController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return InputNamedListsCategoricalController::handleEvent(event);
+}
+
+void InputSlopeController::onDropdownSelected(int selectedRow) {
+  m_slopeTableCell.store()->setSeries(selectedRow);
+  m_slopeTableCell.recomputeDimensionsAndReload(true);
 }
 
 void InputSlopeController::createDynamicCells() {

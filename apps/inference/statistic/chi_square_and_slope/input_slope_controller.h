@@ -30,6 +30,9 @@ class InputSlopeController : public InputNamedListsCategoricalController {
   }
   void viewWillAppear() override;
 
+  // DropdownCallback
+  void onDropdownSelected(int selectedRow) override;
+
  private:
   class PrivateStackViewController
       : public Escher::StackViewController::Default {

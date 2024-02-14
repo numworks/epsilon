@@ -146,7 +146,6 @@ class InputNamedListsCategoricalController : public InputCategoricalController,
                ? &m_dropdownCell
                : InputCategoricalController::reusableCell(index, type);
   }
-  void onDropdownSelected(int selectedRow) override{};  // TODO
 
   virtual char listPrefix(int column) const = 0;
 

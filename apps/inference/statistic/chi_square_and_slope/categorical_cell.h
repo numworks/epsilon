@@ -2,6 +2,7 @@
 #define INFERENCE_CATEGORICAL_CELL_H
 
 #include <apps/i18n.h>
+#include <escher/dropdown_widget.h>
 #include <escher/menu_cell_with_editable_text.h>
 
 namespace Inference {
@@ -49,6 +50,31 @@ class InputCategoricalCell : public AbstractCategoricalCell {
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView,
                                    Escher::MessageTextView>
+      m_innerCell;
+};
+
+class DropdownCategoricalCell : public AbstractCategoricalCell {
+ public:
+  DropdownCategoricalCell(
+      Escher::Responder* parent,
+      Escher::ExplicitListViewDataSource* dropdownDataSource,
+      Escher::DropdownCallback* callback)
+      : m_dropdown(parent, dropdownDataSource, callback) {
+    m_innerCell.accessory()->setDropdown(&m_dropdown);
+  }
+
+  void setMessage(I18n::Message message) {
+    m_innerCell.label()->setMessage(message);
+  }
+
+ private:
+  HighlightCell* subviewAtIndex(int i) override { return &m_innerCell; }
+
+  /* WARNING: make sure the Dropdown DataSource is constructed before the
+   * Dropdown. */
+  Escher::Dropdown m_dropdown;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::DropdownWidget>
       m_innerCell;
 };
 

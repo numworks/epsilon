@@ -42,6 +42,7 @@ bool InputSlopeController::handleEvent(Ion::Events::Event event) {
 
 void InputSlopeController::onDropdownSelected(int selectedRow) {
   m_slopeTableCell.store()->setSeries(selectedRow);
+  m_slopeTableCell.fillColumnsNames();
   m_slopeTableCell.recomputeDimensionsAndReload(true);
 }
 

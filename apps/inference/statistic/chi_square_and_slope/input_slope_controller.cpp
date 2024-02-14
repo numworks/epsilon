@@ -10,7 +10,7 @@ InputSlopeController::InputSlopeController(StackViewController* parent,
                                            ViewController* resultsController,
                                            Statistic* statistic,
                                            Poincare::Context* context)
-    : InputCategoricalController(parent, resultsController, statistic),
+    : DummyInputCategoricalController(parent, resultsController, statistic),
       m_slopeTableCell(&m_selectableListView, statistic, context, this),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
@@ -32,7 +32,7 @@ bool InputSlopeController::handleEvent(Ion::Events::Event event) {
     stackController()->push(&m_secondStackController);
     return true;
   }
-  return InputCategoricalController::handleEvent(event);
+  return DummyInputCategoricalController::handleEvent(event);
 }
 
 void InputSlopeController::createDynamicCells() {
@@ -41,7 +41,7 @@ void InputSlopeController::createDynamicCells() {
 
 void InputSlopeController::viewWillAppear() {
   m_slopeTableCell.fillColumnsNames();
-  InputCategoricalController::viewWillAppear();
+  DummyInputCategoricalController::viewWillAppear();
 }
 
 }  // namespace Inference

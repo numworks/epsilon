@@ -63,6 +63,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/layout_cursor.cpp \
   layout/layout_selection.cpp \
   layout/layoutter.cpp \
+  layout/multiplication_symbol.cpp \
   layout/parser.cpp \
   layout/parsing/helper.cpp \
   layout/parsing/rack_parser.cpp \

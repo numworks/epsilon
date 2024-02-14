@@ -1,4 +1,4 @@
-#include "layout_shape.h"
+#include "multiplication_symbol.h"
 
 #include <poincare_junior/src/expression/builtin.h>
 

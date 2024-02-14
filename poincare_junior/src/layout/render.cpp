@@ -624,6 +624,7 @@ void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
                              KDColor expressionColor, KDColor backgroundColor,
                              LayoutSelection selection) {
   if (RackLayout::IsTrivial(node) && selection.layout() != node) {
+    // Early escape racks with only one child
     PrivateDraw(node->child(0), ctx, p, expressionColor, backgroundColor,
                 selection);
     return;
@@ -631,6 +632,7 @@ void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
   KDCoordinate baseline = RackLayout::Baseline(node);
   static constexpr KDColor selectionColor = Escher::Palette::Select;
   if (selection.layout() == node) {
+    // Draw the selected area gray background
     KDSize selectedSize = RackLayout::SizeBetweenIndexes(
         node, selection.leftPosition(), selection.rightPosition());
     KDCoordinate selectedBaseline = RackLayout::BaselineBetweenIndexes(
@@ -667,8 +669,9 @@ void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
                   selection.layout() == node ? selection : LayoutSelection(),
                   baseline,
                   0};
-  auto iter = [](const Tree* child, KDSize childSize,
-                 KDCoordinate childBaseline, KDPoint position, void* ctx) {
+  RackLayout::Callback* iter = [](const Tree* child, KDSize childSize,
+                                  KDCoordinate childBaseline, KDPoint position,
+                                  void* ctx) {
     Context* context = static_cast<Context*>(ctx);
     KDPoint p(position.x(), context->rackBaseline - position.y());
     p = p.translatedBy(context->rackPosition);
@@ -680,7 +683,7 @@ void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
     if (child) {
       PrivateDraw(child, context->ctx, p, context->expressionColor,
                   backgroundColor, context->selection);
-    } else if (childSize.width()) {
+    } else if (childSize.width() > 0) {
       EmptyRectangle::DrawEmptyRectangle(context->ctx, p, s_font,
                                          EmptyRectangle::Color::Yellow);
     }
@@ -706,6 +709,9 @@ void Render::PrivateDrawGridLayout(const Tree* node, KDContext* ctx, KDPoint p,
                                    KDColor expressionColor,
                                    KDColor backgroundColor,
                                    LayoutSelection selection) {
+  /* For efficiency, we first compute the positions of the rows and columns and
+   * then render each child at the right place.  This function also handles the
+   * drawing of the gray rack placeholders. */
   RenderNode(node, ctx, p, expressionColor, backgroundColor);
   const Grid* grid = Grid::From(node);
   int rows = grid->numberOfRows();
@@ -723,6 +729,7 @@ void Render::PrivateDrawGridLayout(const Tree* node, KDContext* ctx, KDPoint p,
     size = SquareBracketPair::SizeGivenChildSize(size);
     offset = SquareBracketPair::ChildOffset(size.height());
   } else {
+    assert(node->isPiecewiseLayout());
     if (node->numberOfChildren() == 4 && !grid->isEditing() &&
         RackLayout::IsEmpty(node->child(1))) {
       // If there is only 1 row and the condition is empty, shrink the size

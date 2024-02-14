@@ -177,8 +177,8 @@ KDSize RackLayout::SizeBetweenIndexes(const Tree* node, int leftIndex,
     KDCoordinate maxAboveBaseline;
     KDCoordinate totalWidth;
   };
-  auto iter = [](const Tree* child, KDSize childSize,
-                 KDCoordinate childBaseline, KDPoint, void* ctx) {
+  Callback* iter = [](const Tree* child, KDSize childSize,
+                      KDCoordinate childBaseline, KDPoint, void* ctx) {
     Context* context = static_cast<Context*>(ctx);
     context->totalWidth += childSize.width();
     context->maxUnderBaseline = std::max<KDCoordinate>(
@@ -201,14 +201,14 @@ KDPoint RackLayout::ChildPosition(const Tree* node, int i) {
     KDCoordinate x;
     KDCoordinate baseline;
   };
-  auto iter2 = [](const Tree* child, KDSize childSize, KDCoordinate,
-                  KDPoint position, void* ctx) {
+  Callback* iter = [](const Tree* child, KDSize childSize, KDCoordinate,
+                      KDPoint position, void* ctx) {
     Context* context = static_cast<Context*>(ctx);
     context->x = position.x();
     context->baseline = position.y();
   };
   Context context;
-  IterBetweenIndexes(node, 0, i + 1, iter2, &context);
+  IterBetweenIndexes(node, 0, i + 1, iter, &context);
   return KDPoint(context.x, baseline - context.baseline);
 }
 

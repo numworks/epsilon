@@ -644,7 +644,8 @@ void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
     ctx->fillRect(KDRect(p.translatedBy(start), selectedSize), selectionColor);
   }
 #if 0
-  // TODO_PCJ
+  /* TODO_PCJ: enabling this size call deteriorates the complexity, should size
+   * raise in case of overflow instead ? */
   KDSize size = Size(node, childSizes);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||

@@ -4,7 +4,7 @@ NODE(VerticalOffset, 1, 1)
 
 NODE(CodePoint, 0, sizeof(CodePoint))
 NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))
-// NODE(String)
+// TODO Do we need a StringLayout ?
 
 NODE(AbsoluteValue, 1)
 NODE(Ceiling, 1)
@@ -17,6 +17,7 @@ RANGE(SquareBracketPair, AbsoluteValueLayout, VectorNormLayout)
 RANGE(AutocompletedPair, ParenthesisLayout, CurlyBraceLayout)
 RANGE(Pair, AbsoluteValueLayout, CurlyBraceLayout)
 
+// TODO CondensedSum could draw the sigma symbol and have two children
 NODE(CondensedSum, 3)
 NODE(Derivative, 3, 1)
 NODE(NthDerivative, 4, 1)

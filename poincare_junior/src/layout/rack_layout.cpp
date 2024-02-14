@@ -48,6 +48,9 @@ void UpdateChildWithBase(bool isSuperscript, KDCoordinate baseHeight,
   *childHeight += baseHeight - VerticalOffset::IndiceHeight;
 }
 
+#if 0
+/* TODO this code will be needed to render nested prefix subscript which are not
+ * used currently */
 void FindBaseForward(const Tree* child, int maxDepth, KDCoordinate* baseHeight,
                      KDCoordinate* baseBaseline, KDFont::Size font) {
   if (maxDepth == 0) {
@@ -74,6 +77,7 @@ void FindBaseForward(const Tree* child, int maxDepth, KDCoordinate* baseHeight,
   *baseHeight = Render::Size(candidateBase).height();
   *baseBaseline = Render::Baseline(candidateBase);
 }
+#endif
 
 void RackLayout::IterBetweenIndexes(const Tree* node, int leftIndex,
                                     int rightIndex, Callback callback,

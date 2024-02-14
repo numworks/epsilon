@@ -1,6 +1,7 @@
 #include "multiplication_symbol.h"
 
 #include <poincare_junior/src/expression/builtin.h>
+#include <poincare_junior/src/expression/unit.h>
 
 #include <algorithm>
 
@@ -344,13 +345,9 @@ CodePoint MultiplicationSymbol(const Tree* mult) {
     const Tree* left = mult->child(i);
     const Tree* right = mult->child(i + 1);
     Symbol symbol;
-#if O  // TODO PCJ
-    if (ExpressionIsUnit(right)) {
-      symbol = ExpressionIsUnit(left) ? MiddleDot : Empty;
+    if (Units::Unit::IsUnitOrPowerOfUnit(right)) {
+      symbol = Units::Unit::IsUnitOrPowerOfUnit(left) ? MiddleDot : Empty;
     } else {
-#else
-    if (true) {
-#endif
       symbol =
           OperatorSymbolBetween(RightLayoutShape(left), LeftLayoutShape(right));
     }

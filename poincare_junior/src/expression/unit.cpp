@@ -770,17 +770,25 @@ bool Unit::AllowImplicitAddition(const Representative* smallestRepresentative,
   return false;
 }
 
-#if 0
-bool Unit::ForceMarginLeftOfUnit(const Unit& unit) {
-  const Representative* representative = unit.representative();
-  for (int i = 0; i < k_numberOfRepresentativesWithoutLeftMargin; i++) {
-    if (k_representativesWithoutLeftMargin[i] == representative) {
+bool Unit::IsUnitOrPowerOfUnit(const Tree* expr) {
+  return expr->isUnit() || (expr->isPower() && expr->child(0)->isUnit());
+}
+
+bool Unit::ForceMarginLeftOfUnit(const Tree* expr) {
+  assert(IsUnitOrPowerOfUnit(expr));
+  if (expr->isPower()) {
+    expr = expr->child(0);
+  }
+  const Representative* representative = GetRepresentative(expr);
+  for (const Representative* repr : k_representativesWithoutLeftMargin) {
+    if (repr == representative) {
       return false;
     }
   }
   return true;
 }
 
+#if 0
 Expression Unit::shallowReduce(ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == UnitConversion::None ||
       isBaseUnit()) {

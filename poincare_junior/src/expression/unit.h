@@ -336,9 +336,10 @@ class Unit {
       const Representative* smallestRepresentative,
       const Representative* biggestRepresentative);
 
-#if 0
-  static bool ForceMarginLeftOfUnit(const Unit& unit);
+  static bool IsUnitOrPowerOfUnit(const Tree* expr);
+  static bool ForceMarginLeftOfUnit(const Tree* expr);
 
+#if 0
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext);
   Expression shallowBeautify();

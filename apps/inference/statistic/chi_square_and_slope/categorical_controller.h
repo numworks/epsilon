@@ -112,6 +112,32 @@ class InputCategoricalController : public CategoricalController,
   InputCategoricalCell m_significanceCell;
 };
 
+class DummyInputCategoricalController : public InputCategoricalController {
+ public:
+  DummyInputCategoricalController(Escher::StackViewController* parent,
+                                  Escher::ViewController* resultsController,
+                                  Statistic* statistic)
+      : InputCategoricalController(parent, resultsController, statistic),
+        m_dummyCell(&m_selectableListView, this) {}
+
+ protected:
+  constexpr static int k_dummyCellIndex = 0;
+
+  int indexOfTableCell() const override { return k_dummyCellIndex + 1; }
+  KDCoordinate nonMemoizedRowHeight(int row) override {
+    return row == k_dummyCellIndex
+               ? m_dummyCell.minimalSizeForOptimalDisplay().height()
+               : InputCategoricalController::nonMemoizedRowHeight(row);
+  }
+  Escher::HighlightCell* reusableCell(int index, int type) override {
+    return type == k_dummyCellIndex
+               ? &m_dummyCell
+               : InputCategoricalController::reusableCell(index, type);
+  }
+
+  InputCategoricalCell m_dummyCell;
+};
+
 }  // namespace Inference
 
 #endif

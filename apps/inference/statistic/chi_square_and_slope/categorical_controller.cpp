@@ -39,31 +39,29 @@ void CategoricalController::scrollViewDidChangeOffset(
    * displayable cells as its real number of cells. Since the
    * CategoricalController needs at most 3 cells, we delegate the scroll
    * handling to the CategoricalTableCell. */
-  KDPoint currentOffset =
+  KDPoint listOffset = m_selectableListView.contentOffset();
+  KDPoint tableOffset =
       categoricalTableCell()->selectableTableView()->contentOffset();
-  KDCoordinate maximalOffsetY =
-      m_selectableListView.minimalSizeForOptimalDisplay().height() -
-      m_selectableListView.bounds().height();
-  KDCoordinate offsetToAdd = offset().y();
-  if (offsetToAdd > maximalOffsetY) {
-    /* Prevent the table from scrolling past the screen */
-    offsetToAdd = maximalOffsetY;
-  }
-  /* New offset should be corrected to account for the truncation of the
-   * categorical cell. */
-  KDCoordinate displayedCategoricalCellHeight =
-      nonMemoizedRowHeight(indexOfTableCell());
-  KDCoordinate trueCategoricalCellHeight =
-      categoricalTableCell()->minimalSizeForOptimalDisplay().height() -
-      currentOffset.y();
-  KDCoordinate newOffsetY = offsetToAdd + currentOffset.y() +
-                            trueCategoricalCellHeight -
-                            displayedCategoricalCellHeight;
+
+  KDCoordinate maximalListOffsetY =
+      cumulatedHeightBeforeRow(indexOfTableCell());
+  KDCoordinate maximalTableOffsetY =
+      std::max(0, m_selectableListView.minimalSizeForOptimalDisplay().height() +
+                      tableOffset.y() - m_selectableListView.bounds().height() -
+                      maximalListOffsetY);
+
+  KDCoordinate newListOffsetY =
+      std::clamp<int>(listOffset.y() + tableOffset.y(), 0, maximalListOffsetY);
+  KDCoordinate newTableOffsetY =
+      std::clamp<int>(listOffset.y() + tableOffset.y() - newListOffsetY, 0,
+                      maximalTableOffsetY);
+
   categoricalTableCell()->selectableTableView()->setContentOffset(
-      KDPoint(currentOffset.x(), newOffsetY));
+      KDPoint(tableOffset.x(), newTableOffsetY));
   // Unset the ScrollViewDelegate to avoid infinite looping
   setScrollViewDelegate(nullptr);
-  m_selectableListView.resetScroll();
+  m_selectableListView.setContentOffset(
+      KDPoint(listOffset.x(), newListOffsetY));
   setScrollViewDelegate(this);
 }
 
@@ -83,7 +81,8 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
       otherCellsHeight;
   *visible = decorator->verticalBar()->update(
       trueOptimalHeight,
-      categoricalTableCell()->selectableTableView()->contentOffset().y(),
+      categoricalTableCell()->selectableTableView()->contentOffset().y() +
+          m_selectableListView.contentOffset().y(),
       m_selectableListView.bounds().height());
   return true;
 }

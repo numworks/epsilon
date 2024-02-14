@@ -16,8 +16,10 @@ InputSlopeController::InputSlopeController(StackViewController* parent,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_slopeTableCell) {
   m_storeParameterController.selectRow(0);
-  m_selectableListView.margins()->setTop(0);
-  m_slopeTableCell.selectableTableView()->margins()->setTop(0);
+  m_selectableListView.margins()->setTop(
+      m_slopeTableCell.selectableTableView()->margins()->top());
+  m_slopeTableCell.selectableTableView()->margins()->setTop(
+      Metric::TableSeparatorThickness);
 }
 
 bool InputSlopeController::handleEvent(Ion::Events::Event event) {

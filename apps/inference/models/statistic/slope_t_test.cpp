@@ -3,8 +3,8 @@
 namespace Inference {
 
 void SlopeTTest::compute() {
-  double n = doubleCastedNumberOfPairsOfSeries(0);
-  double b = slope(0);
+  double n = doubleCastedNumberOfPairsOfSeries(series());
+  double b = slope(series());
   m_degreesOfFreedom = n - 2.0;
   m_testCriticalValue = b / computeStandardError();
   m_pValue = SignificanceTest::ComputePValue(this);

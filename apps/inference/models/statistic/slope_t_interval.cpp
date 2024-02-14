@@ -17,10 +17,10 @@ Poincare::Layout SlopeTInterval::estimateLayout() const {
 }
 
 void SlopeTInterval::privateCompute() {
-  double n = doubleCastedNumberOfPairsOfSeries(0);
+  double n = doubleCastedNumberOfPairsOfSeries(series());
   m_degreesOfFreedom = n - 2.0;
   m_SE = computeStandardError();
-  m_estimate = slope(0);
+  m_estimate = slope(series());
 }
 
 }  // namespace Inference

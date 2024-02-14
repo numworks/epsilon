@@ -11,21 +11,24 @@ namespace Inference {
 class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
  public:
   SlopeTStatistic(Shared::GlobalContext* context)
-      : Shared::LinearRegressionStore(context, &m_concreteStorePreferences) {
+      : Shared::LinearRegressionStore(context, &m_concreteStorePreferences),
+        m_series(0) {
     initListsFromStorage();
   }
 
   I18n::Message title() const {
     return I18n::Message::HypothesisControllerTitleSlope;
   }
+  int series() const { return m_series; }
+  void setSeries(int series) { m_series = series; }
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override {
-    set(value, 0, column, row, false);
+    set(value, m_series, column, row, false);
   }
   double parameterAtPosition(int row, int column) const override;
   bool deleteParameterAtPosition(int row, int column) override;
-  void recomputeData() override { updateSeries(0); }
+  void recomputeData() override { updateSeries(m_series); }
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }
   int maxNumberOfRows() const override { return k_maxNumberOfPairs; }
 
@@ -38,7 +41,7 @@ class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
   bool authorizedParameterAtIndex(double p, int i) const;
   double computeStandardError() const;
   bool validateInputs() {
-    return seriesIsValid(0) && numberOfPairsOfSeries(0) > 2;
+    return seriesIsValid(m_series) && numberOfPairsOfSeries(m_series) > 2;
   }
 
  private:
@@ -48,6 +51,7 @@ class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
   }
 
   Shared::DoublePairStorePreferences m_concreteStorePreferences;
+  int m_series;
 };
 
 }  // namespace Inference

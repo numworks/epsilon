@@ -9,17 +9,17 @@ bool SlopeTStatistic::deleteParameterAtPosition(int row, int column) {
     // Param is already deleted
     return false;
   }
-  int numberOfPairs = numberOfPairsOfSeries(0);
+  int numberOfPairs = numberOfPairsOfSeries(m_series);
   setParameterAtPosition(k_undefinedValue, row, column);
   // DoublePairStore::updateSeries has handled the deletion of empty rows
-  return numberOfPairs != numberOfPairsOfSeries(0);
+  return numberOfPairs != numberOfPairsOfSeries(m_series);
 }
 
 double SlopeTStatistic::parameterAtPosition(int row, int column) const {
-  if (row >= numberOfPairsOfSeries(0)) {
+  if (row >= numberOfPairsOfSeries(m_series)) {
     return NAN;
   }
-  return get(0, column, row);
+  return get(m_series, column, row);
 }
 
 bool SlopeTStatistic::authorizedParameterAtIndex(double p, int i) const {
@@ -28,10 +28,10 @@ bool SlopeTStatistic::authorizedParameterAtIndex(double p, int i) const {
 }
 
 double SlopeTStatistic::computeStandardError() const {
-  double n = doubleCastedNumberOfPairsOfSeries(0);
-  double xMean = meanOfColumn(0, 0);
-  double SE = std::sqrt((1.0 / (n - 2.0)) * leastSquaredSum(0) /
-                        squaredOffsettedValueSumOfColumn(0, 0, xMean));
+  double n = doubleCastedNumberOfPairsOfSeries(m_series);
+  double xMean = meanOfColumn(m_series, 0);
+  double SE = std::sqrt((1.0 / (n - 2.0)) * leastSquaredSum(m_series) /
+                        squaredOffsettedValueSumOfColumn(m_series, 0, xMean));
   return OMG::LaxToZero(SE);
 }
 

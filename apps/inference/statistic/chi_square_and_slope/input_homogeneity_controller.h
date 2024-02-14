@@ -20,7 +20,7 @@ class InputHomogeneityController : public InputCategoricalController {
 
  private:
   int indexOfSignificanceCell() const override {
-    return k_indexOfTableCell + 1;
+    return indexOfTableCell() + 1;
   }
   InputCategoricalTableCell* categoricalTableCell() override {
     return &m_inputHomogeneityTable;

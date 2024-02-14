@@ -55,11 +55,11 @@ class CategoricalController
 
  protected:
   constexpr static int k_marginVertical = 5;
-  constexpr static int k_indexOfTableCell = 0;
 
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
-  virtual int indexOfNextCell() const { return 1; }
+  virtual int indexOfTableCell() const { return 0; }
+  virtual int indexOfNextCell() const { return indexOfTableCell() + 1; }
   virtual CategoricalTableCell* categoricalTableCell() = 0;
 
   Escher::ViewController* m_nextController;

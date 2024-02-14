@@ -49,7 +49,7 @@ class InputSlopeController : public InputCategoricalController {
   }
   void createDynamicCells() override;
   int indexOfSignificanceCell() const override {
-    return k_indexOfTableCell + 1;
+    return indexOfTableCell() + 1;
   }
   Escher::StackViewController *stackController() const {
     return static_cast<Escher::StackViewController *>(parentResponder());

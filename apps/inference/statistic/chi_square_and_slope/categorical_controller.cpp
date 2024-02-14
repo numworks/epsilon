@@ -52,7 +52,7 @@ void CategoricalController::scrollViewDidChangeOffset(
   /* New offset should be corrected to account for the truncation of the
    * categorical cell. */
   KDCoordinate displayedCategoricalCellHeight =
-      nonMemoizedRowHeight(k_indexOfTableCell);
+      nonMemoizedRowHeight(indexOfTableCell());
   KDCoordinate trueCategoricalCellHeight =
       categoricalTableCell()->minimalSizeForOptimalDisplay().height() -
       currentOffset.y();
@@ -95,10 +95,10 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
   if (previousRow == l->selectedRow() || withinTemporarySelection) {
     return;
   }
-  if (previousRow == k_indexOfTableCell) {
+  if (previousRow == indexOfTableCell()) {
     categoricalTableCell()->selectRow(-1);
     categoricalTableCell()->layoutSubviews(true);
-  } else if (l->selectedRow() == k_indexOfTableCell &&
+  } else if (l->selectedRow() == indexOfTableCell() &&
              previousRow > l->selectedRow()) {
     categoricalTableCell()->selectRow(
         categoricalTableCell()->tableViewDataSource()->numberOfRows() - 1);
@@ -106,7 +106,7 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
 }
 
 HighlightCell *CategoricalController::reusableCell(int index, int type) {
-  if (type == k_indexOfTableCell) {
+  if (type == indexOfTableCell()) {
     return categoricalTableCell();
   }
   assert(type == indexOfNextCell());
@@ -114,7 +114,7 @@ HighlightCell *CategoricalController::reusableCell(int index, int type) {
 }
 
 KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
-  if (row == k_indexOfTableCell) {
+  if (row == indexOfTableCell()) {
     return std::min(
         categoricalTableCell()->minimalSizeForOptimalDisplay().height() -
             categoricalTableCell()->selectableTableView()->contentOffset().y(),

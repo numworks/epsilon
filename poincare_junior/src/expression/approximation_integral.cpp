@@ -1,5 +1,7 @@
 #include <poincare/float.h>
 
+#include <algorithm>
+
 #include "approximation.h"
 #include "parametric.h"
 #include "simplification.h"

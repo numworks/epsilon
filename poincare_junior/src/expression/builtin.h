@@ -11,11 +11,15 @@ namespace PoincareJ {
 
 class Builtin {
  public:
-  constexpr Builtin(BlockType blockType, Aliases aliases)
-      : m_blockType(blockType), m_aliases(aliases) {}
+  constexpr Builtin(BlockType blockType, Aliases aliases,
+                    bool has2DLayout = false)
+      : m_blockType(blockType),
+        m_aliases(aliases),
+        m_has2DLayout(has2DLayout) {}
 
-  constexpr const BlockType blockType() const { return m_blockType; }
+  constexpr BlockType blockType() const { return m_blockType; }
   constexpr const Aliases* aliases() const { return &m_aliases; }
+  constexpr bool has2DLayout() const { return m_has2DLayout; }
   virtual Tree* pushNode(int numberOfChildren) const;
   virtual bool checkNumberOfParameters(int n) const;
   static bool IsReservedFunction(const Tree* tree) {
@@ -47,6 +51,7 @@ class Builtin {
  private:
   BlockType m_blockType;
   Aliases m_aliases;
+  bool m_has2DLayout;
 };
 
 namespace BuiltinsAliases {
@@ -70,7 +75,7 @@ constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
 }  // namespace BuiltinsAliases
 
 constexpr static Builtin s_builtins[] = {
-    {BlockType::Abs, "abs"},
+    {BlockType::Abs, "abs", true},
     {BlockType::Cosine, "cos"},
     {BlockType::Sine, "sin"},
     {BlockType::Tangent, "tan"},
@@ -89,23 +94,23 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::HyperbolicArcCosine, "arcosh"},
     {BlockType::HyperbolicArcSine, "arsinh"},
     {BlockType::HyperbolicArcTangent, "artanh"},
-    {BlockType::Sum, "sum"},
-    {BlockType::Product, "product"},
-    {BlockType::Derivative, "diff"},
-    {BlockType::Integral, "int"},
+    {BlockType::Sum, "sum", true},
+    {BlockType::Product, "product", true},
+    {BlockType::Derivative, "diff", true},
+    {BlockType::Integral, "int", true},
     {BlockType::Exponential, "exp"},
     {BlockType::Logarithm, "log"},
     {BlockType::Log, "log"},
     {BlockType::Ln, "ln"},
-    {BlockType::SquareRoot, BuiltinsAliases::k_squareRootAliases},
-    {BlockType::NthRoot, "root"},
+    {BlockType::SquareRoot, BuiltinsAliases::k_squareRootAliases, true},
+    {BlockType::NthRoot, "root", true},
     {BlockType::Cross, "cross"},
     {BlockType::Det, "det"},
     {BlockType::Dim, "dim"},
     {BlockType::Dot, "dot"},
     {BlockType::Identity, "identity"},
     {BlockType::Inverse, "inverse"},
-    {BlockType::Norm, "norm"},
+    {BlockType::Norm, "norm", true},
     {BlockType::Ref, "ref"},
     {BlockType::Rref, "rref"},
     {BlockType::Trace, "trace"},
@@ -113,19 +118,19 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::ComplexArgument, "arg"},
     {BlockType::RealPart, "re"},
     {BlockType::ImaginaryPart, "im"},
-    {BlockType::Conjugate, "conj"},
-    {BlockType::Dependency, "dep"},
+    {BlockType::Conjugate, "conj", true},
+    {BlockType::Dependency, "dep", true},
     {BlockType::GCD, "gcd"},
     {BlockType::LCM, "lcm"},
     {BlockType::Quotient, "quo"},
     {BlockType::Remainder, "rem"},
     {BlockType::Factor, "factor"},
-    {BlockType::Ceiling, "ceil"},
-    {BlockType::Floor, "floor"},
+    {BlockType::Ceiling, "ceil", true},
+    {BlockType::Floor, "floor", true},
     {BlockType::FracPart, "frac"},
     {BlockType::Round, "round"},
     {BlockType::Sign, "sign"},
-    {BlockType::ListSequence, "sequence"},
+    {BlockType::ListSequence, "sequence", true},
     {BlockType::Mean, "mean"},
     {BlockType::StdDev, "stddev"},
     {BlockType::Median, "med"},
@@ -141,7 +146,7 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Random, "random"},
     {BlockType::RandInt, "randint"},
     {BlockType::RandIntNoRep, "randintnorep"},
-    {BlockType::Piecewise, "piecewise"},
+    {BlockType::Piecewise, "piecewise", true},
 };
 
 constexpr const Builtin* Builtin::GetReservedFunction(BlockType type) {

@@ -216,4 +216,16 @@ InputNamedListsCategoricalController::InputNamedListsCategoricalController(
   m_dropdownCell.setMessage(I18n::Message::Default);  // TODO
 }
 
+void InputNamedListsCategoricalController::viewWillAppear() {
+  m_dropdownCell.dropdown()->init();
+  for (int row = 0; row < m_dropdownDataSource.numberOfRows(); row++) {
+    char index = '1' + row;
+    char buffer[] = {listPrefix(0), index, '/', listPrefix(1), index, '\0'};
+    static_cast<SmallBufferTextHighlightCell *>(m_dropdownDataSource.cell(row))
+        ->setText(buffer);
+  }
+  m_dropdownCell.dropdown()->reloadCell();
+  InputCategoricalController::viewWillAppear();
+}
+
 }  // namespace Inference

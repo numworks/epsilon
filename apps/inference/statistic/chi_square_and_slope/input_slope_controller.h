@@ -8,7 +8,7 @@
 
 namespace Inference {
 
-class InputSlopeController : public DummyInputCategoricalController {
+class InputSlopeController : public InputNamedListsCategoricalController {
  public:
   InputSlopeController(Escher::StackViewController *parent,
                        Escher::ViewController *resultsController,

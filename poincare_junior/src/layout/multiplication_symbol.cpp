@@ -58,9 +58,8 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
 
     case BlockType::Addition:
       /* When beautifying a Multiplication of Additions, Parentheses are added
-       * around Additions. As leftLayoutShape is called after beautifying, we
-       * should never call it on an Addition. */
-      assert(false);
+       * around Additions. */
+      return BoundaryPunctuation;
 
 #if O
     case BlockType::BasedInteger:

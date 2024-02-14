@@ -35,7 +35,7 @@ QUIZ_CASE(pcj_expression_to_layout) {
       KRackL(KParenthesisL("x+y"_l), KVertOffL("2"_l)));
   assert_trees_are_equal(
       Layoutter::LayoutExpression(KPow(KMult("x"_e, "y"_e), 2_e)->clone()),
-      KRackL(KParenthesisL("x×y"_l), KVertOffL("2"_l)));
+      KRackL(KParenthesisL("x·y"_l), KVertOffL("2"_l)));
 }
 
 QUIZ_CASE(pcj_layout_decoder) {

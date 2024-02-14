@@ -16,6 +16,7 @@
 #include <poincare_junior/src/n_ary.h>
 
 #include "k_tree.h"
+#include "multiplication_symbol.h"
 
 namespace PoincareJ {
 
@@ -236,9 +237,13 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
 
   switch (type) {
     case BlockType::Addition:
+      layoutInfixOperator(layoutParent, expression, '+');
+      break;
     case BlockType::Multiplication:
-      layoutInfixOperator(layoutParent, expression,
-                          (type == BlockType::Addition) ? '+' : u'×');
+      /* TODO PCJ: Add small margins when units are present */
+      layoutInfixOperator(
+          layoutParent, expression,
+          m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression));
       break;
     case BlockType::Power:
     case BlockType::PowerMatrix:

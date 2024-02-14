@@ -208,4 +208,12 @@ KDCoordinate InputCategoricalController::nonMemoizedRowHeight(int row) {
   return CategoricalController::nonMemoizedRowHeight(row);
 }
 
+InputNamedListsCategoricalController::InputNamedListsCategoricalController(
+    StackViewController *parent, ViewController *resultsController,
+    Statistic *statistic)
+    : InputCategoricalController(parent, resultsController, statistic),
+      m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this) {
+  m_dropdownCell.setMessage(I18n::Message::Default);  // TODO
+}
+
 }  // namespace Inference

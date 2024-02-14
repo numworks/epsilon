@@ -26,6 +26,9 @@ class SlopeTableCell : public DoubleColumnTableCell,
   SlopeTStatistic *store() override {
     return static_cast<SlopeTStatistic *>(tableModel());
   }
+  const SlopeTStatistic *store() const {
+    return const_cast<SlopeTableCell *>(this)->store();
+  }
 
  private:
   Escher::HighlightCell *headerCell(int index) override {

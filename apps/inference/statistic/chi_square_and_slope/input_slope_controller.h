@@ -58,7 +58,7 @@ class InputSlopeController : public InputNamedListsCategoricalController {
     return static_cast<Escher::StackViewController *>(parentResponder());
   }
   char listPrefix(int column) const override {
-    return column == 0 ? 'X' : 'Y';  // FIXME
+    return m_slopeTableCell.store()->columnNamePrefixAtIndex(column);
   }
 
   char m_titleBuffer[InputController::k_titleBufferSize];

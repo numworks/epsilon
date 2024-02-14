@@ -112,9 +112,9 @@ class InputCategoricalController : public CategoricalController,
   InputCategoricalCell m_significanceCell;
 };
 
-class DummyInputCategoricalController : public InputCategoricalController {
+class InputNamedListsCategoricalController : public InputCategoricalController {
  public:
-  DummyInputCategoricalController(Escher::StackViewController* parent,
+  InputNamedListsCategoricalController(Escher::StackViewController* parent,
                                   Escher::ViewController* resultsController,
                                   Statistic* statistic)
       : InputCategoricalController(parent, resultsController, statistic),

@@ -75,6 +75,9 @@ void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
 }
 
 float InteractiveCurveViewRange::xGridUnit() const {
+  if (!gridUnitAuto(Axis::X)) {
+    return computeGridUnitFromUserParameter(Axis::X);
+  }
   if (m_zoomNormalize) {
     float yUnit = yGridUnit();
     if ((xMax() - xMin()) / yUnit <= k_maxNumberOfXGridUnits) {
@@ -85,6 +88,9 @@ float InteractiveCurveViewRange::xGridUnit() const {
 }
 
 float InteractiveCurveViewRange::yGridUnit() const {
+  if (!gridUnitAuto(Axis::Y)) {
+    return computeGridUnitFromUserParameter(Axis::Y);
+  }
   float res = MemoizedCurveViewRange::yGridUnit();
   if (m_zoomNormalize) {
     /* When m_zoomNormalize is active, both xGridUnit and yGridUnit will be the
@@ -404,6 +410,95 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
   }
 
   setZoomNormalize(isOrthonormal());
+}
+
+float InteractiveCurveViewRange::computeGridUnitFromUserParameter(
+    Axis axis) const {
+  assert(!gridUnitAuto(axis));
+  float minNumberOfUnits, maxNumberOfUnits, range;
+  if (axis == Axis::X) {
+    minNumberOfUnits = k_minNumberOfXGridUnits;
+    maxNumberOfUnits = k_maxNumberOfXGridUnits;
+    range = xMax() - xMin();
+  } else {
+    assert(axis == Axis::Y);
+    minNumberOfUnits = k_minNumberOfYGridUnits;
+    maxNumberOfUnits = k_maxNumberOfYGridUnits;
+    range = yMax() - yMin() + offscreenYAxis();
+  }
+  assert(range > 0.0f && std::isfinite(range));
+  float userGridUnit = m_userGridUnit(axis);
+  assert(userGridUnit > 0.0f);
+  float numberOfUnits = range / userGridUnit;  // in float for now
+  if (minNumberOfUnits <= numberOfUnits && numberOfUnits <= maxNumberOfUnits) {
+    // Case 1
+    return userGridUnit;
+  } else if (numberOfUnits < minNumberOfUnits) {
+    // Case 2
+    assert(std::ceil(minNumberOfUnits / numberOfUnits) <=
+           std::floor(maxNumberOfUnits / numberOfUnits));
+    int k = std::ceil(minNumberOfUnits / numberOfUnits);
+    return userGridUnit / k;
+  }
+  assert(numberOfUnits > maxNumberOfUnits);
+  // Case 3
+  assert(std::ceil(numberOfUnits / maxNumberOfUnits) <=
+         std::floor(numberOfUnits / minNumberOfUnits));
+  int k = std::ceil(numberOfUnits / maxNumberOfUnits);
+  return userGridUnit * k;
+
+  // clang-format off
+  /* Proof of the algorithm:
+   *
+   * We want to find gridUnit = userGridUnit * k or gridUnit = userGridUnit / k, with k an integer.
+   * We want: minNumberOfUnits <= range / gridUnit <= maxNumberOfUnits
+   *
+   * Case 1: minNumberOfUnits <= range / userGridUnit <= maxNumberOfUnits
+   * ------
+   * The solution is userGridUnit.
+   *
+   * Case 2: range / userGridUnit < minNumberOfUnits
+   * -------
+   * We want to decrease the grid unit, so we look for gridUnit = userGridUnit / k, with k an integer
+   * A solution thus needs to verify:
+   *       minNumberOfUnits <= range / (userGridUnit / k) <= maxNumberOfUnits
+   * <=>   minNumberOfUnits <=  k * range / userGridUnit  <= maxNumberOfUnits
+   * <=>   E1 = minNumberOfUnits * userGridUnit / range <= k <= maxNumberOfUnits * userGridUnit / range = E2
+   * Since k must be a integer,
+   * <=>   ceil(E1) <= k <= floor(E2)
+   *
+   * We have a solution if ceil(E1) <= floor(E2) <=> floor(E1) < floor(E2) <=> floor(E1) != floor(E2)
+   *
+   * Let's compute E2 - E1:
+   * E2 - E1 = (maxNumberOfUnits - minNumberOfUnits) * userGridUnit / range
+   * and since range / userGridUnit < minNumberOfUnits
+   * E2 - E1 > (maxNumberOfUnits - minNumberOfUnits) / minNumberOfUnits = E3
+   * For minNumberOfUnits = 7 and maxNumberOfUnits = 18, E3 = 1.57...
+   * For minNumberOfUnits = 5 and maxNumberOfUnits = 13, E3 = 1.6
+   * => E2 - E1 > 1.5
+   * => floor(E1) != floor(E2)
+   *
+   * We can take the smallest k solution to be as close as possible to the user input:
+   * ceil(E1) = ceil(minNumberOfUnits * userGridUnit / range)
+   *
+   * Case 3: range / userGridUnit > maxNumberOfUnits
+   * -------
+   * We want to increase the grid unit, so we look for gridUnit = userGridUnit * k, with k an integer
+   * Similar computation than in case 2 will give
+   * E1 = range / (maxNumberOfUnits * userGridUnit)
+   * E2 = range / (minNumberOfUnits * userGridUnit)
+   * Let's compute E2 - E1:
+   * E2 - E1 = (1/minNumberOfUnits - 1/maxNumberOfUnits) * range / userGridUnit
+   * and since range / userGridUnit > maxNumberOfUnits
+   * E2 - E1 > (1/minNumberOfUnits - 1/maxNumberOfUnits) * maxNumberOfUnits = (maxNumberOfUnits - minNumberOfUnits) / minNumberOfUnits = E3
+   * We saw in case 2 that E3 > 1.5
+   * => E2 - E1 > 1.5
+   * => floor(E1) != floor(E2)
+   *
+   * We can take the smallest k solution to be as close as possible to the user input:
+   * ceil(E1) = ceil(range / (maxNumberOfUnits * userGridUnit))
+   * */
+  // clang-format on
 }
 
 }  // namespace Shared

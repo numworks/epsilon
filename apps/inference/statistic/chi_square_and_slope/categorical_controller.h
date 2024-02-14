@@ -120,6 +120,8 @@ class InputNamedListsCategoricalController : public InputCategoricalController,
       Escher::StackViewController* parent,
       Escher::ViewController* resultsController, Statistic* statistic);
 
+  void viewWillAppear() override;
+
  protected:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:
@@ -145,6 +147,8 @@ class InputNamedListsCategoricalController : public InputCategoricalController,
                : InputCategoricalController::reusableCell(index, type);
   }
   void onDropdownSelected(int selectedRow) override{};  // TODO
+
+  virtual char listPrefix(int column) const = 0;
 
   DropdownDataSource m_dropdownDataSource;
   DropdownCategoricalCell m_dropdownCell;

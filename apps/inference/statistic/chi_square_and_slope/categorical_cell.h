@@ -66,6 +66,7 @@ class DropdownCategoricalCell : public AbstractCategoricalCell {
   void setMessage(I18n::Message message) {
     m_innerCell.label()->setMessage(message);
   }
+  Escher::Dropdown* dropdown() { return &m_dropdown; }
 
  private:
   HighlightCell* subviewAtIndex(int i) override { return &m_innerCell; }

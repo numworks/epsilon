@@ -41,6 +41,7 @@ class SingleInteractiveCurveViewRangeController
     assert(index == 0 || index == 1);
     return index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum;
   }
+  bool boundsParametersAreDifferent();
   bool parametersAreDifferent() override;
   void extractParameters() override;
   void setAutoRange() override;

@@ -23,15 +23,19 @@ void SingleInteractiveCurveViewRangeController::setAxis(Axis axis) {
   extractParameters();
 }
 
-bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
+bool SingleInteractiveCurveViewRangeController::boundsParametersAreDifferent() {
   /* m_secondaryRangeParam is ignored here because it is only relevant when main
    * parameters (xAuto) are different. */
   float min = m_axis == Axis::X ? m_range->xMin() : m_range->yMin();
   float max = m_axis == Axis::X ? m_range->xMax() : m_range->yMax();
 
   return m_autoParam != m_range->zoomAuto(m_axis) ||
-         m_gridUnitParam != m_range->userGridUnit(m_axis) ||
          m_rangeParam.min() != min || m_rangeParam.max() != max;
+}
+
+bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
+  return boundsParametersAreDifferent() ||
+         m_gridUnitParam != m_range->userGridUnit(m_axis);
 }
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {
@@ -74,32 +78,31 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
 }
 
 void SingleInteractiveCurveViewRangeController::confirmParameters() {
-  if (!parametersAreDifferent()) {
-    return;
-  }
   m_range->setUserGridUnit(m_axis, m_gridUnitParam);
-  // Deactivate auto status before updating values.
-  m_range->setZoomAuto(m_axis, false);
+  if (boundsParametersAreDifferent()) {
+    // Deactivate auto status before updating values.
+    m_range->setZoomAuto(m_axis, false);
+    if (m_axis == Axis::X) {
+      m_range->setXRange(m_rangeParam.min(), m_rangeParam.max());
+      m_range->setZoomAuto(m_axis, m_autoParam);
+      if (m_autoParam && m_range->zoomAuto(Axis::Y)) {
+        /* yMin and yMax must also be updated. We could avoid having to store
+         * these values if we called m_range->computeRanges() instead, but it
+         * would cost a significant computation time. */
+        assert(!std::isnan(m_secondaryRangeParam.min()) &&
+               !std::isnan(m_secondaryRangeParam.max()));
 
-  if (m_axis == Axis::X) {
-    m_range->setXRange(m_rangeParam.min(), m_rangeParam.max());
-    m_range->setZoomAuto(m_axis, m_autoParam);
-    if (m_autoParam && m_range->zoomAuto(Axis::Y)) {
-      /* yMin and yMax must also be updated. We could avoid having to store
-       * these values if we called m_range->computeRanges() instead, but it
-       * would cost a significant computation time. */
-      assert(!std::isnan(m_secondaryRangeParam.min()) &&
-             !std::isnan(m_secondaryRangeParam.max()));
-
-      m_range->setZoomAuto(Axis::Y, false);
-      m_range->setYRange(m_secondaryRangeParam.min(),
-                         m_secondaryRangeParam.max());
-      m_range->setZoomAuto(Axis::Y, true);
+        m_range->setZoomAuto(Axis::Y, false);
+        m_range->setYRange(m_secondaryRangeParam.min(),
+                           m_secondaryRangeParam.max());
+        m_range->setZoomAuto(Axis::Y, true);
+      }
+    } else {
+      assert(m_axis == Axis::Y);
+      m_range->setYRange(m_rangeParam.min(), m_rangeParam.max());
+      m_range->setZoomAuto(m_axis, m_autoParam);
     }
-  } else {
-    assert(m_axis == Axis::Y);
-    m_range->setYRange(m_rangeParam.min(), m_rangeParam.max());
-    m_range->setZoomAuto(m_axis, m_autoParam);
+    assert(!boundsParametersAreDifferent());
   }
   assert(!parametersAreDifferent());
 }

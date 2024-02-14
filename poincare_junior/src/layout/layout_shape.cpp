@@ -19,7 +19,6 @@ enum class LayoutShape {
   Root,
   NthRoot,
   Fraction,
-  RightOfPower,
   Default
 };
 

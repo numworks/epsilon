@@ -20,13 +20,11 @@ class Render final {
  public:
   static KDSize Size(const Tree* node, KDFont::Size fontSize) {
     s_font = fontSize;
-    s_showEmptyRack = false;
-    return Size(static_cast<const Rack*>(node));
+    return Size(static_cast<const Rack*>(node), false);
   }
 
   static KDCoordinate Baseline(const Tree* node, KDFont::Size fontSize) {
     s_font = fontSize;
-    s_showEmptyRack = false;
     return Baseline(static_cast<const Rack*>(node));
   }
 
@@ -41,7 +39,9 @@ class Render final {
   static KDSize Size(const LayoutT* node);
 
   static KDCoordinate Height(const Rack* node) { return Size(node).height(); }
-  static KDCoordinate Width(const Rack* node) { return Size(node).width(); }
+  static KDCoordinate Width(const Rack* node, bool showEmpty = true) {
+    return Size(node, showEmpty).width();
+  }
   static KDCoordinate Height(const LayoutT* node) {
     return Size(node).height();
   }
@@ -51,8 +51,7 @@ class Render final {
   // Empty should not change the baseline so no extra argument here
   static KDCoordinate Baseline(const Rack* node);
 
-  static KDPoint PositionOfChild(const Rack* node, int childIndex,
-                                 bool showEmpty = true);
+  static KDPoint PositionOfChild(const Rack* node, int childIndex);
   static KDPoint PositionOfChild(const LayoutT* node, int childIndex);
 
   static KDSize SizeAny(const Tree* node) {
@@ -81,7 +80,6 @@ class Render final {
                          KDColor expressionColor, KDColor backgroundColor);
 
   static KDFont::Size s_font;
-  static bool s_showEmptyRack;
 };
 
 }  // namespace PoincareJ

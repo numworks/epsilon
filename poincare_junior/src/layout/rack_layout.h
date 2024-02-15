@@ -21,7 +21,7 @@ class RackLayout {
     return node->numberOfChildren() == 1 &&
            !node->child(0)->isVerticalOffsetLayout();
   }
-  static KDSize Size(const Rack* node);
+  static KDSize Size(const Rack* node, bool showEmpty);
   static KDCoordinate Baseline(const Rack* node);
   static KDPoint ChildPosition(const Rack* node, int i);
   using Callback = void(const LayoutT* child, KDSize childSize,
@@ -29,15 +29,15 @@ class RackLayout {
                         void* context);
   static void IterBetweenIndexes(const Rack* node, int leftPosition,
                                  int rightPosition, Callback callback,
-                                 void* context);
+                                 void* context, bool showEmpty);
   static KDSize SizeBetweenIndexes(const Rack* node, int leftPosition,
-                                   int rightPosition);
+                                   int rightPosition, bool showEmpty = false);
   static KDCoordinate BaselineBetweenIndexes(const Rack* node, int leftPosition,
                                              int rightPosition);
   static bool ShouldDrawEmptyRectangle(const Rack* node);
   static bool ShouldDrawEmptyBaseAt(const Rack* node, int childIndex);
   static void RenderNode(const Rack* node, KDContext* ctx, KDPoint p,
-                         bool isGridPlaceholder = false);
+                         bool showEmpty, bool isGridPlaceholder = false);
 
   static const LayoutCursor* s_layoutCursor;
 };

@@ -16,8 +16,8 @@ constexpr static KDCoordinate IndiceHeight = 10;
 
 const LayoutCursor* RackLayout::s_layoutCursor = nullptr;
 
-KDSize RackLayout::Size(const Rack* node) {
-  return SizeBetweenIndexes(node, 0, node->numberOfChildren());
+KDSize RackLayout::Size(const Rack* node, bool showEmpty) {
+  return SizeBetweenIndexes(node, 0, node->numberOfChildren(), showEmpty);
 }
 
 KDCoordinate RackLayout::Baseline(const Rack* node) {
@@ -81,13 +81,14 @@ void FindBaseForward(const LayoutT* child, int maxDepth,
 
 void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
                                     int rightIndex, Callback callback,
-                                    void* context) {
+                                    void* context, bool showEmpty) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node->numberOfChildren());
   int numberOfChildren = node->numberOfChildren();
   if (numberOfChildren == 0) {
     KDSize emptySize = EmptyRectangle::Size(Render::s_font);
-    KDCoordinate width = ShouldDrawEmptyRectangle(node) ? emptySize.width() : 0;
+    KDCoordinate width =
+        (showEmpty && ShouldDrawEmptyRectangle(node)) ? emptySize.width() : 0;
     callback(nullptr, KDSize(width, emptySize.height()),
              EmptyRectangle::Baseline(Render::s_font),
              {0, EmptyRectangle::Baseline(Render::s_font)}, context);
@@ -172,7 +173,7 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
 }
 
 KDSize RackLayout::SizeBetweenIndexes(const Rack* node, int leftIndex,
-                                      int rightIndex) {
+                                      int rightIndex, bool showEmpty) {
   if (IsTrivial(node) && leftIndex == 0 && rightIndex == 1) {
     return Render::Size(node->child(0));
   }
@@ -191,7 +192,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Rack* node, int leftIndex,
         std::max(context->maxAboveBaseline, childBaseline);
   };
   Context context = {};
-  IterBetweenIndexes(node, leftIndex, rightIndex, iter, &context);
+  IterBetweenIndexes(node, leftIndex, rightIndex, iter, &context, showEmpty);
   return KDSize(context.totalWidth,
                 context.maxUnderBaseline + context.maxAboveBaseline);
 }
@@ -212,7 +213,7 @@ KDPoint RackLayout::ChildPosition(const Rack* node, int i) {
     context->baseline = position.y();
   };
   Context context;
-  IterBetweenIndexes(node, 0, i + 1, iter, &context);
+  IterBetweenIndexes(node, 0, i + 1, iter, &context, false);
   return KDPoint(context.x, baseline - context.baseline);
 }
 
@@ -236,12 +237,12 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Rack* node, int leftIndex,
         std::max(context->maxAboveBaseline, childBaseline);
   };
   Context context = {};
-  IterBetweenIndexes(node, leftIndex, rightIndex, iter, &context);
+  IterBetweenIndexes(node, leftIndex, rightIndex, iter, &context, false);
   return context.maxAboveBaseline;
 }
 
 bool RackLayout::ShouldDrawEmptyRectangle(const Rack* node) {
-  if (node->numberOfChildren() != 0 || !Render::s_showEmptyRack) {
+  if (node->numberOfChildren() != 0) {
     return false;
   }
   if (!RackLayout::s_layoutCursor) {
@@ -254,8 +255,8 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Rack* node) {
 }
 
 void RackLayout::RenderNode(const Rack* node, KDContext* ctx, KDPoint pos,
-                            bool isGridPlaceholder) {
-  if (ShouldDrawEmptyRectangle(node)) {
+                            bool showEmpty, bool isGridPlaceholder) {
+  if (showEmpty && ShouldDrawEmptyRectangle(node)) {
     EmptyRectangle::DrawEmptyRectangle(ctx, pos, Render::s_font,
                                        isGridPlaceholder
                                            ? EmptyRectangle::Color::Gray

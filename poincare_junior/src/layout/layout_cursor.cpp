@@ -51,7 +51,6 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
-  Render::s_showEmptyRack = false;
   int left, right;
   if (currentSelection.isEmpty()) {
     left = std::max(leftmostPosition(), m_position - 1);

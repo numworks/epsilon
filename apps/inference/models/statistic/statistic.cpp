@@ -1,7 +1,7 @@
 #include "statistic.h"
 
-#include "one_mean_t_interval.h"
-#include "one_mean_t_test.h"
+#include "one_mean_interval.h"
+#include "one_mean_test.h"
 
 namespace Inference {
 

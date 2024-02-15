@@ -9,7 +9,7 @@
 
 #include <new>
 
-#include "one_mean_t_interval.h"
+#include "one_mean_interval.h"
 #include "one_proportion_z_interval.h"
 #include "slope_t_interval.h"
 #include "two_means_t_interval.h"

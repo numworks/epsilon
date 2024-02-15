@@ -1,9 +1,7 @@
 #include "significance_tests.h"
 
-#include <inference/models/statistic/one_mean_t_interval.h>
-#include <inference/models/statistic/one_mean_t_test.h>
-#include <inference/models/statistic/one_mean_z_interval.h>
-#include <inference/models/statistic/one_mean_z_test.h>
+#include <inference/models/statistic/one_mean_interval.h>
+#include <inference/models/statistic/one_mean_test.h>
 #include <inference/models/statistic/pooled_two_means_t_interval.h>
 #include <inference/models/statistic/pooled_two_means_t_test.h>
 #include <inference/models/statistic/two_means_t_interval.h>

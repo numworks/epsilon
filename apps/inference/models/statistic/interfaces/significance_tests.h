@@ -21,7 +21,10 @@ class SignificanceTest {
 
 class OneMean : public SignificanceTest {
  public:
+  enum class Type { T, Z };
   enum ParamsOrder { x, s, n };
+
+#define DISPATCH_TZ(TOption, ZOption) (d == Type::T ? TOption : ZOption)
 
   // Initialization
   static bool TestInitializeDistribution(Statistic* statistic,
@@ -30,11 +33,9 @@ class OneMean : public SignificanceTest {
                                              DistributionType distributionType);
 
   // Description
-  static I18n::Message ZTitle() {
-    return I18n::Message::HypothesisControllerTitleOneMeanZ;
-  }
-  static I18n::Message TTitle() {
-    return I18n::Message::HypothesisControllerTitleOneMeanT;
+  static I18n::Message Title(Type d) {
+    return DISPATCH_TZ(I18n::Message::HypothesisControllerTitleOneMeanT,
+                       I18n::Message::HypothesisControllerTitleOneMeanZ);
   }
   static I18n::Message DistributionTitle() {
     return I18n::Message::TypeControllerTitleOne;
@@ -46,29 +47,48 @@ class OneMean : public SignificanceTest {
   // Parameters
   static int NumberOfAvailableDistributions() { return 2; }
   static void InitTestParameters(Test* test);
-  static void InitTIntervalParameters(Interval* interval);
-  static void InitZIntervalParameters(Interval* interval);
-  static bool ZAuthorizedParameterAtIndex(int index, double p);
-  static bool TAuthorizedParameterAtIndex(int index, double p);
+  static void InitIntervalParameters(Type d, Interval* interval) {
+    DISPATCH_TZ(InitTIntervalParameters, InitZIntervalParameters)(interval);
+  }
+  static bool AuthorizedParameterAtIndex(Type d, int index, double p) {
+    return DISPATCH_TZ(TAuthorizedParameterAtIndex,
+                       ZAuthorizedParameterAtIndex)(index, p);
+  }
   static double ProcessParamaterForIndex(double p, int index);
   static int NumberOfParameters() { return k_numberOfParams; }
-  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(
-      int index);
-  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(
-      int index);
+  static Shared::ParameterRepresentation ParameterRepresentationAtIndex(
+      Type d, int index) {
+    return DISPATCH_TZ(TParameterRepresentationAtIndex,
+                       ZParameterRepresentationAtIndex)(index);
+  }
   static double X(double* params) { return params[ParamsOrder::x]; }
   static double S(double* params) { return params[ParamsOrder::s]; }
   static double N(double* params) { return params[ParamsOrder::n]; }
 
   // Computation
-  static void ComputeZTest(Test* test);
-  static void ComputeTTest(Test* test);
-  static void ComputeZInterval(Interval* interval);
-  static void ComputeTInterval(Interval* interval);
+  static void ComputeTest(Type d, Test* test) {
+    DISPATCH_TZ(ComputeTTest, ComputeZTest)(test);
+  }
+  static void ComputeInterval(Type d, Interval* interval) {
+    DISPATCH_TZ(ComputeTInterval, ComputeZInterval)(interval);
+  }
 
   constexpr static int k_numberOfParams = 3;
 
  private:
+  static void InitTIntervalParameters(Interval* interval);
+  static void InitZIntervalParameters(Interval* interval);
+  static bool TAuthorizedParameterAtIndex(int index, double p);
+  static bool ZAuthorizedParameterAtIndex(int index, double p);
+  static void ComputeTTest(Test* test);
+  static void ComputeZTest(Test* test);
+  static void ComputeTInterval(Interval* interval);
+  static void ComputeZInterval(Interval* interval);
+  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(
+      int index);
+  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(
+      int index);
+
   static double ComputeDegreesOfFreedom(double n) { return n - 1.0; }
   static double ComputeTZ(double mean, double meanSample, double s, double n) {
     return (meanSample - mean) / (s / std::sqrt(n));

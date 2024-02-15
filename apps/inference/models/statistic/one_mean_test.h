@@ -1,19 +1,17 @@
-#ifndef INFERENCE_MODELS_STATISTIC_ONE_MEAN_Z_TEST_H
-#define INFERENCE_MODELS_STATISTIC_ONE_MEAN_Z_TEST_H
+#ifndef INFERENCE_MODELS_STATISTIC_ONE_MEAN_TEST_H
+#define INFERENCE_MODELS_STATISTIC_ONE_MEAN_TEST_H
 
+#include "one_mean_statistic.h"
 #include "test.h"
 
 namespace Inference {
 
-class OneMeanZTest : public Test {
+class OneMeanTest : public Test, public OneMeanStatistic {
  public:
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::OneMean;
   }
-  DistributionType distributionType() const override {
-    return DistributionType::Z;
-  }
-  I18n::Message title() const override { return OneMean::ZTitle(); }
+  I18n::Message title() const override { return OneMean::Title(oneMeanType()); }
 
   // Significance Test: OneMean
   bool initializeDistribution(DistributionType distributionType) override {
@@ -31,27 +29,43 @@ class OneMeanZTest : public Test {
   void initParameters() override { OneMean::InitTestParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override {
     return Inference::authorizedParameterAtIndex(p, i) &&
-           OneMean::ZAuthorizedParameterAtIndex(i, p);
+           OneMean::AuthorizedParameterAtIndex(oneMeanType(), i, p);
   }
   void setParameterAtIndex(double p, int index) override {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
 
-  void compute() override { OneMean::ComputeZTest(this); }
+  void compute() override { OneMean::ComputeTest(oneMeanType(), this); }
 
  private:
+  OneMean::Type oneMeanType() const {
+    return OneMeanStatistic::OneMeanType(this);
+  }
+
   // Significance Test
   int numberOfStatisticParameters() const override {
     return OneMean::NumberOfParameters();
   }
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
-    return OneMean::ZParameterRepresentationAtIndex(i);
+    return OneMean::ParameterRepresentationAtIndex(oneMeanType(), i);
   }
   double* parametersArray() override { return m_params; }
+};
 
-  double m_params[OneMean::k_numberOfParams];
+class OneMeanTTest : public OneMeanTest {
+ public:
+  DistributionType distributionType() const override {
+    return DistributionType::T;
+  }
+};
+
+class OneMeanZTest : public OneMeanTest {
+ public:
+  DistributionType distributionType() const override {
+    return DistributionType::Z;
+  }
 };
 
 }  // namespace Inference

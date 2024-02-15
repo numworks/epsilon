@@ -165,7 +165,7 @@ KDSize Render::Size(const LayoutT* node) {
     case LayoutType::Floor:
     case LayoutType::Ceiling:
     case LayoutType::VectorNorm: {
-      KDSize childSize = Size(node->child(0));
+      KDSize childSize = Size(node->child(0), !node->isAutocompletedPair());
       width = 2 * Pair::BracketWidth(node) + childSize.width();
       height = Pair::Height(childSize.height(), Pair::MinVerticalMargin(node));
       break;
@@ -586,37 +586,17 @@ void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
    * when they overlap. We could add a flag to draw it only when necessary. */
   ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(node), false)),
                 backgroundColor);
-  PrivateDraw(node, ctx, p, expressionColor, backgroundColor,
-              cursor ? cursor->selection() : LayoutSelection());
-}
-
-void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
-                         KDColor expressionColor, KDColor backgroundColor,
-                         LayoutSelection selection) {
-  bool hadShowEmptyRack = s_showEmptyRack;
-  s_showEmptyRack =
-      node->isRackLayout() ? hadShowEmptyRack : !node->isAutocompletedPair();
-  assert(node->isLayout());
-  if (node->isRackLayout()) {
-    PrivateDrawRack(Rack::From(node), ctx, p, expressionColor, backgroundColor,
-                    selection);
-  } else if (node->isGridLayout()) {
-    PrivateDrawGridLayout(LayoutT::From(node), ctx, p, expressionColor,
-                          backgroundColor, selection);
-  } else {
-    PrivateDrawSimpleLayout(LayoutT::From(node), ctx, p, expressionColor,
-                            backgroundColor, selection);
-  }
-  s_showEmptyRack = hadShowEmptyRack;
+  PrivateDrawRack(Rack::From(node), ctx, p, expressionColor, backgroundColor,
+                  cursor ? cursor->selection() : LayoutSelection(), false);
 }
 
 void Render::PrivateDrawRack(const Rack* node, KDContext* ctx, KDPoint p,
                              KDColor expressionColor, KDColor backgroundColor,
-                             LayoutSelection selection) {
+                             LayoutSelection selection, bool showEmpty) {
   if (RackLayout::IsTrivial(node) && selection.layout() != node) {
     // Early escape racks with only one child
-    PrivateDraw(node->child(0), ctx, p, expressionColor, backgroundColor,
-                selection);
+    PrivateDrawSimpleLayout(node->child(0), ctx, p, expressionColor,
+                            backgroundColor, selection);
     return;
   }
   KDCoordinate baseline = RackLayout::Baseline(node);
@@ -672,8 +652,8 @@ void Render::PrivateDrawRack(const Rack* node, KDContext* ctx, KDPoint p,
       backgroundColor = selectionColor;
     }
     if (child) {
-      PrivateDraw(child, context->ctx, p, context->expressionColor,
-                  backgroundColor, context->selection);
+      PrivateDrawSimpleLayout(child, context->ctx, p, context->expressionColor,
+                              backgroundColor, context->selection);
     } else if (childSize.width() > 0) {
       EmptyRectangle::DrawEmptyRectangle(context->ctx, p, s_font,
                                          EmptyRectangle::Color::Yellow);
@@ -688,11 +668,16 @@ void Render::PrivateDrawSimpleLayout(const LayoutT* node, KDContext* ctx,
                                      KDPoint p, KDColor expressionColor,
                                      KDColor backgroundColor,
                                      LayoutSelection selection) {
+  if (node->isGridLayout()) {
+    return PrivateDrawGridLayout(node, ctx, p, expressionColor, backgroundColor,
+                                 selection);
+  }
   assert(node->numberOfChildren() <= 4);
   RenderNode(node, ctx, p, expressionColor, backgroundColor);
   for (int i = 0; const Tree* child : node->children()) {
-    PrivateDraw(child, ctx, PositionOfChild(node, i++).translatedBy(p),
-                expressionColor, backgroundColor, selection);
+    PrivateDrawRack(Rack::From(child), ctx,
+                    PositionOfChild(node, i++).translatedBy(p), expressionColor,
+                    backgroundColor, selection, !node->isAutocompletedPair());
   }
 }
 
@@ -760,7 +745,8 @@ void Render::PrivateDrawGridLayout(const LayoutT* node, KDContext* ctx,
     if (grid->childIsPlaceholder(index)) {
       RackLayout::RenderNode(childRack, ctx, pc, true);
     } else {
-      PrivateDraw(child, ctx, pc, expressionColor, backgroundColor, selection);
+      PrivateDrawRack(childRack, ctx, pc, expressionColor, backgroundColor,
+                      selection, true);
     }
   }
 }
@@ -1037,9 +1023,9 @@ void Render::RenderNode(const LayoutT* node, KDContext* ctx, KDPoint p,
           GetVariableSlot(node) == VariableSlot::Fraction
               ? variableAssignmentPosition
               : positionOfVariableInFractionSlot(node, style.font);
-      PrivateDraw(node->child(k_variableIndex), ctx,
-                  copyPosition.translatedBy(p), expressionColor,
-                  backgroundColor, {});
+      PrivateDrawRack(node->child(k_variableIndex), ctx,
+                      copyPosition.translatedBy(p), expressionColor,
+                      backgroundColor, {});
 
       if (node->isNthDerivativeLayout()) {
         // Draw the copy of the order
@@ -1047,9 +1033,9 @@ void Render::RenderNode(const LayoutT* node, KDContext* ctx, KDPoint p,
             GetOrderSlot(node) == OrderSlot::Denominator
                 ? positionOfOrderInNumerator(node, style.font)
                 : positionOfOrderInDenominator(node, style.font);
-        PrivateDraw(node->child(k_orderIndex), ctx,
-                    copyPosition.translatedBy(p), expressionColor,
-                    backgroundColor, {});
+        PrivateDrawRack(node->child(k_orderIndex), ctx,
+                        copyPosition.translatedBy(p), expressionColor,
+                        backgroundColor, {});
       }
       return;
     }

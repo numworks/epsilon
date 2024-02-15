@@ -66,9 +66,6 @@ class Render final {
                : PositionOfChild(static_cast<const LayoutT*>(node), childIndex);
   }
 
-  static void PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
-                          KDColor expressionColor, KDColor backgroundColor,
-                          LayoutSelection selection);
   static void PrivateDrawSimpleLayout(const LayoutT* node, KDContext* ctx,
                                       KDPoint p, KDColor expressionColor,
                                       KDColor backgroundColor,
@@ -79,7 +76,7 @@ class Render final {
                                     LayoutSelection selection);
   static void PrivateDrawRack(const Rack* node, KDContext* ctx, KDPoint p,
                               KDColor expressionColor, KDColor backgroundColor,
-                              LayoutSelection selection);
+                              LayoutSelection selection, bool showEmpty = true);
   static void RenderNode(const LayoutT* node, KDContext* ctx, KDPoint p,
                          KDColor expressionColor, KDColor backgroundColor);
 

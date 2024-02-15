@@ -326,6 +326,7 @@ int DerivativeNode::extractIntegerOrder() const {
       Derivative(this), numberOfChildren() - 1, &derivationOrder,
       &orderIsSymbol);
   assert(!orderIsSymbol && orderIsInteger && derivationOrder >= 0);
+  (void)orderIsInteger;  // Silence compilation warning.
   return derivationOrder;
 }
 

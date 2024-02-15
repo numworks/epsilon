@@ -102,7 +102,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   if (selecting && !isSelecting()) {
     privateStartSelecting();
   }
-  Tree *oldRack = cursorNode();
+  Rack *oldRack = cursorNode();
   bool moved = false;
   bool wasEmpty = RackLayout::IsEmpty(cursorNode());
   const Tree *oldGridParent = mostNestedGridParent(cursorNode(), rootNode());
@@ -136,7 +136,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   return moved;
 }
 
-bool LayoutBufferCursor::beautifyRightOfRack(Tree *rack, Context *context) {
+bool LayoutBufferCursor::beautifyRightOfRack(Rack *rack, Context *context) {
   execute(&EditionPoolCursor::beautifyRightOfRackAction, context,
           reinterpret_cast<const void *>(rack - cursorNode()));
   // TODO return shouldRedrawLayout through execute
@@ -144,7 +144,7 @@ bool LayoutBufferCursor::beautifyRightOfRack(Tree *rack, Context *context) {
 }
 
 bool LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRack(
-    Tree *targetRack, Context *context) {
+    Rack *targetRack, Context *context) {
   LayoutBufferCursor::EditionPoolCursor tempCursor = *this;
   tempCursor.setLayout(targetRack, OMG::Direction::Right());
   return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(&tempCursor,
@@ -153,7 +153,7 @@ bool LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRack(
 
 void LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRackAction(
     Context *context, const void *rackOffset) {
-  Tree *targetRack = cursorNode() + reinterpret_cast<long int>(rackOffset);
+  Rack *targetRack = cursorNode() + reinterpret_cast<long int>(rackOffset);
   beautifyRightOfRack(targetRack, context);
 }
 
@@ -627,21 +627,22 @@ void LayoutCursor::beautifyLeft(Context *context) {
 void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
   if (!l->isRackLayout()) {
     int indexInParent;
-    Tree *parent = rootNode()->parentOfDescendant(l, &indexInParent);
+    Rack *parent =
+        Rack::From(rootNode()->parentOfDescendant(l, &indexInParent));
     setCursorNode(parent);
     m_position = indexInParent + (sideOfLayout.isRight());
     return;
   }
-  setCursorNode(l);
+  setCursorNode(Rack::From(l));
   m_position = sideOfLayout.isLeft() ? leftmostPosition() : rightmostPosition();
 }
 
-Tree *LayoutCursor::leftLayout() const {
+LayoutT *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
   return m_position == 0 ? nullptr : cursorNode()->child(m_position - 1);
 }
 
-Tree *LayoutCursor::rightLayout() const {
+LayoutT *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
   if (m_position == cursorNode()->numberOfChildren()) {
     return nullptr;
@@ -653,7 +654,7 @@ Tree *LayoutCursor::parentLayout(int *index) const {
   return rootNode()->parentOfDescendant(cursorNode(), index);
 }
 
-void LayoutCursor::setCursorNode(Tree *node, int childIndex,
+void LayoutCursor::setCursorNode(Rack *node, int childIndex,
                                  OMG::HorizontalDirection side) {
   setLayout(node->child(childIndex), side);
 }
@@ -751,7 +752,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
      *
      * */
     setCursorNode(
-        nextLayout, newIndex,
+        Rack::From(nextLayout), newIndex,
         direction.isLeft() ? OMG::Direction::Right() : OMG::Direction::Left());
     return true;
   }
@@ -779,7 +780,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
   int nextLayoutIndex;
   Tree *parent = rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
   const Tree *previousLayout = cursorNode();
-  setCursorNode(parent);
+  setCursorNode(Rack::From(parent));
   m_position = nextLayoutIndex + (direction.isRight());
 
   if (isSelecting() && cursorNode() != previousLayout) {
@@ -847,7 +848,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
    * Try to enter right or left layout if it can be entered through up/down
    * */
   if (!isSelecting()) {
-    Tree *nextLayout = rightLayout();
+    LayoutT *nextLayout = rightLayout();
     PositionInLayout positionRelativeToNextLayout = PositionInLayout::Left;
     // Repeat for right and left
     for (int i = 0; i < 2; i++) {
@@ -1157,8 +1158,8 @@ void LayoutBufferCursor::EditionPoolCursor::
 void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
   m_position = cursor.m_position;
   m_startOfSelection = cursor.m_startOfSelection;
-  setCursorNode(
-      Tree::FromBlocks(rootNode()->block() + cursor.cursorNodeOffset()));
+  setCursorNode(Rack::From(
+      Tree::FromBlocks(rootNode()->block() + cursor.cursorNodeOffset())));
 }
 
 void LayoutBufferCursor::execute(Action action, Context *context,
@@ -1180,8 +1181,8 @@ void LayoutBufferCursor::execute(Action action, Context *context,
             executionContext->m_context, data);
         // Apply the changes
         bufferCursor->setCursorNode(
-            Tree::FromBlocks(bufferCursor->rootNode()->block() +
-                             editionCursor.cursorNodeOffset()));
+            Rack::From(Tree::FromBlocks(bufferCursor->rootNode()->block() +
+                                        editionCursor.cursorNodeOffset())));
         bufferCursor->applyEditionPoolCursor(editionCursor);
         /* The resulting EditionPool tree will be loaded back into
          * m_layoutBuffer and EditionPool will be flushed. */

@@ -6,10 +6,11 @@
 #include "empty_rectangle.h"
 #include "indices.h"
 #include "k_tree.h"
+#include "render.h"
 
 namespace PoincareJ {
 
-class Grid : public Tree {
+class Grid : public LayoutT {
  public:
   constexpr static KDCoordinate k_gridEntryMargin = 6;
 
@@ -28,12 +29,12 @@ class Grid : public Tree {
   void setNumberOfRows(uint8_t rows) { setNodeValue(0, rows); }
   void setNumberOfColumns(uint8_t columns) { setNodeValue(1, columns); }
 
-  const Tree* childAt(uint8_t col, uint8_t row) const;
-  Tree* childAt(uint8_t col, uint8_t row) {
-    return const_cast<Tree*>(const_cast<const Grid*>(this)->childAt(col, row));
+  const Rack* childAt(uint8_t col, uint8_t row) const;
+  Rack* childAt(uint8_t col, uint8_t row) {
+    return const_cast<Rack*>(const_cast<const Grid*>(this)->childAt(col, row));
   }
 
-  Tree* willFillEmptyChildAtIndex(int childIndex);
+  Rack* willFillEmptyChildAtIndex(int childIndex);
   int removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex);
 
   int rowAtChildIndex(int index) const;

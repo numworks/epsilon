@@ -4,7 +4,6 @@
 #include <escher/text_field.h>
 #include <omg/directions.h>
 #include <poincare/junior_layout.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/empty_rectangle.h>
 #include <poincare_junior/src/layout/rack_layout.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -12,6 +11,7 @@
 
 #include "cursor_motion.h"
 #include "layout_selection.h"
+#include "render.h"
 
 namespace PoincareJ {
 
@@ -54,8 +54,8 @@ class LayoutCursor {
   bool isUninitialized() const { return cursorNode() == nullptr; }
 
   // Getters and setters
-  virtual Tree* rootNode() const = 0;
-  virtual Tree* cursorNode() const = 0;
+  virtual Rack* rootNode() const = 0;
+  virtual Rack* cursorNode() const = 0;
   void setLayout(Tree* layout, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
   void setPosition(int position) { m_position = position; }
@@ -104,14 +104,14 @@ class LayoutCursor {
 #endif
 
  protected:
-  virtual void setCursorNode(Tree* node) = 0;
-  void setCursorNode(Tree* node, int childIndex, OMG::HorizontalDirection side);
+  virtual void setCursorNode(Rack* node) = 0;
+  void setCursorNode(Rack* node, int childIndex, OMG::HorizontalDirection side);
   int cursorNodeOffset() const {
     return cursorNode()->block() - rootNode()->block();
   }
 
-  Tree* leftLayout() const;
-  Tree* rightLayout() const;
+  LayoutT* leftLayout() const;
+  LayoutT* rightLayout() const;
   Tree* parentLayout(int* index) const;
 
   int leftmostPosition() const { return 0; }
@@ -129,7 +129,7 @@ class LayoutCursor {
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
 
-  virtual bool beautifyRightOfRack(Tree* rack, Context* context) = 0;
+  virtual bool beautifyRightOfRack(Rack* rack, Context* context) = 0;
 
   // Cursor's horizontal position
   int m_position;
@@ -159,8 +159,10 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
 
   Poincare::JuniorLayout layoutBuffer() { return m_layout; }
-  Tree* rootNode() const override { return const_cast<Tree*>(m_layout.tree()); }
-  Tree* cursorNode() const override { return rootNode() + m_cursorNode; }
+  Rack* rootNode() const override {
+    return static_cast<Rack*>(const_cast<Tree*>(m_layout.tree()));
+  }
+  Rack* cursorNode() const override { return rootNode() + m_cursorNode; }
 
   /* Layout insertion */
   void addEmptyMatrixLayout(Context* context);
@@ -197,13 +199,17 @@ class LayoutBufferCursor final : public LayoutCursor {
 
     EditionPoolCursor(int position, int startOfSelection, int cursorOffset)
         : LayoutCursor(position, startOfSelection) {
-      setCursorNode(Tree::FromBlocks(rootNode()->block() + cursorOffset));
+      setCursorNode(
+          Rack::From(Tree::FromBlocks(rootNode()->block() + cursorOffset)));
     }
 
-    Tree* rootNode() const override {
-      return Tree::FromBlocks(SharedEditionPool->firstBlock());
+    Rack* rootNode() const override {
+      return static_cast<Rack*>(
+          Tree::FromBlocks(SharedEditionPool->firstBlock()));
     }
-    Tree* cursorNode() const override { return m_cursorReference; }
+    Rack* cursorNode() const override {
+      return static_cast<Rack*>(static_cast<Tree*>(m_cursorReference));
+    }
 
     // EditionPoolCursor Actions
     void performBackspace(Context* context, const void* nullptrData);
@@ -222,10 +228,10 @@ class LayoutBufferCursor final : public LayoutCursor {
 
     void privateDelete(DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
-    void setCursorNode(Tree* node) override {
+    void setCursorNode(Rack* node) override {
       m_cursorReference = EditionReference(node);
     }
-    bool beautifyRightOfRack(Tree* rack, Context* context) override;
+    bool beautifyRightOfRack(Rack* rack, Context* context) override;
     void beautifyRightOfRackAction(Context* context, const void* rack);
 
     EditionReference m_cursorReference;
@@ -244,11 +250,11 @@ class LayoutBufferCursor final : public LayoutCursor {
   };
   void execute(Action action, Context* context = nullptr,
                const void* data = nullptr);
-  void setCursorNode(Tree* node) override {
+  void setCursorNode(Rack* node) override {
     // Don't use node here as it may be invalid during execute
-    m_cursorNode = node - rootNode();
+    m_cursorNode = node - Rack::From(static_cast<Tree*>(rootNode()));
   }
-  bool beautifyRightOfRack(Tree* rack, Context* context) override;
+  bool beautifyRightOfRack(Rack* rack, Context* context) override;
 
   // Buffer of cursor's layout
   Poincare::JuniorLayout m_layout;

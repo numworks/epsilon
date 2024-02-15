@@ -119,6 +119,8 @@ void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
                nullptr);
 }
 
-KDSize Layout::size(KDFont::Size font) const { return Render::Size(getTree()); }
+KDSize Layout::size(KDFont::Size font) const {
+  return Render::Size(getTree(), font);
+}
 
 }  // namespace PoincareJ

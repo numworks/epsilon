@@ -216,7 +216,7 @@ class Tree : public TypeBlock {
   Tree* detachNode() { return detach(false); };
   Tree* detachTree() { return detach(true); };
 
- private:
+ protected:
   // Iterators
   template <typename T>
   class AbstractIterator {

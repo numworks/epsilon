@@ -21,7 +21,7 @@ bool Render::s_showEmptyRack;
 
 constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
 
-KDSize Render::Size(const Tree* node) {
+KDSize Render::Size(const LayoutT* node) {
   bool hadShowEmptyRack = s_showEmptyRack;
   s_showEmptyRack =
       node->isRackLayout() ? hadShowEmptyRack : !node->isAutocompletedPair();
@@ -114,7 +114,7 @@ KDSize Render::Size(const Tree* node) {
               k_integrandHorizontalMargin + integrandSize.width() +
               k_differentialHorizontalMargin + dSize.width() +
               k_differentialHorizontalMargin + differentialSize.width();
-      const Tree* last = mostNestedIntegral(node, NestedPosition::Next);
+      const LayoutT* last = mostNestedIntegral(node, NestedPosition::Next);
       height =
           (node == last)
               ? k_boundVerticalMargin +
@@ -146,12 +146,6 @@ KDSize Render::Size(const Tree* node) {
                        totalLowerBoundSize.height(),
                    argumentSizeWithParentheses.height() -
                        Baseline(node->child(k_argumentIndex)));
-      break;
-    }
-    case LayoutType::Rack: {
-      KDSize rackSize = RackLayout::Size(node);
-      width = rackSize.width();
-      height = rackSize.height();
       break;
     }
     case LayoutType::Fraction: {
@@ -256,7 +250,7 @@ KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root) {
     if (nextChild > node) {
       // node is a descendant of child
       KDPoint value = AbsoluteOrigin(node, child)
-                          .translatedBy(PositionOfChild(root, childIndex));
+                          .translatedBy(PositionOfChildAny(root, childIndex));
       s_showEmptyRack = hadShowEmptyRack;
       return value;
     }
@@ -288,7 +282,7 @@ KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
       KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness));
 }
 
-KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
+KDPoint Render::PositionOfChild(const LayoutT* node, int childIndex) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
       KDCoordinate horizontalCenter =
@@ -430,9 +424,6 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
       return KDPoint(x, y);
     }
 
-    case LayoutType::Rack: {
-      return RackLayout::ChildPosition(node, childIndex);
-    }
     case LayoutType::Fraction: {
       KDCoordinate x =
           (Width(node) - Size(node->child(childIndex)).width()) / 2;
@@ -495,7 +486,7 @@ KDPoint Render::PositionOfChild(const Tree* node, int childIndex) {
   };
 }
 
-KDCoordinate Render::Baseline(const Tree* node) {
+KDCoordinate Render::Baseline(const LayoutT* node) {
   switch (node->layoutType()) {
     case LayoutType::Binomial:
       return (Binomial::KNHeight(node, s_font) + 1) / 2;
@@ -529,7 +520,7 @@ KDCoordinate Render::Baseline(const Tree* node) {
     }
     case LayoutType::Integral: {
       using namespace Integral;
-      const Tree* last = mostNestedIntegral(node, NestedPosition::Next);
+      const LayoutT* last = mostNestedIntegral(node, NestedPosition::Next);
       if (node == last) {
         return k_boundVerticalMargin +
                boundMaxHeight(node, BoundPosition::UpperBound, s_font) +
@@ -550,9 +541,6 @@ KDCoordinate Render::Baseline(const Tree* node) {
                                         (SymbolHeight(s_font) + 1) / 2,
                                     Baseline(node->child(k_argumentIndex)));
     }
-
-    case LayoutType::Rack:
-      return RackLayout::Baseline(node);
 
     case LayoutType::Fraction:
       return Height(node->child(0)) + Fraction::k_lineMargin +
@@ -596,7 +584,8 @@ void Render::Draw(const Tree* node, KDContext* ctx, KDPoint p,
   RackLayout::s_layoutCursor = cursor;
   /* TODO all screenshots work fine without the fillRect except labels on graphs
    * when they overlap. We could add a flag to draw it only when necessary. */
-  ctx->fillRect(KDRect(p, Size(node)), backgroundColor);
+  ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(node), false)),
+                backgroundColor);
   PrivateDraw(node, ctx, p, expressionColor, backgroundColor,
               cursor ? cursor->selection() : LayoutSelection());
 }
@@ -609,18 +598,19 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
       node->isRackLayout() ? hadShowEmptyRack : !node->isAutocompletedPair();
   assert(node->isLayout());
   if (node->isRackLayout()) {
-    PrivateDrawRack(node, ctx, p, expressionColor, backgroundColor, selection);
+    PrivateDrawRack(Rack::From(node), ctx, p, expressionColor, backgroundColor,
+                    selection);
   } else if (node->isGridLayout()) {
-    PrivateDrawGridLayout(node, ctx, p, expressionColor, backgroundColor,
-                          selection);
+    PrivateDrawGridLayout(LayoutT::From(node), ctx, p, expressionColor,
+                          backgroundColor, selection);
   } else {
-    PrivateDrawSimpleLayout(node, ctx, p, expressionColor, backgroundColor,
-                            selection);
+    PrivateDrawSimpleLayout(LayoutT::From(node), ctx, p, expressionColor,
+                            backgroundColor, selection);
   }
   s_showEmptyRack = hadShowEmptyRack;
 }
 
-void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
+void Render::PrivateDrawRack(const Rack* node, KDContext* ctx, KDPoint p,
                              KDColor expressionColor, KDColor backgroundColor,
                              LayoutSelection selection) {
   if (RackLayout::IsTrivial(node) && selection.layout() != node) {
@@ -670,7 +660,7 @@ void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
                   selection.layout() == node ? selection : LayoutSelection(),
                   baseline,
                   0};
-  RackLayout::Callback* iter = [](const Tree* child, KDSize childSize,
+  RackLayout::Callback* iter = [](const LayoutT* child, KDSize childSize,
                                   KDCoordinate childBaseline, KDPoint position,
                                   void* ctx) {
     Context* context = static_cast<Context*>(ctx);
@@ -694,7 +684,7 @@ void Render::PrivateDrawRack(const Tree* node, KDContext* ctx, KDPoint p,
                                  &context);
 }
 
-void Render::PrivateDrawSimpleLayout(const Tree* node, KDContext* ctx,
+void Render::PrivateDrawSimpleLayout(const LayoutT* node, KDContext* ctx,
                                      KDPoint p, KDColor expressionColor,
                                      KDColor backgroundColor,
                                      LayoutSelection selection) {
@@ -706,8 +696,8 @@ void Render::PrivateDrawSimpleLayout(const Tree* node, KDContext* ctx,
   }
 }
 
-void Render::PrivateDrawGridLayout(const Tree* node, KDContext* ctx, KDPoint p,
-                                   KDColor expressionColor,
+void Render::PrivateDrawGridLayout(const LayoutT* node, KDContext* ctx,
+                                   KDPoint p, KDColor expressionColor,
                                    KDColor backgroundColor,
                                    LayoutSelection selection) {
   /* For efficiency, we first compute the positions of the rows and columns and
@@ -748,6 +738,7 @@ void Render::PrivateDrawGridLayout(const Tree* node, KDContext* ctx, KDPoint p,
     if (!editing && grid->childIsPlaceholder(index)) {
       continue;
     }
+    const Rack* childRack = Rack::From(child);
     int c = grid->columnAtChildIndex(index);
     int r = grid->rowAtChildIndex(index);
 
@@ -755,7 +746,7 @@ void Render::PrivateDrawGridLayout(const Tree* node, KDContext* ctx, KDPoint p,
                            : -grid->horizontalGridEntryMargin(s_font);
     x += ((columsCumulatedWidth[c] - x -
            grid->horizontalGridEntryMargin(s_font)) -
-          Width(child)) /
+          Width(childRack)) /
              2 +
          grid->horizontalGridEntryMargin(s_font);
     KDCoordinate y = r > 0 ? rowCumulatedHeight[r - 1]
@@ -763,11 +754,11 @@ void Render::PrivateDrawGridLayout(const Tree* node, KDContext* ctx, KDPoint p,
     if (c == 0) {
       rowBaseline = grid->rowBaseline(r, s_font);
     }
-    y += rowBaseline - Render::Baseline(child) +
+    y += rowBaseline - Render::Baseline(childRack) +
          grid->verticalGridEntryMargin(s_font);
     KDPoint pc = KDPoint(x, y).translatedBy(offset);
     if (grid->childIsPlaceholder(index)) {
-      RackLayout::RenderNode(child, ctx, pc, true);
+      RackLayout::RenderNode(childRack, ctx, pc, true);
     } else {
       PrivateDraw(child, ctx, pc, expressionColor, backgroundColor, selection);
     }
@@ -913,7 +904,7 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
                         true);
 }
 
-void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
+void Render::RenderNode(const LayoutT* node, KDContext* ctx, KDPoint p,
                         KDColor expressionColor, KDColor backgroundColor) {
   KDGlyph::Style style{.glyphColor = expressionColor,
                        .backgroundColor = backgroundColor,
@@ -1065,7 +1056,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
 
     case LayoutType::Integral: {
       using namespace Integral;
-      const Tree* integrand = node->child(k_integrandIndex);
+      const Rack* integrand = node->child(k_integrandIndex);
       KDSize integrandSize = Size(integrand);
       KDCoordinate centralArgHeight = centralArgumentHeight(node, s_font);
       KDColor workingBuffer[k_symbolWidth * k_symbolHeight];
@@ -1282,9 +1273,6 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       ctx->drawString(buffer, p, style);
       return;
     }
-    case LayoutType::Rack: {
-      return RackLayout::RenderNode(node, ctx, p);
-    }
     case LayoutType::VerticalOffset:
     case LayoutType::CondensedSum:
       return;
@@ -1361,7 +1349,7 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
                                    k_gridEntryMargin;
       int nbRows = grid->numberOfRows() - !grid->isEditing();
       for (int i = 0; i < nbRows; i++) {
-        const Tree* leftChild = node->child(i * 2);
+        const Rack* leftChild = node->child(i * 2);
         int rightChildIndex = i * 2 + 1;
         KDPoint leftChildPosition = PositionOfChild(node, i * 2);
         KDPoint commaPosition =
@@ -1379,6 +1367,19 @@ void Render::RenderNode(const Tree* node, KDContext* ctx, KDPoint p,
       return;
     }
   };
+}
+
+KDSize Render::Size(const Rack* node, bool showEmpty) {
+  return RackLayout::Size(node);
+}
+
+KDCoordinate Render::Baseline(const Rack* node) {
+  return RackLayout::Baseline(node);
+}
+
+KDPoint Render::PositionOfChild(const Rack* node, int childIndex,
+                                bool showEmpty) {
+  return RackLayout::ChildPosition(node, childIndex);
 }
 
 }  // namespace PoincareJ

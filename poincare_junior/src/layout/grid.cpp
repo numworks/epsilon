@@ -19,7 +19,7 @@ bool Grid::isEditing() const {
   return this <= cursorNode && cursorNode < nextTree();
 }
 
-const Tree* Grid::childAt(uint8_t col, uint8_t row) const {
+const Rack* Grid::childAt(uint8_t col, uint8_t row) const {
   return child(row * numberOfColumns() + col);
 }
 
@@ -30,7 +30,7 @@ bool Grid::childIsPlaceholder(int index) const {
                                     RackLayout::IsEmpty(child(index)))));
 }
 
-Tree* Grid::willFillEmptyChildAtIndex(int childIndex) {
+Rack* Grid::willFillEmptyChildAtIndex(int childIndex) {
   assert(isEditing());
   bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
   bool isRightOfGrid = childIsRightOfGrid(childIndex);
@@ -79,7 +79,7 @@ void Grid::deleteRowAtIndex(int index) {
   int nbColumns = numberOfColumns();
   int nbRows = numberOfRows();
   for (int i = 0; i < nbColumns; i++) {
-    child(index * nbColumns)->removeTree();
+    Tree::child(index * nbColumns)->removeTree();
   }
   setNumberOfRows(nbRows - 1);
 }
@@ -92,7 +92,7 @@ void Grid::deleteColumnAtIndex(int index) {
   int nbColumns = numberOfColumns();
   int nbRows = numberOfRows();
   for (int i = (nbRows - 1) * nbColumns + index; i > -1; i -= nbColumns) {
-    child(i)->removeTree();
+    Tree::child(i)->removeTree();
   }
   setNumberOfColumns(nbColumns - 1);
 }
@@ -157,7 +157,7 @@ int Grid::closestNonGrayIndex(int index) const {
 KDCoordinate Grid::rowBaseline(int row, KDFont::Size font) const {
   assert(numberOfColumns() > 0);
   KDCoordinate rowBaseline = 0;
-  const Tree* child = childAt(0, row);
+  const Rack* child = childAt(0, row);
   for (int column = 0; column < numberOfColumns(); column++) {
     rowBaseline = std::max(rowBaseline, Render::Baseline(child));
     child = child->nextTree();
@@ -169,10 +169,10 @@ KDCoordinate Grid::rowHeight(int row, KDFont::Size font) const {
   KDCoordinate underBaseline = 0;
   KDCoordinate aboveBaseline = 0;
   for (int column = 0; column < numberOfColumns(); column++) {
-    const Tree* l = childAt(column, row);
-    KDCoordinate b = Render::Baseline(l);
+    const Rack* r = childAt(column, row);
+    KDCoordinate b = Render::Baseline(r);
     underBaseline =
-        std::max<KDCoordinate>(underBaseline, Render::Height(l) - b);
+        std::max<KDCoordinate>(underBaseline, Render::Height(r) - b);
     aboveBaseline = std::max(aboveBaseline, b);
   }
   return aboveBaseline + underBaseline;
@@ -203,7 +203,8 @@ void Grid::computePositions(KDFont::Size font, KDCoordinate* columns,
   }
   KDCoordinate underBaseline = 0;
   KDCoordinate aboveBaseline = 0;
-  for (int i = 0; const Tree* child : children()) {
+  for (int i = 0; const Tree* childTree : children()) {
+    const Rack* child = Rack::From(childTree);
     KDSize size = Render::Size(child);
     KDCoordinate baseline = Render::Baseline(child);
     int c = columnAtChildIndex(i);
@@ -252,7 +253,7 @@ bool Grid::isColumnOrRowEmpty(bool column, int index) const {
 }
 
 void Grid::addEmptyRow() {
-  Tree* last = nextTree();
+  LayoutT* last = nextTree();
   setNumberOfRows(numberOfRows() + 1);
   for (int i = 0; i < numberOfColumns(); i++) {
     last->cloneTreeBeforeNode(KRackL());

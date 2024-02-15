@@ -213,7 +213,7 @@ InputNamedListsCategoricalController::InputNamedListsCategoricalController(
     Statistic *statistic)
     : InputCategoricalController(parent, resultsController, statistic),
       m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this) {
-  m_dropdownCell.setMessage(I18n::Message::Default);  // TODO
+  m_dropdownCell.setMessage(I18n::Message::DataSet);
 }
 
 void InputNamedListsCategoricalController::viewWillAppear() {

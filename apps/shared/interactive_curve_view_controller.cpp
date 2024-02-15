@@ -119,6 +119,8 @@ void InteractiveCurveViewController::viewWillAppear() {
   if (!curveView()->hasFocus()) {
     curveView()->setFocus(true);
     header()->setSelectedButton(-1);
+  } else {
+    panToMakeCursorVisible();
   }
 
   SimpleInteractiveCurveViewController::viewWillAppear();

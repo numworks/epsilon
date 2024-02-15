@@ -10,6 +10,7 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
+#include "dataset_controller.h"
 #include "input_controller.h"
 #include "test/hypothesis_controller.h"
 
@@ -24,7 +25,7 @@ class TypeController
   TypeController(Escher::StackViewController* parent,
                  HypothesisController* hypothesisController,
                  InputController* intervalInputController,
-                 Statistic* statistic);
+                 DatasetController* datasetController, Statistic* statistic);
   const char* title() override;
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
@@ -41,6 +42,7 @@ class TypeController
  private:
   HypothesisController* m_hypothesisController;
   InputController* m_inputController;
+  DatasetController* m_datasetController;
 
   constexpr static int k_titleBufferSize =
       sizeof("intervalle pour une moyenne à deux échantillons");

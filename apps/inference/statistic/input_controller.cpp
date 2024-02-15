@@ -83,10 +83,11 @@ void InputController::InputTitle(Escher::ViewController *vc,
 }
 
 ViewController::TitlesDisplay InputController::titlesDisplay() {
-  if (m_statistic->hasHypothesisParameters()) {
-    return ViewController::TitlesDisplay::DisplayLastTwoTitles;
-  }
-  return ViewController::TitlesDisplay::DisplayLastTitle;
+  return m_statistic->hasHypothesisParameters()
+             ? m_statistic->canChooseDataset()
+                   ? TitlesDisplay::DisplayLastAndThirdToLast
+                   : TitlesDisplay::DisplayLastTwoTitles
+             : TitlesDisplay::DisplayLastTitle;
 }
 
 void InputController::initView() {

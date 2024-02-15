@@ -47,7 +47,8 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_inputController(&m_stackViewController, &m_resultsController,
                         snapshot->statistic()),
       m_typeController(&m_stackViewController, &m_hypothesisController,
-                       &m_inputController, snapshot->statistic()),
+                       &m_inputController, &m_datasetController,
+                       snapshot->statistic()),
       m_categoricalTypeController(
           &m_stackViewController,
           static_cast<Chi2Test *>(snapshot->statistic()),
@@ -55,6 +56,8 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_hypothesisController(&m_stackViewController, &m_inputController,
                              &m_inputSlopeController,
                              static_cast<Test *>(snapshot->statistic())),
+      m_datasetController(&m_stackViewController, &m_inputController,
+                          snapshot->statistic()),
       m_testController(&m_stackViewController, &m_hypothesisController,
                        &m_typeController, &m_categoricalTypeController,
                        &m_inputSlopeController, &m_inputController,

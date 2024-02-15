@@ -127,12 +127,14 @@ void HypothesisController::didBecomeFirstResponder() {
 
 bool HypothesisController::ButtonAction(HypothesisController* controller,
                                         void* s) {
-  if (controller->m_test->significanceTestType() ==
-      SignificanceTestType::Slope) {
-    controller->stackOpenPage(controller->m_inputSlopeController);
-  } else {
-    controller->stackOpenPage(controller->m_inputController);
-  }
+  ViewController* nextController =
+      controller->m_test->significanceTestType() == SignificanceTestType::Slope
+          ? controller->m_inputSlopeController
+      : controller->m_datasetController
+          ? controller->m_datasetController
+          : static_cast<ViewController*>(controller->m_inputController);
+  controller->stackOpenPage(nextController);
+
   return true;
 }
 

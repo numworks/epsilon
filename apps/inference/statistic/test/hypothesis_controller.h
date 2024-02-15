@@ -16,6 +16,7 @@
 
 #include "inference/statistic/chi_square_and_slope/input_slope_controller.h"
 #include "inference/statistic/comparison_operator_popup_data_source.h"
+#include "inference/statistic/dataset_controller.h"
 #include "inference/statistic/input_controller.h"
 
 namespace Inference {
@@ -62,6 +63,8 @@ class HypothesisController
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
+  void setDatasetController(DatasetController* c) { m_datasetController = c; }
+
  private:
   void loadHypothesisParam();
   const char* symbolPrefix();
@@ -73,6 +76,7 @@ class HypothesisController
       Constants::k_shortFloatNumberOfChars /* float */ + 1 /* \0 */;
   InputController* m_inputController;
   InputSlopeController* m_inputSlopeController;
+  DatasetController* m_datasetController;
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;
 

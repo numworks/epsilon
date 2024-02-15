@@ -16,6 +16,7 @@
 #include "statistic/chi_square_and_slope/input_slope_controller.h"
 #include "statistic/chi_square_and_slope/results_goodness_controller.h"
 #include "statistic/chi_square_and_slope/results_homogeneity_controller.h"
+#include "statistic/dataset_controller.h"
 #include "statistic/input_controller.h"
 #include "statistic/interval/interval_graph_controller.h"
 #include "statistic/results_controller.h"
@@ -27,7 +28,7 @@
 namespace Inference {
 
 class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
-  using LargeStackViewController = Escher::StackViewController::Custom<7>;
+  using LargeStackViewController = Escher::StackViewController::Custom<9>;
 
  public:
   // Descriptor
@@ -125,6 +126,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;
   HypothesisController m_hypothesisController;
+  DatasetController m_datasetController;
   TestController m_testController;
   Shared::MenuController m_menuController;
   LargeStackViewController m_stackViewController;

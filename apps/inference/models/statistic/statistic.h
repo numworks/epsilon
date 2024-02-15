@@ -117,6 +117,9 @@ class Statistic : public Shared::Inference {
     return m_threshold;
   }
   void setThreshold(double s) { m_threshold = s; }
+  bool canChooseDataset() const {
+    return significanceTestType() == SignificanceTestType::OneMean;
+  }
   virtual bool validateInputs() { return true; };
 
   int indexOfThreshold() const { return numberOfStatisticParameters(); }

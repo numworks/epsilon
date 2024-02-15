@@ -6,6 +6,9 @@
 namespace Inference {
 
 class OneMeanStatistic {
+ public:
+  constexpr static int k_numberOfDatasetOptions = 1;
+
  protected:
   static OneMean::Type OneMeanType(const Statistic* s) {
     if (s->distributionType() == DistributionType::T) {

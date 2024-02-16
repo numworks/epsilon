@@ -54,28 +54,21 @@ class Render final {
   static KDPoint PositionOfChild(const Rack* node, int childIndex);
   static KDPoint PositionOfChild(const LayoutT* node, int childIndex);
 
-  static KDSize SizeAny(const Tree* node) {
-    return node->isRackLayout() ? Size(static_cast<const Rack*>(node))
-                                : Size(static_cast<const LayoutT*>(node));
-  }
-
   static KDPoint PositionOfChildAny(const Tree* node, int childIndex) {
     return node->isRackLayout()
                ? PositionOfChild(static_cast<const Rack*>(node), childIndex)
                : PositionOfChild(static_cast<const LayoutT*>(node), childIndex);
   }
 
-  static void PrivateDrawSimpleLayout(const LayoutT* node, KDContext* ctx,
-                                      KDPoint p, KDColor expressionColor,
-                                      KDColor backgroundColor,
-                                      LayoutSelection selection);
-  static void PrivateDrawGridLayout(const LayoutT* node, KDContext* ctx,
-                                    KDPoint p, KDColor expressionColor,
-                                    KDColor backgroundColor,
-                                    LayoutSelection selection);
-  static void PrivateDrawRack(const Rack* node, KDContext* ctx, KDPoint p,
-                              KDColor expressionColor, KDColor backgroundColor,
-                              LayoutSelection selection, bool showEmpty = true);
+  static void DrawSimpleLayout(const LayoutT* node, KDContext* ctx, KDPoint p,
+                               KDColor expressionColor, KDColor backgroundColor,
+                               LayoutSelection selection);
+  static void DrawGridLayout(const LayoutT* node, KDContext* ctx, KDPoint p,
+                             KDColor expressionColor, KDColor backgroundColor,
+                             LayoutSelection selection);
+  static void DrawRack(const Rack* node, KDContext* ctx, KDPoint p,
+                       KDColor expressionColor, KDColor backgroundColor,
+                       LayoutSelection selection, bool showEmpty = true);
   static void RenderNode(const LayoutT* node, KDContext* ctx, KDPoint p,
                          KDColor expressionColor, KDColor backgroundColor);
 

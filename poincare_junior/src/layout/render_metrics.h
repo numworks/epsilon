@@ -18,29 +18,29 @@ inline KDCoordinate Width(const Rack* r) { return Size(r).width(); }
 inline KDCoordinate Height(const Rack* r) { return Size(r).height(); }
 
 namespace Fraction {
-constexpr static KDCoordinate k_lineMargin = 2;
-constexpr static KDCoordinate k_lineHeight = 1;
-constexpr static KDCoordinate k_horizontalOverflow =
+constexpr KDCoordinate k_lineMargin = 2;
+constexpr KDCoordinate k_lineHeight = 1;
+constexpr KDCoordinate k_horizontalOverflow =
     Escher::Metric::FractionAndConjugateHorizontalOverflow;
-constexpr static KDCoordinate k_horizontalMargin =
+constexpr KDCoordinate k_horizontalMargin =
     Escher::Metric::FractionAndConjugateHorizontalMargin;
 }  // namespace Fraction
 
 namespace CodePoint {
-constexpr static KDCoordinate k_middleDotWidth = 5;
+constexpr KDCoordinate k_middleDotWidth = 5;
 }
 
 namespace VerticalOffset {
-constexpr static KDCoordinate k_indiceHeight = 10;
+constexpr KDCoordinate k_indiceHeight = 10;
 }
 
 namespace Pair {
-constexpr static KDCoordinate k_lineThickness = 1;
+constexpr KDCoordinate k_lineThickness = 1;
 
-constexpr static KDCoordinate k_minimalChildHeight =
+constexpr KDCoordinate k_minimalChildHeight =
     Escher::Metric::MinimalBracketAndParenthesisChildHeight;
 
-constexpr static uint8_t k_temporaryBlendAlpha = 0x60;
+constexpr uint8_t k_temporaryBlendAlpha = 0x60;
 
 constexpr KDCoordinate VerticalMargin(KDCoordinate childHeight,
                                       KDCoordinate minVerticalMargin) {
@@ -73,12 +73,12 @@ constexpr KDPoint ChildOffset(KDCoordinate minVerticalMargin,
 
 namespace SquareBracketPair {
 using Pair::k_lineThickness;
-constexpr static KDCoordinate k_internalWidthMargin = 5;
-constexpr static KDCoordinate k_externalWidthMargin = 2;
-constexpr static KDCoordinate k_bracketWidth =
+constexpr KDCoordinate k_internalWidthMargin = 5;
+constexpr KDCoordinate k_externalWidthMargin = 2;
+constexpr KDCoordinate k_bracketWidth =
     k_internalWidthMargin + k_lineThickness + k_externalWidthMargin;
-constexpr static KDCoordinate k_minVerticalMargin = 1;
-constexpr static KDCoordinate k_doubleBarMargin = 2;
+constexpr KDCoordinate k_minVerticalMargin = 1;
+constexpr KDCoordinate k_doubleBarMargin = 2;
 
 constexpr KDSize SizeGivenChildSize(KDSize childSize) {
   return KDSize(2 * k_bracketWidth + childSize.width(),
@@ -91,30 +91,30 @@ constexpr KDPoint ChildOffset(KDCoordinate childHeight) {
 }  // namespace SquareBracketPair
 
 namespace AbsoluteValue {
-constexpr static KDCoordinate k_k_innerWidthMargin = 2;
-constexpr static KDCoordinate k_bracketWidth =
+constexpr KDCoordinate k_k_innerWidthMargin = 2;
+constexpr KDCoordinate k_bracketWidth =
     Pair::k_lineThickness + k_k_innerWidthMargin +
     SquareBracketPair::k_externalWidthMargin;
-constexpr static KDCoordinate k_minVerticalMargin = 0;
+constexpr KDCoordinate k_minVerticalMargin = 0;
 }  // namespace AbsoluteValue
 
 namespace VectorNorm {
-constexpr static KDCoordinate k_innerWidthMargin = 2;
-constexpr static KDCoordinate k_bracketWidth =
+constexpr KDCoordinate k_innerWidthMargin = 2;
+constexpr KDCoordinate k_bracketWidth =
     2 * Pair::k_lineThickness + SquareBracketPair::k_doubleBarMargin +
     k_innerWidthMargin + SquareBracketPair::k_externalWidthMargin;
-constexpr static KDCoordinate k_minVerticalMargin = 0;
+constexpr KDCoordinate k_minVerticalMargin = 0;
 }  // namespace VectorNorm
 
 namespace CurlyBrace {
 using Pair::k_lineThickness;
-constexpr static KDCoordinate k_curveHeight = 6;
-constexpr static KDCoordinate k_curveWidth = 5;
-constexpr static KDCoordinate k_centerHeight = 3;
-constexpr static KDCoordinate k_centerWidth = 3;
-constexpr static KDCoordinate k_widthMargin = 1;
-constexpr static KDCoordinate k_minVerticalMargin = 1;
-constexpr static KDCoordinate k_curlyBraceWidth =
+constexpr KDCoordinate k_curveHeight = 6;
+constexpr KDCoordinate k_curveWidth = 5;
+constexpr KDCoordinate k_centerHeight = 3;
+constexpr KDCoordinate k_centerWidth = 3;
+constexpr KDCoordinate k_widthMargin = 1;
+constexpr KDCoordinate k_minVerticalMargin = 1;
+constexpr KDCoordinate k_curlyBraceWidth =
     2 * k_widthMargin + k_centerWidth + k_curveWidth - k_lineThickness;
 constexpr KDCoordinate Height(KDCoordinate childHeight) {
   return Pair::Height(childHeight, k_minVerticalMargin);
@@ -126,12 +126,11 @@ constexpr KDCoordinate Baseline(KDCoordinate childHeight,
 }  // namespace CurlyBrace
 
 namespace Parenthesis {
-constexpr static KDCoordinate k_widthMargin = 1;
-constexpr static KDCoordinate k_curveWidth = 5;
-constexpr static KDCoordinate k_curveHeight = 7;
-constexpr static KDCoordinate k_minVerticalMargin = 2;
-constexpr static KDCoordinate k_parenthesisWidth =
-    2 * k_widthMargin + k_curveWidth;
+constexpr KDCoordinate k_widthMargin = 1;
+constexpr KDCoordinate k_curveWidth = 5;
+constexpr KDCoordinate k_curveHeight = 7;
+constexpr KDCoordinate k_minVerticalMargin = 2;
+constexpr KDCoordinate k_parenthesisWidth = 2 * k_widthMargin + k_curveWidth;
 
 constexpr KDCoordinate Height(KDCoordinate childHeight) {
   return Pair::Height(childHeight, k_minVerticalMargin);
@@ -182,17 +181,17 @@ inline KDCoordinate MinVerticalMargin(const LayoutT* node) {
 }  // namespace Pair
 
 namespace Conjugate {
-constexpr static KDCoordinate k_overlineWidth = 1;
-constexpr static KDCoordinate k_overlineVerticalMargin = 1;
+constexpr KDCoordinate k_overlineWidth = 1;
+constexpr KDCoordinate k_overlineVerticalMargin = 1;
 }  // namespace Conjugate
 
 namespace NthRoot {
-constexpr static KDCoordinate k_heightMargin = 2;
-constexpr static KDCoordinate k_widthMargin = 2;
-constexpr static KDCoordinate k_radixLineThickness = 1;
+constexpr KDCoordinate k_heightMargin = 2;
+constexpr KDCoordinate k_widthMargin = 2;
+constexpr KDCoordinate k_radixLineThickness = 1;
 
-constexpr static KDCoordinate k_leftRadixHeight = 9;
-constexpr static KDCoordinate k_leftRadixWidth = 5;
+constexpr KDCoordinate k_leftRadixHeight = 9;
+constexpr KDCoordinate k_leftRadixWidth = 5;
 
 inline KDSize AdjustedIndexSize(const LayoutT* node, KDFont::Size font) {
   return node->isSquareRootLayout()
@@ -223,8 +222,8 @@ constexpr KDCoordinate ArgumentHorizontalMargin(KDFont::Size font) {
   return font == KDFont::Size::Large ? 2 : 0;
 }
 
-constexpr static const char* k_equalSign = "=";
-constexpr static KDCoordinate k_lineThickness = 1;
+constexpr const char* k_equalSign = "=";
+constexpr KDCoordinate k_lineThickness = 1;
 
 inline KDCoordinate subscriptBaseline(const LayoutT* node, KDFont::Size font) {
   return std::max<KDCoordinate>(
@@ -287,18 +286,18 @@ inline KDPoint rightParenthesisPosition(const LayoutT* node, KDFont::Size font,
 }  // namespace Parametric
 
 namespace Sum {
-constexpr static int k_significantPixelWidth = 4;
+constexpr int k_significantPixelWidth = 4;
 static_assert(Parametric::SymbolHeight(KDFont::Size::Large) % 2 != 0 &&
                   Parametric::SymbolHeight(KDFont::Size::Small) % 2 != 0,
               "sum_layout : SymbolHeight is even");
 }  // namespace Sum
 
 namespace Derivative {
-constexpr static KDCoordinate k_dxHorizontalMargin = 2;
-constexpr static KDCoordinate k_barHorizontalMargin = 2;
-constexpr static KDCoordinate k_barWidth = 1;
+constexpr KDCoordinate k_dxHorizontalMargin = 2;
+constexpr KDCoordinate k_barHorizontalMargin = 2;
+constexpr KDCoordinate k_barWidth = 1;
 
-constexpr static const char* k_dString = "d";
+constexpr const char* k_dString = "d";
 
 inline KDCoordinate orderHeightOffset(const LayoutT* node, KDFont::Size font) {
   if (node->isDerivativeLayout()) {
@@ -495,14 +494,14 @@ namespace Integral {
  * ||| = k_lineThickness
  * a = k_symbolWidth - k_lineThickness
  */
-constexpr static KDCoordinate k_symbolHeight = 9;
-constexpr static KDCoordinate k_symbolWidth = 4;
-constexpr static KDCoordinate k_boundVerticalMargin = 4;
-constexpr static KDCoordinate k_boundHorizontalMargin = 3;
-constexpr static KDCoordinate k_differentialHorizontalMargin = 3;
-constexpr static KDCoordinate k_integrandHorizontalMargin = 2;
-constexpr static KDCoordinate k_integrandVerticalMargin = 3;
-constexpr static KDCoordinate k_lineThickness = 1;
+constexpr KDCoordinate k_symbolHeight = 9;
+constexpr KDCoordinate k_symbolWidth = 4;
+constexpr KDCoordinate k_boundVerticalMargin = 4;
+constexpr KDCoordinate k_boundHorizontalMargin = 3;
+constexpr KDCoordinate k_differentialHorizontalMargin = 3;
+constexpr KDCoordinate k_integrandHorizontalMargin = 2;
+constexpr KDCoordinate k_integrandVerticalMargin = 3;
+constexpr KDCoordinate k_lineThickness = 1;
 
 enum class BoundPosition : uint8_t { UpperBound, LowerBound };
 enum class NestedPosition : uint8_t { Previous, Next };
@@ -544,12 +543,11 @@ inline KDCoordinate centralArgumentHeight(const LayoutT* node,
 }  // namespace Integral
 
 namespace PtCombinatorics {
-constexpr static KDCoordinate k_margin = 3;
-constexpr static KDCoordinate k_symbolHeight = 16;
-constexpr static KDCoordinate k_symbolBaseline = 11;
-constexpr static KDCoordinate k_symbolWidth = 12;
-constexpr static KDCoordinate k_symbolWidthWithMargins =
-    k_symbolWidth + 2 * k_margin;
+constexpr KDCoordinate k_margin = 3;
+constexpr KDCoordinate k_symbolHeight = 16;
+constexpr KDCoordinate k_symbolBaseline = 11;
+constexpr KDCoordinate k_symbolWidth = 12;
+constexpr KDCoordinate k_symbolWidthWithMargins = k_symbolWidth + 2 * k_margin;
 
 inline KDCoordinate AboveSymbol(const LayoutT* node, KDFont::Size font) {
   return std::max<KDCoordinate>(
@@ -567,14 +565,14 @@ inline KDCoordinate TotalHeight(const LayoutT* node, KDFont::Size font) {
 }  // namespace PtCombinatorics
 
 namespace PtBinomial {
-constexpr static KDCoordinate k_barHeight = 6;
+constexpr KDCoordinate k_barHeight = 6;
 }
 
 namespace PtPermute {
 using PtCombinatorics::k_symbolHeight, PtCombinatorics::k_symbolWidth;
 }
 
-constexpr static KDCoordinate k_gridEntryMargin = 6;
+constexpr KDCoordinate k_gridEntryMargin = 6;
 
 namespace Binomial {
 inline KDCoordinate KNHeight(const LayoutT* node, KDFont::Size font) {
@@ -584,8 +582,8 @@ inline KDCoordinate KNHeight(const LayoutT* node, KDFont::Size font) {
 }  // namespace Binomial
 
 namespace ListSequence {
-constexpr static KDCoordinate k_variableHorizontalMargin = 1;
-constexpr static KDCoordinate k_variableBaselineOffset = 2;
+constexpr KDCoordinate k_variableHorizontalMargin = 1;
+constexpr KDCoordinate k_variableBaselineOffset = 2;
 
 inline KDCoordinate variableSlotBaseline(const LayoutT* node,
                                          KDFont::Size font) {

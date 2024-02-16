@@ -12,7 +12,7 @@
 
 namespace PoincareJ {
 
-class Render final {
+class Render {
   friend class RackLayout;
   friend class LayoutCursor;
   friend class Grid;
@@ -65,16 +65,16 @@ class Render final {
   }
 
   static void DrawSimpleLayout(const LayoutT* node, KDContext* ctx, KDPoint p,
-                               KDColor expressionColor, KDColor backgroundColor,
+                               const KDGlyph::Style& style,
                                LayoutSelection selection);
   static void DrawGridLayout(const LayoutT* node, KDContext* ctx, KDPoint p,
-                             KDColor expressionColor, KDColor backgroundColor,
+                             const KDGlyph::Style& style,
                              LayoutSelection selection);
   static void DrawRack(const Rack* node, KDContext* ctx, KDPoint p,
-                       KDColor expressionColor, KDColor backgroundColor,
-                       LayoutSelection selection, bool showEmpty = true);
+                       const KDGlyph::Style& style, LayoutSelection selection,
+                       bool showEmpty = true);
   static void RenderNode(const LayoutT* node, KDContext* ctx, KDPoint p,
-                         KDColor expressionColor, KDColor backgroundColor);
+                         const KDGlyph::Style& style);
 
   static KDFont::Size s_font;
 };

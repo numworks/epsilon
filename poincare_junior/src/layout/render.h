@@ -16,6 +16,10 @@ class Render final {
   friend class RackLayout;
   friend class LayoutCursor;
   friend class Grid;
+  // Used by render_metrics
+  friend KDCoordinate Baseline(const Rack* rack);
+  friend KDCoordinate Baseline(const LayoutT* layout);
+  friend KDSize Size(const Rack* rack);
 
  public:
   static KDSize Size(const Tree* node, KDFont::Size fontSize) {
@@ -34,7 +38,7 @@ class Render final {
                    KDColor backgroundColor = KDColorWhite,
                    const LayoutCursor* cursor = nullptr);
 
-  // private:
+ private:
   static KDSize Size(const Rack* node, bool showEmpty = true);
   static KDSize Size(const LayoutT* node);
 

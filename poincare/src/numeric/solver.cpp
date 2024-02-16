@@ -53,12 +53,10 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void* aux,
     Coordinate2D<T> start = p1;
     Coordinate2D<T> middle = p2;
     Coordinate2D<T> end = p3;
-    Interest interest = Interest::None;
+    Interest interest = test(start, middle, end, aux);
     /* If the solver is in float, we want it to be fast so the fine search
      * of interest around undefined intervals is skipped. */
-    if ((interest = test(start, middle, end, aux)) ==
-            Interest::None &&  // assignment in condition
-        isDouble &&
+    if (interest == Interest::None && isDouble &&
         UndefinedInBracket(start, middle, end, aux) ==
             Interest::Discontinuity) {
       /* If no interest was found and there is an undefined subinterval in the

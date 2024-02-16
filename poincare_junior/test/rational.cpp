@@ -134,3 +134,18 @@ QUIZ_CASE(pcj_rational_integer_power) {
   assert_power(1_e, 2_e, 10_e, 1_e, 1024_e);
   assert_power(7123_e, 3_e, 2_e, 50737129_e, 9_e);
 }
+
+QUIZ_CASE(pcj_rational_create_mixed_fraction) {
+  assert_trees_are_equal(Rational::CreateMixedFraction(7_e / 5_e, true),
+                         KMixedFraction(1_e, 2_e / 5_e));
+  assert_trees_are_equal(Rational::CreateMixedFraction(7_e / 5_e, false),
+                         KAdd(1_e, 2_e / 5_e));
+  assert_trees_are_equal(Rational::CreateMixedFraction(-7_e / 5_e, true),
+                         KOpposite(KMixedFraction(1_e, 2_e / 5_e)));
+  assert_trees_are_equal(Rational::CreateMixedFraction(-7_e / 5_e, false),
+                         KAdd(KOpposite(1_e), KOpposite(2_e / 5_e)));
+  assert_trees_are_equal(Rational::CreateMixedFraction(2_e / 3_e, true),
+                         KMixedFraction(0_e, 2_e / 3_e));
+  assert_trees_are_equal(Rational::CreateMixedFraction(-2_e / 3_e, false),
+                         KAdd(0_e, KOpposite(2_e / 3_e)));
+}

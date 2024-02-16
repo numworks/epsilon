@@ -4,6 +4,7 @@
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/value_block.h>
 
+#include "k_tree.h"
 #include "number.h"
 
 namespace PoincareJ {
@@ -212,6 +213,38 @@ bool Rational::IsIrreducible(const Tree* i) {
 
 bool Rational::IsGreaterThanOne(const Tree* r) {
   return IntegerHandler::Compare(Numerator(r), Denominator(r)) > 0;
+}
+
+Tree* Rational::CreateMixedFraction(const Tree* r,
+                                    bool mixedFractionsAreEnabled) {
+  IntegerHandler num = Numerator(r);
+  IntegerHandler den = Denominator(r);
+  bool numIsNegative = num.strictSign() == StrictSign::Negative;
+  num.setSign(NonStrictSign::Positive);
+  // Push quotient and remainder
+  DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
+  Tree* integerPart = division.quotient;
+  // Push the fraction
+  EditionReference fractionPart =
+      Rational::Push(Integer::Handler(division.remainder), den);
+  division.remainder->removeTree();
+  // If mixed fractions are enabled
+  if (mixedFractionsAreEnabled) {
+    integerPart->cloneNodeAtNode(KMixedFraction);
+    if (numIsNegative) {
+      integerPart->cloneNodeBeforeNode(KOpposite);
+    }
+    return integerPart;
+  }
+  // If mixed fractions don't exist in this country
+  if (numIsNegative) {
+    if (!integerPart->isZero()) {
+      integerPart->cloneNodeBeforeNode(KOpposite);
+    }
+    fractionPart->cloneNodeBeforeNode(KOpposite);
+  }
+  integerPart->cloneNodeAtNode(KAdd.node<2>);
+  return integerPart;
 }
 
 }  // namespace PoincareJ

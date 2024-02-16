@@ -29,6 +29,8 @@ class Rational final {
   static Tree* IntegerPower(const Tree* i, const Tree* j);
 
   static bool IsGreaterThanOne(const Tree* r);
+  static Tree* CreateMixedFraction(const Tree* r,
+                                   bool mixedFractionsAreEnabled);
 
  private:
   static bool IsIrreducible(const Tree* i);

@@ -84,10 +84,10 @@ constexpr KDSize SizeGivenChildSize(KDSize childSize) {
   return KDSize(2 * k_bracketWidth + childSize.width(),
                 Pair::Height(childSize.height(), k_minVerticalMargin));
 }
+
 constexpr KDPoint ChildOffset(KDCoordinate childHeight) {
   return Pair::ChildOffset(k_minVerticalMargin, k_bracketWidth, childHeight);
 }
-
 }  // namespace SquareBracketPair
 
 namespace AbsoluteValue {
@@ -136,11 +136,11 @@ constexpr static KDCoordinate k_parenthesisWidth =
 constexpr KDCoordinate Height(KDCoordinate childHeight) {
   return Pair::Height(childHeight, k_minVerticalMargin);
 }
+
 constexpr KDCoordinate Baseline(KDCoordinate childHeight,
                                 KDCoordinate childBaseline) {
   return Pair::Baseline(childHeight, childBaseline, k_minVerticalMargin);
 }
-
 }  // namespace Parenthesis
 
 namespace Pair {
@@ -179,7 +179,6 @@ inline KDCoordinate MinVerticalMargin(const LayoutT* node) {
       assert(false);
   }
 }
-
 }  // namespace Pair
 
 namespace Conjugate {
@@ -207,6 +206,7 @@ namespace Parametric {
 constexpr KDCoordinate SymbolHeight(KDFont::Size font) {
   return font == KDFont::Size::Large ? 29 : 21;
 }
+
 constexpr KDCoordinate SymbolWidth(KDFont::Size font) {
   return font == KDFont::Size::Large ? 22 : 16;
 }
@@ -214,6 +214,7 @@ constexpr KDCoordinate SymbolWidth(KDFont::Size font) {
 constexpr KDCoordinate UpperBoundVerticalMargin(KDFont::Size font) {
   return font == KDFont::Size::Large ? 2 : 0;
 }
+
 constexpr KDCoordinate LowerBoundVerticalMargin(KDFont::Size font) {
   return font == KDFont::Size::Large ? 2 : 1;
 }
@@ -221,6 +222,7 @@ constexpr KDCoordinate LowerBoundVerticalMargin(KDFont::Size font) {
 constexpr KDCoordinate ArgumentHorizontalMargin(KDFont::Size font) {
   return font == KDFont::Size::Large ? 2 : 0;
 }
+
 constexpr static const char* k_equalSign = "=";
 constexpr static KDCoordinate k_lineThickness = 1;
 
@@ -282,7 +284,6 @@ inline KDPoint rightParenthesisPosition(const LayoutT* node, KDFont::Size font,
       .translatedBy(
           KDPoint(Parenthesis::k_parenthesisWidth + argumentSize.width(), 0));
 }
-
 }  // namespace Parametric
 
 namespace Sum {
@@ -305,6 +306,7 @@ inline KDCoordinate orderHeightOffset(const LayoutT* node, KDFont::Size font) {
   }
   return Height(node->child(k_orderIndex)) - VerticalOffset::k_indiceHeight;
 }
+
 inline KDCoordinate orderWidth(const LayoutT* node, KDFont::Size font) {
   if (node->isDerivativeLayout()) {
     return 0;
@@ -410,7 +412,6 @@ inline KDPoint positionOfOrderInDenominator(const LayoutT* node,
   return KDPoint(positionOfX.x() + Width(node->child(k_variableIndex)),
                  positionOfX.y() - orderHeightOffset(node, font));
 }
-
 }  // namespace Derivative
 
 namespace Integral {
@@ -536,7 +537,6 @@ inline KDCoordinate centralArgumentHeight(const LayoutT* node,
     return centralArgumentHeight(last, font);
   }
 }
-
 }  // namespace Integral
 
 namespace PtCombinatorics {

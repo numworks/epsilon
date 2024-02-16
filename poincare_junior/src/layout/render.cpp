@@ -240,9 +240,11 @@ KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root) {
     const Tree* nextChild = child->nextTree();
     if (nextChild > node) {
       // node is a descendant of child
-      KDPoint value = AbsoluteOrigin(node, child)
-                          .translatedBy(PositionOfChildAny(root, childIndex));
-      return value;
+      KDPoint positionOfChild =
+          root->isRackLayout()
+              ? PositionOfChild(static_cast<const Rack*>(root), childIndex)
+              : PositionOfChild(static_cast<const LayoutT*>(root), childIndex);
+      return AbsoluteOrigin(node, child).translatedBy(positionOfChild);
     }
     child = nextChild;
     childIndex++;

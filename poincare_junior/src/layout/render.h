@@ -58,12 +58,6 @@ class Render {
   static KDPoint PositionOfChild(const Rack* node, int childIndex);
   static KDPoint PositionOfChild(const LayoutT* node, int childIndex);
 
-  static KDPoint PositionOfChildAny(const Tree* node, int childIndex) {
-    return node->isRackLayout()
-               ? PositionOfChild(static_cast<const Rack*>(node), childIndex)
-               : PositionOfChild(static_cast<const LayoutT*>(node), childIndex);
-  }
-
   static void DrawSimpleLayout(const LayoutT* node, KDContext* ctx, KDPoint p,
                                const KDGlyph::Style& style,
                                LayoutSelection selection);

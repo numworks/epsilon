@@ -82,7 +82,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void* aux,
   }
 
   registerSolution(definitiveSolution, definitiveInterest);
-  return result();
+  return m_result;
 }
 
 template <typename T>
@@ -122,19 +122,19 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
     case Type::Mult:
       /* x*y = 0 => x = 0 or y = 0 */
       registerSolution(nextRootInMultiplication(e), Interest::Root);
-      return result();
+      return m_result;
 
     case Type::Add:
     case Type::Sub:
       registerSolution(nextRootInAddition(e), Interest::Root);
-      return result();
+      return m_result;
 
     case Type::Pow:
     case Type::Root:
     case Type::Div:
       /* f(x,y) = 0 => x = 0 */
       registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
-      return result();
+      return m_result;
 
     case Type::Abs:
     case Type::ATan:
@@ -146,7 +146,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
 
     case Type::Dep:
       registerSolution(nextRootInDependency(e), Interest::Root);
-      return result();
+      return m_result;
 
     default:
       if (!GetComplexSign(e).canBeNull()) {
@@ -216,7 +216,7 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
      * the middle of the two values. */
     m_result.setY((y1 + y2) / 2.);
   }
-  return result();
+  return m_result;
 }
 
 template <typename T>
@@ -726,6 +726,8 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
     m_lastInterest = interest;
   }
   m_xStart = m_result.x();
+  assert(m_lastInterest != Interest::None ||
+         (std::isnan(m_result.x()) && std::isnan(m_result.y())));
 }
 
 // Explicit template instantiations

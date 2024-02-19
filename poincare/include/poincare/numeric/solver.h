@@ -87,11 +87,6 @@ class Solver {
   Solver(T xStart, T xEnd, Context* context = nullptr);
 
   Interest lastInterest() const { return m_lastInterest; }
-  Coordinate2D<T> result() const {
-    assert(m_lastInterest != Interest::None ||
-           (std::isnan(m_result.x()) && std::isnan(m_result.y())));
-    return m_result;
-  }
 
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist.

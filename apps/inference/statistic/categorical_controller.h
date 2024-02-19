@@ -1,18 +1,11 @@
 #ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_CONTROLLER_H
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_CONTROLLER_H
 
-#include <escher/buffer_text_highlight_cell.h>
 #include <escher/button_cell.h>
-#include <escher/invocation.h>
-#include <escher/menu_cell_with_editable_text.h>
-#include <escher/message_text_view.h>
-#include <escher/selectable_list_view_controller.h>
-#include <escher/selectable_table_view.h>
-#include <escher/stack_view_controller.h>
 
+#include "categorical_cell.h"
+#include "categorical_table_cell.h"
 #include "inference/models/statistic/chi2_test.h"
-#include "inference/statistic/chi_square_and_slope/categorical_cell.h"
-#include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
 
 namespace Inference {
 
@@ -111,46 +104,6 @@ class InputCategoricalController : public CategoricalController,
 
   Statistic* m_statistic;
   InputCategoricalCell m_significanceCell;
-};
-
-class InputNamedListsCategoricalController : public InputCategoricalController,
-                                             Escher::DropdownCallback {
- public:
-  InputNamedListsCategoricalController(
-      Escher::StackViewController* parent,
-      Escher::ViewController* resultsController, Statistic* statistic);
-
-  void viewWillAppear() override;
-
- protected:
-  class DropdownDataSource : public Escher::ExplicitListViewDataSource {
-   public:
-    int numberOfRows() const override { return k_numberOfRows; }
-    Escher::HighlightCell* cell(int row) override { return &m_cells[row]; }
-
-   private:
-    constexpr static int k_numberOfRows = 3;  // FIXME
-    Escher::SmallBufferTextHighlightCell m_cells[k_numberOfRows];
-  };
-
-  constexpr static int k_dummyCellIndex = 0;
-
-  int indexOfTableCell() const override { return k_dummyCellIndex + 1; }
-  KDCoordinate nonMemoizedRowHeight(int row) override {
-    return row == k_dummyCellIndex
-               ? m_dropdownCell.minimalSizeForOptimalDisplay().height()
-               : InputCategoricalController::nonMemoizedRowHeight(row);
-  }
-  Escher::HighlightCell* reusableCell(int index, int type) override {
-    return type == k_dummyCellIndex
-               ? &m_dropdownCell
-               : InputCategoricalController::reusableCell(index, type);
-  }
-
-  virtual char listPrefix(int column) const = 0;
-
-  DropdownDataSource m_dropdownDataSource;
-  DropdownCategoricalCell m_dropdownCell;
 };
 
 }  // namespace Inference

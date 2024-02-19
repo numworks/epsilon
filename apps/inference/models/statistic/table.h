@@ -9,6 +9,8 @@ namespace Inference {
 
 class Table {
  public:
+  constexpr static int k_maxNumberOfStoreColumns = 2;
+
   // Matrix special functions
   virtual void setParameterAtPosition(double value, int row, int column) = 0;
   virtual double parameterAtPosition(int row, int column) const = 0;

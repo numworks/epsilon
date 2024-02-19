@@ -16,7 +16,7 @@ class HypothesisController;
 class CategoricalTypeController;
 class TypeController;
 class InputController;
-class InputSlopeController;
+class InputStoreController;
 
 class TestController
     : public Escher::UniformSelectableListController<
@@ -28,7 +28,7 @@ class TestController
                  HypothesisController* hypothesisController,
                  TypeController* typeController,
                  CategoricalTypeController* categoricalController,
-                 InputSlopeController* inputSlopeController,
+                 InputStoreController* inputSlopeController,
                  InputController* inputController, Statistic* statistic);
   void stackOpenPage(Escher::ViewController* nextPage) override;
   void didBecomeFirstResponder() override;
@@ -48,7 +48,7 @@ class TestController
   TypeController* m_typeController;
   InputController* m_inputController;
   CategoricalTypeController* m_categoricalController;
-  InputSlopeController* m_inputSlopeController;
+  InputStoreController* m_inputSlopeController;
   Statistic* m_statistic;
 };
 

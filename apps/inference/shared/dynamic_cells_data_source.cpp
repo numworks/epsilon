@@ -84,9 +84,9 @@ static_assert(k_doubleColumnTableNumberOfReusableCells ==
               "k_doubleColumnTableNumberOfReusableCells should be updated with "
               "GoodnessTableCell::k_numberOfReusableCells");
 static_assert(k_doubleColumnTableNumberOfReusableCells ==
-                  SlopeTableCell::k_numberOfReusableCells,
+                  StoreTableCell::k_numberOfReusableCells,
               "k_doubleColumnTableNumberOfReusableCells should be updated with "
-              "SlopeTableCell::k_numberOfReusableCells");
+              "StoreTableCell::k_numberOfReusableCells");
 static_assert(k_inputControllerNumberOfReusableCells ==
                   InputController::k_numberOfReusableCells,
               "k_inputControllerNumberOfReusableCells should be updated with "

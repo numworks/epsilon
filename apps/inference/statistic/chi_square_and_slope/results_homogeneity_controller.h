@@ -3,7 +3,7 @@
 
 #include <escher/tab_view_controller.h>
 
-#include "inference/statistic/chi_square_and_slope/categorical_controller.h"
+#include "inference/statistic/categorical_controller.h"
 #include "inference/statistic/chi_square_and_slope/results_homogeneity_table_cell.h"
 
 namespace Inference {

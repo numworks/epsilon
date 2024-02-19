@@ -125,7 +125,7 @@ void assert_parsed_expression_process_to(
     int numberOfSignificantDigits) {
   k_total++;
   Shared::GlobalContext globalContext;
-  constexpr int bufferSize = 500;
+  constexpr int bufferSize = 2048;
   char buffer[bufferSize];
   char result[bufferSize];
   copy_without_system_chars(result, oldResult);

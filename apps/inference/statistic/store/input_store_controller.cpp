@@ -24,7 +24,7 @@ InputStoreController::InputStoreController(StackViewController* parent,
 
 bool InputStoreController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
-      selectedRow() == 0) {
+      selectedRow() == indexOfTableCell()) {
     m_storeParameterController.initializeColumnParameters();
     m_storeParameterController.selectRow(0);
     m_storeParameterController.setTitlesDisplay(

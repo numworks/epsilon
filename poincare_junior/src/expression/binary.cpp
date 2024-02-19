@@ -138,48 +138,50 @@ bool Binary::SimplifyComparison(Tree *tree) {
   }
   Tree *subtraction = PatternMatching::CreateAndSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = tree->child(0), .KB = tree->child(1)});
-  Sign sign = Sign::Get(subtraction);
-  subtraction->removeTree();
   const Tree *result = nullptr;
-  switch (tree->type()) {
-    case BlockType::NotEqual:
-    case BlockType::Equal:
-      if (sign.isZero()) {
-        result = tree->isEqual() ? KTrue : KFalse;
-      } else if (sign.isStrictlyNegative() || sign.isStrictlyPositive()) {
-        result = tree->isEqual() ? KFalse : KTrue;
-      }
-      break;
-    case BlockType::InferiorEqual:
-      if (sign.isNegative()) {
-        result = KTrue;
-      } else if (sign.isStrictlyPositive()) {
-        result = KFalse;
-      }
-      break;
-    case BlockType::SuperiorEqual:
-      if (sign.isPositive()) {
-        result = KTrue;
-      } else if (sign.isStrictlyNegative()) {
-        result = KFalse;
-      }
-      break;
-    case BlockType::Inferior:
-      if (sign.isStrictlyNegative()) {
-        result = KTrue;
-      } else if (sign.isPositive()) {
-        result = KFalse;
-      }
-      break;
-    case BlockType::Superior:
-      if (sign.isStrictlyPositive()) {
-        result = KTrue;
-      } else if (sign.isNegative()) {
-        result = KFalse;
-      }
-      break;
-    default:;
+  if (!tree->isInequality()) {
+    // = or !=
+    ComplexSign sign = ComplexSign::Get(subtraction);
+    if (sign.isZero()) {
+      result = tree->isEqual() ? KTrue : KFalse;
+    } else if (!sign.canBeNull()) {
+      result = tree->isEqual() ? KFalse : KTrue;
+    }
+  } else {
+    Sign sign = Sign::Get(subtraction);
+    switch (tree->type()) {
+      case BlockType::InferiorEqual:
+        if (sign.isNegative()) {
+          result = KTrue;
+        } else if (sign.isStrictlyPositive()) {
+          result = KFalse;
+        }
+        break;
+      case BlockType::SuperiorEqual:
+        if (sign.isPositive()) {
+          result = KTrue;
+        } else if (sign.isStrictlyNegative()) {
+          result = KFalse;
+        }
+        break;
+      case BlockType::Inferior:
+        if (sign.isStrictlyNegative()) {
+          result = KTrue;
+        } else if (sign.isPositive()) {
+          result = KFalse;
+        }
+        break;
+      case BlockType::Superior:
+        if (sign.isStrictlyPositive()) {
+          result = KTrue;
+        } else if (sign.isNegative()) {
+          result = KFalse;
+        }
+        break;
+      default:;
+    }
   }
+  subtraction->removeTree();
   if (!result) {
     return false;
   }

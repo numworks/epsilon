@@ -49,8 +49,10 @@ class PiInterval {
         a.m_max + b.m_max, a.m_maxIsInclusive && b.m_maxIsInclusive);
   }
   static PiInterval Mult(PiInterval a, int b) {
-    return PiInterval(a.m_min * b, a.m_minIsInclusive, a.m_max * b,
-                      a.m_maxIsInclusive);
+    return b >= 0 ? PiInterval(a.m_min * b, a.m_minIsInclusive, a.m_max * b,
+                               a.m_maxIsInclusive)
+                  : PiInterval(a.m_max * b, a.m_maxIsInclusive, a.m_min * b,
+                               a.m_minIsInclusive);
   }
   static PiInterval Arg(ComplexSign sign) {
     PiInterval result;
@@ -106,7 +108,12 @@ class PiInterval {
  private:
   // We want DivideRoundDown(-1, 4) to be -1
   inline static int DivideRoundDown(int num, int den) {
-    return (num / den) + ((num % den) >> 31);
+    int result = num / den;
+    if (num < 0 && -num % den != 0) {
+      // -1/4 is 0 but -4/4 is -1, we expect -1 for both.
+      result -= 1;
+    }
+    return result;
   }
   PiInterval() : PiInterval(INT_MAX, true, INT_MIN, true) {}
   PiInterval(int min, bool minIsInclusive, int max, bool maxIsInclusive)

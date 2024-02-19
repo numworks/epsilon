@@ -32,7 +32,9 @@ ViewController::TitlesDisplay ResultsController::titlesDisplay() {
        m_statistic->categoricalType() == CategoricalType::GoodnessOfFit)) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  return ViewController::TitlesDisplay::DisplayLastThreeTitles;
+  return m_statistic->canChooseDataset()
+             ? TitlesDisplay(0b1011)
+             : ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 
 const char *ResultsController::title() {

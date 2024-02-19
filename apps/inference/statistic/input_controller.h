@@ -21,6 +21,20 @@ class InputController
   friend class InputSlopeController;
 
  public:
+  constexpr static int k_numberOfTitleSignificantDigits =
+      Poincare::Preferences::VeryShortNumberOfSignificantDigits;
+  constexpr static int k_titleBufferSize =
+      sizeof("H0:μ1-μ2= Ha:μ1-μ2≠ α=") +  // longest possible
+      3 * (Poincare::PrintFloat::charSizeForFloatsWithPrecision(
+              k_numberOfTitleSignificantDigits));
+  constexpr static int k_numberOfReusableCells =
+      Ion::Display::Height /
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight +
+      2;
+
+  static void InputTitle(Escher::ViewController* vc, Statistic* statistic,
+                         char* titleBuffer, size_t titleBufferSize);
+
   InputController(Escher::StackViewController* parent,
                   ResultsController* resultsController, Statistic* statistic);
   int numberOfRows() const override {
@@ -45,11 +59,6 @@ class InputController
     return &m_selectableListView;
   }
 
-  constexpr static int k_numberOfReusableCells =
-      Ion::Display::Height /
-          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight +
-      2;
-
  protected:
   double parameterAtIndex(int i) override {
     return m_statistic->parameterAtIndex(i);
@@ -61,15 +70,7 @@ class InputController
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  static void InputTitle(Escher::ViewController* vc, Statistic* statistic,
-                         char* titleBuffer, size_t titleBufferSize);
 
-  constexpr static int k_numberOfTitleSignificantDigits =
-      Poincare::Preferences::VeryShortNumberOfSignificantDigits;
-  constexpr static int k_titleBufferSize =
-      sizeof("H0:μ1-μ2= Ha:μ1-μ2≠ α=") +  // longest possible
-      3 * (Poincare::PrintFloat::charSizeForFloatsWithPrecision(
-              k_numberOfTitleSignificantDigits));
   char m_titleBuffer[k_titleBufferSize];
   Statistic* m_statistic;
   ResultsController* m_resultsController;

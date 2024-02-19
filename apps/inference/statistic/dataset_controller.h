@@ -25,10 +25,16 @@ class DatasetController
         ->setMessage(I18n::Message::InputStatistics);
   }
 
-  const char* title() override { return ""; }  // TODO
+  const char* title() override {
+    InputController::InputTitle(this, m_statistic, m_titleBuffer,
+                                InputController::k_titleBufferSize);
+    return m_titleBuffer;
+  }
   TitlesDisplay titlesDisplay() override {
-    return TitlesDisplay::DisplayAllTitles;
-  }  // TODO
+    return m_statistic->hasHypothesisParameters()
+               ? TitlesDisplay::DisplayLastTwoTitles
+               : TitlesDisplay::DisplayLastTitle;
+  }
   bool handleEvent(Ion::Events::Event) override;
 
  private:
@@ -36,6 +42,7 @@ class DatasetController
 
   InputController* m_inputController;
   Statistic* m_statistic;
+  char m_titleBuffer[InputController::k_titleBufferSize];
 };
 
 }  // namespace Inference

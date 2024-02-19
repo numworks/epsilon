@@ -857,6 +857,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       case ExceptionType::ZeroDivision:
       case ExceptionType::UnhandledDimension:
       case ExceptionType::Unhandled:
+      case ExceptionType::Undefined:
         (type == ExceptionType::Nonreal ? KNonreal : KUndef)->clone();
         return true;
       default:

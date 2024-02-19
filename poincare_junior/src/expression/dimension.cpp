@@ -263,6 +263,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         childDim[2] = Scalar();
         // continue to default
       }
+      break;
     case BlockType::Abs:
     case BlockType::Floor:
     case BlockType::Ceiling:
@@ -270,33 +271,38 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     // case BlockType::SquareRoot: TODO: Handle _m^(1/2)
     case BlockType::UserFunction:
       unitsAllowed = true;
+      break;
     case BlockType::Cosine:
     case BlockType::Sine:
     case BlockType::Tangent:
     case BlockType::Trig:
       angleUnitsAllowed = true;
+      break;
+    case BlockType::Matrix:
+      break;
     default:
       if (t->isLogicalOperatorOrBoolean()) {
         return true;
       }
       assert(t->isScalarOnly());
-    case BlockType::Matrix:
-      if (hasNonKelvinChild ||
-          (hasUnitChild && !(unitsAllowed || angleUnitsAllowed))) {
-        // Early escape. By default, non-Kelvin temperature unit are forbidden.
-        return false;
-      }
-      for (int i = 0; i < t->numberOfChildren(); i++) {
-        if (childDim[i].isScalar() ||
-            (childDim[i].isUnit() &&
-             (unitsAllowed ||
-              (angleUnitsAllowed && childDim[i].isSimpleAngleUnit())))) {
-          continue;
-        }
-        return false;
-      }
-      return true;
+      break;
   }
+  if (hasNonKelvinChild ||
+      (hasUnitChild && !(unitsAllowed || angleUnitsAllowed))) {
+    // Early escape. By default, non-Kelvin temperature unit are forbidden.
+    return false;
+  }
+  // Check each child against the flags
+  for (int i = 0; i < t->numberOfChildren(); i++) {
+    if (childDim[i].isScalar() ||
+        (childDim[i].isUnit() &&
+         (unitsAllowed ||
+          (angleUnitsAllowed && childDim[i].isSimpleAngleUnit())))) {
+      continue;
+    }
+    return false;
+  }
+  return true;
 }
 
 Dimension Dimension::GetDimension(const Tree* t) {

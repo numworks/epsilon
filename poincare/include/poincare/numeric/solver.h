@@ -88,9 +88,9 @@ class Solver {
 
   Interest lastInterest() const { return m_lastInterest; }
   Coordinate2D<T> result() const {
-    return m_lastInterest == Interest::None
-               ? Coordinate2D<T>(k_NAN, k_NAN)
-               : Coordinate2D<T>(m_xStart, m_yResult);
+    assert(m_lastInterest != Interest::None ||
+           (std::isnan(m_xStart) && std::isnan(m_yResult)));
+    return Coordinate2D<T>(m_xStart, m_yResult);
   }
 
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)

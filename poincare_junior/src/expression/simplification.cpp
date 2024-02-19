@@ -260,13 +260,8 @@ bool Simplification::SimplifyAbs(Tree* u) {
   if (sign.canBeNegative() && sign.canBePositive()) {
     return false;
   }
-  /* TODO PCJ: static_cast shouldn't be necessary but there is a bug :
-   * (condition ? i_e : 1_e) returns i_e when condition is false. */
-  const Tree* minusOne = (isReal == sign.canBeNegative())
-                             ? static_cast<const Tree*>(-1_e)
-                             : static_cast<const Tree*>(1_e);
-  const Tree* complexI =
-      (isReal ? static_cast<const Tree*>(1_e) : static_cast<const Tree*>(i_e));
+  const Tree* minusOne = (isReal == sign.canBeNegative()) ? -1_e : 1_e;
+  const Tree* complexI = isReal ? 1_e : i_e;
   // |3| = |-3| = |3i| = |-3i| = 3
   u->moveTreeOverTree(PatternMatching::CreateAndSimplify(
       KMult(KA, KB, KC), {.KA = minusOne, .KB = complexI, .KC = child}));

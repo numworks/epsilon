@@ -425,6 +425,7 @@ QUIZ_CASE(pcj_power_simplification) {
   simplifies_to("√(2)*√(7)-√(14)", "0");
 
   simplifies_to("x^(1-y^0)", "dep(1,{x^0,y^0})");
+  simplifies_to("i^5+i^10+i^15+i^20", "0");
 }
 
 QUIZ_CASE(pcj_variables) {

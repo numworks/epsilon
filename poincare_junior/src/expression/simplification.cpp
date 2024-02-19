@@ -321,10 +321,9 @@ bool Simplification::SimplifyPower(Tree* u) {
         IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
     int rem = Integer::Handler(remainder).to<uint8_t>();
     remainder->removeTree();
-    if (rem != 1) {
-      u->cloneTreeOverTree(rem == 0 ? 1_e
-                                    : (rem == 2 ? -1_e : KMult(-1_e, i_e)));
-    }
+    u->cloneTreeOverTree(
+        rem == 0 ? 1_e
+                 : (rem == 1 ? i_e : (rem == 2 ? -1_e : KMult(-1_e, i_e))));
     return true;
   }
   // (w^p)^n -> w^(p*n)

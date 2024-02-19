@@ -78,7 +78,8 @@ void TangentGraphController::reloadBannerView() {
     return;
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
-      m_cursor, m_record, FunctionApp::app()->functionStore(),
+      m_cursor->t(), m_cursor->x(), m_cursor->y(), m_record,
+      FunctionApp::app()->functionStore(),
       AppsContainerHelper::sharedAppsContainerGlobalContext());
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;

@@ -529,7 +529,7 @@ void GraphController::jumpToLeftRightCurve(double t,
 }
 
 void GraphController::reloadBannerViewForCursorOnFunction(
-    CurveViewCursor* cursor, Ion::Storage::Record record,
+    double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
     FunctionStore* functionStore, Poincare::Context* context,
     bool cappedNumberOfSignificantDigits) {
   ExpiringPointer<ContinuousFunction> function =
@@ -539,29 +539,29 @@ void GraphController::reloadBannerViewForCursorOnFunction(
   /* The interests are sorted from most important to lowest, in case there is
    * not enough space on the banner to display all of them. */
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum)) {
+          cursorX, cursorY, Solver<double>::Interest::LocalMinimum)) {
     assert(!function->isAlongY());
     bannerView()->addInterestMessage(I18n::Message::Minimum, &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum)) {
+          cursorX, cursorY, Solver<double>::Interest::LocalMaximum)) {
     assert(!function->isAlongY());
     bannerView()->addInterestMessage(I18n::Message::Maximum, &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::Intersection)) {
+          cursorX, cursorY, Solver<double>::Interest::Intersection)) {
     bannerView()->addInterestMessage(I18n::Message::Intersection,
                                      &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::Root)) {
+          cursorX, cursorY, Solver<double>::Interest::Root)) {
     bannerView()->addInterestMessage(
         function->isAlongY() ? I18n::Message::LineYInterceptDescription
                              : I18n::Message::Zero,
         &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::YIntercept)) {
+          cursorX, cursorY, Solver<double>::Interest::YIntercept)) {
     bannerView()->addInterestMessage(
         function->isAlongY() ? I18n::Message::Zero
                              : I18n::Message::LineYInterceptDescription,
@@ -574,7 +574,8 @@ void GraphController::reloadBannerViewForCursorOnFunction(
       cappedNumberOfSignificantDigits ||
       bannerView()->numberOfInterestMessages() > 0;
   FunctionGraphController::reloadBannerViewForCursorOnFunction(
-      cursor, record, functionStore, context, cappedNumberOfSignificantDigits);
+      cursorT, cursorX, cursorY, record, functionStore, context,
+      cappedNumberOfSignificantDigits);
 }
 
 }  // namespace Graph

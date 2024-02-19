@@ -123,8 +123,9 @@ class GraphController : public Shared::FunctionGraphController,
 
   // FunctionBannerDelegate
   void reloadBannerViewForCursorOnFunction(
-      Shared::CurveViewCursor* cursor, Ion::Storage::Record record,
-      Shared::FunctionStore* functionStore, Poincare::Context* context,
+      double cursorT, double cursorX, double cursorY,
+      Ion::Storage::Record record, Shared::FunctionStore* functionStore,
+      Poincare::Context* context,
       bool cappedNumberOfSignificantDigits = false) override;
 
   bool defaultRangeIsNormalized() const {

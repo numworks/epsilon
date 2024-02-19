@@ -122,7 +122,7 @@ void FunctionGraphController::reloadBannerView() {
   assert(numberOfCurves() > 0);
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   reloadBannerViewForCursorOnFunction(
-      m_cursor, record, functionStore(),
+      m_cursor->t(), m_cursor->x(), m_cursor->y(), record, functionStore(),
       AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 

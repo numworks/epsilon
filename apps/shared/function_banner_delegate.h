@@ -32,9 +32,9 @@ class FunctionBannerDelegate {
   constexpr static int k_cappedNumberOfSignificantDigits =
       Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
   virtual void reloadBannerViewForCursorOnFunction(
-      CurveViewCursor* cursor, Ion::Storage::Record record,
-      FunctionStore* functionStore, Poincare::Context* context,
-      bool cappedNumberOfSignificantDigits = false);
+      double cursorT, double cursorX, double cursorY,
+      Ion::Storage::Record record, FunctionStore* functionStore,
+      Poincare::Context* context, bool cappedNumberOfSignificantDigits = false);
   virtual XYBannerView* bannerView() = 0;
   virtual int numberOfSignificantDigits(bool capped = false) const {
     int userDigits =

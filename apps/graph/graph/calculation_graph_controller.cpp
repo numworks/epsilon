@@ -93,7 +93,7 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 
 void CalculationGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(
-      m_cursor, m_record, functionStore(),
+      m_cursor->t(), m_cursor->x(), m_cursor->y(), m_record, functionStore(),
       AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 

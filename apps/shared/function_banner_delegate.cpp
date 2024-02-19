@@ -9,7 +9,7 @@ using namespace Poincare;
 namespace Shared {
 
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
-    CurveViewCursor* cursor, Ion::Storage::Record record,
+    double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
     FunctionStore* functionStore, Poincare::Context* context,
     bool cappedNumberOfSignificantDigits) {
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
@@ -24,7 +24,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
   bannerView()->abscissaSymbol()->setText(buffer);
 
   numberOfChar = function->printAbscissaValue(
-      cursor->t(), cursor->x(), buffer, k_textBufferSize,
+      cursorT, cursorX, buffer, k_textBufferSize,
       numberOfSignificantDigits(cappedNumberOfSignificantDigits));
 
   assert(numberOfChar < k_textBufferSize - 1);
@@ -37,7 +37,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
   numberOfChar += SerializationHelper::CodePoint(
       buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
   numberOfChar += function->printFunctionValue(
-      cursor->t(), cursor->x(), cursor->y(), buffer + numberOfChar,
+      cursorT, cursorX, cursorY, buffer + numberOfChar,
       k_textBufferSize - numberOfChar,
       numberOfSignificantDigits(cappedNumberOfSignificantDigits), context);
   assert(numberOfChar < k_textBufferSize - 1);

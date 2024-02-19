@@ -55,6 +55,7 @@ enum class ExceptionType : int {
   UnhandledDimension,  // [[1,2]] + [[1],[2]]
   Unhandled,           // inf - inf, 0 * inf, unimplemented
   BadType,             // non-integers in gcd,lcm,...
+  Undefined,           // arg(0)
   // Misc
   ParseFail,  // Used by parser, TODO : Use more distinct errors.
   Other,      // Used internally for Unit tests.

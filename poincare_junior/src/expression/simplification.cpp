@@ -688,7 +688,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
    * of merging children a and b (with MergeAdditionChildWithNext) if it exists.
    * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
    * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
-   * merging again when child merged with nextCHild) */
+   * merging again when child merged with nextChild) */
   assert(!modified || !SimplifyAddition(u));
   return modified;
 }
@@ -707,7 +707,7 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
   if (realSign.isZero() && imagSign.isKnown()) {
     if (imagSign.isZero()) {
       // atan2(0, 0) = undef
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+      ExceptionCheckpoint::Raise(ExceptionType::Undefined);
     }
     // atan2(y, 0) = π/2 if y > 0, -π/2 if y < 0
     tree->cloneTreeOverTree(imagSign.isStrictlyPositive()

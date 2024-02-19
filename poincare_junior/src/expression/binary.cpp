@@ -136,19 +136,19 @@ bool Binary::SimplifyComparison(Tree *tree) {
       return false;
     }
   }
-  Tree *subtraction = PatternMatching::CreateAndSimplify(
-      KAdd(KA, KMult(-1_e, KB)), {.KA = tree->child(0), .KB = tree->child(1)});
+  ComplexSign complexSign =
+      ComplexSign::SignOfDifference(tree->child(0), tree->child(1));
   const Tree *result = nullptr;
   if (!tree->isInequality()) {
     // = or !=
-    ComplexSign sign = ComplexSign::Get(subtraction);
-    if (sign.isZero()) {
+    if (complexSign.isZero()) {
       result = tree->isEqual() ? KTrue : KFalse;
-    } else if (!sign.canBeNull()) {
+    } else if (!complexSign.canBeNull()) {
       result = tree->isEqual() ? KFalse : KTrue;
     }
   } else {
-    Sign sign = Sign::Get(subtraction);
+    assert(complexSign.isReal());
+    Sign sign = complexSign.realSign();
     switch (tree->type()) {
       case BlockType::InferiorEqual:
         if (sign.isNegative()) {
@@ -181,7 +181,6 @@ bool Binary::SimplifyComparison(Tree *tree) {
       default:;
     }
   }
-  subtraction->removeTree();
   if (!result) {
     return false;
   }

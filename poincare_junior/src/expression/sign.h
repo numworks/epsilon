@@ -150,6 +150,10 @@ class ComplexSign {
 
   static ComplexSign Get(const Tree* t);
 
+  /* Sign of a - b so that a < b <=> SignOfDifference(a, b) < 0 and so on.
+   * Beware that the difference may be real while the trees were complexes. */
+  static ComplexSign SignOfDifference(const Tree* a, const Tree* b);
+
 #if POINCARE_MEMORY_TREE_LOG
   void log() const;
 #endif

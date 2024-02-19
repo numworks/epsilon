@@ -1,5 +1,7 @@
 #include "sign.h"
 
+#include <poincare_junior/src/memory/pattern_matching.h>
+
 #include "dimension.h"
 #include "number.h"
 #include "variables.h"
@@ -288,6 +290,14 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     default:
       return Unknown();
   }
+}
+
+ComplexSign ComplexSign::SignOfDifference(const Tree* a, const Tree* b) {
+  Tree* difference = PatternMatching::CreateAndSimplify(
+      KAdd(KA, KMult(-1_e, KB)), {.KA = a, .KB = b});
+  ComplexSign result = Get(difference);
+  difference->removeTree();
+  return result;
 }
 
 #if POINCARE_MEMORY_TREE_LOG

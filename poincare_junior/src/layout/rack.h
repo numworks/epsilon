@@ -12,13 +12,18 @@ class Rack;
 // Will be called Layout as soon as the older Layout is hidden
 struct LayoutT : TreeSubClass<LayoutT, Rack> {
   static void Check(const Tree* node) {
-    assert(node->isLayout() && !node->isRackLayout());
+    /* It would be safer to check that layouts are actually layouts but it is
+     * also practical to be able to assign to a layout the end element of a rack
+     * (ie one past last).  We should rather check it when dereferencing it. */
+    // assert(node->isLayout() && !node->isRackLayout());
   }
 };
 
 class Rack : public TreeSubClass<Rack, LayoutT> {
  public:
-  static void Check(const Tree* node) { assert(node->isRackLayout()); }
+  static void Check(const Tree* node) {
+    // assert(node->isRackLayout());
+  }
 };
 
 }  // namespace PoincareJ

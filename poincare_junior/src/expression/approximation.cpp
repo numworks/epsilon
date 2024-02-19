@@ -796,7 +796,7 @@ bool Approximation::ToBoolean(const Tree* node) {
     assert(node->isEqual() || node->isNotEqual());
     std::complex<T> a = ToComplex<T>(node->child(0));
     std::complex<T> b = ToComplex<T>(node->child(1));
-    return node->isNotEqual() ^ (a == b);
+    return node->isEqual() == (a == b);
   }
   assert(node->isLogicalOperator());
   bool a = ToBoolean<T>(node->child(0));

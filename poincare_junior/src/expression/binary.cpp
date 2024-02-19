@@ -140,58 +140,50 @@ bool Binary::SimplifyComparison(Tree *tree) {
       KAdd(KA, KMult(-1_e, KB)), {.KA = tree->child(0), .KB = tree->child(1)});
   Sign sign = Sign::Get(subtraction);
   subtraction->removeTree();
+  const Tree *result = nullptr;
   switch (tree->type()) {
     case BlockType::NotEqual:
     case BlockType::Equal:
       if (sign.isZero()) {
-        tree->cloneTreeOverTree(tree->isEqual() ? KTrue : KFalse);
-        return true;
+        result = tree->isEqual() ? KTrue : KFalse;
+      } else if (sign.isStrictlyNegative() || sign.isStrictlyPositive()) {
+        result = tree->isEqual() ? KFalse : KTrue;
       }
-      if (sign.isStrictlyNegative() || sign.isStrictlyPositive()) {
-        tree->cloneTreeOverTree(tree->isEqual() ? KFalse : KTrue);
-        return true;
-      }
-      return false;
+      break;
     case BlockType::InferiorEqual:
       if (sign.isNegative()) {
-        goto return_true;
+        result = KTrue;
+      } else if (sign.isStrictlyPositive()) {
+        result = KFalse;
       }
-      if (!sign.canBeNegative() && !sign.canBeNull()) {
-        goto return_false;
-      }
-      return false;
+      break;
     case BlockType::SuperiorEqual:
       if (sign.isPositive()) {
-        goto return_true;
+        result = KTrue;
+      } else if (sign.isStrictlyNegative()) {
+        result = KFalse;
       }
-      if (!sign.canBePositive() && !sign.canBeNull()) {
-        goto return_false;
-      }
-      return false;
+      break;
     case BlockType::Inferior:
       if (sign.isStrictlyNegative()) {
-        goto return_true;
+        result = KTrue;
+      } else if (sign.isPositive()) {
+        result = KFalse;
       }
-      if (!sign.canBeNegative()) {
-        goto return_false;
-      }
-      return false;
+      break;
     case BlockType::Superior:
       if (sign.isStrictlyPositive()) {
-        goto return_true;
+        result = KTrue;
+      } else if (sign.isNegative()) {
+        result = KFalse;
       }
-      if (!sign.canBePositive()) {
-        goto return_false;
-      }
-      return false;
+      break;
     default:;
   }
-  return false;
-return_true:
-  tree->cloneTreeOverTree(KTrue);
-  return true;
-return_false:
-  tree->cloneTreeOverTree(KFalse);
+  if (!result) {
+    return false;
+  }
+  tree->cloneTreeOverTree(result);
   return true;
 }
 

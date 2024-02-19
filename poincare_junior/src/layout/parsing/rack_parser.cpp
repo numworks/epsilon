@@ -558,8 +558,7 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
                       Token::Type::ComparisonOperator);
   if (leftHandSide->isComparison()) {
     /* TODO a < b = c was parsed in Comparison[<,=](a,b,c)
-     * It is now parsed as (a < b and b < c) to simplify code which is not the
-     * same in some corner cases. */
+     * It is now parsed as (a < b and b = c) to simplify code. */
     /* TODO PCJ: fix code with a < b < c < d */
     CloneTreeAtNode(rightHandSide, leftHandSide->child(1));
     Tree *comparison = SharedEditionPool->push(operatorType);

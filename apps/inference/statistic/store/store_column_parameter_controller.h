@@ -7,9 +7,9 @@
 
 namespace Inference {
 
-class SlopeColumnParameterController : public Shared::StoreParameterController {
+class StoreColumnParameterController : public Shared::StoreParameterController {
  public:
-  SlopeColumnParameterController(Escher::Responder* parentResponder,
+  StoreColumnParameterController(Escher::Responder* parentResponder,
                                  Shared::StoreColumnHelper* storeColumnHelper)
       : Shared::StoreParameterController(parentResponder, storeColumnHelper) {
     // Do not display an option to hide series

@@ -10,10 +10,10 @@
 #include <shared/math_field_delegate.h>
 #include <shared/parameter_text_field_delegate.h>
 
+#include "categorical_table_view_data_source.h"
 #include "inference/models/statistic/statistic.h"
 #include "inference/models/statistic/table.h"
 #include "inference/shared/dynamic_cells_data_source.h"
-#include "inference/statistic/chi_square_and_slope/categorical_table_view_data_source.h"
 
 namespace Inference {
 

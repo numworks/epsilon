@@ -14,10 +14,10 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
 
-#include "inference/statistic/chi_square_and_slope/input_slope_controller.h"
 #include "inference/statistic/comparison_operator_popup_data_source.h"
 #include "inference/statistic/dataset_controller.h"
 #include "inference/statistic/input_controller.h"
+#include "inference/statistic/store/input_store_controller.h"
 
 namespace Inference {
 
@@ -28,7 +28,7 @@ class HypothesisController
  public:
   HypothesisController(Escher::StackViewController* parent,
                        InputController* inputController,
-                       InputSlopeController* inputSlopeController, Test* test);
+                       InputStoreController* inputSlopeController, Test* test);
   static bool ButtonAction(HypothesisController* controller, void* s);
 
   // SelectableListViewController
@@ -75,7 +75,7 @@ class HypothesisController
       7 /* μ1-μ2 */ + 1 /* = */ +
       Constants::k_shortFloatNumberOfChars /* float */ + 1 /* \0 */;
   InputController* m_inputController;
-  InputSlopeController* m_inputSlopeController;
+  InputStoreController* m_inputSlopeController;
   DatasetController* m_datasetController;
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;

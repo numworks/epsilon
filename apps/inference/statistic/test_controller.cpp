@@ -20,7 +20,7 @@ TestController::TestController(StackViewController *parentResponder,
                                HypothesisController *hypothesisController,
                                TypeController *typeController,
                                CategoricalTypeController *categoricalController,
-                               InputSlopeController *inputSlopeController,
+                               InputStoreController *inputSlopeController,
                                InputController *inputController,
                                Statistic *statistic)
     : UniformSelectableListController(parentResponder),

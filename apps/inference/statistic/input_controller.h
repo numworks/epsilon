@@ -18,7 +18,7 @@ class InputController
     : public Shared::FloatParameterController<double>,
       public DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>,
       public DynamicCellsDataSourceDelegate<ParameterCell> {
-  friend class InputSlopeController;
+  friend class InputStoreController;
 
  public:
   constexpr static int k_numberOfTitleSignificantDigits =

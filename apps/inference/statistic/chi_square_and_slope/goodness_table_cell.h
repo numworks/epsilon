@@ -7,8 +7,8 @@
 
 #include "inference/models/statistic/goodness_test.h"
 #include "inference/shared/dynamic_cells_data_source.h"
-#include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
-#include "inference/statistic/chi_square_and_slope/categorical_table_view_data_source.h"
+#include "inference/statistic/categorical_table_cell.h"
+#include "inference/statistic/categorical_table_view_data_source.h"
 
 namespace Inference {
 

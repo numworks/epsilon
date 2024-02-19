@@ -1,21 +1,21 @@
-#include "slope_table_cell.h"
+#include "store_table_cell.h"
 
 #include <escher/palette.h>
 
 #include "inference/app.h"
 #include "inference/statistic/chi_square_and_slope/input_goodness_controller.h"
-#include "input_slope_controller.h"
+#include "input_store_controller.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-SlopeTableCell::SlopeTableCell(Responder *parentResponder, Statistic *statistic,
+StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
                                Poincare::Context *parentContext,
-                               InputSlopeController *inputSlopeController)
+                               InputStoreController *inputStoreController)
     : DoubleColumnTableCell(parentResponder, statistic),
       StoreColumnHelper(this, parentContext, this),
-      m_inputSlopeController(inputSlopeController) {
+      m_inputStoreController(inputStoreController) {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     m_header[i].setColor(Escher::Palette::Red);
     m_header[i].setEven(true);
@@ -23,7 +23,7 @@ SlopeTableCell::SlopeTableCell(Responder *parentResponder, Statistic *statistic,
   }
 }
 
-void SlopeTableCell::fillColumnsNames() {
+void StoreTableCell::fillColumnsNames() {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     /* We delayed filling the column names X1, Y1 to ensure that the underlying
      * model was a valid DoublePairStore. */
@@ -31,14 +31,14 @@ void SlopeTableCell::fillColumnsNames() {
   }
 }
 
-InputViewController *SlopeTableCell::inputViewController() {
+InputViewController *StoreTableCell::inputViewController() {
   return App::app()->inputViewController();
 }
 
-void SlopeTableCell::reload() { recomputeDimensionsAndReload(true); }
+void StoreTableCell::reload() { recomputeDimensionsAndReload(true); }
 
-CategoricalController *SlopeTableCell::categoricalController() {
-  return m_inputSlopeController;
+CategoricalController *StoreTableCell::categoricalController() {
+  return m_inputStoreController;
 }
 
 }  // namespace Inference

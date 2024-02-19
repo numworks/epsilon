@@ -208,24 +208,4 @@ KDCoordinate InputCategoricalController::nonMemoizedRowHeight(int row) {
   return CategoricalController::nonMemoizedRowHeight(row);
 }
 
-InputNamedListsCategoricalController::InputNamedListsCategoricalController(
-    StackViewController *parent, ViewController *resultsController,
-    Statistic *statistic)
-    : InputCategoricalController(parent, resultsController, statistic),
-      m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this) {
-  m_dropdownCell.setMessage(I18n::Message::DataSet);
-}
-
-void InputNamedListsCategoricalController::viewWillAppear() {
-  m_dropdownCell.dropdown()->init();
-  for (int row = 0; row < m_dropdownDataSource.numberOfRows(); row++) {
-    char index = '1' + row;
-    char buffer[] = {listPrefix(0), index, '/', listPrefix(1), index, '\0'};
-    static_cast<SmallBufferTextHighlightCell *>(m_dropdownDataSource.cell(row))
-        ->setText(buffer);
-  }
-  m_dropdownCell.dropdown()->reloadCell();
-  InputCategoricalController::viewWillAppear();
-}
-
 }  // namespace Inference

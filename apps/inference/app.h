@@ -13,13 +13,13 @@
 #include "statistic/chi_square_and_slope/categorical_type_controller.h"
 #include "statistic/chi_square_and_slope/input_goodness_controller.h"
 #include "statistic/chi_square_and_slope/input_homogeneity_controller.h"
-#include "statistic/chi_square_and_slope/input_slope_controller.h"
 #include "statistic/chi_square_and_slope/results_goodness_controller.h"
 #include "statistic/chi_square_and_slope/results_homogeneity_controller.h"
 #include "statistic/dataset_controller.h"
 #include "statistic/input_controller.h"
 #include "statistic/interval/interval_graph_controller.h"
 #include "statistic/results_controller.h"
+#include "statistic/store/input_store_controller.h"
 #include "statistic/test/hypothesis_controller.h"
 #include "statistic/test/test_graph_controller.h"
 #include "statistic/test_controller.h"
@@ -120,7 +120,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;
   InputGoodnessController m_inputGoodnessController;
-  InputSlopeController m_inputSlopeController;
+  InputStoreController m_inputSlopeController;
   ResultsController m_resultsController;
   InputController m_inputController;
   TypeController m_typeController;

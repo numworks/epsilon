@@ -2,23 +2,23 @@
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
 
 #include "inference/models/statistic/slope_t_statistic.h"
-#include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
+#include "inference/statistic/categorical_table_cell.h"
 #include "shared/buffer_function_title_cell.h"
 #include "shared/column_helper.h"
 
 namespace Inference {
 
-class InputSlopeController;
+class InputStoreController;
 
-class SlopeTableCell : public DoubleColumnTableCell,
+class StoreTableCell : public DoubleColumnTableCell,
                        public Shared::StoreColumnHelper {
  public:
-  SlopeTableCell(Escher::Responder *parentResponder, Statistic *statistic,
+  StoreTableCell(Escher::Responder *parentResponder, Statistic *statistic,
                  Poincare::Context *parentContext,
-                 InputSlopeController *inputSlopeController);
+                 InputStoreController *inputStoreController);
 
   constexpr static int k_numberOfReusableCells =
-      SlopeTStatistic::k_maxNumberOfColumns * k_maxNumberOfReusableRows;
+      Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
 
   void fillColumnsNames();
 
@@ -27,7 +27,7 @@ class SlopeTableCell : public DoubleColumnTableCell,
     return static_cast<SlopeTStatistic *>(tableModel());
   }
   const SlopeTStatistic *store() const {
-    return const_cast<SlopeTableCell *>(this)->store();
+    return const_cast<StoreTableCell *>(this)->store();
   }
 
  private:
@@ -44,9 +44,8 @@ class SlopeTableCell : public DoubleColumnTableCell,
   void reload() override;
   CategoricalController *categoricalController() override;
 
-  Shared::BufferFunctionTitleCell
-      m_header[SlopeTStatistic::k_maxNumberOfColumns];
-  InputSlopeController *m_inputSlopeController;
+  Shared::BufferFunctionTitleCell m_header[Table::k_maxNumberOfStoreColumns];
+  InputStoreController *m_inputStoreController;
 };
 
 }  // namespace Inference

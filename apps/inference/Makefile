@@ -29,21 +29,16 @@ app_inference_src += $(addprefix apps/inference/shared/,\
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/chi_square_and_slope/,\
-  categorical_controller.cpp \
-  categorical_table_cell.cpp \
   categorical_type_controller.cpp \
   goodness_table_cell.cpp \
-  results_goodness_table_cell.cpp \
-  results_goodness_controller.cpp \
   homogeneity_data_source.cpp \
-  categorical_cell.cpp \
   input_goodness_controller.cpp \
   input_homogeneity_controller.cpp \
   input_homogeneity_table_cell.cpp \
-  input_slope_controller.cpp \
-  results_homogeneity_table_cell.cpp \
+  results_goodness_controller.cpp \
+  results_goodness_table_cell.cpp \
   results_homogeneity_controller.cpp \
-  slope_table_cell.cpp \
+  results_homogeneity_table_cell.cpp \
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/interval/,\
@@ -51,6 +46,11 @@ app_inference_src += $(addprefix apps/inference/statistic/interval/,\
   interval_curve_view.cpp \
   interval_graph_controller.cpp \
   interval_graph_view.cpp \
+)
+
+app_inference_src += $(addprefix apps/inference/statistic/store/,\
+  input_store_controller.cpp \
+  store_table_cell.cpp \
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/test/,\
@@ -63,6 +63,9 @@ app_inference_src += $(addprefix apps/inference/statistic/test/,\
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/,\
+  categorical_cell.cpp \
+  categorical_controller.cpp \
+  categorical_table_cell.cpp \
   comparison_operator_popup_data_source.cpp \
   dataset_controller.cpp \
   input_controller.cpp \

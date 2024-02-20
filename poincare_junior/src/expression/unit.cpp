@@ -119,28 +119,6 @@ Tree* DimensionVector::toBaseUnits() const {
   return result;
 }
 
-void DimensionVector::addAllCoefficients(const DimensionVector other,
-                                         int8_t factor) {
-  for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
-    setCoefficientAtIndex(
-        i, coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor);
-  }
-}
-
-void DimensionVector::setCoefficientAtIndex(uint8_t i, int8_t coefficient) {
-  assert(i < k_numberOfBaseUnits);
-  int8_t* coefficientsAddresses[] = {&time,
-                                     &distance,
-                                     &angle,
-                                     &mass,
-                                     &current,
-                                     &temperature,
-                                     &amountOfSubstance,
-                                     &luminousIntensity};
-  static_assert(std::size(coefficientsAddresses) == k_numberOfBaseUnits);
-  *(coefficientsAddresses[i]) = coefficient;
-}
-
 // Representative
 const Representative* const* Representative::DefaultRepresentatives() {
   static const Representative* defaultRepresentatives[k_numberOfDimensions] = {

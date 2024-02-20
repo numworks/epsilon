@@ -84,12 +84,33 @@ struct DimensionVector {
   // Push SI units matching the vector
   Tree* toBaseUnits() const;
 
-  void addAllCoefficients(const DimensionVector other, int8_t factor);
-  void setCoefficientAtIndex(uint8_t i, int8_t coefficient);
-  void setCoefficientAtIndex(uint8_t i, int coefficient) {
+  constexpr void addAllCoefficients(const DimensionVector other,
+                                    int8_t factor) {
+    for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
+      setCoefficientAtIndex(
+          i, coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor);
+    }
+  }
+
+  constexpr void setCoefficientAtIndex(uint8_t i, int8_t coefficient) {
+    assert(i < k_numberOfBaseUnits);
+    int8_t* coefficientsAddresses[] = {&time,
+                                       &distance,
+                                       &angle,
+                                       &mass,
+                                       &current,
+                                       &temperature,
+                                       &amountOfSubstance,
+                                       &luminousIntensity};
+    static_assert(std::size(coefficientsAddresses) == k_numberOfBaseUnits);
+    *(coefficientsAddresses[i]) = coefficient;
+  }
+
+  constexpr void setCoefficientAtIndex(uint8_t i, int coefficient) {
     assert(coefficient <= INT8_MAX && coefficient >= INT8_MIN);
     setCoefficientAtIndex(i, static_cast<int8_t>(coefficient));
   }
+
   constexpr int8_t coefficientAtIndex(uint8_t i) const {
     assert(i < k_numberOfBaseUnits);
     const int8_t coefficients[] = {time,

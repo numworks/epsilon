@@ -192,16 +192,16 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
 
 Evaluation<double>
 GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
-    CurveViewCursor* cursor, Ion::Storage::Record record, bool firstOrder) {
+    CurveViewCursor* cursor, Ion::Storage::Record record, int derivationOrder) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
   Evaluation<double> derivative = function->approximateDerivative(
-      cursor->t(), App::app()->localContext(), firstOrder);
+      cursor->t(), App::app()->localContext(), derivationOrder);
   double derivativeScalar = derivative.toScalar();
 
   /* Force derivative to 0 if cursor is at an extremum where the function is
    * differentiable. */
-  if (firstOrder) {
+  if (derivationOrder == 1) {
     PointsOfInterestCache* pointsOfInterest =
         App::app()->graphController()->pointsOfInterestForRecord(record);
     if (std::isfinite(derivativeScalar) &&
@@ -218,7 +218,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   size_t numberOfChar =
-      function->nameWithArgument(buffer, bufferSize, firstOrder ? 1 : 2);
+      function->nameWithArgument(buffer, bufferSize, derivationOrder);
   assert(function->canDisplayDerivative());
   Preferences::PrintFloatMode mode =
       Preferences::sharedPreferences->displayMode();
@@ -235,9 +235,10 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
                         "=%*.*ed", derivativeScalar, mode, precision);
   }
-  if (firstOrder) {
+  if (derivationOrder == 1) {
     bannerView()->firstDerivativeView()->setText(buffer);
   } else {
+    assert(derivationOrder == 2);
     bannerView()->secondDerivativeView()->setText(buffer);
   }
   bannerView()->reload();

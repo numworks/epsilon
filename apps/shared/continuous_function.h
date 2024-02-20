@@ -172,7 +172,7 @@ class ContinuousFunction : public Function {
   }
   // Approximate derivative at t, on given sub curve if there is one
   Poincare::Evaluation<double> approximateDerivative(
-      double t, Poincare::Context *context, bool firstOrder = true,
+      double t, Poincare::Context *context, int derivationOrder = 1,
       bool useDomain = true) const;
   double approximateSlope(double t, Poincare::Context *context) const;
 
@@ -250,8 +250,8 @@ class ContinuousFunction : public Function {
   }
   // Return reduced curve expression derivative
   Poincare::Expression expressionDerivateReduced(Poincare::Context *context,
-                                                 bool firstOrder) const {
-    return m_model.expressionDerivateReduced(this, context, firstOrder);
+                                                 int derivationOrder) const {
+    return m_model.expressionDerivateReduced(this, context, derivationOrder);
   }
   // Return reduced curve expression slope (dy/dx)
   Poincare::Expression expressionSlopeReduced(
@@ -359,7 +359,7 @@ class ContinuousFunction : public Function {
     // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(
         const Ion::Storage::Record *record, Poincare::Context *context,
-        bool firstOrder) const;
+        int derivationOrder) const;
     // Return the slope (dy/dx)
     Poincare::Expression expressionSlopeReduced(
         const Ion::Storage::Record *record, Poincare::Context *context) const;

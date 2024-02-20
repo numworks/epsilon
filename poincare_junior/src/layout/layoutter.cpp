@@ -4,7 +4,6 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
@@ -309,9 +308,11 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
                            Rational::Numerator(expression->nextNode()),
                            Decimal::DecimalOffset(expression));
       expression->nextNode()->removeTree();
-    case BlockType::Constant:
-      PushCodePoint(layoutParent,
-                    Constant::ToCodePoint(Constant::Type(expression)));
+    case BlockType::Pi:
+      PushCodePoint(layoutParent, u'π');
+      break;
+    case BlockType::ExponentialE:
+      PushCodePoint(layoutParent, 'e');
       break;
     case BlockType::ComplexI:
       PushCodePoint(layoutParent, 'i');

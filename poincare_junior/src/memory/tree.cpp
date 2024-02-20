@@ -89,6 +89,7 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " numberOfColumns=\""
            << static_cast<int>(Matrix::NumberOfColumns(this)) << "\"";
   }
+#if O
   if (isConstant()) {
     char buffer[4];
     size_t size = UTF8Decoder::CodePointToChars(
@@ -96,6 +97,7 @@ void Tree::logAttributes(std::ostream& stream) const {
     buffer[size] = 0;
     stream << " type=\"" << buffer << "\"";
   }
+#endif
   if (isNumber()) {
     stream << " value=\"" << Approximation::To<float>(this) << "\"";
     return;

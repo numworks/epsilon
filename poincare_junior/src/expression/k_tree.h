@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_K_TREE_H
 #define POINCARE_EXPRESSION_K_TREE_H
 
-#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/expression/sign.h>
@@ -261,11 +260,9 @@ struct RationalRepresentation<N, D> : KTree<BlockType::RationalShort, N, D> {};
 
 /* Named constants */
 
-constexpr KTree π_e =
-    KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi)>();
+constexpr KTree π_e = KTree<BlockType::Pi>();
 
-constexpr KTree e_e =
-    KTree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::E)>();
+constexpr KTree e_e = KTree<BlockType::ExponentialE>();
 
 // TODO: move in OMG?
 /* Read decimal number in str as an int, ignoring decimal point "1.2" => 12 */

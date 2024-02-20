@@ -9,7 +9,6 @@
 #include <complex>
 
 #include "beautification.h"
-#include "constant.h"
 #include "decimal.h"
 #include "float.h"
 #include "list.h"
@@ -313,8 +312,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
   switch (node->type()) {
     case BlockType::ComplexI:
       return std::complex<T>(0, 1);
-    case BlockType::Constant:
-      return Constant::To<T>(Constant::Type(node));
+    case BlockType::Pi:
+      return M_PI;
+    case BlockType::ExponentialE:
+      return M_E;
     case BlockType::SingleFloat:
       return Float::FloatTo(node);
     case BlockType::DoubleFloat:

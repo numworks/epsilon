@@ -743,8 +743,10 @@ void RackParser::parseConstant(EditionReference &leftHandSide,
   // leftHandSide =
   // Constant::Builder(m_currentToken.text(), m_currentToken.length());
   assert(m_currentToken.length() == 1);
-  leftHandSide = SharedEditionPool->push<BlockType::Constant, char16_t>(
-      m_currentToken.toDecoder(m_root).nextCodePoint());
+  leftHandSide = SharedEditionPool->push(
+      m_currentToken.toDecoder(m_root).nextCodePoint() == 'e'
+          ? BlockType::ExponentialE
+          : BlockType::Pi);
   isThereImplicitOperator();
 }
 

@@ -36,7 +36,7 @@ NODE(RationalNegBig, 0, 2)
 
 RANGE(Rational, Zero, RationalNegBig)
 
-// 1.3 - Other numbers
+// 1.3 - Floats
 
 /* - Float F
  * | F TAG | VALUE (4 bytes) | */
@@ -48,11 +48,14 @@ NODE(DoubleFloat, 0, sizeof(double))
 
 RANGE(Float, SingleFloat, DoubleFloat)
 
-/* - Constant C
- * | C TAG | NODE | */
-NODE(Constant, 0, 1)
+// 1.4 - Mathematical constants
 
-RANGE(Number, Zero, Constant)
+NODE(ExponentialE)
+NODE(Pi)
+
+RANGE(MathematicalConstant, ExponentialE, Pi)
+
+RANGE(Number, Zero, Pi)
 
 // 2 - Order dependant expressions
 

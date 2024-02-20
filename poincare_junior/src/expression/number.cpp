@@ -15,7 +15,7 @@ Tree* Number::Addition(const Tree* i, const Tree* j) {
     return SharedEditionPool->push<BlockType::SingleFloat>(
         Approximation::To<float>(i) + Approximation::To<float>(j));
   }
-  assert(!i->isConstant() && !j->isConstant());
+  assert(!i->isMathematicalConstant() && !j->isMathematicalConstant());
   Tree* result = Rational::Addition(i, j);
   return result;
 }
@@ -28,14 +28,15 @@ Tree* Number::Multiplication(const Tree* i, const Tree* j) {
     return SharedEditionPool->push<BlockType::SingleFloat>(
         Approximation::To<float>(i) * Approximation::To<float>(j));
   }
-  assert(!i->isConstant() && !j->isConstant());
+  assert(!i->isMathematicalConstant() && !j->isMathematicalConstant());
   Tree* result = Rational::Multiplication(i, j);
   return result;
 }
 
 Sign Number::Sign(const Tree* node) {
   switch (node->type()) {
-    case BlockType::Constant:
+    case BlockType::Pi:
+    case BlockType::ExponentialE:
       return Sign::Positive();
     case BlockType::DoubleFloat:
     case BlockType::SingleFloat: {

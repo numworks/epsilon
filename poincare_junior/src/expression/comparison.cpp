@@ -4,7 +4,6 @@
 
 #include "approximation.h"
 #include "beautification.h"
-#include "constant.h"
 #include "dimension.h"
 #include "k_tree.h"
 #include "poincare_junior/src/memory/type_block.h"
@@ -116,10 +115,11 @@ bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {
 
 int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
   assert(node0->type() <= node1->type());
-  if (node1->isConstant()) {
-    return node0->isConstant() ? CompareConstants(node0, node1) : -1;
+  if (node1->isMathematicalConstant()) {
+    return node0->isMathematicalConstant() ? CompareConstants(node0, node1)
+                                           : -1;
   }
-  assert(!node0->isConstant());
+  assert(!node0->isMathematicalConstant());
   if (node0->isRational() && node1->isRational()) {
     // TODO_PCJ: return Rational::NaturalOrder(node0, node1);
   }
@@ -154,8 +154,8 @@ int Comparison::CompareNames(const Tree* node0, const Tree* node1) {
 }
 
 int Comparison::CompareConstants(const Tree* node0, const Tree* node1) {
-  return static_cast<uint8_t>(Constant::Type(node0)) -
-         static_cast<uint8_t>(Constant::Type(node1));
+  return static_cast<uint8_t>(node1->type()) -
+         static_cast<uint8_t>(node0->type());
 }
 
 int Comparison::ComparePolynomial(const Tree* node0, const Tree* node1) {

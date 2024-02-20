@@ -2,7 +2,6 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/matrix.h>
@@ -255,15 +254,10 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
     }
     case BlockType::ComplexI:
       return Poincare::Constant::ComplexIBuilder();
-    case BlockType::Constant: {
-      if (Constant::Type(exp) == Constant::Type::Pi) {
-        return Poincare::Constant::PiBuilder();
-      }
-      if (Constant::Type(exp) == Constant::Type::E) {
-        return Poincare::Constant::ExponentialEBuilder();
-      }
-      return Poincare::Undefined::Builder();
-    }
+    case BlockType::Pi:
+      return Poincare::Constant::PiBuilder();
+    case BlockType::ExponentialE:
+      return Poincare::Constant::ExponentialEBuilder();
     case BlockType::Infinity:
       return Poincare::Infinity::Builder(false);
     case BlockType::Factorial:
@@ -502,9 +496,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::ConstantMaths: {
       Poincare::Constant c = static_cast<Poincare::Constant &>(exp);
       if (c.isExponentialE()) {
-        SharedEditionPool->push<BlockType::Constant>(u'e');
+        SharedEditionPool->push(BlockType::ExponentialE);
       } else if (c.isPi()) {
-        SharedEditionPool->push<BlockType::Constant>(u'π');
+        SharedEditionPool->push(BlockType::Pi);
       } else if (c.isComplexI()) {
         SharedEditionPool->push(BlockType::ComplexI);
       } else {

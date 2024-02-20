@@ -397,7 +397,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
       SharedEditionPool->push<Type>(abs);
     }
     SharedEditionPool->push(BlockType::Power);
-    SharedEditionPool->push<BlockType::Constant>(u'e');
+    SharedEditionPool->push(BlockType::ExponentialE);
     im = std::arg(value);
   }
   // Complex part ±[im×]i

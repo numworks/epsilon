@@ -335,7 +335,7 @@ void EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
 
 template Tree *EditionPool::push<BlockType::Addition, int>(int);
 template Tree *EditionPool::push<BlockType::Multiplication, int>(int);
-template Tree *EditionPool::push<BlockType::Constant, char16_t>(char16_t);
+// template Tree *EditionPool::push<BlockType::Constant, char16_t>(char16_t);
 template Tree *EditionPool::push<BlockType::IntegerShort>(int8_t);
 template Tree *EditionPool::push<BlockType::IntegerPosBig>(uint64_t);
 template Tree *EditionPool::push<BlockType::IntegerNegBig>(uint64_t);

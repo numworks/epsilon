@@ -403,7 +403,7 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
   if (child->isNumber() && next->isNumber() &&
-      !((child->isConstant()) || next->isConstant())) {
+      !((child->isMathematicalConstant()) || next->isMathematicalConstant())) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
@@ -563,7 +563,7 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
   assert(next == child->nextTree());
   Tree* merge = nullptr;
   if (child->isNumber() && next->isNumber() &&
-      !((child->isConstant()) || next->isConstant())) {
+      !((child->isMathematicalConstant()) || next->isMathematicalConstant())) {
     // Merge numbers
     merge = Number::Addition(child, next);
   } else if (TermsAreEqual(child, next)) {

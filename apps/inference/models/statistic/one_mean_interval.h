@@ -36,6 +36,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
+  bool validateInputs() override { return parametersAreValid(); }
 
   const char* estimateSymbol() const override {
     return OneMean::EstimateSymbol();

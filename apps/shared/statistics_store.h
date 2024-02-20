@@ -29,6 +29,10 @@ class StatisticsStore : public DoublePairStore {
   }
   double defaultValueForColumn1() const override { return 1.0; }
   bool updateSeries(int series, bool delayUpdate = false) override;
+  bool valueValidInColumn(double value, int relativeColumn) const override {
+    return DoublePairStore::valueValidInColumn(value, relativeColumn) &&
+           (relativeColumn != 1 || value >= 0.0);
+  }
 
  protected:
   // Sorted value indexes are memoized to save computation

@@ -12,6 +12,14 @@ class BannerView : public Shared::XYBannerView {
   BannerView(Escher::Responder* parentResponder,
              Escher::TextFieldDelegate* textFieldDelegate);
 
+  struct DisplayParameters {
+    bool showInterest : 1;
+    bool showFirstDerivative : 1;
+    bool showSecondDerivative : 1;
+    bool showSlope : 1;
+    bool showTangent : 1;
+  };
+
   BannerBufferTextView* firstDerivativeView() { return &m_firstDerivativeView; }
   BannerBufferTextView* secondDerivativeView() {
     return &m_secondDerivativeView;
@@ -22,11 +30,11 @@ class BannerView : public Shared::XYBannerView {
   int numberOfInterestMessages() const;
   void addInterestMessage(I18n::Message message, Shared::CursorView* cursor);
   void emptyInterestMessages(Shared::CursorView* cursor);
-  void setDisplayParameters(bool showInterest, bool showFirstDerivative,
-                            bool showSecondDerivative, bool showSlope,
-                            bool showTangent);
-  bool showFirstDerivative() const { return m_showFirstDerivative; }
-  bool showSlope() const { return m_showSlope; }
+  void setDisplayParameters(DisplayParameters displayParameters);
+  bool showFirstDerivative() const {
+    return m_displayParameters.showFirstDerivative;
+  }
+  bool showSlope() const { return m_displayParameters.showSlope; }
 
  private:
   constexpr static int k_maxNumberOfInterests = 3;
@@ -34,14 +42,16 @@ class BannerView : public Shared::XYBannerView {
   int numberOfSubviews() const override {
     // there are 3 views for tangent (aView, bView, tangentEquationView)
     return XYBannerView::k_numberOfSubviews + numberOfInterestMessages() +
-           m_showFirstDerivative + m_showSecondDerivative + m_showSlope +
-           3 * m_showTangent;
+           m_displayParameters.showFirstDerivative +
+           m_displayParameters.showSecondDerivative +
+           m_displayParameters.showSlope + 3 * m_displayParameters.showTangent;
   };
   Escher::View* subviewAtIndex(int index) override;
   bool lineBreakBeforeSubview(Escher::View* subview) const override;
   bool hasInterestMessage(int i) const {
     assert(i >= 0 && i < k_maxNumberOfInterests);
-    return m_showInterest && m_interestMessageView[i].text()[0] != '\0';
+    return m_displayParameters.showInterest &&
+           m_interestMessageView[i].text()[0] != '\0';
   }
 
   Escher::MessageTextView m_interestMessageView[k_maxNumberOfInterests];
@@ -51,11 +61,7 @@ class BannerView : public Shared::XYBannerView {
   Escher::MessageTextView m_tangentEquationView;
   BannerBufferTextView m_aView;
   BannerBufferTextView m_bView;
-  bool m_showInterest : 1;
-  bool m_showFirstDerivative : 1;
-  bool m_showSecondDerivative : 1;
-  bool m_showSlope : 1;
-  bool m_showTangent : 1;
+  DisplayParameters m_displayParameters;
 };
 
 }  // namespace Graph

@@ -1,0 +1,18 @@
+#ifndef POINCARE_JUNIOR_SERIALIZE_H
+#define POINCARE_JUNIOR_SERIALIZE_H
+
+#include "rack.h"
+
+namespace PoincareJ {
+
+char *Serialize(const Rack *rack, char *buffer, char *end);
+char *Serialize(const LayoutT *layout, char *buffer, char *end);
+
+inline char *Serialize(const Tree *tree, char *buffer, char *end) {
+  return tree->isRackLayout() ? Serialize(Rack::From(tree), buffer, end)
+                              : Serialize(LayoutT::From(tree), buffer, end);
+}
+
+}  // namespace PoincareJ
+
+#endif

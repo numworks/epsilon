@@ -55,54 +55,6 @@ void Layout::EditionPoolTextToLayoutRec(UTF8Decoder *decoder, Tree *parent,
   }
 }
 
-char *append(const char *text, char *buffer, char *end) {
-  size_t len = std::min<size_t>(strlen(text), end - buffer);
-  memcpy(buffer, text, len);
-  return buffer + len;
-}
-
-char *Layout::Serialize(const Tree *layout, char *buffer, char *end) {
-  switch (layout->layoutType()) {
-    case LayoutType::CodePoint: {
-      constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
-      char codepointBuffer[bufferSize];
-      CodePointLayout::GetName(layout, codepointBuffer, bufferSize);
-      buffer = append(codepointBuffer, buffer, end);
-      break;
-    }
-    case LayoutType::Parenthesis: {
-      buffer = append("(", buffer, end);
-      buffer = Serialize(layout->child(0), buffer, end);
-      buffer = append(")", buffer, end);
-      break;
-    }
-    case LayoutType::Rack: {
-      for (const Tree *child : layout->children()) {
-        buffer = Serialize(child, buffer, end);
-        if (buffer == end) {
-          return end;
-        }
-      }
-      break;
-    }
-    case LayoutType::Fraction: {
-      buffer = Serialize(layout->child(0), buffer, end);
-      buffer = append("/", buffer, end);
-      buffer = Serialize(layout->child(1), buffer, end);
-      break;
-    }
-    case LayoutType::VerticalOffset: {
-      buffer = append("^(", buffer, end);
-      buffer = Serialize(layout->child(0), buffer, end);
-      buffer = append(")", buffer, end);
-      break;
-    }
-    default:
-      buffer = append("?", buffer, end);
-  }
-  return buffer;
-}
-
 LayoutReference LayoutReference::Parse(const char *textInput) {
   return LayoutReference(
       [](const char *text) { EditionPoolTextToLayout(text); }, textInput);

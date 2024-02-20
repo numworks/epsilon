@@ -20,7 +20,6 @@ class Layout {
     return node->numberOfChildren() == 0;
   }
 
-  static char* Serialize(const Tree* layout, char* buffer, char* end);
   static Tree* EditionPoolTextToLayout(const char* text);
   static Poincare::OLayout ToPoincareLayout(const Tree* exp);
   static Tree* FromPoincareLayout(Poincare::OLayout exp);

@@ -11,6 +11,7 @@
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
+#include <poincare_junior/src/layout/serialize.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/n_ary.h>
@@ -23,7 +24,7 @@ Poincare::Expression ToPoincareExpressionViaParse(const Tree *exp) {
   EditionReference outputLayout = Layoutter::LayoutExpression(exp->clone());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
-  *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+  *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
   outputLayout->removeTree();
   return Poincare::Expression::Parse(buffer, nullptr, false, false);
 }

@@ -7,6 +7,7 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/layoutter.h>
+#include <poincare_junior/src/layout/serialize.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/test/helper.h>
 
@@ -140,7 +141,7 @@ void assert_parsed_expression_process_to(
                                           symbolicComputation, unitConversion));
     Tree *l = PoincareJ::Layoutter::LayoutExpression(m, true,
                                                      numberOfSignificantDigits);
-    *PoincareJ::Layout::Serialize(l, buffer, buffer + bufferSize) = 0;
+    *PoincareJ::Serialize(l, buffer, buffer + bufferSize) = 0;
     l->removeTree();
     bad = strcmp(buffer, result) != 0;
   }

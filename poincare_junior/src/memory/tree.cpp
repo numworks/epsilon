@@ -20,6 +20,7 @@
 #include <poincare_junior/src/layout/autocompleted_pair.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/layoutter.h>
+#include <poincare_junior/src/layout/serialize.h>
 #include <poincare_junior/src/memory/placeholder.h>
 #endif
 
@@ -141,7 +142,7 @@ void Tree::logSerialize(std::ostream& stream) const {
   assert(!outputLayout.isUninitialized());
   constexpr size_t bufferSize = 1024;
   char buffer[bufferSize];
-  *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+  *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
   outputLayout->removeTree();
   stream << buffer << "\n";
 }

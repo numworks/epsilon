@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/layout/layoutter.h>
+#include <poincare_junior/src/layout/serialize.h>
 
 #include "helper.h"
 
@@ -110,7 +111,7 @@ void simplifies_to(const char* input, const char* output,
     quiz_assert(!outputLayout.isUninitialized());
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
-    *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+    *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
     outputLayout->removeTree();
     bool visuallyOk = strcmp(output, buffer) == 0;
     if (visuallyOk) {

@@ -24,7 +24,7 @@ class CalculationStore;
  * */
 // clang-format on
 
-#define OLD_POINCARE 1
+#define OLD_POINCARE 0
 
 class Calculation {
   friend CalculationStore;

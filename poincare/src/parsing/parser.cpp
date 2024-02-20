@@ -56,14 +56,13 @@ Expression Parser::parseExpressionWithRightwardsArrow(
   // Step 1. Parse as unitConversion
   m_parsingContext.setParsingMethod(
       ParsingContext::ParsingMethod::UnitConversion);
-  Tokenizer::State tokenizerState;
-  rememberCurrentParsingPosition(&tokenizerState);
+  State previousState = currentState();
   Expression result = initializeFirstTokenAndParseUntilEnd();
   if (m_status == Status::Success) {
     return result;
   }
   // Failed to parse as unit conversion
-  restorePreviousParsingPosition(tokenizerState);
+  setState(previousState);
 
   // Step 2. Parse as assignment, starting with rightHandSide.
   m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
@@ -78,7 +77,7 @@ Expression Parser::parseExpressionWithRightwardsArrow(
        (rightHandSide.type() == ExpressionNode::Type::Function &&
         rightHandSide.childAtIndex(0).type() ==
             ExpressionNode::Type::Symbol))) {
-    restorePreviousParsingPosition(tokenizerState);
+    setState(previousState);
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
     EmptyContext tempContext = EmptyContext();
     /* This is instatiated outside the condition so that the pointer is not
@@ -958,19 +957,14 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
     return;
   }
 
-  Token storedNextToken;
-  Token storedCurrentToken;
-  Tokenizer::State tokenizerState;
-  rememberCurrentParsingPosition(&tokenizerState, &storedCurrentToken,
-                                 &storedNextToken);
+  State previousState = currentState();
   // Try to parse aspostrophe as derivative
   if (privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
                                                  stoppingType, idType, true)) {
     return;
   }
   // Parse aspostrophe as unit (default parsing)
-  restorePreviousParsingPosition(tokenizerState, storedCurrentToken,
-                                 storedNextToken);
+  setState(previousState);
   privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
                                              stoppingType, idType, false);
 }
@@ -1320,11 +1314,7 @@ bool Parser::generateMixedFractionIfNeeded(Expression &leftHandSide) {
      * by adding a multiplication symbol between the two. */
     return false;
   }
-  Token storedNextToken;
-  Token storedCurrentToken;
-  Tokenizer::State tokenizerState;
-  rememberCurrentParsingPosition(&tokenizerState, &storedCurrentToken,
-                                 &storedNextToken);
+  State previousState = currentState();
   // Check for mixed fraction. There is a mixed fraction if :
   if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
       // The next token is either a number, a system parenthesis or empty
@@ -1344,30 +1334,14 @@ bool Parser::generateMixedFractionIfNeeded(Expression &leftHandSide) {
       return true;
     }
   }
-  restorePreviousParsingPosition(tokenizerState, storedCurrentToken,
-                                 storedNextToken);
+  setState(previousState);
   return false;
 }
 
-void Parser::rememberCurrentParsingPosition(Tokenizer::State *tokenizerState,
-                                            Token *storedCurrentToken,
-                                            Token *storedNextToken) {
-  if (storedCurrentToken) {
-    *storedCurrentToken = m_currentToken;
-  }
-  if (storedNextToken) {
-    *storedNextToken = m_nextToken;
-  }
-  assert(tokenizerState);
-  *tokenizerState = m_tokenizer.currentState();
-}
-
-void Parser::restorePreviousParsingPosition(Tokenizer::State tokenizerState,
-                                            Token storedCurrentToken,
-                                            Token storedNextToken) {
-  m_tokenizer.setState(tokenizerState);
-  m_currentToken = storedCurrentToken;
-  m_nextToken = storedNextToken;
+void Parser::setState(State state) {
+  m_tokenizer.setState(state.tokenizerState);
+  m_currentToken = state.currentToken;
+  m_nextToken = state.nextToken;
   m_status = Status::Progress;
 }
 

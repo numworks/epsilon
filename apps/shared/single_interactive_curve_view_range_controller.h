@@ -30,6 +30,8 @@ class SingleInteractiveCurveViewRangeController
   KDCoordinate separatorBeforeRow(int row) override;
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;
+  void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
+
   Axis axis() const { return m_axis; }
   void setAxis(Axis axis);
 

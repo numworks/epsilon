@@ -204,4 +204,11 @@ bool SingleInteractiveCurveViewRangeController::textFieldDidReceiveEvent(
                                                                 event);
 }
 
+void SingleInteractiveCurveViewRangeController::textFieldDidAbortEditing(
+    Escher::AbstractTextField *textField) {
+  // Reload selected cell to display "Auto" when text is empty
+  m_selectableListView.reloadSelectedCell();
+  SingleRangeController<float>::textFieldDidAbortEditing(textField);
+}
+
 }  // namespace Shared

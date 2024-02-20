@@ -1230,6 +1230,9 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       "f^(3)", Power::Builder(Symbol::Builder("f", 1),
                               Parenthesis::Builder(BasedInteger::Builder(3))));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  assert_text_not_parsable(
+      "→M^\U00000012√\U00000012^\U000000122\U00000013\U00000013\U00000013");
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {

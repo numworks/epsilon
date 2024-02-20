@@ -1339,10 +1339,12 @@ bool Parser::generateMixedFractionIfNeeded(Expression &leftHandSide) {
 }
 
 void Parser::setState(State state) {
+  m_status = state.status;
   m_tokenizer.setState(state.tokenizerState);
   m_currentToken = state.currentToken;
   m_nextToken = state.nextToken;
-  m_status = Status::Progress;
+  m_pendingImplicitOperator = state.pendingImplicitOperator;
+  m_waitingSlashForMixedFraction = state.waitingSlashForMixedFraction;
 }
 
 }  // namespace Poincare

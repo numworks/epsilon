@@ -5,7 +5,6 @@
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
-#include <poincare/layout.h>
 #include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/memory/reference.h>
 
@@ -21,8 +20,6 @@ class Layout {
   }
 
   static Tree* EditionPoolTextToLayout(const char* text);
-  static Poincare::OLayout ToPoincareLayout(const Tree* exp);
-  static Tree* FromPoincareLayout(Poincare::OLayout exp);
 
  private:
   static void EditionPoolTextToLayoutRec(UTF8Decoder* decoder, Tree* parent,

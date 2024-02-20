@@ -1,4 +1,5 @@
-#include <poincare/junior_layout.h>
+#include "conversion.h"
+
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/grid.h>
@@ -47,7 +48,7 @@ Correspondance oneToOne[] = {
     {PT::ListSequenceLayout, LT::ListSequence},
 };
 
-Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
+Poincare::OLayout ToPoincareLayout(const Tree *l) {
   LayoutType type = l->layoutType();
   for (Correspondance cr : oneToOne) {
     if (cr.junior == type) {
@@ -294,7 +295,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
   }
 }
 
-Tree *Layout::FromPoincareLayout(Poincare::OLayout l) {
+Tree *FromPoincareLayout(Poincare::OLayout l) {
   Tree *node = Tree::FromBlocks(SharedEditionPool->lastBlock());
   PushPoincareRack(l);
   return node;

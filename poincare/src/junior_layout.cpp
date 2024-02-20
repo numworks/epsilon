@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <poincare/junior_layout.h>
-#include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/conversion.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/render.h>
 
@@ -24,7 +24,7 @@ void JuniorLayoutNode::render(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
 size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {
-  OLayout l = PoincareJ::Layout::ToPoincareLayout(tree());
+  OLayout l = PoincareJ::ToPoincareLayout(tree());
   return l.node()->serialize(buffer, bufferSize, floatDisplayMode,
                              numberOfSignificantDigits);
 }
@@ -61,7 +61,7 @@ JuniorLayout JuniorLayout::Juniorize(OLayout l) {
     // l is already a junior layout
     return static_cast<JuniorLayout&>(l);
   }
-  return Builder(PoincareJ::Layout::FromPoincareLayout(l));
+  return Builder(PoincareJ::FromPoincareLayout(l));
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,

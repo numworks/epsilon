@@ -132,14 +132,13 @@ void StoreController::setTitleCellText(HighlightCell *cell, int column) {
 void StoreController::clearSelectedColumn() {
   int series = m_store->seriesAtColumn(selectedColumn());
   int column = m_store->relativeColumn(selectedColumn());
+  m_store->clearColumn(series, column);
   if (column == 0) {
-    m_store->deleteAllPairsOfSeries(series);
     selectCellAtLocation(selectedColumn(), 1);
     resetMemoizedFormulasOfEmptyColumns(series);
   } else {
     assert(column == 1);
     // Column won't be empty, all values are set to 1
-    m_store->resetColumn(series, column);
     resetMemoizedFormulaOfColumn(series, column);
   }
 }

@@ -25,6 +25,7 @@ class OneMeanStatistic : public Table {
   // Table
   void setParameterAtPosition(double value, int row, int column) override;
   double parameterAtPosition(int row, int column) const override;
+  void deleteParametersInColumn(int column) override;
   bool deleteParameterAtPosition(int row, int column) override;
   void recomputeData() override { m_store->updateSeries(m_series); }
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }

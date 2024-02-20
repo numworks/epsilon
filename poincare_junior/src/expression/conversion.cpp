@@ -1,6 +1,5 @@
 #include <poincare_expressions.h>
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
@@ -11,6 +10,7 @@
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
+#include <poincare_junior/src/layout/rack_from_text.h>
 #include <poincare_junior/src/layout/serialize.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -33,7 +33,7 @@ void PushPoincareExpressionViaParse(Poincare::Expression exp) {
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   exp.serialize(buffer, bufferSize);
-  EditionReference inputLayout = Layout::EditionPoolTextToLayout(buffer);
+  EditionReference inputLayout = RackFromText(buffer);
   RackParser(inputLayout).parse();
   inputLayout->removeTree();
   return;

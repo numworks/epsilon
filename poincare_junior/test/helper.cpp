@@ -1,10 +1,10 @@
 #include "helper.h"
 
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
+#include <poincare_junior/src/layout/rack_from_text.h>
 
 Tree* parse(const char* input) {
-  Tree* inputLayout = Layout::EditionPoolTextToLayout(input);
+  Tree* inputLayout = RackFromText(input);
   RackParser(inputLayout).parse();
   // quiz_assert(expression);
   inputLayout->removeTree();
@@ -49,7 +49,7 @@ const char * ApproximatedParsedIntegerString() {
 #endif
 
 Tree* TextToTree(const char* input) {
-  Tree* expression = Layout::EditionPoolTextToLayout(input);
+  Tree* expression = RackFromText(input);
   expression->moveTreeOverTree(RackParser(expression).parse());
   quiz_assert(expression);
   return expression;

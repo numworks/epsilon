@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/projection.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/parser.h>
+#include <poincare_junior/src/layout/rack_from_text.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 
 namespace PoincareJ {
@@ -11,7 +12,7 @@ namespace PoincareJ {
 Expression Expression::Parse(const char *textInput) {
   return Expression(
       [](const char *text) {
-        EditionReference layout = Layout::EditionPoolTextToLayout(text);
+        EditionReference layout = RackFromText(text);
         Parser::Parse(layout);
         layout->removeTree();
       },

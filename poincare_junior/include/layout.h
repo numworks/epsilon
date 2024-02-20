@@ -18,12 +18,6 @@ class Layout {
     assert(node->isRackLayout());
     return node->numberOfChildren() == 0;
   }
-
-  static Tree* EditionPoolTextToLayout(const char* text);
-
- private:
-  static void EditionPoolTextToLayoutRec(UTF8Decoder* decoder, Tree* parent,
-                                         const Tree* parentheses);
 };
 
 class LayoutReference final : public Reference, public Layout {

@@ -32,7 +32,7 @@ class DerivativesParameterController
   Escher::StackViewController* stackController() const;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   void updateSwitch(int row);
-  void invertSwitchState(int row);
+  void toggleSwitch(int row);
   bool switchState(int row) const;
 
   constexpr static int k_indexOfFirstDerivativeValue = 0;

@@ -23,7 +23,7 @@ DerivativesParameterController::DerivativesParameterController(
 bool DerivativesParameterController::handleEvent(Ion::Events::Event event) {
   // Cells are all the same so then are activated by the same events
   if (cell(0)->canBeActivatedByEvent(event)) {
-    invertSwitchState(selectedRow());
+    toggleSwitch(selectedRow());
     m_selectableListView.reloadSelectedCell();
     return true;
   }
@@ -67,7 +67,7 @@ void DerivativesParameterController::updateSwitch(int row) {
   cell(row)->accessory()->setState(switchState(row));
 }
 
-void DerivativesParameterController::invertSwitchState(int row) {
+void DerivativesParameterController::toggleSwitch(int row) {
   assert(0 <= row && row < k_numberOfCells);
   switch (row) {
     case k_indexOfFirstDerivativeValue:

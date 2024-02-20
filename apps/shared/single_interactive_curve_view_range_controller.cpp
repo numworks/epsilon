@@ -14,7 +14,7 @@ SingleInteractiveCurveViewRangeController::
     : SingleRangeController<float>(parentResponder, confirmPopUpController),
       m_range(interactiveRange),
       m_gridUnitCell(&this->m_selectableListView, this),
-      m_gridUnitParam(k_autoGridUnitValue) {
+      m_gridUnitParam(NAN) {
   m_gridUnitCell.label()->setMessage(I18n::Message::Step);
 }
 
@@ -34,8 +34,13 @@ bool SingleInteractiveCurveViewRangeController::boundsParametersAreDifferent() {
 }
 
 bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
-  return boundsParametersAreDifferent() ||
-         m_gridUnitParam != m_range->userGridUnit(m_axis);
+  bool gridParamIsDifferent =
+      std::isnan(m_gridUnitParam) !=
+          std::isnan(m_range->userGridUnit(m_axis)) ||
+      (!std::isnan(m_gridUnitParam) &&
+       !std::isnan(m_range->userGridUnit(m_axis)) &&
+       m_gridUnitParam != m_range->userGridUnit(m_axis));
+  return gridParamIsDifferent || boundsParametersAreDifferent();
 }
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {
@@ -114,7 +119,7 @@ bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_gridUnitParam = std::isnan(f) ? k_autoGridUnitValue : f;
+    m_gridUnitParam = f;
     return true;
   }
   return SingleRangeController<float>::setParameterAtIndex(parameterIndex, f);

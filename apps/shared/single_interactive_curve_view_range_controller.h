@@ -35,8 +35,6 @@ class SingleInteractiveCurveViewRangeController
 
  private:
   constexpr static int k_gridUnitCellType = 3;
-  constexpr static float k_autoGridUnitValue =
-      InteractiveCurveViewRange::k_autoGridUnitValue;
   I18n::Message parameterMessage(int index) const override {
     assert(index == 0 || index == 1);
     return index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum;
@@ -56,7 +54,7 @@ class SingleInteractiveCurveViewRangeController
   float parameterAtIndex(int index) override;
   bool hasUndefinedValue(const char* text, float floatValue,
                          int row) const override;
-  bool gridUnitIsAuto() const { return m_gridUnitParam == k_autoGridUnitValue; }
+  bool gridUnitIsAuto() const { return std::isnan(m_gridUnitParam); }
 
   InteractiveCurveViewRange* m_range;
   // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.

@@ -15,7 +15,6 @@ namespace Shared {
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
-  constexpr static float k_autoGridUnitValue = -1.f;
   using GridType = GridTypeController::GridType;
 
   template <typename T>
@@ -35,7 +34,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
         m_offscreenYAxis(0.f),
         m_gridType(GridType::Cartesian),
         m_zoomAuto{true, true},
-        m_userGridUnit{k_autoGridUnitValue, k_autoGridUnitValue},
+        m_userGridUnit{NAN, NAN},
         m_zoomNormalize(false) {}
 
   constexpr static float NormalYXRatio() {
@@ -59,11 +58,9 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   bool gridUnitAuto() const {
     return gridUnitAuto(Axis::X) && gridUnitAuto(Axis::Y);
   }
-  void setGridUnitAuto() {
-    privateSetUserGridUnit(k_autoGridUnitValue, k_autoGridUnitValue);
-  }
+  void setGridUnitAuto() { privateSetUserGridUnit(NAN, NAN); }
   bool gridUnitAuto(Axis axis) const {
-    return m_userGridUnit(axis) == k_autoGridUnitValue;
+    return std::isnan(m_userGridUnit(axis));
   }
   AxisInformation<float> userGridUnit() const { return m_userGridUnit; }
   void setUserGridUnit(AxisInformation<float> userGridUnit) {

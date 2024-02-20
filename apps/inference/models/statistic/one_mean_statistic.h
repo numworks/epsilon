@@ -46,6 +46,8 @@ class OneMeanStatistic : public Table {
 
   void syncParametersWithStore();
 
+  virtual void reinitParameters() = 0;
+
   // Table
   Index2D initialDimensions() const override {
     return Index2D{.row = 1, .col = 2};

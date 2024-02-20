@@ -45,6 +45,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   OneMean::Type oneMeanType() const {
     return OneMeanStatistic::OneMeanType(this);
   }
+  void reinitParameters() override { initParameters(); }
 
   // Significance Test:: OneMean
   int numberOfStatisticParameters() const override {

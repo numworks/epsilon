@@ -177,14 +177,21 @@ class Parser {
 
   // Save and restore parser state
   struct State {
+    Status status;
     Tokenizer::State tokenizerState;
     Token currentToken;
     Token nextToken;
+    bool pendingImplicitOperator;
+    bool waitingSlashForMixedFraction;
   };
   State currentState() {
-    return State{.tokenizerState = m_tokenizer.currentState(),
-                 .currentToken = m_currentToken,
-                 .nextToken = m_nextToken};
+    return State{
+        .status = m_status,
+        .tokenizerState = m_tokenizer.currentState(),
+        .currentToken = m_currentToken,
+        .nextToken = m_nextToken,
+        .pendingImplicitOperator = m_pendingImplicitOperator,
+        .waitingSlashForMixedFraction = m_waitingSlashForMixedFraction};
   }
   void setState(State state);
 

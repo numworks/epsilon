@@ -69,32 +69,36 @@ const char *CurveParameterController::title() {
 }
 
 bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
-  switch (row) {
-    case k_indexOfImageCell1:
-    case k_indexOfFirstDerivativeCell1:
-    case k_indexOfSecondDerivativeCell1:
+  assert(0 <= row && row <= k_numberOfParameterRows);
+  ParameterIndex index = static_cast<ParameterIndex>(row);
+  switch (index) {
+    case ParameterIndex::Image1:
+    case ParameterIndex::FirstDerivative1:
+    case ParameterIndex::SecondDerivative1:
       return true;
     default:
-      assert(row == k_indexOfImageCell2 ||
-             row == k_indexOfFirstDerivativeCell2 ||
-             row == k_indexOfSecondDerivativeCell2);
+      assert(index == ParameterIndex::Image2 ||
+             index == ParameterIndex::FirstDerivative2 ||
+             index == ParameterIndex::SecondDerivative2);
       return false;
   }
 }
 
 int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
-  switch (row) {
-    case k_indexOfAbscissaCell:
+  assert(0 <= row && row <= k_numberOfParameterRows);
+  ParameterIndex index = static_cast<ParameterIndex>(row);
+  switch (index) {
+    case ParameterIndex::Abscissa:
       return -1;
-    case k_indexOfImageCell1:
-    case k_indexOfImageCell2:
+    case ParameterIndex::Image1:
+    case ParameterIndex::Image2:
       return 0;
-    case k_indexOfFirstDerivativeCell1:
-    case k_indexOfFirstDerivativeCell2:
+    case ParameterIndex::FirstDerivative1:
+    case ParameterIndex::FirstDerivative2:
       return 1;
     default:
-      assert(row == k_indexOfSecondDerivativeCell1 ||
-             row == k_indexOfSecondDerivativeCell2);
+      assert(index == ParameterIndex::SecondDerivative1 ||
+             index == ParameterIndex::SecondDerivative2);
       return 2;
   }
 }
@@ -111,7 +115,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   constexpr size_t bufferSize =
       Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
   char buffer[bufferSize];
-  if (row == k_indexOfAbscissaCell) {
+  if (row == static_cast<int>(ParameterIndex::Abscissa)) {
     SerializationHelper::CodePoint(buffer, bufferSize, properties.symbol());
   } else {
     bool firstComponent = parameterAtRowIsFirstComponent(row);
@@ -231,7 +235,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
   m_calculationCell.setVisible(function()->canDisplayDerivative());
-  m_parameterCells[k_indexOfImageCell2].setVisible(
+  m_parameterCells[static_cast<int>(ParameterIndex::Image2)].setVisible(
       function()->properties().isParametric());
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
@@ -246,14 +250,14 @@ void CurveParameterController::viewWillAppear() {
   bool isParametric = function()->properties().isParametric();
   bool displayFirstDerivative = function()->displayFirstDerivative();
   bool displaySecondDerivative = function()->displaySecondDerivative();
-  m_parameterCells[k_indexOfFirstDerivativeCell1].setVisible(
-      displayFirstDerivative);
-  m_parameterCells[k_indexOfFirstDerivativeCell2].setVisible(
-      isParametric && displayFirstDerivative);
-  m_parameterCells[k_indexOfSecondDerivativeCell1].setVisible(
-      displaySecondDerivative);
-  m_parameterCells[k_indexOfSecondDerivativeCell2].setVisible(
-      isParametric && displaySecondDerivative);
+  m_parameterCells[static_cast<int>(ParameterIndex::FirstDerivative1)]
+      .setVisible(displayFirstDerivative);
+  m_parameterCells[static_cast<int>(ParameterIndex::FirstDerivative2)]
+      .setVisible(isParametric && displayFirstDerivative);
+  m_parameterCells[static_cast<int>(ParameterIndex::SecondDerivative1)]
+      .setVisible(displaySecondDerivative);
+  m_parameterCells[static_cast<int>(ParameterIndex::SecondDerivative2)]
+      .setVisible(isParametric && displaySecondDerivative);
   ExplicitFloatParameterController::viewWillAppear();
 }
 

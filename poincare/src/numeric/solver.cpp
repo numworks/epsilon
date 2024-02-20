@@ -20,7 +20,6 @@ template <typename T>
 Solver<T>::Solver(T xStart, T xEnd, Context* context)
     : m_xStart(xStart),
       m_xEnd(xEnd),
-      m_solution(),
       m_context(context),
       m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
                                                 : GrowthSpeed::Fast) {
@@ -80,8 +79,7 @@ typename Solver<T>::Solution Solver<T>::next(
     }
   }
 
-  registerSolution(definitiveSolution, definitiveInterest);
-  return m_solution;
+  return registerSolution(definitiveSolution, definitiveInterest);
 }
 
 template <typename T>
@@ -111,20 +109,17 @@ typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
   switch (e->type()) {
     case Type::Mult:
       /* x*y = 0 => x = 0 or y = 0 */
-      registerSolution(nextRootInMultiplication(e), Interest::Root);
-      return m_solution;
+      return registerSolution(nextRootInMultiplication(e), Interest::Root);
 
     case Type::Add:
     case Type::Sub:
-      registerSolution(nextRootInAddition(e), Interest::Root);
-      return m_solution;
+      return registerSolution(nextRootInAddition(e), Interest::Root);
 
     case Type::Pow:
     case Type::Root:
     case Type::Div:
       /* f(x,y) = 0 => x = 0 */
-      registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
-      return m_solution;
+      return registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
 
     case Type::Abs:
     case Type::ATan:
@@ -135,13 +130,11 @@ typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
       return nextRoot(e->child(0));
 
     case Type::Dep:
-      registerSolution(nextRootInDependency(e), Interest::Root);
-      return m_solution;
+      return registerSolution(nextRootInDependency(e), Interest::Root);
 
     default:
       if (!GetComplexSign(e).canBeNull()) {
-        registerSolution(Coordinate2D<T>(), Interest::None);
-        return m_solution;
+        return registerSolution(Coordinate2D<T>(), Interest::None);
       }
 
       Solution res = next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
@@ -195,7 +188,6 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
        * difference yields an infinite or a nan value when e1 or e2 is
        * evaluated. It means the intersection was incorrectly computed, and the
        * search continues. */
-      m_solution = Solution();
       return nextIntersection(e1, e2, memoizedDifference);
     }
     /* Result is not always exactly the same due to approximation errors. Take
@@ -698,20 +690,20 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
 }
 
 template <typename T>
-void Solver<T>::registerSolution(Coordinate2D<T> xy, Interest interest) {
-  if (std::isnan(xy.x())) {
-    m_solution = Solution();
-  } else {
+typename Solver<T>::Solution Solver<T>::registerSolution(Coordinate2D<T> xy,
+                                                         Interest interest) {
+  Solution solution;
+  if (!std::isnan(xy.x())) {
     assert(validSolution(xy.x()));
-    m_solution.xy = xy;
-    if (std::fabs(m_solution.y()) < NullTolerance(m_solution.x())) {
-      m_solution.setY(k_zero);
+    solution.xy = xy;
+    if (std::fabs(solution.y()) < NullTolerance(solution.x())) {
+      solution.setY(k_zero);
     }
-    m_solution.interest = interest;
+    solution.interest = interest;
   }
-  m_xStart = m_solution.x();
-  assert(m_solution.interest != Interest::None ||
-         (std::isnan(m_solution.x()) && std::isnan(m_solution.y())));
+  m_xStart = solution.x();
+  assert((solution.interest == Interest::None) == std::isnan(solution.x()));
+  return solution;
 }
 
 // Explicit template instantiations

@@ -9,6 +9,7 @@
 #include <complex>
 
 #include "beautification.h"
+#include "constant.h"
 #include "decimal.h"
 #include "float.h"
 #include "list.h"
@@ -1048,8 +1049,8 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
                                                       bool collapse) {
   // These types are either already approximated or impossible to approximate.
   if (tree->isFloat() || tree->isRandomNode() ||
-      tree->isOfType(
-          {BlockType::UserSymbol, BlockType::Variable, BlockType::Unit})) {
+      tree->isOfType({BlockType::UserSymbol, BlockType::Variable,
+                      BlockType::Unit, BlockType::PhysicalConstant})) {
     return false;
   }
   bool changed = false;

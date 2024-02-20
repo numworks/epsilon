@@ -40,4 +40,11 @@ int Constant::ConstantIndex(const CPL* name, int length) {
   return -1;
 }
 
+const Constant::ConstantInfo& Constant::Info(const Tree* constant) {
+  assert(constant->isPhysicalConstant());
+  int index = constant->nodeValue(0);
+  assert(index < k_numberOfConstants);
+  return k_constants[index];
+}
+
 }  // namespace PoincareJ

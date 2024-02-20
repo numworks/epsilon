@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <poincare/preferences.h>
+#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
@@ -52,6 +53,12 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
   if (ref->isUnit()) {
     Units::Unit::RemoveUnit(ref);
     changed = true;
+  }
+  if (ref->isPhysicalConstant()) {
+    Tree* value = SharedEditionPool->push<BlockType::DoubleFloat>(
+        Constant::Info(ref).m_value);
+    ref->moveTreeOverTree(value);
+    return true;
   }
 
   if (ref->isDecimal()) {

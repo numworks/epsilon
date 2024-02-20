@@ -1,6 +1,7 @@
 #include "dimension.h"
 
 #include "approximation.h"
+#include "constant.h"
 #include "matrix.h"
 #include "parametric.h"
 #include "symbol.h"
@@ -397,6 +398,8 @@ Dimension Dimension::GetDimension(const Tree* t) {
     }
     case BlockType::Unit:
       return Dimension::Unit(t);
+    case BlockType::PhysicalConstant:
+      return Dimension::Unit(Constant::Info(t).m_dimension, nullptr);
     case BlockType::Point:
       return Point();
     case BlockType::List:

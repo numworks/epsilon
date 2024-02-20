@@ -502,6 +502,10 @@ QUIZ_CASE(pcj_simplification_unit) {
 
   // UnitFormat
   simplifies_to("1609.344_m", "1×_mi", {.m_unitFormat = UnitFormat::Imperial});
+
+  // Constants
+  simplifies_to("_mn + _mp", "3.34754942173ᴇ-24×_g");
+  simplifies_to("_mn + _G", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {

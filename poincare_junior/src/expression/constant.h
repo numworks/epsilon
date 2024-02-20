@@ -26,6 +26,8 @@ class Constant {
     return ConstantIndex(name, length) >= 0;
   }
 
+  static const ConstantInfo& Info(const Tree* constant);
+
   constexpr static int k_numberOfConstants = 14;
 
  private:

@@ -10,6 +10,15 @@ void OneMeanStatistic::setSeries(int series) {
   syncParametersWithStore();
 }
 
+bool OneMeanStatistic::parametersAreValid() const {
+  for (double x : m_params) {
+    if (!std::isfinite(x)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 void OneMeanStatistic::setParameterAtPosition(double value, int row,
                                               int column) {
   assert(m_store);

@@ -20,6 +20,7 @@ class OneMeanStatistic : public Table {
   int series() const { return m_series; }
   void setSeries(int series);
   Shared::StatisticsStore* statisticsStore() const { return m_store; }
+  bool parametersAreValid() const;
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override;

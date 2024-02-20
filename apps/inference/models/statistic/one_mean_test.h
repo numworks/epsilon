@@ -37,6 +37,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
+  bool validateInputs() override { return parametersAreValid(); }
 
   void compute() override { OneMean::ComputeTest(oneMeanType(), this); }
 

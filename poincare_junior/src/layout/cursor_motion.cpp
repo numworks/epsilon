@@ -554,7 +554,7 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
             CollapsingAbsorbingChildIndex(node, direction));
       }
       return absorbingSibling->isRackLayout() &&
-             Layout::IsEmpty(absorbingSibling);
+             Rack::IsEmpty(absorbingSibling);
     }
     case LayoutType::CodePoint: {
       CodePoint codePoint = CodePointLayout::GetCodePoint(node);

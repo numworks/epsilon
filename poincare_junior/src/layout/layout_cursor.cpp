@@ -215,7 +215,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
     copy->cloneNodeAtNode(KRackL.node<1>);
   }
 
-  if (Layout::IsEmpty(ref)) {
+  if (Rack::IsEmpty(ref)) {
     return;
   }
 

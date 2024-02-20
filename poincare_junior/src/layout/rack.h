@@ -24,6 +24,11 @@ class Rack : public TreeSubClass<Rack, LayoutT> {
   static void Check(const Tree* node) {
     // assert(node->isRackLayout());
   }
+
+  static bool IsEmpty(const Tree* node) {
+    assert(node->isRackLayout());
+    return node->numberOfChildren() == 0;
+  }
 };
 
 }  // namespace PoincareJ

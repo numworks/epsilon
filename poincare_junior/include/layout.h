@@ -6,21 +6,14 @@
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
 #include <poincare_junior/src/layout/layout_selection.h>
+#include <poincare_junior/src/layout/rack.h>
 #include <poincare_junior/src/memory/reference.h>
 
 namespace PoincareJ {
 
 class Expression;
 
-class Layout {
- public:
-  constexpr static bool IsEmpty(const Tree* node) {
-    assert(node->isRackLayout());
-    return node->numberOfChildren() == 0;
-  }
-};
-
-class LayoutReference final : public Reference, public Layout {
+class LayoutReference final : public Reference {
   friend class Expression;
 
  public:
@@ -34,7 +27,7 @@ class LayoutReference final : public Reference, public Layout {
             KDColor backgroundColor = KDColorWhite,
             LayoutSelection selection = {}) const;
   KDSize size(KDFont::Size font) const;
-  bool isEmpty() const { return IsEmpty(getTree()); }
+  bool isEmpty() const { return Rack::IsEmpty(getTree()); }
 
   static LayoutReference FromExpression(const Expression* expr);
 };

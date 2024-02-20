@@ -1,6 +1,7 @@
 #ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
 
+#include "inference/models/statistic/one_mean_statistic.h"
 #include "inference/models/statistic/slope_t_statistic.h"
 #include "inference/statistic/categorical_table_cell.h"
 #include "shared/buffer_function_title_cell.h"
@@ -21,12 +22,19 @@ class StoreTableCell : public DoubleColumnTableCell,
       Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
 
   void fillColumnsNames();
+  int selectedSeries();
+  void setSelectedSeries(int series);
 
   // StoreColumnHelper
-  SlopeTStatistic *store() override {
-    return static_cast<SlopeTStatistic *>(tableModel());
+  Shared::DoublePairStore *store() override {
+    if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
+      return static_cast<SlopeTStatistic *>(tableModel());
+    }
+    assert(m_statistic->significanceTestType() ==
+           SignificanceTestType::OneMean);
+    return static_cast<OneMeanStatistic *>(tableModel())->statisticsStore();
   }
-  const SlopeTStatistic *store() const {
+  const Shared::DoublePairStore *store() const {
     return const_cast<StoreTableCell *>(this)->store();
   }
 
@@ -38,7 +46,7 @@ class StoreTableCell : public DoubleColumnTableCell,
   // ClearColumnHelper
   size_t fillColumnName(int column, char *buffer) override {
     return fillColumnNameFromStore(
-        k_maxNumberOfColumns * store()->series() + column, buffer);
+        k_maxNumberOfColumns * selectedSeries() + column, buffer);
   }
   Escher::InputViewController *inputViewController() override;
   void reload() override;

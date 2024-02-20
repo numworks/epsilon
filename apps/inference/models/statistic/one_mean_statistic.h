@@ -11,7 +11,7 @@ namespace Inference {
 
 class OneMeanStatistic : public Table {
  public:
-  constexpr static int k_numberOfDatasetOptions = 1;
+  constexpr static int k_numberOfDatasetOptions = 2;
   constexpr static int k_maxNumberOfColumns = 2;
 
   OneMeanStatistic(Shared::StatisticsStore* store)
@@ -19,6 +19,7 @@ class OneMeanStatistic : public Table {
 
   int series() const { return m_series; }
   void setSeries(int series);
+  Shared::StatisticsStore* statisticsStore() const { return m_store; }
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override;

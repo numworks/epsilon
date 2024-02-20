@@ -6,6 +6,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <inference/models/statistic/one_mean_statistic.h>
 #include <inference/statistic/input_controller.h>
+#include <inference/statistic/store/input_store_controller.h>
 
 namespace Inference {
 
@@ -16,14 +17,9 @@ class DatasetController
           OneMeanStatistic::k_numberOfDatasetOptions> {
  public:
   DatasetController(Escher::StackViewController* parent,
-                    InputController* inputController, Statistic* statistic)
-      : UniformSelectableListController(parent),
-        m_inputController(inputController),
-        m_statistic(statistic) {
-    cell(k_indexOfInputStatisticsCell)
-        ->label()
-        ->setMessage(I18n::Message::InputStatistics);
-  }
+                    InputController* inputController,
+                    InputStoreController* storeController,
+                    Statistic* statistic);
 
   const char* title() override {
     InputController::InputTitle(this, m_statistic, m_titleBuffer,
@@ -39,8 +35,12 @@ class DatasetController
 
  private:
   constexpr static int k_indexOfInputStatisticsCell = 0;
+  constexpr static int k_indexOfDatasetCell = 1;
+
+  OneMeanStatistic* oneMeanStatistic() const;
 
   InputController* m_inputController;
+  InputStoreController* m_storeController;
   Statistic* m_statistic;
   char m_titleBuffer[InputController::k_titleBufferSize];
 };

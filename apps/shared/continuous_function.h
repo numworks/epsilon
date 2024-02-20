@@ -248,12 +248,12 @@ class ContinuousFunction : public Function {
       Poincare::Context *context) const {
     return m_model.expressionReducedForAnalysis(this, context);
   }
-  // Return reduced curve expression derivative
+  // Return the reduced expression of the derivative
   Poincare::Expression expressionDerivateReduced(Poincare::Context *context,
                                                  int derivationOrder) const {
     return m_model.expressionDerivateReduced(this, context, derivationOrder);
   }
-  // Return reduced curve expression slope (dy/dx)
+  // Return the reduced expression of the slope (dy/dx)
   Poincare::Expression expressionSlopeReduced(
       Poincare::Context *context) const {
     return m_model.expressionSlopeReduced(this, context);

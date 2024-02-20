@@ -101,6 +101,7 @@ poincare_src += $(addprefix poincare/src/,\
   infinity.cpp \
   integer.cpp \
   integral.cpp \
+  junior_expression.cpp \
   least_common_multiple.cpp \
   list.cpp \
   list_access.cpp \

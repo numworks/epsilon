@@ -103,23 +103,24 @@ char *Layout::Serialize(const Tree *layout, char *buffer, char *end) {
   return buffer;
 }
 
-Layout Layout::Parse(const char *textInput) {
-  return Layout([](const char *text) { EditionPoolTextToLayout(text); },
-                textInput);
+LayoutReference LayoutReference::Parse(const char *textInput) {
+  return LayoutReference(
+      [](const char *text) { EditionPoolTextToLayout(text); }, textInput);
 }
 
-Layout Layout::FromExpression(const Expression *expr) {
-  return Layout([](Tree *node) { Layoutter::LayoutExpression(node); }, expr);
+LayoutReference LayoutReference::FromExpression(const Expression *expr) {
+  return LayoutReference([](Tree *node) { Layoutter::LayoutExpression(node); },
+                         expr);
 }
 
-void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-                  KDColor expressionColor, KDColor backgroundColor,
-                  LayoutSelection selection) const {
+void LayoutReference::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
+                           KDColor expressionColor, KDColor backgroundColor,
+                           LayoutSelection selection) const {
   Render::Draw(getTree(), ctx, p, font, expressionColor, backgroundColor,
                nullptr);
 }
 
-KDSize Layout::size(KDFont::Size font) const {
+KDSize LayoutReference::size(KDFont::Size font) const {
   return Render::Size(getTree(), font);
 }
 

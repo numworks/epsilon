@@ -13,30 +13,15 @@ namespace PoincareJ {
 
 class Expression;
 
-class Layout final : public Reference {
-  friend class Expression;
-
+class Layout {
  public:
   constexpr static bool IsEmpty(const Tree* node) {
     assert(node->isRackLayout());
     return node->numberOfChildren() == 0;
   }
 
-  Layout(const Tree* tree) : Reference(tree) { assert(tree->isLayout()); }
-  using Reference::Reference;
-  static Layout Parse(const char* text);
-  void draw(KDContext* ctx, KDPoint p, KDFont::Size font,
-            KDColor expressionColor = KDColorBlack,
-            KDColor backgroundColor = KDColorWhite,
-            LayoutSelection selection = {}) const;
-  KDSize size(KDFont::Size font) const;
-  bool isEmpty() const { return IsEmpty(getTree()); }
-
   static char* Serialize(const Tree* layout, char* buffer, char* end);
-  static Layout FromExpression(const Expression* expr);
-
   static Tree* EditionPoolTextToLayout(const char* text);
-
   static Poincare::OLayout ToPoincareLayout(const Tree* exp);
   static Tree* FromPoincareLayout(Poincare::OLayout exp);
 
@@ -45,7 +30,26 @@ class Layout final : public Reference {
                                          const Tree* parentheses);
 };
 
-static_assert(sizeof(Layout) == sizeof(Reference));
+class LayoutReference final : public Reference, public Layout {
+  friend class Expression;
+
+ public:
+  LayoutReference(const Tree* tree) : Reference(tree) {
+    assert(tree->isLayout());
+  }
+  using Reference::Reference;
+  static LayoutReference Parse(const char* text);
+  void draw(KDContext* ctx, KDPoint p, KDFont::Size font,
+            KDColor expressionColor = KDColorBlack,
+            KDColor backgroundColor = KDColorWhite,
+            LayoutSelection selection = {}) const;
+  KDSize size(KDFont::Size font) const;
+  bool isEmpty() const { return IsEmpty(getTree()); }
+
+  static LayoutReference FromExpression(const Expression* expr);
+};
+
+static_assert(sizeof(LayoutReference) == sizeof(Reference));
 
 }  // namespace PoincareJ
 

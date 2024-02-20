@@ -212,7 +212,7 @@ QUIZ_CASE(pcj_cache_reference_shared_data) {
   Expression e = Expression::Parse("2*3");
   assert(e.id() != 1);
   // l is created with e.m_id different from 1
-  Layout l = Layout::FromExpression(&e);
+  LayoutReference l = LayoutReference::FromExpression(&e);
   // Forcing e.m_id change
   cachePool->freeBlocks(1);
   assert(e.id() == 1);

@@ -18,7 +18,7 @@ Expression Expression::Parse(const char *textInput) {
       textInput);
 }
 
-Expression Expression::Parse(const Layout *layout) {
+Expression Expression::Parse(const LayoutReference *layout) {
   return Expression(
       [](Tree *node) {
         Parser::Parse(node);

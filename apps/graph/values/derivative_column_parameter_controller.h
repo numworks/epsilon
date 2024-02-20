@@ -12,22 +12,25 @@ class DerivativeColumnParameterController
       Shared::ValuesController* valuesController)
       : Shared::CalculusColumnParameterController(
             I18n::Message::HideDerivativeColumn, valuesController),
-        m_firstOrder(true) {}
+        m_derivationOrder(-1) {}
 
-  void setDerivationOrder(bool firstOrder) { m_firstOrder = firstOrder; }
+  void setDerivationOrder(int derivationOrder) {
+    m_derivationOrder = derivationOrder;
+  }
 
  private:
   void hideCalculusColumn() override {
     Shared::ExpiringPointer<Shared::ContinuousFunction> f =
         Shared::GlobalContext::continuousFunctionStore->modelForRecord(
             m_record);
-    if (m_firstOrder) {
+    if (m_derivationOrder == 1) {
       f->setDisplayFirstDerivative(false);
     } else {
+      assert(m_derivationOrder == 2);
       f->setDisplaySecondDerivative(false);
     }
   }
-  bool m_firstOrder;
+  int m_derivationOrder;
 };
 
 }  // namespace Graph

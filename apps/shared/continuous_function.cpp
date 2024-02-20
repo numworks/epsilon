@@ -265,7 +265,7 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
 }
 
 Evaluation<double> ContinuousFunction::approximateDerivative(
-    double t, Context *context, bool firstOrder, bool useDomain) const {
+    double t, Context *context, int derivationOrder, bool useDomain) const {
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
@@ -276,7 +276,7 @@ Evaluation<double> ContinuousFunction::approximateDerivative(
     return Complex<double>::RealUndefined();
   }
   // Derivative is simplified once and for all
-  Expression derivate = expressionDerivateReduced(context, firstOrder);
+  Expression derivate = expressionDerivateReduced(context, derivationOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
   Evaluation<double> result = derivate.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
@@ -805,16 +805,17 @@ Expression ContinuousFunction::Model::expressionEquation(
 
 Expression ContinuousFunction::Model::expressionDerivateReduced(
     const Ion::Storage::Record *record, Context *context,
-    bool firstOrder) const {
+    int derivationOrder) const {
   // Derivative isn't available on curves with multiple subcurves
   assert(numberOfSubCurves(record) == 1);
-  Expression *derivative =
-      firstOrder ? &m_expressionFirstDerivate : &m_expressionSecondDerivate;
+  assert(1 <= derivationOrder && derivationOrder <= 2);
+  Expression *derivative = derivationOrder == 1 ? &m_expressionFirstDerivate
+                                                : &m_expressionSecondDerivate;
   if (derivative->isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
-    *derivative = Derivative::Builder(
-        expression, Symbol::SystemSymbol(), Symbol::SystemSymbol(),
-        BasedInteger::Builder(firstOrder ? 1 : 2));
+    *derivative = Derivative::Builder(expression, Symbol::SystemSymbol(),
+                                      Symbol::SystemSymbol(),
+                                      BasedInteger::Builder(derivationOrder));
     /* On complex functions, this step can take a significant time.
      * A workaround could be to identify big functions to skip simplification
      * at the cost of possible inaccurate evaluations (such as

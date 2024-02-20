@@ -17,7 +17,7 @@ class Constant {
     Aliases m_aliasesList;
     int m_comparisonRank;
     double m_value;
-    const char* m_unit;
+    Units::DimensionVector m_dimension;
   };
 
   constexpr static int k_numberOfConstants = 14;

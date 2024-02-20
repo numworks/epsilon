@@ -42,7 +42,10 @@ class ResultsController
   int reusableCellCount(int type) const override;
   int typeAtRow(int row) const override;
   KDCoordinate separatorBeforeRow(int row) override {
-    return typeAtRow(row) == k_buttonCellType ? k_defaultRowSeparator : 0;
+    return row == m_statistic->secondResultSectionStart() ||
+                   typeAtRow(row) == k_buttonCellType
+               ? k_defaultRowSeparator
+               : 0;
   }
   KDCoordinate nonMemoizedRowHeight(int row) override;
 

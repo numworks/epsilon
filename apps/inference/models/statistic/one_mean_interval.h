@@ -40,6 +40,9 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   int numberOfResults() const override {
     return numberOfResultsAndComputedParameters(Interval::numberOfResults());
   }
+  int secondResultSectionStart() const override {
+    return Interval::numberOfResults();
+  }
   void resultAtIndex(int index, double* value, Poincare::Layout* message,
                      I18n::Message* subMessage, int* precision) override {
     if (!resultOrComputedParameterAtIndex(&index, this, value, message,

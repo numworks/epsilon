@@ -41,6 +41,9 @@ class OneMeanTest : public Test, public OneMeanStatistic {
   int numberOfResults() const override {
     return numberOfResultsAndComputedParameters(Test::numberOfResults());
   }
+  int secondResultSectionStart() const override {
+    return Test::numberOfResults();
+  }
   void resultAtIndex(int index, double* value, Poincare::Layout* message,
                      I18n::Message* subMessage, int* precision) override {
     if (!resultOrComputedParameterAtIndex(&index, this, value, message,

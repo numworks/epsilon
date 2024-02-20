@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
+#include <inference/app.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/print.h>
@@ -37,7 +38,7 @@ bool Test::initializeSignificanceTest(SignificanceTestType testType,
   this->~Test();
   switch (testType) {
     case SignificanceTestType::OneMean:
-      new (this) OneMeanTTest();
+      new (this) OneMeanTTest(App::app()->statisticsStore());
       break;
     case SignificanceTestType::TwoMeans:
       new (this) TwoMeansTTest();

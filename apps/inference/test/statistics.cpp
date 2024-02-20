@@ -206,8 +206,8 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   tests[1].m_standardError = 1.5811388493;
   tests[1].m_marginOfError = 5.1384425163;
 
-  OneMeanTTest test;
-  OneMeanTInterval interval;
+  OneMeanTTest test(nullptr);
+  OneMeanTInterval interval(nullptr);
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
@@ -255,8 +255,8 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[1].m_standardError = 0.4427188933;
   tests[1].m_marginOfError = 1.1403683424;
 
-  OneMeanZTest test;
-  OneMeanZInterval interval;
+  OneMeanZTest test(nullptr);
+  OneMeanZInterval interval(nullptr);
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);

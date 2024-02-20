@@ -10,6 +10,8 @@ namespace Inference {
 
 class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
  public:
+  constexpr static int k_maxNumberOfColumns = 2;
+
   SlopeTStatistic(Shared::GlobalContext* context)
       : Shared::LinearRegressionStore(context, &m_concreteStorePreferences),
         m_series(0) {
@@ -31,8 +33,6 @@ class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
   void recomputeData() override { updateSeries(m_series); }
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }
   int maxNumberOfRows() const override { return k_maxNumberOfPairs; }
-
-  constexpr static int k_maxNumberOfColumns = 2;
 
  protected:
   int numberOfTableParameters() const {

@@ -110,8 +110,8 @@ class LayoutCursor {
     return cursorNode()->block() - rootNode()->block();
   }
 
-  LayoutT* leftLayout() const;
-  LayoutT* rightLayout() const;
+  Layout* leftLayout() const;
+  Layout* rightLayout() const;
   Tree* parentLayout(int* index) const;
 
   int leftmostPosition() const { return 0; }

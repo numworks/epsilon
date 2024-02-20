@@ -12,7 +12,7 @@ namespace PoincareJ {
 
 char *Serialize(const Rack *rack, char *buffer, char *end) {
   for (const Tree *child : rack->children()) {
-    buffer = Serialize(LayoutT::From(child), buffer, end);
+    buffer = Serialize(Layout::From(child), buffer, end);
     if (buffer == end) {
       return end;
     }
@@ -26,7 +26,7 @@ char *append(const char *text, char *buffer, char *end) {
   return buffer + len;
 }
 
-char *Serialize(const LayoutT *layout, char *buffer, char *end) {
+char *Serialize(const Layout *layout, char *buffer, char *end) {
   switch (layout->layoutType()) {
     case LayoutType::CodePoint: {
       constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;

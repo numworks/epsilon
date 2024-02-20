@@ -9,8 +9,7 @@ class LayoutCursor;
 
 class Rack;
 
-// Will be called Layout as soon as the older Layout is hidden
-struct LayoutT : TreeSubClass<LayoutT, Rack> {
+struct Layout : TreeSubClass<Layout, Rack> {
   static void Check(const Tree* node) {
     /* It would be safer to check that layouts are actually layouts but it is
      * also practical to be able to assign to a layout the end element of a rack
@@ -19,7 +18,7 @@ struct LayoutT : TreeSubClass<LayoutT, Rack> {
   }
 };
 
-class Rack : public TreeSubClass<Rack, LayoutT> {
+class Rack : public TreeSubClass<Rack, Layout> {
  public:
   static void Check(const Tree* node) {
     // assert(node->isRackLayout());

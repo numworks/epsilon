@@ -253,7 +253,7 @@ bool Grid::isColumnOrRowEmpty(bool column, int index) const {
 }
 
 void Grid::addEmptyRow() {
-  LayoutT* last = nextTree();
+  Layout* last = nextTree();
   setNumberOfRows(numberOfRows() + 1);
   for (int i = 0; i < numberOfColumns(); i++) {
     last->cloneTreeBeforeNode(KRackL());

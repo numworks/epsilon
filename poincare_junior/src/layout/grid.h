@@ -10,7 +10,7 @@
 
 namespace PoincareJ {
 
-class Grid : public LayoutT {
+class Grid : public Layout {
  public:
   constexpr static KDCoordinate k_gridEntryMargin = 6;
 

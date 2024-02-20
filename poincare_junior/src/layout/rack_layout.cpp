@@ -50,14 +50,14 @@ void UpdateChildWithBase(bool isSuperscript, KDCoordinate baseHeight,
 #if 0
 /* TODO this code will be needed to render nested prefix subscript which are not
  * used currently */
-void FindBaseForward(const LayoutT* child, int maxDepth,
+void FindBaseForward(const Layout* child, int maxDepth,
                      KDCoordinate* baseHeight, KDCoordinate* baseBaseline,
                      KDFont::Size font) {
   if (maxDepth == 0) {
     *baseBaseline = EmptyRectangle::Baseline(font);
     *baseHeight = EmptyRectangle::Size(font).width();
   }
-  const LayoutT* candidateBase = child->nextTree();
+  const Layout* candidateBase = child->nextTree();
   if (candidateBase->isVerticalOffsetLayout()) {
     if (VerticalOffset::IsSuffix(candidateBase)) {
       // Add an empty base
@@ -94,8 +94,8 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
              {0, EmptyRectangle::Baseline(Render::s_font)}, context);
     return;
   }
-  const LayoutT* lastBase = nullptr;
-  const LayoutT* child = node->child(0);
+  const Layout* lastBase = nullptr;
+  const Layout* child = node->child(0);
   for (int i = 0; i < leftIndex; i++) {
     if (!child->isVerticalOffsetLayout()) {
       lastBase = child;
@@ -110,14 +110,14 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
     KDCoordinate childBaseline = Render::Baseline(child);
     KDCoordinate y = childBaseline;
     if (child->isVerticalOffsetLayout()) {
-      const LayoutT* base = nullptr;
+      const Layout* base = nullptr;
       if (VerticalOffset::IsSuffix(child)) {
         // Use base
         base = lastBase;
       } else {
         // Find base forward
         int j = i;
-        const LayoutT* candidateBase = child->nextTree();
+        const Layout* candidateBase = child->nextTree();
         while (j < numberOfChildren) {
           if (!candidateBase->isVerticalOffsetLayout()) {
             base = candidateBase;
@@ -182,7 +182,7 @@ KDSize RackLayout::SizeBetweenIndexes(const Rack* node, int leftIndex,
     KDCoordinate maxAboveBaseline;
     KDCoordinate totalWidth;
   };
-  Callback* iter = [](const LayoutT* child, KDSize childSize,
+  Callback* iter = [](const Layout* child, KDSize childSize,
                       KDCoordinate childBaseline, KDPoint, void* ctx) {
     Context* context = static_cast<Context*>(ctx);
     context->totalWidth += childSize.width();
@@ -206,7 +206,7 @@ KDPoint RackLayout::ChildPosition(const Rack* node, int i) {
     KDCoordinate x;
     KDCoordinate baseline;
   };
-  Callback* iter = [](const LayoutT* child, KDSize childSize, KDCoordinate,
+  Callback* iter = [](const Layout* child, KDSize childSize, KDCoordinate,
                       KDPoint position, void* ctx) {
     Context* context = static_cast<Context*>(ctx);
     context->x = position.x();
@@ -227,7 +227,7 @@ KDCoordinate RackLayout::BaselineBetweenIndexes(const Rack* node, int leftIndex,
     KDCoordinate maxAboveBaseline;
     KDCoordinate totalWidth;
   };
-  Callback* iter = [](const LayoutT* child, KDSize childSize,
+  Callback* iter = [](const Layout* child, KDSize childSize,
                       KDCoordinate childBaseline, KDPoint, void* ctx) {
     Context* context = static_cast<Context*>(ctx);
     context->totalWidth += childSize.width();

@@ -20,7 +20,7 @@ KDFont::Size Render::s_font = KDFont::Size::Large;
 
 constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
 
-KDSize Render::Size(const LayoutT* node) {
+KDSize Render::Size(const Layout* node) {
   KDCoordinate width = 0;
   KDCoordinate height = 0;
 
@@ -109,7 +109,7 @@ KDSize Render::Size(const LayoutT* node) {
               k_integrandHorizontalMargin + integrandSize.width() +
               k_differentialHorizontalMargin + dSize.width() +
               k_differentialHorizontalMargin + differentialSize.width();
-      const LayoutT* last = mostNestedIntegral(node, NestedPosition::Next);
+      const Layout* last = mostNestedIntegral(node, NestedPosition::Next);
       height =
           (node == last)
               ? k_boundVerticalMargin +
@@ -243,7 +243,7 @@ KDPoint Render::AbsoluteOrigin(const Tree* node, const Tree* root) {
       KDPoint positionOfChild =
           root->isRackLayout()
               ? PositionOfChild(static_cast<const Rack*>(root), childIndex)
-              : PositionOfChild(static_cast<const LayoutT*>(root), childIndex);
+              : PositionOfChild(static_cast<const Layout*>(root), childIndex);
       return AbsoluteOrigin(node, child).translatedBy(positionOfChild);
     }
     child = nextChild;
@@ -274,7 +274,7 @@ KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
       KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness));
 }
 
-KDPoint Render::PositionOfChild(const LayoutT* node, int childIndex) {
+KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
       KDCoordinate horizontalCenter =
@@ -478,7 +478,7 @@ KDPoint Render::PositionOfChild(const LayoutT* node, int childIndex) {
   };
 }
 
-KDCoordinate Render::Baseline(const LayoutT* node) {
+KDCoordinate Render::Baseline(const Layout* node) {
   switch (node->layoutType()) {
     case LayoutType::Binomial:
       return (Binomial::KNHeight(node, s_font) + 1) / 2;
@@ -512,7 +512,7 @@ KDCoordinate Render::Baseline(const LayoutT* node) {
     }
     case LayoutType::Integral: {
       using namespace Integral;
-      const LayoutT* last = mostNestedIntegral(node, NestedPosition::Next);
+      const Layout* last = mostNestedIntegral(node, NestedPosition::Next);
       if (node == last) {
         return k_boundVerticalMargin +
                boundMaxHeight(node, BoundPosition::UpperBound, s_font) +
@@ -627,7 +627,7 @@ void Render::DrawRack(const Rack* node, KDContext* ctx, KDPoint p,
       ctx,      p,
       style,    selection.layout() == node ? selection : LayoutSelection(),
       baseline, 0};
-  RackLayout::Callback* iter = [](const LayoutT* child, KDSize childSize,
+  RackLayout::Callback* iter = [](const Layout* child, KDSize childSize,
                                   KDCoordinate childBaseline, KDPoint position,
                                   void* ctx) {
     Context* context = static_cast<Context*>(ctx);
@@ -650,7 +650,7 @@ void Render::DrawRack(const Rack* node, KDContext* ctx, KDPoint p,
                                  &context, showEmpty);
 }
 
-void Render::DrawSimpleLayout(const LayoutT* node, KDContext* ctx, KDPoint p,
+void Render::DrawSimpleLayout(const Layout* node, KDContext* ctx, KDPoint p,
                               const KDGlyph::Style& style,
                               LayoutSelection selection) {
   if (node->isGridLayout()) {
@@ -664,7 +664,7 @@ void Render::DrawSimpleLayout(const LayoutT* node, KDContext* ctx, KDPoint p,
   }
 }
 
-void Render::DrawGridLayout(const LayoutT* node, KDContext* ctx, KDPoint p,
+void Render::DrawGridLayout(const Layout* node, KDContext* ctx, KDPoint p,
                             const KDGlyph::Style& style,
                             LayoutSelection selection) {
   /* For efficiency, we first compute the positions of the rows and columns and
@@ -870,7 +870,7 @@ void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
                         workingBuffer, !left, true);
 }
 
-void Render::RenderNode(const LayoutT* node, KDContext* ctx, KDPoint p,
+void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
                         const KDGlyph::Style& style) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {

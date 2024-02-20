@@ -636,12 +636,12 @@ void LayoutCursor::setLayout(Tree *l, OMG::HorizontalDirection sideOfLayout) {
   m_position = sideOfLayout.isLeft() ? leftmostPosition() : rightmostPosition();
 }
 
-LayoutT *LayoutCursor::leftLayout() const {
+Layout *LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
   return m_position == 0 ? nullptr : cursorNode()->child(m_position - 1);
 }
 
-LayoutT *LayoutCursor::rightLayout() const {
+Layout *LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
   if (m_position == cursorNode()->numberOfChildren()) {
     return nullptr;
@@ -847,7 +847,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
    * Try to enter right or left layout if it can be entered through up/down
    * */
   if (!isSelecting()) {
-    LayoutT *nextLayout = rightLayout();
+    Layout *nextLayout = rightLayout();
     PositionInLayout positionRelativeToNextLayout = PositionInLayout::Left;
     // Repeat for right and left
     for (int i = 0; i < 2; i++) {

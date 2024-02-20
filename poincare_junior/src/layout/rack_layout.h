@@ -24,7 +24,7 @@ class RackLayout {
   static KDSize Size(const Rack* node, bool showEmpty);
   static KDCoordinate Baseline(const Rack* node);
   static KDPoint ChildPosition(const Rack* node, int i);
-  using Callback = void(const LayoutT* child, KDSize childSize,
+  using Callback = void(const Layout* child, KDSize childSize,
                         KDCoordinate childBaseline, KDPoint position,
                         void* context);
   static void IterBetweenIndexes(const Rack* node, int leftPosition,

@@ -58,7 +58,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
                              &m_inputSlopeController,
                              static_cast<Test *>(snapshot->statistic())),
       m_datasetController(&m_stackViewController, &m_inputController,
-                          snapshot->statistic()),
+                          &m_inputSlopeController, snapshot->statistic()),
       m_testController(&m_stackViewController, &m_hypothesisController,
                        &m_typeController, &m_categoricalTypeController,
                        &m_inputSlopeController, &m_inputController,

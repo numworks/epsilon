@@ -10,7 +10,7 @@ void OneMeanStatistic::setSeries(int series) {
 void OneMeanStatistic::setParameterAtPosition(double value, int row,
                                               int column) {
   assert(m_store);
-  m_store->set(value, m_series, column, row, false);
+  m_store->set(value, m_series, column, row, false, true);
   syncParametersWithStore();
 }
 

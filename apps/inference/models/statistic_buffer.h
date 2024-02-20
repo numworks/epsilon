@@ -1,8 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_BUFFER_H
 #define INFERENCE_MODELS_STATISTIC_BUFFER_H
 
-#include <apps/apps_container_helper.h>
-
 #include <new>
 
 #include "statistic/goodness_test.h"
@@ -30,8 +28,7 @@ namespace Inference {
 union StatisticBuffer {
  public:
   StatisticBuffer() {
-    new (&m_oneMeanTInterval) OneMeanTInterval(
-        AppsContainerHelper::sharedAppsContainerGlobalContext());
+    new (&m_oneMeanTInterval) OneMeanTInterval(nullptr);
     statistic()->initParameters();
   }
   ~StatisticBuffer() { statistic()->~Statistic(); }

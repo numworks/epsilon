@@ -31,6 +31,22 @@ void StoreTableCell::fillColumnsNames() {
   }
 }
 
+int StoreTableCell::selectedSeries() {
+  if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
+    return static_cast<SlopeTStatistic *>(tableModel())->series();
+  }
+  assert(m_statistic->significanceTestType() == SignificanceTestType::OneMean);
+  return static_cast<OneMeanStatistic *>(tableModel())->series();
+}
+
+void StoreTableCell::setSelectedSeries(int series) {
+  if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
+    return static_cast<SlopeTStatistic *>(tableModel())->setSeries(series);
+  }
+  assert(m_statistic->significanceTestType() == SignificanceTestType::OneMean);
+  return static_cast<OneMeanStatistic *>(tableModel())->setSeries(series);
+}
+
 InputViewController *StoreTableCell::inputViewController() {
   return App::app()->inputViewController();
 }

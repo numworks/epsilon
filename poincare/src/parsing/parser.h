@@ -174,14 +174,20 @@ class Parser {
   Expression parseIntegerCaretForFunction(bool allowParenthesis,
                                           int* caretIntegerValue);
   bool generateMixedFractionIfNeeded(Expression& leftHandSide);
-  // Allows you to rewind to previous position
-  void rememberCurrentParsingPosition(Tokenizer::State* tokenizerState,
-                                      Token* storedCurrentToken = nullptr,
-                                      Token* storedNextToken = nullptr);
-  void restorePreviousParsingPosition(
-      Tokenizer::State tokenizerState,
-      Token storedCurrentToken = Token(Token::Type::Undefined),
-      Token storedNextToken = Token(Token::Type::Undefined));
+
+  // Save and restore parser state
+  struct State {
+    Tokenizer::State tokenizerState;
+    Token currentToken;
+    Token nextToken;
+  };
+  State currentState() {
+    return State{.tokenizerState = m_tokenizer.currentState(),
+                 .currentToken = m_currentToken,
+                 .nextToken = m_nextToken};
+  }
+  void setState(State state);
+
   // Data members
   ParsingContext m_parsingContext;
   Status m_status;

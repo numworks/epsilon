@@ -129,6 +129,7 @@ class Statistic : public Shared::Inference {
 
   // Outputs
   virtual int numberOfResults() const = 0;
+  virtual int secondResultSectionStart() const { return numberOfResults(); }
   virtual void resultAtIndex(int index, double* value,
                              Poincare::Layout* message,
                              I18n::Message* subMessage, int* precision) = 0;

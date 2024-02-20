@@ -62,4 +62,21 @@ void OneMeanStatistic::syncParametersWithStore() {
   m_params[OneMean::ParamsOrder::n] = m_store->sumOfOccurrences(m_series);
 }
 
+bool OneMeanStatistic::resultOrComputedParameterAtIndex(
+    int* index, Statistic* stat, double* value, Poincare::Layout* message,
+    I18n::Message* subMessage, int* precision) {
+  if (m_series < 0) {
+    return false;
+  }
+  if (*index >= OneMean::k_numberOfParams) {
+    *index -= OneMean::k_numberOfParams;
+    return false;
+  }
+  *value = m_params[*index];
+  *message = stat->parameterSymbolAtIndex(*index);
+  *subMessage = stat->parameterDefinitionAtIndex(*index);
+  *precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
+  return true;
+}
+
 }  // namespace Inference

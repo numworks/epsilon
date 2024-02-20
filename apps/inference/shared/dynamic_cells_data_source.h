@@ -66,7 +66,7 @@ constexpr int k_goodnessContributionsTableNumberOfReusableCells = 33;
 constexpr int k_inputControllerNumberOfReusableCells = 8;
 constexpr int k_maxNumberOfParameterCell =
     k_inputControllerNumberOfReusableCells;
-constexpr int k_resultDataSourceNumberOfReusableCells = 5;
+constexpr int k_resultDataSourceNumberOfReusableCells = 8;
 constexpr int k_maxNumberOfResultCells =
     k_resultDataSourceNumberOfReusableCells;
 

@@ -47,6 +47,14 @@ class OneMeanStatistic : public Table {
   }
 
   void syncParametersWithStore();
+  int numberOfResultsAndComputedParameters(int results) const {
+    return results + (m_series >= 0) * OneMean::k_numberOfParams;
+  }
+  bool resultOrComputedParameterAtIndex(int* index, Statistic* stat,
+                                        double* value,
+                                        Poincare::Layout* message,
+                                        I18n::Message* subMessage,
+                                        int* precision);
 
   // Table
   Index2D initialDimensions() const override {

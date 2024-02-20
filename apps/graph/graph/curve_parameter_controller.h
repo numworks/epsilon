@@ -57,14 +57,18 @@ class CurveParameterController
    * CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
-  static constexpr int k_indexOfAbscissaCell = 0;
-  static constexpr int k_indexOfImageCell1 = 1;
-  static constexpr int k_indexOfImageCell2 = 2;
-  static constexpr int k_indexOfFirstDerivativeCell1 = 3;
-  static constexpr int k_indexOfFirstDerivativeCell2 = 4;
-  static constexpr int k_indexOfSecondDerivativeCell1 = 5;
-  static constexpr int k_indexOfSecondDerivativeCell2 = 6;
-  static constexpr int k_numberOfParameterRows = 7;
+  enum class ParameterIndex {
+    Abscissa = 0,
+    Image1,
+    Image2,
+    FirstDerivative1,
+    FirstDerivative2,
+    SecondDerivative1,
+    SecondDerivative2,
+    NumberOfParameters,
+  };
+  constexpr static int k_numberOfParameterRows =
+      static_cast<int>(ParameterIndex::NumberOfParameters);
   constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
 
   using ParameterCell = Escher::MenuCellWithEditableText<

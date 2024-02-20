@@ -28,10 +28,6 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   void initParameters() override {
     OneMean::InitIntervalParameters(oneMeanType(), this);
   }
-  bool authorizedParameterAtPosition(double p, int row,
-                                     int column) const override {
-    return authorizedParameterAtIndex(p, index2DToIndex(row, column));
-  }
   bool authorizedParameterAtIndex(double p, int i) const override {
     return Inference::authorizedParameterAtIndex(p, i) &&
            OneMean::AuthorizedParameterAtIndex(oneMeanType(), i, p);

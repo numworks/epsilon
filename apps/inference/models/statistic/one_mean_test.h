@@ -29,10 +29,6 @@ class OneMeanTest : public Test, public OneMeanStatistic {
     return OneMean::HypothesisSymbol();
   }
   void initParameters() override { OneMean::InitTestParameters(this); }
-  bool authorizedParameterAtPosition(double p, int row,
-                                     int column) const override {
-    return authorizedParameterAtIndex(p, index2DToIndex(row, column));
-  }
   bool authorizedParameterAtIndex(double p, int i) const override {
     return Inference::authorizedParameterAtIndex(p, i) &&
            OneMean::AuthorizedParameterAtIndex(oneMeanType(), i, p);

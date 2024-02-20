@@ -120,10 +120,6 @@ class Store : public Shared::StatisticsStore {
   bool deleteValueAtIndex(int series, int i, int j,
                           bool authorizeNonEmptyRowDeletion = true,
                           bool delayUpdate = false) override;
-  bool valueValidInColumn(double value, int relativeColumn) const override {
-    return DoublePairStore::valueValidInColumn(value, relativeColumn) &&
-           (relativeColumn != 1 || value >= 0.0);
-  }
   bool updateSeries(int series, bool delayUpdate = false) override;
 
   typedef double (Store::*CalculPointer)(int) const;

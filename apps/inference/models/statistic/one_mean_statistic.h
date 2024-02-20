@@ -30,6 +30,10 @@ class OneMeanStatistic : public Table {
   int maxNumberOfRows() const override {
     return Shared::StatisticsStore::k_maxNumberOfPairs;
   }
+  bool authorizedParameterAtPosition(double p, int row,
+                                     int column) const override {
+    return m_store->valueValidInColumn(p, column);
+  }
 
  protected:
   static OneMean::Type OneMeanType(const Statistic* s) {

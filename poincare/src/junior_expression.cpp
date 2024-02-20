@@ -4,8 +4,16 @@
 #include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/sign.h>
+#include <poincare_junior/src/layout/layoutter.h>
 
 namespace Poincare {
+
+Layout JuniorExpressionNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
+  return JuniorLayout::Builder(PoincareJ::Layoutter::LayoutExpression(
+      tree()->clone(), false, numberOfSignificantDigits, floatDisplayMode));
+}
 
 JuniorExpression JuniorExpression::Builder(const PoincareJ::Tree* tree) {
   if (!tree) {

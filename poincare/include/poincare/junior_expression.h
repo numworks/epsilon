@@ -60,12 +60,8 @@ class JuniorExpressionNode final : public ExpressionNode {
   }
 
   // Layout
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits, Context* context) const {
-    // TODO PCJ
-    assert(false);
-    return Layout();
-  }
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                      int numberOfSignificantDigits, Context* context) const;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override {

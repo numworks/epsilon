@@ -175,7 +175,10 @@ static bool ShouldOnlyDisplayExactOutput(Expression input) {
 Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
 #if !OLD_POINCARE
   // TODO remove this
-  return DisplayOutput::ExactAndApproximate;
+  return strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
+                Undefined::Name()) == 0
+             ? DisplayOutput::ExactOnly
+             : DisplayOutput::ExactAndApproximate;
 #endif
   if (m_displayOutput != DisplayOutput::Unknown) {
     return m_displayOutput;

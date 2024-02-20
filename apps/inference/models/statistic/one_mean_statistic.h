@@ -18,9 +18,9 @@ class OneMeanStatistic : public Table {
       : m_store(store), m_series(-1) {}
 
   int series() const { return m_series; }
-  void setSeries(int series);
+  void setSeries(int series, Statistic* state);
   Shared::StatisticsStore* statisticsStore() const { return m_store; }
-  bool parametersAreValid() const;
+  bool parametersAreValid(Statistic* stat);
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override;
@@ -47,8 +47,6 @@ class OneMeanStatistic : public Table {
   }
 
   void syncParametersWithStore();
-
-  virtual void reinitParameters() = 0;
 
   // Table
   Index2D initialDimensions() const override {

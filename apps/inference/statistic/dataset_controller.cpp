@@ -23,13 +23,13 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
   OneMeanStatistic* oneMean = oneMeanStatistic();
   if (row == k_indexOfInputStatisticsCell) {
-    oneMean->setSeries(-1);
+    oneMean->setSeries(-1, m_statistic);
     stackOpenPage(m_inputController);
   } else {
     assert(row == k_indexOfDatasetCell);
     // Keep previous series if possible
     if (oneMean->series() < 0) {
-      oneMean->setSeries(0);
+      oneMean->setSeries(0, m_statistic);
     }
     stackOpenPage(m_storeController);
   }

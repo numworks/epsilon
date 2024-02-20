@@ -36,7 +36,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
-  bool validateInputs() override { return parametersAreValid(); }
+  bool validateInputs() override { return parametersAreValid(this); }
 
   const char* estimateSymbol() const override {
     return OneMean::EstimateSymbol();
@@ -46,7 +46,6 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   OneMean::Type oneMeanType() const {
     return OneMeanStatistic::OneMeanType(this);
   }
-  void reinitParameters() override { initParameters(); }
 
   // Significance Test:: OneMean
   int numberOfStatisticParameters() const override {
@@ -59,6 +58,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   double* parametersArray() override { return m_params; }
 
   void privateCompute() override {
+    syncParametersWithStore();
     OneMean::ComputeInterval(oneMeanType(), this);
   }
 };

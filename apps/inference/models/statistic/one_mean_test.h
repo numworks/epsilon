@@ -37,15 +37,17 @@ class OneMeanTest : public Test, public OneMeanStatistic {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
-  bool validateInputs() override { return parametersAreValid(); }
+  bool validateInputs() override { return parametersAreValid(this); }
 
-  void compute() override { OneMean::ComputeTest(oneMeanType(), this); }
+  void compute() override {
+    syncParametersWithStore();
+    OneMean::ComputeTest(oneMeanType(), this);
+  }
 
  private:
   OneMean::Type oneMeanType() const {
     return OneMeanStatistic::OneMeanType(this);
   }
-  void reinitParameters() override { initParameters(); }
 
   // Significance Test
   int numberOfStatisticParameters() const override {

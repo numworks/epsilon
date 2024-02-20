@@ -44,7 +44,8 @@ void StoreTableCell::setSelectedSeries(int series) {
     return static_cast<SlopeTStatistic *>(tableModel())->setSeries(series);
   }
   assert(m_statistic->significanceTestType() == SignificanceTestType::OneMean);
-  return static_cast<OneMeanStatistic *>(tableModel())->setSeries(series);
+  return static_cast<OneMeanStatistic *>(tableModel())
+      ->setSeries(series, m_statistic);
 }
 
 InputViewController *StoreTableCell::inputViewController() {

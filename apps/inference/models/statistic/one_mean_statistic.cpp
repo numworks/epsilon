@@ -2,17 +2,17 @@
 
 namespace Inference {
 
-void OneMeanStatistic::setSeries(int series) {
-  if (series < 0 && m_series >= 0) {
-    reinitParameters();
+void OneMeanStatistic::setSeries(int series, Statistic* stat) {
+  if (series < 0 && !stat->validateInputs()) {
+    stat->initParameters();
   }
   m_series = series;
-  syncParametersWithStore();
 }
 
-bool OneMeanStatistic::parametersAreValid() const {
-  for (double x : m_params) {
-    if (!std::isfinite(x)) {
+bool OneMeanStatistic::parametersAreValid(Statistic* stat) {
+  syncParametersWithStore();
+  for (int i = 0; i < std::size(m_params); i++) {
+    if (!stat->authorizedParameterAtIndex(m_params[i], i)) {
       return false;
     }
   }
@@ -23,13 +23,11 @@ void OneMeanStatistic::setParameterAtPosition(double value, int row,
                                               int column) {
   assert(m_store);
   m_store->set(value, m_series, column, row, false, true);
-  syncParametersWithStore();
 }
 
 void OneMeanStatistic::deleteParametersInColumn(int column) {
   assert(m_store);
   m_store->clearColumn(m_series, column);
-  syncParametersWithStore();
 }
 
 bool OneMeanStatistic::deleteParameterAtPosition(int row, int column) {
@@ -40,7 +38,6 @@ bool OneMeanStatistic::deleteParameterAtPosition(int row, int column) {
   }
   int numberOfPairs = m_store->numberOfPairsOfSeries(m_series);
   m_store->deletePairOfSeriesAtIndex(m_series, row);
-  syncParametersWithStore();
   // DoublePairStore::updateSeries has handled the deletion of empty rows
   return numberOfPairs != m_store->numberOfPairsOfSeries(m_series);
 }

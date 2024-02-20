@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 
 #include "images/confidence_interval.h"
 #include "images/significance_test.h"
@@ -71,6 +72,8 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
                             StackViewController::Style::GrayGradation),
       m_inputViewController(&m_modalViewController, &m_stackViewController,
                             Shared::MathLayoutFieldDelegate::Default()),
+      m_statisticsStore(AppsContainerHelper::sharedAppsContainerGlobalContext(),
+                        &m_storePreferences),
       m_bufferDestructor(nullptr) {}
 
 void App::didBecomeActive(Window *window) {

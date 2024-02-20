@@ -1,6 +1,8 @@
+#include "slope_t_statistic.h"
+
 #include <omg/round.h>
 
-#include "slope_t_interval.h"
+#include "interfaces/significance_tests.h"
 
 namespace Inference {
 

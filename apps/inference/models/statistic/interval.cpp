@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
+#include <inference/app.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/print.h>
@@ -56,7 +57,7 @@ bool Interval::initializeSignificanceTest(SignificanceTestType testType,
   this->~Interval();
   switch (testType) {
     case SignificanceTestType::OneMean:
-      new (this) OneMeanTInterval();
+      new (this) OneMeanTInterval(App::app()->statisticsStore());
       break;
     case SignificanceTestType::TwoMeans:
       new (this) TwoMeansTInterval();

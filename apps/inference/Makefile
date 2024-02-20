@@ -15,6 +15,7 @@ app_inference_test_src += $(addprefix apps/inference/models/statistic/,\
   goodness_test.cpp \
   homogeneity_test.cpp \
   interval.cpp \
+  one_mean_statistic.cpp \
   slope_t_interval.cpp \
   slope_t_statistic.cpp \
   slope_t_test.cpp \

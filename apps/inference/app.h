@@ -106,6 +106,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   Escher::InputViewController *inputViewController() {
     return &m_inputViewController;
   }
+  Shared::StatisticsStore *statisticsStore() { return &m_statisticsStore; }
 
  private:
   App(Snapshot *snapshot, Poincare::Context *parentContext);
@@ -131,6 +132,8 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   Shared::MenuController m_menuController;
   LargeStackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
+  Shared::DoublePairStorePreferences m_storePreferences;
+  Shared::StatisticsStore m_statisticsStore;
   /* Buffer used for allocating table cells to avoid duplicating required
    * space for these memory-needy tables. */
   char m_buffer[k_bufferSize];

@@ -8,6 +8,8 @@ namespace Inference {
 
 class OneMeanTest : public Test, public OneMeanStatistic {
  public:
+  using OneMeanStatistic::OneMeanStatistic;
+
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::OneMean;
   }
@@ -27,6 +29,10 @@ class OneMeanTest : public Test, public OneMeanStatistic {
     return OneMean::HypothesisSymbol();
   }
   void initParameters() override { OneMean::InitTestParameters(this); }
+  bool authorizedParameterAtPosition(double p, int row,
+                                     int column) const override {
+    return authorizedParameterAtIndex(p, index2DToIndex(row, column));
+  }
   bool authorizedParameterAtIndex(double p, int i) const override {
     return Inference::authorizedParameterAtIndex(p, i) &&
            OneMean::AuthorizedParameterAtIndex(oneMeanType(), i, p);
@@ -56,6 +62,8 @@ class OneMeanTest : public Test, public OneMeanStatistic {
 
 class OneMeanTTest : public OneMeanTest {
  public:
+  using OneMeanTest::OneMeanTest;
+
   DistributionType distributionType() const override {
     return DistributionType::T;
   }
@@ -63,6 +71,8 @@ class OneMeanTTest : public OneMeanTest {
 
 class OneMeanZTest : public OneMeanTest {
  public:
+  using OneMeanTest::OneMeanTest;
+
   DistributionType distributionType() const override {
     return DistributionType::Z;
   }

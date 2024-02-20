@@ -41,6 +41,17 @@ Expression Expression::CreateSimplifyReduction(void *expressionAddress) {
       Tree::FromBlocks(static_cast<const TypeBlock *>(expressionAddress)));
 }
 
+Expression Expression::Approximate(const Expression *input) {
+  return Expression(
+      [](Tree *input) {
+        Approximation::RootTreeToTree<float>(
+            input, Projection::ContextFromSettings().m_angleUnit,
+            Projection::ContextFromSettings().m_complexFormat);
+        input->removeTree();
+      },
+      input);
+}
+
 template <typename T>
 T Expression::approximate() const {
   return Approximation::RootTreeTo<T>(getTree());

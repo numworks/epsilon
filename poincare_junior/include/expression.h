@@ -19,6 +19,7 @@ class Expression final : public Reference {
   static Expression Parse(const Layout* layout);
   static Expression Simplify(const Expression* input);
   static Expression FromPoincareExpression(const Poincare::Expression* exp);
+  static Expression Approximate(const Expression* input);
 
   template <typename T>
   T approximate() const;

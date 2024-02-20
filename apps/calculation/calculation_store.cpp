@@ -160,10 +160,15 @@ ExpiringPointer<Calculation> CalculationStore::push(
           PoincareJ::Expression::FromPoincareExpression(&inputExpression);
       PoincareJ::Expression pcjExact =
           PoincareJ::Expression::Simplify(&pcjInput);
-      double approx = pcjExact.approximate<double>();
+      PoincareJ::Expression pcjApprox =
+          PoincareJ::Expression::Approximate(&pcjExact);
       exactOutputExpression = pcjExact.toPoincareExpression();
+      if (exactOutputExpression.type() == ExpressionNode::Type::Dependency) {
+        // TODO PCJ : Handle dependencies.
+        exactOutputExpression = exactOutputExpression.childAtIndex(0);
+      }
       exactOutputExpression = exactOutputExpression.addMissingParentheses();
-      approximateOutputExpression = Poincare::Float<double>::Builder(approx);
+      approximateOutputExpression = pcjApprox.toPoincareExpression();
 #endif
 
       // Post-processing of store expression

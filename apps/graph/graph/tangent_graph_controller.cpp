@@ -31,8 +31,9 @@ void TangentGraphController::viewWillAppear() {
   m_graphView->setTangentDisplay(m_drawTangent);
   m_graphView->setFocus(true);
   bool isCartesian = function()->properties().isCartesian();
-  m_bannerView->setDisplayParameters(false, isCartesian, false, !isCartesian,
-                                     m_drawTangent);
+  m_bannerView->setDisplayParameters({.showFirstDerivative = isCartesian,
+                                      .showSlope = !isCartesian,
+                                      .showTangent = m_drawTangent});
   reloadBannerView();
   panToMakeCursorVisible();
   SimpleInteractiveCurveViewController::viewWillAppear();

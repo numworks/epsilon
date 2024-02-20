@@ -40,15 +40,8 @@ void BannerView::emptyInterestMessages(Shared::CursorView* cursor) {
   cursor->setHighlighted(false);
 }
 
-void BannerView::setDisplayParameters(bool showInterest,
-                                      bool showFirstDerivative,
-                                      bool showSecondDerivative, bool showSlope,
-                                      bool showTangent) {
-  m_showInterest = showInterest;
-  m_showFirstDerivative = showFirstDerivative;
-  m_showSecondDerivative = showSecondDerivative;
-  m_showSlope = showSlope;
-  m_showTangent = showTangent;
+void BannerView::setDisplayParameters(DisplayParameters displayParameters) {
+  m_displayParameters = displayParameters;
 }
 
 View* BannerView::subviewAtIndex(int index) {
@@ -65,22 +58,22 @@ View* BannerView::subviewAtIndex(int index) {
   }
   index -= Shared::XYBannerView::k_numberOfSubviews;
   // - First derivative
-  if (m_showFirstDerivative && index == 0) {
+  if (m_displayParameters.showFirstDerivative && index == 0) {
     return &m_firstDerivativeView;
   }
-  index -= m_showFirstDerivative;
+  index -= m_displayParameters.showFirstDerivative;
   // - Second derivative
-  if (m_showSecondDerivative && index == 0) {
+  if (m_displayParameters.showSecondDerivative && index == 0) {
     return &m_secondDerivativeView;
   }
-  index -= m_showSecondDerivative;
+  index -= m_displayParameters.showSecondDerivative;
   // - Slope (dx/dy)
-  if (m_showSlope && index == 0) {
+  if (m_displayParameters.showSlope && index == 0) {
     return &m_slopeView;
   }
-  index -= m_showSlope;
+  index -= m_displayParameters.showSlope;
   // - Tangent subviews
-  assert(m_showTangent);
+  assert(m_displayParameters.showTangent);
   assert(0 <= index && index < 3);
   View* subviews[] = {&m_tangentEquationView, &m_aView, &m_bView};
   return subviews[index];

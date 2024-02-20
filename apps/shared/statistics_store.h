@@ -16,6 +16,7 @@ class StatisticsStore : public DoublePairStore {
                   DoublePairStorePreferences* preferences);
 
   void invalidateSortedIndexes();
+  void clearColumn(int series, int column);
   double sumOfOccurrences(int series) const;
   double mean(int series) const;
   double standardDeviation(int series) const;

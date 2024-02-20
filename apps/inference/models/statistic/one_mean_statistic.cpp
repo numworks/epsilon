@@ -26,6 +26,12 @@ void OneMeanStatistic::setParameterAtPosition(double value, int row,
   syncParametersWithStore();
 }
 
+void OneMeanStatistic::deleteParametersInColumn(int column) {
+  assert(m_store);
+  m_store->clearColumn(m_series, column);
+  syncParametersWithStore();
+}
+
 bool OneMeanStatistic::deleteParameterAtPosition(int row, int column) {
   assert(m_store);
   if (std::isnan(parameterAtPosition(row, column))) {
@@ -33,7 +39,8 @@ bool OneMeanStatistic::deleteParameterAtPosition(int row, int column) {
     return false;
   }
   int numberOfPairs = m_store->numberOfPairsOfSeries(m_series);
-  setParameterAtPosition(k_undefinedValue, row, column);
+  m_store->deletePairOfSeriesAtIndex(m_series, row);
+  syncParametersWithStore();
   // DoublePairStore::updateSeries has handled the deletion of empty rows
   return numberOfPairs != m_store->numberOfPairsOfSeries(m_series);
 }

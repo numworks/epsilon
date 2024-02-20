@@ -21,6 +21,16 @@ void StatisticsStore::invalidateSortedIndexes() {
   }
 }
 
+void StatisticsStore::clearColumn(int series, int column) {
+  if (column == 0) {
+    deleteAllPairsOfSeries(series);
+  } else {
+    assert(column == 1);
+    // Column won't be empty, all values are set to 1
+    resetColumn(series, column);
+  }
+}
+
 double StatisticsStore::sumOfOccurrences(int series) const {
   return m_datasets[series].totalWeight();
 }

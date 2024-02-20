@@ -862,6 +862,11 @@ void PushPoincareExpression(Poincare::Expression exp) {
     case OT::Parenthesis:
       SharedEditionPool->push(BlockType::Parenthesis);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::JuniorExpression: {
+      SharedEditionPool->clone(
+          static_cast<Poincare::JuniorExpression &>(exp).tree());
+      return;
+    }
     default:
       assert(false);
   }

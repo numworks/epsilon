@@ -50,6 +50,7 @@
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/integral.h>
+#include <poincare/junior_expression.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/list.h>
 #include <poincare/list_access.h>

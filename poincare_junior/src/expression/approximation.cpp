@@ -373,10 +373,16 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return std::conj(ToComplex<T>(node->nextNode()));
     case BlockType::Opposite:
       return -ToComplex<T>(node->nextNode());
-    case BlockType::RealPart:
-      return ToComplex<T>(node->nextNode()).real();
-    case BlockType::ImaginaryPart:
-      return ToComplex<T>(node->nextNode()).imag();
+    case BlockType::RealPart: {
+      /* TODO_PCJ: Complex NAN should be used in most of the code. Make sure a
+       * NAN result cannot be lost. */
+      std::complex<T> c = ToComplex<T>(node->nextNode());
+      return std::isnan(c.imag()) ? NAN : c.real();
+    }
+    case BlockType::ImaginaryPart: {
+      std::complex<T> c = ToComplex<T>(node->nextNode());
+      return std::isnan(c.real()) ? NAN : c.imag();
+    }
 
     /* Trigonometry */
     case BlockType::Cosine:
@@ -402,7 +408,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
     case BlockType::Variable:
       if (!s_context) {
-        // TODO PCJ: this should be catched when preparing the expression
+        // TODO PCJ: this should be caught when preparing the expression
         return NAN;
       }
       return s_context->variable(Variables::Id(node));

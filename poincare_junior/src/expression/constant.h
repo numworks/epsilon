@@ -5,10 +5,23 @@
 #include <poincare_junior/src/memory/tree.h>
 #include <stdint.h>
 
+#include "aliases.h"
+#include "unit.h"
+
 namespace PoincareJ {
 
-class Constant final {
+class Constant {
  public:
+  /* Constant properties */
+  struct ConstantInfo {
+    Aliases m_aliasesList;
+    int m_comparisonRank;
+    double m_value;
+    const char* m_unit;
+  };
+
+  constexpr static int k_numberOfConstants = 14;
+  static const ConstantInfo k_constants[k_numberOfConstants];
 };
 
 }  // namespace PoincareJ

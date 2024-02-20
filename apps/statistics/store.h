@@ -2,9 +2,8 @@
 #define STATISTICS_STORE_H
 
 #include <apps/i18n.h>
-#include <apps/shared/double_pair_store.h>
+#include <apps/shared/statistics_store.h>
 #include <poincare/range.h>
-#include <poincare/statistics_dataset.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -12,17 +11,14 @@
 
 namespace Statistics {
 
-class Store : public Shared::DoublePairStore {
+class Store : public Shared::StatisticsStore {
   friend class BoxRange;
 
  public:
-  constexpr static const char *const *k_columnNames =
-      DoublePairStore::k_statisticsColumNames;
   constexpr static int k_numberOfQuantiles = 5;
 
   Store(Shared::GlobalContext *context, UserPreferences *userPreferences);
 
-  void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
   bool displayCumulatedFrequenciesForSeries(int series) const {
@@ -35,13 +31,6 @@ class Store : public Shared::DoublePairStore {
     return computeRelativeColumnAndSeries(&column);
   }
   int relativeColumn(int column) const override;
-
-  // DoublePairStore
-  char columnNamePrefixAtIndex(int column) const override {
-    assert(column >= 0 && column < DoublePairStore::k_numberOfColumnsPerSeries);
-    assert(strlen(k_columnNames[column]) == 1);
-    return k_columnNames[column][0];
-  }
 
   // Histogram bars
   double barWidth() const { return userPreferences()->barWidth(); }
@@ -70,7 +59,6 @@ class Store : public Shared::DoublePairStore {
   bool columnIsIntegersOnly(int series, int column) const;
 
   // Calculation
-  double sumOfOccurrences(int series) const;
   // If handleNullFrequencies, values with a null frequency are accounted for
   double maxValueForAllSeries(
       bool handleNullFrequencies = false,
@@ -84,10 +72,7 @@ class Store : public Shared::DoublePairStore {
   double maxValue(int series) const { return maxValue(series, false); }
   double minValue(int series) const { return minValue(series, false); }
   double range(int series) const;
-  double mean(int series) const;
   double variance(int series) const;
-  double standardDeviation(int series) const;
-  double sampleStandardDeviation(int series) const;
   double sampleVariance(int series) const;
   double firstQuartile(int series) const;
   double thirdQuartile(int series) const;
@@ -139,6 +124,7 @@ class Store : public Shared::DoublePairStore {
     return DoublePairStore::valueValidInColumn(value, relativeColumn) &&
            (relativeColumn != 1 || value >= 0.0);
   }
+  bool updateSeries(int series, bool delayUpdate = false) override;
 
   typedef double (Store::*CalculPointer)(int) const;
   static bool ActiveSeriesAndValidTotalNormalProbabilities(
@@ -153,7 +139,6 @@ class Store : public Shared::DoublePairStore {
            static_cast<const Store *>(store)->sumOfOccurrences(series) <=
                k_maxNumberOfPairs;
   }
-  bool updateSeries(int series, bool delayUpdate = false) override;
 
  private:
   constexpr static I18n::Message k_quantilesName[k_numberOfQuantiles] = {
@@ -172,8 +157,6 @@ class Store : public Shared::DoublePairStore {
 
   int computeRelativeColumnAndSeries(int *i) const;
 
-  // DoublePairStore
-  double defaultValueForColumn1() const override { return 1.0; }
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
    * start to end (ordered by value).
    * Retrieve the i-th value and the number distinct values encountered.
@@ -198,11 +181,6 @@ class Store : public Shared::DoublePairStore {
     return static_cast<UserPreferences *>(m_storePreferences);
   }
 
-  // Sorted value indexes are memoized to save computation
-  static_assert(k_maxNumberOfPairs <= UINT8_MAX,
-                "k_maxNumberOfPairs is too large.");
-  /* The dataset memoizes the sorted indexes */
-  Poincare::StatisticsDataset<double> m_datasets[k_numberOfSeries];
   /* Memoizing the max number of modes because the CalculationControllers needs
    * it in numberOfRows(), which is used a lot. */
   mutable int m_memoizedMaxNumberOfModes;

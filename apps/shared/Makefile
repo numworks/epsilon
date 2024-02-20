@@ -29,6 +29,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   sequence.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
+  statistics_store.cpp \
   toolbox_helpers.cpp \
   zoom_and_pan_curve_view_controller.cpp \
   zoom_curve_view_controller.cpp \
@@ -83,6 +84,7 @@ app_shared_src = $(addprefix apps/shared/,\
   simple_interactive_curve_view_controller.cpp \
   single_interactive_curve_view_range_controller.cpp \
   single_range_controller.cpp \
+  statistics_store.cpp \
   store_app.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \

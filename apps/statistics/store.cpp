@@ -23,7 +23,7 @@ constexpr Store::CalculPointer
     Store::k_quantileCalculation[Store::k_numberOfQuantiles];
 
 Store::Store(GlobalContext* context, UserPreferences* userPreferences)
-    : DoublePairStore(context, userPreferences),
+    : StatisticsStore(context, userPreferences),
       m_memoizedMaxNumberOfModes(-1),
       m_graphViewInvalidated(true) {
   /* Update series after having set the datasets, which are needed in
@@ -33,12 +33,6 @@ Store::Store(GlobalContext* context, UserPreferences* userPreferences)
     m_datasets[s] = Poincare::StatisticsDataset<double>(&m_dataLists[s][0],
                                                         &m_dataLists[s][1]);
     updateSeries(s);
-  }
-}
-
-void Store::invalidateSortedIndexes() {
-  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    m_datasets[i].setHasBeenModified();
   }
 }
 
@@ -199,10 +193,6 @@ bool Store::columnIsIntegersOnly(int series, int column) const {
 
 /* Calculation */
 
-double Store::sumOfOccurrences(int series) const {
-  return m_datasets[series].totalWeight();
-}
-
 double Store::maxValueForAllSeries(bool handleNullFrequencies,
                                    ActiveSeriesTest activeSeriesTest) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
@@ -263,18 +253,8 @@ double Store::range(int series) const {
   return maxValue(series) - minValue(series);
 }
 
-double Store::mean(int series) const { return m_datasets[series].mean(); }
-
 double Store::variance(int series) const {
   return m_datasets[series].variance();
-}
-
-double Store::standardDeviation(int series) const {
-  return m_datasets[series].standardDeviation();
-}
-
-double Store::sampleStandardDeviation(int series) const {
-  return m_datasets[series].sampleStandardDeviation();
 }
 
 double Store::sampleVariance(int series) const {
@@ -505,9 +485,8 @@ int Store::computeRelativeColumnAndSeries(int* i) const {
 }
 
 bool Store::updateSeries(int series, bool delayUpdate) {
-  m_datasets[series].setHasBeenModified();
   m_memoizedMaxNumberOfModes = -1;
-  return DoublePairStore::updateSeries(series, delayUpdate);
+  return StatisticsStore::updateSeries(series, delayUpdate);
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2,

@@ -15,6 +15,15 @@ Layout JuniorExpressionNode::createLayout(
       tree()->clone(), false, numberOfSignificantDigits, floatDisplayMode));
 }
 
+size_t JuniorExpressionNode::serialize(
+    char* buffer, size_t bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
+  Expression e = PoincareJ::ToPoincareExpression(tree());
+  return e.node()->serialize(buffer, bufferSize, floatDisplayMode,
+                             numberOfSignificantDigits);
+}
+
 JuniorExpression JuniorExpression::Builder(const PoincareJ::Tree* tree) {
   if (!tree) {
     return JuniorExpression();

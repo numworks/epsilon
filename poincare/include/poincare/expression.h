@@ -74,6 +74,7 @@ class Expression : public TreeHandle {
   friend class IntegralNode;
   friend class InverseMethod;
   friend class LeastCommonMultiple;
+  friend class JuniorExpressionNode;
   friend class List;
   friend class ListFunctionWithOneOrTwoParametersNode;
   friend class ListMean;

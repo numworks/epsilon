@@ -3,6 +3,9 @@
 namespace Inference {
 
 void OneMeanStatistic::setSeries(int series) {
+  if (series < 0 && m_series >= 0) {
+    reinitParameters();
+  }
   m_series = series;
   syncParametersWithStore();
 }

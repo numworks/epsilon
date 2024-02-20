@@ -44,6 +44,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
   OneMean::Type oneMeanType() const {
     return OneMeanStatistic::OneMeanType(this);
   }
+  void reinitParameters() override { initParameters(); }
 
   // Significance Test
   int numberOfStatisticParameters() const override {

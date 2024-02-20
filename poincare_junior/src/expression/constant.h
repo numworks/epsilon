@@ -15,7 +15,6 @@ class Constant {
   /* Constant properties */
   struct ConstantInfo {
     Aliases m_aliasesList;
-    int m_comparisonRank;
     double m_value;
     Units::DimensionVector m_dimension;
   };

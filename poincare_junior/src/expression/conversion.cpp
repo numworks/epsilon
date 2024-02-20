@@ -175,6 +175,16 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
             ToPoincareExpression(exp->child(1)),
             ToPoincareExpression(exp->child(2)));
       }
+      case BlockType::Dependency: {
+        assert(exp->child(1)->isSet());
+        Poincare::List listOfDependencies = Poincare::List::Builder();
+        for (const Tree *child : exp->child(1)->children()) {
+          listOfDependencies.addChildAtIndexInPlace(ToPoincareExpression(child),
+                                                    0, 0);
+        }
+        return Poincare::Dependency::Builder(
+            ToPoincareExpression(exp->child(0)), listOfDependencies);
+      }
       default:
         // TODO: Handle missing BlockTypes
         assert(false);

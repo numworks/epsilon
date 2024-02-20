@@ -5,6 +5,7 @@
 #include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/binary.h>
+#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/list.h>
@@ -740,13 +741,19 @@ void RackParser::parsePercent(EditionReference &leftHandSide,
 void RackParser::parseConstant(EditionReference &leftHandSide,
                                Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  // leftHandSide =
-  // Constant::Builder(m_currentToken.text(), m_currentToken.length());
-  assert(m_currentToken.length() == 1);
-  leftHandSide = SharedEditionPool->push(
-      m_currentToken.toDecoder(m_root).nextCodePoint() == 'e'
-          ? BlockType::ExponentialE
-          : BlockType::Pi);
+  int index = Constant::ConstantIndex(
+      CPL::FromRack(m_root, m_root->indexOfChild(m_currentToken.firstLayout())),
+      m_currentToken.length());
+  if (index >= 0) {
+    leftHandSide =
+        SharedEditionPool->push<BlockType::PhysicalConstant>(uint8_t(index));
+  } else {
+    assert(m_currentToken.length() == 1);
+    leftHandSide = SharedEditionPool->push(
+        m_currentToken.toDecoder(m_root).nextCodePoint() == 'e'
+            ? BlockType::ExponentialE
+            : BlockType::Pi);
+  }
   isThereImplicitOperator();
 }
 

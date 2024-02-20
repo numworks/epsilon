@@ -246,10 +246,16 @@ NODE(InferiorEqual, 2)
 RANGE(Inequality, Superior, InferiorEqual)
 RANGE(Comparison, Equal, InferiorEqual)
 
-// 8 - Order dependant expressions
+// 8 - Units
+
 /* - Unit U
  * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
 NODE(Unit, 0, 2)
+/* - Physical constant PC
+ * | PC TAG | CONSTANT INDEX | */
+NODE(PhysicalConstant, 0, 1)
+
+// 9 - Order dependant expressions
 NODE(Dependency, 2)
 NODE(Piecewise, NARY)
 NODE(Set, NARY)

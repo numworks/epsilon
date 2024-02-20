@@ -29,4 +29,15 @@ const Constant::ConstantInfo Constant::k_constants[] = {
     ConstantInfo{"_hplanck", 6.62607015e-34, (J * s)},
 };
 
+int Constant::ConstantIndex(const CPL* name, int length) {
+  for (int i = 0; const ConstantInfo& ci : k_constants) {
+    CPLayoutDecoder decoder(name, 0, length);
+    if (ci.m_aliasesList.contains(&decoder)) {
+      return i;
+    }
+    i++;
+  }
+  return -1;
+}
+
 }  // namespace PoincareJ

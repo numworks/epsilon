@@ -3,6 +3,7 @@
 
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
+#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/sign.h>
@@ -44,8 +45,8 @@ class NodeConstructor final {
                                                              size_t blockIndex,
                                                              Types... args) {
     static_assert(
-        // blockType != BlockType::Constant &&
-        blockType != BlockType::SingleFloat &&
+        blockType != BlockType::PhysicalConstant &&
+            blockType != BlockType::SingleFloat &&
             blockType != BlockType::DoubleFloat &&
             blockType != BlockType::UserSymbol &&
             blockType != BlockType::IntegerPosBig &&
@@ -76,16 +77,14 @@ class NodeConstructor final {
   }
 };
 
-#if 0
 template <>
-constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Constant>(
-    Block* block, size_t blockIndex, char16_t name) {
-  assert(Constant::Type(name) != Constant::Type::Undefined);
-  return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::Constant, Constant::Type(name));
+constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
+    BlockType::PhysicalConstant>(Block* block, size_t blockIndex,
+                                 uint8_t index) {
+  assert(index < Constant::k_numberOfConstants);
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
+                                            BlockType::PhysicalConstant, index);
 }
-#endif
 
 template <>
 constexpr bool

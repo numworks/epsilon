@@ -7,6 +7,7 @@
 #include <poincare_junior/src/expression/aliases.h>
 #include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/builtin.h>
+#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/unit.h>
 
 namespace PoincareJ {
@@ -415,11 +416,9 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
   if (*length == 1 && *string == 'e') {
     return Token::Type::Constant;
   }
-#if 0
   if (Constant::IsConstant(string, *length)) {
     return Token::Type::Constant;
   }
-#endif
 
   CPLayoutDecoder subString(string, 0, *length);
   if (Builtin::HasCustomIdentifier(&subString)) {

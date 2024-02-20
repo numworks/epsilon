@@ -38,6 +38,16 @@ class OneMeanTest : public Test, public OneMeanStatistic {
     Test::setParameterAtIndex(p, index);
   }
   bool validateInputs() override { return parametersAreValid(this); }
+  int numberOfResults() const override {
+    return numberOfResultsAndComputedParameters(Test::numberOfResults());
+  }
+  void resultAtIndex(int index, double* value, Poincare::Layout* message,
+                     I18n::Message* subMessage, int* precision) override {
+    if (!resultOrComputedParameterAtIndex(&index, this, value, message,
+                                          subMessage, precision)) {
+      Test::resultAtIndex(index, value, message, subMessage, precision);
+    }
+  }
 
   void compute() override {
     syncParametersWithStore();

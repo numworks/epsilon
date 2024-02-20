@@ -37,6 +37,16 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
     Interval::setParameterAtIndex(p, index);
   }
   bool validateInputs() override { return parametersAreValid(this); }
+  int numberOfResults() const override {
+    return numberOfResultsAndComputedParameters(Interval::numberOfResults());
+  }
+  void resultAtIndex(int index, double* value, Poincare::Layout* message,
+                     I18n::Message* subMessage, int* precision) override {
+    if (!resultOrComputedParameterAtIndex(&index, this, value, message,
+                                          subMessage, precision)) {
+      Interval::resultAtIndex(index, value, message, subMessage, precision);
+    }
+  }
 
   const char* estimateSymbol() const override {
     return OneMean::EstimateSymbol();

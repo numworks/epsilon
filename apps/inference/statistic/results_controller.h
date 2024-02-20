@@ -61,7 +61,7 @@ class ResultsController
   char m_titleBuffer[k_titleBufferSize];
 
  private:
-  constexpr static int k_numberOfReusableCells = 5;
+  constexpr static int k_numberOfReusableCells = 6;
   constexpr static int k_resultCellType = 0;
   constexpr static int k_buttonCellType = 1;
   Escher::ButtonCell m_next;

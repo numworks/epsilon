@@ -110,6 +110,11 @@ void Layoutter::layoutBuiltin(EditionReference &layoutParent,
   const Builtin *builtin = Builtin::GetReservedFunction(expression);
   if (m_linearMode || !builtin->has2DLayout()) {
     // Built "builtin(child1, child2)"
+    if (expression->isParametric()) {
+      // Move sub-expression first
+      expression->child(0)->moveTreeBeforeNode(
+          expression->child(expression->numberOfChildren() - 1));
+    }
     layoutFunctionCall(layoutParent, expression,
                        builtin->aliases()->mainAlias());
   } else {
@@ -448,11 +453,6 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::Polynomial:
     default:
       if (Builtin::IsReservedFunction(expression)) {
-        if (type.isParametric()) {
-          // Move sub-expression first
-          expression->child(0)->moveTreeBeforeNode(
-              expression->child(expression->numberOfChildren() - 1));
-        }
         layoutBuiltin(layoutParent, expression);
       } else {
 #if POINCARE_MEMORY_TREE_LOG

@@ -89,11 +89,26 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
         return Poincare::HyperbolicArcTangent::Builder(child);
       case BlockType::Abs:
         return Poincare::AbsoluteValue::Builder(child);
+      case BlockType::Ceiling:
+        return Poincare::Ceiling::Builder(child);
+      case BlockType::Floor:
+        return Poincare::Floor::Builder(child);
+      case BlockType::FracPart:
+        return Poincare::FracPart::Builder(child);
       case BlockType::Log:
         return Poincare::Logarithm::Builder(child);
       case BlockType::Logarithm:
         return Poincare::Logarithm::Builder(
             child, ToPoincareExpression(exp->child(1)));
+      case BlockType::Binomial:
+        return Poincare::BinomialCoefficient::Builder(
+            child, ToPoincareExpression(exp->child(1)));
+      case BlockType::Permute:
+        return Poincare::PermuteCoefficient::Builder(
+            child, ToPoincareExpression(exp->child(1)));
+      case BlockType::Round:
+        return Poincare::Round::Builder(child,
+                                        ToPoincareExpression(exp->child(1)));
       case BlockType::Cross:
         return Poincare::VectorCross::Builder(
             child, ToPoincareExpression(exp->child(1)));
@@ -285,6 +300,18 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::AbsoluteValue:
       SharedEditionPool->push(BlockType::Abs);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Ceiling:
+      SharedEditionPool->push(BlockType::Ceiling);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Floor:
+      SharedEditionPool->push(BlockType::Floor);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::FracPart:
+      SharedEditionPool->push(BlockType::FracPart);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Factorial:
+      SharedEditionPool->push(BlockType::Factorial);
+      return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Opposite:
       SharedEditionPool->push<BlockType::Multiplication>(2);
       SharedEditionPool->push(BlockType::MinusOne);
@@ -380,6 +407,18 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::MatrixReducedRowEchelonForm:
       SharedEditionPool->push(BlockType::Rref);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::BinomialCoefficient:
+      SharedEditionPool->push(BlockType::Binomial);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::PermuteCoefficient:
+      SharedEditionPool->push(BlockType::Permute);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::Round:
+      SharedEditionPool->push(BlockType::Round);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
     case OT::VectorCross:
       SharedEditionPool->push(BlockType::Cross);
       PushPoincareExpression(exp.childAtIndex(0));

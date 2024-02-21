@@ -47,18 +47,25 @@ class StatisticsDataset {
 
   StatisticsDataset(const DatasetColumn<T>* values,
                     const DatasetColumn<T>* weights, bool lnOfValues = false,
-                    bool oppositeOfValue = false)
+                    bool oppositeOfValue = false, bool shouldInitPool = true)
       : m_values(values),
         m_weights(weights),
-        m_sortedIndex(FloatList<float>::Builder()),
         m_recomputeSortedIndex(true),
         m_memoizedTotalWeight(NAN),
         m_lnOfValues(lnOfValues),
-        m_oppositeOfValues(oppositeOfValue) {}
+        m_oppositeOfValues(oppositeOfValue) {
+    if (shouldInitPool) {
+      initPool();
+    }
+  }
   StatisticsDataset(const DatasetColumn<T>* values, bool lnOfValues = false,
                     bool oppositeOfValue = false)
       : StatisticsDataset(values, nullptr, lnOfValues, oppositeOfValue) {}
-  StatisticsDataset() : StatisticsDataset(nullptr, nullptr) {}
+  StatisticsDataset()
+      : StatisticsDataset(nullptr, nullptr, false, false, false) {}
+
+  void initPool() { m_sortedIndex = FloatList<float>::Builder(); }
+  void tidyPool() { m_sortedIndex = FloatList<float>(); }
 
   bool isUndefined() { return m_values == nullptr; }
 

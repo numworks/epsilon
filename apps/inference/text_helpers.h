@@ -12,23 +12,23 @@
 namespace Inference {
 
 inline int defaultConvertFloatToText(double value, char buffer[],
-                                     int bufferSize) {
+                                     int bufferSize, int precision) {
   return Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-      value, buffer, bufferSize,
-      Poincare::Preferences::ShortNumberOfSignificantDigits,
+      value, buffer, bufferSize, precision,
       Poincare::Preferences::PrintFloatMode::Decimal);
 }
 
 template <typename TextHolder>
-void PrintValueInTextHolder(double value, TextHolder* textField,
-                            bool forbidNAN = true,
-                            bool forbidNegative = false) {
+void PrintValueInTextHolder(
+    double value, TextHolder* textField, bool forbidNAN = true,
+    bool forbidNegative = false,
+    int precision = Poincare::Preferences::ShortNumberOfSignificantDigits) {
   if ((forbidNAN && std::isnan(value)) || (forbidNegative && value < 0.0)) {
     textField->setText("");
   } else {
     constexpr int bufferSize = Constants::k_shortBufferSize;
     char buffer[bufferSize];
-    defaultConvertFloatToText(value, buffer, bufferSize);
+    defaultConvertFloatToText(value, buffer, bufferSize, precision);
     textField->setText(buffer);
   }
 }

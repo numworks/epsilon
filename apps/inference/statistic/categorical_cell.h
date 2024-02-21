@@ -35,6 +35,7 @@ class AbstractCategoricalCell : public Escher::HighlightCell {
   }
 };
 
+template <typename T>
 class InputCategoricalCell : public AbstractCategoricalCell {
  public:
   InputCategoricalCell(Escher::Responder* parent = nullptr,
@@ -42,15 +43,13 @@ class InputCategoricalCell : public AbstractCategoricalCell {
       : AbstractCategoricalCell(), m_innerCell(parent, textFieldDelegate) {}
 
   Escher::TextField* textField() { return m_innerCell.textField(); }
-  void setMessages(I18n::Message labelMessage,
+  void setMessages(typename T::TitleType labelMessage,
                    I18n::Message subLabelMessage = I18n::Message::Default);
 
  private:
   HighlightCell* subviewAtIndex(int i) override { return &m_innerCell; }
 
-  Escher::MenuCellWithEditableText<Escher::MessageTextView,
-                                   Escher::MessageTextView>
-      m_innerCell;
+  Escher::MenuCellWithEditableText<T, Escher::MessageTextView> m_innerCell;
 };
 
 class DropdownCategoricalCell : public AbstractCategoricalCell {

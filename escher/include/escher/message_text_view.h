@@ -8,6 +8,8 @@ namespace Escher {
 
 class MessageTextView : public TextView {
  public:
+  using TitleType = I18n::Message;
+
   MessageTextView(I18n::Message message = (I18n::Message)0,
                   KDGlyph::Format format = {}, KDCoordinate lineSpacing = 0)
       : TextView(format, lineSpacing), m_message(message) {}

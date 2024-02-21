@@ -14,6 +14,8 @@ namespace Escher {
 
 class LayoutView : public GlyphsView {
  public:
+  using TitleType = Poincare::Layout;
+
   LayoutView(KDGlyph::Format format = {})
       : GlyphsView(format), m_horizontalMargin(0) {}
 

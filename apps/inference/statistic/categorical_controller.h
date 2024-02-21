@@ -103,7 +103,7 @@ class InputCategoricalController : public CategoricalController,
   }
 
   Statistic* m_statistic;
-  InputCategoricalCell m_significanceCell;
+  InputCategoricalCell<Escher::MessageTextView> m_significanceCell;
 };
 
 }  // namespace Inference

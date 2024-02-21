@@ -39,7 +39,7 @@ class InputGoodnessController : public InputCategoricalController {
   }
   int indexOfEditedParameterAtIndex(int index) const override;
 
-  InputCategoricalCell m_degreeOfFreedomCell;
+  InputCategoricalCell<Escher::MessageTextView> m_degreeOfFreedomCell;
   GoodnessTableCell m_goodnessTableCell;
 };
 

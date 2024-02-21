@@ -40,8 +40,9 @@ void AbstractCategoricalCell::layoutSubviews(bool force) {
 
 // InputCategoricalCell
 
-void InputCategoricalCell::setMessages(I18n::Message labelMessage,
-                                       I18n::Message subLabelMessage) {
+template <>
+void InputCategoricalCell<MessageTextView>::setMessages(
+    I18n::Message labelMessage, I18n::Message subLabelMessage) {
   m_innerCell.label()->setMessage(labelMessage);
   m_innerCell.subLabel()->setMessage(subLabelMessage);
 }

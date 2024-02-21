@@ -43,7 +43,8 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   }
   bool validateInputs() override { return parametersAreValid(this); }
   int numberOfResults() const override {
-    return numberOfResultsAndComputedParameters(Interval::numberOfResults());
+    return numberOfResultsAndComputedParameters(this,
+                                                Interval::numberOfResults());
   }
   int secondResultSectionStart() const override {
     return Interval::numberOfResults();

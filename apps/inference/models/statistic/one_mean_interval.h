@@ -10,6 +10,9 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
  public:
   using OneMeanStatistic::OneMeanStatistic;
 
+  void init() override { initDatasetsIfSeries(); }
+  void tidy() override { tidyDatasets(); }
+
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::OneMean;
   }

@@ -7,6 +7,7 @@ void OneMeanStatistic::setSeries(int series, Statistic* stat) {
     stat->initParameters();
   }
   m_series = series;
+  initDatasetsIfSeries();
 }
 
 bool OneMeanStatistic::parametersAreValid(Statistic* stat) {

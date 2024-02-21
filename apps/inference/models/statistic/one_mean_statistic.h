@@ -55,6 +55,11 @@ class OneMeanStatistic : public Table, public Shared::StatisticsStore {
                                         Poincare::Layout* message,
                                         I18n::Message* subMessage,
                                         int* precision);
+  void initDatasetsIfSeries() {
+    if (m_series >= 0) {
+      initDatasets();
+    }
+  }
 
   // Table
   Index2D initialDimensions() const override {

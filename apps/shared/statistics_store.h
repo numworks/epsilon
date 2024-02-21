@@ -36,6 +36,9 @@ class StatisticsStore : public DoublePairStore {
   }
 
  protected:
+  void initDatasets();
+  void tidyDatasets();
+
   // Sorted value indexes are memoized to save computation
   static_assert(k_maxNumberOfPairs <= UINT8_MAX,
                 "k_maxNumberOfPairs is too large.");

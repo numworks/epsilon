@@ -16,7 +16,9 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::OneMean;
   }
-  I18n::Message title() const override { return OneMean::Title(oneMeanType()); }
+  I18n::Message title() const override {
+    return OneMean::Title(oneMeanType(this));
+  }
 
   // Significance Test: One Mean
   bool initializeDistribution(DistributionType distributionType) override {
@@ -29,11 +31,11 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
     return OneMean::DistributionTitle();
   }
   void initParameters() override {
-    OneMean::InitIntervalParameters(oneMeanType(), this);
+    OneMean::InitIntervalParameters(oneMeanType(this), this);
   }
   bool authorizedParameterAtIndex(double p, int i) const override {
     return Inference::authorizedParameterAtIndex(p, i) &&
-           OneMean::AuthorizedParameterAtIndex(oneMeanType(), i, p);
+           OneMean::AuthorizedParameterAtIndex(oneMeanType(this), i, p);
   }
   void setParameterAtIndex(double p, int index) override {
     p = OneMean::ProcessParamaterForIndex(p, index);
@@ -59,23 +61,19 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   }
 
  private:
-  OneMean::Type oneMeanType() const {
-    return OneMeanStatistic::OneMeanType(this);
-  }
-
   // Significance Test:: OneMean
   int numberOfStatisticParameters() const override {
     return OneMean::NumberOfParameters();
   }
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
-    return OneMean::ParameterRepresentationAtIndex(oneMeanType(), i);
+    return OneMean::ParameterRepresentationAtIndex(oneMeanType(this), i);
   }
   double* parametersArray() override { return m_params; }
 
   void privateCompute() override {
     syncParametersWithStore(this);
-    OneMean::ComputeInterval(oneMeanType(), this);
+    OneMean::ComputeInterval(oneMeanType(this), this);
   }
 };
 

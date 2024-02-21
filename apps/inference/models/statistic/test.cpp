@@ -43,7 +43,8 @@ bool Test::initializeSignificanceTest(SignificanceTestType testType,
           OneMeanTTest(AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case SignificanceTestType::TwoMeans:
-      new (this) TwoMeansTTest();
+      new (this) TwoMeansTTest(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case SignificanceTestType::OneProportion:
       new (this) OneProportionZTest();

@@ -306,13 +306,16 @@ bool TwoMeans::TestInitializeDistribution(Statistic* statistic,
   statistic->~Statistic();
   switch (distributionType) {
     case DistributionType::T:
-      new (statistic) TwoMeansTTest();
+      new (statistic) TwoMeansTTest(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case DistributionType::TPooled:
-      new (statistic) PooledTwoMeansTTest();
+      new (statistic) PooledTwoMeansTTest(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case DistributionType::Z:
-      new (statistic) TwoMeansZTest();
+      new (statistic) TwoMeansZTest(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     default:
       assert(false);
@@ -330,13 +333,16 @@ bool TwoMeans::IntervalInitializeDistribution(
   statistic->~Statistic();
   switch (distributionType) {
     case DistributionType::T:
-      new (statistic) TwoMeansTInterval();
+      new (statistic) TwoMeansTInterval(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case DistributionType::TPooled:
-      new (statistic) PooledTwoMeansTInterval();
+      new (statistic) PooledTwoMeansTInterval(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case DistributionType::Z:
-      new (statistic) TwoMeansZInterval();
+      new (statistic) TwoMeansZInterval(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     default:
       assert(false);

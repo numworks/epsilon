@@ -360,8 +360,9 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[1].m_standardError = 2.7415323257;
   tests[1].m_marginOfError = 7.1826281548;
 
-  TwoMeansTTest test;
-  TwoMeansTInterval interval;
+  TwoMeansTTest test(AppsContainerHelper::sharedAppsContainerGlobalContext());
+  TwoMeansTInterval interval(
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
@@ -416,8 +417,10 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[1].m_standardError = 0.3567562103;
   tests[1].m_marginOfError = 0.6126018763;
 
-  PooledTwoMeansTTest test;
-  PooledTwoMeansTInterval interval;
+  PooledTwoMeansTTest test(
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  PooledTwoMeansTInterval interval(
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
@@ -471,8 +474,9 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   tests[1].m_standardError = 98.9949569702;
   tests[1].m_marginOfError = 254.9941253662;
 
-  TwoMeansZTest test;
-  TwoMeansZInterval interval;
+  TwoMeansZTest test(AppsContainerHelper::sharedAppsContainerGlobalContext());
+  TwoMeansZInterval interval(
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);

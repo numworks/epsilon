@@ -106,6 +106,7 @@ class Statistic : public Shared::Inference {
   int numberOfParameters() override {
     return numberOfStatisticParameters() + 1 /* threshold */;
   }
+  virtual int numberOfStatisticParameters() const = 0;
   double parameterAtIndex(int i) const override;
   void setParameterAtIndex(double f, int i) override;
   double cumulativeDistributiveFunctionAtAbscissa(
@@ -146,7 +147,6 @@ class Statistic : public Shared::Inference {
  protected:
   float computeYMax() const override final;
   float canonicalDensityFunction(float x) const;
-  virtual int numberOfStatisticParameters() const = 0;
 
   /* Threshold is either the confidence level or the significance level */
   double m_threshold;

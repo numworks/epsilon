@@ -44,7 +44,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
   }
   bool validateInputs() override { return parametersAreValid(this); }
   int numberOfResults() const override {
-    return numberOfResultsAndComputedParameters(Test::numberOfResults());
+    return numberOfResultsAndComputedParameters(this, Test::numberOfResults());
   }
   int secondResultSectionStart() const override {
     return Test::numberOfResults();

@@ -23,6 +23,7 @@ app_inference_test_src += $(addprefix apps/inference/models/statistic/,\
   statistic.cpp \
   table.cpp \
   test.cpp \
+  two_means_statistic.cpp \
   two_proportions_z_test.cpp \
 )
 

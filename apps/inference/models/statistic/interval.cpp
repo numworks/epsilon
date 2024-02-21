@@ -62,7 +62,8 @@ bool Interval::initializeSignificanceTest(SignificanceTestType testType,
           AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case SignificanceTestType::TwoMeans:
-      new (this) TwoMeansTInterval();
+      new (this) TwoMeansTInterval(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case SignificanceTestType::OneProportion:
       new (this) OneProportionZInterval();

@@ -8,6 +8,8 @@ namespace Inference {
 
 class TwoMeansTest : public Test, public TwoMeansStatistic {
  public:
+  using TwoMeansStatistic::TwoMeansStatistic;
+
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::TwoMeans;
   }
@@ -57,6 +59,8 @@ class TwoMeansTest : public Test, public TwoMeansStatistic {
 
 class TwoMeansTTest : public TwoMeansTest {
  public:
+  using TwoMeansTest::TwoMeansTest;
+
   DistributionType distributionType() const override {
     return DistributionType::T;
   }
@@ -64,6 +68,8 @@ class TwoMeansTTest : public TwoMeansTest {
 
 class PooledTwoMeansTTest : public TwoMeansTest {
  public:
+  using TwoMeansTest::TwoMeansTest;
+
   DistributionType distributionType() const override {
     return DistributionType::TPooled;
   }
@@ -71,6 +77,8 @@ class PooledTwoMeansTTest : public TwoMeansTest {
 
 class TwoMeansZTest : public TwoMeansTest {
  public:
+  using TwoMeansTest::TwoMeansTest;
+
   DistributionType distributionType() const override {
     return DistributionType::Z;
   }

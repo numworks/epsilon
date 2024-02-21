@@ -65,7 +65,7 @@ Tree* Parser::Parse(const Tree* node) {
           SharedEditionPool->push(ExpressionType(node->layoutType()));
       int n = node->numberOfChildren();
       for (int i = 0; i < n; i++) {
-        Parse(node->child(0));
+        Parse(node->child(i));
       }
       return ref;
     }

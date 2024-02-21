@@ -3,6 +3,8 @@
 
 #include <poincare_junior/src/memory/tree.h>
 
+#include "vertical_offset.h"
+
 namespace PoincareJ {
 
 namespace Fraction {
@@ -48,37 +50,6 @@ inline void SetOrderSlot(Tree* node, OrderSlot slot) {
   return node->nodeValueBlock(0)->setBit(1, static_cast<bool>(slot));
 }
 }  // namespace Derivative
-
-namespace VerticalOffset {
-inline bool IsSuperscript(const Tree* node) {
-  assert(node->isVerticalOffsetLayout());
-  return !node->nodeValueBlock(0)->getBit(0);
-}
-
-inline bool IsSubscript(const Tree* node) { return !IsSuperscript(node); }
-
-inline bool IsSuffix(const Tree* node) {
-  assert(node->isVerticalOffsetLayout());
-  return !node->nodeValueBlock(0)->getBit(1);
-}
-
-inline bool IsPrefix(const Tree* node) { return !IsSuffix(node); }
-
-inline void SetSuperscript(Tree* node, bool superscript) {
-  assert(node->isVerticalOffsetLayout());
-  node->nodeValueBlock(0)->setBit(0, !superscript);
-}
-
-inline void SetSuffix(Tree* node, bool suffix) {
-  assert(node->isVerticalOffsetLayout());
-  node->nodeValueBlock(0)->setBit(1, !suffix);
-}
-
-inline bool IsSuffixSuperscript(const Tree* node) {
-  assert(node->isVerticalOffsetLayout());
-  return IsSuffix(node) && IsSuperscript(node);
-}
-}  // namespace VerticalOffset
 
 namespace Integral {
 constexpr static int k_differentialIndex = 0;

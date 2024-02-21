@@ -79,7 +79,7 @@ KDSize Render::Size(const Layout* node) {
           KDCOORDINATE_MAX / 4;
       KDSize variableSize = Size(node->child(k_variableIndex));
       KDSize orderSize =
-          KDSize(orderWidth(node, s_font), orderHeightOffset(node, s_font));
+          KDSize(OrderWidth(node, s_font), OrderHeightOffset(node, s_font));
       if (variableSize.height() >= k_maxVariableAndOrderSize ||
           variableSize.width() >= k_maxVariableAndOrderSize ||
           orderSize.height() >= k_maxVariableAndOrderSize ||
@@ -93,7 +93,7 @@ KDSize Render::Size(const Layout* node) {
       KDSize abscissaSize = Size(node->child(k_abscissaIndex));
       width = abscissaPosition.x() + abscissaSize.width();
       height = std::max(abscissaPosition.y() + abscissaSize.height(),
-                        positionOfVariableInAssignmentSlot(node, s_font).y() +
+                        PositionOfVariableInAssignmentSlot(node, s_font).y() +
                             variableSize.height());
       break;
     }
@@ -109,15 +109,15 @@ KDSize Render::Size(const Layout* node) {
               k_integrandHorizontalMargin + integrandSize.width() +
               k_differentialHorizontalMargin + dSize.width() +
               k_differentialHorizontalMargin + differentialSize.width();
-      const Layout* last = mostNestedIntegral(node, NestedPosition::Next);
+      const Layout* last = MostNestedIntegral(node, NestedPosition::Next);
       height =
           (node == last)
               ? k_boundVerticalMargin +
-                    boundMaxHeight(node, BoundPosition::UpperBound, s_font) +
+                    BoundMaxHeight(node, BoundPosition::UpperBound, s_font) +
                     k_integrandVerticalMargin +
-                    centralArgumentHeight(node, s_font) +
+                    CentralArgumentHeight(node, s_font) +
                     k_integrandVerticalMargin +
-                    boundMaxHeight(node, BoundPosition::LowerBound, s_font) +
+                    BoundMaxHeight(node, BoundPosition::LowerBound, s_font) +
                     k_boundVerticalMargin
               : Height(last);
       break;
@@ -126,13 +126,13 @@ KDSize Render::Size(const Layout* node) {
     case LayoutType::Sum: {
       using namespace Parametric;
       KDSize totalLowerBoundSize =
-          lowerBoundSizeWithVariableEquals(node, s_font);
+          LowerBoundSizeWithVariableEquals(node, s_font);
       KDSize argumentSize = Size(node->child(k_argumentIndex));
       KDSize argumentSizeWithParentheses =
           KDSize(argumentSize.width() + 2 * Parenthesis::k_parenthesisWidth,
                  Parenthesis::Height(argumentSize.height()));
       width = std::max({SymbolWidth(s_font), totalLowerBoundSize.width(),
-                        upperBoundWidth(node, s_font)}) +
+                        UpperBoundWidth(node, s_font)}) +
               ArgumentHorizontalMargin(s_font) +
               argumentSizeWithParentheses.width();
       height =
@@ -178,7 +178,7 @@ KDSize Render::Size(const Layout* node) {
       KDSize upperBoundSize = Size(node->child(k_upperBoundIndex));
       width = upperBoundPosition.x() + upperBoundSize.width();
       height = std::max(upperBoundPosition.y() + upperBoundSize.height(),
-                        positionOfVariable(node, s_font).y() +
+                        PositionOfVariable(node, s_font).y() +
                             Height(node->child(k_variableIndex)));
       break;
     }
@@ -327,28 +327,28 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
       using namespace Derivative;
       if (childIndex == k_variableIndex) {
         return GetVariableSlot(node) == VariableSlot::Fraction
-                   ? positionOfVariableInFractionSlot(node, s_font)
-                   : positionOfVariableInAssignmentSlot(node, s_font);
+                   ? PositionOfVariableInFractionSlot(node, s_font)
+                   : PositionOfVariableInAssignmentSlot(node, s_font);
       }
       if (childIndex == k_derivandIndex) {
         KDCoordinate leftParenthesisPosX =
-            positionOfLeftParenthesis(node, s_font).x();
+            PositionOfLeftParenthesis(node, s_font).x();
         return KDPoint(leftParenthesisPosX + Parenthesis::k_parenthesisWidth,
                        Baseline(node) - Baseline(node->child(k_derivandIndex)));
       }
       if (childIndex == k_orderIndex) {
         return GetOrderSlot(node) == OrderSlot::Denominator
-                   ? positionOfOrderInDenominator(node, s_font)
-                   : positionOfOrderInNumerator(node, s_font);
+                   ? PositionOfOrderInDenominator(node, s_font)
+                   : PositionOfOrderInNumerator(node, s_font);
       }
-      return KDPoint(positionOfRightParenthesis(
+      return KDPoint(PositionOfRightParenthesis(
                          node, s_font, Size(node->child(k_derivandIndex)))
                              .x() +
                          Parenthesis::k_parenthesisWidth +
                          2 * k_barHorizontalMargin + k_barWidth +
                          Width(node->child(k_variableIndex)) +
                          KDFont::Font(s_font)->stringSize("=").width(),
-                     abscissaBaseline(node, s_font) -
+                     AbscissaBaseline(node, s_font) -
                          Baseline(node->child(k_abscissaIndex)));
     }
     case LayoutType::Integral: {
@@ -362,11 +362,11 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
       if (childIndex == k_lowerBoundIndex) {
         x = boundOffset;
         y = Height(node) - k_boundVerticalMargin -
-            boundMaxHeight(node, BoundPosition::LowerBound, s_font);
+            BoundMaxHeight(node, BoundPosition::LowerBound, s_font);
       } else if (childIndex == k_upperBoundIndex) {
         x = boundOffset;
         y = k_boundVerticalMargin +
-            boundMaxHeight(node, BoundPosition::UpperBound, s_font) -
+            BoundMaxHeight(node, BoundPosition::UpperBound, s_font) -
             upperBoundSize.height();
       } else if (childIndex == k_integrandIndex) {
         x = boundOffset +
@@ -389,26 +389,26 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
       KDCoordinate x = 0;
       KDCoordinate y = 0;
       if (childIndex == k_variableIndex) {
-        x = completeLowerBoundX(node, s_font);
+        x = CompleteLowerBoundX(node, s_font);
         y = Baseline(node) + SymbolHeight(s_font) / 2 +
-            LowerBoundVerticalMargin(s_font) + subscriptBaseline(node, s_font) -
+            LowerBoundVerticalMargin(s_font) + SubscriptBaseline(node, s_font) -
             Baseline(node->child(k_variableIndex));
       } else if (childIndex == k_lowerBoundIndex) {
-        x = completeLowerBoundX(node, s_font) + equalSize.width() +
+        x = CompleteLowerBoundX(node, s_font) + equalSize.width() +
             variableSize.width();
         y = Baseline(node) + SymbolHeight(s_font) / 2 +
-            LowerBoundVerticalMargin(s_font) + subscriptBaseline(node, s_font) -
+            LowerBoundVerticalMargin(s_font) + SubscriptBaseline(node, s_font) -
             Baseline(node->child(k_lowerBoundIndex));
       } else if (childIndex == k_upperBoundIndex) {
         x = std::max({0, (SymbolWidth(s_font) - upperBoundSize.width()) / 2,
-                      (lowerBoundSizeWithVariableEquals(node, s_font).width() -
+                      (LowerBoundSizeWithVariableEquals(node, s_font).width() -
                        upperBoundSize.width()) /
                           2});
         y = Baseline(node) - (SymbolHeight(s_font) + 1) / 2 -
             UpperBoundVerticalMargin(s_font) - upperBoundSize.height();
       } else {
         x = std::max({SymbolWidth(s_font),
-                      lowerBoundSizeWithVariableEquals(node, s_font).width(),
+                      LowerBoundSizeWithVariableEquals(node, s_font).width(),
                       upperBoundSize.width()}) +
             ArgumentHorizontalMargin(s_font) + Parenthesis::k_parenthesisWidth;
         y = Baseline(node) - Baseline(node->child(k_argumentIndex));
@@ -438,16 +438,16 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
     case LayoutType::ListSequence: {
       using namespace ListSequence;
       if (childIndex == k_variableIndex) {
-        return positionOfVariable(node, s_font);
+        return PositionOfVariable(node, s_font);
       }
       if (childIndex == k_functionIndex) {
         return KDPoint(CurlyBrace::k_curlyBraceWidth,
                        Baseline(node) - Baseline(node->child(k_functionIndex)));
       }
-      return KDPoint(positionOfVariable(node, s_font).x() +
+      return KDPoint(PositionOfVariable(node, s_font).x() +
                          Width(node->child(k_variableIndex)) +
                          KDFont::Font(s_font)->stringSize("≤").width(),
-                     variableSlotBaseline(node, s_font) -
+                     VariableSlotBaseline(node, s_font) -
                          Baseline(node->child(k_upperBoundIndex)));
     }
     case LayoutType::VerticalOffset: {
@@ -503,19 +503,19 @@ KDCoordinate Render::Baseline(const Layout* node) {
        * The two candidates are the fraction: d/dx, and the parenthesis pair
        * which surrounds the derivand. */
       KDCoordinate fraction =
-          orderHeightOffset(node, s_font) +
+          OrderHeightOffset(node, s_font) +
           KDFont::Font(s_font)->stringSize(k_dString).height() +
           Fraction::k_lineMargin + Fraction::k_lineHeight;
 
-      KDCoordinate parenthesis = parenthesisBaseline(node, s_font);
+      KDCoordinate parenthesis = ParenthesisBaseline(node, s_font);
       return std::max(parenthesis, fraction);
     }
     case LayoutType::Integral: {
       using namespace Integral;
-      const Layout* last = mostNestedIntegral(node, NestedPosition::Next);
+      const Layout* last = MostNestedIntegral(node, NestedPosition::Next);
       if (node == last) {
         return k_boundVerticalMargin +
-               boundMaxHeight(node, BoundPosition::UpperBound, s_font) +
+               BoundMaxHeight(node, BoundPosition::UpperBound, s_font) +
                k_integrandVerticalMargin +
                std::max(Baseline(node->child(3)), Baseline(node->child(0)));
       } else {
@@ -947,29 +947,29 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
 
       // d/dx...
       ctx->drawString(k_dString,
-                      positionOfDInNumerator(node, style.font).translatedBy(p),
+                      PositionOfDInNumerator(node, style.font).translatedBy(p),
                       style);
       ctx->drawString(
-          k_dString, positionOfDInDenominator(node, style.font).translatedBy(p),
+          k_dString, PositionOfDInDenominator(node, style.font).translatedBy(p),
           style);
 
       KDRect horizontalBar =
           KDRect(Escher::Metric::FractionAndConjugateHorizontalMargin,
                  Baseline(node) - Fraction::k_lineHeight,
-                 fractionBarWidth(node, style.font), Fraction::k_lineHeight);
+                 FractionBarWidth(node, style.font), Fraction::k_lineHeight);
       ctx->fillRect(horizontalBar.translatedBy(p), style.glyphColor);
 
       // ...(f)...
       KDSize derivandSize = Size(node->child(k_derivandIndex));
 
       KDPoint leftParenthesisPosition =
-          positionOfLeftParenthesis(node, style.font);
+          PositionOfLeftParenthesis(node, style.font);
       RenderParenthesisWithChildHeight(true, derivandSize.height(), ctx,
                                        leftParenthesisPosition.translatedBy(p),
                                        style);
 
       KDPoint rightParenthesisPosition =
-          positionOfRightParenthesis(node, style.font, derivandSize);
+          PositionOfRightParenthesis(node, style.font, derivandSize);
 
       RenderParenthesisWithChildHeight(false, derivandSize.height(), ctx,
                                        rightParenthesisPosition.translatedBy(p),
@@ -981,12 +981,12 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
           rightParenthesisPosition.x() + Parenthesis::k_parenthesisWidth +
               k_barHorizontalMargin,
           0, k_barWidth,
-          abscissaBaseline(node, style.font) -
+          AbscissaBaseline(node, style.font) -
               Baseline(node->child(k_variableIndex)) + variableSize.height());
       ctx->fillRect(verticalBar.translatedBy(p), style.glyphColor);
 
       KDPoint variableAssignmentPosition =
-          positionOfVariableInAssignmentSlot(node, style.font);
+          PositionOfVariableInAssignmentSlot(node, style.font);
       KDPoint equalPosition = variableAssignmentPosition.translatedBy(
           KDPoint(variableSize.width(),
                   Baseline(node->child(k_variableIndex)) -
@@ -997,7 +997,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       KDPoint copyPosition =
           GetVariableSlot(node) == VariableSlot::Fraction
               ? variableAssignmentPosition
-              : positionOfVariableInFractionSlot(node, style.font);
+              : PositionOfVariableInFractionSlot(node, style.font);
       DrawRack(node->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
                style, {});
 
@@ -1005,8 +1005,8 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
         // Draw the copy of the order
         KDPoint copyPosition =
             GetOrderSlot(node) == OrderSlot::Denominator
-                ? positionOfOrderInNumerator(node, style.font)
-                : positionOfOrderInDenominator(node, style.font);
+                ? PositionOfOrderInNumerator(node, style.font)
+                : PositionOfOrderInDenominator(node, style.font);
         DrawRack(node->child(k_orderIndex), ctx, copyPosition.translatedBy(p),
                  style, {});
       }
@@ -1017,14 +1017,14 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       using namespace Integral;
       const Rack* integrand = node->child(k_integrandIndex);
       KDSize integrandSize = Size(integrand);
-      KDCoordinate centralArgHeight = centralArgumentHeight(node, s_font);
+      KDCoordinate centralArgHeight = CentralArgumentHeight(node, s_font);
       KDColor workingBuffer[k_symbolWidth * k_symbolHeight];
 
       // Render the integral symbol
       KDCoordinate offsetX = p.x() + k_symbolWidth;
       KDCoordinate offsetY =
           p.y() + k_boundVerticalMargin +
-          boundMaxHeight(node, BoundPosition::UpperBound, s_font) +
+          BoundMaxHeight(node, BoundPosition::UpperBound, s_font) +
           k_integrandVerticalMargin - k_symbolHeight;
 
       // Upper part
@@ -1130,9 +1130,9 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
 
       // Draw k≤...
       KDPoint inferiorEqualPosition = KDPoint(
-          positionOfVariable(node, s_font).x() +
+          PositionOfVariable(node, s_font).x() +
               Width(node->child(k_variableIndex)),
-          variableSlotBaseline(node, s_font) - KDFont::GlyphHeight(s_font) / 2);
+          VariableSlotBaseline(node, s_font) - KDFont::GlyphHeight(s_font) / 2);
       ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), style);
       return;
     }
@@ -1142,7 +1142,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       // Compute sizes.
       KDSize upperBoundSize = Size(node->child(k_upperBoundIndex));
       KDSize lowerBoundNEqualsSize =
-          lowerBoundSizeWithVariableEquals(node, s_font);
+          LowerBoundSizeWithVariableEquals(node, s_font);
       KDCoordinate left =
           p.x() +
           std::max({0, (upperBoundSize.width() - SymbolWidth(s_font)) / 2,
@@ -1205,10 +1205,10 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
 
       RenderParenthesisWithChildHeight(
           true, argumentSize.height(), ctx,
-          leftParenthesisPosition(node, s_font).translatedBy(p), style);
+          LeftParenthesisPosition(node, s_font).translatedBy(p), style);
       RenderParenthesisWithChildHeight(
           false, argumentSize.height(), ctx,
-          rightParenthesisPosition(node, s_font, argumentSize).translatedBy(p),
+          RightParenthesisPosition(node, s_font, argumentSize).translatedBy(p),
           style);
       return;
     }

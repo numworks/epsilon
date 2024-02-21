@@ -231,10 +231,11 @@ poincare_src += $(addprefix poincare/src/parsing/,\
 )
 
 tests_src += $(addprefix poincare/test/,\
-  helper.cpp\
-  approximation.cpp\
-  derivative.cpp\
-  simplification.cpp\
+  helper.cpp \
+  approximation.cpp \
+  expression_to_layout.cpp \
+  derivative.cpp \
+  simplification.cpp \
 )
 
 poincare_bench_src = $(addprefix poincare/src/,\

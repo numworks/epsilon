@@ -11,6 +11,10 @@
 #include <algorithm>
 #include <cmath>
 
+namespace PoincareJ {
+class Tree;
+}
+
 const char* MaxIntegerString();         // (2^32)^k_maxNumberOfDigits-1
 const char* OverflowedIntegerString();  // (2^32)^k_maxNumberOfDigits
 // OverflowedIntegerString with a 2 on first digit

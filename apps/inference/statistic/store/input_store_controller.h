@@ -61,34 +61,32 @@ class InputStoreController : public InputCategoricalController,
   };
 
   constexpr static int k_dropdownCellIndex = 0;
+  constexpr static int k_maxNumberOfExtraParameters = 1;
 
-  int indexOfTableCell() const override { return k_dropdownCellIndex + 1; }
-  KDCoordinate nonMemoizedRowHeight(int row) override {
-    return row == k_dropdownCellIndex
-               ? m_dropdownCell.minimalSizeForOptimalDisplay().height()
-               : InputCategoricalController::nonMemoizedRowHeight(row);
-  }
-  Escher::HighlightCell* reusableCell(int index, int type) override {
-    return type == k_dropdownCellIndex
-               ? &m_dropdownCell
-               : InputCategoricalController::reusableCell(index, type);
-  }
+  KDCoordinate nonMemoizedRowHeight(int row) override;
+  Escher::HighlightCell* reusableCell(int index, int type) override;
   InputCategoricalTableCell* categoricalTableCell() override {
     return &m_slopeTableCell;
   }
   void createDynamicCells() override;
+  int indexOfTableCell() const override { return k_dropdownCellIndex + 1; }
   int indexOfSignificanceCell() const override {
-    return indexOfTableCell() + 1;
+    return indexOfFirstExtraParameter() + numberOfExtraParameters();
   }
+  int indexOfFirstExtraParameter() const { return indexOfTableCell() + 1; }
   Escher::StackViewController* stackController() const {
     return static_cast<Escher::StackViewController*>(parentResponder());
   }
   char listPrefix(int column) const {
     return m_slopeTableCell.store()->columnNamePrefixAtIndex(column);
   }
+  int numberOfExtraParameters() const { return 0; }  // TODO
+  int indexOfEditedParameterAtIndex(int index) const override;
 
   DropdownDataSource m_dropdownDataSource;
   DropdownCategoricalCell m_dropdownCell;
+  InputCategoricalCell<Escher::LayoutView>
+      m_extraParameters[k_maxNumberOfExtraParameters];
   StoreTableCell m_slopeTableCell;
   /* This second stack view controller is used to make the banner of the store
    * parameter controller white, which deviates from the style of the main

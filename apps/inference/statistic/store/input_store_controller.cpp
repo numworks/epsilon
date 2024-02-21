@@ -10,6 +10,9 @@ InputStoreController::InputStoreController(StackViewController* parent,
                                            Poincare::Context* context)
     : InputCategoricalController(parent, resultsController, statistic),
       m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
+      m_extraParameters{
+          InputCategoricalCell<LayoutView>(&m_selectableListView, this),
+      },
       m_slopeTableCell(&m_selectableListView, statistic, context, this),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
@@ -45,12 +48,35 @@ void InputStoreController::onDropdownSelected(int selectedRow) {
   m_slopeTableCell.recomputeDimensionsAndReload(true);
 }
 
+KDCoordinate InputStoreController::nonMemoizedRowHeight(int row) {
+  return row == indexOfTableCell() || row == indexOfSignificanceCell()
+             ? InputCategoricalController::nonMemoizedRowHeight(row)
+             : reusableCell(0, row)->minimalSizeForOptimalDisplay().height();
+}
+
+Escher::HighlightCell* InputStoreController::reusableCell(int index, int type) {
+  assert(index == 0);
+  return type == k_dropdownCellIndex ? &m_dropdownCell
+         : indexOfFirstExtraParameter() <= type &&
+                 type < indexOfSignificanceCell()
+             ? &m_extraParameters[type - indexOfFirstExtraParameter()]
+             : InputCategoricalController::reusableCell(index, type);
+}
+
 void InputStoreController::createDynamicCells() {
   m_slopeTableCell.createCells();
 }
 
 void InputStoreController::viewWillAppear() {
   m_slopeTableCell.fillColumnsNames();
+
+  for (int i = 0; i < numberOfExtraParameters(); i++) {
+    InputCategoricalCell<LayoutView>& c = m_extraParameters[i];
+    int param = indexOfEditedParameterAtIndex(indexOfFirstExtraParameter() + i);
+    c.setMessages(m_statistic->parameterSymbolAtIndex(param),
+                  m_statistic->parameterDefinitionAtIndex(param));
+  }
+
   m_dropdownCell.dropdown()->init();
   for (int row = 0; row < m_dropdownDataSource.numberOfRows(); row++) {
     char index = '1' + row;
@@ -59,7 +85,17 @@ void InputStoreController::viewWillAppear() {
         ->setText(buffer);
   }
   m_dropdownCell.dropdown()->reloadCell();
+
   InputCategoricalController::viewWillAppear();
+}
+
+int InputStoreController::indexOfEditedParameterAtIndex(int index) const {
+  if (index >= indexOfFirstExtraParameter() + numberOfExtraParameters()) {
+    return InputCategoricalController::indexOfEditedParameterAtIndex(index);
+  }
+  // TODO
+  assert(false);
+  return 0;
 }
 
 }  // namespace Inference

@@ -41,7 +41,7 @@ class OneMeanStatistic : public Table, public Shared::StatisticsStore {
   int seriesAtColumn(int column) const override { return m_series; }
 
  protected:
-  static OneMean::Type OneMeanType(const Statistic* s) {
+  OneMean::Type oneMeanType(const Statistic* s) const {
     if (s->distributionType() == DistributionType::T) {
       return OneMean::Type::T;
     }

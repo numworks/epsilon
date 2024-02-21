@@ -16,7 +16,9 @@ class OneMeanTest : public Test, public OneMeanStatistic {
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::OneMean;
   }
-  I18n::Message title() const override { return OneMean::Title(oneMeanType()); }
+  I18n::Message title() const override {
+    return OneMean::Title(oneMeanType(this));
+  }
 
   // Significance Test: OneMean
   bool initializeDistribution(DistributionType distributionType) override {
@@ -34,7 +36,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
   void initParameters() override { OneMean::InitTestParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override {
     return Inference::authorizedParameterAtIndex(p, i) &&
-           OneMean::AuthorizedParameterAtIndex(oneMeanType(), i, p);
+           OneMean::AuthorizedParameterAtIndex(oneMeanType(this), i, p);
   }
   void setParameterAtIndex(double p, int index) override {
     p = OneMean::ProcessParamaterForIndex(p, index);
@@ -57,21 +59,17 @@ class OneMeanTest : public Test, public OneMeanStatistic {
 
   void compute() override {
     syncParametersWithStore(this);
-    OneMean::ComputeTest(oneMeanType(), this);
+    OneMean::ComputeTest(oneMeanType(this), this);
   }
 
  private:
-  OneMean::Type oneMeanType() const {
-    return OneMeanStatistic::OneMeanType(this);
-  }
-
   // Significance Test
   int numberOfStatisticParameters() const override {
     return OneMean::NumberOfParameters();
   }
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
-    return OneMean::ParameterRepresentationAtIndex(oneMeanType(), i);
+    return OneMean::ParameterRepresentationAtIndex(oneMeanType(this), i);
   }
   double* parametersArray() override { return m_params; }
 };

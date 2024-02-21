@@ -1,5 +1,6 @@
 #include "test.h"
 
+#include <apps/apps_container_helper.h>
 #include <assert.h>
 #include <float.h>
 #include <inference/app.h>
@@ -38,7 +39,8 @@ bool Test::initializeSignificanceTest(SignificanceTestType testType,
   this->~Test();
   switch (testType) {
     case SignificanceTestType::OneMean:
-      new (this) OneMeanTTest(App::app()->statisticsStore());
+      new (this)
+          OneMeanTTest(AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case SignificanceTestType::TwoMeans:
       new (this) TwoMeansTTest();

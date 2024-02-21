@@ -1,5 +1,6 @@
 #include "statistic.h"
 
+#include <apps/apps_container_helper.h>
 #include <inference/app.h>
 
 #include "one_mean_interval.h"
@@ -59,10 +60,12 @@ bool Statistic::Initialize(Statistic *statistic, SubApp subApp) {
   Statistic *s = nullptr;
   switch (subApp) {
     case SubApp::Test:
-      s = new (statistic) OneMeanTTest(App::app()->statisticsStore());
+      s = new (statistic)
+          OneMeanTTest(AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case SubApp::Interval:
-      s = new (statistic) OneMeanTInterval(App::app()->statisticsStore());
+      s = new (statistic) OneMeanTInterval(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     default:
       assert(false);

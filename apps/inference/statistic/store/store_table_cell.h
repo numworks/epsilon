@@ -32,7 +32,7 @@ class StoreTableCell : public DoubleColumnTableCell,
     }
     assert(m_statistic->significanceTestType() ==
            SignificanceTestType::OneMean);
-    return static_cast<OneMeanStatistic *>(tableModel())->statisticsStore();
+    return static_cast<OneMeanStatistic *>(tableModel());
   }
   const Shared::DoublePairStore *store() const {
     return const_cast<StoreTableCell *>(this)->store();

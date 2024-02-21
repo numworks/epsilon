@@ -1,5 +1,6 @@
 #include "interval.h"
 
+#include <apps/apps_container_helper.h>
 #include <assert.h>
 #include <float.h>
 #include <inference/app.h>
@@ -57,7 +58,8 @@ bool Interval::initializeSignificanceTest(SignificanceTestType testType,
   this->~Interval();
   switch (testType) {
     case SignificanceTestType::OneMean:
-      new (this) OneMeanTInterval(App::app()->statisticsStore());
+      new (this) OneMeanTInterval(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case SignificanceTestType::TwoMeans:
       new (this) TwoMeansTInterval();

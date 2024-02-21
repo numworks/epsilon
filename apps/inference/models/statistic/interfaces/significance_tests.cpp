@@ -1,5 +1,6 @@
 #include "significance_tests.h"
 
+#include <apps/apps_container_helper.h>
 #include <inference/app.h>
 #include <inference/models/statistic/one_mean_interval.h>
 #include <inference/models/statistic/one_mean_test.h>
@@ -61,10 +62,12 @@ bool OneMean::TestInitializeDistribution(Statistic* statistic,
   statistic->~Statistic();
   switch (distributionType) {
     case DistributionType::T:
-      new (statistic) OneMeanTTest(App::app()->statisticsStore());
+      new (statistic)
+          OneMeanTTest(AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case DistributionType::Z:
-      new (statistic) OneMeanZTest(App::app()->statisticsStore());
+      new (statistic)
+          OneMeanZTest(AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     default:
       assert(false);
@@ -82,10 +85,12 @@ bool OneMean::IntervalInitializeDistribution(
   statistic->~Statistic();
   switch (distributionType) {
     case DistributionType::T:
-      new (statistic) OneMeanTInterval(App::app()->statisticsStore());
+      new (statistic) OneMeanTInterval(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     case DistributionType::Z:
-      new (statistic) OneMeanZInterval(App::app()->statisticsStore());
+      new (statistic) OneMeanZInterval(
+          AppsContainerHelper::sharedAppsContainerGlobalContext());
       break;
     default:
       assert(false);

@@ -290,7 +290,8 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("arsinh(sinh(x))",
-                "ln((e^x-e^(-x))/2+√(1/2+(e^(-2×x)+e^(2×x))/4))", cartesianCtx);
+                "ln((e^x-(e^(-x)))/2+√(1/2+(e^(-2×x)+e^(2×x))/4))",
+                cartesianCtx);
   // TODO: Should simplify to x and overflow the pool
   // simplifies_to(
   //     "artanh(tanh(x))",
@@ -420,7 +421,7 @@ QUIZ_CASE(pcj_simplification_power) {
   //   * |x|^y if p is even
   simplifies_to("(-41)^(4/5)", "41^(4/5)");
   //   * -|x|^y if p is odd
-  simplifies_to("(-41)^(5/7)", "-41^(5/7)");
+  simplifies_to("(-41)^(5/7)", "-(41^(5/7))");
 
   // Complex Power
   simplifies_to("√(x)^2", "x", cartesianCtx);

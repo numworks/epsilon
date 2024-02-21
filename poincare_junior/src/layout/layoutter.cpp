@@ -288,11 +288,17 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    case BlockType::Opposite:
+    case BlockType::Opposite: {
       PushCodePoint(layoutParent, '-');
-      layoutExpression(layoutParent, expression->nextNode(),
-                       OperatorPriority(type));
+      // Add extra parentheses for -1^2 -> -(1^2) but not for -x^2
+      bool addExtraParenthesis =
+          expression->child(0)->isPower() &&
+          !expression->child(0)->child(0)->isUserSymbol();
+      layoutExpression(
+          layoutParent, expression->nextNode(),
+          addExtraParenthesis ? k_tokenPriority : OperatorPriority(type));
       break;
+    }
     case BlockType::Factorial:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));

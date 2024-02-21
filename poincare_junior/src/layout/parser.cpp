@@ -4,6 +4,8 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 
+#include "grid.h"
+
 namespace PoincareJ {
 
 BlockType ExpressionType(LayoutType type) {
@@ -31,8 +33,6 @@ BlockType ExpressionType(LayoutType type) {
       return BlockType::Product;
     case LayoutType::Sum:
       return BlockType::Sum;
-    case LayoutType::Matrix:
-      return BlockType::Matrix;
     case LayoutType::ListSequence:
       return BlockType::ListSequence;
     case LayoutType::Conjugate:
@@ -56,9 +56,29 @@ Tree* Parser::Parse(const Tree* node) {
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints:
     case LayoutType::CurlyBrace:
-    case LayoutType::Piecewise:
     case LayoutType::NthDerivative:
       assert(false);
+    case LayoutType::Piecewise:
+    case LayoutType::Matrix: {
+      const Grid* grid = Grid::From(node);
+      Tree* expr;
+      if (grid->isMatrixLayout()) {
+        expr = SharedEditionPool->push<BlockType::Matrix>(
+            grid->numberOfRows() - 1, grid->numberOfColumns() - 1);
+      } else {
+        // TODO PCJ
+        // expr = SharedEditionPool->push<BlockType::Piecewise>(
+        // (grid->numberOfRows() - 1) * 2);
+      }
+      int n = grid->numberOfChildren();
+      for (int i = 0; i < n; i++) {
+        if (grid->childIsPlaceholder(i)) {
+          continue;
+        }
+        Parse(grid->child(i));
+      }
+      return expr;
+    }
     default: {
       // The layout children map one-to-one to the expression
       EditionReference ref =

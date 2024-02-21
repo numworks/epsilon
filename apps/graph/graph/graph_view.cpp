@@ -636,7 +636,12 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       assert(cursorView());
       cursorView()->setCursorFrame(this, frameOfCursor, true);
     }
-    drawDot(ctx, rect, k_dotSize, dotCoordinates, Escher::Palette::GrayDarkest);
+    KDColor color =
+        p.interest == Solver<double>::Interest::ReachedDiscontinuity ||
+                p.interest == Solver<double>::Interest::UnreachedDiscontinuity
+            ? f->color()
+            : Escher::Palette::GrayDarkest;
+    drawDot(ctx, rect, k_dotSize, dotCoordinates, color);
     if (redrawCursor) {
       /* WARNING: We cannot assert that cursorView is a MemoizedCursorView
        * but it is thanks to the constructor. */

@@ -109,6 +109,12 @@ bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {
 }
 
 const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
+  // WithLayout comes first because we want to yield Sum before ListSum
+  for (const Builtin &builtin : s_builtinsWithLayout) {
+    if (builtin.m_aliases.contains(name)) {
+      return &builtin;
+    }
+  }
   for (const Builtin &builtin : s_builtins) {
     if (builtin.m_aliases.contains(name)) {
       return &builtin;
@@ -123,10 +129,9 @@ const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
 }
 
 const Builtin *Builtin::GetReservedFunction(const Tree *tree) {
-  for (const Builtin &builtin : s_builtins) {
-    if (builtin.m_blockType == tree->type()) {
-      return &builtin;
-    }
+  const Builtin *builtin = GetReservedFunction(tree->type());
+  if (builtin) {
+    return builtin;
   }
   if (tree->isDistribution()) {
     DistributionMethod::Type method = DistributionMethod::Get(tree);

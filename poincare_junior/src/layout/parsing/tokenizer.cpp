@@ -9,6 +9,7 @@
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/unit.h>
+#include <poincare_junior/src/layout/vertical_offset.h>
 
 namespace PoincareJ {
 
@@ -167,7 +168,13 @@ Token Tokenizer::popToken() {
   }
 
   if (!m_decoder.nextLayoutIsCodePoint()) {
-    return Token(Token::Type::Layout, m_decoder.nextLayout());
+    const Tree* layout = m_decoder.nextLayout();
+    Token::Type type = Token::Type::Layout;
+    if (layout->isVerticalOffsetLayout() && VerticalOffset::IsSuffix(layout)) {
+      type = VerticalOffset::IsSuperscript(layout) ? Token::Type::Superscript
+                                                   : Token::Type::Subscript;
+    }
+    return Token(type, layout);
   }
 
   /* Save for later use (since m_decoder.position() is altered by

@@ -185,6 +185,8 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
       &RackParser::parseSpecialIdentifier,  // Token::Type::SpecialIdentifier
       &RackParser::parseCustomIdentifier,   // Token::Type::CustomIdentifier
       &RackParser::parseLayout,             // Token::Type::Layout
+      &RackParser::parseUnexpected,         // Token::Type::Subscript
+      &RackParser::parseSuperscript,        // Token::Type::Superscript
       &RackParser::parseUnexpected          // Token::Type::Undefined
   };
 #define assert_order(token, function)                                 \
@@ -228,6 +230,8 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
   assert_order(Token::Type::SpecialIdentifier, parseSpecialIdentifier);
   assert_order(Token::Type::CustomIdentifier, parseCustomIdentifier);
   assert_order(Token::Type::Layout, parseLayout);
+  assert_order(Token::Type::Subscript, parseUnexpected);
+  assert_order(Token::Type::Superscript, parseSuperscript);
   assert_order(Token::Type::Undefined, parseUnexpected);
 
   do {
@@ -1223,25 +1227,22 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   // ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   // }
   assert(m_currentToken.length() == 1);
+  /* Parse standalone layouts */
+  leftHandSide = Parser::Parse(m_currentToken.firstLayout());
+  isThereImplicitOperator();
+}
+
+void RackParser::parseSuperscript(EditionReference &leftHandSide,
+                                  Token::Type stoppingType) {
   const Tree *layout = m_currentToken.firstLayout();
-  /* Only layouts that can't be standalone are handled in this switch, others
-   * are in Parser::Parse */
-  switch (layout->layoutType()) {
-    case LayoutType::VerticalOffset: {
-      if (leftHandSide.isUninitialized()) {
-        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-      }
-      EditionReference rightHandSide = Parser::Parse(layout->child(0));
-      if (rightHandSide.isUninitialized()) {
-        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-      }
-      turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide,
-                         rightHandSide);
-      break;
-    }
-    default:
-      leftHandSide = Parser::Parse(layout);
+  if (leftHandSide.isUninitialized()) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
+  EditionReference rightHandSide = Parser::Parse(layout->child(0));
+  if (rightHandSide.isUninitialized()) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide, rightHandSide);
   isThereImplicitOperator();
 }
 

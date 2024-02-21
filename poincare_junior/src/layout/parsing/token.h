@@ -57,6 +57,8 @@ class Token {
     SpecialIdentifier,
     CustomIdentifier,
     Layout,
+    Subscript,
+    Superscript,
     Undefined
   };
 

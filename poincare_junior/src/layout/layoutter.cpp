@@ -106,8 +106,24 @@ void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
 void Layoutter::layoutBuiltin(EditionReference &layoutParent,
                               Tree *expression) {
   assert(Builtin::IsReservedFunction(expression));
-  layoutFunctionCall(layoutParent, expression,
-                     Builtin::ReservedFunctionName(expression).mainAlias());
+  const Builtin *builtin = Builtin::GetReservedFunction(expression);
+  if (m_linearMode || !builtin->has2DLayout()) {
+    // Built "builtin(child1, child2)"
+    layoutFunctionCall(layoutParent, expression,
+                       builtin->aliases()->mainAlias());
+  } else {
+    // Built 2D layout associated with builtin
+    const BuiltinWithLayout *builtinWithLayout =
+        static_cast<const BuiltinWithLayout *>(builtin);
+    EditionReference layout = SharedEditionPool->push(
+        static_cast<BlockType>(builtinWithLayout->layoutType()));
+    for (int j = 0; j < expression->numberOfChildren(); j++) {
+      EditionReference newParent =
+          SharedEditionPool->push<BlockType::RackLayout>(0);
+      layoutExpression(newParent, expression->nextNode(), k_maxPriority);
+    }
+    NAry::AddChild(layoutParent, layout);
+  }
 }
 
 void Layoutter::layoutFunctionCall(EditionReference &layoutParent,

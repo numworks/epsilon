@@ -141,6 +141,7 @@ class OneProportion : public SignificanceTest {
 
 class TwoMeans : public SignificanceTest {
  public:
+  enum class Type { T, TPooled, Z };
   enum ParamsOrder { x1, s1, n1, x2, s2, n2 };
 
   // Initialization
@@ -149,14 +150,11 @@ class TwoMeans : public SignificanceTest {
   static bool IntervalInitializeDistribution(Statistic* statistic,
                                              DistributionType distributionType);
 
-  static I18n::Message ZTitle() {
-    return I18n::Message::HypothesisControllerTitleTwoMeansZ;
-  }
-  static I18n::Message TTitle() {
-    return I18n::Message::HypothesisControllerTitleTwoMeansT;
-  }
-  static I18n::Message PooledTitle() {
-    return I18n::Message::HypothesisControllerTitleTwoMeansPooledT;
+  static I18n::Message Title(Type t) {
+    return DispatchTTPooledZ(
+        t, I18n::Message::HypothesisControllerTitleTwoMeansT,
+        I18n::Message::HypothesisControllerTitleTwoMeansPooledT,
+        I18n::Message::HypothesisControllerTitleTwoMeansZ);
   }
   static I18n::Message DistributionTitle() {
     return I18n::Message::TypeControllerTitleTwo;
@@ -174,17 +172,21 @@ class TwoMeans : public SignificanceTest {
   // Parameters
   static void InitTestParameters(Test* test);
   static void InitIntervalParameters(Interval* interval);
-  static bool ZAuthorizedParameterAtIndex(int index, double p);
-  static bool TAuthorizedParameterAtIndex(int index, double p);
+  static bool AuthorizedParameterAtIndex(Type t, int index, double p) {
+    return DispatchTZ(t, TAuthorizedParameterAtIndex,
+                      ZAuthorizedParameterAtIndex)(index, p);
+  }
   static double ProcessParamaterForIndex(double p, int index);
-  static bool ZValidateInputs(double* params);
-  static bool TValidateInputs(double* params);
+  static bool ValidateInputs(Type t, double* params) {
+    return DispatchTZ(t, TValidateInputs, ZValidateInputs)(params);
+  }
 
   static int NumberOfParameters() { return k_numberOfParams; }
-  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(
-      int index);
-  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(
-      int index);
+  static Shared::ParameterRepresentation ParameterRepresentationAtIndex(
+      Type t, int index) {
+    return DispatchTZ(t, TParameterRepresentationAtIndex,
+                      ZParameterRepresentationAtIndex)(index);
+  }
   static double X1(double* params) { return params[ParamsOrder::x1]; }
   static double N1(double* params) { return params[ParamsOrder::n1]; }
   static double S1(double* params) { return params[ParamsOrder::s1]; }
@@ -193,16 +195,42 @@ class TwoMeans : public SignificanceTest {
   static double S2(double* params) { return params[ParamsOrder::s2]; }
 
   // Computation
+  static void ComputeTest(Type t, Test* test) {
+    return DispatchTTPooledZ(t, ComputeTTest, ComputePooledTest,
+                             ComputeZTest)(test);
+  }
+  static void ComputeInterval(Type t, Interval* interval) {
+    return DispatchTTPooledZ(t, ComputeTInterval, ComputePooledInterval,
+                             ComputeZInterval)(interval);
+  }
+
+  constexpr static int k_numberOfParams = 6;
+
+ private:
+  template <typename T>
+  static inline T DispatchTZ(Type t, T tOption, T zOption) {
+    return t == Type::Z ? zOption : tOption;
+  }
+  template <typename T>
+  static inline T DispatchTTPooledZ(Type t, T tOption, T tPooledOption,
+                                    T zOption) {
+    return t == Type::TPooled ? tPooledOption : DispatchTZ(t, tOption, zOption);
+  }
+
+  static bool ZAuthorizedParameterAtIndex(int index, double p);
+  static bool TAuthorizedParameterAtIndex(int index, double p);
+  static bool ZValidateInputs(double* params);
+  static bool TValidateInputs(double* params);
+  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(
+      int index);
+  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(
+      int index);
   static void ComputeZTest(Test* test);
   static void ComputeTTest(Test* test);
   static void ComputePooledTest(Test* t);
   static void ComputeZInterval(Interval* interval);
   static void ComputeTInterval(Interval* interval);
   static void ComputePooledInterval(Interval* i);
-
-  constexpr static int k_numberOfParams = 6;
-
- private:
   static double ComputeTZ(double deltaMean, double meanSample1, double n1,
                           double sigma1, double meanSample2, double n2,
                           double sigma2);

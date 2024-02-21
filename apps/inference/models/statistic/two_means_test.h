@@ -1,21 +1,19 @@
-#ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H
-#define INFERENCE_MODELS_STATISTIC_TWO_MEANS_Z_TEST_H
+#ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_TEST_H
+#define INFERENCE_MODELS_STATISTIC_TWO_MEANS_TEST_H
 
 #include "test.h"
+#include "two_means_statistic.h"
 
 namespace Inference {
 
-class TwoMeansZTest : public Test {
-  friend class TwoMeans;
-
+class TwoMeansTest : public Test, public TwoMeansStatistic {
  public:
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::TwoMeans;
   }
-  DistributionType distributionType() const override {
-    return DistributionType::Z;
+  I18n::Message title() const override {
+    return TwoMeans::Title(twoMeansType(this));
   }
-  I18n::Message title() const override { return TwoMeans::ZTitle(); }
 
   // Significance Test: TwoMeans
   bool initializeDistribution(DistributionType distributionType) override {
@@ -33,30 +31,51 @@ class TwoMeansZTest : public Test {
   void initParameters() override { TwoMeans::InitTestParameters(this); }
   bool authorizedParameterAtIndex(double p, int i) const override {
     return Inference::authorizedParameterAtIndex(p, i) &&
-           TwoMeans::ZAuthorizedParameterAtIndex(i, p);
+           TwoMeans::AuthorizedParameterAtIndex(twoMeansType(this), i, p);
   }
   void setParameterAtIndex(double p, int index) override {
     p = TwoMeans::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
 
-  void compute() override { TwoMeans::ComputeZTest(this); }
+  void compute() override { TwoMeans::ComputeTest(twoMeansType(this), this); }
 
  private:
   // Significance Test: TwoMeans
-  bool validateInputs() override { return TwoMeans::ZValidateInputs(m_params); }
+  bool validateInputs() override {
+    return TwoMeans::ValidateInputs(twoMeansType(this), m_params);
+  }
   int numberOfStatisticParameters() const override {
     return TwoMeans::NumberOfParameters();
   }
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
-    return TwoMeans::ZParameterRepresentationAtIndex(i);
+    return TwoMeans::ParameterRepresentationAtIndex(twoMeansType(this), i);
   }
   double* parametersArray() override { return m_params; }
-
-  double m_params[TwoMeans::k_numberOfParams];
 };
 
-}  // namespace Inference
+class TwoMeansTTest : public TwoMeansTest {
+ public:
+  DistributionType distributionType() const override {
+    return DistributionType::T;
+  }
+};
+
+class PooledTwoMeansTTest : public TwoMeansTest {
+ public:
+  DistributionType distributionType() const override {
+    return DistributionType::TPooled;
+  }
+};
+
+class TwoMeansZTest : public TwoMeansTest {
+ public:
+  DistributionType distributionType() const override {
+    return DistributionType::Z;
+  }
+};
+
+};  // namespace Inference
 
 #endif

@@ -16,7 +16,7 @@
 #include "one_mean_test.h"
 #include "one_proportion_z_test.h"
 #include "slope_t_test.h"
-#include "two_means_t_test.h"
+#include "two_means_test.h"
 #include "two_proportions_z_test.h"
 
 namespace Inference {

@@ -4,12 +4,8 @@
 #include <inference/app.h>
 #include <inference/models/statistic/one_mean_interval.h>
 #include <inference/models/statistic/one_mean_test.h>
-#include <inference/models/statistic/pooled_two_means_t_interval.h>
-#include <inference/models/statistic/pooled_two_means_t_test.h>
-#include <inference/models/statistic/two_means_t_interval.h>
-#include <inference/models/statistic/two_means_t_test.h>
-#include <inference/models/statistic/two_means_z_interval.h>
-#include <inference/models/statistic/two_means_z_test.h>
+#include <inference/models/statistic/two_means_interval.h>
+#include <inference/models/statistic/two_means_test.h>
 #include <inference/text_helpers.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/combined_code_points_layout.h>

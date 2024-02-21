@@ -95,19 +95,19 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
     return;
   }
   const Layout* lastBase = nullptr;
-  const Layout* child = node->child(0);
+  const Tree* child = node->child(0);
   for (int i = 0; i < leftIndex; i++) {
     if (!child->isVerticalOffsetLayout()) {
-      lastBase = child;
+      lastBase = Layout::From(child);
     }
     child = child->nextTree();
   }
   KDCoordinate x = 0;
   for (int i = leftIndex; i < rightIndex; i++) {
-    KDSize childSize = Render::Size(child);
+    KDSize childSize = Render::Size(Layout::From(child));
     KDCoordinate childWidth = childSize.width();
     KDCoordinate childHeight = childSize.height();
-    KDCoordinate childBaseline = Render::Baseline(child);
+    KDCoordinate childBaseline = Render::Baseline(Layout::From(child));
     KDCoordinate y = childBaseline;
     if (child->isVerticalOffsetLayout()) {
       const Layout* base = nullptr;
@@ -117,7 +117,7 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
       } else {
         // Find base forward
         int j = i;
-        const Layout* candidateBase = child->nextTree();
+        const Layout* candidateBase = Layout::From(child->nextTree());
         while (j < numberOfChildren) {
           if (!candidateBase->isVerticalOffsetLayout()) {
             base = candidateBase;
@@ -128,7 +128,7 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
             base = nullptr;
             break;
           }
-          candidateBase = candidateBase->nextTree();
+          candidateBase = Layout::From(candidateBase->nextTree());
           j++;
         }
       }
@@ -146,7 +146,7 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
       } else {
         baseHeight = Render::Height(base);
         baseBaseline = Render::Baseline(base);
-        base = base->nextTree();
+        base = Layout::From(base->nextTree());
         while (base < child) {
           KDCoordinate oldBaseHeight = baseHeight;
           KDCoordinate oldBaseBaseline = baseBaseline;
@@ -158,15 +158,16 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
           UpdateChildWithBase(VerticalOffset::IsSuperscript(base),
                               oldBaseHeight, oldBaseBaseline, &baseBaseline,
                               &baseHeight);
-          base = base->nextTree();
+          base = Layout::From(base->nextTree());
         }
       }
       UpdateChildWithBase(VerticalOffset::IsSuperscript(child), baseHeight,
                           baseBaseline, &childBaseline, &childHeight, &y);
     } else {
-      lastBase = child;
+      lastBase = Layout::From(child);
     }
-    callback(child, {childWidth, childHeight}, childBaseline, {x, y}, context);
+    callback(Layout::From(child), {childWidth, childHeight}, childBaseline,
+             {x, y}, context);
     x += childWidth;
     child = child->nextTree();
   }

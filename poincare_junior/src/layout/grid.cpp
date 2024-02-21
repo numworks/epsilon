@@ -157,9 +157,9 @@ int Grid::closestNonGrayIndex(int index) const {
 KDCoordinate Grid::rowBaseline(int row, KDFont::Size font) const {
   assert(numberOfColumns() > 0);
   KDCoordinate rowBaseline = 0;
-  const Rack* child = childAt(0, row);
+  const Tree* child = childAt(0, row);
   for (int column = 0; column < numberOfColumns(); column++) {
-    rowBaseline = std::max(rowBaseline, Render::Baseline(child));
+    rowBaseline = std::max(rowBaseline, Render::Baseline(Rack::From(child)));
     child = child->nextTree();
   }
   return rowBaseline;
@@ -253,7 +253,7 @@ bool Grid::isColumnOrRowEmpty(bool column, int index) const {
 }
 
 void Grid::addEmptyRow() {
-  Layout* last = nextTree();
+  Tree* last = nextTree();
   setNumberOfRows(numberOfRows() + 1);
   for (int i = 0; i < numberOfColumns(); i++) {
     last->cloneTreeBeforeNode(KRackL());

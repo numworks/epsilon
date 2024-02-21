@@ -44,9 +44,6 @@ struct TreeSubClass : Tree {
     return static_cast<ChildType*>(Tree::child(index));
   }
 
-  const NewType* nextTree() const { return NewType::From(Tree::nextTree()); }
-  NewType* nextTree() { return NewType::From(Tree::nextTree()); }
-
   // TODO children(), parentOfDescendant() etc
 };
 

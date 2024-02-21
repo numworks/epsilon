@@ -750,9 +750,9 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
      * / -10                                       / -10
      *
      * */
-    setCursorNode(
-        Rack::From(nextLayout), newIndex,
-        direction.isLeft() ? OMG::Direction::Right() : OMG::Direction::Left());
+    setLayout(nextLayout->child(newIndex), direction.isLeft()
+                                               ? OMG::Direction::Right()
+                                               : OMG::Direction::Left());
     return true;
   }
 
@@ -1157,7 +1157,9 @@ void LayoutBufferCursor::EditionPoolCursor::
 void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
   m_position = cursor.m_position;
   m_startOfSelection = cursor.m_startOfSelection;
-  setCursorNode(Rack::From(
+  /* We need a rack cast there since the pointed rack is set before the
+   * actual content of the buffer is modified. */
+  setCursorNode(static_cast<Rack *>(
       Tree::FromBlocks(rootNode()->block() + cursor.cursorNodeOffset())));
 }
 
@@ -1179,9 +1181,11 @@ void LayoutBufferCursor::execute(Action action, Context *context,
         (editionCursor.*(executionContext->m_action))(
             executionContext->m_context, data);
         // Apply the changes
-        bufferCursor->setCursorNode(
-            Rack::From(Tree::FromBlocks(bufferCursor->rootNode()->block() +
-                                        editionCursor.cursorNodeOffset())));
+        /* We need a rack cast there since the pointed rack is set before the
+         * actual content of the buffer is modified. */
+        bufferCursor->setCursorNode(static_cast<Rack *>(
+            Tree::FromBlocks(bufferCursor->rootNode()->block() +
+                             editionCursor.cursorNodeOffset())));
         bufferCursor->applyEditionPoolCursor(editionCursor);
         /* The resulting EditionPool tree will be loaded back into
          * m_layoutBuffer and EditionPool will be flushed. */

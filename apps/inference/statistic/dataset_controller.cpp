@@ -21,31 +21,39 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
   int row = selectedRow();
-  OneMeanStatistic* oneMean = oneMeanStatistic();
+
+  RawDataStatistic* rawDataStat = rawDataStatistic();
   if (row == k_indexOfInputStatisticsCell) {
-    oneMean->setSeries(-1, m_statistic);
+    rawDataStat->unsetSeries(m_statistic);
     stackOpenPage(m_inputController);
   } else {
     assert(row == k_indexOfDatasetCell);
-    // Keep previous series if possible
-    if (oneMean->series() < 0) {
-      oneMean->setSeries(0, m_statistic);
+    if (!rawDataStat->hasSeries()) {
+      rawDataStat->setSeriesAt(m_statistic, 0, 0);
+      if (rawDataStat->numberOfSeries() > 1) {
+        rawDataStat->setSeriesAt(m_statistic, 1, 1);
+      }
     }
     stackOpenPage(m_storeController);
   }
   return true;
 }
 
-OneMeanStatistic* DatasetController::oneMeanStatistic() const {
-  return m_statistic->distributionType() == DistributionType::T
-             ? m_statistic->subApp() == Statistic::SubApp::Interval
-                   ? static_cast<OneMeanTInterval*>(m_statistic)
-                   : static_cast<OneMeanStatistic*>(
-                         static_cast<OneMeanTTest*>(m_statistic))
-         : m_statistic->subApp() == Statistic::SubApp::Interval
-             ? static_cast<OneMeanZInterval*>(m_statistic)
-             : static_cast<OneMeanStatistic*>(
-                   static_cast<OneMeanZTest*>(m_statistic));
+RawDataStatistic* DatasetController::rawDataStatistic() const {
+  bool intervalApp = m_statistic->subApp() == Statistic::SubApp::Interval;
+  bool oneMean =
+      m_statistic->significanceTestType() == SignificanceTestType::OneMean;
+
+  if (intervalApp) {
+    if (oneMean) {
+      return static_cast<OneMeanInterval*>(m_statistic);
+    }
+    return static_cast<TwoMeansInterval*>(m_statistic);
+  }
+  if (oneMean) {
+    return static_cast<OneMeanTest*>(m_statistic);
+  }
+  return static_cast<TwoMeansTest*>(m_statistic);
 }
 
 }  // namespace Inference

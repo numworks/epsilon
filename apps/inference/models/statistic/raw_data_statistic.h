@@ -27,6 +27,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
     return m_series[index];
   }
   void setSeriesAt(Statistic* stat, int index, int series);
+  void unsetSeries(Statistic* stat);
   bool parametersAreValid(Statistic* stat);
 
   // DoublePairStore

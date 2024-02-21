@@ -52,7 +52,9 @@ JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
 
 JuniorLayout JuniorLayout::Builder(PoincareJ::Tree* tree) {
   JuniorLayout result = Builder(const_cast<const PoincareJ::Tree*>(tree));
-  tree->removeTree();
+  if (tree) {
+    tree->removeTree();
+  }
   return result;
 }
 

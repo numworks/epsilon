@@ -39,7 +39,9 @@ JuniorExpression JuniorExpression::Builder(const PoincareJ::Tree* tree) {
 
 JuniorExpression JuniorExpression::Builder(PoincareJ::Tree* tree) {
   JuniorExpression result = Builder(const_cast<const PoincareJ::Tree*>(tree));
-  tree->removeTree();
+  if (tree) {
+    tree->removeTree();
+  }
   return result;
 }
 

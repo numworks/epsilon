@@ -37,7 +37,7 @@ class InterestMenuController : public Escher::ListWithTopAndBottomController {
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
  private:
-  uint8_t paramaterAtIndex(int index) const;
+  uint8_t parameterAtIndex(int index) const;
 
   Escher::MessageTextView m_messageView;
   InterestMenuCell m_cells[InterestData::k_maxNumberOfUnknowns];

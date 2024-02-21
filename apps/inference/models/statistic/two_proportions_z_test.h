@@ -28,7 +28,7 @@ class TwoProportionsZTest : public Test {
            TwoProportions::AuthorizedParameterAtIndex(i, p);
   }
   void setParameterAtIndex(double p, int index) override {
-    p = TwoProportions::ProcessParamaterForIndex(p, index);
+    p = TwoProportions::ProcessParameterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
   bool isValidH0(double h0) override { return TwoProportions::ValidH0(h0); }

@@ -28,7 +28,7 @@ class OneProportionZTest : public Test {
            OneProportion::AuthorizedParameterAtIndex(i, p);
   }
   void setParameterAtIndex(double p, int index) override {
-    p = OneProportion::ProcessParamaterForIndex(p, index);
+    p = OneProportion::ProcessParameterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
   bool isValidH0(double h0) override { return OneProportion::ValidH0(h0); }

@@ -147,7 +147,7 @@ bool OneMean::TAuthorizedParameterAtIndex(int index, double p) {
   }
 }
 
-double OneMean::ProcessParamaterForIndex(double p, int index) {
+double OneMean::ProcessParameterForIndex(double p, int index) {
   if (index == ParamsOrder::n) {
     p = std::round(p);
     assert(p > 0.0);
@@ -251,7 +251,7 @@ bool OneProportion::AuthorizedParameterAtIndex(int index, double p) {
   }
 }
 
-double OneProportion::ProcessParamaterForIndex(double p, int index) {
+double OneProportion::ProcessParameterForIndex(double p, int index) {
   if (index == ParamsOrder::n || index == ParamsOrder::x) {
     p = std::round(p);
   }
@@ -408,7 +408,7 @@ bool TwoMeans::TAuthorizedParameterAtIndex(int index, double p) {
   }
 }
 
-double TwoMeans::ProcessParamaterForIndex(double p, int index) {
+double TwoMeans::ProcessParameterForIndex(double p, int index) {
   if (index == ParamsOrder::n1 || index == ParamsOrder::n2) {
     p = std::round(p);
     assert(p > 0.0);
@@ -634,7 +634,7 @@ bool TwoProportions::AuthorizedParameterAtIndex(int index, double p) {
   }
 }
 
-double TwoProportions::ProcessParamaterForIndex(double p, int index) {
+double TwoProportions::ProcessParameterForIndex(double p, int index) {
   if (index == ParamsOrder::n1 || index == ParamsOrder::n2 ||
       index == ParamsOrder::x1 || index == ParamsOrder::x2) {
     p = std::round(p);

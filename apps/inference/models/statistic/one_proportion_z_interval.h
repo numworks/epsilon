@@ -25,7 +25,7 @@ class OneProportionZInterval : public Interval {
            OneProportion::AuthorizedParameterAtIndex(i, p);
   }
   void setParameterAtIndex(double p, int index) override {
-    p = OneProportion::ProcessParamaterForIndex(p, index);
+    p = OneProportion::ProcessParameterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
 

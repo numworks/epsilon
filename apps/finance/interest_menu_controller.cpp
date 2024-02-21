@@ -17,9 +17,9 @@ void InterestMenuController::viewWillAppear() {
   int nRows = numberOfRows();
   for (int i = 0; i < nRows; i++) {
     m_cells[i].label()->setMessage(
-        App::GetInterestData()->labelForParameter(paramaterAtIndex(i)));
+        App::GetInterestData()->labelForParameter(parameterAtIndex(i)));
     m_cells[i].subLabel()->setMessage(
-        App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
+        App::GetInterestData()->sublabelForParameter(parameterAtIndex(i)));
   }
   m_selectableListView.reloadData(false);
   ViewController::viewWillAppear();
@@ -28,7 +28,7 @@ void InterestMenuController::viewWillAppear() {
 bool InterestMenuController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
   if (m_cells[0].canBeActivatedByEvent(event)) {
-    App::GetInterestData()->setUnknown(paramaterAtIndex(innerSelectedRow()));
+    App::GetInterestData()->setUnknown(parameterAtIndex(innerSelectedRow()));
     stackOpenPage(m_parametersController);
     return true;
   }
@@ -47,7 +47,7 @@ KDCoordinate InterestMenuController::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(&m_cells[row], row);
 }
 
-uint8_t InterestMenuController::paramaterAtIndex(int index) const {
+uint8_t InterestMenuController::parameterAtIndex(int index) const {
   // Parameters are displayed in the same order as the enum order.
   assert(index >= 0 && index < App::GetInterestData()->numberOfUnknowns());
   return index;

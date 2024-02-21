@@ -33,7 +33,7 @@ class ParametersController : public Shared::FloatParameterController<double>,
   void onDropdownSelected(int selectedRow) override;
 
  private:
-  uint8_t interestParamaterAtIndex(int index) const;
+  uint8_t interestParameterAtIndex(int index) const;
 
   // Shared::FloatParameterController<double>
   int reusableParameterCellCount(int type) const override;

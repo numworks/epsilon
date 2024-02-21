@@ -697,8 +697,8 @@ typename Solver<T>::Solution Solver<T>::registerSolution(Coordinate2D<T> xy,
       solution.setY(k_zero);
     }
     solution.interest = interest;
+    m_xStart = solution.x();
   }
-  m_xStart = solution.x();
   assert((solution.interest == Interest::None) == std::isnan(solution.x()));
   return solution;
 }

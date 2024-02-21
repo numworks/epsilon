@@ -19,6 +19,12 @@ void RawDataStatistic::setSeriesAt(Statistic* stat, int index, int series) {
   initDatasetsIfSeries();
 }
 
+void RawDataStatistic::unsetSeries(Statistic* stat) {
+  for (int i = 0; i < numberOfSeries(); i++) {
+    setSeriesAt(stat, i, -1);
+  }
+}
+
 bool RawDataStatistic::parametersAreValid(Statistic* stat) {
   syncParametersWithStore(stat);
   for (int i = 0; i < stat->numberOfParameters(); i++) {

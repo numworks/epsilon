@@ -4,7 +4,7 @@
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
-#include <inference/models/statistic/one_mean_statistic.h>
+#include <inference/models/statistic/raw_data_statistic.h>
 #include <inference/statistic/input_controller.h>
 #include <inference/statistic/store/input_store_controller.h>
 
@@ -37,7 +37,7 @@ class DatasetController
   constexpr static int k_indexOfInputStatisticsCell = 0;
   constexpr static int k_indexOfDatasetCell = 1;
 
-  OneMeanStatistic* oneMeanStatistic() const;
+  RawDataStatistic* rawDataStatistic() const;
 
   InputController* m_inputController;
   InputStoreController* m_storeController;

@@ -12,6 +12,7 @@
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/expression/variables.h>
+#include <poincare_junior/src/layout/grid.h>
 #include <poincare_junior/src/memory/placeholder.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -117,11 +118,7 @@ void Layoutter::layoutBuiltin(EditionReference &layoutParent,
         static_cast<const BuiltinWithLayout *>(builtin);
     EditionReference layout = SharedEditionPool->push(
         static_cast<BlockType>(builtinWithLayout->layoutType()));
-    for (int j = 0; j < expression->numberOfChildren(); j++) {
-      EditionReference newParent =
-          SharedEditionPool->push<BlockType::RackLayout>(0);
-      layoutExpression(newParent, expression->nextNode(), k_maxPriority);
-    }
+    layoutChildrenAsRacks(layoutParent, expression);
     NAry::AddChild(layoutParent, layout);
   }
 }
@@ -139,6 +136,15 @@ void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
       PushCodePoint(newParent, ',');
     }
     layoutExpression(newParent, expression->nextNode(), k_commaPriority);
+  }
+}
+
+void Layoutter::layoutChildrenAsRacks(EditionReference &layoutParent,
+                                      Tree *expression) {
+  for (int j = 0; j < expression->numberOfChildren(); j++) {
+    EditionReference newParent =
+        SharedEditionPool->push<BlockType::RackLayout>(0);
+    layoutExpression(newParent, expression->nextNode(), k_maxPriority);
   }
 }
 
@@ -183,7 +189,16 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
 }
 
 void Layoutter::layoutMatrix(EditionReference &layoutParent, Tree *expression) {
-  // TODO: matrix layout
+  if (!m_linearMode) {
+    EditionReference layout = expression->cloneNode();
+    *layout->block() = BlockType::MatrixLayout;
+    layoutChildrenAsRacks(layoutParent, expression);
+    NAry::AddChild(layoutParent, layout);
+    Grid *grid = Grid::From(layout);
+    grid->addEmptyColumn();
+    grid->addEmptyRow();
+    return;
+  }
   PushCodePoint(layoutParent, '[');
   int cols = Matrix::NumberOfColumns(expression);
   int rows = Matrix::NumberOfRows(expression);

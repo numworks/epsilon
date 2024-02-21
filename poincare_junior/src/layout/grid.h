@@ -4,7 +4,6 @@
 #include <poincare_junior/src/memory/tree.h>
 
 #include "empty_rectangle.h"
-#include "indices.h"
 #include "k_tree.h"
 #include "render.h"
 

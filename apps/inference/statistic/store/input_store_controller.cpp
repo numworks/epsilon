@@ -1,5 +1,7 @@
 #include "input_store_controller.h"
 
+#include "inference/text_helpers.h"
+
 using namespace Escher;
 
 namespace Inference {
@@ -73,6 +75,9 @@ void InputStoreController::viewWillAppear() {
   for (int i = 0; i < numberOfExtraParameters(); i++) {
     InputCategoricalCell<LayoutView>& c = m_extraParameters[i];
     int param = indexOfEditedParameterAtIndex(indexOfFirstExtraParameter() + i);
+    PrintValueInTextHolder(
+        m_statistic->parameterAtIndex(param), c.textField(), true, true,
+        Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
     c.setMessages(m_statistic->parameterSymbolAtIndex(param),
                   m_statistic->parameterDefinitionAtIndex(param));
   }

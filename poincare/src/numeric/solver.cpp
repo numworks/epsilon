@@ -64,13 +64,13 @@ typename Solver<T>::Solution Solver<T>::next(
     }
 
     if (interest != Interest::None) {
-      Coordinate2D<T> solution = honeAndRoundSolution(
+      Solution solution = honeAndRoundSolution(
           f, aux, start.x(), end.x(), interest, hone, discontinuityTest);
       if (std::isfinite(solution.x()) &&
           (std::isfinite(solution.y()) ||
            interest == Interest::Discontinuity)) {
         assert(validSolution(solution.x()));
-        return registerSolution(Solution(solution, interest));
+        return registerSolution(solution);
       }
     }
   }
@@ -632,7 +632,7 @@ T Solver<T>::MagicRound(T x) {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::honeAndRoundSolution(
+typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
     FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
     HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
   OMG::Troolean discontinuous = OMG::Troolean::Unknown;
@@ -654,7 +654,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
   Coordinate2D<T> solution =
       hone(f, aux, start, end, interest, xPrecision, discontinuous);
   if (!std::isfinite(solution.x()) || !validSolution(solution.x())) {
-    return Coordinate2D<T>(k_NAN, k_NAN);
+    return Solution();
   }
 
   T x = solution.x();
@@ -671,7 +671,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
      * condition of roundX is different from x, this means that the solution
      * found is probably on an open interval. */
     if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
-      return Coordinate2D<T>(k_NAN, k_NAN);
+      return Solution();
     }
     T fRoundX = f(roundX, aux);
     // f(x) is different from the honed solution when searching intersections
@@ -684,7 +684,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
       solution.setX(roundX);
     }
   }
-  return solution;
+  return Solution(solution, interest);
 }
 
 template <typename T>

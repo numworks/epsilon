@@ -10,8 +10,8 @@ class PooledTwoMeansTTest : public TwoMeansTTest {
   DistributionType distributionType() const override {
     return DistributionType::TPooled;
   }
-  I18n::Message title() const override { return PooledTwoMeans::Title(); }
-  void compute() override { PooledTwoMeans::ComputeTest(this); }
+  I18n::Message title() const override { return TwoMeans::PooledTitle(); }
+  void compute() override { TwoMeans::ComputePooledTest(this); }
 };
 
 }  // namespace Inference

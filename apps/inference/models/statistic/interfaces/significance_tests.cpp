@@ -538,9 +538,7 @@ double TwoMeans::ComputeDegreesOfFreedom(double s1, double n1, double s2,
          (std::pow(v1, 2.) / (n1 - 1.) + std::pow(v2, 2.) / (n2 - 1.));
 }
 
-/* PooledTwoMeans */
-
-void PooledTwoMeans::ComputeTest(Test* t) {
+void TwoMeans::ComputePooledTest(Test* t) {
   double* params = t->parametersArray();
   double n1 = N1(params);
   double s1 = S1(params);
@@ -551,11 +549,11 @@ void PooledTwoMeans::ComputeTest(Test* t) {
   t->m_degreesOfFreedom = n1 + n2 - 2.;
   double deltaMean = t->m_hypothesisParams.firstParam();
   t->m_testCriticalValue =
-      ((x1 - x2) - (deltaMean)) / ComputeStandardError(n1, s1, n2, s2);
+      ((x1 - x2) - (deltaMean)) / ComputePooledStandardError(n1, s1, n2, s2);
   t->m_pValue = ComputePValue(t);
 }
 
-void PooledTwoMeans::ComputeInterval(Interval* i) {
+void TwoMeans::ComputePooledInterval(Interval* i) {
   double* params = i->parametersArray();
   double n1 = N1(params);
   double s1 = S1(params);
@@ -565,10 +563,10 @@ void PooledTwoMeans::ComputeInterval(Interval* i) {
   double x2 = X2(params);
   i->m_degreesOfFreedom = n1 + n2 - 2.;
   i->m_estimate = x1 - x2;
-  i->m_SE = ComputeStandardError(n1, s1, n2, s2);
+  i->m_SE = ComputePooledStandardError(n1, s1, n2, s2);
 }
 
-double PooledTwoMeans::ComputeStandardError(double n1, double s1, double n2,
+double TwoMeans::ComputePooledStandardError(double n1, double s1, double n2,
                                             double s2) {
   /* Pooled estimate of sigma */
   double sp =

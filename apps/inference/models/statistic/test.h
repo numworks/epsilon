@@ -10,7 +10,6 @@ class Test : public Statistic {
   friend class OneMean;
   friend class OneProportion;
   friend class TwoMeans;
-  friend class PooledTwoMeans;
   friend class TwoProportions;
 
  public:

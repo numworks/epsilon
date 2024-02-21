@@ -787,27 +787,23 @@ void RackParser::parseReservedFunction(EditionReference &leftHandSide,
 
 void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
                                               const Builtin *builtin) {
-#if 0
   const Aliases *aliasesList = builtin->aliases();
-  if (aliasesList.contains("log") &&
-      popTokenIfType(Token::Type::LeftSystemBrace)) {
-    // Special case for the log function (e.g. "log\x14{2\x14}(8)")
-    EditionReference base = parseUntil(Token::Type::RightSystemBrace);
-    if (!popTokenIfType(Token::Type::RightSystemBrace)) {
-      // Right brace missing.
+  if (aliasesList->contains("log") && popTokenIfType(Token::Type::Subscript)) {
+    // Special case for the log function (e.g. "log₂(8)")
+    EditionReference base =
+        Parser::Parse(m_currentToken.firstLayout()->child(0));
+    EditionReference parameter = parseFunctionParameters();
+    if (parameter->numberOfChildren() != 1) {
+      // Unexpected number of many parameters.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     } else {
-      EditionReference parameter = parseFunctionParameters();
-      if (parameter.numberOfChildren() != 1) {
-        // Unexpected number of many parameters.
-        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-      } else {
-        leftHandSide = Logarithm::Builder(parameter.child(0), base);
-      }
+      MoveTreeOverTree(parameter, parameter->child(0));
+      SwapTrees(base, parameter);
+      leftHandSide = parameter;
+      CloneNodeAtNode(leftHandSide, KLogarithm);
     }
     return;
   }
-#endif
 
 // Parse cos^n(x)
 #if 0

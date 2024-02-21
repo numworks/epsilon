@@ -93,9 +93,8 @@ int InputStoreController::indexOfEditedParameterAtIndex(int index) const {
   if (index >= indexOfFirstExtraParameter() + numberOfExtraParameters()) {
     return InputCategoricalController::indexOfEditedParameterAtIndex(index);
   }
-  // TODO
-  assert(false);
-  return 0;
+  assert(m_statistic->distributionType() == DistributionType::Z);
+  return OneMean::ParamsOrder::s;
 }
 
 }  // namespace Inference

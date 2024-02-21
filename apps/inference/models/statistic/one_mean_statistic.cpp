@@ -11,7 +11,7 @@ void OneMeanStatistic::setSeries(int series, Statistic* stat) {
 }
 
 bool OneMeanStatistic::parametersAreValid(Statistic* stat) {
-  syncParametersWithStore();
+  syncParametersWithStore(stat);
   for (int i = 0; i < std::size(m_params); i++) {
     if (!stat->authorizedParameterAtIndex(m_params[i], i)) {
       return false;
@@ -47,13 +47,16 @@ double OneMeanStatistic::parameterAtPosition(int row, int column) const {
   return get(m_series, column, row);
 }
 
-void OneMeanStatistic::syncParametersWithStore() {
+void OneMeanStatistic::syncParametersWithStore(Statistic* stat) {
   if (m_series < 0) {
     return;
   }
   m_params[OneMean::ParamsOrder::x] = mean(m_series);
-  // FIXME Different between Z and T ?
-  m_params[OneMean::ParamsOrder::s] = sampleStandardDeviation(m_series);
+  // For Z tests, the S parameter is the population standard deviation, which is
+  // not computed from the sample.
+  if (stat->distributionType() != DistributionType::Z) {
+    m_params[OneMean::ParamsOrder::s] = sampleStandardDeviation(m_series);
+  }
   m_params[OneMean::ParamsOrder::n] = sumOfOccurrences(m_series);
 }
 

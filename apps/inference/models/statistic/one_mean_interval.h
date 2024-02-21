@@ -74,7 +74,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   double* parametersArray() override { return m_params; }
 
   void privateCompute() override {
-    syncParametersWithStore();
+    syncParametersWithStore(this);
     OneMean::ComputeInterval(oneMeanType(), this);
   }
 };

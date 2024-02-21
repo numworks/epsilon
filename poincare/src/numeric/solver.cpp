@@ -33,8 +33,6 @@ typename Solver<T>::Solution Solver<T>::next(
   Coordinate2D<T> p1, p2(m_xStart, f(m_xStart, aux)),
       p3(nextX(p2.x(), m_xEnd, static_cast<T>(1.)), k_NAN);
   p3.setY(f(p3.x(), aux));
-  Coordinate2D<T> definitiveSolution;
-  Interest definitiveInterest = Interest::None;
 
   constexpr bool isDouble = sizeof(T) == sizeof(double);
 
@@ -72,14 +70,12 @@ typename Solver<T>::Solution Solver<T>::next(
           (std::isfinite(solution.y()) ||
            interest == Interest::Discontinuity)) {
         assert(validSolution(solution.x()));
-        definitiveSolution = solution;
-        definitiveInterest = interest;
-        break;
+        return registerSolution(solution, interest);
       }
     }
   }
 
-  return registerSolution(definitiveSolution, definitiveInterest);
+  return registerSolution(Coordinate2D<T>(NAN, NAN), Interest::None);
 }
 
 template <typename T>

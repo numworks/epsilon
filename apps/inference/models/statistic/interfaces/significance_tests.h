@@ -52,7 +52,7 @@ class OneMean : public SignificanceTest {
     return DispatchTZ(t, TAuthorizedParameterAtIndex,
                       ZAuthorizedParameterAtIndex)(index, p);
   }
-  static double ProcessParamaterForIndex(double p, int index);
+  static double ProcessParameterForIndex(double p, int index);
   static int NumberOfParameters() { return k_numberOfParams; }
   static Shared::ParameterRepresentation ParameterRepresentationAtIndex(
       Type t, int index) {
@@ -121,7 +121,7 @@ class OneProportion : public SignificanceTest {
   static void InitTestParameters(Test* test);
   static void InitIntervalParameters(Interval* interval);
   static bool AuthorizedParameterAtIndex(int index, double p);
-  static double ProcessParamaterForIndex(double p, int index);
+  static double ProcessParameterForIndex(double p, int index);
   static bool ValidH0(double h0) { return h0 > 0 && h0 < 1; }
   static bool ValidateInputs(double* params) { return X(params) <= N(params); }
 
@@ -179,7 +179,7 @@ class TwoMeans : public SignificanceTest {
     return DispatchTZ(t, TAuthorizedParameterAtIndex,
                       ZAuthorizedParameterAtIndex)(index, p);
   }
-  static double ProcessParamaterForIndex(double p, int index);
+  static double ProcessParameterForIndex(double p, int index);
   static bool ValidateInputs(Type t, double* params) {
     return DispatchTZ(t, TValidateInputs, ZValidateInputs)(params);
   }
@@ -274,7 +274,7 @@ class TwoProportions : public SignificanceTest {
   static void InitTestParameters(Test* test);
   static void InitIntervalParameters(Interval* interval);
   static bool AuthorizedParameterAtIndex(int index, double p);
-  static double ProcessParamaterForIndex(double p, int index);
+  static double ProcessParameterForIndex(double p, int index);
   static bool ValidH0(double h0) { return h0 <= 1 && h0 >= -1; }
   static bool ValidateInputs(double* params);
 

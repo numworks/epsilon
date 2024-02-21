@@ -36,7 +36,7 @@ class TwoMeansTest : public Test, public TwoMeansStatistic {
            TwoMeans::AuthorizedParameterAtIndex(twoMeansType(this), i, p);
   }
   void setParameterAtIndex(double p, int index) override {
-    p = TwoMeans::ProcessParamaterForIndex(p, index);
+    p = TwoMeans::ProcessParameterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
 

@@ -1,5 +1,5 @@
-#ifndef SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
-#define SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
+#ifndef SEQUENCE_TYPE_PARAMETER_CONTROLLER_H
+#define SEQUENCE_TYPE_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/sequence_store.h>
 #include <escher/even_odd_expression_cell.h>

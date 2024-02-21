@@ -38,7 +38,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
            OneMean::AuthorizedParameterAtIndex(oneMeanType(this), i, p);
   }
   void setParameterAtIndex(double p, int index) override {
-    p = OneMean::ProcessParamaterForIndex(p, index);
+    p = OneMean::ProcessParameterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
   bool validateInputs() override { return parametersAreValid(this); }

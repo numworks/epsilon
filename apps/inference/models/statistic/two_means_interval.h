@@ -31,7 +31,7 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
            TwoMeans::AuthorizedParameterAtIndex(twoMeansType(this), i, p);
   }
   void setParameterAtIndex(double p, int index) override {
-    p = TwoMeans::ProcessParamaterForIndex(p, index);
+    p = TwoMeans::ProcessParameterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
   const char* estimateSymbol() const override {

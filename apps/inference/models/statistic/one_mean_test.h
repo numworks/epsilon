@@ -39,7 +39,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
            OneMean::AuthorizedParameterAtIndex(oneMeanType(this), i, p);
   }
   void setParameterAtIndex(double p, int index) override {
-    p = OneMean::ProcessParamaterForIndex(p, index);
+    p = OneMean::ProcessParameterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
   bool validateInputs() override { return parametersAreValid(this); }

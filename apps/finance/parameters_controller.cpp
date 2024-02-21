@@ -59,7 +59,7 @@ void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
   if (type == k_buttonCellType) {
     return;
   }
-  uint8_t param = interestParamaterAtIndex(row);
+  uint8_t param = interestParameterAtIndex(row);
   if (type == k_dropdownCellType) {
     assert(&m_dropdownCell == cell);
     m_dropdownCell.label()->setMessage(
@@ -105,7 +105,7 @@ void ParametersController::onDropdownSelected(int selectedRow) {
   App::GetInterestData()->m_booleanParam = (selectedRow == 0);
 }
 
-uint8_t ParametersController::interestParamaterAtIndex(int index) const {
+uint8_t ParametersController::interestParameterAtIndex(int index) const {
   uint8_t unknownParam = App::GetInterestData()->getUnknown();
   assert(unknownParam < App::GetInterestData()->numberOfUnknowns());
   if (unknownParam <= index) {
@@ -142,11 +142,11 @@ TextField *ParametersController::textFieldOfCellAtIndex(HighlightCell *cell,
 }
 
 double ParametersController::parameterAtIndex(int index) {
-  return App::GetInterestData()->getValue(interestParamaterAtIndex(index));
+  return App::GetInterestData()->getValue(interestParameterAtIndex(index));
 }
 
 bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
-  uint8_t param = interestParamaterAtIndex(parameterIndex);
+  uint8_t param = interestParameterAtIndex(parameterIndex);
   if (!App::GetInterestData()->checkValue(param, f)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
     return false;

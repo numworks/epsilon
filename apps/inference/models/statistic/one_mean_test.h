@@ -56,7 +56,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
   }
 
   void compute() override {
-    syncParametersWithStore();
+    syncParametersWithStore(this);
     OneMean::ComputeTest(oneMeanType(), this);
   }
 

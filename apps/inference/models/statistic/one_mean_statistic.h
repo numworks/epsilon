@@ -49,7 +49,7 @@ class OneMeanStatistic : public Table, public Shared::StatisticsStore {
     return OneMean::Type::Z;
   }
 
-  void syncParametersWithStore();
+  void syncParametersWithStore(Statistic* stat);
   int numberOfResultsAndComputedParameters(int results) const {
     return results + (m_series >= 0) * OneMean::k_numberOfParams;
   }

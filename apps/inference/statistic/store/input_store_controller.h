@@ -80,7 +80,9 @@ class InputStoreController : public InputCategoricalController,
   char listPrefix(int column) const {
     return m_slopeTableCell.store()->columnNamePrefixAtIndex(column);
   }
-  int numberOfExtraParameters() const { return 0; }  // TODO
+  int numberOfExtraParameters() const {
+    return m_statistic->distributionType() == DistributionType::Z ? 1 : 0;
+  }
   int indexOfEditedParameterAtIndex(int index) const override;
 
   DropdownDataSource m_dropdownDataSource;

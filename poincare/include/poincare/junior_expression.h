@@ -100,6 +100,13 @@ class JuniorExpression final : public Expression {
   JuniorExpression() {}
   JuniorExpression(const Expression& other) { *this = other; }
 
+  static JuniorExpression Parse(const PoincareJ::Tree* layout, Context* context,
+                                bool addMissingParenthesis = true,
+                                bool parseForAssignment = false);
+  static JuniorExpression Parse(const char* layout, Context* context,
+                                bool addMissingParenthesis = true,
+                                bool parseForAssignment = false);
+
   static JuniorExpression Builder(const PoincareJ::Tree* tree);
   // Eat the tree
   static JuniorExpression Builder(PoincareJ::Tree* tree);

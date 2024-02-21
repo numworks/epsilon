@@ -5,6 +5,8 @@
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/layout/layoutter.h>
+#include <poincare_junior/src/layout/parser.h>
+#include <poincare_junior/src/layout/rack_from_text.h>
 
 namespace Poincare {
 
@@ -22,6 +24,30 @@ size_t JuniorExpressionNode::serialize(
   Expression e = PoincareJ::ToPoincareExpression(tree());
   return e.node()->serialize(buffer, bufferSize, floatDisplayMode,
                              numberOfSignificantDigits);
+}
+
+JuniorExpression JuniorExpression::Parse(const PoincareJ::Tree* layout,
+                                         Context* context,
+                                         bool addMissingParenthesis,
+                                         bool parseForAssignment) {
+  // TODO_PCJ: Use context, addMissingParenthesis and parseForAssignment.
+  return Builder(PoincareJ::Parser::Parse(layout));
+}
+
+JuniorExpression JuniorExpression::Parse(char const* string, Context* context,
+                                         bool addMissingParenthesis,
+                                         bool parseForAssignment) {
+  if (string[0] == 0) {
+    return JuniorExpression();
+  }
+  PoincareJ::Tree* layout = PoincareJ::RackFromText(string);
+  if (!layout) {
+    return JuniorExpression();
+  }
+  JuniorExpression result =
+      Parse(layout, context, addMissingParenthesis, parseForAssignment);
+  layout->removeTree();
+  return result;
 }
 
 JuniorExpression JuniorExpression::Builder(const PoincareJ::Tree* tree) {

@@ -10,10 +10,10 @@ class PooledTwoMeansTInterval : public TwoMeansTInterval {
   DistributionType distributionType() const override {
     return DistributionType::TPooled;
   }
-  I18n::Message title() const override { return PooledTwoMeans::Title(); }
+  I18n::Message title() const override { return TwoMeans::PooledTitle(); }
 
  private:
-  void privateCompute() override { PooledTwoMeans::ComputeInterval(this); }
+  void privateCompute() override { TwoMeans::ComputePooledInterval(this); }
 };
 
 }  // namespace Inference

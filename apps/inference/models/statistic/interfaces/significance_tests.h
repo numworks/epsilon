@@ -155,6 +155,9 @@ class TwoMeans : public SignificanceTest {
   static I18n::Message TTitle() {
     return I18n::Message::HypothesisControllerTitleTwoMeansT;
   }
+  static I18n::Message PooledTitle() {
+    return I18n::Message::HypothesisControllerTitleTwoMeansPooledT;
+  }
   static I18n::Message DistributionTitle() {
     return I18n::Message::TypeControllerTitleTwo;
   }
@@ -192,8 +195,10 @@ class TwoMeans : public SignificanceTest {
   // Computation
   static void ComputeZTest(Test* test);
   static void ComputeTTest(Test* test);
+  static void ComputePooledTest(Test* t);
   static void ComputeZInterval(Interval* interval);
   static void ComputeTInterval(Interval* interval);
+  static void ComputePooledInterval(Interval* i);
 
   constexpr static int k_numberOfParams = 6;
 
@@ -203,22 +208,10 @@ class TwoMeans : public SignificanceTest {
                           double sigma2);
   static double ComputeStandardError(double sigma1, double n1, double sigma2,
                                      double n2);
+  static double ComputePooledStandardError(double n1, double s1, double n2,
+                                           double s2);
   static double ComputeDegreesOfFreedom(double s1, double n1, double s2,
                                         double n2);
-};
-
-class PooledTwoMeans : public TwoMeans {
- public:
-  static I18n::Message Title() {
-    return I18n::Message::HypothesisControllerTitleTwoMeansPooledT;
-  }
-  // Computation
-  static void ComputeTest(Test* t);
-  static void ComputeInterval(Interval* i);
-
- private:
-  static double ComputeStandardError(double n1, double s1, double n2,
-                                     double s2);
 };
 
 class TwoProportions : public SignificanceTest {

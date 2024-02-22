@@ -375,7 +375,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::Conjugate:
       return std::conj(ToComplex<T>(node->nextNode()));
     case BlockType::Opposite:
-      return -ToComplex<T>(node->nextNode());
+      return FloatMultiplication<T>(-1, ToComplex<T>(node->nextNode()));
     case BlockType::RealPart: {
       /* TODO_PCJ: Complex NAN should be used in most of the code. Make sure a
        * NAN result cannot be lost. */

@@ -164,6 +164,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         }
       }
       return true;
+    case BlockType::Opposite:
     case BlockType::Division:
     case BlockType::Multiplication: {
       /* TODO: Forbid Complex * units. Units are already forbidden in complex
@@ -213,6 +214,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       const Tree* index = t->child(1);
       // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
       return index->isRational() || index->isDecimal() ||
+             (index->isOpposite() && index->child(0)->isRational()) ||
              (index->isMultiplication() && index->numberOfChildren() == 2 &&
               index->child(0)->isMinusOne() && index->child(1)->isRational());
     }
@@ -371,6 +373,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
       }
     }
     case BlockType::Abs:
+    case BlockType::Opposite:
     case BlockType::SquareRoot:
     case BlockType::Floor:
     case BlockType::Ceiling:

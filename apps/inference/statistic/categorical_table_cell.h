@@ -151,6 +151,9 @@ class DoubleColumnTableCell
       k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 
  private:
+  virtual void fillHeaderCellAtColumn(Escher::HighlightCell *cell, int column) {
+  }
+
   KDCoordinate nonMemoizedColumnWidth(int column) override {
     return k_columnWidth;
   }

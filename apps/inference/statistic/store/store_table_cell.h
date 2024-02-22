@@ -21,8 +21,6 @@ class StoreTableCell : public DoubleColumnTableCell,
   constexpr static int k_numberOfReusableCells =
       Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
 
-  void fillColumnsNames();
-
   // StoreColumnHelper
   Shared::DoublePairStore *store() override {
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
@@ -41,6 +39,7 @@ class StoreTableCell : public DoubleColumnTableCell,
   Escher::HighlightCell *headerCell(int index) override {
     return &m_header[index];
   }
+  void fillHeaderCellAtColumn(Escher::HighlightCell *cell, int column) override;
 
   // ClearColumnHelper
   size_t fillColumnName(int column, char *buffer) override {

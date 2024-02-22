@@ -23,13 +23,13 @@ StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
   }
 }
 
-void StoreTableCell::fillColumnsNames() {
-  assert(m_numberOfColumns > 0);
-  for (int i = 0; i < m_numberOfColumns; i++) {
-    /* We delayed filling the column names X1, Y1 to ensure that the underlying
-     * model was a valid DoublePairStore. */
-    fillColumnName(i, const_cast<char *>(m_header[i].text()));
-  }
+void StoreTableCell::fillHeaderCellAtColumn(Escher::HighlightCell *cell,
+                                            int column) {
+  Shared::BufferFunctionTitleCell *headerCell =
+      static_cast<Shared::BufferFunctionTitleCell *>(cell);
+  assert(m_header <= headerCell &&
+         headerCell < m_header + Table::k_maxNumberOfStoreColumns);
+  fillColumnName(column, const_cast<char *>(headerCell->text()));
 }
 
 InputViewController *StoreTableCell::inputViewController() {

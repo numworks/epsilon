@@ -55,7 +55,6 @@ void InputStoreController::onDropdownSelected(int selectedRow) {
   }
 
   m_slopeTableCell.recomputeDimensionsAndReload(true);
-  m_slopeTableCell.fillColumnsNames();
 }
 
 KDCoordinate InputStoreController::nonMemoizedRowHeight(int row) {
@@ -98,8 +97,6 @@ void InputStoreController::viewWillAppear() {
   m_dropdownCell.dropdown()->reloadCell();
 
   InputCategoricalController::viewWillAppear();
-
-  m_slopeTableCell.fillColumnsNames();
 }
 
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {

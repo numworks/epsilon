@@ -14,7 +14,7 @@ void AbstractRoundCursorView::drawCursor(KDContext* ctx, KDRect rect) const {
   KDRect dotRect = m_isRing ? r
                             : KDRect(r.x() + diff / 2, r.y() + diff / 2,
                                      r.width() - diff, r.height() - diff);
-  const uint8_t* mask = m_isRing ? Dots::LargeRingMask : Dots::LargeDotMask;
+  const uint8_t* mask = Dots::Mask(Dots::Size::Large, m_isRing);
   ctx->blendRectWithMask(dotRect, color(), mask, cursorWorkingBuffer);
 }
 

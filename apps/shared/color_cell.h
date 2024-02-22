@@ -5,6 +5,8 @@
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 
+#include "dots.h"
+
 namespace Shared {
 
 /* Not ArbitraryShapedView since the shape never changes, the parent does not
@@ -17,6 +19,9 @@ class ColorView : public Escher::View, public Escher::CellWidget {
   void setColor(KDColor color);
 
  private:
+  constexpr static Dots::Size k_dotSize = Dots::Size::Large;
+  constexpr static KDCoordinate k_dotDiameter =
+      Dots::Diameter(k_dotSize, false);
   KDColor m_color;
 };
 

@@ -206,22 +206,7 @@ KDRect AbstractPlotView::dotRect(Dots::Size size,
   if (!std::isfinite(xy.x()) || !std::isfinite(xy.y())) {
     return KDRectZero;
   }
-  KDCoordinate diameter = 0;
-  switch (size) {
-    case Dots::Size::Tiny:
-      diameter = Dots::TinyDotDiameter;
-      break;
-    case Dots::Size::Small:
-      diameter = Dots::SmallDotDiameter;
-      break;
-    case Dots::Size::Medium:
-      diameter = Dots::MediumDotDiameter;
-      break;
-    default:
-      assert(size == Dots::Size::Large);
-      diameter = Dots::LargeDotDiameter;
-  }
-  assert(diameter <= Dots::LargeDotDiameter);
+  KDCoordinate diameter = Dots::Diameter(size, false);
   /* If circle has an even diameter, out of the four center pixels, the bottom
    * left one will be placed at (x, y) */
   Coordinate2D<float> pF = floatToPixel2D(xy);
@@ -233,22 +218,7 @@ KDRect AbstractPlotView::dotRect(Dots::Size size,
 void AbstractPlotView::drawDot(KDContext* ctx, KDRect rect, Dots::Size size,
                                Poincare::Coordinate2D<float> xy,
                                KDColor color) const {
-  const uint8_t* mask = nullptr;
-  switch (size) {
-    case Dots::Size::Tiny:
-      mask = (const uint8_t*)Dots::TinyDotMask;
-      break;
-    case Dots::Size::Small:
-      mask = (const uint8_t*)Dots::SmallDotMask;
-      break;
-    case Dots::Size::Medium:
-      mask = (const uint8_t*)Dots::MediumDotMask;
-      break;
-    default:
-      assert(size == Dots::Size::Large);
-      mask = (const uint8_t*)Dots::LargeDotMask;
-  }
-
+  const uint8_t* mask = Dots::Mask(size, false);
   KDRect rectForDot = dotRect(size, xy);
   if (rect.intersects(rectForDot)) {
     KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];

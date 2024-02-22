@@ -1,18 +1,15 @@
 #include "color_cell.h"
 
-#include "dots.h"
-
 namespace Shared {
 
 void ColorView::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
-  ctx->blendRectWithMask(bounds(), m_color,
-                         reinterpret_cast<const uint8_t*>(Dots::LargeDotMask),
+  KDColor workingBuffer[k_dotDiameter * k_dotDiameter];
+  ctx->blendRectWithMask(bounds(), m_color, Dots::Mask(k_dotSize, false),
                          workingBuffer);
 }
 
 KDSize ColorView::minimalSizeForOptimalDisplay() const {
-  return KDSize(Dots::LargeDotDiameter, Dots::LargeDotDiameter);
+  return KDSize(k_dotDiameter, k_dotDiameter);
 }
 
 void ColorView::setColor(KDColor color) {

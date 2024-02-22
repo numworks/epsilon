@@ -49,7 +49,8 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
 
  private:
   bool validateInputs() override {
-    return TwoMeans::ValidateInputs(twoMeansType(this), m_params);
+    return parametersAreValid(this) &&
+           TwoMeans::ValidateInputs(twoMeansType(this), m_params);
   }
   int numberOfStatisticParameters() const override {
     return TwoMeans::NumberOfParameters();
@@ -60,6 +61,7 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
   }
   double* parametersArray() override { return m_params; }
   void privateCompute() override {
+    syncParametersWithStore(this);
     TwoMeans::ComputeInterval(twoMeansType(this), this);
   }
 

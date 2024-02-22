@@ -481,8 +481,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       return;
     case OT::Comparison:
       // TODO: Handle comparisons better
-      assert(Poincare::ComparisonNode::IsBinaryEquality(exp));
+      assert(exp.numberOfChildren() == 2);
     case OT::Addition:
+    case OT::PiecewiseOperator:
     case OT::Multiplication:
     case OT::Subtraction:
     case OT::Division:
@@ -496,7 +497,37 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
           SharedEditionPool->push<BlockType::Multiplication>(
               exp.numberOfChildren());
           break;
-        case OT::Comparison:
+        case OT::PiecewiseOperator:
+          SharedEditionPool->push<BlockType::Piecewise>(exp.numberOfChildren());
+          break;
+        case OT::Comparison: {
+          Poincare::Comparison c = static_cast<Poincare::Comparison &>(exp);
+          BlockType type;
+          switch (c.operatorAtIndex(0)) {
+            case Poincare::ComparisonNode::OperatorType::Equal:
+              type = BlockType::Equal;
+              break;
+            case Poincare::ComparisonNode::OperatorType::NotEqual:
+              type = BlockType::NotEqual;
+              break;
+            case Poincare::ComparisonNode::OperatorType::Inferior:
+              type = BlockType::Inferior;
+              break;
+            case Poincare::ComparisonNode::OperatorType::InferiorEqual:
+              type = BlockType::InferiorEqual;
+              break;
+            case Poincare::ComparisonNode::OperatorType::Superior:
+              type = BlockType::Superior;
+              break;
+            case Poincare::ComparisonNode::OperatorType::SuperiorEqual:
+              type = BlockType::SuperiorEqual;
+              break;
+            default:
+              assert(false);
+          }
+          SharedEditionPool->push(type);
+          break;
+        }
         case OT::Subtraction:
           SharedEditionPool->push(BlockType::Subtraction);
           break;

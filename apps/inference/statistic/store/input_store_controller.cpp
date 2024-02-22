@@ -48,8 +48,8 @@ void InputStoreController::onDropdownSelected(int selectedRow) {
   Table* tableModel = m_slopeTableCell.tableModel();
   if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
     assert(tableModel->numberOfSeries() == 2);
-    tableModel->setSeriesAt(m_statistic, 0, selectedRow % 2);
-    tableModel->setSeriesAt(m_statistic, 1, (selectedRow % 2) + 1);
+    tableModel->setSeriesAt(m_statistic, 0, selectedRow / 2);
+    tableModel->setSeriesAt(m_statistic, 1, ((selectedRow + 1) / 2) + 1);
   } else {
     tableModel->setSeriesAt(m_statistic, 0, selectedRow);
   }

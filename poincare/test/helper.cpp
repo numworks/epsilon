@@ -177,14 +177,17 @@ void assert_parsed_expression_is(
     const char *expression, Poincare::Expression r, bool addParentheses,
     bool parseForAssignment,
     Preferences::MixedFractions mixedFractionsParameter) {
-#if 0
   Shared::GlobalContext context;
   Preferences::SharedPreferences()->enableMixedFractions(
       mixedFractionsParameter);
-  Expression e = parse_expression(expression, &context, addParentheses,
+  Tree *parsed = parse_expression(expression, &context, addParentheses,
                                   parseForAssignment);
-  quiz_assert_print_if_failure(e.isIdenticalTo(r), expression);
-#endif
+  Tree *expected = PoincareJ::Expression::FromPoincareExpression(r);
+  quiz_assert_print_if_failure(parsed, expression);
+  quiz_assert_print_if_failure(expected, expression);
+  quiz_assert_print_if_failure(parsed->treeIsIdenticalTo(expected), expression);
+  expected->removeTree();
+  parsed->removeTree();
 }
 
 void assert_parse_to_same_expression(const char *expression1,

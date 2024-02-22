@@ -236,6 +236,7 @@ tests_src += $(addprefix poincare/test/,\
   expression_to_layout.cpp \
   derivative.cpp \
   layout_to_expression.cpp \
+  parsing.cpp \
   simplification.cpp \
 )
 

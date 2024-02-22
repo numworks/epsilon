@@ -43,12 +43,16 @@ class TwoMeansTest : public Test, public TwoMeansStatistic {
     Test::setParameterAtIndex(p, index);
   }
 
-  void compute() override { TwoMeans::ComputeTest(twoMeansType(this), this); }
+  void compute() override {
+    syncParametersWithStore(this);
+    TwoMeans::ComputeTest(twoMeansType(this), this);
+  }
 
  private:
   // Significance Test: TwoMeans
   bool validateInputs() override {
-    return TwoMeans::ValidateInputs(twoMeansType(this), m_params);
+    return parametersAreValid(this) &&
+           TwoMeans::ValidateInputs(twoMeansType(this), m_params);
   }
   int numberOfStatisticParameters() const override {
     return TwoMeans::NumberOfParameters();

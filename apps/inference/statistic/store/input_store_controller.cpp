@@ -110,7 +110,13 @@ int InputStoreController::indexOfEditedParameterAtIndex(int index) const {
     return InputCategoricalController::indexOfEditedParameterAtIndex(index);
   }
   assert(m_statistic->distributionType() == DistributionType::Z);
-  return OneMean::ParamsOrder::s;
+  if (m_statistic->significanceTestType() == SignificanceTestType::OneMean) {
+    assert(index == indexOfFirstExtraParameter());
+    return OneMean::ParamsOrder::s;
+  }
+  assert(m_statistic->significanceTestType() == SignificanceTestType::TwoMeans);
+  return index == indexOfFirstExtraParameter() ? TwoMeans::ParamsOrder::s1
+                                               : TwoMeans::ParamsOrder::s2;
 }
 
 void InputStoreController::selectSeriesForDropdownRow(int row) {

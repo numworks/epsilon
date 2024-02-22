@@ -54,8 +54,8 @@ void InputStoreController::onDropdownSelected(int selectedRow) {
     tableModel->setSeriesAt(m_statistic, 0, selectedRow);
   }
 
-  m_slopeTableCell.fillColumnsNames();
   m_slopeTableCell.recomputeDimensionsAndReload(true);
+  m_slopeTableCell.fillColumnsNames();
 }
 
 KDCoordinate InputStoreController::nonMemoizedRowHeight(int row) {
@@ -78,8 +78,6 @@ void InputStoreController::createDynamicCells() {
 }
 
 void InputStoreController::viewWillAppear() {
-  m_slopeTableCell.fillColumnsNames();
-
   for (int i = 0; i < numberOfExtraParameters(); i++) {
     InputCategoricalCell<LayoutView>& c = m_extraParameters[i];
     int param = indexOfEditedParameterAtIndex(indexOfFirstExtraParameter() + i);
@@ -100,6 +98,8 @@ void InputStoreController::viewWillAppear() {
   m_dropdownCell.dropdown()->reloadCell();
 
   InputCategoricalController::viewWillAppear();
+
+  m_slopeTableCell.fillColumnsNames();
 }
 
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {

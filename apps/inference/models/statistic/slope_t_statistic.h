@@ -27,6 +27,9 @@ class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
     m_series = series;
   }
 
+  // DoublePairStore
+  int seriesAtColumn(int column) const override { return m_series; }
+
   // Table
   void setParameterAtPosition(double value, int row, int column) override {
     set(value, m_series, column, row, false);

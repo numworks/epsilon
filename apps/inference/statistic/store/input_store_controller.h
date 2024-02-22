@@ -61,7 +61,7 @@ class InputStoreController : public InputCategoricalController,
   };
 
   constexpr static int k_dropdownCellIndex = 0;
-  constexpr static int k_maxNumberOfExtraParameters = 1;
+  constexpr static int k_maxNumberOfExtraParameters = 2;
 
   KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
@@ -81,7 +81,12 @@ class InputStoreController : public InputCategoricalController,
     return m_slopeTableCell.store()->columnNamePrefixAtIndex(column);
   }
   int numberOfExtraParameters() const {
-    return m_statistic->distributionType() == DistributionType::Z ? 1 : 0;
+    return m_statistic->distributionType() == DistributionType::Z
+               ? m_statistic->significanceTestType() ==
+                         SignificanceTestType::TwoMeans
+                     ? 2
+                     : 1
+               : 0;
   }
   int indexOfEditedParameterAtIndex(int index) const override;
 

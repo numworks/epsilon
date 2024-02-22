@@ -104,7 +104,7 @@ class InputCategoricalTableCell
   virtual int relativeColumn(int column) const = 0;
   int relativeRow(int row) { return row - 1; }
   bool deleteSelectedValue();
-  Table *tableModel();
+  Table *tableModel() { return Table::FromStatistic(m_statistic); }
   const Table *constTableModel() const {
     return const_cast<InputCategoricalTableCell *>(this)->tableModel();
   }

@@ -210,34 +210,6 @@ bool InputCategoricalTableCell::recomputeDimensionsAndReload(
   return didChange;
 }
 
-Table *InputCategoricalTableCell::tableModel() {
-  if (m_statistic->subApp() == Statistic::SubApp::Test) {
-    if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
-      return static_cast<SlopeTTest *>(m_statistic);
-    } else if (m_statistic->significanceTestType() ==
-               SignificanceTestType::Categorical) {
-      return static_cast<Chi2Test *>(m_statistic);
-    }
-    assert(m_statistic->significanceTestType() ==
-           SignificanceTestType::OneMean);
-    if (m_statistic->distributionType() == DistributionType::T) {
-      return static_cast<OneMeanTTest *>(m_statistic);
-    }
-    assert(m_statistic->distributionType() == DistributionType::Z);
-    return static_cast<OneMeanZTest *>(m_statistic);
-  }
-  assert(m_statistic->subApp() == Statistic::SubApp::Interval);
-  if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
-    return static_cast<SlopeTInterval *>(m_statistic);
-  }
-  assert(m_statistic->significanceTestType() == SignificanceTestType::OneMean);
-  if (m_statistic->distributionType() == DistributionType::T) {
-    return static_cast<OneMeanTInterval *>(m_statistic);
-  }
-  assert(m_statistic->distributionType() == DistributionType::Z);
-  return static_cast<OneMeanZInterval *>(m_statistic);
-}
-
 /* DoubleColumnTableCell */
 
 DoubleColumnTableCell::DoubleColumnTableCell(Escher::Responder *parentResponder,

@@ -2,7 +2,60 @@
 
 #include <algorithm>
 
+#include "chi2_test.h"
+#include "one_mean_interval.h"
+#include "one_mean_test.h"
+#include "slope_t_interval.h"
+#include "slope_t_test.h"
+#include "statistic.h"
+#include "two_means_interval.h"
+#include "two_means_test.h"
+
 namespace Inference {
+
+Table* Table::FromStatistic(Statistic* stat) {
+  // FIXME Ugly, inferences models need a new class hierarchy
+
+  bool intervalApp = stat->subApp() == Statistic::SubApp::Interval;
+  switch (stat->significanceTestType()) {
+    case SignificanceTestType::OneMean:
+      if (intervalApp) {
+        return static_cast<OneMeanInterval*>(stat);
+      } else {
+        return static_cast<OneMeanTest*>(stat);
+      }
+    case SignificanceTestType::TwoMeans:
+      if (intervalApp) {
+        return static_cast<TwoMeansInterval*>(stat);
+      } else {
+        return static_cast<TwoMeansTest*>(stat);
+      }
+    case SignificanceTestType::Slope:
+      if (intervalApp) {
+        return static_cast<SlopeTInterval*>(stat);
+      } else {
+        return static_cast<SlopeTTest*>(stat);
+      }
+    default:
+      assert(stat->significanceTestType() == SignificanceTestType::Categorical);
+      return static_cast<Chi2Test*>(stat);
+  }
+}
+
+bool Table::hasSeries() const {
+  for (int i = 0; i < numberOfSeries(); i++) {
+    if (seriesAt(i) < 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void Table::unsetSeries(Statistic* stat) {
+  for (int i = 0; i < numberOfSeries(); i++) {
+    setSeriesAt(stat, i, -1);
+  }
+}
 
 void Table::deleteParametersInColumn(int column) {
   int nbOfRows = computeInnerDimensions().row;

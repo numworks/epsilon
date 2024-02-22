@@ -22,8 +22,10 @@ class StoreTableCell : public DoubleColumnTableCell,
       Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
 
   void fillColumnsNames();
-  int selectedSeries();
-  void setSelectedSeries(int series);
+  int selectedSeries() { return tableModel()->seriesAt(0); }
+  void setSelectedSeries(int series) {
+    tableModel()->setSeriesAt(m_statistic, 0, series);
+  }
 
   // StoreColumnHelper
   Shared::DoublePairStore *store() override {
@@ -32,7 +34,7 @@ class StoreTableCell : public DoubleColumnTableCell,
     }
     assert(m_statistic->significanceTestType() ==
            SignificanceTestType::OneMean);
-    return static_cast<OneMeanStatistic *>(tableModel());
+    return static_cast<RawDataStatistic *>(tableModel());
   }
   const Shared::DoublePairStore *store() const {
     return const_cast<StoreTableCell *>(this)->store();

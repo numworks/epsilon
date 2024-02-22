@@ -21,8 +21,11 @@ class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
   I18n::Message title() const {
     return I18n::Message::HypothesisControllerTitleSlope;
   }
-  int series() const { return m_series; }
-  void setSeries(int series) { m_series = series; }
+  int numberOfSeries() const override { return 1; }
+  int seriesAt(int) const override { return m_series; }
+  void setSeriesAt(Statistic*, int index, int series) override {
+    m_series = series;
+  }
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override {
@@ -44,7 +47,6 @@ class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
     return seriesIsValid(m_series) && numberOfPairsOfSeries(m_series) > 2;
   }
 
- private:
   // Table
   Index2D initialDimensions() const override {
     return Index2D{.row = 1, .col = 2};

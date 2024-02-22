@@ -44,6 +44,12 @@ bool StoreTableCell::textFieldDidFinishEditing(
                                  s->numberOfPairsOfSeries(t->seriesAt(1)));
   if (minLength != minLength2) {
     reload();
+    /* Move the selection, as the next could not be selected since it was
+     * hidden. */
+    if (minLength2 > minLength) {
+      m_selectableTableView.selectCellAtLocation(selectedColumn(),
+                                                 selectedRow() + 1);
+    }
   }
   return true;
 }

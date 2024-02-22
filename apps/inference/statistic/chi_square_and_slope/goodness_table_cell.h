@@ -27,7 +27,7 @@ class GoodnessTableCell : public DoubleColumnTableCell {
                                     bool forceReloadPage = false) override;
 
  private:
-  static_assert(GoodnessTest::k_maxNumberOfColumns ==
+  static_assert(GoodnessTest::k_maxNumberOfColumns <=
                     DoubleColumnTableCell::k_maxNumberOfColumns,
                 "GoodnessTest is not adjusted to the DoubleColumnTableCell");
   constexpr static I18n::Message

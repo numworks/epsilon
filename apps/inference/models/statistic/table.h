@@ -11,7 +11,7 @@ class Statistic;
 
 class Table {
  public:
-  constexpr static int k_maxNumberOfStoreColumns = 2;
+  constexpr static int k_maxNumberOfStoreColumns = 4;
 
   static Table* FromStatistic(Statistic*);
 

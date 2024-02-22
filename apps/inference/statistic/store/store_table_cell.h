@@ -22,18 +22,15 @@ class StoreTableCell : public DoubleColumnTableCell,
       Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
 
   void fillColumnsNames();
-  int selectedSeries() { return tableModel()->seriesAt(0); }
-  void setSelectedSeries(int series) {
-    tableModel()->setSeriesAt(m_statistic, 0, series);
-  }
 
   // StoreColumnHelper
   Shared::DoublePairStore *store() override {
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
       return static_cast<SlopeTStatistic *>(tableModel());
     }
-    assert(m_statistic->significanceTestType() ==
-           SignificanceTestType::OneMean);
+    assert(
+        m_statistic->significanceTestType() == SignificanceTestType::OneMean ||
+        m_statistic->significanceTestType() == SignificanceTestType::TwoMeans);
     return static_cast<RawDataStatistic *>(tableModel());
   }
   const Shared::DoublePairStore *store() const {
@@ -47,8 +44,7 @@ class StoreTableCell : public DoubleColumnTableCell,
 
   // ClearColumnHelper
   size_t fillColumnName(int column, char *buffer) override {
-    return fillColumnNameFromStore(
-        k_maxNumberOfColumns * selectedSeries() + column, buffer);
+    return fillColumnNameFromStore(column, buffer);
   }
   Escher::InputViewController *inputViewController() override;
   void reload() override;

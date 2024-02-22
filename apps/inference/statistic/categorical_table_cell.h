@@ -89,6 +89,7 @@ class InputCategoricalTableCell
 
   virtual bool recomputeDimensionsAndReload(bool forceReloadTableCell = false,
                                             bool forceReloadPage = false);
+  Table *tableModel() { return Table::FromStatistic(m_statistic); }
 
  protected:
   // ClearColumnHelper
@@ -104,7 +105,6 @@ class InputCategoricalTableCell
   virtual int relativeColumn(int column) const = 0;
   int relativeRow(int row) { return row - 1; }
   bool deleteSelectedValue();
-  Table *tableModel() { return Table::FromStatistic(m_statistic); }
   const Table *constTableModel() const {
     return const_cast<InputCategoricalTableCell *>(this)->tableModel();
   }
@@ -146,7 +146,7 @@ class DoubleColumnTableCell
     return &m_selectableTableView;
   }
 
-  constexpr static int k_maxNumberOfColumns = 2;
+  constexpr static int k_maxNumberOfColumns = 4;
   constexpr static int k_numberOfReusableCells =
       k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 

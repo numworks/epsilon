@@ -4,6 +4,7 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 
+#include "../n_ary.h"
 #include "grid.h"
 
 namespace PoincareJ {
@@ -66,16 +67,21 @@ Tree* Parser::Parse(const Tree* node) {
         expr = SharedEditionPool->push<BlockType::Matrix>(
             grid->numberOfRows() - 1, grid->numberOfColumns() - 1);
       } else {
-        // TODO PCJ
-        // expr = SharedEditionPool->push<BlockType::Piecewise>(
-        // (grid->numberOfRows() - 1) * 2);
+        expr = SharedEditionPool->push<BlockType::Piecewise>(0);
       }
       int n = grid->numberOfChildren();
+      int actualNumberOfChildren = 0;
       for (int i = 0; i < n; i++) {
         if (grid->childIsPlaceholder(i)) {
           continue;
         }
         Parse(grid->child(i));
+        actualNumberOfChildren++;
+      }
+      if (expr->isPiecewise()) {
+        /* Update number of children to take the bottom right condition only if
+         * it is not a placeholder */
+        NAry::SetNumberOfChildren(expr, actualNumberOfChildren);
       }
       return expr;
     }

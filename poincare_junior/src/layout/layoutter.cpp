@@ -46,6 +46,10 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 5;
     case BlockType::Addition:
       return 6;
+    case BlockType::MixedFraction:
+      /* Priority artificially lower than addition to force parentheses just to
+       * make it clearer */
+      return 7;
 
     case BlockType::LogicalNot:
       return 12;
@@ -349,6 +353,16 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
 #endif
       break;
     }
+    case BlockType::MixedFraction:
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      if (m_linearMode) {
+        // TODO PCJ make sure the serializer makes the distinction too
+        PushCodePoint(layoutParent, ' ');
+      }
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      break;
     case BlockType::Decimal:
       layoutIntegerHandler(layoutParent,
                            Rational::Numerator(expression->nextNode()),

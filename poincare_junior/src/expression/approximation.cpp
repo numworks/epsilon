@@ -768,6 +768,15 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       return std::round(result);
     }
+    case BlockType::MixedFraction: {
+      T integerPart = child[0];
+      T fractionPart = child[1];
+      if (fractionPart < 0.0 || integerPart != std::fabs(integerPart)) {
+        // TODO how can this happen ?
+        return NAN;
+      }
+      return child[0] + child[1];
+    }
     case BlockType::Factor:
       // Useful for the beautification only
       return child[0];

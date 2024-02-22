@@ -346,6 +346,8 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("permute(4,2)", "12");
   simplifies_to("binomial(4,2)", "6");
   // simplifies_to("(n+1)!/n!", "n+1");
+  simplifies_to("1 2/3", "5/3");
+  simplifies_to("-1 2/3", "-5/3");
 }
 
 QUIZ_CASE(pcj_simplification_percent) {

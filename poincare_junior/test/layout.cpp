@@ -36,6 +36,10 @@ QUIZ_CASE(pcj_expression_to_layout) {
   assert_trees_are_equal(
       Layoutter::LayoutExpression(KPow(KMult("x"_e, "y"_e), 2_e)->clone()),
       KRackL(KParenthesisL("x·y"_l), KVertOffL("2"_l)));
+  assert_trees_are_equal(
+      Layoutter::LayoutExpression(
+          KAdd(KMixedFraction(2_e, 1_e / 3_e), 4_e)->clone(), true),
+      KRackL(KParenthesisL("2 1/3"_l), "+"_cl, "4"_cl));
 }
 
 QUIZ_CASE(pcj_layout_decoder) {

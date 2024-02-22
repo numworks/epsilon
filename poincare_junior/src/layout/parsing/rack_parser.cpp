@@ -1272,16 +1272,16 @@ void RackParser::parsePrefixSuperscript(EditionReference &leftHandSide,
   log->removeTree();
 }
 
-bool IsIntegerBaseTenOrEmptyExpression(EditionReference e) {
-  return false;  //(e.type() == ExpressionNode::Type::BasedInteger &&
-                 // static_cast<BasedInteger &>(e).base() ==
-                 // OMG::Base::Decimal)
-                 // ||
-                 // e.type() == ExpressionNode::Type::EmptyExpression;
+bool IsIntegerBaseTenOrEmptyExpression(const Tree *e) {
+  // TODO PCJ: enforce a decimal base
+  /* TODO PCJ: the OrEmpty part was used to parsed a mixed fraction with three
+   * empty squares inserted from the toolbox: make sure it works by inserting a
+   * layout directly and remove this part. */
+  return e->isInteger();
 }
 
 bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
-  if (true /*m_parsingContext.context() &&
+  if (false /*m_parsingContext.context() &&
              !Preferences::SharedPreferences()->mixedFractionsAreEnabled()*/) {
     /* If m_context == nullptr, the expression has already been parsed.
      * We do not escape here because we want to parse it the same way it was
@@ -1302,21 +1302,16 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
   if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
       // The next token is either a number or empty
       && m_nextToken.is(Token::Type::Number)) {
+    // TODO PCJ: or popToken is a FractionLayout
     m_waitingSlashForMixedFraction = true;
     EditionReference rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
     if (!rightHandSide.isUninitialized() && rightHandSide->isDivision() &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
-#if 0
       // The following expression looks like "int/int" -> it's a mixedFraction
-      leftHandSide = MixedFraction::Builder(
-          leftHandSide, static_cast<Division &>(rightHandSide));
+      CloneNodeAtNode(leftHandSide, KMixedFraction);
       return true;
-#else
-      // FIXME
-      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
     }
   }
   restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken,

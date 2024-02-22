@@ -292,6 +292,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
               ? Sign::PositiveOrNull()
               : Sign::Unknown(),
           Sign::Zero());
+    case BlockType::MixedFraction:
+      return Get(t->firstChild());
 #endif
     default:
       return Unknown();

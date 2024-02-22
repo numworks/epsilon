@@ -77,6 +77,7 @@ constexpr auto KBinomial = KBinary<BlockType::Binomial>();
 constexpr auto KPermute = KBinary<BlockType::Permute>();
 constexpr auto KNthRoot = KBinary<BlockType::NthRoot>();
 constexpr auto KPercentAddition = KBinary<BlockType::PercentAddition>();
+constexpr auto KMixedFraction = KBinary<BlockType::MixedFraction>();
 constexpr auto KPoint = KBinary<BlockType::Point>();
 
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();

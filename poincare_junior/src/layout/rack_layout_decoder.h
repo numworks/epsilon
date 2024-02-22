@@ -35,7 +35,8 @@ class RackLayoutDecoder : public UnicodeDecoder {
   CodePoint nextCodePoint() override { return codePointAt(m_position++); }
   CodePoint previousCodePoint() override { return codePointAt(--m_position); }
   void setPosition(size_t index) {
-    assert(0 <= index && index <= m_end);
+    // Parser can setPosition when already one past the end for the next token
+    assert(0 <= index && index <= m_end + 1);
     m_position = index;
   }
   void setPosition(const Tree* child) {

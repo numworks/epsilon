@@ -170,6 +170,10 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
       // A / B -> A * B^-1
       PatternMatching::MatchAndReplace(ref, KDiv(KA, KB),
                                        KMult(KA, KPow(KB, -1_e))) ||
+      // MixedFraction(A + B/C) -> A + B/C
+      // TODO assert KB is a simple rational
+      PatternMatching::MatchAndReplace(ref, KMixedFraction(KA, KB),
+                                       KAdd(KA, KB)) ||
       // cos(A) -> trig(A, 0)
       PatternMatching::MatchAndReplace(ref, KCos(KA), KTrig(KA, 0_e)) ||
       // sin(A) -> trig(A, 1)

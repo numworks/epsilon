@@ -54,6 +54,25 @@ bool StoreTableCell::textFieldDidFinishEditing(
   return true;
 }
 
+int StoreTableCell::indexOfNextSelectableColumnOrRow(int delta, int currentCol,
+                                                     int currentRow,
+                                                     bool searchRow) {
+  if (!searchRow) {
+    /* Never skip a column, they are never empty. */
+    return std::clamp<int>(currentCol + delta, 0, m_numberOfColumns);
+  }
+
+  /* The columns fill up from the top, so search upwards for a visible cell. */
+  int row = currentRow + delta;
+  HighlightCell *cell;
+  while (row > 0 && ((cell = m_selectableTableView.cellAtLocation(
+                          currentCol, row)) == nullptr ||
+                     !cell->isVisible())) {
+    --row;
+  }
+  return row;
+}
+
 void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
                                          int column, int row) {
   DoubleColumnTableCell::fillCellForLocation(cell, column, row);

@@ -151,7 +151,7 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
       foundMin = foundMin && foundMax;
     }
     if (foundMin && foundMax) {
-      return;  // Two extremum have been found
+      break;  // Two extremum have been found
     }
     lastMinExtremum++;
     lastMaxExtremum++;

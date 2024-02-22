@@ -35,7 +35,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Home::App::Snapshot* homeAppSnapshot() { return &m_homeSnapshot; }
   void setExamMode(Poincare::ExamMode targetExamMode);
   Shared::GlobalContext* globalContext();
-  void didSuspend(bool checkIfOnOffKeyReleased = false);
+  void didSuspend();
   bool dispatchEvent(Ion::Events::Event event) override;
   void switchToBuiltinApp(Escher::App::Snapshot* snapshot) override;
   void switchToExternalApp(Ion::ExternalApps::App app);

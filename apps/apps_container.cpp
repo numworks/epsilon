@@ -94,7 +94,7 @@ Shared::GlobalContext* AppsContainer::globalContext() {
   return &m_globalContext;
 }
 
-void AppsContainer::didSuspend(bool checkIfOnOffKeyReleased) {
+void AppsContainer::didSuspend() {
   resetShiftAlphaStatus();
   GlobalPreferences* globalPreferences =
       GlobalPreferences::sharedGlobalPreferences;
@@ -208,7 +208,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OnOff) {
-    didSuspend(true);
+    didSuspend();
     return true;
   }
   return false;

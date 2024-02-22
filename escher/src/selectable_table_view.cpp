@@ -56,6 +56,13 @@ int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col,
   assert((searchForRow && col < totalNumberOfColumns() && col >= 0) ||
          (!searchForRow && row < totalNumberOfRows() && row >= 0));
   assert(delta != 0);
+  int delegateIndex;
+  if (m_delegate &&
+      (delegateIndex = m_delegate->indexOfNextSelectableColumnOrRow(
+           delta, col, row, searchForRow)) >= 0) {
+    return delegateIndex;
+  }
+
   // Let's call our variable cow, as a shortcut for col-or-row
   int cow = searchForRow ? row : col;
   int selectableCow = -1;

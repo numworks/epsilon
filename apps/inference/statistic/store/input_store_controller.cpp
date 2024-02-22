@@ -14,6 +14,7 @@ InputStoreController::InputStoreController(StackViewController* parent,
       m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
       m_extraParameters{
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
+          InputCategoricalCell<LayoutView>(&m_selectableListView, this),
       },
       m_slopeTableCell(&m_selectableListView, statistic, context, this),
       m_secondStackController(this, &m_storeParameterController,

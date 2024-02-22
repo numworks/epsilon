@@ -36,9 +36,16 @@ class InputStoreController : public InputCategoricalController,
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
+  void initSeriesSelection() {
+    selectSeriesForDropdownRow(m_dropdownCell.dropdown()->selectedRow());
+  }
+
  private:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:
+    static int Series1ForRow(int row) { return row == 2 ? 1 : 0; }
+    static int Series2ForRow(int row) { return row == 0 ? 1 : 2; }
+
     int numberOfRows() const override { return k_numberOfRows; }
     Escher::HighlightCell* cell(int row) override { return &m_cells[row]; }
 
@@ -89,6 +96,7 @@ class InputStoreController : public InputCategoricalController,
                : 0;
   }
   int indexOfEditedParameterAtIndex(int index) const override;
+  void selectSeriesForDropdownRow(int row);
 
   DropdownDataSource m_dropdownDataSource;
   DropdownCategoricalCell m_dropdownCell;

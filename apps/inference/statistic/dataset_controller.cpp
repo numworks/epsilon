@@ -28,12 +28,7 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
     stackOpenPage(m_inputController);
   } else {
     assert(row == k_indexOfDatasetCell);
-    if (!tableModel->hasSeries()) {
-      tableModel->setSeriesAt(m_statistic, 0, 0);
-      if (tableModel->numberOfSeries() > 1) {
-        tableModel->setSeriesAt(m_statistic, 1, 1);
-      }
-    }
+    m_storeController->initSeriesSelection();
     stackOpenPage(m_storeController);
   }
   return true;

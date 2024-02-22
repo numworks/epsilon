@@ -46,15 +46,7 @@ bool InputStoreController::handleEvent(Ion::Events::Event event) {
 }
 
 void InputStoreController::onDropdownSelected(int selectedRow) {
-  Table* tableModel = m_slopeTableCell.tableModel();
-  if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
-    assert(tableModel->numberOfSeries() == 2);
-    tableModel->setSeriesAt(m_statistic, 0, selectedRow / 2);
-    tableModel->setSeriesAt(m_statistic, 1, ((selectedRow + 1) / 2) + 1);
-  } else {
-    tableModel->setSeriesAt(m_statistic, 0, selectedRow);
-  }
-
+  selectSeriesForDropdownRow(selectedRow);
   m_slopeTableCell.recomputeDimensionsAndReload(true);
 }
 
@@ -106,6 +98,22 @@ int InputStoreController::indexOfEditedParameterAtIndex(int index) const {
   }
   assert(m_statistic->distributionType() == DistributionType::Z);
   return OneMean::ParamsOrder::s;
+}
+
+void InputStoreController::selectSeriesForDropdownRow(int row) {
+  if (row < 0) {
+    row = 0;
+  }
+  Table* tableModel = m_slopeTableCell.tableModel();
+  if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
+    assert(tableModel->numberOfSeries() == 2);
+    tableModel->setSeriesAt(m_statistic, 0,
+                            DropdownDataSource::Series1ForRow(row));
+    tableModel->setSeriesAt(m_statistic, 1,
+                            DropdownDataSource::Series2ForRow(row));
+  } else {
+    tableModel->setSeriesAt(m_statistic, 0, row);
+  }
 }
 
 }  // namespace Inference

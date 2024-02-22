@@ -1,18 +1,22 @@
 #include <apps/shared/global_context.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
-#include <poincare/src/parsing/parser.h>
 #include <poincare_expressions.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
+#include <poincare_junior/src/layout/rack_from_text.h>
 
 #include "helper.h"
 #include "tree/helpers.h"
 
 using namespace Poincare;
+using PoincareJ::ParsingContext;
+using PoincareJ::Token;
+using PoincareJ::Tokenizer;
 
 void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
-  ParsingContext parsingContext(nullptr,
-                                ParsingContext::ParsingMethod::Classic);
-  Tokenizer tokenizer(string, &parsingContext);
+  PoincareJ::Tree* inputLayout = PoincareJ::RackFromText(string);
+  ParsingContext parsingContext(ParsingContext::ParsingMethod::Classic);
+  Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
     quiz_assert_print_if_failure(token.type() == *tokenTypes, string);
@@ -39,9 +43,9 @@ void assert_tokenizes_as_constant(const char* string) {
 }
 
 void assert_tokenizes_as_undefined_token(const char* string) {
-  ParsingContext parsingContext(nullptr,
-                                ParsingContext::ParsingMethod::Classic);
-  Tokenizer tokenizer(string, &parsingContext);
+  PoincareJ::Tree* inputLayout = PoincareJ::RackFromText(string);
+  ParsingContext parsingContext(ParsingContext::ParsingMethod::Classic);
+  Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
     if (token.type() == Token::Type::Undefined) {

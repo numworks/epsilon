@@ -33,6 +33,7 @@ Troolean Domain::ExpressionIsIn(const Tree *expression, Type type,
   }
 
   if (!expression->isRational()) {
+    // TODO we could leverage sign analysis to give an anwser on some domains
     return Troolean::Unknown;
   }
 

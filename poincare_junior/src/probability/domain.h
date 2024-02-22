@@ -23,9 +23,9 @@ class Domain {
     RPlus = 1 << 4,
     RPlusStar = 1 << 5,
     RMinus = 1 << 6,
-    UnitSegment = 1 << 7,
-    LeftOpenUnitSegment = 1 << 8,
-    OpenUnitSegment = 1 << 9,
+    UnitSegment = 1 << 7,          // [0, 1]
+    LeftOpenUnitSegment = 1 << 8,  // ]0, 1]
+    OpenUnitSegment = 1 << 9,      // ]0, 1[
   };
 
   constexpr static Type k_nonZero = static_cast<Type>(

@@ -10,6 +10,9 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
  public:
   using TwoMeansStatistic::TwoMeansStatistic;
 
+  void init() override { initDatasetsIfSeries(); }
+  void tidy() override { tidyDatasets(); }
+
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::TwoMeans;
   }

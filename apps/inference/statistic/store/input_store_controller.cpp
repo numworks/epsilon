@@ -82,8 +82,21 @@ void InputStoreController::viewWillAppear() {
 
   m_dropdownCell.dropdown()->init();
   for (int row = 0; row < m_dropdownDataSource.numberOfRows(); row++) {
-    char index = '1' + row;
-    char buffer[] = {listPrefix(0), index, '/', listPrefix(1), index, '\0'};
+    char buffer[] = "Ai/Bi,Aj/Bj";
+    buffer[0] = listPrefix(0);
+    buffer[3] = listPrefix(1);
+    if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
+      char i = '1' + DropdownDataSource::Series1ForRow(row);
+      char j = '1' + DropdownDataSource::Series2ForRow(row);
+      buffer[6] = listPrefix(0);
+      buffer[9] = listPrefix(1);
+      buffer[1] = buffer[4] = i;
+      buffer[7] = buffer[10] = j;
+    } else {
+      char i = '1' + row;
+      buffer[1] = buffer[4] = i;
+      buffer[5] = '\0';
+    }
     static_cast<SmallBufferTextHighlightCell*>(m_dropdownDataSource.cell(row))
         ->setText(buffer);
   }

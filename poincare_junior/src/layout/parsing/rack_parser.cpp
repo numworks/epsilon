@@ -428,7 +428,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     if (!plus) {
       // TODO Opposite instead of multiplication by -1
       CloneTreeAtNode(leftHandSide, -1_e);
-      CloneNodeAtNode(leftHandSide, KTree<BlockType::Multiplication, 2>());
+      CloneNodeAtNode(leftHandSide, KMult.node<2>);
     }
     return;
   }
@@ -446,7 +446,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() + 1);
   } else {
-    CloneNodeAtNode(leftHandSide, KTree<BlockType::Addition, 2>());
+    CloneNodeAtNode(leftHandSide, KAdd.node<2>);
   }
 }
 
@@ -478,10 +478,10 @@ bool RackParser::mergeIntoPercentAdditionIfNeeded(
       rightHandSide->child(0)->isPercentSimple()) {
     return false;
   }
-  CloneNodeAtNode(leftHandSide, KTree<BlockType::PercentAddition>());
+  CloneNodeAtNode(leftHandSide, KPercentAddition);
   MoveNodeOverNode(rightHandSide, rightHandSide->child(0));
   if (!north) {
-    CloneNodeAtNode(rightHandSide, KTree<BlockType::Opposite>());
+    CloneNodeAtNode(rightHandSide, KOpposite);
   }
   return true;
 }
@@ -518,7 +518,7 @@ void RackParser::parseSlash(EditionReference &leftHandSide,
                             Token::Type stoppingType) {
   EditionReference rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash);
-  CloneNodeAtNode(leftHandSide, KTree<BlockType::Division>());
+  CloneNodeAtNode(leftHandSide, KDiv);
 }
 
 void RackParser::privateParseTimes(EditionReference &leftHandSide,
@@ -529,7 +529,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() + 1);
   } else {
-    CloneNodeAtNode(leftHandSide, KTree<BlockType::Multiplication, 2>());
+    CloneNodeAtNode(leftHandSide, KMult.node<2>);
   }
 }
 
@@ -543,7 +543,7 @@ void RackParser::parseCaret(EditionReference &leftHandSide,
                             Token::Type stoppingType) {
   EditionReference rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::ImplicitTimes);
-  turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide, rightHandSide);
+  turnIntoBinaryNode(KPow, leftHandSide, rightHandSide);
 }
 
 void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
@@ -729,7 +729,7 @@ void RackParser::parseBang(EditionReference &leftHandSide,
     // Left-hand side missing
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   } else {
-    CloneNodeAtNode(leftHandSide, KTree<BlockType::Factorial>());
+    CloneNodeAtNode(leftHandSide, KFact);
   }
   isThereImplicitOperator();
 }
@@ -740,7 +740,7 @@ void RackParser::parsePercent(EditionReference &leftHandSide,
     // Left-hand side missing
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  CloneNodeAtNode(leftHandSide, KTree<BlockType::PercentSimple>());
+  CloneNodeAtNode(leftHandSide, KPercentSimple);
   isThereImplicitOperator();
 }
 
@@ -1240,7 +1240,7 @@ void RackParser::parseSuperscript(EditionReference &leftHandSide,
   if (rightHandSide.isUninitialized()) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide, rightHandSide);
+  turnIntoBinaryNode(KPow, leftHandSide, rightHandSide);
   isThereImplicitOperator();
 }
 

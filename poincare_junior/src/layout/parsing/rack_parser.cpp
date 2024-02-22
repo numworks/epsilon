@@ -1240,6 +1240,10 @@ void RackParser::parseSuperscript(EditionReference &leftHandSide,
   if (rightHandSide.isUninitialized()) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
+  if (popTokenIfType(Token::Type::Superscript)) {
+    // a^b^c -> a^(b^c)
+    parseSuperscript(rightHandSide);
+  }
   turnIntoBinaryNode(KPow, leftHandSide, rightHandSide);
   isThereImplicitOperator();
 }

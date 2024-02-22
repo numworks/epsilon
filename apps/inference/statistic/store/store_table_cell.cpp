@@ -25,6 +25,7 @@ StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
 void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
                                          int column, int row) {
   DoubleColumnTableCell::fillCellForLocation(cell, column, row);
+
   if (typeAtLocation(column, row) == k_typeOfHeaderCells) {
     Shared::BufferFunctionTitleCell *headerCell =
         static_cast<Shared::BufferFunctionTitleCell *>(cell);
@@ -33,7 +34,15 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
     headerCell->setColor(
         store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
     fillColumnName(column, const_cast<char *>(headerCell->text()));
+    return;
   }
+
+  assert(typeAtLocation(column, row) == k_typeOfInnerCells);
+  /* Hide cells to avoid padding a shorter series with empty cells.
+   * FIXME This is a hack to simulate the behavior of a StoreController, the
+   * classes should be factorized. */
+  cell->setVisible(row - 1 <= store()->numberOfPairsOfSeries(
+                                  store()->seriesAtColumn(column)));
 }
 
 InputViewController *StoreTableCell::inputViewController() {

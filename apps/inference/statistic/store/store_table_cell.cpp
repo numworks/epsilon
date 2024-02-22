@@ -17,7 +17,6 @@ StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
       StoreColumnHelper(this, parentContext, this),
       m_inputStoreController(inputStoreController) {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
-    m_header[i].setColor(Escher::Palette::Red);
     m_header[i].setEven(true);
     m_header[i].setFont(KDFont::Size::Small);
   }
@@ -29,6 +28,8 @@ void StoreTableCell::fillHeaderCellAtColumn(Escher::HighlightCell *cell,
       static_cast<Shared::BufferFunctionTitleCell *>(cell);
   assert(m_header <= headerCell &&
          headerCell < m_header + Table::k_maxNumberOfStoreColumns);
+  headerCell->setColor(
+      store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
   fillColumnName(column, const_cast<char *>(headerCell->text()));
 }
 

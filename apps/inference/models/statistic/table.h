@@ -7,9 +7,20 @@
 
 namespace Inference {
 
+class Statistic;
+
 class Table {
  public:
   constexpr static int k_maxNumberOfStoreColumns = 2;
+
+  static Table* FromStatistic(Statistic*);
+
+  // Store functions
+  virtual int numberOfSeries() const { return 0; }
+  virtual int seriesAt(int index) const { return -1; }
+  virtual void setSeriesAt(Statistic*, int index, int series) {}
+  bool hasSeries() const;
+  void unsetSeries(Statistic*);
 
   // Matrix special functions
   virtual void setParameterAtPosition(double value, int row, int column) = 0;

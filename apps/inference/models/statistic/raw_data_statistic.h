@@ -19,15 +19,11 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
   RawDataStatistic(Shared::GlobalContext* context)
       : StatisticsStore(context, &m_storePreferences), m_series{-1, -1} {}
 
-  virtual int numberOfSeries() const = 0;
-
-  bool hasSeries() const;
-  int seriesAt(int index) const {
+  int seriesAt(int index) const override {
     assert(index < numberOfSeries() && index < k_maxNumberOfSeries);
     return m_series[index];
   }
-  void setSeriesAt(Statistic* stat, int index, int series);
-  void unsetSeries(Statistic* stat);
+  void setSeriesAt(Statistic* stat, int index, int series) override;
   bool parametersAreValid(Statistic* stat);
 
   // DoublePairStore

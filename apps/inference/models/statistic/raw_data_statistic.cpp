@@ -2,27 +2,12 @@
 
 namespace Inference {
 
-bool RawDataStatistic::hasSeries() const {
-  for (int i = 0; i < numberOfSeries(); i++) {
-    if (m_series[i] < 0) {
-      return false;
-    }
-  }
-  return true;
-}
-
 void RawDataStatistic::setSeriesAt(Statistic* stat, int index, int series) {
   m_series[index] = series;
   if (!hasSeries() && !stat->validateInputs()) {
     stat->initParameters();
   }
   initDatasetsIfSeries();
-}
-
-void RawDataStatistic::unsetSeries(Statistic* stat) {
-  for (int i = 0; i < numberOfSeries(); i++) {
-    setSeriesAt(stat, i, -1);
-  }
 }
 
 bool RawDataStatistic::parametersAreValid(Statistic* stat) {

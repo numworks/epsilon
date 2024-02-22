@@ -37,8 +37,6 @@ class DatasetController
   constexpr static int k_indexOfInputStatisticsCell = 0;
   constexpr static int k_indexOfDatasetCell = 1;
 
-  RawDataStatistic* rawDataStatistic() const;
-
   InputController* m_inputController;
   InputStoreController* m_storeController;
   Statistic* m_statistic;

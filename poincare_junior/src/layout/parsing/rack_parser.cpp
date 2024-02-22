@@ -187,6 +187,7 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
       &RackParser::parseLayout,             // Token::Type::Layout
       &RackParser::parseUnexpected,         // Token::Type::Subscript
       &RackParser::parseSuperscript,        // Token::Type::Superscript
+      &RackParser::parsePrefixSuperscript,  // Token::Type::PrefixSuperscript
       &RackParser::parseUnexpected          // Token::Type::Undefined
   };
 #define assert_order(token, function)                                 \
@@ -232,6 +233,7 @@ Tree *RackParser::parseUntil(Token::Type stoppingType,
   assert_order(Token::Type::Layout, parseLayout);
   assert_order(Token::Type::Subscript, parseUnexpected);
   assert_order(Token::Type::Superscript, parseSuperscript);
+  assert_order(Token::Type::PrefixSuperscript, parsePrefixSuperscript);
   assert_order(Token::Type::Undefined, parseUnexpected);
 
   do {
@@ -1240,6 +1242,30 @@ void RackParser::parseSuperscript(EditionReference &leftHandSide,
   }
   turnIntoBinaryNode(KTree<BlockType::Power>(), leftHandSide, rightHandSide);
   isThereImplicitOperator();
+}
+
+void RackParser::parsePrefixSuperscript(EditionReference &leftHandSide,
+                                        Token::Type stoppingType) {
+  // Only used for NL-logarithm
+  if (!leftHandSide.isUninitialized()) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  const Tree *layout = m_currentToken.firstLayout();
+  EditionReference base = Parser::Parse(layout->child(0));
+  if (base.isUninitialized()) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  popToken();
+  EditionReference log;
+  parseReservedFunction(log, Token::Type::ImplicitTimes);
+  if (log.isUninitialized() || !log->isLog()) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  // Turn log into logarithm
+  leftHandSide = PatternMatching::Create(KLogarithm(KA, KB),
+                                         {.KA = log->firstChild(), .KB = base});
+  base->removeTree();
+  log->removeTree();
 }
 
 bool IsIntegerBaseTenOrEmptyExpression(EditionReference e) {

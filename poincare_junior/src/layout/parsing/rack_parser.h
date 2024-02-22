@@ -139,6 +139,8 @@ class RackParser {
                    Token::Type stoppingType = (Token::Type)0);
   void parseSuperscript(EditionReference& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0);
+  void parsePrefixSuperscript(EditionReference& leftHandSide,
+                              Token::Type stoppingType = (Token::Type)0);
   // Parsing helpers
   void privateParsePlusAndMinus(EditionReference& leftHandSide, bool plus,
                                 Token::Type stoppingType = (Token::Type)0);

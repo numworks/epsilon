@@ -170,9 +170,13 @@ Token Tokenizer::popToken() {
   if (!m_decoder.nextLayoutIsCodePoint()) {
     const Tree* layout = m_decoder.nextLayout();
     Token::Type type = Token::Type::Layout;
-    if (layout->isVerticalOffsetLayout() && VerticalOffset::IsSuffix(layout)) {
-      type = VerticalOffset::IsSuperscript(layout) ? Token::Type::Superscript
-                                                   : Token::Type::Subscript;
+    if (layout->isVerticalOffsetLayout()) {
+      if (VerticalOffset::IsSuffix(layout)) {
+        type = VerticalOffset::IsSuperscript(layout) ? Token::Type::Superscript
+                                                     : Token::Type::Subscript;
+      } else if (VerticalOffset::IsSuperscript(layout)) {
+        type = Token::Type::PrefixSuperscript;
+      }
     }
     return Token(type, layout);
   }

@@ -59,6 +59,7 @@ class Token {
     Layout,
     Subscript,
     Superscript,
+    PrefixSuperscript,
     Undefined
   };
 

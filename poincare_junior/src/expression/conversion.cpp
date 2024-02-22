@@ -313,8 +313,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       SharedEditionPool->push(BlockType::Factorial);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Opposite:
-      SharedEditionPool->push<BlockType::Multiplication>(2);
-      SharedEditionPool->push(BlockType::MinusOne);
+      SharedEditionPool->push(BlockType::Opposite);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::SquareRoot:
       SharedEditionPool->push(BlockType::SquareRoot);
@@ -446,6 +445,56 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       SharedEditionPool->push(BlockType::PercentAddition);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::ListElement:
+      SharedEditionPool->push(BlockType::ListElement);
+      // list is last in poincare
+      PushPoincareExpression(exp.childAtIndex(1));
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ListSlice:
+      SharedEditionPool->push(BlockType::ListSlice);
+      // list is last in poincare
+      PushPoincareExpression(exp.childAtIndex(2));
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::Boolean:
+      SharedEditionPool->push(static_cast<Poincare::Boolean &>(exp).value()
+                                  ? BlockType::True
+                                  : BlockType::False);
+      return;
+    case OT::LogicalOperatorNot:
+      SharedEditionPool->push(BlockType::LogicalNot);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::BinaryLogicalOperator: {
+      Poincare::BinaryLogicalOperator op =
+          static_cast<Poincare::BinaryLogicalOperator &>(exp);
+      BlockType type;
+      switch (op.operatorType()) {
+        case Poincare::BinaryLogicalOperatorNode::OperatorType::And:
+          type = BlockType::LogicalAnd;
+          break;
+        case Poincare::BinaryLogicalOperatorNode::OperatorType::Or:
+          type = BlockType::LogicalOr;
+          break;
+        case Poincare::BinaryLogicalOperatorNode::OperatorType::Xor:
+          type = BlockType::LogicalXor;
+          break;
+        case Poincare::BinaryLogicalOperatorNode::OperatorType::Nand:
+          type = BlockType::LogicalNand;
+          break;
+        case Poincare::BinaryLogicalOperatorNode::OperatorType::Nor:
+          type = BlockType::LogicalNor;
+          break;
+        default:
+          assert(false);
+      }
+      SharedEditionPool->push(type);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
+    }
+    case OT::Point:
+      SharedEditionPool->push(BlockType::Point);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
     case OT::Logarithm:
       if (exp.numberOfChildren() == 2) {
         SharedEditionPool->push(BlockType::Logarithm);
@@ -485,6 +534,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::Addition:
     case OT::PiecewiseOperator:
     case OT::Multiplication:
+    case OT::List:
     case OT::Subtraction:
     case OT::Division:
     case OT::Power:
@@ -496,6 +546,9 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
         case OT::Multiplication:
           SharedEditionPool->push<BlockType::Multiplication>(
               exp.numberOfChildren());
+          break;
+        case OT::List:
+          SharedEditionPool->push<BlockType::List>(exp.numberOfChildren());
           break;
         case OT::PiecewiseOperator:
           SharedEditionPool->push<BlockType::Piecewise>(exp.numberOfChildren());

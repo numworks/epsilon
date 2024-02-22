@@ -158,6 +158,14 @@ class BinaryLogicalOperator : public Expression {
       Expression firstChild, Expression secondChild,
       BinaryLogicalOperatorNode::OperatorType type);
   Expression shallowReduce(ReductionContext reductionContext);
+  BinaryLogicalOperatorNode::OperatorType operatorType() const {
+    return node()->operatorType();
+  }
+
+ private:
+  BinaryLogicalOperatorNode* node() const {
+    return static_cast<BinaryLogicalOperatorNode*>(Expression::node());
+  }
 };
 
 }  // namespace Poincare

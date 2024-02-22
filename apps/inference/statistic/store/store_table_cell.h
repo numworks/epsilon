@@ -25,6 +25,10 @@ class StoreTableCell : public DoubleColumnTableCell,
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  Ion::Events::Event event) override;
 
+  // SelectableTableViewDelegate
+  int indexOfNextSelectableColumnOrRow(int delta, int currentCol,
+                                       int currentRow, bool searchRow) override;
+
   // StoreColumnHelper
   Shared::DoublePairStore *store() override {
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {

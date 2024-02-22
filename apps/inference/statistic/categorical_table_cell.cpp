@@ -228,7 +228,7 @@ int DoubleColumnTableCell::reusableCellCount(int type) const {
 HighlightCell *DoubleColumnTableCell::reusableCell(int i, int type) {
   assert(i < reusableCellCount(type));
   if (type == k_typeOfHeaderCells) {
-    assert(i < 2);
+    assert(i < k_maxNumberOfColumns);
     return headerCell(i);
   }
   return cell(i);

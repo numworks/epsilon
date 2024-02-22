@@ -24,7 +24,7 @@ StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
 }
 
 void StoreTableCell::fillColumnsNames() {
-  for (int i = 0; i < k_maxNumberOfColumns; i++) {
+  for (int i = 0; i < m_numberOfColumns; i++) {
     /* We delayed filling the column names X1, Y1 to ensure that the underlying
      * model was a valid DoublePairStore. */
     fillColumnName(i, const_cast<char *>(m_header[i].text()));

@@ -21,6 +21,10 @@ class StoreTableCell : public DoubleColumnTableCell,
   constexpr static int k_numberOfReusableCells =
       Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
 
+  // TextFieldDelegate
+  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+                                 Ion::Events::Event event) override;
+
   // StoreColumnHelper
   Shared::DoublePairStore *store() override {
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {

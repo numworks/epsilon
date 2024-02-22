@@ -22,6 +22,32 @@ StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
   }
 }
 
+bool StoreTableCell::textFieldDidFinishEditing(
+    Escher::AbstractTextField *textField, Ion::Events::Event event) {
+  Table *t = tableModel();
+  if (t->numberOfSeries() == 1) {
+    return DoubleColumnTableCell::textFieldDidFinishEditing(textField, event);
+  }
+
+  assert(t->numberOfSeries() == 2);
+  Shared::DoublePairStore *s = store();
+  int minLength = std::min<int>(s->numberOfPairsOfSeries(t->seriesAt(0)),
+                                s->numberOfPairsOfSeries(t->seriesAt(1)));
+
+  if (!DoubleColumnTableCell::textFieldDidFinishEditing(textField, event)) {
+    return false;
+  }
+  /* Even though the table size may not have changed, reload to update the
+   * visibility of the cells if the shorter series length has changed. */
+
+  int minLength2 = std::min<int>(s->numberOfPairsOfSeries(t->seriesAt(0)),
+                                 s->numberOfPairsOfSeries(t->seriesAt(1)));
+  if (minLength != minLength2) {
+    reload();
+  }
+  return true;
+}
+
 void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
                                          int column, int row) {
   DoubleColumnTableCell::fillCellForLocation(cell, column, row);

@@ -13,6 +13,10 @@ Troolean Domain::ExpressionIsIn(const Tree *expression, Type type,
 
   ComplexSign sign = ComplexSign::Get(expression);
 
+  if (!sign.isReal()) {
+    return Troolean::Unknown;
+  }
+
   Troolean isPositive = sign.realSign().isPositive()      ? Troolean::True
                         : sign.realSign().canBePositive() ? Troolean::Unknown
                                                           : Troolean::False;
@@ -26,10 +30,6 @@ Troolean Domain::ExpressionIsIn(const Tree *expression, Type type,
     if (isPositive != Troolean::False) {
       return isPositive == Troolean::True ? Troolean::False : Troolean::Unknown;
     }
-  }
-
-  if (!sign.isReal()) {
-    return Troolean::Unknown;
   }
 
   if (!expression->isRational()) {

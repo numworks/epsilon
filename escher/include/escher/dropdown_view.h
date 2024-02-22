@@ -58,6 +58,7 @@ class Dropdown : public PopupItemView, public Responder {
   Responder* responder() override { return this; }
   bool handleEvent(Ion::Events::Event e) override;
   void init();
+  int selectedRow() const { return m_popup.selectedRow(); }
   void selectRow(int row);
 
   void open();

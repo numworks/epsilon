@@ -22,15 +22,18 @@ StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
   }
 }
 
-void StoreTableCell::fillHeaderCellAtColumn(Escher::HighlightCell *cell,
-                                            int column) {
-  Shared::BufferFunctionTitleCell *headerCell =
-      static_cast<Shared::BufferFunctionTitleCell *>(cell);
-  assert(m_header <= headerCell &&
-         headerCell < m_header + Table::k_maxNumberOfStoreColumns);
-  headerCell->setColor(
-      store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
-  fillColumnName(column, const_cast<char *>(headerCell->text()));
+void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
+                                         int column, int row) {
+  DoubleColumnTableCell::fillCellForLocation(cell, column, row);
+  if (typeAtLocation(column, row) == k_typeOfHeaderCells) {
+    Shared::BufferFunctionTitleCell *headerCell =
+        static_cast<Shared::BufferFunctionTitleCell *>(cell);
+    assert(m_header <= headerCell &&
+           headerCell < m_header + Table::k_maxNumberOfStoreColumns);
+    headerCell->setColor(
+        store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
+    fillColumnName(column, const_cast<char *>(headerCell->text()));
+  }
 }
 
 InputViewController *StoreTableCell::inputViewController() {

@@ -237,7 +237,7 @@ HighlightCell *DoubleColumnTableCell::reusableCell(int i, int type) {
 void DoubleColumnTableCell::fillCellForLocation(Escher::HighlightCell *cell,
                                                 int column, int row) {
   if (typeAtLocation(column, row) == k_typeOfHeaderCells) {
-    return fillHeaderCellAtColumn(cell, column);
+    return;
   }
   InferenceEvenOddEditableCell *myCell =
       static_cast<InferenceEvenOddEditableCell *>(cell);

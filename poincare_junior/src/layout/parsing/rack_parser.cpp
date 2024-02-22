@@ -1166,7 +1166,7 @@ Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
       m_nextToken.firstLayout()->isParenthesisLayout()) {
     assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
-    RackParser subParser(m_nextToken.firstLayout()->nextNode(), 0,
+    RackParser subParser(m_nextToken.firstLayout()->nextNode(), -1,
                          ParsingContext::ParsingMethod::CommaSeparatedList);
     popToken();
     return subParser.parse();

@@ -54,6 +54,7 @@ QUIZ_CASE(pcj_layout_parse) {
   quiz_assert(is_parsable(
       KRackL(KCodePointL<'1'>(), KCodePointL<u'ᴇ'>(), KCodePointL<'2'>())));
   quiz_assert(is_parsable("-1"_l));
+  quiz_assert(is_parsable(".1"_l));
   quiz_assert(is_parsable("1+2+3+4+5+6"_l));
   quiz_assert(is_parsable("(1+(2+(3+4)))"_l));
   quiz_assert(is_parsable(KRackL(KFracL("2"_l, "3"_l), KParenthesisL("4"_l))));

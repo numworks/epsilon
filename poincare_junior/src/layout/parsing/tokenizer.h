@@ -19,7 +19,7 @@ class Tokenizer {
 
  public:
   Tokenizer(const Tree* node, ParsingContext* parsingContext,
-            size_t textStart = 0, size_t textEnd = 0)
+            size_t textStart = 0, int textEnd = -1)
       : m_decoder(node, textStart, textEnd),
         m_parsingContext(parsingContext),
         m_numberOfStoredIdentifiers(0) {}

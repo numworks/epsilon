@@ -16,9 +16,10 @@ namespace PoincareJ {
 class RackLayoutDecoder : public UnicodeDecoder {
  public:
   RackLayoutDecoder(const Tree* layout, size_t initialPosition = 0,
-                    size_t layoutEnd = 0)
-      : UnicodeDecoder(initialPosition,
-                       layoutEnd ? layoutEnd : layout->numberOfChildren()),
+                    int layoutEnd = -1)
+      : UnicodeDecoder(initialPosition, layoutEnd != -1
+                                            ? layoutEnd
+                                            : layout->numberOfChildren()),
         m_layout(layout) {
     assert(layout->isRackLayout());
     if (m_position > m_end) {

@@ -261,13 +261,19 @@ NODE(Unit, 0, 2)
 NODE(PhysicalConstant, 0, 1)
 
 // 9 - Order dependant expressions
+
 NODE(Dependency, 2)
 NODE(Piecewise, NARY)
 NODE(Set, NARY)
 NODE(Nonreal)
 NODE(Undefined)
 
-RANGE(Expression, Zero, Undefined)
+// 10 - Operations on expressions
+
+NODE(Store, 2)
+NODE(UnitConversion, 2)
+
+RANGE(Expression, Zero, UnitConversion)
 
 /* TODO:
  * - Short integers could be coded on n-bytes (with n static) instead of 1-byte.

@@ -25,14 +25,17 @@
 namespace PoincareJ {
 
 Tree *RackParser::parse() {
-#if 0
-  size_t endPosition = m_tokenizer.endPosition();
-  size_t rightwardsArrowPosition = UTF8Helper::CodePointSearch(
-      m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
-  if (rightwardsArrowPosition != endPosition) {
+  size_t rightwardsArrowPosition = -1;
+  for (int i = 0; const Tree *child : m_root->children()) {
+    if (child->treeIsIdenticalTo(KCodePointL<UCodePointRightwardsArrow>())) {
+      rightwardsArrowPosition = i;
+      break;
+    }
+    i++;
+  }
+  if (rightwardsArrowPosition != -1) {
     return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
   }
-#endif
   ExceptionTry {
     Tree *result = initializeFirstTokenAndParseUntilEnd();
     // Only 1 tree has been created.
@@ -74,7 +77,7 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
 
   // Step 1. Parse as unitConversion
   m_parsingContext.setParsingMethod(
-      ParsingContext::ParsingMethod::Classic /*UnitConversion*/);
+      ParsingContext::ParsingMethod::UnitConversion);
   size_t startingPosition;
   rememberCurrentParsingPosition(&startingPosition);
   // ExceptionTry {
@@ -615,20 +618,16 @@ void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
   }
 
   EditionReference rightHandSide = parseUntil(stoppingType);
-#if 0
   if (!m_nextToken.is(Token::Type::EndOfStream) ||
       rightHandSide.isUninitialized() ||
-      !rightHandSide.isCombinationOfUnits() ||
-      (!leftHandSide.hasUnit() && !rightHandSide.isPureAngleUnit())) {
+      !Units::IsCombinationOfUnits(rightHandSide) ||
+      (!Units::HasUnit(leftHandSide) &&
+       !Units::IsPureAngleUnit(rightHandSide))) {
     // UnitConvert expect a unit on the right and an expression with units on
     // the left
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
-#else
-  // FIXME
-  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
+  turnIntoBinaryNode(KUnitConversion, leftHandSide, rightHandSide);
 }
 
 void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,

@@ -79,6 +79,8 @@ constexpr auto KNthRoot = KBinary<BlockType::NthRoot>();
 constexpr auto KPercentAddition = KBinary<BlockType::PercentAddition>();
 constexpr auto KMixedFraction = KBinary<BlockType::MixedFraction>();
 constexpr auto KPoint = KBinary<BlockType::Point>();
+constexpr auto KStore = KBinary<BlockType::Store>();
+constexpr auto KUnitConversion = KBinary<BlockType::UnitConversion>();
 
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
 constexpr auto KListSlice = KFixedArity<3, BlockType::ListSlice>();

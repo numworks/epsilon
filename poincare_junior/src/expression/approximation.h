@@ -96,7 +96,8 @@ class Approximation final {
   EDITION_REF_WRAP_2D(ApproximateAndReplaceEveryScalar, bool, true,
                       const ProjectionContext*, nullptr);
 
-  // Returns -1 if every condition is false
+  /* Returns -1 if every condition is false, it assumes there is no other free
+   * variable than VarX */
   template <typename T>
   static int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
 

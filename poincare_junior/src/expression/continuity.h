@@ -12,7 +12,10 @@ class Continuity {
   /* These functions only return true if the discontinuity is not asymptotic
    * (i.e. for the functions random, randint, round, floor and ceil).
    * Functions like 1/x are not handled here since it "obvious" that they are
-   * discontinuous. */
+   * discontinuous.
+   * They also return true for continuous functions like Abs that are tricky for
+   * the numerical algorithms.
+   */
 
   static bool InvolvesDiscontinuousFunction(const Tree *e) {
     return e->recursivelyMatches(ShallowIsDiscontinuous);

@@ -161,16 +161,29 @@ class ContinuousFunction : public Function {
     return canDisplayDerivative() &&
            recordData()->displayValueFirstDerivative();
   }
+  bool displayPlotFirstDerivative() const {
+    return canDisplayDerivative() && recordData()->displayPlotFirstDerivative();
+  }
   bool displayValueSecondDerivative() const {
     return canDisplayDerivative() &&
            recordData()->displayValueSecondDerivative();
+  }
+  bool displayPlotSecondDerivative() const {
+    return canDisplayDerivative() &&
+           recordData()->displayPlotSecondDerivative();
   }
   // Set derivative display status
   void setDisplayValueFirstDerivative(bool display) {
     return recordData()->setDisplayValueFirstDerivative(display);
   }
+  void setDisplayPlotFirstDerivative(bool display) {
+    return recordData()->setDisplayPlotFirstDerivative(display);
+  }
   void setDisplayValueSecondDerivative(bool display) {
     return recordData()->setDisplayValueSecondDerivative(display);
+  }
+  void setDisplayPlotSecondDerivative(bool display) {
+    return recordData()->setDisplayPlotSecondDerivative(display);
   }
   // Approximate derivative at t, on given sub curve if there is one
   Poincare::Evaluation<double> approximateDerivative(
@@ -285,14 +298,26 @@ class ContinuousFunction : public Function {
     bool displayValueFirstDerivative() const {
       return m_derivativesOptions.valueFirstDerivative;
     }
+    bool displayPlotFirstDerivative() const {
+      return m_derivativesOptions.plotFirstDerivative;
+    }
     bool displayValueSecondDerivative() const {
       return m_derivativesOptions.valueSecondDerivative;
+    }
+    bool displayPlotSecondDerivative() const {
+      return m_derivativesOptions.plotSecondDerivative;
     }
     void setDisplayValueFirstDerivative(bool display) {
       m_derivativesOptions.valueFirstDerivative = display;
     }
+    void setDisplayPlotFirstDerivative(bool display) {
+      m_derivativesOptions.plotFirstDerivative = display;
+    }
     void setDisplayValueSecondDerivative(bool display) {
       m_derivativesOptions.valueSecondDerivative = display;
+    }
+    void setDisplayPlotSecondDerivative(bool display) {
+      m_derivativesOptions.plotSecondDerivative = display;
     }
     float tMin() const {
       assert(!m_tAuto);

@@ -9,6 +9,13 @@ namespace Shared {
 
 class MemoizedCurveViewRange : public CurveViewRange {
  public:
+  template <typename T>
+  struct AxisInformation {
+    T x, y;
+    T operator()(Axis axis) const { return axis == Axis::X ? x : y; }
+    void set(Axis axis, T value) { (axis == Axis::X ? x : y) = value; }
+  };
+
   MemoizedCurveViewRange();
 
   // CurveViewRange
@@ -51,8 +58,7 @@ class MemoizedCurveViewRange : public CurveViewRange {
 
   // Window bounds of the data
   Poincare::Range2D<float> m_range;
-  float m_xGridUnit;
-  float m_yGridUnit;
+  AxisInformation<float> m_gridUnit;
 };
 
 }  // namespace Shared

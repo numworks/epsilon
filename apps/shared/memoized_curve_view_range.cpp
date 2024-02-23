@@ -17,23 +17,22 @@ MemoizedCurveViewRange::MemoizedCurveViewRange()
               Range1D<float>::k_defaultHalfLength,
               -Range1D<float>::k_defaultHalfLength,
               Range1D<float>::k_defaultHalfLength),
-      m_xGridUnit(NAN),
-      m_yGridUnit(NAN) {}
+      m_gridUnit{NAN, NAN} {}
 
 float MemoizedCurveViewRange::xGridUnit() {
-  if (std::isnan(m_xGridUnit)) {
-    m_xGridUnit = computeXGridUnit();
+  if (std::isnan(m_gridUnit(Axis::X))) {
+    m_gridUnit.set(Axis::X, computeXGridUnit());
   }
-  assert(m_xGridUnit != 0.0f);
-  return m_xGridUnit;
+  assert(m_gridUnit(Axis::X) != 0.0f);
+  return m_gridUnit(Axis::X);
 }
 
 float MemoizedCurveViewRange::yGridUnit() {
-  if (std::isnan(m_yGridUnit)) {
-    m_yGridUnit = computeYGridUnit();
+  if (std::isnan(m_gridUnit(Axis::Y))) {
+    m_gridUnit.set(Axis::Y, computeYGridUnit());
   }
-  assert(m_yGridUnit != 0.0f);
-  return m_yGridUnit;
+  assert(m_gridUnit(Axis::Y) != 0.0f);
+  return m_gridUnit(Axis::Y);
 }
 
 void MemoizedCurveViewRange::privateSet(float min, float max, float limit,
@@ -42,8 +41,7 @@ void MemoizedCurveViewRange::privateSet(float min, float max, float limit,
   *range1D = Range1D<float>::ValidRangeBetween(min, max, limit);
   /* We must reset both grid units because with normalization
    * they can depend on each other. */
-  m_xGridUnit = NAN;
-  m_yGridUnit = NAN;
+  m_gridUnit = {NAN, NAN};
 }
 
 }  // namespace Shared

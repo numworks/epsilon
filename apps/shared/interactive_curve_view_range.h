@@ -16,13 +16,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
   using GridType = GridTypeController::GridType;
-
   template <typename T>
-  struct AxisInformation {
-    T x, y;
-    T operator()(Axis axis) const { return axis == Axis::X ? x : y; }
-    void set(Axis axis, T value) { (axis == Axis::X ? x : y) = value; }
-  };
+  using AxisInformation = MemoizedCurveViewRange::AxisInformation<T>;
 
   InteractiveCurveViewRange(
       InteractiveCurveViewRangeDelegate* delegate = nullptr)

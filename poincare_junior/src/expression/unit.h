@@ -367,6 +367,7 @@ class Unit {
 };
 
 Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents);
+bool IsCombinationOfUnits(const Tree* expr);
 
 }  // namespace Units
 }  // namespace PoincareJ

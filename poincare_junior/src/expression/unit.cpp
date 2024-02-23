@@ -938,5 +938,23 @@ void Unit::SetPrefix(Tree* unit, const Prefix* prefix) {
   unit->setNodeValue(1, Prefix::ToId(prefix));
 }
 
+bool IsCombinationOfUnits(const Tree* expr) {
+  if (expr->isUnit()) {
+    return true;
+  }
+  if (expr->isMultiplication() || expr->isDivision()) {
+    for (const Tree* child : expr->children()) {
+      if (!IsCombinationOfUnits(child)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  if (expr->isPower()) {
+    return IsCombinationOfUnits(expr->child(0));
+  }
+  return false;
+}
+
 }  // namespace Units
 }  // namespace PoincareJ

@@ -12,7 +12,7 @@ class JuniorExpressionNode final : public ExpressionNode {
 
  public:
   JuniorExpressionNode(const PoincareJ::Tree* tree, size_t treeSize) {
-    memcpy(m_blocks, tree, treeSize);
+    memcpy(m_blocks, tree->block(), treeSize);
   }
 
   // TreeNode

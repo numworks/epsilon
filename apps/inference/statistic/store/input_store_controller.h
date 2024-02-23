@@ -29,6 +29,8 @@ class InputStoreController : public InputCategoricalController,
   ViewController::TitlesDisplay titlesDisplay() override {
     return m_statistic->subApp() == Statistic::SubApp::Interval
                ? ViewController::TitlesDisplay::DisplayLastTitle
+           : m_statistic->canChooseDataset()
+               ? ViewController::TitlesDisplay::DisplayLastAndThirdToLast
                : ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   void viewWillAppear() override;

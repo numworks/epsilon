@@ -47,7 +47,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
                                                 Interval::numberOfResults());
   }
   int secondResultSectionStart() const override {
-    return Interval::numberOfResults();
+    return numberOfStatisticParameters();
   }
   void resultAtIndex(int index, double* value, Poincare::Layout* message,
                      I18n::Message* subMessage, int* precision) override {

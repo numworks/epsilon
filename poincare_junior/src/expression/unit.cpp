@@ -956,5 +956,20 @@ bool IsCombinationOfUnits(const Tree* expr) {
   return false;
 }
 
+bool HasUnit(const Tree* expr) {
+  // TODO should HasUnit be replaced by dimensional analysis ?
+  for (const Tree* d : expr->selfAndDescendants()) {
+    if (d->isUnit() || d->isPhysicalConstant()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool IsPureAngleUnit(const Tree* expr) {
+  return expr->isUnit() &&
+         Unit::GetRepresentative(expr)->dimensionVector() == Time::Dimension;
+}
+
 }  // namespace Units
 }  // namespace PoincareJ

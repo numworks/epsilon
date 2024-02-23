@@ -47,6 +47,7 @@ Troolean Domain::ExpressionIsIn(const Tree *expression, Type type,
 
   if (type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment) &&
       Rational::IsGreaterThanOne(expression)) {
+    assert(Rational::Sign(expression).isPositive());
     return Troolean::False;
   }
 

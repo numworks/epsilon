@@ -838,7 +838,7 @@ Expression ContinuousFunction::Model::expressionSlopeReduced(
   // TODO: assert(canComputeTangent());
   if (m_expressionSlope.isUninitialized()) {
     if (properties().isCartesian()) {
-      m_expressionSlope = expressionDerivateReduced(record, context, true);
+      m_expressionSlope = expressionDerivateReduced(record, context, 1);
     } else {
       assert(properties().isParametric() || properties().isPolar());
       Expression expression = parametricForm(record, context);

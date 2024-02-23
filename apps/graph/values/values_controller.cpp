@@ -349,10 +349,10 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   if (derivationOrder >= 1) {
     // Compute derivative approximate result
     assert(derivationOrder == 1 || derivationOrder == 2);
-    result = function
-                 ->approximateDerivative(abscissa, context,
-                                         derivationOrder == 1, false)
-                 .complexToExpression(Preferences::ComplexFormat::Real);
+    result =
+        function
+            ->approximateDerivative(abscissa, context, derivationOrder, false)
+            .complexToExpression(Preferences::ComplexFormat::Real);
   } else {
     // Compute exact result
     assert(derivationOrder == 0);
@@ -454,8 +454,7 @@ T *ValuesController::parameterController() {
   if (derivationOrder >= 1) {
     assert(derivationOrder == 1 || derivationOrder == 2);
     m_derivativeColumnParameterController.setRecord(record);
-    m_derivativeColumnParameterController.setDerivationOrder(derivationOrder ==
-                                                             1);
+    m_derivativeColumnParameterController.setDerivationOrder(derivationOrder);
     return &m_derivativeColumnParameterController;
   }
   assert(derivationOrder == 0);

@@ -83,8 +83,7 @@ void TangentGraphController::reloadBannerView() {
   double coefficientA;
   if (m_bannerView->showFirstDerivative()) {
     Evaluation<double> derivative =
-        reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record,
-                                                        true);
+        reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record, 1);
     assert(derivative.type() == EvaluationNode<double>::Type::Complex);
     coefficientA = derivative.toScalar();
   } else {

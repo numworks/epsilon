@@ -15,6 +15,7 @@ class DerivativeColumnParameterController
         m_derivationOrder(-1) {}
 
   void setDerivationOrder(int derivationOrder) {
+    assert(derivationOrder == 1 || derivationOrder == 2);
     m_derivationOrder = derivationOrder;
   }
 

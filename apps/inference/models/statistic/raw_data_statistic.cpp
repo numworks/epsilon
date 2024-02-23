@@ -65,10 +65,28 @@ bool RawDataStatistic::resultOrComputedParameterAtIndex(
     *index -= stat->numberOfStatisticParameters();
     return false;
   }
-  *value = stat->parameterAtIndex(*index);
-  *message = stat->parameterSymbolAtIndex(*index);
-  *subMessage = stat->parameterDefinitionAtIndex(*index);
+
   *precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
+
+  if (stat->distributionType() != DistributionType::Z || *index % 3 != 1) {
+    *value = stat->parameterAtIndex(*index);
+    *message = stat->parameterSymbolAtIndex(*index);
+    *subMessage = stat->parameterDefinitionAtIndex(*index);
+    return true;
+  }
+
+  /* Weave sample standard deviation between mean and population. */
+  *value = sampleStandardDeviation(seriesAt(*index / 3));
+  Shared::ParameterRepresentation repr;
+  if (stat->significanceTestType() == SignificanceTestType::OneMean) {
+    repr = OneMean::ParameterRepresentationAtIndex(OneMean::Type::T, *index);
+  } else {
+    assert(stat->significanceTestType() == SignificanceTestType::TwoMeans);
+    repr = TwoMeans::ParameterRepresentationAtIndex(TwoMeans::Type::T, *index);
+  }
+  *message = repr.m_symbol;
+  *subMessage = repr.m_description;
+
   return true;
 }
 

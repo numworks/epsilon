@@ -280,20 +280,19 @@ class ContinuousFunction : public Function {
     RecordDataBuffer(KDColor color)
         : Shared::Function::RecordDataBuffer(color),
           m_domain(-INFINITY, INFINITY),
-          m_displayValueFirstDerivative(false),
-          m_displayValueSecondDerivative(false),
+          m_derivativesOptions{},
           m_tAuto(true) {}
     bool displayValueFirstDerivative() const {
-      return m_displayValueFirstDerivative;
+      return m_derivativesOptions.valueFirstDerivative;
     }
     bool displayValueSecondDerivative() const {
-      return m_displayValueSecondDerivative;
+      return m_derivativesOptions.valueSecondDerivative;
     }
     void setDisplayValueFirstDerivative(bool display) {
-      m_displayValueFirstDerivative = display;
+      m_derivativesOptions.valueFirstDerivative = display;
     }
     void setDisplayValueSecondDerivative(bool display) {
-      m_displayValueSecondDerivative = display;
+      m_derivativesOptions.valueSecondDerivative = display;
     }
     float tMin() const {
       assert(!m_tAuto);
@@ -316,8 +315,13 @@ class ContinuousFunction : public Function {
 
    private:
     PackedRange1D m_domain;
-    bool m_displayValueFirstDerivative;
-    bool m_displayValueSecondDerivative;
+    struct DerivativesOptions {
+      bool valueFirstDerivative : 1;
+      bool plotFirstDerivative : 1;
+      bool valueSecondDerivative : 1;
+      bool plotSecondDerivative : 1;
+    };
+    DerivativesOptions m_derivativesOptions;
     bool m_tAuto;
     /* In the record, after the boolean flag about displayValueFirstDerivative,
      * there is the expression of the function, directly copied from the pool.

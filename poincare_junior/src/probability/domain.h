@@ -23,20 +23,21 @@ class Domain {
     RPlus = 1 << 4,
     RPlusStar = 1 << 5,
     RMinus = 1 << 6,
-    UnitSegment = 1 << 7,          // [0, 1]
-    LeftOpenUnitSegment = 1 << 8,  // ]0, 1]
-    OpenUnitSegment = 1 << 9,      // ]0, 1[
+    ZeroToOne = 1 << 7,                  // [0, 1]
+    ZeroExcludedToOne = 1 << 8,          // ]0, 1]
+    ZeroExcludedToOneExcluded = 1 << 9,  // ]0, 1[
   };
 
-  constexpr static Type k_nonZero = static_cast<Type>(
-      NStar | RStar | RPlusStar | LeftOpenUnitSegment | OpenUnitSegment);
-  constexpr static Type k_finite =
-      static_cast<Type>(UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
+  constexpr static Type k_nonZero =
+      static_cast<Type>(NStar | RStar | RPlusStar | ZeroExcludedToOne |
+                        ZeroExcludedToOneExcluded);
+  constexpr static Type k_finite = static_cast<Type>(
+      ZeroToOne | ZeroExcludedToOne | ZeroExcludedToOneExcluded);
   constexpr static Type k_onlyIntegers = static_cast<Type>(N | NStar);
   constexpr static Type k_onlyNegative = static_cast<Type>(RMinus);
   constexpr static Type k_onlyPositive =
-      static_cast<Type>(N | NStar | RPlus | RPlusStar | UnitSegment |
-                        LeftOpenUnitSegment | OpenUnitSegment);
+      static_cast<Type>(N | NStar | RPlus | RPlusStar | ZeroToOne |
+                        ZeroExcludedToOne | ZeroExcludedToOneExcluded);
 
   template <typename T>
   static bool Contains(T value, Type type) {
@@ -57,10 +58,10 @@ class Domain {
       return false;
     }
     if (value > static_cast<T>(1.0) &&
-        type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment)) {
+        type & (ZeroToOne | ZeroExcludedToOne | ZeroExcludedToOneExcluded)) {
       return false;
     }
-    if (value == static_cast<T>(1.0) && type & (OpenUnitSegment)) {
+    if (value == static_cast<T>(1.0) && type & (ZeroExcludedToOneExcluded)) {
       return false;
     }
     return true;

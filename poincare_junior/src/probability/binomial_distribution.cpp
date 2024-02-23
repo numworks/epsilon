@@ -108,7 +108,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(
 template <typename T>
 bool BinomialDistribution::ParametersAreOK(T n, T p) {
   return Domain::Contains(n, Domain::Type::N) &&
-         Domain::Contains(p, Domain::Type::UnitSegment);
+         Domain::Contains(p, Domain::Type::ZeroToOne);
 }
 
 bool BinomialDistribution::expressionParametersAreOK(bool *result,
@@ -116,7 +116,7 @@ bool BinomialDistribution::expressionParametersAreOK(bool *result,
                                                      const Tree *p,
                                                      Context *context) {
   return Domain::ExpressionsAreIn(result, n, Domain::Type::N, p,
-                                  Domain::Type::UnitSegment, context);
+                                  Domain::Type::ZeroToOne, context);
 }
 
 template float BinomialDistribution::EvaluateAtAbscissa<float>(float, float,

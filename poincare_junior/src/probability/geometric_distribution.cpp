@@ -65,12 +65,12 @@ T GeometricDistribution::CumulativeDistributiveInverseForProbability(
 
 template <typename T>
 bool GeometricDistribution::PIsOK(T p) {
-  return Domain::Contains(p, Domain::Type::LeftOpenUnitSegment);
+  return Domain::Contains(p, Domain::Type::ZeroExcludedToOne);
 }
 
 bool GeometricDistribution::ExpressionPIsOK(bool *result, const Tree *p,
                                             Context *context) {
-  return Domain::ExpressionIsIn(result, p, Domain::Type::LeftOpenUnitSegment,
+  return Domain::ExpressionIsIn(result, p, Domain::Type::ZeroExcludedToOne,
                                 context);
 }
 

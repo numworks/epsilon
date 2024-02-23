@@ -45,13 +45,13 @@ Troolean Domain::ExpressionIsIn(const Tree *expression, Type type,
     return Troolean::False;
   }
 
-  if (type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment) &&
+  if (type & (ZeroToOne | ZeroExcludedToOne | ZeroExcludedToOneExcluded) &&
       Rational::IsGreaterThanOne(expression)) {
     assert(Rational::Sign(expression).isPositive());
     return Troolean::False;
   }
 
-  if (type == OpenUnitSegment && expression->isOne()) {
+  if (type == ZeroExcludedToOneExcluded && expression->isOne()) {
     return Troolean::False;
   }
 

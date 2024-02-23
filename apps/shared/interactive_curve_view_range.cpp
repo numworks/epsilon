@@ -74,35 +74,30 @@ void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
   MemoizedCurveViewRange::protectedSetYRange(yMin(), yMax() + d, k_maxFloat);
 }
 
-float InteractiveCurveViewRange::computeXGridUnit() {
-  if (!gridUnitAuto(Axis::X)) {
-    return computeGridUnitFromUserParameter(Axis::X);
+float InteractiveCurveViewRange::computeGridUnit(Axis axis) {
+  if (!gridUnitAuto(axis)) {
+    return computeGridUnitFromUserParameter(axis);
   }
+  float res = MemoizedCurveViewRange::computeGridUnit(axis);
   if (m_zoomNormalize) {
-    float yUnit = yGridUnit();
-    if ((xMax() - xMin()) / yUnit <= k_maxNumberOfXGridUnits) {
-      return yUnit;
-    }
-  }
-  return MemoizedCurveViewRange::computeXGridUnit();
-}
-
-float InteractiveCurveViewRange::computeYGridUnit() {
-  if (!gridUnitAuto(Axis::Y)) {
-    return computeGridUnitFromUserParameter(Axis::Y);
-  }
-  float res = MemoizedCurveViewRange::computeYGridUnit();
-  if (m_zoomNormalize) {
-    /* When m_zoomNormalize is active, both xGridUnit and yGridUnit will be the
-     * same. To declutter the X axis, we try a unit twice as large. We check
-     * that it allows enough graduations on the Y axis, but if the standard
-     * unit would lead to too many graduations on the X axis, we force the
-     * larger unit anyways. */
-    float numberOfYUnits = (yMax() - yMin() + offscreenYAxis()) / res;
-    float numberOfXUnits = (xMax() - xMin()) / res;
-    if (numberOfXUnits > k_maxNumberOfXGridUnits ||
-        numberOfYUnits / 2.f > k_minNumberOfYGridUnits) {
-      return 2 * res;
+    if (axis == Axis::X) {
+      float yUnit = yGridUnit();
+      if ((xMax() - xMin()) / yUnit <= k_maxNumberOfXGridUnits) {
+        return yUnit;
+      }
+    } else {
+      assert(axis == Axis::Y);
+      /* When m_zoomNormalize is active, both xGridUnit and yGridUnit will be
+       * the same. To declutter the X axis, we try a unit twice as large. We
+       * check that it allows enough graduations on the Y axis, but if the
+       * standard unit would lead to too many graduations on the X axis, we
+       * force the larger unit anyways. */
+      float numberOfYUnits = (yMax() - yMin() + offscreenYAxis()) / res;
+      float numberOfXUnits = (xMax() - xMin()) / res;
+      if (numberOfXUnits > k_maxNumberOfXGridUnits ||
+          numberOfYUnits / 2.f > k_minNumberOfYGridUnits) {
+        return 2 * res;
+      }
     }
   }
   return res;

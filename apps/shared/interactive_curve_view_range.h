@@ -133,8 +133,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   float computeGridUnitFromUserParameter(Axis axis) const;
 
   // MemoizedCurveViewRange
-  float computeXGridUnit() override;
-  float computeYGridUnit() override;
+  float computeGridUnit(Axis axis) override;
 
   Poincare::Range2D<float> m_memoizedAutoRange;
   uint64_t m_checksumOfMemoizedAutoRange;

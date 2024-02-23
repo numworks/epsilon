@@ -32,8 +32,10 @@ class MemoizedCurveViewRange : public CurveViewRange {
 
  protected:
   Poincare::Range2D<float> memoizedRange() const { return m_range; }
-  virtual float computeXGridUnit() { return CurveViewRange::xGridUnit(); }
-  virtual float computeYGridUnit() { return CurveViewRange::yGridUnit(); }
+  virtual float computeGridUnit(Axis axis) {
+    return axis == Axis::X ? CurveViewRange::xGridUnit()
+                           : CurveViewRange::yGridUnit();
+  }
 
   void protectedSetXRange(float min, float max,
                           float limit = Poincare::Range1D<float>::k_maxFloat) {

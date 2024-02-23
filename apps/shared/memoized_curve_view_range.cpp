@@ -21,7 +21,7 @@ MemoizedCurveViewRange::MemoizedCurveViewRange()
 
 float MemoizedCurveViewRange::xGridUnit() {
   if (std::isnan(m_gridUnit(Axis::X))) {
-    m_gridUnit.set(Axis::X, computeXGridUnit());
+    m_gridUnit.set(Axis::X, computeGridUnit(Axis::X));
   }
   assert(m_gridUnit(Axis::X) != 0.0f);
   return m_gridUnit(Axis::X);
@@ -29,7 +29,7 @@ float MemoizedCurveViewRange::xGridUnit() {
 
 float MemoizedCurveViewRange::yGridUnit() {
   if (std::isnan(m_gridUnit(Axis::Y))) {
-    m_gridUnit.set(Axis::Y, computeYGridUnit());
+    m_gridUnit.set(Axis::Y, computeGridUnit(Axis::Y));
   }
   assert(m_gridUnit(Axis::Y) != 0.0f);
   return m_gridUnit(Axis::Y);

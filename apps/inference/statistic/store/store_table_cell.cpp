@@ -1,6 +1,7 @@
 #include "store_table_cell.h"
 
 #include <escher/palette.h>
+#include <poincare/print.h>
 
 #include "inference/app.h"
 #include "inference/statistic/chi_square_and_slope/input_goodness_controller.h"
@@ -84,7 +85,19 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
            headerCell < m_header + Table::k_maxNumberOfStoreColumns);
     headerCell->setColor(
         store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
-    fillColumnName(column, const_cast<char *>(headerCell->text()));
+
+    char columnName[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
+    if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
+      fillColumnName(column, const_cast<char *>(headerCell->text()));
+    } else {
+      fillColumnName(column, columnName);
+      I18n::Message prefix = store()->relativeColumn(column) == 0
+                                 ? I18n::Message::Values
+                                 : I18n::Message::Frequencies;
+      Poincare::Print::CustomPrintf(const_cast<char *>(headerCell->text()),
+                                    k_maxSizeOfColumnName,
+                                    I18n::translate(prefix), columnName);
+    }
     return;
   }
 

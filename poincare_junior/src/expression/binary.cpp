@@ -46,7 +46,7 @@ bool Binary::IsComparisonOperatorString(const CPL *s, int length,
     // Loop twice, once on the main string, the other on the alternative string
     for (int k = 0; k < 2; k++) {
       int operatorLength = UTF8Helper::StringGlyphLength(currentOperatorString);
-      if (  // operatorLength <= maxOperatorLength &&
+      if (operatorLength <= maxOperatorLength &&
           operatorLength > lengthOfFoundOperator &&
           OMG::CompareCPLWithNullTerminatedString(s, operatorLength,
 

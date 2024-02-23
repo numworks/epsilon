@@ -1,5 +1,6 @@
 #include <apps/apps_container_helper.h>
 #include <math.h>
+#include <poincare/random.h>
 #include <poincare/test/helper.h>
 #include <quiz.h>
 
@@ -634,4 +635,54 @@ QUIZ_CASE(probability_slope_t_statistic) {
   SlopeTInterval interval(&context);
   inputTableValues(&interval, &interval, testCase);
   testInterval(&interval, testCase);
+}
+
+QUIZ_CASE(one_mean_t_with_table) {
+  /* Create a random dataset and make sure the computed values match whether the
+   * raw data or their statistics are the inputs. */
+
+  StatisticTestCase rawDataCase{
+      .m_firstHypothesisParam = 128,
+      .m_op = Poincare::ComparisonNode::OperatorType::Inferior,
+      .m_numberOfInputs = 100,
+      .m_significanceLevel = 0.05,
+      .m_confidenceLevel = 0.95,
+  };
+  for (int i = 0; i < rawDataCase.m_numberOfInputs / 2; i++) {
+    rawDataCase.m_inputs[2 * i] = Poincare::Random::random<double>();
+    rawDataCase.m_inputs[2 * i + 1] = 1;
+  }
+
+  constexpr int k_series = 0;
+
+  OneMeanTTest rawDataTest(
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  rawDataTest.setSeries(k_series, &rawDataTest);
+  inputTableValues(&rawDataTest, &rawDataTest, rawDataCase);
+
+  StatisticTestCase parametersCase{
+      .m_numberOfInputs = 3,
+      .m_inputs =
+          {
+              rawDataTest.mean(k_series),
+              rawDataTest.sampleStandardDeviation(k_series),
+              rawDataTest.sumOfOccurrences(k_series),
+          },
+  };
+
+  OneMeanTTest referenceTest(
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  inputValues(&referenceTest, parametersCase, 0.05);
+  referenceTest.hypothesisParams()->setFirstParam(
+      rawDataCase.m_firstHypothesisParam);
+  referenceTest.compute();
+
+  rawDataCase.m_numberOfParameters = referenceTest.numberOfParameters();
+  rawDataCase.m_hasDegreeOfFreedom = referenceTest.hasDegreeOfFreedom();
+  rawDataCase.m_degreesOfFreedom = referenceTest.degreeOfFreedom();
+  rawDataCase.m_testPassed = referenceTest.canRejectNull();
+  rawDataCase.m_testCriticalValue = referenceTest.testCriticalValue();
+  rawDataCase.m_pValue = referenceTest.pValue();
+
+  testTest(&rawDataTest, rawDataCase);
 }

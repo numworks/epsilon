@@ -20,7 +20,6 @@ InputStoreController::InputStoreController(StackViewController* parent,
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_slopeTableCell) {
-  m_dropdownCell.setMessage(I18n::Message::DataSet);
   m_storeParameterController.selectRow(0);
   m_selectableListView.margins()->setTop(
       m_slopeTableCell.selectableTableView()->margins()->top());
@@ -81,6 +80,10 @@ void InputStoreController::viewWillAppear() {
   }
 
   m_dropdownCell.dropdown()->init();
+  m_dropdownCell.setMessage(m_statistic->significanceTestType() ==
+                                    SignificanceTestType::TwoMeans
+                                ? I18n::Message::DataSets
+                                : I18n::Message::DataSet);
   for (int row = 0; row < m_dropdownDataSource.numberOfRows(); row++) {
     char buffer[] = "Ai/Bi,Aj/Bj";
     buffer[0] = listPrefix(0);

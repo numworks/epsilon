@@ -235,8 +235,8 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
   m_calculationCell.setVisible(function()->canDisplayDerivative());
-  m_parameterCells[static_cast<int>(ParameterIndex::Image2)].setVisible(
-      function()->properties().isParametric());
+  parameterCell(ParameterIndex::Image2)
+      ->setVisible(function()->properties().isParametric());
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);
@@ -250,14 +250,14 @@ void CurveParameterController::viewWillAppear() {
   bool isParametric = function()->properties().isParametric();
   bool displayFirstDerivative = function()->displayFirstDerivative();
   bool displaySecondDerivative = function()->displaySecondDerivative();
-  m_parameterCells[static_cast<int>(ParameterIndex::FirstDerivative1)]
-      .setVisible(displayFirstDerivative);
-  m_parameterCells[static_cast<int>(ParameterIndex::FirstDerivative2)]
-      .setVisible(isParametric && displayFirstDerivative);
-  m_parameterCells[static_cast<int>(ParameterIndex::SecondDerivative1)]
-      .setVisible(displaySecondDerivative);
-  m_parameterCells[static_cast<int>(ParameterIndex::SecondDerivative2)]
-      .setVisible(isParametric && displaySecondDerivative);
+  parameterCell(ParameterIndex::FirstDerivative1)
+      ->setVisible(displayFirstDerivative);
+  parameterCell(ParameterIndex::FirstDerivative2)
+      ->setVisible(isParametric && displayFirstDerivative);
+  parameterCell(ParameterIndex::SecondDerivative1)
+      ->setVisible(displaySecondDerivative);
+  parameterCell(ParameterIndex::SecondDerivative2)
+      ->setVisible(isParametric && displaySecondDerivative);
   ExplicitFloatParameterController::viewWillAppear();
 }
 

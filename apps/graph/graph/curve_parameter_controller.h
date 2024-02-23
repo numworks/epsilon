@@ -34,10 +34,25 @@ class CurveParameterController
   }
 
  private:
+  using ParameterCell = Escher::MenuCellWithEditableText<
+      Escher::OneLineBufferTextView<KDFont::Size::Large>>;
+  enum class ParameterIndex {
+    Abscissa = 0,
+    Image1,
+    Image2,
+    FirstDerivative1,
+    FirstDerivative2,
+    SecondDerivative1,
+    SecondDerivative2,
+    NumberOfParameters,
+  };
+
   KDCoordinate separatorBeforeRow(int row) override {
     return cell(row) == &m_calculationCell ? k_defaultRowSeparator : 0;
   }
-
+  ParameterCell* parameterCell(ParameterIndex index) {
+    return &m_parameterCells[static_cast<int>(index)];
+  }
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override {
     return confirmParameterAtIndex(parameterIndex, f);
@@ -57,22 +72,9 @@ class CurveParameterController
    * CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
-  enum class ParameterIndex {
-    Abscissa = 0,
-    Image1,
-    Image2,
-    FirstDerivative1,
-    FirstDerivative2,
-    SecondDerivative1,
-    SecondDerivative2,
-    NumberOfParameters,
-  };
   constexpr static int k_numberOfParameterRows =
       static_cast<int>(ParameterIndex::NumberOfParameters);
   constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
-
-  using ParameterCell = Escher::MenuCellWithEditableText<
-      Escher::OneLineBufferTextView<KDFont::Size::Large>>;
 
   char m_title[k_titleSize];
   ParameterCell m_parameterCells[k_numberOfParameterRows];

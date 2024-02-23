@@ -37,6 +37,20 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
     p = TwoMeans::ProcessParameterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
+  int numberOfResults() const override {
+    return numberOfResultsAndComputedParameters(this,
+                                                Interval::numberOfResults());
+  }
+  int secondResultSectionStart() const override {
+    return numberOfStatisticParameters();
+  }
+  void resultAtIndex(int index, double* value, Poincare::Layout* message,
+                     I18n::Message* subMessage, int* precision) override {
+    if (!resultOrComputedParameterAtIndex(&index, this, value, message,
+                                          subMessage, precision)) {
+      Interval::resultAtIndex(index, value, message, subMessage, precision);
+    }
+  }
   const char* estimateSymbol() const override {
     return TwoMeans::EstimateSymbol();
   }

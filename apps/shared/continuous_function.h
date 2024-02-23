@@ -157,18 +157,20 @@ class ContinuousFunction : public Function {
   /* Derivative */
 
   // If derivative should be displayed
-  bool displayFirstDerivative() const {
-    return canDisplayDerivative() && recordData()->displayFirstDerivative();
+  bool displayValueFirstDerivative() const {
+    return canDisplayDerivative() &&
+           recordData()->displayValueFirstDerivative();
   }
-  bool displaySecondDerivative() const {
-    return canDisplayDerivative() && recordData()->displaySecondDerivative();
+  bool displayValueSecondDerivative() const {
+    return canDisplayDerivative() &&
+           recordData()->displayValueSecondDerivative();
   }
   // Set derivative display status
-  void setDisplayFirstDerivative(bool display) {
-    return recordData()->setDisplayFirstDerivative(display);
+  void setDisplayValueFirstDerivative(bool display) {
+    return recordData()->setDisplayValueFirstDerivative(display);
   }
-  void setDisplaySecondDerivative(bool display) {
-    return recordData()->setDisplaySecondDerivative(display);
+  void setDisplayValueSecondDerivative(bool display) {
+    return recordData()->setDisplayValueSecondDerivative(display);
   }
   // Approximate derivative at t, on given sub curve if there is one
   Poincare::Evaluation<double> approximateDerivative(
@@ -278,16 +280,20 @@ class ContinuousFunction : public Function {
     RecordDataBuffer(KDColor color)
         : Shared::Function::RecordDataBuffer(color),
           m_domain(-INFINITY, INFINITY),
-          m_displayFirstDerivative(false),
-          m_displaySecondDerivative(false),
+          m_displayValueFirstDerivative(false),
+          m_displayValueSecondDerivative(false),
           m_tAuto(true) {}
-    bool displayFirstDerivative() const { return m_displayFirstDerivative; }
-    bool displaySecondDerivative() const { return m_displaySecondDerivative; }
-    void setDisplayFirstDerivative(bool display) {
-      m_displayFirstDerivative = display;
+    bool displayValueFirstDerivative() const {
+      return m_displayValueFirstDerivative;
     }
-    void setDisplaySecondDerivative(bool display) {
-      m_displaySecondDerivative = display;
+    bool displayValueSecondDerivative() const {
+      return m_displayValueSecondDerivative;
+    }
+    void setDisplayValueFirstDerivative(bool display) {
+      m_displayValueFirstDerivative = display;
+    }
+    void setDisplayValueSecondDerivative(bool display) {
+      m_displayValueSecondDerivative = display;
     }
     float tMin() const {
       assert(!m_tAuto);
@@ -310,11 +316,12 @@ class ContinuousFunction : public Function {
 
    private:
     PackedRange1D m_domain;
-    bool m_displayFirstDerivative;
-    bool m_displaySecondDerivative;
+    bool m_displayValueFirstDerivative;
+    bool m_displayValueSecondDerivative;
     bool m_tAuto;
-    /* In the record, after the boolean flag about displayFirstDerivative, there
-     * is the expression of the function, directly copied from the pool. */
+    /* In the record, after the boolean flag about displayValueFirstDerivative,
+     * there is the expression of the function, directly copied from the pool.
+     */
     // char m_expression[0];
   };
 

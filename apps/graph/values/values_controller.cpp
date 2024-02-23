@@ -515,11 +515,13 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
       if (i == index) {
         *derivationOrder = 0;
       } else if (i == index + 1) {
-        assert(f->displayFirstDerivative() || f->displaySecondDerivative());
-        *derivationOrder = f->displayFirstDerivative() ? 1 : 2;
+        assert(f->displayValueFirstDerivative() ||
+               f->displayValueSecondDerivative());
+        *derivationOrder = f->displayValueFirstDerivative() ? 1 : 2;
       } else {
         assert(i == index + 2);
-        assert(f->displayFirstDerivative() && f->displaySecondDerivative());
+        assert(f->displayValueFirstDerivative() &&
+               f->displayValueSecondDerivative());
         *derivationOrder = 2;
       }
       return record;
@@ -542,7 +544,8 @@ int ValuesController::numberOfColumnsForRecord(
     Ion::Storage::Record record) const {
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
-  return 1 + f->displayFirstDerivative() + f->displaySecondDerivative();
+  return 1 + f->displayValueFirstDerivative() +
+         f->displayValueSecondDerivative();
 }
 
 int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {

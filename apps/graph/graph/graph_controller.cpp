@@ -290,19 +290,19 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
 
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  bool displayFirstDerivative =
-      functionStore()->modelForRecord(record)->displayFirstDerivative();
-  bool displaySecondDerivative =
-      functionStore()->modelForRecord(record)->displaySecondDerivative();
+  bool displayValueFirstDerivative =
+      functionStore()->modelForRecord(record)->displayValueFirstDerivative();
+  bool displayValueSecondDerivative =
+      functionStore()->modelForRecord(record)->displayValueSecondDerivative();
   m_bannerView.setDisplayParameters(
       {.showInterest = true,
-       .showFirstDerivative = displayFirstDerivative,
-       .showSecondDerivative = displaySecondDerivative});
+       .showFirstDerivative = displayValueFirstDerivative,
+       .showSecondDerivative = displayValueSecondDerivative});
   FunctionGraphController::reloadBannerView();
-  if (displayFirstDerivative) {
+  if (displayValueFirstDerivative) {
     reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, 1);
   }
-  if (displaySecondDerivative) {
+  if (displayValueSecondDerivative) {
     reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, 2);
   }
 }

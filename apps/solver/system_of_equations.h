@@ -99,7 +99,7 @@ class SystemOfEquations {
     using Poincare::ContextWithParent::ContextWithParent;
 
    private:
-    const Poincare::Expression protectedExpressionForSymbolAbstract(
+    const Poincare::OExpression protectedExpressionForSymbolAbstract(
         const Poincare::SymbolAbstract& symbol, bool clone,
         Poincare::ContextWithParent* lastDescendantContext) override;
   };

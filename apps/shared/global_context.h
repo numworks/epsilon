@@ -45,13 +45,13 @@ class GlobalContext final : public Poincare::Context {
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
 
   GlobalContext() : m_sequenceContext(this, sequenceStore){};
-  /* Expression for symbol
+  /* OExpression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   SymbolAbstractType expressionTypeForIdentifier(const char *identifier,
                                                  int length) override;
   bool setExpressionForSymbolAbstract(
-      const Poincare::Expression &expression,
+      const Poincare::OExpression &expression,
       const Poincare::SymbolAbstract &symbol) override;
   static OMG::GlobalBox<SequenceStore> sequenceStore;
   static OMG::GlobalBox<ContinuousFunctionStore> continuousFunctionStore;
@@ -63,27 +63,27 @@ class GlobalContext final : public Poincare::Context {
   void reset();
 
  private:
-  // Expression getters
-  const Poincare::Expression protectedExpressionForSymbolAbstract(
+  // OExpression getters
+  const Poincare::OExpression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract &symbol, bool clone,
       Poincare::ContextWithParent *lastDescendantContext) override;
-  const Poincare::Expression expressionForSymbolAndRecord(
+  const Poincare::OExpression expressionForSymbolAndRecord(
       const Poincare::SymbolAbstract &symbol, Ion::Storage::Record r,
       Context *ctx);
-  static const Poincare::Expression ExpressionForActualSymbol(
+  static const Poincare::OExpression ExpressionForActualSymbol(
       Ion::Storage::Record r);
-  static const Poincare::Expression ExpressionForFunction(
-      const Poincare::Expression &parameter, Ion::Storage::Record r);
-  const Poincare::Expression expressionForSequence(
+  static const Poincare::OExpression ExpressionForFunction(
+      const Poincare::OExpression &parameter, Ion::Storage::Record r);
+  const Poincare::OExpression expressionForSequence(
       const Poincare::SymbolAbstract &symbol, Ion::Storage::Record r,
       Context *ctx);
-  // Expression setters
+  // OExpression setters
   /* This modifies the expression. */
   Ion::Storage::Record::ErrorStatus setExpressionForActualSymbol(
-      Poincare::Expression &expression, const Poincare::SymbolAbstract &symbol,
+      Poincare::OExpression &expression, const Poincare::SymbolAbstract &symbol,
       Ion::Storage::Record previousRecord);
   Ion::Storage::Record::ErrorStatus setExpressionForFunction(
-      const Poincare::Expression &expression,
+      const Poincare::OExpression &expression,
       const Poincare::SymbolAbstract &symbol,
       Ion::Storage::Record previousRecord);
   // Record getter

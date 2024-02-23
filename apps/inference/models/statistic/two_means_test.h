@@ -42,6 +42,19 @@ class TwoMeansTest : public Test, public TwoMeansStatistic {
     p = TwoMeans::ProcessParameterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
+  int numberOfResults() const override {
+    return numberOfResultsAndComputedParameters(this, Test::numberOfResults());
+  }
+  int secondResultSectionStart() const override {
+    return numberOfStatisticParameters();
+  }
+  void resultAtIndex(int index, double* value, Poincare::Layout* message,
+                     I18n::Message* subMessage, int* precision) override {
+    if (!resultOrComputedParameterAtIndex(&index, this, value, message,
+                                          subMessage, precision)) {
+      Test::resultAtIndex(index, value, message, subMessage, precision);
+    }
+  }
 
   void compute() override {
     syncParametersWithStore(this);

@@ -300,10 +300,10 @@ void GraphController::reloadBannerView() {
        .showSecondDerivative = displaySecondDerivative});
   FunctionGraphController::reloadBannerView();
   if (displayFirstDerivative) {
-    reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, true);
+    reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, 1);
   }
   if (displaySecondDerivative) {
-    reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, false);
+    reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, 2);
   }
 }
 

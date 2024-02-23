@@ -17,9 +17,9 @@
 
 namespace Poincare {
 
-Expression ExpressionNode::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const Expression& expression) {
-  return Expression(this).deepReplaceSymbolWithExpression(symbol, expression);
+OExpression ExpressionNode::replaceSymbolWithExpression(
+    const SymbolAbstract& symbol, const OExpression& expression) {
+  return OExpression(this).deepReplaceSymbolWithExpression(symbol, expression);
 }
 
 int ExpressionNode::polynomialDegree(Context* context,
@@ -32,10 +32,10 @@ int ExpressionNode::polynomialDegree(Context* context,
   return 0;
 }
 
-int ExpressionNode::getPolynomialCoefficients(Context* context,
-                                              const char* symbolName,
-                                              Expression coefficients[]) const {
-  return Expression(this).defaultGetPolynomialCoefficients(
+int ExpressionNode::getPolynomialCoefficients(
+    Context* context, const char* symbolName,
+    OExpression coefficients[]) const {
+  return OExpression(this).defaultGetPolynomialCoefficients(
       polynomialDegree(context, symbolName), context, symbolName, coefficients);
 }
 
@@ -52,10 +52,10 @@ bool ExpressionNode::involvesCircularity(Context* context, int maxDepth,
   return false;
 }
 
-Expression ExpressionNode::deepReplaceReplaceableSymbols(
+OExpression ExpressionNode::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
-  return Expression(this).defaultReplaceReplaceableSymbols(
+  return OExpression(this).defaultReplaceReplaceableSymbols(
       context, isCircular, parameteredAncestorsCount, symbolicComputation);
 }
 
@@ -121,11 +121,11 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode* e,
   return 0;
 }
 
-Expression ExpressionNode::shallowReduce(
+OExpression ExpressionNode::shallowReduce(
     const ReductionContext& reductionContext) {
-  Expression e(this);
+  OExpression e(this);
   ReductionContext alterableContext = reductionContext;
-  Expression res =
+  OExpression res =
       SimplificationHelper::defaultShallowReduce(e, &alterableContext);
   if (!res.isUninitialized()) {
     return res;
@@ -133,21 +133,21 @@ Expression ExpressionNode::shallowReduce(
   return e;
 }
 
-Expression ExpressionNode::shallowBeautify(
+OExpression ExpressionNode::shallowBeautify(
     const ReductionContext& reductionContext) {
-  return Expression(this).defaultShallowBeautify();
+  return OExpression(this).defaultShallowBeautify();
 }
 
 bool ExpressionNode::derivate(const ReductionContext& reductionContext,
-                              Symbol symbol, Expression symbolValue) {
-  Expression e =
-      Derivative::DefaultDerivate(Expression(this), reductionContext, symbol);
+                              Symbol symbol, OExpression symbolValue) {
+  OExpression e =
+      Derivative::DefaultDerivate(OExpression(this), reductionContext, symbol);
   return !e.isUninitialized();
 }
 
-Expression ExpressionNode::unaryFunctionDifferential(
+OExpression ExpressionNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
-  return Expression(this).defaultUnaryFunctionDifferential();
+  return OExpression(this).defaultUnaryFunctionDifferential();
 }
 
 bool ExpressionNode::isOfType(
@@ -163,20 +163,20 @@ bool ExpressionNode::isOfType(
 bool ExpressionNode::hasMatrixOrListChild(Context* context,
                                           bool isReduced) const {
   for (ExpressionNode* c : children()) {
-    if (Expression(c).deepIsMatrix(context, true, isReduced) ||
-        Expression(c).deepIsList(context)) {
+    if (OExpression(c).deepIsMatrix(context, true, isReduced) ||
+        OExpression(c).deepIsList(context)) {
       return true;
     }
   }
   return false;
 }
 
-Expression ExpressionNode::removeUnit(Expression* unit) {
-  return Expression(this);
+OExpression ExpressionNode::removeUnit(OExpression* unit) {
+  return OExpression(this);
 }
 
-void ExpressionNode::setChildrenInPlace(Expression other) {
-  Expression(this).defaultSetChildrenInPlace(other);
+void ExpressionNode::setChildrenInPlace(OExpression other) {
+  OExpression(this).defaultSetChildrenInPlace(other);
 }
 
 }  // namespace Poincare

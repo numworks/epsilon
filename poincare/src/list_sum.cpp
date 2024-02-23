@@ -17,7 +17,7 @@ size_t ListSumNode::serialize(char* buffer, size_t bufferSize,
       ListSum::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ListSumNode::shallowReduce(
+OExpression ListSumNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListSum(this).shallowReduce(reductionContext);
 }
@@ -33,8 +33,8 @@ Evaluation<T> ListSumNode::templatedApproximate(
   return static_cast<ListNode*>(child)->sumOfElements<T>(approximationContext);
 }
 
-Expression ListSum::shallowReduce(ReductionContext reductionContext) {
-  Expression child = childAtIndex(0);
+OExpression ListSum::shallowReduce(ReductionContext reductionContext) {
+  OExpression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();
   }

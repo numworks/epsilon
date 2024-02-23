@@ -76,7 +76,7 @@ int BasedIntegerNode::simplificationOrderSameType(
   return Integer::NaturalOrder(integer(), other->integer());
 }
 
-Expression BasedIntegerNode::shallowReduce(
+OExpression BasedIntegerNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return BasedInteger(this).shallowReduce();
 }
@@ -100,11 +100,11 @@ BasedInteger BasedInteger::Builder(const Integer &m, OMG::Base base) {
   return static_cast<BasedInteger &>(h);
 }
 
-Expression BasedInteger::shallowReduce() {
+OExpression BasedInteger::shallowReduce() {
   // Turn BasedInteger into Rational
   Integer numerator = node()->integer();
   Integer denominator(1);
-  Expression result;
+  OExpression result;
   if (numerator.isOverflow() || denominator.isOverflow()) {
     result =
         Number::FloatNumber(node()->integer().template approximate<double>());

@@ -13,15 +13,15 @@ namespace Poincare {
 
 class ParameteredExpressionNode : public ExpressionNode {
  public:
-  // Expression
-  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                         const Expression& expression) override;
-  Expression deepReplaceReplaceableSymbols(
+  // OExpression
+  OExpression replaceSymbolWithExpression(
+      const SymbolAbstract& symbol, const OExpression& expression) override;
+  OExpression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
 
-  // Expression properties
+  // OExpression properties
   int getVariables(Context* context, isVariableTest isVariable, char* variables,
                    int maxSizeVariable, int nextVariableIndex) const override;
 
@@ -42,7 +42,7 @@ class ParameteredExpressionNode : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class ParameteredExpression : public Expression {
+class ParameteredExpression : public OExpression {
   friend class ParameteredExpressionNode;
 
  public:
@@ -55,7 +55,7 @@ class ParameteredExpression : public Expression {
   static bool ParameterText(const char* text, const char** parameterText,
                             size_t* parameterLength);
 
-  // Expression
+  // OExpression
   /* We sometimes replace 'x' by 'UnknownX' to differentiate between a variable
    * and a function parameter. For instance, when defining the function
    * f(x)=cos(x) in Graph, we want x to be an unknown, instead of having f be
@@ -65,16 +65,16 @@ class ParameteredExpression : public Expression {
    * unknowns: for instance, we want to change f(x)=diff(cos(x),x,x) into
    * f(X)=diff(cos(x),x,X), X being an unknown. ReplaceUnknownInExpression does
    * that. */
-  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                         const Expression& expression);
-  Expression deepReplaceReplaceableSymbols(
+  OExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
+                                          const OExpression& expression);
+  OExpression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
   Symbol parameter();
 
  protected:
   ParameteredExpression(const ParameteredExpressionNode* node)
-      : Expression(node) {}
+      : OExpression(node) {}
 };
 
 }  // namespace Poincare

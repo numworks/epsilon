@@ -24,7 +24,7 @@ static bool isScalarEvaluationType(typename EvaluationNode<T>::Type type) {
 }
 
 template <typename T>
-Expression ListComplexNode<T>::complexToExpression(
+OExpression ListComplexNode<T>::complexToExpression(
     Preferences::Preferences::ComplexFormat complexFormat) const {
   if (isUndefined()) {
     return Undefined::Builder();
@@ -32,7 +32,7 @@ Expression ListComplexNode<T>::complexToExpression(
   List list = List::Builder();
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
-    Expression childExpression = Undefined::Builder();
+    OExpression childExpression = Undefined::Builder();
     if (isScalarEvaluationType<T>(c->type())) {
       childExpression = c->complexToExpression(complexFormat);
     }

@@ -6,7 +6,7 @@
 #include <initializer_list>
 
 namespace Poincare {
-/* A TreeHandle references a TreeNode stored somewhere is the Expression Pool,
+/* A TreeHandle references a TreeNode stored somewhere is the OExpression Pool,
  * and identified by its idenfier.
  * Any method that can possibly move the object ("break the this")
  * therefore needs to be implemented in the Handle rather than the Node.

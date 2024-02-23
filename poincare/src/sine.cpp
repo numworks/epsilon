@@ -33,29 +33,29 @@ size_t SineNode::serialize(char* buffer, size_t bufferSize,
       Sine::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression SineNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression SineNode::shallowReduce(const ReductionContext& reductionContext) {
   Sine e = Sine(this);
   return Trigonometry::ShallowReduceDirectFunction(e, reductionContext);
 }
 
 bool SineNode::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                        Expression symbolValue) {
+                        OExpression symbolValue) {
   return Sine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression SineNode::unaryFunctionDifferential(
+OExpression SineNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Sine(this).unaryFunctionDifferential(reductionContext);
 }
 
 bool Sine::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                    Expression symbolValue) {
+                    OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
                                     reductionContext);
   return true;
 }
 
-Expression Sine::unaryFunctionDifferential(
+OExpression Sine::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Multiplication::Builder(
       Trigonometry::UnitConversionFactor(reductionContext.angleUnit(),

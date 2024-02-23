@@ -40,7 +40,7 @@ class DivisionRemainderNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   // Evaluation
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -61,9 +61,9 @@ class DivisionRemainder final
     : public ExpressionTwoChildren<DivisionRemainder, DivisionRemainderNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
-  static Expression Reduce(const Integer& a, const Integer& b);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
+  static OExpression Reduce(const Integer& a, const Integer& b);
 };
 
 }  // namespace Poincare

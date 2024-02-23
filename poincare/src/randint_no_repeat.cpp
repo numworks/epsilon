@@ -20,7 +20,7 @@ size_t RandintNoRepeatNode::serialize(
       RandintNoRepeat::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression RandintNoRepeatNode::shallowReduce(
+OExpression RandintNoRepeatNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return RandintNoRepeat(this).shallowReduce(reductionContext);
 }
@@ -85,7 +85,7 @@ Evaluation<T> RandintNoRepeatNode::templatedApproximate(
   return std::move(result);
 }
 
-Expression RandintNoRepeat::shallowReduce(ReductionContext reductionContext) {
+OExpression RandintNoRepeat::shallowReduce(ReductionContext reductionContext) {
   SetReductionEncounteredUndistributedList(true);
   return *this;
 }

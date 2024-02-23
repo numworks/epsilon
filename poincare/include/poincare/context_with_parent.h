@@ -17,14 +17,14 @@ class ContextWithParent : public Context {
     assert(m_parentContext);
     return m_parentContext->expressionTypeForIdentifier(identifier, length);
   }
-  bool setExpressionForSymbolAbstract(const Expression& expression,
+  bool setExpressionForSymbolAbstract(const OExpression& expression,
                                       const SymbolAbstract& symbol) override {
     assert(m_parentContext);
     return m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
   }
 
  protected:
-  const Expression protectedExpressionForSymbolAbstract(
+  const OExpression protectedExpressionForSymbolAbstract(
       const SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override {
     assert(m_parentContext);

@@ -11,11 +11,11 @@
 
 namespace Poincare {
 
-Expression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
   return Store(this).shallowReduce(reductionContext);
 }
 
-Expression StoreNode::deepReplaceReplaceableSymbols(
+OExpression StoreNode::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return Store(this).deepReplaceReplaceableSymbols(
@@ -37,7 +37,7 @@ void Store::deepReduceChildren(const ReductionContext& reductionContext) {
   }
 }
 
-Expression Store::shallowReduce(ReductionContext reductionContext) {
+OExpression Store::shallowReduce(ReductionContext reductionContext) {
   /* Stores are kept by the reduction and the app will do the effective store if
    * deemed necessary. Side-effects of the storage modification will therefore
    * happen outside of the checkpoint. */
@@ -49,12 +49,12 @@ bool Store::storeValueForSymbol(Context* context) const {
   return context->setExpressionForSymbolAbstract(value(), symbol());
 }
 
-Expression Store::deepReplaceReplaceableSymbols(
+OExpression Store::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   // Only the value of a symbol should have no free variables
   if (symbol().type() == ExpressionNode::Type::Symbol) {
-    Expression value = childAtIndex(0).deepReplaceReplaceableSymbols(
+    OExpression value = childAtIndex(0).deepReplaceReplaceableSymbols(
         context, isCircular, parameteredAncestorsCount, symbolicComputation);
     replaceChildAtIndexInPlace(0, value);
   }

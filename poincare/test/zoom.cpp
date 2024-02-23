@@ -57,7 +57,7 @@ void assert_ranges_equal(Range2D<float> observed, Range2D<float> expected,
 
 template <typename T>
 Coordinate2D<T> expressionEvaluator(T t, const void *model, Context *context) {
-  const Expression *e = static_cast<const Expression *>(model);
+  const OExpression *e = static_cast<const OExpression *>(model);
   ApproximationContext approximationContext(context, Real, Radian);
   if (e->type() == ExpressionNode::Type::Matrix) {
     return Coordinate2D<T>(
@@ -73,7 +73,7 @@ Coordinate2D<T> expressionEvaluator(T t, const void *model, Context *context) {
 void assert_points_of_interest_range_is(const char *expression,
                                         Range2D<float> expectedRange) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context, false);
   ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat), &context);
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<float>, &e, false,
                                    expressionEvaluator<double>);
@@ -136,8 +136,8 @@ void assert_intersections_range_is(const char *expression1,
                                    const char *expression2,
                                    Range2D<float> expectedRange) {
   Shared::GlobalContext context;
-  Expression e1 = parse_expression(expression1, &context, false);
-  Expression e2 = parse_expression(expression2, &context, false);
+  OExpression e1 = parse_expression(expression1, &context, false);
+  OExpression e2 = parse_expression(expression2, &context, false);
   ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat), &context);
   zoom.zoom()->fitIntersections(expressionEvaluator, &e1, expressionEvaluator,
                                 &e2);

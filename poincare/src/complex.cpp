@@ -26,7 +26,7 @@ template <typename T>
 ComplexNode<T>::ComplexNode(std::complex<T> c)
     : EvaluationNode<T>(), std::complex<T>(c.real(), c.imag()) {
   if (!std::isnan(c.imag()) && c.imag() != static_cast<T>(0.0)) {
-    Expression::SetEncounteredComplex(true);
+    OExpression::SetEncounteredComplex(true);
   }
   if (this->real() == -0) {
     this->real(0);
@@ -47,10 +47,10 @@ T ComplexNode<T>::toScalar() const {
 }
 
 template <typename T>
-Expression ComplexNode<T>::complexToExpression(
+OExpression ComplexNode<T>::complexToExpression(
     Preferences::ComplexFormat complexFormat) const {
   if (complexFormat == Preferences::ComplexFormat::Real &&
-      Expression::EncounteredComplex()) {
+      OExpression::EncounteredComplex()) {
     return Nonreal::Builder();
   }
   T ra, tb;
@@ -61,7 +61,7 @@ Expression ComplexNode<T>::complexToExpression(
     ra = this->real();
     tb = this->imag();
   }
-  return Expression::CreateComplexExpression(
+  return OExpression::CreateComplexExpression(
       Number::FloatNumber<T>(std::fabs(ra)),
       Number::FloatNumber<T>(std::fabs(tb)), complexFormat,
       ra < static_cast<T>(0.0), tb < static_cast<T>(0.0));

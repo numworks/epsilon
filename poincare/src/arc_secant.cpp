@@ -33,7 +33,7 @@ size_t ArcSecantNode::serialize(char* buffer, size_t bufferSize,
       ArcSecant::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ArcSecantNode::shallowReduce(
+OExpression ArcSecantNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcSecant e = ArcSecant(this);
   return Trigonometry::ShallowReduceInverseAdvancedFunction(e,

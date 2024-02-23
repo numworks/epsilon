@@ -14,7 +14,7 @@ class PointNode : public ExpressionNode {
       SinglePrecision p, const ApproximationContext& context) const override {
     return templatedApproximate<float>(context);
   }
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   Evaluation<double> approximate(
       DoublePrecision p, const ApproximationContext& context) const override {
     return templatedApproximate<double>(context);
@@ -44,7 +44,7 @@ class Point : public ExpressionTwoChildren<Point, PointNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 
   template <typename T>
   Coordinate2D<T> approximate2D(

@@ -25,24 +25,24 @@ std::complex<T> HyperbolicTangentNode::computeOnComplex(
 }
 
 bool HyperbolicTangentNode::derivate(const ReductionContext& reductionContext,
-                                     Symbol symbol, Expression symbolValue) {
+                                     Symbol symbol, OExpression symbolValue) {
   return HyperbolicTangent(this).derivate(reductionContext, symbol,
                                           symbolValue);
 }
 
-Expression HyperbolicTangentNode::unaryFunctionDifferential(
+OExpression HyperbolicTangentNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return HyperbolicTangent(this).unaryFunctionDifferential(reductionContext);
 }
 
 bool HyperbolicTangent::derivate(const ReductionContext& reductionContext,
-                                 Symbol symbol, Expression symbolValue) {
+                                 Symbol symbol, OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
                                     reductionContext);
   return true;
 }
 
-Expression HyperbolicTangent::unaryFunctionDifferential(
+OExpression HyperbolicTangent::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Power::Builder(HyperbolicCosine::Builder(childAtIndex(0).clone()),
                         Rational::Builder(-2));

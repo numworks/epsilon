@@ -184,7 +184,7 @@ class DistributionDispatcherNode : public NAryExpressionNode {
                                   bool ignoreParentheses) const override;
 
  private:
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
@@ -233,8 +233,8 @@ class DistributionDispatcher final : public NAryExpression {
   }
 
   template <Distribution::Type T, DistributionMethod::Type U>
-  static Expression hook(Expression children) {
-    Expression exp =
+  static OExpression hook(OExpression children) {
+    OExpression exp =
         UntypedBuilderMultipleChildren<DistributionDispatcher>(children);
     DistributionDispatcher dist = exp.convert<DistributionDispatcher>();
     dist.setDistribution(T);
@@ -243,8 +243,8 @@ class DistributionDispatcher final : public NAryExpression {
     return std::move(dist);
   }
 
-  Expression shallowReduce(ReductionContext reductionContext,
-                           bool* stopReduction = nullptr);
+  OExpression shallowReduce(ReductionContext reductionContext,
+                            bool* stopReduction = nullptr);
   void setType(DistributionMethod::Type f) {
     static_cast<DistributionDispatcherNode*>(node())->setType(f);
   }
@@ -265,8 +265,8 @@ class DistributionDispatcher final : public NAryExpression {
 };
 
 template <Distribution::Type T, DistributionMethod::Type U>
-constexpr Expression::FunctionHelper makeHelper() {
-  return Expression::FunctionHelper(
+constexpr OExpression::FunctionHelper makeHelper() {
+  return OExpression::FunctionHelper(
       getName<T, U>(),
       Distribution::numberOfParameters(T) +
           DistributionMethod::numberOfParameters(U),
@@ -274,104 +274,104 @@ constexpr Expression::FunctionHelper makeHelper() {
 }
 
 struct NormCDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Normal, DistributionMethod::Type::CDF>();
 };
 struct NormCDFRange {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Normal,
                  DistributionMethod::Type::CDFRange>();
 };
 struct NormPDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Normal, DistributionMethod::Type::PDF>();
 };
 struct InvNorm {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Normal,
                  DistributionMethod::Type::Inverse>();
 };
 
 struct StudentCDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Student, DistributionMethod::Type::CDF>();
 };
 struct StudentCDFRange {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Student,
                  DistributionMethod::Type::CDFRange>();
 };
 struct StudentPDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Student, DistributionMethod::Type::PDF>();
 };
 struct InvStudent {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Student,
                  DistributionMethod::Type::Inverse>();
 };
 
 struct PoissonCDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Poisson, DistributionMethod::Type::CDF>();
 };
 struct PoissonPDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Poisson, DistributionMethod::Type::PDF>();
 };
 
 struct BinomCDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Binomial, DistributionMethod::Type::CDF>();
 };
 struct BinomPDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Binomial, DistributionMethod::Type::PDF>();
 };
 struct InvBinom {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Binomial,
                  DistributionMethod::Type::Inverse>();
 };
 
 struct GeomCDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Geometric,
                  DistributionMethod::Type::CDF>();
 };
 struct GeomCDFRange {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Geometric,
                  DistributionMethod::Type::CDFRange>();
 };
 struct GeomPDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Geometric,
                  DistributionMethod::Type::PDF>();
 };
 struct InvGeom {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Geometric,
                  DistributionMethod::Type::Inverse>();
 };
 
 struct HypergeomCDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Hypergeometric,
                  DistributionMethod::Type::CDF>();
 };
 struct HypergeomCDFRange {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Hypergeometric,
                  DistributionMethod::Type::CDFRange>();
 };
 struct HypergeomPDF {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Hypergeometric,
                  DistributionMethod::Type::PDF>();
 };
 struct InvHypergeom {
-  constexpr static Expression::FunctionHelper s_functionHelper =
+  constexpr static OExpression::FunctionHelper s_functionHelper =
       makeHelper<Distribution::Type::Hypergeometric,
                  DistributionMethod::Type::Inverse>();
 };

@@ -31,7 +31,8 @@ int MatrixNode::polynomialDegree(Context *context,
   return -1;
 }
 
-Expression MatrixNode::shallowReduce(const ReductionContext &reductionContext) {
+OExpression MatrixNode::shallowReduce(
+    const ReductionContext &reductionContext) {
   return Matrix(this).shallowReduce(reductionContext);
 }
 
@@ -129,11 +130,11 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 }
 
 int Matrix::rank(Context *context, bool forceCanonization) {
-  assert(!recursivelyMatches(Expression::IsUninitialized, context));
-  if (recursivelyMatches(Expression::IsUndefined, context)) {
+  assert(!recursivelyMatches(OExpression::IsUninitialized, context));
+  if (recursivelyMatches(OExpression::IsUndefined, context)) {
     return -1;
   }
-  Expression m;
+  OExpression m;
   ReductionContext systemReductionContext =
       ReductionContext::DefaultReductionContextForAnalysis(context);
 
@@ -147,7 +148,7 @@ int Matrix::rank(Context *context, bool forceCanonization) {
     } else {
       /* rowCanonize can create expression that are too big for the pool.
        * If it's the case, compute the rank with approximated values. */
-      Expression mApproximation =
+      OExpression mApproximation =
           approximate<double>(ApproximationContext(systemReductionContext));
       if (mApproximation.type() != ExpressionNode::Type::Matrix) {
         /* The approximation was able to conclude that a coefficient is undef
@@ -161,7 +162,7 @@ int Matrix::rank(Context *context, bool forceCanonization) {
   }
 
   if (!canonizationSuccess ||
-      m.recursivelyMatches(Expression::IsUndefined, context)) {
+      m.recursivelyMatches(OExpression::IsUndefined, context)) {
     return -1;
   }
 
@@ -188,7 +189,7 @@ int Matrix::rank(Context *context, bool forceCanonization) {
   return rank;
 }
 
-Expression Matrix::createTrace() {
+OExpression Matrix::createTrace() {
   assert(numberOfRows() == numberOfColumns());
   int n = numberOfRows();
   Addition a = Addition::Builder();
@@ -255,7 +256,7 @@ bool Matrix::isCanonizable(const ReductionContext &reductionContext) {
 }
 
 Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
-                           bool *canonizationSuccess, Expression *determinant,
+                           bool *canonizationSuccess, OExpression *determinant,
                            bool reduced, bool forceCanonization) {
   assert(canonizationSuccess);
   *canonizationSuccess = true;
@@ -337,20 +338,20 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
         }
       }
       // Set to 1 M[h][k] by linear combination
-      Expression divisor = matrixChild(h, k);
+      OExpression divisor = matrixChild(h, k);
       // Update determinant: det *= divisor
       if (determinant) {
         det.addChildAtIndexInPlace(divisor.clone(), det.numberOfChildren(),
                                    det.numberOfChildren());
       }
       for (int j = k + 1; j < n; j++) {
-        Expression opHJ = matrixChild(h, j);
-        Expression newOpHJ = Division::Builder(opHJ, divisor.clone());
+        OExpression opHJ = matrixChild(h, j);
+        OExpression newOpHJ = Division::Builder(opHJ, divisor.clone());
         replaceChildAtIndexInPlace(h * n + j, newOpHJ);
         newOpHJ = newOpHJ.shallowReduce(reductionContext);
         if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
             newOpHJ.type() == ExpressionNode::Type::Dependency) {
-          Expression e = newOpHJ.childAtIndex(0);
+          OExpression e = newOpHJ.childAtIndex(0);
           newOpHJ.replaceChildAtIndexWithGhostInPlace(0);
           newOpHJ.replaceWithInPlace(e);
         }
@@ -365,10 +366,10 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
         if (i == h) {
           continue;
         }
-        Expression factor = matrixChild(i, k);
+        OExpression factor = matrixChild(i, k);
         for (int j = k + 1; j < n; j++) {
-          Expression opIJ = matrixChild(i, j);
-          Expression newOpIJ = Subtraction::Builder(
+          OExpression opIJ = matrixChild(i, j);
+          OExpression newOpIJ = Subtraction::Builder(
               opIJ, Multiplication::Builder(matrixChild(h, j).clone(),
                                             factor.clone()));
           replaceChildAtIndexInPlace(i * n + j, newOpIJ);
@@ -376,7 +377,7 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
           newOpIJ = newOpIJ.shallowReduce(reductionContext);
           if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
               newOpIJ.type() == ExpressionNode::Type::Dependency) {
-            Expression e = newOpIJ.childAtIndex(0);
+            OExpression e = newOpIJ.childAtIndex(0);
             newOpIJ.replaceChildAtIndexWithGhostInPlace(0);
             newOpIJ.replaceWithInPlace(e);
           }
@@ -523,8 +524,8 @@ Matrix Matrix::createTranspose() const {
   return matrix;
 }
 
-Expression Matrix::createRef(const ReductionContext &reductionContext,
-                             bool *couldComputeRef, bool reduced) const {
+OExpression Matrix::createRef(const ReductionContext &reductionContext,
+                              bool *couldComputeRef, bool reduced) const {
   // Compute Matrix Row Echelon Form
   /* If the matrix is too big, the rowCanonization might not be computed exactly
    * because of a pool allocation error, but we might still be able to compute
@@ -550,25 +551,25 @@ Expression Matrix::createRef(const ReductionContext &reductionContext,
     return std::move(result);
   } else {
     *couldComputeRef = false;
-    return Expression();
+    return OExpression();
   }
 }
 
-Expression Matrix::createInverse(const ReductionContext &reductionContext,
-                                 bool *couldComputeInverse) const {
+OExpression Matrix::createInverse(const ReductionContext &reductionContext,
+                                  bool *couldComputeInverse) const {
   int dim = numberOfRows();
   if (dim != numberOfColumns()) {
     *couldComputeInverse = true;
     return Undefined::Builder();
   }
-  Expression result =
+  OExpression result =
       computeInverseOrDeterminant(false, reductionContext, couldComputeInverse);
   assert(!(*couldComputeInverse) || !result.isUninitialized());
   return result;
 }
 
-Expression Matrix::determinant(const ReductionContext &reductionContext,
-                               bool *couldComputeDeterminant, bool inPlace) {
+OExpression Matrix::determinant(const ReductionContext &reductionContext,
+                                bool *couldComputeDeterminant, bool inPlace) {
   // Determinant must be called on a reduced matrix only.
   *couldComputeDeterminant = true;
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
@@ -589,7 +590,7 @@ Expression Matrix::determinant(const ReductionContext &reductionContext,
         Multiplication::Builder(m.matrixChild(0, 0), m.matrixChild(1, 1));
     Multiplication bc =
         Multiplication::Builder(m.matrixChild(0, 1), m.matrixChild(1, 0));
-    Expression result = Subtraction::Builder(ad, bc);
+    OExpression result = Subtraction::Builder(ad, bc);
     ad.shallowReduce(reductionContext);
     bc.shallowReduce(reductionContext);
     return result;
@@ -598,63 +599,64 @@ Expression Matrix::determinant(const ReductionContext &reductionContext,
     /*                |a b c|
      * Determinant of |d e f| is aei+bfg+cdh-ceg-bdi-afh
      *                |g h i|                             */
-    Expression a = m.matrixChild(0, 0);
-    Expression b = m.matrixChild(0, 1);
-    Expression c = m.matrixChild(0, 2);
-    Expression d = m.matrixChild(1, 0);
-    Expression e = m.matrixChild(1, 1);
-    Expression f = m.matrixChild(1, 2);
-    Expression g = m.matrixChild(2, 0);
-    Expression h = m.matrixChild(2, 1);
-    Expression i = m.matrixChild(2, 2);
+    OExpression a = m.matrixChild(0, 0);
+    OExpression b = m.matrixChild(0, 1);
+    OExpression c = m.matrixChild(0, 2);
+    OExpression d = m.matrixChild(1, 0);
+    OExpression e = m.matrixChild(1, 1);
+    OExpression f = m.matrixChild(1, 2);
+    OExpression g = m.matrixChild(2, 0);
+    OExpression h = m.matrixChild(2, 1);
+    OExpression i = m.matrixChild(2, 2);
     Tuple children = {Multiplication::Builder(a.clone(), e.clone(), i.clone()),
                       Multiplication::Builder(b.clone(), f.clone(), g.clone()),
                       Multiplication::Builder(c.clone(), d.clone(), h.clone()),
                       Multiplication::Builder(Rational::Builder(-1), c, e, g),
                       Multiplication::Builder(Rational::Builder(-1), b, d, i),
                       Multiplication::Builder(Rational::Builder(-1), a, f, h)};
-    Expression result = Addition::Builder(children);
-    for (Expression child : children) {
+    OExpression result = Addition::Builder(children);
+    for (OExpression child : children) {
       child.shallowReduce(reductionContext);
     }
     return result;
   }
 
   // Dimension >= 4
-  Expression result = computeInverseOrDeterminant(true, reductionContext,
-                                                  couldComputeDeterminant);
+  OExpression result = computeInverseOrDeterminant(true, reductionContext,
+                                                   couldComputeDeterminant);
   assert(!(*couldComputeDeterminant) || !result.isUninitialized());
   return result;
 }
 
-Expression Matrix::norm(const ReductionContext &reductionContext) const {
+OExpression Matrix::norm(const ReductionContext &reductionContext) const {
   // Norm is defined on vectors only
   assert(isVector());
   Addition sum = Addition::Builder();
   int childrenNumber = numberOfChildren();
   for (int j = 0; j < childrenNumber; j++) {
-    Expression absValue = AbsoluteValue::Builder(
+    OExpression absValue = AbsoluteValue::Builder(
         const_cast<Matrix *>(this)->childAtIndex(j).clone());
-    Expression squaredAbsValue = Power::Builder(absValue, Rational::Builder(2));
+    OExpression squaredAbsValue =
+        Power::Builder(absValue, Rational::Builder(2));
     absValue.shallowReduce(reductionContext);
     sum.addChildAtIndexInPlace(squaredAbsValue, sum.numberOfChildren(),
                                sum.numberOfChildren());
     squaredAbsValue.shallowReduce(reductionContext);
   }
-  Expression result = SquareRoot::Builder(sum);
+  OExpression result = SquareRoot::Builder(sum);
   sum.shallowReduce(reductionContext);
   return result;
 }
 
-Expression Matrix::dot(Matrix *b,
-                       const ReductionContext &reductionContext) const {
+OExpression Matrix::dot(Matrix *b,
+                        const ReductionContext &reductionContext) const {
   // Dot product is defined between two vectors of same size and type
   assert(isVector() && vectorType() == b->vectorType() &&
          numberOfChildren() == b->numberOfChildren());
   Addition sum = Addition::Builder();
   int childrenNumber = numberOfChildren();
   for (int j = 0; j < childrenNumber; j++) {
-    Expression product = Multiplication::Builder(
+    OExpression product = Multiplication::Builder(
         const_cast<Matrix *>(this)->childAtIndex(j).clone(),
         const_cast<Matrix *>(b)->childAtIndex(j).clone());
     sum.addChildAtIndexInPlace(product, sum.numberOfChildren(),
@@ -673,13 +675,13 @@ Matrix Matrix::cross(Matrix *b,
   for (int j = 0; j < 3; j++) {
     int j1 = (j + 1) % 3;
     int j2 = (j + 2) % 3;
-    Expression a1b2 = Multiplication::Builder(
+    OExpression a1b2 = Multiplication::Builder(
         const_cast<Matrix *>(this)->childAtIndex(j1).clone(),
         const_cast<Matrix *>(b)->childAtIndex(j2).clone());
-    Expression a2b1 = Multiplication::Builder(
+    OExpression a2b1 = Multiplication::Builder(
         const_cast<Matrix *>(this)->childAtIndex(j2).clone(),
         const_cast<Matrix *>(b)->childAtIndex(j1).clone());
-    Expression difference = Subtraction::Builder(a1b2, a2b1);
+    OExpression difference = Subtraction::Builder(a1b2, a2b1);
     a1b2.shallowReduce(reductionContext);
     a2b1.shallowReduce(reductionContext);
     matrix.addChildAtIndexInPlace(difference, matrix.numberOfChildren(),
@@ -690,11 +692,11 @@ Matrix Matrix::cross(Matrix *b,
   return matrix;
 }
 
-Expression Matrix::shallowReduce(ReductionContext reductionContext) {
+OExpression Matrix::shallowReduce(ReductionContext reductionContext) {
   if (node()->hasMatrixOrListChild(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
-  Expression e =
+  OExpression e =
       SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
   if (!e.isUninitialized()) {
     return e;
@@ -702,7 +704,7 @@ Expression Matrix::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-Expression Matrix::computeInverseOrDeterminant(
+OExpression Matrix::computeInverseOrDeterminant(
     bool computeDeterminant, const ReductionContext &reductionContext,
     bool *couldCompute) const {
   assert(numberOfRows() == numberOfColumns());
@@ -730,7 +732,7 @@ Expression Matrix::computeInverseOrDeterminant(
     Matrix matrixAI = Matrix::Builder();
     for (int i = 0; i < dim; i++) {
       for (int j = 0; j < dim; j++) {
-        Expression mChildIJ = cl.matrixChild(i, j);
+        OExpression mChildIJ = cl.matrixChild(i, j);
         matrixAI.addChildAtIndexInPlace(mChildIJ, i * 2 * dim + j,
                                         i * 2 * dim + j);
       }
@@ -741,7 +743,7 @@ Expression Matrix::computeInverseOrDeterminant(
       }
     }
     matrixAI.setDimensions(dim, 2 * dim);
-    Expression det;
+    OExpression det;
     bool canonizationSuccess = true;
     matrixAI =
         matrixAI.rowCanonize(reductionContext, &canonizationSuccess, &det);
@@ -770,7 +772,7 @@ Expression Matrix::computeInverseOrDeterminant(
     return std::move(inverse);
   } else {
     *couldCompute = false;
-    return Expression();
+    return OExpression();
   }
 }
 

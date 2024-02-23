@@ -11,7 +11,7 @@ int MatrixEchelonFormNode::numberOfChildren() const {
   return sNumberOfChildren;
 }
 
-Expression MatrixEchelonFormNode::shallowReduce(
+OExpression MatrixEchelonFormNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return MatrixEchelonForm(this).shallowReduce(reductionContext);
 }
@@ -39,9 +39,10 @@ Evaluation<T> MatrixEchelonFormNode::templatedApproximate(
   return ref;
 }
 
-Expression MatrixEchelonForm::shallowReduce(ReductionContext reductionContext) {
+OExpression MatrixEchelonForm::shallowReduce(
+    ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -49,10 +50,10 @@ Expression MatrixEchelonForm::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     bool couldComputeRef = false;
-    Expression result = static_cast<Matrix&>(c).createRef(
+    OExpression result = static_cast<Matrix&>(c).createRef(
         reductionContext, &couldComputeRef, isFormReduced());
     if (couldComputeRef) {
       replaceWithInPlace(result);

@@ -28,11 +28,12 @@ size_t FactorNode::serialize(char* buffer, size_t bufferSize,
       Factor::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression FactorNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression FactorNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return Factor(this).shallowReduce(reductionContext);
 }
 
-Expression FactorNode::shallowBeautify(
+OExpression FactorNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return Factor(this).shallowBeautify(reductionContext);
 }
@@ -68,7 +69,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(
     return m;
   }
   for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Expression factor = Rational::Builder(*arithmetic.factorAtIndex(index));
+    OExpression factor = Rational::Builder(*arithmetic.factorAtIndex(index));
     if (!arithmetic.coefficientAtIndex(index)->isOne()) {
       factor = Power::Builder(
           factor, Rational::Builder(*arithmetic.coefficientAtIndex(index)));
@@ -79,9 +80,9 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(
   return m;
 }
 
-Expression Factor::shallowReduce(ReductionContext reductionContext) {
+OExpression Factor::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -94,8 +95,8 @@ Expression Factor::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-Expression Factor::shallowBeautify(const ReductionContext& reductionContext) {
-  Expression c = childAtIndex(0);
+OExpression Factor::shallowBeautify(const ReductionContext& reductionContext) {
+  OExpression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
     return replaceWithUndefinedInPlace();
   }
@@ -110,7 +111,7 @@ Expression Factor::shallowBeautify(const ReductionContext& reductionContext) {
   if (numeratorDecomp.numberOfChildren() == 0) {
     return replaceWithUndefinedInPlace();
   }
-  Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
+  OExpression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.isInteger()) {
     Multiplication denominatorDecomp =
         createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator());

@@ -20,7 +20,7 @@ int BinomialCoefficientNode::numberOfChildren() const {
   return BinomialCoefficient::s_functionHelper.numberOfChildren();
 }
 
-Expression BinomialCoefficientNode::shallowReduce(
+OExpression BinomialCoefficientNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return BinomialCoefficient(this).shallowReduce(reductionContext);
 }
@@ -73,10 +73,10 @@ T BinomialCoefficientNode::compute(T k, T n) {
   return generalized ? result : std::round(result);
 }
 
-Expression BinomialCoefficient::shallowReduce(
+OExpression BinomialCoefficient::shallowReduce(
     ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -86,8 +86,8 @@ Expression BinomialCoefficient::shallowReduce(
       return e;
     }
   }
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
+  OExpression c0 = childAtIndex(0);
+  OExpression c1 = childAtIndex(1);
 
   if (c0.type() != ExpressionNode::Type::Rational ||
       c1.type() != ExpressionNode::Type::Rational) {
@@ -123,7 +123,7 @@ Expression BinomialCoefficient::shallowReduce(
     // Generalized binomial coefficient (n < k)
     if (!n.isNegative()) {
       // When n is an integer and 0 <= n < k, binomial(n,k) is 0.
-      Expression res = Rational::Builder(0);
+      OExpression res = Rational::Builder(0);
       replaceWithInPlace(res);
       return res;
     }

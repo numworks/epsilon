@@ -34,7 +34,7 @@ class SignFunctionNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };
@@ -60,7 +60,7 @@ class SignFunctionNode final : public ExpressionNode {
   }
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 };
 
 class SignFunction final
@@ -68,9 +68,9 @@ class SignFunction final
  public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
+                OExpression symbolValue);
 };
 
 }  // namespace Poincare

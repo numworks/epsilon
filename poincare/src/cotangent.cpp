@@ -37,7 +37,7 @@ size_t CotangentNode::serialize(char* buffer, size_t bufferSize,
       Cotangent::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression CotangentNode::shallowReduce(
+OExpression CotangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
   Cotangent e = Cotangent(this);
   return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);

@@ -30,7 +30,7 @@ class ConstantNode final : public ExpressionNode {
   // Complex
   bool isReal() const;
 
-  // Expression Properties
+  // OExpression Properties
   Type type() const override {
     return constantInfo().m_unit == nullptr ? Type::ConstantMaths
                                             : Type::ConstantPhysics;
@@ -110,14 +110,14 @@ class ConstantNode final : public ExpressionNode {
                                   bool ignoreParentheses) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::OneLetter;
   };
 
   /* Derivation */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 
  private:
   int rankOfConstant() const { return constantInfo().m_comparisonRank; }
@@ -127,11 +127,11 @@ class ConstantNode final : public ExpressionNode {
   const ConstantInfo* m_constantInfo;
 };
 
-class Constant final : public Expression {
+class Constant final : public OExpression {
   friend class ConstantNode;
 
  public:
-  Constant(const ConstantNode* node) : Expression(node) {}
+  Constant(const ConstantNode* node) : OExpression(node) {}
 
   static Constant Builder(const char* name, int length);
   static Constant Builder(const char* name) {
@@ -162,15 +162,15 @@ class Constant final : public Expression {
   }
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
+                OExpression symbolValue);
 
  private:
   // Return -1 if the name does not refer to a constant
   static int ConstantInfoIndexFromName(const char* name, int length);
   ConstantNode* node() const {
-    return static_cast<ConstantNode*>(Expression::node());
+    return static_cast<ConstantNode*>(OExpression::node());
   }
 };
 

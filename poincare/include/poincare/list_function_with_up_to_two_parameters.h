@@ -20,11 +20,11 @@ class ListFunctionWithOneOrTwoParametersNode
     return LayoutShape::BoundaryPunctuation;
   }
 
-  bool getChildrenIfNonEmptyList(Expression* memoizedChildren) const {
-    memoizedChildren[0] = Expression(childAtIndex(0));
+  bool getChildrenIfNonEmptyList(OExpression* memoizedChildren) const {
+    memoizedChildren[0] = OExpression(childAtIndex(0));
     memoizedChildren[1] =
         numberOfChildren() == 2
-            ? Expression(childAtIndex(1))
+            ? OExpression(childAtIndex(1))
             : List::Ones(memoizedChildren[0].numberOfChildren());
     return memoizedChildren[0].type() == ExpressionNode::Type::List &&
            memoizedChildren[1].type() == ExpressionNode::Type::List &&

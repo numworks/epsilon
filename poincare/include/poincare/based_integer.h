@@ -28,7 +28,7 @@ class BasedIntegerNode final : public NumberNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  // Expression subclassing
+  // OExpression subclassing
   Type type() const override { return Type::BasedInteger; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
@@ -61,7 +61,7 @@ class BasedIntegerNode final : public NumberNode {
  private:
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return m_base == OMG::Base::Decimal ? LayoutShape::Integer
                                         : LayoutShape::Default;
@@ -96,7 +96,7 @@ class BasedInteger final : public Number {
   }
 
   /* Simplification */
-  Expression shallowReduce();
+  OExpression shallowReduce();
 };
 
 }  // namespace Poincare

@@ -16,7 +16,7 @@ int DimensionNode::numberOfChildren() const {
   return Dimension::s_functionHelper.numberOfChildren();
 }
 
-Expression DimensionNode::shallowReduce(
+OExpression DimensionNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Dimension(this).shallowReduce(reductionContext);
 }
@@ -46,9 +46,9 @@ Evaluation<T> DimensionNode::templatedApproximate(
   return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
-Expression Dimension::shallowReduce(ReductionContext reductionContext) {
+OExpression Dimension::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -56,10 +56,10 @@ Expression Dimension::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
 
   if (c.type() == ExpressionNode::Type::List) {
-    Expression result = Rational::Builder(c.numberOfChildren());
+    OExpression result = Rational::Builder(c.numberOfChildren());
     replaceWithInPlace(result);
     return result;
   }

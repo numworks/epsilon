@@ -21,14 +21,14 @@ size_t RealPartNode::serialize(char* buffer, size_t bufferSize,
       RealPart::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression RealPartNode::shallowReduce(
+OExpression RealPartNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return RealPart(this).shallowReduce(reductionContext);
 }
 
-Expression RealPart::shallowReduce(ReductionContext reductionContext) {
+OExpression RealPart::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -38,7 +38,7 @@ Expression RealPart::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.isReal(reductionContext.context(),
                reductionContext.shouldCheckMatrices())) {
     replaceWithInPlace(c);
@@ -46,7 +46,7 @@ Expression RealPart::shallowReduce(ReductionContext reductionContext) {
   }
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
-    Expression r = complexChild.real();
+    OExpression r = complexChild.real();
     replaceWithInPlace(r);
     return r.shallowReduce(reductionContext);
   }

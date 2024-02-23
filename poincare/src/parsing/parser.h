@@ -37,15 +37,15 @@ class Parser {
         m_pendingImplicitOperator(false),
         m_waitingSlashForMixedFraction(false) {}
 
-  Expression parse();
+  OExpression parse();
   Status getStatus() const { return m_status; }
 
  private:
-  Expression parseUntil(Token::Type stoppingType,
-                        Expression leftHandSide = Expression());
-  Expression parseExpressionWithRightwardsArrow(
+  OExpression parseUntil(Token::Type stoppingType,
+                         OExpression leftHandSide = OExpression());
+  OExpression parseExpressionWithRightwardsArrow(
       const char* rightwardsArrowPosition);
-  Expression initializeFirstTokenAndParseUntilEnd();
+  OExpression initializeFirstTokenAndParseUntilEnd();
 
   // Methods on Tokens
   void popToken();
@@ -56,124 +56,125 @@ class Parser {
   Token::Type implicitOperatorType();
 
   // Specific Token parsers
-  void parseUnexpected(Expression& leftHandSide,
+  void parseUnexpected(OExpression& leftHandSide,
                        Token::Type stoppingType = (Token::Type)0);
-  void parseNumber(Expression& leftHandSide,
+  void parseNumber(OExpression& leftHandSide,
                    Token::Type stoppingType = (Token::Type)0);
-  void parseConstant(Expression& leftHandSide,
+  void parseConstant(OExpression& leftHandSide,
                      Token::Type stoppingType = (Token::Type)0);
-  void parseUnit(Expression& leftHandSide,
+  void parseUnit(OExpression& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
-  void parseReservedFunction(Expression& leftHandSide,
+  void parseReservedFunction(OExpression& leftHandSide,
                              Token::Type stoppingType = (Token::Type)0);
-  void parseSpecialIdentifier(Expression& leftHandSide,
+  void parseSpecialIdentifier(OExpression& leftHandSide,
                               Token::Type stoppingType = (Token::Type)0);
-  void parseCustomIdentifier(Expression& leftHandSide,
+  void parseCustomIdentifier(OExpression& leftHandSide,
                              Token::Type stoppingType = (Token::Type)0);
-  void parseEmpty(Expression& leftHandSide,
+  void parseEmpty(OExpression& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseMatrix(Expression& leftHandSide,
+  void parseMatrix(OExpression& leftHandSide,
                    Token::Type stoppingType = (Token::Type)0);
-  void parseLeftParenthesis(Expression& leftHandSide,
+  void parseLeftParenthesis(OExpression& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseLeftSystemParenthesis(Expression& leftHandSide,
+  void parseLeftSystemParenthesis(OExpression& leftHandSide,
                                   Token::Type stoppingType = (Token::Type)0);
-  void parseLeftSystemBrace(Expression& leftHandSide,
+  void parseLeftSystemBrace(OExpression& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseBang(Expression& leftHandSide,
+  void parseBang(OExpression& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
-  void parsePercent(Expression& leftHandSide,
+  void parsePercent(OExpression& leftHandSide,
                     Token::Type stoppingType = (Token::Type)0);
-  void parsePlus(Expression& leftHandSide,
+  void parsePlus(OExpression& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
-  void parseMinus(Expression& leftHandSide,
+  void parseMinus(OExpression& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseTimes(Expression& leftHandSide,
+  void parseTimes(OExpression& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseSlash(Expression& leftHandSide,
+  void parseSlash(OExpression& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseImplicitTimes(Expression& leftHandSide,
+  void parseImplicitTimes(OExpression& leftHandSide,
                           Token::Type stoppingType = (Token::Type)0);
   void parseImplicitAdditionBetweenUnits(
-      Expression& leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseCaret(Expression& leftHandSide,
+      OExpression& leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseCaret(OExpression& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseCaretWithParenthesis(Expression& leftHandSide,
+  void parseCaretWithParenthesis(OExpression& leftHandSide,
                                  Token::Type stoppingType = (Token::Type)0);
-  void parseComparisonOperator(Expression& leftHandSide,
+  void parseComparisonOperator(OExpression& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
-  void parseAssignmentEqual(Expression& leftHandSide,
+  void parseAssignmentEqual(OExpression& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseLogicalOperatorNot(Expression& leftHandSide,
+  void parseLogicalOperatorNot(OExpression& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
-  void parseAndOperator(Expression& leftHandSide,
+  void parseAndOperator(OExpression& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::And,
                                leftHandSide, stoppingType);
   }
-  void parseNandOperator(Expression& leftHandSide,
+  void parseNandOperator(OExpression& leftHandSide,
                          Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nand,
                                leftHandSide, stoppingType);
   }
-  void parseOrOperator(Expression& leftHandSide,
+  void parseOrOperator(OExpression& leftHandSide,
                        Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Or,
                                leftHandSide, stoppingType);
   }
-  void parseXorOperator(Expression& leftHandSide,
+  void parseXorOperator(OExpression& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Xor,
                                leftHandSide, stoppingType);
   }
-  void parseNorOperator(Expression& leftHandSide,
+  void parseNorOperator(OExpression& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nor,
                                leftHandSide, stoppingType);
   }
 
-  void parseRightwardsArrow(Expression& leftHandSide,
+  void parseRightwardsArrow(OExpression& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseLeftSuperscript(Expression& leftHandSide,
+  void parseLeftSuperscript(OExpression& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseList(Expression& leftHandSide,
+  void parseList(OExpression& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
-  void parseNorthEastArrow(Expression& leftHandSide,
+  void parseNorthEastArrow(OExpression& leftHandSide,
                            Token::Type stoppingType = (Token::Type)0);
-  void parseSouthEastArrow(Expression& leftHandSide,
+  void parseSouthEastArrow(OExpression& leftHandSide,
                            Token::Type stoppingType = (Token::Type)0);
 
   // Parsing helpers
-  void privateParsePlusAndMinus(Expression& leftHandSide, bool plus,
+  void privateParsePlusAndMinus(OExpression& leftHandSide, bool plus,
                                 Token::Type stoppingType = (Token::Type)0);
-  void privateParseEastArrow(Expression& leftHandSide, bool north,
+  void privateParseEastArrow(OExpression& leftHandSide, bool north,
                              Token::Type stoppingType = (Token::Type)0);
   void parseBinaryLogicalOperator(
       BinaryLogicalOperatorNode::OperatorType operatorType,
-      Expression& leftHandSide, Token::Type stoppingType);
-  bool parseBinaryOperator(const Expression& leftHandSide,
-                           Expression& rightHandSide, Token::Type stoppingType);
-  Expression parseVector();
-  Expression parseFunctionParameters();
-  Expression parseCommaSeparatedList();
-  void privateParseTimes(Expression& leftHandSide, Token::Type stoppingType);
+      OExpression& leftHandSide, Token::Type stoppingType);
+  bool parseBinaryOperator(const OExpression& leftHandSide,
+                           OExpression& rightHandSide,
+                           Token::Type stoppingType);
+  OExpression parseVector();
+  OExpression parseFunctionParameters();
+  OExpression parseCommaSeparatedList();
+  void privateParseTimes(OExpression& leftHandSide, Token::Type stoppingType);
   void privateParseReservedFunction(
-      Expression& leftHandSide,
-      const Expression::FunctionHelper* const* functionHelper);
-  void privateParseCustomIdentifier(Expression& leftHandSide, const char* name,
+      OExpression& leftHandSide,
+      const OExpression::FunctionHelper* const* functionHelper);
+  void privateParseCustomIdentifier(OExpression& leftHandSide, const char* name,
                                     size_t length, Token::Type stoppingType);
   bool privateParseCustomIdentifierWithParameters(
-      Expression& leftHandSide, const char* name, size_t length,
+      OExpression& leftHandSide, const char* name, size_t length,
       Token::Type stoppingType, Context::SymbolAbstractType idType,
       bool parseApostropheAsDerivative);
-  void parseSequence(Expression& leftHandSide, const char* name,
+  void parseSequence(OExpression& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
   void defaultParseLeftParenthesis(bool isSystemParenthesis,
-                                   Expression& leftHandSide,
+                                   OExpression& leftHandSide,
                                    Token::Type stoppingType);
-  Expression parseIntegerCaretForFunction(bool allowParenthesis,
-                                          int* caretIntegerValue);
-  bool generateMixedFractionIfNeeded(Expression& leftHandSide);
+  OExpression parseIntegerCaretForFunction(bool allowParenthesis,
+                                           int* caretIntegerValue);
+  bool generateMixedFractionIfNeeded(OExpression& leftHandSide);
 
   // Save and restore parser state
   struct State {

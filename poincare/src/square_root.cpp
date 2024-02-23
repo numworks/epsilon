@@ -38,13 +38,13 @@ std::complex<T> SquareRootNode::computeOnComplex(
                                                                       c);
 }
 
-Expression SquareRootNode::shallowReduce(
+OExpression SquareRootNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return SquareRoot(this).shallowReduce(reductionContext);
 }
 
-bool SquareRoot::SplitRadical(Expression term, Expression *factor,
-                              Expression *underRoot) {
+bool SquareRoot::SplitRadical(OExpression term, OExpression *factor,
+                              OExpression *underRoot) {
   /* We expect term to be a reduction of a√b, with a or b eventually equal to 1
    */
   if (term.type() == ExpressionNode::Type::Rational) {
@@ -58,12 +58,12 @@ bool SquareRoot::SplitRadical(Expression term, Expression *factor,
   }
   if (term.type() == ExpressionNode::Type::Multiplication &&
       term.numberOfChildren() == 2) {
-    Expression factor1 = term.childAtIndex(0), factor2 = term.childAtIndex(1);
+    OExpression factor1 = term.childAtIndex(0), factor2 = term.childAtIndex(1);
     if (factor1.type() == ExpressionNode::Type::Rational &&
         (factor2.type() == ExpressionNode::Type::Power &&
          factor2.childAtIndex(1).type() == ExpressionNode::Type::Rational &&
          factor2.childAtIndex(0).type() == ExpressionNode::Type::Rational)) {
-      Expression exponent = factor2.childAtIndex(1);
+      OExpression exponent = factor2.childAtIndex(1);
       if (static_cast<Rational &>(exponent).isHalf()) {
         *factor = factor1;
         *underRoot = factor2.childAtIndex(0);
@@ -74,8 +74,8 @@ bool SquareRoot::SplitRadical(Expression term, Expression *factor,
   return false;
 }
 
-Expression SquareRoot::ReduceNestedRadicals(
-    Expression a, Expression b, Expression c, Expression d,
+OExpression SquareRoot::ReduceNestedRadicals(
+    OExpression a, OExpression b, OExpression c, OExpression d,
     const ReductionContext &reductionContext) {
   assert(a.type() == ExpressionNode::Type::Rational &&
          b.type() == ExpressionNode::Type::Rational &&
@@ -112,41 +112,41 @@ Expression SquareRoot::ReduceNestedRadicals(
       w.numeratorOrDenominatorIsInfinity() ||
       x.numeratorOrDenominatorIsInfinity() ||
       z.numeratorOrDenominatorIsInfinity()) {
-    return Expression();
+    return OExpression();
   }
   /* √(y+√z) can be turned into √u+√v if √(y^2-z) is rational. Because of our
    * choice of w, x, y and z, we know that y^2 > z. */
   Rational y2MinusZ = Rational::Addition(
       y2, Rational::Multiplication(z, Rational::Builder(-1)));
   if (y2MinusZ.numeratorOrDenominatorIsInfinity()) {
-    return Expression();
+    return OExpression();
   }
-  Expression delta = Power::Builder(y2MinusZ, Rational::Builder(1, 2))
-                         .shallowReduce(reductionContext);
+  OExpression delta = Power::Builder(y2MinusZ, Rational::Builder(1, 2))
+                          .shallowReduce(reductionContext);
   if (delta.type() != ExpressionNode::Type::Rational) {
-    return Expression();
+    return OExpression();
   }
   Rational rDelta = static_cast<Rational &>(delta);
-  Expression left =
+  OExpression left =
       Power::Builder(Rational::Multiplication(Rational::Addition(y, rDelta),
                                               Rational::Builder(1, 2)),
                      Rational::Builder(1, 2));
-  Expression right = Power::Builder(
+  OExpression right = Power::Builder(
       Rational::Multiplication(
           Rational::Addition(
               y, Rational::Multiplication(rDelta, Rational::Builder(-1))),
           Rational::Builder(1, 2)),
       Rational::Builder(1, 2));
-  Expression result = Multiplication::Builder(
+  OExpression result = Multiplication::Builder(
       {Power::Builder(w, Rational::Builder(1, 4)),
        Power::Builder(x, Rational::Builder(1, 2)),
        Addition::Builder(left, subtract ? Opposite::Builder(right) : right)});
   return result.deepReduce(reductionContext);
 }
 
-Expression SquareRoot::shallowReduce(ReductionContext reductionContext) {
+OExpression SquareRoot::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
@@ -156,7 +156,7 @@ Expression SquareRoot::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   Power p = Power::Builder(c, Rational::Builder(1, 2));
   replaceWithInPlace(p);
   return p.shallowReduce(reductionContext);

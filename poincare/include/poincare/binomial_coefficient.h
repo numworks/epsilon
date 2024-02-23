@@ -30,7 +30,7 @@ class BinomialCoefficientNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };
@@ -57,8 +57,8 @@ class BinomialCoefficient final
  public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
 
  private:
   constexpr static int k_maxNValue = 300;

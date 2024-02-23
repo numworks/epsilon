@@ -15,7 +15,7 @@
 
 namespace Poincare {
 
-Expression MixedFractionNode::shallowReduce(
+OExpression MixedFractionNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return MixedFraction(this).shallowReduce(reductionContext);
 }
@@ -48,9 +48,9 @@ Evaluation<T> MixedFractionNode::templateApproximate(
   return Complex<T>::Builder(evaluatedIntegerPart + evaluatedFractionPart);
 }
 
-Expression MixedFraction::shallowReduce(ReductionContext context) {
-  Expression integerPart = childAtIndex(0);
-  Expression fractionPart = childAtIndex(1);
+OExpression MixedFraction::shallowReduce(ReductionContext context) {
+  OExpression integerPart = childAtIndex(0);
+  OExpression fractionPart = childAtIndex(1);
   if (integerPart.type() != ExpressionNode::Type::Rational ||
       fractionPart.type() != ExpressionNode::Type::Rational) {
     return replaceWithUndefinedInPlace();

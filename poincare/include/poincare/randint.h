@@ -25,13 +25,13 @@ class RandintNode final : public ExpressionNodeWithOneOrTwoChildren {
 
  private:
   constexpr static int k_defaultMinBound = 1;
-  Expression createExpressionWithTwoChildren() const;
+  OExpression createExpressionWithTwoChildren() const;
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   // Evaluation
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -61,7 +61,7 @@ class Randint final : public ExpressionUpToTwoChildren<Randint, RandintNode> {
 
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

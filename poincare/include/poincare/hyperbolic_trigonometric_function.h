@@ -22,25 +22,25 @@ class HyperbolicTrigonometricFunctionNode : public ExpressionNode {
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
-  virtual bool isNotableValue(Expression e, Context* context) const {
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+  virtual bool isNotableValue(OExpression e, Context* context) const {
     return e.isNull(context) == TrinaryBoolean::True;
   }
-  virtual Expression imageOfNotableValue() const {
+  virtual OExpression imageOfNotableValue() const {
     return Rational::Builder(0);
   }
 };
 
-class HyperbolicTrigonometricFunction : public Expression {
+class HyperbolicTrigonometricFunction : public OExpression {
  public:
   HyperbolicTrigonometricFunction(const HyperbolicTrigonometricFunctionNode* n)
-      : Expression(n) {}
-  Expression shallowReduce(ReductionContext reductionContext);
+      : OExpression(n) {}
+  OExpression shallowReduce(ReductionContext reductionContext);
 
  private:
   HyperbolicTrigonometricFunctionNode* node() const {
     return static_cast<HyperbolicTrigonometricFunctionNode*>(
-        Expression::node());
+        OExpression::node());
   }
 };
 

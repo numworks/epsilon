@@ -83,10 +83,10 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::next(const Expression &e, BracketTest test,
+Coordinate2D<T> Solver<T>::next(const OExpression &e, BracketTest test,
                                 HoneResult hone) {
   assert(m_unknown && m_unknown[0] != '\0');
-  if (e.recursivelyMatches(Expression::IsRandom, m_context)) {
+  if (e.recursivelyMatches(OExpression::IsRandom, m_context)) {
     return Coordinate2D<T>(NAN, NAN);
   }
   ApproximationContext approximationContext(m_context, m_complexFormat,
@@ -106,8 +106,8 @@ Coordinate2D<T> Solver<T>::next(const Expression &e, BracketTest test,
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRoot(const Expression &e) {
-  if (e.recursivelyMatches(Expression::IsRandom, m_context)) {
+Coordinate2D<T> Solver<T>::nextRoot(const OExpression &e) {
+  if (e.recursivelyMatches(OExpression::IsRandom, m_context)) {
     return Coordinate2D<T>(NAN, NAN);
   }
   ExpressionNode::Type type = e.type();
@@ -153,7 +153,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Expression &e) {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextMinimum(const Expression &e) {
+Coordinate2D<T> Solver<T>::nextMinimum(const OExpression &e) {
   /* TODO We could add a layer of formal resolution:
    * - use the derivative (could be an optional argument to avoid recomputing
    *   it every time)
@@ -163,11 +163,11 @@ Coordinate2D<T> Solver<T>::nextMinimum(const Expression &e) {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextIntersection(const Expression &e1,
-                                            const Expression &e2,
-                                            Expression *memoizedDifference) {
+Coordinate2D<T> Solver<T>::nextIntersection(const OExpression &e1,
+                                            const OExpression &e2,
+                                            OExpression *memoizedDifference) {
   if (!memoizedDifference) {
-    Expression diff;
+    OExpression diff;
     return nextIntersection(e1, e2, &diff);
   }
   assert(memoizedDifference);
@@ -529,10 +529,10 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
+Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const OExpression &e,
                                                    int childIndex) const {
   Solver<T> solver = *this;
-  Expression child = e.childAtIndex(childIndex);
+  OExpression child = e.childAtIndex(childIndex);
   T xRoot;
   while (std::isfinite(
       xRoot = solver.nextRoot(child).x())) {  // assignment in condition
@@ -544,7 +544,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
      * sometimes we find cos(xRoot) = -0.0..01, so sqrt(cos(xRoot)) = undef.
      * To avoid this problem, clone e and replace cos(xRoot) by 0.
      * */
-    Expression ebis = e.clone();
+    OExpression ebis = e.clone();
     ebis.replaceChildAtIndexInPlace(childIndex, Rational::Builder(0));
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
@@ -559,7 +559,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
 
 template <typename T>
 Coordinate2D<T> Solver<T>::nextRootInChildren(
-    const Expression &e, Expression::ExpressionTestAuxiliary test,
+    const OExpression &e, OExpression::ExpressionTestAuxiliary test,
     void *aux) const {
   T xRoot = k_NAN;
   int n = e.numberOfChildren();
@@ -577,14 +577,15 @@ Coordinate2D<T> Solver<T>::nextRootInChildren(
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Expression &e) const {
+Coordinate2D<T> Solver<T>::nextRootInMultiplication(
+    const OExpression &e) const {
   assert(e.type() == ExpressionNode::Type::Multiplication);
   return nextRootInChildren(
-      e, [](const Expression, Context *, void *) { return true; }, nullptr);
+      e, [](const OExpression, Context *, void *) { return true; }, nullptr);
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression &e) const {
+Coordinate2D<T> Solver<T>::nextRootInAddition(const OExpression &e) const {
   /* Special case for expressions of the form "f(x)^a+g(x)", with:
    * - f(x) and g(x) sharing a root x0
    * - f(x) being defined only on one side of x0
@@ -592,10 +593,10 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression &e) const {
    * Since the expression does not change sign around x0, the usual numerical
    * schemes won't work. We instead look for the zeroes of f, and check whether
    * they are zeroes of the whole expression. */
-  Expression::ExpressionTestAuxiliary test = [](const Expression e,
-                                                Context *context, void *aux) {
+  OExpression::ExpressionTestAuxiliary test = [](const OExpression e,
+                                                 Context *context, void *aux) {
     return e.recursivelyMatches(
-        [](const Expression e, Context *context, void *aux) {
+        [](const OExpression e, Context *context, void *aux) {
           const Solver<T> *solver = static_cast<const Solver<T> *>(aux);
           T exponent = k_NAN;
           ApproximationContext approximationContext(
@@ -712,10 +713,10 @@ template Solver<double>::Solver(double, double, const char *, Context *,
 template Coordinate2D<double> Solver<double>::next(
     FunctionEvaluation, const void *, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);
-template Coordinate2D<double> Solver<double>::nextRoot(const Expression &);
-template Coordinate2D<double> Solver<double>::nextMinimum(const Expression &);
+template Coordinate2D<double> Solver<double>::nextRoot(const OExpression &);
+template Coordinate2D<double> Solver<double>::nextMinimum(const OExpression &);
 template Coordinate2D<double> Solver<double>::nextIntersection(
-    const Expression &, const Expression &, Expression *);
+    const OExpression &, const OExpression &, OExpression *);
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
     FunctionEvaluation, const void *, double, double, Interest, double,

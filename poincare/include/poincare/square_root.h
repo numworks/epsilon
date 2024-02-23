@@ -43,7 +43,7 @@ class SquareRootNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::Root; };
   // Evaluation
   Evaluation<float> approximate(
@@ -64,12 +64,12 @@ class SquareRoot final : public ExpressionOneChild<SquareRoot, SquareRootNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
   /* Reduce an expression of the form √(a√b + c√d) */
-  static Expression ReduceNestedRadicals(
-      Expression a, Expression b, Expression c, Expression d,
+  static OExpression ReduceNestedRadicals(
+      OExpression a, OExpression b, OExpression c, OExpression d,
       const ReductionContext& reductionContext);
-  static bool SplitRadical(Expression term, Expression* factor,
-                           Expression* underRoot);
-  Expression shallowReduce(ReductionContext reductionContext);
+  static bool SplitRadical(OExpression term, OExpression* factor,
+                           OExpression* underRoot);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

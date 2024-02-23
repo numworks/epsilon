@@ -86,7 +86,7 @@ QUIZ_CASE(poincare_expression_to_layout) {
               VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
 }
 
-void assert_expression_layouts_and_serializes_to(Expression expression,
+void assert_expression_layouts_and_serializes_to(OExpression expression,
                                                  const char* serialization) {
   OLayout layout = expression.createLayout(
       DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
@@ -357,27 +357,27 @@ QUIZ_CASE(poincare_expression_to_layout_implicit_addition) {
   assert_expression_layouts_and_serializes_to(
       Addition::Builder(
           {Multiplication::Builder(BasedInteger::Builder(2),
-                                   Expression::Parse("_h", nullptr)),
+                                   OExpression::Parse("_h", nullptr)),
            Multiplication::Builder(BasedInteger::Builder(3),
-                                   Expression::Parse("_min", nullptr)),
+                                   OExpression::Parse("_min", nullptr)),
            Multiplication::Builder(Decimal::Builder(4.5),
-                                   Expression::Parse("_s", nullptr))}),
+                                   OExpression::Parse("_s", nullptr))}),
       "2h3min4.5s");
   assert_expression_layouts_and_serializes_to(
       Addition::Builder(
           {Multiplication::Builder(BasedInteger::Builder(2),
-                                   Expression::Parse("_h", nullptr)),
+                                   OExpression::Parse("_h", nullptr)),
            Multiplication::Builder(BasedInteger::Builder(3),
-                                   Expression::Parse("_min", nullptr)),
+                                   OExpression::Parse("_min", nullptr)),
            Multiplication::Builder(Decimal::Builder(4, 30),
-                                   Expression::Parse("_s", nullptr))}),
+                                   OExpression::Parse("_s", nullptr))}),
       "2h+3min+4ᴇ30s");
 }
 
 void assert_parsed_expression_layout_serialize_to_self(
     const char* expressionLayout) {
 #if O
-  Expression e = parse_expression(expressionLayout, nullptr, true);
+  OExpression e = parse_expression(expressionLayout, nullptr, true);
   OLayout el = e.createLayout(
       DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
   constexpr int bufferSize = 255;

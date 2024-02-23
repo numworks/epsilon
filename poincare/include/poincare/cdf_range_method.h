@@ -19,11 +19,11 @@ class CDFRangeMethod final : public DistributionMethod {
                                                                 parameters);
   }
 
-  Expression shallowReduce(Expression* abscissae,
-                           const Distribution* distribution,
-                           Expression* parameters,
-                           ReductionContext reductionContext,
-                           Expression* expression) const override;
+  OExpression shallowReduce(OExpression* abscissae,
+                            const Distribution* distribution,
+                            OExpression* parameters,
+                            ReductionContext reductionContext,
+                            OExpression* expression) const override;
 };
 
 }  // namespace Poincare

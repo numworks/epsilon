@@ -746,11 +746,11 @@ IntegerDivision Integer::udiv(const Integer &numerator,
   return div;
 }
 
-Expression Integer::CreateEuclideanDivision(const Integer &num,
-                                            const Integer &denom) {
-  Expression quo = DivisionQuotient::Reduce(num, denom);
-  Expression rem = DivisionRemainder::Reduce(num, denom);
-  Expression e = Comparison::Builder(
+OExpression Integer::CreateEuclideanDivision(const Integer &num,
+                                             const Integer &denom) {
+  OExpression quo = DivisionQuotient::Reduce(num, denom);
+  OExpression rem = DivisionRemainder::Reduce(num, denom);
+  OExpression e = Comparison::Builder(
       Rational::Builder(num), ComparisonNode::OperatorType::Equal,
       Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo),
                         rem));
@@ -762,17 +762,17 @@ Expression Integer::CreateEuclideanDivision(const Integer &num,
   return e;
 }
 
-Expression Integer::CreateMixedFraction(const Integer &num,
-                                        const Integer &denom) {
+OExpression Integer::CreateMixedFraction(const Integer &num,
+                                         const Integer &denom) {
   Integer numPositive(num), denomPositive(denom);
   numPositive.setNegative(false);
   denomPositive.setNegative(false);
   IntegerDivision division = Division(numPositive, denomPositive);
-  Expression integerPart = Rational::Builder(division.quotient);
+  OExpression integerPart = Rational::Builder(division.quotient);
   Rational fractionPart = Rational::Builder(division.remainder, denomPositive);
   // If mixed fractions are enabled
   if (Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
-    Expression mixedFraction = MixedFraction::Builder(
+    OExpression mixedFraction = MixedFraction::Builder(
         integerPart, Rational::Builder(fractionPart.unsignedIntegerNumerator()),
         Rational::Builder(fractionPart.integerDenominator()));
     if (num.isNegative() != denom.isNegative()) {

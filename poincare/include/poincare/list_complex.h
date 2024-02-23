@@ -40,7 +40,7 @@ class ListComplexNode final : public EvaluationNode<T> {
   }
   /* undef list is a list with a negative number of elements. */
   bool isUndefined() const override { return m_numberOfChildren < 0; }
-  Expression complexToExpression(
+  OExpression complexToExpression(
       Preferences::Preferences::ComplexFormat complexFormat) const override;
 
  private:

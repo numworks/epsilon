@@ -22,7 +22,7 @@ class FunctionNode final : public SymbolAbstractNode {
   Type type() const override { return Type::Function; }
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const override;
+                                OExpression coefficients[]) const override;
   int getVariables(Context* context, isVariableTest isVariable, char* variables,
                    int maxSizeVariable, int nextVariableIndex) const override;
 
@@ -34,8 +34,8 @@ class FunctionNode final : public SymbolAbstractNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
-  Expression deepReplaceReplaceableSymbols(
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
@@ -61,11 +61,11 @@ class Function final : public SymbolAbstract {
  public:
   Function(const FunctionNode* n) : SymbolAbstract(n) {}
   static Function Builder(const char* name, size_t length,
-                          Expression child = Expression());
+                          OExpression child = OExpression());
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext);
-  Expression deepReplaceReplaceableSymbols(
+  OExpression shallowReduce(ReductionContext reductionContext);
+  OExpression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 };

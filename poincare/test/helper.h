@@ -100,8 +100,8 @@ PoincareJ::Tree* parse_expression(const char* expression,
                                   bool parseForAssignment = false);
 
 void assert_parsed_expression_is(
-    const char* expression, Poincare::Expression r, bool addParentheses = false,
-    bool parseForAssignment = false,
+    const char* expression, Poincare::OExpression r,
+    bool addParentheses = false, bool parseForAssignment = false,
     Poincare::Preferences::MixedFractions mixedFractionsParameter =
         Poincare::Preferences::MixedFractions::Enabled);
 void assert_parse_to_same_expression(const char* expression1,
@@ -116,7 +116,7 @@ void assert_reduce_and_store(
     Poincare::ReductionTarget target = User);
 
 void assert_expression_reduce(
-    Poincare::Expression expression,
+    Poincare::OExpression expression,
     Poincare::Preferences::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
@@ -192,7 +192,7 @@ void assert_expression_simplifies_approximates_to(
     int numberOfSignificantDigits =
         Poincare::PrintFloat::SignificantDecimalDigits<T>());
 
-// Expression serializing
+// OExpression serializing
 
 void assert_expression_serializes_to(
     PoincareJ::Tree* expression, const char* serialization,
@@ -200,7 +200,7 @@ void assert_expression_serializes_to(
     int numberOfSignificantDigits = 7);
 
 void assert_expression_serializes_and_parses_to_itself(
-    Poincare::Expression expression);
+    Poincare::OExpression expression);
 void assert_expression_parses_and_serializes_to(const char* expression,
                                                 const char* result);
 void assert_expression_parses_and_serializes_to_itself(const char* expression);
@@ -210,7 +210,7 @@ void assert_expression_parses_and_serializes_to_itself(const char* expression);
 void assert_layout_serializes_to(PoincareJ::Tree* layout,
                                  const char* serialization);
 
-// Expression layouting
+// OExpression layouting
 
 void assert_expression_layouts_as(PoincareJ::Tree* expression,
                                   PoincareJ::Tree* layout);

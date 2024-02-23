@@ -33,13 +33,13 @@ size_t SignFunctionNode::serialize(char* buffer, size_t bufferSize,
       SignFunction::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression SignFunctionNode::shallowReduce(
+OExpression SignFunctionNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return SignFunction(this).shallowReduce(reductionContext);
 }
 
 bool SignFunctionNode::derivate(const ReductionContext& reductionContext,
-                                Symbol symbol, Expression symbolValue) {
+                                Symbol symbol, OExpression symbolValue) {
   return SignFunction(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -59,9 +59,9 @@ std::complex<T> SignFunctionNode::computeOnComplex(
   return 1.0;
 }
 
-Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
+OExpression SignFunction::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
@@ -71,11 +71,11 @@ Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
     // Discard units if any
-    Expression unit;
+    OExpression unit;
     childAtIndex(0).removeUnit(&unit);
   }
-  Expression child = childAtIndex(0);
-  Expression resultSign;
+  OExpression child = childAtIndex(0);
+  OExpression resultSign;
   TrinaryBoolean childIsPositive = child.isPositive(reductionContext.context());
   TrinaryBoolean childIsNull = child.isNull(reductionContext.context());
   if (childIsPositive != TrinaryBoolean::Unknown &&
@@ -96,12 +96,12 @@ Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
       /* c's approximation has no sign (c is complex or NAN)
        * sign(-x) = -sign(x) */
-      Expression oppChild =
+      OExpression oppChild =
           child.makePositiveAnyNegativeNumeralFactor(reductionContext);
       if (oppChild.isUninitialized()) {
         return *this;
       }
-      Expression sign = *this;
+      OExpression sign = *this;
       Multiplication m = Multiplication::Builder(Rational::Builder(-1));
       replaceWithInPlace(m);
       m.addChildAtIndexInPlace(sign, 1, 1);
@@ -116,9 +116,10 @@ Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
 }
 
 bool SignFunction::derivate(const ReductionContext& reductionContext,
-                            Symbol symbol, Expression symbolValue) {
+                            Symbol symbol, OExpression symbolValue) {
   {
-    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    OExpression e =
+        Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {
       return true;
     }

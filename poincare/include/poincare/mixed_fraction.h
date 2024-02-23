@@ -25,7 +25,7 @@ class MixedFractionNode final : public ExpressionNode {
 
  private:
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::Integer; };
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::Fraction;
@@ -50,19 +50,19 @@ class MixedFractionNode final : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class MixedFraction final : public Expression {
+class MixedFraction final : public OExpression {
  public:
-  MixedFraction(const MixedFractionNode* n) : Expression(n) {}
-  static Expression Builder(Expression integerPart, Expression numerator,
-                            Expression denominator) {
+  MixedFraction(const MixedFractionNode* n) : OExpression(n) {}
+  static OExpression Builder(OExpression integerPart, OExpression numerator,
+                             OExpression denominator) {
     return Builder(integerPart, Division::Builder(numerator, denominator));
   }
-  static Expression Builder(Expression integerPart, Division fractionPart) {
+  static OExpression Builder(OExpression integerPart, Division fractionPart) {
     return TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(
         {integerPart, fractionPart});
   }
 
-  Expression shallowReduce(ReductionContext context);
+  OExpression shallowReduce(ReductionContext context);
 };
 
 }  // namespace Poincare

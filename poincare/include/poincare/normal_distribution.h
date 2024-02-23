@@ -60,10 +60,10 @@ class NormalDistribution final : public ContinuousDistribution {
     return MuAndSigmaAreOK(parameters[0], parameters[1]);
   }
 
-  static bool ExpressionMuAndSigmaAreOK(bool* result, const Expression& mu,
-                                        const Expression& sigma,
+  static bool ExpressionMuAndSigmaAreOK(bool* result, const OExpression& mu,
+                                        const OExpression& sigma,
                                         Context* context);
-  bool expressionParametersAreOK(bool* result, const Expression* parameters,
+  bool expressionParametersAreOK(bool* result, const OExpression* parameters,
                                  Context* context) const override {
     return ExpressionMuAndSigmaAreOK(result, parameters[0], parameters[1],
                                      context);

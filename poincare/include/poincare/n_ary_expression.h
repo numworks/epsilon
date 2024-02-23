@@ -10,7 +10,7 @@ class NAryExpressionNode
     : public ExpressionNode {  // TODO: VariableArityExpressionNode?
  public:
 #if ASSERTIONS
-  void setChildrenInPlace(Expression other) override { assert(false); }
+  void setChildrenInPlace(OExpression other) override { assert(false); }
 #endif
 
   // Tree
@@ -26,7 +26,7 @@ class NAryExpressionNode
   // Commutative properties
   void sortChildrenInPlace(ExpressionOrder order, Context* context,
                            bool canSwapMatrices, bool canContainMatrices);
-  Expression squashUnaryHierarchyInPlace();
+  OExpression squashUnaryHierarchyInPlace();
 
  protected:
   LayoutShape leftLayoutShape() const override {
@@ -41,14 +41,14 @@ class NAryExpressionNode
   uint16_t m_numberOfChildren;
 };
 
-class NAryExpression : public Expression {
+class NAryExpression : public OExpression {
  public:
-  NAryExpression(const NAryExpressionNode* n) : Expression(n) {}
+  NAryExpression(const NAryExpressionNode* n) : OExpression(n) {}
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
   using TreeHandle::removeChildInPlace;
   using TreeHandle::removeChildrenInPlace;
-  Expression squashUnaryHierarchyInPlace() {
+  OExpression squashUnaryHierarchyInPlace() {
     return node()->squashUnaryHierarchyInPlace();
   }
   void mergeSameTypeChildrenInPlace();
@@ -61,16 +61,16 @@ class NAryExpression : public Expression {
                                 canContainMatrices);
   }
   NAryExpressionNode* node() const {
-    return static_cast<NAryExpressionNode*>(Expression::node());
+    return static_cast<NAryExpressionNode*>(OExpression::node());
   }
-  Expression checkChildrenAreRationalIntegersAndUpdate(
+  OExpression checkChildrenAreRationalIntegersAndUpdate(
       const ReductionContext& reductionContext);
 
   using ComplexOperator = ComplexCartesian (ComplexCartesian::*)(
       ComplexCartesian& other, const ReductionContext& reductionContext);
   // /!\ Only call this during reduction.
-  Expression combineComplexCartesians(ComplexOperator complexOperator,
-                                      ReductionContext reductionContext);
+  OExpression combineComplexCartesians(ComplexOperator complexOperator,
+                                       ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

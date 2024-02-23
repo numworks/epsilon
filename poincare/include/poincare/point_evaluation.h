@@ -23,7 +23,7 @@ class PointEvaluationNode final : public EvaluationNode<T> {
   std::complex<T> complexAtIndex(int index) const override {
     return std::complex<T>(NAN, NAN);
   }
-  Expression complexToExpression(
+  OExpression complexToExpression(
       Preferences::ComplexFormat complexFormat) const override;
 
   // TreeHandle

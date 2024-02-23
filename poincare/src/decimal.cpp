@@ -131,7 +131,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode *e,
   return ((int)Number(this).isPositive()) * unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(
+OExpression DecimalNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return Decimal(this).shallowReduce(reductionContext);
 }
@@ -548,14 +548,14 @@ Decimal Decimal::Builder(size_t size, const Integer &m, int e) {
   return static_cast<Decimal &>(h);
 }
 
-Expression Decimal::shallowReduce(ReductionContext reductionContext) {
+OExpression Decimal::shallowReduce(ReductionContext reductionContext) {
   int exp = node()->exponent();
   Integer mantissa = node()->signedMantissa();
   /* To avoid uselessly big numbers, we get rid of useless 0s
    * ending the mantissa before reducing. */
   removeZeroAtTheEnd(&mantissa);
   int numberOfDigits = Integer::NumberOfBase10DigitsWithoutSign(mantissa);
-  Expression result = Multiplication::Builder(
+  OExpression result = Multiplication::Builder(
       Rational::Builder(mantissa),
       Power::Builder(Rational::Builder(Integer(10)),
                      Rational::Builder(Integer(exp - numberOfDigits + 1))));

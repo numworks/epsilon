@@ -44,9 +44,9 @@ class GeometricDistribution final : public DiscreteDistribution {
     return PIsOK(parameters[0]);
   }
 
-  static bool ExpressionPIsOK(bool* result, const Expression& p,
+  static bool ExpressionPIsOK(bool* result, const OExpression& p,
                               Context* context);
-  bool expressionParametersAreOK(bool* result, const Expression* parameters,
+  bool expressionParametersAreOK(bool* result, const OExpression* parameters,
                                  Context* context) const override {
     return ExpressionPIsOK(result, parameters[0], context);
   }

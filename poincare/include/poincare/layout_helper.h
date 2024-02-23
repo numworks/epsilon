@@ -13,21 +13,21 @@
 namespace Poincare {
 
 namespace LayoutHelper {
-/* Expression to OLayout */
+/* OExpression to OLayout */
 typedef OLayout (*OperatorLayoutForInfix)(const char* operatorName,
-                                          Expression left, Expression right,
+                                          OExpression left, OExpression right,
                                           OLayout rightLayout);
 OLayout DefaultCreateOperatorLayoutForInfix(const char* operatorName,
-                                            Expression left, Expression right,
+                                            OExpression left, OExpression right,
                                             OLayout rightLayout);
 
-OLayout Infix(const Expression& expression,
+OLayout Infix(const OExpression& expression,
               Preferences::PrintFloatMode floatDisplayMode,
               int numberOfSignificantDigits, const char* operatorName,
               Context* context,
               OperatorLayoutForInfix operatorLayoutBuilder =
                   DefaultCreateOperatorLayoutForInfix);
-OLayout Prefix(const Expression& expression,
+OLayout Prefix(const OExpression& expression,
                Preferences::PrintFloatMode floatDisplayMode,
                int numberOfSignificantDigits, const char* operatorName,
                Context* context, bool addParenthesese = true);
@@ -38,7 +38,7 @@ OLayout Parentheses(OLayout layout, bool cloneLayout);
 OLayout String(const char* buffer, int bufferLen = -1);
 /* Create StringLayout from expression */
 OLayout StringLayoutOfSerialization(
-    const Expression& expression, char* buffer, size_t bufferSize,
+    const OExpression& expression, char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits);
 /* Create HorizontalLayout with CodePointLayouts from buffer */

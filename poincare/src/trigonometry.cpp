@@ -53,7 +53,7 @@ static int PiDivisor(Preferences::AngleUnit angleUnit) {
   }
 }
 
-Expression Trigonometry::PiExpressionInAngleUnit(
+OExpression Trigonometry::PiExpressionInAngleUnit(
     Preferences::AngleUnit angleUnit) {
   switch (angleUnit) {
     case Preferences::AngleUnit::Radian:
@@ -86,37 +86,37 @@ double Trigonometry::ConvertAngleToRadian(double angle,
              : angle;
 }
 
-Expression Trigonometry::AnglePeriodInAngleUnit(
+OExpression Trigonometry::AnglePeriodInAngleUnit(
     Preferences::AngleUnit angleUnit) {
   return Multiplication::Builder(
       Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(angleUnit));
 }
 
-bool Trigonometry::IsDirectTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsDirectTrigonometryFunction(const OExpression& e) {
   return e.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine,
                      ExpressionNode::Type::Tangent});
 }
 
-bool Trigonometry::IsInverseTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsInverseTrigonometryFunction(const OExpression& e) {
   return e.isOfType({ExpressionNode::Type::ArcCosine,
                      ExpressionNode::Type::ArcSine,
                      ExpressionNode::Type::ArcTangent});
 }
 
-bool Trigonometry::IsAdvancedTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsAdvancedTrigonometryFunction(const OExpression& e) {
   return e.isOfType({ExpressionNode::Type::Secant,
                      ExpressionNode::Type::Cosecant,
                      ExpressionNode::Type::Cotangent});
 }
 
-bool Trigonometry::IsInverseAdvancedTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsInverseAdvancedTrigonometryFunction(const OExpression& e) {
   return e.isOfType({ExpressionNode::Type::ArcSecant,
                      ExpressionNode::Type::ArcCosecant,
                      ExpressionNode::Type::ArcCotangent});
 }
 
-bool Trigonometry::AreInverseFunctions(const Expression& directFunction,
-                                       const Expression& inverseFunction) {
+bool Trigonometry::AreInverseFunctions(const OExpression& directFunction,
+                                       const OExpression& inverseFunction) {
   if (!IsDirectTrigonometryFunction(directFunction)) {
     return false;
   }
@@ -136,8 +136,8 @@ bool Trigonometry::AreInverseFunctions(const Expression& directFunction,
   return inverseFunction.type() == correspondingType;
 }
 
-Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit,
-                                              Preferences::AngleUnit toUnit) {
+OExpression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit,
+                                               Preferences::AngleUnit toUnit) {
   if (fromUnit == toUnit) {
     // Just an optimisation to gain some time at reduction
     return Rational::Builder(1);
@@ -146,7 +146,7 @@ Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit,
                            PiExpressionInAngleUnit(fromUnit));
 }
 
-bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(const Expression& e,
+bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(const OExpression& e,
                                                          bool inverse) {
   // We look for (sin(x) * cos(x)^-1) or (sin(x)^-1 * cos(x))
   assert(ExpressionNode::Type::Sine < ExpressionNode::Type::Cosine);
@@ -172,22 +172,22 @@ bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(const Expression& e,
   return false;
 }
 
-bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression& e) {
+bool Trigonometry::ExpressionIsEquivalentToTangent(const OExpression& e) {
   return ExpressionIsTangentOrInverseOfTangent(e, false);
 }
 
 bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(
-    const Expression& e) {
+    const OExpression& e) {
   return ExpressionIsTangentOrInverseOfTangent(e, true);
 }
 
-Expression Trigonometry::ShallowReduceDirectFunction(
-    Expression& e, ReductionContext reductionContext) {
+OExpression Trigonometry::ShallowReduceDirectFunction(
+    OExpression& e, ReductionContext reductionContext) {
   assert(IsDirectTrigonometryFunction(e));
 
   // Step 0.0 Map on list child if possible
   {
-    Expression eReduced = SimplificationHelper::defaultShallowReduce(
+    OExpression eReduced = SimplificationHelper::defaultShallowReduce(
         e, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
@@ -199,7 +199,7 @@ Expression Trigonometry::ShallowReduceDirectFunction(
   }
 
   // Step 0.1 Eliminate angle unit if there is one
-  Expression unit;
+  OExpression unit;
   e.childAtIndex(0).removeUnit(&unit);
   if (!unit.isUninitialized()) {
     // _unit^-1 and _unit*_unit cannot be valid angle units
@@ -224,7 +224,7 @@ Expression Trigonometry::ShallowReduceDirectFunction(
   }
 
   // Step 1. Try finding an easy standard calculation reduction
-  Expression lookup = TrigonometryCheatTable::Table()->simplify(
+  OExpression lookup = TrigonometryCheatTable::Table()->simplify(
       e.childAtIndex(0), e.type(), reductionContext);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
@@ -233,7 +233,7 @@ Expression Trigonometry::ShallowReduceDirectFunction(
 
   // Step 2. Look for an expression of type "cos(acos(x))", return x.
   if (AreInverseFunctions(e, e.childAtIndex(0))) {
-    Expression result = e.childAtIndex(0).childAtIndex(0);
+    OExpression result = e.childAtIndex(0).childAtIndex(0);
     // Only real functions asin and acos have a domain of definition
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real &&
         e.type() != ExpressionNode::Type::Tangent) {
@@ -253,7 +253,7 @@ Expression Trigonometry::ShallowReduceDirectFunction(
        e.childAtIndex(0).type() == ExpressionNode::Type::ArcSine) ||
       (e.type() == ExpressionNode::Type::Sine &&
        e.childAtIndex(0).type() == ExpressionNode::Type::ArcCosine)) {
-    Expression sqrt = Power::Builder(
+    OExpression sqrt = Power::Builder(
         Addition::Builder(Rational::Builder(1),
                           Multiplication::Builder(
                               Rational::Builder(-1),
@@ -279,9 +279,9 @@ Expression Trigonometry::ShallowReduceDirectFunction(
   if ((e.isOfType(
           {ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine})) &&
       e.childAtIndex(0).type() == ExpressionNode::Type::ArcTangent) {
-    Expression x = e.childAtIndex(0).childAtIndex(0);
+    OExpression x = e.childAtIndex(0).childAtIndex(0);
     // Build 1/sqrt(1+x^2)
-    Expression res = Power::Builder(
+    OExpression res = Power::Builder(
         Addition::Builder(
             Rational::Builder(1),
             Power::Builder(
@@ -304,7 +304,7 @@ Expression Trigonometry::ShallowReduceDirectFunction(
   }
 
   // Step 5. Look for an expression of type "cos(-a)", return "+/-cos(a)"
-  Expression positiveArg =
+  OExpression positiveArg =
       e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(reductionContext);
   if (!positiveArg.isUninitialized()) {
     // The argument was of form cos(-a)
@@ -376,8 +376,8 @@ Expression Trigonometry::ShallowReduceDirectFunction(
       }
       // Step 6.5. Build the new result.
       Integer rDenominator = r.integerDenominator();
-      Expression newR = Rational::Builder(div.remainder, rDenominator);
-      Expression rationalParent =
+      OExpression newR = Rational::Builder(div.remainder, rDenominator);
+      OExpression rationalParent =
           angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0) : e;
       rationalParent.replaceChildAtIndexInPlace(0, newR);
       newR.shallowReduce(reductionContext);
@@ -390,7 +390,7 @@ Expression Trigonometry::ShallowReduceDirectFunction(
          * multiply the result by -1 (because cos((2k+1)π + x) = -cos(x) */
         unaryCoefficient *= -1;
       }
-      Expression simplifiedCosine =
+      OExpression simplifiedCosine =
           e.shallowReduce(reductionContext);  // recursive
       Multiplication m =
           Multiplication::Builder(Rational::Builder(unaryCoefficient));
@@ -403,12 +403,12 @@ Expression Trigonometry::ShallowReduceDirectFunction(
   return e;
 }
 
-Expression Trigonometry::ShallowReduceInverseFunction(
-    Expression& e, ReductionContext reductionContext) {
+OExpression Trigonometry::ShallowReduceInverseFunction(
+    OExpression& e, ReductionContext reductionContext) {
   assert(IsInverseTrigonometryFunction(e));
   // Step 0. Map on list child if possible
   {
-    Expression eReduced = SimplificationHelper::defaultShallowReduce(
+    OExpression eReduced = SimplificationHelper::defaultShallowReduce(
         e, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -423,15 +423,15 @@ Expression Trigonometry::ShallowReduceInverseFunction(
   double pi = PiInAngleUnit(angleUnit);
 
   // Step 1. Look for an expression of type "acos(cos(x))", return x
-  Expression result;
+  OExpression result;
   // special case for arctan(sin/cos)
   bool isArcTanOfSinCos = e.type() == ExpressionNode::Type::ArcTangent &&
                           ExpressionIsEquivalentToTangent(e.childAtIndex(0));
   if (isArcTanOfSinCos || AreInverseFunctions(e.childAtIndex(0), e)) {
     bool isArccos = e.type() == ExpressionNode::Type::ArcCosine;
-    Expression result = isArcTanOfSinCos
-                            ? e.childAtIndex(0).childAtIndex(0).childAtIndex(0)
-                            : e.childAtIndex(0).childAtIndex(0);
+    OExpression result = isArcTanOfSinCos
+                             ? e.childAtIndex(0).childAtIndex(0).childAtIndex(0)
+                             : e.childAtIndex(0).childAtIndex(0);
     double x = result.approximateToScalar<double>(
         ApproximationContext(reductionContext, true));
     if (std::isfinite(x)) {
@@ -448,13 +448,13 @@ Expression Trigonometry::ShallowReduceInverseFunction(
         result = Addition::Builder(result.clone(), mult);
         mult.shallowReduce(reductionContext);
         if (isArccos && kInt % 2 == 1) {
-          Expression sub = Subtraction::Builder(
+          OExpression sub = Subtraction::Builder(
               PiExpressionInAngleUnit(reductionContext.angleUnit()), result);
           result.shallowReduce(reductionContext);
           result = sub;
         }
         if (e.type() == ExpressionNode::Type::ArcSine && kInt % 2 == 1) {
-          Expression add = result;
+          OExpression add = result;
           result = Opposite::Builder(add);
           add.shallowReduce(reductionContext);
         }
@@ -482,9 +482,9 @@ Expression Trigonometry::ShallowReduceInverseFunction(
     Dependency dep = Dependency::Builder(Undefined::Builder(), List::Builder());
     dep.addDependency(e.childAtIndex(0).clone());
     dep.replaceChildAtIndexInPlace(0, e.childAtIndex(0).childAtIndex(0));
-    Expression x = dep.shallowReduce(reductionContext);
+    OExpression x = dep.shallowReduce(reductionContext);
 
-    Expression sign = SignFunction::Builder(x.clone());
+    OExpression sign = SignFunction::Builder(x.clone());
     Multiplication m0 = Multiplication::Builder(
         Rational::Builder(1, 2), sign, PiExpressionInAngleUnit(angleUnit));
     sign.shallowReduce(reductionContext);
@@ -500,7 +500,7 @@ Expression Trigonometry::ShallowReduceInverseFunction(
   }
 
   // Step 3. Try finding an easy standard calculation reduction
-  Expression lookup = TrigonometryCheatTable::Table()->simplify(
+  OExpression lookup = TrigonometryCheatTable::Table()->simplify(
       e.childAtIndex(0), e.type(), reductionContext);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
@@ -515,21 +515,21 @@ Expression Trigonometry::ShallowReduceInverseFunction(
    *   information on the parent which could later be a cosine, a sine or a
    * tangent.
    */
-  Expression p = e.parent();
+  OExpression p = e.parent();
   bool letArcFunctionAtRoot =
       !p.isUninitialized() && IsDirectTrigonometryFunction(p);
   /* Step 4. Handle opposite argument: acos(-x) = π-acos(x),
    * asin(-x) = -asin(x), atan(-x)= -atan(x) *
    */
   if (!letArcFunctionAtRoot) {
-    Expression positiveArg =
+    OExpression positiveArg =
         e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(
             reductionContext);
     if (!positiveArg.isUninitialized()) {
       /* The argument was made positive
        * acos(-x) = π-acos(x) */
       if (e.type() == ExpressionNode::Type::ArcCosine) {
-        Expression pi = PiExpressionInAngleUnit(angleUnit);
+        OExpression pi = PiExpressionInAngleUnit(angleUnit);
         Subtraction s = Subtraction::Builder();
         e.replaceWithInPlace(s);
         s.replaceChildAtIndexInPlace(0, pi);
@@ -550,13 +550,13 @@ Expression Trigonometry::ShallowReduceInverseFunction(
   return e;
 }
 
-Expression Trigonometry::ShallowReduceAdvancedFunction(
-    Expression& e, ReductionContext reductionContext) {
+OExpression Trigonometry::ShallowReduceAdvancedFunction(
+    OExpression& e, ReductionContext reductionContext) {
   /* Since the child always ends in a direct function, angle units are left
    * untouched here */
   assert(IsAdvancedTrigonometryFunction(e));
   {
-    Expression eReduced = SimplificationHelper::defaultShallowReduce(
+    OExpression eReduced = SimplificationHelper::defaultShallowReduce(
         e, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits);
@@ -565,7 +565,7 @@ Expression Trigonometry::ShallowReduceAdvancedFunction(
     }
   }
   // Step 0. Replace with inverse (^-1) of equivalent direct function.
-  Expression result;
+  OExpression result;
   switch (e.type()) {
     case ExpressionNode::Type::Secant:
       result = Cosine::Builder(e.childAtIndex(0));
@@ -591,11 +591,11 @@ Expression Trigonometry::ShallowReduceAdvancedFunction(
   return p.shallowReduce(reductionContext);
 }
 
-Expression Trigonometry::ShallowReduceInverseAdvancedFunction(
-    Expression& e, ReductionContext reductionContext) {
+OExpression Trigonometry::ShallowReduceInverseAdvancedFunction(
+    OExpression& e, ReductionContext reductionContext) {
   assert(IsInverseAdvancedTrigonometryFunction(e));
   {
-    Expression eReduced = SimplificationHelper::defaultShallowReduce(
+    OExpression eReduced = SimplificationHelper::defaultShallowReduce(
         e, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -603,7 +603,7 @@ Expression Trigonometry::ShallowReduceInverseAdvancedFunction(
       return eReduced;
     }
   }
-  Expression result;
+  OExpression result;
   // Step 1. Manage specific cases for Arcotangent
   if (e.type() == ExpressionNode::Type::ArcCotangent) {
     TrinaryBoolean isNull =
@@ -642,14 +642,14 @@ Expression Trigonometry::ShallowReduceInverseAdvancedFunction(
   return result.shallowReduce(reductionContext);
 }
 
-Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
-                                                     Expression& denominator) {
+OExpression Trigonometry::ReplaceWithAdvancedFunction(
+    OExpression& e, OExpression& denominator) {
   /* Replace direct trigonometric function with their advanced counterpart.
    * This function must be called within a denominator. */
   assert(e.type() == ExpressionNode::Type::Power &&
          !denominator.isUninitialized());
   assert(IsDirectTrigonometryFunction(denominator));
-  Expression result;
+  OExpression result;
   switch (denominator.type()) {
     case ExpressionNode::Type::Cosine:
       result = Secant::Builder(denominator.childAtIndex(0));
@@ -687,7 +687,7 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(
 }
 
 bool Trigonometry::DetectLinearPatternOfCosOrSin(
-    const Expression& e, ReductionContext reductionContext, const char* symbol,
+    const OExpression& e, ReductionContext reductionContext, const char* symbol,
     bool acceptConstantTerm, double* coefficientBeforeCos,
     double* coefficientBeforeSymbol, double* angle) {
   double placeHolder1, placeHolder2, placeHolder3;
@@ -710,7 +710,7 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
      * If acceptConstantTerm, accept same expression + K */
     bool cosFound = false;
     for (int i = 0; i < nChildren; i++) {
-      Expression child = e.childAtIndex(i);
+      OExpression child = e.childAtIndex(i);
       double tempCoeffBeforeCos, tempCoeffBeforeSymbol, tempAngle;
 
       if (!DetectLinearPatternOfCosOrSin(
@@ -739,7 +739,7 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
   } else if (e.type() == ExpressionNode::Type::Multiplication) {
     // Check if expression is B*cos(A*theta+constant)
     for (int i = 0; i < nChildren; i++) {
-      Expression child = e.childAtIndex(i);
+      OExpression child = e.childAtIndex(i);
       if (!DetectLinearPatternOfCosOrSin(child, reductionContext, symbol, false,
                                          coefficientBeforeCos,
                                          coefficientBeforeSymbol, angle)) {
@@ -748,7 +748,7 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
       if (nChildren == 1) {
         return true;
       }
-      Expression clone = e.clone();
+      OExpression clone = e.clone();
       NAryExpression eWithoutCos = static_cast<NAryExpression&>(clone);
       eWithoutCos.removeChildAtIndexInPlace(i);
       if (eWithoutCos.polynomialDegree(reductionContext.context(), symbol) !=
@@ -770,12 +770,12 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
     return false;
   }
 
-  Expression child = e.childAtIndex(0);
+  OExpression child = e.childAtIndex(0);
   int thetaDeg = child.polynomialDegree(reductionContext.context(), symbol);
   if (thetaDeg != 1) {
     return false;
   }
-  Expression coefficients[2];  // Only 2 coefficients since child has degree 1
+  OExpression coefficients[2];  // Only 2 coefficients since child has degree 1
   child.getPolynomialReducedCoefficients(
       symbol, coefficients, reductionContext.context(),
       reductionContext.complexFormat(), reductionContext.angleUnit(),
@@ -797,14 +797,14 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
   return true;
 }
 
-static Expression AddAngleUnitToDirectFunctionIfNeeded(
-    Expression& e, Preferences::AngleUnit angleUnit) {
+static OExpression AddAngleUnitToDirectFunctionIfNeeded(
+    OExpression& e, Preferences::AngleUnit angleUnit) {
   assert(Trigonometry::IsDirectTrigonometryFunction(e) ||
          Trigonometry::IsAdvancedTrigonometryFunction(e));
 
   assert(e.numberOfChildren() == 1 && !e.childAtIndex(0).isUninitialized());
 
-  Expression child = e.childAtIndex(0);
+  OExpression child = e.childAtIndex(0);
 
   if (child.isZero()) {
     return e;
@@ -813,7 +813,7 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
   bool containsPi = false;
   bool containsOtherChildrenThanCombinationOfNumberAndPi =
       child.recursivelyMatches(
-          [](const Expression e, Context* context, void* auxiliary) {
+          [](const OExpression e, Context* context, void* auxiliary) {
             if (e.type() == ExpressionNode::Type::ConstantMaths &&
                 static_cast<const Constant&>(e).isPi()) {
               bool* containsPi = static_cast<bool*>(auxiliary);
@@ -853,20 +853,20 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
                       ExpressionNode::Type::Subtraction})) {
     child = Parenthesis::Builder(child);
   }
-  Expression newChild = Multiplication::Builder(child, unit);
+  OExpression newChild = Multiplication::Builder(child, unit);
   e.replaceChildAtIndexInPlace(0, newChild);
   return e;
 }
 
-Expression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-    Expression& e, Preferences::AngleUnit angleUnit) {
+OExpression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+    OExpression& e, Preferences::AngleUnit angleUnit) {
   if (IsDirectTrigonometryFunction(e) || IsAdvancedTrigonometryFunction(e)) {
     e = AddAngleUnitToDirectFunctionIfNeeded(e, angleUnit);
     return e;
   }
   int nChildren = e.numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
-    Expression child = e.childAtIndex(i);
+    OExpression child = e.childAtIndex(i);
     DeepAddAngleUnitToAmbiguousDirectFunctions(child, angleUnit);
   }
   return e;

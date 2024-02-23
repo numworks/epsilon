@@ -46,7 +46,7 @@ int LogicalOperatorNode::LogicalOperatorTypePrecedence(
 }
 
 bool LogicalOperatorNode::childAtIndexNeedsUserParentheses(
-    const Expression &child, int childIndex) const {
+    const OExpression &child, int childIndex) const {
   int childPrecedence = LogicalOperatorTypePrecedence(child.node());
   return childPrecedence != -1 &&
          childPrecedence != LogicalOperatorTypePrecedence(this);
@@ -79,15 +79,15 @@ Evaluation<T> LogicalOperatorNotNode::templatedApproximate(
       });
 }
 
-Expression LogicalOperatorNotNode::shallowReduce(
+OExpression LogicalOperatorNotNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return LogicalOperatorNot(this).shallowReduce(reductionContext);
 }
 
-Expression LogicalOperatorNot::shallowReduce(
+OExpression LogicalOperatorNot::shallowReduce(
     ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::DefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -97,7 +97,7 @@ Expression LogicalOperatorNot::shallowReduce(
       return e;
     }
   }
-  Expression child = childAtIndex(0);
+  OExpression child = childAtIndex(0);
   if (!child.hasBooleanValue()) {
     return replaceWithUndefinedInPlace();
   }
@@ -105,7 +105,7 @@ Expression LogicalOperatorNot::shallowReduce(
     // Let approximation handle this
     return *this;
   }
-  Expression result = Boolean::Builder(!static_cast<Boolean &>(child).value());
+  OExpression result = Boolean::Builder(!static_cast<Boolean &>(child).value());
   replaceWithInPlace(result);
   return result;
 }
@@ -185,15 +185,15 @@ Evaluation<T> BinaryLogicalOperatorNode::templatedApproximate(
       reinterpret_cast<void *>(const_cast<BinaryLogicalOperatorNode *>(this)));
 }
 
-Expression BinaryLogicalOperatorNode::shallowReduce(
+OExpression BinaryLogicalOperatorNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return BinaryLogicalOperator(this).shallowReduce(reductionContext);
 }
 
-Expression BinaryLogicalOperator::shallowReduce(
+OExpression BinaryLogicalOperator::shallowReduce(
     ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::DefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -203,8 +203,8 @@ Expression BinaryLogicalOperator::shallowReduce(
       return e;
     }
   }
-  Expression leftChild = childAtIndex(0);
-  Expression rightChild = childAtIndex(1);
+  OExpression leftChild = childAtIndex(0);
+  OExpression rightChild = childAtIndex(1);
   if (!leftChild.hasBooleanValue() || !rightChild.hasBooleanValue()) {
     return replaceWithUndefinedInPlace();
   }
@@ -215,7 +215,7 @@ Expression BinaryLogicalOperator::shallowReduce(
   }
   bool leftValue = static_cast<Boolean &>(leftChild).value();
   bool rightValue = static_cast<Boolean &>(rightChild).value();
-  Expression result = Boolean::Builder(
+  OExpression result = Boolean::Builder(
       static_cast<BinaryLogicalOperatorNode *>(node())->evaluate(leftValue,
                                                                  rightValue));
   replaceWithInPlace(result);
@@ -223,7 +223,7 @@ Expression BinaryLogicalOperator::shallowReduce(
 }
 
 BinaryLogicalOperator BinaryLogicalOperator::Builder(
-    Expression firstChild, Expression secondChild,
+    OExpression firstChild, OExpression secondChild,
     BinaryLogicalOperatorNode::OperatorType type) {
   TreeHandle h = TreeHandle::BuilderWithChildren(
       Initializer<BinaryLogicalOperatorNode>, sizeof(BinaryLogicalOperatorNode),

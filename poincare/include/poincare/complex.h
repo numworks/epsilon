@@ -37,7 +37,7 @@ class ComplexNode final : public EvaluationNode<T>, public std::complex<T> {
     return (std::isnan(this->real()) || std::isnan(this->imag()));
   }
   T toScalar() const override;
-  Expression complexToExpression(
+  OExpression complexToExpression(
       Preferences::Preferences::ComplexFormat complexFormat) const override;
 };
 

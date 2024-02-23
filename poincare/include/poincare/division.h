@@ -30,7 +30,7 @@ class DivisionNode final : public ExpressionNode {
                : TrinaryBoolean::Unknown;
   }
   Type type() const override { return Type::Division; }
-  Expression removeUnit(Expression* unit) override {
+  OExpression removeUnit(OExpression* unit) override {
     assert(false);
     return ExpressionNode::removeUnit(unit);
   }
@@ -66,7 +66,7 @@ class DivisionNode final : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::Fraction;
   };
@@ -89,7 +89,7 @@ class DivisionNode final : public ExpressionNode {
 class Division final : public ExpressionTwoChildren<Division, DivisionNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

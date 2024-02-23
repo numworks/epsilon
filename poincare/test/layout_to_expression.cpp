@@ -28,7 +28,7 @@ void assert_layout_is_not_parsed(Layout l) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   l.serializeForParsing(buffer, bufferSize);
-  Expression e = Expression::Parse(buffer, nullptr, false);
+  OExpression e = OExpression::Parse(buffer, nullptr, false);
   quiz_assert_print_if_failure(e.isUninitialized(), buffer);
 }
 
@@ -61,7 +61,7 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
   }
 }
 
-void assert_parsed_layout_is(Layout l, Poincare::Expression r) {
+void assert_parsed_layout_is(Layout l, Poincare::OExpression r) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   l.serializeForParsing(buffer, bufferSize);
@@ -74,7 +74,7 @@ void assert_parsed_layout_is(Layout l, Poincare::Expression r) {
   PoincareJ::EditionPool::SharedEditionPool->flush();
 }
 
-Matrix BuildOneChildMatrix(Expression entry) {
+Matrix BuildOneChildMatrix(OExpression entry) {
   Matrix m = Matrix::Builder();
   m.addChildAtIndexInPlace(entry, 0, 0);
   return m;
@@ -82,7 +82,7 @@ Matrix BuildOneChildMatrix(Expression entry) {
 
 QUIZ_CASE(poincare_layout_to_expression_parsable) {
   Layout l;
-  Expression e;
+  OExpression e;
 
   // 1+2
   l = HorizontalLayout::Builder(CodePointLayout::Builder('1'),

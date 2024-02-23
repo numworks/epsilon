@@ -41,7 +41,7 @@ size_t SequenceNode::serialize(char* buffer, size_t bufferSize,
   return result;
 }
 
-Expression SequenceNode::shallowReduce(
+OExpression SequenceNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Sequence(this).shallowReduce(reductionContext);
 }
@@ -72,7 +72,7 @@ Evaluation<T> SequenceNode::templatedApproximate(
      * reduced for instance). */
     return Complex<T>::Undefined();
   }
-  Expression e =
+  OExpression e =
       approximationContext.context()->expressionForSymbolAbstract(this, false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
@@ -80,7 +80,7 @@ Evaluation<T> SequenceNode::templatedApproximate(
   return e.node()->approximate(T(), approximationContext);
 }
 
-Sequence Sequence::Builder(const char* name, size_t length, Expression child) {
+Sequence Sequence::Builder(const char* name, size_t length, OExpression child) {
   Sequence seq = SymbolAbstract::Builder<Sequence, SequenceNode>(name, length);
   if (!child.isUninitialized()) {
     seq.replaceChildAtIndexInPlace(0, child);
@@ -88,12 +88,12 @@ Sequence Sequence::Builder(const char* name, size_t length, Expression child) {
   return seq;
 }
 
-Expression Sequence::shallowReduce(ReductionContext reductionContext) {
+OExpression Sequence::shallowReduce(ReductionContext reductionContext) {
   if (reductionContext.symbolicComputation() ==
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
-  Expression e = SimplificationHelper::defaultShallowReduce(
+  OExpression e = SimplificationHelper::defaultShallowReduce(
       *this, &reductionContext,
       SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
       SimplificationHelper::UnitReduction::BanUnits);

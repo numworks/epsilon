@@ -56,8 +56,8 @@ bool FisherDistribution::D1AndD2AreOK(T d1, T d2) {
 }
 
 bool FisherDistribution::ExpressionD1AndD2AreOK(bool* result,
-                                                const Expression& d1,
-                                                const Expression& d2,
+                                                const OExpression& d1,
+                                                const OExpression& d2,
                                                 Context* context) {
   return Domain::ExpressionsAreIn(result, d1, Domain::Type::RPlusStar, d2,
                                   Domain::Type::RPlusStar, context);

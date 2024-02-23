@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-Expression ListVarianceNode::shallowReduce(
+OExpression ListVarianceNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListVariance(this).shallowReduce(reductionContext);
 }
@@ -26,19 +26,19 @@ Evaluation<T> ListVarianceNode::templatedApproximate(
   return Complex<T>::Builder(dataset.variance());
 }
 
-Expression ListVariance::shallowReduce(ReductionContext reductionContext) {
+OExpression ListVariance::shallowReduce(ReductionContext reductionContext) {
   /* var(L) = mean(L^2) - mean(L)^2 */
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
-  Expression children[2];
+  OExpression children[2];
   if (!static_cast<ListFunctionWithOneOrTwoParametersNode*>(node())
            ->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
   }
-  Expression m = ListMean::Builder(children[0].clone(), children[1].clone());
+  OExpression m = ListMean::Builder(children[0].clone(), children[1].clone());
   Power m2 = Power::Builder(m, Rational::Builder(2));
   m.shallowReduce(reductionContext);
   Power l2 = Power::Builder(children[0], Rational::Builder(2));
-  Expression ml2 = ListMean::Builder(l2, children[1]);
+  OExpression ml2 = ListMean::Builder(l2, children[1]);
   l2.shallowReduce(reductionContext);
   Subtraction s = Subtraction::Builder(ml2, m2);
   ml2.shallowReduce(reductionContext);

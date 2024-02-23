@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-Expression ListSampleStandardDeviationNode::shallowReduce(
+OExpression ListSampleStandardDeviationNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListSampleStandardDeviation(this).shallowReduce(reductionContext);
 }
@@ -27,10 +27,10 @@ Evaluation<T> ListSampleStandardDeviationNode::templatedApproximate(
   return Complex<T>::Builder(dataset.sampleStandardDeviation());
 }
 
-Expression ListSampleStandardDeviation::shallowReduce(
+OExpression ListSampleStandardDeviation::shallowReduce(
     ReductionContext reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
-  Expression children[2];
+  OExpression children[2];
   if (!static_cast<ListFunctionWithOneOrTwoParametersNode*>(node())
            ->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
@@ -45,7 +45,7 @@ Expression ListSampleStandardDeviation::shallowReduce(
   Addition q =
       Addition::Builder(Rational::Builder(1, 1), p);  // 1 + 1/(n-1) = n/(n-1)
   p.shallowReduce(reductionContext);
-  Expression correctionFactor =
+  OExpression correctionFactor =
       Power::Builder(q, Rational::Builder(1, 2));  // sqrt(n/(n-1))
   q.shallowReduce(reductionContext);
   ListStandardDeviation sttdev =

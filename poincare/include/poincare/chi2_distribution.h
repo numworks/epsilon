@@ -51,9 +51,9 @@ class Chi2Distribution final : public ContinuousDistribution {
     return KIsOK(parameters[0]);
   }
 
-  static bool ExpressionKIsOK(bool *result, const Expression &k,
+  static bool ExpressionKIsOK(bool *result, const OExpression &k,
                               Context *context);
-  bool expressionParametersAreOK(bool *result, const Expression *parameters,
+  bool expressionParametersAreOK(bool *result, const OExpression *parameters,
                                  Context *context) const override {
     return ExpressionKIsOK(result, parameters[0], context);
   }

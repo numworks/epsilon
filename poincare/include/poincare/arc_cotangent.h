@@ -34,7 +34,7 @@ class ArcCotangentNode final : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };
@@ -44,8 +44,8 @@ class ArcCotangentNode final : public ExpressionNode {
 
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue) override;
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext) override;
 
   // Evaluation
@@ -70,8 +70,8 @@ class ArcCotangent final
 
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue);
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext);
 };
 

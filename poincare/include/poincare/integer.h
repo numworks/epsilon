@@ -195,10 +195,10 @@ class Integer final : public TreeHandle {
   static Integer RandomInt(const Integer &a, const Integer &b);
 
   // Derived expression builder
-  static Expression CreateEuclideanDivision(const Integer &num,
-                                            const Integer &denom);
-  static Expression CreateMixedFraction(const Integer &num,
-                                        const Integer &denom);
+  static OExpression CreateEuclideanDivision(const Integer &num,
+                                             const Integer &denom);
+  static OExpression CreateMixedFraction(const Integer &num,
+                                         const Integer &denom);
 
   constexpr static int k_maxNumberOfDigits = 32;
 

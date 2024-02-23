@@ -29,7 +29,7 @@ int SymbolNode::polynomialDegree(Context* context,
 
 int SymbolNode::getPolynomialCoefficients(Context* context,
                                           const char* symbolName,
-                                          Expression coefficients[]) const {
+                                          OExpression coefficients[]) const {
   return Symbol(this).getPolynomialCoefficients(context, symbolName,
                                                 coefficients);
 }
@@ -43,14 +43,14 @@ int SymbolNode::getVariables(Context* context, isVariableTest isVariable,
     int index = 0;
     /* variables is in fact of type
      * char[k_maxNumberOfVariables][maxSizeVariable] */
-    while (index < maxSizeVariable * Expression::k_maxNumberOfVariables &&
+    while (index < maxSizeVariable * OExpression::k_maxNumberOfVariables &&
            variables[index] != 0) {
       if (strcmp(m_name, &variables[index]) == 0) {
         return nextVariableIndex;
       }
       index += maxSizeVariable;
     }
-    if (nextVariableIndex < Expression::k_maxNumberOfVariables) {
+    if (nextVariableIndex < OExpression::k_maxNumberOfVariables) {
       assert(variables[nextVariableIndex * maxSizeVariable] == 0);
       if (strlen(m_name) + 1 > (size_t)maxSizeVariable) {
         return -2;
@@ -58,7 +58,7 @@ int SymbolNode::getVariables(Context* context, isVariableTest isVariable,
       strlcpy(&variables[nextVariableIndex * maxSizeVariable], m_name,
               maxSizeVariable);
       nextVariableIndex++;
-      if (nextVariableIndex < Expression::k_maxNumberOfVariables) {
+      if (nextVariableIndex < OExpression::k_maxNumberOfVariables) {
         variables[nextVariableIndex * maxSizeVariable] = 0;
       }
       return nextVariableIndex;
@@ -68,11 +68,12 @@ int SymbolNode::getVariables(Context* context, isVariableTest isVariable,
   return nextVariableIndex;
 }
 
-Expression SymbolNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression SymbolNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }
 
-Expression SymbolNode::deepReplaceReplaceableSymbols(
+OExpression SymbolNode::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return Symbol(this).deepReplaceReplaceableSymbols(
@@ -80,7 +81,7 @@ Expression SymbolNode::deepReplaceReplaceableSymbols(
 }
 
 bool SymbolNode::derivate(const ReductionContext& reductionContext,
-                          Symbol symbol, Expression symbolValue) {
+                          Symbol symbol, OExpression symbolValue) {
   return Symbol(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -89,7 +90,7 @@ Evaluation<T> SymbolNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Symbol s(this);
   // No need to preserve undefined symbols because they will be approximated.
-  Expression e = SymbolAbstract::Expand(
+  OExpression e = SymbolAbstract::Expand(
       s, approximationContext.context(), true,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (e.isUninitialized()) {
@@ -115,7 +116,7 @@ Symbol Symbol::Builder(CodePoint name) {
   return Symbol::Builder(buffer, codePointLength);
 }
 
-Expression Symbol::shallowReduce(ReductionContext reductionContext) {
+OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
   SymbolicComputation symbolicComputation =
       reductionContext.symbolicComputation();
   if (symbolicComputation ==
@@ -132,8 +133,8 @@ Expression Symbol::shallowReduce(ReductionContext reductionContext) {
          symbolicComputation ==
              SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   {
-    Expression current = *this;
-    Expression p = parent();
+    OExpression current = *this;
+    OExpression p = parent();
     while (!p.isUninitialized()) {
       if (p.isParameteredExpression()) {
         int index = p.indexOfChild(current);
@@ -153,8 +154,8 @@ Expression Symbol::shallowReduce(ReductionContext reductionContext) {
 
   /* Recursively replace symbols and catch circular references involving symbols
    * as well as functions. */
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(),
-                                             true, symbolicComputation);
+  OExpression result = SymbolAbstract::Expand(*this, reductionContext.context(),
+                                              true, symbolicComputation);
   if (result.isUninitialized()) {
     if (symbolicComputation ==
         SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
@@ -180,13 +181,13 @@ Expression Symbol::shallowReduce(ReductionContext reductionContext) {
 }
 
 bool Symbol::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                      Expression symbolValue) {
+                      OExpression symbolValue) {
   replaceWithInPlace(Rational::Builder(strcmp(name(), symbol.name()) == 0));
   return true;
 }
 
 int Symbol::getPolynomialCoefficients(Context* context, const char* symbolName,
-                                      Expression coefficients[]) const {
+                                      OExpression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg == 1) {
     coefficients[0] = Rational::Builder(0);
@@ -198,7 +199,7 @@ int Symbol::getPolynomialCoefficients(Context* context, const char* symbolName,
   return deg;
 }
 
-Expression Symbol::deepReplaceReplaceableSymbols(
+OExpression Symbol::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   /* This symbolic computation parameters make no sense in this method.
@@ -220,7 +221,7 @@ Expression Symbol::deepReplaceReplaceableSymbols(
              SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 
   // Check that this is not a parameter in a parametered expression
-  Expression ancestor = *this;
+  OExpression ancestor = *this;
   while (parameteredAncestorsCount > 0) {
     ancestor = ancestor.parent();
     assert(!ancestor.isUninitialized());
@@ -247,7 +248,7 @@ Expression Symbol::deepReplaceReplaceableSymbols(
   }
   assert(isCircularFromHere == TrinaryBoolean::False);
 
-  Expression e = context->expressionForSymbolAbstract(*this, true);
+  OExpression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     if (symbolicComputation ==
         SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {

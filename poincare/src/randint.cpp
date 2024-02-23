@@ -18,10 +18,10 @@ extern "C" {
 
 namespace Poincare {
 
-Expression RandintNode::createExpressionWithTwoChildren() const {
+OExpression RandintNode::createExpressionWithTwoChildren() const {
   if (numberOfChildren() == 1) {
     return Randint::Builder(BasedInteger::Builder(k_defaultMinBound),
-                            Expression(childAtIndex(0)).clone());
+                            OExpression(childAtIndex(0)).clone());
   }
   assert(numberOfChildren() == 2);
   return Randint(this);
@@ -36,7 +36,7 @@ size_t RandintNode::serialize(char* buffer, size_t bufferSize,
       Randint::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression RandintNode::shallowReduce(
+OExpression RandintNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Randint(this).shallowReduce(reductionContext);
 }
@@ -99,9 +99,9 @@ Evaluation<T> RandintNode::templateApproximate(
       });
 }
 
-Expression Randint::shallowReduce(ReductionContext reductionContext) {
+OExpression Randint::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -114,8 +114,8 @@ Expression Randint::shallowReduce(ReductionContext reductionContext) {
   return *this;
   // TODO: handle sum(randint(0,2),k,0,10) and sequence(randint(0,23),k,0,10)
 #if 0
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
+  OExpression c0 = childAtIndex(0);
+  OExpression c1 = childAtIndex(1);
 
   if (c0.type() != ExpressionNode::Type::Rational ||
       c1.type() != ExpressionNode::Type::Rational) {

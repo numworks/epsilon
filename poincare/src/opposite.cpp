@@ -27,7 +27,7 @@ Evaluation<T> OppositeNode::templatedApproximate(
 
 /* Layout */
 
-bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression& child,
+bool OppositeNode::childAtIndexNeedsUserParentheses(const OExpression& child,
                                                     int childIndex) const {
   assert(childIndex == 0);
   if (child.isNumber() &&
@@ -60,20 +60,20 @@ size_t OppositeNode::serialize(char* buffer, size_t bufferSize,
   return numberOfChar;
 }
 
-Expression OppositeNode::shallowReduce(
+OExpression OppositeNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Opposite(this).shallowReduce(reductionContext);
 }
 
 /* Simplification */
 
-Expression Opposite::shallowReduce(ReductionContext reductionContext) {
-  Expression result =
+OExpression Opposite::shallowReduce(ReductionContext reductionContext) {
+  OExpression result =
       SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
   if (!result.isUninitialized()) {
     return result;
   }
-  Expression child = childAtIndex(0);
+  OExpression child = childAtIndex(0);
   result = Multiplication::Builder(Rational::Builder(-1), child);
   replaceWithInPlace(result);
   return result.shallowReduce(reductionContext);

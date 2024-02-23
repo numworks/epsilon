@@ -51,7 +51,7 @@ size_t DivisionNode::serialize(char *buffer, size_t bufferSize,
                                     numberOfSignificantDigits, "/");
 }
 
-Expression DivisionNode::shallowReduce(
+OExpression DivisionNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return Division(this).shallowReduce(reductionContext);
 }
@@ -85,9 +85,9 @@ std::complex<T> DivisionNode::computeOnComplex(
 }
 
 // Division
-Expression Division::shallowReduce(ReductionContext reductionContext) {
+OExpression Division::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans);
     if (!e.isUninitialized()) {
@@ -100,7 +100,7 @@ Expression Division::shallowReduce(ReductionContext reductionContext) {
                                    reductionContext.shouldCheckMatrices())) {
     return replaceWithUndefinedInPlace();
   }
-  Expression p = Power::Builder(childAtIndex(1), Rational::Builder(-1));
+  OExpression p = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Multiplication m = Multiplication::Builder(childAtIndex(0), p);
   /* For instance: Division::Builder(2,1). p would be 1^(-1) which can be
    * simplified */

@@ -17,7 +17,7 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Integral::s_functionHelper;
+constexpr OExpression::FunctionHelper Integral::s_functionHelper;
 
 int IntegralNode::numberOfChildren() const {
   return Integral::s_functionHelper.numberOfChildren();
@@ -43,7 +43,7 @@ size_t IntegralNode::serialize(char* buffer, size_t bufferSize,
       Integral::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression IntegralNode::shallowReduce(
+OExpression IntegralNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Integral(this).shallowReduce(reductionContext);
 }
@@ -197,10 +197,10 @@ T IntegralNode::integrand(
   }
 }
 
-Expression IntegralNode::rewriteIntegrandNear(
-    Expression bound, const ReductionContext& reductionContext) const {
-  Expression integrand = Expression(childAtIndex(0)).clone();
-  Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
+OExpression IntegralNode::rewriteIntegrandNear(
+    OExpression bound, const ReductionContext& reductionContext) const {
+  OExpression integrand = OExpression(childAtIndex(0)).clone();
+  Symbol symbol = OExpression(childAtIndex(1)).clone().convert<Symbol>();
   integrand.replaceSymbolWithExpression(
       symbol, Addition::Builder(bound.clone(), symbol));
   return integrand.deepReduce(reductionContext);
@@ -506,11 +506,11 @@ IntegralNode::DetailedResult<T> IntegralNode::iterateAdaptiveQuadrature(
 }
 #endif
 
-Expression Integral::UntypedBuilder(Expression children) {
+OExpression Integral::UntypedBuilder(OExpression children) {
   assert(children.type() == ExpressionNode::Type::List);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
-    return Expression();
+    return OExpression();
   }
   return Builder(children.childAtIndex(0),
                  children.childAtIndex(1).convert<Symbol>(),
@@ -531,9 +531,9 @@ void Integral::deepReduceChildren(const ReductionContext& reductionContext) {
   }
 }
 
-Expression Integral::shallowReduce(ReductionContext reductionContext) {
+OExpression Integral::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,

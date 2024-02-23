@@ -48,7 +48,7 @@ class UndefinedNode : public NumberNode {
   /* Derivation
    * Unlike Numbers that derivate to 0, Undefined derivates to Undefined. */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,

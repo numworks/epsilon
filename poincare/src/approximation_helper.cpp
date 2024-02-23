@@ -163,7 +163,7 @@ Evaluation<T> ApproximationHelper::Map(
   if (numberOfParameters == 0) {
     return Complex<T>::Undefined();
   }
-  int listLength = Expression::k_noList;
+  int listLength = OExpression::k_noList;
   for (int i = 0; i < numberOfParameters; i++) {
     evaluationArray[i] =
         expression->childAtIndex(i)->approximate(T(), approximationContext);
@@ -176,7 +176,7 @@ Evaluation<T> ApproximationHelper::Map(
         return Complex<T>::Undefined();
       }
       int newLength = evaluationArray[i].numberOfChildren();
-      if (listLength == Expression::k_noList) {
+      if (listLength == OExpression::k_noList) {
         listLength = newLength;
       } else if (listLength != newLength) {
         return Complex<T>::Undefined();
@@ -202,7 +202,7 @@ Evaluation<T> ApproximationHelper::Map(
     isBooleanEvaluation =
         evaluationArray[0].type() == EvaluationNode<T>::Type::BooleanEvaluation;
   }
-  if (listLength == Expression::k_noList) {
+  if (listLength == OExpression::k_noList) {
     for (int i = 0; i < numberOfParameters; i++) {
       assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex ||
              evaluationArray[i].type() ==

@@ -17,10 +17,10 @@
 namespace Poincare {
 
 void SimplificationHelper::deepBeautifyChildren(
-    Expression e, const ReductionContext& reductionContext) {
+    OExpression e, const ReductionContext& reductionContext) {
   const int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    Expression child = e.childAtIndex(i);
+    OExpression child = e.childAtIndex(i);
     child = child.deepBeautify(reductionContext);
     // We add missing Parentheses after beautifying the parent and child
     if (e.node()->childAtIndexNeedsUserParentheses(child, i)) {
@@ -30,7 +30,7 @@ void SimplificationHelper::deepBeautifyChildren(
 }
 
 void SimplificationHelper::defaultDeepReduceChildren(
-    Expression e, const ReductionContext& reductionContext) {
+    OExpression e, const ReductionContext& reductionContext) {
   const int childrenCount = e.numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     assert(childrenCount == e.numberOfChildren());
@@ -38,13 +38,13 @@ void SimplificationHelper::defaultDeepReduceChildren(
   }
 }
 
-Expression SimplificationHelper::defaultShallowReduce(
-    Expression e, ReductionContext* reductionContext,
+OExpression SimplificationHelper::defaultShallowReduce(
+    OExpression e, ReductionContext* reductionContext,
     BooleanReduction booleanParameter, UnitReduction unitParameter,
     MatrixReduction matrixParameter, ListReduction listParameter,
     PointReduction pointParameter, UndefReduction undefParameter,
     DependencyReduction dependencyParameter) {
-  Expression res;
+  OExpression res;
   // Step 1: Shallow reduce undefined
   if (undefParameter == UndefReduction::BubbleUpUndef) {
     res = shallowReduceUndefined(e);
@@ -99,8 +99,8 @@ Expression SimplificationHelper::defaultShallowReduce(
   return res;
 }
 
-Expression SimplificationHelper::shallowReduceUndefined(Expression e) {
-  Expression result;
+OExpression SimplificationHelper::shallowReduceUndefined(OExpression e) {
+  OExpression result;
   const int childrenCount = e.numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     /* The reduction is shortcut if one child is nonreal or undefined:
@@ -119,26 +119,26 @@ Expression SimplificationHelper::shallowReduceUndefined(Expression e) {
     e.replaceWithInPlace(result);
     return result;
   }
-  return Expression();
+  return OExpression();
 }
 
-Expression SimplificationHelper::shallowReduceBanningUnits(Expression e) {
-  // Generically, an Expression does not accept any Unit in its children.
+OExpression SimplificationHelper::shallowReduceBanningUnits(OExpression e) {
+  // Generically, an OExpression does not accept any Unit in its children.
   if (e.hasUnit()) {
     return e.replaceWithUndefinedInPlace();
   }
-  return Expression();
+  return OExpression();
 }
 
-Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(
-    Expression e, const ReductionContext& reductionContext) {
-  Expression child = e.childAtIndex(0);
-  Expression unit;
+OExpression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(
+    OExpression e, const ReductionContext& reductionContext) {
+  OExpression child = e.childAtIndex(0);
+  OExpression unit;
   child.removeUnit(&unit);
   if (!unit.isUninitialized()) {
     Multiplication mul = Multiplication::Builder(unit);
     e.replaceWithInPlace(mul);
-    Expression value = e.shallowReduce(reductionContext);
+    OExpression value = e.shallowReduce(reductionContext);
     if (value.isUndefined()) {
       // Undefined * _unit is Undefined. Same with Nonreal.
       mul.replaceWithInPlace(value);
@@ -149,13 +149,13 @@ Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(
     mul.mergeSameTypeChildrenInPlace();
     return std::move(mul);
   }
-  return Expression();
+  return OExpression();
 }
 
-Expression SimplificationHelper::undefinedOnMatrix(
-    Expression e, ReductionContext* reductionContext) {
+OExpression SimplificationHelper::undefinedOnMatrix(
+    OExpression e, ReductionContext* reductionContext) {
   if (!reductionContext->shouldCheckMatrices()) {
-    return Expression();
+    return OExpression();
   }
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
@@ -164,36 +164,36 @@ Expression SimplificationHelper::undefinedOnMatrix(
     }
   }
   reductionContext->setCheckMatrices(false);
-  return Expression();
+  return OExpression();
 }
 
-Expression SimplificationHelper::undefinedOnBooleans(Expression e) {
+OExpression SimplificationHelper::undefinedOnBooleans(OExpression e) {
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
     if (e.childAtIndex(i).hasBooleanValue()) {
       return e.replaceWithUndefinedInPlace();
     }
   }
-  return Expression();
+  return OExpression();
 }
 
-Expression SimplificationHelper::undefinedOnPoint(Expression e) {
+OExpression SimplificationHelper::undefinedOnPoint(OExpression e) {
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
     if (e.childAtIndex(i).type() == ExpressionNode::Type::Point) {
       return e.replaceWithUndefinedInPlace();
     }
   }
-  return Expression();
+  return OExpression();
 }
 
-Expression SimplificationHelper::distributeReductionOverLists(
-    Expression e, const ReductionContext& reductionContext) {
+OExpression SimplificationHelper::distributeReductionOverLists(
+    OExpression e, const ReductionContext& reductionContext) {
   int listLength = e.lengthOfListChildren();
-  if (listLength == Expression::k_noList) {
+  if (listLength == OExpression::k_noList) {
     /* No list in children, shallow reduce as usual. */
-    return Expression();
-  } else if (listLength == Expression::k_mismatchedLists) {
+    return OExpression();
+  } else if (listLength == OExpression::k_mismatchedLists) {
     /* Operators only apply to lists of the same length. */
     return e.replaceWithUndefinedInPlace();
   }
@@ -220,9 +220,9 @@ Expression SimplificationHelper::distributeReductionOverLists(
    * the k-th element of the list. */
   List result = List::Builder();
   for (int listIndex = 0; listIndex < listLength; listIndex++) {
-    Expression element = e.clone();
+    OExpression element = e.clone();
     for (int childIndex = 0; childIndex < n; childIndex++) {
-      Expression child = children.childAtIndex(childIndex);
+      OExpression child = children.childAtIndex(childIndex);
       if (child.type() == ExpressionNode::Type::List) {
         assert(child.numberOfChildren() == listLength);
         element.replaceChildAtIndexInPlace(childIndex,
@@ -238,11 +238,11 @@ Expression SimplificationHelper::distributeReductionOverLists(
   return result.shallowReduce(reductionContext);
 }
 
-Expression SimplificationHelper::bubbleUpDependencies(
-    Expression e, const ReductionContext& reductionContext) {
+OExpression SimplificationHelper::bubbleUpDependencies(
+    OExpression e, const ReductionContext& reductionContext) {
   assert(e.type() != ExpressionNode::Type::Store);
   if (e.type() == ExpressionNode::Type::Comparison) {
-    return Expression();
+    return OExpression();
   }
   List dependencies = List::Builder();
   int nChildren = e.numberOfChildren();
@@ -256,22 +256,23 @@ Expression SimplificationHelper::bubbleUpDependencies(
        * in its shallowReduce. */
       continue;
     }
-    Expression child = e.childAtIndex(i);
+    OExpression child = e.childAtIndex(i);
     if (child.type() == ExpressionNode::Type::Dependency) {
       static_cast<Dependency&>(child).extractDependencies(dependencies);
     }
   }
   if (dependencies.numberOfChildren() == 0) {
-    return Expression();
+    return OExpression();
   }
   return reduceAfterBubblingUpDependencies(e, dependencies, reductionContext);
 }
 
-Expression SimplificationHelper::reduceAfterBubblingUpDependencies(
-    Expression e, List dependencies, const ReductionContext& reductionContext) {
+OExpression SimplificationHelper::reduceAfterBubblingUpDependencies(
+    OExpression e, List dependencies,
+    const ReductionContext& reductionContext) {
   assert(dependencies.numberOfChildren() > 0);
   e = e.shallowReduce(reductionContext);
-  Expression d = Dependency::Builder(Undefined::Builder(), dependencies);
+  OExpression d = Dependency::Builder(Undefined::Builder(), dependencies);
   e.replaceWithInPlace(d);
   d.replaceChildAtIndexInPlace(0, e);
   if (e.type() == ExpressionNode::Type::Dependency) {
@@ -280,11 +281,12 @@ Expression SimplificationHelper::reduceAfterBubblingUpDependencies(
   return d.shallowReduce(reductionContext);
 }
 
-bool SimplificationHelper::extractInteger(Expression e, int* integerReturnValue,
+bool SimplificationHelper::extractInteger(OExpression e,
+                                          int* integerReturnValue,
                                           bool* isSymbolReturnValue) {
   *isSymbolReturnValue = false;
   int coef;
-  Expression numberExpression;
+  OExpression numberExpression;
   if (e.isNumber()) {
     coef = 1;
     numberExpression = e;
@@ -312,10 +314,10 @@ bool SimplificationHelper::extractInteger(Expression e, int* integerReturnValue,
 }
 
 bool SimplificationHelper::extractIntegerChildAtIndex(
-    Expression e, int integerChildIndex, int* integerChildReturnValue,
+    OExpression e, int integerChildIndex, int* integerChildReturnValue,
     bool* isSymbolReturnValue) {
   assert(e.numberOfChildren() > integerChildIndex);
-  Expression child = e.childAtIndex(integerChildIndex);
+  OExpression child = e.childAtIndex(integerChildIndex);
   return extractInteger(child, integerChildReturnValue, isSymbolReturnValue);
 }
 

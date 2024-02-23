@@ -26,7 +26,7 @@ size_t ComplexArgumentNode::serialize(
       ComplexArgument::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ComplexArgumentNode::shallowReduce(
+OExpression ComplexArgumentNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ComplexArgument(this).shallowReduce(reductionContext);
 }
@@ -38,9 +38,9 @@ std::complex<T> ComplexArgumentNode::computeOnComplex(
   return std::arg(c);
 }
 
-Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
+OExpression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -50,15 +50,15 @@ Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
-    Expression childArg = complexChild.argument(reductionContext);
+    OExpression childArg = complexChild.argument(reductionContext);
     replaceWithInPlace(childArg);
     return childArg.shallowReduce(reductionContext);
   }
   Context* context = reductionContext.context();
-  Expression res;
+  OExpression res;
   if (c.isNull(context) == TrinaryBoolean::True) {
     res = Undefined::Builder();
   } else if (c.isPositive(context) == TrinaryBoolean::True) {

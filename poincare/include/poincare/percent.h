@@ -22,7 +22,7 @@ class PercentSimpleNode : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
 
  protected:
@@ -41,8 +41,9 @@ class PercentSimpleNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplication
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return childAtIndex(0)->leftLayoutShape();
   }
@@ -75,7 +76,7 @@ class PercentAdditionNode final : public PercentSimpleNode {
   Type type() const override { return Type::PercentAddition; }
   TrinaryBoolean isPositive(Context* context) const override;
   TrinaryBoolean isNull(Context* context) const override;
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
 
  private:
@@ -84,8 +85,9 @@ class PercentAdditionNode final : public PercentSimpleNode {
                            Preferences::PrintFloatMode floatDisplayMode,
                            int numberOfSignificantDigits) const override;
   // Simplication
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   // Evaluation
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -107,8 +109,8 @@ class PercentSimple
     : public ExpressionOneChild<PercentSimple, PercentSimpleNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowBeautify(const ReductionContext& reductionContext);
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowBeautify(const ReductionContext& reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 class PercentAddition final
@@ -116,8 +118,8 @@ class PercentAddition final
                                    PercentSimple> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowBeautify(const ReductionContext& reductionContext);
-  Expression deepBeautify(const ReductionContext& reductionContext);
+  OExpression shallowBeautify(const ReductionContext& reductionContext);
+  OExpression deepBeautify(const ReductionContext& reductionContext);
 };
 
 }  // namespace Poincare

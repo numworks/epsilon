@@ -33,26 +33,26 @@ size_t LogarithmNode::serialize(char* buffer, size_t bufferSize,
       Logarithm::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression LogarithmNode::shallowReduce(
+OExpression LogarithmNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Logarithm(this).shallowReduce(reductionContext);
 }
 
 bool LogarithmNode::derivate(const ReductionContext& reductionContext,
-                             Symbol symbol, Expression symbolValue) {
+                             Symbol symbol, OExpression symbolValue) {
   // One child logarithm disappears at reduction.
   assert(numberOfChildren() == 2);
   return Logarithm(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression LogarithmNode::unaryFunctionDifferential(
+OExpression LogarithmNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   // One child logarithm disappears at reduction.
   assert(numberOfChildren() == 2);
   return Logarithm(this).unaryFunctionDifferential(reductionContext);
 }
 
-Expression LogarithmNode::shallowBeautify(
+OExpression LogarithmNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return Logarithm(this).shallowBeautify();
 }
@@ -95,14 +95,14 @@ void Logarithm::deepReduceChildren(const ReductionContext& reductionContext) {
   childAtIndex(0).deepReduce(reductionContext);
 }
 
-Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
+OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
   if (numberOfChildren() == 1) {
     Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
     replaceWithInPlace(log);
     return log.shallowReduce(reductionContext);
   }
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -112,7 +112,7 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression base = childAtIndex(1);
+  OExpression base = childAtIndex(1);
   if (Poincare::Preferences::SharedPreferences()
           ->examMode()
           .forbidBasedLogarithm()) {
@@ -123,17 +123,17 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
       return replaceWithUndefinedInPlace();
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.isPositive(reductionContext.context()) == TrinaryBoolean::False ||
       base.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-      Expression result = Nonreal::Builder();
+      OExpression result = Nonreal::Builder();
       replaceWithInPlace(result);
       return result;
     }
     return *this;
   }
-  Expression f = simpleShallowReduce(reductionContext);
+  OExpression f = simpleShallowReduce(reductionContext);
   if (f.type() != ExpressionNode::Type::Logarithm) {
     return f;
   }
@@ -173,7 +173,7 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
   }
 
   /* TODO: If simplification is reworked, remove this.
-   * (see Expression::deepReduce comment) */
+   * (see OExpression::deepReduce comment) */
   if (!reductionContext.shouldExpandLogarithm()) {
     return *this;
   }
@@ -183,8 +183,8 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
       c.childAtIndex(0).isPositive(reductionContext.context()) ==
           TrinaryBoolean::True) {
     Power p = static_cast<Power&>(c);
-    Expression x = p.childAtIndex(0);
-    Expression y = p.childAtIndex(1);
+    OExpression x = p.childAtIndex(0);
+    OExpression y = p.childAtIndex(1);
     replaceChildInPlace(p, x);
     Multiplication mult = Multiplication::Builder(y);
     replaceWithInPlace(mult);
@@ -196,10 +196,10 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
   if (c.type() == ExpressionNode::Type::Multiplication) {
     Addition a = Addition::Builder();
     for (int i = 0; i < c.numberOfChildren() - 1; i++) {
-      Expression factor = c.childAtIndex(i);
+      OExpression factor = c.childAtIndex(i);
       if (factor.isPositive(reductionContext.context()) ==
           TrinaryBoolean::True) {
-        Expression newLog = clone();
+        OExpression newLog = clone();
         static_cast<Multiplication&>(c).removeChildInPlace(
             factor, factor.numberOfChildren());
         newLog.replaceChildAtIndexInPlace(0, factor);
@@ -211,7 +211,7 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
     }
     if (a.numberOfChildren() > 0) {
       c.shallowReduce(reductionContext);
-      Expression reducedLastLog = shallowReduce(reductionContext);
+      OExpression reducedLastLog = shallowReduce(reductionContext);
       reducedLastLog.replaceWithInPlace(a);
       a.addChildAtIndexInPlace(reducedLastLog, a.numberOfChildren(),
                                a.numberOfChildren());
@@ -247,11 +247,11 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-Expression Logarithm::simpleShallowReduce(
+OExpression Logarithm::simpleShallowReduce(
     const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
-  Expression c = childAtIndex(0);
-  Expression b = childAtIndex(1);
+  OExpression c = childAtIndex(0);
+  OExpression b = childAtIndex(1);
 
   // log(x,0) = log(x,1) = undef
   if (b.isZero() || b.isOne()) {
@@ -265,17 +265,17 @@ Expression Logarithm::simpleShallowReduce(
     }
     // log(1,x) = 0;
     if (r.isOne()) {
-      Expression result = Rational::Builder(0);
+      OExpression result = Rational::Builder(0);
       replaceWithInPlace(result);
       return result;
     }
   }
   // log(x,x) = 1 with x != inf, and log(inf,inf) = undef
   if (c.isIdenticalTo(b)) {
-    Expression result =
-        c.recursivelyMatches(Expression::IsInfinity, reductionContext.context())
-            ? Undefined::Builder().convert<Expression>()
-            : Rational::Builder(1).convert<Expression>();
+    OExpression result = c.recursivelyMatches(OExpression::IsInfinity,
+                                              reductionContext.context())
+                             ? Undefined::Builder().convert<OExpression>()
+                             : Rational::Builder(1).convert<OExpression>();
     replaceWithInPlace(result);
     return result;
   }
@@ -286,8 +286,8 @@ Expression Logarithm::simpleShallowReduce(
 bool Logarithm::parentIsAPowerOfSameBase() const {
   assert(numberOfChildren() == 2);
   // We look for expressions of types e^ln(x) or e^(ln(x)) where ln is this
-  Expression parentExpression = parent();
-  Expression logGroup = *this;
+  OExpression parentExpression = parent();
+  OExpression logGroup = *this;
   if (!parentExpression.isUninitialized() &&
       parentExpression.type() == ExpressionNode::Type::Parenthesis) {
     logGroup = parentExpression;
@@ -301,7 +301,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
           ? parentExpression.childAtIndex(1) == logGroup
           : false;
   if (thisIsPowerExponent) {
-    Expression powerOperand0 = parentExpression.childAtIndex(0);
+    OExpression powerOperand0 = parentExpression.childAtIndex(0);
     /* powerOperand0 has already been reduced so can be compared to
      * childAtIndex(1) */
     if (powerOperand0.isIdenticalTo(childAtIndex(1))) {
@@ -330,10 +330,11 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer& base,
 }
 
 bool Logarithm::derivate(const ReductionContext& reductionContext,
-                         Symbol symbol, Expression symbolValue) {
+                         Symbol symbol, OExpression symbolValue) {
   assert(numberOfChildren() == 2);
   {
-    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    OExpression e =
+        Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {
       return true;
     }
@@ -351,7 +352,7 @@ bool Logarithm::derivate(const ReductionContext& reductionContext,
   return true;
 }
 
-Expression Logarithm::unaryFunctionDifferential(
+OExpression Logarithm::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
   /* log(x, b)` = (ln(x)/ln(b))`
@@ -363,7 +364,7 @@ Expression Logarithm::unaryFunctionDifferential(
                         Rational::Builder(-1));
 }
 
-Expression Logarithm::splitLogarithmInteger(
+OExpression Logarithm::splitLogarithmInteger(
     Integer i, bool isDenominator, const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
   assert(!i.isZero());
@@ -376,7 +377,7 @@ Expression Logarithm::splitLogarithmInteger(
   if (numberOfPrimeFactors < 0) {
     /* We could not break i in prime factor (either it might take too many
      * factors or too much time). */
-    Expression e = clone();
+    OExpression e = clone();
     e.replaceChildAtIndexInPlace(0, Rational::Builder(i));
     if (!isDenominator) {
       return e;
@@ -401,7 +402,7 @@ Expression Logarithm::splitLogarithmInteger(
   return std::move(a);
 }
 
-Expression Logarithm::shallowBeautify() {
+OExpression Logarithm::shallowBeautify() {
   if (numberOfChildren() == 1) {
     return *this;
   }

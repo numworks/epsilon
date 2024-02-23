@@ -14,7 +14,7 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_expression_can_start_uninitialized) {
-  Expression e;
+  OExpression e;
   {
     Rational i = Rational::Builder(1);
     e = i;
@@ -22,8 +22,8 @@ QUIZ_CASE(poincare_expression_can_start_uninitialized) {
 }
 
 QUIZ_CASE(poincare_expression_can_be_copied_even_if_uninitialized) {
-  Expression e;
-  Expression f;
+  OExpression e;
+  OExpression f;
   f = e;
 }
 
@@ -31,10 +31,10 @@ QUIZ_CASE(poincare_expression_cast_does_not_copy) {
   Rational i1 = Rational::Builder(1);
   Rational i2 = Rational::Builder(2);
   Addition j = Addition::Builder(i1, i2);
-  Expression k = j;
+  OExpression k = j;
   quiz_assert(k.identifier() == (static_cast<Addition&>(k)).identifier());
-  quiz_assert(i1.identifier() == (static_cast<Expression&>(i1)).identifier());
-  quiz_assert(k.identifier() == (static_cast<Expression&>(k)).identifier());
+  quiz_assert(i1.identifier() == (static_cast<OExpression&>(i1)).identifier());
+  quiz_assert(k.identifier() == (static_cast<OExpression&>(k)).identifier());
 }
 
 static inline void assert_equal(const Decimal i, const Decimal j) {
@@ -121,8 +121,8 @@ static inline void assert_generalizes_to_and_extract(const char* expression,
                                                      const char* generalized,
                                                      float value) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
-  Expression g = parse_expression(generalized, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression g = parse_expression(generalized, &globalContext, false);
   float v = e.getNumericalValue();
   e.replaceNumericalValuesWithSymbol(Symbol::Builder('x'));
   quiz_assert(e.isIdenticalTo(g));

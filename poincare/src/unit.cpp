@@ -47,7 +47,7 @@ void UnitNode::DimensionVector::addAllCoefficients(const DimensionVector other,
 }
 
 UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
-    const Expression baseUnits, bool canIgnoreCoefficients) {
+    const OExpression baseUnits, bool canIgnoreCoefficients) {
   /* Returns the vector of Base units with integer exponents. If rational, the
    * closest integer will be used. */
   DimensionVector nullVector = {
@@ -63,7 +63,7 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
   DimensionVector vector = nullVector;
   int numberOfFactors;
   int factorIndex = 0;
-  Expression factor;
+  OExpression factor;
   if (baseUnits.type() == ExpressionNode::Type::Multiplication) {
     numberOfFactors = baseUnits.numberOfChildren();
     factor = baseUnits.childAtIndex(0);
@@ -75,7 +75,7 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
     // Get the unit's exponent
     int exponent = 1;
     if (factor.type() == ExpressionNode::Type::Power) {
-      Expression exp = factor.childAtIndex(1);
+      OExpression exp = factor.childAtIndex(1);
       assert(exp.type() == ExpressionNode::Type::Rational);
       if (!static_cast<Rational&>(exp).isInteger()) {
         /* If non-integer exponents are found, we return a null vector so that
@@ -116,8 +116,8 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
   return vector;
 }
 
-Expression UnitNode::DimensionVector::toBaseUnits() const {
-  Expression result = Multiplication::Builder();
+OExpression UnitNode::DimensionVector::toBaseUnits() const {
+  OExpression result = Multiplication::Builder();
   int numberOfChildren = 0;
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
     // We require the base units to be the first seven in DefaultRepresentatives
@@ -126,7 +126,7 @@ Expression UnitNode::DimensionVector::toBaseUnits() const {
     assert(representative);
     const Prefix* prefix = representative->basePrefix();
     int exponent = coefficientAtIndex(i);
-    Expression e;
+    OExpression e;
     if (exponent == 0) {
       continue;
     }
@@ -314,9 +314,9 @@ bool UnitNode::Representative::canParse(const char* symbol, size_t length,
   return false;
 }
 
-Expression UnitNode::Representative::toBaseUnits(
+OExpression UnitNode::Representative::toBaseUnits(
     const ReductionContext& reductionContext) const {
-  Expression result;
+  OExpression result;
   if (isBaseUnit()) {
     result = Unit::Builder(this, basePrefix());
   } else {
@@ -324,7 +324,7 @@ Expression UnitNode::Representative::toBaseUnits(
   }
   Rational basePrefixFactor =
       Rational::IntegerPower(Rational::Builder(10), -basePrefix()->exponent());
-  Expression factor =
+  OExpression factor =
       Multiplication::Builder(basePrefixFactor,
                               ratioExpressionReduced(reductionContext))
           .shallowReduce(reductionContext);
@@ -595,7 +595,7 @@ UnitNode::VolumeRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::TimeRepresentative::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
+    double value, OExpression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
   /* Use all representatives but week */
@@ -642,7 +642,7 @@ UnitNode::DistanceRepresentative::standardRepresentative(
 }
 
 int UnitNode::DistanceRepresentative::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
+    double value, OExpression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
@@ -695,15 +695,15 @@ UnitNode::AngleRepresentative::standardRepresentative(
   return DefaultRepresentativeForAngleUnit(reductionContext.angleUnit());
 }
 
-Expression UnitNode::AngleRepresentative::convertInto(
-    Expression value, const UnitNode::Representative* other,
+OExpression UnitNode::AngleRepresentative::convertInto(
+    OExpression value, const UnitNode::Representative* other,
     const ReductionContext& reductionContext) const {
   assert(dimensionVector() == other->dimensionVector());
-  Expression unit = Unit::Builder(other, Prefix::EmptyPrefix());
-  Expression inRadians =
+  OExpression unit = Unit::Builder(other, Prefix::EmptyPrefix());
+  OExpression inRadians =
       Multiplication::Builder(value, ratioExpressionReduced(reductionContext))
           .shallowReduce(reductionContext);
-  Expression inOther =
+  OExpression inOther =
       Division::Builder(inRadians,
                         other->ratioExpressionReduced(reductionContext))
           .shallowReduce(reductionContext)
@@ -712,8 +712,8 @@ Expression UnitNode::AngleRepresentative::convertInto(
 }
 
 int UnitNode::AngleRepresentative::setAdditionalExpressionsWithExactValue(
-    Expression exactValue, double value, Expression* dest, int availableLength,
-    const ReductionContext& reductionContext) const {
+    OExpression exactValue, double value, OExpression* dest,
+    int availableLength, const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   int numberOfResults = 0;
   // Conversion to degrees should be added to all units not degree related
@@ -739,8 +739,8 @@ int UnitNode::AngleRepresentative::setAdditionalExpressionsWithExactValue(
           representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex,
           Prefix::EmptyPrefix()),
   };
-  Expression split = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
-                                      reductionContext);
+  OExpression split = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
+                                       reductionContext);
   if (!split.isUndefined()) {
     dest[numberOfResults++] = split;
   }
@@ -783,7 +783,7 @@ UnitNode::MassRepresentative::standardRepresentative(
 }
 
 int UnitNode::MassRepresentative::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
+    double value, OExpression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 1);
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
@@ -827,7 +827,7 @@ double UnitNode::TemperatureRepresentative::ConvertTemperatures(
 }
 
 int UnitNode::TemperatureRepresentative::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
+    double value, OExpression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   const Representative* celsius =
@@ -863,7 +863,7 @@ int UnitNode::TemperatureRepresentative::setAdditionalExpressions(
 }
 
 int UnitNode::EnergyRepresentative::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
+    double value, OExpression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   int index = 0;
@@ -915,11 +915,11 @@ UnitNode::SurfaceRepresentative::standardRepresentative(
 }
 
 int UnitNode::SurfaceRepresentative::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
+    double value, OExpression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
-  Expression* destMetric;
-  Expression* destImperial = nullptr;
+  OExpression* destMetric;
+  OExpression* destImperial = nullptr;
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
     destMetric = dest;
   } else {
@@ -958,11 +958,11 @@ UnitNode::VolumeRepresentative::standardRepresentative(
 }
 
 int UnitNode::VolumeRepresentative::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
+    double value, OExpression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
-  Expression* destMetric;
-  Expression* destImperial = nullptr;
+  OExpression* destMetric;
+  OExpression* destImperial = nullptr;
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
     destMetric = dest;
   } else {
@@ -1002,11 +1002,11 @@ int UnitNode::VolumeRepresentative::setAdditionalExpressions(
 }
 
 int UnitNode::SpeedRepresentative::setAdditionalExpressions(
-    double value, Expression* dest, int availableLength,
+    double value, OExpression* dest, int availableLength,
     const ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
-  Expression* destMetric;
-  Expression* destImperial = nullptr;
+  OExpression* destMetric;
+  OExpression* destImperial = nullptr;
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) {
     destMetric = dest;
   } else {
@@ -1043,7 +1043,7 @@ int UnitNode::SpeedRepresentative::setAdditionalExpressions(
 }
 
 // UnitNode
-Expression UnitNode::removeUnit(Expression* unit) {
+OExpression UnitNode::removeUnit(OExpression* unit) {
   return Unit(this).removeUnit(unit);
 }
 
@@ -1083,11 +1083,12 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode* e,
   return prediff;
 }
 
-Expression UnitNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression UnitNode::shallowReduce(const ReductionContext& reductionContext) {
   return Unit(this).shallowReduce(reductionContext);
 }
 
-Expression UnitNode::shallowBeautify(const ReductionContext& reductionContext) {
+OExpression UnitNode::shallowBeautify(
+    const ReductionContext& reductionContext) {
   return Unit(this).shallowBeautify();
 }
 
@@ -1123,12 +1124,12 @@ bool Unit::CanParse(const char* symbol, size_t length,
 }
 
 static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-    Expression unit, double* value, const ReductionContext& reductionContext,
+    OExpression unit, double* value, const ReductionContext& reductionContext,
     bool optimizePrefix) {
   double exponent = 1.f;
-  Expression factor = unit;
+  OExpression factor = unit;
   if (factor.type() == ExpressionNode::Type::Power) {
-    Expression childExponent = factor.childAtIndex(1);
+    OExpression childExponent = factor.childAtIndex(1);
     assert(factor.childAtIndex(0).type() == ExpressionNode::Type::Unit);
     assert(factor.childAtIndex(1).type() == ExpressionNode::Type::Rational);
     ApproximationContext approximationContext(reductionContext);
@@ -1149,9 +1150,10 @@ static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
 }
 
 void Unit::ChooseBestRepresentativeAndPrefixForValue(
-    Expression units, double* value, const ReductionContext& reductionContext) {
+    OExpression units, double* value,
+    const ReductionContext& reductionContext) {
   int numberOfFactors;
-  Expression factor;
+  OExpression factor;
   if (units.type() == ExpressionNode::Type::Multiplication) {
     numberOfFactors = units.numberOfChildren();
     factor = units.childAtIndex(0);
@@ -1167,7 +1169,7 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(
   }
 }
 
-bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
+bool Unit::ShouldDisplayAdditionalOutputs(double value, OExpression unit,
                                           Preferences::UnitFormat unitFormat) {
   if (unit.isUninitialized() || !std::isfinite(value)) {
     return false;
@@ -1177,7 +1179,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
   const Representative* representative =
       Representative::RepresentativeForDimension(vector);
 
-  ExpressionTest isNonBase = [](const Expression e, Context* context) {
+  ExpressionTest isNonBase = [](const OExpression e, Context* context) {
     return !e.isUninitialized() && e.type() == ExpressionNode::Type::Unit &&
            !e.convert<Unit>().isBaseUnit();
   };
@@ -1187,10 +1189,10 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
          unit.recursivelyMatches(isNonBase);
 }
 
-int Unit::SetAdditionalExpressions(Expression units, double value,
-                                   Expression* dest, int availableLength,
+int Unit::SetAdditionalExpressions(OExpression units, double value,
+                                   OExpression* dest, int availableLength,
                                    const ReductionContext& reductionContext,
-                                   const Expression exactOutput) {
+                                   const OExpression exactOutput) {
   if (units.isUninitialized()) {
     return 0;
   }
@@ -1205,10 +1207,10 @@ int Unit::SetAdditionalExpressions(Expression units, double value,
   if (representative->dimensionVector() ==
       AngleRepresentative::Default().dimensionVector()) {
     /* Angles are the only unit where we want to display the exact value. */
-    Expression unit;
+    OExpression unit;
     ReductionContext childContext = reductionContext;
     childContext.setUnitConversion(UnitConversion::None);
-    Expression exactValue =
+    OExpression exactValue =
         exactOutput.cloneAndReduceAndRemoveUnit(childContext, &unit);
     assert(unit.type() == ExpressionNode::Type::Unit);
     return static_cast<const AngleRepresentative*>(
@@ -1220,8 +1222,8 @@ int Unit::SetAdditionalExpressions(Expression units, double value,
                                                   reductionContext);
 }
 
-Expression Unit::BuildSplit(double value, const Unit* units, int length,
-                            const ReductionContext& reductionContext) {
+OExpression Unit::BuildSplit(double value, const Unit* units, int length,
+                             const ReductionContext& reductionContext) {
   assert(!std::isnan(value));
   assert(units);
   assert(length > 0);
@@ -1271,14 +1273,14 @@ Expression Unit::BuildSplit(double value, const Unit* units, int length,
   return res.squashUnaryHierarchyInPlace().shallowBeautify(keepUnitsContext);
 }
 
-Expression Unit::ConvertTemperatureUnits(
-    Expression e, Unit unit, const ReductionContext& reductionContext) {
+OExpression Unit::ConvertTemperatureUnits(
+    OExpression e, Unit unit, const ReductionContext& reductionContext) {
   const Representative* targetRepr = unit.representative();
   const Prefix* targetPrefix = unit.node()->prefix();
   assert(unit.representative()->dimensionVector() ==
          TemperatureRepresentative::Default().dimensionVector());
 
-  Expression startUnit;
+  OExpression startUnit;
   e = e.removeUnit(&startUnit);
   if (startUnit.isUninitialized() ||
       startUnit.type() != ExpressionNode::Type::Unit) {
@@ -1302,7 +1304,7 @@ Expression Unit::ConvertTemperatureUnits(
       unit.clone());
 }
 
-bool Unit::IsForbiddenTemperatureProduct(Expression e) {
+bool Unit::IsForbiddenTemperatureProduct(OExpression e) {
   assert(e.type() == ExpressionNode::Type::Multiplication);
   if (e.numberOfChildren() != 2) {
     /* A multiplication cannot contain a °C or °F if it does not have 2
@@ -1312,7 +1314,7 @@ bool Unit::IsForbiddenTemperatureProduct(Expression e) {
   }
   int temperatureChildIndex = -1;
   for (int i = 0; i < 2; i++) {
-    Expression child = e.childAtIndex(i);
+    OExpression child = e.childAtIndex(i);
     if (child.type() == ExpressionNode::Type::Unit &&
         (static_cast<Unit&>(child).node()->representative() ==
              k_temperatureRepresentatives + k_celsiusRepresentativeIndex ||
@@ -1328,12 +1330,12 @@ bool Unit::IsForbiddenTemperatureProduct(Expression e) {
   if (e.childAtIndex(1 - temperatureChildIndex).hasUnit()) {
     return true;
   }
-  Expression p = e.parent();
+  OExpression p = e.parent();
   if (p.isUninitialized() || p.isOfType({ExpressionNode::Type::UnitConvert,
                                          ExpressionNode::Type::Store})) {
     return false;
   }
-  Expression pp = p.parent();
+  OExpression pp = p.parent();
   return !(
       p.type() == ExpressionNode::Type::Opposite &&
       (pp.isUninitialized() || pp.isOfType({ExpressionNode::Type::UnitConvert,
@@ -1380,7 +1382,7 @@ bool Unit::ForceMarginLeftOfUnit(const Unit& unit) {
   return true;
 }
 
-Expression Unit::shallowReduce(ReductionContext reductionContext) {
+OExpression Unit::shallowReduce(ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == UnitConversion::None ||
       isBaseUnit()) {
     /* We escape early if we are one of the seven base units.
@@ -1404,7 +1406,7 @@ Expression Unit::shallowReduce(ReductionContext reductionContext) {
           TemperatureRepresentative::Default().dimensionVector() &&
       node()->representative() !=
           k_temperatureRepresentatives + k_kelvinRepresentativeIndex) {
-    Expression p = parent();
+    OExpression p = parent();
     if (p.isUninitialized() ||
         p.isOfType({ExpressionNode::Type::UnitConvert,
                     ExpressionNode::Type::Store,
@@ -1423,10 +1425,10 @@ Expression Unit::shallowReduce(ReductionContext reductionContext) {
   const Representative* representative = unitNode->representative();
   const Prefix* prefix = unitNode->prefix();
 
-  Expression result = representative->toBaseUnits(reductionContext)
-                          .deepReduce(reductionContext);
+  OExpression result = representative->toBaseUnits(reductionContext)
+                           .deepReduce(reductionContext);
   if (prefix != Prefix::EmptyPrefix()) {
-    Expression prefixFactor = Power::Builder(
+    OExpression prefixFactor = Power::Builder(
         Rational::Builder(10), Rational::Builder(prefix->exponent()));
     prefixFactor = prefixFactor.shallowReduce(reductionContext);
     result = Multiplication::Builder(prefixFactor, result)
@@ -1436,7 +1438,7 @@ Expression Unit::shallowReduce(ReductionContext reductionContext) {
   return result;
 }
 
-Expression Unit::shallowBeautify() {
+OExpression Unit::shallowBeautify() {
   // Force Float(1) in front of an orphan Unit
   if (parent().isUninitialized() ||
       parent().type() == ExpressionNode::Type::Opposite) {
@@ -1448,9 +1450,9 @@ Expression Unit::shallowBeautify() {
   return *this;
 }
 
-Expression Unit::removeUnit(Expression* unit) {
+OExpression Unit::removeUnit(OExpression* unit) {
   *unit = *this;
-  Expression one = Rational::Builder(1);
+  OExpression one = Rational::Builder(1);
   replaceWithInPlace(one);
   return one;
 }

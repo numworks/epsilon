@@ -37,15 +37,15 @@ class ComparisonNode : public ExpressionNode {
 
   static OperatorType SwitchInferiorSuperior(OperatorType type);
 
-  static bool IsBinaryComparison(Expression e,
+  static bool IsBinaryComparison(OExpression e,
                                  OperatorType* returnType = nullptr);
-  static bool IsBinaryComparisonWithOperator(Expression e,
+  static bool IsBinaryComparisonWithOperator(OExpression e,
                                              OperatorType operatorType);
-  static bool IsBinaryEquality(Expression e) {
+  static bool IsBinaryEquality(OExpression e) {
     return IsBinaryComparisonWithOperator(e, OperatorType::Equal);
   }
   static bool IsComparisonWithoutNotEqualOperator(
-      Expression e);  // Return false if one of the operator is NotEqual
+      OExpression e);  // Return false if one of the operator is NotEqual
 
   static TrinaryBoolean TruthValueOfOperator(OperatorType type,
                                              TrinaryBoolean chidlrenAreEqual,
@@ -120,7 +120,7 @@ class ComparisonNode : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& ReductionContext) override;
+  OExpression shallowReduce(const ReductionContext& ReductionContext) override;
 
   uint16_t m_numberOfOperands;
   /* This variable contains the list of operators to insert between the
@@ -128,33 +128,33 @@ class ComparisonNode : public ExpressionNode {
   OperatorType m_operatorsList[0];  // Must be last
 };
 
-class Comparison : public Expression {
+class Comparison : public OExpression {
  public:
-  Comparison(const ComparisonNode* n) : Expression(n) {}
-  static Comparison Builder(Expression child0,
+  Comparison(const ComparisonNode* n) : OExpression(n) {}
+  static Comparison Builder(OExpression child0,
                             ComparisonNode::OperatorType operatorType,
-                            Expression child1);
+                            OExpression child1);
   Comparison addComparison(ComparisonNode::OperatorType operatorType,
-                           Expression child);
+                           OExpression child);
 
-  Expression shallowReduce(ReductionContext ReductionContext);
+  OExpression shallowReduce(ReductionContext ReductionContext);
   ComparisonNode::OperatorType operatorAtIndex(int i) const {
     return node()->operatorAtIndex(i);
   }
   /* Returns Undefined if contains an equal. */
-  Expression cloneWithStrictOperators() const {
+  OExpression cloneWithStrictOperators() const {
     return cloneWithStrictOrLenientOperators(true);
   }
   /* Changes not equal into equal. */
-  Expression cloneWithLenientOperators() const {
+  OExpression cloneWithLenientOperators() const {
     return cloneWithStrictOrLenientOperators(false);
   }
   int numberOfOperators() const { return node()->numberOfOperators(); }
 
  private:
-  Expression cloneWithStrictOrLenientOperators(bool strict) const;
+  OExpression cloneWithStrictOrLenientOperators(bool strict) const;
   ComparisonNode* node() const {
-    return static_cast<ComparisonNode*>(Expression::node());
+    return static_cast<ComparisonNode*>(OExpression::node());
   }
 };
 

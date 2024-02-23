@@ -38,7 +38,7 @@ class ArcCosineNode final : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };
@@ -48,8 +48,8 @@ class ArcCosineNode final : public ExpressionNode {
 
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue) override;
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext) override;
 
   // Evaluation
@@ -76,8 +76,8 @@ class ArcCosine final : public ExpressionOneChild<ArcCosine, ArcCosineNode> {
   using ExpressionBuilder::ExpressionBuilder;
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue);
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext);
 };
 

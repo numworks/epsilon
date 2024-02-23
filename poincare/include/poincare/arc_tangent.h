@@ -38,7 +38,7 @@ class ArcTangentNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };
@@ -48,8 +48,8 @@ class ArcTangentNode final : public ExpressionNode {
 
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue) override;
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext) override;
 
   // Evaluation
@@ -76,8 +76,8 @@ class ArcTangent final : public ExpressionOneChild<ArcTangent, ArcTangentNode> {
   using ExpressionBuilder::ExpressionBuilder;
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue);
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext);
 };
 

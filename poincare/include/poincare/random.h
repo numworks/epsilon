@@ -56,12 +56,12 @@ class Random final : public ExpressionNoChildren<Random, RandomNode> {
 
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  static Expression UntypedBuilder(Expression children) {
+  static OExpression UntypedBuilder(OExpression children) {
     assert(children.type() == ExpressionNode::Type::List);
     return Builder();
   }
-  constexpr static Expression::FunctionHelper s_functionHelper =
-      Expression::FunctionHelper("random", 0, &UntypedBuilder);
+  constexpr static OExpression::FunctionHelper s_functionHelper =
+      OExpression::FunctionHelper("random", 0, &UntypedBuilder);
 
   template <typename T>
   static T random();

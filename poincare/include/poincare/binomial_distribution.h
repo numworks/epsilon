@@ -57,9 +57,9 @@ class BinomialDistribution final : public DiscreteDistribution {
     return ParametersAreOK(parameters[0], parameters[1]);
   }
 
-  static bool expressionParametersAreOK(bool* result, const Expression& n,
-                                        const Expression& p, Context* context);
-  bool expressionParametersAreOK(bool* result, const Expression* parameters,
+  static bool expressionParametersAreOK(bool* result, const OExpression& n,
+                                        const OExpression& p, Context* context);
+  bool expressionParametersAreOK(bool* result, const OExpression* parameters,
                                  Context* context) const override {
     return expressionParametersAreOK(result, parameters[0], parameters[1],
                                      context);

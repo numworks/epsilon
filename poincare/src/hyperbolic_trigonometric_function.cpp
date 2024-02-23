@@ -5,15 +5,15 @@
 
 namespace Poincare {
 
-Expression HyperbolicTrigonometricFunctionNode::shallowReduce(
+OExpression HyperbolicTrigonometricFunctionNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return HyperbolicTrigonometricFunction(this).shallowReduce(reductionContext);
 }
 
-Expression HyperbolicTrigonometricFunction::shallowReduce(
+OExpression HyperbolicTrigonometricFunction::shallowReduce(
     ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -24,12 +24,12 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
     }
   }
 
-  Expression thisExpression = *this;
-  Expression c = childAtIndex(0);
+  OExpression thisExpression = *this;
+  OExpression c = childAtIndex(0);
 
   // Step 1. Notable values
   if (node()->isNotableValue(c, reductionContext.context())) {
-    Expression result = node()->imageOfNotableValue();
+    OExpression result = node()->imageOfNotableValue();
     replaceWithInPlace(result);
     return result;
   }
@@ -39,10 +39,10 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
   ExpressionNode::Type childT = c.type();
   ApproximationContext approximationContext(reductionContext, true);
   {
-    Expression result;
+    OExpression result;
     if (t == ExpressionNode::Type::HyperbolicCosine) {
       if (childT == ExpressionNode::Type::HyperbolicArcCosine) {
-        Expression e = childAtIndex(0).childAtIndex(0);
+        OExpression e = childAtIndex(0).childAtIndex(0);
         if (reductionContext.complexFormat() !=
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
@@ -53,7 +53,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
       }
     } else if (t == ExpressionNode::Type::HyperbolicArcCosine) {
       if (childT == ExpressionNode::Type::HyperbolicCosine) {
-        Expression e = childAtIndex(0).childAtIndex(0);
+        OExpression e = childAtIndex(0).childAtIndex(0);
         if (reductionContext.complexFormat() !=
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
@@ -72,7 +72,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
       }
     } else if (t == ExpressionNode::Type::HyperbolicTangent) {
       if (childT == ExpressionNode::Type::HyperbolicArcTangent) {
-        Expression e = childAtIndex(0).childAtIndex(0);
+        OExpression e = childAtIndex(0).childAtIndex(0);
         if (reductionContext.complexFormat() !=
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
@@ -96,7 +96,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(
 
   // Step 3. Look for an expression of type "cosh(-x)", return "+/-cosh(x)"
   if (t != ExpressionNode::Type::HyperbolicArcCosine) {
-    Expression positiveArg =
+    OExpression positiveArg =
         childAtIndex(0).makePositiveAnyNegativeNumeralFactor(reductionContext);
     if (!positiveArg.isUninitialized()) {
       // The argument was of form cosh(-a)

@@ -29,8 +29,9 @@ class LogarithmNode final : public ExpressionNodeWithOneOrTwoChildren {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };
@@ -39,8 +40,8 @@ class LogarithmNode final : public ExpressionNodeWithOneOrTwoChildren {
   }
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue) override;
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext) override;
   // Evaluation
   template <typename T>
@@ -76,20 +77,20 @@ class Logarithm final
 
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
-  Expression shallowBeautify();
+  OExpression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowBeautify();
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue);
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext);
 
  private:
   void deepReduceChildren(const ReductionContext& reductionContext);
-  Expression simpleShallowReduce(const ReductionContext& reductionContext);
+  OExpression simpleShallowReduce(const ReductionContext& reductionContext);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer& base,
                                               Addition& a, bool isDenominator);
-  Expression splitLogarithmInteger(Integer i, bool isDenominator,
-                                   const ReductionContext& reductionContext);
+  OExpression splitLogarithmInteger(Integer i, bool isDenominator,
+                                    const ReductionContext& reductionContext);
   bool parentIsAPowerOfSameBase() const;
 };
 

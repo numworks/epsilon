@@ -12,7 +12,7 @@ namespace Poincare {
 
 // Private
 
-bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression& child,
+bool SubtractionNode::childAtIndexNeedsUserParentheses(const OExpression& child,
                                                        int childIndex) const {
   if (childIndex == 0) {
     // First operand of a subtraction never requires parentheses
@@ -35,19 +35,19 @@ size_t SubtractionNode::serialize(char* buffer, size_t bufferSize,
                                     numberOfSignificantDigits, "-");
 }
 
-Expression SubtractionNode::shallowReduce(
+OExpression SubtractionNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Subtraction(this).shallowReduce(reductionContext);
 }
 
-Expression Subtraction::shallowReduce(ReductionContext reductionContext) {
-  Expression e = SimplificationHelper::defaultShallowReduce(
+OExpression Subtraction::shallowReduce(ReductionContext reductionContext) {
+  OExpression e = SimplificationHelper::defaultShallowReduce(
       *this, &reductionContext,
       SimplificationHelper::BooleanReduction::UndefinedOnBooleans);
   if (!e.isUninitialized()) {
     return e;
   }
-  Expression secondChild = childAtIndex(1);
+  OExpression secondChild = childAtIndex(1);
   if (secondChild.type() == ExpressionNode::Type::Addition) {
     /* In Addition::shallowReduce, the addition is not reduced if its parent is
      * a Subtraction, to avoid miscomputing a common denominator. This results
@@ -60,14 +60,14 @@ Expression Subtraction::shallowReduce(ReductionContext reductionContext) {
      *  */
     int n = secondChild.numberOfChildren();
     for (int i = 0; i < n; i++) {
-      Expression additionTerm = secondChild.childAtIndex(i);
+      OExpression additionTerm = secondChild.childAtIndex(i);
       Multiplication m = Multiplication::Builder(Rational::Builder(-1));
       secondChild.replaceChildAtIndexInPlace(i, m);
       m.addChildAtIndexInPlace(additionTerm, 1, 1);
       m.shallowReduce(reductionContext);
     }
   } else {
-    Expression m = Multiplication::Builder(Rational::Builder(-1), secondChild);
+    OExpression m = Multiplication::Builder(Rational::Builder(-1), secondChild);
     replaceChildAtIndexInPlace(1, m);
     m.shallowReduce(reductionContext);
   }

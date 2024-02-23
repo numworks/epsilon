@@ -16,15 +16,15 @@ void assert_roots_of_polynomial_are(const char* polynomial,
   ReductionContext reductionContext(&context, complexFormat, angleUnit,
                                     MetricUnitFormat, User);
 
-  Expression polynomialExp = parse_expression(polynomial, &context, false)
-                                 .cloneAndReduce(reductionContext);
-  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  OExpression polynomialExp = parse_expression(polynomial, &context, false)
+                                  .cloneAndReduce(reductionContext);
+  OExpression coefficients[OExpression::k_maxNumberOfPolynomialCoefficients];
   int degree = polynomialExp.getPolynomialReducedCoefficients(
       symbol, coefficients, &context, complexFormat, angleUnit,
       MetricUnitFormat, ReplaceAllDefinedSymbolsWithDefinition);
 
-  Expression deltaExp;
-  Expression rootsExp[Expression::k_maxPolynomialDegree];
+  OExpression deltaExp;
+  OExpression rootsExp[OExpression::k_maxPolynomialDegree];
   int numberOfRoots;
   if (degree == 2) {
     numberOfRoots = Polynomial::QuadraticPolynomialRoots(

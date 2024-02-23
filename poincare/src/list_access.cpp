@@ -37,13 +37,13 @@ size_t ListAccessNode<U>::serialize(
 }
 
 template <>
-Expression ListAccessNode<1>::shallowReduce(
+OExpression ListAccessNode<1>::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListElement(this).shallowReduce(reductionContext);
 }
 
 template <>
-Expression ListAccessNode<2>::shallowReduce(
+OExpression ListAccessNode<2>::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListSlice(this).shallowReduce(reductionContext);
 }
@@ -109,16 +109,16 @@ Evaluation<T> ListAccessNode<2>::templatedApproximate(
   return std::move(returnList);
 }
 
-Expression ListElement::shallowReduce(ReductionContext reductionContext) {
+OExpression ListElement::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e =
+    OExpression e =
         SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
   }
 
-  Expression listChild = childAtIndex(ListAccessNode<1>::k_listChildIndex);
+  OExpression listChild = childAtIndex(ListAccessNode<1>::k_listChildIndex);
   if (listChild.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();
   }
@@ -140,21 +140,21 @@ Expression ListElement::shallowReduce(ReductionContext reductionContext) {
     return replaceWithUndefinedInPlace();
   }
 
-  Expression element = listChild.childAtIndex(index);
+  OExpression element = listChild.childAtIndex(index);
   replaceWithInPlace(element);
   return element;
 }
 
-Expression ListSlice::shallowReduce(ReductionContext reductionContext) {
+OExpression ListSlice::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e =
+    OExpression e =
         SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
   }
 
-  Expression listChild = childAtIndex(ListAccessNode<2>::k_listChildIndex);
+  OExpression listChild = childAtIndex(ListAccessNode<2>::k_listChildIndex);
   if (listChild.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();
   }

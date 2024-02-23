@@ -60,30 +60,30 @@ std::complex<T> ArcTangentNode::computeOnComplex(
   return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
 }
 
-Expression ArcTangentNode::shallowReduce(
+OExpression ArcTangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcTangent e = ArcTangent(this);
   return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcTangentNode::derivate(const ReductionContext& reductionContext,
-                              Symbol symbol, Expression symbolValue) {
+                              Symbol symbol, OExpression symbolValue) {
   return ArcTangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression ArcTangentNode::unaryFunctionDifferential(
+OExpression ArcTangentNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return ArcTangent(this).unaryFunctionDifferential(reductionContext);
 }
 
 bool ArcTangent::derivate(const ReductionContext& reductionContext,
-                          Symbol symbol, Expression symbolValue) {
+                          Symbol symbol, OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
                                     reductionContext);
   return true;
 }
 
-Expression ArcTangent::unaryFunctionDifferential(
+OExpression ArcTangent::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(

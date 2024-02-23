@@ -14,7 +14,7 @@ int MatrixTransposeNode::numberOfChildren() const {
   return MatrixTranspose::s_functionHelper.numberOfChildren();
 }
 
-Expression MatrixTransposeNode::shallowReduce(
+OExpression MatrixTransposeNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return MatrixTranspose(this).shallowReduce(reductionContext);
 }
@@ -42,9 +42,9 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(
   return transpose;
 }
 
-Expression MatrixTranspose::shallowReduce(ReductionContext reductionContext) {
+OExpression MatrixTranspose::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -52,9 +52,9 @@ Expression MatrixTranspose::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Expression result = static_cast<Matrix&>(c).createTranspose();
+    OExpression result = static_cast<Matrix&>(c).createTranspose();
     replaceWithInPlace(result);
     return result;
   }

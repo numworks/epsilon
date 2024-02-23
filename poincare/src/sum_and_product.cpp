@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression SumAndProductNode::shallowReduce(
+OExpression SumAndProductNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return SumAndProduct(this).shallowReduce(reductionContext);
 }
@@ -48,9 +48,9 @@ Evaluation<T> SumAndProductNode::templatedApproximate(
   return result;
 }
 
-Expression SumAndProduct::shallowReduce(ReductionContext reductionContext) {
+OExpression SumAndProduct::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,

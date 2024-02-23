@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-Expression ListMeanNode::shallowReduce(
+OExpression ListMeanNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListMean(this).shallowReduce(reductionContext);
 }
@@ -27,9 +27,9 @@ Evaluation<T> ListMeanNode::templatedApproximate(
   return Complex<T>::Builder(dataset.mean());
 }
 
-Expression ListMean::shallowReduce(ReductionContext reductionContext) {
+OExpression ListMean::shallowReduce(ReductionContext reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
-  Expression children[2];
+  OExpression children[2];
   if (!static_cast<ListFunctionWithOneOrTwoParametersNode*>(node())
            ->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
@@ -52,12 +52,12 @@ Expression ListMean::shallowReduce(ReductionContext reductionContext) {
     // Could not find a negative but some children have unknown sign
     return *this;
   }
-  Expression listToSum =
+  OExpression listToSum =
       Multiplication::Builder(children[0], children[1].clone());
   ListSum sum = ListSum::Builder(listToSum);
   listToSum.shallowReduce(reductionContext);
   ListSum sumOfWeights = ListSum::Builder(children[1]);
-  Expression inverseOfTotalWeights =
+  OExpression inverseOfTotalWeights =
       Power::Builder(sumOfWeights, Rational::Builder(-1));
   sumOfWeights.shallowReduce(reductionContext);
   Multiplication result = Multiplication::Builder(sum, inverseOfTotalWeights);

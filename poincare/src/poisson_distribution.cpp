@@ -57,7 +57,7 @@ bool PoissonDistribution::LambdaIsOK(T lambda) {
 }
 
 bool PoissonDistribution::ExpressionLambdaIsOK(bool *result,
-                                               const Expression &lambda,
+                                               const OExpression &lambda,
                                                Context *context) {
   return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlusStar,
                                 context);

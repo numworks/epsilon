@@ -18,7 +18,7 @@ size_t ListProductNode::serialize(char* buffer, size_t bufferSize,
       ListProduct::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ListProductNode::shallowReduce(
+OExpression ListProductNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListProduct(this).shallowReduce(reductionContext);
 }
@@ -34,8 +34,8 @@ Evaluation<T> ListProductNode::templatedApproximate(
       approximationContext);
 }
 
-Expression ListProduct::shallowReduce(ReductionContext reductionContext) {
-  Expression child = childAtIndex(0);
+OExpression ListProduct::shallowReduce(ReductionContext reductionContext) {
+  OExpression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();
   }

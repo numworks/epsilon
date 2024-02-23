@@ -34,7 +34,7 @@ class BooleanEvaluationNode final : public EvaluationNode<T> {
     return EvaluationNode<T>::Type::BooleanEvaluation;
   }
   bool isUndefined() const override { return false; }
-  Expression complexToExpression(
+  OExpression complexToExpression(
       Preferences::Preferences::ComplexFormat complexFormat) const override;
 
  private:
@@ -52,7 +52,7 @@ class BooleanEvaluation final : public Evaluation<T> {
   }
 };
 
-// === Expression ===
+// === OExpression ===
 
 class BooleanNode final : public ExpressionNode {
  public:
@@ -70,7 +70,7 @@ class BooleanNode final : public ExpressionNode {
   }
 #endif
 
-  // Expression Node Properties
+  // OExpression Node Properties
   Type type() const override { return Type::Boolean; }
 
   // Properties
@@ -103,7 +103,7 @@ class BooleanNode final : public ExpressionNode {
   bool m_value;
 };
 
-class Boolean final : public Expression {
+class Boolean final : public OExpression {
  public:
   static Boolean Builder(bool value);
   bool value() const { return static_cast<BooleanNode*>(node())->value(); }

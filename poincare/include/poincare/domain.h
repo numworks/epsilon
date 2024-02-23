@@ -63,10 +63,10 @@ class Domain {
     return true;
   }
 
-  static TrinaryBoolean ExpressionIsIn(const Expression &expression,
+  static TrinaryBoolean ExpressionIsIn(const OExpression &expression,
                                        Type domain, Context *context);
 
-  static bool ExpressionIsIn(bool *result, const Expression &expression,
+  static bool ExpressionIsIn(bool *result, const OExpression &expression,
                              Type domain, Context *context) {
     assert(result != nullptr);
     TrinaryBoolean expressionsIsIn =
@@ -84,8 +84,8 @@ class Domain {
     }
   }
 
-  static bool ExpressionsAreIn(bool *result, const Expression &expression1,
-                               Type domain1, const Expression &expression2,
+  static bool ExpressionsAreIn(bool *result, const OExpression &expression1,
+                               Type domain1, const OExpression &expression2,
                                Type domain2, Context *context) {
     assert(result != nullptr);
     TrinaryBoolean expressionsAreIn =

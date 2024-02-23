@@ -25,7 +25,7 @@ size_t ConjugateNode::serialize(char* buffer, size_t bufferSize,
       Conjugate::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ConjugateNode::shallowReduce(
+OExpression ConjugateNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Conjugate(this).shallowReduce(reductionContext);
 }
@@ -37,9 +37,9 @@ std::complex<T> ConjugateNode::computeOnComplex(
   return std::conj(c);
 }
 
-Expression Conjugate::shallowReduce(ReductionContext reductionContext) {
+OExpression Conjugate::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -49,7 +49,7 @@ Expression Conjugate::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.isReal(reductionContext.context(),
                reductionContext.shouldCheckMatrices())) {
     replaceWithInPlace(c);

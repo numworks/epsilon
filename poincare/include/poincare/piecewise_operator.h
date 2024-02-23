@@ -34,7 +34,7 @@ class PiecewiseOperatorNode final : public ExpressionNode {
 
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 
  private:
   // Layout
@@ -42,7 +42,7 @@ class PiecewiseOperatorNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::Default; };
   // Evaluation
   Evaluation<float> approximate(
@@ -62,21 +62,21 @@ class PiecewiseOperatorNode final : public ExpressionNode {
   int m_numberOfChildren;
 };
 
-class PiecewiseOperator final : public Expression {
-  friend class Expression;
+class PiecewiseOperator final : public OExpression {
+  friend class OExpression;
 
  public:
-  PiecewiseOperator(const PiecewiseOperatorNode* n) : Expression(n) {}
+  PiecewiseOperator(const PiecewiseOperatorNode* n) : OExpression(n) {}
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
-  static Expression UntypedBuilder(Expression children);
-  constexpr static Expression::FunctionHelper s_functionHelper =
-      Expression::FunctionHelper("piecewise", 1, INT_MAX, &UntypedBuilder);
+  static OExpression UntypedBuilder(OExpression children);
+  constexpr static OExpression::FunctionHelper s_functionHelper =
+      OExpression::FunctionHelper("piecewise", 1, INT_MAX, &UntypedBuilder);
 
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
+                OExpression symbolValue);
 
   // Returns -1 if every condition is false
   template <typename T>
@@ -90,7 +90,7 @@ class PiecewiseOperator final : public Expression {
         convert(children));
   }
   // This will shallowReduce the resulting expression.
-  Expression bubbleUpPiecewiseDependencies(
+  OExpression bubbleUpPiecewiseDependencies(
       const ReductionContext& reductionContext);
 };
 

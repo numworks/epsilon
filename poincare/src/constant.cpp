@@ -60,13 +60,13 @@ Evaluation<T> ConstantNode::templatedApproximate() const {
                      : Complex<T>::Builder(info.m_value);
 }
 
-Expression ConstantNode::shallowReduce(
+OExpression ConstantNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Constant(this).shallowReduce(reductionContext);
 }
 
 bool ConstantNode::derivate(const ReductionContext& reductionContext,
-                            Symbol symbol, Expression symbolValue) {
+                            Symbol symbol, OExpression symbolValue) {
   return Constant(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -82,12 +82,12 @@ Constant Constant::Builder(const char* name, int length) {
   return static_cast<Constant&>(h);
 }
 
-Expression Constant::shallowReduce(ReductionContext reductionContext) {
+OExpression Constant::shallowReduce(ReductionContext reductionContext) {
   if (isExponentialE() || isPi()) {
     return *this;
   }
   ConstantNode::ConstantInfo info = constantInfo();
-  Expression result;
+  OExpression result;
   if (isComplexI()) {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       result = Nonreal::Builder();
@@ -100,7 +100,7 @@ Expression Constant::shallowReduce(ReductionContext reductionContext) {
   } else {
     assert(info.m_unit != nullptr);
     result = Multiplication::Builder(Float<double>::Builder(info.m_value),
-                                     Expression::Parse(info.m_unit, nullptr));
+                                     OExpression::Parse(info.m_unit, nullptr));
     result.childAtIndex(1).deepReduce(reductionContext);
   }
   replaceWithInPlace(result);
@@ -108,7 +108,7 @@ Expression Constant::shallowReduce(ReductionContext reductionContext) {
 }
 
 bool Constant::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                        Expression symbolValue) {
+                        OExpression symbolValue) {
   ConstantNode::ConstantInfo info = constantInfo();
   if (info.m_unit == nullptr) {
     if (std::isnan(info.m_value)) {

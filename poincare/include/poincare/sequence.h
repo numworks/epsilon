@@ -28,7 +28,7 @@ class SequenceNode final : public SymbolAbstractNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }
@@ -51,11 +51,11 @@ class Sequence final : public SymbolAbstract {
  public:
   Sequence(const SequenceNode* n) : SymbolAbstract(n) {}
   static Sequence Builder(const char* name, size_t length,
-                          Expression child = Expression());
+                          OExpression child = OExpression());
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext);
-  Expression deepReplaceReplaceableSymbols(
+  OExpression shallowReduce(ReductionContext reductionContext);
+  OExpression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
     return *this;

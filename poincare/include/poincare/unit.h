@@ -19,7 +19,7 @@ namespace Poincare {
  *  - informations on how the representative should be prefixed.
  *
  * Given an representative and a Prefix allowed for that representative, one may
- * get a symbol and an Expression.
+ * get a symbol and an OExpression.
  *
  * FIXME ?
  * The UnitNode class holds as members pointers to a Representative and a
@@ -60,7 +60,7 @@ class UnitNode final : public ExpressionNode {
   struct DimensionVector {
     // SupportSize is defined as the number of distinct base units.
     size_t supportSize() const;
-    static DimensionVector FromBaseUnits(const Expression baseUnits,
+    static DimensionVector FromBaseUnits(const OExpression baseUnits,
                                          bool canIgnoreCoefficients = true);
     const int coefficientAtIndex(size_t i) const {
       assert(i < k_numberOfBaseUnits);
@@ -97,7 +97,7 @@ class UnitNode final : public ExpressionNode {
       return !(*this == rhs);
     }
     void addAllCoefficients(const DimensionVector other, int factor);
-    Expression toBaseUnits() const;
+    OExpression toBaseUnits() const;
     int time;
     int distance;
     int angle;
@@ -169,7 +169,7 @@ class UnitNode final : public ExpressionNode {
       return false;
     }
     virtual int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const {
       return 0;
     }
@@ -189,12 +189,12 @@ class UnitNode final : public ExpressionNode {
                                  const Prefix** prefix) const;
     bool canParse(const char* symbol, size_t length,
                   const Prefix** prefix) const;
-    Expression toBaseUnits(const ReductionContext& reductionContext) const;
+    OExpression toBaseUnits(const ReductionContext& reductionContext) const;
     bool canPrefix(const Prefix* prefix, bool input) const;
     const Prefix* findBestPrefix(double value, double exponent) const;
-    Expression ratioExpressionReduced(
+    OExpression ratioExpressionReduced(
         const ReductionContext& reductionContext) const {
-      return Expression::Parse(m_ratioExpression, nullptr)
+      return OExpression::Parse(m_ratioExpression, nullptr)
           .deepReduce(reductionContext);
     }
 
@@ -244,7 +244,7 @@ class UnitNode final : public ExpressionNode {
       return ratio() * value >= representativesOfSameDimension()[1].ratio();
     }
     int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 
    private:
@@ -282,7 +282,7 @@ class UnitNode final : public ExpressionNode {
       return unitFormat == Preferences::UnitFormat::Imperial;
     }
     int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 
    private:
@@ -301,8 +301,8 @@ class UnitNode final : public ExpressionNode {
         Preferences::AngleUnit angleUnit);
 
     // Returns a beautified expression
-    Expression convertInto(Expression value, const Representative* other,
-                           const ReductionContext& reductionContext) const;
+    OExpression convertInto(OExpression value, const Representative* other,
+                            const ReductionContext& reductionContext) const;
     const DimensionVector dimensionVector() const override {
       return DimensionVector{.time = 0,
                              .distance = 0,
@@ -326,7 +326,7 @@ class UnitNode final : public ExpressionNode {
       return true;
     }
     int setAdditionalExpressionsWithExactValue(
-        Expression exactValue, double value, Expression* dest,
+        OExpression exactValue, double value, OExpression* dest,
         int availableLength, const ReductionContext& reductionContext) const;
 
    private:
@@ -365,7 +365,7 @@ class UnitNode final : public ExpressionNode {
       return unitFormat == Preferences::UnitFormat::Imperial;
     }
     int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 
    private:
@@ -436,7 +436,7 @@ class UnitNode final : public ExpressionNode {
       return true;
     }
     int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 
    private:
@@ -601,7 +601,7 @@ class UnitNode final : public ExpressionNode {
       return true;
     }
     int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 
    private:
@@ -884,7 +884,7 @@ class UnitNode final : public ExpressionNode {
       return true;
     }
     int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 
    private:
@@ -919,7 +919,7 @@ class UnitNode final : public ExpressionNode {
       return true;
     }
     int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 
    private:
@@ -954,7 +954,7 @@ class UnitNode final : public ExpressionNode {
       return true;
     }
     int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
+        double value, OExpression* dest, int availableLength,
         const ReductionContext& reductionContext) const override;
 
    private:
@@ -976,7 +976,7 @@ class UnitNode final : public ExpressionNode {
   }
 #endif
 
-  // Expression Properties
+  // OExpression Properties
   Type type() const override { return Type::Unit; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
@@ -984,7 +984,7 @@ class UnitNode final : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return TrinaryBoolean::False;
   }
-  Expression removeUnit(Expression* unit) override;
+  OExpression removeUnit(OExpression* unit) override;
 
   /* Layout */
   size_t serialize(char* buffer, size_t bufferSize,
@@ -1008,8 +1008,9 @@ class UnitNode final : public ExpressionNode {
                                   bool ignoreParentheses) const override;
 
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::OneLetter;
   }  // TODO
@@ -1037,7 +1038,7 @@ class UnitNode final : public ExpressionNode {
 #define STR(x) #x
 #define DEFINE_TWICE(x) STR(x), x
 
-class Unit : public Expression {
+class Unit : public OExpression {
   friend class UnitNode;
 
  public:
@@ -1457,26 +1458,26 @@ class Unit : public Expression {
           "gal"),
       "Index for the Gallon Representative is incorrect.");
 
-  Unit(const UnitNode* node) : Expression(node) {}
+  Unit(const UnitNode* node) : OExpression(node) {}
   static Unit Builder(const Representative* representative,
                       const Prefix* prefix = Prefix::EmptyPrefix());
   static bool CanParse(const char* symbol, size_t length,
                        const Representative** representative,
                        const Prefix** prefix);
   static void ChooseBestRepresentativeAndPrefixForValue(
-      Expression units, double* value,
+      OExpression units, double* value,
       const ReductionContext& reductionContext);
   static bool ShouldDisplayAdditionalOutputs(
-      double value, Expression unit, Preferences::UnitFormat unitFormat);
-  static int SetAdditionalExpressions(Expression units, double value,
-                                      Expression* dest, int availableLength,
+      double value, OExpression unit, Preferences::UnitFormat unitFormat);
+  static int SetAdditionalExpressions(OExpression units, double value,
+                                      OExpression* dest, int availableLength,
                                       const ReductionContext& reductionContext,
-                                      const Expression exactOutput);
-  static Expression BuildSplit(double value, const Unit* units, int length,
-                               const ReductionContext& reductionContext);
-  static Expression ConvertTemperatureUnits(
-      Expression e, Unit unit, const ReductionContext& reductionContext);
-  static bool IsForbiddenTemperatureProduct(Expression e);
+                                      const OExpression exactOutput);
+  static OExpression BuildSplit(double value, const Unit* units, int length,
+                                const ReductionContext& reductionContext);
+  static OExpression ConvertTemperatureUnits(
+      OExpression e, Unit unit, const ReductionContext& reductionContext);
+  static bool IsForbiddenTemperatureProduct(OExpression e);
 
   // These must be sorted in order, from smallest to biggest
   constexpr static const UnitNode::Representative*
@@ -1635,8 +1636,8 @@ class Unit : public Expression {
   static bool ForceMarginLeftOfUnit(const Unit& unit);
 
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext);
-  Expression shallowBeautify();
+  OExpression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowBeautify();
 
   bool isBaseUnit() const {
     return node()->representative()->isBaseUnit() &&
@@ -1651,8 +1652,8 @@ class Unit : public Expression {
   }
 
  private:
-  UnitNode* node() const { return static_cast<UnitNode*>(Expression::node()); }
-  Expression removeUnit(Expression* unit);
+  UnitNode* node() const { return static_cast<UnitNode*>(OExpression::node()); }
+  OExpression removeUnit(OExpression* unit);
 };
 
 }  // namespace Poincare

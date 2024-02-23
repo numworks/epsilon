@@ -17,7 +17,7 @@ namespace Poincare {
 #define Layout OLayout
 
 Layout LayoutHelper::DefaultCreateOperatorLayoutForInfix(
-    const char* operatorName, Expression left, Expression right,
+    const char* operatorName, OExpression left, OExpression right,
     Layout rightLayout) {
   size_t operatorLength = strlen(operatorName);
   if (operatorLength == 0) {
@@ -27,7 +27,7 @@ Layout LayoutHelper::DefaultCreateOperatorLayoutForInfix(
   return result;
 }
 
-Layout LayoutHelper::Infix(const Expression& expression,
+Layout LayoutHelper::Infix(const OExpression& expression,
                            Preferences::PrintFloatMode floatDisplayMode,
                            int numberOfSignificantDigits,
                            const char* operatorName, Context* context,
@@ -36,8 +36,8 @@ Layout LayoutHelper::Infix(const Expression& expression,
   const int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
 
-  Expression leftChild;
-  Expression rightChild;
+  OExpression leftChild;
+  OExpression rightChild;
 
   for (int i = 0; i < numberOfChildren; i++) {
     rightChild = expression.childAtIndex(i);
@@ -61,7 +61,7 @@ Layout LayoutHelper::Infix(const Expression& expression,
   return std::move(result);
 }
 
-Layout LayoutHelper::Prefix(const Expression& expression,
+Layout LayoutHelper::Prefix(const OExpression& expression,
                             Preferences::PrintFloatMode floatDisplayMode,
                             int numberOfSignificantDigits,
                             const char* operatorName, Context* context,
@@ -113,7 +113,7 @@ Layout LayoutHelper::String(const char* buffer, int bufferLen) {
 }
 
 Layout LayoutHelper::StringLayoutOfSerialization(
-    const Expression& expression, char* buffer, size_t bufferSize,
+    const OExpression& expression, char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) {
   size_t length = expression.serialize(buffer, bufferSize, floatDisplayMode,

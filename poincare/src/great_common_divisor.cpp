@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper GreatCommonDivisor::s_functionHelper;
+constexpr OExpression::FunctionHelper GreatCommonDivisor::s_functionHelper;
 
 size_t GreatCommonDivisorNode::serialize(
     char* buffer, size_t bufferSize,
@@ -17,12 +17,12 @@ size_t GreatCommonDivisorNode::serialize(
       GreatCommonDivisor::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression GreatCommonDivisorNode::shallowReduce(
+OExpression GreatCommonDivisorNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return GreatCommonDivisor(this).shallowReduce(reductionContext);
 }
 
-Expression GreatCommonDivisorNode::shallowBeautify(
+OExpression GreatCommonDivisorNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return GreatCommonDivisor(this).shallowBeautify(reductionContext.context());
 }
@@ -34,7 +34,7 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(
   return Arithmetic::GCD<T>(*this, approximationContext);
 }
 
-Expression GreatCommonDivisor::shallowBeautify(Context* context) {
+OExpression GreatCommonDivisor::shallowBeautify(Context* context) {
   /* Sort children in decreasing order:
    * gcd(1,x,x^2) --> gcd(x^2,x,1)
    * gcd(1,R(2)) --> gcd(R(2),1) */
@@ -46,10 +46,10 @@ Expression GreatCommonDivisor::shallowBeautify(Context* context) {
   return *this;
 }
 
-Expression GreatCommonDivisor::shallowReduce(
+OExpression GreatCommonDivisor::shallowReduce(
     ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -66,7 +66,7 @@ Expression GreatCommonDivisor::shallowReduce(
 
   // Step 1: check that all children are compatible
   {
-    Expression checkChildren =
+    OExpression checkChildren =
         checkChildrenAreRationalIntegersAndUpdate(reductionContext);
     if (!checkChildren.isUninitialized()) {
       return checkChildren;
@@ -74,7 +74,7 @@ Expression GreatCommonDivisor::shallowReduce(
   }
 
   // Step 2: Compute GCD
-  Expression result = Arithmetic::GCD(*this);
+  OExpression result = Arithmetic::GCD(*this);
 
   replaceWithInPlace(result);
   return result;

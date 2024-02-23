@@ -25,14 +25,14 @@ class PowerNode final : public ExpressionNode {
   Type type() const override { return Type::Power; }
   TrinaryBoolean isPositive(Context* context) const override;
   TrinaryBoolean isNull(Context* context) const override;
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
   double degreeForSortingAddition(bool symbolsOnly) const override;
-  Expression removeUnit(Expression* unit) override;
+  OExpression removeUnit(OExpression* unit) override;
 
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const override;
+                                OExpression coefficients[]) const override;
 
   template <typename T>
   static std::complex<T> computeNotPrincipalRealRootOfRationalPow(
@@ -64,8 +64,9 @@ class PowerNode final : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplify
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return childAtIndex(0)->leftLayoutShape();
   }
@@ -77,7 +78,7 @@ class PowerNode final : public ExpressionNode {
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
   // Evaluation
   template <typename T>
   static MatrixComplex<T> computeOnMatrixAndComplex(
@@ -107,11 +108,11 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   using ExpressionBuilder::ExpressionBuilder;
 
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const;
-  Expression shallowBeautify(const ReductionContext& reductionContext);
-  Expression shallowReduce(ReductionContext reductionContext);
+                                OExpression coefficients[]) const;
+  OExpression shallowBeautify(const ReductionContext& reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
+                OExpression symbolValue);
 
   enum class DependencyType : uint8_t {
     None = 0,
@@ -123,48 +124,48 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   DependencyType typeOfDependency(
       const ReductionContext& reductionContext) const;
   static void AddPowerToListOfDependenciesIfNeeded(
-      Expression e, Power compareTo, List l,
+      OExpression e, Power compareTo, List l,
       const ReductionContext& reductionContext, bool clone);
 
   constexpr static AliasesList k_exponentialName = "exp";
-  static Expression ExponentialBuilder(Expression children);
-  constexpr static Expression::FunctionHelper s_exponentialFunctionHelper =
-      Expression::FunctionHelper(k_exponentialName, 1, &ExponentialBuilder);
+  static OExpression ExponentialBuilder(OExpression children);
+  constexpr static OExpression::FunctionHelper s_exponentialFunctionHelper =
+      OExpression::FunctionHelper(k_exponentialName, 1, &ExponentialBuilder);
 
-  static Expression ChainedPowerBuilder(Expression leftSide,
-                                        Expression rightSide);
+  static OExpression ChainedPowerBuilder(OExpression leftSide,
+                                         OExpression rightSide);
 
  private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
   // Simplification
-  static Expression SafePowerRationalRational(
+  static OExpression SafePowerRationalRational(
       const Rational base, const Rational index,
       const ReductionContext& reductionContext);
   // WARNING: These two methods alter their arguments
-  static Expression UnsafePowerRationalRational(
+  static OExpression UnsafePowerRationalRational(
       Rational base, Rational index, const ReductionContext& reductionContext);
-  static Expression UnsafePowerIntegerRational(
+  static OExpression UnsafePowerIntegerRational(
       Integer base, Rational index, const ReductionContext& reductionContext);
   // Returns e^(i*pi*r)
-  static Expression CreateComplexExponent(
-      const Expression& r, const ReductionContext& reductionContext);
+  static OExpression CreateComplexExponent(
+      const OExpression& r, const ReductionContext& reductionContext);
   static bool RationalExponentShouldNotBeReduced(const Rational& b,
                                                  const Rational& r);
-  static bool IsLogarithmOfBase(const Expression e, const Expression base);
-  static Expression ReduceLogarithmLinearCombination(
-      const ReductionContext& reductionContext, Expression linearCombination,
-      const Expression baseOfLogarithmToReduce);
-  static Expression MinusOnePowerRational(
+  static bool IsLogarithmOfBase(const OExpression e, const OExpression base);
+  static OExpression ReduceLogarithmLinearCombination(
+      const ReductionContext& reductionContext, OExpression linearCombination,
+      const OExpression baseOfLogarithmToReduce);
+  static OExpression MinusOnePowerRational(
       const Rational index, const ReductionContext& reductionContext);
-  bool isLogarithmOfSameBase(Expression e) const;
+  bool isLogarithmOfSameBase(OExpression e) const;
   bool isNthRootOfUnity() const;
 
   // Unit
-  Expression removeUnit(Expression* unit);
+  OExpression removeUnit(OExpression* unit);
 
-  Expression denominator(const ReductionContext& reductionContext) const;
+  OExpression denominator(const ReductionContext& reductionContext) const;
 };
 
 }  // namespace Poincare

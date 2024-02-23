@@ -18,7 +18,7 @@ size_t ListMinimumNode::serialize(char* buffer, size_t bufferSize,
       ListMinimum::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ListMinimumNode::shallowReduce(
+OExpression ListMinimumNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListMinimum(this).shallowReduce(reductionContext);
 }
@@ -34,14 +34,14 @@ Evaluation<T> ListMinimumNode::templatedApproximate(
       approximationContext, true);
 }
 
-Expression ListMinimum::shallowReduce(ReductionContext reductionContext) {
-  Expression child = childAtIndex(0);
+OExpression ListMinimum::shallowReduce(ReductionContext reductionContext) {
+  OExpression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List ||
       child.numberOfChildren() == 0 ||
-      recursivelyMatches(Expression::IsUndefined, nullptr)) {
+      recursivelyMatches(OExpression::IsUndefined, nullptr)) {
     return replaceWithUndefinedInPlace();
   }
-  Expression result =
+  OExpression result =
       static_cast<List&>(child).extremum(reductionContext, true);
   if (result.isUndefined()) {
     // Let approximation handle this

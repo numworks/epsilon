@@ -12,7 +12,7 @@
 namespace Poincare {
 
 /* Methods preceded by '*!*' interfere with the expression pool, which can make
- * 'this' outdated. They should only be called in a wrapper on Expression. */
+ * 'this' outdated. They should only be called in a wrapper on OExpression. */
 
 class SymbolAbstract;
 class Symbol;
@@ -177,21 +177,21 @@ class ExpressionNode : public TreeNode {
    * +(2,-1) --> 2+(-1)
    * *(+(2,1),3) --> (2+1)*3
    */
-  virtual bool childAtIndexNeedsUserParentheses(const Expression& child,
+  virtual bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                                 int childIndex) const {
     return false;
   }
-  /*!*/ virtual Expression replaceSymbolWithExpression(
-      const SymbolAbstract& symbol, const Expression& expression);
+  /*!*/ virtual OExpression replaceSymbolWithExpression(
+      const SymbolAbstract& symbol, const OExpression& expression);
   /*!*/ virtual int polynomialDegree(Context* context,
                                      const char* symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context* context,
                                               const char* symbolName,
-                                              Expression coefficients[]) const;
+                                              OExpression coefficients[]) const;
   virtual bool involvesCircularity(Context* context, int maxDepth,
                                    const char** visitedSymbols,
                                    int numberOfVisitedSymbols);
-  /*!*/ virtual Expression deepReplaceReplaceableSymbols(
+  /*!*/ virtual OExpression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
   typedef bool (*isVariableTest)(const char* c, Poincare::Context* context);
@@ -207,8 +207,8 @@ class ExpressionNode : public TreeNode {
 
   bool hasMatrixOrListChild(Context* context, bool isReduced = true) const;
 
-  virtual Expression removeUnit(
-      Expression* unit);  // Only reduced nodes should answer
+  virtual OExpression removeUnit(
+      OExpression* unit);  // Only reduced nodes should answer
 
   /* Simplification */
   /* SimplificationOrder returns:
@@ -254,23 +254,23 @@ class ExpressionNode : public TreeNode {
 
   /* Simplification */
   /*!*/ void deepReduceChildren(const ReductionContext& reductionContext);
-  /*!*/ Expression deepBeautify(const ReductionContext& reductionContext);
-  /*!*/ virtual Expression shallowReduce(
+  /*!*/ OExpression deepBeautify(const ReductionContext& reductionContext);
+  /*!*/ virtual OExpression shallowReduce(
       const ReductionContext& reductionContext);
   /* TODO: shallowBeautify takes a pointer to the reduction context, unlike
    * other methods. The pointer is needed to allow UnitConvert to modify the
-   * context and prevent unit modifications (in Expression::deepBeautify, after
+   * context and prevent unit modifications (in OExpression::deepBeautify, after
    * calling UnitConvert::shallowBeautify).
    * We should uniformize this behaviour and use pointers in other methods using
    * the reduction context. */
-  /*!*/ virtual Expression shallowBeautify(
+  /*!*/ virtual OExpression shallowBeautify(
       const ReductionContext& reductionContext);
   /*!*/ virtual bool derivate(const ReductionContext& reductionContext,
-                              Symbol symbol, Expression symbolValue);
-  virtual Expression unaryFunctionDifferential(
+                              Symbol symbol, OExpression symbolValue);
+  virtual OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext);
   /* Return a clone of the denominator part of the expression */
-  /*!*/ Expression denominator(const ReductionContext& reductionContext) const;
+  /*!*/ OExpression denominator(const ReductionContext& reductionContext) const;
   /* LayoutShape is used to check if the multiplication sign can be omitted
    * between two expressions. It depends on the "layout syle" on the right of
    * the left expression */
@@ -297,9 +297,9 @@ class ExpressionNode : public TreeNode {
   }
 
 #if ASSERTIONS
-  virtual void setChildrenInPlace(Expression other);
+  virtual void setChildrenInPlace(OExpression other);
 #else
-  void setChildrenInPlace(Expression other);
+  void setChildrenInPlace(OExpression other);
 #endif
 
  protected:

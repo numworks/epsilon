@@ -33,7 +33,7 @@ size_t ArcCosecantNode::serialize(char* buffer, size_t bufferSize,
       ArcCosecant::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ArcCosecantNode::shallowReduce(
+OExpression ArcCosecantNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcCosecant e = ArcCosecant(this);
   return Trigonometry::ShallowReduceInverseAdvancedFunction(e,

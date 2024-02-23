@@ -20,7 +20,7 @@ size_t FracPartNode::serialize(char* buffer, size_t bufferSize,
       FracPart::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression FracPartNode::shallowReduce(
+OExpression FracPartNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return FracPart(this).shallowReduce(reductionContext);
 }
@@ -35,9 +35,9 @@ std::complex<T> FracPartNode::computeOnComplex(
   return c.real() - std::floor(c.real());
 }
 
-Expression FracPart::shallowReduce(ReductionContext reductionContext) {
+OExpression FracPart::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -47,7 +47,7 @@ Expression FracPart::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
@@ -56,7 +56,7 @@ Expression FracPart::shallowReduce(ReductionContext reductionContext) {
       Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.remainder.isOverflow());
   Integer rDenominator = r.integerDenominator();
-  Expression result = Rational::Builder(div.remainder, rDenominator);
+  OExpression result = Rational::Builder(div.remainder, rDenominator);
   replaceWithInPlace(result);
   return result;
 }

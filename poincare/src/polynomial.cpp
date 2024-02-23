@@ -18,8 +18,8 @@
 
 namespace Poincare {
 
-int Polynomial::LinearPolynomialRoots(Expression a, Expression b,
-                                      Expression *root,
+int Polynomial::LinearPolynomialRoots(OExpression a, OExpression b,
+                                      OExpression *root,
                                       ReductionContext reductionContext,
                                       bool beautifyRoots) {
   assert(root);
@@ -29,9 +29,9 @@ int Polynomial::LinearPolynomialRoots(Expression a, Expression b,
   return !root->isUndefined();
 }
 
-int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b,
-                                         Expression c, Expression *root1,
-                                         Expression *root2, Expression *delta,
+int Polynomial::QuadraticPolynomialRoots(OExpression a, OExpression b,
+                                         OExpression c, OExpression *root1,
+                                         OExpression *root2, OExpression *delta,
                                          ReductionContext reductionContext,
                                          bool *approximateSolutions,
                                          bool beautifyRoots) {
@@ -73,7 +73,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b,
       // Coefficient a is negative, swap root1 and root 2 to preseverve order.
       offset = 1;
     }
-    Expression *roots[2] = {root1, root2};
+    OExpression *roots[2] = {root1, root2};
     *roots[offset % 2] = Division::Builder(
         Subtraction::Builder(Opposite::Builder(b.clone()),
                              SquareRoot::Builder(delta->clone())),
@@ -113,7 +113,7 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b,
   return !root1->isUndefined() + !root2->isUndefined();
 }
 
-static bool rootSmallerThan(const Expression *root1, const Expression *root2,
+static bool rootSmallerThan(const OExpression *root1, const OExpression *root2,
                             const ApproximationContext *approximationContext) {
   if (root2->type() == ExpressionNode::Type::Undefined ||
       root2->type() == ExpressionNode::Type::Nonreal) {
@@ -148,10 +148,10 @@ static bool rootSmallerThan(const Expression *root1, const Expression *root2,
   return ir1 <= ir2;
 }
 
-int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
-                                     Expression d, Expression *root1,
-                                     Expression *root2, Expression *root3,
-                                     Expression *delta,
+int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
+                                     OExpression c, OExpression d,
+                                     OExpression *root1, OExpression *root2,
+                                     OExpression *root3, OExpression *delta,
                                      ReductionContext reductionContext,
                                      bool *approximateSolutions,
                                      bool beautifyRoots) {
@@ -162,10 +162,10 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
   Context *context = reductionContext.context();
   ApproximationContext approximationContext(reductionContext);
 
-  const Expression coefficients[] = {d, c, b, a};
+  const OExpression coefficients[] = {d, c, b, a};
   constexpr int degree = 3;
   static_assert(
-      Expression::k_maxPolynomialDegree >= degree,
+      OExpression::k_maxPolynomialDegree >= degree,
       "The maximal polynomial degree is too low to handle cubic equations.");
 
   bool approximate = approximateSolutions ? *approximateSolutions : false;
@@ -173,7 +173,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
                               c.isReal(context) && d.isReal(context);
 
   // Cube roots of unity.
-  Expression roots[3] = {
+  OExpression roots[3] = {
       Rational::Builder(1),
       Division::Builder(
           ComplexCartesian::Builder(Rational::Builder(-1),
@@ -230,7 +230,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
   /* To avoid applying Cardano's formula right away, we use techniques to find
    * a simple solution, based on some particularly common forms of cubic
    * equations in school problems. */
-  *root1 = Expression();
+  *root1 = OExpression();
   /* If d is null, the polynom can easily be factored by X. We handle it here
    * (even though in most case it would be caught by the following case) in
    * case c is null. */
@@ -271,7 +271,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
   }
   /* Polynoms of the forms "kx^2(cx+d)+cx+d" and "kx(bx^2+d)+bx^2+d" have a
    * simple solution x1 = -d/c. */
-  Expression r = Division::Builder(Opposite::Builder(d.clone()), c.clone());
+  OExpression r = Division::Builder(Opposite::Builder(d.clone()), c.clone());
   if (root1->isUninitialized() &&
       IsRoot(coefficients, degree, r, reductionContext)) {
     *root1 = r;
@@ -296,16 +296,16 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
   if (!root1->isUninitialized() && root2->isUninitialized()) {
     /* We have found one simple solution, we can factor and solve the quadratic
      * equation. */
-    Expression beta =
+    OExpression beta =
         Addition::Builder(
             {b.clone(), Multiplication::Builder(a.clone(), root1->clone())})
             .cloneAndSimplify(reductionContext);
-    Expression gamma =
+    OExpression gamma =
         root1->isNull(context) == TrinaryBoolean::True
             ? c.clone()
             : Opposite::Builder(Division::Builder(d.clone(), root1->clone()))
                   .cloneAndSimplify(reductionContext);
-    Expression delta2;
+    OExpression delta2;
     QuadraticPolynomialRoots(a.clone(), beta, gamma, root2, root3, &delta2,
                              reductionContext, nullptr, beautifyRoots);
     assert(!root2->isUninitialized() && !root3->isUninitialized());
@@ -324,7 +324,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
       assert(!std::isnan(deltaValue) || deltaSign == -1);
     }
     // b^2 - 3ac
-    Expression delta0 =
+    OExpression delta0 =
         Subtraction::Builder(
             Power::Builder(b.clone(), Rational::Builder(2)),
             Multiplication::Builder(Rational::Builder(3), a.clone(), c.clone()))
@@ -361,7 +361,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
       }
     } else {
       // 2b^3 - 9abc + 27da^2
-      Expression delta1 =
+      OExpression delta1 =
           Addition::Builder(
               {Multiplication::Builder(
                    Rational::Builder(2),
@@ -379,7 +379,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
       complexContext.setComplextFormat(Preferences::ComplexFormat::Cartesian);
       complexContext.setTarget(ReductionTarget::SystemForApproximation);
       ApproximationContext approximationComplexContext(complexContext);
-      Expression cardano =
+      OExpression cardano =
           CardanoNumber(delta0, delta1, &approximate, complexContext);
       if (cardano.type() == ExpressionNode::Type::Undefined ||
           cardano.deepIsOfType(
@@ -422,7 +422,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
         for (int i = 0; i < 3; i++) {
           /* The roots can be computed from Cardano's number using the cube
            * roots of unity. */
-          Expression cz = Multiplication::Builder(cardano.clone(), roots[i]);
+          OExpression cz = Multiplication::Builder(cardano.clone(), roots[i]);
           roots[i] = Division::Builder(
               Addition::Builder({b.clone(), cz.clone(),
                                  Division::Builder(delta0, cz.clone())}),
@@ -522,16 +522,16 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
   Helpers::Sort(
       [](int i, int j, void *ctx, int n) {  // Swap method
         assert(i < n && j < n);
-        Expression **tab =
-            reinterpret_cast<Expression **>(reinterpret_cast<void **>(ctx));
-        Expression t = *tab[i];
+        OExpression **tab =
+            reinterpret_cast<OExpression **>(reinterpret_cast<void **>(ctx));
+        OExpression t = *tab[i];
         *tab[i] = *tab[j];
         *tab[j] = t;
       },
       [](int i, int j, void *ctx, int n) {  // Comparison method
         assert(i < n && j < n);
         void **pack = reinterpret_cast<void **>(ctx);
-        Expression **tab = reinterpret_cast<Expression **>(pack);
+        OExpression **tab = reinterpret_cast<OExpression **>(pack);
         ApproximationContext *approximationContext =
             reinterpret_cast<ApproximationContext *>(pack[3]);
         return rootSmallerThan(tab[j], tab[i], approximationContext);
@@ -544,8 +544,8 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
   return !root1->isUndefined() + !root2->isUndefined() + !root3->isUndefined();
 }
 
-Expression Polynomial::ReducePolynomial(
-    const Expression *coefficients, int degree, Expression parameter,
+OExpression Polynomial::ReducePolynomial(
+    const OExpression *coefficients, int degree, OExpression parameter,
     const ReductionContext &reductionContext) {
   Addition polynomial = Addition::Builder();
   polynomial.addChildAtIndexInPlace(coefficients[0].clone(), 0, 0);
@@ -557,7 +557,7 @@ Expression Polynomial::ReducePolynomial(
         i, i);
   }
   // Try to simplify polynomial
-  Expression simplifiedReducedPolynomial =
+  OExpression simplifiedReducedPolynomial =
       polynomial.cloneAndSimplify(reductionContext);
   return simplifiedReducedPolynomial;
 }
@@ -572,10 +572,10 @@ Rational Polynomial::ReduceRationalPolynomial(const Rational *coefficients,
   return result;
 }
 
-Expression Polynomial::RationalRootSearch(
-    const Expression *coefficients, int degree,
+OExpression Polynomial::RationalRootSearch(
+    const OExpression *coefficients, int degree,
     const ReductionContext &reductionContext) {
-  assert(degree <= Expression::k_maxPolynomialDegree);
+  assert(degree <= OExpression::k_maxPolynomialDegree);
 
   const Rational *rationalCoefficients =
       static_cast<const Rational *>(coefficients);
@@ -585,7 +585,7 @@ Expression Polynomial::RationalRootSearch(
     lcm.addChildAtIndexInPlace(
         Rational::Builder(rationalCoefficients[i].integerDenominator()), i, i);
   }
-  Expression lcmResult = lcm.shallowReduce(reductionContext);
+  OExpression lcmResult = lcm.shallowReduce(reductionContext);
   assert(lcmResult.type() == ExpressionNode::Type::Rational);
   Rational rationalLCM = static_cast<Rational &>(lcmResult);
 
@@ -632,34 +632,35 @@ Expression Polynomial::RationalRootSearch(
       }
     }
   }
-  return Expression();
+  return OExpression();
 }
 
-Expression Polynomial::SumRootSearch(const Expression *coefficients, int degree,
-                                     int relevantCoefficient,
-                                     const ReductionContext &reductionContext) {
-  Expression a = coefficients[degree];
-  Expression b = coefficients[relevantCoefficient].clone();
+OExpression Polynomial::SumRootSearch(
+    const OExpression *coefficients, int degree, int relevantCoefficient,
+    const ReductionContext &reductionContext) {
+  OExpression a = coefficients[degree];
+  OExpression b = coefficients[relevantCoefficient].clone();
 
   if (b.type() != ExpressionNode::Type::Addition) {
-    Expression r = Opposite::Builder(Division::Builder(b, a.clone()));
-    return IsRoot(coefficients, degree, r, reductionContext) ? r : Expression();
+    OExpression r = Opposite::Builder(Division::Builder(b, a.clone()));
+    return IsRoot(coefficients, degree, r, reductionContext) ? r
+                                                             : OExpression();
   }
   int n = b.numberOfChildren();
   for (int i = 0; i < n; i++) {
-    Expression r =
+    OExpression r =
         Opposite::Builder(Division::Builder(b.childAtIndex(i), a.clone()));
     if (IsRoot(coefficients, degree, r, reductionContext)) {
       return r;
     }
   }
 
-  return Expression();
+  return OExpression();
 }
 
-Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1,
-                                     bool *approximate,
-                                     const ReductionContext &reductionContext) {
+OExpression Polynomial::CardanoNumber(
+    OExpression delta0, OExpression delta1, bool *approximate,
+    const ReductionContext &reductionContext) {
   assert(approximate != nullptr);
 
   /* C = root((delta1 ± sqrt(delta1^2 - 4*delta0^3)) / 2, 3)
@@ -668,17 +669,17 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1,
    *   - otherwise, ± takes the sign of delta1. This way, we do not run the
    *     risk of subtracting two very close numbers when delta0 << delta1. */
 
-  Expression C;
+  OExpression C;
   ApproximationContext approximationContext(reductionContext);
   if (delta0.isNull(reductionContext.context()) == TrinaryBoolean::True) {
     C = delta1.clone();
   } else {
-    Expression rootDeltaDifference = SquareRoot::Builder(Subtraction::Builder(
+    OExpression rootDeltaDifference = SquareRoot::Builder(Subtraction::Builder(
         Power::Builder(delta1.clone(), Rational::Builder(2)),
         Multiplication::Builder(
             Rational::Builder(4),
             Power::Builder(delta0.clone(), Rational::Builder(3)))));
-    Expression diff;
+    OExpression diff;
     if (SignFunction::Builder(delta1).approximateToScalar<double>(
             approximationContext) <= 0.0) {
       diff = Subtraction::Builder(delta1.clone(), rootDeltaDifference);

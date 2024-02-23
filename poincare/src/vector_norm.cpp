@@ -13,7 +13,7 @@ int VectorNormNode::numberOfChildren() const {
   return VectorNorm::s_functionHelper.numberOfChildren();
 }
 
-Expression VectorNormNode::shallowReduce(
+OExpression VectorNormNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return VectorNorm(this).shallowReduce(reductionContext);
 }
@@ -41,9 +41,9 @@ Evaluation<T> VectorNormNode::templatedApproximate(
   return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).norm());
 }
 
-Expression VectorNorm::shallowReduce(ReductionContext reductionContext) {
+OExpression VectorNorm::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -56,14 +56,14 @@ Expression VectorNorm::shallowReduce(ReductionContext reductionContext) {
           .forbidVectorNorm()) {
     return replaceWithUndefinedInPlace();
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixChild = static_cast<Matrix&>(c);
     // Norm is only defined on vectors only
     if (!matrixChild.isVector()) {
       return replaceWithUndefinedInPlace();
     }
-    Expression a = matrixChild.norm(reductionContext);
+    OExpression a = matrixChild.norm(reductionContext);
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }

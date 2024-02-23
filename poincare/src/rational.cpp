@@ -157,12 +157,12 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode *e,
 
 // Simplification
 
-Expression RationalNode::shallowReduce(
+OExpression RationalNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return Rational(this).shallowReduce();
 }
 
-Expression RationalNode::shallowBeautify(
+OExpression RationalNode::shallowBeautify(
     const ReductionContext &reductionContext) {
   return Rational(this).shallowBeautify();
 }
@@ -261,7 +261,7 @@ Rational Rational::Builder(const native_uint_t *i, uint8_t numeratorSize,
   return static_cast<Rational &>(h);
 }
 
-Expression Rational::shallowReduce() {
+OExpression Rational::shallowReduce() {
   // FIXME:
   /* Infinite Rational should not exist as they aren't parsed and are supposed
    * to be turn in Float if they should appear. We assert(false) so far, but
@@ -288,9 +288,9 @@ Expression Rational::shallowReduce() {
   return *this;
 }
 
-Expression Rational::shallowBeautify() {
+OExpression Rational::shallowBeautify() {
   if (isPositive() == TrinaryBoolean::False) {
-    Expression abs = setSign(true);
+    OExpression abs = setSign(true);
     Opposite o = Opposite::Builder();
     replaceWithInPlace(o);
     o.replaceChildAtIndexInPlace(0, abs);
@@ -299,10 +299,10 @@ Expression Rational::shallowBeautify() {
   return *this;
 }
 
-Expression Rational::denominator() const {
+OExpression Rational::denominator() const {
   Integer d = integerDenominator();
   if (d.isOne()) {
-    return Expression();
+    return OExpression();
   }
   if (d.isOverflow()) {
     return Infinity::Builder(false);

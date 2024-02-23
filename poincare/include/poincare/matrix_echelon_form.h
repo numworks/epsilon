@@ -18,7 +18,7 @@ class MatrixEchelonFormNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };
@@ -44,10 +44,10 @@ class MatrixEchelonFormNode : public ExpressionNode {
   virtual const char* functionHelperName() const = 0;
 };
 
-class MatrixEchelonForm : public Expression {
+class MatrixEchelonForm : public OExpression {
  public:
-  MatrixEchelonForm(const MatrixEchelonFormNode* n) : Expression(n) {}
-  Expression shallowReduce(ReductionContext reductionContext);
+  MatrixEchelonForm(const MatrixEchelonFormNode* n) : OExpression(n) {}
+  OExpression shallowReduce(ReductionContext reductionContext);
   bool isFormReduced() const {
     return static_cast<MatrixEchelonFormNode*>(node())->isFormReduced();
   }

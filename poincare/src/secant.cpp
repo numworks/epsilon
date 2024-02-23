@@ -34,7 +34,8 @@ size_t SecantNode::serialize(char* buffer, size_t bufferSize,
       Secant::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression SecantNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression SecantNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   Secant e = Secant(this);
   return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
 }

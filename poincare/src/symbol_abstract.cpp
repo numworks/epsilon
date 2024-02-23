@@ -37,8 +37,8 @@ size_t SymbolAbstractNode::NameWithoutQuotationMarks(char *buffer,
   return strlcpy(buffer, name, bufferSize);
 }
 
-Expression SymbolAbstractNode::replaceSymbolWithExpression(
-    const SymbolAbstract &symbol, const Expression &expression) {
+OExpression SymbolAbstractNode::replaceSymbolWithExpression(
+    const SymbolAbstract &symbol, const OExpression &expression) {
   return SymbolAbstract(this).replaceSymbolWithExpression(symbol, expression);
 }
 
@@ -59,7 +59,7 @@ size_t SymbolAbstractNode::size() const {
 TrinaryBoolean SymbolAbstractNode::isPositive(Context *context) const {
   SymbolAbstract s(this);
   // No need to preserve undefined symbols here.
-  Expression e = SymbolAbstract::Expand(
+  OExpression e = SymbolAbstract::Expand(
       s, context, true,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (e.isUninitialized()) {
@@ -111,7 +111,7 @@ bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
   visitedSymbols[numberOfVisitedSymbols] = m_name;
   numberOfVisitedSymbols++;
 
-  Expression symbolAbstract;
+  OExpression symbolAbstract;
   if (type() == ExpressionNode::Type::Function) {
     // This is like cloning, but without the symbol.
     symbolAbstract = Function::Builder(name(), strlen(name()),
@@ -121,7 +121,7 @@ bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
     symbolAbstract = SymbolAbstract(this);
   }
 
-  Expression e = context->expressionForSymbolAbstract(
+  OExpression e = context->expressionForSymbolAbstract(
       static_cast<SymbolAbstract &>(symbolAbstract), false);
 
   return !e.isUninitialized() &&
@@ -150,9 +150,9 @@ bool SymbolAbstract::hasSameNameAs(const SymbolAbstract &other) const {
 bool SymbolAbstract::matches(const SymbolAbstract &symbol,
                              ExpressionTrinaryTest test, Context *context,
                              void *auxiliary,
-                             Expression::IgnoredSymbols *ignoredSymbols) {
+                             OExpression::IgnoredSymbols *ignoredSymbols) {
   // Undefined symbols must be preserved.
-  Expression e = SymbolAbstract::Expand(
+  OExpression e = SymbolAbstract::Expand(
       symbol, context, true,
       SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   return !e.isUninitialized() &&
@@ -161,17 +161,17 @@ bool SymbolAbstract::matches(const SymbolAbstract &symbol,
                               auxiliary, ignoredSymbols);
 }
 
-Expression SymbolAbstract::replaceSymbolWithExpression(
-    const SymbolAbstract &symbol, const Expression &expression) {
+OExpression SymbolAbstract::replaceSymbolWithExpression(
+    const SymbolAbstract &symbol, const OExpression &expression) {
   deepReplaceSymbolWithExpression(symbol, expression);
   if (symbol.type() == type() && hasSameNameAs(symbol)) {
-    Expression exp = expression.clone();
+    OExpression exp = expression.clone();
     if (numberOfChildren() > 0) {
       assert(isOfType(
           {ExpressionNode::Type::Function, ExpressionNode::Type::Sequence}));
       assert(numberOfChildren() == 1 && symbol.numberOfChildren() == 1);
-      Expression myVariable = childAtIndex(0).clone();
-      Expression symbolVariable = symbol.childAtIndex(0);
+      OExpression myVariable = childAtIndex(0).clone();
+      OExpression symbolVariable = symbol.childAtIndex(0);
       if (symbolVariable.type() == ExpressionNode::Type::Symbol) {
         exp = exp.replaceSymbolWithExpression(symbolVariable.convert<Symbol>(),
                                               myVariable);
@@ -179,7 +179,7 @@ Expression SymbolAbstract::replaceSymbolWithExpression(
         return *this;
       }
     }
-    Expression p = parent();
+    OExpression p = parent();
     if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(
                                     exp, p.indexOfChild(*this))) {
       exp = Parenthesis::Builder(exp);
@@ -194,21 +194,21 @@ void SymbolAbstract::checkForCircularityIfNeeded(Context *context,
                                                  TrinaryBoolean *isCircular) {
   assert(*isCircular != TrinaryBoolean::True);
   if (*isCircular == TrinaryBoolean::Unknown) {
-    const char *visitedSymbols[Expression::k_maxSymbolReplacementsCount];
+    const char *visitedSymbols[OExpression::k_maxSymbolReplacementsCount];
     *isCircular = BinaryToTrinaryBool(involvesCircularity(
-        context, Expression::k_maxSymbolReplacementsCount, visitedSymbols, 0));
+        context, OExpression::k_maxSymbolReplacementsCount, visitedSymbols, 0));
   }
 }
 
-Expression SymbolAbstract::Expand(const SymbolAbstract &symbol,
-                                  Context *context, bool clone,
-                                  SymbolicComputation symbolicComputation) {
+OExpression SymbolAbstract::Expand(const SymbolAbstract &symbol,
+                                   Context *context, bool clone,
+                                   SymbolicComputation symbolicComputation) {
   assert(context);
-  Expression e = context->expressionForSymbolAbstract(symbol, clone);
+  OExpression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. Symbols defined in a parametered function
    * will be preserved as long as the function is defined within this symbol. */
-  e = Expression::ExpressionWithoutSymbols(e, context, symbolicComputation);
+  e = OExpression::ExpressionWithoutSymbols(e, context, symbolicComputation);
   if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
     Dependency d = Dependency::Builder(e);
     d.addDependency(symbol.childAtIndex(0));

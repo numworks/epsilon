@@ -78,7 +78,7 @@ ComparisonNode::OperatorType ComparisonNode::SwitchInferiorSuperior(
   }
 }
 
-bool ComparisonNode::IsBinaryComparison(Expression e,
+bool ComparisonNode::IsBinaryComparison(OExpression e,
                                         OperatorType* operatorType) {
   assert(!e.isUninitialized());
   if (e.type() != Type::Comparison || e.numberOfChildren() != 2) {
@@ -91,7 +91,7 @@ bool ComparisonNode::IsBinaryComparison(Expression e,
   return true;
 }
 
-bool ComparisonNode::IsComparisonWithoutNotEqualOperator(Expression e) {
+bool ComparisonNode::IsComparisonWithoutNotEqualOperator(OExpression e) {
   assert(!e.isUninitialized());
   if (e.type() != Type::Comparison) {
     return false;
@@ -106,7 +106,7 @@ bool ComparisonNode::IsComparisonWithoutNotEqualOperator(Expression e) {
   return true;
 }
 
-bool ComparisonNode::IsBinaryComparisonWithOperator(Expression e,
+bool ComparisonNode::IsBinaryComparisonWithOperator(OExpression e,
                                                     OperatorType operatorType) {
   OperatorType operatorTypeOfE;
   return IsBinaryComparison(e, &operatorTypeOfE) &&
@@ -218,9 +218,9 @@ size_t ComparisonNode::serialize(char* buffer, size_t bufferSize,
 bool ComparisonNode::childNeedsSystemParenthesesAtSerialization(
     const TreeNode* child) const {
   int i = indexOfChild(child);
-  Expression e = Comparison(this).childAtIndex(i);
+  OExpression e = Comparison(this).childAtIndex(i);
   // Factorials can mess up with equal signs
-  return e.recursivelyMatches(Expression::IsFactorial, nullptr);
+  return e.recursivelyMatches(OExpression::IsFactorial, nullptr);
 }
 
 Evaluation<float> ComparisonNode::approximate(
@@ -282,14 +282,14 @@ Evaluation<T> ComparisonNode::templatedApproximate(
   return BooleanEvaluation<T>::Builder(true);
 }
 
-Expression ComparisonNode::shallowReduce(
+OExpression ComparisonNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Comparison(this).shallowReduce(reductionContext);
 }
 
-Comparison Comparison::Builder(Expression child0,
+Comparison Comparison::Builder(OExpression child0,
                                ComparisonNode::OperatorType operatorType,
-                               Expression child1) {
+                               OExpression child1) {
   void* bufferNode =
       TreePool::sharedPool->alloc(SizeOfComparisonNodeWithOperators(1));
   ComparisonNode* node = new (bufferNode) ComparisonNode(operatorType);
@@ -300,7 +300,7 @@ Comparison Comparison::Builder(Expression child0,
 }
 
 Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType,
-                                     Expression child) {
+                                     OExpression child) {
   int numberOfOperands = numberOfChildren() + 1;
   void* bufferNode = TreePool::sharedPool->alloc(
       SizeOfComparisonNodeWithOperators(numberOfOperands - 1));
@@ -316,9 +316,9 @@ Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType,
   return static_cast<Comparison&>(h);
 }
 
-Expression Comparison::shallowReduce(ReductionContext reductionContext) {
+OExpression Comparison::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
@@ -328,13 +328,13 @@ Expression Comparison::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression firstChild;
-  Expression secondChild = childAtIndex(0);
+  OExpression firstChild;
+  OExpression secondChild = childAtIndex(0);
   const int numberOfOperands = numberOfChildren();
   for (int i = 1; i < numberOfOperands; i++) {
     firstChild = secondChild;
     secondChild = childAtIndex(i);
-    Expression difference =
+    OExpression difference =
         Subtraction::Builder(firstChild.clone(), secondChild.clone());
     difference = difference.shallowReduce(reductionContext);
     TrinaryBoolean childrenAreEqual =
@@ -347,17 +347,17 @@ Expression Comparison::shallowReduce(ReductionContext reductionContext) {
       return *this;  // Let approximation decide
     }
     if (comparison == TrinaryBoolean::False) {
-      Expression result = Boolean::Builder(false);
+      OExpression result = Boolean::Builder(false);
       replaceWithInPlace(result);
       return result;
     }
   }
-  Expression result = Boolean::Builder(true);
+  OExpression result = Boolean::Builder(true);
   replaceWithInPlace(result);
   return result;
 }
 
-Expression Comparison::cloneWithStrictOrLenientOperators(bool strict) const {
+OExpression Comparison::cloneWithStrictOrLenientOperators(bool strict) const {
   // operators[strict] is strict if strict == 1 and lenient if strict == 0
   constexpr ComparisonNode::OperatorType inferiorOperators[] = {
       ComparisonNode::OperatorType::InferiorEqual,
@@ -366,7 +366,7 @@ Expression Comparison::cloneWithStrictOrLenientOperators(bool strict) const {
       ComparisonNode::OperatorType::SuperiorEqual,
       ComparisonNode::OperatorType::Superior};
   int n = numberOfOperators();
-  Expression result = clone();
+  OExpression result = clone();
   ComparisonNode::OperatorType* operatorsList =
       static_cast<Comparison&>(result).node()->listOfOperators();
   for (int i = 0; i < n; i++) {

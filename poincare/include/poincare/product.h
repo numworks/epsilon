@@ -40,15 +40,15 @@ class Product final : public SumAndProduct {
 
  public:
   Product(const ProductNode* n) : SumAndProduct(n) {}
-  static Product Builder(Expression argument, Symbol symbol,
-                         Expression subScript, Expression superScript) {
+  static Product Builder(OExpression argument, Symbol symbol,
+                         OExpression subScript, OExpression superScript) {
     return TreeHandle::FixedArityBuilder<Product, ProductNode>(
         {argument, symbol, subScript, superScript});
   }
-  static Expression UntypedBuilder(Expression children);
+  static OExpression UntypedBuilder(OExpression children);
 
-  constexpr static Expression::FunctionHelper s_functionHelper =
-      Expression::FunctionHelper("product", 4, &UntypedBuilder);
+  constexpr static OExpression::FunctionHelper s_functionHelper =
+      OExpression::FunctionHelper("product", 4, &UntypedBuilder);
 };
 
 }  // namespace Poincare

@@ -68,8 +68,8 @@ class TreeNode {
    * they won't be decreased if an exception is raised.
    *
    * WARNING: ref counters have a bugged behaviour in this case:
-   *  Expression a = Cosine::Builder();
-   *  Expression b;
+   *  OExpression a = Cosine::Builder();
+   *  OExpression b;
    *  Checkpoint() {
    *    ...
    *    b = a;
@@ -131,7 +131,7 @@ class TreeNode {
    *  2 (2
    * --- π --> [[2]/[3]]π which keeps the omitted multiplication and forbid to
    * parse --- π 3 3)
-   * - Expression:
+   * - OExpression:
    *  2+3
    * ----- --> [2+3]/4 to keep the fraction structure
    *   4

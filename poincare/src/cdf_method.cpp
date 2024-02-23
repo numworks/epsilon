@@ -5,20 +5,20 @@
 
 namespace Poincare {
 
-Expression CDFMethod::shallowReduce(Expression* abscissae,
-                                    const Distribution* distribution,
-                                    Expression* parameters,
-                                    ReductionContext reductionContext,
-                                    Expression* expression) const {
-  Expression x = abscissae[0];
+OExpression CDFMethod::shallowReduce(OExpression* abscissae,
+                                     const Distribution* distribution,
+                                     OExpression* parameters,
+                                     ReductionContext reductionContext,
+                                     OExpression* expression) const {
+  OExpression x = abscissae[0];
 
   if (x.type() == ExpressionNode::Type::Infinity) {
     if (x.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
-      Expression result = Rational::Builder(0);
+      OExpression result = Rational::Builder(0);
       expression->replaceWithInPlace(result);
       return result;
     } else {
-      Expression result = Rational::Builder(1);
+      OExpression result = Rational::Builder(1);
       expression->replaceWithInPlace(result);
       return result;
     }

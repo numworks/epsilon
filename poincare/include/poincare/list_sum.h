@@ -26,7 +26,7 @@ class ListSumNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Evaluation
   Evaluation<float> approximate(
@@ -47,7 +47,7 @@ class ListSumNode : public ExpressionNode {
 class ListSum : public ExpressionOneChild<ListSum, ListSumNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

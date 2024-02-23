@@ -29,8 +29,8 @@ class TrigonometryCheatTable {
   };
   static const TrigonometryCheatTable* Table();
   // Only call simplify on expressions which have reduced children
-  Expression simplify(const Expression e, ExpressionNode::Type type,
-                      const ReductionContext& reductionContext) const;
+  OExpression simplify(const OExpression e, ExpressionNode::Type type,
+                       const ReductionContext& reductionContext) const;
 
  private:
   // ROW CLASS
@@ -41,7 +41,7 @@ class TrigonometryCheatTable {
      public:
       constexpr Pair(const char* expression, float value = NAN)
           : m_expression(expression), m_value(value) {}
-      Expression reducedExpression(
+      OExpression reducedExpression(
           bool assertNotUninitialized,
           const ReductionContext& reductionContext) const;
       float value() const { return m_value; }
@@ -58,7 +58,7 @@ class TrigonometryCheatTable {
       assert(((int)t) >= 0 && ((int)t) < k_numberOfPairs);
       return m_pairs[(int)t].value();
     }
-    Expression expressionForType(
+    OExpression expressionForType(
         Type t, bool assertNotUninitialized,
         const ReductionContext& reductionContext) const {
       assert(((int)t) >= 0 && ((int)t) < k_numberOfPairs);
@@ -77,7 +77,7 @@ class TrigonometryCheatTable {
     assert(i >= 0 && i < k_numberOfEntries);
     return m_rows[i].floatForType(t);
   }
-  Expression expressionForTypeAtIndex(
+  OExpression expressionForTypeAtIndex(
       Type t, int i, bool assertNotUninitialized,
       const ReductionContext& reductionContext) const {
     assert(i >= 0 && i < k_numberOfEntries);

@@ -23,7 +23,7 @@ size_t PiecewiseOperatorNode::serialize(
       PiecewiseOperator::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression PiecewiseOperatorNode::shallowReduce(
+OExpression PiecewiseOperatorNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return PiecewiseOperator(this).shallowReduce(reductionContext);
 }
@@ -65,7 +65,7 @@ int PiecewiseOperatorNode::indexOfFirstTrueCondition(
   return -1;
 }
 
-Expression PiecewiseOperator::UntypedBuilder(Expression children) {
+OExpression PiecewiseOperator::UntypedBuilder(OExpression children) {
   assert(children.type() == ExpressionNode::Type::List);
   int n = children.numberOfChildren();
   // Check that each condition is boolean
@@ -73,21 +73,22 @@ Expression PiecewiseOperator::UntypedBuilder(Expression children) {
     if (i % 2 == 0) {
       continue;
     }
-    Expression condition = children.childAtIndex(i);
+    OExpression condition = children.childAtIndex(i);
     if (!condition.hasBooleanValue() &&
         condition.type() != ExpressionNode::Type::EmptyExpression) {
-      return Expression();
+      return OExpression();
     }
   }
   return UntypedBuilderMultipleChildren<PiecewiseOperator>(children);
 }
 
-Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
+OExpression PiecewiseOperator::shallowReduce(
+    ReductionContext reductionContext) {
   /* TODO: add a check that all children expressions (not the conditions) have
    * the same dimension, otherwise reduce to undef */
   {
     // Use custom dependencies bubbling-up for piecewise.
-    Expression e = bubbleUpPiecewiseDependencies(reductionContext);
+    OExpression e = bubbleUpPiecewiseDependencies(reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -112,7 +113,7 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
 
   int i = 0;
   while (i + 1 < n) {
-    Expression condition = childAtIndex(i + 1);
+    OExpression condition = childAtIndex(i + 1);
     if (condition.hasBooleanValue()) {
       // Skip conditions that are not booleans. They are always false
       if (condition.type() != ExpressionNode::Type::Boolean) {
@@ -121,7 +122,7 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
       }
       if (static_cast<Boolean&>(condition).value()) {
         // Condition is true
-        Expression result = childAtIndex(i);
+        OExpression result = childAtIndex(i);
         replaceWithInPlace(result);
         return result;
       }
@@ -131,7 +132,7 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
   if (i < n) {
     // Last child has no condition and every other condition is false
     assert(n % 2 == 1 && i == n - 1);
-    Expression result = childAtIndex(i);
+    OExpression result = childAtIndex(i);
     replaceWithInPlace(result);
     return result;
   }
@@ -140,15 +141,16 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
 }
 
 bool PiecewiseOperatorNode::derivate(const ReductionContext& reductionContext,
-                                     Symbol symbol, Expression symbolValue) {
+                                     Symbol symbol, OExpression symbolValue) {
   return PiecewiseOperator(this).derivate(reductionContext, symbol,
                                           symbolValue);
 }
 
 bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
-                                 Symbol symbol, Expression symbolValue) {
+                                 Symbol symbol, OExpression symbolValue) {
   {
-    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    OExpression e =
+        Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {
       return true;
     }
@@ -188,15 +190,15 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
       // No condition for last expression.
       break;
     }
-    Expression originalCondition = childAtIndex(i + 1);
+    OExpression originalCondition = childAtIndex(i + 1);
     if (originalCondition.type() != ExpressionNode::Type::Comparison) {
       i += 2;
       continue;
     }
     // Turn >= into > and <= into <
-    Expression strictCondition =
+    OExpression strictCondition =
         static_cast<Comparison&>(originalCondition).cloneWithStrictOperators();
-    Expression lenientCondition =
+    OExpression lenientCondition =
         static_cast<Comparison&>(originalCondition).cloneWithLenientOperators();
     // Add the undef expression with the condition containing <=, >=, ==
     assert(!lenientCondition.isUndefined());
@@ -232,7 +234,7 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(
       ->indexOfFirstTrueCondition<T>(newContext);
 }
 
-Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
+OExpression PiecewiseOperator::bubbleUpPiecewiseDependencies(
     const ReductionContext& reductionContext) {
   /* - Do not bubble up dependencies of conditions.
    * - When bubbling up dependencies, keep conditions in dependencies list :
@@ -282,14 +284,14 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
    * */
   int nChildren = numberOfChildren();
   // Create a piecewise with same conditions but filled with 0.
-  Expression piecewiseDependency = clone();
+  OExpression piecewiseDependency = clone();
   for (int i = 0; i < nChildren; i += 2) {
     piecewiseDependency.replaceChildAtIndexInPlace(i, Rational::Builder(0));
   }
 
   List dependencies = List::Builder();
   for (int i = 0; i < nChildren; i += 2) {
-    Expression child = childAtIndex(i);
+    OExpression child = childAtIndex(i);
     int currentNDependencies = dependencies.numberOfChildren();
     if (child.type() == ExpressionNode::Type::Dependency) {
       static_cast<Dependency&>(child).extractDependencies(dependencies);
@@ -298,7 +300,7 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
     if (newNDependencies == currentNDependencies) {
       continue;
     }
-    Expression dependencyExpression;
+    OExpression dependencyExpression;
     if (newNDependencies == currentNDependencies + 1) {
       dependencyExpression =
           dependencies.childAtIndex(newNDependencies - 1).clone();
@@ -313,7 +315,7 @@ Expression PiecewiseOperator::bubbleUpPiecewiseDependencies(
     piecewiseDependency.replaceChildAtIndexInPlace(i, dependencyExpression);
   }
   if (dependencies.numberOfChildren() == 0) {
-    return Expression();
+    return OExpression();
   }
   dependencies = List::Builder();
   dependencies.addChildAtIndexInPlace(piecewiseDependency, 0, 0);

@@ -25,7 +25,7 @@ class FactorialNode final : public ExpressionNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
 
  private:
@@ -36,7 +36,7 @@ class FactorialNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplication
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return childAtIndex(0)->leftLayoutShape();
   };
@@ -63,15 +63,15 @@ class FactorialNode final : public ExpressionNode {
   }
 
 #if 0
-  int simplificationOrderGreaterType(const Expression e) const override;
-  int simplificationOrderSameType(const Expression e) const override;
+  int simplificationOrderGreaterType(const OExpression e) const override;
+  int simplificationOrderSameType(const OExpression e) const override;
 #endif
 };
 
 class Factorial final : public ExpressionOneChild<Factorial, FactorialNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 
  private:
   constexpr static int k_maxOperandValue = 100;

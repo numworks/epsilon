@@ -45,23 +45,23 @@ std::complex<T> TangentNode::computeOnComplex(
   return numerator / denominator;
 }
 
-Expression TangentNode::shallowReduce(
+OExpression TangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Tangent(this).shallowReduce(reductionContext);
 }
 
 bool TangentNode::derivate(const ReductionContext& reductionContext,
-                           Symbol symbol, Expression symbolValue) {
+                           Symbol symbol, OExpression symbolValue) {
   return Tangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression TangentNode::unaryFunctionDifferential(
+OExpression TangentNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Tangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-Expression Tangent::shallowReduce(ReductionContext reductionContext) {
-  Expression newExpression =
+OExpression Tangent::shallowReduce(ReductionContext reductionContext) {
+  OExpression newExpression =
       Trigonometry::ShallowReduceDirectFunction(*this, reductionContext);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
@@ -76,13 +76,13 @@ Expression Tangent::shallowReduce(ReductionContext reductionContext) {
 }
 
 bool Tangent::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                       Expression symbolValue) {
+                       OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
                                     reductionContext);
   return true;
 }
 
-Expression Tangent::unaryFunctionDifferential(
+OExpression Tangent::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Multiplication::Builder(
       Trigonometry::UnitConversionFactor(reductionContext.angleUnit(),

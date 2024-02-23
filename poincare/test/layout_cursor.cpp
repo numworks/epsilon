@@ -11,7 +11,7 @@
 using namespace Poincare;
 
 void assert_inserted_layout_points_to(Layout layoutToInsert,
-                                      Expression correspondingExpression,
+                                      OExpression correspondingExpression,
                                       Layout expectedLayoutAfterInsertion,
                                       int cursorPositionInLayout = 0) {
   HorizontalLayout h = HorizontalLayout::Builder();
@@ -48,7 +48,7 @@ void assert_inserted_layout_points_to(Layout layoutToInsert,
 
 QUIZ_CASE(poincare_layout_cursor_layout_to_point) {
   Layout l;
-  Expression e;
+  OExpression e;
 
   // 1+2
   l = HorizontalLayout::Builder(CodePointLayout::Builder('1'),

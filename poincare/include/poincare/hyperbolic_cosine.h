@@ -23,7 +23,7 @@ class HyperbolicCosineNode final : public HyperbolicTrigonometricFunctionNode {
 
  private:
   // Simplification
-  Expression imageOfNotableValue() const override {
+  OExpression imageOfNotableValue() const override {
     return Rational::Builder(1);
   }
   // Layout
@@ -32,8 +32,8 @@ class HyperbolicCosineNode final : public HyperbolicTrigonometricFunctionNode {
                    int numberOfSignificantDigits) const override;
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue) override;
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext) override;
   // Evaluation
   template <typename T>
@@ -61,8 +61,8 @@ class HyperbolicCosine final
   using ExpressionBuilder::ExpressionBuilder;
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue);
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext);
 };
 

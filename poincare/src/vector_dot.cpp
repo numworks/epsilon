@@ -12,7 +12,7 @@ int VectorDotNode::numberOfChildren() const {
   return VectorDot::s_functionHelper.numberOfChildren();
 }
 
-Expression VectorDotNode::shallowReduce(
+OExpression VectorDotNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return VectorDot(this).shallowReduce(reductionContext);
 }
@@ -47,9 +47,9 @@ Evaluation<T> VectorDotNode::templatedApproximate(
       static_cast<MatrixComplex<T>*>(&input1)));
 }
 
-Expression VectorDot::shallowReduce(ReductionContext reductionContext) {
+OExpression VectorDot::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -62,8 +62,8 @@ Expression VectorDot::shallowReduce(ReductionContext reductionContext) {
           .forbidVectorProduct()) {
     return replaceWithUndefinedInPlace();
   }
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
+  OExpression c0 = childAtIndex(0);
+  OExpression c1 = childAtIndex(1);
   if (c0.type() == ExpressionNode::Type::Matrix &&
       c1.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixChild0 = static_cast<Matrix&>(c0);
@@ -74,7 +74,7 @@ Expression VectorDot::shallowReduce(ReductionContext reductionContext) {
         matrixChild0.numberOfChildren() != matrixChild1.numberOfChildren()) {
       return replaceWithUndefinedInPlace();
     }
-    Expression a = matrixChild0.dot(&matrixChild1, reductionContext);
+    OExpression a = matrixChild0.dot(&matrixChild1, reductionContext);
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }

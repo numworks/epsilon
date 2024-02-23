@@ -6,18 +6,18 @@
 
 namespace Poincare {
 
-Expression CDFRangeMethod::shallowReduce(Expression* abscissae,
-                                         const Distribution* distribution,
-                                         Expression* parameters,
-                                         ReductionContext reductionContext,
-                                         Expression* expression) const {
-  Expression x = abscissae[0];
-  Expression y = abscissae[1];
+OExpression CDFRangeMethod::shallowReduce(OExpression* abscissae,
+                                          const Distribution* distribution,
+                                          OExpression* parameters,
+                                          ReductionContext reductionContext,
+                                          OExpression* expression) const {
+  OExpression x = abscissae[0];
+  OExpression y = abscissae[1];
 
   if (x.type() == ExpressionNode::Type::Infinity &&
       x.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
     if (y.type() == ExpressionNode::Type::Infinity) {
-      Expression result = Rational::Builder(
+      OExpression result = Rational::Builder(
           y.isPositive(reductionContext.context()) == TrinaryBoolean::True);
       expression->replaceWithInPlace(result);
       return result;

@@ -35,11 +35,11 @@ class DistributionMethod {
   virtual double EvaluateAtAbscissa(double* x, const Distribution* distribution,
                                     const double* parameters) const = 0;
 
-  virtual Expression shallowReduce(Expression* abscissae,
-                                   const Distribution* distribution,
-                                   Expression* parameters,
-                                   ReductionContext context,
-                                   Expression* expression) const {
+  virtual OExpression shallowReduce(OExpression* abscissae,
+                                    const Distribution* distribution,
+                                    OExpression* parameters,
+                                    ReductionContext context,
+                                    OExpression* expression) const {
     return *expression;
   }
 };

@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-const Expression Context::expressionForSymbolAbstract(
+const OExpression Context::expressionForSymbolAbstract(
     const SymbolAbstract& symbol, bool clone) {
   return protectedExpressionForSymbolAbstract(symbol, clone, nullptr);
 }

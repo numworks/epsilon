@@ -12,7 +12,7 @@ extern "C" {
 namespace Poincare {
 
 bool NonrealNode::derivate(const ReductionContext& reductionContext,
-                           Symbol symbol, Expression symbolValue) {
+                           Symbol symbol, OExpression symbolValue) {
   return true;
 }
 

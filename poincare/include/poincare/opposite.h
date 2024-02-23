@@ -27,7 +27,7 @@ class OppositeNode final : public ExpressionNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryNot(childAtIndex(0)->isPositive(context));
   }
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
 
   // Approximation
@@ -52,7 +52,7 @@ class OppositeNode final : public ExpressionNode {
                    int numberOfSignificantDigits = 0) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     // leftLayoutShape of Opposite is only called from Conjugate
     assert(parent() && parent()->type() == Type::Conjugate);
@@ -69,7 +69,7 @@ class Opposite final : public ExpressionOneChild<Opposite, OppositeNode> {
   static Opposite Builder() {
     return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>();
   }
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

@@ -15,16 +15,16 @@
 
 namespace Poincare {
 
-Expression UnitConvertNode::removeUnit(Expression* unit) {
+OExpression UnitConvertNode::removeUnit(OExpression* unit) {
   /* Warning: removeUnit of a UnitConvert doesn't make much sense but we
    * implement a 'dummy' version since UnitConvert still exists among the
    * reduced expression. We do not return any unit as we do not want the caller
    * to believe the call to removeUnit has succeeded. */
-  *unit = Expression();
+  *unit = OExpression();
   return UnitConvert(this).replaceWithUndefinedInPlace();
 }
 
-Expression UnitConvertNode::shallowBeautify(
+OExpression UnitConvertNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return UnitConvert(this).shallowBeautify(reductionContext);
 }
@@ -48,23 +48,24 @@ void UnitConvert::deepReduceChildren(const ReductionContext& reductionContext) {
   childAtIndex(1).deepReduce(childContext);
 }
 
-Expression UnitConvert::deepBeautify(const ReductionContext& reductionContext) {
-  Expression e = shallowBeautify(reductionContext);
+OExpression UnitConvert::deepBeautify(
+    const ReductionContext& reductionContext) {
+  OExpression e = shallowBeautify(reductionContext);
   ReductionContext childContext = reductionContext;
   childContext.setUnitConversion(UnitConversion::None);
   SimplificationHelper::deepBeautifyChildren(e, childContext);
   return e;
 }
 
-Expression UnitConvert::shallowBeautify(
+OExpression UnitConvert::shallowBeautify(
     const ReductionContext& reductionContext) {
   // Discard cases like 4 -> _m/_km
   {
     ReductionContext reductionContextWithUnits = reductionContext;
     reductionContextWithUnits.setSymbolicComputation(
         SymbolicComputation::ReplaceAllSymbolsWithUndefined);
-    Expression unit;
-    Expression childWithoutUnit = childAtIndex(1).cloneAndReduceAndRemoveUnit(
+    OExpression unit;
+    OExpression childWithoutUnit = childAtIndex(1).cloneAndReduceAndRemoveUnit(
         reductionContextWithUnits, &unit);
     if (childWithoutUnit.isUndefined() || unit.isUninitialized()) {
       // There is no unit on the right
@@ -72,7 +73,7 @@ Expression UnitConvert::shallowBeautify(
     }
   }
   // Find the unit
-  Expression unit;
+  OExpression unit;
   childAtIndex(1).removeUnit(&unit);
   if (unit.isUninitialized()) {
     // There is no unit on the right
@@ -85,7 +86,7 @@ Expression UnitConvert::shallowBeautify(
     Unit unitRef = static_cast<Unit&>(unit);
     if (unitRef.representative()->dimensionVector() ==
         Unit::TemperatureRepresentative::Default().dimensionVector()) {
-      Expression result = Unit::ConvertTemperatureUnits(
+      OExpression result = Unit::ConvertTemperatureUnits(
           childAtIndex(0), unitRef, reductionContext);
       replaceWithInPlace(result);
       return result;
@@ -93,8 +94,8 @@ Expression UnitConvert::shallowBeautify(
   }
 
   // Divide the left member by the new unit
-  Expression divisionUnit;
-  Expression division =
+  OExpression divisionUnit;
+  OExpression division =
       Division::Builder(childAtIndex(0), unit.clone())
           .cloneAndReduceAndRemoveUnit(reductionContext, &divisionUnit);
   if (!divisionUnit.isUninitialized()) {
@@ -105,7 +106,7 @@ Expression UnitConvert::shallowBeautify(
               reductionContext.angleUnit()));
       division =
           Multiplication::Builder(division, divisionUnit, currentAngleUnit);
-      divisionUnit = Expression();
+      divisionUnit = OExpression();
       division =
           division.cloneAndReduceAndRemoveUnit(reductionContext, &divisionUnit);
       if (!divisionUnit.isUninitialized()) {
@@ -116,7 +117,7 @@ Expression UnitConvert::shallowBeautify(
       return replaceWithUndefinedInPlace();
     }
   }
-  Expression result = Multiplication::Builder(division, unit);
+  OExpression result = Multiplication::Builder(division, unit);
   replaceWithInPlace(result);
   ReductionContext childContext = reductionContext;
   childContext.setSymbolicComputation(

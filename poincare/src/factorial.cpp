@@ -16,7 +16,7 @@ namespace Poincare {
 
 // Property
 
-bool FactorialNode::childAtIndexNeedsUserParentheses(const Expression& child,
+bool FactorialNode::childAtIndexNeedsUserParentheses(const OExpression& child,
                                                      int childIndex) const {
   if (child.isNumber() &&
       static_cast<const Number&>(child).isPositive() == TrinaryBoolean::False) {
@@ -43,7 +43,7 @@ bool FactorialNode::childNeedsSystemParenthesesAtSerialization(
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(
+OExpression FactorialNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Factorial(this).shallowReduce(reductionContext);
 }
@@ -80,9 +80,9 @@ size_t FactorialNode::serialize(char* buffer, size_t bufferSize,
   return numberOfChar;
 }
 
-Expression Factorial::shallowReduce(ReductionContext reductionContext) {
+OExpression Factorial::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -92,7 +92,7 @@ Expression Factorial::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
     if (!r.isInteger() || r.isPositive() == TrinaryBoolean::False) {
@@ -117,14 +117,14 @@ Expression Factorial::shallowReduce(ReductionContext reductionContext) {
 }
 
 #if 0
-int Factorial::simplificationOrderGreaterType(const Expression * e) const {
+int Factorial::simplificationOrderGreaterType(const OExpression * e) const {
   if (SimplificationOrder(childAtIndex(0),e) == 0) {
     return 1;
   }
   return SimplificationOrder(childAtIndex(0), e);
 }
 
-int Factorial::simplificationOrderSameType(const Expression * e) const {
+int Factorial::simplificationOrderSameType(const OExpression * e) const {
   return SimplificationOrder(childAtIndex(0), e->childAtIndex(0));
 }
 #endif

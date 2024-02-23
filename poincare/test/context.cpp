@@ -11,7 +11,7 @@ using namespace Poincare;
 
 template <typename T>
 void assert_parsed_expression_approximates_with_value_for_symbol(
-    Expression expression, const char *symbol, T value, T approximation,
+    OExpression expression, const char *symbol, T value, T approximation,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     Poincare::Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
@@ -211,7 +211,7 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
 
   assert_reduce_and_store("[[1]]→a");
   quiz_assert(
-      Symbol::Builder('a').recursivelyMatches(Expression::IsMatrix, &context));
+      Symbol::Builder('a').recursivelyMatches(OExpression::IsMatrix, &context));
 
   /* [[x]]→f(x) expression contains a matrix, so its simplification is going
    * to be interrupted. We thus rather approximate it instead of simplifying it.
@@ -220,10 +220,10 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   assert_reduce_and_store("[[x]]→f(x)");
   quiz_assert(
       Function::Builder("f", 1, Symbol::Builder('x'))
-          .recursivelyMatches(Poincare::Expression::IsMatrix, &context));
+          .recursivelyMatches(Poincare::OExpression::IsMatrix, &context));
   assert_reduce_and_store("0.2*x→g(x)");
   quiz_assert(Function::Builder("g", 1, Rational::Builder(2))
-                  .recursivelyMatches(Expression::IsApproximate, &context));
+                  .recursivelyMatches(OExpression::IsApproximate, &context));
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.mat").destroy();
@@ -248,8 +248,8 @@ QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
 }
 
 template void assert_parsed_expression_approximates_with_value_for_symbol(
-    Poincare::Expression, const char *, float, float,
+    Poincare::OExpression, const char *, float, float,
     Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
 template void assert_parsed_expression_approximates_with_value_for_symbol(
-    Poincare::Expression, const char *, double, double,
+    Poincare::OExpression, const char *, double, double,
     Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);

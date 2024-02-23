@@ -2,13 +2,13 @@
 
 namespace Poincare {
 
-TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type,
+TrinaryBoolean Domain::ExpressionIsIn(const OExpression &expression, Type type,
                                       Context *context) {
   if (expression.deepIsMatrix(context)) {
     return TrinaryBoolean::False;
   }
 
-  if (expression.isUndefined() || Expression::IsInfinity(expression)) {
+  if (expression.isUndefined() || OExpression::IsInfinity(expression)) {
     return TrinaryBoolean::False;
   }
 

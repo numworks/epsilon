@@ -21,7 +21,7 @@ int UndefinedNode::polynomialDegree(Context* context,
 }
 
 bool UndefinedNode::derivate(const ReductionContext& reductionContext,
-                             Symbol symbol, Expression symbolValue) {
+                             Symbol symbol, OExpression symbolValue) {
   return true;
 }
 

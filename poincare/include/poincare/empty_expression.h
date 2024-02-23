@@ -23,7 +23,7 @@ class EmptyExpressionNode final : public ExpressionNode {
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-  Expression removeUnit(Expression* unit) override {
+  OExpression removeUnit(OExpression* unit) override {
     assert(false);
     return ExpressionNode::removeUnit(unit);
   }
@@ -53,13 +53,13 @@ class EmptyExpressionNode final : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class EmptyExpression final : public Expression {
+class EmptyExpression final : public OExpression {
  public:
   static EmptyExpression Builder() {
     return TreeHandle::FixedArityBuilder<EmptyExpression,
                                          EmptyExpressionNode>();
   }
-  EmptyExpression(const EmptyExpressionNode* n) : Expression(n) {}
+  EmptyExpression(const EmptyExpressionNode* n) : OExpression(n) {}
 };
 
 }  // namespace Poincare

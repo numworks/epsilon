@@ -28,7 +28,7 @@ class ListMinimumNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Evaluation
   Evaluation<float> approximate(
@@ -49,7 +49,7 @@ class ListMinimumNode : public ExpressionNode {
 class ListMinimum : public ExpressionOneChild<ListMinimum, ListMinimumNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

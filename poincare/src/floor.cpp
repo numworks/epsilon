@@ -41,13 +41,13 @@ std::complex<T> FloorNode::computeOnComplex(const std::complex<T> c,
   return std::floor(c.real());
 }
 
-Expression FloorNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression FloorNode::shallowReduce(const ReductionContext& reductionContext) {
   return Floor(this).shallowReduce(reductionContext);
 }
 
-Expression Floor::shallowReduce(ReductionContext reductionContext) {
+OExpression Floor::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
@@ -57,13 +57,13 @@ Expression Floor::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = static_cast<Rational&>(c);
     IntegerDivision div =
         Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
     assert(!div.quotient.isOverflow());
-    Expression result = Rational::Builder(div.quotient);
+    OExpression result = Rational::Builder(div.quotient);
     replaceWithInPlace(result);
     return result;
   }

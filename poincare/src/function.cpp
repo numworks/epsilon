@@ -18,7 +18,7 @@ namespace Poincare {
 int FunctionNode::polynomialDegree(Context* context,
                                    const char* symbolName) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(
+  OExpression e = SymbolAbstract::Expand(
       f, context, true,
       SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
@@ -29,9 +29,9 @@ int FunctionNode::polynomialDegree(Context* context,
 
 int FunctionNode::getPolynomialCoefficients(Context* context,
                                             const char* symbolName,
-                                            Expression coefficients[]) const {
+                                            OExpression coefficients[]) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(
+  OExpression e = SymbolAbstract::Expand(
       f, context, true,
       SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
@@ -44,7 +44,7 @@ int FunctionNode::getVariables(Context* context, isVariableTest isVariable,
                                char* variables, int maxSizeVariable,
                                int nextVariableIndex) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(
+  OExpression e = SymbolAbstract::Expand(
       f, context, true,
       SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
@@ -61,13 +61,13 @@ size_t FunctionNode::serialize(char* buffer, size_t bufferSize,
                                      numberOfSignificantDigits, m_name);
 }
 
-Expression FunctionNode::shallowReduce(
+OExpression FunctionNode::shallowReduce(
     const ReductionContext& reductionContext) {
   // This uses Symbol::shallowReduce
   return Function(this).shallowReduce(reductionContext);
 }
 
-Expression FunctionNode::deepReplaceReplaceableSymbols(
+OExpression FunctionNode::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return Function(this).deepReplaceReplaceableSymbols(
@@ -88,7 +88,7 @@ template <typename T>
 Evaluation<T> FunctionNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(
+  OExpression e = SymbolAbstract::Expand(
       f, approximationContext.context(), true,
       SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (e.isUninitialized()) {
@@ -97,7 +97,7 @@ Evaluation<T> FunctionNode::templatedApproximate(
   return e.node()->approximate(T(), approximationContext);
 }
 
-Function Function::Builder(const char* name, size_t length, Expression child) {
+Function Function::Builder(const char* name, size_t length, OExpression child) {
   Function f = SymbolAbstract::Builder<Function, FunctionNode>(name, length);
   if (!child.isUninitialized()) {
     f.replaceChildAtIndexInPlace(0, child);
@@ -105,7 +105,7 @@ Function Function::Builder(const char* name, size_t length, Expression child) {
   return f;
 }
 
-Expression Function::shallowReduce(ReductionContext reductionContext) {
+OExpression Function::shallowReduce(ReductionContext reductionContext) {
   SymbolicComputation symbolicComputation =
       reductionContext.symbolicComputation();
   if (symbolicComputation ==
@@ -114,7 +114,7 @@ Expression Function::shallowReduce(ReductionContext reductionContext) {
   }
 
   // Bubble up dependencies of children
-  Expression e =
+  OExpression e =
       SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
   if (!e.isUninitialized()) {
     return e;
@@ -139,7 +139,7 @@ Expression Function::shallowReduce(ReductionContext reductionContext) {
    * Symbols will be handled in deepReduce, which is aware of parametered
    * expressions context. For example, with 1->x and 1+x->f(x), f(x) within
    * diff(f(x),x,1) should be reduced to 1+x instead of 2. */
-  Expression result = SymbolAbstract::Expand(
+  OExpression result = SymbolAbstract::Expand(
       *this, reductionContext.context(), true,
       SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (result.isUninitialized()) {
@@ -159,7 +159,7 @@ Expression Function::shallowReduce(ReductionContext reductionContext) {
   return result.deepReduce(reductionContext);
 }
 
-Expression Function::deepReplaceReplaceableSymbols(
+OExpression Function::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   /* This symbolic computation parameters make no sense in this method.
@@ -197,7 +197,7 @@ Expression Function::deepReplaceReplaceableSymbols(
                                    symbolicComputation);
   assert(isCircularFromHere == TrinaryBoolean::False);
 
-  Expression e = context->expressionForSymbolAbstract(*this, true);
+  OExpression e = context->expressionForSymbolAbstract(*this, true);
   /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent
    * to ReplaceAllDefinedSymbolsWithDefinition, like in shallowReduce. */
   if (e.isUninitialized()) {

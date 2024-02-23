@@ -75,7 +75,7 @@ class Conic {
 class CartesianConic : public Conic {
  public:
   // Extract A,B,C,D,E,F parameters
-  CartesianConic(const Expression e, Context* context,
+  CartesianConic(const OExpression e, Context* context,
                  Preferences::ComplexFormat complexFormat, const char* x = "x",
                  const char* y = "y");
   double getEccentricity() const override;
@@ -133,7 +133,7 @@ class CartesianConic : public Conic {
 
 class PolarConic : public Conic {
  public:
-  PolarConic(const Expression& e, Context* context,
+  PolarConic(const OExpression& e, Context* context,
              Preferences::ComplexFormat complexFormat, const char* theta = "θ");
 
  private:
@@ -144,7 +144,7 @@ class PolarConic : public Conic {
 
 class ParametricConic : public Conic {
  public:
-  ParametricConic(const Expression& e, Context* context,
+  ParametricConic(const OExpression& e, Context* context,
                   Preferences::ComplexFormat complexFormat,
                   const char* symbol = "t");
 

@@ -52,8 +52,8 @@ bool NormalDistribution::MuAndSigmaAreOK(T mu, T sigma) {
 }
 
 bool NormalDistribution::ExpressionMuAndSigmaAreOK(bool* result,
-                                                   const Expression& mu,
-                                                   const Expression& sigma,
+                                                   const OExpression& mu,
+                                                   const OExpression& sigma,
                                                    Context* context) {
   return Domain::ExpressionsAreIn(result, mu, Domain::Type::R, sigma,
                                   Domain::Type::RPlusStar, context);

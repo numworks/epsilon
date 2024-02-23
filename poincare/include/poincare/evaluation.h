@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-class Expression;
+class OExpression;
 template <typename T>
 class Evaluation;
 
@@ -37,7 +37,7 @@ class EvaluationNode : public TreeNode {
   virtual bool isUndefined() const = 0;
   virtual std::complex<T> complexAtIndex(int index) const = 0;
   virtual T toScalar() const { return NAN; }
-  virtual Expression complexToExpression(
+  virtual OExpression complexToExpression(
       Preferences::ComplexFormat complexFormat) const = 0;
 
   bool isDefinedScalar() const;
@@ -78,7 +78,7 @@ class Evaluation : public TreeHandle {
     return node()->complexAtIndex(index);
   }
   T toScalar() const { return node()->toScalar(); }
-  Expression complexToExpression(
+  OExpression complexToExpression(
       Preferences::ComplexFormat complexFormat) const;
 
   bool isDefinedScalar() const { return node()->isDefinedScalar(); }

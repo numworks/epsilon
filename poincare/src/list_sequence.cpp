@@ -10,13 +10,13 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper ListSequence::s_functionHelper;
+constexpr OExpression::FunctionHelper ListSequence::s_functionHelper;
 
 int ListSequenceNode::numberOfChildren() const {
   return ListSequence::s_functionHelper.numberOfChildren();
 }
 
-Expression ListSequenceNode::shallowReduce(
+OExpression ListSequenceNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListSequence(this).shallowReduce(reductionContext);
 }
@@ -47,20 +47,20 @@ Evaluation<T> ListSequenceNode::templatedApproximate(
   return std::move(list);
 }
 
-Expression ListSequence::UntypedBuilder(Expression children) {
+OExpression ListSequence::UntypedBuilder(OExpression children) {
   assert(children.type() == ExpressionNode::Type::List);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
-    return Expression();
+    return OExpression();
   }
   return Builder(children.childAtIndex(0),
                  children.childAtIndex(1).convert<Symbol>(),
                  children.childAtIndex(2));
 }
 
-Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
+OExpression ListSequence::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -72,8 +72,8 @@ Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
     }
   }
   assert(childAtIndex(1).type() == ExpressionNode::Type::Symbol);
-  Expression function = childAtIndex(0);
-  Expression variableExpression = childAtIndex(1);
+  OExpression function = childAtIndex(0);
+  OExpression variableExpression = childAtIndex(1);
   Symbol variable = static_cast<Symbol&>(variableExpression);
 
   int upperBound;
@@ -90,7 +90,7 @@ Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
 
   List finalList = List::Builder();
   for (int i = 1; i <= upperBound; i++) {
-    Expression newListElement = function.clone().replaceSymbolWithExpression(
+    OExpression newListElement = function.clone().replaceSymbolWithExpression(
         variable, BasedInteger::Builder(Integer(i)));
     finalList.addChildAtIndexInPlace(newListElement, i - 1, i - 1);
     newListElement.deepReduce(reductionContext);

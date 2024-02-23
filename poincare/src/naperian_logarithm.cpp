@@ -20,14 +20,15 @@ size_t NaperianLogarithmNode::serialize(
       NaperianLogarithm::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression NaperianLogarithmNode::shallowReduce(
+OExpression NaperianLogarithmNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return NaperianLogarithm(this).shallowReduce(reductionContext);
 }
 
-Expression NaperianLogarithm::shallowReduce(ReductionContext reductionContext) {
+OExpression NaperianLogarithm::shallowReduce(
+    ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,

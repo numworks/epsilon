@@ -18,7 +18,7 @@ size_t ListMaximumNode::serialize(char* buffer, size_t bufferSize,
       ListMaximum::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ListMaximumNode::shallowReduce(
+OExpression ListMaximumNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListMaximum(this).shallowReduce(reductionContext);
 }
@@ -34,14 +34,14 @@ Evaluation<T> ListMaximumNode::templatedApproximate(
       approximationContext, false);
 }
 
-Expression ListMaximum::shallowReduce(ReductionContext reductionContext) {
-  Expression child = childAtIndex(0);
+OExpression ListMaximum::shallowReduce(ReductionContext reductionContext) {
+  OExpression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List ||
       child.numberOfChildren() == 0 ||
-      recursivelyMatches(Expression::IsUndefined, nullptr)) {
+      recursivelyMatches(OExpression::IsUndefined, nullptr)) {
     return replaceWithUndefinedInPlace();
   }
-  Expression result =
+  OExpression result =
       static_cast<List&>(child).extremum(reductionContext, false);
   if (result.isUndefined()) {
     // Let approximation handle this

@@ -21,7 +21,7 @@ size_t JuniorExpressionNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  Expression e = PoincareJ::ToPoincareExpression(tree());
+  OExpression e = PoincareJ::ToPoincareExpression(tree());
   return e.node()->serialize(buffer, bufferSize, floatDisplayMode,
                              numberOfSignificantDigits);
 }
@@ -71,7 +71,7 @@ JuniorExpression JuniorExpression::Builder(PoincareJ::Tree* tree) {
   return result;
 }
 
-JuniorExpression JuniorExpression::Juniorize(Expression e) {
+JuniorExpression JuniorExpression::Juniorize(OExpression e) {
   if (e.isUninitialized() ||
       e.type() == ExpressionNode::Type::JuniorExpression) {
     // e is already a junior expression

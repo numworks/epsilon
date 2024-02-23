@@ -32,7 +32,7 @@ class RationalNode final : public NumberNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  // Expression subclassing
+  // OExpression subclassing
   Type type() const override { return Type::Rational; }
   TrinaryBoolean isPositive(Context* context) const override {
     return BinaryToTrinaryBool(!m_negative);
@@ -88,8 +88,9 @@ class RationalNode final : public NumberNode {
  private:
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     assert(!m_negative);
     return isInteger() ? LayoutShape::Integer : LayoutShape::Fraction;
@@ -150,7 +151,7 @@ class Rational final : public Number {
   }
 
   // Simplification
-  Expression shallowReduce();
+  OExpression shallowReduce();
 
  private:
   static Rational Builder(const native_uint_t* i, uint8_t numeratorSize,
@@ -158,8 +159,8 @@ class Rational final : public Number {
                           bool negative);
 
   /* Simplification */
-  Expression shallowBeautify();
-  Expression denominator() const;
+  OExpression shallowBeautify();
+  OExpression denominator() const;
 };
 
 }  // namespace Poincare

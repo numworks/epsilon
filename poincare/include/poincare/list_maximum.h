@@ -28,7 +28,7 @@ class ListMaximumNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -48,7 +48,7 @@ class ListMaximumNode : public ExpressionNode {
 class ListMaximum : public ExpressionOneChild<ListMaximum, ListMaximumNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

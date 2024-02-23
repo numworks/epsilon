@@ -23,7 +23,7 @@ class ListSequenceNode final : public ParameteredExpressionNode {
 
  private:
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Evaluation
   Evaluation<float> approximate(
@@ -53,16 +53,16 @@ class ListSequenceNode final : public ParameteredExpressionNode {
 class ListSequence : public ParameteredExpression {
  public:
   ListSequence(const ListSequenceNode* n) : ParameteredExpression(n) {}
-  static ListSequence Builder(Expression function, Symbol variable,
-                              Expression variableUpperBound) {
+  static ListSequence Builder(OExpression function, Symbol variable,
+                              OExpression variableUpperBound) {
     return TreeHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(
         {function, variable, variableUpperBound});
   }
-  static Expression UntypedBuilder(Expression children);
-  constexpr static Expression::FunctionHelper s_functionHelper =
-      Expression::FunctionHelper("sequence", 3, &UntypedBuilder);
+  static OExpression UntypedBuilder(OExpression children);
+  constexpr static OExpression::FunctionHelper s_functionHelper =
+      OExpression::FunctionHelper("sequence", 3, &UntypedBuilder);
 
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

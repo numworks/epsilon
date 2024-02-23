@@ -20,9 +20,10 @@ class UnitConvertNode final : public RightwardsArrowExpressionNode {
   Type type() const override { return Type::UnitConvert; }
 
  private:
-  Expression removeUnit(Expression* unit) override;
+  OExpression removeUnit(OExpression* unit) override;
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
   // Evalutation
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -45,14 +46,14 @@ class UnitConvert final
 
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  // Expression
+  // OExpression
   void deepReduceChildren(const ReductionContext& reductionContext);
-  Expression deepBeautify(const ReductionContext& reductionContext);
-  Expression shallowBeautify(const ReductionContext& reductionContext);
+  OExpression deepBeautify(const ReductionContext& reductionContext);
+  OExpression shallowBeautify(const ReductionContext& reductionContext);
 
  private:
   UnitConvertNode* node() const {
-    return static_cast<UnitConvertNode*>(Expression::node());
+    return static_cast<UnitConvertNode*>(OExpression::node());
   }
 };
 

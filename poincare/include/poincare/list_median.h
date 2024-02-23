@@ -19,7 +19,7 @@ class ListMedianNode : public ListFunctionWithOneOrTwoParametersNode {
   Type type() const override { return Type::ListMedian; }
 
  private:
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -40,7 +40,7 @@ class ListMedian
     : public ExpressionUpToTwoChildren<ListMedian, ListMedianNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 
  private:
   void approximationHelper(int* index1, int* index2, Context* context,

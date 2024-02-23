@@ -12,7 +12,7 @@
 
 using namespace Poincare;
 
-void assert_greater(Expression e1, Expression e2) {
+void assert_greater(OExpression e1, OExpression e2) {
   /* ExpressionNode::SimplificationOrder can be used directly (because node
    * getter is private) so we build an addition whose we sort children and we
    * check that the children order is the expected one. */
@@ -86,8 +86,8 @@ QUIZ_CASE(poincare_expression_order_mix) {
                  Decimal::Builder("3", -2));
 }
 
-void assert_multiplication_or_addition_is_ordered_as(Expression e1,
-                                                     Expression e2) {
+void assert_multiplication_or_addition_is_ordered_as(OExpression e1,
+                                                     OExpression e2) {
   Shared::GlobalContext globalContext;
   if (e1.type() == ExpressionNode::Type::Multiplication) {
     static_cast<Multiplication &>(e1).sortChildrenInPlace(
@@ -109,51 +109,51 @@ void assert_multiplication_or_addition_is_ordered_as(Expression e1,
 QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   {
     // 2 * 5 -> 2 * 5
-    Expression e1 =
+    OExpression e1 =
         Multiplication::Builder(Rational::Builder(2), Rational::Builder(5));
     assert_multiplication_or_addition_is_ordered_as(e1, e1);
   }
   {
     // 5 * 2 -> 2 * 5
-    Expression e1 =
+    OExpression e1 =
         Multiplication::Builder(Rational::Builder(5), Rational::Builder(2));
-    Expression e2 =
+    OExpression e2 =
         Multiplication::Builder(Rational::Builder(2), Rational::Builder(5));
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // 1 + 2 + 0 -> 2 + 1 + 0
-    Expression e1 = Addition::Builder(
+    OExpression e1 = Addition::Builder(
         {Rational::Builder(1), Rational::Builder(2), Rational::Builder(0)});
-    Expression e2 = Addition::Builder(
+    OExpression e2 = Addition::Builder(
         {Rational::Builder(2), Rational::Builder(1), Rational::Builder(0)});
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // pi + i + e -> e + pi + i
-    Expression pi = Constant::PiBuilder();
-    Expression i = Constant::ComplexIBuilder();
-    Expression e = Constant::ExponentialEBuilder();
-    Expression e1 = Addition::Builder({pi.clone(), i.clone(), e.clone()});
-    Expression e2 = Addition::Builder({e, pi, i});
+    OExpression pi = Constant::PiBuilder();
+    OExpression i = Constant::ComplexIBuilder();
+    OExpression e = Constant::ExponentialEBuilder();
+    OExpression e1 = Addition::Builder({pi.clone(), i.clone(), e.clone()});
+    OExpression e2 = Addition::Builder({e, pi, i});
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // root(3) * 2 -> 2 * root(3)
-    Expression e1 = Multiplication::Builder(
+    OExpression e1 = Multiplication::Builder(
         SquareRoot::Builder(Rational::Builder(3)), Rational::Builder(2));
-    Expression e2 = Multiplication::Builder(
+    OExpression e2 = Multiplication::Builder(
         Rational::Builder(2), SquareRoot::Builder(Rational::Builder(3)));
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // c + b^2 + a^2 + a -> a^2 + a + b^2 + c
-    Expression e1 = Addition::Builder(
+    OExpression e1 = Addition::Builder(
         {Symbol::Builder('c'),
          Power::Builder(Symbol::Builder('b'), Rational::Builder(2)),
          Power::Builder(Symbol::Builder('a'), Rational::Builder(2)),
          Symbol::Builder('a')});
-    Expression e2 = Addition::Builder(
+    OExpression e2 = Addition::Builder(
         {Power::Builder(Symbol::Builder('a'), Rational::Builder(2)),
          Symbol::Builder('a'),
          Power::Builder(Symbol::Builder('b'), Rational::Builder(2)),
@@ -162,75 +162,75 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   }
   {
     // 3*x^2 + 2*x^3 -> 2*x^3 + 3*x^2
-    Expression child1 = Multiplication::Builder(
+    OExpression child1 = Multiplication::Builder(
         Rational::Builder(2),
         Power::Builder(Symbol::Builder('x'), Rational::Builder(3)));
-    Expression child2 = Multiplication::Builder(
+    OExpression child2 = Multiplication::Builder(
         Rational::Builder(3),
         Power::Builder(Symbol::Builder('x'), Rational::Builder(2)));
-    Expression e1 = Addition::Builder(child2.clone(), child1.clone());
-    Expression e2 = Addition::Builder(child1, child2);
+    OExpression e1 = Addition::Builder(child2.clone(), child1.clone());
+    OExpression e2 = Addition::Builder(child1, child2);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // 2*x + 3*x -> 3*x + 2*x
-    Expression child1 =
+    OExpression child1 =
         Multiplication::Builder(Rational::Builder(3), Symbol::Builder('x'));
-    Expression child2 =
+    OExpression child2 =
         Multiplication::Builder(Rational::Builder(2), Symbol::Builder('x'));
-    Expression e1 = Addition::Builder(child2.clone(), child1.clone());
-    Expression e2 = Addition::Builder(child1, child2);
+    OExpression e1 = Addition::Builder(child2.clone(), child1.clone());
+    OExpression e2 = Addition::Builder(child1, child2);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // pi^b * pi^a -> pi^a * pi^b
-    Expression child1 =
+    OExpression child1 =
         Power::Builder(Constant::PiBuilder(), Symbol::Builder('a'));
-    Expression child2 =
+    OExpression child2 =
         Power::Builder(Constant::PiBuilder(), Symbol::Builder('b'));
-    Expression e1 = Multiplication::Builder(child2.clone(), child1.clone());
-    Expression e2 = Multiplication::Builder(child1, child2);
+    OExpression e1 = Multiplication::Builder(child2.clone(), child1.clone());
+    OExpression e2 = Multiplication::Builder(child1, child2);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // pi^3 * pi^2 -> pi^2 * pi^3
-    Expression child1 =
+    OExpression child1 =
         Power::Builder(Constant::PiBuilder(), Rational::Builder(2));
-    Expression child2 =
+    OExpression child2 =
         Power::Builder(Constant::PiBuilder(), Rational::Builder(3));
-    Expression e1 = Multiplication::Builder(child2.clone(), child1.clone());
-    Expression e2 = Multiplication::Builder(child1, child2);
+    OExpression e1 = Multiplication::Builder(child2.clone(), child1.clone());
+    OExpression e2 = Multiplication::Builder(child1, child2);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // 1 + Matrix1 + 2 -> 1 + 2 + Matrix1
-    Expression child1 = Rational::Builder(1);
-    Expression child2 = Rational::Builder(2);
-    Expression childMatrix = Matrix::Builder();
+    OExpression child1 = Rational::Builder(1);
+    OExpression child2 = Rational::Builder(2);
+    OExpression childMatrix = Matrix::Builder();
     static_cast<Matrix &>(childMatrix)
         .addChildAtIndexInPlace(Rational::Builder(3), 0, 0);
-    Expression e1 = Multiplication::Builder(child2.clone(), childMatrix.clone(),
-                                            child1.clone());
-    Expression e2 = Multiplication::Builder(child1.clone(), child2.clone(),
-                                            childMatrix.clone());
+    OExpression e1 = Multiplication::Builder(
+        child2.clone(), childMatrix.clone(), child1.clone());
+    OExpression e2 = Multiplication::Builder(child1.clone(), child2.clone(),
+                                             childMatrix.clone());
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
 
   {
     // 1 + Matrix1 + Matrix2 + 2 -> 1 + 2 + Matrix1 + Matrix2
-    Expression child1 = Rational::Builder(1);
-    Expression child2 = Rational::Builder(2);
-    Expression childMatrix1 = Matrix::Builder();
+    OExpression child1 = Rational::Builder(1);
+    OExpression child2 = Rational::Builder(2);
+    OExpression childMatrix1 = Matrix::Builder();
     static_cast<Matrix &>(childMatrix1)
         .addChildAtIndexInPlace(Rational::Builder(3), 0, 0);
-    Expression childMatrix2 = Matrix::Builder();
+    OExpression childMatrix2 = Matrix::Builder();
     static_cast<Matrix &>(childMatrix2)
         .addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
 
-    Expression e1 =
+    OExpression e1 =
         Multiplication::Builder({child2.clone(), childMatrix1.clone(),
                                  childMatrix2.clone(), child1.clone()});
-    Expression e2 =
+    OExpression e2 =
         Multiplication::Builder({child1.clone(), child2.clone(),
                                  childMatrix1.clone(), childMatrix2.clone()});
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
@@ -238,15 +238,15 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
 
   {
     // ∑Matrix + i  -> i + ∑Matrix
-    Expression childMatrix = Matrix::Builder();
+    OExpression childMatrix = Matrix::Builder();
     static_cast<Matrix &>(childMatrix)
         .addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
-    Expression child1 =
+    OExpression child1 =
         Sum::Builder(childMatrix, Symbol::Builder('n'), Rational::Builder(0),
                      Rational::Builder(0));
-    Expression child2 = Symbol::Builder('i');
-    Expression e1 = Addition::Builder(child1.clone(), child2.clone());
-    Expression e2 = Addition::Builder(child2, child1);
+    OExpression child2 = Symbol::Builder('i');
+    OExpression e1 = Addition::Builder(child1.clone(), child2.clone());
+    OExpression e2 = Addition::Builder(child2, child1);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
 }

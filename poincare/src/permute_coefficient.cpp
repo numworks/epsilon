@@ -28,7 +28,7 @@ size_t PermuteCoefficientNode::serialize(
       PermuteCoefficient::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression PermuteCoefficientNode::shallowReduce(
+OExpression PermuteCoefficientNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return PermuteCoefficient(this).shallowReduce(reductionContext);
 }
@@ -62,10 +62,10 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(
       });
 }
 
-Expression PermuteCoefficient::shallowReduce(
+OExpression PermuteCoefficient::shallowReduce(
     ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -75,8 +75,8 @@ Expression PermuteCoefficient::shallowReduce(
       return e;
     }
   }
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
+  OExpression c0 = childAtIndex(0);
+  OExpression c1 = childAtIndex(1);
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.isInteger() || r0.isPositive() == TrinaryBoolean::False) {
@@ -99,7 +99,7 @@ Expression PermuteCoefficient::shallowReduce(
   Integer n = r0.unsignedIntegerNumerator();
   Integer k = r1.unsignedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    Expression result = Rational::Builder(0);
+    OExpression result = Rational::Builder(0);
     replaceWithInPlace(result);
     return result;
   }
@@ -116,7 +116,7 @@ Expression PermuteCoefficient::shallowReduce(
     result = Integer::Multiplication(result, factor);
   }
   assert(!result.isOverflow());  // < permute(k_maxNValue, k_maxNValue-1)~10^158
-  Expression rationalResult = Rational::Builder(result);
+  OExpression rationalResult = Rational::Builder(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }

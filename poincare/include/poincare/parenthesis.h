@@ -25,7 +25,7 @@ class ParenthesisNode final : public ExpressionNode {
     return childAtIndex(0)->isNull(context);
   }
   Type type() const override { return Type::Parenthesis; }
-  Expression removeUnit(Expression* unit) override {
+  OExpression removeUnit(OExpression* unit) override {
     assert(false);
     return ExpressionNode::removeUnit(unit);
   }
@@ -35,7 +35,7 @@ class ParenthesisNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };
@@ -62,8 +62,8 @@ class Parenthesis final
     : public ExpressionOneChild<Parenthesis, ParenthesisNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

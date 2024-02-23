@@ -20,7 +20,7 @@ size_t RoundNode::serialize(char* buffer, size_t bufferSize,
       Round::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression RoundNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression RoundNode::shallowReduce(const ReductionContext& reductionContext) {
   return Round(this).shallowReduce(reductionContext);
 }
 
@@ -48,13 +48,13 @@ Evaluation<T> RoundNode::templatedApproximate(
       });
 }
 
-Expression Round::shallowReduce(ReductionContext reductionContext) {
+OExpression Round::shallowReduce(ReductionContext reductionContext) {
   {
     if (numberOfChildren() == 2 && childAtIndex(1).hasUnit()) {
       // Number of digits cannot have units
       return replaceWithUndefinedInPlace();
     }
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
@@ -64,7 +64,7 @@ Expression Round::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression secondChild;
+  OExpression secondChild;
   if (numberOfChildren() == 1) {
     secondChild = Rational::Builder(0);
   } else {

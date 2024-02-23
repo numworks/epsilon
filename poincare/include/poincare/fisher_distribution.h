@@ -56,9 +56,9 @@ class FisherDistribution final : public ContinuousDistribution {
     return D1AndD2AreOK(parameters[0], parameters[1]);
   }
 
-  static bool ExpressionD1AndD2AreOK(bool* result, const Expression& d1,
-                                     const Expression& d2, Context* context);
-  bool expressionParametersAreOK(bool* result, const Expression* parameters,
+  static bool ExpressionD1AndD2AreOK(bool* result, const OExpression& d1,
+                                     const OExpression& d2, Context* context);
+  bool expressionParametersAreOK(bool* result, const OExpression* parameters,
                                  Context* context) const override {
     return ExpressionD1AndD2AreOK(result, parameters[0], parameters[1],
                                   context);

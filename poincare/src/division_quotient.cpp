@@ -26,7 +26,7 @@ TrinaryBoolean DivisionQuotientNode::isPositive(Context *context) const {
   return BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
 }
 
-Expression DivisionQuotientNode::shallowReduce(
+OExpression DivisionQuotientNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return DivisionQuotient(this).shallowReduce(reductionContext);
 }
@@ -59,9 +59,9 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(
       });
 }
 
-Expression DivisionQuotient::shallowReduce(ReductionContext reductionContext) {
+OExpression DivisionQuotient::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -71,8 +71,8 @@ Expression DivisionQuotient::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
+  OExpression c0 = childAtIndex(0);
+  OExpression c1 = childAtIndex(1);
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.isInteger()) {
@@ -94,12 +94,12 @@ Expression DivisionQuotient::shallowReduce(ReductionContext reductionContext) {
 
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
-  Expression result = Reduce(a, b);
+  OExpression result = Reduce(a, b);
   replaceWithInPlace(result);
   return result;
 }
 
-Expression DivisionQuotient::Reduce(const Integer &a, const Integer &b) {
+OExpression DivisionQuotient::Reduce(const Integer &a, const Integer &b) {
   if (b.isZero()) {
     return Infinity::Builder(a.isNegative());
   }

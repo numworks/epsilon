@@ -12,7 +12,7 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order,
                                              Context* context,
                                              bool canSwapMatrices,
                                              bool canContainMatrices) {
-  Expression reference(this);
+  OExpression reference(this);
   const int childrenCount = reference.numberOfChildren();
   for (int i = 1; i < childrenCount; i++) {
     bool isSorted = true;
@@ -22,9 +22,9 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order,
       ExpressionNode* cj = childAtIndex(j);
       ExpressionNode* cj1 = childAtIndex(j + 1);
       bool cjIsMatrix =
-          Expression(cj).deepIsMatrix(context, canContainMatrices);
+          OExpression(cj).deepIsMatrix(context, canContainMatrices);
       bool cj1IsMatrix =
-          Expression(cj1).deepIsMatrix(context, canContainMatrices);
+          OExpression(cj1).deepIsMatrix(context, canContainMatrices);
       bool cj1GreaterThanCj = order(cj, cj1) > 0;
       if ((cjIsMatrix &&
            !cj1IsMatrix) ||  // we always put matrices at the end of expressions
@@ -40,10 +40,10 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order,
   }
 }
 
-Expression NAryExpressionNode::squashUnaryHierarchyInPlace() {
+OExpression NAryExpressionNode::squashUnaryHierarchyInPlace() {
   NAryExpression reference = NAryExpression(this);
   if (reference.numberOfChildren() == 1) {
-    Expression child = reference.childAtIndex(0);
+    OExpression child = reference.childAtIndex(0);
     reference.replaceWithInPlace(child);
     return child;
   }
@@ -55,7 +55,7 @@ void NAryExpression::mergeSameTypeChildrenInPlace() {
   ExpressionNode::Type parentType = type();
   int i = 0;
   while (i < numberOfChildren()) {
-    Expression c = childAtIndex(i);
+    OExpression c = childAtIndex(i);
     if (c.type() != parentType) {
       i++;
     } else {
@@ -64,11 +64,11 @@ void NAryExpression::mergeSameTypeChildrenInPlace() {
   }
 }
 
-Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
+OExpression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
     const ReductionContext& reductionContext) {
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; ++i) {
-    Expression c = childAtIndex(i);
+    OExpression c = childAtIndex(i);
     if (c.deepIsMatrix(reductionContext.context(),
                        reductionContext.shouldCheckMatrices())) {
       return replaceWithUndefinedInPlace();
@@ -101,17 +101,17 @@ Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
       return replaceWithUndefinedInPlace();
     }
   }
-  return Expression();
+  return OExpression();
 }
 
-Expression NAryExpression::combineComplexCartesians(
+OExpression NAryExpression::combineComplexCartesians(
     ComplexOperator complexOperator, ReductionContext reductionContext) {
   /* Let's bubble up the complex cartesian if possible.
    * Children are sorted so ComplexCartesian nodes are at the end. */
   int currentNChildren = numberOfChildren();
   if (childAtIndex(currentNChildren - 1).type() !=
       ExpressionNode::Type::ComplexCartesian) {
-    return Expression();
+    return OExpression();
   }
   /* We need to shallow reduce with target for analysis otherwise the
    * combination of complex might not be well reduced. */
@@ -124,7 +124,7 @@ Expression NAryExpression::combineComplexCartesians(
   child.imag().shallowReduce(contextForAnalysis);
   while (i > 0) {
     i--;
-    Expression c = childAtIndex(i);
+    OExpression c = childAtIndex(i);
     if (c.type() != ExpressionNode::Type::ComplexCartesian) {
       if (!c.isReal(reductionContext.context(),
                     reductionContext.shouldCheckMatrices())) {
@@ -145,7 +145,7 @@ Expression NAryExpression::combineComplexCartesians(
     return shallowReduce(reductionContext);
   }
 
-  return Expression();
+  return OExpression();
 }
 
 }  // namespace Poincare

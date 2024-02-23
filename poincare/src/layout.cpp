@@ -72,7 +72,7 @@ size_t Layout::serializeParsedExpression(char *buffer, size_t bufferSize,
     return 0;
   }
   serializeForParsing(buffer, bufferSize);
-  Poincare::Expression e = Poincare::Expression::Parse(buffer, context);
+  Poincare::OExpression e = Poincare::OExpression::Parse(buffer, context);
   if (e.isUninitialized()) {
     buffer[0] = 0;
     return 0;

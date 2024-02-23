@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-Expression ListMedianNode::shallowReduce(
+OExpression ListMedianNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListMedian(this).shallowReduce(reductionContext);
 }
@@ -27,10 +27,10 @@ Evaluation<T> ListMedianNode::templatedApproximate(
   return Complex<T>::Builder(dataset.median());
 }
 
-Expression ListMedian::shallowReduce(ReductionContext reductionContext) {
+OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
   ApproximationContext approximationContext(reductionContext, true);
   for (int k = 0; k < numberOfChildren(); k++) {
-    Expression listChild = childAtIndex(k);
+    OExpression listChild = childAtIndex(k);
     int n = listChild.numberOfChildren();
     for (int i = 0; i < n; i++) {
       if (listChild.childAtIndex(i).isUndefined()) {
@@ -59,12 +59,12 @@ Expression ListMedian::shallowReduce(ReductionContext reductionContext) {
     return replaceWithUndefinedInPlace();
   }
   if (upperMedianIndex == lowerMedianIndex) {
-    Expression e = childAtIndex(0).childAtIndex(upperMedianIndex);
+    OExpression e = childAtIndex(0).childAtIndex(upperMedianIndex);
     replaceWithInPlace(e);
     return e;
   }
-  Expression a = childAtIndex(0).childAtIndex(upperMedianIndex),
-             b = childAtIndex(0).childAtIndex(lowerMedianIndex);
+  OExpression a = childAtIndex(0).childAtIndex(upperMedianIndex),
+              b = childAtIndex(0).childAtIndex(lowerMedianIndex);
   Addition sum = Addition::Builder(a, b);
   Division div = Division::Builder(sum, Rational::Builder(2));
   sum.shallowReduce(reductionContext);

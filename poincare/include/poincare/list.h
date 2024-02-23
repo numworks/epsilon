@@ -28,7 +28,7 @@ class ListNode : public ExpressionNode {
   LayoutShape leftLayoutShape() const override { return LayoutShape::Brace; };
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Evaluation
   Evaluation<float> approximate(
@@ -68,25 +68,25 @@ class ListNode : public ExpressionNode {
   uint16_t m_numberOfChildren;
 };
 
-class List : public Expression {
+class List : public OExpression {
   friend class ListNode;
 
  public:
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
-  static Expression Ones(int length);
+  static OExpression Ones(int length);
 
-  List() : Expression() {}
-  List(const ListNode* n) : Expression(n) {}
+  List() : OExpression() {}
+  List(const ListNode* n) : OExpression(n) {}
 
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
 
-  ListNode* node() const { return static_cast<ListNode*>(Expression::node()); }
-  Expression extremum(const ReductionContext& reductionContext, bool minimum);
-  Expression shallowReduce(ReductionContext reductionContext);
+  ListNode* node() const { return static_cast<ListNode*>(OExpression::node()); }
+  OExpression extremum(const ReductionContext& reductionContext, bool minimum);
+  OExpression shallowReduce(ReductionContext reductionContext);
   bool isListOfPoints(Context* context) const;
   template <typename T>
-  Expression approximateAndRemoveUndefAndSort(
+  OExpression approximateAndRemoveUndefAndSort(
       const ApproximationContext& approximationContext) const;
 };
 

@@ -867,9 +867,9 @@ template <typename T>
 void assert_no_duplicates_in_list(const char *expression) {
 #if 0
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, true);
+  OExpression e = parse_expression(expression, &globalContext, true);
   e = ListSort::Builder(e);
-  Expression result =
+  OExpression result =
       e.approximate<T>(ApproximationContext(&globalContext, Cartesian, Radian));
   assert(result.type() == ExpressionNode::Type::List);
   List list = static_cast<List &>(result);

@@ -42,7 +42,7 @@ class MatrixComplexNode final : public Array, public EvaluationNode<T> {
   bool isUndefined() const override {
     return m_numberOfRows == static_cast<uint16_t>(-1);
   }
-  Expression complexToExpression(
+  OExpression complexToExpression(
       Preferences::Preferences::ComplexFormat complexFormat) const override;
 
   // Matrix related functions

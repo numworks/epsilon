@@ -37,14 +37,14 @@ Evaluation<T> DeterminantNode::templatedApproximate(
       static_cast<MatrixComplex<T>&>(input).determinant());
 }
 
-Expression DeterminantNode::shallowReduce(
+OExpression DeterminantNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Determinant(this).shallowReduce(reductionContext);
 }
 
-Expression Determinant::shallowReduce(ReductionContext reductionContext) {
+OExpression Determinant::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -52,7 +52,7 @@ Expression Determinant::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c0 = childAtIndex(0);
+  OExpression c0 = childAtIndex(0);
   // det(A) = undef if A is not a matrix
   if (!c0.deepIsMatrix(reductionContext.context(),
                        reductionContext.shouldCheckMatrices())) {
@@ -61,7 +61,7 @@ Expression Determinant::shallowReduce(ReductionContext reductionContext) {
   if (c0.type() == ExpressionNode::Type::Matrix) {
     Matrix m0 = static_cast<Matrix&>(c0);
     bool couldComputeDeterminant = true;
-    Expression result =
+    OExpression result =
         m0.determinant(reductionContext, &couldComputeDeterminant, true);
     if (couldComputeDeterminant) {
       assert(!result.isUninitialized());

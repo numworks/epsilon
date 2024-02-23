@@ -13,7 +13,7 @@ void assert_next_solution_is(const char* expression, Context* context,
                              const char* otherExpression) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  Expression e = parse_expression(expression, context, false);
+  OExpression e = parse_expression(expression, context, false);
 
   Coordinate2D<double> observed;
   switch (interest) {
@@ -29,7 +29,7 @@ void assert_next_solution_is(const char* expression, Context* context,
     default:
       assert(interest == Interest::Intersection);
       assert(otherExpression);
-      Expression e2 = parse_expression(otherExpression, context, false);
+      OExpression e2 = parse_expression(otherExpression, context, false);
       observed = solver->nextIntersection(e, e2);
   }
 

@@ -34,8 +34,9 @@ class FactorNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   /* Simplification */
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };
@@ -66,9 +67,9 @@ class Factor final : public ExpressionOneChild<Factor, FactorNode> {
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(
       Integer i) const;
 
-  // Expression
-  Expression shallowBeautify(const ReductionContext& reductionContext);
-  Expression shallowReduce(ReductionContext reductionContext);
+  // OExpression
+  OExpression shallowBeautify(const ReductionContext& reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

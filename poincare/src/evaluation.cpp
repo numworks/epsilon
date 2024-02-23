@@ -54,7 +54,7 @@ Evaluation<T> Evaluation<T>::childAtIndex(int i) const {
 }
 
 template <typename T>
-Expression Evaluation<T>::complexToExpression(
+OExpression Evaluation<T>::complexToExpression(
     Preferences::ComplexFormat complexFormat) const {
   return node()->complexToExpression(complexFormat);
 }
@@ -69,9 +69,9 @@ template bool EvaluationNode<float>::isListOfDefinedPoints() const;
 template bool EvaluationNode<double>::isListOfDefinedPoints() const;
 template Evaluation<float> Evaluation<float>::childAtIndex(int i) const;
 template Evaluation<double> Evaluation<double>::childAtIndex(int i) const;
-template Expression Evaluation<float>::complexToExpression(
+template OExpression Evaluation<float>::complexToExpression(
     Preferences::ComplexFormat) const;
-template Expression Evaluation<double>::complexToExpression(
+template OExpression Evaluation<double>::complexToExpression(
     Preferences::ComplexFormat) const;
 
 }  // namespace Poincare

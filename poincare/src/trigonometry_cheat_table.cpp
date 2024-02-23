@@ -4,22 +4,23 @@
 
 namespace Poincare {
 
-Expression TrigonometryCheatTable::Row::Pair::reducedExpression(
+OExpression TrigonometryCheatTable::Row::Pair::reducedExpression(
     bool assertNotUninitialized,
     const ReductionContext& reductionContext) const {
-  Expression e = Expression::Parse(m_expression, nullptr);  // No context needed
+  OExpression e =
+      OExpression::Parse(m_expression, nullptr);  // No context needed
   if (assertNotUninitialized) {
     assert(!e.isUninitialized());
   } else {
     if (e.isUninitialized()) {
-      return Expression();
+      return OExpression();
     }
   }
   return e.deepReduce(reductionContext);
 }
 
-Expression TrigonometryCheatTable::simplify(
-    const Expression e, ExpressionNode::Type type,
+OExpression TrigonometryCheatTable::simplify(
+    const OExpression e, ExpressionNode::Type type,
     const ReductionContext& reductionContext) const {
   assert(type == ExpressionNode::Type::Sine ||
          type == ExpressionNode::Type::Cosine ||
@@ -28,7 +29,7 @@ Expression TrigonometryCheatTable::simplify(
          type == ExpressionNode::Type::ArcSine ||
          type == ExpressionNode::Type::ArcTangent);
 
-  Expression exp = e;
+  OExpression exp = e;
   Preferences::AngleUnit angleUnit = reductionContext.angleUnit();
 
   // Compute the input and output types
@@ -76,7 +77,7 @@ Expression TrigonometryCheatTable::simplify(
                              ExpressionNode::Type::Addition,
                              ExpressionNode::Type::Infinity,
                          }))) {
-    return Expression();
+    return OExpression();
   }
 
   // Approximate e to quickly compare it to cheat table entries
@@ -85,7 +86,7 @@ Expression TrigonometryCheatTable::simplify(
           ->approximate(float(), ApproximationContext(reductionContext, true))
           .toScalar();
   if (std::isnan(eValue)) {
-    return Expression();
+    return OExpression();
   }
   for (int i = 0; i < k_numberOfEntries; i++) {
     float inputValue = floatForTypeAtIndex(inputType, i);
@@ -96,10 +97,10 @@ Expression TrigonometryCheatTable::simplify(
     }
     /* e's approximation matches a table entry, check that both expressions are
      * identical */
-    Expression input =
+    OExpression input =
         expressionForTypeAtIndex(inputType, i, true, reductionContext);
     if (input.isIdenticalTo(exp)) {
-      Expression result =
+      OExpression result =
           expressionForTypeAtIndex(outputType, i, false, reductionContext);
 
       if (isIndirectType) {
@@ -116,12 +117,12 @@ Expression TrigonometryCheatTable::simplify(
          * For instance, we want tan(pi/2) = undef. However we have the entries
          * in the table to be able to compute, for instance: arctan(inf) = pi/2
          */
-        return Expression();
+        return OExpression();
       }
       return result;
     }
   }
-  return Expression();
+  return OExpression();
 }
 
 /* Some cheat tables values were not entered because they would never be needed

@@ -109,7 +109,7 @@ Evaluation<T> ListNode::productOfElements(
       });
 }
 
-Expression ListNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression ListNode::shallowReduce(const ReductionContext& reductionContext) {
   return List(this).shallowReduce(reductionContext);
 }
 
@@ -129,7 +129,7 @@ Evaluation<T> ListNode::templatedApproximate(
 
 // List
 
-Expression List::Ones(int length) {
+OExpression List::Ones(int length) {
   List result = List::Builder();
   for (int i = 0; i < length; i++) {
     result.addChildAtIndexInPlace(Rational::Builder(1), i, i);
@@ -137,8 +137,8 @@ Expression List::Ones(int length) {
   return std::move(result);
 }
 
-Expression List::shallowReduce(ReductionContext reductionContext) {
-  Expression myParent = parent();
+OExpression List::shallowReduce(ReductionContext reductionContext) {
+  OExpression myParent = parent();
   bool isDependenciesList =
       !myParent.isUninitialized() &&
       myParent.type() == ExpressionNode::Type::Dependency &&
@@ -157,7 +157,7 @@ Expression List::shallowReduce(ReductionContext reductionContext) {
           ? SimplificationHelper::UndefReduction::BubbleUpUndef
           : SimplificationHelper::UndefReduction::DoNotBubbleUpUndef;
 
-  Expression e = SimplificationHelper::defaultShallowReduce(
+  OExpression e = SimplificationHelper::defaultShallowReduce(
       *this, &reductionContext,
       SimplificationHelper::BooleanReduction::DefinedOnBooleans,
       SimplificationHelper::UnitReduction::KeepUnits,
@@ -170,8 +170,8 @@ Expression List::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-Expression List::extremum(const ReductionContext& reductionContext,
-                          bool minimum) {
+OExpression List::extremum(const ReductionContext& reductionContext,
+                           bool minimum) {
   const ApproximationContext approximationContext(reductionContext, true);
   int extremumIndex = node()->extremumIndex(approximationContext, minimum);
   if (extremumIndex < 0) {
@@ -183,12 +183,12 @@ Expression List::extremum(const ReductionContext& reductionContext,
 bool List::isListOfPoints(Context* context) const {
   int n = numberOfChildren();
   for (int i = 0; i < n; i++) {
-    Expression e = childAtIndex(i);
+    OExpression e = childAtIndex(i);
     if (IsSymbolic(e)) {
       if (!context) {
         return false;
       }
-      Expression ve = context->expressionForSymbolAbstract(
+      OExpression ve = context->expressionForSymbolAbstract(
           static_cast<SymbolAbstract&>(e), false);
       if (!(ve.isUninitialized() || IsPoint(ve))) {
         return false;
@@ -201,7 +201,7 @@ bool List::isListOfPoints(Context* context) const {
 }
 
 template <typename T>
-Expression List::approximateAndRemoveUndefAndSort(
+OExpression List::approximateAndRemoveUndefAndSort(
     const ApproximationContext& approximationContext) const {
   if (isUninitialized()) {
     return Undefined::Builder();
@@ -235,8 +235,8 @@ template Evaluation<float> ListNode::productOfElements<float>(
 template Evaluation<double> ListNode::productOfElements<double>(
     const ApproximationContext& approximationContext);
 
-template Expression List::approximateAndRemoveUndefAndSort<float>(
+template OExpression List::approximateAndRemoveUndefAndSort<float>(
     const ApproximationContext& approximationContext) const;
-template Expression List::approximateAndRemoveUndefAndSort<double>(
+template OExpression List::approximateAndRemoveUndefAndSort<double>(
     const ApproximationContext& approximationContext) const;
 }  // namespace Poincare

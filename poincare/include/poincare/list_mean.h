@@ -19,7 +19,7 @@ class ListMeanNode : public ListFunctionWithOneOrTwoParametersNode {
   Type type() const override { return Type::ListMean; }
 
  private:
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -39,7 +39,7 @@ class ListMeanNode : public ListFunctionWithOneOrTwoParametersNode {
 class ListMean : public ExpressionUpToTwoChildren<ListMean, ListMeanNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

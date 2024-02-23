@@ -16,7 +16,7 @@ int MatrixTraceNode::numberOfChildren() const {
   return MatrixTrace::s_functionHelper.numberOfChildren();
 }
 
-Expression MatrixTraceNode::shallowReduce(
+OExpression MatrixTraceNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return MatrixTrace(this).shallowReduce(reductionContext);
 }
@@ -41,9 +41,9 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(
   return std::move(result);
 }
 
-Expression MatrixTrace::shallowReduce(ReductionContext reductionContext) {
+OExpression MatrixTrace::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -51,13 +51,13 @@ Expression MatrixTrace::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixChild0 = static_cast<Matrix&>(c);
     if (matrixChild0.numberOfRows() != matrixChild0.numberOfColumns()) {
       return replaceWithUndefinedInPlace();
     }
-    Expression a = matrixChild0.createTrace();
+    OExpression a = matrixChild0.createTrace();
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }

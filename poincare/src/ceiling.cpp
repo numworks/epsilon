@@ -41,14 +41,14 @@ std::complex<T> CeilingNode::computeOnComplex(
   return std::ceil(c.real());
 }
 
-Expression CeilingNode::shallowReduce(
+OExpression CeilingNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Ceiling(this).shallowReduce(reductionContext);
 }
 
-Expression Ceiling::shallowReduce(ReductionContext reductionContext) {
+OExpression Ceiling::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
@@ -59,14 +59,14 @@ Expression Ceiling::shallowReduce(ReductionContext reductionContext) {
     }
   }
 
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
     IntegerDivision div =
         Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
     assert(!div.remainder.isOverflow());
     if (div.remainder.isZero()) {
-      Expression result = Rational::Builder(div.quotient);
+      OExpression result = Rational::Builder(div.quotient);
       replaceWithInPlace(result);
       return result;
     }
@@ -74,7 +74,7 @@ Expression Ceiling::shallowReduce(ReductionContext reductionContext) {
     if (result.isOverflow()) {
       return *this;
     }
-    Expression rationalResult = Rational::Builder(result);
+    OExpression rationalResult = Rational::Builder(result);
     replaceWithInPlace(rationalResult);
     return rationalResult;
   }

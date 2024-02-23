@@ -27,7 +27,7 @@ class IntegralNode final : public ParameteredExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };
@@ -73,11 +73,11 @@ class IntegralNode final : public ParameteredExpressionNode {
    public:
     double a;
     double b;
-    Expression integrandNearA;
-    Expression integrandNearB;
+    OExpression integrandNearA;
+    OExpression integrandNearB;
   };
-  Expression rewriteIntegrandNear(
-      Expression bound, const ReductionContext& reductionContext) const;
+  OExpression rewriteIntegrandNear(
+      OExpression bound, const ReductionContext& reductionContext) const;
   template <typename T>
   T integrand(T x, Substitution<T> substitution,
               const ApproximationContext& approximationContext) const;
@@ -107,20 +107,20 @@ class IntegralNode final : public ParameteredExpressionNode {
 class Integral final : public ParameteredExpression {
  public:
   Integral(const IntegralNode* n) : ParameteredExpression(n) {}
-  static Integral Builder(Expression child0, Symbol child1, Expression child2,
-                          Expression child3) {
+  static Integral Builder(OExpression child0, Symbol child1, OExpression child2,
+                          OExpression child3) {
     return TreeHandle::FixedArityBuilder<Integral, IntegralNode>(
         {child0, child1, child2, child3});
   }
-  static Expression UntypedBuilder(Expression children);
+  static OExpression UntypedBuilder(OExpression children);
 
-  constexpr static Expression::FunctionHelper s_functionHelper =
-      Expression::FunctionHelper("int", 4, &UntypedBuilder);
+  constexpr static OExpression::FunctionHelper s_functionHelper =
+      OExpression::FunctionHelper("int", 4, &UntypedBuilder);
   constexpr static char k_defaultXNTChar = 'x';
 
-  // Expression
+  // OExpression
   void deepReduceChildren(const ReductionContext& reductionContext);
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

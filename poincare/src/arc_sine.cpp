@@ -26,18 +26,18 @@ size_t ArcSineNode::serialize(char* buffer, size_t bufferSize,
       ArcSine::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ArcSineNode::shallowReduce(
+OExpression ArcSineNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcSine e = ArcSine(this);
   return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcSineNode::derivate(const ReductionContext& reductionContext,
-                           Symbol symbol, Expression symbolValue) {
+                           Symbol symbol, OExpression symbolValue) {
   return ArcSine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression ArcSineNode::unaryFunctionDifferential(
+OExpression ArcSineNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return ArcSine(this).unaryFunctionDifferential(reductionContext);
 }
@@ -71,13 +71,13 @@ std::complex<T> ArcSineNode::computeOnComplex(
 }
 
 bool ArcSine::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                       Expression symbolValue) {
+                       OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
                                     reductionContext);
   return true;
 }
 
-Expression ArcSine::unaryFunctionDifferential(
+OExpression ArcSine::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(

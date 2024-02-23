@@ -22,14 +22,14 @@ size_t ImaginaryPartNode::serialize(
       ImaginaryPart::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ImaginaryPartNode::shallowReduce(
+OExpression ImaginaryPartNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ImaginaryPart(this).shallowReduce(reductionContext);
 }
 
-Expression ImaginaryPart::shallowReduce(ReductionContext reductionContext) {
+OExpression ImaginaryPart::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -39,16 +39,16 @@ Expression ImaginaryPart::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.isReal(reductionContext.context(),
                reductionContext.shouldCheckMatrices())) {
-    Expression result = Rational::Builder(0);
+    OExpression result = Rational::Builder(0);
     replaceWithInPlace(result);
     return result;
   }
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
-    Expression i = complexChild.imag();
+    OExpression i = complexChild.imag();
     replaceWithInPlace(i);
     return i.shallowReduce(reductionContext);
   }

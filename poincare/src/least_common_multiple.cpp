@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper LeastCommonMultiple::s_functionHelper;
+constexpr OExpression::FunctionHelper LeastCommonMultiple::s_functionHelper;
 
 size_t LeastCommonMultipleNode::serialize(
     char* buffer, size_t bufferSize,
@@ -17,12 +17,12 @@ size_t LeastCommonMultipleNode::serialize(
       LeastCommonMultiple::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression LeastCommonMultipleNode::shallowReduce(
+OExpression LeastCommonMultipleNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return LeastCommonMultiple(this).shallowReduce(reductionContext);
 }
 
-Expression LeastCommonMultipleNode::shallowBeautify(
+OExpression LeastCommonMultipleNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return LeastCommonMultiple(this).shallowBeautify(reductionContext.context());
 }
@@ -34,7 +34,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(
   return Arithmetic::LCM<T>(*this, approximationContext);
 }
 
-Expression LeastCommonMultiple::shallowBeautify(Context* context) {
+OExpression LeastCommonMultiple::shallowBeautify(Context* context) {
   /* Sort children in decreasing order:
    * lcm(1,x,x^2) --> lcm(x^2,x,1)
    * lcm(1,R(2)) --> lcm(R(2),1) */
@@ -46,10 +46,10 @@ Expression LeastCommonMultiple::shallowBeautify(Context* context) {
   return *this;
 }
 
-Expression LeastCommonMultiple::shallowReduce(
+OExpression LeastCommonMultiple::shallowReduce(
     ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -66,7 +66,7 @@ Expression LeastCommonMultiple::shallowReduce(
 
   // Step 1: check that all children are compatible
   {
-    Expression checkChildren =
+    OExpression checkChildren =
         checkChildrenAreRationalIntegersAndUpdate(reductionContext);
     if (!checkChildren.isUninitialized()) {
       return checkChildren;
@@ -74,7 +74,7 @@ Expression LeastCommonMultiple::shallowReduce(
   }
 
   // Step 2: Compute LCM
-  Expression result = Arithmetic::LCM(*this);
+  OExpression result = Arithmetic::LCM(*this);
 
   replaceWithInPlace(result);
   return result;

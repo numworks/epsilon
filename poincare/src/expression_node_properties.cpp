@@ -54,34 +54,34 @@ bool ExpressionNode::isCombinationOfUnits() const {
 
 bool ExpressionNode::isSystemSymbol() const {
   return type() == ExpressionNode::Type::Symbol &&
-         Expression(this).convert<Symbol>().isSystemSymbol();
+         OExpression(this).convert<Symbol>().isSystemSymbol();
 }
 
-Expression ExpressionNode::denominator(
+OExpression ExpressionNode::denominator(
     const ReductionContext& reductionContext) const {
   if (type() == Type::Multiplication) {
-    return Expression(this).convert<Multiplication>().denominator(
+    return OExpression(this).convert<Multiplication>().denominator(
         reductionContext);
   }
   if (type() == Type::Power) {
-    return Expression(this).convert<Power>().denominator(reductionContext);
+    return OExpression(this).convert<Power>().denominator(reductionContext);
   }
   if (type() == Type::Rational) {
-    return Expression(this).convert<Rational>().denominator();
+    return OExpression(this).convert<Rational>().denominator();
   }
-  return Expression();
+  return OExpression();
 }
 
-Expression ExpressionNode::deepBeautify(
+OExpression ExpressionNode::deepBeautify(
     const ReductionContext& reductionContext) {
   if (type() == Type::UnitConvert) {
-    return Expression(this).convert<UnitConvert>().deepBeautify(
+    return OExpression(this).convert<UnitConvert>().deepBeautify(
         reductionContext);
   } else if (type() == Type::PercentAddition) {
-    return Expression(this).convert<PercentAddition>().deepBeautify(
+    return OExpression(this).convert<PercentAddition>().deepBeautify(
         reductionContext);
   } else {
-    Expression e = shallowBeautify(reductionContext);
+    OExpression e = shallowBeautify(reductionContext);
     SimplificationHelper::deepBeautifyChildren(e, reductionContext);
     return e;
   }
@@ -90,31 +90,33 @@ Expression ExpressionNode::deepBeautify(
 void ExpressionNode::deepReduceChildren(
     const ReductionContext& reductionContext) {
   if (type() == Type::Store) {
-    Expression(this).convert<Store>().deepReduceChildren(reductionContext);
+    OExpression(this).convert<Store>().deepReduceChildren(reductionContext);
     return;
   }
   if (type() == Type::Logarithm && numberOfChildren() == 2) {
-    Expression(this).convert<Logarithm>().deepReduceChildren(reductionContext);
+    OExpression(this).convert<Logarithm>().deepReduceChildren(reductionContext);
     return;
   }
   if (type() == Type::Integral) {
-    Expression(this).convert<Integral>().deepReduceChildren(reductionContext);
+    OExpression(this).convert<Integral>().deepReduceChildren(reductionContext);
     return;
   }
   if (type() == Type::Derivative) {
-    Expression(this).convert<Derivative>().deepReduceChildren(reductionContext);
-    return;
-  }
-  if (type() == Type::Dependency) {
-    Expression(this).convert<Dependency>().deepReduceChildren(reductionContext);
-    return;
-  }
-  if (type() == Type::UnitConvert) {
-    Expression(this).convert<UnitConvert>().deepReduceChildren(
+    OExpression(this).convert<Derivative>().deepReduceChildren(
         reductionContext);
     return;
   }
-  SimplificationHelper::defaultDeepReduceChildren(Expression(this),
+  if (type() == Type::Dependency) {
+    OExpression(this).convert<Dependency>().deepReduceChildren(
+        reductionContext);
+    return;
+  }
+  if (type() == Type::UnitConvert) {
+    OExpression(this).convert<UnitConvert>().deepReduceChildren(
+        reductionContext);
+    return;
+  }
+  SimplificationHelper::defaultDeepReduceChildren(OExpression(this),
                                                   reductionContext);
 }
 

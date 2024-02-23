@@ -34,7 +34,7 @@ class MatrixNode final : public Array, public ExpressionNode {
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Approximation
   Evaluation<float> approximate(
@@ -60,7 +60,7 @@ class MatrixNode final : public Array, public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class Matrix final : public Expression {
+class Matrix final : public OExpression {
   template <typename T>
   friend class MatrixComplexNode;
   friend class GlobalContext;
@@ -70,7 +70,7 @@ class Matrix final : public Expression {
    * TODO: Find another solution */
   constexpr static int k_maxNumberOfChildren = 100;
 
-  Matrix(const MatrixNode* node) : Expression(node) {}
+  Matrix(const MatrixNode* node) : OExpression(node) {}
   static Matrix Builder() {
     return TreeHandle::NAryBuilder<Matrix, MatrixNode>();
   }
@@ -83,7 +83,7 @@ class Matrix final : public Expression {
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
   void addChildrenAsRowInPlace(TreeHandle t, int i);
-  Expression matrixChild(int i, int j) {
+  OExpression matrixChild(int i, int j) {
     return childAtIndex(i * numberOfColumns() + j);
   }
 
@@ -91,35 +91,35 @@ class Matrix final : public Expression {
 
   // rank returns -1 if the rank cannot be computed
   int rank(Context* context, bool forceCanonization = false);
-  Expression createTrace();
+  OExpression createTrace();
   /* Inverse the array in-place. Array has to be given in the form
    * array[row_index][column_index] */
   template <typename T>
   static int ArrayInverse(T* array, int numberOfRows, int numberOfColumns);
   static Matrix CreateIdentity(int dim);
   Matrix createTranspose() const;
-  Expression createRef(const ReductionContext& reductionContext,
-                       bool* couldComputeRef, bool reduced) const;
+  OExpression createRef(const ReductionContext& reductionContext,
+                        bool* couldComputeRef, bool reduced) const;
   /* createInverse can be called on any matrix, reduced or not, approximated or
    * not. */
-  Expression createInverse(const ReductionContext& reductionContext,
-                           bool* couldComputeInverse) const;
-  Expression determinant(const ReductionContext& reductionContext,
-                         bool* couldComputeDeterminant, bool inPlace);
-  Expression norm(const ReductionContext& reductionContext) const;
-  Expression dot(Matrix* b, const ReductionContext& reductionContext) const;
+  OExpression createInverse(const ReductionContext& reductionContext,
+                            bool* couldComputeInverse) const;
+  OExpression determinant(const ReductionContext& reductionContext,
+                          bool* couldComputeDeterminant, bool inPlace);
+  OExpression norm(const ReductionContext& reductionContext) const;
+  OExpression dot(Matrix* b, const ReductionContext& reductionContext) const;
   Matrix cross(Matrix* b, const ReductionContext& reductionContext) const;
 
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
 
  private:
   MatrixNode* node() const {
-    return static_cast<MatrixNode*>(Expression::node());
+    return static_cast<MatrixNode*>(OExpression::node());
   }
   void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { node()->setNumberOfColumns(columns); }
-  Expression computeInverseOrDeterminant(
+  OExpression computeInverseOrDeterminant(
       bool computeDeterminant, const ReductionContext& reductionContext,
       bool* couldCompute) const;
   /* rowCanonize turns a matrix in its row echelon form, reduced or not.
@@ -145,7 +145,7 @@ class Matrix final : public Expression {
    * */
   bool isCanonizable(const ReductionContext& reductionContext);
   Matrix rowCanonize(const ReductionContext& reductionContext,
-                     bool* canonizationSuccess, Expression* determinant,
+                     bool* canonizationSuccess, OExpression* determinant,
                      bool reduced = true, bool forceCanonization = false);
   // Row canonize the array in place
   template <typename T>

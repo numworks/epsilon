@@ -13,7 +13,7 @@ class SumAndProductNode : public ParameteredExpressionNode {
 
  private:
   // Simplication
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };
@@ -40,10 +40,10 @@ class SumAndProductNode : public ParameteredExpressionNode {
       Preferences::ComplexFormat complexFormat) const = 0;
 };
 
-class SumAndProduct : public Expression {
+class SumAndProduct : public OExpression {
  public:
-  SumAndProduct(const SumAndProductNode* n) : Expression(n) {}
-  Expression shallowReduce(ReductionContext reductionContext);
+  SumAndProduct(const SumAndProductNode* n) : OExpression(n) {}
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

@@ -19,7 +19,7 @@ class ListVarianceNode : public ListFunctionWithOneOrTwoParametersNode {
   Type type() const override { return Type::ListVariance; }
 
  private:
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -40,7 +40,7 @@ class ListVariance
     : public ExpressionUpToTwoChildren<ListVariance, ListVarianceNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

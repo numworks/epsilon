@@ -8,7 +8,7 @@
  * the successive Tokens, that are then consumed by the Parser.
  * Each Token has a Type and may hold other relevant data intended for the
  * Parser:
- *   - an Expression, specifically for a Number Token,
+ *   - an OExpression, specifically for a Number Token,
  *   - a string (m_text, m_length), specifically for an Identifier Token. */
 
 namespace Poincare {
@@ -78,11 +78,11 @@ class Token {
   }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
-  Expression expression() const { return m_expression; }
+  OExpression expression() const { return m_expression; }
   const char* text() const { return m_text; }
   size_t length() const { return m_length; }
 
-  void setExpression(Expression e) { m_expression = e; }
+  void setExpression(OExpression e) { m_expression = e; }
   void setString(const char* text, size_t length) {
     m_text = text;
     m_length = length;
@@ -90,7 +90,7 @@ class Token {
 
  private:
   Type m_type;
-  Expression m_expression;
+  OExpression m_expression;
   const char* m_text;
   size_t m_length;
 };

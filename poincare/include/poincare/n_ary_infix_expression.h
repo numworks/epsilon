@@ -11,7 +11,7 @@ class NAryInfixExpressionNode : public NAryExpressionNode {
  public:
   using NAryExpressionNode::NAryExpressionNode;
   // Properties
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
 
  protected:

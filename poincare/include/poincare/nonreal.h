@@ -31,7 +31,7 @@ class NonrealNode final : public UndefinedNode {
   /* Derivation
    * Unlike Numbers that derivate to 0, Nonreal derivates to Nonreal. */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
@@ -42,7 +42,7 @@ class NonrealNode final : public UndefinedNode {
  private:
   template <typename T>
   Evaluation<T> templatedApproximate() const {
-    Expression::SetEncounteredComplex(true);
+    OExpression::SetEncounteredComplex(true);
     return UndefinedNode::templatedApproximate<T>();
   }
 };

@@ -12,7 +12,7 @@ int VectorCrossNode::numberOfChildren() const {
   return VectorCross::s_functionHelper.numberOfChildren();
 }
 
-Expression VectorCrossNode::shallowReduce(
+OExpression VectorCrossNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return VectorCross(this).shallowReduce(reductionContext);
 }
@@ -47,9 +47,9 @@ Evaluation<T> VectorCrossNode::templatedApproximate(
       static_cast<MatrixComplex<T>*>(&input1));
 }
 
-Expression VectorCross::shallowReduce(ReductionContext reductionContext) {
+OExpression VectorCross::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -62,8 +62,8 @@ Expression VectorCross::shallowReduce(ReductionContext reductionContext) {
           .forbidVectorProduct()) {
     return replaceWithUndefinedInPlace();
   }
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
+  OExpression c0 = childAtIndex(0);
+  OExpression c1 = childAtIndex(1);
   if (c0.type() == ExpressionNode::Type::Matrix &&
       c1.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixChild0 = static_cast<Matrix&>(c0);
@@ -75,7 +75,7 @@ Expression VectorCross::shallowReduce(ReductionContext reductionContext) {
         matrixChild1.numberOfChildren() != 3) {
       return replaceWithUndefinedInPlace();
     }
-    Expression a = matrixChild0.cross(&matrixChild1, reductionContext);
+    OExpression a = matrixChild0.cross(&matrixChild1, reductionContext);
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }

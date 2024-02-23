@@ -171,7 +171,7 @@ PoincareJ::Tree *parse_expression(const char *expression, Context *context,
 }
 
 void assert_parsed_expression_is(
-    const char *expression, Poincare::Expression r, bool addParentheses,
+    const char *expression, Poincare::OExpression r, bool addParentheses,
     bool parseForAssignment,
     Preferences::MixedFractions mixedFractionsParameter) {
   Shared::GlobalContext context;
@@ -191,8 +191,8 @@ void assert_parse_to_same_expression(const char *expression1,
                                      const char *expression2) {
 #if 0
   Shared::GlobalContext context;
-  Expression e1 = parse_expression(expression1, &context, false);
-  Expression e2 = parse_expression(expression2, &context, false);
+  OExpression e1 = parse_expression(expression1, &context, false);
+  OExpression e2 = parse_expression(expression2, &context, false);
   quiz_assert(e1.isIdenticalTo(e2));
 #endif
 }
@@ -329,7 +329,7 @@ void assert_expression_serializes_to(Tree *expression,
 }
 
 void assert_expression_serializes_and_parses_to_itself(
-    Poincare::Expression expression) {
+    Poincare::OExpression expression) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   expression.serialize(buffer, bufferSize);
@@ -340,7 +340,7 @@ void assert_expression_parses_and_serializes_to(const char *expression,
                                                 const char *result) {
 #if 0
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext, false);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   e.serialize(buffer, bufferSize);

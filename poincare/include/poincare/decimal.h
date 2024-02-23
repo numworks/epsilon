@@ -78,7 +78,7 @@ class DecimalNode final : public NumberNode {
                                   bool ignoreParentheses) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     assert(!m_negative);
     return LayoutShape::Decimal;
@@ -111,7 +111,7 @@ class DecimalNode final : public NumberNode {
 
 class Decimal final : public Number {
   friend class Number;
-  friend class Expression;
+  friend class OExpression;
   friend class DecimalNode;
   template <typename T>
   friend class ComplexNode;
@@ -144,7 +144,7 @@ class Decimal final : public Number {
   constexpr static int k_maxMantissaLength = 20;
   static Decimal Builder(size_t size, const Integer& m, int e);
   // Simplification
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

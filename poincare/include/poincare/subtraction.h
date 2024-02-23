@@ -21,9 +21,9 @@ class SubtractionNode final : public ExpressionNode {
 
   // Properties
   Type type() const override { return Type::Subtraction; }
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
-  Expression removeUnit(Expression* unit) override {
+  OExpression removeUnit(OExpression* unit) override {
     assert(false);
     return ExpressionNode::removeUnit(unit);
   }
@@ -65,7 +65,7 @@ class SubtractionNode final : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
  private:
   /* Simplification */
@@ -92,8 +92,8 @@ class Subtraction final
   static Subtraction Builder() {
     return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>();
   }
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

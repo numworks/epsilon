@@ -67,9 +67,9 @@ class JuniorExpressionNode final : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override {
+  OExpression shallowReduce(const ReductionContext& reductionContext) override {
     assert(false);
-    return Expression();
+    return OExpression();
   }
   LayoutShape leftLayoutShape() const override {
     // TODO PCJ: Remove
@@ -79,7 +79,7 @@ class JuniorExpressionNode final : public ExpressionNode {
 
  private:
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override {
+                OExpression symbolValue) override {
     // TODO PCJ: Remove
     assert(false);
     return false;
@@ -93,12 +93,12 @@ class JuniorExpressionNode final : public ExpressionNode {
   PoincareJ::Block m_blocks[0];
 };
 
-class JuniorExpression final : public Expression {
+class JuniorExpression final : public OExpression {
   friend class JuniorExpressionNode;
 
  public:
   JuniorExpression() {}
-  JuniorExpression(const Expression& other) { *this = other; }
+  JuniorExpression(const OExpression& other) { *this = other; }
 
   static JuniorExpression Parse(const PoincareJ::Tree* layout, Context* context,
                                 bool addMissingParenthesis = true,
@@ -110,32 +110,32 @@ class JuniorExpression final : public Expression {
   static JuniorExpression Builder(const PoincareJ::Tree* tree);
   // Eat the tree
   static JuniorExpression Builder(PoincareJ::Tree* tree);
-  static JuniorExpression Juniorize(Expression e);
+  static JuniorExpression Juniorize(OExpression e);
   PoincareJ::Tree* tree() const {
     return const_cast<JuniorExpression*>(this)->node()->tree();
   }
 
-  JuniorExpression operator=(Expression&& other) {
+  JuniorExpression operator=(OExpression&& other) {
     *this = Juniorize(other);
     return *this;
   }
 
-  JuniorExpression operator=(const Expression& other) {
+  JuniorExpression operator=(const OExpression& other) {
     *this = Juniorize(other);
     return *this;
   }
 
   JuniorExpressionNode* node() const {
-    return static_cast<JuniorExpressionNode*>(Expression::node());
+    return static_cast<JuniorExpressionNode*>(OExpression::node());
   }
 
-  Expression shallowReduce(ReductionContext reductionContext) {
+  OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO PCJ
     assert(false);
-    return Expression();
+    return OExpression();
   }
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) {
+                OExpression symbolValue) {
     // TODO PCJ: Remove
     assert(false);
     return false;

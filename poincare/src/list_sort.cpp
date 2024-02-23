@@ -19,7 +19,7 @@ size_t ListSortNode::serialize(char* buffer, size_t bufferSize,
       ListSort::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ListSortNode::shallowReduce(
+OExpression ListSortNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListSort(this).shallowReduce(reductionContext);
 }
@@ -36,8 +36,8 @@ Evaluation<T> ListSortNode::templatedApproximate(
   return std::move(listChild);
 }
 
-Expression ListSort::shallowReduce(ReductionContext reductionContext) {
-  Expression child = childAtIndex(0);
+OExpression ListSort::shallowReduce(ReductionContext reductionContext) {
+  OExpression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     if (!child.deepIsList(reductionContext.context())) {
       return replaceWithUndefinedInPlace();
@@ -46,7 +46,7 @@ Expression ListSort::shallowReduce(ReductionContext reductionContext) {
   }
 
   if (child.numberOfChildren() == 0 ||
-      recursivelyMatches(Expression::IsUndefined, nullptr)) {
+      recursivelyMatches(OExpression::IsUndefined, nullptr)) {
     // Cannot sort if a child is the expression Undefined
     replaceWithInPlace(child);
     return child;

@@ -20,16 +20,16 @@
 
 namespace PoincareJ {
 
-Poincare::Expression ToPoincareExpressionViaParse(const Tree *exp) {
+Poincare::OExpression ToPoincareExpressionViaParse(const Tree *exp) {
   EditionReference outputLayout = Layoutter::LayoutExpression(exp->clone());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
   outputLayout->removeTree();
-  return Poincare::Expression::Parse(buffer, nullptr, false, false);
+  return Poincare::OExpression::Parse(buffer, nullptr, false, false);
 }
 
-void PushPoincareExpressionViaParse(Poincare::Expression exp) {
+void PushPoincareExpressionViaParse(Poincare::OExpression exp) {
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   exp.serialize(buffer, bufferSize);
@@ -58,12 +58,12 @@ Poincare::ComparisonNode::OperatorType ComparisonToOperator(BlockType type) {
   }
 }
 
-Poincare::Expression ToPoincareExpression(const Tree *exp) {
+Poincare::OExpression ToPoincareExpression(const Tree *exp) {
   // NOTE: Make sure new BlockTypes are handled here.
   BlockType type = exp->type();
 
   if (Builtin::IsReservedFunction(exp)) {
-    Poincare::Expression child = ToPoincareExpression(exp->child(0));
+    Poincare::OExpression child = ToPoincareExpression(exp->child(0));
     switch (type) {
       case BlockType::SquareRoot:
         return Poincare::SquareRoot::Builder(child);
@@ -168,7 +168,7 @@ Poincare::Expression ToPoincareExpression(const Tree *exp) {
         return Poincare::PercentAddition::Builder(
             child, ToPoincareExpression(exp->child(1)));
       case BlockType::Derivative: {
-        Poincare::Expression symbol = child;
+        Poincare::OExpression symbol = child;
         if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
@@ -178,7 +178,7 @@ Poincare::Expression ToPoincareExpression(const Tree *exp) {
             ToPoincareExpression(exp->child(1)));
       }
       case BlockType::Integral: {
-        Poincare::Expression symbol = child;
+        Poincare::OExpression symbol = child;
         if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
@@ -189,7 +189,7 @@ Poincare::Expression ToPoincareExpression(const Tree *exp) {
             ToPoincareExpression(exp->child(2)));
       }
       case BlockType::Sum: {
-        Poincare::Expression symbol = child;
+        Poincare::OExpression symbol = child;
         if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
@@ -199,7 +199,7 @@ Poincare::Expression ToPoincareExpression(const Tree *exp) {
                                       ToPoincareExpression(exp->child(2)));
       }
       case BlockType::Product: {
-        Poincare::Expression symbol = child;
+        Poincare::OExpression symbol = child;
         if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
@@ -263,9 +263,9 @@ Poincare::Expression ToPoincareExpression(const Tree *exp) {
     case BlockType::Power:
     case BlockType::PowerMatrix:
     case BlockType::Division: {
-      Poincare::Expression child0 = ToPoincareExpression(exp->child(0));
-      Poincare::Expression child1 = ToPoincareExpression(exp->child(1));
-      Poincare::Expression result;
+      Poincare::OExpression child0 = ToPoincareExpression(exp->child(0));
+      Poincare::OExpression child1 = ToPoincareExpression(exp->child(1));
+      Poincare::OExpression result;
       if (type == BlockType::Subtraction) {
         result = Poincare::Subtraction::Builder(child0, child1);
       } else if (type == BlockType::Division) {
@@ -329,7 +329,7 @@ Poincare::Expression ToPoincareExpression(const Tree *exp) {
   }
 }
 
-void PushPoincareExpression(Poincare::Expression exp) {
+void PushPoincareExpression(Poincare::OExpression exp) {
   using OT = Poincare::ExpressionNode::Type;
   switch (exp.type()) {
     case OT::AbsoluteValue:
@@ -662,7 +662,7 @@ void PushPoincareExpression(Poincare::Expression exp) {
       if (exp.numberOfChildren() > 2) {
         // This will not work semantically but is sufficient for createLayout
         Poincare::Comparison c = static_cast<Poincare::Comparison &>(exp);
-        Poincare::Expression e = Poincare::Comparison::Builder(
+        Poincare::OExpression e = Poincare::Comparison::Builder(
             Poincare::Comparison::Builder(
                 c.childAtIndex(0), c.operatorAtIndex(0), c.childAtIndex(1)),
             c.operatorAtIndex(1), c.childAtIndex(2));
@@ -872,7 +872,7 @@ void PushPoincareExpression(Poincare::Expression exp) {
   }
 }
 
-Tree *FromPoincareExpression(Poincare::Expression exp) {
+Tree *FromPoincareExpression(Poincare::OExpression exp) {
   Tree *node = Tree::FromBlocks(SharedEditionPool->lastBlock());
   PushPoincareExpression(exp);
   return node;

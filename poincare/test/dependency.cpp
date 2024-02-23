@@ -24,16 +24,16 @@ void assert_expression_simplify_to_with_dependencies(
   }
 
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext, false);
   ReductionContext reductionContext(&globalContext, complexFormat, angleUnit,
                                     unitFormat, target, symbolicComputation,
                                     unitConversion);
-  Expression d = e.cloneAndSimplify(reductionContext);
+  OExpression d = e.cloneAndSimplify(reductionContext);
 
   quiz_assert_print_if_failure(d.type() == ExpressionNode::Type::Dependency,
                                expression);
   assert_expression_serializes_to(d.childAtIndex(0), simplifiedExpression);
-  Expression m = d.childAtIndex(1);
+  OExpression m = d.childAtIndex(1);
   quiz_assert_print_if_failure(m.type() == ExpressionNode::Type::List,
                                expression);
   quiz_assert_print_if_failure(m.numberOfChildren() == N, expression);

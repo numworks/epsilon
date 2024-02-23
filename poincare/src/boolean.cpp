@@ -4,7 +4,7 @@
 namespace Poincare {
 
 template <typename T>
-Expression BooleanEvaluationNode<T>::complexToExpression(
+OExpression BooleanEvaluationNode<T>::complexToExpression(
     Preferences::Preferences::ComplexFormat complexFormat) const {
   return Boolean::Builder(value());
 }

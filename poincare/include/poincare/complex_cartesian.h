@@ -41,8 +41,9 @@ class ComplexCartesianNode : public ExpressionNode {
     return templatedApproximate<double>(approximationContext);
   }
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     /* leftLayoutShape is called after beautifying expression. ComplexCartesian
      * is transformed in another expression at beautifying. */
@@ -55,32 +56,32 @@ class ComplexCartesianNode : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class ComplexCartesian final : public Expression {
+class ComplexCartesian final : public OExpression {
  public:
-  ComplexCartesian() : Expression() {}
-  ComplexCartesian(const ComplexCartesianNode* node) : Expression(node) {}
+  ComplexCartesian() : OExpression() {}
+  ComplexCartesian(const ComplexCartesianNode* node) : OExpression(node) {}
   static ComplexCartesian Builder() {
     return TreeHandle::FixedArityBuilder<ComplexCartesian,
                                          ComplexCartesianNode>();
   }
-  static ComplexCartesian Builder(Expression child0, Expression child1) {
+  static ComplexCartesian Builder(OExpression child0, OExpression child1) {
     return TreeHandle::FixedArityBuilder<ComplexCartesian,
                                          ComplexCartesianNode>(
         {child0, child1});
   }
 
   // Getters
-  Expression real() const { return childAtIndex(0); }
-  Expression imag() const { return childAtIndex(1); }
+  OExpression real() const { return childAtIndex(0); }
+  OExpression imag() const { return childAtIndex(1); }
 
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext);
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowBeautify(const ReductionContext& reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 
   // Common operations (done in-place)
-  Expression squareNorm(const ReductionContext& reductionContext);
-  Expression norm(const ReductionContext& reductionContext);
-  Expression argument(const ReductionContext& reductionContext);
+  OExpression squareNorm(const ReductionContext& reductionContext);
+  OExpression norm(const ReductionContext& reductionContext);
+  OExpression argument(const ReductionContext& reductionContext);
   ComplexCartesian inverse(const ReductionContext& reductionContext);
   ComplexCartesian squareRoot(const ReductionContext& reductionContext);
   ComplexCartesian powerInteger(int n,
@@ -94,15 +95,15 @@ class ComplexCartesian final : public Expression {
 
  private:
   constexpr static int k_maxNumberOfNodesBeforeInterrupting = 50;
-  void factorAndArgumentOfFunction(Expression e,
+  void factorAndArgumentOfFunction(OExpression e,
                                    ExpressionNode::Type searchedType,
-                                   Expression* factor, Expression* argument,
+                                   OExpression* factor, OExpression* argument,
                                    const ReductionContext& reductionContext);
   ComplexCartesian interruptComputationIfManyNodes();
   static Multiplication squareRootHelper(
-      Expression e, const ReductionContext& reductionContext);
-  static Expression powerHelper(Expression norm, Expression trigo,
-                                const ReductionContext& reductionContext);
+      OExpression e, const ReductionContext& reductionContext);
+  static OExpression powerHelper(OExpression norm, OExpression trigo,
+                                 const ReductionContext& reductionContext);
 };
 
 }  // namespace Poincare

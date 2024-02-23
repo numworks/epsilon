@@ -31,19 +31,19 @@ size_t AbsoluteValueNode::serialize(
       AbsoluteValue::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression AbsoluteValueNode::shallowReduce(
+OExpression AbsoluteValueNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return AbsoluteValue(this).shallowReduce(reductionContext);
 }
 
 bool AbsoluteValueNode::derivate(const ReductionContext& reductionContext,
-                                 Symbol symbol, Expression symbolValue) {
+                                 Symbol symbol, OExpression symbolValue) {
   return AbsoluteValue(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
+OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
@@ -53,7 +53,7 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
 
   // |x| = ±x if x is real
   if (c.isReal(reductionContext.context(),
@@ -81,8 +81,8 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
       }
     } else if (reductionContext.target() != ReductionTarget::User) {
       // Do not display sign(x)*x to the user
-      Expression sign = SignFunction::Builder(c.clone());
-      Expression result = Multiplication::Builder(sign, c);
+      OExpression sign = SignFunction::Builder(c.clone());
+      OExpression result = Multiplication::Builder(sign, c);
       sign.shallowReduce(reductionContext);
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
@@ -92,7 +92,7 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   // |a+ib| = sqrt(a^2+b^2)
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
-    Expression childNorm = complexChild.norm(reductionContext);
+    OExpression childNorm = complexChild.norm(reductionContext);
     replaceWithInPlace(childNorm);
     return childNorm.shallowReduce(reductionContext);
   }
@@ -118,7 +118,7 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       listOfDependencies.addChildAtIndexInPlace(c.clone(), 0, 0);
     }
-    Expression newabs = AbsoluteValue::Builder(c.childAtIndex(0));
+    OExpression newabs = AbsoluteValue::Builder(c.childAtIndex(0));
     c.replaceChildAtIndexInPlace(0, newabs);
     newabs.shallowReduce(reductionContext);
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
@@ -146,7 +146,7 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   // |i| = 1
   if (c.type() == ExpressionNode::Type::ConstantMaths &&
       static_cast<const Constant&>(c).isComplexI()) {
-    Expression e = Rational::Builder(1);
+    OExpression e = Rational::Builder(1);
     replaceWithInPlace(e);
     return e;
   }
@@ -158,15 +158,16 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
 
 // Derivate of |f(x)| is f'(x)*sg(x) (and undef in 0) = f'(x)*(f(x)/|f(x)|)
 bool AbsoluteValue::derivate(const ReductionContext& reductionContext,
-                             Symbol symbol, Expression symbolValue) {
+                             Symbol symbol, OExpression symbolValue) {
   {
-    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    OExpression e =
+        Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {
       return true;
     }
   }
 
-  Expression f = childAtIndex(0);
+  OExpression f = childAtIndex(0);
   Multiplication result = Multiplication::Builder();
   result.addChildAtIndexInPlace(
       Derivative::Builder(f.clone(), symbol.clone().convert<Symbol>(),

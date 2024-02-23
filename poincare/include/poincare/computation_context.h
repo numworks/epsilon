@@ -52,7 +52,7 @@ class ComputationContext {
     m_angleUnit = angleUnit;
   }
 
-  void updateComplexFormat(const Expression e);
+  void updateComplexFormat(const OExpression e);
 
  private:
   Context* m_context;

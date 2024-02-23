@@ -19,7 +19,7 @@ class NthRootNode final : public ExpressionNode {
 #endif
 
  private:
-  Expression removeUnit(Expression* unit) override {
+  OExpression removeUnit(OExpression* unit) override {
     assert(false);
     return ExpressionNode::removeUnit(unit);
   }
@@ -28,7 +28,7 @@ class NthRootNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::NthRoot; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::Root; };
   // Evaluation
@@ -50,7 +50,7 @@ class NthRootNode final : public ExpressionNode {
 class NthRoot final : public ExpressionTwoChildren<NthRoot, NthRootNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

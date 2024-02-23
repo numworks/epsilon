@@ -24,10 +24,10 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
   TrinaryBoolean isNull(Context* context) const override;
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const override;
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+                                OExpression coefficients[]) const override;
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
-  Expression removeUnit(Expression* unit) override;
+  OExpression removeUnit(OExpression* unit) override;
   double degreeForSortingAddition(bool symbolsOnly) const override;
 
   // Approximation
@@ -75,12 +75,13 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 
   // Approximation
   template <typename T>
@@ -116,32 +117,33 @@ class Multiplication : public NAryExpression {
         convert(children));
   }
   // TODO: Get rid of those helpers
-  static Multiplication Builder(Expression e1) {
+  static Multiplication Builder(OExpression e1) {
     return Multiplication::Builder({e1});
   }
-  static Multiplication Builder(Expression e1, Expression e2) {
+  static Multiplication Builder(OExpression e1, OExpression e2) {
     return Multiplication::Builder({e1, e2});
   }
-  static Multiplication Builder(Expression e1, Expression e2, Expression e3) {
+  static Multiplication Builder(OExpression e1, OExpression e2,
+                                OExpression e3) {
     return Multiplication::Builder({e1, e2, e3});
   }
-  static Multiplication Builder(Expression e1, Expression e2, Expression e3,
-                                Expression e4) {
+  static Multiplication Builder(OExpression e1, OExpression e2, OExpression e3,
+                                OExpression e4) {
     return Multiplication::Builder({e1, e2, e3, e4});
   }
 
   // Properties
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const;
+                                OExpression coefficients[]) const;
 
   // Approximation
   template <typename T>
   static void computeOnArrays(T* m, T* n, T* result, int mNumberOfColumns,
                               int mNumberOfRows, int nNumberOfColumns);
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext);
-  Expression shallowReduce(ReductionContext reductionContext);
-  Expression denominator(const ReductionContext& reductionContext) const;
+  OExpression shallowBeautify(const ReductionContext& reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
+  OExpression denominator(const ReductionContext& reductionContext) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order,
                            Context* context, bool canContainMatrices = true) {
     NAryExpression::sortChildrenInPlace(order, context, false,
@@ -149,44 +151,44 @@ class Multiplication : public NAryExpression {
   }
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
+                OExpression symbolValue);
 
-  void splitIntoNormalForm(Expression& numerator, Expression& denominator,
+  void splitIntoNormalForm(OExpression& numerator, OExpression& denominator,
                            const ReductionContext& reductionContext) const;
 
  private:
   // Unit
-  Expression removeUnit(Expression* unit);
+  OExpression removeUnit(OExpression* unit);
 
   // Simplification
   void factorizeBase(int i, int j, const ReductionContext& reductionContext,
                      List dependenciesCreatedDuringReduction);
   void mergeInChildByFactorizingBase(
-      int i, Expression e, const ReductionContext& reductionContext,
+      int i, OExpression e, const ReductionContext& reductionContext,
       List dependenciesCreatedDuringReduction = List());
   bool factorizeExponent(int i, int j,
                          const ReductionContext& reductionContext);
-  Expression gatherLikeTerms(const ReductionContext& reductionContext);
+  OExpression gatherLikeTerms(const ReductionContext& reductionContext);
   bool gatherRationalPowers(int i, int j,
                             const ReductionContext& reductionContext);
-  Expression distributeOnOperandAtIndex(
+  OExpression distributeOnOperandAtIndex(
       int index, const ReductionContext& reductionContext);
   // factor must be a reduced expression
-  void addMissingFactors(Expression factor,
+  void addMissingFactors(OExpression factor,
                          const ReductionContext& reductionContext);
   bool factorizeSineAndCosine(int i, int j,
                               const ReductionContext& reductionContext);
-  static bool HaveSameNonNumeralFactors(const Expression& e1,
-                                        const Expression& e2);
-  static bool TermsHaveIdenticalBase(const Expression& e1,
-                                     const Expression& e2);
-  static bool TermsHaveIdenticalExponent(const Expression& e1,
-                                         const Expression& e2);
-  static bool TermHasNumeralBase(const Expression& e);
-  static bool TermHasNumeralExponent(const Expression& e);
-  static bool TermIsPowerOfRationals(const Expression& e);
-  static const Expression CreateExponent(Expression e);
-  static inline const Expression Base(const Expression e);
+  static bool HaveSameNonNumeralFactors(const OExpression& e1,
+                                        const OExpression& e2);
+  static bool TermsHaveIdenticalBase(const OExpression& e1,
+                                     const OExpression& e2);
+  static bool TermsHaveIdenticalExponent(const OExpression& e1,
+                                         const OExpression& e2);
+  static bool TermHasNumeralBase(const OExpression& e);
+  static bool TermHasNumeralExponent(const OExpression& e);
+  static bool TermIsPowerOfRationals(const OExpression& e);
+  static const OExpression CreateExponent(OExpression e);
+  static inline const OExpression Base(const OExpression e);
 };
 
 }  // namespace Poincare

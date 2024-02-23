@@ -30,7 +30,7 @@ size_t NthRootNode::serialize(char* buffer, size_t bufferSize,
       NthRoot::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression NthRootNode::shallowReduce(
+OExpression NthRootNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return NthRoot(this).shallowReduce(reductionContext);
 }
@@ -65,9 +65,9 @@ Evaluation<T> NthRootNode::templatedApproximate(
       });
 }
 
-Expression NthRoot::shallowReduce(ReductionContext reductionContext) {
+OExpression NthRoot::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
@@ -77,7 +77,7 @@ Expression NthRoot::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression invIndex = Power::Builder(childAtIndex(1), Rational::Builder(-1));
+  OExpression invIndex = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Power p = Power::Builder(childAtIndex(0), invIndex);
   invIndex.shallowReduce(reductionContext);
   replaceWithInPlace(p);

@@ -10,8 +10,8 @@ class Arithmetic final {
  public:
   static Integer GCD(const Integer& i, const Integer& j);
   static Integer LCM(const Integer& i, const Integer& j);
-  static Expression GCD(const Expression& expression);
-  static Expression LCM(const Expression& expression);
+  static OExpression GCD(const OExpression& expression);
+  static OExpression LCM(const OExpression& expression);
   /* GCD cannot overflow as GCD(a,b) <=  max(|a|,|b|)
    * we add hasOverflown's parameters anyway to match LCM's signature. */
   static uint32_t GCD(uint32_t i, uint32_t j, bool* hasOverflown = nullptr);

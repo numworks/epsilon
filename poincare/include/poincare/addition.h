@@ -28,7 +28,7 @@ class AdditionNode final : public NAryInfixExpressionNode {
   TrinaryBoolean isPositive(Context* context) const override;
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const override;
+                                OExpression coefficients[]) const override;
 
   // Evaluation
   template <typename T>
@@ -74,12 +74,13 @@ class AdditionNode final : public NAryInfixExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 
   /* Evaluation */
   Evaluation<float> approximate(
@@ -106,21 +107,21 @@ class Addition final : public NAryExpression {
     return TreeHandle::NAryBuilder<Addition, AdditionNode>(convert(children));
   }
   // TODO: Get rid of these two helper functions
-  static Addition Builder(Expression e1) { return Addition::Builder({e1}); }
-  static Addition Builder(Expression e1, Expression e2) {
+  static Addition Builder(OExpression e1) { return Addition::Builder({e1}); }
+  static Addition Builder(OExpression e1, OExpression e2) {
     return Addition::Builder({e1, e2});
   }
-  // Expression
-  Expression shallowBeautify(const ReductionContext& reductionContext);
+  // OExpression
+  OExpression shallowBeautify(const ReductionContext& reductionContext);
   /* WARNING: If the parent of an addition is also an addition (or a
    * subtraction), the reduction won't do anything and let the parent
    * do the reduction. So a child addition can't be reduced without
    * reducing its parent addition. */
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
+                OExpression symbolValue);
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const;
+                                OExpression coefficients[]) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order,
                            Context* context, bool canContainMatrices = true) {
     NAryExpression::sortChildrenInPlace(order, context, true,
@@ -130,34 +131,35 @@ class Addition final : public NAryExpression {
    * Beware that it is not the constant part ie what's left when symbol = 0.
    * WARNING: The expression MUST depend on the symbol. If degree == 0, it
    * will crash. */
-  Expression removeConstantTerms(Context* context, const char* symbolName);
+  OExpression removeConstantTerms(Context* context, const char* symbolName);
 
  private:
-  static const Number NumeralFactor(const Expression& e);
-  static inline int NumberOfNonNumeralFactors(const Expression& e);
-  static inline const Expression FirstNonNumeralFactor(const Expression& e);
+  static const Number NumeralFactor(const OExpression& e);
+  static inline int NumberOfNonNumeralFactors(const OExpression& e);
+  static inline const OExpression FirstNonNumeralFactor(const OExpression& e);
 
-  static bool TermsHaveIdenticalNonNumeralFactors(const Expression& e1,
-                                                  const Expression& e2,
+  static bool TermsHaveIdenticalNonNumeralFactors(const OExpression& e1,
+                                                  const OExpression& e2,
                                                   Context* context);
   /* Return true if the expression is y*cos(x)^2 or y*sin(x)^2 and
    * "base" is unintialized or "base" == x.
    * Set "coefficient" to y. If "base" is uninitialized, set "base" to x
    * Set cosine to true if it's a cosine, to false if it's a sine. */
   static bool TermHasSquaredTrigFunctionWithBase(
-      const Expression& e, const ReductionContext& reductionContext,
-      Expression& base, Expression& coefficient, bool* cosine);
-  static bool TermHasSquaredCos(const Expression& e,
+      const OExpression& e, const ReductionContext& reductionContext,
+      OExpression& base, OExpression& coefficient, bool* cosine);
+  static bool TermHasSquaredCos(const OExpression& e,
                                 const ReductionContext& reductionContext,
-                                Expression& baseOfCos);
+                                OExpression& baseOfCos);
 
-  Expression factorizeOnCommonDenominator(ReductionContext reductionContext);
+  OExpression factorizeOnCommonDenominator(ReductionContext reductionContext);
   void factorizeChildrenAtIndexesInPlace(
       int index1, int index2, const ReductionContext& reductionContext);
-  Expression factorizeSquaredTrigFunction(
-      Expression& baseOfTrigFunction, const ReductionContext& reductionContext);
+  OExpression factorizeSquaredTrigFunction(
+      OExpression& baseOfTrigFunction,
+      const ReductionContext& reductionContext);
   AdditionNode* node() const {
-    return static_cast<AdditionNode*>(Expression::node());
+    return static_cast<AdditionNode*>(OExpression::node());
   }
 };
 

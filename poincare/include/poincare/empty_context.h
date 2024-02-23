@@ -14,17 +14,17 @@ class EmptyContext : public Context {
                                                  int length) override {
     return SymbolAbstractType::None;
   }
-  bool setExpressionForSymbolAbstract(const Expression& expression,
+  bool setExpressionForSymbolAbstract(const OExpression& expression,
                                       const SymbolAbstract& symbol) override {
     assert(false);
     return false;
   }
 
  protected:
-  const Expression protectedExpressionForSymbolAbstract(
+  const OExpression protectedExpressionForSymbolAbstract(
       const SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override {
-    return Expression();
+    return OExpression();
   }
 };
 

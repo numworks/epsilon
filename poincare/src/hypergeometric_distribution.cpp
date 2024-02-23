@@ -88,19 +88,19 @@ bool HypergeometricDistribution::nIsOK(T n) {
 }
 
 bool HypergeometricDistribution::ExpressionNIsOK(bool *result,
-                                                 const Expression &N,
+                                                 const OExpression &N,
                                                  Context *context) {
   return Domain::ExpressionIsIn(result, N, Domain::Type::N, context);
 }
 
 bool HypergeometricDistribution::ExpressionKIsOK(bool *result,
-                                                 const Expression &K,
+                                                 const OExpression &K,
                                                  Context *context) {
   return Domain::ExpressionIsIn(result, K, Domain::Type::N, context);
 }
 
 bool HypergeometricDistribution::ExpressionnIsOK(bool *result,
-                                                 const Expression &n,
+                                                 const OExpression &n,
                                                  Context *context) {
   return Domain::ExpressionIsIn(result, n, Domain::Type::N, context);
 }

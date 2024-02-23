@@ -15,24 +15,25 @@ class ParsingHelper {
    * entries of the reserved functions array in order to determine
    * whether a token corresponds to an entry. The constexpr static
    * s_reservedFunctionsUpperBound marks the end of the array. */
-  static const Expression::FunctionHelper *const *GetReservedFunction(
+  static const OExpression::FunctionHelper *const *GetReservedFunction(
       const char *name, size_t nameLength);
-  static const Expression::FunctionHelper *const *GetInverseFunction(
+  static const OExpression::FunctionHelper *const *GetInverseFunction(
       const char *name, size_t nameLength);
-  static const Expression::FunctionHelper *const *
+  static const OExpression::FunctionHelper *const *
   ReservedFunctionsUpperBound() {
     return s_reservedFunctionsUpperBound;
   }
   static bool IsSpecialIdentifierName(const char *name, size_t nameLength);
   static bool IsLogicalOperator(const char *name, size_t nameLength,
                                 Token::Type *returnType);
-  static bool IsParameteredExpression(const Expression::FunctionHelper *helper);
+  static bool IsParameteredExpression(
+      const OExpression::FunctionHelper *helper);
   /* True if f^n(x) = f(x)^n for n != -1
    * ex: cos^2(x) = cos(x)^2 but ln^2(x) != ln(x)^2 */
-  static bool IsPowerableFunction(const Expression::FunctionHelper *helper);
+  static bool IsPowerableFunction(const OExpression::FunctionHelper *helper);
 
   // This must be called with an identifier name
-  typedef Expression (*IdentifierBuilder)();
+  typedef OExpression (*IdentifierBuilder)();
   static const IdentifierBuilder GetIdentifierBuilder(const char *name,
                                                       size_t nameLength);
 
@@ -44,24 +45,24 @@ class ParsingHelper {
   };
   constexpr static SpecialIdentifier s_specialIdentifiers[] = {
       {Infinity::k_infinityAliases,
-       [] { return static_cast<Expression>(Infinity::Builder(false)); }},
+       [] { return static_cast<OExpression>(Infinity::Builder(false)); }},
       {Symbol::k_ansAliases,
-       [] { return static_cast<Expression>(Symbol::Ans()); }},
+       [] { return static_cast<OExpression>(Symbol::Ans()); }},
       {BooleanNode::k_falseAliases,
-       [] { return static_cast<Expression>(Boolean::Builder(false)); }},
+       [] { return static_cast<OExpression>(Boolean::Builder(false)); }},
       {Nonreal::Name(),
-       [] { return static_cast<Expression>(Nonreal::Builder()); }},
+       [] { return static_cast<OExpression>(Nonreal::Builder()); }},
       {BooleanNode::k_trueAliases,
-       [] { return static_cast<Expression>(Boolean::Builder(true)); }},
+       [] { return static_cast<OExpression>(Boolean::Builder(true)); }},
       {Undefined::Name(),
-       [] { return static_cast<Expression>(Undefined::Builder()); }}};
+       [] { return static_cast<OExpression>(Undefined::Builder()); }}};
   constexpr static int k_numberOfSpecialIdentifiers =
       std::size(s_specialIdentifiers);
 
   static int SpecialIdentifierIndexForName(const char *name, size_t nameLength);
 
   // The array of reserved functions' helpers
-  constexpr static const Expression::FunctionHelper *s_reservedFunctions[] = {
+  constexpr static const OExpression::FunctionHelper *s_reservedFunctions[] = {
       /* This MUST be ordered according to name, and then by numberOfChildren
        * otherwise GetReservedFunction won't work properly.
        * If the function has multiple aliases, take the first alias
@@ -166,14 +167,14 @@ class ParsingHelper {
       &ListVariance::s_functionHelper,                 // var
   };
 
-  constexpr static const Expression::FunctionHelper *const
+  constexpr static const OExpression::FunctionHelper *const
       *s_reservedFunctionsUpperBound =
           s_reservedFunctions + std::size(s_reservedFunctions);
 
   // The array of functions that can be aliases to f^-1
   struct FunctionMapping {
-    const Expression::FunctionHelper *mainFunction;
-    const Expression::FunctionHelper *inverseFunction;
+    const OExpression::FunctionHelper *mainFunction;
+    const OExpression::FunctionHelper *inverseFunction;
   };
   constexpr static const FunctionMapping s_inverses[] = {
       {&Cosine::s_functionHelper, &ArcCosine::s_functionHelper},

@@ -201,82 +201,82 @@ QUIZ_CASE(poincare_properties_is_rational_number) {
 
 void assert_expression_has_property_or_not(const char* expression,
                                            Context* context,
-                                           Expression::ExpressionTest test,
+                                           OExpression::ExpressionTest test,
                                            bool hasProperty) {
-  Expression e = parse_expression(expression, context, false);
+  OExpression e = parse_expression(expression, context, false);
   quiz_assert_print_if_failure(
       e.recursivelyMatches(test, context) == hasProperty, expression);
 }
 
 void assert_expression_has_property_or_not(
     const char* expression, Context* context,
-    Expression::SimpleExpressionTest test, bool hasProperty) {
-  Expression e = parse_expression(expression, context, false);
+    OExpression::SimpleExpressionTest test, bool hasProperty) {
+  OExpression e = parse_expression(expression, context, false);
   quiz_assert_print_if_failure(
       e.recursivelyMatches(test, context) == hasProperty, expression);
 }
 
 void assert_expression_has_property(const char* expression, Context* context,
-                                    Expression::ExpressionTest test) {
+                                    OExpression::ExpressionTest test) {
   assert_expression_has_property_or_not(expression, context, test, true);
 }
 
 void assert_expression_has_property(const char* expression, Context* context,
-                                    Expression::SimpleExpressionTest test) {
+                                    OExpression::SimpleExpressionTest test) {
   assert_expression_has_property_or_not(expression, context, test, true);
 }
 
 void assert_expression_has_not_property(const char* expression,
                                         Context* context,
-                                        Expression::ExpressionTest test) {
+                                        OExpression::ExpressionTest test) {
   assert_expression_has_property_or_not(expression, context, test, false);
 }
 
-void assert_expression_has_not_property(const char* expression,
-                                        Context* context,
-                                        Expression::SimpleExpressionTest test) {
+void assert_expression_has_not_property(
+    const char* expression, Context* context,
+    OExpression::SimpleExpressionTest test) {
   assert_expression_has_property_or_not(expression, context, test, false);
 }
 
 QUIZ_CASE(poincare_properties_is_approximate) {
   Shared::GlobalContext context;
-  assert_expression_has_property("3.4", &context, Expression::IsApproximate);
-  assert_expression_has_property("2.3+1", &context, Expression::IsApproximate);
-  assert_expression_has_not_property("a", &context, Expression::IsApproximate);
+  assert_expression_has_property("3.4", &context, OExpression::IsApproximate);
+  assert_expression_has_property("2.3+1", &context, OExpression::IsApproximate);
+  assert_expression_has_not_property("a", &context, OExpression::IsApproximate);
 }
 
 QUIZ_CASE(poincare_properties_is_matrix) {
   Shared::GlobalContext context;
   assert_expression_has_property("[[1,2][3,4]]", &context,
-                                 Expression::IsMatrix);
+                                 OExpression::IsMatrix);
   assert_expression_has_property("dim([[1,2][3,4]])/3", &context,
-                                 Expression::IsMatrix);
+                                 OExpression::IsMatrix);
   assert_expression_has_property("[[1,2][3,4]]^(-1)", &context,
-                                 Expression::IsMatrix);
+                                 OExpression::IsMatrix);
   assert_expression_has_property("inverse([[1,2][3,4]])", &context,
-                                 Expression::IsMatrix);
+                                 OExpression::IsMatrix);
   assert_expression_has_property("3*identity(4)", &context,
-                                 Expression::IsMatrix);
+                                 OExpression::IsMatrix);
   assert_expression_has_property("transpose([[1,2][3,4]])", &context,
-                                 Expression::IsMatrix);
+                                 OExpression::IsMatrix);
   assert_expression_has_property("ref([[1,2][3,4]])", &context,
-                                 Expression::IsMatrix);
+                                 OExpression::IsMatrix);
   assert_expression_has_property("rref([[1,2][3,4]])", &context,
-                                 Expression::IsMatrix);
+                                 OExpression::IsMatrix);
   assert_expression_has_property("cross([[1][2][3]],[[3][4][5]])", &context,
-                                 Expression::IsMatrix);
-  assert_expression_has_not_property("2*3+1", &context, Expression::IsMatrix);
+                                 OExpression::IsMatrix);
+  assert_expression_has_not_property("2*3+1", &context, OExpression::IsMatrix);
 }
 
 void assert_expression_is_deep_matrix(const char* expression) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context, false);
   quiz_assert_print_if_failure(e.deepIsMatrix(&context), expression);
 }
 
 void assert_expression_is_not_deep_matrix(const char* expression) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context, false);
   quiz_assert_print_if_failure(!e.deepIsMatrix(&context), expression);
 }
 
@@ -291,25 +291,26 @@ QUIZ_CASE(poincare_properties_deep_is_matrix) {
 
 QUIZ_CASE(poincare_properties_is_infinity) {
   Shared::GlobalContext context;
-  assert_expression_has_property("3.4+inf", &context, Expression::IsInfinity);
-  assert_expression_has_not_property("2.3+1", &context, Expression::IsInfinity);
-  assert_expression_has_not_property("a", &context, Expression::IsInfinity);
+  assert_expression_has_property("3.4+inf", &context, OExpression::IsInfinity);
+  assert_expression_has_not_property("2.3+1", &context,
+                                     OExpression::IsInfinity);
+  assert_expression_has_not_property("a", &context, OExpression::IsInfinity);
   assert_reduce_and_store("42.3+inf→a");
-  assert_expression_has_property("a", &context, Expression::IsInfinity);
+  assert_expression_has_property("a", &context, OExpression::IsInfinity);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 }
 
 QUIZ_CASE(poincare_properties_in_parametric) {
   Shared::GlobalContext context;
-  assert_expression_has_property("2x+1", &context, Expression::IsSymbolic);
+  assert_expression_has_property("2x+1", &context, OExpression::IsSymbolic);
   assert_expression_has_not_property("diff(x^2,x,3)", &context,
-                                     Expression::IsSymbolic);
+                                     OExpression::IsSymbolic);
   assert_expression_has_property("diff(y^2+x^2,x,3)", &context,
-                                 Expression::IsSymbolic);
+                                 OExpression::IsSymbolic);
   assert_reduce_and_store("1+inf→x");
-  assert_expression_has_property("x", &context, Expression::IsInfinity);
+  assert_expression_has_property("x", &context, OExpression::IsInfinity);
   assert_expression_has_not_property("diff(x^2,x,3)", &context,
-                                     Expression::IsInfinity);
+                                     OExpression::IsInfinity);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 }
 
@@ -319,7 +320,7 @@ void assert_reduced_expression_sign(
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext, false);
   e = e.cloneAndReduce(ReductionContext(&globalContext, complexFormat,
                                         angleUnit, unitFormat,
                                         SystemForApproximation));
@@ -457,7 +458,7 @@ QUIZ_CASE(poincare_properties_sign) {
 }
 
 void assert_sign_sets_to(
-    Expression e, Poincare::TrinaryBoolean isPositive,
+    OExpression e, Poincare::TrinaryBoolean isPositive,
     Preferences::ComplexFormat complexFormat = Cartesian,
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat) {
@@ -468,7 +469,7 @@ void assert_sign_sets_to(
                                     unitFormat, User);
   ApproximationContext approximationContext(reductionContext);
   double eValue = e.approximateToScalar<double>(approximationContext);
-  Expression f =
+  OExpression f =
       e.setSign(isPositive == TrinaryBoolean::True, reductionContext);
   quiz_assert(f.isPositive(&context) == isPositive);
   double fValue = f.approximateToScalar<double>(approximationContext);
@@ -526,20 +527,20 @@ QUIZ_CASE(poincare_properties_set_sign_positive) {
 void assert_expression_is_real(const char* expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
-  Expression e = parse_expression(expression, &context, false)
-                     .cloneAndReduce(ReductionContext(&context, Cartesian,
-                                                      Radian, MetricUnitFormat,
-                                                      SystemForApproximation));
+  OExpression e = parse_expression(expression, &context, false)
+                      .cloneAndReduce(ReductionContext(&context, Cartesian,
+                                                       Radian, MetricUnitFormat,
+                                                       SystemForApproximation));
   quiz_assert_print_if_failure(e.isReal(&context), expression);
 }
 
 void assert_expression_is_not_real(const char* expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
-  Expression e = parse_expression(expression, &context, false)
-                     .cloneAndReduce(ReductionContext(&context, Cartesian,
-                                                      Radian, MetricUnitFormat,
-                                                      SystemForApproximation));
+  OExpression e = parse_expression(expression, &context, false)
+                      .cloneAndReduce(ReductionContext(&context, Cartesian,
+                                                       Radian, MetricUnitFormat,
+                                                       SystemForApproximation));
   quiz_assert_print_if_failure(!e.isReal(&context), expression);
 }
 
@@ -688,8 +689,8 @@ void assert_reduced_expression_polynomial_degree(
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
-  Expression result = e.cloneAndReduce(
+  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression result = e.cloneAndReduce(
       ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
                        SystemForApproximation));
 
@@ -739,11 +740,11 @@ void assert_expression_has_variables(const char* expression,
                                      const char* variables[],
                                      int trueNumberOfVariables) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext, false);
   constexpr static int k_maxVariableSize =
       Poincare::SymbolAbstractNode::k_maxNameSize;
-  char variableBuffer[Expression::k_maxNumberOfVariables][k_maxVariableSize] = {
-      {0}};
+  char variableBuffer[OExpression::k_maxNumberOfVariables][k_maxVariableSize] =
+      {{0}};
   int numberOfVariables = e.getVariables(
       &globalContext,
       [](const char* symbol, Poincare::Context* context) { return true; },
@@ -755,7 +756,7 @@ void assert_expression_has_variables(const char* expression,
     return;
   }
   int index = 0;
-  while (index < Expression::k_maxNumberOfVariables &&
+  while (index < OExpression::k_maxNumberOfVariables &&
          (variableBuffer[index][0] != 0 || variables[index][0] != 0)) {
     quiz_assert_print_if_failure(
         strcmp(variableBuffer[index], variables[index]) == 0, expression);
@@ -863,17 +864,17 @@ void assert_reduced_expression_has_polynomial_coefficient(
     SymbolicComputation symbolicComputation =
         ReplaceAllDefinedSymbolsWithDefinition) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext, false);
   e = e.cloneAndReduce(
       ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
                        SystemForAnalysis, symbolicComputation));
-  Expression coefficientBuffer
-      [Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
+  OExpression coefficientBuffer
+      [Poincare::OExpression::k_maxNumberOfPolynomialCoefficients];
   int d = e.getPolynomialReducedCoefficients(
       symbolName, coefficientBuffer, &globalContext, complexFormat, Radian,
       unitFormat, symbolicComputation);
   for (int i = 0; i <= d; i++) {
-    Expression f = parse_expression(coefficients[i], &globalContext, false);
+    OExpression f = parse_expression(coefficients[i], &globalContext, false);
     coefficientBuffer[i] = coefficientBuffer[i].cloneAndReduce(
         ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
                          SystemForAnalysis, symbolicComputation));
@@ -938,11 +939,11 @@ void assert_reduced_expression_unit_is(const char* expression,
   Shared::GlobalContext globalContext;
   ReductionContext redContext(&globalContext, Real, Degree, MetricUnitFormat,
                               SystemForApproximation);
-  Expression e = parse_expression(expression, &globalContext, false);
-  Expression u1;
+  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression u1;
   e = e.cloneAndReduceAndRemoveUnit(redContext, &u1);
-  Expression e2 = parse_expression(unit, &globalContext, false);
-  Expression u2;
+  OExpression e2 = parse_expression(unit, &globalContext, false);
+  OExpression u2;
   e2.cloneAndReduceAndRemoveUnit(redContext, &u2);
   quiz_assert_print_if_failure(
       u1.isUninitialized() == u2.isUninitialized() &&
@@ -964,14 +965,14 @@ void assert_additional_results_compute_to(
   Shared::GlobalContext globalContext;
   constexpr int maxNumberOfResults = 5;
   assert(length <= maxNumberOfResults);
-  Expression additional[maxNumberOfResults];
+  OExpression additional[maxNumberOfResults];
   ReductionContext reductionContext(
       &globalContext, Cartesian, Degree, unitFormat, User,
       ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
   ApproximationContext approximationContext(reductionContext);
-  Expression units;
-  Expression e = parse_expression(expression, &globalContext, false)
-                     .cloneAndReduceAndRemoveUnit(reductionContext, &units);
+  OExpression units;
+  OExpression e = parse_expression(expression, &globalContext, false)
+                      .cloneAndReduceAndRemoveUnit(reductionContext, &units);
   double value = e.approximateToScalar<double>(approximationContext);
 
   if (!Unit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {
@@ -980,7 +981,7 @@ void assert_additional_results_compute_to(
   }
   const int numberOfResults = Unit::SetAdditionalExpressions(
       units, value, additional, maxNumberOfResults, reductionContext,
-      Expression());
+      OExpression());
 
   quiz_assert(numberOfResults == length);
   for (int i = 0; i < length; i++) {
@@ -1083,23 +1084,23 @@ QUIZ_CASE(poincare_expression_additional_results) {
 void assert_list_length_in_children_is(const char* definition,
                                        int targetLength) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(definition, &globalContext, false);
+  OExpression e = parse_expression(definition, &globalContext, false);
   quiz_assert_print_if_failure(e.lengthOfListChildren() == targetLength,
                                definition);
 }
 
 QUIZ_CASE(poincare_expression_children_list_length) {
-  assert_list_length_in_children_is("1+1", Expression::k_noList);
+  assert_list_length_in_children_is("1+1", OExpression::k_noList);
   assert_list_length_in_children_is("1+{}", 0);
   assert_list_length_in_children_is("1*{2,3,4}*5*{6,7,8}", 3);
   assert_list_length_in_children_is("{1,-2,3,-4}^2", 4);
   assert_list_length_in_children_is("{1,2}+{3,4,5}",
-                                    Expression::k_mismatchedLists);
+                                    OExpression::k_mismatchedLists);
 }
 
 void assert_is_list_of_points(const char* definition, bool truth = true) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(definition, &globalContext, false);
+  OExpression e = parse_expression(definition, &globalContext, false);
   quiz_assert_print_if_failure(
       e.type() == ExpressionNode::Type::List &&
           static_cast<List&>(e).isListOfPoints(&globalContext) == truth,
@@ -1129,7 +1130,7 @@ QUIZ_CASE(poincare_expression_list_of_points) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
   /*
   assert_reduce_and_store("42.3+inf→a");
-  assert_expression_has_property("a", &context, Expression::IsInfinity);
+  assert_expression_has_property("a", &context, OExpression::IsInfinity);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   */
 }
@@ -1137,7 +1138,7 @@ QUIZ_CASE(poincare_expression_list_of_points) {
 void assert_is_continuous_between_values(const char* expression, float x1,
                                          float x2, bool isContinuous) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context, false);
   ApproximationContext approximationContext(&context, Cartesian, Degree);
   quiz_assert_print_if_failure(
       !isContinuous == e.isDiscontinuousBetweenValuesForSymbol(
@@ -1161,10 +1162,10 @@ QUIZ_CASE(poincare_expression_continuous) {
 }
 
 void assert_is_linear_combination_of_pattern(
-    const char* expression, Expression::PatternTest testFunction,
+    const char* expression, OExpression::PatternTest testFunction,
     bool truthValue = true, const char* symbol = "x") {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context, false);
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
@@ -1177,7 +1178,7 @@ void assert_is_linear_pattern_of_sin_or_cos(
     const char* expression, bool acceptAddition, double coefficientBeforeCos,
     double coefficientBeforeSymbol, double angle, const char* symbol = "x") {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context, false);
   ReductionContext reductionContext =
       ReductionContext::DefaultReductionContextForAnalysis(&context);
   e = e.cloneAndReduce(reductionContext);
@@ -1198,15 +1199,15 @@ void assert_is_linear_pattern_of_sin_or_cos(
 
 QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
   assert_is_linear_combination_of_pattern("1+(1/x)",
-                                          &Expression::IsRationalFraction);
+                                          &OExpression::IsRationalFraction);
   assert_is_linear_combination_of_pattern("(πx^2-3x^5)/(1-x)",
-                                          &Expression::IsRationalFraction);
+                                          &OExpression::IsRationalFraction);
   assert_is_linear_combination_of_pattern(
-      "x^0.5", &Expression::IsRationalFraction, false);
+      "x^0.5", &OExpression::IsRationalFraction, false);
 
   assert_is_linear_combination_of_pattern(
       "4log(6x)+3cos(1)-πlog(2x-4)",
-      [](const Expression& e, Context* context, const char* symbol) {
+      [](const OExpression& e, Context* context, const char* symbol) {
         return e.type() == ExpressionNode::Type::Logarithm &&
                e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
       });
@@ -1221,7 +1222,7 @@ QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
 
 void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context, false);
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(

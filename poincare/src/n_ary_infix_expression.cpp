@@ -4,7 +4,7 @@
 namespace Poincare {
 
 bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(
-    const Expression &child, int childIndex) const {
+    const OExpression &child, int childIndex) const {
   /* Expressions like "-2" require parentheses in Addition/Multiplication except
    * when they are the first operand. (same for -2%) */
   if (childIndex != 0 &&

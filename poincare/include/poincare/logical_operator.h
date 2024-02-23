@@ -31,7 +31,7 @@ class LogicalOperatorNode : public ExpressionNode {
 
  private:
   LayoutShape leftLayoutShape() const override { return LayoutShape::Default; }
-  bool childAtIndexNeedsUserParentheses(const Expression& child,
+  bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
 };
 
@@ -68,14 +68,14 @@ class LogicalOperatorNotNode : public LogicalOperatorNode {
       const ApproximationContext& approximationContext) const;
 
   // Reduction
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class LogicalOperatorNot
     : public ExpressionOneChild<LogicalOperatorNot, LogicalOperatorNotNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 // Binary Logical Operator
@@ -140,25 +140,25 @@ class BinaryLogicalOperatorNode : public LogicalOperatorNode {
       const ApproximationContext& approximationContext) const;
 
   // Reduction
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   OperatorType m_typeOfOperator;
 };
 
-class BinaryLogicalOperator : public Expression {
+class BinaryLogicalOperator : public OExpression {
  public:
-  BinaryLogicalOperator(const BinaryLogicalOperatorNode* n) : Expression(n) {}
+  BinaryLogicalOperator(const BinaryLogicalOperatorNode* n) : OExpression(n) {}
   static BinaryLogicalOperator Builder(
-      Expression firstChild, Expression secondChild,
+      OExpression firstChild, OExpression secondChild,
       BinaryLogicalOperatorNode::OperatorType type);
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
   BinaryLogicalOperatorNode::OperatorType operatorType() const {
     return node()->operatorType();
   }
 
  private:
   BinaryLogicalOperatorNode* node() const {
-    return static_cast<BinaryLogicalOperatorNode*>(Expression::node());
+    return static_cast<BinaryLogicalOperatorNode*>(OExpression::node());
   }
 };
 

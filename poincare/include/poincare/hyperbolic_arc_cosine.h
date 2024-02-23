@@ -24,7 +24,7 @@ class HyperbolicArcCosineNode final
 
  private:
   // Simplification
-  bool isNotableValue(Expression e, Context* context) const override {
+  bool isNotableValue(OExpression e, Context* context) const override {
     return e.isRationalOne();
   }
   // Layout

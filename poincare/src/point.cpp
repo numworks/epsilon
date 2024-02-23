@@ -14,7 +14,7 @@ size_t PointNode::serialize(char* buffer, size_t bufferSize,
                                      significantDigits, k_prefix);
 }
 
-Expression PointNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression PointNode::shallowReduce(const ReductionContext& reductionContext) {
   return Point(this).shallowReduce(reductionContext);
 }
 
@@ -25,8 +25,8 @@ Evaluation<T> PointNode::templatedApproximate(
   return PointEvaluation<T>::Builder(xy.x(), xy.y());
 }
 
-Expression Point::shallowReduce(ReductionContext reductionContext) {
-  Expression e = SimplificationHelper::defaultShallowReduce(
+OExpression Point::shallowReduce(ReductionContext reductionContext) {
+  OExpression e = SimplificationHelper::defaultShallowReduce(
       *this, &reductionContext,
       SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
       SimplificationHelper::UnitReduction::BanUnits,

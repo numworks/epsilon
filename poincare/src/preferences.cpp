@@ -25,7 +25,7 @@ Preferences::Preferences()
       m_forceExamModeReload(false) {}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
-    ComplexFormat complexFormat, const Expression& exp, Context* context) {
+    ComplexFormat complexFormat, const OExpression& exp, Context* context) {
   if (complexFormat == ComplexFormat::Real && exp.hasComplexI(context)) {
     return k_defautComplexFormatIfNotReal;
   }

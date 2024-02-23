@@ -1,7 +1,7 @@
 #ifndef POINCARE_PARSING_TOKENIZER_H
 #define POINCARE_PARSING_TOKENIZER_H
 
-/* In order to parse a text input into an Expression, (an instance of) the
+/* In order to parse a text input into an OExpression, (an instance of) the
  * Tokenizer reads the successive characters of the input, pops the Tokens it
  * recognizes, which are then consumed by the Parser. For each Token, the
  * Tokenizer determines a Type and may save other relevant data intended for the

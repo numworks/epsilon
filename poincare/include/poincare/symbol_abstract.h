@@ -53,8 +53,8 @@ class SymbolAbstractNode : public ExpressionNode {
 
   // Property
   TrinaryBoolean isPositive(Context *context) const override;
-  Expression replaceSymbolWithExpression(const SymbolAbstract &symbol,
-                                         const Expression &expression) override;
+  OExpression replaceSymbolWithExpression(
+      const SymbolAbstract &symbol, const OExpression &expression) override;
   ExpressionNode::LayoutShape leftLayoutShape() const override;
 
   // TreeNode
@@ -83,11 +83,11 @@ class SymbolAbstractNode : public ExpressionNode {
 };
 
 /* WARNING: SymbolAbstract cannot have any virtual methods. Otherwise,
- * inheriting Expression won't fulfil the requirement:
- * 'sizeof(Expression) == sizeof(ExpressionInheritingFromSymbolAbstract)
+ * inheriting OExpression won't fulfil the requirement:
+ * 'sizeof(OExpression) == sizeof(ExpressionInheritingFromSymbolAbstract)
  * due to the virtual table. */
 
-class SymbolAbstract : public Expression {
+class SymbolAbstract : public OExpression {
   friend class Function;
   friend class FunctionNode;
   friend class Sequence;
@@ -102,23 +102,24 @@ class SymbolAbstract : public Expression {
   bool hasSameNameAs(const SymbolAbstract &other) const;
   static bool matches(const SymbolAbstract &symbol, ExpressionTrinaryTest test,
                       Context *context, void *auxiliary,
-                      Expression::IgnoredSymbols *ignoredSymbols);
-  Expression replaceSymbolWithExpression(const SymbolAbstract &symbol,
-                                         const Expression &expression);
+                      OExpression::IgnoredSymbols *ignoredSymbols);
+  OExpression replaceSymbolWithExpression(const SymbolAbstract &symbol,
+                                          const OExpression &expression);
 
  protected:
-  SymbolAbstract(const SymbolAbstractNode *node) : Expression(node) {}
+  SymbolAbstract(const SymbolAbstractNode *node) : OExpression(node) {}
   template <typename T, typename U>
   static T Builder(const char *name, int length);
   SymbolAbstractNode *node() const {
-    return static_cast<SymbolAbstractNode *>(Expression::node());
+    return static_cast<SymbolAbstractNode *>(OExpression::node());
   }
   void checkForCircularityIfNeeded(Context *context,
                                    TrinaryBoolean *isCircular);
 
  private:
-  static Expression Expand(const SymbolAbstract &symbol, Context *context,
-                           bool clone, SymbolicComputation symbolicComputation);
+  static OExpression Expand(const SymbolAbstract &symbol, Context *context,
+                            bool clone,
+                            SymbolicComputation symbolicComputation);
 };
 
 }  // namespace Poincare

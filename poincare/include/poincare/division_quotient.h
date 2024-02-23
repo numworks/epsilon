@@ -37,7 +37,7 @@ class DivisionQuotientNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   // Evaluation
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -64,9 +64,9 @@ class DivisionQuotient final
     return b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
   }
 
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
-  static Expression Reduce(const Integer& a, const Integer& b);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
+  static OExpression Reduce(const Integer& a, const Integer& b);
 };
 
 }  // namespace Poincare

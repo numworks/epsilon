@@ -29,7 +29,7 @@ Evaluation<T> InfinityNode::templatedApproximate() const {
 }
 
 bool InfinityNode::derivate(const ReductionContext& reductionContext,
-                            Symbol symbol, Expression symbolValue) {
+                            Symbol symbol, OExpression symbolValue) {
   return Infinity(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -41,7 +41,7 @@ Infinity Infinity::Builder(bool negative) {
 }
 
 bool Infinity::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                        Expression symbolValue) {
+                        OExpression symbolValue) {
   replaceWithUndefinedInPlace();
   return true;
 }

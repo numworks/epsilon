@@ -2,9 +2,9 @@
 
 namespace Poincare {
 
-const Expression::FunctionHelper* const* ParsingHelper::GetReservedFunction(
+const OExpression::FunctionHelper* const* ParsingHelper::GetReservedFunction(
     const char* name, size_t nameLength) {
-  const Expression::FunctionHelper* const* reservedFunction =
+  const OExpression::FunctionHelper* const* reservedFunction =
       s_reservedFunctions;
   while (reservedFunction < s_reservedFunctionsUpperBound) {
     int nameDifference =
@@ -20,7 +20,7 @@ const Expression::FunctionHelper* const* ParsingHelper::GetReservedFunction(
   return nullptr;
 }
 
-const Expression::FunctionHelper* const* ParsingHelper::GetInverseFunction(
+const OExpression::FunctionHelper* const* ParsingHelper::GetInverseFunction(
     const char* name, size_t nameLength) {
   const FunctionMapping* functionMapping = s_inverses;
   while (functionMapping < s_inverseFunctionsUpperBound) {
@@ -76,7 +76,7 @@ bool ParsingHelper::IsLogicalOperator(const char* name, size_t nameLength,
 }
 
 bool ParsingHelper::IsParameteredExpression(
-    const Expression::FunctionHelper* helper) {
+    const OExpression::FunctionHelper* helper) {
   return helper == &Derivative::s_functionHelper ||
          helper == &Derivative::s_functionHelperFirstOrder ||
          helper == &Integral::s_functionHelper ||
@@ -91,7 +91,7 @@ bool ParsingHelper::IsParameteredExpression(
 }
 
 bool ParsingHelper::IsPowerableFunction(
-    const Expression::FunctionHelper* helper) {
+    const OExpression::FunctionHelper* helper) {
   return helper == &ArcCosine::s_functionHelper ||
          helper == &ArcCosecant::s_functionHelper ||
          helper == &HyperbolicArcCosine::s_functionHelper ||

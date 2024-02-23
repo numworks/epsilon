@@ -9,13 +9,13 @@
 
 namespace Poincare {
 
-Expression ParameteredExpressionNode::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const Expression& expression) {
+OExpression ParameteredExpressionNode::replaceSymbolWithExpression(
+    const SymbolAbstract& symbol, const OExpression& expression) {
   return ParameteredExpression(this).replaceSymbolWithExpression(symbol,
                                                                  expression);
 }
 
-Expression ParameteredExpressionNode::deepReplaceReplaceableSymbols(
+OExpression ParameteredExpressionNode::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return ParameteredExpression(this).deepReplaceReplaceableSymbols(
@@ -48,7 +48,7 @@ int ParameteredExpressionNode::getVariables(Context* context,
       break;
     }
   }
-  if (numberOfVariables < Expression::k_maxNumberOfVariables) {
+  if (numberOfVariables < OExpression::k_maxNumberOfVariables) {
     variables[numberOfVariables * maxSizeVariable] = 0;
   }
   nextVariableIndex = numberOfVariables;
@@ -78,7 +78,7 @@ Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(
   VariableContext variableContext =
       VariableContext(symbol.name(), approximationContext.context());
   variableContext.setApproximationForVariable<T>(x);
-  /* Here we cannot use Expression::approximateToScalarWithValueForSymbol which
+  /* Here we cannot use OExpression::approximateToScalarWithValueForSymbol which
    * would reset the sApproximationEncounteredComplex flag. */
   ApproximationContext childContext = approximationContext;
   childContext.setContext(&variableContext);
@@ -176,8 +176,8 @@ bool ParameteredExpression::ParameterText(const char* text,
   return result;
 }
 
-Expression ParameteredExpression::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const Expression& expression) {
+OExpression ParameteredExpression::replaceSymbolWithExpression(
+    const SymbolAbstract& symbol, const OExpression& expression) {
   if (symbol.type() != ExpressionNode::Type::Symbol ||
       !parameter().hasSameNameAs(symbol)) {
     // If the symbol is not the parameter, replace normally
@@ -196,7 +196,7 @@ Expression ParameteredExpression::replaceSymbolWithExpression(
   return *this;
 }
 
-Expression ParameteredExpression::deepReplaceReplaceableSymbols(
+OExpression ParameteredExpression::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   /* All children replaceable symbols should be replaced apart from symbols that
@@ -225,7 +225,7 @@ Expression ParameteredExpression::deepReplaceReplaceableSymbols(
 }
 
 Symbol ParameteredExpression::parameter() {
-  Expression e = childAtIndex(ParameteredExpression::ParameterChildIndex());
+  OExpression e = childAtIndex(ParameteredExpression::ParameterChildIndex());
   assert(e.type() == ExpressionNode::Type::Symbol);
   return static_cast<Symbol&>(e);
 }

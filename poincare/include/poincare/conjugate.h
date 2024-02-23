@@ -34,7 +34,7 @@ class ConjugateNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return childAtIndex(0)->leftLayoutShape();
   };
@@ -64,7 +64,7 @@ class ConjugateNode final : public ExpressionNode {
 class Conjugate final : public ExpressionOneChild<Conjugate, ConjugateNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

@@ -21,7 +21,7 @@ std::complex<T> MatrixComplexNode<T>::complexAtIndex(int index) const {
 }
 
 template <typename T>
-Expression MatrixComplexNode<T>::complexToExpression(
+OExpression MatrixComplexNode<T>::complexToExpression(
     Preferences::ComplexFormat complexFormat) const {
   if (isUndefined()) {
     return Undefined::Builder();
@@ -29,7 +29,7 @@ Expression MatrixComplexNode<T>::complexToExpression(
   Matrix matrix = Matrix::Builder();
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
-    Expression childExpression = Undefined::Builder();
+    OExpression childExpression = Undefined::Builder();
     if (c->type() == EvaluationNode<T>::Type::Complex) {
       childExpression = c->complexToExpression(complexFormat);
     }

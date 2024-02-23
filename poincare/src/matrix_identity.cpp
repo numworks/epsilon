@@ -17,7 +17,7 @@ int MatrixIdentityNode::numberOfChildren() const {
   return MatrixIdentity::s_functionHelper.numberOfChildren();
 }
 
-Expression MatrixIdentityNode::shallowReduce(
+OExpression MatrixIdentityNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return MatrixIdentity(this).shallowReduce(reductionContext);
 }
@@ -46,9 +46,9 @@ Evaluation<T> MatrixIdentityNode::templatedApproximate(
   return Complex<T>::Undefined();
 }
 
-Expression MatrixIdentity::shallowReduce(ReductionContext reductionContext) {
+OExpression MatrixIdentity::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -56,7 +56,7 @@ Expression MatrixIdentity::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational ||
       !static_cast<Rational&>(c).isInteger()) {
     return *this;
@@ -71,7 +71,7 @@ Expression MatrixIdentity::shallowReduce(ReductionContext reductionContext) {
   }
   int dim = dimension.extractedInt();
   assert(dim != 0);
-  Expression result = Matrix::CreateIdentity(dim);
+  OExpression result = Matrix::CreateIdentity(dim);
   replaceWithInPlace(result);
   return result;
 }

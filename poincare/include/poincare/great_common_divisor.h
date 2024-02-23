@@ -28,8 +28,9 @@ class GreatCommonDivisorNode final : public NAryExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowBeautify(
+      const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };
@@ -59,14 +60,14 @@ class GreatCommonDivisor final : public NAryExpression {
     return TreeHandle::NAryBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(
         convert(children));
   }
-  constexpr static Expression::FunctionHelper s_functionHelper =
-      Expression::FunctionHelper(
+  constexpr static OExpression::FunctionHelper s_functionHelper =
+      OExpression::FunctionHelper(
           "gcd", 2, INT_MAX,
           &UntypedBuilderMultipleChildren<GreatCommonDivisor>);
 
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
-  Expression shallowBeautify(Context* context);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowBeautify(Context* context);
 };
 
 }  // namespace Poincare

@@ -43,13 +43,13 @@ class HypergeometricDistribution final : public DiscreteDistribution {
     return NIsOK(parameters[0]) && KIsOK(parameters[1]) && nIsOK(parameters[2]);
   }
 
-  static bool ExpressionNIsOK(bool *result, const Expression &N,
+  static bool ExpressionNIsOK(bool *result, const OExpression &N,
                               Context *context);
-  static bool ExpressionKIsOK(bool *result, const Expression &K,
+  static bool ExpressionKIsOK(bool *result, const OExpression &K,
                               Context *context);
-  static bool ExpressionnIsOK(bool *result, const Expression &n,
+  static bool ExpressionnIsOK(bool *result, const OExpression &n,
                               Context *context);
-  bool expressionParametersAreOK(bool *result, const Expression *parameters,
+  bool expressionParametersAreOK(bool *result, const OExpression *parameters,
                                  Context *context) const override {
     return ExpressionNIsOK(result, parameters[0], context) ||
            ExpressionKIsOK(result, parameters[1], context) ||

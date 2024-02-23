@@ -25,7 +25,7 @@ size_t DivisionRemainderNode::serialize(
       DivisionRemainder::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression DivisionRemainderNode::shallowReduce(
+OExpression DivisionRemainderNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return DivisionRemainder(this).shallowReduce(reductionContext);
 }
@@ -50,9 +50,10 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(
       });
 }
 
-Expression DivisionRemainder::shallowReduce(ReductionContext reductionContext) {
+OExpression DivisionRemainder::shallowReduce(
+    ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -62,8 +63,8 @@ Expression DivisionRemainder::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c0 = childAtIndex(0);
-  Expression c1 = childAtIndex(1);
+  OExpression c0 = childAtIndex(0);
+  OExpression c1 = childAtIndex(1);
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.isInteger()) {
@@ -85,12 +86,12 @@ Expression DivisionRemainder::shallowReduce(ReductionContext reductionContext) {
 
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
-  Expression result = Reduce(a, b);
+  OExpression result = Reduce(a, b);
   replaceWithInPlace(result);
   return result;
 }
 
-Expression DivisionRemainder::Reduce(const Integer &a, const Integer &b) {
+OExpression DivisionRemainder::Reduce(const Integer &a, const Integer &b) {
   if (b.isZero()) {
     return Undefined::Builder();
   }

@@ -7,32 +7,32 @@
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper NormCDF::s_functionHelper;
-constexpr Expression::FunctionHelper NormCDFRange::s_functionHelper;
-constexpr Expression::FunctionHelper NormPDF::s_functionHelper;
-constexpr Expression::FunctionHelper InvNorm::s_functionHelper;
+constexpr OExpression::FunctionHelper NormCDF::s_functionHelper;
+constexpr OExpression::FunctionHelper NormCDFRange::s_functionHelper;
+constexpr OExpression::FunctionHelper NormPDF::s_functionHelper;
+constexpr OExpression::FunctionHelper InvNorm::s_functionHelper;
 
-constexpr Expression::FunctionHelper StudentCDF::s_functionHelper;
-constexpr Expression::FunctionHelper StudentCDFRange::s_functionHelper;
-constexpr Expression::FunctionHelper StudentPDF::s_functionHelper;
-constexpr Expression::FunctionHelper InvStudent::s_functionHelper;
+constexpr OExpression::FunctionHelper StudentCDF::s_functionHelper;
+constexpr OExpression::FunctionHelper StudentCDFRange::s_functionHelper;
+constexpr OExpression::FunctionHelper StudentPDF::s_functionHelper;
+constexpr OExpression::FunctionHelper InvStudent::s_functionHelper;
 
-constexpr Expression::FunctionHelper PoissonCDF::s_functionHelper;
-constexpr Expression::FunctionHelper PoissonPDF::s_functionHelper;
+constexpr OExpression::FunctionHelper PoissonCDF::s_functionHelper;
+constexpr OExpression::FunctionHelper PoissonPDF::s_functionHelper;
 
-constexpr Expression::FunctionHelper BinomCDF::s_functionHelper;
-constexpr Expression::FunctionHelper BinomPDF::s_functionHelper;
-constexpr Expression::FunctionHelper InvBinom::s_functionHelper;
+constexpr OExpression::FunctionHelper BinomCDF::s_functionHelper;
+constexpr OExpression::FunctionHelper BinomPDF::s_functionHelper;
+constexpr OExpression::FunctionHelper InvBinom::s_functionHelper;
 
-constexpr Expression::FunctionHelper GeomCDF::s_functionHelper;
-constexpr Expression::FunctionHelper GeomCDFRange::s_functionHelper;
-constexpr Expression::FunctionHelper GeomPDF::s_functionHelper;
-constexpr Expression::FunctionHelper InvGeom::s_functionHelper;
+constexpr OExpression::FunctionHelper GeomCDF::s_functionHelper;
+constexpr OExpression::FunctionHelper GeomCDFRange::s_functionHelper;
+constexpr OExpression::FunctionHelper GeomPDF::s_functionHelper;
+constexpr OExpression::FunctionHelper InvGeom::s_functionHelper;
 
-constexpr Expression::FunctionHelper HypergeomCDF::s_functionHelper;
-constexpr Expression::FunctionHelper HypergeomCDFRange::s_functionHelper;
-constexpr Expression::FunctionHelper HypergeomPDF::s_functionHelper;
-constexpr Expression::FunctionHelper InvHypergeom::s_functionHelper;
+constexpr OExpression::FunctionHelper HypergeomCDF::s_functionHelper;
+constexpr OExpression::FunctionHelper HypergeomCDFRange::s_functionHelper;
+constexpr OExpression::FunctionHelper HypergeomPDF::s_functionHelper;
+constexpr OExpression::FunctionHelper InvHypergeom::s_functionHelper;
 
 size_t DistributionDispatcherNode::serialize(
     char *buffer, size_t bufferSize,
@@ -63,18 +63,18 @@ int DistributionDispatcherNode::simplificationOrderSameType(
                                                      ignoreParentheses);
 }
 
-Expression DistributionDispatcherNode::shallowReduce(
+OExpression DistributionDispatcherNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return DistributionDispatcher(this).shallowReduce(reductionContext);
 }
 
-Expression DistributionDispatcher::shallowReduce(
+OExpression DistributionDispatcher::shallowReduce(
     ReductionContext reductionContext, bool *stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
@@ -86,12 +86,12 @@ Expression DistributionDispatcher::shallowReduce(
   }
 
   int childIndex = 0;
-  Expression abscissae[DistributionMethod::k_maxNumberOfParameters];
+  OExpression abscissae[DistributionMethod::k_maxNumberOfParameters];
   for (int i = 0; i < DistributionMethod::numberOfParameters(methodType());
        i++) {
     abscissae[i] = childAtIndex(childIndex++);
   }
-  Expression parameters[Distribution::k_maxNumberOfParameters];
+  OExpression parameters[Distribution::k_maxNumberOfParameters];
   for (int i = 0; i < Distribution::numberOfParameters(distributionType());
        i++) {
     parameters[i] = childAtIndex(childIndex++);
@@ -110,8 +110,8 @@ Expression DistributionDispatcher::shallowReduce(
     return replaceWithUndefinedInPlace();
   }
 
-  Expression e = function->shallowReduce(abscissae, distribution, parameters,
-                                         reductionContext, this);
+  OExpression e = function->shallowReduce(abscissae, distribution, parameters,
+                                          reductionContext, this);
   if (!e.isUninitialized()) {
     return e;
   }

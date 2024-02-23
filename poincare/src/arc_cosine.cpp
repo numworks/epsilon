@@ -27,18 +27,18 @@ size_t ArcCosineNode::serialize(char* buffer, size_t bufferSize,
       ArcCosine::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression ArcCosineNode::shallowReduce(
+OExpression ArcCosineNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcCosine e = ArcCosine(this);
   return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcCosineNode::derivate(const ReductionContext& reductionContext,
-                             Symbol symbol, Expression symbolValue) {
+                             Symbol symbol, OExpression symbolValue) {
   return ArcCosine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression ArcCosineNode::unaryFunctionDifferential(
+OExpression ArcCosineNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return ArcCosine(this).unaryFunctionDifferential(reductionContext);
 }
@@ -72,13 +72,13 @@ std::complex<T> ArcCosineNode::computeOnComplex(
 }
 
 bool ArcCosine::derivate(const ReductionContext& reductionContext,
-                         Symbol symbol, Expression symbolValue) {
+                         Symbol symbol, OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
                                     reductionContext);
   return true;
 }
 
-Expression ArcCosine::unaryFunctionDifferential(
+OExpression ArcCosine::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(

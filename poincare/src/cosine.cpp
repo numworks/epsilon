@@ -34,29 +34,30 @@ size_t CosineNode::serialize(char* buffer, size_t bufferSize,
       Cosine::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression CosineNode::shallowReduce(const ReductionContext& reductionContext) {
+OExpression CosineNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   Cosine e = Cosine(this);
   return Trigonometry::ShallowReduceDirectFunction(e, reductionContext);
 }
 
 bool CosineNode::derivate(const ReductionContext& reductionContext,
-                          Symbol symbol, Expression symbolValue) {
+                          Symbol symbol, OExpression symbolValue) {
   return Cosine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression CosineNode::unaryFunctionDifferential(
+OExpression CosineNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Cosine(this).unaryFunctionDifferential(reductionContext);
 }
 
 bool Cosine::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                      Expression symbolValue) {
+                      OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
                                     reductionContext);
   return true;
 }
 
-Expression Cosine::unaryFunctionDifferential(
+OExpression Cosine::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Multiplication::Builder(
       Rational::Builder(-1),

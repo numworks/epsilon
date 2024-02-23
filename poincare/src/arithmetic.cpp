@@ -85,8 +85,8 @@ uint32_t Arithmetic::LCM(uint32_t a, uint32_t b, bool* hasOverflown) {
   return a * (b / gcd);
 }
 
-Integer getIntegerFromRationalExpression(Expression expression) {
-  // Expression must be a Rational with 1 as denominator.
+Integer getIntegerFromRationalExpression(OExpression expression) {
+  // OExpression must be a Rational with 1 as denominator.
   assert(expression.type() == ExpressionNode::Type::Rational);
   Rational r = static_cast<Rational&>(expression);
   assert(r.isInteger());
@@ -95,9 +95,9 @@ Integer getIntegerFromRationalExpression(Expression expression) {
   return i;
 }
 
-Expression applyAssociativeFunctionOnChildren(const Expression& expression,
-                                              Integer (*f)(const Integer&,
-                                                           const Integer&)) {
+OExpression applyAssociativeFunctionOnChildren(const OExpression& expression,
+                                               Integer (*f)(const Integer&,
+                                                            const Integer&)) {
   /* Use function associativity to compute a function of expression's children.
    * The function can be GCD or LCM. The expression must have at least 1
    * child, and all its children must be integer Rationals. */
@@ -112,13 +112,13 @@ Expression applyAssociativeFunctionOnChildren(const Expression& expression,
   return Rational::Builder(result);
 }
 
-Expression Arithmetic::GCD(const Expression& expression) {
+OExpression Arithmetic::GCD(const OExpression& expression) {
   /* Compute GCD of expression's children. the expression must have at least 1
    * child, and all its children must be integer Rationals. */
   return applyAssociativeFunctionOnChildren(expression, Arithmetic::GCD);
 }
 
-Expression Arithmetic::LCM(const Expression& expression) {
+OExpression Arithmetic::LCM(const OExpression& expression) {
   /* Compute LCM of expression's children. the expression must have at least 1
    * child, and all its children must be integer Rationals. */
   return applyAssociativeFunctionOnChildren(expression, Arithmetic::LCM);

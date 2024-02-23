@@ -23,7 +23,7 @@ class DependencyNode : public ExpressionNode {
     return mainExpression()->polynomialDegree(context, symbolName);
   }
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const override;
+                                OExpression coefficients[]) const override;
 
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
@@ -46,9 +46,9 @@ class DependencyNode : public ExpressionNode {
   }
 
   // Simplification
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 
  private:
   template <typename T>
@@ -59,53 +59,53 @@ class DependencyNode : public ExpressionNode {
   ExpressionNode* dependenciesList() const;
 };
 
-class Dependency : public Expression {
+class Dependency : public OExpression {
   friend class DependencyNode;
 
  public:
   constexpr static int k_indexOfMainExpression = 0;
   constexpr static int k_indexOfDependenciesList = 1;
-  Dependency(const DependencyNode* n) : Expression(n) {}
-  static Dependency Builder(Expression expression,
+  Dependency(const DependencyNode* n) : OExpression(n) {}
+  static Dependency Builder(OExpression expression,
                             List dependencies = List::Builder()) {
     return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(
         {expression, dependencies});
   }
 
   void deepReduceChildren(const ReductionContext& reductionContext);
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 
   int numberOfDependencies() const {
     return dependenciesList().numberOfChildren();
   }
-  void addDependency(Expression newDependency);
+  void addDependency(OExpression newDependency);
 
   /* Store the dependecies in l and replace the dependency node with the true
    * expression. */
-  Expression extractDependencies(List l);
+  OExpression extractDependencies(List l);
   bool dependencyRecursivelyMatches(
       ExpressionTrinaryTest test, Context* context,
       SymbolicComputation replaceSymbols, void* auxiliary,
-      Expression::IgnoredSymbols* ignoredSymbols) const {
+      OExpression::IgnoredSymbols* ignoredSymbols) const {
     return mainExpression().recursivelyMatches(test, context, replaceSymbols,
                                                auxiliary, ignoredSymbols);
   }
 
-  Expression removeUselessDependencies(
+  OExpression removeUselessDependencies(
       const ReductionContext& reductionContext);
 
   // Parser utils
-  static Expression UntypedBuilder(Expression children);
+  static OExpression UntypedBuilder(OExpression children);
   static_assert(UCodePointSystem == 0x14,
                 "UCodePointSystem value was modified");
-  constexpr static Expression::FunctionHelper s_functionHelper =
-      Expression::FunctionHelper("\u0014dep", 2, &UntypedBuilder);
+  constexpr static OExpression::FunctionHelper s_functionHelper =
+      OExpression::FunctionHelper("\u0014dep", 2, &UntypedBuilder);
 
  private:
-  Expression mainExpression() const {
+  OExpression mainExpression() const {
     return childAtIndex(k_indexOfMainExpression);
   }
-  Expression dependenciesList() const {
+  OExpression dependenciesList() const {
     return childAtIndex(k_indexOfDependenciesList);
   }
 };

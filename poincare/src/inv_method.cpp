@@ -5,12 +5,12 @@
 
 namespace Poincare {
 
-Expression InverseMethod::shallowReduce(Expression *x,
-                                        const Distribution *distribution,
-                                        Expression *parameters,
-                                        ReductionContext reductionContext,
-                                        Expression *expression) const {
-  Expression a = x[0];
+OExpression InverseMethod::shallowReduce(OExpression *x,
+                                         const Distribution *distribution,
+                                         OExpression *parameters,
+                                         ReductionContext reductionContext,
+                                         OExpression *expression) const {
+  OExpression a = x[0];
   // Check a
   if (a.type() != ExpressionNode::Type::Rational) {
     return *expression;
@@ -36,19 +36,19 @@ Expression InverseMethod::shallowReduce(Expression *x,
     // TODO: for all distributions with finite support
     if (distribution->hasType(Distribution::Type::Binomial)) {
       if (is0) {
-        Expression p = parameters[1];
+        OExpression p = parameters[1];
         if (p.type() != ExpressionNode::Type::Rational) {
           return *expression;
         }
         if (static_cast<Rational &>(p).isOne()) {
-          Expression result = Rational::Builder(0);
+          OExpression result = Rational::Builder(0);
           expression->replaceWithInPlace(result);
           return result;
         }
         return expression->replaceWithUndefinedInPlace();
       }
       // n if a == 1 (TODO: false if p == 0 ?)
-      Expression n = parameters[0];
+      OExpression n = parameters[0];
       expression->replaceWithInPlace(n);
       return n;
     }
@@ -59,16 +59,16 @@ Expression InverseMethod::shallowReduce(Expression *x,
       }
 
       // is1
-      Expression p = parameters[0];
+      OExpression p = parameters[0];
       if (p.type() != ExpressionNode::Type::Rational) {
         return *expression;
       }
       if (static_cast<Rational &>(p).isOne()) {
-        Expression result = Rational::Builder(1);
+        OExpression result = Rational::Builder(1);
         expression->replaceWithInPlace(result);
         return result;
       }
-      Expression result = Infinity::Builder(false);
+      OExpression result = Infinity::Builder(false);
       expression->replaceWithInPlace(result);
       return result;
     }
@@ -76,7 +76,7 @@ Expression InverseMethod::shallowReduce(Expression *x,
     if (distribution->hasType(Distribution::Type::Normal) ||
         distribution->hasType(Distribution::Type::Student)) {
       // Normal and Student (all distributions with real line support)
-      Expression result = Infinity::Builder(is0);
+      OExpression result = Infinity::Builder(is0);
       expression->replaceWithInPlace(result);
       return result;
     }
@@ -85,12 +85,12 @@ Expression InverseMethod::shallowReduce(Expression *x,
   // expectedValue if a == 0.5 and continuous and symmetrical
   if (rationalA.isHalf()) {
     if (distribution->hasType(Distribution::Type::Normal)) {
-      Expression mu = parameters[0];
+      OExpression mu = parameters[0];
       expression->replaceWithInPlace(mu);
       return mu;
     }
     if (distribution->hasType(Distribution::Type::Student)) {
-      Expression zero = Rational::Builder(0);
+      OExpression zero = Rational::Builder(0);
       expression->replaceWithInPlace(zero);
       return zero;
     }

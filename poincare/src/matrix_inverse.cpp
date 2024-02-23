@@ -16,7 +16,7 @@ int MatrixInverseNode::numberOfChildren() const {
   return MatrixInverse::s_functionHelper.numberOfChildren();
 }
 
-Expression MatrixInverseNode::shallowReduce(
+OExpression MatrixInverseNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return MatrixInverse(this).shallowReduce(reductionContext);
 }
@@ -47,9 +47,9 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(
   return inverse;
 }
 
-Expression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
+OExpression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(
+    OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits);
@@ -57,12 +57,12 @@ Expression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     /* Power(matrix, -n) creates a matrixInverse, so the simplification must be
      * done here and not in power. */
     bool couldComputeInverse = false;
-    Expression result = static_cast<Matrix&>(c).createInverse(
+    OExpression result = static_cast<Matrix&>(c).createInverse(
         reductionContext, &couldComputeInverse);
     if (couldComputeInverse) {
       replaceWithInPlace(result);
@@ -71,7 +71,7 @@ Expression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
     // The matrix could not be inverted exactly. TODO: Poincare error?
     return *this;
   }
-  Expression result = Power::Builder(c, Rational::Builder(-1));
+  OExpression result = Power::Builder(c, Rational::Builder(-1));
   replaceWithInPlace(result);
   return result.shallowReduce(reductionContext);
 }

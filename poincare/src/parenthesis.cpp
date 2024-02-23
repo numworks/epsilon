@@ -12,7 +12,7 @@ size_t ParenthesisNode::serialize(char* buffer, size_t bufferSize,
                                      numberOfSignificantDigits, "");
 }
 
-Expression ParenthesisNode::shallowReduce(
+OExpression ParenthesisNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Parenthesis(this).shallowReduce(reductionContext);
 }
@@ -23,13 +23,13 @@ Evaluation<T> ParenthesisNode::templatedApproximate(
   return childAtIndex(0)->approximate(T(), approximationContext);
 }
 
-Expression Parenthesis::shallowReduce(ReductionContext reductionContext) {
-  Expression e =
+OExpression Parenthesis::shallowReduce(ReductionContext reductionContext) {
+  OExpression e =
       SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
   if (!e.isUninitialized()) {
     return e;
   }
-  Expression c = childAtIndex(0);
+  OExpression c = childAtIndex(0);
   replaceWithInPlace(c);
   return c;
 }

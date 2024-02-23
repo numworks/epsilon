@@ -15,7 +15,7 @@ class SymbolNode final : public SymbolAbstractNode {
   void logNodeName(std::ostream& stream) const override { stream << "Symbol"; }
 #endif
 
-  // Expression Properties
+  // OExpression Properties
   Type type() const override { return Type::Symbol; }
   // Symbol is not expanded for sign as it may be a local variable.
   TrinaryBoolean isPositive(Context* context) const override {
@@ -23,7 +23,7 @@ class SymbolNode final : public SymbolAbstractNode {
   }
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const override;
+                                OExpression coefficients[]) const override;
   int getVariables(Context* context, isVariableTest isVariable, char* variables,
                    int maxSizeVariable, int nextVariableIndex) const override;
   double degreeForSortingAddition(bool symbolsOnly) const override {
@@ -35,15 +35,15 @@ class SymbolNode final : public SymbolAbstractNode {
   /* Layout */
 
   /* Simplification */
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
-  Expression deepReplaceReplaceableSymbols(
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
 
   /* Derivation */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 
   /* Approximation */
   Evaluation<float> approximate(
@@ -67,7 +67,7 @@ class SymbolNode final : public SymbolAbstractNode {
 };
 
 class Symbol final : public SymbolAbstract {
-  friend class Expression;
+  friend class OExpression;
   friend class SymbolNode;
 
  public:
@@ -94,19 +94,19 @@ class Symbol final : public SymbolAbstract {
   bool isSystemSymbol() const { return node()->isSystemSymbol(); }
   const char* name() const { return node()->name(); }
 
-  // Expression
-  Expression shallowReduce(ReductionContext reductionContext);
+  // OExpression
+  OExpression shallowReduce(ReductionContext reductionContext);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
+                OExpression symbolValue);
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                Expression coefficients[]) const;
-  Expression deepReplaceReplaceableSymbols(
+                                OExpression coefficients[]) const;
+  OExpression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 
  private:
   SymbolNode* node() const {
-    return static_cast<SymbolNode*>(Expression::node());
+    return static_cast<SymbolNode*>(OExpression::node());
   }
 };
 

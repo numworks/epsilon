@@ -29,7 +29,7 @@ class ListAccessNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -46,27 +46,27 @@ class ListAccessNode : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class ListElement : public Expression {
+class ListElement : public OExpression {
  public:
-  ListElement(const ListAccessNode<1>* n) : Expression(n) {}
-  static ListElement Builder(Expression index, Expression list) {
+  ListElement(const ListAccessNode<1>* n) : OExpression(n) {}
+  static ListElement Builder(OExpression index, OExpression list) {
     return TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(
         {index, list});
   }
 
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
-class ListSlice : public Expression {
+class ListSlice : public OExpression {
  public:
-  ListSlice(const ListAccessNode<2>* n) : Expression(n) {}
-  static ListSlice Builder(Expression firstIndex, Expression lastIndex,
-                           Expression list) {
+  ListSlice(const ListAccessNode<2>* n) : OExpression(n) {}
+  static ListSlice Builder(OExpression firstIndex, OExpression lastIndex,
+                           OExpression list) {
     return TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(
         {firstIndex, lastIndex, list});
   }
 
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-constexpr Expression::FunctionHelper Product::s_functionHelper;
+constexpr OExpression::FunctionHelper Product::s_functionHelper;
 
 size_t ProductNode::serialize(char* buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
@@ -21,11 +21,11 @@ size_t ProductNode::serialize(char* buffer, size_t bufferSize,
       Product::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression Product::UntypedBuilder(Expression children) {
+OExpression Product::UntypedBuilder(OExpression children) {
   assert(children.type() == ExpressionNode::Type::List);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
-    return Expression();
+    return OExpression();
   }
   return Builder(children.childAtIndex(0),
                  children.childAtIndex(1).convert<Symbol>(),

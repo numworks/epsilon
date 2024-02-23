@@ -36,7 +36,7 @@ class FloatList : public List, public DatasetColumn<T> {
 
   /* This replaces childAtIndex. Instead of being in linear time, it's
    * in constant time. */
-  Expression floatExpressionAtIndex(int index) const;
+  OExpression floatExpressionAtIndex(int index) const;
 };
 
 }  // namespace Poincare

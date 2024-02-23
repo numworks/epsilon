@@ -28,8 +28,8 @@ class HyperbolicTangentNode final : public HyperbolicTrigonometricFunctionNode {
                    int numberOfSignificantDigits) const override;
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue) override;
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext) override;
   // Evaluation
   template <typename T>
@@ -56,8 +56,8 @@ class HyperbolicTangent final
  public:
   using ExpressionBuilder::ExpressionBuilder;
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
-  Expression unaryFunctionDifferential(
+                OExpression symbolValue);
+  OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext);
 };
 

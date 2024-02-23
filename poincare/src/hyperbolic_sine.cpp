@@ -28,23 +28,23 @@ std::complex<T> HyperbolicSineNode::computeOnComplex(
 }
 
 bool HyperbolicSineNode::derivate(const ReductionContext& reductionContext,
-                                  Symbol symbol, Expression symbolValue) {
+                                  Symbol symbol, OExpression symbolValue) {
   return HyperbolicSine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression HyperbolicSineNode::unaryFunctionDifferential(
+OExpression HyperbolicSineNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return HyperbolicSine(this).unaryFunctionDifferential(reductionContext);
 }
 
 bool HyperbolicSine::derivate(const ReductionContext& reductionContext,
-                              Symbol symbol, Expression symbolValue) {
+                              Symbol symbol, OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
                                     reductionContext);
   return true;
 }
 
-Expression HyperbolicSine::unaryFunctionDifferential(
+OExpression HyperbolicSine::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return HyperbolicCosine::Builder(childAtIndex(0).clone());
 }

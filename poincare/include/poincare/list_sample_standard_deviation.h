@@ -22,7 +22,7 @@ class ListSampleStandardDeviationNode
   Type type() const override { return Type::ListSampleStandardDeviation; }
 
  private:
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
+  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -44,7 +44,7 @@ class ListSampleStandardDeviation
                                        ListSampleStandardDeviationNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ReductionContext reductionContext);
+  OExpression shallowReduce(ReductionContext reductionContext);
 };
 
 }  // namespace Poincare

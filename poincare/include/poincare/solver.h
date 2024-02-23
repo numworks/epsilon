@@ -74,7 +74,7 @@ class Solver {
   }
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
-   * Expression. */
+   * OExpression. */
   Solver(T xStart, T xEnd, const char *unknown = nullptr,
          Context *context = nullptr,
          Preferences::ComplexFormat complexFormat =
@@ -92,23 +92,23 @@ class Solver {
 
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist. */
-  Coordinate2D<T> next(const Expression &e, BracketTest test, HoneResult hone);
+  Coordinate2D<T> next(const OExpression &e, BracketTest test, HoneResult hone);
   Coordinate2D<T> next(FunctionEvaluation f, const void *aux, BracketTest test,
                        HoneResult hone,
                        DiscontinuityEvaluation discontinuityTest = nullptr);
-  Coordinate2D<T> nextRoot(const Expression &e);
+  Coordinate2D<T> nextRoot(const OExpression &e);
   Coordinate2D<T> nextRoot(FunctionEvaluation f, const void *aux) {
     return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot);
   }
-  Coordinate2D<T> nextMinimum(const Expression &e);
-  Coordinate2D<T> nextMaximum(const Expression &e) {
+  Coordinate2D<T> nextMinimum(const OExpression &e);
+  Coordinate2D<T> nextMaximum(const OExpression &e) {
     return next(e, MaximumInBracket, SafeBrentMaximum);
   }
   /* Caller of nextIntersection may provide a place to store the difference
    * between the two expressions, in case the method needs to be called several
    * times in a row. */
-  Coordinate2D<T> nextIntersection(const Expression &e1, const Expression &e2,
-                                   Expression *memoizedDifference = nullptr);
+  Coordinate2D<T> nextIntersection(const OExpression &e1, const OExpression &e2,
+                                   OExpression *memoizedDifference = nullptr);
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
    * interval. */
@@ -120,7 +120,7 @@ class Solver {
   struct FunctionEvaluationParameters {
     const ApproximationContext &approximationContext;
     const char *unknown;
-    Expression expression;
+    OExpression expression;
   };
 
   constexpr static T k_NAN = static_cast<T>(NAN);
@@ -157,13 +157,13 @@ class Solver {
   static T MinimalStep(T x, T slope = static_cast<T>(1.));
   bool validSolution(T x) const;
   T nextX(T x, T direction, T slope) const;
-  Coordinate2D<T> nextPossibleRootInChild(const Expression &e,
+  Coordinate2D<T> nextPossibleRootInChild(const OExpression &e,
                                           int childIndex) const;
-  Coordinate2D<T> nextRootInChildren(const Expression &e,
-                                     Expression::ExpressionTestAuxiliary test,
+  Coordinate2D<T> nextRootInChildren(const OExpression &e,
+                                     OExpression::ExpressionTestAuxiliary test,
                                      void *aux) const;
-  Coordinate2D<T> nextRootInMultiplication(const Expression &m) const;
-  Coordinate2D<T> nextRootInAddition(const Expression &m) const;
+  Coordinate2D<T> nextRootInMultiplication(const OExpression &m) const;
+  Coordinate2D<T> nextRootInAddition(const OExpression &m) const;
   Coordinate2D<T> honeAndRoundSolution(
       FunctionEvaluation f, const void *aux, T start, T end, Interest interest,
       HoneResult hone, DiscontinuityEvaluation discontinuityTest);

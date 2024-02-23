@@ -42,12 +42,12 @@ class NumberNode : public ExpressionNode {
   }
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue) override;
+                OExpression symbolValue) override;
 };
 
-class Number : public Expression {
+class Number : public OExpression {
  public:
-  Number(const NumberNode* node) : Expression(node) {}
+  Number(const NumberNode* node) : OExpression(node) {}
   /* Return either a Rational, a Decimal or an Infinity. */
   static Number ParseNumber(const char* integralPart, size_t integralLength,
                             const char* decimalPart, size_t decimalLength,
@@ -70,7 +70,7 @@ class Number : public Expression {
 
   /* Number::isPositive() does not need a context or an angle unit
    * (a number can be Infinity, Undefined, Float, Decimal, Rational). */
-  TrinaryBoolean isPositive() const { return Expression::isPositive(nullptr); }
+  TrinaryBoolean isPositive() const { return OExpression::isPositive(nullptr); }
   Number setSign(bool positive) {
     node()->setNegative(!positive);
     return *this;
@@ -79,7 +79,7 @@ class Number : public Expression {
   double doubleApproximation() const { return node()->doubleApproximation(); };
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                Expression symbolValue);
+                OExpression symbolValue);
 
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
@@ -91,9 +91,9 @@ class Number : public Expression {
   }
 
  protected:
-  Number() : Expression() {}
+  Number() : OExpression() {}
   NumberNode* node() const {
-    return static_cast<NumberNode*>(Expression::node());
+    return static_cast<NumberNode*>(OExpression::node());
   }
 
  private:

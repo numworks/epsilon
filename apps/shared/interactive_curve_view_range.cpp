@@ -74,7 +74,7 @@ void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
   MemoizedCurveViewRange::protectedSetYRange(yMin(), yMax() + d, k_maxFloat);
 }
 
-float InteractiveCurveViewRange::xGridUnit() const {
+float InteractiveCurveViewRange::computeXGridUnit() {
   if (!gridUnitAuto(Axis::X)) {
     return computeGridUnitFromUserParameter(Axis::X);
   }
@@ -84,14 +84,14 @@ float InteractiveCurveViewRange::xGridUnit() const {
       return yUnit;
     }
   }
-  return MemoizedCurveViewRange::xGridUnit();
+  return MemoizedCurveViewRange::computeXGridUnit();
 }
 
-float InteractiveCurveViewRange::yGridUnit() const {
+float InteractiveCurveViewRange::computeYGridUnit() {
   if (!gridUnitAuto(Axis::Y)) {
     return computeGridUnitFromUserParameter(Axis::Y);
   }
-  float res = MemoizedCurveViewRange::yGridUnit();
+  float res = MemoizedCurveViewRange::computeYGridUnit();
   if (m_zoomNormalize) {
     /* When m_zoomNormalize is active, both xGridUnit and yGridUnit will be the
      * same. To declutter the X axis, we try a unit twice as large. We check

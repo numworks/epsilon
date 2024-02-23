@@ -76,10 +76,6 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   void setZoomNormalize(bool v);
   float roundLimit(float y, float range, bool isMin);
 
-  // MemoizedCurveViewRange
-  float xGridUnit() const override;
-  float yGridUnit() const override;
-
   // CurveViewWindow
   void setXRange(float min, float max) override;
   void setYRange(float min, float max) override;
@@ -140,6 +136,10 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   void privateSetUserGridUnit(float xValue, float yValue);
   void privateComputeRanges(bool computeX, bool computeY);
   float computeGridUnitFromUserParameter(Axis axis) const;
+
+  // MemoizedCurveViewRange
+  float computeXGridUnit() override;
+  float computeYGridUnit() override;
 
   Poincare::Range2D<float> m_memoizedAutoRange;
   uint64_t m_checksumOfMemoizedAutoRange;

@@ -10,7 +10,7 @@
 
 namespace Shared {
 
-uint32_t CurveViewRange::rangeChecksum() const {
+uint32_t CurveViewRange::rangeChecksum() {
   float data[7] = {xMin(),      xMax(),      yMin(),          yMax(),
                    xGridUnit(), yGridUnit(), offscreenYAxis()};
   size_t dataLengthInBytes = sizeof(data);
@@ -20,7 +20,7 @@ uint32_t CurveViewRange::rangeChecksum() const {
                               dataLengthInBytes / sizeof(uint32_t));
 }
 
-float CurveViewRange::computeGridUnit(Axis axis) const {
+float CurveViewRange::computeGridUnit(Axis axis) {
   float minNumberOfUnits, maxNumberOfUnits, range;
   if (axis == Axis::X) {
     minNumberOfUnits = k_minNumberOfXGridUnits;

@@ -50,6 +50,10 @@ Troolean Domain::ExpressionIsIn(const Tree *expression, Type type,
     return Troolean::False;
   }
 
+  if (type == OpenUnitSegment && expression->isOne()) {
+    return Troolean::False;
+  }
+
   return Troolean::True;
 }
 

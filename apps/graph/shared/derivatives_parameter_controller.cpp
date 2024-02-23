@@ -71,14 +71,14 @@ void DerivativesParameterController::toggleSwitch(int row) {
   assert(0 <= row && row < k_numberOfCells);
   switch (row) {
     case k_indexOfFirstDerivativeValue:
-      function()->setDisplayFirstDerivative(
-          !function()->displayFirstDerivative());
+      function()->setDisplayValueFirstDerivative(
+          !function()->displayValueFirstDerivative());
       break;
     case k_indexOfFirstDerivativePlot:
       break;
     case k_indexOfSecondDerivativeValue:
-      function()->setDisplaySecondDerivative(
-          !function()->displaySecondDerivative());
+      function()->setDisplayValueSecondDerivative(
+          !function()->displayValueSecondDerivative());
       break;
     default:
       assert(row == k_indexOfSecondDerivativePlot);
@@ -91,11 +91,11 @@ bool DerivativesParameterController::switchState(int row) const {
   assert(0 <= row && row < k_numberOfCells);
   switch (row) {
     case k_indexOfFirstDerivativeValue:
-      return function()->displayFirstDerivative();
+      return function()->displayValueFirstDerivative();
     case k_indexOfFirstDerivativePlot:
       return false;
     case k_indexOfSecondDerivativeValue:
-      return function()->displaySecondDerivative();
+      return function()->displayValueSecondDerivative();
     default:
       assert(row == k_indexOfSecondDerivativePlot);
       return false;

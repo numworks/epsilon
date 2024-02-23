@@ -25,10 +25,10 @@ class DerivativeColumnParameterController
         Shared::GlobalContext::continuousFunctionStore->modelForRecord(
             m_record);
     if (m_derivationOrder == 1) {
-      f->setDisplayFirstDerivative(false);
+      f->setDisplayValueFirstDerivative(false);
     } else {
       assert(m_derivationOrder == 2);
-      f->setDisplaySecondDerivative(false);
+      f->setDisplayValueSecondDerivative(false);
     }
   }
   int m_derivationOrder;

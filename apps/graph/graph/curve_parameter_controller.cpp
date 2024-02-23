@@ -248,16 +248,17 @@ void CurveParameterController::viewWillAppear() {
    * setRecord) in since show derivative can be toggled from a sub-menu of
    * this one. */
   bool isParametric = function()->properties().isParametric();
-  bool displayFirstDerivative = function()->displayFirstDerivative();
-  bool displaySecondDerivative = function()->displaySecondDerivative();
+  bool displayValueFirstDerivative = function()->displayValueFirstDerivative();
+  bool displayValueSecondDerivative =
+      function()->displayValueSecondDerivative();
   parameterCell(ParameterIndex::FirstDerivative1)
-      ->setVisible(displayFirstDerivative);
+      ->setVisible(displayValueFirstDerivative);
   parameterCell(ParameterIndex::FirstDerivative2)
-      ->setVisible(isParametric && displayFirstDerivative);
+      ->setVisible(isParametric && displayValueFirstDerivative);
   parameterCell(ParameterIndex::SecondDerivative1)
-      ->setVisible(displaySecondDerivative);
+      ->setVisible(displayValueSecondDerivative);
   parameterCell(ParameterIndex::SecondDerivative2)
-      ->setVisible(isParametric && displaySecondDerivative);
+      ->setVisible(isParametric && displayValueSecondDerivative);
   ExplicitFloatParameterController::viewWillAppear();
 }
 

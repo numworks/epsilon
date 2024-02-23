@@ -12,7 +12,7 @@
 
 #include "elements_data_base.h"
 
-// TODO decide how apps should use import this
+// TODO decide how apps should use this
 using PoincareJ::operator""_l;
 
 using namespace Poincare;

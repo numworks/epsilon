@@ -14,20 +14,16 @@ class Continuity {
    * Functions like 1/x are not handled here since it "obvious" that they are
    * discontinuous. */
 
-  static bool IsDiscontinuous(const Tree *e) {
-    return e->isRandomNode() || e->isPiecewise() ||
-           (e->isOfType({BlockType::Floor, BlockType::Round, BlockType::Ceiling,
-                         BlockType::FracPart, BlockType::Abs}) &&
-            Variables::HasVariables(e));
-  };
-
   static bool InvolvesDiscontinuousFunction(const Tree *e) {
-    return e->recursivelyMatches(IsDiscontinuous);
+    return e->recursivelyMatches(ShallowIsDiscontinuous);
   }
 
   static bool IsDiscontinuousBetweenValuesForSymbol(
       const Tree *e, const char *symbol, float x1, float x2
       /*const ApproximationContext &approximationContext*/);
+
+ private:
+  static bool ShallowIsDiscontinuous(const Tree *e);
 };
 
 }  // namespace PoincareJ

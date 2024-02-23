@@ -4,6 +4,13 @@
 
 namespace PoincareJ {
 
+bool Continuity::ShallowIsDiscontinuous(const Tree *e) {
+  return e->isRandomNode() || e->isPiecewise() ||
+         (e->isOfType({BlockType::Floor, BlockType::Round, BlockType::Ceiling,
+                       BlockType::FracPart, BlockType::Abs}) &&
+          Variables::HasVariables(e));
+};
+
 bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree *e,
                                                        const char *symbol,
                                                        float x1, float x2) {

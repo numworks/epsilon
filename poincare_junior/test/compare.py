@@ -10,6 +10,19 @@ parser.add_argument(
     "--markdown", action="store_true", help="format output with Markdown"
 )
 
+Line = collections.namedtuple("Line", ["result", "input", "expected", "actual"])
+
+
+def parse_line(line):
+    type, input, expected, *remaining = line.split("\t")
+    if type == "CRASH":
+        actual = "CRASH"
+    if type == "BAD":
+        actual = remaining[0]
+    if type == "OK":
+        actual = expected
+    return Line(type, input, expected, actual)
+
 
 def main():
     args = parser.parse_args()
@@ -32,25 +45,28 @@ def main():
     for old, new in zip(before, after):
         if not old:
             continue
-        old_result, *old_args = old.split("\t")
-        new_result, *new_args = new.split("\t")
-        assert old_args[0] == new_args[0]
-        if old_result != new_result:
-            if new_result == "OK":
-                fixed.append(new_args[0])
-            elif old_result == "CRASH":
-                changed.append(f"{new_args[0]}\n  no longer crashes")
-            else:
-                if new_result == "CRASH":
-                    broken.append(f"{new_args[0]}\n  now crashes")
-                else:
-                    changed.append(
-                        f"{new_args[0]}\n  returns   {new_args[2]}\n  expected  {new_args[1]}"
-                    )
-        elif old_result == "BAD" and old_args[2] != new_args[2]:
-            changed.append(
-                f"{new_args[0]}\n  from      {old_args[2]}\n  to        {new_args[2]}\n  expected  {new_args[1]}"
-            )
+        old = parse_line(old)
+        new = parse_line(new)
+        assert old.input == new.input
+
+        if new == old:
+            continue
+
+        if new.result == "OK":
+            fixed.append(new.input)
+            continue
+
+        message = (
+            f"{new.input}\n"
+            + f"  before    {old.actual}\n"
+            + f"  after     {new.actual}\n"
+            + f"  expected  {new.expected}"
+        )
+
+        if old.result == "OK" or (old.result == "BAD" and new.result == "CRASH"):
+            broken.append(message)
+        else:
+            changed.append(message)
 
     for items, name in (fixed, "fixed"), (changed, "changed"), (broken, "broken"):
         if not items:

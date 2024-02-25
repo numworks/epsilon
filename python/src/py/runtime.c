@@ -43,6 +43,7 @@
 #include "py/builtin.h"
 #include "py/stackctrl.h"
 #include "py/gc.h"
+#include "../../port/mod/ulab_tools.h"
 
 #if MICROPY_DEBUG_VERBOSE // print debugging info
 #define DEBUG_PRINT (1)
@@ -587,6 +588,14 @@ mp_obj_t mp_binary_op(mp_binary_op_t op, mp_obj_t lhs, mp_obj_t rhs) {
     // generic binary_op supplied by type
     const mp_obj_type_t *type;
 generic_binary_op:
+    // instead of duplicating ndarray management for int/float/more?
+    // just swap lhs and rhs (see bug #2102)
+    if (mp_obj_is_type(rhs, &ulab_ndarray_type)) {
+        mp_obj_t temp = lhs;
+        lhs = rhs;
+        rhs = temp;
+    }
+
     type = mp_obj_get_type(lhs);
     if (type->binary_op != NULL) {
         mp_obj_t result = type->binary_op(op, lhs, rhs);

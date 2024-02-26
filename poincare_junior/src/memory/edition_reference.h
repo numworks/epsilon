@@ -137,7 +137,6 @@ inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
     return ApplyPreservingReference(F, r, u1, u2);             \
   }
 
-void SwapTrees(EditionReference& u, EditionReference& v);
 void CloneNodeAtNode(EditionReference& target, const Tree* nodeToClone);
 void CloneTreeAtNode(EditionReference& target, const Tree* treeToClone);
 
@@ -190,8 +189,6 @@ inline void CloneNodeOverNode(EditionReference& u, const Tree* n) {
 inline void CloneNodeOverTree(EditionReference& u, const Tree* n) {
   u = u->cloneNodeOverTree(n);
 }
-
-void SwapTrees(EditionReference& u, EditionReference& v);
 
 }  // namespace PoincareJ
 

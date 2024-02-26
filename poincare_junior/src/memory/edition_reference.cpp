@@ -85,15 +85,4 @@ void MoveAt(EditionReference& target, Tree* source, bool tree, bool before) {
   target = previousTarget;
 }
 
-void SwapTrees(EditionReference& u, EditionReference& v) {
-  if (u->block() > v->block()) {
-    return SwapTrees(v, u);
-  }
-  Tree* previousU = u;
-  Tree* previousV = v;
-  MoveTreeAtNode(v, previousU);
-  u = EditionReference(previousU);
-  MoveTreeAtNode(u, previousV);
-}
-
 }  // namespace PoincareJ

@@ -300,24 +300,6 @@ void ListController::fillExpressionCellForRow(HighlightCell *cell, int row) {
   }
 }
 
-int ListController::modelIndexForRow(int j) const {
-  if (j < 0) {
-    return j;
-  }
-  if (isAddEmptyRow(j)) {
-    return modelIndexForRow(j - 1) + 1;
-  }
-  int row = 0;
-  int sequenceIndex = -1;
-  do {
-    sequenceIndex++;
-    Shared::Sequence *sequence = modelStore()->modelForRecord(
-        modelStore()->recordAtIndex(sequenceIndex));
-    row += sequence->numberOfElements();
-  } while (row <= j);
-  return sequenceIndex;
-}
-
 int ListController::sequenceDefinitionForRow(int j) const {
   if (j < 0) {
     return k_otherDefinition;

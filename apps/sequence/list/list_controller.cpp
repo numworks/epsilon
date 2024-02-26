@@ -94,7 +94,9 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     AbstractSequenceCell *sequenceCell =
         static_cast<AbstractSequenceCell *>(cell);
     // Update the expression cell first since the title's baseline depends on it
-    fillExpressionCellForRow(sequenceCell->mainCell(), row);
+    if (type == k_expressionCellType) {
+      fillExpressionCellForRow(sequenceCell->mainCell(), row);
+    }
     willDisplayTitleCellAtIndex(sequenceCell->titleCell(), row,
                                 sequenceCell->mainCell());
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
@@ -276,9 +278,7 @@ void ListController::willDisplayTitleCellAtIndex(
 }
 
 void ListController::fillExpressionCellForRow(HighlightCell *cell, int row) {
-  if (row == m_editedCellIndex) {
-    return;
-  }
+  assert(typeAtRow(row) == k_expressionCellType);
   Escher::EvenOddExpressionCell *myCell =
       static_cast<Escher::EvenOddExpressionCell *>(cell);
   Ion::Storage::Record record = recordAtRow(row);

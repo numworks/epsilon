@@ -26,7 +26,6 @@ class ListController : public Shared::ExpressionModelListController,
       int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
@@ -60,6 +59,7 @@ class ListController : public Shared::ExpressionModelListController,
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::Metric::StoreRowHeight,
           Escher::Metric::ButtonRowEmbossedStyleHeightLarge);
+  int maxNumberOfDisplayableRows() const override { return k_maxNumberOfRows; }
   Escher::SelectableListView* selectableListView() override;
   Escher::EditableExpressionModelCell* editableExpressionModelCell() override {
     return &m_editableCell;

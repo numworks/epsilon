@@ -53,6 +53,9 @@ class ExpressionModelListController
 
   // ListViewDataSource
   int numberOfRows() const override;
+  int reusableCellCount(int type) const override {
+    return type == k_expressionCellType ? maxNumberOfDisplayableRows() : 1;
+  }
   int typeAtRow(int row) const override;
   // Row height
   virtual KDCoordinate expressionRowHeight(int row);
@@ -90,6 +93,7 @@ class ExpressionModelListController
   int16_t m_editedCellIndex;
 
  private:
+  virtual int maxNumberOfDisplayableRows() const = 0;
   void finishEdition();
   bool addEmptyModel();
   virtual bool shouldCompleteEquation(Poincare::Expression expression,

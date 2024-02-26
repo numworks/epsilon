@@ -75,6 +75,9 @@ class ListController : public Shared::FunctionListController,
   OMG::HorizontalDirection parameterColumnPosition() const override {
     return OMG::Direction::Right();
   }
+  int numberOfRowsForRecord(Ion::Storage::Record record) const override;
+  int derivationOrderFromRelativeRow(Shared::ContinuousFunction* f,
+                                     int relativeRow) const;
 
   void deleteParametricComponentsOfSelectedModel();
   void storeParametricComponentsOfSelectedModel();

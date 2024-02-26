@@ -2,8 +2,8 @@
 #define POINCARE_UNIT_H
 
 #include <poincare/aliases_list.h>
-#include <poincare/expression.h>
 #include <poincare/helpers.h>
+#include <poincare/old_expression.h>
 
 #include <array>
 

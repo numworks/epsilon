@@ -1,9 +1,9 @@
 #include <assert.h>
 #include <float.h>
 #include <ion.h>
-#include <poincare/expression.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>
+#include <poincare/old_expression.h>
 #include <poincare/undefined.h>
 
 #include <cmath>

@@ -1,8 +1,8 @@
 #ifndef POINCARE_DOMAIN_H
 #define POINCARE_DOMAIN_H
 
-#include <poincare/expression.h>
 #include <poincare/float.h>
+#include <poincare/old_expression.h>
 #include <poincare/rational.h>
 #include <stdint.h>
 

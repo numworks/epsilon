@@ -1,7 +1,7 @@
 #ifndef POINCARE_VECTOR_CROSS_H
 #define POINCARE_VECTOR_CROSS_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

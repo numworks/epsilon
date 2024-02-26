@@ -2,7 +2,7 @@
 #define POINCARE_HYPERGEOMETRIC_DISTRIBUTION_H
 
 #include <poincare/discrete_distribution.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

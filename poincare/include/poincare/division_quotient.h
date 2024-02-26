@@ -1,8 +1,8 @@
 #ifndef POINCARE_DIVISION_QUOTIENT_H
 #define POINCARE_DIVISION_QUOTIENT_H
 
-#include <poincare/expression.h>
 #include <poincare/integer.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

@@ -2,7 +2,7 @@
 #include <poincare/addition.h>
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/unit.h>

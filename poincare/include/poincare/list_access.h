@@ -1,7 +1,7 @@
 #ifndef POINCARE_LIST_ACCESS_H
 #define POINCARE_LIST_ACCESS_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 

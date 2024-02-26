@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/preferences.h>
 #include <poincare/unit.h>
 

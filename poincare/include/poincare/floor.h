@@ -2,7 +2,7 @@
 #define POINCARE_FLOOR_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

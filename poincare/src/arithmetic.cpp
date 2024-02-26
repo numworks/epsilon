@@ -1,6 +1,6 @@
 #include <limits.h>
 #include <poincare/arithmetic.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/rational.h>
 #include <stdint.h>
 

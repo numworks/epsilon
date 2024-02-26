@@ -2,7 +2,7 @@
 #define POINCARE_ABSOLUTE_VALUE_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/rational.h>
 
 namespace Poincare {

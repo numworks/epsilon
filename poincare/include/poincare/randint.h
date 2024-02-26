@@ -1,8 +1,8 @@
 #ifndef POINCARE_RANDINT_H
 #define POINCARE_RANDINT_H
 
-#include <poincare/expression.h>
 #include <poincare/expression_node_with_up_to_two_children.h>
+#include <poincare/old_expression.h>
 #include <poincare/random.h>
 #include <poincare/rational.h>
 

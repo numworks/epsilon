@@ -2,7 +2,7 @@
 #define POINCARE_MATRIX_H
 
 #include <poincare/array.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

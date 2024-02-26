@@ -1,7 +1,7 @@
 #ifndef POINCARE_MATRIX_TRANSPOSE_H
 #define POINCARE_MATRIX_TRANSPOSE_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_LIST_MAXIMUM_H
 #define POINCARE_LIST_MAXIMUM_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

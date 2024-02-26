@@ -1,8 +1,8 @@
 #ifndef POINCARE_FACTOR_H
 #define POINCARE_FACTOR_H
 
-#include <poincare/expression.h>
 #include <poincare/multiplication.h>
+#include <poincare/old_expression.h>
 #include <poincare/rational.h>
 
 #include <cmath>

@@ -1,7 +1,7 @@
 #ifndef POINCARE_HYPERBOLIC_TRIGONOMETRIC_FUNCTION_H
 #define POINCARE_HYPERBOLIC_TRIGONOMETRIC_FUNCTION_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/rational.h>
 #include <poincare/trigonometry.h>
 

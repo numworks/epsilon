@@ -2,7 +2,7 @@
 #define POINCARE_PIECEWISE_OPERATOR_H
 
 #include <limits.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 /* The syntax is piecewise(result1,condition1,result2,condtion2,...,resultN)
  * There can be a final resultN without condition or not.

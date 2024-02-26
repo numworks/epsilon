@@ -2,7 +2,7 @@
 #define POINCARE_PARENTHESIS_H
 
 #include <poincare/complex_cartesian.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

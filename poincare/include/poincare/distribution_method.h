@@ -2,7 +2,7 @@
 #define POINCARE_DISTRIBUTION_METHOD_H
 
 #include <poincare/distribution.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

@@ -1,10 +1,10 @@
 #include <float.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/evaluation.h>
-#include <poincare/expression.h>
 #include <poincare/float.h>
 #include <poincare/list_complex.h>
 #include <poincare/matrix_complex.h>
+#include <poincare/old_expression.h>
 #include <stdint.h>
 
 #include <cmath>

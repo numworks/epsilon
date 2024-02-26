@@ -1,7 +1,7 @@
 #ifndef POINCARE_PARSING_TOKEN_H
 #define POINCARE_PARSING_TOKEN_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 /* The Token class is meant to be the output type of the Tokenizer.
  * While processing a text input, the Tokenizer indeed produces (pops)

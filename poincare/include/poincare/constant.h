@@ -2,8 +2,8 @@
 #define POINCARE_CONSTANT_H
 
 #include <poincare/aliases_list.h>
-#include <poincare/expression.h>
 #include <poincare/expression_node.h>
+#include <poincare/old_expression.h>
 
 #include <array>
 

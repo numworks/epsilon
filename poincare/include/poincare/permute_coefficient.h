@@ -2,7 +2,7 @@
 #define POINCARE_PERMUTE_COEFFICIENT_H
 
 #include <poincare/evaluation.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

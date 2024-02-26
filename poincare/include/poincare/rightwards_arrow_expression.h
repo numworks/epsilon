@@ -2,7 +2,7 @@
 #define POINCARE_RIGHTWARDS_ARROW_EXPRESSION_H
 
 #include <poincare/evaluation.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/symbol_abstract.h>
 
 namespace Poincare {

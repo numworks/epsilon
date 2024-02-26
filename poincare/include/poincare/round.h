@@ -2,8 +2,8 @@
 #define POINCARE_ROUND_H
 
 #include <poincare/evaluation.h>
-#include <poincare/expression.h>
 #include <poincare/expression_node_with_up_to_two_children.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

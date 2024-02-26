@@ -31,7 +31,6 @@
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/empty_expression.h>
-#include <poincare/expression.h>
 #include <poincare/factor.h>
 #include <poincare/factorial.h>
 #include <poincare/float.h>
@@ -82,6 +81,7 @@
 #include <poincare/nonreal.h>
 #include <poincare/nth_root.h>
 #include <poincare/number.h>
+#include <poincare/old_expression.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/percent.h>

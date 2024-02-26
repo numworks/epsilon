@@ -1,7 +1,7 @@
 #ifndef POINCARE_ABSTRACT_SYMBOL_H
 #define POINCARE_ABSTRACT_SYMBOL_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

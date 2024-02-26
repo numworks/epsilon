@@ -1,9 +1,9 @@
 #include <poincare/addition.h>
 #include <poincare/complex.h>
 #include <poincare/evaluation.h>
-#include <poincare/expression.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/multiplication.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

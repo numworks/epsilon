@@ -9,10 +9,10 @@ extern "C" {
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
 #include <poincare/division.h>
-#include <poincare/expression.h>
 #include <poincare/infinity.h>
 #include <poincare/multiplication.h>
 #include <poincare/nonreal.h>
+#include <poincare/old_expression.h>
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/subtraction.h>

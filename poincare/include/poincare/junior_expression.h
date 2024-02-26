@@ -1,7 +1,7 @@
 #ifndef POINCARE_JUNIOR_EXPRESSION_H
 #define POINCARE_JUNIOR_EXPRESSION_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/symbol.h>
 #include <poincare_junior/src/memory/tree.h>
 

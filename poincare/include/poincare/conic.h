@@ -2,7 +2,7 @@
 #define POINCARE_CONIC_H
 
 #include <float.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

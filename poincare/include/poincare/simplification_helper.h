@@ -1,8 +1,8 @@
 #ifndef SIMPLIFICATION_HELPER_H
 #define SIMPLIFICATION_HELPER_H
 
-#include "expression.h"
 #include "expression_node.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

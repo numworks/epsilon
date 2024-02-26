@@ -1,12 +1,12 @@
 #include <assert.h>
 #include <poincare/boolean.h>
 #include <poincare/dependency.h>
-#include <poincare/expression.h>
 #include <poincare/expression_node.h>
 #include <poincare/integer.h>
 #include <poincare/list.h>
 #include <poincare/multiplication.h>
 #include <poincare/nonreal.h>
+#include <poincare/old_expression.h>
 #include <poincare/parametered_expression.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>

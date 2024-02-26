@@ -1,6 +1,6 @@
-#include <poincare/expression.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
+#include <poincare/old_expression.h>
 
 #include "helper.h"
 

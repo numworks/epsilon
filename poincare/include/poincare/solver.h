@@ -2,8 +2,8 @@
 #define POINCARE_SOLVER_H
 
 #include <math.h>
-#include <poincare/expression.h>
 #include <poincare/float.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

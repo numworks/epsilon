@@ -4,8 +4,8 @@
 #include <poincare/constant.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
-#include <poincare/expression.h>
 #include <poincare/expression_node.h>
+#include <poincare/old_expression.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/sign_function.h>

@@ -2,12 +2,12 @@
 #include <ion/display.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_selection.h>
 #include <poincare/matrix_layout.h>
+#include <poincare/old_expression.h>
 #include <poincare/vertical_offset_layout.h>
 
 namespace Poincare {

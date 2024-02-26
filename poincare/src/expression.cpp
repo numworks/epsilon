@@ -11,7 +11,6 @@
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/expression.h>
 #include <poincare/expression_node.h>
 #include <poincare/float.h>
 #include <poincare/ghost.h>
@@ -21,6 +20,7 @@
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/number.h>
+#include <poincare/old_expression.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/piecewise_operator.h>
@@ -1159,6 +1159,7 @@ OExpression OExpression::ParseAndSimplify(
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
+#if 0  // TODO_PCJ
   // TODO: Shared shouldn't be called in Poincare !
   Shared::PoincareHelpers::CloneAndSimplify(
       &exp, context,
@@ -1166,6 +1167,9 @@ OExpression OExpression::ParseAndSimplify(
        .unitConversion = unitConversion},
       reductionFailure);
   assert(!exp.isUninitialized());
+#else
+  return Undefined::Builder();
+#endif
   return exp;
 }
 

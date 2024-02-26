@@ -2,7 +2,7 @@
 #define POINCARE_BOOLEAN_H
 
 #include <poincare/aliases_list.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

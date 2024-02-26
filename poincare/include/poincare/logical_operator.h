@@ -1,7 +1,7 @@
 #ifndef POINCARE_LOGICAL_OPERATOR_H
 #define POINCARE_LOGICAL_OPERATOR_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 #include <array>
 

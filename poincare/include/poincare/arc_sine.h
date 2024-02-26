@@ -3,7 +3,7 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/arc_cosecant.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/trigonometry.h>
 
 namespace Poincare {

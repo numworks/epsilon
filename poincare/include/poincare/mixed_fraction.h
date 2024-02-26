@@ -2,7 +2,7 @@
 #define POINCARE_MIXED_FRACTION_H
 
 #include <poincare/division.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

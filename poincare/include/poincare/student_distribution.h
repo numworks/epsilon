@@ -2,7 +2,7 @@
 #define POINCARE_STUDENT_DISTRIBUTION_H
 
 #include <poincare/continuous_distribution.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {

@@ -1,7 +1,7 @@
 #ifndef POINCARE_POLYNOMIAL_H
 #define POINCARE_POLYNOMIAL_H
 
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 #include <poincare/rational.h>
 
 namespace Poincare {

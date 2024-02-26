@@ -2,7 +2,7 @@
 #define POINCARE_COMPARISON_EXPRESSION_H
 
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 #include <array>
 

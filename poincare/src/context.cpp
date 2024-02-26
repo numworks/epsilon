@@ -1,5 +1,5 @@
 #include <poincare/context.h>
-#include <poincare/expression.h>
+#include <poincare/old_expression.h>
 
 namespace Poincare {
 

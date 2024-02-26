@@ -286,7 +286,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
   }
   assert(type == k_expressionCellType || type == k_editableCellType);
   ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(row));
+      modelStore()->modelForRecord(recordAtRow(row));
   if (type == k_expressionCellType) {
     FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
     functionCell->expressionCell()->setLayout(f->layout());

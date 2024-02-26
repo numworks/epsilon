@@ -353,7 +353,9 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
             }
             Expression base = e.childAtIndex(0);
             return base.type() == ExpressionNode::Type::ConstantMaths &&
+#if 0  // PCJ_TODO
                    static_cast<Constant&>(base).isExponentialE() &&
+#endif
                    e.childAtIndex(1).polynomialDegree(context, symbol) == 1;
           },
           Function::k_unknownName)) {
@@ -493,8 +495,10 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
       ReductionContext::DefaultReductionContextForAnalysis(context);
   Expression denominator, numerator;
   if (analyzedExpression.type() == ExpressionNode::Type::Multiplication) {
+#if 0  // PCJ_TODO
     static_cast<const Multiplication&>(analyzedExpression)
         .splitIntoNormalForm(numerator, denominator, reductionContext);
+#endif
   } else if (analyzedExpression.type() == ExpressionNode::Type::Power &&
              analyzedExpression.childAtIndex(1).isMinusOne()) {
     denominator = analyzedExpression.childAtIndex(0);
@@ -587,15 +591,19 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   }
   assert(degOfTinX != 0 && degOfTinY != 0);
   Expression variableX = xOfT.clone();
+#if 0  // PCJ_TODO
   if (variableX.type() == ExpressionNode::Type::Addition) {
     static_cast<Addition&>(variableX).removeConstantTerms(
         context, Function::k_unknownName);
   }
+#endif
   Expression variableY = yOfT.clone();
+#if 0  // PCJ_TODO
   if (variableY.type() == ExpressionNode::Type::Addition) {
     static_cast<Addition&>(variableY).removeConstantTerms(
         context, Function::k_unknownName);
   }
+#endif
   Expression quotient = Division::Builder(variableX, variableY);
   quotient = quotient.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(context));
@@ -632,6 +640,9 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
   /* An equation is explicit if it is a comparison between the given symbol and
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
+#if 1  // TODO_PCJ
+  return false;
+#else
   return equation.type() == ExpressionNode::Type::Comparison &&
          equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol)) &&
          !equation.childAtIndex(1).recursivelyMatches(
@@ -645,6 +656,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
              },
              nullptr, SymbolicComputation::DoNotReplaceAnySymbol,
              static_cast<void*>(&symbol));
+#endif
 }
 
 bool ContinuousFunctionProperties::HasNonNullCoefficients(

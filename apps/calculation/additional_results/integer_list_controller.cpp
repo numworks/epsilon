@@ -31,7 +31,11 @@ void IntegerListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
   assert(AdditionalResultsType::HasInteger(exactOutput));
+#if 0  // TODO_PCJ
   Integer integer = static_cast<const BasedInteger &>(exactOutput).integer();
+#else
+  Integer integer;
+#endif
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
     if (baseAtIndex(index) == OMG::Base::Decimal) {
       // TODO PCJ only handle this one yet

@@ -157,6 +157,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
+#if 0  // TODO_PCJ
         Expression exactStoredExpression =
             static_cast<Store &>(storeExpression).value();
         approximateOutputExpression =
@@ -176,6 +177,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
                     .value()
                     .deepIsSymbolic(
                         nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
+#endif
       }
     } else {
       context->tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
@@ -199,6 +201,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * */
   if (!storeExpression.isUninitialized()) {
     assert(storeExpression.type() == ExpressionNode::Type::Store);
+#if 0  // TODO_PCJ
     if (static_cast<Store &>(storeExpression).storeValueForSymbol(context)) {
       exactOutputExpression = context->expressionForSymbolAbstract(
           static_cast<Store &>(storeExpression).symbol(), false);
@@ -207,6 +210,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       exactOutputExpression = Undefined::Builder();
       approximateOutputExpression = Undefined::Builder();
     }
+#endif
   }
 
   if (m_inUsePreferences.examMode().forbidUnits() &&

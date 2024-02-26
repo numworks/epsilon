@@ -159,6 +159,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
   if (ComparisonNode::IsBinaryEquality(formula)) {
     bool isValidEquality = false;
     Expression leftOfEqual = formula.childAtIndex(0);
+#if 0  // TODO_PCJ
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
       Symbol symbolLeftOfEqual = static_cast<Symbol &>(leftOfEqual);
       if (store()->isColumnName(symbolLeftOfEqual.name(),
@@ -168,6 +169,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
         isValidEquality = true;
       }
     }
+#endif
     if (!isValidEquality) {
       return FillColumnStatus::DataNotSuitable;
     }
@@ -212,8 +214,10 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
      * same time in the pool. We might be working with huge lists right now, so
      * it's better to get out of the scope and destroy the list before storing
      * the data of the double pair store in the storage. */
+#if 0  // TODO_PCJ
     store()->setList(static_cast<Poincare::List &>(formula), *series, *column,
                      true, true);
+#endif
     return FillColumnStatus::Success;
   }
 

@@ -51,13 +51,17 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   }
 
   Expression result;
+#if 0  // TODO_PCJ
   if (unit.type() == ExpressionNode::Type::Multiplication) {
     static_cast<Multiplication&>(unit).addChildAtIndexInPlace(
         value, 0, unit.numberOfChildren());
     result = unit;
   } else {
-    result = Multiplication::Builder(value, unit);
+#endif
+  result = Multiplication::Builder(value, unit);
+#if 0  // TODO_PCJ
   }
+#endif
   return result.createLayout(floatDisplayMode, significantDigits,
                              globalContext);
 }

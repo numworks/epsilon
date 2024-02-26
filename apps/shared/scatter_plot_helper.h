@@ -4,6 +4,7 @@
 #include <poincare/expression.h>
 #include <poincare/list.h>
 #include <poincare/list_sort.h>
+#include <poincare/old_expression.h>
 #include <poincare/point.h>
 
 #include "poincare_helpers.h"
@@ -14,7 +15,7 @@ class ScatterPlotIterable {
   friend class ContinuousFunction;
 
   using ExpressionIterable =
-      Poincare::TreeHandle::Direct<Poincare::Expression,
+      Poincare::TreeHandle::Direct<Poincare::OExpression,
                                    Poincare::ExpressionNode>;
 
   class Iterator : public ExpressionIterable::Iterator {
@@ -25,7 +26,12 @@ class ScatterPlotIterable {
     Poincare::Point operator*() const {
       Poincare::Expression e = ExpressionIterable::Iterator::operator*();
       assert(e.type() == Poincare::ExpressionNode::Type::Point);
+#if 0  // TODO_PCJ
       return static_cast<Poincare::Point&>(e);
+#else
+      return Poincare::Point::Builder(Poincare::Expression(),
+                                      Poincare::Expression());
+#endif
     }
     bool operator!=(const Iterator& rhs) const {
       return this->ExpressionIterable::Iterator::operator!=(rhs) &&
@@ -48,7 +54,11 @@ class ScatterPlotIterable {
   ScatterPlotIterable(Poincare::Expression e) : m_iterable(e), m_expression(e) {
     assert(Poincare::Expression::IsPoint(e) ||
            (e.type() == Poincare::ExpressionNode::Type::List &&
+#if 0  // TODO_PCJ
             static_cast<Poincare::List&>(e).isListOfPoints(nullptr)));
+#else
+            false));
+#endif
   }
 
   static int ListLength(const Poincare::Expression& e) {

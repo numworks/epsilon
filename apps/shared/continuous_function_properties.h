@@ -5,6 +5,7 @@
 #include <omg/bit_helper.h>
 #include <poincare/comparison.h>
 #include <poincare/conic.h>
+#include <poincare/expression.h>
 #include <poincare/helpers.h>
 #include <poincare/symbol.h>
 

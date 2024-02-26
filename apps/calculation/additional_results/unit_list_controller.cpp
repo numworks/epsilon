@@ -108,10 +108,13 @@ void UnitListController::computeAdditionalResults(
 
   Expression siExpression;
   const Unit::Representative *representative =
+#if 0  // TODO_PCJ
       units.type() == ExpressionNode::Type::Unit
           ? static_cast<Unit &>(units).representative()
-          : UnitNode::Representative::RepresentativeForDimension(
-                UnitNode::DimensionVector::FromBaseUnits(units));
+          :
+#endif
+      UnitNode::Representative::RepresentativeForDimension(
+          UnitNode::DimensionVector::FromBaseUnits(units));
   if (representative &&
       representative->dimensionVector() ==
           Unit::AngleRepresentative::Default().dimensionVector()) {

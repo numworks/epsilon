@@ -55,8 +55,10 @@ Expression ExtractExactAngleFromDirectTrigo(
       {.complexFormat = complexFormat, .angleUnit = angleUnit});
   if (!unit.isUninitialized()) {
     assert(unit.isPureAngleUnit());
+#if 0  // TODO_PCJ
     assert(static_cast<Unit&>(unit).representative() ==
            Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
+#endif
     /* After a reduction, all angle units are converted to radians, so we
      * convert exactAngle again here to fit the angle unit that will be used
      * in reductions below. */

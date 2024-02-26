@@ -18,7 +18,9 @@ namespace Graph {
 PointsOfInterestCache PointsOfInterestCache::clone() const {
   PointsOfInterestCache result = *this;
   Expression cloneList = result.list().clone();
+#if 0  // TODO_PCJ
   result.m_list.setList(static_cast<Poincare::List &>(cloneList));
+#endif
   return result;
 }
 
@@ -204,6 +206,9 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     m_computedEnd = end;
   }
 
+#if 1  // TODO_PCJ
+  return;
+#else
   float searchStep = Solver<double>::MaximalStep(m_start - m_end);
 
   ContinuousFunctionStore *store = App::app()->functionStore();
@@ -291,6 +296,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
              *reinterpret_cast<uint32_t *>(&record));
     }
   }
+#endif
 }
 
 void PointsOfInterestCache::append(double x, double y,

@@ -201,8 +201,10 @@ const OExpression GlobalContext::expressionForSequence(
   Sequence seq(r);
   OExpression rank = symbol.childAtIndex(0).clone();
   bool rankIsInteger = false;
+#if 0  // TODO_PCJ
   PoincareHelpers::CloneAndSimplify(
       &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
+#endif
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
   if (rank.type() == ExpressionNode::Type::Rational) {
     Rational n = static_cast<Rational &>(rank);
@@ -229,7 +231,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
   PoincareHelpers::ReductionParameters params = {
       .symbolicComputation =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
+#if 0  // TODO_PCJ
   PoincareHelpers::CloneAndSimplify(&expression, this, params);
+#endif
   /* "approximateKeepingUnits" is called because the expression might contain
    * units, and juste calling "approximate" would return undef*/
 

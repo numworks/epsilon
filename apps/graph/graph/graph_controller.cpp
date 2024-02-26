@@ -194,11 +194,13 @@ Range2D<float> GraphController::optimalRange(
               &p)) {
         assert(!p.isUninitialized() &&
                p.type() == ExpressionNode::Type::PiecewiseOperator);
+#if 0  // TODO_PCJ
         zoom.fitConditions(
             static_cast<PiecewiseOperator &>(p), evaluator<float>,
             f.operator->(), ContinuousFunction::k_unknownName,
             Preferences::SharedPreferences()->complexFormat(),
             Preferences::SharedPreferences()->angleUnit(), alongY);
+#endif
       }
 
       if (canComputeIntersections[i] &&

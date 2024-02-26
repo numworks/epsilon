@@ -161,6 +161,9 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   return expressionClone().recursivelyMatches(
       [](const Expression e, Context *context, void *arg) {
         Pack *pack = static_cast<Pack *>(arg);
+#if 1  // PCJ_TODO
+        return TrinaryBoolean::Unknown;
+#else
         if (e.isRandom()) {
           return TrinaryBoolean::True;
         }
@@ -201,6 +204,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
           return TrinaryBoolean::False;
         }
         return TrinaryBoolean::True;
+#endif
       },
       context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       &pack);

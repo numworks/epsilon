@@ -140,6 +140,96 @@ class JuniorExpression final : public OExpression {
     assert(false);
     return false;
   }
+
+#if 1  // TODO_PCJ
+  typedef TrinaryBoolean (*ExpressionTrinaryTest)(const JuniorExpression e,
+                                                  Context* context,
+                                                  void* auxiliary);
+  struct IgnoredSymbols {
+    Symbol* head;
+    void* tail;
+  };
+  bool recursivelyMatches(
+      ExpressionTrinaryTest test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      void* auxiliary = nullptr,
+      IgnoredSymbols* ignoredSymbols = nullptr) const {
+    return false;
+  }
+  typedef bool (*ExpressionTest)(const JuniorExpression e, Context* context);
+  bool recursivelyMatches(
+      ExpressionTest test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const {
+    return false;
+  }
+  typedef bool (*SimpleExpressionTest)(const JuniorExpression e);
+  bool recursivelyMatches(
+      SimpleExpressionTest test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const {
+    return false;
+  }
+  typedef bool (*ExpressionTestAuxiliary)(const JuniorExpression e,
+                                          Context* context, void* auxiliary);
+  bool recursivelyMatches(
+      ExpressionTestAuxiliary test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      void* auxiliary = nullptr) const {
+    return false;
+  }
+  // Set of ExpressionTest that can be used with recursivelyMatches
+  static bool IsUninitialized(const JuniorExpression e) {
+    return e.isUninitialized();
+  }
+  static bool IsUndefined(const JuniorExpression e) { return e.isUndefined(); }
+  static bool IsNAry(const JuniorExpression e) {
+    return e.isOfType(
+        {ExpressionNode::Type::Addition, ExpressionNode::Type::Multiplication});
+  }
+  static bool IsApproximate(const JuniorExpression e) {
+    return e.isOfType({ExpressionNode::Type::Decimal,
+                       ExpressionNode::Type::Float,
+                       ExpressionNode::Type::Double});
+  }
+  static bool IsRandom(const JuniorExpression e) { return false; }
+  static bool IsMatrix(const JuniorExpression e, Context* context) {
+    return false;
+  }
+  static bool IsInfinity(const JuniorExpression e) {
+    return e.isOfType({ExpressionNode::Type::Infinity});
+  }
+  static bool IsPercent(const JuniorExpression e) {
+    return e.isOfType({ExpressionNode::Type::PercentSimple,
+                       ExpressionNode::Type::PercentAddition});
+  }
+  static bool IsDiscontinuous(const JuniorExpression e, Context* context) {
+    return false;
+  }
+  static bool IsSymbolic(const JuniorExpression e) { return false; }
+  static bool IsPoint(const JuniorExpression e) {
+    return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
+  }
+  static bool IsSequence(const JuniorExpression e) {
+    return e.type() == ExpressionNode::Type::Sequence;
+  }
+  static bool IsFactorial(const JuniorExpression e) {
+    return e.type() == ExpressionNode::Type::Factorial;
+  }
+
+  typedef bool (*PatternTest)(const JuniorExpression& e, Context* context,
+                              const char* symbol);
+  static bool IsRationalFraction(const JuniorExpression& e, Context* context,
+                                 const char* symbol) {
+    return false;
+  }
+  bool isLinearCombinationOfFunction(Context* context, PatternTest testFunction,
+                                     const char* symbol) const {
+    return false;
+  }
+#endif
 };
 
 }  // namespace Poincare

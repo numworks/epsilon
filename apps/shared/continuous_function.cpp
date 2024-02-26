@@ -553,7 +553,11 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
+#if 0  // TODO_PCJ
     return static_cast<Point &>(point).approximate2D<T>(approximationContext);
+#else
+    return Coordinate2D<T>();
+#endif
   }
 
   if (!properties().isParametric()) {
@@ -650,9 +654,11 @@ Expression ContinuousFunction::Model::expressionReduced(
         Expression list = m_expression.type() == ExpressionNode::Type::List
                               ? m_expression
                               : m_expression.childAtIndex(0);
+#if 0  // PCJ_TODO
         m_expression =
             static_cast<List &>(list).approximateAndRemoveUndefAndSort<double>(
                 ApproximationContext(context, complexFormat));
+#endif
       } else {
         assert(m_expression.type() == ExpressionNode::Type::Point ||
                (m_expression.type() == ExpressionNode::Type::Dependency &&
@@ -880,8 +886,10 @@ Expression ContinuousFunction::Model::expressionEquation(
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType)) {
     if (result.type() == ExpressionNode::Type::Point ||
+#if 0  // PCJ_TODO
         (result.type() == ExpressionNode::Type::List &&
          static_cast<List &>(result).isListOfPoints(context)) ||
+#endif
         (result.type() == ExpressionNode::Type::ListSequence &&
          result.childAtIndex(0).type() == ExpressionNode::Type::Point)) {
       if (computedFunctionSymbol) {
@@ -913,8 +921,12 @@ Expression ContinuousFunction::Model::expressionEquation(
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     assert(leftExpression.type() == Poincare::ExpressionNode::Type::Function);
+#if 0  // TODO_PCJ
     const char *functionName =
         static_cast<Poincare::Function &>(leftExpression).name();
+#else
+    const char *functionName = "TODO";
+#endif
     const size_t functionNameLength = strlen(functionName);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
@@ -1055,9 +1067,11 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
   if (record->hasExtension(Ion::Storage::functionExtension)) {
     if (IsFunctionAssignment(newExpression)) {
       Expression function = newExpression.childAtIndex(0);
+#if 0  // PCJ_TODO
       error = Ion::Storage::Record::SetBaseNameWithExtension(
           record, static_cast<SymbolAbstract &>(function).name(),
           Ion::Storage::functionExtension);
+#endif
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         return error;
       }
@@ -1115,9 +1129,13 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
                                               symbol);
   } else {
     if (expressionToStore.recursivelyMatches([](const Expression e) {
+#if 0  // PCJ_TODO
           return e.type() == ExpressionNode::Type::Symbol &&
                  AliasesLists::k_thetaAliases.contains(
                      static_cast<const Symbol &>(e).name());
+#else
+          return true;
+#endif
         })) {
       symbol = expressionToStore.childAtIndex(0).isIdenticalTo(
                    Symbol::Builder(k_polarSymbol))

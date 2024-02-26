@@ -60,7 +60,9 @@ void VectorListController::computeAdditionalResults(
     return;
   }
   setLineAtIndex(index++, Expression(), normalized, computationContext);
-
+#if 1  // PCJ_TODO
+  return;
+#else
   // 3. Angle with x-axis
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
   Matrix vector = static_cast<const Matrix &>(approximateOutput);
@@ -103,6 +105,7 @@ void VectorListController::computeAdditionalResults(
       Trigonometry::ConvertAngleToRadian(angleApproximation, angleUnit());
   m_model.setAngle(angleApproximation);
   setShowIllustration(true);
+#endif
 }
 
 I18n::Message VectorListController::messageAtIndex(int index) {

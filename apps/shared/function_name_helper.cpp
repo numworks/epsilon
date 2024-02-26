@@ -113,8 +113,10 @@ bool ParametricComponentsNameError(Expression expression,
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char functionName[bufferSize];
   assert(function.type() == ExpressionNode::Type::Function);
+#if 0  // TODO_PCJ
   strlcpy(functionName, static_cast<Poincare::Function &>(function).name(),
           bufferSize);
+#endif
   size_t functionNameLength = strlen(functionName);
   assert(f->fullName() != nullptr);
   bool willDefineNewParametricComponents =

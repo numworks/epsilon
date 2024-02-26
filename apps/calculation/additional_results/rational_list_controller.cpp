@@ -19,7 +19,11 @@ Integer extractInteger(const Expression e) {
     return i;
   }
   assert(e.type() == ExpressionNode::Type::BasedInteger);
+#if 0  // TODO_PCJ
   return static_cast<const BasedInteger &>(e).integer();
+#else
+  return Integer();
+#endif
 }
 
 static bool isIntegerInput(Expression e) {

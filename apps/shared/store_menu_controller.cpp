@@ -121,6 +121,9 @@ bool StoreMenuController::parseAndStore(const char* text) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
+#if 1  // PCJ_TODO
+  return false;
+#else
   if (input.isUninitialized()) {
     openAbortWarning();
     return false;
@@ -153,6 +156,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
     app->displayWarning(I18n::Message::VariableCantBeEdited);
   }
   return true;
+#endif
 }
 
 bool StoreMenuController::layoutFieldDidFinishEditing(

@@ -93,10 +93,12 @@ Expression Model::AdditionOrSubtractionBuilder(Expression e1, Expression e2,
   if (e1.type() == ExpressionNode::Type::Multiplication &&
       e1.childAtIndex(0).type() == ExpressionNode::Type::Decimal) {
     Expression d = e1.childAtIndex(0);
+#if 0  // TODO_PCJ
     if (static_cast<Decimal&>(d).isPositive() == TrinaryBoolean::False) {
       static_cast<Decimal&>(d).setSign(true);
       e1 = Opposite::Builder(e1);
     }
+#endif
   }
   if (addition) {
     return Addition::Builder(e1, e2);

@@ -49,7 +49,9 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
       if (e.type() != ExpressionNode::Type::List) {
         continue;
       }
+#if 0  // TODO_PCJ
       setList(static_cast<List &>(e), s, i, true);
+#endif
     }
     updateSeries(s, delayUpdate);
   }

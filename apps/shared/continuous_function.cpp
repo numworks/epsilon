@@ -97,22 +97,20 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
   return m_model.renameRecordIfNeeded(this, context);
 }
 
-size_t ContinuousFunction::nameWithoutArgument(char *buffer,
-                                               size_t bufferSize) {
-  if (isNamed()) {
-    return Function::name(buffer, bufferSize);
-  }
-  return SerializationHelper::CodePoint(
-      buffer, bufferSize,
-      properties().isPolar()
-          ? k_radiusSymbol
-          : (properties().isInversePolar() ? k_polarSymbol : k_ordinateSymbol));
-}
-
-size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize,
-                                            int derivationOrder) {
+size_t ContinuousFunction::nameWithoutArgument(char *buffer, size_t bufferSize,
+                                               int derivationOrder) {
   assert(0 <= derivationOrder && derivationOrder <= 2);
-  size_t length = nameWithoutArgument(buffer, bufferSize);
+  size_t length = 0;
+  if (isNamed()) {
+    length += Function::name(buffer, bufferSize);
+  } else {
+    length += SerializationHelper::CodePoint(
+        buffer, bufferSize,
+        properties().isPolar()
+            ? k_radiusSymbol
+            : (properties().isInversePolar() ? k_polarSymbol
+                                             : k_ordinateSymbol));
+  }
   if (derivationOrder > 0) {
     const CodePoint derivative = derivationOrder == 1
                                      ? DerivativeNode::k_firstDerivativeSymbol
@@ -120,6 +118,13 @@ size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize,
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, derivative);
   }
+  return length;
+}
+
+size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize,
+                                            int derivationOrder) {
+  assert(0 <= derivationOrder && derivationOrder <= 2);
+  size_t length = nameWithoutArgument(buffer, bufferSize, derivationOrder);
   if (isNamed()) {
     length += withArgument(buffer + length, bufferSize - length);
   }

@@ -166,6 +166,12 @@ CodePoint ListController::defaultXNT() {
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
+  int relativeRow;
+  modelIndexForRow(selectedRow(), &relativeRow);
+  if (relativeRow != 0) {
+    // Cell f' and f" are not editable
+    return;
+  }
   ExpressionModelListController::editExpression(event);
   if (m_editableCell.isTemplateButtonHighlighted()) {
     // TODO: should be done in layoutFieldDidStartEditing

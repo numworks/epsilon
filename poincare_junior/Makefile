@@ -2,9 +2,6 @@ PLATFORM ?= simulator
 DEBUG ?= 1
 DEVELOPMENT ?= 1
 ARCH = arm64
-ASSERTIONCHECKPOINT ?= 0
-
-SFLAGS += -DASSERTIONCHECKPOINT=$(ASSERTIONCHECKPOINT)
 
 include poincare_junior/omgpj/Makefile
 

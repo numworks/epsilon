@@ -70,7 +70,6 @@ class ListController : public Shared::FunctionListController {
   void fillTitleCellForRow(VerticalSequenceTitleCell* cell, int row,
                            Escher::HighlightCell* expressionCell);
   void fillExpressionCellForRow(Escher::HighlightCell* cell, int row);
-  int modelIndexForRow(int j) const override;
   int sequenceDefinitionForRow(int j) const;
   int numberOfRowsForRecord(Ion::Storage::Record record) const override;
   KDCoordinate maxFunctionNameWidth();

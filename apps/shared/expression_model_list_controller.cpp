@@ -193,6 +193,25 @@ bool ExpressionModelListController::removeModelRow(
   return true;
 }
 
+int ExpressionModelListController::modelIndexForRow(int row) const {
+  if (row < 0) {
+    return row;
+  }
+  if (isAddEmptyRow(row)) {
+    return modelIndexForRow(row - 1) + 1;
+  }
+  int i = 0;
+  int recordIndex = -1;
+  do {
+    recordIndex++;
+    assert(0 <= recordIndex && recordIndex < modelStore()->numberOfModels());
+    Ion::Storage::Record record = modelStore()->recordAtIndex(recordIndex);
+    const int numberOfRowsForCurrentRecord = numberOfRowsForRecord(record);
+    i += numberOfRowsForCurrentRecord;
+  } while (i <= row);
+  return recordIndex;
+}
+
 void ExpressionModelListController::layoutFieldDidChangeSize(
     LayoutField *layoutField) {
   selectableListView()->reloadData(false);

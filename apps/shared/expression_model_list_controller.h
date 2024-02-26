@@ -67,8 +67,11 @@ class ExpressionModelListController
     selectableListView()->resetSizeAndOffsetMemoization();
   }
   virtual bool removeModelRow(Ion::Storage::Record record);
+  int modelIndexForRow(int row, int* relativeRow) const;
   int modelIndexForRow(int row) const;
+  Ion::Storage::Record recordAtRow(int row, int* relativeRow) const;
   Ion::Storage::Record recordAtRow(int row) const;
+  Ion::Storage::Record selectedRecord(int* relativeRow) const;
   Ion::Storage::Record selectedRecord() const;
 
   // ViewController

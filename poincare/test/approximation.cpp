@@ -482,6 +482,7 @@ void assert_expression_approximation_is_bounded(const char *expression,
   quiz_assert_print_if_failure(
       result < upBound || (result == upBound && upBoundIncluded), expression);
 #endif
+  e->removeTree();
 }
 
 QUIZ_CASE(poincare_approximation_function) {

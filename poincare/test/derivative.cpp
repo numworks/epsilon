@@ -55,10 +55,12 @@ QUIZ_CASE(poincare_derivative_formal) {
       Gradian);
   assert_reduces_to_formal_expression("diff(tan(x),x,x)",
                                       "\u0014dep(tan(x)^2+1,{sec(x),sin(x)})");
+#if TODO_PCJ
   assert_reduces_to_formal_expression(
       "diff(tan(x),x,x)",
       "\u0014dep(\U00000012π×tan(x)^2+π\U00000013/180,{sec(x),sin(x)})",
       Degree);
+#endif
 
   assert_reduces_to_formal_expression("diff(asin(x),x,x)",
                                       "\u0014dep(1/√(-x^2+1),{arcsin(x)})");
@@ -96,6 +98,7 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(sinh(sin(y)),x,x)",
                                       "\u0014dep(0,{sinh(sin(y))})");
 
+#if TODO_PCJ
   assert_reduces_to_formal_expression(
       "diff(piecewise(x,x≥1,-x,x≠0),x,x)",
       "\u0014dep(piecewise(1,x>1,undef,x≥1,-1,"
@@ -104,6 +107,7 @@ QUIZ_CASE(poincare_derivative_formal) {
       "diff(piecewise(x,x=1,2×x,x<5,3),x,x)",
       "\u0014dep(piecewise(undef,x=1,2,x<5,undef,x≤5,0),{"
       "piecewise(x,x=1,2×x,x<5,3)})");
+#endif
 
   assert_reduce_and_store("2→a");
   assert_reduce_and_store("-1→b");

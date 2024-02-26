@@ -31,6 +31,7 @@ class FunctionListController : public ExpressionModelListController,
   void didEnterResponderChain(Escher::Responder* nextFirstResponder) override;
   void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
   void didBecomeFirstResponder() override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */
   Escher::View* view() override { return &m_selectableListView; }

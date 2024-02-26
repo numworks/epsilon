@@ -778,6 +778,20 @@ bool RelaxProjectionContext(void* context) {
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
+  if (ref->isStore()) {
+    // Store is an expression only for convenience
+    return Simplify(ref->child(0), projectionContext);
+  }
+  if (ref->isUnitConversion()) {
+    if (!Dimension::DeepCheckDimensions(ref)) {
+      // TODO: Raise appropriate exception in DeepCheckDimensions.
+      ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
+    }
+    Simplify(ref->child(0), projectionContext);
+    ref->moveTreeOverTree(ref->child(0));
+    // TODO PCJ actually select the required unit
+    return ref;
+  }
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
   SharedEditionPool->executeAndReplaceTree(
       [](void* context, const void* data) {

@@ -172,6 +172,7 @@ bool Builtin::checkNumberOfParameters(int n) const {
     case BlockType::StdDev:
     case BlockType::SampleStdDev:
     case BlockType::Median:
+    case BlockType::RandInt:
       return 1 <= n && n <= 2;
     case BlockType::GCD:
     case BlockType::LCM:
@@ -195,6 +196,9 @@ bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
     // Add default parameters
     if (type == BlockType::Round) {
       NAry::AddChild(parameterList, (0_e)->clone());
+    }
+    if (type == BlockType::RandInt) {
+      NAry::AddChildAtIndex(parameterList, (1_e)->clone(), 0);
     }
     if (type.isOfType({BlockType::Mean, BlockType::Variance, BlockType::StdDev,
                        BlockType::SampleStdDev, BlockType::Median})) {

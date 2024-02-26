@@ -32,17 +32,6 @@ ListController::ListController(Responder *parentResponder,
   }
 }
 
-int ListController::numberOfRows() const {
-  int numberOfRows = 0;
-  SequenceStore *store = const_cast<ListController *>(this)->modelStore();
-  const int modelsCount = store->numberOfModels();
-  for (int i = 0; i < modelsCount; i++) {
-    Shared::Sequence *sequence = store->modelForRecord(store->recordAtIndex(i));
-    numberOfRows += sequence->numberOfElements();
-  }
-  return numberOfRows + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
-};
-
 KDCoordinate ListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   KDCoordinate sequenceHeight;
@@ -418,4 +407,9 @@ void ListController::showLastSequence() {
   int lastRow = numberOfRows() - (hasAddSequenceButton ? 0 : 1) - 1;
   selectableListView()->scrollToCell(lastRow);
 }
+
+int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {
+  return modelStore()->modelForRecord(record)->numberOfElements();
+}
+
 }  // namespace Sequence

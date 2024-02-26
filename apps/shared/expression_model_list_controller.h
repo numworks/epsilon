@@ -103,6 +103,9 @@ class ExpressionModelListController
   virtual bool isValidExpressionModel(Poincare::Expression expression) {
     return true;
   }
+  virtual int numberOfRowsForRecord(Ion::Storage::Record record) const {
+    return 1;
+  }
 };
 
 }  // namespace Shared

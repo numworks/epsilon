@@ -19,7 +19,6 @@ class ListController : public Shared::FunctionListController {
   ListController(Escher::Responder* parentResponder,
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer);
-  int numberOfRows() const override;
   KDCoordinate expressionRowHeight(int row) override;
   void selectPreviousNewSequenceCell();
   void editExpression(Ion::Events::Event event) override;
@@ -74,6 +73,7 @@ class ListController : public Shared::FunctionListController {
                                         int j) override;
   int modelIndexForRow(int j) const override;
   int sequenceDefinitionForRow(int j) const;
+  int numberOfRowsForRecord(Ion::Storage::Record record) const override;
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
   KDCoordinate baseline(int j, Escher::HighlightCell* cell);

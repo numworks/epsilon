@@ -52,9 +52,8 @@ class ExpressionModelListController
   bool isAddEmptyRow(int row) const;
 
   // ListViewDataSource
-  int numberOfRows() const override { return numberOfExpressionRows(); }
+  int numberOfRows() const override;
   int typeAtRow(int row) const override;
-  virtual int numberOfExpressionRows() const;
   virtual void willDisplayExpressionCellAtIndex(Escher::HighlightCell* cell,
                                                 int j);
   // Row height

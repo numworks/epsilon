@@ -80,8 +80,8 @@ void FunctionListController::didBecomeFirstResponder() {
   } else {
     selectRow(selectedRow());
   }
-  if (selectedRow() >= numberOfExpressionRows()) {
-    selectRow(numberOfExpressionRows() - 1);
+  if (selectedRow() >= numberOfRows()) {
+    selectRow(numberOfRows() - 1);
   }
   footer()->setSelectedButton(-1);
   if (m_editedCellIndex != -1) {

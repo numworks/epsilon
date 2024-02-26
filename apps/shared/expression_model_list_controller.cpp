@@ -26,7 +26,7 @@ ExpressionModelListController::ExpressionModelListController(
   m_addNewModelCell.setLeftMargin(k_newModelMargin);
 }
 
-int ExpressionModelListController::numberOfExpressionRows() const {
+int ExpressionModelListController::numberOfRows() const {
   const ExpressionModelStore *store =
       const_cast<ExpressionModelListController *>(this)->modelStore();
   int modelsCount = store->numberOfModels();
@@ -34,7 +34,7 @@ int ExpressionModelListController::numberOfExpressionRows() const {
 }
 
 bool ExpressionModelListController::isAddEmptyRow(int row) const {
-  return row == numberOfExpressionRows() - 1 &&
+  return row == numberOfRows() - 1 &&
          modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
 }
 
@@ -107,9 +107,8 @@ bool ExpressionModelListController::handleEventOnExpression(
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
     Ion::Storage::Record record = selectedRecord();
     if (removeModelRow(record)) {
-      int newSelectedRow = selectedRow() >= numberOfExpressionRows()
-                               ? numberOfExpressionRows() - 1
-                               : selectedRow();
+      int newSelectedRow =
+          selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
       selectRow(newSelectedRow);
       selectableListView()->reloadData();
     }

@@ -26,8 +26,7 @@ ListController::ListController(
       m_parameterController(functionParameterController),
       m_modelsParameterController(this, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
-                              StackViewController::Style::PurpleWhite),
-      m_parameterColumnSelected(false) {}
+                              StackViewController::Style::PurpleWhite) {}
 
 /* TableViewDataSource */
 
@@ -195,30 +194,11 @@ KDCoordinate ListController::editableRowHeight() {
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {
-  // Here we handle an additional parameter column, within FunctionCell's button
   if (selectedRow() >= 0 && selectedRow() <= numberOfRows() &&
-      !isAddEmptyRow(selectedRow())) {
-    // Selected row is a function cell
-    if (m_parameterColumnSelected) {
-      // Parameter column is selected
-      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-        // Open function parameter menu
-        m_parameterController->setUseColumnTitle(false);
-        configureFunction(selectedRecord());
-        return true;
-      }
-      if (event == Ion::Events::Left) {
-        // Leave parameter column
-        m_parameterColumnSelected = false;
-        selectableListView()->reloadData(true, false);
-        return true;
-      }
-    } else if (event == Ion::Events::Right) {
-      // Enter parameter column
-      m_parameterColumnSelected = true;
-      selectableListView()->reloadData(true, false);
-      return true;
-    }
+      !isAddEmptyRow(selectedRow()) && m_parameterColumnSelected &&
+      (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    // Will open function parameter menu
+    m_parameterController->setUseColumnTitle(false);
   }
   return FunctionListController::handleEvent(event);
 }

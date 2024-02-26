@@ -25,8 +25,7 @@ ListController::ListController(Responder *parentResponder,
       m_typeParameterController(this, this),
       m_typeStackController(nullptr, &m_typeParameterController,
                             StackViewController::Style::PurpleWhite),
-      m_titlesColumnWidth(k_minTitleColumnWidth),
-      m_parameterColumnSelected(false) {
+      m_titlesColumnWidth(k_minTitleColumnWidth) {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_sequenceCells[i].expressionCell()->setMargins({k_expressionMargin, 0});
   }
@@ -105,42 +104,6 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
   }
   FunctionListController::fillCellForRow(cell, row);
-}
-
-/* Responder */
-
-bool ListController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Right && m_parameterColumnSelected) {
-    // Leave parameter column
-    m_parameterColumnSelected = false;
-    selectableListView()->reloadData(true, false);
-    return true;
-  } else if (event == Ion::Events::Left && !m_parameterColumnSelected) {
-    // Enter parameter column
-    m_parameterColumnSelected = true;
-    selectableListView()->reloadData(true, false);
-    return true;
-  }
-  if (selectedRow() >= 0 && event == Ion::Events::Backspace &&
-      !isAddEmptyRow(selectedRow())) {
-    Ion::Storage::Record record = selectedRecord();
-    if (removeModelRow(record)) {
-      int newSelectedRow =
-          selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
-      selectRow(newSelectedRow);
-      selectableListView()->reloadData();
-    }
-    return true;
-  }
-  if (selectedRow() >= 0 && m_parameterColumnSelected &&
-      !isAddEmptyRow(selectedRow())) {
-    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-      configureFunction(selectedRecord());
-      return true;
-    }
-    return false;
-  }
-  return FunctionListController::handleEvent(event);
 }
 
 /* MathLayoutFieldDelegate */

@@ -50,9 +50,13 @@ class FunctionListController : public ExpressionModelListController,
   void configureFunction(Ion::Storage::Record record);
   Escher::TabViewController* tabController() const;
 
+  bool m_parameterColumnSelected;
+
  private:
   virtual ListParameterController* parameterController() = 0;
   virtual Escher::HighlightCell* functionCells(int index) = 0;
+  virtual OMG::HorizontalDirection parameterColumnPosition() const = 0;
+
   Escher::SelectableListView m_selectableListView;
   Escher::AbstractButtonCell m_plotButton;
   Escher::AbstractButtonCell m_valuesButton;

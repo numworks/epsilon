@@ -14,6 +14,7 @@ FunctionListController::FunctionListController(Responder *parentResponder,
                                                I18n::Message text)
     : ExpressionModelListController(parentResponder, text),
       ButtonRowDelegate(header, footer),
+      m_parameterColumnSelected(false),
       m_selectableListView(this, this, this, this),
       m_plotButton(this, I18n::Message::Plot,
                    Invocation::Builder<FunctionListController>(
@@ -93,6 +94,35 @@ void FunctionListController::didBecomeFirstResponder() {
 }
 
 bool FunctionListController::handleEvent(Ion::Events::Event event) {
+  if (selectedRow() >= 0 && selectedRow() <= numberOfRows() &&
+      !isAddEmptyRow(selectedRow())) {
+    if (m_parameterColumnSelected) {
+      if ((event == Ion::Events::Left && parameterColumnPosition().isRight()) ||
+          (event == Ion::Events::Right && parameterColumnPosition().isLeft())) {
+        // Leave parameter column
+        m_parameterColumnSelected = false;
+        selectableListView()->reloadData(true, false);
+        return true;
+      }
+      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+        // Open function parameter menu
+        configureFunction(selectedRecord());
+        return true;
+      }
+      if (event != Ion::Events::Backspace && event != Ion::Events::Up) {
+        // Handled later
+        return false;
+      }
+    }
+    if (!m_parameterColumnSelected &&
+        ((event == Ion::Events::Right && parameterColumnPosition().isRight()) ||
+         (event == Ion::Events::Left && parameterColumnPosition().isLeft()))) {
+      // Enter parameter column
+      m_parameterColumnSelected = true;
+      selectableListView()->reloadData(true, false);
+      return true;
+    }
+  }
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);

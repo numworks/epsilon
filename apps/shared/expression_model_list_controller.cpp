@@ -51,7 +51,7 @@ int ExpressionModelListController::typeAtRow(int row) const {
 KDCoordinate ExpressionModelListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   ExpiringPointer<ExpressionModelHandle> m =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(row));
+      modelStore()->modelForRecord(recordAtRow(row));
   KDCoordinate expressionHeight = m->layout().isUninitialized()
                                       ? 0
                                       : m->layout().layoutSize(k_font).height();
@@ -81,7 +81,7 @@ void ExpressionModelListController::willDisplayExpressionCellAtIndex(
     HighlightCell *cell, int j) {
   EvenOddExpressionCell *myCell = static_cast<EvenOddExpressionCell *>(cell);
   ExpiringPointer<ExpressionModelHandle> m =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+      modelStore()->modelForRecord(recordAtRow(j));
   myCell->setLayout(m->layout());
 }
 
@@ -263,8 +263,12 @@ void ExpressionModelListController::layoutFieldDidAbortEditing(
   finishEdition();
 }
 
+Ion::Storage::Record ExpressionModelListController::recordAtRow(int row) const {
+  return modelStore()->recordAtIndex(modelIndexForRow(row));
+}
+
 Ion::Storage::Record ExpressionModelListController::selectedRecord() const {
-  return modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  return recordAtRow(selectedRow());
 }
 
 }  // namespace Shared

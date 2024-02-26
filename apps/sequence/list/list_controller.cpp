@@ -46,8 +46,7 @@ int ListController::numberOfExpressionRows() const {
 KDCoordinate ListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   KDCoordinate sequenceHeight;
-  Shared::Sequence *sequence = modelStore()->modelForRecord(
-      modelStore()->recordAtIndex(modelIndexForRow(row)));
+  Shared::Sequence *sequence = modelStore()->modelForRecord(recordAtRow(row));
   Layout layout;
   int sequenceDefinition = sequenceDefinitionForRow(row);
   if (sequenceDefinition == k_firstInitialCondition) {
@@ -268,8 +267,7 @@ void ListController::willDisplayTitleCellAtIndex(
     VerticalSequenceTitleCell *cell, int j, HighlightCell *expressionCell) {
   assert(j >= 0 && j < k_maxNumberOfRows);
   cell->setBaseline(baseline(j, expressionCell));
-  Ion::Storage::Record record =
-      modelStore()->recordAtIndex(modelIndexForRow(j));
+  Ion::Storage::Record record = recordAtRow(j);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor nameColor =
@@ -295,8 +293,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell *cell,
   }
   Escher::EvenOddExpressionCell *myCell =
       static_cast<Escher::EvenOddExpressionCell *>(cell);
-  Ion::Storage::Record record =
-      modelStore()->recordAtIndex(modelIndexForRow(j));
+  Ion::Storage::Record record = recordAtRow(j);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor textColor = sequence->isActive() ? KDColorBlack : Palette::GrayDark;

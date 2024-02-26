@@ -88,6 +88,7 @@ constexpr auto KListSlice = KFixedArity<3, BlockType::ListSlice>();
 constexpr auto KSum = KFixedArity<4, BlockType::Sum>();
 constexpr auto KProduct = KFixedArity<4, BlockType::Product>();
 constexpr auto KIntegral = KFixedArity<4, BlockType::Integral>();
+constexpr auto KNthDiff = KFixedArity<4, BlockType::NthDerivative>();
 
 constexpr auto KAdd = KNAry<BlockType::Addition>();
 constexpr auto KMult = KNAry<BlockType::Multiplication>();

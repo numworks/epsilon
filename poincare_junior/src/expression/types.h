@@ -181,6 +181,9 @@ NODE(ListSequence, 3)
 
 RANGE(Parametric, Sum, ListSequence)
 
+// TODO PCJ move in Parametric when implemeting
+NODE(NthDerivative, 4)
+
 // 5 - Matrix and vector builtins
 
 NODE(Dot, 2)

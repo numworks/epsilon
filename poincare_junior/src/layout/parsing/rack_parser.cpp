@@ -897,6 +897,9 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   } else if (numberOfParameters == 1 &&
              builtin->blockType() == BlockType::Sum) {
     builtin = Builtin::GetReservedFunction(KListSum);
+  } else if (numberOfParameters == 4 &&
+             builtin->blockType() == BlockType::Derivative) {
+    builtin = Builtin::GetReservedFunction(KNthDiff);
   }
   assert(builtin);
 

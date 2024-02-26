@@ -149,6 +149,7 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
     {BlockType::Sum, "sum", LayoutType::Sum},
     {BlockType::Product, "product", LayoutType::Product},
     {BlockType::Derivative, "diff", LayoutType::Derivative},
+    {BlockType::NthDerivative, "diff", LayoutType::NthDerivative},
     {BlockType::Integral, "int", LayoutType::Integral},
     {BlockType::SquareRoot, BuiltinsAliases::k_squareRootAliases,
      LayoutType::SquareRoot},

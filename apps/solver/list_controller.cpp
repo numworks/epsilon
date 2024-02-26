@@ -85,7 +85,11 @@ int ListController::reusableCellCount(int type) const {
 void ListController::fillCellForRow(HighlightCell *cell, int row) {
   int type = typeAtRow(row);
   if (type == k_expressionCellType) {
-    fillExpressionCellForRow(cell, row);
+    EvenOddExpressionCell *evenOddCell =
+        static_cast<EvenOddExpressionCell *>(cell);
+    ExpiringPointer<Equation> equation =
+        modelStore()->modelForRecord(recordAtRow(row));
+    evenOddCell->setLayout(equation->layout());
   }
 }
 

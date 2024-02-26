@@ -69,7 +69,7 @@ class ListController : public Shared::FunctionListController {
   Escher::HighlightCell* functionCells(int index) override;
   void willDisplayTitleCellAtIndex(VerticalSequenceTitleCell* cell, int j,
                                    Escher::HighlightCell* expressionCell);
-  void fillExpressionCellForRow(Escher::HighlightCell* cell, int row) override;
+  void fillExpressionCellForRow(Escher::HighlightCell* cell, int row);
   int modelIndexForRow(int j) const override;
   int sequenceDefinitionForRow(int j) const;
   int numberOfRowsForRecord(Ion::Storage::Record record) const override;

@@ -19,7 +19,7 @@ class MatrixNode final : public Array, public ExpressionNode {
     return Array::didChangeNumberOfChildren(newNumberOfChildren);
   }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream& stream) const override { stream << "Matrix"; }
+  void logNodeName(std::ostream& stream) const override { stream << "OMatrix"; }
   void logAttributes(std::ostream& stream) const override {
     stream << " rows=\"" << m_numberOfRows << "\"";
     stream << " columns=\"" << m_numberOfColumns << "\"";
@@ -27,7 +27,7 @@ class MatrixNode final : public Array, public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Matrix; }
+  Type type() const override { return Type::OMatrix; }
   int polynomialDegree(Context* context, const char* symbolName) const override;
 
   // Simplification
@@ -60,7 +60,7 @@ class MatrixNode final : public Array, public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class Matrix final : public OExpression {
+class OMatrix final : public OExpression {
   template <typename T>
   friend class MatrixComplexNode;
   friend class GlobalContext;
@@ -70,9 +70,9 @@ class Matrix final : public OExpression {
    * TODO: Find another solution */
   constexpr static int k_maxNumberOfChildren = 100;
 
-  Matrix(const MatrixNode* node) : OExpression(node) {}
-  static Matrix Builder() {
-    return TreeHandle::NAryBuilder<Matrix, MatrixNode>();
+  OMatrix(const MatrixNode* node) : OExpression(node) {}
+  static OMatrix Builder() {
+    return TreeHandle::NAryBuilder<OMatrix, MatrixNode>();
   }
 
   void setDimensions(int rows, int columns);
@@ -96,8 +96,8 @@ class Matrix final : public OExpression {
    * array[row_index][column_index] */
   template <typename T>
   static int ArrayInverse(T* array, int numberOfRows, int numberOfColumns);
-  static Matrix CreateIdentity(int dim);
-  Matrix createTranspose() const;
+  static OMatrix CreateIdentity(int dim);
+  OMatrix createTranspose() const;
   OExpression createRef(const ReductionContext& reductionContext,
                         bool* couldComputeRef, bool reduced) const;
   /* createInverse can be called on any matrix, reduced or not, approximated or
@@ -107,8 +107,8 @@ class Matrix final : public OExpression {
   OExpression determinant(const ReductionContext& reductionContext,
                           bool* couldComputeDeterminant, bool inPlace);
   OExpression norm(const ReductionContext& reductionContext) const;
-  OExpression dot(Matrix* b, const ReductionContext& reductionContext) const;
-  Matrix cross(Matrix* b, const ReductionContext& reductionContext) const;
+  OExpression dot(OMatrix* b, const ReductionContext& reductionContext) const;
+  OMatrix cross(OMatrix* b, const ReductionContext& reductionContext) const;
 
   // OExpression
   OExpression shallowReduce(ReductionContext reductionContext);
@@ -144,9 +144,9 @@ class Matrix final : public OExpression {
    * so the 1's of the last rows will always be taken as pivots, and not the tk.
    * */
   bool isCanonizable(const ReductionContext& reductionContext);
-  Matrix rowCanonize(const ReductionContext& reductionContext,
-                     bool* canonizationSuccess, OExpression* determinant,
-                     bool reduced = true, bool forceCanonization = false);
+  OMatrix rowCanonize(const ReductionContext& reductionContext,
+                      bool* canonizationSuccess, OExpression* determinant,
+                      bool reduced = true, bool forceCanonization = false);
   // Row canonize the array in place
   template <typename T>
   static void ArrayRowCanonize(T* array, int numberOfRows, int numberOfColumns,

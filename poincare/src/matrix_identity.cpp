@@ -71,7 +71,7 @@ OExpression MatrixIdentity::shallowReduce(ReductionContext reductionContext) {
   }
   int dim = dimension.extractedInt();
   assert(dim != 0);
-  OExpression result = Matrix::CreateIdentity(dim);
+  OExpression result = OMatrix::CreateIdentity(dim);
   replaceWithInPlace(result);
   return result;
 }

@@ -33,7 +33,7 @@ int MatrixNode::polynomialDegree(Context *context,
 
 OExpression MatrixNode::shallowReduce(
     const ReductionContext &reductionContext) {
-  return Matrix(this).shallowReduce(reductionContext);
+  return OMatrix(this).shallowReduce(reductionContext);
 }
 
 size_t MatrixNode::serialize(char *buffer, size_t bufferSize,
@@ -107,13 +107,13 @@ Evaluation<T> MatrixNode::templatedApproximate(
 
 // MATRIX
 
-void Matrix::setDimensions(int rows, int columns) {
+void OMatrix::setDimensions(int rows, int columns) {
   assert(rows * columns == numberOfChildren());
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }
 
-void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
+void OMatrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
   int previousNumberOfColumns = numberOfColumns();
   if (previousNumberOfColumns > 0) {
     assert(t.numberOfChildren() == numberOfColumns());
@@ -129,7 +129,7 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
                                               : previousNumberOfColumns);
 }
 
-int Matrix::rank(Context *context, bool forceCanonization) {
+int OMatrix::rank(Context *context, bool forceCanonization) {
   assert(!recursivelyMatches(OExpression::IsUninitialized, context));
   if (recursivelyMatches(OExpression::IsUndefined, context)) {
     return -1;
@@ -142,7 +142,7 @@ int Matrix::rank(Context *context, bool forceCanonization) {
   {
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
-      Matrix cannonizedM = clone().convert<Matrix>();
+      OMatrix cannonizedM = clone().convert<OMatrix>();
       m = cannonizedM.rowCanonize(systemReductionContext, &canonizationSuccess,
                                   nullptr, true, forceCanonization);
     } else {
@@ -150,12 +150,12 @@ int Matrix::rank(Context *context, bool forceCanonization) {
        * If it's the case, compute the rank with approximated values. */
       OExpression mApproximation =
           approximate<double>(ApproximationContext(systemReductionContext));
-      if (mApproximation.type() != ExpressionNode::Type::Matrix) {
+      if (mApproximation.type() != ExpressionNode::Type::OMatrix) {
         /* The approximation was able to conclude that a coefficient is undef
          * while the reduction could not. */
         return -1;
       }
-      m = static_cast<Matrix &>(mApproximation)
+      m = static_cast<OMatrix &>(mApproximation)
               .rowCanonize(systemReductionContext, &canonizationSuccess,
                            nullptr, true, forceCanonization);
     }
@@ -166,8 +166,8 @@ int Matrix::rank(Context *context, bool forceCanonization) {
     return -1;
   }
 
-  assert(m.type() == ExpressionNode::Type::Matrix);
-  Matrix cannonizedMatrix = static_cast<Matrix &>(m);
+  assert(m.type() == ExpressionNode::Type::OMatrix);
+  OMatrix cannonizedMatrix = static_cast<OMatrix &>(m);
   *this = cannonizedMatrix;
 
   int rank = cannonizedMatrix.numberOfRows();
@@ -189,7 +189,7 @@ int Matrix::rank(Context *context, bool forceCanonization) {
   return rank;
 }
 
-OExpression Matrix::createTrace() {
+OExpression OMatrix::createTrace() {
   assert(numberOfRows() == numberOfColumns());
   int n = numberOfRows();
   Addition a = Addition::Builder();
@@ -200,7 +200,7 @@ OExpression Matrix::createTrace() {
 }
 
 template <typename T>
-int Matrix::ArrayInverse(T *array, int numberOfRows, int numberOfColumns) {
+int OMatrix::ArrayInverse(T *array, int numberOfRows, int numberOfColumns) {
   if (numberOfRows != numberOfColumns) {
     return -1;
   }
@@ -240,7 +240,7 @@ int Matrix::ArrayInverse(T *array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
-bool Matrix::isCanonizable(const ReductionContext &reductionContext) {
+bool OMatrix::isCanonizable(const ReductionContext &reductionContext) {
   ApproximationContext approximationContext(reductionContext);
   int m = numberOfRows();
   int n = numberOfColumns();
@@ -255,9 +255,10 @@ bool Matrix::isCanonizable(const ReductionContext &reductionContext) {
   return true;
 }
 
-Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
-                           bool *canonizationSuccess, OExpression *determinant,
-                           bool reduced, bool forceCanonization) {
+OMatrix OMatrix::rowCanonize(const ReductionContext &reductionContext,
+                             bool *canonizationSuccess,
+                             OExpression *determinant, bool reduced,
+                             bool forceCanonization) {
   assert(canonizationSuccess);
   *canonizationSuccess = true;
 
@@ -395,8 +396,8 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
 }
 
 template <typename T>
-void Matrix::ArrayRowCanonize(T *array, int numberOfRows, int numberOfColumns,
-                              T *determinant, bool reduced) {
+void OMatrix::ArrayRowCanonize(T *array, int numberOfRows, int numberOfColumns,
+                               T *determinant, bool reduced) {
   int h = 0;  // row pivot
   int k = 0;  // column pivot
 
@@ -497,8 +498,8 @@ void Matrix::ArrayRowCanonize(T *array, int numberOfRows, int numberOfColumns,
   }
 }
 
-Matrix Matrix::CreateIdentity(int dim) {
-  Matrix matrix = Matrix::Builder();
+OMatrix OMatrix::CreateIdentity(int dim) {
+  OMatrix matrix = OMatrix::Builder();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       matrix.addChildAtIndexInPlace(
@@ -510,12 +511,12 @@ Matrix Matrix::CreateIdentity(int dim) {
   return matrix;
 }
 
-Matrix Matrix::createTranspose() const {
-  Matrix matrix = Matrix::Builder();
+OMatrix OMatrix::createTranspose() const {
+  OMatrix matrix = OMatrix::Builder();
   for (int j = 0; j < numberOfColumns(); j++) {
     for (int i = 0; i < numberOfRows(); i++) {
       matrix.addChildAtIndexInPlace(
-          const_cast<Matrix *>(this)->matrixChild(i, j).clone(),
+          const_cast<OMatrix *>(this)->matrixChild(i, j).clone(),
           matrix.numberOfChildren(), matrix.numberOfChildren());
     }
   }
@@ -524,9 +525,9 @@ Matrix Matrix::createTranspose() const {
   return matrix;
 }
 
-OExpression Matrix::createRef(const ReductionContext &reductionContext,
-                              bool *couldComputeRef, bool reduced) const {
-  // Compute Matrix Row Echelon Form
+OExpression OMatrix::createRef(const ReductionContext &reductionContext,
+                               bool *couldComputeRef, bool reduced) const {
+  // Compute OMatrix Row Echelon Form
   /* If the matrix is too big, the rowCanonization might not be computed exactly
    * because of a pool allocation error, but we might still be able to compute
    * it approximately. We thus encapsulate the ref creation in an exception
@@ -543,7 +544,7 @@ OExpression Matrix::createRef(const ReductionContext &reductionContext,
      * located before the checkpoint). If an exception is raised before
      * destroying the child handle, its reference counter would be off by one
      * after the long jump. */
-    Matrix result = clone().convert<Matrix>();
+    OMatrix result = clone().convert<OMatrix>();
     /* Reduced row echelon form is also called row canonical form. To compute
      * the row echelon form (non reduced one), fewer steps are required. */
     result =
@@ -555,8 +556,8 @@ OExpression Matrix::createRef(const ReductionContext &reductionContext,
   }
 }
 
-OExpression Matrix::createInverse(const ReductionContext &reductionContext,
-                                  bool *couldComputeInverse) const {
+OExpression OMatrix::createInverse(const ReductionContext &reductionContext,
+                                   bool *couldComputeInverse) const {
   int dim = numberOfRows();
   if (dim != numberOfColumns()) {
     *couldComputeInverse = true;
@@ -568,11 +569,11 @@ OExpression Matrix::createInverse(const ReductionContext &reductionContext,
   return result;
 }
 
-OExpression Matrix::determinant(const ReductionContext &reductionContext,
-                                bool *couldComputeDeterminant, bool inPlace) {
+OExpression OMatrix::determinant(const ReductionContext &reductionContext,
+                                 bool *couldComputeDeterminant, bool inPlace) {
   // Determinant must be called on a reduced matrix only.
   *couldComputeDeterminant = true;
-  Matrix m = inPlace ? *this : clone().convert<Matrix>();
+  OMatrix m = inPlace ? *this : clone().convert<OMatrix>();
   int dim = m.numberOfRows();
   if (dim != m.numberOfColumns()) {
     // Determinant is for square matrices
@@ -628,14 +629,14 @@ OExpression Matrix::determinant(const ReductionContext &reductionContext,
   return result;
 }
 
-OExpression Matrix::norm(const ReductionContext &reductionContext) const {
+OExpression OMatrix::norm(const ReductionContext &reductionContext) const {
   // Norm is defined on vectors only
   assert(isVector());
   Addition sum = Addition::Builder();
   int childrenNumber = numberOfChildren();
   for (int j = 0; j < childrenNumber; j++) {
     OExpression absValue = AbsoluteValue::Builder(
-        const_cast<Matrix *>(this)->childAtIndex(j).clone());
+        const_cast<OMatrix *>(this)->childAtIndex(j).clone());
     OExpression squaredAbsValue =
         Power::Builder(absValue, Rational::Builder(2));
     absValue.shallowReduce(reductionContext);
@@ -648,8 +649,8 @@ OExpression Matrix::norm(const ReductionContext &reductionContext) const {
   return result;
 }
 
-OExpression Matrix::dot(Matrix *b,
-                        const ReductionContext &reductionContext) const {
+OExpression OMatrix::dot(OMatrix *b,
+                         const ReductionContext &reductionContext) const {
   // Dot product is defined between two vectors of same size and type
   assert(isVector() && vectorType() == b->vectorType() &&
          numberOfChildren() == b->numberOfChildren());
@@ -657,8 +658,8 @@ OExpression Matrix::dot(Matrix *b,
   int childrenNumber = numberOfChildren();
   for (int j = 0; j < childrenNumber; j++) {
     OExpression product = Multiplication::Builder(
-        const_cast<Matrix *>(this)->childAtIndex(j).clone(),
-        const_cast<Matrix *>(b)->childAtIndex(j).clone());
+        const_cast<OMatrix *>(this)->childAtIndex(j).clone(),
+        const_cast<OMatrix *>(b)->childAtIndex(j).clone());
     sum.addChildAtIndexInPlace(product, sum.numberOfChildren(),
                                sum.numberOfChildren());
     product.shallowReduce(reductionContext);
@@ -666,21 +667,21 @@ OExpression Matrix::dot(Matrix *b,
   return std::move(sum);
 }
 
-Matrix Matrix::cross(Matrix *b,
-                     const ReductionContext &reductionContext) const {
+OMatrix OMatrix::cross(OMatrix *b,
+                       const ReductionContext &reductionContext) const {
   // Cross product is defined between two vectors of size 3 and of same type.
   assert(isVector() && vectorType() == b->vectorType() &&
          numberOfChildren() == 3 && b->numberOfChildren() == 3);
-  Matrix matrix = Matrix::Builder();
+  OMatrix matrix = OMatrix::Builder();
   for (int j = 0; j < 3; j++) {
     int j1 = (j + 1) % 3;
     int j2 = (j + 2) % 3;
     OExpression a1b2 = Multiplication::Builder(
-        const_cast<Matrix *>(this)->childAtIndex(j1).clone(),
-        const_cast<Matrix *>(b)->childAtIndex(j2).clone());
+        const_cast<OMatrix *>(this)->childAtIndex(j1).clone(),
+        const_cast<OMatrix *>(b)->childAtIndex(j2).clone());
     OExpression a2b1 = Multiplication::Builder(
-        const_cast<Matrix *>(this)->childAtIndex(j2).clone(),
-        const_cast<Matrix *>(b)->childAtIndex(j1).clone());
+        const_cast<OMatrix *>(this)->childAtIndex(j2).clone(),
+        const_cast<OMatrix *>(b)->childAtIndex(j1).clone());
     OExpression difference = Subtraction::Builder(a1b2, a2b1);
     a1b2.shallowReduce(reductionContext);
     a2b1.shallowReduce(reductionContext);
@@ -692,7 +693,7 @@ Matrix Matrix::cross(Matrix *b,
   return matrix;
 }
 
-OExpression Matrix::shallowReduce(ReductionContext reductionContext) {
+OExpression OMatrix::shallowReduce(ReductionContext reductionContext) {
   if (node()->hasMatrixOrListChild(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
@@ -704,7 +705,7 @@ OExpression Matrix::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-OExpression Matrix::computeInverseOrDeterminant(
+OExpression OMatrix::computeInverseOrDeterminant(
     bool computeDeterminant, const ReductionContext &reductionContext,
     bool *couldCompute) const {
   assert(numberOfRows() == numberOfColumns());
@@ -725,11 +726,11 @@ OExpression Matrix::computeInverseOrDeterminant(
      * located before the checkpoint). If an exception is raised before
      * destroying the child handle, its reference counter would be off by one
      * after the long jump. */
-    Matrix cl = clone().convert<Matrix>();
+    OMatrix cl = clone().convert<OMatrix>();
     *couldCompute = true;
     /* Create the matrix (A|I) with A is the input matrix and I the dim
      * identity matrix */
-    Matrix matrixAI = Matrix::Builder();
+    OMatrix matrixAI = OMatrix::Builder();
     for (int i = 0; i < dim; i++) {
       for (int j = 0; j < dim; j++) {
         OExpression mChildIJ = cl.matrixChild(i, j);
@@ -760,7 +761,7 @@ OExpression Matrix::computeInverseOrDeterminant(
         return Undefined::Builder();
       }
     }
-    Matrix inverse = Matrix::Builder();
+    OMatrix inverse = OMatrix::Builder();
     for (int i = 0; i < dim; i++) {
       for (int j = 0; j < dim; j++) {
         // We can steal matrixAI's children
@@ -776,14 +777,14 @@ OExpression Matrix::computeInverseOrDeterminant(
   }
 }
 
-template int Matrix::ArrayInverse<double>(double *, int, int);
-template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float> *,
-                                                       int, int);
-template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double> *,
+template int OMatrix::ArrayInverse<double>(double *, int, int);
+template int OMatrix::ArrayInverse<std::complex<float>>(std::complex<float> *,
                                                         int, int);
-template void Matrix::ArrayRowCanonize<std::complex<float>>(
+template int OMatrix::ArrayInverse<std::complex<double>>(std::complex<double> *,
+                                                         int, int);
+template void OMatrix::ArrayRowCanonize<std::complex<float>>(
     std::complex<float> *, int, int, std::complex<float> *, bool);
-template void Matrix::ArrayRowCanonize<std::complex<double>>(
+template void OMatrix::ArrayRowCanonize<std::complex<double>>(
     std::complex<double> *, int, int, std::complex<double> *, bool);
 
 }  // namespace Poincare

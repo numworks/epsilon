@@ -86,7 +86,7 @@ class OExpression : public TreeHandle {
   friend class Logarithm;
   friend class LogarithmNode;
   friend class LogicalOperatorNode;
-  friend class Matrix;
+  friend class OMatrix;
   friend class MatrixEchelonForm;
   friend class MatrixIdentity;
   friend class MatrixInverse;

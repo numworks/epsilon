@@ -379,22 +379,22 @@ OExpression Addition::shallowReduce(ReductionContext reductionContext) {
          * addition of a matrix and a scalar. */
         return replaceWithUndefinedInPlace();
       }
-      if (lastChild.type() != ExpressionNode::Type::Matrix) {
-        /* All children are matrices that are not of type Matrix (for instance a
-         * ConfidenceInterval that cannot be reduced). We cannot reduce the
+      if (lastChild.type() != ExpressionNode::Type::OMatrix) {
+        /* All children are matrices that are not of type OMatrix (for instance
+         * a ConfidenceInterval that cannot be reduced). We cannot reduce the
          * addition more. */
         return *this;
       }
       // Create the addition matrix (in place of the last child)
-      Matrix resultMatrix = static_cast<Matrix&>(lastChild);
+      OMatrix resultMatrix = static_cast<OMatrix&>(lastChild);
       int n = resultMatrix.numberOfRows();
       int m = resultMatrix.numberOfColumns();
       // Scan to add the other children, which are  matrices
       for (int i = childrenCount - 2; i >= 0; i--) {
-        if (childAtIndex(i).type() != ExpressionNode::Type::Matrix) {
+        if (childAtIndex(i).type() != ExpressionNode::Type::OMatrix) {
           break;
         }
-        Matrix currentMatrix = childAtIndex(i).convert<Matrix>();
+        OMatrix currentMatrix = childAtIndex(i).convert<OMatrix>();
         int currentN = currentMatrix.numberOfRows();
         int currentM = currentMatrix.numberOfColumns();
         if (currentN != n || currentM != m) {

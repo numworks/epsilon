@@ -145,7 +145,7 @@ class ExpressionNode : public TreeNode {
     MatrixRowEchelonForm,
     MatrixReducedRowEchelonForm,
     VectorCross,
-    Matrix,
+    OMatrix,
     EmptyExpression,
     JuniorExpression
   };

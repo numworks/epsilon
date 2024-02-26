@@ -52,8 +52,8 @@ OExpression MatrixTrace::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix matrixChild0 = static_cast<Matrix&>(c);
+  if (c.type() == ExpressionNode::Type::OMatrix) {
+    OMatrix matrixChild0 = static_cast<OMatrix&>(c);
     if (matrixChild0.numberOfRows() != matrixChild0.numberOfColumns()) {
       return replaceWithUndefinedInPlace();
     }

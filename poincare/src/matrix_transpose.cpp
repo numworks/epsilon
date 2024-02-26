@@ -53,8 +53,8 @@ OExpression MatrixTranspose::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    OExpression result = static_cast<Matrix&>(c).createTranspose();
+  if (c.type() == ExpressionNode::Type::OMatrix) {
+    OExpression result = static_cast<OMatrix&>(c).createTranspose();
     replaceWithInPlace(result);
     return result;
   }

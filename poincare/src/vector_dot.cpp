@@ -64,10 +64,10 @@ OExpression VectorDot::shallowReduce(ReductionContext reductionContext) {
   }
   OExpression c0 = childAtIndex(0);
   OExpression c1 = childAtIndex(1);
-  if (c0.type() == ExpressionNode::Type::Matrix &&
-      c1.type() == ExpressionNode::Type::Matrix) {
-    Matrix matrixChild0 = static_cast<Matrix&>(c0);
-    Matrix matrixChild1 = static_cast<Matrix&>(c1);
+  if (c0.type() == ExpressionNode::Type::OMatrix &&
+      c1.type() == ExpressionNode::Type::OMatrix) {
+    OMatrix matrixChild0 = static_cast<OMatrix&>(c0);
+    OMatrix matrixChild1 = static_cast<OMatrix&>(c1);
     // Dot product is defined between two vectors of the same dimension and type
     if (!matrixChild0.isVector() ||
         matrixChild0.vectorType() != matrixChild1.vectorType() ||

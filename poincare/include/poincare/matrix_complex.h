@@ -45,7 +45,7 @@ class MatrixComplexNode final : public Array, public EvaluationNode<T> {
   OExpression complexToExpression(
       Preferences::Preferences::ComplexFormat complexFormat) const override;
 
-  // Matrix related functions
+  // OMatrix related functions
   std::complex<T> trace() const;
   std::complex<T> determinant() const;
   MatrixComplex<T> inverse() const;

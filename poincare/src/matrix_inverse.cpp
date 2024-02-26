@@ -58,11 +58,11 @@ OExpression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
+  if (c.type() == ExpressionNode::Type::OMatrix) {
     /* Power(matrix, -n) creates a matrixInverse, so the simplification must be
      * done here and not in power. */
     bool couldComputeInverse = false;
-    OExpression result = static_cast<Matrix&>(c).createInverse(
+    OExpression result = static_cast<OMatrix&>(c).createInverse(
         reductionContext, &couldComputeInverse);
     if (couldComputeInverse) {
       replaceWithInPlace(result);

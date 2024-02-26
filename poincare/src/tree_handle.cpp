@@ -368,7 +368,7 @@ template ListSequence
 TreeHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(const Tuple &);
 template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(
     const Tuple &);
-template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(const Tuple &);
+template OMatrix TreeHandle::NAryBuilder<OMatrix, MatrixNode>(const Tuple &);
 template MatrixComplex<double> TreeHandle::NAryBuilder<
     MatrixComplex<double>, MatrixComplexNode<double>>(const Tuple &);
 template MatrixComplex<float> TreeHandle::NAryBuilder<

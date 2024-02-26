@@ -1118,7 +1118,7 @@ void Parser::parseMatrix(OExpression &leftHandSide, Token::Type stoppingType) {
     m_status = Status::Error;  // FIXME
     return;
   }
-  Matrix matrix = Matrix::Builder();
+  OMatrix matrix = OMatrix::Builder();
   int numberOfRows = 0;
   int numberOfColumns = 0;
   while (!popTokenIfType(Token::Type::RightBracket)) {

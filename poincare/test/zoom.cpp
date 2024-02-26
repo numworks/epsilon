@@ -59,7 +59,7 @@ template <typename T>
 Coordinate2D<T> expressionEvaluator(T t, const void *model, Context *context) {
   const OExpression *e = static_cast<const OExpression *>(model);
   ApproximationContext approximationContext(context, Real, Radian);
-  if (e->type() == ExpressionNode::Type::Matrix) {
+  if (e->type() == ExpressionNode::Type::OMatrix) {
     return Coordinate2D<T>(
         e->childAtIndex(0).approximateToScalarWithValueForSymbol(
             k_symbol, t, approximationContext),

@@ -51,9 +51,9 @@ OExpression MatrixEchelonForm::shallowReduce(
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
+  if (c.type() == ExpressionNode::Type::OMatrix) {
     bool couldComputeRef = false;
-    OExpression result = static_cast<Matrix&>(c).createRef(
+    OExpression result = static_cast<OMatrix&>(c).createRef(
         reductionContext, &couldComputeRef, isFormReduced());
     if (couldComputeRef) {
       replaceWithInPlace(result);

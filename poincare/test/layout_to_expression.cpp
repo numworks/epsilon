@@ -74,8 +74,8 @@ void assert_parsed_layout_is(Layout l, Poincare::OExpression r) {
   PoincareJ::EditionPool::SharedEditionPool->flush();
 }
 
-Matrix BuildOneChildMatrix(OExpression entry) {
-  Matrix m = Matrix::Builder();
+OMatrix BuildOneChildMatrix(OExpression entry) {
+  OMatrix m = OMatrix::Builder();
   m.addChildAtIndexInPlace(entry, 0, 0);
   return m;
 }
@@ -247,7 +247,7 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
           CodePointLayout::Builder('!')),
       CodePointLayout::Builder('7'), CodePointLayout::Builder('4'),
       CodePointLayout::Builder('5'));
-  Matrix m = BuildOneChildMatrix(Factorial::Builder(
+  OMatrix m = BuildOneChildMatrix(Factorial::Builder(
       Power::Builder(BasedInteger::Builder(3), BasedInteger::Builder(2))));
   m.addChildAtIndexInPlace(BasedInteger::Builder(7), 1, 1);
   m.addChildAtIndexInPlace(BasedInteger::Builder(4), 2, 2);

@@ -64,7 +64,7 @@ OExpression Dimension::shallowReduce(ReductionContext reductionContext) {
     return result;
   }
 
-  if (c.type() != ExpressionNode::Type::Matrix) {
+  if (c.type() != ExpressionNode::Type::OMatrix) {
     if (c.deepIsMatrix(reductionContext.context(),
                        reductionContext.shouldCheckMatrices())) {
       return *this;
@@ -72,8 +72,8 @@ OExpression Dimension::shallowReduce(ReductionContext reductionContext) {
     return replaceWithUndefinedInPlace();
   }
 
-  Matrix result = Matrix::Builder();
-  Matrix m = static_cast<Matrix&>(c);
+  OMatrix result = OMatrix::Builder();
+  OMatrix m = static_cast<OMatrix&>(c);
   result.addChildAtIndexInPlace(Rational::Builder(m.numberOfRows()), 0, 0);
   result.addChildAtIndexInPlace(Rational::Builder(m.numberOfColumns()), 1, 1);
   result.setDimensions(1, 2);

@@ -437,8 +437,8 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_text_not_parsable("re^\u0012im(,0)\u0013");
 }
 
-Matrix BuildMatrix(int rows, int columns, OExpression entries[]) {
-  Matrix m = Matrix::Builder();
+OMatrix BuildMatrix(int rows, int columns, OExpression entries[]) {
+  OMatrix m = OMatrix::Builder();
   int position = 0;
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < columns; j++) {
@@ -1438,9 +1438,9 @@ QUIZ_CASE_DISABLED(poincare_parsing_implicit_multiplication) {
           Power::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3)),
           BasedInteger::Builder(3)));
   OExpression m1[] = {BasedInteger::Builder(1)};
-  Matrix M1 = BuildMatrix(1, 1, m1);
+  OMatrix M1 = BuildMatrix(1, 1, m1);
   OExpression m2[] = {BasedInteger::Builder(2)};
-  Matrix M2 = BuildMatrix(1, 1, m2);
+  OMatrix M2 = BuildMatrix(1, 1, m2);
   assert_parsed_expression_is("[[1]][[2]]", Multiplication::Builder(M1, M2));
   OExpression l1[] = {BasedInteger::Builder(1), BasedInteger::Builder(2)};
   assert_parsed_expression_is(

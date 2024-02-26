@@ -844,8 +844,8 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
   /* Thanks to the simplification order, all matrix children (if any) are the
    * last children. */
   OExpression lastChild = childAtIndex(numberOfChildren() - 1);
-  if (lastChild.type() == ExpressionNode::Type::Matrix) {
-    Matrix resultMatrix = static_cast<Matrix &>(lastChild);
+  if (lastChild.type() == ExpressionNode::Type::OMatrix) {
+    OMatrix resultMatrix = static_cast<OMatrix &>(lastChild);
     // Use the last matrix child as the final matrix
     int n = resultMatrix.numberOfRows();
     int m = resultMatrix.numberOfColumns();
@@ -854,10 +854,10 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
     int multiplicationChildIndex = numberOfChildren() - 2;
     while (multiplicationChildIndex >= 0) {
       OExpression currentChild = childAtIndex(multiplicationChildIndex);
-      if (currentChild.type() != ExpressionNode::Type::Matrix) {
+      if (currentChild.type() != ExpressionNode::Type::OMatrix) {
         break;
       }
-      Matrix currentMatrix = static_cast<Matrix &>(currentChild);
+      OMatrix currentMatrix = static_cast<OMatrix &>(currentChild);
       int currentN = currentMatrix.numberOfRows();
       int currentM = currentMatrix.numberOfColumns();
       if (currentM != n) {
@@ -887,7 +887,7 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
        * */
       int newResultN = currentN;
       int newResultM = m;
-      Matrix newResult = Matrix::Builder();
+      OMatrix newResult = OMatrix::Builder();
       for (int i = 0; i < newResultN; i++) {
         for (int j = 0; j < newResultM; j++) {
           Addition a = Addition::Builder();

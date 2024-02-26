@@ -9,8 +9,8 @@ using namespace Poincare;
 static inline void assert_has_rank(const char *exp, int rank) {
   Shared::GlobalContext context;
   OExpression e = parse_expression(exp, &context, false);
-  quiz_assert(e.type() == ExpressionNode::Type::Matrix);
-  Matrix *m = reinterpret_cast<Matrix *>(&e);
+  quiz_assert(e.type() == ExpressionNode::Type::OMatrix);
+  OMatrix *m = reinterpret_cast<OMatrix *>(&e);
   quiz_assert(rank == m->rank(&context));
 }
 

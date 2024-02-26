@@ -26,7 +26,7 @@ OExpression MatrixComplexNode<T>::complexToExpression(
   if (isUndefined()) {
     return Undefined::Builder();
   }
-  Matrix matrix = Matrix::Builder();
+  OMatrix matrix = OMatrix::Builder();
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
     OExpression childExpression = Undefined::Builder();
@@ -59,28 +59,28 @@ std::complex<T> MatrixComplexNode<T>::trace() const {
 template <typename T>
 std::complex<T> MatrixComplexNode<T>::determinant() const {
   if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 ||
-      numberOfChildren() > Matrix::k_maxNumberOfChildren) {
+      numberOfChildren() > OMatrix::k_maxNumberOfChildren) {
     return std::complex<T>(NAN, NAN);
   }
-  std::complex<T> operandsCopy[Matrix::k_maxNumberOfChildren];
+  std::complex<T> operandsCopy[OMatrix::k_maxNumberOfChildren];
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     // Returns complex<T>(NAN, NAN) if Node type is not Complex
     operandsCopy[i] = complexAtIndex(i);
   }
   std::complex<T> determinant = std::complex<T>(1);
-  Matrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns,
-                           &determinant);
+  OMatrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns,
+                            &determinant);
   return determinant;
 }
 
 template <typename T>
 MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
   if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 ||
-      numberOfChildren() > Matrix::k_maxNumberOfChildren) {
+      numberOfChildren() > OMatrix::k_maxNumberOfChildren) {
     return MatrixComplex<T>::Undefined();
   }
-  std::complex<T> operandsCopy[Matrix::k_maxNumberOfChildren];
+  std::complex<T> operandsCopy[OMatrix::k_maxNumberOfChildren];
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
     if (c->type() != EvaluationNode<T>::Type::Complex) {
@@ -90,7 +90,7 @@ MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
     i++;
   }
   int result =
-      Matrix::ArrayInverse(operandsCopy, m_numberOfRows, m_numberOfColumns);
+      OMatrix::ArrayInverse(operandsCopy, m_numberOfRows, m_numberOfColumns);
   if (result == 0) {
     /* Intentionally swapping dimensions for inverse, although it doesn't make a
      * difference because it is square. */
@@ -120,12 +120,12 @@ MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
 
 template <typename T>
 MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
-  // Compute Matrix Row Echelon Form
+  // Compute OMatrix Row Echelon Form
   if (numberOfChildren() == 0 ||
-      numberOfChildren() > Matrix::k_maxNumberOfChildren) {
+      numberOfChildren() > OMatrix::k_maxNumberOfChildren) {
     return MatrixComplex<T>::Undefined();
   }
-  std::complex<T> operandsCopy[Matrix::k_maxNumberOfChildren];
+  std::complex<T> operandsCopy[OMatrix::k_maxNumberOfChildren];
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     // Returns complex<T>(NAN, NAN) if Node type is not Complex
@@ -133,8 +133,8 @@ MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
   }
   /* Reduced row echelon form is also called row canonical form. To compute the
    * row echelon form (non reduced one), fewer steps are required. */
-  Matrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns,
-                           static_cast<std::complex<T> *>(nullptr), reduced);
+  OMatrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns,
+                            static_cast<std::complex<T> *>(nullptr), reduced);
   return MatrixComplex<T>::Builder(operandsCopy, m_numberOfRows,
                                    m_numberOfColumns);
 }

@@ -58,8 +58,8 @@ OExpression Determinant::shallowReduce(ReductionContext reductionContext) {
                        reductionContext.shouldCheckMatrices())) {
     return replaceWithUndefinedInPlace();
   }
-  if (c0.type() == ExpressionNode::Type::Matrix) {
-    Matrix m0 = static_cast<Matrix&>(c0);
+  if (c0.type() == ExpressionNode::Type::OMatrix) {
+    OMatrix m0 = static_cast<OMatrix&>(c0);
     bool couldComputeDeterminant = true;
     OExpression result =
         m0.determinant(reductionContext, &couldComputeDeterminant, true);
@@ -70,7 +70,7 @@ OExpression Determinant::shallowReduce(ReductionContext reductionContext) {
     } else if (reductionContext.target() ==
                Poincare::ReductionTarget::SystemForApproximation) {
       /* ReductionTarget::SystemForApproximation requires an exact value, which
-       * couldn't be computed by Matrix::determinant due to the lacked of
+       * couldn't be computed by OMatrix::determinant due to the lacked of
        * computational resources. */
 
       return replaceWithUndefinedInPlace();

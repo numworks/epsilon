@@ -206,8 +206,8 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
     // 1 + Matrix1 + 2 -> 1 + 2 + Matrix1
     OExpression child1 = Rational::Builder(1);
     OExpression child2 = Rational::Builder(2);
-    OExpression childMatrix = Matrix::Builder();
-    static_cast<Matrix &>(childMatrix)
+    OExpression childMatrix = OMatrix::Builder();
+    static_cast<OMatrix &>(childMatrix)
         .addChildAtIndexInPlace(Rational::Builder(3), 0, 0);
     OExpression e1 = Multiplication::Builder(
         child2.clone(), childMatrix.clone(), child1.clone());
@@ -220,11 +220,11 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
     // 1 + Matrix1 + Matrix2 + 2 -> 1 + 2 + Matrix1 + Matrix2
     OExpression child1 = Rational::Builder(1);
     OExpression child2 = Rational::Builder(2);
-    OExpression childMatrix1 = Matrix::Builder();
-    static_cast<Matrix &>(childMatrix1)
+    OExpression childMatrix1 = OMatrix::Builder();
+    static_cast<OMatrix &>(childMatrix1)
         .addChildAtIndexInPlace(Rational::Builder(3), 0, 0);
-    OExpression childMatrix2 = Matrix::Builder();
-    static_cast<Matrix &>(childMatrix2)
+    OExpression childMatrix2 = OMatrix::Builder();
+    static_cast<OMatrix &>(childMatrix2)
         .addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
 
     OExpression e1 =
@@ -237,9 +237,9 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   }
 
   {
-    // ∑Matrix + i  -> i + ∑Matrix
-    OExpression childMatrix = Matrix::Builder();
-    static_cast<Matrix &>(childMatrix)
+    // ∑OMatrix + i  -> i + ∑OMatrix
+    OExpression childMatrix = OMatrix::Builder();
+    static_cast<OMatrix &>(childMatrix)
         .addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
     OExpression child1 =
         Sum::Builder(childMatrix, Symbol::Builder('n'), Rational::Builder(0),

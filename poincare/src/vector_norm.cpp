@@ -57,8 +57,8 @@ OExpression VectorNorm::shallowReduce(ReductionContext reductionContext) {
     return replaceWithUndefinedInPlace();
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix matrixChild = static_cast<Matrix&>(c);
+  if (c.type() == ExpressionNode::Type::OMatrix) {
+    OMatrix matrixChild = static_cast<OMatrix&>(c);
     // Norm is only defined on vectors only
     if (!matrixChild.isVector()) {
       return replaceWithUndefinedInPlace();

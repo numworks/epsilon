@@ -19,7 +19,7 @@ class Array {
   bool isVector() const { return vectorType() != Array::VectorType::None; }
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
-  // Convention: Undefined Matrix complex have -1 row.
+  // Convention: Undefined OMatrix complex have -1 row.
   void setNumberOfRows(int rows) {
     assert(rows == -1 || rows >= 0);
     m_numberOfRows = rows;

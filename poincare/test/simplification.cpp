@@ -1588,12 +1588,12 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
 }
 
 QUIZ_CASE(poincare_simplification_matrix) {
-  // Matrix can't contain matrix or lists
+  // OMatrix can't contain matrix or lists
   assert_parsed_expression_simplify_to("[[[[1,2][3,4]],2][3,4]]",
                                        Undefined::Name());
   assert_parsed_expression_simplify_to("[[{9,8,7},2][3,4]]", Undefined::Name());
 
-  // Matrix don't bubble-up undefined/unreal or unit
+  // OMatrix don't bubble-up undefined/unreal or unit
   assert_parsed_expression_simplify_to("[[1,1/0][3,4]]", "[[1,undef][3,4]]");
   assert_parsed_expression_simplify_to("[[1,(-1)^(1/2)][3,4]]",
                                        "[[1,nonreal][3,4]]", User, Radian,
@@ -1601,7 +1601,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("[[1,3_kg][3,4]]", "[[1,3×_kg][3,4]]",
                                        User, Radian, MetricUnitFormat, Real);
 
-  // Addition Matrix
+  // Addition OMatrix
   assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", Undefined::Name());
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+1", Undefined::Name());
   assert_parsed_expression_simplify_to("[[1,2][3,4]]+[[1,2,3][4,5,6]]",
@@ -1613,7 +1613,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+[[1,2,3][4,5,6]]",
                                        "[[2,4,6][8,10,12]]");
 
-  // Multiplication Matrix
+  // Multiplication OMatrix
   assert_parsed_expression_simplify_to("2*[[1,2,3][4,5,6]]",
                                        "[[2,4,6][8,10,12]]");
   assert_parsed_expression_simplify_to(
@@ -1630,7 +1630,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
       "[[1,2][3,4]]^(-3)*[[1,2,3][3,4,5]]*[[1,2][3,2][4,5]]*4",
       "[[-176,-186][122,129]]");
 
-  // Power Matrix
+  // Power OMatrix
   assert_parsed_expression_simplify_to(
       "[[1,2,3][4,5,6][7,8,9]]^3",
       "[[468,576,684][1062,1305,1548][1656,2034,2412]]");

@@ -350,7 +350,7 @@ bool OExpression::deepIsList(Context *context) const {
 bool OExpression::IsRandom(const OExpression e) { return e.isRandom(); }
 
 bool OExpression::IsMatrix(const OExpression e, Context *context) {
-  return e.type() == ExpressionNode::Type::Matrix
+  return e.type() == ExpressionNode::Type::OMatrix
          /* A Dimension is a matrix unless its child is a list. */
          || (e.type() == ExpressionNode::Type::Dimension &&
              !e.childAtIndex(0).deepIsList(context)) ||
@@ -1266,7 +1266,7 @@ void OExpression::SimplifyAndApproximateChildren(
     OExpression input, OExpression *simplifiedOutput,
     OExpression *approximateOutput, const ReductionContext &reductionContext) {
   assert(input.isOfType(
-      {ExpressionNode::Type::Matrix, ExpressionNode::Type::List}));
+      {ExpressionNode::Type::OMatrix, ExpressionNode::Type::List}));
   List simplifiedChildren = List::Builder(),
        approximatedChildren = List::Builder();
   int n = input.numberOfChildren();
@@ -1295,9 +1295,9 @@ void OExpression::SimplifyAndApproximateChildren(
     return;
   }
 
-  assert(input.type() == ExpressionNode::Type::Matrix);
-  Matrix simplifiedMatrix = Matrix::Builder(),
-         approximateMatrix = Matrix::Builder();
+  assert(input.type() == ExpressionNode::Type::OMatrix);
+  OMatrix simplifiedMatrix = OMatrix::Builder(),
+          approximateMatrix = OMatrix::Builder();
   for (int i = 0; i < n; i++) {
     simplifiedMatrix.addChildAtIndexInPlace(simplifiedChildren.childAtIndex(i),
                                             i, i);
@@ -1306,7 +1306,7 @@ void OExpression::SimplifyAndApproximateChildren(
           approximatedChildren.childAtIndex(i), i, i);
     }
   }
-  Matrix m = static_cast<Matrix &>(input);
+  OMatrix m = static_cast<OMatrix &>(input);
   simplifiedMatrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
   *simplifiedOutput = simplifiedMatrix;
   if (approximateOutput) {
@@ -1346,7 +1346,7 @@ void OExpression::cloneAndSimplifyAndApproximate(
   // Step 2: we approximate and beautify the reduced expression
   /* Case 1: the reduced expression is a matrix or a list : We scan the
    * children to beautify them with the right complex format. */
-  if (e.isOfType({ExpressionNode::Type::Matrix, ExpressionNode::Type::List})) {
+  if (e.isOfType({ExpressionNode::Type::OMatrix, ExpressionNode::Type::List})) {
     SimplifyAndApproximateChildren(e, simplifiedExpression,
                                    approximateExpression, reductionContext);
   } else {
@@ -1665,7 +1665,7 @@ OExpression OExpression::deepApproximateKeepingSymbols(
       *parentCanApproximate = true;
     } else if (type() != ExpressionNode::Type::Symbol &&
                type() != ExpressionNode::Type::List &&
-               type() != ExpressionNode::Type::Matrix && !isRandom()) {
+               type() != ExpressionNode::Type::OMatrix && !isRandom()) {
       /* No need to approximate lists and matrices. Approximating their children
        * is enough.
        * Do not approximate symbols because we are "KeepingSymbols".

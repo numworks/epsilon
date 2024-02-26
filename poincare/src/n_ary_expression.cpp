@@ -17,7 +17,7 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order,
   for (int i = 1; i < childrenCount; i++) {
     bool isSorted = true;
     for (int j = 0; j < childrenCount - 1; j++) {
-      /* Warning: Matrix operations are not always commutative (ie,
+      /* Warning: OMatrix operations are not always commutative (ie,
        * multiplication) so we never swap 2 matrices. */
       ExpressionNode* cj = childAtIndex(j);
       ExpressionNode* cj1 = childAtIndex(j + 1);

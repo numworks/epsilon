@@ -558,8 +558,8 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
         !static_cast<Rational &>(index).isInteger()) {
       return replaceWithUndefinedInPlace();
     }
-    if (baseType == ExpressionNode::Type::Matrix) {
-      Matrix matrixBase = static_cast<Matrix &>(base);
+    if (baseType == ExpressionNode::Type::OMatrix) {
+      OMatrix matrixBase = static_cast<OMatrix &>(base);
       int baseNumberOfRows = matrixBase.numberOfRows();
       if (baseNumberOfRows != matrixBase.numberOfColumns()) {
         return replaceWithUndefinedInPlace();
@@ -586,7 +586,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       }
       /* Ok because 0 < index < k_maxExactPowerMatrix */
       int i = integerIndex.extractedInt();
-      OExpression result = Matrix::CreateIdentity(baseNumberOfRows);
+      OExpression result = OMatrix::CreateIdentity(baseNumberOfRows);
       /* TODO: implement a quick exponentiation */
       for (int j = 0; j < i; j++) {
         result = Multiplication::Builder(result, matrixBase.clone())

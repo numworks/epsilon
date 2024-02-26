@@ -51,6 +51,13 @@ Tree *RackParser::parse() {
   }
 }
 
+static inline void turnIntoBinaryNode(const Tree *node,
+                                      EditionReference &leftHandSide,
+                                      EditionReference &rightHandSide) {
+  assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
+  CloneNodeAtNode(leftHandSide, node);
+}
+
 Tree *RackParser::parseExpressionWithRightwardsArrow(
     size_t rightwardsArrowPosition) {
   /* If the string contains an arrow, try to parse as unit conversion first.
@@ -80,56 +87,51 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
       ParsingContext::ParsingMethod::UnitConversion);
   size_t startingPosition;
   rememberCurrentParsingPosition(&startingPosition);
-  // ExceptionTry {
-  return initializeFirstTokenAndParseUntilEnd();
-  // }
-  // ExceptionCatch(type) {
-  //   if (type != ExceptionType::ParseFail) {
-  //     ExceptionCheckpoint::Raise(type);
-  //   }
-  // }
+  ExceptionTry { return initializeFirstTokenAndParseUntilEnd(); }
+  ExceptionCatch(type) {
+    if (type != ExceptionType::ParseFail) {
+      ExceptionCheckpoint::Raise(type);
+    }
 
-  // // Failed to parse as unit conversion
-  // restorePreviousParsingPosition(startingPosition);
+    // Failed to parse as unit conversion
+    restorePreviousParsingPosition(startingPosition);
+  }
 
   // Step 2. Parse as assignment, starting with rightHandSide.
-  // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
-  // m_tokenizer.goToPosition(
-  // rightwardsArrowPosition +
-  // UTF8Decoder::CharSizeOfCodePoint(UCodePointRightwardsArrow));
-  // EditionReference rightHandSide = initializeFirstTokenAndParseUntilEnd();
-  // if (m_nextToken.is(Token::Type::EndOfStream) &&
-  // !rightHandSide.isUninitialized() &&
-  // (rightHandSide.type() ==
-  // ExpressionNode::Type::Symbol  // RightHandSide must be symbol or
-  // function.
-  // || (rightHandSide.type() == ExpressionNode::Type::Function &&
-  // rightHandSide.child(0).type() ==
-  // ExpressionNode::Type::Symbol))) {
-  // restorePreviousParsingPosition(startingPosition);
-  // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
-  // EmptyContext tempContext = EmptyContext();
-  // This is instantiated outside the condition so that the pointer is not
-  // lost.
-  // VariableContext assignmentContext("", &tempContext);
-  // if (rightHandSide.type() == ExpressionNode::Type::Function &&
-  // m_parsingContext.context()) {
-  /* If assigning a function, set the function parameter in the context
-   * for parsing leftHandSide.
-   * This is to ensure that 3g->f(g) is correctly parsed */
-  // EditionReference functionParameter = rightHandSide.child(0);
-  // assignmentContext = VariableContext(
-  // static_cast<Symbol &>(functionParameter), m_parsingContext.context());
-  // m_parsingContext.setContext(&assignmentContext);
-  // }
-  // Parse leftHandSide
-  // m_nextToken = m_tokenizer.popToken();
-  // EditionReference leftHandSide = parseUntil(Token::Type::RightwardsArrow);
-  // result = Store::Builder(leftHandSide,
-  // static_cast<SymbolAbstract &>(rightHandSide));
-  // return result;
-  // }
-  // ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
+  m_tokenizer.goToPosition(rightwardsArrowPosition + 1);
+  EditionReference rightHandSide = initializeFirstTokenAndParseUntilEnd();
+  if (m_nextToken.is(Token::Type::EndOfStream) &&
+      !rightHandSide.isUninitialized() &&
+      (rightHandSide
+           ->isUserSymbol() ||  // RightHandSide must be symbol or function.
+       (rightHandSide->isUserFunction() &&
+        rightHandSide->child(0)->isUserSymbol()))) {
+    restorePreviousParsingPosition(startingPosition);
+    m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
+#if 0
+    EmptyContext tempContext = EmptyContext();
+    // This is instantiated outside the condition so that the pointer is not
+    // lost.
+    VariableContext assignmentContext("", &tempContext);
+    if (rightHandSide->isUserFunction() && m_parsingContext.context()) {
+      /* If assigning a function, set the function parameter in the context
+       * for parsing leftHandSide.
+       * This is to ensure that 3g->f(g) is correctly parsed */
+      EditionReference functionParameter = rightHandSide.child(0);
+      assignmentContext = VariableContext(
+          static_cast<Symbol &>(functionParameter), m_parsingContext.context());
+      m_parsingContext.setContext(&assignmentContext);
+    }
+#endif
+    // Parse leftHandSide
+    m_nextToken = m_tokenizer.popToken();
+    EditionReference leftHandSide = parseUntil(Token::Type::RightwardsArrow);
+    SwapTrees(leftHandSide, rightHandSide);
+    turnIntoBinaryNode(KStore, leftHandSide, rightHandSide);
+    return leftHandSide;
+  }
+  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
 }
 
 Tree *RackParser::initializeFirstTokenAndParseUntilEnd() {
@@ -532,12 +534,6 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
   } else {
     CloneNodeAtNode(leftHandSide, KMult.node<2>);
   }
-}
-
-static void turnIntoBinaryNode(const Tree *node, EditionReference &leftHandSide,
-                               EditionReference &rightHandSide) {
-  assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
-  CloneNodeAtNode(leftHandSide, node);
 }
 
 void RackParser::parseCaret(EditionReference &leftHandSide,

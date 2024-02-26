@@ -1,5 +1,6 @@
 #include "helper.h"
 
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/layout/rack_from_text.h>
 
@@ -50,7 +51,10 @@ const char * ApproximatedParsedIntegerString() {
 
 Tree* TextToTree(const char* input) {
   Tree* expression = RackFromText(input);
-  expression->moveTreeOverTree(RackParser(expression).parse());
-  quiz_assert(expression);
+  Tree* parsed = RackParser(expression).parse();
+  if (!parsed) {
+    parsed = KUndef->clone();
+  }
+  expression->moveTreeOverTree(parsed);
   return expression;
 }

@@ -32,7 +32,7 @@ ListController::ListController(Responder *parentResponder,
   }
 }
 
-int ListController::numberOfExpressionRows() const {
+int ListController::numberOfRows() const {
   int numberOfRows = 0;
   SequenceStore *store = const_cast<ListController *>(this)->modelStore();
   const int modelsCount = store->numberOfModels();
@@ -379,8 +379,7 @@ void ListController::didChangeModelsList() {
 }
 
 KDCoordinate ListController::baseline(int j, HighlightCell *cell) {
-  assert(j >= 0 &&
-         j < const_cast<ListController *>(this)->numberOfExpressionRows());
+  assert(j >= 0 && j < const_cast<ListController *>(this)->numberOfRows());
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {
     return -1;  // Baseline < 0 triggers default behaviour (centered alignment)
@@ -416,7 +415,7 @@ void ListController::showLastSequence() {
   SequenceStore *store = const_cast<ListController *>(this)->modelStore();
   bool hasAddSequenceButton =
       store->numberOfModels() == store->maxNumberOfModels();
-  int lastRow = numberOfExpressionRows() - (hasAddSequenceButton ? 0 : 1) - 1;
+  int lastRow = numberOfRows() - (hasAddSequenceButton ? 0 : 1) - 1;
   selectableListView()->scrollToCell(lastRow);
 }
 }  // namespace Sequence

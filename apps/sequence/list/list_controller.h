@@ -19,7 +19,7 @@ class ListController : public Shared::FunctionListController {
   ListController(Escher::Responder* parentResponder,
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer);
-  int numberOfExpressionRows() const override;
+  int numberOfRows() const override;
   KDCoordinate expressionRowHeight(int row) override;
   void selectPreviousNewSequenceCell();
   void editExpression(Ion::Events::Event event) override;

@@ -377,10 +377,12 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::ComplexI:
       PushCodePoint(layoutParent, 'i');
       break;
-    case BlockType::UserSymbol:
-      assert(Symbol::Length(expression) == 1);
-      PushCodePoint(layoutParent, *Symbol::NonNullTerminatedName(expression));
+    case BlockType::UserSymbol: {
+      char buffer[40];
+      Symbol::GetName(expression, buffer, std::size(buffer));
+      layoutText(layoutParent, buffer);
       break;
+    }
     case BlockType::Infinity:
     case BlockType::Nonreal:
     case BlockType::Undefined:

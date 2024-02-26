@@ -954,12 +954,17 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
   assert(leftHandSide.isUninitialized());
   const Tree *node = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
-  assert(node->isCodePointLayout() && length == 1);  // TODO
-  constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
+  constexpr int bufferSize = (sizeof(CodePoint) / sizeof(char)) * 10 + 1;
   char buffer[bufferSize];
-  CodePointLayout::GetName(node, buffer, bufferSize);
+  char *end = buffer + bufferSize;
+  char *buf = buffer;
+  while (length--) {
+    assert(node->isCodePointLayout());
+    buf = CodePointLayout::GetName(node, buf, end - buf);
+    node = node->nextTree();
+  }
   leftHandSide = SharedEditionPool->push<BlockType::UserSymbol>(
-      static_cast<const char *>(buffer), length);
+      static_cast<const char *>(buffer), m_currentToken.length());
   // privateParseCustomIdentifier(leftHandSide, node, length, stoppingType);
   isThereImplicitOperator();
 }

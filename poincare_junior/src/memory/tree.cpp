@@ -105,8 +105,9 @@ void Tree::logAttributes(std::ostream& stream) const {
   }
   if (isUserNamed() || isCodePointLayout()) {
     char buffer[64];
-    (isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
-        this, buffer, sizeof(buffer));
+    isUserNamed()
+        ? Symbol::GetName(this, buffer, sizeof(buffer))
+        : (void)CodePointLayout::GetName(this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
     return;
   }

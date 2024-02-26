@@ -153,8 +153,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
     assert(selectedRow() >= 0);
-    Ion::Storage::Record record =
-        modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+    Ion::Storage::Record record = selectedRecord();
     if (removeModelRow(record)) {
       int newSelectedRow =
           selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
@@ -165,8 +164,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   }
   if (m_parameterColumnSelected && !isAddEmptyRow(selectedRow())) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-      configureFunction(
-          modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
+      configureFunction(selectedRecord());
       return true;
     }
     return false;
@@ -183,8 +181,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     // Set extra cells
     int recurrenceDepth = -1;
     int row = selectedRow();
-    Shared::Sequence *sequence = modelStore()->modelForRecord(
-        modelStore()->recordAtIndex(modelIndexForRow(row)));
+    Shared::Sequence *sequence = modelStore()->modelForRecord(selectedRecord());
     if (sequenceDefinitionForRow(row) == k_sequenceDefinition) {
       recurrenceDepth = sequence->numberOfElements() - 1;
     }
@@ -223,8 +220,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ListController::editSelectedRecordWithText(const char *text) {
-  Ion::Storage::Record record =
-      modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  Ion::Storage::Record record = selectedRecord();
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   Context *context = App::app()->localContext();
   Ion::Storage::Record::ErrorStatus error;
@@ -243,8 +239,7 @@ bool ListController::editSelectedRecordWithText(const char *text) {
 }
 
 void ListController::getTextForSelectedRecord(char *text, size_t size) const {
-  Ion::Storage::Record record =
-      modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  Ion::Storage::Record record = selectedRecord();
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   switch (sequenceDefinitionForRow(selectedRow())) {
     case k_sequenceDefinition:

@@ -94,7 +94,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     AbstractSequenceCell *sequenceCell =
         static_cast<AbstractSequenceCell *>(cell);
     // Update the expression cell first since the title's baseline depends on it
-    willDisplayExpressionCellAtIndex(sequenceCell->mainCell(), row);
+    fillExpressionCellForRow(sequenceCell->mainCell(), row);
     willDisplayTitleCellAtIndex(sequenceCell->titleCell(), row,
                                 sequenceCell->mainCell());
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
@@ -275,20 +275,19 @@ void ListController::willDisplayTitleCellAtIndex(
   }
 }
 
-void ListController::willDisplayExpressionCellAtIndex(HighlightCell *cell,
-                                                      int j) {
-  if (j == m_editedCellIndex) {
+void ListController::fillExpressionCellForRow(HighlightCell *cell, int row) {
+  if (row == m_editedCellIndex) {
     return;
   }
   Escher::EvenOddExpressionCell *myCell =
       static_cast<Escher::EvenOddExpressionCell *>(cell);
-  Ion::Storage::Record record = recordAtRow(j);
+  Ion::Storage::Record record = recordAtRow(row);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor textColor = sequence->isActive() ? KDColorBlack : Palette::GrayDark;
   myCell->setTextColor(textColor);
   // Set the layout
-  int sequenceDefinition = sequenceDefinitionForRow(j);
+  int sequenceDefinition = sequenceDefinitionForRow(row);
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
       return myCell->setLayout(sequence->layout());

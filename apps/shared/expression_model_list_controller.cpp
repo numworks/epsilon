@@ -81,11 +81,11 @@ KDCoordinate ExpressionModelListController::nonMemoizedRowHeight(int row) {
   return std::max<KDCoordinate>(expressionHeight, k_defaultRowHeight);
 }
 
-void ExpressionModelListController::willDisplayExpressionCellAtIndex(
-    HighlightCell *cell, int j) {
+void ExpressionModelListController::fillExpressionCellForRow(
+    HighlightCell *cell, int row) {
   EvenOddExpressionCell *myCell = static_cast<EvenOddExpressionCell *>(cell);
   ExpiringPointer<ExpressionModelHandle> m =
-      modelStore()->modelForRecord(recordAtRow(j));
+      modelStore()->modelForRecord(recordAtRow(row));
   myCell->setLayout(m->layout());
 }
 

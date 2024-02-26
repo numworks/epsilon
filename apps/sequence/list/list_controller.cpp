@@ -35,9 +35,10 @@ ListController::ListController(Responder *parentResponder,
 KDCoordinate ListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   KDCoordinate sequenceHeight;
-  Shared::Sequence *sequence = modelStore()->modelForRecord(recordAtRow(row));
+  int sequenceDefinition;
+  Shared::Sequence *sequence =
+      modelStore()->modelForRecord(recordAtRow(row, &sequenceDefinition));
   Layout layout;
-  int sequenceDefinition = sequenceDefinitionForRow(row);
   if (sequenceDefinition == k_firstInitialCondition) {
     layout = sequence->firstInitialConditionLayout();
   } else if (sequenceDefinition == k_secondInitialCondition) {
@@ -53,8 +54,10 @@ KDCoordinate ListController::expressionRowHeight(int row) {
 
 void ListController::selectPreviousNewSequenceCell() {
   int row = selectedRow();
-  if (sequenceDefinitionForRow(row) >= 0) {
-    selectRow(row - sequenceDefinitionForRow(row));
+  int sequenceDefinition;
+  modelIndexForRow(row, &sequenceDefinition);
+  if (sequenceDefinition >= 0) {
+    selectRow(row - sequenceDefinition);
   }
 }
 
@@ -170,9 +173,10 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
   if (event == Ion::Events::Toolbox) {
     // Set extra cells
     int recurrenceDepth = -1;
-    int row = selectedRow();
-    Shared::Sequence *sequence = modelStore()->modelForRecord(selectedRecord());
-    if (sequenceDefinitionForRow(row) == k_sequenceDefinition) {
+    int sequenceDefinition;
+    Shared::Sequence *sequence =
+        modelStore()->modelForRecord(selectedRecord(&sequenceDefinition));
+    if (sequenceDefinition == k_sequenceDefinition) {
       recurrenceDepth = sequence->numberOfElements() - 1;
     }
     m_sequenceToolboxDataSource.buildExtraCellsLayouts(sequence->fullName(),
@@ -210,11 +214,12 @@ void ListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ListController::editSelectedRecordWithText(const char *text) {
-  Ion::Storage::Record record = selectedRecord();
+  int sequenceDefinition;
+  Ion::Storage::Record record = selectedRecord(&sequenceDefinition);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   Context *context = App::app()->localContext();
   Ion::Storage::Record::ErrorStatus error;
-  switch (sequenceDefinitionForRow(selectedRow())) {
+  switch (sequenceDefinition) {
     case k_sequenceDefinition:
       error = sequence->setContent(text, context);
       break;
@@ -229,9 +234,10 @@ bool ListController::editSelectedRecordWithText(const char *text) {
 }
 
 void ListController::getTextForSelectedRecord(char *text, size_t size) const {
-  Ion::Storage::Record record = selectedRecord();
+  int sequenceDefinition;
+  Ion::Storage::Record record = selectedRecord(&sequenceDefinition);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
-  switch (sequenceDefinitionForRow(selectedRow())) {
+  switch (sequenceDefinition) {
     case k_sequenceDefinition:
       sequence->text(text, size);
       break;
@@ -259,14 +265,14 @@ void ListController::fillTitleCellForRow(VerticalSequenceTitleCell *cell,
                                          HighlightCell *expressionCell) {
   assert(row >= 0 && row < k_maxNumberOfRows);
   cell->setBaseline(baseline(row, expressionCell));
-  Ion::Storage::Record record = recordAtRow(row);
+  int sequenceDefinition;
+  Ion::Storage::Record record = recordAtRow(row, &sequenceDefinition);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor nameColor =
       sequence->isActive() ? sequence->color() : Palette::GrayDark;
   cell->setColor(nameColor);
   // Set the layout
-  int sequenceDefinition = sequenceDefinitionForRow(row);
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
       return cell->setLayout(sequence->definitionName());
@@ -282,13 +288,13 @@ void ListController::fillExpressionCellForRow(HighlightCell *cell, int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   Escher::EvenOddExpressionCell *myCell =
       static_cast<Escher::EvenOddExpressionCell *>(cell);
-  Ion::Storage::Record record = recordAtRow(row);
+  int sequenceDefinition;
+  Ion::Storage::Record record = recordAtRow(row, &sequenceDefinition);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor textColor = sequence->isActive() ? KDColorBlack : Palette::GrayDark;
   myCell->setTextColor(textColor);
   // Set the layout
-  int sequenceDefinition = sequenceDefinitionForRow(row);
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
       return myCell->setLayout(sequence->layout());
@@ -298,29 +304,6 @@ void ListController::fillExpressionCellForRow(HighlightCell *cell, int row) {
       assert(sequenceDefinition == k_secondInitialCondition);
       return myCell->setLayout(sequence->secondInitialConditionLayout());
   }
-}
-
-int ListController::sequenceDefinitionForRow(int j) const {
-  if (j < 0) {
-    return k_otherDefinition;
-  }
-  if (isAddEmptyRow(j)) {
-    return k_sequenceDefinition;
-  }
-  int row = 0;
-  int sequenceIndex = -1;
-  Shared::Sequence *sequence;
-  do {
-    sequenceIndex++;
-    sequence = modelStore()->modelForRecord(
-        modelStore()->recordAtIndex(sequenceIndex));
-    row += sequence->numberOfElements();
-  } while (row <= j);
-  assert(sequence);
-  int sequenceDefinition = j + sequence->numberOfElements() - row;
-  assert(sequenceDefinition >= k_sequenceDefinition &&
-         sequenceDefinition <= k_secondInitialCondition);
-  return sequenceDefinition;
 }
 
 KDCoordinate ListController::maxFunctionNameWidth() {

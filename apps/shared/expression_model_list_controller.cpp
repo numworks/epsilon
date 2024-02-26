@@ -193,7 +193,9 @@ bool ExpressionModelListController::removeModelRow(
   return true;
 }
 
-int ExpressionModelListController::modelIndexForRow(int row) const {
+int ExpressionModelListController::modelIndexForRow(int row,
+                                                    int *relativeRow) const {
+  *relativeRow = 0;
   if (row < 0) {
     return row;
   }
@@ -207,9 +209,17 @@ int ExpressionModelListController::modelIndexForRow(int row) const {
     assert(0 <= recordIndex && recordIndex < modelStore()->numberOfModels());
     Ion::Storage::Record record = modelStore()->recordAtIndex(recordIndex);
     const int numberOfRowsForCurrentRecord = numberOfRowsForRecord(record);
+    if (i <= row && row < i + numberOfRowsForCurrentRecord) {
+      *relativeRow = row - i;
+    }
     i += numberOfRowsForCurrentRecord;
   } while (i <= row);
   return recordIndex;
+}
+
+int ExpressionModelListController::modelIndexForRow(int row) const {
+  int relativeRow;
+  return modelIndexForRow(row, &relativeRow);
 }
 
 void ExpressionModelListController::layoutFieldDidChangeSize(
@@ -277,12 +287,24 @@ void ExpressionModelListController::layoutFieldDidAbortEditing(
   finishEdition();
 }
 
+Ion::Storage::Record ExpressionModelListController::recordAtRow(
+    int row, int *relativeRow) const {
+  return modelStore()->recordAtIndex(modelIndexForRow(row, relativeRow));
+}
+
 Ion::Storage::Record ExpressionModelListController::recordAtRow(int row) const {
-  return modelStore()->recordAtIndex(modelIndexForRow(row));
+  int relativeRow;
+  return recordAtRow(row, &relativeRow);
+}
+
+Ion::Storage::Record ExpressionModelListController::selectedRecord(
+    int *relativeRow) const {
+  return recordAtRow(selectedRow(), relativeRow);
 }
 
 Ion::Storage::Record ExpressionModelListController::selectedRecord() const {
-  return recordAtRow(selectedRow());
+  int relativeRow;
+  return selectedRecord(&relativeRow);
 }
 
 }  // namespace Shared

@@ -88,7 +88,9 @@ HighlightCell *ListController::reusableCell(int index, int type) {
 }
 
 void ListController::fillCellForRow(HighlightCell *cell, int row) {
-  if (!isAddEmptyRow(row)) {
+  int type = typeAtRow(row);
+  if (type != k_addNewModelCellType) {
+    assert(type == k_expressionCellType || type == k_editableCellType);
     AbstractSequenceCell *sequenceCell =
         static_cast<AbstractSequenceCell *>(cell);
     // Update the expression cell first since the title's baseline depends on it

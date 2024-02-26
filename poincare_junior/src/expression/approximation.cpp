@@ -308,6 +308,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     return Rational::Numerator(node).to<T>() /
            Rational::Denominator(node).to<T>();
   }
+  if (node->isRandIntNoRep()) {
+    // TODO PCJ
+    return NAN;
+  }
   if (node->isRandomNode()) {
     return Random::Approximate<T>(node, s_randomContext);
   }

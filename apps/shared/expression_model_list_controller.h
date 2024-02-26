@@ -54,8 +54,7 @@ class ExpressionModelListController
   // ListViewDataSource
   int numberOfRows() const override;
   int typeAtRow(int row) const override;
-  virtual void willDisplayExpressionCellAtIndex(Escher::HighlightCell* cell,
-                                                int j);
+  virtual void fillExpressionCellForRow(Escher::HighlightCell* cell, int row);
   // Row height
   virtual KDCoordinate expressionRowHeight(int row);
   virtual KDCoordinate editableRowHeight();

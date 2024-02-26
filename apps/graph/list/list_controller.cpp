@@ -220,27 +220,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       return true;
     }
   }
-  if (event == Ion::Events::Up) {
-    if (selectedRow() == -1) {
-      footer()->setSelectedButton(-1);
-      selectableListView()->selectCell(numberOfRows() - 1);
-      App::app()->setFirstResponder(selectableListView());
-      return true;
-    }
-    selectableListView()->deselectTable();
-    assert(selectedRow() == -1);
-    tabController()->selectTab();
-    return true;
-  }
-  if (selectedRow() < 0) {
-    return false;
-  }
-  if (event == Ion::Events::Down) {
-    selectableListView()->deselectTable();
-    footer()->setSelectedButton(0);
-    return true;
-  }
-  return handleEventOnExpression(event);
+  return FunctionListController::handleEvent(event);
 }
 
 Shared::ListParameterController *ListController::parameterController() {

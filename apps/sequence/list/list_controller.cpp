@@ -110,26 +110,6 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
 /* Responder */
 
 bool ListController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up) {
-    if (selectedRow() == -1) {
-      footer()->setSelectedButton(-1);
-      selectableListView()->selectCell(numberOfRows() - 1);
-      App::app()->setFirstResponder(selectableListView());
-      return true;
-    }
-    selectableListView()->deselectTable();
-    assert(selectedRow() == -1);
-    tabController()->selectTab();
-    return true;
-  }
-  if (event == Ion::Events::Down) {
-    if (selectedRow() == -1) {
-      return false;
-    }
-    selectableListView()->deselectTable();
-    footer()->setSelectedButton(0);
-    return true;
-  }
   if (event == Ion::Events::Right && m_parameterColumnSelected) {
     // Leave parameter column
     m_parameterColumnSelected = false;
@@ -141,11 +121,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     selectableListView()->reloadData(true, false);
     return true;
   }
-  if (selectedRow() < 0) {
-    return false;
-  }
-  if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
-    assert(selectedRow() >= 0);
+  if (selectedRow() >= 0 && event == Ion::Events::Backspace &&
+      !isAddEmptyRow(selectedRow())) {
     Ion::Storage::Record record = selectedRecord();
     if (removeModelRow(record)) {
       int newSelectedRow =
@@ -155,15 +132,15 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (m_parameterColumnSelected && !isAddEmptyRow(selectedRow())) {
+  if (selectedRow() >= 0 && m_parameterColumnSelected &&
+      !isAddEmptyRow(selectedRow())) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       configureFunction(selectedRecord());
       return true;
     }
     return false;
   }
-  return handleEventOnExpression(event);
-  ;
+  return FunctionListController::handleEvent(event);
 }
 
 /* MathLayoutFieldDelegate */

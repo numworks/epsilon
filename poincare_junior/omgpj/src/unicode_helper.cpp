@@ -13,6 +13,17 @@ size_t CodePointSearch(UnicodeDecoder* decoder, CodePoint c) {
   return decoder->position();
 }
 
+inline size_t CodePointSearch(const char* string, CodePoint c) {
+  UTF8Decoder dec(string);
+  return CodePointSearch(&dec, c);
+}
+
+inline size_t CodePointSearch(const PoincareJ::Tree* first, int length,
+                              CodePoint c) {
+  PoincareJ::CPLayoutDecoder dec(first, length);
+  return CodePointSearch(&dec, c);
+}
+
 const PoincareJ::CPL* CodePointLSearch(const PoincareJ::CPL* s, CodePoint c,
                                        const PoincareJ::CPL* stop) {
   while (s != stop && *s != 0) {

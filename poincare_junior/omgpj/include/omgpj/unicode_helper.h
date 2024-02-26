@@ -5,11 +5,17 @@
 
 namespace PoincareJ {
 class CPL;
-}
+class Tree;
+}  // namespace PoincareJ
 
 namespace OMG {
 
 size_t CodePointSearch(UnicodeDecoder* decoder, CodePoint c);
+
+inline size_t CodePointSearch(const char* string, CodePoint c);
+inline size_t CodePointSearch(const PoincareJ::Tree* first, int length,
+                              CodePoint c);
+
 int CompareDecoders(UnicodeDecoder* a, UnicodeDecoder* b);
 int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
                                            const char* string);

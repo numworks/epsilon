@@ -62,6 +62,10 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case BlockType::Point:
     case BlockType::Set:
     case BlockType::List:
+      return 18;
+    case BlockType::Store:
+    case BlockType::UnitConversion:
+      // 2,3→x is read as (2,3)→x not 2,(3→x) (even if invalid)
       return 19;
     case BlockType::RackLayout:
       return 20;
@@ -313,10 +317,6 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
                        OperatorPriority(type));
       PushCodePoint(layoutParent, '!');
       break;
-      layoutExpression(layoutParent, expression->nextNode(),
-                       OperatorPriority(type));
-      PushCodePoint(layoutParent, '%');
-      break;
     case BlockType::PercentAddition:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
@@ -434,6 +434,10 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       PushCodePoint(layoutParent, type.isPoint() ? '(' : '{');
       layoutInfixOperator(layoutParent, expression, ',');
       PushCodePoint(layoutParent, type.isPoint() ? ')' : '}');
+      break;
+    case BlockType::Store:
+    case BlockType::UnitConversion:
+      layoutInfixOperator(layoutParent, expression, UCodePointRightwardsArrow);
       break;
 #if POINCARE_MEMORY_TREE_LOG
     case BlockType::Placeholder: {

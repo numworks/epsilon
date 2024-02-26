@@ -25,18 +25,18 @@
 namespace PoincareJ {
 
 Tree *RackParser::parse() {
-  size_t rightwardsArrowPosition = -1;
-  for (int i = 0; const Tree *child : m_root->children()) {
-    if (child->treeIsIdenticalTo(KCodePointL<UCodePointRightwardsArrow>())) {
-      rightwardsArrowPosition = i;
-      break;
-    }
-    i++;
-  }
-  if (rightwardsArrowPosition != -1) {
-    return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
-  }
   ExceptionTry {
+    size_t rightwardsArrowPosition = -1;
+    for (int i = 0; const Tree *child : m_root->children()) {
+      if (child->treeIsIdenticalTo(KCodePointL<UCodePointRightwardsArrow>())) {
+        rightwardsArrowPosition = i;
+        break;
+      }
+      i++;
+    }
+    if (rightwardsArrowPosition != -1) {
+      return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
+    }
     Tree *result = initializeFirstTokenAndParseUntilEnd();
     // Only 1 tree has been created.
     assert(result &&

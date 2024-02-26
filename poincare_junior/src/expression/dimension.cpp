@@ -432,7 +432,8 @@ bool Dimension::operator==(const Dimension& other) const {
   }
   if (type == Type::Unit) {
     return unit.vector == other.unit.vector &&
-           unit.representative == other.unit.representative;
+           (unit.vector != Units::Temperature::Dimension ||
+            unit.representative == other.unit.representative);
   }
   return true;
 }

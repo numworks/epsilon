@@ -465,6 +465,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("12_m", "12×_m");
   simplifies_to("1_s", "1×_s");
   simplifies_to("1_m+1_s", "undef");
+  simplifies_to("1_m+1_yd", "1.9144×_m");
   simplifies_to("1_m+x", "undef");
   simplifies_to("1_mm+1_km", "1.000001×_km");
   // simplifies_to("2_month×7_dm", "3681720×_s×_m");

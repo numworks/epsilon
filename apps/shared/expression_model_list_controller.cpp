@@ -30,7 +30,11 @@ int ExpressionModelListController::numberOfRows() const {
   const ExpressionModelStore *store =
       const_cast<ExpressionModelListController *>(this)->modelStore();
   int modelsCount = store->numberOfModels();
-  return modelsCount + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
+  int nRows = 0;
+  for (int i = 0; i < modelsCount; i++) {
+    nRows += numberOfRowsForRecord(store->recordAtIndex(i));
+  }
+  return nRows + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
 }
 
 bool ExpressionModelListController::isAddEmptyRow(int row) const {

@@ -26,7 +26,6 @@ class ListController : public Shared::FunctionListController,
                                                      size_t bufferSize);
 
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) const override;
   // ViewController
   void viewWillAppear() override;
   void viewDidDisappear() override;

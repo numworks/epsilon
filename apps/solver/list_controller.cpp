@@ -75,13 +75,6 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   }
 }
 
-int ListController::reusableCellCount(int type) const {
-  if (type == k_expressionCellType) {
-    return k_maxNumberOfRows;
-  }
-  return 1;
-}
-
 void ListController::fillCellForRow(HighlightCell *cell, int row) {
   int type = typeAtRow(row);
   if (type == k_expressionCellType) {

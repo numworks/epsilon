@@ -4,7 +4,9 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/layout_helper.h>
 #include <poincare/matrix_layout.h>
+#include <poincare/string_layout.h>
 #include <poincare/symbol_abstract.h>
 
 #include "../app.h"
@@ -232,12 +234,29 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
   int type = typeAtRow(row);
   if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
+    int relativeRow;
     ExpiringPointer<ContinuousFunction> f =
-        modelStore()->modelForRecord(recordAtRow(row));
+        modelStore()->modelForRecord(recordAtRow(row, &relativeRow));
     if (type == k_expressionCellType) {
       FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
-      functionCell->expressionCell()->setLayout(f->layout());
-      functionCell->setMessage(f->properties().caption());
+      int derivationOrder =
+          derivationOrderFromRelativeRow(f.pointer(), relativeRow);
+      Layout layout;
+      I18n::Message caption = I18n::Message::Default;
+      if (derivationOrder == 0) {
+        layout = f->layout();
+        caption = f->properties().caption();
+      } else {
+        assert(derivationOrder == 1 || derivationOrder == 2);
+        constexpr static size_t bufferSize =
+            Shared::Function::k_maxNameWithArgumentSize;
+        char buffer[bufferSize];
+        size_t length =
+            f->nameWithoutArgument(buffer, bufferSize, derivationOrder);
+        layout = LayoutHelper::String(buffer, length);
+      }
+      functionCell->expressionCell()->setLayout(layout);
+      functionCell->setMessage(caption);
       KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
       functionCell->expressionCell()->setTextColor(textColor);
       static_cast<FunctionCell *>(functionCell)
@@ -324,6 +343,28 @@ void ListController::storeParametricComponentsOfSelectedModel() {
                                                               bufferSize));
   storeParametricComponent(buffer, length, bufferSize, e, true);
   storeParametricComponent(buffer, length, bufferSize, e, false);
+}
+
+int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {
+  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(record);
+  return 1 + f->displayPlotFirstDerivative() + f->displayPlotSecondDerivative();
+}
+
+int ListController::derivationOrderFromRelativeRow(ContinuousFunction *f,
+                                                   int relativeRow) const {
+  switch (relativeRow) {
+    case 0:
+      return 0;
+    case 1:
+      assert(f->displayPlotFirstDerivative() ||
+             f->displayPlotSecondDerivative());
+      return f->displayPlotFirstDerivative() ? 1 : 2;
+    default:
+      assert(relativeRow == 2);
+      assert(f->displayPlotFirstDerivative() &&
+             f->displayPlotSecondDerivative());
+      return 2;
+  }
 }
 
 bool ListController::isValidExpressionModel(Expression expression) {

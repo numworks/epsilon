@@ -101,7 +101,7 @@ bool ListController::completeEquation(LayoutField *equationField,
   equationField->putCursorOnOneSide(OMG::Direction::Left());
   // Retrieve the edited function
   ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+      modelStore()->modelForRecord(selectedRecord());
   constexpr size_t k_bufferSize =
       SymbolAbstractNode::k_maxNameSize + sizeof("(θ)≥") - 1;
   char buffer[k_bufferSize];
@@ -165,8 +165,7 @@ CodePoint ListController::defaultXNT() {
   int selectedFunctionIndex = selectedRow();
   if (selectedFunctionIndex >= 0) {
     assert(selectedFunctionIndex < modelStore()->numberOfModels());
-    Ion::Storage::Record record =
-        modelStore()->recordAtIndex(selectedFunctionIndex);
+    Ion::Storage::Record record = selectedRecord();
     return modelStore()->modelForRecord(record)->symbol();
   }
   return ContinuousFunction::k_cartesianSymbol;
@@ -212,8 +211,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         // Open function parameter menu
         m_parameterController->setUseColumnTitle(false);
-        configureFunction(
-            modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
+        configureFunction(selectedRecord());
         return true;
       }
       if (event == Ion::Events::Left) {
@@ -351,7 +349,7 @@ void ListController::DeleteParametricComponentsWithBaseName(
 
 void ListController::deleteParametricComponentsOfSelectedModel() {
   ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+      modelStore()->modelForRecord(selectedRecord());
   if (!f->properties().isEnabledParametric()) {
     return;
   }
@@ -363,7 +361,7 @@ void ListController::deleteParametricComponentsOfSelectedModel() {
 
 void ListController::storeParametricComponentsOfSelectedModel() {
   ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+      modelStore()->modelForRecord(selectedRecord());
   if (!f->properties().isEnabledParametric()) {
     return;
   }
@@ -383,7 +381,7 @@ void ListController::storeParametricComponentsOfSelectedModel() {
 
 bool ListController::isValidExpressionModel(Expression expression) {
   ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+      modelStore()->modelForRecord(selectedRecord());
   if (FunctionNameHelper::ParametricComponentsNameError(expression,
                                                         f.pointer())) {
     App::app()->displayWarning(I18n::Message::ParametricNameError);

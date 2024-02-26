@@ -105,8 +105,7 @@ bool ExpressionModelListController::handleEventOnExpression(
     return true;
   }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
-    Ion::Storage::Record record =
-        modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+    Ion::Storage::Record record = selectedRecord();
     if (removeModelRow(record)) {
       int newSelectedRow = selectedRow() >= numberOfExpressionRows()
                                ? numberOfExpressionRows() - 1
@@ -177,8 +176,7 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
 bool ExpressionModelListController::editSelectedRecordWithText(
     const char *text) {
   telemetryReportEvent("Edit", text);
-  Ion::Storage::Record record =
-      modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  Ion::Storage::Record record = selectedRecord();
   ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);
   bool result = (model->setContent(text, App::app()->localContext()) ==
@@ -189,8 +187,7 @@ bool ExpressionModelListController::editSelectedRecordWithText(
 
 void ExpressionModelListController::getTextForSelectedRecord(
     char *text, size_t size) const {
-  Ion::Storage::Record record =
-      modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  Ion::Storage::Record record = selectedRecord();
   modelStore()->modelForRecord(record)->text(text, size);
 }
 
@@ -264,6 +261,10 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
 void ExpressionModelListController::layoutFieldDidAbortEditing(
     Escher::LayoutField *layoutField) {
   finishEdition();
+}
+
+Ion::Storage::Record ExpressionModelListController::selectedRecord() const {
+  return modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
 }
 
 }  // namespace Shared

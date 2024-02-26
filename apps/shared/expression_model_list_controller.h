@@ -71,6 +71,7 @@ class ExpressionModelListController
   }
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) const { return j; }
+  Ion::Storage::Record selectedRecord() const;
 
   // ViewController
   virtual Escher::SelectableListView* selectableListView() = 0;

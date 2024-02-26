@@ -83,7 +83,8 @@ int ListController::reusableCellCount(int type) const {
 }
 
 void ListController::fillCellForRow(HighlightCell *cell, int row) {
-  if (!isAddEmptyRow(row) && row != m_editedCellIndex) {
+  int type = typeAtRow(row);
+  if (type == k_expressionCellType) {
     willDisplayExpressionCellAtIndex(cell, row);
   }
 }

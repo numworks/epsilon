@@ -72,6 +72,9 @@ class ListController : public Shared::FunctionListController,
     return m_editableCell.expressionCell()->layoutField();
   }
   bool isValidExpressionModel(Poincare::Expression expression) override;
+  OMG::HorizontalDirection parameterColumnPosition() const override {
+    return OMG::Direction::Right();
+  }
 
   void deleteParametricComponentsOfSelectedModel();
   void storeParametricComponentsOfSelectedModel();
@@ -81,7 +84,6 @@ class ListController : public Shared::FunctionListController,
   FunctionParameterController* m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController::Default m_modelsStackController;
-  bool m_parameterColumnSelected;
 };
 
 }  // namespace Graph

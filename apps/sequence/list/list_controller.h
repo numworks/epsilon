@@ -30,7 +30,6 @@ class ListController : public Shared::FunctionListController {
   bool canStoreCellAtRow(int row) override { return false; }
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
-  bool handleEvent(Ion::Events::Event event) override;
   void showLastSequence();
 
   /* MathLayoutFieldDelegate */
@@ -81,6 +80,9 @@ class ListController : public Shared::FunctionListController {
   Escher::LayoutField* layoutField() override {
     return m_editableCell.expressionCell()->layoutField();
   }
+  OMG::HorizontalDirection parameterColumnPosition() const override {
+    return OMG::Direction::Left();
+  }
 
   SequenceCell m_sequenceCells[k_maxNumberOfRows];
   EditableSequenceCell m_editableCell;
@@ -89,7 +91,6 @@ class ListController : public Shared::FunctionListController {
   Escher::StackViewController::Default m_typeStackController;
   SequenceToolboxDataSource m_sequenceToolboxDataSource;
   KDCoordinate m_titlesColumnWidth;
-  bool m_parameterColumnSelected;
 };
 
 }  // namespace Sequence

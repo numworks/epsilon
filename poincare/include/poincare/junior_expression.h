@@ -114,6 +114,7 @@ class JuniorExpression final : public OExpression {
   PoincareJ::Tree* tree() const {
     return const_cast<JuniorExpression*>(this)->node()->tree();
   }
+  JuniorExpression childAtIndex(int i) const;
 
   JuniorExpression operator=(OExpression&& other) {
     *this = Juniorize(other);

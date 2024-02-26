@@ -80,4 +80,9 @@ JuniorExpression JuniorExpression::Juniorize(OExpression e) {
   return Builder(PoincareJ::FromPoincareExpression(e));
 }
 
+JuniorExpression JuniorExpression::childAtIndex(int i) const {
+  assert(tree());
+  return Builder(tree()->child(i));
+}
+
 }  // namespace Poincare

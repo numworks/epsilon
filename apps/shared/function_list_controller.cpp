@@ -94,6 +94,12 @@ void FunctionListController::didBecomeFirstResponder() {
 
 /* ExpressionModelListController */
 
+void FunctionListController::fillCellForRow(HighlightCell *cell, int row) {
+  EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
+  evenOddCell->setEven(modelIndexForRow(row) % 2 == 0);
+  evenOddCell->reloadCell();
+}
+
 StackViewController *FunctionListController::stackController() const {
   return static_cast<StackViewController *>(
       parentResponder()->parentResponder()->parentResponder());

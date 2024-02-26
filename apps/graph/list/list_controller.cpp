@@ -276,32 +276,26 @@ HighlightCell *ListController::functionCells(int row) {
 }
 
 void ListController::fillCellForRow(HighlightCell *cell, int row) {
-  assert(cell != nullptr);
-  EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
-  evenOddCell->setEven(row % 2 == 0);
   int type = typeAtRow(row);
-  if (type == k_addNewModelCellType) {
-    evenOddCell->reloadCell();
-    return;
+  if (type != k_addNewModelCellType) {
+    assert(type == k_expressionCellType || type == k_editableCellType);
+    ExpiringPointer<ContinuousFunction> f =
+        modelStore()->modelForRecord(recordAtRow(row));
+    if (type == k_expressionCellType) {
+      FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
+      functionCell->expressionCell()->setLayout(f->layout());
+      functionCell->setMessage(f->properties().caption());
+      KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
+      functionCell->expressionCell()->setTextColor(textColor);
+      static_cast<FunctionCell *>(functionCell)
+          ->setParameterSelected(m_parameterColumnSelected);
+    }
+    // f can be null if the entry was just created and is still empty.
+    KDColor functionColor =
+        (!f->isNull() && f->isActive()) ? f->color() : Palette::GrayDark;
+    static_cast<AbstractFunctionCell *>(cell)->setColor(functionColor);
   }
-  assert(type == k_expressionCellType || type == k_editableCellType);
-  ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(recordAtRow(row));
-  if (type == k_expressionCellType) {
-    FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
-    functionCell->expressionCell()->setLayout(f->layout());
-    functionCell->setMessage(f->properties().caption());
-    KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
-    functionCell->expressionCell()->setTextColor(textColor);
-    static_cast<FunctionCell *>(functionCell)
-        ->setParameterSelected(m_parameterColumnSelected);
-  }
-
-  // f can be null if the entry was just created and is still empty.
-  KDColor functionColor =
-      (!f->isNull() && f->isActive()) ? f->color() : Palette::GrayDark;
-  static_cast<AbstractFunctionCell *>(cell)->setColor(functionColor);
-  cell->reloadCell();
+  FunctionListController::fillCellForRow(cell, row);
 }
 
 void ListController::addNewModelAction() {

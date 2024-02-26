@@ -39,6 +39,7 @@ class FunctionListController : public ExpressionModelListController,
   }
 
   /* ExpressionModelListController */
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   Escher::SelectableListView* selectableListView() override {
     return &m_selectableListView;
   }

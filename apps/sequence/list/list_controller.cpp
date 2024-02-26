@@ -97,9 +97,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
                                 sequenceCell->mainCell());
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
   }
-  EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);
-  myCell->setEven(modelIndexForRow(row) % 2 == 0);
-  myCell->reloadCell();
+  FunctionListController::fillCellForRow(cell, row);
 }
 
 /* Responder */

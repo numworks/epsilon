@@ -97,8 +97,8 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     if (type == k_expressionCellType) {
       fillExpressionCellForRow(sequenceCell->mainCell(), row);
     }
-    willDisplayTitleCellAtIndex(sequenceCell->titleCell(), row,
-                                sequenceCell->mainCell());
+    fillTitleCellForRow(sequenceCell->titleCell(), row,
+                        sequenceCell->mainCell());
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
   }
   FunctionListController::fillCellForRow(cell, row);
@@ -254,18 +254,19 @@ HighlightCell *ListController::functionCells(int index) {
   return m_sequenceCells[index].expressionCell();
 }
 
-void ListController::willDisplayTitleCellAtIndex(
-    VerticalSequenceTitleCell *cell, int j, HighlightCell *expressionCell) {
-  assert(j >= 0 && j < k_maxNumberOfRows);
-  cell->setBaseline(baseline(j, expressionCell));
-  Ion::Storage::Record record = recordAtRow(j);
+void ListController::fillTitleCellForRow(VerticalSequenceTitleCell *cell,
+                                         int row,
+                                         HighlightCell *expressionCell) {
+  assert(row >= 0 && row < k_maxNumberOfRows);
+  cell->setBaseline(baseline(row, expressionCell));
+  Ion::Storage::Record record = recordAtRow(row);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor nameColor =
       sequence->isActive() ? sequence->color() : Palette::GrayDark;
   cell->setColor(nameColor);
   // Set the layout
-  int sequenceDefinition = sequenceDefinitionForRow(j);
+  int sequenceDefinition = sequenceDefinitionForRow(row);
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
       return cell->setLayout(sequence->definitionName());

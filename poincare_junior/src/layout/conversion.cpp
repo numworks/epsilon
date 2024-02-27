@@ -208,7 +208,9 @@ void PushPoincareRack(Poincare::OLayout l) {
     Poincare::OLayout editable =
         Poincare::LayoutHelper::StringToCodePointsLayout(s.string(),
                                                          s.stringLength());
+    Tree *rack = Tree::FromBlocks(SharedEditionPool->lastBlock());
     PushPoincareRack(editable);
+    Layoutter::AddThousandSeparators(rack);
   } else {
     if (l.type() != Poincare::LayoutNode::Type::JuniorLayout) {
       SharedEditionPool->push<BlockType::RackLayout>(1);

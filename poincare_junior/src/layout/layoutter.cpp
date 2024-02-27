@@ -485,4 +485,45 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
   expression->removeNode();
 }
 
+int FirstNonDigitIndex(Tree *rack) {
+  int nonDigitIndex = 0;
+  for (const Tree *child : rack->children()) {
+    if (!child->isCodePointLayout()) {
+      break;
+    }
+    CodePoint cp = CodePointLayout::GetCodePoint(child);
+    if (!((nonDigitIndex == 0 && cp == '-') || ('0' <= cp && cp <= '9'))) {
+      break;
+    }
+    nonDigitIndex++;
+  }
+  return nonDigitIndex;
+}
+
+/* We only display thousands separator if there is more than 4 digits (12 345
+ * but 1234) */
+constexpr int k_minDigitsForThousandSeparator = 5;
+
+bool Layoutter::AddThousandSeparators(Tree *rack) {
+  int nonDigitIndex = FirstNonDigitIndex(rack);
+  bool isNegative = rack->child(0)->isCodePointLayout() &&
+                    CodePointLayout::GetCodePoint(rack->child(0)) == '-';
+  if (nonDigitIndex - isNegative < k_minDigitsForThousandSeparator) {
+    return false;
+  }
+  int index = isNegative + 1;  // skip "-" and first digit
+  Tree *digit = rack->child(index);
+  while (index < nonDigitIndex) {
+    if ((nonDigitIndex - index) % 3 == 0) {
+      digit->cloneTreeAtNode(KThousandSeparatorL);
+      digit = digit->nextTree();
+    }
+    digit = digit->nextTree();
+    index++;
+  }
+  NAry::SetNumberOfChildren(
+      rack, rack->numberOfChildren() + (nonDigitIndex - isNegative - 1) / 3);
+  return true;
+}
+
 }  // namespace PoincareJ

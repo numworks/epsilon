@@ -11,6 +11,8 @@ class Layoutter {
   static Tree* LayoutExpression(Tree* expression, bool linearMode = false,
                                 int numberOfSignificantDigits = -1);
 
+  static bool AddThousandSeparators(Tree* rack);
+
  private:
   Layoutter(bool linearMode, int numberOfSignificantDigits)
       : m_linearMode(linearMode),

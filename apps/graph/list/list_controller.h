@@ -6,6 +6,7 @@
 #include <apps/shared/math_toolbox_controller.h>
 
 #include "../graph/graph_controller.h"
+#include "../shared/derivative_column_parameter_controller.h"
 #include "../shared/function_parameter_controller.h"
 #include "editable_function_cell.h"
 #include "function_cell.h"
@@ -16,10 +17,11 @@ namespace Graph {
 class ListController : public Shared::FunctionListController,
                        public Shared::MathToolboxExtraCellsDataSource {
  public:
-  ListController(Escher::Responder* parentResponder,
-                 Escher::ButtonRowController* header,
-                 Escher::ButtonRowController* footer,
-                 FunctionParameterController* functionParameterController);
+  ListController(
+      Escher::Responder* parentResponder, Escher::ButtonRowController* header,
+      Escher::ButtonRowController* footer,
+      FunctionParameterController* functionParameterController,
+      DerivativeColumnParameterController* derivativeColumnParameterController);
 
   static void DeleteParametricComponentsWithBaseName(char* baseName,
                                                      size_t baseNameLength,
@@ -85,6 +87,7 @@ class ListController : public Shared::FunctionListController,
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;
   FunctionParameterController* m_parameterController;
+  DerivativeColumnParameterController* m_derivativeColumnParameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController::Default m_modelsStackController;
 };

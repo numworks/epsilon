@@ -47,7 +47,8 @@ void App::Snapshot::tidy() {
 App::ListTab::ListTab()
     : Shared::FunctionApp::ListTab(&m_listController),
       m_listController(&m_listFooter, &m_listHeader, &m_listFooter,
-                       &app()->m_functionParameterController) {}
+                       &app()->m_functionParameterController,
+                       &app()->m_derivativeColumnParameterController) {}
 
 App::GraphTab::GraphTab()
     : Shared::FunctionApp::GraphTab(&m_graphController),
@@ -59,12 +60,14 @@ App::GraphTab::GraphTab()
 App::ValuesTab::ValuesTab()
     : Shared::FunctionApp::ValuesTab(&m_valuesController),
       m_valuesController(&m_valuesAlternateEmptyViewController, &m_valuesHeader,
-                         &app()->m_functionParameterController) {}
+                         &app()->m_functionParameterController,
+                         &app()->m_derivativeColumnParameterController) {}
 
 App::App(Snapshot* snapshot)
     : FunctionApp(snapshot, &m_tabs, ListTab::k_title),
       m_functionParameterController(this, I18n::Message::FunctionColor,
-                                    I18n::Message::DeleteExpression) {
+                                    I18n::Message::DeleteExpression),
+      m_derivativeColumnParameterController(this) {
   snapshot->functionStore()->setCachesContainer(&m_cachesContainer);
 }
 

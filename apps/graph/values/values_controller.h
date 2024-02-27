@@ -23,9 +23,10 @@ class ValuesController : public Shared::ValuesController,
                          public Escher::PrefacedTableViewDelegate,
                          public Escher::HeavyTableSizeManagerDelegate {
  public:
-  ValuesController(Escher::Responder *parentResponder,
-                   Escher::ButtonRowController *header,
-                   FunctionParameterController *functionParameterController);
+  ValuesController(
+      Escher::Responder *parentResponder, Escher::ButtonRowController *header,
+      FunctionParameterController *functionParameterController,
+      DerivativeColumnParameterController *derivativeColumnParameterController);
   bool displayButtonExactValues() const;
 
   // View controller
@@ -187,7 +188,7 @@ class ValuesController : public Shared::ValuesController,
   FunctionParameterController *m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
-  DerivativeColumnParameterController m_derivativeColumnParameterController;
+  DerivativeColumnParameterController *m_derivativeColumnParameterController;
   Escher::AbstractButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;

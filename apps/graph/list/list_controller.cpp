@@ -21,11 +21,14 @@ namespace Graph {
 ListController::ListController(
     Responder *parentResponder, ButtonRowController *header,
     ButtonRowController *footer,
-    FunctionParameterController *functionParameterController)
+    FunctionParameterController *functionParameterController,
+    DerivativeColumnParameterController *derivativeColumnParameterController)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddFunction),
       m_editableCell(this, this, &m_modelsStackController),
       m_parameterController(functionParameterController),
+      m_derivativeColumnParameterController(
+          derivativeColumnParameterController),
       m_modelsParameterController(this, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite) {}

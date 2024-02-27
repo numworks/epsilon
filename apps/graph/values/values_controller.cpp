@@ -26,12 +26,14 @@ namespace Graph {
 
 ValuesController::ValuesController(
     Responder *parentResponder, ButtonRowController *header,
-    FunctionParameterController *functionParameterController)
+    FunctionParameterController *functionParameterController,
+    DerivativeColumnParameterController *derivativeColumnParameterController)
     : Shared::ValuesController(parentResponder, header),
       m_tableSizeManager(this),
       m_functionParameterController(functionParameterController),
       m_intervalParameterController(this),
-      m_derivativeColumnParameterController(this),
+      m_derivativeColumnParameterController(
+          derivativeColumnParameterController),
       m_setIntervalButton(
           this, I18n::Message::IntervalSet,
           Invocation::Builder<ValuesController>(
@@ -459,8 +461,8 @@ T *ValuesController::parameterController() {
       recordAtColumn(selectedColumn(), &derivationOrder);
   if (derivationOrder >= 1) {
     assert(derivationOrder == 1 || derivationOrder == 2);
-    m_derivativeColumnParameterController.setRecord(record, derivationOrder);
-    return &m_derivativeColumnParameterController;
+    m_derivativeColumnParameterController->setRecord(record, derivationOrder);
+    return m_derivativeColumnParameterController;
   }
   assert(derivationOrder == 0);
   m_functionParameterController->setRecord(record);

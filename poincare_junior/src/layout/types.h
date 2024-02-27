@@ -1,7 +1,7 @@
 NODE(Rack, NARY16)
-NODE(Fraction, 2)
 NODE(VerticalOffset, 1, 1)
 
+NODE(Margin)
 NODE(CodePoint, 0, sizeof(CodePoint))
 NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))
 // TODO Do we need a StringLayout ?
@@ -25,6 +25,7 @@ NODE(Integral, 4)
 NODE(Product, 4)
 NODE(Sum, 4)
 
+NODE(Fraction, 2)
 NODE(Binomial, 2)
 NODE(PtBinomial, 2)
 NODE(PtPermute, 2)

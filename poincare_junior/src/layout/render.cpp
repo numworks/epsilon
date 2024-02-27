@@ -182,6 +182,10 @@ KDSize Render::Size(const Layout* node) {
                             Height(node->child(k_variableIndex)));
       break;
     }
+    case LayoutType::Margin:
+      width = Escher::Metric::OperatorHorizontalMargin;
+      height = 0;
+      break;
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints: {
       KDSize glyph = KDFont::GlyphSize(s_font);
@@ -453,6 +457,7 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
     case LayoutType::VerticalOffset: {
       return KDPointZero;
     }
+    case LayoutType::Margin:
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints:
       assert(false);
@@ -553,6 +558,7 @@ KDCoordinate Render::Baseline(const Layout* node) {
     }
     case LayoutType::VerticalOffset:
       return 0;
+    case LayoutType::Margin:
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints:
       return KDFont::GlyphHeight(s_font) / 2;
@@ -1213,6 +1219,8 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       return;
     }
 
+    case LayoutType::Margin:
+      return;
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints: {
       ::CodePoint codePoint = CodePointLayout::GetCodePoint(node);

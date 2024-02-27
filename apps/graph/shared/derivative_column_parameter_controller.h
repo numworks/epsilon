@@ -12,8 +12,7 @@ namespace Graph {
 class DerivativeColumnParameterController
     : public Shared::ColumnParameterController {
  public:
-  DerivativeColumnParameterController(
-      Shared::ValuesController* valuesController);
+  DerivativeColumnParameterController(Escher::Responder* parentResponder);
 
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -23,9 +22,10 @@ class DerivativeColumnParameterController
 
  private:
   Shared::ColumnNameHelper* columnNameHelper() override {
-    return m_valuesController;
+    return valuesController();
   }
   Shared::ExpiringPointer<Shared::ContinuousFunction> function();
+  Shared::ValuesController* valuesController();
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
@@ -34,7 +34,6 @@ class DerivativeColumnParameterController
   Shared::ColorParameterController m_colorParameterController;
   Ion::Storage::Record m_record;
   int m_derivationOrder;
-  Shared::ValuesController* m_valuesController;
 };
 
 }  // namespace Graph

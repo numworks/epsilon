@@ -27,9 +27,9 @@ Expression RandintNode::createExpressionWithTwoChildren() const {
   return Randint(this);
 }
 
-Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context* context) const {
+OLayout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                  int numberOfSignificantDigits,
+                                  Context* context) const {
   return LayoutHelper::Prefix(
       createExpressionWithTwoChildren(), floatDisplayMode,
       numberOfSignificantDigits,

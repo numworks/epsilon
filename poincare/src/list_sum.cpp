@@ -17,9 +17,9 @@ size_t ListSumNode::serialize(char* buffer, size_t bufferSize,
       ListSum::s_functionHelper.aliasesList().mainAlias());
 }
 
-Layout ListSumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context* context) const {
+OLayout ListSumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                  int numberOfSignificantDigits,
+                                  Context* context) const {
   return LayoutHelper::Prefix(
       ListSum(this), floatDisplayMode, numberOfSignificantDigits,
       ListSum::s_functionHelper.aliasesList().mainAlias(), context);

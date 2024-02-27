@@ -12,9 +12,9 @@
 
 namespace Poincare {
 
-Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                               int numberOfSignificantDigits,
-                               Context* context) const {
+OLayout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits,
+                                Context* context) const {
   return LayoutHelper::Prefix(
       Round(this), floatDisplayMode, numberOfSignificantDigits,
       Round::s_functionHelper.aliasesList().mainAlias(), context);

@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-Layout HyperbolicArcTangentNode::createLayout(
+OLayout HyperbolicArcTangentNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

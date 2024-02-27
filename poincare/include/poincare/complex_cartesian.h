@@ -29,9 +29,9 @@ class ComplexCartesianNode : public ExpressionNode {
 
  private:
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override {
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override {
     assert(false);
     return Layout();
   }

@@ -35,9 +35,9 @@ int IntegralNode::polynomialDegree(Context* context,
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
+OLayout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits,
+                                   Context* context) const {
   return IntegralLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
                                     context),

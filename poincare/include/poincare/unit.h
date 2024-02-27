@@ -987,9 +987,9 @@ class UnitNode final : public ExpressionNode {
   Expression removeUnit(Expression* unit) override;
 
   /* Layout */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;

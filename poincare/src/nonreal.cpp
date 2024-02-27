@@ -11,9 +11,9 @@ extern "C" {
 
 namespace Poincare {
 
-Layout NonrealNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context* context) const {
+OLayout NonrealNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                  int numberOfSignificantDigits,
+                                  Context* context) const {
   return LayoutHelper::String(Nonreal::Name(), Nonreal::NameSize() - 1);
 }
 

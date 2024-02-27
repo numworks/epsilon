@@ -19,7 +19,7 @@ Expression MatrixTransposeNode::shallowReduce(
   return MatrixTranspose(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixTransposeNode::createLayout(
+OLayout MatrixTransposeNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

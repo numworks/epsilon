@@ -43,7 +43,7 @@ Layout LayoutHelper::Infix(const Expression& expression,
 
   for (int i = 0; i < numberOfChildren; i++) {
     rightChild = expression.childAtIndex(i);
-    Layout childLayout = rightChild.createLayout(
+    OLayout childLayout = rightChild.createLayout(
         floatDisplayMode, numberOfSignificantDigits, context, false, true);
 
     if (i > 0) {

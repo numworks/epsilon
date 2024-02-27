@@ -11,7 +11,7 @@ int NaperianLogarithmNode::numberOfChildren() const {
   return NaperianLogarithm::s_functionHelper.numberOfChildren();
 }
 
-Layout NaperianLogarithmNode::createLayout(
+OLayout NaperianLogarithmNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

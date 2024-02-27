@@ -20,7 +20,7 @@ Expression MixedFractionNode::shallowReduce(
   return MixedFraction(this).shallowReduce(reductionContext);
 }
 
-Layout MixedFractionNode::createLayout(
+OLayout MixedFractionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Infix(MixedFraction(this), floatDisplayMode,

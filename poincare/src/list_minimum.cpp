@@ -18,7 +18,7 @@ size_t ListMinimumNode::serialize(char* buffer, size_t bufferSize,
       ListMinimum::s_functionHelper.aliasesList().mainAlias());
 }
 
-Layout ListMinimumNode::createLayout(
+OLayout ListMinimumNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

@@ -25,12 +25,12 @@ Expression BinomialCoefficientNode::shallowReduce(
   return BinomialCoefficient(this).shallowReduce(reductionContext);
 }
 
-Layout BinomialCoefficientNode::createLayout(
+OLayout BinomialCoefficientNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
-  Layout child0 = childAtIndex(0)->createLayout(
+  OLayout child0 = childAtIndex(0)->createLayout(
       floatDisplayMode, numberOfSignificantDigits, context);
-  Layout child1 = childAtIndex(1)->createLayout(
+  OLayout child1 = childAtIndex(1)->createLayout(
       floatDisplayMode, numberOfSignificantDigits, context);
   if (Preferences::SharedPreferences()->combinatoricSymbols() ==
       Preferences::CombinatoricSymbols::Default) {

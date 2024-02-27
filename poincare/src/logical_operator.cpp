@@ -54,7 +54,7 @@ bool LogicalOperatorNode::childAtIndexNeedsUserParentheses(
 
 // Not Operator
 
-Layout LogicalOperatorNotNode::createLayout(
+OLayout LogicalOperatorNotNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context *context) const {
   char nameBuffer[k_sizeOfNameBuffer];
@@ -165,7 +165,7 @@ bool BinaryLogicalOperatorNode::evaluate(bool a, bool b) const {
   }
 }
 
-Layout BinaryLogicalOperatorNode::createLayout(
+OLayout BinaryLogicalOperatorNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context *context) const {
   char nameBuffer[k_sizeOfNameBuffer];

@@ -59,9 +59,9 @@ int AdditionNode::getPolynomialCoefficients(Context* context,
 
 // Layout
 
-Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
+OLayout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits,
+                                   Context* context) const {
   Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode,
                                       numberOfSignificantDigits, "+", context);
   if (displayImplicitAdditionBetweenUnits(result)) {

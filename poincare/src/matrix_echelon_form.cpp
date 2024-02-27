@@ -16,7 +16,7 @@ Expression MatrixEchelonFormNode::shallowReduce(
   return MatrixEchelonForm(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixEchelonFormNode::createLayout(
+OLayout MatrixEchelonFormNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(MatrixEchelonForm(this), floatDisplayMode,

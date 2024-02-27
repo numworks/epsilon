@@ -11,7 +11,7 @@ int RandintNoRepeatNode::numberOfChildren() const {
   return RandintNoRepeat::s_functionHelper.numberOfChildren();
 }
 
-Layout RandintNoRepeatNode::createLayout(
+OLayout RandintNoRepeatNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

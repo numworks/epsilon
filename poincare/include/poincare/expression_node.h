@@ -239,9 +239,9 @@ class ExpressionNode : public TreeNode {
                                           bool ignoreParentheses) const;
 
   /* Layout Helper */
-  virtual Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits,
-                              Context* context) const = 0;
+  virtual OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits,
+                               Context* context) const = 0;
 
   /* Evaluation Helper */
   typedef float SinglePrecision;

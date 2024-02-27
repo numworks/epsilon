@@ -14,9 +14,9 @@ int RandomNode::numberOfChildren() const {
   return Random::s_functionHelper.numberOfChildren();
 }
 
-Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits,
-                                Context *context) const {
+OLayout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits,
+                                 Context *context) const {
   return LayoutHelper::Prefix(
       Random(this), floatDisplayMode, numberOfSignificantDigits,
       Random::s_functionHelper.aliasesList().mainAlias(), context);

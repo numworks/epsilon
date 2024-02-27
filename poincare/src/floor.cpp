@@ -18,9 +18,9 @@ int FloorNode::numberOfChildren() const {
   return Floor::s_functionHelper.numberOfChildren();
 }
 
-Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                               int numberOfSignificantDigits,
-                               Context* context) const {
+OLayout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits,
+                                Context* context) const {
   return FloorLayout::Builder(childAtIndex(0)->createLayout(
       floatDisplayMode, numberOfSignificantDigits, context));
 }

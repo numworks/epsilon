@@ -66,9 +66,9 @@ std::complex<T> FactorialNode::computeOnComplex(
   return std::round(result);
 }
 
-Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
+OLayout FactorialNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,

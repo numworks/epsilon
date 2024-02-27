@@ -32,10 +32,10 @@ int SequenceNode::simplificationOrderSameType(const ExpressionNode* e,
   return delta;
 }
 
-Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
-  Layout rank = childAtIndex(0)->createLayout(
+OLayout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits,
+                                   Context* context) const {
+  OLayout rank = childAtIndex(0)->createLayout(
       floatDisplayMode, numberOfSignificantDigits, context);
   return HorizontalLayout::Builder(
       CodePointLayout::Builder(m_name[0]),

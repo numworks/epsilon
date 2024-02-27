@@ -19,7 +19,7 @@ int PermuteCoefficientNode::numberOfChildren() const {
   return PermuteCoefficient::s_functionHelper.numberOfChildren();
 }
 
-Layout PermuteCoefficientNode::createLayout(
+OLayout PermuteCoefficientNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context *context) const {
   if (Preferences::SharedPreferences()->combinatoricSymbols() ==

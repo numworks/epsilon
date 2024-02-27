@@ -12,9 +12,9 @@ class SumAndProductNode : public ParameteredExpressionNode {
   int numberOfChildren() const override { return 4; }
 
  private:
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
   virtual Layout createSumAndProductLayout(Layout argumentLayout,
                                            Layout symbolLayout,
                                            Layout subscriptLayout,

@@ -40,9 +40,9 @@ bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression& child,
   return child.isOfType({Type::Addition, Type::Subtraction, Type::Opposite});
 }
 
-Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
+OLayout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits,
+                                   Context* context) const {
   HorizontalLayout result =
       HorizontalLayout::Builder(CodePointLayout::Builder('-'));
   if (childAtIndex(0)->type() == Type::Opposite ||

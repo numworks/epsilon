@@ -136,9 +136,9 @@ Expression DecimalNode::shallowReduce(
   return Decimal(this).shallowReduce(reductionContext);
 }
 
-Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context *context) const {
+OLayout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                  int numberOfSignificantDigits,
+                                  Context *context) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode,
                                     numberOfSignificantDigits);

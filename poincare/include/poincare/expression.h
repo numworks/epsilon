@@ -396,9 +396,10 @@ class Expression : public TreeHandle {
       Expression exactExpression, Expression approximateExpression);
 
   /* Layout Helper */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits, Context* context,
-                      bool forceStripMargin = false, bool nested = false) const;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits, Context* context,
+                       bool forceStripMargin = false,
+                       bool nested = false) const;
   ExpressionNode::LayoutShape leftLayoutShape() const {
     return node()->leftLayoutShape();
   }

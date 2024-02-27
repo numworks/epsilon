@@ -38,7 +38,7 @@ int DerivativeNode::polynomialDegree(Context* context,
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Layout DerivativeNode::createLayout(
+OLayout DerivativeNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   // Case 1: layout is f'(a)

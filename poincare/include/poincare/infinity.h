@@ -51,9 +51,9 @@ class InfinityNode final : public NumberNode {
   }
 
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode =
                        Preferences::PrintFloatMode::Decimal,

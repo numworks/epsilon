@@ -10,9 +10,9 @@ extern "C" {
 
 namespace Poincare {
 
-Layout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
+OLayout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits,
+                                   Context* context) const {
   char buffer[5];
   size_t numberOfChars =
       serialize(buffer, 5, floatDisplayMode, numberOfSignificantDigits);

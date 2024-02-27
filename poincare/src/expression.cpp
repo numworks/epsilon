@@ -1159,14 +1159,15 @@ static void StripMarginFromLayout(OLayout l) {
   }
 }
 
-Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits, Context *context,
-                                bool forceStripMargin, bool nested) const {
+OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits,
+                                 Context *context, bool forceStripMargin,
+                                 bool nested) const {
   if (isUninitialized()) {
     return Layout();
   }
-  Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                  context);
+  OLayout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits,
+                                   context);
   assert(!l.isUninitialized());
   if (forceStripMargin || !(nested || LayoutHasLockedMargins(l) ||
                             LayoutHasStringWithThousandSeparator(l))) {

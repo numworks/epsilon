@@ -33,9 +33,9 @@ class SymbolNode final : public SymbolAbstractNode {
    * already been replaced if it should have been.*/
 
   /* Layout */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
 
   /* Simplification */
   Expression shallowReduce(const ReductionContext& reductionContext) override;

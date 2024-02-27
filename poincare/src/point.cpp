@@ -7,8 +7,8 @@
 
 namespace Poincare {
 
-Layout PointNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                               int significantDigits, Context* context) const {
+OLayout PointNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                int significantDigits, Context* context) const {
   return LayoutHelper::Prefix(Point(this), floatDisplayMode, significantDigits,
                               k_prefix, context);
 }

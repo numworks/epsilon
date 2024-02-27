@@ -21,7 +21,7 @@ size_t RightwardsArrowExpressionNode::serialize(
                                     numberOfSignificantDigits, string);
 }
 
-Layout RightwardsArrowExpressionNode::createLayout(
+OLayout RightwardsArrowExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   constexpr CodePoint arrow = UCodePointRightwardsArrow;

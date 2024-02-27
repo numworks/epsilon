@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-Layout SumAndProductNode::createLayout(
+OLayout SumAndProductNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return createSumAndProductLayout(

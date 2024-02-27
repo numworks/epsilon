@@ -18,7 +18,7 @@ int DeterminantNode::numberOfChildren() const {
   return Determinant::s_functionHelper.numberOfChildren();
 }
 
-Layout DeterminantNode::createLayout(
+OLayout DeterminantNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

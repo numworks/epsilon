@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-Layout HyperbolicCosineNode::createLayout(
+OLayout HyperbolicCosineNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

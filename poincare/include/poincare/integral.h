@@ -23,9 +23,9 @@ class IntegralNode final : public ParameteredExpressionNode {
 
  private:
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
@@ -119,6 +119,7 @@ class Integral final : public ParameteredExpression {
 
   constexpr static Expression::FunctionHelper s_functionHelper =
       Expression::FunctionHelper("int", 4, &UntypedBuilder);
+  constexpr static char k_defaultXNTChar = 'x';
 
   // Expression
   void deepReduceChildren(const ReductionContext& reductionContext);

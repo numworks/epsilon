@@ -25,7 +25,7 @@ std::complex<T> ArcCosecantNode::computeOnComplex(
                                           angleUnit);
 }
 
-Layout ArcCosecantNode::createLayout(
+OLayout ArcCosecantNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

@@ -14,16 +14,16 @@
 
 namespace Poincare {
 
-Layout PiecewiseOperatorNode::createLayout(
+OLayout PiecewiseOperatorNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   PiecewiseOperatorLayout l = PiecewiseOperatorLayout::Builder();
   int n = numberOfChildren();
   int i = 0;
   while (i + 1 < n) {
-    Layout leftChildLayout = childAtIndex(i)->createLayout(
+    OLayout leftChildLayout = childAtIndex(i)->createLayout(
         floatDisplayMode, numberOfSignificantDigits, context);
-    Layout rightChildLayout = childAtIndex(i + 1)->createLayout(
+    OLayout rightChildLayout = childAtIndex(i + 1)->createLayout(
         floatDisplayMode, numberOfSignificantDigits, context);
     l.addRow(leftChildLayout, rightChildLayout);
     i += 2;
@@ -31,7 +31,7 @@ Layout PiecewiseOperatorNode::createLayout(
   if (i < n) {
     // Last child has no condition
     assert(n % 2 == 1 && i == n - 1);
-    Layout leftChildLayout = childAtIndex(i)->createLayout(
+    OLayout leftChildLayout = childAtIndex(i)->createLayout(
         floatDisplayMode, numberOfSignificantDigits, context);
     l.addRow(leftChildLayout);
   }

@@ -31,7 +31,7 @@ Expression DivisionQuotientNode::shallowReduce(
   return DivisionQuotient(this).shallowReduce(reductionContext);
 }
 
-Layout DivisionQuotientNode::createLayout(
+OLayout DivisionQuotientNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context *context) const {
   return LayoutHelper::Prefix(

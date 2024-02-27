@@ -21,7 +21,7 @@ Expression MatrixInverseNode::shallowReduce(
   return MatrixInverse(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixInverseNode::createLayout(
+OLayout MatrixInverseNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

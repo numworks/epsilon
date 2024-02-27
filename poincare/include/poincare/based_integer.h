@@ -43,9 +43,9 @@ class BasedIntegerNode final : public NumberNode {
   Integer integerValue() const override { return integer(); }
 
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
 
   // Approximation
   Evaluation<float> approximate(

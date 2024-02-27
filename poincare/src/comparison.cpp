@@ -165,7 +165,7 @@ void ComparisonNode::logAttributes(std::ostream& stream) const {
 }
 #endif
 
-Layout ComparisonNode::createLayout(
+OLayout ComparisonNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   HorizontalLayout result = HorizontalLayout::Builder();

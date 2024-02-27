@@ -37,9 +37,9 @@ size_t ListNode::serialize(char* buffer, size_t bufferSize,
   return writtenChars;
 }
 
-Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits,
-                              Context* context) const {
+OLayout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits,
+                               Context* context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   if (m_numberOfChildren > 1) {
     Layout elementsLayout = LayoutHelper::Infix(

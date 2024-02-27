@@ -21,7 +21,7 @@ Expression MatrixTraceNode::shallowReduce(
   return MatrixTrace(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixTraceNode::createLayout(
+OLayout MatrixTraceNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

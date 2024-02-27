@@ -90,9 +90,9 @@ class DecimalNode final : public NumberNode {
                    int numberOfSignificantDigits = 0) const override;
 
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
 
  private:
   // Worst case is -1.2345678901234ᴇ-1000 (the small capital E is two chars)

@@ -18,7 +18,7 @@ Expression VectorNormNode::shallowReduce(
   return VectorNorm(this).shallowReduce(reductionContext);
 }
 
-Layout VectorNormNode::createLayout(
+OLayout VectorNormNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return VectorNormLayout::Builder(childAtIndex(0)->createLayout(

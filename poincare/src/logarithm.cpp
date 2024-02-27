@@ -25,9 +25,9 @@
 
 namespace Poincare {
 
-Layout LogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
+OLayout LogarithmNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   if (numberOfChildren() == 2) {
     return LayoutHelper::Logarithm(
         childAtIndex(0)->createLayout(floatDisplayMode,

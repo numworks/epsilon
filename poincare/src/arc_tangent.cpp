@@ -17,7 +17,7 @@ int ArcTangentNode::numberOfChildren() const {
   return ArcTangent::s_functionHelper.numberOfChildren();
 }
 
-Layout ArcTangentNode::createLayout(
+OLayout ArcTangentNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

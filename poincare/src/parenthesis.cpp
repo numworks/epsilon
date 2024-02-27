@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-Layout ParenthesisNode::createLayout(
+OLayout ParenthesisNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Parentheses(

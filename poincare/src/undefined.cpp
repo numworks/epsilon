@@ -20,9 +20,9 @@ int UndefinedNode::polynomialDegree(Context* context,
   return 0;
 }
 
-Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
+OLayout UndefinedNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   return LayoutHelper::String(Undefined::Name(), Undefined::NameSize() - 1);
 }
 

@@ -22,7 +22,7 @@ Expression MatrixIdentityNode::shallowReduce(
   return MatrixIdentity(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixIdentityNode::createLayout(
+OLayout MatrixIdentityNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

@@ -18,9 +18,9 @@ int TangentNode::numberOfChildren() const {
   return Tangent::s_functionHelper.numberOfChildren();
 }
 
-Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context* context) const {
+OLayout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                  int numberOfSignificantDigits,
+                                  Context* context) const {
   return LayoutHelper::Prefix(
       Tangent(this), floatDisplayMode, numberOfSignificantDigits,
       Tangent::s_functionHelper.aliasesList().mainAlias(), context);

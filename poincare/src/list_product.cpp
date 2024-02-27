@@ -18,7 +18,7 @@ size_t ListProductNode::serialize(char* buffer, size_t bufferSize,
       ListProduct::s_functionHelper.aliasesList().mainAlias());
 }
 
-Layout ListProductNode::createLayout(
+OLayout ListProductNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

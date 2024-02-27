@@ -1047,9 +1047,9 @@ Expression UnitNode::removeUnit(Expression* unit) {
   return Unit(this).removeUnit(unit);
 }
 
-Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits,
-                              Context* context) const {
+OLayout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits,
+                               Context* context) const {
   /* TODO: compute the bufferSize more precisely... So far the longest unit is
    * "month" of size 6 but later, we might add unicode to represent ohm or µ
    * which would change the required size?*/

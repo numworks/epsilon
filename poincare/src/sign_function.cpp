@@ -25,7 +25,7 @@ int SignFunctionNode::numberOfChildren() const {
   return SignFunction::s_functionHelper.numberOfChildren();
 }
 
-Layout SignFunctionNode::createLayout(
+OLayout SignFunctionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

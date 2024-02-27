@@ -35,9 +35,9 @@ Expression MatrixNode::shallowReduce(const ReductionContext &reductionContext) {
   return Matrix(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits,
-                                Context *context) const {
+OLayout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits,
+                                 Context *context) const {
   assert(numberOfChildren() > 0);
   MatrixLayout layout = MatrixLayout::Builder();
   for (ExpressionNode *c : children()) {

@@ -19,9 +19,9 @@ int ArcCosineNode::numberOfChildren() const {
   return ArcCosine::s_functionHelper.numberOfChildren();
 }
 
-Layout ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
+OLayout ArcCosineNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   return LayoutHelper::Prefix(
       ArcCosine(this), floatDisplayMode, numberOfSignificantDigits,
       ArcCosine::s_functionHelper.aliasesList().mainAlias(), context);

@@ -39,7 +39,7 @@ class Prefix {
   const char* symbol() const { return m_symbol; }
   int8_t exponent() const { return m_exponent; }
 #if 0
-  int serialize(char* buffer, int bufferSize) const;
+  size_ serialize(char* buffer, size_t bufferSize,) const;
 #endif
 
  private:
@@ -203,7 +203,7 @@ class Representative {
     return m_outputPrefixable != Prefixable::None;
   }
 #if 0
-  int serialize(char* buffer, int bufferSize, const Prefix* prefix) const;
+  size_ serialize(char* buffer, size_t bufferSize,, const Prefix* prefix) const;
 #endif
   bool canParseWithEquivalents(const char* symbol, size_t length,
                                const Representative** representative,
@@ -260,7 +260,7 @@ class UnitNode final : public ExpressionNode {
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,
                       Context* context) const override;
-  int serialize(char* buffer, int bufferSize,
+  size_ serialize(char* buffer, size_t bufferSize,,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits) const override;
 

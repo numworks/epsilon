@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-Layout HyperbolicTangentNode::createLayout(
+OLayout HyperbolicTangentNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

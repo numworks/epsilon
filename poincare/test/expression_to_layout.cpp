@@ -88,7 +88,7 @@ QUIZ_CASE(poincare_expression_to_layout) {
 
 void assert_expression_layouts_and_serializes_to(Expression expression,
                                                  const char* serialization) {
-  Layout layout = expression.createLayout(
+  OLayout layout = expression.createLayout(
       DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
 #if O
   // TODO PCJ ? should be adapted since system parentheses are gone
@@ -378,7 +378,7 @@ void assert_parsed_expression_layout_serialize_to_self(
     const char* expressionLayout) {
 #if O
   Expression e = parse_expression(expressionLayout, nullptr, true);
-  Layout el = e.createLayout(
+  OLayout el = e.createLayout(
       DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
   constexpr int bufferSize = 255;
   char buffer[bufferSize];

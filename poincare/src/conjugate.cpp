@@ -17,9 +17,9 @@ int ConjugateNode::numberOfChildren() const {
   return Conjugate::s_functionHelper.numberOfChildren();
 }
 
-Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
+OLayout ConjugateNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   return ConjugateLayout::Builder(childAtIndex(0)->createLayout(
       floatDisplayMode, numberOfSignificantDigits, context));
 }

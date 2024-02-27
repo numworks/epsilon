@@ -111,7 +111,7 @@ class Integer final : public TreeHandle {
                    OMG::Base base = OMG::Base::Decimal) const;
 
   // Layout
-  Layout createLayout(OMG::Base base = OMG::Base::Decimal) const;
+  OLayout createLayout(OMG::Base base = OMG::Base::Decimal) const;
 
   // Approximation
   template <typename T>

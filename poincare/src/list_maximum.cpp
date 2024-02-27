@@ -18,7 +18,7 @@ size_t ListMaximumNode::serialize(char* buffer, size_t bufferSize,
       ListMaximum::s_functionHelper.aliasesList().mainAlias());
 }
 
-Layout ListMaximumNode::createLayout(
+OLayout ListMaximumNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

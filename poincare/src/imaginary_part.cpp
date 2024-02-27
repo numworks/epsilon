@@ -13,7 +13,7 @@ int ImaginaryPartNode::numberOfChildren() const {
   return ImaginaryPart::s_functionHelper.numberOfChildren();
 }
 
-Layout ImaginaryPartNode::createLayout(
+OLayout ImaginaryPartNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

@@ -21,9 +21,9 @@ Expression DimensionNode::shallowReduce(
   return Dimension(this).shallowReduce(reductionContext);
 }
 
-Layout DimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
+OLayout DimensionNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   return LayoutHelper::Prefix(
       Dimension(this), floatDisplayMode, numberOfSignificantDigits,
       Dimension::s_functionHelper.aliasesList().mainAlias(), context);

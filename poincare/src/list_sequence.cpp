@@ -21,7 +21,7 @@ Expression ListSequenceNode::shallowReduce(
   return ListSequence(this).shallowReduce(reductionContext);
 }
 
-Layout ListSequenceNode::createLayout(
+OLayout ListSequenceNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return ListSequenceLayout::Builder(

@@ -29,7 +29,7 @@ std::complex<T> ArcCotangentNode::computeOnComplex(
                                              complexFormat, angleUnit);
 }
 
-Layout ArcCotangentNode::createLayout(
+OLayout ArcCotangentNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

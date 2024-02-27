@@ -12,7 +12,7 @@ size_t EmptyExpressionNode::serialize(
   return SerializationHelper::CodePoint(buffer, bufferSize, UCodePointEmpty);
 }
 
-Layout EmptyExpressionNode::createLayout(
+OLayout EmptyExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return HorizontalLayout::Builder();

@@ -38,7 +38,7 @@ bool PercentSimpleNode::childNeedsSystemParenthesesAtSerialization(
       child);
 }
 
-Layout PercentSimpleNode::createLayout(
+OLayout PercentSimpleNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);

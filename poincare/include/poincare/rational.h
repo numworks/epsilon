@@ -39,9 +39,9 @@ class RationalNode final : public NumberNode {
   }
 
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
 
   // Approximation
   Evaluation<float> approximate(

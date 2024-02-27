@@ -50,9 +50,9 @@ size_t ConstantNode::serialize(char* buffer, size_t bufferSize,
   return std::min<size_t>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
-Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
+OLayout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits,
+                                   Context* context) const {
   constexpr static size_t bufferSize = Helpers::StringLength("_hplanck") + 1;
   assert(strlen(name()) < bufferSize);
   char buffer[bufferSize];

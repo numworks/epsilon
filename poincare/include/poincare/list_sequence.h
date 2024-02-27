@@ -41,9 +41,9 @@ class ListSequenceNode final : public ParameteredExpressionNode {
       const ApproximationContext& approximationContext) const;
 
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
+  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                       int numberOfSignificantDigits,
+                       Context* context) const override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }

@@ -26,9 +26,9 @@ std::complex<T> CosineNode::computeOnComplex(const std::complex<T> c,
       res, angleInput);
 }
 
-Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits,
-                                Context* context) const {
+OLayout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits,
+                                 Context* context) const {
   return LayoutHelper::Prefix(
       Cosine(this), floatDisplayMode, numberOfSignificantDigits,
       Cosine::s_functionHelper.aliasesList().mainAlias(), context);

@@ -25,9 +25,9 @@ std::complex<T> SineNode::computeOnComplex(const std::complex<T> c,
       res, angleInput);
 }
 
-Layout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits,
-                              Context* context) const {
+OLayout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits,
+                               Context* context) const {
   return LayoutHelper::Prefix(
       Sine(this), floatDisplayMode, numberOfSignificantDigits,
       Sine::s_functionHelper.aliasesList().mainAlias(), context);

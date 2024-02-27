@@ -119,14 +119,14 @@ size_t RationalNode::serialize(char *buffer, size_t bufferSize,
 
 // Layout
 
-Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context *context) const {
-  Layout numeratorLayout = signedNumerator().createLayout();
+OLayout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits,
+                                   Context *context) const {
+  OLayout numeratorLayout = signedNumerator().createLayout();
   if (isInteger()) {
     return numeratorLayout;
   }
-  Layout denominatorLayout = denominator().createLayout();
+  OLayout denominatorLayout = denominator().createLayout();
   return FractionLayout::Builder(numeratorLayout, denominatorLayout);
 }
 

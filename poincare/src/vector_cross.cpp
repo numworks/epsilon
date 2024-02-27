@@ -17,7 +17,7 @@ Expression VectorCrossNode::shallowReduce(
   return VectorCross(this).shallowReduce(reductionContext);
 }
 
-Layout VectorCrossNode::createLayout(
+OLayout VectorCrossNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

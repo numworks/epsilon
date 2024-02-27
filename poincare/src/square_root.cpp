@@ -21,7 +21,7 @@ int SquareRootNode::numberOfChildren() const {
   return SquareRoot::s_functionHelper.numberOfChildren();
 }
 
-Layout SquareRootNode::createLayout(
+OLayout SquareRootNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context *context) const {
   return NthRootLayout::Builder(childAtIndex(0)->createLayout(

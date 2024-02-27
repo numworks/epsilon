@@ -18,9 +18,9 @@ int ArcSineNode::numberOfChildren() const {
   return ArcSine::s_functionHelper.numberOfChildren();
 }
 
-Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context* context) const {
+OLayout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                  int numberOfSignificantDigits,
+                                  Context* context) const {
   return LayoutHelper::Prefix(
       ArcSine(this), floatDisplayMode, numberOfSignificantDigits,
       ArcSine::s_functionHelper.aliasesList().mainAlias(), context);

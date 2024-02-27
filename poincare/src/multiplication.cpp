@@ -313,7 +313,7 @@ CodePoint MultiplicationNode::operatorSymbol() const {
   return CodePointForOperatorSymbol(static_cast<MultiplicationSymbol>(sign));
 }
 
-Layout MultiplicationNode::createLayout(
+OLayout MultiplicationNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context *context) const {
   constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;

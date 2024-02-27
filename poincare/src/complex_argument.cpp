@@ -17,7 +17,7 @@ int ComplexArgumentNode::numberOfChildren() const {
   return ComplexArgument::s_functionHelper.numberOfChildren();
 }
 
-Layout ComplexArgumentNode::createLayout(
+OLayout ComplexArgumentNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return LayoutHelper::Prefix(

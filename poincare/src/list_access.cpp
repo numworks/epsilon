@@ -37,7 +37,7 @@ size_t ListAccessNode<U>::serialize(
 }
 
 template <>
-Layout ListAccessNode<1>::createLayout(
+OLayout ListAccessNode<1>::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
@@ -55,7 +55,7 @@ Layout ListAccessNode<1>::createLayout(
 }
 
 template <>
-Layout ListAccessNode<2>::createLayout(
+OLayout ListAccessNode<2>::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   HorizontalLayout parameters = HorizontalLayout::Builder();

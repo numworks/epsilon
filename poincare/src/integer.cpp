@@ -262,7 +262,7 @@ size_t Integer::serializeInBinaryBase(char *buffer, size_t bufferSize,
 
 // Layout
 
-Layout Integer::createLayout(OMG::Base base) const {
+OLayout Integer::createLayout(OMG::Base base) const {
   constexpr int bufferSize = k_maxNumberOfDigitsBase10 + 1;
   char buffer[bufferSize];
   int numberOfChars = serialize(buffer, bufferSize, base);

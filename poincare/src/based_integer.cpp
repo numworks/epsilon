@@ -57,7 +57,7 @@ size_t BasedIntegerNode::serialize(char *buffer, size_t bufferSize,
 
 // Layout
 
-Layout BasedIntegerNode::createLayout(
+OLayout BasedIntegerNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context *context) const {
   return integer().createLayout(m_base);

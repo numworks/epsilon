@@ -22,7 +22,7 @@ int AbsoluteValueNode::numberOfChildren() const {
   return AbsoluteValue::s_functionHelper.numberOfChildren();
 }
 
-Layout AbsoluteValueNode::createLayout(
+OLayout AbsoluteValueNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return AbsoluteValueLayout::Builder(childAtIndex(0)->createLayout(

@@ -17,9 +17,9 @@ Expression VectorDotNode::shallowReduce(
   return VectorDot(this).shallowReduce(reductionContext);
 }
 
-Layout VectorDotNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
+OLayout VectorDotNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   return LayoutHelper::Prefix(
       VectorDot(this), floatDisplayMode, numberOfSignificantDigits,
       VectorDot::s_functionHelper.aliasesList().mainAlias(), context);

@@ -282,9 +282,9 @@ std::complex<T> PowerNode::computeOnComplex(
 
 // Layout
 
-Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                               int numberOfSignificantDigits,
-                               Context *context) const {
+OLayout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits,
+                                Context *context) const {
   ExpressionNode *indiceOperand = childAtIndex(1);
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(

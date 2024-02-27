@@ -482,6 +482,7 @@ T *ValuesController::parameterController() {
   }
   assert(derivationOrder == 0);
   m_functionParameterController->setRecord(record);
+  m_functionParameterController->setParameterDelegate(this);
   return m_functionParameterController;
 }
 

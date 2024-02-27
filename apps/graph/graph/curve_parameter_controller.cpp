@@ -225,8 +225,8 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   if (cell == &m_optionsCell && m_optionsCell.canBeActivatedByEvent(event)) {
     FunctionParameterController *details =
         App::app()->functionParameterController();
-    details->setUsePersonalizedTitle(false);
     details->setRecord(m_record);  // Will select cell at location (0,0)
+    details->setParameterDelegate(this);
     stack->push(details);
     return true;
   }

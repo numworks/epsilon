@@ -8,6 +8,7 @@
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
 
+#include "../shared/derivative_column_parameter_controller.h"
 #include "banner_view.h"
 #include "calculation_parameter_controller.h"
 
@@ -17,7 +18,8 @@ class GraphController;
 
 class CurveParameterController
     : public Shared::ExplicitFloatParameterController,
-      public Shared::WithRecord {
+      public Shared::WithRecord,
+      public ParameterDelegate {
  public:
   CurveParameterController(Shared::InteractiveCurveViewRange* graphRange,
                            BannerView* bannerView,
@@ -32,6 +34,11 @@ class CurveParameterController
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastTitle;
   }
+
+  // ParameterDelegate
+  bool usePersonalizedTitle() const override { return false; }
+  void hideDerivative(Ion::Storage::Record record,
+                      int derivationOrder) override {}
 
  private:
   using ParameterCell = Escher::MenuCellWithEditableText<

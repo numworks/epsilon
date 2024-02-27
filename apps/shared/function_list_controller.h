@@ -47,7 +47,6 @@ class FunctionListController : public ExpressionModelListController,
 
  protected:
   Escher::StackViewController* stackController() const;
-  void configureFunction(Ion::Storage::Record record);
   Escher::TabViewController* tabController() const;
 
   bool m_parameterColumnSelected;

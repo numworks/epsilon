@@ -106,7 +106,9 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
       }
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         // Open function parameter menu
-        configureFunction(selectedRecord());
+        StackViewController *stack = stackController();
+        parameterController()->setRecord(selectedRecord());
+        stack->push(parameterController());
         return true;
       }
       if (event != Ion::Events::Backspace && event != Ion::Events::Up) {
@@ -157,12 +159,6 @@ void FunctionListController::fillCellForRow(HighlightCell *cell, int row) {
 StackViewController *FunctionListController::stackController() const {
   return static_cast<StackViewController *>(
       parentResponder()->parentResponder()->parentResponder());
-}
-
-void FunctionListController::configureFunction(Ion::Storage::Record record) {
-  StackViewController *stack = stackController();
-  parameterController()->setRecord(record);
-  stack->push(parameterController());
 }
 
 TabViewController *FunctionListController::tabController() const {

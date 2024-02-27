@@ -467,6 +467,43 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
           k_unknownName, t, approximationContext));
 }
 
+ContinuousFunction::RecordDataBuffer::RecordDataBuffer(KDColor color)
+    : Shared::Function::RecordDataBuffer(color),
+      m_domain(-INFINITY, INFINITY),
+      m_derivativesOptions{},
+      m_tAuto(true) {
+  m_derivativesOptions.colorFirstDerivative = color;
+  m_derivativesOptions.colorSecondDerivative = color;
+}
+
+KDColor ContinuousFunction::RecordDataBuffer::color(int derivationOrder) const {
+  switch (derivationOrder) {
+    case 0:
+      return Function::RecordDataBuffer::color();
+    case 1:
+      return KDColor::RGB16(m_derivativesOptions.colorFirstDerivative);
+    default:
+      assert(derivationOrder == 2);
+      return KDColor::RGB16(m_derivativesOptions.colorSecondDerivative);
+  }
+}
+
+void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
+                                                    int derivationOrder) {
+  switch (derivationOrder) {
+    case 0:
+      Function::RecordDataBuffer::setColor(color);
+      break;
+    case 1:
+      m_derivativesOptions.colorFirstDerivative = color;
+      break;
+    default:
+      assert(derivationOrder == 2);
+      m_derivativesOptions.colorSecondDerivative = color;
+      break;
+  }
+}
+
 /* ContinuousFunction::Model */
 
 Expression ContinuousFunction::Model::expressionReduced(

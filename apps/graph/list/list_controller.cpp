@@ -243,10 +243,10 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     int relativeRow;
     ExpiringPointer<ContinuousFunction> f =
         modelStore()->modelForRecord(recordAtRow(row, &relativeRow));
+    int derivationOrder =
+        derivationOrderFromRelativeRow(f.pointer(), relativeRow);
     if (type == k_expressionCellType) {
       FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
-      int derivationOrder =
-          derivationOrderFromRelativeRow(f.pointer(), relativeRow);
       Layout layout;
       I18n::Message caption = I18n::Message::Default;
       if (derivationOrder == 0) {
@@ -269,8 +269,9 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
           ->setParameterSelected(m_parameterColumnSelected);
     }
     // f can be null if the entry was just created and is still empty.
-    KDColor functionColor =
-        (!f->isNull() && f->isActive()) ? f->color() : Palette::GrayDark;
+    KDColor functionColor = (!f->isNull() && f->isActive())
+                                ? f->color(derivationOrder)
+                                : Palette::GrayDark;
     static_cast<AbstractFunctionCell *>(cell)->setColor(functionColor);
   }
   FunctionListController::fillCellForRow(cell, row);

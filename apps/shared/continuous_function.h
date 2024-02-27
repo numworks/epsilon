@@ -291,11 +291,11 @@ class ContinuousFunction : public Function {
   class __attribute__((packed)) RecordDataBuffer
       : public Shared::Function::RecordDataBuffer {
    public:
-    RecordDataBuffer(KDColor color)
-        : Shared::Function::RecordDataBuffer(color),
-          m_domain(-INFINITY, INFINITY),
-          m_derivativesOptions{},
-          m_tAuto(true) {}
+    RecordDataBuffer(KDColor color);
+
+    KDColor color(int derivationOrder = 0) const override;
+    void setColor(KDColor color, int derivationOrder = 0) override;
+
     bool displayValueFirstDerivative() const {
       return m_derivativesOptions.valueFirstDerivative;
     }
@@ -346,6 +346,14 @@ class ContinuousFunction : public Function {
       bool plotFirstDerivative : 1;
       bool valueSecondDerivative : 1;
       bool plotSecondDerivative : 1;
+#if __EMSCRIPTEN__
+      // See comment in function.h
+      emscripten_align1_short colorFirstDerivative;
+      emscripten_align1_short colorSecondDerivative;
+#else
+      uint16_t colorFirstDerivative;
+      uint16_t colorSecondDerivative;
+#endif
     };
     DerivativesOptions m_derivativesOptions;
     bool m_tAuto;

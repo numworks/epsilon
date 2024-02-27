@@ -1,16 +1,17 @@
 #include "derivative_column_parameter_controller.h"
 
+#include "../app.h"
+
 using namespace Escher;
 using namespace Shared;
 
 namespace Graph {
 
 DerivativeColumnParameterController::DerivativeColumnParameterController(
-    Shared::ValuesController* valuesController)
-    : ColumnParameterController(valuesController),
+    Responder* parentResponder)
+    : ColumnParameterController(parentResponder),
       m_colorParameterController(nullptr),
-      m_derivationOrder(-1),
-      m_valuesController(valuesController) {
+      m_derivationOrder(-1) {
   m_colorCell.label()->setMessage(I18n::Message::Color);
   m_hideColumn.label()->setMessage(I18n::Message::HideDerivativeColumn);
 }
@@ -33,9 +34,9 @@ bool DerivativeColumnParameterController::handleEvent(
   }
   if (selectedCell() == &m_hideColumn &&
       m_colorCell.canBeActivatedByEvent(event)) {
-    m_valuesController->selectCellAtLocation(
-        m_valuesController->selectedColumn() - 1,
-        m_valuesController->selectedRow());
+    valuesController()->selectCellAtLocation(
+        valuesController()->selectedColumn() - 1,
+        valuesController()->selectedRow());
     if (m_derivationOrder == 1) {
       function()->setDisplayValueFirstDerivative(false);
     } else {
@@ -67,6 +68,11 @@ ExpiringPointer<ContinuousFunction>
 DerivativeColumnParameterController::function() {
   return Shared::GlobalContext::continuousFunctionStore->modelForRecord(
       m_record);
+}
+
+Shared::ValuesController*
+DerivativeColumnParameterController::valuesController() {
+  return App::app()->valuesController();
 }
 
 }  // namespace Graph

@@ -2,6 +2,7 @@ NODE(Rack, NARY16)
 NODE(VerticalOffset, 1, 1)
 
 NODE(Margin)
+NODE(ThousandSeparator)
 NODE(CodePoint, 0, sizeof(CodePoint))
 NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))
 // TODO Do we need a StringLayout ?

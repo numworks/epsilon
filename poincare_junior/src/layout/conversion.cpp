@@ -115,6 +115,9 @@ Poincare::OLayout ToPoincareLayout(const Tree *l) {
       } else {
         Poincare::HorizontalLayout nary = Poincare::HorizontalLayout::Builder();
         for (const Tree *child : l->children()) {
+          if (child->isMarginLayout() || child->isThousandSeparatorLayout()) {
+            continue;
+          }
           nary.addChildAtIndexInPlace(ToPoincareLayout(child),
                                       nary.numberOfChildren(),
                                       nary.numberOfChildren());

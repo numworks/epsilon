@@ -287,7 +287,7 @@ class OExpression : public TreeHandle {
   static bool IsDiscontinuous(const OExpression e, Context* context);
   static bool IsSymbolic(const OExpression e);
   static bool IsPoint(const OExpression e) {
-    return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
+    return e.isUndefined() || e.type() == ExpressionNode::Type::OPoint;
   }
   static bool IsSequence(const OExpression e) {
     return e.type() == ExpressionNode::Type::Sequence;

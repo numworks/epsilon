@@ -9,7 +9,7 @@ namespace Poincare {
 template <typename T>
 OExpression PointEvaluationNode<T>::complexToExpression(
     Preferences::ComplexFormat complexFormat) const {
-  return Point::Builder(Float<T>::Builder(m_x), Float<T>::Builder(m_y));
+  return OPoint::Builder(Float<T>::Builder(m_x), Float<T>::Builder(m_y));
 }
 
 template <typename T>

@@ -529,7 +529,7 @@ ParametricConic::ParametricConic(const OExpression& e, Context* context,
       ReductionContext(context, complexFormat, angleUnit, unitFormat,
                        ReductionTarget::SystemForAnalysis);
   OExpression reducedExpression = e.cloneAndReduce(reductionContext);
-  assert(reducedExpression.type() == ExpressionNode::Type::Point);
+  assert(reducedExpression.type() == ExpressionNode::Type::OPoint);
 
   const OExpression xOfT = reducedExpression.childAtIndex(0);
   const OExpression yOfT = reducedExpression.childAtIndex(1);

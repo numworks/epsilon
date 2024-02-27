@@ -471,7 +471,7 @@ OExpression Derivative::distributeOverPoint() {
     point = pointParent.childAtIndex(0);
     hasDependency = true;
   }
-  if (point.type() != ExpressionNode::Type::Point) {
+  if (point.type() != ExpressionNode::Type::OPoint) {
     return OExpression();
   }
   pointParent.replaceChildAtIndexWithGhostInPlace(0);

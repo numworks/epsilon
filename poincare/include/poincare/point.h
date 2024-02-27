@@ -9,7 +9,7 @@ namespace Poincare {
 class PointNode : public ExpressionNode {
  public:
   // ExpressionNode
-  Type type() const override { return Type::Point; }
+  Type type() const override { return Type::OPoint; }
   Evaluation<float> approximate(
       SinglePrecision p, const ApproximationContext& context) const override {
     return templatedApproximate<float>(context);
@@ -27,7 +27,7 @@ class PointNode : public ExpressionNode {
   size_t size() const override { return sizeof(PointNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream& stream) const override { stream << "Point"; }
+  void logNodeName(std::ostream& stream) const override { stream << "OPoint"; }
 #endif
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
@@ -40,7 +40,7 @@ class PointNode : public ExpressionNode {
   Evaluation<T> templatedApproximate(const ApproximationContext&) const;
 };
 
-class Point : public ExpressionTwoChildren<Point, PointNode> {
+class OPoint : public ExpressionTwoChildren<OPoint, PointNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
 

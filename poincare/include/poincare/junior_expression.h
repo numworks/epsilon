@@ -211,7 +211,7 @@ class JuniorExpression : public OExpression {
   }
   static bool IsSymbolic(const JuniorExpression e) { return false; }
   static bool IsPoint(const JuniorExpression e) {
-    return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
+    return e.isUndefined() || e.type() == ExpressionNode::Type::OPoint;
   }
   static bool IsSequence(const JuniorExpression e) {
     return e.type() == ExpressionNode::Type::Sequence;

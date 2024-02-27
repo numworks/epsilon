@@ -1755,14 +1755,14 @@ QUIZ_CASE(poincare_parsing_logic) {
 QUIZ_CASE(poincare_parsing_points) {
   assert_parsed_expression_is(
       "(0,1)",
-      Point::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1)));
+      OPoint::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1)));
   assert_parsed_expression_is(
-      "(5,sin(3))", Point::Builder(BasedInteger::Builder(5),
-                                   Sine::Builder(BasedInteger::Builder(3))));
+      "(5,sin(3))", OPoint::Builder(BasedInteger::Builder(5),
+                                    Sine::Builder(BasedInteger::Builder(3))));
   assert_parsed_expression_is(
       "(0,1)cos(3)",
       Multiplication::Builder(
-          Point::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1)),
+          OPoint::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1)),
           Cosine::Builder(BasedInteger::Builder(3))));
 }
 

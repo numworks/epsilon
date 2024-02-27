@@ -47,7 +47,7 @@ class SimplificationHelper {
   /* This method applies the default reduction that almost all nodes need:
    * - It bubbles up dependencies
    * - Depending on its parameters, it applies different default reductions
-   *   on expressions containing Undef, Boolean, Unit, OMatrix, List and Point
+   *   on expressions containing Undef, Boolean, Unit, OMatrix, List and OPoint
    */
   static OExpression defaultShallowReduce(
       OExpression e, ReductionContext* reductionContext,

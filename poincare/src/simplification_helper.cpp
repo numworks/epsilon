@@ -180,7 +180,7 @@ OExpression SimplificationHelper::undefinedOnBooleans(OExpression e) {
 OExpression SimplificationHelper::undefinedOnPoint(OExpression e) {
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
-    if (e.childAtIndex(i).type() == ExpressionNode::Type::Point) {
+    if (e.childAtIndex(i).type() == ExpressionNode::Type::OPoint) {
       return e.replaceWithUndefinedInPlace();
     }
   }

@@ -15,17 +15,17 @@ size_t PointNode::serialize(char* buffer, size_t bufferSize,
 }
 
 OExpression PointNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Point(this).shallowReduce(reductionContext);
+  return OPoint(this).shallowReduce(reductionContext);
 }
 
 template <typename T>
 Evaluation<T> PointNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
-  Coordinate2D<T> xy = Point(this).approximate2D<T>(approximationContext);
+  Coordinate2D<T> xy = OPoint(this).approximate2D<T>(approximationContext);
   return PointEvaluation<T>::Builder(xy.x(), xy.y());
 }
 
-OExpression Point::shallowReduce(ReductionContext reductionContext) {
+OExpression OPoint::shallowReduce(ReductionContext reductionContext) {
   OExpression e = SimplificationHelper::defaultShallowReduce(
       *this, &reductionContext,
       SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
@@ -41,8 +41,8 @@ OExpression Point::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-Layout Point::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
-                             int significantDigits, Context* context) const {
+Layout OPoint::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
+                              int significantDigits, Context* context) const {
   Layout child0 = childAtIndex(0).createLayout(floatDisplayMode,
                                                significantDigits, context);
   Layout child1 = childAtIndex(1).createLayout(floatDisplayMode,

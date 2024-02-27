@@ -1189,7 +1189,7 @@ void Parser::defaultParseLeftParenthesis(bool isSystemParenthesis,
     OExpression result = parseCommaSeparatedList();
     if (!result.isUninitialized() && result.numberOfChildren() == 2) {
       leftHandSide =
-          Point::Builder(result.childAtIndex(0), result.childAtIndex(1));
+          OPoint::Builder(result.childAtIndex(0), result.childAtIndex(1));
     } else if (!result.isUninitialized() && result.numberOfChildren() == 1) {
       leftHandSide = Parenthesis::Builder(result.childAtIndex(0));
     } else {

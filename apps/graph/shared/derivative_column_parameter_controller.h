@@ -30,7 +30,7 @@ class DerivativeColumnParameterController
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_colorCell;
-  Escher::MenuCell<Escher::MessageTextView> m_hideColumn;
+  Escher::MenuCell<Escher::MessageTextView> m_hideCell;
   Shared::ColorParameterController m_colorParameterController;
   Ion::Storage::Record m_record;
   int m_derivationOrder;

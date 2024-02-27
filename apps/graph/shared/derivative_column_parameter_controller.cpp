@@ -13,7 +13,7 @@ DerivativeColumnParameterController::DerivativeColumnParameterController(
       m_colorParameterController(nullptr),
       m_derivationOrder(-1) {
   m_colorCell.label()->setMessage(I18n::Message::Color);
-  m_hideColumn.label()->setMessage(I18n::Message::HideDerivativeColumn);
+  m_hideCell.label()->setMessage(I18n::Message::HideDerivativeColumn);
 }
 
 void DerivativeColumnParameterController::viewWillAppear() {
@@ -24,16 +24,15 @@ void DerivativeColumnParameterController::viewWillAppear() {
 
 bool DerivativeColumnParameterController::handleEvent(
     Ion::Events::Event event) {
+  HighlightCell* cell = selectedCell();
   StackViewController* stack =
       static_cast<StackViewController*>(parentResponder());
-  if (selectedCell() == &m_colorCell &&
-      m_colorCell.canBeActivatedByEvent(event)) {
+  if (cell == &m_colorCell && m_colorCell.canBeActivatedByEvent(event)) {
     m_colorParameterController.setRecord(m_record, m_derivationOrder);
     stack->push(&m_colorParameterController);
     return true;
   }
-  if (selectedCell() == &m_hideColumn &&
-      m_colorCell.canBeActivatedByEvent(event)) {
+  if (cell == &m_hideCell && m_colorCell.canBeActivatedByEvent(event)) {
     valuesController()->selectCellAtLocation(
         valuesController()->selectedColumn() - 1,
         valuesController()->selectedRow());
@@ -43,7 +42,6 @@ bool DerivativeColumnParameterController::handleEvent(
       assert(m_derivationOrder == 2);
       function()->setDisplayValueSecondDerivative(false);
     }
-    StackViewController* stack = (StackViewController*)(parentResponder());
     stack->pop();
     return true;
   }
@@ -55,7 +53,7 @@ HighlightCell* DerivativeColumnParameterController::cell(int row) {
   if (row == 0) {
     return &m_colorCell;
   }
-  return &m_hideColumn;
+  return &m_hideCell;
 }
 
 void DerivativeColumnParameterController::setRecord(Ion::Storage::Record record,

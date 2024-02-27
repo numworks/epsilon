@@ -258,7 +258,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
             Shared::Function::k_maxNameWithArgumentSize;
         char buffer[bufferSize];
         size_t length =
-            f->nameWithoutArgument(buffer, bufferSize, derivationOrder);
+            f->nameWithArgument(buffer, bufferSize, derivationOrder);
         layout = LayoutHelper::String(buffer, length);
       }
       functionCell->expressionCell()->setLayout(layout);

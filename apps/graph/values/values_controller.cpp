@@ -156,6 +156,21 @@ int ValuesController::columnToFreeze() {
   return column;
 }
 
+// ParameterDelegate
+
+void ValuesController::hideDerivative(Ion::Storage::Record record,
+                                      int derivationOrder) {
+  selectCellAtLocation(selectedColumn() - 1, selectedRow());
+  ExpiringPointer<ContinuousFunction> f =
+      functionStore()->modelForRecord(record);
+  if (derivationOrder == 1) {
+    f->setDisplayValueFirstDerivative(false);
+  } else {
+    assert(derivationOrder == 2);
+    f->setDisplayValueSecondDerivative(false);
+  }
+}
+
 /* PRIVATE */
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
@@ -462,6 +477,7 @@ T *ValuesController::parameterController() {
   if (derivationOrder >= 1) {
     assert(derivationOrder == 1 || derivationOrder == 2);
     m_derivativeColumnParameterController->setRecord(record, derivationOrder);
+    m_derivativeColumnParameterController->setParameterDelegate(this);
     return m_derivativeColumnParameterController;
   }
   assert(derivationOrder == 0);

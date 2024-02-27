@@ -21,7 +21,8 @@ namespace Graph {
 
 class ValuesController : public Shared::ValuesController,
                          public Escher::PrefacedTableViewDelegate,
-                         public Escher::HeavyTableSizeManagerDelegate {
+                         public Escher::HeavyTableSizeManagerDelegate,
+                         public ParameterDelegate {
  public:
   ValuesController(
       Escher::Responder *parentResponder, Escher::ButtonRowController *header,
@@ -66,6 +67,10 @@ class ValuesController : public Shared::ValuesController,
   // PrefacedTableViewDelegate
   KDCoordinate maxRowPrefaceHeight() const override { return 3 * k_cellHeight; }
   int columnToFreeze() override;
+
+  // ParameterDelegate
+  void hideDerivative(Ion::Storage::Record record,
+                      int derivationOrder) override;
 
  private:
   constexpr static size_t k_maxNumberOfSymbolTypes =

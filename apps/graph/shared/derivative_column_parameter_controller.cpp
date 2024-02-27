@@ -11,7 +11,8 @@ DerivativeColumnParameterController::DerivativeColumnParameterController(
     Responder* parentResponder)
     : ColumnParameterController(parentResponder),
       m_colorParameterController(nullptr),
-      m_derivationOrder(-1) {
+      m_derivationOrder(-1),
+      m_parameterDelegate(nullptr) {
   m_colorCell.label()->setMessage(I18n::Message::Color);
   m_hideCell.label()->setMessage(I18n::Message::HideDerivativeColumn);
 }
@@ -33,15 +34,8 @@ bool DerivativeColumnParameterController::handleEvent(
     return true;
   }
   if (cell == &m_hideCell && m_colorCell.canBeActivatedByEvent(event)) {
-    valuesController()->selectCellAtLocation(
-        valuesController()->selectedColumn() - 1,
-        valuesController()->selectedRow());
-    if (m_derivationOrder == 1) {
-      function()->setDisplayValueFirstDerivative(false);
-    } else {
-      assert(m_derivationOrder == 2);
-      function()->setDisplayValueSecondDerivative(false);
-    }
+    assert(m_parameterDelegate);
+    m_parameterDelegate->hideDerivative(m_record, m_derivationOrder);
     stack->pop();
     return true;
   }

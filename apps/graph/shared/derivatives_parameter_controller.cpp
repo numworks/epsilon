@@ -39,6 +39,7 @@ void DerivativesParameterController::viewWillAppear() {
   for (int row = 0; row < k_numberOfCells; row++) {
     updateSwitch(row);
   }
+  selectRow(0);
   m_selectableListView.reloadData();
   UniformSelectableListController::viewWillAppear();
 }

@@ -71,6 +71,9 @@ class App : public Shared::FunctionApp {
   FunctionParameterController *parameterController() {
     return &m_functionParameterController;
   }
+  DerivativeColumnParameterController *derivativeColumnParameterController() {
+    return &m_derivativeColumnParameterController;
+  }
 
  private:
   App(Snapshot *snapshot);
@@ -90,6 +93,7 @@ class App : public Shared::FunctionApp {
   };
 
   FunctionParameterController m_functionParameterController;
+  DerivativeColumnParameterController m_derivativeColumnParameterController;
   Shared::CachesContainer m_cachesContainer;
   Escher::TabUnion<ListTab, GraphTab, ValuesTab> m_tabs;
 };

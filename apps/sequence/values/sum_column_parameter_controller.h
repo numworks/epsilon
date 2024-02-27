@@ -1,22 +1,33 @@
-#ifndef SUM_COLUMN_PARAM_CONTROLLER_H
-#define SUM_COLUMN_PARAM_CONTROLLER_H
+#ifndef SEQUENCE_SUM_COLUMN_PARAM_CONTROLLER_H
+#define SEQUENCE_SUM_COLUMN_PARAM_CONTROLLER_H
 
-#include <apps/shared/calculus_column_parameter_controller.h>
+#include <apps/shared/function_store.h>
+#include <apps/shared/values_controller.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 
 namespace Sequence {
 
-class SumColumnParameterController
-    : public Shared::CalculusColumnParameterController {
+class SumColumnParameterController : public Shared::ColumnParameterController {
  public:
-  SumColumnParameterController(Shared::ValuesController* valuesController)
-      : Shared::CalculusColumnParameterController(I18n::Message::HideSumOfTerms,
-                                                  valuesController) {}
+  SumColumnParameterController(Shared::ValuesController* valuesController);
 
- private:
-  void hideCalculusColumn() override {
-    Shared::GlobalContext::sequenceStore->modelForRecord(m_record)
-        ->setDisplaySum(false);
+  bool handleEvent(Ion::Events::Event event) override;
+  int numberOfRows() const override { return k_totalNumberOfCell; }
+  Escher::HighlightCell* cell(int row) override {
+    assert(row == 0);
+    return &m_hideColumn;
   }
+  void setRecord(Ion::Storage::Record record) { m_record = record; }
+
+ protected:
+  Shared::ColumnNameHelper* columnNameHelper() override {
+    return m_valuesController;
+  }
+  constexpr static int k_totalNumberOfCell = 1;
+  Escher::MenuCell<Escher::MessageTextView> m_hideColumn;
+  Ion::Storage::Record m_record;
+  Shared::ValuesController* m_valuesController;
 };
 
 }  // namespace Sequence

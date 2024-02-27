@@ -86,7 +86,7 @@ class ListController : public Shared::FunctionListController,
 
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;
-  FunctionParameterController* m_parameterController;
+  FunctionParameterController* m_functionParameterController;
   DerivativeColumnParameterController* m_derivativeColumnParameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController::Default m_modelsStackController;

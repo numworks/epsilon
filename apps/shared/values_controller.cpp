@@ -502,13 +502,12 @@ void ValuesController::setTitleCellText(HighlightCell *cell, int column) {
 }
 
 void ValuesController::setTitleCellStyle(HighlightCell *cell, int column) {
-  if (typeAtLocation(column, 0) == k_functionTitleCellType) {
-    FunctionTitleCell *myCell = static_cast<FunctionTitleCell *>(cell);
-    Shared::Function *function =
-        functionStore()->modelForRecord(recordAtColumn(column)).pointer();
-    myCell->setColor(function->color());
+  if (typeAtLocation(column, 0) != k_functionTitleCellType) {
     return;
   }
+  Shared::Function *function =
+      functionStore()->modelForRecord(recordAtColumn(column)).pointer();
+  static_cast<FunctionTitleCell *>(cell)->setColor(function->color());
 }
 
 void ValuesController::reloadEditedCell(int column, int row) {

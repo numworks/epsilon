@@ -15,10 +15,9 @@ class SumAndProductNode : public ParameteredExpressionNode {
   OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                        int numberOfSignificantDigits,
                        Context* context) const override;
-  virtual Layout createSumAndProductLayout(Layout argumentLayout,
-                                           Layout symbolLayout,
-                                           Layout subscriptLayout,
-                                           Layout superscriptLayout) const = 0;
+  virtual OLayout createSumAndProductLayout(
+      OLayout argumentLayout, OLayout symbolLayout, OLayout subscriptLayout,
+      OLayout superscriptLayout) const = 0;
   // Simplication
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {

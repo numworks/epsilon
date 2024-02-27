@@ -13,10 +13,10 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper Sum::s_functionHelper;
 
-Layout SumNode::createSumAndProductLayout(Layout argumentLayout,
-                                          Layout symbolLayout,
-                                          Layout subscriptLayout,
-                                          Layout superscriptLayout) const {
+OLayout SumNode::createSumAndProductLayout(OLayout argumentLayout,
+                                           OLayout symbolLayout,
+                                           OLayout subscriptLayout,
+                                           OLayout superscriptLayout) const {
   return SumLayout::Builder(argumentLayout, symbolLayout, subscriptLayout,
                             superscriptLayout);
 }

@@ -1164,16 +1164,16 @@ OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                  Context *context, bool forceStripMargin,
                                  bool nested) const {
   if (isUninitialized()) {
-    return Layout();
+    return OLayout();
   }
   OLayout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits,
                                    context);
   assert(!l.isUninitialized());
+  assert(l.type() != LayoutNode::Type::JuniorLayout);
   if (forceStripMargin || !(nested || LayoutHasLockedMargins(l) ||
                             LayoutHasStringWithThousandSeparator(l))) {
     StripMarginFromLayout(l);
   }
-  l = JuniorLayout::Juniorize(l);
   return l;
 }
 

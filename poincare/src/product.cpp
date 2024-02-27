@@ -13,10 +13,9 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper Product::s_functionHelper;
 
-Layout ProductNode::createSumAndProductLayout(Layout argumentLayout,
-                                              Layout symbolLayout,
-                                              Layout subscriptLayout,
-                                              Layout superscriptLayout) const {
+OLayout ProductNode::createSumAndProductLayout(
+    OLayout argumentLayout, OLayout subscriptLayout, OLayout symbolLayout,
+    OLayout superscriptLayout) const {
   return ProductLayout::Builder(argumentLayout, symbolLayout, subscriptLayout,
                                 superscriptLayout);
 }

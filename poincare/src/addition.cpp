@@ -62,12 +62,12 @@ int AdditionNode::getPolynomialCoefficients(Context* context,
 OLayout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits,
                                    Context* context) const {
-  Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode,
-                                      numberOfSignificantDigits, "+", context);
-  if (displayImplicitAdditionBetweenUnits(result)) {
-    // Remove the '+'
-    PoincareJ::AppHelpers::MakeAdditionImplicit(result);
-  }
+  OLayout result = LayoutHelper::Infix(Addition(this), floatDisplayMode,
+                                       numberOfSignificantDigits, "+", context);
+  // if (displayImplicitAdditionBetweenUnits(result)) {
+  // Remove the '+'
+  // PoincareJ::AppHelpers::MakeAdditionImplicit(result);
+  // }
   return result;
 }
 

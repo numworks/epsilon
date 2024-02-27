@@ -142,7 +142,7 @@ OLayout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode,
                                     numberOfSignificantDigits);
-  Layout res = LayoutHelper::String(buffer, numberOfChars);
+  OLayout res = LayoutHelper::String(buffer, numberOfChars);
   return res;
 }
 

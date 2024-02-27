@@ -42,7 +42,7 @@ OLayout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                Context* context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   if (m_numberOfChildren > 1) {
-    Layout elementsLayout = LayoutHelper::Infix(
+    OLayout elementsLayout = LayoutHelper::Infix(
         List(this), floatDisplayMode, numberOfSignificantDigits, ",", context);
     result.addOrMergeChildAtIndex(elementsLayout, 0);
   } else if (m_numberOfChildren == 1) {

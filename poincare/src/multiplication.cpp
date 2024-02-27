@@ -330,7 +330,7 @@ OLayout MultiplicationNode::createLayout(
         if (rightIsUnit && leftIsUnit) {
           /* Both children are unit: symbol is always a middle dot with no
            * margin */
-          Layout symbolLayout = CodePointLayout::Builder(
+          OLayout symbolLayout = CodePointLayout::Builder(
               CodePointForOperatorSymbol(MultiplicationSymbol::MiddleDot));
           symbolLayout.setMargin(false);
           rightLayout.setMargin(false);
@@ -340,7 +340,7 @@ OLayout MultiplicationNode::createLayout(
           // Unit on the right: don't display useless symbol and force margin
           rightLayout.setMargin(true);
           rightLayout.lockMargin(forceMarginOfRightUnit);
-          return Layout();
+          return OLayout();
         }
         return LayoutHelper::DefaultCreateOperatorLayoutForInfix(
             operatorName, left, right, rightLayout);

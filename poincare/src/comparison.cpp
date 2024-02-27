@@ -174,12 +174,12 @@ OLayout ComparisonNode::createLayout(
         childAtIndex(i)->createLayout(floatDisplayMode,
                                       numberOfSignificantDigits, context),
         result.numberOfChildren());
-    Layout operatorLayout = ComparisonOperatorLayout(m_operatorsList[i]);
+    OLayout operatorLayout = ComparisonOperatorLayout(m_operatorsList[i]);
     operatorLayout.setMargin(true);
     result.addChildAtIndexInPlace(operatorLayout, result.numberOfChildren(),
                                   result.numberOfChildren());
   }
-  Layout lastChildLayout =
+  OLayout lastChildLayout =
       childAtIndex(m_numberOfOperands - 1)
           ->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
   lastChildLayout.setMargin(true);

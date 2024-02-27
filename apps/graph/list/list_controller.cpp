@@ -210,7 +210,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     // Will open function parameter menu
     // Open function parameter menu
-    m_functionParameterController->setUsePersonalizedTitle(false);
     int relativeRow;
     Ion::Storage::Record record = selectedRecord(&relativeRow);
     ExpiringPointer<ContinuousFunction> f =
@@ -219,6 +218,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
         derivationOrderFromRelativeRow(f.pointer(), relativeRow);
     if (derivationOrder == 0) {
       m_functionParameterController->setRecord(record);
+      m_functionParameterController->setParameterDelegate(this);
       stackController()->push(m_functionParameterController);
     } else {
       m_derivativeColumnParameterController->setRecord(record, derivationOrder);

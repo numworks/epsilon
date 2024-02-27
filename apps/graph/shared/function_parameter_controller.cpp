@@ -23,15 +23,17 @@ FunctionParameterController::FunctionParameterController(
       m_detailsParameterController(nullptr),
       m_domainParameterController(nullptr),
       m_derivativesParameterController(nullptr),
-      m_usePersonalizedTitle(false) {
+      m_parameterDelegate(nullptr) {
   m_detailsCell.label()->setMessage(I18n::Message::Details);
   m_derivativesCell.label()->setMessage(I18n::Message::GraphDerivatives);
   m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
 }
 
 const char *FunctionParameterController::title() {
-  return m_usePersonalizedTitle ? m_titleBuffer
-                                : I18n::translate(I18n::Message::Options);
+  assert(m_parameterDelegate);
+  return m_parameterDelegate->usePersonalizedTitle()
+             ? m_titleBuffer
+             : I18n::translate(I18n::Message::Options);
 }
 
 HighlightCell *FunctionParameterController::cell(int row) {
@@ -130,7 +132,6 @@ ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {
 }
 
 void FunctionParameterController::initializeColumnParameters() {
-  setUsePersonalizedTitle(true);
   Shared::ColumnParameters::initializeColumnParameters();
 }
 

@@ -67,6 +67,10 @@ JuniorLayout JuniorLayout::Juniorize(OLayout l) {
   return Builder(PoincareJ::FromPoincareLayout(l));
 }
 
+OLayout JuniorLayout::UnJuniorize(JuniorLayout l) {
+  return PoincareJ::ToPoincareLayout(l.tree());
+}
+
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
                         PoincareJ::LayoutCursor* cursor,
                         KDColor selectionColor) {

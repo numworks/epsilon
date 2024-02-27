@@ -75,6 +75,7 @@ class JuniorLayout final
   // Eat the tree
   static JuniorLayout Builder(PoincareJ::Tree* tree);
   static JuniorLayout Juniorize(OLayout l);
+  static OLayout UnJuniorize(JuniorLayout l);
   PoincareJ::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }

@@ -21,16 +21,10 @@ void MakeRightMostParenthesisTemporary(Tree* tree) {
 }
 
 void MakeAdditionImplicit(Tree* rack) {
-  int i = rack->numberOfChildren() - 1;
-  Tree* child = rack->child(0);
-  while (i >= 0) {
+  for (Tree* child : rack->children()) {
     if (CodePointLayout::IsCodePoint(child, '+')) {
-      NAry::SetNumberOfChildren(rack, rack->numberOfChildren() - 1);
-      child->removeTree();
-    } else {
-      child = child->nextTree();
+      child->cloneTreeOverTree(KMarginL);
     }
-    i--;
   }
 }
 

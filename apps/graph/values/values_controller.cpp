@@ -459,8 +459,7 @@ T *ValuesController::parameterController() {
       recordAtColumn(selectedColumn(), &derivationOrder);
   if (derivationOrder >= 1) {
     assert(derivationOrder == 1 || derivationOrder == 2);
-    m_derivativeColumnParameterController.setRecord(record);
-    m_derivativeColumnParameterController.setDerivationOrder(derivationOrder);
+    m_derivativeColumnParameterController.setRecord(record, derivationOrder);
     return &m_derivativeColumnParameterController;
   }
   assert(derivationOrder == 0);

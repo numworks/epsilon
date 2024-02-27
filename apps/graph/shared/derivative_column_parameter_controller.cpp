@@ -57,6 +57,12 @@ HighlightCell* DerivativeColumnParameterController::cell(int row) {
   return &m_hideColumn;
 }
 
+void DerivativeColumnParameterController::setRecord(Ion::Storage::Record record,
+                                                    int derivationOrder) {
+  m_record = record;
+  m_derivationOrder = derivationOrder;
+}
+
 ExpiringPointer<ContinuousFunction>
 DerivativeColumnParameterController::function() {
   return Shared::GlobalContext::continuousFunctionStore->modelForRecord(

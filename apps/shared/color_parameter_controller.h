@@ -13,8 +13,8 @@ class ColorParameterController : public Escher::SelectableListViewController<
                                      Escher::SimpleListViewDataSource> {
  public:
   ColorParameterController(Escher::Responder* parentResponder)
-      : SelectableListViewController<SimpleListViewDataSource>(
-            parentResponder) {}
+      : SelectableListViewController<SimpleListViewDataSource>(parentResponder),
+        m_derivationOrder(0) {}
 
   // ViewController
   const char* title() override { return I18n::translate(I18n::Message::Color); }
@@ -35,7 +35,7 @@ class ColorParameterController : public Escher::SelectableListViewController<
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
   // ColorParameterController
-  void setRecord(Ion::Storage::Record record) { m_record = record; }
+  void setRecord(Ion::Storage::Record record, int derivationOrder = 0);
 
  private:
   // Remaining cell can be above and below so we add +2
@@ -49,6 +49,7 @@ class ColorParameterController : public Escher::SelectableListViewController<
 
   Ion::Storage::Record m_record;
   ColorCell m_cells[k_numberOfCells];
+  int m_derivationOrder;
 };
 
 }  // namespace Shared

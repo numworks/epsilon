@@ -10,7 +10,7 @@ namespace Shared {
 
 void ColorParameterController::viewWillAppear() {
   int functionColorIndex = 0;
-  KDColor functionColor = function()->color();
+  KDColor functionColor = function()->color(m_derivationOrder);
   for (int i = 0; i < ColorNames::k_count; i++) {
     if (functionColor == ColorNames::k_colors[i]) {
       functionColorIndex = i;
@@ -25,7 +25,7 @@ bool ColorParameterController::handleEvent(Ion::Events::Event event) {
       static_cast<StackViewController *>(parentResponder());
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     KDColor selectedColor = ColorNames::k_colors[selectedRow()];
-    function()->setColor(selectedColor);
+    function()->setColor(selectedColor, m_derivationOrder);
     // Pop all the way back
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
@@ -44,6 +44,12 @@ void ColorParameterController::fillCellForRow(HighlightCell *cell, int row) {
   assert(row < ColorNames::k_count);
   colorCell->label()->setMessage(ColorNames::k_messages[row]);
   colorCell->accessory()->setColor(ColorNames::k_colors[row]);
+}
+
+void ColorParameterController::setRecord(Ion::Storage::Record record,
+                                         int derivationOrder) {
+  m_record = record;
+  m_derivationOrder = derivationOrder;
 }
 
 KDCoordinate ColorParameterController::defaultRowHeight() {

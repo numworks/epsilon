@@ -38,9 +38,13 @@ size_t Function::NameWithArgument(Ion::Storage::Record record,
 
 bool Function::isActive() const { return recordData()->isActive(); }
 
-KDColor Function::color() const { return recordData()->color(); }
+KDColor Function::color(int derivationOrder) const {
+  return recordData()->color(derivationOrder);
+}
 
-void Function::setColor(KDColor color) { recordData()->setColor(color); }
+void Function::setColor(KDColor color, int derivationOrder) {
+  recordData()->setColor(color, derivationOrder);
+}
 
 void Function::setActive(bool active) {
   recordData()->setActive(active);

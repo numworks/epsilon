@@ -16,7 +16,7 @@ DerivativeColumnParameterController::DerivativeColumnParameterController(
 
 void DerivativeColumnParameterController::viewWillAppear() {
   m_colorCell.subLabel()->setMessage(
-      ColorNames::NameForColor(function()->color()));
+      ColorNames::NameForColor(function()->color(m_derivationOrder)));
   CalculusColumnParameterController::viewWillAppear();
 }
 
@@ -26,7 +26,7 @@ bool DerivativeColumnParameterController::handleEvent(
       static_cast<StackViewController*>(parentResponder());
   if (selectedCell() == &m_colorCell &&
       m_colorCell.canBeActivatedByEvent(event)) {
-    m_colorParameterController.setRecord(m_record);
+    m_colorParameterController.setRecord(m_record, m_derivationOrder);
     stack->push(&m_colorParameterController);
     return true;
   }

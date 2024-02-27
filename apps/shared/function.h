@@ -38,8 +38,8 @@ class Function : public ExpressionModelHandle {
 
   // Properties
   virtual bool isActive() const;
-  KDColor color() const;
-  void setColor(KDColor color);
+  KDColor color(int derivationOrder = 0) const;
+  void setColor(KDColor color, int derivationOrder = 0);
   void setActive(bool active);
   virtual int numberOfSubCurves() const { return 1; }
   virtual bool isAlongY() const { return false; }
@@ -88,8 +88,12 @@ class Function : public ExpressionModelHandle {
   class __attribute__((packed)) RecordDataBuffer {
    public:
     RecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
-    KDColor color() const { return KDColor::RGB16(m_color); }
-    void setColor(KDColor color) { m_color = color; }
+    virtual KDColor color(int derivationOrder = 0) const {
+      return KDColor::RGB16(m_color);
+    }
+    virtual void setColor(KDColor color, int derivationOrder = 0) {
+      m_color = color;
+    }
     virtual bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
 

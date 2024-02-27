@@ -243,10 +243,15 @@ void ValuesController::reloadEditedCell(int column, int row) {
 }
 
 void ValuesController::setTitleCellStyle(HighlightCell *cell, int column) {
-  if (typeAtLocation(column, 0) == k_abscissaTitleCellType) {
+  if (typeAtLocation(column, 0) != k_functionTitleCellType) {
     return;
   }
-  Shared::ValuesController::setTitleCellStyle(cell, column);
+  int derivationOrder;
+  Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
+  Shared::ExpiringPointer<ContinuousFunction> function =
+      functionStore()->modelForRecord(record);
+  static_cast<FunctionTitleCell *>(cell)->setColor(
+      function->color(derivationOrder));
 }
 
 // Shared::ValuesController

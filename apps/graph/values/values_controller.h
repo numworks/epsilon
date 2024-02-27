@@ -69,6 +69,7 @@ class ValuesController : public Shared::ValuesController,
   int columnToFreeze() override;
 
   // ParameterDelegate
+  bool usePersonalizedTitle() const override { return true; }
   void hideDerivative(Ion::Storage::Record record,
                       int derivationOrder) override;
 

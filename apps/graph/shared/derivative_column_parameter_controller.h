@@ -19,11 +19,7 @@ class DerivativeColumnParameterController
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return 2; }
   Escher::HighlightCell* cell(int row) override;
-  void setDerivationOrder(int derivationOrder) {
-    assert(derivationOrder == 1 || derivationOrder == 2);
-    m_derivationOrder = derivationOrder;
-  }
-  void setRecord(Ion::Storage::Record record) { m_record = record; }
+  void setRecord(Ion::Storage::Record record, int derivationOrder);
 
  private:
   Shared::ColumnNameHelper* columnNameHelper() override {

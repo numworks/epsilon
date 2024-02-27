@@ -209,7 +209,23 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       !isAddEmptyRow(selectedRow()) && m_parameterColumnSelected &&
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     // Will open function parameter menu
+    // Open function parameter menu
     m_functionParameterController->setUseColumnTitle(false);
+    int relativeRow;
+    Ion::Storage::Record record = selectedRecord(&relativeRow);
+    ExpiringPointer<ContinuousFunction> f =
+        modelStore()->modelForRecord(record);
+    int derivationOrder =
+        derivationOrderFromRelativeRow(f.pointer(), relativeRow);
+    if (derivationOrder == 0) {
+      m_functionParameterController->setRecord(record);
+      stackController()->push(m_functionParameterController);
+    } else {
+      m_derivativeColumnParameterController->setRecord(record, derivationOrder);
+      m_derivativeColumnParameterController->setParameterDelegate(this);
+      stackController()->push(m_derivativeColumnParameterController);
+    }
+    return true;
   }
   return FunctionListController::handleEvent(event);
 }
@@ -278,6 +294,18 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     static_cast<AbstractFunctionCell *>(cell)->setColor(functionColor);
   }
   FunctionListController::fillCellForRow(cell, row);
+}
+
+void ListController::hideDerivative(Ion::Storage::Record record,
+                                    int derivationOrder) {
+  selectableListView()->selectCell(selectableListView()->selectedRow() - 1);
+  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(record);
+  if (derivationOrder == 1) {
+    f->setDisplayPlotFirstDerivative(false);
+  } else {
+    assert(derivationOrder == 2);
+    f->setDisplayPlotSecondDerivative(false);
+  }
 }
 
 void ListController::addNewModelAction() {

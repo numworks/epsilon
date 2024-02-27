@@ -9,6 +9,12 @@
 
 namespace Graph {
 
+class ParameterDelegate {
+ public:
+  virtual void hideDerivative(Ion::Storage::Record record,
+                              int derivationOrder) = 0;
+};
+
 class DerivativeColumnParameterController
     : public Shared::ColumnParameterController {
  public:
@@ -19,6 +25,9 @@ class DerivativeColumnParameterController
   int numberOfRows() const override { return 2; }
   Escher::HighlightCell* cell(int row) override;
   void setRecord(Ion::Storage::Record record, int derivationOrder);
+  void setParameterDelegate(ParameterDelegate* parameterDelegate) {
+    m_parameterDelegate = parameterDelegate;
+  }
 
  private:
   Shared::ColumnNameHelper* columnNameHelper() override {
@@ -34,6 +43,7 @@ class DerivativeColumnParameterController
   Shared::ColorParameterController m_colorParameterController;
   Ion::Storage::Record m_record;
   int m_derivationOrder;
+  ParameterDelegate* m_parameterDelegate;
 };
 
 }  // namespace Graph

@@ -15,7 +15,8 @@
 namespace Graph {
 
 class ListController : public Shared::FunctionListController,
-                       public Shared::MathToolboxExtraCellsDataSource {
+                       public Shared::MathToolboxExtraCellsDataSource,
+                       public ParameterDelegate {
  public:
   ListController(
       Escher::Responder* parentResponder, Escher::ButtonRowController* header,
@@ -50,6 +51,10 @@ class ListController : public Shared::FunctionListController,
   // MathToolboxExtraCellsDataSource
   int numberOfExtraCells() override { return k_numberOfToolboxExtraCells; }
   Poincare::Layout extraCellLayoutAtRow(int row) override;
+
+  // ParameterDelegate
+  void hideDerivative(Ion::Storage::Record record,
+                      int derivationOrder) override;
 
  private:
   // 6 rows of undefined empty functions

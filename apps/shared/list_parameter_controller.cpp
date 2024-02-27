@@ -14,7 +14,7 @@ ListParameterController::ListParameterController(
     I18n::Message deleteFunctionMessage,
     SelectableListViewDelegate *listDelegate)
     : ExplicitSelectableListViewController(parentResponder, listDelegate),
-      m_colorParameterController(this) {
+      m_colorParameterController(nullptr) {
   m_enableCell.label()->setMessage(
       I18n::Message::ActivateDeactivateListParamTitle);
   m_enableCell.subLabel()->setMessage(

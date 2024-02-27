@@ -148,7 +148,8 @@ class ExpressionNode : public TreeNode {
     OMatrix,
     EmptyExpression,
     JuniorExpression,
-    Matrix
+    Matrix,
+    Point
   };
 
   /* Poor man's RTTI */

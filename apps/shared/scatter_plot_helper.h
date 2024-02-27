@@ -26,12 +26,7 @@ class ScatterPlotIterable {
     Poincare::Point operator*() const {
       Poincare::Expression e = ExpressionIterable::Iterator::operator*();
       assert(e.type() == Poincare::ExpressionNode::Type::Point);
-#if 0  // TODO_PCJ
       return static_cast<Poincare::Point&>(e);
-#else
-      return Poincare::Point::Builder(Poincare::Expression(),
-                                      Poincare::Expression());
-#endif
     }
     bool operator!=(const Iterator& rhs) const {
       return this->ExpressionIterable::Iterator::operator!=(rhs) &&

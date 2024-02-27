@@ -168,4 +168,28 @@ template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float>*,
 template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double>*,
                                                         int, int);
 
+/* Point */
+
+Point Point::Builder(JuniorExpression x, JuniorExpression y) {
+  PoincareJ::Tree* tree = PoincareJ::KPoint->cloneNode();
+  x.tree()->clone();
+  y.tree()->clone();
+  JuniorExpression temp = JuniorExpression::Builder(tree);
+  return static_cast<Point&>(temp);
+}
+
+template <typename T>
+Coordinate2D<T> Point::approximate2D(
+    const ApproximationContext& approximationContext) {
+  // TODO_PCJ: Add context for angle unit and complex format.
+  return Coordinate2D<T>(
+      PoincareJ::Approximation::RootTreeTo<T>(tree()->child(0)),
+      PoincareJ::Approximation::RootTreeTo<T>(tree()->child(1)));
+}
+
+template Coordinate2D<float> Point::approximate2D<float>(
+    const ApproximationContext& approximationContext);
+template Coordinate2D<double> Point::approximate2D<double>(
+    const ApproximationContext& approximationContext);
+
 }  // namespace Poincare

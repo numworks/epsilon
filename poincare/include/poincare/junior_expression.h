@@ -255,6 +255,14 @@ class Matrix final : public JuniorExpression {
   static int ArrayInverse(T* array, int numberOfRows, int numberOfColumns);
 };
 
+class Point final : public JuniorExpression {
+ public:
+  static Point Builder(JuniorExpression x, JuniorExpression y);
+  template <typename T>
+  Coordinate2D<T> approximate2D(
+      const ApproximationContext& approximationContext);
+};
+
 }  // namespace Poincare
 
 #endif

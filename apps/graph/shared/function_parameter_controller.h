@@ -30,8 +30,8 @@ class FunctionParameterController : public Shared::ListParameterController,
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastTwoTitles;
   }
-  void setUseColumnTitle(bool useColumnTitle) {
-    m_useColumnTitle = useColumnTitle;
+  void setUsePersonalizedTitle(bool useColumnTitle) {
+    m_usePersonalizedTitle = useColumnTitle;
   }
 
  private:
@@ -65,7 +65,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
   DerivativesParameterController m_derivativesParameterController;
-  bool m_useColumnTitle;
+  bool m_usePersonalizedTitle;
 };
 
 }  // namespace Graph

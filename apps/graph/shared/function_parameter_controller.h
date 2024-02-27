@@ -19,9 +19,7 @@ class ValuesController;
 class FunctionParameterController : public Shared::ListParameterController,
                                     public Shared::ColumnParameters {
  public:
-  FunctionParameterController(Escher::Responder* parentResponder,
-                              I18n::Message functionColorMessage,
-                              I18n::Message deleteFunctionMessage);
+  FunctionParameterController(Escher::Responder* parentResponder);
   void setRecord(Ion::Storage::Record record) override;
   // MemoizedListViewDataSource
   Escher::HighlightCell* cell(int row) override;

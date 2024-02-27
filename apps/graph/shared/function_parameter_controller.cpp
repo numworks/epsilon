@@ -16,10 +16,10 @@ using namespace Escher;
 namespace Graph {
 
 FunctionParameterController::FunctionParameterController(
-    Responder *parentResponder, I18n::Message functionColorMessage,
-    I18n::Message deleteFunctionMessage)
-    : Shared::ListParameterController(parentResponder, functionColorMessage,
-                                      deleteFunctionMessage),
+    Responder *parentResponder)
+    : Shared::ListParameterController(parentResponder,
+                                      I18n::Message::FunctionColor,
+                                      I18n::Message::DeleteExpression),
       m_detailsParameterController(nullptr),
       m_domainParameterController(nullptr),
       m_derivativesParameterController(nullptr),

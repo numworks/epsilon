@@ -65,9 +65,8 @@ App::ValuesTab::ValuesTab()
 
 App::App(Snapshot* snapshot)
     : FunctionApp(snapshot, &m_tabs, ListTab::k_title),
-      m_functionParameterController(this, I18n::Message::FunctionColor,
-                                    I18n::Message::DeleteExpression),
-      m_derivativeColumnParameterController(this) {
+      m_functionParameterController(nullptr),
+      m_derivativeColumnParameterController(nullptr) {
   snapshot->functionStore()->setCachesContainer(&m_cachesContainer);
 }
 

@@ -24,6 +24,7 @@ app_sequence_src = $(addprefix apps/sequence/,\
   list/vertical_sequence_title_cell.cpp \
   values/interval_parameter_controller.cpp \
   values/sequence_column_parameter_controller.cpp \
+  values/sum_column_parameter_controller.cpp \
   values/values_controller.cpp \
 )
 

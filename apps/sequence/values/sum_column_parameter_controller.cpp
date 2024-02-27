@@ -1,23 +1,25 @@
-#include "calculus_column_parameter_controller.h"
+#include "sum_column_parameter_controller.h"
 
 using namespace Escher;
+using namespace Shared;
 
-namespace Shared {
+namespace Sequence {
 
-CalculusColumnParameterController::CalculusColumnParameterController(
-    I18n::Message hideMessage, ValuesController *valuesController)
+SumColumnParameterController::SumColumnParameterController(
+    Shared::ValuesController *valuesController)
     : ColumnParameterController(valuesController),
       m_valuesController(valuesController) {
-  m_hideColumn.label()->setMessage(hideMessage);
+  m_hideColumn.label()->setMessage(I18n::Message::HideSumOfTerms);
 }
 
-bool CalculusColumnParameterController::handleEvent(Ion::Events::Event event) {
+bool SumColumnParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedCell() == &m_hideColumn);
     m_valuesController->selectCellAtLocation(
         m_valuesController->selectedColumn() - 1,
         m_valuesController->selectedRow());
-    hideCalculusColumn();
+    GlobalContext::sequenceStore->modelForRecord(m_record)->setDisplaySum(
+        false);
     StackViewController *stack = (StackViewController *)(parentResponder());
     stack->pop();
     return true;
@@ -25,4 +27,4 @@ bool CalculusColumnParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-}  // namespace Shared
+}  // namespace Sequence

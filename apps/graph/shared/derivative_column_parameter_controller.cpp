@@ -6,18 +6,19 @@ using namespace Shared;
 namespace Graph {
 
 DerivativeColumnParameterController::DerivativeColumnParameterController(
-    ValuesController* valuesController)
-    : CalculusColumnParameterController(I18n::Message::HideDerivativeColumn,
-                                        valuesController),
+    Shared::ValuesController* valuesController)
+    : ColumnParameterController(valuesController),
       m_colorParameterController(nullptr),
-      m_derivationOrder(-1) {
+      m_derivationOrder(-1),
+      m_valuesController(valuesController) {
   m_colorCell.label()->setMessage(I18n::Message::Color);
+  m_hideColumn.label()->setMessage(I18n::Message::HideDerivativeColumn);
 }
 
 void DerivativeColumnParameterController::viewWillAppear() {
   m_colorCell.subLabel()->setMessage(
       ColorNames::NameForColor(function()->color(m_derivationOrder)));
-  CalculusColumnParameterController::viewWillAppear();
+  ColumnParameterController::viewWillAppear();
 }
 
 bool DerivativeColumnParameterController::handleEvent(
@@ -30,7 +31,22 @@ bool DerivativeColumnParameterController::handleEvent(
     stack->push(&m_colorParameterController);
     return true;
   }
-  return CalculusColumnParameterController::handleEvent(event);
+  if (selectedCell() == &m_hideColumn &&
+      m_colorCell.canBeActivatedByEvent(event)) {
+    m_valuesController->selectCellAtLocation(
+        m_valuesController->selectedColumn() - 1,
+        m_valuesController->selectedRow());
+    if (m_derivationOrder == 1) {
+      function()->setDisplayValueFirstDerivative(false);
+    } else {
+      assert(m_derivationOrder == 2);
+      function()->setDisplayValueSecondDerivative(false);
+    }
+    StackViewController* stack = (StackViewController*)(parentResponder());
+    stack->pop();
+    return true;
+  }
+  return false;
 }
 
 HighlightCell* DerivativeColumnParameterController::cell(int row) {
@@ -38,16 +54,7 @@ HighlightCell* DerivativeColumnParameterController::cell(int row) {
   if (row == 0) {
     return &m_colorCell;
   }
-  return CalculusColumnParameterController::cell(row);
-}
-
-void DerivativeColumnParameterController::hideCalculusColumn() {
-  if (m_derivationOrder == 1) {
-    function()->setDisplayValueFirstDerivative(false);
-    return;
-  }
-  assert(m_derivationOrder == 2);
-  function()->setDisplayValueSecondDerivative(false);
+  return &m_hideColumn;
 }
 
 ExpiringPointer<ContinuousFunction>

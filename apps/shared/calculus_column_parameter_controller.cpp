@@ -13,7 +13,7 @@ CalculusColumnParameterController::CalculusColumnParameterController(
 
 bool CalculusColumnParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    assert(selectedRow() == 0);
+    assert(selectedCell() == &m_hideColumn);
     m_valuesController->selectCellAtLocation(
         m_valuesController->selectedColumn() - 1,
         m_valuesController->selectedRow());

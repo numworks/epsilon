@@ -53,6 +53,7 @@ class ListController : public Shared::FunctionListController,
   Poincare::Layout extraCellLayoutAtRow(int row) override;
 
   // ParameterDelegate
+  bool usePersonalizedTitle() const override { return false; }
   void hideDerivative(Ion::Storage::Record record,
                       int derivationOrder) override;
 

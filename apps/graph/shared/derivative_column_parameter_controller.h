@@ -11,6 +11,7 @@ namespace Graph {
 
 class ParameterDelegate {
  public:
+  virtual bool usePersonalizedTitle() const = 0;
   virtual void hideDerivative(Ion::Storage::Record record,
                               int derivationOrder) = 0;
 };
@@ -20,6 +21,7 @@ class DerivativeColumnParameterController
  public:
   DerivativeColumnParameterController(Escher::Responder* parentResponder);
 
+  const char* title() override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return 2; }

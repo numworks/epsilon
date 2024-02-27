@@ -1,6 +1,7 @@
 #ifndef GRAPH_VALUES_CONTROLLER_H
 #define GRAPH_VALUES_CONTROLLER_H
 
+#include <apps/graph/shared/derivative_column_parameter_controller.h>
 #include <apps/graph/shared/function_parameter_controller.h>
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/expression_function_title_cell.h>
@@ -14,7 +15,6 @@
 #include <escher/toggleable_dot_view.h>
 #include <omg/round.h>
 
-#include "derivative_column_parameter_controller.h"
 #include "interval_parameter_selector_controller.h"
 
 namespace Graph {

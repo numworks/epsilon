@@ -26,7 +26,7 @@ ListController::ListController(
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddFunction),
       m_editableCell(this, this, &m_modelsStackController),
-      m_parameterController(functionParameterController),
+      m_functionParameterController(functionParameterController),
       m_derivativeColumnParameterController(
           derivativeColumnParameterController),
       m_modelsParameterController(this, this),
@@ -209,13 +209,13 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       !isAddEmptyRow(selectedRow()) && m_parameterColumnSelected &&
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     // Will open function parameter menu
-    m_parameterController->setUseColumnTitle(false);
+    m_functionParameterController->setUseColumnTitle(false);
   }
   return FunctionListController::handleEvent(event);
 }
 
 Shared::ListParameterController *ListController::parameterController() {
-  return m_parameterController;
+  return m_functionParameterController;
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {

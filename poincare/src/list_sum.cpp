@@ -26,7 +26,7 @@ template <typename T>
 Evaluation<T> ListSumNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   ExpressionNode* child = childAtIndex(0);
-  if (child->type() != ExpressionNode::Type::List) {
+  if (child->type() != ExpressionNode::Type::OList) {
     return Complex<T>::Undefined();
   }
 
@@ -35,7 +35,7 @@ Evaluation<T> ListSumNode::templatedApproximate(
 
 OExpression ListSum::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
-  if (child.type() != ExpressionNode::Type::List) {
+  if (child.type() != ExpressionNode::Type::OList) {
     return replaceWithUndefinedInPlace();
   }
 

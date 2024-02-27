@@ -817,7 +817,7 @@ OExpression Addition::factorizeSquaredTrigFunction(
                                   result.numberOfChildren(),
                                   result.numberOfChildren());
     Dependency dep = Dependency::Builder(result.shallowReduce(reductionContext),
-                                         List::Builder());
+                                         OList::Builder());
     dep.addDependency(baseOfTrigFunction);
     replaceWithInPlace(dep);
     return dep.shallowReduce(reductionContext);

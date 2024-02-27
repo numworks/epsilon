@@ -369,7 +369,7 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
                                      CodePointLayout::Builder('3')));
   p.addRow(CodePointLayout::Builder('1'));
 
-  List args = List::Builder();
+  OList args = OList::Builder();
   args.addChildAtIndexInPlace(BasedInteger::Builder(3), 0, 0);
   args.addChildAtIndexInPlace(
       Comparison::Builder(BasedInteger::Builder(2),

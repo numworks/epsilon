@@ -27,7 +27,7 @@ template <typename T>
 Evaluation<T> ListProductNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   ExpressionNode* child = childAtIndex(0);
-  if (child->type() != ExpressionNode::Type::List) {
+  if (child->type() != ExpressionNode::Type::OList) {
     return Complex<T>::Undefined();
   }
   return static_cast<ListNode*>(child)->productOfElements<T>(
@@ -36,7 +36,7 @@ Evaluation<T> ListProductNode::templatedApproximate(
 
 OExpression ListProduct::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
-  if (child.type() != ExpressionNode::Type::List) {
+  if (child.type() != ExpressionNode::Type::OList) {
     return replaceWithUndefinedInPlace();
   }
 

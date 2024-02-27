@@ -133,7 +133,7 @@ class ExpressionNode : public TreeNode {
     // - Complexes
     ComplexCartesian,
     // - Any kind of lists :
-    List,
+    OList,
     ListSequence,
     ListSort,
     ListSlice,

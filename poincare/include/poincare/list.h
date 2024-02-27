@@ -7,7 +7,7 @@ namespace Poincare {
 
 class ListNode : public ExpressionNode {
  public:
-  friend class List;
+  friend class OList;
   // TreeNode
   size_t size() const override { return sizeof(ListNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
@@ -15,11 +15,11 @@ class ListNode : public ExpressionNode {
     m_numberOfChildren = numberOfChildren;
   }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream& stream) const override { stream << "List"; }
+  void logNodeName(std::ostream& stream) const override { stream << "OList"; }
 #endif
 
   // Properties
-  Type type() const override { return Type::List; }
+  Type type() const override { return Type::OList; }
 
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
@@ -68,15 +68,15 @@ class ListNode : public ExpressionNode {
   uint16_t m_numberOfChildren;
 };
 
-class List : public OExpression {
+class OList : public OExpression {
   friend class ListNode;
 
  public:
-  static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
+  static OList Builder() { return TreeHandle::NAryBuilder<OList, ListNode>(); }
   static OExpression Ones(int length);
 
-  List() : OExpression() {}
-  List(const ListNode* n) : OExpression(n) {}
+  OList() : OExpression() {}
+  OList(const ListNode* n) : OExpression(n) {}
 
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;

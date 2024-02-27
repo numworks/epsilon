@@ -57,7 +57,7 @@ class Random final : public ExpressionNoChildren<Random, RandomNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
   static OExpression UntypedBuilder(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::List);
+    assert(children.type() == ExpressionNode::Type::OList);
     return Builder();
   }
   constexpr static OExpression::FunctionHelper s_functionHelper =

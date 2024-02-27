@@ -932,7 +932,7 @@ void Parser::privateParseCustomIdentifier(OExpression &leftHandSide,
         m_parsingContext.context()->expressionTypeForIdentifier(name, length);
     if (idType != Context::SymbolAbstractType::Function &&
         idType != Context::SymbolAbstractType::Sequence &&
-        idType != Context::SymbolAbstractType::List) {
+        idType != Context::SymbolAbstractType::OList) {
       leftHandSide = Symbol::Builder(name, length);
       return;
     }
@@ -1033,7 +1033,7 @@ bool Parser::privateParseCustomIdentifierWithParameters(
       m_status =
           Status::Error;  // Function and variable must have distinct names.
       return true;
-    } else if (idType == Context::SymbolAbstractType::List) {
+    } else if (idType == Context::SymbolAbstractType::OList) {
       if (derivativeOrder > 0) {
         return false;
       }
@@ -1099,7 +1099,7 @@ OExpression Parser::parseFunctionParameters() {
       poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis
                                 : Token::Type::RightParenthesis;
   if (popTokenIfType(correspondingRightParenthesis)) {
-    return List::Builder();  // The function has no parameter.
+    return OList::Builder();  // The function has no parameter.
   }
   OExpression commaSeparatedList = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
@@ -1161,7 +1161,7 @@ OExpression Parser::parseVector() {
 }
 
 OExpression Parser::parseCommaSeparatedList() {
-  List commaSeparatedList = List::Builder();
+  OList commaSeparatedList = OList::Builder();
   int length = 0;
   do {
     OExpression item = parseUntil(Token::Type::Comma);
@@ -1228,7 +1228,7 @@ void Parser::parseList(OExpression &leftHandSide, Token::Type stoppingType) {
       return;
     }
   } else {
-    result = List::Builder();
+    result = OList::Builder();
   }
   leftHandSide = result;
   if (popTokenIfType(Token::Type::LeftParenthesis)) {

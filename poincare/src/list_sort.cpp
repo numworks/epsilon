@@ -38,7 +38,7 @@ Evaluation<T> ListSortNode::templatedApproximate(
 
 OExpression ListSort::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
-  if (child.type() != ExpressionNode::Type::List) {
+  if (child.type() != ExpressionNode::Type::OList) {
     if (!child.deepIsList(reductionContext.context())) {
       return replaceWithUndefinedInPlace();
     }
@@ -52,7 +52,7 @@ OExpression ListSort::shallowReduce(ReductionContext reductionContext) {
     return child;
   }
 
-  List list = static_cast<List&>(child);
+  OList list = static_cast<OList&>(child);
   ApproximationContext approximationContext(reductionContext, true);
   Evaluation<float> approximatedList =
       list.approximateToEvaluation<float>(approximationContext);

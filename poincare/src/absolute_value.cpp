@@ -114,7 +114,7 @@ OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   if (c.type() == ExpressionNode::Type::Power &&
       c.childAtIndex(1).isReal(reductionContext.context(),
                                reductionContext.shouldCheckMatrices())) {
-    List listOfDependencies = List::Builder();
+    OList listOfDependencies = OList::Builder();
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       listOfDependencies.addChildAtIndexInPlace(c.clone(), 0, 0);
     }

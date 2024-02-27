@@ -1102,8 +1102,8 @@ void assert_is_list_of_points(const char* definition, bool truth = true) {
   Shared::GlobalContext globalContext;
   OExpression e = parse_expression(definition, &globalContext, false);
   quiz_assert_print_if_failure(
-      e.type() == ExpressionNode::Type::List &&
-          static_cast<List&>(e).isListOfPoints(&globalContext) == truth,
+      e.type() == ExpressionNode::Type::OList &&
+          static_cast<OList&>(e).isListOfPoints(&globalContext) == truth,
       definition);
 }
 

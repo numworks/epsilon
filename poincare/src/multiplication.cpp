@@ -1071,7 +1071,7 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
             /* If we replace the multiplication with 0, we must add a dependency
              * in case the other terms of the multiplication are undef.
              * For example, if f(x) = 0*(1/x), then f(0) = undef. */
-            Dependency dep = Dependency::Builder(result, List::Builder());
+            Dependency dep = Dependency::Builder(result, OList::Builder());
             removeChildAtIndexInPlace(0);
             replaceWithInPlace(dep);
             dep.addDependency(numberOfChildren() > 1 ? *this : childAtIndex(0));
@@ -1129,7 +1129,7 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
  * merged and this turned into Multiplication::Builder(pi^5). */
 void Multiplication::factorizeBase(int i, int j,
                                    const ReductionContext &reductionContext,
-                                   List dependenciesCreatedDuringReduction) {
+                                   OList dependenciesCreatedDuringReduction) {
   OExpression e = childAtIndex(j);
   // Step 1: Get rid of the child j
   removeChildAtIndexInPlace(j);
@@ -1140,7 +1140,7 @@ void Multiplication::factorizeBase(int i, int j,
 
 void Multiplication::mergeInChildByFactorizingBase(
     int i, OExpression e, const ReductionContext &reductionContext,
-    List dependenciesCreatedDuringReduction) {
+    OList dependenciesCreatedDuringReduction) {
   /* This function replace the child at index i by its factorization with e. e
    * and childAtIndex(i) are supposed to have a common base.
    *
@@ -1233,7 +1233,7 @@ OExpression Multiplication::gatherLikeTerms(
    * other. */
   int i = 0;
   bool gatheredTerms = false;
-  List dependencies = List::Builder();
+  OList dependencies = OList::Builder();
   while (i < numberOfChildren() - 1) {
     OExpression oi = childAtIndex(i);
     OExpression oi1 = childAtIndex(i + 1);

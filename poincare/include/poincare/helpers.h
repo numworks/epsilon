@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-class List;
+class OList;
 template <typename T>
 class ListComplex;
 
@@ -20,7 +20,7 @@ class Helpers {
 
   template <typename T>
   struct ListSortPack {
-    List* list;
+    OList* list;
     ListComplex<T>* listComplex;
     bool scalars;
   };

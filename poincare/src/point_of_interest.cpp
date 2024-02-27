@@ -47,7 +47,7 @@ void PointsOfInterestList::append(double abscissa, double ordinate,
 void PointsOfInterestList::sort() {
   Helpers::Sort(
       [](int i, int j, void *context, int numberOfElements) {
-        List list = static_cast<PointsOfInterestList *>(context)->list();
+        OList list = static_cast<PointsOfInterestList *>(context)->list();
         list.swapChildrenInPlace(i, j);
       },
       [](int i, int j, void *context, int numberOfElements) {

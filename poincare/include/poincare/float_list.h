@@ -8,7 +8,7 @@
 namespace Poincare {
 
 template <typename T>
-class FloatList : public List, public DatasetColumn<T> {
+class FloatList : public OList, public DatasetColumn<T> {
   /* WARNING: Do not add children to FloatList with addChildAtIndexInPlace,
    * and do not replace children with replaceChildAtIndexInPlace.
    * The method floatExpressionAtIndex assumes that every child is a FloatNode,

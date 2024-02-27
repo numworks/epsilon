@@ -237,7 +237,7 @@ OExpression Trigonometry::ShallowReduceDirectFunction(
     // Only real functions asin and acos have a domain of definition
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real &&
         e.type() != ExpressionNode::Type::Tangent) {
-      List listOfDependencies = List::Builder();
+      OList listOfDependencies = OList::Builder();
       listOfDependencies.addChildAtIndexInPlace(e.childAtIndex(0).clone(), 0,
                                                 0);
       result = Dependency::Builder(result, listOfDependencies);
@@ -479,7 +479,8 @@ OExpression Trigonometry::ShallowReduceInverseFunction(
       e.childAtIndex(0).type() == ExpressionNode::Type::Power &&
       e.childAtIndex(0).childAtIndex(1).isMinusOne()) {
     // We add a dependency in 1/x
-    Dependency dep = Dependency::Builder(Undefined::Builder(), List::Builder());
+    Dependency dep =
+        Dependency::Builder(Undefined::Builder(), OList::Builder());
     dep.addDependency(e.childAtIndex(0).clone());
     dep.replaceChildAtIndexInPlace(0, e.childAtIndex(0).childAtIndex(0));
     OExpression x = dep.shallowReduce(reductionContext);

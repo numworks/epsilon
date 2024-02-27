@@ -5,8 +5,8 @@ namespace Poincare {
 template <typename T>
 void FloatList<T>::addValueAtIndex(T value, int index) {
   assert(index <= numberOfChildren());
-  List::addChildAtIndexInPlace(Float<T>::Builder(value), index,
-                               numberOfChildren());
+  OList::addChildAtIndexInPlace(Float<T>::Builder(value), index,
+                                numberOfChildren());
 }
 
 template <typename T>
@@ -23,7 +23,7 @@ void FloatList<T>::replaceValueAtIndex(T value, int index) {
 template <typename T>
 void FloatList<T>::removeValueAtIndex(int index) {
   assert(index < numberOfChildren());
-  List::removeChildAtIndexInPlace(index);
+  OList::removeChildAtIndexInPlace(index);
 }
 
 template <typename T>

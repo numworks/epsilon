@@ -29,7 +29,7 @@ OExpression ListComplexNode<T>::complexToExpression(
   if (isUndefined()) {
     return Undefined::Builder();
   }
-  List list = List::Builder();
+  OList list = OList::Builder();
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
     OExpression childExpression = Undefined::Builder();

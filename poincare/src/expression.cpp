@@ -317,7 +317,7 @@ bool OExpression::deepIsList(Context *context) const {
       [](const OExpression e, Context *context, void *) {
         switch (e.type()) {
           /* These expressions are always lists. */
-          case ExpressionNode::Type::List:
+          case ExpressionNode::Type::OList:
           case ExpressionNode::Type::ListElement:
           case ExpressionNode::Type::ListSlice:
           case ExpressionNode::Type::ListSequence:
@@ -1266,9 +1266,9 @@ void OExpression::SimplifyAndApproximateChildren(
     OExpression input, OExpression *simplifiedOutput,
     OExpression *approximateOutput, const ReductionContext &reductionContext) {
   assert(input.isOfType(
-      {ExpressionNode::Type::OMatrix, ExpressionNode::Type::List}));
-  List simplifiedChildren = List::Builder(),
-       approximatedChildren = List::Builder();
+      {ExpressionNode::Type::OMatrix, ExpressionNode::Type::OList}));
+  OList simplifiedChildren = OList::Builder(),
+        approximatedChildren = OList::Builder();
   int n = input.numberOfChildren();
   for (int i = 0; i < n; i++) {
     OExpression simplifiedChild, approximateChild;
@@ -1287,7 +1287,7 @@ void OExpression::SimplifyAndApproximateChildren(
     }
   }
 
-  if (input.type() == ExpressionNode::Type::List) {
+  if (input.type() == ExpressionNode::Type::OList) {
     *simplifiedOutput = simplifiedChildren;
     if (approximateOutput) {
       *approximateOutput = approximatedChildren;
@@ -1346,7 +1346,8 @@ void OExpression::cloneAndSimplifyAndApproximate(
   // Step 2: we approximate and beautify the reduced expression
   /* Case 1: the reduced expression is a matrix or a list : We scan the
    * children to beautify them with the right complex format. */
-  if (e.isOfType({ExpressionNode::Type::OMatrix, ExpressionNode::Type::List})) {
+  if (e.isOfType(
+          {ExpressionNode::Type::OMatrix, ExpressionNode::Type::OList})) {
     SimplifyAndApproximateChildren(e, simplifiedExpression,
                                    approximateExpression, reductionContext);
   } else {
@@ -1551,10 +1552,10 @@ int OExpression::lengthOfListChildren() const {
   int n = numberOfChildren();
   bool isNAry = IsNAry(*this);
   for (int i = n - 1; i >= 0; i--) {
-    if (isNAry && childAtIndex(i).type() < ExpressionNode::Type::List) {
+    if (isNAry && childAtIndex(i).type() < ExpressionNode::Type::OList) {
       return lastLength;
     }
-    if (childAtIndex(i).type() == ExpressionNode::Type::List) {
+    if (childAtIndex(i).type() == ExpressionNode::Type::OList) {
       int length = childAtIndex(i).numberOfChildren();
       if (lastLength == k_noList) {
         lastLength = length;
@@ -1664,7 +1665,7 @@ OExpression OExpression::deepApproximateKeepingSymbols(
        */
       *parentCanApproximate = true;
     } else if (type() != ExpressionNode::Type::Symbol &&
-               type() != ExpressionNode::Type::List &&
+               type() != ExpressionNode::Type::OList &&
                type() != ExpressionNode::Type::OMatrix && !isRandom()) {
       /* No need to approximate lists and matrices. Approximating their children
        * is enough.
@@ -1766,7 +1767,7 @@ OExpression OExpression::CreateComplexExpression(
   if (ra.isUndefined() || tb.isUndefined()) {
     return Undefined::Builder();
   }
-  List dependencies = List::Builder();
+  OList dependencies = OList::Builder();
   if (ra.type() == ExpressionNode::Type::Dependency) {
     ra = static_cast<Dependency &>(ra).extractDependencies(dependencies);
   }
@@ -1863,7 +1864,7 @@ OExpression OExpression::CreateComplexExpression(
 
 static OExpression maker(OExpression children, int nbChildren,
                          TreeNode::Initializer initializer, size_t size) {
-  assert(children.type() == ExpressionNode::Type::List);
+  assert(children.type() == ExpressionNode::Type::OList);
   TreeHandle handle = TreeHandle::Builder(initializer, size, nbChildren);
   OExpression result = static_cast<OExpression &>(handle);
   for (size_t i = 0; i < static_cast<size_t>(nbChildren); i++) {

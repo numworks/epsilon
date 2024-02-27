@@ -355,7 +355,7 @@ template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(
     const Tuple &);
 template LeastCommonMultiple TreeHandle::NAryBuilder<
     LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
-template List TreeHandle::NAryBuilder<List, ListNode>(const Tuple &);
+template OList TreeHandle::NAryBuilder<OList, ListNode>(const Tuple &);
 template ListComplex<double> TreeHandle::NAryBuilder<
     ListComplex<double>, ListComplexNode<double>>(const Tuple &);
 template ListComplex<float> TreeHandle::NAryBuilder<

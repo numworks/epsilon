@@ -58,7 +58,7 @@ OExpression Dimension::shallowReduce(ReductionContext reductionContext) {
   }
   OExpression c = childAtIndex(0);
 
-  if (c.type() == ExpressionNode::Type::List) {
+  if (c.type() == ExpressionNode::Type::OList) {
     OExpression result = Rational::Builder(c.numberOfChildren());
     replaceWithInPlace(result);
     return result;

@@ -121,7 +121,7 @@ void Helpers::Sort(Swap swap, Compare compare, void *context,
 template <typename T>
 void Helpers::SwapInList(int i, int j, void *context, int numberOfElements) {
   ListSortPack<float> *pack = static_cast<ListSortPack<float> *>(context);
-  List *list = reinterpret_cast<List *>(pack->list);
+  OList *list = reinterpret_cast<OList *>(pack->list);
   ListComplex<float> *listComplex =
       reinterpret_cast<ListComplex<float> *>(pack->listComplex);
   assert(listComplex->numberOfChildren() == numberOfElements);

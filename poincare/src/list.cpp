@@ -110,7 +110,7 @@ Evaluation<T> ListNode::productOfElements(
 }
 
 OExpression ListNode::shallowReduce(const ReductionContext& reductionContext) {
-  return List(this).shallowReduce(reductionContext);
+  return OList(this).shallowReduce(reductionContext);
 }
 
 template <typename T>
@@ -127,17 +127,17 @@ Evaluation<T> ListNode::templatedApproximate(
   return std::move(list);
 }
 
-// List
+// OList
 
-OExpression List::Ones(int length) {
-  List result = List::Builder();
+OExpression OList::Ones(int length) {
+  OList result = OList::Builder();
   for (int i = 0; i < length; i++) {
     result.addChildAtIndexInPlace(Rational::Builder(1), i, i);
   }
   return std::move(result);
 }
 
-OExpression List::shallowReduce(ReductionContext reductionContext) {
+OExpression OList::shallowReduce(ReductionContext reductionContext) {
   OExpression myParent = parent();
   bool isDependenciesList =
       !myParent.isUninitialized() &&
@@ -170,8 +170,8 @@ OExpression List::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-OExpression List::extremum(const ReductionContext& reductionContext,
-                           bool minimum) {
+OExpression OList::extremum(const ReductionContext& reductionContext,
+                            bool minimum) {
   const ApproximationContext approximationContext(reductionContext, true);
   int extremumIndex = node()->extremumIndex(approximationContext, minimum);
   if (extremumIndex < 0) {
@@ -180,7 +180,7 @@ OExpression List::extremum(const ReductionContext& reductionContext,
   return childAtIndex(extremumIndex);
 }
 
-bool List::isListOfPoints(Context* context) const {
+bool OList::isListOfPoints(Context* context) const {
   int n = numberOfChildren();
   for (int i = 0; i < n; i++) {
     OExpression e = childAtIndex(i);
@@ -201,7 +201,7 @@ bool List::isListOfPoints(Context* context) const {
 }
 
 template <typename T>
-OExpression List::approximateAndRemoveUndefAndSort(
+OExpression OList::approximateAndRemoveUndefAndSort(
     const ApproximationContext& approximationContext) const {
   if (isUninitialized()) {
     return Undefined::Builder();
@@ -235,8 +235,8 @@ template Evaluation<float> ListNode::productOfElements<float>(
 template Evaluation<double> ListNode::productOfElements<double>(
     const ApproximationContext& approximationContext);
 
-template OExpression List::approximateAndRemoveUndefAndSort<float>(
+template OExpression OList::approximateAndRemoveUndefAndSort<float>(
     const ApproximationContext& approximationContext) const;
-template OExpression List::approximateAndRemoveUndefAndSort<double>(
+template OExpression OList::approximateAndRemoveUndefAndSort<double>(
     const ApproximationContext& approximationContext) const;
 }  // namespace Poincare

@@ -134,7 +134,7 @@ bool SignFunction::derivate(const ReductionContext& reductionContext,
   Comparison condition = Comparison::Builder(
       childAtIndex(0), ComparisonNode::OperatorType::NotEqual,
       Rational::Builder(0));
-  List arguments = List::Builder();
+  OList arguments = OList::Builder();
   arguments.addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
   arguments.addChildAtIndexInPlace(condition, 1, 1);
   replaceWithInPlace(PiecewiseOperator::UntypedBuilder(arguments));

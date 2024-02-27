@@ -94,7 +94,7 @@ class TreeNode {
   TreeNode *root();
   virtual int numberOfChildren() const = 0;
   /* The following methods are only used for nodes that have a variable number
-   * of children like List, HorizontalLayout or Randint */
+   * of children like OList, HorizontalLayout or Randint */
   virtual void setNumberOfChildren(int numberOfChildren) {
   }  // Do not assert false.
   void incrementNumberOfChildren(int increment = 1) {

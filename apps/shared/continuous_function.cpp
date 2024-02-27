@@ -553,11 +553,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
-#if 0  // TODO_PCJ
     return static_cast<Point &>(point).approximate2D<T>(approximationContext);
-#else
-    return Coordinate2D<T>();
-#endif
   }
 
   if (!properties().isParametric()) {

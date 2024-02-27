@@ -66,7 +66,7 @@ int PiecewiseOperatorNode::indexOfFirstTrueCondition(
 }
 
 OExpression PiecewiseOperator::UntypedBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::List);
+  assert(children.type() == ExpressionNode::Type::OList);
   int n = children.numberOfChildren();
   // Check that each condition is boolean
   for (int i = 0; i < n; i++) {
@@ -289,7 +289,7 @@ OExpression PiecewiseOperator::bubbleUpPiecewiseDependencies(
     piecewiseDependency.replaceChildAtIndexInPlace(i, Rational::Builder(0));
   }
 
-  List dependencies = List::Builder();
+  OList dependencies = OList::Builder();
   for (int i = 0; i < nChildren; i += 2) {
     OExpression child = childAtIndex(i);
     int currentNDependencies = dependencies.numberOfChildren();
@@ -317,7 +317,7 @@ OExpression PiecewiseOperator::bubbleUpPiecewiseDependencies(
   if (dependencies.numberOfChildren() == 0) {
     return OExpression();
   }
-  dependencies = List::Builder();
+  dependencies = OList::Builder();
   dependencies.addChildAtIndexInPlace(piecewiseDependency, 0, 0);
   return SimplificationHelper::reduceAfterBubblingUpDependencies(
       *this, dependencies, reductionContext);

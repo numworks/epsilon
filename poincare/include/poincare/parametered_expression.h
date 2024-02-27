@@ -7,7 +7,7 @@
 namespace Poincare {
 
 /* Parametered expressions are Integral, Derivative, Sum, Product and
- * List Sequence. Their child at index 0 is parametered, and the child
+ * OList Sequence. Their child at index 0 is parametered, and the child
  * at index 1 is the parameter symbol.
  * */
 

@@ -124,7 +124,7 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   DependencyType typeOfDependency(
       const ReductionContext& reductionContext) const;
   static void AddPowerToListOfDependenciesIfNeeded(
-      OExpression e, Power compareTo, List l,
+      OExpression e, Power compareTo, OList l,
       const ReductionContext& reductionContext, bool clone);
 
   constexpr static AliasesList k_exponentialName = "exp";

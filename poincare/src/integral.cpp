@@ -507,7 +507,7 @@ IntegralNode::DetailedResult<T> IntegralNode::iterateAdaptiveQuadrature(
 #endif
 
 OExpression Integral::UntypedBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::List);
+  assert(children.type() == ExpressionNode::Type::OList);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return OExpression();

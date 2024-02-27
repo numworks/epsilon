@@ -479,8 +479,8 @@ QUIZ_CASE(poincare_parsing_matrices) {
 }
 
 template <size_t N>
-List BuildList(OExpression (&elements)[N]) {
-  List l = List::Builder();
+OList BuildList(OExpression (&elements)[N]) {
+  OList l = OList::Builder();
   for (size_t i = 0; i < N; i++) {
     l.addChildAtIndexInPlace(elements[i], i, i);
   }
@@ -488,7 +488,7 @@ List BuildList(OExpression (&elements)[N]) {
 }
 
 QUIZ_CASE(poincare_parsing_lists) {
-  assert_parsed_expression_is("{}", List::Builder());
+  assert_parsed_expression_is("{}", OList::Builder());
   {
     OExpression elements[] = {BasedInteger::Builder(1)};
     assert_parsed_expression_is("{1}", BuildList(elements));
@@ -976,7 +976,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_identifiers) {
   assert_text_not_parsable("sinh^\u0012-1\u0013(2)");
   assert_parsed_expression_is(
       "\u0014dep(x,{})",
-      Dependency::Builder(Symbol::Builder("x", 1), List::Builder()));
+      Dependency::Builder(Symbol::Builder("x", 1), OList::Builder()));
   assert_text_not_parsable("\u0014cos(x)");
   assert_text_not_parsable("\u0014cod(x)");
 

@@ -85,9 +85,9 @@ class PointOfInterest : public TreeHandle {
 
 class PointsOfInterestList {
  public:
-  List list() const { return m_list; }
-  void init() { m_list = List::Builder(); }
-  void setList(List list) { m_list = list; }
+  OList list() const { return m_list; }
+  void init() { m_list = OList::Builder(); }
+  void setList(OList list) { m_list = list; }
   bool isUninitialized() const { return m_list.isUninitialized(); }
   int numberOfPoints() const { return m_list.numberOfChildren(); }
   Poincare::PointOfInterest pointAtIndex(int i) const;
@@ -97,7 +97,7 @@ class PointsOfInterestList {
   void sort();
 
  private:
-  List m_list;
+  OList m_list;
 };
 
 }  // namespace Poincare

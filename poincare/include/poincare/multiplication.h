@@ -162,10 +162,10 @@ class Multiplication : public NAryExpression {
 
   // Simplification
   void factorizeBase(int i, int j, const ReductionContext& reductionContext,
-                     List dependenciesCreatedDuringReduction);
+                     OList dependenciesCreatedDuringReduction);
   void mergeInChildByFactorizingBase(
       int i, OExpression e, const ReductionContext& reductionContext,
-      List dependenciesCreatedDuringReduction = List());
+      OList dependenciesCreatedDuringReduction = OList());
   bool factorizeExponent(int i, int j,
                          const ReductionContext& reductionContext);
   OExpression gatherLikeTerms(const ReductionContext& reductionContext);

@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class List;
+class OList;
 
 /* Class holding helper functions (mostly defaults)
  * for expression simplication (reduce / beautify). */
@@ -47,7 +47,7 @@ class SimplificationHelper {
   /* This method applies the default reduction that almost all nodes need:
    * - It bubbles up dependencies
    * - Depending on its parameters, it applies different default reductions
-   *   on expressions containing Undef, Boolean, Unit, OMatrix, List and OPoint
+   *   on expressions containing Undef, Boolean, Unit, OMatrix, OList and OPoint
    */
   static OExpression defaultShallowReduce(
       OExpression e, ReductionContext* reductionContext,
@@ -91,7 +91,7 @@ class SimplificationHelper {
       OExpression e, const ReductionContext& reductionContext);
 
   static OExpression reduceAfterBubblingUpDependencies(
-      OExpression e, List dependencies,
+      OExpression e, OList dependencies,
       const ReductionContext& reductionContext);
 
   static OExpression undefinedOnBooleans(OExpression e);

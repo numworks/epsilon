@@ -204,7 +204,7 @@ OExpression SimplificationHelper::distributeReductionOverLists(
    * clone 'this' into the result list.
    * */
   int n = e.numberOfChildren();
-  List children = List::Builder();
+  OList children = OList::Builder();
   for (int i = 0; i < n; i++) {
     // You can't mix lists and matrices
     if (e.childAtIndex(i).deepIsMatrix(
@@ -218,12 +218,12 @@ OExpression SimplificationHelper::distributeReductionOverLists(
   /* Step 2 : Build the result list by cloning 'this' and readding
    * its children at the right place. If the child is a list, just add
    * the k-th element of the list. */
-  List result = List::Builder();
+  OList result = OList::Builder();
   for (int listIndex = 0; listIndex < listLength; listIndex++) {
     OExpression element = e.clone();
     for (int childIndex = 0; childIndex < n; childIndex++) {
       OExpression child = children.childAtIndex(childIndex);
-      if (child.type() == ExpressionNode::Type::List) {
+      if (child.type() == ExpressionNode::Type::OList) {
         assert(child.numberOfChildren() == listLength);
         element.replaceChildAtIndexInPlace(childIndex,
                                            child.childAtIndex(listIndex));
@@ -244,7 +244,7 @@ OExpression SimplificationHelper::bubbleUpDependencies(
   if (e.type() == ExpressionNode::Type::Comparison) {
     return OExpression();
   }
-  List dependencies = List::Builder();
+  OList dependencies = OList::Builder();
   int nChildren = e.numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
     if (e.isParameteredExpression() &&
@@ -268,7 +268,7 @@ OExpression SimplificationHelper::bubbleUpDependencies(
 }
 
 OExpression SimplificationHelper::reduceAfterBubblingUpDependencies(
-    OExpression e, List dependencies,
+    OExpression e, OList dependencies,
     const ReductionContext& reductionContext) {
   assert(dependencies.numberOfChildren() > 0);
   e = e.shallowReduce(reductionContext);

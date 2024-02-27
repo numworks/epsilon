@@ -119,7 +119,7 @@ OExpression ListElement::shallowReduce(ReductionContext reductionContext) {
   }
 
   OExpression listChild = childAtIndex(ListAccessNode<1>::k_listChildIndex);
-  if (listChild.type() != ExpressionNode::Type::List) {
+  if (listChild.type() != ExpressionNode::Type::OList) {
     return replaceWithUndefinedInPlace();
   }
 
@@ -135,7 +135,7 @@ OExpression ListElement::shallowReduce(ReductionContext reductionContext) {
     return *this;
   }
 
-  index = index - 1;  // List index starts at 1
+  index = index - 1;  // OList index starts at 1
   if (index < 0 || index >= listChild.numberOfChildren()) {
     return replaceWithUndefinedInPlace();
   }
@@ -155,7 +155,7 @@ OExpression ListSlice::shallowReduce(ReductionContext reductionContext) {
   }
 
   OExpression listChild = childAtIndex(ListAccessNode<2>::k_listChildIndex);
-  if (listChild.type() != ExpressionNode::Type::List) {
+  if (listChild.type() != ExpressionNode::Type::OList) {
     return replaceWithUndefinedInPlace();
   }
 
@@ -175,9 +175,9 @@ OExpression ListSlice::shallowReduce(ReductionContext reductionContext) {
   }
 
   int listNumberOfChildren = listChild.numberOfChildren();
-  int firstIndex = indexes[0] - 1;  // List index starts at 1
+  int firstIndex = indexes[0] - 1;  // OList index starts at 1
   int lastIndex = indexes[1] - 1;
-  List typedList = static_cast<List&>(listChild);
+  OList typedList = static_cast<OList&>(listChild);
 
   if (lastIndex < -1) {
     lastIndex = -1;

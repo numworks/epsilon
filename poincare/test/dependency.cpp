@@ -34,7 +34,7 @@ void assert_expression_simplify_to_with_dependencies(
                                expression);
   assert_expression_serializes_to(d.childAtIndex(0), simplifiedExpression);
   OExpression m = d.childAtIndex(1);
-  quiz_assert_print_if_failure(m.type() == ExpressionNode::Type::List,
+  quiz_assert_print_if_failure(m.type() == ExpressionNode::Type::OList,
                                expression);
   quiz_assert_print_if_failure(m.numberOfChildren() == N, expression);
   for (size_t i = 0; i < N; i++) {

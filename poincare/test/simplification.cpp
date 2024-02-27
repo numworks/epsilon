@@ -2656,7 +2656,7 @@ QUIZ_CASE(poincare_simplification_list) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("l1.lis").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("l2.lis").destroy();
   // Functions on lists
-  // List length
+  // OList length
   assert_parsed_expression_simplify_to("dim({})", "0");
   assert_parsed_expression_simplify_to("dim({1,2,3})", "3");
   assert_parsed_expression_simplify_to("dim({{1,2,3,4,5}})", Undefined::Name());
@@ -2763,7 +2763,7 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("med({1,6,3},{1,1,x})",
                                        "med({1,6,3},{1,1,x})");
 #endif
-  // List sequences
+  // OList sequences
   assert_parsed_expression_simplify_to("sequence(1,k,1)", "{1}");
   assert_parsed_expression_simplify_to("sequence(k,k,10)",
                                        "{1,2,3,4,5,6,7,8,9,10}");

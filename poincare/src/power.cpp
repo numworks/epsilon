@@ -660,7 +660,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       /* Step 3.6: index is 0
        * x^0 -> 1 or dep(1, {x^0}) */
       if (baseNull == TrinaryBoolean::Unknown) {
-        List depList = List::Builder();
+        OList depList = OList::Builder();
         depList.addChildAtIndexInPlace(
             Power::Builder(base, Rational::Builder(-1)), 0, 0);
         trivialResult = Dependency::Builder(Rational::Builder(1), depList);
@@ -716,7 +716,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       return newSelf;
     }
     // If not able to know sign and/or null status, create a dependency.
-    List listOfDependencies = List::Builder();
+    OList listOfDependencies = OList::Builder();
     // e^ln(x) = x if ln(x) is defined.
     listOfDependencies.addChildAtIndexInPlace(newIndex.clone(), 0, 0);
     OExpression dependency = Dependency::Builder(newSelf, listOfDependencies);
@@ -868,7 +868,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
        *   needing to be positive (in real mode).
        * - x^(1/2)^3 does not need a dependency since x^(3/2) keeps the
        *   same interval of definition as x^(1/2) */
-      List listOfDependencies = List::Builder();
+      OList listOfDependencies = OList::Builder();
       AddPowerToListOfDependenciesIfNeeded(base, *this, listOfDependencies,
                                            reductionContext, false);
       if (listOfDependencies.numberOfChildren() > 0) {
@@ -1387,7 +1387,7 @@ Power::DependencyType Power::typeOfDependency(
 }
 
 void Power::AddPowerToListOfDependenciesIfNeeded(
-    OExpression e, Power compareTo, List l,
+    OExpression e, Power compareTo, OList l,
     const ReductionContext &reductionContext, bool clone) {
   if (e.type() == ExpressionNode::Type::Power) {
     DependencyType depType =
@@ -1401,7 +1401,7 @@ void Power::AddPowerToListOfDependenciesIfNeeded(
 }
 
 OExpression Power::ExponentialBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::List);
+  assert(children.type() == ExpressionNode::Type::OList);
   return Builder(Constant::ExponentialEBuilder(), children.childAtIndex(0));
 }
 

@@ -75,7 +75,7 @@ class OExpression : public TreeHandle {
   friend class InverseMethod;
   friend class LeastCommonMultiple;
   friend class JuniorExpressionNode;
-  friend class List;
+  friend class OList;
   friend class ListFunctionWithOneOrTwoParametersNode;
   friend class ListMean;
   friend class ListMedian;
@@ -587,30 +587,30 @@ class OExpression : public TreeHandle {
 
   template <typename U>
   static OExpression UntypedBuilderOneChild(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::List);
+    assert(children.type() == ExpressionNode::Type::OList);
     return U::Builder(children.childAtIndex(0));
   }
   template <typename U>
   static OExpression UntypedBuilderTwoChildren(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::List);
+    assert(children.type() == ExpressionNode::Type::OList);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1));
   }
   template <typename U>
   static OExpression UntypedBuilderThreeChildren(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::List);
+    assert(children.type() == ExpressionNode::Type::OList);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1),
                       children.childAtIndex(2));
   }
   template <typename U>
   static OExpression UntypedBuilderFourChildren(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::List);
+    assert(children.type() == ExpressionNode::Type::OList);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1),
                       children.childAtIndex(2), children.childAtIndex(3));
   }
   template <typename U>
   static OExpression UntypedBuilderMultipleChildren(OExpression children) {
     // Only with OExpression classes implementing addChildAtIndexInPlace
-    assert(children.type() == ExpressionNode::Type::List);
+    assert(children.type() == ExpressionNode::Type::OList);
     int childrenNumber = children.numberOfChildren();
     assert(childrenNumber > 0);
     U expression = U::Builder({children.childAtIndex(0)});

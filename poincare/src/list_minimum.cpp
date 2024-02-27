@@ -27,7 +27,7 @@ template <typename T>
 Evaluation<T> ListMinimumNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   ExpressionNode* child = childAtIndex(0);
-  if (child->type() != ExpressionNode::Type::List) {
+  if (child->type() != ExpressionNode::Type::OList) {
     return Complex<T>::Undefined();
   }
   return static_cast<ListNode*>(child)->extremumApproximation<T>(
@@ -36,13 +36,13 @@ Evaluation<T> ListMinimumNode::templatedApproximate(
 
 OExpression ListMinimum::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
-  if (child.type() != ExpressionNode::Type::List ||
+  if (child.type() != ExpressionNode::Type::OList ||
       child.numberOfChildren() == 0 ||
       recursivelyMatches(OExpression::IsUndefined, nullptr)) {
     return replaceWithUndefinedInPlace();
   }
   OExpression result =
-      static_cast<List&>(child).extremum(reductionContext, true);
+      static_cast<OList&>(child).extremum(reductionContext, true);
   if (result.isUndefined()) {
     // Let approximation handle this
     return *this;

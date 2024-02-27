@@ -48,7 +48,7 @@ Evaluation<T> ListSequenceNode::templatedApproximate(
 }
 
 OExpression ListSequence::UntypedBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::List);
+  assert(children.type() == ExpressionNode::Type::OList);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return OExpression();
@@ -88,7 +88,7 @@ OExpression ListSequence::shallowReduce(ReductionContext reductionContext) {
     return *this;
   }
 
-  List finalList = List::Builder();
+  OList finalList = OList::Builder();
   for (int i = 1; i <= upperBound; i++) {
     OExpression newListElement = function.clone().replaceSymbolWithExpression(
         variable, BasedInteger::Builder(Integer(i)));

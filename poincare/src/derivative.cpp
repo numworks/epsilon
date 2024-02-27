@@ -333,7 +333,7 @@ OExpression Derivative::shallowReduce(ReductionContext reductionContext) {
     return replaceWithUndefinedInPlace();
   }
 
-  List listOfDependencies = List::Builder();
+  OList listOfDependencies = OList::Builder();
   OExpression derivand = childAtIndex(0);
   if (derivand.type() == ExpressionNode::Type::Dependency) {
     static_cast<Dependency&>(derivand).extractDependencies(listOfDependencies);
@@ -446,7 +446,7 @@ OExpression Derivative::DefaultDerivate(
 }
 
 OExpression Derivative::UntypedBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::List);
+  assert(children.type() == ExpressionNode::Type::OList);
   if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return OExpression();

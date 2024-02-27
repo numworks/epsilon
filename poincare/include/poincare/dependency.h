@@ -67,7 +67,7 @@ class Dependency : public OExpression {
   constexpr static int k_indexOfDependenciesList = 1;
   Dependency(const DependencyNode* n) : OExpression(n) {}
   static Dependency Builder(OExpression expression,
-                            List dependencies = List::Builder()) {
+                            OList dependencies = OList::Builder()) {
     return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(
         {expression, dependencies});
   }
@@ -82,7 +82,7 @@ class Dependency : public OExpression {
 
   /* Store the dependecies in l and replace the dependency node with the true
    * expression. */
-  OExpression extractDependencies(List l);
+  OExpression extractDependencies(OList l);
   bool dependencyRecursivelyMatches(
       ExpressionTrinaryTest test, Context* context,
       SymbolicComputation replaceSymbols, void* auxiliary,

@@ -115,7 +115,8 @@ Poincare::OLayout ToPoincareLayout(const Tree *l) {
       } else {
         Poincare::HorizontalLayout nary = Poincare::HorizontalLayout::Builder();
         for (const Tree *child : l->children()) {
-          if (child->isMarginLayout() || child->isThousandSeparatorLayout()) {
+          if (child->isOperatorMarginLayout() ||
+              child->isThousandSeparatorLayout()) {
             continue;
           }
           nary.addChildAtIndexInPlace(ToPoincareLayout(child),
@@ -191,7 +192,7 @@ void PushPoincareRack(Poincare::OLayout l) {
     for (int i = 0; i < l.numberOfChildren(); i++) {
       Poincare::OLayout c = l.childAtIndex(i);
       if (c.node()->leftMargin()) {
-        SharedEditionPool->push(BlockType::MarginLayout);
+        SharedEditionPool->push(BlockType::OperatorMarginLayout);
         NAry::SetNumberOfChildren(parent, parent->numberOfChildren() + 1);
       }
       if (c.type() == Poincare::LayoutNode::Type::StringLayout) {

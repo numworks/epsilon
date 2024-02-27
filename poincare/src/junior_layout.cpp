@@ -2,6 +2,7 @@
 #include <poincare/junior_layout.h>
 #include <poincare_junior/src/layout/conversion.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
+#include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
 
 #include <algorithm>
@@ -29,7 +30,9 @@ size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
                              numberOfSignificantDigits);
 }
 
-OLayout JuniorLayoutNode::makeEditable() { return OLayout(this); }
+OLayout JuniorLayoutNode::makeEditable() {
+  return JuniorLayout(this).cloneWithoutMargins();
+}
 
 bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) {
   if (l.type() != LayoutNode::Type::JuniorLayout) {
@@ -81,6 +84,14 @@ void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
                             KDColor selectionColor) {
   PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
                           style.backgroundColor, cursor);
+}
+
+JuniorLayout JuniorLayout::cloneWithoutMargins() {
+  PoincareJ::Tree* clone = tree()->clone();
+  if (clone->isRackLayout()) {
+    PoincareJ::Layoutter::StripMargins(clone);
+  }
+  return JuniorLayout::Builder(clone);
 }
 
 }  // namespace Poincare

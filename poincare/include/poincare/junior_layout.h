@@ -89,6 +89,8 @@ class JuniorLayout final
     return *this;
   }
 
+  JuniorLayout cloneWithoutMargins();
+
   bool isEmpty() const { return tree()->numberOfChildren() == 0; }
 
   // Render

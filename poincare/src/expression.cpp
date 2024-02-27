@@ -1172,7 +1172,12 @@ OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   assert(l.type() != LayoutNode::Type::JuniorLayout);
   if (forceStripMargin || !(nested || LayoutHasLockedMargins(l) ||
                             LayoutHasStringWithThousandSeparator(l))) {
-    StripMarginFromLayout(l);
+    if (l.type() == LayoutNode::Type::JuniorLayout) {
+      // not useful yet
+      l = static_cast<JuniorLayout &>(l).cloneWithoutMargins();
+    } else {
+      StripMarginFromLayout(l);
+    }
   }
   return l;
 }

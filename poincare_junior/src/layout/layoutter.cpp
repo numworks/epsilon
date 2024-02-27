@@ -526,4 +526,23 @@ bool Layoutter::AddThousandSeparators(Tree *rack) {
   return true;
 }
 
+void Layoutter::StripMargins(Tree *rack) {
+  Tree *child = rack->nextNode();
+  int n = rack->numberOfChildren();
+  int i = 0;
+  while (i < n) {
+    if (child->isOperatorMarginLayout() || child->isThousandSeparatorLayout()) {
+      child->removeTree();
+      n--;
+      continue;
+    }
+    for (Tree *subRack : child->children()) {
+      StripMargins(subRack);
+    }
+    child = child->nextTree();
+    i++;
+  }
+  NAry::SetNumberOfChildren(rack, n);
+}
+
 }  // namespace PoincareJ

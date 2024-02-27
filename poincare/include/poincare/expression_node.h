@@ -147,7 +147,8 @@ class ExpressionNode : public TreeNode {
     VectorCross,
     OMatrix,
     EmptyExpression,
-    JuniorExpression
+    JuniorExpression,
+    Matrix
   };
 
   /* Poor man's RTTI */

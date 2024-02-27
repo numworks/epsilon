@@ -307,9 +307,8 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     ++abChildren;
   }
   ab.setDimensions(m, n + 1);
-#if 0  // TODO_PCJ
+
   assert(!ab.recursivelyMatches(Expression::IsUninitialized, context));
-#endif
 
   // Compute the rank of (A|b)
   int rank = ab.rank(context);

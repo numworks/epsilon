@@ -18,12 +18,10 @@ Expression BuildVectorNorm(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit(true));
-#if 0  // TODO_PCJ
   if (exactOutput.type() != ExpressionNode::Type::Matrix ||
       !static_cast<const Matrix &>(exactOutput).isVector()) {
     return Expression();
   }
-#endif
   Expression norm = VectorNorm::Builder(exactOutput);
   Preferences::ComplexFormat complexFormat =
       calculationPreferences.complexFormat;

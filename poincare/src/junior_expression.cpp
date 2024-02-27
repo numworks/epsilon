@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+/* JuniorExpressionNode */
+
 Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
@@ -25,6 +27,8 @@ size_t JuniorExpressionNode::serialize(
   return e.node()->serialize(buffer, bufferSize, floatDisplayMode,
                              numberOfSignificantDigits);
 }
+
+/* JuniorExpression */
 
 JuniorExpression JuniorExpression::Parse(const PoincareJ::Tree* layout,
                                          Context* context,
@@ -84,5 +88,84 @@ JuniorExpression JuniorExpression::childAtIndex(int i) const {
   assert(tree());
   return Builder(tree()->child(i));
 }
+
+/* Matrix */
+
+Matrix Matrix::Builder() {
+  JuniorExpression expr = JuniorExpression::Builder(
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::Matrix>(0, 0));
+  return static_cast<Matrix&>(expr);
+}
+
+void Matrix::setDimensions(int rows, int columns) {
+  assert(rows * columns == tree()->numberOfChildren());
+  PoincareJ::Tree* clone = tree()->clone();
+  PoincareJ::Matrix::SetNumberOfColumns(clone, columns);
+  PoincareJ::Matrix::SetNumberOfRows(clone, rows);
+  JuniorExpression temp = JuniorExpression::Builder(clone);
+  *this = static_cast<Matrix&>(temp);
+}
+
+bool Matrix::isVector() const {
+  const PoincareJ::Tree* t = tree();
+  return PoincareJ::Matrix::NumberOfRows(t) == 1 ||
+         PoincareJ::Matrix::NumberOfColumns(t) == 1;
+}
+
+int Matrix::numberOfRows() const {
+  return PoincareJ::Matrix::NumberOfRows(tree());
+}
+
+int Matrix::numberOfColumns() const {
+  return PoincareJ::Matrix::NumberOfColumns(tree());
+}
+
+// TODO_PCJ: Rework this and its usage
+void Matrix::addChildAtIndexInPlace(JuniorExpression t, int index,
+                                    int currentNumberOfChildren) {
+  PoincareJ::Tree* clone = tree()->clone();
+  PoincareJ::EditionReference newChild = t.tree()->clone();
+  if (index >= clone->numberOfChildren()) {
+    int rows = PoincareJ::Matrix::NumberOfRows(clone);
+    int columns = PoincareJ::Matrix::NumberOfColumns(clone);
+    for (int i = 1; i < columns; i++) {
+      PoincareJ::KUndef->clone();
+    }
+    PoincareJ::Matrix::SetNumberOfRows(clone, rows + 1);
+  } else {
+    PoincareJ::Tree* previousChild = clone->child(index);
+    previousChild->removeTree();
+    newChild->moveTreeAtNode(previousChild);
+  }
+  JuniorExpression temp = JuniorExpression::Builder(clone);
+  *this = static_cast<Matrix&>(temp);
+}
+
+JuniorExpression Matrix::matrixChild(int i, int j) {
+  return JuniorExpression::Builder(PoincareJ::Matrix::Child(tree(), i, j));
+}
+
+int Matrix::rank(Context* context, bool forceCanonization) {
+  if (!forceCanonization) {
+    return PoincareJ::Matrix::Rank(tree());
+  }
+  PoincareJ::Tree* clone = tree()->clone();
+  int result = PoincareJ::Matrix::CanonizeAndRank(clone);
+  JuniorExpression temp = JuniorExpression::Builder(clone);
+  *this = static_cast<Matrix&>(temp);
+  return result;
+}
+
+// TODO_PCJ: Rework this and its usage
+template <typename T>
+int Matrix::ArrayInverse(T* array, int numberOfRows, int numberOfColumns) {
+  return OMatrix::ArrayInverse(array, numberOfRows, numberOfColumns);
+}
+
+template int Matrix::ArrayInverse<double>(double*, int, int);
+template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float>*,
+                                                       int, int);
+template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double>*,
+                                                        int, int);
 
 }  // namespace Poincare

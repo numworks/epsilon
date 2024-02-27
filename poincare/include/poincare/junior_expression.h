@@ -93,7 +93,7 @@ class JuniorExpressionNode final : public ExpressionNode {
   PoincareJ::Block m_blocks[0];
 };
 
-class JuniorExpression final : public OExpression {
+class JuniorExpression : public OExpression {
   friend class JuniorExpressionNode;
 
  public:
@@ -231,6 +231,28 @@ class JuniorExpression final : public OExpression {
     return false;
   }
 #endif
+};
+
+// TODO_PCJ: Actually implement methods. Assert its block type is Matrix
+class Matrix final : public JuniorExpression {
+ public:
+  /* Cap the matrix's size for inverse and determinant computation.
+   * TODO: Find another solution */
+  constexpr static int k_maxNumberOfChildren = 100;
+  static Matrix Builder();
+  void setDimensions(int rows, int columns);
+  bool isVector() const;
+  int numberOfRows() const;
+  int numberOfColumns() const;
+  void addChildAtIndexInPlace(JuniorExpression t, int index,
+                              int currentNumberOfChildren);
+  JuniorExpression matrixChild(int i, int j);
+  // rank returns -1 if the rank cannot be computed
+  int rank(Context* context, bool forceCanonization = false);
+  /* Inverse the array in-place. Array has to be given in the form
+   * array[row_index][column_index] */
+  template <typename T>
+  static int ArrayInverse(T* array, int numberOfRows, int numberOfColumns);
 };
 
 }  // namespace Poincare

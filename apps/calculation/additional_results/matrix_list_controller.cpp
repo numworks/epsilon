@@ -42,15 +42,9 @@ void MatrixListController::computeAdditionalResults(
   Expression clone = exactOutput.type() == ExpressionNode::Type::Matrix
                          ? exactOutput.clone()
                          : approximateOutput.clone();
-#if 0  // TODO_PCJ
   Matrix matrix = static_cast<const Matrix &>(clone);
 
   bool mIsSquared = matrix.numberOfRows() == matrix.numberOfColumns();
-#else
-  Expression matrix = clone;
-
-  bool mIsSquared = false;
-#endif
   size_t index = 0;
   size_t messageIndex = 0;
   // 1. Matrix determinant if square matrix

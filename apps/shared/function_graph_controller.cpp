@@ -201,23 +201,23 @@ bool FunctionGraphController::moveCursorVertically(
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   Poincare::Context *context = App::app()->localContext();
   int nextSubCurve = 0;
-  int nextFunction =
+  int nextCurve =
       nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
                                m_selectedSubCurveIndex, &nextSubCurve);
-  if (nextFunction < 0) {
+  if (nextCurve < 0) {
     return false;
   }
 
-  moveCursorVerticallyToPosition(nextFunction, nextSubCurve, m_cursor->t());
+  moveCursorVerticallyToPosition(nextCurve, nextSubCurve, m_cursor->t());
   return true;
 }
 
-void FunctionGraphController::moveCursorVerticallyToPosition(int nextFunction,
+void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
                                                              int nextSubCurve,
                                                              double nextT) {
   // Clip the current t to the domain of the next function
   ExpiringPointer<Function> f =
-      functionStore()->modelForRecord(recordAtCurveIndex(nextFunction));
+      functionStore()->modelForRecord(recordAtCurveIndex(nextCurve));
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
     nextT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), nextT));
@@ -226,7 +226,7 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextFunction,
   Poincare::Coordinate2D<double> cursorPosition =
       f->evaluateXYAtParameter(nextT, context, nextSubCurve);
   m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
-  selectCurveAtIndex(nextFunction, true);
+  selectCurveAtIndex(nextCurve, true);
   // Prevent the abscissaValue from edition if the function is along y
   Escher::Responder *responder = isAlongY(*m_selectedCurveIndex)
                                      ? static_cast<Responder *>(this)

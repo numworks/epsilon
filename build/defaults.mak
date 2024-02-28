@@ -12,7 +12,7 @@ SFLAGS += -DVALGRIND=$(VALGRIND)
 
 # Language-specific flags
 CFLAGS := -std=c11
-CXXFLAGS := -std=c++17 -fno-exceptions -fno-rtti -fno-threadsafe-statics
+CXXFLAGS := -std=c++20 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
 # Flags - Optimizations
 ifeq ($(DEBUG),1)

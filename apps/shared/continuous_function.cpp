@@ -409,11 +409,12 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
 
 template <typename T>
 Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
-    T t, Context *context, int subCurveIndex) const {
+    T t, Context *context, int subCurveIndex, int derivationOrder) const {
+  assert(subCurveIndex == 0 || derivationOrder == 0);
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
-  Expression e = expressionApproximated(context);
+  Expression e = expressionApproximated(context, derivationOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
 
   if (properties().isScatterPlot()) {
@@ -654,18 +655,35 @@ Expression ContinuousFunction::Model::expressionReduced(
 }
 
 Poincare::Expression ContinuousFunction::Model::expressionApproximated(
-    const Ion::Storage::Record *record, Poincare::Context *context) const {
-  if (m_expressionApproximated.isUninitialized()) {
-    Expression e = expressionReduced(record, context);
+    const Ion::Storage::Record *record, Poincare::Context *context,
+    int derivationOrder) const {
+  assert(0 <= derivationOrder && derivationOrder <= 2);
+  Expression *approximated;
+  switch (derivationOrder) {
+    case 0:
+      approximated = &m_expressionApproximated;
+      break;
+    case 1:
+      approximated = &m_expressionFirstDerivateApproximated;
+      break;
+    default:
+      assert(derivationOrder == 2);
+      approximated = &m_expressionSecondDerivateApproximated;
+      break;
+  }
+  if (approximated->isUninitialized()) {
+    Expression e = derivationOrder == 0 ? expressionReduced(record, context)
+                                        : expressionDerivateReduced(
+                                              record, context, derivationOrder);
     PoincareHelpers::CloneAndApproximateKeepingSymbols(
         &e, context,
         {.complexFormat = complexFormat(record, context),
          .updateComplexFormatWithExpression = false,
          .target = ReductionTarget::SystemForApproximation,
          .symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol});
-    m_expressionApproximated = e;
+    *approximated = e;
   }
-  return m_expressionApproximated;
+  return *approximated;
 }
 
 Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
@@ -1008,8 +1026,16 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
     m_expressionFirstDerivate = Expression();
   }
   if (treePoolCursor == nullptr ||
+      m_expressionFirstDerivateApproximated.isDownstreamOf(treePoolCursor)) {
+    m_expressionFirstDerivateApproximated = Expression();
+  }
+  if (treePoolCursor == nullptr ||
       m_expressionSecondDerivate.isDownstreamOf(treePoolCursor)) {
     m_expressionSecondDerivate = Expression();
+  }
+  if (treePoolCursor == nullptr ||
+      m_expressionSecondDerivateApproximated.isDownstreamOf(treePoolCursor)) {
+    m_expressionSecondDerivateApproximated = Expression();
   }
   if (treePoolCursor == nullptr ||
       m_expressionSlope.isDownstreamOf(treePoolCursor)) {
@@ -1083,10 +1109,10 @@ void ContinuousFunction::Model::setStorageChangeFlag() const {
 
 template Coordinate2D<float>
 ContinuousFunction::templatedApproximateAtParameter<float>(float, Context *,
-                                                           int) const;
+                                                           int, int) const;
 template Coordinate2D<double>
 ContinuousFunction::templatedApproximateAtParameter<double>(double, Context *,
-                                                            int) const;
+                                                            int, int) const;
 
 template Coordinate2D<float>
 ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context *,

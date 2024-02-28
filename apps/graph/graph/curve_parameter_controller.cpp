@@ -32,6 +32,7 @@ CurveParameterController::CurveParameterController(
       m_functionParameterController(functionParameterController),
       m_derivativeColumnParameterController(
           derivativeColumnParameterController),
+      m_derivationOrder(0),
       m_graphController(graphController) {
   for (int i = 0; i < k_numberOfParameterRows; i++) {
     m_parameterCells[i].setParentResponder(&m_selectableListView);
@@ -245,6 +246,12 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);
+}
+
+void CurveParameterController::setRecord(Ion::Storage::Record record,
+                                         int derivationOrder) {
+  setRecord(record);
+  m_derivationOrder = derivationOrder;
 }
 
 void CurveParameterController::viewWillAppear() {

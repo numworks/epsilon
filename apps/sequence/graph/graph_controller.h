@@ -90,12 +90,7 @@ class GraphController final : public Shared::FunctionGraphController {
         Shared::FunctionGraphController::functionStore());
   }
   GraphView *functionGraphView() override { return &m_view; }
-  CurveParameterController *curveParameterController() override {
-    return &m_curveParameterController;
-  }
-  Shared::WithRecord *curveParameterControllerWithRecord() override {
-    return &m_curveParameterController;
-  }
+  void openMenuForSelectedCurve() override;
 
   Shared::RingCursorView m_cursorView;
   Shared::XYBannerView m_bannerView;

@@ -111,12 +111,7 @@ class GraphController : public Shared::FunctionGraphController,
         Shared::FunctionGraphController::functionStore());
   }
   GraphView *functionGraphView() override { return &m_view; }
-  CurveParameterController *curveParameterController() override {
-    return &m_curveParameterController;
-  }
-  Shared::WithRecord *curveParameterControllerWithRecord() override {
-    return &m_curveParameterController;
-  }
+  void openMenuForSelectedCurve() override;
   bool moveCursorVertically(OMG::VerticalDirection direction) override;
 
   // InteractiveCurveViewController

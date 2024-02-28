@@ -429,6 +429,16 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
   return currentT;
 }
 
+void GraphController::openMenuForSelectedCurve() {
+  int derivationOrder =
+      m_selectedSubCurveIndex >= numberOfSubCurves(*m_selectedCurveIndex)
+          ? m_selectedSubCurveIndex
+          : 0;
+  m_curveParameterController.setRecord(recordAtSelectedCurveIndex(),
+                                       derivationOrder);
+  stackController()->push(&m_curveParameterController);
+}
+
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   Context *context = App::app()->localContext();

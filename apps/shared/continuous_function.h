@@ -187,9 +187,10 @@ class ContinuousFunction : public Function {
     return recordData()->setDisplayPlotSecondDerivative(display);
   }
   // Approximate derivative at t, on given sub curve if there is one
-  Poincare::Evaluation<double> approximateDerivative(
-      double t, Poincare::Context *context, int derivationOrder = 1,
-      bool useDomain = true) const;
+  template <typename T>
+  Poincare::Evaluation<T> approximateDerivative(T t, Poincare::Context *context,
+                                                int derivationOrder = 1,
+                                                bool useDomain = true) const;
   double approximateSlope(double t, Poincare::Context *context) const;
 
   /* tMin, tMax and tAuto */

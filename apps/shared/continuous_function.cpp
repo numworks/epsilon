@@ -269,21 +269,23 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
   }
 }
 
-Evaluation<double> ContinuousFunction::approximateDerivative(
-    double t, Context *context, int derivationOrder, bool useDomain) const {
+template <typename T>
+Evaluation<T> ContinuousFunction::approximateDerivative(T t, Context *context,
+                                                        int derivationOrder,
+                                                        bool useDomain) const {
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
   if (useDomain && (t < tMin() || t > tMax())) {
     if (properties().isParametric()) {
-      return PointEvaluation<double>::Builder(NAN, NAN);
+      return PointEvaluation<T>::Builder(NAN, NAN);
     }
-    return Complex<double>::RealUndefined();
+    return Complex<T>::RealUndefined();
   }
   // Derivative is simplified once and for all
   Expression derivate = expressionDerivateReduced(context, derivationOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
-  Evaluation<double> result = derivate.approximateWithValueForSymbol(
+  Evaluation<T> result = derivate.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
   return result;
 }
@@ -1092,5 +1094,7 @@ ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context *,
 template Coordinate2D<double>
 ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Context *,
                                                          int) const;
+template Evaluation<double> ContinuousFunction::approximateDerivative(
+    double t, Context *context, int derivationOrder, bool useDomain) const;
 
 }  // namespace Shared

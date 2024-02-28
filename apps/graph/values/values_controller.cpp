@@ -371,10 +371,10 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   if (derivationOrder >= 1) {
     // Compute derivative approximate result
     assert(derivationOrder == 1 || derivationOrder == 2);
-    result =
-        function
-            ->approximateDerivative(abscissa, context, derivationOrder, false)
-            .complexToExpression(Preferences::ComplexFormat::Real);
+    result = function
+                 ->approximateDerivative<double>(abscissa, context,
+                                                 derivationOrder, false)
+                 .complexToExpression(Preferences::ComplexFormat::Real);
   } else {
     // Compute exact result
     assert(derivationOrder == 0);

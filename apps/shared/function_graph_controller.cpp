@@ -265,7 +265,7 @@ Coordinate2D<double> FunctionGraphController::xyValues(
 int FunctionGraphController::numberOfSubCurves(int curveIndex) const {
   return functionStore()
       ->modelForRecord(recordAtCurveIndex(curveIndex))
-      ->numberOfSubCurves();
+      ->numberOfSubCurves(true);
 }
 
 bool FunctionGraphController::isAlongY(int curveIndex) const {

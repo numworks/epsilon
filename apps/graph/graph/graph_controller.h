@@ -100,7 +100,7 @@ class GraphController : public Shared::FunctionGraphController,
   // FunctionGraphController
   void selectCurveAtIndex(int curveIndex, bool willBeVisible) override;
   int nextCurveIndexVertically(OMG::VerticalDirection direction,
-                               int currentSelectedCurve,
+                               int currentCurveIndex,
                                Poincare::Context *context,
                                int currentSubCurveIndex,
                                int *nextSubCurveIndex) const override;

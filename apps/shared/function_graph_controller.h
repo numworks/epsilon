@@ -87,11 +87,11 @@ class FunctionGraphController : public InteractiveCurveViewController,
                                 bool ignoreMargins);
   virtual FunctionStore *functionStore() const;
   virtual int nextCurveIndexVertically(OMG::VerticalDirection direction,
-                                       int currentSelectedCurve,
+                                       int currentCurveIndex,
                                        Poincare::Context *context,
                                        int currentSubCurveIndex,
                                        int *subCurveIndex) const {
-    return closestCurveIndexVertically(direction, currentSelectedCurve, context,
+    return closestCurveIndexVertically(direction, currentCurveIndex, context,
                                        currentSubCurveIndex, subCurveIndex);
   }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange *range) const;

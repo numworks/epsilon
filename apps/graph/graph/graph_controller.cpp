@@ -328,7 +328,7 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible) {
 }
 
 int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
-                                              int currentSelectedCurve,
+                                              int currentCurveIndex,
                                               Poincare::Context *context,
                                               int currentSubCurveIndex,
                                               int *nextSubCurveIndex) const {
@@ -336,24 +336,23 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
   int nbOfActiveFunctions = 0;
   if (functionStore()->displaysOnlyCartesianFunctions(&nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(
-        direction, currentSelectedCurve, context, currentSubCurveIndex,
+        direction, currentCurveIndex, context, currentSubCurveIndex,
         nextSubCurveIndex);
   }
   // Handle for sub curve in current function
   if (direction.isDown()) {
-    if (numberOfSubCurves(currentSelectedCurve) > currentSubCurveIndex + 1) {
+    if (numberOfSubCurves(currentCurveIndex) > currentSubCurveIndex + 1) {
       // Switch to next sub curve
       *nextSubCurveIndex = currentSubCurveIndex + 1;
-      return currentSelectedCurve;
+      return currentCurveIndex;
     }
   } else if (direction.isUp() && currentSubCurveIndex > 0) {
     // Switch to previous sub curve
     *nextSubCurveIndex = currentSubCurveIndex - 1;
-    return currentSelectedCurve;
+    return currentCurveIndex;
   }
   // Go to the next function
-  int nextActiveFunctionIndex =
-      currentSelectedCurve + (direction.isUp() ? -1 : 1);
+  int nextActiveFunctionIndex = currentCurveIndex + (direction.isUp() ? -1 : 1);
   if (nextActiveFunctionIndex >= nbOfActiveFunctions ||
       nextActiveFunctionIndex < 0) {
     return -1;

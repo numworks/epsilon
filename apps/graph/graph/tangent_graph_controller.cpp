@@ -31,7 +31,8 @@ void TangentGraphController::viewWillAppear() {
   m_graphView->setTangentDisplay(m_drawTangent);
   m_graphView->setFocus(true);
   bool isCartesian = function()->properties().isCartesian();
-  m_bannerView->setDisplayParameters({.showFirstDerivative = isCartesian,
+  m_bannerView->setDisplayParameters({.showOrdinate = true,
+                                      .showFirstDerivative = isCartesian,
                                       .showSlope = !isCartesian,
                                       .showTangent = m_drawTangent});
   reloadBannerView();

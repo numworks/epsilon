@@ -14,6 +14,7 @@ class BannerView : public Shared::XYBannerView {
 
   struct DisplayParameters {
     bool showInterest : 1;
+    bool showOrdinate : 1;
     bool showFirstDerivative : 1;
     bool showSecondDerivative : 1;
     bool showSlope : 1;
@@ -40,11 +41,13 @@ class BannerView : public Shared::XYBannerView {
   constexpr static int k_maxNumberOfInterests = 3;
 
   int numberOfSubviews() const override {
-    // there are 3 views for tangent (aView, bView, tangentEquationView)
-    return XYBannerView::k_numberOfSubviews + numberOfInterestMessages() +
-           m_displayParameters.showFirstDerivative +
-           m_displayParameters.showSecondDerivative +
-           m_displayParameters.showSlope + 3 * m_displayParameters.showTangent;
+    return numberOfInterestMessages()                  // interests messages
+           + 1                                         // x
+           + m_displayParameters.showOrdinate          // f(x)
+           + m_displayParameters.showFirstDerivative   // f'(x)
+           + m_displayParameters.showSecondDerivative  // f"(x)
+           + m_displayParameters.showSlope             // dy/dx
+           + 3 * m_displayParameters.showTangent;      // (a, b, y=ax+b)
   };
   Escher::View* subviewAtIndex(int index) override;
   bool lineBreakBeforeSubview(Escher::View* subview) const override;

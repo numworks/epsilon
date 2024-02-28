@@ -6,7 +6,7 @@
 
 namespace Shared {
 
-class XYBannerView : public BannerView, EditableFieldBannerViewDelegate {
+class XYBannerView : public BannerView, public EditableFieldBannerViewDelegate {
  public:
   XYBannerView(Escher::Responder* parentResponder,
                Escher::TextFieldDelegate* textFieldDelegate)
@@ -23,10 +23,10 @@ class XYBannerView : public BannerView, EditableFieldBannerViewDelegate {
     assert(0 <= index && index < k_numberOfSubviews);
     return index == 0 ? editableView() : &m_ordinateView;
   }
+  BannerBufferTextView m_ordinateView;
 
  private:
   int numberOfSubviews() const override { return k_numberOfSubviews; }
-  BannerBufferTextView m_ordinateView;
 };
 
 }  // namespace Shared

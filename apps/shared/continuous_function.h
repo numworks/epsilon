@@ -164,19 +164,24 @@ class ContinuousFunction : public Function {
 
   // If derivative should be displayed
   bool displayValueFirstDerivative() const {
-    return canDisplayDerivative() &&
-           recordData()->displayValueFirstDerivative();
+    assert(!recordData()->displayValueFirstDerivative() ||
+           canDisplayDerivative());
+    return recordData()->displayValueFirstDerivative();
   }
   bool displayPlotFirstDerivative() const {
-    return canDisplayDerivative() && recordData()->displayPlotFirstDerivative();
+    assert(!recordData()->displayPlotFirstDerivative() ||
+           canDisplayDerivative());
+    return recordData()->displayPlotFirstDerivative();
   }
   bool displayValueSecondDerivative() const {
-    return canDisplayDerivative() &&
-           recordData()->displayValueSecondDerivative();
+    assert(!recordData()->displayValueSecondDerivative() ||
+           canDisplayDerivative());
+    return recordData()->displayValueSecondDerivative();
   }
   bool displayPlotSecondDerivative() const {
-    return canDisplayDerivative() &&
-           recordData()->displayPlotSecondDerivative();
+    assert(!recordData()->displayPlotSecondDerivative() ||
+           canDisplayDerivative());
+    return recordData()->displayPlotSecondDerivative();
   }
   // Set derivative display status
   void setDisplayValueFirstDerivative(bool display) {

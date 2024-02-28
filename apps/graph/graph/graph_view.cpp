@@ -275,43 +275,26 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
                                patternUpper, patternWithoutCurve, axis);
   firstCurve.draw(this, ctx, rect);
 
-  // - Draw second curve
-  if (hasTwoCurves) {
-    CurveDrawing secondCurve(Curve2D(evaluateXYSecondCurve<float>, f),
-                             context(), tStart, tEnd, tStep, f->color(), true,
-                             f->properties().plotIsDotted());
-    secondCurve.setPrecisionOptions(true, evaluateXYSecondCurve<double>,
-                                    discontinuity);
-    secondCurve.setPatternOptions(pattern, patternStart, patternEnd,
-                                  patternLower2, Curve2D(), patternWithoutCurve,
-                                  axis);
-    secondCurve.draw(this, ctx, rect);
-  }
-
-  // - Draw derivatives
-  if (f->displayPlotFirstDerivative()) {
-    assert(f->canPlotDerivatives());
-    CurveDrawing derivativeCurve(Curve2D(evaluateXYFirstDerivative<float>, f),
-                                 context(), tStart, tEnd, tStep, f->color(1),
-                                 true, f->properties().plotIsDotted());
-    derivativeCurve.setPrecisionOptions(true, evaluateXYFirstDerivative<double>,
-                                        discontinuity);
-    derivativeCurve.setPatternOptions(pattern, patternStart, patternEnd,
-                                      patternLower, patternUpper,
-                                      patternWithoutCurve, axis);
-    derivativeCurve.draw(this, ctx, rect);
-  }
-  if (f->displayPlotSecondDerivative()) {
-    assert(f->canPlotDerivatives());
-    CurveDrawing derivativeCurve(Curve2D(evaluateXYSecondDerivative<float>, f),
-                                 context(), tStart, tEnd, tStep, f->color(2),
-                                 true, f->properties().plotIsDotted());
-    derivativeCurve.setPrecisionOptions(
-        true, evaluateXYSecondDerivative<double>, discontinuity);
-    derivativeCurve.setPatternOptions(pattern, patternStart, patternEnd,
-                                      patternLower, patternUpper,
-                                      patternWithoutCurve, axis);
-    derivativeCurve.draw(this, ctx, rect);
+  // - Draw second curve and derivatives
+  Curve2DEvaluation<float> evaluationFloat[] = {
+      evaluateXYSecondCurve<float>, evaluateXYFirstDerivative<float>,
+      evaluateXYSecondDerivative<float>};
+  Curve2DEvaluation<double> evaluationDouble[] = {
+      evaluateXYSecondCurve<double>, evaluateXYFirstDerivative<double>,
+      evaluateXYSecondDerivative<double>};
+  bool plotCurve[] = {hasTwoCurves, f->displayPlotFirstDerivative(),
+                      f->displayPlotSecondDerivative()};
+  for (int i = 0; i < 3; i++) {
+    if (plotCurve[i]) {
+      CurveDrawing secondCurve(Curve2D(evaluationFloat[i], f), context(),
+                               tStart, tEnd, tStep, f->color(i), true,
+                               f->properties().plotIsDotted());
+      secondCurve.setPrecisionOptions(true, evaluationDouble[i], discontinuity);
+      secondCurve.setPatternOptions(pattern, patternStart, patternEnd,
+                                    patternLower2, Curve2D(),
+                                    patternWithoutCurve, axis);
+      secondCurve.draw(this, ctx, rect);
+    }
   }
 }
 

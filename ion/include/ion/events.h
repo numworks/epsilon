@@ -25,10 +25,12 @@ class ShiftAlphaStatus {
   constexpr ShiftAlphaStatus()
       : ShiftAlphaStatus(ShiftStatus::Inactive, AlphaStatus::Inactive) {}
 
-  bool operator==(const ShiftAlphaStatus& other) {
+  bool operator==(const ShiftAlphaStatus& other) const {
     return m_shift == other.m_shift && m_alpha == other.m_alpha;
   }
-  bool operator!=(const ShiftAlphaStatus& other) { return !(*this == other); }
+  bool operator!=(const ShiftAlphaStatus& other) const {
+    return !(*this == other);
+  }
 
   bool shiftIsActive() const { return m_shift != ShiftStatus::Inactive; }
   bool alphaIsActive() const { return m_alpha != AlphaStatus::Inactive; }

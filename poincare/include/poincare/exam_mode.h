@@ -35,7 +35,7 @@ class __attribute__((packed)) ExamMode : public Ion::ExamMode::Configuration {
     static_assert(static_cast<size_t>(Flags::NumberOfFlags) <=
                   Ion::ExamMode::Configuration::k_dataSize);
 
-    bool operator==(const PressToTestFlags& other) {
+    bool operator==(const PressToTestFlags& other) const {
       return m_bits == other.m_bits;
     }
 

@@ -32,7 +32,7 @@ class KDHorizontalMargins : public KD1DMargins {
  public:
   using KD1DMargins::KD1DMargins;
 
-  constexpr bool operator==(const KDHorizontalMargins& other) {
+  constexpr bool operator==(const KDHorizontalMargins& other) const {
     return other.left() == left() && other.right() == right();
   }
 
@@ -51,7 +51,7 @@ class KDVerticalMargins : public KD1DMargins {
  public:
   using KD1DMargins::KD1DMargins;
 
-  constexpr bool operator==(const KDVerticalMargins& other) {
+  constexpr bool operator==(const KDVerticalMargins& other) const {
     return other.top() == top() && other.bottom() == bottom();
   }
 
@@ -81,7 +81,7 @@ class KDMargins : public KDHorizontalMargins, public KDVerticalMargins {
         KDVerticalMargins(margin, margin) {}
   constexpr KDMargins() : KDHorizontalMargins(), KDVerticalMargins() {}
 
-  constexpr bool operator==(const KDMargins& other) {
+  constexpr bool operator==(const KDMargins& other) const {
     return other.horizontal() == horizontal() && other.vertical() == vertical();
   }
   // Unary minus

@@ -211,7 +211,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
       }
       case BlockType::Dependency: {
         assert(exp->child(1)->isSet());
-        Poincare::List listOfDependencies = Poincare::List::Builder();
+        Poincare::OList listOfDependencies = Poincare::OList::Builder();
         for (const Tree *child : exp->child(1)->children()) {
           listOfDependencies.addChildAtIndexInPlace(ToPoincareExpression(child),
                                                     0, 0);
@@ -249,7 +249,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
       return nary;
     }
     case BlockType::Matrix: {
-      Poincare::Matrix mat = Poincare::Matrix::Builder();
+      Poincare::OMatrix mat = Poincare::OMatrix::Builder();
       for (const Tree *child : exp->children()) {
         mat.addChildAtIndexInPlace(ToPoincareExpression(child),
                                    mat.numberOfChildren(),
@@ -741,8 +741,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           break;
         case OT::Matrix:
           SharedEditionPool->push<BlockType::Matrix>(
-              static_cast<Poincare::Matrix &>(exp).numberOfRows(),
-              static_cast<Poincare::Matrix &>(exp).numberOfColumns());
+              static_cast<Poincare::OMatrix &>(exp).numberOfRows(),
+              static_cast<Poincare::OMatrix &>(exp).numberOfColumns());
           break;
         default:
           assert(false);

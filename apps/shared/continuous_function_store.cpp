@@ -7,14 +7,14 @@ using namespace Escher;
 
 namespace Shared {
 
-bool ContinuousFunctionStore::displaysNonCartesianFunctions(
+bool ContinuousFunctionStore::displaysOnlyCartesianFunctions(
     int* nbActiveFunctions) const {
   int nActive = numberOfActiveFunctions();
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = nActive;
   }
   return numberOfActiveFunctionsWithProperty(
-             &ContinuousFunctionProperties::isCartesian) < nActive;
+             &ContinuousFunctionProperties::isCartesian) == nActive;
 }
 
 bool ContinuousFunctionStore::displaysFunctionsToNormalize(

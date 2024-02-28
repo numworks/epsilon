@@ -336,7 +336,7 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
                                               int *nextSubCurveIndex) const {
   assert(nextSubCurveIndex != nullptr);
   int nbOfActiveFunctions = 0;
-  if (!functionStore()->displaysNonCartesianFunctions(&nbOfActiveFunctions)) {
+  if (functionStore()->displaysOnlyCartesianFunctions(&nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(
         direction, currentSelectedCurve, context, currentSubCurveIndex,
         nextSubCurveIndex);

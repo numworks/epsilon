@@ -1155,11 +1155,10 @@ size_t OExpression::serialize(char *buffer, size_t bufferSize,
 OExpression OExpression::ParseAndSimplify(
     const char *text, Context *context, SymbolicComputation symbolicComputation,
     UnitConversion unitConversion, bool *reductionFailure) {
-  OExpression exp = Parse(text, context, false);
+  JuniorExpression exp = Parse(text, context, false);
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
-#if 0  // TODO_PCJ
   // TODO: Shared shouldn't be called in Poincare !
   Shared::PoincareHelpers::CloneAndSimplify(
       &exp, context,
@@ -1167,9 +1166,6 @@ OExpression OExpression::ParseAndSimplify(
        .unitConversion = unitConversion},
       reductionFailure);
   assert(!exp.isUninitialized());
-#else
-  return Undefined::Builder();
-#endif
   return exp;
 }
 

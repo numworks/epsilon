@@ -312,10 +312,8 @@ void GraphController::reloadBannerView() {
 
 bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
                                              int scrollSpeed) {
+  assert(m_selectedSubCurveIndex < numberOfSubCurves(*m_selectedCurveIndex));
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  assert(
-      m_selectedSubCurveIndex <
-      App::app()->functionStore()->modelForRecord(record)->numberOfSubCurves());
   return privateMoveCursorHorizontally(
       m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit,
       record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
@@ -343,10 +341,7 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
   }
   // Handle for sub curve in current function
   if (direction.isDown()) {
-    ExpiringPointer<ContinuousFunction> currentF =
-        functionStore()->modelForRecord(
-            recordAtCurveIndex(currentSelectedCurve));
-    if (currentF->numberOfSubCurves() > currentSubCurveIndex + 1) {
+    if (numberOfSubCurves(currentSelectedCurve) > currentSubCurveIndex + 1) {
       // Switch to next sub curve
       *nextSubCurveIndex = currentSubCurveIndex + 1;
       return currentSelectedCurve;
@@ -365,9 +360,7 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
   }
   if (direction.isUp()) {
     // Select last sub curve in next function when going up
-    ExpiringPointer<ContinuousFunction> nextF = functionStore()->modelForRecord(
-        recordAtCurveIndex(nextActiveFunctionIndex));
-    *nextSubCurveIndex = nextF->numberOfSubCurves() - 1;
+    *nextSubCurveIndex = numberOfSubCurves(nextActiveFunctionIndex) - 1;
   } else {
     // Select first sub curve in next function
     *nextSubCurveIndex = 0;

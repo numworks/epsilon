@@ -342,7 +342,7 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
         nextSubCurveIndex);
   }
   // Handle for sub curve in current function
-  if (!direction.isUp()) {
+  if (direction.isDown()) {
     ExpiringPointer<ContinuousFunction> currentF =
         functionStore()->modelForRecord(
             recordAtCurveIndex(currentSelectedCurve));

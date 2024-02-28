@@ -15,7 +15,7 @@ class ScatterPlotIterable {
   friend class ContinuousFunction;
 
   using ExpressionIterable =
-      Poincare::TreeHandle::Direct<Poincare::OExpression,
+      Poincare::TreeHandle::Direct<Poincare::Expression,
                                    Poincare::ExpressionNode>;
 
   class Iterator : public ExpressionIterable::Iterator {

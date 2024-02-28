@@ -582,9 +582,9 @@ class OExpression : public TreeHandle {
   Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
       const char* baseName, const char* extension) const;
 
- protected:
   OExpression(const ExpressionNode* n) : TreeHandle(n) {}
 
+ protected:
   template <typename U>
   static OExpression UntypedBuilderOneChild(OExpression children) {
     assert(children.type() == ExpressionNode::Type::OList);

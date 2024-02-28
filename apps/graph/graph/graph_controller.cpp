@@ -432,10 +432,10 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   Context *context = App::app()->localContext();
 
   int nextSubCurve = 0;
-  int nextFunction =
+  int nextCurve =
       nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
                                m_selectedSubCurveIndex, &nextSubCurve);
-  if (nextFunction < 0) {
+  if (nextCurve < 0) {
     return false;
   }
 
@@ -447,7 +447,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
           : m_cursor->t();
 
   ExpiringPointer<ContinuousFunction> nextF =
-      functionStore()->modelForRecord(recordAtCurveIndex(nextFunction));
+      functionStore()->modelForRecord(recordAtCurveIndex(nextCurve));
   if (nextF->properties().isScatterPlot()) {
     double nextX = nextT;
     nextT = -1;
@@ -466,7 +466,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     }
   }
 
-  moveCursorVerticallyToPosition(nextFunction, nextSubCurve, nextT);
+  moveCursorVerticallyToPosition(nextCurve, nextSubCurve, nextT);
   return true;
 }
 

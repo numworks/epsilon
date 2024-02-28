@@ -174,7 +174,7 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
   }
 }
 
-const OExpression SequenceContext::protectedExpressionForSymbolAbstract(
+const Expression SequenceContext::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
   if (symbol.type() != ExpressionNode::Type::Sequence) {
@@ -195,7 +195,7 @@ const OExpression SequenceContext::protectedExpressionForSymbolAbstract(
   if (!seq->fullName()) {
     return Float<double>::Builder(result);
   }
-  OExpression rankExpression = symbol.childAtIndex(0).clone();
+  Expression rankExpression = symbol.childAtIndex(0).clone();
   /* The lastDesendantContext might contain informations on variables
    * that are contained in the rank expression. */
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(

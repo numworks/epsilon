@@ -100,7 +100,7 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
   }
 }
 
-const OExpression GlobalContext::protectedExpressionForSymbolAbstract(
+const Expression GlobalContext::protectedExpressionForSymbolAbstract(
     const Poincare::SymbolAbstract &symbol, bool clone,
     Poincare::ContextWithParent *lastDescendantContext) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
@@ -111,15 +111,15 @@ const OExpression GlobalContext::protectedExpressionForSymbolAbstract(
 }
 
 bool GlobalContext::setExpressionForSymbolAbstract(
-    const OExpression &expression, const SymbolAbstract &symbol) {
+    const Expression &expression, const SymbolAbstract &symbol) {
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
-  OExpression e = expressionForSymbolAndRecord(symbol, record, this);
+  Expression e = expressionForSymbolAndRecord(symbol, record, this);
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }
-  OExpression finalExpression =
+  Expression finalExpression =
       expression.clone().replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
@@ -129,7 +129,8 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   }
   assert(symbol.type() == ExpressionNode::Type::Function &&
          symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
-  OExpression childSymbol = symbol.childAtIndex(0);
+  Expression childSymbol = symbol.childAtIndex(0);
+#if 0  // TODO_PCJ
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol &>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
@@ -140,16 +141,19 @@ bool GlobalContext::setExpressionForSymbolAbstract(
         childSymbol.isIdenticalTo(
             Symbol::Builder(ContinuousFunction::k_parametricSymbol)))) {
     // Unsupported symbol. Fall back to the default cartesain function symbol
-    OExpression symbolInX = symbol.clone();
+    Expression symbolInX = symbol.clone();
     symbolInX.replaceChildAtIndexInPlace(
         0, Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
     symbolToStore = static_cast<const SymbolAbstract &>(symbolInX);
   }
   return setExpressionForFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
+#else
+  return false;
+#endif
 }
 
-const OExpression GlobalContext::expressionForSymbolAndRecord(
+const Expression GlobalContext::expressionForSymbolAndRecord(
     const SymbolAbstract &symbol, Ion::Storage::Record r, Context *ctx) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
@@ -160,26 +164,26 @@ const OExpression GlobalContext::expressionForSymbolAndRecord(
   return expressionForSequence(symbol, r, ctx);
 }
 
-const OExpression GlobalContext::ExpressionForActualSymbol(
+const Expression GlobalContext::ExpressionForActualSymbol(
     Ion::Storage::Record r) {
   if (!r.hasExtension(Ion::Storage::expressionExtension) &&
       !r.hasExtension(Ion::Storage::listExtension) &&
       !r.hasExtension(Ion::Storage::matrixExtension)) {
-    return OExpression();
+    return Expression();
   }
   // An expression record value is the expression itself
   Ion::Storage::Record::Data d = r.value();
-  return OExpression::ExpressionFromAddress(d.buffer, d.size);
+  return Expression::ExpressionFromAddress(d.buffer, d.size);
 }
 
-const OExpression GlobalContext::ExpressionForFunction(
-    const OExpression &parameter, Ion::Storage::Record r) {
-  OExpression e;
+const Expression GlobalContext::ExpressionForFunction(
+    const Expression &parameter, Ion::Storage::Record r) {
+  Expression e;
   if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
       r.hasExtension(Ion::Storage::regressionExtension)) {
     // A regression record value is the expression itself
     Ion::Storage::Record::Data d = r.value();
-    e = OExpression::ExpressionFromAddress(d.buffer, d.size);
+    e = Expression::ExpressionFromAddress(d.buffer, d.size);
   } else if (r.hasExtension(Ion::Storage::functionExtension)) {
     /* A function record value has metadata before the expression. To get the
      * expression, use the function record handle. */
@@ -191,15 +195,15 @@ const OExpression GlobalContext::ExpressionForFunction(
   return e;
 }
 
-const OExpression GlobalContext::expressionForSequence(
+const Expression GlobalContext::expressionForSequence(
     const SymbolAbstract &symbol, Ion::Storage::Record r, Context *ctx) {
   if (!r.hasExtension(Ion::Storage::sequenceExtension)) {
-    return OExpression();
+    return Expression();
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   Sequence seq(r);
-  OExpression rank = symbol.childAtIndex(0).clone();
+  Expression rank = symbol.childAtIndex(0).clone();
   bool rankIsInteger = false;
 #if 0  // TODO_PCJ
   PoincareHelpers::CloneAndSimplify(
@@ -207,8 +211,12 @@ const OExpression GlobalContext::expressionForSequence(
 #endif
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
   if (rank.type() == ExpressionNode::Type::Rational) {
+#if 0  // TODO_PCJ
     Rational n = static_cast<Rational &>(rank);
     rankIsInteger = n.isInteger();
+#else
+    rankIsInteger = false;
+#endif
   } else if (!std::isnan(rankValue)) {
     /* WARNING:
      * in some edge cases, because of quantification, we have
@@ -223,7 +231,7 @@ const OExpression GlobalContext::expressionForSequence(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
-    OExpression &expression, const SymbolAbstract &symbol,
+    Expression &expression, const SymbolAbstract &symbol,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation =
       ExpressionDisplayPermissions::NeverDisplayReductionOfInput(expression,
@@ -231,18 +239,16 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
   PoincareHelpers::ReductionParameters params = {
       .symbolicComputation =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
-#if 0  // TODO_PCJ
   PoincareHelpers::CloneAndSimplify(&expression, this, params);
-#endif
   /* "approximateKeepingUnits" is called because the expression might contain
    * units, and juste calling "approximate" would return undef*/
 
-  OExpression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(
+  Expression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(
       expression, this, params);
   // Do not store exact derivative, etc.
   if (storeApproximation ||
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          OExpression(), expression, approximation, this)) {
+          Expression(), expression, approximation, this)) {
     expression = approximation;
   }
   ExpressionNode::Type type = expression.type();
@@ -262,7 +268,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
-    const OExpression &expressionToStore, const SymbolAbstract &symbol,
+    const Expression &expressionToStore, const SymbolAbstract &symbol,
     Ion::Storage::Record previousRecord) {
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error =
@@ -278,7 +284,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
     }
     recordToSet = newModel;
   }
-  Poincare::OExpression equation = Poincare::Comparison::Builder(
+  Poincare::Expression equation = Poincare::Comparison::Builder(
       symbol.clone(), ComparisonNode::OperatorType::Equal, expressionToStore);
   ExpiringPointer<ContinuousFunction> f =
       GlobalContext::continuousFunctionStore->modelForRecord(recordToSet);

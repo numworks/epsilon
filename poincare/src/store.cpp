@@ -4,6 +4,7 @@
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
+#include <poincare/expression.h>
 #include <poincare/store.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>

@@ -3,6 +3,7 @@
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/context.h>
+#include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parametered_expression.h>
@@ -248,7 +249,7 @@ OExpression Symbol::deepReplaceReplaceableSymbols(
   }
   assert(isCircularFromHere == TrinaryBoolean::False);
 
-  OExpression e = context->expressionForSymbolAbstract(*this, true);
+  Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     if (symbolicComputation ==
         SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {

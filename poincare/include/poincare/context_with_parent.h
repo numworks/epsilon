@@ -3,7 +3,7 @@
 
 #include <assert.h>
 #include <poincare/context.h>
-#include <poincare/old_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
@@ -17,14 +17,14 @@ class ContextWithParent : public Context {
     assert(m_parentContext);
     return m_parentContext->expressionTypeForIdentifier(identifier, length);
   }
-  bool setExpressionForSymbolAbstract(const OExpression& expression,
+  bool setExpressionForSymbolAbstract(const Expression& expression,
                                       const SymbolAbstract& symbol) override {
     assert(m_parentContext);
     return m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
   }
 
  protected:
-  const OExpression protectedExpressionForSymbolAbstract(
+  const Expression protectedExpressionForSymbolAbstract(
       const SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override {
     assert(m_parentContext);

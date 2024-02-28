@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class OExpression;
+class JuniorExpression;
 class SymbolAbstract;
 class ContextWithParent;
 class TreeNode;
@@ -26,10 +26,10 @@ class Context {
   };
   virtual SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                          int length) = 0;
-  const OExpression expressionForSymbolAbstract(const SymbolAbstract& symbol,
-                                                bool clone);
-  virtual bool setExpressionForSymbolAbstract(const OExpression& expression,
-                                              const SymbolAbstract& symbol) = 0;
+  const JuniorExpression expressionForSymbolAbstract(
+      const SymbolAbstract& symbol, bool clone);
+  virtual bool setExpressionForSymbolAbstract(
+      const JuniorExpression& expression, const SymbolAbstract& symbol) = 0;
   virtual void tidyDownstreamPoolFrom(TreeNode* treePoolCursor = nullptr) {}
   virtual bool canRemoveUnderscoreToUnits() const { return true; }
 
@@ -38,7 +38,7 @@ class Context {
    * When getting the expression for a sequences in GlobalContext, you need
    * information on the variable that is stored in the ContextWithParent that
    * called you. */
-  virtual const OExpression protectedExpressionForSymbolAbstract(
+  virtual const JuniorExpression protectedExpressionForSymbolAbstract(
       const SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) = 0;
 };

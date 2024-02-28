@@ -2,8 +2,6 @@
 #define POINCARE_EMPTY_CONTEXT_H
 
 #include <assert.h>
-#include <poincare/context.h>
-#include <poincare/old_expression.h>
 
 namespace Poincare {
 
@@ -14,17 +12,17 @@ class EmptyContext : public Context {
                                                  int length) override {
     return SymbolAbstractType::None;
   }
-  bool setExpressionForSymbolAbstract(const OExpression& expression,
+  bool setExpressionForSymbolAbstract(const JuniorExpression& expression,
                                       const SymbolAbstract& symbol) override {
     assert(false);
     return false;
   }
 
  protected:
-  const OExpression protectedExpressionForSymbolAbstract(
+  const JuniorExpression protectedExpressionForSymbolAbstract(
       const SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override {
-    return OExpression();
+    return JuniorExpression();
   }
 };
 

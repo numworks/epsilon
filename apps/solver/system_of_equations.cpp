@@ -19,13 +19,13 @@ using namespace Shared;
 
 namespace Solver {
 
-const OExpression
+const Expression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
   if (symbol.type() == ExpressionNode::Type::Symbol &&
       static_cast<const Symbol &>(symbol).name()[0] == 't') {
-    return OExpression();
+    return Expression();
   }
   return ContextWithParent::protectedExpressionForSymbolAbstract(
       symbol, clone, lastDescendantContext);

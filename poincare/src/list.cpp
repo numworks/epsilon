@@ -1,6 +1,7 @@
 #include <poincare/addition.h>
 #include <poincare/curly_brace_layout.h>
 #include <poincare/dependency.h>
+#include <poincare/expression.h>
 #include <poincare/helpers.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
@@ -188,7 +189,7 @@ bool OList::isListOfPoints(Context* context) const {
       if (!context) {
         return false;
       }
-      OExpression ve = context->expressionForSymbolAbstract(
+      Expression ve = context->expressionForSymbolAbstract(
           static_cast<SymbolAbstract&>(e), false);
       if (!(ve.isUninitialized() || IsPoint(ve))) {
         return false;

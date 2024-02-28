@@ -23,17 +23,17 @@ class VariableContext : public ContextWithParent {
   // Context
   SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                  int length) override;
-  bool setExpressionForSymbolAbstract(const OExpression& expression,
+  bool setExpressionForSymbolAbstract(const Expression& expression,
                                       const SymbolAbstract& symbol) override;
 
  protected:
-  const OExpression protectedExpressionForSymbolAbstract(
+  const Expression protectedExpressionForSymbolAbstract(
       const SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
 
  private:
   const char* m_name;
-  OExpression m_value;
+  Expression m_value;
 };
 
 }  // namespace Poincare

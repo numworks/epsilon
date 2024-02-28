@@ -27,7 +27,7 @@ class StringLayoutNode : public LayoutNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  Layout makeEditable() override;
+  OLayout makeEditable() override;
   int numberOfThousandsSeparators();
 
   // TreeNode
@@ -47,7 +47,7 @@ class StringLayoutNode : public LayoutNode {
    * but 1234) */
   constexpr static int k_minDigitsForThousandSeparator = 5;
 
-  bool protectedIsIdenticalTo(Layout l) override;
+  bool protectedIsIdenticalTo(OLayout l) override;
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode *child, KDFont::Size font) override {
@@ -60,11 +60,11 @@ class StringLayoutNode : public LayoutNode {
   char m_string[0];
 };
 
-class StringLayout : public Layout {
+class StringLayout : public OLayout {
  public:
-  static void DistributeThousandDisplayType(Layout l, int start, int stop);
+  static void DistributeThousandDisplayType(OLayout l, int start, int stop);
 
-  StringLayout(const StringLayoutNode *n) : Layout(n) {}
+  StringLayout(const StringLayoutNode *n) : OLayout(n) {}
   static StringLayout Builder(const char *string, int stringSize = -1);
   int stringLength() const {
     return const_cast<StringLayout *>(this)->node()->stringLength();
@@ -72,12 +72,12 @@ class StringLayout : public Layout {
   const char *string() const {
     return const_cast<StringLayout *>(this)->node()->string();
   }
-  Layout makeEditable();
+  OLayout makeEditable();
 
  private:
-  using Layout::node;
+  using OLayout::node;
   StringLayoutNode *node() {
-    return static_cast<StringLayoutNode *>(Layout::node());
+    return static_cast<StringLayoutNode *>(OLayout::node());
   }
 };
 

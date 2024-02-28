@@ -45,11 +45,11 @@ Correspondance oneToOne[] = {
     {PT::ListSequenceLayout, LT::ListSequence},
 };
 
-Poincare::Layout Layout::ToPoincareLayout(const Tree *l) {
+Poincare::OLayout Layout::ToPoincareLayout(const Tree *l) {
   LayoutType type = l->layoutType();
   for (Correspondance cr : oneToOne) {
     if (cr.junior == type) {
-      Poincare::Layout c[5];
+      Poincare::OLayout c[5];
       for (int i = 0; i < l->numberOfChildren(); i++) {
         c[i] = ToPoincareLayout(l->child(i));
       }
@@ -142,14 +142,14 @@ Poincare::Layout Layout::ToPoincareLayout(const Tree *l) {
   }
 }
 
-void PushPoincareLayout(Poincare::Layout l);
+void PushPoincareLayout(Poincare::OLayout l);
 
-void PushPoincareRack(Poincare::Layout l) {
+void PushPoincareRack(Poincare::OLayout l) {
   if (l.isHorizontal()) {
     Tree *parent =
         SharedEditionPool->push<BlockType::RackLayout>(l.numberOfChildren());
     for (int i = 0; i < l.numberOfChildren(); i++) {
-      Poincare::Layout c = l.childAtIndex(i);
+      Poincare::OLayout c = l.childAtIndex(i);
       if (c.type() == Poincare::LayoutNode::Type::StringLayout) {
         PushPoincareRack(c);
       } else if (c.type() == Poincare::LayoutNode::Type::JuniorLayout) {
@@ -161,7 +161,7 @@ void PushPoincareRack(Poincare::Layout l) {
     NAry::Flatten(parent);
   } else if (l.type() == Poincare::LayoutNode::Type::StringLayout) {
     Poincare::StringLayout s = static_cast<Poincare::StringLayout &>(l);
-    Poincare::Layout editable =
+    Poincare::OLayout editable =
         Poincare::LayoutHelper::StringToCodePointsLayout(s.string(),
                                                          s.stringLength());
     PushPoincareRack(editable);
@@ -171,7 +171,7 @@ void PushPoincareRack(Poincare::Layout l) {
   }
 }
 
-void PushPoincareLayout(Poincare::Layout l) {
+void PushPoincareLayout(Poincare::OLayout l) {
   if (l.type() == PT::NthRootLayout && l.numberOfChildren() == 1) {
     SharedEditionPool->push(BlockType::SquareRootLayout);
     PushPoincareRack(l.childAtIndex(0));
@@ -230,7 +230,7 @@ void PushPoincareLayout(Poincare::Layout l) {
   }
 }
 
-Tree *Layout::FromPoincareLayout(Poincare::Layout l) {
+Tree *Layout::FromPoincareLayout(Poincare::OLayout l) {
   Tree *node = Tree::FromBlocks(SharedEditionPool->lastBlock());
   PushPoincareRack(l);
   return node;

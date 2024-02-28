@@ -13,7 +13,7 @@ namespace Poincare {
 
 class CodePointLayoutNode : public LayoutNode {
  public:
-  static bool IsCodePoint(Layout l, CodePoint c);
+  static bool IsCodePoint(OLayout l, CodePoint c);
 
   CodePointLayoutNode(CodePoint c = UCodePointNull)
       : LayoutNode(), m_codePoint(c) {}
@@ -56,7 +56,7 @@ class CodePointLayoutNode : public LayoutNode {
     assert(false);
     return KDPointZero;
   }
-  bool protectedIsIdenticalTo(Layout l) override;
+  bool protectedIsIdenticalTo(OLayout l) override;
   CodePoint m_codePoint;
 
  private:
@@ -64,18 +64,18 @@ class CodePointLayoutNode : public LayoutNode {
   void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
 };
 
-class CodePointLayout : public Layout {
+class CodePointLayout : public OLayout {
  public:
-  CodePointLayout(const CodePointLayoutNode *n) : Layout(n) {}
+  CodePointLayout(const CodePointLayoutNode *n) : OLayout(n) {}
   static CodePointLayout Builder(CodePoint c);
   CodePoint codePoint() const {
     return const_cast<CodePointLayout *>(this)->node()->codePoint();
   }
 
  private:
-  using Layout::node;
+  using OLayout::node;
   CodePointLayoutNode *node() {
-    return static_cast<CodePointLayoutNode *>(Layout::node());
+    return static_cast<CodePointLayoutNode *>(OLayout::node());
   }
 };
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_SELECTION_H
 #define POINCARE_LAYOUT_SELECTION_H
 
-#include <poincare/layout.h>
+#include <poincare/old_layout.h>
 
 namespace Poincare {
 
@@ -20,7 +20,7 @@ class LayoutSelection {
    *     -> LayoutSelection(l, 0, 1) = "A"
    *     -> LayoutSelection(l, 0, 0) = ""
    * */
-  LayoutSelection(Layout l, int startPosition, int endPosition)
+  LayoutSelection(OLayout l, int startPosition, int endPosition)
       : m_layout(l),
         m_startPosition(startPosition),
         m_endPosition(endPosition) {
@@ -32,7 +32,7 @@ class LayoutSelection {
             endPosition <= 1));
   }
 
-  LayoutSelection() : LayoutSelection(Layout(), 0, 0) {}
+  LayoutSelection() : LayoutSelection(OLayout(), 0, 0) {}
 
   LayoutSelection clone() {
     return LayoutSelection(m_layout.clone(), m_startPosition, m_endPosition);
@@ -42,7 +42,7 @@ class LayoutSelection {
     return m_layout.isUninitialized() || m_startPosition == m_endPosition;
   }
 
-  Layout layout() const { return m_layout; }
+  OLayout layout() const { return m_layout; }
   /* startPosition can be higher than endPosition if the selection is from
    * right to left. */
   int startPosition() const { return m_startPosition; }
@@ -60,7 +60,7 @@ class LayoutSelection {
   }
 
  private:
-  Layout m_layout;
+  OLayout m_layout;
   int m_startPosition;
   int m_endPosition;
 };

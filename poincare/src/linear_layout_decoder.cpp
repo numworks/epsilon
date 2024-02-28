@@ -4,6 +4,8 @@
 
 namespace Poincare {
 
+#define Layout OLayout
+
 LinearLayoutDecoder::LinearLayoutDecoder(const HorizontalLayout layout,
                                          size_t initialPosition,
                                          size_t layoutEnd)

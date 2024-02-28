@@ -24,8 +24,10 @@ Layout ComparisonNode::ComparisonOperatorLayout(OperatorType type) {
   const char* operatorString = ComparisonOperatorString(type);
   Layout result = LayoutHelper::StringToCodePointsLayout(
       operatorString, strlen(operatorString));
+#if 0
   assert(result.type() == LayoutNode::Type::CodePointLayout ||
          result.type() == LayoutNode::Type::CombinedCodePointsLayout);
+#endif
   return result;
 }
 

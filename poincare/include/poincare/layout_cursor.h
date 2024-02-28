@@ -3,8 +3,8 @@
 
 #include <omg/directions.h>
 #include <poincare/empty_rectangle.h>
-#include <poincare/layout.h>
 #include <poincare/layout_selection.h>
+#include <poincare/old_layout.h>
 
 namespace Poincare {
 
@@ -38,7 +38,7 @@ class LayoutCursor final {
  public:
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */
-  LayoutCursor(Layout layout,
+  LayoutCursor(OLayout layout,
                OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
       : m_position(0), m_startOfSelection(-1) {
     if (!layout.isUninitialized()) {
@@ -46,7 +46,7 @@ class LayoutCursor final {
     }
   }
 
-  LayoutCursor() : LayoutCursor(Layout()) {}
+  LayoutCursor() : LayoutCursor(OLayout()) {}
 
   // Definition
   bool isUninitialized() const { return m_layout.isUninitialized(); }
@@ -57,7 +57,7 @@ class LayoutCursor final {
   }
 
   // Getters and setters
-  Layout layout() { return m_layout; }
+  OLayout layout() { return m_layout; }
   int position() const { return m_position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
   LayoutSelection selection() const {
@@ -67,7 +67,7 @@ class LayoutCursor final {
   }
 
   // These will call didEnterCurrentPosition
-  void safeSetLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
+  void safeSetLayout(OLayout layout, OMG::HorizontalDirection sideOfLayout);
   void safeSetPosition(int position);
 
   /* Position and size */
@@ -82,8 +82,8 @@ class LayoutCursor final {
   bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting,
                          bool* shouldRedrawLayout, Context* context = nullptr);
 
-  /* Layout insertion */
-  void insertLayout(Layout layout, Context* context, bool forceRight = false,
+  /* OLayout insertion */
+  void insertLayout(OLayout layout, Context* context, bool forceRight = false,
                     bool forceLeft = false);
   void addEmptyExponentialLayout(Context* context);
   void addEmptyMatrixLayout(Context* context);
@@ -96,7 +96,7 @@ class LayoutCursor final {
                   bool forceCursorRightOfText = false,
                   bool forceCursorLeftOfText = false, bool linearMode = false);
 
-  /* Layout deletion */
+  /* OLayout deletion */
   void performBackspace();
 
   void resetSelection();
@@ -112,16 +112,16 @@ class LayoutCursor final {
 
   bool isAtNumeratorOfEmptyFraction() const;
 
-  static int RightmostPossibleCursorPosition(Layout l);
+  static int RightmostPossibleCursorPosition(OLayout l);
 
   void beautifyLeft(Context* context);
 
  private:
-  void setLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
+  void setLayout(OLayout layout, OMG::HorizontalDirection sideOfLayout);
 
-  Layout leftLayout();
-  Layout rightLayout();
-  Layout layoutToFit(KDFont::Size font);
+  OLayout leftLayout();
+  OLayout rightLayout();
+  OLayout layoutToFit(KDFont::Size font);
 
   int leftMostPosition() const { return 0; }
   int rightmostPosition() const {
@@ -144,14 +144,14 @@ class LayoutCursor final {
   void removeEmptyRowOrColumnOfGridParentIfNeeded();
   void invalidateSizesAndPositions();
 
-  void collapseSiblingsOfLayout(Layout l);
-  void collapseSiblingsOfLayoutOnDirection(Layout l,
+  void collapseSiblingsOfLayout(OLayout l);
+  void collapseSiblingsOfLayoutOnDirection(OLayout l,
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
 
   void balanceAutocompletedBracketsAndKeepAValidCursor();
 
-  Layout m_layout;
+  OLayout m_layout;
   int m_position;
   /* -1 if no current selection. If m_startOfSelection >= 0, the selection is
    * between m_startOfSelection and m_position */

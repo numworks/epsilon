@@ -67,7 +67,7 @@ class VerticalOffsetLayoutNode final : public LayoutNode {
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode *child, KDFont::Size font) override;
   void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
-  bool protectedIsIdenticalTo(Layout l) override;
+  bool protectedIsIdenticalTo(OLayout l) override;
 
   LayoutNode *indiceLayout() { return childAtIndex(0); }
   int baseOffsetInParent() const {
@@ -85,10 +85,10 @@ class VerticalOffsetLayoutNode final : public LayoutNode {
   HorizontalPosition m_horizontalPosition : 1;
 };
 
-class VerticalOffsetLayout final : public Layout {
+class VerticalOffsetLayout final : public OLayout {
  public:
   static VerticalOffsetLayout Builder(
-      Layout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition,
+      OLayout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition,
       VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition =
           VerticalOffsetLayoutNode::HorizontalPosition::Suffix);
   VerticalOffsetLayout() = delete;
@@ -110,7 +110,7 @@ class VerticalOffsetLayout final : public Layout {
 
  private:
   VerticalOffsetLayoutNode *node() const {
-    return static_cast<VerticalOffsetLayoutNode *>(Layout::node());
+    return static_cast<VerticalOffsetLayoutNode *>(OLayout::node());
   }
 };
 

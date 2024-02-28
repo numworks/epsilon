@@ -23,7 +23,7 @@ class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
   }
   static bool IsAutoCompletedBracketPairCodePoint(CodePoint c, Type* type,
                                                   Side* side);
-  static Layout BuildFromBracketType(Type type);
+  static OLayout BuildFromBracketType(Type type);
 
   // Deep balance the autocompleted brackets in hLayout
   static void BalanceBrackets(HorizontalLayout hLayout,

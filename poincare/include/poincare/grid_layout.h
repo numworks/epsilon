@@ -135,12 +135,12 @@ class GridLayoutNode : public Array, public LayoutNode {
   void colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int lineIndex);
 };
 
-class GridLayout : public Layout {
+class GridLayout : public OLayout {
  public:
-  GridLayout(const GridLayoutNode *n) : Layout(n) {}
+  GridLayout(const GridLayoutNode *n) : OLayout(n) {}
 
   void setDimensions(int rows, int columns);
-  using Layout::addChildAtIndexInPlace;
+  using OLayout::addChildAtIndexInPlace;
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
   bool isEditing() const { return node()->isEditing(); }
@@ -149,7 +149,7 @@ class GridLayout : public Layout {
 
  private:
   virtual GridLayoutNode *node() const {
-    return static_cast<GridLayoutNode *>(Layout::node());
+    return static_cast<GridLayoutNode *>(OLayout::node());
   }
   void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { node()->setNumberOfColumns(columns); }

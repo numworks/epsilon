@@ -262,8 +262,10 @@ void SumGraphController::LegendView::setEditableZone(double d) {
 
 static Layout emptyValueLayout() {
   Layout layout = HorizontalLayout::Builder();
+#if 0
   static_cast<HorizontalLayout &>(layout).setEmptyVisibility(
       EmptyRectangle::State::Hidden);
+#endif
   return layout;
 }
 

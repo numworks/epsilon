@@ -13,6 +13,8 @@
 
 namespace Poincare {
 
+#define Layout OLayout
+
 Layout Layout::clone() const {
   if (isUninitialized()) {
     return Layout();

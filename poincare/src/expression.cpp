@@ -1124,7 +1124,7 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
 
 /* Layout Helper */
 
-static bool LayoutHasStringWithThousandSeparator(Layout l) {
+static bool LayoutHasStringWithThousandSeparator(OLayout l) {
   if (l.type() == LayoutNode::Type::StringLayout) {
     return static_cast<StringLayoutNode *>(l.node())
                ->numberOfThousandsSeparators() > 0;
@@ -1138,7 +1138,7 @@ static bool LayoutHasStringWithThousandSeparator(Layout l) {
   return false;
 }
 
-static bool LayoutHasLockedMargins(Layout l) {
+static bool LayoutHasLockedMargins(OLayout l) {
   if (l.node()->marginIsLocked()) {
     return true;
   }
@@ -1151,7 +1151,7 @@ static bool LayoutHasLockedMargins(Layout l) {
   return false;
 }
 
-static void StripMarginFromLayout(Layout l) {
+static void StripMarginFromLayout(OLayout l) {
   l.node()->setMargin(false);
   int n = l.numberOfChildren();
   for (int i = 0; i < n; i++) {

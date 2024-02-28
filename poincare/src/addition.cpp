@@ -64,6 +64,7 @@ Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode,
                                       numberOfSignificantDigits, "+", context);
   if (displayImplicitAdditionBetweenUnits(result)) {
+#if 0
     // Remove the '+'
     int i = result.numberOfChildren() - 1;
     while (i >= 0) {
@@ -76,6 +77,7 @@ Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       i--;
     }
     assert(i == -1);
+#endif
   }
   return result;
 }
@@ -111,6 +113,7 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
   if (nChildrenExpression < 2) {
     return false;
   }
+#if 0
   /* Step 1: Check if the layout of the addtion contains an 'ᴇ'.
    * If it's the case, return false, since implicit
    * addition should not contain any 'ᴇ'.
@@ -149,6 +152,8 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
     storedUnitRepresentative = unitOfChild.representative();
   }
   return true;
+#endif
+  return false;
 }
 
 // Addition

@@ -30,7 +30,7 @@ class InputBeautification {
   };
 
   static BeautificationMethod BeautificationMethodWhenInsertingLayout(
-      Layout insertedLayout);
+      OLayout insertedLayout);
 
   /* Both of the following functions return true if layouts were beautified.
    *
@@ -54,7 +54,7 @@ class InputBeautification {
                                                  Context* context);
 
  private:
-  using BeautifiedLayoutBuilder = Layout (*)(Layout* parameters);
+  using BeautifiedLayoutBuilder = OLayout (*)(OLayout* parameters);
   constexpr static int k_maxNumberOfParameters = 4;
   struct BeautificationRule {
     AliasesList listOfBeautifiedAliases;
@@ -70,62 +70,64 @@ class InputBeautification {
   constexpr static const BeautificationRule k_symbolsRules[] = {
       // Comparison operators
       {"<=", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(ComparisonNode::ComparisonOperatorLayout(
              ComparisonNode::OperatorType::InferiorEqual));
        }},
       {">=", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(ComparisonNode::ComparisonOperatorLayout(
              ComparisonNode::OperatorType::SuperiorEqual));
        }},
       {"!=", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(ComparisonNode::ComparisonOperatorLayout(
              ComparisonNode::OperatorType::NotEqual));
        }},
       // Special char
       {"->", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(
              CodePointLayout::Builder(UCodePointRightwardsArrow));
        }},
       {"*", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(
              CodePointLayout::Builder(UCodePointMultiplicationSign));
        }},
   };
 
   constexpr static BeautificationRule k_infRule = {
-      "inf", 0, [](Layout* parameters) {
-        return static_cast<Layout>(
+      "inf", 0, [](OLayout* parameters) {
+        return static_cast<OLayout>(
             CodePointLayout::Builder(UCodePointInfinity));
       }};
 
   constexpr static BeautificationRule k_piRule = {
-      "pi", 0, [](Layout* parameters) {
-        return static_cast<Layout>(
+      "pi", 0, [](OLayout* parameters) {
+        return static_cast<OLayout>(
             CodePointLayout::Builder(UCodePointGreekSmallLetterPi));
       }};
   constexpr static BeautificationRule k_thetaRule = {
-      "theta", 0, [](Layout* parameters) {
-        return static_cast<Layout>(
+      "theta", 0, [](OLayout* parameters) {
+        return static_cast<OLayout>(
             CodePointLayout::Builder(UCodePointGreekSmallLetterTheta));
       }};
 
   constexpr static BeautificationRule k_absoluteValueRule = {
-      AbsoluteValue::s_functionHelper.aliasesList(), 1, [](Layout* parameters) {
-        return static_cast<Layout>(AbsoluteValueLayout::Builder(parameters[0]));
+      AbsoluteValue::s_functionHelper.aliasesList(), 1,
+      [](OLayout* parameters) {
+        return static_cast<OLayout>(
+            AbsoluteValueLayout::Builder(parameters[0]));
       }};
 
   constexpr static BeautificationRule k_derivativeRule = {
-      Derivative::s_functionHelper.aliasesList(), 3, [](Layout* parameters) {
+      Derivative::s_functionHelper.aliasesList(), 3, [](OLayout* parameters) {
         if (parameters[1].isEmpty()) {  // This preserves cursor
           parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('x'), 0,
                                                0);
         }
-        return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(
+        return static_cast<OLayout>(FirstOrderDerivativeLayout::Builder(
             parameters[0], parameters[1], parameters[2]));
       }};
 
@@ -149,25 +151,25 @@ class InputBeautification {
       /* abs( */ k_absoluteValueRule,
       {/* binomial( */
        BinomialCoefficient::s_functionHelper.aliasesList(), 2,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(
              BinomialCoefficientLayout::Builder(parameters[0], parameters[1]));
        }},
       {/* ceil( */
        Ceiling::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(CeilingLayout::Builder(parameters[0]));
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(CeilingLayout::Builder(parameters[0]));
        }},
       {/* conj( */
        Conjugate::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(ConjugateLayout::Builder(parameters[0]));
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(ConjugateLayout::Builder(parameters[0]));
        }},
       /* diff( */ k_derivativeRule,
       {/* exp( */
        Power::s_exponentialFunctionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(HorizontalLayout::Builder(
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(HorizontalLayout::Builder(
              CodePointLayout::Builder('e'),
              VerticalOffsetLayout::Builder(
                  parameters[0],
@@ -175,29 +177,29 @@ class InputBeautification {
        }},
       {/* floor( */
        Floor::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(FloorLayout::Builder(parameters[0]));
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(FloorLayout::Builder(parameters[0]));
        }},
       /* inf */ k_infRule,
       {/* int( */
        Integral::s_functionHelper.aliasesList(), 4,
-       [](Layout* parameters) {
+       [](OLayout* parameters) {
          if (parameters[1].isEmpty()) {  // This preserves cursor
            parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('x'),
                                                 0, 0);
          }
-         return static_cast<Layout>(IntegralLayout::Builder(
+         return static_cast<OLayout>(IntegralLayout::Builder(
              parameters[0], parameters[1], parameters[2], parameters[3]));
        }},
       {/* norm( */
        VectorNorm::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(VectorNormLayout::Builder(parameters[0]));
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(VectorNormLayout::Builder(parameters[0]));
        }},
       /* pi */ k_piRule,
       {/* piecewise( */
        PiecewiseOperator::s_functionHelper.aliasesList(), 2,
-       [](Layout* parameters) {
+       [](OLayout* parameters) {
          /* WARNING: The implementation of ReplaceEmptyLayoutsWithParameters
           * needs the created layout to have empty layouts where the
           * parameters should be inserted. Since Piecewise operator does not
@@ -210,29 +212,29 @@ class InputBeautification {
           * with nothing on its right. */
          PiecewiseOperatorLayout layout = PiecewiseOperatorLayout::Builder();
          layout.addRow(parameters[0],
-                       parameters[1].isEmpty() ? Layout() : parameters[1]);
-         return static_cast<Layout>(layout);
+                       parameters[1].isEmpty() ? OLayout() : parameters[1]);
+         return static_cast<OLayout>(layout);
        }},
       {/* product( */
        Product::s_functionHelper.aliasesList(), 4,
-       [](Layout* parameters) {
+       [](OLayout* parameters) {
          if (parameters[1].isEmpty()) {  // This preserves cursor
            parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('k'),
                                                 0, 0);
          }
-         return static_cast<Layout>(ProductLayout::Builder(
+         return static_cast<OLayout>(ProductLayout::Builder(
              parameters[0], parameters[1], parameters[2], parameters[3]));
        }},
       {/* root( */
        NthRoot::s_functionHelper.aliasesList(), 2,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(
              NthRootLayout::Builder(parameters[0], parameters[1]));
        }},
       {/* sqrt( */
        SquareRoot::s_functionHelper.aliasesList(), 1,
-       [](Layout* parameters) {
-         return static_cast<Layout>(NthRootLayout::Builder(parameters[0]));
+       [](OLayout* parameters) {
+         return static_cast<OLayout>(NthRootLayout::Builder(parameters[0]));
        }},
       /* theta */ k_thetaRule};
 
@@ -240,24 +242,24 @@ class InputBeautification {
       std::size(k_identifiersRules);
 
   constexpr static BeautificationRule k_sumRule = {
-      Sum::s_functionHelper.aliasesList(), 4, [](Layout* parameters) {
+      Sum::s_functionHelper.aliasesList(), 4, [](OLayout* parameters) {
         if (parameters[1].isEmpty()) {  // This preserves cursor
           parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('k'), 0,
                                                0);
         }
-        return static_cast<Layout>(SumLayout::Builder(
+        return static_cast<OLayout>(SumLayout::Builder(
             parameters[0], parameters[1], parameters[2], parameters[3]));
       }};
 
   constexpr static BeautificationRule k_logarithmRule = {
-      Logarithm::s_functionHelper.aliasesList(), 2, [](Layout* parameters) {
-        return static_cast<Layout>(
+      Logarithm::s_functionHelper.aliasesList(), 2, [](OLayout* parameters) {
+        return static_cast<OLayout>(
             LayoutHelper::Logarithm(parameters[0], parameters[1])
                 .makeEditable());
       }};
   constexpr static int k_indexOfBaseOfLog = 1;
 
-  static bool LayoutIsIdentifierMaterial(Layout l);
+  static bool LayoutIsIdentifierMaterial(OLayout l);
 
   // All following methods return true if layout was beautified
 
@@ -295,11 +297,11 @@ class InputBeautification {
       HorizontalLayout h, int startIndex, int endIndex,
       BeautificationRule beautificationRule, LayoutCursor* layoutCursor,
       int* numberOfLayoutsAddedOrRemoved = nullptr,
-      Layout preProcessedParameter = Layout(),
+      OLayout preProcessedParameter = OLayout(),
       int indexOfPreProcessedParameter = -1);
 
   // Return false if there are too many parameters
-  static bool CreateParametersList(Layout* parameters, HorizontalLayout h,
+  static bool CreateParametersList(OLayout* parameters, HorizontalLayout h,
                                    int parenthesisIndexInParent,
                                    BeautificationRule beautificationRule,
                                    LayoutCursor* layoutCursor);

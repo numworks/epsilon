@@ -48,7 +48,7 @@ class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
 
  private:
   void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
-  bool protectedIsIdenticalTo(Layout l) override;
+  bool protectedIsIdenticalTo(OLayout l) override;
 
   CodePoint m_combinedCodePoint;
 };
@@ -64,7 +64,7 @@ class CombinedCodePointsLayout final : public CodePointLayout {
         ->combinedCodePoint();
   }
   CombinedCodePointsLayoutNode *node() {
-    return static_cast<CombinedCodePointsLayoutNode *>(Layout::node());
+    return static_cast<CombinedCodePointsLayoutNode *>(OLayout::node());
   }
 };
 

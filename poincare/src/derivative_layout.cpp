@@ -385,8 +385,8 @@ void DerivativeLayoutNode::render(KDContext* ctx, KDPoint p,
   ctx->drawString("=", equalPosition.translatedBy(p), style);
 
   // Draw the copy of x
-  Layout variableCopy =
-      HorizontalLayout::Builder(Layout(variableLayout()).clone());
+  OLayout variableCopy =
+      HorizontalLayout::Builder(OLayout(variableLayout()).clone());
   KDPoint copyPosition = m_variableSlot == VariableSlot::Fraction
                              ? variableAssignmentPosition
                              : positionOfVariableInFractionSlot(style.font);
@@ -421,7 +421,7 @@ KDPoint HigherOrderDerivativeLayoutNode::positionOfOrderInDenominator(
 void HigherOrderDerivativeLayoutNode::render(KDContext* ctx, KDPoint p,
                                              KDGlyph::Style style) {
   // Draw the copy of the order
-  Layout orderCopy = HorizontalLayout::Builder(Layout(orderLayout()).clone());
+  OLayout orderCopy = HorizontalLayout::Builder(OLayout(orderLayout()).clone());
   KDPoint copyPosition = m_orderSlot == OrderSlot::Denominator
                              ? positionOfOrderInNumerator(style.font)
                              : positionOfOrderInDenominator(style.font);

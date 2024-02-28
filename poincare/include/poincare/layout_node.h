@@ -11,11 +11,11 @@
 
 namespace Poincare {
 
-class Layout;
+class OLayout;
 class LayoutSelection;
 
 class LayoutNode : public TreeNode {
-  friend class Layout;
+  friend class OLayout;
 
  public:
   enum class Type : uint8_t {
@@ -71,7 +71,7 @@ class LayoutNode : public TreeNode {
   bool isHorizontal() const { return type() == Type::HorizontalLayout; }
 
   // Comparison
-  bool isIdenticalTo(Layout l, bool makeEditable = false);
+  bool isIdenticalTo(OLayout l, bool makeEditable = false);
 
   // Rendering
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
@@ -161,13 +161,13 @@ class LayoutNode : public TreeNode {
   bool canBeOmittedMultiplicationLeftFactor() const;
   virtual bool hasUpperLeftIndex() const { return false; }
 
-  virtual Layout makeEditable();
+  virtual OLayout makeEditable();
 
-  bool createGraySquaresAfterEnteringGrid(Layout layoutToExclude);
-  bool deleteGraySquaresBeforeLeavingGrid(Layout layoutToExclude);
+  bool createGraySquaresAfterEnteringGrid(OLayout layoutToExclude);
+  bool deleteGraySquaresBeforeLeavingGrid(OLayout layoutToExclude);
 
  protected:
-  virtual bool protectedIsIdenticalTo(Layout l);
+  virtual bool protectedIsIdenticalTo(OLayout l);
 
   // Tree
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
@@ -184,7 +184,7 @@ class LayoutNode : public TreeNode {
   KDPoint absoluteOriginWithMargin(KDFont::Size font);
   virtual void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) = 0;
   bool changeGraySquaresOfAllGridRelatives(bool add, bool ancestors,
-                                           Layout layoutToExclude);
+                                           OLayout layoutToExclude);
 
   KDRect m_frame;
   /* m_baseline is the signed vertical distance from the top of the layout to

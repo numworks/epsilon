@@ -45,7 +45,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  Layout h = HorizontalLayout::Builder();
+  OLayout h = HorizontalLayout::Builder();
   JuniorLayout l = JuniorLayout::Juniorize(h);
   m_layoutView.setLayout(l);
   m_cursor =
@@ -68,7 +68,7 @@ void LayoutField::ContentView::copySelection(Context *context,
   }
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
-  Layout layoutToParse;
+  OLayout layoutToParse;
 #if 0
   if (selection.layout().isHorizontal()) {
     layoutToParse = HorizontalLayout::Builder();
@@ -177,7 +177,7 @@ void LayoutField::scrollToCursor() {
   scrollToBaselinedRect(cursorRect, cursorBaseline);
 }
 
-void LayoutField::setLayout(Poincare::Layout newLayout) {
+void LayoutField::setLayout(Poincare::OLayout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();
   const_cast<LayoutView *>(m_contentView.layoutView())
@@ -330,7 +330,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
     return true;
   }
   // The text is parsable, we create its layout an insert it.
-  Layout resultLayout = resultExpression.createLayout(
+  OLayout resultLayout = resultExpression.createLayout(
       Poincare::Preferences::SharedPreferences()->displayMode(),
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
       App::app() ? App::app()->localContext() : nullptr, true);
@@ -368,7 +368,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
    * */
   if (!forceCursorRightOfText && resultLayout.isHorizontal() &&
       resultLayout.numberOfChildren() > 0) {
-    Layout lastChild =
+    OLayout lastChild =
         resultLayout.childAtIndex(resultLayout.numberOfChildren() - 1);
     if (lastChild.type() == LayoutNode::Type::ParenthesisLayout &&
         !static_cast<ParenthesisLayoutNode *>(lastChild.node())
@@ -425,11 +425,11 @@ void LayoutField::restoreContent(const char *buffer, size_t size,
     return;
   }
 #if 0
-  setLayout(Layout::LayoutFromAddress(buffer, size));
+  setLayout(OLayout::LayoutFromAddress(buffer, size));
   if (*cursorOffset != -1) {
     const LayoutNode *cursorNode = reinterpret_cast<const LayoutNode *>(
         reinterpret_cast<char *>(layout().node()) + *cursorOffset);
-    LayoutCursor restoredCursor = LayoutCursor(Layout(cursorNode));
+    LayoutCursor restoredCursor = LayoutCursor(OLayout(cursorNode));
     restoredCursor.safeSetPosition(*position);
     *cursor() = restoredCursor;
   }
@@ -653,7 +653,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect);
 }
 
-void LayoutField::insertLayoutAtCursor(Layout layout,
+void LayoutField::insertLayoutAtCursor(OLayout layout,
                                        bool forceCursorRightOfLayout,
                                        bool forceCursorLeftOfLayout) {
   if (layout.isUninitialized()) {

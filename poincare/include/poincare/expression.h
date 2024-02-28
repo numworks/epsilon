@@ -6,6 +6,7 @@
 #include <poincare/complex.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression_node.h>
+#include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/tree_handle.h>

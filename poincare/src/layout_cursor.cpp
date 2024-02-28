@@ -17,6 +17,8 @@
 
 namespace Poincare {
 
+#define Layout OLayout
+
 void LayoutCursor::safeSetLayout(Layout layout,
                                  OMG::HorizontalDirection sideOfLayout) {
   LayoutCursor previousCursor = *this;

@@ -65,7 +65,7 @@ class Test : public Statistic {
   // Additional estimates
   virtual int numberOfEstimates() const { return 0; }
   virtual double estimateValue(int index) { return 0; }
-  virtual Poincare::Layout estimateLayout(int index) const { return nullptr; }
+  virtual Poincare::Layout estimateLayout(int index) const { return {}; }
   virtual I18n::Message estimateDescription(int index) {
     return I18n::Message::Default;
   }

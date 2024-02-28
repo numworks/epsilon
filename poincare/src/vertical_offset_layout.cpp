@@ -213,7 +213,7 @@ KDCoordinate VerticalOffsetLayoutNode::baseBaseline(KDFont::Size font) {
                       : EmptyRectangle::RectangleBaseLine(font);
 }
 
-bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(Layout l) {
+bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(OLayout l) {
   assert(l.type() == Type::VerticalOffsetLayout);
   VerticalOffsetLayoutNode *n =
       static_cast<VerticalOffsetLayoutNode *>(l.node());
@@ -247,7 +247,7 @@ void VerticalOffsetLayoutNode::render(KDContext *ctx, KDPoint p,
 }
 
 VerticalOffsetLayout VerticalOffsetLayout::Builder(
-    Layout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition,
+    OLayout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition,
     VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition) {
   void *bufferNode =
       TreePool::sharedPool->alloc(sizeof(VerticalOffsetLayoutNode));

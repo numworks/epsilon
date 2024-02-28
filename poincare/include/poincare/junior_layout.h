@@ -42,7 +42,7 @@ class JuniorLayoutNode final : public LayoutNode {
     assert(false);
     return KDPointZero;
   }
-  Layout makeEditable() override;
+  OLayout makeEditable() override;
 
  private:
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
@@ -57,28 +57,28 @@ class JuniorLayout final
     : public LayoutNoChildren<JuniorLayout, JuniorLayoutNode> {
  public:
   JuniorLayout() {}
-  JuniorLayout(const Layout& other) { *this = other; }
+  JuniorLayout(const OLayout& other) { *this = other; }
 
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
-  static JuniorLayout Juniorize(Layout l);
+  static JuniorLayout Juniorize(OLayout l);
   const PoincareJ::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }
 
-  JuniorLayout operator=(Layout&& other) {
+  JuniorLayout operator=(OLayout&& other) {
     *this = Juniorize(other);
     return *this;
   }
 
-  JuniorLayout operator=(const Layout& other) {
+  JuniorLayout operator=(const OLayout& other) {
     *this = Juniorize(other);
     return *this;
   }
 
  private:
-  using Layout::node;
+  using OLayout::node;
   JuniorLayoutNode* node() {
-    return static_cast<JuniorLayoutNode*>(Layout::node());
+    return static_cast<JuniorLayoutNode*>(OLayout::node());
   }
 };
 

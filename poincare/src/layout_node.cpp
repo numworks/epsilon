@@ -12,6 +12,8 @@
 
 namespace Poincare {
 
+#define Layout OLayout
+
 bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
   if (makeEditable) {
     return Layout(this).clone().makeEditable().isIdenticalTo(

@@ -14,6 +14,8 @@
 
 namespace Poincare {
 
+#define Layout OLayout
+
 Layout LayoutHelper::DefaultCreateOperatorLayoutForInfix(
     const char* operatorName, Expression left, Expression right,
     Layout rightLayout) {

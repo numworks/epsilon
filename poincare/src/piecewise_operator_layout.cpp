@@ -149,7 +149,7 @@ void PiecewiseOperatorLayoutNode::makeLastConditionVisibleIfEmpty(
   }
 }
 
-// Layout
+// OLayout
 
 PiecewiseOperatorLayout PiecewiseOperatorLayout::Builder() {
   TreeHandle result = TreeHandle::NAryBuilder<PiecewiseOperatorLayout,
@@ -160,7 +160,7 @@ PiecewiseOperatorLayout PiecewiseOperatorLayout::Builder() {
   return layout;
 }
 
-void PiecewiseOperatorLayout::addRow(Layout leftLayout, Layout rightLayout) {
+void PiecewiseOperatorLayout::addRow(OLayout leftLayout, OLayout rightLayout) {
   assert(numberOfColumns() == 2);
   if (rightLayout.isUninitialized()) {
     rightLayout = HorizontalLayout::Builder();

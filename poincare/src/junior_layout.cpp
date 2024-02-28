@@ -23,12 +23,12 @@ void JuniorLayoutNode::render(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
 size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {
-  Layout l = PoincareJ::Layout::ToPoincareLayout(tree());
+  OLayout l = PoincareJ::Layout::ToPoincareLayout(tree());
   return l.node()->serialize(buffer, bufferSize, floatDisplayMode,
                              numberOfSignificantDigits);
 }
 
-Layout JuniorLayoutNode::makeEditable() {
+OLayout JuniorLayoutNode::makeEditable() {
   return PoincareJ::Layout::ToPoincareLayout(tree());
 }
 
@@ -41,7 +41,7 @@ JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
   return static_cast<JuniorLayout&>(h);
 }
 
-JuniorLayout JuniorLayout::Juniorize(Layout l) {
+JuniorLayout JuniorLayout::Juniorize(OLayout l) {
   if (l.isUninitialized()) {
     return static_cast<JuniorLayout&>(l);
   }

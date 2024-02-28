@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-class Layout : public TreeHandle {
+class OLayout : public TreeHandle {
   friend class AdditionNode;
   friend class GridLayoutNode;
   friend class HorizontalLayoutNode;
@@ -19,15 +19,15 @@ class Layout : public TreeHandle {
   friend class VerticalOffsetLayoutNode;
 
  public:
-  Layout() : TreeHandle() {}
-  Layout(const LayoutNode *node) : TreeHandle(node) {}
-  Layout clone() const;
+  OLayout() : TreeHandle() {}
+  OLayout(const LayoutNode *node) : TreeHandle(node) {}
+  OLayout clone() const;
   LayoutNode *node() const {
     assert(isUninitialized() ||
            (TreeHandle::node() && !TreeHandle::node()->isGhost()));
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
-  static Layout LayoutFromAddress(const void *address, size_t size);
+  static OLayout LayoutFromAddress(const void *address, size_t size);
 
   // Properties
   LayoutNode::Type type() const { return node()->type(); }
@@ -35,7 +35,7 @@ class Layout : public TreeHandle {
   bool isEmpty() const { return node()->isEmpty(); }
   // True if horizontal layout with only code points in it
   bool isCodePointsString() const;
-  bool isIdenticalTo(Layout l, bool makeEditable = false) {
+  bool isIdenticalTo(OLayout l, bool makeEditable = false) {
     return isUninitialized() ? l.isUninitialized()
                              : node()->isIdenticalTo(l, makeEditable);
   }
@@ -69,8 +69,8 @@ class Layout : public TreeHandle {
   // Layout properties
   /* Return True if the layout succeeded the test, Unknown if its children
    * could succeed, and False if the recursion should stop. */
-  typedef TrinaryBoolean (*LayoutTest)(const Layout l);
-  Layout recursivelyMatches(LayoutTest test) const;
+  typedef TrinaryBoolean (*LayoutTest)(const OLayout l);
+  OLayout recursivelyMatches(LayoutTest test) const;
 
   bool shouldCollapseSiblingsOnLeft() const {
     return type() == LayoutNode::Type::FractionLayout;
@@ -82,7 +82,7 @@ class Layout : public TreeHandle {
   }
   bool isCollapsable(int *numberOfOpenParenthesis,
                      OMG::HorizontalDirection direction) const {
-    return const_cast<Layout *>(this)->node()->isCollapsable(
+    return const_cast<OLayout *>(this)->node()->isCollapsable(
         numberOfOpenParenthesis, direction);
   }
 
@@ -90,10 +90,10 @@ class Layout : public TreeHandle {
   int indexOfChildToPointToWhenInserting() {
     return node()->indexOfChildToPointToWhenInserting();
   }
-  bool createGraySquaresAfterEnteringGrid(Layout layoutToExclude = Layout()) {
+  bool createGraySquaresAfterEnteringGrid(OLayout layoutToExclude = OLayout()) {
     return node()->createGraySquaresAfterEnteringGrid(layoutToExclude);
   }
-  bool deleteGraySquaresBeforeLeavingGrid(Layout layoutToExclude = Layout()) {
+  bool deleteGraySquaresBeforeLeavingGrid(OLayout layoutToExclude = OLayout()) {
     return node()->deleteGraySquaresBeforeLeavingGrid(layoutToExclude);
   }
 
@@ -101,18 +101,18 @@ class Layout : public TreeHandle {
   void lockMargin(bool lock) { node()->lockMargin(lock); }
 
   // Tree
-  Layout childAtIndex(int i) const;
-  Layout root() const {
+  OLayout childAtIndex(int i) const;
+  OLayout root() const {
     assert(!isUninitialized());
-    return Layout(node()->root());
+    return OLayout(node()->root());
   }
-  Layout parent() const {
+  OLayout parent() const {
     assert(!isUninitialized());
-    return Layout(node()->parent());
+    return OLayout(node()->parent());
   }
 
   // Replace strings with codepoints
-  Layout makeEditable() { return node()->makeEditable(); }
+  OLayout makeEditable() { return node()->makeEditable(); }
 
   // Cursor move
   int indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction,
@@ -143,7 +143,7 @@ template <typename T, typename U, int N, typename Parent>
 class LayoutBuilder : public Parent {
  public:
 #ifndef PLATFORM_DEVICE
-  static_assert(std::is_base_of<Layout, Parent>::value);
+  static_assert(std::is_base_of<OLayout, Parent>::value);
 #endif
   static T Builder() {
     static_assert(N == 0);
@@ -151,25 +151,26 @@ class LayoutBuilder : public Parent {
         TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
     return static_cast<T &>(h);
   }
-  static T Builder(Layout child) {
+  static T Builder(OLayout child) {
     static_assert(N == 1);
     TreeHandle h =
         TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
     return static_cast<T &>(h);
   }
-  static T Builder(Layout child1, Layout child2) {
+  static T Builder(OLayout child1, OLayout child2) {
     static_assert(N == 2);
     TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
                                                    {child1, child2});
     return static_cast<T &>(h);
   }
-  static T Builder(Layout child1, Layout child2, Layout child3) {
+  static T Builder(OLayout child1, OLayout child2, OLayout child3) {
     static_assert(N == 3);
     TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
                                                    {child1, child2, child3});
     return static_cast<T &>(h);
   }
-  static T Builder(Layout child1, Layout child2, Layout child3, Layout child4) {
+  static T Builder(OLayout child1, OLayout child2, OLayout child3,
+                   OLayout child4) {
     static_assert(N == 4);
     TreeHandle h = TreeHandle::BuilderWithChildren(
         Initializer<U>, sizeof(U), {child1, child2, child3, child4});
@@ -177,15 +178,15 @@ class LayoutBuilder : public Parent {
   }
 };
 
-template <typename T, typename U, typename P = Layout>
+template <typename T, typename U, typename P = OLayout>
 using LayoutNoChildren = LayoutBuilder<T, U, 0, P>;
-template <typename T, typename U, typename P = Layout>
+template <typename T, typename U, typename P = OLayout>
 using LayoutOneChild = LayoutBuilder<T, U, 1, P>;
-template <typename T, typename U, typename P = Layout>
+template <typename T, typename U, typename P = OLayout>
 using LayoutTwoChildren = LayoutBuilder<T, U, 2, P>;
-template <typename T, typename U, typename P = Layout>
+template <typename T, typename U, typename P = OLayout>
 using LayoutThreeChildren = LayoutBuilder<T, U, 3, P>;
-template <typename T, typename U, typename P = Layout>
+template <typename T, typename U, typename P = OLayout>
 using LayoutFourChildren = LayoutBuilder<T, U, 4, P>;
 
 }  // namespace Poincare

@@ -12,7 +12,7 @@ StringLayoutNode::StringLayoutNode(const char *string, int stringSize)
   strlcpy(m_string, string, stringSize);
 }
 
-Layout StringLayoutNode::makeEditable() {
+OLayout StringLayoutNode::makeEditable() {
   return StringLayout(this).makeEditable();
 }
 
@@ -26,7 +26,7 @@ size_t StringLayoutNode::size() const {
   return sizeof(StringLayoutNode) + sizeof(char) * (stringLength() + 1);
 }
 
-bool StringLayoutNode::protectedIsIdenticalTo(Layout l) {
+bool StringLayoutNode::protectedIsIdenticalTo(OLayout l) {
   assert(l.type() == Type::StringLayout);
   StringLayout &sl = static_cast<StringLayout &>(l);
   return strncmp(m_string, sl.string(),
@@ -106,10 +106,10 @@ StringLayout StringLayout::Builder(const char *string, int stringSize) {
   return static_cast<StringLayout &>(h);
 }
 
-Layout StringLayout::makeEditable() {
-  Layout editableLayout =
+OLayout StringLayout::makeEditable() {
+  OLayout editableLayout =
       LayoutHelper::StringToCodePointsLayout(string(), stringLength());
-  Layout myParent = this->parent();
+  OLayout myParent = this->parent();
   /* editableLayout can be an HorizontalLayout, so it needs to be merged with
    * parent if it is also an HorizontalLayout. */
   if (!myParent.isUninitialized() && myParent.isHorizontal()) {

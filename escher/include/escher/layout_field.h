@@ -26,14 +26,14 @@ class LayoutField : public EditableField {
   void scrollToCursor();
 
   bool isEmpty() const { return layout().isEmpty(); }
-  Poincare::Layout layout() const {
+  Poincare::OLayout layout() const {
     return m_contentView.layoutView()->layout();
   }
   bool layoutHasNode() const {
     return m_contentView.layoutView()->layoutHasNode();
   }
   void putCursorOnOneSide(OMG::HorizontalDirection side);
-  void setLayout(Poincare::Layout newLayout);
+  void setLayout(Poincare::OLayout newLayout);
   size_t dumpContent(char* buffer, size_t bufferSize, int* cursorOffset,
                      int* position);
 
@@ -97,7 +97,7 @@ class LayoutField : public EditableField {
   bool didHandleEvent(bool didHandleEvent, bool layoutDidChange,
                       bool shouldUpdateCursor, KDSize previousSize);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::Layout layoutR,
+  void insertLayoutAtCursor(Poincare::OLayout layoutR,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
   TextCursorView::CursorFieldView* cursorCursorFieldView() override {

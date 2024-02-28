@@ -2,6 +2,7 @@
 #define POINCARE_PERCENT_H
 
 #include <poincare/expression.h>
+#include <poincare/horizontal_layout.h>
 
 namespace Poincare {
 

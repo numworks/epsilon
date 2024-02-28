@@ -58,7 +58,7 @@ class NthRootLayoutNode final : public LayoutNode {
   constexpr static KDCoordinate k_radixLineThickness = 1;
   KDSize adjustedIndexSize(KDFont::Size font);
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
-  bool protectedIsIdenticalTo(Layout l) override;
+  bool protectedIsIdenticalTo(OLayout l) override;
 
   constexpr static int k_radicandLayoutIndex = 0;
   constexpr static int k_indexLayoutIndex = 1;
@@ -69,11 +69,11 @@ class NthRootLayoutNode final : public LayoutNode {
   bool m_hasIndex;
 };
 
-class NthRootLayout final : public Layout {
+class NthRootLayout final : public OLayout {
  public:
   NthRootLayout() = delete;
-  static NthRootLayout Builder(Layout child);
-  static NthRootLayout Builder(Layout radicand, Layout index);
+  static NthRootLayout Builder(OLayout child);
+  static NthRootLayout Builder(OLayout radicand, OLayout index);
 };
 
 }  // namespace Poincare

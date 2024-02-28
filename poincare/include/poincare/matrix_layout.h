@@ -55,15 +55,15 @@ class MatrixLayout final : public GridLayout {
   static MatrixLayout Builder() {
     return TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>();
   }
-  static MatrixLayout Builder(Layout l1);
-  static MatrixLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4);
+  static MatrixLayout Builder(OLayout l1);
+  static MatrixLayout Builder(OLayout l1, OLayout l2, OLayout l3, OLayout l4);
   static MatrixLayout EmptyMatrixBuilder() {
     return Builder(HorizontalLayout::Builder());
   }
 
  private:
   MatrixLayoutNode *node() const {
-    return static_cast<MatrixLayoutNode *>(Layout::node());
+    return static_cast<MatrixLayoutNode *>(OLayout::node());
   }
 };
 

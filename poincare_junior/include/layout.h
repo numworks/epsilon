@@ -37,8 +37,8 @@ class Layout final : public Reference {
 
   static Tree* EditionPoolTextToLayout(const char* text);
 
-  static Poincare::Layout ToPoincareLayout(const Tree* exp);
-  static Tree* FromPoincareLayout(Poincare::Layout exp);
+  static Poincare::OLayout ToPoincareLayout(const Tree* exp);
+  static Tree* FromPoincareLayout(Poincare::OLayout exp);
 
  private:
   static void EditionPoolTextToLayoutRec(UTF8Decoder* decoder, Tree* parent,

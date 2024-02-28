@@ -11,7 +11,7 @@ namespace Poincare {
 class HorizontalLayout;
 
 class HorizontalLayoutNode final : public LayoutNode {
-  friend class Layout;
+  friend class OLayout;
   friend class HorizontalLayout;
 
  public:
@@ -42,7 +42,7 @@ class HorizontalLayoutNode final : public LayoutNode {
     assert(false);
     return -2;
   }
-  Layout deepChildToPointToWhenInserting() const;
+  OLayout deepChildToPointToWhenInserting() const;
 
   size_t serialize(char *buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
@@ -105,43 +105,44 @@ class HorizontalLayoutNode final : public LayoutNode {
   EmptyRectangle::State m_emptyVisibility;
 };
 
-class HorizontalLayout final : public Layout {
+class HorizontalLayout final : public OLayout {
   friend class HorizontalLayoutNode;
 
  public:
   // Constructors
-  HorizontalLayout() : Layout() {}
-  HorizontalLayout(HorizontalLayoutNode *n) : Layout(n) {}
+  HorizontalLayout() : OLayout() {}
+  HorizontalLayout(HorizontalLayoutNode *n) : OLayout(n) {}
 
-  // FIXME: use Layout instead of TreeHandle
+  // FIXME: use OLayout instead of TreeHandle
   static HorizontalLayout Builder(
       std::initializer_list<TreeHandle> children = {}) {
     return TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(
         children);
   }
   // TODO: Get rid of those helpers
-  static HorizontalLayout Builder(Layout l) { return Builder({l}); }
-  static HorizontalLayout Builder(Layout l1, Layout l2) {
+  static HorizontalLayout Builder(OLayout l) { return Builder({l}); }
+  static HorizontalLayout Builder(OLayout l1, OLayout l2) {
     return Builder({l1, l2});
   }
-  static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3) {
+  static HorizontalLayout Builder(OLayout l1, OLayout l2, OLayout l3) {
     return Builder({l1, l2, l3});
   }
-  static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
+  static HorizontalLayout Builder(OLayout l1, OLayout l2, OLayout l3,
+                                  OLayout l4) {
     return Builder({l1, l2, l3, l4});
   }
 
-  void addOrMergeChildAtIndex(Layout l, int index);
+  void addOrMergeChildAtIndex(OLayout l, int index);
   void mergeChildrenAtIndex(HorizontalLayout h, int indexπ);
-  using Layout::addChildAtIndexInPlace;
-  using Layout::removeChildAtIndexInPlace;
-  using Layout::removeChildInPlace;
+  using OLayout::addChildAtIndexInPlace;
+  using OLayout::removeChildAtIndexInPlace;
+  using OLayout::removeChildInPlace;
 
-  Layout deepChildToPointToWhenInserting() {
+  OLayout deepChildToPointToWhenInserting() {
     return node()->deepChildToPointToWhenInserting();
   }
 
-  Layout squashUnaryHierarchyInPlace();
+  OLayout squashUnaryHierarchyInPlace();
 
   KDSize layoutSizeBetweenIndexes(int leftIndex, int rightIndex,
                                   KDFont::Size font) const {
@@ -164,7 +165,7 @@ class HorizontalLayout final : public Layout {
   }
 
   HorizontalLayoutNode *node() const {
-    return static_cast<HorizontalLayoutNode *>(Layout::node());
+    return static_cast<HorizontalLayoutNode *>(OLayout::node());
   }
 };
 

@@ -175,6 +175,7 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
 }
 
 static Layout xntLayout(Layout parameterLayout) {
+#if 0
   if (parameterLayout.isUninitialized()) {
     return Layout();
   }
@@ -192,6 +193,9 @@ static Layout xntLayout(Layout parameterLayout) {
     return Layout();
   }
   return xnt;
+#else
+  return Layout();
+#endif
 }
 
 static bool findParameteredFunction2D(Layout layout, int* functionIndex,

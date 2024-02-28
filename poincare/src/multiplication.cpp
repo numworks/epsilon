@@ -323,7 +323,7 @@ Layout MultiplicationNode::createLayout(
       Multiplication(this), floatDisplayMode, numberOfSignificantDigits, string,
       context,
       [](const char *operatorName, Expression left, Expression right,
-         Layout rightLayout) {
+         OLayout rightLayout) -> OLayout {
         bool forceMarginOfRightUnit = true;
         bool leftIsUnit = ExpressionIsUnit(left, nullptr);
         bool rightIsUnit = ExpressionIsUnit(right, &forceMarginOfRightUnit);

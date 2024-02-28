@@ -57,13 +57,13 @@ class PiecewiseOperatorLayout /*final*/ : public GridLayout {
   PiecewiseOperatorLayout(const PiecewiseOperatorLayoutNode *n)
       : GridLayout(n) {}
   static PiecewiseOperatorLayout Builder();
-  void addRow(Layout leftLayout, Layout rightLayout = Layout());
+  void addRow(OLayout leftLayout, OLayout rightLayout = OLayout());
 
  private:
   // Make private. Use addRow instead.
   using GridLayout::addChildAtIndexInPlace;
   PiecewiseOperatorLayoutNode *node() const {
-    return static_cast<PiecewiseOperatorLayoutNode *>(Layout::node());
+    return static_cast<PiecewiseOperatorLayoutNode *>(OLayout::node());
   }
 };
 

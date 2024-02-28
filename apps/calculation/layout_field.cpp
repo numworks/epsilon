@@ -62,12 +62,14 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 }
 
 bool LayoutField::fieldContainsSingleMinusSymbol() const {
+#if 0
   if (layout().isHorizontal() && layout().numberOfChildren() == 1) {
     Layout child = layout().childAtIndex(0);
     if (child.type() == LayoutNode::Type::CodePointLayout) {
       return static_cast<CodePointLayout &>(child).codePoint() == '-';
     }
   }
+#endif
   return false;
 }
 

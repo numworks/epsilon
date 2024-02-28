@@ -4,6 +4,8 @@
 
 namespace Poincare {
 
+#define Layout OLayout
+
 // public
 
 InputBeautification::BeautificationMethod

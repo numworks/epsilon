@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-bool CodePointLayoutNode::IsCodePoint(Layout l, CodePoint c) {
+bool CodePointLayoutNode::IsCodePoint(OLayout l, CodePoint c) {
   return l.type() == Type::CodePointLayout &&
          static_cast<CodePointLayout &>(l).codePoint() == c;
 }
@@ -26,12 +26,12 @@ bool CodePointLayoutNode::isCollapsable(
     if (m_codePoint == '-') {
       /* If the expression is like 3ᴇ-200, we want '-' to be collapsable.
        * Otherwise, '-' is not collapsable. */
-      Layout thisRef = CodePointLayout(this);
-      Layout parent = thisRef.parent();
+      OLayout thisRef = CodePointLayout(this);
+      OLayout parent = thisRef.parent();
       if (!parent.isUninitialized()) {
         int indexOfThis = parent.indexOfChild(thisRef);
         if (indexOfThis > 0) {
-          Layout leftBrother = parent.childAtIndex(indexOfThis - 1);
+          OLayout leftBrother = parent.childAtIndex(indexOfThis - 1);
           if (leftBrother.type() == Type::CodePointLayout &&
               static_cast<CodePointLayout &>(leftBrother).codePoint() ==
                   UCodePointLatinLetterSmallCapitalE) {
@@ -44,11 +44,11 @@ bool CodePointLayoutNode::isCollapsable(
     if (isMultiplicationCodePoint()) {
       /* We want '*' to be collapsable only if the following brother is not a
        * fraction, so that the user can write intuitively "1/2 * 3/4". */
-      Layout thisRef = CodePointLayout(this);
-      Layout parent = thisRef.parent();
+      OLayout thisRef = CodePointLayout(this);
+      OLayout parent = thisRef.parent();
       if (!parent.isUninitialized()) {
         int indexOfThis = parent.indexOfChild(thisRef);
-        Layout brother;
+        OLayout brother;
         if (indexOfThis > 0 && direction.isLeft()) {
           brother = parent.childAtIndex(indexOfThis - 1);
         } else if (indexOfThis < parent.numberOfChildren() - 1 &&
@@ -106,7 +106,7 @@ bool CodePointLayoutNode::isMultiplicationCodePoint() const {
          m_codePoint == UCodePointMiddleDot;
 }
 
-bool CodePointLayoutNode::protectedIsIdenticalTo(Layout l) {
+bool CodePointLayoutNode::protectedIsIdenticalTo(OLayout l) {
   assert(l.type() == Type::CodePointLayout ||
          l.type() == Type::CombinedCodePointsLayout);
   CodePointLayout &cpl = static_cast<CodePointLayout &>(l);

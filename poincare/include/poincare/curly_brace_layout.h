@@ -69,7 +69,7 @@ class CurlyBraceLayout final
   static CurlyBraceLayout Builder() {
     return Builder(HorizontalLayout::Builder());
   }
-  static CurlyBraceLayout Builder(Layout l) {
+  static CurlyBraceLayout Builder(OLayout l) {
     // Ensure curly brace layout has always an horizontal child
     return LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode>::Builder(
         l.isHorizontal() ? l : HorizontalLayout::Builder(l));

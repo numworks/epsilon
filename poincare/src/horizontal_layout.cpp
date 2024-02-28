@@ -8,9 +8,9 @@
 
 namespace Poincare {
 
-Layout HorizontalLayoutNode::deepChildToPointToWhenInserting() const {
-  Layout layoutToPointTo =
-      Layout(this).recursivelyMatches([](Poincare::Layout layout) {
+OLayout HorizontalLayoutNode::deepChildToPointToWhenInserting() const {
+  OLayout layoutToPointTo =
+      OLayout(this).recursivelyMatches([](Poincare::OLayout layout) {
         if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
                 layout.type())) {
           /* If the inserted bracket is temp on the left, do not put cursor
@@ -196,7 +196,7 @@ bool HorizontalLayoutNode::shouldDrawEmptyRectangle() const {
 
 // HorizontalLayout
 
-void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index) {
+void HorizontalLayout::addOrMergeChildAtIndex(OLayout l, int index) {
   if (l.isHorizontal()) {
     mergeChildrenAtIndex(
         HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index);
@@ -226,7 +226,7 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index) {
   int childrenNumber = h.numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     int n = numberOfChildren();
-    Layout c = h.childAtIndex(i);
+    OLayout c = h.childAtIndex(i);
     bool firstAddedChild = (i == 0);
     addChildAtIndexInPlace(c, newIndex, n);
     if (firstAddedChild) {
@@ -238,9 +238,9 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index) {
   }
 }
 
-Layout HorizontalLayout::squashUnaryHierarchyInPlace() {
+OLayout HorizontalLayout::squashUnaryHierarchyInPlace() {
   if (numberOfChildren() == 1) {
-    Layout child = childAtIndex(0);
+    OLayout child = childAtIndex(0);
     replaceWithInPlace(child);
     return child;
   }

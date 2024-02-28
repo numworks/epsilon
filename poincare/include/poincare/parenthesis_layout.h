@@ -71,7 +71,7 @@ class ParenthesisLayout final
   static ParenthesisLayout Builder() {
     return Builder(HorizontalLayout::Builder());
   }
-  static ParenthesisLayout Builder(Layout l) {
+  static ParenthesisLayout Builder(OLayout l) {
     // Ensure parenthesis layout has always an horizontal child
     return LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode>::Builder(
         l.isHorizontal() ? l : HorizontalLayout::Builder(l));

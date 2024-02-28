@@ -183,14 +183,14 @@ void NthRootLayoutNode::render(KDContext *ctx, KDPoint p,
   }
 }
 
-bool NthRootLayoutNode::protectedIsIdenticalTo(Layout l) {
+bool NthRootLayoutNode::protectedIsIdenticalTo(OLayout l) {
   assert(l.type() == Type::NthRootLayout);
   NthRootLayout &nrl = static_cast<NthRootLayout &>(l);
   return hasUpperLeftIndex() == nrl.node()->hasUpperLeftIndex() &&
          LayoutNode::protectedIsIdenticalTo(l);
 }
 
-NthRootLayout NthRootLayout::Builder(Layout child) {
+NthRootLayout NthRootLayout::Builder(OLayout child) {
   void *bufferNode = TreePool::sharedPool->alloc(sizeof(NthRootLayoutNode));
   NthRootLayoutNode *node = new (bufferNode) NthRootLayoutNode(false);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
@@ -198,7 +198,7 @@ NthRootLayout NthRootLayout::Builder(Layout child) {
   return static_cast<NthRootLayout &>(h);
 }
 
-NthRootLayout NthRootLayout::Builder(Layout child, Layout index) {
+NthRootLayout NthRootLayout::Builder(OLayout child, OLayout index) {
   void *bufferNode = TreePool::sharedPool->alloc(sizeof(NthRootLayoutNode));
   NthRootLayoutNode *node = new (bufferNode) NthRootLayoutNode(true);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

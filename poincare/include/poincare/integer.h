@@ -4,14 +4,11 @@
 #include <assert.h>
 #include <limits.h>
 #include <omg/print.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <stdint.h>
 
 namespace Poincare {
 
-class ExpressionLayout;
-class Layout;
-class LayoutNode;
 class Integer;
 struct IntegerDivision;
 

@@ -932,7 +932,7 @@ void Parser::privateParseCustomIdentifier(OExpression &leftHandSide,
         m_parsingContext.context()->expressionTypeForIdentifier(name, length);
     if (idType != Context::SymbolAbstractType::Function &&
         idType != Context::SymbolAbstractType::Sequence &&
-        idType != Context::SymbolAbstractType::OList) {
+        idType != Context::SymbolAbstractType::List) {
       leftHandSide = Symbol::Builder(name, length);
       return;
     }
@@ -1033,7 +1033,7 @@ bool Parser::privateParseCustomIdentifierWithParameters(
       m_status =
           Status::Error;  // Function and variable must have distinct names.
       return true;
-    } else if (idType == Context::SymbolAbstractType::OList) {
+    } else if (idType == Context::SymbolAbstractType::List) {
       if (derivativeOrder > 0) {
         return false;
       }

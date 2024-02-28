@@ -22,7 +22,7 @@ class Context {
     Function,
     Sequence,
     Symbol,
-    OList
+    List
   };
   virtual SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                          int length) = 0;

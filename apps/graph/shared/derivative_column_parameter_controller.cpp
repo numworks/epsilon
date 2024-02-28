@@ -69,8 +69,8 @@ DerivativeColumnParameterController::function() {
       m_record);
 }
 
-Shared::ValuesController*
-DerivativeColumnParameterController::valuesController() {
+Shared::ColumnNameHelper*
+DerivativeColumnParameterController::columnNameHelper() {
   return App::app()->valuesController();
 }
 

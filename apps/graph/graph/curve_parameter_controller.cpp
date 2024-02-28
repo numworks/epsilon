@@ -145,8 +145,8 @@ double CurveParameterController::parameterAtIndex(int index) {
     assert(derivationOrder == 1 || derivationOrder == 2);
     assert(function()->canDisplayDerivative());
     bool firstComponent = parameterAtRowIsFirstComponent(index);
-    Evaluation<double> derivative =
-        function()->approximateDerivative(m_cursor->t(), ctx, derivationOrder);
+    Evaluation<double> derivative = function()->approximateDerivative<double>(
+        m_cursor->t(), ctx, derivationOrder);
     if (derivative.type() == EvaluationNode<double>::Type::Complex) {
       assert(firstComponent);
       return derivative.toScalar();

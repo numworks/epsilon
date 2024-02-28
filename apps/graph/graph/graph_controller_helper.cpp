@@ -64,13 +64,13 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       // Use the local derivative to slow down the cursor's step if needed
       assert(!subCurveIndex || *subCurveIndex == 0);
       double slope =
-          function->approximateDerivative(tCursor, context).toScalar();
+          function->approximateDerivative<double>(tCursor, context).toScalar();
       if (std::isnan(slope)) {
         /* If the derivative could not bet computed, compute the derivative one
          * step further. */
         slope = function
-                    ->approximateDerivative(tCursor + dir * step * pixelWidth,
-                                            context)
+                    ->approximateDerivative<double>(
+                        tCursor + dir * step * pixelWidth, context)
                     .toScalar();
         if (std::isnan(slope)) {
           /* If the derivative is still NAN, it might mean that it's NAN
@@ -195,7 +195,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
     CurveViewCursor* cursor, Ion::Storage::Record record, int derivationOrder) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
-  Evaluation<double> derivative = function->approximateDerivative(
+  Evaluation<double> derivative = function->approximateDerivative<double>(
       cursor->t(), App::app()->localContext(), derivationOrder);
   double derivativeScalar = derivative.toScalar();
 

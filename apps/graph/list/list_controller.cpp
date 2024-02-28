@@ -268,9 +268,11 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
       FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
       Layout layout;
       I18n::Message caption = I18n::Message::Default;
+      bool hideMessage;
       if (derivationOrder == 0) {
         layout = f->layout();
         caption = f->properties().caption();
+        hideMessage = false;
       } else {
         assert(derivationOrder == 1 || derivationOrder == 2);
         constexpr static size_t bufferSize =
@@ -279,9 +281,11 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
         size_t length =
             f->nameWithArgument(buffer, bufferSize, derivationOrder);
         layout = LayoutHelper::String(buffer, length);
+        hideMessage = true;
       }
       functionCell->expressionCell()->setLayout(layout);
       functionCell->setMessage(caption);
+      functionCell->setHideMessage(hideMessage);
       KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
       functionCell->expressionCell()->setTextColor(textColor);
       static_cast<FunctionCell *>(functionCell)

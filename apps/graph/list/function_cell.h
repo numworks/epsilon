@@ -30,6 +30,7 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   void setMessage(I18n::Message message) {
     m_messageTextView.setMessage(message);
   }
+  void setHideMessage(bool hide) { m_hideMessage = hide; }
 
   // - Color indicator
   void setColor(KDColor color) { m_functionColor = color; }
@@ -40,6 +41,7 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   int numberOfSubviews() const override { return 2 + displayFunctionType(); }
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
+  KDCoordinate messageTextHeight() const;
 
   constexpr static KDCoordinate k_colorIndicatorThickness =
       Escher::Metric::VerticalColorIndicatorThickness;
@@ -54,6 +56,7 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   KDColor m_functionColor;
   KDColor m_expressionBackground;
   KDColor m_ellipsisBackground;
+  bool m_hideMessage;
 };
 
 template <typename T>

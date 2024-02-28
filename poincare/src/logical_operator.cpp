@@ -101,11 +101,12 @@ OExpression LogicalOperatorNot::shallowReduce(
   if (!child.hasBooleanValue()) {
     return replaceWithUndefinedInPlace();
   }
-  if (child.type() != ExpressionNode::Type::Boolean) {
+  if (child.type() != ExpressionNode::Type::OBoolean) {
     // Let approximation handle this
     return *this;
   }
-  OExpression result = Boolean::Builder(!static_cast<Boolean &>(child).value());
+  OExpression result =
+      OBoolean::Builder(!static_cast<OBoolean &>(child).value());
   replaceWithInPlace(result);
   return result;
 }
@@ -208,14 +209,14 @@ OExpression BinaryLogicalOperator::shallowReduce(
   if (!leftChild.hasBooleanValue() || !rightChild.hasBooleanValue()) {
     return replaceWithUndefinedInPlace();
   }
-  if (leftChild.type() != ExpressionNode::Type::Boolean ||
-      rightChild.type() != ExpressionNode::Type::Boolean) {
+  if (leftChild.type() != ExpressionNode::Type::OBoolean ||
+      rightChild.type() != ExpressionNode::Type::OBoolean) {
     // Let approximation handle this
     return *this;
   }
-  bool leftValue = static_cast<Boolean &>(leftChild).value();
-  bool rightValue = static_cast<Boolean &>(rightChild).value();
-  OExpression result = Boolean::Builder(
+  bool leftValue = static_cast<OBoolean &>(leftChild).value();
+  bool rightValue = static_cast<OBoolean &>(rightChild).value();
+  OExpression result = OBoolean::Builder(
       static_cast<BinaryLogicalOperatorNode *>(node())->evaluate(leftValue,
                                                                  rightValue));
   replaceWithInPlace(result);

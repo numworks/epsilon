@@ -64,14 +64,16 @@ class BooleanNode final : public ExpressionNode {
   size_t size() const override { return sizeof(BooleanNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream& stream) const override { stream << "Boolean"; }
+  void logNodeName(std::ostream& stream) const override {
+    stream << "OBoolean";
+  }
   void logAttributes(std::ostream& stream) const override {
     stream << " value=" << (m_value ? "True" : "False");
   }
 #endif
 
   // OExpression Node Properties
-  Type type() const override { return Type::Boolean; }
+  Type type() const override { return Type::OBoolean; }
 
   // Properties
   bool value() const { return m_value; }
@@ -103,9 +105,9 @@ class BooleanNode final : public ExpressionNode {
   bool m_value;
 };
 
-class Boolean final : public OExpression {
+class OBoolean final : public OExpression {
  public:
-  static Boolean Builder(bool value);
+  static OBoolean Builder(bool value);
   bool value() const { return static_cast<BooleanNode*>(node())->value(); }
 };
 

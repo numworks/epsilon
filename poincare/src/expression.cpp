@@ -689,7 +689,7 @@ bool OExpression::isDiscontinuousBetweenValuesForSymbol(
 }
 
 bool OExpression::hasBooleanValue() const {
-  return isOfType({ExpressionNode::Type::Boolean,
+  return isOfType({ExpressionNode::Type::OBoolean,
                    ExpressionNode::Type::Comparison,
                    ExpressionNode::Type::LogicalOperatorNot,
                    ExpressionNode::Type::BinaryLogicalOperator});

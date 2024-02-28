@@ -32,7 +32,7 @@ class ExpressionNode : public TreeNode {
     Uninitialized = 0,
     Undefined = 1,
     Nonreal,
-    Boolean,
+    OBoolean,
     Rational,
     BasedInteger,
     MixedFraction,

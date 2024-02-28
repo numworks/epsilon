@@ -1676,26 +1676,26 @@ QUIZ_CASE(poincare_parsing_east_arrows) {
 QUIZ_CASE(poincare_parsing_logic) {
   assert_parsed_expression_is(
       "True and False", BinaryLogicalOperator::Builder(
-                            Boolean::Builder(true), Boolean::Builder(false),
+                            OBoolean::Builder(true), OBoolean::Builder(false),
                             BinaryLogicalOperatorNode::OperatorType::And));
   assert_parsed_expression_is(
       "True or False", BinaryLogicalOperator::Builder(
-                           Boolean::Builder(true), Boolean::Builder(false),
+                           OBoolean::Builder(true), OBoolean::Builder(false),
                            BinaryLogicalOperatorNode::OperatorType::Or));
   assert_parsed_expression_is(
       "True xor False", BinaryLogicalOperator::Builder(
-                            Boolean::Builder(true), Boolean::Builder(false),
+                            OBoolean::Builder(true), OBoolean::Builder(false),
                             BinaryLogicalOperatorNode::OperatorType::Xor));
   assert_parsed_expression_is(
       "True nor False", BinaryLogicalOperator::Builder(
-                            Boolean::Builder(true), Boolean::Builder(false),
+                            OBoolean::Builder(true), OBoolean::Builder(false),
                             BinaryLogicalOperatorNode::OperatorType::Nor));
   assert_parsed_expression_is(
       "True nand False", BinaryLogicalOperator::Builder(
-                             Boolean::Builder(true), Boolean::Builder(false),
+                             OBoolean::Builder(true), OBoolean::Builder(false),
                              BinaryLogicalOperatorNode::OperatorType::Nand));
   assert_parsed_expression_is(
-      "not True", LogicalOperatorNot::Builder(Boolean::Builder(true)));
+      "not True", LogicalOperatorNot::Builder(OBoolean::Builder(true)));
   assert_text_not_parsable("not");
   assert_text_not_parsable("and");
   assert_text_not_parsable("or True");
@@ -1708,46 +1708,47 @@ QUIZ_CASE(poincare_parsing_logic) {
   assert_parsed_expression_is(
       "not True and False",
       BinaryLogicalOperator::Builder(
-          LogicalOperatorNot::Builder(Boolean::Builder(true)),
-          Boolean::Builder(false),
+          LogicalOperatorNot::Builder(OBoolean::Builder(true)),
+          OBoolean::Builder(false),
           BinaryLogicalOperatorNode::OperatorType::And));
   assert_parsed_expression_is(
       "True and False or True",
       BinaryLogicalOperator::Builder(
           BinaryLogicalOperator::Builder(
-              Boolean::Builder(true), Boolean::Builder(false),
+              OBoolean::Builder(true), OBoolean::Builder(false),
               BinaryLogicalOperatorNode::OperatorType::And),
-          Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::Or));
+          OBoolean::Builder(true),
+          BinaryLogicalOperatorNode::OperatorType::Or));
   assert_parsed_expression_is(
       "True or False and True",
       BinaryLogicalOperator::Builder(
-          Boolean::Builder(true),
+          OBoolean::Builder(true),
           BinaryLogicalOperator::Builder(
-              Boolean::Builder(false), Boolean::Builder(true),
+              OBoolean::Builder(false), OBoolean::Builder(true),
               BinaryLogicalOperatorNode::OperatorType::And),
           BinaryLogicalOperatorNode::OperatorType::Or));
   assert_parsed_expression_is(
       "True nor False and True",
       BinaryLogicalOperator::Builder(
-          Boolean::Builder(true),
+          OBoolean::Builder(true),
           BinaryLogicalOperator::Builder(
-              Boolean::Builder(false), Boolean::Builder(true),
+              OBoolean::Builder(false), OBoolean::Builder(true),
               BinaryLogicalOperatorNode::OperatorType::And),
           BinaryLogicalOperatorNode::OperatorType::Nor));
   assert_parsed_expression_is(
       "True xor False and True",
       BinaryLogicalOperator::Builder(
-          Boolean::Builder(true),
+          OBoolean::Builder(true),
           BinaryLogicalOperator::Builder(
-              Boolean::Builder(false), Boolean::Builder(true),
+              OBoolean::Builder(false), OBoolean::Builder(true),
               BinaryLogicalOperatorNode::OperatorType::And),
           BinaryLogicalOperatorNode::OperatorType::Xor));
   assert_parsed_expression_is(
       "True or False nand True",
       BinaryLogicalOperator::Builder(
-          Boolean::Builder(true),
+          OBoolean::Builder(true),
           BinaryLogicalOperator::Builder(
-              Boolean::Builder(false), Boolean::Builder(true),
+              OBoolean::Builder(false), OBoolean::Builder(true),
               BinaryLogicalOperatorNode::OperatorType::Nand),
           BinaryLogicalOperatorNode::OperatorType::Or));
 }

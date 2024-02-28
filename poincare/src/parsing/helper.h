@@ -49,11 +49,11 @@ class ParsingHelper {
       {Symbol::k_ansAliases,
        [] { return static_cast<OExpression>(Symbol::Ans()); }},
       {BooleanNode::k_falseAliases,
-       [] { return static_cast<OExpression>(Boolean::Builder(false)); }},
+       [] { return static_cast<OExpression>(OBoolean::Builder(false)); }},
       {Nonreal::Name(),
        [] { return static_cast<OExpression>(Nonreal::Builder()); }},
       {BooleanNode::k_trueAliases,
-       [] { return static_cast<OExpression>(Boolean::Builder(true)); }},
+       [] { return static_cast<OExpression>(OBoolean::Builder(true)); }},
       {Undefined::Name(),
        [] { return static_cast<OExpression>(Undefined::Builder()); }}};
   constexpr static int k_numberOfSpecialIdentifiers =

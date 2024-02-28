@@ -116,11 +116,11 @@ OExpression PiecewiseOperator::shallowReduce(
     OExpression condition = childAtIndex(i + 1);
     if (condition.hasBooleanValue()) {
       // Skip conditions that are not booleans. They are always false
-      if (condition.type() != ExpressionNode::Type::Boolean) {
+      if (condition.type() != ExpressionNode::Type::OBoolean) {
         // The condition is undetermined, can't reduce
         return *this;
       }
-      if (static_cast<Boolean&>(condition).value()) {
+      if (static_cast<OBoolean&>(condition).value()) {
         // Condition is true
         OExpression result = childAtIndex(i);
         replaceWithInPlace(result);

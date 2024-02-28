@@ -347,12 +347,12 @@ OExpression Comparison::shallowReduce(ReductionContext reductionContext) {
       return *this;  // Let approximation decide
     }
     if (comparison == TrinaryBoolean::False) {
-      OExpression result = Boolean::Builder(false);
+      OExpression result = OBoolean::Builder(false);
       replaceWithInPlace(result);
       return result;
     }
   }
-  OExpression result = Boolean::Builder(true);
+  OExpression result = OBoolean::Builder(true);
   replaceWithInPlace(result);
   return result;
 }

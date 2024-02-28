@@ -58,8 +58,7 @@ void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
                  m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
-  curveParameterControllerWithRecord()->setRecord(recordAtSelectedCurveIndex());
-  stackController()->push(curveParameterController());
+  openMenuForSelectedCurve();
 }
 
 void FunctionGraphController::selectCurveAtIndex(int curveIndex,

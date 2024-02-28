@@ -42,6 +42,8 @@ class CurveParameterController
   void hideDerivative(Ion::Storage::Record record,
                       int derivationOrder) override {}
 
+  void setRecord(Ion::Storage::Record record, int derivationOrder);
+
  private:
   using ParameterCell = Escher::MenuCellWithEditableText<
       Escher::OneLineBufferTextView<KDFont::Size::Large>>;
@@ -99,6 +101,7 @@ class CurveParameterController
   CalculationParameterController m_calculationParameterController;
   FunctionParameterController* m_functionParameterController;
   DerivativeColumnParameterController* m_derivativeColumnParameterController;
+  int m_derivationOrder;
 
   // parent controller: handles the cursor
   GraphController* m_graphController;

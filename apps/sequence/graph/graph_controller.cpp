@@ -157,4 +157,9 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
                        record, ignoreMargins)));
 }
 
+void GraphController::openMenuForSelectedCurve() {
+  m_curveParameterController.setRecord(recordAtSelectedCurveIndex());
+  stackController()->push(&m_curveParameterController);
+}
+
 }  // namespace Sequence

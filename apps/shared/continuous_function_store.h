@@ -25,7 +25,7 @@ class ContinuousFunctionStore : public FunctionStore {
   int numberOfActiveFunctionsInTable() const {
     return numberOfModelsSatisfyingTest(&IsFunctionActiveInTable, nullptr);
   }
-  bool displaysNonCartesianFunctions(int *nbActiveFunctions = nullptr) const;
+  bool displaysOnlyCartesianFunctions(int *nbActiveFunctions = nullptr) const;
   bool displaysFunctionsToNormalize(int *nbActiveFunctions = nullptr) const;
   int numberOfActiveFunctionsInTableOfSymbolType(
       ContinuousFunctionProperties::SymbolType symbolType) const {

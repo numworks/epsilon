@@ -32,7 +32,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
 
   if (((direction.isRight() && std::abs(tCursor - tMax) < DBL_EPSILON) ||
        (direction.isLeft() && std::abs(tCursor - tMin) < DBL_EPSILON)) &&
-      !App::app()->functionStore()->displaysNonCartesianFunctions(
+      App::app()->functionStore()->displaysOnlyCartesianFunctions(
           &functionsCount)) {
     jumpToLeftRightCurve(tCursor, direction, functionsCount, record);
     return true;

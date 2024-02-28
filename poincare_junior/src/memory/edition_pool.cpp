@@ -442,6 +442,9 @@ template Tree *EditionPool::push<BlockType::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
 template Tree *EditionPool::push<BlockType::PhysicalConstant, uint8_t>(uint8_t);
 template Tree *EditionPool::push<BlockType::Piecewise, int>(int);
+template Tree *EditionPool::push<BlockType::PointOfInterest, double, double,
+                                 uint32_t, uint8_t, bool, uint8_t>(
+    double, double, uint32_t, uint8_t, bool, uint8_t);
 template Tree *EditionPool::push<BlockType::Polynomial, int>(int);
 template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
 template Tree *EditionPool::push<BlockType::Set>(int);

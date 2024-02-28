@@ -1,6 +1,7 @@
 #include <poincare/junior_expression.h>
 #include <poincare/junior_layout.h>
 #include <poincare/matrix.h>
+#include <poincare/point_2D_layout.h>
 #include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/sign.h>
@@ -186,6 +187,15 @@ Coordinate2D<T> Point::approximate2D(
   return Coordinate2D<T>(
       PoincareJ::Approximation::RootTreeTo<T>(tree()->child(0)),
       PoincareJ::Approximation::RootTreeTo<T>(tree()->child(1)));
+}
+
+Layout Point::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
+                             int significantDigits, Context* context) const {
+  Layout child0 = childAtIndex(0).createLayout(floatDisplayMode,
+                                               significantDigits, context);
+  Layout child1 = childAtIndex(1).createLayout(floatDisplayMode,
+                                               significantDigits, context);
+  return JuniorLayout::Create(KPoint2DL(KA, KB), {.KA = child0, .KB = child1});
 }
 
 template Coordinate2D<float> Point::approximate2D<float>(

@@ -1,4 +1,7 @@
 #include <poincare/point_of_interest.h>
+#include <poincare_junior/src/expression/point_of_interest.h>
+#include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/tree.h>
 
 namespace Poincare {
 
@@ -8,11 +11,47 @@ PointOfInterest PointOfInterest::Builder(
     double abscissa, double ordinate,
     typename Solver<double>::Interest interest, uint32_t data, bool inverted,
     int subCurveIndex) {
-  void *bufferNode = TreePool::sharedPool->alloc(sizeof(PointOfInterestNode));
-  PointOfInterestNode *node = new (bufferNode) PointOfInterestNode(
-      abscissa, ordinate, interest, data, inverted, subCurveIndex);
-  TreeHandle handle = TreeHandle::BuildWithGhostChildren(node);
-  return static_cast<PointOfInterest &>(handle);
+  JuniorExpression expr = JuniorExpression::Builder(
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::PointOfInterest>(
+          abscissa, ordinate, data, static_cast<uint8_t>(interest), inverted,
+          static_cast<uint8_t>(subCurveIndex)));
+  return static_cast<PointOfInterest &>(expr);
+}
+
+double PointOfInterest::abscissa() const {
+  return PoincareJ::PointOfInterest::GetAbscissa(tree());
+}
+
+double PointOfInterest::ordinate() const {
+  return PoincareJ::PointOfInterest::GetOrdinate(tree());
+}
+
+double PointOfInterest::x() const {
+  return PoincareJ::PointOfInterest::IsInverted(tree()) ? ordinate()
+                                                        : abscissa();
+}
+
+double PointOfInterest::y() const {
+  return PoincareJ::PointOfInterest::IsInverted(tree()) ? abscissa()
+                                                        : ordinate();
+}
+
+int PointOfInterest::subCurveIndex() const {
+  return PoincareJ::PointOfInterest::GetSubCurveIndex(tree());
+}
+
+typename Solver<double>::Interest PointOfInterest::interest() const {
+  return static_cast<Solver<double>::Interest>(
+      PoincareJ::PointOfInterest::GetInterest(tree()));
+}
+
+Coordinate2D<double> PointOfInterest::xy() const {
+  return isUninitialized() ? Coordinate2D<double>()
+                           : Coordinate2D<double>(x(), y());
+}
+
+uint32_t PointOfInterest::data() const {
+  return PoincareJ::PointOfInterest::GetData(tree());
 }
 
 // PointsOfInterestList
@@ -24,7 +63,6 @@ PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
    * OExpression::childAtIndex, since a PointOfInterest is not an OExpression.
    */
   TreeHandle h = static_cast<const TreeHandle &>(m_list).childAtIndex(i);
-  assert(h.size() == sizeof(PointOfInterestNode));
   return static_cast<PointOfInterest &>(h);
 }
 
@@ -47,7 +85,7 @@ void PointsOfInterestList::append(double abscissa, double ordinate,
 void PointsOfInterestList::sort() {
   Helpers::Sort(
       [](int i, int j, void *context, int numberOfElements) {
-        OList list = static_cast<PointsOfInterestList *>(context)->list();
+        List list = static_cast<PointsOfInterestList *>(context)->list();
         list.swapChildrenInPlace(i, j);
       },
       [](int i, int j, void *context, int numberOfElements) {

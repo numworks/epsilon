@@ -261,6 +261,8 @@ class Point final : public JuniorExpression {
   template <typename T>
   Coordinate2D<T> approximate2D(
       const ApproximationContext& approximationContext);
+  Layout create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
+                        int significantDigits, Context* context) const;
 };
 
 // TODO_PCJ: Actually implement methods. Assert its block type is List

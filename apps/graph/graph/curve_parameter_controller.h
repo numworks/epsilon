@@ -15,17 +15,19 @@
 namespace Graph {
 
 class GraphController;
+class FunctionParameterController;
 
 class CurveParameterController
     : public Shared::ExplicitFloatParameterController,
       public Shared::WithRecord,
       public ParameterDelegate {
  public:
-  CurveParameterController(Shared::InteractiveCurveViewRange* graphRange,
-                           BannerView* bannerView,
-                           Shared::CurveViewCursor* cursor,
-                           GraphView* graphView,
-                           GraphController* graphController);
+  CurveParameterController(
+      Shared::InteractiveCurveViewRange* graphRange, BannerView* bannerView,
+      Shared::CurveViewCursor* cursor, GraphView* graphView,
+      GraphController* graphController,
+      FunctionParameterController* functionParameterController,
+      DerivativeColumnParameterController* derivativeColumnParameterController);
   const char* title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
@@ -95,6 +97,8 @@ class CurveParameterController
   Shared::CurveViewCursor* m_cursor;
   PreimageGraphController m_preimageGraphController;
   CalculationParameterController m_calculationParameterController;
+  FunctionParameterController* m_functionParameterController;
+  DerivativeColumnParameterController* m_derivativeColumnParameterController;
 
   // parent controller: handles the cursor
   GraphController* m_graphController;

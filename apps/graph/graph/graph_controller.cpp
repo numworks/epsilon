@@ -17,14 +17,17 @@ namespace Graph {
 GraphController::GraphController(
     Escher::Responder *parentResponder, Escher::ButtonRowController *header,
     Shared::InteractiveCurveViewRange *interactiveRange,
-    CurveViewCursor *cursor, int *selectedCurveIndex)
+    CurveViewCursor *cursor, int *selectedCurveIndex,
+    FunctionParameterController *functionParameterController,
+    DerivativeColumnParameterController *derivativeColumnParameterController)
     : FunctionGraphController(parentResponder, header, interactiveRange,
                               &m_view, cursor, selectedCurveIndex),
       m_bannerView(this, this),
       m_view(interactiveRange, m_cursor, &m_bannerView, &m_cursorView),
       m_graphRange(interactiveRange),
       m_curveParameterController(interactiveRange, &m_bannerView, m_cursor,
-                                 &m_view, this),
+                                 &m_view, this, functionParameterController,
+                                 derivativeColumnParameterController),
       m_functionSelectionController(this) {
   m_graphRange->setDelegate(this);
   showGridTypeMenu(true);

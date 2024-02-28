@@ -68,12 +68,6 @@ class App : public Shared::FunctionApp {
   GraphController *graphController() {
     return &m_tabs.tab<GraphTab>()->m_graphController;
   }
-  FunctionParameterController *functionParameterController() {
-    return &m_functionParameterController;
-  }
-  DerivativeColumnParameterController *derivativeColumnParameterController() {
-    return &m_derivativeColumnParameterController;
-  }
 
  private:
   App(Snapshot *snapshot);

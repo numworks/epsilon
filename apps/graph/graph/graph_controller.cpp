@@ -293,12 +293,22 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
 
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
+  ExpiringPointer<ContinuousFunction> f =
+      functionStore()->modelForRecord(record);
+  int derivationOrder = m_selectedSubCurveIndex >= f->numberOfSubCurves()
+                            ? m_selectedSubCurveIndex
+                            : 0;
+  // Only display f(x) when on f curve
+  bool displayOrdinate = derivationOrder == 0;
+  // Only display f'(x) when on f or f' curve
   bool displayValueFirstDerivative =
-      functionStore()->modelForRecord(record)->displayValueFirstDerivative();
+      f->displayValueFirstDerivative() && derivationOrder != 2;
+  // Only display f"(x) when on f or f" curve
   bool displayValueSecondDerivative =
-      functionStore()->modelForRecord(record)->displayValueSecondDerivative();
+      f->displayValueSecondDerivative() && derivationOrder != 1;
   m_bannerView.setDisplayParameters(
       {.showInterest = true,
+       .showOrdinate = displayOrdinate,
        .showFirstDerivative = displayValueFirstDerivative,
        .showSecondDerivative = displayValueSecondDerivative});
   FunctionGraphController::reloadBannerView();

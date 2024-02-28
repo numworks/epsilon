@@ -52,11 +52,16 @@ View* BannerView::subviewAtIndex(int index) {
     return m_interestMessageView + index;
   }
   index -= n;
-  // - XYBanner subviews
-  if (index < Shared::XYBannerView::k_numberOfSubviews) {
-    return Shared::XYBannerView::subviewAtIndex(index);
+  // - Abscissa
+  if (index == 0) {
+    return editableView();
   }
-  index -= Shared::XYBannerView::k_numberOfSubviews;
+  index--;
+  // - Ordinate
+  if (m_displayParameters.showOrdinate && index == 0) {
+    return &m_ordinateView;
+  }
+  index -= m_displayParameters.showOrdinate;
   // - First derivative
   if (m_displayParameters.showFirstDerivative && index == 0) {
     return &m_firstDerivativeView;

@@ -280,6 +280,14 @@ class List final : public JuniorExpression {
                               int currentNumberOfChildren);
 };
 
+class Boolean final : public JuniorExpression {
+ public:
+  bool value() const {
+    assert(tree()->isTrue() != tree()->isFalse());
+    return tree()->isTrue();
+  }
+};
+
 }  // namespace Poincare
 
 #endif

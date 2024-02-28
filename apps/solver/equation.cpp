@@ -76,14 +76,10 @@ Expression Equation::Model::standardForm(
      * Return 1 if the equation has no solution (since it is equivalent to
      * 1 = 0) or 0 if it has infinite solutions. */
     returnedExpression =
-#if 1  // PCJ_TODO
-        Rational::Builder(1);
-#else
         simplifiedInput.type() == ExpressionNode::Type::Boolean &&
                 static_cast<Boolean &>(simplifiedInput).value()
             ? Rational::Builder(0)
             : Rational::Builder(1);
-#endif
   }
   return returnedExpression;
 }

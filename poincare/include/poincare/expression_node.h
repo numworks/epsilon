@@ -150,7 +150,8 @@ class ExpressionNode : public TreeNode {
     JuniorExpression,
     Matrix,
     Point,
-    List
+    List,
+    Boolean
   };
 
   /* Poor man's RTTI */

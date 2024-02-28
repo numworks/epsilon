@@ -409,11 +409,12 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
 
 template <typename T>
 Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
-    T t, Context *context, int subCurveIndex, int derivationOrder) const {
-  assert(subCurveIndex == 0 || derivationOrder == 0);
+    T t, Context *context, int subCurveIndex) const {
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
+  int derivationOrder =
+      subCurveIndex >= numberOfSubCurves() ? subCurveIndex : 0;
   Expression e = expressionApproximated(context, derivationOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
 
@@ -442,10 +443,9 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
 
   if (!properties().isParametric()) {
     if (numberOfSubCurves() >= 2) {
+      assert(derivationOrder == 0);
       assert(e.numberOfChildren() > subCurveIndex);
       e = e.childAtIndex(subCurveIndex);
-    } else {
-      assert(subCurveIndex == 0);
     }
     T value = e.approximateToScalarWithValueForSymbol(k_unknownName, t,
                                                       approximationContext);
@@ -1109,10 +1109,10 @@ void ContinuousFunction::Model::setStorageChangeFlag() const {
 
 template Coordinate2D<float>
 ContinuousFunction::templatedApproximateAtParameter<float>(float, Context *,
-                                                           int, int) const;
+                                                           int) const;
 template Coordinate2D<double>
 ContinuousFunction::templatedApproximateAtParameter<double>(double, Context *,
-                                                            int, int) const;
+                                                            int) const;
 
 template Coordinate2D<float>
 ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context *,

@@ -113,8 +113,11 @@ class ContinuousFunction : public Function {
   Poincare::CartesianConic cartesianConicParameters(
       Poincare::Context *context) const;
   // Return the number of subcurves to plot.
-  int numberOfSubCurves() const override {
-    return m_model.numberOfSubCurves(this);
+  int numberOfSubCurves(int includeDerivatives = false) const override {
+    return m_model.numberOfSubCurves(this) +
+           (includeDerivatives
+                ? displayPlotFirstDerivative() + displayPlotSecondDerivative()
+                : 0);
   }
 
   /* Expression */
@@ -153,7 +156,7 @@ class ContinuousFunction : public Function {
   template <typename T>
   Poincare::Coordinate2D<T> evaluateXYDerivativeAtParameter(
       T t, Poincare::Context *context, int derivationOrder) const {
-    return templatedApproximateAtParameter(t, context, 0, derivationOrder);
+    return templatedApproximateAtParameter(t, context, derivationOrder);
   }
 
   double evaluateCurveParameter(int index, double cursorT, double cursorX,
@@ -295,8 +298,7 @@ class ContinuousFunction : public Function {
   // Approximate XY at parameter
   template <typename T>
   Poincare::Coordinate2D<T> templatedApproximateAtParameter(
-      T t, Poincare::Context *context, int subCurveIndex = 0,
-      int derivationOrder = 0) const;
+      T t, Poincare::Context *context, int subCurveIndex = 0) const;
 
   /* Record */
 

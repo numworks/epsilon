@@ -23,7 +23,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     int* subCurveIndex) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
-  assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves());
+  assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves(true));
   const double tCursor = cursor->t();
   double tMin = function->tMin();
   double tMax = function->tMax();
@@ -62,10 +62,9 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     double slopeMultiplicator = 1.0;
     if (function->canDisplayDerivative()) {
       // Use the local derivative to slow down the cursor's step if needed
-      assert(!subCurveIndex || *subCurveIndex == 0);
       double slope =
           function->approximateDerivative<double>(tCursor, context).toScalar();
-      if (std::isnan(slope)) {
+      if ((!subCurveIndex || *subCurveIndex == 0) && std::isnan(slope)) {
         /* If the derivative could not bet computed, compute the derivative one
          * step further. */
         slope = function

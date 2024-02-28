@@ -125,9 +125,9 @@ class ContinuousFunction : public Function {
   }
   // Update plotType as well as tMin and tMax values.
   void updateModel(Poincare::Context *context, bool wasCartesian);
-  Poincare::Expression expressionApproximated(
-      Poincare::Context *context) const {
-    return m_model.expressionApproximated(this, context);
+  Poincare::Expression expressionApproximated(Poincare::Context *context,
+                                              int derivationOrder = 0) const {
+    return m_model.expressionApproximated(this, context, derivationOrder);
   }
   Poincare::Expression parametricForm(Poincare::Context *context,
                                       bool approximated = false) const {
@@ -285,7 +285,8 @@ class ContinuousFunction : public Function {
   // Approximate XY at parameter
   template <typename T>
   Poincare::Coordinate2D<T> templatedApproximateAtParameter(
-      T t, Poincare::Context *context, int subCurveIndex = 0) const;
+      T t, Poincare::Context *context, int subCurveIndex = 0,
+      int derivationOrder = 0) const;
 
   /* Record */
 
@@ -384,7 +385,8 @@ class ContinuousFunction : public Function {
     /* Return the expression reduced with approximated non symbols for faster
      * plot */
     Poincare::Expression expressionApproximated(
-        const Ion::Storage::Record *record, Poincare::Context *context) const;
+        const Ion::Storage::Record *record, Poincare::Context *context,
+        int derivationOrder = 0) const;
     // Return the expression reduced, and computes plotType
     Poincare::Expression expressionReducedForAnalysis(
         const Ion::Storage::Record *record, Poincare::Context *context) const;
@@ -443,7 +445,9 @@ class ContinuousFunction : public Function {
      */
     mutable Poincare::Expression m_expressionApproximated;
     mutable Poincare::Expression m_expressionFirstDerivate;
+    mutable Poincare::Expression m_expressionFirstDerivateApproximated;
     mutable Poincare::Expression m_expressionSecondDerivate;
+    mutable Poincare::Expression m_expressionSecondDerivateApproximated;
     mutable Poincare::Expression m_expressionSlope;
   };
 

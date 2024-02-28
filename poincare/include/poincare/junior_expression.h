@@ -263,6 +263,21 @@ class Point final : public JuniorExpression {
       const ApproximationContext& approximationContext);
 };
 
+// TODO_PCJ: Actually implement methods. Assert its block type is List
+class List final : public JuniorExpression {
+ public:
+  static List Builder();
+  bool isListOfPoints(Context* context) const { return false; }
+  template <typename T>
+  JuniorExpression approximateAndRemoveUndefAndSort(
+      const ApproximationContext& approximationContext) const {
+    return JuniorExpression();
+  }
+  void removeChildAtIndexInPlace(int i) { return; }
+  void addChildAtIndexInPlace(JuniorExpression t, int index,
+                              int currentNumberOfChildren);
+};
+
 }  // namespace Poincare
 
 #endif

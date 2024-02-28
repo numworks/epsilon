@@ -7,6 +7,7 @@
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/rack_from_text.h>
+#include <poincare_junior/src/n_ary.h>
 
 namespace Poincare {
 
@@ -191,5 +192,23 @@ template Coordinate2D<float> Point::approximate2D<float>(
     const ApproximationContext& approximationContext);
 template Coordinate2D<double> Point::approximate2D<double>(
     const ApproximationContext& approximationContext);
+
+/* List */
+
+List List::Builder() {
+  JuniorExpression expr = JuniorExpression::Builder(
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::List>(0));
+  return static_cast<List&>(expr);
+}
+
+// TODO_PCJ: Rework this and its usage
+void List::addChildAtIndexInPlace(JuniorExpression t, int index,
+                                  int currentNumberOfChildren) {
+  PoincareJ::Tree* clone = tree()->clone();
+  PoincareJ::EditionReference newChild = t.tree()->clone();
+  PoincareJ::NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
+  JuniorExpression temp = JuniorExpression::Builder(clone);
+  *this = static_cast<List&>(temp);
+}
 
 }  // namespace Poincare

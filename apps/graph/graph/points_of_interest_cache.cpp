@@ -18,9 +18,7 @@ namespace Graph {
 PointsOfInterestCache PointsOfInterestCache::clone() const {
   PointsOfInterestCache result = *this;
   Expression cloneList = result.list().clone();
-#if 0  // TODO_PCJ
   result.m_list.setList(static_cast<Poincare::List &>(cloneList));
-#endif
   return result;
 }
 

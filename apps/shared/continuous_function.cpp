@@ -650,11 +650,9 @@ Expression ContinuousFunction::Model::expressionReduced(
         Expression list = m_expression.type() == ExpressionNode::Type::List
                               ? m_expression
                               : m_expression.childAtIndex(0);
-#if 0  // PCJ_TODO
         m_expression =
             static_cast<List &>(list).approximateAndRemoveUndefAndSort<double>(
                 ApproximationContext(context, complexFormat));
-#endif
       } else {
         assert(m_expression.type() == ExpressionNode::Type::Point ||
                (m_expression.type() == ExpressionNode::Type::Dependency &&
@@ -882,10 +880,8 @@ Expression ContinuousFunction::Model::expressionEquation(
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType)) {
     if (result.type() == ExpressionNode::Type::Point ||
-#if 0  // PCJ_TODO
         (result.type() == ExpressionNode::Type::List &&
          static_cast<List &>(result).isListOfPoints(context)) ||
-#endif
         (result.type() == ExpressionNode::Type::ListSequence &&
          result.childAtIndex(0).type() == ExpressionNode::Type::Point)) {
       if (computedFunctionSymbol) {

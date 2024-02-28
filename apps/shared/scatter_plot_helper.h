@@ -49,11 +49,7 @@ class ScatterPlotIterable {
   ScatterPlotIterable(Poincare::Expression e) : m_iterable(e), m_expression(e) {
     assert(Poincare::Expression::IsPoint(e) ||
            (e.type() == Poincare::ExpressionNode::Type::List &&
-#if 0  // TODO_PCJ
             static_cast<Poincare::List&>(e).isListOfPoints(nullptr)));
-#else
-            false));
-#endif
   }
 
   static int ListLength(const Poincare::Expression& e) {

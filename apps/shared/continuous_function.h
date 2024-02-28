@@ -150,6 +150,11 @@ class ContinuousFunction : public Function {
       double t, Poincare::Context *context, int curveIndex = 0) const override {
     return privateEvaluateXYAtParameter<double>(t, context, curveIndex);
   }
+  template <typename T>
+  Poincare::Coordinate2D<T> evaluateXYDerivativeAtParameter(
+      T t, Poincare::Context *context, int derivationOrder) const {
+    return templatedApproximateAtParameter(t, context, 0, derivationOrder);
+  }
 
   double evaluateCurveParameter(int index, double cursorT, double cursorX,
                                 double cursorY,

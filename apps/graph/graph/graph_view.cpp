@@ -165,6 +165,20 @@ static Coordinate2D<T> evaluateXYSecondCurve(T t, void *model, void *context) {
   return reinterpret_cast<ContinuousFunction *>(model)->evaluateXYAtParameter(
       t, reinterpret_cast<Context *>(context), 1);
 }
+template <typename T>
+static Coordinate2D<T> evaluateXYFirstDerivative(T t, void *model,
+                                                 void *context) {
+  return reinterpret_cast<ContinuousFunction *>(model)
+      ->evaluateXYDerivativeAtParameter(t, reinterpret_cast<Context *>(context),
+                                        1);
+}
+template <typename T>
+static Coordinate2D<T> evaluateXYSecondDerivative(T t, void *model,
+                                                  void *context) {
+  return reinterpret_cast<ContinuousFunction *>(model)
+      ->evaluateXYDerivativeAtParameter(t, reinterpret_cast<Context *>(context),
+                                        2);
+}
 
 static Coordinate2D<float> evaluateInfinity(float t, void *, void *) {
   return Coordinate2D<float>(INFINITY, INFINITY);
@@ -272,6 +286,32 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
                                   patternLower2, Curve2D(), patternWithoutCurve,
                                   axis);
     secondCurve.draw(this, ctx, rect);
+  }
+
+  // - Draw derivatives
+  if (f->displayPlotFirstDerivative()) {
+    assert(f->canPlotDerivatives());
+    CurveDrawing derivativeCurve(Curve2D(evaluateXYFirstDerivative<float>, f),
+                                 context(), tStart, tEnd, tStep, f->color(1),
+                                 true, f->properties().plotIsDotted());
+    derivativeCurve.setPrecisionOptions(true, evaluateXYFirstDerivative<double>,
+                                        discontinuity);
+    derivativeCurve.setPatternOptions(pattern, patternStart, patternEnd,
+                                      patternLower, patternUpper,
+                                      patternWithoutCurve, axis);
+    derivativeCurve.draw(this, ctx, rect);
+  }
+  if (f->displayPlotSecondDerivative()) {
+    assert(f->canPlotDerivatives());
+    CurveDrawing derivativeCurve(Curve2D(evaluateXYSecondDerivative<float>, f),
+                                 context(), tStart, tEnd, tStep, f->color(2),
+                                 true, f->properties().plotIsDotted());
+    derivativeCurve.setPrecisionOptions(
+        true, evaluateXYSecondDerivative<double>, discontinuity);
+    derivativeCurve.setPatternOptions(pattern, patternStart, patternEnd,
+                                      patternLower, patternUpper,
+                                      patternWithoutCurve, axis);
+    derivativeCurve.draw(this, ctx, rect);
   }
 }
 

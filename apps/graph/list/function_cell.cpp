@@ -33,7 +33,8 @@ AbstractFunctionCell::AbstractFunctionCell()
                          .verticalAlignment = KDGlyph::k_alignTop}),
       m_functionColor(KDColorBlack),
       m_expressionBackground(KDColorWhite),
-      m_ellipsisBackground(KDColorWhite) {}
+      m_ellipsisBackground(KDColorWhite),
+      m_hideMessage(false) {}
 
 void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw the color indicator
@@ -55,8 +56,7 @@ KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
   KDCoordinate minimalHeight =
       mainCell()->minimalSizeForOptimalDisplay().height() + 2 * k_margin;
   if (displayFunctionType()) {
-    KDCoordinate messageHeight =
-        m_messageTextView.minimalSizeForOptimalDisplay().height();
+    KDCoordinate messageHeight = messageTextHeight();
     minimalHeight += k_messageMargin + messageHeight;
   }
   return KDSize(bounds().width(), minimalHeight);
@@ -90,8 +90,7 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
 
   KDCoordinate totalMessageHeight = 0;
   if (displayFunctionType()) {
-    KDCoordinate messageHeight =
-        m_messageTextView.minimalSizeForOptimalDisplay().height();
+    KDCoordinate messageHeight = messageTextHeight();
     setChildFrame(
         &m_messageTextView,
         KDRect(leftMargin, bounds().height() - k_margin - messageHeight,
@@ -109,6 +108,13 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
       KDRect(leftMargin, k_margin + (availableHeight - expressionHeight) / 2,
              availableWidth, expressionHeight),
       force);
+}
+
+KDCoordinate AbstractFunctionCell::messageTextHeight() const {
+  if (m_hideMessage) {
+    return 0;
+  }
+  return m_messageTextView.minimalSizeForOptimalDisplay().height();
 }
 
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {

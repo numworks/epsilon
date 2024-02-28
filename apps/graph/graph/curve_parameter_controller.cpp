@@ -19,7 +19,9 @@ namespace Graph {
 CurveParameterController::CurveParameterController(
     InteractiveCurveViewRange *graphRange, BannerView *bannerView,
     CurveViewCursor *cursor, GraphView *graphView,
-    GraphController *graphController)
+    GraphController *graphController,
+    FunctionParameterController *functionParameterController,
+    DerivativeColumnParameterController *derivativeColumnParameterController)
     : ExplicitFloatParameterController(parentResponder()),
       m_graphRange(graphRange),
       m_cursor(cursor),
@@ -27,6 +29,9 @@ CurveParameterController::CurveParameterController(
                                 cursor),
       m_calculationParameterController(this, graphView, bannerView, graphRange,
                                        cursor),
+      m_functionParameterController(functionParameterController),
+      m_derivativeColumnParameterController(
+          derivativeColumnParameterController),
       m_graphController(graphController) {
   for (int i = 0; i < k_numberOfParameterRows; i++) {
     m_parameterCells[i].setParentResponder(&m_selectableListView);
@@ -223,11 +228,10 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (cell == &m_optionsCell && m_optionsCell.canBeActivatedByEvent(event)) {
-    FunctionParameterController *details =
-        App::app()->functionParameterController();
-    details->setRecord(m_record);  // Will select cell at location (0,0)
-    details->setParameterDelegate(this);
-    stack->push(details);
+    m_functionParameterController->setRecord(
+        m_record);  // Will select cell at location (0,0)
+    m_functionParameterController->setParameterDelegate(this);
+    stack->push(m_functionParameterController);
     return true;
   }
   return false;

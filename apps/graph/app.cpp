@@ -55,7 +55,9 @@ App::GraphTab::GraphTab()
       m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader,
                         app()->snapshot()->graphRange(),
                         app()->snapshot()->cursor(),
-                        app()->snapshot()->selectedCurveIndex()) {}
+                        app()->snapshot()->selectedCurveIndex(),
+                        &app()->m_functionParameterController,
+                        &app()->m_derivativeColumnParameterController) {}
 
 App::ValuesTab::ValuesTab()
     : Shared::FunctionApp::ValuesTab(&m_valuesController),

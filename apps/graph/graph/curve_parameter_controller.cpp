@@ -236,19 +236,15 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void CurveParameterController::setRecord(Ion::Storage::Record record) {
-  Shared::WithRecord::setRecord(record);
+void CurveParameterController::setRecord(Ion::Storage::Record record,
+                                         int derivationOrder) {
+  m_record = record;
+  m_derivationOrder = derivationOrder;
   m_calculationCell.setVisible(function()->canDisplayDerivative() &&
                                m_derivationOrder == 0);
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);
-}
-
-void CurveParameterController::setRecord(Ion::Storage::Record record,
-                                         int derivationOrder) {
-  setRecord(record);
-  m_derivationOrder = derivationOrder;
 }
 
 void CurveParameterController::viewWillAppear() {

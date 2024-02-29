@@ -39,7 +39,9 @@ class ContinuousFunction : public Function {
   // Builder
   ContinuousFunction(Ion::Storage::Record record = Record());
 
-  ContinuousFunctionProperties properties() const;
+  ContinuousFunctionProperties properties() const {
+    return m_model.properties(this);
+  }
   Ion::Storage::Record::ErrorStatus updateNameIfNeeded(
       Poincare::Context *context);
 
@@ -445,7 +447,8 @@ class ContinuousFunction : public Function {
     void tidyDownstreamPoolFrom(
         Poincare::TreeNode *treePoolCursor) const override;
     // m_plotType getter
-    ContinuousFunctionProperties properties() const { return m_properties; }
+    ContinuousFunctionProperties properties(
+        const Ion::Storage::Record *record) const;
     int numberOfSubCurves(const Ion::Storage::Record *record) const;
     // Reset m_plotType to Uninitialized type
     void resetProperties() const { m_properties.reset(); }

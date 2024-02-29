@@ -8,7 +8,8 @@ namespace PoincareJ {
 
 // TODO: A RackLayout shouldn't have RackLayout children.
 constexpr auto KRackL = KNAry16<BlockType::RackLayout>();
-constexpr auto KMarginL = KTree<BlockType::OperatorMarginLayout>();
+constexpr auto KOperatorSeparatorL =
+    KTree<BlockType::OperatorSeparatorLayout>();
 constexpr auto KThousandSeparatorL =
     KTree<BlockType::ThousandSeparatorLayout>();
 constexpr auto KFracL = KBinary<BlockType::FractionLayout>();

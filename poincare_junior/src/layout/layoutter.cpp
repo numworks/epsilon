@@ -526,18 +526,19 @@ bool Layoutter::AddThousandSeparators(Tree *rack) {
   return true;
 }
 
-void Layoutter::StripMargins(Tree *rack) {
+void Layoutter::StripSeparators(Tree *rack) {
+  assert(rack->isRackLayout());
   Tree *child = rack->nextNode();
   int n = rack->numberOfChildren();
   int i = 0;
   while (i < n) {
-    if (child->isOperatorMarginLayout() || child->isThousandSeparatorLayout()) {
+    if (child->isSeparatorLayout()) {
       child->removeTree();
       n--;
       continue;
     }
     for (Tree *subRack : child->children()) {
-      StripMargins(subRack);
+      StripSeparators(subRack);
     }
     child = child->nextTree();
     i++;

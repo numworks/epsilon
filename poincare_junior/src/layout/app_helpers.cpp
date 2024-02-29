@@ -23,7 +23,7 @@ void MakeRightMostParenthesisTemporary(Tree* tree) {
 void MakeAdditionImplicit(Tree* rack) {
   for (Tree* child : rack->children()) {
     if (CodePointLayout::IsCodePoint(child, '+')) {
-      child->cloneTreeOverTree(KMarginL);
+      child->cloneTreeOverTree(KOperatorSeparatorL);
     }
   }
 }

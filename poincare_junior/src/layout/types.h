@@ -1,8 +1,11 @@
 NODE(Rack, NARY16)
 NODE(VerticalOffset, 1, 1)
 
-NODE(OperatorMargin)
+NODE(OperatorSeparator)
 NODE(ThousandSeparator)
+
+RANGE(SeparatorLayout, OperatorSeparatorLayout, ThousandSeparatorLayout)
+
 NODE(CodePoint, 0, sizeof(CodePoint))
 NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))
 // TODO Do we need a StringLayout ?

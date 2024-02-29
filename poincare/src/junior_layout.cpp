@@ -93,7 +93,7 @@ void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
 JuniorLayout JuniorLayout::cloneWithoutMargins() {
   PoincareJ::Tree* clone = tree()->clone();
   if (clone->isRackLayout()) {
-    PoincareJ::Layoutter::StripMargins(clone);
+    PoincareJ::Layoutter::StripSeparators(clone);
   }
   return JuniorLayout::Builder(clone);
 }

@@ -13,8 +13,8 @@ class Layoutter {
 
   static bool AddThousandSeparators(Tree* rack);
 
-  /* Remove OperatorMargins and ThousandSeparators in rack */
-  static void StripMargins(Tree* rack);
+  /* Remove OperatorSeparators and ThousandSeparators in rack */
+  static void StripSeparators(Tree* rack);
 
  private:
   Layoutter(bool linearMode, int numberOfSignificantDigits)

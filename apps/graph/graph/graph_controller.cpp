@@ -295,9 +295,8 @@ void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
-  int derivationOrder = m_selectedSubCurveIndex >= f->numberOfSubCurves()
-                            ? m_selectedSubCurveIndex
-                            : 0;
+  int derivationOrder =
+      f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
   // Only display f(x) when on f curve
   bool displayOrdinate = derivationOrder == 0;
   // Only display f'(x) when on f or f' curve
@@ -430,12 +429,12 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
 }
 
 void GraphController::openMenuForSelectedCurve() {
+  Ion::Storage::Record record = recordAtSelectedCurveIndex();
+  ExpiringPointer<ContinuousFunction> f =
+      functionStore()->modelForRecord(record);
   int derivationOrder =
-      m_selectedSubCurveIndex >= numberOfSubCurves(*m_selectedCurveIndex)
-          ? m_selectedSubCurveIndex
-          : 0;
-  m_curveParameterController.setRecord(recordAtSelectedCurveIndex(),
-                                       derivationOrder);
+      f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
+  m_curveParameterController.setRecord(record, derivationOrder);
   stackController()->push(&m_curveParameterController);
 }
 

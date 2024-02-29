@@ -199,6 +199,9 @@ class ContinuousFunction : public Function {
   void setDisplayPlotSecondDerivative(bool display) {
     return recordData()->setDisplayPlotSecondDerivative(display);
   }
+
+  int derivationOrderFromSubCurveIndex(int subCurveIndex) const;
+
   // Approximate derivative at t, on given sub curve if there is one
   template <typename T>
   Poincare::Evaluation<T> approximateDerivative(T t, Poincare::Context *context,

@@ -269,6 +269,25 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
   }
 }
 
+int ContinuousFunction::derivationOrderFromSubCurveIndex(
+    int subCurveIndex) const {
+  assert(0 <= subCurveIndex && subCurveIndex < numberOfSubCurves(true));
+  if (numberOfSubCurves() > 1) {
+    return 0;
+  }
+  switch (subCurveIndex) {
+    case 0:
+      return 0;
+    case 1:
+      assert(displayPlotFirstDerivative() || displayPlotSecondDerivative());
+      return displayPlotFirstDerivative() ? 1 : 2;
+    default:
+      assert(subCurveIndex == 2);
+      assert(displayPlotFirstDerivative() && displayPlotSecondDerivative());
+      return 2;
+  }
+}
+
 template <typename T>
 Evaluation<T> ContinuousFunction::approximateDerivative(T t, Context *context,
                                                         int derivationOrder,
@@ -413,8 +432,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
-  int derivationOrder =
-      subCurveIndex >= numberOfSubCurves() ? subCurveIndex : 0;
+  int derivationOrder = derivationOrderFromSubCurveIndex(subCurveIndex);
   Expression e = expressionApproximated(context, derivationOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
 

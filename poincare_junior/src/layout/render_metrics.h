@@ -140,6 +140,10 @@ constexpr KDCoordinate Baseline(KDCoordinate childHeight,
                                 KDCoordinate childBaseline) {
   return Pair::Baseline(childHeight, childBaseline, k_minVerticalMargin);
 }
+
+constexpr KDCoordinate VerticalMargin(KDCoordinate childHeight) {
+  return Pair::VerticalMargin(childHeight, k_minVerticalMargin);
+}
 }  // namespace Parenthesis
 
 namespace Pair {
@@ -570,12 +574,35 @@ using PtCombinatorics::k_symbolHeight, PtCombinatorics::k_symbolWidth;
 
 constexpr KDCoordinate k_gridEntryMargin = 6;
 
-namespace Binomial {
-inline KDCoordinate KNHeight(const Layout* node, KDFont::Size font) {
-  return Height(node->child(k_nIndex)) + k_gridEntryMargin +
-         Height(node->child(k_kIndex));
+namespace TwoRows {
+constexpr static KDCoordinate k_point2DRowsSeparator = 2;
+
+inline KDCoordinate RowsSeparator(const Layout* node, KDFont::Size font) {
+  return node->isBinomialLayout() ? k_gridEntryMargin : k_point2DRowsSeparator;
 }
-}  // namespace Binomial
+
+inline KDCoordinate RowsHeight(const Layout* node, KDFont::Size font) {
+  return Height(node->child(Binomial::k_nIndex)) + RowsSeparator(node, font) +
+         Height(node->child(Binomial::k_kIndex));
+}
+
+inline KDCoordinate RowsWidth(const Layout* node, KDFont::Size font) {
+  return std::max(Width(node->child(Binomial::k_nIndex)),
+                  Width(node->child(Binomial::k_kIndex)));
+}
+
+inline KDCoordinate UpperMargin(const Layout* node, KDFont::Size font) {
+  return node->isPoint2DLayout() ? Parenthesis::VerticalMargin(
+                                       Height(node->child(Binomial::k_nIndex)))
+                                 : 0;
+}
+
+inline KDCoordinate LowerMargin(const Layout* node, KDFont::Size font) {
+  return node->isPoint2DLayout() ? Parenthesis::VerticalMargin(
+                                       Height(node->child(Binomial::k_kIndex)))
+                                 : 0;
+}
+}  // namespace TwoRows
 
 namespace ListSequence {
 constexpr KDCoordinate k_variableHorizontalMargin = 1;

@@ -1005,7 +1005,7 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     m_cursorReference = parentOfFraction;
     return;
   }
-  if (deletionMethod == DeletionMethod::BinomialCoefficientMoveFromKtoN) {
+  if (deletionMethod == DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper) {
     assert(deletionAppliedToParent);
     assert(parent->isBinomialLayout());
     int newIndex = Binomial::k_nIndex;

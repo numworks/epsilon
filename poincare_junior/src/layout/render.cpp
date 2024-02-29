@@ -25,12 +25,12 @@ KDSize Render::Size(const Layout* node) {
   KDCoordinate height = 0;
 
   switch (node->layoutType()) {
+    case LayoutType::Point2D:
     case LayoutType::Binomial: {
-      KDSize coefficientsSize =
-          KDSize(std::max(Width(node->child(0)), Width(node->child(1))),
-                 Binomial::KNHeight(node, s_font));
-      width = coefficientsSize.width() + 2 * Parenthesis::k_parenthesisWidth;
-      height = coefficientsSize.height();
+      using namespace TwoRows;
+      width = RowsWidth(node, s_font) + 2 * Parenthesis::k_parenthesisWidth;
+      height = RowsHeight(node, s_font) + UpperMargin(node, s_font) +
+               LowerMargin(node, s_font);
       break;
     }
     case LayoutType::Conjugate: {
@@ -284,15 +284,18 @@ KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
 
 KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
   switch (node->layoutType()) {
+    case LayoutType::Point2D:
     case LayoutType::Binomial: {
-      KDCoordinate horizontalCenter =
-          Parenthesis::k_parenthesisWidth +
-          std::max(Width(node->child(0)), Width(node->child(1))) / 2;
+      using namespace TwoRows;
+      KDSize size = Size(node);
+      KDCoordinate horizontalCenter = size.width() / 2;
       if (childIndex == 0) {
-        return KDPoint(horizontalCenter - Width(node->child(0)) / 2, 0);
+        return KDPoint(horizontalCenter - Width(node->child(0)) / 2,
+                       UpperMargin(node, s_font));
       }
-      return KDPoint(horizontalCenter - Width(node->child(1)) / 2,
-                     Binomial::KNHeight(node, s_font) - Height(node->child(1)));
+      return KDPoint(
+          horizontalCenter - Width(node->child(1)) / 2,
+          size.height() - Height(node->child(1)) - LowerMargin(node, s_font));
     }
     case LayoutType::Conjugate: {
       return KDPoint(
@@ -490,8 +493,9 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
 
 KDCoordinate Render::Baseline(const Layout* node) {
   switch (node->layoutType()) {
+    case LayoutType::Point2D:
     case LayoutType::Binomial:
-      return (Binomial::KNHeight(node, s_font) + 1) / 2;
+      return (TwoRows::RowsHeight(node, s_font) + 1) / 2;
     case LayoutType::Conjugate:
       return Baseline(node->child(0)) + Conjugate::k_overlineWidth +
              Conjugate::k_overlineVerticalMargin;
@@ -886,14 +890,37 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
                         const KDGlyph::Style& style) {
   switch (node->layoutType()) {
     case LayoutType::Binomial: {
-      KDCoordinate childHeight = Binomial::KNHeight(node, s_font);
+      using namespace TwoRows;
+      KDCoordinate childHeight = RowsHeight(node, s_font);
       KDCoordinate rightParenthesisPointX =
-          std::max(Width(node->child(0)), Width(node->child(1))) +
-          Parenthesis::k_parenthesisWidth;
+          RowsWidth(node, s_font) + Parenthesis::k_parenthesisWidth;
       RenderParenthesisWithChildHeight(true, childHeight, ctx, p, style);
       RenderParenthesisWithChildHeight(
           false, childHeight, ctx,
           p.translatedBy(KDPoint(rightParenthesisPointX, 0)), style);
+      return;
+    }
+    case LayoutType::Point2D: {
+      using namespace TwoRows;
+      KDCoordinate upperLayoutHeight = Height(node->child(0));
+      KDCoordinate lowerLayoutHeight = Height(node->child(1));
+      KDCoordinate right =
+          Parenthesis::k_parenthesisWidth + RowsWidth(node, style.font);
+      KDCoordinate bottom = upperLayoutHeight + k_point2DRowsSeparator;
+      // Draw left parenthesis
+      RenderParenthesisWithChildHeight(true, upperLayoutHeight, ctx, p, style);
+      // Draw right parenthesis
+      RenderParenthesisWithChildHeight(false, lowerLayoutHeight, ctx,
+                                       p.translatedBy(KDPoint(right, bottom)),
+                                       style);
+      // Draw comma
+      KDCoordinate topMargin = UpperMargin(node, style.font);
+      KDCoordinate commaHeight = KDFont::GlyphHeight(style.font);
+      assert(commaHeight <= upperLayoutHeight);
+      KDCoordinate commaPositionY =
+          topMargin + (upperLayoutHeight - commaHeight) / 2;
+      ctx->drawString(",", p.translatedBy(KDPoint(right, commaPositionY)),
+                      style);
       return;
     }
     case LayoutType::Conjugate: {

@@ -11,7 +11,7 @@ enum class DeletionMethod {
   DeleteParent,
   MoveLeft,
   FractionDenominatorDeletion,
-  BinomialCoefficientMoveFromKtoN,
+  TwoRowsLayoutMoveFromLowertoUpper,
   GridLayoutMoveToUpperRow,
   GridLayoutDeleteColumnAndRow,
   GridLayoutDeleteColumn,

@@ -14,6 +14,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     Tree* node, OMG::HorizontalDirection direction, int currentIndex) {
   int nChildren = node->numberOfChildren();
   switch (node->layoutType()) {
+    case LayoutType::Point2D:
     case LayoutType::Binomial:
     case LayoutType::Fraction:
       static_assert(Fraction::k_numeratorIndex == Binomial::k_nIndex);
@@ -187,6 +188,7 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     Tree* node, OMG::VerticalDirection direction, int currentIndex,
     PositionInLayout positionAtCurrentIndex) {
   switch (node->layoutType()) {
+    case LayoutType::Point2D:
     case LayoutType::Binomial: {
       using namespace Binomial;
       if (currentIndex == k_kIndex && direction.isUp()) {
@@ -416,13 +418,14 @@ static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(
 DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     const Tree* node, int childIndex) {
   switch (node->layoutType()) {
+    case LayoutType::Point2D:
     case LayoutType::Binomial:
       using namespace Binomial;
       if (childIndex == k_nIndex && IsEmpty(node->child(k_kIndex))) {
         return DeletionMethod::DeleteParent;
       }
       if (childIndex == k_kIndex) {
-        return DeletionMethod::BinomialCoefficientMoveFromKtoN;
+        return DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper;
       }
       return DeletionMethod::MoveLeft;
     case LayoutType::Fraction:

@@ -36,6 +36,7 @@ Correspondance oneToOne[] = {
     {PT::CurlyBraceLayout, LT::CurlyBrace, true},
     {PT::FractionLayout, LT::Fraction},
     {PT::BinomialCoefficientLayout, LT::Binomial},
+    {PT::Point2DLayout, LT::Point2D},
     {PT::LetterCWithSubAndSuperscriptLayout, LT::PtBinomial},
     {PT::LetterAWithSubAndSuperscriptLayout, LT::PtPermute},
     {PT::NthRootLayout, LT::NthRoot},
@@ -81,6 +82,8 @@ Poincare::OLayout ToPoincareLayout(const Tree *l) {
           return CurlyBraceLayout::Builder(c[0]);
         case LT::Fraction:
           return FractionLayout::Builder(c[0], c[1]);
+        case LT::Point2D:
+          return Point2DLayout::Builder(c[0], c[1]);
         case LT::Binomial:
           return BinomialCoefficientLayout::Builder(c[0], c[1]);
         case LT::PtBinomial:

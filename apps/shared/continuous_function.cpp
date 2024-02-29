@@ -82,16 +82,6 @@ ContinuousFunction::ContinuousFunction(Ion::Storage::Record record)
   }
 }
 
-ContinuousFunctionProperties ContinuousFunction::properties() const {
-  if (!m_model.properties().isInitialized()) {
-    // Computing the expression equation will update the function properties
-    expressionReducedForAnalysis(
-        AppsContainerHelper::sharedAppsContainerGlobalContext());
-  }
-  assert(m_model.properties().isInitialized());
-  return m_model.properties();
-}
-
 Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
     Context *context) {
   return m_model.renameRecordIfNeeded(this, context);
@@ -261,7 +251,6 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
   setCache(nullptr);
   m_model.resetProperties();  // Reset model's properties.
   properties();               // update properties.
-  assert(m_model.properties().isInitialized());
   if (wasCartesian != properties().isCartesian() ||
       !properties().canHaveCustomDomain()) {
     // The definition's domain must be reset.
@@ -591,7 +580,7 @@ Expression ContinuousFunction::Model::expressionReduced(
   if (m_expression.isUninitialized()) {
     // Retrieve the expression equation's expression.
     m_expression = expressionReducedForAnalysis(record, context);
-    ContinuousFunctionProperties thisProperties = properties();
+    ContinuousFunctionProperties thisProperties = properties(record);
     if (!thisProperties.isEnabled()) {
       m_expression = Undefined::Builder();
       return m_expression;
@@ -974,11 +963,12 @@ Expression ContinuousFunction::Model::expressionSlopeReduced(
    * For curves with multiple subcurves and for inverse polar,
    * it is not available. */
   // TODO: assert(canComputeTangent());
+  ContinuousFunctionProperties prop = properties(record);
   if (m_expressionSlope.isUninitialized()) {
-    if (properties().isCartesian()) {
+    if (prop.isCartesian()) {
       m_expressionSlope = expressionDerivateReduced(record, context, 1);
     } else {
-      assert(properties().isParametric() || properties().isPolar());
+      assert(prop.isParametric() || prop.isPolar());
       Expression expression = parametricForm(record, context);
       assert(expression.type() == ExpressionNode::Type::Point);
       assert(expression.numberOfChildren() == 2);
@@ -1124,13 +1114,25 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }
 
+ContinuousFunctionProperties ContinuousFunction::Model::properties(
+    const Ion::Storage::Record *record) const {
+  if (!m_properties.isInitialized()) {
+    // Computing the expression equation will update the function properties
+    expressionReducedForAnalysis(
+        record, AppsContainerHelper::sharedAppsContainerGlobalContext());
+  }
+  assert(m_properties.isInitialized());
+  return m_properties;
+}
+
 int ContinuousFunction::Model::numberOfSubCurves(
     const Ion::Storage::Record *record) const {
-  if (properties().isCartesian()) {
+  ContinuousFunctionProperties prop = properties(record);
+  if (prop.isCartesian()) {
     Expression e = expressionReduced(
         record, AppsContainerHelper::sharedAppsContainerGlobalContext());
     if (e.type() == ExpressionNode::Type::List) {
-      assert(properties().isOfDegreeTwo());
+      assert(prop.isOfDegreeTwo());
       return e.numberOfChildren();
     }
   }
@@ -1140,14 +1142,14 @@ int ContinuousFunction::Model::numberOfSubCurves(
 Expression ContinuousFunction::Model::parametricForm(
     const Ion::Storage::Record *record, Poincare::Context *context,
     bool approximated) const {
-  assert(properties().isPolar() || properties().isInversePolar() ||
-         properties().isParametric());
+  ContinuousFunctionProperties prop = properties(record);
+  assert(prop.isPolar() || prop.isInversePolar() || prop.isParametric());
   Expression e = approximated ? expressionApproximated(record, context)
                               : expressionReduced(record, context);
-  if (properties().isPolar() || properties().isInversePolar()) {
+  if (prop.isPolar() || prop.isInversePolar()) {
     Expression x, y;
     Expression unknown = Symbol::SystemSymbol();
-    if (properties().isPolar()) {
+    if (prop.isPolar()) {
       /* Turn r(θ) into f(θ) = (x(θ), y(θ)) with
        * - x(θ) = r(θ) * cos(θ)
        * - y(θ) = r(θ) * sin(θ) */
@@ -1162,7 +1164,7 @@ Expression ContinuousFunction::Model::parametricForm(
     }
     e = Point::Builder(x, y);
   } else {
-    assert(properties().isParametric());
+    assert(prop.isParametric());
     e = e.clone();
   }
   assert(e.type() == ExpressionNode::Type::Point);

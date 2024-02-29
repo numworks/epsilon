@@ -38,7 +38,7 @@ class CurveParameterController
   // ParameterDelegate
   bool usePersonalizedTitle() const override { return false; }
   void hideDerivative(Ion::Storage::Record record,
-                      int derivationOrder) override {}
+                      int derivationOrder) override;
 
   void setRecord(Ion::Storage::Record record, int derivationOrder);
 

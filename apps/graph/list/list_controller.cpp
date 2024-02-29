@@ -310,6 +310,7 @@ void ListController::hideDerivative(Ion::Storage::Record record,
     assert(derivationOrder == 2);
     f->setDisplayPlotSecondDerivative(false);
   }
+  stackController()->pop();
 }
 
 void ListController::addNewModelAction() {

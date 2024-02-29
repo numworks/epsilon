@@ -169,6 +169,7 @@ void ValuesController::hideDerivative(Ion::Storage::Record record,
     assert(derivationOrder == 2);
     f->setDisplayValueSecondDerivative(false);
   }
+  stackController()->pop();
 }
 
 /* PRIVATE */

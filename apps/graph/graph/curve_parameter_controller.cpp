@@ -227,9 +227,16 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (cell == &m_optionsCell && m_optionsCell.canBeActivatedByEvent(event)) {
-    m_functionParameterController->setRecord(m_record);
-    m_functionParameterController->setParameterDelegate(this);
-    stack->push(m_functionParameterController);
+    if (m_derivationOrder == 0) {
+      m_functionParameterController->setRecord(m_record);
+      m_functionParameterController->setParameterDelegate(this);
+      stackController()->push(m_functionParameterController);
+    } else {
+      m_derivativeColumnParameterController->setRecord(m_record,
+                                                       m_derivationOrder);
+      m_derivativeColumnParameterController->setParameterDelegate(this);
+      stackController()->push(m_derivativeColumnParameterController);
+    }
     return true;
   }
   return false;
@@ -244,6 +251,19 @@ void CurveParameterController::setRecord(Ion::Storage::Record record,
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);
+}
+
+void CurveParameterController::hideDerivative(Ion::Storage::Record record,
+                                              int derivationOrder) {
+  if (derivationOrder == 1) {
+    function()->setDisplayPlotFirstDerivative(false);
+  } else {
+    assert(derivationOrder == 2);
+    function()->setDisplayPlotSecondDerivative(false);
+  }
+  stackController()->popUntilDepth(
+      Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+      true);
 }
 
 void CurveParameterController::viewWillAppear() {

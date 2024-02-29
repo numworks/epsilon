@@ -27,7 +27,7 @@ const char *CurveParameterController::title() {
 }
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
-  WithRecord::setRecord(record);
+  m_record = record;
   m_goToParameterController.setRecord(record);
   m_cobwebController->setRecord(record);
   m_cobwebCell.setVisible(m_cobwebController->isRecordSuitable());

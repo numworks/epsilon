@@ -43,7 +43,6 @@ bool DerivativeColumnParameterController::handleEvent(
   if (cell == &m_hideCell && m_colorCell.canBeActivatedByEvent(event)) {
     assert(m_parameterDelegate);
     m_parameterDelegate->hideDerivative(m_record, m_derivationOrder);
-    stack->pop();
     return true;
   }
   return false;

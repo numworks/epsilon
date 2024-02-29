@@ -302,6 +302,27 @@ int ContinuousFunction::derivationOrderFromSubCurveIndex(
                                                 DerivativeDisplayType::Plot);
 }
 
+int ContinuousFunction::subCurveIndexFromDerivationOrder(
+    int derivationOrder) const {
+  int subCurveIndex;
+  switch (derivationOrder) {
+    case 0:
+      subCurveIndex = 0;
+      break;
+    case 1:
+      assert(displayPlotFirstDerivative());
+      subCurveIndex = 1;
+      break;
+    default:
+      assert(derivationOrder == 2);
+      assert(displayPlotSecondDerivative());
+      subCurveIndex = displayPlotFirstDerivative() ? 2 : 1;
+      break;
+  }
+  assert(0 <= subCurveIndex && subCurveIndex < numberOfSubCurves(true));
+  return subCurveIndex;
+}
+
 template <typename T>
 Evaluation<T> ContinuousFunction::approximateDerivative(T t, Context *context,
                                                         int derivationOrder,

@@ -19,7 +19,6 @@ class FunctionParameterController;
 
 class CurveParameterController
     : public Shared::ExplicitFloatParameterController,
-      public Shared::WithRecord,
       public ParameterDelegate {
  public:
   CurveParameterController(
@@ -68,7 +67,6 @@ class CurveParameterController
   bool setParameterAtIndex(int parameterIndex, double f) override {
     return confirmParameterAtIndex(parameterIndex, f);
   }
-  void setRecord(Ion::Storage::Record record) override;
   Escher::HighlightCell* cell(int row) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
@@ -101,6 +99,7 @@ class CurveParameterController
   CalculationParameterController m_calculationParameterController;
   FunctionParameterController* m_functionParameterController;
   DerivativeColumnParameterController* m_derivativeColumnParameterController;
+  Ion::Storage::Record m_record;
   int m_derivationOrder;
 
   // parent controller: handles the cursor

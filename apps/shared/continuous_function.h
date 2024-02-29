@@ -156,7 +156,8 @@ class ContinuousFunction : public Function {
   template <typename T>
   Poincare::Coordinate2D<T> evaluateXYDerivativeAtParameter(
       T t, Poincare::Context *context, int derivationOrder) const {
-    return templatedApproximateAtParameter(t, context, derivationOrder);
+    return templatedApproximateAtParameter(
+        t, context, subCurveIndexFromDerivationOrder(derivationOrder));
   }
 
   double evaluateCurveParameter(int index, double cursorT, double cursorX,
@@ -204,6 +205,7 @@ class ContinuousFunction : public Function {
   int derivationOrderFromRelativeIndex(int relativeIndex,
                                        DerivativeDisplayType type) const;
   int derivationOrderFromSubCurveIndex(int subCurveIndex) const;
+  int subCurveIndexFromDerivationOrder(int derivationOrder) const;
 
   // Approximate derivative at t, on given sub curve if there is one
   template <typename T>

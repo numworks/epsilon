@@ -241,8 +241,6 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
   m_calculationCell.setVisible(function()->canDisplayDerivative());
-  parameterCell(ParameterIndex::Image2)
-      ->setVisible(function()->properties().isParametric());
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);
@@ -260,9 +258,17 @@ void CurveParameterController::viewWillAppear() {
    * setRecord) in since show derivative can be toggled from a sub-menu of
    * this one. */
   bool isParametric = function()->properties().isParametric();
-  bool displayValueFirstDerivative = function()->displayValueFirstDerivative();
+  // Only display f(x) when on f curve
+  bool displayImage = m_derivationOrder == 0;
+  // Only display f'(x) when on f or f' curve
+  bool displayValueFirstDerivative =
+      function()->displayValueFirstDerivative() && m_derivationOrder != 2;
+  // Only display f"(x) when on f or f" curve
   bool displayValueSecondDerivative =
-      function()->displayValueSecondDerivative();
+      function()->displayValueSecondDerivative() && m_derivationOrder != 1;
+  parameterCell(ParameterIndex::Image1)->setVisible(displayImage);
+  parameterCell(ParameterIndex::Image2)
+      ->setVisible(isParametric && displayImage);
   parameterCell(ParameterIndex::FirstDerivative1)
       ->setVisible(displayValueFirstDerivative);
   parameterCell(ParameterIndex::FirstDerivative2)

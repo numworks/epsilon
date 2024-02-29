@@ -2,7 +2,6 @@
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/explicit_float_parameter_controller.h>
-#include <apps/shared/with_record.h>
 #include <escher/buffer_text_view.h>
 #include <escher/chevron_view.h>
 #include <escher/menu_cell_with_editable_text.h>

@@ -6,7 +6,6 @@
 #include <apps/shared/function_graph_controller.h>
 #include <apps/shared/interactive_curve_view_range.h>
 #include <apps/shared/round_cursor_view.h>
-#include <apps/shared/with_record.h>
 
 #include "banner_view.h"
 #include "curve_parameter_controller.h"

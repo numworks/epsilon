@@ -4,7 +4,6 @@
 #include <apps/shared/function_graph_controller.h>
 #include <apps/shared/round_cursor_view.h>
 #include <apps/shared/sequence_store.h>
-#include <apps/shared/with_record.h>
 #include <apps/shared/xy_banner_view.h>
 
 #include "cobweb_controller.h"

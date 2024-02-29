@@ -238,7 +238,8 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
-  m_calculationCell.setVisible(function()->canDisplayDerivative());
+  m_calculationCell.setVisible(function()->canDisplayDerivative() &&
+                               m_derivationOrder == 0);
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);

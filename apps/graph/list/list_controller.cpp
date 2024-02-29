@@ -235,7 +235,24 @@ Shared::ListParameterController *ListController::parameterController() {
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {
+  // Remove parametric components too
   deleteParametricComponentsOfSelectedModel();
+  // If we are on a derivative row, only hide derivative
+  int relativeRow;
+  ExpiringPointer<ContinuousFunction> f =
+      modelStore()->modelForRecord(selectedRecord(&relativeRow));
+  int derivationOrder =
+      derivationOrderFromRelativeRow(f.pointer(), relativeRow);
+  if (derivationOrder > 0) {
+    if (derivationOrder == 1) {
+      f->setDisplayPlotFirstDerivative(false);
+    } else {
+      assert(derivationOrder == 2);
+      f->setDisplayPlotSecondDerivative(false);
+    }
+    didChangeModelsList();
+    return true;
+  }
   return FunctionListController::removeModelRow(record);
 }
 

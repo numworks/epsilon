@@ -63,7 +63,8 @@ const char *CurveParameterController::title() {
     const char *calculate = I18n::translate(I18n::Message::CalculateOnFx);
     size_t len = strlen(calculate);
     memcpy(m_title, calculate, len);
-    function()->nameWithArgument(m_title + len, k_titleSize - len);
+    function()->nameWithArgument(m_title + len, k_titleSize - len,
+                                 m_derivationOrder);
   } else {
     const char *colorName = I18n::translate(
         Shared::ColorNames::NameForCurveColor(function()->color()));

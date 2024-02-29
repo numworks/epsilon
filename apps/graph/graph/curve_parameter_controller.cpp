@@ -223,14 +223,12 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       static_cast<StackViewController *>(parentResponder());
   if (cell == &m_calculationCell &&
       m_calculationCell.canBeActivatedByEvent(event)) {
-    m_calculationParameterController.setRecord(
-        m_record);  // Will select row at location 0
+    m_calculationParameterController.setRecord(m_record);
     stack->push(&m_calculationParameterController);
     return true;
   }
   if (cell == &m_optionsCell && m_optionsCell.canBeActivatedByEvent(event)) {
-    m_functionParameterController->setRecord(
-        m_record);  // Will select cell at location (0,0)
+    m_functionParameterController->setRecord(m_record);
     m_functionParameterController->setParameterDelegate(this);
     stack->push(m_functionParameterController);
     return true;

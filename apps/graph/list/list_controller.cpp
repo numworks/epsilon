@@ -394,19 +394,8 @@ int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {
 
 int ListController::derivationOrderFromRelativeRow(ContinuousFunction *f,
                                                    int relativeRow) const {
-  switch (relativeRow) {
-    case 0:
-      return 0;
-    case 1:
-      assert(f->displayPlotFirstDerivative() ||
-             f->displayPlotSecondDerivative());
-      return f->displayPlotFirstDerivative() ? 1 : 2;
-    default:
-      assert(relativeRow == 2);
-      assert(f->displayPlotFirstDerivative() &&
-             f->displayPlotSecondDerivative());
-      return 2;
-  }
+  return f->derivationOrderFromRelativeIndex(
+      relativeRow, ContinuousFunction::DerivativeDisplayType::Plot);
 }
 
 bool ListController::isValidExpressionModel(Expression expression) {

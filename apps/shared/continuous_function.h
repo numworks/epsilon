@@ -200,6 +200,9 @@ class ContinuousFunction : public Function {
     return recordData()->setDisplayPlotSecondDerivative(display);
   }
 
+  enum class DerivativeDisplayType : bool { Plot, Value };
+  int derivationOrderFromRelativeIndex(int relativeIndex,
+                                       DerivativeDisplayType type) const;
   int derivationOrderFromSubCurveIndex(int subCurveIndex) const;
 
   // Approximate derivative at t, on given sub curve if there is one

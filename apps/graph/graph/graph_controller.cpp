@@ -297,14 +297,11 @@ void GraphController::reloadBannerView() {
       functionStore()->modelForRecord(record);
   int derivationOrder =
       f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
-  // Only display f(x) when on f curve
-  bool displayOrdinate = derivationOrder == 0;
-  // Only display f'(x) when on f or f' curve
-  bool displayValueFirstDerivative =
-      f->displayValueFirstDerivative() && derivationOrder != 2;
-  // Only display f"(x) when on f or f" curve
-  bool displayValueSecondDerivative =
-      f->displayValueSecondDerivative() && derivationOrder != 1;
+  bool displayOrdinate, displayValueFirstDerivative,
+      displayValueSecondDerivative;
+  f->valuesToDisplayOnDerivativeCurve(derivationOrder, &displayOrdinate,
+                                      &displayValueFirstDerivative,
+                                      &displayValueSecondDerivative);
   m_bannerView.setDisplayParameters(
       {.showInterest = true,
        .showOrdinate = displayOrdinate,

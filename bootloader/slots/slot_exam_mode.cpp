@@ -51,7 +51,7 @@ uint8_t SlotsExamMode::FetchSlotExamMode(const char * version, const char * Slot
       end = getSlotAEndExamAddress(0);
     }
     // Else versions before 22
-    else if (version[0] == '2' && version[1] < '2') {
+    else if ((version[0] == '2' && version[1] < '2') || (version[0] == '1')) {
       start = getSlotAStartExamAddress(1);
       end = getSlotAEndExamAddress(1);
     }
@@ -68,7 +68,7 @@ uint8_t SlotsExamMode::FetchSlotExamMode(const char * version, const char * Slot
       end = getSlotBEndExamAddress(0);
     }
     // Else versions before 22
-    else if (version[0] == '2' && version[1] < '2') {
+    else if ((version[0] == '2' && version[1] < '2') || (version[0] == '1')) {
       start = getSlotBStartExamAddress(1);
       end = getSlotBEndExamAddress(1);
     }

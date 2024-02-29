@@ -254,14 +254,10 @@ void CurveParameterController::viewWillAppear() {
    * setRecord) in since show derivative can be toggled from a sub-menu of
    * this one. */
   bool isParametric = function()->properties().isParametric();
-  // Only display f(x) when on f curve
-  bool displayImage = m_derivationOrder == 0;
-  // Only display f'(x) when on f or f' curve
-  bool displayValueFirstDerivative =
-      function()->displayValueFirstDerivative() && m_derivationOrder != 2;
-  // Only display f"(x) when on f or f" curve
-  bool displayValueSecondDerivative =
-      function()->displayValueSecondDerivative() && m_derivationOrder != 1;
+  bool displayImage, displayValueFirstDerivative, displayValueSecondDerivative;
+  function()->valuesToDisplayOnDerivativeCurve(m_derivationOrder, &displayImage,
+                                               &displayValueFirstDerivative,
+                                               &displayValueSecondDerivative);
   parameterCell(ParameterIndex::Image1)->setVisible(displayImage);
   parameterCell(ParameterIndex::Image2)
       ->setVisible(isParametric && displayImage);

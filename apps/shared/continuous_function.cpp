@@ -323,6 +323,29 @@ int ContinuousFunction::subCurveIndexFromDerivationOrder(
   return subCurveIndex;
 }
 
+void ContinuousFunction::valuesToDisplayOnDerivativeCurve(
+    int derivationOrder, bool *image, bool *firstDerivative,
+    bool *secondDerivative) const {
+  *image = false;
+  *firstDerivative = false;
+  *secondDerivative = false;
+  switch (derivationOrder) {
+    case 0:
+      *image = true;
+      *firstDerivative = displayValueFirstDerivative();
+      *secondDerivative = displayValueSecondDerivative();
+      return;
+    case 1:
+      assert(displayPlotFirstDerivative());
+      *firstDerivative = true;
+      return;
+    case 2:
+      assert(displayPlotSecondDerivative());
+      *secondDerivative = true;
+      return;
+  }
+}
+
 template <typename T>
 Evaluation<T> ContinuousFunction::approximateDerivative(T t, Context *context,
                                                         int derivationOrder,

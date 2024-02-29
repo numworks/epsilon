@@ -206,6 +206,9 @@ class ContinuousFunction : public Function {
                                        DerivativeDisplayType type) const;
   int derivationOrderFromSubCurveIndex(int subCurveIndex) const;
   int subCurveIndexFromDerivationOrder(int derivationOrder) const;
+  void valuesToDisplayOnDerivativeCurve(int derivationOrder, bool *image,
+                                        bool *firstDerivative,
+                                        bool *secondDerivative) const;
 
   // Approximate derivative at t, on given sub curve if there is one
   template <typename T>

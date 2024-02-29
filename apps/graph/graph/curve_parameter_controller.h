@@ -75,6 +75,7 @@ class CurveParameterController
   void fillParameterCellAtRow(int row) override;
   bool parameterAtRowIsFirstComponent(int row) const;
   int derivationOrderOfParameterAtRow(int row) const;
+  Escher::StackViewController* stackController() const;
 
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,
    * CalculateOnTheCurve + max(Color*Curve)) */

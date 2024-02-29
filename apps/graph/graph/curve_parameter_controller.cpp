@@ -203,8 +203,7 @@ bool CurveParameterController::textFieldDidFinishEditing(
                                                                    event)) {
     return false;
   }
-  StackViewController *stack =
-      static_cast<StackViewController *>(parentResponder());
+  StackViewController *stack = stackController();
   stack->popUntilDepth(
       InteractiveCurveViewController::k_graphControllerStackDepth, true);
   if (function()->properties().parameterAtIndexIsPreimage(index)) {
@@ -220,8 +219,7 @@ TextField *CurveParameterController::textFieldOfCellAtRow(int row) {
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
-  StackViewController *stack =
-      static_cast<StackViewController *>(parentResponder());
+  StackViewController *stack = stackController();
   if (cell == &m_calculationCell &&
       m_calculationCell.canBeActivatedByEvent(event)) {
     m_calculationParameterController.setRecord(m_record);
@@ -274,13 +272,16 @@ void CurveParameterController::viewWillAppear() {
 
 void CurveParameterController::didBecomeFirstResponder() {
   if (!function()->isActive()) {
-    static_cast<StackViewController *>(parentResponder())
-        ->popUntilDepth(
-            Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
-            true);
+    stackController()->popUntilDepth(
+        Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+        true);
     return;
   }
   Shared::ExplicitFloatParameterController::didBecomeFirstResponder();
+}
+
+StackViewController *CurveParameterController::stackController() const {
+  return static_cast<StackViewController *>(parentResponder());
 }
 
 }  // namespace Graph

@@ -269,23 +269,37 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
   }
 }
 
-int ContinuousFunction::derivationOrderFromSubCurveIndex(
-    int subCurveIndex) const {
-  assert(0 <= subCurveIndex && subCurveIndex < numberOfSubCurves(true));
-  if (numberOfSubCurves() > 1) {
-    return 0;
+int ContinuousFunction::derivationOrderFromRelativeIndex(
+    int relativeIndex, DerivativeDisplayType type) const {
+  bool displayFirstDerivative, displaySecondDerivative;
+  if (type == DerivativeDisplayType::Plot) {
+    displayFirstDerivative = displayPlotFirstDerivative();
+    displaySecondDerivative = displayPlotSecondDerivative();
+  } else {
+    assert(type == DerivativeDisplayType::Value);
+    displayFirstDerivative = displayValueFirstDerivative();
+    displaySecondDerivative = displayValueSecondDerivative();
   }
-  switch (subCurveIndex) {
+  switch (relativeIndex) {
     case 0:
       return 0;
     case 1:
-      assert(displayPlotFirstDerivative() || displayPlotSecondDerivative());
-      return displayPlotFirstDerivative() ? 1 : 2;
+      assert(displayFirstDerivative || displaySecondDerivative);
+      return displayFirstDerivative ? 1 : 2;
     default:
-      assert(subCurveIndex == 2);
-      assert(displayPlotFirstDerivative() && displayPlotSecondDerivative());
+      assert(relativeIndex == 2);
+      assert(displayFirstDerivative && displaySecondDerivative);
       return 2;
   }
+}
+
+int ContinuousFunction::derivationOrderFromSubCurveIndex(
+    int subCurveIndex) const {
+  assert(0 <= subCurveIndex && subCurveIndex < numberOfSubCurves(true));
+  return numberOfSubCurves() > 1
+             ? 0
+             : derivationOrderFromRelativeIndex(subCurveIndex,
+                                                DerivativeDisplayType::Plot);
 }
 
 template <typename T>

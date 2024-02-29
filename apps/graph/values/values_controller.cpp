@@ -382,15 +382,16 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       result = approximation;
     }
   }
-  Layout layout;
-  if (result.type() == ExpressionNode::Type::Point) {
+  Layout layout =
+      result.createLayout(preferences->displayMode(),
+                          preferences->numberOfSignificantDigits(), context);
+  if (result.type() == ExpressionNode::Type::Point &&
+      layout.layoutSize(k_cellFont).width() >
+          Shared::ValuesController::defaultColumnWidth()) {
+    // Fallback on two rows point display if one row does not fit
     layout = static_cast<const Point &>(result).create2DLayout(
         preferences->displayMode(), preferences->numberOfSignificantDigits(),
         context);
-  } else {
-    layout =
-        result.createLayout(preferences->displayMode(),
-                            preferences->numberOfSignificantDigits(), context);
   }
   *memoizedLayoutAtIndex(index) = layout;
 }

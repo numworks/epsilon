@@ -27,7 +27,8 @@ class SequenceStore : public FunctionStore {
     return Ion::Storage::FileSystem::sharedFileSystem
         ->recordBaseNamedWithExtension(k_sequenceNames[i], modelExtension());
   }
-  KDColor colorForRecord(Ion::Storage::Record record) const override {
+  KDColor colorForRecord(Ion::Storage::Record record,
+                         int subCurveIndex) const override {
     return modelForRecord(record)->color();
   }
 

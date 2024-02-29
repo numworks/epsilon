@@ -57,9 +57,8 @@ class ContinuousFunctionStore : public FunctionStore {
     return ExpiringPointer<ContinuousFunction>(
         static_cast<ContinuousFunction *>(privateModelForRecord(record)));
   }
-  KDColor colorForRecord(Ion::Storage::Record record) const override {
-    return modelForRecord(record)->color();
-  }
+  KDColor colorForRecord(Ion::Storage::Record record,
+                         int subCurveIndex) const override;
   void setCachesContainer(CachesContainer *container) {
     m_cachesContainer = container;
   }

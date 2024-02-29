@@ -71,7 +71,8 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
   Ion::Storage::Record r = recordAtCurveIndex(curveIndex);
   functionGraphView()->selectRecord(r);
   functionGraphView()->cursorView()->setColor(
-      functionStore()->colorForRecord(r), functionGraphView());
+      functionStore()->colorForRecord(r, m_selectedSubCurveIndex),
+      functionGraphView());
   // Force reload to display the selected function on top
   if (willBeVisible) {
     functionGraphView()->reload(false, true);
@@ -225,6 +226,7 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
   Poincare::Coordinate2D<double> cursorPosition =
       f->evaluateXYAtParameter(nextT, context, nextSubCurve);
   m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
+  m_selectedSubCurveIndex = nextSubCurve;
   selectCurveAtIndex(nextCurve, true);
   // Prevent the abscissaValue from edition if the function is along y
   Escher::Responder *responder = isAlongY(*m_selectedCurveIndex)
@@ -233,7 +235,6 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
   if (App::app()->firstResponder() != responder) {
     App::app()->setFirstResponder(responder);
   }
-  m_selectedSubCurveIndex = nextSubCurve;
 }
 
 bool FunctionGraphController::selectedModelIsValid() const {

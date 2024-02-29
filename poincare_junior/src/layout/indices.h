@@ -7,9 +7,15 @@
 
 namespace PoincareJ {
 
+namespace TwoRows {
+// Fraction, point2D and binomial
+constexpr static int k_upperIndex = 0;
+constexpr static int k_lowerIndex = 1;
+}  // namespace TwoRows
+
 namespace Fraction {
-constexpr static int k_numeratorIndex = 0;
-constexpr static int k_denominatorIndex = 1;
+constexpr static int k_numeratorIndex = TwoRows::k_upperIndex;
+constexpr static int k_denominatorIndex = TwoRows::k_lowerIndex;
 }  // namespace Fraction
 
 namespace NthRoot {
@@ -64,8 +70,8 @@ constexpr static int k_kIndex = 1;
 }  // namespace PtCombinatorics
 
 namespace Binomial {
-constexpr static int k_nIndex = 0;
-constexpr static int k_kIndex = 1;
+constexpr static int k_nIndex = TwoRows::k_upperIndex;
+constexpr static int k_kIndex = TwoRows::k_lowerIndex;
 }  // namespace Binomial
 
 namespace ListSequence {

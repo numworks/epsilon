@@ -17,10 +17,9 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     case LayoutType::Point2D:
     case LayoutType::Binomial:
     case LayoutType::Fraction:
-      static_assert(Fraction::k_numeratorIndex == Binomial::k_nIndex);
       if (currentIndex == k_outsideIndex) {
-        return direction.isRight() ? Fraction::k_numeratorIndex
-                                   : Fraction::k_denominatorIndex;
+        return direction.isRight() ? TwoRows::k_upperIndex
+                                   : TwoRows::k_lowerIndex;
       }
       return k_outsideIndex;
     case LayoutType::Matrix:
@@ -188,28 +187,22 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     Tree* node, OMG::VerticalDirection direction, int currentIndex,
     PositionInLayout positionAtCurrentIndex) {
   switch (node->layoutType()) {
+    case LayoutType::Fraction:
+      if (currentIndex == k_outsideIndex) {
+        return direction.isUp() ? TwoRows::k_upperIndex : TwoRows::k_lowerIndex;
+      }
+      // continue
     case LayoutType::Point2D:
     case LayoutType::Binomial: {
-      using namespace Binomial;
-      if (currentIndex == k_kIndex && direction.isUp()) {
-        return k_nIndex;
+      using namespace TwoRows;
+      if (currentIndex == k_lowerIndex && direction.isUp()) {
+        return k_upperIndex;
       }
-      if (currentIndex == k_nIndex && direction.isDown()) {
-        return k_kIndex;
+      if (currentIndex == k_upperIndex && direction.isDown()) {
+        return k_lowerIndex;
       }
       return k_cantMoveIndex;
     }
-    case LayoutType::Fraction:
-      switch (currentIndex) {
-        using namespace Fraction;
-        case k_outsideIndex:
-          return direction.isUp() ? k_numeratorIndex : k_denominatorIndex;
-        case k_numeratorIndex:
-          return direction.isUp() ? k_cantMoveIndex : k_denominatorIndex;
-        default:
-          assert(currentIndex == k_denominatorIndex);
-          return direction.isUp() ? k_numeratorIndex : k_cantMoveIndex;
-      }
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
       const Grid* grid = Grid::From(node);
@@ -420,11 +413,11 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
   switch (node->layoutType()) {
     case LayoutType::Point2D:
     case LayoutType::Binomial:
-      using namespace Binomial;
-      if (childIndex == k_nIndex && IsEmpty(node->child(k_kIndex))) {
+      using namespace TwoRows;
+      if (childIndex == k_upperIndex && IsEmpty(node->child(k_lowerIndex))) {
         return DeletionMethod::DeleteParent;
       }
-      if (childIndex == k_kIndex) {
+      if (childIndex == k_lowerIndex) {
         return DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper;
       }
       return DeletionMethod::MoveLeft;

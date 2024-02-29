@@ -582,25 +582,25 @@ inline KDCoordinate RowsSeparator(const Layout* node, KDFont::Size font) {
 }
 
 inline KDCoordinate RowsHeight(const Layout* node, KDFont::Size font) {
-  return Height(node->child(Binomial::k_nIndex)) + RowsSeparator(node, font) +
-         Height(node->child(Binomial::k_kIndex));
+  return Height(node->child(k_upperIndex)) + RowsSeparator(node, font) +
+         Height(node->child(k_lowerIndex));
 }
 
 inline KDCoordinate RowsWidth(const Layout* node, KDFont::Size font) {
-  return std::max(Width(node->child(Binomial::k_nIndex)),
-                  Width(node->child(Binomial::k_kIndex)));
+  return std::max(Width(node->child(k_upperIndex)),
+                  Width(node->child(k_lowerIndex)));
 }
 
 inline KDCoordinate UpperMargin(const Layout* node, KDFont::Size font) {
-  return node->isPoint2DLayout() ? Parenthesis::VerticalMargin(
-                                       Height(node->child(Binomial::k_nIndex)))
-                                 : 0;
+  return node->isPoint2DLayout()
+             ? Parenthesis::VerticalMargin(Height(node->child(k_upperIndex)))
+             : 0;
 }
 
 inline KDCoordinate LowerMargin(const Layout* node, KDFont::Size font) {
-  return node->isPoint2DLayout() ? Parenthesis::VerticalMargin(
-                                       Height(node->child(Binomial::k_kIndex)))
-                                 : 0;
+  return node->isPoint2DLayout()
+             ? Parenthesis::VerticalMargin(Height(node->child(k_lowerIndex)))
+             : 0;
 }
 }  // namespace TwoRows
 

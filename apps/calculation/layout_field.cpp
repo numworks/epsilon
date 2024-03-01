@@ -28,6 +28,10 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
    * is done here. */
   if (event == Ion::Events::Up) {
     if (m_insertionCursor.isUninitialized()) {
+      /* Beautify and save the cursor before moving up, otherwise moving up may
+       * beautify and the copied cursor will be pointing to the pre-beautified
+       * layout. */
+      cursor()->beautifyLeft(nullptr);
       m_insertionCursor = *cursor();
       /* Ensure insertion cursor will stay valid even when the current layout is
        * exited */

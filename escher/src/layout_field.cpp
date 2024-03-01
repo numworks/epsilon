@@ -17,6 +17,8 @@
 #include <poincare_junior/src/layout/app_helpers.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/rack_layout.h>
+#include <poincare_junior/src/layout/rack_layout_decoder.h>
+#include <poincare_junior/src/layout/xnt.h>
 #include <string.h>
 
 #include <algorithm>
@@ -212,20 +214,15 @@ bool LayoutField::prepareToEdit() {
 
 bool LayoutField::findXNT(char *buffer, size_t bufferSize, int xntIndex,
                           size_t *cycleSize) {
-#if 0
-  Layout layout = cursor()->layout();
   if (linearMode()) {
-    assert(layout.isHorizontal());
-    HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
-    LinearLayoutDecoder decoder(horizontalLayout, cursor()->position());
+    PoincareJ::RackLayoutDecoder decoder(cursor()->cursorNode(),
+                                         cursor()->position());
     return XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
                                        cycleSize);
   }
-  return XNTHelpers::FindXNTSymbol2D(layout, buffer, bufferSize, xntIndex,
-                                     cycleSize);
-#else
-  return false;
-#endif
+  return PoincareJ::FindXNTSymbol2D(cursor()->cursorNode(),
+                                    cursor()->rootNode(), buffer, bufferSize,
+                                    xntIndex, cycleSize);
 }
 
 void LayoutField::removePreviousXNT() {

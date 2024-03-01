@@ -187,7 +187,10 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
   EvenOddExpressionCell tempCell;
   tempCell.setFont(k_cellFont);
   tempCell.setLayout(l);
-  bool addVerticalMargin = l.type() != LayoutNode::Type::Point2DLayout;
+  bool addVerticalMargin =
+      l.type() != LayoutNode::Type::Point2DLayout &&
+      (l.type() != LayoutNode::Type::JuniorLayout ||
+       !static_cast<JuniorLayout &>(l).tree()->child(0)->isPoint2DLayout());
   return tempCell.minimalSizeForOptimalDisplay() +
          KDSize(Metric::SmallCellMargin * 2,
                 addVerticalMargin * Metric::SmallCellMargin * 2);

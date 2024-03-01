@@ -5,7 +5,8 @@
 
 namespace PoincareJ {
 
-const Tree* XNTLayout(const Tree* layout, int childIndex, const Tree* root);
+bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,
+                     size_t bufferSize, int xntIndex, size_t* cycleSize);
 
 }  // namespace PoincareJ
 

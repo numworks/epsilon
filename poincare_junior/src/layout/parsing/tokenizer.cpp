@@ -15,17 +15,20 @@ namespace PoincareJ {
 
 bool Tokenizer::CanBeCustomIdentifier(RackLayoutDecoder& decoder,
                                       size_t length) {
+#if TODO_PCJ
   ParsingContext pContext(
       /*nullptr, */ ParsingContext::ParsingMethod::Assignment);
   Tokenizer tokenizer(decoder, &pContext);
   Token t = tokenizer.popToken();
   if (t.type() != Token::Type::CustomIdentifier ||
       t.length() != decoder.end() - decoder.start() ||
-      // TODO PCJ !SymbolAbstractNode::NameLengthIsValid(t.text(), t.length())
-      t.length() > 7) {
+      !SymbolAbstractNode::NameLengthIsValid(t.text(), t.length())) {
     return false;
   }
   return true;
+#else
+  return decoder.end() - decoder.start() <= 7;
+#endif
 }
 
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, bool* testResult) {

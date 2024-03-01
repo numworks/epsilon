@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/parametric.h>
 
 #include "k_tree.h"
+#include "parsing/tokenizer.h"
 #include "serialize.h"
 
 using namespace Poincare::XNTHelpers;
@@ -54,6 +55,19 @@ static bool findParameteredFunction2D(const Tree *layout, int *functionIndex,
   return false;
 }
 
+static bool isValidXNTParameter(const Tree *xnt) {
+  for (const Tree *child : xnt->children()) {
+    if (!child->isCodePointLayout()) {
+      return false;
+    }
+  }
+  RackLayoutDecoder decoder(xnt);
+  if (!Tokenizer::CanBeCustomIdentifier(decoder)) {
+    return false;
+  }
+  return true;
+}
+
 bool FindXNTSymbol2D(const Tree *layout, const Tree *root, char *buffer,
                      size_t bufferSize, int xntIndex, size_t *cycleSize) {
   assert(cycleSize);
@@ -70,8 +84,7 @@ bool FindXNTSymbol2D(const Tree *layout, const Tree *root, char *buffer,
     Poincare::SerializationHelper::CodePoint(buffer, bufferSize, xnt);
     if (childIndex == Parametric::FunctionIndex(static_cast<BlockType>(
                           k_parameteredFunctions[functionIndex].layoutType))) {
-      // TODO PCJ parameterLayout = xntLayout(parameterLayout);
-      if (parameterLayout) {
+      if (isValidXNTParameter(parameterLayout)) {
         Serialize(parameterLayout, buffer, buffer + bufferSize);
         *cycleSize = 1;
       }

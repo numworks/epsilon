@@ -23,12 +23,19 @@ class Tokenizer {
       : m_decoder(node, textStart, textEnd),
         m_parsingContext(parsingContext),
         m_numberOfStoredIdentifiers(0) {}
+  Tokenizer(RackLayoutDecoder& decoder, ParsingContext* parsingContext)
+      : m_decoder(decoder),
+        m_parsingContext(parsingContext),
+        m_numberOfStoredIdentifiers(0) {}
   Token popToken();
 
   // Rewind tokenizer
   void goToPosition(size_t position) { m_decoder.setPosition(position); }
   size_t currentPosition() { return m_decoder.position(); }
   size_t endPosition() { return m_decoder.end(); }
+
+  static bool CanBeCustomIdentifier(RackLayoutDecoder& decoder,
+                                    size_t length = -1);
 
  private:
   constexpr static int k_maxNumberOfIdentifiersInList =

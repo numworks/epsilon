@@ -20,7 +20,10 @@ class Parametric {
   static bool Explicit(Tree* t);
   static bool HasLocalRandom(Tree* t);
 
+  // Accepts layout and expressions
   static uint8_t FunctionIndex(const Tree* t);
+  static uint8_t FunctionIndex(TypeBlock type);
+
   static ComplexSign VariableSign(const Tree* t);
 
   constexpr static ComplexSign k_discreteVariableSign =

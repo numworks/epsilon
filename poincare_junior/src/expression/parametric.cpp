@@ -12,13 +12,22 @@
 namespace PoincareJ {
 
 uint8_t Parametric::FunctionIndex(const Tree* t) {
-  switch (t->type()) {
+  return FunctionIndex(t->type());
+}
+
+uint8_t Parametric::FunctionIndex(TypeBlock type) {
+  switch (type) {
     case BlockType::Derivative:
+    case BlockType::DerivativeLayout:
     case BlockType::ListSequence:
+    case BlockType::ListSequenceLayout:
       return 2;
     case BlockType::Integral:
+    case BlockType::IntegralLayout:
     case BlockType::Sum:
+    case BlockType::SumLayout:
     case BlockType::Product:
+    case BlockType::ProductLayout:
       return k_integrandIndex;
     default:
       assert(false);

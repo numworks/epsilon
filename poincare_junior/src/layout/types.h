@@ -28,15 +28,16 @@ NODE(NthDerivative, 4, 1)
 NODE(Integral, 4)
 NODE(Product, 4)
 NODE(Sum, 4)
+// TODO replace by subscript ?
+NODE(ListSequence, 3)
+
+RANGE(ParametricLayout, DerivativeLayout, ListSequenceLayout)
 
 NODE(Fraction, 2)
 NODE(Point2D, 2)
 NODE(Binomial, 2)
 NODE(PtBinomial, 2)
 NODE(PtPermute, 2)
-
-// TODO replace by subscript ?
-NODE(ListSequence, 3)
 
 NODE(Matrix, NARY2D)
 NODE(Piecewise, NARY2D)

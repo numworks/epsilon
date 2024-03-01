@@ -1,8 +1,8 @@
 #include "xnt.h"
 
 #include <poincare/xnt_helpers.h>
+#include <poincare_junior/src/expression/parametric.h>
 
-#include "indices.h"
 #include "k_tree.h"
 #include "serialize.h"
 
@@ -23,10 +23,7 @@ constexpr struct {
     {LayoutType::ListSequence, k_defaultDiscreteXNTCycle},
 };
 constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
-constexpr int k_indexOfMainExpression =
-    Poincare::ParameteredExpression::ParameteredChildIndex();
-constexpr int k_indexOfParameter =
-    Poincare::ParameteredExpression::ParameterChildIndex();
+constexpr int k_indexOfParameter = Parametric::k_variableIndex;
 
 static bool findParameteredFunction2D(const Tree *layout, int *functionIndex,
                                       int *childIndex, const Tree *root,
@@ -37,20 +34,22 @@ static bool findParameteredFunction2D(const Tree *layout, int *functionIndex,
   *parameterLayout = nullptr;
   assert(layout);
   const Tree *child = layout;
-  const Tree *parent = child->parent(root);
+  const Tree *parent = root->parentOfDescendant(child, childIndex);
   while (parent) {
-    *childIndex = parent->indexOfChild(child);
-    if (*childIndex <= k_indexOfParameter) {
-      for (size_t i = 0; i < k_numberOfFunctions; i++) {
-        if (parent->layoutType() == k_parameteredFunctions[i].layoutType) {
-          *functionIndex = i;
-          *parameterLayout = parent->child(k_indexOfParameter);
-          return true;
+    if (parent->isParametricLayout()) {
+      if (*childIndex == k_indexOfParameter ||
+          *childIndex == Parametric::FunctionIndex(parent)) {
+        for (size_t i = 0; i < k_numberOfFunctions; i++) {
+          if (parent->layoutType() == k_parameteredFunctions[i].layoutType) {
+            *functionIndex = i;
+            *parameterLayout = parent->child(k_indexOfParameter);
+            return true;
+          }
         }
       }
     }
     child = parent;
-    parent = child->parent(root);
+    parent = root->parentOfDescendant(child, childIndex);
   }
   return false;
 }
@@ -66,11 +65,11 @@ bool FindXNTSymbol2D(const Tree *layout, const Tree *root, char *buffer,
   if (findParameteredFunction2D(layout, &functionIndex, &childIndex, root,
                                 &parameterLayout)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
-    assert(0 <= childIndex && childIndex <= k_indexOfParameter);
     CodePoint xnt = CodePointAtIndexInCycle(
         xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
     Poincare::SerializationHelper::CodePoint(buffer, bufferSize, xnt);
-    if (childIndex == k_indexOfMainExpression) {
+    if (childIndex == Parametric::FunctionIndex(static_cast<BlockType>(
+                          k_parameteredFunctions[functionIndex].layoutType))) {
       // TODO PCJ parameterLayout = xntLayout(parameterLayout);
       if (parameterLayout) {
         Serialize(parameterLayout, buffer, buffer + bufferSize);

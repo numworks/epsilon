@@ -462,9 +462,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     if (isEditing() &&
         m_delegate->layoutFieldShouldFinishEditing(this, event)) {
       setEditing(false);
-#if TODO_PCJ
       cursor()->beautifyLeft(context());
-#endif
       if (!m_delegate->layoutFieldDidFinishEditing(this, event)) {
         prepareToEdit();
       }

@@ -135,6 +135,25 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   return moved;
 }
 
+void LayoutBufferCursor::beautifyLeft(Context *context) {
+  execute(&EditionPoolCursor::beautifyLeftAction, context, nullptr);
+  if (position() > cursorNode()->numberOfChildren() + 1) {
+    /* Beautification does not preserve the cursor so its position may be
+     * invalid. The other calls to beaufication happen just after we move the
+     * cursor to another rack than the one beautified so it only matters
+     * here. */
+    setPosition(cursorNode()->numberOfChildren() + 1);
+  }
+  // TODO invalidate only if shouldRedrawLayout
+  invalidateSizesAndPositions();
+  // TODO factorize with beautifyRightOfRack
+}
+
+void LayoutBufferCursor::EditionPoolCursor::beautifyLeftAction(Context *context,
+                                                               const void *) {
+  InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
+}
+
 bool LayoutBufferCursor::beautifyRightOfRack(Rack *rack, Context *context) {
   execute(&EditionPoolCursor::beautifyRightOfRackAction, context,
           reinterpret_cast<const void *>(rack - cursorNode()));
@@ -611,13 +630,6 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
 #if 0
 int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
   return l.isHorizontal() ? l.numberOfChildren() : 1;
-}
-
-void LayoutCursor::beautifyLeft(Context *context) {
-  if (InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this,
-                                                                context)) {
-    invalidateSizesAndPositions();
-  }
 }
 #endif
 

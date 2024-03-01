@@ -99,8 +99,6 @@ class LayoutCursor {
 
 #if 0
   static int RightmostPossibleCursorPosition(Layout l);
-
-  void beautifyLeft(Context* context);
 #endif
 
  protected:
@@ -192,6 +190,8 @@ class LayoutBufferCursor final : public LayoutCursor {
     m_layout.invalidAllSizesPositionsAndBaselines();
   }
 
+  void beautifyLeft(Context* context);
+
  private:
   class EditionPoolCursor final : public LayoutCursor {
     friend class LayoutBufferCursor;
@@ -233,6 +233,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     }
     bool beautifyRightOfRack(Rack* rack, Context* context) override;
     void beautifyRightOfRackAction(Context* context, const void* rack);
+    void beautifyLeftAction(Context* context, const void* /* no arg */);
 
     EditionReference m_cursorReference;
   };

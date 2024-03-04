@@ -74,6 +74,10 @@ class Function : public ExpressionModelHandle {
   virtual Poincare::Expression sumBetweenBounds(
       double start, double end, Poincare::Context* context) const = 0;
 
+  virtual int derivationOrderFromSubCurveIndex(int subCurveIndex) const {
+    return 0;
+  }
+
  protected:
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Function. We want to avoid padding which would:

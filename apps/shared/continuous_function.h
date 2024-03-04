@@ -206,7 +206,7 @@ class ContinuousFunction : public Function {
   enum class DerivativeDisplayType : bool { Plot, Value };
   int derivationOrderFromRelativeIndex(int relativeIndex,
                                        DerivativeDisplayType type) const;
-  int derivationOrderFromSubCurveIndex(int subCurveIndex) const;
+  int derivationOrderFromSubCurveIndex(int subCurveIndex) const override;
   int subCurveIndexFromDerivationOrder(int derivationOrder) const;
   void valuesToDisplayOnDerivativeCurve(int derivationOrder, bool *image,
                                         bool *firstDerivative,

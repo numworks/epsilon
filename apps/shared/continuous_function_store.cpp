@@ -56,7 +56,7 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
 
     for (int i = std::max(0, functionsCount - (paletteSize - 1));
          i < functionsCount; i++) {
-      if (colorForRecord(recordAtIndex(i), 0) ==
+      if (modelForRecord(recordAtIndex(i))->color() ==
           color) {  // TODO: cycle over derivatives plots colors too
         isCandidate = false;
         break;
@@ -69,12 +69,6 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
   }
 
   return ContinuousFunction::NewModel(error, name, nextColor);
-}
-
-KDColor ContinuousFunctionStore::colorForRecord(Ion::Storage::Record record,
-                                                int subCurveIndex) const {
-  ExpiringPointer<ContinuousFunction> f = modelForRecord(record);
-  return f->color(f->derivationOrderFromSubCurveIndex(subCurveIndex));
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

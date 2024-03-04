@@ -70,9 +70,10 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
 
   Ion::Storage::Record r = recordAtCurveIndex(curveIndex);
   functionGraphView()->selectRecord(r);
-  functionGraphView()->cursorView()->setColor(
-      functionStore()->colorForRecord(r, m_selectedSubCurveIndex),
-      functionGraphView());
+  ExpiringPointer<Function> f = functionStore()->modelForRecord(r);
+  KDColor color =
+      f->color(f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex));
+  functionGraphView()->cursorView()->setColor(color, functionGraphView());
   // Force reload to display the selected function on top
   if (willBeVisible) {
     functionGraphView()->reload(false, true);

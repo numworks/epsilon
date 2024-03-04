@@ -194,7 +194,8 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
   int childNumber = expression->numberOfChildren();
   for (int childIndex = 0; childIndex < childNumber; childIndex++) {
     Tree *child = expression->nextNode();
-    if (childIndex > 0 && !(op == '+' && child->isOpposite())) {
+    if (op != UCodePointNull && childIndex > 0 &&
+        !(op == '+' && child->isOpposite())) {
       PushCodePoint(layoutParent, op);
     }
     layoutExpression(layoutParent, child, OperatorPriority(type));

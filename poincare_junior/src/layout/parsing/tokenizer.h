@@ -34,7 +34,7 @@ class Tokenizer {
   size_t currentPosition() { return m_decoder.position(); }
   size_t endPosition() { return m_decoder.end(); }
 
-  static bool CanBeCustomIdentifier(RackLayoutDecoder& decoder,
+  static bool CanBeCustomIdentifier(UnicodeDecoder& decoder,
                                     size_t length = -1);
 
  private:

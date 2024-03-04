@@ -84,6 +84,92 @@ constexpr struct {
     {LayoutType::ListSequence, k_defaultDiscreteXNTCycle},
 };
 constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
+
+constexpr int k_indexOfMainExpression1D = 0;
+constexpr int k_indexOfParameter1D = 1;
+
+bool ParameterText(UnicodeDecoder &varDecoder, size_t *parameterStart,
+                   size_t *parameterLength) {
+  static_assert(k_indexOfParameter1D == 1,
+                "ParameteredExpression::ParameterText is outdated");
+  /* Find the beginning of the parameter. Count parentheses to handle the
+   * presence of functions with several parameters in the parametered
+   * expression. */
+  CodePoint c = UCodePointUnknown;
+  bool variableFound = false;
+  int cursorLevel = 0;
+  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
+    c = varDecoder.nextCodePoint();
+    switch (c) {
+      case '(':
+      case '{':
+      case '[':
+      case UCodePointLeftSystemParenthesis:
+        cursorLevel++;
+        break;
+      case ')':
+      case '}':
+      case ']':
+      case UCodePointRightSystemParenthesis:
+        cursorLevel--;
+        break;
+      case ',':
+        // The parameter is the second argument of parametered expressions
+        variableFound = cursorLevel == 0;
+        break;
+    }
+  }
+  if (!variableFound || c == UCodePointNull) {
+    return false;
+  }
+
+  size_t startOfVariable = varDecoder.position();
+  // Parameter name can be nested in system parentheses. Skip them
+  c = varDecoder.nextCodePoint();
+  bool hasSystemParenthesis = (c == UCodePointLeftSystemParenthesis);
+  if (hasSystemParenthesis) {
+    startOfVariable = varDecoder.position();
+  }
+  CodePoint previousC = UCodePointUnknown;
+  while (c != UCodePointNull && c != ',' && c != ')') {
+    previousC = c;
+    c = varDecoder.nextCodePoint();
+  }
+  // Skip system parenthesis if needed
+  if (hasSystemParenthesis) {
+    if (previousC != UCodePointRightSystemParenthesis) {
+      return false;
+    }
+    varDecoder.previousCodePoint();
+  }
+  size_t endOfVariable = varDecoder.position();
+  varDecoder.unsafeSetPosition(startOfVariable);
+  do {
+    // Skip whitespaces
+    c = varDecoder.nextCodePoint();
+  } while (c == ' ');
+  varDecoder.previousCodePoint();
+  startOfVariable = varDecoder.position();
+  size_t lengthOfVariable = endOfVariable - startOfVariable - 1;
+
+  if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
+    return false;
+  }
+  varDecoder.unsafeSetPosition(startOfVariable);
+  *parameterLength = lengthOfVariable;
+  *parameterStart = startOfVariable;
+  return true;
+}
+
+bool ParameterText(const char *text, const char **parameterText,
+                   size_t *parameterLength) {
+  UTF8Decoder decoder(text);
+  size_t parameterStart = *parameterText - text;
+  bool result = ParameterText(decoder, &parameterStart, parameterLength);
+  *parameterText = parameterStart + text;
+  return result;
+}
+
 constexpr int k_indexOfParameter = Parametric::k_variableIndex;
 
 static bool findParameteredFunction2D(const Tree *layout, int *functionIndex,

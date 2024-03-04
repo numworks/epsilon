@@ -13,8 +13,7 @@
 
 namespace PoincareJ {
 
-bool Tokenizer::CanBeCustomIdentifier(RackLayoutDecoder& decoder,
-                                      size_t length) {
+bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
 #if TODO_PCJ
   ParsingContext pContext(
       /*nullptr, */ ParsingContext::ParsingMethod::Assignment);
@@ -27,7 +26,7 @@ bool Tokenizer::CanBeCustomIdentifier(RackLayoutDecoder& decoder,
   }
   return true;
 #else
-  return decoder.end() - decoder.start() <= 7;
+  return (length == -1 ? decoder.end() - decoder.start() : length) <= 7;
 #endif
 }
 

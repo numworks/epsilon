@@ -95,7 +95,8 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
    * layoutParent's root. */
   EditionReference layoutParent =
       SharedEditionPool->push<BlockType::RackLayout>(0);
-  Layoutter layoutter(linearMode, numberOfSignificantDigits);
+  bool addSeparators = !linearMode && RequireSeparators(expression);
+  Layoutter layoutter(linearMode, addSeparators, numberOfSignificantDigits);
   layoutter.layoutExpression(layoutParent, expression, k_maxPriority);
   return layoutParent;
 }
@@ -548,6 +549,7 @@ int FirstNonDigitIndex(Tree *rack) {
 /* We only display thousands separator if there is more than 4 digits (12 345
  * but 1234) */
 constexpr int k_minDigitsForThousandSeparator = 5;
+constexpr int k_minValueForThousandSeparator = 10000;
 
 bool Layoutter::AddThousandSeparators(Tree *rack) {
   int nonDigitIndex = FirstNonDigitIndex(rack);
@@ -569,6 +571,30 @@ bool Layoutter::AddThousandSeparators(Tree *rack) {
   NAry::SetNumberOfChildren(
       rack, rack->numberOfChildren() + (nonDigitIndex - isNegative - 1) / 3);
   return true;
+}
+
+bool Layoutter::RequireSeparators(const Tree *expr) {
+  for (const Tree *child : expr->children()) {
+    if (RequireSeparators(child)) {
+      return true;
+    }
+    if (expr->isMultiplication() && Units::Unit::IsUnitOrPowerOfUnit(child)) {
+      return true;
+    }
+    if (expr->isRational()) {
+      // TODO PCJ same for decimals and floats
+      IntegerHandler num = Rational::Numerator(expr);
+      num.setSign(NonStrictSign::Positive);
+      if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {
+        return true;
+      }
+      IntegerHandler den = Rational::Denominator(expr);
+      if (IntegerHandler::Compare(den, k_minValueForThousandSeparator) >= 0) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 void Layoutter::StripSeparators(Tree *rack) {

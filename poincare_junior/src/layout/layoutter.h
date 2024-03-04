@@ -13,12 +13,15 @@ class Layoutter {
 
   static bool AddThousandSeparators(Tree* rack);
 
+  static bool RequireSeparators(const Tree* expr);
+
   /* Remove OperatorSeparators and ThousandSeparators in rack */
   static void StripSeparators(Tree* rack);
 
  private:
-  Layoutter(bool linearMode, int numberOfSignificantDigits)
+  Layoutter(bool linearMode, bool addSeparators, int numberOfSignificantDigits)
       : m_linearMode(linearMode),
+        m_addSeparators(addSeparators),
         m_numberOfSignificantDigits(numberOfSignificantDigits) {}
   void layoutText(EditionReference& layoutParent, const char* text);
   void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
@@ -35,6 +38,7 @@ class Layoutter {
   void layoutExpression(EditionReference& layoutParent, Tree* expression,
                         int parentPriority);
   bool m_linearMode;
+  bool m_addSeparators;
   int m_numberOfSignificantDigits;
 };
 }  // namespace PoincareJ

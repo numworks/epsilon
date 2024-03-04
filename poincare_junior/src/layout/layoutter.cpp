@@ -21,6 +21,8 @@
 
 namespace PoincareJ {
 
+static constexpr int k_forceParenthesis = -2;
+
 // A single token will never need parentheses
 static constexpr int k_tokenPriority = -1;
 
@@ -318,7 +320,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
           !expression->child(0)->child(0)->isUserSymbol();
       layoutExpression(
           layoutParent, expression->nextNode(),
-          addExtraParenthesis ? k_tokenPriority : OperatorPriority(type));
+          addExtraParenthesis ? k_forceParenthesis : OperatorPriority(type));
       break;
     }
     case BlockType::Factorial:
@@ -386,11 +388,24 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::ComplexI:
       PushCodePoint(layoutParent, 'i');
       break;
-    case BlockType::UserSymbol: {
+    case BlockType::UserSymbol:
+    case BlockType::UserSequence:
+    case BlockType::UserFunction: {
       constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
       char buffer[bufferSize];
       Symbol::GetName(expression, buffer, std::size(buffer));
       layoutText(layoutParent, buffer);
+      if (type.isUserFunction()) {
+        // minimum priority to force parentheses
+        layoutExpression(layoutParent, expression->nextNode(),
+                         k_forceParenthesis);
+      }
+      if (type.isUserSequence()) {
+        // TODO PCJ vertical offset subscript in non linear mode
+        PushCodePoint(layoutParent, '_');
+        layoutExpression(layoutParent, expression->nextNode(),
+                         k_forceParenthesis);
+      }
       break;
     }
     case BlockType::Infinity:

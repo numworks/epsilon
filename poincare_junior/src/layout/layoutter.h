@@ -23,6 +23,7 @@ class Layoutter {
       : m_linearMode(linearMode),
         m_addSeparators(addSeparators),
         m_numberOfSignificantDigits(numberOfSignificantDigits) {}
+  void addSeparator(Tree* layoutParent);
   void layoutText(EditionReference& layoutParent, const char* text);
   void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
   void layoutFunctionCall(EditionReference& layoutParent, Tree* expression,

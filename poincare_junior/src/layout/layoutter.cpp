@@ -114,6 +114,14 @@ static void InsertCodePointAt(Tree *layout, CodePoint codePoint, int index) {
       index);
 }
 
+void Layoutter::addSeparator(Tree *layoutParent) {
+  if (!m_addSeparators) {
+    return;
+  }
+  assert(!m_linearMode);
+  NAry::AddChild(layoutParent, KOperatorSeparatorL->clone());
+}
+
 void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
@@ -205,9 +213,12 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
   int childNumber = expression->numberOfChildren();
   for (int childIndex = 0; childIndex < childNumber; childIndex++) {
     Tree *child = expression->nextNode();
-    if (op != UCodePointNull && childIndex > 0 &&
-        !(op == '+' && child->isOpposite())) {
-      PushCodePoint(layoutParent, op);
+    if (childIndex > 0) {
+      addSeparator(layoutParent);
+      if (op != UCodePointNull && !(op == '+' && child->isOpposite())) {
+        PushCodePoint(layoutParent, op);
+        addSeparator(layoutParent);
+      }
     }
     layoutExpression(layoutParent, child, OperatorPriority(type));
   }
@@ -309,7 +320,9 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::Subtraction:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(BlockType::Addition));
+      addSeparator(layoutParent);
       PushCodePoint(layoutParent, '-');
+      addSeparator(layoutParent);
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
@@ -463,7 +476,9 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
     case BlockType::Superior:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
+      addSeparator(layoutParent);
       layoutText(layoutParent, Binary::ComparisonOperatorName(type));
+      addSeparator(layoutParent);
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;

@@ -120,6 +120,7 @@ class ContinuousFunction : public Function {
            includeDerivatives *
                (displayPlotFirstDerivative() + displayPlotSecondDerivative());
   }
+  KDColor subCurveColor(int subCurveIndex) const;
 
   /* Expression */
 

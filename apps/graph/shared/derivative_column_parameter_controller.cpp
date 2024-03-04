@@ -60,6 +60,7 @@ void DerivativeColumnParameterController::setRecord(Ion::Storage::Record record,
                                                     int derivationOrder) {
   m_record = record;
   m_derivationOrder = derivationOrder;
+  selectRow(0);
 }
 
 ExpiringPointer<ContinuousFunction>

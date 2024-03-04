@@ -339,17 +339,13 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     }
     case LayoutType::VerticalOffset: {
       if (currentIndex == k_outsideIndex &&
-          ((direction.isUp() && true
-            /*m_verticalPosition == VerticalPosition::Superscript*/) ||
-           (direction.isDown() && false
-            /*m_verticalPosition == VerticalPosition::Subscript*/))) {
+          ((direction.isUp() && VerticalOffset::IsSuperscript(node)) ||
+           (direction.isDown() && VerticalOffset::IsSubscript(node)))) {
         return 0;
       }
       if (currentIndex == 0 &&
-          ((direction.isDown() && true
-            /*m_verticalPosition == VerticalPosition::Superscript*/) ||
-           (direction.isUp() && false
-            /*m_verticalPosition == VerticalPosition::Subscript*/)) &&
+          ((direction.isDown() && VerticalOffset::IsSuperscript(node)) ||
+           (direction.isUp() && VerticalOffset::IsSubscript(node))) &&
           positionAtCurrentIndex != PositionInLayout::Middle) {
         return k_outsideIndex;
       }

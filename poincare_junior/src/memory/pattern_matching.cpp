@@ -269,7 +269,8 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
           pattern = patternChild;
           continue;
         }
-        // With empty KA_s, Match 1 with Mult(KA_s) and 0 with Add(KA_s)
+        // With empty KA_s, Match 1 with Mult(KA_s) and 0 with Add(KA_s).
+        // TODO: Try both {} and {1} when Matching 1 with Mult(KA_s).
         if ((pattern->isAddition() && source->isZero()) ||
             (pattern->isMultiplication() && source->isOne())) {
           source = source->nextTree();

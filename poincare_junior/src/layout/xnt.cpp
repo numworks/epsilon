@@ -104,13 +104,11 @@ bool ParameterText(UnicodeDecoder &varDecoder, size_t *parameterStart,
       case '(':
       case '{':
       case '[':
-      case UCodePointLeftSystemParenthesis:
         cursorLevel++;
         break;
       case ')':
       case '}':
       case ']':
-      case UCodePointRightSystemParenthesis:
         cursorLevel--;
         break;
       case ',':
@@ -126,21 +124,10 @@ bool ParameterText(UnicodeDecoder &varDecoder, size_t *parameterStart,
   size_t startOfVariable = varDecoder.position();
   // Parameter name can be nested in system parentheses. Skip them
   c = varDecoder.nextCodePoint();
-  bool hasSystemParenthesis = (c == UCodePointLeftSystemParenthesis);
-  if (hasSystemParenthesis) {
-    startOfVariable = varDecoder.position();
-  }
   CodePoint previousC = UCodePointUnknown;
   while (c != UCodePointNull && c != ',' && c != ')') {
     previousC = c;
     c = varDecoder.nextCodePoint();
-  }
-  // Skip system parenthesis if needed
-  if (hasSystemParenthesis) {
-    if (previousC != UCodePointRightSystemParenthesis) {
-      return false;
-    }
-    varDecoder.previousCodePoint();
   }
   size_t endOfVariable = varDecoder.position();
   varDecoder.unsafeSetPosition(startOfVariable);

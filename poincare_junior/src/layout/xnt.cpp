@@ -1,14 +1,13 @@
 #include "xnt.h"
 
-#include <poincare/xnt_helpers.h>
+#include <ion/unicode/utf8_helper.h>
+#include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/expression/symbol.h>
 
 #include "k_tree.h"
 #include "parsing/tokenizer.h"
 #include "serialize.h"
-
-using namespace Poincare::XNTHelpers;
 
 namespace PoincareJ {
 
@@ -74,14 +73,18 @@ CodePoint CodePointAtIndexInCycle(int index, const CodePoint *cycle,
 // Parametered functions
 constexpr struct {
   LayoutType layoutType;
+  BlockType expressionType;
   const CodePoint *XNTcycle;
 } k_parameteredFunctions[] = {
-    {LayoutType::Derivative, k_defaultContinuousXNTCycle},
-    {LayoutType::NthDerivative, k_defaultContinuousXNTCycle},
-    {LayoutType::Integral, k_defaultContinuousXNTCycle},
-    {LayoutType::Sum, k_defaultDiscreteXNTCycle},
-    {LayoutType::Product, k_defaultDiscreteXNTCycle},
-    {LayoutType::ListSequence, k_defaultDiscreteXNTCycle},
+    {LayoutType::Derivative, BlockType::Derivative,
+     k_defaultContinuousXNTCycle},
+    {LayoutType::NthDerivative, BlockType::Derivative,
+     k_defaultContinuousXNTCycle}, /* TODO NthDerivative */
+    {LayoutType::Integral, BlockType::Integral, k_defaultContinuousXNTCycle},
+    {LayoutType::Sum, BlockType::Sum, k_defaultDiscreteXNTCycle},
+    {LayoutType::Product, BlockType::Product, k_defaultDiscreteXNTCycle},
+    {LayoutType::ListSequence, BlockType::ListSequence,
+     k_defaultDiscreteXNTCycle},
 };
 constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
 
@@ -157,6 +160,132 @@ bool ParameterText(const char *text, const char **parameterText,
   return result;
 }
 
+static bool Contains(UnicodeDecoder &string, UnicodeDecoder &pattern) {
+  while (CodePoint c = pattern.nextCodePoint()) {
+    if (string.nextCodePoint() != c) {
+      return false;
+    }
+  }
+  return true;
+}
+
+static bool findParameteredFunction1D(UnicodeDecoder &decoder,
+                                      int *functionIndex, int *childIndex) {
+  assert(functionIndex && childIndex);
+  *functionIndex = -1;
+  *childIndex = -1;
+  // Step 1 : Identify the function the cursor is in
+  size_t textStart = decoder.start();
+  size_t location = decoder.position();
+  CodePoint c = UCodePointUnknown;
+  // Analyze glyphs on the left of the cursor
+  if (location > textStart) {
+    c = decoder.previousCodePoint();
+    location = decoder.position();
+  }
+  int functionLevel = 0;
+  int numberOfCommas = 0;
+  bool functionFound = false;
+  while (location > textStart && !functionFound) {
+    switch (c) {
+      case '(':
+        // Check if we are skipping to the next matching '('.
+        if (functionLevel > 0) {
+          functionLevel--;
+          break;
+        }
+        // Skip over whitespace.
+        while (location > textStart && decoder.previousCodePoint() == ' ') {
+          location = decoder.position();
+        }
+        // Move back right before the last non whitespace code-point
+        decoder.nextCodePoint();
+        location = decoder.position();
+        // Identify one of the functions
+        for (size_t i = 0; i < k_numberOfFunctions; i++) {
+          const char *name = Builtin::GetReservedFunction(
+                                 k_parameteredFunctions[i].expressionType)
+                                 ->aliases()
+                                 ->mainAlias();
+          size_t length = UTF8Helper::StringCodePointLength(name);
+          if (location >= textStart + length) {
+            UTF8Decoder nameDecoder(name);
+            size_t savePosition = decoder.position();
+            // Move the decoder where the function name could start
+            decoder.unsafeSetPosition(savePosition - length);
+            if (Contains(decoder, nameDecoder)) {
+              *functionIndex = i;
+              *childIndex = numberOfCommas;
+              functionFound = true;
+            }
+            decoder.unsafeSetPosition(savePosition);
+          }
+        }
+        if (!functionFound) {
+          // No function found, reset search parameters
+          numberOfCommas = 0;
+        }
+        break;
+      case ',':
+        if (functionLevel == 0) {
+          numberOfCommas++;
+          if (numberOfCommas > k_indexOfParameter1D) {
+            /* We are only interested in the 2 first children.
+             * Look for one in level. */
+            functionLevel++;
+            numberOfCommas = 0;
+          }
+        }
+        break;
+      case ')':
+        // Skip to the next matching '('.
+        functionLevel++;
+        break;
+    }
+    c = decoder.previousCodePoint();
+    location = decoder.position();
+  }
+  if (functionFound) {
+    // Put decoder at the beginning of the argument
+    c = decoder.nextCodePoint();
+    do {
+      c = decoder.nextCodePoint();
+    } while (c == ' ');
+    assert(c == '(');
+  }
+  return functionFound;
+}
+
+bool FindXNTSymbol1D(UnicodeDecoder &decoder, char *buffer, size_t bufferSize,
+                     int xntIndex, size_t *cycleSize) {
+  assert(cycleSize);
+  int functionIndex;
+  int childIndex;
+  buffer[0] = 0;
+  *cycleSize = 0;
+  if (findParameteredFunction1D(decoder, &functionIndex, &childIndex)) {
+    assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
+    assert(0 <= childIndex && childIndex <= k_indexOfParameter1D);
+    CodePoint xnt = CodePointAtIndexInCycle(
+        xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
+    size_t size = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
+    buffer[size] = 0;
+    if (childIndex == k_indexOfMainExpression1D) {
+      size_t parameterStart;
+      size_t parameterLength;
+      if (ParameterText(decoder, &parameterStart, &parameterLength)) {
+        decoder.printInBuffer(buffer, bufferSize, parameterLength);
+        assert(buffer[parameterLength] == 0);
+        *cycleSize = 1;
+      }
+    }
+    assert(strlen(buffer) > 0);
+    return true;
+  }
+  assert(strlen(buffer) == 0);
+  return false;
+}
+
 constexpr int k_indexOfParameter = Parametric::k_variableIndex;
 
 static bool findParameteredFunction2D(const Tree *layout, int *functionIndex,
@@ -214,7 +343,8 @@ bool FindXNTSymbol2D(const Tree *layout, const Tree *root, char *buffer,
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     CodePoint xnt = CodePointAtIndexInCycle(
         xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
-    Poincare::SerializationHelper::CodePoint(buffer, bufferSize, xnt);
+    size_t size = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
+    buffer[size] = 0;
     if (childIndex == Parametric::FunctionIndex(static_cast<BlockType>(
                           k_parameteredFunctions[functionIndex].layoutType))) {
       if (isValidXNTParameter(parameterLayout)) {

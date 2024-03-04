@@ -13,7 +13,6 @@
 #include <poincare/parenthesis_layout.h>
 #include <poincare/string_layout.h>
 #include <poincare/symbol.h>
-#include <poincare/xnt_helpers.h>
 #include <poincare_junior/src/layout/app_helpers.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/rack_layout.h>
@@ -217,8 +216,8 @@ bool LayoutField::findXNT(char *buffer, size_t bufferSize, int xntIndex,
   if (linearMode()) {
     PoincareJ::RackLayoutDecoder decoder(cursor()->cursorNode(),
                                          cursor()->position());
-    return XNTHelpers::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
-                                       cycleSize);
+    return PoincareJ::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
+                                      cycleSize);
   }
   return PoincareJ::FindXNTSymbol2D(cursor()->cursorNode(),
                                     cursor()->rootNode(), buffer, bufferSize,

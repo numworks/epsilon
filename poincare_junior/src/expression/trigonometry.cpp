@@ -330,9 +330,9 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
 bool Trigonometry::ExpandTrigonometric(Tree* ref) {
   // Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
   return PatternMatching::MatchReplaceAndSimplify(
-      ref, KTrig(KAdd(KA, KB, KC_s), KD),
-      KAdd(KMult(KTrig(KAdd(KA), 0_e), KTrig(KAdd(KB, KC_s), KD)),
-           KMult(KTrig(KAdd(KA), 1_e), KTrig(KAdd(KB, KC_s), KAdd(KD, -1_e)))));
+      ref, KTrig(KAdd(KA, KB_p), KD),
+      KAdd(KMult(KTrig(KAdd(KA), 0_e), KTrig(KAdd(KB_p), KD)),
+           KMult(KTrig(KAdd(KA), 1_e), KTrig(KAdd(KB_p), KAdd(KD, -1_e)))));
 }
 
 bool Trigonometry::ContractTrigonometric(Tree* ref) {

@@ -406,43 +406,43 @@ bool AdvancedSimplification::TryOneOperation(Tree* e,
 
 bool AdvancedSimplification::ExpandImRe(Tree* ref) {
   return
-      // im(A+B+C?) = im(A) + im(B+C)
+      // im(A+B?) = im(A) + im(B)
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KIm(KAdd(KA, KB, KC_s)), KAdd(KIm(KA), KIm(KAdd(KB, KC_s)))) ||
-      // re(A+B+C?) = re(A) + re(B+C)
+          ref, KIm(KAdd(KA, KB_p)), KAdd(KIm(KA), KIm(KAdd(KB_p)))) ||
+      // re(A+B?) = re(A) + re(B)
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KRe(KAdd(KA, KB, KC_s)), KAdd(KRe(KA), KRe(KAdd(KB, KC_s)))) ||
-      // im(A*B*C?) = im(A)re(B*C) + re(A)im(B*C)
+          ref, KRe(KAdd(KA, KB_p)), KAdd(KRe(KA), KRe(KAdd(KB_p)))) ||
+      // im(A*B?) = im(A)re(B) + re(A)im(B)
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KIm(KMult(KA, KB, KC_s)),
-          KAdd(KMult(KIm(KA), KRe(KMult(KB, KC_s))),
-               KMult(KRe(KA), KIm(KMult(KB, KC_s))))) ||
-      // re(A*B*C?) = re(A)*re(B*C) - im(A)*im(B*C)
+          ref, KIm(KMult(KA, KB_p)),
+          KAdd(KMult(KIm(KA), KRe(KMult(KB_p))),
+               KMult(KRe(KA), KIm(KMult(KB_p))))) ||
+      // re(A*B?) = re(A)*re(B) - im(A)*im(B)
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KRe(KMult(KA, KB, KC_s)),
-          KAdd(KMult(KRe(KA), KRe(KMult(KB, KC_s))),
-               KMult(-1_e, KIm(KA), KIm(KMult(KB, KC_s))))) ||
+          ref, KRe(KMult(KA, KB_p)),
+          KAdd(KMult(KRe(KA), KRe(KMult(KB_p))),
+               KMult(-1_e, KIm(KA), KIm(KMult(KB_p))))) ||
       // Replace im and re in additions only to prevent infinitely expanding
-      // A? + B?*im(C)*D? + E + F? = A - i*B*C*D + i*B*re(C)*D + E + F
+      // A? + B?*im(C)*D? + E? = A - i*B*C*D + i*B*re(C)*D + E
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE, KF_s),
+          ref, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_p),
           KAdd(KA_s, KMult(-1_e, i_e, KB_s, KC, KD_s),
-               KMult(i_e, KB_s, KRe(KC), KD_s), KE, KF_s)) ||
-      // A? + B?*re(C)*D? + E + F? = A + B*C*D - i*B*im(C)*D + E + F
+               KMult(i_e, KB_s, KRe(KC), KD_s), KE_p)) ||
+      // A? + B?*re(C)*D? + E? = A + B*C*D - i*B*im(C)*D + E
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE, KF_s),
+          ref, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_p),
           KAdd(KA_s, KMult(KB_s, KC, KD_s),
-               KMult(-1_e, i_e, KB_s, KIm(KC), KD_s), KE, KF_s)) ||
-      // A + B? + C?*im(D)*E? = A + B - i*C*D*E + i*C*re(D)*E
+               KMult(-1_e, i_e, KB_s, KIm(KC), KD_s), KE_p)) ||
+      // A? + B?*im(C)*D? = A - i*B*C*D + i*B*re(C)*D
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KAdd(KA, KB_s, KMult(KC_s, KIm(KD), KE_s)),
-          KAdd(KA, KB_s, KMult(-1_e, i_e, KC_s, KD, KE_s),
-               KMult(i_e, KC_s, KRe(KD), KE_s))) ||
-      // A + B? + C?*re(D)*E? = A + B + C*D*E - i*C*im(D)*E
+          ref, KAdd(KA_p, KMult(KB_s, KIm(KC), KD_s)),
+          KAdd(KA_p, KMult(-1_e, i_e, KB_s, KC, KD_s),
+               KMult(i_e, KB_s, KRe(KC), KD_s))) ||
+      // A? + B?*re(C)*D? = A + B*C*D - i*B*im(C)*D
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KAdd(KA, KB_s, KMult(KC_s, KRe(KD), KE_s)),
-          KAdd(KA, KB_s, KMult(KC_s, KD, KE_s),
-               KMult(-1_e, i_e, KC_s, KIm(KD), KE_s)));
+          ref, KAdd(KA_p, KMult(KB_s, KRe(KC), KD_s)),
+          KAdd(KA_p, KMult(KB_s, KC, KD_s),
+               KMult(-1_e, i_e, KB_s, KIm(KC), KD_s)));
 }
 
 bool AdvancedSimplification::ContractAbs(Tree* ref) {
@@ -454,10 +454,9 @@ bool AdvancedSimplification::ContractAbs(Tree* ref) {
 
 bool AdvancedSimplification::ExpandAbs(Tree* ref) {
   return
-      // |A*B*C?| = |A|*|B*C|
+      // |A*B?| = |A|*|B|
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KAbs(KMult(KA, KB, KC_s)),
-          KMult(KAbs(KA), KAbs(KMult(KB, KC_s)))) ||
+          ref, KAbs(KMult(KA, KB_p)), KMult(KAbs(KA), KAbs(KMult(KB_p)))) ||
       // |x| = √(re(x)^2+im(x)^2)
       PatternMatching::MatchReplaceAndSimplify(
           ref, KAbs(KA),
@@ -472,9 +471,9 @@ bool AdvancedSimplification::ExpandExp(Tree* ref) {
           ref, KExp(KMult(KA_s, i_e, KB_s)),
           KAdd(KTrig(KMult(KA_s, KB_s), 0_e),
                KMult(i_e, KTrig(KMult(KA_s, KB_s), 1_e)))) ||
-      // exp(A+B+C?) = exp(A) * exp(B+C)
+      // exp(A+B?) = exp(A) * exp(B)
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KExp(KAdd(KA, KB, KC_s)), KMult(KExp(KA), KExp(KAdd(KB, KC_s))));
+          ref, KExp(KAdd(KA, KB_p)), KMult(KExp(KA), KExp(KAdd(KB_p))));
 }
 
 bool AdvancedSimplification::ContractExpMult(Tree* ref) {
@@ -493,15 +492,14 @@ bool AdvancedSimplification::ContractExpMult(Tree* ref) {
 bool AdvancedSimplification::ExpandMult(Tree* ref) {
   // We need at least one factor before or after addition.
   return
-      // A*B?*(C+D+E?)*F? = A*B*C*F + A*B*(D+E)*F
+      // A?*(B+C?)*D? = A*B*D + A*C*D
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KMult(KA, KB_s, KAdd(KC, KD, KE_s), KF_s),
-          KAdd(KMult(KA, KB_s, KC, KF_s),
-               KMult(KA, KB_s, KAdd(KD, KE_s), KF_s))) ||
-      // (A+B+C?)*D*E? = A*D*E + (B+C)*D*E
+          ref, KMult(KA_p, KAdd(KB, KC_p), KD_s),
+          KAdd(KMult(KA_p, KB, KD_s), KMult(KA_p, KAdd(KC_p), KD_s))) ||
+      // (A+B?)*C? = A*C + B*C
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KMult(KAdd(KA, KB, KC_s), KD, KE_s),
-          KAdd(KMult(KA, KD, KE_s), KMult(KAdd(KB, KC_s), KD, KE_s)));
+          ref, KMult(KAdd(KA, KB_p), KC_p),
+          KAdd(KMult(KA, KC_p), KMult(KAdd(KB_p), KC_p)));
 }
 
 bool AdvancedSimplification::ContractMult(Tree* ref) {
@@ -516,12 +514,11 @@ bool AdvancedSimplification::ContractMult(Tree* ref) {
 
 bool AdvancedSimplification::ExpandPower(Tree* ref) {
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
-  // (A + B + C?)^2 = (A^2 + 2*A*(B + C) + (B + C)^2)
+  // (A + B?)^2 = (A^2 + 2*A*B + B^2)
   // TODO: Implement a more general (A + B)^C expand.
   return PatternMatching::MatchReplaceAndSimplify(
-      ref, KPow(KAdd(KA, KB, KC_s), 2_e),
-      KAdd(KPow(KA, 2_e), KMult(2_e, KA, KAdd(KB, KC_s)),
-           KPow(KAdd(KB, KC_s), 2_e)));
+      ref, KPow(KAdd(KA, KB_p), 2_e),
+      KAdd(KPow(KA, 2_e), KMult(2_e, KA, KAdd(KB_p)), KPow(KAdd(KB_p), 2_e)));
 }
 
 }  // namespace PoincareJ

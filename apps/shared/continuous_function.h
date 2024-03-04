@@ -117,9 +117,8 @@ class ContinuousFunction : public Function {
   // Return the number of subcurves to plot.
   int numberOfSubCurves(int includeDerivatives = false) const override {
     return m_model.numberOfSubCurves(this) +
-           (includeDerivatives
-                ? displayPlotFirstDerivative() + displayPlotSecondDerivative()
-                : 0);
+           includeDerivatives *
+               (displayPlotFirstDerivative() + displayPlotSecondDerivative());
   }
 
   /* Expression */

@@ -140,7 +140,10 @@ constexpr static Builtin s_builtins[] = {
     {BlockType::Random, "random"},
     {BlockType::RandInt, "randint"},
     {BlockType::RandIntNoRep, "randintnorep"},
-    {BlockType::Dependency, "dep"},  // TODO dummy
+    {BlockType::Derivative, "diff"},      // TODO PCJ 2D layout is special
+    {BlockType::NthDerivative, "diff"},   // TODO PCJ 2D layout is special
+    {BlockType::Piecewise, "piecewise"},  // TODO PCJ 2D layout is a grid
+    {BlockType::Dependency, "dep"},       // TODO dummy
 };
 
 constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
@@ -148,8 +151,6 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
     {BlockType::Binomial, "binomial", LayoutType::Binomial},
     {BlockType::Sum, "sum", LayoutType::Sum},
     {BlockType::Product, "product", LayoutType::Product},
-    {BlockType::Derivative, "diff", LayoutType::Derivative},
-    {BlockType::NthDerivative, "diff", LayoutType::NthDerivative},
     {BlockType::Integral, "int", LayoutType::Integral},
     {BlockType::SquareRoot, BuiltinsAliases::k_squareRootAliases,
      LayoutType::SquareRoot},
@@ -159,7 +160,6 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
     {BlockType::Ceiling, "ceil", LayoutType::Ceiling},
     {BlockType::Floor, "floor", LayoutType::Floor},
     {BlockType::ListSequence, "sequence", LayoutType::ListSequence},
-    {BlockType::Piecewise, "piecewise", LayoutType::Piecewise},
 };
 
 constexpr const Builtin* Builtin::GetReservedFunction(BlockType type) {

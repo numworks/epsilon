@@ -20,6 +20,7 @@ void TextToInsertForCommandText(const char* command, int commandLength,
                                 char* buffer, size_t bufferSize,
                                 bool replaceArgsWithEmptyChar) {
   size_t length = 0;
+  buffer[length] = 0;
   int numberOfOpenParentheses = 0;
   int numberOfOpenBrackets = 0;
   bool insideQuote = false;

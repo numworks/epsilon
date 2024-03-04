@@ -17,7 +17,7 @@
 
 namespace Escher {
 
-class NestedMenuController : public StackViewController::Default,
+class NestedMenuController : public StackViewController::Custom<5>,
                              public StandardMemoizedListViewDataSource,
                              public SelectableListViewDataSource,
                              public SelectableListViewDelegate,
@@ -56,7 +56,7 @@ class NestedMenuController : public StackViewController::Default,
 
   // A state is needed for all StackView children but the first
   constexpr static int k_maxModelTreeDepth =
-      StackViewController::Default::k_maxNumberOfChildren - 1;
+      StackViewController::Custom<5>::k_maxNumberOfChildren - 1;
   constexpr static int k_leafCellType = 0;
   constexpr static int k_nodeCellType = 1;
   int stackDepth() { return m_stack.length(); }
@@ -93,7 +93,7 @@ class NestedMenuController : public StackViewController::Default,
          2 * Metric::CellSeparatorThickness - Metric::CellMargins.width()) /
         KDFont::GlyphWidth(KDFont::Size::Small);
     constexpr static int k_maxModelTreeDepth =
-        StackViewController::Default::k_maxNumberOfChildren - 1;
+        StackViewController::Custom<5>::k_maxNumberOfChildren - 1;
     void updateTitle();
     SelectableListView* m_selectableListView;
     int m_titleCount;

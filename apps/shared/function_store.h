@@ -32,8 +32,6 @@ class FunctionStore : public ExpressionModelStore {
     return ExpiringPointer<Function>(
         static_cast<Function *>(privateModelForRecord(record)));
   }
-  virtual KDColor colorForRecord(Ion::Storage::Record record,
-                                 int subCurveIndex) const = 0;
 
  protected:
   static bool IsFunctionActive(ExpressionModelHandle *model, void *context) {

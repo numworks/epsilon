@@ -19,7 +19,7 @@ void TextToInsertForCommandMessage(I18n::Message message, char* buffer,
 void TextToInsertForCommandText(const char* command, int commandLength,
                                 char* buffer, size_t bufferSize,
                                 bool replaceArgsWithEmptyChar) {
-  size_t index = 0;
+  size_t length = 0;
   int numberOfOpenParentheses = 0;
   int numberOfOpenBrackets = 0;
   bool insideQuote = false;
@@ -28,7 +28,7 @@ void TextToInsertForCommandText(const char* command, int commandLength,
   UTF8Decoder decoder(command);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull &&
-         index + UTF8Decoder::CharSizeOfCodePoint(codePoint) < bufferSize &&
+         length + UTF8Decoder::CharSizeOfCodePoint(codePoint) < bufferSize &&
          (commandLength < 0 ||
           (decoder.stringPosition() - command <= commandLength))) {
     if (codePoint == ')') {
@@ -41,17 +41,17 @@ void TextToInsertForCommandText(const char* command, int commandLength,
          codePoint == ',' ||
          (numberOfOpenBrackets > 0 &&
           (codePoint == ',' || codePoint == '[' || codePoint == ']')))) {
-      assert(index < bufferSize);
+      assert(length < bufferSize);
       if (argumentAlreadyReplaced) {
         argumentAlreadyReplaced = false;
       }
-      index += Poincare::SerializationHelper::CodePoint(
-          buffer + index, bufferSize - index, codePoint);
+      length += Poincare::SerializationHelper::CodePoint(
+          buffer + length, bufferSize - length, codePoint);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
-        assert(index < bufferSize);
-        index += Poincare::SerializationHelper::CodePoint(
-            buffer + index, bufferSize - index, UCodePointEmpty);
+        assert(length < bufferSize);
+        length += Poincare::SerializationHelper::CodePoint(
+            buffer + length, bufferSize - length, UCodePointEmpty);
         argumentAlreadyReplaced = true;
       }
     }
@@ -64,8 +64,8 @@ void TextToInsertForCommandText(const char* command, int commandLength,
     }
     codePoint = decoder.nextCodePoint();
   }
-  assert(index < bufferSize);
-  assert(buffer[index] == 0);
+  assert(length < bufferSize);
+  assert(buffer[length] == 0);
 }
 
 }  // namespace ToolboxHelpers

@@ -287,7 +287,7 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
 
   // - Draw subcurves
   int n = f->numberOfSubCurves(true);
-  for (int i = 0; i < n; i++) {
+  for (int i = n - 1; i >= 0; i--) {
     Curve2DEvaluation<float> evaluationFloat = subCurveEvaluation<float>(f, i);
     CurveDrawing secondCurve(Curve2D(evaluationFloat, f), context(), tStart,
                              tEnd, tStep, f->subCurveColor(i), true,

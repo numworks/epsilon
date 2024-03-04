@@ -36,6 +36,8 @@
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
 #include <poincare/variable_context.h>
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/layout/layoutter.h>
 
 #include <cmath>
 #include <utility>
@@ -1166,6 +1168,11 @@ OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   if (isUninitialized()) {
     return OLayout();
   }
+  PoincareJ::Tree *exp = PoincareJ::Expression::FromPoincareExpression(*this);
+  PoincareJ::Tree *lay = PoincareJ::Layoutter::LayoutExpression(
+      exp, false, numberOfSignificantDigits);
+  return JuniorLayout::Builder(lay);
+#if 0
   OLayout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits,
                                    context);
   assert(!l.isUninitialized());
@@ -1180,6 +1187,7 @@ OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
     }
   }
   return l;
+#endif
 }
 
 size_t Expression::serialize(char *buffer, size_t bufferSize,

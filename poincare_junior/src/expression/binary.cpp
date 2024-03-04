@@ -35,6 +35,15 @@ const char *Binary::OperatorName(TypeBlock type) {
   assert(false);
 }
 
+const char *Binary::ComparisonOperatorName(TypeBlock type) {
+  for (const OperatorString &name : k_operatorStrings) {
+    if (type == name.type) {
+      return name.mainString;
+    }
+  }
+  assert(false);
+}
+
 bool Binary::IsComparisonOperatorString(const CPL *s, int length,
                                         BlockType *returnType,
                                         size_t *returnLength) {

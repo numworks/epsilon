@@ -16,6 +16,8 @@ class Binary {
                                          BlockType* returnType,
                                          size_t* returnLength);
 
+  static const char* ComparisonOperatorName(TypeBlock type);
+
   static bool SimplifyBooleanOperator(Tree* tree);
   EDITION_REF_WRAP(SimplifyBooleanOperator);
 

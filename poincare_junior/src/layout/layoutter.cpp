@@ -51,6 +51,13 @@ static constexpr int OperatorPriority(TypeBlock type) {
        * make it clearer */
       return 7;
 
+    case BlockType::Equal:
+    case BlockType::NotEqual:
+    case BlockType::InferiorEqual:
+    case BlockType::Inferior:
+    case BlockType::SuperiorEqual:
+      return 11;
+
     case BlockType::LogicalNot:
       return 12;
     case BlockType::LogicalAnd:
@@ -59,6 +66,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case BlockType::LogicalOr:
     case BlockType::LogicalXor:
       return 14;
+
     case BlockType::Point:
     case BlockType::Set:
     case BlockType::List:
@@ -428,6 +436,18 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       }
       layoutText(layoutParent, Binary::OperatorName(type));
       PushCodePoint(layoutParent, ' ');
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      break;
+    case BlockType::Equal:
+    case BlockType::NotEqual:
+    case BlockType::InferiorEqual:
+    case BlockType::Inferior:
+    case BlockType::SuperiorEqual:
+    case BlockType::Superior:
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      layoutText(layoutParent, Binary::ComparisonOperatorName(type));
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;

@@ -74,8 +74,8 @@ RANGE(Algebraic, Zero, Addition)
 /* - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
 NODE(UserSymbol, 0, 1)
-NODE(UserFunction, 0, 1)
-NODE(UserSequence, 0, 1)
+NODE(UserFunction, 1, 1)
+NODE(UserSequence, 1, 1)
 
 RANGE(UserNamed, UserSymbol, UserSequence)
 

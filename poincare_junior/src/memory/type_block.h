@@ -168,6 +168,8 @@ class TypeBlock : public Block {
         uint8_t numberOfTerms = static_cast<uint8_t>(*next()) - 1;
         return numberOfMetaBlocks + numberOfTerms;
       }
+      case BlockType::UserFunction:
+      case BlockType::UserSequence:
       case BlockType::UserSymbol: {
         uint8_t numberOfChars = static_cast<uint8_t>(*next());
         return numberOfMetaBlocks + numberOfChars;

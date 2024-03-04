@@ -78,8 +78,8 @@ constexpr struct {
 } k_parameteredFunctions[] = {
     {LayoutType::Derivative, BlockType::Derivative,
      k_defaultContinuousXNTCycle},
-    {LayoutType::NthDerivative, BlockType::Derivative,
-     k_defaultContinuousXNTCycle}, /* TODO NthDerivative */
+    {LayoutType::NthDerivative, BlockType::NthDerivative,
+     k_defaultContinuousXNTCycle},
     {LayoutType::Integral, BlockType::Integral, k_defaultContinuousXNTCycle},
     {LayoutType::Sum, BlockType::Sum, k_defaultDiscreteXNTCycle},
     {LayoutType::Product, BlockType::Product, k_defaultDiscreteXNTCycle},

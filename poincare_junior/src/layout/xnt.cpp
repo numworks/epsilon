@@ -2,6 +2,7 @@
 
 #include <poincare/xnt_helpers.h>
 #include <poincare_junior/src/expression/parametric.h>
+#include <poincare_junior/src/expression/symbol.h>
 
 #include "k_tree.h"
 #include "parsing/tokenizer.h"
@@ -10,6 +11,65 @@
 using namespace Poincare::XNTHelpers;
 
 namespace PoincareJ {
+
+// Cycles
+constexpr int k_maxCycleSize = 5;
+constexpr CodePoint k_defaultXNTCycle[] = {
+    Symbol::k_cartesianSymbol,
+    Symbol::k_sequenceSymbol,
+    Symbol::k_parametricSymbol,
+    Symbol::k_polarSymbol,
+    UCodePointNull,
+};
+constexpr CodePoint k_defaultContinuousXNTCycle[] = {
+    Symbol::k_cartesianSymbol,
+    Symbol::k_parametricSymbol,
+    Symbol::k_polarSymbol,
+    UCodePointNull,
+};
+constexpr CodePoint k_defaultDiscreteXNTCycle[] = {
+    'k',
+    'n',
+    UCodePointNull,
+};
+
+static int indexOfCodePointInCycle(CodePoint codePoint,
+                                   const CodePoint *cycle) {
+  for (size_t i = 0; i < k_maxCycleSize - 1; i++) {
+    if (cycle[i] == codePoint) {
+      return i;
+    }
+  }
+  assert(cycle[k_maxCycleSize - 1] == codePoint);
+  return k_maxCycleSize - 1;
+}
+
+static size_t sizeOfCycle(const CodePoint *cycle) {
+  return indexOfCodePointInCycle(UCodePointNull, cycle);
+}
+
+static CodePoint codePointAtIndexInCycle(int index, int startingIndex,
+                                         const CodePoint *cycle,
+                                         size_t *cycleSize) {
+  assert(index >= 0);
+  assert(cycleSize);
+  *cycleSize = sizeOfCycle(cycle);
+  assert(0 <= startingIndex && startingIndex < *cycleSize);
+  return cycle[(startingIndex + index) % *cycleSize];
+}
+
+CodePoint CodePointAtIndexInDefaultCycle(int index, CodePoint startingCodePoint,
+                                         size_t *cycleSize) {
+  int startingIndex =
+      indexOfCodePointInCycle(startingCodePoint, k_defaultXNTCycle);
+  return codePointAtIndexInCycle(index, startingIndex, k_defaultXNTCycle,
+                                 cycleSize);
+}
+
+CodePoint CodePointAtIndexInCycle(int index, const CodePoint *cycle,
+                                  size_t *cycleSize) {
+  return codePointAtIndexInCycle(index, 0, cycle, cycleSize);
+}
 
 // Parametered functions
 constexpr struct {

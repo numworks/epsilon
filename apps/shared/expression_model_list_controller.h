@@ -70,6 +70,7 @@ class ExpressionModelListController
     selectableListView()->resetSizeAndOffsetMemoization();
   }
   virtual bool removeModelRow(Ion::Storage::Record record);
+  // Relative row is the index of the row starting from the model row
   int modelIndexForRow(int row, int* relativeRow) const;
   int modelIndexForRow(int row) const;
   Ion::Storage::Record recordAtRow(int row, int* relativeRow) const;

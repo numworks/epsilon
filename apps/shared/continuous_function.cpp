@@ -230,6 +230,10 @@ CartesianConic ContinuousFunction::cartesianConicParameters(
                         complexFormat(context), k_unknownName);
 }
 
+KDColor ContinuousFunction::subCurveColor(int subCurveIndex) const {
+  return color(derivationOrderFromSubCurveIndex(subCurveIndex));
+}
+
 double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
                                                   double cursorX,
                                                   double cursorY,

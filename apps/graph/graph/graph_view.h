@@ -72,6 +72,10 @@ class GraphView : public Shared::FunctionGraphView,
 
   void drawAxesAndGrid(KDContext *ctx, KDRect rect) const override;
 
+  template <typename T>
+  Curve2DEvaluation<T> subCurveEvaluation(Shared::ContinuousFunction *f,
+                                          int subCurveIndex) const;
+
   InterestView m_interestView;
   mutable int m_areaIndex;
   mutable int m_nextPointOfInterestIndex;

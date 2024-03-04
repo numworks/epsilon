@@ -198,6 +198,25 @@ bool GraphView::FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2,
           x1, x2, static_cast<Poincare::Context *>(context));
 }
 
+template <typename T>
+GraphView::Curve2DEvaluation<T> GraphView::subCurveEvaluation(
+    ContinuousFunction *f, int subCurveIndex) const {
+  if (subCurveIndex == 0) {
+    return evaluateXY<T>;
+  }
+  if (f->numberOfSubCurves() > 1) {
+    assert(f->numberOfSubCurves() == 2);
+    assert(subCurveIndex == 1);
+    return evaluateXYSecondCurve<T>;
+  }
+  assert(f->numberOfSubCurves() == 1);
+  assert(f->numberOfSubCurves(true) > 1);
+  int derivationOrder = f->derivationOrderFromSubCurveIndex(subCurveIndex);
+  assert(derivationOrder == 1 || derivationOrder == 2);
+  return derivationOrder == 1 ? evaluateXYFirstDerivative<T>
+                              : evaluateXYSecondDerivative<T>;
+}
+
 void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
                               ContinuousFunction *f,
                               Ion::Storage::Record record, float tStart,
@@ -266,35 +285,25 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
     m_areaIndex = (m_areaIndex + 1) % Pattern::k_numberOfSections;
   }
 
-  // - Draw first curve
-  CurveDrawing firstCurve(Curve2D(evaluateXY<float>, f), context(), tStart,
-                          tEnd, tStep, f->color(), true,
-                          f->properties().plotIsDotted());
-  firstCurve.setPrecisionOptions(true, evaluateXY<double>, discontinuity);
-  firstCurve.setPatternOptions(pattern, patternStart, patternEnd, patternLower,
-                               patternUpper, patternWithoutCurve, axis);
-  firstCurve.draw(this, ctx, rect);
-
-  // - Draw second curve and derivatives
-  Curve2DEvaluation<float> evaluationFloat[] = {
-      evaluateXYSecondCurve<float>, evaluateXYFirstDerivative<float>,
-      evaluateXYSecondDerivative<float>};
-  Curve2DEvaluation<double> evaluationDouble[] = {
-      evaluateXYSecondCurve<double>, evaluateXYFirstDerivative<double>,
-      evaluateXYSecondDerivative<double>};
-  bool plotCurve[] = {hasTwoCurves, f->displayPlotFirstDerivative(),
-                      f->displayPlotSecondDerivative()};
-  for (int i = 0; i < 3; i++) {
-    if (plotCurve[i]) {
-      CurveDrawing secondCurve(Curve2D(evaluationFloat[i], f), context(),
-                               tStart, tEnd, tStep, f->color(i), true,
-                               f->properties().plotIsDotted());
-      secondCurve.setPrecisionOptions(true, evaluationDouble[i], discontinuity);
-      secondCurve.setPatternOptions(pattern, patternStart, patternEnd,
-                                    patternLower2, Curve2D(),
-                                    patternWithoutCurve, axis);
-      secondCurve.draw(this, ctx, rect);
+  // - Draw subcurves
+  int n = f->numberOfSubCurves(true);
+  for (int i = 0; i < n; i++) {
+    Curve2DEvaluation<float> evaluationFloat = subCurveEvaluation<float>(f, i);
+    CurveDrawing secondCurve(Curve2D(evaluationFloat, f), context(), tStart,
+                             tEnd, tStep, f->subCurveColor(i), true,
+                             f->properties().plotIsDotted());
+    Curve2DEvaluation<double> evaluationDouble =
+        subCurveEvaluation<double>(f, i);
+    secondCurve.setPrecisionOptions(true, evaluationDouble, discontinuity);
+    Curve2D pLower = patternLower;
+    Curve2D pUpper = patternUpper;
+    if (hasTwoCurves && i == 1) {
+      pLower = patternLower2;
+      pUpper = Curve2D();
     }
+    secondCurve.setPatternOptions(pattern, patternStart, patternEnd, pLower,
+                                  pUpper, patternWithoutCurve, axis);
+    secondCurve.draw(this, ctx, rect);
   }
 }
 

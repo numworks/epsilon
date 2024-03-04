@@ -128,9 +128,15 @@ void PatternMatching::MatchContext::setLocalToParent() {
 bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
                                     const Tree* pattern, Context* context,
                                     MatchContext matchContext) {
+  Placeholder::Filter filter = Placeholder::NodeToFilter(pattern);
+  assert(filter == Placeholder::Filter::OneOrMore ||
+         filter == Placeholder::Filter::NoneOrMore);
   int maxNumberOfTrees = matchContext.remainingLocalTrees(source);
-  int numberOfTrees = 0;
+  int numberOfTrees = (filter == Placeholder::Filter::OneOrMore) ? 1 : 0;
   context->setNode(tag, source, numberOfTrees, true);
+  if (filter == Placeholder::Filter::OneOrMore) {
+    source = source->nextTree();
+  }
   Context newResult = *context;
 
   // Give the placeholder a growing number of trees until everything matches.
@@ -161,7 +167,7 @@ const Tree* PatternMatching::ChildToSquashPatternTo(const Tree* source,
   const Tree* result = nullptr;
   for (const Tree* child : pattern->children()) {
     if (child->isPlaceholder() &&
-        (Placeholder::NodeToFilter(child) == Placeholder::Filter::AnyTrees)) {
+        (Placeholder::NodeToFilter(child) == Placeholder::Filter::NoneOrMore)) {
       Placeholder::Tag tag = Placeholder::NodeToTag(child);
       if (!tempContext.getNode(tag)) {
         tempContext.setNode(tag, source, 0, true);
@@ -210,8 +216,8 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
       const Tree* tagNode = context->getNode(tag);
       if (tagNode) {
         // AnyTrees status should be preserved if the Placeholder is reused.
-        assert(context->isAnyTree(tag) == (Placeholder::NodeToFilter(pattern) ==
-                                           Placeholder::Filter::AnyTrees));
+        assert(context->isAnyTree(tag) == (Placeholder::NodeToFilter(pattern) !=
+                                           Placeholder::Filter::One));
         // Tag has already been set. Check the trees are the same.
         for (int i = 0; i < context->getNumberOfTrees(tag); i++) {
           if (onlyEmptyPlaceholders || !tagNode->treeIsIdenticalTo(source)) {
@@ -220,16 +226,16 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
           tagNode = tagNode->nextTree();
           source = source->nextTree();
         }
-      } else if (Placeholder::NodeToFilter(pattern) ==
-                 Placeholder::Filter::AnyTrees) {
+      } else if (onlyEmptyPlaceholders && Placeholder::NodeToFilter(pattern) !=
+                                              Placeholder::Filter::NoneOrMore) {
+        return false;
+      } else if (Placeholder::NodeToFilter(pattern) !=
+                 Placeholder::Filter::One) {
         /* MatchAnyTrees will try to absorb consecutive trees in this
          * placeholder (as little as possible) and match the rest of the nodes.
          */
         return MatchAnyTrees(tag, source, pattern, context, matchContext);
       } else {
-        if (onlyEmptyPlaceholders) {
-          return false;
-        }
         // Set the tag to source's tree
         context->setNode(tag, source, 1, false);
         source = source->nextTree();
@@ -255,7 +261,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
       pattern = pattern->nextNode();
       continue;
     } else if (CanBeSquashed(pattern)) {
-      // Match x with KTA*x*KTB
+      // Match x with KA_s*x*KB_s
       const Tree* patternChild =
           ChildToSquashPatternTo(source, pattern, context);
       if (patternChild) {
@@ -263,7 +269,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
           pattern = patternChild;
           continue;
         }
-        // With empty KTA, Match 1 with Mult(KTA) and 0 with Add(KTA)
+        // With empty KA_s, Match 1 with Mult(KA_s) and 0 with Add(KA_s)
         if ((pattern->isAddition() && source->isZero()) ||
             (pattern->isMultiplication() && source->isOne())) {
           source = source->nextTree();
@@ -289,11 +295,11 @@ bool CanEarlyEscape(const Tree* pattern, const Tree* source) {
   if (!CanBeSquashed(pattern)) {
     return true;
   }
-  // We can still match x wit KTA*KB
+  // We can still match x wit KA_s*KB
   bool canHaveNonEmptyChildren = false;
   for (const Tree* child : pattern->children()) {
     if (child->isPlaceholder() &&
-        (Placeholder::NodeToFilter(child) == Placeholder::Filter::AnyTrees)) {
+        (Placeholder::NodeToFilter(child) == Placeholder::Filter::NoneOrMore)) {
       continue;
     }
     if (canHaveNonEmptyChildren) {
@@ -370,7 +376,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
     assert(nodeToInsert && treesToInsert >= 0);
     // Created tree must match AnyTrees status of the Placeholder used to match
     assert(context.isAnyTree(tag) ==
-           (Placeholder::NodeToFilter(node) == Placeholder::Filter::AnyTrees));
+           (Placeholder::NodeToFilter(node) != Placeholder::Filter::One));
     /* AnyTreesPlaceholders trees can only be inserted into simple nArys, even
      * with 1 treesToInsert. */
     assert(!(context.isAnyTree(tag) && !withinNAry));

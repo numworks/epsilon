@@ -203,11 +203,15 @@ struct KPlaceholderFilter
 };
 
 template <Placeholder::Tag Tag>
-using KPlaceholder = KPlaceholderFilter<Tag, Placeholder::Filter::None>;
+using KPlaceholder = KPlaceholderFilter<Tag, Placeholder::Filter::One>;
 
 template <Placeholder::Tag Tag>
-using KAnyTreesPlaceholder =
-    KPlaceholderFilter<Tag, Placeholder::Filter::AnyTrees>;
+using KOneOrMorePlaceholder =
+    KPlaceholderFilter<Tag, Placeholder::Filter::OneOrMore>;
+
+template <Placeholder::Tag Tag>
+using KNoneOrMorePlaceholder =
+    KPlaceholderFilter<Tag, Placeholder::Filter::NoneOrMore>;
 
 }  // namespace PoincareJ
 

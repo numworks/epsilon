@@ -95,8 +95,8 @@ bool Parametric::ExpandSum(Tree* expr) {
   // sum(x_k, k, 0, n) = x_0 + ... + x_n
   return expr->isSum() &&
          (PatternMatching::MatchReplaceAndSimplify(
-              expr, KSum(KA, KB, KC, KAdd(KD, KE, KTF)),
-              KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KE, KTF)))) ||
+              expr, KSum(KA, KB, KC, KAdd(KD, KE, KF_s)),
+              KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KE, KF_s)))) ||
           Explicit(expr));
 }
 
@@ -105,9 +105,9 @@ bool Parametric::ExpandProduct(Tree* expr) {
   // prod(x_k, k, 0, n) = x_0 * ... * x_n
   return expr->isProduct() &&
          (PatternMatching::MatchReplaceAndSimplify(
-              expr, KProduct(KA, KB, KC, KMult(KD, KE, KTF)),
+              expr, KProduct(KA, KB, KC, KMult(KD, KE, KF_s)),
               KMult(KProduct(KA, KB, KC, KD),
-                    KProduct(KA, KB, KC, KMult(KE, KTF)))) ||
+                    KProduct(KA, KB, KC, KMult(KE, KF_s)))) ||
           Explicit(expr));
 }
 

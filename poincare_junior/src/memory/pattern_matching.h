@@ -177,9 +177,9 @@ class PatternMatching {
   static Tree* CreateTree(const Tree* structure, const Context context,
                           Tree* insertedNAry, bool simplify);
   /* If pattern could be squashed, return the only non-empty child:
-   *                                          KMult(KA, KTB) -> KA
-   * Return pattern if there are none:        KMult(KTA) -> KMult(KTA)
-   * Return nullptr if it cannot be squashed: KMUlt(KA, KTB, KC) -> nullptr */
+   *                                          KMult(KA, KB_s) -> KA
+   * Return pattern if there are none:        KMult(KA_s) -> KMult(KA_s)
+   * Return nullptr if it cannot be squashed: KMUlt(KA, KB_s, KC) -> nullptr */
   static const Tree* ChildToSquashPatternTo(const Tree* source,
                                             const Tree* pattern,
                                             Context* context);
@@ -195,14 +195,23 @@ constexpr auto KF = KPlaceholder<Placeholder::Tag::F>();
 constexpr auto KG = KPlaceholder<Placeholder::Tag::G>();
 constexpr auto KH = KPlaceholder<Placeholder::Tag::H>();
 
-constexpr auto KTA = KAnyTreesPlaceholder<Placeholder::Tag::A>();
-constexpr auto KTB = KAnyTreesPlaceholder<Placeholder::Tag::B>();
-constexpr auto KTC = KAnyTreesPlaceholder<Placeholder::Tag::C>();
-constexpr auto KTD = KAnyTreesPlaceholder<Placeholder::Tag::D>();
-constexpr auto KTE = KAnyTreesPlaceholder<Placeholder::Tag::E>();
-constexpr auto KTF = KAnyTreesPlaceholder<Placeholder::Tag::F>();
-constexpr auto KTG = KAnyTreesPlaceholder<Placeholder::Tag::G>();
-constexpr auto KTH = KAnyTreesPlaceholder<Placeholder::Tag::H>();
+constexpr auto KA_p = KOneOrMorePlaceholder<Placeholder::Tag::A>();
+constexpr auto KB_p = KOneOrMorePlaceholder<Placeholder::Tag::B>();
+constexpr auto KC_p = KOneOrMorePlaceholder<Placeholder::Tag::C>();
+constexpr auto KD_p = KOneOrMorePlaceholder<Placeholder::Tag::D>();
+constexpr auto KE_p = KOneOrMorePlaceholder<Placeholder::Tag::E>();
+constexpr auto KF_p = KOneOrMorePlaceholder<Placeholder::Tag::F>();
+constexpr auto KG_p = KOneOrMorePlaceholder<Placeholder::Tag::G>();
+constexpr auto KH_p = KOneOrMorePlaceholder<Placeholder::Tag::H>();
+
+constexpr auto KA_s = KNoneOrMorePlaceholder<Placeholder::Tag::A>();
+constexpr auto KB_s = KNoneOrMorePlaceholder<Placeholder::Tag::B>();
+constexpr auto KC_s = KNoneOrMorePlaceholder<Placeholder::Tag::C>();
+constexpr auto KD_s = KNoneOrMorePlaceholder<Placeholder::Tag::D>();
+constexpr auto KE_s = KNoneOrMorePlaceholder<Placeholder::Tag::E>();
+constexpr auto KF_s = KNoneOrMorePlaceholder<Placeholder::Tag::F>();
+constexpr auto KG_s = KNoneOrMorePlaceholder<Placeholder::Tag::G>();
+constexpr auto KH_s = KNoneOrMorePlaceholder<Placeholder::Tag::H>();
 
 }  // namespace PoincareJ
 

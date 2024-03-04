@@ -151,7 +151,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
   // TODO: Maybe factorize even/odd functions logic
   if (PatternMatching::MatchReplaceAndSimplify(
-          firstArgument, KMult(KTA, -1_e, KTB), KMult(KTA, KTB))) {
+          firstArgument, KMult(KA_s, -1_e, KB_s), KMult(KA_s, KB_s))) {
     changed = true;
     if (isSin) {
       isOpposed = !isOpposed;
@@ -330,9 +330,9 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
 bool Trigonometry::ExpandTrigonometric(Tree* ref) {
   // Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
   return PatternMatching::MatchReplaceAndSimplify(
-      ref, KTrig(KAdd(KA, KB, KTC), KD),
-      KAdd(KMult(KTrig(KAdd(KA), 0_e), KTrig(KAdd(KB, KTC), KD)),
-           KMult(KTrig(KAdd(KA), 1_e), KTrig(KAdd(KB, KTC), KAdd(KD, -1_e)))));
+      ref, KTrig(KAdd(KA, KB, KC_s), KD),
+      KAdd(KMult(KTrig(KAdd(KA), 0_e), KTrig(KAdd(KB, KC_s), KD)),
+           KMult(KTrig(KAdd(KA), 1_e), KTrig(KAdd(KB, KC_s), KAdd(KD, -1_e)))));
 }
 
 bool Trigonometry::ContractTrigonometric(Tree* ref) {
@@ -340,17 +340,17 @@ bool Trigonometry::ContractTrigonometric(Tree* ref) {
       // A?+cos(B)^2+C?+sin(D)^2+E? = 1 + A + C + E
       PatternMatching::MatchReplaceAndSimplify(
           ref,
-          KAdd(KTA, KPow(KTrig(KB, 0_e), 2_e), KTC, KPow(KTrig(KD, 1_e), 2_e),
-               KTE),
-          KAdd(1_e, KTA, KTC, KTE)) ||
+          KAdd(KA_s, KPow(KTrig(KB, 0_e), 2_e), KC_s, KPow(KTrig(KD, 1_e), 2_e),
+               KE_s),
+          KAdd(1_e, KA_s, KC_s, KE_s)) ||
       // A?*Trig(B, C)*D?*Trig(E, F)*G? =
       // 0.5*A*D*(Trig(B-E, TrigDiff(C,F)) + Trig(B+E, C+F))*G
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KMult(KTA, KTrig(KB, KC), KTD, KTrig(KE, KF), KTG),
-          KMult(KHalf, KTA, KTD,
+          ref, KMult(KA_s, KTrig(KB, KC), KD_s, KTrig(KE, KF), KG_s),
+          KMult(KHalf, KA_s, KD_s,
                 KAdd(KTrig(KAdd(KB, KMult(-1_e, KE)), KTrigDiff(KC, KF)),
                      KTrig(KAdd(KB, KE), KAdd(KF, KC))),
-                KTG));
+                KG_s));
 }
 
 /* TODO: Maybe expand arccos(x) = π/2 - arcsin(x).

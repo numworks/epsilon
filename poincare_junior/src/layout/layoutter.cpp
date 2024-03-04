@@ -445,13 +445,15 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
 #if POINCARE_MEMORY_TREE_LOG
     case BlockType::Placeholder: {
       PushCodePoint(layoutParent, 'K');
-      if (Placeholder::NodeToFilter(expression) ==
-          Placeholder::Filter::AnyTrees) {
-        PushCodePoint(layoutParent, 'T');
-      }
       uint8_t offset = Placeholder::NodeToTag(expression);
+      Placeholder::Filter filter = Placeholder::NodeToFilter(expression);
       char name = 'A' + offset;
       PushCodePoint(layoutParent, name);
+      if (filter != Placeholder::Filter::One) {
+        PushCodePoint(layoutParent, '_');
+        PushCodePoint(layoutParent,
+                      filter == Placeholder::Filter::NoneOrMore ? 's' : 'p');
+      }
       break;
     }
     case BlockType::Exponential:

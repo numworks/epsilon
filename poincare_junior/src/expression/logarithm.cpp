@@ -212,14 +212,14 @@ bool Logarithm::ContractLn(Tree* ref) {
     return true;
   }
   // A?+ ln(B) +C?+ ln(D) +E? = A+C+ ln(BD) +E+ i*(arg(B) + arg(D) - arg(BD))
-  if (PatternMatching::Match(KAdd(KTA, KLn(KB), KTC, KLn(KD), KTE), ref,
+  if (PatternMatching::Match(KAdd(KA_s, KLn(KB), KC_s, KLn(KD), KE_s), ref,
                              &ctx)) {
     const Tree* a = ctx.getNode(KB);
     const Tree* b = ctx.getNode(KD);
     EditionReference c = PushAdditionCorrection(a, b);
     ctx.setNode(KF, c, 1, false);
     ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KAdd(KTA, KTC, KLn(KMult(KB, KD)), KTE, KF), ctx));
+        KAdd(KA_s, KC_s, KLn(KMult(KB, KD)), KE_s, KF), ctx));
     c->removeTree();
     return true;
   }
@@ -233,11 +233,11 @@ bool Logarithm::ExpandLn(Tree* ref) {
   }
   PatternMatching::Context ctx;
   // ln(A*B*C?) = ln(A) + ln(BC) - i*(arg(A) + arg(BC) - arg(ABC))
-  if (PatternMatching::Match(KLn(KMult(KA, KB, KTC)), ref, &ctx)) {
-    // Since KTB can match multiple trees, we need them as a single tree.
+  if (PatternMatching::Match(KLn(KMult(KA, KB, KC_s)), ref, &ctx)) {
+    // Since KB_s can match multiple trees, we need them as a single tree.
     const Tree* a = ctx.getNode(KA);
     EditionReference b =
-        PatternMatching::CreateAndSimplify(KMult(KB, KTC), ctx);
+        PatternMatching::CreateAndSimplify(KMult(KB, KC_s), ctx);
     EditionReference c = PushAdditionCorrection(a, b);
     ref->moveTreeOverTree(PatternMatching::CreateAndSimplify(
         KAdd(KLn(KA), KLn(KB), KMult(-1_e, KC)), {.KA = a, .KB = b, .KC = c}));

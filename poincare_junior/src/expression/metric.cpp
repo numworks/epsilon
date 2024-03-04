@@ -23,7 +23,7 @@ int Metric::GetMetric(const Tree* u) {
     case BlockType::Exponential: {
       // exp(A*ln(B)) -> Root(B,A) exception
       PatternMatching::Context ctx;
-      if (PatternMatching::Match(KExp(KMult(KTA, KLn(KB))), u, &ctx)) {
+      if (PatternMatching::Match(KExp(KMult(KA_s, KLn(KB))), u, &ctx)) {
         if (!ctx.getNode(KA)->isHalf()) {
           result += GetMetric(ctx.getNode(KA));
         }

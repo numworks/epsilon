@@ -316,11 +316,11 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   // ln(A)      * ln(B)^(-1) -> log(A, B)
   // ln(A)^(-1) * ln(B)      -> log(B, A)
   changed = PatternMatching::MatchAndReplace(
-                ref, KMult(KTA, KLn(KB), KPow(KLn(KC), -1_e), KTD),
-                KMult(KTA, KLogarithm(KB, KC), KTD)) ||
+                ref, KMult(KA_s, KLn(KB), KPow(KLn(KC), -1_e), KD_s),
+                KMult(KA_s, KLogarithm(KB, KC), KD_s)) ||
             PatternMatching::MatchAndReplace(
-                ref, KMult(KTA, KPow(KLn(KB), -1_e), KLn(KC), KTD),
-                KMult(KTA, KLogarithm(KC, KB), KTD));
+                ref, KMult(KA_s, KPow(KLn(KB), -1_e), KLn(KC), KD_s),
+                KMult(KA_s, KLogarithm(KC, KB), KD_s));
 #endif
 
   // Turn multiplications with negative powers into divisions
@@ -342,8 +342,8 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
   // exp(A? * ln(B) * C?) -> B^(A*C)
   if (PatternMatching::MatchAndReplace(ref, KPowMatrix(KA, KB), KPow(KA, KB)) ||
       PatternMatching::MatchAndReplace(ref, KPowReal(KA, KB), KPow(KA, KB)) ||
-      PatternMatching::MatchAndReplace(ref, KExp(KMult(KTA, KLn(KB), KTC)),
-                                       KPow(KB, KMult(KTA, KTC)))) {
+      PatternMatching::MatchAndReplace(ref, KExp(KMult(KA_s, KLn(KB), KC_s)),
+                                       KPow(KB, KMult(KA_s, KC_s)))) {
     // A^0.5 -> Sqrt(A)
     PatternMatching::MatchAndReplace(ref, KPow(KA, KHalf), KSqrt(KA));
     return true;
@@ -357,12 +357,12 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
       PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) ||
       // -floor(-A) -> ceil(A)
       PatternMatching::MatchAndReplace(
-          ref, KMult(-1_e, KTA, KFloor(KMult(-1_e, KB)), KTC),
-          KMult(KTA, KCeil(KB), KTC)) ||
+          ref, KMult(-1_e, KA_s, KFloor(KMult(-1_e, KB)), KC_s),
+          KMult(KA_s, KCeil(KB), KC_s)) ||
       // A - floor(A) -> frac(A)
       PatternMatching::MatchAndReplace(
-          ref, KAdd(KTA, KB, KTC, KMult(-1_e, KFloor(KB)), KTD),
-          KAdd(KTA, KTC, KFrac(KB), KTD)) ||
+          ref, KAdd(KA_s, KB, KC_s, KMult(-1_e, KFloor(KB)), KD_s),
+          KAdd(KA_s, KC_s, KFrac(KB), KD_s)) ||
       ShallowBeautifyPercent(ref) || changed;
 }
 

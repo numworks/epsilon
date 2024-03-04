@@ -15,10 +15,12 @@ class Placeholder {
   enum Tag : uint8_t { A = 0, B, C, D, E, F, G, H, NumberOfTags };
 
   enum class Filter : uint8_t {
-    // Match any tree
-    None = 0,
-    // Match 0 or any number of consecutive trees
-    AnyTrees,
+    // Match any single tree
+    One = 0,
+    // Match 0 or more consecutive trees
+    NoneOrMore,
+    // Match 1 or more consecutive trees
+    OneOrMore,
     NumberOfFilters
   };
 

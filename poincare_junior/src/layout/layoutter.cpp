@@ -187,7 +187,7 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
     PushCodePoint(layoutParent, '-');
   }
   handler.setSign(NonStrictSign::Positive);
-  int firstInsertedIndex = layoutParent->numberOfChildren();
+  Tree *rack = KRackL()->clone();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
    * pushing layouts on the EditionPool at each steps. Value is therefore
    * temporarily stored and updated on the EditionPool. */
@@ -199,16 +199,18 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
     assert(result.remainder > result.quotient);
     result.remainder->removeTree();
     MoveTreeOverTree(value, result.quotient);
-    InsertCodePointAt(layoutParent, '0' + digit, firstInsertedIndex);
+    InsertCodePointAt(rack, '0' + digit, 0);
     if (--decimalOffset == 0) {
-      InsertCodePointAt(layoutParent, '.', firstInsertedIndex);
+      InsertCodePointAt(rack, '.', 0);
       if (value->isZero()) {
         // TODO insert 0 before . if nothing else is to come
-        InsertCodePointAt(layoutParent, '0', firstInsertedIndex);
+        InsertCodePointAt(rack, '0', 0);
       }
     }
   } while (!(value->isZero() && decimalOffset <= 0));
   value->removeTree();
+  AddThousandSeparators(rack);
+  NAry::AddOrMergeChild(layoutParent, rack);
 }
 
 void Layoutter::layoutInfixOperator(EditionReference &layoutParent,

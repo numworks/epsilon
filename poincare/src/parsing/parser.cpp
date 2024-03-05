@@ -163,7 +163,7 @@ OExpression Parser::parseUntil(Token::Type stoppingType,
       &Parser::parseNumber,             // Token::Type::Number
       &Parser::parseNumber,             // Token::Type::BinaryNumber
       &Parser::parseNumber,             // Token::Type::HexadecimalNumber
-      &Parser::parseUnit,               // Token::Type::Unit
+      &Parser::parseUnit,               // Token::Type::OUnit
       &Parser::parseReservedFunction,   // Token::Type::ReservedFunction
       &Parser::parseSpecialIdentifier,  // Token::Type::SpecialIdentifier
       &Parser::parseCustomIdentifier,   // Token::Type::CustomIdentifier
@@ -212,7 +212,7 @@ OExpression Parser::parseUntil(Token::Type stoppingType,
   assert_order(Token::Type::Number, Parser::parseNumber);
   assert_order(Token::Type::BinaryNumber, Parser::parseNumber);
   assert_order(Token::Type::HexadecimalNumber, Parser::parseNumber);
-  assert_order(Token::Type::Unit, Parser::parseUnit);
+  assert_order(Token::Type::OUnit, Parser::parseUnit);
   assert_order(Token::Type::ReservedFunction, Parser::parseReservedFunction);
   assert_order(Token::Type::SpecialIdentifier, Parser::parseSpecialIdentifier);
   assert_order(Token::Type::CustomIdentifier, Parser::parseCustomIdentifier);
@@ -294,7 +294,7 @@ void Parser::isThereImplicitOperator() {
   m_pendingImplicitOperator =
       (m_nextToken.is(Token::Type::Number) ||
        m_nextToken.is(Token::Type::Constant) ||
-       m_nextToken.is(Token::Type::Unit) ||
+       m_nextToken.is(Token::Type::OUnit) ||
        m_nextToken.is(Token::Type::ReservedFunction) ||
        m_nextToken.is(Token::Type::SpecialIdentifier) ||
        m_nextToken.is(Token::Type::CustomIdentifier) ||
@@ -309,7 +309,7 @@ void Parser::isThereImplicitOperator() {
 Token::Type Parser::implicitOperatorType() {
   return m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::
                                                  ImplicitAdditionBetweenUnits &&
-                 m_currentToken.type() == Token::Type::Unit
+                 m_currentToken.type() == Token::Type::OUnit
              ? Token::Type::Plus
              : Token::Type::ImplicitTimes;
 }
@@ -745,14 +745,14 @@ void Parser::parseConstant(OExpression &leftHandSide,
 
 void Parser::parseUnit(OExpression &leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  const Unit::Representative *unitRepresentative = nullptr;
-  const Unit::Prefix *unitPrefix = nullptr;
-  if (!Unit::CanParse(m_currentToken.text(), m_currentToken.length(),
-                      &unitRepresentative, &unitPrefix)) {
-    m_status = Status::Error;  // Unit does not exist
+  const OUnit::Representative *unitRepresentative = nullptr;
+  const OUnit::Prefix *unitPrefix = nullptr;
+  if (!OUnit::CanParse(m_currentToken.text(), m_currentToken.length(),
+                       &unitRepresentative, &unitPrefix)) {
+    m_status = Status::Error;  // OUnit does not exist
     return;
   }
-  leftHandSide = Unit::Builder(unitRepresentative, unitPrefix);
+  leftHandSide = OUnit::Builder(unitRepresentative, unitPrefix);
   isThereImplicitOperator();
 }
 

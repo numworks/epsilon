@@ -84,21 +84,23 @@ QUIZ_CASE(poincare_expression_constant_constructor) {
 }
 
 QUIZ_CASE(poincare_expression_unit_constructor) {
-  Unit u =
-      Unit::Builder(Unit::k_timeRepresentatives, Unit::Prefix::EmptyPrefix());
+  OUnit u = OUnit::Builder(OUnit::k_timeRepresentatives,
+                           OUnit::Prefix::EmptyPrefix());
   assert_expression_serializes_to(u, "_s");
 
-  u = Unit::Builder(Unit::k_timeRepresentatives + 2,
-                    Unit::Prefix::EmptyPrefix());
+  u = OUnit::Builder(OUnit::k_timeRepresentatives + 2,
+                     OUnit::Prefix::EmptyPrefix());
   assert_expression_serializes_to(u, "_h");
 
-  u = Unit::Builder(Unit::k_distanceRepresentatives, Unit::k_prefixes + 9);
+  u = OUnit::Builder(OUnit::k_distanceRepresentatives, OUnit::k_prefixes + 9);
   assert_expression_serializes_to(u, "_km");
 
-  u = Unit::Builder(Unit::k_volumeRepresentatives, Unit::Prefix::EmptyPrefix());
+  u = OUnit::Builder(OUnit::k_volumeRepresentatives,
+                     OUnit::Prefix::EmptyPrefix());
   assert_expression_serializes_to(u, "_L");
 
-  u = Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix());
+  u = OUnit::Builder(OUnit::k_powerRepresentatives,
+                     OUnit::Prefix::EmptyPrefix());
   assert_expression_serializes_to(u, "_W");
 }
 

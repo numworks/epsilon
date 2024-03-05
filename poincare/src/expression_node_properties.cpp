@@ -35,7 +35,7 @@ bool ExpressionNode::isParameteredExpression() const {
 }
 
 bool ExpressionNode::isCombinationOfUnits() const {
-  if (type() == Type::Unit) {
+  if (type() == Type::OUnit) {
     return true;
   }
   if (isOfType({Type::Multiplication, Type::Division})) {

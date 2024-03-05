@@ -82,11 +82,11 @@ OExpression UnitConvert::shallowBeautify(
 
   /* Handle temperatures, as converting between Kelvin, Celsius and Fahrenheit
    * cannot be done with a division. */
-  if (unit.type() == ExpressionNode::Type::Unit) {
-    Unit unitRef = static_cast<Unit&>(unit);
+  if (unit.type() == ExpressionNode::Type::OUnit) {
+    OUnit unitRef = static_cast<OUnit&>(unit);
     if (unitRef.representative()->dimensionVector() ==
-        Unit::TemperatureRepresentative::Default().dimensionVector()) {
-      OExpression result = Unit::ConvertTemperatureUnits(
+        OUnit::TemperatureRepresentative::Default().dimensionVector()) {
+      OExpression result = OUnit::ConvertTemperatureUnits(
           childAtIndex(0), unitRef, reductionContext);
       replaceWithInPlace(result);
       return result;
@@ -101,7 +101,7 @@ OExpression UnitConvert::shallowBeautify(
   if (!divisionUnit.isUninitialized()) {
     if (unit.isPureAngleUnit()) {
       // Try again with the current angle unit
-      Unit currentAngleUnit = Unit::Builder(
+      OUnit currentAngleUnit = OUnit::Builder(
           UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
               reductionContext.angleUnit()));
       division =

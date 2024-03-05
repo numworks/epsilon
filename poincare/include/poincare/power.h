@@ -162,7 +162,7 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   bool isLogarithmOfSameBase(OExpression e) const;
   bool isNthRootOfUnity() const;
 
-  // Unit
+  // OUnit
   OExpression removeUnit(OExpression* unit);
 
   OExpression denominator(const ReductionContext& reductionContext) const;

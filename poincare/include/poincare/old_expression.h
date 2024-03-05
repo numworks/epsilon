@@ -144,7 +144,7 @@ class OExpression : public TreeHandle {
   friend class Tangent;
   friend class Trigonometry;
   friend class TrigonometryCheatTable;
-  friend class Unit;
+  friend class OUnit;
   friend class UnitConvert;
   friend class UnitNode;
   friend class VectorCross;

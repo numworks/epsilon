@@ -173,7 +173,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
- * Left  \ Right | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Unit |   Default
+ * Left  \ Right | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | OUnit |   Default
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
  * Decimal       |    ×    |    ×    |     ø     |      ×      |       ×       |  ×   |    ×    |    ×     |  ø   |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
@@ -193,7 +193,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
  * Default       |    •    |    •    |     •     |      •      |       •       |  •   |    •    |    •     |  ø   |      •
  *
- * Two Units are separated by a •, Unit on the left is treated according to its type
+ * Two Units are separated by a •, OUnit on the left is treated according to its type
  * */
 // clang-format on
 
@@ -276,17 +276,17 @@ CodePoint MultiplicationNode::CodePointForOperatorSymbol(
 
 static bool ExpressionIsUnit(OExpression e, bool *shouldLockMargin = nullptr) {
   OExpression unitExpression;
-  if (e.type() == ExpressionNode::Type::Unit) {
+  if (e.type() == ExpressionNode::Type::OUnit) {
     unitExpression = e;
   } else if (e.type() == ExpressionNode::Type::Power &&
-             e.childAtIndex(0).type() == ExpressionNode::Type::Unit) {
+             e.childAtIndex(0).type() == ExpressionNode::Type::OUnit) {
     unitExpression = e.childAtIndex(0);
   } else {
     return false;
   }
   if (shouldLockMargin) {
     *shouldLockMargin =
-        Unit::ForceMarginLeftOfUnit(static_cast<Unit &>(unitExpression));
+        OUnit::ForceMarginLeftOfUnit(static_cast<OUnit &>(unitExpression));
   }
   return true;
 }
@@ -447,7 +447,7 @@ static bool CanSimplifyUnitProduct(
     const UnitNode::DimensionVector *entryUnitExponents, int entryUnitExponent,
     int8_t &bestUnitExponent, UnitNode::DimensionVector &bestRemainderExponents,
     size_t &bestRemainderSupportSize) {
-  /* This function tries to simplify a Unit product (given as the
+  /* This function tries to simplify a OUnit product (given as the
    * 'unitsExponents' int array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
@@ -472,14 +472,14 @@ static bool CanSimplifyUnitProduct(
    * can be handled, and a 1/2 step can be used (but it should be asserted that
    * no square root simplification is performed if all exponents are integers.*/
   int step = 1;
-  for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+  for (size_t i = 0; i < OUnit::NumberOfBaseUnits; i++) {
     // Set simplifiedExponents to unitsExponents
     simplifiedExponents.setCoefficientAtIndex(i, unitsExponents.coefficientAtIndex(i));
   }
   do {
     best_norm = norm_temp;
     n+= step;
-    for (size_t i = 0; i < Unit::NumberOfBaseUnits; i++) {
+    for (size_t i = 0; i < OUnit::NumberOfBaseUnits; i++) {
       // Simplify unitsExponents with base units from derived unit
       simplifiedExponents.setCoefficientAtIndex(i, simplifiedExponents.coefficientAtIndex(i) - entryUnitExponent * step * entryUnitExponents->coefficientAtIndex(i));
     }
@@ -569,8 +569,8 @@ OExpression Multiplication::shallowBeautify(
         // Pure angle unit is the only unit allowed to be evaluated exactly
         double value = self.approximateToScalar<double>(approximationContext);
         OExpression toUnit = units.clone();
-        Unit::ChooseBestRepresentativeAndPrefixForValue(toUnit, &value,
-                                                        reductionContext);
+        OUnit::ChooseBestRepresentativeAndPrefixForValue(toUnit, &value,
+                                                         reductionContext);
         // Divide the left member by the new unit
         OExpression division = Division::Builder(
             Multiplication::Builder(self.clone(), units), toUnit.clone());
@@ -641,7 +641,7 @@ OExpression Multiplication::shallowBeautify(
           break;
         }
         // Build and add the best derived unit
-        OExpression derivedUnit = Unit::Builder(
+        OExpression derivedUnit = OUnit::Builder(
             bestDim->representativesOfSameDimension(), bestDim->basePrefix());
 
 #if 0
@@ -686,7 +686,7 @@ OExpression Multiplication::shallowBeautify(
      * Choose a unit multiple adequate for the numerical value.
      * An exhaustive exploration of all possible multiples would have
      * exponential complexity with respect to the number of factors. Instead,
-     * we focus on one single factor. The first Unit factor is certainly the
+     * we focus on one single factor. The first OUnit factor is certainly the
      * most relevant.
      */
 
@@ -711,13 +711,13 @@ OExpression Multiplication::shallowBeautify(
            * a system appropriate one in Step 2b. */
           repr = UnitNode::VolumeRepresentative::Default()
                      .representativesOfSameDimension();
-          units = Unit::Builder(repr, UnitNode::Prefix::EmptyPrefix());
+          units = OUnit::Builder(repr, UnitNode::Prefix::EmptyPrefix());
           value /= repr->ratio();
-          Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
-                                                          reductionContext);
+          OUnit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
+                                                           reductionContext);
         } else {
-          Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
-                                                          reductionContext);
+          OUnit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
+                                                           reductionContext);
         }
       }
       // Build final OExpression
@@ -814,7 +814,7 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
   }
   /* Before merging with multiplication children, we must catch a forbidden
    * case of unit reduction. */
-  if (hasUnit() && Unit::IsForbiddenTemperatureProduct(*this)) {
+  if (hasUnit() && OUnit::IsForbiddenTemperatureProduct(*this)) {
     return replaceWithUndefinedInPlace();
   }
 

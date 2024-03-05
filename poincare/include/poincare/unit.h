@@ -24,22 +24,22 @@ namespace Poincare {
  * FIXME ?
  * The UnitNode class holds as members pointers to a Representative and a
  * Prefix. Those nested classes may not be forward
- * declared and must be defined in UnitNode and then aliased in Unit so as
+ * declared and must be defined in UnitNode and then aliased in OUnit so as
  * to be used outside. That technical limitation could have been avoided if
- * UnitNode were itself a nested class of Unit, say Unit::Node. More
+ * UnitNode were itself a nested class of OUnit, say OUnit::Node. More
  * generally, turning all the Poincare::...Node classes into nested
  * Poincare::...::Node classes might be a more clever usage of namespaces
  * and scopes.
  */
 
-class Unit;
+class OUnit;
 
 class UnitNode final : public ExpressionNode {
  public:
   constexpr static int k_numberOfBaseUnits = 8;
 
   class Prefix {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static int k_numberOfPrefixes = 13;
@@ -109,7 +109,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     enum class Prefixable {
@@ -217,7 +217,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class TimeRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static TimeRepresentative Default() {
@@ -252,7 +252,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class DistanceRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static DistanceRepresentative Default() {
@@ -290,7 +290,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class AngleRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static AngleRepresentative Default() {
@@ -334,7 +334,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class MassRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static MassRepresentative Default() {
@@ -373,7 +373,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class CurrentRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static CurrentRepresentative Default() {
@@ -401,7 +401,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class TemperatureRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     static double ConvertTemperatures(double value,
@@ -446,7 +446,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class AmountOfSubstanceRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static AmountOfSubstanceRepresentative Default() {
@@ -474,7 +474,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class LuminousIntensityRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static LuminousIntensityRepresentative Default() {
@@ -502,7 +502,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class FrequencyRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static FrequencyRepresentative Default() {
@@ -527,7 +527,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class ForceRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static ForceRepresentative Default() {
@@ -552,7 +552,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class PressureRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static PressureRepresentative Default() {
@@ -577,7 +577,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class EnergyRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static EnergyRepresentative Default() {
@@ -609,7 +609,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class PowerRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static PowerRepresentative Default() {
@@ -634,7 +634,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class ElectricChargeRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     using Representative::Representative;
@@ -657,7 +657,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class ElectricPotentialRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static ElectricPotentialRepresentative Default() {
@@ -682,7 +682,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class ElectricCapacitanceRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static ElectricCapacitanceRepresentative Default() {
@@ -707,7 +707,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class ElectricResistanceRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static ElectricResistanceRepresentative Default() {
@@ -732,7 +732,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class ElectricConductanceRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static ElectricConductanceRepresentative Default() {
@@ -757,7 +757,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class MagneticFluxRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static MagneticFluxRepresentative Default() {
@@ -782,7 +782,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class MagneticFieldRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static MagneticFieldRepresentative Default() {
@@ -807,7 +807,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class InductanceRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static InductanceRepresentative Default() {
@@ -832,7 +832,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class CatalyticActivityRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static CatalyticActivityRepresentative Default() {
@@ -857,7 +857,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class SurfaceRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static SurfaceRepresentative Default() {
@@ -892,7 +892,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class VolumeRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static VolumeRepresentative Default() {
@@ -927,7 +927,7 @@ class UnitNode final : public ExpressionNode {
   };
 
   class SpeedRepresentative : public Representative {
-    friend class Unit;
+    friend class OUnit;
 
    public:
     constexpr static SpeedRepresentative Default() {
@@ -968,7 +968,7 @@ class UnitNode final : public ExpressionNode {
   size_t size() const override { return sizeof(UnitNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream& stream) const override { stream << "Unit"; }
+  void logNodeName(std::ostream& stream) const override { stream << "OUnit"; }
   void logAttributes(std::ostream& stream) const override {
     stream << " prefix=\"" << m_prefix->symbol() << "\"";
     stream << " rootSymbol=\"" << m_representative->rootSymbols().mainAlias()
@@ -977,7 +977,7 @@ class UnitNode final : public ExpressionNode {
 #endif
 
   // OExpression Properties
-  Type type() const override { return Type::Unit; }
+  Type type() const override { return Type::OUnit; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }
@@ -1038,16 +1038,16 @@ class UnitNode final : public ExpressionNode {
 #define STR(x) #x
 #define DEFINE_TWICE(x) STR(x), x
 
-class Unit : public OExpression {
+class OUnit : public OExpression {
   friend class UnitNode;
 
  public:
   /* Prefixes and Representativees defined below must be defined only once and
    * all units must be constructed from their pointers. This way we can easily
-   * check if two Unit objects are equal by comparing pointers. This saves us
+   * check if two OUnit objects are equal by comparing pointers. This saves us
    * from overloading the == operator on Prefix and Representative and saves
    * time at execution. As such, their constructor are private and can only be
-   * accessed by their friend class Unit. */
+   * accessed by their friend class OUnit. */
   typedef UnitNode::Prefix Prefix;
   constexpr static const Prefix k_prefixes[Prefix::k_numberOfPrefixes] = {
       Prefix("p", -12), Prefix("n", -9), Prefix("μ", -6), Prefix("m", -3),
@@ -1458,9 +1458,9 @@ class Unit : public OExpression {
           "gal"),
       "Index for the Gallon Representative is incorrect.");
 
-  Unit(const UnitNode* node) : OExpression(node) {}
-  static Unit Builder(const Representative* representative,
-                      const Prefix* prefix = Prefix::EmptyPrefix());
+  OUnit(const UnitNode* node) : OExpression(node) {}
+  static OUnit Builder(const Representative* representative,
+                       const Prefix* prefix = Prefix::EmptyPrefix());
   static bool CanParse(const char* symbol, size_t length,
                        const Representative** representative,
                        const Prefix** prefix);
@@ -1473,10 +1473,10 @@ class Unit : public OExpression {
                                       OExpression* dest, int availableLength,
                                       const ReductionContext& reductionContext,
                                       const OExpression exactOutput);
-  static OExpression BuildSplit(double value, const Unit* units, int length,
+  static OExpression BuildSplit(double value, const OUnit* units, int length,
                                 const ReductionContext& reductionContext);
   static OExpression ConvertTemperatureUnits(
-      OExpression e, Unit unit, const ReductionContext& reductionContext);
+      OExpression e, OUnit unit, const ReductionContext& reductionContext);
   static bool IsForbiddenTemperatureProduct(OExpression e);
 
   // These must be sorted in order, from smallest to biggest
@@ -1633,7 +1633,7 @@ class Unit : public OExpression {
                     k_representativesWithoutLeftMargin[4]->m_rootSymbols, "°F"),
                 "Wrong unit without margin");
 
-  static bool ForceMarginLeftOfUnit(const Unit& unit);
+  static bool ForceMarginLeftOfUnit(const OUnit& unit);
 
   // Simplification
   OExpression shallowReduce(ReductionContext reductionContext);

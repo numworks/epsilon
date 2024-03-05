@@ -126,9 +126,9 @@ QUIZ_CASE(poincare_properties_is_number_zero) {
               TrinaryBoolean::False);
   quiz_assert(SignFunction::Builder(Rational::Builder(0)).isNull(&context) ==
               TrinaryBoolean::True);
-  quiz_assert(
-      Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix())
-          .isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(OUnit::Builder(OUnit::k_powerRepresentatives,
+                             OUnit::Prefix::EmptyPrefix())
+                  .isNull(&context) == TrinaryBoolean::False);
   quiz_assert(Division::Builder(Rational::Builder(0), Rational::Builder(3, 7))
                   .isNull(&context) == TrinaryBoolean::True);
   quiz_assert(Power::Builder(Rational::Builder(0), Rational::Builder(3, 7))
@@ -403,9 +403,9 @@ QUIZ_CASE(poincare_properties_expression_sign) {
   quiz_assert(
       SignFunction::Builder(Rational::Builder(-7)).isPositive(&context) ==
       TrinaryBoolean::False);
-  quiz_assert(
-      Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix())
-          .isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(OUnit::Builder(OUnit::k_powerRepresentatives,
+                             OUnit::Prefix::EmptyPrefix())
+                  .isPositive(&context) == TrinaryBoolean::True);
   quiz_assert(
       VectorNorm::Builder(BasedInteger::Builder(1)).isPositive(&context) ==
       TrinaryBoolean::True);
@@ -502,9 +502,9 @@ QUIZ_CASE(poincare_properties_set_sign_positive) {
       DivisionQuotient::Builder(Rational::Builder(-23), Rational::Builder(12)),
       TrinaryBoolean::True);
   assert_sign_sets_to(
-      Unit::Builder(
-          &Unit::k_massRepresentatives[Unit::k_poundRepresentativeIndex],
-          &Unit::k_prefixes[Unit::k_emptyPrefixIndex]),
+      OUnit::Builder(
+          &OUnit::k_massRepresentatives[OUnit::k_poundRepresentativeIndex],
+          &OUnit::k_prefixes[OUnit::k_emptyPrefixIndex]),
       TrinaryBoolean::True);
   assert_sign_sets_to(
       Multiplication::Builder(Rational::Builder(-3, 5), Rational::Builder(2),
@@ -975,11 +975,11 @@ void assert_additional_results_compute_to(
                       .cloneAndReduceAndRemoveUnit(reductionContext, &units);
   double value = e.approximateToScalar<double>(approximationContext);
 
-  if (!Unit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {
+  if (!OUnit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {
     quiz_assert(length == 0);
     return;
   }
-  const int numberOfResults = Unit::SetAdditionalExpressions(
+  const int numberOfResults = OUnit::SetAdditionalExpressions(
       units, value, additional, maxNumberOfResults, reductionContext,
       OExpression());
 

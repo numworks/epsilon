@@ -910,7 +910,7 @@ bool OExpression::hasUnit(bool ignoreAngleUnits, bool *hasAngleUnits,
         if (isAngleUnit && hasAngleUnits) {
           *hasAngleUnits = true;
         }
-        return (e.type() == ExpressionNode::Type::Unit &&
+        return (e.type() == ExpressionNode::Type::OUnit &&
                 (!pack->ignoreAngleUnits || !isAngleUnit)) ||
                e.type() == ExpressionNode::Type::ConstantPhysics;
       },
@@ -922,9 +922,9 @@ bool OExpression::hasUnit(bool ignoreAngleUnits, bool *hasAngleUnits,
 }
 
 bool OExpression::isPureAngleUnit() const {
-  return !isUninitialized() && type() == ExpressionNode::Type::Unit &&
-         convert<Unit>().representative()->dimensionVector() ==
-             Unit::AngleRepresentative::Default().dimensionVector();
+  return !isUninitialized() && type() == ExpressionNode::Type::OUnit &&
+         convert<OUnit>().representative()->dimensionVector() ==
+             OUnit::AngleRepresentative::Default().dimensionVector();
 }
 
 bool OExpression::isInRadians(Context *context) const {
@@ -934,9 +934,9 @@ bool OExpression::isInRadians(Context *context) const {
   reductionContext.setUnitConversion(UnitConversion::None);
   OExpression thisClone = cloneAndReduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() &&
-         units.type() == ExpressionNode::Type::Unit &&
-         units.convert<Unit>().representative() ==
-             &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
+         units.type() == ExpressionNode::Type::OUnit &&
+         units.convert<OUnit>().representative() ==
+             &OUnit::k_angleRepresentatives[OUnit::k_radianRepresentativeIndex];
 }
 
 /* Complex */
@@ -999,7 +999,7 @@ bool OExpression::isReal(Context *context, bool canContainMatrices) const {
           ExpressionNode::Type::RealPart,
           ExpressionNode::Type::Round,
           ExpressionNode::Type::SignFunction,
-          ExpressionNode::Type::Unit,
+          ExpressionNode::Type::OUnit,
       })) {
     return !deepIsMatrix(context, canContainMatrices) && !deepIsList(context);
   }
@@ -1577,7 +1577,7 @@ OExpression OExpression::approximate(
 template <typename U>
 OExpression OExpression::approximateKeepingUnits(
     const ReductionContext &reductionContext) const {
-  // Unit need to be extracted before approximating.
+  // OUnit need to be extracted before approximating.
   OExpression units;
   OExpression expressionWithoutUnits = *this;
   if (hasUnit()) {

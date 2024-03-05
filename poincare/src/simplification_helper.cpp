@@ -123,7 +123,7 @@ OExpression SimplificationHelper::shallowReduceUndefined(OExpression e) {
 }
 
 OExpression SimplificationHelper::shallowReduceBanningUnits(OExpression e) {
-  // Generically, an OExpression does not accept any Unit in its children.
+  // Generically, an OExpression does not accept any OUnit in its children.
   if (e.hasUnit()) {
     return e.replaceWithUndefinedInPlace();
   }

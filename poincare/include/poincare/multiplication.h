@@ -157,7 +157,7 @@ class Multiplication : public NAryExpression {
                            const ReductionContext& reductionContext) const;
 
  private:
-  // Unit
+  // OUnit
   OExpression removeUnit(OExpression* unit);
 
   // Simplification

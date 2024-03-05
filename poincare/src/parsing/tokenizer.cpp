@@ -221,10 +221,10 @@ Token Tokenizer::popToken() {
         ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
       /* If currently popping an implicit addition, we have already
        * checked that any identifier is a unit. */
-      Token result(Token::Type::Unit);
+      Token result(Token::Type::OUnit);
       result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) +
                                   popWhile(IsNonDigitalIdentifierMaterial));
-      assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
+      assert(OUnit::CanParse(result.text(), result.length(), nullptr, nullptr));
       return result;
     }
     // Decoder is one CodePoint ahead of the beginning of the identifier string
@@ -464,8 +464,8 @@ Token::Type Tokenizer::stringTokenType(const char* string,
     return logicalOperatorType;
   }
   if (string[0] == '_') {
-    if (Unit::CanParse(string, *length, nullptr, nullptr)) {
-      return Token::Type::Unit;
+    if (OUnit::CanParse(string, *length, nullptr, nullptr)) {
+      return Token::Type::OUnit;
     }
     // Only constants and units can be prefixed with a '_'
     return Token::Type::Undefined;
@@ -478,7 +478,7 @@ Token::Type Tokenizer::stringTokenType(const char* string,
      * We handle this now so that min is never understood as a CustomIdentifier
      * (3->min is not allowed, just like 3->cos) */
     return *(string + *length) == '(' ? Token::Type::ReservedFunction
-                                      : Token::Type::Unit;
+                                      : Token::Type::OUnit;
   }
   if (ParsingHelper::GetReservedFunction(string, *length) != nullptr) {
     return Token::Type::ReservedFunction;
@@ -487,8 +487,8 @@ Token::Type Tokenizer::stringTokenType(const char* string,
    * be understood as the unit and not the variable. */
   if (m_parsingContext->parsingMethod() ==
           ParsingContext::ParsingMethod::UnitConversion &&
-      Unit::CanParse(string, *length, nullptr, nullptr)) {
-    return Token::Type::Unit;
+      OUnit::CanParse(string, *length, nullptr, nullptr)) {
+    return Token::Type::OUnit;
   }
   bool hasUnitOnlyCodePoint =
       UTF8Helper::HasCodePoint(string, UCodePointDegreeSign,
@@ -511,8 +511,8 @@ Token::Type Tokenizer::stringTokenType(const char* string,
           ParsingContext::ParsingMethod::UnitConversion &&
       m_parsingContext->context() &&
       m_parsingContext->context()->canRemoveUnderscoreToUnits() &&
-      Unit::CanParse(string, *length, nullptr, nullptr)) {
-    return Token::Type::Unit;
+      OUnit::CanParse(string, *length, nullptr, nullptr)) {
+    return Token::Type::OUnit;
   }
   // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
   Token::Type type;
@@ -537,7 +537,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   assert(c.isDecimalDigit() || c == '.');
   bool isImplicitAddition = false;
   size_t length = 0;
-  const Unit::Representative* storedUnitRepresentative = nullptr;
+  const OUnit::Representative* storedUnitRepresentative = nullptr;
   while (true) {
     /* Check if the string is of the form:
      * decimalNumber-unit-decimalNumber-unit...
@@ -566,18 +566,18 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfPotentialUnit;
-    const Unit::Representative* unitRepresentative;
-    const Unit::Prefix* unitPrefix;
-    if (!Unit::CanParse(currentStringStart, lengthOfPotentialUnit,
-                        &unitRepresentative, &unitPrefix)) {
+    const OUnit::Representative* unitRepresentative;
+    const OUnit::Prefix* unitPrefix;
+    if (!OUnit::CanParse(currentStringStart, lengthOfPotentialUnit,
+                         &unitRepresentative, &unitPrefix)) {
       // Second element is not a unit: the string is not an implicit addition
       isImplicitAddition = false;
       break;
     }
     if (storedUnitRepresentative != nullptr) {
       // Warning: The order of AllowImplicitAddition arguments matter
-      if (Unit::AllowImplicitAddition(unitRepresentative,
-                                      storedUnitRepresentative)) {
+      if (OUnit::AllowImplicitAddition(unitRepresentative,
+                                       storedUnitRepresentative)) {
         // There is at least 2 units allowing for implicit addition
         isImplicitAddition = true;
       } else {

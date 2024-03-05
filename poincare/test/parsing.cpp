@@ -33,7 +33,7 @@ void assert_tokenizes_as_number(const char* string) {
 }
 
 void assert_tokenizes_as_unit(const char* string) {
-  const Token::Type types[] = {Token::Type::Unit, Token::Type::EndOfStream};
+  const Token::Type types[] = {Token::Type::OUnit, Token::Type::EndOfStream};
   assert_tokenizes_as(types, string);
 }
 
@@ -546,41 +546,41 @@ QUIZ_CASE_DISABLED(poincare_parsing_units) {
   // Units
 #if O
   Shared::GlobalContext context;
-  for (int i = 0; i < Unit::Representative::k_numberOfDimensions; i++) {
-    const Unit::Representative* dim =
-        Unit::Representative::DefaultRepresentatives()[i];
+  for (int i = 0; i < OUnit::Representative::k_numberOfDimensions; i++) {
+    const OUnit::Representative* dim =
+        OUnit::Representative::DefaultRepresentatives()[i];
     for (int j = 0; j < dim->numberOfRepresentatives(); j++) {
-      const Unit::Representative* rep =
+      const OUnit::Representative* rep =
           dim->representativesOfSameDimension() + j;
       constexpr static size_t bufferSize = 10;
       char buffer[bufferSize];
-      Unit::Builder(rep, Unit::Prefix::EmptyPrefix())
+      OUnit::Builder(rep, OUnit::Prefix::EmptyPrefix())
           .serialize(buffer, bufferSize, DecimalMode,
                      Preferences::VeryShortNumberOfSignificantDigits);
       OExpression unit = parse_expression(buffer, nullptr, false);
-      quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit,
-                                   "Should be parsed as a Unit");
+      quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::OUnit,
+                                   "Should be parsed as a OUnit");
       // Try without '_'. This need a context or everything without '_' is
       // understood as variable.
       unit = parse_expression(buffer + 1, &context, false);
-      quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit,
-                                   "Should be parsed as a Unit");
+      quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::OUnit,
+                                   "Should be parsed as a OUnit");
       if (rep->isInputPrefixable()) {
-        for (size_t i = 0; i < Unit::Prefix::k_numberOfPrefixes; i++) {
-          const Unit::Prefix* pre = Unit::Prefix::Prefixes();
-          Unit::Builder(rep, pre).serialize(
+        for (size_t i = 0; i < OUnit::Prefix::k_numberOfPrefixes; i++) {
+          const OUnit::Prefix* pre = OUnit::Prefix::Prefixes();
+          OUnit::Builder(rep, pre).serialize(
               buffer, bufferSize, DecimalMode,
               Preferences::VeryShortNumberOfSignificantDigits);
           OExpression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(
-              unit.type() == ExpressionNode::Type::Unit,
-              "Should be parsed as a Unit");
+              unit.type() == ExpressionNode::Type::OUnit,
+              "Should be parsed as a OUnit");
           // Try without '_'. This need a context or everything without '_' is
           // understood as variable.
           unit = parse_expression(buffer, &context, false);
           quiz_assert_print_if_failure(
-              unit.type() == ExpressionNode::Type::Unit,
-              "Should be parsed as a Unit");
+              unit.type() == ExpressionNode::Type::OUnit,
+              "Should be parsed as a OUnit");
         }
       }
     }
@@ -1097,12 +1097,12 @@ QUIZ_CASE_DISABLED(poincare_parsing_identifiers) {
 }
 
 QUIZ_CASE_DISABLED(poincare_parsing_derivative_apostrophe) {
-  Unit apostropheUnit = Unit::Builder(
-      Unit::k_angleRepresentatives + Unit::k_arcMinuteRepresentativeIndex,
-      Unit::Prefix::EmptyPrefix());
-  Unit quoteUnit = Unit::Builder(
-      Unit::k_angleRepresentatives + Unit::k_arcSecondRepresentativeIndex,
-      Unit::Prefix::EmptyPrefix());
+  OUnit apostropheUnit = OUnit::Builder(
+      OUnit::k_angleRepresentatives + OUnit::k_arcMinuteRepresentativeIndex,
+      OUnit::Prefix::EmptyPrefix());
+  OUnit quoteUnit = OUnit::Builder(
+      OUnit::k_angleRepresentatives + OUnit::k_arcSecondRepresentativeIndex,
+      OUnit::Prefix::EmptyPrefix());
 
   // Reserved function
   assert_text_not_parsable("cos'(x)");

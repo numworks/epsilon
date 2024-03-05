@@ -203,12 +203,12 @@ OExpression Trigonometry::ShallowReduceDirectFunction(
   e.childAtIndex(0).removeUnit(&unit);
   if (!unit.isUninitialized()) {
     // _unit^-1 and _unit*_unit cannot be valid angle units
-    if (unit.type() != ExpressionNode::Type::Unit) {
+    if (unit.type() != ExpressionNode::Type::OUnit) {
       return e.replaceWithUndefinedInPlace();
     }
-    Unit unitRef = static_cast<Unit&>(unit);
+    OUnit unitRef = static_cast<OUnit&>(unit);
     if (unitRef.representative()->dimensionVector() !=
-        Unit::AngleRepresentative::Default().dimensionVector()) {
+        OUnit::AngleRepresentative::Default().dimensionVector()) {
       return e.replaceWithUndefinedInPlace();
     }
     // The child has been converted to radians, turn it into the current unit
@@ -847,7 +847,7 @@ static OExpression AddAngleUnitToDirectFunctionIfNeeded(
     return e;
   }
 
-  Unit unit = Unit::Builder(
+  OUnit unit = OUnit::Builder(
       UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
           angleUnit));
   if (child.isOfType({ExpressionNode::Type::Addition,

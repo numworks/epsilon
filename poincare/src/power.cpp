@@ -476,7 +476,7 @@ OExpression Power::removeUnit(OExpression *unit) {
   if (!childUnit.isUninitialized()) {
     // Reduced power containing unit are of form "unit^i" with i integer
     assert(child.isRationalOne());
-    assert(childUnit.type() == ExpressionNode::Type::Unit);
+    assert(childUnit.type() == ExpressionNode::Type::OUnit);
     Power p = *this;
     replaceWithInPlace(child);
     p.replaceChildAtIndexInPlace(0, childUnit);
@@ -1268,7 +1268,7 @@ OExpression Power::shallowBeautify(const ReductionContext &reductionContext) {
   // Step 2: Turn a^(1/n) into root(a, n), unless base is a unit
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational &&
       childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne() &&
-      childAtIndex(0).type() != ExpressionNode::Type::Unit) {
+      childAtIndex(0).type() != ExpressionNode::Type::OUnit) {
     Integer index = childAtIndex(1).convert<Rational>().integerDenominator();
     // Special case: a^(1/2) --> sqrt(a)
     if (index.isEqualTo(Integer(2))) {
@@ -1282,9 +1282,9 @@ OExpression Power::shallowBeautify(const ReductionContext &reductionContext) {
     return result;
   }
 
-  // Step 4: Force Float(1) in front of an orphan Power of Unit
+  // Step 4: Force Float(1) in front of an orphan Power of OUnit
   if (parent().isUninitialized() &&
-      childAtIndex(0).type() == ExpressionNode::Type::Unit) {
+      childAtIndex(0).type() == ExpressionNode::Type::OUnit) {
     Multiplication m = Multiplication::Builder(Float<double>::Builder(1.0));
     replaceWithInPlace(m);
     m.addChildAtIndexInPlace(*this, 1, 1);
@@ -1419,7 +1419,7 @@ OExpression Power::ChainedPowerBuilder(OExpression leftSide,
 
 // Simplification
 OExpression Power::denominator(const ReductionContext &reductionContext) const {
-  if (childAtIndex(0).type() == ExpressionNode::Type::Unit ||
+  if (childAtIndex(0).type() == ExpressionNode::Type::OUnit ||
       childAtIndex(1).type() == ExpressionNode::Type::Infinity) {
     // x^-inf can be different from 1/x^inf
     return OExpression();

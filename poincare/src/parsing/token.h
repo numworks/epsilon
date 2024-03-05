@@ -60,7 +60,7 @@ class Token {
     Number,
     BinaryNumber,
     HexadecimalNumber,
-    Unit,
+    OUnit,
     ReservedFunction,
     SpecialIdentifier,
     CustomIdentifier,

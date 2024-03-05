@@ -98,20 +98,20 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
     return false;
   }
   // Step 2: Check if units can be implicitly added
-  const Unit::Representative* storedUnitRepresentative = nullptr;
+  const OUnit::Representative* storedUnitRepresentative = nullptr;
   for (int i = 0; i < nChildrenExpression; i++) {
     OExpression child = childAtIndex(i);
     if (child.type() != Type::Multiplication || child.numberOfChildren() != 2 ||
         !child.childAtIndex(0).isOfType(
             {Type::BasedInteger, Type::Decimal, Type::Double, Type::Float}) ||
-        child.childAtIndex(1).type() != Type::Unit ||
+        child.childAtIndex(1).type() != Type::OUnit ||
         child.childAtIndex(0).isPositive(nullptr) == TrinaryBoolean::False) {
       return false;
     }
-    Unit unitOfChild = child.childAtIndex(1).convert<Unit>();
+    OUnit unitOfChild = child.childAtIndex(1).convert<OUnit>();
     if (storedUnitRepresentative &&
-        !Unit::AllowImplicitAddition(unitOfChild.representative(),
-                                     storedUnitRepresentative)) {
+        !OUnit::AllowImplicitAddition(unitOfChild.representative(),
+                                      storedUnitRepresentative)) {
       return false;
     }
     storedUnitRepresentative = unitOfChild.representative();

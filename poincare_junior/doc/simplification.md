@@ -13,8 +13,7 @@ From a parsed user input expression, the simplification algorithm does:
 8. Bubble up lists, applying systematic reduction
 9. Apply advanced reduction
 10. Approximate again, depending on the strategy
-12. Beautify expression
-13. Beautify variables back to their names
+11. Beautify expression
 
 ## 1 - Dimension check
 
@@ -113,7 +112,24 @@ It's expected to:
 
 ## 5 - User symbols
 
-TO COMPLETE
+We list all global user symbols, sorted in the alphabetical order.
+
+All symbols (global and local) are then projected to an id, based on if they are global or local, and how nested they are in the local contexts, using Bruijn indices.
+
+For example, under the expression are the projected id of the user symbols. Some of the local user symbols are preserved for beautification (since we don't list them with the global user-symbols).
+
+This step converts the `UserVariable` trees (containing the variable name) into a `Variable` (containing the id only).
+
+```
+a+b+diff(a+c+x+sum(k+a+x, k, 1, b), x, b)+a
+0 1      1 3 0     0 2 1  k  1  2   x  1  0
+```
+
+In other words, within a parametered expression, `0` is the local context.
+
+When nested inside a parametered expression, all indexes are incremented.
+
+This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope`.
 
 ## 6 - Systematic reduction
 
@@ -400,3 +416,37 @@ graph TD;
 ```
 
 </details>
+
+## 10 - Final approximation
+
+With an approximation strategy, we approximate again here in case previous steps unlocked new possible approximations.
+
+## 11 - Beautification
+
+This step basically undo early steps and projections in the following order :
+
+### Restore complex format
+
+Unimplemented yet.
+
+### Restore angle unit
+
+All angle-dependant functions have been projected to radians in projection.
+
+They are restored to the initial angle unit.
+
+An advanced reduction may be called again at after that because the created angle factors may be advanced reduced again. We can do this because, at this step, the expression is  still mostly projected.
+
+### Beautify
+
+This step undo the projection by re-introducing nodes unhandled by simplification (For example, `Division`, `Log`, `Power` with non-integer indexes...).
+
+`Addition`, `Multiplication`, `GCD` and `LCM` are also sorted differently.
+
+### Restore Unit
+
+The unit removed on projection is restored to the best prefix and representative.
+
+### Restore Variable names
+
+User variables, as well as nested local variables are restored to their original names.

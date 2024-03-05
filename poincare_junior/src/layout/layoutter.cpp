@@ -435,6 +435,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       layoutText(layoutParent,
                  Builtin::SpecialIdentifierName(type).mainAlias());
       break;
+    case BlockType::Empty:
+      break;
     case BlockType::Matrix:
       layoutMatrix(layoutParent, expression);
       break;

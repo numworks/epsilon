@@ -202,8 +202,12 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
     InsertCodePointAt(layoutParent, '0' + digit, firstInsertedIndex);
     if (--decimalOffset == 0) {
       InsertCodePointAt(layoutParent, '.', firstInsertedIndex);
+      if (value->isZero()) {
+        // TODO insert 0 before . if nothing else is to come
+        InsertCodePointAt(layoutParent, '0', firstInsertedIndex);
+      }
     }
-  } while (!value->isZero() && decimalOffset <= 0);
+  } while (!(value->isZero() && decimalOffset <= 0));
   value->removeTree();
 }
 
@@ -393,6 +397,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
                            Rational::Numerator(expression->nextNode()),
                            Decimal::DecimalOffset(expression));
       expression->nextNode()->removeTree();
+      break;
     case BlockType::Pi:
       PushCodePoint(layoutParent, u'π');
       break;

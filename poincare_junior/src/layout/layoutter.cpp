@@ -258,7 +258,10 @@ void Layoutter::layoutMatrix(EditionReference &layoutParent, Tree *expression) {
 }
 
 void Layoutter::layoutUnit(EditionReference &layoutParent, Tree *expression) {
-  PushCodePoint(layoutParent, '_');
+  // TODO PCJ ask the context whether to add an underscore
+  if (m_linearMode) {
+    PushCodePoint(layoutParent, '_');
+  }
   layoutText(layoutParent, Units::Unit::GetPrefix(expression)->symbol());
   layoutText(layoutParent,
              Units::Unit::GetRepresentative(expression)->rootSymbols());

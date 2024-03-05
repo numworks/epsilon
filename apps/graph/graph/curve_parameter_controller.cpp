@@ -22,13 +22,13 @@ CurveParameterController::CurveParameterController(
     GraphController *graphController,
     FunctionParameterController *functionParameterController,
     DerivativeColumnParameterController *derivativeColumnParameterController)
-    : ExplicitFloatParameterController(parentResponder()),
+    : ExplicitFloatParameterController(nullptr),
       m_graphRange(graphRange),
       m_cursor(cursor),
       m_preimageGraphController(nullptr, graphView, bannerView, graphRange,
                                 cursor),
-      m_calculationParameterController(this, graphView, bannerView, graphRange,
-                                       cursor),
+      m_calculationParameterController(nullptr, graphView, bannerView,
+                                       graphRange, cursor),
       m_functionParameterController(functionParameterController),
       m_derivativeColumnParameterController(
           derivativeColumnParameterController),

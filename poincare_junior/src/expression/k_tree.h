@@ -59,6 +59,7 @@ constexpr auto KArCosh = KUnary<BlockType::HyperbolicArcCosine>();
 constexpr auto KArSinh = KUnary<BlockType::HyperbolicArcSine>();
 constexpr auto KArTanh = KUnary<BlockType::HyperbolicArcTangent>();
 constexpr auto KPercentSimple = KUnary<BlockType::PercentSimple>();
+constexpr auto KParenthesis = KUnary<BlockType::Parenthesis>();
 
 constexpr auto KATrig = KBinary<BlockType::ATrig>();
 constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();

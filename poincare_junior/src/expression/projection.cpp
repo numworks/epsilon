@@ -22,9 +22,19 @@ ProjectionContext Projection::ContextFromSettings() {
   };
 }
 
+bool Projection::RemoveParentheses(Tree* ref) {
+  return Tree::ApplyShallowInDepth(
+      ref,
+      [](Tree* ref, void*) {
+        return PatternMatching::MatchAndReplace(ref, KParenthesis(KA), KA);
+      },
+      nullptr);
+}
+
 bool Projection::DeepSystemProject(Tree* ref,
                                    ProjectionContext projectionContext) {
   bool changed = false;
+  changed = RemoveParentheses(ref);
   if (projectionContext.m_strategy != Strategy::Default) {
     assert((projectionContext.m_strategy == Strategy::ApproximateToFloat ||
             projectionContext.m_strategy == Strategy::NumbersToFloat));

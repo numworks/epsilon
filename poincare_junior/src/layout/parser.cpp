@@ -42,6 +42,8 @@ BlockType ExpressionType(LayoutType type) {
       return BlockType::SquareRoot;
     case LayoutType::NthRoot:
       return BlockType::NthRoot;
+    case LayoutType::Parenthesis:
+      return BlockType::Parenthesis;
     default:
       assert(false);
   }
@@ -51,8 +53,8 @@ Tree* Parser::Parse(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Rack:
       return RackParser(node).parse();
-    case LayoutType::Parenthesis:
-      return Parse(node->child(0));
+    // case LayoutType::Parenthesis:
+    // return Parse(node->child(0));
     case LayoutType::VerticalOffset:
     case LayoutType::CodePoint:
     case LayoutType::CombinedCodePoints:

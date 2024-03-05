@@ -48,7 +48,7 @@ bool is_parsable(const Tree* layout) {
 
 QUIZ_CASE(pcj_layout_parse) {
   assert_trees_are_equal(RackParser("2^(3+1)^4"_l).parse(),
-                         KPow(2_e, KPow(KAdd(3_e, 1_e), 4_e)));
+                         KPow(2_e, KPow(KParenthesis(KAdd(3_e, 1_e)), 4_e)));
   quiz_assert(is_parsable("12(123 +  0x2a+2*0b0101)"_l));
   // TODO _l with non-ascii codepoints
   quiz_assert(is_parsable(

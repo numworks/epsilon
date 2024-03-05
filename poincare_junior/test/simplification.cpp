@@ -101,6 +101,7 @@ QUIZ_CASE(pcj_simplification_variables) {
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
   EditionReference expected = TextToTree(output);
+  Projection::RemoveParentheses(expected);
   EditionReference expression = TextToTree(input);
   Simplification::Simplify(expression, projectionContext);
   quiz_assert(!expression.isUninitialized());

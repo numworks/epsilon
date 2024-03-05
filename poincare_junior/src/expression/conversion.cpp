@@ -767,7 +767,8 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::EmptyExpression:  // no equivalent
       SharedEditionPool->push(BlockType::Undefined);
       return;
-    case OT::Parenthesis:  // no equivalent
+    case OT::Parenthesis:
+      SharedEditionPool->push(BlockType::Parenthesis);
       return PushPoincareExpression(exp.childAtIndex(0));
     default:
       assert(false);

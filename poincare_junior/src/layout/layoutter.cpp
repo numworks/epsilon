@@ -497,6 +497,10 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       layoutInfixOperator(layoutParent, expression, ',');
       PushCodePoint(layoutParent, type.isPoint() ? ')' : '}');
       break;
+    case BlockType::Parenthesis:
+      layoutExpression(layoutParent, expression->nextNode(),
+                       k_forceParenthesis);
+      break;
     case BlockType::Store:
     case BlockType::UnitConversion:
       layoutInfixOperator(layoutParent, expression, UCodePointRightwardsArrow);

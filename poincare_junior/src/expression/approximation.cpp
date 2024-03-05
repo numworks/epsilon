@@ -322,6 +322,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     return Random::Approximate<T>(node, s_randomContext);
   }
   switch (node->type()) {
+    case BlockType::Parenthesis:  // TODO PCJ remove
+      return ToComplex<T>(node->nextNode());
     case BlockType::ComplexI:
       return std::complex<T>(0, 1);
     case BlockType::Pi:

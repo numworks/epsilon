@@ -268,6 +268,7 @@ NODE(PhysicalConstant, 0, 1)
 NODE(Dependency, 2)
 NODE(Piecewise, NARY)
 NODE(Set, NARY)
+NODE(Parenthesis, 1) // TODO PCJ temporary
 NODE(Nonreal)
 NODE(Undefined)
 

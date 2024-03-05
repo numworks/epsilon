@@ -222,7 +222,10 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
   for (int childIndex = 0; childIndex < childNumber; childIndex++) {
     Tree *child = expression->nextNode();
     if (childIndex > 0) {
-      addSeparator(layoutParent);
+      if (!Units::Unit::IsUnitOrPowerOfUnit(child) ||
+          Units::Unit::ForceMarginLeftOfUnit(child)) {
+        addSeparator(layoutParent);
+      }
       if (op != UCodePointNull && !(op == '+' && child->isOpposite())) {
         PushCodePoint(layoutParent, op);
         addSeparator(layoutParent);

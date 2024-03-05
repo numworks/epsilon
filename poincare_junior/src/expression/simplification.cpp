@@ -808,6 +808,10 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     // Seed random nodes before anything is merged/duplicated.
     changed = Random::SeedTreeNodes(ref) > 0;
     changed = Projection::DeepSystemProject(ref, projectionContext) || changed;
+    /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
+     * because of the ordered structure of the set. When projecting y+x,
+     * variables will be {x, y} and we must have found all user symbols to
+     * properly project y to 1. */
     Tree* variables = Variables::GetUserSymbols(ref);
     SwapTrees(&ref, &variables);
     Variables::ProjectToId(

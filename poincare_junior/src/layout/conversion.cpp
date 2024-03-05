@@ -265,7 +265,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
     case OT::VerticalOffsetLayout: {
       using namespace Poincare;
       VerticalOffsetLayout v = static_cast<VerticalOffsetLayout &>(l);
-      Tree *t = KVertOffL->cloneNode();
+      Tree *t = KSuperscriptL->cloneNode();
       VerticalOffset::SetSuffix(
           t, v.horizontalPosition() ==
                  VerticalOffsetLayoutNode::HorizontalPosition::Suffix);

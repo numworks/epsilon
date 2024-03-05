@@ -394,12 +394,12 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 }
 
 void LayoutBufferCursor::addEmptyExponentialLayout(Context *context) {
-  insertLayout(KRackL("e"_cl, KVertOffL(""_l)), context, false, false);
+  insertLayout(KRackL("e"_cl, KSuperscriptL(""_l)), context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyTenPowerLayout(Context *context) {
   insertLayout(KRackL(KCodePointL<UCodePointMultiplicationSign>(), "1"_cl,
-                      "0"_cl, KVertOffL(""_l)),
+                      "0"_cl, KSuperscriptL(""_l)),
                context, false, false);
 }
 
@@ -412,12 +412,12 @@ void LayoutBufferCursor::addEmptySquareRootLayout(Context *context) {
 }
 
 void LayoutBufferCursor::addEmptyPowerLayout(Context *context) {
-  insertLayout(KVertOffL(""_l), context, false, false);
+  insertLayout(KSuperscriptL(""_l), context, false, false);
 }
 
 void LayoutBufferCursor::addEmptySquarePowerLayout(Context *context) {
   /* Force the cursor right of the layout. */
-  insertLayout(KVertOffL("2"_l), context, true, false);
+  insertLayout(KSuperscriptL("2"_l), context, true, false);
 }
 
 void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(

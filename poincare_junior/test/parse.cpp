@@ -59,7 +59,7 @@ QUIZ_CASE(pcj_layout_parse) {
   quiz_assert(is_parsable("(1+(2+(3+4)))"_l));
   quiz_assert(is_parsable(KRackL(KFracL("2"_l, "3"_l), KParenthesisL("4"_l))));
   quiz_assert(is_parsable(
-      KRackL(KFracL("2"_l, "3"_l), KVertOffL(KFracL("4"_l, "5"_l)))));
+      KRackL(KFracL("2"_l, "3"_l), KSuperscriptL(KFracL("4"_l, "5"_l)))));
 
   quiz_assert(!is_parsable("ln(ln(2"_l));
   quiz_assert(is_parsable("log(2)"_l));

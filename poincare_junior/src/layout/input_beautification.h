@@ -163,7 +163,8 @@ class InputBeautification {
       {/* exp( */
        "exp", 1,
        [](EditionReference* parameters) -> Tree* {
-         EditionReference exp = KRackL("e"_cl, KVertOffL(KRackL()))->clone();
+         EditionReference exp =
+             KRackL("e"_cl, KSuperscriptL(KRackL()))->clone();
          exp->child(1)->child(0)->moveTreeOverTree(parameters[0]);
          return exp;
        }},

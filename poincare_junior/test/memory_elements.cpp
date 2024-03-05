@@ -689,7 +689,7 @@ QUIZ_CASE(pcj_constructor) {
       KRackL("1+"_l,
              KParenthesisL(KRackL(
                  "2*"_l, KParenthesisL(KRackL("1+"_l, KFracL("1"_l, "2"_l))))),
-             KVertOffL("2"_l), "-2"_l),
+             KSuperscriptL("2"_l), "-2"_l),
       {
           TypeBlock(BlockType::RackLayout),
           ValueBlock(4),

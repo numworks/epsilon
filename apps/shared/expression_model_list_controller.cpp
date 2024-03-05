@@ -89,6 +89,7 @@ bool ExpressionModelListController::handleEventOnExpression(
     return false;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    assert(!layoutField()->isEditing());
     if (isAddEmptyRow(selectedRow())) {
       addNewModelAction();
       return true;
@@ -101,6 +102,7 @@ bool ExpressionModelListController::handleEventOnExpression(
     return true;
   }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
+    assert(!layoutField()->isEditing());
     Ion::Storage::Record record = selectedRecord();
     if (removeModelRow(record)) {
       int newSelectedRow =
@@ -114,8 +116,10 @@ bool ExpressionModelListController::handleEventOnExpression(
   size_t eventTextLength =
       Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
                             Ion::Events::EventData::k_maxDataSize);
-  if (eventTextLength > 0 || event == Ion::Events::XNT ||
-      event == Ion::Events::Paste ||
+  // If layout field is editing, then it should have handled "writting events"
+  if ((!layoutField()->isEditing() &&
+       (eventTextLength > 0 || event == Ion::Events::XNT ||
+        event == Ion::Events::Paste)) ||
       (!inTemplateMenu &&
        (event == Ion::Events::Toolbox || event == Ion::Events::Var))) {
     if (inTemplateMenu) {

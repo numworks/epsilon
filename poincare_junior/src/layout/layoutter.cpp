@@ -389,6 +389,17 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
 #endif
       break;
     }
+    case BlockType::Derivative:
+    case BlockType::NthDerivative:
+      if (m_linearMode) {
+        layoutBuiltin(layoutParent, expression);
+      } else {
+        EditionReference layout =
+            (type.isDerivative() ? KDerivativeL : KNthDerivativeL)->cloneNode();
+        layoutChildrenAsRacks(layoutParent, expression);
+        NAry::AddChild(layoutParent, layout);
+      }
+      break;
     case BlockType::Binomial:
     case BlockType::Permute:
       if (m_linearMode ||

@@ -441,10 +441,15 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
                          k_forceParenthesis);
       }
       if (type.isUserSequence()) {
-        // TODO PCJ vertical offset subscript in non linear mode
-        PushCodePoint(layoutParent, '_');
-        layoutExpression(layoutParent, expression->nextNode(),
-                         k_forceParenthesis);
+        if (m_linearMode) {
+          PushCodePoint(layoutParent, '_');
+          layoutExpression(layoutParent, expression->nextNode(),
+                           k_forceParenthesis);
+        } else {
+          EditionReference layout = KSubscriptL->cloneNode();
+          layoutChildrenAsRacks(layoutParent, expression);
+          NAry::AddChild(layoutParent, layout);
+        }
       }
       break;
     }

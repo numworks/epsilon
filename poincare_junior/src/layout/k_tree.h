@@ -16,9 +16,14 @@ constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
 
 constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout, 0>();
-constexpr auto KSuperscriptL = KUnary<BlockType::VerticalOffsetLayout, 0>();
 constexpr auto KDerivativeL = KUnary<BlockType::DerivativeLayout, 0>();
 constexpr auto KNthDerivativeL = KUnary<BlockType::NthDerivativeLayout, 0>();
+
+constexpr auto KSuperscriptL = KUnary<BlockType::VerticalOffsetLayout, 0>();
+constexpr auto KSubscriptL = KUnary<BlockType::VerticalOffsetLayout, 1>();
+constexpr auto KPrefixSuperscriptL =
+    KUnary<BlockType::VerticalOffsetLayout, 2>();
+constexpr auto KPrefixSubscriptL = KUnary<BlockType::VerticalOffsetLayout, 3>();
 
 constexpr auto KEmptyMatrixL =
     KTree<BlockType::MatrixLayout, 2, 2, BlockType::RackLayout, 0, 0,

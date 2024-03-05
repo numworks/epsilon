@@ -568,8 +568,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       SharedEditionPool->push(BlockType::UnitConversion);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
-    case OT::Boolean:
-      SharedEditionPool->push(static_cast<Poincare::Boolean &>(exp).value()
+    case OT::OBoolean:
+      SharedEditionPool->push(static_cast<Poincare::OBoolean &>(exp).value()
                                   ? BlockType::True
                                   : BlockType::False);
       return;
@@ -603,7 +603,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     }
-    case OT::Point:
+    case OT::OPoint:
       SharedEditionPool->push(BlockType::Point);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
@@ -673,11 +673,11 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::Addition:
     case OT::PiecewiseOperator:
     case OT::Multiplication:
-    case OT::List:
+    case OT::OList:
     case OT::Subtraction:
     case OT::Division:
     case OT::Power:
-    case OT::Matrix:
+    case OT::OMatrix:
     case OT::GreatCommonDivisor:
     case OT::LeastCommonMultiple:
       switch (exp.type()) {
@@ -688,7 +688,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           SharedEditionPool->push<BlockType::Multiplication>(
               exp.numberOfChildren());
           break;
-        case OT::List:
+        case OT::OList:
           SharedEditionPool->push<BlockType::List>(exp.numberOfChildren());
           break;
         case OT::PiecewiseOperator:
@@ -739,7 +739,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
         case OT::Power:
           SharedEditionPool->push(BlockType::Power);
           break;
-        case OT::Matrix:
+        case OT::OMatrix:
           SharedEditionPool->push<BlockType::Matrix>(
               static_cast<Poincare::OMatrix &>(exp).numberOfRows(),
               static_cast<Poincare::OMatrix &>(exp).numberOfColumns());

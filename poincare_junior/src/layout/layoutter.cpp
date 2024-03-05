@@ -297,20 +297,17 @@ void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
 }
 
 // Remove expression while converting it to a layout in layoutParent
-void Layoutter::layoutExpression(EditionReference &layoutParentRef,
+void Layoutter::layoutExpression(EditionReference &layoutParent,
                                  Tree *expression, int parentPriority) {
-  assert(layoutParentRef->isRackLayout());
+  assert(layoutParent->isRackLayout());
   TypeBlock type = expression->type();
-
-  EditionReference layoutParent;
 
   // Add Parentheses if necessary
   if (parentPriority < OperatorPriority(type)) {
     EditionReference parenthesis = KParenthesisL(KRackL())->clone();
-    NAry::AddChild(layoutParentRef, parenthesis);
-    layoutParent = parenthesis->child(0);
-  } else {
-    layoutParent = layoutParentRef;
+    NAry::AddChild(layoutParent, parenthesis);
+    EditionReference rack = parenthesis->child(0);
+    return layoutExpression(rack, expression, k_maxPriority);
   }
 
   switch (type) {

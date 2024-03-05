@@ -288,8 +288,8 @@ bool FindXNTSymbol1D(UnicodeDecoder &decoder, char *buffer, size_t bufferSize,
 
 constexpr int k_indexOfParameter = Parametric::k_variableIndex;
 
-static bool findParameteredFunction2D(const Tree *layout, int *functionIndex,
-                                      int *childIndex, const Tree *root,
+static bool findParameteredFunction2D(const Tree *layout, const Tree *root,
+                                      int *functionIndex, int *childIndex,
                                       const Tree **parameterLayout) {
   assert(functionIndex && childIndex && parameterLayout);
   *functionIndex = -1;
@@ -324,10 +324,7 @@ static bool isValidXNTParameter(const Tree *xnt) {
     }
   }
   RackLayoutDecoder decoder(xnt);
-  if (!Tokenizer::CanBeCustomIdentifier(decoder)) {
-    return false;
-  }
-  return true;
+  return Tokenizer::CanBeCustomIdentifier(decoder);
 }
 
 bool FindXNTSymbol2D(const Tree *layout, const Tree *root, char *buffer,
@@ -338,7 +335,7 @@ bool FindXNTSymbol2D(const Tree *layout, const Tree *root, char *buffer,
   const Tree *parameterLayout;
   buffer[0] = 0;
   *cycleSize = 0;
-  if (findParameteredFunction2D(layout, &functionIndex, &childIndex, root,
+  if (findParameteredFunction2D(layout, root, &functionIndex, &childIndex,
                                 &parameterLayout)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     CodePoint xnt = CodePointAtIndexInCycle(

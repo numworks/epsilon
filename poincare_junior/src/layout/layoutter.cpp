@@ -19,6 +19,8 @@
 #include "k_tree.h"
 #include "multiplication_symbol.h"
 
+using Poincare::Preferences;
+
 namespace PoincareJ {
 
 static constexpr int k_forceParenthesis = -2;
@@ -387,6 +389,20 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
 #endif
       break;
     }
+    case BlockType::Binomial:
+    case BlockType::Permute:
+      if (m_linearMode ||
+          Preferences::SharedPreferences()->combinatoricSymbols() ==
+              Preferences::CombinatoricSymbols::Default) {
+        layoutBuiltin(layoutParent, expression);
+      } else {
+        EditionReference layout = SharedEditionPool->push(
+            type.isBinomial() ? BlockType::PtBinomialLayout
+                              : BlockType::PtPermuteLayout);
+        layoutChildrenAsRacks(layoutParent, expression);
+        NAry::AddChild(layoutParent, layout);
+      }
+      break;
     case BlockType::MixedFraction:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));

@@ -69,7 +69,7 @@ class FunctionApp : public MathApp {
     }
     Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
     Escher::ButtonRowController m_graphHeader;
-    Escher::StackViewController::Default m_graphStackViewController;
+    Escher::StackViewController::Custom<5> m_graphStackViewController;
   };
   struct ValuesTab : public Escher::Tab {
     static constexpr I18n::Message k_title = I18n::Message::ValuesTab;

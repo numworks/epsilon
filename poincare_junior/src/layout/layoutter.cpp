@@ -544,14 +544,22 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    // TODO make list and set different
     case BlockType::List:
     case BlockType::Set:
     case BlockType::Point:
-      PushCodePoint(layoutParent, type.isPoint() ? '(' : '{');
-      layoutInfixOperator(layoutParent, expression, ',');
-      PushCodePoint(layoutParent, type.isPoint() ? ')' : '}');
-      break;
+      if (m_linearMode) {
+        PushCodePoint(layoutParent, type.isPoint() ? '(' : '{');
+        layoutInfixOperator(layoutParent, expression, ',');
+        PushCodePoint(layoutParent, type.isPoint() ? ')' : '}');
+        break;
+      } else {
+        EditionReference parenthesis =
+            (type.isList() ? KCurlyBracesL : KParenthesisL)->cloneNode();
+        EditionReference rack = KRackL()->clone();
+        NAry::AddChild(layoutParent, parenthesis);
+        layoutInfixOperator(rack, expression, ',');
+        break;
+      }
     case BlockType::Parenthesis:
       layoutExpression(layoutParent, expression->nextNode(),
                        k_forceParenthesis);

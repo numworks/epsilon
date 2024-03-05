@@ -16,6 +16,7 @@ constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
 
 constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout, 0>();
+constexpr auto KCurlyBracesL = KUnary<BlockType::CurlyBraceLayout, 0>();
 constexpr auto KDerivativeL = KUnary<BlockType::DerivativeLayout, 0>();
 constexpr auto KNthDerivativeL = KUnary<BlockType::NthDerivativeLayout, 0>();
 

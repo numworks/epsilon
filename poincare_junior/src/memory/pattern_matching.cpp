@@ -21,7 +21,8 @@ void PatternMatching::Context::log() const {
   std::cout << "<Context>\n";
   for (int i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     int numberOfTress = m_numberOfTrees[i];
-    std::cout << "  <PlaceHolder tag=" << i << " trees=" << numberOfTress
+    char tagName[2] = {static_cast<char>('A' + i), 0};
+    std::cout << "  <PlaceHolder tag=" << tagName << " trees=" << numberOfTress
               << ">\n";
     const Tree* tree = m_array[i];
     if (tree) {
@@ -30,8 +31,7 @@ void PatternMatching::Context::log() const {
         tree = tree->nextTree();
       }
     } else {
-      // TODO
-      // Tree().log(std::cout, true, true, 2);
+      std::cout << "    <Uninitialized/>\n";
     }
     std::cout << "  </PlaceHolder>\n";
   }
@@ -108,20 +108,8 @@ void PatternMatching::MatchContext::setLocalToParent() {
       m_globalSourceRoot->parentOfDescendant(m_localSourceRoot);
   const Tree* patternParent =
       m_globalPatternRoot->parentOfDescendant(m_localPatternRoot);
-  assert(patternParent);
-  if (!sourceParent || (sourceParent->type() != patternParent->type())) {
-#if ASSERTIONS
-    /* When pattern is "squashed", we simply set m_localPatternRoot to the only
-     * child of the squashed NAry. When setting back to local parent, we must
-     * only restore m_localPatternRoot to it's parent (the squashed NAry). We
-     * ensure here this is the only case when source and pattern are not
-     * synchronized. TODO: Having the actual context would be better since some
-     * AnyTree Placeholders may not be empty. */
-    Context context;
-    assert(ChildToSquashPatternTo(nullptr, patternParent, &context));
-#endif
-    sourceParent = m_localSourceRoot;
-  }
+  assert(patternParent && sourceParent &&
+         (sourceParent->type() == patternParent->type()));
   setLocal(sourceParent, patternParent);
 }
 
@@ -154,42 +142,88 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
   return true;
 }
 
-bool CanBeSquashed(const Tree* pattern) {
-  return pattern->isAddition() || pattern->isMultiplication();
+// Only additions and multiplications can be squashed.
+bool CannotBeSquashed(const Tree* pattern) {
+  return !pattern->isAddition() && !pattern->isMultiplication();
 }
 
-const Tree* PatternMatching::ChildToSquashPatternTo(const Tree* source,
-                                                    const Tree* pattern,
-                                                    Context* context) {
-  assert(CanBeSquashed(pattern));
-  // Use a temporary context to preserve context in case no match is found.
-  Context tempContext = *context;
-  const Tree* result = nullptr;
+bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
+                                                     const Tree* pattern,
+                                                     Context* context) {
+  if (CannotBeSquashed(pattern)) {
+    return false;
+  }
+  // If pattern requires more than 1 child, it can't be squashed.
+  int minimalNumberOfChildren = 0;
+  /* Single tree the pattern can be squashed to (if we need to match it with
+   * source). */
+  const Tree* ChildToCheck = nullptr;
+  // Used to keep track of emptied placeholders.
+  Context emptiedPlaceholders;
+
   for (const Tree* child : pattern->children()) {
-    if (child->isPlaceholder() &&
-        (Placeholder::NodeToFilter(child) == Placeholder::Filter::NoneOrMore)) {
+    if (child->isPlaceholder()) {
       Placeholder::Tag tag = Placeholder::NodeToTag(child);
-      if (!tempContext.getNode(tag)) {
-        tempContext.setNode(tag, source, 0, true);
+      Placeholder::Filter filter = Placeholder::NodeToFilter(child);
+      if (context->getNode(tag)) {
+        if (emptiedPlaceholders.getNode(tag)) {
+          /* If an emptied placeholder is met more than once, unmark it so we
+           * can't set it to one child later. */
+          emptiedPlaceholders.setNode(tag, nullptr, 0, true);
+        }
+        int sourceNodeChildren = context->getNumberOfTrees(tag);
+        minimalNumberOfChildren += sourceNodeChildren;
+        if (sourceNodeChildren > 0) {
+          ChildToCheck = child;
+        }
+      } else if (filter != Placeholder::Filter::NoneOrMore) {
+        minimalNumberOfChildren++;
+        context->setNode(tag, source, 1,
+                         filter == Placeholder::Filter::OneOrMore);
+      } else {
+        // Set unassigned NoneOrMore placeholders to 0 children for now.
+        context->setNode(tag, source, 0, true);
+        emptiedPlaceholders.setNode(tag, source, 1, true);
       }
-      int numberOfTrees = tempContext.getNumberOfTrees(tag);
-      if (numberOfTrees == 0) {
-        continue;
-      } else if (numberOfTrees > 1) {
-        return nullptr;
+    } else {
+      minimalNumberOfChildren++;
+      ChildToCheck = child;
+    }
+    if (minimalNumberOfChildren > 1) {
+      // Too many children, pattern can't be squashed.
+      return false;
+    }
+  }
+  if (minimalNumberOfChildren == 0) {
+    // All pattern children are empty placeholders.
+    assert(!ChildToCheck);
+    // Find a placeholder that have been emptied here, and met only once.
+    /* TODO: An arbitrary tag is being chosen here. Multiple solutions could
+     *       be tried. */
+    Placeholder::Tag emptiedPlaceholderTag = Placeholder::Tag::NumberOfTags;
+    for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
+      if (emptiedPlaceholders.getNode(i)) {
+        emptiedPlaceholderTag = static_cast<Placeholder::Tag>(i);
       }
     }
-    if (result) {
-      return nullptr;
+    if (emptiedPlaceholderTag == Placeholder::Tag::NumberOfTags) {
+      // All placeholders were already empty, pattern can be matched with
+      // addition/multiplication neutral only.
+      return ((pattern->isAddition() && source->isZero()) ||
+              (pattern->isMultiplication() && source->isOne()));
     }
-    result = child;
+    // Update the emptied placeholder to hold the source as single child instead
+    /* TODO: If source is addition/multiplication neutral, leaving the
+     *       placeholder empty could also work. */
+    context->setNode(emptiedPlaceholderTag, source, 1, true);
   }
-  if (!result) {
-    result = pattern;
-  }
-  // Apply temporary context
-  *context = tempContext;
-  return result;
+  /* Since the parent context in source isn't an NAry, we avoid using MatchNodes
+   * with unmatched placeholders. This is why we already matched them (and
+   * updated context). Otherwise, we still need to check that source match the
+   * squashed pattern. */
+  return ChildToCheck ? MatchNodes(source, ChildToCheck, context,
+                                   MatchContext(source, ChildToCheck))
+                      : true;
 }
 
 bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
@@ -260,27 +294,14 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
       source = source->nextNode();
       pattern = pattern->nextNode();
       continue;
-    } else if (CanBeSquashed(pattern)) {
-      // Match x with KA_s*x*KB_s
-      const Tree* patternChild =
-          ChildToSquashPatternTo(source, pattern, context);
-      if (patternChild) {
-        if (pattern != patternChild) {
-          pattern = patternChild;
-          continue;
-        }
-        // With empty KA_s, Match 1 with Mult(KA_s) and 0 with Add(KA_s).
-        // TODO: Try both {} and {1} when Matching 1 with Mult(KA_s).
-        if ((pattern->isAddition() && source->isZero()) ||
-            (pattern->isMultiplication() && source->isOne())) {
-          source = source->nextTree();
-          pattern = pattern->nextTree();
-          continue;
-        }
-      }
     }
-    // Tree* cannot match exactly.
-    return false;
+    // Try to squash the pattern: KMult(KA_p) may match with a single tree.
+    if (!MatchSourceWithSquashedPattern(source, pattern, context)) {
+      // Tree* cannot match exactly.
+      return false;
+    }
+    source = source->nextTree();
+    pattern = pattern->nextTree();
   }
   /* Pattern has been entirely and successfully matched.
    * Return false if source has not been entirely checked. */
@@ -293,20 +314,20 @@ bool CanEarlyEscape(const Tree* pattern, const Tree* source) {
   if (pattern->type() == source->type() || pattern->isPlaceholder()) {
     return false;
   }
-  if (!CanBeSquashed(pattern)) {
+  if (CannotBeSquashed(pattern)) {
     return true;
   }
   // We can still match x wit KA_s*KB
-  bool canHaveNonEmptyChildren = false;
+  int minimalNumberOfChildren = 0;
   for (const Tree* child : pattern->children()) {
     if (child->isPlaceholder() &&
         (Placeholder::NodeToFilter(child) == Placeholder::Filter::NoneOrMore)) {
       continue;
     }
-    if (canHaveNonEmptyChildren) {
+    minimalNumberOfChildren++;
+    if (minimalNumberOfChildren > 1) {
       return true;
     }
-    canHaveNonEmptyChildren = true;
   }
   return false;
 }

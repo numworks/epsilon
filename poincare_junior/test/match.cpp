@@ -163,11 +163,12 @@ QUIZ_CASE(pcj_match_n_ary) {
 
   assert_match_and_create(KAdd(1_e), KAdd(KA_p), KAdd(KA_p), 1_e);
   assert_match_and_create(1_e, KAdd(KA, KB_s), KAdd(KB_s), 0_e);
-#if 0
-  // TODO: These tests fail or crash
-  assert_match_and_create(1_e, KAdd(KA_s), KAdd(KA_s), 1_e);
-  assert_match_and_create(1_e, KAdd(KA_p), KAdd(KA_p), 1_e);
-#endif
+
+  assert_match_and_create(1_e, KAdd(KA_s), KMult(KA_s), 1_e);
+  assert_match_and_create(1_e, KAdd(KA_p), KMult(KA_p), 1_e);
+  assert_no_match(1_e, KAdd(KA_s, KA_s));
+  assert_match_and_create(0_e, KAdd(KA_s, KA_s), KMult(KA_s), 1_e);
+
   assert_no_match(KAdd(1_e, 2_e), KAdd(KA, KB, KC_p));
   assert_no_match(KAdd(1_e, 2_e, 3_e, 4_e), KAdd(KA_s, 3_e, KB, 4_e));
 

@@ -403,6 +403,35 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
         NAry::AddChild(layoutParent, layout);
       }
       break;
+    case BlockType::Logarithm: {
+      if (m_linearMode) {
+        layoutBuiltin(layoutParent, expression);
+        break;
+      }
+      constexpr const char *log =
+          Builtin::GetReservedFunction(BlockType::Logarithm)
+              ->aliases()
+              ->mainAlias();
+      bool nlLog = Preferences::SharedPreferences()->logarithmBasePosition() ==
+                   Preferences::LogarithmBasePosition::TopLeft;
+      if (!nlLog) {
+        layoutText(layoutParent, log);
+      }
+      // Base
+      EditionReference layout =
+          nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();
+      EditionReference newParent = KRackL()->clone();
+      layoutExpression(newParent, expression->nextNode()->nextNode(),
+                       k_maxPriority);
+      NAry::AddChild(layoutParent, layout);
+      if (nlLog) {
+        layoutText(layoutParent, log);
+      }
+      // Value
+      layoutExpression(layoutParent, expression->nextNode(),
+                       k_forceParenthesis);
+      break;
+    }
     case BlockType::MixedFraction:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));

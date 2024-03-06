@@ -131,6 +131,12 @@ class JuniorExpression : public OExpression {
     return static_cast<JuniorExpressionNode*>(OExpression::node());
   }
 
+  void cloneAndSimplifyAndApproximate(
+      JuniorExpression* simplifiedExpression,
+      JuniorExpression* approximateExpression,
+      const ReductionContext& reductionContext,
+      bool approximateKeepingSymbols = false) const;
+
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO PCJ
     assert(false);

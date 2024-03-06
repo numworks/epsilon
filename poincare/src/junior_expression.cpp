@@ -6,6 +6,7 @@
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/sign.h>
+#include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
@@ -182,6 +183,35 @@ ExpressionNode::Type JuniorExpression::type() const {
       assert(false);
       return ExpressionNode::Type::JuniorExpression;
   }
+}
+
+void JuniorExpression::cloneAndSimplifyAndApproximate(
+    JuniorExpression* simplifiedExpression,
+    JuniorExpression* approximateExpression,
+    const ReductionContext& reductionContext,
+    bool approximateKeepingSymbols) const {
+  assert(simplifiedExpression && simplifiedExpression->isUninitialized());
+  assert(!approximateExpression || approximateExpression->isUninitialized());
+
+  // Step 1: we reduce the expression
+  assert(reductionContext.target() == ReductionTarget::User);
+  PoincareJ::ProjectionContext context = {
+      .m_complexFormat =
+          PoincareJ::ComplexFormat(reductionContext.complexFormat()),
+      .m_angleUnit = PoincareJ::AngleUnit(reductionContext.angleUnit()),
+      .m_strategy = approximateKeepingSymbols
+                        ? PoincareJ::Strategy::ApproximateToFloat
+                        : PoincareJ::Strategy::Default,
+      .m_unitFormat = PoincareJ::UnitFormat(reductionContext.unitFormat())};
+  PoincareJ::Tree* e = tree()->clone();
+  PoincareJ::Simplification::Simplify(e, context);
+  if (approximateExpression) {
+    *approximateExpression = JuniorExpression::Builder(
+        PoincareJ::Approximation::RootTreeToTree<double>(
+            e, context.m_angleUnit, context.m_complexFormat));
+  }
+  *simplifiedExpression = JuniorExpression::Builder(e);
+  return;
 }
 
 /* Matrix */

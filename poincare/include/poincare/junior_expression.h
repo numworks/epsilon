@@ -157,6 +157,7 @@ class JuniorExpression : public OExpression {
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr,
       IgnoredSymbols* ignoredSymbols = nullptr) const {
+    assert(false);
     return false;
   }
   typedef bool (*ExpressionTest)(const JuniorExpression e, Context* context);
@@ -164,6 +165,7 @@ class JuniorExpression : public OExpression {
       ExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const {
+    assert(false);
     return false;
   }
   typedef bool (*SimpleExpressionTest)(const JuniorExpression e);
@@ -171,6 +173,7 @@ class JuniorExpression : public OExpression {
       SimpleExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const {
+    assert(false);
     return false;
   }
   typedef bool (*ExpressionTestAuxiliary)(const JuniorExpression e,
@@ -180,6 +183,7 @@ class JuniorExpression : public OExpression {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr) const {
+    assert(false);
     return false;
   }
   // Set of ExpressionTest that can be used with recursivelyMatches
@@ -196,8 +200,12 @@ class JuniorExpression : public OExpression {
                        ExpressionNode::Type::Float,
                        ExpressionNode::Type::Double});
   }
-  static bool IsRandom(const JuniorExpression e) { return false; }
+  static bool IsRandom(const JuniorExpression e) {
+    assert(false);
+    return false;
+  }
   static bool IsMatrix(const JuniorExpression e, Context* context) {
+    assert(false);
     return false;
   }
   static bool IsInfinity(const JuniorExpression e) {
@@ -208,27 +216,33 @@ class JuniorExpression : public OExpression {
                        ExpressionNode::Type::PercentAddition});
   }
   static bool IsDiscontinuous(const JuniorExpression e, Context* context) {
+    assert(false);
     return false;
   }
-  static bool IsSymbolic(const JuniorExpression e) { return false; }
+  static bool IsSymbolic(const JuniorExpression e) {
+    assert(false);
+    return false;
+  }
   static bool IsPoint(const JuniorExpression e) {
-    return e.isUndefined() || e.otype() == ExpressionNode::Type::OPoint;
+    return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
   }
   static bool IsSequence(const JuniorExpression e) {
-    return e.otype() == ExpressionNode::Type::Sequence;
+    return e.type() == ExpressionNode::Type::Sequence;
   }
   static bool IsFactorial(const JuniorExpression e) {
-    return e.otype() == ExpressionNode::Type::Factorial;
+    return e.type() == ExpressionNode::Type::Factorial;
   }
 
   typedef bool (*PatternTest)(const JuniorExpression& e, Context* context,
                               const char* symbol);
   static bool IsRationalFraction(const JuniorExpression& e, Context* context,
                                  const char* symbol) {
+    assert(false);
     return false;
   }
   bool isLinearCombinationOfFunction(Context* context, PatternTest testFunction,
                                      const char* symbol) const {
+    assert(false);
     return false;
   }
 #endif
@@ -270,13 +284,20 @@ class Point final : public JuniorExpression {
 class List final : public JuniorExpression {
  public:
   static List Builder();
-  bool isListOfPoints(Context* context) const { return false; }
+  bool isListOfPoints(Context* context) const {
+    assert(false);
+    return false;
+  }
   template <typename T>
   JuniorExpression approximateAndRemoveUndefAndSort(
       const ApproximationContext& approximationContext) const {
+    assert(false);
     return JuniorExpression();
   }
-  void removeChildAtIndexInPlace(int i) { return; }
+  void removeChildAtIndexInPlace(int i) {
+    assert(false);
+    return;
+  }
   void addChildAtIndexInPlace(JuniorExpression t, int index,
                               int currentNumberOfChildren);
 };
@@ -297,13 +318,15 @@ class Unit final {
   static bool HasAngleDimension(JuniorExpression expression);
   static bool ShouldDisplayAdditionalOutputs(
       double value, OExpression unit, Preferences::UnitFormat unitFormat) {
-    return false;  // TODO_PCJ
+    assert(false);
+    return false;
   }
   static int SetAdditionalExpressions(OExpression units, double value,
                                       OExpression* dest, int availableLength,
                                       const ReductionContext& reductionContext,
                                       const OExpression exactOutput) {
-    return 0;  // TODO_PCJ
+    assert(false);
+    return 0;
   }
 };
 

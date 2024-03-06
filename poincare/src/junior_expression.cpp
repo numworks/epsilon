@@ -177,6 +177,7 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Symbol;
 #endif
     default:
+      assert(false);
       return ExpressionNode::Type::JuniorExpression;
   }
 }

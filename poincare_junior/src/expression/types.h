@@ -134,12 +134,6 @@ NODE(Opposite, 1)
 NODE(PercentSimple, 1)
 NODE(PercentAddition, 2)
 NODE(Permute, 2)
-/* - PointOfInterest PI
- * | PI TAG | ABSCISSA | ORDINATE | DATA | INTEREST | INVERTED | SUBCURVEINDEX |
- */
-NODE(PointOfInterest, 0,
-     sizeof(double) + sizeof(double) + sizeof(uint32_t) + sizeof(uint8_t) +
-         sizeof(bool) + sizeof(uint8_t))
 
 /* - Polynomial P = a1*x^e1 + ... + an*x^en
  *   n = number of terms
@@ -285,6 +279,13 @@ NODE(Store, 2)
 NODE(UnitConversion, 2)
 
 RANGE(Expression, Zero, UnitConversion)
+
+/* - PointOfInterest PI
+ * | PI TAG | ABSCISSA | ORDINATE | DATA | INTEREST | INVERTED | SUBCURVEINDEX |
+ */
+NODE(PointOfInterest, 0,
+     sizeof(double) + sizeof(double) + sizeof(uint32_t) + sizeof(uint8_t) +
+         sizeof(bool) + sizeof(uint8_t))
 
 /* TODO:
  * - Short integers could be coded on n-bytes (with n static) instead of 1-byte.

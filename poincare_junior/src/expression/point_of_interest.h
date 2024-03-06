@@ -5,6 +5,10 @@
 
 namespace PoincareJ {
 
+/* TODO_PCJ: This tree is a bit odd. It would be better if it was handled in the
+ *           apps. Maybe we need a generic, fixed-sized tree that can be
+ *           customized out of PCJ, but used within lists and storage. */
+
 // | PI TAG | ABSCISSA | ORDINATE | DATA | INTEREST | INVERTED | SUBCURVEINDEX |
 class PointOfInterest final {
  public:
@@ -30,16 +34,16 @@ class PointOfInterest final {
   }
 
  private:
-  constexpr static u_int8_t k_abscissaValueIndex = 0;
-  constexpr static u_int8_t k_ordinateValueIndex =
+  constexpr static uint8_t k_abscissaValueIndex = 0;
+  constexpr static uint8_t k_ordinateValueIndex =
       k_abscissaValueIndex + sizeof(double);
-  constexpr static u_int8_t k_dataValueIndex =
+  constexpr static uint8_t k_dataValueIndex =
       k_ordinateValueIndex + sizeof(double);
-  constexpr static u_int8_t k_interestValueIndex =
+  constexpr static uint8_t k_interestValueIndex =
       k_dataValueIndex + sizeof(uint32_t);
-  constexpr static u_int8_t k_invertedValueIndex =
+  constexpr static uint8_t k_invertedValueIndex =
       k_interestValueIndex + sizeof(uint8_t);
-  constexpr static u_int8_t k_subCurveIndexValueIndex =
+  constexpr static uint8_t k_subCurveIndexValueIndex =
       k_invertedValueIndex + sizeof(bool);
 };
 

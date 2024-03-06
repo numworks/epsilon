@@ -212,8 +212,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         return false;
       }
       const Tree* index = t->child(1);
-      // TODO: Handle operations such as _m^(1+1) or _m^(-1*n) or _m^(1/2)
-      return index->isInteger() /*|| index->isDecimal()*/ ||
+      // TODO: Handle operations such as m^(1+1) or m^(-1*n) or m^(1/2) or m^0.5
+      return index->isInteger() ||
              (index->isOpposite() && index->child(0)->isInteger()) ||
              (index->isMultiplication() && index->numberOfChildren() == 2 &&
               index->child(0)->isMinusOne() && index->child(1)->isInteger());

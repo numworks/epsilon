@@ -116,7 +116,7 @@ bool ExpressionModelListController::handleEventOnExpression(
   size_t eventTextLength =
       Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
                             Ion::Events::EventData::k_maxDataSize);
-  // If layout field is editing, then it should have handled "writting events"
+  // If layout field is editing, then it should have handled "writing events"
   if ((!layoutField()->isEditing() &&
        (eventTextLength > 0 || event == Ion::Events::XNT ||
         event == Ion::Events::Paste)) ||

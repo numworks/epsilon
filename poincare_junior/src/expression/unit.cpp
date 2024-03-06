@@ -968,7 +968,7 @@ bool HasUnit(const Tree* expr) {
 
 bool IsPureAngleUnit(const Tree* expr) {
   return expr->isUnit() &&
-         Unit::GetRepresentative(expr)->dimensionVector() == Time::Dimension;
+         Unit::GetRepresentative(expr)->dimensionVector() == Angle::Dimension;
 }
 
 }  // namespace Units

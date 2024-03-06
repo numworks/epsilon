@@ -271,7 +271,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     }
     case BlockType::UnitConversion:
       assert(childDim[1].isUnit());
-      return childDim[0] == childDim[1];
+      return childDim[0] == childDim[1] ||
+             (childDim[1].isAngleUnit() && childDim[0].isScalar());
     case BlockType::List:
       // Lists can contain points or scalars but not both
       for (int i = 0; i < t->numberOfChildren(); i++) {

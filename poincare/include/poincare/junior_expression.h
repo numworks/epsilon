@@ -288,6 +288,24 @@ class Boolean final : public JuniorExpression {
   }
 };
 
+class Unit final {
+ public:
+  // Build default unit for given angleUnit preference.
+  static JuniorExpression Builder(Preferences::AngleUnit angleUnit);
+  static bool IsPureAngleUnit(JuniorExpression expression, bool radianOnly);
+  static bool HasAngleDimension(JuniorExpression expression);
+  static bool ShouldDisplayAdditionalOutputs(
+      double value, OExpression unit, Preferences::UnitFormat unitFormat) {
+    return false;  // TODO_PCJ
+  }
+  static int SetAdditionalExpressions(OExpression units, double value,
+                                      OExpression* dest, int availableLength,
+                                      const ReductionContext& reductionContext,
+                                      const OExpression exactOutput) {
+    return 0;  // TODO_PCJ
+  }
+};
+
 }  // namespace Poincare
 
 #endif

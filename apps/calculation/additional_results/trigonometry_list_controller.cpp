@@ -101,20 +101,15 @@ void TrigonometryListController::computeAdditionalResults(
 
   m_layouts[index] = Layout::String("θ");
 
-  Expression exactAngleWithUnit = Multiplication::Builder(
-      exactAngle.clone(),
-      Unit::Builder(
-          UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
-              angleUnit())));
+  Expression exactAngleWithUnit =
+      Multiplication::Builder(exactAngle.clone(), Unit::Builder(angleUnit()));
 
-  Expression radians = Unit::Builder(Unit::k_angleRepresentatives +
-                                     Unit::k_radianRepresentativeIndex);
+  Expression radians = Unit::Builder(Preferences::AngleUnit::Radian);
   m_exactLayouts[index] = getExactLayoutFromExpression(
       UnitConvert::Builder(exactAngleWithUnit.clone(), radians),
       computationContext);
 
-  Expression degrees = Unit::Builder(Unit::k_angleRepresentatives +
-                                     Unit::k_degreeRepresentativeIndex);
+  Expression degrees = Unit::Builder(Preferences::AngleUnit::Degree);
   m_approximatedLayouts[index] = getExactLayoutFromExpression(
       UnitConvert::Builder(exactAngleWithUnit.clone(), degrees),
       computationContext);

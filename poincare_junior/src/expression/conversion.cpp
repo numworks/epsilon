@@ -756,7 +756,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return;
     case OT::Rational:
     case OT::BasedInteger:
-    case OT::Unit:
+    case OT::OUnit:
     case OT::ConstantPhysics:
       return PushPoincareExpressionViaParse(exp);
     case OT::Decimal: {

@@ -3,8 +3,10 @@
 #include <poincare/matrix.h>
 #include <poincare/point_2D_layout.h>
 #include <poincare_junior/src/expression/conversion.h>
+#include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/sign.h>
+#include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/rack_from_text.h>
@@ -219,6 +221,30 @@ void List::addChildAtIndexInPlace(JuniorExpression t, int index,
   PoincareJ::NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
   JuniorExpression temp = JuniorExpression::Builder(clone);
   *this = static_cast<List&>(temp);
+}
+
+/* Unit */
+
+JuniorExpression Unit::Builder(Preferences::AngleUnit angleUnit) {
+  return JuniorExpression::Builder(PoincareJ::Units::Unit::Push(
+      angleUnit == Preferences::AngleUnit::Radian
+          ? &PoincareJ::Units::Angle::representatives.radian
+      : angleUnit == Preferences::AngleUnit::Degree
+          ? &PoincareJ::Units::Angle::representatives.degree
+          : &PoincareJ::Units::Angle::representatives.gradian,
+      PoincareJ::Units::Prefix::EmptyPrefix()));
+}
+
+bool Unit::IsPureAngleUnit(JuniorExpression expression, bool isRadian) {
+  return PoincareJ::Units::IsPureAngleUnit(expression.tree()) &&
+         (!isRadian ||
+          PoincareJ::Units::Unit::GetRepresentative(expression.tree()) ==
+              &PoincareJ::Units::Angle::representatives.radian);
+}
+
+bool Unit::HasAngleDimension(JuniorExpression expression) {
+  assert(PoincareJ::Dimension::DeepCheckDimensions(expression.tree()));
+  return PoincareJ::Dimension::GetDimension(expression.tree()).isAngleUnit();
 }
 
 }  // namespace Poincare

@@ -107,17 +107,7 @@ void UnitListController::computeAdditionalResults(
       exactClone);
 
   Expression siExpression;
-  const Unit::Representative *representative =
-#if 0  // TODO_PCJ
-      units.type() == ExpressionNode::Type::Unit
-          ? static_cast<Unit &>(units).representative()
-          :
-#endif
-      UnitNode::Representative::RepresentativeForDimension(
-          UnitNode::DimensionVector::FromBaseUnits(units));
-  if (representative &&
-      representative->dimensionVector() ==
-          Unit::AngleRepresentative::Default().dimensionVector()) {
+  if (Unit::HasAngleDimension(units)) {
     // Needs to be defined for the unit comparison but is not used with angles
     siExpression = exactClone;
   } else {

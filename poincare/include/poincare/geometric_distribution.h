@@ -13,7 +13,7 @@ namespace Poincare {
 
 class GeometricDistribution final : public DiscreteDistribution {
  public:
-  Type otype() const override { return Type::Geometric; }
+  Type type() const override { return Type::Geometric; }
   bool isSymmetrical() const override { return false; }
 
   template <typename T>

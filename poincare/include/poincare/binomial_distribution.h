@@ -9,7 +9,7 @@ namespace Poincare {
 
 class BinomialDistribution final : public DiscreteDistribution {
  public:
-  Type otype() const override { return Type::Binomial; }
+  Type type() const override { return Type::Binomial; }
   bool isSymmetrical() const override { return false; }
 
   template <typename T>

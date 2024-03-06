@@ -9,7 +9,7 @@ namespace Poincare {
 
 class ExponentialDistribution final : public ContinuousDistribution {
  public:
-  Type otype() const override { return Type::Exponential; }
+  Type type() const override { return Type::Exponential; }
   bool isSymmetrical() const override { return false; }
 
   template <typename T>

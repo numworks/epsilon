@@ -12,7 +12,7 @@ class NormalDistribution final : public ContinuousDistribution {
   constexpr static double k_standardMu = 0.;
   constexpr static double k_standardSigma = 1.;
 
-  Type otype() const override { return Type::Normal; }
+  Type type() const override { return Type::Normal; }
   bool isSymmetrical() const override { return true; }
 
   template <typename T>

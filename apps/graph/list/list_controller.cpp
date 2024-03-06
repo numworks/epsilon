@@ -144,7 +144,8 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
       m_editableCell.setTemplateButtonHighlighted(true);
       return true;
     }
-    if (event == Ion::Events::Left && onTemplateButton) {
+    if ((event == Ion::Events::Left || event == Ion::Events::Back) &&
+        onTemplateButton) {
       m_editableCell.setTemplateButtonHighlighted(false);
       return true;
     }
@@ -156,6 +157,12 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
 
   return ExpressionModelListController::layoutFieldDidReceiveEvent(layoutField,
                                                                    event);
+}
+
+void ListController::layoutFieldDidAbortEditing(
+    Escher::LayoutField *layoutField) {
+  assert(!m_editableCell.isTemplateButtonHighlighted());
+  ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
 }
 
 CodePoint ListController::defaultXNT() {

@@ -36,6 +36,7 @@ class ListController : public Shared::FunctionListController,
   void layoutFieldDidHandleEvent(Escher::LayoutField* layoutField) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
+  void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   CodePoint defaultXNT() override;
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

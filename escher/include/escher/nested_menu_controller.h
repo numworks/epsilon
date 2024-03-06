@@ -55,8 +55,7 @@ class NestedMenuController : public StackViewController::Custom<5>,
   };
 
   // A state is needed for all StackView children but the first
-  constexpr static int k_maxModelTreeDepth =
-      StackViewController::Custom<5>::k_maxNumberOfChildren - 1;
+  constexpr static int k_maxModelTreeDepth = k_maxNumberOfChildren - 1;
   constexpr static int k_leafCellType = 0;
   constexpr static int k_nodeCellType = 1;
   int stackDepth() { return m_stack.length(); }

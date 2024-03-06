@@ -64,7 +64,7 @@ void DerivativeColumnParameterController::setRecord(Ion::Storage::Record record,
 }
 
 ExpiringPointer<ContinuousFunction>
-DerivativeColumnParameterController::function() {
+DerivativeColumnParameterController::function() const {
   return Shared::GlobalContext::continuousFunctionStore->modelForRecord(
       m_record);
 }

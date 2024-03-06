@@ -18,24 +18,24 @@ void TrigonometryListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
   assert((m_directTrigonometry &&
-          AdditionalResultsType::HasDirectTrigo(
-              input, exactOutput, m_complexFormat, m_angleUnit)) ||
+          AdditionalResultsType::HasDirectTrigo(input, exactOutput,
+                                                m_calculationPreferences)) ||
          (!m_directTrigonometry &&
-          AdditionalResultsType::HasInverseTrigo(
-              input, exactOutput, m_complexFormat, m_angleUnit)));
+          AdditionalResultsType::HasInverseTrigo(input, exactOutput,
+                                                 m_calculationPreferences)));
 
   Context* context = App::app()->localContext();
-  ComputationContext computationContext(context, m_complexFormat, m_angleUnit);
+  ComputationContext computationContext(context, complexFormat(), angleUnit());
 
   size_t index = 0;
 
-  Expression period = Trigonometry::AnglePeriodInAngleUnit(m_angleUnit);
+  Expression period = Trigonometry::AnglePeriodInAngleUnit(angleUnit());
 
   // Find the angle
   Expression exactAngle, approximateAngle;
   if (m_directTrigonometry) {
     exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
-                     input, exactOutput, context, m_complexFormat, m_angleUnit)
+                     input, exactOutput, context, m_calculationPreferences)
                      .clone();
     approximateAngle = Expression();
   } else {
@@ -58,7 +58,7 @@ void TrigonometryListController::computeAdditionalResults(
       period.clone());
   PoincareHelpers::CloneAndSimplify(
       &simplifiedAngle, context,
-      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
 
   /* Approximate the angle if:
    * - The reduction failed
@@ -80,7 +80,7 @@ void TrigonometryListController::computeAdditionalResults(
        * right semicircle. */
       if (PoincareHelpers::ApproximateToScalar<double>(
               Sine::Builder(exactAngle), context,
-              {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit}) <
+              {.complexFormat = complexFormat(), .angleUnit = angleUnit()}) <
           0) {
         approximateAngle =
             Subtraction::Builder(period.clone(), approximateAngle);
@@ -89,7 +89,7 @@ void TrigonometryListController::computeAdditionalResults(
     assert(!approximateAngle.isUninitialized());
     approximateAngle = PoincareHelpers::Approximate<double>(
         approximateAngle, context,
-        {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
+        {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
     exactAngle = approximateAngle;
     m_isStrictlyEqual[index] = false;
   } else {
@@ -103,7 +103,7 @@ void TrigonometryListController::computeAdditionalResults(
       exactAngle.clone(),
       Unit::Builder(
           UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
-              m_angleUnit)));
+              angleUnit())));
 
   Expression radians = Unit::Builder(Unit::k_angleRepresentatives +
                                      Unit::k_radianRepresentativeIndex);
@@ -135,8 +135,8 @@ void TrigonometryListController::computeAdditionalResults(
    * double is castable in float. */
   float angle = static_cast<float>(PoincareHelpers::ApproximateToScalar<double>(
       approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
-      context, {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit}));
-  angle = Trigonometry::ConvertAngleToRadian(angle, m_angleUnit);
+      context, {.complexFormat = complexFormat(), .angleUnit = angleUnit()}));
+  angle = Trigonometry::ConvertAngleToRadian(angle, angleUnit());
   m_model.setAngle(angle);
   setShowIllustration(true);
 }

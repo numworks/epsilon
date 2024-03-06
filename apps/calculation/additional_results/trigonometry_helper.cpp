@@ -14,8 +14,7 @@ namespace TrigonometryHelper {
 
 Expression ExtractExactAngleFromDirectTrigo(
     const Expression input, const Expression exactOutput, Context* context,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    const Preferences::CalculationPreferences calculationPreferences) {
   assert(!input.hasUnit(true));
   assert(!exactOutput.hasUnit(true));
   /* Trigonometry additional results are displayed if either input or output is
@@ -28,7 +27,7 @@ Expression ExtractExactAngleFromDirectTrigo(
    * When both inputs and outputs are direct trigo functions, we take the input
    * because the angle might not be the same modulo 2π. */
   Preferences* preferences = Preferences::sharedPreferences;
-  assert(!exactOutput.isScalarComplex(complexFormat, angleUnit));
+  assert(!exactOutput.isScalarComplex(calculationPreferences));
   Expression directTrigoFunction;
   if (Trigonometry::IsDirectTrigonometryFunction(input) &&
       !input.deepIsSymbolic(context,
@@ -48,6 +47,11 @@ Expression ExtractExactAngleFromDirectTrigo(
   Expression exactAngle = directTrigoFunction.childAtIndex(0);
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
   assert(!exactAngle.hasUnit(true));
+  Preferences::ComplexFormat complexFormat =
+      static_cast<Preferences::ComplexFormat>(
+          calculationPreferences.complexFormat);
+  Preferences::AngleUnit angleUnit =
+      static_cast<Preferences::AngleUnit>(calculationPreferences.angleUnit);
   Expression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &exactAngle, &unit, context,

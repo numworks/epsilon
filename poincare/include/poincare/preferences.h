@@ -94,6 +94,9 @@ class Preferences final {
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Expression& e, Context* context);
 
+  CalculationPreferences calculationPreferences() const {
+    return m_calculationPreferences;
+  }
   AngleUnit angleUnit() const {
     return static_cast<AngleUnit>(m_calculationPreferences.angleUnit);
   }

@@ -19,15 +19,14 @@ namespace Calculation {
 AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    const Preferences::CalculationPreferences calculationPreferences) {
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
     return AdditionalResultsType{.empty = true};
   }
-  if (HasComplex(approximateOutput, complexFormat, angleUnit)) {
+  if (HasComplex(approximateOutput, calculationPreferences)) {
     return AdditionalResultsType{.complex = true};
   }
-  if (exactOutput.isScalarComplex(complexFormat, angleUnit)) {
+  if (exactOutput.isScalarComplex(calculationPreferences)) {
     // Cf comment in HasComplex
     return AdditionalResultsType{.empty = true};
   }
@@ -41,17 +40,17 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (inputHasUnit || exactHasUnit) {
     /* We display units additional results based on exact output. If input has
      * units but not output (ex: L/(L/3)), we don't display any results. */
-    return exactHasUnit && HasUnit(exactOutput, complexFormat, angleUnit)
+    return exactHasUnit && HasUnit(exactOutput, calculationPreferences)
                ? AdditionalResultsType{.unit = true}
                : AdditionalResultsType{.empty = true};
   }
-  if (HasDirectTrigo(input, exactOutput, complexFormat, angleUnit)) {
+  if (HasDirectTrigo(input, exactOutput, calculationPreferences)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
-  if (HasInverseTrigo(input, exactOutput, complexFormat, angleUnit)) {
+  if (HasInverseTrigo(input, exactOutput, calculationPreferences)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
   }
-  if (HasVector(exactOutput, approximateOutput, complexFormat, angleUnit)) {
+  if (HasVector(exactOutput, approximateOutput, calculationPreferences)) {
     return AdditionalResultsType{.vector = true};
   }
   if (approximateOutput.deepIsMatrix()) {
@@ -59,7 +58,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
                                         : AdditionalResultsType{.empty = true};
   }
   if (exactHasAngleUnit || approximateHasAngleUnit) {
-    return exactHasAngleUnit && HasUnit(exactOutput, complexFormat, angleUnit)
+    return exactHasAngleUnit && HasUnit(exactOutput, calculationPreferences)
                ? AdditionalResultsType{.unit = true}
                : AdditionalResultsType{.empty = true};
   }
@@ -107,8 +106,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
 
 bool AdditionalResultsType::HasComplex(
     const Expression approximateOutput,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    const Preferences::CalculationPreferences calculationPreferences) {
   /* We have 2 edge cases:
    * 1) exact output assessed to scalar complex but not approximate output
    * ex:
@@ -125,27 +123,25 @@ bool AdditionalResultsType::HasComplex(
    *    complex, while the exact output is.
    * We chosed to handle the 2nd case and not to display any additional results
    * in the 1st case. */
-  return approximateOutput.isScalarComplex(complexFormat, angleUnit);
+  return approximateOutput.isScalarComplex(calculationPreferences);
 }
 
 bool AdditionalResultsType::HasDirectTrigo(
     const Expression input, const Expression exactOutput,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.hasUnit(true));
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
-      input, exactOutput, globalContext, complexFormat, angleUnit);
+      input, exactOutput, globalContext, calculationPreferences);
   return !exactAngle.isUninitialized();
 }
 
 bool AdditionalResultsType::HasInverseTrigo(
     const Expression input, const Expression exactOutput,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    const Preferences::CalculationPreferences calculationPreferences) {
   // If the result is complex, it is treated as a complex result instead.
-  assert(!exactOutput.isScalarComplex(complexFormat, angleUnit));
+  assert(!exactOutput.isScalarComplex(calculationPreferences));
   assert(!exactOutput.hasUnit(true));
   return (Trigonometry::IsInverseTrigonometryFunction(input)) ||
          Trigonometry::IsInverseTrigonometryFunction(exactOutput);
@@ -153,11 +149,15 @@ bool AdditionalResultsType::HasInverseTrigo(
 
 bool AdditionalResultsType::HasUnit(
     const Expression exactOutput,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    const Preferences::CalculationPreferences calculationPreferences) {
   assert(exactOutput.hasUnit());
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
+  Preferences::ComplexFormat complexFormat =
+      static_cast<Preferences::ComplexFormat>(
+          calculationPreferences.complexFormat);
+  Preferences::AngleUnit angleUnit =
+      static_cast<Preferences::AngleUnit>(calculationPreferences.angleUnit);
   Expression unit;
   Expression clone = exactOutput.clone();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
@@ -190,20 +190,19 @@ bool AdditionalResultsType::HasUnit(
 
 bool AdditionalResultsType::HasVector(
     const Expression exactOutput, const Expression approximateOutput,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    const Preferences::CalculationPreferences calculationPreferences) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression norm = VectorHelper::BuildVectorNorm(
-      exactOutput.clone(), globalContext, complexFormat, angleUnit);
+      exactOutput.clone(), globalContext, calculationPreferences);
   if (norm.isUninitialized()) {
     return false;
   }
   assert(!norm.isUndefined());
   int nChildren = approximateOutput.numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (approximateOutput.childAtIndex(i).isScalarComplex(complexFormat,
-                                                          angleUnit)) {
+    if (approximateOutput.childAtIndex(i).isScalarComplex(
+            calculationPreferences)) {
       return false;
     }
   }

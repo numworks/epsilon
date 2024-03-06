@@ -12,8 +12,7 @@ namespace Calculation {
 void AdditionalResultsController::openAdditionalResults(
     AdditionalResultsType type, const Expression input,
     const Expression exactOutput, const Expression approximateOutput,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    const Preferences::CalculationPreferences calculationPreferences) {
   // Head controller
   /* TODO: Refactor to avoid writing an if for each parent * child. */
   ExpressionsListController *mainController = nullptr;
@@ -44,7 +43,7 @@ void AdditionalResultsController::openAdditionalResults(
     mainController = &m_scientificNotationListController;
   }
   computeResults(&mainController, input, exactOutput, approximateOutput,
-                 complexFormat, angleUnit);
+                 calculationPreferences);
 
   // Tail controller
   ExpressionsListController *tailController = nullptr;
@@ -54,7 +53,7 @@ void AdditionalResultsController::openAdditionalResults(
     tailController = &m_rationalController;
   }
   computeResults(&tailController, input, exactOutput, approximateOutput,
-                 complexFormat, angleUnit);
+                 calculationPreferences);
 
   if (tailController) {
     if (mainController) {
@@ -77,8 +76,7 @@ void AdditionalResultsController::computeResults(
     ExpressionsListController **expressionsListController,
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput,
-    const Preferences::ComplexFormat complexFormat,
-    const Preferences::AngleUnit angleUnit) {
+    Preferences::CalculationPreferences calculationPreferences) {
   if (*expressionsListController == nullptr) {
     return;
   }
@@ -92,7 +90,7 @@ void AdditionalResultsController::computeResults(
      * computation of additionnal results if the expressions contain complex
      * number. It should maybe be updated once and for all now. */
     (*expressionsListController)
-        ->setComplexFormatAndAngleUnit(complexFormat, angleUnit);
+        ->setCalculationPreferences(calculationPreferences);
     (*expressionsListController)
         ->computeAdditionalResults(input, exactOutput, approximateOutput);
   } else {

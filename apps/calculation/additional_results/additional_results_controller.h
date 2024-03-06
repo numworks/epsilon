@@ -26,20 +26,20 @@ class AdditionalResultsController {
         m_rationalController(editExpressionController),
         m_scientificNotationListController(editExpressionController) {}
 
-  void openAdditionalResults(
-      AdditionalResultsType type, const Poincare::Expression input,
-      const Poincare::Expression exactOutput,
-      const Poincare::Expression approximateOutput,
-      const Poincare::Preferences::ComplexFormat complexFormat,
-      const Poincare::Preferences::AngleUnit angleUnit);
+  void openAdditionalResults(AdditionalResultsType type,
+                             const Poincare::Expression input,
+                             const Poincare::Expression exactOutput,
+                             const Poincare::Expression approximateOutput,
+                             const Poincare::Preferences::CalculationPreferences
+                                 calculationPreferences);
 
  private:
   void computeResults(ExpressionsListController** expressionsListController,
                       const Poincare::Expression input,
                       const Poincare::Expression exactOutput,
                       const Poincare::Expression approximateOutput,
-                      const Poincare::Preferences::ComplexFormat complexFormat,
-                      const Poincare::Preferences::AngleUnit angleUnit);
+                      const Poincare::Preferences::CalculationPreferences
+                          calculationPreferences);
 
   EditExpressionController* m_editExpressionController;
 

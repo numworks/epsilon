@@ -95,9 +95,9 @@ class CalculationStore {
 
   /* Push helper methods return a pointer to the end of the pushed content, or
    * k_pushError if the content was not pushed. */
-  char *pushEmptyCalculation(char *location,
-                             Poincare::Preferences::ComplexFormat complexFormat,
-                             Poincare::Preferences::AngleUnit angleUnit);
+  char *pushEmptyCalculation(
+      char *location,
+      Poincare::Preferences::CalculationPreferences calculationPreferences);
   char *pushSerializedExpression(char *location, Poincare::Expression e,
                                  int numberOfSignificantDigits);
   char *pushUndefined(char *location);

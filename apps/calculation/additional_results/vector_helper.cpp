@@ -13,9 +13,9 @@ namespace Calculation {
 
 namespace VectorHelper {
 
-Expression BuildVectorNorm(const Expression exactOutput, Context *context,
-                           const Preferences::ComplexFormat complexFormat,
-                           const Preferences::AngleUnit angleUnit) {
+Expression BuildVectorNorm(
+    const Expression exactOutput, Context *context,
+    const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit(true));
   if (exactOutput.type() != ExpressionNode::Type::Matrix ||
@@ -23,6 +23,11 @@ Expression BuildVectorNorm(const Expression exactOutput, Context *context,
     return Expression();
   }
   Expression norm = VectorNorm::Builder(exactOutput);
+  Preferences::ComplexFormat complexFormat =
+      static_cast<Preferences::ComplexFormat>(
+          calculationPreferences.complexFormat);
+  Preferences::AngleUnit angleUnit =
+      static_cast<Preferences::AngleUnit>(calculationPreferences.angleUnit);
   PoincareHelpers::CloneAndSimplify(
       &norm, context,
       {.complexFormat = complexFormat,

@@ -125,8 +125,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       // Push a new, empty Calculation
       cursor = pushEmptyCalculation(
-          cursor, Poincare::Preferences::sharedPreferences->complexFormat(),
-          Poincare::Preferences::sharedPreferences->angleUnit());
+          cursor,
+          Poincare::Preferences::sharedPreferences->calculationPreferences());
       assert(cursor != k_pushError);
 
       // Push the input
@@ -324,15 +324,15 @@ ExpiringPointer<Calculation> CalculationStore::errorPushUndefined() {
 }
 
 char *CalculationStore::pushEmptyCalculation(
-    char *location, Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::Preferences::AngleUnit angleUnit) {
+    char *location,
+    Poincare::Preferences::CalculationPreferences calculationPreferences) {
   while (spaceForNewCalculations(location) < k_calculationMinimalSize) {
     if (numberOfCalculations() == 0) {
       return k_pushError;
     }
     location -= deleteOldestCalculation(location);
   }
-  new (location) Calculation(complexFormat, angleUnit);
+  new (location) Calculation(calculationPreferences);
   return location + sizeof(Calculation);
 }
 

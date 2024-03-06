@@ -32,10 +32,10 @@ void MatrixListController::computeAdditionalResults(
    * are no risks of displaying additional results on an nonreal output. */
   ComputationContext computationContext(
       context,
-      m_complexFormat == Preferences::ComplexFormat::Real
+      complexFormat() == Preferences::ComplexFormat::Real
           ? Preferences::ComplexFormat::Cartesian
-          : m_complexFormat,
-      m_angleUnit);
+          : complexFormat(),
+      angleUnit());
 
   // The expression must be reduced to call methods such as determinant or trace
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
@@ -55,8 +55,8 @@ void MatrixListController::computeAdditionalResults(
     Expression determinant = Determinant::Builder(matrix);
     PoincareHelpers::CloneAndSimplify(
         &determinant, context,
-        {.complexFormat = m_complexFormat,
-         .angleUnit = m_angleUnit,
+        {.complexFormat = complexFormat(),
+         .angleUnit = angleUnit(),
          .target = ReductionTarget::SystemForApproximation,
          .symbolicComputation =
              SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});

@@ -301,8 +301,8 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
        * sign */
       PoincareHelpers::CloneAndSimplify(
           &exactOutputExpression, context,
-          {.complexFormat = m_complexFormat,
-           .angleUnit = m_angleUnit,
+          {.complexFormat = complexFormat(),
+           .angleUnit = angleUnit(),
            .symbolicComputation = SymbolicComputation::
                ReplaceAllSymbolsWithDefinitionsOrUndefined});
     }
@@ -337,7 +337,7 @@ AdditionalResultsType Calculation::additionalResultsType() {
     fillExpressionsForAdditionalResults(&i, &e, &a);
     m_additionalResultsType =
         AdditionalResultsType::AdditionalResultsForExpressions(
-            i, e, a, m_complexFormat, m_angleUnit);
+            i, e, a, m_calculationPreferences);
   }
   assert(!m_additionalResultsType.isUninitialized());
   return m_additionalResultsType;

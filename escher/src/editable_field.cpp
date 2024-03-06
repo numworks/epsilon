@@ -28,7 +28,7 @@ bool EditableField::privateHandleBoxEvent(Ion::Events::Event event) {
 
 bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   if (!prepareToEdit()) {
-    return false;
+    return true;
   }
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];

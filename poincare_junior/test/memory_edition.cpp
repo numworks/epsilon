@@ -211,4 +211,9 @@ QUIZ_CASE(pcj_tree_comments) {
   u->moveTreeOverNode(v);
   QUIZ_ASSERT(v->nextNode()->treeIsIdenticalTo("bb"_e) && u.isUninitialized() &&
               v->treeIsIdenticalTo("ccc"_e));
+  setup();
+  u->swapWithTree(v);
+  QUIZ_ASSERT(u->treeIsIdenticalTo("aaaa"_e) && v->treeIsIdenticalTo("ccc"_e) &&
+              v->nextNode()->treeIsIdenticalTo("bb"_e) &&
+              v->nextNode()->nextNode() == u);
 }

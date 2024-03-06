@@ -239,7 +239,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   Tree *clone = h->clone();
   /* The cursor is inside h and we need to move it inside clone for it to follow
    * editions. Since they are the still the same, we swap them. */
-  PoincareJ::SwapTrees(h, clone);
+  h->swapWithTree(clone);
   Tokenizer tokenizer = Tokenizer(h, &parsingContext, firstIndexOfIdentifier,
                                   rightmostIndexToBeautify + 1);
   Token currentIdentifier = Token(Token::Type::Undefined);

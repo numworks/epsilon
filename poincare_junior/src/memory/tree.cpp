@@ -464,12 +464,12 @@ Tree* Tree::detach(bool isTree) {
   return Tree::FromBlocks(destination - sizeToMove);
 }
 
-void SwapTrees(Tree* u, Tree* v) {
-  if (u->block() > v->block()) {
-    return SwapTrees(v, u);
+void Tree::swapWithTree(Tree* v) {
+  if (block() > v->block()) {
+    return v->swapWithTree(this);
   }
-  v->moveTreeBeforeNode(u);
-  u->moveTreeBeforeNode(v);
+  v->moveTreeBeforeNode(this);
+  moveTreeBeforeNode(v);
 }
 
 void SwapTrees(Tree** u, Tree** v) {
@@ -477,7 +477,7 @@ void SwapTrees(Tree** u, Tree** v) {
     SwapTrees(v, u);
   }
   Block* newV = (*v)->block() - ((*u)->treeSize() - (*v)->treeSize());
-  SwapTrees(*u, *v);
+  (*u)->swapWithTree(*v);
   *v = *u;
   *u = Tree::FromBlocks(newV);
 }

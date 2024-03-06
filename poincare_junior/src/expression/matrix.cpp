@@ -244,7 +244,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
       // Swap row h and iPivot
       if (iPivot != h) {
         for (int col = h; col < n; col++) {
-          SwapTrees(Child(matrix, iPivot, col), Child(matrix, h, col));
+          Child(matrix, iPivot, col)->swapWithTree(Child(matrix, h, col));
         }
         if (determinant) {
           // Update determinant: det *= -1

@@ -123,7 +123,7 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
     // Parse leftHandSide
     m_nextToken = m_tokenizer.popToken();
     EditionReference leftHandSide = parseUntil(Token::Type::RightwardsArrow);
-    SwapTrees(leftHandSide, rightHandSide);
+    leftHandSide->swapWithTree(rightHandSide);
     turnIntoBinaryNode(KStore, leftHandSide, rightHandSide);
     return leftHandSide;
   }
@@ -789,7 +789,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     } else {
       MoveTreeOverTree(parameter, parameter->child(0));
-      SwapTrees(base, parameter);
+      base->swapWithTree(parameter);
       leftHandSide = parameter;
       CloneNodeAtNode(leftHandSide, KLogarithm);
     }

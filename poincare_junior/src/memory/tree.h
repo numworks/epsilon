@@ -216,6 +216,12 @@ class Tree : public TypeBlock {
   Tree* detachNode() { return detach(false); };
   Tree* detachTree() { return detach(true); };
 
+  /*  u     v                       v    u
+   *  |     |       u.swapWith(v)   |    |
+   *  aaaabbcccdd        =>         cccbbaaaadd
+   */
+  void swapWithTree(Tree* v);
+
  protected:
   // Iterators
   template <typename T>
@@ -363,8 +369,6 @@ class Tree : public TypeBlock {
 /* Even if Trees can be larger than one block, it's pratical if their C++ sizes
  * match to be able to write Tree * ptr = tree + treeSize() and so on. */
 static_assert(sizeof(Tree) == sizeof(Block));
-
-void SwapTrees(Tree* u, Tree* v);
 
 /* This overload exchanges the trees pointed to by the pointers and update the
  * pointers. */

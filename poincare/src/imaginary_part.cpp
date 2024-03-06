@@ -46,7 +46,7 @@ OExpression ImaginaryPart::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(result);
     return result;
   }
-  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+  if (c.otype() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
     OExpression i = complexChild.imag();
     replaceWithInPlace(i);

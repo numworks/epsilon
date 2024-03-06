@@ -52,11 +52,11 @@ OExpression NAryExpressionNode::squashUnaryHierarchyInPlace() {
 
 void NAryExpression::mergeSameTypeChildrenInPlace() {
   // Multiplication is associative: a*(b*c)->a*b*c. The same goes for Addition
-  ExpressionNode::Type parentType = type();
+  ExpressionNode::Type parentType = otype();
   int i = 0;
   while (i < numberOfChildren()) {
     OExpression c = childAtIndex(i);
-    if (c.type() != parentType) {
+    if (c.otype() != parentType) {
       i++;
     } else {
       mergeChildrenAtIndexInPlace(c, i);
@@ -73,7 +73,7 @@ OExpression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
                        reductionContext.shouldCheckMatrices())) {
       return replaceWithUndefinedInPlace();
     }
-    if (c.type() != ExpressionNode::Type::Rational) {
+    if (c.otype() != ExpressionNode::Type::Rational) {
       /* Replace expression with undefined if child can be approximated to a
        * complex or finite non-integer number. Otherwise, rely on template
        * approximations. hasDefinedComplexApproximation is given Cartesian
@@ -109,7 +109,7 @@ OExpression NAryExpression::combineComplexCartesians(
   /* Let's bubble up the complex cartesian if possible.
    * Children are sorted so ComplexCartesian nodes are at the end. */
   int currentNChildren = numberOfChildren();
-  if (childAtIndex(currentNChildren - 1).type() !=
+  if (childAtIndex(currentNChildren - 1).otype() !=
       ExpressionNode::Type::ComplexCartesian) {
     return OExpression();
   }
@@ -125,14 +125,14 @@ OExpression NAryExpression::combineComplexCartesians(
   while (i > 0) {
     i--;
     OExpression c = childAtIndex(i);
-    if (c.type() != ExpressionNode::Type::ComplexCartesian) {
+    if (c.otype() != ExpressionNode::Type::ComplexCartesian) {
       if (!c.isReal(reductionContext.context(),
                     reductionContext.shouldCheckMatrices())) {
         continue;
       }
       c = ComplexCartesian::Builder(c, Rational::Builder(0));
     }
-    assert(c.type() == ExpressionNode::Type::ComplexCartesian);
+    assert(c.otype() == ExpressionNode::Type::ComplexCartesian);
     ComplexCartesian complex = static_cast<ComplexCartesian&>(c);
     complex.real().shallowReduce(contextForAnalysis);
     complex.imag().shallowReduce(contextForAnalysis);

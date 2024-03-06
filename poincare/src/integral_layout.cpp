@@ -104,11 +104,11 @@ IntegralLayoutNode *IntegralLayoutNode::mostNestedIntegral(
  * return nullptr */
 IntegralLayoutNode *IntegralLayoutNode::nextNestedIntegral() {
   LayoutNode *integrand = integrandLayout();
-  if (integrand->type() == Type::IntegralLayout) {
+  if (integrand->otype() == Type::IntegralLayout) {
     // Integral can be directly in the integrand
     return static_cast<IntegralLayoutNode *>(integrand);
   } else if (integrand->isHorizontal() && integrand->numberOfChildren() == 1 &&
-             integrand->childAtIndex(0)->type() == Type::IntegralLayout) {
+             integrand->childAtIndex(0)->otype() == Type::IntegralLayout) {
     // Or can be in a Horizontal layout that only contains an integral
     integrand = integrand->childAtIndex(0);
     return static_cast<IntegralLayoutNode *>(integrand);
@@ -119,12 +119,12 @@ IntegralLayoutNode *IntegralLayoutNode::nextNestedIntegral() {
 /* Return pointer to the integral immediately on the left. If none is found,
  * return nullptr */
 IntegralLayoutNode *IntegralLayoutNode::previousNestedIntegral() {
-  assert(type() == Type::IntegralLayout);
+  assert(otype() == Type::IntegralLayout);
   LayoutNode *p = parent();
   if (p == nullptr) {
     return nullptr;
   }
-  if (p->type() == Type::IntegralLayout) {
+  if (p->otype() == Type::IntegralLayout) {
     // Parent is an integral. Checking if the child is its integrand or not
     if (p->childAtIndex(0) == this) {
       return static_cast<IntegralLayoutNode *>(p);
@@ -139,7 +139,7 @@ IntegralLayoutNode *IntegralLayoutNode::previousNestedIntegral() {
     if (prev == nullptr) {
       return nullptr;
     }
-    if (p->numberOfChildren() == 1 && prev->type() == Type::IntegralLayout) {
+    if (p->numberOfChildren() == 1 && prev->otype() == Type::IntegralLayout) {
       /* We can consider the integrals in a row only if the horizontal layout
        * just contains an integral The horizontal layout must be the previous
        * integral's integrand */

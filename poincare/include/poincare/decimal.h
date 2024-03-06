@@ -41,7 +41,7 @@ class DecimalNode final : public NumberNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Decimal; }
+  Type otype() const override { return Type::Decimal; }
   TrinaryBoolean isPositive(Context* context) const override {
     return BinaryToTrinaryBool(!m_negative);
   }

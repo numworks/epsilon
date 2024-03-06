@@ -20,7 +20,7 @@ class BinomialCoefficientNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::BinomialCoefficient; }
+  Type otype() const override { return Type::BinomialCoefficient; }
   template <typename T>
   static T compute(T k, T n);
 

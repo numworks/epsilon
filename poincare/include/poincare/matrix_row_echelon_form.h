@@ -19,7 +19,7 @@ class MatrixRowEchelonFormNode final : public MatrixEchelonFormNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::MatrixRowEchelonForm; }
+  Type otype() const override { return Type::MatrixRowEchelonForm; }
 
  private:
   const char* functionHelperName() const override;

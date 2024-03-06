@@ -20,7 +20,7 @@ class CosecantNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Cosecant; }
+  Type otype() const override { return Type::Cosecant; }
 
   template <typename T>
   static std::complex<T> computeOnComplex(

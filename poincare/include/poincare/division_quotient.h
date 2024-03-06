@@ -21,7 +21,7 @@ class DivisionQuotientNode final : public ExpressionNode {
 
   // ExpressionNode
   TrinaryBoolean isPositive(Context* context) const override;
-  Type type() const override { return Type::DivisionQuotient; }
+  Type otype() const override { return Type::DivisionQuotient; }
 
   // Simplification
   LayoutShape leftLayoutShape() const override {

@@ -18,7 +18,7 @@ class RandomNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Random; }
+  Type otype() const override { return Type::Random; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }
@@ -57,7 +57,7 @@ class Random final : public ExpressionNoChildren<Random, RandomNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
   static OExpression UntypedBuilder(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::OList);
+    assert(children.otype() == ExpressionNode::Type::OList);
     return Builder();
   }
   constexpr static OExpression::FunctionHelper s_functionHelper =

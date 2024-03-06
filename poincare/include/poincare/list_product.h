@@ -15,7 +15,7 @@ class ListProductNode : public ExpressionNode {
     stream << "ListProduct";
   }
 #endif
-  Type type() const override { return Type::ListProduct; }
+  Type otype() const override { return Type::ListProduct; }
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

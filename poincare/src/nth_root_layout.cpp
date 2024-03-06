@@ -184,7 +184,7 @@ void NthRootLayoutNode::render(KDContext *ctx, KDPoint p,
 }
 
 bool NthRootLayoutNode::protectedIsIdenticalTo(OLayout l) {
-  assert(l.type() == Type::NthRootLayout);
+  assert(l.otype() == Type::NthRootLayout);
   NthRootLayout &nrl = static_cast<NthRootLayout &>(l);
   return hasUpperLeftIndex() == nrl.node()->hasUpperLeftIndex() &&
          LayoutNode::protectedIsIdenticalTo(l);

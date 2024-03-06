@@ -20,7 +20,7 @@ class HyperbolicArcCosineNode final
 #endif
 
   // Properties
-  Type type() const override { return Type::HyperbolicArcCosine; }
+  Type otype() const override { return Type::HyperbolicArcCosine; }
 
  private:
   // Simplification

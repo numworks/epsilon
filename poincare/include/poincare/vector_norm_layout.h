@@ -11,7 +11,7 @@ namespace Poincare {
 class VectorNormLayoutNode final : public SquareBracketPairLayoutNode {
  public:
   // Layout
-  Type type() const override { return Type::VectorNormLayout; }
+  Type otype() const override { return Type::VectorNormLayout; }
 
   // SerializationHelperInterface
   size_t serialize(char* buffer, size_t bufferSize,

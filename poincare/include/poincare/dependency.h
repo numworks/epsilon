@@ -17,7 +17,7 @@ class DependencyNode : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Dependency; }
+  Type otype() const override { return Type::Dependency; }
   int polynomialDegree(Context* context,
                        const char* symbolName) const override {
     return mainExpression()->polynomialDegree(context, symbolName);

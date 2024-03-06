@@ -89,14 +89,14 @@ QUIZ_CASE(poincare_expression_order_mix) {
 void assert_multiplication_or_addition_is_ordered_as(OExpression e1,
                                                      OExpression e2) {
   Shared::GlobalContext globalContext;
-  if (e1.type() == ExpressionNode::Type::Multiplication) {
+  if (e1.otype() == ExpressionNode::Type::Multiplication) {
     static_cast<Multiplication &>(e1).sortChildrenInPlace(
         [](const ExpressionNode *e1, const ExpressionNode *e2) {
           return ExpressionNode::SimplificationOrder(e1, e2, true);
         },
         &globalContext);
   } else {
-    quiz_assert(e1.type() == ExpressionNode::Type::Addition);
+    quiz_assert(e1.otype() == ExpressionNode::Type::Addition);
     static_cast<Addition &>(e1).sortChildrenInPlace(
         [](const ExpressionNode *e1, const ExpressionNode *e2) {
           return ExpressionNode::SimplificationOrder(e1, e2, false);

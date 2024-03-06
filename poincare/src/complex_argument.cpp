@@ -51,7 +51,7 @@ OExpression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+  if (c.otype() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
     OExpression childArg = complexChild.argument(reductionContext);
     replaceWithInPlace(childArg);

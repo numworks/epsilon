@@ -11,7 +11,7 @@ class ConjugateLayoutNode : public LayoutNode {
   using LayoutNode::LayoutNode;
 
   // Layout
-  Type type() const override { return Type::ConjugateLayout; }
+  Type otype() const override { return Type::ConjugateLayout; }
 
   // LayoutNode
   size_t serialize(char* buffer, size_t bufferSize,

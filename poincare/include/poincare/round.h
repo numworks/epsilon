@@ -21,7 +21,7 @@ class RoundNode final : public ExpressionNodeWithOneOrTwoChildren {
   TrinaryBoolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }
-  Type type() const override { return Type::Round; }
+  Type otype() const override { return Type::Round; }
 
  private:
   // Layout

@@ -22,11 +22,11 @@ bool ExpressionNode::isNumber() const {
 }
 
 bool ExpressionNode::isRandomNumber() const {
-  return type() == Type::Random || type() == Type::Randint;
+  return otype() == Type::Random || otype() == Type::Randint;
 }
 
 bool ExpressionNode::isRandomList() const {
-  return type() == Type::RandintNoRepeat;
+  return otype() == Type::RandintNoRepeat;
 }
 
 bool ExpressionNode::isParameteredExpression() const {
@@ -35,7 +35,7 @@ bool ExpressionNode::isParameteredExpression() const {
 }
 
 bool ExpressionNode::isCombinationOfUnits() const {
-  if (type() == Type::OUnit) {
+  if (otype() == Type::OUnit) {
     return true;
   }
   if (isOfType({Type::Multiplication, Type::Division})) {
@@ -46,27 +46,27 @@ bool ExpressionNode::isCombinationOfUnits() const {
     }
     return true;
   }
-  if (type() == Type::Power) {
+  if (otype() == Type::Power) {
     return childAtIndex(0)->isCombinationOfUnits();
   }
   return false;
 }
 
 bool ExpressionNode::isSystemSymbol() const {
-  return type() == ExpressionNode::Type::Symbol &&
+  return otype() == ExpressionNode::Type::Symbol &&
          OExpression(this).convert<Symbol>().isSystemSymbol();
 }
 
 OExpression ExpressionNode::denominator(
     const ReductionContext& reductionContext) const {
-  if (type() == Type::Multiplication) {
+  if (otype() == Type::Multiplication) {
     return OExpression(this).convert<Multiplication>().denominator(
         reductionContext);
   }
-  if (type() == Type::Power) {
+  if (otype() == Type::Power) {
     return OExpression(this).convert<Power>().denominator(reductionContext);
   }
-  if (type() == Type::Rational) {
+  if (otype() == Type::Rational) {
     return OExpression(this).convert<Rational>().denominator();
   }
   return OExpression();
@@ -74,10 +74,10 @@ OExpression ExpressionNode::denominator(
 
 OExpression ExpressionNode::deepBeautify(
     const ReductionContext& reductionContext) {
-  if (type() == Type::UnitConvert) {
+  if (otype() == Type::UnitConvert) {
     return OExpression(this).convert<UnitConvert>().deepBeautify(
         reductionContext);
-  } else if (type() == Type::PercentAddition) {
+  } else if (otype() == Type::PercentAddition) {
     return OExpression(this).convert<PercentAddition>().deepBeautify(
         reductionContext);
   } else {
@@ -89,29 +89,29 @@ OExpression ExpressionNode::deepBeautify(
 
 void ExpressionNode::deepReduceChildren(
     const ReductionContext& reductionContext) {
-  if (type() == Type::Store) {
+  if (otype() == Type::Store) {
     OExpression(this).convert<Store>().deepReduceChildren(reductionContext);
     return;
   }
-  if (type() == Type::Logarithm && numberOfChildren() == 2) {
+  if (otype() == Type::Logarithm && numberOfChildren() == 2) {
     OExpression(this).convert<Logarithm>().deepReduceChildren(reductionContext);
     return;
   }
-  if (type() == Type::Integral) {
+  if (otype() == Type::Integral) {
     OExpression(this).convert<Integral>().deepReduceChildren(reductionContext);
     return;
   }
-  if (type() == Type::Derivative) {
+  if (otype() == Type::Derivative) {
     OExpression(this).convert<Derivative>().deepReduceChildren(
         reductionContext);
     return;
   }
-  if (type() == Type::Dependency) {
+  if (otype() == Type::Dependency) {
     OExpression(this).convert<Dependency>().deepReduceChildren(
         reductionContext);
     return;
   }
-  if (type() == Type::UnitConvert) {
+  if (otype() == Type::UnitConvert) {
     OExpression(this).convert<UnitConvert>().deepReduceChildren(
         reductionContext);
     return;

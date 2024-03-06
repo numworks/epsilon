@@ -22,7 +22,7 @@ class VectorNormNode final : public ExpressionNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }
-  Type type() const override { return Type::VectorNorm; }
+  Type otype() const override { return Type::VectorNorm; }
 
  private:
   // Layout

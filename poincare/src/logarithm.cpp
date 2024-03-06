@@ -116,9 +116,9 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
   if (Poincare::Preferences::SharedPreferences()
           ->examMode()
           .forbidBasedLogarithm()) {
-    if (!((base.type() == ExpressionNode::Type::ConstantMaths &&
+    if (!((base.otype() == ExpressionNode::Type::ConstantMaths &&
            static_cast<Constant&>(base).isExponentialE()) ||
-          (base.type() == ExpressionNode::Type::Rational &&
+          (base.otype() == ExpressionNode::Type::Rational &&
            static_cast<Rational&>(base).isTen()))) {
       return replaceWithUndefinedInPlace();
     }
@@ -134,7 +134,7 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
     return *this;
   }
   OExpression f = simpleShallowReduce(reductionContext);
-  if (f.type() != ExpressionNode::Type::Logarithm) {
+  if (f.otype() != ExpressionNode::Type::Logarithm) {
     return f;
   }
 
@@ -150,10 +150,10 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
   }
 
   // log(+inf, a) ?
-  if (c.type() == ExpressionNode::Type::Infinity &&
+  if (c.otype() == ExpressionNode::Type::Infinity &&
       c.isPositive(reductionContext.context()) == TrinaryBoolean::True) {
     // log(+inf, a) --> ±inf with a rational and a > 0
-    if (base.type() == ExpressionNode::Type::Rational &&
+    if (base.otype() == ExpressionNode::Type::Rational &&
         !static_cast<Rational&>(base).isNegative() &&
         !static_cast<Rational&>(base).isZero()) {
       /* log(+inf,a) with a < 1 --> -inf
@@ -164,7 +164,7 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
       }
       replaceWithInPlace(c);
       return c;
-    } else if (base.type() == ExpressionNode::Type::ConstantMaths &&
+    } else if (base.otype() == ExpressionNode::Type::ConstantMaths &&
                (static_cast<Constant&>(base).isExponentialE() ||
                 static_cast<Constant&>(base).isPi())) {
       replaceWithInPlace(c);
@@ -179,7 +179,7 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
   }
 
   // log(x^y, b)->y*log(x, b) if x>0
-  if (c.type() == ExpressionNode::Type::Power &&
+  if (c.otype() == ExpressionNode::Type::Power &&
       c.childAtIndex(0).isPositive(reductionContext.context()) ==
           TrinaryBoolean::True) {
     Power p = static_cast<Power&>(c);
@@ -193,7 +193,7 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
     return mult.shallowReduce(reductionContext);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
-  if (c.type() == ExpressionNode::Type::Multiplication) {
+  if (c.otype() == ExpressionNode::Type::Multiplication) {
     Addition a = Addition::Builder();
     for (int i = 0; i < c.numberOfChildren() - 1; i++) {
       OExpression factor = c.childAtIndex(i);
@@ -219,11 +219,11 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
     }
   }
   // log(r) with r Rational
-  if (c.type() == ExpressionNode::Type::Rational) {
+  if (c.otype() == ExpressionNode::Type::Rational) {
     Rational r = static_cast<Rational&>(c);
     Addition a = Addition::Builder();
     // if the log base is Integer: log_b(r) = c + log_b(r') with r = b^c*r'
-    if (base.type() == ExpressionNode::Type::Rational &&
+    if (base.otype() == ExpressionNode::Type::Rational &&
         base.convert<Rational>().isInteger()) {
       Integer b = base.convert<Rational>().signedIntegerNumerator();
       Integer newNumerator = simplifyLogarithmIntegerBaseInteger(
@@ -257,7 +257,7 @@ OExpression Logarithm::simpleShallowReduce(
   if (b.isZero() || b.isOne()) {
     return replaceWithUndefinedInPlace();
   }
-  if (c.type() == ExpressionNode::Type::Rational) {
+  if (c.otype() == ExpressionNode::Type::Rational) {
     const Rational r = static_cast<Rational&>(c);
     // log(0,x) = undef
     if (r.isZero()) {
@@ -289,7 +289,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
   OExpression parentExpression = parent();
   OExpression logGroup = *this;
   if (!parentExpression.isUninitialized() &&
-      parentExpression.type() == ExpressionNode::Type::Parenthesis) {
+      parentExpression.otype() == ExpressionNode::Type::Parenthesis) {
     logGroup = parentExpression;
     parentExpression = parentExpression.parent();
   }
@@ -297,7 +297,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
     return false;
   }
   bool thisIsPowerExponent =
-      parentExpression.type() == ExpressionNode::Type::Power
+      parentExpression.otype() == ExpressionNode::Type::Power
           ? parentExpression.childAtIndex(1) == logGroup
           : false;
   if (thisIsPowerExponent) {

@@ -16,7 +16,7 @@ class SequenceNode final : public SymbolAbstractNode {
   }
 #endif
 
-  Type type() const override { return Type::Sequence; }
+  Type otype() const override { return Type::Sequence; }
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
 

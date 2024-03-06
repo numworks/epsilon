@@ -22,8 +22,8 @@ size_t ProductNode::serialize(char* buffer, size_t bufferSize,
 }
 
 OExpression Product::UntypedBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::OList);
-  if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+  assert(children.otype() == ExpressionNode::Type::OList);
+  if (children.childAtIndex(1).otype() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return OExpression();
   }

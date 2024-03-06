@@ -48,8 +48,8 @@ Evaluation<T> ListSequenceNode::templatedApproximate(
 }
 
 OExpression ListSequence::UntypedBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::OList);
-  if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+  assert(children.otype() == ExpressionNode::Type::OList);
+  if (children.childAtIndex(1).otype() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return OExpression();
   }
@@ -71,7 +71,7 @@ OExpression ListSequence::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  assert(childAtIndex(1).type() == ExpressionNode::Type::Symbol);
+  assert(childAtIndex(1).otype() == ExpressionNode::Type::Symbol);
   OExpression function = childAtIndex(0);
   OExpression variableExpression = childAtIndex(1);
   Symbol variable = static_cast<Symbol&>(variableExpression);

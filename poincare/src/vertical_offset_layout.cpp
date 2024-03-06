@@ -179,7 +179,7 @@ KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode *child,
 LayoutNode *VerticalOffsetLayoutNode::baseLayout() {
   LayoutNode *parentNode = parent();
   assert(parentNode != nullptr);
-  if (parentNode->type() != Type::HorizontalLayout) {
+  if (parentNode->otype() != Type::HorizontalLayout) {
     return nullptr;
   }
   int idxInParent = parentNode->indexOfChild(this);
@@ -189,7 +189,7 @@ LayoutNode *VerticalOffsetLayoutNode::baseLayout() {
     return nullptr;
   }
   LayoutNode *result = parentNode->childAtIndex(baseIndex);
-  if (result->type() == Type::VerticalOffsetLayout &&
+  if (result->otype() == Type::VerticalOffsetLayout &&
       static_cast<VerticalOffsetLayoutNode *>(result)->horizontalPosition() !=
           horizontalPosition()) {
     /* If two vertical offset layouts, one prefix and one suffix, are next to
@@ -214,7 +214,7 @@ KDCoordinate VerticalOffsetLayoutNode::baseBaseline(KDFont::Size font) {
 }
 
 bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(OLayout l) {
-  assert(l.type() == Type::VerticalOffsetLayout);
+  assert(l.otype() == Type::VerticalOffsetLayout);
   VerticalOffsetLayoutNode *n =
       static_cast<VerticalOffsetLayoutNode *>(l.node());
   return verticalPosition() == n->verticalPosition() &&

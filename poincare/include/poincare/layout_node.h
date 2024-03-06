@@ -65,8 +65,8 @@ class LayoutNode : public TreeNode {
         }) {}
 
   /* Poor man's RTTI */
-  virtual Type type() const = 0;
-  bool isHorizontal() const { return type() == Type::HorizontalLayout; }
+  virtual Type otype() const = 0;
+  bool isHorizontal() const { return otype() == Type::HorizontalLayout; }
 
   // Comparison
   bool isIdenticalTo(OLayout l, bool makeEditable = false);

@@ -24,7 +24,7 @@ class AdditionNode final : public NAryInfixExpressionNode {
   // ExpressionNode
 
   // Properties
-  Type type() const override { return Type::Addition; }
+  Type otype() const override { return Type::Addition; }
   TrinaryBoolean isPositive(Context* context) const override;
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,

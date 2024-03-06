@@ -19,7 +19,7 @@ class MatrixInverseNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::MatrixInverse; }
+  Type otype() const override { return Type::MatrixInverse; }
 
  private:
   // Layout

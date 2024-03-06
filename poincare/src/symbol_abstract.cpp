@@ -70,7 +70,7 @@ TrinaryBoolean SymbolAbstractNode::isPositive(Context *context) const {
 
 int SymbolAbstractNode::simplificationOrderSameType(
     const ExpressionNode *e, bool ascending, bool ignoreParentheses) const {
-  assert(type() == e->type());
+  assert(otype() == e->otype());
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
 }
 
@@ -84,7 +84,7 @@ size_t SymbolAbstractNode::serialize(
 bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
                                              const char **visitedSymbols,
                                              int numberOfVisitedSymbols) {
-  if (type() == ExpressionNode::Type::Sequence) {
+  if (otype() == ExpressionNode::Type::Sequence) {
     return ExpressionNode::involvesCircularity(
         context, maxDepth, visitedSymbols, numberOfVisitedSymbols);
   }
@@ -112,12 +112,12 @@ bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
   numberOfVisitedSymbols++;
 
   OExpression symbolAbstract;
-  if (type() == ExpressionNode::Type::Function) {
+  if (otype() == ExpressionNode::Type::Function) {
     // This is like cloning, but without the symbol.
     symbolAbstract = Function::Builder(name(), strlen(name()),
                                        Symbol::Builder(UCodePointUnknown));
   } else {
-    assert(type() == ExpressionNode::Type::Symbol);
+    assert(otype() == ExpressionNode::Type::Symbol);
     symbolAbstract = SymbolAbstract(this);
   }
 
@@ -164,7 +164,7 @@ bool SymbolAbstract::matches(const SymbolAbstract &symbol,
 OExpression SymbolAbstract::replaceSymbolWithExpression(
     const SymbolAbstract &symbol, const OExpression &expression) {
   deepReplaceSymbolWithExpression(symbol, expression);
-  if (symbol.type() == type() && hasSameNameAs(symbol)) {
+  if (symbol.otype() == otype() && hasSameNameAs(symbol)) {
     OExpression exp = expression.clone();
     if (numberOfChildren() > 0) {
       assert(isOfType(
@@ -172,7 +172,7 @@ OExpression SymbolAbstract::replaceSymbolWithExpression(
       assert(numberOfChildren() == 1 && symbol.numberOfChildren() == 1);
       OExpression myVariable = childAtIndex(0).clone();
       OExpression symbolVariable = symbol.childAtIndex(0);
-      if (symbolVariable.type() == ExpressionNode::Type::Symbol) {
+      if (symbolVariable.otype() == ExpressionNode::Type::Symbol) {
         exp = exp.replaceSymbolWithExpression(symbolVariable.convert<Symbol>(),
                                               myVariable);
       } else if (!myVariable.isIdenticalTo(symbolVariable)) {
@@ -209,7 +209,8 @@ OExpression SymbolAbstract::Expand(const SymbolAbstract &symbol,
    * symbols are defined circularly. Symbols defined in a parametered function
    * will be preserved as long as the function is defined within this symbol. */
   e = OExpression::ExpressionWithoutSymbols(e, context, symbolicComputation);
-  if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
+  if (!e.isUninitialized() &&
+      symbol.otype() == ExpressionNode::Type::Function) {
     Dependency d = Dependency::Builder(e);
     d.addDependency(symbol.childAtIndex(0));
     return std::move(d);

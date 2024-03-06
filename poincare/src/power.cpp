@@ -47,7 +47,7 @@ TrinaryBoolean PowerNode::isPositive(Context *context) const {
       childAtIndex(1)->isPositive(context) != TrinaryBoolean::Unknown) {
     return TrinaryBoolean::True;
   }
-  if (childAtIndex(1)->type() == ExpressionNode::Type::Rational &&
+  if (childAtIndex(1)->otype() == ExpressionNode::Type::Rational &&
       static_cast<RationalNode *>(childAtIndex(1))->isInteger() &&
       OExpression(childAtIndex(0)).isReal(context)) {
     RationalNode *r = static_cast<RationalNode *>(childAtIndex(1));
@@ -78,8 +78,8 @@ TrinaryBoolean PowerNode::isNull(Context *context) const {
     // 0^+x is null
     return TrinaryBoolean::True;
   }
-  if ((index->isNumber() || index->type() == Type::ConstantMaths ||
-       index->type() == Type::ConstantPhysics) &&
+  if ((index->isNumber() || index->otype() == Type::ConstantMaths ||
+       index->otype() == Type::ConstantPhysics) &&
       baseIsNull == TrinaryBoolean::False) {
     // x^y is not null if y is not -inf and x not null.
     return TrinaryBoolean::False;
@@ -97,7 +97,7 @@ int PowerNode::polynomialDegree(Context *context,
   if (op0Deg < 0) {
     return -1;
   }
-  if (childAtIndex(1)->type() != ExpressionNode::Type::Rational) {
+  if (childAtIndex(1)->otype() != ExpressionNode::Type::Rational) {
     return -1;
   }
   RationalNode *r = static_cast<RationalNode *>(childAtIndex(1));
@@ -132,7 +132,7 @@ bool PowerNode::isReal(Context *context, bool canContainMatrices) const {
   if (base.isReal(context, canContainMatrices) &&
       index.isReal(context, canContainMatrices) &&
       (base.isPositive(context) == TrinaryBoolean::True ||
-       (index.type() == ExpressionNode::Type::Rational &&
+       (index.otype() == ExpressionNode::Type::Rational &&
         static_cast<Rational &>(index).isInteger()))) {
     return true;
   }
@@ -146,7 +146,7 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const OExpression &child,
   }
   if ((child.isNumber() && static_cast<const Number &>(child).isPositive() ==
                                TrinaryBoolean::False) ||
-      (child.type() == Type::Rational &&
+      (child.otype() == Type::Rational &&
        !static_cast<const Rational &>(child).isInteger())) {
     /* ^(-2.3, 4) --> (-2.3)^{4}
      * ^(2/3, 4) --> (2/3)^{4}   */
@@ -287,17 +287,17 @@ std::complex<T> PowerNode::computeOnComplex(
 bool PowerNode::childNeedsSystemParenthesesAtSerialization(
     const TreeNode *child) const {
   const ExpressionNode *childE = static_cast<const ExpressionNode *>(child);
-  if (childAtIndex(0)->type() == Type::ConstantMaths &&
+  if (childAtIndex(0)->otype() == Type::ConstantMaths &&
       static_cast<const ConstantNode *>(childAtIndex(0))->isExponentialE() &&
       indexOfChild(childE) == 1) {
-    return childE->type() != Type::Parenthesis;
+    return childE->otype() != Type::Parenthesis;
   }
   if (childE->isNumber() &&
       Number(static_cast<const NumberNode *>(childE)).isPositive() ==
           TrinaryBoolean::False) {
     return true;
   }
-  if (childE->type() == Type::Rational &&
+  if (childE->otype() == Type::Rational &&
       !static_cast<const RationalNode *>(childE)->isInteger()) {
     return true;
   }
@@ -398,12 +398,12 @@ Evaluation<T> PowerNode::templatedApproximate(
    * root. We return this value in that case to avoid returning "nonreal". */
   if (approximationContext.complexFormat() ==
           Preferences::ComplexFormat::Real &&
-      base.type() == EvaluationNode<T>::Type::Complex) {
+      base.otype() == EvaluationNode<T>::Type::Complex) {
     std::complex<T> c = base.complexAtIndex(0);
     T p = NAN;
     T q = NAN;
     // If the power has been reduced, we look for a rational index
-    if (childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
+    if (childAtIndex(1)->otype() == ExpressionNode::Type::Rational) {
       const RationalNode *r =
           static_cast<const RationalNode *>(childAtIndex(1));
       p = r->signedNumerator().approximate<T>();
@@ -411,10 +411,10 @@ Evaluation<T> PowerNode::templatedApproximate(
     }
     /* If the power has been simplified (reduced + beautified), we look for an
      * index of the for Division(Rational,Rational). */
-    if (childAtIndex(1)->type() == ExpressionNode::Type::Division &&
-        childAtIndex(1)->childAtIndex(0)->type() ==
+    if (childAtIndex(1)->otype() == ExpressionNode::Type::Division &&
+        childAtIndex(1)->childAtIndex(0)->otype() ==
             ExpressionNode::Type::Rational &&
-        childAtIndex(1)->childAtIndex(1)->type() ==
+        childAtIndex(1)->childAtIndex(1)->otype() ==
             ExpressionNode::Type::Rational) {
       const RationalNode *pRat =
           static_cast<const RationalNode *>(childAtIndex(1)->childAtIndex(0));
@@ -454,8 +454,8 @@ int Power::getPolynomialCoefficients(Context *context, const char *symbolName,
     return defaultGetPolynomialCoefficients(deg, context, symbolName,
                                             coefficients);
   }
-  assert(childAtIndex(1).type() == ExpressionNode::Type::Rational);
-  if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
+  assert(childAtIndex(1).otype() == ExpressionNode::Type::Rational);
+  if (childAtIndex(0).otype() == ExpressionNode::Type::Symbol) {
     assert(strcmp(childAtIndex(0).convert<Symbol>().name(), symbolName) == 0);
     assert(childAtIndex(1)
                .convert<Rational>()
@@ -476,7 +476,7 @@ OExpression Power::removeUnit(OExpression *unit) {
   if (!childUnit.isUninitialized()) {
     // Reduced power containing unit are of form "unit^i" with i integer
     assert(child.isRationalOne());
-    assert(childUnit.type() == ExpressionNode::Type::OUnit);
+    assert(childUnit.otype() == ExpressionNode::Type::OUnit);
     Power p = *this;
     replaceWithInPlace(child);
     p.replaceChildAtIndexInPlace(0, childUnit);
@@ -487,11 +487,11 @@ OExpression Power::removeUnit(OExpression *unit) {
 }
 
 static bool isSquare(OExpression e) {
-  if (e.type() != ExpressionNode::Type::Power) {
+  if (e.otype() != ExpressionNode::Type::Power) {
     return false;
   }
   OExpression c = e.childAtIndex(1);
-  return c.type() == ExpressionNode::Type::Rational &&
+  return c.otype() == ExpressionNode::Type::Rational &&
          static_cast<Rational &>(c).isTwo();
 }
 
@@ -501,14 +501,14 @@ static int indexOfChildWithSquare(OExpression e) {
    * expressions with only one square (e.g. (π+1)^2 = π^2+2π+1).
    * We also look in children that are products, as they can contain squares
    * (e.g. (2π+1)^2 = 4π^2+4π+1) */
-  assert(e.type() == ExpressionNode::Type::Addition);
+  assert(e.otype() == ExpressionNode::Type::Addition);
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
     OExpression c = e.childAtIndex(i);
     if (isSquare(c)) {
       return i;
     }
-    if (c.type() == ExpressionNode::Type::Multiplication) {
+    if (c.otype() == ExpressionNode::Type::Multiplication) {
       int n2 = c.numberOfChildren();
       for (int j = 0; j < n2; j++) {
         if (isSquare(c.childAtIndex(j))) {
@@ -537,8 +537,8 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
   ApproximationContext approximationContext(reductionContext, true);
   OExpression base = childAtIndex(0);
   OExpression index = childAtIndex(1);
-  ExpressionNode::Type baseType = base.type();
-  ExpressionNode::Type indexType = index.type();
+  ExpressionNode::Type baseType = base.otype();
+  ExpressionNode::Type indexType = index.otype();
 
   /* Step 1
    * Simple cases where the power is undefined. */
@@ -546,7 +546,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
   index = index.removeUnit(&indexUnit);
   if (index.deepIsMatrix(context, reductionContext.shouldCheckMatrices()) ||
       !indexUnit.isUninitialized() || index.isUndefined() ||
-      (base.hasUnit() && !(index.type() == ExpressionNode::Type::Rational))) {
+      (base.hasUnit() && !(index.otype() == ExpressionNode::Type::Rational))) {
     return replaceWithUndefinedInPlace();
   }
 
@@ -569,7 +569,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       if (integerIndex.isNegative()) {
         index.setSign(true, reductionContext);
         OExpression e = shallowReduce(reductionContext);
-        if (e.type() == ExpressionNode::Type::Power) {
+        if (e.otype() == ExpressionNode::Type::Power) {
           /* The power cannot be reduced, return to avoid an infinite loop. */
           e.childAtIndex(1).setSign(false, reductionContext);
           return e;
@@ -603,7 +603,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
   TrinaryBoolean baseIsPositive = base.isPositive(context);
   TrinaryBoolean indexIsPositive = index.isPositive(context);
   TrinaryBoolean indexNull = index.isNull(context);
-  if (base.type() == ExpressionNode::Type::Infinity) {
+  if (base.otype() == ExpressionNode::Type::Infinity) {
     // Step 3.1: base is infinity
     if (indexNull == TrinaryBoolean::True) {
       // inf^0 -> undef
@@ -627,9 +627,9 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       default:
         break;
     }
-  } else if (index.type() == ExpressionNode::Type::Infinity &&
+  } else if (index.otype() == ExpressionNode::Type::Infinity &&
              (base.isOne() || base.isMinusOne() ||
-              base.type() == ExpressionNode::Type::ComplexCartesian)) {
+              base.otype() == ExpressionNode::Type::ComplexCartesian)) {
     /* Step 3.2: index is infinity
      * if x=+-1 or x is complex: x^+inf or x^-inf -> undef */
     trivialResult = Undefined::Builder();
@@ -811,7 +811,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
    * r^(s+a+...) -> r^s*r^(a+...) */
   if (baseType == ExpressionNode::Type::Rational &&
       indexType == ExpressionNode::Type::Addition &&
-      index.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
+      index.childAtIndex(0).otype() == ExpressionNode::Type::Rational) {
     Rational rationalIndex = index.childAtIndex(0).convert<Rational>();
     if (rationalIndex.unsignedIntegerNumerator().isOne() &&
         !rationalIndex.isInteger()) {
@@ -936,7 +936,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
     Integer denominator = rationalIndex.integerDenominator();
     Power p = Power::Builder(result, Rational::Builder(one, denominator));
     replaceWithInPlace(p);
-    if (result.type() == ExpressionNode::Type::ConstantMaths &&
+    if (result.otype() == ExpressionNode::Type::ConstantMaths &&
         static_cast<Constant &>(result).isComplexI()) {
       // Don't shallowReduce to avoid infinite loop
       return std::move(p);
@@ -966,7 +966,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
      * would create the expression -1*a which would be reduced here again.*/
     Multiplication mResult = Multiplication::Builder();
     int i = 0;
-    while (base.type() == ExpressionNode::Type::Multiplication &&
+    while (base.otype() == ExpressionNode::Type::Multiplication &&
            i < baseChildren) {
       Multiplication multiplicationBase = static_cast<Multiplication &>(base);
       OExpression child = base.childAtIndex(i);
@@ -1047,7 +1047,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       int numberOfChildrenOfA = a.numberOfChildren();
       for (int i = 2; i <= clippedN; i++) {
         /* result = result * (a0+a1+...+a(m-1) in its expanded form */
-        if (result.type() == ExpressionNode::Type::Addition) {
+        if (result.otype() == ExpressionNode::Type::Addition) {
           /* We need a 'double' distribution and newA will hold the new
            * expanded form. */
           OExpression newA = Addition::Builder();
@@ -1056,7 +1056,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
                 Multiplication::Builder(result.clone(),
                                         a.childAtIndex(j).clone())
                     .distributeOnOperandAtIndex(0, reductionContext);
-            if (newA.type() == ExpressionNode::Type::Addition) {
+            if (newA.otype() == ExpressionNode::Type::Addition) {
               static_cast<Addition &>(newA).addChildAtIndexInPlace(
                   m, newA.numberOfChildren(), newA.numberOfChildren());
             } else {
@@ -1120,10 +1120,10 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
          * -------------------------------------------------------
          *          n1^2*d2^2*p1*q2 - n2^2*d1^2*p2*q1
          */
-        assert(a.type() == ExpressionNode::Type::Rational &&
-               b.type() == ExpressionNode::Type::Rational &&
-               c.type() == ExpressionNode::Type::Rational &&
-               d.type() == ExpressionNode::Type::Rational);
+        assert(a.otype() == ExpressionNode::Type::Rational &&
+               b.otype() == ExpressionNode::Type::Rational &&
+               c.otype() == ExpressionNode::Type::Rational &&
+               d.otype() == ExpressionNode::Type::Rational);
         Integer n1 = static_cast<Rational &>(a).signedIntegerNumerator();
         Integer d1 = static_cast<Rational &>(a).integerDenominator();
         Integer p1 = static_cast<Rational &>(b).signedIntegerNumerator();
@@ -1252,7 +1252,7 @@ OExpression Power::shallowBeautify(const ReductionContext &reductionContext) {
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
     if (Trigonometry::IsDirectTrigonometryFunction(p) &&
-        (p.type() != ExpressionNode::Type::Tangent ||
+        (p.otype() != ExpressionNode::Type::Tangent ||
          !p.approximate<float>(ApproximationContext(reductionContext, true))
               .isUndefined())) {
       /* Replace this inverse with denominator's advanced equivalent.
@@ -1266,9 +1266,9 @@ OExpression Power::shallowBeautify(const ReductionContext &reductionContext) {
     return d.shallowBeautify(reductionContext);
   }
   // Step 2: Turn a^(1/n) into root(a, n), unless base is a unit
-  if (childAtIndex(1).type() == ExpressionNode::Type::Rational &&
+  if (childAtIndex(1).otype() == ExpressionNode::Type::Rational &&
       childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne() &&
-      childAtIndex(0).type() != ExpressionNode::Type::OUnit) {
+      childAtIndex(0).otype() != ExpressionNode::Type::OUnit) {
     Integer index = childAtIndex(1).convert<Rational>().integerDenominator();
     // Special case: a^(1/2) --> sqrt(a)
     if (index.isEqualTo(Integer(2))) {
@@ -1284,7 +1284,7 @@ OExpression Power::shallowBeautify(const ReductionContext &reductionContext) {
 
   // Step 4: Force Float(1) in front of an orphan Power of OUnit
   if (parent().isUninitialized() &&
-      childAtIndex(0).type() == ExpressionNode::Type::OUnit) {
+      childAtIndex(0).otype() == ExpressionNode::Type::OUnit) {
     Multiplication m = Multiplication::Builder(Float<double>::Builder(1.0));
     replaceWithInPlace(m);
     m.addChildAtIndexInPlace(*this, 1, 1);
@@ -1377,7 +1377,7 @@ Power::DependencyType Power::typeOfDependency(
 
   // Case 2.
   if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real &&
-      (index.type() != ExpressionNode::Type::Rational ||
+      (index.otype() != ExpressionNode::Type::Rational ||
        static_cast<Rational &>(index).integerDenominator().isEven()) &&
       base.isPositive(reductionContext.context()) != TrinaryBoolean::True) {
     result = result == DependencyType::None ? DependencyType::RationalIndex
@@ -1389,7 +1389,7 @@ Power::DependencyType Power::typeOfDependency(
 void Power::AddPowerToListOfDependenciesIfNeeded(
     OExpression e, Power compareTo, OList l,
     const ReductionContext &reductionContext, bool clone) {
-  if (e.type() == ExpressionNode::Type::Power) {
+  if (e.otype() == ExpressionNode::Type::Power) {
     DependencyType depType =
         static_cast<Power &>(e).typeOfDependency(reductionContext);
     if (depType != DependencyType::None &&
@@ -1401,13 +1401,13 @@ void Power::AddPowerToListOfDependenciesIfNeeded(
 }
 
 OExpression Power::ExponentialBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::OList);
+  assert(children.otype() == ExpressionNode::Type::OList);
   return Builder(Constant::ExponentialEBuilder(), children.childAtIndex(0));
 }
 
 OExpression Power::ChainedPowerBuilder(OExpression leftSide,
                                        OExpression rightSide) {
-  if (leftSide.type() == ExpressionNode::Type::Power) {
+  if (leftSide.otype() == ExpressionNode::Type::Power) {
     Power powerExponent = Power::Builder(leftSide.childAtIndex(1), rightSide);
     leftSide.replaceChildAtIndexInPlace(1, powerExponent);
     return leftSide;
@@ -1419,8 +1419,8 @@ OExpression Power::ChainedPowerBuilder(OExpression leftSide,
 
 // Simplification
 OExpression Power::denominator(const ReductionContext &reductionContext) const {
-  if (childAtIndex(0).type() == ExpressionNode::Type::OUnit ||
-      childAtIndex(1).type() == ExpressionNode::Type::Infinity) {
+  if (childAtIndex(0).otype() == ExpressionNode::Type::OUnit ||
+      childAtIndex(1).otype() == ExpressionNode::Type::Infinity) {
     // x^-inf can be different from 1/x^inf
     return OExpression();
   }
@@ -1595,20 +1595,20 @@ bool Power::IsLogarithmOfBase(const OExpression e, const OExpression base) {
   if (e.isUninitialized()) {
     return false;
   }
-  if (e.type() == ExpressionNode::Type::Logarithm) {
+  if (e.otype() == ExpressionNode::Type::Logarithm) {
     /* Because e is a logarthim, we simplified e.childAtIndex(1) before
      * e.childAtIndex(0), so e.childAtIndex(1) can be compared to base even if
      * e is our parent. */
     if (e.numberOfChildren() == 1) {
-      return base.type() == ExpressionNode::Type::Rational &&
+      return base.otype() == ExpressionNode::Type::Rational &&
              static_cast<const Rational &>(base).isTen();
     } else {
       assert(e.numberOfChildren() == 2);
       return base.isIdenticalTo(e.childAtIndex(1));
     }
   }
-  return e.type() == ExpressionNode::Type::NaperianLogarithm &&
-         base.type() == ExpressionNode::Type::ConstantMaths &&
+  return e.otype() == ExpressionNode::Type::NaperianLogarithm &&
+         base.otype() == ExpressionNode::Type::ConstantMaths &&
          static_cast<const Constant &>(base).isExponentialE();
 }
 
@@ -1626,7 +1626,7 @@ OExpression Power::ReduceLogarithmLinearCombination(
     return OExpression();
   }
   // Handle x*log(y) -> log(y^x)
-  if (linearCombination.type() == ExpressionNode::Type::Multiplication) {
+  if (linearCombination.otype() == ExpressionNode::Type::Multiplication) {
     OExpression clone = linearCombination.clone();
     Multiplication multiplication = static_cast<Multiplication &>(clone);
     int nChildren = multiplication.numberOfChildren();
@@ -1654,7 +1654,7 @@ OExpression Power::ReduceLogarithmLinearCombination(
       }
     }
     // Handle log(x) + log(y) -> log(x*y)
-  } else if (linearCombination.type() == ExpressionNode::Type::Addition) {
+  } else if (linearCombination.otype() == ExpressionNode::Type::Addition) {
     OExpression clone = linearCombination.clone();
     Addition addition = static_cast<Addition &>(clone);
     int nChildren = addition.numberOfChildren();
@@ -1726,21 +1726,21 @@ bool Power::isNthRootOfUnity() const {
   OExpression base = childAtIndex(0);
   OExpression index = childAtIndex(1);
   int n = index.numberOfChildren();
-  if (base.type() != ExpressionNode::Type::ConstantMaths ||
-      index.type() != ExpressionNode::Type::Multiplication || n < 2 || n > 3 ||
+  if (base.otype() != ExpressionNode::Type::ConstantMaths ||
+      index.otype() != ExpressionNode::Type::Multiplication || n < 2 || n > 3 ||
       !static_cast<Constant &>(base).isExponentialE()) {
     return false;
   }
   const OExpression i = index.childAtIndex(n - 2);
   const OExpression pi = index.childAtIndex(n - 1);
-  if (i.type() != ExpressionNode::Type::ConstantMaths ||
+  if (i.otype() != ExpressionNode::Type::ConstantMaths ||
       !static_cast<const Constant &>(i).isComplexI() ||
-      pi.type() != ExpressionNode::Type::ConstantMaths ||
+      pi.otype() != ExpressionNode::Type::ConstantMaths ||
       !static_cast<const Constant &>(pi).isPi()) {
     return false;
   }
   return n == 2 ||
-         index.childAtIndex(0).type() == ExpressionNode::Type::Rational;
+         index.childAtIndex(0).otype() == ExpressionNode::Type::Rational;
 }
 
 OExpression Power::CreateComplexExponent(

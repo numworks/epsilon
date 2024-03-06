@@ -11,7 +11,7 @@ class SumLayoutNode final : public SequenceLayoutNode {
   using SequenceLayoutNode::SequenceLayoutNode;
 
   // Layout
-  Type type() const override { return Type::SumLayout; }
+  Type otype() const override { return Type::SumLayout; }
 
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,

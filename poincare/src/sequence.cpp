@@ -20,7 +20,7 @@ int SequenceNode::simplificationOrderSameType(const ExpressionNode* e,
    * We never want to factorize. The only cases where it could be useful are
    * like the following : u(n)+u(n). But thanks to the cache system, no
    * computation is needed for the second term.*/
-  assert(type() == e->type());
+  assert(otype() == e->otype());
   assert(numberOfChildren() == 1);
   assert(e->numberOfChildren() == 1);
   ExpressionNode* seq = const_cast<ExpressionNode*>(e);

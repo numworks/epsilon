@@ -17,7 +17,7 @@ class MatrixLayoutNode final : public GridLayoutNode {
   using GridLayoutNode::GridLayoutNode;
 
   // Layout
-  Type type() const override { return Type::MatrixLayout; }
+  Type otype() const override { return Type::MatrixLayout; }
 
   // SerializableNode
   size_t serialize(char *buffer, size_t bufferSize,

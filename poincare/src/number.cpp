@@ -17,7 +17,7 @@ extern "C" {
 namespace Poincare {
 
 double NumberNode::doubleApproximation() const {
-  switch (type()) {
+  switch (otype()) {
     case Type::Undefined:
     case Type::Nonreal:
       return NAN;
@@ -118,8 +118,8 @@ Number Number::FloatNumber(T f) {
 Number Number::BinaryOperation(const Number &i, const Number &j,
                                RationalBinaryOperation rationalOp,
                                DoubleBinaryOperation doubleOp) {
-  if (i.type() == ExpressionNode::Type::Rational &&
-      j.type() == ExpressionNode::Type::Rational) {
+  if (i.otype() == ExpressionNode::Type::Rational &&
+      j.otype() == ExpressionNode::Type::Rational) {
     // Rational + Rational
     Rational a = rationalOp(static_cast<const Rational &>(i),
                             static_cast<const Rational &>(j));
@@ -157,8 +157,8 @@ Number Number::Power(const Number &i, const Number &j) {
 }
 
 int Number::NaturalOrder(const Number &i, const Number &j) {
-  if (i.node()->type() == ExpressionNode::Type::Rational &&
-      j.node()->type() == ExpressionNode::Type::Rational) {
+  if (i.node()->otype() == ExpressionNode::Type::Rational &&
+      j.node()->otype() == ExpressionNode::Type::Rational) {
     // Rational + Rational
     return Rational::NaturalOrder(static_cast<const Rational &>(i),
                                   static_cast<const Rational &>(j));

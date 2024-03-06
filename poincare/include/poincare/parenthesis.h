@@ -24,7 +24,7 @@ class ParenthesisNode final : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
-  Type type() const override { return Type::Parenthesis; }
+  Type otype() const override { return Type::Parenthesis; }
   OExpression removeUnit(OExpression* unit) override {
     assert(false);
     return ExpressionNode::removeUnit(unit);

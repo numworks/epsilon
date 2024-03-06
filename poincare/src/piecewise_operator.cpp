@@ -50,7 +50,7 @@ int PiecewiseOperatorNode::indexOfFirstTrueCondition(
         childAtIndex(i + 1)->approximate(T(), approximationContext);
     /* If condition is not boolean (if it's undef for example), it is considered
      * false */
-    if (condition.type() == EvaluationNode<T>::Type::BooleanEvaluation &&
+    if (condition.otype() == EvaluationNode<T>::Type::BooleanEvaluation &&
         static_cast<BooleanEvaluation<T>&>(condition).value()) {
       return i;
     }
@@ -66,7 +66,7 @@ int PiecewiseOperatorNode::indexOfFirstTrueCondition(
 }
 
 OExpression PiecewiseOperator::UntypedBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::OList);
+  assert(children.otype() == ExpressionNode::Type::OList);
   int n = children.numberOfChildren();
   // Check that each condition is boolean
   for (int i = 0; i < n; i++) {
@@ -75,7 +75,7 @@ OExpression PiecewiseOperator::UntypedBuilder(OExpression children) {
     }
     OExpression condition = children.childAtIndex(i);
     if (!condition.hasBooleanValue() &&
-        condition.type() != ExpressionNode::Type::EmptyExpression) {
+        condition.otype() != ExpressionNode::Type::EmptyExpression) {
       return OExpression();
     }
   }
@@ -116,7 +116,7 @@ OExpression PiecewiseOperator::shallowReduce(
     OExpression condition = childAtIndex(i + 1);
     if (condition.hasBooleanValue()) {
       // Skip conditions that are not booleans. They are always false
-      if (condition.type() != ExpressionNode::Type::OBoolean) {
+      if (condition.otype() != ExpressionNode::Type::OBoolean) {
         // The condition is undetermined, can't reduce
         return *this;
       }
@@ -191,7 +191,7 @@ bool PiecewiseOperator::derivate(const ReductionContext& reductionContext,
       break;
     }
     OExpression originalCondition = childAtIndex(i + 1);
-    if (originalCondition.type() != ExpressionNode::Type::Comparison) {
+    if (originalCondition.otype() != ExpressionNode::Type::Comparison) {
       i += 2;
       continue;
     }
@@ -293,7 +293,7 @@ OExpression PiecewiseOperator::bubbleUpPiecewiseDependencies(
   for (int i = 0; i < nChildren; i += 2) {
     OExpression child = childAtIndex(i);
     int currentNDependencies = dependencies.numberOfChildren();
-    if (child.type() == ExpressionNode::Type::Dependency) {
+    if (child.otype() == ExpressionNode::Type::Dependency) {
       static_cast<Dependency&>(child).extractDependencies(dependencies);
     }
     int newNDependencies = dependencies.numberOfChildren();

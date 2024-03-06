@@ -21,7 +21,7 @@ class AbsoluteValueNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::AbsoluteValue; }
+  Type otype() const override { return Type::AbsoluteValue; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }

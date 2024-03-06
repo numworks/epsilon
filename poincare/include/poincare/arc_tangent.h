@@ -30,7 +30,7 @@ class ArcTangentNode final : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
-  Type type() const override { return Type::ArcTangent; }
+  Type otype() const override { return Type::ArcTangent; }
 
  private:
   // Layout

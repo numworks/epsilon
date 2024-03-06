@@ -18,7 +18,7 @@ class CeilingNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Ceiling; }
+  Type otype() const override { return Type::Ceiling; }
 
  private:
   // Layout

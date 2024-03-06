@@ -10,12 +10,12 @@
 namespace Poincare {
 
 template <>
-ExpressionNode::Type ListAccessNode<1>::type() const {
+ExpressionNode::Type ListAccessNode<1>::otype() const {
   return Type::ListElement;
 }
 
 template <>
-ExpressionNode::Type ListAccessNode<2>::type() const {
+ExpressionNode::Type ListAccessNode<2>::otype() const {
   return Type::ListSlice;
 }
 
@@ -54,7 +54,7 @@ Evaluation<T> ListAccessNode<1>::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> child = childAtIndex(ListAccessNode<1>::k_listChildIndex)
                             ->approximate(T(), approximationContext);
-  if (child.type() != EvaluationNode<T>::Type::ListComplex) {
+  if (child.otype() != EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Undefined();
   }
   ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
@@ -77,7 +77,7 @@ Evaluation<T> ListAccessNode<2>::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> child = childAtIndex(ListAccessNode<2>::k_listChildIndex)
                             ->approximate(T(), approximationContext);
-  if (child.type() != EvaluationNode<T>::Type::ListComplex) {
+  if (child.otype() != EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Undefined();
   }
   ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
@@ -119,7 +119,7 @@ OExpression ListElement::shallowReduce(ReductionContext reductionContext) {
   }
 
   OExpression listChild = childAtIndex(ListAccessNode<1>::k_listChildIndex);
-  if (listChild.type() != ExpressionNode::Type::OList) {
+  if (listChild.otype() != ExpressionNode::Type::OList) {
     return replaceWithUndefinedInPlace();
   }
 
@@ -155,7 +155,7 @@ OExpression ListSlice::shallowReduce(ReductionContext reductionContext) {
   }
 
   OExpression listChild = childAtIndex(ListAccessNode<2>::k_listChildIndex);
-  if (listChild.type() != ExpressionNode::Type::OList) {
+  if (listChild.otype() != ExpressionNode::Type::OList) {
     return replaceWithUndefinedInPlace();
   }
 

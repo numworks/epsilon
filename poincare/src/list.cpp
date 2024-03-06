@@ -142,7 +142,7 @@ OExpression OList::shallowReduce(ReductionContext reductionContext) {
   OExpression myParent = parent();
   bool isDependenciesList =
       !myParent.isUninitialized() &&
-      myParent.type() == ExpressionNode::Type::Dependency &&
+      myParent.otype() == ExpressionNode::Type::Dependency &&
       myParent.indexOfChild(*this) == Dependency::k_indexOfDependenciesList;
 
   // A list can't contain a matrix or a list
@@ -209,7 +209,7 @@ OExpression OList::approximateAndRemoveUndefAndSort(
   }
   Evaluation<T> eval =
       node()->templatedApproximate<T>(approximationContext, false);
-  if (eval.type() != EvaluationNode<T>::Type::ListComplex) {
+  if (eval.otype() != EvaluationNode<T>::Type::ListComplex) {
     return Undefined::Builder();
   }
   static_cast<ListComplex<T>&>(eval).sort();

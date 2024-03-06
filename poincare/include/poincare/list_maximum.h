@@ -15,7 +15,7 @@ class ListMaximumNode : public ExpressionNode {
     stream << "ListMaximum";
   }
 #endif
-  Type type() const override { return Type::ListMaximum; }
+  Type otype() const override { return Type::ListMaximum; }
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

@@ -21,7 +21,7 @@ class FactorialNode final : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return TrinaryBoolean::False;
   }
-  Type type() const override { return Type::Factorial; }
+  Type otype() const override { return Type::Factorial; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }

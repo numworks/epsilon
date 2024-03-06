@@ -25,8 +25,8 @@ Layout ComparisonNode::ComparisonOperatorLayout(OperatorType type) {
   Layout result;
   assert(false);
 #if 0
-  assert(result.type() == LayoutNode::Type::CodePointLayout ||
-         result.type() == LayoutNode::Type::CombinedCodePointsLayout);
+  assert(result.otype() == LayoutNode::Type::CodePointLayout ||
+         result.otype() == LayoutNode::Type::CombinedCodePointsLayout);
 #endif
   return result;
 }
@@ -81,7 +81,7 @@ ComparisonNode::OperatorType ComparisonNode::SwitchInferiorSuperior(
 bool ComparisonNode::IsBinaryComparison(OExpression e,
                                         OperatorType* operatorType) {
   assert(!e.isUninitialized());
-  if (e.type() != Type::Comparison || e.numberOfChildren() != 2) {
+  if (e.otype() != Type::Comparison || e.numberOfChildren() != 2) {
     return false;
   }
   if (operatorType) {
@@ -93,7 +93,7 @@ bool ComparisonNode::IsBinaryComparison(OExpression e,
 
 bool ComparisonNode::IsComparisonWithoutNotEqualOperator(OExpression e) {
   assert(!e.isUninitialized());
-  if (e.type() != Type::Comparison) {
+  if (e.otype() != Type::Comparison) {
     return false;
   }
   Comparison c = static_cast<Comparison&>(e);
@@ -242,8 +242,8 @@ Evaluation<T> ComparisonNode::templatedApproximate(
   for (int i = 1; i < m_numberOfOperands; i++) {
     firstChildApprox = secondChildApprox;
     secondChildApprox = childAtIndex(i)->approximate(T(), approximationContext);
-    if (firstChildApprox.type() != EvaluationNode<T>::Type::Complex ||
-        secondChildApprox.type() != EvaluationNode<T>::Type::Complex) {
+    if (firstChildApprox.otype() != EvaluationNode<T>::Type::Complex ||
+        secondChildApprox.otype() != EvaluationNode<T>::Type::Complex) {
       return Complex<T>::Undefined();
     }
     std::complex<T> difference = firstChildApprox.complexAtIndex(0) -

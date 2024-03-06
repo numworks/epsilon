@@ -23,7 +23,7 @@ class OppositeNode final : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
-  Type type() const override { return Type::Opposite; }
+  Type otype() const override { return Type::Opposite; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryNot(childAtIndex(0)->isPositive(context));
   }
@@ -55,7 +55,7 @@ class OppositeNode final : public ExpressionNode {
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     // leftLayoutShape of Opposite is only called from Conjugate
-    assert(parent() && parent()->type() == Type::Conjugate);
+    assert(parent() && parent()->otype() == Type::Conjugate);
     return LayoutShape::OneLetter;
   };
   LayoutShape rightLayoutShape() const override {

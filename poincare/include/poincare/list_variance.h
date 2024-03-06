@@ -16,7 +16,7 @@ class ListVarianceNode : public ListFunctionWithOneOrTwoParametersNode {
     stream << "ListVariance";
   }
 #endif
-  Type type() const override { return Type::ListVariance; }
+  Type otype() const override { return Type::ListVariance; }
 
  private:
   OExpression shallowReduce(const ReductionContext& reductionContext) override;

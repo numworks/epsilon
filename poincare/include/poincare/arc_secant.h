@@ -20,7 +20,7 @@ class ArcSecantNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::ArcSecant; }
+  Type otype() const override { return Type::ArcSecant; }
 
   template <typename T>
   static std::complex<T> computeOnComplex(

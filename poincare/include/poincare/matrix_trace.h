@@ -19,7 +19,7 @@ class MatrixTraceNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::MatrixTrace; }
+  Type otype() const override { return Type::MatrixTrace; }
 
  private:
   // Layout

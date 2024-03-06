@@ -10,7 +10,7 @@ class LetterAWithSubAndSuperscriptLayoutNode final
     : public LetterWithSubAndSuperscriptLayoutNode {
  public:
   // Layout
-  Type type() const override {
+  Type otype() const override {
     return Type::LetterAWithSubAndSuperscriptLayout;
   }
 

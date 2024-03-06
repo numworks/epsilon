@@ -89,8 +89,8 @@ OExpression BinomialCoefficient::shallowReduce(
   OExpression c0 = childAtIndex(0);
   OExpression c1 = childAtIndex(1);
 
-  if (c0.type() != ExpressionNode::Type::Rational ||
-      c1.type() != ExpressionNode::Type::Rational) {
+  if (c0.otype() != ExpressionNode::Type::Rational ||
+      c1.otype() != ExpressionNode::Type::Rational) {
     return *this;
   }
 

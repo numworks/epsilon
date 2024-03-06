@@ -52,8 +52,8 @@ bool Layout::isCodePointsString() const {
   }
   int n = numberOfChildren();
   for (int i = 0; i < n; i++) {
-    if (childAtIndex(i).type() != LayoutNode::Type::CodePointLayout &&
-        childAtIndex(i).type() != LayoutNode::Type::CombinedCodePointsLayout) {
+    if (childAtIndex(i).otype() != LayoutNode::Type::CodePointLayout &&
+        childAtIndex(i).otype() != LayoutNode::Type::CombinedCodePointsLayout) {
       return false;
     }
   }
@@ -100,14 +100,14 @@ Layout Layout::recursivelyMatches(LayoutTest test) const {
 }
 
 bool Layout::shouldCollapseSiblingsOnRight() const {
-  return type() == LayoutNode::Type::ConjugateLayout ||
-         type() == LayoutNode::Type::FractionLayout ||
-         type() == LayoutNode::Type::NthRootLayout ||
+  return otype() == LayoutNode::Type::ConjugateLayout ||
+         otype() == LayoutNode::Type::FractionLayout ||
+         otype() == LayoutNode::Type::NthRootLayout ||
          // SquareBracketPairLayouts
-         type() == LayoutNode::Type::AbsoluteValueLayout ||
-         type() == LayoutNode::Type::CeilingLayout ||
-         type() == LayoutNode::Type::FloorLayout ||
-         type() == LayoutNode::Type::VectorNormLayout;
+         otype() == LayoutNode::Type::AbsoluteValueLayout ||
+         otype() == LayoutNode::Type::CeilingLayout ||
+         otype() == LayoutNode::Type::FloorLayout ||
+         otype() == LayoutNode::Type::VectorNormLayout;
 }
 
 Layout Layout::childAtIndex(int i) const {

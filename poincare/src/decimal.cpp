@@ -108,7 +108,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode *e,
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
-  assert(e->type() == Type::Decimal);
+  assert(e->otype() == Type::Decimal);
   const DecimalNode *other = static_cast<const DecimalNode *>(e);
   if (m_negative && !other->m_negative) {
     return -1;

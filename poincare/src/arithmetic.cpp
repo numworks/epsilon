@@ -87,7 +87,7 @@ uint32_t Arithmetic::LCM(uint32_t a, uint32_t b, bool* hasOverflown) {
 
 Integer getIntegerFromRationalExpression(OExpression expression) {
   // OExpression must be a Rational with 1 as denominator.
-  assert(expression.type() == ExpressionNode::Type::Rational);
+  assert(expression.otype() == ExpressionNode::Type::Rational);
   Rational r = static_cast<Rational&>(expression);
   assert(r.isInteger());
   Integer i = r.signedIntegerNumerator();

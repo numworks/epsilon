@@ -31,7 +31,7 @@ TrinaryBoolean Domain::ExpressionIsIn(const OExpression &expression, Type type,
     return TrinaryBoolean::Unknown;
   }
 
-  if (expression.type() != ExpressionNode::Type::Rational) {
+  if (expression.otype() != ExpressionNode::Type::Rational) {
     return TrinaryBoolean::Unknown;
   }
 

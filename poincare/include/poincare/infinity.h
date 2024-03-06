@@ -22,7 +22,7 @@ class InfinityNode final : public NumberNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Infinity; }
+  Type otype() const override { return Type::Infinity; }
   TrinaryBoolean isPositive(Context* context) const override {
     return BinaryToTrinaryBool(!m_negative);
   }

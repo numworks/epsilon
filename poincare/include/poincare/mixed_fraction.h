@@ -18,7 +18,7 @@ class MixedFractionNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::MixedFraction; }
+  Type otype() const override { return Type::MixedFraction; }
   TrinaryBoolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }

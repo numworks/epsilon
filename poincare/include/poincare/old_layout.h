@@ -34,7 +34,7 @@ class OLayout : public TreeHandle {
   static OLayout LayoutFromAddress(const void *address, size_t size);
 
   // Properties
-  LayoutNode::Type type() const { return node()->type(); }
+  LayoutNode::Type otype() const { return node()->otype(); }
   bool isHorizontal() const { return node()->isHorizontal(); }
   bool isEmpty() const { return node()->isEmpty(); }
   // True if horizontal layout with only code points in it
@@ -73,12 +73,12 @@ class OLayout : public TreeHandle {
   OLayout recursivelyMatches(LayoutTest test) const;
 
   bool shouldCollapseSiblingsOnLeft() const {
-    return type() == LayoutNode::Type::FractionLayout;
+    return otype() == LayoutNode::Type::FractionLayout;
   }
   bool shouldCollapseSiblingsOnRight() const;
   int leftCollapsingAbsorbingChildIndex() const { return 0; }
   int rightCollapsingAbsorbingChildIndex() const {
-    return type() == LayoutNode::Type::FractionLayout ? 1 : 0;
+    return otype() == LayoutNode::Type::FractionLayout ? 1 : 0;
   }
   bool isCollapsable(int *numberOfOpenParenthesis,
                      OMG::HorizontalDirection direction) const {

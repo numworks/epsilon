@@ -30,7 +30,7 @@ class JuniorExpressionNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::JuniorExpression; }
+  Type otype() const override { return Type::JuniorExpression; }
   // TODO PCJ: Plug in approximation
   // TrinaryBoolean isPositive(Context* context) const override;
   // TrinaryBoolean isNull(Context* context) const override;
@@ -211,13 +211,13 @@ class JuniorExpression : public OExpression {
   }
   static bool IsSymbolic(const JuniorExpression e) { return false; }
   static bool IsPoint(const JuniorExpression e) {
-    return e.isUndefined() || e.type() == ExpressionNode::Type::OPoint;
+    return e.isUndefined() || e.otype() == ExpressionNode::Type::OPoint;
   }
   static bool IsSequence(const JuniorExpression e) {
-    return e.type() == ExpressionNode::Type::Sequence;
+    return e.otype() == ExpressionNode::Type::Sequence;
   }
   static bool IsFactorial(const JuniorExpression e) {
-    return e.type() == ExpressionNode::Type::Factorial;
+    return e.otype() == ExpressionNode::Type::Factorial;
   }
 
   typedef bool (*PatternTest)(const JuniorExpression& e, Context* context,

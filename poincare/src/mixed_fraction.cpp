@@ -35,8 +35,8 @@ Evaluation<T> MixedFractionNode::templateApproximate(
       childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> fractionPart =
       childAtIndex(1)->approximate(T(), approximationContext);
-  if (integerPart.type() != EvaluationNode<T>::Type::Complex ||
-      fractionPart.type() != EvaluationNode<T>::Type::Complex) {
+  if (integerPart.otype() != EvaluationNode<T>::Type::Complex ||
+      fractionPart.otype() != EvaluationNode<T>::Type::Complex) {
     return Complex<T>::Undefined();
   }
   T evaluatedIntegerPart = integerPart.toScalar();
@@ -51,8 +51,8 @@ Evaluation<T> MixedFractionNode::templateApproximate(
 OExpression MixedFraction::shallowReduce(ReductionContext context) {
   OExpression integerPart = childAtIndex(0);
   OExpression fractionPart = childAtIndex(1);
-  if (integerPart.type() != ExpressionNode::Type::Rational ||
-      fractionPart.type() != ExpressionNode::Type::Rational) {
+  if (integerPart.otype() != ExpressionNode::Type::Rational ||
+      fractionPart.otype() != ExpressionNode::Type::Rational) {
     return replaceWithUndefinedInPlace();
   }
   Rational rationalIntegerPart = static_cast<Rational&>(integerPart);

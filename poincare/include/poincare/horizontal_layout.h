@@ -22,7 +22,7 @@ class HorizontalLayoutNode final : public LayoutNode {
         m_emptyVisibility(EmptyRectangle::State::Visible) {}
 
   // Layout
-  Type type() const override { return Type::HorizontalLayout; }
+  Type otype() const override { return Type::HorizontalLayout; }
 
   // LayoutNode
   int indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction,

@@ -17,7 +17,7 @@ class StringLayoutNode : public LayoutNode {
  public:
   StringLayoutNode(const char *string, int stringSize);
 
-  Type type() const override { return Type::StringLayout; }
+  Type otype() const override { return Type::StringLayout; }
 
   int stringLength() const { return strlen(m_string); }
   const char *string() const { return m_string; }

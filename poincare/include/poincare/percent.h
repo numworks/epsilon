@@ -15,7 +15,7 @@ class PercentSimpleNode : public ExpressionNode {
   void logNodeName(std::ostream& stream) const override { stream << "Percent"; }
 #endif
   // Properties
-  Type type() const override { return Type::PercentSimple; }
+  Type otype() const override { return Type::PercentSimple; }
   TrinaryBoolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }
@@ -73,7 +73,7 @@ class PercentAdditionNode final : public PercentSimpleNode {
   size_t size() const override { return sizeof(PercentAdditionNode); }
   int numberOfChildren() const override { return 2; }
   // Properties
-  Type type() const override { return Type::PercentAddition; }
+  Type otype() const override { return Type::PercentAddition; }
   TrinaryBoolean isPositive(Context* context) const override;
   TrinaryBoolean isNull(Context* context) const override;
   bool childAtIndexNeedsUserParentheses(const OExpression& child,

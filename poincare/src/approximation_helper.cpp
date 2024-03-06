@@ -167,11 +167,12 @@ Evaluation<T> ApproximationHelper::Map(
   for (int i = 0; i < numberOfParameters; i++) {
     evaluationArray[i] =
         expression->childAtIndex(i)->approximate(T(), approximationContext);
-    if (evaluationArray[i].type() == EvaluationNode<T>::Type::MatrixComplex ||
-        evaluationArray[i].type() == EvaluationNode<T>::Type::PointEvaluation) {
+    if (evaluationArray[i].otype() == EvaluationNode<T>::Type::MatrixComplex ||
+        evaluationArray[i].otype() ==
+            EvaluationNode<T>::Type::PointEvaluation) {
       return Complex<T>::Undefined();
     }
-    if (evaluationArray[i].type() == EvaluationNode<T>::Type::ListComplex) {
+    if (evaluationArray[i].otype() == EvaluationNode<T>::Type::ListComplex) {
       if (!mapOnList) {
         return Complex<T>::Undefined();
       }
@@ -183,8 +184,8 @@ Evaluation<T> ApproximationHelper::Map(
       }
       for (int j = 0; j < listLength; j++) {
         Evaluation<T> child = evaluationArray[i].childAtIndex(j);
-        if (child.type() == EvaluationNode<T>::Type::MatrixComplex ||
-            child.type() == EvaluationNode<T>::Type::PointEvaluation) {
+        if (child.otype() == EvaluationNode<T>::Type::MatrixComplex ||
+            child.otype() == EvaluationNode<T>::Type::PointEvaluation) {
           return Complex<T>::Undefined();
         }
       }
@@ -194,20 +195,20 @@ Evaluation<T> ApproximationHelper::Map(
   std::complex<T> complexesArray[k_maxNumberOfParametersForMap];
   bool booleansArray[k_maxNumberOfParametersForMap];
   bool isBooleanEvaluation;
-  if (evaluationArray[0].type() == EvaluationNode<T>::Type::ListComplex &&
+  if (evaluationArray[0].otype() == EvaluationNode<T>::Type::ListComplex &&
       evaluationArray[0].numberOfChildren() > 0) {
-    isBooleanEvaluation = evaluationArray[0].childAtIndex(0).type() ==
+    isBooleanEvaluation = evaluationArray[0].childAtIndex(0).otype() ==
                           EvaluationNode<T>::Type::BooleanEvaluation;
   } else {
-    isBooleanEvaluation =
-        evaluationArray[0].type() == EvaluationNode<T>::Type::BooleanEvaluation;
+    isBooleanEvaluation = evaluationArray[0].otype() ==
+                          EvaluationNode<T>::Type::BooleanEvaluation;
   }
   if (listLength == OExpression::k_noList) {
     for (int i = 0; i < numberOfParameters; i++) {
-      assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex ||
-             evaluationArray[i].type() ==
+      assert(evaluationArray[i].otype() == EvaluationNode<T>::Type::Complex ||
+             evaluationArray[i].otype() ==
                  EvaluationNode<T>::Type::BooleanEvaluation);
-      if ((evaluationArray[i].type() ==
+      if ((evaluationArray[i].otype() ==
            EvaluationNode<T>::Type::BooleanEvaluation) != isBooleanEvaluation) {
         return Complex<T>::Undefined();
       }
@@ -229,19 +230,19 @@ Evaluation<T> ApproximationHelper::Map(
   for (int k = 0; k < listLength; k++) {
     for (int i = 0; i < numberOfParameters; i++) {
       Evaluation<T> currentChild;
-      if (evaluationArray[i].type() == EvaluationNode<T>::Type::ListComplex) {
+      if (evaluationArray[i].otype() == EvaluationNode<T>::Type::ListComplex) {
         currentChild = evaluationArray[i].childAtIndex(k);
       } else {
         currentChild = evaluationArray[i];
       }
-      if ((currentChild.type() == EvaluationNode<T>::Type::BooleanEvaluation) !=
-          isBooleanEvaluation) {
+      if ((currentChild.otype() ==
+           EvaluationNode<T>::Type::BooleanEvaluation) != isBooleanEvaluation) {
         return Complex<T>::Undefined();
       }
-      if (currentChild.type() == EvaluationNode<T>::Type::Complex) {
+      if (currentChild.otype() == EvaluationNode<T>::Type::Complex) {
         complexesArray[i] = currentChild.complexAtIndex(0);
       } else {
-        assert(currentChild.type() ==
+        assert(currentChild.otype() ==
                EvaluationNode<T>::Type::BooleanEvaluation);
         booleansArray[i] =
             static_cast<BooleanEvaluation<T> &>(currentChild).value();
@@ -296,18 +297,18 @@ Evaluation<T> ApproximationHelper::Reduce(
     ComplexAndMatrixReduction<T> computeOnComplexAndMatrix,
     MatrixAndComplexReduction<T> computeOnMatrixAndComplex,
     MatrixAndMatrixReduction<T> computeOnMatrices, bool mapOnList) {
-  if (eval1.type() == EvaluationNode<T>::Type::BooleanEvaluation ||
-      eval2.type() == EvaluationNode<T>::Type::BooleanEvaluation ||
-      eval1.type() == EvaluationNode<T>::Type::PointEvaluation ||
-      eval2.type() == EvaluationNode<T>::Type::PointEvaluation) {
+  if (eval1.otype() == EvaluationNode<T>::Type::BooleanEvaluation ||
+      eval2.otype() == EvaluationNode<T>::Type::BooleanEvaluation ||
+      eval1.otype() == EvaluationNode<T>::Type::PointEvaluation ||
+      eval2.otype() == EvaluationNode<T>::Type::PointEvaluation) {
     return Complex<T>::Undefined();
   }
   // If element is complex
-  if (eval1.type() == EvaluationNode<T>::Type::Complex) {
-    if (eval2.type() == EvaluationNode<T>::Type::Complex) {
+  if (eval1.otype() == EvaluationNode<T>::Type::Complex) {
+    if (eval2.otype() == EvaluationNode<T>::Type::Complex) {
       return Complex<T>::Builder(computeOnComplexes(
           eval1.complexAtIndex(0), eval2.complexAtIndex(0), complexFormat));
-    } else if (eval2.type() == EvaluationNode<T>::Type::ListComplex) {
+    } else if (eval2.otype() == EvaluationNode<T>::Type::ListComplex) {
       if (!mapOnList) {
         return Complex<T>::Undefined();
       }
@@ -315,42 +316,42 @@ Evaluation<T> ApproximationHelper::Reduce(
           static_cast<ListComplex<T> &>(eval2), eval1.complexAtIndex(0),
           complexFormat, computeOnComplexes, true);
     } else {
-      assert(eval2.type() == EvaluationNode<T>::Type::MatrixComplex);
+      assert(eval2.otype() == EvaluationNode<T>::Type::MatrixComplex);
       return computeOnComplexAndMatrix(eval1.complexAtIndex(0),
                                        static_cast<MatrixComplex<T> &>(eval2),
                                        complexFormat);
     }
     // If element is list
-  } else if (eval1.type() == EvaluationNode<T>::Type::ListComplex) {
+  } else if (eval1.otype() == EvaluationNode<T>::Type::ListComplex) {
     if (!mapOnList) {
       return Complex<T>::Undefined();
     }
-    if (eval2.type() == EvaluationNode<T>::Type::Complex) {
+    if (eval2.otype() == EvaluationNode<T>::Type::Complex) {
       return ElementWiseOnListAndComplex<T>(
           static_cast<ListComplex<T> &>(eval1), eval2.complexAtIndex(0),
           complexFormat, computeOnComplexes, false);
-    } else if (eval2.type() == EvaluationNode<T>::Type::ListComplex) {
+    } else if (eval2.otype() == EvaluationNode<T>::Type::ListComplex) {
       return ElementWiseOnLists<T>(static_cast<ListComplex<T> &>(eval1),
                                    static_cast<ListComplex<T> &>(eval2),
                                    complexFormat, computeOnComplexes);
     } else {
       // Matrices and lists are not compatible
-      assert(eval2.type() == EvaluationNode<T>::Type::MatrixComplex);
+      assert(eval2.otype() == EvaluationNode<T>::Type::MatrixComplex);
       return Complex<T>::Undefined();
     }
     // If element if matrix
   } else {
-    assert(eval1.type() == EvaluationNode<T>::Type::MatrixComplex);
-    if (eval2.type() == EvaluationNode<T>::Type::Complex) {
+    assert(eval1.otype() == EvaluationNode<T>::Type::MatrixComplex);
+    if (eval2.otype() == EvaluationNode<T>::Type::Complex) {
       return computeOnMatrixAndComplex(static_cast<MatrixComplex<T> &>(eval1),
                                        eval2.complexAtIndex(0), complexFormat);
-    } else if (eval2.type() == EvaluationNode<T>::Type::MatrixComplex) {
+    } else if (eval2.otype() == EvaluationNode<T>::Type::MatrixComplex) {
       return computeOnMatrices(static_cast<MatrixComplex<T> &>(eval1),
                                static_cast<MatrixComplex<T> &>(eval2),
                                complexFormat);
     } else {
       // Matrices and lists are not compatible
-      assert(eval2.type() == EvaluationNode<T>::Type::ListComplex);
+      assert(eval2.otype() == EvaluationNode<T>::Type::ListComplex);
       return Complex<T>::Undefined();
     }
   }

@@ -13,9 +13,9 @@ template <typename T>
 void FloatList<T>::replaceValueAtIndex(T value, int index) {
   assert(index < numberOfChildren());
   OExpression child = floatExpressionAtIndex(index);
-  assert((child.type() == ExpressionNode::Type::Float &&
+  assert((child.otype() == ExpressionNode::Type::Float &&
           sizeof(T) == sizeof(float)) ||
-         (child.type() == ExpressionNode::Type::Double &&
+         (child.otype() == ExpressionNode::Type::Double &&
           sizeof(T) == sizeof(double)));
   static_cast<Float<T> &>(child).setValue(value);
 }
@@ -32,9 +32,9 @@ T FloatList<T>::valueAtIndex(int index) const {
     return NAN;
   }
   OExpression child = floatExpressionAtIndex(index);
-  assert((child.type() == ExpressionNode::Type::Float &&
+  assert((child.otype() == ExpressionNode::Type::Float &&
           sizeof(T) == sizeof(float)) ||
-         (child.type() == ExpressionNode::Type::Double &&
+         (child.otype() == ExpressionNode::Type::Double &&
           sizeof(T) == sizeof(double)));
   return static_cast<Float<T> &>(child).value();
 }
@@ -42,9 +42,9 @@ T FloatList<T>::valueAtIndex(int index) const {
 template <typename T>
 OExpression FloatList<T>::floatExpressionAtIndex(int index) const {
   assert(index >= 0 && index < numberOfChildren() && numberOfChildren() > 0);
-  assert((childAtIndex(index).type() == ExpressionNode::Type::Float &&
+  assert((childAtIndex(index).otype() == ExpressionNode::Type::Float &&
           sizeof(T) == sizeof(float)) ||
-         (childAtIndex(index).type() == ExpressionNode::Type::Double &&
+         (childAtIndex(index).otype() == ExpressionNode::Type::Double &&
           sizeof(T) == sizeof(double)));
   char *firstChild = reinterpret_cast<char *>(node()) +
                      Helpers::AlignedSize(sizeof(ListNode), ByteAlignment);

@@ -82,7 +82,7 @@ OExpression UnitConvert::shallowBeautify(
 
   /* Handle temperatures, as converting between Kelvin, Celsius and Fahrenheit
    * cannot be done with a division. */
-  if (unit.type() == ExpressionNode::Type::OUnit) {
+  if (unit.otype() == ExpressionNode::Type::OUnit) {
     OUnit unitRef = static_cast<OUnit&>(unit);
     if (unitRef.representative()->dimensionVector() ==
         OUnit::TemperatureRepresentative::Default().dimensionVector()) {

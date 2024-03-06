@@ -26,8 +26,8 @@ class ListFunctionWithOneOrTwoParametersNode
         numberOfChildren() == 2
             ? OExpression(childAtIndex(1))
             : OList::Ones(memoizedChildren[0].numberOfChildren());
-    return memoizedChildren[0].type() == ExpressionNode::Type::OList &&
-           memoizedChildren[1].type() == ExpressionNode::Type::OList &&
+    return memoizedChildren[0].otype() == ExpressionNode::Type::OList &&
+           memoizedChildren[1].otype() == ExpressionNode::Type::OList &&
            memoizedChildren[0].numberOfChildren() != 0 &&
            memoizedChildren[1].numberOfChildren() != 0;
   }

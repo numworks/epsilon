@@ -14,7 +14,7 @@ class NonrealNode final : public UndefinedNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Nonreal; }
+  Type otype() const override { return Type::Nonreal; }
 
   // Approximation
   Evaluation<float> approximate(

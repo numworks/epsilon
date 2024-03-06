@@ -27,7 +27,7 @@ class PiecewiseOperatorNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::PiecewiseOperator; }
+  Type otype() const override { return Type::PiecewiseOperator; }
   template <typename T>
   int indexOfFirstTrueCondition(
       const ApproximationContext& approximationContext) const;

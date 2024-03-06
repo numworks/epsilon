@@ -457,10 +457,10 @@ PolarConic::PolarConic(const OExpression& e, Context* context,
 
   // Detect the pattern (d*e)/(1±e*cos(theta)) where e is the eccentricity
   OExpression numerator, denominator;
-  if (reducedExpression.type() == ExpressionNode::Type::Multiplication) {
+  if (reducedExpression.otype() == ExpressionNode::Type::Multiplication) {
     static_cast<Multiplication&>(reducedExpression)
         .splitIntoNormalForm(numerator, denominator, reductionContext);
-  } else if (reducedExpression.type() == ExpressionNode::Type::Power &&
+  } else if (reducedExpression.otype() == ExpressionNode::Type::Power &&
              reducedExpression.childAtIndex(1).isMinusOne()) {
     denominator = reducedExpression.childAtIndex(0);
   }
@@ -486,7 +486,7 @@ PolarConic::PolarConic(const OExpression& e, Context* context,
   /* Denominator can be of the form a+b*cos(theta) and needs to be turned
    * into 1 + (b/a)*cos(theta) */
   denominator = denominator.cloneAndReduce(reductionContext);
-  if (denominator.type() != ExpressionNode::Type::Addition) {
+  if (denominator.otype() != ExpressionNode::Type::Addition) {
     m_shape = Shape::Undefined;
     return;
   }
@@ -529,7 +529,7 @@ ParametricConic::ParametricConic(const OExpression& e, Context* context,
       ReductionContext(context, complexFormat, angleUnit, unitFormat,
                        ReductionTarget::SystemForAnalysis);
   OExpression reducedExpression = e.cloneAndReduce(reductionContext);
-  assert(reducedExpression.type() == ExpressionNode::Type::OPoint);
+  assert(reducedExpression.otype() == ExpressionNode::Type::OPoint);
 
   const OExpression xOfT = reducedExpression.childAtIndex(0);
   const OExpression yOfT = reducedExpression.childAtIndex(1);

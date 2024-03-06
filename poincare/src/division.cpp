@@ -33,7 +33,7 @@ bool DivisionNode::childNeedsSystemParenthesesAtSerialization(
           TrinaryBoolean::False) {
     return true;
   }
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational &&
+  if (static_cast<const ExpressionNode *>(child)->otype() == Type::Rational &&
       !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }

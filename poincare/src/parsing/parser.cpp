@@ -73,9 +73,9 @@ OExpression Parser::parseExpressionWithRightwardsArrow(
   if (m_nextToken.is(Token::Type::EndOfStream) &&
       !rightHandSide.isUninitialized() &&
       // RightHandSide must be symbol or function.
-      (rightHandSide.type() == ExpressionNode::Type::Symbol ||
-       (rightHandSide.type() == ExpressionNode::Type::Function &&
-        rightHandSide.childAtIndex(0).type() ==
+      (rightHandSide.otype() == ExpressionNode::Type::Symbol ||
+       (rightHandSide.otype() == ExpressionNode::Type::Function &&
+        rightHandSide.childAtIndex(0).otype() ==
             ExpressionNode::Type::Symbol))) {
     setState(previousState);
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
@@ -83,7 +83,7 @@ OExpression Parser::parseExpressionWithRightwardsArrow(
     /* This is instatiated outside the condition so that the pointer is not
      * lost. */
     VariableContext assignmentContext("", &tempContext);
-    if (rightHandSide.type() == ExpressionNode::Type::Function &&
+    if (rightHandSide.otype() == ExpressionNode::Type::Function &&
         m_parsingContext.context()) {
       /* If assigning a function, set the function parameter in the context
        * for parsing leftHandSide.
@@ -220,7 +220,7 @@ OExpression Parser::parseUntil(Token::Type stoppingType,
 
   do {
     popToken();
-    (this->*(tokenParsers[static_cast<int>(m_currentToken.type())]))(
+    (this->*(tokenParsers[static_cast<int>(m_currentToken.otype())]))(
         leftHandSide, stoppingType);
   } while (m_status == Status::Progress &&
            nextTokenHasPrecedenceOver(stoppingType));
@@ -239,7 +239,7 @@ void Parser::popToken() {
       m_status = Status::Error;  // OExpression misses a rightHandSide
     } else {
       m_nextToken = m_tokenizer.popToken();
-      if (m_nextToken.type() == Token::Type::AssignmentEqual) {
+      if (m_nextToken.otype() == Token::Type::AssignmentEqual) {
         assert(m_parsingContext.parsingMethod() ==
                ParsingContext::ParsingMethod::Assignment);
         /* Stop parsing for assignment to ensure that, frow now on xy is
@@ -268,8 +268,9 @@ bool Parser::popTokenIfType(Token::Type type) {
 }
 
 bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
-  Token::Type nextTokenType =
-      (m_pendingImplicitOperator) ? implicitOperatorType() : m_nextToken.type();
+  Token::Type nextTokenType = (m_pendingImplicitOperator)
+                                  ? implicitOperatorType()
+                                  : m_nextToken.otype();
   if (m_waitingSlashForMixedFraction && nextTokenType == Token::Type::Slash) {
     /* When parsing a mixed fraction, we cannot parse until a token type
      * with lower precedence than slash, but we still need not to stop on the
@@ -309,7 +310,7 @@ void Parser::isThereImplicitOperator() {
 Token::Type Parser::implicitOperatorType() {
   return m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::
                                                  ImplicitAdditionBetweenUnits &&
-                 m_currentToken.type() == Token::Type::OUnit
+                 m_currentToken.otype() == Token::Type::OUnit
              ? Token::Type::Plus
              : Token::Type::ImplicitTimes;
 }
@@ -372,8 +373,8 @@ void Parser::privateParsePlusAndMinus(OExpression &leftHandSide, bool plus,
   }
   OExpression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
-    if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-        rightHandSide.childAtIndex(0).type() !=
+    if (rightHandSide.otype() == ExpressionNode::Type::PercentSimple &&
+        rightHandSide.childAtIndex(0).otype() !=
             ExpressionNode::Type::PercentSimple) {
       /* The condition checks if the percent does not contain a percent because
        * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
@@ -387,7 +388,7 @@ void Parser::privateParsePlusAndMinus(OExpression &leftHandSide, bool plus,
       leftHandSide = Subtraction::Builder(leftHandSide, rightHandSide);
       return;
     }
-    if (leftHandSide.type() == ExpressionNode::Type::Addition) {
+    if (leftHandSide.otype() == ExpressionNode::Type::Addition) {
       int childrenCount = leftHandSide.numberOfChildren();
       static_cast<Addition &>(leftHandSide)
           .addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
@@ -411,8 +412,8 @@ void Parser::privateParseEastArrow(OExpression &leftHandSide, bool north,
                                    Token::Type stoppingType) {
   OExpression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
-    if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-        rightHandSide.childAtIndex(0).type() !=
+    if (rightHandSide.otype() == ExpressionNode::Type::PercentSimple &&
+        rightHandSide.childAtIndex(0).otype() !=
             ExpressionNode::Type::PercentSimple) {
       leftHandSide = PercentAddition::Builder(
           leftHandSide, north
@@ -463,7 +464,7 @@ void Parser::privateParseTimes(OExpression &leftHandSide,
                                Token::Type stoppingType) {
   OExpression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, stoppingType)) {
-    if (leftHandSide.type() == ExpressionNode::Type::Multiplication) {
+    if (leftHandSide.otype() == ExpressionNode::Type::Multiplication) {
       int childrenCount = leftHandSide.numberOfChildren();
       static_cast<Multiplication &>(leftHandSide)
           .addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
@@ -521,7 +522,7 @@ void Parser::parseComparisonOperator(OExpression &leftHandSide,
   (void)check;
   if (parseBinaryOperator(leftHandSide, rightHandSide,
                           Token::Type::ComparisonOperator)) {
-    if (leftHandSide.type() == ExpressionNode::Type::Comparison) {
+    if (leftHandSide.otype() == ExpressionNode::Type::Comparison) {
       Comparison leftComparison = static_cast<Comparison &>(leftHandSide);
       leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
     } else {
@@ -878,7 +879,7 @@ void Parser::privateParseReservedFunction(
 
 void Parser::parseSequence(OExpression &leftHandSide, const char *name,
                            Token::Type rightDelimiter) {
-  assert(m_nextToken.type() ==
+  assert(m_nextToken.otype() ==
          ((rightDelimiter == Token::Type::RightSystemBrace)
               ? Token::Type::LeftSystemBrace
               : Token::Type::LeftParenthesis));
@@ -940,19 +941,19 @@ void Parser::privateParseCustomIdentifier(OExpression &leftHandSide,
 
   if (idType == Context::SymbolAbstractType::Sequence ||
       (idType == Context::SymbolAbstractType::None &&
-       m_nextToken.type() == Token::Type::LeftSystemBrace)) {
+       m_nextToken.otype() == Token::Type::LeftSystemBrace)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
      * by braces, it's a sequence call. */
-    if (m_nextToken.type() != Token::Type::LeftSystemBrace &&
-        m_nextToken.type() != Token::Type::LeftParenthesis) {
+    if (m_nextToken.otype() != Token::Type::LeftSystemBrace &&
+        m_nextToken.otype() != Token::Type::LeftParenthesis) {
       /* If the identifier is a sequence but not followed by braces, it can
        * also be followed by parenthesis. If not, it's a syntax error. */
       m_status = Status::Error;
       return;
     }
     parseSequence(leftHandSide, name,
-                  m_nextToken.type() == Token::Type::LeftSystemBrace
+                  m_nextToken.otype() == Token::Type::LeftSystemBrace
                       ? Token::Type::RightSystemBrace
                       : Token::Type::RightParenthesis);
     return;
@@ -1027,7 +1028,7 @@ bool Parser::privateParseCustomIdentifierWithParameters(
                            Symbol::Builder(name, length));
   } else if (numberOfParameters == 1) {
     parameter = parameter.childAtIndex(0);
-    if (parameter.type() == ExpressionNode::Type::Symbol &&
+    if (parameter.otype() == ExpressionNode::Type::Symbol &&
         strncmp(static_cast<SymbolAbstract &>(parameter).name(), name,
                 length) == 0) {
       m_status =
@@ -1061,9 +1062,9 @@ bool Parser::privateParseCustomIdentifierWithParameters(
     m_status = Status::Error;
     return true;
   }
-  if (result.type() == ExpressionNode::Type::Function &&
-      parameter.type() == ExpressionNode::Type::Symbol &&
-      m_nextToken.type() == Token::Type::AssignmentEqual &&
+  if (result.otype() == ExpressionNode::Type::Function &&
+      parameter.otype() == ExpressionNode::Type::Symbol &&
+      m_nextToken.otype() == Token::Type::AssignmentEqual &&
       m_parsingContext.context()) {
     /* Set the parameter in the context to ensure that f(t)=t is not
      * understood as f(t)=1_t
@@ -1257,9 +1258,9 @@ void Parser::parseList(OExpression &leftHandSide, Token::Type stoppingType) {
 }
 
 bool IsIntegerBaseTenOrEmptyExpression(OExpression e) {
-  return (e.type() == ExpressionNode::Type::BasedInteger &&
+  return (e.otype() == ExpressionNode::Type::BasedInteger &&
           static_cast<BasedInteger &>(e).base() == OMG::Base::Decimal) ||
-         e.type() == ExpressionNode::Type::EmptyExpression;
+         e.otype() == ExpressionNode::Type::EmptyExpression;
 }
 
 OExpression Parser::parseIntegerCaretForFunction(bool allowParenthesis,
@@ -1290,7 +1291,7 @@ OExpression Parser::parseIntegerCaretForFunction(bool allowParenthesis,
   bool isSymbol;
   assert(caretIntegerValue);
   OExpression result =
-      allowParenthesis && base.type() == ExpressionNode::Type::Parenthesis
+      allowParenthesis && base.otype() == ExpressionNode::Type::Parenthesis
           ? base.childAtIndex(0)
           : base;
   if (SimplificationHelper::extractInteger(result, caretIntegerValue,
@@ -1326,7 +1327,7 @@ bool Parser::generateMixedFractionIfNeeded(OExpression &leftHandSide) {
     OExpression rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
     if (!rightHandSide.isUninitialized() &&
-        rightHandSide.type() == ExpressionNode::Type::Division &&
+        rightHandSide.otype() == ExpressionNode::Type::Division &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(0)) &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(1))) {
       // The following expression looks like "int/int" -> it's a mixedFraction

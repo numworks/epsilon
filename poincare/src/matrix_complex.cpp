@@ -14,7 +14,7 @@ namespace Poincare {
 template <typename T>
 std::complex<T> MatrixComplexNode<T>::complexAtIndex(int index) const {
   EvaluationNode<T> *child = EvaluationNode<T>::childAtIndex(index);
-  if (child->type() == EvaluationNode<T>::Type::Complex) {
+  if (child->otype() == EvaluationNode<T>::Type::Complex) {
     return *(static_cast<ComplexNode<T> *>(child));
   }
   return std::complex<T>(NAN, NAN);
@@ -30,7 +30,7 @@ OExpression MatrixComplexNode<T>::complexToExpression(
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
     OExpression childExpression = Undefined::Builder();
-    if (c->type() == EvaluationNode<T>::Type::Complex) {
+    if (c->otype() == EvaluationNode<T>::Type::Complex) {
       childExpression = c->complexToExpression(complexFormat);
     }
     matrix.addChildAtIndexInPlace(childExpression, i, i);
@@ -83,7 +83,7 @@ MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
   std::complex<T> operandsCopy[OMatrix::k_maxNumberOfChildren];
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
-    if (c->type() != EvaluationNode<T>::Type::Complex) {
+    if (c->otype() != EvaluationNode<T>::Type::Complex) {
       return MatrixComplex<T>::Undefined();
     }
     operandsCopy[i] = complexAtIndex(i);
@@ -227,7 +227,7 @@ void MatrixComplex<T>::setDimensions(int rows, int columns) {
 template <typename T>
 void MatrixComplex<T>::addChildAtIndexInPlace(Evaluation<T> t, int index,
                                               int currentNumberOfChildren) {
-  if (t.type() != EvaluationNode<T>::Type::Complex) {
+  if (t.otype() != EvaluationNode<T>::Type::Complex) {
     t = Complex<T>::Undefined();
   }
   Evaluation<T>::addChildAtIndexInPlace(t, index, currentNumberOfChildren);

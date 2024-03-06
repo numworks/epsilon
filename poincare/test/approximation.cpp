@@ -871,7 +871,7 @@ void assert_no_duplicates_in_list(const char *expression) {
   e = ListSort::Builder(e);
   OExpression result =
       e.approximate<T>(ApproximationContext(&globalContext, Cartesian, Radian));
-  assert(result.type() == ExpressionNode::Type::OList);
+  assert(result.otype() == ExpressionNode::Type::OList);
   OList list = static_cast<OList &>(result);
   int n = list.numberOfChildren();
   for (int i = 1; i < n; i++) {

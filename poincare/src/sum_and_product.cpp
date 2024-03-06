@@ -20,7 +20,7 @@ template <typename T>
 Evaluation<T> SumAndProductNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   // TODO : Reduction distributes on list but not approx
-  if (type() == ExpressionNode::Type::Sum &&
+  if (otype() == ExpressionNode::Type::Sum &&
       Poincare::Preferences::SharedPreferences()->examMode().forbidSum()) {
     return Complex<T>::Undefined();
   }
@@ -60,7 +60,7 @@ OExpression SumAndProduct::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  if (type() == ExpressionNode::Type::Sum &&
+  if (otype() == ExpressionNode::Type::Sum &&
       Poincare::Preferences::SharedPreferences()->examMode().forbidSum()) {
     return replaceWithUndefinedInPlace();
   }

@@ -19,7 +19,7 @@ StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(
   for (int i = 0; i < std::min(n, 2); i++) {
     Evaluation<T> childEval =
         e->childAtIndex(i)->approximate(T(), approximationContext);
-    if (childEval.type() != EvaluationNode<T>::Type::ListComplex) {
+    if (childEval.otype() != EvaluationNode<T>::Type::ListComplex) {
       return StatisticsDataset<T>();
     }
     evaluationArray[i] = static_cast<ListComplex<T> &>(childEval);

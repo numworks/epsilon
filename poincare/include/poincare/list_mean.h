@@ -16,7 +16,7 @@ class ListMeanNode : public ListFunctionWithOneOrTwoParametersNode {
     stream << "ListMean";
   }
 #endif
-  Type type() const override { return Type::ListMean; }
+  Type otype() const override { return Type::ListMean; }
 
  private:
   OExpression shallowReduce(const ReductionContext& reductionContext) override;

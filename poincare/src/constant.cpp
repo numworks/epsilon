@@ -38,7 +38,7 @@ int ConstantNode::simplificationOrderSameType(const ExpressionNode* e,
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
-  assert(type() == e->type());
+  assert(otype() == e->otype());
   return rankOfConstant() -
          static_cast<const ConstantNode*>(e)->rankOfConstant();
 }

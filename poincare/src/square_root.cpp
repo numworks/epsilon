@@ -47,22 +47,22 @@ bool SquareRoot::SplitRadical(OExpression term, OExpression *factor,
                               OExpression *underRoot) {
   /* We expect term to be a reduction of a√b, with a or b eventually equal to 1
    */
-  if (term.type() == ExpressionNode::Type::Rational) {
+  if (term.otype() == ExpressionNode::Type::Rational) {
     *factor = term;
     *underRoot = Rational::Builder(1);
     return true;
   }
-  if (term.type() == ExpressionNode::Type::Power) {
+  if (term.otype() == ExpressionNode::Type::Power) {
     return SplitRadical(Multiplication::Builder(Rational::Builder(1), term),
                         factor, underRoot);
   }
-  if (term.type() == ExpressionNode::Type::Multiplication &&
+  if (term.otype() == ExpressionNode::Type::Multiplication &&
       term.numberOfChildren() == 2) {
     OExpression factor1 = term.childAtIndex(0), factor2 = term.childAtIndex(1);
-    if (factor1.type() == ExpressionNode::Type::Rational &&
-        (factor2.type() == ExpressionNode::Type::Power &&
-         factor2.childAtIndex(1).type() == ExpressionNode::Type::Rational &&
-         factor2.childAtIndex(0).type() == ExpressionNode::Type::Rational)) {
+    if (factor1.otype() == ExpressionNode::Type::Rational &&
+        (factor2.otype() == ExpressionNode::Type::Power &&
+         factor2.childAtIndex(1).otype() == ExpressionNode::Type::Rational &&
+         factor2.childAtIndex(0).otype() == ExpressionNode::Type::Rational)) {
       OExpression exponent = factor2.childAtIndex(1);
       if (static_cast<Rational &>(exponent).isHalf()) {
         *factor = factor1;
@@ -77,10 +77,10 @@ bool SquareRoot::SplitRadical(OExpression term, OExpression *factor,
 OExpression SquareRoot::ReduceNestedRadicals(
     OExpression a, OExpression b, OExpression c, OExpression d,
     const ReductionContext &reductionContext) {
-  assert(a.type() == ExpressionNode::Type::Rational &&
-         b.type() == ExpressionNode::Type::Rational &&
-         c.type() == ExpressionNode::Type::Rational &&
-         d.type() == ExpressionNode::Type::Rational);
+  assert(a.otype() == ExpressionNode::Type::Rational &&
+         b.otype() == ExpressionNode::Type::Rational &&
+         c.otype() == ExpressionNode::Type::Rational &&
+         d.otype() == ExpressionNode::Type::Rational);
   /* We want to go from √(a√b + c√d) to root(w,4)×√x×√(y+√z), because √(y+√z)
    * is very easy to denest. */
   Rational rA = static_cast<Rational &>(a), rB = static_cast<Rational &>(b),
@@ -123,7 +123,7 @@ OExpression SquareRoot::ReduceNestedRadicals(
   }
   OExpression delta = Power::Builder(y2MinusZ, Rational::Builder(1, 2))
                           .shallowReduce(reductionContext);
-  if (delta.type() != ExpressionNode::Type::Rational) {
+  if (delta.otype() != ExpressionNode::Type::Rational) {
     return OExpression();
   }
   Rational rDelta = static_cast<Rational &>(delta);

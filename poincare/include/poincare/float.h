@@ -37,7 +37,7 @@ class FloatNode final : public NumberNode {
 #endif
 
   // Properties
-  Type type() const override {
+  Type otype() const override {
     return (sizeof(T) == sizeof(float)) ? Type::Float : Type::Double;
   }
   TrinaryBoolean isPositive(Context* context) const override {

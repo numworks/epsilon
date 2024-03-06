@@ -35,9 +35,9 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> inverse;
-  if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
+  if (input.otype() == EvaluationNode<T>::Type::MatrixComplex) {
     inverse = static_cast<MatrixComplex<T>&>(input).inverse();
-  } else if (input.type() == EvaluationNode<T>::Type::Complex) {
+  } else if (input.otype() == EvaluationNode<T>::Type::Complex) {
     inverse =
         Complex<T>::Builder(std::complex<T>(1) / (input.complexAtIndex(0)));
   }
@@ -58,7 +58,7 @@ OExpression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::OMatrix) {
+  if (c.otype() == ExpressionNode::Type::OMatrix) {
     /* Power(matrix, -n) creates a matrixInverse, so the simplification must be
      * done here and not in power. */
     bool couldComputeInverse = false;

@@ -150,7 +150,7 @@ int OMatrix::rank(Context *context, bool forceCanonization) {
        * If it's the case, compute the rank with approximated values. */
       OExpression mApproximation =
           approximate<double>(ApproximationContext(systemReductionContext));
-      if (mApproximation.type() != ExpressionNode::Type::OMatrix) {
+      if (mApproximation.otype() != ExpressionNode::Type::OMatrix) {
         /* The approximation was able to conclude that a coefficient is undef
          * while the reduction could not. */
         return -1;
@@ -166,7 +166,7 @@ int OMatrix::rank(Context *context, bool forceCanonization) {
     return -1;
   }
 
-  assert(m.type() == ExpressionNode::Type::OMatrix);
+  assert(m.otype() == ExpressionNode::Type::OMatrix);
   OMatrix cannonizedMatrix = static_cast<OMatrix &>(m);
   *this = cannonizedMatrix;
 
@@ -351,7 +351,7 @@ OMatrix OMatrix::rowCanonize(const ReductionContext &reductionContext,
         replaceChildAtIndexInPlace(h * n + j, newOpHJ);
         newOpHJ = newOpHJ.shallowReduce(reductionContext);
         if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
-            newOpHJ.type() == ExpressionNode::Type::Dependency) {
+            newOpHJ.otype() == ExpressionNode::Type::Dependency) {
           OExpression e = newOpHJ.childAtIndex(0);
           newOpHJ.replaceChildAtIndexWithGhostInPlace(0);
           newOpHJ.replaceWithInPlace(e);
@@ -377,7 +377,7 @@ OMatrix OMatrix::rowCanonize(const ReductionContext &reductionContext,
           newOpIJ.childAtIndex(1).shallowReduce(reductionContext);
           newOpIJ = newOpIJ.shallowReduce(reductionContext);
           if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
-              newOpIJ.type() == ExpressionNode::Type::Dependency) {
+              newOpIJ.otype() == ExpressionNode::Type::Dependency) {
             OExpression e = newOpIJ.childAtIndex(0);
             newOpIJ.replaceChildAtIndexWithGhostInPlace(0);
             newOpIJ.replaceWithInPlace(e);

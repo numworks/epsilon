@@ -29,7 +29,7 @@ class BasedIntegerNode final : public NumberNode {
                    int numberOfSignificantDigits) const override;
 
   // OExpression subclassing
-  Type type() const override { return Type::BasedInteger; }
+  Type otype() const override { return Type::BasedInteger; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }

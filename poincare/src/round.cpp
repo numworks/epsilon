@@ -72,8 +72,8 @@ OExpression Round::shallowReduce(ReductionContext reductionContext) {
   }
   /* We reduce only round(Rational, Rational). We do not reduce
    * round(Float, Float) which is equivalent to what is done in approximate. */
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational &&
-      secondChild.type() == ExpressionNode::Type::Rational) {
+  if (childAtIndex(0).otype() == ExpressionNode::Type::Rational &&
+      secondChild.otype() == ExpressionNode::Type::Rational) {
     Rational r1 = childAtIndex(0).convert<Rational>();
     Rational r2 = secondChild.convert<Rational>();
     if (!r2.isInteger()) {

@@ -22,7 +22,7 @@ class LogarithmNode final : public ExpressionNodeWithOneOrTwoChildren {
 #endif
 
   // Properties
-  Type type() const override { return Type::Logarithm; }
+  Type otype() const override { return Type::Logarithm; }
 
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,

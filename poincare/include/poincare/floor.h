@@ -18,7 +18,7 @@ class FloorNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Floor; }
+  Type otype() const override { return Type::Floor; }
 
  private:
   // Layout

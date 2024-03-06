@@ -107,7 +107,7 @@ OExpression SimplificationHelper::shallowReduceUndefined(OExpression e) {
      * - the result is nonreal if at least one child is nonreal
      * - the result is undefined if at least one child is undefined but no child
      *   is nonreal */
-    ExpressionNode::Type childIType = e.childAtIndex(i).type();
+    ExpressionNode::Type childIType = e.childAtIndex(i).otype();
     if (childIType == ExpressionNode::Type::Nonreal) {
       result = Nonreal::Builder();
       break;
@@ -180,7 +180,7 @@ OExpression SimplificationHelper::undefinedOnBooleans(OExpression e) {
 OExpression SimplificationHelper::undefinedOnPoint(OExpression e) {
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
-    if (e.childAtIndex(i).type() == ExpressionNode::Type::OPoint) {
+    if (e.childAtIndex(i).otype() == ExpressionNode::Type::OPoint) {
       return e.replaceWithUndefinedInPlace();
     }
   }
@@ -223,7 +223,7 @@ OExpression SimplificationHelper::distributeReductionOverLists(
     OExpression element = e.clone();
     for (int childIndex = 0; childIndex < n; childIndex++) {
       OExpression child = children.childAtIndex(childIndex);
-      if (child.type() == ExpressionNode::Type::OList) {
+      if (child.otype() == ExpressionNode::Type::OList) {
         assert(child.numberOfChildren() == listLength);
         element.replaceChildAtIndexInPlace(childIndex,
                                            child.childAtIndex(listIndex));
@@ -240,8 +240,8 @@ OExpression SimplificationHelper::distributeReductionOverLists(
 
 OExpression SimplificationHelper::bubbleUpDependencies(
     OExpression e, const ReductionContext& reductionContext) {
-  assert(e.type() != ExpressionNode::Type::Store);
-  if (e.type() == ExpressionNode::Type::Comparison) {
+  assert(e.otype() != ExpressionNode::Type::Store);
+  if (e.otype() == ExpressionNode::Type::Comparison) {
     return OExpression();
   }
   OList dependencies = OList::Builder();
@@ -257,7 +257,7 @@ OExpression SimplificationHelper::bubbleUpDependencies(
       continue;
     }
     OExpression child = e.childAtIndex(i);
-    if (child.type() == ExpressionNode::Type::Dependency) {
+    if (child.otype() == ExpressionNode::Type::Dependency) {
       static_cast<Dependency&>(child).extractDependencies(dependencies);
     }
   }
@@ -275,7 +275,7 @@ OExpression SimplificationHelper::reduceAfterBubblingUpDependencies(
   OExpression d = Dependency::Builder(Undefined::Builder(), dependencies);
   e.replaceWithInPlace(d);
   d.replaceChildAtIndexInPlace(0, e);
-  if (e.type() == ExpressionNode::Type::Dependency) {
+  if (e.otype() == ExpressionNode::Type::Dependency) {
     static_cast<Dependency&>(e).extractDependencies(dependencies);
   }
   return d.shallowReduce(reductionContext);
@@ -290,12 +290,12 @@ bool SimplificationHelper::extractInteger(OExpression e,
   if (e.isNumber()) {
     coef = 1;
     numberExpression = e;
-  } else if (e.type() == ExpressionNode::Type::Opposite &&
+  } else if (e.otype() == ExpressionNode::Type::Opposite &&
              e.childAtIndex(0).isNumber()) {
     coef = -1;
     numberExpression = e.childAtIndex(0);
   } else {
-    if (e.type() != ExpressionNode::Type::Symbol) {
+    if (e.otype() != ExpressionNode::Type::Symbol) {
       return false;
     }
     *isSymbolReturnValue = true;

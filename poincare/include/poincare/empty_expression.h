@@ -19,7 +19,7 @@ class EmptyExpressionNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::EmptyExpression; }
+  Type otype() const override { return Type::EmptyExpression; }
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
@@ -31,7 +31,7 @@ class EmptyExpressionNode final : public ExpressionNode {
   // Simplification
   LayoutShape leftLayoutShape() const override {
     // leftLayoutShape of EmptyExpression is only called from Conjugate
-    assert(parent() && parent()->type() == Type::Conjugate);
+    assert(parent() && parent()->otype() == Type::Conjugate);
     return LayoutShape::OneLetter;
   };
 

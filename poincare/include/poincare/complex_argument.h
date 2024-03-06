@@ -20,7 +20,7 @@ class ComplexArgumentNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::ComplexArgument; }
+  Type otype() const override { return Type::ComplexArgument; }
 
  private:
   // Layout

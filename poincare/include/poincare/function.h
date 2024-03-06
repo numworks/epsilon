@@ -19,7 +19,7 @@ class FunctionNode final : public SymbolAbstractNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Function; }
+  Type otype() const override { return Type::Function; }
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;

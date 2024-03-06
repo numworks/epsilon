@@ -110,7 +110,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const OExpression &e) {
   if (e.recursivelyMatches(OExpression::IsRandom, m_context)) {
     return Coordinate2D<T>(NAN, NAN);
   }
-  ExpressionNode::Type type = e.type();
+  ExpressionNode::Type type = e.otype();
 
   switch (type) {
     case ExpressionNode::Type::Multiplication:
@@ -579,7 +579,7 @@ Coordinate2D<T> Solver<T>::nextRootInChildren(
 template <typename T>
 Coordinate2D<T> Solver<T>::nextRootInMultiplication(
     const OExpression &e) const {
-  assert(e.type() == ExpressionNode::Type::Multiplication);
+  assert(e.otype() == ExpressionNode::Type::Multiplication);
   return nextRootInChildren(
       e, [](const OExpression, Context *, void *) { return true; }, nullptr);
 }
@@ -601,12 +601,12 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const OExpression &e) const {
           T exponent = k_NAN;
           ApproximationContext approximationContext(
               context, solver->m_complexFormat, solver->m_angleUnit);
-          if (e.type() == ExpressionNode::Type::SquareRoot) {
+          if (e.otype() == ExpressionNode::Type::SquareRoot) {
             exponent = static_cast<T>(0.5);
-          } else if (e.type() == ExpressionNode::Type::Power) {
+          } else if (e.otype() == ExpressionNode::Type::Power) {
             exponent =
                 e.childAtIndex(1).approximateToScalar<T>(approximationContext);
-          } else if (e.type() == ExpressionNode::Type::NthRoot) {
+          } else if (e.otype() == ExpressionNode::Type::NthRoot) {
             exponent =
                 static_cast<T>(1.) /
                 e.childAtIndex(1).approximateToScalar<T>(approximationContext);

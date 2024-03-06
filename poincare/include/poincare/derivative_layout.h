@@ -80,7 +80,7 @@ class FirstOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
   // diff(f(x), x, a)
  public:
   // LayoutNode
-  Type type() const override { return Type::FirstOrderDerivativeLayout; }
+  Type otype() const override { return Type::FirstOrderDerivativeLayout; }
   int indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction,
                                      int currentIndex,
                                      bool* shouldRedrawLayout) override;
@@ -115,7 +115,7 @@ class HigherOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
   HigherOrderDerivativeLayoutNode()
       : DerivativeLayoutNode(), m_orderSlot(OrderSlot::Denominator) {}
   // LayoutNode
-  Type type() const override { return Type::HigherOrderDerivativeLayout; }
+  Type otype() const override { return Type::HigherOrderDerivativeLayout; }
   int indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction,
                                      int currentIndex,
                                      bool* shouldRedrawLayout) override;

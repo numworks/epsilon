@@ -15,7 +15,7 @@ class ListSortNode : public ExpressionNode {
     stream << "ListSort";
   }
 #endif
-  Type type() const override { return Type::ListSort; }
+  Type otype() const override { return Type::ListSort; }
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

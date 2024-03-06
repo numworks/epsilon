@@ -18,7 +18,7 @@ class DeterminantNode final : public ExpressionNode {
   }
 #endif
 
-  Type type() const override { return Type::Determinant; }
+  Type otype() const override { return Type::Determinant; }
 
  private:
   /* Layout */

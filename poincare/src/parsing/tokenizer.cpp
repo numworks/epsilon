@@ -17,7 +17,7 @@ bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
   ParsingContext pContext(nullptr, ParsingContext::ParsingMethod::Assignment);
   Tokenizer tokenizer(buffer, &pContext);
   Token t = tokenizer.popToken();
-  if (t.type() != Token::Type::CustomIdentifier || t.length() != charLength ||
+  if (t.otype() != Token::Type::CustomIdentifier || t.length() != charLength ||
       !SymbolAbstractNode::NameLengthIsValid(t.text(), t.length())) {
     return false;
   }

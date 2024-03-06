@@ -20,7 +20,7 @@ class NaperianLogarithmNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::NaperianLogarithm; }
+  Type otype() const override { return Type::NaperianLogarithm; }
 
  private:
   // Layout

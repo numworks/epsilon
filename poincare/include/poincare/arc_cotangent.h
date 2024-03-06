@@ -20,7 +20,7 @@ class ArcCotangentNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::ArcCotangent; }
+  Type otype() const override { return Type::ArcCotangent; }
 
   template <typename T>
   static std::complex<T> computeOnComplex(

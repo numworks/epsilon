@@ -150,7 +150,7 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode *e,
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
-  assert(e->type() == ExpressionNode::Type::Rational);
+  assert(e->otype() == ExpressionNode::Type::Rational);
   const RationalNode *other = static_cast<const RationalNode *>(e);
   return NaturalOrder(this, other);
 }

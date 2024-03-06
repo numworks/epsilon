@@ -12,7 +12,7 @@ OLayout HorizontalLayoutNode::deepChildToPointToWhenInserting() const {
   OLayout layoutToPointTo =
       OLayout(this).recursivelyMatches([](Poincare::OLayout layout) {
         if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-                layout.type())) {
+                layout.otype())) {
           /* If the inserted bracket is temp on the left, do not put cursor
            * inside it so that the cursor is put right when inserting ")". */
           return static_cast<AutocompletedBracketPairLayoutNode *>(
@@ -58,7 +58,7 @@ size_t HorizontalLayoutNode::serialize(
     if (i != childrenCount - 1) {
       nextChild = childAtIndex(i + 1);
       // Write the multiplication sign if needed
-      LayoutNode::Type nextChildType = nextChild->type();
+      LayoutNode::Type nextChildType = nextChild->otype();
       if ((nextChildType == LayoutNode::Type::AbsoluteValueLayout ||
            nextChildType == LayoutNode::Type::BinomialCoefficientLayout ||
            nextChildType == LayoutNode::Type::CeilingLayout ||
@@ -187,7 +187,7 @@ bool HorizontalLayoutNode::shouldDrawEmptyRectangle() const {
   }
   LayoutNode *p = parent();
   if (!p || AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-                p->type())) {
+                p->otype())) {
     // Never show the empty rectangle if in a parenthesis or if has no parent
     return false;
   }

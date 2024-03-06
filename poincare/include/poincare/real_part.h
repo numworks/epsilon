@@ -28,7 +28,7 @@ class RealPartNode final : public ExpressionNode {
                ? TrinaryBoolean::True
                : TrinaryBoolean::Unknown;
   }
-  Type type() const override { return Type::RealPart; }
+  Type otype() const override { return Type::RealPart; }
 
  private:
   // Layout

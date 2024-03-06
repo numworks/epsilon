@@ -19,7 +19,7 @@ class ListAccessNode : public ExpressionNode {
     stream << (U == 1 ? "ListElement" : "ListSlice");
   }
 #endif
-  Type type() const override;
+  Type otype() const override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };

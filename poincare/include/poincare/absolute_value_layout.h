@@ -11,7 +11,7 @@ namespace Poincare {
 class AbsoluteValueLayoutNode final : public SquareBracketPairLayoutNode {
  public:
   // LayoutNode
-  Type type() const override { return Type::AbsoluteValueLayout; }
+  Type otype() const override { return Type::AbsoluteValueLayout; }
 
   // SerializationHelperInterface
   size_t serialize(char* buffer, size_t bufferSize,

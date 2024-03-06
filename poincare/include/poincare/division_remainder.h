@@ -24,7 +24,7 @@ class DivisionRemainderNode final : public ExpressionNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }
-  Type type() const override { return Type::DivisionRemainder; }
+  Type otype() const override { return Type::DivisionRemainder; }
 
   // Simplification
   LayoutShape leftLayoutShape() const override {

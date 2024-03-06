@@ -52,7 +52,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
   bool onlyLeftParenthesisIsInserted =
       onlyOneLayoutIsInserted &&
-      (leftMostLayout.type() == LayoutNode::Type::ParenthesisLayout &&
+      (leftMostLayout.otype() == LayoutNode::Type::ParenthesisLayout &&
        !static_cast<ParenthesisLayoutNode *>(leftMostLayout.node())
             ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));
 
@@ -109,7 +109,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
 
   // - Step 2 - Apply the beautification
   Layout insertedLayout = h.childAtIndex(insertedLayoutIndex);
-  if (insertedLayout.type() == LayoutNode::Type::ParenthesisLayout) {
+  if (insertedLayout.otype() == LayoutNode::Type::ParenthesisLayout) {
     /* - Step 2.1 - Beautify after a parenthesis insertion.
      *    > Beautify identifiers and functions left of the parenthesis.
      *    > Beautifiy d/dx() into derivative function */
@@ -136,7 +136,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
 // private
 
 bool InputBeautification::LayoutIsIdentifierMaterial(Layout l) {
-  return l.type() == LayoutNode::Type::CodePointLayout &&
+  return l.otype() == LayoutNode::Type::CodePointLayout &&
          Tokenizer::IsIdentifierMaterial(
              static_cast<CodePointLayout &>(l).codePoint());
 }
@@ -147,7 +147,7 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
   assert(!h.isUninitialized());
   assert(rightmostIndexToBeautify < h.numberOfChildren() &&
          rightmostIndexToBeautify >= 0);
-  if (h.childAtIndex(rightmostIndexToBeautify).type() !=
+  if (h.childAtIndex(rightmostIndexToBeautify).otype() !=
       LayoutNode::Type::CodePointLayout) {
     return false;
   }
@@ -197,7 +197,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
          rightmostIndexToBeautify >= 0);
   bool followedByParenthesis =
       (rightmostIndexToBeautify < h.numberOfChildren() - 1 &&
-       h.childAtIndex(rightmostIndexToBeautify + 1).type() ==
+       h.childAtIndex(rightmostIndexToBeautify + 1).otype() ==
            LayoutNode::Type::ParenthesisLayout);
 
   // Get the identifiers string.
@@ -222,7 +222,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   size_t bufferCurrentLength = 0;
   for (int i = firstIndexOfIdentifier; i <= rightmostIndexToBeautify; i++) {
     Layout currentChild = h.childAtIndex(i);
-    assert(currentChild.type() == LayoutNode::Type::CodePointLayout);
+    assert(currentChild.otype() == LayoutNode::Type::CodePointLayout);
     CodePoint c = static_cast<CodePointLayout &>(currentChild).codePoint();
     // This does not add null termination
     size_t cLen = UTF8Decoder::CharSizeOfCodePoint(c);
@@ -246,7 +246,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   bool layoutsWereBeautified = false;
   int numberOfLayoutsAddedOrRemovedLastLoop = 0;
 
-  while (nextIdentifier.type() != Token::Type::EndOfStream) {
+  while (nextIdentifier.otype() != Token::Type::EndOfStream) {
     // Offset the index of the identifier in the horizontal layout
     firstIndexOfIdentifier +=
         UTF8Helper::StringGlyphLength(currentIdentifier.text(),
@@ -261,7 +261,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
       BeautificationRule beautificationRule = rulesList[i];
       if (beautificationRule.numberOfParameters > 0 &&
           (!followedByParenthesis ||
-           nextIdentifier.type() != Token::Type::EndOfStream)) {
+           nextIdentifier.otype() != Token::Type::EndOfStream)) {
         // Only last token can be a function
         continue;
       }
@@ -287,13 +287,13 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
      * string is long.
      * */
     if (logBeautification && followedByParenthesis &&
-        nextIdentifier.type() == Token::Type::Number &&
+        nextIdentifier.otype() == Token::Type::Number &&
         // Check if current token is a function
-        currentIdentifier.type() == Token::Type::ReservedFunction &&
+        currentIdentifier.otype() == Token::Type::ReservedFunction &&
         // Check if logN is at the end of the identifiers string
         *(nextIdentifier.text() + nextIdentifier.length()) == 0 &&
         // Check if N is integer
-        nextIdentifier.expression().type() ==
+        nextIdentifier.expression().otype() ==
             ExpressionNode::Type::BasedInteger &&
         // Check if function is "log"
         k_logarithmRule.listOfBeautifiedAliases.contains(
@@ -341,7 +341,7 @@ bool InputBeautification::BeautifyPipeKey(HorizontalLayout h,
 bool InputBeautification::BeautifyFractionIntoDerivative(
     HorizontalLayout h, int indexOfFraction, LayoutCursor *layoutCursor) {
   assert(indexOfFraction >= 0 && indexOfFraction < h.numberOfChildren() - 1 &&
-         h.childAtIndex(indexOfFraction + 1).type() ==
+         h.childAtIndex(indexOfFraction + 1).otype() ==
              LayoutNode::Type::ParenthesisLayout);
   Layout childToMatch = h.childAtIndex(indexOfFraction);
   Layout fractionDDXLayout = FractionLayout::Builder(
@@ -358,14 +358,14 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
     HorizontalLayout h, int indexOfSuperscript, LayoutCursor *layoutCursor) {
   Layout superscript = h.childAtIndex(indexOfSuperscript);
-  if (superscript.type() != LayoutNode::Type::VerticalOffsetLayout ||
+  if (superscript.otype() != LayoutNode::Type::VerticalOffsetLayout ||
       static_cast<VerticalOffsetLayout &>(superscript).verticalPosition() !=
           VerticalOffsetLayoutNode::VerticalPosition::Superscript) {
     return false;
   }
   Layout firstOrderDerivative = h.parent();
   if (firstOrderDerivative.isUninitialized() ||
-      firstOrderDerivative.type() !=
+      firstOrderDerivative.otype() !=
           LayoutNode::Type::FirstOrderDerivativeLayout ||
       firstOrderDerivative.indexOfChild(h) !=
           DerivativeLayoutNode::k_variableLayoutIndex ||
@@ -411,7 +411,7 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
   }
   Layout parenthesis = h.parent();
   if (parenthesis.isUninitialized() ||
-      parenthesis.type() != LayoutNode::Type::ParenthesisLayout) {
+      parenthesis.otype() != LayoutNode::Type::ParenthesisLayout) {
     return false;
   }
   Layout horizontalParent = parenthesis.parent();
@@ -443,7 +443,7 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
     // Replace the cursor if it's in variable slot
     Layout parent = layoutCursor->layout().parent();
     assert(!parent.isUninitialized() &&
-           parent.type() == LayoutNode::Type::SumLayout);
+           parent.otype() == LayoutNode::Type::SumLayout);
     if (parent.indexOfChild(layoutCursor->layout()) ==
         SequenceLayoutNode::k_variableLayoutIndex) {
       layoutCursor->safeSetLayout(
@@ -476,7 +476,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
     int *numberOfLayoutsAddedOrRemoved, Layout preProcessedParameter,
     int indexOfPreProcessedParameter) {
   assert(beautificationRule.numberOfParameters == 0 ||
-         h.childAtIndex(endIndex + 1).type() ==
+         h.childAtIndex(endIndex + 1).otype() ==
              LayoutNode::Type::ParenthesisLayout);
   int currentNumberOfChildren = h.numberOfChildren();
   // Create pattern layout
@@ -541,7 +541,7 @@ bool InputBeautification::CreateParametersList(
     Layout *parameters, HorizontalLayout h, int parenthesisIndexInParent,
     BeautificationRule beautificationRule, LayoutCursor *layoutCursor) {
   Layout parenthesis = h.childAtIndex(parenthesisIndexInParent);
-  assert(parenthesis.type() == LayoutNode::Type::ParenthesisLayout);
+  assert(parenthesis.otype() == LayoutNode::Type::ParenthesisLayout);
   // Left parenthesis should not be temporary
   assert(!static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())
               ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));

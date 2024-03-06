@@ -19,7 +19,7 @@ class ListSequenceNode final : public ParameteredExpressionNode {
   }
 #endif
   // Properties
-  Type type() const override { return Type::ListSequence; }
+  Type otype() const override { return Type::ListSequence; }
 
  private:
   // Simplification

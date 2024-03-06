@@ -60,7 +60,7 @@ OExpression Ceiling::shallowReduce(ReductionContext reductionContext) {
   }
 
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Rational) {
+  if (c.otype() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
     IntegerDivision div =
         Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());

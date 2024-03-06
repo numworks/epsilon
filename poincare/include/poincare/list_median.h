@@ -16,7 +16,7 @@ class ListMedianNode : public ListFunctionWithOneOrTwoParametersNode {
     stream << "ListMedian";
   }
 #endif
-  Type type() const override { return Type::ListMedian; }
+  Type otype() const override { return Type::ListMedian; }
 
  private:
   OExpression shallowReduce(const ReductionContext& reductionContext) override;

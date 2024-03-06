@@ -33,7 +33,7 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> transpose;
-  if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
+  if (input.otype() == EvaluationNode<T>::Type::MatrixComplex) {
     transpose = static_cast<MatrixComplex<T>&>(input).transpose();
   } else {
     transpose = input;
@@ -53,7 +53,7 @@ OExpression MatrixTranspose::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::OMatrix) {
+  if (c.otype() == ExpressionNode::Type::OMatrix) {
     OExpression result = static_cast<OMatrix&>(c).createTranspose();
     replaceWithInPlace(result);
     return result;

@@ -29,10 +29,10 @@ void fillBufferWithStartingAndEndingSpace(char *nameBuffer, int sizeOfBuffer,
 
 int LogicalOperatorNode::LogicalOperatorTypePrecedence(
     const ExpressionNode *operatorExpression) {
-  if (operatorExpression->type() == Type::LogicalOperatorNot) {
+  if (operatorExpression->otype() == Type::LogicalOperatorNot) {
     return 2;
   }
-  if (operatorExpression->type() == Type::BinaryLogicalOperator) {
+  if (operatorExpression->otype() == Type::BinaryLogicalOperator) {
     const BinaryLogicalOperatorNode *binaryOperatorExpression =
         static_cast<const BinaryLogicalOperatorNode *>(operatorExpression);
     BinaryLogicalOperatorNode::OperatorType operatorType =
@@ -101,7 +101,7 @@ OExpression LogicalOperatorNot::shallowReduce(
   if (!child.hasBooleanValue()) {
     return replaceWithUndefinedInPlace();
   }
-  if (child.type() != ExpressionNode::Type::OBoolean) {
+  if (child.otype() != ExpressionNode::Type::OBoolean) {
     // Let approximation handle this
     return *this;
   }
@@ -209,8 +209,8 @@ OExpression BinaryLogicalOperator::shallowReduce(
   if (!leftChild.hasBooleanValue() || !rightChild.hasBooleanValue()) {
     return replaceWithUndefinedInPlace();
   }
-  if (leftChild.type() != ExpressionNode::Type::OBoolean ||
-      rightChild.type() != ExpressionNode::Type::OBoolean) {
+  if (leftChild.otype() != ExpressionNode::Type::OBoolean ||
+      rightChild.otype() != ExpressionNode::Type::OBoolean) {
     // Let approximation handle this
     return *this;
   }

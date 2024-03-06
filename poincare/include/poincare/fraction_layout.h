@@ -14,7 +14,7 @@ class FractionLayoutNode final : public LayoutNode {
   using LayoutNode::LayoutNode;
 
   // Layout
-  Type type() const override { return Type::FractionLayout; }
+  Type otype() const override { return Type::FractionLayout; }
 
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,

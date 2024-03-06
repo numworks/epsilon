@@ -9,7 +9,7 @@ class NthRootNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "root";
   // ExpressionNode
-  Type type() const override { return Type::NthRoot; }
+  Type otype() const override { return Type::NthRoot; }
 
   // TreeNode
   size_t size() const override { return sizeof(NthRootNode); }

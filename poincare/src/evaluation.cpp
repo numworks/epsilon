@@ -14,12 +14,12 @@ bool EvaluationNode<T>::isDefinedScalar() const {
 
 template <typename T>
 bool EvaluationNode<T>::isDefinedPoint() const {
-  return type() == EvaluationNode<T>::Type::PointEvaluation && !isUndefined();
+  return otype() == EvaluationNode<T>::Type::PointEvaluation && !isUndefined();
 }
 
 template <typename T>
 bool EvaluationNode<T>::isListOfDefinedScalars() const {
-  if (type() != EvaluationNode<T>::Type::ListComplex) {
+  if (otype() != EvaluationNode<T>::Type::ListComplex) {
     return false;
   }
   const int n = numberOfChildren();
@@ -34,7 +34,7 @@ bool EvaluationNode<T>::isListOfDefinedScalars() const {
 
 template <typename T>
 bool EvaluationNode<T>::isListOfDefinedPoints() const {
-  if (type() != EvaluationNode<T>::Type::ListComplex) {
+  if (otype() != EvaluationNode<T>::Type::ListComplex) {
     return false;
   }
   const int n = numberOfChildren();

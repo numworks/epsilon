@@ -58,7 +58,7 @@ OExpression Floor::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Rational) {
+  if (c.otype() == ExpressionNode::Type::Rational) {
     Rational r = static_cast<Rational&>(c);
     IntegerDivision div =
         Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());

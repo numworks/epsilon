@@ -18,7 +18,7 @@ class SecantNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Secant; }
+  Type otype() const override { return Type::Secant; }
 
   template <typename T>
   static std::complex<T> computeOnComplex(

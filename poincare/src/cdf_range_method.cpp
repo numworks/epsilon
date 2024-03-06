@@ -14,9 +14,9 @@ OExpression CDFRangeMethod::shallowReduce(OExpression* abscissae,
   OExpression x = abscissae[0];
   OExpression y = abscissae[1];
 
-  if (x.type() == ExpressionNode::Type::Infinity &&
+  if (x.otype() == ExpressionNode::Type::Infinity &&
       x.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
-    if (y.type() == ExpressionNode::Type::Infinity) {
+    if (y.otype() == ExpressionNode::Type::Infinity) {
       OExpression result = Rational::Builder(
           y.isPositive(reductionContext.context()) == TrinaryBoolean::True);
       expression->replaceWithInPlace(result);

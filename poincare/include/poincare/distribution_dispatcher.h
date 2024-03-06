@@ -129,7 +129,7 @@ class DistributionDispatcherNode : public NAryExpressionNode {
   const char* name() const { return m_name; }
 
   // Properties
-  Type type() const override { return Type::DistributionDispatcher; }
+  Type otype() const override { return Type::DistributionDispatcher; }
 
   TrinaryBoolean isPositive(Context* context) const override {
     if (m_methodType != DistributionMethod::Type::Inverse) {

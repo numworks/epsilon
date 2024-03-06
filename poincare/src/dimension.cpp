@@ -33,10 +33,10 @@ template <typename T>
 Evaluation<T> DimensionNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.type() == EvaluationNode<T>::Type::ListComplex) {
+  if (input.otype() == EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Builder(std::complex<T>(input.numberOfChildren()));
   }
-  if (input.type() != EvaluationNode<T>::Type::MatrixComplex ||
+  if (input.otype() != EvaluationNode<T>::Type::MatrixComplex ||
       input.isUndefined()) {
     return Complex<T>::Undefined();
   }
@@ -58,13 +58,13 @@ OExpression Dimension::shallowReduce(ReductionContext reductionContext) {
   }
   OExpression c = childAtIndex(0);
 
-  if (c.type() == ExpressionNode::Type::OList) {
+  if (c.otype() == ExpressionNode::Type::OList) {
     OExpression result = Rational::Builder(c.numberOfChildren());
     replaceWithInPlace(result);
     return result;
   }
 
-  if (c.type() != ExpressionNode::Type::OMatrix) {
+  if (c.otype() != ExpressionNode::Type::OMatrix) {
     if (c.deepIsMatrix(reductionContext.context(),
                        reductionContext.shouldCheckMatrices())) {
       return *this;

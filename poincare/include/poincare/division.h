@@ -29,7 +29,7 @@ class DivisionNode final : public ExpressionNode {
                ? TrinaryBoolean::True
                : TrinaryBoolean::Unknown;
   }
-  Type type() const override { return Type::Division; }
+  Type otype() const override { return Type::Division; }
   OExpression removeUnit(OExpression* unit) override {
     assert(false);
     return ExpressionNode::removeUnit(unit);

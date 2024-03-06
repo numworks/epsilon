@@ -21,7 +21,7 @@ class RandintNode final : public ExpressionNodeWithOneOrTwoChildren {
 #endif
 
   // Properties
-  Type type() const override { return Type::Randint; }
+  Type otype() const override { return Type::Randint; }
 
  private:
   constexpr static int k_defaultMinBound = 1;

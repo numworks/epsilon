@@ -11,7 +11,7 @@ class RandintNoRepeatNode : public ExpressionNode {
 
   size_t size() const override { return sizeof(RandintNoRepeatNode); }
   int numberOfChildren() const override;
-  Type type() const override { return Type::RandintNoRepeat; }
+  Type otype() const override { return Type::RandintNoRepeat; }
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

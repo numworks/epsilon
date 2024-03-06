@@ -13,7 +13,7 @@ class ListSumNode : public ExpressionNode {
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "ListSum"; }
 #endif
-  Type type() const override { return Type::ListSum; }
+  Type otype() const override { return Type::ListSum; }
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

@@ -23,7 +23,7 @@ class FracPartNode final : public ExpressionNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }
-  Type type() const override { return Type::FracPart; }
+  Type otype() const override { return Type::FracPart; }
 
  private:
   // Layout

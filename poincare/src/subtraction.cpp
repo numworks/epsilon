@@ -48,7 +48,7 @@ OExpression Subtraction::shallowReduce(ReductionContext reductionContext) {
     return e;
   }
   OExpression secondChild = childAtIndex(1);
-  if (secondChild.type() == ExpressionNode::Type::Addition) {
+  if (secondChild.otype() == ExpressionNode::Type::Addition) {
     /* In Addition::shallowReduce, the addition is not reduced if its parent is
      * a Subtraction, to avoid miscomputing a common denominator. This results
      * in the second child not being yet reduced. This could cause problem

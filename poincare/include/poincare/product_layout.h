@@ -11,7 +11,7 @@ class ProductLayoutNode final : public SequenceLayoutNode {
   using SequenceLayoutNode::SequenceLayoutNode;
 
   // Layout
-  Type type() const override { return Type::ProductLayout; }
+  Type otype() const override { return Type::ProductLayout; }
 
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,

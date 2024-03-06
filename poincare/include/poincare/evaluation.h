@@ -32,7 +32,7 @@ class EvaluationNode : public TreeNode {
   Direct<EvaluationNode<T>> children() const {
     return Direct<EvaluationNode<T>>(this);
   }
-  virtual Type type() const = 0;
+  virtual Type otype() const = 0;
   virtual ~EvaluationNode() = default;
   virtual bool isUndefined() const = 0;
   virtual std::complex<T> complexAtIndex(int index) const = 0;
@@ -70,8 +70,8 @@ class Evaluation : public TreeHandle {
 
   /* Hierarchy */
   Evaluation<T> childAtIndex(int i) const;
-  typename Poincare::EvaluationNode<T>::Type type() const {
-    return node()->type();
+  typename Poincare::EvaluationNode<T>::Type otype() const {
+    return node()->otype();
   }
   bool isUndefined() const { return node()->isUndefined(); }
   std::complex<T> complexAtIndex(int index) const {

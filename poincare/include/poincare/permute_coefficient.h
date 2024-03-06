@@ -22,7 +22,7 @@ class PermuteCoefficientNode final : public ExpressionNode {
   // ExpressionNode
 
   // Properties
-  Type type() const override { return Type::PermuteCoefficient; }
+  Type otype() const override { return Type::PermuteCoefficient; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }

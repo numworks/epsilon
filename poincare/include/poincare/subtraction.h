@@ -20,7 +20,7 @@ class SubtractionNode final : public ExpressionNode {
   // ExpressionNode
 
   // Properties
-  Type type() const override { return Type::Subtraction; }
+  Type otype() const override { return Type::Subtraction; }
   bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
   OExpression removeUnit(OExpression* unit) override {

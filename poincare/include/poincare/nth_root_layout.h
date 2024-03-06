@@ -20,7 +20,7 @@ class NthRootLayoutNode final : public LayoutNode {
   bool isSquareRoot() const;
 
   // Layout
-  Type type() const override { return Type::NthRootLayout; }
+  Type otype() const override { return Type::NthRootLayout; }
 
   // LayoutNode
   size_t serialize(char* buffer, size_t bufferSize,

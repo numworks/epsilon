@@ -122,7 +122,7 @@ int PercentAdditionNode::serializeSecondChild(
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
   ExpressionNode* percentChild = childAtIndex(1);
-  if (percentChild->type() == ExpressionNode::Type::Opposite) {
+  if (percentChild->otype() == ExpressionNode::Type::Opposite) {
     numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar,
                                                    bufferSize - numberOfChar,
                                                    UCodePointSouthEastArrow);
@@ -225,7 +225,7 @@ OExpression PercentAddition::deepBeautify(
   /* We override deepBeautify to prevent the shallow reduce of the addition
    * because we need to preserve the order. */
   OExpression e = shallowBeautify(reductionContext);
-  assert(e.type() == ExpressionNode::Type::Multiplication);
+  assert(e.otype() == ExpressionNode::Type::Multiplication);
   assert(e.numberOfChildren() == 2);
   OExpression child0 = e.childAtIndex(0);
   child0 = child0.deepBeautify(reductionContext);
@@ -240,9 +240,9 @@ OExpression PercentAddition::deepBeautify(
    * child. */
   if (e.node()->childAtIndexNeedsUserParentheses(child0, 0) ||
       (!parent.isUninitialized() &&
-       parent.type() == ExpressionNode::Type::Multiplication &&
+       parent.otype() == ExpressionNode::Type::Multiplication &&
        parent.indexOfChild(e) > 0 &&
-       child0.type() == ExpressionNode::Type::Opposite)) {
+       child0.otype() == ExpressionNode::Type::Opposite)) {
     e.replaceChildAtIndexInPlace(0, Parenthesis::Builder(child0));
   }
   // Skip the Addition's shallowBeautify

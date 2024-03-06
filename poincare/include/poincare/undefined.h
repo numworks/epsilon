@@ -16,7 +16,7 @@ class UndefinedNode : public NumberNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Undefined; }
+  Type otype() const override { return Type::Undefined; }
   int polynomialDegree(Context* context, const char* symbolName) const override;
   TrinaryBoolean isNull(Context* context) const override {
     return TrinaryBoolean::Unknown;

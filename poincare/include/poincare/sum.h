@@ -14,7 +14,7 @@ class SumNode final : public SumAndProductNode {
   void logNodeName(std::ostream& stream) const override { stream << "Sum"; }
 #endif
 
-  Type type() const override { return Type::Sum; }
+  Type otype() const override { return Type::Sum; }
 
  private:
   float emptySumAndProductValue() const override { return 0.0f; }

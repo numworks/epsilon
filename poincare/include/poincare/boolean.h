@@ -30,7 +30,7 @@ class BooleanEvaluationNode final : public EvaluationNode<T> {
 #endif
 
   // EvaluationNode
-  typename EvaluationNode<T>::Type type() const override {
+  typename EvaluationNode<T>::Type otype() const override {
     return EvaluationNode<T>::Type::BooleanEvaluation;
   }
   bool isUndefined() const override { return false; }
@@ -73,7 +73,7 @@ class BooleanNode final : public ExpressionNode {
 #endif
 
   // OExpression Node Properties
-  Type type() const override { return Type::OBoolean; }
+  Type otype() const override { return Type::OBoolean; }
 
   // Properties
   bool value() const { return m_value; }

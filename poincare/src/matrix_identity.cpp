@@ -57,7 +57,7 @@ OExpression MatrixIdentity::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() != ExpressionNode::Type::Rational ||
+  if (c.otype() != ExpressionNode::Type::Rational ||
       !static_cast<Rational&>(c).isInteger()) {
     return *this;
   }

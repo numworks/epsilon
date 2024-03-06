@@ -207,7 +207,7 @@ void assert_reduce_and_store(const char *expression,
   Tree *e = parse_expression(expression, &globalContext, false);
   assert_expression_reduce(e, angleUnit, unitFormat, complexFormat, target,
   expression);
-  assert(e.type() == ExpressionNode::Type::Store);
+  assert(e.otype() == ExpressionNode::Type::Store);
   static_cast<Store &>(e).storeValueForSymbol(&globalContext);
 #endif
 }

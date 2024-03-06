@@ -19,7 +19,7 @@ class CosineNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Cosine; }
+  Type otype() const override { return Type::Cosine; }
 
   template <typename T>
   static std::complex<T> computeOnComplex(

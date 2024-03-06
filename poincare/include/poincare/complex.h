@@ -30,7 +30,7 @@ class ComplexNode final : public EvaluationNode<T>, public std::complex<T> {
   }
 #endif
 
-  typename Poincare::EvaluationNode<T>::Type type() const override {
+  typename Poincare::EvaluationNode<T>::Type otype() const override {
     return Poincare::EvaluationNode<T>::Type::Complex;
   }
   bool isUndefined() const override {

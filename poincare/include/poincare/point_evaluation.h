@@ -14,7 +14,7 @@ class PointEvaluationNode final : public EvaluationNode<T> {
   Coordinate2D<T> xy() const { return Coordinate2D<T>(m_x, m_y); }
 
   // EvaluationNode
-  typename EvaluationNode<T>::Type type() const override {
+  typename EvaluationNode<T>::Type otype() const override {
     return EvaluationNode<T>::Type::PointEvaluation;
   }
   bool isUndefined() const override {

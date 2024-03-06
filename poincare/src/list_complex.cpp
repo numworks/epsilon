@@ -10,7 +10,7 @@ template <typename T>
 std::complex<T> ListComplexNode<T>::complexAtIndex(int index) const {
   assert(index < m_numberOfChildren);
   EvaluationNode<T> *child = EvaluationNode<T>::childAtIndex(index);
-  if (child->type() == EvaluationNode<T>::Type::Complex) {
+  if (child->otype() == EvaluationNode<T>::Type::Complex) {
     return *(static_cast<ComplexNode<T> *>(child));
   }
   return std::complex<T>(NAN, NAN);
@@ -33,7 +33,7 @@ OExpression ListComplexNode<T>::complexToExpression(
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
     OExpression childExpression = Undefined::Builder();
-    if (isScalarEvaluationType<T>(c->type())) {
+    if (isScalarEvaluationType<T>(c->otype())) {
       childExpression = c->complexToExpression(complexFormat);
     }
     list.addChildAtIndexInPlace(childExpression, i, i);
@@ -46,7 +46,7 @@ template <typename T>
 void ListComplex<T>::addChildAtIndexInPlace(Evaluation<T> t, int index,
                                             int currentNumberOfChildren) {
   assert(!node()->isUndefined());
-  if (!isScalarEvaluationType<T>(t.type())) {
+  if (!isScalarEvaluationType<T>(t.otype())) {
     t = Complex<T>::Undefined();
   }
   Evaluation<T>::addChildAtIndexInPlace(t, index, currentNumberOfChildren);

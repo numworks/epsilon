@@ -8,7 +8,7 @@ namespace Poincare {
 
 class HypergeometricDistribution final : public DiscreteDistribution {
  public:
-  Type type() const override { return Type::Hypergeometric; }
+  Type otype() const override { return Type::Hypergeometric; }
   bool isSymmetrical() const override { return false; }
 
   template <typename T>

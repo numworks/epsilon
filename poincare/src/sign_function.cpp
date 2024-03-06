@@ -89,7 +89,7 @@ OExpression SignFunction::shallowReduce(ReductionContext reductionContext) {
   } else {
     Evaluation<float> childApproximated = child.node()->approximate(
         1.0f, ApproximationContext(reductionContext, true));
-    if (childApproximated.type() != EvaluationNode<float>::Type::Complex) {
+    if (childApproximated.otype() != EvaluationNode<float>::Type::Complex) {
       return replaceWithUndefinedInPlace();
     }
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);

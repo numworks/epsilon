@@ -31,7 +31,7 @@ size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
 }
 
 bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) {
-  if (l.type() != LayoutNode::Type::JuniorLayout) {
+  if (l.otype() != LayoutNode::Type::JuniorLayout) {
     return false;
   }
   return tree()->treeIsIdenticalTo(static_cast<const JuniorLayout&>(l).tree());

@@ -99,7 +99,7 @@ bool OExpression::isZero() const {
 }
 
 bool OExpression::isRationalOne() const {
-  return type() == ExpressionNode::Type::Rational && isOne();
+  return otype() == ExpressionNode::Type::Rational && isOne();
 }
 
 bool OExpression::isOne() const {
@@ -108,18 +108,18 @@ bool OExpression::isOne() const {
 
 bool OExpression::isMinusOne() const {
   return (isNumber() && convert<const Number>().isMinusOne()) ||
-         (type() == ExpressionNode::Type::Opposite && childAtIndex(0).isOne());
+         (otype() == ExpressionNode::Type::Opposite && childAtIndex(0).isOne());
 }
 
 bool OExpression::isInteger() const {
   return (isNumber() && convert<const Number>().isInteger()) ||
-         (type() == ExpressionNode::Type::Opposite &&
+         (otype() == ExpressionNode::Type::Opposite &&
           childAtIndex(0).isInteger());
 }
 
 static bool IsIgnoredSymbol(const OExpression *e,
                             OExpression::IgnoredSymbols *ignoredSymbols) {
-  if (e->type() != ExpressionNode::Type::Symbol) {
+  if (e->otype() != ExpressionNode::Type::Symbol) {
     return false;
   }
   while (ignoredSymbols) {
@@ -153,7 +153,7 @@ bool OExpression::recursivelyMatches(ExpressionTrinaryTest test,
   assert(testResult == TrinaryBoolean::Unknown && !isUninitialized());
 
   // Handle dependencies, store, symbols and functions
-  ExpressionNode::Type t = type();
+  ExpressionNode::Type t = otype();
   if (t == ExpressionNode::Type::Dependency) {
     OExpression e = *this;
     return static_cast<Dependency &>(e).dependencyRecursivelyMatches(
@@ -315,7 +315,7 @@ bool OExpression::deepIsMatrix(Context *context, bool canContainMatrices,
 bool OExpression::deepIsList(Context *context) const {
   return recursivelyMatches(
       [](const OExpression e, Context *context, void *) {
-        switch (e.type()) {
+        switch (e.otype()) {
           /* These expressions are always lists. */
           case ExpressionNode::Type::OList:
           case ExpressionNode::Type::ListElement:
@@ -350,9 +350,9 @@ bool OExpression::deepIsList(Context *context) const {
 bool OExpression::IsRandom(const OExpression e) { return e.isRandom(); }
 
 bool OExpression::IsMatrix(const OExpression e, Context *context) {
-  return e.type() == ExpressionNode::Type::OMatrix
+  return e.otype() == ExpressionNode::Type::OMatrix
          /* A Dimension is a matrix unless its child is a list. */
-         || (e.type() == ExpressionNode::Type::Dimension &&
+         || (e.otype() == ExpressionNode::Type::Dimension &&
              !e.childAtIndex(0).deepIsList(context)) ||
          e.isOfType({ExpressionNode::Type::MatrixInverse,
                      ExpressionNode::Type::MatrixIdentity,
@@ -363,7 +363,7 @@ bool OExpression::IsMatrix(const OExpression e, Context *context) {
 }
 
 bool OExpression::IsDiscontinuous(const OExpression e, Context *context) {
-  return e.isRandom() || e.type() == ExpressionNode::Type::PiecewiseOperator ||
+  return e.isRandom() || e.otype() == ExpressionNode::Type::PiecewiseOperator ||
          (e.isOfType({ExpressionNode::Type::Floor, ExpressionNode::Type::Round,
                       ExpressionNode::Type::Ceiling,
                       ExpressionNode::Type::FracPart,
@@ -394,13 +394,13 @@ bool OExpression::IsRationalFraction(const OExpression &e, Context *context,
 
   OExpression numerator, denominator;
 
-  if (e.type() == ExpressionNode::Type::Power) {
+  if (e.otype() == ExpressionNode::Type::Power) {
     denominator = e.denominator(reductionContext);
     if (denominator.isUninitialized()) {
       numerator = e;
     }
   } else {
-    assert(e.type() == ExpressionNode::Type::Multiplication);
+    assert(e.otype() == ExpressionNode::Type::Multiplication);
     static_cast<const Multiplication &>(e).splitIntoNormalForm(
         numerator, denominator, reductionContext);
   }
@@ -421,7 +421,7 @@ bool OExpression::isLinearCombinationOfFunction(Context *context,
       polynomialDegree(context, symbol) == 0) {
     return true;
   }
-  if (type() == ExpressionNode::Type::Addition) {
+  if (otype() == ExpressionNode::Type::Addition) {
     int n = numberOfChildren();
     assert(n > 0);
     for (int i = 0; i < n; i++) {
@@ -432,7 +432,7 @@ bool OExpression::isLinearCombinationOfFunction(Context *context,
     }
     return true;
   }
-  if (type() == ExpressionNode::Type::Multiplication) {
+  if (otype() == ExpressionNode::Type::Multiplication) {
     int n = numberOfChildren();
     assert(n > 0);
     bool patternHasAlreadyBeenDetected = false;
@@ -458,7 +458,7 @@ bool OExpression::isLinearCombinationOfFunction(Context *context,
 
 bool containsVariables(const OExpression e, char *variables,
                        int maxVariableSize) {
-  if (e.type() == ExpressionNode::Type::Symbol) {
+  if (e.otype() == ExpressionNode::Type::Symbol) {
     int index = 0;
     while (variables[index * maxVariableSize] != 0) {
       if (strcmp(static_cast<const Symbol &>(e).name(),
@@ -566,25 +566,25 @@ bool OExpression::allChildrenAreReal(Context *context,
 }
 
 bool OExpression::isBasedIntegerCappedBy(const char *stringInteger) const {
-  return type() == ExpressionNode::Type::BasedInteger &&
+  return otype() == ExpressionNode::Type::BasedInteger &&
          (Integer::NaturalOrder(convert<BasedInteger>().integer(),
                                 Integer(stringInteger)) < 0);
 }
 
 bool OExpression::isDivisionOfIntegers() const {
-  return type() == ExpressionNode::Type::Division &&
-         childAtIndex(0).type() == ExpressionNode::Type::BasedInteger &&
-         childAtIndex(1).type() == ExpressionNode::Type::BasedInteger;
+  return otype() == ExpressionNode::Type::Division &&
+         childAtIndex(0).otype() == ExpressionNode::Type::BasedInteger &&
+         childAtIndex(1).otype() == ExpressionNode::Type::BasedInteger;
 }
 
 bool OExpression::isAlternativeFormOfRationalNumber() const {
   return isOfType({ExpressionNode::Type::Rational,
                    ExpressionNode::Type::BasedInteger,
                    ExpressionNode::Type::Decimal}) ||
-         (type() == ExpressionNode::Type::Division &&
+         (otype() == ExpressionNode::Type::Division &&
           childAtIndex(0).isAlternativeFormOfRationalNumber() &&
           childAtIndex(1).isAlternativeFormOfRationalNumber()) ||
-         (type() == ExpressionNode::Type::Opposite &&
+         (otype() == ExpressionNode::Type::Opposite &&
           childAtIndex(0).isAlternativeFormOfRationalNumber());
 }
 
@@ -599,7 +599,7 @@ bool OExpression::hasDefinedComplexApproximation(
   /* We return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
   Evaluation<T> approximation = node()->approximate(T(), approximationContext);
-  if (approximation.type() != EvaluationNode<T>::Type::Complex) {
+  if (approximation.otype() != EvaluationNode<T>::Type::Complex) {
     return false;
   }
   Complex<T> z = static_cast<Complex<T> &>(approximation);
@@ -652,7 +652,7 @@ bool OExpression::isDiscontinuousBetweenValuesForSymbol(
                           symbol, x1, approximationContext) !=
                       approximateToScalarWithValueForSymbol<float>(
                           symbol, x2, approximationContext);
-  } else if (type() == ExpressionNode::Type::FracPart) {
+  } else if (otype() == ExpressionNode::Type::FracPart) {
     // is discontinuous if the child changes int value
     isDiscontinuous =
         std::floor(childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
@@ -667,7 +667,7 @@ bool OExpression::isDiscontinuousBetweenValuesForSymbol(
              symbol, x1, approximationContext) > 0.0) !=
         (childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
              symbol, x2, approximationContext) > 0.0);
-  } else if (type() == ExpressionNode::Type::PiecewiseOperator) {
+  } else if (otype() == ExpressionNode::Type::PiecewiseOperator) {
     PiecewiseOperator pieceWiseExpression = convert<PiecewiseOperator>();
     isDiscontinuous =
         pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
@@ -752,7 +752,7 @@ OExpression OExpression::shallowReduceUsingApproximation(
     OExpression result = Decimal::Builder(approx);
     replaceWithInPlace(result);
     result = result.shallowReduce(reductionContext);
-    assert(result.type() == ExpressionNode::Type::Rational);
+    assert(result.otype() == ExpressionNode::Type::Rational);
     return result;
   }
   return *this;
@@ -800,7 +800,7 @@ OExpression OExpression::makePositiveAnyNegativeNumeralFactor(
     return setSign(true, reductionContext);
   }
   // The expression is a multiplication whose numeral factor is negative
-  if (type() == ExpressionNode::Type::Multiplication &&
+  if (otype() == ExpressionNode::Type::Multiplication &&
       numberOfChildren() > 0 && childAtIndex(0).isNumber() &&
       childAtIndex(0).isPositive(reductionContext.context()) ==
           TrinaryBoolean::False) {
@@ -883,7 +883,7 @@ int OExpression::getPolynomialReducedCoefficients(
         context, complexFormat, angleUnit, unitFormat,
         ReductionTarget::SystemForApproximation, symbolicComputation));
     if (!keepDependencies &&
-        coefficients[i].type() == ExpressionNode::Type::Dependency) {
+        coefficients[i].otype() == ExpressionNode::Type::Dependency) {
       coefficients[i] = coefficients[i].childAtIndex(0);
     }
   }
@@ -910,9 +910,9 @@ bool OExpression::hasUnit(bool ignoreAngleUnits, bool *hasAngleUnits,
         if (isAngleUnit && hasAngleUnits) {
           *hasAngleUnits = true;
         }
-        return (e.type() == ExpressionNode::Type::OUnit &&
+        return (e.otype() == ExpressionNode::Type::OUnit &&
                 (!pack->ignoreAngleUnits || !isAngleUnit)) ||
-               e.type() == ExpressionNode::Type::ConstantPhysics;
+               e.otype() == ExpressionNode::Type::ConstantPhysics;
       },
       ctx,
       replaceSymbols
@@ -922,7 +922,7 @@ bool OExpression::hasUnit(bool ignoreAngleUnits, bool *hasAngleUnits,
 }
 
 bool OExpression::isPureAngleUnit() const {
-  return !isUninitialized() && type() == ExpressionNode::Type::OUnit &&
+  return !isUninitialized() && otype() == ExpressionNode::Type::OUnit &&
          convert<OUnit>().representative()->dimensionVector() ==
              OUnit::AngleRepresentative::Default().dimensionVector();
 }
@@ -934,7 +934,7 @@ bool OExpression::isInRadians(Context *context) const {
   reductionContext.setUnitConversion(UnitConversion::None);
   OExpression thisClone = cloneAndReduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() &&
-         units.type() == ExpressionNode::Type::OUnit &&
+         units.otype() == ExpressionNode::Type::OUnit &&
          units.convert<OUnit>().representative() ==
              &OUnit::k_angleRepresentatives[OUnit::k_radianRepresentativeIndex];
 }
@@ -954,9 +954,9 @@ bool OExpression::hasComplexI(Context *context,
   return !isUninitialized() &&
          recursivelyMatches(
              [](const OExpression e, Context *context) {
-               return (e.type() == ExpressionNode::Type::ConstantMaths &&
+               return (e.otype() == ExpressionNode::Type::ConstantMaths &&
                        static_cast<const Constant &>(e).isComplexI()) ||
-                      (e.type() == ExpressionNode::Type::ComplexCartesian &&
+                      (e.otype() == ExpressionNode::Type::ComplexCartesian &&
                        static_cast<const ComplexCartesian &>(e).imag().isNull(
                            context) != TrinaryBoolean::True);
              },
@@ -970,7 +970,7 @@ bool OExpression::isReal(Context *context, bool canContainMatrices) const {
 
   // These expressions are always real
   if ((isNumber() && !isUndefined()) ||
-      type() == ExpressionNode::Type::Random) {
+      otype() == ExpressionNode::Type::Random) {
     return true;
   }
 
@@ -1015,11 +1015,11 @@ bool OExpression::isReal(Context *context, bool canContainMatrices) const {
     return allChildrenAreReal(context, canContainMatrices);
   }
 
-  if (type() == ExpressionNode::Type::ConstantMaths) {
+  if (otype() == ExpressionNode::Type::ConstantMaths) {
     return static_cast<ConstantNode *>(node())->isReal();
   }
 
-  if (type() == ExpressionNode::Type::Power) {
+  if (otype() == ExpressionNode::Type::Power) {
     return static_cast<PowerNode *>(node())->isReal(context,
                                                     canContainMatrices);
   }
@@ -1050,8 +1050,8 @@ bool OExpression::containsSameDependency(
   if (isIdenticalToWithoutParentheses(e)) {
     return true;
   }
-  if (e.type() == ExpressionNode::Type::Power &&
-      type() == ExpressionNode::Type::Power &&
+  if (e.otype() == ExpressionNode::Type::Power &&
+      otype() == ExpressionNode::Type::Power &&
       e.childAtIndex(0).isIdenticalToWithoutParentheses(childAtIndex(0))) {
     Power ePower = static_cast<const Power &>(e);
     Power thisPower = static_cast<const Power &>(*this);
@@ -1082,14 +1082,14 @@ bool OExpression::ExactAndApproximateExpressionsAreEqual(
    * undefined. Since this method is recursive, only assert at the root of the
    * expression. */
   assert(!approximateExpression.parent().isUninitialized() ||
-         approximateExpression.type() != ExpressionNode::Type::Undefined);
+         approximateExpression.otype() != ExpressionNode::Type::Undefined);
 
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */
-  if (approximateExpression.type() == ExpressionNode::Type::Double) {
+  if (approximateExpression.otype() == ExpressionNode::Type::Double) {
     approximateExpression = Decimal::Builder(
         static_cast<Float<double> &>(approximateExpression).value());
-  } else if (approximateExpression.type() == ExpressionNode::Type::Float) {
+  } else if (approximateExpression.otype() == ExpressionNode::Type::Float) {
     approximateExpression = Decimal::Builder(
         static_cast<Float<float> &>(approximateExpression).value());
   }
@@ -1106,7 +1106,7 @@ bool OExpression::ExactAndApproximateExpressionsAreEqual(
     return exp0.isIdenticalTo(exp1);
   }
 
-  if (exactExpression.type() != approximateExpression.type() ||
+  if (exactExpression.otype() != approximateExpression.otype() ||
       exactExpression.numberOfChildren() !=
           approximateExpression.numberOfChildren()) {
     return false;
@@ -1178,7 +1178,7 @@ OExpression OExpression::cloneAndSimplify(ReductionContext reductionContext,
     *reductionFailure = reduceFailure;
   }
   if (reduceFailure ||
-      (type() == ExpressionNode::Type::Store &&
+      (otype() == ExpressionNode::Type::Store &&
        !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
     // We can't beautify unreduced expression
     return e;
@@ -1187,7 +1187,7 @@ OExpression OExpression::cloneAndSimplify(ReductionContext reductionContext,
 }
 
 void makePositive(OExpression *e, bool *isNegative) {
-  if (e->type() == ExpressionNode::Type::Opposite) {
+  if (e->otype() == ExpressionNode::Type::Opposite) {
     *isNegative = true;
     *e = e->childAtIndex(0);
   }
@@ -1203,10 +1203,10 @@ void OExpression::beautifyAndApproximateScalar(
       userReductionContext.complexFormat();
   /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
    * take into account the complex format to display a+i*b or r*e^(i*th) */
-  if ((type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) &&
+  if ((otype() == ExpressionNode::Type::ComplexCartesian || isReal(context)) &&
       !hasUnits && !s_reductionEncounteredUndistributedList) {
     ComplexCartesian ecomplex =
-        type() == ExpressionNode::Type::ComplexCartesian
+        otype() == ExpressionNode::Type::ComplexCartesian
             ? convert<ComplexCartesian>()
             : ComplexCartesian::Builder(*this, Rational::Builder(0));
     if (approximateExpression) {
@@ -1283,7 +1283,7 @@ void OExpression::SimplifyAndApproximateChildren(
     }
   }
 
-  if (input.type() == ExpressionNode::Type::OList) {
+  if (input.otype() == ExpressionNode::Type::OList) {
     *simplifiedOutput = simplifiedChildren;
     if (approximateOutput) {
       *approximateOutput = approximatedChildren;
@@ -1291,7 +1291,7 @@ void OExpression::SimplifyAndApproximateChildren(
     return;
   }
 
-  assert(input.type() == ExpressionNode::Type::OMatrix);
+  assert(input.otype() == ExpressionNode::Type::OMatrix);
   OMatrix simplifiedMatrix = OMatrix::Builder(),
           approximateMatrix = OMatrix::Builder();
   for (int i = 0; i < n; i++) {
@@ -1328,7 +1328,7 @@ void OExpression::cloneAndSimplifyAndApproximate(
       &reductionContextClone, &reduceFailure, approximateKeepingSymbols);
 
   if (reduceFailure ||
-      (type() == ExpressionNode::Type::Store &&
+      (otype() == ExpressionNode::Type::Store &&
        !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
     // We can't beautify unreduced expression
     *simplifiedExpression = e;
@@ -1507,7 +1507,7 @@ OExpression OExpression::deepReduce(ReductionContext reductionContext) {
 OExpression OExpression::deepRemoveUselessDependencies(
     const ReductionContext &reductionContext) {
   OExpression result = *this;
-  if (type() == ExpressionNode::Type::Dependency) {
+  if (otype() == ExpressionNode::Type::Dependency) {
     Dependency depThis = static_cast<Dependency &>(*this);
     result = depThis.removeUselessDependencies(reductionContext);
   }
@@ -1548,10 +1548,10 @@ int OExpression::lengthOfListChildren() const {
   int n = numberOfChildren();
   bool isNAry = IsNAry(*this);
   for (int i = n - 1; i >= 0; i--) {
-    if (isNAry && childAtIndex(i).type() < ExpressionNode::Type::OList) {
+    if (isNAry && childAtIndex(i).otype() < ExpressionNode::Type::OList) {
       return lastLength;
     }
-    if (childAtIndex(i).type() == ExpressionNode::Type::OList) {
+    if (childAtIndex(i).otype() == ExpressionNode::Type::OList) {
       int length = childAtIndex(i).numberOfChildren();
       if (lastLength == k_noList) {
         lastLength = length;
@@ -1645,7 +1645,7 @@ OExpression OExpression::deepApproximateKeepingSymbols(
   deepApproximateChildrenKeepingSymbols(reductionContext, &thisCanApproximate,
                                         &thisShouldReduce);
   if (thisCanApproximate) {
-    if (type() == ExpressionNode::Type::Rational) {
+    if (otype() == ExpressionNode::Type::Rational) {
       /* It's better not to approximate rational because some reduction and
        * approximation routines check for the presence of rationals to compute
        * properly (like for example PowerNode::templatedApproximate).
@@ -1660,9 +1660,9 @@ OExpression OExpression::deepApproximateKeepingSymbols(
        *    would be undef for x < 0. in RealMode).
        */
       *parentCanApproximate = true;
-    } else if (type() != ExpressionNode::Type::Symbol &&
-               type() != ExpressionNode::Type::OList &&
-               type() != ExpressionNode::Type::OMatrix && !isRandom()) {
+    } else if (otype() != ExpressionNode::Type::Symbol &&
+               otype() != ExpressionNode::Type::OList &&
+               otype() != ExpressionNode::Type::OMatrix && !isRandom()) {
       /* No need to approximate lists and matrices. Approximating their children
        * is enough.
        * Do not approximate symbols because we are "KeepingSymbols".
@@ -1699,7 +1699,7 @@ void OExpression::deepApproximateChildrenKeepingSymbols(
   *shouldReduce = false;
   const int childrenCount = numberOfChildren();
   bool parameteredExpression = isParameteredExpression();
-  bool storeExpression = type() == ExpressionNode::Type::Store;
+  bool storeExpression = otype() == ExpressionNode::Type::Store;
 
   for (int i = 0; i < childrenCount; i++) {
     OExpression child = childAtIndex(i);
@@ -1712,8 +1712,8 @@ void OExpression::deepApproximateChildrenKeepingSymbols(
     if ((parameteredExpression &&
          i == ParameteredExpression::ParameterChildIndex()) ||
         (storeExpression && i == 1) ||
-        (type() == ExpressionNode::Type::Logarithm && i == 1 &&
-         child.type() == ExpressionNode::Type::ConstantMaths &&
+        (otype() == ExpressionNode::Type::Logarithm && i == 1 &&
+         child.otype() == ExpressionNode::Type::ConstantMaths &&
          static_cast<Constant &>(child).isExponentialE())) {
       continue;
     }
@@ -1764,10 +1764,10 @@ OExpression OExpression::CreateComplexExpression(
     return Undefined::Builder();
   }
   OList dependencies = OList::Builder();
-  if (ra.type() == ExpressionNode::Type::Dependency) {
+  if (ra.otype() == ExpressionNode::Type::Dependency) {
     ra = static_cast<Dependency &>(ra).extractDependencies(dependencies);
   }
-  if (tb.type() == ExpressionNode::Type::Dependency) {
+  if (tb.otype() == ExpressionNode::Type::Dependency) {
     tb = static_cast<Dependency &>(tb).extractDependencies(dependencies);
   }
   bool isZeroRa = ra.isZero();
@@ -1860,7 +1860,7 @@ OExpression OExpression::CreateComplexExpression(
 
 static OExpression maker(OExpression children, int nbChildren,
                          TreeNode::Initializer initializer, size_t size) {
-  assert(children.type() == ExpressionNode::Type::OList);
+  assert(children.otype() == ExpressionNode::Type::OList);
   TreeHandle handle = TreeHandle::Builder(initializer, size, nbChildren);
   OExpression result = static_cast<OExpression &>(handle);
   for (size_t i = 0; i < static_cast<size_t>(nbChildren); i++) {
@@ -1881,8 +1881,8 @@ OExpression OExpression::FunctionHelper::build(OExpression children) const {
 
 int ExpressionNode::numberOfNumericalValues() const {
   constexpr int k_error = -1;
-  assert(type() != ExpressionNode::Type::Dependency);
-  if (isRandom() || type() == ExpressionNode::Type::Symbol) {
+  assert(otype() != ExpressionNode::Type::Dependency);
+  if (isRandom() || otype() == ExpressionNode::Type::Symbol) {
     return k_error;
   }
   if (isNumber()) {
@@ -1891,7 +1891,7 @@ int ExpressionNode::numberOfNumericalValues() const {
                ? 1
                : k_error;
   }
-  if (type() == ExpressionNode::Type::Power) {
+  if (otype() == ExpressionNode::Type::Power) {
     int base = childAtIndex(0)->numberOfNumericalValues();
     int exponent = childAtIndex(1)->numberOfNumericalValues();
     if (base == k_error || exponent == k_error) {
@@ -1899,7 +1899,7 @@ int ExpressionNode::numberOfNumericalValues() const {
     }
     return base != 0 ? base : exponent;
   }
-  if (type() == ExpressionNode::Type::ConstantMaths) {
+  if (otype() == ExpressionNode::Type::ConstantMaths) {
     const ConstantNode *constant = static_cast<const ConstantNode *>(this);
     // We decide that e is not a constant for e^2 to generalize as e^x
     return !constant->isExponentialE() && !constant->isComplexI();
@@ -1919,12 +1919,12 @@ void OExpression::replaceNumericalValuesWithSymbol(Symbol x) {
   if (isNumber()) {
     return replaceWithInPlace(x);
   }
-  if (type() == ExpressionNode::Type::ConstantMaths &&
+  if (otype() == ExpressionNode::Type::ConstantMaths &&
       !convert<Constant>().isExponentialE() &&
       !convert<Constant>().isComplexI()) {
     return replaceWithInPlace(x);
   }
-  if (type() == ExpressionNode::Type::Power) {
+  if (otype() == ExpressionNode::Type::Power) {
     if (childAtIndex(0).numberOfNumericalValues() == 0) {
       // replace exponent
       childAtIndex(1).replaceNumericalValuesWithSymbol(x);
@@ -1944,7 +1944,7 @@ float OExpression::getNumericalValue() const {
   if (isNumber()) {
     return convert<Number>().doubleApproximation();
   }
-  if (type() == ExpressionNode::Type::ConstantMaths &&
+  if (otype() == ExpressionNode::Type::ConstantMaths &&
       !convert<Constant>().isExponentialE() &&
       !convert<Constant>().isComplexI()) {
     return convert<Constant>().constantInfo().m_value;

@@ -36,7 +36,7 @@ class MatrixComplexNode final : public Array, public EvaluationNode<T> {
 #endif
 
   // EvaluationNode
-  typename EvaluationNode<T>::Type type() const override {
+  typename EvaluationNode<T>::Type otype() const override {
     return EvaluationNode<T>::Type::MatrixComplex;
   }
   bool isUndefined() const override {

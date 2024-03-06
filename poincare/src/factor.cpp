@@ -97,7 +97,7 @@ OExpression Factor::shallowReduce(ReductionContext reductionContext) {
 
 OExpression Factor::shallowBeautify(const ReductionContext& reductionContext) {
   OExpression c = childAtIndex(0);
-  if (c.type() != ExpressionNode::Type::Rational) {
+  if (c.otype() != ExpressionNode::Type::Rational) {
     return replaceWithUndefinedInPlace();
   }
   Rational r = static_cast<Rational&>(c);

@@ -17,7 +17,7 @@ class IntegralLayoutNode final : public LayoutNode {
   using LayoutNode::LayoutNode;
 
   // Layout
-  Type type() const override { return Type::IntegralLayout; }
+  Type otype() const override { return Type::IntegralLayout; }
 
   // LayoutNode
   size_t serialize(char* buffer, size_t bufferSize,

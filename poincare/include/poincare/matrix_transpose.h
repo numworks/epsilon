@@ -19,7 +19,7 @@ class MatrixTransposeNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::MatrixTranspose; }
+  Type otype() const override { return Type::MatrixTranspose; }
 
  private:
   // Layout

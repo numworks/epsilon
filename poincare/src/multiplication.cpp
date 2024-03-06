@@ -276,10 +276,10 @@ CodePoint MultiplicationNode::CodePointForOperatorSymbol(
 
 static bool ExpressionIsUnit(OExpression e, bool *shouldLockMargin = nullptr) {
   OExpression unitExpression;
-  if (e.type() == ExpressionNode::Type::OUnit) {
+  if (e.otype() == ExpressionNode::Type::OUnit) {
     unitExpression = e;
-  } else if (e.type() == ExpressionNode::Type::Power &&
-             e.childAtIndex(0).type() == ExpressionNode::Type::OUnit) {
+  } else if (e.otype() == ExpressionNode::Type::Power &&
+             e.childAtIndex(0).otype() == ExpressionNode::Type::OUnit) {
     unitExpression = e.childAtIndex(0);
   } else {
     return false;
@@ -730,13 +730,13 @@ OExpression Multiplication::shallowBeautify(
      *This only handle the simple cos(x)/sin(x) case and not cos(x)^p/sin(x)^q*/
     for (int i = 0; i < numberOfChildren(); i++) {
       OExpression child = childAtIndex(i);
-      if (child.type() == ExpressionNode::Type::Power &&
-          child.childAtIndex(0).type() == ExpressionNode::Type::Sine &&
+      if (child.otype() == ExpressionNode::Type::Power &&
+          child.childAtIndex(0).otype() == ExpressionNode::Type::Sine &&
           child.childAtIndex(1).isMinusOne()) {
         for (int j = i + 1; j < numberOfChildren(); j++) {
           // Cosine are after sine in simplification order
           OExpression otherChild = childAtIndex(j);
-          if (otherChild.type() == ExpressionNode::Type::Cosine &&
+          if (otherChild.otype() == ExpressionNode::Type::Cosine &&
               otherChild.childAtIndex(0).isIdenticalTo(
                   child.childAtIndex(0).childAtIndex(0))) {
             OExpression cotangent =
@@ -844,7 +844,7 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
   /* Thanks to the simplification order, all matrix children (if any) are the
    * last children. */
   OExpression lastChild = childAtIndex(numberOfChildren() - 1);
-  if (lastChild.type() == ExpressionNode::Type::OMatrix) {
+  if (lastChild.otype() == ExpressionNode::Type::OMatrix) {
     OMatrix resultMatrix = static_cast<OMatrix &>(lastChild);
     // Use the last matrix child as the final matrix
     int n = resultMatrix.numberOfRows();
@@ -854,7 +854,7 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
     int multiplicationChildIndex = numberOfChildren() - 2;
     while (multiplicationChildIndex >= 0) {
       OExpression currentChild = childAtIndex(multiplicationChildIndex);
-      if (currentChild.type() != ExpressionNode::Type::OMatrix) {
+      if (currentChild.otype() != ExpressionNode::Type::OMatrix) {
         break;
       }
       OMatrix currentMatrix = static_cast<OMatrix &>(currentChild);
@@ -955,14 +955,14 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
     int childrenNumber = numberOfChildren();
     for (int i = 0; i < childrenNumber; i++) {
       OExpression o1 = childAtIndex(i);
-      if (Base(o1).type() == ExpressionNode::Type::Sine &&
+      if (Base(o1).otype() == ExpressionNode::Type::Sine &&
           TermHasNumeralExponent(o1)) {
         const OExpression x = Base(o1).childAtIndex(0);
         /* Thanks to the SimplificationOrder, Cosine-base factors are after
          * Sine-base factors */
         for (int j = i + 1; j < childrenNumber; j++) {
           OExpression o2 = childAtIndex(j);
-          if (Base(o2).type() == ExpressionNode::Type::Cosine &&
+          if (Base(o2).otype() == ExpressionNode::Type::Cosine &&
               TermHasNumeralExponent(o2) &&
               Base(o2).childAtIndex(0).isIdenticalTo(x)) {
             hasFactorizedTangent =
@@ -1098,11 +1098,11 @@ OExpression Multiplication::shallowReduce(ReductionContext reductionContext) {
   if (reductionContext.shouldExpandMultiplication() &&
       !productHasUnit &&  // Do not expand in presence of units
       (p.isUninitialized() ||
-       p.type() != ExpressionNode::Type::Multiplication) &&
+       p.otype() != ExpressionNode::Type::Multiplication) &&
       !hasRandom) {
     int childrenNumber = numberOfChildren();
     for (int i = 0; i < childrenNumber; i++) {
-      if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
+      if (childAtIndex(i).otype() == ExpressionNode::Type::Addition) {
         return distributeOnOperandAtIndex(i, reductionContext);
       }
     }
@@ -1167,7 +1167,7 @@ void Multiplication::mergeInChildByFactorizingBase(
   p = p.shallowReduce(reductionContext);
 
   // Step 4: Merge dependencies introduced by the reduction of power if any
-  if (p.type() == ExpressionNode::Type::Dependency) {
+  if (p.otype() == ExpressionNode::Type::Dependency) {
     if (!dependenciesCreatedDuringReduction.isUninitialized()) {
       int n = dependenciesCreatedDuringReduction.numberOfChildren();
       dependenciesCreatedDuringReduction.mergeChildrenAtIndexInPlace(
@@ -1179,7 +1179,7 @@ void Multiplication::mergeInChildByFactorizingBase(
   /* Step 5: Reducing the new power might have turned it into a multiplication,
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the
    * multiplication node with this. */
-  if (p.type() == ExpressionNode::Type::Multiplication) {
+  if (p.otype() == ExpressionNode::Type::Multiplication) {
     mergeChildrenAtIndexInPlace(p, i);
   }
 }
@@ -1212,7 +1212,7 @@ bool Multiplication::factorizeExponent(
       /* Step 5: Reducing the new power might have turned it into a
        * multiplication, ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to
        * merge the multiplication node with this. */
-      if (p.type() == ExpressionNode::Type::Multiplication) {
+      if (p.otype() == ExpressionNode::Type::Multiplication) {
         cloneOfThis.mergeChildrenAtIndexInPlace(p, i);
       }
       thisAfterFactorization = cloneOfThis;
@@ -1220,7 +1220,8 @@ bool Multiplication::factorizeExponent(
       return false;
     }
   }
-  assert(thisAfterFactorization.type() == ExpressionNode::Type::Multiplication);
+  assert(thisAfterFactorization.otype() ==
+         ExpressionNode::Type::Multiplication);
   replaceWithInPlace(thisAfterFactorization);
   *this = static_cast<Multiplication &>(thisAfterFactorization);
   return true;
@@ -1242,8 +1243,8 @@ OExpression Multiplication::gatherLikeTerms(
       // Do not factorize random or randint
     } else if (TermsHaveIdenticalBase(oi, oi1) &&
                (!TermHasNumeralBase(oi) ||
-                (oi.type() == ExpressionNode::Type::Power &&
-                 oi1.type() == ExpressionNode::Type::Power))) {
+                (oi.otype() == ExpressionNode::Type::Power &&
+                 oi1.otype() == ExpressionNode::Type::Power))) {
       /* The previous condition exists because combining powers
        * of a given rational isn't straightforward. Indeed,
        * there are two cases we want to deal with:
@@ -1326,7 +1327,7 @@ bool Multiplication::gatherRationalPowers(
   removeChildAtIndexInPlace(j);
   replaceChildAtIndexInPlace(i, result);
   OExpression child = childAtIndex(i).shallowReduce(reductionContext);
-  if (child.type() == ExpressionNode::Type::Multiplication) {
+  if (child.otype() == ExpressionNode::Type::Multiplication) {
     mergeChildrenAtIndexInPlace(child, i);
   }
   return true;
@@ -1337,7 +1338,7 @@ OExpression Multiplication::distributeOnOperandAtIndex(
   /* This method creates a*...*b*y... + a*...*c*y... + ... from
    * a*...*(b+c+...)*y... */
   assert(i >= 0 && i < numberOfChildren());
-  assert(childAtIndex(i).type() == ExpressionNode::Type::Addition);
+  assert(childAtIndex(i).otype() == ExpressionNode::Type::Addition);
 
   Addition a = Addition::Builder();
   OExpression childI = childAtIndex(i);
@@ -1356,7 +1357,7 @@ OExpression Multiplication::distributeOnOperandAtIndex(
 
 void Multiplication::addMissingFactors(
     OExpression factor, const ReductionContext &reductionContext) {
-  if (factor.type() == ExpressionNode::Type::Multiplication) {
+  if (factor.otype() == ExpressionNode::Type::Multiplication) {
     int childrenNumber = factor.numberOfChildren();
     /* WARNING: This is wrong in general case.
      * LCM(x, a*b*c) != LCM(LCM(LCM(x,a),b),c)
@@ -1377,8 +1378,8 @@ void Multiplication::addMissingFactors(
    * child, we replace it by its LCM with factor ; otherwise, we simply add
    * factor as a child. */
   if (numberOfChildren() > 0 &&
-      childAtIndex(0).type() == ExpressionNode::Type::Rational &&
-      factor.type() == ExpressionNode::Type::Rational) {
+      childAtIndex(0).otype() == ExpressionNode::Type::Rational &&
+      factor.otype() == ExpressionNode::Type::Rational) {
     assert(static_cast<Rational &>(factor).isInteger());
     assert(childAtIndex(0).convert<Rational>().isInteger());
     Integer lcm = Arithmetic::LCM(
@@ -1394,7 +1395,7 @@ void Multiplication::addMissingFactors(
     replaceChildAtIndexInPlace(0, Rational::Builder(lcm));
     return;
   }
-  if (factor.type() != ExpressionNode::Type::Rational) {
+  if (factor.otype() != ExpressionNode::Type::Rational) {
     /* If factor is not a rational, we merge it with the child of identical
      * base if any. Otherwise, we add it as an new child. */
     for (int i = 0; i < numberOfChildren(); i++) {
@@ -1405,7 +1406,7 @@ void Multiplication::addMissingFactors(
         if (sub.isPositive(reductionContext.context()) ==
             TrinaryBoolean::False) {  // index[0] < index[1]
           sub = Opposite::Builder(sub);
-          if (factor.type() == ExpressionNode::Type::Power) {
+          if (factor.otype() == ExpressionNode::Type::Power) {
             factor.replaceChildAtIndexInPlace(1, sub);
           } else {
             factor = Power::Builder(factor, sub);
@@ -1508,7 +1509,7 @@ bool Multiplication::HaveSameNonNumeralFactors(const OExpression &e1,
 }
 
 const OExpression Multiplication::CreateExponent(OExpression e) {
-  OExpression result = e.type() == ExpressionNode::Type::Power
+  OExpression result = e.otype() == ExpressionNode::Type::Power
                            ? e.childAtIndex(1).clone()
                            : Rational::Builder(1);
   return result;
@@ -1523,8 +1524,8 @@ bool Multiplication::TermsHaveIdenticalExponent(const OExpression &e1,
                                                 const OExpression &e2) {
   /* Note: We will return false for e1=2 and e2=Pi, even though one could argue
    * that these have the same exponent whose value is 1. */
-  return e1.type() == ExpressionNode::Type::Power &&
-         e2.type() == ExpressionNode::Type::Power &&
+  return e1.otype() == ExpressionNode::Type::Power &&
+         e2.otype() == ExpressionNode::Type::Power &&
          (e1.childAtIndex(1).isIdenticalTo(e2.childAtIndex(1)));
 }
 
@@ -1533,19 +1534,19 @@ bool Multiplication::TermHasNumeralBase(const OExpression &e) {
 }
 
 bool Multiplication::TermHasNumeralExponent(const OExpression &e) {
-  if (e.type() != ExpressionNode::Type::Power) {
+  if (e.otype() != ExpressionNode::Type::Power) {
     return true;
   }
   return e.childAtIndex(1).isNumber();
 }
 
 bool Multiplication::TermIsPowerOfRationals(const OExpression &e) {
-  if (e.type() != ExpressionNode::Type::Power) {
+  if (e.otype() != ExpressionNode::Type::Power) {
     return false;
   }
   assert(e.numberOfChildren() == 2);
-  return e.childAtIndex(0).type() == ExpressionNode::Type::Rational &&
-         e.childAtIndex(1).type() == ExpressionNode::Type::Rational;
+  return e.childAtIndex(0).otype() == ExpressionNode::Type::Rational &&
+         e.childAtIndex(1).otype() == ExpressionNode::Type::Rational;
 }
 
 void Multiplication::splitIntoNormalForm(
@@ -1558,7 +1559,7 @@ void Multiplication::splitIntoNormalForm(
   const int numberOfFactors = numberOfChildren();
   for (int i = 0; i < numberOfFactors; i++) {
     OExpression factor = childAtIndex(i).clone();
-    ExpressionNode::Type factorType = factor.type();
+    ExpressionNode::Type factorType = factor.otype();
     OExpression factorsNumerator;
     OExpression factorsDenominator;
     if (factorType == ExpressionNode::Type::Rational) {
@@ -1608,7 +1609,7 @@ void Multiplication::splitIntoNormalForm(
 }
 
 const OExpression Multiplication::Base(const OExpression e) {
-  if (e.type() == ExpressionNode::Type::Power) {
+  if (e.otype() == ExpressionNode::Type::Power) {
     return e.childAtIndex(0);
   }
   return e;

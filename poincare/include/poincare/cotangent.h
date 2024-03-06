@@ -20,7 +20,7 @@ class CotangentNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Cotangent; }
+  Type otype() const override { return Type::Cotangent; }
 
   template <typename T>
   static std::complex<T> computeOnComplex(

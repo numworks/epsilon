@@ -19,8 +19,8 @@ void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
   Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
-    quiz_assert_print_if_failure(token.type() == *tokenTypes, string);
-    if (token.type() == Token::Type::EndOfStream) {
+    quiz_assert_print_if_failure(token.otype() == *tokenTypes, string);
+    if (token.otype() == Token::Type::EndOfStream) {
       return;
     }
     tokenTypes++;
@@ -48,10 +48,10 @@ void assert_tokenizes_as_undefined_token(const char* string) {
   Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
-    if (token.type() == Token::Type::Undefined) {
+    if (token.otype() == Token::Type::Undefined) {
       return;
     }
-    quiz_assert_print_if_failure(token.type() != Token::Type::EndOfStream,
+    quiz_assert_print_if_failure(token.otype() != Token::Type::EndOfStream,
                                  string);
   }
 }
@@ -558,12 +558,12 @@ QUIZ_CASE_DISABLED(poincare_parsing_units) {
           .serialize(buffer, bufferSize, DecimalMode,
                      Preferences::VeryShortNumberOfSignificantDigits);
       OExpression unit = parse_expression(buffer, nullptr, false);
-      quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::OUnit,
+      quiz_assert_print_if_failure(unit.otype() == ExpressionNode::Type::OUnit,
                                    "Should be parsed as a OUnit");
       // Try without '_'. This need a context or everything without '_' is
       // understood as variable.
       unit = parse_expression(buffer + 1, &context, false);
-      quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::OUnit,
+      quiz_assert_print_if_failure(unit.otype() == ExpressionNode::Type::OUnit,
                                    "Should be parsed as a OUnit");
       if (rep->isInputPrefixable()) {
         for (size_t i = 0; i < OUnit::Prefix::k_numberOfPrefixes; i++) {
@@ -573,13 +573,13 @@ QUIZ_CASE_DISABLED(poincare_parsing_units) {
               Preferences::VeryShortNumberOfSignificantDigits);
           OExpression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(
-              unit.type() == ExpressionNode::Type::OUnit,
+              unit.otype() == ExpressionNode::Type::OUnit,
               "Should be parsed as a OUnit");
           // Try without '_'. This need a context or everything without '_' is
           // understood as variable.
           unit = parse_expression(buffer, &context, false);
           quiz_assert_print_if_failure(
-              unit.type() == ExpressionNode::Type::OUnit,
+              unit.otype() == ExpressionNode::Type::OUnit,
               "Should be parsed as a OUnit");
         }
       }

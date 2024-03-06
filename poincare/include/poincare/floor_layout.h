@@ -11,7 +11,7 @@ namespace Poincare {
 class FloorLayoutNode final : public SquareBracketPairLayoutNode {
  public:
   // Layout
-  Type type() const override { return Type::FloorLayout; }
+  Type otype() const override { return Type::FloorLayout; }
 
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,

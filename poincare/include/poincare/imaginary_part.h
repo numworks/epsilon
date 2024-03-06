@@ -25,7 +25,7 @@ class ImaginaryPartNode final : public ExpressionNode {
                ? TrinaryBoolean::Unknown
                : TrinaryBoolean::True;
   }
-  Type type() const override { return Type::ImaginaryPart; }
+  Type otype() const override { return Type::ImaginaryPart; }
 
  private:
   // Layout

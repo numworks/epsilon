@@ -14,7 +14,7 @@ class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
         m_combinedCodePoint(combinedCodePoint) {}
 
   // Layout
-  Type type() const override { return Type::CombinedCodePointsLayout; }
+  Type otype() const override { return Type::CombinedCodePointsLayout; }
 
   // CodePointLayout
   CodePoint combinedCodePoint() const { return m_combinedCodePoint; }

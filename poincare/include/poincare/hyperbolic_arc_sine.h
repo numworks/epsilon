@@ -19,7 +19,7 @@ class HyperbolicArcSineNode final : public HyperbolicTrigonometricFunctionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::HyperbolicArcSine; }
+  Type otype() const override { return Type::HyperbolicArcSine; }
 
  private:
   // Layout

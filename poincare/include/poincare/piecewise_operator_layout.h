@@ -14,7 +14,7 @@ class PiecewiseOperatorLayoutNode final : public GridLayoutNode {
   using GridLayoutNode::GridLayoutNode;
 
   // Layout
-  Type type() const override { return Type::PiecewiseOperatorLayout; }
+  Type otype() const override { return Type::PiecewiseOperatorLayout; }
 
   // SerializableNode
   size_t serialize(char *buffer, size_t bufferSize,

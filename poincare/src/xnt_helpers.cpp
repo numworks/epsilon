@@ -183,8 +183,8 @@ static Layout xntLayout(Layout parameterLayout) {
   }
   Layout xnt = parameterLayout.clone();
   if (!xnt.isCodePointsString() &&
-      xnt.type() != LayoutNode::Type::CodePointLayout &&
-      xnt.type() != LayoutNode::Type::CombinedCodePointsLayout) {
+      xnt.otype() != LayoutNode::Type::CodePointLayout &&
+      xnt.otype() != LayoutNode::Type::CombinedCodePointsLayout) {
     return Layout();
   }
   if (!xnt.isHorizontal()) {
@@ -214,7 +214,7 @@ static bool findParameteredFunction2D(Layout layout, int* functionIndex,
     *childIndex = parent.indexOfChild(child);
     if (*childIndex <= k_indexOfParameter) {
       for (size_t i = 0; i < k_numberOfFunctions; i++) {
-        if (parent.type() == k_parameteredFunctions[i].layoutType) {
+        if (parent.otype() == k_parameteredFunctions[i].layoutType) {
           *functionIndex = i;
           *parameterLayout = parent.childAtIndex(k_indexOfParameter);
           return true;

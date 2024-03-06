@@ -55,7 +55,7 @@ class ComparisonNode : public ExpressionNode {
   size_t size() const override;
   int numberOfChildren() const override { return m_numberOfOperands; }
 
-  Type type() const override { return Type::Comparison; }
+  Type otype() const override { return Type::Comparison; }
 
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

@@ -50,7 +50,7 @@ static int bracketNestingLevel(HorizontalLayout h, LayoutNode::Type type) {
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
   OLayout parent = h.parent();
   int result = 0;
-  while (!parent.isUninitialized() && parent.type() == type) {
+  while (!parent.isUninitialized() && parent.otype() == type) {
     AutocompletedBracketPairLayoutNode *parentNode =
         static_cast<AutocompletedBracketPairLayoutNode *>(parent.node());
     // If both sides are temp, the bracket will be removed so it is ignored
@@ -87,7 +87,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
   if ((type == Type::ParenthesisLayout &&
        hLayout
            .recursivelyMatches([](const OLayout l) {
-             return l.type() == Type::ParenthesisLayout
+             return l.otype() == Type::ParenthesisLayout
                         ? TrinaryBoolean::True
                         : TrinaryBoolean::Unknown;
            })
@@ -95,7 +95,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
       (type == Type::CurlyBraceLayout &&
        hLayout
            .recursivelyMatches([](const OLayout l) {
-             return l.type() == Type::CurlyBraceLayout
+             return l.otype() == Type::CurlyBraceLayout
                         ? TrinaryBoolean::True
                         : TrinaryBoolean::Unknown;
            })
@@ -149,7 +149,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
       /* -- Step 1 -- The reading arrived at a layout that is not a bracket:
        * juste add it to the written layout and continue reading. */
       OLayout readChild = readLayout.childAtIndex(readIndex);
-      if (readChild.type() != type) {
+      if (readChild.otype() != type) {
         assert(!readChild.isHorizontal());
         OLayout readClone = readChild.clone();
         writtenLayout.addOrMergeChildAtIndex(readClone,
@@ -170,7 +170,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
 
         /* If the inserted child is a bracket pair of another type, balance
          * inside of it. */
-        if (IsAutoCompletedBracketPairType(readClone.type())) {
+        if (IsAutoCompletedBracketPairType(readClone.otype())) {
           HorizontalLayout h = horizontalChild(readClone);
           PrivateBalanceBrackets(type, h, cursorLayout, cursorPosition);
         }
@@ -238,7 +238,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
      * bracket.
      * */
     OLayout readBracket = readLayout.parent();
-    assert(readBracket.type() == type);
+    assert(readBracket.otype() == type);
     AutocompletedBracketPairLayoutNode *readBracketNode =
         static_cast<AutocompletedBracketPairLayoutNode *>(readBracket.node());
 
@@ -291,7 +291,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
     if (!writtenBracket.isUninitialized()) {
       /* The current written layout is in a bracket of the same type:
        * Close the bracket and continue writing in its parent. */
-      assert(writtenBracket.type() == type);
+      assert(writtenBracket.otype() == type);
       AutocompletedBracketPairLayoutNode *writtenBracketNode =
           static_cast<AutocompletedBracketPairLayoutNode *>(
               writtenBracket.node());
@@ -335,7 +335,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
     int newCursorNestingLevel = bracketNestingLevel(*cursorLayout, type);
     while (newCursorNestingLevel > cursorNestingLevel && *cursorPosition == 0) {
       OLayout p = cursorLayout->parent();
-      assert(!p.isUninitialized() && p.type() == type);
+      assert(!p.isUninitialized() && p.otype() == type);
       HorizontalLayout h = horizontalParent(p);
       *cursorPosition = h.indexOfChild(p);
       *cursorLayout = h;
@@ -373,7 +373,7 @@ void AutocompletedBracketPairLayoutNode::makeChildrenPermanent(
     return;
   }
   OLayout child = childOnSide(side);
-  if (type() == child.type()) {
+  if (otype() == child.otype()) {
     AutocompletedBracketPairLayoutNode *bracket =
         static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
     bracket->makeChildrenPermanent(side, true);

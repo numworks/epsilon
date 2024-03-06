@@ -19,7 +19,7 @@ class SineNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Sine; }
+  Type otype() const override { return Type::Sine; }
 
   template <typename T>
   static std::complex<T> computeOnComplex(

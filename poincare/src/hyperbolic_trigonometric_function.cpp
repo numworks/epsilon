@@ -35,8 +35,8 @@ OExpression HyperbolicTrigonometricFunction::shallowReduce(
   }
 
   // Step 2. Look for an expression of type "cosh(acosh(z))", return z
-  ExpressionNode::Type t = type();
-  ExpressionNode::Type childT = c.type();
+  ExpressionNode::Type t = otype();
+  ExpressionNode::Type childT = c.otype();
   ApproximationContext approximationContext(reductionContext, true);
   {
     OExpression result;

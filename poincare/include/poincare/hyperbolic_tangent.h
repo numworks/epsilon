@@ -19,7 +19,7 @@ class HyperbolicTangentNode final : public HyperbolicTrigonometricFunctionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::HyperbolicTangent; }
+  Type otype() const override { return Type::HyperbolicTangent; }
 
  private:
   // Layout

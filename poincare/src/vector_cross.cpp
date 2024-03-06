@@ -35,12 +35,12 @@ Evaluation<T> VectorCrossNode::templatedApproximate(
   }
   Evaluation<T> input0 =
       childAtIndex(0)->approximate(T(), approximationContext);
-  if (input0.type() != EvaluationNode<T>::Type::MatrixComplex) {
+  if (input0.otype() != EvaluationNode<T>::Type::MatrixComplex) {
     return Complex<T>::Undefined();
   }
   Evaluation<T> input1 =
       childAtIndex(1)->approximate(T(), approximationContext);
-  if (input1.type() != EvaluationNode<T>::Type::MatrixComplex) {
+  if (input1.otype() != EvaluationNode<T>::Type::MatrixComplex) {
     return Complex<T>::Undefined();
   }
   return static_cast<MatrixComplex<T>&>(input0).cross(
@@ -64,8 +64,8 @@ OExpression VectorCross::shallowReduce(ReductionContext reductionContext) {
   }
   OExpression c0 = childAtIndex(0);
   OExpression c1 = childAtIndex(1);
-  if (c0.type() == ExpressionNode::Type::OMatrix &&
-      c1.type() == ExpressionNode::Type::OMatrix) {
+  if (c0.otype() == ExpressionNode::Type::OMatrix &&
+      c1.otype() == ExpressionNode::Type::OMatrix) {
     OMatrix matrixChild0 = static_cast<OMatrix&>(c0);
     OMatrix matrixChild1 = static_cast<OMatrix&>(c1);
     // Cross product is defined between two vectors of same type and of size 3

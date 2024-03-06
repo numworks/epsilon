@@ -21,7 +21,7 @@ class SquareRootNode final : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
-  Type type() const override { return Type::SquareRoot; }
+  Type otype() const override { return Type::SquareRoot; }
 
   // TreeNode
   size_t size() const override { return sizeof(SquareRootNode); }

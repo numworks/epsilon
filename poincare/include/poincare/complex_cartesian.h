@@ -25,7 +25,7 @@ class ComplexCartesianNode : public ExpressionNode {
                : TrinaryBoolean::Unknown;
   }
   TrinaryBoolean isNull(Context* context) const override;
-  Type type() const override { return Type::ComplexCartesian; }
+  Type otype() const override { return Type::ComplexCartesian; }
 
  private:
   // Layout

@@ -22,7 +22,7 @@ class PowerNode final : public ExpressionNode {
   bool isReal(Context* context, bool canContainMatrices = true) const;
 
   // Properties
-  Type type() const override { return Type::Power; }
+  Type otype() const override { return Type::Power; }
   TrinaryBoolean isPositive(Context* context) const override;
   TrinaryBoolean isNull(Context* context) const override;
   bool childAtIndexNeedsUserParentheses(const OExpression& child,

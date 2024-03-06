@@ -1102,7 +1102,7 @@ void assert_is_list_of_points(const char* definition, bool truth = true) {
   Shared::GlobalContext globalContext;
   OExpression e = parse_expression(definition, &globalContext, false);
   quiz_assert_print_if_failure(
-      e.type() == ExpressionNode::Type::OList &&
+      e.otype() == ExpressionNode::Type::OList &&
           static_cast<OList&>(e).isListOfPoints(&globalContext) == truth,
       definition);
 }
@@ -1208,7 +1208,7 @@ QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
   assert_is_linear_combination_of_pattern(
       "4log(6x)+3cos(1)-πlog(2x-4)",
       [](const OExpression& e, Context* context, const char* symbol) {
-        return e.type() == ExpressionNode::Type::Logarithm &&
+        return e.otype() == ExpressionNode::Type::Logarithm &&
                e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
       });
 

@@ -30,7 +30,7 @@ Evaluation<T> MatrixEchelonFormNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> ref;
-  if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
+  if (input.otype() == EvaluationNode<T>::Type::MatrixComplex) {
     ref = static_cast<MatrixComplex<T>&>(input).ref(isFormReduced());
   } else {
     ref = Complex<T>::Undefined();
@@ -51,7 +51,7 @@ OExpression MatrixEchelonForm::shallowReduce(
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::OMatrix) {
+  if (c.otype() == ExpressionNode::Type::OMatrix) {
     bool couldComputeRef = false;
     OExpression result = static_cast<OMatrix&>(c).createRef(
         reductionContext, &couldComputeRef, isFormReduced());

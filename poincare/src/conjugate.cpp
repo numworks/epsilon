@@ -55,7 +55,7 @@ OExpression Conjugate::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(c);
     return c;
   }
-  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+  if (c.otype() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
     Multiplication m =
         Multiplication::Builder(Rational::Builder(-1), complexChild.imag());
@@ -64,7 +64,7 @@ OExpression Conjugate::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(complexChild);
     return std::move(complexChild);
   }
-  if (c.type() == ExpressionNode::Type::Rational) {
+  if (c.otype() == ExpressionNode::Type::Rational) {
     replaceWithInPlace(c);
     return c;
   }

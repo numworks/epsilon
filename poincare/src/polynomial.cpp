@@ -87,8 +87,8 @@ int Polynomial::QuadraticPolynomialRoots(OExpression a, OExpression b,
   if (!approximate) {
     *root1 = root1->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
     *root2 = root2->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
-    if (root1->type() == ExpressionNode::Type::Undefined ||
-        (!multipleRoot && root2->type() == ExpressionNode::Type::Undefined)) {
+    if (root1->otype() == ExpressionNode::Type::Undefined ||
+        (!multipleRoot && root2->otype() == ExpressionNode::Type::Undefined)) {
       // Simplification has been interrupted, recompute approximated roots.
       approximate = true;
       if (approximateSolutions) {
@@ -115,8 +115,8 @@ int Polynomial::QuadraticPolynomialRoots(OExpression a, OExpression b,
 
 static bool rootSmallerThan(const OExpression *root1, const OExpression *root2,
                             const ApproximationContext *approximationContext) {
-  if (root2->type() == ExpressionNode::Type::Undefined ||
-      root2->type() == ExpressionNode::Type::Nonreal) {
+  if (root2->otype() == ExpressionNode::Type::Undefined ||
+      root2->otype() == ExpressionNode::Type::Nonreal) {
     return true;
   }
   if (root1->isUndefined()) {
@@ -201,7 +201,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
            Power::Builder(b.clone(), Rational::Builder(3)))});
   if (!approximate) {
     *delta = delta->cloneAndSimplify(reductionContext);
-    if (delta->type() == ExpressionNode::Type::Undefined) {
+    if (delta->otype() == ExpressionNode::Type::Undefined) {
       // Simplification has been interrupted, recompute approximated roots.
       approximate = true;
       if (approximateSolutions != nullptr) {
@@ -219,7 +219,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
     *delta = delta->approximate<double>(approximationContext);
   }
   assert(!delta->isUninitialized());
-  if (delta->type() == ExpressionNode::Type::Undefined) {
+  if (delta->otype() == ExpressionNode::Type::Undefined) {
     // There is an undefined coefficient/delta, do not return any solution.
     *root1 = Undefined::Builder();
     *root2 = Undefined::Builder();
@@ -276,10 +276,10 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
       IsRoot(coefficients, degree, r, reductionContext)) {
     *root1 = r;
   }
-  if (root1->isUninitialized() && a.type() == ExpressionNode::Type::Rational &&
-      b.type() == ExpressionNode::Type::Rational &&
-      c.type() == ExpressionNode::Type::Rational &&
-      d.type() == ExpressionNode::Type::Rational) {
+  if (root1->isUninitialized() && a.otype() == ExpressionNode::Type::Rational &&
+      b.otype() == ExpressionNode::Type::Rational &&
+      c.otype() == ExpressionNode::Type::Rational &&
+      d.otype() == ExpressionNode::Type::Rational) {
     /* The equation can be written with integer coefficients. Under that form,
      * since d/a = x1*x2*x3, a rational root p/q must be so that p divides d
      * and q divides a. */
@@ -381,7 +381,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
       ApproximationContext approximationComplexContext(complexContext);
       OExpression cardano =
           CardanoNumber(delta0, delta1, &approximate, complexContext);
-      if (cardano.type() == ExpressionNode::Type::Undefined ||
+      if (cardano.otype() == ExpressionNode::Type::Undefined ||
           cardano.deepIsOfType(
               {ExpressionNode::Type::Undefined, ExpressionNode::Type::Infinity},
               context)) {
@@ -470,18 +470,18 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
   if (!approximate) {
     *root1 = root1->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
     bool simplificationFailed =
-        root1->type() == ExpressionNode::Type::Undefined;
+        root1->otype() == ExpressionNode::Type::Undefined;
     if (root2->isUninitialized() ||
-        root2->type() != ExpressionNode::Type::Undefined) {
+        root2->otype() != ExpressionNode::Type::Undefined) {
       *root2 = root2->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
       simplificationFailed = simplificationFailed ||
-                             root2->type() == ExpressionNode::Type::Undefined;
+                             root2->otype() == ExpressionNode::Type::Undefined;
     }
     if (root3->isUninitialized() ||
-        root3->type() != ExpressionNode::Type::Undefined) {
+        root3->otype() != ExpressionNode::Type::Undefined) {
       *root3 = root3->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
       simplificationFailed = simplificationFailed ||
-                             root3->type() == ExpressionNode::Type::Undefined;
+                             root3->otype() == ExpressionNode::Type::Undefined;
     }
     if (simplificationFailed) {
       // Simplification has been interrupted, recompute approximated roots.
@@ -581,12 +581,12 @@ OExpression Polynomial::RationalRootSearch(
       static_cast<const Rational *>(coefficients);
   LeastCommonMultiple lcm = LeastCommonMultiple::Builder();
   for (int i = 0; i <= degree; i++) {
-    assert(coefficients[i].type() == ExpressionNode::Type::Rational);
+    assert(coefficients[i].otype() == ExpressionNode::Type::Rational);
     lcm.addChildAtIndexInPlace(
         Rational::Builder(rationalCoefficients[i].integerDenominator()), i, i);
   }
   OExpression lcmResult = lcm.shallowReduce(reductionContext);
-  assert(lcmResult.type() == ExpressionNode::Type::Rational);
+  assert(lcmResult.otype() == ExpressionNode::Type::Rational);
   Rational rationalLCM = static_cast<Rational &>(lcmResult);
 
   Integer a0Int =
@@ -641,7 +641,7 @@ OExpression Polynomial::SumRootSearch(
   OExpression a = coefficients[degree];
   OExpression b = coefficients[relevantCoefficient].clone();
 
-  if (b.type() != ExpressionNode::Type::Addition) {
+  if (b.otype() != ExpressionNode::Type::Addition) {
     OExpression r = Opposite::Builder(Division::Builder(b, a.clone()));
     return IsRoot(coefficients, degree, r, reductionContext) ? r
                                                              : OExpression();

@@ -41,7 +41,7 @@ class LogicalOperatorNotNode : public LogicalOperatorNode {
  public:
   constexpr static const char* k_name = "not";
   size_t size() const override { return sizeof(LogicalOperatorNotNode); }
-  Type type() const override { return Type::LogicalOperatorNot; }
+  Type otype() const override { return Type::LogicalOperatorNot; }
   int numberOfChildren() const override { return 1; }
 
  private:
@@ -93,7 +93,7 @@ class BinaryLogicalOperatorNode : public LogicalOperatorNode {
   static bool IsBinaryLogicalOperator(const char* name, int nameLength,
                                       OperatorType* type);
 
-  Type type() const override { return Type::BinaryLogicalOperator; }
+  Type otype() const override { return Type::BinaryLogicalOperator; }
   size_t size() const override { return sizeof(BinaryLogicalOperatorNode); }
   int numberOfChildren() const override { return 2; }
 

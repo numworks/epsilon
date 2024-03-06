@@ -9,7 +9,7 @@ namespace Poincare {
 
 class Chi2Distribution final : public ContinuousDistribution {
  public:
-  Type type() const override { return Type::ChiSquared; }
+  Type otype() const override { return Type::ChiSquared; }
   bool isSymmetrical() const override { return false; }
 
   template <typename T>

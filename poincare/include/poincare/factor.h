@@ -25,7 +25,7 @@ class FactorNode final : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
-  Type type() const override { return Type::Factor; }
+  Type otype() const override { return Type::Factor; }
 
  private:
   /* Layout */

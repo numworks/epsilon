@@ -28,7 +28,7 @@ void CombinedCodePointsLayoutNode::render(KDContext *ctx, KDPoint p,
 }
 
 bool CombinedCodePointsLayoutNode::protectedIsIdenticalTo(OLayout l) {
-  assert(l.type() == Type::CombinedCodePointsLayout);
+  assert(l.otype() == Type::CombinedCodePointsLayout);
   CombinedCodePointsLayout &cpl = static_cast<CombinedCodePointsLayout &>(l);
   return combinedCodePoint() == cpl.combinedCodePoint() &&
          CodePointLayoutNode::protectedIsIdenticalTo(l);

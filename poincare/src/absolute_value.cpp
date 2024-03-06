@@ -90,7 +90,7 @@ OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   }
 
   // |a+ib| = sqrt(a^2+b^2)
-  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+  if (c.otype() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
     OExpression childNorm = complexChild.norm(reductionContext);
     replaceWithInPlace(childNorm);
@@ -111,7 +111,7 @@ OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
    *       = r^a*e^(i*b*ln(r))
    * So if b = 0, |z^y| = |z|^y
    */
-  if (c.type() == ExpressionNode::Type::Power &&
+  if (c.otype() == ExpressionNode::Type::Power &&
       c.childAtIndex(1).isReal(reductionContext.context(),
                                reductionContext.shouldCheckMatrices())) {
     OList listOfDependencies = OList::Builder();
@@ -130,7 +130,7 @@ OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   }
 
   // |x*y| = |x|*|y|
-  if (c.type() == ExpressionNode::Type::Multiplication) {
+  if (c.otype() == ExpressionNode::Type::Multiplication) {
     Multiplication m = Multiplication::Builder();
     int childrenNumber = c.numberOfChildren();
     for (int i = 0; i < childrenNumber; i++) {
@@ -144,7 +144,7 @@ OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   }
 
   // |i| = 1
-  if (c.type() == ExpressionNode::Type::ConstantMaths &&
+  if (c.otype() == ExpressionNode::Type::ConstantMaths &&
       static_cast<const Constant&>(c).isComplexI()) {
     OExpression e = Rational::Builder(1);
     replaceWithInPlace(e);

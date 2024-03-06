@@ -9,7 +9,7 @@ namespace Poincare {
 
 class UniformDistribution final : public ContinuousDistribution {
  public:
-  Type type() const override { return Type::Uniform; }
+  Type otype() const override { return Type::Uniform; }
   bool isSymmetrical() const override { return true; }
 
   template <typename T>

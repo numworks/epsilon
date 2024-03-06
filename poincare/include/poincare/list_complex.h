@@ -35,7 +35,7 @@ class ListComplexNode final : public EvaluationNode<T> {
 #endif
 
   // EvaluationNode
-  typename EvaluationNode<T>::Type type() const override {
+  typename EvaluationNode<T>::Type otype() const override {
     return EvaluationNode<T>::Type::ListComplex;
   }
   /* undef list is a list with a negative number of elements. */

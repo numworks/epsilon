@@ -28,10 +28,10 @@ CodePoint LinearLayoutDecoder::nextCodePointAtDirection(
   assert(0 <= m_position && m_position < m_end);
   Layout child = m_layout.childAtIndex(m_position);
   CodePoint result = UCodePointNull;
-  if (child.type() == LayoutNode::Type::CodePointLayout) {
+  if (child.otype() == LayoutNode::Type::CodePointLayout) {
     result = static_cast<CodePointLayout&>(child).codePoint();
   } else {
-    assert(child.type() == LayoutNode::Type::CombinedCodePointsLayout);
+    assert(child.otype() == LayoutNode::Type::CombinedCodePointsLayout);
     CombinedCodePointsLayout ccpl =
         static_cast<CombinedCodePointsLayout&>(child);
     result =

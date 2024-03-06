@@ -19,7 +19,7 @@ class ListNode : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::OList; }
+  Type otype() const override { return Type::OList; }
 
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,

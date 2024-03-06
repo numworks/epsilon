@@ -169,7 +169,7 @@ class OExpression : public TreeHandle {
   }
 
   /* Properties */
-  ExpressionNode::Type type() const { return node()->type(); }
+  ExpressionNode::Type otype() const { return node()->otype(); }
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const {
     return node()->isOfType(types);
   }
@@ -287,13 +287,13 @@ class OExpression : public TreeHandle {
   static bool IsDiscontinuous(const OExpression e, Context* context);
   static bool IsSymbolic(const OExpression e);
   static bool IsPoint(const OExpression e) {
-    return e.isUndefined() || e.type() == ExpressionNode::Type::OPoint;
+    return e.isUndefined() || e.otype() == ExpressionNode::Type::OPoint;
   }
   static bool IsSequence(const OExpression e) {
-    return e.type() == ExpressionNode::Type::Sequence;
+    return e.otype() == ExpressionNode::Type::Sequence;
   }
   static bool IsFactorial(const OExpression e) {
-    return e.type() == ExpressionNode::Type::Factorial;
+    return e.otype() == ExpressionNode::Type::Factorial;
   }
 
   typedef bool (*PatternTest)(const OExpression& e, Context* context,
@@ -587,30 +587,30 @@ class OExpression : public TreeHandle {
  protected:
   template <typename U>
   static OExpression UntypedBuilderOneChild(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::OList);
+    assert(children.otype() == ExpressionNode::Type::OList);
     return U::Builder(children.childAtIndex(0));
   }
   template <typename U>
   static OExpression UntypedBuilderTwoChildren(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::OList);
+    assert(children.otype() == ExpressionNode::Type::OList);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1));
   }
   template <typename U>
   static OExpression UntypedBuilderThreeChildren(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::OList);
+    assert(children.otype() == ExpressionNode::Type::OList);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1),
                       children.childAtIndex(2));
   }
   template <typename U>
   static OExpression UntypedBuilderFourChildren(OExpression children) {
-    assert(children.type() == ExpressionNode::Type::OList);
+    assert(children.otype() == ExpressionNode::Type::OList);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1),
                       children.childAtIndex(2), children.childAtIndex(3));
   }
   template <typename U>
   static OExpression UntypedBuilderMultipleChildren(OExpression children) {
     // Only with OExpression classes implementing addChildAtIndexInPlace
-    assert(children.type() == ExpressionNode::Type::OList);
+    assert(children.otype() == ExpressionNode::Type::OList);
     int childrenNumber = children.numberOfChildren();
     assert(childrenNumber > 0);
     U expression = U::Builder({children.childAtIndex(0)});

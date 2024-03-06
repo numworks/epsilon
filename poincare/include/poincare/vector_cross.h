@@ -19,7 +19,7 @@ class VectorCrossNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::VectorCross; }
+  Type otype() const override { return Type::VectorCross; }
 
  private:
   // Layout

@@ -33,7 +33,7 @@ class RationalNode final : public NumberNode {
                    int numberOfSignificantDigits) const override;
 
   // OExpression subclassing
-  Type type() const override { return Type::Rational; }
+  Type otype() const override { return Type::Rational; }
   TrinaryBoolean isPositive(Context* context) const override {
     return BinaryToTrinaryBool(!m_negative);
   }

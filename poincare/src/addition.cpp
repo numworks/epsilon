@@ -101,10 +101,11 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
   const OUnit::Representative* storedUnitRepresentative = nullptr;
   for (int i = 0; i < nChildrenExpression; i++) {
     OExpression child = childAtIndex(i);
-    if (child.type() != Type::Multiplication || child.numberOfChildren() != 2 ||
+    if (child.otype() != Type::Multiplication ||
+        child.numberOfChildren() != 2 ||
         !child.childAtIndex(0).isOfType(
             {Type::BasedInteger, Type::Decimal, Type::Double, Type::Float}) ||
-        child.childAtIndex(1).type() != Type::OUnit ||
+        child.childAtIndex(1).otype() != Type::OUnit ||
         child.childAtIndex(0).isPositive(nullptr) == TrinaryBoolean::False) {
       return false;
     }
@@ -122,7 +123,7 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
 // Addition
 
 const Number Addition::NumeralFactor(const OExpression& e) {
-  if (e.type() == ExpressionNode::Type::Multiplication &&
+  if (e.otype() == ExpressionNode::Type::Multiplication &&
       e.childAtIndex(0).isNumber()) {
     Number result = e.childAtIndex(0).convert<Number>();
     return result;
@@ -305,7 +306,7 @@ OExpression Addition::shallowReduce(ReductionContext reductionContext) {
   mergeSameTypeChildrenInPlace();
   OExpression parentOfThis = parent();
   while (!parentOfThis.isUninitialized() &&
-         parentOfThis.type() == ExpressionNode::Type::Parenthesis) {
+         parentOfThis.otype() == ExpressionNode::Type::Parenthesis) {
     parentOfThis = parentOfThis.parent();
   }
   if (!parentOfThis.isUninitialized() &&
@@ -379,7 +380,7 @@ OExpression Addition::shallowReduce(ReductionContext reductionContext) {
          * addition of a matrix and a scalar. */
         return replaceWithUndefinedInPlace();
       }
-      if (lastChild.type() != ExpressionNode::Type::OMatrix) {
+      if (lastChild.otype() != ExpressionNode::Type::OMatrix) {
         /* All children are matrices that are not of type OMatrix (for instance
          * a ConfidenceInterval that cannot be reduced). We cannot reduce the
          * addition more. */
@@ -391,7 +392,7 @@ OExpression Addition::shallowReduce(ReductionContext reductionContext) {
       int m = resultMatrix.numberOfColumns();
       // Scan to add the other children, which are  matrices
       for (int i = childrenCount - 2; i >= 0; i--) {
-        if (childAtIndex(i).type() != ExpressionNode::Type::OMatrix) {
+        if (childAtIndex(i).otype() != ExpressionNode::Type::OMatrix) {
           break;
         }
         OMatrix currentMatrix = childAtIndex(i).convert<OMatrix>();
@@ -405,7 +406,7 @@ OExpression Addition::shallowReduce(ReductionContext reductionContext) {
         for (int j = 0; j < n * m; j++) {
           OExpression resultEntryJ = resultMatrix.childAtIndex(j);
           OExpression currentEntryJ = currentMatrix.childAtIndex(j);
-          if (resultEntryJ.type() == ExpressionNode::Type::Addition) {
+          if (resultEntryJ.otype() == ExpressionNode::Type::Addition) {
             static_cast<Addition&>(resultEntryJ)
                 .addChildAtIndexInPlace(currentEntryJ,
                                         resultEntryJ.numberOfChildren(),
@@ -477,7 +478,7 @@ OExpression Addition::shallowReduce(ReductionContext reductionContext) {
   i = 0;
   while (i < numberOfChildren()) {
     OExpression e = childAtIndex(i);
-    if (e.type() == ExpressionNode::Type::Rational &&
+    if (e.otype() == ExpressionNode::Type::Rational &&
         static_cast<Rational&>(e).isZero() && numberOfChildren() > 1) {
       removeChildAtIndexInPlace(i);
       continue;
@@ -503,7 +504,7 @@ OExpression Addition::shallowReduce(ReductionContext reductionContext) {
    * is not an addition. */
   OExpression p = result.parent();
   if (reductionContext.target() == ReductionTarget::User && result == *this &&
-      (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
+      (p.isUninitialized() || p.otype() != ExpressionNode::Type::Addition)) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
     result = factorizeOnCommonDenominator(reductionContext);
   }
@@ -528,8 +529,8 @@ bool Addition::derivate(const ReductionContext& reductionContext, Symbol symbol,
 }
 
 int Addition::NumberOfNonNumeralFactors(const OExpression& e) {
-  if (e.type() != ExpressionNode::Type::Multiplication) {
-    return 1;  // Or (e->type() != Type::Rational);
+  if (e.otype() != ExpressionNode::Type::Multiplication) {
+    return 1;  // Or (e->otype() != Type::Rational);
   }
   int result = e.numberOfChildren();
   if (e.childAtIndex(0).isNumber()) {
@@ -539,7 +540,7 @@ int Addition::NumberOfNonNumeralFactors(const OExpression& e) {
 }
 
 const OExpression Addition::FirstNonNumeralFactor(const OExpression& e) {
-  if (e.type() != ExpressionNode::Type::Multiplication) {
+  if (e.otype() != ExpressionNode::Type::Multiplication) {
     return e;
   }
   if (e.childAtIndex(0).isNumber()) {
@@ -639,7 +640,7 @@ OExpression Addition::factorizeOnCommonDenominator(
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(),
                                      numerator.numberOfChildren());
     OExpression reducedM = m.shallowReduce(reductionContext);
-    if (reducedM.type() == ExpressionNode::Type::Dependency) {
+    if (reducedM.otype() == ExpressionNode::Type::Dependency) {
       /* The reduction of the numerator might have created dependencies that
        * we do not need since the information of the forbidden values is either
        * contained in the denominator or already bubbled up.
@@ -711,7 +712,7 @@ void Addition::factorizeChildrenAtIndexesInPlace(
 
   // Step 3: Create a multiplication
   Multiplication m = Multiplication::Builder();
-  if (e1.type() == ExpressionNode::Type::Multiplication) {
+  if (e1.otype() == ExpressionNode::Type::Multiplication) {
     m = static_cast<Multiplication&>(e1);
   } else {
     replaceChildAtIndexInPlace(index1, m);
@@ -745,11 +746,11 @@ bool Addition::TermHasSquaredCos(const OExpression& e,
 bool Addition::TermHasSquaredTrigFunctionWithBase(
     const OExpression& e, const ReductionContext& reductionContext,
     OExpression& base, OExpression& coefficient, bool* cosine) {
-  if (e.type() == ExpressionNode::Type::Power &&
+  if (e.otype() == ExpressionNode::Type::Power &&
       e.childAtIndex(0).isOfType(
           {ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}) &&
       e.childAtIndex(1).isIdenticalTo(Rational::Builder(2))) {
-    *cosine = e.childAtIndex(0).type() == ExpressionNode::Type::Cosine;
+    *cosine = e.childAtIndex(0).otype() == ExpressionNode::Type::Cosine;
     coefficient = Rational::Builder(1);
     OExpression trigFunctionBase = e.childAtIndex(0).childAtIndex(0);
     if (base.isUninitialized()) {
@@ -758,7 +759,7 @@ bool Addition::TermHasSquaredTrigFunctionWithBase(
     } else if (base.isIdenticalTo(trigFunctionBase)) {
       return true;
     }
-  } else if (e.type() == ExpressionNode::Type::Multiplication) {
+  } else if (e.otype() == ExpressionNode::Type::Multiplication) {
     OExpression trigFunctionCoeff;
     int nChildren = e.numberOfChildren();
     for (int i = 0; i < nChildren; i++) {
@@ -780,7 +781,7 @@ OExpression Addition::factorizeSquaredTrigFunction(
   Addition totalCoefOfSine = Addition::Builder();
   Addition totalCoefOfCosine = Addition::Builder();
   OExpression thisClone = clone();
-  assert(thisClone.type() == ExpressionNode::Type::Addition);
+  assert(thisClone.otype() == ExpressionNode::Type::Addition);
   Addition result = static_cast<Addition&>(thisClone);
   for (int i = 0; i < result.numberOfChildren(); i++) {
     OExpression child = result.childAtIndex(i);

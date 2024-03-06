@@ -12,13 +12,13 @@ OExpression PDFMethod::shallowReduce(OExpression *abscissae,
                                      OExpression *expression) const {
   OExpression x = abscissae[0];
 
-  if (x.type() == ExpressionNode::Type::Infinity) {
+  if (x.otype() == ExpressionNode::Type::Infinity) {
     OExpression result = Rational::Builder(0);
     expression->replaceWithInPlace(result);
     return result;
   }
 
-  if (x.type() != ExpressionNode::Type::Rational) {
+  if (x.otype() != ExpressionNode::Type::Rational) {
     return *expression;
   }
 

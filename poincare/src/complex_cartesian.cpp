@@ -46,8 +46,8 @@ Complex<T> ComplexCartesianNode::templatedApproximate(
       childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> imagEvalution =
       childAtIndex(1)->approximate(T(), approximationContext);
-  assert(realEvaluation.type() == EvaluationNode<T>::Type::Complex);
-  assert(imagEvalution.type() == EvaluationNode<T>::Type::Complex);
+  assert(realEvaluation.otype() == EvaluationNode<T>::Type::Complex);
+  assert(imagEvalution.otype() == EvaluationNode<T>::Type::Complex);
   std::complex<T> a = realEvaluation.complexAtIndex(0);
   std::complex<T> b = imagEvalution.complexAtIndex(0);
   if ((a.imag() != static_cast<T>(0.0) && !std::isnan(a.imag())) ||
@@ -107,15 +107,15 @@ OExpression ComplexCartesian::shallowBeautify(
 void ComplexCartesian::factorAndArgumentOfFunction(
     OExpression e, ExpressionNode::Type searchedType, OExpression* factor,
     OExpression* argument, const ReductionContext& reductionContext) {
-  if (e.type() == searchedType) {
+  if (e.otype() == searchedType) {
     *factor = Rational::Builder(1);
     *argument = e.childAtIndex(0);
     return;
   }
-  if (e.type() == ExpressionNode::Type::Multiplication) {
+  if (e.otype() == ExpressionNode::Type::Multiplication) {
     int childrenNumber = e.numberOfChildren();
     for (int i = 0; i < childrenNumber; i++) {
-      if (e.childAtIndex(i).type() == searchedType) {
+      if (e.childAtIndex(i).otype() == searchedType) {
         *argument = e.childAtIndex(i).childAtIndex(0);
         *factor = e.clone();
         static_cast<Multiplication*>(factor)->removeChildAtIndexInPlace(i);

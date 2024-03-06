@@ -71,7 +71,7 @@ int BasedIntegerNode::simplificationOrderSameType(
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
-  assert(e->type() == ExpressionNode::Type::BasedInteger);
+  assert(e->otype() == ExpressionNode::Type::BasedInteger);
   const BasedIntegerNode *other = static_cast<const BasedIntegerNode *>(e);
   return Integer::NaturalOrder(integer(), other->integer());
 }

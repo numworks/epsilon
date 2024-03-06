@@ -31,7 +31,7 @@ class ConstantNode final : public ExpressionNode {
   bool isReal() const;
 
   // OExpression Properties
-  Type type() const override {
+  Type otype() const override {
     return constantInfo().m_unit == nullptr ? Type::ConstantMaths
                                             : Type::ConstantPhysics;
   }

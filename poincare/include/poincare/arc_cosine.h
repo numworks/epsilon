@@ -29,7 +29,7 @@ class ArcCosineNode final : public ExpressionNode {
                ? TrinaryBoolean::Unknown
                : TrinaryBoolean::True;
   }
-  Type type() const override { return Type::ArcCosine; }
+  Type otype() const override { return Type::ArcCosine; }
 
  private:
   // Layout

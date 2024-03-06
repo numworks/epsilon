@@ -23,7 +23,7 @@ class VerticalOffsetLayoutNode final : public LayoutNode {
         m_horizontalPosition(horizontalPosition) {}
 
   // Layout
-  Type type() const override { return Type::VerticalOffsetLayout; }
+  Type otype() const override { return Type::VerticalOffsetLayout; }
 
   // VerticalOffsetLayoutNode
   VerticalPosition verticalPosition() const { return m_verticalPosition; }

@@ -16,7 +16,7 @@ class SymbolNode final : public SymbolAbstractNode {
 #endif
 
   // OExpression Properties
-  Type type() const override { return Type::Symbol; }
+  Type otype() const override { return Type::Symbol; }
   // Symbol is not expanded for sign as it may be a local variable.
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::Unknown;

@@ -27,7 +27,7 @@ size_t StringLayoutNode::size() const {
 }
 
 bool StringLayoutNode::protectedIsIdenticalTo(OLayout l) {
-  assert(l.type() == Type::StringLayout);
+  assert(l.otype() == Type::StringLayout);
   StringLayout &sl = static_cast<StringLayout &>(l);
   return strncmp(m_string, sl.string(),
                  std::max(stringLength() + 1, sl.stringLength() + 1)) == 0;

@@ -19,7 +19,7 @@ class HyperbolicCosineNode final : public HyperbolicTrigonometricFunctionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::HyperbolicCosine; }
+  Type otype() const override { return Type::HyperbolicCosine; }
 
  private:
   // Simplification

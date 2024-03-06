@@ -28,7 +28,7 @@ template <typename T>
 Evaluation<T> ListSortNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> child = childAtIndex(0)->approximate(T(), approximationContext);
-  if (child.type() != EvaluationNode<T>::Type::ListComplex) {
+  if (child.otype() != EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Undefined();
   }
   ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
@@ -38,7 +38,7 @@ Evaluation<T> ListSortNode::templatedApproximate(
 
 OExpression ListSort::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
-  if (child.type() != ExpressionNode::Type::OList) {
+  if (child.otype() != ExpressionNode::Type::OList) {
     if (!child.deepIsList(reductionContext.context())) {
       return replaceWithUndefinedInPlace();
     }

@@ -81,7 +81,7 @@ JuniorExpression JuniorExpression::Builder(PoincareJ::Tree* tree) {
 
 JuniorExpression JuniorExpression::Juniorize(OExpression e) {
   if (e.isUninitialized() ||
-      e.type() == ExpressionNode::Type::JuniorExpression) {
+      e.otype() == ExpressionNode::Type::JuniorExpression) {
     // e is already a junior expression
     return static_cast<JuniorExpression&>(e);
   }

@@ -296,7 +296,7 @@ size_t SerializationHelper::CodePoint(char *buffer, size_t bufferSize,
 
 bool SerializationHelper::PostfixChildNeedsSystemParenthesesAtSerialization(
     const TreeNode *child) {
-  if (static_cast<const ExpressionNode *>(child)->type() ==
+  if (static_cast<const ExpressionNode *>(child)->otype() ==
           ExpressionNode::Type::Rational &&
       !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;

@@ -17,7 +17,7 @@ class ListStandardDeviationNode
     stream << "ListStandardDeviation";
   }
 #endif
-  Type type() const override { return Type::ListStandardDeviation; }
+  Type otype() const override { return Type::ListStandardDeviation; }
 
  private:
   OExpression shallowReduce(const ReductionContext& reductionContext) override;

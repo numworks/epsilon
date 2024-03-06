@@ -63,7 +63,7 @@ OExpression TangentNode::unaryFunctionDifferential(
 OExpression Tangent::shallowReduce(ReductionContext reductionContext) {
   OExpression newExpression =
       Trigonometry::ShallowReduceDirectFunction(*this, reductionContext);
-  if (newExpression.type() == ExpressionNode::Type::Tangent) {
+  if (newExpression.otype() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
     Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
     Division d = Division::Builder(s, c);

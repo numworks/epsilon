@@ -16,7 +16,7 @@ class Point2DLayoutNode final : public TwoRowsLayoutNode {
   }
 
   // Layout
-  Type type() const override { return Type::Point2DLayout; }
+  Type otype() const override { return Type::Point2DLayout; }
 
   // SerializableNode
   size_t serialize(char* buffer, size_t bufferSize,

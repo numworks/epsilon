@@ -15,7 +15,7 @@ class StoreNode final : public RightwardsArrowExpressionNode {
   void logNodeName(std::ostream& stream) const override { stream << "Store"; }
 #endif
   // ExpressionNode
-  Type type() const override { return Type::Store; }
+  Type otype() const override { return Type::Store; }
 
  private:
   // Simplification
@@ -54,7 +54,7 @@ class Store final : public ExpressionTwoChildren<Store, StoreNode> {
   }
   const OExpression value() const { return childAtIndex(0); }
   bool isTrulyReducedInShallowReduce() const {
-    return symbol().type() == ExpressionNode::Type::Symbol;
+    return symbol().otype() == ExpressionNode::Type::Symbol;
   }
 
   // OExpression

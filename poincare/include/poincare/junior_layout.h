@@ -25,7 +25,7 @@ class JuniorLayoutNode final : public LayoutNode {
   }
 
   // Layout
-  Type type() const override { return Type::JuniorLayout; }
+  Type otype() const override { return Type::JuniorLayout; }
 
   // TreeNode
   size_t size() const override {

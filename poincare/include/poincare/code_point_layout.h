@@ -19,7 +19,7 @@ class CodePointLayoutNode : public LayoutNode {
       : LayoutNode(), m_codePoint(c) {}
 
   // Layout
-  Type type() const override { return Type::CodePointLayout; }
+  Type otype() const override { return Type::CodePointLayout; }
 
   // CodePointLayout
   CodePoint codePoint() const { return m_codePoint; }

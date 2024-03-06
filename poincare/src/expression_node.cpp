@@ -78,12 +78,12 @@ int ExpressionNode::SimplificationOrder(const ExpressionNode* e1,
                                         bool ascending,
                                         bool ignoreParentheses) {
   // Depending on ignoreParentheses, check if e1 or e2 are parenthesis
-  ExpressionNode::Type type1 = e1->type();
+  ExpressionNode::Type type1 = e1->otype();
   if (ignoreParentheses && type1 == Type::Parenthesis) {
     return SimplificationOrder(e1->childAtIndex(0), e2, ascending,
                                ignoreParentheses);
   }
-  ExpressionNode::Type type2 = e2->type();
+  ExpressionNode::Type type2 = e2->otype();
   if (ignoreParentheses && type2 == Type::Parenthesis) {
     return SimplificationOrder(e1, e2->childAtIndex(0), ascending,
                                ignoreParentheses);
@@ -153,7 +153,7 @@ OExpression ExpressionNode::unaryFunctionDifferential(
 bool ExpressionNode::isOfType(
     std::initializer_list<ExpressionNode::Type> types) const {
   for (ExpressionNode::Type t : types) {
-    if (type() == t) {
+    if (otype() == t) {
       return true;
     }
   }

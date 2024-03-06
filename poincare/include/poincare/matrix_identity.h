@@ -19,7 +19,7 @@ class MatrixIdentityNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::MatrixIdentity; }
+  Type otype() const override { return Type::MatrixIdentity; }
 
  private:
   // Layout

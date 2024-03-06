@@ -15,7 +15,7 @@ class ListMinimumNode : public ExpressionNode {
     stream << "ListMinimum";
   }
 #endif
-  Type type() const override { return Type::ListMinimum; }
+  Type otype() const override { return Type::ListMinimum; }
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

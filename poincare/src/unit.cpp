@@ -64,7 +64,7 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
   int numberOfFactors;
   int factorIndex = 0;
   OExpression factor;
-  if (baseUnits.type() == ExpressionNode::Type::Multiplication) {
+  if (baseUnits.otype() == ExpressionNode::Type::Multiplication) {
     numberOfFactors = baseUnits.numberOfChildren();
     factor = baseUnits.childAtIndex(0);
   } else {
@@ -74,9 +74,9 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
   do {
     // Get the unit's exponent
     int exponent = 1;
-    if (factor.type() == ExpressionNode::Type::Power) {
+    if (factor.otype() == ExpressionNode::Type::Power) {
       OExpression exp = factor.childAtIndex(1);
-      assert(exp.type() == ExpressionNode::Type::Rational);
+      assert(exp.otype() == ExpressionNode::Type::Rational);
       if (!static_cast<Rational&>(exp).isInteger()) {
         /* If non-integer exponents are found, we return a null vector so that
          * Multiplication::shallowBeautify will not attempt to find derived
@@ -104,7 +104,7 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
       factor = factor.childAtIndex(0);
     }
     // Fill the vector with the unit's exponent
-    assert(factor.type() == ExpressionNode::Type::OUnit);
+    assert(factor.otype() == ExpressionNode::Type::OUnit);
     vector.addAllCoefficients(
         static_cast<OUnit&>(factor).node()->representative()->dimensionVector(),
         exponent);
@@ -1067,7 +1067,7 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode* e,
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
-  assert(type() == e->type());
+  assert(otype() == e->otype());
   const UnitNode* eNode = static_cast<const UnitNode*>(e);
   DimensionVector v = representative()->dimensionVector();
   DimensionVector w = eNode->representative()->dimensionVector();
@@ -1130,16 +1130,16 @@ static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     bool optimizePrefix) {
   double exponent = 1.f;
   OExpression factor = unit;
-  if (factor.type() == ExpressionNode::Type::Power) {
+  if (factor.otype() == ExpressionNode::Type::Power) {
     OExpression childExponent = factor.childAtIndex(1);
-    assert(factor.childAtIndex(0).type() == ExpressionNode::Type::OUnit);
-    assert(factor.childAtIndex(1).type() == ExpressionNode::Type::Rational);
+    assert(factor.childAtIndex(0).otype() == ExpressionNode::Type::OUnit);
+    assert(factor.childAtIndex(1).otype() == ExpressionNode::Type::Rational);
     ApproximationContext approximationContext(reductionContext);
     exponent = static_cast<Rational&>(childExponent)
                    .approximateToScalar<double>(approximationContext);
     factor = factor.childAtIndex(0);
   }
-  assert(factor.type() == ExpressionNode::Type::OUnit);
+  assert(factor.otype() == ExpressionNode::Type::OUnit);
   if (exponent == 0.f) {
     /* Finding the best representative for a unit with exponent 0 doesn't
      * really make sense, and should only happen with a weak ReductionTarget
@@ -1156,7 +1156,7 @@ void OUnit::ChooseBestRepresentativeAndPrefixForValue(
     const ReductionContext& reductionContext) {
   int numberOfFactors;
   OExpression factor;
-  if (units.type() == ExpressionNode::Type::Multiplication) {
+  if (units.otype() == ExpressionNode::Type::Multiplication) {
     numberOfFactors = units.numberOfChildren();
     factor = units.childAtIndex(0);
   } else {
@@ -1182,7 +1182,7 @@ bool OUnit::ShouldDisplayAdditionalOutputs(double value, OExpression unit,
       Representative::RepresentativeForDimension(vector);
 
   ExpressionTest isNonBase = [](const OExpression e, Context* context) {
-    return !e.isUninitialized() && e.type() == ExpressionNode::Type::OUnit &&
+    return !e.isUninitialized() && e.otype() == ExpressionNode::Type::OUnit &&
            !e.convert<OUnit>().isBaseUnit();
   };
 
@@ -1199,7 +1199,7 @@ int OUnit::SetAdditionalExpressions(OExpression units, double value,
     return 0;
   }
   const Representative* representative =
-      units.type() == ExpressionNode::Type::OUnit
+      units.otype() == ExpressionNode::Type::OUnit
           ? static_cast<OUnit&>(units).node()->representative()
           : UnitNode::Representative::RepresentativeForDimension(
                 UnitNode::DimensionVector::FromBaseUnits(units));
@@ -1214,7 +1214,7 @@ int OUnit::SetAdditionalExpressions(OExpression units, double value,
     childContext.setUnitConversion(UnitConversion::None);
     OExpression exactValue =
         exactOutput.cloneAndReduceAndRemoveUnit(childContext, &unit);
-    assert(unit.type() == ExpressionNode::Type::OUnit);
+    assert(unit.otype() == ExpressionNode::Type::OUnit);
     return static_cast<const AngleRepresentative*>(
                static_cast<OUnit&>(unit).representative())
         ->setAdditionalExpressionsWithExactValue(
@@ -1285,7 +1285,7 @@ OExpression OUnit::ConvertTemperatureUnits(
   OExpression startUnit;
   e = e.removeUnit(&startUnit);
   if (startUnit.isUninitialized() ||
-      startUnit.type() != ExpressionNode::Type::OUnit) {
+      startUnit.otype() != ExpressionNode::Type::OUnit) {
     return Undefined::Builder();
   }
   const Representative* startRepr =
@@ -1307,7 +1307,7 @@ OExpression OUnit::ConvertTemperatureUnits(
 }
 
 bool OUnit::IsForbiddenTemperatureProduct(OExpression e) {
-  assert(e.type() == ExpressionNode::Type::Multiplication);
+  assert(e.otype() == ExpressionNode::Type::Multiplication);
   if (e.numberOfChildren() != 2) {
     /* A multiplication cannot contain a °C or °F if it does not have 2
      * children, as otherwise the temperature would have reduced itself to
@@ -1317,7 +1317,7 @@ bool OUnit::IsForbiddenTemperatureProduct(OExpression e) {
   int temperatureChildIndex = -1;
   for (int i = 0; i < 2; i++) {
     OExpression child = e.childAtIndex(i);
-    if (child.type() == ExpressionNode::Type::OUnit &&
+    if (child.otype() == ExpressionNode::Type::OUnit &&
         (static_cast<OUnit&>(child).node()->representative() ==
              k_temperatureRepresentatives + k_celsiusRepresentativeIndex ||
          static_cast<OUnit&>(child).node()->representative() ==
@@ -1339,7 +1339,7 @@ bool OUnit::IsForbiddenTemperatureProduct(OExpression e) {
   }
   OExpression pp = p.parent();
   return !(
-      p.type() == ExpressionNode::Type::Opposite &&
+      p.otype() == ExpressionNode::Type::Opposite &&
       (pp.isUninitialized() || pp.isOfType({ExpressionNode::Type::UnitConvert,
                                             ExpressionNode::Type::Store})));
 }
@@ -1413,7 +1413,7 @@ OExpression OUnit::shallowReduce(ReductionContext reductionContext) {
         p.isOfType({ExpressionNode::Type::UnitConvert,
                     ExpressionNode::Type::Store,
                     ExpressionNode::Type::Opposite}) ||
-        (p.type() == ExpressionNode::Type::Multiplication &&
+        (p.otype() == ExpressionNode::Type::Multiplication &&
          p.numberOfChildren() == 2)) {
       /* If the parent is a UnitConvert, the temperature is always legal.
        * Otherwise, we need to wait until the reduction of the multiplication
@@ -1443,7 +1443,7 @@ OExpression OUnit::shallowReduce(ReductionContext reductionContext) {
 OExpression OUnit::shallowBeautify() {
   // Force Float(1) in front of an orphan OUnit
   if (parent().isUninitialized() ||
-      parent().type() == ExpressionNode::Type::Opposite) {
+      parent().otype() == ExpressionNode::Type::Opposite) {
     Multiplication m = Multiplication::Builder(Float<double>::Builder(1.));
     replaceWithInPlace(m);
     m.addChildAtIndexInPlace(*this, 1, 1);

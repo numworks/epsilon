@@ -20,7 +20,7 @@ class LeastCommonMultipleNode final : public NAryExpressionNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }
-  Type type() const override { return Type::LeastCommonMultiple; }
+  Type otype() const override { return Type::LeastCommonMultiple; }
 
  private:
   // Layout

@@ -30,7 +30,7 @@ template <typename T>
 Evaluation<T> DeterminantNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.type() != EvaluationNode<T>::Type::MatrixComplex) {
+  if (input.otype() != EvaluationNode<T>::Type::MatrixComplex) {
     return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(
@@ -58,7 +58,7 @@ OExpression Determinant::shallowReduce(ReductionContext reductionContext) {
                        reductionContext.shouldCheckMatrices())) {
     return replaceWithUndefinedInPlace();
   }
-  if (c0.type() == ExpressionNode::Type::OMatrix) {
+  if (c0.otype() == ExpressionNode::Type::OMatrix) {
     OMatrix m0 = static_cast<OMatrix&>(c0);
     bool couldComputeDeterminant = true;
     OExpression result =

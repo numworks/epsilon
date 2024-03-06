@@ -5,7 +5,7 @@
 namespace Poincare {
 
 bool CodePointLayoutNode::IsCodePoint(OLayout l, CodePoint c) {
-  return l.type() == Type::CodePointLayout &&
+  return l.otype() == Type::CodePointLayout &&
          static_cast<CodePointLayout &>(l).codePoint() == c;
 }
 
@@ -32,7 +32,7 @@ bool CodePointLayoutNode::isCollapsable(
         int indexOfThis = parent.indexOfChild(thisRef);
         if (indexOfThis > 0) {
           OLayout leftBrother = parent.childAtIndex(indexOfThis - 1);
-          if (leftBrother.type() == Type::CodePointLayout &&
+          if (leftBrother.otype() == Type::CodePointLayout &&
               static_cast<CodePointLayout &>(leftBrother).codePoint() ==
                   UCodePointLatinLetterSmallCapitalE) {
             return true;
@@ -56,7 +56,7 @@ bool CodePointLayoutNode::isCollapsable(
           brother = parent.childAtIndex(indexOfThis + 1);
         }
         if (!brother.isUninitialized() &&
-            brother.type() == LayoutNode::Type::FractionLayout) {
+            brother.otype() == LayoutNode::Type::FractionLayout) {
           return false;
         }
       }
@@ -107,8 +107,8 @@ bool CodePointLayoutNode::isMultiplicationCodePoint() const {
 }
 
 bool CodePointLayoutNode::protectedIsIdenticalTo(OLayout l) {
-  assert(l.type() == Type::CodePointLayout ||
-         l.type() == Type::CombinedCodePointsLayout);
+  assert(l.otype() == Type::CodePointLayout ||
+         l.otype() == Type::CombinedCodePointsLayout);
   CodePointLayout &cpl = static_cast<CodePointLayout &>(l);
   return codePoint() == cpl.codePoint();
 }

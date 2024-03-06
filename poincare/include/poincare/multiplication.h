@@ -19,7 +19,7 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::Multiplication; }
+  Type otype() const override { return Type::Multiplication; }
   TrinaryBoolean isPositive(Context* context) const override;
   TrinaryBoolean isNull(Context* context) const override;
   int polynomialDegree(Context* context, const char* symbolName) const override;

@@ -33,7 +33,7 @@ template <typename T>
 Evaluation<T> MatrixTraceNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.type() != EvaluationNode<T>::Type::MatrixComplex) {
+  if (input.otype() != EvaluationNode<T>::Type::MatrixComplex) {
     return input;
   }
   Complex<T> result =
@@ -52,7 +52,7 @@ OExpression MatrixTrace::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::OMatrix) {
+  if (c.otype() == ExpressionNode::Type::OMatrix) {
     OMatrix matrixChild0 = static_cast<OMatrix&>(c);
     if (matrixChild0.numberOfRows() != matrixChild0.numberOfColumns()) {
       return replaceWithUndefinedInPlace();

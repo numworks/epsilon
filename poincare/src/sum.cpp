@@ -22,8 +22,8 @@ size_t SumNode::serialize(char* buffer, size_t bufferSize,
 }
 
 OExpression Sum::UntypedBuilder(OExpression children) {
-  assert(children.type() == ExpressionNode::Type::OList);
-  if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+  assert(children.otype() == ExpressionNode::Type::OList);
+  if (children.childAtIndex(1).otype() != ExpressionNode::Type::Symbol) {
     // Second parameter must be a Symbol.
     return OExpression();
   }

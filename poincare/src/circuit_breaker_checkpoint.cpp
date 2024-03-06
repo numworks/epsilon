@@ -25,7 +25,7 @@ void CircuitBreakerCheckpoint::rollbackCircuitBreaker() {
    * jumping. */
   assert(!Ion::CircuitBreaker::hasCheckpoint(
       static_cast<Ion::CircuitBreaker::CheckpointType>(
-          static_cast<uint8_t>(type()) + 1)));
+          static_cast<uint8_t>(otype()) + 1)));
   /* At this point, checkpoints after this can be located in the unwound stack.
    * We must not call their methods. */
   s_topmost = this;

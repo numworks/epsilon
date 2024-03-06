@@ -27,7 +27,7 @@ class MatrixNode final : public Array, public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::OMatrix; }
+  Type otype() const override { return Type::OMatrix; }
   int polynomialDegree(Context* context, const char* symbolName) const override;
 
   // Simplification

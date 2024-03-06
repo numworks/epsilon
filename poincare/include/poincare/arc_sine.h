@@ -28,7 +28,7 @@ class ArcSineNode final : public ExpressionNode {
   TrinaryBoolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
-  Type type() const override { return Type::ArcSine; }
+  Type otype() const override { return Type::ArcSine; }
 
  private:
   // Layout

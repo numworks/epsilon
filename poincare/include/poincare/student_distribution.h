@@ -9,7 +9,7 @@ namespace Poincare {
 
 class StudentDistribution final : public ContinuousDistribution {
  public:
-  Type type() const override { return Type::Student; }
+  Type otype() const override { return Type::Student; }
   bool isSymmetrical() const override { return true; }
 
   template <typename T>

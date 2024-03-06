@@ -73,7 +73,7 @@ template <typename T>
 Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(
     ExpressionNode* expression, T x,
     const ApproximationContext& approximationContext) const {
-  assert(childAtIndex(1)->type() == Type::Symbol);
+  assert(childAtIndex(1)->otype() == Type::Symbol);
   Symbol symbol = Symbol(static_cast<SymbolNode*>(childAtIndex(1)));
   VariableContext variableContext =
       VariableContext(symbol.name(), approximationContext.context());
@@ -178,7 +178,7 @@ bool ParameteredExpression::ParameterText(const char* text,
 
 OExpression ParameteredExpression::replaceSymbolWithExpression(
     const SymbolAbstract& symbol, const OExpression& expression) {
-  if (symbol.type() != ExpressionNode::Type::Symbol ||
+  if (symbol.otype() != ExpressionNode::Type::Symbol ||
       !parameter().hasSameNameAs(symbol)) {
     // If the symbol is not the parameter, replace normally
     return deepReplaceSymbolWithExpression(symbol, expression);
@@ -226,7 +226,7 @@ OExpression ParameteredExpression::deepReplaceReplaceableSymbols(
 
 Symbol ParameteredExpression::parameter() {
   OExpression e = childAtIndex(ParameteredExpression::ParameterChildIndex());
-  assert(e.type() == ExpressionNode::Type::Symbol);
+  assert(e.otype() == ExpressionNode::Type::Symbol);
   return static_cast<Symbol&>(e);
 }
 

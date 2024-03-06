@@ -93,7 +93,7 @@ OExpression Factorial::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Rational) {
+  if (c.otype() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
     if (!r.isInteger() || r.isPositive() == TrinaryBoolean::False) {
       return replaceWithUndefinedInPlace();

@@ -10,7 +10,7 @@ class BinomialCoefficientLayoutNode final : public TwoRowsLayoutNode {
   using TwoRowsLayoutNode::TwoRowsLayoutNode;
 
   // Layout
-  Type type() const override { return Type::BinomialCoefficientLayout; }
+  Type otype() const override { return Type::BinomialCoefficientLayout; }
 
   // SerializableNode
   size_t serialize(char* buffer, size_t bufferSize,

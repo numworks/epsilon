@@ -156,7 +156,7 @@ class ExpressionNode : public TreeNode {
   };
 
   /* Poor man's RTTI */
-  virtual Type type() const = 0;
+  virtual Type otype() const = 0;
 
   /* Properties */
   virtual TrinaryBoolean isPositive(Context* context) const {

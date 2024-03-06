@@ -20,7 +20,7 @@ class SignFunctionNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::SignFunction; }
+  Type otype() const override { return Type::SignFunction; }
   TrinaryBoolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }

@@ -17,7 +17,7 @@ class UnitConvertNode final : public RightwardsArrowExpressionNode {
   }
 #endif
   // ExpressionNode
-  Type type() const override { return Type::UnitConvert; }
+  Type otype() const override { return Type::UnitConvert; }
 
  private:
   OExpression removeUnit(OExpression* unit) override;

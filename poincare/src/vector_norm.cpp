@@ -35,7 +35,7 @@ Evaluation<T> VectorNormNode::templatedApproximate(
     return Complex<T>::Undefined();
   }
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.type() != EvaluationNode<T>::Type::MatrixComplex) {
+  if (input.otype() != EvaluationNode<T>::Type::MatrixComplex) {
     return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).norm());
@@ -57,7 +57,7 @@ OExpression VectorNorm::shallowReduce(ReductionContext reductionContext) {
     return replaceWithUndefinedInPlace();
   }
   OExpression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::OMatrix) {
+  if (c.otype() == ExpressionNode::Type::OMatrix) {
     OMatrix matrixChild = static_cast<OMatrix&>(c);
     // Norm is only defined on vectors only
     if (!matrixChild.isVector()) {

@@ -77,20 +77,20 @@ OExpression PermuteCoefficient::shallowReduce(
   }
   OExpression c0 = childAtIndex(0);
   OExpression c1 = childAtIndex(1);
-  if (c0.type() == ExpressionNode::Type::Rational) {
+  if (c0.otype() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.isInteger() || r0.isPositive() == TrinaryBoolean::False) {
       return replaceWithUndefinedInPlace();
     }
   }
-  if (c1.type() == ExpressionNode::Type::Rational) {
+  if (c1.otype() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
     if (!r1.isInteger() || r1.isPositive() == TrinaryBoolean::False) {
       return replaceWithUndefinedInPlace();
     }
   }
-  if (c0.type() != ExpressionNode::Type::Rational ||
-      c1.type() != ExpressionNode::Type::Rational) {
+  if (c0.otype() != ExpressionNode::Type::Rational ||
+      c1.otype() != ExpressionNode::Type::Rational) {
     return *this;
   }
   Rational r0 = static_cast<Rational &>(c0);

@@ -44,7 +44,7 @@ OExpression RealPart::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(c);
     return c;
   }
-  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+  if (c.otype() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
     OExpression r = complexChild.real();
     replaceWithInPlace(r);

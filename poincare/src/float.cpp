@@ -10,9 +10,9 @@ int FloatNode<T>::simplificationOrderSameType(const ExpressionNode *e,
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
-  assert((e->type() == ExpressionNode::Type::Float &&
+  assert((e->otype() == ExpressionNode::Type::Float &&
           sizeof(T) == sizeof(float)) ||
-         (e->type() == ExpressionNode::Type::Double &&
+         (e->otype() == ExpressionNode::Type::Double &&
           sizeof(T) == sizeof(double)));
   const FloatNode<T> *other = static_cast<const FloatNode<T> *>(e);
   if (value() < other->value()) {

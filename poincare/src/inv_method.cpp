@@ -12,7 +12,7 @@ OExpression InverseMethod::shallowReduce(OExpression *x,
                                          OExpression *expression) const {
   OExpression a = x[0];
   // Check a
-  if (a.type() != ExpressionNode::Type::Rational) {
+  if (a.otype() != ExpressionNode::Type::Rational) {
     return *expression;
   }
 
@@ -37,7 +37,7 @@ OExpression InverseMethod::shallowReduce(OExpression *x,
     if (distribution->hasType(Distribution::Type::Binomial)) {
       if (is0) {
         OExpression p = parameters[1];
-        if (p.type() != ExpressionNode::Type::Rational) {
+        if (p.otype() != ExpressionNode::Type::Rational) {
           return *expression;
         }
         if (static_cast<Rational &>(p).isOne()) {
@@ -60,7 +60,7 @@ OExpression InverseMethod::shallowReduce(OExpression *x,
 
       // is1
       OExpression p = parameters[0];
-      if (p.type() != ExpressionNode::Type::Rational) {
+      if (p.otype() != ExpressionNode::Type::Rational) {
         return *expression;
       }
       if (static_cast<Rational &>(p).isOne()) {

@@ -977,7 +977,7 @@ class UnitNode final : public ExpressionNode {
 #endif
 
   // OExpression Properties
-  Type type() const override { return Type::OUnit; }
+  Type otype() const override { return Type::OUnit; }
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }

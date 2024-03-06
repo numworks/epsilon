@@ -31,7 +31,7 @@ class CurlyBraceLayoutNode : public AutocompletedBracketPairLayoutNode {
   }
 
   // LayoutNode
-  Type type() const override { return Type::CurlyBraceLayout; }
+  Type otype() const override { return Type::CurlyBraceLayout; }
 
   // TreeNode
 #if POINCARE_TREE_LOG

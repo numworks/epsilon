@@ -20,7 +20,7 @@ class HyperbolicArcTangentNode final
 #endif
 
   // Properties
-  Type type() const override { return Type::HyperbolicArcTangent; }
+  Type otype() const override { return Type::HyperbolicArcTangent; }
 
  private:
   // Layout

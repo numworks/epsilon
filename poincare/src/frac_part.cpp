@@ -48,7 +48,7 @@ OExpression FracPart::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.type() != ExpressionNode::Type::Rational) {
+  if (c.otype() != ExpressionNode::Type::Rational) {
     return *this;
   }
   Rational r = static_cast<Rational&>(c);

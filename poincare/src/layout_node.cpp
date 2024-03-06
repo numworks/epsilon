@@ -19,7 +19,7 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
     return Layout(this).clone().makeEditable().isIdenticalTo(
         l.clone().makeEditable(), false);
   }
-  if (l.isUninitialized() || type() != l.type()) {
+  if (l.isUninitialized() || otype() != l.otype()) {
     return false;
   }
   if (identifier() == l.identifier()) {
@@ -163,7 +163,7 @@ Layout LayoutNode::makeEditable() {
 // Other
 bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
 #if 0
-  if (type() == LayoutNode::Type::CodePointLayout &&
+  if (otype() == LayoutNode::Type::CodePointLayout &&
       static_cast<const CodePointLayoutNode *>(this)
           ->isMultiplicationCodePoint()) {
     return false;
@@ -201,7 +201,7 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
 }
 
 bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout *l) {
-  if (!GridLayoutNode::IsGridLayoutType(l->type())) {
+  if (!GridLayoutNode::IsGridLayoutType(l->otype())) {
     return false;
   }
   if (add) {

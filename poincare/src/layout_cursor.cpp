@@ -141,7 +141,7 @@ bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
 static bool IsEmptyChildOfGridLayout(Layout l) {
   Layout parent = l.parent();
   return l.isEmpty() && !parent.isUninitialized() &&
-         GridLayoutNode::IsGridLayoutType(parent.type());
+         GridLayoutNode::IsGridLayoutType(parent.otype());
 }
 
 static Layout LeftOrRightmostLayout(Layout l,
@@ -155,7 +155,7 @@ static Layout LeftOrRightmostLayout(Layout l,
 static bool IsTemporaryAutocompletedBracketPair(
     Layout l, AutocompletedBracketPairLayoutNode::Side tempSide) {
   return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-             l.type()) &&
+             l.otype()) &&
          static_cast<AutocompletedBracketPairLayoutNode *>(l.node())
              ->isTemporary(tempSide);
 }
@@ -238,10 +238,10 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
   Layout rightL = rightLayout();
   if (!leftL.isUninitialized() &&
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-          leftL.type())) {
+          leftL.otype())) {
     Layout leftMostInsertedLayout =
         LeftOrRightmostLayout(layout, OMG::Direction::Left());
-    bool makeLeftLPerma = leftMostInsertedLayout.type() != leftL.type() ||
+    bool makeLeftLPerma = leftMostInsertedLayout.otype() != leftL.otype() ||
                           !IsTemporaryAutocompletedBracketPair(
                               leftMostInsertedLayout,
                               AutocompletedBracketPairLayoutNode::Side::Left);
@@ -251,10 +251,10 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
   }
   if (!rightL.isUninitialized() &&
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-          rightL.type())) {
+          rightL.otype())) {
     Layout rightMostInsertedLayout =
         LeftOrRightmostLayout(layout, OMG::Direction::Right());
-    bool makeRightLPerma = rightMostInsertedLayout.type() != rightL.type() ||
+    bool makeRightLPerma = rightMostInsertedLayout.otype() != rightL.otype() ||
                            !IsTemporaryAutocompletedBracketPair(
                                rightMostInsertedLayout,
                                AutocompletedBracketPairLayoutNode::Side::Right);
@@ -267,10 +267,10 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
   if (m_layout.isHorizontal() &&
-      layout.type() == LayoutNode::Type::VerticalOffsetLayout &&
+      layout.otype() == LayoutNode::Type::VerticalOffsetLayout &&
       static_cast<VerticalOffsetLayout &>(layout).isSuffixSuperscript()) {
     if (!leftL.isUninitialized() &&
-        leftL.type() == LayoutNode::Type::VerticalOffsetLayout &&
+        leftL.otype() == LayoutNode::Type::VerticalOffsetLayout &&
         static_cast<VerticalOffsetLayout &>(leftL).isSuffixSuperscript()) {
       // Insert ^c left of a^b -> turn a^b into (a^b)
       int leftParenthesisIndex =
@@ -281,7 +281,7 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
     }
 
     if (!rightL.isUninitialized() &&
-        rightL.type() == LayoutNode::Type::VerticalOffsetLayout &&
+        rightL.otype() == LayoutNode::Type::VerticalOffsetLayout &&
         static_cast<VerticalOffsetLayout &>(rightL).isSuffixSuperscript() &&
         m_layout.indexOfChild(rightL) > 0) {
       // Insert ^b right of a in a^c -> turn a^c into (a)^c
@@ -306,7 +306,7 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
                               .deepChildToPointToWhenInserting();
     if (!layoutToPoint.isUninitialized() &&
         AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-            layoutToPoint.type())) {
+            layoutToPoint.otype())) {
       layoutToPoint = layoutToPoint.childAtIndex(0);
     }
   }
@@ -497,7 +497,7 @@ void LayoutCursor::insertText(const char *text, Context *context,
         assert(nextCodePoint == '}');
         // Leave the subscript
         Layout subscript = currentLayout;
-        while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
+        while (subscript.otype() != LayoutNode::Type::VerticalOffsetLayout) {
           subscript = subscript.parent();
           assert(!subscript.isUninitialized());
         }
@@ -654,7 +654,7 @@ bool LayoutCursor::didExitPosition() {
 bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
   return m_layout.numberOfChildren() == 0 &&
          !m_layout.parent().isUninitialized() &&
-         m_layout.parent().type() == LayoutNode::Type::FractionLayout &&
+         m_layout.parent().otype() == LayoutNode::Type::FractionLayout &&
          m_layout.parent().indexOfChild(m_layout) == 0 &&
          m_layout.parent().childAtIndex(1).numberOfChildren() == 0;
 }
@@ -992,7 +992,7 @@ bool LayoutCursor::setEmptyRectangleVisibilityAtCurrentPosition(
   }
   Layout leftL = leftLayout();
   if (!leftL.isUninitialized() &&
-      leftL.type() == LayoutNode::Type::VerticalOffsetLayout &&
+      leftL.otype() == LayoutNode::Type::VerticalOffsetLayout &&
       static_cast<VerticalOffsetLayout &>(leftL).horizontalPosition() ==
           VerticalOffsetLayoutNode::HorizontalPosition::Prefix) {
     result =
@@ -1001,7 +1001,7 @@ bool LayoutCursor::setEmptyRectangleVisibilityAtCurrentPosition(
   }
   Layout rightL = rightLayout();
   if (!rightL.isUninitialized() &&
-      rightL.type() == LayoutNode::Type::VerticalOffsetLayout &&
+      rightL.otype() == LayoutNode::Type::VerticalOffsetLayout &&
       static_cast<VerticalOffsetLayout &>(rightL).horizontalPosition() ==
           VerticalOffsetLayoutNode::HorizontalPosition::Suffix) {
     result =
@@ -1053,12 +1053,12 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
     if (deletionAppliedToParent) {  // Inside bracket
       Layout parent = m_layout.parent();
       assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-          parent.type()));
+          parent.otype()));
       static_cast<AutocompletedBracketPairLayoutNode *>(parent.node())
           ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     } else {  // Right of bracket
       assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-          leftLayout().type()));
+          leftLayout().otype()));
       static_cast<AutocompletedBracketPairLayoutNode *>(leftLayout().node())
           ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
     }
@@ -1072,7 +1072,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);
     Layout fraction = m_layout.parent();
-    assert(fraction.type() == LayoutNode::Type::FractionLayout &&
+    assert(fraction.otype() == LayoutNode::Type::FractionLayout &&
            fraction.childAtIndex(1) == m_layout);
     Layout numerator = fraction.childAtIndex(0);
     if (!numerator.isHorizontal()) {
@@ -1109,14 +1109,14 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
     int newIndex = -1;
     if (deletionMethod ==
         LayoutNode::DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper) {
-      assert(m_layout.parent().type() ==
+      assert(m_layout.parent().otype() ==
                  LayoutNode::Type::BinomialCoefficientLayout ||
-             m_layout.parent().type() == LayoutNode::Type::Point2DLayout);
+             m_layout.parent().otype() == LayoutNode::Type::Point2DLayout);
       newIndex = TwoRowsLayoutNode::k_upperLayoutIndex;
     } else {
       assert(deletionMethod ==
              LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow);
-      assert(GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
+      assert(GridLayoutNode::IsGridLayoutType(m_layout.parent().otype()));
       GridLayoutNode *gridNode =
           static_cast<GridLayoutNode *>(m_layout.parent().node());
       int currentIndex = m_layout.parent().indexOfChild(m_layout);
@@ -1135,7 +1135,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
       deletionMethod ==
           LayoutNode::DeletionMethod::GridLayoutDeleteColumnAndRow) {
     assert(deletionAppliedToParent);
-    assert(GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
+    assert(GridLayoutNode::IsGridLayoutType(m_layout.parent().otype()));
     GridLayoutNode *gridNode =
         static_cast<GridLayoutNode *>(m_layout.parent().node());
     int currentIndex = m_layout.parent().indexOfChild(m_layout);
@@ -1271,7 +1271,7 @@ void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
   while (!currentParent.isUninitialized() &&
          (currentParent.isHorizontal() ||
           AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-              currentParent.type()))) {
+              currentParent.otype()))) {
     currentLayout = currentParent;
     currentParent = currentLayout.parent();
   }

@@ -6,7 +6,7 @@
 
 #define CircuitBreakerRun(checkpoint) \
   (CheckpointRun(checkpoint,          \
-                 Ion::CircuitBreaker::setCheckpoint(checkpoint.type())))
+                 Ion::CircuitBreaker::setCheckpoint(checkpoint.otype())))
 
 namespace Poincare {
 
@@ -18,7 +18,7 @@ class CircuitBreakerCheckpoint final : public Checkpoint {
    * we call unset instead of discard. */
   virtual ~CircuitBreakerCheckpoint() { unset(); }
 
-  Ion::CircuitBreaker::CheckpointType type() const { return m_type; }
+  Ion::CircuitBreaker::CheckpointType otype() const { return m_type; }
   bool setActive(Ion::CircuitBreaker::Status status);
   void discard() const override {
     unset();

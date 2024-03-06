@@ -19,7 +19,7 @@ class VectorDotNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type type() const override { return Type::VectorDot; }
+  Type otype() const override { return Type::VectorDot; }
 
  private:
   // Layout

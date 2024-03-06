@@ -112,7 +112,7 @@ OExpression TrigonometryCheatTable::simplify(
             result.radianToAngleUnit(angleUnit).shallowReduce(reductionContext);
 
       } else if (!result.isUninitialized() &&
-                 result.type() == ExpressionNode::Type::Infinity) {
+                 result.otype() == ExpressionNode::Type::Infinity) {
         /* We don't want to return inf for direct trigonometric functions.
          * For instance, we want tan(pi/2) = undef. However we have the entries
          * in the table to be able to compute, for instance: arctan(inf) = pi/2

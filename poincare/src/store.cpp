@@ -33,7 +33,7 @@ Evaluation<T> StoreNode::templatedApproximate(
 
 void Store::deepReduceChildren(const ReductionContext& reductionContext) {
   // Only the value of a symbol should have no free variables
-  if (symbol().type() == ExpressionNode::Type::Symbol) {
+  if (symbol().otype() == ExpressionNode::Type::Symbol) {
     childAtIndex(0).deepReduce(reductionContext);
   }
 }
@@ -54,7 +54,7 @@ OExpression Store::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   // Only the value of a symbol should have no free variables
-  if (symbol().type() == ExpressionNode::Type::Symbol) {
+  if (symbol().otype() == ExpressionNode::Type::Symbol) {
     OExpression value = childAtIndex(0).deepReplaceReplaceableSymbols(
         context, isCircular, parameteredAncestorsCount, symbolicComputation);
     replaceChildAtIndexInPlace(0, value);

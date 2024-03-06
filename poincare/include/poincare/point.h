@@ -9,7 +9,7 @@ namespace Poincare {
 class PointNode : public ExpressionNode {
  public:
   // ExpressionNode
-  Type type() const override { return Type::OPoint; }
+  Type otype() const override { return Type::OPoint; }
   Evaluation<float> approximate(
       SinglePrecision p, const ApproximationContext& context) const override {
     return templatedApproximate<float>(context);

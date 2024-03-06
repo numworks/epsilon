@@ -96,6 +96,10 @@ JuniorExpression JuniorExpression::childAtIndex(int i) const {
 ExpressionNode::Type JuniorExpression::type() const {
   /* TODO_PCJ: These are the types checked for in apps. Update apps to use the
    *           new blockType instead. */
+  if (tree()->isRational()) {
+    return tree()->isInteger() ? ExpressionNode::Type::BasedInteger
+                               : ExpressionNode::Type::Rational;
+  }
   switch (tree()->type()) {
     case PoincareJ::BlockType::Addition:
       return ExpressionNode::Type::Addition;
@@ -166,13 +170,11 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::UnitConvert;
 #if 0
       // No perfect PoincareJ equivalents
-      return ExpressionNode::Type::BasedInteger;
       return ExpressionNode::Type::Comparison;
       return ExpressionNode::Type::ConstantMaths;
       return ExpressionNode::Type::DistributionDispatcher;
       return ExpressionNode::Type::Function;
       return ExpressionNode::Type::Parenthesis;
-      return ExpressionNode::Type::Rational;
       return ExpressionNode::Type::Sequence;
       return ExpressionNode::Type::Symbol;
 #endif

@@ -43,7 +43,8 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   if (cycleSize > 1 && currentIndex > 0) {
     removePreviousXNT();
   }
-  return handleEventWithText(buffer, false, true);
+  handleEventWithText(buffer, false, true);
+  return true;
 }
 
 }  // namespace Escher

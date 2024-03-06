@@ -21,7 +21,14 @@ class Preferences final {
   constexpr static int ShortNumberOfSignificantDigits = 4;
   constexpr static int VeryShortNumberOfSignificantDigits = 3;
 
-  enum class EditionMode : bool { Edition2D, Edition1D };
+  // Calculation preferences
+
+  enum class AngleUnit : uint8_t {
+    Radian = 0,
+    Degree = 1,
+    Gradian = 2,
+    NumberOfAngleUnit,
+  };
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
    * auto mode tries to return 'natural' float like (0.021) and switches to
@@ -31,11 +38,40 @@ class Preferences final {
     Decimal = 0,
     Scientific = 1,
     Engineering = 2,
+    NumberOfPrintFloatMode,
   };
-  enum class ComplexFormat : uint8_t { Real = 0, Cartesian = 1, Polar = 2 };
+  enum class EditionMode : bool {
+    Edition2D,
+    Edition1D,
+  };
+  enum class ComplexFormat : uint8_t {
+    Real = 0,
+    Cartesian = 1,
+    Polar = 2,
+    NumberOfComplexFormat,
+  };
   constexpr static ComplexFormat k_defautComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
-  enum class AngleUnit : uint8_t { Radian = 0, Degree = 1, Gradian = 2 };
+  constexpr static size_t k_numberOfBitsForAngleUnit =
+      OMG::BitHelper::numberOfBitsToCountUpTo(
+          static_cast<unsigned int>(AngleUnit::NumberOfAngleUnit));
+  constexpr static size_t k_numberOfBitsForPrintFloatMode =
+      OMG::BitHelper::numberOfBitsToCountUpTo(
+          static_cast<unsigned int>(PrintFloatMode::NumberOfPrintFloatMode));
+  constexpr static size_t k_numberOfBitsForComplexFormat =
+      OMG::BitHelper::numberOfBitsToCountUpTo(
+          static_cast<unsigned int>(ComplexFormat::NumberOfComplexFormat));
+
+  struct CalculationPreferences {
+    /* AngleUnit */ uint8_t angleUnit : k_numberOfBitsForAngleUnit;
+    /* PrintFloatMode */ uint8_t displayMode : k_numberOfBitsForPrintFloatMode;
+    /* EditionMode */ bool editionMode : 1;
+    /* ComplexFormat */ uint8_t complexFormat : k_numberOfBitsForComplexFormat;
+    uint8_t numberOfSignificantDigits;
+  };
+
+  // Other preferences
+
   enum class UnitFormat : bool { Metric = 0, Imperial = 1 };
   /* The symbol used for combinations and permutations is country-dependent and
    * set in apps but it stored there to be accessible from Poincare */
@@ -58,15 +94,30 @@ class Preferences final {
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Expression& e, Context* context);
 
-  AngleUnit angleUnit() const { return m_angleUnit; }
-  void setAngleUnit(AngleUnit angleUnit) { m_angleUnit = angleUnit; }
-  PrintFloatMode displayMode() const { return m_displayMode; }
-  void setDisplayMode(PrintFloatMode mode) { m_displayMode = mode; }
-  EditionMode editionMode() const { return m_editionMode; }
-  void setEditionMode(EditionMode editionMode) { m_editionMode = editionMode; }
-  ComplexFormat complexFormat() const { return m_complexFormat; }
+  AngleUnit angleUnit() const {
+    return static_cast<AngleUnit>(m_calculationPreferences.angleUnit);
+  }
+  void setAngleUnit(AngleUnit angleUnit) {
+    m_calculationPreferences.angleUnit = static_cast<uint8_t>(angleUnit);
+  }
+  PrintFloatMode displayMode() const {
+    return static_cast<PrintFloatMode>(m_calculationPreferences.displayMode);
+  }
+  void setDisplayMode(PrintFloatMode displayMode) {
+    m_calculationPreferences.displayMode = static_cast<uint8_t>(displayMode);
+  }
+  EditionMode editionMode() const {
+    return static_cast<EditionMode>(m_calculationPreferences.editionMode);
+  }
+  void setEditionMode(EditionMode editionMode) {
+    m_calculationPreferences.editionMode = static_cast<uint8_t>(editionMode);
+  }
+  ComplexFormat complexFormat() const {
+    return static_cast<ComplexFormat>(m_calculationPreferences.complexFormat);
+  }
   void setComplexFormat(Preferences::ComplexFormat complexFormat) {
-    m_complexFormat = complexFormat;
+    m_calculationPreferences.complexFormat =
+        static_cast<uint8_t>(complexFormat);
   }
   CombinatoricSymbols combinatoricSymbols() const {
     return m_combinatoricSymbols;
@@ -75,10 +126,11 @@ class Preferences final {
     m_combinatoricSymbols = combinatoricSymbols;
   }
   uint8_t numberOfSignificantDigits() const {
-    return m_numberOfSignificantDigits;
+    return m_calculationPreferences.numberOfSignificantDigits;
   }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
-    m_numberOfSignificantDigits = numberOfSignificantDigits;
+    m_calculationPreferences.numberOfSignificantDigits =
+        numberOfSignificantDigits;
   }
   bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
   void enableMixedFractions(MixedFractions enable) {
@@ -103,16 +155,12 @@ class Preferences final {
   void setExamMode(ExamMode examMode);
 
   uint32_t mathPreferencesCheckSum() const {
-    return (static_cast<uint32_t>(m_complexFormat) << 8) +
-           static_cast<uint32_t>(m_angleUnit);
+    return (static_cast<uint32_t>(complexFormat()) << 8) +
+           static_cast<uint32_t>(angleUnit());
   }
 
  private:
-  AngleUnit m_angleUnit;
-  PrintFloatMode m_displayMode;
-  EditionMode m_editionMode;
-  ComplexFormat m_complexFormat;
-  uint8_t m_numberOfSignificantDigits;
+  CalculationPreferences m_calculationPreferences;
   mutable CombinatoricSymbols m_combinatoricSymbols;
   mutable ExamMode m_examMode;
   mutable bool m_mixedFractionsAreEnabled;

@@ -15,12 +15,15 @@ constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 OMG::GlobalBox<Preferences> Preferences::sharedPreferences;
 
 Preferences::Preferences()
-    : m_angleUnit(AngleUnit::Radian),
-      m_displayMode(Preferences::PrintFloatMode::Decimal),
-      m_editionMode(EditionMode::Edition2D),
-      m_complexFormat(Preferences::ComplexFormat::Real),
-      m_numberOfSignificantDigits(
-          Preferences::DefaultNumberOfPrintedSignificantDigits) {}
+    : m_calculationPreferences{
+          .angleUnit = static_cast<uint8_t>(AngleUnit::Radian),
+          .displayMode =
+              static_cast<uint8_t>(Preferences::PrintFloatMode::Decimal),
+          .editionMode = static_cast<bool>(EditionMode::Edition2D),
+          .complexFormat =
+              static_cast<uint8_t>(Preferences::ComplexFormat::Real),
+          .numberOfSignificantDigits =
+              Preferences::DefaultNumberOfPrintedSignificantDigits} {}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Expression& exp, Context* context) {

@@ -101,6 +101,7 @@ class JuniorLayout final
   PoincareJ::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }
+  LayoutNode::Type type() const { return otype(); }
 
   JuniorLayout cloneWithoutMargins();
   JuniorLayout makeEditable() { return cloneWithoutMargins(); }

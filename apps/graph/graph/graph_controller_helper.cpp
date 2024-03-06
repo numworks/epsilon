@@ -223,14 +223,14 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       Preferences::SharedPreferences()->displayMode();
   int precision = Preferences::SharedPreferences()->numberOfSignificantDigits();
   if (function->properties().isParametric()) {
-    assert(derivative.type() == EvaluationNode<double>::Type::PointEvaluation);
+    assert(derivative.otype() == EvaluationNode<double>::Type::PointEvaluation);
     Coordinate2D<double> xy =
         static_cast<PointEvaluation<double>&>(derivative).xy();
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
                         "=(%*.*ed;%*.*ed)", xy.x(), mode, precision, xy.y(),
                         mode, precision);
   } else {
-    assert(derivative.type() == EvaluationNode<double>::Type::Complex);
+    assert(derivative.otype() == EvaluationNode<double>::Type::Complex);
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
                         "=%*.*ed", derivativeScalar, mode, precision);
   }

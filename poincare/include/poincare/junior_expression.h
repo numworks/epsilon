@@ -115,6 +115,7 @@ class JuniorExpression : public OExpression {
     return const_cast<JuniorExpression*>(this)->node()->tree();
   }
   JuniorExpression childAtIndex(int i) const;
+  ExpressionNode::Type type() const;
 
   JuniorExpression operator=(OExpression&& other) {
     *this = Juniorize(other);

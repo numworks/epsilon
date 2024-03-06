@@ -416,7 +416,7 @@ double ContinuousFunction::approximateSlope(double t,
   ApproximationContext approximationContext(context, complexFormat(context));
   Evaluation<double> result = slope.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
-  assert(result.type() == EvaluationNode<double>::Type::Complex);
+  assert(result.otype() == EvaluationNode<double>::Type::Complex);
   return result.toScalar();
 }
 

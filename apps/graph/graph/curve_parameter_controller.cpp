@@ -149,11 +149,11 @@ double CurveParameterController::parameterAtIndex(int index) {
     bool firstComponent = parameterAtRowIsFirstComponent(index);
     Evaluation<double> derivative = function()->approximateDerivative<double>(
         m_cursor->t(), ctx, derivationOrder);
-    if (derivative.type() == EvaluationNode<double>::Type::Complex) {
+    if (derivative.otype() == EvaluationNode<double>::Type::Complex) {
       assert(firstComponent);
       return derivative.toScalar();
     }
-    assert(derivative.type() == EvaluationNode<double>::Type::PointEvaluation);
+    assert(derivative.otype() == EvaluationNode<double>::Type::PointEvaluation);
     Coordinate2D<double> xy =
         static_cast<PointEvaluation<double> &>(derivative).xy();
     return firstComponent ? xy.x() : xy.y();

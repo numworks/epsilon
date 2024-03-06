@@ -169,7 +169,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
             child, ToPoincareExpression(exp->child(1)));
       case BlockType::Derivative: {
         Poincare::OExpression symbol = child;
-        if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
+        if (symbol.otype() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Derivative::Builder(
@@ -179,7 +179,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
       }
       case BlockType::Integral: {
         Poincare::OExpression symbol = child;
-        if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
+        if (symbol.otype() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Integral::Builder(
@@ -190,7 +190,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
       }
       case BlockType::Sum: {
         Poincare::OExpression symbol = child;
-        if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
+        if (symbol.otype() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Sum::Builder(ToPoincareExpression(exp->child(3)),
@@ -200,7 +200,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
       }
       case BlockType::Product: {
         Poincare::OExpression symbol = child;
-        if (symbol.type() != Poincare::ExpressionNode::Type::Symbol) {
+        if (symbol.otype() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Product::Builder(
@@ -331,7 +331,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
 
 void PushPoincareExpression(Poincare::OExpression exp) {
   using OT = Poincare::ExpressionNode::Type;
-  switch (exp.type()) {
+  switch (exp.otype()) {
     case OT::AbsoluteValue:
       SharedEditionPool->push(BlockType::Abs);
       return PushPoincareExpression(exp.childAtIndex(0));
@@ -517,7 +517,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::ListStandardDeviation:
     case OT::ListSampleStandardDeviation:
     case OT::ListMedian: {
-      switch (exp.type()) {
+      switch (exp.otype()) {
         case OT::ListMean:
           SharedEditionPool->push(BlockType::Mean);
           break;
@@ -651,8 +651,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return;
     case OT::Sum:
     case OT::Product:
-      SharedEditionPool->push(exp.type() == OT::Sum ? BlockType::Sum
-                                                    : BlockType::Product);
+      SharedEditionPool->push(exp.otype() == OT::Sum ? BlockType::Sum
+                                                     : BlockType::Product);
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
       PushPoincareExpression(exp.childAtIndex(3));
@@ -680,7 +680,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::OMatrix:
     case OT::GreatCommonDivisor:
     case OT::LeastCommonMultiple:
-      switch (exp.type()) {
+      switch (exp.otype()) {
         case OT::Addition:
           SharedEditionPool->push<BlockType::Addition>(exp.numberOfChildren());
           break;
@@ -780,12 +780,12 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
       Tree *t = SharedEditionPool->push<BlockType::UserSymbol>(
-          s.name(), exp.type() == OT::Sequence ? 1 : strlen(s.name()));
-      if (exp.type() == OT::Function) {
+          s.name(), exp.otype() == OT::Sequence ? 1 : strlen(s.name()));
+      if (exp.otype() == OT::Function) {
         *t->block() = BlockType::UserFunction;
         PushPoincareExpression(exp.childAtIndex(0));
       }
-      if (exp.type() == OT::Sequence) {
+      if (exp.otype() == OT::Sequence) {
         *t->block() = BlockType::UserSequence;
         PushPoincareExpression(exp.childAtIndex(0));
       }

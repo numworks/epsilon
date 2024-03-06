@@ -190,16 +190,16 @@ void PushPoincareRack(Poincare::OLayout l) {
         SharedEditionPool->push<BlockType::RackLayout>(l.numberOfChildren());
     for (int i = 0; i < l.numberOfChildren(); i++) {
       Poincare::OLayout c = l.childAtIndex(i);
-      if (c.type() == Poincare::LayoutNode::Type::StringLayout) {
+      if (c.otype() == Poincare::LayoutNode::Type::StringLayout) {
         PushPoincareRack(c);
-      } else if (c.type() == Poincare::LayoutNode::Type::JuniorLayout) {
+      } else if (c.otype() == Poincare::LayoutNode::Type::JuniorLayout) {
         static_cast<Poincare::JuniorLayout &>(c).tree()->clone();
       } else {
         PushPoincareLayout(c);
       }
     }
     NAry::Flatten(parent);
-  } else if (l.type() == Poincare::LayoutNode::Type::StringLayout) {
+  } else if (l.otype() == Poincare::LayoutNode::Type::StringLayout) {
     Poincare::StringLayout s = static_cast<Poincare::StringLayout &>(l);
     Poincare::OLayout editable = Poincare::OLayout();
     assert(false);
@@ -207,7 +207,7 @@ void PushPoincareRack(Poincare::OLayout l) {
     PushPoincareRack(editable);
     Layoutter::AddThousandSeparators(rack);
   } else {
-    if (l.type() != Poincare::LayoutNode::Type::JuniorLayout) {
+    if (l.otype() != Poincare::LayoutNode::Type::JuniorLayout) {
       SharedEditionPool->push<BlockType::RackLayout>(1);
     }
     PushPoincareLayout(l);
@@ -215,13 +215,13 @@ void PushPoincareRack(Poincare::OLayout l) {
 }
 
 void PushPoincareLayout(Poincare::OLayout l) {
-  if (l.type() == PT::NthRootLayout && l.numberOfChildren() == 1) {
+  if (l.otype() == PT::NthRootLayout && l.numberOfChildren() == 1) {
     SharedEditionPool->push(BlockType::SquareRootLayout);
     PushPoincareRack(l.childAtIndex(0));
     return;
   }
   for (Correspondance c : oneToOne) {
-    if (c.old == l.type()) {
+    if (c.old == l.otype()) {
       Tree *tree = Tree::FromBlocks(SharedEditionPool->lastBlock());
       SharedEditionPool->push(static_cast<BlockType>(c.junior));
       if (c.extraZero) {
@@ -241,7 +241,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
     }
   }
   using OT = Poincare::LayoutNode::Type;
-  switch (l.type()) {
+  switch (l.otype()) {
     case OT::HorizontalLayout:
       return PushPoincareRack(l);
     case OT::CodePointLayout:

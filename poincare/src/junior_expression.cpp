@@ -93,6 +93,94 @@ JuniorExpression JuniorExpression::childAtIndex(int i) const {
   return Builder(tree()->child(i));
 }
 
+ExpressionNode::Type JuniorExpression::type() const {
+  /* TODO_PCJ: These are the types checked for in apps. Update apps to use the
+   *           new blockType instead. */
+  switch (tree()->type()) {
+    case PoincareJ::BlockType::Addition:
+      return ExpressionNode::Type::Addition;
+    case PoincareJ::BlockType::True:
+    case PoincareJ::BlockType::False:
+      return ExpressionNode::Type::Boolean;
+    case PoincareJ::BlockType::ComplexArgument:
+      return ExpressionNode::Type::ComplexArgument;
+    case PoincareJ::BlockType::Conjugate:
+      return ExpressionNode::Type::Conjugate;
+    case PoincareJ::BlockType::PhysicalConstant:
+      return ExpressionNode::Type::ConstantPhysics;
+    case PoincareJ::BlockType::Dependency:
+      return ExpressionNode::Type::Dependency;
+    case PoincareJ::BlockType::Derivative:
+      return ExpressionNode::Type::Derivative;
+    case PoincareJ::BlockType::Division:
+      return ExpressionNode::Type::Division;
+    case PoincareJ::BlockType::Factor:
+      return ExpressionNode::Type::Factor;
+    case PoincareJ::BlockType::FracPart:
+      return ExpressionNode::Type::FracPart;
+    case PoincareJ::BlockType::ImaginaryPart:
+      return ExpressionNode::Type::ImaginaryPart;
+    case PoincareJ::BlockType::Infinity:
+      return ExpressionNode::Type::Infinity;
+    case PoincareJ::BlockType::Integral:
+      return ExpressionNode::Type::Integral;
+    case PoincareJ::BlockType::List:
+      return ExpressionNode::Type::List;
+    case PoincareJ::BlockType::ListSequence:
+      return ExpressionNode::Type::ListSequence;
+    case PoincareJ::BlockType::Logarithm:
+      return ExpressionNode::Type::Logarithm;
+    case PoincareJ::BlockType::Matrix:
+      return ExpressionNode::Type::Matrix;
+    case PoincareJ::BlockType::Multiplication:
+      return ExpressionNode::Type::Multiplication;
+    case PoincareJ::BlockType::Nonreal:
+      return ExpressionNode::Type::Nonreal;
+    case PoincareJ::BlockType::Opposite:
+      return ExpressionNode::Type::Opposite;
+    case PoincareJ::BlockType::Piecewise:
+      return ExpressionNode::Type::PiecewiseOperator;
+    case PoincareJ::BlockType::Point:
+      return ExpressionNode::Type::Point;
+    case PoincareJ::BlockType::Power:
+      return ExpressionNode::Type::Power;
+    case PoincareJ::BlockType::Product:
+      return ExpressionNode::Type::Product;
+    case PoincareJ::BlockType::RandInt:
+      return ExpressionNode::Type::Randint;
+    case PoincareJ::BlockType::RandIntNoRep:
+      return ExpressionNode::Type::RandintNoRepeat;
+    case PoincareJ::BlockType::Random:
+      return ExpressionNode::Type::Random;
+    case PoincareJ::BlockType::RealPart:
+      return ExpressionNode::Type::RealPart;
+    case PoincareJ::BlockType::Round:
+      return ExpressionNode::Type::Round;
+    case PoincareJ::BlockType::Store:
+      return ExpressionNode::Type::Store;
+    case PoincareJ::BlockType::Sum:
+      return ExpressionNode::Type::Sum;
+    case PoincareJ::BlockType::Undefined:
+      return ExpressionNode::Type::Undefined;
+    case PoincareJ::BlockType::UnitConversion:
+      return ExpressionNode::Type::UnitConvert;
+#if 0
+      // No perfect PoincareJ equivalents
+      return ExpressionNode::Type::BasedInteger;
+      return ExpressionNode::Type::Comparison;
+      return ExpressionNode::Type::ConstantMaths;
+      return ExpressionNode::Type::DistributionDispatcher;
+      return ExpressionNode::Type::Function;
+      return ExpressionNode::Type::Parenthesis;
+      return ExpressionNode::Type::Rational;
+      return ExpressionNode::Type::Sequence;
+      return ExpressionNode::Type::Symbol;
+#endif
+    default:
+      return ExpressionNode::Type::JuniorExpression;
+  }
+}
+
 /* Matrix */
 
 Matrix Matrix::Builder() {

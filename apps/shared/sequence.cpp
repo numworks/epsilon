@@ -161,7 +161,8 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   return expressionClone().recursivelyMatches(
       [](const Expression e, Context *context, void *arg) {
         Pack *pack = static_cast<Pack *>(arg);
-#if 1  // PCJ_TODO
+#if 1  // TODO_PCJ
+        assert(false);
         return TrinaryBoolean::Unknown;
 #else
         if (e.isRandom()) {

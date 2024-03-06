@@ -177,6 +177,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
                     .value()
                     .deepIsSymbolic(
                         nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
+#else
+        assert(false);
 #endif
       }
     } else {
@@ -210,6 +212,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
       exactOutputExpression = Undefined::Builder();
       approximateOutputExpression = Undefined::Builder();
     }
+#else
+    assert(false);
 #endif
   }
 

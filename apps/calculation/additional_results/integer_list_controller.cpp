@@ -34,6 +34,7 @@ void IntegerListController::computeAdditionalResults(
 #if 0  // TODO_PCJ
   Integer integer = static_cast<const BasedInteger &>(exactOutput).integer();
 #else
+  assert(false);
   Integer integer;
 #endif
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {

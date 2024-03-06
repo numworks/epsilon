@@ -149,6 +149,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   return setExpressionForFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
 #else
+  assert(false);
   return false;
 #endif
 }
@@ -208,6 +209,8 @@ const Expression GlobalContext::expressionForSequence(
 #if 0  // TODO_PCJ
   PoincareHelpers::CloneAndSimplify(
       &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
+#else
+  assert(false);
 #endif
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
   if (rank.type() == ExpressionNode::Type::Rational) {
@@ -215,6 +218,7 @@ const Expression GlobalContext::expressionForSequence(
     Rational n = static_cast<Rational &>(rank);
     rankIsInteger = n.isInteger();
 #else
+    assert(false);
     rankIsInteger = false;
 #endif
   } else if (!std::isnan(rankValue)) {

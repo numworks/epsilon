@@ -99,6 +99,7 @@ Expression Model::AdditionOrSubtractionBuilder(Expression e1, Expression e2,
       e1 = Opposite::Builder(e1);
     }
 #endif
+    assert(false);
   }
   if (addition) {
     return Addition::Builder(e1, e2);

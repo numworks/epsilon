@@ -116,6 +116,8 @@ bool ParametricComponentsNameError(Expression expression,
 #if 0  // TODO_PCJ
   strlcpy(functionName, static_cast<Poincare::Function &>(function).name(),
           bufferSize);
+#else
+  assert(false);
 #endif
   size_t functionNameLength = strlen(functionName);
   assert(f->fullName() != nullptr);

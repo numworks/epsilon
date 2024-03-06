@@ -121,7 +121,8 @@ bool StoreMenuController::parseAndStore(const char* text) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
-#if 1  // PCJ_TODO
+#if 1  // TODO_PCJ
+  assert(false);
   return false;
 #else
   if (input.isUninitialized()) {

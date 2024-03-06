@@ -169,6 +169,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
         isValidEquality = true;
       }
     }
+#else
+    assert(false);
 #endif
     if (!isValidEquality) {
       return FillColumnStatus::DataNotSuitable;

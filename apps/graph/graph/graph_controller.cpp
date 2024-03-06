@@ -200,6 +200,8 @@ Range2D<float> GraphController::optimalRange(
             f.operator->(), ContinuousFunction::k_unknownName,
             Preferences::SharedPreferences()->complexFormat(),
             Preferences::SharedPreferences()->angleUnit(), alongY);
+#else
+        assert(false);
 #endif
       }
 

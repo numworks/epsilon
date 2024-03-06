@@ -205,6 +205,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   }
 
 #if 1  // TODO_PCJ
+  assert(false);
   return;
 #else
   float searchStep = Solver<double>::MaximalStep(m_start - m_end);

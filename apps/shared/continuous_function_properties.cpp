@@ -352,11 +352,14 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
               return false;
             }
             Expression base = e.childAtIndex(0);
+#if 0  // TODO_PCJ
             return base.type() == ExpressionNode::Type::ConstantMaths &&
-#if 0  // PCJ_TODO
                    static_cast<Constant&>(base).isExponentialE() &&
-#endif
                    e.childAtIndex(1).polynomialDegree(context, symbol) == 1;
+#else
+            assert(false);
+            return false;
+#endif
           },
           Function::k_unknownName)) {
     setCaption(I18n::Message::ExponentialType);
@@ -495,9 +498,11 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
       ReductionContext::DefaultReductionContextForAnalysis(context);
   Expression denominator, numerator;
   if (analyzedExpression.type() == ExpressionNode::Type::Multiplication) {
-#if 0  // PCJ_TODO
+#if 0  // TODO_PCJ
     static_cast<const Multiplication&>(analyzedExpression)
         .splitIntoNormalForm(numerator, denominator, reductionContext);
+#else
+    assert(false);
 #endif
   } else if (analyzedExpression.type() == ExpressionNode::Type::Power &&
              analyzedExpression.childAtIndex(1).isMinusOne()) {
@@ -591,18 +596,22 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   }
   assert(degOfTinX != 0 && degOfTinY != 0);
   Expression variableX = xOfT.clone();
-#if 0  // PCJ_TODO
+#if 0  // TODO_PCJ
   if (variableX.type() == ExpressionNode::Type::Addition) {
     static_cast<Addition&>(variableX).removeConstantTerms(
         context, Function::k_unknownName);
   }
+#else
+  assert(false);
 #endif
   Expression variableY = yOfT.clone();
-#if 0  // PCJ_TODO
+#if 0  // TODO_PCJ
   if (variableY.type() == ExpressionNode::Type::Addition) {
     static_cast<Addition&>(variableY).removeConstantTerms(
         context, Function::k_unknownName);
   }
+#else
+  assert(false);
 #endif
   Expression quotient = Division::Builder(variableX, variableY);
   quotient = quotient.cloneAndReduce(
@@ -641,6 +650,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
 #if 1  // TODO_PCJ
+  assert(false);
   return false;
 #else
   return equation.type() == ExpressionNode::Type::Comparison &&

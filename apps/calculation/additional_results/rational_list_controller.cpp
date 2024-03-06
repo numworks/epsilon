@@ -22,6 +22,7 @@ Integer extractInteger(const Expression e) {
 #if 0  // TODO_PCJ
   return static_cast<const BasedInteger &>(e).integer();
 #else
+  assert(false);
   return Integer();
 #endif
 }

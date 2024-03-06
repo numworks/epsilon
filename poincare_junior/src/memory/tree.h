@@ -372,7 +372,7 @@ static_assert(sizeof(Tree) == sizeof(Block));
 
 /* This overload exchanges the trees pointed to by the pointers and update the
  * pointers. */
-void SwapTrees(Tree** u, Tree** v);
+void SwapTreesPointers(Tree** u, Tree** v);
 
 }  // namespace PoincareJ
 

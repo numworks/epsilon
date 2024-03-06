@@ -472,9 +472,9 @@ void Tree::swapWithTree(Tree* v) {
   moveTreeBeforeNode(v);
 }
 
-void SwapTrees(Tree** u, Tree** v) {
+void SwapTreesPointers(Tree** u, Tree** v) {
   if (*u > *v) {
-    SwapTrees(v, u);
+    SwapTreesPointers(v, u);
   }
   Block* newV = (*v)->block() - ((*u)->treeSize() - (*v)->treeSize());
   (*u)->swapWithTree(*v);

@@ -827,7 +827,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
      * variables will be {x, y} and we must have found all user symbols to
      * properly project y to 1. */
     Tree* variables = Variables::GetUserSymbols(ref);
-    SwapTrees(&ref, &variables);
+    SwapTreesPointers(&ref, &variables);
     Variables::ProjectToId(
         ref, variables,
         projectionContext.m_complexFormat == ComplexFormat::Real

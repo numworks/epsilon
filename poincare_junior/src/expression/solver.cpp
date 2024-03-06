@@ -68,7 +68,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   Tree* variables =
       SimplifyAndFindVariables(simplifiedEquationSet, *context, error);
   uint8_t numberOfVariables = variables->numberOfChildren();
-  SwapTrees(&simplifiedEquationSet, &variables);
+  SwapTreesPointers(&simplifiedEquationSet, &variables);
   // TODO: Use user settings for a RealUnkown sign ?
   Variables::ProjectToId(simplifiedEquationSet, variables,
                          ComplexSign::Unknown());
@@ -106,7 +106,7 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
    * - Pass ProjectionContext and project equality into subtraction.
    */
   Tree* variables = Variables::GetUserSymbols(equationsSet);
-  SwapTrees(&equationsSet, &variables);
+  SwapTreesPointers(&equationsSet, &variables);
   for (Tree* equation : equationsSet->children()) {
     if (!Dimension::DeepCheckDimensions(equation) ||
         !Dimension::GetDimension(equation).isScalar()) {
@@ -117,7 +117,7 @@ Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
     Simplification::DeepSystematicReduce(equation);
     AdvancedSimplification::AdvancedReduce(equation);
   }
-  SwapTrees(&variables, &equationsSet);
+  SwapTreesPointers(&variables, &equationsSet);
   return variables;
 }
 

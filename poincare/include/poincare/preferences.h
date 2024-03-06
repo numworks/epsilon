@@ -21,7 +21,7 @@ class Preferences final {
   constexpr static int ShortNumberOfSignificantDigits = 4;
   constexpr static int VeryShortNumberOfSignificantDigits = 3;
 
-  enum class EditionMode : uint8_t { Edition2D, Edition1D };
+  enum class EditionMode : bool { Edition2D, Edition1D };
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
    * auto mode tries to return 'natural' float like (0.021) and switches to

@@ -21,13 +21,13 @@ void VectorListController::computeAdditionalResults(
     const Expression input, const Expression exactOutput,
     const Expression approximateOutput) {
   assert(AdditionalResultsType::HasVector(exactOutput, approximateOutput,
-                                          m_complexFormat, m_angleUnit));
+                                          m_calculationPreferences));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Context *context = App::app()->localContext();
-  ComputationContext computationContext(context, m_complexFormat, m_angleUnit);
+  ComputationContext computationContext(context, complexFormat(), angleUnit());
   computationContext.updateComplexFormat(exactOutput);
 
   setShowIllustration(false);
@@ -36,14 +36,14 @@ void VectorListController::computeAdditionalResults(
 
   // 1. Vector norm
   Expression norm = VectorHelper::BuildVectorNorm(exactClone, context,
-                                                  m_complexFormat, m_angleUnit);
+                                                  m_calculationPreferences);
   assert(!norm.isUninitialized() && !norm.isUndefined());
   setLineAtIndex(index++, Expression(), norm, computationContext);
 
   // 2. Normalized vector
   Expression approximatedNorm = PoincareHelpers::Approximate<double>(
       norm, context,
-      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   if (approximatedNorm.isNull(context) != TrinaryBoolean::False ||
       Expression::IsInfinity(approximatedNorm)) {
     return;
@@ -51,8 +51,8 @@ void VectorListController::computeAdditionalResults(
   Expression normalized = Division::Builder(exactClone, norm);
   PoincareHelpers::CloneAndSimplify(
       &normalized, context,
-      {.complexFormat = m_complexFormat,
-       .angleUnit = m_angleUnit,
+      {.complexFormat = complexFormat(),
+       .angleUnit = angleUnit(),
        .target = k_target,
        .symbolicComputation = k_symbolicComputation});
   if (normalized.type() != ExpressionNode::Type::Matrix) {
@@ -78,7 +78,7 @@ void VectorListController::computeAdditionalResults(
   }
   float angleApproximation = PoincareHelpers::ApproximateToScalar<float>(
       angle, context,
-      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   if (!std::isfinite(angleApproximation)) {
     return;
   }
@@ -89,10 +89,10 @@ void VectorListController::computeAdditionalResults(
   // 4. Illustration
   float xApproximation = PoincareHelpers::ApproximateToScalar<float>(
       vector.childAtIndex(0), context,
-      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   float yApproximation = PoincareHelpers::ApproximateToScalar<float>(
       vector.childAtIndex(1), context,
-      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&
        OMG::LaxToZero(yApproximation) == 0.f)) {
@@ -100,7 +100,7 @@ void VectorListController::computeAdditionalResults(
   }
   m_model.setVector(xApproximation, yApproximation);
   angleApproximation =
-      Trigonometry::ConvertAngleToRadian(angleApproximation, m_angleUnit);
+      Trigonometry::ConvertAngleToRadian(angleApproximation, angleUnit());
   m_model.setAngle(angleApproximation);
   setShowIllustration(true);
 }

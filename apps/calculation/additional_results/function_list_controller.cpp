@@ -39,8 +39,8 @@ void FunctionListController::computeAdditionalResults(
   Expression simplifiedExpression = inputClone;
   PoincareHelpers::CloneAndSimplify(
       &simplifiedExpression, context,
-      {.complexFormat = m_complexFormat,
-       .angleUnit = m_angleUnit,
+      {.complexFormat = complexFormat(),
+       .angleUnit = angleUnit(),
        .target = ReductionTarget::SystemForApproximation});
 
   /* Use the approximate expression to compute the ordinate to ensure that
@@ -50,7 +50,7 @@ void FunctionListController::computeAdditionalResults(
    */
   float ordinate = PoincareHelpers::ApproximateToScalar<float>(
       approximateOutput, context,
-      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] = HorizontalLayout::Builder(

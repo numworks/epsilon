@@ -39,7 +39,7 @@ void IntegerListController::computeAdditionalResults(
   Expression factor = Factor::Builder(exactOutput.clone());
   PoincareHelpers::CloneAndSimplify(
       &factor, App::app()->localContext(),
-      {.complexFormat = m_complexFormat, .angleUnit = m_angleUnit});
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   if (!factor.isUndefined() && !factor.isIdenticalTo(Rational::Builder(1)) &&
       !factor.isIdenticalTo(Rational::Builder(0))) {
     m_layouts[k_indexOfFactorExpression] =

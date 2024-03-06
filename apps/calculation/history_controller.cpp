@@ -309,7 +309,7 @@ void HistoryController::handleOK() {
    * computed. */
   m_additionalResultsController.openAdditionalResults(
       selectedCalculation->additionalResultsType(), i, e, a,
-      selectedCalculation->complexFormat(), selectedCalculation->angleUnit());
+      selectedCalculation->calculationPreferences());
 }
 
 }  // namespace Calculation

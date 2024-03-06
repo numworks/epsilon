@@ -27,11 +27,9 @@ class ExpressionsListController
   virtual ~ExpressionsListController() = default;
   void tidy();
 
-  void setComplexFormatAndAngleUnit(
-      Poincare::Preferences::ComplexFormat complexFormat,
-      Poincare::Preferences::AngleUnit angleUnit) {
-    m_complexFormat = complexFormat;
-    m_angleUnit = angleUnit;
+  void setCalculationPreferences(
+      Poincare::Preferences::CalculationPreferences calculationPreferences) {
+    m_calculationPreferences = calculationPreferences;
   }
 
   // StackViewController
@@ -59,6 +57,15 @@ class ExpressionsListController
       Poincare::Expression e,
       const Poincare::ComputationContext& computationContext,
       Poincare::Layout* approximatedLayout = nullptr);
+  Poincare::Preferences::AngleUnit angleUnit() const {
+    return static_cast<Poincare::Preferences::AngleUnit>(
+        m_calculationPreferences.angleUnit);
+  }
+  Poincare::Preferences::ComplexFormat complexFormat() const {
+    return static_cast<Poincare::Preferences::ComplexFormat>(
+        m_calculationPreferences.complexFormat);
+  }
+
   // Memoization of layouts
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_exactLayouts[k_maxNumberOfRows];
@@ -84,8 +91,7 @@ class ExpressionsListController
 
   InnerListController m_listController;
   EditExpressionController* m_editExpressionController;
-  Poincare::Preferences::ComplexFormat m_complexFormat;
-  Poincare::Preferences::AngleUnit m_angleUnit;
+  Poincare::Preferences::CalculationPreferences m_calculationPreferences;
 
  private:
   virtual I18n::Message messageAtIndex(int index) = 0;

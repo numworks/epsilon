@@ -200,8 +200,8 @@ class Expression : public TreeHandle {
   bool hasDefinedComplexApproximation(
       const ApproximationContext& approximationContext,
       T* returnRealPart = nullptr, T* returnImagPart = nullptr) const;
-  bool isScalarComplex(Preferences::ComplexFormat complexFormat,
-                       Preferences::AngleUnit angleUnit) const;
+  bool isScalarComplex(
+      Preferences::CalculationPreferences calculationPreferences) const;
   bool isCombinationOfUnits() const { return node()->isCombinationOfUnits(); }
   /* This two functions only return true if the discontinuity is not asymptotic
    * (i.e. for the functions random, randint, round, floor and ceil).

@@ -280,8 +280,8 @@ int ContinuousFunction::derivationOrderFromRelativeIndex(
       assert(displayFirstDerivative || displaySecondDerivative);
       return displayFirstDerivative ? 1 : 2;
     default:
-      assert(relativeIndex == 2);
-      assert(displayFirstDerivative && displaySecondDerivative);
+      assert(relativeIndex == 2 && displayFirstDerivative &&
+             displaySecondDerivative);
       return 2;
   }
 }

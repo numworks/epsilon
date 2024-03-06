@@ -305,7 +305,7 @@ class List final : public JuniorExpression {
 class Boolean final : public JuniorExpression {
  public:
   bool value() const {
-    assert(tree()->isTrue() != tree()->isFalse());
+    assert(tree()->isTrue() || tree()->isFalse());
     return tree()->isTrue();
   }
 };

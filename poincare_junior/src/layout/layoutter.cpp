@@ -378,7 +378,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       PushCodePoint(layoutParent, 'i');
       break;
     case BlockType::UserSymbol: {
-      char buffer[40];
+      constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
+      char buffer[bufferSize];
       Symbol::GetName(expression, buffer, std::size(buffer));
       layoutText(layoutParent, buffer);
       break;

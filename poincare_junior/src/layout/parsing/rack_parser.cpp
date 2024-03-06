@@ -10,6 +10,7 @@
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/list.h>
 #include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
@@ -949,7 +950,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
   assert(leftHandSide.isUninitialized());
   const Tree *node = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
-  constexpr int bufferSize = (sizeof(CodePoint) / sizeof(char)) * 10 + 1;
+  constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
   char buffer[bufferSize];
   char *end = buffer + bufferSize;
   char *buf = buffer;

@@ -38,7 +38,7 @@ Layout Parentheses(Layout layout, bool cloneLayout);
 Layout String(const char* buffer, int bufferLen = -1);
 /* Create StringLayout from expression */
 Layout StringLayoutOfSerialization(const Expression& expression, char* buffer,
-                                   int bufferSize,
+                                   size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits);
 /* Create HorizontalLayout with CodePointLayouts from buffer */

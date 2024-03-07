@@ -70,7 +70,11 @@ bool RawDataStatistic::computedParameterAtIndex(int* index, Statistic* stat,
 
   *precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
 
-  if (stat->distributionType() != DistributionType::Z || *index % 3 != 1) {
+  /* For Z distribution, the computed parameter at index 1 (and 4 in case of
+   * TwoMeans) is not the parameter at that index (which is the population
+   * standard deviation).*/
+  if (stat->distributionType() != DistributionType::Z ||
+      *index % OneMean::k_numberOfParams != 1) {
     *value = stat->parameterAtIndex(*index);
     *message = stat->parameterSymbolAtIndex(*index);
     *subMessage = stat->parameterDefinitionAtIndex(*index);
@@ -78,7 +82,8 @@ bool RawDataStatistic::computedParameterAtIndex(int* index, Statistic* stat,
   }
 
   /* Weave sample standard deviation between mean and population. */
-  *value = sampleStandardDeviation(seriesAt(*index / 3));
+  *value =
+      sampleStandardDeviation(seriesAt(*index / OneMean::k_numberOfParams));
   Shared::ParameterRepresentation repr;
   if (stat->significanceTestType() == SignificanceTestType::OneMean) {
     repr = OneMean::ParameterRepresentationAtIndex(OneMean::Type::T, *index);

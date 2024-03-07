@@ -63,7 +63,9 @@ struct AdditionalResultsType {
   static bool HasFunction(const Poincare::Expression input,
                           const Poincare::Expression approximateOutput);
   static bool HasScientificNotation(
-      const Poincare::Expression approximateOutput);
+      const Poincare::Expression approximateOutput,
+      const Poincare::Preferences::CalculationPreferences
+          calculationPreferences);
   static bool HasInteger(const Poincare::Expression exactOutput);
   static bool HasRational(const Poincare::Expression exactOutput);
 };

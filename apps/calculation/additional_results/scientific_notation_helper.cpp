@@ -8,9 +8,11 @@ namespace Calculation {
 
 namespace ScientificNotationHelper {
 
-Layout ScientificLayout(const Expression a, Context* context) {
+Layout ScientificLayout(
+    const Expression a, Context* context,
+    const Preferences::CalculationPreferences calculationPreferences) {
   assert(!a.hasUnit());
-  assert(Preferences::sharedPreferences->displayMode() !=
+  assert(calculationPreferences.displayMode() !=
          Preferences::PrintFloatMode::Scientific);
   Expression e;
   if (a.type() == ExpressionNode::Type::BasedInteger) {
@@ -21,9 +23,9 @@ Layout ScientificLayout(const Expression a, Context* context) {
   } else {
     e = a;
   }
-  return e.createLayout(
-      Preferences::PrintFloatMode::Scientific,
-      Preferences::sharedPreferences->numberOfSignificantDigits(), context);
+  return e.createLayout(Preferences::PrintFloatMode::Scientific,
+                        calculationPreferences.numberOfSignificantDigits(),
+                        context);
 }
 
 }  // namespace ScientificNotationHelper

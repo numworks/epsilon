@@ -835,7 +835,7 @@ Tree* PushComplex(std::complex<T> value) {
   Tree* result = SharedEditionPool->push<BlockType::Addition>(2);
   SharedEditionPool->push<FloatType<T>::type>(value.real());
   if (value.imag() != 1.0) {
-    Tree* result = SharedEditionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->push<BlockType::Multiplication>(2);
     SharedEditionPool->push<FloatType<T>::type>(value.imag());
   }
   SharedEditionPool->push(BlockType::ComplexI);

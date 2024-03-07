@@ -250,11 +250,18 @@ bool AdditionalResultsType::HasScientificNotation(
   assert(!approximateOutput.hasUnit());
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
-         Preferences::sharedPreferences->displayMode() !=
-             Preferences::PrintFloatMode::Scientific &&
-         ScientificNotationHelper::HasAdditionalOutputs(approximateOutput,
-                                                        globalContext);
+  if (approximateOutput.type() == ExpressionNode::Type::Nonreal ||
+      Preferences::sharedPreferences->displayMode() ==
+          Preferences::PrintFloatMode::Scientific) {
+    return false;
+  }
+  Layout historyResult = approximateOutput.createLayout(
+      Preferences::sharedPreferences->displayMode(),
+      Preferences::sharedPreferences->numberOfSignificantDigits(),
+      globalContext);
+  return !historyResult.isIdenticalTo(
+      ScientificNotationHelper::ScientificLayout(approximateOutput,
+                                                 globalContext));
 }
 
 bool AdditionalResultsType::HasInteger(const Expression exactOutput) {

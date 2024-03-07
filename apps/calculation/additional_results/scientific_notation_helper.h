@@ -9,8 +9,6 @@ namespace Calculation {
 
 namespace ScientificNotationHelper {
 
-bool HasAdditionalOutputs(const Poincare::Expression approximateExpression,
-                          Poincare::Context* context);
 Poincare::Layout ScientificLayout(
     const Poincare::Expression approximateExpression,
     Poincare::Context* context);

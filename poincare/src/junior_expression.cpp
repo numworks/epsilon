@@ -306,6 +306,7 @@ JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
     .m_unitFormat = PoincareJ::UnitFormat(reductionContext->unitFormat())
   };
   PoincareJ::Tree* e = tree()->clone();
+  // TODO_PCJ: Do not beautify !! Decide if a projection is needed.
   PoincareJ::Simplification::Simplify(e, &context);
   *reduceFailure = context.m_strategy != initialStrategy;
   JuniorExpression simplifiedExpression = JuniorExpression::Builder(e);
@@ -346,6 +347,29 @@ JuniorExpression JuniorExpression::cloneAndReduce(
   bool reduceFailure;
   return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext,
                                                 &reduceFailure);
+}
+
+JuniorExpression JuniorExpression::cloneAndSimplify(
+    ReductionContext reductionContext, bool* reductionFailure) const {
+  bool reduceFailure = false;
+  JuniorExpression e =
+      cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  if (reductionFailure) {
+    *reductionFailure = reduceFailure;
+  }
+#if 0  // TODO_PCJ
+  if (reduceFailure ||
+      (otype() == ExpressionNode::Type::Store &&
+       !static_cast<const Store*>(this)->isTrulyReducedInShallowReduce())) {
+    // We can't beautify unreduced expression
+    return e;
+  }
+#else
+  assert(!reduceFailure && (type() != ExpressionNode::Type::Store));
+#endif
+  /* TODO_PCJ: Beautify since cloneAndDeepReduceWithSystemCheckpoint isn't
+   * supposed to. */
+  return e.deepBeautify(reductionContext);
 }
 
 static bool IsIgnoredSymbol(const JuniorExpression* e,

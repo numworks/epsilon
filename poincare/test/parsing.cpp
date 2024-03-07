@@ -19,8 +19,8 @@ void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
   Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
-    quiz_assert_print_if_failure(token.otype() == *tokenTypes, string);
-    if (token.otype() == Token::Type::EndOfStream) {
+    quiz_assert_print_if_failure(token.type() == *tokenTypes, string);
+    if (token.type() == Token::Type::EndOfStream) {
       return;
     }
     tokenTypes++;
@@ -33,7 +33,7 @@ void assert_tokenizes_as_number(const char* string) {
 }
 
 void assert_tokenizes_as_unit(const char* string) {
-  const Token::Type types[] = {Token::Type::OUnit, Token::Type::EndOfStream};
+  const Token::Type types[] = {Token::Type::Unit, Token::Type::EndOfStream};
   assert_tokenizes_as(types, string);
 }
 
@@ -48,10 +48,10 @@ void assert_tokenizes_as_undefined_token(const char* string) {
   Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
-    if (token.otype() == Token::Type::Undefined) {
+    if (token.type() == Token::Type::Undefined) {
       return;
     }
-    quiz_assert_print_if_failure(token.otype() != Token::Type::EndOfStream,
+    quiz_assert_print_if_failure(token.type() != Token::Type::EndOfStream,
                                  string);
   }
 }

@@ -213,7 +213,11 @@ void set(const char *variable, const char *value) {
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
   Expression e = Expression::ParseAndSimplify(buffer, &solverContext);
+#if 0  // TODO_PCJ
   static_cast<Store &>(e).storeValueForSymbol(&globalContext);
+#else
+  assert(false);
+#endif
 }
 
 void unset(const char *variable) {

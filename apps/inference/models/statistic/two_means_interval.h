@@ -46,8 +46,8 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
   }
   void resultAtIndex(int index, double* value, Poincare::Layout* message,
                      I18n::Message* subMessage, int* precision) override {
-    if (!resultOrComputedParameterAtIndex(&index, this, value, message,
-                                          subMessage, precision)) {
+    if (!computedParameterAtIndex(&index, this, value, message, subMessage,
+                                  precision)) {
       Interval::resultAtIndex(index, value, message, subMessage, precision);
     }
   }

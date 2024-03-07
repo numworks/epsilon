@@ -50,8 +50,8 @@ class TwoMeansTest : public Test, public TwoMeansStatistic {
   }
   void resultAtIndex(int index, double* value, Poincare::Layout* message,
                      I18n::Message* subMessage, int* precision) override {
-    if (!resultOrComputedParameterAtIndex(&index, this, value, message,
-                                          subMessage, precision)) {
+    if (!computedParameterAtIndex(&index, this, value, message, subMessage,
+                                  precision)) {
       Test::resultAtIndex(index, value, message, subMessage, precision);
     }
   }

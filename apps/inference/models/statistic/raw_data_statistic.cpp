@@ -55,9 +55,11 @@ void RawDataStatistic::recomputeData() {
   }
 }
 
-bool RawDataStatistic::resultOrComputedParameterAtIndex(
-    int* index, Statistic* stat, double* value, Poincare::Layout* message,
-    I18n::Message* subMessage, int* precision) {
+bool RawDataStatistic::computedParameterAtIndex(int* index, Statistic* stat,
+                                                double* value,
+                                                Poincare::Layout* message,
+                                                I18n::Message* subMessage,
+                                                int* precision) {
   if (!hasSeries()) {
     return false;
   }

@@ -55,11 +55,9 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
                                            int results) const {
     return results + hasSeries() * stat->numberOfStatisticParameters();
   }
-  bool resultOrComputedParameterAtIndex(int* index, Statistic* stat,
-                                        double* value,
-                                        Poincare::Layout* message,
-                                        I18n::Message* subMessage,
-                                        int* precision);
+  bool computedParameterAtIndex(int* index, Statistic* stat, double* value,
+                                Poincare::Layout* message,
+                                I18n::Message* subMessage, int* precision);
   void initDatasetsIfSeries() {
     if (hasSeries()) {
       initDatasets();

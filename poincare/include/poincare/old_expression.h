@@ -434,7 +434,7 @@ class OExpression : public TreeHandle {
       UnitConversion unitConversion = UnitConversion::Default,
       bool* reductionFailure = nullptr);
   OExpression cloneAndSimplify(ReductionContext reductionContext,
-                               bool* reductionFailure = nullptr);
+                               bool* reductionFailure = nullptr) const;
   void cloneAndSimplifyAndApproximate(
       OExpression* simplifiedExpression, OExpression* approximateExpression,
       const ReductionContext& reductionContext,

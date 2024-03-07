@@ -1170,7 +1170,7 @@ OExpression OExpression::ParseAndSimplify(
 }
 
 OExpression OExpression::cloneAndSimplify(ReductionContext reductionContext,
-                                          bool *reductionFailure) {
+                                          bool *reductionFailure) const {
   bool reduceFailure = false;
   OExpression e =
       cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);

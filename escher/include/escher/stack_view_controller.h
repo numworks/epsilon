@@ -94,7 +94,7 @@ class CustomSizeStackViewController : public StackViewController {
 
  private:
   ViewController** stackSlot(int index) override {
-    assert(index >= 0 && index < Capacity);
+    assert(index >= 0 && index < static_cast<int>(Capacity));
     return &m_stack[index];
   }
 

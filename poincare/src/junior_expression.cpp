@@ -2,6 +2,7 @@
 #include <poincare/junior_layout.h>
 #include <poincare/matrix.h>
 #include <poincare/point_2D_layout.h>
+#include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/matrix.h>
@@ -16,6 +17,16 @@
 namespace Poincare {
 
 /* JuniorExpressionNode */
+
+int JuniorExpressionNode::simplificationOrderSameType(
+    const ExpressionNode* e, bool ascending, bool ignoreParentheses) const {
+  if (!ascending) {
+    return e->simplificationOrderSameType(this, true, ignoreParentheses);
+  }
+  assert(otype() == e->otype());
+  return PoincareJ::Comparison::Compare(
+      tree(), static_cast<const JuniorExpressionNode*>(e)->tree());
+}
 
 Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,

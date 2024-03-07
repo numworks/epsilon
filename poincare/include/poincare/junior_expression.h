@@ -34,6 +34,8 @@ class JuniorExpressionNode final : public ExpressionNode {
   // TODO PCJ: Plug in approximation
   // TrinaryBoolean isPositive(Context* context) const override;
   // TrinaryBoolean isNull(Context* context) const override;
+  int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
+                                  bool ignoreParentheses) const override;
 
   // Approximation
   template <typename T>

@@ -88,6 +88,8 @@ int ExpressionNode::SimplificationOrder(const ExpressionNode* e1,
     return SimplificationOrder(e1, e2->childAtIndex(0), ascending,
                                ignoreParentheses);
   }
+  assert((type1 == Type::JuniorExpression) ==
+         (type2 == Type::JuniorExpression));
   if (type1 > type2) {
     return -(
         e2->simplificationOrderGreaterType(e1, ascending, ignoreParentheses));

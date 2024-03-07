@@ -56,4 +56,29 @@ void InputCategoricalCell<LayoutView>::setMessages(
   m_innerCell.subLabel()->setMessage(subLabelMessage);
 }
 
+// DropdownCategoricalCell
+
+KDSize DropdownCategoricalCell::minimalSizeForOptimalDisplay() const {
+  KDSize res = AbstractCategoricalCell::minimalSizeForOptimalDisplay();
+  return KDSize(res.width(), res.height() + k_topMargin);
+}
+
+void DropdownCategoricalCell::drawRect(KDContext* ctx, KDRect rect) const {
+  // Fill top margin
+  KDCoordinate width = bounds().width();
+  ctx->fillRect(KDRect(0, 0, width, k_topMargin), Palette::WallScreenDark);
+
+  AbstractCategoricalCell::drawRect(ctx, rect);
+}
+
+void DropdownCategoricalCell::layoutSubviews(bool force) {
+  KDCoordinate width = bounds().width();
+  KDCoordinate height = bounds().height();
+  setChildFrame(
+      &m_innerCell,
+      KDRect(Metric::CommonMargins.left(), k_topMargin,
+             width - Metric::CommonMargins.width(), height - k_topMargin),
+      force);
+}
+
 }  // namespace Inference

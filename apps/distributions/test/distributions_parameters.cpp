@@ -19,7 +19,8 @@
 
 void assert_parameters_are(Distributions::Distribution* distribution,
                            std::initializer_list<double> parameters) {
-  assert(parameters.size() == distribution->numberOfParameters());
+  assert(static_cast<int>(parameters.size()) ==
+         distribution->numberOfParameters());
   const double* parametersArray = distribution->constParametersArray();
   size_t i = 0;
   for (double param : parameters) {

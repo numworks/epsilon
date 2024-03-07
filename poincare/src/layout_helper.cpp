@@ -113,7 +113,7 @@ Layout LayoutHelper::String(const char* buffer, int bufferLen) {
 }
 
 Layout LayoutHelper::StringLayoutOfSerialization(
-    const Expression& expression, char* buffer, int bufferSize,
+    const Expression& expression, char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) {
   size_t length = expression.serialize(buffer, bufferSize, floatDisplayMode,

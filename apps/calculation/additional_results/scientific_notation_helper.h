@@ -11,7 +11,8 @@ namespace ScientificNotationHelper {
 
 Poincare::Layout ScientificLayout(
     const Poincare::Expression approximateExpression,
-    Poincare::Context* context);
+    Poincare::Context* context,
+    const Poincare::Preferences::CalculationPreferences calculationPreferences);
 
 }  // namespace ScientificNotationHelper
 

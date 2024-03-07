@@ -66,7 +66,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (!inputHasAngleUnit && HasFunction(input, approximateOutput)) {
     type.function = true;
   }
-  if (HasScientificNotation(approximateOutput)) {
+  if (HasScientificNotation(approximateOutput, calculationPreferences)) {
     type.scientificNotation = true;
   }
   if (HasInteger(exactOutput)) {
@@ -245,23 +245,23 @@ bool AdditionalResultsType::HasFunction(const Expression input,
 }
 
 bool AdditionalResultsType::HasScientificNotation(
-    const Expression approximateOutput) {
+    const Expression approximateOutput,
+    const Preferences::CalculationPreferences calculationPreferences) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit());
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   if (approximateOutput.type() == ExpressionNode::Type::Nonreal ||
-      Preferences::sharedPreferences->displayMode() ==
+      calculationPreferences.displayMode() ==
           Preferences::PrintFloatMode::Scientific) {
     return false;
   }
   Layout historyResult = approximateOutput.createLayout(
-      Preferences::sharedPreferences->displayMode(),
-      Preferences::sharedPreferences->numberOfSignificantDigits(),
-      globalContext);
+      calculationPreferences.displayMode(),
+      calculationPreferences.numberOfSignificantDigits(), globalContext);
   return !historyResult.isIdenticalTo(
-      ScientificNotationHelper::ScientificLayout(approximateOutput,
-                                                 globalContext));
+      ScientificNotationHelper::ScientificLayout(
+          approximateOutput, globalContext, calculationPreferences));
 }
 
 bool AdditionalResultsType::HasInteger(const Expression exactOutput) {

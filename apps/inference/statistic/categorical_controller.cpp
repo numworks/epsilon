@@ -46,9 +46,11 @@ void CategoricalController::scrollViewDidChangeOffset(
   KDCoordinate maximalListOffsetY =
       cumulatedHeightBeforeRow(indexOfTableCell()) +
       m_selectableListView.margins()->top();
-  KDCoordinate maximalTableOffsetY = std::clamp<int>(
+  KDCoordinate maximalListHeight =
       m_selectableListView.minimalSizeForOptimalDisplay().height() +
-          tableOffset.y() - m_selectableListView.bounds().height() -
+      tableOffset.y();
+  KDCoordinate maximalTableOffsetY = std::clamp<int>(
+      maximalListHeight - m_selectableListView.bounds().height() -
           maximalListOffsetY,
       0,
       categoricalTableCell()

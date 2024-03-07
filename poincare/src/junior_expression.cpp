@@ -215,6 +215,49 @@ ExpressionNode::Type JuniorExpression::type() const {
     default:
       assert(false);
       return ExpressionNode::Type::JuniorExpression;
+      // Unused in apps, but they should not raise the default assert.
+    case PoincareJ::BlockType::Decimal:
+      return ExpressionNode::Type::Decimal;
+    case PoincareJ::BlockType::ComplexI:
+    case PoincareJ::BlockType::ExponentialE:
+    case PoincareJ::BlockType::Pi:
+      return ExpressionNode::Type::ConstantMaths;
+    case PoincareJ::BlockType::Cosine:
+      return ExpressionNode::Type::Cosine;
+    case PoincareJ::BlockType::Sine:
+      return ExpressionNode::Type::Sine;
+    case PoincareJ::BlockType::Tangent:
+      return ExpressionNode::Type::Tangent;
+    case PoincareJ::BlockType::Cosecant:
+      return ExpressionNode::Type::Cosecant;
+    case PoincareJ::BlockType::Secant:
+      return ExpressionNode::Type::Secant;
+    case PoincareJ::BlockType::Cotangent:
+      return ExpressionNode::Type::Cotangent;
+    case PoincareJ::BlockType::HyperbolicCosine:
+      return ExpressionNode::Type::HyperbolicCosine;
+    case PoincareJ::BlockType::HyperbolicSine:
+      return ExpressionNode::Type::HyperbolicSine;
+    case PoincareJ::BlockType::HyperbolicTangent:
+      return ExpressionNode::Type::HyperbolicTangent;
+    case PoincareJ::BlockType::ArcCosine:
+      return ExpressionNode::Type::ArcCosine;
+    case PoincareJ::BlockType::ArcSine:
+      return ExpressionNode::Type::ArcSine;
+    case PoincareJ::BlockType::ArcTangent:
+      return ExpressionNode::Type::ArcTangent;
+    case PoincareJ::BlockType::ArcCosecant:
+      return ExpressionNode::Type::ArcCosecant;
+    case PoincareJ::BlockType::ArcSecant:
+      return ExpressionNode::Type::ArcSecant;
+    case PoincareJ::BlockType::ArcCotangent:
+      return ExpressionNode::Type::ArcCotangent;
+    case PoincareJ::BlockType::HyperbolicArcCosine:
+      return ExpressionNode::Type::HyperbolicArcCosine;
+    case PoincareJ::BlockType::HyperbolicArcSine:
+      return ExpressionNode::Type::HyperbolicArcSine;
+    case PoincareJ::BlockType::HyperbolicArcTangent:
+      return ExpressionNode::Type::HyperbolicArcTangent;
   }
 }
 

@@ -1,6 +1,5 @@
 #include "scientific_notation_helper.h"
 
-#include <apps/shared/poincare_helpers.h>
 #include <poincare/float.h>
 
 using namespace Poincare;
@@ -10,7 +9,9 @@ namespace Calculation {
 namespace ScientificNotationHelper {
 
 bool HasAdditionalOutputs(const Expression a, Context* context) {
-  Layout historyResult = Shared::PoincareHelpers::CreateLayout(a, context);
+  Layout historyResult = a.createLayout(
+      Preferences::sharedPreferences->displayMode(),
+      Preferences::sharedPreferences->numberOfSignificantDigits(), context);
   return !historyResult.isIdenticalTo(ScientificLayout(a, context));
 }
 
@@ -25,8 +26,9 @@ Layout ScientificLayout(const Expression a, Context* context) {
   } else {
     e = a;
   }
-  return Shared::PoincareHelpers::CreateLayout(
-      e, context, Preferences::PrintFloatMode::Scientific);
+  return e.createLayout(
+      Preferences::PrintFloatMode::Scientific,
+      Preferences::sharedPreferences->numberOfSignificantDigits(), context);
 }
 
 }  // namespace ScientificNotationHelper

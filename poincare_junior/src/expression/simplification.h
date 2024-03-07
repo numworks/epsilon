@@ -13,8 +13,8 @@ namespace PoincareJ {
 
 class Simplification {
  public:
-  static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
-  EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
+  static bool Simplify(Tree *node, ProjectionContext *projectionContext);
+  EDITION_REF_WRAP_1(Simplify, ProjectionContext *);
 
   static bool ShallowSystematicReduce(Tree *u);
   EDITION_REF_WRAP(ShallowSystematicReduce);

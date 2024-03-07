@@ -813,7 +813,7 @@ bool RelaxProjectionContext(void* context) {
   return true;
 }
 
-bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
+bool Simplification::Simplify(Tree* ref, ProjectionContext* projectionContext) {
   if (ref->isStore()) {
     // Store is an expression only for convenience
     return Simplify(ref->child(0), projectionContext);
@@ -828,15 +828,16 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
     // TODO PCJ actually select the required unit
     return ref;
   }
+  assert(projectionContext);
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
   SharedEditionPool->executeAndReplaceTree(
       [](void* context, const void* data) {
         SimplifyLastTree(static_cast<const Tree*>(data)->clone(),
                          *static_cast<ProjectionContext*>(context));
       },
-      &projectionContext, ref, RelaxProjectionContext);
+      projectionContext, ref, RelaxProjectionContext);
   /* TODO: Due to projection/beautification cycles, SimplifyLastTree will most
-   *       likely return true everytime anyway. */
+   *       likely return true every time anyway. */
   return true;
 }
 

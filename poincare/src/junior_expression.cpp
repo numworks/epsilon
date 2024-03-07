@@ -280,7 +280,7 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
                         : PoincareJ::Strategy::Default,
       .m_unitFormat = PoincareJ::UnitFormat(reductionContext.unitFormat())};
   PoincareJ::Tree* e = tree()->clone();
-  PoincareJ::Simplification::Simplify(e, context);
+  PoincareJ::Simplification::Simplify(e, &context);
   if (approximateExpression) {
     *approximateExpression = JuniorExpression::Builder(
         PoincareJ::Approximation::RootTreeToTree<double>(
@@ -293,21 +293,21 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
 JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
     ReductionContext* reductionContext, bool* reduceFailure,
     bool approximateDuringReduction) const {
-  *reduceFailure = false;
+  PoincareJ::Strategy initialStrategy =
+      approximateDuringReduction ? PoincareJ::Strategy::ApproximateToFloat
+                                 : PoincareJ::Strategy::Default;
   PoincareJ::ProjectionContext context = {
     .m_complexFormat =
         PoincareJ::ComplexFormat(reductionContext->complexFormat()),
     .m_angleUnit = PoincareJ::AngleUnit(reductionContext->angleUnit()),
 #if 1
-    .m_strategy = approximateDuringReduction
-                      ? PoincareJ::Strategy::ApproximateToFloat
-                      : PoincareJ::Strategy::Default,
+    .m_strategy = initialStrategy,
 #endif
     .m_unitFormat = PoincareJ::UnitFormat(reductionContext->unitFormat())
   };
   PoincareJ::Tree* e = tree()->clone();
-  // TODO_PCJ: Update reduceFailure if context.m_strategy changed.
-  PoincareJ::Simplification::Simplify(e, context);
+  PoincareJ::Simplification::Simplify(e, &context);
+  *reduceFailure = context.m_strategy != initialStrategy;
   JuniorExpression simplifiedExpression = JuniorExpression::Builder(e);
 #if 0
   if (approximateDuringReduction) {

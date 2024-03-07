@@ -102,7 +102,7 @@ void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
   EditionReference expected = TextToTree(output);
   EditionReference expression = TextToTree(input);
-  Simplification::Simplify(expression, projectionContext);
+  Simplification::Simplify(expression, &projectionContext);
   quiz_assert(!expression.isUninitialized());
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
@@ -539,15 +539,16 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Dependency::ShallowBubbleUpDependencies(e2);
   QUIZ_ASSERT(e2->treeIsIdenticalTo(r2));
 
+  ProjectionContext context;
   Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->clone();
   const Tree* r3 = KDep(3_e, KSet(KPow("a"_e, 0_e)));
-  Simplification::Simplify(e3);
+  Simplification::Simplify(e3, &context);
   QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
 
   Tree* e4 =
       KDiff("x"_e, "y"_e, KDep("x"_e, KSet(KAbs("x"_e), "z"_e)))->clone();
   const Tree* r4 = KDep(1_e, KSet(KAbs("y"_e), "z"_e));
-  Simplification::Simplify(e4);
+  Simplification::Simplify(e4, &context);
   QUIZ_ASSERT(e4->treeIsIdenticalTo(r4));
 }
 

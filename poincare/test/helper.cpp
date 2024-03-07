@@ -212,7 +212,8 @@ void assert_reduce_and_store(const char *expression,
 #endif
 }
 
-void assert_expression_reduce(Tree *e, Preferences::AngleUnit angleUnit,
+void assert_expression_reduce(Poincare::Expression e,
+                              Preferences::AngleUnit angleUnit,
                               Preferences::UnitFormat unitFormat,
                               Preferences::ComplexFormat complexFormat,
                               ReductionTarget target,
@@ -221,7 +222,7 @@ void assert_expression_reduce(Tree *e, Preferences::AngleUnit angleUnit,
   ReductionContext context = ReductionContext(&globalContext, complexFormat,
                                               angleUnit, unitFormat, target);
   bool reductionFailure = false;
-  PoincareJ::Simplification::Simplify(e);
+  e = e.cloneAndDeepReduceWithSystemCheckpoint(&context, &reductionFailure);
   quiz_assert_print_if_failure(!reductionFailure, printIfFailure);
 }
 
@@ -241,7 +242,7 @@ void assert_parsed_expression_simplify_to(
             .m_angleUnit = PoincareJ::AngleUnit(reductionContext.angleUnit()),
             .m_unitFormat =
                 PoincareJ::UnitFormat(reductionContext.unitFormat())};
-        PoincareJ::Simplification::Simplify(e, context);
+        PoincareJ::Simplification::Simplify(e, &context);
         // TODO PCJ also approximate to see if it crashes
         return e;
       });

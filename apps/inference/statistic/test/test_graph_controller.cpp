@@ -17,6 +17,9 @@ Escher::ViewController::TitlesDisplay TestGraphController::titlesDisplay() {
       m_test->categoricalType() == CategoricalType::GoodnessOfFit) {
     return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
   }
+  if (m_test->canChooseDataset()) {
+    return ViewController::TitlesDisplay(0b10111);
+  }
   return ViewController::TitlesDisplay::DisplayLastFourTitles;
 }
 

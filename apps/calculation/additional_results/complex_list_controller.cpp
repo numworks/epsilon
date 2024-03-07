@@ -29,7 +29,7 @@ void ComplexListController::computeAdditionalResults(
                                            m_calculationPreferences));
   ComputationContext computationContext(App::app()->localContext(),
                                         Preferences::ComplexFormat::Cartesian,
-                                        m_calculationPreferences.angleUnit());
+                                        angleUnit());
   ApproximationContext approximationContext(computationContext);
 
   // Fill Calculation Store
@@ -73,8 +73,7 @@ I18n::Message ComplexListController::messageAtIndex(int index) {
 };
 
 Preferences::ComplexFormat ComplexListController::complexFormToDisplay() const {
-  return m_calculationPreferences.complexFormat() ==
-                 Preferences::ComplexFormat::Polar
+  return complexFormat() == Preferences::ComplexFormat::Polar
              ? Preferences::ComplexFormat::Cartesian
              : Preferences::ComplexFormat::Polar;
 }

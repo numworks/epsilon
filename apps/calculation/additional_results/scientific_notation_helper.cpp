@@ -16,16 +16,17 @@ bool HasAdditionalOutputs(const Expression a, Context* context) {
 
 Layout ScientificLayout(const Expression a, Context* context) {
   assert(!a.hasUnit());
-  if (a.type() != ExpressionNode::Type::BasedInteger) {
-    return Shared::PoincareHelpers::CreateLayout(
-        a, context, Preferences::PrintFloatMode::Scientific);
+  Expression e;
+  if (a.type() == ExpressionNode::Type::BasedInteger) {
+    // Based Integer must be approximated to be layouted in scientific mode
+    ApproximationContext approximationContext(context);
+    e = Float<double>::Builder(
+        a.approximateToScalar<double>(approximationContext));
+  } else {
+    e = a;
   }
-  // Based Integer must be approximated to be layouted in scientific mode
-  ApproximationContext approximationContext(context);
-  Expression floatRepr = Float<double>::Builder(
-      a.approximateToScalar<double>(approximationContext));
   return Shared::PoincareHelpers::CreateLayout(
-      floatRepr, context, Preferences::PrintFloatMode::Scientific);
+      e, context, Preferences::PrintFloatMode::Scientific);
 }
 
 }  // namespace ScientificNotationHelper

@@ -21,8 +21,6 @@ InputStoreController::InputStoreController(StackViewController* parent,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_slopeTableCell) {
   m_storeParameterController.selectRow(0);
-  m_selectableListView.margins()->setTop(
-      m_slopeTableCell.selectableTableView()->margins()->top());
   m_slopeTableCell.selectableTableView()->margins()->setTop(
       Metric::TableSeparatorThickness);
 }

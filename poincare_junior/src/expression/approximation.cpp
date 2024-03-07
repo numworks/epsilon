@@ -463,9 +463,22 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->unshiftVariables();
       return result;
     }
-    case BlockType::Derivative: {
+    case BlockType::Derivative:
+    case BlockType::NthDerivative: {
       constexpr static int k_maxOrderForApproximation = 4;
-      int order = 1;  // TODO PCJ nth diff
+      int order;
+      const Tree* derivand;
+      if (node->isNthDerivative()) {
+        T orderReal = To<T>(node->child(2));
+        if (orderReal != std::floor(orderReal)) {
+          return NAN;
+        }
+        order = orderReal;
+        derivand = node->child(3);
+      } else {
+        order = 1;
+        derivand = node->child(2);
+      }
       if (order < 0) {
         return NAN;
       }
@@ -490,7 +503,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
         return NAN;
       }
       s_context->shiftVariables();
-      T result = ApproximateDerivative(node->child(2), at.real(), order);
+      T result = ApproximateDerivative(derivand, at.real(), order);
       s_context->unshiftVariables();
       return result;
     }

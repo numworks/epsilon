@@ -205,6 +205,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   // TODO: Should be undef
   simplifies_to("diff(ln(x), x, -1)", "dep(-1,{diff(ln(x),x,-1)})");
+  simplifies_to("diff(x^3,x,x,2)", "6×x");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

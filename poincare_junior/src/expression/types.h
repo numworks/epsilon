@@ -175,13 +175,11 @@ NODE(TrigDiff, 2)
 NODE(Sum, 4)
 NODE(Product, 4)
 NODE(Derivative, 3)
+NODE(NthDerivative, 4)
 NODE(Integral, 4)
 NODE(ListSequence, 3)
 
 RANGE(Parametric, Sum, ListSequence)
-
-// TODO PCJ move in Parametric when implemeting
-NODE(NthDerivative, 4)
 
 // 5 - Matrix and vector builtins
 

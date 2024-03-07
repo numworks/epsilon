@@ -106,6 +106,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifyComplexArgument(u);
     case BlockType::Derivative:
       return Derivation::ShallowSimplify(u);
+    case BlockType::NthDerivative:
+      return Derivation::ShallowSimplifyNthDerivative(u);
     case BlockType::Dim:
       return SimplifyDim(u);
     case BlockType::Distribution:

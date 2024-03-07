@@ -323,6 +323,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     return Random::Approximate<T>(node, s_randomContext);
   }
   switch (node->type()) {
+    case BlockType::Undefined:
+      // Until we make simplification compulsory, undef may be anywhere
+      return NAN;
     case BlockType::Parenthesis:
       return ToComplex<T>(node->nextNode());
     case BlockType::ComplexI:
@@ -819,6 +822,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
         // TODO: Explicit tree if it contains random nodes.
       }
       // TODO: Implement more BlockTypes
+      assert(false);
       return NAN;
   };
 }

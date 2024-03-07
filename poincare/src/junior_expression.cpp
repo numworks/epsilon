@@ -28,6 +28,28 @@ int JuniorExpressionNode::simplificationOrderSameType(
       tree(), static_cast<const JuniorExpressionNode*>(e)->tree());
 }
 
+Evaluation<float> JuniorExpressionNode::approximate(
+    SinglePrecision p, const ApproximationContext& approximationContext) const {
+  // TODO_PCJ: Handle Matrix, list, boolean and point evaluations. Use p.
+  return Complex<float>::Builder(
+      PoincareJ::Approximation::RootTreeToComplex<float>(
+          tree(),
+          static_cast<PoincareJ::AngleUnit>(approximationContext.angleUnit()),
+          static_cast<PoincareJ::ComplexFormat>(
+              approximationContext.complexFormat())));
+}
+
+Evaluation<double> JuniorExpressionNode::approximate(
+    DoublePrecision p, const ApproximationContext& approximationContext) const {
+  // TODO_PCJ: Handle Matrix, list, boolean and point evaluations. Use p.
+  return Complex<double>::Builder(
+      PoincareJ::Approximation::RootTreeToComplex<double>(
+          tree(),
+          static_cast<PoincareJ::AngleUnit>(approximationContext.angleUnit()),
+          static_cast<PoincareJ::ComplexFormat>(
+              approximationContext.complexFormat())));
+}
+
 Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {

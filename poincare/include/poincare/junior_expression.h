@@ -48,18 +48,10 @@ class JuniorExpressionNode final : public ExpressionNode {
   }
   Evaluation<float> approximate(
       SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    // TODO PCJ: Plug in approximation
-    assert(false);
-    return Evaluation<float>();
-  }
+      const ApproximationContext& approximationContext) const override;
   Evaluation<double> approximate(
       DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    // TODO PCJ: Plug in approximation
-    assert(false);
-    return Evaluation<double>();
-  }
+      const ApproximationContext& approximationContext) const override;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,

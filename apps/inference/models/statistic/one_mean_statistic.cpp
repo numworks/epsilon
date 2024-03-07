@@ -7,9 +7,11 @@ void OneMeanStatistic::syncParametersWithStore(Statistic* stat) {
     return;
   }
   m_params[OneMean::ParamsOrder::x] = mean(series());
-  // For Z tests, the S parameter is the population standard deviation, which is
-  // not computed from the sample.
-  if (stat->distributionType() != DistributionType::Z) {
+  /* For T tests, the S parameter is the sample standard deviation, which can be
+   * computed from the dataset. For Z tests however, the S parameter is the
+   * population standard deviation, which is given by the user. */
+  OneMean::Type type = oneMeanType(stat);
+  if (type == OneMean::Type::T) {
     m_params[OneMean::ParamsOrder::s] = sampleStandardDeviation(series());
   }
   m_params[OneMean::ParamsOrder::n] = sumOfOccurrences(series());

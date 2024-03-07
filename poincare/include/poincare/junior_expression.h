@@ -131,6 +131,11 @@ class JuniorExpression : public OExpression {
       const ReductionContext& reductionContext,
       bool approximateKeepingSymbols = false) const;
 
+  JuniorExpression cloneAndReduce(ReductionContext reductionContext) const;
+  JuniorExpression cloneAndDeepReduceWithSystemCheckpoint(
+      ReductionContext* reductionContext, bool* reduceFailure,
+      bool approximateDuringReduction = false) const;
+
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO PCJ
     assert(false);

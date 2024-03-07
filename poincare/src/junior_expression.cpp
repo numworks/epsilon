@@ -290,6 +290,64 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
   return;
 }
 
+JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
+    ReductionContext* reductionContext, bool* reduceFailure,
+    bool approximateDuringReduction) const {
+  *reduceFailure = false;
+  PoincareJ::ProjectionContext context = {
+    .m_complexFormat =
+        PoincareJ::ComplexFormat(reductionContext->complexFormat()),
+    .m_angleUnit = PoincareJ::AngleUnit(reductionContext->angleUnit()),
+#if 1
+    .m_strategy = approximateDuringReduction
+                      ? PoincareJ::Strategy::ApproximateToFloat
+                      : PoincareJ::Strategy::Default,
+#endif
+    .m_unitFormat = PoincareJ::UnitFormat(reductionContext->unitFormat())
+  };
+  PoincareJ::Tree* e = tree()->clone();
+  // TODO_PCJ: Update reduceFailure if context.m_strategy changed.
+  PoincareJ::Simplification::Simplify(e, context);
+  JuniorExpression simplifiedExpression = JuniorExpression::Builder(e);
+#if 0
+  if (approximateDuringReduction) {
+    /* TODO_PCJ: We used to approximate after a full reduction (see comment).
+     *           Ensure this is no longer necessary. */
+    /* It is always needed to reduce when approximating keeping symbols to
+     * catch reduction failure and abort if necessary.
+     *
+     * The expression is reduced before and not during approximation keeping
+     * symbols even because deepApproximateKeepingSymbols can only partially
+     * reduce the expression.
+     *
+     * For example, if e="x*x+x^2":
+     * "x*x" will be reduced to "x^rational(2)", while "x^2" will be
+     * reduced/approximated to "x^float(2.)".
+     * Then "x^rational(2)+x^float(2.)" won't be able to reduce to
+     * "2*x^float(2.)" because float(2.) != rational(2.).
+     * This does not happen if e is reduced beforehand. */
+    simplifiedExpression =
+        simplifiedExpression.deepApproximateKeepingSymbols(*reductionContext);
+  }
+  if (!*reduceFailure) {
+    /* TODO_PCJ: Ensure Dependency::deepRemoveUselessDependencies(...) logic has
+     * been properly brought in PoincareJ::Simplification. */
+    simplifiedExpression =
+        simplifiedExpression.deepRemoveUselessDependencies(*reductionContext);
+  }
+#endif
+  assert(!simplifiedExpression.isUninitialized());
+  return simplifiedExpression;
+}
+
+JuniorExpression JuniorExpression::cloneAndReduce(
+    ReductionContext reductionContext) const {
+  // TODO: Ensure all cloneAndReduce usages handle reduction failure.
+  bool reduceFailure;
+  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext,
+                                                &reduceFailure);
+}
+
 static bool IsIgnoredSymbol(const JuniorExpression* e,
                             JuniorExpression::IgnoredSymbols* ignoredSymbols) {
   if (e->type() != ExpressionNode::Type::Symbol) {

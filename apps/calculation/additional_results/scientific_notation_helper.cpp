@@ -8,15 +8,10 @@ namespace Calculation {
 
 namespace ScientificNotationHelper {
 
-bool HasAdditionalOutputs(const Expression a, Context* context) {
-  Layout historyResult = a.createLayout(
-      Preferences::sharedPreferences->displayMode(),
-      Preferences::sharedPreferences->numberOfSignificantDigits(), context);
-  return !historyResult.isIdenticalTo(ScientificLayout(a, context));
-}
-
 Layout ScientificLayout(const Expression a, Context* context) {
   assert(!a.hasUnit());
+  assert(Preferences::sharedPreferences->displayMode() !=
+         Preferences::PrintFloatMode::Scientific);
   Expression e;
   if (a.type() == ExpressionNode::Type::BasedInteger) {
     // Based Integer must be approximated to be layouted in scientific mode

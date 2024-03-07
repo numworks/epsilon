@@ -26,7 +26,6 @@ Expression ExtractExactAngleFromDirectTrigo(
    * However if the result is complex, it is treated as a complex result.
    * When both inputs and outputs are direct trigo functions, we take the input
    * because the angle might not be the same modulo 2π. */
-  Preferences* preferences = Preferences::sharedPreferences;
   assert(!exactOutput.isScalarComplex(calculationPreferences));
   Expression directTrigoFunction;
   if (Trigonometry::IsDirectTrigonometryFunction(input) &&
@@ -62,9 +61,8 @@ Expression ExtractExactAngleFromDirectTrigo(
      * convert exactAngle again here to fit the angle unit that will be used
      * in reductions below. */
     exactAngle = Multiplication::Builder(
-        exactAngle,
-        Trigonometry::UnitConversionFactor(Preferences::AngleUnit::Radian,
-                                           preferences->angleUnit()));
+        exactAngle, Trigonometry::UnitConversionFactor(
+                        Preferences::AngleUnit::Radian, angleUnit));
   }
   // The angle must be real.
   if (!std::isfinite(PoincareHelpers::ApproximateToScalar<double>(

@@ -60,8 +60,14 @@ class ExpressionsListController
   Poincare::Preferences::AngleUnit angleUnit() const {
     return m_calculationPreferences.angleUnit();
   }
+  Poincare::Preferences::PrintFloatMode displayMode() const {
+    return m_calculationPreferences.displayMode();
+  }
   Poincare::Preferences::ComplexFormat complexFormat() const {
     return m_calculationPreferences.complexFormat();
+  }
+  uint8_t numberOfSignificantDigits() const {
+    return m_calculationPreferences.numberOfSignificantDigits();
   }
 
   // Memoization of layouts

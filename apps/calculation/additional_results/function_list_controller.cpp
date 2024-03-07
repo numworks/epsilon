@@ -28,7 +28,6 @@ void FunctionListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Preferences* preferences = Preferences::sharedPreferences;
   Context* context = App::app()->localContext();
 
   Expression inputClone = input.clone();
@@ -57,8 +56,7 @@ void FunctionListController::computeAdditionalResults(
       LayoutHelper::String("y="),
       inputClone
           .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
-          .createLayout(preferences->displayMode(),
-                        preferences->numberOfSignificantDigits(), context));
+          .createLayout(displayMode(), numberOfSignificantDigits(), context));
   setShowIllustration(true);
 }
 

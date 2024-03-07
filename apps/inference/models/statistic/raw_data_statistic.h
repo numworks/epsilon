@@ -28,6 +28,8 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
   // DoublePairStore
   int seriesAtColumn(int column) const override {
+    assert(0 <= column &&
+           column < k_numberOfColumnsPerSeries * numberOfSeries());
     return seriesAt(column / k_numberOfColumnsPerSeries);
   }
 

@@ -28,7 +28,7 @@
 namespace Inference {
 
 class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
-  using LargeStackViewController = Escher::StackViewController::Custom<9>;
+  using LargeStackViewController = Escher::StackViewController::Custom<8>;
 
  public:
   // Descriptor

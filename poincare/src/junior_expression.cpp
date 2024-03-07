@@ -225,6 +225,160 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
   return;
 }
 
+static bool IsIgnoredSymbol(const JuniorExpression* e,
+                            JuniorExpression::IgnoredSymbols* ignoredSymbols) {
+  if (e->type() != ExpressionNode::Type::Symbol) {
+    return false;
+  }
+  while (ignoredSymbols) {
+    assert(ignoredSymbols->head);
+    if (ignoredSymbols->head->isIdenticalTo(*e)) {
+      return true;
+    }
+    ignoredSymbols = reinterpret_cast<JuniorExpression::IgnoredSymbols*>(
+        ignoredSymbols->tail);
+  }
+  return false;
+}
+
+bool JuniorExpression::recursivelyMatches(
+    ExpressionTrinaryTest test, Context* context,
+    SymbolicComputation replaceSymbols, void* auxiliary,
+    IgnoredSymbols* ignoredSymbols) const {
+  if (!context) {
+    replaceSymbols = SymbolicComputation::DoNotReplaceAnySymbol;
+  }
+  if (IsIgnoredSymbol(this, ignoredSymbols)) {
+    return false;
+  }
+  TrinaryBoolean testResult = test(*this, context, auxiliary);
+  if (testResult == TrinaryBoolean::True) {
+    return true;
+  } else if (testResult == TrinaryBoolean::False) {
+    return false;
+  }
+  assert(testResult == TrinaryBoolean::Unknown && !isUninitialized());
+
+  // Handle dependencies, store, symbols and functions
+  ExpressionNode::Type t = type();
+  if (t == ExpressionNode::Type::Dependency) {
+#if 0  // TODO_PCJ
+    JuniorExpression e = *this;
+    return static_cast<Dependency&>(e).dependencyRecursivelyMatches(
+        test, context, replaceSymbols, auxiliary, ignoredSymbols);
+#else
+    assert(false);
+    return false;
+#endif
+  }
+  if (t == ExpressionNode::Type::Store) {
+#if 0  // TODO_PCJ
+    JuniorExpression e = *this;
+    return static_cast<Store&>(e).storeRecursivelyMatches(
+        test, context, replaceSymbols, auxiliary, ignoredSymbols);
+#else
+    assert(false);
+    return false;
+#endif
+  }
+  if (t == ExpressionNode::Type::Symbol ||
+      t == ExpressionNode::Type::Function) {
+    assert(replaceSymbols ==
+               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
+           replaceSymbols ==
+               SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
+           // We need only those cases for now
+           || replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol);
+    if (replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol ||
+        (replaceSymbols ==
+             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions &&
+         t == ExpressionNode::Type::Symbol)) {
+      return false;
+    }
+    assert(replaceSymbols ==
+               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
+           t == ExpressionNode::Type::Function);
+#if 0  // TODO_PCJ
+    return SymbolAbstract::matches(convert<const SymbolAbstract>(), test,
+                                   context, auxiliary, ignoredSymbols);
+#else
+    assert(false);
+    return false;
+#endif
+  }
+
+  const int childrenCount = this->numberOfChildren();
+  bool isParametered = tree()->isParametric();
+  // Run loop backwards to find lists and matrices quicker in NAry expressions
+  for (int i = childrenCount - 1; i >= 0; i--) {
+    if (isParametered && i == PoincareJ::Parametric::k_variableIndex) {
+      continue;
+    }
+    // TODO: There's no need to clone the juniorExpression here.
+    JuniorExpression childToAnalyze = childAtIndex(i);
+    bool matches;
+    if (isParametered && i == PoincareJ::Parametric::FunctionIndex(tree())) {
+      JuniorExpression symbolExpr =
+          childAtIndex(PoincareJ::Parametric::k_variableIndex);
+      IgnoredSymbols updatedIgnoredSymbols = {.head = &symbolExpr,
+                                              .tail = ignoredSymbols};
+      matches = childToAnalyze.recursivelyMatches(
+          test, context, replaceSymbols, auxiliary, &updatedIgnoredSymbols);
+    } else {
+      matches = childToAnalyze.recursivelyMatches(test, context, replaceSymbols,
+                                                  auxiliary, ignoredSymbols);
+    }
+    if (matches) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool JuniorExpression::recursivelyMatches(
+    ExpressionTest test, Context* context,
+    SymbolicComputation replaceSymbols) const {
+  ExpressionTrinaryTest ternary = [](const JuniorExpression e, Context* context,
+                                     void* auxiliary) {
+    ExpressionTest* trueTest = static_cast<ExpressionTest*>(auxiliary);
+    return (*trueTest)(e, context) ? TrinaryBoolean::True
+                                   : TrinaryBoolean::Unknown;
+  };
+  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+}
+
+bool JuniorExpression::recursivelyMatches(
+    SimpleExpressionTest test, Context* context,
+    SymbolicComputation replaceSymbols) const {
+  ExpressionTrinaryTest ternary = [](const JuniorExpression e, Context* context,
+                                     void* auxiliary) {
+    SimpleExpressionTest* trueTest =
+        static_cast<SimpleExpressionTest*>(auxiliary);
+    return (*trueTest)(e) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+  };
+  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+}
+
+bool JuniorExpression::recursivelyMatches(ExpressionTestAuxiliary test,
+                                          Context* context,
+                                          SymbolicComputation replaceSymbols,
+                                          void* auxiliary) const {
+  struct Pack {
+    ExpressionTestAuxiliary* test;
+    void* auxiliary;
+  };
+  ExpressionTrinaryTest ternary = [](const JuniorExpression e, Context* context,
+                                     void* pack) {
+    ExpressionTestAuxiliary* trueTest =
+        static_cast<ExpressionTestAuxiliary*>(static_cast<Pack*>(pack)->test);
+    return (*trueTest)(e, context, static_cast<Pack*>(pack)->auxiliary)
+               ? TrinaryBoolean::True
+               : TrinaryBoolean::Unknown;
+  };
+  Pack pack{&test, auxiliary};
+  return recursivelyMatches(ternary, context, replaceSymbols, &pack);
+}
+
 /* Matrix */
 
 Matrix Matrix::Builder() {

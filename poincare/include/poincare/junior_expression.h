@@ -156,7 +156,7 @@ class JuniorExpression : public OExpression {
                                                   Context* context,
                                                   void* auxiliary);
   struct IgnoredSymbols {
-    Symbol* head;
+    JuniorExpression* head;
     void* tail;
   };
   bool recursivelyMatches(
@@ -164,36 +164,24 @@ class JuniorExpression : public OExpression {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr,
-      IgnoredSymbols* ignoredSymbols = nullptr) const {
-    assert(false);
-    return false;
-  }
+      IgnoredSymbols* ignoredSymbols = nullptr) const;
   typedef bool (*ExpressionTest)(const JuniorExpression e, Context* context);
   bool recursivelyMatches(
       ExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const {
-    assert(false);
-    return false;
-  }
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   typedef bool (*SimpleExpressionTest)(const JuniorExpression e);
   bool recursivelyMatches(
       SimpleExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const {
-    assert(false);
-    return false;
-  }
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   typedef bool (*ExpressionTestAuxiliary)(const JuniorExpression e,
                                           Context* context, void* auxiliary);
   bool recursivelyMatches(
       ExpressionTestAuxiliary test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      void* auxiliary = nullptr) const {
-    assert(false);
-    return false;
-  }
+      void* auxiliary = nullptr) const;
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsUninitialized(const JuniorExpression e) {
     return e.isUninitialized();

@@ -2838,6 +2838,8 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
   assert_parsed_expression_simplify_to("abs({1}%)", "{abs(1/100)}");
   assert_parsed_expression_simplify_to("2+{5,10}%",
                                        "{2×(1+5/100),2×(1+10/100)}");
+  assert_parsed_expression_simplify_to("rem(sort({i})^4,0)",
+                                       "rem(sort({i})^4,0)");
 }
 
 QUIZ_CASE(poincare_simplification_mix_lists) {

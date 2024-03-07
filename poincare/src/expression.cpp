@@ -948,41 +948,50 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
    * types but many expressions have the same implementation so it is easier to
    * factorize it here. */
 
-  // These expressions are real if their children are
-  if (isOfType({ExpressionNode::Type::ArcTangent,
-                ExpressionNode::Type::Conjugate, ExpressionNode::Type::Cosine,
-                ExpressionNode::Type::Sine, ExpressionNode::Type::Tangent})) {
-    return childAtIndex(0).isReal(context, canContainMatrices);
-  }
-
   // These expressions are always real
   if ((isNumber() && !isUndefined()) ||
-      isOfType({ExpressionNode::Type::BinomialCoefficient,
-                ExpressionNode::Type::Derivative,
-                ExpressionNode::Type::DivisionQuotient,
-                ExpressionNode::Type::DivisionRemainder,
-                ExpressionNode::Type::GreatCommonDivisor,
-                ExpressionNode::Type::Integral,
-                ExpressionNode::Type::LeastCommonMultiple,
-                ExpressionNode::Type::PermuteCoefficient,
-                ExpressionNode::Type::Random, ExpressionNode::Type::Round,
-                ExpressionNode::Type::SignFunction,
-                ExpressionNode::Type::Unit})) {
+      type() == ExpressionNode::Type::Random) {
     return true;
   }
 
-  // These expressions are real when they are scalar
-  if (isOfType(
-          {ExpressionNode::Type::AbsoluteValue, ExpressionNode::Type::Ceiling,
-           ExpressionNode::Type::ComplexArgument,
-           ExpressionNode::Type::Factorial, ExpressionNode::Type::Floor,
-           ExpressionNode::Type::FracPart, ExpressionNode::Type::ImaginaryPart,
-           ExpressionNode::Type::RealPart})) {
+  /* These expressions are real when they do not contain a matrix or a list
+   * - either they always return a real value on any complex
+   *   (AbsoluteValue, ComplexArgument, ImaginaryPart, RealPart)
+   * - or they return undef on complex
+   *   (all the others) */
+  if (isOfType({
+          ExpressionNode::Type::AbsoluteValue,
+          ExpressionNode::Type::BinomialCoefficient,
+          ExpressionNode::Type::Ceiling,
+          ExpressionNode::Type::ComplexArgument,
+          ExpressionNode::Type::Derivative,
+          ExpressionNode::Type::DivisionQuotient,
+          ExpressionNode::Type::DivisionRemainder,
+          ExpressionNode::Type::Factorial,
+          ExpressionNode::Type::Floor,
+          ExpressionNode::Type::FracPart,
+          ExpressionNode::Type::GreatCommonDivisor,
+          ExpressionNode::Type::ImaginaryPart,
+          ExpressionNode::Type::Integral,
+          ExpressionNode::Type::LeastCommonMultiple,
+          ExpressionNode::Type::PermuteCoefficient,
+          ExpressionNode::Type::Randint,
+          ExpressionNode::Type::RealPart,
+          ExpressionNode::Type::Round,
+          ExpressionNode::Type::SignFunction,
+          ExpressionNode::Type::Unit,
+      })) {
     return !deepIsMatrix(context, canContainMatrices) && !deepIsList(context);
   }
 
-  // NAryExpresions and Randints are real if all children are real.
-  if (IsNAry(*this) || type() == ExpressionNode::Type::Randint) {
+  // These expressions are real if their children are
+  if (IsNAry(*this) || isOfType({
+                           ExpressionNode::Type::ArcTangent,
+                           ExpressionNode::Type::Conjugate,
+                           ExpressionNode::Type::Cosine,
+                           ExpressionNode::Type::Sine,
+                           ExpressionNode::Type::Tangent,
+                       })) {
     return allChildrenAreReal(context, canContainMatrices);
   }
 
@@ -995,6 +1004,7 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
                                                     canContainMatrices);
   }
 
+  // We should return TrinaryBoolean::Unknown
   return false;
 }
 

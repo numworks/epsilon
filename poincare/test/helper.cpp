@@ -164,8 +164,12 @@ void assert_parsed_expression_simplify_to(
       [](Expression e, ReductionContext reductionContext) {
         Expression simplifiedExpression;
         if (reductionContext.target() == User) {
-          e.cloneAndSimplifyAndApproximate(&simplifiedExpression, nullptr,
-                                           reductionContext);
+          /* Input approximatedExpression as a parameter so that approximation
+           * is computed too, which enables us to check that approximation does
+           * not raise any error. */
+          Expression approximatedExpression;
+          e.cloneAndSimplifyAndApproximate(
+              &simplifiedExpression, &approximatedExpression, reductionContext);
         } else {
           simplifiedExpression = e.cloneAndSimplify(reductionContext);
         }

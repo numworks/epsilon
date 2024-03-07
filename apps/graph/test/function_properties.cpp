@@ -720,6 +720,11 @@ QUIZ_CASE(graph_function_properties) {
             .m_status = ContinuousFunctionProperties::Status::Undefined,
             .m_caption = I18n::Message::UndefinedType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta});
+    assert_check_function_properties(
+        "f(x)=tan(tan(tan(tan(tan(tan(tan(tan(tan(i)))))))))(0,0)",
+        FunctionProperties{
+            .m_status = ContinuousFunctionProperties::Status::Undefined,
+            .m_caption = I18n::Message::UndefinedType});
     constexpr static FunctionProperties k_unhandledCartesian =
         FunctionProperties{
             .m_status = ContinuousFunctionProperties::Status::Unhandled,

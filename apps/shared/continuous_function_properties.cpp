@@ -186,16 +186,12 @@ void ContinuousFunctionProperties::update(
          analyzedExpression.deepIsList(context)) ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
          precomputedFunctionSymbol != SymbolType::T &&
-         analyzedExpression.type() == ExpressionNode::Type::Point)) {
+         analyzedExpression.recursivelyMatches([](const Expression e) {
+           return e.type() == ExpressionNode::Type::Point;
+         }))) {
       setErrorStatusAndUpdateCaption(Status::Undefined);
       return;
     }
-    // We don't need to recursively check if it is a point but we can assert it.
-    assert(precomputedFunctionSymbol == SymbolType::NoSymbol ||
-           precomputedFunctionSymbol == SymbolType::T ||
-           !analyzedExpression.recursivelyMatches([](const Expression e) {
-             return e.type() == ExpressionNode::Type::Point;
-           }));
 
     if (precomputedFunctionSymbol == SymbolType::X) {
       setCartesianFunctionProperties(analyzedExpression, context);

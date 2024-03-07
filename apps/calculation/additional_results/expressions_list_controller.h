@@ -58,12 +58,10 @@ class ExpressionsListController
       const Poincare::ComputationContext& computationContext,
       Poincare::Layout* approximatedLayout = nullptr);
   Poincare::Preferences::AngleUnit angleUnit() const {
-    return static_cast<Poincare::Preferences::AngleUnit>(
-        m_calculationPreferences.angleUnit);
+    return m_calculationPreferences.angleUnit();
   }
   Poincare::Preferences::ComplexFormat complexFormat() const {
-    return static_cast<Poincare::Preferences::ComplexFormat>(
-        m_calculationPreferences.complexFormat);
+    return m_calculationPreferences.complexFormat();
   }
 
   // Memoization of layouts

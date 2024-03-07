@@ -24,10 +24,8 @@ Expression BuildVectorNorm(
   }
   Expression norm = VectorNorm::Builder(exactOutput);
   Preferences::ComplexFormat complexFormat =
-      static_cast<Preferences::ComplexFormat>(
-          calculationPreferences.complexFormat);
-  Preferences::AngleUnit angleUnit =
-      static_cast<Preferences::AngleUnit>(calculationPreferences.angleUnit);
+      calculationPreferences.complexFormat();
+  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit();
   PoincareHelpers::CloneAndSimplify(
       &norm, context,
       {.complexFormat = complexFormat,

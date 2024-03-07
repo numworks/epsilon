@@ -154,10 +154,8 @@ bool AdditionalResultsType::HasUnit(
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Preferences::ComplexFormat complexFormat =
-      static_cast<Preferences::ComplexFormat>(
-          calculationPreferences.complexFormat);
-  Preferences::AngleUnit angleUnit =
-      static_cast<Preferences::AngleUnit>(calculationPreferences.angleUnit);
+      calculationPreferences.complexFormat();
+  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit();
   Expression unit;
   Expression clone = exactOutput.clone();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(

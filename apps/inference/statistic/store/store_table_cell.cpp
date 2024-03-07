@@ -90,6 +90,10 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
       fillColumnName(column, const_cast<char *>(headerCell->text()));
     } else {
+      assert(m_statistic->significanceTestType() ==
+                 SignificanceTestType::OneMean ||
+             m_statistic->significanceTestType() ==
+                 SignificanceTestType::TwoMeans);
       fillColumnName(column, columnName);
       I18n::Message prefix = store()->relativeColumn(column) == 0
                                  ? I18n::Message::Values

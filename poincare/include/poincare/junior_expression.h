@@ -110,6 +110,7 @@ class JuniorExpression : public OExpression {
   }
   JuniorExpression childAtIndex(int i) const;
   ExpressionNode::Type type() const;
+  bool isOfType(std::initializer_list<ExpressionNode::Type> types) const;
 
   JuniorExpression operator=(OExpression&& other) {
     *this = Juniorize(other);
@@ -181,6 +182,13 @@ class JuniorExpression : public OExpression {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr) const;
+
+  bool deepIsOfType(std::initializer_list<ExpressionNode::Type> types,
+                    Context* context = nullptr) const;
+  bool deepIsMatrix(Context* context = nullptr, bool canContainMatrices = true,
+                    bool isReduced = true) const;
+  bool deepIsList(Context* context) const;
+
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsUninitialized(const JuniorExpression e) {
     return e.isUninitialized();

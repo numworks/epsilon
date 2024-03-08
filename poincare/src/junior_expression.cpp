@@ -305,6 +305,16 @@ ExpressionNode::Type JuniorExpression::type() const {
   }
 }
 
+bool JuniorExpression::isOfType(
+    std::initializer_list<ExpressionNode::Type> types) const {
+  for (ExpressionNode::Type t : types) {
+    if (type() == t) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void JuniorExpression::cloneAndSimplifyAndApproximate(
     JuniorExpression* simplifiedExpression,
     JuniorExpression* approximateExpression,
@@ -568,6 +578,32 @@ bool JuniorExpression::recursivelyMatches(ExpressionTestAuxiliary test,
   };
   Pack pack{&test, auxiliary};
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
+}
+
+bool Expression::deepIsOfType(std::initializer_list<ExpressionNode::Type> types,
+                              Context* context) const {
+  return recursivelyMatches(
+      [](const Expression e, Context* context, void* auxiliary) {
+        return e.isOfType(
+                   *static_cast<std::initializer_list<ExpressionNode::Type>*>(
+                       auxiliary))
+                   ? TrinaryBoolean::True
+                   : TrinaryBoolean::Unknown;
+      },
+      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      &types);
+}
+
+bool Expression::deepIsMatrix(Context* context, bool canContainMatrices,
+                              bool isReduced) const {
+  if (!canContainMatrices) {
+    return false;
+  }
+  return PoincareJ::Dimension::GetDimension(tree()).isMatrix();
+}
+
+bool Expression::deepIsList(Context* context) const {
+  return PoincareJ::Dimension::GetListLength(tree()) >= 0;
 }
 
 /* Matrix */

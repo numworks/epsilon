@@ -1127,8 +1127,14 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
     // TODO: Partially approximate additions and multiplication anyway
     return changed;
   }
-  Tree* approximatedTree = RootTreeToTree<T>(tree, s_context->m_angleUnit,
-                                             s_context->m_complexFormat);
+  /* RootTreeToTree will override and clear s_context. We need to store it away
+   * in the meantime.
+   * TODO: this could be avoided by reworking how s_context is handled. */
+  Context* previousContext = s_context;
+  s_context = nullptr;
+  Tree* approximatedTree = RootTreeToTree<T>(tree, previousContext->m_angleUnit,
+                                             previousContext->m_complexFormat);
+  s_context = previousContext;
   assert(!tree->treeIsIdenticalTo(approximatedTree));
   tree->moveTreeOverTree(approximatedTree);
   return true;

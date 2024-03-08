@@ -80,6 +80,10 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
 };
 
 bool Dependency::ShallowReduce(Tree* dep) {
+  /* TODO : We call this function to eliminate some dependencies after we
+   * modified the list and it processes all the dependencies. We should rather
+   * add an AddDependency method that makes sure the dependency is interesting
+   * and not already covered by another one in the list. */
   Tree* expression = dep->child(0);
   Tree* list = expression->nextTree();
 
@@ -171,7 +175,7 @@ bool RemoveUselessDependencies(Tree* dep) {
   }
 
   // ShallowReduce to remove defined dependencies ({x+3}->{x, 3}->{x})
-  // TODO PCJ
+  Dependency::ShallowReduce(dep);
 
   /* Step 2: Remove duplicate dependencies and dependencies contained in others
    * {sqrt(x), sqrt(x), 1/sqrt(x)} -> {1/sqrt(x)} */
@@ -199,6 +203,7 @@ bool RemoveUselessDependencies(Tree* dep) {
     }
   }
 
+  Dependency::ShallowReduce(dep);
   return true;
 }
 

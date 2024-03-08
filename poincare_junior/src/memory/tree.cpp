@@ -1,5 +1,6 @@
 #include <poincare_junior/src/memory/cache_pool.h>
 
+#include "edition_reference.h"
 #include "node_iterator.h"
 
 #if POINCARE_POOL_VISUALIZATION
@@ -478,13 +479,11 @@ void Tree::swapWithTree(Tree* v) {
 }
 
 void SwapTreesPointers(Tree** u, Tree** v) {
-  if (*u > *v) {
-    SwapTreesPointers(v, u);
-  }
-  Block* newV = (*v)->block() - ((*u)->treeSize() - (*v)->treeSize());
+  EditionReference ru(*u);
+  EditionReference rv(*v);
   (*u)->swapWithTree(*v);
-  *v = *u;
-  *u = Tree::FromBlocks(newV);
+  *u = ru;
+  *v = rv;
 }
 
 }  // namespace PoincareJ

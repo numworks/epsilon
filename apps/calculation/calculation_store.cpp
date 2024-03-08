@@ -284,10 +284,11 @@ char *CalculationStore::endOfCalculationAtIndex(int index) const {
 
 size_t CalculationStore::spaceForNewCalculations(
     char *currentEndOfCalculations) const {
-  // Convert to int because size_t cannot be negative
-  int availableSize = (pointerArea() - currentEndOfCalculations) -
-                      static_cast<int>(sizeof(Calculation *));
-  return availableSize > 0 ? static_cast<size_t>(availableSize) : 0;
+  // Be careful with size_t: negative values are not handled
+  return currentEndOfCalculations + sizeof(Calculation *) < pointerArea()
+             ? (pointerArea() - currentEndOfCalculations) -
+                   sizeof(Calculation *)
+             : 0;
 }
 
 size_t CalculationStore::privateDeleteCalculationAtIndex(

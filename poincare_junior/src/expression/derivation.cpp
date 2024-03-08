@@ -1,5 +1,6 @@
 #include "derivation.h"
 
+#include <poincare_junior/src/expression/dependency.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/set.h>
@@ -84,6 +85,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
 
   if (setOfDependencies->numberOfChildren() > 0) {
     derivand->cloneNodeAtNode(KDep);
+    Dependency::ShallowReduce(derivand);
   } else {
     setOfDependencies->removeTree();
   }

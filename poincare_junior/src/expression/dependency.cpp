@@ -1,11 +1,13 @@
 #include "dependency.h"
 
+#include "poincare_junior/src/expression/approximation.h"
 #include "poincare_junior/src/expression/k_tree.h"
 #include "poincare_junior/src/expression/parametric.h"
 #include "poincare_junior/src/expression/set.h"
 #include "poincare_junior/src/expression/variables.h"
 #include "poincare_junior/src/memory/block.h"
 #include "poincare_junior/src/memory/edition_reference.h"
+#include "poincare_junior/src/memory/exception_checkpoint.h"
 #include "poincare_junior/src/n_ary.h"
 
 namespace PoincareJ {
@@ -76,6 +78,54 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   }
   return false;
 };
+
+bool Dependency::ShallowReduce(Tree* dep) {
+  Tree* expression = dep->child(0);
+  Tree* list = expression->nextTree();
+
+  bool changed = false;
+  int totalNumberOfDependencies = list->numberOfChildren();
+  int i = 0;
+  while (i < totalNumberOfDependencies) {
+    Tree* depI = list->child(i);
+    Tree* approximation;
+
+    bool hasSymbolsOrRandom = depI->recursivelyMatches(
+        [](const Tree* t) { return t->isVariable() || t->isRandom(); });
+    if (hasSymbolsOrRandom) {
+      /* If the dependency involves unresolved symbol/function/sequence,
+       * the approximation of the dependency could be undef while the
+       * whole expression is not. We juste approximate everything but the symbol
+       * in case the other parts of the expression make it undef/nonreal.
+       * */
+      approximation = depI->clone();
+      Approximation::ApproximateAndReplaceEveryScalar(approximation);
+    } else {
+      // TODO PCJ
+      approximation = Approximation::RootTreeToTree<double>(
+          depI, AngleUnit::Radian, ComplexFormat::Real);
+    }
+    if (approximation->isUndefined()) {
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
+    approximation->removeTree();
+    if (!hasSymbolsOrRandom) {
+      changed = true;
+      NAry::RemoveChildAtIndex(list, i);
+      totalNumberOfDependencies--;
+    } else {
+      i++;
+    }
+  }
+
+  if (/*expression->isUndefined() ||*/ totalNumberOfDependencies == 0) {
+    list->removeTree();
+    dep->removeNode();
+    return true;
+  }
+
+  return changed;
+}
 
 bool ContainsSameDependency(const Tree* out, const Tree* in) {
   if (in->treeIsIdenticalTo(out)) {

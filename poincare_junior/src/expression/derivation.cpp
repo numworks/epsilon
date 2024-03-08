@@ -1,8 +1,8 @@
 #include "derivation.h"
 
 #include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/list.h>
 #include <poincare_junior/src/expression/rational.h>
+#include <poincare_junior/src/expression/set.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
@@ -29,12 +29,13 @@ bool Derivation::ShallowSimplify(Tree *node) {
     derivationOrder = Integer::Handler(order).to<uint8_t>();
     constDerivand = order->nextTree();
   }
+  Tree *setOfDependencies;
   Tree *derivand;
   if (constDerivand->isDependency()) {
-    listOfDependencies = constDerivand->child(1)->clone();
+    setOfDependencies = constDerivand->child(1)->clone();
     derivand = constDerivand->child(0)->clone();
   } else {
-    listOfDependencies = List::PushEmpty();
+    setOfDependencies = Set::PushEmpty();
     derivand = constDerivand->clone();
   }
 
@@ -69,20 +70,22 @@ bool Derivation::ShallowSimplify(Tree *node) {
     derivand->removeTree();
   }
 
-  SwapTreesPointers(&derivand, &listOfDependencies);
+  SwapTreesPointers(&derivand, &setOfDependencies);
+  // Do not add a dependency if nothing was derivated.
   if (currentDerivationOrder < derivationOrder) {
-    // Do not add a dependency if nothing was derivated.
-    NAry::AddChild(listOfDependencies, constDerivand->clone());
+    EditionReference formula = CloneReplacingSymbol(constDerivand, symbolValue);
+    Set::Add(setOfDependencies, formula);
+    formula->removeTree();
   }
 
 #if TODO_PCJ
   reductionContext.setTarget(initialTarget);
 #endif
 
-  if (listOfDependencies->numberOfChildren() > 0) {
+  if (setOfDependencies->numberOfChildren() > 0) {
     derivand->cloneNodeAtNode(KDep);
   } else {
-    listOfDependencies->removeTree();
+    setOfDependencies->removeTree();
   }
 
   node->moveTreeOverTree(derivand);

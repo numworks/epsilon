@@ -1106,13 +1106,15 @@ template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
                                                       bool collapse) {
   // These types are either already approximated or impossible to approximate.
-  if (tree->isFloat() || tree->isRandomNode() ||
+  if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
       tree->isOfType({BlockType::UserSymbol, BlockType::Variable,
                       BlockType::Unit, BlockType::PhysicalConstant})) {
     return false;
   }
   bool changed = false;
-  bool approximateNode = collapse || (tree->numberOfChildren() == 0);
+  bool approximateNode =
+      (collapse || (tree->numberOfChildren() == 0)) &&
+      !(tree->isList() || tree->isMatrix() || tree->isPoint());
   int childIndex = 0;
   for (Tree* child : tree->children()) {
     if (interruptApproximation(tree->type(), childIndex++, child->type())) {
@@ -1125,8 +1127,10 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
     // TODO: Partially approximate additions and multiplication anyway
     return changed;
   }
-  tree->moveTreeOverTree(
-      SharedEditionPool->push<FloatType<T>::type>(To<T>(tree)));
+  Tree* approximatedTree = RootTreeToTree<T>(tree, s_context->m_angleUnit,
+                                             s_context->m_complexFormat);
+  assert(!tree->treeIsIdenticalTo(approximatedTree));
+  tree->moveTreeOverTree(approximatedTree);
   return true;
 }
 

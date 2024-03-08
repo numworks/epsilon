@@ -34,7 +34,7 @@ void ExamModeController::didEnterResponderChain(
   selectRow(initialSelectedRow());
   m_contentView.reload();
   // We add a message when the mode exam is on
-  m_contentView.setMessage(Preferences::sharedPreferences->examMode().isActive()
+  m_contentView.setMessage(Preferences::SharedPreferences()->examMode().isActive()
                                ? I18n::Message::ToDeactivateExamMode
                                : I18n::Message::Default);
 }
@@ -43,7 +43,7 @@ int ExamModeController::numberOfRows() const {
   /* Available exam mode depends on the selected country and the active mode.
    * A user could first activate an exam mode and then change the country. */
   ExamMode::Ruleset rules =
-      Preferences::sharedPreferences->examMode().ruleset();
+      Preferences::SharedPreferences()->examMode().ruleset();
   switch (rules) {
     case ExamMode::Ruleset::PressToTest:
       // Menu shouldn't be visible
@@ -108,9 +108,9 @@ int ExamModeController::initialSelectedRow() const {
 
 ExamMode ExamModeController::examMode() {
   ExamMode mode(examModeRulesetAtIndex(selectedRow()));
-  if (Preferences::sharedPreferences->examMode().isActive()) {
+  if (Preferences::SharedPreferences()->examMode().isActive()) {
     // If the exam mode is already on, this re-activate the same exam mode
-    mode = Preferences::sharedPreferences->examMode();
+    mode = Preferences::SharedPreferences()->examMode();
   }
   return mode;
 }
@@ -195,7 +195,7 @@ I18n::Message ExamModeController::examModeActivationMessage(
                 "messages size is invalid");
 
   ExamMode::Ruleset examMode =
-      Preferences::sharedPreferences->examMode().ruleset();
+      Preferences::SharedPreferences()->examMode().ruleset();
   bool isReactivation = (examMode != ExamMode::Ruleset::Off);
   assert(!isReactivation || index == 0);
   // Exam mode is either the selected ruleset or the already activated one.

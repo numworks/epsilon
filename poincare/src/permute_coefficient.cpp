@@ -22,7 +22,7 @@ int PermuteCoefficientNode::numberOfChildren() const {
 Layout PermuteCoefficientNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context *context) const {
-  if (Preferences::sharedPreferences->combinatoricSymbols() ==
+  if (Preferences::SharedPreferences()->combinatoricSymbols() ==
       Preferences::CombinatoricSymbols::Default) {
     return LayoutHelper::Prefix(
         PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits,

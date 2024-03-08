@@ -197,8 +197,8 @@ Range2D<float> GraphController::optimalRange(
         zoom.fitConditions(static_cast<PiecewiseOperator &>(p),
                            evaluator<float>, f.operator->(),
                            ContinuousFunction::k_unknownName,
-                           Preferences::sharedPreferences->complexFormat(),
-                           Preferences::sharedPreferences->angleUnit(), alongY);
+                           Preferences::SharedPreferences()->complexFormat(),
+                           Preferences::SharedPreferences()->angleUnit(), alongY);
       }
 
       if (canComputeIntersections[i] &&

@@ -91,7 +91,7 @@ void FunctionParameterController::viewWillAppear() {
     char buffer[bufferSize];
     writeInterval(buffer, bufferSize, min, max,
                   Preferences::VeryShortNumberOfSignificantDigits,
-                  Preferences::sharedPreferences->displayMode());
+                  Preferences::SharedPreferences()->displayMode());
     // Cell's layout will adapt to fit the subLabel.
     m_functionDomainCell.subLabel()->setText(buffer);
   }

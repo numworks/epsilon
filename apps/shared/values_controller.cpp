@@ -125,8 +125,8 @@ int ValuesController::numberOfColumns() const { return m_numberOfColumns; }
 void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
                                            int row) {
   fillCellForLocationWithDisplayMode(
-      cell, column, row, Preferences::sharedPreferences->displayMode(),
-      Preferences::sharedPreferences->numberOfSignificantDigits());
+      cell, column, row, Preferences::SharedPreferences()->displayMode(),
+      Preferences::SharedPreferences()->numberOfSignificantDigits());
   // The cell is not a title cell and not editable
   if (typeAtLocation(column, row) == k_notEditableValueCellType) {
     EvenOddExpressionCell *myCell = static_cast<EvenOddExpressionCell *>(cell);
@@ -292,7 +292,7 @@ int ValuesController::numberOfElementsInColumn(int column) const {
 KDCoordinate ValuesController::defaultColumnWidth() {
   KDCoordinate width =
       PrintFloat::glyphLengthForFloatWithPrecision(
-          Preferences::sharedPreferences->numberOfSignificantDigits()) *
+          Preferences::SharedPreferences()->numberOfSignificantDigits()) *
           KDFont::GlyphWidth(k_cellFont) +
       2 * Escher::Metric::SmallCellMargin;
   return std::max(EditableCellTableViewController::defaultColumnWidth(), width);

@@ -16,9 +16,9 @@ namespace PoincareHelpers {
 inline Poincare::Layout CreateLayout(
     const Poincare::Expression e, Poincare::Context* context,
     Poincare::Preferences::PrintFloatMode displayMode =
-        Poincare::Preferences::sharedPreferences->displayMode(),
+        Poincare::Preferences::SharedPreferences()->displayMode(),
     uint8_t numberOfSignificantDigits =
-        Poincare::Preferences::sharedPreferences->numberOfSignificantDigits()) {
+        Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits()) {
   return e.createLayout(displayMode, numberOfSignificantDigits, context);
 }
 
@@ -32,7 +32,7 @@ inline int ConvertFloatToText(T d, char* buffer, int bufferSize,
              Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
                  numberOfSignificantDigits),
              numberOfSignificantDigits,
-             Poincare::Preferences::sharedPreferences->displayMode())
+             Poincare::Preferences::SharedPreferences()->displayMode())
       .CharLength;
 }
 
@@ -53,7 +53,7 @@ inline size_t Serialize(
     int numberOfSignificantDigits =
         Poincare::PrintFloat::k_maxNumberOfSignificantDigits) {
   return e.serialize(buffer, bufferSize,
-                     Poincare::Preferences::sharedPreferences->displayMode(),
+                     Poincare::Preferences::SharedPreferences()->displayMode(),
                      numberOfSignificantDigits);
 }
 
@@ -61,9 +61,9 @@ inline size_t Serialize(
 
 struct ApproximationParameters {
   Poincare::Preferences::ComplexFormat complexFormat =
-      Poincare::Preferences::sharedPreferences->complexFormat();
+      Poincare::Preferences::SharedPreferences()->complexFormat();
   Poincare::Preferences::AngleUnit angleUnit =
-      Poincare::Preferences::sharedPreferences->angleUnit();
+      Poincare::Preferences::SharedPreferences()->angleUnit();
   bool updateComplexFormatWithExpression = true;
 };
 
@@ -109,9 +109,9 @@ inline T ApproximateWithValueForSymbol(
 
 struct ReductionParameters {
   Poincare::Preferences::ComplexFormat complexFormat =
-      Poincare::Preferences::sharedPreferences->complexFormat();
+      Poincare::Preferences::SharedPreferences()->complexFormat();
   Poincare::Preferences::AngleUnit angleUnit =
-      Poincare::Preferences::sharedPreferences->angleUnit();
+      Poincare::Preferences::SharedPreferences()->angleUnit();
   bool updateComplexFormatWithExpression = true;
 
   Poincare::ReductionTarget target = Poincare::ReductionTarget::User;
@@ -187,7 +187,7 @@ inline void CloneAndReduceAndRemoveUnit(
 template <typename T>
 inline Poincare::Solver<T> Solver(T xMin, T xMax, const char* unknown = nullptr,
                                   Poincare::Context* context = nullptr) {
-  Poincare::Preferences* preferences = Poincare::Preferences::sharedPreferences;
+  Poincare::Preferences* preferences = Poincare::Preferences::SharedPreferences();
   return Poincare::Solver<T>(xMin, xMax, unknown, context,
                              preferences->complexFormat(),
                              preferences->angleUnit());

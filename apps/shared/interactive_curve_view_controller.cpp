@@ -171,7 +171,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       floatBody, App::app()->localContext(),
-      Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(),
+      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
       curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
   return true;

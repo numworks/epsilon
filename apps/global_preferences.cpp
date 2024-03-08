@@ -7,15 +7,15 @@ OMG::GlobalBox<GlobalPreferences> GlobalPreferences::sharedGlobalPreferences;
 void GlobalPreferences::setCountry(I18n::Country country,
                                    bool updateSnapshots) {
   m_country = country;
-  Poincare::Preferences::sharedPreferences->setCombinatoricSymbols(
+  Poincare::Preferences::SharedPreferences()->setCombinatoricSymbols(
       combinatoricsSymbols());
-  Poincare::Preferences::sharedPreferences->enableMixedFractions(
+  Poincare::Preferences::SharedPreferences()->enableMixedFractions(
       mixedFractions());
-  Poincare::Preferences::sharedPreferences->setLogarithmBasePosition(
+  Poincare::Preferences::SharedPreferences()->setLogarithmBasePosition(
       logarithmBasePosition());
-  Poincare::Preferences::sharedPreferences->setLogarithmKeyEvent(
+  Poincare::Preferences::SharedPreferences()->setLogarithmKeyEvent(
       logarithmKeyEvent());
-  Poincare::Preferences::sharedPreferences->setParabolaParameter(
+  Poincare::Preferences::SharedPreferences()->setParabolaParameter(
       parabolaParameter());
   if (!updateSnapshots) {
     return;

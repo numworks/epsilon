@@ -34,8 +34,8 @@ Layout StoreApp::Snapshot::memoizedFormula(int index) const {
   Expression e = Expression::Parse(m_memoizedFormulasBuffer[index],
                                    StoreApp::storeApp()->localContext());
   return e.createLayout(
-      Preferences::sharedPreferences->displayMode(),
-      Preferences::sharedPreferences->numberOfSignificantDigits(),
+      Preferences::SharedPreferences()->displayMode(),
+      Preferences::SharedPreferences()->numberOfSignificantDigits(),
       StoreApp::storeApp()->localContext());
 }
 

@@ -64,8 +64,8 @@ App::Snapshot* AppsContainer::usbConnectedAppSnapshot() {
 
 void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode) {
   ExamMode::Ruleset previousRules =
-      Preferences::sharedPreferences->examMode().ruleset();
-  Preferences::sharedPreferences->setExamMode(targetExamMode);
+      Preferences::SharedPreferences()->examMode().ruleset();
+  Preferences::SharedPreferences()->setExamMode(targetExamMode);
 
   if (targetExamMode.ruleset() != ExamMode::Ruleset::Off) {
     // Empty storage (delete functions, variables, python scripts)
@@ -167,7 +167,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
       return false;
     }
-    if (!Preferences::sharedPreferences->examMode().isActive()) {
+    if (!Preferences::SharedPreferences()->examMode().isActive()) {
       App::Snapshot* activeSnapshot =
           (activeApp() == nullptr ? homeAppSnapshot()
                                   : activeApp()->snapshot());
@@ -276,7 +276,7 @@ void AppsContainer::handleRunException() {
 
 void AppsContainer::run() {
   window()->setAbsoluteFrame(KDRectScreen);
-  Preferences* poincarePreferences = Preferences::sharedPreferences;
+  Preferences* poincarePreferences = Preferences::SharedPreferences();
   Poincare::ExamMode examMode = poincarePreferences->examMode();
   if (examMode.isActive()) {
     setExamMode(examMode);

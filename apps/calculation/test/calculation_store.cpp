@@ -144,11 +144,11 @@ QUIZ_CASE(calculation_ans) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
   // Setup complex format and exam mode
   Preferences::ComplexFormat previousComplexFormat =
-      Preferences::sharedPreferences->complexFormat();
-  ExamMode previousExamMode = Preferences::sharedPreferences->examMode();
-  Preferences::sharedPreferences->setComplexFormat(
+      Preferences::SharedPreferences()->complexFormat();
+  ExamMode previousExamMode = Preferences::SharedPreferences()->examMode();
+  Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
-  Preferences::sharedPreferences->setExamMode(ExamMode(ExamMode::Ruleset::Off));
+  Preferences::SharedPreferences()->setExamMode(ExamMode(ExamMode::Ruleset::Off));
 
   store.push("1+3/4", &globalContext);
   store.push("ans+2/3", &globalContext);
@@ -181,7 +181,7 @@ QUIZ_CASE(calculation_ans) {
 
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
-  Preferences::sharedPreferences->setExamMode(
+  Preferences::SharedPreferences()->setExamMode(
       ExamMode(ExamMode::Ruleset::Dutch));
   assert(Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
       SquareRoot::Builder(Rational::Builder(2)),
@@ -190,8 +190,8 @@ QUIZ_CASE(calculation_ans) {
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 
   // Restore complex format and exam mode
-  Preferences::sharedPreferences->setExamMode(previousExamMode);
-  Preferences::sharedPreferences->setComplexFormat(previousComplexFormat);
+  Preferences::SharedPreferences()->setExamMode(previousExamMode);
+  Preferences::SharedPreferences()->setComplexFormat(previousComplexFormat);
 
   store.push("_g0", &globalContext);
   store.push("ans→m*s^-2", &globalContext);
@@ -257,8 +257,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
   Preferences::AngleUnit previousAngleUnit =
-      Preferences::sharedPreferences->angleUnit();
-  Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Degree);
+      Preferences::SharedPreferences()->angleUnit();
+  Preferences::SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
 
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Equal, "1/2", "0.5", "0.5", &globalContext,
@@ -363,7 +363,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("45→gon", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "50×_gon", "50×_gon",
                       &globalContext, &store);
-  Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Radian);
+  Preferences::SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Radian);
   assertCalculationIs("π/2→°", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "90×_°", "90×_°",
                       &globalContext, &store);
@@ -383,11 +383,11 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "6×_rad", "6×_rad",
                       &globalContext, &store);
-  Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Degree);
+  Preferences::SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
-  ExamMode previousExamMode = Preferences::sharedPreferences->examMode();
-  Preferences::sharedPreferences->setExamMode(
+  ExamMode previousExamMode = Preferences::SharedPreferences()->examMode();
+  Preferences::SharedPreferences()->setExamMode(
       ExamMode(ExamMode::Ruleset::Dutch));
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
@@ -412,8 +412,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("_g0", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
                       nullptr, nullptr, nullptr, &globalContext, &store);
 
-  Preferences::sharedPreferences->setExamMode(previousExamMode);
-  Preferences::sharedPreferences->setAngleUnit(previousAngleUnit);
+  Preferences::SharedPreferences()->setExamMode(previousExamMode);
+  Preferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
 }
 
 void assertMainCalculationOutputIs(const char *input, const char *output,
@@ -686,7 +686,7 @@ QUIZ_CASE(calculation_complex_format) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  Preferences::sharedPreferences->setComplexFormat(
+  Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
   assertCalculationIs("1+i", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
                       nullptr, "1+i", "1+i", &globalContext, &store);
@@ -709,7 +709,7 @@ QUIZ_CASE(calculation_complex_format) {
                       EqualSign::Unknown, nullptr, "nonreal", "nonreal",
                       &globalContext, &store);
 
-  Preferences::sharedPreferences->setComplexFormat(
+  Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
   assertCalculationIs("1+i", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
                       nullptr, "1+i", "1+i", &globalContext, &store);
@@ -732,7 +732,7 @@ QUIZ_CASE(calculation_complex_format) {
                       EqualSign::Approximation, "root(8,4)/2+root(8,4)/2×i",
                       nullptr, nullptr, &globalContext, &store);
 
-  Preferences::sharedPreferences->setComplexFormat(
+  Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "√(2)×e^\u0012π/4×i\u0013",
@@ -758,7 +758,7 @@ QUIZ_CASE(calculation_complex_format) {
                       EqualSign::Approximation, "root(2,4)×e^\u0012π/4×i\u0013",
                       nullptr, nullptr, &globalContext, &store);
 
-  Preferences::sharedPreferences->setComplexFormat(
+  Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
 }
 
@@ -810,7 +810,7 @@ QUIZ_CASE(calculation_additional_results) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  Preferences::sharedPreferences->setComplexFormat(
+  Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
   assertCalculationAdditionalResultTypeHas("1+1", {.integer = true},
                                            &globalContext, &store);
@@ -895,11 +895,11 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("_L/(_L/3)", {}, &globalContext,
                                            &store);
 
-  Preferences::sharedPreferences->setDisplayMode(
+  Preferences::SharedPreferences()->setDisplayMode(
       Preferences::PrintFloatMode::Scientific);
   assertCalculationAdditionalResultTypeHas("e^(2+3)", {}, &globalContext,
                                            &store);
-  Preferences::sharedPreferences->setDisplayMode(
+  Preferences::SharedPreferences()->setDisplayMode(
       Preferences::PrintFloatMode::Decimal);
 
   assertCalculationAdditionalResultTypeHas("√(-1)", {}, &globalContext, &store);
@@ -920,12 +920,12 @@ QUIZ_CASE(calculation_additional_results) {
                                            &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("z.exp").destroy();
 
-  Preferences::sharedPreferences->setComplexFormat(
+  Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
   assertCalculationAdditionalResultTypeHas("-10", {.complex = true},
                                            &globalContext, &store);
 
-  Preferences::sharedPreferences->setComplexFormat(
+  Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
                                            &globalContext, &store);

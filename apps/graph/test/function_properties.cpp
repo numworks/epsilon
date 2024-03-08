@@ -85,7 +85,7 @@ void assert_same_function_properties(const char* expression1,
 }
 
 QUIZ_CASE(graph_function_properties) {
-  Poincare::Preferences::sharedPreferences->setComplexFormat(
+  Poincare::Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
 
   // Test the plot type under different Press-to-test parameters :
@@ -98,7 +98,7 @@ QUIZ_CASE(graph_function_properties) {
                {.forbidInequalityGraphing = true, .forbidImplicitPlots = true}),
   };
   for (const ExamMode examMode : examModes) {
-    Preferences::sharedPreferences->setExamMode(examMode);
+    Preferences::SharedPreferences()->setExamMode(examMode);
     bool noInequations = examMode.forbidInequalityGraphing();
     bool noImplicitPlot = examMode.forbidImplicitPlots();
 
@@ -782,7 +782,7 @@ QUIZ_CASE(graph_function_properties) {
 
     // === Updated complex format ===
 
-    assert(Poincare::Preferences::sharedPreferences->complexFormat() ==
+    assert(Poincare::Preferences::SharedPreferences()->complexFormat() ==
            Preferences::ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
@@ -795,7 +795,7 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("y=im(i*x+1)",
                                      k_cartesianEquationProperties);
 
-    Poincare::Preferences::sharedPreferences->setComplexFormat(
+    Poincare::Preferences::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", k_unhandledCartesian);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
@@ -808,11 +808,11 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("y=im(i*x+1)",
                                      k_cartesianEquationProperties);
     // Restore preferences
-    Poincare::Preferences::sharedPreferences->setComplexFormat(
+    Poincare::Preferences::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);
 
     // Restore an Off exam mode.
-    Poincare::Preferences::sharedPreferences->setExamMode(
+    Poincare::Preferences::SharedPreferences()->setExamMode(
         ExamMode(ExamMode::Ruleset::Off));
   }
 }

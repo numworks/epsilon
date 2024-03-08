@@ -177,7 +177,7 @@ void ValuesController::hideDerivative(Ion::Storage::Record record,
 KDSize ValuesController::ApproximatedParametricCellSize() {
   KDSize layoutSize = Point2DLayoutNode::SizeGivenChildSize(
       PrintFloat::glyphLengthForFloatWithPrecision(
-          Preferences::sharedPreferences->numberOfSignificantDigits()) *
+          Preferences::SharedPreferences()->numberOfSignificantDigits()) *
           KDFont::GlyphWidth(k_cellFont),
       KDFont::GlyphHeight(k_cellFont));
   return layoutSize + KDSize(Metric::SmallCellMargin * 2, 0);
@@ -362,7 +362,7 @@ void ValuesController::setStartEndMessages(
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  Preferences *preferences = Preferences::sharedPreferences;
+  Preferences *preferences = Preferences::SharedPreferences();
   double abscissa;
   int derivationOrder;
   Shared::ExpiringPointer<ContinuousFunction> function =

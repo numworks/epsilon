@@ -134,7 +134,7 @@ void ContinuousFunctionProperties::update(
   setSymbolType(precomputedFunctionSymbol);
   setEquationType(precomputedOperatorType);
 
-  if (Preferences::sharedPreferences->examMode().forbidInequalityGraphing() &&
+  if (Preferences::SharedPreferences()->examMode().forbidInequalityGraphing() &&
       precomputedOperatorType != ComparisonNode::OperatorType::Equal) {
     setErrorStatusAndUpdateCaption(Status::Banned);
     return;
@@ -279,7 +279,7 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  if (Preferences::sharedPreferences->examMode().forbidImplicitPlots()) {
+  if (Preferences::SharedPreferences()->examMode().forbidImplicitPlots()) {
     CodePoint symbol = willBeAlongX ? k_ordinateSymbol : UCodePointUnknown;
     if (!IsExplicitEquation(inputEquation, symbol)) {
       setErrorStatusAndUpdateCaption(Status::Banned);
@@ -450,7 +450,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
                                   : CurveParameterType::CartesianFunction);
 
   if (xDeg >= 1 && xDeg <= 2 &&
-      !Preferences::sharedPreferences->examMode().forbidImplicitPlots()) {
+      !Preferences::SharedPreferences()->examMode().forbidImplicitPlots()) {
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */
@@ -652,7 +652,7 @@ bool ContinuousFunctionProperties::HasNonNullCoefficients(
     Preferences::ComplexFormat complexFormat,
     TrinaryBoolean* highestDegreeCoefficientIsPositive) {
   Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences->angleUnit();
+      Preferences::SharedPreferences()->angleUnit();
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Symbols will be replaced anyway to compute isNull
   int degree = equation.getPolynomialReducedCoefficients(

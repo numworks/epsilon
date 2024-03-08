@@ -121,7 +121,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       // Also round t so that f(x) matches f evaluated at displayed x
       t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
           t, context,
-          Preferences::sharedPreferences->numberOfSignificantDigits(),
+          Preferences::SharedPreferences()->numberOfSignificantDigits(),
           pixelWidth, false);
     }
     // Snap to interest could have corrupted ExpiringPointer
@@ -147,7 +147,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
         t, App::app()->localContext(),
-        Preferences::sharedPreferences->numberOfSignificantDigits(),
+        Preferences::SharedPreferences()->numberOfSignificantDigits(),
         0.05 * step, true);
   }
   // t must have changed
@@ -220,8 +220,8 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       function->nameWithArgument(buffer, bufferSize, derivationOrder);
   assert(function->canDisplayDerivative());
   Preferences::PrintFloatMode mode =
-      Preferences::sharedPreferences->displayMode();
-  int precision = Preferences::sharedPreferences->numberOfSignificantDigits();
+      Preferences::SharedPreferences()->displayMode();
+  int precision = Preferences::SharedPreferences()->numberOfSignificantDigits();
   if (function->properties().isParametric()) {
     assert(derivative.type() == EvaluationNode<double>::Type::PointEvaluation);
     Coordinate2D<double> xy =
@@ -256,8 +256,8 @@ double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
   Print::CustomPrintf(
       buffer, bufferSize, "%s=%*.*ed",
       I18n::translate(I18n::Message::CartesianSlopeFormula), slope,
-      Preferences::sharedPreferences->displayMode(),
-      Preferences::sharedPreferences->numberOfSignificantDigits());
+      Preferences::SharedPreferences()->displayMode(),
+      Preferences::SharedPreferences()->numberOfSignificantDigits());
   bannerView()->slopeView()->setText(buffer);
   bannerView()->reload();
   return slope;

@@ -186,7 +186,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   int baseIndex;
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(
       index, VerticalOffsetLayoutNode::VerticalPosition::Subscript);
-  if (Preferences::sharedPreferences->logarithmBasePosition() ==
+  if (Preferences::SharedPreferences()->logarithmBasePosition() ==
       Preferences::LogarithmBasePosition::TopLeft) {
     baseIndex = 0;
     offsetLayout = VerticalOffsetLayout::Builder(

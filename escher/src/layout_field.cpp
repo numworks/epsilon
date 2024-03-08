@@ -321,7 +321,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
   }
   // The text is parsable, we create its layout an insert it.
   Layout resultLayout = resultExpression.createLayout(
-      Poincare::Preferences::sharedPreferences->displayMode(),
+      Poincare::Preferences::SharedPreferences()->displayMode(),
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
       App::app() ? App::app()->localContext() : nullptr, true);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
@@ -570,7 +570,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
 size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char *buffer,
                                      size_t bufferSize) {
   if (event == Ion::Events::Log &&
-      Poincare::Preferences::sharedPreferences->logarithmKeyEvent() ==
+      Poincare::Preferences::SharedPreferences()->logarithmKeyEvent() ==
           Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
     constexpr const char *k_logWithBase10 = "log(\x11,10)";
     return strlcpy(buffer, k_logWithBase10, bufferSize);

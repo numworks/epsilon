@@ -195,8 +195,8 @@ void assert_auto_solving_range_is(const char *equation, double min,
 
 void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
                                   Preferences::AngleUnit angleUnit) {
-  Preferences::sharedPreferences->setComplexFormat(complexFormat);
-  Preferences::sharedPreferences->setAngleUnit(angleUnit);
+  Preferences::SharedPreferences()->setComplexFormat(complexFormat);
+  Preferences::SharedPreferences()->setAngleUnit(angleUnit);
 }
 
 void set(const char *variable, const char *value) {

@@ -1303,7 +1303,7 @@ Expression Parser::parseIntegerCaretForFunction(bool allowParenthesis,
 
 bool Parser::generateMixedFractionIfNeeded(Expression &leftHandSide) {
   if (m_parsingContext.context() &&
-      !Preferences::sharedPreferences->mixedFractionsAreEnabled()) {
+      !Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
     /* If m_context == nullptr, the expression has already been parsed.
      * We do not escape here because we want to parse it the same way it was
      * parsed the first time.

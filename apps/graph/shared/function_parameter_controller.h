@@ -39,7 +39,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   static constexpr int k_numberOfRows =
       Shared::ListParameterController::k_numberOfSharedCells + 3;
   bool displayDetails() const {
-    assert(!Poincare::Preferences::sharedPreferences->examMode()
+    assert(!Poincare::Preferences::SharedPreferences()->examMode()
                 .forbidGraphDetails() ||
            m_detailsParameterController.detailsNumberOfSections() == 0);
     return m_detailsParameterController.detailsNumberOfSections() > 0;

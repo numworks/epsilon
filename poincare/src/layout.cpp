@@ -72,7 +72,7 @@ size_t Layout::serializeParsedExpression(char *buffer, size_t bufferSize,
     return 0;
   }
   return e.serialize(buffer, bufferSize,
-                     Poincare::Preferences::sharedPreferences->displayMode());
+                     Poincare::Preferences::SharedPreferences()->displayMode());
 }
 
 Layout Layout::recursivelyMatches(LayoutTest test) const {

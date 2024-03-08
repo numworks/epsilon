@@ -25,7 +25,7 @@ class InteractiveCurveViewRangeDelegate {
     return (static_cast<uint64_t>(
                 Ion::Storage::FileSystem::sharedFileSystem->checksum())
             << 32) +
-           static_cast<uint64_t>(Poincare::Preferences::sharedPreferences
+           static_cast<uint64_t>(Poincare::Preferences::SharedPreferences()
                                      ->mathPreferencesCheckSum());
   }
   virtual Poincare::Range2D<float> optimalRange(

@@ -777,7 +777,7 @@ Expression Integer::CreateMixedFraction(const Integer &num,
   Expression integerPart = Rational::Builder(division.quotient);
   Rational fractionPart = Rational::Builder(division.remainder, denomPositive);
   // If mixed fractions are enabled
-  if (Preferences::sharedPreferences->mixedFractionsAreEnabled()) {
+  if (Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
     Expression mixedFraction = MixedFraction::Builder(
         integerPart, Rational::Builder(fractionPart.unsignedIntegerNumerator()),
         Rational::Builder(fractionPart.integerDenominator()));

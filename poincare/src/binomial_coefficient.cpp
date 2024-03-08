@@ -32,7 +32,7 @@ Layout BinomialCoefficientNode::createLayout(
       floatDisplayMode, numberOfSignificantDigits, context);
   Layout child1 = childAtIndex(1)->createLayout(
       floatDisplayMode, numberOfSignificantDigits, context);
-  if (Preferences::sharedPreferences->combinatoricSymbols() ==
+  if (Preferences::SharedPreferences()->combinatoricSymbols() ==
       Preferences::CombinatoricSymbols::Default) {
     return BinomialCoefficientLayout::Builder(child0, child1);
   } else {

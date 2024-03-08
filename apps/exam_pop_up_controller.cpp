@@ -83,7 +83,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
   ExamMode::Ruleset rules = m_targetExamMode.ruleset();
   size_t index = static_cast<size_t>(rules) * messagesPerMode;
   index += (rules == ExamMode::Ruleset::Off &&
-            Preferences::sharedPreferences->examMode().ruleset() ==
+            Preferences::SharedPreferences()->examMode().ruleset() ==
                 ExamMode::Ruleset::PressToTest) ||
            Ion::Authentication::clearanceLevel() !=
                Ion::Authentication::ClearanceLevel::NumWorks;

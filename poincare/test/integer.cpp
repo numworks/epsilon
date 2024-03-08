@@ -400,7 +400,7 @@ QUIZ_CASE(poincare_integer_euclidian_division) {
 
 void assert_mixed_fraction_computes_to(int n, int m, const char* frac,
                                        bool mixedFractionsEnabled = true) {
-  Preferences::sharedPreferences->enableMixedFractions(
+  Preferences::SharedPreferences()->enableMixedFractions(
       mixedFractionsEnabled ? Preferences::MixedFractions::Enabled
                             : Preferences::MixedFractions::Disabled);
   assert_expression_serializes_to(

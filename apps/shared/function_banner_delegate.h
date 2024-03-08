@@ -38,7 +38,7 @@ class FunctionBannerDelegate {
   virtual XYBannerView* bannerView() = 0;
   virtual int numberOfSignificantDigits(bool capped = false) const {
     int userDigits =
-        Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
+        Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits();
     return capped && userDigits > k_cappedNumberOfSignificantDigits
                ? k_cappedNumberOfSignificantDigits
                : userDigits;

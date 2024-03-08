@@ -21,6 +21,8 @@ class Preferences final {
   constexpr static int ShortNumberOfSignificantDigits = 4;
   constexpr static int VeryShortNumberOfSignificantDigits = 3;
 
+  constexpr static char k_recordName[] = "pr";
+
   // Calculation preferences
 
   enum class AngleUnit : uint8_t {
@@ -89,7 +91,7 @@ class Preferences final {
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
 
   Preferences();
-  static OMG::GlobalBox<Preferences> sharedPreferences;
+  static Preferences* SharedPreferences();
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Expression& e, Context* context);

@@ -121,7 +121,7 @@ DomainParameterController::function() const {
 
 Poincare::Layout DomainParameterController::extraCellLayoutAtRow(int row) {
   assert(row == 0);
-  Preferences* pref = Preferences::sharedPreferences;
+  Preferences* pref = Preferences::SharedPreferences();
   return Infinity::Builder(m_currentTextFieldIsMinField)
       .createLayout(pref->displayMode(), pref->numberOfSignificantDigits(),
                     App::app()->localContext());

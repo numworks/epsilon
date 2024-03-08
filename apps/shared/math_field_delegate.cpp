@@ -59,7 +59,7 @@ bool AbstractMathFieldDelegate::isAcceptableText(const char *text,
   constexpr int bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
   int length = exp.serialize(buffer, bufferSize,
-                             Preferences::sharedPreferences->displayMode());
+                             Preferences::SharedPreferences()->displayMode());
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */

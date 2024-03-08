@@ -36,7 +36,7 @@ size_t VectorNormNode::serialize(char* buffer, size_t bufferSize,
 template <typename T>
 Evaluation<T> VectorNormNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
-  if (Poincare::Preferences::sharedPreferences->examMode().forbidVectorNorm()) {
+  if (Poincare::Preferences::SharedPreferences()->examMode().forbidVectorNorm()) {
     return Complex<T>::Undefined();
   }
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
@@ -56,7 +56,7 @@ Expression VectorNorm::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  if (Poincare::Preferences::sharedPreferences->examMode().forbidVectorNorm()) {
+  if (Poincare::Preferences::SharedPreferences()->examMode().forbidVectorNorm()) {
     return replaceWithUndefinedInPlace();
   }
   Expression c = childAtIndex(0);

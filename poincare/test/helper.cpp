@@ -112,7 +112,7 @@ void assert_parsed_expression_is(
     bool parseForAssignment,
     Preferences::MixedFractions mixedFractionsParameter) {
   Shared::GlobalContext context;
-  Preferences::sharedPreferences->enableMixedFractions(mixedFractionsParameter);
+  Preferences::SharedPreferences()->enableMixedFractions(mixedFractionsParameter);
   Expression e = parse_expression(expression, &context, addParentheses,
                                   parseForAssignment);
   quiz_assert_print_if_failure(e.isIdenticalTo(r), expression);

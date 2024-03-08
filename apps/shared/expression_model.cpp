@@ -66,7 +66,7 @@ Preferences::ComplexFormat ExpressionModel::complexFormat(
   }
   assert(m_expressionComplexFormat != MemoizedComplexFormat::NotMemoized);
   Preferences::ComplexFormat userComplexFormat =
-      Preferences::sharedPreferences->complexFormat();
+      Preferences::SharedPreferences()->complexFormat();
   if (m_expressionComplexFormat == MemoizedComplexFormat::Complex &&
       userComplexFormat == Preferences::ComplexFormat::Real) {
     return Preferences::k_defautComplexFormatIfNotReal;

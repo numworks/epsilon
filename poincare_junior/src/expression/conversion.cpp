@@ -248,6 +248,15 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
       }
       return nary;
     }
+    case BlockType::List: {
+      Poincare::OList list = Poincare::OList::Builder();
+      for (const Tree *child : exp->children()) {
+        list.addChildAtIndexInPlace(ToPoincareExpression(child),
+                                    list.numberOfChildren(),
+                                    list.numberOfChildren());
+      }
+      return list;
+    }
     case BlockType::Matrix: {
       Poincare::OMatrix mat = Poincare::OMatrix::Builder();
       for (const Tree *child : exp->children()) {
@@ -322,7 +331,6 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Set:
-    case BlockType::List:
     case BlockType::Polynomial:
     default:
       return Poincare::Undefined::Builder();

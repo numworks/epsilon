@@ -90,7 +90,8 @@ class Approximation final {
   template <typename T>
   static Tree* ToMatrix(const Tree* node);
 
-  // If collapse is true, approximate parents if all children have approximated.
+  /* If collapse is true, approximate parents if all children have approximated.
+   * Also raise if result is undefined. */
   static bool ApproximateAndReplaceEveryScalar(
       Tree* tree, bool collapse = true, const ProjectionContext* ctx = nullptr);
   EDITION_REF_WRAP_2D(ApproximateAndReplaceEveryScalar, bool, true,

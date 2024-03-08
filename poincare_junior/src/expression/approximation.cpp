@@ -1,6 +1,7 @@
 #include "approximation.h"
 
 #include <math.h>
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/n_ary.h>
 #include <poincare_junior/src/numeric/float.h>
@@ -1099,6 +1100,14 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
   s_context = &context;
   bool result = ApproximateAndReplaceEveryScalarT<double>(tree, collapse);
   s_context = nullptr;
+  if (result) {
+    if (tree->isUndefined()) {
+      ExceptionCheckpoint::Raise(ExceptionType::Undefined);
+    }
+    if (tree->isNonreal()) {
+      ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+    }
+  }
   return result;
 }
 

@@ -154,8 +154,8 @@ bool AdditionalResultsType::HasUnit(
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Preferences::ComplexFormat complexFormat =
-      calculationPreferences.complexFormat();
-  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit();
+      calculationPreferences.complexFormat;
+  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
   Expression unit;
   Expression clone = exactOutput.clone();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
@@ -252,13 +252,13 @@ bool AdditionalResultsType::HasScientificNotation(
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   if (approximateOutput.type() == ExpressionNode::Type::Nonreal ||
-      calculationPreferences.displayMode() ==
+      calculationPreferences.displayMode ==
           Preferences::PrintFloatMode::Scientific) {
     return false;
   }
   Layout historyResult = approximateOutput.createLayout(
-      calculationPreferences.displayMode(),
-      calculationPreferences.numberOfSignificantDigits(), globalContext);
+      calculationPreferences.displayMode,
+      calculationPreferences.numberOfSignificantDigits, globalContext);
   return !historyResult.isIdenticalTo(
       ScientificNotationHelper::ScientificLayout(
           approximateOutput, globalContext, calculationPreferences));

@@ -16,13 +16,11 @@ OMG::GlobalBox<Preferences> Preferences::sharedPreferences;
 
 Preferences::Preferences()
     : m_calculationPreferences{
-          .m_angleUnit = static_cast<uint8_t>(AngleUnit::Radian),
-          .m_displayMode =
-              static_cast<uint8_t>(Preferences::PrintFloatMode::Decimal),
-          .m_editionMode = static_cast<bool>(EditionMode::Edition2D),
-          .m_complexFormat =
-              static_cast<uint8_t>(Preferences::ComplexFormat::Real),
-          .m_numberOfSignificantDigits =
+          .angleUnit = AngleUnit::Radian,
+          .displayMode = Preferences::PrintFloatMode::Decimal,
+          .editionMode = EditionMode::Edition2D,
+          .complexFormat = Preferences::ComplexFormat::Real,
+          .numberOfSignificantDigits =
               Preferences::DefaultNumberOfPrintedSignificantDigits} {}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(

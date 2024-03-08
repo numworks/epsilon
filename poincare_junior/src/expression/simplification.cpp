@@ -874,6 +874,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
     assert(!DeepSystematicReduce(ref));
     changed = List::BubbleUp(ref, ShallowSystematicReduce) || changed;
     changed = AdvancedSimplification::AdvancedReduce(ref) || changed;
+    changed = Dependency::DeepRemoveUselessDependencies(ref) || changed;
 
     if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
       // Approximate again in case exact numbers appeared during simplification.

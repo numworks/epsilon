@@ -175,7 +175,7 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
 
 bool EditionPool::insertBlocks(Block *destination, const Block *source,
                                size_t numberOfBlocks, bool at) {
-  if (destination == source || numberOfBlocks == 0) {
+  if (numberOfBlocks == 0) {
     return true;
   }
   checkForEnoughSpace(numberOfBlocks);

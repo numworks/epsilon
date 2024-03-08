@@ -112,7 +112,7 @@ void StoreController::fillCellForLocation(HighlightCell *cell, int column,
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
   fillCellForLocationWithDisplayMode(
-      cell, column, row, Preferences::sharedPreferences->displayMode(),
+      cell, column, row, Preferences::SharedPreferences()->displayMode(),
       AbstractEvenOddBufferTextCell::k_defaultPrecision);
 }
 

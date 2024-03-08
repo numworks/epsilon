@@ -37,7 +37,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::UpperT) &&
       m_messageTreeModel->label() == I18n::Message::About &&
       isHardwareTestRow(selectedRow()) &&
-      !Poincare::Preferences::sharedPreferences->examMode().isActive()) {
+      !Poincare::Preferences::SharedPreferences()->examMode().isActive()) {
     // Prevent hardware test in exam mode so that the LED can't be accessed.
     m_hardwareTestPopUpController.presentModally();
     return true;

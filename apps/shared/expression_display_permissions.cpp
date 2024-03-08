@@ -57,7 +57,7 @@ static bool isPrimeFactorization(Expression expression) {
 }
 
 static bool exactExpressionIsForbidden(Expression exactOutput) {
-  if (!Preferences::sharedPreferences->examMode().forbidExactResults()) {
+  if (!Preferences::SharedPreferences()->examMode().forbidExactResults()) {
     return false;
   }
   if (exactOutput.type() == ExpressionNode::Type::Opposite) {

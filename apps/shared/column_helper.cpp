@@ -175,8 +175,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
 
   // Create the layout before simplifying
   *formulaLayout = formula.createLayout(
-      Preferences::sharedPreferences->displayMode(),
-      Preferences::sharedPreferences->numberOfSignificantDigits(),
+      Preferences::SharedPreferences()->displayMode(),
+      Preferences::SharedPreferences()->numberOfSignificantDigits(),
       &storeContext);
 
   PoincareHelpers::CloneAndSimplify(

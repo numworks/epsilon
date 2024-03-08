@@ -188,7 +188,7 @@ int MainController::typeAtRow(int row) const {
 void MainController::fillCellForRow(HighlightCell *cell, int row) {
   GlobalPreferences *globalPreferences =
       GlobalPreferences::sharedGlobalPreferences;
-  Preferences *preferences = Preferences::sharedPreferences;
+  Preferences *preferences = Preferences::SharedPreferences();
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtRow(row);
@@ -321,7 +321,7 @@ bool MainController::hasTestModeCell() const {
       GlobalPreferences::sharedGlobalPreferences->availableExamModes();
   return (examMode == CountryPreferences::AvailableExamModes::All ||
           examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&
-         Preferences::sharedPreferences->examMode().ruleset() ==
+         Preferences::SharedPreferences()->examMode().ruleset() ==
              ExamMode::Ruleset::Off;
 }
 

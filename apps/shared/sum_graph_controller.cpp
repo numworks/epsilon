@@ -302,7 +302,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
   if (step == Step::Result) {
     Layout leftLayout;
     Layout equalLayout = LayoutHelper::String(" = ", 3);
-    Preferences *preferences = Preferences::sharedPreferences;
+    Preferences *preferences = Preferences::SharedPreferences();
     Layout resultLayout =
         valueLayout(result, preferences->numberOfSignificantDigits(),
                     preferences->displayMode());

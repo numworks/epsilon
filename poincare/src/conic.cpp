@@ -45,7 +45,7 @@ CartesianConic::CartesianConic(const Expression e, Context* context,
    * In this constructor, we extract the coefficients parameters.
    * We then compute the conic's type and canonize the coefficients. */
   Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences->angleUnit();
+      Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation symbolicComputation =
       SymbolicComputation::DoNotReplaceAnySymbol;
@@ -400,7 +400,7 @@ double CartesianConic::getParameter() const {
   assert(isCanonical());
   assert(m_shape == Shape::Parabola);
   double defaultParameter = std::abs(m_e) / 2;
-  return Preferences::sharedPreferences->parabolaParameter() ==
+  return Preferences::SharedPreferences()->parabolaParameter() ==
                  Preferences::ParabolaParameter::FocalLength
              ? defaultParameter / 2
              : defaultParameter;
@@ -425,7 +425,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
                        Preferences::ComplexFormat complexFormat,
                        const char* theta) {
   Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences->angleUnit();
+      Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   // Reduce Conic for analysis
   ReductionContext reductionContext =
@@ -522,7 +522,7 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
                                  Preferences::ComplexFormat complexFormat,
                                  const char* symbol) {
   Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences->angleUnit();
+      Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   // Reduce Conic for analysis
   ReductionContext reductionContext =

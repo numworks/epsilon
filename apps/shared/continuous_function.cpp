@@ -140,7 +140,7 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
   ContinuousFunctionProperties thisProperties = properties();
   if (thisProperties.isParametric()) {
     Preferences::PrintFloatMode mode =
-        Poincare::Preferences::sharedPreferences->displayMode();
+        Poincare::Preferences::SharedPreferences()->displayMode();
     return Poincare::Print::CustomPrintf(buffer, bufferSize, "(%*.*ed;%*.*ed)",
                                          cursorX, mode, precision, cursorY,
                                          mode, precision);
@@ -201,7 +201,7 @@ void ContinuousFunction::getLineParameters(double *slope, double *intercept,
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
       k_unknownName, coefficients, context, complexFormat(context),
-      Poincare::Preferences::sharedPreferences->angleUnit(),
+      Poincare::Preferences::SharedPreferences()->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   assert(d <= 1);
@@ -415,7 +415,7 @@ float ContinuousFunction::autoTMax() const {
              : (properties().isInversePolar()
                     ? Range1D<float>::k_defaultHalfLength
                     : 2.f * Trigonometry::PiInAngleUnit(
-                                Preferences::sharedPreferences->angleUnit()));
+                                Preferences::SharedPreferences()->angleUnit()));
 }
 
 float ContinuousFunction::autoTMin() const {
@@ -480,7 +480,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
   const T r = thisProperties.isPolar() ? x1x2.y() : x1x2.x();
   const T angle = (thisProperties.isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
                   Trigonometry::PiInAngleUnit(
-                      Poincare::Preferences::sharedPreferences->angleUnit());
+                      Poincare::Preferences::SharedPreferences()->angleUnit());
   return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));
 }
 
@@ -599,7 +599,7 @@ Expression ContinuousFunction::Model::expressionReduced(
     Preferences::ComplexFormat complexFormat =
         this->complexFormat(record, context);
     Preferences::AngleUnit angleUnit =
-        Preferences::sharedPreferences->angleUnit();
+        Preferences::SharedPreferences()->angleUnit();
     if (thisProperties.isScatterPlot()) {
       /* Scatter plots do not depend on any variable, so they can be
        * approximated in advance.

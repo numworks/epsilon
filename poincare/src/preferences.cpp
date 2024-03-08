@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ion/storage/file_system.h>
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 #include <poincare/unit.h>
@@ -12,8 +13,6 @@ constexpr int Preferences::MediumNumberOfSignificantDigits;
 constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 
-OMG::GlobalBox<Preferences> Preferences::sharedPreferences;
-
 Preferences::Preferences()
     : m_calculationPreferences{
           .angleUnit = AngleUnit::Radian,
@@ -22,6 +21,22 @@ Preferences::Preferences()
           .complexFormat = Preferences::ComplexFormat::Real,
           .numberOfSignificantDigits =
               Preferences::DefaultNumberOfPrintedSignificantDigits} {}
+
+static Preferences* fetchFromStorage() {
+  Ion::Storage::Record record =
+      Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
+          Preferences::k_recordName, Ion::Storage::systemExtension);
+  assert(!record.isNull());
+  Ion::Storage::Record::Data data = record.value();
+  assert(data.size == sizeof(Preferences));
+  return static_cast<Preferences*>(const_cast<void*>(data.buffer));
+}
+
+Preferences* Preferences::SharedPreferences() {
+  static Preferences* ptr = fetchFromStorage();
+  assert(fetchFromStorage() == ptr);
+  return ptr;
+}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Expression& exp, Context* context) {

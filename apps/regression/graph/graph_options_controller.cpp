@@ -110,7 +110,7 @@ void GraphOptionsController::viewWillAppear() {
       }
       m_r2Cell.label()->setLayout(r2Layout);
     }
-    if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
+    if (Preferences::SharedPreferences()->examMode().forbidStatsDiagnostics()) {
       rCells[i]->label()->setTextColor(Palette::GrayDark);
       rCells[i]->accessory()->setTextColor(Palette::GrayDark);
       rCells[i]->accessory()->setText(I18n::translate(I18n::Message::Disabled));

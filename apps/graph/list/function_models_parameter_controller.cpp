@@ -35,7 +35,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(
      * entering exam mode or changing country which requires exiting the app and
      * rebuilding the cells when re-entering. */
     m_modelCells[i].subLabel()->setMessage(
-        Preferences::sharedPreferences->examMode().forbidGraphDetails()
+        Preferences::SharedPreferences()->examMode().forbidGraphDetails()
             ? I18n::Message::Default
             : k_modelDescriptions[static_cast<int>(models[i]) - 1]);
   }
@@ -125,7 +125,7 @@ FunctionModelsParameterController::Models() {
 }
 
 bool FunctionModelsParameterController::ModelIsAllowed(Model model) {
-  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  ExamMode examMode = Preferences::SharedPreferences()->examMode();
   if (examMode.forbidInequalityGraphing() && model == Model::Inequality) {
     return false;
   }
@@ -137,7 +137,7 @@ bool FunctionModelsParameterController::ModelIsAllowed(Model model) {
 }
 
 const char* FunctionModelsParameterController::ModelString(Model model) {
-  if (Preferences::sharedPreferences->examMode().forbidImplicitPlots()) {
+  if (Preferences::SharedPreferences()->examMode().forbidImplicitPlots()) {
     if (model == Model::Line || model == Model::LineVariant) {
       return k_lineModelWhenForbidden;
     }

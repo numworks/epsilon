@@ -910,7 +910,7 @@ KDCoordinate MathToolboxController::nonMemoizedRowHeight(int row) {
 bool MathToolboxController::isMessageTreeDisabled(
     const ToolboxMessageTree *messageTree) const {
   I18n::Message label = messageTree->label();
-  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  ExamMode examMode = Preferences::SharedPreferences()->examMode();
   return (label == I18n::Message::SumCommandWithArg && examMode.forbidSum()) ||
          (label == I18n::Message::LogCommandWithArg &&
           examMode.forbidBasedLogarithm()) ||
@@ -961,14 +961,14 @@ void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
     const char *text = I18n::translate(messageTree->label());
     Layout resultLayout;
 
-    if (Poincare::Preferences::sharedPreferences->editionMode() ==
+    if (Poincare::Preferences::SharedPreferences()->editionMode() ==
         Poincare::Preferences::EditionMode::Edition2D) {
       // No context is given so that f(x) is never parsed as f×(x)
       Expression resultExpression = Expression::Parse(text, nullptr);
       if (!resultExpression.isUninitialized()) {
         // The text is parsable, we create its layout an insert it.
         resultLayout = resultExpression.createLayout(
-            Poincare::Preferences::sharedPreferences->displayMode(),
+            Poincare::Preferences::SharedPreferences()->displayMode(),
             Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
             App::app()->localContext());
       }
@@ -1069,7 +1069,7 @@ int MathToolboxController::maxNumberOfDisplayedRows() const {
 
 int MathToolboxController::controlChecksum() const {
   return static_cast<int>(
-             Preferences::sharedPreferences->examMode().ruleset()) *
+             Preferences::SharedPreferences()->examMode().ruleset()) *
              I18n::NumberOfCountries +
          static_cast<int>(
              GlobalPreferences::sharedGlobalPreferences->country()) +
@@ -1082,7 +1082,7 @@ int MathToolboxController::controlChecksum() const {
 int MathToolboxController::indexAfterFork(
     const ToolboxMessageTree *forkMessageTree) const {
   if (forkMessageTree->childrenList() == arithmeticFork) {
-    if (Poincare::Preferences::sharedPreferences->mixedFractionsAreEnabled()) {
+    if (Poincare::Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
       return 0;
     }
     return 1;

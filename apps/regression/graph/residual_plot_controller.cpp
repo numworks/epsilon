@@ -29,9 +29,9 @@ void ResidualPlotController::updateCursor() {
                         &m_curveView);
 
   const int significantDigits =
-      Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
+      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      Poincare::Preferences::sharedPreferences->displayMode();
+      Poincare::Preferences::SharedPreferences()->displayMode();
   constexpr size_t bufferSize =
       Shared::BannerView::BannerBufferTextView::MaxTextSize();
   constexpr static int k_maxNumberOfGlyphs =

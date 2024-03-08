@@ -36,7 +36,7 @@ size_t VectorCrossNode::serialize(char* buffer, size_t bufferSize,
 template <typename T>
 Evaluation<T> VectorCrossNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
-  if (Poincare::Preferences::sharedPreferences->examMode()
+  if (Poincare::Preferences::SharedPreferences()->examMode()
           .forbidVectorProduct()) {
     return Complex<T>::Undefined();
   }
@@ -64,7 +64,7 @@ Expression VectorCross::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  if (Poincare::Preferences::sharedPreferences->examMode()
+  if (Poincare::Preferences::SharedPreferences()->examMode()
           .forbidVectorProduct()) {
     return replaceWithUndefinedInPlace();
   }

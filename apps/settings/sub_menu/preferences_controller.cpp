@@ -127,7 +127,7 @@ KDCoordinate PreferencesController::nonMemoizedRowHeight(int row) {
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
                                                         int valueIndex) {
-  Preferences *preferences = Preferences::sharedPreferences;
+  Preferences *preferences = Preferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
@@ -152,7 +152,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
 
 int PreferencesController::valueIndexForPreference(
     I18n::Message message) const {
-  Preferences *preferences = Preferences::sharedPreferences;
+  Preferences *preferences = Preferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();
   }

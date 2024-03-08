@@ -60,8 +60,8 @@ static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
       t, e->approximateToScalarWithValueForSymbol<T>(
              variable, t,
              ApproximationContext(
-                 context, Preferences::sharedPreferences->complexFormat(),
-                 Preferences::sharedPreferences->angleUnit())));
+                 context, Preferences::SharedPreferences()->complexFormat(),
+                 Preferences::SharedPreferences()->angleUnit())));
 }
 
 void SystemOfEquations::setApproximateSolvingRange(
@@ -192,9 +192,9 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
   m_numberOfUserVariables = 0;
   m_variables[0][0] = 0;
   m_userVariables[0][0] = 0;
-  m_complexFormat = Preferences::sharedPreferences->complexFormat();
+  m_complexFormat = Preferences::SharedPreferences()->complexFormat();
 
-  bool forbidSimultaneousEquation = Preferences::sharedPreferences->examMode()
+  bool forbidSimultaneousEquation = Preferences::SharedPreferences()->examMode()
                                         .forbidSimultaneousEquationSolver();
 
   EquationStore *store = m_store;
@@ -267,7 +267,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
 SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     Context *context, Expression *simplifiedEquations) {
   Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences->angleUnit();
+      Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat =
       GlobalPreferences::sharedGlobalPreferences->unitFormat();
   SymbolicComputation symbolicComputation =
@@ -439,7 +439,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   }
   ReductionContext reductionContextWithSolutions(
       &solutionContexts[n - 1], m_complexFormat,
-      Preferences::sharedPreferences->angleUnit(),
+      Preferences::SharedPreferences()->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
       ReductionTarget::SystemForAnalysis);
   for (int i = 0; i < numberOfOriginalEquations; i++) {
@@ -469,7 +469,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   assert(m_numberOfSolvingVariables == 1 &&
          m_store->numberOfDefinedModels() == 1);
   Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences->angleUnit();
+      Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat =
       GlobalPreferences::sharedGlobalPreferences->unitFormat();
   SymbolicComputation symbolicComputation =
@@ -557,11 +557,11 @@ static void simplifyAndApproximateSolution(
 SystemOfEquations::Error SystemOfEquations::registerSolution(
     Expression e, Context *context, SolutionType type) {
   Preferences::AngleUnit angleUnit =
-      Preferences::sharedPreferences->angleUnit();
+      Preferences::SharedPreferences()->angleUnit();
   Expression exact, approximate;
 
   bool forbidExactSolution =
-      Preferences::sharedPreferences->examMode().forbidExactResults();
+      Preferences::SharedPreferences()->examMode().forbidExactResults();
   EquationStore *store = m_store;
   int nEquations = store->numberOfDefinedModels();
   int i = 0;

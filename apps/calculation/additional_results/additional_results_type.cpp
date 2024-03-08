@@ -89,7 +89,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
    * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
+  if (Preferences::SharedPreferences()->examMode().forbidAdditionalResults() ||
       input.isUninitialized() || exactOutput.isUninitialized() ||
       approximateOutput.isUninitialized() ||
       input.type() == ExpressionNode::Type::Store ||

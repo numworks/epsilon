@@ -38,8 +38,8 @@ class ComputationContext {
         m_angleUnit(angleUnit) {}
   ComputationContext(Context* context)
       : ComputationContext(context,
-                           Preferences::sharedPreferences->complexFormat(),
-                           Preferences::sharedPreferences->angleUnit()) {}
+                           Preferences::SharedPreferences()->complexFormat(),
+                           Preferences::SharedPreferences()->angleUnit()) {}
 
   Context* context() const { return m_context; }
   void setContext(Context* context) { m_context = context; }
@@ -158,7 +158,7 @@ class ApproximationContext : public ComputationContext {
   ApproximationContext(Context* context,
                        Preferences::ComplexFormat complexFormat)
       : ApproximationContext(context, complexFormat,
-                             Preferences::sharedPreferences->angleUnit()) {}
+                             Preferences::SharedPreferences()->angleUnit()) {}
 
   bool withinReduce() const { return m_withinReduce; }
 

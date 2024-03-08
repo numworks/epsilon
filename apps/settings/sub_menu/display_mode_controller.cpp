@@ -50,7 +50,7 @@ void DisplayModeController::fillCellForRow(HighlightCell *cell, int row) {
     GenericSubController::fillCellForRow(cell, row);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
-    Integer(Preferences::sharedPreferences->numberOfSignificantDigits())
+    Integer(Preferences::SharedPreferences()->numberOfSignificantDigits())
         .serialize(buffer, bufferSize);
     m_editableCell.textField()->setText(buffer);
     return;
@@ -73,7 +73,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (floatBody < 1.0) {
     floatBody = 1.0;
   }
-  if (Preferences::sharedPreferences->displayMode() ==
+  if (Preferences::SharedPreferences()->displayMode() ==
           Preferences::PrintFloatMode::Engineering &&
       floatBody < 3.0) {
     floatBody = 3.0;
@@ -81,7 +81,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (floatBody > PrintFloat::k_maxNumberOfSignificantDigits) {
     floatBody = PrintFloat::k_maxNumberOfSignificantDigits;
   }
-  Preferences::sharedPreferences->setNumberOfSignificantDigits(
+  Preferences::SharedPreferences()->setNumberOfSignificantDigits(
       (char)std::round(floatBody));
   m_selectableListView.reloadSelectedCell();
   if (event == Ion::Events::Up || event == Ion::Events::OK) {

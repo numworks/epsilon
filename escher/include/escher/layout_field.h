@@ -74,7 +74,7 @@ class LayoutField : public EditableField {
 
  protected:
   bool linearMode() const {
-    return Poincare::Preferences::sharedPreferences->editionMode() ==
+    return Poincare::Preferences::SharedPreferences()->editionMode() ==
            Poincare::Preferences::EditionMode::Edition1D;
   }
   bool insertText(const char* text, bool indentation = false,

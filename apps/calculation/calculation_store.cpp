@@ -19,9 +19,9 @@ static Expression enhancePushedExpression(Expression expression) {
    * Ex: If angleUnit = rad, cos(4)->cos(4rad)
    *     If angleUnit = deg, cos(π)->cos(π°)
    * */
-  if (!Preferences::sharedPreferences->examMode().forbidUnits()) {
+  if (!Preferences::SharedPreferences()->examMode().forbidUnits()) {
     expression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-        expression, Preferences::sharedPreferences->angleUnit());
+        expression, Preferences::SharedPreferences()->angleUnit());
   }
   return expression;
 }
@@ -32,7 +32,7 @@ CalculationStore::CalculationStore(char *buffer, size_t bufferSize)
     : m_buffer(buffer),
       m_bufferSize(bufferSize),
       m_numberOfCalculations(0),
-      m_inUsePreferences(*Preferences::sharedPreferences) {}
+      m_inUsePreferences(*Preferences::SharedPreferences()) {}
 
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
     int index) const {
@@ -107,7 +107,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * result. If we do so, don't forget to force the Calculation sign to be
    * approximative to avoid long computation to determine it.
    */
-  m_inUsePreferences = *Preferences::sharedPreferences;
+  m_inUsePreferences = *Preferences::SharedPreferences();
   char *cursor = endOfCalculations();
   Expression exactOutputExpression, approximateOutputExpression,
       storeExpression;
@@ -126,7 +126,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       // Push a new, empty Calculation
       cursor = pushEmptyCalculation(
           cursor,
-          Poincare::Preferences::sharedPreferences->calculationPreferences());
+          Poincare::Preferences::SharedPreferences()->calculationPreferences());
       assert(cursor != k_pushError);
 
       // Push the input
@@ -252,7 +252,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
 bool CalculationStore::preferencesHaveChanged() {
   // Track settings that might invalidate HistoryCells heights
-  Preferences *preferences = Preferences::sharedPreferences;
+  Preferences *preferences = Preferences::SharedPreferences();
   if (m_inUsePreferences.combinatoricSymbols() ==
           preferences->combinatoricSymbols() &&
       m_inUsePreferences.numberOfSignificantDigits() ==

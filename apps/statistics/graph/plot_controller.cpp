@@ -61,9 +61,9 @@ bool PlotController::reloadBannerView() {
       bannerView()->minimalSizeForOptimalDisplay().height();
 
   int precision =
-      Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
+      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      Poincare::Preferences::sharedPreferences->displayMode();
+      Poincare::Preferences::SharedPreferences()->displayMode();
   constexpr static int k_bufferSize =
       Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth + 1;
   char buffer[k_bufferSize] = "";

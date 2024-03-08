@@ -89,7 +89,7 @@ bool LayoutField::fieldContainsSingleMinusSymbol() const {
 bool LayoutField::handleDivision() {
   assert(m_divisionCycleWithAns != TrinaryBoolean::Unknown);
   bool mixedFractionsEnabled =
-      Preferences::sharedPreferences->mixedFractionsAreEnabled();
+      Preferences::SharedPreferences()->mixedFractionsAreEnabled();
   Ion::Events::Event event = Ion::Events::Division;
 
   if (m_divisionCycleWithAns == TrinaryBoolean::True) {

@@ -187,7 +187,7 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
       (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
   f = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       f, App::app()->localContext(),
-      Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(),
+      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
       pixelWidth, false);
 
   m_graphRange->setZoomAuto(false);

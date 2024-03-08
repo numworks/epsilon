@@ -391,14 +391,14 @@ void assert_trigonometric_regression_is(
     double residualStdDeviation) {
   // Test the trigonometric regression at all angle units
   const Preferences::AngleUnit previousAngleUnit =
-      Preferences::sharedPreferences->angleUnit();
+      Preferences::SharedPreferences()->angleUnit();
   const Poincare::Preferences::AngleUnit units[3] = {
       Poincare::Preferences::AngleUnit::Radian,
       Poincare::Preferences::AngleUnit::Degree,
       Poincare::Preferences::AngleUnit::Gradian};
   for (int i = 0; i < 3; ++i) {
     Poincare::Preferences::AngleUnit unit = units[i];
-    Poincare::Preferences::sharedPreferences->setAngleUnit(unit);
+    Poincare::Preferences::SharedPreferences()->setAngleUnit(unit);
     double unitFactor = Trigonometry::PiInAngleUnit(unit) /
                         Trigonometry::PiInAngleUnit(trueCoeffcientsUnit);
     // True coefficients b and c are converted to the tested angle unit
@@ -409,7 +409,7 @@ void assert_trigonometric_regression_is(
                          coefficientsUnit, NAN, NAN, residualStdDeviation);
   }
   // Restore previous angleUnit
-  Poincare::Preferences::sharedPreferences->setAngleUnit(previousAngleUnit);
+  Poincare::Preferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
 }
 
 QUIZ_CASE(regression_trigonometric_1) {

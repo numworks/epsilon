@@ -57,10 +57,10 @@ class Calculation {
     return m_calculationPreferences;
   }
   Poincare::Preferences::AngleUnit angleUnit() const {
-    return m_calculationPreferences.angleUnit();
+    return m_calculationPreferences.angleUnit;
   }
   Poincare::Preferences::ComplexFormat complexFormat() const {
-    return m_calculationPreferences.complexFormat();
+    return m_calculationPreferences.complexFormat;
   }
 
   // Texts

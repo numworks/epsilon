@@ -614,8 +614,8 @@ bool Expression::hasDefinedComplexApproximation(
 bool Expression::isScalarComplex(
     Preferences::CalculationPreferences calculationPreferences) const {
   Preferences::ComplexFormat complexFormat =
-      calculationPreferences.complexFormat();
-  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit();
+      calculationPreferences.complexFormat;
+  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
   ApproximationContext approximationContext(nullptr, complexFormat, angleUnit);
   approximationContext.updateComplexFormat(*this);
   if (hasDefinedComplexApproximation<double>(approximationContext)) {

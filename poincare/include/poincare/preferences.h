@@ -63,42 +63,11 @@ class Preferences final {
           static_cast<unsigned int>(ComplexFormat::NumberOfComplexFormat));
 
   struct CalculationPreferences {
-    /* AngleUnit */ uint8_t m_angleUnit : k_numberOfBitsForAngleUnit;
-    /* PrintFloatMode */ uint8_t m_displayMode
-        : k_numberOfBitsForPrintFloatMode;
-    /* EditionMode */ bool m_editionMode : 1;
-    /* ComplexFormat */ uint8_t m_complexFormat
-        : k_numberOfBitsForComplexFormat;
-    uint8_t m_numberOfSignificantDigits;
-
-    AngleUnit angleUnit() const { return static_cast<AngleUnit>(m_angleUnit); }
-    void setAngleUnit(AngleUnit angleUnit) {
-      m_angleUnit = static_cast<uint8_t>(angleUnit);
-    }
-    PrintFloatMode displayMode() const {
-      return static_cast<PrintFloatMode>(m_displayMode);
-    }
-    void setDisplayMode(PrintFloatMode displayMode) {
-      m_displayMode = static_cast<uint8_t>(displayMode);
-    }
-    EditionMode editionMode() const {
-      return static_cast<EditionMode>(m_editionMode);
-    }
-    void setEditionMode(EditionMode editionMode) {
-      m_editionMode = static_cast<uint8_t>(editionMode);
-    }
-    ComplexFormat complexFormat() const {
-      return static_cast<ComplexFormat>(m_complexFormat);
-    }
-    void setComplexFormat(Preferences::ComplexFormat complexFormat) {
-      m_complexFormat = static_cast<uint8_t>(complexFormat);
-    }
-    uint8_t numberOfSignificantDigits() const {
-      return m_numberOfSignificantDigits;
-    }
-    void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
-      m_numberOfSignificantDigits = numberOfSignificantDigits;
-    }
+    AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
+    PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
+    EditionMode editionMode : 1;
+    ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
+    uint8_t numberOfSignificantDigits;
   };
 
   // Other preferences
@@ -128,27 +97,27 @@ class Preferences final {
   CalculationPreferences calculationPreferences() const {
     return m_calculationPreferences;
   }
-  AngleUnit angleUnit() const { return m_calculationPreferences.angleUnit(); }
+  AngleUnit angleUnit() const { return m_calculationPreferences.angleUnit; }
   void setAngleUnit(AngleUnit angleUnit) {
-    m_calculationPreferences.setAngleUnit(angleUnit);
+    m_calculationPreferences.angleUnit = angleUnit;
   }
   PrintFloatMode displayMode() const {
-    return m_calculationPreferences.displayMode();
+    return m_calculationPreferences.displayMode;
   }
   void setDisplayMode(PrintFloatMode displayMode) {
-    m_calculationPreferences.setDisplayMode(displayMode);
+    m_calculationPreferences.displayMode = displayMode;
   }
   EditionMode editionMode() const {
-    return m_calculationPreferences.editionMode();
+    return m_calculationPreferences.editionMode;
   }
   void setEditionMode(EditionMode editionMode) {
-    m_calculationPreferences.setEditionMode(editionMode);
+    m_calculationPreferences.editionMode = editionMode;
   }
   ComplexFormat complexFormat() const {
-    return m_calculationPreferences.complexFormat();
+    return m_calculationPreferences.complexFormat;
   }
   void setComplexFormat(Preferences::ComplexFormat complexFormat) {
-    m_calculationPreferences.setComplexFormat(complexFormat);
+    m_calculationPreferences.complexFormat = complexFormat;
   }
   CombinatoricSymbols combinatoricSymbols() const {
     return m_combinatoricSymbols;
@@ -157,11 +126,11 @@ class Preferences final {
     m_combinatoricSymbols = combinatoricSymbols;
   }
   uint8_t numberOfSignificantDigits() const {
-    return m_calculationPreferences.numberOfSignificantDigits();
+    return m_calculationPreferences.numberOfSignificantDigits;
   }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
-    m_calculationPreferences.setNumberOfSignificantDigits(
-        numberOfSignificantDigits);
+    m_calculationPreferences.numberOfSignificantDigits =
+        numberOfSignificantDigits;
   }
   bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
   void enableMixedFractions(MixedFractions enable) {

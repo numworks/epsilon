@@ -47,8 +47,8 @@ Expression ExtractExactAngleFromDirectTrigo(
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
   assert(!exactAngle.hasUnit(true));
   Preferences::ComplexFormat complexFormat =
-      calculationPreferences.complexFormat();
-  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit();
+      calculationPreferences.complexFormat;
+  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
   Expression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &exactAngle, &unit, context,

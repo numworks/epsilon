@@ -12,7 +12,7 @@ Layout ScientificLayout(
     const Expression a, Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!a.hasUnit());
-  assert(calculationPreferences.displayMode() !=
+  assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
   Expression e;
   if (a.type() == ExpressionNode::Type::BasedInteger) {
@@ -24,7 +24,7 @@ Layout ScientificLayout(
     e = a;
   }
   return e.createLayout(Preferences::PrintFloatMode::Scientific,
-                        calculationPreferences.numberOfSignificantDigits(),
+                        calculationPreferences.numberOfSignificantDigits,
                         context);
 }
 

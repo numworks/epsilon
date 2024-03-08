@@ -13,31 +13,22 @@ namespace PoincareJ {
 
 bool Derivation::ShallowSimplify(Tree *node) {
   // Reference is expected to have been reduced beforehand.
-  assert(node->isDerivative());
-  // Diff(Derivand, Symbol, SymbolValue)
+  assert(node->isDerivative() || node->isNthDerivative());
   const Tree *symbol = node->child(0);
   const Tree *symbolValue = symbol->nextTree();
-  const Tree *derivand = symbolValue->nextTree();
-  // TODO_PCJ: Add a dependency to ensure the derivand is both defined and real
-  Tree *result = Derivate(derivand, symbolValue, symbol);
-  if (!result) {
-    return false;
+  const Tree *constDerivand;
+  int derivationOrder;
+  if (node->isDerivative()) {
+    derivationOrder = 1;
+    constDerivand = symbolValue->nextTree();
+  } else {
+    const Tree *order = symbolValue->nextTree();
+    if (!Integer::Is<uint8_t>(order)) {
+      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
+    derivationOrder = Integer::Handler(order).to<uint8_t>();
+    constDerivand = order->nextTree();
   }
-  node->moveTreeOverTree(result);
-  return true;
-}
-
-bool Derivation::ShallowSimplifyNthDerivative(Tree *node) {
-  assert(node->isNthDerivative());
-  const Tree *symbol = node->child(0);
-  const Tree *symbolValue = symbol->nextTree();
-  const Tree *order = symbolValue->nextTree();
-  const Tree *constDerivand = order->nextTree();
-  if (!Integer::Is<uint8_t>(order)) {
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
-  }
-  int derivationOrder = Integer::Handler(order).to<uint8_t>();
-  Tree *listOfDependencies;
   Tree *derivand;
   if (constDerivand->isDependency()) {
     listOfDependencies = constDerivand->child(1)->clone();

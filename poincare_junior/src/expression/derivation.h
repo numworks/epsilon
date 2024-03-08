@@ -10,9 +10,6 @@ class Derivation {
   // Shallow simplify a derivation Tree* inplace.
   static bool ShallowSimplify(Tree* ref);
 
-  // Shallow simplify a nth-derivative Tree* inplace.
-  static bool ShallowSimplifyNthDerivative(Tree* ref);
-
  private:
   // Push derivand derivation on the pool.
   static Tree* Derivate(const Tree* derivand, const Tree* symbolValue,

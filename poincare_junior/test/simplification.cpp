@@ -226,6 +226,7 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("2+[[3]]", "undef");
   simplifies_to("[[2]]+[[3]]", "[[5]]");
   simplifies_to("2×[[3]]", "[[6]]");
+  simplifies_to("[[3]]×i", "[[3×i]]");
   simplifies_to("[[1,2][3,4]]×[[2,3][4,5]]", "[[10,13][22,29]]");
   simplifies_to("norm([[2,3,6]])", "7");
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");

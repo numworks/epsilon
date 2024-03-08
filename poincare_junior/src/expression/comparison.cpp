@@ -34,12 +34,17 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     order = Order::Beautification;
   }
   if (order == Order::PreserveMatrices) {
-    if (Dimension::GetDimension(node0).isMatrix() &&
-        Dimension::GetDimension(node1).isMatrix()) {
+    bool node0IsMatrix = Dimension::GetDimension(node0).isMatrix();
+    bool node1IsMatrix = Dimension::GetDimension(node1).isMatrix();
+    if (node0IsMatrix && node1IsMatrix) {
       if (node0->treeIsIdenticalTo(node1)) {
         return 0;
       }
       return node0 < node1 ? -1 : 1;
+    }
+    if (node0IsMatrix || node1IsMatrix) {
+      // Preserve all matrices to the right
+      return node0IsMatrix ? 1 : -1;
     }
     order = Order::System;
   }

@@ -46,18 +46,20 @@ class Variables {
   static bool HasVariable(const Tree* t, int id);
 
   // Replace occurrences of variable with value and simplify inside expr
-  static bool Replace(Tree* expr, const Tree* variable, const Tree* value);
-  static bool Replace(Tree* expr, int id, const Tree* value,
-                      bool leave = false);
+  static bool Replace(Tree* expr, const Tree* variable, const Tree* value,
+                      bool simplify);
+  static bool Replace(Tree* expr, int id, const Tree* value, bool leave = false,
+                      bool simplify = true);
   static bool Replace(Tree* expr, int id, const EditionReference& value,
-                      bool leave = false);
+                      bool leave = false, bool simplify = true);
 
   // Increment variables indexes
   static void EnterScope(Tree* expr);
   // Decrement variables indexes
   static void LeaveScope(Tree* expr);
-  static void LeaveScopeWithReplacement(Tree* expr, const Tree* value) {
-    Replace(expr, 0, value, true);
+  static void LeaveScopeWithReplacement(Tree* expr, const Tree* value,
+                                        bool simplify) {
+    Replace(expr, 0, value, true, simplify);
   }
 
  private:

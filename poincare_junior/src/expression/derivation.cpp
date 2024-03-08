@@ -34,7 +34,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
   Tree *derivand;
   if (constDerivand->isDependency()) {
     setOfDependencies =
-        CloneReplacingSymbol(constDerivand->child(1), symbolValue);
+        CloneReplacingSymbol(constDerivand->child(1), symbolValue, false);
     derivand = constDerivand->child(0)->clone();
   } else {
     setOfDependencies = Set::PushEmpty();
@@ -216,9 +216,9 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
 }
 
 Tree *Derivation::CloneReplacingSymbol(const Tree *expression,
-                                       const Tree *symbolValue) {
+                                       const Tree *symbolValue, bool simplify) {
   Tree *result = expression->clone();
-  Variables::LeaveScopeWithReplacement(result, symbolValue);
+  Variables::LeaveScopeWithReplacement(result, symbolValue, simplify);
   return result;
 }
 

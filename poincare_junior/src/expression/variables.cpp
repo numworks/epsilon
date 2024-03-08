@@ -71,22 +71,24 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
   }
 }
 
-bool Variables::Replace(Tree* expr, const Tree* variable, const Tree* value) {
+bool Variables::Replace(Tree* expr, const Tree* variable, const Tree* value,
+                        bool simplify) {
   assert(variable->isVariable());
-  return Replace(expr, Id(variable), value);
+  return Replace(expr, Id(variable), value, simplify);
 }
 
-bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave) {
+bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave,
+                        bool simplify) {
   /* TODO We need to track the replacement value only if it is in the pool and
    * after expr. Cloning is overkill but easy. */
   EditionReference valueRef = value->clone();
-  bool result = Replace(expr, id, valueRef, leave);
+  bool result = Replace(expr, id, valueRef, leave, simplify);
   valueRef->removeTree();
   return result;
 }
 
 bool Variables::Replace(Tree* expr, int id, const EditionReference& value,
-                        bool leave) {
+                        bool leave, bool simplify) {
   if (expr->isVariable()) {
     if (Id(expr) == id) {
       expr->cloneTreeOverTree(value);
@@ -103,9 +105,9 @@ bool Variables::Replace(Tree* expr, int id, const EditionReference& value,
   for (int i = 0; Tree * child : expr->children()) {
     int updatedId =
         id + (isParametric && i++ == Parametric::FunctionIndex(expr));
-    changed = Replace(child, updatedId, value, leave) || changed;
+    changed = Replace(child, updatedId, value, leave, simplify) || changed;
   }
-  if (changed) {
+  if (simplify && changed) {
     Simplification::ShallowSystematicReduce(expr);
   }
   return changed;

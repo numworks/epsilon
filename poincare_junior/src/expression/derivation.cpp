@@ -36,15 +36,28 @@ bool Derivation::ShallowSimplifyNthDerivative(Tree *node) {
   if (!Integer::Is<uint8_t>(order)) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
-  // Tree * listOfDependencies = List::PushEmpty();
+  int derivationOrder = Integer::Handler(order).to<uint8_t>();
+  Tree *listOfDependencies;
   Tree *derivand;
   if (constDerivand->isDependency()) {
-    // listOfDependencies->cloneTreeOverTree(constDerivand->child(1));
+    listOfDependencies = constDerivand->child(1)->clone();
     derivand = constDerivand->child(0)->clone();
   } else {
+    listOfDependencies = List::PushEmpty();
     derivand = constDerivand->clone();
   }
-  int derivationOrder = Integer::Handler(order).to<uint8_t>();
+
+#if TODO_PCJ
+  /* Use reduction target SystemForAnalysis when derivating,
+   * because we don't want to have false reductions such as
+   * arccot(x) -> arctan(1/x)
+   * This will not impact the function derivate since it only
+   * use the angle unit of the reduction context, but it will
+   * impact the function deepReduce */
+  ReductionTarget initialTarget = reductionContext.target();
+  reductionContext.setTarget(ReductionTarget::SystemForAnalysis);
+#endif
+
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
     Tree *derivative = Derivate(derivand, symbolValue, symbol);
@@ -65,13 +78,20 @@ bool Derivation::ShallowSimplifyNthDerivative(Tree *node) {
     derivand->removeTree();
   }
 
+  SwapTreesPointers(&derivand, &listOfDependencies);
   if (currentDerivationOrder < derivationOrder) {
-    // Do not add a dependecy if nothing was derivated.
-#if 0
-  listOfDependencies.addChildAtIndexInPlace(
-        derivandAsDependency, listOfDependencies.numberOfChildren(),
-        listOfDependencies.numberOfChildren());
+    // Do not add a dependency if nothing was derivated.
+    NAry::AddChild(listOfDependencies, constDerivand->clone());
+  }
+
+#if TODO_PCJ
+  reductionContext.setTarget(initialTarget);
 #endif
+
+  if (listOfDependencies->numberOfChildren() > 0) {
+    derivand->cloneNodeAtNode(KDep);
+  } else {
+    listOfDependencies->removeTree();
   }
 
   node->moveTreeOverTree(derivand);

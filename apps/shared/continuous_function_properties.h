@@ -93,21 +93,19 @@ class ContinuousFunctionProperties {
   }
   Status status() const {
     assert(m_isInitialized);
-    return static_cast<Status>(m_propertiesBitField.m_status);
+    return m_propertiesBitField.m_status;
   }
   Poincare::ComparisonNode::OperatorType equationType() const {
     assert(m_isInitialized);
-    return static_cast<Poincare::ComparisonNode::OperatorType>(
-        m_propertiesBitField.m_equationType);
+    return m_propertiesBitField.m_equationType;
   }
   SymbolType symbolType() const {
     assert(m_isInitialized);
-    return static_cast<SymbolType>(m_propertiesBitField.m_symbolType);
+    return m_propertiesBitField.m_symbolType;
   }
   CurveParameterType getCurveParameterType() const {
     assert(m_isInitialized);
-    return static_cast<CurveParameterType>(
-        m_propertiesBitField.m_curveParameterType);
+    return m_propertiesBitField.m_curveParameterType;
   }
   bool isOfDegreeTwo() const {
     assert(m_isInitialized);
@@ -115,8 +113,7 @@ class ContinuousFunctionProperties {
   }
   Poincare::Conic::Shape conicShape() const {
     assert(m_isInitialized);
-    return static_cast<Poincare::Conic::Shape>(
-        m_propertiesBitField.m_conicShape);
+    return m_propertiesBitField.m_conicShape;
   }
   bool isAlongY() const {
     assert(m_isInitialized);
@@ -246,21 +243,19 @@ class ContinuousFunctionProperties {
 
   // Setters
   void setCaption(I18n::Message caption) { m_caption = caption; }
-  void setStatus(Status status) {
-    m_propertiesBitField.m_status = static_cast<uint8_t>(status);
-  }
+  void setStatus(Status status) { m_propertiesBitField.m_status = status; }
   void setErrorStatusAndUpdateCaption(Status status);
   void setEquationType(Poincare::ComparisonNode::OperatorType type) {
-    m_propertiesBitField.m_equationType = static_cast<uint8_t>(type);
+    m_propertiesBitField.m_equationType = type;
   }
   void setSymbolType(SymbolType type) {
-    m_propertiesBitField.m_symbolType = static_cast<uint8_t>(type);
+    m_propertiesBitField.m_symbolType = type;
   }
   void setCurveParameterType(CurveParameterType type) {
-    m_propertiesBitField.m_curveParameterType = static_cast<uint8_t>(type);
+    m_propertiesBitField.m_curveParameterType = type;
   }
   void setConicShape(Poincare::Conic::Shape shape) {
-    m_propertiesBitField.m_conicShape = static_cast<uint8_t>(shape);
+    m_propertiesBitField.m_conicShape = shape;
   }
   void setIsOfDegreeTwo(bool isOfDegreeTwo) {
     m_propertiesBitField.m_isOfDegreeTwo = isOfDegreeTwo;
@@ -289,14 +284,13 @@ class ContinuousFunctionProperties {
           static_cast<unsigned int>(Poincare::Conic::Shape::NumberOfShapes));
 
   struct PropertiesBitField {
-    /* Status */ uint8_t m_status : k_numberOfBitsForStatus;
-    /* Poincare::ComparisonNode::OperatorType */ uint8_t m_equationType
+    Status m_status : k_numberOfBitsForStatus;
+    Poincare::ComparisonNode::OperatorType m_equationType
         : k_numberOfBitsForEquationType;
-    /* Symbol */ uint8_t m_symbolType : k_numberOfBitsForSymbolType;
-    /* CurveParameterType */ uint8_t m_curveParameterType
+    SymbolType m_symbolType : k_numberOfBitsForSymbolType;
+    CurveParameterType m_curveParameterType
         : k_numberOfBitsForCurveParameterType;
-    /* Poincare::Conic::Shape */ uint8_t m_conicShape
-        : k_numberOfBitsForConicShape;
+    Poincare::Conic::Shape m_conicShape : k_numberOfBitsForConicShape;
     bool m_isOfDegreeTwo : 1;
     bool m_isAlongY : 1;
     bool m_hideDetails : 1;

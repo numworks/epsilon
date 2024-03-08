@@ -1,7 +1,12 @@
+#include <poincare/boolean.h>
+#include <poincare/complex.h>
 #include <poincare/junior_expression.h>
 #include <poincare/junior_layout.h>
+#include <poincare/list_complex.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix_complex.h>
 #include <poincare/point_2D_layout.h>
+#include <poincare/point_evaluation.h>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/dimension.h>
@@ -28,26 +33,65 @@ int JuniorExpressionNode::simplificationOrderSameType(
       tree(), static_cast<const JuniorExpressionNode*>(e)->tree());
 }
 
+// Only handle approximated Boolean, Point and Complex trees.
+template <typename T>
+Evaluation<T> EvaluationFromSimpleTree(const PoincareJ::Tree* tree) {
+  if (tree->isBoolean()) {
+    return BooleanEvaluation<T>::Builder(
+        PoincareJ::Approximation::ToBoolean<T>(tree));
+  }
+  if (tree->isPoint()) {
+    assert(false);
+    // TODO_PCJ: To implement.
+    // return PointEvaluation<T>::Builder()
+  }
+  return Complex<T>::Builder(PoincareJ::Approximation::ToComplex<T>(tree));
+}
+
+// Return the Evaluation for any tree.
+template <typename T>
+Evaluation<T> EvaluationFromTree(
+    const PoincareJ::Tree* origin,
+    const ApproximationContext& approximationContext) {
+  PoincareJ::Tree* tree = PoincareJ::Approximation::RootTreeToTree<T>(
+      origin,
+      static_cast<PoincareJ::AngleUnit>(approximationContext.angleUnit()),
+      static_cast<PoincareJ::ComplexFormat>(
+          approximationContext.complexFormat()));
+  Evaluation<T> result;
+  if (tree->isMatrix()) {
+    MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
+    int i = 0;
+    for (const PoincareJ::Tree* child : tree->children()) {
+      matrix.addChildAtIndexInPlace(EvaluationFromSimpleTree<T>(child), i, i);
+      i++;
+    }
+    result = matrix;
+  } else if (tree->isList()) {
+    ListComplex<T> list = ListComplex<T>::Builder();
+    int i = 0;
+    for (const PoincareJ::Tree* child : tree->children()) {
+      list.addChildAtIndexInPlace(EvaluationFromSimpleTree<T>(child), i, i);
+      i++;
+    }
+    result = list;
+  } else {
+    result = EvaluationFromSimpleTree<T>(tree);
+  }
+  tree->removeTree();
+  return result;
+}
+
 Evaluation<float> JuniorExpressionNode::approximate(
     SinglePrecision p, const ApproximationContext& approximationContext) const {
-  // TODO_PCJ: Handle Matrix, list, boolean and point evaluations. Use p.
-  return Complex<float>::Builder(
-      PoincareJ::Approximation::RootTreeToComplex<float>(
-          tree(),
-          static_cast<PoincareJ::AngleUnit>(approximationContext.angleUnit()),
-          static_cast<PoincareJ::ComplexFormat>(
-              approximationContext.complexFormat())));
+  // TODO_PCJ: Use p.
+  return EvaluationFromTree<float>(tree(), approximationContext);
 }
 
 Evaluation<double> JuniorExpressionNode::approximate(
     DoublePrecision p, const ApproximationContext& approximationContext) const {
-  // TODO_PCJ: Handle Matrix, list, boolean and point evaluations. Use p.
-  return Complex<double>::Builder(
-      PoincareJ::Approximation::RootTreeToComplex<double>(
-          tree(),
-          static_cast<PoincareJ::AngleUnit>(approximationContext.angleUnit()),
-          static_cast<PoincareJ::ComplexFormat>(
-              approximationContext.complexFormat())));
+  // TODO_PCJ: Use p.
+  return EvaluationFromTree<double>(tree(), approximationContext);
 }
 
 Layout JuniorExpressionNode::createLayout(
@@ -679,5 +723,15 @@ bool Unit::HasAngleDimension(JuniorExpression expression) {
   assert(PoincareJ::Dimension::DeepCheckDimensions(expression.tree()));
   return PoincareJ::Dimension::GetDimension(expression.tree()).isAngleUnit();
 }
+
+template Evaluation<float> EvaluationFromTree<float>(
+    const PoincareJ::Tree*, const ApproximationContext&);
+template Evaluation<double> EvaluationFromTree<double>(
+    const PoincareJ::Tree*, const ApproximationContext&);
+
+template Evaluation<float> EvaluationFromSimpleTree<float>(
+    const PoincareJ::Tree*);
+template Evaluation<double> EvaluationFromSimpleTree<double>(
+    const PoincareJ::Tree*);
 
 }  // namespace Poincare

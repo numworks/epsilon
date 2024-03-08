@@ -25,8 +25,8 @@ class Preferences final {
 
   enum class AngleUnit : uint8_t {
     Radian = 0,
-    Degree = 1,
-    Gradian = 2,
+    Degree,
+    Gradian,
     NumberOfAngleUnit,
   };
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
@@ -36,8 +36,8 @@ class Preferences final {
    * of significant digits. */
   enum class PrintFloatMode : uint8_t {
     Decimal = 0,
-    Scientific = 1,
-    Engineering = 2,
+    Scientific,
+    Engineering,
     NumberOfPrintFloatMode,
   };
   enum class EditionMode : bool {
@@ -46,8 +46,8 @@ class Preferences final {
   };
   enum class ComplexFormat : uint8_t {
     Real = 0,
-    Cartesian = 1,
-    Polar = 2,
+    Cartesian,
+    Polar,
     NumberOfComplexFormat,
   };
   constexpr static ComplexFormat k_defautComplexFormatIfNotReal =
@@ -108,7 +108,7 @@ class Preferences final {
    * set in apps but it stored there to be accessible from Poincare */
   enum class CombinatoricSymbols : uint8_t {
     Default = 0,
-    LetterWithSubAndSuperscript = 1
+    LetterWithSubAndSuperscript,
   };
   enum class MixedFractions : bool { Disabled = false, Enabled = true };
   enum class LogarithmBasePosition : uint8_t {

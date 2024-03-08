@@ -33,7 +33,8 @@ bool Derivation::ShallowSimplify(Tree *node) {
   Tree *setOfDependencies;
   Tree *derivand;
   if (constDerivand->isDependency()) {
-    setOfDependencies = constDerivand->child(1)->clone();
+    setOfDependencies =
+        CloneReplacingSymbol(constDerivand->child(1), symbolValue);
     derivand = constDerivand->child(0)->clone();
   } else {
     setOfDependencies = Set::PushEmpty();

@@ -94,6 +94,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
 bool ExamPopUpController::handleButton() const {
   /* Warning : By unplugging before confirmation, the examMode may then be
    *           deactivated while unplugged. */
-  AppsContainer::sharedAppsContainer()->setExamMode(m_targetExamMode);
+  AppsContainer::sharedAppsContainer()->setExamMode(
+      m_targetExamMode, Preferences::SharedPreferences()->examMode());
   return true;
 }

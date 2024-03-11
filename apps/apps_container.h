@@ -33,7 +33,8 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Escher::App::Snapshot* onBoardingAppSnapshot();
   Escher::App::Snapshot* usbConnectedAppSnapshot();
   Home::App::Snapshot* homeAppSnapshot() { return &m_homeSnapshot; }
-  void setExamMode(Poincare::ExamMode targetExamMode);
+  void setExamMode(Poincare::ExamMode targetExamMode,
+                   Poincare::ExamMode previousMode);
   Shared::GlobalContext* globalContext();
   void didSuspend();
   bool dispatchEvent(Ion::Events::Event event) override;

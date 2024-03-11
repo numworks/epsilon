@@ -49,6 +49,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController* promptController();
   void redrawWindow();
+  void setDFUBetweenEvents(bool active) { m_dfuBetweenEvents = active; }
 
   // Ion::Storage::StorageDelegate
   bool storageCanChangeForRecordName(

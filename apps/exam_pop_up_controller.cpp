@@ -25,7 +25,14 @@ void ExamPopUpController::setTargetExamMode(ExamMode mode) {
   setContentMessage(activationWarningMessage());
 }
 
+void ExamPopUpController::viewWillAppear() {
+  if (!m_targetExamMode.isActive()) {
+    AppsContainer::sharedAppsContainer()->setDFUBetweenEvents(true);
+  }
+}
+
 void ExamPopUpController::viewDidDisappear() {
+  AppsContainer::sharedAppsContainer()->setDFUBetweenEvents(false);
   if (!m_targetExamMode.isActive()) {
     Ion::USB::clearEnumerationInterrupt();
   }

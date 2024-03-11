@@ -136,10 +136,10 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue,
       return nullptr;
     }
     NAry::SetNumberOfChildren(mult, 2);
-    Simplification::SimplifyMultiplication(mult);
+    Simplification::ShallowSystematicReduce(mult);
     derivandChild = derivandChild->nextTree();
   }
-  Simplification::SimplifyAddition(result);
+  Simplification::ShallowSystematicReduce(result);
   return result;
 }
 
@@ -162,7 +162,7 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
         }
       }
       if (numberOfChildren > 2) {
-        Simplification::SimplifyMultiplication(mult);
+        Simplification::ShallowSystematicReduce(mult);
       }
       return true;
     }
@@ -180,7 +180,7 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
       Tree *power = SharedEditionPool->push(BlockType::Power);
       CloneReplacingSymbol(derivand->child(0), symbolValue);
       SharedEditionPool->push(BlockType::MinusOne);
-      Simplification::SimplifyPower(power);
+      Simplification::ShallowSystematicReduce(power);
       return true;
     }
     case BlockType::Trig:

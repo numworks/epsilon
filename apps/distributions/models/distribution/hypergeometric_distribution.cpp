@@ -36,10 +36,8 @@ float HypergeometricDistribution::privateComputeXMax() const {
 float HypergeometricDistribution::computeYMax() const {
   float mean =
       m_parameters[2] * m_parameters[1] / m_parameters[0];  // n * K / N
-  float maximum = evaluateAtAbscissa(mean);
-  if (std::floor(mean) != mean) {
-    maximum = std::max(maximum, evaluateAtAbscissa(mean + 1));
-  }
+  float maximum = maximum = std::max(evaluateAtAbscissa(std::floor(mean)),
+                                     evaluateAtAbscissa(std::ceil(mean)));
   return maximum * (1.0f + k_displayTopMarginRatio);
 }
 

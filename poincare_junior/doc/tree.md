@@ -22,10 +22,10 @@ children) and their value is contained inside their node.
 <details>
 <summary>Example</summary>
 
-For instance, $cos(4×π)$ is represented by the tree :
+For instance, $cos(4×x)$ is represented by the tree :
 
-|Cosine|Multiplication|2|IntegerShort|4|Constant|ContantType::PI|
-|-|-|-|-|-|-|-|
+|Cosine|Multiplication|2|IntegerShort|4|UserSymbol|1|'x'|
+|-|-|-|-|-|-|-|-|
 
 The first block `Cosine` is always unary so the next block is the start of its
 only child.
@@ -35,8 +35,7 @@ only child.
 `IntegerShort` has always 0 children but its node has a additional byte to be
 interpreted as its value here 4
 
-Likewise `Constant` has no children and a byte inside a special enum
-ContantType.
+`UserSymbol` has no children, the next block indicates the number of chars, stored in the following blocks.
 
 </details>
 

@@ -531,8 +531,8 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
        * absorbed. This way, the user can write a product of fractions without
        * typing the × sign. */
       int indexOfThis;
-      const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
-      assert(parent->numberOfChildren() > 1);
+      const Tree* parent = root->parentOfDescendant(node, &indexOfThis);
+      assert(parent && parent->numberOfChildren() > 1);
       int indexInParent = parent->indexOfChild(node);
       int indexOfAbsorbingSibling =
           indexInParent + (direction.isLeft() ? 1 : -1);
@@ -556,7 +556,8 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
         /* If the expression is like 3ᴇ-200, we want '-' to be collapsable.
          * Otherwise, '-' is not collapsable. */
         int indexOfThis;
-        const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
+        const Tree* parent = root->parentOfDescendant(node, &indexOfThis);
+        assert(parent);
         if (indexOfThis > 0) {
           const Tree* leftBrother = parent->child(indexOfThis - 1);
           if (leftBrother->isCodePointLayout() &&
@@ -574,7 +575,8 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
         /* We want '*' to be collapsable only if the following brother is not
          * a fraction, so that the user can write intuitively "1/2 * 3/4". */
         int indexOfThis;
-        const Tree* parent = root->parentOfDescendant(root, &indexOfThis);
+        const Tree* parent = root->parentOfDescendant(node, &indexOfThis);
+        assert(parent);
         const Tree* brother;
         if (indexOfThis > 0 && direction.isLeft()) {
           brother = parent->child(indexOfThis - 1);

@@ -214,7 +214,7 @@ In this example, `x+x` would be matched with KA pointing to the first `x`.
 
 </details>
 
-Methods `MatchCreateAndSimplify` and `MatchReplaceAndSimplify` perform the same task, but also call systematic simplification on each created trees along the way (but not placeholders, which are assumed to be simplified trees already).
+Methods `CreateAndSimplify` and `MatchReplaceAndSimplify` perform the same task, but also call systematic simplification on each created tree along the way (but not placeholders, which are assumed to be simplified trees already).
 
 
 ### Placeholders
@@ -229,7 +229,7 @@ bool hasChanged = MatchReplaceAndSimplify(
     KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));
 ```
 
-After [this pull request](https://github.com/numworks/epsilon-internal/pull/5872), there are a three types of placeholders :
+There are three types of placeholders :
 - `One` : Matching a single tree, named `KA` for example.
 - `NoneOrMore` : Matching 0, 1 or more consecutive sibling trees, named `KD_s` for example.
 - `OneOrMore` : Matching 1 or more consecutive sibling trees, named `KC_p` for example.

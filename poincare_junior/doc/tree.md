@@ -205,6 +205,47 @@ avoid dealing with the context at all :
 // Apply simplification a + a -> 2 * a
 bool hasChanged = MatchAndReplace(myTree, KAdd(KA, KA), KMult(2_e, KA));
 ```
+<details>
+<summary>Note</summary>
+
+In this example, `x+x` would be matched with KA pointing to the first `x`.
+
+`x+y` would not match.
+
+</details>
+
+Methods `MatchCreateAndSimplify` and `MatchReplaceAndSimplify` perform the same task, but also call systematic simplification on each created trees along the way (but not placeholders, which are assumed to be simplified trees already).
 
 
-TODO KTA
+### Placeholders
+
+Placeholders are named from `A` to `H`, and are expected to match with different trees.
+They have a type and are expected to have the same type both on match and on create :
+
+```cpp
+// Apply simplification a*(b+c)*d -> a*b*d + a*(c)*d
+bool hasChanged = MatchReplaceAndSimplify(
+    myTree, KMult(KA, KAdd(KB, KC_p), KD_s),
+    KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));
+```
+
+After [this pull request](https://github.com/numworks/epsilon-internal/pull/5872), there are a three types of placeholders :
+- `One` : Matching a single tree, named `KA` for example.
+- `NoneOrMore` : Matching 0, 1 or more consecutive sibling trees, named `KD_s` for example.
+- `OneOrMore` : Matching 1 or more consecutive sibling trees, named `KC_p` for example.
+
+<details>
+<summary>Note</summary>
+
+In the `a*(b+c)*d -> a*b*d + a*(c)*d` example above, we would match :
+
+|expression|KA|KB|KC_p|KD_s|
+|-|-|-|-|-|
+|`a*(b+c)*d`|`{a}`|`{b}`|`{c}`|`{d}`|
+|`x*(y+x+1)`|`{x}`|`{y}`|`{x, 1}`|`{}`|
+|`a*(b+c)*d*π*2`|`{a}`|`{b}`|`{c}`|`{d, π, 2}`|
+|`(b+c)*d*π*2`|`{a}`|`{b}`|`{c}`|`{d, π, 2}`|
+
+`(b+c)*d*π*2` or `a*b*c` would not match.
+
+</details>

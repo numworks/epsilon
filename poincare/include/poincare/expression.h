@@ -673,10 +673,10 @@ class Expression : public TreeHandle {
    * SymbolicComputation defines how to handle functions and undefined symbols.
    */
   bool involvesCircularity(Context* context, int maxDepth,
-                           const char** visitedFunctions,
-                           int numberOfVisitedFunctions) {
-    return node()->involvesCircularity(context, maxDepth, visitedFunctions,
-                                       numberOfVisitedFunctions);
+                           const char** visitedSymbols,
+                           int numberOfVisitedSymbols) {
+    return node()->involvesCircularity(context, maxDepth, visitedSymbols,
+                                       numberOfVisitedSymbols);
   }
   Expression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,

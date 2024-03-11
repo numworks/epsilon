@@ -38,9 +38,6 @@ class FunctionNode final : public SymbolAbstractNode {
 
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
-  bool involvesCircularity(Context* context, int maxDepth,
-                           const char** visitedFunctions,
-                           int numberOfVisitedFunctions) override;
   Expression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount,

@@ -186,8 +186,8 @@ class ExpressionNode : public TreeNode {
                                               const char* symbolName,
                                               Expression coefficients[]) const;
   virtual bool involvesCircularity(Context* context, int maxDepth,
-                                   const char** visitedFunctions,
-                                   int numberOfVisitedFunctions);
+                                   const char** visitedSymbols,
+                                   int numberOfVisitedSymbols);
   /*!*/ virtual Expression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);

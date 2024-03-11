@@ -417,7 +417,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 }
 
 void assertMainCalculationOutputIs(const char *input, const char *output,
-                                   Context *context, CalculationStore *store) {
+                                   Context *context, CalculationStore *store,
+                                   bool cleanHistory = false) {
   // For the next test, we only need to checkout input and output text.
   store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
@@ -435,7 +436,9 @@ void assertMainCalculationOutputIs(const char *input, const char *output,
           strcmp(lastCalculation->exactOutputText(), output) == 0, input);
       break;
   }
-  store->deleteAll();
+  if (cleanHistory) {
+    store->deleteAll();
+  }
 }
 
 QUIZ_CASE(calculation_symbolic_computation) {
@@ -634,6 +637,11 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("g(2)", "undef", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
+
+  // 8 - Circularly with symbols
+  assertMainCalculationOutputIs("x→f(x)", "x", &globalContext, &store, false);
+  assertMainCalculationOutputIs("f(Ans)→A", "undef", &globalContext, &store);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

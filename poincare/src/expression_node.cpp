@@ -40,12 +40,12 @@ int ExpressionNode::getPolynomialCoefficients(Context* context,
 }
 
 bool ExpressionNode::involvesCircularity(Context* context, int maxDepth,
-                                         const char** visitedFunctions,
-                                         int numberOfVisitedFunctions) {
+                                         const char** visitedSymbols,
+                                         int numberOfVisitedSymbols) {
   int nChildren = numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
-    if (childAtIndex(i)->involvesCircularity(
-            context, maxDepth, visitedFunctions, numberOfVisitedFunctions)) {
+    if (childAtIndex(i)->involvesCircularity(context, maxDepth, visitedSymbols,
+                                             numberOfVisitedSymbols)) {
       return true;
     }
   }

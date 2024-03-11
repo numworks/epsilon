@@ -230,7 +230,8 @@ void PressToTestController::fillCellForRow(HighlightCell *cell, int row) {
   bool featureIsDisabled = getParamAtIndex(row);
   myCell->label()->setMessage(LabelAtIndex(row));
   myCell->label()->setTextColor(
-      Preferences::SharedPreferences()->examMode().isActive() && featureIsDisabled
+      Preferences::SharedPreferences()->examMode().isActive() &&
+              featureIsDisabled
           ? Palette::GrayDark
           : KDColorBlack);
   myCell->subLabel()->setMessage(SubLabelAtIndex(row));

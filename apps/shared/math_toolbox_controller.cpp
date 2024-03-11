@@ -1000,7 +1000,8 @@ bool MathToolboxController::selectSubMenu(int selectedRow) {
 
 bool MathToolboxController::selectLeaf(int selectedRow) {
   assert(typeAtRow(selectedRow) == k_leafCellType);
-  if (GlobalPreferences::SharedGlobalPreferences()->listsStatsOrderInToolbox() ==
+  if (GlobalPreferences::SharedGlobalPreferences()
+              ->listsStatsOrderInToolbox() ==
           CountryPreferences::ListsStatsOrderInToolbox::Alternate &&
       m_messageTreeModel->childrenList() == listsStatsChildren) {
     // We are in lists stats sub-menu
@@ -1082,7 +1083,8 @@ int MathToolboxController::controlChecksum() const {
 int MathToolboxController::indexAfterFork(
     const ToolboxMessageTree *forkMessageTree) const {
   if (forkMessageTree->childrenList() == arithmeticFork) {
-    if (Poincare::Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
+    if (Poincare::Preferences::SharedPreferences()
+            ->mixedFractionsAreEnabled()) {
       return 0;
     }
     return 1;

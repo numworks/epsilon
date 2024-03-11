@@ -30,7 +30,8 @@ class AffineModel : public Model {
 
  private:
   static bool UseMxpbForm() {
-    return GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
+    return GlobalPreferences::SharedGlobalPreferences()
+               ->regressionAppVariant() ==
            CountryPreferences::RegressionApp::Variant1;
   }
 

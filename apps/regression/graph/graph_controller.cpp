@@ -165,7 +165,8 @@ void GraphController::reloadBannerView() {
     m_bannerView.setDisplayParameters(true, true, !coefficientsAreDefined);
     m_bannerView.otherView()->setText(I18n::translate(I18n::Message::MeanDot));
   } else if (!(Store::HasCoefficients(modelType) ||
-               Preferences::SharedPreferences()->examMode()
+               Preferences::SharedPreferences()
+                   ->examMode()
                    .forbidStatsDiagnostics())) {
     // Display correlation coefficient
     m_bannerView.setDisplayParameters(true, false, !coefficientsAreDefined);

@@ -82,8 +82,9 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         App::app()->localContext()->resetCache();
         // Reset the first index if the new type is "Explicit"
         if (sequenceType == Shared::Sequence::Type::Explicit) {
-          sequence()->setInitialRank(GlobalPreferences::SharedGlobalPreferences()
-                                         ->sequencesInitialRank());
+          sequence()->setInitialRank(
+              GlobalPreferences::SharedGlobalPreferences()
+                  ->sequencesInitialRank());
         }
       }
       StackViewController *stack = stackController();

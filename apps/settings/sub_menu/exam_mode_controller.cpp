@@ -34,9 +34,10 @@ void ExamModeController::didEnterResponderChain(
   selectRow(initialSelectedRow());
   m_contentView.reload();
   // We add a message when the mode exam is on
-  m_contentView.setMessage(Preferences::SharedPreferences()->examMode().isActive()
-                               ? I18n::Message::ToDeactivateExamMode
-                               : I18n::Message::Default);
+  m_contentView.setMessage(
+      Preferences::SharedPreferences()->examMode().isActive()
+          ? I18n::Message::ToDeactivateExamMode
+          : I18n::Message::Default);
 }
 
 int ExamModeController::numberOfRows() const {

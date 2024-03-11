@@ -260,8 +260,12 @@ const char *FileSystem::extensionOfRecordBaseNamedWithExtensions(
 }
 
 void FileSystem::destroyAllRecords() {
-  overrideSizeAtPosition(m_buffer, 0);
-  notifyChangeToDelegate();
+  /* Do not destroy .sys records. */
+  destroyRecordsMatching(
+      [](Record::Name name, const void *) {
+        return strcmp(name.extension, systemExtension) != 0;
+      },
+      nullptr);
 }
 
 void FileSystem::destroyRecordsWithExtension(const char *extension) {

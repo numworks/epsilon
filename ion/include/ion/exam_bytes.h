@@ -3,10 +3,19 @@
 
 #include <stdint.h>
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace Ion {
 namespace ExamBytes {
 
-typedef uint16_t Int;
+using Int =
+#if __EMSCRIPTEN__
+    emscripten_align1_short;
+#else
+    uint16_t;
+#endif
 
 constexpr ExamBytes::Int k_defaultValue = 0;
 

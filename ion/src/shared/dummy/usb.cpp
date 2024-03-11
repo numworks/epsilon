@@ -14,7 +14,7 @@ bool isEnumerated() {
 
 void clearEnumerationInterrupt() {}
 
-void DFU() {}
+void DFU(DFUParameters) {}
 
 /* To be able to fully emulate plugged states and events on simulator, we take
  * advantage of enable and disable methods, which are conveniently called

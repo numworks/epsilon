@@ -16,7 +16,8 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-bool SVC_ATTRIBUTES shouldInterruptDFU() {
+bool SVC_ATTRIBUTES shouldInterruptDFU(Keyboard::State exitKeys,
+                                       bool bubbleUpEvents) {
   SVC_RETURNING_R0(SVC_USB_SHOULD_INTERRUPT, bool)
 }
 

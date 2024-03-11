@@ -41,7 +41,7 @@ interpreted as its value here 4
 
 
 Since trees have a variable size, code manipulates them via `Tree *`
-pointers. Moreover, the `const` keyword is used pervasively to differenciate
+pointers. Moreover, the `const` keyword is used pervasively to differentiate
 `const Tree *` from `Tree *` to constrain signatures.
 
 You may find the different tree types available for
@@ -54,7 +54,7 @@ come with some helpers such as `tree->isCosine()` to test them.
 Types are sometimes grouped together inside RANGE that provide similarly the
 method `tree->isNumber()`.
 
-You may also be intersted by the various tree methods that you will find here :
+You may also be interested by the various tree methods that you will find here :
 **TODO**
 
 Unlike the previous poincare, Tree can only be iterated forward.  You can't
@@ -76,7 +76,7 @@ with your trees temporarily. It's not intended for storage and can be cleared by
 exceptions. You must save your trees elsewhere before you return from pcj.
 
 The primary way to create Trees from scratch is to push nodes at the end of the
-`SharedEditionPool`. Its push method is templated to accomodate the different
+`SharedEditionPool`. Its push method is templated to accommodate the different
 arguments needed by various tree types.
 
 ```cpp

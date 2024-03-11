@@ -424,8 +424,11 @@ void AppsContainer::resetShiftAlphaStatus() {
 }
 
 void AppsContainer::openDFU(bool blocking) {
+  Preferences* preferences = Preferences::SharedPreferences();
   App::Snapshot* activeSnapshot =
       (activeApp() == nullptr ? homeAppSnapshot() : activeApp()->snapshot());
+  Poincare::ExamMode activeExamMode = preferences->examMode();
+
   /* Just after a software update, the battery timer does not have time to
    * fire before the calculator enters DFU mode. As the DFU mode blocks the
    * event loop, we update the battery state "manually" here.
@@ -443,8 +446,10 @@ void AppsContainer::openDFU(bool blocking) {
    * that have callbacks : country and exam mode.*/
   GlobalPreferences::SharedGlobalPreferences()->setCountry(
       GlobalPreferences::SharedGlobalPreferences()->country());
-  setExamMode(Preferences::SharedPreferences()->examMode(),
-              Ion::ExamMode::get());
+  if (preferences->examMode() != activeExamMode ||
+      preferences->forceExamModeReload()) {
+    setExamMode(preferences->examMode(), Ion::ExamMode::get());
+  }
   // Update LED when exiting DFU mode
   Ion::LED::updateColorWithPlugAndCharge();
   /* Do not switch back to the previous app if the USB connected screen is not

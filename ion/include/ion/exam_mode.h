@@ -40,6 +40,9 @@ class Configuration {
   bool operator==(const Configuration& other) const {
     return m_internals.raw == other.m_internals.raw;
   }
+  bool operator!=(const Configuration& other) const {
+    return !(*this == other);
+  }
 
   Ruleset ruleset() const;
   Int flags() const;

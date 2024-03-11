@@ -14,13 +14,15 @@ constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 
 Preferences::Preferences()
-    : m_calculationPreferences{
-          .angleUnit = AngleUnit::Radian,
-          .displayMode = Preferences::PrintFloatMode::Decimal,
-          .editionMode = EditionMode::Edition2D,
-          .complexFormat = Preferences::ComplexFormat::Real,
-          .numberOfSignificantDigits =
-              Preferences::DefaultNumberOfPrintedSignificantDigits} {}
+    : m_calculationPreferences{.angleUnit = AngleUnit::Radian,
+                               .displayMode =
+                                   Preferences::PrintFloatMode::Decimal,
+                               .editionMode = EditionMode::Edition2D,
+                               .complexFormat =
+                                   Preferences::ComplexFormat::Real,
+                               .numberOfSignificantDigits = Preferences::
+                                   DefaultNumberOfPrintedSignificantDigits},
+      m_forceExamModeReload(false) {}
 
 static Preferences* fetchFromStorage() {
   Ion::Storage::Record record =
@@ -54,6 +56,7 @@ ExamMode Preferences::examMode() const {
 }
 
 void Preferences::setExamMode(ExamMode mode) {
+  m_forceExamModeReload = false;
   m_examMode = mode;
   Ion::ExamMode::set(mode);
 }

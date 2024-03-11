@@ -153,6 +153,7 @@ class Preferences final {
     m_parabolaParameter = parameter;
   }
 
+  bool forceExamModeReload() const { return m_forceExamModeReload; }
   ExamMode examMode() const;
   void setExamMode(ExamMode examMode);
 
@@ -163,6 +164,9 @@ class Preferences final {
 
  private:
   CalculationPreferences m_calculationPreferences;
+  /* This flag is only to be used when writing new Preferences via DFU, to force
+   * the re-activation of the same exam mode. */
+  bool m_forceExamModeReload;
   mutable CombinatoricSymbols m_combinatoricSymbols;
   mutable ExamMode m_examMode;
   mutable bool m_mixedFractionsAreEnabled;

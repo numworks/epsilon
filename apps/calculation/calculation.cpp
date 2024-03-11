@@ -191,13 +191,16 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
       strcmp(exactText, Undefined::Name()) == 0 ||
       // If the approximate output is 'nonreal'
       strcmp(approxText, Nonreal::Name()) == 0 ||
-      // If the approximate output is 'undef'
-      strcmp(approxText, Undefined::Name()) == 0 ||
       // Other conditions are factorized in ExpressionDisplayPermissions
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
           inputExp, outputExp,
           approximateOutput(NumberOfSignificantDigits::UserDefined), context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
+  } else if (
+      // If the approximate output is 'undef'
+      strcmp(approxText, Undefined::Name()) == 0) {
+    // TODO_PCJ: This allow the display of exact pcj results, regulate it.
+    m_displayOutput = DisplayOutput::ExactOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||
              inputExp.recursivelyMatches(Expression::IsApproximate, context) ||
              outputExp.recursivelyMatches(Expression::IsApproximate, context) ||

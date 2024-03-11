@@ -256,6 +256,9 @@ ExpressionNode::Type JuniorExpression::type() const {
 #endif
     default:
       assert(false);
+      // Fallthrough
+    case PoincareJ::BlockType::UserSymbol:
+      // TODO_PCJ: Handle symbols better
       return ExpressionNode::Type::JuniorExpression;
       // Unused in apps, but they should not raise the default assert.
     case PoincareJ::BlockType::Subtraction:

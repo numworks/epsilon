@@ -93,6 +93,11 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
       position = position.translatedBy(
           KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));
       codePoint = decoder.nextCodePoint();
+    } else if (codePoint.isCombining()) {
+      /* Ignore combining codepoints at the start of a line that
+       * unsanitized calls (from micropython for instance) may
+       * contain. */
+      codePoint = decoder.nextCodePoint();
     } else {
       assert(!codePoint.isCombining());
       KDFont::Font(style.font)

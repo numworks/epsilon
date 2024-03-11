@@ -17,6 +17,7 @@
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/rack_from_text.h>
+#include <poincare_junior/src/layout/serialize.h>
 #include <poincare_junior/src/n_ary.h>
 
 namespace Poincare {
@@ -103,9 +104,12 @@ size_t JuniorExpressionNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  OExpression e = PoincareJ::ToPoincareExpression(tree());
-  return e.node()->serialize(buffer, bufferSize, floatDisplayMode,
-                             numberOfSignificantDigits);
+  PoincareJ::Tree* layout = PoincareJ::Layoutter::LayoutExpression(
+      tree()->clone(), true, numberOfSignificantDigits);
+  size_t size =
+      PoincareJ::Serialize(layout, buffer, buffer + bufferSize) - buffer;
+  layout->removeTree();
+  return size;
 }
 
 /* JuniorExpression */

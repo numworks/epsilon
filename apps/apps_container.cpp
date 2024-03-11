@@ -297,6 +297,7 @@ void AppsContainer::run() {
           GlobalPreferences::SharedGlobalPreferences()->brightnessLevel());
       Ion::Events::setSpinner(true);
       Ion::Display::setScreenshotCallback(ShowCursor);
+      m_dfuBetweenEvents = false;
       if (activeApp() && activeApp()->snapshot() == homeAppSnapshot()) {
         dispatchEvent(Ion::Events::Back);
       } else {

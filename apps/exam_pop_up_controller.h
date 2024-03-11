@@ -10,6 +10,7 @@ class ExamPopUpController : public Shared::MessagePopUpController {
   ExamPopUpController();
   void setTargetExamMode(Poincare::ExamMode mode);
   Poincare::ExamMode targetExamMode() const { return m_targetExamMode; }
+  void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
 

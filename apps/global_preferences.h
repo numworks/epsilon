@@ -7,6 +7,10 @@
 #include <omg/global_box.h>
 #include <poincare/preferences.h>
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 class GlobalPreferences {
   friend OMG::GlobalBox<GlobalPreferences>;
 
@@ -16,8 +20,8 @@ class GlobalPreferences {
   static GlobalPreferences* SharedGlobalPreferences();
 
   GlobalPreferences()
-      : m_showPopUp(true),
-        m_brightnessLevel(Ion::Backlight::MaxBrightness),
+      : m_brightnessLevel(Ion::Backlight::MaxBrightness),
+        m_showPopUp(true),
         m_font(KDFont::Size::Large) {
     setLanguage(I18n::Language::EN);
     setCountry(I18n::Country::WW, false);
@@ -115,11 +119,21 @@ class GlobalPreferences {
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
 
+#if __EMSCRIPTEN__
+  emscripten_align1_int m_brightnessLevel;
+#else
+  int m_brightnessLevel;
+#endif
   I18n::Language m_language;
   I18n::Country m_country;
   bool m_showPopUp;
-  int m_brightnessLevel;
   KDFont::Size m_font;
 };
+
+#if __EMSCRIPTEN
+/* GlobalPreferences live in the Storage which does not enforce alignment, so
+ * make sure Emscripten cannot attempt unaligned accesses. */
+static_assert(std::alignment_of<GlobalPreferences>() == 1);
+#endif
 
 #endif

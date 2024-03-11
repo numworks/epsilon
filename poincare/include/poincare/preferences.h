@@ -173,6 +173,12 @@ class Preferences final {
    * CalculationStore::preferencesMightHaveChanged */
 };
 
+#if __EMSCRIPTEN__
+/* Preferences live in the Storage which does not enforce alignment, so make
+ * sure Emscripten cannot attempt unaligned accesses. */
+static_assert(std::alignment_of<Preferences>() == 1);
+#endif
+
 }  // namespace Poincare
 
 #endif

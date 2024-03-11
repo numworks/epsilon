@@ -97,7 +97,7 @@ Shared::GlobalContext* AppsContainer::globalContext() {
 void AppsContainer::didSuspend() {
   resetShiftAlphaStatus();
   GlobalPreferences* globalPreferences =
-      GlobalPreferences::sharedGlobalPreferences;
+      GlobalPreferences::SharedGlobalPreferences();
   // Display the prompt if it has a message to display
   if (promptController() != nullptr &&
       activeApp()->snapshot() != onBoardingAppSnapshot() &&
@@ -148,7 +148,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
     Ion::Backlight::setBrightness(
-        GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
+        GlobalPreferences::SharedGlobalPreferences()->brightnessLevel());
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
     window()->redraw();
@@ -194,7 +194,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     if (Ion::USB::isPlugged()) {
       Ion::USB::enable();
       Ion::Backlight::setBrightness(
-          GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
+          GlobalPreferences::SharedGlobalPreferences()->brightnessLevel());
     } else {
       m_firstUSBEnumeration = true;
       Ion::USB::disable();
@@ -307,7 +307,7 @@ void AppsContainer::run() {
       m_backlightDimmingTimer.reset();
       m_suspendTimer.reset();
       Ion::Backlight::setBrightness(
-          GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
+          GlobalPreferences::SharedGlobalPreferences()->brightnessLevel());
       Ion::Events::setSpinner(true);
       Ion::Display::setScreenshotCallback(ShowCursor);
       if (activeApp() && activeApp()->snapshot() == homeAppSnapshot()) {

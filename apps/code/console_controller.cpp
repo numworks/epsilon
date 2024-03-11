@@ -226,7 +226,7 @@ int ConsoleController::numberOfRows() const { return editableCellRow() + 1; }
 
 KDCoordinate ConsoleController::defaultRowHeight() {
   return KDFont::GlyphHeight(
-      GlobalPreferences::sharedGlobalPreferences->font());
+      GlobalPreferences::SharedGlobalPreferences()->font());
 }
 
 HighlightCell *ConsoleController::reusableCell(int index, int type) {

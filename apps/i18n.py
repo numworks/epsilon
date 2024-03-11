@@ -542,7 +542,7 @@ const char * translate(Message m) {
     assert(universalMessages[(int)m] != nullptr);
     return universalMessages[(int)m];
   }
-  int languageIndex = (int)GlobalPreferences::sharedGlobalPreferences->language();
+  int languageIndex = (int)GlobalPreferences::SharedGlobalPreferences()->language();
   int messageIndex = (int)m - localizedMessageOffset;
   assert((messageIndex*NumberOfLanguages+languageIndex)*sizeof(char *) < sizeof(messages));
   return messages[messageIndex][languageIndex];
@@ -739,7 +739,7 @@ const char * translate(Message m) {
     // Universal messages must be loaded once
     unpackUniversal();
   }
-  int selectedLanguage = (int)GlobalPreferences::sharedGlobalPreferences->language();
+  int selectedLanguage = (int)GlobalPreferences::SharedGlobalPreferences()->language();
   if (selectedLanguage != currentLanguage) {
     // Load and update selected language
     unpackLocalized(selectedLanguage);

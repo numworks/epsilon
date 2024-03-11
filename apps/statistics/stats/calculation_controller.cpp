@@ -198,7 +198,7 @@ int CalculationController::typeAtLocation(int column, int row) const {
 int CalculationController::findCellIndex(int i) const {
   int returnIndex = 0;
   while (returnIndex <= fixedNumberOfRows()) {
-    if (i == (GlobalPreferences::sharedGlobalPreferences->statsRowsLayout() ==
+    if (i == (GlobalPreferences::SharedGlobalPreferences()->statsRowsLayout() ==
                       CountryPreferences::StatsRowsLayout::Variant1
                   ? k_calculationRows[returnIndex].variant1Index
                   : k_calculationRows[returnIndex].defaultIndex)) {
@@ -212,7 +212,7 @@ int CalculationController::findCellIndex(int i) const {
 
 int CalculationController::fixedNumberOfRows() const {
   // Hide SampleMean under default StatsRowLayout
-  return GlobalPreferences::sharedGlobalPreferences->statsRowsLayout() ==
+  return GlobalPreferences::SharedGlobalPreferences()->statsRowsLayout() ==
                  CountryPreferences::StatsRowsLayout::Variant1
              ? k_fixedMaxNumberOfRows
              : k_fixedMaxNumberOfRows - 1;

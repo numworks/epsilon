@@ -41,7 +41,7 @@ App *App::Snapshot::unpack(Container *container) {
 void App::Snapshot::resetInterval() {
   m_interval.reset();
   m_interval.parameters()->setStart(
-      GlobalPreferences::sharedGlobalPreferences->sequencesInitialRank());
+      GlobalPreferences::SharedGlobalPreferences()->sequencesInitialRank());
   m_interval.forceRecompute();
   setIntervalModifiedByUser(false);
 }

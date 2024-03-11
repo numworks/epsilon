@@ -182,9 +182,9 @@ void assert_data_box_plot(Store* store, int numberOfData,
   I18n::Country country;
   for (int c = 0; c < I18n::NumberOfCountries; c++) {
     country = static_cast<I18n::Country>(c);
-    GlobalPreferences::sharedGlobalPreferences->setCountry(country);
+    GlobalPreferences::SharedGlobalPreferences()->setCountry(country);
     bool countryUseFrequencyMethod =
-        (GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+        (GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
          CountryPreferences::MethodForQuartiles::CumulatedFrequency);
     if (shouldUseFrequencyMethod != countryUseFrequencyMethod) {
       continue;
@@ -229,7 +229,7 @@ void assert_data_box_plot(Store* store, int numberOfData,
                   store->upperOutlierAtIndex(k_defaultSeriesIndex, i));
     }
   }
-  GlobalPreferences::sharedGlobalPreferences->setCountry(I18n::Country::WW);
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);
 }
 
 QUIZ_CASE(statistics) {

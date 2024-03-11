@@ -171,7 +171,7 @@ bool AdditionalResultsType::HasUnit(
   if (!unit.isUninitialized() &&
       (Unit::ShouldDisplayAdditionalOutputs(
            value, unit,
-           GlobalPreferences::sharedGlobalPreferences->unitFormat()) ||
+           GlobalPreferences::SharedGlobalPreferences()->unitFormat()) ||
        UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
     /* Sometimes with angle units, the reduction with UnitConversion::None
      * will be defined but not the reduction with UnitConversion::Default,

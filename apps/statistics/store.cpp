@@ -275,24 +275,24 @@ double Store::sampleVariance(int series) const {
  * the more general definition if non-integral frequencies are found.
  * */
 double Store::firstQuartile(int series) const {
-  if (GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+  if (GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
           CountryPreferences::MethodForQuartiles::CumulatedFrequency ||
       !columnIsIntegersOnly(series, 1)) {
     return sortedElementAtCumulatedFrequency(series, 1.0 / 4.0);
   }
-  assert(GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+  assert(GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
          CountryPreferences::MethodForQuartiles::MedianOfSublist);
   return sortedElementAtCumulatedPopulation(
       series, std::floor(sumOfOccurrences(series) / 2.) / 2., true);
 }
 
 double Store::thirdQuartile(int series) const {
-  if (GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+  if (GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
           CountryPreferences::MethodForQuartiles::CumulatedFrequency ||
       !columnIsIntegersOnly(series, 1)) {
     return sortedElementAtCumulatedFrequency(series, 3.0 / 4.0);
   }
-  assert(GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+  assert(GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
          CountryPreferences::MethodForQuartiles::MedianOfSublist);
   return sortedElementAtCumulatedPopulation(
       series, std::ceil(3. / 2. * sumOfOccurrences(series)) / 2., true);

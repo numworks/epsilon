@@ -73,7 +73,7 @@ MainController::MainController(Responder *parentResponder)
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences *globalPreferences =
-      GlobalPreferences::sharedGlobalPreferences;
+      GlobalPreferences::SharedGlobalPreferences();
   int index = selectedRow();
   int type = typeAtRow(index);
   if (type == k_resetCellType) {
@@ -187,7 +187,7 @@ int MainController::typeAtRow(int row) const {
 
 void MainController::fillCellForRow(HighlightCell *cell, int row) {
   GlobalPreferences *globalPreferences =
-      GlobalPreferences::sharedGlobalPreferences;
+      GlobalPreferences::SharedGlobalPreferences();
   Preferences *preferences = Preferences::SharedPreferences();
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
@@ -241,7 +241,7 @@ void MainController::fillCellForRow(HighlightCell *cell, int row) {
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::FontSizes:
-      childIndex = GlobalPreferences::sharedGlobalPreferences->font() ==
+      childIndex = GlobalPreferences::SharedGlobalPreferences()->font() ==
                            KDFont::Size::Large
                        ? 0
                        : 1;
@@ -318,7 +318,7 @@ bool MainController::hasPressToTestCell() const {
 bool MainController::hasTestModeCell() const {
   // If both exam mode and press to test are available
   CountryPreferences::AvailableExamModes examMode =
-      GlobalPreferences::sharedGlobalPreferences->availableExamModes();
+      GlobalPreferences::SharedGlobalPreferences()->availableExamModes();
   return (examMode == CountryPreferences::AvailableExamModes::All ||
           examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&
          Preferences::SharedPreferences()->examMode().ruleset() ==

@@ -120,7 +120,7 @@ bool GraphController::buildRegressionExpression(
       m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
   Layout l = m_store->regressionModel(modelType)->equationLayout(
       coefficients,
-      GlobalPreferences::sharedGlobalPreferences->yPredictedSymbol(),
+      GlobalPreferences::SharedGlobalPreferences()->yPredictedSymbol(),
       significantDigits, displayMode);
   size_t length = l.serializeForParsing(buffer, bufferSize);
   if (length >= bufferSize - 1 || length == 0) {
@@ -196,7 +196,7 @@ void GraphController::reloadBannerView() {
       buffer, BannerView::BannerBufferTextView::MaxTextSize(), "%s=%*.*ed",
       (displayMean
            ? "y\xCC\x85"
-           : (displayEquation ? GlobalPreferences::sharedGlobalPreferences
+           : (displayEquation ? GlobalPreferences::SharedGlobalPreferences()
                                     ->yPredictedSymbol()
                               : "y")),
       y, displayMode, significantDigits);

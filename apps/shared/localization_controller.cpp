@@ -181,7 +181,7 @@ void LocalizationController::setMode(LocalizationController::Mode mode) {
 int LocalizationController::indexOfCellToSelectOnReset() const {
   assert(mode() == Mode::Language);
   return static_cast<int>(
-      GlobalPreferences::sharedGlobalPreferences->language());
+      GlobalPreferences::SharedGlobalPreferences()->language());
 }
 
 const char *LocalizationController::title() {
@@ -201,12 +201,12 @@ void LocalizationController::viewWillAppear() {
 bool LocalizationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (mode() == Mode::Language) {
-      GlobalPreferences::sharedGlobalPreferences->setLanguage(
+      GlobalPreferences::SharedGlobalPreferences()->setLanguage(
           static_cast<I18n::Language>(selectedRow()));
       AppsContainer::sharedAppsContainer()->reloadTitleBarView();
     } else {
       assert(mode() == Mode::Country);
-      GlobalPreferences::sharedGlobalPreferences->setCountry(
+      GlobalPreferences::SharedGlobalPreferences()->setCountry(
           CountryAtIndex(selectedRow()));
     }
     return true;

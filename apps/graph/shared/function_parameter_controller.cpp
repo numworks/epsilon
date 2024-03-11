@@ -64,7 +64,7 @@ void FunctionParameterController::setRecord(Ion::Storage::Record record) {
 
 const char *intervalBracket(double value, bool opening) {
   if (std::isinf(value)) {
-    return GlobalPreferences::sharedGlobalPreferences->openIntervalChar(
+    return GlobalPreferences::SharedGlobalPreferences()->openIntervalChar(
         opening);
   }
   return opening ? "[" : "]";

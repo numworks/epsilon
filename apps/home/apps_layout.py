@@ -86,7 +86,7 @@ def print_implementation(implementation, data):
 
     f.write("int PermutedAppSnapshotIndex(int index) {\n")
     f.write(
-        "  CountryPreferences::HomeAppsLayout currentLayout = GlobalPreferences::sharedGlobalPreferences->homeAppsLayout();\n"
+        "  CountryPreferences::HomeAppsLayout currentLayout = GlobalPreferences::SharedGlobalPreferences()->homeAppsLayout();\n"
     )
     for i in range(len(styles)):
         f.write(

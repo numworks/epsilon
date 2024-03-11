@@ -2,7 +2,21 @@
 
 #include "apps_container_helper.h"
 
-OMG::GlobalBox<GlobalPreferences> GlobalPreferences::sharedGlobalPreferences;
+static GlobalPreferences* fetchFromStorage() {
+  Ion::Storage::Record record =
+      Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
+          GlobalPreferences::k_recordName, Ion::Storage::systemExtension);
+  assert(!record.isNull());
+  Ion::Storage::Record::Data data = record.value();
+  assert(data.size == sizeof(GlobalPreferences));
+  return static_cast<GlobalPreferences*>(const_cast<void*>(data.buffer));
+}
+
+GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
+  static GlobalPreferences* ptr = fetchFromStorage();
+  assert(fetchFromStorage() == ptr);
+  return ptr;
+}
 
 void GlobalPreferences::setCountry(I18n::Country country,
                                    bool updateSnapshots) {

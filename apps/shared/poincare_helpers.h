@@ -125,7 +125,7 @@ inline Poincare::ReductionContext ReductionContextForParameters(
     const ReductionParameters& reductionParameters) {
   Poincare::ReductionContext reductionContext(
       context, reductionParameters.complexFormat, reductionParameters.angleUnit,
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
+      GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       reductionParameters.target, reductionParameters.symbolicComputation,
       reductionParameters.unitConversion);
   if (reductionParameters.updateComplexFormatWithExpression) {

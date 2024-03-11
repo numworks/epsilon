@@ -145,7 +145,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
-    GlobalPreferences::sharedGlobalPreferences->setFont(
+    GlobalPreferences::SharedGlobalPreferences()->setFont(
         valueIndex == 0 ? KDFont::Size::Large : KDFont::Size::Small);
   }
 }
@@ -166,7 +166,7 @@ int PreferencesController::valueIndexForPreference(
     return (int)preferences->complexFormat();
   }
   if (message == I18n::Message::FontSizes) {
-    return GlobalPreferences::sharedGlobalPreferences->font() ==
+    return GlobalPreferences::SharedGlobalPreferences()->font() ==
                    KDFont::Size::Large
                ? 0
                : 1;

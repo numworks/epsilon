@@ -166,13 +166,8 @@ void ListController::layoutFieldDidAbortEditing(
 }
 
 CodePoint ListController::defaultXNT() {
-  int selectedFunctionIndex = selectedRow();
-  if (selectedFunctionIndex >= 0) {
-    assert(selectedFunctionIndex < modelStore()->numberOfModels());
-    Ion::Storage::Record record = selectedRecord();
-    return modelStore()->modelForRecord(record)->symbol();
-  }
-  return ContinuousFunction::k_cartesianSymbol;
+  assert(selectedRow() >= 0);
+  return modelStore()->modelForRecord(selectedRecord())->symbol();
 }
 
 void ListController::editExpression(Ion::Events::Event event) {

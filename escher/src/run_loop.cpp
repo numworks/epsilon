@@ -31,6 +31,9 @@ void RunLoop::runWhile(bool (*callback)(void* ctx), void* ctx) {
 }
 
 bool RunLoop::step() {
+  // The device might want to listen to the USB before receiving an event.
+  listenToExternalEvents();
+
   // Fetch the event, if any
   int eventDuration = Timer::TickDuration;
   int timeout = eventDuration;

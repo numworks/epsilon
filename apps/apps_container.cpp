@@ -25,6 +25,7 @@ AppsContainer* AppsContainer::sharedAppsContainer() {
 AppsContainer::AppsContainer()
     : Container(),
       m_firstUSBEnumeration(true),
+      m_dfuBetweenEvents(false),
       m_examPopUpController(),
       m_promptController(k_promptMessages, k_promptColors,
                          k_promptNumberOfMessages)
@@ -167,26 +168,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       return false;
     }
     if (!Preferences::SharedPreferences()->examMode().isActive()) {
-      App::Snapshot* activeSnapshot =
-          (activeApp() == nullptr ? homeAppSnapshot()
-                                  : activeApp()->snapshot());
-      /* Just after a software update, the battery timer does not have time to
-       * fire before the calculator enters DFU mode. As the DFU mode blocks the
-       * event loop, we update the battery state "manually" here.
-       * We do it before switching to USB application to redraw the battery
-       * pictogram. */
-      updateBatteryState();
-      switchToBuiltinApp(usbConnectedAppSnapshot());
-      Ion::USB::DFU();
-      /* DFU might have changed preferences and global preferences, update those
-       * that have callbacks : country and exam mode.*/
-      GlobalPreferences::SharedGlobalPreferences()->setCountry(
-          GlobalPreferences::SharedGlobalPreferences()->country());
-      setExamMode(Preferences::SharedPreferences()->examMode(),
-                  Ion::ExamMode::get());
-      // Update LED when exiting DFU mode
-      Ion::LED::updateColorWithPlugAndCharge();
-      switchToBuiltinApp(activeSnapshot);
+      openDFU(true);
     } else if (m_firstUSBEnumeration) {
       displayExamModePopUp(ExamMode(ExamMode::Ruleset::Off));
       // Warning: if the window is dirtied, you need to call window()->redraw()
@@ -424,9 +406,46 @@ Timer* AppsContainer::containerTimerAtIndex(int i) {
   return timers[i];
 }
 
+void AppsContainer::listenToExternalEvents() {
+  if (m_dfuBetweenEvents) {
+    openDFU(false);
+  }
+}
+
 void AppsContainer::resetShiftAlphaStatus() {
   Ion::Events::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus());
   updateAlphaLock();
+}
+
+void AppsContainer::openDFU(bool blocking) {
+  App::Snapshot* activeSnapshot =
+      (activeApp() == nullptr ? homeAppSnapshot() : activeApp()->snapshot());
+  /* Just after a software update, the battery timer does not have time to
+   * fire before the calculator enters DFU mode. As the DFU mode blocks the
+   * event loop, we update the battery state "manually" here.
+   * We do it before switching to USB application to redraw the battery
+   * pictogram. */
+  updateBatteryState();
+  if (blocking) {
+    switchToBuiltinApp(usbConnectedAppSnapshot());
+  }
+
+  Ion::USB::DFU(blocking ? Ion::USB::DFUParameters::Blocking()
+                         : Ion::USB::DFUParameters::PassThrough());
+
+  /* DFU might have changed preferences and global preferences, update those
+   * that have callbacks : country and exam mode.*/
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(
+      GlobalPreferences::SharedGlobalPreferences()->country());
+  setExamMode(Preferences::SharedPreferences()->examMode(),
+              Ion::ExamMode::get());
+  // Update LED when exiting DFU mode
+  Ion::LED::updateColorWithPlugAndCharge();
+  /* Do not switch back to the previous app if the USB connected screen is not
+   * active, as a special command may have switched app. */
+  if (activeApp()->snapshot() == usbConnectedAppSnapshot()) {
+    switchToBuiltinApp(activeSnapshot);
+  }
 }
 
 void AppsContainer::ShowCursor() {

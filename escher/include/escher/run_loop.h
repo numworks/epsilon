@@ -16,6 +16,7 @@ class RunLoop {
   virtual bool dispatchEvent(Ion::Events::Event e) = 0;
   virtual int numberOfTimers();
   virtual Timer* timerAtIndex(int i);
+  virtual void listenToExternalEvents() = 0;
 
  private:
   // Returns true while the Termination event is not fired.

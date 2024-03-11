@@ -675,9 +675,6 @@ void RackParser::parseBinaryOperator(const EditionReference &leftHandSide,
                                      EditionReference &rightHandSide,
                                      Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    /* TODO: If this assert never crashed, parseBinaryOperator could be
-     * replaced with parseUntil. */
-    assert(false);
     // Left-hand side missing.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }

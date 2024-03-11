@@ -92,7 +92,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
 
   if (setOfDependencies->numberOfChildren() > 0) {
     derivand->cloneNodeAtNode(KDep);
-    Dependency::ShallowReduce(derivand);
+    Dependency::RemoveDefinedDependencies(derivand);
   } else {
     setOfDependencies->removeTree();
   }

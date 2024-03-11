@@ -79,7 +79,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   return false;
 };
 
-bool Dependency::ShallowReduce(Tree* dep) {
+bool Dependency::RemoveDefinedDependencies(Tree* dep) {
   /* TODO : We call this function to eliminate some dependencies after we
    * modified the list and it processes all the dependencies. We should rather
    * add an AddDependency method that makes sure the dependency is interesting
@@ -175,7 +175,7 @@ bool RemoveUselessDependencies(Tree* dep) {
   }
 
   // ShallowReduce to remove defined dependencies ({x+3}->{x, 3}->{x})
-  Dependency::ShallowReduce(dep);
+  Dependency::RemoveDefinedDependencies(dep);
 
   /* Step 2: Remove duplicate dependencies and dependencies contained in others
    * {sqrt(x), sqrt(x), 1/sqrt(x)} -> {1/sqrt(x)} */
@@ -203,7 +203,7 @@ bool RemoveUselessDependencies(Tree* dep) {
     }
   }
 
-  Dependency::ShallowReduce(dep);
+  Dependency::RemoveDefinedDependencies(dep);
   return true;
 }
 

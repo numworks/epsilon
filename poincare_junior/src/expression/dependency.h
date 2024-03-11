@@ -6,7 +6,7 @@
 namespace PoincareJ {
 
 struct Dependency {
-  static bool ShallowReduce(Tree* expr);
+  static bool RemoveDefinedDependencies(Tree* expr);
   static bool ShallowBubbleUpDependencies(Tree* expr);
   static bool DeepRemoveUselessDependencies(Tree* expr);
 };

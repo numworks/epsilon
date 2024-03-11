@@ -81,6 +81,50 @@ size_t SymbolAbstractNode::serialize(
   return std::min<size_t>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
+bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
+                                             const char **visitedSymbols,
+                                             int numberOfVisitedSymbols) {
+  // Check if this symbol has already been visited.
+  for (int i = 0; i < numberOfVisitedSymbols; i++) {
+    if (strcmp(name(), visitedSymbols[i]) == 0) {
+      return true;
+    }
+  }
+
+  // Check children of this (useful for function parameters)
+  if (ExpressionNode::involvesCircularity(context, maxDepth, visitedSymbols,
+                                          numberOfVisitedSymbols)) {
+    return true;
+  }
+
+  // Check for circularity in the expression of the symbol and decrease depth
+  maxDepth--;
+  if (maxDepth < 0) {
+    /* We went too deep into the check and consider the expression to be
+     * circular. */
+    return true;
+  }
+  visitedSymbols[numberOfVisitedSymbols] = m_name;
+  numberOfVisitedSymbols++;
+
+  Expression symbolAbstract;
+  if (type() == ExpressionNode::Type::Function) {
+    // This is like cloning, but without the symbol.
+    symbolAbstract = Function::Builder(name(), strlen(name()),
+                                       Symbol::Builder(UCodePointUnknown));
+  } else {
+    assert(type() == ExpressionNode::Type::Symbol);
+    symbolAbstract = SymbolAbstract(this);
+  }
+
+  Expression e = context->expressionForSymbolAbstract(
+      static_cast<SymbolAbstract &>(symbolAbstract), false);
+
+  return !e.isUninitialized() &&
+         e.involvesCircularity(context, maxDepth, visitedSymbols,
+                               numberOfVisitedSymbols);
+}
+
 template <typename T, typename U>
 T SymbolAbstract::Builder(const char *name, int length) {
   if (AliasesLists::k_thetaAliases.contains(name, length)) {
@@ -140,6 +184,16 @@ Expression SymbolAbstract::replaceSymbolWithExpression(
     return exp;
   }
   return *this;
+}
+
+void SymbolAbstract::checkForCircularityIfNeeded(Context *context,
+                                                 TrinaryBoolean *isCircular) {
+  assert(*isCircular != TrinaryBoolean::True);
+  if (*isCircular == TrinaryBoolean::Unknown) {
+    const char *visitedSymbols[Expression::k_maxSymbolReplacementsCount];
+    *isCircular = BinaryToTrinaryBool(involvesCircularity(
+        context, Expression::k_maxSymbolReplacementsCount, visitedSymbols, 0));
+  }
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract &symbol,

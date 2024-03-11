@@ -74,42 +74,6 @@ Expression FunctionNode::shallowReduce(
   return Function(this).shallowReduce(reductionContext);
 }
 
-bool FunctionNode::involvesCircularity(Context* context, int maxDepth,
-                                       const char** visitedFunctions,
-                                       int numberOfVisitedFunctions) {
-  // Check if this symbol has already been visited.
-  for (int i = 0; i < numberOfVisitedFunctions; i++) {
-    if (strcmp(m_name, visitedFunctions[i]) == 0) {
-      return true;
-    }
-  }
-
-  // Check variable
-  if (childAtIndex(0)->involvesCircularity(context, maxDepth, visitedFunctions,
-                                           numberOfVisitedFunctions)) {
-    return true;
-  }
-
-  // Check for circularity in the expression of the function and decrease depth
-  maxDepth--;
-  if (maxDepth < 0) {
-    /* We went too deep into the check and consider the expression to be
-     * circular. */
-    return true;
-  }
-  visitedFunctions[numberOfVisitedFunctions] = m_name;
-  numberOfVisitedFunctions++;
-
-  // This is like cloning, but without the symbol.
-  Expression e = Function::Builder(name(), strlen(name()),
-                                   Symbol::Builder(UCodePointUnknown));
-  e = context->expressionForSymbolAbstract(static_cast<SymbolAbstract&>(e),
-                                           false);
-  return !e.isUninitialized() &&
-         e.involvesCircularity(context, maxDepth, visitedFunctions,
-                               numberOfVisitedFunctions);
-}
-
 Expression FunctionNode::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
@@ -208,7 +172,6 @@ Expression Function::deepReplaceReplaceableSymbols(
   /* This symbolic computation parameters make no sense in this method.
    * It is therefore not handled. */
   assert(symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
-  assert(*isCircular != TrinaryBoolean::True);
 
   if (symbolicComputation ==
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
@@ -222,18 +185,13 @@ Expression Function::deepReplaceReplaceableSymbols(
          symbolicComputation ==
              SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
 
-  /* Check for circularity only when a function is encountered so that
+  /* Check for circularity only when a symbol/function is encountered so that
    * it is not uselessly checked each time deepReplaceReplaceableSymbols is
    * called.
    * isCircularFromHere is used so that isCircular is not altered if this is
    * not circular but a sibling of this is circular and was not checked yet. */
   TrinaryBoolean isCircularFromHere = *isCircular;
-  if (isCircularFromHere == TrinaryBoolean::Unknown) {
-    const char* visitedFunctions[Expression::k_maxSymbolReplacementsCount];
-    isCircularFromHere = BinaryToTrinaryBool(
-        involvesCircularity(context, Expression::k_maxSymbolReplacementsCount,
-                            visitedFunctions, 0));
-  }
+  checkForCircularityIfNeeded(context, &isCircularFromHere);
   if (isCircularFromHere == TrinaryBoolean::True) {
     *isCircular = isCircularFromHere;
     return *this;

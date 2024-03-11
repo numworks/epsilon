@@ -9,6 +9,14 @@ PlotStore::PlotStore() : Shared::InteractiveCurveViewRange(), m_show(false) {
 }
 
 void PlotStore::flush() {
+  /* First set the objects to null, so that the first malloc new_list
+   * can call the garbage collection and free the previous list. It is
+   * necessary since allocation need not to fail because this function
+   * is called during HandleException. */
+  m_dots = MP_OBJ_NULL;
+  m_segments = MP_OBJ_NULL;
+  m_rects = MP_OBJ_NULL;
+  m_labels = MP_OBJ_NULL;
   m_dots = mp_obj_new_list(0, nullptr);
   m_segments = mp_obj_new_list(0, nullptr);
   m_rects = mp_obj_new_list(0, nullptr);

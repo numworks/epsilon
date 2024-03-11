@@ -121,8 +121,12 @@ Expression Constant::shallowReduce(ReductionContext reductionContext) {
 bool Constant::derivate(const ReductionContext& reductionContext, Symbol symbol,
                         Expression symbolValue) {
   ConstantNode::ConstantInfo info = constantInfo();
-  if (info.m_unit == nullptr && !std::isnan(info.m_value)) {
-    replaceWithInPlace(Rational::Builder(0));
+  if (info.m_unit == nullptr) {
+    if (std::isnan(info.m_value)) {
+      replaceWithInPlace(Undefined::Builder());
+    } else {
+      replaceWithInPlace(Rational::Builder(0));
+    }
     return true;
   }
   return false;

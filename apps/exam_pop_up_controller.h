@@ -12,7 +12,6 @@ class ExamPopUpController : public Shared::MessagePopUpController {
   Poincare::ExamMode targetExamMode() const { return m_targetExamMode; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  bool handleEvent(Ion::Events::Event event) override;
 
  private:
   constexpr static int k_numberOfLines = 4;

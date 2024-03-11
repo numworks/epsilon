@@ -99,7 +99,7 @@ class GlobalPreferences {
   void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }
 
   constexpr static int NumberOfBrightnessStates = 12;
-  int brightnessLevel() const { return m_brightnessLevel; }
+  int brightnessLevel() const;
   void setBrightnessLevel(int brightnessLevel);
 
   KDFont::Size font() const { return m_font; }

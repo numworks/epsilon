@@ -258,6 +258,8 @@ ExpressionNode::Type JuniorExpression::type() const {
       assert(false);
       return ExpressionNode::Type::JuniorExpression;
       // Unused in apps, but they should not raise the default assert.
+    case PoincareJ::BlockType::Subtraction:
+      return ExpressionNode::Type::Subtraction;
     case PoincareJ::BlockType::Decimal:
       return ExpressionNode::Type::Decimal;
     case PoincareJ::BlockType::ComplexI:

@@ -62,7 +62,7 @@ class ResultGoodnessContributionsTable
                                                I18n::Message::Expected,
                                                I18n::Message::Contributions};
 
-  static constexpr KDCoordinate k_columnsWidth[] = {90, 90, 110};
+  static constexpr KDCoordinate k_columnsWidth[] = {95, 95, 100};
 
   GoodnessTest *m_statistic;
   CategoricalController *m_parentController;

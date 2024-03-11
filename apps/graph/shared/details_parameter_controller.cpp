@@ -228,7 +228,7 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
     }
     case Conic::Shape::Parabola: {
       I18n::Message k_descriptions[k_parabolaDetailsSections] = {
-          GlobalPreferences::sharedGlobalPreferences->parabolaParameter() ==
+          GlobalPreferences::SharedGlobalPreferences()->parabolaParameter() ==
                   Poincare::Preferences::ParabolaParameter::FocalLength
               ? I18n::Message::ParabolaFocalLengthDescription
               : I18n::Message::ParabolaParameterDescription,

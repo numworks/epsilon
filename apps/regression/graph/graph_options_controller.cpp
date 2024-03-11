@@ -192,7 +192,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
 
 HighlightCell *GraphOptionsController::cell(int row) {
   assert(row >= 0 && row < k_maxNumberOfRows);
-  if (GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+  if (GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
       CountryPreferences::RegressionApp::Default) {
     HighlightCell *cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
                                                &m_regressionEquationCell,
@@ -204,7 +204,7 @@ HighlightCell *GraphOptionsController::cell(int row) {
                                                &m_removeRegressionCell};
     return cells[row];
   }
-  assert(GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+  assert(GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
          CountryPreferences::RegressionApp::Variant1);
   HighlightCell *cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
                                              &m_regressionEquationCell,

@@ -16,8 +16,8 @@ EditorView::EditorView(Responder* parentResponder, App* pythonDelegate)
     : Responder(parentResponder),
       View(),
       m_textArea(parentResponder, pythonDelegate,
-                 GlobalPreferences::sharedGlobalPreferences->font()),
-      m_gutterView(GlobalPreferences::sharedGlobalPreferences->font()) {
+                 GlobalPreferences::SharedGlobalPreferences()->font()),
+      m_gutterView(GlobalPreferences::SharedGlobalPreferences()->font()) {
   m_textArea.setScrollViewDataSourceDelegate(this);
 }
 

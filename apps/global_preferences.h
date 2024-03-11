@@ -11,7 +11,18 @@ class GlobalPreferences {
   friend OMG::GlobalBox<GlobalPreferences>;
 
  public:
-  static OMG::GlobalBox<GlobalPreferences> sharedGlobalPreferences;
+  constexpr static char k_recordName[] = "gp";
+
+  static GlobalPreferences* SharedGlobalPreferences();
+
+  GlobalPreferences()
+      : m_showPopUp(true),
+        m_brightnessLevel(Ion::Backlight::MaxBrightness),
+        m_font(KDFont::Size::Large) {
+    setLanguage(I18n::Language::EN);
+    setCountry(I18n::Country::WW, false);
+  }
+
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
@@ -103,13 +114,6 @@ class GlobalPreferences {
    * EPSILON_COUNTRIES flag */
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
-  GlobalPreferences()
-      : m_showPopUp(true),
-        m_brightnessLevel(Ion::Backlight::MaxBrightness),
-        m_font(KDFont::Size::Large) {
-    setLanguage(I18n::Language::EN);
-    setCountry(I18n::Country::WW, false);
-  }
 
   I18n::Language m_language;
   I18n::Country m_country;

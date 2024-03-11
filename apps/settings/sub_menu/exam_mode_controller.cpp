@@ -63,7 +63,7 @@ int ExamModeController::numberOfRows() const {
       assert(rules == ExamMode::Ruleset::Off);
   }
   CountryPreferences::AvailableExamModes availableExamModes =
-      GlobalPreferences::sharedGlobalPreferences->availableExamModes();
+      GlobalPreferences::SharedGlobalPreferences()->availableExamModes();
   // Activation button(s)
   switch (availableExamModes) {
     case CountryPreferences::AvailableExamModes::StandardOnly:
@@ -118,7 +118,7 @@ ExamMode ExamModeController::examMode() {
 ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
     size_t index) const {
   CountryPreferences::AvailableExamModes availableExamModes =
-      GlobalPreferences::sharedGlobalPreferences->availableExamModes();
+      GlobalPreferences::SharedGlobalPreferences()->availableExamModes();
   switch (availableExamModes) {
     case CountryPreferences::AvailableExamModes::DutchOnly:
       assert(index == 0);
@@ -205,7 +205,7 @@ I18n::Message ExamModeController::examModeActivationMessage(
   size_t messageIndex =
       static_cast<size_t>(examMode) * messagesPerMode + isReactivation;
   if (examMode == ExamMode::Ruleset::Standard &&
-      GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
+      GlobalPreferences::SharedGlobalPreferences()->availableExamModes() ==
           CountryPreferences::AvailableExamModes::All) {
     // Specify french exam mode type
     messageIndex -= messagesPerMode;

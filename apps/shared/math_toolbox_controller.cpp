@@ -950,7 +950,7 @@ void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
            static_cast<void *>(cell) >=
                static_cast<void *>(m_nodeCells + k_maxNumberOfDisplayedRows));
     // Message is leaf
-    if (GlobalPreferences::sharedGlobalPreferences
+    if (GlobalPreferences::SharedGlobalPreferences()
                 ->listsStatsOrderInToolbox() ==
             CountryPreferences::ListsStatsOrderInToolbox::Alternate &&
         m_messageTreeModel->childrenList() == listsStatsChildren) {
@@ -1000,7 +1000,7 @@ bool MathToolboxController::selectSubMenu(int selectedRow) {
 
 bool MathToolboxController::selectLeaf(int selectedRow) {
   assert(typeAtRow(selectedRow) == k_leafCellType);
-  if (GlobalPreferences::sharedGlobalPreferences->listsStatsOrderInToolbox() ==
+  if (GlobalPreferences::SharedGlobalPreferences()->listsStatsOrderInToolbox() ==
           CountryPreferences::ListsStatsOrderInToolbox::Alternate &&
       m_messageTreeModel->childrenList() == listsStatsChildren) {
     // We are in lists stats sub-menu
@@ -1072,7 +1072,7 @@ int MathToolboxController::controlChecksum() const {
              Preferences::SharedPreferences()->examMode().ruleset()) *
              I18n::NumberOfCountries +
          static_cast<int>(
-             GlobalPreferences::sharedGlobalPreferences->country()) +
+             GlobalPreferences::SharedGlobalPreferences()->country()) +
          +(m_extraCellsDataSource ? m_extraCellsDataSource->numberOfExtraCells()
                                   : 0) *
              static_cast<int>(Ion::ExamMode::Ruleset::NumberOfRulesets) *
@@ -1088,7 +1088,7 @@ int MathToolboxController::indexAfterFork(
     return 1;
   }
   Preferences::UnitFormat unitFormat =
-      GlobalPreferences::sharedGlobalPreferences->unitFormat();
+      GlobalPreferences::SharedGlobalPreferences()->unitFormat();
   if (unitFormat == Preferences::UnitFormat::Metric) {
     return 0;
   }

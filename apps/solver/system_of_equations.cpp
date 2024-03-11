@@ -269,7 +269,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat =
-      GlobalPreferences::sharedGlobalPreferences->unitFormat();
+      GlobalPreferences::SharedGlobalPreferences()->unitFormat();
   SymbolicComputation symbolicComputation =
       m_overrideUserVariables
           ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
@@ -440,7 +440,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   ReductionContext reductionContextWithSolutions(
       &solutionContexts[n - 1], m_complexFormat,
       Preferences::SharedPreferences()->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
+      GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       ReductionTarget::SystemForAnalysis);
   for (int i = 0; i < numberOfOriginalEquations; i++) {
     if (simplifiedEquations[i].type() != ExpressionNode::Type::Dependency) {
@@ -471,7 +471,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat =
-      GlobalPreferences::sharedGlobalPreferences->unitFormat();
+      GlobalPreferences::SharedGlobalPreferences()->unitFormat();
   SymbolicComputation symbolicComputation =
       m_overrideUserVariables
           ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
@@ -586,7 +586,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
   } else {
     assert(type == SolutionType::Formal || type == SolutionType::Exact);
     Preferences::UnitFormat unitFormat =
-        GlobalPreferences::sharedGlobalPreferences->unitFormat();
+        GlobalPreferences::SharedGlobalPreferences()->unitFormat();
     SymbolicComputation symbolicComputation =
         m_overrideUserVariables
             ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions

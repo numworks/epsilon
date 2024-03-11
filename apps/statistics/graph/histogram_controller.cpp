@@ -112,7 +112,7 @@ bool HistogramController::reloadBannerView() {
       "%s%s[%*.*ed,%*.*ed%s", I18n::translate(I18n::Message::Interval),
       I18n::translate(I18n::Message::ColonConvention), lowerBound, displayMode,
       upperBound, displayMode,
-      GlobalPreferences::sharedGlobalPreferences->openIntervalChar(false));
+      GlobalPreferences::SharedGlobalPreferences()->openIntervalChar(false));
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Display frequency
@@ -274,7 +274,7 @@ void HistogramController::initBarParameters() {
   if (allValuesAreIntegers) {
     // With integer values, the histogram is better with an integer bar width
     barWidth = std::ceil(barWidth);
-    if (GlobalPreferences::sharedGlobalPreferences->histogramOffset() ==
+    if (GlobalPreferences::SharedGlobalPreferences()->histogramOffset() ==
         CountryPreferences::HistogramsOffset::OnIntegerValues) {
       // Bars are offsetted right to center the bars around the labels.
       xMin -= barWidth / 2.0;

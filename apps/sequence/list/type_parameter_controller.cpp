@@ -82,7 +82,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         App::app()->localContext()->resetCache();
         // Reset the first index if the new type is "Explicit"
         if (sequenceType == Shared::Sequence::Type::Explicit) {
-          sequence()->setInitialRank(GlobalPreferences::sharedGlobalPreferences
+          sequence()->setInitialRank(GlobalPreferences::SharedGlobalPreferences()
                                          ->sequencesInitialRank());
         }
       }

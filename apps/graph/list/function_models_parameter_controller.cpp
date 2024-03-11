@@ -113,7 +113,7 @@ int FunctionModelsParameterController::numberOfRows() const {
 const FunctionModelsParameterController::Model*
 FunctionModelsParameterController::Models() {
   CountryPreferences::GraphTemplatesLayout layout =
-      GlobalPreferences::sharedGlobalPreferences->graphTemplatesLayout();
+      GlobalPreferences::SharedGlobalPreferences()->graphTemplatesLayout();
   switch (layout) {
     case CountryPreferences::GraphTemplatesLayout::Variant1:
       return layoutVariant1;

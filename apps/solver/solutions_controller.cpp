@@ -177,7 +177,7 @@ SolutionsController::SolutionsController(Responder *parentResponder,
               },
               this)) {
   const char *delta =
-      GlobalPreferences::sharedGlobalPreferences->discriminantSymbol();
+      GlobalPreferences::SharedGlobalPreferences()->discriminantSymbol();
   size_t lenDelta = strlen(delta);
   const char *equalB = "=b";
   m_delta2Layout = HorizontalLayout::Builder(

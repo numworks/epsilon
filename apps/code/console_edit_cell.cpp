@@ -20,11 +20,11 @@ ConsoleEditCell::ConsoleEditCell(Responder *parentResponder,
       m_promptView(
           nullptr,
           {.style = {.font =
-                         GlobalPreferences::sharedGlobalPreferences->font()}}),
+                         GlobalPreferences::SharedGlobalPreferences()->font()}}),
       m_textField(
           this, nullptr, TextField::MaxBufferSize(), delegate,
           {.style = {.font =
-                         GlobalPreferences::sharedGlobalPreferences->font()}}) {
+                         GlobalPreferences::SharedGlobalPreferences()->font()}}) {
 }
 
 int ConsoleEditCell::numberOfSubviews() const { return 2; }

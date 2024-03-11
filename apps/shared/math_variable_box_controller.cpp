@@ -317,8 +317,8 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
   }
 
   // Handle the text
-  sender()->handleEventWithText(nameToHandle);
   App::app()->modalViewController()->dismissModal();
+  sender()->handleEventWithText(nameToHandle);
   return true;
 }
 

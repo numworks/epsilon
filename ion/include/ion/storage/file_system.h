@@ -144,6 +144,7 @@ class FileSystem {
   Record recordWithFilterAtIndex(const char *extension, int index,
                                  RecordFilter filter,
                                  const void *auxiliary = nullptr);
+  void destroyRecordsMatching(RecordFilter filter, const void *auxiliary);
 
   FileSystem();
 

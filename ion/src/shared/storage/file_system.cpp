@@ -265,22 +265,12 @@ void FileSystem::destroyAllRecords() {
 }
 
 void FileSystem::destroyRecordsWithExtension(const char *extension) {
-  char *currentRecordStart = (char *)m_buffer;
-  bool didChange = false;
-  while (currentRecordStart && sizeOfRecordStarting(currentRecordStart) != 0) {
-    Record::Name currentName = nameOfRecordStarting(currentRecordStart);
-    if (!Record::NameIsEmpty(currentName) &&
-        strcmp(currentName.extension, extension) == 0) {
-      Record currentRecord(currentName);
-      currentRecord.destroy();
-      didChange = true;
-      continue;
-    }
-    currentRecordStart = *(RecordIterator(currentRecordStart).operator++());
-  }
-  if (didChange) {
-    notifyChangeToDelegate();
-  }
+  destroyRecordsMatching(
+      [](Record::Name name, const void *auxiliary) {
+        return strcmp(name.extension, static_cast<const char *>(auxiliary)) ==
+               0;
+      },
+      extension);
 }
 
 bool FileSystem::handleCompetingRecord(Record::Name recordName,
@@ -321,6 +311,25 @@ bool FileSystem::handleCompetingRecord(Record::Name recordName,
 }
 
 // PRIVATE
+
+void FileSystem::destroyRecordsMatching(RecordFilter filter,
+                                        const void *auxiliary) {
+  char *currentRecordStart = (char *)m_buffer;
+  bool didChange = false;
+  while (currentRecordStart && sizeOfRecordStarting(currentRecordStart) != 0) {
+    Record::Name currentName = nameOfRecordStarting(currentRecordStart);
+    if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary)) {
+      Record currentRecord(currentName);
+      currentRecord.destroy();
+      didChange = true;
+      continue;
+    }
+    currentRecordStart = *(RecordIterator(currentRecordStart).operator++());
+  }
+  if (didChange) {
+    notifyChangeToDelegate();
+  }
+}
 
 FileSystem::FileSystem()
     : m_magicHeader(Magic),

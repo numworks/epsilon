@@ -260,6 +260,12 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
     // The definition's domain must be reset.
     setTAuto(true);
   }
+  if (!canDisplayDerivative()) {
+    setDisplayValueFirstDerivative(false);
+    setDisplayPlotFirstDerivative(false);
+    setDisplayValueSecondDerivative(false);
+    setDisplayPlotSecondDerivative(false);
+  }
 }
 
 int ContinuousFunction::derivationOrderFromRelativeIndex(

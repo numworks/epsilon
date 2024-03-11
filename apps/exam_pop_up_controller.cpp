@@ -38,14 +38,6 @@ void ExamPopUpController::viewDidDisappear() {
   }
 }
 
-bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::USBEnumeration) {
-    App::app()->modalViewController()->dismissModal();
-    return false;
-  }
-  return MessagePopUpController::handleEvent(event);
-}
-
 I18n::Message ExamPopUpController::activationWarningMessage() const {
   constexpr size_t numberOfModes =
       static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets);

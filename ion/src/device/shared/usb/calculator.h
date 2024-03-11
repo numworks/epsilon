@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <config/internal_flash.h>
 #include <drivers/usb.h>
+#include <ion/usb.h>
 #include <stddef.h>
 
 #include "dfu_interface.h"
@@ -27,7 +28,7 @@ namespace USB {
 
 class Calculator : public Device {
  public:
-  static void PollAndReset()
+  static void PollAndReset(Ion::USB::DFUParameters)
       // Needed to pinpoint this symbol in the linker script
       __attribute__((section(".dfu_entry_point")))
       // Make sure this symbol is not discarded at link time

@@ -2,6 +2,7 @@
 #define ION_DEVICE_SHARED_USB_H
 
 #include <config/usb.h>
+#include <ion/keyboard.h>
 #include <shared/drivers/kernel_header.h>
 #include <shared/drivers/userland_header.h>
 
@@ -11,7 +12,7 @@ namespace USB {
 
 void willExecuteDFU();
 void didExecuteDFU();
-bool shouldInterruptDFU();
+bool shouldInterruptDFU(Keyboard::State exitKeys, bool bubbleUpEvents);
 const char* stringDescriptor();
 
 /* When entering DFU mode, we update this SlotInfo with a pointer to the current

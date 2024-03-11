@@ -8,7 +8,7 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-void Calculator::PollAndReset() {
+void Calculator::PollAndReset(Ion::USB::DFUParameters parameters) {
   /* Don't use Ion::serialNumber to avoid any data section in the relocatable
    * dfu. */
   char serialNumber[Ion::k_serialNumberLength + 1];
@@ -17,7 +17,9 @@ void Calculator::PollAndReset() {
   // Ensure FIFOs are clean before starting polling.
   c.flushFIFOs();
   while (Ion::USB::isPlugged() && !c.isSoftDisconnected() &&
-         !(USB::shouldInterruptDFU() && !c.isErasingAndWriting())) {
+         !(USB::shouldInterruptDFU(parameters.exitKeys,
+                                   parameters.bubbleUpEvents) &&
+           !c.isErasingAndWriting())) {
     c.poll();
   }
 

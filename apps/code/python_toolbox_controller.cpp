@@ -1115,8 +1115,8 @@ bool PythonToolboxController::selectLeaf(int selectedRow) {
         true);
     editedText = strippedEditedText;
   }
-  sender()->handleEventWithText(editedText, true);
   App::app()->modalViewController()->dismissModal();
+  sender()->handleEventWithText(editedText, true);
   return true;
 }
 

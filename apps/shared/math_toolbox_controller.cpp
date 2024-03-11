@@ -1022,8 +1022,8 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
                                                maxTextToInsertLength, true);
     text = textToInsert;
   }
-  sender()->handleEventWithText(text);
   App::app()->modalViewController()->dismissModal();
+  sender()->handleEventWithText(text);
   return true;
 }
 
@@ -1033,8 +1033,8 @@ bool MathToolboxController::selectExtraCell(int selectedRow) {
   char buffer[k_maxSizeOfExtraCellExpression];
   l.serializeForParsing(
       buffer, k_maxSizeOfExtraCellExpression);  // No need of context here
-  sender()->handleEventWithText(buffer);
   App::app()->modalViewController()->dismissModal();
+  sender()->handleEventWithText(buffer);
   return true;
 }
 

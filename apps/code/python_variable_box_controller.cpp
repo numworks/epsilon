@@ -440,10 +440,9 @@ bool PythonVariableBoxController::selectLeaf(int row) {
   assert(cellType == k_itemCellType);
   (void)cellType;  // Silence warnings
 
+  App::app()->modalViewController()->dismissModal();
   insertAutocompletionResultAtIndex(
       row - (m_displaySubtitles ? cumulatedOriginsCount : 0));
-
-  App::app()->modalViewController()->dismissModal();
   return true;
 }
 

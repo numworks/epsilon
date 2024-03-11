@@ -85,8 +85,8 @@ void StoreMenuController::open() {
 }
 
 void StoreMenuController::close() {
-  m_cell.layoutField()->setEditing(false);
   App::app()->modalViewController()->dismissModal();
+  m_cell.layoutField()->setEditing(false);
 }
 
 void StoreMenuController::fillCellForRow(HighlightCell* cell, int row) {

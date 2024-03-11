@@ -17,12 +17,17 @@ void assert_reduces_to_formal_expression(
 }
 
 QUIZ_CASE(poincare_derivative_formal) {
+  // Undefined
   assert_reduces_to_formal_expression("diff(undef,x,x)", Undefined::Name());
   assert_reduces_to_formal_expression("diff(nonreal,x,x)", Nonreal::Name());
   assert_reduces_to_formal_expression("diff(inf,x,x)", Undefined::Name());
 
-  assert_reduces_to_formal_expression("diff(1,x,x)", "0");
+  // Constants
+  assert_reduces_to_formal_expression("diff(i,x,x)", Undefined::Name());
   assert_reduces_to_formal_expression("diff(π,x,x)", "0");
+  assert_reduces_to_formal_expression("diff(e,x,x)", "0");
+
+  assert_reduces_to_formal_expression("diff(1,x,x)", "0");
   assert_reduces_to_formal_expression("diff(y,x,x)", "\u0014dep(0,{y})");
   assert_reduces_to_formal_expression("diff(x,x,x)", "\u0014dep(1,{x})");
   assert_reduces_to_formal_expression("diff(x^2,x,x)", "2×x");

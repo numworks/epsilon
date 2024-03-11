@@ -1,3 +1,4 @@
+cout<<"The Sum of two numbers is: "<<"a+b"<<endl;
 # Disable default Make rules
 .SUFFIXES:
 

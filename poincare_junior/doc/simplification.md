@@ -125,7 +125,7 @@ a+b+diff(a+c+x+sum(k+a+x, k, 1, b), x, b)+a
 0 1      1 3 0     0 2 1  k  1  2   x  1  0
 ```
 
-In other words, within a parametered expression, `0` is the local context.
+In other words, within a parametered expression, `0` is the local parameter.
 
 When nested inside a parametered expression, all indexes are incremented.
 
@@ -435,7 +435,7 @@ All angle-dependant functions have been projected to radians in projection.
 
 They are restored to the initial angle unit.
 
-An advanced reduction may be called again at after that because the created angle factors may be advanced reduced again. We can do this because, at this step, the expression is  still mostly projected.
+An advanced reduction may be called again after that because the created angle factors may be advanced reduced again. We can do this because, at this step, the expression is still mostly projected.
 
 ### Beautify
 

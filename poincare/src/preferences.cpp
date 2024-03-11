@@ -54,9 +54,6 @@ ExamMode Preferences::examMode() const {
 }
 
 void Preferences::setExamMode(ExamMode mode) {
-  if (m_examMode == mode) {
-    return;
-  }
   m_examMode = mode;
   Ion::ExamMode::set(mode);
 }

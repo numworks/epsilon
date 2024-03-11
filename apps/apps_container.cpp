@@ -62,9 +62,8 @@ App::Snapshot* AppsContainer::usbConnectedAppSnapshot() {
   return &m_usbConnectedSnapshot;
 }
 
-void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode) {
-  ExamMode::Ruleset previousRules =
-      Preferences::SharedPreferences()->examMode().ruleset();
+void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
+                                Poincare::ExamMode previousMode) {
   Preferences::SharedPreferences()->setExamMode(targetExamMode);
 
   if (targetExamMode.ruleset() != ExamMode::Ruleset::Off) {
@@ -75,7 +74,7 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode) {
     for (int i = 0; i < numberOfBuiltinApps(); i++) {
       appSnapshotAtIndex(i)->reset();
     }
-  } else if (previousRules == ExamMode::Ruleset::PressToTest) {
+  } else if (previousMode.ruleset() == ExamMode::Ruleset::PressToTest) {
     // Reset when leaving PressToTest mode.
     Ion::Reset::core();
   }
@@ -179,6 +178,12 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       updateBatteryState();
       switchToBuiltinApp(usbConnectedAppSnapshot());
       Ion::USB::DFU();
+      /* DFU might have changed preferences and global preferences, update those
+       * that have callbacks : country and exam mode.*/
+      GlobalPreferences::SharedGlobalPreferences()->setCountry(
+          GlobalPreferences::SharedGlobalPreferences()->country());
+      setExamMode(Preferences::SharedPreferences()->examMode(),
+                  Ion::ExamMode::get());
       // Update LED when exiting DFU mode
       Ion::LED::updateColorWithPlugAndCharge();
       switchToBuiltinApp(activeSnapshot);
@@ -279,7 +284,7 @@ void AppsContainer::run() {
   Preferences* poincarePreferences = Preferences::SharedPreferences();
   Poincare::ExamMode examMode = poincarePreferences->examMode();
   if (examMode.isActive()) {
-    setExamMode(examMode);
+    setExamMode(examMode, Poincare::ExamMode());
   } else {
     refreshPreferences();
   }

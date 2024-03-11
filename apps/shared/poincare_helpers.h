@@ -18,7 +18,8 @@ inline Poincare::Layout CreateLayout(
     Poincare::Preferences::PrintFloatMode displayMode =
         Poincare::Preferences::SharedPreferences()->displayMode(),
     uint8_t numberOfSignificantDigits =
-        Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits()) {
+        Poincare::Preferences::SharedPreferences()
+            ->numberOfSignificantDigits()) {
   return e.createLayout(displayMode, numberOfSignificantDigits, context);
 }
 
@@ -187,7 +188,8 @@ inline void CloneAndReduceAndRemoveUnit(
 template <typename T>
 inline Poincare::Solver<T> Solver(T xMin, T xMax, const char* unknown = nullptr,
                                   Poincare::Context* context = nullptr) {
-  Poincare::Preferences* preferences = Poincare::Preferences::SharedPreferences();
+  Poincare::Preferences* preferences =
+      Poincare::Preferences::SharedPreferences();
   return Poincare::Solver<T>(xMin, xMax, unknown, context,
                              preferences->complexFormat(),
                              preferences->angleUnit());

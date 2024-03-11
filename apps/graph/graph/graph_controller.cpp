@@ -194,11 +194,11 @@ Range2D<float> GraphController::optimalRange(
               &p)) {
         assert(!p.isUninitialized() &&
                p.type() == ExpressionNode::Type::PiecewiseOperator);
-        zoom.fitConditions(static_cast<PiecewiseOperator &>(p),
-                           evaluator<float>, f.operator->(),
-                           ContinuousFunction::k_unknownName,
-                           Preferences::SharedPreferences()->complexFormat(),
-                           Preferences::SharedPreferences()->angleUnit(), alongY);
+        zoom.fitConditions(
+            static_cast<PiecewiseOperator &>(p), evaluator<float>,
+            f.operator->(), ContinuousFunction::k_unknownName,
+            Preferences::SharedPreferences()->complexFormat(),
+            Preferences::SharedPreferences()->angleUnit(), alongY);
       }
 
       if (canComputeIntersections[i] &&

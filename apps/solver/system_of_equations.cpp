@@ -194,7 +194,8 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
   m_userVariables[0][0] = 0;
   m_complexFormat = Preferences::SharedPreferences()->complexFormat();
 
-  bool forbidSimultaneousEquation = Preferences::SharedPreferences()->examMode()
+  bool forbidSimultaneousEquation = Preferences::SharedPreferences()
+                                        ->examMode()
                                         .forbidSimultaneousEquationSolver();
 
   EquationStore *store = m_store;

@@ -48,9 +48,10 @@ void RegressionController::didBecomeFirstResponder() {
   Model::Type type = m_store->seriesRegressionType(m_series);
   int initialIndex = std::max(0, IndexOfModelType(type));
   if (initialIndex >= numberOfRows()) {
-    assert(type == Model::Type::LinearApbx &&
-           GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
-               CountryPreferences::RegressionApp::Default);
+    assert(
+        type == Model::Type::LinearApbx &&
+        GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
+            CountryPreferences::RegressionApp::Default);
     // Type is hidden for selected country, select the first line.
     initialIndex = 0;
   } else {

@@ -148,7 +148,8 @@ QUIZ_CASE(calculation_ans) {
   ExamMode previousExamMode = Preferences::SharedPreferences()->examMode();
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
-  Preferences::SharedPreferences()->setExamMode(ExamMode(ExamMode::Ruleset::Off));
+  Preferences::SharedPreferences()->setExamMode(
+      ExamMode(ExamMode::Ruleset::Off));
 
   store.push("1+3/4", &globalContext);
   store.push("ans+2/3", &globalContext);
@@ -258,7 +259,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
   Preferences::AngleUnit previousAngleUnit =
       Preferences::SharedPreferences()->angleUnit();
-  Preferences::SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+  Preferences::SharedPreferences()->setAngleUnit(
+      Preferences::AngleUnit::Degree);
 
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Equal, "1/2", "0.5", "0.5", &globalContext,
@@ -363,7 +365,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("45→gon", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "50×_gon", "50×_gon",
                       &globalContext, &store);
-  Preferences::SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Radian);
+  Preferences::SharedPreferences()->setAngleUnit(
+      Preferences::AngleUnit::Radian);
   assertCalculationIs("π/2→°", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "90×_°", "90×_°",
                       &globalContext, &store);
@@ -383,7 +386,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "6×_rad", "6×_rad",
                       &globalContext, &store);
-  Preferences::SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+  Preferences::SharedPreferences()->setAngleUnit(
+      Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   ExamMode previousExamMode = Preferences::SharedPreferences()->examMode();

@@ -15,7 +15,8 @@ void assert_expression_approximates_to_scalar(
     Preferences::MixedFractions mixedFractionsParameter =
         Poincare::Preferences::MixedFractions::Enabled) {
   Shared::GlobalContext globalContext;
-  Preferences::SharedPreferences()->enableMixedFractions(mixedFractionsParameter);
+  Preferences::SharedPreferences()->enableMixedFractions(
+      mixedFractionsParameter);
   Expression e = parse_expression(expression, &globalContext, false);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);

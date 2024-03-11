@@ -23,18 +23,19 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(
     KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-  ctx->drawString(m_line->text(), KDPointZero,
-                  {.glyphColor = textColor(m_line),
-                   .backgroundColor = defaultBackgroundColor(),
-                   .font = GlobalPreferences::SharedGlobalPreferences()->font()});
+  ctx->drawString(
+      m_line->text(), KDPointZero,
+      {.glyphColor = textColor(m_line),
+       .backgroundColor = defaultBackgroundColor(),
+       .font = GlobalPreferences::SharedGlobalPreferences()->font()});
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::
     minimalSizeForOptimalDisplay() const {
-  return m_line
-             ? KDFont::Font(GlobalPreferences::SharedGlobalPreferences()->font())
-                   ->stringSize(m_line->text())
-             : KDSizeZero;
+  return m_line ? KDFont::Font(
+                      GlobalPreferences::SharedGlobalPreferences()->font())
+                      ->stringSize(m_line->text())
+                : KDSizeZero;
 }
 
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(
@@ -49,8 +50,8 @@ ConsoleLineCell::ConsoleLineCell(Responder* parentResponder)
       Responder(parentResponder),
       m_promptView(
           I18n::Message::ConsolePrompt,
-          {.style = {.font =
-                         GlobalPreferences::SharedGlobalPreferences()->font()}}),
+          {.style =
+               {.font = GlobalPreferences::SharedGlobalPreferences()->font()}}),
       m_scrollableView(this) {}
 
 void ConsoleLineCell::setLine(ConsoleLine line) {

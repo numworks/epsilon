@@ -42,9 +42,11 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       break;
     }
     case LayoutType::Fraction: {
+      buffer = append("(", buffer, end);
       buffer = Serialize(layout->child(0), buffer, end);
-      buffer = append("/", buffer, end);
+      buffer = append(")/(", buffer, end);
       buffer = Serialize(layout->child(1), buffer, end);
+      buffer = append(")", buffer, end);
       break;
     }
     case LayoutType::VerticalOffset: {

@@ -408,8 +408,13 @@ Timer* AppsContainer::containerTimerAtIndex(int i) {
 }
 
 void AppsContainer::listenToExternalEvents() {
-  if (m_dfuBetweenEvents) {
+  if (m_dfuBetweenEvents && Ion::USB::isPlugged()) {
     openDFU(false);
+    /* The USB stack will leave the peripheral in the soft-disconnected state.
+     * To make sure the device is enumerated for the next call to
+     * listenToExternalEvents or after the exam mode pop-up is dismissed,
+     * manually reactivate the USB here. */
+    Ion::USB::enable();
   }
 }
 

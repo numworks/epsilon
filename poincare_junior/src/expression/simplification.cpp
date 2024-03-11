@@ -104,8 +104,6 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Arithmetic::SimplifyBinomial(u);
     case BlockType::ComplexArgument:
       return SimplifyComplexArgument(u);
-    case BlockType::Dependency:
-      return Dependency::ShallowReduce(u);
     case BlockType::Derivative:
     case BlockType::NthDerivative:
       return Derivation::ShallowSimplify(u);

@@ -176,6 +176,9 @@ bool RemoveUselessDependencies(Tree* dep) {
 
   // ShallowReduce to remove defined dependencies ({x+3}->{x, 3}->{x})
   Dependency::RemoveDefinedDependencies(dep);
+  if (!dep->isDependency()) {
+    return true;
+  }
 
   /* Step 2: Remove duplicate dependencies and dependencies contained in others
    * {sqrt(x), sqrt(x), 1/sqrt(x)} -> {1/sqrt(x)} */

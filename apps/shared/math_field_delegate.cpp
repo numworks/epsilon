@@ -16,7 +16,11 @@ namespace Shared {
 bool AbstractMathFieldDelegate::handleEventForField(EditableField *field,
                                                     Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
-    return field->handleXNT(m_currentXNTIndex, defaultXNT());
+    bool inserted = field->handleXNT(m_currentXNTIndex, defaultXNT());
+    if (!inserted) {
+      m_currentXNTIndex = -1;
+    }
+    return true;
   }
   return false;
 }

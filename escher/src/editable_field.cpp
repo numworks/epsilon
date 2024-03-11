@@ -28,7 +28,7 @@ bool EditableField::privateHandleBoxEvent(Ion::Events::Event event) {
 
 bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   if (!prepareToEdit()) {
-    return true;
+    return false;
   }
   constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
@@ -43,8 +43,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   if (cycleSize > 1 && currentIndex > 0) {
     removePreviousXNT();
   }
-  handleEventWithText(buffer, false, true);
-  return true;
+  return handleEventWithText(buffer, false, true);
 }
 
 }  // namespace Escher

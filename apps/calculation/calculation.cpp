@@ -189,10 +189,10 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
       // If the exact result is 'undef'
       strcmp(exactOutputText(), Undefined::Name()) == 0 ||
       // If the approximate output is 'nonreal'
-      strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
+      strcmp(approximateOutputText(NumberOfSignificantDigits::UserDefined),
              Nonreal::Name()) == 0 ||
       // If the approximate output is 'undef'
-      strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
+      strcmp(approximateOutputText(NumberOfSignificantDigits::UserDefined),
              Undefined::Name()) == 0 ||
       // Other conditions are factorized in ExpressionDisplayPermissions
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(

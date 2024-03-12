@@ -453,7 +453,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       EditionReference layout =
           nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();
       EditionReference newParent = KRackL()->clone();
-      layoutExpression(newParent, expression->nextNode()->nextNode(),
+      layoutExpression(newParent, expression->nextNode()->nextTree(),
                        k_maxPriority);
       NAry::AddChild(layoutParent, layout);
       if (nlLog) {

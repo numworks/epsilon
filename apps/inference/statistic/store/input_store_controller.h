@@ -35,6 +35,10 @@ class InputStoreController : public InputCategoricalController,
   }
   void viewWillAppear() override;
 
+  // ScrollViewDelegate
+  void scrollViewDidChangeOffset(
+      ScrollViewDataSource* scrollViewDataSource) override;
+
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 

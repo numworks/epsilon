@@ -21,8 +21,7 @@ InputStoreController::InputStoreController(StackViewController* parent,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_slopeTableCell) {
   m_storeParameterController.selectRow(0);
-  m_selectableListView.margins()->setTop(
-      m_slopeTableCell.selectableTableView()->margins()->top());
+  m_selectableListView.margins()->setTop(Metric::CommonMargins.top());
   m_slopeTableCell.selectableTableView()->margins()->setTop(
       Metric::TableSeparatorThickness);
 }
@@ -106,6 +105,35 @@ void InputStoreController::viewWillAppear() {
   m_dropdownCell.dropdown()->reloadCell();
 
   InputCategoricalController::viewWillAppear();
+}
+
+void InputStoreController::scrollViewDidChangeOffset(
+    ScrollViewDataSource* scrollViewDataSource) {
+  InputCategoricalController::scrollViewDidChangeOffset(scrollViewDataSource);
+
+  /* The top margin of the list view depends on the first visible row:
+   * - if the top row is the table, there needs to not be a margin to let the
+   * table fill up the whole screen.
+   * - if the top row is a normal cell, a margin is needed to have the right
+   * vertical scroll. */
+
+  KDPoint listOffset = m_selectableListView.contentOffset();
+  KDCoordinate listTopMargin = m_selectableListView.margins()->top();
+  /* Don't use firstDisplayedRow as the table has not been re-laid out yet. */
+  KDCoordinate firstVisibleRow = rowAfterCumulatedHeight(listOffset.y());
+  if ((firstVisibleRow == indexOfTableCell()) != (listTopMargin == 0)) {
+    KDCoordinate newListTopMargin = Metric::CommonMargins.top() - listTopMargin;
+    m_selectableListView.margins()->setTop(newListTopMargin);
+    /* If the first visible row is the topmost row, we want to stay at the top
+     * of the list so don't propagate the changed in offset caused by the
+     * margin. */
+    if (firstVisibleRow != 0) {
+      setScrollViewDelegate(nullptr);
+      m_selectableListView.setContentOffset(KDPoint(
+          listOffset.x(), listOffset.y() - listTopMargin + newListTopMargin));
+      setScrollViewDelegate(this);
+    }
+  }
 }
 
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {

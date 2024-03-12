@@ -36,7 +36,12 @@ Approximation::Context::Context(AngleUnit angleUnit,
                                 ComplexFormat complexFormat)
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
-      m_variablesOffset(k_maxNumberOfVariables) {
+      m_variablesOffset(k_maxNumberOfVariables)
+#if ASSERTIONS
+      ,
+      m_listElement(-1)
+#endif
+{
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
     m_variables[i] = NAN;
   }
@@ -519,10 +524,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 
     /* Lists */
     case BlockType::List:
+      assert(s_context->m_listElement != -1);
       return ToComplex<T>(node->child(s_context->m_listElement));
     case BlockType::ListSequence: {
       s_context->shiftVariables();
       // epsilon sequences starts at one
+      assert(s_context->m_listElement != -1);
       s_context->setXValue(s_context->m_listElement + 1);
       std::complex<T> result = ToComplex<T>(node->child(2));
       s_context->unshiftVariables();

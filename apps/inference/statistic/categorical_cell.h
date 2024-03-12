@@ -67,15 +67,7 @@ class DropdownCategoricalCell : public AbstractCategoricalCell {
   }
   Escher::Dropdown* dropdown() { return &m_dropdown; }
 
-  // View
-  KDSize minimalSizeForOptimalDisplay() const override;
-  void drawRect(KDContext* ctx, KDRect rect) const override;
-  void layoutSubviews(bool force) override;
-
  private:
-  constexpr static KDCoordinate k_topMargin =
-      Escher::Metric::CommonMargins.top();
-
   HighlightCell* subviewAtIndex(int i) override { return &m_innerCell; }
 
   /* WARNING: make sure the Dropdown DataSource is constructed before the

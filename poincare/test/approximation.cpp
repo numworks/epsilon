@@ -860,6 +860,8 @@ QUIZ_CASE(poincare_approximation_unique_random) {
   assert_expression_approximates_to<double>("randintnorep(1,10,-1)",
                                             Undefined::Name());
   assert_expression_approximates_to<double>("randintnorep(1,10,0)", "{}");
+  assert_expression_approximates_to<double>(
+      "randintnorep(536427840,-2145711360,4)", "undef");
 
   assert_no_duplicates_in_list<float>("randintnorep(-100,99,200)");
   assert_no_duplicates_in_list<float>("randintnorep(1234,5678,20)");

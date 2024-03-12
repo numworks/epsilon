@@ -118,6 +118,7 @@ class InputStoreController : public InputCategoricalController,
   PrivateStackViewController m_secondStackController;
   StoreColumnParameterController m_storeParameterController;
   char m_titleBuffer[InputController::k_titleBufferSize];
+  Statistic::SubApp m_loadedSubApp;
   DistributionType m_loadedDistribution;
   SignificanceTestType m_loadedTest;
 };

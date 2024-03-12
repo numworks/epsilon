@@ -63,15 +63,10 @@ int StoreTableCell::indexOfNextSelectableColumnOrRow(int delta, int currentCol,
     return std::clamp<int>(currentCol + delta, 0, m_numberOfColumns);
   }
 
-  /* The columns fill up from the top, so search upwards for a visible cell. */
-  int row = currentRow + delta;
-  HighlightCell *cell;
-  while (row > 0 && ((cell = m_selectableTableView.cellAtLocation(
-                          currentCol, row)) == nullptr ||
-                     !cell->isVisible())) {
-    --row;
-  }
-  return row;
+  Shared::DoublePairStore *s = store();
+  int columnLength = 1 /* column title */ + 1 /* empty row for input */ +
+                     s->numberOfPairsOfSeries(s->seriesAtColumn(currentCol));
+  return std::clamp<int>(currentRow + delta, 0, columnLength - 1);
 }
 
 void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,

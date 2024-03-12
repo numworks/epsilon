@@ -45,7 +45,9 @@ Evaluation<T> RandintNoRepeatNode::templatedApproximate(
   T tn = childAtIndex(2)->approximate(T(), approximationContext).toScalar();
   int a = static_cast<int>(ta), b = static_cast<int>(tb),
       n = static_cast<int>(tn);
-  if (ta != a || tb != b || tn != n || n < 0 || b - a + 1 < n) {
+  /* In all cases where b < a is true, b - a + 1 < n is also true unless we take
+   * into account integer over(under)flow (and unless n = 0). */
+  if (ta != a || tb != b || tn != n || n < 0 || b < a || b - a + 1 < n) {
     return Complex<T>::Undefined();
   }
 

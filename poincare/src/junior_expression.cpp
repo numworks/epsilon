@@ -265,6 +265,8 @@ ExpressionNode::Type JuniorExpression::type() const {
       // TODO_PCJ: Handle symbols better
       return ExpressionNode::Type::JuniorExpression;
       // Unused in apps, but they should not raise the default assert.
+    case PoincareJ::BlockType::NthRoot:
+      return ExpressionNode::Type::NthRoot;
     case PoincareJ::BlockType::SquareRoot:
       return ExpressionNode::Type::SquareRoot;
     case PoincareJ::BlockType::Subtraction:

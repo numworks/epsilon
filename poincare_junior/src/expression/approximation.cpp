@@ -1116,6 +1116,7 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
                                                       bool collapse) {
   // These types are either already approximated or impossible to approximate.
   if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
+      tree->isComplexI() ||
       tree->isOfType({BlockType::UserSymbol, BlockType::Variable,
                       BlockType::Unit, BlockType::PhysicalConstant})) {
     return false;

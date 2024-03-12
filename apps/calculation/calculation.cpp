@@ -184,9 +184,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
       ShouldOnlyDisplayExactOutput(inputExp)) {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (
-      /* If the exact and approximate outputs are equal (with the
-       * UserDefined number of significant digits), do not display the exact
-       * output. Indeed, in this case, the layouts are identical. */
+      // If the exact and approximate outputs are equal
       strcmp(approxText, exactText) == 0 ||
       // If the exact result is 'undef'
       strcmp(exactText, Undefined::Name()) == 0 ||

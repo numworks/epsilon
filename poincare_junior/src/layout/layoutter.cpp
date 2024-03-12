@@ -372,7 +372,12 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::PercentAddition:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
-      PushCodePoint(layoutParent, UCodePointNorthEastArrow);
+      if (expression->nextNode()->isOpposite()) {
+        PushCodePoint(layoutParent, UCodePointSouthEastArrow);
+        expression->nextNode()->removeNode();
+      } else {
+        PushCodePoint(layoutParent, UCodePointNorthEastArrow);
+      }
       // continue
     case BlockType::PercentSimple:
       layoutExpression(layoutParent, expression->nextNode(),

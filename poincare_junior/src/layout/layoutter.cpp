@@ -4,6 +4,7 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/builtin.h>
+#include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
@@ -491,6 +492,10 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       break;
     case BlockType::ComplexI:
       PushCodePoint(layoutParent, 'i');
+      break;
+    case BlockType::PhysicalConstant:
+      layoutText(layoutParent,
+                 Constant::Info(expression).m_aliasesList.mainAlias());
       break;
     case BlockType::UserSymbol:
     case BlockType::UserSequence:

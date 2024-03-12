@@ -254,7 +254,6 @@ int InteractiveCurveViewController::closestCurveIndexVertically(
   int nextCurveIndex = -1;
   int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
-  constexpr int k_maxNumberOfSubcurves = 3;
   for (int curveIndex = 0; curveIndex < curvesCount; curveIndex++) {
     int nSubCurves = numberOfSubCurves(curveIndex);
     assert(0 <= nSubCurves && nSubCurves <= k_maxNumberOfSubcurves);
@@ -289,14 +288,13 @@ int InteractiveCurveViewController::closestCurveIndexVertically(
        * Index score is computed so that both primary and sub curve (with
        * a lesser weight) indexes are taken into account. */
       int currentIndexScore =
-          k_maxNumberOfSubcurves * currentCurveIndex + currentSubCurveIndex;
-      int newIndexScore = k_maxNumberOfSubcurves * curveIndex + subCurveIndex;
+          IndexScore(currentCurveIndex, currentSubCurveIndex);
+      int newIndexScore = IndexScore(curveIndex, subCurveIndex);
       if (direction.isUp()) {
         if (newY > y && newY < nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {
-          assert(newIndexScore >
-                 k_maxNumberOfSubcurves * nextCurveIndex + nextSubCurveIndex);
+          assert(newIndexScore > IndexScore(nextCurveIndex, nextSubCurveIndex));
           if (newY != y || currentIndexScore < 0 ||
               newIndexScore < currentIndexScore) {
             isNextCurve = true;
@@ -308,8 +306,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(
         if (newY < y && newY > nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {
-          assert(newIndexScore >
-                 k_maxNumberOfSubcurves * nextCurveIndex + nextSubCurveIndex);
+          assert(newIndexScore > IndexScore(nextCurveIndex, nextSubCurveIndex));
         } else if (newY == y && newIndexScore > currentIndexScore) {
           isNextCurve = true;
         }

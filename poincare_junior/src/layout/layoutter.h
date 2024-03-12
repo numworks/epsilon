@@ -38,7 +38,7 @@ class Layoutter {
   void layoutIntegerHandler(EditionReference& layoutParent,
                             IntegerHandler handler, int decimalOffset = 0);
   void layoutInfixOperator(EditionReference& layoutParent, Tree* expression,
-                           CodePoint op);
+                           CodePoint op, bool multiplication = false);
   void layoutMatrix(EditionReference& layoutParent, Tree* expression);
   void layoutUnit(EditionReference& layoutParent, Tree* expression);
   void layoutPowerOrDivision(EditionReference& layoutParent, Tree* expression);

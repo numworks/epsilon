@@ -218,22 +218,35 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
 }
 
 void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
-                                    Tree *expression, CodePoint op) {
+                                    Tree *expression, CodePoint op,
+                                    bool multiplication) {
   BlockType type = expression->type();
   int childNumber = expression->numberOfChildren();
+  bool previousWasUnit = false;
   for (int childIndex = 0; childIndex < childNumber; childIndex++) {
     Tree *child = expression->nextNode();
+    bool isUnit = Units::Unit::IsUnitOrPowerOfUnit(child);
     if (childIndex > 0) {
-      if (!Units::Unit::IsUnitOrPowerOfUnit(child) ||
-          Units::Unit::ForceMarginLeftOfUnit(child)) {
-        addSeparator(layoutParent);
+      if (!m_linearMode && multiplication && isUnit) {
+        if (!previousWasUnit) {
+          if (Units::Unit::ForceMarginLeftOfUnit(child)) {
+            addSeparator(layoutParent);
+          }
+        } else {
+          PushCodePoint(layoutParent, UCodePointMiddleDot);
+        }
+        layoutExpression(layoutParent, child, OperatorPriority(type));
+        previousWasUnit = isUnit;
+        continue;
       }
+      addSeparator(layoutParent);
       if (op != UCodePointNull && !(op == '+' && child->isOpposite())) {
         PushCodePoint(layoutParent, op);
         addSeparator(layoutParent);
       }
     }
     layoutExpression(layoutParent, child, OperatorPriority(type));
+    previousWasUnit = isUnit;
   }
 }
 
@@ -323,7 +336,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       /* TODO PCJ: Add small margins when units are present */
       layoutInfixOperator(
           layoutParent, expression,
-          m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression));
+          m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression),
+          true);
       break;
     case BlockType::Power:
     case BlockType::PowerMatrix:

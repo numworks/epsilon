@@ -18,7 +18,7 @@ class Placeholder {
     // Match any single tree
     One = 0,
     // Match 0 or more consecutive trees
-    NoneOrMore,
+    ZeroOrMore,
     // Match 1 or more consecutive trees
     OneOrMore,
     NumberOfFilters

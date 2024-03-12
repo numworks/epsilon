@@ -210,8 +210,8 @@ using KOneOrMorePlaceholder =
     KPlaceholderFilter<Tag, Placeholder::Filter::OneOrMore>;
 
 template <Placeholder::Tag Tag>
-using KNoneOrMorePlaceholder =
-    KPlaceholderFilter<Tag, Placeholder::Filter::NoneOrMore>;
+using KZeroOrMorePlaceholder =
+    KPlaceholderFilter<Tag, Placeholder::Filter::ZeroOrMore>;
 
 }  // namespace PoincareJ
 

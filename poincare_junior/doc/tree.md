@@ -231,7 +231,7 @@ bool hasChanged = MatchReplaceAndSimplify(
 
 There are three types of placeholders :
 - `One` : Matching a single tree, named `KA` for example.
-- `NoneOrMore` : Matching 0, 1 or more consecutive sibling trees, named `KD_s` for example.
+- `ZeroOrMore` : Matching 0, 1 or more consecutive sibling trees, named `KD_s` for example.
 - `OneOrMore` : Matching 1 or more consecutive sibling trees, named `KC_p` for example.
 
 <details>

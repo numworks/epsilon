@@ -118,7 +118,7 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
                                     MatchContext matchContext) {
   Placeholder::Filter filter = Placeholder::NodeToFilter(pattern);
   assert(filter == Placeholder::Filter::OneOrMore ||
-         filter == Placeholder::Filter::NoneOrMore);
+         filter == Placeholder::Filter::ZeroOrMore);
   int maxNumberOfTrees = matchContext.remainingLocalTrees(source);
   int numberOfTrees = (filter == Placeholder::Filter::OneOrMore) ? 1 : 0;
   context->setNode(tag, source, numberOfTrees, true);
@@ -176,12 +176,12 @@ bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
         if (sourceNodeChildren > 0) {
           ChildToCheck = child;
         }
-      } else if (filter != Placeholder::Filter::NoneOrMore) {
+      } else if (filter != Placeholder::Filter::ZeroOrMore) {
         minimalNumberOfChildren++;
         context->setNode(tag, source, 1,
                          filter == Placeholder::Filter::OneOrMore);
       } else {
-        // Set unassigned NoneOrMore placeholders to 0 children for now.
+        // Set unassigned ZeroOrMore placeholders to 0 children for now.
         context->setNode(tag, source, 0, true);
         emptiedPlaceholders.setNode(tag, source, 1, true);
       }
@@ -261,7 +261,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
           source = source->nextTree();
         }
       } else if (onlyEmptyPlaceholders && Placeholder::NodeToFilter(pattern) !=
-                                              Placeholder::Filter::NoneOrMore) {
+                                              Placeholder::Filter::ZeroOrMore) {
         return false;
       } else if (Placeholder::NodeToFilter(pattern) !=
                  Placeholder::Filter::One) {
@@ -321,7 +321,7 @@ bool CanEarlyEscape(const Tree* pattern, const Tree* source) {
   int minimalNumberOfChildren = 0;
   for (const Tree* child : pattern->children()) {
     if (child->isPlaceholder() &&
-        (Placeholder::NodeToFilter(child) == Placeholder::Filter::NoneOrMore)) {
+        (Placeholder::NodeToFilter(child) == Placeholder::Filter::ZeroOrMore)) {
       continue;
     }
     minimalNumberOfChildren++;

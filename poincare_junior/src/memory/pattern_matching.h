@@ -202,14 +202,14 @@ constexpr auto KF_p = KOneOrMorePlaceholder<Placeholder::Tag::F>();
 constexpr auto KG_p = KOneOrMorePlaceholder<Placeholder::Tag::G>();
 constexpr auto KH_p = KOneOrMorePlaceholder<Placeholder::Tag::H>();
 
-constexpr auto KA_s = KNoneOrMorePlaceholder<Placeholder::Tag::A>();
-constexpr auto KB_s = KNoneOrMorePlaceholder<Placeholder::Tag::B>();
-constexpr auto KC_s = KNoneOrMorePlaceholder<Placeholder::Tag::C>();
-constexpr auto KD_s = KNoneOrMorePlaceholder<Placeholder::Tag::D>();
-constexpr auto KE_s = KNoneOrMorePlaceholder<Placeholder::Tag::E>();
-constexpr auto KF_s = KNoneOrMorePlaceholder<Placeholder::Tag::F>();
-constexpr auto KG_s = KNoneOrMorePlaceholder<Placeholder::Tag::G>();
-constexpr auto KH_s = KNoneOrMorePlaceholder<Placeholder::Tag::H>();
+constexpr auto KA_s = KZeroOrMorePlaceholder<Placeholder::Tag::A>();
+constexpr auto KB_s = KZeroOrMorePlaceholder<Placeholder::Tag::B>();
+constexpr auto KC_s = KZeroOrMorePlaceholder<Placeholder::Tag::C>();
+constexpr auto KD_s = KZeroOrMorePlaceholder<Placeholder::Tag::D>();
+constexpr auto KE_s = KZeroOrMorePlaceholder<Placeholder::Tag::E>();
+constexpr auto KF_s = KZeroOrMorePlaceholder<Placeholder::Tag::F>();
+constexpr auto KG_s = KZeroOrMorePlaceholder<Placeholder::Tag::G>();
+constexpr auto KH_s = KZeroOrMorePlaceholder<Placeholder::Tag::H>();
 
 }  // namespace PoincareJ
 

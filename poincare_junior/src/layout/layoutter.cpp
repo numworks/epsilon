@@ -452,7 +452,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParentRef,
       if (filter != Placeholder::Filter::One) {
         PushCodePoint(layoutParent, '_');
         PushCodePoint(layoutParent,
-                      filter == Placeholder::Filter::NoneOrMore ? 's' : 'p');
+                      filter == Placeholder::Filter::ZeroOrMore ? 's' : 'p');
       }
       break;
     }

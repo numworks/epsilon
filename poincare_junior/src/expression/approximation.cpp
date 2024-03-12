@@ -1100,14 +1100,6 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
   s_context = &context;
   bool result = ApproximateAndReplaceEveryScalarT<double>(tree, collapse);
   s_context = nullptr;
-  if (result) {
-    if (tree->isUndefined()) {
-      ExceptionCheckpoint::Raise(ExceptionType::Undefined);
-    }
-    if (tree->isNonreal()) {
-      ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
-    }
-  }
   return result;
 }
 
@@ -1145,6 +1137,12 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
   Tree* approximatedTree = RootTreeToTree<T>(tree, previousContext->m_angleUnit,
                                              previousContext->m_complexFormat);
   s_context = previousContext;
+  if (approximatedTree->isUndefined()) {
+    ExceptionCheckpoint::Raise(ExceptionType::Undefined);
+  }
+  if (approximatedTree->isNonreal()) {
+    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+  }
   assert(!tree->treeIsIdenticalTo(approximatedTree));
   tree->moveTreeOverTree(approximatedTree);
   return true;

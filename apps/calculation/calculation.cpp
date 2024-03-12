@@ -177,6 +177,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
   }
   Expression inputExp = input();
   Expression outputExp = exactOutput();
+  const char *exactText = exactOutputText();
+  const char *approxText =
+      approximateOutputText(NumberOfSignificantDigits::UserDefined);
   if (inputExp.isUninitialized() || outputExp.isUninitialized() ||
       ShouldOnlyDisplayExactOutput(inputExp)) {
     m_displayOutput = DisplayOutput::ExactOnly;
@@ -184,16 +187,13 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
       /* If the exact and approximate outputs are equal (with the
        * UserDefined number of significant digits), do not display the exact
        * output. Indeed, in this case, the layouts are identical. */
-      strcmp(approximateOutputText(NumberOfSignificantDigits::UserDefined),
-             exactOutputText()) == 0 ||
+      strcmp(approxText, exactText) == 0 ||
       // If the exact result is 'undef'
-      strcmp(exactOutputText(), Undefined::Name()) == 0 ||
+      strcmp(exactText, Undefined::Name()) == 0 ||
       // If the approximate output is 'nonreal'
-      strcmp(approximateOutputText(NumberOfSignificantDigits::UserDefined),
-             Nonreal::Name()) == 0 ||
+      strcmp(approxText, Nonreal::Name()) == 0 ||
       // If the approximate output is 'undef'
-      strcmp(approximateOutputText(NumberOfSignificantDigits::UserDefined),
-             Undefined::Name()) == 0 ||
+      strcmp(approxText, Undefined::Name()) == 0 ||
       // Other conditions are factorized in ExpressionDisplayPermissions
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
           inputExp, outputExp,

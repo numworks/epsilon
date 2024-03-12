@@ -115,6 +115,8 @@ class InputStoreController : public InputCategoricalController,
   PrivateStackViewController m_secondStackController;
   StoreColumnParameterController m_storeParameterController;
   char m_titleBuffer[InputController::k_titleBufferSize];
+  DistributionType m_loadedDistribution;
+  SignificanceTestType m_loadedTest;
 };
 
 }  // namespace Inference

@@ -36,9 +36,7 @@ bool InputStoreController::handleEvent(Ion::Events::Event event) {
     m_storeParameterController.setTitlesDisplay(
         ViewController::TitlesDisplay::DisplayLastTitle);
     m_secondStackController.setTitlesDisplay(
-        titlesDisplay() == ViewController::TitlesDisplay::DisplayLastTitle
-            ? ViewController::TitlesDisplay::DisplaySecondToLast
-            : ViewController::TitlesDisplay::DisplaySecondAndThirdToLast);
+        TitlesDisplay(static_cast<int>(titlesDisplay()) << 1));
     stackController()->push(&m_secondStackController);
     return true;
   }

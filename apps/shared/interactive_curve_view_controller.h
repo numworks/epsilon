@@ -121,6 +121,11 @@ class InteractiveCurveViewController
 
  private:
   constexpr static KDFont::Size k_buttonFont = KDFont::Size::Small;
+  constexpr static int k_maxNumberOfSubcurves = 3;
+  constexpr static int IndexScore(int curveIndex, int subCurveIndex) {
+    assert(0 <= subCurveIndex && subCurveIndex < k_maxNumberOfSubcurves);
+    return k_maxNumberOfSubcurves * curveIndex + subCurveIndex;
+  }
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical,

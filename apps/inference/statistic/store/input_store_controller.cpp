@@ -20,6 +20,7 @@ InputStoreController::InputStoreController(StackViewController* parent,
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_slopeTableCell),
+      m_loadedSubApp(Statistic::SubApp::Test),
       m_loadedDistribution(DistributionType::T),
       m_loadedTest(SignificanceTestType::OneProportion) {
   m_storeParameterController.selectRow(0);
@@ -110,7 +111,8 @@ void InputStoreController::viewWillAppear() {
   }
   m_dropdownCell.dropdown()->reloadCell();
 
-  if (m_loadedDistribution != m_statistic->distributionType() ||
+  if (m_loadedSubApp != m_statistic->subApp() ||
+      m_loadedDistribution != m_statistic->distributionType() ||
       m_loadedTest != m_statistic->significanceTestType()) {
     categoricalTableCell()->selectRow(-1);
     categoricalTableCell()->selectColumn(0);
@@ -118,6 +120,7 @@ void InputStoreController::viewWillAppear() {
     m_selectableListView.selectRow(0);
     m_selectableListView.resetScroll();
   }
+  m_loadedSubApp = m_statistic->subApp();
   m_loadedDistribution = m_statistic->distributionType();
   m_loadedTest = m_statistic->significanceTestType();
 

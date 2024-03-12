@@ -115,8 +115,8 @@ void LogisticModel::specializedInitCoefficientsForFit(double* modelCoefficients,
    * We use these properties :
    * (1) f(x) = c/2 <=> x = ln(a)/b
    * (2) f(x + ln(a)/b) = r * c <=> x = ln(r/(1-r)) / b
-   * Coefficients are initiated assuming the data is equally distributed on the
-   * interesting part of a logistic function curve.
+   * Coefficients are initialized assuming the data is equally distributed on
+   * the interesting part of a logistic function curve.
    * We assume this interesting part to be where 0.01*c < f(x) < 0.99*c.
    * Using (2), it roughly corresponds to (ln(a)-5)/b < x < (ln(a)+5)/b
    * Data is assumed equally distributed around the point (ln(a)/b, c/2) (1)

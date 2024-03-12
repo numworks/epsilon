@@ -137,9 +137,9 @@ void LogisticModel::specializedInitCoefficientsForFit(double* modelCoefficients,
    * negative c coefficients while not being too dependent on outliers. */
   double c = 2.0 * store->meanOfColumn(series, 1);
 
-  /* We assume most data point are distributed around the interesting part,
-   * where X data is within (ln(a)-5)/b  and (ln(a)+5)/b (2). We can therefore
-   * estimate b from X's range of values (dependent on outliers). */
+  /* The range of the interesting part is 10/b. We assume that most data points
+   * are distributed around the interesting part. We can therefore estimate b
+   * from X's range of values (dependent on outliers): Xmax - Xmin = 10/b */
   double b = 10.0 / (store->maxValueOfColumn(series, 0) -
                      store->minValueOfColumn(series, 0));
   double slope = store->slope(series);

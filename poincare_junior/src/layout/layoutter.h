@@ -36,7 +36,7 @@ class Layoutter {
   void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
   void layoutFunctionCall(EditionReference& layoutParent, Tree* expression,
                           const char* name);
-  void layoutChildrenAsRacks(EditionReference& layoutParent, Tree* expression);
+  void layoutChildrenAsRacks(Tree* expression);
   void layoutIntegerHandler(EditionReference& layoutParent,
                             IntegerHandler handler, int decimalOffset = 0);
   void layoutInfixOperator(EditionReference& layoutParent, Tree* expression,

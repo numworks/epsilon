@@ -152,7 +152,7 @@ void Layoutter::layoutBuiltin(EditionReference &layoutParent,
         static_cast<const BuiltinWithLayout *>(builtin);
     EditionReference layout = SharedEditionPool->push(
         static_cast<BlockType>(builtinWithLayout->layoutType()));
-    layoutChildrenAsRacks(layoutParent, expression);
+    layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
   }
 }
@@ -179,8 +179,7 @@ void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
   }
 }
 
-void Layoutter::layoutChildrenAsRacks(EditionReference &layoutParent,
-                                      Tree *expression) {
+void Layoutter::layoutChildrenAsRacks(Tree *expression) {
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     EditionReference newParent =
         SharedEditionPool->push<BlockType::RackLayout>(0);
@@ -258,7 +257,7 @@ void Layoutter::layoutMatrix(EditionReference &layoutParent, Tree *expression) {
   if (!m_linearMode) {
     EditionReference layout = expression->cloneNode();
     *layout->block() = BlockType::MatrixLayout;
-    layoutChildrenAsRacks(layoutParent, expression);
+    layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
     Grid *grid = Grid::From(layout);
     grid->addEmptyColumn();
@@ -465,7 +464,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
           // TODO fix order in derivative layout instead
           expression->child(2)->moveTreeBeforeNode(expression->child(3));
         }
-        layoutChildrenAsRacks(layout, expression);
+        layoutChildrenAsRacks(expression);
         NAry::AddChild(layoutParent, layout);
       }
       break;
@@ -479,7 +478,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
         EditionReference layout = SharedEditionPool->push(
             type.isBinomial() ? BlockType::PtBinomialLayout
                               : BlockType::PtPermuteLayout);
-        layoutChildrenAsRacks(layoutParent, expression);
+        layoutChildrenAsRacks(expression);
         NAry::AddChild(layoutParent, layout);
       }
       break;
@@ -553,7 +552,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
                            k_forceParenthesis);
         } else {
           EditionReference layout = KSubscriptL->cloneNode();
-          layoutChildrenAsRacks(layoutParent, expression);
+          layoutChildrenAsRacks(expression);
           NAry::AddChild(layoutParent, layout);
         }
       }
@@ -579,7 +578,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
             SharedEditionPool->push(BlockType::PiecewiseLayout);
         SharedEditionPool->push(rows + 1);
         SharedEditionPool->push(2);
-        layoutChildrenAsRacks(layoutParent, expression);
+        layoutChildrenAsRacks(expression);
         // Placeholders
         if (expression->numberOfChildren() % 2 == 1) {
           KRackL()->clone();

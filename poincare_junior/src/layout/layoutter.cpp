@@ -152,6 +152,12 @@ void Layoutter::layoutBuiltin(EditionReference &layoutParent,
         static_cast<const BuiltinWithLayout *>(builtin);
     EditionReference layout = SharedEditionPool->push(
         static_cast<BlockType>(builtinWithLayout->layoutType()));
+    /* Some builtins have a bigger nodeSize. Additional parameters are not
+     * handled here. TODO_PCJ: Remove this one these Layouts are moved out of
+     * builtins. */
+    for (size_t i = 1; i < layout->nodeSize(); i++) {
+      SharedEditionPool->push(BlockType::Zero);
+    }
     layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
   }

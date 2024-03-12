@@ -121,10 +121,16 @@ void LogisticModel::specializedInitCoefficientsForFit(double* modelCoefficients,
    * Using (2), it roughly corresponds to (ln(a)-5)/b < x < (ln(a)+5)/b
    * Data is assumed equally distributed around the point (ln(a)/b, c/2) (1)
    * The curve and significant values look like this :
-   *                             ln(a)/b         _  _  _ c
-   *                   c/2  _  _  _  _ ¦/¦‾‾‾‾‾‾
-   *                             ______/ ¦
-   *                   0 ‾  ‾  ‾        ~(ln(a)+5)/b
+   *
+   *                             ln(a)/b
+   *                                  ¦  ______  _  _  _  c
+   *                                  ¦ /¦
+   *             c/2  _  _  _  _  _  _¦/ ¦
+   *                                  /  ¦
+   *              0  _  _  _  ______ /   ¦
+   *                                ¦    ¦
+   *                                ¦    ¦
+   *                      ~(ln(a)-5)/b   ~(ln(a)+5)/b
    */
 
   /* We assume the average of Y data is c/2. This handles both positive and

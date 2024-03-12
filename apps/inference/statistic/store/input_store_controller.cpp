@@ -132,10 +132,12 @@ void InputStoreController::scrollViewDidChangeOffset(
 
   KDPoint listOffset = m_selectableListView.contentOffset();
   KDCoordinate listTopMargin = m_selectableListView.margins()->top();
-  /* Don't use firstDisplayedRow as the table has not been re-laid out yet. */
-  KDCoordinate firstVisibleRow = rowAfterCumulatedHeight(listOffset.y());
+  KDCoordinate newListTopMargin = Metric::CommonMargins.top() - listTopMargin;
+  /* Don't use firstDisplayedRow as the table has not been re-laid out yet.
+   * Always take margin into account to avoid being locked from scrolling. */
+  KDCoordinate firstVisibleRow =
+      rowAfterCumulatedHeight(listOffset.y() + newListTopMargin);
   if ((firstVisibleRow == indexOfTableCell()) != (listTopMargin == 0)) {
-    KDCoordinate newListTopMargin = Metric::CommonMargins.top() - listTopMargin;
     m_selectableListView.margins()->setTop(newListTopMargin);
     /* If the first visible row is the topmost row, we want to stay at the top
      * of the list so don't propagate the changed in offset caused by the

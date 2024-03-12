@@ -135,7 +135,59 @@ You can now read the various Tree motions in `tree.h` and see how they update
 references. Mind the difference between `moveBefore` and `moveAt` that are the
 same function tree-wise but not reference-wise.
 
-`TODO` Wrappers
+### Implementation
+
+The EditionPool has a reference table, which is an array of node offsets. This array has a maximal size (`EditionPool::k_maxNumberOfReferences`).
+
+In addition, offset can be a special identifier (`Pool::ReferenceTable::InvalidatedOffset`), indicating the node doesn't exist anymore in the EditionPool.
+
+Each EditionReference has an identifier. It represent the index at which the EditionReference's node offset can be found in the EditionPool's reference table.
+
+Similarly, the identifier can be special :
+- `Pool::ReferenceTable::NoNodeIdentifier` indicates the EditionReference doesn't point to any tree.
+- `EditionPool::ReferenceTable::DeletedOffset` indicates the EditionReference has been deleted.
+
+To retrieve the node pointed by an EditionReference, we just return the node in the edition pool at the corresponding offset.
+
+Each time something is moved or changed in the EditionPool, all node offsets are updated (`EditionPool::ReferenceTable::updateNodes`).
+
+Once an EditionReference is destroyed, the corresponding node offset is set back to `EditionPool::ReferenceTable::DeletedOffset`.
+
+### Wrappers
+
+Some methods manipulating `Tree *` may overwrite it with something else.
+
+This isn't an issue with `Tree *` since the tree still lives at the same place.
+
+However, EditionReference will be invalidated.
+
+```cpp
+static void ReplaceTreeWithZero(Tree * tree) {
+  tree->cloneTreeOverTree(0_e);
+}
+
+Tree * a = someTree->clone();
+EditionReference b = a
+ReplaceTreeWithZero(b); // Exact Equivalent of ReplaceTreeWithZero(a);
+
+assert(a->isZero()); // Ok
+assert(b->isZero()); // Raise because b no longer exists, the tracked tree has been overwritten.
+```
+
+To minimize the risk of mistakes, we created a wrapper allowing the use of such methods on EditionReference while preserving them.
+
+For the example above, just add :
+```cpp
+static void ReplaceTreeWithZero(Tree * tree) {
+  tree->cloneTreeOverTree(0_e);
+}
+/* Create a static void ReplaceTreeWithZero(EditionReference& tree) calling the
+ * original ReplaceTreeWithZero, and restoring the EditionReference to the
+ * original Tree */
+EDITION_REF_WRAP(ReplaceTreeWithZero);
+// ...
+assert(b->isZero()); // Ok
+```
 
 
 ## KTrees

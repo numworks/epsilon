@@ -5,6 +5,7 @@
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
 #include <omgpj/bit.h>
+#include <poincare/preferences.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <stdlib.h>
 
@@ -201,6 +202,17 @@ class IntegerHandler final {
   }
 #endif
 
+  int numberOfBase10DigitsWithoutSign() const;
+  size_t serialize(char *buffer, size_t bufferSize,
+                   OMG::Base base = OMG::Base::Decimal) const;
+  size_t serializeInDecimal(char *buffer, size_t bufferSize) const;
+  void removeZeroAtTheEnd(int minimalNumbersOfDigits,
+                          WorkingBuffer *workingBuffer);
+  static int ConvertDecimalToText(const Tree *decimal, char *buffer,
+                                  int bufferSize,
+                                  Poincare::Preferences::PrintFloatMode mode,
+                                  int numberOfSignificantDigits);
+
  private:
   static constexpr float k_digitBase =
       1 << sizeof(uint8_t) * Bit::k_numberOfBitsInByte;
@@ -224,6 +236,9 @@ class IntegerHandler final {
   static DivisionResult<IntegerHandler> Udiv(const IntegerHandler &a,
                                              const IntegerHandler &b,
                                              WorkingBuffer *workingBuffer);
+  static DivisionResult<IntegerHandler> Div(const IntegerHandler &a,
+                                            const IntegerHandler &b,
+                                            WorkingBuffer *workingBuffer);
   static IntegerHandler GCD(const IntegerHandler &a, const IntegerHandler &b,
                             WorkingBuffer *workingBuffer);
   IntegerHandler multiplyByPowerOf2(uint8_t pow,

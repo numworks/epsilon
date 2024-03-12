@@ -1170,7 +1170,7 @@ OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   }
   PoincareJ::Tree *exp = PoincareJ::Expression::FromPoincareExpression(*this);
   PoincareJ::Tree *lay = PoincareJ::Layoutter::LayoutExpression(
-      exp, false, numberOfSignificantDigits);
+      exp, false, numberOfSignificantDigits, floatDisplayMode);
   return JuniorLayout::Builder(lay);
 #if 0
   OLayout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits,

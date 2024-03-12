@@ -214,6 +214,20 @@ uint8_t IntegerHandler::numberOfDigits() const {
   return Arithmetic::CeilDivision<uint8_t>(nbOfDigits, sizeof(T));
 }
 
+int IntegerHandler::numberOfBase10DigitsWithoutSign() const {
+  // TODO: This method should be optimized because udiv is a costly function
+  // assert(!isOverflow());
+  WorkingBuffer workingBuffer;
+  int numberOfDigits = 1;
+  IntegerHandler base(10);
+  DivisionResult<IntegerHandler> d = Udiv(*this, base, &workingBuffer);
+  while (!d.quotient.isZero()) {
+    d = Udiv(d.quotient, base, &workingBuffer);
+    numberOfDigits++;
+  }
+  return numberOfDigits;
+}
+
 template <typename T>
 T IntegerHandler::digit(int i) const {
   assert(i >= 0);
@@ -466,6 +480,26 @@ DivisionResult<Tree *> IntegerHandler::Division(
   Tree *q = quotient.pushOnEditionPool();
   Tree *r = remainder.pushOnEditionPool();
   return {.quotient = q, .remainder = r};
+}
+
+DivisionResult<IntegerHandler> IntegerHandler::Div(
+    const IntegerHandler &numerator, const IntegerHandler &denominator,
+    WorkingBuffer *workingBuffer) {
+  auto [quotient, remainder] = Udiv(numerator, denominator, workingBuffer);
+  if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
+    quotient = Usum(quotient, IntegerHandler(1), false, workingBuffer);
+    remainder = Usum(denominator, remainder, true,
+                     workingBuffer);  // |denominator|-remainder
+  }
+  quotient.setSign(numerator.sign() == denominator.sign()
+                       ? NonStrictSign::Positive
+                       : NonStrictSign::Negative);
+  /* If both IntegerHandler are stored on the WorkingBuffer, they need to be
+   * ordered to ensure that pushing the digits of one on the EditionPool won't
+   * override the other one. */
+  assert(quotient.usesImmediateDigit() || remainder.usesImmediateDigit() ||
+         quotient.digits() < remainder.digits());
+  return {.quotient = quotient, .remainder = remainder};
 }
 
 Tree *IntegerHandler::Quotient(const IntegerHandler &numerator,

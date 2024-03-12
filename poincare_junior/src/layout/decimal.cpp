@@ -1,10 +1,149 @@
 #include "decimal.h"
 
+#include <poincare/print_float.h>
+#include <poincare/serialization_helper.h>
+#include <poincare_junior/src/expression/decimal.h>
+#include <poincare_junior/src/expression/integer.h>
+
+#include <algorithm>
+
 namespace PoincareJ {
 
-int DecimalNode::convertToText(char *buffer, int bufferSize,
-                               Preferences::PrintFloatMode mode,
-                               int numberOfSignificantDigits) const {
+using Poincare::Preferences;
+using Poincare::PrintFloat;
+using Poincare::SerializationHelper::CodePoint;
+
+void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
+                                        WorkingBuffer *workingBuffer) {
+  /* Remove the zeroes at the end of an integer, respecting the minimum number
+   * of digits asked for.
+   *
+   * For instance :
+   *
+   * i = 1000
+   * removeZeroAtTheEnd(&i, 2)
+   * assert(i==10)
+   *
+   * i = 1000
+   * removeZeroAtTheEnd(&i, -1)
+   * assert(i==1)
+   */
+
+  if (isZero()) {
+    return;
+  }
+
+  /* If we check the number of digits, we want *i to stay outside of the
+   * interval ]-10^numberDigits; 10^numberDigits[. */
+  const bool shouldCheckMinimalNumberOfDigits = minimalNumbersOfDigits > 0;
+  IntegerHandler minimum =
+      // shouldCheckMinimalNumberOfDigits ?
+      IntegerHandler((int64_t)std::pow(10.0, minimalNumbersOfDigits - 1));
+  // : Integer::Overflow(false);
+  IntegerHandler minusMinimum =
+      // shouldCheckMinimalNumberOfDigits ?
+      IntegerHandler(-(int64_t)std::pow(10.0, minimalNumbersOfDigits - 1));
+  // : Integer::Overflow(false);
+
+  IntegerHandler base = IntegerHandler(10);
+  DivisionResult<IntegerHandler> d = Udiv(*this, base, workingBuffer);
+  while (d.remainder.isZero()) {
+    if (shouldCheckMinimalNumberOfDigits &&
+        (Compare(d.quotient, minimum) < 0 &&
+         Compare(d.quotient, minusMinimum) > 0)) {
+      break;
+    }
+    *this = d.quotient;
+    d = Udiv(*this, base, workingBuffer);
+  }
+  // assert(!isOverflow());
+}
+
+size_t IntegerHandler::serialize(char *buffer, size_t bufferSize,
+                                 OMG::Base base) const {
+  if (bufferSize == 0) {
+    return bufferSize - 1;
+  }
+  buffer[bufferSize - 1] = 0;
+  if (bufferSize == 1) {
+    return bufferSize - 1;
+  }
+#if 0
+  if (isOverflow()) {
+    return PrintFloat::ConvertFloatToText<float>(
+               m_negative ? -INFINITY : INFINITY, buffer, bufferSize,
+               PrintFloat::k_maxFloatGlyphLength,
+               PrintFloat::k_maxNumberOfSignificantDigits,
+               Preferences::PrintFloatMode::Decimal)
+        .CharLength;
+  }
+  assert(base == OMG::Base::Decimal);
+  switch (base) {
+    case OMG::Base::Binary:
+      return serializeInBinaryBase(buffer, bufferSize, 'b', OMG::Base::Binary);
+    case OMG::Base::Decimal:
+      return serializeInDecimal(buffer, bufferSize);
+    default:
+      assert(base == OMG::Base::Hexadecimal);
+      return serializeInBinaryBase(buffer, bufferSize, 'x',
+                                   OMG::Base::Hexadecimal);
+  }
+#endif
+  return serializeInDecimal(buffer, bufferSize);
+}
+
+size_t IntegerHandler::serializeInDecimal(char *buffer,
+                                          size_t bufferSize) const {
+  IntegerHandler base(10);
+  IntegerHandler abs = *this;
+  abs.setSign(NonStrictSign::Positive);
+  WorkingBuffer workingBuffer;
+  DivisionResult<IntegerHandler> d = Udiv(abs, base, &workingBuffer);
+
+  size_t length = 0;
+  if (isZero()) {
+    length += CodePoint(buffer + length, bufferSize - length, '0');
+  } else if (m_sign == NonStrictSign::Negative) {
+    length += CodePoint(buffer + length, bufferSize - length, '-');
+  }
+
+  while (!(d.remainder.isZero() && d.quotient.isZero())) {
+    char c = OMG::Print::CharacterForDigit(
+        OMG::Base::Decimal, d.remainder.isZero() ? 0 : d.remainder.digit(0));
+    if (length >= bufferSize - 1) {
+      return PrintFloat::ConvertFloatToText<float>(
+                 NAN, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength,
+                 PrintFloat::k_maxNumberOfSignificantDigits,
+                 Preferences::PrintFloatMode::Decimal)
+          .CharLength;
+    }
+    length += CodePoint(buffer + length, bufferSize - length, c);
+    d = Udiv(d.quotient, base, &workingBuffer);
+  }
+  assert(length <= bufferSize - 1);
+  assert(buffer[length] == 0);
+
+  // Flip the string
+  for (int i = m_sign == NonStrictSign::Negative, j = length - 1; i < j;
+       i++, j--) {
+    char c = buffer[i];
+    buffer[i] = buffer[j];
+    buffer[j] = c;
+  }
+  return length;
+}
+
+int IntegerHandler::ConvertDecimalToText(
+    const Tree *decimal, char *buffer, int bufferSize,
+    Poincare::Preferences::PrintFloatMode mode, int numberOfSignificantDigits) {
+  assert(decimal->isDecimal() ||
+         decimal->isOpposite() && decimal->child(0)->isDecimal());
+  bool m_negative = decimal->isOpposite();
+  if (m_negative) {
+    decimal = decimal->child(0);
+  }
+  const Tree *unsignedMantissa = decimal->child(0);
+
   if (bufferSize == 0) {
     return -1;
   }
@@ -12,32 +151,35 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
     buffer[0] = 0;
     return 0;
   }
-  if (unsignedMantissa().isZero()) {
+  if (unsignedMantissa->isZero()) {
     // This already writes the null terminating char
-    return SerializationHelper::CodePoint(buffer, bufferSize, '0');
+    return CodePoint(buffer, bufferSize, '0');
   }
 
   // Compute the exponent
-  int exponent = m_exponent;
+  int exponent = Decimal::DecimalOffset(decimal);
 
+  WorkingBuffer workingBuffer;
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
   char tempBuffer[PrintFloat::k_maxNumberOfSignificantDigits + 1];
-  Integer m = unsignedMantissa();
-  int numberOfDigitsInMantissa = Integer::NumberOfBase10DigitsWithoutSign(m);
+  IntegerHandler m = Integer::Handler(unsignedMantissa);
+  int numberOfDigitsInMantissa = m.numberOfBase10DigitsWithoutSign();
+  exponent = numberOfDigitsInMantissa - 1 - exponent;
   if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
-    IntegerDivision d = Integer::Division(
-        m, Integer((int64_t)std::pow(
-               10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)));
+    DivisionResult<IntegerHandler> d =
+        Div(m,
+            IntegerHandler((int64_t)std::pow(
+                10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)),
+            &workingBuffer);
     m = d.quotient;
     int64_t boundary = 5. * std::pow(10., numberOfDigitsInMantissa -
                                               numberOfSignificantDigits - 1);
-    if (Integer::NaturalOrder(d.remainder, Integer(boundary)) >= 0) {
-      m = Integer::Addition(m, Integer(1));
+    if (IntegerHandler::Compare(d.remainder, IntegerHandler(boundary)) >= 0) {
+      m = Sum(m, IntegerHandler(1), false, &workingBuffer);
       // if 9999 was rounded to 10000, we need to update exponent and mantissa
-      if (Integer::NumberOfBase10DigitsWithoutSign(m) >
-          numberOfSignificantDigits) {
+      if (m.numberOfBase10DigitsWithoutSign() > numberOfSignificantDigits) {
         exponent++;
-        m = Integer::Division(m, Integer(10)).quotient;
+        m = Div(m, IntegerHandler(10), &workingBuffer).quotient;
       }
     }
   }
@@ -52,11 +194,10 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
             exponent, exponentForEngineeringNotation);
     int numberOfZeroesToAddForEngineering =
         PrintFloat::EngineeringNumberOfZeroesToAdd(
-            minimalNumberOfMantissaDigits,
-            Integer::NumberOfBase10DigitsWithoutSign(m));
+            minimalNumberOfMantissaDigits, m.numberOfBase10DigitsWithoutSign());
     if (numberOfZeroesToAddForEngineering > 0) {
       for (int i = 0; i < numberOfZeroesToAddForEngineering; i++) {
-        m = Integer::Multiplication(m, Integer(10));
+        m = Mult(m, IntegerHandler(10), &workingBuffer);
       }
       removeZeroes = false;
     }
@@ -66,14 +207,13 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
    * rounding. For example 1.999 with 3 significant digits: the mantissa 1999 is
    * rounded to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
   if (removeZeroes) {
-    removeZeroAtTheEnd(&m, minimalNumberOfMantissaDigits);
+    m.removeZeroAtTheEnd(minimalNumberOfMantissaDigits, &workingBuffer);
   }
 
   // Print the sign
   int currentChar = 0;
   if (m_negative) {
-    assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
-    currentChar += SerializationHelper::CodePoint(buffer, bufferSize, '-');
+    currentChar += CodePoint(buffer, bufferSize, '-');
     if (currentChar >= bufferSize - 1) {
       return bufferSize - 1;
     }
@@ -84,11 +224,11 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
       m.serialize(tempBuffer, PrintFloat::k_maxNumberOfSignificantDigits + 1);
 
   // Assert that m is not +/-inf
-  assert(strcmp(tempBuffer, Infinity::Name(false)) != 0);
-  assert(strcmp(tempBuffer, Infinity::Name(true)) != 0);
+  assert(strcmp(tempBuffer, "inf") != 0);
+  assert(strcmp(tempBuffer, "-inf") != 0);
 
   // Stop here if m is undef
-  if (strcmp(tempBuffer, Undefined::Name()) == 0) {
+  if (strcmp(tempBuffer, "undef") == 0) {
     currentChar +=
         strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
     return std::min(currentChar, bufferSize - 1);
@@ -117,8 +257,7 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
       forceScientificMode) {
     if (mantissaLength > 1 &&
         (mode != Preferences::PrintFloatMode::Engineering ||
-         Integer::NumberOfBase10DigitsWithoutSign(m) >
-             minimalNumberOfMantissaDigits)) {
+         m.numberOfBase10DigitsWithoutSign() > minimalNumberOfMantissaDigits)) {
       /* Forward one or more chars: _
        * Write the mantissa _23456
        * Copy the most significant digits on the forwarded chars: 223456
@@ -164,19 +303,18 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
         exponent == 0) {
       return currentChar;
     }
-    currentChar += SerializationHelper::CodePoint(
-        buffer + currentChar, bufferSize - currentChar,
-        UCodePointLatinLetterSmallCapitalE);
+    currentChar += CodePoint(buffer + currentChar, bufferSize - currentChar,
+                             UCodePointLatinLetterSmallCapitalE);
     if (currentChar >= bufferSize - 1) {
       return bufferSize - 1;
     }
     if (mode == Preferences::PrintFloatMode::Engineering) {
       currentChar +=
-          Integer(exponentForEngineeringNotation)
+          IntegerHandler(exponentForEngineeringNotation)
               .serialize(buffer + currentChar, bufferSize - currentChar);
     } else {
-      currentChar += Integer(exponent).serialize(buffer + currentChar,
-                                                 bufferSize - currentChar);
+      currentChar += IntegerHandler(exponent).serialize(
+          buffer + currentChar, bufferSize - currentChar);
     }
     return currentChar;
   }
@@ -219,8 +357,8 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
   if (exponent >= 0 && exponent > mantissaLength - 1) {
     int endMarkerPosition = m_negative ? exponent + 1 : exponent;
     for (int i = currentChar - 1; i < endMarkerPosition; i++) {
-      currentChar += SerializationHelper::CodePoint(
-          buffer + currentChar, bufferSize - currentChar, '0');
+      currentChar +=
+          CodePoint(buffer + currentChar, bufferSize - currentChar, '0');
       if (currentChar + 1 >= bufferSize - 1) {
         return bufferSize - 1;
       }

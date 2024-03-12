@@ -54,6 +54,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/code_point_layout.cpp \
   layout/conversion.cpp \
   layout/cursor_motion.cpp \
+  layout/decimal.cpp \
   layout/empty_rectangle.cpp \
   layout/grid.cpp \
   layout/input_beautification.cpp \

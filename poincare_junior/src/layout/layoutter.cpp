@@ -90,7 +90,8 @@ static constexpr int OperatorPriority(TypeBlock type) {
 static constexpr int k_commaPriority = OperatorPriority(BlockType::Set);
 
 Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
-                                  int numberOfSignificantDigits) {
+                                  int numberOfSignificantDigits,
+                                  Preferences::PrintFloatMode floatMode) {
   assert(expression->isExpression());
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
@@ -98,7 +99,8 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
   EditionReference layoutParent =
       SharedEditionPool->push<BlockType::RackLayout>(0);
   bool addSeparators = !linearMode && RequireSeparators(expression);
-  Layoutter layoutter(linearMode, addSeparators, numberOfSignificantDigits);
+  Layoutter layoutter(linearMode, addSeparators, numberOfSignificantDigits,
+                      floatMode);
   layoutter.layoutExpression(layoutParent, expression, k_maxPriority);
   return layoutParent;
 }
@@ -453,12 +455,15 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    case BlockType::Decimal:
-      layoutIntegerHandler(layoutParent,
-                           Rational::Numerator(expression->nextNode()),
-                           Decimal::DecimalOffset(expression));
+    case BlockType::Decimal: {
+      char buffer[20];
+      IntegerHandler::ConvertDecimalToText(expression, buffer,
+                                           std::size(buffer), m_floatMode,
+                                           m_numberOfSignificantDigits);
+      layoutText(layoutParent, buffer);
       expression->nextNode()->removeTree();
       break;
+    }
     case BlockType::Pi:
       PushCodePoint(layoutParent, u'π');
       break;
@@ -517,7 +522,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
           : type == BlockType::SingleFloat
               ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
               : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
-          Poincare::Preferences::PrintFloatMode::Decimal);
+          m_floatMode);
       layoutText(layoutParent, buffer);
       break;
     }

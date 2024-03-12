@@ -4,12 +4,16 @@
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
+using Poincare::Preferences;
+
 namespace PoincareJ {
 
 class Layoutter {
  public:
   static Tree* LayoutExpression(Tree* expression, bool linearMode = false,
-                                int numberOfSignificantDigits = -1);
+                                int numberOfSignificantDigits = -1,
+                                Preferences::PrintFloatMode floatMode =
+                                    Preferences::PrintFloatMode::Decimal);
 
   static bool AddThousandSeparators(Tree* rack);
 
@@ -19,10 +23,12 @@ class Layoutter {
   static void StripSeparators(Tree* rack);
 
  private:
-  Layoutter(bool linearMode, bool addSeparators, int numberOfSignificantDigits)
+  Layoutter(bool linearMode, bool addSeparators, int numberOfSignificantDigits,
+            Preferences::PrintFloatMode floatMode)
       : m_linearMode(linearMode),
         m_addSeparators(addSeparators),
-        m_numberOfSignificantDigits(numberOfSignificantDigits) {}
+        m_numberOfSignificantDigits(numberOfSignificantDigits),
+        m_floatMode(floatMode) {}
   void addSeparator(Tree* layoutParent);
   void layoutText(EditionReference& layoutParent, const char* text);
   void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
@@ -41,6 +47,7 @@ class Layoutter {
   bool m_linearMode;
   bool m_addSeparators;
   int m_numberOfSignificantDigits;
+  Preferences::PrintFloatMode m_floatMode;
 };
 }  // namespace PoincareJ
 

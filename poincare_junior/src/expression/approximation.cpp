@@ -419,13 +419,14 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::HyperbolicArcCosine:
     case BlockType::HyperbolicArcTangent:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
-    case BlockType::Variable:
-      if (!s_context) {
+    case BlockType::Variable: {
+      int index = Variables::Id(node);
+      if (!s_context || index >= s_context->m_variablesOffset) {
         // TODO PCJ: this should be caught when preparing the expression
         return NAN;
       }
-      return s_context->variable(Variables::Id(node));
-
+      return s_context->variable(index);
+    }
     /* Analysis */
     case BlockType::Sum:
     case BlockType::Product: {

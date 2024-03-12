@@ -823,6 +823,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       // TODO: Implement more BlockTypes
       assert(false);
+    case BlockType::Undefined:
       return NAN;
   };
 }

@@ -1114,7 +1114,9 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
   if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
       tree->isComplexI() ||
       tree->isOfType({BlockType::UserSymbol, BlockType::Variable,
-                      BlockType::Unit, BlockType::PhysicalConstant})) {
+                      BlockType::Unit, BlockType::PhysicalConstant}) ||
+      !Dimension::GetDimension(tree).isScalar() ||
+      Dimension::GetListLength(tree) != -1) {
     return false;
   }
   bool changed = false;

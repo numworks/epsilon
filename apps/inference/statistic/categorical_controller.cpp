@@ -199,8 +199,7 @@ void InputCategoricalController::viewWillAppear() {
                          m_significanceCell.textField(), true, true);
   m_significanceCell.setMessages(m_statistic->thresholdName(),
                                  m_statistic->thresholdDescription());
-  // Table cell
-  categoricalTableCell()->selectableTableView()->resetScroll();
+
   categoricalTableCell()->recomputeDimensionsAndReload(true, true);
 }
 

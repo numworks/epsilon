@@ -79,10 +79,16 @@ void InputStoreController::viewWillAppear() {
   }
 
   m_dropdownCell.dropdown()->init();
-  m_dropdownCell.setMessage(m_statistic->significanceTestType() ==
-                                    SignificanceTestType::TwoMeans
-                                ? I18n::Message::DataSets
-                                : I18n::Message::DataSet);
+  Table* tableModel = m_slopeTableCell.tableModel();
+  if (tableModel->numberOfSeries() == 2) {
+    m_dropdownCell.dropdown()->selectRow(DropdownDataSource::RowForSeriesPair(
+        tableModel->seriesAt(0), tableModel->seriesAt(1)));
+    m_dropdownCell.setMessage(I18n::Message::DataSets);
+  } else {
+    assert(tableModel->numberOfSeries() == 1);
+    m_dropdownCell.dropdown()->selectRow(tableModel->seriesAt(0));
+    m_dropdownCell.setMessage(I18n::Message::DataSet);
+  }
   for (int row = 0; row < m_dropdownDataSource.numberOfRows(); row++) {
     char buffer[] = "Ai/Bi,Aj/Bj";
     buffer[0] = listPrefix(0);

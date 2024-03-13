@@ -73,7 +73,7 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
   if (dim.isMatrix()) {
     return Approximation::RootTreeToMatrix<T>(node, angleUnit, complexFormat);
   }
-  if (Dimension::GetListLength(node) != -1) {
+  if (Dimension::GetListLength(node) >= 0) {
     return Approximation::RootTreeToList<T>(node, angleUnit, complexFormat);
   }
   std::complex<T> value =

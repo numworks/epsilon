@@ -53,7 +53,8 @@ bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
 Tree* List::Fold(const Tree* list, TypeBlock type) {
   Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
   // TODO compute GetListLength less often
-  size_t size = Dimension::GetListLength(list);
+  int size = Dimension::GetListLength(list);
+  assert(size >= 0);
   if (size == 0) {
     assert(type.isListSum() || type.isListProduct());
     (type.isListSum() ? 0_e : 1_e)->clone();

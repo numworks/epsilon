@@ -54,11 +54,11 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(!dim("0 and False"));
   QUIZ_ASSERT(dim("0 < 3 and False", Boolean));
 
-  QUIZ_ASSERT(len("1", -1));
+  QUIZ_ASSERT(len("1", Dimension::k_nonListListLength));
   QUIZ_ASSERT(len("{1,2}", 2));
   QUIZ_ASSERT(len("2*cos({1,2})+3", 2));
   QUIZ_ASSERT(len("sequence(2*k+1,k,4)", 4));
-  QUIZ_ASSERT(len("2+mean({1,2})", -1));
+  QUIZ_ASSERT(len("2+mean({1,2})", Dimension::k_nonListListLength));
   QUIZ_ASSERT(len("sort({1,2})", 2));
   QUIZ_ASSERT(len("{}", 0));
 

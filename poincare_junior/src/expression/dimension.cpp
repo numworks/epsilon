@@ -26,15 +26,15 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
   switch (t->type()) {
     case BlockType::SampleStdDev:
       // SampleStdDev needs a list of length >= 2
-      return childLength[0] >= 2 &&
-             (childLength[1] == -1 || childLength[0] == childLength[1]);
+      return childLength[0] >= 2 && (childLength[1] == k_nonListListLength ||
+                                     childLength[0] == childLength[1]);
     case BlockType::Mean:
     case BlockType::StdDev:
     case BlockType::Median:
     case BlockType::Variance:
       // At least 1 child is needed.
-      return childLength[0] >= 1 &&
-             (childLength[1] == -1 || childLength[0] == childLength[1]);
+      return childLength[0] >= 1 && (childLength[1] == k_nonListListLength ||
+                                     childLength[0] == childLength[1]);
     case BlockType::Minimum:
     case BlockType::Maximum:
       // At least 1 child is needed.
@@ -44,10 +44,10 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     case BlockType::ListSort:
       return childLength[0] >= 0;
     case BlockType::ListElement:
-      return childLength[0] >= 0 && childLength[1] == -1;
+      return childLength[0] >= 0 && childLength[1] == k_nonListListLength;
     case BlockType::ListSlice:
-      return childLength[0] >= 0 && childLength[1] == -1 &&
-             childLength[2] == -1;
+      return childLength[0] >= 0 && childLength[1] == k_nonListListLength &&
+             childLength[2] == k_nonListListLength;
     case BlockType::List: {
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (childLength[i++] >= 0) {
@@ -59,9 +59,9 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     }
     default: {
       assert(!t->isListToScalar());
-      int thisLength = -1;
+      int thisLength = k_unknownListLength;
       for (int i = 0; i < t->numberOfChildren(); i++) {
-        if (childLength[i] == -1) {
+        if (childLength[i] == k_nonListListLength) {
           continue;
         }
         if (thisLength >= 0 && childLength[i] != thisLength) {
@@ -70,8 +70,8 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
         }
         thisLength = childLength[i];
       }
-      if (thisLength >= 0 && (GetDimension(t).isMatrix() ||
-                              t->isListSequence() || t->isRandIntNoRep())) {
+      if (thisLength >= 0 && (t->isListSequence() || t->isRandIntNoRep() ||
+                              GetDimension(t).isMatrix())) {
         // Lists are forbidden
         return false;
       }
@@ -93,7 +93,7 @@ int Dimension::GetListLength(const Tree* t) {
     case BlockType::ListProduct:
     case BlockType::Dim:
     case BlockType::ListElement:
-      return -1;
+      return k_nonListListLength;
     case BlockType::ListSort:
       return GetListLength(t->child(0));
     case BlockType::List:
@@ -116,7 +116,7 @@ int Dimension::GetListLength(const Tree* t) {
           return childListDim;
         }
       }
-      return -1;
+      return k_nonListListLength;
     }
   }
 }

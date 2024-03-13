@@ -81,7 +81,9 @@ struct Dimension {
            representative == &Units::Temperature::representatives.fahrenheit;
   }
 
-  // Return -1 if tree isn't a list.
+  constexpr static int k_unknownListLength = -2;
+  constexpr static int k_nonListListLength = -1;
+  // Return k_nonListListLength if tree isn't a list.
   static int GetListLength(const Tree* t);
   static bool DeepCheckListLength(const Tree* t);
   static Dimension GetDimension(const Tree* t);

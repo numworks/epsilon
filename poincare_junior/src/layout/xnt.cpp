@@ -318,10 +318,9 @@ static bool findParameteredFunction2D(const Tree *layout, const Tree *root,
 }
 
 static bool isValidXNTParameter(const Tree *xnt) {
-  for (const Tree *child : xnt->children()) {
-    if (!child->isCodePointLayout()) {
-      return false;
-    }
+  if (xnt->matchInChildren(
+          [](const Tree *e) { return !e->isCodePointLayout(); })) {
+    return false;
   }
   RackLayoutDecoder decoder(xnt);
   return Tokenizer::CanBeCustomIdentifier(decoder);

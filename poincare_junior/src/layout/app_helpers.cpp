@@ -37,13 +37,9 @@ void MakeAdditionImplicit(Poincare::JuniorLayout& layout) {
 }
 
 bool ContainsSmallCapitalE(const Tree* rack) {
-  for (const Tree* child : rack->children()) {
-    if (CodePointLayout::IsCodePoint(child,
-                                     UCodePointLatinLetterSmallCapitalE)) {
-      return true;
-    }
-  }
-  return false;
+  return rack->matchInChildren([](const Tree* e) {
+    return CodePointLayout::IsCodePoint(e, UCodePointLatinLetterSmallCapitalE);
+  });
 }
 
 void SanitizeRack(PoincareJ::Tree* rack) {

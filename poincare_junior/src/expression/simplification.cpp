@@ -52,15 +52,11 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
 /* Approximate all children if one of them is already float. Return true if the
  * entire tree have been approximated. */
 bool CanApproximateTree(Tree* u, bool* changed) {
-  for (Tree* child : u->children()) {
-    if (child->isFloat()) {
-      if (Approximation::ApproximateAndReplaceEveryScalar(u)) {
-        *changed = true;
-        if (u->isFloat()) {
-          return true;
-        }
-      }
-      break;
+  if (u->matchInChildren([](const Tree* e) { return e->isFloat(); }) &&
+      Approximation::ApproximateAndReplaceEveryScalar(u)) {
+    *changed = true;
+    if (u->isFloat()) {
+      return true;
     }
   }
   return false;
@@ -70,7 +66,7 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
   // This assert is quite costly, should be an assert level 2 ?
   assert(Dimension::DeepCheckDimensions(u));
   if (!u->isNAry() && u->numberOfChildren() == 0) {
-    // No childless trees have a reduction pattern.
+    // No childless tree have a reduction pattern.
     return false;
   }
   bool changed = false;

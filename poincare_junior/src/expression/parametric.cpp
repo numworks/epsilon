@@ -142,12 +142,8 @@ bool Parametric::ContractProduct(Tree* expr) {
 }
 
 bool Parametric::HasLocalRandom(Tree* expr) {
-  for (Tree* u : expr->selfAndDescendants()) {
-    if (u->isRandomNode()) {
-      return true;
-    }
-  }
-  return false;
+  return expr->matchInSelfAndDescendants(
+      [](const Tree* e) { return e->isRandomNode(); });
 }
 
 bool Parametric::Explicit(Tree* expr) {

@@ -351,7 +351,8 @@ class Tree : public TypeBlock {
   ConstAncestors ancestors(const Tree* root) const { return {root, this}; }
 
   using Predicate = bool (*)(const Tree*);
-  bool recursivelyMatches(Predicate predicate) const;
+  bool matchInSelfAndDescendants(Predicate predicate) const;
+  bool matchInChildren(Predicate predicate) const;
 
  private:
   Tree* cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,

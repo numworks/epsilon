@@ -12,10 +12,8 @@ Tree* Set::PushEmpty() { return KSet.node<0>->cloneNode(); }
 bool Set::Includes(const Tree* set, const Tree* expression) {
   for (const Tree* child : set->children()) {
     int comparison = Comparison::Compare(child, expression);
-    if (comparison == 0) {
-      return true;
-    } else if (comparison > 0) {
-      break;
+    if (comparison >= 0) {
+      return comparison == 0;
     }
   }
   return false;

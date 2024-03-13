@@ -18,7 +18,7 @@ class Continuity {
    */
 
   static bool InvolvesDiscontinuousFunction(const Tree *e) {
-    return e->recursivelyMatches(ShallowIsDiscontinuous);
+    return e->matchInSelfAndDescendants(ShallowIsDiscontinuous);
   }
 
   static bool IsDiscontinuousBetweenValuesForSymbol(

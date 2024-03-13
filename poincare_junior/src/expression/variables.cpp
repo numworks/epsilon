@@ -189,12 +189,8 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables,
 bool Variables::HasVariables(const Tree* expr) {
   // TODO we probably want to ignore bound variables
   // return HasVariable(expr, 0) ?
-  for (const Tree* child : expr->selfAndDescendants()) {
-    if (child->isVariable()) {
-      return true;
-    }
-  }
-  return false;
+  return expr->matchInSelfAndDescendants(
+      [](const Tree* e) { return e->isVariable(); });
 }
 
 bool Variables::HasVariable(const Tree* expr, const Tree* variable) {

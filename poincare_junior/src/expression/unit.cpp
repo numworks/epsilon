@@ -944,12 +944,8 @@ bool IsCombinationOfUnits(const Tree* expr) {
     return true;
   }
   if (expr->isMultiplication() || expr->isDivision()) {
-    for (const Tree* child : expr->children()) {
-      if (!IsCombinationOfUnits(child)) {
-        return false;
-      }
-    }
-    return true;
+    return !expr->matchInChildren(
+        [](const Tree* e) { return !IsCombinationOfUnits(e); });
   }
   if (expr->isPower()) {
     return IsCombinationOfUnits(expr->child(0));
@@ -959,12 +955,8 @@ bool IsCombinationOfUnits(const Tree* expr) {
 
 bool HasUnit(const Tree* expr) {
   // TODO should HasUnit be replaced by dimensional analysis ?
-  for (const Tree* d : expr->selfAndDescendants()) {
-    if (d->isUnit() || d->isPhysicalConstant()) {
-      return true;
-    }
-  }
-  return false;
+  return expr->matchInSelfAndDescendants(
+      [](const Tree* e) { return e->isUnit() || e->isPhysicalConstant(); });
 }
 
 bool IsPureAngleUnit(const Tree* expr) {

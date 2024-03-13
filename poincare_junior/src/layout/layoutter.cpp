@@ -50,11 +50,8 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case BlockType::Subtraction:
       return 5;
     case BlockType::Addition:
-      return 6;
     case BlockType::MixedFraction:
-      /* Priority artificially lower than addition to force parentheses just to
-       * make it clearer */
-      return 7;
+      return 6;
 
     case BlockType::Equal:
     case BlockType::NotEqual:

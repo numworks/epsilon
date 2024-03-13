@@ -119,19 +119,16 @@ bool Approximation::RootTreeToBoolean(const Tree* node, AngleUnit angleUnit,
 template <typename T>
 Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
+  Random::Context randomContext;
+  s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat);
   s_context = &context;
   Tree* clone = node->clone();
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
-  {
-    // Be careful to nest Random::Context since they create trees
-    Random::Context randomContext;
-    s_randomContext = &randomContext;
-    ToList<T>(clone);
-    s_randomContext = nullptr;
-  }
+  ToList<T>(clone);
   clone->removeTree();
+  s_randomContext = nullptr;
   s_context = nullptr;
   return clone;
 }
@@ -139,23 +136,20 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
 template <typename T>
 Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
                                       ComplexFormat complexFormat) {
+  Random::Context randomContext;
+  s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat);
   s_context = &context;
   Tree* clone = node->clone();
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
-  {
-    // Be careful to nest Random::Context since they create trees
-    Random::Context randomContext;
-    s_randomContext = &randomContext;
-    Tree* m = ToMatrix<T>(clone);
-    for (Tree* child : m->children()) {
-      child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
-          ToComplex<T>(child), complexFormat));
-    }
-    s_randomContext = nullptr;
+  Tree* m = ToMatrix<T>(clone);
+  for (Tree* child : m->children()) {
+    child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
+        ToComplex<T>(child), complexFormat));
   }
   clone->removeTree();
+  s_randomContext = nullptr;
   s_context = nullptr;
   return clone;
 }

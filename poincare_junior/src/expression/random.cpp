@@ -3,7 +3,6 @@
 #include <math.h>
 #include <poincare/random.h>
 #include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -12,10 +11,11 @@
 
 namespace PoincareJ {
 
-Random::Context::Context()
-    : m_list(SharedEditionPool->push<BlockType::List>(0)) {}
-
-Random::Context::~Context() { m_list->removeTree(); }
+Random::Context::Context() {
+  for (int i = 0; i < k_maxNumberOfVariables; i++) {
+    m_list[i] = NAN;
+  }
+}
 
 uint8_t Random::SeedTreeNodes(Tree* tree, uint8_t seedOffset) {
   uint8_t currentSeed = seedOffset;
@@ -37,26 +37,18 @@ uint8_t Random::SeedTreeNodes(Tree* tree, uint8_t seedOffset) {
 template <typename T>
 T Random::Approximate(const Tree* randomTree, Context* context) {
   uint8_t seed = Random::GetSeed(randomTree);
-  Tree* approximationForSeed;
   if (seed > 0) {
     if (!context) {
       return NAN;
     }
-    assert(!context->m_list.isUninitialized());
-    while (seed > context->m_list->numberOfChildren()) {
-      // Some seeds might have been simplified out, or reordered.
-      NAry::AddChild(context->m_list, KUndef->clone());
-    }
-    approximationForSeed = context->m_list->child(seed - 1);
-    if (!approximationForSeed->isUndefined()) {
-      return Approximation::To<T>(approximationForSeed);
+    T result = context->m_list[seed - 1];
+    if (!std::isnan(result)) {
+      return result;
     }
   }
   T result = Approximate<T>(randomTree);
   if (seed > 0) {
-    assert(approximationForSeed);
-    approximationForSeed->moveTreeOverTree(
-        SharedEditionPool->push<FloatType<T>::type>(result));
+    context->m_list[seed - 1] = result;
   }
   return result;
 }
@@ -73,7 +65,7 @@ T Random::Approximate(const Tree* randomTree) {
       assert(randomTree->type() == BlockType::RandIntNoRep);
       // TODO: Copy or factorize
       // Poincare::RandintNoRepeatNode::templatedApproximate<T>();
-      // TODO_PCJ: Handle lists in approximation.
+      // TODO_PCJ: Handle this.
       assert(false);
       return static_cast<T>(GetSeed(randomTree));
   }

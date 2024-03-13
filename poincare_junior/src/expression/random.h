@@ -30,21 +30,12 @@ class Random {
    * A null seed indicates a un-seeded node.
    * For simplicity, distinct nodes cannot have a same seed. */
  public:
-  /* Random context leaves a list tree on the EditionPool to temporarily store
-   * the random approximations for each seeds. */
   class Context {
    public:
-    explicit Context();
-    ~Context();
-    EditionReference m_list;
-
-   private:
-    /* Make Copy constructor, Move constructor, Copy assignment and Move
-     * assignment inaccessible. */
-    Context(const Context& other);
-    Context(Context&& other);
-    Context& operator=(const Context& other);
-    Context& operator=(Context&& other);
+    using VariableType = double;
+    Context();
+    static constexpr int k_maxNumberOfVariables = 16;
+    VariableType m_list[k_maxNumberOfVariables];
   };
   /* Takes a Tree containing un-seeded random nodes only, and seed them. Return
    * the last seed. */

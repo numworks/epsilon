@@ -1,7 +1,5 @@
 #include "tokenizer.h"
 
-#include "helper.h"
-// #include "parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/expression/aliases.h>
@@ -10,6 +8,8 @@
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/layout/vertical_offset.h>
+
+#include "helper.h"
 
 namespace PoincareJ {
 
@@ -541,16 +541,14 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   bool isImplicitAddition = false;
   bool nextLayoutIsCodePoint = true;
   size_t length = 0;
-#if 0
-  const Unit::Representative * storedUnitRepresentative = nullptr;
-#endif
+  const Units::Representative* storedUnitRepresentative = nullptr;
   while (true) {
     /* Check if the string is of the form:
      * decimalNumber-unit-decimalNumber-unit...
      * Each loop will check for a pair decimalNumber-unit */
     size_t lengthOfNumber = 0;
     while (nextLayoutIsCodePoint && (c.isDecimalDigit() || c == '.')) {
-      lengthOfNumber += UTF8Decoder::CharSizeOfCodePoint(c);
+      lengthOfNumber += 1;
       nextLayoutIsCodePoint = m_decoder.nextLayoutIsCodePoint();
       if (nextLayoutIsCodePoint) {
         c = m_decoder.nextCodePoint();
@@ -562,16 +560,10 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfNumber;
-#if 0
-    size_t currentStringStart =
-        m_decoder.position() - UTF8Decoder::CharSizeOfCodePoint(c);
-#endif
+    size_t currentStringStart = m_decoder.position() - 1;
     size_t lengthOfPotentialUnit = 0;
     while (nextLayoutIsCodePoint && IsNonDigitalIdentifierMaterial(c)) {
-      lengthOfPotentialUnit += UTF8Decoder::CharSizeOfCodePoint(c);
-      if (m_decoder.nextLayoutIsCodePoint()) {
-        break;
-      }
+      lengthOfPotentialUnit += 1;
       nextLayoutIsCodePoint = m_decoder.nextLayoutIsCodePoint();
       if (nextLayoutIsCodePoint) {
         c = m_decoder.nextCodePoint();
@@ -583,19 +575,19 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfPotentialUnit;
-#if 0
-    const Unit::Representative* unitRepresentative;
-    const Unit::Prefix* unitPrefix;
-    if (!Unit::CanParse(currentStringStart, lengthOfPotentialUnit,
-                        &unitRepresentative, &unitPrefix)) {
+    const Units::Representative* unitRepresentative;
+    const Units::Prefix* unitPrefix;
+    RackLayoutDecoder decoder(m_decoder.mainLayout(), currentStringStart,
+                              currentStringStart + lengthOfPotentialUnit);
+    if (!Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
       // Second element is not a unit : the string is not an implicit addition
       isImplicitAddition = false;
       break;
     }
     if (storedUnitRepresentative != nullptr) {
       // Warning: The order of AllowImplicitAddition arguments matter
-      if (Unit::AllowImplicitAddition(unitRepresentative,
-                                      storedUnitRepresentative)) {
+      if (Units::Unit::AllowImplicitAddition(unitRepresentative,
+                                             storedUnitRepresentative)) {
         // There is at least 2 units allowing for implicit addition
         isImplicitAddition = true;
       } else {
@@ -605,7 +597,6 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       }
     }
     storedUnitRepresentative = unitRepresentative;
-#endif
   }
   if (nextLayoutIsCodePoint) {
     m_decoder.previousCodePoint();

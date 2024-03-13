@@ -480,7 +480,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
                        OperatorPriority(type));
       break;
     case BlockType::Decimal: {
-      char buffer[20];
+      char buffer[100];
       IntegerHandler::ConvertDecimalToText(expression, buffer,
                                            std::size(buffer), m_floatMode,
                                            m_numberOfSignificantDigits);

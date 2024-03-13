@@ -39,8 +39,6 @@ class EditableCellTableViewController : public TabTableController,
 
   bool handleEvent(Ion::Events::Event event) override;
 
-  virtual int numberOfRowsAtColumn(int i) const = 0;
-
  protected:
   constexpr static KDFont::Size k_cellFont = KDFont::Size::Small;
   constexpr static KDCoordinate k_cellHeight =

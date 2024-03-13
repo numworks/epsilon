@@ -18,7 +18,6 @@ class EditableCellSelectableTableView : public Escher::SelectableTableView {
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
-  bool selectNonHiddenCellAtClippedLocation(int i, int j);
   EditableCellTableViewController* m_tableViewController;
 };
 

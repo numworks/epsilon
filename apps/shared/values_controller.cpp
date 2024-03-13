@@ -185,11 +185,9 @@ Responder *ValuesController::responderWhenEmpty() {
   return tabController();
 }
 
-// EditableCellTableViewController
-
-int ValuesController::numberOfRowsAtColumn(int i) const {
+int ValuesController::numberOfRowsAtColumn(int column) const {
   // Number of elements + title + last empty cell
-  return numberOfElementsInColumn(i) + 2;
+  return numberOfElementsInColumn(column) + 2;
 }
 
 SelectableViewController *ValuesController::columnParameterController() {

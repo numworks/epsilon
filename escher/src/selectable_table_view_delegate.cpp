@@ -8,4 +8,9 @@ KDPoint SelectableTableViewDelegate::offsetToRestoreAfterReload(
   return t->contentOffset();
 }
 
+int SelectableTableViewDelegate::numberOfRowsAtColumn(
+    const SelectableTableView* t, int column) {
+  return t->totalNumberOfRows();
+}
+
 }  // namespace Escher

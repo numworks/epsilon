@@ -39,6 +39,7 @@ class PrefacedTableView : public View,
       const SelectableTableView* t) const override {
     return m_virtualOffset;
   }
+  int numberOfRowsAtColumn(const SelectableTableView* t, int column) override;
 
   SelectableTableView* selectableTableView() { return m_mainTableView; }
   virtual void setMargins(KDMargins m);

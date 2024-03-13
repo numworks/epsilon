@@ -92,6 +92,10 @@ class SelectableTableView : public TableView, public Responder {
     return m_delegate ? m_delegate->offsetToRestoreAfterReload(this)
                       : contentOffset();
   }
+  int numberOfRowsAtColumn(int column) const {
+    return m_delegate ? m_delegate->numberOfRowsAtColumn(this, column)
+                      : totalNumberOfRows();
+  }
 };
 
 }  // namespace Escher

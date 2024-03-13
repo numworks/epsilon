@@ -53,7 +53,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case BlockType::Sum:
     case BlockType::Product:
     case BlockType::Norm:
-      // case Parenthesis
+    case BlockType::Parenthesis:  // TODO PCJ remove this one
       return BoundaryPunctuation;
 
     case BlockType::Addition:

@@ -1157,6 +1157,8 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
    * TODO: this could be avoided by reworking how s_context is handled. */
   Context* previousContext = s_context;
   s_context = nullptr;
+  /* TODO_PCJ: RootTreeToTree is overkill here, although at this point tree only
+   * has direct float children. */
   Tree* approximatedTree = RootTreeToTree<T>(tree, previousContext->m_angleUnit,
                                              previousContext->m_complexFormat);
   s_context = previousContext;

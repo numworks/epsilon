@@ -702,7 +702,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
       Tree *t = SharedEditionPool->push<BlockType::UserSymbol>(
-          s.name(), strlen(s.name()));
+          s.name(), exp.type() == OT::Sequence ? 1 : strlen(s.name()));
       if (exp.type() == OT::Function) {
         *t->block() = BlockType::UserFunction;
         PushPoincareExpression(exp.childAtIndex(0));

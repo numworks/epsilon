@@ -323,7 +323,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
   TypeBlock type = expression->type();
 
   // Add Parentheses if necessary
-  if (parentPriority < OperatorPriority(type)) {
+  if (parentPriority < OperatorPriority(type) &&
+      !(type.isPoint() || type.isList())) {
     EditionReference parenthesis = KParenthesisL(KRackL())->clone();
     NAry::AddChild(layoutParent, parenthesis);
     EditionReference rack = parenthesis->child(0);

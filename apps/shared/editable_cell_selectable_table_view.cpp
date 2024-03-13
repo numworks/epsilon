@@ -18,29 +18,18 @@ EditableCellSelectableTableView::EditableCellSelectableTableView(
 bool EditableCellSelectableTableView::handleEvent(Ion::Events::Event event) {
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::Down) {
-    return selectNonHiddenCellAtClippedLocation(selectedColumn(),
-                                                selectedRow() + step);
+    return selectCellAtClippedLocation(selectedColumn(), selectedRow() + step);
   }
   if (event == Ion::Events::Up) {
-    return selectNonHiddenCellAtClippedLocation(selectedColumn(),
-                                                selectedRow() - step);
+    return selectCellAtClippedLocation(selectedColumn(), selectedRow() - step);
   }
   if (event == Ion::Events::Left) {
-    return selectNonHiddenCellAtClippedLocation(selectedColumn() - step,
-                                                selectedRow());
+    return selectCellAtClippedLocation(selectedColumn() - step, selectedRow());
   }
   if (event == Ion::Events::Right) {
-    return selectNonHiddenCellAtClippedLocation(selectedColumn() + step,
-                                                selectedRow());
+    return selectCellAtClippedLocation(selectedColumn() + step, selectedRow());
   }
   return SelectableTableView::handleEvent(event);
-}
-
-bool EditableCellSelectableTableView::selectNonHiddenCellAtClippedLocation(
-    int i, int j) {
-  i = std::clamp<int>(i, 0, totalNumberOfColumns() - 1);
-  j = std::clamp<int>(j, 0, m_tableViewController->numberOfRowsAtColumn(i) - 1);
-  return selectCellAtClippedLocation(i, j);
 }
 
 }  // namespace Shared

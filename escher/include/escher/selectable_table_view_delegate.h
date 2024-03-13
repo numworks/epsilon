@@ -23,6 +23,7 @@ class SelectableTableViewDelegate : public ContextProvider {
                                                int currentRow, bool searchRow) {
     return -1;
   }
+  virtual int numberOfRowsAtColumn(const SelectableTableView* t, int column);
 };
 
 }  // namespace Escher

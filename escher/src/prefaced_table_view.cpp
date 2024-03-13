@@ -76,6 +76,14 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
   layoutSubviews();
 }
 
+int PrefacedTableView::numberOfRowsAtColumn(const SelectableTableView* t,
+                                            int column) {
+  assert(t == m_mainTableView);
+  return m_mainTableDelegate
+             ? m_mainTableDelegate->numberOfRowsAtColumn(t, column)
+             : SelectableTableViewDelegate::numberOfRowsAtColumn(t, column);
+}
+
 View* PrefacedTableView::subviewAtIndex(int index) {
   switch (index) {
     case 0:

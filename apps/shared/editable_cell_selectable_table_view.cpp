@@ -38,17 +38,8 @@ bool EditableCellSelectableTableView::handleEvent(Ion::Events::Event event) {
 
 bool EditableCellSelectableTableView::selectNonHiddenCellAtClippedLocation(
     int i, int j) {
-  // Clip i to retrieve a valid seriesIndex
-  if (i < 0) {
-    i = 0;
-  } else if (i >= totalNumberOfColumns()) {
-    i = totalNumberOfColumns() - 1;
-  }
-  int nRowsAtColumn = m_tableViewController->numberOfRowsAtColumn(i);
-  if (j >= nRowsAtColumn) {
-    j = nRowsAtColumn - 1;
-  }
-  // if negative, j will be clipped in selectCellAtClippedLocation
+  i = std::clamp<int>(i, 0, totalNumberOfColumns() - 1);
+  j = std::clamp<int>(j, 0, m_tableViewController->numberOfRowsAtColumn(i) - 1);
   return selectCellAtClippedLocation(i, j);
 }
 

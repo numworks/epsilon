@@ -141,8 +141,9 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
 
 void Variables::ProjectToId(Tree* expr, const Tree* variables, ComplexSign sign,
                             uint8_t depth) {
-  assert(SharedEditionPool->isAfter(variables, expr));
-  if (expr->isUserSymbol()) {
+  assert(!variables || SharedEditionPool->isAfter(variables, expr));
+  if (variables && expr->isUserSymbol()) {
+    // Project global variable
     Tree* var = SharedEditionPool->push<BlockType::Variable>(
         static_cast<uint8_t>(ToId(variables,
                                   Symbol::NonNullTerminatedName(expr),
@@ -155,6 +156,7 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, ComplexSign sign,
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
+      // Project local variable
       ReplaceSymbol(child, expr->child(Parametric::k_variableIndex), 0,
                     Parametric::VariableSign(expr));
       ProjectToId(child, variables, sign, depth + 1);

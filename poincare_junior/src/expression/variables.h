@@ -32,8 +32,12 @@ class Variables {
   };
   // Push a Set with the free user symbols of the expression
   static Tree* GetUserSymbols(const Tree* t);
+  // With nullptr variables, only local variables are projected.
   static void ProjectToId(Tree* t, const Tree* variables, ComplexSign sign,
                           uint8_t depth = 0);
+  static void ProjectLocalVariablesToId(Tree* t) {
+    ProjectToId(t, nullptr, ComplexSign::Unknown(), 0);
+  }
   static void BeautifyToName(Tree* t, const Tree* variables, uint8_t depth = 0);
   static uint8_t Id(const Tree* variable);
   static ComplexSign GetComplexSign(const Tree* variable);

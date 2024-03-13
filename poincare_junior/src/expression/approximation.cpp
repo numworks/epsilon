@@ -97,13 +97,11 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat);
   s_context = &context;
-  // TODO we should rather assume variable projection has already been done
-  Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
-  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  // TODO we should rather assume variable projection has already been done
+  Variables::ProjectLocalVariablesToId(clone);
   std::complex<T> result = ToComplex<T>(clone);
   clone->removeTree();
-  variables->removeTree();
   s_randomContext = nullptr;
   s_context = nullptr;
   return result;
@@ -116,13 +114,11 @@ bool Approximation::RootTreeToBoolean(const Tree* node, AngleUnit angleUnit,
   s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat);
   s_context = &context;
-  // TODO we should rather assume variable projection has already been done
-  Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
-  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  // TODO we should rather assume variable projection has already been done
+  Variables::ProjectLocalVariablesToId(clone);
   bool result = ToBoolean<T>(clone);
   clone->removeTree();
-  variables->removeTree();
   s_randomContext = nullptr;
   s_context = nullptr;
   return result;
@@ -133,10 +129,9 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
   Context context(angleUnit, complexFormat);
   s_context = &context;
-  // TODO we should rather assume variable projection has already been done
-  Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
-  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  // TODO we should rather assume variable projection has already been done
+  Variables::ProjectLocalVariablesToId(clone);
   {
     // Be careful to nest Random::Context since they create trees
     Random::Context randomContext;
@@ -145,9 +140,8 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
     s_randomContext = nullptr;
   }
   clone->removeTree();
-  variables->removeTree();
   s_context = nullptr;
-  return variables;
+  return clone;
 }
 
 template <typename T>
@@ -155,10 +149,9 @@ Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
                                       ComplexFormat complexFormat) {
   Context context(angleUnit, complexFormat);
   s_context = &context;
-  // TODO we should rather assume variable projection has already been done
-  Tree* variables = Variables::GetUserSymbols(node);
   Tree* clone = node->clone();
-  Variables::ProjectToId(clone, variables, ComplexSign::Unknown());
+  // TODO we should rather assume variable projection has already been done
+  Variables::ProjectLocalVariablesToId(clone);
   {
     // Be careful to nest Random::Context since they create trees
     Random::Context randomContext;
@@ -171,9 +164,8 @@ Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
     s_randomContext = nullptr;
   }
   clone->removeTree();
-  variables->removeTree();
   s_context = nullptr;
-  return variables;
+  return clone;
 }
 
 /* Helpers */
@@ -426,13 +418,16 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case BlockType::HyperbolicArcTangent:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
     case BlockType::Variable: {
+      // Local variable
       int index = Variables::Id(node);
-      if (!s_context || index >= s_context->m_variablesOffset) {
-        // TODO PCJ: this should be caught when preparing the expression
-        return NAN;
-      }
+      assert(s_context);
       return s_context->variable(index);
     }
+    case BlockType::UserSymbol:
+    case BlockType::UserFunction:
+    case BlockType::UserSequence:
+      // Global variable
+      return NAN;
     /* Analysis */
     case BlockType::Sum:
     case BlockType::Product: {

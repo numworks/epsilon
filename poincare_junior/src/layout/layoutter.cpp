@@ -537,6 +537,25 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::Matrix:
       layoutMatrix(layoutParent, expression);
       break;
+    case BlockType::Piecewise:
+      if (m_linearMode) {
+        layoutBuiltin(layoutParent, expression);
+      } else {
+        int rows = (expression->numberOfChildren() + 1) / 2;
+        EditionReference layout =
+            SharedEditionPool->push(BlockType::PiecewiseLayout);
+        SharedEditionPool->push(rows + 1);
+        SharedEditionPool->push(2);
+        layoutChildrenAsRacks(layoutParent, expression);
+        // Placeholders
+        if (expression->numberOfChildren() % 2 == 1) {
+          KRackL()->clone();
+        }
+        KRackL()->clone();
+        KRackL()->clone();
+        NAry::AddChild(layoutParent, layout);
+      }
+      break;
     case BlockType::Unit:
       layoutUnit(layoutParent, expression);
       break;

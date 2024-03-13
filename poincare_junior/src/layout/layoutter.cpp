@@ -724,24 +724,28 @@ bool Layoutter::AddThousandSeparators(Tree *rack) {
 }
 
 bool Layoutter::RequireSeparators(const Tree *expr) {
+  if (expr->isRational()) {
+    // TODO PCJ same for decimals and floats
+    IntegerHandler num = Rational::Numerator(expr);
+    num.setSign(NonStrictSign::Positive);
+    if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {
+      return true;
+    }
+    IntegerHandler den = Rational::Denominator(expr);
+    if (IntegerHandler::Compare(den, k_minValueForThousandSeparator) >= 0) {
+      return true;
+    }
+    return false;
+  }
+  if (expr->isDecimal()) {
+    return false;
+  }
   for (const Tree *child : expr->children()) {
     if (RequireSeparators(child)) {
       return true;
     }
     if (expr->isMultiplication() && Units::Unit::IsUnitOrPowerOfUnit(child)) {
       return true;
-    }
-    if (expr->isRational()) {
-      // TODO PCJ same for decimals and floats
-      IntegerHandler num = Rational::Numerator(expr);
-      num.setSign(NonStrictSign::Positive);
-      if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {
-        return true;
-      }
-      IntegerHandler den = Rational::Denominator(expr);
-      if (IntegerHandler::Compare(den, k_minValueForThousandSeparator) >= 0) {
-        return true;
-      }
     }
   }
   return false;

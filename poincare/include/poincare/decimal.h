@@ -46,6 +46,8 @@ class DecimalNode final : public NumberNode {
     return BinaryToTrinaryBool(!m_negative);
   }
 
+  bool isNegative() const { return m_negative; }
+
   // NumberNode
   void setNegative(bool negative) override { m_negative = negative; }
   bool isZero() const override { return unsignedMantissa().isZero(); }
@@ -137,11 +139,12 @@ class Decimal final : public Number {
   /* Decimal numbers have a capped exponent. */
   constexpr static int k_maxExponent = 1000;
 
- private:
-  constexpr static int k_maxMantissaLength = 20;
   DecimalNode* node() const {
     return static_cast<DecimalNode*>(Number::node());
   }
+
+ private:
+  constexpr static int k_maxMantissaLength = 20;
   static Decimal Builder(size_t size, const Integer& m, int e);
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext);

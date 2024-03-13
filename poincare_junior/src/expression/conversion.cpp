@@ -678,10 +678,25 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       return;
     case OT::Rational:
     case OT::BasedInteger:
-    case OT::Decimal:
     case OT::Unit:
     case OT::ConstantPhysics:
       return PushPoincareExpressionViaParse(exp);
+    case OT::Decimal: {
+      Poincare::Decimal d = static_cast<Poincare::Decimal &>(exp);
+      if (d.node()->isNegative()) {
+        SharedEditionPool->push(BlockType::Opposite);
+      }
+      int numberOfDigits = Poincare::Integer::NumberOfBase10DigitsWithoutSign(
+          d.node()->unsignedMantissa());
+      int8_t exponent = numberOfDigits - 1 - d.node()->exponent();
+      SharedEditionPool->push<BlockType::Decimal>(exponent);
+      Poincare::Integer mantissa = d.node()->unsignedMantissa();
+      char buffer[100];
+      mantissa.serialize(buffer, 100);
+      UTF8Decoder decoder(buffer);
+      IntegerHandler::Parse(decoder, OMG::Base::Decimal).pushOnEditionPool();
+      return;
+    }
     case OT::Sequence:
     case OT::Function:
     case OT::Symbol: {

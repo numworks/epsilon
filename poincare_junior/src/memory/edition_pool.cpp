@@ -352,7 +352,7 @@ template Tree *EditionPool::push<BlockType::IntegerPosBig>(uint64_t);
 template Tree *EditionPool::push<BlockType::IntegerNegBig>(uint64_t);
 template Tree *EditionPool::push<BlockType::SingleFloat, float>(float);
 template Tree *EditionPool::push<BlockType::DoubleFloat, double>(double);
-template Tree *EditionPool::push<BlockType::Decimal, uint8_t>(uint8_t);
+template Tree *EditionPool::push<BlockType::Decimal, int8_t>(int8_t);
 template Tree *EditionPool::push<BlockType::Unit, uint8_t, uint8_t>(uint8_t,
                                                                     uint8_t);
 template Tree *EditionPool::push<BlockType::PhysicalConstant, uint8_t>(uint8_t);

@@ -375,7 +375,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
       assert(offset > 0);
       // Decimal<offset>(integerDigits * 10^offset + fractionalDigits)
       leftHandSide =
-          SharedEditionPool->push<BlockType::Decimal, uint8_t>(offset);
+          SharedEditionPool->push<BlockType::Decimal, int8_t>(offset);
       Tree *child =
           IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
       child->moveTreeOverTree(IntegerHandler::Multiplication(

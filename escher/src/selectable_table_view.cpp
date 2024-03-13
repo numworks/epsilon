@@ -23,21 +23,21 @@ HighlightCell* SelectableTableView::selectedCell() {
   return cellAtLocation(selectedColumn(), selectedRow());
 }
 
-int SelectableTableView::firstOrLastSelectableColumnOrRow(bool first,
-                                                          bool searchForRow) {
-  int nColumnsOrRow =
-      searchForRow ? totalNumberOfRows() : totalNumberOfColumns();
-  if (nColumnsOrRow == 0) {
+int SelectableTableView::firstOrLastSelectableIndexInRowOrColumn(
+    bool first, int rowOrColumn, bool searchForRow) {
+  const int maxIndex =
+      (searchForRow ? totalNumberOfRows() : totalNumberOfColumns()) - 1;
+  if (maxIndex < 0) {
     return 0;
   }
-  int firstIndex = first ? 0 : nColumnsOrRow - 1;
-  for (int cow = firstIndex; first ? cow < nColumnsOrRow : cow >= 0;
-       first ? cow++ : cow--) {
+  int firstIndex = first ? 0 : maxIndex;
+  for (int index = firstIndex; first ? index <= maxIndex : index >= 0;
+       first ? index++ : index--) {
     bool isSelectable = searchForRow
-                            ? canSelectCellAtLocation(selectedColumn(), cow)
-                            : canSelectCellAtLocation(cow, selectedRow());
+                            ? canSelectCellAtLocation(rowOrColumn, index)
+                            : canSelectCellAtLocation(index, rowOrColumn);
     if (isSelectable) {
-      return cow;
+      return index;
     }
   }
   assert(false);
@@ -50,9 +50,8 @@ bool SelectableTableView::canSelectCellAtLocation(int column, int row) {
          dataSource()->canSelectCellAtLocation(column, row);
 }
 
-int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col,
-                                                          int row,
-                                                          bool searchForRow) {
+int SelectableTableView::indexOfNextSelectableIndex(int delta, int col, int row,
+                                                    bool searchForRow) {
   assert((searchForRow && col < totalNumberOfColumns() && col >= 0) ||
          (!searchForRow && row < totalNumberOfRows() && row >= 0));
   assert(delta != 0);
@@ -63,28 +62,28 @@ int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col,
     return delegateIndex;
   }
 
-  // Let's call our variable cow, as a shortcut for col-or-row
-  int cow = searchForRow ? row : col;
-  int selectableCow = -1;
+  int index = searchForRow ? row : col;
+  int selectableIndex = -1;
   int step = delta > 0 ? 1 : -1;
-  const int lastCow =
+  const int maxIndex =
       (searchForRow ? totalNumberOfRows() : totalNumberOfColumns()) - 1;
   while (delta) {
-    cow += step;
-    if (cow < 0 || cow > lastCow) {
-      if (selectableCow >= 0) {
-        return selectableCow;
+    index += step;
+    if (index < 0 || index > maxIndex) {
+      if (selectableIndex >= 0) {
+        return selectableIndex;
       }
-      return firstOrLastSelectableColumnOrRow(delta < 0, searchForRow);
+      return firstOrLastSelectableIndexInRowOrColumn(
+          delta < 0, searchForRow ? col : row, searchForRow);
     }
-    bool cellIsSelectable = searchForRow ? canSelectCellAtLocation(col, cow)
-                                         : canSelectCellAtLocation(cow, row);
+    bool cellIsSelectable = searchForRow ? canSelectCellAtLocation(col, index)
+                                         : canSelectCellAtLocation(index, row);
     if (cellIsSelectable) {
-      selectableCow = cow;
+      selectableIndex = index;
       delta -= step;
     }
   }
-  return selectableCow;
+  return selectableIndex;
 }
 
 bool SelectableTableView::selectCellAtLocation(int col, int row,

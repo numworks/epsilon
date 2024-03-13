@@ -16,11 +16,12 @@ class Layoutter {
                                     Preferences::PrintFloatMode::Decimal);
 
   static bool AddThousandSeparators(Tree* rack);
-
   static bool RequireSeparators(const Tree* expr);
 
   /* Remove OperatorSeparators and ThousandSeparators in rack */
   static void StripSeparators(Tree* rack);
+
+  static bool ImplicitAddition(const Tree* addition);
 
  private:
   Layoutter(bool linearMode, bool addSeparators, int numberOfSignificantDigits,

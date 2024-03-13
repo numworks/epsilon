@@ -331,9 +331,12 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
   }
 
   switch (type) {
-    case BlockType::Addition:
-      layoutInfixOperator(layoutParent, expression, '+');
+    case BlockType::Addition: {
+      CodePoint op =
+          ImplicitAddition(expression) ? UCodePointNull : CodePoint('+');
+      layoutInfixOperator(layoutParent, expression, op);
       break;
+    }
     case BlockType::Multiplication:
       /* TODO PCJ: Add small margins when units are present */
       layoutInfixOperator(
@@ -745,6 +748,37 @@ void Layoutter::StripSeparators(Tree *rack) {
     i++;
   }
   NAry::SetNumberOfChildren(rack, n);
+}
+
+bool Layoutter::ImplicitAddition(const Tree *addition) {
+  if (addition->numberOfChildren() < 2) {
+    return false;
+  }
+  // Step 1: TODO PCJ check for ᴇ
+  // Step 2: Check if units can be implicitly added
+  const Units::Representative *storedUnitRepresentative = nullptr;
+  for (const Tree *child : addition->children()) {
+    if (!child->isMultiplication() || child->numberOfChildren() != 2 ||
+        !(child->child(0)->isInteger() ||
+          child->child(0)->isOfType({BlockType::Decimal, BlockType::DoubleFloat,
+                                     BlockType::SingleFloat})) ||
+        !child->child(1)->isUnit()) {
+      return false;
+    }
+    ComplexSign sign = ComplexSign::Get(child->child(0));
+    if (!sign.isReal() || !sign.realSign().isPositive()) {
+      return false;
+    }
+    const Units::Representative *childReprensentative =
+        Units::Unit::GetRepresentative(child->child(1));
+    if (storedUnitRepresentative &&
+        !Units::Unit::AllowImplicitAddition(childReprensentative,
+                                            storedUnitRepresentative)) {
+      return false;
+    }
+    storedUnitRepresentative = childReprensentative;
+  }
+  return true;
 }
 
 }  // namespace PoincareJ

@@ -736,8 +736,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       return;
     case OT::Infinity: {
       if (exp.isPositive(nullptr) == Poincare::TrinaryBoolean::False) {
-        SharedEditionPool->push<BlockType::Multiplication>(2);
-        SharedEditionPool->push(BlockType::MinusOne);
+        SharedEditionPool->push(BlockType::Opposite);
       }
       SharedEditionPool->push(BlockType::Infinity);
       return;

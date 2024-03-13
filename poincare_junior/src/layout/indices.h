@@ -75,9 +75,9 @@ constexpr static int k_kIndex = TwoRows::k_lowerIndex;
 }  // namespace Binomial
 
 namespace ListSequence {
-constexpr static int k_functionIndex = 0;
-constexpr static int k_variableIndex = 1;
-constexpr static int k_upperBoundIndex = 2;
+constexpr static int k_variableIndex = 0;
+constexpr static int k_upperBoundIndex = 1;
+constexpr static int k_functionIndex = 2;
 }  // namespace ListSequence
 
 }  // namespace PoincareJ

@@ -46,7 +46,7 @@ Correspondance oneToOne[] = {
     {PT::IntegralLayout, LT::Integral, false, true},
     {PT::SumLayout, LT::Sum, false, true},
     {PT::ProductLayout, LT::Product, false, true},
-    {PT::ListSequenceLayout, LT::ListSequence},
+    {PT::ListSequenceLayout, LT::ListSequence, false, true},
 };
 
 Poincare::OLayout ToPoincareLayout(const Tree *l) {

@@ -477,15 +477,6 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    case BlockType::Decimal: {
-      char buffer[100];
-      IntegerHandler::ConvertDecimalToText(expression, buffer,
-                                           std::size(buffer), m_floatMode,
-                                           m_numberOfSignificantDigits);
-      layoutText(layoutParent, buffer);
-      expression->nextNode()->removeTree();
-      break;
-    }
     case BlockType::Pi:
       PushCodePoint(layoutParent, u'π');
       break;
@@ -557,18 +548,29 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::Unit:
       layoutUnit(layoutParent, expression);
       break;
-    case BlockType::DoubleFloat:
-    case BlockType::SingleFloat: {
-      char buffer[20];
-      Poincare::PrintFloat::ConvertFloatToText(
-          FloatNode::To(expression), buffer, std::size(buffer),
-          Poincare::PrintFloat::k_maxFloatGlyphLength,
-          m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
-          : type == BlockType::SingleFloat
-              ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
-              : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
-          m_floatMode);
-      layoutText(layoutParent, buffer);
+    case BlockType::Decimal:
+    case BlockType::SingleFloat:
+    case BlockType::DoubleFloat: {
+      char buffer[100];
+      if (type.isDecimal()) {
+        IntegerHandler::ConvertDecimalToText(expression, buffer,
+                                             std::size(buffer), m_floatMode,
+                                             m_numberOfSignificantDigits);
+        expression->nextNode()->removeTree();
+      } else {
+        Poincare::PrintFloat::ConvertFloatToText(
+            FloatNode::To(expression), buffer, std::size(buffer),
+            Poincare::PrintFloat::k_maxFloatGlyphLength,
+            m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
+            : type == BlockType::SingleFloat
+                ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
+                : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
+            m_floatMode);
+      }
+      EditionReference rack = KRackL()->clone();
+      layoutText(rack, buffer);
+      AddThousandSeparators(rack);
+      NAry::AddOrMergeChild(layoutParent, rack);
       break;
     }
     case BlockType::True:

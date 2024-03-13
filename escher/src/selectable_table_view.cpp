@@ -25,8 +25,9 @@ HighlightCell* SelectableTableView::selectedCell() {
 
 int SelectableTableView::firstOrLastSelectableIndexInRowOrColumn(
     bool first, int rowOrColumn, bool searchForRow) {
-  const int maxIndex =
-      (searchForRow ? totalNumberOfRows() : totalNumberOfColumns()) - 1;
+  const int maxIndex = (searchForRow ? numberOfRowsAtColumn(rowOrColumn)
+                                     : totalNumberOfColumns()) -
+                       1;
   if (maxIndex < 0) {
     return 0;
   }
@@ -53,7 +54,7 @@ bool SelectableTableView::canSelectCellAtLocation(int column, int row) {
 int SelectableTableView::indexOfNextSelectableIndex(int delta, int col, int row,
                                                     bool searchForRow) {
   assert((searchForRow && col < totalNumberOfColumns() && col >= 0) ||
-         (!searchForRow && row < totalNumberOfRows() && row >= 0));
+         (!searchForRow && row < numberOfRowsAtColumn(col) && row >= 0));
   assert(delta != 0);
   int delegateIndex;
   if (m_delegate &&
@@ -66,7 +67,7 @@ int SelectableTableView::indexOfNextSelectableIndex(int delta, int col, int row,
   int selectableIndex = -1;
   int step = delta > 0 ? 1 : -1;
   const int maxIndex =
-      (searchForRow ? totalNumberOfRows() : totalNumberOfColumns()) - 1;
+      (searchForRow ? numberOfRowsAtColumn(col) : totalNumberOfColumns()) - 1;
   while (delta) {
     index += step;
     if (index < 0 || index > maxIndex) {

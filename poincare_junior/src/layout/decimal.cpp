@@ -163,7 +163,8 @@ int IntegerHandler::ConvertDecimalToText(
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
   char tempBuffer[PrintFloat::k_maxNumberOfSignificantDigits + 1];
   IntegerHandler m = Integer::Handler(unsignedMantissa);
-  int numberOfDigitsInMantissa = m.numberOfBase10DigitsWithoutSign();
+  int numberOfDigitsInMantissa =
+      m.numberOfBase10DigitsWithoutSign(&workingBuffer);
   exponent = numberOfDigitsInMantissa - 1 - exponent;
   if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
     DivisionResult<IntegerHandler> d =
@@ -177,7 +178,8 @@ int IntegerHandler::ConvertDecimalToText(
     if (IntegerHandler::Compare(d.remainder, IntegerHandler(boundary)) >= 0) {
       m = Sum(m, IntegerHandler(1), false, &workingBuffer);
       // if 9999 was rounded to 10000, we need to update exponent and mantissa
-      if (m.numberOfBase10DigitsWithoutSign() > numberOfSignificantDigits) {
+      if (m.numberOfBase10DigitsWithoutSign(&workingBuffer) >
+          numberOfSignificantDigits) {
         exponent++;
         m = Div(m, IntegerHandler(10), &workingBuffer).quotient;
       }
@@ -194,7 +196,8 @@ int IntegerHandler::ConvertDecimalToText(
             exponent, exponentForEngineeringNotation);
     int numberOfZeroesToAddForEngineering =
         PrintFloat::EngineeringNumberOfZeroesToAdd(
-            minimalNumberOfMantissaDigits, m.numberOfBase10DigitsWithoutSign());
+            minimalNumberOfMantissaDigits,
+            m.numberOfBase10DigitsWithoutSign(&workingBuffer));
     if (numberOfZeroesToAddForEngineering > 0) {
       for (int i = 0; i < numberOfZeroesToAddForEngineering; i++) {
         m = Mult(m, IntegerHandler(10), &workingBuffer);
@@ -257,7 +260,8 @@ int IntegerHandler::ConvertDecimalToText(
       forceScientificMode) {
     if (mantissaLength > 1 &&
         (mode != Preferences::PrintFloatMode::Engineering ||
-         m.numberOfBase10DigitsWithoutSign() > minimalNumberOfMantissaDigits)) {
+         m.numberOfBase10DigitsWithoutSign(&workingBuffer) >
+             minimalNumberOfMantissaDigits)) {
       /* Forward one or more chars: _
        * Write the mantissa _23456
        * Copy the most significant digits on the forwarded chars: 223456

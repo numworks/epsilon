@@ -214,15 +214,17 @@ uint8_t IntegerHandler::numberOfDigits() const {
   return Arithmetic::CeilDivision<uint8_t>(nbOfDigits, sizeof(T));
 }
 
-int IntegerHandler::numberOfBase10DigitsWithoutSign() const {
+int IntegerHandler::numberOfBase10DigitsWithoutSign(
+    WorkingBuffer *workingBuffer) const {
   // TODO: This method should be optimized because udiv is a costly function
   // assert(!isOverflow());
-  WorkingBuffer workingBuffer;
+  uint8_t *const localStart = workingBuffer->localStart();
   int numberOfDigits = 1;
   IntegerHandler base(10);
-  DivisionResult<IntegerHandler> d = Udiv(*this, base, &workingBuffer);
-  while (!d.quotient.isZero()) {
-    d = Udiv(d.quotient, base, &workingBuffer);
+  IntegerHandler d = Udiv(*this, base, workingBuffer).quotient;
+  while (!d.isZero()) {
+    d = Udiv(d, base, workingBuffer).quotient;
+    workingBuffer->garbageCollect({&base, &d}, localStart);
     numberOfDigits++;
   }
   return numberOfDigits;

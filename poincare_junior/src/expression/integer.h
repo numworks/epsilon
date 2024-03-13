@@ -202,7 +202,7 @@ class IntegerHandler final {
   }
 #endif
 
-  int numberOfBase10DigitsWithoutSign() const;
+  int numberOfBase10DigitsWithoutSign(WorkingBuffer *workingBuffer) const;
   size_t serialize(char *buffer, size_t bufferSize,
                    OMG::Base base = OMG::Base::Decimal) const;
   size_t serializeInDecimal(char *buffer, size_t bufferSize) const;

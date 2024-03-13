@@ -75,7 +75,7 @@ class Approximation final {
   // Approximate expression at KVarX/K = x
   template <typename T>
   static T To(const Tree* node, T x) {
-    s_context->setXValue(x);
+    s_context->setLocalValue(x);
     std::complex<T> value = ToComplex<T>(node);
     return value.imag() == 0 ? value.real() : NAN;
   }
@@ -138,19 +138,25 @@ class Approximation final {
   static const Tree* SelectPiecewiseBranch(const Tree* piecewise);
 
   struct Context {
+    using VariableType = double;
     Context(AngleUnit angleUnit, ComplexFormat complexFormat);
 
-    double& variable(size_t index);
-    void shiftVariables();
-    void unshiftVariables();
+    VariableType variable(uint8_t index) const {
+      return m_variables[indexForVariable(index)];
+    }
+    void shiftVariables() { m_variablesOffset--; }
+    void unshiftVariables() { m_variablesOffset++; }
 
-    void setXValue(double value) { variable(0) = value; }
-
+    void setLocalValue(VariableType value) { m_variables[0] = value; }
+    // with sum(sum(l,l,1,k),k,1,n) m_variables stores [n, NaN, …, NaN, l, k]
+    uint8_t indexForVariable(uint8_t index) const {
+      assert(index < m_variablesOffset);
+      return (index + m_variablesOffset) % k_maxNumberOfVariables;
+    }
     AngleUnit m_angleUnit;
     ComplexFormat m_complexFormat;
 
     static constexpr int k_maxNumberOfVariables = 16;
-    using VariableType = double;
     VariableType m_variables[k_maxNumberOfVariables];
     uint8_t m_variablesOffset;
 

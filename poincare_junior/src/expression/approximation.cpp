@@ -49,14 +49,6 @@ Approximation::Context::Context(AngleUnit angleUnit,
   }
 }
 
-// with sum(sum(l,l,1,k),k,1,n) s_variables stores [n, NaN, …, NaN, l, k]
-double& Approximation::Context::variable(size_t index) {
-  assert(index < m_variablesOffset);
-  return m_variables[(index + m_variablesOffset) % k_maxNumberOfVariables];
-}
-void Approximation::Context::shiftVariables() { m_variablesOffset--; }
-void Approximation::Context::unshiftVariables() { m_variablesOffset++; }
-
 template <typename T>
 Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
@@ -447,7 +439,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->shiftVariables();
       std::complex<T> result = node->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
-        s_context->variable(0) = k;
+        s_context->setLocalValue(k);
         std::complex<T> value = ToComplex<T>(child);
         if (node->isSum()) {
           result += value;
@@ -546,7 +538,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->shiftVariables();
       // epsilon sequences starts at one
       assert(s_context->m_listElement != -1);
-      s_context->setXValue(s_context->m_listElement + 1);
+      s_context->setLocalValue(s_context->m_listElement + 1);
       std::complex<T> result = ToComplex<T>(node->child(2));
       s_context->unshiftVariables();
       return result;
@@ -1052,7 +1044,7 @@ const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise) {
  * need the index */
 template <typename T>
 int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
-  s_context->setXValue(x);
+  s_context->setLocalValue(x);
   const Tree* branch = SelectPiecewiseBranch<T>(piecewise);
   if (branch == KUndef) {
     return -1;

@@ -284,8 +284,9 @@ void Layoutter::layoutUnit(EditionReference &layoutParent, Tree *expression) {
     PushCodePoint(layoutParent, '_');
   }
   layoutText(layoutParent, Units::Unit::GetPrefix(expression)->symbol());
-  layoutText(layoutParent,
-             Units::Unit::GetRepresentative(expression)->rootSymbols());
+  layoutText(
+      layoutParent,
+      Units::Unit::GetRepresentative(expression)->rootSymbols().mainAlias());
 }
 
 void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,

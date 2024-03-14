@@ -198,9 +198,8 @@ void StoreController::didBecomeFirstResponder() {
 int StoreController::numberOfRowsAtColumn(const SelectableTableView *t,
                                           int column) {
   assert(t == &m_selectableTableView);
-  int s = m_store->seriesAtColumn(column);
   // number of pairs + title + last empty cell
-  return m_store->numberOfPairsOfSeries(s) + 2;
+  return numberOfElementsInColumn(column) + 2;
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j,

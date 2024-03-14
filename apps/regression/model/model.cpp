@@ -9,6 +9,7 @@
 #include <poincare/function.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
+#include <poincare/opposite.h>
 #include <poincare/subtraction.h>
 
 #include <cmath>
@@ -89,6 +90,15 @@ bool Model::dataSuitableForFit(Store* store, int series) const {
 
 Expression Model::AdditionOrSubtractionBuilder(Expression e1, Expression e2,
                                                bool addition) {
+  // Workaround difference of beautification of PCJ
+  if (e1.type() == ExpressionNode::Type::Multiplication &&
+      e1.childAtIndex(0).type() == ExpressionNode::Type::Decimal) {
+    Expression d = e1.childAtIndex(0);
+    if (static_cast<Decimal&>(d).isPositive() == TrinaryBoolean::False) {
+      static_cast<Decimal&>(d).setSign(true);
+      e1 = Opposite::Builder(e1);
+    }
+  }
   if (addition) {
     return Addition::Builder(e1, e2);
   }

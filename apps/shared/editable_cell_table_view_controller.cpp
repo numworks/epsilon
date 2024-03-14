@@ -21,7 +21,7 @@ namespace Shared {
 EditableCellTableViewController::EditableCellTableViewController(
     Responder *parentResponder, Escher::SelectableTableViewDelegate *delegate)
     : TabTableController(parentResponder),
-      m_selectableTableView(this, this, this, this, delegate) {}
+      m_selectableTableView(this, this, this, delegate) {}
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {

@@ -8,7 +8,6 @@
 
 #include "column_helper.h"
 #include "column_parameter_controller.h"
-#include "editable_cell_selectable_table_view.h"
 #include "math_field_delegate.h"
 #include "tab_table_controller.h"
 
@@ -87,7 +86,7 @@ class EditableCellTableViewController : public TabTableController,
     return true;
   }
 
-  EditableCellSelectableTableView m_selectableTableView;
+  Escher::SelectableTableView m_selectableTableView;
 
  private:
   virtual void didChangeCell(int column, int row) {}

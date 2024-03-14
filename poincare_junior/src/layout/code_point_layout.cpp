@@ -12,8 +12,8 @@ CodePoint CodePointLayout::GetCombinedCodePoint(const Tree* node) {
   return CodePoint(node->nodeValueBlock(4)->get<uint32_t>());
 }
 
-char* CodePointLayout::GetName(const Tree* node, char* buffer,
-                               size_t bufferSize) {
+char* CodePointLayout::CopyName(const Tree* node, char* buffer,
+                                size_t bufferSize) {
   CodePoint c = GetCodePoint(node);
   size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
   if (node->isCombinedCodePointsLayout()) {

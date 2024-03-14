@@ -35,7 +35,7 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
     case LayoutType::CodePoint: {
       constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
       char codepointBuffer[bufferSize];
-      CodePointLayout::GetName(layout, codepointBuffer, bufferSize);
+      CodePointLayout::CopyName(layout, codepointBuffer, bufferSize);
       buffer = append(codepointBuffer, buffer, end);
       break;
     }

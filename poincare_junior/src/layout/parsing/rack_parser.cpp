@@ -953,7 +953,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
   char *buf = buffer;
   while (length--) {
     assert(node->isCodePointLayout());
-    buf = CodePointLayout::GetName(node, buf, end - buf);
+    buf = CodePointLayout::CopyName(node, buf, end - buf);
     node = node->nextTree();
   }
   leftHandSide = SharedEditionPool->push<BlockType::UserSymbol>(

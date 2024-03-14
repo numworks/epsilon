@@ -1290,7 +1290,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       constexpr int bufferSize =
           2 * sizeof(::CodePoint) + 1;  // Null-terminating char
       char buffer[bufferSize];
-      CodePointLayout::GetName(node, buffer, bufferSize);
+      CodePointLayout::CopyName(node, buffer, bufferSize);
       ctx->drawString(buffer, p, style);
       return;
     }

@@ -127,14 +127,21 @@ void HypothesisController::didBecomeFirstResponder() {
 
 bool HypothesisController::ButtonAction(HypothesisController* controller,
                                         void* s) {
-  ViewController* nextController =
-      controller->m_test->significanceTestType() == SignificanceTestType::Slope
-          ? controller->m_inputSlopeController
-      : controller->m_datasetController
-          ? controller->m_datasetController
-          : static_cast<ViewController*>(controller->m_inputController);
+  ViewController* nextController = nullptr;
+  if (controller->m_test->significanceTestType() ==
+      SignificanceTestType::Slope) {
+    nextController = controller->m_inputSlopeController;
+  } else if (controller->m_datasetController) {
+    /* Reset row of DatasetController here and not in
+     * viewWillAppear or initView because we want
+     * to save row when we come back from results. */
+    controller->m_datasetController->selectRow(0);
+    nextController = controller->m_datasetController;
+  } else {
+    nextController =
+        static_cast<ViewController*>(controller->m_inputController);
+  }
   controller->stackOpenPage(nextController);
-
   return true;
 }
 

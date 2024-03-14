@@ -429,10 +429,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
           expression->lastChild()->child(0)->isUserSymbol() &&
           expression->lastChild()->child(0)->treeIsIdenticalTo(
               Symbol::k_systemSymbol)) {
-        constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
-        char buffer[bufferSize];
-        Symbol::GetName(expression->lastChild(), buffer, std::size(buffer));
-        layoutText(layoutParent, buffer);
+        layoutText(layoutParent, Symbol::GetName(expression->lastChild()));
         int order = expression->isDerivative()
                         ? 1
                         : Integer::Handler(expression->child(2)).to<int>();
@@ -542,10 +539,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::UserSymbol:
     case BlockType::UserSequence:
     case BlockType::UserFunction: {
-      constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
-      char buffer[bufferSize];
-      Symbol::GetName(expression, buffer, std::size(buffer));
-      layoutText(layoutParent, buffer);
+      layoutText(layoutParent, Symbol::GetName(expression));
       if (type.isUserFunction()) {
         // minimum priority to force parentheses
         layoutExpression(layoutParent, expression->nextNode(),

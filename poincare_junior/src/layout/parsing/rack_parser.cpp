@@ -957,7 +957,7 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
     node = node->nextTree();
   }
   leftHandSide = SharedEditionPool->push<BlockType::UserSymbol>(
-      static_cast<const char *>(buffer), m_currentToken.length());
+      static_cast<const char *>(buffer), m_currentToken.length() + 1);
   // privateParseCustomIdentifier(leftHandSide, node, length, stoppingType);
   isThereImplicitOperator();
 }

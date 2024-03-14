@@ -301,9 +301,8 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
     case BlockType::Unit:
       return ToPoincareExpressionViaParse(exp);
     case BlockType::UserSymbol: {
-      char buffer[20];
-      Symbol::GetName(exp, buffer, std::size(buffer));
-      return Poincare::Symbol::Builder(buffer, Symbol::Length(exp));
+      return Poincare::Symbol::Builder(Symbol::GetName(exp),
+                                       Symbol::Length(exp));
     }
     case BlockType::ComplexI:
       return Poincare::Constant::ComplexIBuilder();
@@ -788,7 +787,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
       Tree *t = SharedEditionPool->push<BlockType::UserSymbol>(
-          s.name(), exp.otype() == OT::Sequence ? 1 : strlen(s.name()));
+          s.name(), (exp.otype() == OT::Sequence ? 1 : strlen(s.name())) + 1);
       if (exp.otype() == OT::Function) {
         *t->block() = BlockType::UserFunction;
         PushPoincareExpression(exp.childAtIndex(0));

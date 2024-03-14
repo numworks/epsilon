@@ -24,8 +24,8 @@ children) and their value is contained inside their node.
 
 For instance, $cos(4×x)$ is represented by the tree :
 
-|Cosine|Multiplication|2|IntegerShort|4|UserSymbol|1|'x'|
-|-|-|-|-|-|-|-|-|
+|Cosine|Multiplication|2|IntegerShort|4|UserSymbol|2|'x'|0|
+|-|-|-|-|-|-|-|-|-|
 
 The first block `Cosine` is always unary so the next block is the start of its
 only child.

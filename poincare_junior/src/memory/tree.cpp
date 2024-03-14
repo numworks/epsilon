@@ -103,11 +103,13 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " value=\"" << Approximation::To<float>(this) << "\"";
     return;
   }
-  if (isUserNamed() || isCodePointLayout()) {
+  if (isUserNamed()) {
+    stream << " value=\"" << Symbol::GetName(this) << "\"";
+    return;
+  }
+  if (isCodePointLayout()) {
     char buffer[64];
-    isUserNamed()
-        ? Symbol::GetName(this, buffer, sizeof(buffer))
-        : (void)CodePointLayout::GetName(this, buffer, sizeof(buffer));
+    CodePointLayout::CopyName(this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
     return;
   }

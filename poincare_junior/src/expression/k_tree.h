@@ -392,7 +392,7 @@ consteval auto operator"" _e() {
 // https://stackoverflow.com/questions/60434033/how-do-i-expand-a-compile-time-stdarray-into-a-parameter-pack/60440611#60440611
 
 template <String S,
-          typename IS = decltype(std::make_index_sequence<S.size() - 1>())>
+          typename IS = decltype(std::make_index_sequence<S.size()>())>
 struct Variable;
 
 template <String S, std::size_t... I>

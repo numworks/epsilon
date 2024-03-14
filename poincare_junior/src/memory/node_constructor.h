@@ -98,16 +98,16 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Matrix>(
 template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(
-    Block* block, size_t blockIndex, const char* name, size_t nameLength) {
+    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
   size_t numberOfMetaBlocks =
       TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol);
   if (blockIndex < numberOfMetaBlocks) {
     assert(blockIndex == 1);
-    *block = ValueBlock(nameLength);
-    return nameLength == 0;
+    *block = ValueBlock(nameSize);
+    return nameSize == 0;
   }
   *block = ValueBlock(name[blockIndex - numberOfMetaBlocks]);
-  return blockIndex - numberOfMetaBlocks >= nameLength - 1;
+  return blockIndex - numberOfMetaBlocks >= nameSize - 1;
 }
 
 template <>

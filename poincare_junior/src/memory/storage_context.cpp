@@ -8,8 +8,8 @@ namespace PoincareJ {
 bool StorageContext::DeepReplaceIdentifiersWithTrees(Tree* tree) {
   bool changed = false;
   if (tree->isUserSymbol()) {
-    const Tree* replacement = TreeForIdentifier(
-        Symbol::NonNullTerminatedName(tree), Symbol::Length(tree));
+    const Tree* replacement =
+        TreeForIdentifier(Symbol::GetName(tree), Symbol::Length(tree));
     if (replacement) {
       tree->cloneTreeOverTree(replacement);
       // Nested UserSymbol shouldn't exist and are therefore not replaced.

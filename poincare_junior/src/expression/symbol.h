@@ -26,9 +26,12 @@ class Symbol final {
 
   constexpr static KTree k_systemSymbol = "\x01"_e;
 
-  static uint8_t Length(const Tree* node) { return node->nodeValue(0); }
-  static void GetName(const Tree* node, char* buffer, size_t bufferSize);
-  static const char* NonNullTerminatedName(const Tree* node);
+  static uint8_t Length(const Tree* node) {
+    assert(node->isUserNamed());
+    return node->nodeValue(0) - 1;
+  }
+  static char* CopyName(const Tree* node, char* buffer, size_t bufferSize);
+  static const char* GetName(const Tree* node);
 };
 
 }  // namespace PoincareJ

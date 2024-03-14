@@ -70,7 +70,7 @@ NODE(Addition, NARY)
 
 RANGE(Algebraic, Zero, Addition)
 
-/* - UserSymbol US (same for UserFunction, UserSequence)
+/* - UserSymbol US (same for UserFunction, UserSequence) CHARN must be 0.
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
 NODE(UserSymbol, 0, 1)
 NODE(UserFunction, 1, 1)

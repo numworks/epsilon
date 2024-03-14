@@ -13,13 +13,13 @@ QUIZ_CASE(pcj_k_tree) {
   quiz_assert(node->numberOfChildren() == 3);
   quiz_assert(node->numberOfDescendants(true) == 7);
 
-  quiz_assert(("x"_e)->nodeSize() == 3);
-  quiz_assert(("var"_e)->nodeSize() == 5);
+  quiz_assert(("x"_e)->nodeSize() == 4);
+  quiz_assert(("var"_e)->nodeSize() == 6);
 
   const Tree* poly = KPol(Exponents<2, 3>(), "x"_e, 2_e, "a"_e);
   quiz_assert(poly->numberOfChildren() == 3);
   quiz_assert(poly->nodeSize() == 4);
-  quiz_assert(poly->treeSize() == 11);
+  quiz_assert(poly->treeSize() == 13);
 
   (void)KPol(Exponents<1>(), "x"_e, 2_e);
 

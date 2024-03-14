@@ -147,10 +147,7 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
 }
 
 int Comparison::CompareNames(const Tree* node0, const Tree* node1) {
-  int stringComparison =
-      strncmp(Symbol::NonNullTerminatedName(node0),
-              Symbol::NonNullTerminatedName(node1),
-              std::min(Symbol::Length(node0), Symbol::Length(node1)));
+  int stringComparison = strcmp(Symbol::GetName(node0), Symbol::GetName(node1));
   if (stringComparison == 0) {
     int delta = Symbol::Length(node0) - Symbol::Length(node1);
     return delta > 0 ? 1 : (delta == 0 ? 0 : -1);

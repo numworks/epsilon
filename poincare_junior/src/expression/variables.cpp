@@ -30,8 +30,7 @@ ComplexSign Variables::GetComplexSign(const Tree* variable) {
 uint8_t Variables::ToId(const Tree* variables, const char* name,
                         uint8_t length) {
   for (uint8_t i = 0; const Tree* child : variables->children()) {
-    if (Symbol::Length(child) == length &&
-        strncmp(Symbol::NonNullTerminatedName(child), name, length) == 0) {
+    if (strcmp(Symbol::GetName(child), name) == 0) {
       return i;
     }
     i++;
@@ -145,10 +144,9 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, ComplexSign sign,
   if (variables && expr->isUserSymbol()) {
     // Project global variable
     Tree* var = SharedEditionPool->push<BlockType::Variable>(
-        static_cast<uint8_t>(ToId(variables,
-                                  Symbol::NonNullTerminatedName(expr),
-                                  Symbol::Length(expr)) +
-                             depth),
+        static_cast<uint8_t>(
+            ToId(variables, Symbol::GetName(expr), Symbol::Length(expr)) +
+            depth),
         sign);
     expr->moveTreeOverTree(var);
   }

@@ -59,8 +59,10 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
     context->numberOfUserVariables = userVariables->numberOfChildren();
     Tree* userVariable = userVariables->firstChild();
     for (int i = 0; i < context->numberOfUserVariables; i++) {
-      Symbol::GetName(userVariable, context->userVariables[i], 10);
-      context->userVariables[i][Symbol::Length(userVariable)] = 0;
+      if (userVariable->isUserNamed()) {
+        Symbol::GetName(userVariable, context->userVariables[i], 10);
+        context->userVariables[i][Symbol::Length(userVariable)] = 0;
+      }
       userVariable->removeTree();
     }
     userVariables->removeNode();

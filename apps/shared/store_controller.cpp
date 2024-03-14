@@ -21,7 +21,7 @@ StoreController::StoreController(Responder *parentResponder,
     : EditableCellTableViewController(parentResponder, &m_prefacedTableView),
       ButtonRowDelegate(header, nullptr),
       StoreColumnHelper(this, parentContext, this),
-      m_prefacedTableView(0, this, &m_selectableTableView, this),
+      m_prefacedTableView(0, this, &m_selectableTableView, this, this),
       m_store(store),
       m_widthManager(this) {
   m_prefacedTableView.setBackgroundColor(Palette::WallScreenDark);

@@ -62,7 +62,7 @@ void SelectableTableView::nextSelectableCellInDirection(
   bool searchForRow = direction.isVertical();
   assert((searchForRow && *col < totalNumberOfColumns() && *col >= 0) ||
          (!searchForRow && *row < numberOfRowsAtColumn(*col) && *row >= 0));
-  assert(delta != 0);
+  assert(delta > 0);
 
   int index = searchForRow ? *row : *col;
   int selectableIndex = -1;

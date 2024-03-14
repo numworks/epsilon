@@ -55,18 +55,12 @@ bool StoreTableCell::textFieldDidFinishEditing(
   return true;
 }
 
-int StoreTableCell::indexOfNextSelectableColumnOrRow(int delta, int currentCol,
-                                                     int currentRow,
-                                                     bool searchRow) {
-  if (!searchRow) {
-    /* Never skip a column, they are never empty. */
-    return std::clamp<int>(currentCol + delta, 0, m_numberOfColumns);
-  }
-
+int StoreTableCell::numberOfRowsAtColumn(const SelectableTableView *t,
+                                         int column) {
+  assert(t = &m_selectableTableView);
   Shared::DoublePairStore *s = store();
-  int columnLength = 1 /* column title */ + 1 /* empty row for input */ +
-                     s->numberOfPairsOfSeries(s->seriesAtColumn(currentCol));
-  return std::clamp<int>(currentRow + delta, 0, columnLength - 1);
+  return 1 /* column title */ + 1 /* empty row for input */ +
+         s->numberOfPairsOfSeries(s->seriesAtColumn(column));
 }
 
 void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,

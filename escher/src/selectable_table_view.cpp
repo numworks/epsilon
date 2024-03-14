@@ -57,39 +57,40 @@ bool SelectableTableView::canSelectCellAtLocation(int column, int row) {
          dataSource()->canSelectCellAtLocation(column, row);
 }
 
-int SelectableTableView::nextSelectableIndexInDirection(
-    int col, int row, OMG::Direction direction, int delta) {
+void SelectableTableView::nextSelectableCellInDirection(
+    int* col, int* row, OMG::Direction direction, int delta) {
   bool searchForRow = direction.isVertical();
-  assert((searchForRow && col < totalNumberOfColumns() && col >= 0) ||
-         (!searchForRow && row < numberOfRowsAtColumn(col) && row >= 0));
+  assert((searchForRow && *col < totalNumberOfColumns() && *col >= 0) ||
+         (!searchForRow && *row < numberOfRowsAtColumn(*col) && *row >= 0));
   assert(delta != 0);
-  int delegateIndex;
-  if (m_delegate &&
-      (delegateIndex = m_delegate->indexOfNextSelectableColumnOrRow(
-           delta, col, row, searchForRow)) >= 0) {
-    return delegateIndex;
-  }
 
-  int index = searchForRow ? row : col;
+  int index = searchForRow ? *row : *col;
   int selectableIndex = -1;
   int step = direction.isDown() || direction.isRight() ? 1 : -1;
-  const int maxIndex = maxIndexInDirection(col, row, direction);
+  const int maxIndex = maxIndexInDirection(*col, *row, direction);
   while (delta) {
     index += step;
     if (index < 0 || index > maxIndex) {
-      if (selectableIndex >= 0) {
-        return selectableIndex;
+      if (selectableIndex < 0) {
+        selectableIndex = lastSelectableIndexInDirection(*col, *row, direction);
       }
-      return lastSelectableIndexInDirection(col, row, direction);
+      break;
     }
-    bool cellIsSelectable = searchForRow ? canSelectCellAtLocation(col, index)
-                                         : canSelectCellAtLocation(index, row);
+    bool cellIsSelectable = searchForRow ? canSelectCellAtLocation(*col, index)
+                                         : canSelectCellAtLocation(index, *row);
     if (cellIsSelectable) {
       selectableIndex = index;
       delta--;
+    } else if (!searchForRow) {
+      int newRow = std::clamp(*row, 0, numberOfRowsAtColumn(index) - 1);
+      if (canSelectCellAtLocation(index, newRow)) {
+        *col = index;
+        *row = newRow;
+        return;
+      }
     }
   }
-  return selectableIndex;
+  (searchForRow ? *row : *col) = selectableIndex;
 }
 
 bool SelectableTableView::selectCellAtLocation(int col, int row,
@@ -103,7 +104,7 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   if (!canSelectCellAtLocation(col, row)) {
     /* If the cell is not selectable, go down by default.
      * This behaviour is only implemented for Explicit. */
-    row = nextSelectableIndexInDirection(col, row, OMG::Direction::Down());
+    nextSelectableCellInDirection(&col, &row, OMG::Direction::Down());
   }
   // There should always be at least 1 selectable cell in the column
   assert(canSelectCellAtLocation(col, row));
@@ -169,13 +170,8 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down || event == Ion::Events::Up ||
       event == Ion::Events::Left || event == Ion::Events::Right) {
     OMG::Direction direction = OMG::Direction(event);
-    int nextIndex = nextSelectableIndexInDirection(col, row, direction, delta);
-    if (direction.isVertical()) {
-      return selectCellAtClippedLocation(col, nextIndex);
-    } else {
-      assert(direction.isHorizontal());
-      return selectCellAtClippedLocation(nextIndex, row);
-    }
+    nextSelectableCellInDirection(&col, &row, direction, delta);
+    return selectCellAtClippedLocation(col, row);
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut ||
       event == Ion::Events::Sto || event == Ion::Events::Var) {

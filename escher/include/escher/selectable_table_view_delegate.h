@@ -19,10 +19,6 @@ class SelectableTableViewDelegate : public ContextProvider {
       KDPoint previousOffset, bool withinTemporarySelection = false) {}
   virtual KDPoint offsetToRestoreAfterReload(
       const SelectableTableView* t) const;
-  virtual int indexOfNextSelectableColumnOrRow(int delta, int currentCol,
-                                               int currentRow, bool searchRow) {
-    return -1;
-  }
   virtual int numberOfRowsAtColumn(const SelectableTableView* t, int column);
 };
 

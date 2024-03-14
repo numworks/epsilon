@@ -204,8 +204,10 @@ class IntegerHandler final {
 
   int numberOfBase10DigitsWithoutSign(WorkingBuffer *workingBuffer) const;
   size_t serialize(char *buffer, size_t bufferSize,
+                   WorkingBuffer *workingBuffer,
                    OMG::Base base = OMG::Base::Decimal) const;
-  size_t serializeInDecimal(char *buffer, size_t bufferSize) const;
+  size_t serializeInDecimal(char *buffer, size_t bufferSize,
+                            WorkingBuffer *workingBuffer) const;
   void removeZeroAtTheEnd(int minimalNumbersOfDigits,
                           WorkingBuffer *workingBuffer);
   static int ConvertDecimalToText(const Tree *decimal, char *buffer,

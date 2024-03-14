@@ -60,6 +60,7 @@ void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
 }
 
 size_t IntegerHandler::serialize(char *buffer, size_t bufferSize,
+                                 WorkingBuffer *workingBuffer,
                                  OMG::Base base) const {
   if (bufferSize == 0) {
     return bufferSize - 1;
@@ -89,16 +90,15 @@ size_t IntegerHandler::serialize(char *buffer, size_t bufferSize,
                                    OMG::Base::Hexadecimal);
   }
 #endif
-  return serializeInDecimal(buffer, bufferSize);
+  return serializeInDecimal(buffer, bufferSize, workingBuffer);
 }
 
-size_t IntegerHandler::serializeInDecimal(char *buffer,
-                                          size_t bufferSize) const {
+size_t IntegerHandler::serializeInDecimal(char *buffer, size_t bufferSize,
+                                          WorkingBuffer *workingBuffer) const {
   IntegerHandler base(10);
   IntegerHandler abs = *this;
   abs.setSign(NonStrictSign::Positive);
-  WorkingBuffer workingBuffer;
-  DivisionResult<IntegerHandler> d = Udiv(abs, base, &workingBuffer);
+  DivisionResult<IntegerHandler> d = Udiv(abs, base, workingBuffer);
 
   size_t length = 0;
   if (isZero()) {
@@ -118,7 +118,7 @@ size_t IntegerHandler::serializeInDecimal(char *buffer,
           .CharLength;
     }
     length += CodePoint(buffer + length, bufferSize - length, c);
-    d = Udiv(d.quotient, base, &workingBuffer);
+    d = Udiv(d.quotient, base, workingBuffer);
   }
   assert(length <= bufferSize - 1);
   assert(buffer[length] == 0);
@@ -224,7 +224,8 @@ int IntegerHandler::ConvertDecimalToText(
 
   // Serialize the mantissa
   int mantissaLength =
-      m.serialize(tempBuffer, PrintFloat::k_maxNumberOfSignificantDigits + 1);
+      m.serialize(tempBuffer, PrintFloat::k_maxNumberOfSignificantDigits + 1,
+                  &workingBuffer);
 
   // Assert that m is not +/-inf
   assert(strcmp(tempBuffer, "inf") != 0);
@@ -313,12 +314,12 @@ int IntegerHandler::ConvertDecimalToText(
       return bufferSize - 1;
     }
     if (mode == Preferences::PrintFloatMode::Engineering) {
-      currentChar +=
-          IntegerHandler(exponentForEngineeringNotation)
-              .serialize(buffer + currentChar, bufferSize - currentChar);
+      currentChar += IntegerHandler(exponentForEngineeringNotation)
+                         .serialize(buffer + currentChar,
+                                    bufferSize - currentChar, &workingBuffer);
     } else {
       currentChar += IntegerHandler(exponent).serialize(
-          buffer + currentChar, bufferSize - currentChar);
+          buffer + currentChar, bufferSize - currentChar, &workingBuffer);
     }
     return currentChar;
   }

@@ -35,7 +35,8 @@ only child.
 `IntegerShort` has always 0 children but its node has a additional byte to be
 interpreted as its value here 4
 
-`UserSymbol` has no children, the next block indicates the number of chars, stored in the following blocks.
+`UserSymbol` has no children, the next block indicates the number of chars,
+stored in the following blocks.
 
 </details>
 
@@ -137,21 +138,31 @@ same function tree-wise but not reference-wise.
 
 ### Implementation
 
-The EditionPool has a reference table, which is an array of node offsets. This array has a maximal size (`EditionPool::k_maxNumberOfReferences`).
+The EditionPool has a reference table, which is an array of node offsets. This
+array has a maximal size (`EditionPool::k_maxNumberOfReferences`).
 
-In addition, offset can be a special identifier (`Pool::ReferenceTable::InvalidatedOffset`), indicating the node doesn't exist anymore in the EditionPool.
+In addition, offset can be a special identifier
+(`Pool::ReferenceTable::InvalidatedOffset`), indicating the node doesn't exist
+anymore in the EditionPool.
 
-Each EditionReference has an identifier. It represent the index at which the EditionReference's node offset can be found in the EditionPool's reference table.
+Each EditionReference has an identifier. It represents the index at which the
+EditionReference's node offset can be found in the EditionPool's reference
+table.
 
 Similarly, the identifier can be special :
-- `Pool::ReferenceTable::NoNodeIdentifier` indicates the EditionReference doesn't point to any tree.
-- `EditionPool::ReferenceTable::DeletedOffset` indicates the EditionReference has been deleted.
+- `Pool::ReferenceTable::NoNodeIdentifier` indicates the EditionReference
+doesn't point to any tree.
+- `EditionPool::ReferenceTable::DeletedOffset` indicates the EditionReference
+has been deleted.
 
-To retrieve the node pointed by an EditionReference, we just return the node in the edition pool at the corresponding offset.
+To retrieve the node pointed by an EditionReference, we just return the node in
+the edition pool at the corresponding offset.
 
-Each time something is moved or changed in the EditionPool, all node offsets are updated (`EditionPool::ReferenceTable::updateNodes`).
+Each time something is moved or changed in the EditionPool, all node offsets are
+updated (`EditionPool::ReferenceTable::updateNodes`).
 
-Once an EditionReference is destroyed, the corresponding node offset is set back to `EditionPool::ReferenceTable::DeletedOffset`.
+Once an EditionReference is destroyed, the corresponding node offset is set back
+to `EditionPool::ReferenceTable::DeletedOffset`.
 
 ### Wrappers
 
@@ -171,10 +182,12 @@ EditionReference b = a
 ReplaceTreeWithZero(b); // Exact Equivalent of ReplaceTreeWithZero(a);
 
 assert(a->isZero()); // Ok
-assert(b->isZero()); // Raise because b no longer exists, the tracked tree has been overwritten.
+assert(b->isZero()); // Raise because b no longer exists, the tracked tree has
+// been overwritten.
 ```
 
-To minimize the risk of mistakes, we created a wrapper allowing the use of such methods on EditionReference while preserving them.
+To minimize the risk of mistakes, we created a wrapper allowing the use of such
+methods on EditionReference while preserving them.
 
 For the example above, just add :
 ```cpp
@@ -266,13 +279,18 @@ In this example, `x+x` would be matched with KA pointing to the first `x`.
 
 </details>
 
-Methods `CreateAndSimplify` and `MatchReplaceAndSimplify` perform the same task, but also call systematic simplification on each created tree along the way (but not placeholders, which are assumed to be simplified trees already).
+Methods `CreateAndSimplify` and `MatchReplaceAndSimplify` perform the same task,
+but also call systematic simplification on each created tree along the way (but
+not placeholders, which are assumed to be simplified trees already).
 
 
 ### Placeholders
 
-Placeholders are named from `A` to `H`, and are expected to match with different trees.
-They have a type and are expected to have the same type both on match and on create :
+Placeholders are named from `A` to `H`, and are expected to match with different
+trees.
+
+They have a type and are expected to have the same type both on match and on
+create :
 
 ```cpp
 // Apply simplification a*(b+c)*d -> a*b*d + a*(c)*d
@@ -283,8 +301,10 @@ bool hasChanged = MatchReplaceAndSimplify(
 
 There are three types of placeholders :
 - `One` : Matching a single tree, named `KA` for example.
-- `ZeroOrMore` : Matching 0, 1 or more consecutive sibling trees, named `KD_s` for example.
-- `OneOrMore` : Matching 1 or more consecutive sibling trees, named `KC_p` for example.
+- `ZeroOrMore` : Matching 0, 1 or more consecutive sibling trees, named `KD_s`
+for example.
+- `OneOrMore` : Matching 1 or more consecutive sibling trees, named `KC_p` for
+example.
 
 <details>
 <summary>Note</summary>

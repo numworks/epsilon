@@ -96,9 +96,9 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
    * layoutParent's root. */
   EditionReference layoutParent =
       SharedEditionPool->push<BlockType::RackLayout>(0);
-  bool addSeparators = !linearMode && RequireSeparators(expression);
-  Layoutter layoutter(linearMode, addSeparators, numberOfSignificantDigits,
-                      floatMode);
+  Layoutter layoutter(linearMode, false, numberOfSignificantDigits, floatMode);
+  layoutter.m_addSeparators =
+      !linearMode && layoutter.requireSeparators(expression);
   layoutter.layoutExpression(layoutParent, expression, k_maxPriority);
   return layoutParent;
 }
@@ -725,7 +725,7 @@ bool Layoutter::AddThousandSeparators(Tree *rack) {
   return true;
 }
 
-bool Layoutter::RequireSeparators(const Tree *expr) {
+bool Layoutter::requireSeparators(const Tree *expr) {
   if (expr->isRational()) {
     // TODO PCJ same for decimals and floats
     IntegerHandler num = Rational::Numerator(expr);
@@ -739,11 +739,23 @@ bool Layoutter::RequireSeparators(const Tree *expr) {
     }
     return false;
   }
-  if (expr->isDecimal()) {
+  if (expr->isFloat() || expr->isDecimal()) {
+    /* Since rules are complex with floatDisplayMode, layout the float and check
+     * if it has separators. */
+    Tree *clone = expr->clone();
+    EditionReference rack = KRackL()->clone();
+    layoutExpression(rack, clone, k_tokenPriority);
+    for (const Tree *child : rack->children()) {
+      if (child->isSeparatorLayout()) {
+        rack->removeTree();
+        return true;
+      }
+    }
+    rack->removeTree();
     return false;
   }
   for (const Tree *child : expr->children()) {
-    if (RequireSeparators(child)) {
+    if (requireSeparators(child)) {
       return true;
     }
     if (expr->isMultiplication() && Units::Unit::IsUnitOrPowerOfUnit(child)) {

@@ -16,7 +16,6 @@ class Layoutter {
                                     Preferences::PrintFloatMode::Decimal);
 
   static bool AddThousandSeparators(Tree* rack);
-  static bool RequireSeparators(const Tree* expr);
 
   /* Remove OperatorSeparators and ThousandSeparators in rack */
   static void StripSeparators(Tree* rack);
@@ -31,6 +30,7 @@ class Layoutter {
         m_numberOfSignificantDigits(numberOfSignificantDigits),
         m_floatMode(floatMode) {}
   void addSeparator(Tree* layoutParent);
+  bool requireSeparators(const Tree* expr);
   void layoutText(EditionReference& layoutParent, const char* text);
   void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
   void layoutFunctionCall(EditionReference& layoutParent, Tree* expression,

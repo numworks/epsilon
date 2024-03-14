@@ -93,7 +93,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
   while (i < totalNumberOfDependencies) {
     Tree* approximation;
 
-    bool hasSymbolsOrRandom = depI->recursivelyMatches(
+    bool hasSymbolsOrRandom = depI->hasDescendantSatisfying(
         [](const Tree* t) { return t->isVariable() || t->isRandom(); });
     if (hasSymbolsOrRandom) {
       /* If the dependency involves unresolved symbol/function/sequence, the

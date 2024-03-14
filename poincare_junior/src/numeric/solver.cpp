@@ -88,7 +88,7 @@ template <typename T>
 Coordinate2D<T> Solver<T>::next(const Tree *e, BracketTest test,
                                 HoneResult hone) {
   assert(m_unknown && m_unknown[0] != '\0');
-  if (e->matchInSelfAndDescendants(
+  if (e->hasDescendantSatisfying(
           [](const Tree *e) { return e->isRandomNode(); })) {
     return Coordinate2D<T>(NAN, NAN);
   }
@@ -114,7 +114,7 @@ Coordinate2D<T> Solver<T>::next(const Tree *e, BracketTest test,
 
 template <typename T>
 Coordinate2D<T> Solver<T>::nextRoot(const Tree *e) {
-  if (e->matchInSelfAndDescendants(
+  if (e->hasDescendantSatisfying(
           [](const Tree *e) { return e->isRandomNode(); })) {
     return Coordinate2D<T>(NAN, NAN);
   }
@@ -607,7 +607,7 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree *e) const {
    * they are zeroes of the whole expression. */
   ExpressionTestAuxiliary test = [](const Tree *e, Context *context,
                                     void *aux) -> bool {
-    return e->matchInSelfAndDescendants(
+    return e->hasDescendantSatisfying(
         [](const Tree *e, Context *context, void *aux) {
           const Solver<T> *solver = static_cast<const Solver<T> *>(aux);
           T exponent = k_NAN;

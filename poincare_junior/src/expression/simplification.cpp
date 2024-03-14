@@ -52,7 +52,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
 /* Approximate all children if one of them is already float. Return true if the
  * entire tree have been approximated. */
 bool CanApproximateTree(Tree* u, bool* changed) {
-  if (u->matchInChildren([](const Tree* e) { return e->isFloat(); }) &&
+  if (u->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
       Approximation::ApproximateAndReplaceEveryScalar(u)) {
     *changed = true;
     if (u->isFloat()) {

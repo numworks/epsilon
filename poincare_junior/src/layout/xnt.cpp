@@ -318,7 +318,7 @@ static bool findParameteredFunction2D(const Tree *layout, const Tree *root,
 }
 
 static bool isValidXNTParameter(const Tree *xnt) {
-  if (xnt->matchInChildren(
+  if (xnt->hasChildSatisfying(
           [](const Tree *e) { return !e->isCodePointLayout(); })) {
     return false;
   }

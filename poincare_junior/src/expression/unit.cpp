@@ -944,7 +944,7 @@ bool IsCombinationOfUnits(const Tree* expr) {
     return true;
   }
   if (expr->isMultiplication() || expr->isDivision()) {
-    return !expr->matchInChildren(
+    return !expr->hasChildSatisfying(
         [](const Tree* e) { return !IsCombinationOfUnits(e); });
   }
   if (expr->isPower()) {
@@ -955,7 +955,7 @@ bool IsCombinationOfUnits(const Tree* expr) {
 
 bool HasUnit(const Tree* expr) {
   // TODO should HasUnit be replaced by dimensional analysis ?
-  return expr->matchInSelfAndDescendants(
+  return expr->hasDescendantSatisfying(
       [](const Tree* e) { return e->isUnit() || e->isPhysicalConstant(); });
 }
 

@@ -353,7 +353,7 @@ bool Tree::ApplyShallowInDepth(Tree* ref, ShallowOperation shallowOperation,
   return changed;
 }
 
-bool Tree::matchInSelfAndDescendants(Predicate predicate) const {
+bool Tree::hasDescendantSatisfying(Predicate predicate) const {
   for (const Tree* d : selfAndDescendants()) {
     if (predicate(d)) {
       return true;
@@ -362,7 +362,7 @@ bool Tree::matchInSelfAndDescendants(Predicate predicate) const {
   return false;
 }
 
-bool Tree::matchInChildren(Predicate predicate) const {
+bool Tree::hasChildSatisfying(Predicate predicate) const {
   for (const Tree* d : children()) {
     if (predicate(d)) {
       return true;

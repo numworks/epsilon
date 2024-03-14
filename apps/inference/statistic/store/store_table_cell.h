@@ -26,8 +26,8 @@ class StoreTableCell : public DoubleColumnTableCell,
                                  Ion::Events::Event event) override;
 
   // SelectableTableViewDelegate
-  int indexOfNextSelectableColumnOrRow(int delta, int currentCol,
-                                       int currentRow, bool searchRow) override;
+  int numberOfRowsAtColumn(const Escher::SelectableTableView *t,
+                           int column) override;
 
   // StoreColumnHelper
   Shared::DoublePairStore *store() override {

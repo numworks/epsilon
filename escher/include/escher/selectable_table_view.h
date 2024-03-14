@@ -76,8 +76,8 @@ class SelectableTableView : public TableView, public Responder {
    * Example 3: | o | x | x | o | x | currentCol = 2 -> resultCol = 3
    * Example 4: | o | x | x | o | x | currentCol = 4 -> resultCol = 3
    * */
-  int nextSelectableIndexInDirection(int col, int row, OMG::Direction direction,
-                                     int delta = 1);
+  void nextSelectableCellInDirection(int* col, int* row,
+                                     OMG::Direction direction, int delta = 1);
   int lastSelectableIndexInDirection(int col, int row,
                                      OMG::Direction direction);
   int maxIndexInDirection(int col, int row, OMG::Direction direction);

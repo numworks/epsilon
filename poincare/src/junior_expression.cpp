@@ -84,13 +84,11 @@ Evaluation<T> EvaluationFromTree(
 
 Evaluation<float> JuniorExpressionNode::approximate(
     SinglePrecision p, const ApproximationContext& approximationContext) const {
-  // TODO_PCJ: Use p.
   return EvaluationFromTree<float>(tree(), approximationContext);
 }
 
 Evaluation<double> JuniorExpressionNode::approximate(
     DoublePrecision p, const ApproximationContext& approximationContext) const {
-  // TODO_PCJ: Use p.
   return EvaluationFromTree<double>(tree(), approximationContext);
 }
 
@@ -322,8 +320,6 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
     bool approximateKeepingSymbols) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximateExpression || approximateExpression->isUninitialized());
-
-  // Step 1: we reduce the expression
   assert(reductionContext.target() == ReductionTarget::User);
   PoincareJ::ProjectionContext context = {
       .m_complexFormat =

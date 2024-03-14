@@ -17,8 +17,8 @@ Random::Context::Context() {
   }
 }
 
-uint8_t Random::SeedTreeNodes(Tree* tree, uint8_t seedOffset) {
-  uint8_t currentSeed = seedOffset;
+uint8_t Random::SeedTreeNodes(Tree* tree) {
+  uint8_t currentSeed = 0;
   Tree* u = tree;
   int descendants = 1;
   while (descendants > 0) {

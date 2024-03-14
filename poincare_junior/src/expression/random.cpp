@@ -46,6 +46,7 @@ T Random::Approximate(const Tree* randomTree, Context* context,
                       int listElement) {
   uint8_t seed = Random::GetSeed(randomTree);
   if (randomTree->isRandIntNoRep() && seed > 0) {
+    assert(listElement >= 0);
     seed += listElement;
   }
   assert(seed <= Context::k_maxNumberOfVariables);

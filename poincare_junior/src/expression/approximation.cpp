@@ -296,7 +296,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 
   if (node->isRandomNode()) {
     return Random::Approximate<T>(node, s_randomContext,
-                                  s_context ? s_context->m_listElement : 0);
+                                  s_context ? s_context->m_listElement : -1);
   }
   switch (node->type()) {
     case BlockType::Undefined:

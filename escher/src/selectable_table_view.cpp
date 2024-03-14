@@ -23,20 +23,20 @@ HighlightCell* SelectableTableView::selectedCell() {
   return cellAtLocation(selectedColumn(), selectedRow());
 }
 
-int SelectableTableView::firstOrLastSelectableIndexInRowOrColumn(
-    bool first, int rowOrColumn, bool searchForRow) {
-  const int maxIndex = (searchForRow ? numberOfRowsAtColumn(rowOrColumn)
-                                     : totalNumberOfColumns()) -
-                       1;
+int SelectableTableView::lastSelectableIndexInDirection(
+    int col, int row, OMG::Direction direction) {
+  bool searchForRow = direction.isVertical();
+  const int maxIndex =
+      (searchForRow ? numberOfRowsAtColumn(col) : totalNumberOfColumns()) - 1;
   if (maxIndex < 0) {
     return 0;
   }
+  bool first = direction.isUp() || direction.isLeft();
   int firstIndex = first ? 0 : maxIndex;
   for (int index = firstIndex; first ? index <= maxIndex : index >= 0;
        first ? index++ : index--) {
-    bool isSelectable = searchForRow
-                            ? canSelectCellAtLocation(rowOrColumn, index)
-                            : canSelectCellAtLocation(index, rowOrColumn);
+    bool isSelectable = searchForRow ? canSelectCellAtLocation(col, index)
+                                     : canSelectCellAtLocation(index, row);
     if (isSelectable) {
       return index;
     }
@@ -51,8 +51,9 @@ bool SelectableTableView::canSelectCellAtLocation(int column, int row) {
          dataSource()->canSelectCellAtLocation(column, row);
 }
 
-int SelectableTableView::indexOfNextSelectableIndex(int delta, int col, int row,
-                                                    bool searchForRow) {
+int SelectableTableView::nextSelectableIndexInDirection(
+    int col, int row, OMG::Direction direction, int delta) {
+  bool searchForRow = direction.isVertical();
   assert((searchForRow && col < totalNumberOfColumns() && col >= 0) ||
          (!searchForRow && row < numberOfRowsAtColumn(col) && row >= 0));
   assert(delta != 0);
@@ -65,7 +66,7 @@ int SelectableTableView::indexOfNextSelectableIndex(int delta, int col, int row,
 
   int index = searchForRow ? row : col;
   int selectableIndex = -1;
-  int step = delta > 0 ? 1 : -1;
+  int step = direction.isDown() || direction.isRight() ? 1 : -1;
   const int maxIndex =
       (searchForRow ? numberOfRowsAtColumn(col) : totalNumberOfColumns()) - 1;
   while (delta) {
@@ -74,14 +75,13 @@ int SelectableTableView::indexOfNextSelectableIndex(int delta, int col, int row,
       if (selectableIndex >= 0) {
         return selectableIndex;
       }
-      return firstOrLastSelectableIndexInRowOrColumn(
-          delta < 0, searchForRow ? col : row, searchForRow);
+      return lastSelectableIndexInDirection(col, row, direction);
     }
     bool cellIsSelectable = searchForRow ? canSelectCellAtLocation(col, index)
                                          : canSelectCellAtLocation(index, row);
     if (cellIsSelectable) {
       selectableIndex = index;
-      delta -= step;
+      delta--;
     }
   }
   return selectableIndex;
@@ -98,7 +98,7 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   if (!canSelectCellAtLocation(col, row)) {
     /* If the cell is not selectable, go down by default.
      * This behaviour is only implemented for Explicit. */
-    row = indexOfNextSelectableRow(1, col, row);
+    row = nextSelectableIndexInDirection(col, row, OMG::Direction::Down());
   }
   // There should always be at least 1 selectable cell in the column
   assert(canSelectCellAtLocation(col, row));
@@ -158,24 +158,19 @@ bool SelectableTableView::selectCellAtClippedLocation(
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   assert(totalNumberOfRows() > 0);
-  int step = Ion::Events::longPressFactor();
+  int delta = Ion::Events::longPressFactor();
   int col = selectedColumn();
   int row = selectedRow();
-  if (event == Ion::Events::Down) {
-    return selectCellAtClippedLocation(
-        col, indexOfNextSelectableRow(step, col, row));
-  }
-  if (event == Ion::Events::Up) {
-    return selectCellAtClippedLocation(
-        col, indexOfNextSelectableRow(-step, col, row));
-  }
-  if (event == Ion::Events::Left) {
-    return selectCellAtClippedLocation(
-        indexOfNextSelectableColumn(-step, col, row), row);
-  }
-  if (event == Ion::Events::Right) {
-    return selectCellAtClippedLocation(
-        indexOfNextSelectableColumn(step, col, row), row);
+  if (event == Ion::Events::Down || event == Ion::Events::Up ||
+      event == Ion::Events::Left || event == Ion::Events::Right) {
+    OMG::Direction direction = OMG::Direction(event);
+    int nextIndex = nextSelectableIndexInDirection(col, row, direction, delta);
+    if (direction.isVertical()) {
+      return selectCellAtClippedLocation(col, nextIndex);
+    } else {
+      assert(direction.isHorizontal());
+      return selectCellAtClippedLocation(nextIndex, row);
+    }
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut ||
       event == Ion::Events::Sto || event == Ion::Events::Var) {

@@ -76,17 +76,10 @@ class SelectableTableView : public TableView, public Responder {
    * Example 3: | o | x | x | o | x | currentCol = 2 -> resultCol = 3
    * Example 4: | o | x | x | o | x | currentCol = 4 -> resultCol = 3
    * */
-  int indexOfNextSelectableIndex(int delta, int currentCol, int currentRow,
-                                 bool searchForRow);
-  int indexOfNextSelectableRow(int delta, int currentColumn, int currentRow) {
-    return indexOfNextSelectableIndex(delta, currentColumn, currentRow, true);
-  }
-  int indexOfNextSelectableColumn(int delta, int currentColumn,
-                                  int currentRow) {
-    return indexOfNextSelectableIndex(delta, currentColumn, currentRow, false);
-  }
-  int firstOrLastSelectableIndexInRowOrColumn(bool first, int rowOrColumn,
-                                              bool searchForRow);
+  int nextSelectableIndexInDirection(int col, int row, OMG::Direction direction,
+                                     int delta = 1);
+  int lastSelectableIndexInDirection(int col, int row,
+                                     OMG::Direction direction);
   KDPoint offsetToRestoreAfterReload() const {
     return m_delegate ? m_delegate->offsetToRestoreAfterReload(this)
                       : contentOffset();

@@ -23,11 +23,17 @@ HighlightCell* SelectableTableView::selectedCell() {
   return cellAtLocation(selectedColumn(), selectedRow());
 }
 
+int SelectableTableView::maxIndexInDirection(int col, int row,
+                                             OMG::Direction direction) {
+  int numberOfIndexes = direction.isVertical() ? numberOfRowsAtColumn(col)
+                                               : totalNumberOfColumns();
+  return numberOfIndexes - 1;
+}
+
 int SelectableTableView::lastSelectableIndexInDirection(
     int col, int row, OMG::Direction direction) {
   bool searchForRow = direction.isVertical();
-  const int maxIndex =
-      (searchForRow ? numberOfRowsAtColumn(col) : totalNumberOfColumns()) - 1;
+  const int maxIndex = maxIndexInDirection(col, row, direction);
   if (maxIndex < 0) {
     return 0;
   }
@@ -67,8 +73,7 @@ int SelectableTableView::nextSelectableIndexInDirection(
   int index = searchForRow ? row : col;
   int selectableIndex = -1;
   int step = direction.isDown() || direction.isRight() ? 1 : -1;
-  const int maxIndex =
-      (searchForRow ? numberOfRowsAtColumn(col) : totalNumberOfColumns()) - 1;
+  const int maxIndex = maxIndexInDirection(col, row, direction);
   while (delta) {
     index += step;
     if (index < 0 || index > maxIndex) {

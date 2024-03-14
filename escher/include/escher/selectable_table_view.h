@@ -80,6 +80,7 @@ class SelectableTableView : public TableView, public Responder {
                                      int delta = 1);
   int lastSelectableIndexInDirection(int col, int row,
                                      OMG::Direction direction);
+  int maxIndexInDirection(int col, int row, OMG::Direction direction);
   KDPoint offsetToRestoreAfterReload() const {
     return m_delegate ? m_delegate->offsetToRestoreAfterReload(this)
                       : contentOffset();

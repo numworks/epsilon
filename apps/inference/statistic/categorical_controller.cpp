@@ -108,10 +108,16 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
   if (previousRow == indexOfTableCell()) {
     categoricalTableCell()->selectRow(-1);
     categoricalTableCell()->layoutSubviews(true);
-  } else if (l->selectedRow() == indexOfTableCell() &&
-             previousRow > l->selectedRow()) {
-    categoricalTableCell()->selectRow(
-        categoricalTableCell()->tableViewDataSource()->numberOfRows() - 1);
+  } else if (l->selectedRow() == indexOfTableCell() && previousRow >= 0) {
+    int rowToSelect;
+    if (previousRow < l->selectedRow()) {
+      rowToSelect = 0;
+    } else {
+      assert(previousRow > l->selectedRow());
+      rowToSelect =
+          categoricalTableCell()->tableViewDataSource()->numberOfRows() - 1;
+    }
+    categoricalTableCell()->selectRow(rowToSelect);
   }
 }
 

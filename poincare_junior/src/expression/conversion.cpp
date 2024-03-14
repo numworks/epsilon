@@ -597,8 +597,13 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       return;
     case OT::Comparison:
       if (exp.numberOfChildren() > 2) {
-        SharedEditionPool->push(BlockType::Undefined);
-        return;
+        // This will not work semantically but is sufficient for createLayout
+        Poincare::Comparison c = static_cast<Poincare::Comparison &>(exp);
+        Poincare::Expression e = Poincare::Comparison::Builder(
+            Poincare::Comparison::Builder(
+                c.childAtIndex(0), c.operatorAtIndex(0), c.childAtIndex(1)),
+            c.operatorAtIndex(1), c.childAtIndex(2));
+        return PushPoincareExpression(e);
       }
       // TODO: Handle comparisons better
       assert(exp.numberOfChildren() == 2);

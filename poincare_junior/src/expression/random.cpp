@@ -3,6 +3,7 @@
 #include <math.h>
 #include <poincare/random.h>
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -24,9 +25,15 @@ uint8_t Random::SeedTreeNodes(Tree* tree) {
   while (descendants > 0) {
     descendants--;
     if (u->isRandomNode()) {
-      assert(currentSeed < UINT8_MAX);
-      currentSeed += 1;
-      SetSeed(u, currentSeed);
+      // RandIntNoRep needs to reserve seed for each of its elements.
+      int size = u->isRandIntNoRep() ? Dimension::GetListLength(u) : 1;
+      assert(static_cast<int>(currentSeed) + size < UINT8_MAX);
+      if (currentSeed + size > Context::k_maxNumberOfVariables) {
+        assert(GetSeed(u) == 0);
+        return currentSeed;
+      }
+      SetSeed(u, currentSeed + 1);
+      currentSeed += size;
     }
     descendants += u->numberOfChildren();
     u = u->nextNode();
@@ -35,8 +42,13 @@ uint8_t Random::SeedTreeNodes(Tree* tree) {
 }
 
 template <typename T>
-T Random::Approximate(const Tree* randomTree, Context* context) {
+T Random::Approximate(const Tree* randomTree, Context* context,
+                      int listElement) {
   uint8_t seed = Random::GetSeed(randomTree);
+  if (randomTree->isRandIntNoRep() && seed > 0) {
+    seed += listElement;
+  }
+  assert(seed <= Context::k_maxNumberOfVariables);
   if (seed > 0) {
     if (!context) {
       return NAN;
@@ -46,7 +58,8 @@ T Random::Approximate(const Tree* randomTree, Context* context) {
       return result;
     }
   }
-  T result = Approximate<T>(randomTree);
+  // Context is needed with RandIntNoRep
+  T result = PrivateApproximate<T>(randomTree, context, listElement);
   if (seed > 0) {
     context->m_list[seed - 1] = result;
   }
@@ -54,21 +67,48 @@ T Random::Approximate(const Tree* randomTree, Context* context) {
 }
 
 template <typename T>
-T Random::Approximate(const Tree* randomTree) {
-  switch (randomTree->type()) {
-    case BlockType::RandInt:
-      return RandomInt<T>(Approximation::To<T>(randomTree->child(0)),
-                          Approximation::To<T>(randomTree->child(1)));
-    case BlockType::Random:
-      return Poincare::Random::random<T>();
-    default:
-      assert(randomTree->type() == BlockType::RandIntNoRep);
-      // TODO: Copy or factorize
-      // Poincare::RandintNoRepeatNode::templatedApproximate<T>();
-      // TODO_PCJ: Handle this.
-      assert(false);
-      return static_cast<T>(GetSeed(randomTree));
+T Random::PrivateApproximate(const Tree* randomTree, Context* context,
+                             int listElement) {
+  if (randomTree->isRandom()) {
+    return Poincare::Random::random<T>();
+  } else if (randomTree->isRandInt()) {
+    return RandomInt<T>(Approximation::To<T>(randomTree->child(0)),
+                        Approximation::To<T>(randomTree->child(1)));
   }
+  assert(randomTree->isRandIntNoRep());
+  uint8_t seed = Random::GetSeed(randomTree);
+  if (seed == 0) {
+    // Cannot access a single element for unseeded RandIntNoRep.
+    return NAN;
+  }
+  T a = Approximation::To<T>(randomTree->child(0));
+  T b = Approximation::To<T>(randomTree->child(1));
+  // Shorten the RandInt window since numbers have already been generated.
+  T result = RandomInt<T>(a, b - listElement);
+  // Check all previously generated numbers, ordered by increasing value.
+  T check = b + 1.0;
+  T previousCheck = a - 1.0;
+  for (int j = 0; j < listElement; j++) {
+    // Find the next check : smallest value bigger than previousCheck
+    for (int k = 0; k < listElement; k++) {
+      T value = Approximate<T>(randomTree, context, k);
+      if (value > previousCheck && value < check) {
+        check = value;
+      }
+    }
+    /* With each checked values, map result to values not yet generated.
+     * For example, a is 1 and b is 6. 1, 6 and 3 have been generated already.
+     * Result can be 1/2/3. First checked value is 1. Result can now be 2/3/4.
+     * Next checked value is 3, result can now be 2/4/5. Final checked value is
+     * 6, so result stays 2/4/5. The possible value have not been generated
+     * yet.*/
+    if (result >= check) {
+      result += 1.0;
+    }
+    previousCheck = check;
+    check = b + 1.0;
+  }
+  return result;
 }
 
 /* We could adapt Poincare::Integer::RandomInt<T>() here instead, but in
@@ -94,10 +134,10 @@ T Random::RandomInt(T a, T b) {
   return std::floor(rand * range + a);
 }
 
-template float Random::Approximate<float>(const Tree*);
-template double Random::Approximate<double>(const Tree*);
-template float Random::Approximate<float>(const Tree*, Context*);
-template double Random::Approximate<double>(const Tree*, Context*);
+template float Random::Approximate<float>(const Tree*, Context*, int);
+template double Random::Approximate<double>(const Tree*, Context*, int);
+template float Random::PrivateApproximate<float>(const Tree*, Context*, int);
+template double Random::PrivateApproximate<double>(const Tree*, Context*, int);
 template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);
 

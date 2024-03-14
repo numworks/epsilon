@@ -566,7 +566,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
       PushPoincareExpression(exp.childAtIndex(0));
       return;
     case OT::Derivative:
-      if (exp.numberOfChildren() == 3) {
+      if (exp.childAtIndex(3).isOne()) {
         SharedEditionPool->push(BlockType::Derivative);
         PushPoincareExpression(exp.childAtIndex(1));
         PushPoincareExpression(exp.childAtIndex(2));

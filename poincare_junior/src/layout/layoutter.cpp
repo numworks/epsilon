@@ -420,7 +420,12 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       } else {
         EditionReference layout =
             (type.isDerivative() ? KDerivativeL : KNthDerivativeL)->cloneNode();
-        layoutChildrenAsRacks(layoutParent, expression);
+        if (type.isNthDerivative()) {
+          // Handle the peculiar order of nth-derivative layout
+          // TODO fix order in derivative layout instead
+          expression->child(2)->moveTreeBeforeNode(expression->child(3));
+        }
+        layoutChildrenAsRacks(layout, expression);
         NAry::AddChild(layoutParent, layout);
       }
       break;

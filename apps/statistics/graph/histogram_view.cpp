@@ -10,28 +10,27 @@ namespace Statistics {
 
 // HistogramPlotPolicy
 
-static float histogramLevels(float x, void *model, void *context) {
+static double histogramLevels(double x, void *model, void *context) {
   Store *store = reinterpret_cast<Store *>(model);
-  float *parameters = reinterpret_cast<float *>(context);
-  float maxSize = parameters[0];
-  float series = parameters[1];
+  double *parameters = reinterpret_cast<double *>(context);
+  double maxSize = parameters[0];
+  double series = parameters[1];
   assert(maxSize >= 0);
   return maxSize == 0 ? 0 : store->heightOfBarAtValue(series, x) / maxSize;
 }
 
-static bool barIsHighlighted(float x, void *model, void *context) {
-  float *parameters = reinterpret_cast<float *>(context);
-  float start = parameters[2];
-  float end = parameters[3];
+static bool barIsHighlighted(double x, void *model, void *context) {
+  double *parameters = reinterpret_cast<double *>(context);
+  double start = parameters[2];
+  double end = parameters[3];
   return start <= x && x < end;
 }
 
 void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
                                    KDContext *ctx, KDRect rect) const {
-  // WARNING/TODO: Dangerous cast from double to float
-  float context[] = {static_cast<float>(m_store->maxHeightOfBar(m_series)),
-                     static_cast<float>(m_series), m_highlightedBarStart,
-                     m_highlightedBarEnd};
+  double context[] = {m_store->maxHeightOfBar(m_series),
+                      static_cast<double>(m_series), m_highlightedBarStart,
+                      m_highlightedBarEnd};
 
   KDColor color, borderColor;
   HighlightTest highlights = nullptr;
@@ -68,7 +67,7 @@ void HistogramView::reload(bool resetInterruption, bool force) {
   markWholeFrameAsDirty();
 }
 
-void HistogramView::setHighlight(float start, float end) {
+void HistogramView::setHighlight(double start, double end) {
   if (m_highlightedBarStart != start || m_highlightedBarEnd != end) {
     reloadSelectedBar();
     m_highlightedBarStart = start;

@@ -22,8 +22,8 @@ class HistogramPlotPolicy : public Shared::PlotPolicy::WithHistogram {
 
   Store *m_store;
   int m_series;
-  float m_highlightedBarStart;
-  float m_highlightedBarEnd;
+  double m_highlightedBarStart;
+  double m_highlightedBarEnd;
 };
 
 class HistogramView
@@ -36,7 +36,7 @@ class HistogramView
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false);
 
-  void setHighlight(float start, float end);
+  void setHighlight(double start, double end);
   void setDisplayLabels(bool display) { m_xAxis.setHidden(!display); }
 
  private:

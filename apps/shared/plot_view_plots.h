@@ -145,8 +145,8 @@ class WithCurves {
 class WithHistogram {
  protected:
   constexpr static KDCoordinate k_borderWidth = 1;
-  typedef float (*Curve1D)(float, void *, void *);
-  typedef bool (*HighlightTest)(float, void *, void *);
+  typedef double (*Curve1D)(double, void *, void *);
+  typedef bool (*HighlightTest)(double, void *, void *);
 
   class HistogramDrawing {
    public:

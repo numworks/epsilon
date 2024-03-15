@@ -404,7 +404,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
    *  - right border is drawn at B
    */
   double barsWidth =
-      std::max(plotView->pixelWidth(), static_cast<float>(m_barsWidth));
+      std::max(static_cast<double>(plotView->pixelWidth()), m_barsWidth);
   double rectMin =
       plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
   double rectMinBarIndex = std::floor((rectMin - m_start) / barsWidth);

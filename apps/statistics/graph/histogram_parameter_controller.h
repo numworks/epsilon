@@ -15,6 +15,9 @@ class HistogramParameterController
  public:
   HistogramParameterController(Escher::Responder* parentResponder,
                                Store* store);
+  static bool AuthorizedBarWidth(double barWidth, double firstDrawnBarAbscissa,
+                                 Store* store);
+
   void viewWillAppear() override;
   const char* title() override;
   int numberOfRows() const override { return 1 + k_numberOfCells; }

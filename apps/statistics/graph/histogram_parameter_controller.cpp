@@ -129,17 +129,26 @@ bool HistogramParameterController::authorizedParameters(
   }
   assert(DoublePairStore::k_numberOfSeries > 0);
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    if (!Shared::DoublePairStore::DefaultActiveSeriesTest(m_store, i)) {
+    if (Shared::DoublePairStore::DefaultActiveSeriesTest(m_store, i) &&
+        m_store->maxValue(i) < firstDrawnBarAbscissa) {
+      return false;
+    }
+  }
+  return AuthorizedBarWidth(barWidth, firstDrawnBarAbscissa, m_store);
+}
+
+bool HistogramParameterController::AuthorizedBarWidth(
+    double barWidth, double firstDrawnBarAbscissa, Store *store) {
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+    if (!Shared::DoublePairStore::DefaultActiveSeriesTest(store, i)) {
       continue;
     }
-    const double min = std::min(m_store->minValue(i), firstDrawnBarAbscissa);
-    const double max = m_store->maxValue(i);
+    const double min = std::min(store->minValue(i), firstDrawnBarAbscissa);
+    const double max = store->maxValue(i);
     double numberOfBars = std::ceil((max - min) / barWidth);
     // First escape case: if the bars are too thin or there is too much bars
     if (numberOfBars > HistogramRange::k_maxNumberOfBars
-        // Second escape case : max < X-start
-        || max < firstDrawnBarAbscissa
-        /* Third escape case: Since interval width is computed in float, we
+        /* Second escape case: Since interval width is computed in float, we
          * need to check if the values are not too close.
          * If max == min then the interval goes from min to min + barWidth.
          * But if min == min + barWidth, the display is bugged. */

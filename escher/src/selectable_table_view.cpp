@@ -37,10 +37,19 @@ int SelectableTableView::lastSelectableIndexInDirection(
   if (maxIndex < 0) {
     return 0;
   }
-  bool first = direction.isUp() || direction.isLeft();
-  int firstIndex = first ? 0 : maxIndex;
-  for (int index = firstIndex; first ? index <= maxIndex : index >= 0;
-       first ? index++ : index--) {
+  int firstIndex, lastIndex, step;
+  if (direction.isUp() || direction.isLeft()) {
+    firstIndex = 0;
+    lastIndex = maxIndex;
+    step = 1;
+  } else {
+    assert(direction.isDown() || direction.isRight());
+    firstIndex = maxIndex;
+    lastIndex = 0;
+    step = -1;
+  }
+  for (int index = firstIndex; step * index <= step * lastIndex;
+       index += step) {
     bool isSelectable = searchForRow ? canSelectCellAtLocation(col, index)
                                      : canSelectCellAtLocation(index, row);
     if (isSelectable) {

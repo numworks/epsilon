@@ -74,6 +74,14 @@ class JuniorLayout final
   JuniorLayout() {}
   JuniorLayout(const OLayout& other) { *this = other; }
 
+  JuniorLayout(const PoincareJ::Tree* tree) {
+    // TODO is copy-elimination guaranted here ?
+    *this = Builder(tree);
+  }
+
+  template <PoincareJ::TreeConcept C>
+  JuniorLayout(C c) : JuniorLayout(static_cast<const PoincareJ::Tree*>(c)) {}
+
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
   // Eat the tree
   static JuniorLayout Builder(PoincareJ::Tree* tree);

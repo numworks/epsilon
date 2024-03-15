@@ -40,6 +40,18 @@ using KCodePointL = KTree<BlockType::CodePointLayout,
                           CodePointLayout::SubCodePointLayoutAtIndex(cp, 2),
                           CodePointLayout::SubCodePointLayoutAtIndex(cp, 3)>;
 
+template <uint32_t cp, uint32_t cc>
+using KCombinedCodePointL =
+    KTree<BlockType::CombinedCodePointsLayout,
+          CodePointLayout::SubCodePointLayoutAtIndex(cp, 0),
+          CodePointLayout::SubCodePointLayoutAtIndex(cp, 1),
+          CodePointLayout::SubCodePointLayoutAtIndex(cp, 2),
+          CodePointLayout::SubCodePointLayoutAtIndex(cp, 3),
+          CodePointLayout::SubCodePointLayoutAtIndex(cc, 0),
+          CodePointLayout::SubCodePointLayoutAtIndex(cc, 1),
+          CodePointLayout::SubCodePointLayoutAtIndex(cc, 2),
+          CodePointLayout::SubCodePointLayoutAtIndex(cc, 3)>;
+
 template <String S,
           typename IS =
               decltype(std::make_index_sequence<S.codePointSize() - 1>())>

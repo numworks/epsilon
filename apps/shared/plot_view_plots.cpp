@@ -459,6 +459,9 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
         plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, y);
     KDCoordinate barHeight = plotViewHeight - top;
     assert(barHeight >= 0);
+    KDCoordinate minBarHeight = 1 + borderWidth;
+    barHeight = std::max(barHeight, minBarHeight);
+    top = plotViewHeight - barHeight;
 
     //   Step 3: Draw
     KDColor color =

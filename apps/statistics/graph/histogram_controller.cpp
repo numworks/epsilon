@@ -254,10 +254,17 @@ void HistogramController::initBarParameters() {
     const double truncateFactor = std::pow(10.0, precision - logBarWidth);
     barWidth = std::round(barWidth * truncateFactor) / truncateFactor;
   }
-  if (std::ceil((xMax - xMin) / barWidth) > HistogramRange::k_maxNumberOfBars) {
-    // Use k_maxNumberOfBars - 1 for extra margin in case of a loss of precision
-    barWidth = (xMax - xMin) / (HistogramRange::k_maxNumberOfBars - 1);
+  /* Start numberOfBars at k_maxNumberOfBars - 1 for extra margin in case of a
+   * loss of precision. */
+  int numberOfBars = HistogramRange::k_maxNumberOfBars;
+  while (!HistogramParameterController::AuthorizedBarWidth(barWidth, xMin,
+                                                           m_store) &&
+         numberOfBars > 0) {
+    numberOfBars--;
+    barWidth = (xMax - xMin) / numberOfBars;
   }
+  assert(HistogramParameterController::AuthorizedBarWidth(barWidth, xMin,
+                                                          m_store));
   bool allValuesAreIntegers = true;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (allValuesAreIntegers && activeSeriesMethod()(m_store, i)) {

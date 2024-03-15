@@ -1,5 +1,7 @@
 #include "serialize.h"
 
+#include <poincare_junior/src/expression/builtin.h>
+
 #include <algorithm>
 
 #include "code_point_layout.h"
@@ -55,8 +57,25 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       buffer = append(")", buffer, end);
       break;
     }
-    default:
-      buffer = append("?", buffer, end);
+    default: {
+      const BuiltinWithLayout *builtin =
+          BuiltinWithLayout::GetReservedFunction(layout->layoutType());
+      if (!builtin) {
+        assert(false);
+        buffer = append("?", buffer, end);
+      }
+      buffer = append(builtin->aliases()->mainAlias(), buffer, end);
+      buffer = append("(", buffer, end);
+      bool firstChild = true;
+      for (const Tree *child : layout->children()) {
+        if (!firstChild) {
+          buffer = append(",", buffer, end);
+        }
+        buffer = Serialize(child, buffer, end);
+        firstChild = false;
+      }
+      buffer = append(")", buffer, end);
+    }
   }
   return buffer;
 }

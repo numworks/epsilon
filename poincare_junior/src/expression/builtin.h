@@ -56,9 +56,12 @@ class BuiltinWithLayout : public Builtin {
                               LayoutType layoutType)
       : Builtin(blockType, aliases), m_layoutType(layoutType) {}
   LayoutType layoutType() const { return m_layoutType; }
+  bool has2DLayout() const override { return true; }
+
+  static constexpr const BuiltinWithLayout* GetReservedFunction(
+      LayoutType layoutType);
 
  private:
-  bool has2DLayout() const override { return true; }
   LayoutType m_layoutType;
 };
 
@@ -170,6 +173,16 @@ constexpr const Builtin* Builtin::GetReservedFunction(BlockType type) {
   }
   for (const Builtin& builtin : s_builtinsWithLayout) {
     if (builtin.m_blockType == type) {
+      return &builtin;
+    }
+  }
+  return nullptr;
+}
+
+constexpr const BuiltinWithLayout* BuiltinWithLayout::GetReservedFunction(
+    LayoutType LayoutType) {
+  for (const BuiltinWithLayout& builtin : s_builtinsWithLayout) {
+    if (builtin.m_layoutType == LayoutType) {
       return &builtin;
     }
   }

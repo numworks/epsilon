@@ -20,21 +20,10 @@ using namespace Poincare;
 
 namespace Regression {
 
+using namespace PoincareJ;
+
 Layout LogisticModel::templateLayout() const {
-  return FractionLayout::Builder(
-      CodePointLayout::Builder('c'),
-      HorizontalLayout::Builder(
-          {CodePointLayout::Builder('1'), CodePointLayout::Builder('+'),
-           CodePointLayout::Builder('a'),
-           CodePointLayout::Builder(UCodePointMiddleDot),
-           CodePointLayout::Builder('e'),
-           VerticalOffsetLayout::Builder(
-               HorizontalLayout::Builder(
-                   {CodePointLayout::Builder('-'),
-                    CodePointLayout::Builder('b'),
-                    CodePointLayout::Builder(UCodePointMiddleDot),
-                    CodePointLayout::Builder('x')}),
-               VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
+  return KRackL(KFracL("c"_l, "1+a·e"_l ^ KSuperscriptL("-b·x"_l)));
 }
 
 Poincare::Expression LogisticModel::privateExpression(

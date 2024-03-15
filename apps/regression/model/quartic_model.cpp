@@ -14,38 +14,14 @@
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
+using namespace PoincareJ;
 using namespace Shared;
 
 namespace Regression {
 
 Layout QuarticModel::templateLayout() const {
-  return HorizontalLayout::Builder(
-      {CodePointLayout::Builder('a'),
-       CodePointLayout::Builder(UCodePointMiddleDot),
-       CodePointLayout::Builder('x'),
-       VerticalOffsetLayout::Builder(
-           CodePointLayout::Builder('4'),
-           VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-       CodePointLayout::Builder('+'),
-       CodePointLayout::Builder('b'),
-       CodePointLayout::Builder(UCodePointMiddleDot),
-       CodePointLayout::Builder('x'),
-       VerticalOffsetLayout::Builder(
-           CodePointLayout::Builder('3'),
-           VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-       CodePointLayout::Builder('+'),
-       CodePointLayout::Builder('c'),
-       CodePointLayout::Builder(UCodePointMiddleDot),
-       CodePointLayout::Builder('x'),
-       VerticalOffsetLayout::Builder(
-           CodePointLayout::Builder('2'),
-           VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-       CodePointLayout::Builder('+'),
-       CodePointLayout::Builder('d'),
-       CodePointLayout::Builder(UCodePointMiddleDot),
-       CodePointLayout::Builder('x'),
-       CodePointLayout::Builder('+'),
-       CodePointLayout::Builder('e')});
+  return "a·x"_l ^ KSuperscriptL("4"_l) ^ "+b·x"_l ^ KSuperscriptL("3"_l) ^
+         "+c·x"_l ^ KSuperscriptL("2"_l) ^ "+d·x+e"_l;
 }
 
 Expression QuarticModel::privateExpression(double* modelCoefficients) const {

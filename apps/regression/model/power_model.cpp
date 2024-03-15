@@ -13,6 +13,7 @@
 #include "../store.h"
 
 using namespace Poincare;
+using namespace PoincareJ;
 
 namespace Regression {
 
@@ -22,13 +23,7 @@ PowerModel::PowerModel() : TransformedModel() {
 }
 
 Layout PowerModel::templateLayout() const {
-  return HorizontalLayout::Builder(
-      {CodePointLayout::Builder('a'),
-       CodePointLayout::Builder(UCodePointMiddleDot),
-       CodePointLayout::Builder('x'),
-       VerticalOffsetLayout::Builder(
-           CodePointLayout::Builder('b'),
-           VerticalOffsetLayoutNode::VerticalPosition::Superscript)});
+  return "a·x"_l ^ KSuperscriptL("b"_l);
 }
 
 Expression PowerModel::privateExpression(double* modelCoefficients) const {

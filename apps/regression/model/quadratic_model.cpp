@@ -14,25 +14,13 @@
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
+using namespace PoincareJ;
 using namespace Shared;
 
 namespace Regression {
 
 Layout QuadraticModel::templateLayout() const {
-  return HorizontalLayout::Builder({
-      CodePointLayout::Builder('a'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2'),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('b'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('c'),
-  });
+  return "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
 }
 
 Expression QuadraticModel::privateExpression(double* modelCoefficients) const {

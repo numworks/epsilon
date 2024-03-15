@@ -14,32 +14,14 @@
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
+using namespace PoincareJ;
 using namespace Shared;
 
 namespace Regression {
 
 Layout CubicModel::templateLayout() const {
-  return HorizontalLayout::Builder({
-      CodePointLayout::Builder('a'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('3'),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('b'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2'),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('c'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('d'),
-  });
+  return "a·x"_l ^ KSuperscriptL("3"_l) ^ "+b·x"_l ^ KSuperscriptL("2"_l) ^
+         "+c·x+d"_l;
 }
 
 Expression CubicModel::privateExpression(double* modelCoefficients) const {

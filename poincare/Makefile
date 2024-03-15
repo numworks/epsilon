@@ -180,6 +180,7 @@ poincare_src += $(addprefix poincare/src/,\
   polynomial.cpp \
   power.cpp \
   preferences.cpp \
+  preferences_in_storage.cpp \
   print.cpp \
   print_float.cpp \
   print_int.cpp \
@@ -273,6 +274,7 @@ poincare_bench_src = $(addprefix poincare/src/,\
   init.cpp \
   integer.cpp \
   preferences.cpp \
+  preferences_no_storage.cpp \
   print_float.cpp \
   print_int.cpp \
   serialization_helper.cpp \

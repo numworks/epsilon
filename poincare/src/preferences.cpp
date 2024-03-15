@@ -24,22 +24,6 @@ Preferences::Preferences()
                                    DefaultNumberOfPrintedSignificantDigits},
       m_forceExamModeReload(false) {}
 
-static Preferences* fetchFromStorage() {
-  Ion::Storage::Record record =
-      Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
-          Preferences::k_recordName, Ion::Storage::systemExtension);
-  assert(!record.isNull());
-  Ion::Storage::Record::Data data = record.value();
-  assert(data.size == sizeof(Preferences));
-  return static_cast<Preferences*>(const_cast<void*>(data.buffer));
-}
-
-Preferences* Preferences::SharedPreferences() {
-  static Preferences* ptr = fetchFromStorage();
-  assert(fetchFromStorage() == ptr);
-  return ptr;
-}
-
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Expression& exp, Context* context) {
   if (complexFormat == ComplexFormat::Real && exp.hasComplexI(context)) {

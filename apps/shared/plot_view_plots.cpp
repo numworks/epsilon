@@ -403,29 +403,29 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
    *  - left border is drawn at A
    *  - right border is drawn at B
    */
+  double barsWidth =
+      std::max(plotView->pixelWidth(), static_cast<float>(m_barsWidth));
   double rectMin =
       plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
-  double rectMinBarIndex = std::floor((rectMin - m_start) / m_barsWidth);
-  double rectMinBarStart = m_start + rectMinBarIndex * m_barsWidth;
+  double rectMinBarIndex = std::floor((rectMin - m_start) / barsWidth);
+  double rectMinBarStart = m_start + rectMinBarIndex * barsWidth;
   double rectMax =
       plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right());
-  double rectMaxBarIndex = std::floor((rectMax - m_start) / m_barsWidth);
-  double rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * m_barsWidth;
-  double step =
-      std::max(plotView->pixelWidth(), static_cast<float>(m_barsWidth));
+  double rectMaxBarIndex = std::floor((rectMax - m_start) / barsWidth);
+  double rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * barsWidth;
   KDCoordinate plotViewHeight =
       plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, 0.f);
   KDCoordinate borderWidth = m_displayBorder ? k_borderWidth : 0;
 
   double xPrevious = NAN;
-  for (double x = rectMinBarStart; x < rectMaxBarEnd; x += step) {
+  for (double x = rectMinBarStart; x < rectMaxBarEnd; x += barsWidth) {
     if (x == xPrevious) {
       return;
     }
     xPrevious = x;
 
     // Step 1: Compute values
-    double xCenter = m_fillBars ? x + 0.5f * m_barsWidth : x;
+    double xCenter = m_fillBars ? x + 0.5f * barsWidth : x;
     // WARNING/TODO: Dangerous cast from double to float
     double y = m_curve(xCenter, m_model, m_context);
     if (!std::isfinite(y) || y == 0.f) {
@@ -439,7 +439,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
     KDCoordinate left = plotView->floatToKDCoordinatePixel(
         AbstractPlotView::Axis::Horizontal, x);
     KDCoordinate leftOfNextBar = plotView->floatToKDCoordinatePixel(
-        AbstractPlotView::Axis::Horizontal, x + m_barsWidth);
+        AbstractPlotView::Axis::Horizontal, x + barsWidth);
     if (leftOfNextBar <= rect.left()) {
       continue;
     }

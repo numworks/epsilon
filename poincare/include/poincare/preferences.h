@@ -91,6 +91,7 @@ class Preferences final {
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
 
   Preferences();
+  static void Init();
   static Preferences* SharedPreferences();
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(

@@ -35,6 +35,7 @@ class JuniorLayoutNode final : public LayoutNode {
   }
   void logAttributes(std::ostream& stream) const override {
 #if POINCARE_MEMORY_TREE_LOG
+    stream << '\n';
     tree()->log(stream);
 #endif
   }

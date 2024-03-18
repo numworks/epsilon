@@ -21,32 +21,25 @@ class Simplification {
   static bool DeepSystematicReduce(Tree *u);
   EDITION_REF_WRAP(DeepSystematicReduce);
 
-  static bool SimplifyAbs(Tree *u);
-  EDITION_REF_WRAP(SimplifyAbs);
   static bool SimplifyAddition(Tree *u);
   EDITION_REF_WRAP(SimplifyAddition);
   static bool SimplifyMultiplication(Tree *u);
   EDITION_REF_WRAP(SimplifyMultiplication);
   static bool SimplifyPower(Tree *u);
   EDITION_REF_WRAP(SimplifyPower);
-  static bool SimplifyPowerReal(Tree *u);
-  EDITION_REF_WRAP(SimplifyPowerReal);
-  static bool SimplifyLnReal(Tree *u);
-  EDITION_REF_WRAP(SimplifyLnReal);
-  static bool SimplifyExp(Tree *u);
-  EDITION_REF_WRAP(SimplifyExp);
-  static bool SimplifyComplexArgument(Tree *t);
-  EDITION_REF_WRAP(SimplifyComplexArgument);
-  static bool SimplifyComplexPart(Tree *t);
-  EDITION_REF_WRAP(SimplifyComplexPart);
-  static bool SimplifySign(Tree *t);
-  EDITION_REF_WRAP(SimplifySign);
-  static bool SimplifyDistribution(Tree *t);
-  EDITION_REF_WRAP(SimplifyDistribution);
 
  private:
   /* These private methods should never be called on EditionReferences.
    * TODO: ensure it cannot. */
+  static bool SimplifyAbs(Tree *u);
+  static bool SimplifyPowerReal(Tree *u);
+  static bool SimplifyLnReal(Tree *u);
+  static bool SimplifyExp(Tree *u);
+  static bool SimplifyComplexArgument(Tree *t);
+  static bool SimplifyComplexPart(Tree *t);
+  static bool SimplifySign(Tree *t);
+  static bool SimplifyDistribution(Tree *t);
+
   static bool SimplifyLastTree(Tree *node,
                                ProjectionContext projectionContext = {});
   static bool SimplifySwitch(Tree *u);

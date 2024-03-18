@@ -16,6 +16,9 @@ void MakeAdditionImplicit(Poincare::JuniorLayout& layout);
 
 bool ContainsSmallCapitalE(const Tree* rack);
 
+// Enforce a correct rack/layout structure by merging or inserting racks
+void SanitizeRack(Tree* rack);
+
 }  // namespace AppHelpers
 }  // namespace PoincareJ
 

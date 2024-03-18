@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <poincare/junior_layout.h>
+#include <poincare_junior/src/layout/app_helpers.h>
 #include <poincare_junior/src/layout/conversion.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layoutter.h>
@@ -61,7 +62,9 @@ JuniorLayout JuniorLayout::Builder(PoincareJ::Tree* tree) {
 
 JuniorLayout JuniorLayout::Create(const PoincareJ::Tree* structure,
                                   PoincareJ::ContextTrees ctx) {
-  return Builder(PoincareJ::PatternMatching::Create(structure, ctx));
+  PoincareJ::Tree* tree = PoincareJ::PatternMatching::Create(structure, ctx);
+  PoincareJ::AppHelpers::SanitizeRack(tree);
+  return Builder(tree);
 }
 
 JuniorLayout JuniorLayout::Juniorize(OLayout l) {

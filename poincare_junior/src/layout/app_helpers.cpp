@@ -46,5 +46,23 @@ bool ContainsSmallCapitalE(const Tree* rack) {
   return false;
 }
 
+void SanitizeRack(PoincareJ::Tree* rack) {
+  if (!rack->isRackLayout()) {
+    rack->cloneNodeAtNode(KRackL.node<1>);
+  }
+  for (Tree* child : rack->children()) {
+    if (child->isRackLayout()) {
+      SanitizeRack(child);
+      NAry::SetNumberOfChildren(
+          rack, rack->numberOfChildren() + child->numberOfChildren());
+      child->removeTree();
+    } else {
+      for (Tree* subRack : child->children()) {
+        SanitizeRack(subRack);
+      }
+    }
+  }
+}
+
 }  // namespace AppHelpers
 }  // namespace PoincareJ

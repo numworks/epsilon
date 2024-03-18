@@ -4,6 +4,7 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/old_layout.h>
 #include <poincare_junior/src/layout/k_tree.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/tree.h>
 
 // Expose KTrees to apps to be used to replace builders
@@ -85,6 +86,10 @@ class JuniorLayout final
   JuniorLayout(C c) : JuniorLayout(static_cast<const PoincareJ::Tree*>(c)) {
     static_assert(c.type().isRackLayout());
   }
+
+  static JuniorLayout Create(const PoincareJ::Tree* structure,
+                             PoincareJ::ContextTrees ctx);
+  operator const PoincareJ::Tree*() { return tree(); }
 
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
   // Eat the tree

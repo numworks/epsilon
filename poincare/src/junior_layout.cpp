@@ -59,6 +59,11 @@ JuniorLayout JuniorLayout::Builder(PoincareJ::Tree* tree) {
   return result;
 }
 
+JuniorLayout JuniorLayout::Create(const PoincareJ::Tree* structure,
+                                  PoincareJ::ContextTrees ctx) {
+  return Builder(PoincareJ::PatternMatching::Create(structure, ctx));
+}
+
 JuniorLayout JuniorLayout::Juniorize(OLayout l) {
   if (l.isUninitialized() || l.type() == LayoutNode::Type::JuniorLayout) {
     // l is already a junior layout

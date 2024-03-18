@@ -12,19 +12,19 @@
 
 namespace PoincareJ {
 
+struct ContextTrees {
+  const Tree* KA = nullptr;
+  const Tree* KB = nullptr;
+  const Tree* KC = nullptr;
+  const Tree* KD = nullptr;
+  const Tree* KE = nullptr;
+  const Tree* KF = nullptr;
+  const Tree* KG = nullptr;
+  const Tree* KH = nullptr;
+};
+
 class PatternMatching {
  public:
-  struct ContextTrees {
-    const Tree* KA = nullptr;
-    const Tree* KB = nullptr;
-    const Tree* KC = nullptr;
-    const Tree* KD = nullptr;
-    const Tree* KE = nullptr;
-    const Tree* KF = nullptr;
-    const Tree* KG = nullptr;
-    const Tree* KH = nullptr;
-  };
-
   class Context {
    public:
     Context() : m_array() {}
@@ -183,6 +183,7 @@ class PatternMatching {
                                              Context* context);
 };
 
+namespace KTrees {
 // Aliases for convenience
 constexpr auto KA = KPlaceholder<Placeholder::Tag::A>();
 constexpr auto KB = KPlaceholder<Placeholder::Tag::B>();
@@ -210,6 +211,7 @@ constexpr auto KE_s = KZeroOrMorePlaceholder<Placeholder::Tag::E>();
 constexpr auto KF_s = KZeroOrMorePlaceholder<Placeholder::Tag::F>();
 constexpr auto KG_s = KZeroOrMorePlaceholder<Placeholder::Tag::G>();
 constexpr auto KH_s = KZeroOrMorePlaceholder<Placeholder::Tag::H>();
+}  // namespace KTrees
 
 }  // namespace PoincareJ
 

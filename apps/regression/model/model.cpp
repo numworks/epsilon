@@ -24,8 +24,7 @@ namespace Regression {
 Layout Model::templateLayout() const {
   const char* layoutString =
       I18n::translate(formulaMessage()) + sizeof("y=") - 1;
-  return LayoutHelper::StringToCodePointsLayout(layoutString,
-                                                strlen(layoutString));
+  return Layout::String(layoutString);
 }
 
 Layout Model::equationLayout(

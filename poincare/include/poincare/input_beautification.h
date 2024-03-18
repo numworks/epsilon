@@ -252,11 +252,8 @@ class InputBeautification {
       }};
 
   constexpr static BeautificationRule k_logarithmRule = {
-      Logarithm::s_functionHelper.aliasesList(), 2, [](OLayout* parameters) {
-        return static_cast<OLayout>(
-            LayoutHelper::Logarithm(parameters[0], parameters[1])
-                .makeEditable());
-      }};
+      Logarithm::s_functionHelper.aliasesList(), 2,
+      [](OLayout* parameters) { return OLayout(); }};
   constexpr static int k_indexOfBaseOfLog = 1;
 
   static bool LayoutIsIdentifierMaterial(OLayout l);

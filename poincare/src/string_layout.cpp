@@ -107,8 +107,8 @@ StringLayout StringLayout::Builder(const char *string, int stringSize) {
 }
 
 OLayout StringLayout::makeEditable() {
-  OLayout editableLayout =
-      LayoutHelper::StringToCodePointsLayout(string(), stringLength());
+  OLayout editableLayout;
+  assert(false);
   OLayout myParent = this->parent();
   /* editableLayout can be an HorizontalLayout, so it needs to be merged with
    * parent if it is also an HorizontalLayout. */

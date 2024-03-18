@@ -459,14 +459,12 @@ ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int index) {
 ParameterRepresentation TwoMeans::TParameterRepresentationAtIndex(int index) {
   switch (index) {
     case ParamsOrder::s1: {
-      Poincare::HorizontalLayout s1 =
-          LayoutHelper::CodePointSubscriptCodePointLayout('s', '1');
-      return ParameterRepresentation{s1, I18n::Message::Sample1Std};
+      return ParameterRepresentation{"s"_l ^ KSubscriptL("1"_l),
+                                     I18n::Message::Sample1Std};
     }
     case ParamsOrder::s2: {
-      Poincare::HorizontalLayout s2 =
-          LayoutHelper::CodePointSubscriptCodePointLayout('s', '2');
-      return ParameterRepresentation{s2, I18n::Message::Sample2Std};
+      return ParameterRepresentation{"s"_l ^ KSubscriptL("2"_l),
+                                     I18n::Message::Sample2Std};
     }
     default:
       return ZParameterRepresentationAtIndex(index);

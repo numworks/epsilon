@@ -33,7 +33,14 @@ void IntegerListController::computeAdditionalResults(
   assert(AdditionalResultsType::HasInteger(exactOutput));
   Integer integer = static_cast<const BasedInteger &>(exactOutput).integer();
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
-    m_layouts[index] = integer.createLayout(baseAtIndex(index));
+    if (baseAtIndex(index) == OMG::Base::Decimal) {
+      // TODO PCJ only handle this one yet
+      m_layouts[index] = exactOutput.createLayout(
+          Preferences::PrintFloatMode::Decimal,
+          Preferences::LargeNumberOfSignificantDigits, nullptr);
+    } else {
+      m_layouts[index] = integer.createLayout(baseAtIndex(index));
+    }
   }
   // Computing factorExpression
   Expression factor = Factor::Builder(exactOutput.clone());

@@ -272,7 +272,7 @@ OLayout Integer::createLayout(OMG::Base base) const {
     UTF8Decoder decoder = UTF8Decoder(buffer);
     return CodePointLayout::Builder(decoder.nextCodePoint());
   }
-  OLayout res = LayoutHelper::String(buffer, numberOfChars);
+  OLayout res = Layout::String(buffer, numberOfChars);
   return res;
 }
 

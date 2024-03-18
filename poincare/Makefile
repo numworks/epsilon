@@ -134,7 +134,6 @@ poincare_src += $(addprefix poincare/src/,\
   infinity.cpp \
   integer.cpp \
   integral.cpp \
-  layout_helper.cpp \
   least_common_multiple.cpp \
   list.cpp \
   list_access.cpp \

@@ -28,7 +28,8 @@ class HypothesisController
  public:
   HypothesisController(Escher::StackViewController* parent,
                        InputController* inputController,
-                       InputStoreController* inputSlopeController, Test* test);
+                       InputStoreController* inputSlopeController,
+                       DatasetController* datasetController, Test* test);
   static bool ButtonAction(HypothesisController* controller, void* s);
 
   // SelectableListViewController
@@ -62,8 +63,6 @@ class HypothesisController
 
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;
-
-  void setDatasetController(DatasetController* c) { m_datasetController = c; }
 
  private:
   void loadHypothesisParam();

@@ -55,7 +55,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
           static_cast<Chi2Test *>(snapshot->statistic()),
           &m_inputGoodnessController, &m_inputHomogeneityController),
       m_hypothesisController(&m_stackViewController, &m_inputController,
-                             &m_inputSlopeController,
+                             &m_inputSlopeController, &m_datasetController,
                              static_cast<Test *>(snapshot->statistic())),
       m_datasetController(&m_stackViewController, &m_inputController,
                           &m_inputSlopeController, snapshot->statistic()),

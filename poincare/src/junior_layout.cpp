@@ -80,9 +80,17 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
   UTF8Decoder decoder(str);
   int n = 0;
   class CodePoint cp = 0;
+  // TODO decoder could yield glyphs
   while (n != length && (cp = decoder.nextCodePoint())) {
-    PoincareJ::EditionPool::SharedEditionPool
-        ->push<PoincareJ::BlockType::CodePointLayout>(cp);
+    class CodePoint cc = 0;
+    if (n + 1 != length && (cc = decoder.nextCodePoint()) && cc.isCombining()) {
+      PoincareJ::EditionPool::SharedEditionPool
+          ->push<PoincareJ::BlockType::CombinedCodePointsLayout>(cp, cc);
+    } else {
+      decoder.previousCodePoint();
+      PoincareJ::EditionPool::SharedEditionPool
+          ->push<PoincareJ::BlockType::CodePointLayout>(cp);
+    }
     n++;
   }
   PoincareJ::NAry::SetNumberOfChildren(tree, n);

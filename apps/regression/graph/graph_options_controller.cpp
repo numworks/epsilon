@@ -38,7 +38,7 @@ GraphOptionsController::GraphOptionsController(Responder *parentResponder,
       m_store(store),
       m_graphController(graphController) {
   m_residualPlotCell.label()->setMessage(I18n::Message::ResidualPlot);
-  m_rCell.label()->setLayout(CodePointLayout::Builder('r'));
+  m_rCell.label()->setLayout("r"_l);
   m_changeRegressionCell.label()->setMessage(I18n::Message::RegressionModel);
   m_xParameterCell.label()->setMessage(I18n::Message::XPrediction);
   m_yParameterCell.label()->setMessage(I18n::Message::YPrediction);
@@ -97,18 +97,8 @@ void GraphOptionsController::viewWillAppear() {
       Model::Type type = m_store->seriesRegressionType(
           m_graphController->selectedSeriesIndex());
       assert(Store::DisplayR2(type) != Store::DisplayRSquared(type));
-      Layout r2Layout;
-      if (Store::DisplayR2(type)) {
-        r2Layout = HorizontalLayout::Builder(
-            {CodePointLayout::Builder('R'), CodePointLayout::Builder('2')});
-      } else {
-        r2Layout = HorizontalLayout::Builder(
-            {CodePointLayout::Builder('r'),
-             VerticalOffsetLayout::Builder(
-                 CodePointLayout::Builder('2'),
-                 VerticalOffsetLayoutNode::VerticalPosition::Superscript)});
-      }
-      m_r2Cell.label()->setLayout(r2Layout);
+      m_r2Cell.label()->setLayout(
+          Store::DisplayR2(type) ? "R2"_l : "r"_l ^ KSuperscriptL("2"_l));
     }
     if (Preferences::SharedPreferences()->examMode().forbidStatsDiagnostics()) {
       rCells[i]->label()->setTextColor(Palette::GrayDark);

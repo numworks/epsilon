@@ -47,62 +47,43 @@ int PreferencesController::reusableCellCount(int type) const {
 Layout PreferencesController::layoutForPreferences(I18n::Message message) {
   switch (message) {
     // Angle Unit
-    case I18n::Message::Degrees: {
-      const char *degEx = "90°";
-      return LayoutHelper::String(degEx, strlen(degEx));
-    }
+    case I18n::Message::Degrees:
+      return "90°"_l;
     case I18n::Message::Radian:
-      return FractionLayout::Builder(
-          CodePointLayout::Builder(UCodePointGreekSmallLetterPi),
-          CodePointLayout::Builder('2'));
-    case I18n::Message::Gradians: {
-      const char *degEx = "100 gon";
-      return LayoutHelper::String(degEx, strlen(degEx));
-    }
+      return KRackL(KFracL("π"_l, "2"_l));
+    case I18n::Message::Gradians:
+      return "100 gon"_l;
+
     // Display Mode format
     case I18n::Message::Decimal:
-      return LayoutHelper::String("0.1234", 6);
-    case I18n::Message::Scientific: {
-      const char *text = "1.234ᴇ-1";
-      return LayoutHelper::String(text, strlen(text));
-    }
-    case I18n::Message::Engineering: {
-      const char *text = "123.4ᴇ-3";
-      return LayoutHelper::String(text, strlen(text));
-    }
+      return "0.1234"_l;
+    case I18n::Message::Scientific:
+      // TODO handle small E in rack litterals
+      // return "1.234ᴇ-1"_l;
+      return "1.234"_l ^ KCodePointL<UCodePointLatinLetterSmallCapitalE>() ^
+             "-1"_l;
+    case I18n::Message::Engineering:
+      return "123.4"_l ^ KCodePointL<UCodePointLatinLetterSmallCapitalE>() ^
+             "-3"_l;
 
     // Edition mode
     case I18n::Message::Edition2D:
-      return HorizontalLayout::Builder(
-          LayoutHelper::String("1+", 2),
-          FractionLayout::Builder(LayoutHelper::String("2", 1),
-                                  LayoutHelper::String("3", 1)));
+      return "1+"_l ^ KFracL("2"_l, "3"_l);
     case I18n::Message::EditionLinear:
-      return LayoutHelper::String("1+2/3", 5);
+      return "1+2/3"_l;
 
     // Complex format
     case I18n::Message::Real:
-      return CodePointLayout::Builder('x');
-    case I18n::Message::Algebraic: {
-      const char *text = "a+ib";
-      return LayoutHelper::String(text, strlen(text));
-    }
-    case I18n::Message::Exponential: {
-      const char *base = "re";
-      const char *superscript = "iθ";
-      return HorizontalLayout::Builder(
-          LayoutHelper::String(base, strlen(base)),
-          VerticalOffsetLayout::Builder(
-              LayoutHelper::String(superscript, strlen(superscript)),
-              VerticalOffsetLayoutNode::VerticalPosition::Superscript));
-    }
+      return "x"_l;
+    case I18n::Message::Algebraic:
+      return "a+ib"_l;
+    case I18n::Message::Exponential:
+      return "re"_l ^ KSuperscriptL("iθ"_l);
 
     // Font size
     case I18n::Message::LargeFont:
-    case I18n::Message::SmallFont: {
-      const char *text = "abc";
-      return LayoutHelper::String(text, strlen(text));
-    }
+    case I18n::Message::SmallFont:
+      return "abc"_l;
 
     default:
       assert(false);

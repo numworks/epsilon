@@ -179,14 +179,9 @@ SolutionsController::SolutionsController(Responder *parentResponder,
   const char *delta =
       GlobalPreferences::SharedGlobalPreferences()->discriminantSymbol();
   size_t lenDelta = strlen(delta);
-  const char *equalB = "=b";
   m_delta2Layout = HorizontalLayout::Builder(
       LayoutHelper::String(delta, lenDelta),
-      LayoutHelper::String(equalB, strlen(equalB)),
-      VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2'),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      LayoutHelper::String("-4ac", 4));
+      Layout("=b"_l ^ KSuperscriptL("2"_l) ^ "-4ac"_l));
   m_delta3Layout = LayoutHelper::String(delta, lenDelta);
   for (int i = 0; i < k_numberOfExactValueCells; i++) {
     m_exactValueCells[i].setParentResponder(

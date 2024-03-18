@@ -18,8 +18,12 @@ constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
 
 constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout, 0>();
 constexpr auto KCurlyBracesL = KUnary<BlockType::CurlyBraceLayout, 0>();
+constexpr auto KAbsL = KUnary<BlockType::AbsoluteValueLayout>();
+
 constexpr auto KDerivativeL = KUnary<BlockType::DerivativeLayout, 0>();
 constexpr auto KNthDerivativeL = KUnary<BlockType::NthDerivativeLayout, 0>();
+constexpr auto KIntegralL = KFixedArity<4, BlockType::IntegralLayout>();
+constexpr auto KCondensedSumL = KFixedArity<3, BlockType::CondensedSumLayout>();
 
 constexpr auto KSuperscriptL = KUnary<BlockType::VerticalOffsetLayout, 0>();
 constexpr auto KSubscriptL = KUnary<BlockType::VerticalOffsetLayout, 1>();

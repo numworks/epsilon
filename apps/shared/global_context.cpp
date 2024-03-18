@@ -117,7 +117,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
   Expression e = expressionForSymbolAndRecord(symbol, record, this);
   if (e.isUninitialized()) {
-    e = Undefined::Builder();
+    e = JuniorUndefined::Builder();
   }
   Expression finalExpression =
       expression.clone().replaceSymbolWithExpression(symbol, e);
@@ -228,10 +228,10 @@ const Expression GlobalContext::expressionForSequence(
     rankIsInteger = std::floor(rankValue) == rankValue;
   }
   if (rankIsInteger) {
-    return Float<double>::Builder(
+    return JuniorFloat<double>::Builder(
         seq.evaluateXYAtParameter(rankValue, sequenceContext()).y());
   }
-  return Float<double>::Builder(NAN);
+  return JuniorFloat<double>::Builder(NAN);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(

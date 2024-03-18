@@ -9,7 +9,7 @@ namespace Poincare {
 
 template <typename T>
 void VariableContext::setApproximationForVariable(T value) {
-  m_value = Float<T>::Builder(value);
+  m_value = JuniorFloat<T>::Builder(value);
 }
 
 Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(
@@ -42,7 +42,7 @@ const Expression VariableContext::protectedExpressionForSymbolAbstract(
     if (symbol.type() == ExpressionNode::Type::Symbol) {
       return clone ? m_value.clone() : m_value;
     }
-    return Undefined::Builder();
+    return JuniorUndefined::Builder();
   }
   return ContextWithParent::protectedExpressionForSymbolAbstract(
       symbol, clone, lastDescendantContext);

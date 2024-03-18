@@ -3,6 +3,7 @@
 
 #include <float.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/junior_expression.h>
 #include <poincare/number.h>
 
 namespace Poincare {
@@ -162,6 +163,12 @@ template <>
 constexpr inline double Float<double>::Max() {
   return DBL_MAX;
 }
+
+template <typename T>
+class JuniorFloat final : public JuniorExpression {
+ public:
+  static JuniorFloat Builder(T value);
+};
 
 }  // namespace Poincare
 

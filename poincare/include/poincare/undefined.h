@@ -1,6 +1,7 @@
 #ifndef POINCARE_UNDEFINED_H
 #define POINCARE_UNDEFINED_H
 
+#include <poincare/junior_expression.h>
 #include <poincare/number.h>
 
 namespace Poincare {
@@ -73,6 +74,11 @@ class Undefined final : public Number {
   }
   constexpr static const char* Name() { return "undef"; }
   constexpr static int NameSize() { return 6; }
+};
+
+class JuniorUndefined final : public JuniorExpression {
+ public:
+  static JuniorUndefined Builder();
 };
 
 }  // namespace Poincare

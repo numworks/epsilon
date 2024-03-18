@@ -1,5 +1,6 @@
 #include <poincare/float.h>
 #include <poincare/layout_helper.h>
+#include <poincare_junior/src/memory/edition_pool.h>
 
 namespace Poincare {
 
@@ -40,6 +41,22 @@ Float<T> Float<T>::Builder(T value) {
   FloatNode<T> *node = new (bufferNode) FloatNode<T>(value);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Float &>(h);
+}
+
+template <>
+JuniorFloat<float> JuniorFloat<float>::Builder(float value) {
+  JuniorExpression expr = JuniorExpression::Builder(
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::SingleFloat>(
+          value));
+  return static_cast<JuniorFloat<float> &>(expr);
+}
+
+template <>
+JuniorFloat<double> JuniorFloat<double>::Builder(double value) {
+  JuniorExpression expr = JuniorExpression::Builder(
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::DoubleFloat>(
+          value));
+  return static_cast<JuniorFloat<double> &>(expr);
 }
 
 template class FloatNode<float>;

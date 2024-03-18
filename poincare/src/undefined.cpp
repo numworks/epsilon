@@ -2,6 +2,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
+#include <poincare_junior/src/memory/edition_pool.h>
 
 #include <algorithm>
 
@@ -35,6 +36,12 @@ size_t UndefinedNode::serialize(char* buffer, size_t bufferSize,
 template <typename T>
 Evaluation<T> UndefinedNode::templatedApproximate() const {
   return Complex<T>::Undefined();
+}
+
+JuniorUndefined JuniorUndefined::Builder() {
+  JuniorExpression expr = JuniorExpression::Builder(
+      PoincareJ::SharedEditionPool->push(PoincareJ::BlockType::Undefined));
+  return static_cast<JuniorUndefined&>(expr);
 }
 
 template Evaluation<float> UndefinedNode::templatedApproximate() const;

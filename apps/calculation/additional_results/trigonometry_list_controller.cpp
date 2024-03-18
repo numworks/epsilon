@@ -99,7 +99,7 @@ void TrigonometryListController::computeAdditionalResults(
   }
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
-  m_layouts[index] = LayoutHelper::String("θ");
+  m_layouts[index] = Layout::String("θ");
 
   Expression exactAngleWithUnit = Multiplication::Builder(
       exactAngle.clone(),

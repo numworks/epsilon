@@ -184,20 +184,18 @@ void Interval::resultAtIndex(int index, double *value,
       break;
     case ResultOrder::SE:
       *value = standardError();
-      *message =
-          Poincare::LayoutHelper::String(I18n::translate(I18n::Message::SE));
+      *message = Poincare::Layout::String(I18n::translate(I18n::Message::SE));
       *subMessage = I18n::Message::StandardError;
       break;
     case ResultOrder::ME:
       *value = marginOfError();
-      *message =
-          Poincare::LayoutHelper::String(I18n::translate(I18n::Message::ME));
+      *message = Poincare::Layout::String(I18n::translate(I18n::Message::ME));
       *subMessage = I18n::Message::MarginOfError;
       break;
     default:
       assert(index == ResultOrder::IntervalDegree);
       *value = degreeOfFreedom();
-      *message = Poincare::LayoutHelper::String(
+      *message = Poincare::Layout::String(
           I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
       /* We reduce the precision since "Degrees of freedom" might not fit in

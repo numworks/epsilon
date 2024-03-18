@@ -46,12 +46,12 @@ ParameterRepresentation UniformDistribution::paramRepresentationAtIndex(
   switch (i) {
     case ParamsOrder::A: {
       Poincare::Layout a =
-          Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::A));
+          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::A));
       return ParameterRepresentation{a, I18n::Message::IntervalADescr};
     }
     case ParamsOrder::B: {
       Poincare::Layout b =
-          Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::B));
+          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::B));
       return ParameterRepresentation{b, I18n::Message::IntervalBDescr};
     }
     default:

@@ -23,7 +23,7 @@ class DistributionT : public Distribution {
  public:
   const char* criticalValueSymbol() const override { return "t"; }
   Poincare::Layout criticalValueSymbolLayout() const override {
-    return Poincare::LayoutHelper::String("t", -1);
+    return Poincare::Layout::String("t", -1);
   }
   float canonicalDensityFunction(float x,
                                  double degreesOfFreedom) const override;
@@ -39,7 +39,7 @@ class DistributionZ : public Distribution {
  public:
   const char* criticalValueSymbol() const override { return "z"; }
   Poincare::Layout criticalValueSymbolLayout() const override {
-    return Poincare::LayoutHelper::String("z", -1);
+    return Poincare::Layout::String("z", -1);
   }
   float canonicalDensityFunction(float x,
                                  double degreesOfFreedom) const override;

@@ -96,12 +96,11 @@ Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   if (numberOfChars >= bufferSize) {
     return Layout();
   }
-  Poincare::Layout subtractionLayout =
-      LayoutHelper::String(buffer, strlen(buffer));
+  Poincare::Layout subtractionLayout = Layout::String(buffer, strlen(buffer));
   Poincare::Layout absoluteValue =
       AbsoluteValueLayout::Builder(subtractionLayout);
   const char *dx = "dx";
-  Poincare::Layout dxLayout = LayoutHelper::String(dx, strlen(dx));
+  Poincare::Layout dxLayout = Layout::String(dx, strlen(dx));
   return Poincare::HorizontalLayout::Builder(absoluteValue, dxLayout);
 }
 

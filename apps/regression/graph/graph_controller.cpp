@@ -109,7 +109,7 @@ void GraphController::CurveSelectionController::fillCellForRow(
   CurveSelectionCellWithChevron *myCell =
       static_cast<CurveSelectionCellWithChevron *>(cell);
   myCell->setColor(DoublePairStore::colorOfSeriesAtIndex(series));
-  myCell->label()->setLayout(LayoutHelper::String(name));
+  myCell->label()->setLayout(Layout::String(name));
 }
 
 bool GraphController::buildRegressionExpression(

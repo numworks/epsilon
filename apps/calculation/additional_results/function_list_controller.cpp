@@ -53,7 +53,7 @@ void FunctionListController::computeAdditionalResults(
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] = HorizontalLayout::Builder(
-      LayoutHelper::String("y="),
+      Layout::String("y="),
       inputClone
           .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
           .createLayout(displayMode(), numberOfSignificantDigits(), context));

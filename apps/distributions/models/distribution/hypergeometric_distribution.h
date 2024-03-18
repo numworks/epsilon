@@ -39,8 +39,7 @@ class HypergeometricDistribution final : public ThreeParametersDistribution {
                                       I18n::Message::TotalItemsWithFeature,
                                       I18n::Message::SampleSize};
     return Shared::ParameterRepresentation{
-        Poincare::LayoutHelper::String(parameterNameAtIndex(i)),
-        parameterTexts[i]};
+        Poincare::Layout::String(parameterNameAtIndex(i)), parameterTexts[i]};
   }
   float privateComputeXMax() const override;
   float computeYMax() const override;

@@ -298,7 +298,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
         char buffer[bufferSize];
         size_t length =
             f->nameWithArgument(buffer, bufferSize, derivationOrder);
-        layout = LayoutHelper::String(buffer, length);
+        layout = Layout::String(buffer, length);
         hideMessage = true;
       }
       functionCell->expressionCell()->setLayout(layout);

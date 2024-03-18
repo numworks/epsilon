@@ -975,7 +975,7 @@ void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
     }
     if (resultLayout.isUninitialized()) {
       // If 2D parsing failed or edition is in 1D, try a simpler layout
-      resultLayout = LayoutHelper::String(text, strlen(text));
+      resultLayout = Layout::String(text, strlen(text));
     }
 
     myCell->label()->setLayout(resultLayout);

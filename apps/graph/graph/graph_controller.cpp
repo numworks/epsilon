@@ -288,7 +288,7 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
   constexpr size_t bufferSize = ContinuousFunction::k_maxNameWithArgumentSize;
   char buffer[bufferSize];
   size_t size = function->nameWithArgument(buffer, bufferSize);
-  return LayoutHelper::String(buffer, size);
+  return Layout::String(buffer, size);
 }
 
 void GraphController::reloadBannerView() {

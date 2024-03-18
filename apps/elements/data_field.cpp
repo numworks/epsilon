@@ -101,7 +101,7 @@ Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
   if (subscript[0] != '\0') {
     res.addOrMergeChildAtIndex(
         VerticalOffsetLayout::Builder(
-            LayoutHelper::String(subscript),
+            Layout::String(subscript),
             VerticalOffsetLayoutNode::VerticalPosition::Subscript),
         1);
   }
@@ -428,7 +428,7 @@ Layout AffinityDataField::getLayout(AtomicNumber z,
                                     int significantDigits) const {
   assert(std::isinf(ElementData::k_affinityUnstable));
   if (std::isinf(getDouble(z))) {
-    return LayoutHelper::String("Unstable");
+    return Layout::String("Unstable");
   }
   return DoubleDataFieldWithSubscriptSymbol::getLayout(z, significantDigits);
 }

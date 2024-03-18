@@ -34,7 +34,7 @@ class GeometricDistribution final : public OneParameterDistribution {
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
     return Shared::ParameterRepresentation{
-        Poincare::LayoutHelper::String(parameterNameAtIndex(0)),
+        Poincare::Layout::String(parameterNameAtIndex(0)),
         I18n::Message::SuccessProbability};
   }
   float privateComputeXMax() const override;

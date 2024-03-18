@@ -52,7 +52,7 @@ Layout IntegralGraphController::createFunctionLayout() {
       function->nameWithArgument(buffer, bufferSize - strlen(dx));
   assert(numberOfChars <= bufferSize);
   strlcpy(buffer + numberOfChars, dx, bufferSize - numberOfChars);
-  return LayoutHelper::String(buffer, strlen(buffer));
+  return Layout::String(buffer, strlen(buffer));
 }
 
 }  // namespace Graph

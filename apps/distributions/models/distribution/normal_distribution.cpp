@@ -39,12 +39,12 @@ ParameterRepresentation NormalDistribution::paramRepresentationAtIndex(
   switch (i) {
     case ParamsOrder::Mu: {
       Poincare::Layout u =
-          Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::Mu));
+          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::Mu));
       return ParameterRepresentation{u, I18n::Message::MeanDefinition};
     }
     case ParamsOrder::Sigma: {
-      Poincare::Layout s = Poincare::LayoutHelper::String(
-          parameterNameAtIndex(ParamsOrder::Sigma));
+      Poincare::Layout s =
+          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::Sigma));
       return ParameterRepresentation{s, I18n::Message::StandardDeviation};
     }
     default:

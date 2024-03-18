@@ -268,7 +268,7 @@ static Layout valueLayout(double value, int numberOfSignificantDigits,
   char buffer[k_bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
       value, buffer, k_bufferSize, numberOfSignificantDigits, displayMode);
-  Layout layout = LayoutHelper::String(buffer, strlen(buffer));
+  Layout layout = Layout::String(buffer, strlen(buffer));
   return layout;
 }
 
@@ -277,7 +277,7 @@ static Layout areaMessageLayout() {
   char buffer[bufferSize];
   int length = Print::CustomPrintf(buffer, bufferSize, "%s",
                                    I18n::translate(I18n::Message::Area));
-  return LayoutHelper::String(buffer, length);
+  return Layout::String(buffer, length);
 }
 
 void SumGraphController::LegendView::setSumLayout(Step step, double start,
@@ -297,7 +297,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
       {.KA = Layout::CodePoint(sumSymbol), .KB = startLayout, .KC = endLayout});
   if (step == Step::Result) {
     Layout leftLayout;
-    Layout equalLayout = LayoutHelper::String(" = ", 3);
+    Layout equalLayout = Layout::String(" = ", 3);
     Preferences *preferences = Preferences::SharedPreferences();
     Layout resultLayout =
         valueLayout(result, preferences->numberOfSignificantDigits(),

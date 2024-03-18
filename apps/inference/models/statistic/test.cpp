@@ -94,14 +94,14 @@ void Test::resultAtIndex(int index, double* value, Poincare::Layout* message,
       break;
     case ResultOrder::PValue:
       *value = pValue();
-      *message = Poincare::LayoutHelper::String(
-          I18n::translate(I18n::Message::PValue));
+      *message =
+          Poincare::Layout::String(I18n::translate(I18n::Message::PValue));
       *subMessage = I18n::Message::Default;
       break;
     default:
       assert(index == ResultOrder::TestDegree);
       *value = degreeOfFreedom();
-      *message = Poincare::LayoutHelper::String(
+      *message = Poincare::Layout::String(
           I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
       /* We reduce the precision since "Degrees of freedom" might not fit in

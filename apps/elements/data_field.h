@@ -19,7 +19,7 @@ typedef uint8_t AtomicNumber;
 class DataField {
  public:
   static Poincare::Layout UnknownValueLayout() {
-    return Poincare::LayoutHelper::String(
+    return Poincare::Layout::String(
         I18n::translate(I18n::Message::UnknownValue));
   }
   class ColorPair {
@@ -41,7 +41,7 @@ class DataField {
   virtual I18n::Message fieldLegend() const { return I18n::Message::Default; }
   virtual I18n::Message fieldSymbol() const { return I18n::Message::Default; }
   virtual Poincare::Layout fieldSymbolLayout() const {
-    return Poincare::LayoutHelper::String(I18n::translate(fieldSymbol()));
+    return Poincare::Layout::String(I18n::translate(fieldSymbol()));
   }
 
   virtual bool hasDouble(AtomicNumber z) const { return false; }
@@ -66,7 +66,7 @@ class EnumDataField : public DataField {
   Poincare::Layout getLayout(
       AtomicNumber z,
       int significantDigits = k_defaultSignificantDigits) const override {
-    return Poincare::LayoutHelper::String(I18n::translate(getMessage(z)));
+    return Poincare::Layout::String(I18n::translate(getMessage(z)));
   }
 };
 

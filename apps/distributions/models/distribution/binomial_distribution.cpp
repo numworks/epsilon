@@ -53,12 +53,12 @@ ParameterRepresentation BinomialDistribution::paramRepresentationAtIndex(
   switch (i) {
     case ParamsOrder::N: {
       Poincare::Layout n =
-          Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::N));
+          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::N));
       return ParameterRepresentation{n, I18n::Message::RepetitionNumber};
     }
     case ParamsOrder::P: {
       Poincare::Layout p =
-          Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::P));
+          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::P));
       return ParameterRepresentation{p, I18n::Message::SuccessProbability};
     }
     default:

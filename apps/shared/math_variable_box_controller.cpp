@@ -183,7 +183,7 @@ void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
     symbolLayout = u.definitionName();
   }
   if (symbolLayout.isUninitialized()) {
-    symbolLayout = LayoutHelper::String(symbolName, symbolLength);
+    symbolLayout = Layout::String(symbolName, symbolLength);
   }
   myCell->label()->setLayout(symbolLayout);
   myCell->subLabel()->setLayout(expressionLayoutForRecord(record, row));

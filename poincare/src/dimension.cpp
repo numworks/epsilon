@@ -21,14 +21,6 @@ Expression DimensionNode::shallowReduce(
   return Dimension(this).shallowReduce(reductionContext);
 }
 
-OLayout DimensionNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      Dimension(this), floatDisplayMode, numberOfSignificantDigits,
-      Dimension::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t DimensionNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

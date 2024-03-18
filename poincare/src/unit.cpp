@@ -1047,29 +1047,6 @@ Expression UnitNode::removeUnit(Expression* unit) {
   return Unit(this).removeUnit(unit);
 }
 
-OLayout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                               int numberOfSignificantDigits,
-                               Context* context) const {
-  /* TODO: compute the bufferSize more precisely... So far the longest unit is
-   * "month" of size 6 but later, we might add unicode to represent ohm or µ
-   * which would change the required size?*/
-  constexpr static size_t bufferSize = 10;
-  char buffer[bufferSize];
-  char* string = buffer;
-  size_t stringLen = serialize(buffer, bufferSize, floatDisplayMode,
-                               numberOfSignificantDigits);
-  if (!context ||
-      (context->canRemoveUnderscoreToUnits() &&
-       context->expressionTypeForIdentifier(buffer + 1, strlen(buffer) - 1) ==
-           Context::SymbolAbstractType::None)) {
-    // If the unit is not a defined variable, do not display the '_'
-    assert(string[0] == '_');
-    string++;
-    stringLen--;
-  }
-  return LayoutHelper::StringToStringLayout(string, stringLen);
-}
-
 size_t UnitNode::serialize(char* buffer, size_t bufferSize,
                            Preferences::PrintFloatMode floatDisplayMode,
                            int numberOfSignificantDigits) const {

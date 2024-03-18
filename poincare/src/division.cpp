@@ -26,18 +26,6 @@ TrinaryBoolean DivisionNode::isPositive(Context *context) const {
   return BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
 }
 
-OLayout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context *context) const {
-  const ExpressionNode *numerator = childAtIndex(0);
-  const ExpressionNode *denominator = childAtIndex(1);
-  return FractionLayout::Builder(
-      numerator->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                              context),
-      denominator->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                context));
-}
-
 bool DivisionNode::childNeedsSystemParenthesesAtSerialization(
     const TreeNode *child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() &&

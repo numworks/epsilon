@@ -25,21 +25,6 @@ Expression BinomialCoefficientNode::shallowReduce(
   return BinomialCoefficient(this).shallowReduce(reductionContext);
 }
 
-OLayout BinomialCoefficientNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  OLayout child0 = childAtIndex(0)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context);
-  OLayout child1 = childAtIndex(1)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context);
-  if (Preferences::SharedPreferences()->combinatoricSymbols() ==
-      Preferences::CombinatoricSymbols::Default) {
-    return BinomialCoefficientLayout::Builder(child0, child1);
-  } else {
-    return LetterCWithSubAndSuperscriptLayout::Builder(child0, child1);
-  }
-}
-
 size_t BinomialCoefficientNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

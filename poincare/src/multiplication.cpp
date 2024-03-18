@@ -313,40 +313,6 @@ CodePoint MultiplicationNode::operatorSymbol() const {
   return CodePointForOperatorSymbol(static_cast<MultiplicationSymbol>(sign));
 }
 
-OLayout MultiplicationNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context *context) const {
-  constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
-  char string[stringMaxSize];
-  SerializationHelper::CodePoint(string, stringMaxSize, operatorSymbol());
-  return LayoutHelper::Infix(
-      Multiplication(this), floatDisplayMode, numberOfSignificantDigits, string,
-      context,
-      [](const char *operatorName, Expression left, Expression right,
-         OLayout rightLayout) -> OLayout {
-        bool forceMarginOfRightUnit = true;
-        bool leftIsUnit = ExpressionIsUnit(left, nullptr);
-        bool rightIsUnit = ExpressionIsUnit(right, &forceMarginOfRightUnit);
-        if (rightIsUnit && leftIsUnit) {
-          /* Both children are unit: symbol is always a middle dot with no
-           * margin */
-          OLayout symbolLayout = CodePointLayout::Builder(
-              CodePointForOperatorSymbol(MultiplicationSymbol::MiddleDot));
-          symbolLayout.setMargin(false);
-          rightLayout.setMargin(false);
-          return symbolLayout;
-        }
-        if (rightIsUnit) {
-          // Unit on the right: don't display useless symbol and force margin
-          rightLayout.setMargin(true);
-          rightLayout.lockMargin(forceMarginOfRightUnit);
-          return OLayout();
-        }
-        return LayoutHelper::DefaultCreateOperatorLayoutForInfix(
-            operatorName, left, right, rightLayout);
-      });
-}
-
 size_t MultiplicationNode::serialize(
     char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

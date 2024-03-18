@@ -18,14 +18,6 @@ int TangentNode::numberOfChildren() const {
   return Tangent::s_functionHelper.numberOfChildren();
 }
 
-OLayout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
-  return LayoutHelper::Prefix(
-      Tangent(this), floatDisplayMode, numberOfSignificantDigits,
-      Tangent::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t TangentNode::serialize(char* buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

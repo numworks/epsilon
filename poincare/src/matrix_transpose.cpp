@@ -19,14 +19,6 @@ Expression MatrixTransposeNode::shallowReduce(
   return MatrixTranspose(this).shallowReduce(reductionContext);
 }
 
-OLayout MatrixTransposeNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      MatrixTranspose(this), floatDisplayMode, numberOfSignificantDigits,
-      MatrixTranspose::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t MatrixTransposeNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

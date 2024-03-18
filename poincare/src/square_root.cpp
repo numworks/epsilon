@@ -21,13 +21,6 @@ int SquareRootNode::numberOfChildren() const {
   return SquareRoot::s_functionHelper.numberOfChildren();
 }
 
-OLayout SquareRootNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context *context) const {
-  return NthRootLayout::Builder(childAtIndex(0)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context));
-}
-
 size_t SquareRootNode::serialize(char *buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {

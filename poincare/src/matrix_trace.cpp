@@ -21,14 +21,6 @@ Expression MatrixTraceNode::shallowReduce(
   return MatrixTrace(this).shallowReduce(reductionContext);
 }
 
-OLayout MatrixTraceNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      MatrixTrace(this), floatDisplayMode, numberOfSignificantDigits,
-      MatrixTrace::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t MatrixTraceNode::serialize(char* buffer, size_t bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits) const {

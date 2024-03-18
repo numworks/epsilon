@@ -35,16 +35,6 @@ size_t FloatNode<T>::serialize(char *buffer, size_t bufferSize,
 }
 
 template <typename T>
-OLayout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context *context) const {
-  char buffer[PrintFloat::k_maxFloatCharSize];
-  size_t numberOfChars = serialize(buffer, PrintFloat::k_maxFloatCharSize,
-                                   floatDisplayMode, numberOfSignificantDigits);
-  return LayoutHelper::String(buffer, numberOfChars);
-}
-
-template <typename T>
 Float<T> Float<T>::Builder(T value) {
   void *bufferNode = TreePool::sharedPool->alloc(sizeof(FloatNode<T>));
   FloatNode<T> *node = new (bufferNode) FloatNode<T>(value);

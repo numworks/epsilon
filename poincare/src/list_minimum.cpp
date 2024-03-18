@@ -18,14 +18,6 @@ size_t ListMinimumNode::serialize(char* buffer, size_t bufferSize,
       ListMinimum::s_functionHelper.aliasesList().mainAlias());
 }
 
-OLayout ListMinimumNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      ListMinimum(this), floatDisplayMode, numberOfSignificantDigits,
-      ListMinimum::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 Expression ListMinimumNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListMinimum(this).shallowReduce(reductionContext);

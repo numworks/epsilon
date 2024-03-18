@@ -54,13 +54,6 @@ int FunctionNode::getVariables(Context* context, isVariableTest isVariable,
                                 nextVariableIndex);
 }
 
-OLayout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  return LayoutHelper::Prefix(Function(this), floatDisplayMode,
-                              numberOfSignificantDigits, m_name, context);
-}
-
 size_t FunctionNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

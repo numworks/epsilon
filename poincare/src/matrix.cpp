@@ -35,20 +35,6 @@ Expression MatrixNode::shallowReduce(const ReductionContext &reductionContext) {
   return Matrix(this).shallowReduce(reductionContext);
 }
 
-OLayout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context *context) const {
-  assert(numberOfChildren() > 0);
-  MatrixLayout layout = MatrixLayout::Builder();
-  for (ExpressionNode *c : children()) {
-    layout.addChildAtIndexInPlace(
-        c->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
-        layout.numberOfChildren(), layout.numberOfChildren());
-  }
-  layout.setDimensions(m_numberOfRows, m_numberOfColumns);
-  return std::move(layout);
-}
-
 size_t MatrixNode::serialize(char *buffer, size_t bufferSize,
                              Preferences::PrintFloatMode floatDisplayMode,
                              int numberOfSignificantDigits) const {

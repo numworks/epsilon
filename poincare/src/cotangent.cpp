@@ -29,14 +29,6 @@ std::complex<T> CotangentNode::computeOnComplex(
   return numerator / denominator;
 }
 
-OLayout CotangentNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      Cotangent(this), floatDisplayMode, numberOfSignificantDigits,
-      Cotangent::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t CotangentNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

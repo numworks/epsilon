@@ -17,14 +17,6 @@ Expression VectorDotNode::shallowReduce(
   return VectorDot(this).shallowReduce(reductionContext);
 }
 
-OLayout VectorDotNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      VectorDot(this), floatDisplayMode, numberOfSignificantDigits,
-      VectorDot::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t VectorDotNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

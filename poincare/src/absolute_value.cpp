@@ -22,13 +22,6 @@ int AbsoluteValueNode::numberOfChildren() const {
   return AbsoluteValue::s_functionHelper.numberOfChildren();
 }
 
-OLayout AbsoluteValueNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return AbsoluteValueLayout::Builder(childAtIndex(0)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context));
-}
-
 size_t AbsoluteValueNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

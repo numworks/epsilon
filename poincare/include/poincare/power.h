@@ -55,9 +55,6 @@ class PowerNode final : public ExpressionNode {
   constexpr static int k_maxApproximatePowerMatrix = 1000;
 
   // Layout
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override;
 
   // Serialize
   bool childNeedsSystemParenthesesAtSerialization(

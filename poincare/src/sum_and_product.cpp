@@ -11,20 +11,6 @@ extern "C" {
 
 namespace Poincare {
 
-OLayout SumAndProductNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return createSumAndProductLayout(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context));
-}
-
 Expression SumAndProductNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return SumAndProduct(this).shallowReduce(reductionContext);

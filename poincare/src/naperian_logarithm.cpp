@@ -11,14 +11,6 @@ int NaperianLogarithmNode::numberOfChildren() const {
   return NaperianLogarithm::s_functionHelper.numberOfChildren();
 }
 
-OLayout NaperianLogarithmNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      this, floatDisplayMode, numberOfSignificantDigits,
-      NaperianLogarithm::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t NaperianLogarithmNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

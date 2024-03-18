@@ -29,12 +29,6 @@ class ComplexCartesianNode : public ExpressionNode {
 
  private:
   // Layout
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override {
-    assert(false);
-    return Layout();
-  }
   // Evaluation
   Evaluation<float> approximate(
       SinglePrecision p,

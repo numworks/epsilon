@@ -34,13 +34,6 @@ constexpr Expression::FunctionHelper HypergeomCDFRange::s_functionHelper;
 constexpr Expression::FunctionHelper HypergeomPDF::s_functionHelper;
 constexpr Expression::FunctionHelper InvHypergeom::s_functionHelper;
 
-OLayout DistributionDispatcherNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context *context) const {
-  return LayoutHelper::Prefix(DistributionDispatcher(this), floatDisplayMode,
-                              numberOfSignificantDigits, name(), context);
-}
-
 size_t DistributionDispatcherNode::serialize(
     char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

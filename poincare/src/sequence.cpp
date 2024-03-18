@@ -32,17 +32,6 @@ int SequenceNode::simplificationOrderSameType(const ExpressionNode* e,
   return delta;
 }
 
-OLayout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  OLayout rank = childAtIndex(0)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context);
-  return HorizontalLayout::Builder(
-      CodePointLayout::Builder(m_name[0]),
-      VerticalOffsetLayout::Builder(
-          rank, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-}
-
 size_t SequenceNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

@@ -67,9 +67,6 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
       ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right);
   static CodePoint CodePointForOperatorSymbol(MultiplicationSymbol symbol);
   // Layout
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override;
   CodePoint operatorSymbol() const;
 
   // Serialize

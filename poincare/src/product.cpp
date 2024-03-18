@@ -13,13 +13,6 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper Product::s_functionHelper;
 
-OLayout ProductNode::createSumAndProductLayout(
-    OLayout argumentLayout, OLayout subscriptLayout, OLayout symbolLayout,
-    OLayout superscriptLayout) const {
-  return ProductLayout::Builder(argumentLayout, symbolLayout, subscriptLayout,
-                                superscriptLayout);
-}
-
 size_t ProductNode::serialize(char* buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

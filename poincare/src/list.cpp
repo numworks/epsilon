@@ -37,25 +37,6 @@ size_t ListNode::serialize(char* buffer, size_t bufferSize,
   return writtenChars;
 }
 
-OLayout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                               int numberOfSignificantDigits,
-                               Context* context) const {
-  HorizontalLayout result = HorizontalLayout::Builder();
-  if (m_numberOfChildren > 1) {
-    OLayout elementsLayout = LayoutHelper::Infix(
-        List(this), floatDisplayMode, numberOfSignificantDigits, ",", context);
-    result.addOrMergeChildAtIndex(elementsLayout, 0);
-  } else if (m_numberOfChildren == 1) {
-    result.addOrMergeChildAtIndex(
-        childAtIndex(0)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context),
-        0);
-  } else if (m_numberOfChildren == 0) {
-    return CurlyBraceLayout::Builder();
-  }
-  return CurlyBraceLayout::Builder(result);
-}
-
 // Helper functions
 int ListNode::extremumIndex(const ApproximationContext& approximationContext,
                             bool minimum) {

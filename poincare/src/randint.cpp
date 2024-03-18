@@ -27,15 +27,6 @@ Expression RandintNode::createExpressionWithTwoChildren() const {
   return Randint(this);
 }
 
-OLayout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
-  return LayoutHelper::Prefix(
-      createExpressionWithTwoChildren(), floatDisplayMode,
-      numberOfSignificantDigits,
-      Randint::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t RandintNode::serialize(char* buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

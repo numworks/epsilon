@@ -12,14 +12,6 @@
 
 namespace Poincare {
 
-OLayout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits,
-                                Context* context) const {
-  return LayoutHelper::Prefix(
-      Round(this), floatDisplayMode, numberOfSignificantDigits,
-      Round::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t RoundNode::serialize(char* buffer, size_t bufferSize,
                             Preferences::PrintFloatMode floatDisplayMode,
                             int numberOfSignificantDigits) const {

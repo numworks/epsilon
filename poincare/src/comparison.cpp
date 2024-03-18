@@ -165,6 +165,7 @@ void ComparisonNode::logAttributes(std::ostream& stream) const {
 }
 #endif
 
+#if 0
 OLayout ComparisonNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
@@ -186,6 +187,7 @@ OLayout ComparisonNode::createLayout(
   result.addOrMergeChildAtIndex(lastChildLayout, result.numberOfChildren());
   return std::move(result);
 }
+#endif
 
 size_t ComparisonNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,

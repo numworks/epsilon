@@ -18,14 +18,6 @@ int DeterminantNode::numberOfChildren() const {
   return Determinant::s_functionHelper.numberOfChildren();
 }
 
-OLayout DeterminantNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      Determinant(this), floatDisplayMode, numberOfSignificantDigits,
-      Determinant::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t DeterminantNode::serialize(char* buffer, size_t bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits) const {

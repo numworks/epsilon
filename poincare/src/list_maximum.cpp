@@ -18,14 +18,6 @@ size_t ListMaximumNode::serialize(char* buffer, size_t bufferSize,
       ListMaximum::s_functionHelper.aliasesList().mainAlias());
 }
 
-OLayout ListMaximumNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      ListMaximum(this), floatDisplayMode, numberOfSignificantDigits,
-      ListMaximum::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 Expression ListMaximumNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListMaximum(this).shallowReduce(reductionContext);

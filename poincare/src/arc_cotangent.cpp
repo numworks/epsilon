@@ -29,14 +29,6 @@ std::complex<T> ArcCotangentNode::computeOnComplex(
                                              complexFormat, angleUnit);
 }
 
-OLayout ArcCotangentNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      ArcCotangent(this), floatDisplayMode, numberOfSignificantDigits,
-      ArcCotangent::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t ArcCotangentNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {

@@ -20,13 +20,6 @@ Expression MixedFractionNode::shallowReduce(
   return MixedFraction(this).shallowReduce(reductionContext);
 }
 
-OLayout MixedFractionNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Infix(MixedFraction(this), floatDisplayMode,
-                             numberOfSignificantDigits, "", context);
-}
-
 size_t MixedFractionNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

@@ -12,12 +12,6 @@ size_t EmptyExpressionNode::serialize(
   return SerializationHelper::CodePoint(buffer, bufferSize, UCodePointEmpty);
 }
 
-OLayout EmptyExpressionNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return HorizontalLayout::Builder();
-}
-
 template <typename T>
 Evaluation<T> EmptyExpressionNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {

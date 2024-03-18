@@ -21,15 +21,4 @@ size_t RightwardsArrowExpressionNode::serialize(
                                     numberOfSignificantDigits, string);
 }
 
-OLayout RightwardsArrowExpressionNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  constexpr CodePoint arrow = UCodePointRightwardsArrow;
-  constexpr size_t k_sizeOfArrow = UTF8Decoder::CharSizeOfCodePoint(arrow) + 1;
-  char arrowString[k_sizeOfArrow];
-  SerializationHelper::CodePoint(arrowString, k_sizeOfArrow, arrow);
-  return LayoutHelper::Infix(Expression(this), floatDisplayMode,
-                             numberOfSignificantDigits, arrowString, context);
-}
-
 }  // namespace Poincare

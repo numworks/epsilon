@@ -11,14 +11,6 @@ int RandintNoRepeatNode::numberOfChildren() const {
   return RandintNoRepeat::s_functionHelper.numberOfChildren();
 }
 
-OLayout RandintNoRepeatNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      RandintNoRepeat(this), floatDisplayMode, numberOfSignificantDigits,
-      RandintNoRepeat::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t RandintNoRepeatNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

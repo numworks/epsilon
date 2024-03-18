@@ -16,14 +16,6 @@ Expression MatrixEchelonFormNode::shallowReduce(
   return MatrixEchelonForm(this).shallowReduce(reductionContext);
 }
 
-OLayout MatrixEchelonFormNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(MatrixEchelonForm(this), floatDisplayMode,
-                              numberOfSignificantDigits, functionHelperName(),
-                              context);
-}
-
 size_t MatrixEchelonFormNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

@@ -27,9 +27,6 @@ class RandintNode final : public ExpressionNodeWithOneOrTwoChildren {
   constexpr static int k_defaultMinBound = 1;
   Expression createExpressionWithTwoChildren() const;
   // Layout
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;

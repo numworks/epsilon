@@ -40,13 +40,6 @@ class ListFunctionWithOneOrTwoParametersNode
         this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
         functionName());
   }
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override {
-    return LayoutHelper::Prefix(Expression(this), floatDisplayMode,
-                                numberOfSignificantDigits, functionName(),
-                                context);
-  }
 };
 
 }  // namespace Poincare

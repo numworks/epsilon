@@ -18,13 +18,6 @@ int FloorNode::numberOfChildren() const {
   return Floor::s_functionHelper.numberOfChildren();
 }
 
-OLayout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                int numberOfSignificantDigits,
-                                Context* context) const {
-  return FloorLayout::Builder(childAtIndex(0)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context));
-}
-
 size_t FloorNode::serialize(char* buffer, size_t bufferSize,
                             Preferences::PrintFloatMode floatDisplayMode,
                             int numberOfSignificantDigits) const {

@@ -28,13 +28,6 @@ bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression& child,
   return child.isOfType({Type::Subtraction, Type::Opposite, Type::Addition});
 }
 
-OLayout SubtractionNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Infix(Subtraction(this), floatDisplayMode,
-                             numberOfSignificantDigits, "-", context);
-}
-
 size_t SubtractionNode::serialize(char* buffer, size_t bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits) const {

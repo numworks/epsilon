@@ -393,12 +393,13 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::Two:
     case BlockType::IntegerShort:
     case BlockType::IntegerPosBig:
+    case BlockType::IntegerNegBig:
 #ifndef POINCARE_TREE_LOG
       assert(!Rational::Sign(expression).isStrictlyNegative());
 #endif
+      // TODO PCJ we need a way to layout an integer in base something
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
       break;
-    case BlockType::IntegerNegBig:
     case BlockType::Half:
     case BlockType::RationalShort:
     case BlockType::RationalPosBig:
@@ -415,6 +416,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     }
     case BlockType::Derivative:
     case BlockType::NthDerivative:
+      // TODO_PCJ createValidExpandedForm
+      // TODO PCJ condensed form
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {

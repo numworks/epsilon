@@ -20,12 +20,6 @@ int UndefinedNode::polynomialDegree(Context* context,
   return 0;
 }
 
-OLayout UndefinedNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::String(Undefined::Name(), Undefined::NameSize() - 1);
-}
-
 bool UndefinedNode::derivate(const ReductionContext& reductionContext,
                              Symbol symbol, Expression symbolValue) {
   return true;

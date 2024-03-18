@@ -17,14 +17,6 @@ Expression VectorCrossNode::shallowReduce(
   return VectorCross(this).shallowReduce(reductionContext);
 }
 
-OLayout VectorCrossNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      VectorCross(this), floatDisplayMode, numberOfSignificantDigits,
-      VectorCross::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t VectorCrossNode::serialize(char* buffer, size_t bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits) const {

@@ -16,14 +16,6 @@ int DivisionRemainderNode::numberOfChildren() const {
   return DivisionRemainder::s_functionHelper.numberOfChildren();
 }
 
-OLayout DivisionRemainderNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context *context) const {
-  return LayoutHelper::Prefix(
-      DivisionRemainder(this), floatDisplayMode, numberOfSignificantDigits,
-      DivisionRemainder::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t DivisionRemainderNode::serialize(
     char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

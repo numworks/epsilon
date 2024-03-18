@@ -7,14 +7,6 @@
 
 namespace Poincare {
 
-OLayout HyperbolicArcSineNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      HyperbolicArcSine(this), floatDisplayMode, numberOfSignificantDigits,
-      HyperbolicArcSine::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t HyperbolicArcSineNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

@@ -7,15 +7,6 @@
 
 namespace Poincare {
 
-OLayout HyperbolicArcTangentNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      HyperbolicArcTangent(this), floatDisplayMode, numberOfSignificantDigits,
-      HyperbolicArcTangent::s_functionHelper.aliasesList().mainAlias(),
-      context);
-}
-
 size_t HyperbolicArcTangentNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

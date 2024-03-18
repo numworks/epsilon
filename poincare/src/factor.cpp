@@ -20,14 +20,6 @@ int FactorNode::numberOfChildren() const {
   return Factor::s_functionHelper.numberOfChildren();
 }
 
-OLayout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context* context) const {
-  return LayoutHelper::Prefix(
-      Factor(this), floatDisplayMode, numberOfSignificantDigits,
-      Factor::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t FactorNode::serialize(char* buffer, size_t bufferSize,
                              Preferences::PrintFloatMode floatDisplayMode,
                              int numberOfSignificantDigits) const {

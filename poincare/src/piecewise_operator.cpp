@@ -14,30 +14,6 @@
 
 namespace Poincare {
 
-OLayout PiecewiseOperatorNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  PiecewiseOperatorLayout l = PiecewiseOperatorLayout::Builder();
-  int n = numberOfChildren();
-  int i = 0;
-  while (i + 1 < n) {
-    OLayout leftChildLayout = childAtIndex(i)->createLayout(
-        floatDisplayMode, numberOfSignificantDigits, context);
-    OLayout rightChildLayout = childAtIndex(i + 1)->createLayout(
-        floatDisplayMode, numberOfSignificantDigits, context);
-    l.addRow(leftChildLayout, rightChildLayout);
-    i += 2;
-  }
-  if (i < n) {
-    // Last child has no condition
-    assert(n % 2 == 1 && i == n - 1);
-    OLayout leftChildLayout = childAtIndex(i)->createLayout(
-        floatDisplayMode, numberOfSignificantDigits, context);
-    l.addRow(leftChildLayout);
-  }
-  return std::move(l);
-}
-
 size_t PiecewiseOperatorNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

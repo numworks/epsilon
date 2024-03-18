@@ -8,14 +8,6 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper LeastCommonMultiple::s_functionHelper;
 
-OLayout LeastCommonMultipleNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits,
-      LeastCommonMultiple::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t LeastCommonMultipleNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

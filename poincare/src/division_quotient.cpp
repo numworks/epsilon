@@ -31,13 +31,6 @@ Expression DivisionQuotientNode::shallowReduce(
   return DivisionQuotient(this).shallowReduce(reductionContext);
 }
 
-OLayout DivisionQuotientNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context *context) const {
-  return LayoutHelper::Prefix(
-      DivisionQuotient(this), floatDisplayMode, numberOfSignificantDigits,
-      DivisionQuotient::s_functionHelper.aliasesList().mainAlias(), context);
-}
 size_t DivisionQuotientNode::serialize(
     char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

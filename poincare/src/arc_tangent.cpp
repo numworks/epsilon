@@ -17,14 +17,6 @@ int ArcTangentNode::numberOfChildren() const {
   return ArcTangent::s_functionHelper.numberOfChildren();
 }
 
-OLayout ArcTangentNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      ArcTangent(this), floatDisplayMode, numberOfSignificantDigits,
-      ArcTangent::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t ArcTangentNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {

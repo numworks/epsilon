@@ -21,18 +21,6 @@ Expression ListSequenceNode::shallowReduce(
   return ListSequence(this).shallowReduce(reductionContext);
 }
 
-OLayout ListSequenceNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return ListSequenceLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context));
-}
-
 size_t ListSequenceNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {

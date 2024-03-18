@@ -46,9 +46,6 @@ class OppositeNode final : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 
   // Layout
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode =
                        Preferences::PrintFloatMode::Decimal,

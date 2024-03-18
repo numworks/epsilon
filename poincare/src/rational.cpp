@@ -119,17 +119,6 @@ size_t RationalNode::serialize(char *buffer, size_t bufferSize,
 
 // Layout
 
-OLayout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context *context) const {
-  OLayout numeratorLayout = signedNumerator().createLayout();
-  if (isInteger()) {
-    return numeratorLayout;
-  }
-  OLayout denominatorLayout = denominator().createLayout();
-  return FractionLayout::Builder(numeratorLayout, denominatorLayout);
-}
-
 // Approximation
 
 template <typename T>

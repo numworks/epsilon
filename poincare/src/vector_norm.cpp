@@ -18,13 +18,6 @@ Expression VectorNormNode::shallowReduce(
   return VectorNorm(this).shallowReduce(reductionContext);
 }
 
-OLayout VectorNormNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return VectorNormLayout::Builder(childAtIndex(0)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context));
-}
-
 size_t VectorNormNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {

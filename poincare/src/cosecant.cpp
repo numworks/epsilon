@@ -26,14 +26,6 @@ std::complex<T> CosecantNode::computeOnComplex(
   return std::complex<T>(1) / denominator;
 }
 
-OLayout CosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  return LayoutHelper::Prefix(
-      Cosecant(this), floatDisplayMode, numberOfSignificantDigits,
-      Cosecant::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t CosecantNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

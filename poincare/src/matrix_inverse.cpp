@@ -21,14 +21,6 @@ Expression MatrixInverseNode::shallowReduce(
   return MatrixInverse(this).shallowReduce(reductionContext);
 }
 
-OLayout MatrixInverseNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      MatrixInverse(this), floatDisplayMode, numberOfSignificantDigits,
-      MatrixInverse::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t MatrixInverseNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

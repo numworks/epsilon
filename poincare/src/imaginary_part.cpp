@@ -13,14 +13,6 @@ int ImaginaryPartNode::numberOfChildren() const {
   return ImaginaryPart::s_functionHelper.numberOfChildren();
 }
 
-OLayout ImaginaryPartNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      ImaginaryPart(this), floatDisplayMode, numberOfSignificantDigits,
-      ImaginaryPart::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t ImaginaryPartNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

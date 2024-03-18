@@ -38,6 +38,7 @@ int DerivativeNode::polynomialDegree(Context* context,
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
+#if 0
 OLayout DerivativeNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
@@ -63,27 +64,8 @@ OLayout DerivativeNode::createLayout(
     return HorizontalLayout::Builder(name, derivative,
                                      ParenthesisLayout::Builder(argument));
   }
-  // Case 2: layout is d^n(f(x))/dx|x=a
-  Expression e = createValidExpandedForm();
-  if (isFirstOrder()) {
-    return FirstOrderDerivativeLayout::Builder(
-        e.childAtIndex(0).createLayout(floatDisplayMode,
-                                       numberOfSignificantDigits, context),
-        e.childAtIndex(1).createLayout(floatDisplayMode,
-                                       numberOfSignificantDigits, context),
-        e.childAtIndex(2).createLayout(floatDisplayMode,
-                                       numberOfSignificantDigits, context));
-  }
-  return HigherOrderDerivativeLayout::Builder(
-      e.childAtIndex(0).createLayout(floatDisplayMode,
-                                     numberOfSignificantDigits, context),
-      e.childAtIndex(1).createLayout(floatDisplayMode,
-                                     numberOfSignificantDigits, context),
-      e.childAtIndex(2).createLayout(floatDisplayMode,
-                                     numberOfSignificantDigits, context),
-      e.childAtIndex(3).createLayout(floatDisplayMode,
-                                     numberOfSignificantDigits, context));
 }
+#endif
 
 size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,

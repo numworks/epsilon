@@ -38,24 +38,6 @@ bool PercentSimpleNode::childNeedsSystemParenthesesAtSerialization(
       child);
 }
 
-OLayout PercentSimpleNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  assert(numberOfChildren() == 1 || numberOfChildren() == 2);
-  HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      0);
-  int childrenCount = result.numberOfChildren();
-  childrenCount =
-      createSecondChildLayout(&result, childrenCount, floatDisplayMode,
-                              numberOfSignificantDigits, context);
-  result.addChildAtIndexInPlace(CodePointLayout::Builder('%'), childrenCount,
-                                childrenCount);
-  return std::move(result);
-}
-
 size_t PercentSimpleNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
@@ -134,29 +116,6 @@ bool PercentAdditionNode::childAtIndexNeedsUserParentheses(
 }
 
 // PercentSimpleNode
-
-int PercentAdditionNode::createSecondChildLayout(
-    Poincare::HorizontalLayout* result, int childrenCount,
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  ExpressionNode* percentChild = childAtIndex(1);
-  if (percentChild->type() == ExpressionNode::Type::Opposite) {
-    result->addChildAtIndexInPlace(
-        CodePointLayout::Builder(UCodePointSouthEastArrow), childrenCount,
-        childrenCount);
-    percentChild = percentChild->childAtIndex(0);
-  } else {
-    result->addChildAtIndexInPlace(
-        CodePointLayout::Builder(UCodePointNorthEastArrow), childrenCount,
-        childrenCount);
-  }
-  childrenCount++;
-  result->addOrMergeChildAtIndex(
-      percentChild->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                 context),
-      childrenCount);
-  return result->numberOfChildren();
-}
 
 int PercentAdditionNode::serializeSecondChild(
     char* buffer, int bufferSize, int numberOfChar,

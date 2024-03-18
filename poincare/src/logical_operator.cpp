@@ -54,17 +54,6 @@ bool LogicalOperatorNode::childAtIndexNeedsUserParentheses(
 
 // Not Operator
 
-OLayout LogicalOperatorNotNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context *context) const {
-  char nameBuffer[k_sizeOfNameBuffer];
-  fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer,
-                                       operatorName(), false);
-  return LayoutHelper::Prefix(LogicalOperatorNot(this), floatDisplayMode,
-                              numberOfSignificantDigits, nameBuffer, context,
-                              false);
-}
-
 size_t LogicalOperatorNotNode::serialize(
     char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
@@ -163,16 +152,6 @@ bool BinaryLogicalOperatorNode::evaluate(bool a, bool b) const {
       assert(m_typeOfOperator == OperatorType::Nor);
       return !(a || b);
   }
-}
-
-OLayout BinaryLogicalOperatorNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context *context) const {
-  char nameBuffer[k_sizeOfNameBuffer];
-  fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer,
-                                       operatorName(), true);
-  return LayoutHelper::Infix(BinaryLogicalOperator(this), floatDisplayMode,
-                             numberOfSignificantDigits, nameBuffer, context);
 }
 
 size_t BinaryLogicalOperatorNode::serialize(

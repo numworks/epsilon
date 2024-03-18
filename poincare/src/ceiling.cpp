@@ -18,13 +18,6 @@ int CeilingNode::numberOfChildren() const {
   return Ceiling::s_functionHelper.numberOfChildren();
 }
 
-OLayout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
-  return CeilingLayout::Builder(childAtIndex(0)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context));
-}
-
 size_t CeilingNode::serialize(char* buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

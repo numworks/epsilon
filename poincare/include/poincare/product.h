@@ -18,10 +18,6 @@ class ProductNode final : public SumAndProductNode {
 
  private:
   float emptySumAndProductValue() const override { return 1.0f; }
-  OLayout createSumAndProductLayout(OLayout argumentLayout,
-                                    OLayout symbolLayout,
-                                    OLayout subscriptLayout,
-                                    OLayout superscriptLayout) const override;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;

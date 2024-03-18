@@ -18,14 +18,6 @@ int ArcSineNode::numberOfChildren() const {
   return ArcSine::s_functionHelper.numberOfChildren();
 }
 
-OLayout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context* context) const {
-  return LayoutHelper::Prefix(
-      ArcSine(this), floatDisplayMode, numberOfSignificantDigits,
-      ArcSine::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t ArcSineNode::serialize(char* buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

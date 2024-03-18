@@ -25,14 +25,6 @@ std::complex<T> ArcSecantNode::computeOnComplex(
                                             complexFormat, angleUnit);
 }
 
-OLayout ArcSecantNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      ArcSecant(this), floatDisplayMode, numberOfSignificantDigits,
-      ArcSecant::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t ArcSecantNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

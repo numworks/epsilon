@@ -136,16 +136,6 @@ Expression DecimalNode::shallowReduce(
   return Decimal(this).shallowReduce(reductionContext);
 }
 
-OLayout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context *context) const {
-  char buffer[k_maxBufferSize];
-  int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode,
-                                    numberOfSignificantDigits);
-  OLayout res = LayoutHelper::String(buffer, numberOfChars);
-  return res;
-}
-
 size_t DecimalNode::serialize(char *buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

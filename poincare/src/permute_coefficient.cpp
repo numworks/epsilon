@@ -19,24 +19,6 @@ int PermuteCoefficientNode::numberOfChildren() const {
   return PermuteCoefficient::s_functionHelper.numberOfChildren();
 }
 
-OLayout PermuteCoefficientNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context *context) const {
-  if (Preferences::SharedPreferences()->combinatoricSymbols() ==
-      Preferences::CombinatoricSymbols::Default) {
-    return LayoutHelper::Prefix(
-        PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits,
-        PermuteCoefficient::s_functionHelper.aliasesList().mainAlias(),
-        context);
-  } else {
-    return LetterAWithSubAndSuperscriptLayout::Builder(
-        childAtIndex(0)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context),
-        childAtIndex(1)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context));
-  }
-}
-
 size_t PermuteCoefficientNode::serialize(
     char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

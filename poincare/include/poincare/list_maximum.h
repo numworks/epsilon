@@ -27,9 +27,6 @@ class ListMaximumNode : public ExpressionNode {
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override;
 
   Expression shallowReduce(const ReductionContext& reductionContext) override;
 

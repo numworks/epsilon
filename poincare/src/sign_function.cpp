@@ -25,14 +25,6 @@ int SignFunctionNode::numberOfChildren() const {
   return SignFunction::s_functionHelper.numberOfChildren();
 }
 
-OLayout SignFunctionNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      SignFunction(this), floatDisplayMode, numberOfSignificantDigits,
-      SignFunction::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t SignFunctionNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {

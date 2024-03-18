@@ -37,9 +37,6 @@ class EmptyExpressionNode final : public ExpressionNode {
 
  private:
   // Layout
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override;
   // Evaluation
   Evaluation<float> approximate(
       SinglePrecision p,

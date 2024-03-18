@@ -18,14 +18,6 @@ size_t ListProductNode::serialize(char* buffer, size_t bufferSize,
       ListProduct::s_functionHelper.aliasesList().mainAlias());
 }
 
-OLayout ListProductNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      ListProduct(this), floatDisplayMode, numberOfSignificantDigits,
-      ListProduct::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 Expression ListProductNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListProduct(this).shallowReduce(reductionContext);

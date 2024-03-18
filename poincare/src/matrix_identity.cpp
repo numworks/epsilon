@@ -22,14 +22,6 @@ Expression MatrixIdentityNode::shallowReduce(
   return MatrixIdentity(this).shallowReduce(reductionContext);
 }
 
-OLayout MatrixIdentityNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      MatrixIdentity(this), floatDisplayMode, numberOfSignificantDigits,
-      MatrixIdentity::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t MatrixIdentityNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

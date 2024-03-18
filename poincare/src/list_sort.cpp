@@ -19,14 +19,6 @@ size_t ListSortNode::serialize(char* buffer, size_t bufferSize,
       ListSort::s_functionHelper.aliasesList().mainAlias());
 }
 
-OLayout ListSortNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  return LayoutHelper::Prefix(
-      ListSort(this), floatDisplayMode, numberOfSignificantDigits,
-      ListSort::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 Expression ListSortNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListSort(this).shallowReduce(reductionContext);

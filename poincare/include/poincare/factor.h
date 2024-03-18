@@ -29,9 +29,6 @@ class FactorNode final : public ExpressionNode {
 
  private:
   /* Layout */
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int numberOfSignificantDigits,
-                       Context* context) const override;
   /* Serialization */
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,

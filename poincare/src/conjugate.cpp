@@ -17,13 +17,6 @@ int ConjugateNode::numberOfChildren() const {
   return Conjugate::s_functionHelper.numberOfChildren();
 }
 
-OLayout ConjugateNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return ConjugateLayout::Builder(childAtIndex(0)->createLayout(
-      floatDisplayMode, numberOfSignificantDigits, context));
-}
-
 size_t ConjugateNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

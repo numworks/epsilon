@@ -40,29 +40,6 @@ bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression& child,
   return child.isOfType({Type::Addition, Type::Subtraction, Type::Opposite});
 }
 
-OLayout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  HorizontalLayout result =
-      HorizontalLayout::Builder(CodePointLayout::Builder('-'));
-  if (childAtIndex(0)->type() == Type::Opposite ||
-      (childAtIndex(0)->type() == Type::Power &&
-       childAtIndex(0)->childAtIndex(0)->type() != Type::Symbol)) {
-    result.addOrMergeChildAtIndex(
-        LayoutHelper::Parentheses(
-            childAtIndex(0)->createLayout(floatDisplayMode,
-                                          numberOfSignificantDigits, context),
-            false),
-        1);
-  } else {
-    result.addOrMergeChildAtIndex(
-        childAtIndex(0)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context),
-        1);
-  }
-  return std::move(result);
-}
-
 size_t OppositeNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

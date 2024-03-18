@@ -35,20 +35,6 @@ int IntegralNode::polynomialDegree(Context* context,
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-OLayout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  return IntegralLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context));
-}
-
 size_t IntegralNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

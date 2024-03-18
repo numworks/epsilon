@@ -68,13 +68,6 @@ int SymbolNode::getVariables(Context* context, isVariableTest isVariable,
   return nextVariableIndex;
 }
 
-OLayout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context* context) const {
-  assert(!isSystemSymbol());
-  return LayoutHelper::String(m_name, strlen(m_name));
-}
-
 Expression SymbolNode::shallowReduce(const ReductionContext& reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }

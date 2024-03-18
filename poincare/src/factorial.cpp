@@ -66,20 +66,6 @@ std::complex<T> FactorialNode::computeOnComplex(
   return std::round(result);
 }
 
-OLayout FactorialNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      0);
-  int childrenCount = result.numberOfChildren();
-  result.addChildAtIndexInPlace(CodePointLayout::Builder('!'), childrenCount,
-                                childrenCount);
-  return std::move(result);
-}
-
 size_t FactorialNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

@@ -12,14 +12,6 @@ int FracPartNode::numberOfChildren() const {
   return FracPart::s_functionHelper.numberOfChildren();
 }
 
-OLayout FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  return LayoutHelper::Prefix(
-      FracPart(this), floatDisplayMode, numberOfSignificantDigits,
-      FracPart::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t FracPartNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

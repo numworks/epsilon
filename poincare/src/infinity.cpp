@@ -10,15 +10,6 @@ extern "C" {
 
 namespace Poincare {
 
-OLayout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  char buffer[5];
-  size_t numberOfChars =
-      serialize(buffer, 5, floatDisplayMode, numberOfSignificantDigits);
-  return LayoutHelper::String(buffer, numberOfChars);
-}
-
 size_t InfinityNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

@@ -25,12 +25,6 @@ template BooleanEvaluation<float> BooleanEvaluation<float>::Builder(bool value);
 template BooleanEvaluation<double> BooleanEvaluation<double>::Builder(
     bool value);
 
-OLayout BooleanNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                  int numberOfSignificantDigits,
-                                  Context *context) const {
-  return LayoutHelper::String(aliasesList().mainAlias());
-}
-
 size_t BooleanNode::serialize(char *buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

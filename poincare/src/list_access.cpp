@@ -37,49 +37,6 @@ size_t ListAccessNode<U>::serialize(
 }
 
 template <>
-OLayout ListAccessNode<1>::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(
-      LayoutHelper::Parentheses(
-          childAtIndex(0)->createLayout(floatDisplayMode,
-                                        numberOfSignificantDigits, context),
-          false),
-      0);
-  result.addOrMergeChildAtIndex(
-      childAtIndex(k_listChildIndex)
-          ->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
-      0);
-  return std::move(result);
-}
-
-template <>
-OLayout ListAccessNode<2>::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  HorizontalLayout parameters = HorizontalLayout::Builder();
-  parameters.addOrMergeChildAtIndex(
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      0);
-  parameters.addOrMergeChildAtIndex(CodePointLayout::Builder(','), 0);
-  parameters.addOrMergeChildAtIndex(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      0);
-
-  HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(parameters, false),
-                                0);
-  result.addOrMergeChildAtIndex(
-      childAtIndex(k_listChildIndex)
-          ->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
-      0);
-  return std::move(result);
-}
-
-template <>
 Expression ListAccessNode<1>::shallowReduce(
     const ReductionContext& reductionContext) {
   return ListElement(this).shallowReduce(reductionContext);

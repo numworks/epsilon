@@ -13,14 +13,6 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper Sum::s_functionHelper;
 
-OLayout SumNode::createSumAndProductLayout(OLayout argumentLayout,
-                                           OLayout symbolLayout,
-                                           OLayout subscriptLayout,
-                                           OLayout superscriptLayout) const {
-  return SumLayout::Builder(argumentLayout, symbolLayout, subscriptLayout,
-                            superscriptLayout);
-}
-
 size_t SumNode::serialize(char* buffer, size_t bufferSize,
                           Preferences::PrintFloatMode floatDisplayMode,
                           int numberOfSignificantDigits) const {

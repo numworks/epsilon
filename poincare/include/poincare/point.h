@@ -10,8 +10,6 @@ class PointNode : public ExpressionNode {
  public:
   // ExpressionNode
   Type type() const override { return Type::Point; }
-  OLayout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                       int significantDigits, Context* context) const override;
   Evaluation<float> approximate(
       SinglePrecision p, const ApproximationContext& context) const override {
     return templatedApproximate<float>(context);

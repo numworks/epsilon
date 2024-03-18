@@ -17,14 +17,6 @@ int ComplexArgumentNode::numberOfChildren() const {
   return ComplexArgument::s_functionHelper.numberOfChildren();
 }
 
-OLayout ComplexArgumentNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  return LayoutHelper::Prefix(
-      ComplexArgument(this), floatDisplayMode, numberOfSignificantDigits,
-      ComplexArgument::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t ComplexArgumentNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

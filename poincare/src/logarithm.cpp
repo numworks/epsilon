@@ -25,21 +25,6 @@
 
 namespace Poincare {
 
-OLayout LogarithmNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  if (numberOfChildren() == 2) {
-    return LayoutHelper::Logarithm(
-        childAtIndex(0)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context),
-        childAtIndex(1)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context));
-  }
-  return LayoutHelper::Prefix(
-      this, floatDisplayMode, numberOfSignificantDigits,
-      Logarithm::s_functionHelper.aliasesList().mainAlias(), context);
-}
-
 size_t LogarithmNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

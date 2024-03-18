@@ -59,35 +59,6 @@ int AdditionNode::getPolynomialCoefficients(Context* context,
 
 // Layout
 
-OLayout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits,
-                                   Context* context) const {
-  OLayout result = LayoutHelper::Infix(Addition(this), floatDisplayMode,
-                                       numberOfSignificantDigits, "+", context);
-  if (displayImplicitAdditionBetweenUnits(result)) {
-#if 1  // TODO PCJ
-    // Remove the '+'
-    int i = result.numberOfChildren() - 1;
-    while (i >= 0) {
-      OLayout child = result.childAtIndex(i);
-      if (child.type() == LayoutNode::Type::CodePointLayout &&
-          static_cast<CodePointLayout&>(child).codePoint() == '+') {
-        assert(result.type() == LayoutNode::Type::HorizontalLayout);
-        result.removeChildAtIndexInPlace(i);
-      }
-      i--;
-    }
-    assert(i == -1);
-#else
-    // Remove the '+'
-    Layout l = result;
-    PoincareJ::AppHelpers::MakeAdditionImplicit(l);
-    result = JuniorLayout::UnJuniorize(l);
-#endif
-  }
-  return result;
-}
-
 size_t AdditionNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

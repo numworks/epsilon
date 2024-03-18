@@ -36,19 +36,9 @@ HypothesisController::HypothesisController(
                  &HypothesisController::ButtonAction, this),
              ButtonCell::Style::EmbossedLight),
       m_test(test) {
-  Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
-      Poincare::CodePointLayout::Builder('H'),
-      Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('0'),
-          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-  Poincare::Layout ha = Poincare::HorizontalLayout::Builder(
-      Poincare::CodePointLayout::Builder('H'),
-      Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('a'),
-          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-  m_h0.label()->setLayout(h0);
+  m_h0.label()->setLayout("H"_l ^ KSubscriptL("0"_l));
   m_h0.subLabel()->setMessage(I18n::Message::H0Sub);
-  m_ha.label()->setLayout(ha);
+  m_ha.label()->setLayout("H"_l ^ KSubscriptL("a"_l));
   m_ha.subLabel()->setMessage(I18n::Message::HaSub);
   m_ha.accessory()->setDropdown(&m_haDropdown);
 }

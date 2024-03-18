@@ -3,10 +3,7 @@ app_headers += apps/inference/app.h
 
 app_inference_src = $(addprefix apps/inference/,\
   app.cpp \
-  text_helpers.cpp \
 )
-
-app_inference_test_src += apps/inference/text_helpers.cpp
 
 app_inference_test_src += $(addprefix apps/inference/models/statistic/,\
   interfaces/distributions.cpp \

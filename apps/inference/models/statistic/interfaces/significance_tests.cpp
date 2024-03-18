@@ -7,8 +7,8 @@
 #include <inference/models/statistic/two_means_interval.h>
 #include <inference/models/statistic/two_means_test.h>
 #include <inference/text_helpers.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/combined_code_points_layout.h>
+#include <poincare/layout.h>
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
@@ -158,18 +158,16 @@ double OneMean::ProcessParameterForIndex(double p, int index) {
 ParameterRepresentation OneMean::ZParameterRepresentationAtIndex(int index) {
   switch (index) {
     case ParamsOrder::x: {
-      Poincare::Layout x =
-          CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline);
+      Layout x =
+          KRackL(KCombinedCodePointL<'x', UCodePointCombiningOverline>());
       return ParameterRepresentation{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::s: {
-      Layout sigma =
-          CodePointLayout::Builder(CodePoint(UCodePointGreekSmallLetterSigma));
+      Layout sigma = KRackL(KCodePointL<UCodePointGreekSmallLetterSigma>());
       return ParameterRepresentation{sigma, I18n::Message::PopulationStd};
     }
     case ParamsOrder::n: {
-      Poincare::Layout n = CodePointLayout::Builder('n');
-      return ParameterRepresentation{n, I18n::Message::SampleSize};
+      return ParameterRepresentation{"n"_l, I18n::Message::SampleSize};
     }
   }
   assert(false);
@@ -179,8 +177,7 @@ ParameterRepresentation OneMean::ZParameterRepresentationAtIndex(int index) {
 ParameterRepresentation OneMean::TParameterRepresentationAtIndex(int index) {
   switch (index) {
     case ParamsOrder::s: {
-      Poincare::Layout s = CodePointLayout::Builder('s');
-      return ParameterRepresentation{s, I18n::Message::SampleSTD};
+      return ParameterRepresentation{"s"_l, I18n::Message::SampleSTD};
     }
     default:
       return OneMean::ZParameterRepresentationAtIndex(index);
@@ -215,8 +212,7 @@ void OneMean::ComputeTInterval(Interval* i) {
 
 Poincare::Layout OneProportion::EstimateLayout(Poincare::Layout* layout) {
   if (layout->isUninitialized()) {
-    *layout =
-        CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex);
+    *layout = KRackL(KCombinedCodePointL<'p', UCodePointCombiningCircumflex>());
   }
   return *layout;
 }
@@ -262,12 +258,10 @@ ParameterRepresentation OneProportion::ParameterRepresentationAtIndex(
     int index) {
   switch (index) {
     case ParamsOrder::x: {
-      Layout x = CodePointLayout::Builder('x');
-      return ParameterRepresentation{x, I18n::Message::NumberOfSuccesses};
+      return ParameterRepresentation{"x"_l, I18n::Message::NumberOfSuccesses};
     }
     case ParamsOrder::n: {
-      Layout n = CodePointLayout::Builder('n');
-      return ParameterRepresentation{n, I18n::Message::SampleSize};
+      return ParameterRepresentation{"n"_l, I18n::Message::SampleSize};
     }
   }
   assert(false);
@@ -354,7 +348,9 @@ bool TwoMeans::IntervalInitializeDistribution(
 
 Poincare::Layout TwoMeans::EstimateLayout(Poincare::Layout* layout) {
   if (layout->isUninitialized()) {
-    *layout = XOneMinusXTwoLayout();
+    constexpr KTree xBar =
+        KCombinedCodePointL<'x', UCodePointCombiningOverline>();
+    *layout = xBar ^ KSubscriptL("1"_l) ^ "-"_l ^ xBar ^ KSubscriptL("2"_l);
   }
   return *layout;
 }
@@ -428,45 +424,32 @@ bool TwoMeans::TValidateInputs(double* params) {
 }
 
 ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int index) {
+  constexpr KTree xBar =
+      KCombinedCodePointL<'x', UCodePointCombiningOverline>();
   switch (index) {
     case ParamsOrder::x1: {
-      Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
-          CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
-          VerticalOffsetLayout::Builder(
-              CodePointLayout::Builder('1'),
-              VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-      return ParameterRepresentation{x1, I18n::Message::Sample1Mean};
+      return ParameterRepresentation{xBar ^ KSubscriptL("1"_l),
+                                     I18n::Message::Sample1Mean};
     }
     case ParamsOrder::n1: {
-      Poincare::HorizontalLayout n1 =
-          LayoutHelper::CodePointSubscriptCodePointLayout('n', '1');
-      return ParameterRepresentation{n1, I18n::Message::Sample1Size};
+      return ParameterRepresentation{"n"_l ^ KSubscriptL("1"_l),
+                                     I18n::Message::Sample1Size};
     }
     case ParamsOrder::s1: {
-      Poincare::HorizontalLayout sigma1 =
-          LayoutHelper::CodePointSubscriptCodePointLayout(
-              CodePoint(UCodePointGreekSmallLetterSigma), '1');
-      return ParameterRepresentation{sigma1, I18n::Message::Population1Std};
+      return ParameterRepresentation{"σ"_l ^ KSubscriptL("1"_l),
+                                     I18n::Message::Population1Std};
     }
     case ParamsOrder::x2: {
-      Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
-          CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
-          VerticalOffsetLayout::Builder(
-              CodePointLayout::Builder('2'),
-              VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-      return ParameterRepresentation{x2, I18n::Message::Sample2Mean};
+      return ParameterRepresentation{xBar ^ KSubscriptL("2"_l),
+                                     I18n::Message::Sample2Mean};
     }
     case ParamsOrder::n2: {
-      Poincare::HorizontalLayout n2 =
-          LayoutHelper::CodePointSubscriptCodePointLayout('n', '2');
-      ;
-      return ParameterRepresentation{n2, I18n::Message::Sample2Size};
+      return ParameterRepresentation{"n"_l ^ KSubscriptL("2"_l),
+                                     I18n::Message::Sample2Size};
     }
     case ParamsOrder::s2: {
-      Poincare::HorizontalLayout sigma2 =
-          LayoutHelper::CodePointSubscriptCodePointLayout(
-              CodePoint(UCodePointGreekSmallLetterSigma), '2');
-      return ParameterRepresentation{sigma2, I18n::Message::Population2Std};
+      return ParameterRepresentation{"σ"_l ^ KSubscriptL("2"_l),
+                                     I18n::Message::Population2Std};
     }
   }
   assert(false);
@@ -578,22 +561,15 @@ double TwoMeans::ComputePooledStandardError(double n1, double s1, double n2,
 
 /* TwoProportions */
 
-Poincare::Layout TwoProportions::EstimateLayout(Poincare::Layout* layout) {
+Layout TwoProportions::EstimateLayout(Poincare::Layout* layout) {
+  constexpr KTree pHat =
+      KCombinedCodePointL<'p', UCodePointCombiningCircumflex>();
   if (layout->isUninitialized()) {
-    Poincare::HorizontalLayout p1 = Poincare::HorizontalLayout::Builder(
-        CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
-        VerticalOffsetLayout::Builder(
-            CodePointLayout::Builder('1'),
-            VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-    Poincare::HorizontalLayout p2 = Poincare::HorizontalLayout::Builder(
-        CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
-        VerticalOffsetLayout::Builder(
-            CodePointLayout::Builder('2'),
-            VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+    KTree p1 = pHat ^ KSubscriptL("1"_l);
+    KTree p2 = pHat ^ KSubscriptL("2"_l);
     /* we build a nested layout instead of a flat one to be able to retrieve p1
        and p2 from it when needed by the estimates of the TwoProportionTest */
-    Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(
-        p1, CodePointLayout::Builder('-'), p2);
+    Layout res = p1 ^ "-"_l ^ p2;
     *layout = std::move(res);
   }
   return *layout;
@@ -655,36 +631,20 @@ ParameterRepresentation TwoProportions::ParameterRepresentationAtIndex(
     int index) {
   switch (index) {
     case ParamsOrder::x1: {
-      Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
-          CodePointLayout::Builder('x'),
-          VerticalOffsetLayout::Builder(
-              CodePointLayout::Builder('1'),
-              VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-      return ParameterRepresentation{x1, I18n::Message::SuccessSample1};
+      return ParameterRepresentation{"x"_l ^ KSubscriptL("1"_l),
+                                     I18n::Message::SuccessSample1};
     }
     case ParamsOrder::n1: {
-      Poincare::HorizontalLayout n1 = Poincare::HorizontalLayout::Builder(
-          CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(
-              CodePointLayout::Builder('1'),
-              VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-      return ParameterRepresentation{n1, I18n::Message::Sample1Size};
+      return ParameterRepresentation{"n"_l ^ KSubscriptL("1"_l),
+                                     I18n::Message::Sample1Size};
     }
     case ParamsOrder::x2: {
-      Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
-          CodePointLayout::Builder('x'),
-          VerticalOffsetLayout::Builder(
-              CodePointLayout::Builder('2'),
-              VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-      return ParameterRepresentation{x2, I18n::Message::SuccessSample2};
+      return ParameterRepresentation{"x"_l ^ KSubscriptL("2"_l),
+                                     I18n::Message::SuccessSample2};
     }
     case ParamsOrder::n2: {
-      Poincare::HorizontalLayout n2 = Poincare::HorizontalLayout::Builder(
-          CodePointLayout::Builder('n'),
-          VerticalOffsetLayout::Builder(
-              CodePointLayout::Builder('2'),
-              VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-      return ParameterRepresentation{n2, I18n::Message::Sample2Size};
+      return ParameterRepresentation{"n"_l ^ KSubscriptL("2"_l),
+                                     I18n::Message::Sample2Size};
     }
   }
   assert(false);

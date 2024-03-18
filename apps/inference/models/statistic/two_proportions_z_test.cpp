@@ -1,6 +1,6 @@
 #include "two_proportions_z_test.h"
 
-#include <poincare_layouts.h>
+#include <poincare/layout.h>
 
 namespace Inference {
 
@@ -24,18 +24,14 @@ double TwoProportionsZTest::estimateValue(int index) {
 }
 
 Poincare::Layout TwoProportionsZTest::estimateLayout(int index) const {
-  Poincare::Layout pHat = Poincare::CombinedCodePointsLayout::Builder(
-      'p', UCodePointCombiningCircumflex);
+  constexpr KTree pHat =
+      KCombinedCodePointL<'p', UCodePointCombiningCircumflex>();
   if (static_cast<EstimatesOrder>(index) == EstimatesOrder::Pooled) {
-    return pHat;  // p̂
+    return KRackL(pHat);  // p̂
   }
-  return Poincare::HorizontalLayout::Builder(
-      pHat,
-      Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder(
-              static_cast<EstimatesOrder>(index) == EstimatesOrder::P1 ? '1'
-                                                                       : '2'),
-          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+  return static_cast<EstimatesOrder>(index) == EstimatesOrder::P1
+             ? pHat ^ KSubscriptL("1"_l)
+             : pHat ^ KSubscriptL("2"_l);
 }
 
 I18n::Message TwoProportionsZTest::estimateDescription(int index) {

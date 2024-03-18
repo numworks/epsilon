@@ -33,8 +33,6 @@ void PrintValueInTextHolder(
   }
 }
 
-Poincare::Layout XOneMinusXTwoLayout();
-
 }  // namespace Inference
 
 #endif

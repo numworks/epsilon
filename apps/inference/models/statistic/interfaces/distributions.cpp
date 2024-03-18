@@ -3,11 +3,13 @@
 #include <inference/models/statistic/statistic.h>
 #include <inference/models/statistic/test.h>
 #include <poincare/chi2_distribution.h>
-#include <poincare/code_point_layout.h>
+#include <poincare/layout.h>
 #include <poincare/normal_distribution.h>
 #include <poincare/student_distribution.h>
 #include <poincare/test/helper.h>
 #include <poincare/vertical_offset_layout.h>
+
+using namespace PoincareJ;
 
 namespace Inference {
 
@@ -66,11 +68,7 @@ float DistributionZ::yMax(double degreesOfFreedom) const {
 /* Distribution chi 2 */
 
 Poincare::Layout DistributionChi2::criticalValueSymbolLayout() const {
-  return Poincare::HorizontalLayout::Builder(
-      Poincare::CodePointLayout::Builder(UCodePointGreekSmallLetterChi),
-      Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('2'),
-          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript));
+  return "χ"_l ^ KSuperscriptL("2"_l);
 }
 
 float DistributionChi2::canonicalDensityFunction(

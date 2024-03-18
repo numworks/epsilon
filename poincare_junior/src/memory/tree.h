@@ -86,7 +86,9 @@ class Tree : public TypeBlock {
 
   // Tree Navigation
   const Tree* nextNode() const;
-  Tree* nextNode() { return Utils::DeconstifyPtr(&Tree::nextNode, this); };
+  Tree* nextNode() {
+    return const_cast<Tree*>(const_cast<const Tree*>(this)->nextNode());
+  }
   const Tree* firstChild() const { return nextNode(); }
   Tree* firstChild() { return nextNode(); }
   const Tree* nextTree() const {
@@ -98,7 +100,9 @@ class Tree : public TypeBlock {
     }
     return result;
   }
-  Tree* nextTree() { return Utils::DeconstifyPtr(&Tree::nextTree, this); };
+  Tree* nextTree() {
+    return const_cast<Tree*>(const_cast<const Tree*>(this)->nextTree());
+  }
 
   // Sizes
   size_t treeSize() const { return nextTree()->block() - block(); }
@@ -107,7 +111,8 @@ class Tree : public TypeBlock {
   const Tree* commonAncestor(const Tree* child1, const Tree* child2) const;
   Tree* commonAncestor(const Tree* child1, const Tree* child2) {
     // Children may be const but they belong to root which is non-const anyway
-    return Utils::DeconstifyPtr(&Tree::commonAncestor, this, child1, child2);
+    return const_cast<Tree*>(
+        const_cast<const Tree*>(this)->commonAncestor(child1, child2));
   }
   const Tree* parent(const Tree* root) const {
     return root->parentOfDescendant(this);
@@ -131,7 +136,7 @@ class Tree : public TypeBlock {
   int numberOfDescendants(bool includeSelf) const;
   const Tree* child(int index) const;
   Tree* child(int index) {
-    return Utils::DeconstifyPtr(&Tree::child, this, index);
+    return const_cast<Tree*>(const_cast<const Tree*>(this)->child(index));
   }
   int indexOfChild(const Tree* child) const;
   bool hasChild(const Tree* child) const;

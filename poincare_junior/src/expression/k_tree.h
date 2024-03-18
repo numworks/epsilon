@@ -9,6 +9,7 @@
 #include <bit>
 
 namespace PoincareJ {
+namespace KTrees {
 
 // Constructors
 
@@ -406,6 +407,7 @@ consteval auto operator"" _e() {
   return typename Variable<S>::tree();
 }
 
+}  // namespace KTrees
 }  // namespace PoincareJ
 
 #endif

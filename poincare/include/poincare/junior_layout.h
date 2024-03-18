@@ -4,8 +4,10 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/old_layout.h>
 #include <poincare_junior/src/layout/k_tree.h>
-#include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/memory/tree.h>
+
+// Expose KTrees to apps to be used to replace builders
+using namespace PoincareJ::KTrees;
 
 namespace PoincareJ {
 class LayoutCursor;

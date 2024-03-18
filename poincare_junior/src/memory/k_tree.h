@@ -11,6 +11,7 @@
 #include "tree.h"
 
 namespace PoincareJ {
+namespace KTrees {
 
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
@@ -213,6 +214,9 @@ template <Placeholder::Tag Tag>
 using KZeroOrMorePlaceholder =
     KPlaceholderFilter<Tag, Placeholder::Filter::ZeroOrMore>;
 
+}  // namespace KTrees
+
+using namespace KTrees;
 }  // namespace PoincareJ
 
 #endif

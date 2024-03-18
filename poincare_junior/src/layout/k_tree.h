@@ -5,6 +5,7 @@
 #include <poincare_junior/src/memory/k_tree.h>
 
 namespace PoincareJ {
+namespace KTrees {
 
 // TODO: A RackLayout shouldn't have RackLayout children.
 constexpr auto KRackL = KNAry16<BlockType::RackLayout>();
@@ -113,6 +114,7 @@ consteval auto operator^(KTree<T1, B1...>, KTree<T2, B2...>) {
   return KTree<BlockType::RackLayout, 2, 0, T1, B1..., T2, B2...>();
 }
 
+}  // namespace KTrees
 }  // namespace PoincareJ
 
 #endif

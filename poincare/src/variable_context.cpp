@@ -25,7 +25,7 @@ Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(
 bool VariableContext::setExpressionForSymbolAbstract(
     const Expression& expression, const SymbolAbstract& symbol) {
   if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
-    assert(symbol.otype() == ExpressionNode::Type::Symbol);
+    assert(symbol.type() == ExpressionNode::Type::Symbol);
     if (expression.isUninitialized()) {
       return false;
     }
@@ -39,7 +39,7 @@ const Expression VariableContext::protectedExpressionForSymbolAbstract(
     const SymbolAbstract& symbol, bool clone,
     ContextWithParent* lastDescendantContext) {
   if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
-    if (symbol.otype() == ExpressionNode::Type::Symbol) {
+    if (symbol.type() == ExpressionNode::Type::Symbol) {
       return clone ? m_value.clone() : m_value;
     }
     return Undefined::Builder();

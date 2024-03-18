@@ -23,7 +23,7 @@ const Expression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
-  if (symbol.otype() == ExpressionNode::Type::Symbol &&
+  if (symbol.type() == ExpressionNode::Type::Symbol &&
       static_cast<const Symbol &>(symbol).name()[0] == 't') {
     return Expression();
   }

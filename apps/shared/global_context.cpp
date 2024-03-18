@@ -123,12 +123,12 @@ bool GlobalContext::setExpressionForSymbolAbstract(
       expression.clone().replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
-  if (symbol.otype() == ExpressionNode::Type::Symbol) {
+  if (symbol.type() == ExpressionNode::Type::Symbol) {
     return setExpressionForActualSymbol(finalExpression, symbol, record) ==
            Ion::Storage::Record::ErrorStatus::None;
   }
-  assert(symbol.otype() == ExpressionNode::Type::Function &&
-         symbol.childAtIndex(0).otype() == ExpressionNode::Type::Symbol);
+  assert(symbol.type() == ExpressionNode::Type::Function &&
+         symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
   Expression childSymbol = symbol.childAtIndex(0);
 #if 0  // TODO_PCJ
   finalExpression = finalExpression.replaceSymbolWithExpression(
@@ -156,12 +156,12 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 
 const Expression GlobalContext::expressionForSymbolAndRecord(
     const SymbolAbstract &symbol, Ion::Storage::Record r, Context *ctx) {
-  if (symbol.otype() == ExpressionNode::Type::Symbol) {
+  if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
-  } else if (symbol.otype() == ExpressionNode::Type::Function) {
+  } else if (symbol.type() == ExpressionNode::Type::Function) {
     return ExpressionForFunction(symbol.childAtIndex(0), r);
   }
-  assert(symbol.otype() == ExpressionNode::Type::Sequence);
+  assert(symbol.type() == ExpressionNode::Type::Sequence);
   return expressionForSequence(symbol, r, ctx);
 }
 

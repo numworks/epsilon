@@ -256,21 +256,21 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Undefined;
     case PoincareJ::BlockType::UnitConversion:
       return ExpressionNode::Type::UnitConvert;
+    case PoincareJ::BlockType::UserSymbol:
+      return ExpressionNode::Type::Symbol;
+    case PoincareJ::BlockType::UserFunction:
+      return ExpressionNode::Type::Function;
+    case PoincareJ::BlockType::UserSequence:
+      return ExpressionNode::Type::Sequence;
 #if 0
       // No perfect PoincareJ equivalents
       return ExpressionNode::Type::Comparison;
       return ExpressionNode::Type::ConstantMaths;
       return ExpressionNode::Type::DistributionDispatcher;
-      return ExpressionNode::Type::Function;
       return ExpressionNode::Type::Parenthesis;
-      return ExpressionNode::Type::Sequence;
-      return ExpressionNode::Type::Symbol;
 #endif
     default:
       assert(false);
-      // Fallthrough
-    case PoincareJ::BlockType::UserSymbol:
-      // TODO_PCJ: Handle symbols better
       return ExpressionNode::Type::JuniorExpression;
       // Unused in apps, but they should not raise the default assert.
     case PoincareJ::BlockType::LnReal:

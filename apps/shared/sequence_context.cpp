@@ -177,7 +177,7 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
 const Expression SequenceContext::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
-  if (symbol.otype() != ExpressionNode::Type::Sequence) {
+  if (symbol.type() != ExpressionNode::Type::Sequence) {
     return ContextWithParent::protectedExpressionForSymbolAbstract(
         symbol, clone, lastDescendantContext);
   }

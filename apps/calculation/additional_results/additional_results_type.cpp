@@ -241,6 +241,7 @@ bool AdditionalResultsType::HasFunction(const Expression input,
   assert(!approximateOutput.hasUnit());
   assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
   return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
+         approximateOutput.type() != ExpressionNode::Type::Point &&
          expressionIsInterestingFunction(input);
 }
 

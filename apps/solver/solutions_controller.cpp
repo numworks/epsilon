@@ -179,9 +179,9 @@ SolutionsController::SolutionsController(Responder *parentResponder,
   const char *delta =
       GlobalPreferences::SharedGlobalPreferences()->discriminantSymbol();
   size_t lenDelta = strlen(delta);
-  m_delta2Layout = HorizontalLayout::Builder(
-      Layout::String(delta, lenDelta),
-      Layout("=b"_l ^ KSuperscriptL("2"_l) ^ "-4ac"_l));
+  m_delta2Layout = Layout::Create(
+      KA ^ KB, {.KA = Layout::String(delta, lenDelta),
+                .KB = Layout("=b"_l ^ KSuperscriptL("2"_l) ^ "-4ac"_l)});
   m_delta3Layout = Layout::String(delta, lenDelta);
   for (int i = 0; i < k_numberOfExactValueCells; i++) {
     m_exactValueCells[i].setParentResponder(

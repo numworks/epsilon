@@ -52,11 +52,14 @@ void FunctionListController::computeAdditionalResults(
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
-  m_layouts[0] = HorizontalLayout::Builder(
-      Layout::String("y="),
-      inputClone
-          .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
-          .createLayout(displayMode(), numberOfSignificantDigits(), context));
+  m_layouts[0] = Layout::Create(
+      KA ^ KB,
+      {.KA = Layout::String("y="),
+       .KB = Layout(
+           inputClone
+               .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
+               .createLayout(displayMode(), numberOfSignificantDigits(),
+                             context))});
   setShowIllustration(true);
 }
 

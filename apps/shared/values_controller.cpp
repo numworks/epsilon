@@ -133,7 +133,7 @@ void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
     EvenOddExpressionCell *myCell = static_cast<EvenOddExpressionCell *>(cell);
     // Special case: last row
     if (row == numberOfElementsInColumn(column) + k_numberOfTitleRows) {
-      myCell->setLayout(HorizontalLayout::Builder());
+      myCell->setLayout(KRackL());
     } else {
       myCell->setLayout(memoizedLayoutForCell(column, row));
     }

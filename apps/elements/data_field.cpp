@@ -95,17 +95,13 @@ bool DoubleDataField::canBeStored(AtomicNumber z) const {
 // DoubleDataFieldWithSubscriptSymbol
 
 Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
-  HorizontalLayout res =
-      HorizontalLayout::Builder(DataField::fieldSymbolLayout());
+  Layout res = DataField::fieldSymbolLayout();
   const char* subscript = I18n::translate(fieldSubscript());
   if (subscript[0] != '\0') {
-    res.addOrMergeChildAtIndex(
-        VerticalOffsetLayout::Builder(
-            Layout::String(subscript),
-            VerticalOffsetLayoutNode::VerticalPosition::Subscript),
-        1);
+    res = Layout::Create(KA ^ KSubscriptL(KB),
+                         {.KA = res, .KB = Layout::String(subscript)});
   }
-  return std::move(res);
+  return res;
 }
 
 // ADataField

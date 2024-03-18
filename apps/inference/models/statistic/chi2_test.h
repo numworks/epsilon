@@ -45,8 +45,7 @@ class Chi2Test : public Test, public Table {
   // Instanciate unused abstract classs
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
-    return Shared::ParameterRepresentation{
-        Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
+    return Shared::ParameterRepresentation{KRackL(), I18n::Message::Default};
   }
 
   // Chi2 specific

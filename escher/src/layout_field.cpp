@@ -45,7 +45,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  OLayout h = HorizontalLayout::Builder();
+  Layout h = KRackL();
   JuniorLayout l = JuniorLayout::Juniorize(h);
   m_layoutView.setLayout(l);
   m_cursor =

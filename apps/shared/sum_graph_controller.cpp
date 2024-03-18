@@ -311,11 +311,13 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
       assert(sumSymbol == UCodePointIntegral);
       leftLayout = areaMessageLayout();
     } else {
-      leftLayout = HorizontalLayout::Builder(sumLayout, functionLayout);
+      leftLayout =
+          Layout::Create(KA ^ KB, {.KA = sumLayout, .KB = functionLayout});
     }
 
-    sumLayout =
-        HorizontalLayout::Builder(leftLayout, equalLayout, resultLayout);
+    sumLayout = leftLayout = Layout::Create(
+        KA ^ KB ^ KC,
+        {.KA = leftLayout, .KB = equalLayout, .KC = resultLayout});
   }
   m_sum.setLayout(sumLayout);
   m_sum.setAlignment(

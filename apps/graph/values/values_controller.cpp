@@ -328,7 +328,7 @@ Layout ValuesController::functionTitleLayout(int column) {
                                          App::app()->localContext());
   }
   function->nameWithArgument(buffer, bufferNameSize, derivationOrder);
-  return StringLayout::Builder(buffer);
+  return Layout::String(buffer);
 }
 
 int ValuesController::numberOfAbscissaColumnsBeforeAbsoluteColumn(

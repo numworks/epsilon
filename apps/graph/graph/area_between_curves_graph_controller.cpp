@@ -96,12 +96,7 @@ Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   if (numberOfChars >= bufferSize) {
     return Layout();
   }
-  Poincare::Layout subtractionLayout = Layout::String(buffer, strlen(buffer));
-  Poincare::Layout absoluteValue =
-      AbsoluteValueLayout::Builder(subtractionLayout);
-  const char *dx = "dx";
-  Poincare::Layout dxLayout = Layout::String(dx, strlen(dx));
-  return Poincare::HorizontalLayout::Builder(absoluteValue, dxLayout);
+  return Layout::Create(KAbsL(KA) ^ "dx"_l, {.KA = Layout::String(buffer)});
 }
 
 Poincare::Expression AreaBetweenCurvesGraphController::createSumExpression(

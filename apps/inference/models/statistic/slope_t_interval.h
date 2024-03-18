@@ -45,8 +45,7 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
   }
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
-    return Shared::ParameterRepresentation{
-        Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
+    return Shared::ParameterRepresentation{KRackL(), I18n::Message::Default};
   }
 
   // Inference

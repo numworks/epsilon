@@ -142,7 +142,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
     m_layout = PoincareHelpers::CreateLayout(
         clone, Escher::App::app()->localContext());
     if (m_layout.isUninitialized()) {
-      m_layout = HorizontalLayout::Builder();
+      m_layout = KRackL();
     }
   }
   return m_layout;

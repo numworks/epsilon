@@ -1,6 +1,6 @@
 #include "slope_t_interval.h"
 
-#include <poincare/string_layout.h>
+#include <poincare/layout.h>
 
 namespace Inference {
 
@@ -11,7 +11,7 @@ void SlopeTInterval::tidy() {
 
 Poincare::Layout SlopeTInterval::estimateLayout() const {
   if (m_estimateLayout.isUninitialized()) {
-    m_estimateLayout = Poincare::StringLayout::Builder(estimateSymbol());
+    m_estimateLayout = Poincare::Layout::String(estimateSymbol());
   }
   return m_estimateLayout;
 }

@@ -2,10 +2,11 @@
 #define POINCARE_JUNIOR_EXPRESSION_H
 
 #include <poincare/old_expression.h>
-#include <poincare/symbol.h>
 #include <poincare_junior/src/memory/tree.h>
 
 namespace Poincare {
+
+class Symbol;
 
 class JuniorExpressionNode final : public ExpressionNode {
   friend class JuniorExpression;
@@ -73,11 +74,7 @@ class JuniorExpressionNode final : public ExpressionNode {
 
  private:
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                OExpression symbolValue) override {
-    // TODO PCJ: Remove
-    assert(false);
-    return false;
-  }
+                OExpression symbolValue) override;
 
   // PCJ
   const PoincareJ::Tree* tree() const {
@@ -145,11 +142,7 @@ class JuniorExpression : public OExpression {
     return OExpression();
   }
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                OExpression symbolValue) {
-    // TODO PCJ: Remove
-    assert(false);
-    return false;
-  }
+                OExpression symbolValue);
 
 #if 1  // TODO_PCJ
   typedef TrinaryBoolean (*ExpressionTrinaryTest)(const JuniorExpression e,

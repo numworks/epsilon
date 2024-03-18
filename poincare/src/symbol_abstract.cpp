@@ -11,6 +11,8 @@
 #include <poincare/symbol.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/undefined.h>
+#include <poincare_junior/src/expression/symbol.h>
+#include <poincare_junior/src/memory/edition_pool.h>
 #include <string.h>
 
 #include <algorithm>
@@ -129,30 +131,21 @@ bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
                                numberOfVisitedSymbols);
 }
 
-template <typename T, typename U>
-T SymbolAbstract::Builder(const char *name, int length) {
-  if (AliasesLists::k_thetaAliases.contains(name, length)) {
-    name = AliasesLists::k_thetaAliases.mainAlias();
-    length = strlen(name);
-  }
-  size_t size = sizeof(U) + length + 1;
-  void *bufferNode = TreePool::sharedPool->alloc(size);
-  U *node = new (bufferNode) U(name, length);
-  assert(node->size() == size);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
-  return static_cast<T &>(h);
+const char *SymbolAbstract::name() const {
+  return PoincareJ::Symbol::GetName(tree());
 }
 
 bool SymbolAbstract::hasSameNameAs(const SymbolAbstract &other) const {
   return strcmp(other.name(), name()) == 0;
 }
 
+#if 0  // TODO_PCJ
 bool SymbolAbstract::matches(const SymbolAbstract &symbol,
-                             ExpressionTrinaryTest test, Context *context,
-                             void *auxiliary,
+                             JuniorExpression::ExpressionTrinaryTest test,
+                             Context *context, void *auxiliary,
                              OExpression::IgnoredSymbols *ignoredSymbols) {
   // Undefined symbols must be preserved.
-  OExpression e = SymbolAbstract::Expand(
+  JuniorExpression e = SymbolAbstract::Expand(
       symbol, context, true,
       SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   return !e.isUninitialized() &&
@@ -160,30 +153,34 @@ bool SymbolAbstract::matches(const SymbolAbstract &symbol,
                               SymbolicComputation::DoNotReplaceAnySymbol,
                               auxiliary, ignoredSymbols);
 }
+#endif
 
-OExpression SymbolAbstract::replaceSymbolWithExpression(
-    const SymbolAbstract &symbol, const OExpression &expression) {
+JuniorExpression SymbolAbstract::replaceSymbolWithExpression(
+    const SymbolAbstract &symbol, const JuniorExpression &expression) {
   deepReplaceSymbolWithExpression(symbol, expression);
-  if (symbol.otype() == otype() && hasSameNameAs(symbol)) {
-    OExpression exp = expression.clone();
+  if (symbol.type() == type() && hasSameNameAs(symbol)) {
+    JuniorExpression exp = expression.clone();
     if (numberOfChildren() > 0) {
       assert(isOfType(
           {ExpressionNode::Type::Function, ExpressionNode::Type::Sequence}));
       assert(numberOfChildren() == 1 && symbol.numberOfChildren() == 1);
-      OExpression myVariable = childAtIndex(0).clone();
-      OExpression symbolVariable = symbol.childAtIndex(0);
-      if (symbolVariable.otype() == ExpressionNode::Type::Symbol) {
+      JuniorExpression myVariable = childAtIndex(0).clone();
+      JuniorExpression symbolVariable = symbol.childAtIndex(0);
+      if (symbolVariable.type() == ExpressionNode::Type::Symbol) {
         exp = exp.replaceSymbolWithExpression(symbolVariable.convert<Symbol>(),
                                               myVariable);
       } else if (!myVariable.isIdenticalTo(symbolVariable)) {
         return *this;
       }
     }
-    OExpression p = parent();
-    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(
-                                    exp, p.indexOfChild(*this))) {
-      exp = Parenthesis::Builder(exp);
-    }
+#if 0
+  // TODO_PCJ: Ensure we don't need that anymore
+  JuniorExpression p = parent();
+  if (!p.isUninitialized() &&
+      p.node()->childAtIndexNeedsUserParentheses(exp, p.indexOfChild(*this))) {
+    exp = Parenthesis::Builder(exp);
+  }
+#endif
     replaceWithInPlace(exp);
     return exp;
   }
@@ -200,30 +197,26 @@ void SymbolAbstract::checkForCircularityIfNeeded(Context *context,
   }
 }
 
-OExpression SymbolAbstract::Expand(const SymbolAbstract &symbol,
-                                   Context *context, bool clone,
-                                   SymbolicComputation symbolicComputation) {
+JuniorExpression SymbolAbstract::Expand(
+    const SymbolAbstract &symbol, Context *context, bool clone,
+    SymbolicComputation symbolicComputation) {
   assert(context);
-  OExpression e = context->expressionForSymbolAbstract(symbol, clone);
+  JuniorExpression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. Symbols defined in a parametered function
    * will be preserved as long as the function is defined within this symbol. */
-  e = OExpression::ExpressionWithoutSymbols(e, context, symbolicComputation);
-  if (!e.isUninitialized() &&
-      symbol.otype() == ExpressionNode::Type::Function) {
+  e = JuniorExpression::ExpressionWithoutSymbols(e, context,
+                                                 symbolicComputation);
+  if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
+#if 0  // TODO_PCJ
     Dependency d = Dependency::Builder(e);
     d.addDependency(symbol.childAtIndex(0));
     return std::move(d);
+#else
+    assert(false);
+#endif
   }
   return e;
 }
-
-template Constant SymbolAbstract::Builder<Constant, ConstantNode>(char const *,
-                                                                  int);
-template Function SymbolAbstract::Builder<Function, FunctionNode>(char const *,
-                                                                  int);
-template Sequence SymbolAbstract::Builder<Sequence, SequenceNode>(char const *,
-                                                                  int);
-template Symbol SymbolAbstract::Builder<Symbol, SymbolNode>(char const *, int);
 
 }  // namespace Poincare

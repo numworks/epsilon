@@ -9,6 +9,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/vertical_offset_layout.h>
+#include <poincare_junior/src/memory/edition_pool.h>
 
 namespace Poincare {
 
@@ -80,12 +81,20 @@ Evaluation<T> SequenceNode::templatedApproximate(
   return e.node()->approximate(T(), approximationContext);
 }
 
-Sequence Sequence::Builder(const char* name, size_t length, OExpression child) {
-  Sequence seq = SymbolAbstract::Builder<Sequence, SequenceNode>(name, length);
-  if (!child.isUninitialized()) {
-    seq.replaceChildAtIndexInPlace(0, child);
+Sequence Sequence::Builder(const char* name, size_t length,
+                           JuniorExpression child) {
+  if (AliasesLists::k_thetaAliases.contains(name, length)) {
+    name = AliasesLists::k_thetaAliases.mainAlias();
+    length = strlen(name);
   }
-  return seq;
+  PoincareJ::Tree* tree =
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSequence>(
+          name, length + 1);
+  assert(!child.isUninitialized());
+  child.tree()->clone();
+
+  JuniorExpression expr = JuniorExpression::Builder(tree);
+  return static_cast<Sequence&>(expr);
 }
 
 OExpression Sequence::shallowReduce(ReductionContext reductionContext) {

@@ -11,6 +11,7 @@
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/vertical_offset_layout.h>
+#include <poincare_junior/src/memory/edition_pool.h>
 #include <string.h>
 
 #include <cmath>
@@ -106,6 +107,18 @@ bool SymbolNode::isSystemSymbol() const {
     assert(m_name[1] == 0);
   }
   return result;
+}
+
+Symbol Symbol::Builder(const char* name, int length) {
+  if (AliasesLists::k_thetaAliases.contains(name, length)) {
+    name = AliasesLists::k_thetaAliases.mainAlias();
+    length = strlen(name);
+  }
+  // UserSequence  UserSymbol
+  JuniorExpression expr = JuniorExpression::Builder(
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
+          name, static_cast<size_t>(length + 1)));
+  return static_cast<Symbol&>(expr);
 }
 
 Symbol Symbol::Builder(CodePoint name) {

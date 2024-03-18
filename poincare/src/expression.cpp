@@ -138,6 +138,7 @@ bool OExpression::recursivelyMatches(ExpressionTrinaryTest test,
                                      SymbolicComputation replaceSymbols,
                                      void *auxiliary,
                                      IgnoredSymbols *ignoredSymbols) const {
+#if 0  // TODO_PCJ
   if (!context) {
     replaceSymbols = SymbolicComputation::DoNotReplaceAnySymbol;
   }
@@ -211,6 +212,10 @@ bool OExpression::recursivelyMatches(ExpressionTrinaryTest test,
     }
   }
   return false;
+#else
+  assert(false);
+  return false;
+#endif
 }
 
 bool OExpression::recursivelyMatches(ExpressionTest test, Context *context,

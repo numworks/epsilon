@@ -81,9 +81,7 @@ class Symbol final : public SymbolAbstract {
   static Symbol SystemSymbol() { return Builder(UCodePointUnknown); }
 
   Symbol(const SymbolNode* node = nullptr) : SymbolAbstract(node) {}
-  static Symbol Builder(const char* name, int length) {
-    return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length);
-  }
+  static Symbol Builder(const char* name, int length);
   static Symbol Builder(CodePoint name);
   static Symbol Ans() {
     return Symbol::Builder(k_ansAliases.mainAlias(),

@@ -6,6 +6,7 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
+#include <poincare_junior/src/memory/edition_pool.h>
 
 #include <cmath>
 
@@ -97,12 +98,20 @@ Evaluation<T> FunctionNode::templatedApproximate(
   return e.node()->approximate(T(), approximationContext);
 }
 
-Function Function::Builder(const char* name, size_t length, OExpression child) {
-  Function f = SymbolAbstract::Builder<Function, FunctionNode>(name, length);
-  if (!child.isUninitialized()) {
-    f.replaceChildAtIndexInPlace(0, child);
+Function Function::Builder(const char* name, size_t length,
+                           JuniorExpression child) {
+  if (AliasesLists::k_thetaAliases.contains(name, length)) {
+    name = AliasesLists::k_thetaAliases.mainAlias();
+    length = strlen(name);
   }
-  return f;
+  PoincareJ::Tree* tree =
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserFunction>(
+          name, length + 1);
+  assert(!child.isUninitialized());
+  child.tree()->clone();
+
+  JuniorExpression expr = JuniorExpression::Builder(tree);
+  return static_cast<Function&>(expr);
 }
 
 OExpression Function::shallowReduce(ReductionContext reductionContext) {

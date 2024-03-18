@@ -1,6 +1,7 @@
 #ifndef POINCARE_ABSTRACT_SYMBOL_H
 #define POINCARE_ABSTRACT_SYMBOL_H
 
+#include <poincare/junior_expression.h>
 #include <poincare/old_expression.h>
 
 namespace Poincare {
@@ -87,7 +88,7 @@ class SymbolAbstractNode : public ExpressionNode {
  * 'sizeof(OExpression) == sizeof(ExpressionInheritingFromSymbolAbstract)
  * due to the virtual table. */
 
-class SymbolAbstract : public OExpression {
+class SymbolAbstract : public JuniorExpression {
   friend class Function;
   friend class FunctionNode;
   friend class Sequence;
@@ -98,28 +99,31 @@ class SymbolAbstract : public OExpression {
   friend class SumAndProductNode;
 
  public:
-  const char *name() const { return node()->name(); }
+  const char *name() const;
   bool hasSameNameAs(const SymbolAbstract &other) const;
+#if 0  // TODO_PCJ
   static bool matches(const SymbolAbstract &symbol, ExpressionTrinaryTest test,
                       Context *context, void *auxiliary,
                       OExpression::IgnoredSymbols *ignoredSymbols);
-  OExpression replaceSymbolWithExpression(const SymbolAbstract &symbol,
-                                          const OExpression &expression);
+#endif
+  JuniorExpression replaceSymbolWithExpression(
+      const SymbolAbstract &symbol, const JuniorExpression &expression);
 
  protected:
-  SymbolAbstract(const SymbolAbstractNode *node) : OExpression(node) {}
-  template <typename T, typename U>
-  static T Builder(const char *name, int length);
+  SymbolAbstract(const SymbolAbstractNode *node) : JuniorExpression(node) {}
   SymbolAbstractNode *node() const {
-    return static_cast<SymbolAbstractNode *>(OExpression::node());
+    // TODO_PCJ
+    assert(false);
+    return nullptr;
+    // return static_cast<SymbolAbstractNode *>(JuniorExpression::node());
   }
   void checkForCircularityIfNeeded(Context *context,
                                    TrinaryBoolean *isCircular);
 
  private:
-  static OExpression Expand(const SymbolAbstract &symbol, Context *context,
-                            bool clone,
-                            SymbolicComputation symbolicComputation);
+  static JuniorExpression Expand(const SymbolAbstract &symbol, Context *context,
+                                 bool clone,
+                                 SymbolicComputation symbolicComputation);
 };
 
 }  // namespace Poincare

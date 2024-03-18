@@ -7,6 +7,7 @@
 #include <poincare/matrix_complex.h>
 #include <poincare/point_2D_layout.h>
 #include <poincare/point_evaluation.h>
+#include <poincare/symbol.h>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/dimension.h>
@@ -110,6 +111,13 @@ size_t JuniorExpressionNode::serialize(
       PoincareJ::Serialize(layout, buffer, buffer + bufferSize) - buffer;
   layout->removeTree();
   return size;
+}
+
+bool JuniorExpressionNode::derivate(const ReductionContext& reductionContext,
+                                    Symbol symbol, OExpression symbolValue) {
+  // TODO PCJ: Remove
+  assert(false);
+  return false;
 }
 
 /* JuniorExpression */
@@ -436,6 +444,13 @@ JuniorExpression JuniorExpression::cloneAndSimplify(
   /* TODO_PCJ: Beautify since cloneAndDeepReduceWithSystemCheckpoint isn't
    * supposed to. */
   return e.deepBeautify(reductionContext);
+}
+
+bool JuniorExpression::derivate(const ReductionContext& reductionContext,
+                                Symbol symbol, OExpression symbolValue) {
+  // TODO PCJ: Remove
+  assert(false);
+  return false;
 }
 
 static bool IsIgnoredSymbol(const JuniorExpression* e,

@@ -51,7 +51,7 @@ class Sequence final : public SymbolAbstract {
  public:
   Sequence(const SequenceNode* n) : SymbolAbstract(n) {}
   static Sequence Builder(const char* name, size_t length,
-                          OExpression child = OExpression());
+                          JuniorExpression child);
 
   // Simplification
   OExpression shallowReduce(ReductionContext reductionContext);

@@ -82,7 +82,9 @@ class JuniorLayout final
   }
 
   template <PoincareJ::TreeConcept C>
-  JuniorLayout(C c) : JuniorLayout(static_cast<const PoincareJ::Tree*>(c)) {}
+  JuniorLayout(C c) : JuniorLayout(static_cast<const PoincareJ::Tree*>(c)) {
+    static_assert(c.type().isRackLayout());
+  }
 
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
   // Eat the tree

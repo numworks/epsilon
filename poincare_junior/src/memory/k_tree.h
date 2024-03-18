@@ -46,6 +46,9 @@ class KTree : public AbstractTree {
   constexpr operator const Tree*() const {
     return Tree::FromBlocks(static_cast<const Block*>(*this));
   }
+  constexpr TypeBlock type() {
+    return TypeBlock(BlockType(static_cast<uint8_t>(k_blocks[0])));
+  }
   const Tree* operator->() const { return operator const Tree*(); }
 };
 

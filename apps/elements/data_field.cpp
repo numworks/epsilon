@@ -160,18 +160,16 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
     }
   }
 
-  HorizontalLayout res = HorizontalLayout::Builder();
+  Layout res = KRackL();
   int electrons = z;
   int n = 1, l = 0;
   if (previousNoble >= 0) {
     electrons -= k_nobles[previousNoble];
     n = previousNoble + 3;
-    res.addOrMergeChildAtIndex(
-        HorizontalLayout::Builder(CodePointLayout::Builder('['),
-                                  LayoutHelper::String(ElementsDataBase::Symbol(
-                                      k_nobles[previousNoble])),
-                                  CodePointLayout::Builder(']')),
-        0);
+    res = Layout::Create(KA ^ "["_l ^ KB ^ "]"_l,
+                         {.KA = res,
+                          .KB = Layout::String(ElementsDataBase::Symbol(
+                              k_nobles[previousNoble]))});
   }
   while (electrons > 0) {
     int index = (n - 1) * k_lMax + l;
@@ -204,16 +202,15 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
       if (conf[index] == 0) {
         continue;
       }
-      Layout term = HorizontalLayout::Builder(
-          Integer(n).createLayout(), CodePointLayout::Builder(k_lSymbols[l]),
-          VerticalOffsetLayout::Builder(
-              Integer(conf[index]).createLayout(),
-              VerticalOffsetLayoutNode::VerticalPosition::Superscript));
-      res.addOrMergeChildAtIndex(term, res.numberOfChildren());
+      res = Layout::Create(KA ^ KB ^ KC ^ KSuperscriptL(KD),
+                           {.KA = res,
+                            .KB = Layout(Integer(n).createLayout()),
+                            .KC = Layout::CodePoint(k_lSymbols[l]),
+                            .KD = Layout(Integer(conf[index]).createLayout())});
     }
   }
 
-  return std::move(res);
+  return res;
 }
 
 int ConfigurationDataField::DisplacedElectrons(AtomicNumber z, int* n, int* l) {

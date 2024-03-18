@@ -103,18 +103,13 @@ void BannerView::layoutSubviews(bool force) {
 
   I18n::Message legendMessage = dataSource->field()->getMessage(z);
   if (legendMessage != I18n::Message::Default) {
-    m_legendView.setLayout(
-        LayoutHelper::String(I18n::translate(legendMessage)));
+    m_legendView.setLayout(Layout::String(I18n::translate(legendMessage)));
   } else {
-    HorizontalLayout h = HorizontalLayout::Builder();
-    h.addOrMergeChildAtIndex(LayoutHelper::String(I18n::translate(
-                                 dataSource->field()->fieldLegend())),
-                             0);
+    Layout h =
+        Layout::String(I18n::translate(dataSource->field()->fieldLegend()));
     if (dataSource->field()->hasDouble(z)) {
-      h.addOrMergeChildAtIndex(CodePointLayout::Builder(' '),
-                               h.numberOfChildren());
-      h.addOrMergeChildAtIndex(dataSource->field()->getLayout(z),
-                               h.numberOfChildren());
+      h = Layout::Create(KA ^ " "_l ^ KB,
+                         {.KA = h, .KB = dataSource->field()->getLayout(z)});
     }
     m_legendView.setLayout(h);
   }

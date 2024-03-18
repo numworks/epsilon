@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <float.h>
 #include <inference/app.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -16,6 +16,8 @@
 #include "slope_t_interval.h"
 #include "two_means_interval.h"
 #include "two_proportions_z_interval.h"
+
+using namespace Poincare;
 
 namespace Inference {
 
@@ -83,11 +85,8 @@ bool Interval::initializeSignificanceTest(SignificanceTestType testType,
 void Interval::tidy() { m_estimateLayout = Poincare::Layout(); }
 
 Poincare::Layout Interval::intervalCriticalValueSymbol() {
-  return Poincare::HorizontalLayout::Builder(
-      criticalValueSymbolLayout(),
-      Poincare::VerticalOffsetLayout::Builder(
-          Poincare::CodePointLayout::Builder('*'),
-          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript));
+  return Layout::Create(KA ^ KSuperscriptL("*"_l),
+                        {.KA = criticalValueSymbolLayout()});
 }
 
 bool Interval::isGraphable() const {

@@ -1,7 +1,7 @@
 #include "test_curve_view.h"
 
 #include <poincare/absolute_value_layout.h>
-#include <poincare/code_point_layout.h>
+#include <poincare/layout.h>
 
 #include <algorithm>
 #include <cmath>
@@ -27,13 +27,11 @@ void TestPlotPolicy::drawZLabelAndZGraduation(
     const AbstractPlotView *plotView, KDContext *ctx, KDRect rect, float z,
     ComparisonNode::OperatorType op) const {
   if (op == Poincare::ComparisonNode::OperatorType::NotEqual) {
-    AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(
-        m_test->criticalValueSymbolLayout());
+    Layout absolute =
+        Layout::Create(KAbsL(KA), {.KA = m_test->criticalValueSymbolLayout()});
     drawLabelAndGraduation(plotView, ctx, rect, std::abs(z), absolute);
-    absolute.invalidAllSizesPositionsAndBaselines();
-    drawLabelAndGraduation(
-        plotView, ctx, rect, -std::abs(z),
-        HorizontalLayout::Builder(CodePointLayout::Builder('-'), absolute));
+    drawLabelAndGraduation(plotView, ctx, rect, -std::abs(z),
+                           Layout::Create("-"_l ^ KA, {.KA = absolute}));
   } else {
     drawLabelAndGraduation(plotView, ctx, rect, z,
                            m_test->criticalValueSymbolLayout());

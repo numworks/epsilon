@@ -265,7 +265,7 @@ Poincare::Layout ListController::extraCellLayoutAtRow(int row) {
   assert(row < k_numberOfToolboxExtraCells);
   constexpr CodePoint codepoints[k_numberOfToolboxExtraCells] = {
       UCodePointInferiorEqual, UCodePointSuperiorEqual};
-  return CodePointLayout::Builder(codepoints[row]);
+  return Layout::CodePoint(codepoints[row]);
 }
 
 HighlightCell *ListController::functionCells(int row) {

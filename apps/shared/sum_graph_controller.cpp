@@ -260,9 +260,7 @@ void SumGraphController::LegendView::setEditableZone(double d) {
   m_editableZone.setText(buffer);
 }
 
-static Layout emptyValueLayout() {
-  return HorizontalLayout::Builder(CodePointLayout::Builder(' '));
-}
+static Layout emptyValueLayout() { return " "_l; }
 
 static Layout valueLayout(double value, int numberOfSignificantDigits,
                           Preferences::PrintFloatMode displayMode) {
@@ -294,8 +292,9 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
       step == Step::FirstParameter
           ? emptyValueLayout()
           : valueLayout(end, k_valuesPrecision, k_valuesDisplayMode);
-  Layout sumLayout = CondensedSumLayout::Builder(
-      CodePointLayout::Builder(sumSymbol), startLayout, endLayout);
+  Layout sumLayout = Layout::Create(
+      KCondensedSumL(KA, KB, KC),
+      {.KA = Layout::CodePoint(sumSymbol), .KB = startLayout, .KC = endLayout});
   if (step == Step::Result) {
     Layout leftLayout;
     Layout equalLayout = LayoutHelper::String(" = ", 3);

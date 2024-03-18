@@ -60,7 +60,9 @@ class ExamMode : public Ion::ExamMode::Configuration {
            ruleset() == Ruleset::Portuguese || ruleset() == Ruleset::English ||
            ruleset() == Ruleset::IBTest;
   }
-  bool forbidCodeApp() const { return ruleset() == Ruleset::Dutch; }
+  bool forbidCodeApp() const {
+    return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::English;
+  }
   bool forbidGraphDetails() const {
     return flags().forbidGraphDetails || ruleset() == Ruleset::IBTest ||
            ruleset() == Ruleset::Pennsylvania || ruleset() == Ruleset::STAAR ||

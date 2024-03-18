@@ -148,15 +148,24 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case BlockType::ListSort:
     case BlockType::Median:
       return List::ShallowApplyListOperators(u);
-    case BlockType::Dim:
-      if (Dimension::GetDimension(u->child(0)).isMatrix()) {
-        return false;
+    case BlockType::Dim: {
+      Dimension dim = Dimension::GetDimension(u->child(0));
+      if (dim.isMatrix()) {
+        Tree* result = SharedEditionPool->push<BlockType::Matrix>(1, 2);
+        Integer::Push(dim.matrix.rows);
+        Integer::Push(dim.matrix.cols);
+        u->moveTreeOverTree(result);
+        return true;
       }
       return List::ShallowApplyListOperators(u);
+    }
     case BlockType::Piecewise:
       return Binary::SimplifyPiecewise(u);
     case BlockType::Distribution:
       return SimplifyDistribution(u);
+    case BlockType::Identity:
+      u->moveTreeOverTree(Matrix::Identity(u->child(0)));
+      return true;
     default:
       if (u->type().isListToScalar()) {
         return List::ShallowApplyListOperators(u);
@@ -166,6 +175,63 @@ bool Simplification::SimplifySwitch(Tree* u) {
       }
       if (u->type().isComparison()) {
         return Binary::SimplifyComparison(u);
+      }
+      if (u->isAMatrixOrContainsMatricesAsChildren()) {
+        Tree* child = u->child(0);
+        if (!child->isMatrix()) {
+          return false;
+        }
+        switch (u->type()) {
+          case BlockType::Cross:
+          case BlockType::Dot: {
+            Tree* child2 = child->nextTree();
+            if (!u->child(1)->isMatrix()) {
+              return false;
+            }
+            u->moveTreeOverTree(
+                (u->isCross() ? Vector::Cross : Vector::Dot)(child, child2));
+            return true;
+          }
+          case BlockType::PowerMatrix: {
+            Tree* index = child->nextTree();
+            if (!Integer::Is<int>(index)) {
+              // TODO: Raise to rely on approximation.
+              return false;
+            }
+            u->moveTreeOverTree(
+                Matrix::Power(child, Integer::Handler(index).to<int>()));
+            return true;
+          }
+          case BlockType::Inverse:
+            u->moveTreeOverTree(Matrix::Inverse(child));
+            return true;
+          case BlockType::Ref:
+            Matrix::RowCanonize(child, false);
+            u->removeNode();
+            return true;
+          case BlockType::Rref:
+            Matrix::RowCanonize(child, true);
+            u->removeNode();
+            return true;
+          case BlockType::Trace:
+            u->moveTreeOverTree(Matrix::Trace(child));
+            return true;
+          case BlockType::Transpose:
+            u->moveTreeOverTree(Matrix::Transpose(child));
+            return true;
+          case BlockType::Det: {
+            Tree* determinant;
+            Matrix::RowCanonize(child, true, &determinant);
+            u->moveTreeOverTree(determinant);
+            return true;
+          }
+          case BlockType::Norm:
+            u->moveTreeOverTree(Vector::Norm(child));
+            return true;
+          default:
+            // Remaining types have been handled beforehand.
+            assert(false);
+        }
       }
       return false;
   }
@@ -415,6 +481,11 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
         KPow(KA, KAdd(KB, KC)),
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
     assert(!merge->isMultiplication());
+  } else if (next->isMatrix()) {
+    // TODO: Maybe this should go in advanced reduction.
+    merge =
+        (child->isMatrix() ? Matrix::Multiplication
+                           : Matrix::ScalarMultiplication)(child, next, false);
   }
   if (!merge) {
     return false;
@@ -483,7 +554,23 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
                                  &zero);
   NAry::SetNumberOfChildren(multiplication, n);
   if (zero) {
-    multiplication->cloneTreeOverTree(0_e);
+    // 0 * {1, 2, 4} -> {0, 0, 0}. Same for matrices.
+    Tree* zeroTree;
+    Dimension dim = Dimension::GetDimension(multiplication);
+    if (dim.isMatrix()) {
+      zeroTree = Matrix::Zero(dim.matrix);
+    } else {
+      int length = Dimension::GetListLength(multiplication);
+      if (length >= 0) {
+        zeroTree = SharedEditionPool->push<BlockType::List>(length);
+        for (int i = 0; i < length; i++) {
+          (0_e)->clone();
+        }
+      } else {
+        zeroTree = (0_e)->clone();
+      }
+    }
+    multiplication->moveTreeOverTree(zeroTree);
     return true;
   }
   if (!changed || NAry::SquashIfPossible(multiplication)) {
@@ -577,6 +664,8 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
         {.KA = Constant(child), .KB = Constant(next), .KC = term});
     term->removeTree();
     merge = term;
+  } else if (child->isMatrix() && next->isMatrix()) {
+    merge = Matrix::Addition(child, next);
   }
   if (!merge) {
     return false;
@@ -834,9 +923,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
             ? ComplexSign::RealUnknown()
             : ComplexSign::Unknown());
     changed = DeepSystematicReduce(ref) || changed;
-    changed = DeepApplyMatrixOperators(ref) || changed;
     assert(!DeepSystematicReduce(ref));
-    assert(!DeepApplyMatrixOperators(ref));
     changed = List::BubbleUp(ref, ShallowSystematicReduce) || changed;
     changed = AdvancedSimplification::AdvancedReduce(ref) || changed;
 
@@ -868,132 +955,6 @@ bool Simplification::SimplifyLastTree(Tree* ref,
   }
   // Silence warning
   return false;
-}
-
-// TODO: Properly integrate this within systematic simplification.
-bool Simplification::ShallowApplyMatrixOperators(Tree* tree, void* context) {
-  if (tree->numberOfChildren() < 1) {
-    return false;
-  }
-  Tree* child = tree->child(0);
-  if (tree->isIdentity()) {
-    tree->moveTreeOverTree(Matrix::Identity(child));
-    return true;
-  }
-  if (tree->isMultiplication()) {
-    int numberOfMatrices = tree->numberOfChildren();
-    // Find first matrix
-    const Tree* firstMatrix = nullptr;
-    for (const Tree* child : tree->children()) {
-      if (child->isMatrix()) {
-        firstMatrix = child;
-        break;
-      }
-      numberOfMatrices--;
-    }
-    if (!firstMatrix) {
-      return false;
-    }
-    Tree* result = firstMatrix->clone();
-    Tree* child = tree->nextNode();
-    // Merge matrices
-    while (child < firstMatrix) {
-      result->moveTreeOverTree(Matrix::ScalarMultiplication(child, result));
-      child = child->nextTree();
-    }
-    while (--numberOfMatrices) {
-      child = child->nextTree();
-      result->moveTreeOverTree(Matrix::Multiplication(result, child));
-    }
-    tree->moveTreeOverTree(result);
-    return true;
-  }
-  if (!child->isMatrix()) {
-    return false;
-  }
-  if (tree->isAddition()) {
-    int n = tree->numberOfChildren() - 1;
-    Tree* result = child->clone();
-    while (n--) {
-      child = child->nextTree();
-      result->moveTreeOverTree(Matrix::Addition(result, child));
-    }
-    tree->moveTreeOverTree(result);
-    return true;
-  }
-  if (tree->isPowerMatrix()) {
-    Tree* index = child->nextTree();
-    if (!Integer::Is<int>(index)) {
-      // TODO: Raise to rely on approximation.
-      return false;
-    }
-    tree->moveTreeOverTree(
-        Matrix::Power(child, Integer::Handler(index).to<int>()));
-    return true;
-  }
-  if (tree->numberOfChildren() == 2) {
-    Tree* child2 = child->nextTree();
-    if (!child2->isMatrix()) {
-      return false;
-    }
-    switch (tree->type()) {
-      case BlockType::Cross:
-        tree->moveTreeOverTree(Vector::Cross(child, child2));
-        return true;
-      case BlockType::Dot:
-        tree->moveTreeOverTree(Vector::Dot(child, child2));
-        return true;
-      default:
-        return false;
-    }
-  }
-  switch (tree->type()) {
-    case BlockType::Inverse:
-      tree->moveTreeOverTree(Matrix::Inverse(child));
-      return true;
-    case BlockType::Ref:
-      Matrix::RowCanonize(child, false);
-      tree->removeNode();
-      return true;
-    case BlockType::Rref:
-      Matrix::RowCanonize(child, true);
-      tree->removeNode();
-      return true;
-    case BlockType::Trace:
-      tree->moveTreeOverTree(Matrix::Trace(child));
-      return true;
-    case BlockType::Transpose:
-      tree->moveTreeOverTree(Matrix::Transpose(child));
-      return true;
-    case BlockType::Dim: {
-      assert(child->isMatrix());
-      Tree* dim = SharedEditionPool->push<BlockType::Matrix>(1, 2);
-      Integer::Push(Matrix::NumberOfRows(child));
-      Integer::Push(Matrix::NumberOfColumns(child));
-      tree->moveTreeOverTree(dim);
-      return true;
-    }
-    case BlockType::Det: {
-      Tree* determinant;
-      Matrix::RowCanonize(child, true, &determinant);
-      tree->moveTreeOverTree(determinant);
-      return true;
-    }
-    case BlockType::Norm:
-      tree->moveTreeOverTree(Vector::Norm(child));
-      return true;
-    default:
-      return false;
-  }
-}
-
-bool Simplification::DeepApplyMatrixOperators(Tree* tree) {
-  bool changed = false;
-  for (Tree* child : tree->children()) {
-    changed |= DeepApplyMatrixOperators(child);
-  }
-  changed |= ShallowApplyMatrixOperators(tree);
-  return changed;
 }
 
 }  // namespace PoincareJ

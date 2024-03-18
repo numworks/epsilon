@@ -16,11 +16,6 @@ class Simplification {
   static bool Simplify(Tree *node, ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(Simplify, ProjectionContext, {});
 
-  static bool ShallowApplyMatrixOperators(Tree *u, void *context = nullptr);
-  EDITION_REF_WRAP_1D(ShallowApplyMatrixOperators, void *, nullptr);
-  static bool DeepApplyMatrixOperators(Tree *u);
-  EDITION_REF_WRAP(DeepApplyMatrixOperators);
-
   static bool ShallowSystematicReduce(Tree *u);
   EDITION_REF_WRAP(ShallowSystematicReduce);
   static bool DeepSystematicReduce(Tree *u);

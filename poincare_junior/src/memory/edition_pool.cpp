@@ -452,6 +452,10 @@ template Tree *EditionPool::push<BlockType::Set>(uint8_t);
 template Tree *EditionPool::push<BlockType::SingleFloat, float>(float);
 template Tree *EditionPool::push<BlockType::Unit, uint8_t, uint8_t>(uint8_t,
                                                                     uint8_t);
+template Tree *EditionPool::push<BlockType::UserFunction, const char *, size_t>(
+    const char *, size_t);
+template Tree *EditionPool::push<BlockType::UserSequence, const char *, size_t>(
+    const char *, size_t);
 template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
     const char *, size_t);
 template Tree *EditionPool::push<BlockType::Variable, uint8_t, ComplexSign>(

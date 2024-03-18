@@ -95,12 +95,11 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Matrix>(
                                             BlockType::Matrix, rows, cols);
 }
 
-template <>
-constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(
-    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
-  size_t numberOfMetaBlocks =
-      TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol);
+constexpr bool CreateBlockAtIndexForUserType(BlockType type, Block* block,
+                                             size_t blockIndex,
+                                             const char* name,
+                                             size_t nameSize) {
+  size_t numberOfMetaBlocks = TypeBlock::NumberOfMetaBlocks(type);
   if (blockIndex < numberOfMetaBlocks) {
     assert(blockIndex == 1);
     *block = ValueBlock(nameSize);
@@ -108,6 +107,29 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(
   }
   *block = ValueBlock(name[blockIndex - numberOfMetaBlocks]);
   return blockIndex - numberOfMetaBlocks >= nameSize - 1;
+}
+
+template <>
+constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserFunction>(
+    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
+  return CreateBlockAtIndexForUserType(BlockType::UserFunction, block,
+                                       blockIndex, name, nameSize);
+}
+template <>
+constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSequence>(
+    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
+  return CreateBlockAtIndexForUserType(BlockType::UserSequence, block,
+                                       blockIndex, name, nameSize);
+}
+
+template <>
+constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(
+    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
+  return CreateBlockAtIndexForUserType(BlockType::UserSymbol, block, blockIndex,
+                                       name, nameSize);
 }
 
 template <>

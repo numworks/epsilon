@@ -97,9 +97,6 @@ class OLayout : public TreeHandle {
     return node()->deleteGraySquaresBeforeLeavingGrid(layoutToExclude);
   }
 
-  void setMargin(bool hasMargin) { node()->setMargin(hasMargin); }
-  void lockMargin(bool lock) { node()->lockMargin(lock); }
-
   // Tree
   OLayout childAtIndex(int i) const;
   OLayout root() const {

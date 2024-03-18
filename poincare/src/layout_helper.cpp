@@ -19,13 +19,11 @@ namespace Poincare {
 Layout LayoutHelper::DefaultCreateOperatorLayoutForInfix(
     const char* operatorName, Expression left, Expression right,
     Layout rightLayout) {
-  rightLayout.setMargin(true);
   size_t operatorLength = strlen(operatorName);
   if (operatorLength == 0) {
     return Layout();
   }
   Layout result = String(operatorName, operatorLength);
-  result.setMargin(true);
   return result;
 }
 

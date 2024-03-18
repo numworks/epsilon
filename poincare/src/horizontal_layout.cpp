@@ -207,8 +207,6 @@ void HorizontalLayout::addOrMergeChildAtIndex(OLayout l, int index) {
 
 void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index) {
   int newIndex = index;
-  bool margin = h.node()->leftMargin() > 0;
-  bool marginIsLocked = h.node()->marginIsLocked();
   // Remove h if it is a child
   int indexOfh = indexOfChild(h);
   if (indexOfh >= 0) {
@@ -231,8 +229,6 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index) {
     addChildAtIndexInPlace(c, newIndex, n);
     if (firstAddedChild) {
       LayoutNode *l = childAtIndex(newIndex).node();
-      l->setMargin(margin);
-      l->lockMargin(marginIsLocked);
     }
     newIndex++;
   }

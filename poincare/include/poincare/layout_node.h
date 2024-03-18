@@ -59,8 +59,6 @@ class LayoutNode : public TreeNode {
             .m_baselined = false,
             .m_positioned = false,
             .m_sized = false,
-            .m_margin = false,
-            .m_lockMargin = false,
             .m_baselineFontSize = KDFont::Size::Small,
             .m_positionFontSize = KDFont::Size::Small,
             .m_sizeFontSize = KDFont::Size::Small,
@@ -76,17 +74,10 @@ class LayoutNode : public TreeNode {
   // Rendering
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
   KDPoint absoluteOrigin(KDFont::Size font) {
-    return absoluteOriginWithMargin(font).translatedBy(
-        KDPoint(leftMargin(), 0));
+    return absoluteOriginWithMargin(font);
   }
   KDSize layoutSize(KDFont::Size font);
   KDCoordinate baseline(KDFont::Size font);
-  void setMargin(bool hasMargin) { m_flags.m_margin = hasMargin; }
-  void lockMargin(bool lock) { m_flags.m_lockMargin = lock; }
-  int leftMargin() const {
-    return m_flags.m_margin ? Escher::Metric::OperatorHorizontalMargin : 0;
-  }
-  bool marginIsLocked() const { return m_flags.m_lockMargin; }
 
   // TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();

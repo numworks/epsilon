@@ -82,7 +82,7 @@ KDSize LayoutNode::layoutSize(KDFont::Size font) {
       ExceptionCheckpoint::Raise();
     }
 
-    m_frame.setSize(KDSize(size.width() + leftMargin(), size.height()));
+    m_frame.setSize(size);
     m_flags.m_sized = true;
     m_flags.m_sizeFontSize = font;
   }

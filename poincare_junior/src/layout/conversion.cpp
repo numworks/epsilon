@@ -193,10 +193,6 @@ void PushPoincareRack(Poincare::OLayout l) {
         SharedEditionPool->push<BlockType::RackLayout>(l.numberOfChildren());
     for (int i = 0; i < l.numberOfChildren(); i++) {
       Poincare::OLayout c = l.childAtIndex(i);
-      if (c.node()->leftMargin()) {
-        SharedEditionPool->push(BlockType::OperatorSeparatorLayout);
-        NAry::SetNumberOfChildren(parent, parent->numberOfChildren() + 1);
-      }
       if (c.type() == Poincare::LayoutNode::Type::StringLayout) {
         PushPoincareRack(c);
       } else if (c.type() == Poincare::LayoutNode::Type::JuniorLayout) {

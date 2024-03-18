@@ -91,6 +91,9 @@ class JuniorLayout final
                              PoincareJ::ContextTrees ctx);
   operator const PoincareJ::Tree*() { return tree(); }
 
+  static JuniorLayout CodePoint(CodePoint cp);
+  static JuniorLayout String(const char* str, int length = -1);
+
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
   // Eat the tree
   static JuniorLayout Builder(PoincareJ::Tree* tree);

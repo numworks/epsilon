@@ -5,6 +5,7 @@
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
+#include <poincare_junior/src/n_ary.h>
 
 #include <algorithm>
 
@@ -64,6 +65,27 @@ JuniorLayout JuniorLayout::Create(const PoincareJ::Tree* structure,
                                   PoincareJ::ContextTrees ctx) {
   PoincareJ::Tree* tree = PoincareJ::PatternMatching::Create(structure, ctx);
   PoincareJ::AppHelpers::SanitizeRack(tree);
+  return Builder(tree);
+}
+
+JuniorLayout JuniorLayout::CodePoint(class CodePoint cp) {
+  PoincareJ::Tree* tree = KRackL.node<1>->cloneNode();
+  PoincareJ::EditionPool::SharedEditionPool
+      ->push<PoincareJ::BlockType::CodePointLayout>(cp);
+  return Builder(tree);
+}
+
+JuniorLayout JuniorLayout::String(const char* str, int length) {
+  PoincareJ::Tree* tree = KRackL()->clone();
+  UTF8Decoder decoder(str);
+  int n = 0;
+  class CodePoint cp = 0;
+  while (n != length && (cp = decoder.nextCodePoint())) {
+    PoincareJ::EditionPool::SharedEditionPool
+        ->push<PoincareJ::BlockType::CodePointLayout>(cp);
+    n++;
+  }
+  PoincareJ::NAry::SetNumberOfChildren(tree, n);
   return Builder(tree);
 }
 

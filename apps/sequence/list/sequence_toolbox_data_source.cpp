@@ -36,12 +36,11 @@ void SequenceToolboxDataSource::buildExtraCellsLayouts(const char *sequenceName,
       }
       const char *indice = j == 0 ? "n" : "n+1";
       assert(m_numberOfAddedCells < k_maxNumberOfLayouts);
-      m_addedCellLayout[m_numberOfAddedCells++] = HorizontalLayout::Builder(
-          CodePointLayout::Builder(
-              Shared::SequenceStore::k_sequenceNames[i][0]),
-          VerticalOffsetLayout::Builder(
-              LayoutHelper::String(indice, strlen(indice)),
-              VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+      m_addedCellLayout[m_numberOfAddedCells++] = Layout::Create(
+          KA ^ KSubscriptL(KB),
+          {.KA =
+               Layout::CodePoint(Shared::SequenceStore::k_sequenceNames[i][0]),
+           .KB = Layout::String(indice)});
     }
   }
 }

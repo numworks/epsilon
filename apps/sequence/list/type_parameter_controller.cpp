@@ -45,11 +45,9 @@ void TypeParameterController::viewWillAppear() {
   assert(nextName != nullptr);
   const char *subscripts[k_numberOfCells] = {"n", "n+1", "n+2"};
   for (size_t j = 0; j < k_numberOfCells; j++) {
-    cell(j)->label()->setLayout(HorizontalLayout::Builder(
-        CodePointLayout::Builder(nextName[0]),
-        VerticalOffsetLayout::Builder(
-            LayoutHelper::String(subscripts[j], strlen(subscripts[j])),
-            VerticalOffsetLayoutNode::VerticalPosition::Subscript)));
+    cell(j)->label()->setLayout(Layout::Create(
+        KA ^ KSubscriptL(KB), {.KA = Layout::CodePoint(nextName[0]),
+                               .KB = Layout::String(subscripts[j])}));
   }
   ViewController::viewWillAppear();
   m_selectableListView.reloadData();

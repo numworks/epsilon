@@ -7,7 +7,7 @@
 #include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/integer.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/sequence.h>
 #include <poincare/serialization_helper.h>
@@ -101,11 +101,9 @@ void Sequence::setInitialRank(int rank) {
 }
 
 Layout Sequence::nameLayout() {
-  return HorizontalLayout::Builder(
-      CodePointLayout::Builder(fullName()[0]),
-      VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder(symbol()),
-          VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+  return Layout::Create(KA ^ KSubscriptL(KB),
+                        {.KA = Layout::CodePoint(fullName()[0]),
+                         .KB = Layout::CodePoint(symbol())});
 }
 
 bool Sequence::isDefined() const {
@@ -355,27 +353,18 @@ size_t Sequence::DefinitionModel::expressionSize(
 }
 
 void Sequence::DefinitionModel::buildName(Sequence *sequence) {
-  char name = sequence->fullName()[0];
+  const char *index;
   if (sequence->type() == Type::Explicit) {
-    m_name = HorizontalLayout::Builder(
-        CodePointLayout::Builder(name),
-        VerticalOffsetLayout::Builder(
-            LayoutHelper::String("n", 1),
-            VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+    index = "n";
   } else if (sequence->type() == Type::SingleRecurrence) {
-    m_name = HorizontalLayout::Builder(
-        CodePointLayout::Builder(name),
-        VerticalOffsetLayout::Builder(
-            LayoutHelper::String("n+1", 3),
-            VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+    index = "n+1";
   } else {
     assert(sequence->type() == Type::DoubleRecurrence);
-    m_name = HorizontalLayout::Builder(
-        CodePointLayout::Builder(name),
-        VerticalOffsetLayout::Builder(
-            LayoutHelper::String("n+2", 3),
-            VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+    index = "n+2";
   }
+  m_name = Layout::Create(KA ^ KSubscriptL(KB),
+                          {.KA = Layout::CodePoint(sequence->fullName()[0]),
+                           .KB = Layout::String(index)});
 }
 
 /* Initial Condition Handle*/
@@ -412,11 +401,9 @@ void Sequence::InitialConditionModel::buildName(Sequence *sequence) {
   char buffer[k_initialRankNumberOfDigits + 1];
   Integer(sequence->initialRank() + conditionIndex())
       .serialize(buffer, k_initialRankNumberOfDigits + 1);
-  Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer));
-  m_name = HorizontalLayout::Builder(
-      CodePointLayout::Builder(sequence->fullName()[0]),
-      VerticalOffsetLayout::Builder(
-          indexLayout, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+  m_name = Layout::Create(KA ^ KSubscriptL(KB),
+                          {.KA = Layout::CodePoint(sequence->fullName()[0]),
+                           .KB = Layout::String(buffer)});
 }
 
 template double Sequence::privateEvaluateYAtX<double>(double, Context *) const;

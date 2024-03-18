@@ -1126,41 +1126,6 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
 
 /* Layout Helper */
 
-static bool LayoutHasStringWithThousandSeparator(OLayout l) {
-  if (l.type() == LayoutNode::Type::StringLayout) {
-    return static_cast<StringLayoutNode *>(l.node())
-               ->numberOfThousandsSeparators() > 0;
-  }
-  int n = l.numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    if (LayoutHasStringWithThousandSeparator(l.childAtIndex(i))) {
-      return true;
-    }
-  }
-  return false;
-}
-
-static bool LayoutHasLockedMargins(OLayout l) {
-  if (l.node()->marginIsLocked()) {
-    return true;
-  }
-  int n = l.numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    if (LayoutHasLockedMargins(l.childAtIndex(i))) {
-      return true;
-    }
-  }
-  return false;
-}
-
-static void StripMarginFromLayout(OLayout l) {
-  l.node()->setMargin(false);
-  int n = l.numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    StripMarginFromLayout(l.childAtIndex(i));
-  }
-}
-
 OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits,
                                  Context *context, bool forceStripMargin,
@@ -1172,22 +1137,6 @@ OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   PoincareJ::Tree *lay = PoincareJ::Layoutter::LayoutExpression(
       exp, false, numberOfSignificantDigits, floatDisplayMode);
   return JuniorLayout::Builder(lay);
-#if 0
-  OLayout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                   context);
-  assert(!l.isUninitialized());
-  assert(l.type() != LayoutNode::Type::JuniorLayout);
-  if (forceStripMargin || !(nested || LayoutHasLockedMargins(l) ||
-                            LayoutHasStringWithThousandSeparator(l))) {
-    if (l.type() == LayoutNode::Type::JuniorLayout) {
-      // not useful yet
-      l = static_cast<JuniorLayout &>(l).cloneWithoutMargins();
-    } else {
-      StripMarginFromLayout(l);
-    }
-  }
-  return l;
-#endif
 }
 
 size_t Expression::serialize(char *buffer, size_t bufferSize,

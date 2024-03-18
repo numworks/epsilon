@@ -22,10 +22,12 @@ namespace Inference {
 
 HypothesisController::HypothesisController(
     Escher::StackViewController* parent, InputController* inputController,
-    InputStoreController* inputSlopeController, Test* test)
+    InputStoreController* inputSlopeController,
+    DatasetController* datasetController, Test* test)
     : Escher::ExplicitSelectableListViewController(parent),
       m_inputController(inputController),
       m_inputSlopeController(inputSlopeController),
+      m_datasetController(datasetController),
       m_operatorDataSource(test),
       m_h0(&m_selectableListView, this),
       m_haDropdown(&m_selectableListView, &m_operatorDataSource, this),
@@ -127,19 +129,16 @@ void HypothesisController::didBecomeFirstResponder() {
 
 bool HypothesisController::ButtonAction(HypothesisController* controller,
                                         void* s) {
-  ViewController* nextController = nullptr;
+  ViewController* nextController = controller->m_inputController;
   if (controller->m_test->significanceTestType() ==
       SignificanceTestType::Slope) {
     nextController = controller->m_inputSlopeController;
-  } else if (controller->m_datasetController) {
+  } else if (controller->m_test->canChooseDataset()) {
     /* Reset row of DatasetController here and not in
      * viewWillAppear or initView because we want
      * to save row when we come back from results. */
     controller->m_datasetController->selectRow(0);
     nextController = controller->m_datasetController;
-  } else {
-    nextController =
-        static_cast<ViewController*>(controller->m_inputController);
   }
   controller->stackOpenPage(nextController);
   return true;

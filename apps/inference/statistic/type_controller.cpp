@@ -49,14 +49,14 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     type = DistributionType::TPooled;
   }
   ViewController *controller = m_inputController;
-  if (m_statistic->canChooseDataset()) {
-    controller = m_datasetController;
-    m_hypothesisController->setDatasetController(m_datasetController);
-  } else {
-    m_hypothesisController->setDatasetController(nullptr);
-  }
   if (m_statistic->hasHypothesisParameters()) {
     controller = m_hypothesisController;
+  } else if (m_statistic->canChooseDataset()) {
+    /* Reset row of DatasetController here and not in
+     * viewWillAppear or initView because we want
+     * to save row when we come back from results. */
+    m_datasetController->selectRow(0);
+    controller = m_datasetController;
   }
   assert(controller != nullptr);
   m_statistic->initializeDistribution(type);

@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "code_point_layout.h"
+#include "grid.h"
 
 namespace PoincareJ {
 
@@ -43,6 +44,12 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       buffer = append(")", buffer, end);
       break;
     }
+    case LayoutType::CurlyBrace: {
+      buffer = append("{", buffer, end);
+      buffer = Serialize(layout->child(0), buffer, end);
+      buffer = append("}", buffer, end);
+      break;
+    }
     case LayoutType::Fraction: {
       buffer = append("(", buffer, end);
       buffer = Serialize(layout->child(0), buffer, end);
@@ -57,14 +64,37 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       buffer = append(")", buffer, end);
       break;
     }
-    default: {
-      const BuiltinWithLayout *builtin =
-          BuiltinWithLayout::GetReservedFunction(layout->layoutType());
-      if (!builtin) {
-        assert(false);
-        buffer = append("?", buffer, end);
+    case LayoutType::OperatorSeparator:
+    case LayoutType::ThousandSeparator:
+      break;
+    case LayoutType::Matrix: {
+      const Grid *grid = Grid::From(layout);
+      buffer = append("[", buffer, end);
+      for (int j = 0; j < grid->numberOfRows() - 1; j++) {
+        buffer = append("[", buffer, end);
+        for (int i = 0; i < grid->numberOfColumns() - 1; i++) {
+          if (i > 0) {
+            buffer = append(",", buffer, end);
+          }
+          buffer = Serialize(grid->childAt(i, j), buffer, end);
+        }
+        buffer = append("]", buffer, end);
       }
-      buffer = append(builtin->aliases()->mainAlias(), buffer, end);
+      buffer = append("]", buffer, end);
+      break;
+    }
+    default: {
+      if (layout->isPiecewiseLayout()) {
+        buffer = append("piecewise", buffer, end);
+      } else {
+        const BuiltinWithLayout *builtin =
+            BuiltinWithLayout::GetReservedFunction(layout->layoutType());
+        if (!builtin) {
+          assert(false);
+          buffer = append("?", buffer, end);
+        }
+        buffer = append(builtin->aliases()->mainAlias(), buffer, end);
+      }
       buffer = append("(", buffer, end);
       bool firstChild = true;
       for (const Tree *child : layout->children()) {

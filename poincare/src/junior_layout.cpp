@@ -5,6 +5,7 @@
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
+#include <poincare_junior/src/layout/serialize.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include <algorithm>
@@ -27,9 +28,7 @@ void JuniorLayoutNode::render(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
 size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {
-  OLayout l = PoincareJ::ToPoincareLayout(tree());
-  return l.node()->serialize(buffer, bufferSize, floatDisplayMode,
-                             numberOfSignificantDigits);
+  return PoincareJ::Serialize(tree(), buffer, buffer + bufferSize) - buffer;
 }
 
 OLayout JuniorLayoutNode::makeEditable() {

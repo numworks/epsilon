@@ -1,7 +1,7 @@
 #include "goodness_test.h"
 
 #include <float.h>
-#include <inference/statistic/chi_square_and_slope/results_goodness_table_cell.h>
+#include <inference/statistic/chi_square/results_goodness_table_cell.h>
 #include <poincare/print.h>
 #include <string.h>
 

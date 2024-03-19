@@ -31,7 +31,7 @@ app_inference_src += $(addprefix apps/inference/shared/,\
   dynamic_cells_data_source.cpp \
 )
 
-app_inference_src += $(addprefix apps/inference/statistic/chi_square_and_slope/,\
+app_inference_src += $(addprefix apps/inference/statistic/chi_square/,\
   categorical_type_controller.cpp \
   goodness_table_cell.cpp \
   homogeneity_data_source.cpp \

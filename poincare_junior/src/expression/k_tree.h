@@ -84,6 +84,7 @@ constexpr auto KUnitConversion = KBinary<BlockType::UnitConversion>();
 
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
 constexpr auto KListSlice = KFixedArity<3, BlockType::ListSlice>();
+constexpr auto KListSequence = KFixedArity<3, BlockType::ListSequence>();
 
 constexpr auto KSum = KFixedArity<4, BlockType::Sum>();
 constexpr auto KProduct = KFixedArity<4, BlockType::Product>();

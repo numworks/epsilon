@@ -562,10 +562,10 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
     } else {
       int length = Dimension::GetListLength(multiplication);
       if (length >= 0) {
-        zeroTree = SharedEditionPool->push<BlockType::List>(length);
-        for (int i = 0; i < length; i++) {
-          (0_e)->clone();
-        }
+        // Push ListSequence of 0s instead of a list to delay its expansion.
+        zeroTree = Integer::Push(length);
+        zeroTree->moveTreeOverTree(PatternMatching::Create(
+            KListSequence(KVarK, KA, 0_e), {.KA = zeroTree}));
       } else {
         zeroTree = (0_e)->clone();
       }

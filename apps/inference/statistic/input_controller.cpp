@@ -20,7 +20,7 @@ InputController::InputController(Escher::StackViewController *parent,
       m_statistic(statistic),
       m_resultsController(resultsController),
       m_significanceCell(&m_selectableListView, this),
-      m_messageView(I18n::Message::DefineStatistics, k_messageFormat) {
+      m_messageView(I18n::Message::InputStatistics, k_messageFormat) {
   m_okButton.setMessage(I18n::Message::Next);
 }
 

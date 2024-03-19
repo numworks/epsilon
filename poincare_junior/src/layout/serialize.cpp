@@ -6,6 +6,7 @@
 
 #include "code_point_layout.h"
 #include "grid.h"
+#include "vertical_offset.h"
 
 namespace PoincareJ {
 
@@ -59,9 +60,15 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       break;
     }
     case LayoutType::VerticalOffset: {
-      buffer = append("^\x12", buffer, end);
-      buffer = Serialize(layout->child(0), buffer, end);
-      buffer = append("\x13", buffer, end);
+      if (VerticalOffset::IsSuffixSuperscript(layout)) {
+        buffer = append("^\x12", buffer, end);
+        buffer = Serialize(layout->child(0), buffer, end);
+        buffer = append("\x13", buffer, end);
+      } else {
+        buffer = append("\x14{", buffer, end);
+        buffer = Serialize(layout->child(0), buffer, end);
+        buffer = append("\x14}", buffer, end);
+      }
       break;
     }
     case LayoutType::OperatorSeparator:

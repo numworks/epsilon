@@ -4,7 +4,6 @@
 #include <escher/tab_view_controller.h>
 
 #include "inference/statistic/categorical_controller.h"
-#include "inference/statistic/chi_square/results_goodness_table_cell.h"
 #include "inference/statistic/results_controller.h"
 #include "results_goodness_table_cell.h"
 

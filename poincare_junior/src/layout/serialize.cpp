@@ -124,6 +124,15 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
             i == layout->numberOfChildren() - 1) {
           break;
         }
+        if (layout->isPiecewiseLayout() &&
+            i == layout->numberOfChildren() - 2) {
+          break;
+        }
+        if (layout->isPiecewiseLayout() &&
+            i == layout->numberOfChildren() - 3 &&
+            child->numberOfChildren() == 0) {
+          break;
+        }
         if (!firstChild) {
           buffer = append(",", buffer, end);
         }

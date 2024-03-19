@@ -39,6 +39,8 @@ constexpr auto KEmptyMatrixL =
           BlockType::RackLayout, 0, 0, BlockType::RackLayout, 0, 0,
           BlockType::RackLayout, 0, 0>();
 
+constexpr auto KPoint2DL = KBinary<BlockType::Point2DLayout>();
+
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint
 template <uint32_t cp>

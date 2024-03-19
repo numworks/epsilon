@@ -47,7 +47,7 @@ Layout Point::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
                                                significantDigits, context);
   Layout child1 = childAtIndex(1).createLayout(floatDisplayMode,
                                                significantDigits, context);
-  return Point2DLayout::Builder(child0, child1);
+  return JuniorLayout::Create(KPoint2DL(KA, KB), {.KA = child0, .KB = child1});
 }
 
 }  // namespace Poincare

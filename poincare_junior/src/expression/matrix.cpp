@@ -420,13 +420,15 @@ bool Matrix::SimplifySwitch(Tree* u) {
   // Dim is handled in Simplification::SimplifySwitch
   assert(u->isAMatrixOrContainsMatricesAsChildren() && !u->isDim());
   Tree* child = u->child(0);
-  if (!child->isMatrix()) {
-    if (u->isIdentity()) {
-      u->moveTreeOverTree(Identity(child));
-      return true;
-    }
+  if (!child->isMatrix() && !u->isIdentity()) {
     return false;
   }
+  if (u->isRef() || u->isRref()) {
+    RowCanonize(child, u->isRref());
+    u->removeNode();
+    return true;
+  }
+  Tree* result;
   switch (u->type()) {
     case BlockType::Cross:
     case BlockType::Dot: {
@@ -434,46 +436,42 @@ bool Matrix::SimplifySwitch(Tree* u) {
       if (!u->child(1)->isMatrix()) {
         return false;
       }
-      u->moveTreeOverTree(
-          (u->isCross() ? Vector::Cross : Vector::Dot)(child, child2));
-      return true;
+      result = (u->isCross() ? Vector::Cross : Vector::Dot)(child, child2);
+      break;
     }
-    case BlockType::Det: {
-      Tree* determinant;
-      RowCanonize(child, true, &determinant);
-      u->moveTreeOverTree(determinant);
-      return true;
-    }
+    case BlockType::Det:
+      RowCanonize(child, true, &result);
+      break;
+    case BlockType::Identity:
+      result = Identity(child);
+      break;
     case BlockType::Inverse:
-      u->moveTreeOverTree(Inverse(child));
-      return true;
+      result = Inverse(child);
+      break;
     case BlockType::Norm:
-      u->moveTreeOverTree(Vector::Norm(child));
-      return true;
+      result = Vector::Norm(child);
+      break;
     case BlockType::PowerMatrix: {
       Tree* index = child->nextTree();
       if (!Integer::Is<int>(index)) {
         // TODO: Raise to rely on approximation.
         return false;
       }
-      u->moveTreeOverTree(Power(child, Integer::Handler(index).to<int>()));
-      return true;
+      result = Power(child, Integer::Handler(index).to<int>());
+      break;
     }
-    case BlockType::Ref:
-    case BlockType::Rref:
-      RowCanonize(child, u->isRref());
-      u->removeNode();
-      return true;
     case BlockType::Trace:
-      u->moveTreeOverTree(Trace(child));
-      return true;
+      result = Trace(child);
+      break;
     case BlockType::Transpose:
-      u->moveTreeOverTree(Transpose(child));
-      return true;
-    default:  // Remaining types have been handled beforehand.
+      result = Transpose(child);
+      break;
+    default:  // Remaining types should have been handled beforehand.
       assert(false);
+      return false;
   }
-  return false;
+  u->moveTreeOverTree(result);
+  return true;
 }
 
 }  // namespace PoincareJ

@@ -22,11 +22,11 @@ namespace Inference {
 
 HypothesisController::HypothesisController(
     Escher::StackViewController* parent, InputController* inputController,
-    InputStoreController* inputSlopeController,
+    InputStoreController* inputStoreController,
     DatasetController* datasetController, Test* test)
     : Escher::ExplicitSelectableListViewController(parent),
       m_inputController(inputController),
-      m_inputSlopeController(inputSlopeController),
+      m_inputStoreController(inputStoreController),
       m_datasetController(datasetController),
       m_operatorDataSource(test),
       m_h0(&m_selectableListView, this),
@@ -132,7 +132,7 @@ bool HypothesisController::ButtonAction(HypothesisController* controller,
   ViewController* nextController = controller->m_inputController;
   if (controller->m_test->significanceTestType() ==
       SignificanceTestType::Slope) {
-    nextController = controller->m_inputSlopeController;
+    nextController = controller->m_inputStoreController;
   } else if (controller->m_test->canChooseDataset()) {
     /* Reset row of DatasetController here and not in
      * viewWillAppear or initView because we want

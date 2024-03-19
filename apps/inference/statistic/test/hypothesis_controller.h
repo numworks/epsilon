@@ -28,7 +28,7 @@ class HypothesisController
  public:
   HypothesisController(Escher::StackViewController* parent,
                        InputController* inputController,
-                       InputStoreController* inputSlopeController,
+                       InputStoreController* inputStoreController,
                        DatasetController* datasetController, Test* test);
   static bool ButtonAction(HypothesisController* controller, void* s);
 
@@ -74,7 +74,7 @@ class HypothesisController
       7 /* μ1-μ2 */ + 1 /* = */ +
       Constants::k_shortFloatNumberOfChars /* float */ + 1 /* \0 */;
   InputController* m_inputController;
-  InputStoreController* m_inputSlopeController;
+  InputStoreController* m_inputStoreController;
   DatasetController* m_datasetController;
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;

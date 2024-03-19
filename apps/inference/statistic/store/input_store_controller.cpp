@@ -127,9 +127,11 @@ void InputStoreController::viewWillAppear() {
   InputCategoricalController::viewWillAppear();
 }
 
-void InputStoreController::scrollViewDidChangeOffset(
-    ScrollViewDataSource* scrollViewDataSource) {
-  InputCategoricalController::scrollViewDidChangeOffset(scrollViewDataSource);
+void InputStoreController::listViewDidChangeSelectionAndDidScroll(
+    SelectableListView* l, int previousRow, KDPoint previousOffset,
+    bool withinTemporarySelection) {
+  InputCategoricalController::listViewDidChangeSelectionAndDidScroll(
+      l, previousRow, previousOffset, withinTemporarySelection);
 
   /* The top margin of the list view depends on the first visible row:
    * - if the top row is the table, there needs to not be a margin to let the
@@ -150,10 +152,8 @@ void InputStoreController::scrollViewDidChangeOffset(
      * of the list so don't propagate the changed in offset caused by the
      * margin. */
     if (firstVisibleRow != 0) {
-      setScrollViewDelegate(nullptr);
       m_selectableListView.setContentOffset(KDPoint(
           listOffset.x(), listOffset.y() - listTopMargin + newListTopMargin));
-      setScrollViewDelegate(this);
     }
   }
 }

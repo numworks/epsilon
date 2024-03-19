@@ -3,7 +3,7 @@
 
 #include "inference/statistic/categorical_cell.h"
 #include "inference/statistic/categorical_controller.h"
-#include "inference/statistic/chi_square_and_slope/goodness_table_cell.h"
+#include "inference/statistic/chi_square/goodness_table_cell.h"
 
 namespace Inference {
 

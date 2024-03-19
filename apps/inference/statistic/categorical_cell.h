@@ -33,6 +33,11 @@ class AbstractCategoricalCell : public Escher::HighlightCell {
   const HighlightCell* innerCell() const {
     return const_cast<AbstractCategoricalCell*>(this)->innerCell();
   }
+
+  virtual bool addTopMargin() const { return false; }
+  KDCoordinate topMargin() const {
+    return addTopMargin() ? Escher::Metric::CommonMargins.top() : 0;
+  }
 };
 
 template <typename T>
@@ -69,6 +74,7 @@ class DropdownCategoricalCell : public AbstractCategoricalCell {
 
  private:
   HighlightCell* subviewAtIndex(int i) override { return &m_innerCell; }
+  bool addTopMargin() const override { return true; }
 
   /* WARNING: make sure the Dropdown DataSource is constructed before the
    * Dropdown. */

@@ -9,6 +9,7 @@
 #include "k_tree.h"
 #include "number.h"
 #include "simplification.h"
+#include "vector.h"
 
 namespace PoincareJ {
 
@@ -413,6 +414,70 @@ Tree* Matrix::Power(const Tree* m, int p, bool approximate) {
     result->moveTreeOverTree(Multiplication(m, result, approximate));
   }
   return result;
+}
+
+bool Matrix::SimplifySwitch(Tree* u) {
+  // Dim is handled in Simplification::SimplifySwitch
+  assert(u->isAMatrixOrContainsMatricesAsChildren() && !u->isDim());
+  Tree* child = u->child(0);
+  if (!child->isMatrix()) {
+    if (u->isIdentity()) {
+      u->moveTreeOverTree(Identity(child));
+      return true;
+    }
+    return false;
+  }
+  switch (u->type()) {
+    case BlockType::Cross:
+    case BlockType::Dot: {
+      Tree* child2 = child->nextTree();
+      if (!u->child(1)->isMatrix()) {
+        return false;
+      }
+      u->moveTreeOverTree(
+          (u->isCross() ? Vector::Cross : Vector::Dot)(child, child2));
+      return true;
+    }
+    case BlockType::PowerMatrix: {
+      Tree* index = child->nextTree();
+      if (!Integer::Is<int>(index)) {
+        // TODO: Raise to rely on approximation.
+        return false;
+      }
+      u->moveTreeOverTree(Power(child, Integer::Handler(index).to<int>()));
+      return true;
+    }
+    case BlockType::Inverse:
+      u->moveTreeOverTree(Inverse(child));
+      return true;
+    case BlockType::Ref:
+      RowCanonize(child, false);
+      u->removeNode();
+      return true;
+    case BlockType::Rref:
+      RowCanonize(child, true);
+      u->removeNode();
+      return true;
+    case BlockType::Trace:
+      u->moveTreeOverTree(Trace(child));
+      return true;
+    case BlockType::Transpose:
+      u->moveTreeOverTree(Transpose(child));
+      return true;
+    case BlockType::Det: {
+      Tree* determinant;
+      RowCanonize(child, true, &determinant);
+      u->moveTreeOverTree(determinant);
+      return true;
+    }
+    case BlockType::Norm:
+      u->moveTreeOverTree(Vector::Norm(child));
+      return true;
+    default:
+      // Remaining types have been handled beforehand.
+      assert(false);
+  }
+  return false;
 }
 
 }  // namespace PoincareJ

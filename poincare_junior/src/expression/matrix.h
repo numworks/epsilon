@@ -45,6 +45,7 @@ struct Matrix {
   static int RankOfCanonized(const Tree* m);
   static Tree* Inverse(const Tree* m, bool approximate = false);
   static Tree* Power(const Tree* m, int p, bool approximate = false);
+  static bool SimplifySwitch(Tree* u);
 };
 
 }  // namespace PoincareJ

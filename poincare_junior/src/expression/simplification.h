@@ -39,6 +39,7 @@ class Simplification {
   static bool SimplifyComplexPart(Tree *t);
   static bool SimplifySign(Tree *t);
   static bool SimplifyDistribution(Tree *t);
+  static bool SimplifyDim(Tree *t);
 
   static bool SimplifyLastTree(Tree *node,
                                ProjectionContext projectionContext = {});

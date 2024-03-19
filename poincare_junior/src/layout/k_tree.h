@@ -15,6 +15,7 @@ constexpr auto KThousandSeparatorL =
     KTree<BlockType::ThousandSeparatorLayout>();
 constexpr auto KFracL = KBinary<BlockType::FractionLayout>();
 constexpr auto KSqrtL = KUnary<BlockType::SquareRootLayout>();
+constexpr auto KNthSqrtL = KBinary<BlockType::NthRootLayout>();
 
 constexpr auto KParenthesisL = KUnary<BlockType::ParenthesisLayout, 0>();
 constexpr auto KCurlyBracesL = KUnary<BlockType::CurlyBraceLayout, 0>();
@@ -23,6 +24,8 @@ constexpr auto KAbsL = KUnary<BlockType::AbsoluteValueLayout>();
 constexpr auto KDerivativeL = KUnary<BlockType::DerivativeLayout, 0>();
 constexpr auto KNthDerivativeL = KUnary<BlockType::NthDerivativeLayout, 0>();
 constexpr auto KIntegralL = KFixedArity<4, BlockType::IntegralLayout>();
+constexpr auto KSumL = KFixedArity<4, BlockType::SumLayout>();
+constexpr auto KProductL = KFixedArity<4, BlockType::ProductLayout>();
 constexpr auto KCondensedSumL = KFixedArity<3, BlockType::CondensedSumLayout>();
 
 constexpr auto KSuperscriptL = KUnary<BlockType::VerticalOffsetLayout, 0>();

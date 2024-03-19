@@ -25,23 +25,14 @@ void assert_stored_text_is_parseable(Layout layout) {
 }
 
 QUIZ_CASE(escher_clipboard_stored_text_is_parseable) {
-  Layout l = IntegralLayout::Builder(
-      HorizontalLayout::Builder(), CodePointLayout::Builder('x'),
-      HorizontalLayout::Builder(), HorizontalLayout::Builder());
+  Layout l = KRackL(KIntegralL("x"_l, KRackL(), KRackL(), KRackL()));
   assert_stored_text_is_parseable(l);
-  l = NthRootLayout::Builder(HorizontalLayout::Builder());
+  l = KRackL(KNthSqrtL(KRackL(), KRackL()));
   assert_stored_text_is_parseable(l);
-  l = MatrixLayout::Builder(
-      CodePointLayout::Builder('1'), HorizontalLayout::Builder(),
-      HorizontalLayout::Builder(), CodePointLayout::Builder('2'));
+  l = KRackL(KEmptyMatrixL);
   assert_stored_text_is_parseable(l);
-  l = SumLayout::Builder(
-      HorizontalLayout::Builder(), CodePointLayout::Builder('n'),
-      HorizontalLayout::Builder(), HorizontalLayout::Builder());
+  l = KRackL(KSumL("n"_l, KRackL(), KRackL(), KRackL()));
   assert_stored_text_is_parseable(l);
-  l = SumLayout::Builder(
-      HorizontalLayout::Builder(), CodePointLayout::Builder('n'),
-      HorizontalLayout::Builder(), HorizontalLayout::Builder());
+  l = KRackL(KProductL("n"_l, KRackL(), KRackL(), KRackL()));
   assert_stored_text_is_parseable(l);
-  ;
 }

@@ -16,16 +16,16 @@ InputStoreController::InputStoreController(StackViewController* parent,
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
       },
-      m_slopeTableCell(&m_selectableListView, statistic, context, this),
+      m_storeTableCell(&m_selectableListView, statistic, context, this),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
-      m_storeParameterController(parent, &m_slopeTableCell),
+      m_storeParameterController(parent, &m_storeTableCell),
       m_loadedSubApp(Statistic::SubApp::Test),
       m_loadedDistribution(DistributionType::T),
       m_loadedTest(SignificanceTestType::OneProportion) {
   m_storeParameterController.selectRow(0);
   m_selectableListView.margins()->setTop(Metric::CommonMargins.top());
-  m_slopeTableCell.selectableTableView()->margins()->setTop(
+  m_storeTableCell.selectableTableView()->margins()->setTop(
       Metric::TableSeparatorThickness);
 }
 
@@ -46,7 +46,7 @@ bool InputStoreController::handleEvent(Ion::Events::Event event) {
 
 void InputStoreController::onDropdownSelected(int selectedRow) {
   selectSeriesForDropdownRow(selectedRow);
-  m_slopeTableCell.recomputeDimensionsAndReload(true);
+  m_storeTableCell.recomputeDimensionsAndReload(true);
 }
 
 KDCoordinate InputStoreController::nonMemoizedRowHeight(int row) {
@@ -65,7 +65,7 @@ Escher::HighlightCell* InputStoreController::reusableCell(int index, int type) {
 }
 
 void InputStoreController::createDynamicCells() {
-  m_slopeTableCell.createCells();
+  m_storeTableCell.createCells();
 }
 
 void InputStoreController::viewWillAppear() {
@@ -80,7 +80,7 @@ void InputStoreController::viewWillAppear() {
   }
 
   m_dropdownCell.dropdown()->init();
-  Table* tableModel = m_slopeTableCell.tableModel();
+  Table* tableModel = m_storeTableCell.tableModel();
   if (tableModel->numberOfSeries() == 2) {
     m_dropdownCell.dropdown()->selectRow(DropdownDataSource::RowForSeriesPair(
         tableModel->seriesAt(0), tableModel->seriesAt(1)));
@@ -176,7 +176,7 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
   if (row < 0) {
     row = 0;
   }
-  Table* tableModel = m_slopeTableCell.tableModel();
+  Table* tableModel = m_storeTableCell.tableModel();
   if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
     assert(tableModel->numberOfSeries() == 2);
     tableModel->setSeriesAt(m_statistic, 0,

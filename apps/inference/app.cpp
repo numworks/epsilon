@@ -41,7 +41,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_inputGoodnessController(
           &m_stackViewController, &m_goodnessResultsController,
           static_cast<GoodnessTest *>(snapshot->statistic())),
-      m_inputSlopeController(&m_stackViewController, &m_resultsController,
+      m_inputStoreController(&m_stackViewController, &m_resultsController,
                              snapshot->statistic(), parentContext),
       m_resultsController(&m_stackViewController, snapshot->statistic(),
                           &m_testGraphController, &m_intervalGraphController),
@@ -55,13 +55,13 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
           static_cast<Chi2Test *>(snapshot->statistic()),
           &m_inputGoodnessController, &m_inputHomogeneityController),
       m_hypothesisController(&m_stackViewController, &m_inputController,
-                             &m_inputSlopeController, &m_datasetController,
+                             &m_inputStoreController, &m_datasetController,
                              static_cast<Test *>(snapshot->statistic())),
       m_datasetController(&m_stackViewController, &m_inputController,
-                          &m_inputSlopeController, snapshot->statistic()),
+                          &m_inputStoreController, snapshot->statistic()),
       m_testController(&m_stackViewController, &m_hypothesisController,
                        &m_typeController, &m_categoricalTypeController,
-                       &m_inputSlopeController, &m_inputController,
+                       &m_inputStoreController, &m_inputController,
                        snapshot->statistic()),
       m_menuController(
           &m_stackViewController, {&m_testController, &m_testController},
@@ -92,7 +92,7 @@ void App::didBecomeActive(Window *window) {
     currentController->stackOpenPage(controller);
     currentController = controller;
 
-    if (currentController == &m_inputSlopeController) {
+    if (currentController == &m_inputStoreController) {
       // X1/Y1 data might have changed outside the app.
       if (!snapshot()->statistic()->validateInputs()) {
         // If input were invalidated, just stop here.

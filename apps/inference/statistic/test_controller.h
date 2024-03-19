@@ -28,7 +28,7 @@ class TestController
                  HypothesisController* hypothesisController,
                  TypeController* typeController,
                  CategoricalTypeController* categoricalController,
-                 InputStoreController* inputSlopeController,
+                 InputStoreController* inputStoreController,
                  InputController* inputController, Statistic* statistic);
   void stackOpenPage(Escher::ViewController* nextPage) override;
   void didBecomeFirstResponder() override;
@@ -48,7 +48,7 @@ class TestController
   TypeController* m_typeController;
   InputController* m_inputController;
   CategoricalTypeController* m_categoricalController;
-  InputStoreController* m_inputSlopeController;
+  InputStoreController* m_inputStoreController;
   Statistic* m_statistic;
 };
 

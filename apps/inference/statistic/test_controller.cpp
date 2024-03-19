@@ -20,7 +20,7 @@ TestController::TestController(StackViewController *parentResponder,
                                HypothesisController *hypothesisController,
                                TypeController *typeController,
                                CategoricalTypeController *categoricalController,
-                               InputStoreController *inputSlopeController,
+                               InputStoreController *inputStoreController,
                                InputController *inputController,
                                Statistic *statistic)
     : UniformSelectableListController(parentResponder),
@@ -28,7 +28,7 @@ TestController::TestController(StackViewController *parentResponder,
       m_typeController(typeController),
       m_inputController(inputController),
       m_categoricalController(categoricalController),
-      m_inputSlopeController(inputSlopeController),
+      m_inputStoreController(inputStoreController),
       m_statistic(statistic) {
   cell(k_indexOfOneProp)->label()->setMessage(I18n::Message::TestOneProp);
   cell(k_indexOfOneMean)->label()->setMessage(I18n::Message::TestOneMean);
@@ -86,7 +86,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     controller = m_typeController;
   } else if (row == k_indexOfSlope) {
     testType = SignificanceTestType::Slope;
-    controller = m_inputSlopeController;
+    controller = m_inputStoreController;
     if (m_statistic->hasHypothesisParameters()) {
       controller = m_hypothesisController;
     }

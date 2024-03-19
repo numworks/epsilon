@@ -120,7 +120,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;
   InputGoodnessController m_inputGoodnessController;
-  InputStoreController m_inputSlopeController;
+  InputStoreController m_inputStoreController;
   ResultsController m_resultsController;
   InputController m_inputController;
   TypeController m_typeController;

@@ -14,10 +14,10 @@ namespace Inference {
 
 class InputGoodnessController;
 
-class GoodnessTableCell : public DoubleColumnTableCell {
+class InputGoodnessTableCell : public DoubleColumnTableCell {
  public:
-  GoodnessTableCell(Escher::Responder *parentResponder, GoodnessTest *test,
-                    InputGoodnessController *inputGoodnessController);
+  InputGoodnessTableCell(Escher::Responder *parentResponder, GoodnessTest *test,
+                         InputGoodnessController *inputGoodnessController);
 
   // Responder
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,

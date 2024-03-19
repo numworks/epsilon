@@ -86,7 +86,7 @@ consteval auto operator"" _cl() {
 template <Block N1, Block... B1, Block N2, Block... B2>
 consteval auto operator^(KTree<BlockType::RackLayout, N1, 0, B1...>,
                          KTree<BlockType::RackLayout, N2, 0, B2...>) {
-  static_assert(uint8_t(N1) + uint8_t(N2) < 256);
+  static_assert(static_cast<uint8_t>(N1) + static_cast<uint8_t>(N2) < 256);
   return KTree<BlockType::RackLayout,
                Block(static_cast<uint8_t>(N1) + static_cast<uint8_t>(N2)), 0,
                B1..., B2...>();
@@ -97,6 +97,7 @@ template <Block N1, Block... B1, Block T2, Block... B2>
   requires(BlockType(uint8_t(T2)) != BlockType::RackLayout)
 consteval auto operator^(KTree<BlockType::RackLayout, N1, 0, B1...>,
                          KTree<T2, B2...>) {
+  static_assert(static_cast<uint8_t>(N1) < 255);
   return KTree<BlockType::RackLayout, Block(static_cast<uint8_t>(N1) + 1), 0,
                B1..., T2, B2...>();
 }
@@ -106,6 +107,7 @@ template <Block T1, Block... B1, Block N2, Block... B2>
   requires(BlockType(uint8_t(T1)) != BlockType::RackLayout)
 consteval auto operator^(KTree<T1, B1...>,
                          KTree<BlockType::RackLayout, N2, 0, B2...>) {
+  static_assert(static_cast<uint8_t>(N2) < 255);
   return KTree<BlockType::RackLayout, Block(static_cast<uint8_t>(N2) + 1), 0,
                T1, B1..., B2...>();
 }

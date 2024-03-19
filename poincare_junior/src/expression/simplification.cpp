@@ -92,68 +92,68 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
 
 bool Simplification::SimplifySwitch(Tree* u) {
   switch (u->type()) {
-    case BlockType::Power:
-      return SimplifyPower(u);
-    case BlockType::Addition:
-      return SimplifyAddition(u);
-    case BlockType::Multiplication:
-      return SimplifyMultiplication(u);
-    case BlockType::PowerReal:
-      return SimplifyPowerReal(u);
-    case BlockType::LnReal:
-      return SimplifyLnReal(u);
     case BlockType::Abs:
       return SimplifyAbs(u);
-    case BlockType::TrigDiff:
-      return Trigonometry::SimplifyTrigDiff(u);
-    case BlockType::Trig:
-      return Trigonometry::SimplifyTrig(u);
-    case BlockType::ATrig:
-      return Trigonometry::SimplifyATrig(u);
+    case BlockType::Addition:
+      return SimplifyAddition(u);
     case BlockType::ArcTangentRad:
       return Trigonometry::SimplifyArcTangentRad(u);
-    case BlockType::Derivative:
-      return Derivation::ShallowSimplify(u);
-    case BlockType::Ln:
-      return Logarithm::SimplifyLn(u);
-    case BlockType::Exponential:
-      return SimplifyExp(u);
+    case BlockType::ATrig:
+      return Trigonometry::SimplifyATrig(u);
+    case BlockType::Binomial:
+      return Arithmetic::SimplifyBinomial(u);
     case BlockType::ComplexArgument:
       return SimplifyComplexArgument(u);
+    case BlockType::Derivative:
+      return Derivation::ShallowSimplify(u);
+    case BlockType::Dim:
+      return SimplifyDim(u);
+    case BlockType::Distribution:
+      return SimplifyDistribution(u);
+    case BlockType::Exponential:
+      return SimplifyExp(u);
+    case BlockType::Factorial:
+      return Arithmetic::SimplifyFactorial(u);
+    case BlockType::Floor:
+      return Arithmetic::SimplifyFloor(u);
+    case BlockType::GCD:
+      return Arithmetic::SimplifyGCD(u);
     case BlockType::ImaginaryPart:
     case BlockType::RealPart:
       return SimplifyComplexPart(u);
-    case BlockType::Sum:
-    case BlockType::Product:
-      return Parametric::SimplifySumOrProduct(u);
-    case BlockType::GCD:
-      return Arithmetic::SimplifyGCD(u);
     case BlockType::LCM:
       return Arithmetic::SimplifyLCM(u);
-    case BlockType::Quotient:
-    case BlockType::Remainder:
-      return Arithmetic::SimplifyQuotientOrRemainder(u);
-    case BlockType::Factorial:
-      return Arithmetic::SimplifyFactorial(u);
-    case BlockType::Binomial:
-      return Arithmetic::SimplifyBinomial(u);
-    case BlockType::Permute:
-      return Arithmetic::SimplifyPermute(u);
-    case BlockType::Sign:
-      return SimplifySign(u);
-    case BlockType::Floor:
-      return Arithmetic::SimplifyFloor(u);
-    case BlockType::Round:
-      return Arithmetic::SimplifyRound(u);
     case BlockType::ListSort:
     case BlockType::Median:
       return List::ShallowApplyListOperators(u);
-    case BlockType::Dim:
-      return SimplifyDim(u);
+    case BlockType::Ln:
+      return Logarithm::SimplifyLn(u);
+    case BlockType::LnReal:
+      return SimplifyLnReal(u);
+    case BlockType::Multiplication:
+      return SimplifyMultiplication(u);
+    case BlockType::Permute:
+      return Arithmetic::SimplifyPermute(u);
     case BlockType::Piecewise:
       return Binary::SimplifyPiecewise(u);
-    case BlockType::Distribution:
-      return SimplifyDistribution(u);
+    case BlockType::Power:
+      return SimplifyPower(u);
+    case BlockType::PowerReal:
+      return SimplifyPowerReal(u);
+    case BlockType::Quotient:
+    case BlockType::Remainder:
+      return Arithmetic::SimplifyQuotientOrRemainder(u);
+    case BlockType::Round:
+      return Arithmetic::SimplifyRound(u);
+    case BlockType::Sign:
+      return SimplifySign(u);
+    case BlockType::Sum:
+    case BlockType::Product:
+      return Parametric::SimplifySumOrProduct(u);
+    case BlockType::Trig:
+      return Trigonometry::SimplifyTrig(u);
+    case BlockType::TrigDiff:
+      return Trigonometry::SimplifyTrigDiff(u);
     default:
       if (u->type().isListToScalar()) {
         return List::ShallowApplyListOperators(u);

@@ -438,6 +438,18 @@ bool Matrix::SimplifySwitch(Tree* u) {
           (u->isCross() ? Vector::Cross : Vector::Dot)(child, child2));
       return true;
     }
+    case BlockType::Det: {
+      Tree* determinant;
+      RowCanonize(child, true, &determinant);
+      u->moveTreeOverTree(determinant);
+      return true;
+    }
+    case BlockType::Inverse:
+      u->moveTreeOverTree(Inverse(child));
+      return true;
+    case BlockType::Norm:
+      u->moveTreeOverTree(Vector::Norm(child));
+      return true;
     case BlockType::PowerMatrix: {
       Tree* index = child->nextTree();
       if (!Integer::Is<int>(index)) {
@@ -447,15 +459,9 @@ bool Matrix::SimplifySwitch(Tree* u) {
       u->moveTreeOverTree(Power(child, Integer::Handler(index).to<int>()));
       return true;
     }
-    case BlockType::Inverse:
-      u->moveTreeOverTree(Inverse(child));
-      return true;
     case BlockType::Ref:
-      RowCanonize(child, false);
-      u->removeNode();
-      return true;
     case BlockType::Rref:
-      RowCanonize(child, true);
+      RowCanonize(child, u->isRref());
       u->removeNode();
       return true;
     case BlockType::Trace:
@@ -464,17 +470,7 @@ bool Matrix::SimplifySwitch(Tree* u) {
     case BlockType::Transpose:
       u->moveTreeOverTree(Transpose(child));
       return true;
-    case BlockType::Det: {
-      Tree* determinant;
-      RowCanonize(child, true, &determinant);
-      u->moveTreeOverTree(determinant);
-      return true;
-    }
-    case BlockType::Norm:
-      u->moveTreeOverTree(Vector::Norm(child));
-      return true;
-    default:
-      // Remaining types have been handled beforehand.
+    default:  // Remaining types have been handled beforehand.
       assert(false);
   }
   return false;

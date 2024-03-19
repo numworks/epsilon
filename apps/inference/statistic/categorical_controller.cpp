@@ -29,9 +29,7 @@ bool CategoricalController::ButtonAction(CategoricalController *controller,
   return true;
 }
 
-void CategoricalController::scrollViewDidChangeOffset(
-    ScrollViewDataSource *scrollViewDataSource) {
-  assert(scrollViewDataSource == this);
+void CategoricalController::didScroll() {
   /* Transfer the CategoricalController offset to the CategoricalTableCell
    * offset. This is a hack to ensure that the categorical table cell doesn't
    * require too many displayable cells. If the scroll was handled by the
@@ -69,11 +67,8 @@ void CategoricalController::scrollViewDidChangeOffset(
 
   categoricalTableCell()->selectableTableView()->setContentOffset(
       KDPoint(tableOffset.x(), newTableOffsetY));
-  // Unset the ScrollViewDelegate to avoid infinite looping
-  setScrollViewDelegate(nullptr);
   m_selectableListView.setContentOffset(
       KDPoint(listOffset.x(), newListOffsetY));
-  setScrollViewDelegate(this);
 }
 
 bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
@@ -119,6 +114,7 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
     }
     categoricalTableCell()->selectRow(rowToSelect);
   }
+  didScroll();
 }
 
 HighlightCell *CategoricalController::reusableCell(int index, int type) {

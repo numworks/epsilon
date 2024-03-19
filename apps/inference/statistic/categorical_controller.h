@@ -27,8 +27,6 @@ class CategoricalController
   static bool ButtonAction(CategoricalController* controller, void* s);
 
   // ScrollViewDelegate
-  void scrollViewDidChangeOffset(
-      ScrollViewDataSource* scrollViewDataSource) override;
   bool updateBarIndicator(bool vertical, bool* visible) override;
 
   // SelectableListViewDelegate
@@ -59,6 +57,7 @@ class CategoricalController
 
  private:
   virtual void createDynamicCells() = 0;
+  void didScroll();
 };
 
 /* Common Controller between InputHomogeneityController and

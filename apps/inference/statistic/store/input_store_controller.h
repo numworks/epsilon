@@ -35,9 +35,10 @@ class InputStoreController : public InputCategoricalController,
   }
   void viewWillAppear() override;
 
-  // ScrollViewDelegate
-  void scrollViewDidChangeOffset(
-      ScrollViewDataSource* scrollViewDataSource) override;
+  // SelectableListViewDelegate
+  void listViewDidChangeSelectionAndDidScroll(
+      Escher::SelectableListView* l, int previousRow, KDPoint previousOffset,
+      bool withinTemporarySelection = false) override;
 
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;

@@ -10,7 +10,7 @@ class ScrollViewDataSource;
 class ScrollViewDelegate {
  public:
   virtual void scrollViewDidChangeOffset(
-      ScrollViewDataSource* scrollViewDataSource) = 0;
+      ScrollViewDataSource* scrollViewDataSource){};
   virtual bool updateBarIndicator(bool vertical, bool* visible) {
     return false;
   }

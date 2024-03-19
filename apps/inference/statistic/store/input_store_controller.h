@@ -83,7 +83,7 @@ class InputStoreController : public InputCategoricalController,
   KDCoordinate nonMemoizedRowHeight(int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   InputCategoricalTableCell* categoricalTableCell() override {
-    return &m_slopeTableCell;
+    return &m_storeTableCell;
   }
   void createDynamicCells() override;
   int indexOfTableCell() const override { return k_dropdownCellIndex + 1; }
@@ -95,7 +95,7 @@ class InputStoreController : public InputCategoricalController,
     return static_cast<Escher::StackViewController*>(parentResponder());
   }
   char listPrefix(int column) const {
-    return m_slopeTableCell.store()->columnNamePrefixAtIndex(column);
+    return m_storeTableCell.store()->columnNamePrefixAtIndex(column);
   }
   int numberOfExtraParameters() const {
     return m_statistic->distributionType() == DistributionType::Z
@@ -112,7 +112,7 @@ class InputStoreController : public InputCategoricalController,
   DropdownCategoricalCell m_dropdownCell;
   InputCategoricalCell<Escher::LayoutView>
       m_extraParameters[k_maxNumberOfExtraParameters];
-  StoreTableCell m_slopeTableCell;
+  StoreTableCell m_storeTableCell;
   /* This second stack view controller is used to make the banner of the store
    * parameter controller white, which deviates from the style of the main
    * stack view controller (gray scales). */

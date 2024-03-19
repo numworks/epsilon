@@ -24,7 +24,6 @@ InputStoreController::InputStoreController(StackViewController* parent,
       m_loadedDistribution(DistributionType::T),
       m_loadedTest(SignificanceTestType::OneProportion) {
   m_storeParameterController.selectRow(0);
-  m_selectableListView.margins()->setTop(Metric::CommonMargins.top());
   m_storeTableCell.selectableTableView()->margins()->setTop(
       Metric::TableSeparatorThickness);
 }
@@ -125,37 +124,6 @@ void InputStoreController::viewWillAppear() {
   m_loadedTest = m_statistic->significanceTestType();
 
   InputCategoricalController::viewWillAppear();
-}
-
-void InputStoreController::listViewDidChangeSelectionAndDidScroll(
-    SelectableListView* l, int previousRow, KDPoint previousOffset,
-    bool withinTemporarySelection) {
-  InputCategoricalController::listViewDidChangeSelectionAndDidScroll(
-      l, previousRow, previousOffset, withinTemporarySelection);
-
-  /* The top margin of the list view depends on the first visible row:
-   * - if the top row is the table, there needs to not be a margin to let the
-   * table fill up the whole screen.
-   * - if the top row is a normal cell, a margin is needed to have the right
-   * vertical scroll. */
-
-  KDPoint listOffset = m_selectableListView.contentOffset();
-  KDCoordinate listTopMargin = m_selectableListView.margins()->top();
-  KDCoordinate newListTopMargin = Metric::CommonMargins.top() - listTopMargin;
-  /* Don't use firstDisplayedRow as the table has not been re-laid out yet.
-   * Always take margin into account to avoid being locked from scrolling. */
-  KDCoordinate firstVisibleRow =
-      rowAfterCumulatedHeight(listOffset.y() + newListTopMargin);
-  if ((firstVisibleRow == indexOfTableCell()) != (listTopMargin == 0)) {
-    m_selectableListView.margins()->setTop(newListTopMargin);
-    /* If the first visible row is the topmost row, we want to stay at the top
-     * of the list so don't propagate the changed in offset caused by the
-     * margin. */
-    if (firstVisibleRow != 0) {
-      m_selectableListView.setContentOffset(KDPoint(
-          listOffset.x(), listOffset.y() - listTopMargin + newListTopMargin));
-    }
-  }
 }
 
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {

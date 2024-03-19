@@ -112,12 +112,21 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       }
       buffer = append("(", buffer, end);
       bool firstChild = true;
-      for (const Tree *child : layout->children()) {
+      for (int i = 0; const Tree *child : layout->children()) {
+        if (layout->isParametricLayout() &&
+            i == layout->numberOfChildren() - 1) {
+          break;
+        }
         if (!firstChild) {
+          buffer = append(",", buffer, end);
+        }
+        if (layout->isParametricLayout() && i == 0) {
+          buffer = Serialize(layout->lastChild(), buffer, end);
           buffer = append(",", buffer, end);
         }
         buffer = Serialize(child, buffer, end);
         firstChild = false;
+        i++;
       }
       buffer = append(")", buffer, end);
     }

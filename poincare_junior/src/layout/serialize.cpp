@@ -25,7 +25,7 @@ char *Serialize(const Rack *rack, char *buffer, char *end) {
 }
 
 char *append(const char *text, char *buffer, char *end) {
-  size_t len = std::min<size_t>(strlen(text), end - buffer);
+  size_t len = std::min<size_t>(strlen(text), end - 1 - buffer);
   memcpy(buffer, text, len);
   return buffer + len;
 }

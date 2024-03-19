@@ -10,9 +10,8 @@
 
 using namespace PoincareJ;
 
-/* TODO PCJ: Reactivate these tests once we can increase
- * AdvancedSimplification::Path::k_size to 12 and
- * AdvancedSimplification::CrcCollection::k_size to 128 */
+/* TODO PCJ: Reactivate these tests once we can increase ADVANCED_MAX_DEPTH to
+ * 12 and ADVANCED_MAX_BREADTH to 128 */
 #define ACTIVATE_IF_INCREASED_PATH_SIZE 0
 
 ProjectionContext cartesianCtx = {.m_complexFormat = ComplexFormat::Cartesian};

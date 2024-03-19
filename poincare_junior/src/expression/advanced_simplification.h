@@ -10,6 +10,11 @@
 #include "projection.h"
 #include "trigonometry.h"
 
+// Max number of trees advanced reduction can handle
+#define ADVANCED_MAX_BREADTH 64
+// Max depth of path advanced reduction can handle
+#define ADVANCED_MAX_DEPTH 6
+
 namespace PoincareJ {
 
 class AdvancedSimplification {
@@ -36,7 +41,7 @@ class AdvancedSimplification {
 
    private:
     // Max Expand/Contract combination possibilities
-    constexpr static size_t k_size = 64;
+    constexpr static size_t k_size = ADVANCED_MAX_BREADTH;
     uint32_t m_collection[k_size];
     // Depth at which each crc has been explored
     uint8_t m_depth[k_size];
@@ -101,7 +106,7 @@ class AdvancedSimplification {
 
    private:
     // Path max length (~= 2 * max number of allowed Expand/Contract)
-    constexpr static uint8_t k_size = 6;
+    constexpr static uint8_t k_size = ADVANCED_MAX_DEPTH;
     Direction m_stack[k_size];
     uint8_t m_length;
   };

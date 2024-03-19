@@ -162,11 +162,14 @@ Layout LayoutNode::makeEditable() {
 
 // Other
 bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
+#if 0
   if (type() == LayoutNode::Type::CodePointLayout &&
       static_cast<const CodePointLayoutNode *>(this)
           ->isMultiplicationCodePoint()) {
     return false;
   }
+#endif
+  assert(false);
   /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
    * isCollapsable is true too. If isCollapsable changes, it might not be the
    * case anymore so make sure to modify this function if needed. */

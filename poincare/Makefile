@@ -1,42 +1,9 @@
 SFLAGS += -Ipoincare/include
 
 poincare_src += $(addprefix poincare/src/,\
-  autocompleted_bracket_pair_layout.cpp \
-  binomial_coefficient_layout.cpp \
-  bracket_pair_layout.cpp \
-  code_point_layout.cpp\
-  combined_code_points_layout.cpp\
-  condensed_sum_layout.cpp \
-  conjugate_layout.cpp \
-  curly_brace_layout.cpp \
-  derivative_layout.cpp \
-  empty_rectangle.cpp \
-  fraction_layout.cpp \
-  grid_layout.cpp \
-  horizontal_layout.cpp \
-  input_beautification.cpp \
-  integral_layout.cpp \
   junior_layout.cpp \
   layout.cpp \
-  layout_cursor.cpp \
   layout_node.cpp \
-  letter_a_with_sub_and_superscript_layout.cpp \
-  letter_c_with_sub_and_superscript_layout.cpp \
-  letter_with_sub_and_superscript_layout.cpp \
-  linear_layout_decoder.cpp \
-  list_sequence_layout.cpp \
-  matrix_layout.cpp \
-  nth_root_layout.cpp \
-  parenthesis_layout.cpp \
-  piecewise_operator_layout.cpp \
-  point_2D_layout.cpp \
-  product_layout.cpp \
-  sequence_layout.cpp \
-  square_bracket_pair_layout.cpp \
-  string_layout.cpp \
-  sum_layout.cpp \
-  two_rows_layout.cpp \
-  vertical_offset_layout.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/,\
@@ -232,9 +199,7 @@ poincare_src += $(addprefix poincare/src/parsing/,\
 tests_src += $(addprefix poincare/test/,\
   helper.cpp \
   approximation.cpp \
-  expression_to_layout.cpp \
   derivative.cpp \
-  layout_to_expression.cpp \
   parsing.cpp \
   simplification.cpp \
 )

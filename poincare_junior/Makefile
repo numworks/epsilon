@@ -53,7 +53,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/app_helpers.cpp \
   layout/autocompleted_pair.cpp \
   layout/code_point_layout.cpp \
-  layout/conversion.cpp \
   layout/cursor_motion.cpp \
   layout/empty_rectangle.cpp \
   layout/grid.cpp \

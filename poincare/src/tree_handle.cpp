@@ -351,8 +351,6 @@ template FloatList<float> TreeHandle::NAryBuilder<FloatList<float>, ListNode>(
 template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
 template GreatCommonDivisor TreeHandle::NAryBuilder<
     GreatCommonDivisor, GreatCommonDivisorNode>(const Tuple &);
-template HorizontalLayout
-TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(const Tuple &);
 template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(
     const Tuple &);
 template LeastCommonMultiple TreeHandle::NAryBuilder<
@@ -375,8 +373,6 @@ template MatrixComplex<double> TreeHandle::NAryBuilder<
     MatrixComplex<double>, MatrixComplexNode<double>>(const Tuple &);
 template MatrixComplex<float> TreeHandle::NAryBuilder<
     MatrixComplex<float>, MatrixComplexNode<float>>(const Tuple &);
-template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(
-    const Tuple &);
 template MixedFraction
 TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(const Tuple &);
 template Multiplication
@@ -387,17 +383,11 @@ template Parenthesis
 TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template PiecewiseOperator TreeHandle::NAryBuilder<
     PiecewiseOperator, PiecewiseOperatorNode>(const Tuple &);
-template PiecewiseOperatorLayout TreeHandle::NAryBuilder<
-    PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>(const Tuple &);
 template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(
     const Tuple &);
-template ProductLayout
-TreeHandle::FixedArityBuilder<ProductLayout, ProductLayoutNode>(const Tuple &);
 template Subtraction
 TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
 template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
-template SumLayout TreeHandle::FixedArityBuilder<SumLayout, SumLayoutNode>(
-    const Tuple &);
 template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(
     const Tuple &);
 template Nonreal TreeHandle::FixedArityBuilder<Nonreal, NonrealNode>(

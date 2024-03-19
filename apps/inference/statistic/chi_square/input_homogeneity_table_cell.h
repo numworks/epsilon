@@ -1,9 +1,9 @@
 #ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_TABLE_CELL_H
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_TABLE_CELL_H
 
+#include "homogeneity_data_source.h"
 #include "inference/models/statistic/homogeneity_test.h"
 #include "inference/statistic/categorical_table_cell.h"
-#include "inference/statistic/chi_square/homogeneity_data_source.h"
 
 namespace Inference {
 

@@ -54,7 +54,6 @@ class JuniorLayoutNode final : public LayoutNode {
     assert(false);
     return KDPointZero;
   }
-  OLayout makeEditable() override;
 
   bool protectedIsIdenticalTo(OLayout l) override;
 
@@ -73,7 +72,6 @@ class JuniorLayout final
     : public LayoutNoChildren<JuniorLayout, JuniorLayoutNode> {
  public:
   JuniorLayout() {}
-  JuniorLayout(const OLayout& other) { *this = other; }
 
   JuniorLayout(const PoincareJ::Tree* tree) {
     // TODO is copy-elimination guaranted here ?
@@ -83,6 +81,11 @@ class JuniorLayout final
   template <PoincareJ::TreeConcept C>
   JuniorLayout(C c) : JuniorLayout(static_cast<const PoincareJ::Tree*>(c)) {
     static_assert(c.type().isRackLayout());
+  }
+
+  JuniorLayout clone() const {
+    OLayout clone = OLayout::clone();
+    return static_cast<JuniorLayout&>(clone);
   }
 
   static JuniorLayout Create(const PoincareJ::Tree* structure,
@@ -95,23 +98,12 @@ class JuniorLayout final
   static JuniorLayout Builder(const PoincareJ::Tree* tree);
   // Eat the tree
   static JuniorLayout Builder(PoincareJ::Tree* tree);
-  static JuniorLayout Juniorize(OLayout l);
-  static OLayout UnJuniorize(JuniorLayout l);
   PoincareJ::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }
 
-  JuniorLayout operator=(OLayout&& other) {
-    *this = Juniorize(other);
-    return *this;
-  }
-
-  JuniorLayout operator=(const OLayout& other) {
-    *this = Juniorize(other);
-    return *this;
-  }
-
   JuniorLayout cloneWithoutMargins();
+  JuniorLayout makeEditable() { return cloneWithoutMargins(); }
 
   bool isEmpty() const { return tree()->numberOfChildren() == 0; }
 

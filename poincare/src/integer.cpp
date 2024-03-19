@@ -262,18 +262,12 @@ size_t Integer::serializeInBinaryBase(char *buffer, size_t bufferSize,
 
 // Layout
 
-OLayout Integer::createLayout(OMG::Base base) const {
+Layout Integer::createLayout(OMG::Base base) const {
   constexpr int bufferSize = k_maxNumberOfDigitsBase10 + 1;
   char buffer[bufferSize];
   int numberOfChars = serialize(buffer, bufferSize, base);
   assert(numberOfChars >= 1);
-  if (static_cast<int>(UTF8Decoder::CharSizeOfCodePoint(buffer[0])) ==
-      numberOfChars) {
-    UTF8Decoder decoder = UTF8Decoder(buffer);
-    return CodePointLayout::Builder(decoder.nextCodePoint());
-  }
-  OLayout res = Layout::String(buffer, numberOfChars);
-  return res;
+  return Layout::String(buffer, numberOfChars);
 }
 
 // Approximation

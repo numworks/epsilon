@@ -9,6 +9,8 @@
 
 namespace Poincare {
 
+#define Layout OLayout
+
 int FractionLayoutNode::indexAfterHorizontalCursorMove(
     OMG::HorizontalDirection direction, int currentIndex,
     bool* shouldRedrawLayout) {

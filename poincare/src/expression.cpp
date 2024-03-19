@@ -1126,12 +1126,11 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
 
 /* Layout Helper */
 
-OLayout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context *context, bool forceStripMargin,
-                                 bool nested) const {
+Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits, Context *context,
+                                bool forceStripMargin, bool nested) const {
   if (isUninitialized()) {
-    return OLayout();
+    return Layout();
   }
   PoincareJ::Tree *exp = PoincareJ::Expression::FromPoincareExpression(*this);
   PoincareJ::Tree *lay = PoincareJ::Layoutter::LayoutExpression(

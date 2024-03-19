@@ -45,8 +45,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  Layout h = KRackL();
-  JuniorLayout l = JuniorLayout::Juniorize(h);
+  Layout l = KRackL();
   m_layoutView.setLayout(l);
   m_cursor =
       PoincareJ::LayoutBufferCursor(l, const_cast<PoincareJ::Tree *>(l.tree()));
@@ -167,11 +166,11 @@ void LayoutField::scrollToCursor() {
   scrollToBaselinedRect(cursorRect, cursorBaseline);
 }
 
-void LayoutField::setLayout(Poincare::OLayout newLayout) {
+void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();
   const_cast<LayoutView *>(m_contentView.layoutView())
-      ->setLayout(JuniorLayout::Juniorize(newLayout.makeEditable()));
+      ->setLayout(newLayout.makeEditable());
   putCursorOnOneSide(OMG::Direction::Right());
   reload(previousSize);
 }

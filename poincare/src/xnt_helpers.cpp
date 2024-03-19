@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+#define Layout OLayout
+
 namespace XNTHelpers {
 
 static int indexOfCodePointInCycle(CodePoint codePoint,

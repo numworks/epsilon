@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <poincare/junior_layout.h>
 #include <poincare_junior/src/layout/app_helpers.h>
-#include <poincare_junior/src/layout/conversion.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
@@ -29,10 +28,6 @@ size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {
   return PoincareJ::Serialize(tree(), buffer, buffer + bufferSize) - buffer;
-}
-
-OLayout JuniorLayoutNode::makeEditable() {
-  return JuniorLayout(this).cloneWithoutMargins();
 }
 
 bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) {
@@ -95,18 +90,6 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
   }
   PoincareJ::NAry::SetNumberOfChildren(tree, n);
   return Builder(tree);
-}
-
-JuniorLayout JuniorLayout::Juniorize(OLayout l) {
-  if (l.isUninitialized() || l.type() == LayoutNode::Type::JuniorLayout) {
-    // l is already a junior layout
-    return static_cast<JuniorLayout&>(l);
-  }
-  return Builder(PoincareJ::FromPoincareLayout(l));
-}
-
-OLayout JuniorLayout::UnJuniorize(JuniorLayout l) {
-  return PoincareJ::ToPoincareLayout(l.tree());
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,

@@ -33,7 +33,7 @@ class LayoutField : public EditableField {
     return m_contentView.layoutView()->layoutHasNode();
   }
   void putCursorOnOneSide(OMG::HorizontalDirection side);
-  void setLayout(Poincare::OLayout newLayout);
+  void setLayout(Poincare::Layout newLayout);
   size_t dumpContent(char* buffer, size_t bufferSize, int* cursorOffset,
                      int* position);
 

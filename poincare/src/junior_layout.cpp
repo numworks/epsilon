@@ -68,7 +68,7 @@ JuniorLayout JuniorLayout::Create(const PoincareJ::Tree* structure,
   return Builder(tree);
 }
 
-JuniorLayout JuniorLayout::CodePoint(class CodePoint cp) {
+JuniorLayout JuniorLayout::CodePoint(::CodePoint cp) {
   PoincareJ::Tree* tree = KRackL.node<1>->cloneNode();
   PoincareJ::EditionPool::SharedEditionPool
       ->push<PoincareJ::BlockType::CodePointLayout>(cp);
@@ -79,10 +79,10 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
   PoincareJ::Tree* tree = KRackL()->clone();
   UTF8Decoder decoder(str);
   int n = 0;
-  class CodePoint cp = 0;
+  ::CodePoint cp = 0;
   // TODO decoder could yield glyphs
   while (n != length && (cp = decoder.nextCodePoint())) {
-    class CodePoint cc = 0;
+    ::CodePoint cc = 0;
     if (n + 1 != length && (cc = decoder.nextCodePoint()) && cc.isCombining()) {
       PoincareJ::EditionPool::SharedEditionPool
           ->push<PoincareJ::BlockType::CombinedCodePointsLayout>(cp, cc);

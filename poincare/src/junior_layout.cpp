@@ -44,6 +44,7 @@ bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) {
 }
 
 JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
+  assert(PoincareJ::AppHelpers::IsSanitizedRack(tree));
   if (!tree) {
     return JuniorLayout();
   }

@@ -64,5 +64,22 @@ void SanitizeRack(PoincareJ::Tree* rack) {
   }
 }
 
+bool IsSanitizedRack(const PoincareJ::Tree* rack) {
+  if (!rack->isRackLayout()) {
+    return false;
+  }
+  for (const Tree* child : rack->children()) {
+    if (child->isRackLayout()) {
+      return false;
+    }
+    for (const Tree* subRack : child->children()) {
+      if (!IsSanitizedRack(subRack)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 }  // namespace AppHelpers
 }  // namespace PoincareJ

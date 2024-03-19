@@ -19,6 +19,8 @@ bool ContainsSmallCapitalE(const Tree* rack);
 // Enforce a correct rack/layout structure by merging or inserting racks
 void SanitizeRack(Tree* rack);
 
+bool IsSanitizedRack(const Tree* rack);
+
 }  // namespace AppHelpers
 }  // namespace PoincareJ
 

@@ -83,6 +83,21 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       buffer = append("]", buffer, end);
       break;
     }
+    case LayoutType::Derivative:
+    case LayoutType::NthDerivative: {
+      buffer = append("diff(", buffer, end);
+      buffer = Serialize(layout->child(2), buffer, end);
+      buffer = append(",", buffer, end);
+      buffer = Serialize(layout->child(0), buffer, end);
+      buffer = append(",", buffer, end);
+      buffer = Serialize(layout->child(1), buffer, end);
+      if (layout->isNthDerivativeLayout()) {
+        buffer = append(",", buffer, end);
+        buffer = Serialize(layout->child(3), buffer, end);
+      }
+      buffer = append(")", buffer, end);
+      break;
+    }
     default: {
       if (layout->isPiecewiseLayout()) {
         buffer = append("piecewise", buffer, end);

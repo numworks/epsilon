@@ -80,9 +80,9 @@ static_assert(k_homogeneityTableNumberOfReusableInnerCells ==
               "k_homogeneityTableNumberOfReusableHeaderCells should be updated "
               "with HomogeneityTableDataSource::k_numberOfReusableCells");
 static_assert(k_doubleColumnTableNumberOfReusableCells ==
-                  GoodnessTableCell::k_numberOfReusableCells,
+                  InputGoodnessTableCell::k_numberOfReusableCells,
               "k_doubleColumnTableNumberOfReusableCells should be updated with "
-              "GoodnessTableCell::k_numberOfReusableCells");
+              "InputGoodnessTableCell::k_numberOfReusableCells");
 static_assert(k_doubleColumnTableNumberOfReusableCells ==
                   StoreTableCell::k_numberOfReusableCells,
               "k_doubleColumnTableNumberOfReusableCells should be updated with "

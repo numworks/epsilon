@@ -3,7 +3,7 @@
 
 #include "inference/statistic/categorical_cell.h"
 #include "inference/statistic/categorical_controller.h"
-#include "inference/statistic/chi_square/goodness_table_cell.h"
+#include "inference/statistic/chi_square/input_goodness_table_cell.h"
 
 namespace Inference {
 
@@ -31,7 +31,7 @@ class InputGoodnessController : public InputCategoricalController {
   constexpr static int k_indexOfDegreeOfFreedom = 1;
 
   InputCategoricalTableCell* categoricalTableCell() override {
-    return &m_goodnessTableCell;
+    return &m_inputGoodnessTableCell;
   }
   void createDynamicCells() override;
   int indexOfSignificanceCell() const override {
@@ -40,7 +40,7 @@ class InputGoodnessController : public InputCategoricalController {
   int indexOfEditedParameterAtIndex(int index) const override;
 
   InputCategoricalCell<Escher::MessageTextView> m_degreeOfFreedomCell;
-  GoodnessTableCell m_goodnessTableCell;
+  InputGoodnessTableCell m_inputGoodnessTableCell;
 };
 
 }  // namespace Inference

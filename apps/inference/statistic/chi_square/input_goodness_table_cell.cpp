@@ -1,15 +1,14 @@
-#include "goodness_table_cell.h"
+#include "input_goodness_table_cell.h"
 
 #include <shared/column_parameter_controller.h>
 
-#include "inference/statistic/chi_square/input_goodness_controller.h"
 #include "input_goodness_controller.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-GoodnessTableCell::GoodnessTableCell(
+InputGoodnessTableCell::InputGoodnessTableCell(
     Responder* parentResponder, GoodnessTest* test,
     InputGoodnessController* inputGoodnessController)
     : DoubleColumnTableCell(parentResponder, test),
@@ -20,7 +19,7 @@ GoodnessTableCell::GoodnessTableCell(
   }
 }
 
-bool GoodnessTableCell::textFieldDidFinishEditing(
+bool InputGoodnessTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   int previousDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
   if (InputCategoricalTableCell::textFieldDidFinishEditing(textField, event)) {
@@ -34,8 +33,8 @@ bool GoodnessTableCell::textFieldDidFinishEditing(
   return false;
 }
 
-bool GoodnessTableCell::recomputeDimensionsAndReload(bool forceReloadTableCell,
-                                                     bool forceReloadPage) {
+bool InputGoodnessTableCell::recomputeDimensionsAndReload(
+    bool forceReloadTableCell, bool forceReloadPage) {
   // Update degree of freedom if Number of non-empty rows changed
   if (InputCategoricalTableCell::recomputeDimensionsAndReload(
           forceReloadTableCell, forceReloadPage)) {
@@ -47,12 +46,12 @@ bool GoodnessTableCell::recomputeDimensionsAndReload(bool forceReloadTableCell,
   return false;
 }
 
-size_t GoodnessTableCell::fillColumnName(int column, char* buffer) {
+size_t InputGoodnessTableCell::fillColumnName(int column, char* buffer) {
   return strlcpy(buffer, I18n::translate(k_columnHeaders[column]),
                  Shared::ColumnParameterController::k_titleBufferSize);
 }
 
-CategoricalController* GoodnessTableCell::categoricalController() {
+CategoricalController* InputGoodnessTableCell::categoricalController() {
   return m_inputGoodnessController;
 }
 

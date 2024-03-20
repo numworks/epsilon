@@ -106,7 +106,10 @@ class JuniorExpression : public OExpression {
   // Eat the tree
   static JuniorExpression Builder(PoincareJ::Tree* tree);
   static JuniorExpression Juniorize(OExpression e);
-  const PoincareJ::Tree* tree() const { return node()->tree(); }
+  const PoincareJ::Tree* tree() const {
+    assert(!isUninitialized());
+    return node()->tree();
+  }
   JuniorExpression childAtIndex(int i) const;
   ExpressionNode::Type type() const;
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const;

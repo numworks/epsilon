@@ -71,6 +71,10 @@ struct Dimension {
   bool isSimpleAngleUnit() const {
     return isAngleUnit() && unit.vector.angle == 1;
   }
+  bool isSimpleRadianAngleUnit() const {
+    return isSimpleAngleUnit() &&
+           unit.representative == &Units::Angle::representatives.radian;
+  }
   bool hasNonKelvinTemperatureUnit() const {
     return isUnit() &&
            IsNonKelvinTemperatureRepresentative(unit.representative);

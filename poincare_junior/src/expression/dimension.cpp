@@ -352,7 +352,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
         }
         secondDivisionChild = (t->isDivision());
       }
-      // If other than a non-kelvin temperature, representative doesn't matter.
+      // Only unique and celsius, fahrenheit or radians representatives matter.
       return rows > 0
                  ? Matrix(rows, cols)
                  : (unitVector.isEmpty() ? Scalar()

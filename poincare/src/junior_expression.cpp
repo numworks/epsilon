@@ -660,6 +660,62 @@ bool JuniorExpression::deepIsList(Context* context) const {
   return PoincareJ::Dimension::GetListLength(tree()) >= 0;
 }
 
+bool JuniorExpression::hasComplexI(Context* context,
+                                   SymbolicComputation replaceSymbols) const {
+  return !isUninitialized() &&
+         recursivelyMatches(
+             [](const JuniorExpression e, Context* context) {
+               return e.tree()->isComplexI();
+             },
+             context, replaceSymbols);
+}
+
+bool JuniorExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
+                               bool replaceSymbols, Context* ctx) const {
+  if (hasAngleUnits) {
+    *hasAngleUnits = false;
+  }
+  struct Pack {
+    bool ignoreAngleUnits;
+    bool* hasAngleUnits;
+  };
+  Pack pack{ignoreAngleUnits, hasAngleUnits};
+  return recursivelyMatches(
+      [](const JuniorExpression e, Context* context, void* arg) {
+        Pack* pack = static_cast<Pack*>(arg);
+        bool isAngleUnit = e.isPureAngleUnit();
+        bool* hasAngleUnits = pack->hasAngleUnits;
+        if (isAngleUnit && hasAngleUnits) {
+          *hasAngleUnits = true;
+        }
+        return (e.type() == ExpressionNode::Type::Unit &&
+                (!pack->ignoreAngleUnits || !isAngleUnit)) ||
+               e.type() == ExpressionNode::Type::ConstantPhysics;
+      },
+      ctx,
+      replaceSymbols
+          ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
+          : SymbolicComputation::DoNotReplaceAnySymbol,
+      &pack);
+}
+
+bool JuniorExpression::isPureAngleUnit() const {
+  return !isUninitialized() && type() == ExpressionNode::Type::Unit &&
+         PoincareJ::Dimension::GetDimension(tree()).isSimpleAngleUnit();
+}
+
+bool JuniorExpression::isInRadians(Context* context) const {
+  JuniorExpression units;
+  ReductionContext reductionContext;
+  reductionContext.setContext(context);
+  reductionContext.setUnitConversion(UnitConversion::None);
+  JuniorExpression thisClone =
+      cloneAndReduceAndRemoveUnit(reductionContext, &units);
+  return !units.isUninitialized() &&
+         units.type() == ExpressionNode::Type::Unit &&
+         PoincareJ::Dimension::GetDimension(tree()).isSimpleRadianAngleUnit();
+}
+
 /* Matrix */
 
 Matrix Matrix::Builder() {

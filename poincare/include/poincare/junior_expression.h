@@ -249,6 +249,16 @@ class JuniorExpression : public OExpression {
     assert(false);
     return false;
   }
+
+  bool isUndefined() const { return type() == ExpressionNode::Type::Undefined; }
+  bool hasComplexI(
+      Context* context,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
+               bool replaceSymbols = false, Context* ctx = nullptr) const;
+  bool isPureAngleUnit() const;
+  bool isInRadians(Context* context) const;
 #endif
 };
 

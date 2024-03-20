@@ -71,9 +71,12 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
   }
   KDPoint position = p;
   KDSize glyphSize = KDFont::GlyphSize(style.font);
-  KDFont::RenderPalette palette =
-      KDFont::Font(style.font)
-          ->renderPalette(style.glyphColor, style.backgroundColor);
+  static KDFont::RenderPalette palette =
+      KDFont::renderPalette(KDColorBlack, KDColorBlack);
+  if (palette.from() != style.backgroundColor ||
+      palette.to() != style.glyphColor) {
+    palette = KDFont::renderPalette(style.glyphColor, style.backgroundColor);
+  }
   KDFont::GlyphBuffer glyphBuffer;
 
   UTF8Decoder decoder(text);

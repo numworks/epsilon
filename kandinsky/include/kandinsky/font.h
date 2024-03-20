@@ -118,8 +118,8 @@ class KDFont {
   void colorizeGlyphBuffer(const RenderPalette* renderPalette,
                            GlyphBuffer* glyphBuffer) const;
 
-  RenderPalette renderPalette(KDColor textColor,
-                              KDColor backgroundColor) const {
+  static RenderPalette renderPalette(KDColor textColor,
+                                     KDColor backgroundColor) {
     return RenderPalette::Gradient(textColor, backgroundColor);
   }
 

@@ -46,9 +46,7 @@ class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
   }
   bool authorizedParameterAtIndex(double p, int i) const;
   double computeStandardError() const;
-  bool validateInputs() {
-    return seriesIsValid(m_series) && numberOfPairsOfSeries(m_series) > 2;
-  }
+  bool validateInputs() { return validateSeries(this); }
 
   // Table
   Index2D initialDimensions() const override {

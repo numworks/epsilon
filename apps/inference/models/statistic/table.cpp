@@ -120,4 +120,15 @@ int Table::index2DToIndex(int row, int column) const {
   return column + row * maxNumberOfColumns();
 }
 
+bool Table::validateSeries(Shared::DoublePairStore* doublePairStore) const {
+  for (int i = 0; i < numberOfSeries(); ++i) {
+    int series = seriesAt(i);
+    if (!doublePairStore->seriesIsValid(series) ||
+        doublePairStore->numberOfPairsOfSeries(series) <= 2) {
+      return false;
+    }
+  }
+  return true;
+}
+
 }  // namespace Inference

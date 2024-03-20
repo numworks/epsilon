@@ -11,6 +11,9 @@ void RawDataStatistic::setSeriesAt(Statistic* stat, int index, int series) {
 }
 
 bool RawDataStatistic::parametersAreValid(Statistic* stat) {
+  if (hasSeries() && !validateSeries(this)) {
+    return false;
+  }
   syncParametersWithStore(stat);
   for (int i = 0; i < stat->numberOfParameters(); i++) {
     if (!stat->authorizedParameterAtIndex(stat->parameterAtIndex(i), i)) {

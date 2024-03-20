@@ -41,7 +41,7 @@ void CategoricalTypeController::stackOpenPage(
 bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
   if (cell(0)->canBeActivatedByEvent(event)) {
-    Escher::ViewController* controller = nullptr;
+    InputCategoricalController* controller = nullptr;
     CategoricalType type;
     switch (selectedRow()) {
       case k_indexOfGoodnessCell:
@@ -55,7 +55,9 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-    m_statistic->initializeCategoricalType(type);
+    if (m_statistic->initializeCategoricalType(type)) {
+      controller->selectRow(0);
+    }
     stackOpenPage(controller);
     return true;
   }

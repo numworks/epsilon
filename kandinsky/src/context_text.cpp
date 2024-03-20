@@ -66,6 +66,9 @@ KDPoint KDContext::alignAndDrawString(const char* text, KDPoint p, KDSize frame,
 
 KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
                               int maxByteLength) {
+  if (origin().x() + p.x() >= Ion::Display::Width && text[1] == 0) {
+    return KDPointZero;
+  }
   KDPoint position = p;
   KDSize glyphSize = KDFont::GlyphSize(style.font);
   KDFont::RenderPalette palette =

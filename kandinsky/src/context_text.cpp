@@ -66,9 +66,6 @@ KDPoint KDContext::alignAndDrawString(const char* text, KDPoint p, KDSize frame,
 
 KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
                               int maxByteLength) {
-  if (origin().x() + p.x() >= Ion::Display::Width && text[1] == 0) {
-    return KDPointZero;
-  }
   KDPoint position = p;
   KDSize glyphSize = KDFont::GlyphSize(style.font);
   static KDFont::RenderPalette palette =
@@ -106,21 +103,32 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
       codePoint = decoder.nextCodePoint();
     } else {
       assert(!codePoint.isCombining());
-      KDFont::Font(style.font)
-          ->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
-      codePoint = decoder.nextCodePoint();
-      while (codePoint.isCombining()) {
+      // TODO use clipping rect instead
+      if (origin().x() + position.x() + glyphSize.width() > 0 &&
+          origin().x() + position.x() < Ion::Display::Width) {
         KDFont::Font(style.font)
-            ->accumulateGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
-        codePointPointer = decoder.stringPosition();
+            ->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
         codePoint = decoder.nextCodePoint();
+        while (codePoint.isCombining()) {
+          KDFont::Font(style.font)
+              ->accumulateGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
+          codePointPointer = decoder.stringPosition();
+          codePoint = decoder.nextCodePoint();
+        }
+        KDFont::Font(style.font)->colorizeGlyphBuffer(&palette, &glyphBuffer);
+        /* Push the character on the screen
+         * It's OK to trash the content of the color buffer since we'll re-fetch
+         * it for the next char anyway */
+        fillRectWithPixels(KDRect(position, glyphSize),
+                           glyphBuffer.colorBuffer(),
+                           glyphBuffer.colorBuffer());
+      } else {
+        codePoint = decoder.nextCodePoint();
+        while (codePoint.isCombining()) {
+          codePointPointer = decoder.stringPosition();
+          codePoint = decoder.nextCodePoint();
+        }
       }
-      KDFont::Font(style.font)->colorizeGlyphBuffer(&palette, &glyphBuffer);
-      /* Push the character on the screen
-       * It's OK to trash the content of the color buffer since we'll re-fetch
-       * it for the next char anyway */
-      fillRectWithPixels(KDRect(position, glyphSize), glyphBuffer.colorBuffer(),
-                         glyphBuffer.colorBuffer());
       position = position.translatedBy(KDPoint(glyphSize.width(), 0));
       if (origin().x() + position.x() >= Ion::Display::Width) {
         // fast forward until line feed

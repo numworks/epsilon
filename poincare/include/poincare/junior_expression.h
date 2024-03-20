@@ -2,7 +2,12 @@
 #define POINCARE_JUNIOR_EXPRESSION_H
 
 #include <poincare/old_expression.h>
-#include <poincare_junior/src/memory/tree.h>
+
+namespace PoincareJ {
+
+class Tree;
+
+}
 
 namespace Poincare {
 

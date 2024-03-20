@@ -1,6 +1,7 @@
 #ifndef INFERENCE_MODELS_STATISTIC_TABLE_H
 #define INFERENCE_MODELS_STATISTIC_TABLE_H
 
+#include <apps/shared/double_pair_store.h>
 #include <assert.h>
 
 #include <cmath>
@@ -34,6 +35,8 @@ class Table {
   virtual void recomputeData() = 0;
   virtual int maxNumberOfColumns() const = 0;
   virtual int maxNumberOfRows() const = 0;
+
+  bool validateSeries(Shared::DoublePairStore* doublePairStore) const;
 
   struct Index2D {
     int row;

@@ -35,6 +35,13 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
     // Catch left event to avoid popping controller from StackViewController
     return true;
   }
+  if (e == Ion::Events::Down) {
+    /* The categorical list controller will select cell below the
+     * categorical table cell, so we need to scroll down the table cell first */
+    assert(categoricalController()->indexOfTableCell() <
+           categoricalController()->numberOfRows() - 1);
+    m_selectableTableView.scrollToBottom();
+  }
   return false;
 }
 

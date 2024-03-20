@@ -11,7 +11,7 @@
 
 namespace Poincare {
 
-class OExpression;
+class JuniorExpression;
 
 /* Preferences live in the Storage, which does not enforce alignment. The packed
  * attribute ensures the compiler will not emit instructions that require the
@@ -104,7 +104,7 @@ class __attribute__((packed)) Preferences final {
   static Preferences* SharedPreferences();
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
-      ComplexFormat complexFormat, const OExpression& e, Context* context);
+      ComplexFormat complexFormat, const JuniorExpression& e, Context* context);
 
   CalculationPreferences calculationPreferences() const {
     return m_calculationPreferences;

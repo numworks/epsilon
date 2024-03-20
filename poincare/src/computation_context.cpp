@@ -1,9 +1,9 @@
 #include <poincare/computation_context.h>
-#include <poincare/old_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-void ComputationContext::updateComplexFormat(const OExpression e) {
+void ComputationContext::updateComplexFormat(const JuniorExpression e) {
   m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
       m_complexFormat, e, m_context);
 }

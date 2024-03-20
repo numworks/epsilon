@@ -6,6 +6,8 @@
 
 namespace Poincare {
 
+class JuniorExpression;
+
 enum class ReductionTarget {
   /* Minimal reduction: this at least reduces rationals operations as
    * "1-0.3-0.7 --> 0" */
@@ -52,7 +54,7 @@ class ComputationContext {
     m_angleUnit = angleUnit;
   }
 
-  void updateComplexFormat(const OExpression e);
+  void updateComplexFormat(const JuniorExpression e);
 
  private:
   Context* m_context;

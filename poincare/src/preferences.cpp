@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
-#include <poincare/old_expression.h>
+#include <poincare/junior_expression.h>
 #include <poincare/preferences.h>
 #include <poincare/unit.h>
 
@@ -25,7 +25,8 @@ Preferences::Preferences()
       m_forceExamModeReload(false) {}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
-    ComplexFormat complexFormat, const OExpression& exp, Context* context) {
+    ComplexFormat complexFormat, const JuniorExpression& exp,
+    Context* context) {
   if (complexFormat == ComplexFormat::Real && exp.hasComplexI(context)) {
     return k_defautComplexFormatIfNotReal;
   }

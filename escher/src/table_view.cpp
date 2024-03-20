@@ -18,7 +18,7 @@ TableView::TableView(TableViewDataSource* dataSource,
 void TableView::scrollToBottom() {
   KDCoordinate contentOffsetX = contentOffset().x();
   KDCoordinate contentOffsetY =
-      dataSource()->cumulatedHeightBeforeRow(totalNumberOfRows()) -
+      m_contentView.minimalSizeForOptimalDisplay().height() -
       maxContentHeightDisplayableWithoutScrolling();
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }

@@ -80,7 +80,6 @@ class JuniorExpressionNode final : public ExpressionNode {
   const PoincareJ::Tree* tree() const {
     return PoincareJ::Tree::FromBlocks(m_blocks);
   }
-  PoincareJ::Tree* tree() { return PoincareJ::Tree::FromBlocks(m_blocks); }
   PoincareJ::Block m_blocks[0];
 };
 
@@ -102,9 +101,7 @@ class JuniorExpression : public OExpression {
   // Eat the tree
   static JuniorExpression Builder(PoincareJ::Tree* tree);
   static JuniorExpression Juniorize(OExpression e);
-  PoincareJ::Tree* tree() const {
-    return const_cast<JuniorExpression*>(this)->node()->tree();
-  }
+  const PoincareJ::Tree* tree() const { return node()->tree(); }
   JuniorExpression childAtIndex(int i) const;
   ExpressionNode::Type type() const;
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const;

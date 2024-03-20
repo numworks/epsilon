@@ -41,6 +41,7 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
     assert(categoricalController()->indexOfTableCell() <
            categoricalController()->numberOfRows() - 1);
     m_selectableTableView.scrollToBottom();
+    assert(m_selectableTableView.contentOffset().y() >= 0);
   }
   return false;
 }

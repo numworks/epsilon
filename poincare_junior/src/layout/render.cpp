@@ -654,6 +654,14 @@ void Render::DrawRack(const Rack* node, KDContext* ctx, KDPoint p,
                     .right()) {
       return;
     }
+    if ((!child || child->isCodePointLayout()) &&
+        p.x() + KDFont::GlyphWidth(context->style.font) <
+            context->ctx->clippingRect()
+                .relativeTo(context->ctx->origin())
+                .left()) {
+      context->index++;
+      return;
+    }
     KDGlyph::Style childStyle = context->style;
     if (context->index >= context->selection.leftPosition() &&
         context->index < context->selection.rightPosition()) {

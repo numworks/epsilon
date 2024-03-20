@@ -45,10 +45,11 @@ class CategoricalController
 
   void initView() override;
 
+  virtual int indexOfTableCell() const { return 0; }
+
  protected:
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
-  virtual int indexOfTableCell() const { return 0; }
   virtual int indexOfNextCell() const { return indexOfTableCell() + 1; }
   virtual CategoricalTableCell* categoricalTableCell() = 0;
 

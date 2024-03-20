@@ -43,6 +43,9 @@ class CategoricalTableCell : public Escher::HighlightCell,
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_selectableTableView.minimalSizeForOptimalDisplay();
   }
+  KDSize contentSizeWithMargins() const {
+    return m_selectableTableView.contentSizeWithMargins();
+  }
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelectionAndDidScroll(

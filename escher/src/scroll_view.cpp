@@ -21,11 +21,14 @@ ScrollView::ScrollView(View *contentView, ScrollViewDataSource *dataSource)
   assert(m_dataSource != nullptr);
 }
 
+KDSize ScrollView::contentSizeWithMargins() const {
+  return m_contentView->minimalSizeForOptimalDisplay() + m_margins;
+}
+
 KDSize ScrollView::minimalSizeForOptimalDisplay() const {
-  KDSize contentSize = m_contentView->minimalSizeForOptimalDisplay();
-  KDSize contentSizeWithMargins = contentSize + m_margins;
-  KDCoordinate width = contentSizeWithMargins.width();
-  KDCoordinate height = contentSizeWithMargins.height();
+  KDSize contentSize = contentSizeWithMargins();
+  KDCoordinate width = contentSize.width();
+  KDCoordinate height = contentSize.height();
 
   /* Crop right or bottom margins if content fits without a portion of them.
    * With a 0.0 tolerance, right and bottom margin is never cropped.

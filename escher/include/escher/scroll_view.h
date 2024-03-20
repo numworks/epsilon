@@ -18,6 +18,7 @@ class ScrollView : public View {
 
  public:
   ScrollView(View *contentView, ScrollViewDataSource *dataSource);
+  KDSize contentSizeWithMargins() const;
   KDSize minimalSizeForOptimalDisplay() const override;
 
   KDMargins *margins() { return &m_margins; }

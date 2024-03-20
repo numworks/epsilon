@@ -37,38 +37,29 @@ void CategoricalController::didScroll() {
    * displayable cells as its real number of cells. Since the
    * CategoricalController needs at most 3 cells, we delegate the scroll
    * handling to the CategoricalTableCell. */
-  KDPoint listOffset = m_selectableListView.contentOffset();
-  KDPoint tableOffset =
-      categoricalTableCell()->selectableTableView()->contentOffset();
+  KDCoordinate listOffset = m_selectableListView.contentOffset().y();
+  KDCoordinate tableOffset =
+      categoricalTableCell()->selectableTableView()->contentOffset().y();
 
-  KDCoordinate maximalListOffsetY =
-      cumulatedHeightBeforeRow(indexOfTableCell()) +
-      m_selectableListView.margins()->top();
-  KDCoordinate maximalListHeight =
-      m_selectableListView.minimalSizeForOptimalDisplay().height() +
-      tableOffset.y();
-  KDCoordinate maximalTableOffsetY = std::clamp<int>(
-      maximalListHeight - m_selectableListView.bounds().height() -
-          maximalListOffsetY,
-      0,
-      categoricalTableCell()
-          ->selectableTableView()
-          ->minimalSizeForOptimalDisplay()
-          .height());
+  int tableCellRow = indexOfTableCell();
+  KDCoordinate topMargin = m_selectableListView.margins()->top();
+  int firstVisibleRow = rowAfterCumulatedHeight(listOffset + topMargin);
+  KDCoordinate heightBeforeTableCell =
+      cumulatedHeightBeforeRow(tableCellRow) + topMargin;
 
-  KDCoordinate newListOffsetY =
-      std::clamp<int>(listOffset.y() + tableOffset.y(), 0, maximalListOffsetY);
-  KDCoordinate newTableOffsetY =
-      std::max(listOffset.y() + tableOffset.y() - newListOffsetY, 0);
-  if (newTableOffsetY > maximalTableOffsetY) {
-    newListOffsetY += newTableOffsetY - maximalTableOffsetY;
-    newTableOffsetY = maximalTableOffsetY;
+  assert((firstVisibleRow < tableCellRow &&
+          listOffset < heightBeforeTableCell && tableOffset == 0) ||
+         listOffset >= heightBeforeTableCell);
+
+  if (firstVisibleRow == tableCellRow && listOffset > heightBeforeTableCell) {
+    KDCoordinate translation = listOffset - heightBeforeTableCell;
+    assert(translation > 0);
+    // Change table cell offset first (to relayout well the list)
+    categoricalTableCell()->selectableTableView()->translateContentOffsetBy(
+        KDPoint(0, translation));
+    m_selectableListView.translateContentOffsetBy(KDPoint(0, -translation));
+    assert(m_selectableListView.contentOffset().y() == heightBeforeTableCell);
   }
-
-  categoricalTableCell()->selectableTableView()->setContentOffset(
-      KDPoint(tableOffset.x(), newTableOffsetY));
-  m_selectableListView.setContentOffset(
-      KDPoint(listOffset.x(), newListOffsetY));
 }
 
 bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {

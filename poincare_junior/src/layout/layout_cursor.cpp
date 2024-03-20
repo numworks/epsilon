@@ -156,10 +156,10 @@ void LayoutBufferCursor::EditionPoolCursor::beautifyLeftAction(Context *context,
 }
 
 bool LayoutBufferCursor::beautifyRightOfRack(Rack *rack, Context *context) {
-  execute(&EditionPoolCursor::beautifyRightOfRackAction, context,
-          reinterpret_cast<const void *>(rack - cursorNode()));
-  // TODO return shouldRedrawLayout through execute
-  return true;
+  EditionPoolCursor::BeautifyContext ctx{static_cast<int>(rack - cursorNode()),
+                                         false};
+  execute(&EditionPoolCursor::beautifyRightOfRackAction, context, &ctx);
+  return ctx.m_shouldRedraw;
 }
 
 bool LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRack(
@@ -172,8 +172,9 @@ bool LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRack(
 
 void LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRackAction(
     Context *context, const void *rackOffset) {
-  Rack *targetRack = cursorNode() + reinterpret_cast<long int>(rackOffset);
-  beautifyRightOfRack(targetRack, context);
+  const BeautifyContext *ctx = static_cast<const BeautifyContext *>(rackOffset);
+  Rack *targetRack = cursorNode() + ctx->m_rackOffset;
+  ctx->m_shouldRedraw = beautifyRightOfRack(targetRack, context);
 }
 
 bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,

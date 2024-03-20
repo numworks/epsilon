@@ -231,6 +231,10 @@ class LayoutBufferCursor final : public LayoutCursor {
     void setCursorNode(Rack* node) override {
       m_cursorReference = EditionReference(node);
     }
+    struct BeautifyContext {
+      int m_rackOffset;
+      mutable bool m_shouldRedraw;
+    };
     bool beautifyRightOfRack(Rack* rack, Context* context) override;
     void beautifyRightOfRackAction(Context* context, const void* rack);
     void beautifyLeftAction(Context* context, const void* /* no arg */);

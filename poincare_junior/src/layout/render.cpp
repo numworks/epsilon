@@ -649,6 +649,11 @@ void Render::DrawRack(const Rack* node, KDContext* ctx, KDPoint p,
     Context* context = static_cast<Context*>(ctx);
     KDPoint p(position.x(), context->rackBaseline - position.y());
     p = p.translatedBy(context->rackPosition);
+    if (p.x() > context->ctx->clippingRect()
+                    .relativeTo(context->ctx->origin())
+                    .right()) {
+      return;
+    }
     KDGlyph::Style childStyle = context->style;
     if (context->index >= context->selection.leftPosition() &&
         context->index < context->selection.rightPosition()) {

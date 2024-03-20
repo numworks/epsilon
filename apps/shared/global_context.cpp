@@ -130,7 +130,6 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   assert(symbol.type() == ExpressionNode::Type::Function &&
          symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
   Expression childSymbol = symbol.childAtIndex(0);
-#if 0  // TODO_PCJ
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol &>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
@@ -148,10 +147,6 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   }
   return setExpressionForFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
-#else
-  assert(false);
-  return false;
-#endif
 }
 
 const Expression GlobalContext::expressionForSymbolAndRecord(
@@ -206,12 +201,8 @@ const Expression GlobalContext::expressionForSequence(
   Sequence seq(r);
   Expression rank = symbol.childAtIndex(0).clone();
   bool rankIsInteger = false;
-#if 0  // TODO_PCJ
   PoincareHelpers::CloneAndSimplify(
       &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
-#else
-  assert(false);
-#endif
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
   if (rank.type() == ExpressionNode::Type::Rational) {
 #if 0  // TODO_PCJ

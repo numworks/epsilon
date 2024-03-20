@@ -649,10 +649,6 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
   /* An equation is explicit if it is a comparison between the given symbol and
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
-#if 1  // TODO_PCJ
-  assert(false);
-  return false;
-#else
   return equation.type() == ExpressionNode::Type::Comparison &&
          equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol)) &&
          !equation.childAtIndex(1).recursivelyMatches(
@@ -666,7 +662,6 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
              },
              nullptr, SymbolicComputation::DoNotReplaceAnySymbol,
              static_cast<void*>(&symbol));
-#endif
 }
 
 bool ContinuousFunctionProperties::HasNonNullCoefficients(

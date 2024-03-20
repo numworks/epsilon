@@ -913,13 +913,8 @@ Expression ContinuousFunction::Model::expressionEquation(
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     assert(leftExpression.type() == Poincare::ExpressionNode::Type::Function);
-#if 0  // TODO_PCJ
     const char *functionName =
         static_cast<Poincare::Function &>(leftExpression).name();
-#else
-    assert(false);
-    const char *functionName = "TODO";
-#endif
     const size_t functionNameLength = strlen(functionName);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
@@ -1060,13 +1055,9 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
   if (record->hasExtension(Ion::Storage::functionExtension)) {
     if (IsFunctionAssignment(newExpression)) {
       Expression function = newExpression.childAtIndex(0);
-#if 0  // TODO_PCJ
       error = Ion::Storage::Record::SetBaseNameWithExtension(
           record, static_cast<SymbolAbstract &>(function).name(),
           Ion::Storage::functionExtension);
-#else
-      assert(false);
-#endif
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         return error;
       }
@@ -1124,14 +1115,9 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
                                               symbol);
   } else {
     if (expressionToStore.recursivelyMatches([](const Expression e) {
-#if 0  // TODO_PCJ
           return e.type() == ExpressionNode::Type::Symbol &&
                  AliasesLists::k_thetaAliases.contains(
                      static_cast<const Symbol &>(e).name());
-#else
-          assert(false);
-          return true;
-#endif
         })) {
       symbol = expressionToStore.childAtIndex(0).isIdenticalTo(
                    Symbol::Builder(k_polarSymbol))

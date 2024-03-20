@@ -159,7 +159,6 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
   if (ComparisonNode::IsBinaryEquality(formula)) {
     bool isValidEquality = false;
     Expression leftOfEqual = formula.childAtIndex(0);
-#if 0  // TODO_PCJ
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
       Symbol symbolLeftOfEqual = static_cast<Symbol &>(leftOfEqual);
       if (store()->isColumnName(symbolLeftOfEqual.name(),
@@ -169,9 +168,6 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
         isValidEquality = true;
       }
     }
-#else
-    assert(false);
-#endif
     if (!isValidEquality) {
       return FillColumnStatus::DataNotSuitable;
     }

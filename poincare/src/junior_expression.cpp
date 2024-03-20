@@ -553,13 +553,8 @@ bool JuniorExpression::recursivelyMatches(
     assert(replaceSymbols ==
                SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
            t == ExpressionNode::Type::Function);
-#if 0  // TODO_PCJ
     return SymbolAbstract::matches(convert<const SymbolAbstract>(), test,
                                    context, auxiliary, ignoredSymbols);
-#else
-    assert(false);
-    return false;
-#endif
   }
 
   const int childrenCount = this->numberOfChildren();

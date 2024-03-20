@@ -139,11 +139,10 @@ bool SymbolAbstract::hasSameNameAs(const SymbolAbstract &other) const {
   return strcmp(other.name(), name()) == 0;
 }
 
-#if 0  // TODO_PCJ
 bool SymbolAbstract::matches(const SymbolAbstract &symbol,
                              JuniorExpression::ExpressionTrinaryTest test,
                              Context *context, void *auxiliary,
-                             OExpression::IgnoredSymbols *ignoredSymbols) {
+                             JuniorExpression::IgnoredSymbols *ignoredSymbols) {
   // Undefined symbols must be preserved.
   JuniorExpression e = SymbolAbstract::Expand(
       symbol, context, true,
@@ -153,8 +152,9 @@ bool SymbolAbstract::matches(const SymbolAbstract &symbol,
                               SymbolicComputation::DoNotReplaceAnySymbol,
                               auxiliary, ignoredSymbols);
 }
-#endif
 
+// Implemented in JuniorExpression::replaceSymbolWithExpression
+#if 0
 JuniorExpression SymbolAbstract::replaceSymbolWithExpression(
     const SymbolAbstract &symbol, const JuniorExpression &expression) {
   deepReplaceSymbolWithExpression(symbol, expression);
@@ -173,19 +173,17 @@ JuniorExpression SymbolAbstract::replaceSymbolWithExpression(
         return *this;
       }
     }
-#if 0
-  // TODO_PCJ: Ensure we don't need that anymore
   JuniorExpression p = parent();
   if (!p.isUninitialized() &&
       p.node()->childAtIndexNeedsUserParentheses(exp, p.indexOfChild(*this))) {
     exp = Parenthesis::Builder(exp);
   }
-#endif
     replaceWithInPlace(exp);
     return exp;
   }
   return *this;
 }
+#endif
 
 void SymbolAbstract::checkForCircularityIfNeeded(Context *context,
                                                  TrinaryBoolean *isCircular) {

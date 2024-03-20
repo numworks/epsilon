@@ -462,6 +462,24 @@ bool JuniorExpression::derivate(const ReductionContext& reductionContext,
   return false;
 }
 
+JuniorExpression JuniorExpression::replaceSymbolWithExpression(
+    const SymbolAbstract& symbol, const JuniorExpression& expression) {
+  // TODO_PCJ: Ensure symbol is variable and use PoincareJ::Variables::Replace
+  /* TODO_PCJ: Handle parametrics, functions and sequences as well. See
+   * replaceSymbolWithExpression implementations. */
+  assert(symbol.tree()->isUserSymbol() &&
+         !tree()->hasDescendantSatisfying(
+             [](const PoincareJ::Tree* e) { return e->isParametric(); }));
+  PoincareJ::Tree* result = tree()->clone();
+  if (result->deepReplaceWith(symbol.tree(), expression.tree())) {
+    JuniorExpression res = JuniorExpression::Builder(result);
+    replaceWithInPlace(res);
+    return res;
+  }
+  result->removeTree();
+  return *this;
+}
+
 static bool IsIgnoredSymbol(const JuniorExpression* e,
                             JuniorExpression::IgnoredSymbols* ignoredSymbols) {
   if (e->type() != ExpressionNode::Type::Symbol) {

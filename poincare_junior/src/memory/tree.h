@@ -155,6 +155,8 @@ class Tree : public TypeBlock {
   static bool ApplyShallowInDepth(Tree* node, ShallowOperation shallowOperation,
                                   void* context = nullptr, bool check = true);
 
+  bool deepReplaceWith(const Tree* target, const Tree* replacement);
+
   Tree* clone() const;
   Tree* cloneNode() const;
 
@@ -355,6 +357,7 @@ class Tree : public TypeBlock {
   bool hasChildSatisfying(Predicate predicate) const;
 
  private:
+  bool replaceWith(const Tree* target, const Tree* replacement);
   Tree* cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
                 bool at = false);
   Tree* moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at = false);

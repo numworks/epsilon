@@ -150,6 +150,9 @@ class JuniorExpression : public OExpression {
                 OExpression symbolValue);
 
 #if 1  // TODO_PCJ
+  JuniorExpression replaceSymbolWithExpression(
+      const SymbolAbstract& symbol, const JuniorExpression& expression);
+
   typedef TrinaryBoolean (*ExpressionTrinaryTest)(const JuniorExpression e,
                                                   Context* context,
                                                   void* auxiliary);

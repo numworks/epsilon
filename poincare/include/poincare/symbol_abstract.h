@@ -101,13 +101,14 @@ class SymbolAbstract : public JuniorExpression {
  public:
   const char *name() const;
   bool hasSameNameAs(const SymbolAbstract &other) const;
-#if 0  // TODO_PCJ
   static bool matches(const SymbolAbstract &symbol, ExpressionTrinaryTest test,
                       Context *context, void *auxiliary,
-                      OExpression::IgnoredSymbols *ignoredSymbols);
-#endif
+                      JuniorExpression::IgnoredSymbols *ignoredSymbols);
+  // Implemented in JuniorExpression::replaceSymbolWithExpression
+#if 0
   JuniorExpression replaceSymbolWithExpression(
       const SymbolAbstract &symbol, const JuniorExpression &expression);
+#endif
 
  protected:
   SymbolAbstract(const SymbolAbstractNode *node) : JuniorExpression(node) {}

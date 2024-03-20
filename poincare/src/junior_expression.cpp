@@ -274,6 +274,14 @@ ExpressionNode::Type JuniorExpression::type() const {
       assert(false);
       return ExpressionNode::Type::JuniorExpression;
       // Unused in apps, but they should not raise the default assert.
+    case PoincareJ::BlockType::Equal:
+    case PoincareJ::BlockType::NotEqual:
+    case PoincareJ::BlockType::Superior:
+    case PoincareJ::BlockType::SuperiorEqual:
+    case PoincareJ::BlockType::Inferior:
+    case PoincareJ::BlockType::InferiorEqual:
+      // TODO_PCJ
+      return ExpressionNode::Type::Comparison;
     case PoincareJ::BlockType::LnReal:
     case PoincareJ::BlockType::Ln:
       return ExpressionNode::Type::NaperianLogarithm;

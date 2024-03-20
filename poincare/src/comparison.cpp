@@ -11,6 +11,7 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
+#include <poincare_junior/src/memory/tree.h>
 
 namespace Poincare {
 
@@ -78,15 +79,37 @@ ComparisonNode::OperatorType ComparisonNode::SwitchInferiorSuperior(
   }
 }
 
-bool ComparisonNode::IsBinaryComparison(OExpression e,
+bool ComparisonNode::IsBinaryComparison(JuniorExpression e,
                                         OperatorType* operatorType) {
   assert(!e.isUninitialized());
-  if (e.otype() != Type::Comparison || e.numberOfChildren() != 2) {
+  if (e.type() != Type::Comparison) {
     return false;
   }
   if (operatorType) {
-    Comparison comparison = static_cast<Comparison&>(e);
-    *operatorType = comparison.operatorAtIndex(0);
+    assert(e.otype() == ExpressionNode::Type::JuniorExpression &&
+           e.tree()->numberOfChildren() == 2);
+    switch (e.tree()->type()) {
+      case PoincareJ::BlockType::Equal:
+        *operatorType = OperatorType::Equal;
+        break;
+      case PoincareJ::BlockType::NotEqual:
+        *operatorType = OperatorType::NotEqual;
+        break;
+      case PoincareJ::BlockType::Superior:
+        *operatorType = OperatorType::Superior;
+        break;
+      case PoincareJ::BlockType::SuperiorEqual:
+        *operatorType = OperatorType::SuperiorEqual;
+        break;
+      case PoincareJ::BlockType::Inferior:
+        *operatorType = OperatorType::Inferior;
+        break;
+      case PoincareJ::BlockType::InferiorEqual:
+        *operatorType = OperatorType::InferiorEqual;
+        break;
+      default:
+        assert(false);
+    }
   }
   return true;
 }
@@ -106,7 +129,7 @@ bool ComparisonNode::IsComparisonWithoutNotEqualOperator(OExpression e) {
   return true;
 }
 
-bool ComparisonNode::IsBinaryComparisonWithOperator(OExpression e,
+bool ComparisonNode::IsBinaryComparisonWithOperator(JuniorExpression e,
                                                     OperatorType operatorType) {
   OperatorType operatorTypeOfE;
   return IsBinaryComparison(e, &operatorTypeOfE) &&

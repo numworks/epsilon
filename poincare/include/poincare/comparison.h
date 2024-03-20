@@ -2,6 +2,7 @@
 #define POINCARE_COMPARISON_EXPRESSION_H
 
 #include <ion/unicode/utf8_decoder.h>
+#include <poincare/junior_expression.h>
 #include <poincare/old_expression.h>
 
 #include <array>
@@ -37,11 +38,11 @@ class ComparisonNode : public ExpressionNode {
 
   static OperatorType SwitchInferiorSuperior(OperatorType type);
 
-  static bool IsBinaryComparison(OExpression e,
+  static bool IsBinaryComparison(JuniorExpression e,
                                  OperatorType* returnType = nullptr);
-  static bool IsBinaryComparisonWithOperator(OExpression e,
+  static bool IsBinaryComparisonWithOperator(JuniorExpression e,
                                              OperatorType operatorType);
-  static bool IsBinaryEquality(OExpression e) {
+  static bool IsBinaryEquality(JuniorExpression e) {
     return IsBinaryComparisonWithOperator(e, OperatorType::Equal);
   }
   static bool IsComparisonWithoutNotEqualOperator(

@@ -17,14 +17,6 @@ CalculationSelectableListView::CalculationSelectableListView(
   hideScrollBars();
 }
 
-void CalculationSelectableListView::scrollToBottom() {
-  KDCoordinate contentOffsetX = contentOffset().x();
-  KDCoordinate contentOffsetY =
-      dataSource()->cumulatedHeightBeforeRow(totalNumberOfRows()) -
-      maxContentHeightDisplayableWithoutScrolling();
-  setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
-}
-
 void CalculationSelectableListView::didChangeSelectionAndDidScroll() {
   TableView::layoutSubviews();
   if (m_contentView.bounds().height() - contentOffset().y() <

@@ -41,6 +41,7 @@ class TableView : public ScrollView {
   void scrollToCell(int col, int row) {
     scrollToContentRect(m_contentView.cellFrame(col, row));
   }
+  void scrollToBottom();
   HighlightCell *cellAtLocation(int col, int row) {
     return m_contentView.cellAtLocation(col, row);
   }

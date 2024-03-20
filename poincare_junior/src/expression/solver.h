@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_SOLVER_H
 #define POINCARE_EXPRESSION_SOLVER_H
 
+#include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {
@@ -16,7 +17,7 @@ class Solver {
     bool exactResults = true;
     // Context used for apps/solver compatibility
     int numberOfUserVariables = 0;
-    char userVariables[6][10];
+    char userVariables[6][Symbol::k_maxNameSize];
   };
 
   enum class Error {

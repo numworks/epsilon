@@ -60,7 +60,8 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
     Tree* userVariable = userVariables->firstChild();
     for (int i = 0; i < context->numberOfUserVariables; i++) {
       if (userVariable->isUserNamed()) {
-        Symbol::CopyName(userVariable, context->userVariables[i], 10);
+        Symbol::CopyName(userVariable, context->userVariables[i],
+                         Symbol::k_maxNameSize);
       }
       userVariable->removeTree();
     }

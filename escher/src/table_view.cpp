@@ -15,6 +15,14 @@ TableView::TableView(TableViewDataSource* dataSource,
   m_decorator.setVisibility(true);
 }
 
+void TableView::scrollToBottom() {
+  KDCoordinate contentOffsetX = contentOffset().x();
+  KDCoordinate contentOffsetY =
+      dataSource()->cumulatedHeightBeforeRow(totalNumberOfRows()) -
+      maxContentHeightDisplayableWithoutScrolling();
+  setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
+}
+
 void TableView::reloadVisibleCellsAtColumn(int column) {
   // Reload visible cells of the selected column
   int firstVisibleCol = firstDisplayedColumn();

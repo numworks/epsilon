@@ -49,8 +49,8 @@ void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
   DivisionResult<IntegerHandler> d = Udiv(*this, base, workingBuffer);
   while (d.remainder.isZero()) {
     if (shouldCheckMinimalNumberOfDigits &&
-        (Compare(d.quotient, minimum) < 0 &&
-         Compare(d.quotient, minusMinimum) > 0)) {
+        (Compare(d.quotient, minimum) <= 0 &&
+         Compare(d.quotient, minusMinimum) >= 0)) {
       break;
     }
     *this = d.quotient;
@@ -96,9 +96,7 @@ size_t IntegerHandler::serialize(char *buffer, size_t bufferSize,
 size_t IntegerHandler::serializeInDecimal(char *buffer, size_t bufferSize,
                                           WorkingBuffer *workingBuffer) const {
   IntegerHandler base(10);
-  IntegerHandler abs = *this;
-  abs.setSign(NonStrictSign::Positive);
-  DivisionResult<IntegerHandler> d = Udiv(abs, base, workingBuffer);
+  DivisionResult<IntegerHandler> d = Udiv(*this, base, workingBuffer);
 
   size_t length = 0;
   if (isZero()) {

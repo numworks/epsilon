@@ -84,6 +84,10 @@ size_t SymbolAbstractNode::serialize(
 bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
                                              const char **visitedSymbols,
                                              int numberOfVisitedSymbols) {
+  if (type() == ExpressionNode::Type::Sequence) {
+    return ExpressionNode::involvesCircularity(
+        context, maxDepth, visitedSymbols, numberOfVisitedSymbols);
+  }
   // Check if this symbol has already been visited.
   for (int i = 0; i < numberOfVisitedSymbols; i++) {
     if (strcmp(name(), visitedSymbols[i]) == 0) {

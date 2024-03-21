@@ -310,6 +310,11 @@ int Tree::numberOfDescendants(bool includeSelf) const {
 
 const Tree* Tree::child(int i) const {
   assert(i >= 0 && i < numberOfChildren());
+  if (i == 0) {
+    /* For some reason (-Os ?) the compiler doesn't try to unroll the loop when
+     * it sees a call to child(0). */
+    return nextNode();
+  }
   const Tree* child = nextNode();
   for (; i > 0; i--) {
     child = child->nextTree();

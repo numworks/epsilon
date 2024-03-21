@@ -101,7 +101,6 @@ QUIZ_CASE(pcj_simplification_variables) {
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
   EditionReference expected = TextToTree(output);
-  Projection::RemoveParentheses(expected);
   EditionReference expression = TextToTree(input);
   Simplification::Simplify(expression, projectionContext);
   quiz_assert(!expression.isUninitialized());
@@ -143,7 +142,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("a×(a×a)", "a^3");
   simplifies_to("(a×b)^2", "a^2×b^2");
   simplifies_to("(a×b×c)^2", "a^2×b^2×c^2");
-  simplifies_to("(x^3)^2", "x^(6)");
+  simplifies_to("(x^3)^2", "x^6");
   simplifies_to("a×a×a", "a^3");
   simplifies_to("a×a×a×b", "b×a^3");
   simplifies_to("a×2a×b×a×b×4", "8×a^3×b^2");
@@ -424,7 +423,8 @@ QUIZ_CASE(pcj_simplification_power) {
   // - x^y if x is complex or positive
   simplifies_to("41^(1/3)", "41^(1/3)");
   // - PowerReal(x,y) y is not a rational
-  simplifies_to("x^(e^3)", "x^(e^3)");
+  simplifies_to("x^(e^3)", "x^e^3");
+  simplifies_to("(x^e)^3)", "(x^e)^3)");
   // - Looking at y's reduced rational form p/q :
   //   * PowerReal(x,y) if x is of unknown sign and p odd
   simplifies_to("x^(1/3)", "x^(1/3)");

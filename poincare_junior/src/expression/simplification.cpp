@@ -813,7 +813,6 @@ bool RelaxProjectionContext(void* context) {
 }
 
 bool Simplification::Simplify(Tree* ref, ProjectionContext projectionContext) {
-  Projection::RemoveParentheses(ref);
   if (ref->isStore()) {
     // Store is an expression only for convenience
     return Simplify(ref->child(0), projectionContext);

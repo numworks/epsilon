@@ -22,19 +22,9 @@ ProjectionContext Projection::ContextFromSettings() {
   };
 }
 
-bool Projection::RemoveParentheses(Tree* ref) {
-  return Tree::ApplyShallowInDepth(
-      ref,
-      [](Tree* ref, void*) {
-        return PatternMatching::MatchAndReplace(ref, KParenthesis(KA), KA);
-      },
-      nullptr);
-}
-
 bool Projection::DeepSystemProject(Tree* ref,
                                    ProjectionContext projectionContext) {
   bool changed = false;
-  changed = RemoveParentheses(ref);
   if (projectionContext.m_strategy != Strategy::Default) {
     assert((projectionContext.m_strategy == Strategy::ApproximateToFloat ||
             projectionContext.m_strategy == Strategy::NumbersToFloat));
@@ -59,6 +49,11 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
   bool changed = false;
   if (ref->isUndefined()) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+  }
+  if (ref->isParenthesis()) {
+    ref->removeNode();
+    ShallowSystemProject(ref, context);
+    return true;
   }
   if (ref->isUnit()) {
     Units::Unit::RemoveUnit(ref);

@@ -698,7 +698,6 @@ void RackParser::parseLeftParenthesis(EditionReference &leftHandSide,
     CloneNodeOverNode(list, KPoint);
     leftHandSide = list;
   } else if (!list.isUninitialized() && list->numberOfChildren() == 1) {
-    // MoveTreeOverTree(list, list->child(0));
     CloneNodeOverNode(list, KParenthesis);
     leftHandSide = list;
   } else {

@@ -59,12 +59,11 @@ RANGE(Number, Zero, Pi)
 
 // 2 - Order dependant expressions
 
-/* - Multiplication M (same for Addition, Set, List, RackLayout)
+/* - Multiplication M (same for Addition, Set, List)
  * | M TAG | NUMBER OF CHILDREN | */
 NODE(Multiplication, NARY)
 
-/* - Power P (same for Factorial, Subtraction, Division, FractionLayout,
- * ParenthesisLayout, VerticalOffsetLayout) | P TAG | */
+/* - Power P (same for Factorial, Subtraction, Division) | P TAG | */
 NODE(Power, 2)
 
 NODE(Addition, NARY)
@@ -268,8 +267,8 @@ NODE(PhysicalConstant, 0, 1)
 NODE(Dependency, 2)
 NODE(Piecewise, NARY)
 NODE(Set, NARY)
-NODE(Parenthesis, 1)  // TODO PCJ temporary
-NODE(Empty)           // TODO PCJ temporary
+NODE(Parenthesis, 1)
+NODE(Empty)  // TODO PCJ temporary
 NODE(Nonreal)
 NODE(Undefined)
 

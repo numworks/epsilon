@@ -302,6 +302,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       break;
     case BlockType::Matrix:
       break;
+    case BlockType::Parenthesis:
+      return true;
     default:
       if (t->isLogicalOperatorOrBoolean()) {
         return true;
@@ -388,6 +390,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case BlockType::Ref:
     case BlockType::Rref:
     case BlockType::Piecewise:
+    case BlockType::Parenthesis:
       return GetDimension(t->nextNode());
     case BlockType::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));

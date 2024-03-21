@@ -160,6 +160,8 @@ class RackParser {
                            EditionReference& rightHandSide,
                            Token::Type stoppingType);
   Tree* parseVector();
+  // Return nullptr if parentheses could not be parsed
+  Tree* tryParseFunctionParameters();
   Tree* parseFunctionParameters();
   Tree* parseCommaSeparatedList(bool isFirstToken = false);
   void privateParseTimes(EditionReference& leftHandSide,

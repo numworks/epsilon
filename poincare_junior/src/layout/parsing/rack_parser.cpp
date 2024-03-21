@@ -1124,20 +1124,29 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
 }
 #endif
 
-Tree *RackParser::parseFunctionParameters() {
+Tree *RackParser::tryParseFunctionParameters() {
   bool parenthesisIsLayout = m_nextToken.is(Token::Type::Layout) &&
                              m_nextToken.firstLayout()->isParenthesisLayout();
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::LeftParenthesis)) {
     // Left parenthesis missing.
-    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+    return nullptr;
   }
   if (!parenthesisIsLayout && popTokenIfType(Token::Type::RightParenthesis)) {
     // The function has no parameter.
     return List::PushEmpty();
   }
-  EditionReference commaSeparatedList = parseCommaSeparatedList();
+  Tree *commaSeparatedList = parseCommaSeparatedList();
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
+    commaSeparatedList->removeTree();
+    return nullptr;
+  }
+  return commaSeparatedList;
+}
+
+Tree *RackParser::parseFunctionParameters() {
+  Tree *commaSeparatedList = tryParseFunctionParameters();
+  if (!commaSeparatedList) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   return commaSeparatedList;

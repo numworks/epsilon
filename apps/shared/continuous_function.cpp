@@ -822,12 +822,9 @@ bool ContinuousFunction::IsFunctionAssignment(const Expression e) {
     return false;
   }
   Expression functionSymbol = leftExpression.childAtIndex(0);
-  return functionSymbol.isIdenticalTo(
-             Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) ||
-         functionSymbol.isIdenticalTo(
-             Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
-         functionSymbol.isIdenticalTo(
-             Symbol::Builder(ContinuousFunction::k_polarSymbol));
+  return functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)) ||
+         functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)) ||
+         functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol));
 }
 
 Expression ContinuousFunction::Model::expressionEquation(

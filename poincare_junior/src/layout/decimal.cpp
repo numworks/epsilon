@@ -168,10 +168,10 @@ int IntegerHandler::ConvertDecimalToText(
   exponent = numberOfDigitsInMantissa - 1 - exponent;
   if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
     DivisionResult<IntegerHandler> d =
-        Div(m,
-            IntegerHandler((int64_t)std::pow(
-                10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)),
-            &workingBuffer);
+        Udiv(m,
+             IntegerHandler((int64_t)std::pow(
+                 10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)),
+             &workingBuffer);
     m = d.quotient;
     int64_t boundary = 5. * std::pow(10., numberOfDigitsInMantissa -
                                               numberOfSignificantDigits - 1);
@@ -181,7 +181,7 @@ int IntegerHandler::ConvertDecimalToText(
       if (m.numberOfBase10DigitsWithoutSign(&workingBuffer) >
           numberOfSignificantDigits) {
         exponent++;
-        m = Div(m, IntegerHandler(10), &workingBuffer).quotient;
+        m = Udiv(m, IntegerHandler(10), &workingBuffer).quotient;
       }
     }
   }

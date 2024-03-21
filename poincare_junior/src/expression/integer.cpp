@@ -484,26 +484,6 @@ DivisionResult<Tree *> IntegerHandler::Division(
   return {.quotient = q, .remainder = r};
 }
 
-DivisionResult<IntegerHandler> IntegerHandler::Div(
-    const IntegerHandler &numerator, const IntegerHandler &denominator,
-    WorkingBuffer *workingBuffer) {
-  auto [quotient, remainder] = Udiv(numerator, denominator, workingBuffer);
-  if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
-    quotient = Usum(quotient, IntegerHandler(1), false, workingBuffer);
-    remainder = Usum(denominator, remainder, true,
-                     workingBuffer);  // |denominator|-remainder
-  }
-  quotient.setSign(numerator.sign() == denominator.sign()
-                       ? NonStrictSign::Positive
-                       : NonStrictSign::Negative);
-  /* If both IntegerHandler are stored on the WorkingBuffer, they need to be
-   * ordered to ensure that pushing the digits of one on the EditionPool won't
-   * override the other one. */
-  assert(quotient.usesImmediateDigit() || remainder.usesImmediateDigit() ||
-         quotient.digits() < remainder.digits());
-  return {.quotient = quotient, .remainder = remainder};
-}
-
 Tree *IntegerHandler::Quotient(const IntegerHandler &numerator,
                                const IntegerHandler &denominator) {
   WorkingBuffer workingBuffer;

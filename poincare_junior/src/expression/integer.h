@@ -238,9 +238,6 @@ class IntegerHandler final {
   static DivisionResult<IntegerHandler> Udiv(const IntegerHandler &a,
                                              const IntegerHandler &b,
                                              WorkingBuffer *workingBuffer);
-  static DivisionResult<IntegerHandler> Div(const IntegerHandler &a,
-                                            const IntegerHandler &b,
-                                            WorkingBuffer *workingBuffer);
   static IntegerHandler GCD(const IntegerHandler &a, const IntegerHandler &b,
                             WorkingBuffer *workingBuffer);
   IntegerHandler multiplyByPowerOf2(uint8_t pow,

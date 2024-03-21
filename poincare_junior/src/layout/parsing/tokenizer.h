@@ -34,6 +34,19 @@ class Tokenizer {
   size_t currentPosition() { return m_decoder.position(); }
   size_t endPosition() { return m_decoder.end(); }
 
+  struct State {
+    size_t position = UnicodeDecoder::k_noSize;
+    int numberOfStoredIdentifiers = -1;
+  };
+  State currentState() {
+    return State{.position = currentPosition(),
+                 .numberOfStoredIdentifiers = m_numberOfStoredIdentifiers};
+  }
+  void setState(State state) {
+    goToPosition(state.position);
+    m_numberOfStoredIdentifiers = state.numberOfStoredIdentifiers;
+  }
+
   static bool CanBeCustomIdentifier(UnicodeDecoder& decoder,
                                     size_t length = -1);
 

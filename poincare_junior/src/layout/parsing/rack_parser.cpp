@@ -81,8 +81,7 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
   // Step 1. Parse as unitConversion
   m_parsingContext.setParsingMethod(
       ParsingContext::ParsingMethod::UnitConversion);
-  size_t startingPosition;
-  rememberCurrentParsingPosition(&startingPosition);
+  State previousState = currentState();
   ExceptionTry { return initializeFirstTokenAndParseUntilEnd(); }
   ExceptionCatch(type) {
     if (type != ExceptionType::ParseFail) {
@@ -90,7 +89,7 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
     }
 
     // Failed to parse as unit conversion
-    restorePreviousParsingPosition(startingPosition);
+    setState(previousState);
   }
 
   // Step 2. Parse as assignment, starting with rightHandSide.
@@ -103,7 +102,7 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
            ->isUserSymbol() ||  // RightHandSide must be symbol or function.
        (rightHandSide->isUserFunction() &&
         rightHandSide->child(0)->isUserSymbol()))) {
-    restorePreviousParsingPosition(startingPosition);
+    setState(previousState);
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
 #if 0
     EmptyContext tempContext = EmptyContext();
@@ -1292,11 +1291,7 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
      * by adding a multiplication symbol between the two. */
     return false;
   }
-  Token storedNextToken;
-  Token storedCurrentToken;
-  size_t tokenizerPosition;
-  rememberCurrentParsingPosition(&tokenizerPosition, &storedCurrentToken,
-                                 &storedNextToken);
+  State previousState = currentState();
   // Check for mixed fraction. There is a mixed fraction if :
   if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
       // The next token is either a number or empty
@@ -1313,29 +1308,16 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
       return true;
     }
   }
-  restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken,
-                                 storedNextToken);
+  setState(previousState);
   return false;
 }
 
-void RackParser::rememberCurrentParsingPosition(size_t *tokenizerPosition,
-                                                Token *storedCurrentToken,
-                                                Token *storedNextToken) {
-  if (storedCurrentToken) {
-    *storedCurrentToken = m_currentToken;
-  }
-  if (storedNextToken) {
-    *storedNextToken = m_nextToken;
-  }
-  *tokenizerPosition = m_tokenizer.currentPosition();
-}
-
-void RackParser::restorePreviousParsingPosition(size_t tokenizerPosition,
-                                                Token storedCurrentToken,
-                                                Token storedNextToken) {
-  m_tokenizer.goToPosition(tokenizerPosition);
-  m_currentToken = storedCurrentToken;
-  m_nextToken = storedNextToken;
+void RackParser::setState(State state) {
+  m_tokenizer.setState(state.tokenizerState);
+  m_currentToken = state.currentToken;
+  m_nextToken = state.nextToken;
+  m_pendingImplicitOperator = state.pendingImplicitOperator;
+  m_waitingSlashForMixedFraction = state.waitingSlashForMixedFraction;
 }
 
 }  // namespace PoincareJ

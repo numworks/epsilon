@@ -22,9 +22,9 @@ class UnicodeDecoder {
   size_t printInBuffer(char* buffer, size_t bufferSize,
                        size_t printLength = k_noSize);
 
- protected:
   constexpr static size_t k_noSize = static_cast<size_t>(-1);
 
+ protected:
   size_t m_position;
   size_t m_end;
 };

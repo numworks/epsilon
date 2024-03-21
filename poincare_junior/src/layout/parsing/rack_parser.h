@@ -168,14 +168,25 @@ class RackParser {
   void parseSequence(EditionReference& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
   bool generateMixedFractionIfNeeded(EditionReference& leftHandSide);
-  // Allows you to rewind to previous position
-  void rememberCurrentParsingPosition(size_t* tokenizerPosition,
-                                      Token* storedCurrentToken = nullptr,
-                                      Token* storedNextToken = nullptr);
-  void restorePreviousParsingPosition(
-      size_t tokenizerPosition,
-      Token storedCurrentToken = Token(Token::Type::Undefined),
-      Token storedNextToken = Token(Token::Type::Undefined));
+
+  // Save and restore parser state
+  struct State {
+    Tokenizer::State tokenizerState;
+    Token currentToken;
+    Token nextToken;
+    bool pendingImplicitOperator;
+    bool waitingSlashForMixedFraction;
+  };
+  State currentState() {
+    return State{
+        .tokenizerState = m_tokenizer.currentState(),
+        .currentToken = m_currentToken,
+        .nextToken = m_nextToken,
+        .pendingImplicitOperator = m_pendingImplicitOperator,
+        .waitingSlashForMixedFraction = m_waitingSlashForMixedFraction};
+  }
+  void setState(State state);
+
   // Data members
   ParsingContext m_parsingContext;
   Tokenizer m_tokenizer;

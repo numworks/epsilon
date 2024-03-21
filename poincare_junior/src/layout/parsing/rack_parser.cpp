@@ -794,47 +794,28 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
 
 // Parse cos^n(x)
 #if 0
-  Token::Type endDelimiterOfPower;
-  bool hasCaret = false;
   bool powerFunction = false;
-#endif
-  if (popTokenIfType(Token::Type::Caret)) {
-#if 0
-    hasCaret = true;
-    endDelimiterOfPower = Token::Type::RightParenthesis;
-#endif
-    if (!popTokenIfType(Token::Type::LeftParenthesis)) {
-      // Exponent should be parenthesed
-      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-    }
-  }
-  EditionReference base;
-#if 0
-  if (hasCaret) {
-    base = parseUntil(endDelimiterOfPower);
-    if (!popTokenIfType(endDelimiterOfPower)) {
-      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-    } else if (base.isMinusOne()) {
+  int powerValue;
+  EditionReference power = parseIntegerCaretForFunction(false, &powerValue);
+  if (!power.isUninitialized()) {
+    assert(power.isInteger());
+    if (powerValue == -1) {
       // Detect cos^-1(x) --> arccos(x)
       const char *mainAlias = aliasesList.mainAlias();
       functionHelper =
           ParsingHelper::GetInverseFunction(mainAlias, strlen(mainAlias));
       if (!functionHelper) {
         // This function has no inverse
-        ExceptionCheckpoint::Raise(
-            ExceptionType::ParseFail);
+        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
       }
       aliasesList = (**functionHelper).aliasesList();
-    } else if (base.isInteger()) {
+    } else {
       // Detect cos^n(x) with n!=-1 --> (cos(x))^n
       if (!ParsingHelper::IsPowerableFunction(*functionHelper)) {
-         // This function can't be powered
-        ExceptionCheckpoint::Raise(
-            ExceptionType::ParseFail);
+        // This function can't be powered
+        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
       }
       powerFunction = true;
-    } else {
-      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     }
   }
 
@@ -907,7 +888,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   }
 #if 0
   if (powerFunction) {
-    leftHandSide = Power::Builder(leftHandSide, base);
+    leftHandSide = Power::Builder(leftHandSide, power);
   }
 #endif
 }
@@ -966,14 +947,22 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 }
 
 #if 0
+void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
+                                       Token::Type stoppingType) {
+  assert(leftHandSide.isUninitialized());
+  const char *name = m_currentToken.text();
+  size_t length = m_currentToken.length();
+  privateParseCustomIdentifier(leftHandSide, name, length, stoppingType);
+  isThereImplicitOperator();
+}
+
 void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
                                           const char *name, size_t length,
                                           Token::Type stoppingType) {
-  if (length >= SymbolAbstract::k_maxNameSize) {
+  if (!SymbolAbstractNode::NameLengthIsValid(name, length)) {
     // Identifier name too long.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  bool poppedParenthesisIsSystem = false;
 
   /* Check the context: if the identifier does not already exist as a function,
    * seq or list, interpret it as a symbol, even if there are parentheses
@@ -1013,11 +1002,49 @@ void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
     return;
   }
 
+  State previousState = currentState();
+  // Try to parse aspostrophe as derivative
+  if (privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
+                                                 stoppingType, idType, true)) {
+    return;
+  }
+  // Parse aspostrophe as unit (default parsing)
+  setState(previousState);
+  privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
+                                             stoppingType, idType, false);
+}
+
+bool RackParser::privateParseCustomIdentifierWithParameters(
+    EditionReference &leftHandSide, const char *name, size_t length,
+    Token::Type stoppingType, Context::SymbolAbstractType idType,
+    bool parseApostropheAsDerivative) {
+  int derivativeOrder = 0;
+  if (parseApostropheAsDerivative) {
+    // Case 1: parse f'''(x)
+    while (m_nextToken.length() == 1 &&
+           (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
+      popToken();
+      derivativeOrder += m_currentToken.text()[0] == '\'' ? 1 : 2;
+    }
+    // Case 2: parse f^(3)(x)
+    if (derivativeOrder == 0) {
+      EditionReference base =
+          parseIntegerCaretForFunction(true, &derivativeOrder);
+      if (base.isUninitialized() || derivativeOrder < 0) {
+        return false;
+      }
+    }
+  }
+
   // If the identifier is not followed by parentheses, it is a symbol
+  bool poppedParenthesisIsSystem = false;
   if (!popTokenIfType(Token::Type::LeftParenthesis)) {
     if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
+      if (derivativeOrder > 0) {
+        return false;
+      }
       leftHandSide = Symbol::Builder(name, length);
-      return;
+      return true;
     }
     poppedParenthesisIsSystem = true;
   }
@@ -1031,6 +1058,9 @@ void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
   int numberOfParameters = parameter.numberOfChildren();
   EditionReference result;
   if (numberOfParameters == 2) {
+    if (derivativeOrder > 0) {
+      return false;
+    }
     /* If you change how list accesses are parsed, change it also in parseList
      * or factorize it. */
     result = ListSlice::Builder(parameter.child(0), parameter.child(1),
@@ -1043,13 +1073,24 @@ void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
       // Function and variable must have distinct names.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
     } else if (idType == Context::SymbolAbstractType::List) {
+      if (derivativeOrder > 0) {
+        return false;
+      }
       result = ListElement::Builder(parameter, Symbol::Builder(name, length));
     } else {
-      result = Function::Builder(name, length, parameter);
+      if (derivativeOrder > 0) {
+        EditionReference derivand =
+            Function::Builder(name, length, Symbol::SystemSymbol());
+        result =
+            Derivative::Builder(derivand, Symbol::SystemSymbol(), parameter,
+                                BasedInteger::Builder(derivativeOrder));
+      } else {
+        result = Function::Builder(name, length, parameter);
+      }
     }
   } else {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-    return;
+    return true;
   }
 
   Token::Type correspondingRightParenthesis =
@@ -1057,37 +1098,29 @@ void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
                                 : Token::Type::RightParenthesis;
   if (!popTokenIfType(correspondingRightParenthesis)) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-    return;
+    return true;
   }
-  if (m_parsingContext.parsingMethod() ==
-          ParsingContext::ParsingMethod::Assignment &&
-      result.type() == ExpressionNode::Type::Function &&
+  if (result.type() == ExpressionNode::Type::Function &&
       parameter.type() == ExpressionNode::Type::Symbol &&
-      m_nextToken.type() == Token::Type::AssignmentEqual) {
-    /* Stop parsing for assignment to ensure that, frow now on xy is
-     * understood as x*y.
-     * For example, "func(x) = xy" -> left of the =, we parse for assignment so
-     * "func" is NOT understood as "f*u*n*c", but after the equal we want "xy"
-     * to be understood as "x*y" */
-    m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
-    if (m_parsingContext.context()) {
-      /* Set the parameter in the context to ensure that f(t)=t is not
-       * understood as f(t)=1_t
-       * If we decide that functions can be assigned with any parameter,
-       * this will ensure that f(abc)=abc is understood like f(x)=x
-       */
-      Context *previousContext = m_parsingContext.context();
-      VariableContext functionAssignmentContext(
-          static_cast<Symbol &>(parameter), m_parsingContext.context());
-      m_parsingContext.setContext(&functionAssignmentContext);
-      // We have to parseUntil here so that we do not lose the
-      // functionAssignmentContext pointer.
-      leftHandSide = parseUntil(stoppingType, result);
-      m_parsingContext.setContext(previousContext);
-      return;
-    }
+      m_nextToken.type() == Token::Type::AssignmentEqual &&
+      m_parsingContext.context()) {
+    /* Set the parameter in the context to ensure that f(t)=t is not
+     * understood as f(t)=1_t
+     * If we decide that functions can be assigned with any parameter,
+     * this will ensure that f(abc)=abc is understood like f(x)=x
+     */
+    Context *previousContext = m_parsingContext.context();
+    VariableContext functionAssignmentContext(static_cast<Symbol &>(parameter),
+                                              m_parsingContext.context());
+    m_parsingContext.setContext(&functionAssignmentContext);
+    // We have to parseUntil here so that we do not lose the
+    // functionAssignmentContext pointer.
+    leftHandSide = parseUntil(stoppingType, result);
+    m_parsingContext.setContext(previousContext);
+    return true;
   }
   leftHandSide = result;
+  return true;
 }
 #endif
 
@@ -1277,6 +1310,43 @@ bool IsIntegerBaseTenOrEmptyExpression(const Tree *e) {
    * layout directly and remove this part. */
   return e->isInteger();
 }
+
+#if 0
+EditionReference Parser::parseIntegerCaretForFunction(bool allowParenthesis,
+                                                int *caretIntegerValue) {
+  // Parse f^n(x)
+  Token::Type endDelimiterOfPower;
+  if (popTokenIfType(Token::Type::CaretWithParenthesis)) {
+    endDelimiterOfPower = Token::Type::RightSystemParenthesis;
+  } else if (popTokenIfType(Token::Type::Caret)) {
+    endDelimiterOfPower = Token::Type::RightParenthesis;
+    if (!popTokenIfType(Token::Type::LeftParenthesis)) {
+      // Exponent should be parenthesed
+      // TODO: allow without parenthesis?
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+    }
+  } else {
+    return Expression();
+  }
+  Expression base = parseUntil(endDelimiterOfPower);
+  if (!popTokenIfType(endDelimiterOfPower)) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  bool isSymbol;
+  assert(caretIntegerValue);
+  Expression result =
+      allowParenthesis && base.type() == ExpressionNode::Type::Parenthesis
+          ? base.child(0)
+          : base;
+  if (SimplificationHelper::extractInteger(result, caretIntegerValue,
+                                           &isSymbol) &&
+      !isSymbol) {
+    return result;
+  }
+  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  return Expression();
+}
+#endif
 
 bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
   if (false /*m_parsingContext.context() &&

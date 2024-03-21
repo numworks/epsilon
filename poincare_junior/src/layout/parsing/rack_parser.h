@@ -15,6 +15,10 @@
 
 namespace PoincareJ {
 
+/* TODO_PCJ : This class closely follows Poincare::Parser. Last update was on
+ * 5fa0f7c. When Poincare::Parser is removed, updated  with latest changes and
+ * remove this comment. */
+
 class RackParser {
  public:
   enum class Status { Success, Progress, Error };
@@ -165,8 +169,16 @@ class RackParser {
   void privateParseCustomIdentifier(EditionReference& leftHandSide,
                                     const char* name, size_t length,
                                     Token::Type stoppingType);
+#if 0
+  bool privateParseCustomIdentifierWithParameters(
+      EditionReference& leftHandSide, const char* name, size_t length,
+      Token::Type stoppingType, Context::SymbolAbstractType idType,
+      bool parseApostropheAsDerivative);
+#endif
   void parseSequence(EditionReference& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
+  EditionReference parseIntegerCaretForFunction(bool allowParenthesis,
+                                                int* caretIntegerValue);
   bool generateMixedFractionIfNeeded(EditionReference& leftHandSide);
 
   // Save and restore parser state

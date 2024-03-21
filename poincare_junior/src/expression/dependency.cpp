@@ -150,6 +150,7 @@ bool RemoveUselessDependencies(Tree* dep) {
   const Tree* expression = dep->child(0);
   Tree* list = dep->child(1);
   assert(list->isSet());
+  bool changed = false;
   for (int i = 0; i < list->numberOfChildren(); i++) {
     Tree* depI = list->child(i);
     // TODO is it true with infinite ? for instance -inf+inf is undef
@@ -159,6 +160,7 @@ bool RemoveUselessDependencies(Tree* dep) {
           list, list->numberOfChildren() + depI->numberOfChildren() - 1);
       depI->removeNode();
       i--;
+      changed = true;
       continue;
     }
     // dep(..,{x^y}) = dep(..,{x}) if y > 0 and y != p/2*q
@@ -172,6 +174,9 @@ bool RemoveUselessDependencies(Tree* dep) {
       }
 #endif
     }
+  }
+  if (changed) {
+    NAry::Sort(list);
   }
 
   // ShallowReduce to remove defined dependencies ({x+3}->{x, 3}->{x})
@@ -191,6 +196,7 @@ bool RemoveUselessDependencies(Tree* dep) {
       if (ContainsSameDependency(depI, list->child(j))) {
         NAry::RemoveChildAtIndex(list, j);
         i--;
+        changed = true;
         break;
       }
     }
@@ -203,11 +209,12 @@ bool RemoveUselessDependencies(Tree* dep) {
     if (ContainsSameDependency(depI, expression)) {
       NAry::RemoveChildAtIndex(list, i);
       i--;
+      changed = true;
     }
   }
 
-  Dependency::RemoveDefinedDependencies(dep);
-  return true;
+  changed |= Dependency::RemoveDefinedDependencies(dep);
+  return changed;
 }
 
 bool Dependency::DeepRemoveUselessDependencies(Tree* expr) {

@@ -171,12 +171,10 @@ class RackParser {
   void privateParseCustomIdentifier(EditionReference& leftHandSide,
                                     const char* name, size_t length,
                                     Token::Type stoppingType);
-#if 0
   bool privateParseCustomIdentifierWithParameters(
       EditionReference& leftHandSide, const char* name, size_t length,
-      Token::Type stoppingType, Context::SymbolAbstractType idType,
+      Token::Type stoppingType, Poincare::Context::SymbolAbstractType idType,
       bool parseApostropheAsDerivative);
-#endif
   void parseSequence(EditionReference& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
   EditionReference parseIntegerCaretForFunction(bool allowParenthesis,

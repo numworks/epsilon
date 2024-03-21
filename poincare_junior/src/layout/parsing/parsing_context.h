@@ -1,7 +1,7 @@
 #ifndef POINCARE_JUNIOR_LAYOUT_PARSING_CONTEXT_H
 #define POINCARE_JUNIOR_LAYOUT_PARSING_CONTEXT_H
 
-// #include <poincare/context.h>
+#include <poincare/context.h>
 
 namespace PoincareJ {
 
@@ -22,17 +22,18 @@ class ParsingContext {
   };
 
   ParsingContext(
-      /*Context * context, */ ParsingContext::ParsingMethod parsingMethod)
-      : /* m_context(context),*/ m_parsingMethod(parsingMethod) {}
+      /*Poincare::Context * context, */ ParsingContext::ParsingMethod
+          parsingMethod)
+      : m_context(nullptr), m_parsingMethod(parsingMethod) {}
 
-  // Context * context() { return m_context; }
-  // void setContext(Context * context) { m_context = context; }
+  Poincare::Context* context() { return m_context; }
+  void setContext(Poincare::Context* context) { m_context = context; }
 
   ParsingMethod parsingMethod() { return m_parsingMethod; }
   void setParsingMethod(ParsingMethod method) { m_parsingMethod = method; }
 
  private:
-  // Context * m_context;
+  Poincare::Context* m_context;
   ParsingMethod m_parsingMethod;
 };
 

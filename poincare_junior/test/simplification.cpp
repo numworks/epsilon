@@ -771,3 +771,9 @@ QUIZ_CASE(pcj_distributions) {
   simplifies_to("binompdf(3.5,5,0.4)", "binompdf(3,5,2/5)");
   simplifies_to("normcdf(inf,5,0.4)", "1");
 }
+
+QUIZ_CASE(pcj_simplification_function) {
+  simplifies_to("f(x)", "f(x)");
+  simplifies_to("f(2+2)", "f(4)");
+  simplifies_to("f(y)+f(x)-f(x)", "f(y)");
+}

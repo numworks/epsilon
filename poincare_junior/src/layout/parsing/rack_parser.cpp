@@ -827,7 +827,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     if (ParameteredExpression::ParameterText(
             m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
             &parameterLength)) {
-      Context *oldContext = m_parsingContext.context();
+      Poincare::Context *oldContext = m_parsingContext.context();
       VariableContext parameterContext(
           Symbol::Builder(parameterText, parameterLength), oldContext);
       m_parsingContext.setContext(&parameterContext);
@@ -938,53 +938,45 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
     buf = CodePointLayout::CopyName(node, buf, end - buf);
     node = node->nextTree();
   }
-  leftHandSide = SharedEditionPool->push<BlockType::UserSymbol>(
-      static_cast<const char *>(buffer), m_currentToken.length() + 1);
-#if 0
-  privateParseCustomIdentifier(leftHandSide, node, length, stoppingType);
-#endif
+  privateParseCustomIdentifier(leftHandSide, buffer, m_currentToken.length(),
+                               stoppingType);
   isThereImplicitOperator();
 }
 
+void RackParser::privateParseCustomIdentifier(EditionReference &leftHandSide,
+                                              const char *name, size_t length,
+                                              Token::Type stoppingType) {
 #if 0
-void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
-                                       Token::Type stoppingType) {
-  assert(leftHandSide.isUninitialized());
-  const char *name = m_currentToken.text();
-  size_t length = m_currentToken.length();
-  privateParseCustomIdentifier(leftHandSide, name, length, stoppingType);
-  isThereImplicitOperator();
-}
-
-void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
-                                          const char *name, size_t length,
-                                          Token::Type stoppingType) {
   if (!SymbolAbstractNode::NameLengthIsValid(name, length)) {
     // Identifier name too long.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
+#endif
 
   /* Check the context: if the identifier does not already exist as a function,
    * seq or list, interpret it as a symbol, even if there are parentheses
    * afterwards.
    * If there is no context, f(x) is always parsed as a function and u{n} as
    * a sequence*/
-  Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
+  Poincare::Context::SymbolAbstractType idType =
+      Poincare::Context::SymbolAbstractType::None;
   if (m_parsingContext.context() &&
       m_parsingContext.parsingMethod() !=
           ParsingContext::ParsingMethod::Assignment) {
     idType =
         m_parsingContext.context()->expressionTypeForIdentifier(name, length);
-    if (idType != Context::SymbolAbstractType::Function &&
-        idType != Context::SymbolAbstractType::Sequence &&
-        idType != Context::SymbolAbstractType::List) {
-      leftHandSide = Symbol::Builder(name, length);
+    if (idType != Poincare::Context::SymbolAbstractType::Function &&
+        idType != Poincare::Context::SymbolAbstractType::Sequence &&
+        idType != Poincare::Context::SymbolAbstractType::List) {
+      leftHandSide =
+          SharedEditionPool->push<BlockType::UserSymbol>(name, length + 1);
       return;
     }
   }
 
-  if (idType == Context::SymbolAbstractType::Sequence ||
-      (idType == Context::SymbolAbstractType::None &&
+#if 0
+  if (idType == Poincare::Context::SymbolAbstractType::Sequence ||
+      (idType == Poincare::Context::SymbolAbstractType::None &&
        m_nextToken.type() == Token::Type::LeftSystemBrace)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
@@ -1010,16 +1002,20 @@ void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
   }
   // Parse aspostrophe as unit (default parsing)
   setState(previousState);
+#endif
   privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
                                              stoppingType, idType, false);
 }
 
 bool RackParser::privateParseCustomIdentifierWithParameters(
     EditionReference &leftHandSide, const char *name, size_t length,
-    Token::Type stoppingType, Context::SymbolAbstractType idType,
+    Token::Type stoppingType, Poincare::Context::SymbolAbstractType idType,
     bool parseApostropheAsDerivative) {
+#if 0
   int derivativeOrder = 0;
+#endif
   if (parseApostropheAsDerivative) {
+#if 0
     // Case 1: parse f'''(x)
     while (m_nextToken.length() == 1 &&
            (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
@@ -1034,50 +1030,58 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
         return false;
       }
     }
+#else
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
   }
 
   // If the identifier is not followed by parentheses, it is a symbol
-  bool poppedParenthesisIsSystem = false;
-  if (!popTokenIfType(Token::Type::LeftParenthesis)) {
-    if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
-      if (derivativeOrder > 0) {
-        return false;
-      }
-      leftHandSide = Symbol::Builder(name, length);
-      return true;
+  EditionReference parameter = tryParseFunctionParameters();
+  if (!parameter) {
+#if 0
+    if (derivativeOrder > 0) {
+      return false;
     }
-    poppedParenthesisIsSystem = true;
+#endif
+    leftHandSide =
+        SharedEditionPool->push<BlockType::UserSymbol>(name, length + 1);
+    return true;
   }
 
   /* The identifier is followed by parentheses. It can be:
    * - a function call
    * - an access to a list element   */
-  EditionReference parameter = parseCommaSeparatedList();
-  assert(!parameter.isUninitialized());
-
-  int numberOfParameters = parameter.numberOfChildren();
+  int numberOfParameters = parameter->numberOfChildren();
   EditionReference result;
   if (numberOfParameters == 2) {
+#if 0
     if (derivativeOrder > 0) {
       return false;
     }
     /* If you change how list accesses are parsed, change it also in parseList
      * or factorize it. */
-    result = ListSlice::Builder(parameter.child(0), parameter.child(1),
+    result = ListSlice::Builder(parameter->child(0), parameter->child(1),
                                 Symbol::Builder(name, length));
+#else
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
   } else if (numberOfParameters == 1) {
-    parameter = parameter.child(0);
-    if (parameter.type() == ExpressionNode::Type::Symbol &&
-        strncmp(static_cast<SymbolAbstract &>(parameter).name(), name,
-                length) == 0) {
+    MoveTreeOverTree(parameter, parameter->child(0));
+    if (parameter->type() == BlockType::UserSymbol &&
+        strncmp(Symbol::GetName(parameter), name, length) == 0) {
       // Function and variable must have distinct names.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-    } else if (idType == Context::SymbolAbstractType::List) {
+    } else if (idType == Poincare::Context::SymbolAbstractType::List) {
+#if 0
       if (derivativeOrder > 0) {
         return false;
       }
       result = ListElement::Builder(parameter, Symbol::Builder(name, length));
+#else
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
     } else {
+#if 0
       if (derivativeOrder > 0) {
         EditionReference derivand =
             Function::Builder(name, length, Symbol::SystemSymbol());
@@ -1085,31 +1089,30 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
             Derivative::Builder(derivand, Symbol::SystemSymbol(), parameter,
                                 BasedInteger::Builder(derivativeOrder));
       } else {
-        result = Function::Builder(name, length, parameter);
+#endif
+      result =
+          SharedEditionPool->push<BlockType::UserFunction>(name, length + 1);
+      parameter->moveNodeBeforeNode(result);
+      assert(result->child(0) == parameter);
+#if 0
       }
+#endif
     }
   } else {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-    return true;
   }
 
-  Token::Type correspondingRightParenthesis =
-      poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis
-                                : Token::Type::RightParenthesis;
-  if (!popTokenIfType(correspondingRightParenthesis)) {
-    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-    return true;
-  }
-  if (result.type() == ExpressionNode::Type::Function &&
-      parameter.type() == ExpressionNode::Type::Symbol &&
+  if (result->type() == BlockType::UserFunction &&
+      parameter->type() == BlockType::UserSymbol &&
       m_nextToken.type() == Token::Type::AssignmentEqual &&
       m_parsingContext.context()) {
+#if 0
     /* Set the parameter in the context to ensure that f(t)=t is not
      * understood as f(t)=1_t
      * If we decide that functions can be assigned with any parameter,
      * this will ensure that f(abc)=abc is understood like f(x)=x
      */
-    Context *previousContext = m_parsingContext.context();
+    Poincare::Context *previousContext = m_parsingContext.context();
     VariableContext functionAssignmentContext(static_cast<Symbol &>(parameter),
                                               m_parsingContext.context());
     m_parsingContext.setContext(&functionAssignmentContext);
@@ -1118,11 +1121,13 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     leftHandSide = parseUntil(stoppingType, result);
     m_parsingContext.setContext(previousContext);
     return true;
+#else
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
   }
   leftHandSide = result;
   return true;
 }
-#endif
 
 Tree *RackParser::tryParseFunctionParameters() {
   bool parenthesisIsLayout = m_nextToken.is(Token::Type::Layout) &&

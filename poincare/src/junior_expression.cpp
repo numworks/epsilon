@@ -12,6 +12,7 @@
 #include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/matrix.h>
+#include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/unit.h>
@@ -460,6 +461,65 @@ bool JuniorExpression::derivate(const ReductionContext& reductionContext,
   // TODO PCJ: Remove
   assert(false);
   return false;
+}
+
+int JuniorExpression::getPolynomialCoefficients(
+    Context* context, const char* symbolName,
+    JuniorExpression coefficients[]) const {
+  PoincareJ::Tree* variable =
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
+          symbolName, strlen(symbolName) + 1);
+  PoincareJ::Tree* poly =
+      PoincareJ::PolynomialParser::Parse(tree()->clone(), variable);
+  int degree = poly->isPolynomial() ? PoincareJ::Polynomial::Degree(poly) : 0;
+  int indexExponent = 0;
+  int numberOfTerms = PoincareJ::Polynomial::NumberOfTerms(poly);
+  for (int i = degree; i >= 0; i--) {
+    if (indexExponent < numberOfTerms &&
+        i == PoincareJ::Polynomial::ExponentAtIndex(poly, indexExponent)) {
+      coefficients[i] =
+          JuniorExpression::Builder(poly->child(indexExponent + 1)->clone());
+      indexExponent++;
+    } else {
+      coefficients[i] = JuniorExpression::Builder(
+          PoincareJ::SharedEditionPool->push(PoincareJ::BlockType::Zero));
+    }
+  }
+  assert(indexExponent == PoincareJ::Polynomial::NumberOfTerms(poly));
+  poly->removeTree();
+  variable->removeTree();
+  return degree;
+}
+
+int JuniorExpression::getPolynomialReducedCoefficients(
+    const char* symbolName, JuniorExpression coefficients[], Context* context,
+    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
+    Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
+    bool keepDependencies) const {
+  int degree = getPolynomialCoefficients(context, symbolName, coefficients);
+  for (int i = 0; i <= degree; i++) {
+    coefficients[i] = coefficients[i].cloneAndReduce(ReductionContext(
+        context, complexFormat, angleUnit, unitFormat,
+        ReductionTarget::SystemForApproximation, symbolicComputation));
+    if (!keepDependencies &&
+        coefficients[i].type() == ExpressionNode::Type::Dependency) {
+      coefficients[i] = coefficients[i].childAtIndex(0);
+    }
+  }
+  return degree;
+}
+
+int JuniorExpression::polynomialDegree(Context* context,
+                                       const char* symbolName) const {
+  PoincareJ::Tree* variable =
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
+          symbolName, strlen(symbolName) + 1);
+  PoincareJ::Tree* poly =
+      PoincareJ::PolynomialParser::Parse(tree()->clone(), variable);
+  int degree = poly->isPolynomial() ? PoincareJ::Polynomial::Degree(poly) : 0;
+  poly->removeTree();
+  variable->removeTree();
+  return degree;
 }
 
 JuniorExpression JuniorExpression::replaceSymbolWithExpression(

@@ -149,6 +149,26 @@ class JuniorExpression : public OExpression {
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue);
 
+  int getPolynomialReducedCoefficients(const char* symbolName,
+                                       JuniorExpression coefficients[],
+                                       Context* context,
+                                       Preferences::ComplexFormat complexFormat,
+                                       Preferences::AngleUnit angleUnit,
+                                       Preferences::UnitFormat unitFormat,
+                                       SymbolicComputation symbolicComputation,
+                                       bool keepDependencies = false) const;
+  /* getPolynomialCoefficients fills the table coefficients with the expressions
+   * of the first 3 polynomial coefficients and returns the  polynomial degree.
+   * It is supposed to be called on a reduced expression.
+   * coefficients has up to 3 entries.  */
+  int getPolynomialCoefficients(Context* context, const char* symbolName,
+                                JuniorExpression coefficients[]) const;
+
+  /* polynomialDegree returns:
+   * - (-1) if the expression is not a polynomial
+   * - the degree of the polynomial otherwise */
+  int polynomialDegree(Context* context, const char* symbolName) const;
+
 #if 1  // TODO_PCJ
   JuniorExpression replaceSymbolWithExpression(
       const SymbolAbstract& symbol, const JuniorExpression& expression);

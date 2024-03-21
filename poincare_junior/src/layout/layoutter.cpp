@@ -461,8 +461,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       EditionReference layout =
           nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();
       EditionReference newParent = KRackL()->clone();
-      layoutExpression(newParent, expression->nextNode()->nextTree(),
-                       k_maxPriority);
+      layoutExpression(newParent, expression->child(1), k_maxPriority);
       NAry::AddChild(layoutParent, layout);
       if (nlLog) {
         layoutText(layoutParent, log);
@@ -794,15 +793,16 @@ bool Layoutter::ImplicitAddition(const Tree *addition) {
   if (addition->numberOfChildren() < 2) {
     return false;
   }
-  // Step 1: TODO PCJ check for ᴇ
+  // Step 1: TODO PCJ check that no ᴇ will be needed
   // Step 2: Check if units can be implicitly added
   const Units::Representative *storedUnitRepresentative = nullptr;
   for (const Tree *child : addition->children()) {
-    if (!child->isMultiplication() || child->numberOfChildren() != 2 ||
-        !(child->child(0)->isInteger() ||
-          child->child(0)->isOfType({BlockType::Decimal, BlockType::DoubleFloat,
-                                     BlockType::SingleFloat})) ||
-        !child->child(1)->isUnit()) {
+    if (!(child->isMultiplication() && child->numberOfChildren() == 2 &&
+          (child->child(0)->isInteger() ||
+           child->child(0)->isOfType({BlockType::Decimal,
+                                      BlockType::DoubleFloat,
+                                      BlockType::SingleFloat})) &&
+          child->child(1)->isUnit())) {
       return false;
     }
     ComplexSign sign = ComplexSign::Get(child->child(0));

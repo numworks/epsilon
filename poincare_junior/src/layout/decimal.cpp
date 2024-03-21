@@ -20,12 +20,12 @@ void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
    *
    * For instance :
    *
-   * i = 1000
-   * removeZeroAtTheEnd(&i, 2)
+   * i = 10000
+   * i.removeZeroAtTheEnd(2)
    * assert(i==10)
    *
    * i = 1000
-   * removeZeroAtTheEnd(&i, -1)
+   * i.removeZeroAtTheEnd(-1)
    * assert(i==1)
    */
 

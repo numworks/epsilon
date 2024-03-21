@@ -59,6 +59,12 @@ class CategoricalController
  private:
   virtual void createDynamicCells() = 0;
   void didScroll();
+  KDCoordinate listVerticalOffset() {
+    return m_selectableListView.contentOffset().y();
+  }
+  KDCoordinate tableCellVerticalOffset() {
+    return categoricalTableCell()->selectableTableView()->contentOffset().y();
+  }
 };
 
 /* Common Controller between InputHomogeneityController and

@@ -37,9 +37,8 @@ void CategoricalController::didScroll() {
    * displayable cells as its real number of cells. Since the
    * CategoricalController needs at most 3 cells, we delegate the scroll
    * handling to the CategoricalTableCell. */
-  KDCoordinate listOffset = m_selectableListView.contentOffset().y();
-  KDCoordinate tableOffset =
-      categoricalTableCell()->selectableTableView()->contentOffset().y();
+  KDCoordinate listOffset = listVerticalOffset();
+  KDCoordinate tableOffset = tableCellVerticalOffset();
 
   int tableCellRow = indexOfTableCell();
   KDCoordinate topMargin = m_selectableListView.margins()->top();
@@ -58,7 +57,7 @@ void CategoricalController::didScroll() {
     categoricalTableCell()->selectableTableView()->translateContentOffsetBy(
         KDPoint(0, translation));
     m_selectableListView.translateContentOffsetBy(KDPoint(0, -translation));
-    assert(m_selectableListView.contentOffset().y() == heightBeforeTableCell);
+    assert(listVerticalOffset() == heightBeforeTableCell);
   }
 }
 
@@ -77,9 +76,7 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
       categoricalTableCell()->minimalSizeForOptimalDisplay().height() +
       otherCellsHeight;
   *visible = decorator->verticalBar()->update(
-      trueOptimalHeight,
-      categoricalTableCell()->selectableTableView()->contentOffset().y() +
-          m_selectableListView.contentOffset().y(),
+      trueOptimalHeight, tableCellVerticalOffset() + listVerticalOffset(),
       m_selectableListView.bounds().height());
   return true;
 }
@@ -120,10 +117,9 @@ HighlightCell *CategoricalController::reusableCell(int index, int type) {
 
 KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
   if (row == indexOfTableCell()) {
-    return std::min(
-        categoricalTableCell()->contentSizeWithMargins().height() -
-            categoricalTableCell()->selectableTableView()->contentOffset().y(),
-        static_cast<int>(m_selectableListView.bounds().height()));
+    return std::min(categoricalTableCell()->contentSizeWithMargins().height() -
+                        tableCellVerticalOffset(),
+                    static_cast<int>(m_selectableListView.bounds().height()));
   }
   assert(row == indexOfNextCell());
   return m_next.minimalSizeForOptimalDisplay().height();

@@ -84,24 +84,22 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
    * modified the list and it processes all the dependencies. We should rather
    * add an AddDependency method that makes sure the dependency is interesting
    * and not already covered by another one in the list. */
-  Tree* expression = dep->child(0);
-  Tree* list = expression->nextTree();
+  Tree* list = dep->child(1);
 
   bool changed = false;
   int totalNumberOfDependencies = list->numberOfChildren();
   int i = 0;
   while (i < totalNumberOfDependencies) {
-    Tree* depI = list->child(i);
+    const Tree* depI = list->child(i);
     Tree* approximation;
 
     bool hasSymbolsOrRandom = depI->recursivelyMatches(
         [](const Tree* t) { return t->isVariable() || t->isRandom(); });
     if (hasSymbolsOrRandom) {
-      /* If the dependency involves unresolved symbol/function/sequence,
-       * the approximation of the dependency could be undef while the
-       * whole expression is not. We juste approximate everything but the symbol
-       * in case the other parts of the expression make it undef/nonreal.
-       * */
+      /* If the dependency involves unresolved symbol/function/sequence, the
+       * approximation of the dependency could be undef while the whole
+       * expression is not. We just approximate everything but the symbol in
+       * case the other parts of the expression make it undef/nonreal. */
       approximation = depI->clone();
       Approximation::ApproximateAndReplaceEveryScalar(approximation);
     } else {
@@ -111,6 +109,9 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     }
     if (approximation->isUndefined()) {
       ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    }
+    if (approximation->isNonreal()) {
+      ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
     }
     approximation->removeTree();
     if (!hasSymbolsOrRandom) {
@@ -131,13 +132,14 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
   return changed;
 }
 
-bool ContainsSameDependency(const Tree* out, const Tree* in) {
-  if (in->treeIsIdenticalTo(out)) {
+bool ContainsSameDependency(const Tree* searched, const Tree* container) {
+  // TODO handle scopes, x will not be seen in sum(k+x,k,1,n)
+  if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
   // TODO PCJ if power and same type of power return true
-  for (const Tree* child : out->children()) {
-    if (ContainsSameDependency(child, in)) {
+  for (const Tree* child : container->children()) {
+    if (ContainsSameDependency(searched, child)) {
       return true;
     }
   }
@@ -145,19 +147,17 @@ bool ContainsSameDependency(const Tree* out, const Tree* in) {
 }
 
 bool RemoveUselessDependencies(Tree* dep) {
-  Tree* expression = dep->child(0);
+  const Tree* expression = dep->child(0);
   Tree* list = dep->child(1);
   assert(list->isSet());
   for (int i = 0; i < list->numberOfChildren(); i++) {
     Tree* depI = list->child(i);
+    // TODO is it true with infinite ? for instance -inf+inf is undef
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
     if (depI->isAddition() || depI->isMultiplication()) {
-      if (depI->numberOfChildren() == 1) {
-        depI->moveTreeOverTree(depI->child(0));
-      } else {
-        NAry::AddChild(list, depI->child(0));
-        NAry::SetNumberOfChildren(depI, depI->numberOfChildren() - 1);
-      }
+      NAry::SetNumberOfChildren(
+          list, list->numberOfChildren() + depI->numberOfChildren() - 1);
+      depI->removeNode();
       i--;
       continue;
     }
@@ -188,7 +188,7 @@ bool RemoveUselessDependencies(Tree* dep) {
       if (i == j) {
         continue;
       }
-      if (ContainsSameDependency(list->child(j), depI)) {
+      if (ContainsSameDependency(depI, list->child(j))) {
         NAry::RemoveChildAtIndex(list, j);
         i--;
         break;
@@ -200,7 +200,7 @@ bool RemoveUselessDependencies(Tree* dep) {
    * dep(x^2+1,{x}) -> x^2+1 */
   for (int i = 0; i < list->numberOfChildren(); i++) {
     const Tree* depI = list->child(i);
-    if (ContainsSameDependency(expression, depI)) {
+    if (ContainsSameDependency(depI, expression)) {
       NAry::RemoveChildAtIndex(list, i);
       i--;
     }
@@ -213,7 +213,8 @@ bool RemoveUselessDependencies(Tree* dep) {
 bool Dependency::DeepRemoveUselessDependencies(Tree* expr) {
   bool changed = false;
   if (expr->isDependency()) {
-    changed |= RemoveUselessDependencies(expr);
+    RemoveUselessDependencies(expr);
+    return true;
   }
   for (Tree* child : expr->children()) {
     changed |= DeepRemoveUselessDependencies(child);

@@ -6,7 +6,7 @@
 #include <poincare_junior/include/poincare.h>
 #endif
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/include/poincare.h>
@@ -26,7 +26,7 @@
 
 namespace PoincareJ {
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 
 void Tree::log(std::ostream& stream, bool recursive, bool verbose,
                int indentation, const Tree* comparison) const {

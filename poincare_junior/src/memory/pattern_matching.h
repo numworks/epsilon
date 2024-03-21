@@ -71,7 +71,7 @@ class PatternMatching {
     }
     bool isUninitialized() const;
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
     __attribute__((__used__)) void log() const;
 #endif
 
@@ -144,7 +144,7 @@ class PatternMatching {
     void setLocal(const Tree* source, const Tree* pattern);
     // Sets the local context to local root parents.
     void setLocalToParent();
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
     __attribute__((__used__)) void log() const;
 #endif
 

@@ -65,7 +65,7 @@ bool Pool::ReferenceTable::reset() {
   return true;
 }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 
 void Pool::ReferenceTable::logIdsForNode(std::ostream& stream,
                                          const Tree* node) const {
@@ -86,7 +86,7 @@ void Pool::ReferenceTable::logIdsForNode(std::ostream& stream,
 
 // Pool
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 
 void Pool::logNode(std::ostream& stream, const Tree* node, bool recursive,
                    bool verbose, int indentation) {

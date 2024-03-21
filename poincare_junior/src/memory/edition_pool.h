@@ -92,7 +92,7 @@ class EditionPool final : public Pool {
                int maxSize, Relax relax = k_defaultRelax);
   // Pool memory
   void checkForEnoughSpace(size_t numberOfRequiredBlock);
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   const char *name() override { return "Edition"; }
 #endif
 

@@ -144,7 +144,7 @@ void Reference::send(FunctionOnConstTree function, void *context) const {
   return function(getTree(), context);
 }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 void Reference::log() {
   std::cout << "id: " << m_id;
   getTree()->log(std::cout);

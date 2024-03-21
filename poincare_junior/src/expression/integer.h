@@ -186,7 +186,7 @@ class IntegerHandler final {
   constexpr static uint8_t k_maxNumberOfDigits = 128;
   constexpr static uint8_t k_maxNumberOfNativeDigits =
       k_maxNumberOfDigits / sizeof(native_uint_t);
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   void log() const {
     std::cout << "<IntegerHandler size="
               << (int)numberOfDigits<native_uint_t>();

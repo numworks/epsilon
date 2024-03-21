@@ -9,7 +9,7 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <quiz.h>
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 #include <iostream>
 #endif
 
@@ -28,7 +28,7 @@ inline void assert_node_equals_blocks(const Tree* node,
 inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
   quiz_assert((tree0 == nullptr) == (tree1 == nullptr));
   if (!Comparison::AreEqual(tree0, tree1)) {
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
     tree0->logDiffWith(tree1);
 #endif
     quiz_assert(false);
@@ -42,7 +42,7 @@ inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize,
   Pool* pools[] = {cachePool, SharedEditionPool};
   size_t theoreticalSizes[] = {cachePoolSize, editionPoolSize};
   for (size_t i = 0; i < sizeof(theoreticalSizes) / sizeof(size_t); i++) {
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
     const char* poolNames[] = {"cache pool", "edition Pool"};
     if ((pools[i]->*functionSize)() != theoreticalSizes[i]) {
       std::cout << "Expected " << poolNames[i] << " of size "

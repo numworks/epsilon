@@ -32,7 +32,7 @@ EditionReference& EditionReference::operator=(Tree* tree) {
   return *this;
 }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 void EditionReference::log() const {
   std::cout << "id: " << m_identifier << "\n";
   tree()->log(std::cout, true, 1, true);

@@ -133,7 +133,7 @@ bool AdvancedSimplification::Direction::apply(Tree** u, Tree* root,
   return true;
 }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 void AdvancedSimplification::Direction::log() {
   if (isNextNode()) {
     std::cout << "NextNode";

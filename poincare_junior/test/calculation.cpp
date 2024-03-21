@@ -55,7 +55,7 @@ Expression expressionViolatingLifetimeOfData() {
 // This test is expected to fail
 // QUIZ__CASE(pcj_mustfail) {
 //   Expression e = expressionViolatingLifetimeOfData();
-// #if POINCARE_MEMORY_TREE_LOG
+// #if POINCARE_TREE_LOG
 //   e.log();
 // #endif
 // }

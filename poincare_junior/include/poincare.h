@@ -4,7 +4,7 @@
 #if POINCARE_POOL_VISUALIZATION
 #include <fstream>
 #endif
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 #include <iostream>
 #endif
 
@@ -25,7 +25,7 @@ void Log(LoggerType type, const char* event, const void* blockAddress = nullptr,
 
 #endif
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 void Indent(std::ostream& stream, int indentation);
 #endif
 

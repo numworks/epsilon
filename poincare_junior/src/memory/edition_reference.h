@@ -52,7 +52,7 @@ class EditionReference {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
   }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   __attribute__((__used__)) void log() const;
 #endif
 

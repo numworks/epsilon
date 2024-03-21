@@ -81,7 +81,7 @@ class Sign {
 
   static Sign Get(const Tree* t);
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   void log(bool endOfLine = true) const;
 #endif
 
@@ -154,7 +154,7 @@ class ComplexSign {
    * Beware that the difference may be real while the trees were complexes. */
   static ComplexSign SignOfDifference(const Tree* a, const Tree* b);
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   void log() const;
 #endif
 

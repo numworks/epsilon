@@ -60,7 +60,7 @@ class AdvancedSimplification {
     // Constructor needed for Path::m_stack
     Direction() : m_type(0) {}
     bool isNextNode() const { return !isContract() && !isExpand(); }
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
     void log();
 #endif
     // Returns one of the three base direction (NextNode, Contract and Expand).

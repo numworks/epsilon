@@ -59,7 +59,7 @@ class CachePool final : public Pool {
   CachePool();
   void translate(uint16_t offset, Block *start);
   void resizeEditionPool();
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   const char *name() override { return "Cache"; }
 #endif
 
@@ -96,7 +96,7 @@ class CachePool final : public Pool {
       return CachePool::k_maxNumberOfReferences;
     }
     uint16_t *nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
     uint16_t identifierForIndex(uint16_t index) const override {
       return idForIndex(index);
     }

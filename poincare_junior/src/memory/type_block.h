@@ -59,7 +59,7 @@ class TypeBlock : public Block {
   constexpr bool operator!=(BlockType t) const { return type() != t; }
   constexpr operator BlockType() const { return type(); }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   // Add an array of names for the BlockTypes
   static constexpr const char *names[] = {
 #define RANGE(...)

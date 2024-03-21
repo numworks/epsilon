@@ -5,7 +5,7 @@
 
 #include "tree.h"
 #include "type_block.h"
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 #include <iostream>
 #endif
 
@@ -42,7 +42,7 @@ class Pool {
   // Offset in the ReferenceTable are relative to the referenceBlock
   virtual Block *referenceBlock() { return firstBlock(); };
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   enum class LogFormat { Flat, Tree };
 #endif
  protected:
@@ -61,7 +61,7 @@ class Pool {
     virtual uint16_t storeNode(Tree *node) = 0;
     virtual Tree *nodeForIdentifier(uint16_t id) const;
     virtual bool reset();
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
     void logIdsForNode(std::ostream &stream, const Tree *node) const;
     virtual uint16_t identifierForIndex(uint16_t index) const { return index; }
 #endif
@@ -76,7 +76,7 @@ class Pool {
  private:
   virtual const ReferenceTable *referenceTable() const = 0;
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
  public:
   virtual const char *name() = 0;
   void logNode(std::ostream &stream, const Tree *node, bool recursive,

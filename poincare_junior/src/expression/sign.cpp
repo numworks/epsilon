@@ -6,7 +6,7 @@
 #include "number.h"
 #include "variables.h"
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 #include <iostream>
 #endif
 
@@ -78,7 +78,7 @@ Sign Sign::Get(const Tree* t) {
   return ComplexSign::Get(t).realSign();
 }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 void Sign::log(bool endOfLine) const {
   if (isZero()) {
     std::cout << "Zero";
@@ -308,7 +308,7 @@ ComplexSign ComplexSign::SignOfDifference(const Tree* a, const Tree* b) {
   return result;
 }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 void ComplexSign::log() const {
   std::cout << "(";
   realSign().log(false);

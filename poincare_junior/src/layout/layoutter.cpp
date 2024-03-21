@@ -393,7 +393,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::Two:
     case BlockType::IntegerShort:
     case BlockType::IntegerPosBig:
-#ifndef POINCARE_MEMORY_TREE_LOG
+#ifndef POINCARE_TREE_LOG
       assert(!Rational::Sign(expression).isStrictlyNegative());
 #endif
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
@@ -403,7 +403,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::RationalShort:
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
       layoutIntegerHandler(layoutParent, Rational::Numerator(expression));
       PushCodePoint(layoutParent, '/');
       layoutIntegerHandler(layoutParent, Rational::Denominator(expression));
@@ -634,7 +634,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::UnitConversion:
       layoutInfixOperator(layoutParent, expression, UCodePointRightwardsArrow);
       break;
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
     case BlockType::Placeholder: {
       PushCodePoint(layoutParent, 'K');
       uint8_t offset = Placeholder::NodeToTag(expression);
@@ -670,7 +670,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       if (Builtin::IsReservedFunction(expression)) {
         layoutBuiltin(layoutParent, expression);
       } else {
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
         layoutFunctionCall(
             layoutParent, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);

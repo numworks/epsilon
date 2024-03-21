@@ -62,7 +62,7 @@ class Reference {
     return (isUninitialized() == other.isUninitialized()) &&
            (isUninitialized() || getTree()->treeIsIdenticalTo(other.getTree()));
   }
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   void log();
 #endif
 

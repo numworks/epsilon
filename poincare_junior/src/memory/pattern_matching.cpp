@@ -16,7 +16,7 @@ bool PatternMatching::Context::isUninitialized() const {
   return true;
 }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 void PatternMatching::Context::log() const {
   std::cout << "<Context>\n";
   for (int i = 0; i < Placeholder::Tag::NumberOfTags; i++) {

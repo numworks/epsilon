@@ -8,7 +8,7 @@
 #include "type_block.h"
 #include "value_block.h"
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
 #include <iostream>
 #endif
 
@@ -48,7 +48,7 @@ class Tree : public TypeBlock {
     return memcmp(this, other, nodeSize()) == 0;
   }
 
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   __attribute__((__used__)) void log() const { log(std::cout); }
   __attribute__((__used__)) void logDiffWith(const Tree* n) const {
     log(std::cout, true, false, 0, n);

@@ -150,10 +150,10 @@ tests_src += $(poincare_junior_src)
 
 ifeq ($(DEBUG),1)
   ifeq ($(PLATFORM),simulator)
-    POINCARE_MEMORY_TREE_LOG ?= 1
+    POINCARE_TREE_LOG ?= 1
   endif
 endif
 
 ifdef POINCARE_TREE_LOG
-SFLAGS += -DPOINCARE_MEMORY_TREE_LOG=$(POINCARE_MEMORY_TREE_LOG)
+SFLAGS += -DPOINCARE_TREE_LOG=$(POINCARE_TREE_LOG)
 endif

@@ -27,7 +27,7 @@ void assert_sign(const char* input, ComplexSign expectedSign) {
                                 {.m_complexFormat = ComplexFormat::Cartesian});
   Simplification::DeepSystematicReduce(expression);
   bool result = ComplexSign::Get(expression) == expectedSign;
-#if POINCARE_MEMORY_TREE_LOG
+#if POINCARE_TREE_LOG
   if (!result) {
     std::cout << input << " -> ";
     expression->logSerialize();

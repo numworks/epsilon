@@ -105,7 +105,9 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
     }
     categoricalTableCell()->selectRow(rowToSelect);
   }
-  didScroll();
+  if (m_selectableListView.contentOffset() != previousOffset) {
+    didScroll();
+  }
 }
 
 HighlightCell *CategoricalController::reusableCell(int index, int type) {

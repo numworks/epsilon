@@ -417,7 +417,41 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::Derivative:
     case BlockType::NthDerivative:
       // TODO_PCJ createValidExpandedForm
-      // TODO PCJ condensed form
+      if (expression->lastChild()->isUserFunction() &&
+          expression->lastChild()->child(0)->isUserSymbol() &&
+          expression->lastChild()->child(0)->treeIsIdenticalTo(
+              Symbol::k_systemSymbol)) {
+        constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
+        char buffer[bufferSize];
+        Symbol::GetName(expression->lastChild(), buffer, std::size(buffer));
+        layoutText(layoutParent, buffer);
+        int order = expression->isDerivative()
+                        ? 1
+                        : Integer::Handler(expression->child(2)).to<int>();
+        if (order <= 2) {
+          PushCodePoint(layoutParent, order == 1 ? '\'' : '"');
+          if (expression->isNthDerivative()) {
+            expression->child(2)->removeTree();
+          }
+        } else {
+          assert(expression->isNthDerivative());
+          EditionReference rack;
+          if (m_linearMode) {
+            PushCodePoint(layoutParent, '^');
+            rack = layoutParent;
+          } else {
+            Tree *createdLayout = KSuperscriptL->cloneNode();
+            rack = SharedEditionPool->push<BlockType::RackLayout>(0);
+            NAry::AddChild(layoutParent, createdLayout);
+          }
+          layoutExpression(rack, expression->child(2), k_forceParenthesis);
+        }
+        expression->child(2)->removeTree();
+        expression->child(0)->removeTree();
+        layoutExpression(layoutParent, expression->nextNode(),
+                         k_forceParenthesis);
+        break;
+      }
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {

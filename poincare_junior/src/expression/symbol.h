@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_SYMBOL_H
 #define POINCARE_EXPRESSION_SYMBOL_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include "k_tree.h"
 
 namespace PoincareJ {
 
@@ -23,6 +23,8 @@ class Symbol final {
   constexpr static CodePoint k_radiusSymbol = 'r';
   constexpr static CodePoint k_ordinateSymbol = 'y';
   constexpr static CodePoint k_sequenceSymbol = 'n';
+
+  constexpr static KTree k_systemSymbol = "\x01"_e;
 
   static uint8_t Length(const Tree* node) { return node->nodeValue(0); }
   static void GetName(const Tree* node, char* buffer, size_t bufferSize);

@@ -38,35 +38,6 @@ int DerivativeNode::polynomialDegree(Context* context,
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-#if 0
-OLayout DerivativeNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  // Case 1: layout is f'(a)
-  if (isValidCondensedForm()) {
-    const char* functionName =
-        static_cast<SymbolAbstractNode*>(childAtIndex(0))->name();
-    Layout name = LayoutHelper::String(functionName, strlen(functionName));
-    int order = extractIntegerOrder();
-    assert(order > 0);
-    Layout derivative;
-    if (order <= 2) {
-      derivative = CodePointLayout::Builder(
-          order == 1 ? k_firstDerivativeSymbol : k_secondDerivativeSymbol);
-    } else {
-      derivative = VerticalOffsetLayout::Builder(
-          ParenthesisLayout::Builder(childAtIndex(3)->createLayout(
-              floatDisplayMode, numberOfSignificantDigits, context)),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript);
-    }
-    Layout argument = childAtIndex(2)->createLayout(
-        floatDisplayMode, numberOfSignificantDigits, context);
-    return HorizontalLayout::Builder(name, derivative,
-                                     ParenthesisLayout::Builder(argument));
-  }
-}
-#endif
-
 size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {

@@ -906,9 +906,11 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     // Incorrect parameter type or too few args
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  // if (powerFunction) {
-  // leftHandSide = Power::Builder(leftHandSide, base);
-  // }
+#if 0
+  if (powerFunction) {
+    leftHandSide = Power::Builder(leftHandSide, base);
+  }
+#endif
 }
 
 void RackParser::parseSequence(EditionReference &leftHandSide, const char *name,
@@ -958,134 +960,137 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
   }
   leftHandSide = SharedEditionPool->push<BlockType::UserSymbol>(
       static_cast<const char *>(buffer), m_currentToken.length() + 1);
-  // privateParseCustomIdentifier(leftHandSide, node, length, stoppingType);
+#if 0
+  privateParseCustomIdentifier(leftHandSide, node, length, stoppingType);
+#endif
   isThereImplicitOperator();
 }
 
-// void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
-// const char *name, size_t length,
-// Token::Type stoppingType) {
-// if (length >= SymbolAbstract::k_maxNameSize) {
-// // Identifier name too long.
-// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-// }
-// bool poppedParenthesisIsSystem = false;
+#if 0
+void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
+                                          const char *name, size_t length,
+                                          Token::Type stoppingType) {
+  if (length >= SymbolAbstract::k_maxNameSize) {
+    // Identifier name too long.
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  bool poppedParenthesisIsSystem = false;
 
-/* Check the context: if the identifier does not already exist as a function,
- * seq or list, interpret it as a symbol, even if there are parentheses
- * afterwards.
- * If there is no context, f(x) is always parsed as a function and u{n} as
- * a sequence*/
-// Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
-// if (m_parsingContext.context() &&
-// m_parsingContext.parsingMethod() !=
-// ParsingContext::ParsingMethod::Assignment) {
-// idType =
-// m_parsingContext.context()->expressionTypeForIdentifier(name, length);
-// if (idType != Context::SymbolAbstractType::Function &&
-// idType != Context::SymbolAbstractType::Sequence &&
-// idType != Context::SymbolAbstractType::List) {
-// leftHandSide = Symbol::Builder(name, length);
-// return;
-// }
-// }
+  /* Check the context: if the identifier does not already exist as a function,
+   * seq or list, interpret it as a symbol, even if there are parentheses
+   * afterwards.
+   * If there is no context, f(x) is always parsed as a function and u{n} as
+   * a sequence*/
+  Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
+  if (m_parsingContext.context() &&
+      m_parsingContext.parsingMethod() !=
+          ParsingContext::ParsingMethod::Assignment) {
+    idType =
+        m_parsingContext.context()->expressionTypeForIdentifier(name, length);
+    if (idType != Context::SymbolAbstractType::Function &&
+        idType != Context::SymbolAbstractType::Sequence &&
+        idType != Context::SymbolAbstractType::List) {
+      leftHandSide = Symbol::Builder(name, length);
+      return;
+    }
+  }
 
-// if (idType == Context::SymbolAbstractType::Sequence ||
-// (idType == Context::SymbolAbstractType::None &&
-// m_nextToken.type() == Token::Type::LeftSystemBrace)) {
-/* If the user is not defining a variable and the identifier is already
- * known to be a sequence, or has an unknown type and is followed
- * by braces, it's a sequence call. */
-// if (m_nextToken.type() != Token::Type::LeftSystemBrace &&
-// m_nextToken.type() != Token::Type::LeftParenthesis) {
-/* If the identifier is a sequence but not followed by braces, it can
- * also be followed by parenthesis. If not, it's a syntax error. */
-// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-// }
-// parseSequence(leftHandSide, name,
-// m_nextToken.type() == Token::Type::LeftSystemBrace
-// ? Token::Type::RightSystemBrace
-// : Token::Type::RightParenthesis);
-// return;
-// }
+  if (idType == Context::SymbolAbstractType::Sequence ||
+      (idType == Context::SymbolAbstractType::None &&
+       m_nextToken.type() == Token::Type::LeftSystemBrace)) {
+    /* If the user is not defining a variable and the identifier is already
+     * known to be a sequence, or has an unknown type and is followed
+     * by braces, it's a sequence call. */
+    if (m_nextToken.type() != Token::Type::LeftSystemBrace &&
+        m_nextToken.type() != Token::Type::LeftParenthesis) {
+      /* If the identifier is a sequence but not followed by braces, it can
+       * also be followed by parenthesis. If not, it's a syntax error. */
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+    }
+    parseSequence(leftHandSide, name,
+                  m_nextToken.type() == Token::Type::LeftSystemBrace
+                      ? Token::Type::RightSystemBrace
+                      : Token::Type::RightParenthesis);
+    return;
+  }
 
-// If the identifier is not followed by parentheses, it is a symbol
-// if (!popTokenIfType(Token::Type::LeftParenthesis)) {
-// if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
-// leftHandSide = Symbol::Builder(name, length);
-// return;
-// }
-// poppedParenthesisIsSystem = true;
-// }
+  // If the identifier is not followed by parentheses, it is a symbol
+  if (!popTokenIfType(Token::Type::LeftParenthesis)) {
+    if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
+      leftHandSide = Symbol::Builder(name, length);
+      return;
+    }
+    poppedParenthesisIsSystem = true;
+  }
 
-/* The identifier is followed by parentheses. It can be:
- * - a function call
- * - an access to a list element   */
-// EditionReference parameter = parseCommaSeparatedList();
-// assert(!parameter.isUninitialized());
+  /* The identifier is followed by parentheses. It can be:
+   * - a function call
+   * - an access to a list element   */
+  EditionReference parameter = parseCommaSeparatedList();
+  assert(!parameter.isUninitialized());
 
-// int numberOfParameters = parameter.numberOfChildren();
-// EditionReference result;
-// if (numberOfParameters == 2) {
-/* If you change how list accesses are parsed, change it also in parseList
- * or factorize it. */
-// result =
-// ListSlice::Builder(parameter.child(0), parameter.child(1),
-// Symbol::Builder(name, length));
-// } else if (numberOfParameters == 1) {
-// parameter = parameter.child(0);
-// if (parameter.type() == ExpressionNode::Type::Symbol &&
-// strncmp(static_cast<SymbolAbstract &>(parameter).name(), name,
-// length) == 0) {
-// // Function and variable must have distinct names.
-// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-// } else if (idType == Context::SymbolAbstractType::List) {
-// result = ListElement::Builder(parameter, Symbol::Builder(name, length));
-// } else {
-// result = Function::Builder(name, length, parameter);
-// }
-// } else {
-// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-// return;
-// }
+  int numberOfParameters = parameter.numberOfChildren();
+  EditionReference result;
+  if (numberOfParameters == 2) {
+    /* If you change how list accesses are parsed, change it also in parseList
+     * or factorize it. */
+    result = ListSlice::Builder(parameter.child(0), parameter.child(1),
+                                Symbol::Builder(name, length));
+  } else if (numberOfParameters == 1) {
+    parameter = parameter.child(0);
+    if (parameter.type() == ExpressionNode::Type::Symbol &&
+        strncmp(static_cast<SymbolAbstract &>(parameter).name(), name,
+                length) == 0) {
+      // Function and variable must have distinct names.
+      ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+    } else if (idType == Context::SymbolAbstractType::List) {
+      result = ListElement::Builder(parameter, Symbol::Builder(name, length));
+    } else {
+      result = Function::Builder(name, length, parameter);
+    }
+  } else {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+    return;
+  }
 
-// Token::Type correspondingRightParenthesis =
-// poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis
-// : Token::Type::RightParenthesis;
-// if (!popTokenIfType(correspondingRightParenthesis)) {
-// ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-// return;
-// }
-// if (m_parsingContext.parsingMethod() ==
-// ParsingContext::ParsingMethod::Assignment &&
-// result.type() == ExpressionNode::Type::Function &&
-// parameter.type() == ExpressionNode::Type::Symbol &&
-// m_nextToken.type() == Token::Type::AssignmentEqual) {
-/* Stop parsing for assignment to ensure that, frow now on xy is
- * understood as x*y.
- * For example, "func(x) = xy" -> left of the =, we parse for assignment so
- * "func" is NOT understood as "f*u*n*c", but after the equal we want "xy"
- * to be understood as "x*y" */
-// m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
-// if (m_parsingContext.context()) {
-/* Set the parameter in the context to ensure that f(t)=t is not
- * understood as f(t)=1_t
- * If we decide that functions can be assigned with any parameter,
- * this will ensure that f(abc)=abc is understood like f(x)=x
- */
-// Context *previousContext = m_parsingContext.context();
-// VariableContext functionAssignmentContext(
-// static_cast<Symbol &>(parameter), m_parsingContext.context());
-// m_parsingContext.setContext(&functionAssignmentContext);
-// We have to parseUntil here so that we do not lose the
-// functionAssignmentContext pointer.
-// leftHandSide = parseUntil(stoppingType, result);
-// m_parsingContext.setContext(previousContext);
-// return;
-// }
-// }
-// leftHandSide = result;
-// }
+  Token::Type correspondingRightParenthesis =
+      poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis
+                                : Token::Type::RightParenthesis;
+  if (!popTokenIfType(correspondingRightParenthesis)) {
+    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+    return;
+  }
+  if (m_parsingContext.parsingMethod() ==
+          ParsingContext::ParsingMethod::Assignment &&
+      result.type() == ExpressionNode::Type::Function &&
+      parameter.type() == ExpressionNode::Type::Symbol &&
+      m_nextToken.type() == Token::Type::AssignmentEqual) {
+    /* Stop parsing for assignment to ensure that, frow now on xy is
+     * understood as x*y.
+     * For example, "func(x) = xy" -> left of the =, we parse for assignment so
+     * "func" is NOT understood as "f*u*n*c", but after the equal we want "xy"
+     * to be understood as "x*y" */
+    m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
+    if (m_parsingContext.context()) {
+      /* Set the parameter in the context to ensure that f(t)=t is not
+       * understood as f(t)=1_t
+       * If we decide that functions can be assigned with any parameter,
+       * this will ensure that f(abc)=abc is understood like f(x)=x
+       */
+      Context *previousContext = m_parsingContext.context();
+      VariableContext functionAssignmentContext(
+          static_cast<Symbol &>(parameter), m_parsingContext.context());
+      m_parsingContext.setContext(&functionAssignmentContext);
+      // We have to parseUntil here so that we do not lose the
+      // functionAssignmentContext pointer.
+      leftHandSide = parseUntil(stoppingType, result);
+      m_parsingContext.setContext(previousContext);
+      return;
+    }
+  }
+  leftHandSide = result;
+}
+#endif
 
 Tree *RackParser::parseFunctionParameters() {
   bool parenthesisIsLayout = m_nextToken.is(Token::Type::Layout) &&

@@ -73,11 +73,13 @@ def generate_all_screenshots(
     return list_images
 
 
-def create_gif(list_images, folder, gif_name="scenario"):
+def create_gif(list_images, folder, gif_name="scenario", delay=350, end_delay=1750):
     print("Creating gif")
     gif = os.path.join(folder, gif_name + ".gif")
     p = Popen(
-        "convert -set delay '%[fx:t==(n-1) ? 175 : 35]' "
+        "convert"
+        # convert delays are in centiseconds
+        + f" -set delay '%[fx:t==(n-1) ? {end_delay / 10} : {delay / 10}]' "
         + " ".join(list_images)
         + " "
         + gif,
@@ -92,12 +94,16 @@ def create_gif(list_images, folder, gif_name="scenario"):
     print("Done, gif created in", folder)
 
 
+def folder_images(folder):
+    return os.path.join(folder, "images")
+
+
 def generate_all_screenshots_and_create_gif(
     state_file, executable, folder, skip_idle=False, exit_if_error=True
 ):
     clean_or_create_folder(folder)
     list_images = generate_all_screenshots(
-        state_file, executable, os.path.join(folder, "images"), skip_idle, exit_if_error
+        state_file, executable, folder_images(folder), skip_idle, exit_if_error
     )
     create_gif(list_images, folder)
     return list_images

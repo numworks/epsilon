@@ -557,9 +557,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::DoubleFloat: {
       char buffer[100];
       if (type.isDecimal()) {
-        IntegerHandler::ConvertDecimalToText(expression, buffer,
-                                             std::size(buffer), m_floatMode,
-                                             m_numberOfSignificantDigits);
+        Decimal::Serialize(expression, buffer, std::size(buffer), m_floatMode,
+                           m_numberOfSignificantDigits);
         expression->nextNode()->removeTree();
       } else {
         Poincare::PrintFloat::ConvertFloatToText(

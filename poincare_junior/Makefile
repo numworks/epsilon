@@ -28,6 +28,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/derivation.cpp \
   expression/dimension.cpp \
   expression/integer.cpp \
+  expression/integer_serialization.cpp \
   expression/list.cpp \
   expression/logarithm.cpp \
   expression/matrix.cpp \
@@ -54,7 +55,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/code_point_layout.cpp \
   layout/conversion.cpp \
   layout/cursor_motion.cpp \
-  layout/decimal.cpp \
   layout/empty_rectangle.cpp \
   layout/grid.cpp \
   layout/input_beautification.cpp \

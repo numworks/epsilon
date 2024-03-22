@@ -5,7 +5,6 @@
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
 #include <omgpj/bit.h>
-#include <poincare/preferences.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <stdlib.h>
 
@@ -108,6 +107,7 @@ class IntegerHandler final {
 
   friend class WorkingBuffer;
   friend class Arithmetic;
+  friend class Decimal;
 
  public:
   IntegerHandler(const uint8_t *digits = nullptr, uint8_t numberOfDigits = 0,
@@ -210,10 +210,6 @@ class IntegerHandler final {
                             WorkingBuffer *workingBuffer) const;
   void removeZeroAtTheEnd(int minimalNumbersOfDigits,
                           WorkingBuffer *workingBuffer);
-  static int ConvertDecimalToText(const Tree *decimal, char *buffer,
-                                  int bufferSize,
-                                  Poincare::Preferences::PrintFloatMode mode,
-                                  int numberOfSignificantDigits);
 
  private:
   static constexpr float k_digitBase =

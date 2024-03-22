@@ -1,6 +1,7 @@
 #ifndef POINCARE_JUNIOR_LAYOUTTER_H
 #define POINCARE_JUNIOR_LAYOUTTER_H
 
+#include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 

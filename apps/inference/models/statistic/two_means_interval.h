@@ -11,7 +11,10 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
   using TwoMeansStatistic::TwoMeansStatistic;
 
   void init() override { initDatasetsIfSeries(); }
-  void tidy() override { tidyDatasets(); }
+  void tidy() override {
+    tidyDatasets();
+    m_estimateLayout = Poincare::Layout();
+  }
 
   SignificanceTestType significanceTestType() const override {
     return SignificanceTestType::TwoMeans;

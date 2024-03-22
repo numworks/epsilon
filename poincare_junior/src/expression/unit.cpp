@@ -6,8 +6,9 @@
 #include <poincare_junior/src/numeric/float.h>
 
 #include "approximation.h"
-#include "poincare_junior/src/expression/unit_representatives.h"
+#include "integer.h"
 #include "simplification.h"
+#include "unit_representatives.h"
 
 namespace PoincareJ {
 namespace Units {

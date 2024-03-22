@@ -10,6 +10,7 @@
 #include <bit>
 #include <complex>
 
+#include "arithmetic.h"
 #include "beautification.h"
 #include "constant.h"
 #include "decimal.h"

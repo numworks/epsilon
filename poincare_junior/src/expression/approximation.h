@@ -8,7 +8,6 @@
 #include <cmath>
 #include <complex>
 
-#include "arithmetic.h"
 #include "context.h"
 #include "random.h"
 

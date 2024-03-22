@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_K_TREE_H
 #define POINCARE_EXPRESSION_K_TREE_H
 
-#include <poincare_junior/src/expression/integer.h>
+#include <omgpj/arithmetic.h>
 #include <poincare_junior/src/expression/parametric.h>
 #include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/memory/k_tree.h>
@@ -218,10 +218,10 @@ struct IntegerRepresentation<V> : KTree<BlockType::IntegerShort, V> {};
   GUIDE(8, B(0), B(1), B(2), B(3), B(4), B(5), B(6), B(7));
 
 // IntegerPosBig
-#define GUIDE(N, ...)                                         \
-  template <int64_t V>                                        \
-    requires(V > INT8_MAX && Integer::NumberOfDigits(V) == N) \
-  struct IntegerRepresentation<V>                             \
+#define GUIDE(N, ...)                                              \
+  template <int64_t V>                                             \
+    requires(V > INT8_MAX && ::Arithmetic::NumberOfDigits(V) == N) \
+  struct IntegerRepresentation<V>                                  \
       : KTree<BlockType::IntegerPosBig, N, __VA_ARGS__> {};
 
 #define B(I) Bit::getByteAtIndex(V, I)
@@ -232,10 +232,10 @@ SPECIALIZATIONS;
 #undef GUIDE
 
 // IntegerNegBig
-#define GUIDE(N, ...)                                          \
-  template <int64_t V>                                         \
-    requires(V < INT8_MIN && Integer::NumberOfDigits(-V) == N) \
-  struct IntegerRepresentation<V>                              \
+#define GUIDE(N, ...)                                               \
+  template <int64_t V>                                              \
+    requires(V < INT8_MIN && ::Arithmetic::NumberOfDigits(-V) == N) \
+  struct IntegerRepresentation<V>                                   \
       : KTree<BlockType::IntegerNegBig, N, __VA_ARGS__> {};
 
 #define B(I) Bit::getByteAtIndex(-V, I)

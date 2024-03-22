@@ -1,4 +1,5 @@
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/k_tree.h>
 
 #include "helper.h"

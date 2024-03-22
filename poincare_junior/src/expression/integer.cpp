@@ -747,7 +747,7 @@ Tree *IntegerHandler::Factorial(const IntegerHandler &i) {
 
 void IntegerHandler::sanitize() {
   if (usesImmediateDigit()) {
-    m_numberOfDigits = NumberOfDigits(m_digitAccessor.m_digit);
+    m_numberOfDigits = ::Arithmetic::NumberOfDigits(m_digitAccessor.m_digit);
     return;
   }
   while (m_numberOfDigits > sizeof(native_uint_t) &&
@@ -759,7 +759,7 @@ void IntegerHandler::sanitize() {
     m_digitAccessor.m_digit =
         *(reinterpret_cast<const Unaligned<native_uint_t>::type *>(
             m_digitAccessor.m_digits));
-    m_numberOfDigits = NumberOfDigits(m_digitAccessor.m_digit);
+    m_numberOfDigits = ::Arithmetic::NumberOfDigits(m_digitAccessor.m_digit);
   }
 }
 

@@ -6,6 +6,7 @@
 #include <poincare_junior/src/n_ary.h>
 
 #include "approximation.h"
+#include "integer.h"
 #include "k_tree.h"
 #include "number.h"
 #include "simplification.h"

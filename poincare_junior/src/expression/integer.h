@@ -4,7 +4,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
-#include <omgpj/bit.h>
+#include <omgpj/arithmetic.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <stdlib.h>
 
@@ -121,7 +121,7 @@ class IntegerHandler final {
   IntegerHandler(native_uint_t value, NonStrictSign sign)
       : m_digitAccessor(value),
         m_sign(sign),
-        m_numberOfDigits(NumberOfDigits(value)) {}
+        m_numberOfDigits(::Arithmetic::NumberOfDigits(value)) {}
 
   static IntegerHandler Parse(UnicodeDecoder &decoder, OMG::Base base);
 
@@ -245,11 +245,6 @@ class IntegerHandler final {
   // sanitize removes the leading zero and recompute the number of digits if
   // necessary
   void sanitize();
-  static size_t NumberOfDigits(native_uint_t value) {
-    return ::Arithmetic::CeilDivision<size_t>(
-        OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
-        OMG::BitHelper::k_numberOfBitsInByte);
-  }
 
   // Get HalfNativeDigits, NativeDigits, DoubleNativeDigits
   template <typename T>

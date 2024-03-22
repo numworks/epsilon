@@ -3,6 +3,7 @@
 
 #include <poincare_junior/src/memory/edition_reference.h>
 
+#include "integer.h"
 #include "k_tree.h"
 
 namespace PoincareJ {

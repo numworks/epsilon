@@ -6,8 +6,6 @@
 
 namespace PoincareJ {
 
-class LayoutReference;
-
 class Expression final : public Reference {
  public:
   Expression(const Tree* tree) : Reference(tree) {
@@ -16,7 +14,6 @@ class Expression final : public Reference {
   using Reference::Reference;
   // TODO: Delete this method and adapt tests ?
   static Expression Parse(const char* text);
-  static Expression Parse(const LayoutReference* layout);
   static Expression Simplify(const Expression* input);
   static Expression FromPoincareExpression(const Poincare::Expression* exp);
   static Expression Approximate(const Expression* input);

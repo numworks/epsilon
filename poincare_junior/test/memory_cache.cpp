@@ -1,5 +1,4 @@
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
@@ -204,20 +203,4 @@ QUIZ_CASE(pcj_cache_reference_invalidation) {
   /* Invalidation when cache identifiers overflow */
   fill_cache_and_assert_invalidation(CachePool::k_maxNumberOfReferences,
                                      smallTree);
-}
-
-QUIZ_CASE(pcj_cache_reference_shared_data) {
-  CachePool *cachePool = CachePool::SharedCachePool;
-  cachePool->reset();
-  Expression e = Expression::Parse("2*3");
-  assert(e.id() != 1);
-  // l is created with e.m_id different from 1
-  LayoutReference l = LayoutReference::FromExpression(&e);
-  // Forcing e.m_id change
-  cachePool->freeBlocks(1);
-  assert(e.id() == 1);
-  // This test should fail if this line is uncommented
-  // e = Expression::Parse("2*3");
-  // l should handle new e.m_id
-  l.id();
 }

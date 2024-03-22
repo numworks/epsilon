@@ -8,6 +8,9 @@
 
 namespace PoincareJ {
 
+// Before removing cache pool, remove :
+// - Expression and Layout References
+
 /*  <---- EditionPool ----> <------------------- CachePool ------------------>
  * +-----------------------+-------------------------+---+--------------------+
  * | draft trees           | most recent cached tree | … | oldest cached tree |

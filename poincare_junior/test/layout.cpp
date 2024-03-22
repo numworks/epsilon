@@ -1,7 +1,6 @@
 #include <kandinsky/ion_context.h>
 #include <omgpj/unicode_helper.h>
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/layoutter.h>
@@ -11,23 +10,6 @@
 #include "helper.h"
 
 using namespace PoincareJ;
-
-QUIZ_CASE(pcj_layout_creation) {
-  // text -> Layout
-  LayoutReference l1 = LayoutReference::Parse("1+2×3");
-  // text -> Expression -> Layout
-  Expression e1 = Expression::Parse("1+2×3");
-  LayoutReference l2 = LayoutReference::FromExpression(&e1);
-  assert(l2.treeIsIdenticalTo(l1));
-  // expression node -> Expression -> Layout
-  Expression e2 = Expression(KAdd(1_e, KMult(2_e, 3_e)));
-  LayoutReference l3 = LayoutReference::FromExpression(&e2);
-  // layout Tree -> Layout
-  assert(l3.treeIsIdenticalTo(l1));
-  // constexpr tree -> Layout
-  LayoutReference l4 = LayoutReference("1+2×3"_l);
-  assert(l4.treeIsIdenticalTo(l1));
-}
 
 QUIZ_CASE(pcj_expression_to_layout) {
   assert_trees_are_equal(

@@ -1,7 +1,6 @@
 #include "conversion.h"
 
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/grid.h>
 #include <poincare_junior/src/layout/indices.h>
 #include <poincare_junior/src/layout/layoutter.h>

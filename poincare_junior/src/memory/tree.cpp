@@ -9,7 +9,6 @@
 
 #if POINCARE_TREE_LOG
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/include/poincare.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/constant.h>

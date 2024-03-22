@@ -1,5 +1,4 @@
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/projection.h>
 #include <poincare_junior/src/expression/simplification.h>
@@ -17,15 +16,6 @@ Expression Expression::Parse(const char *textInput) {
         layout->removeTree();
       },
       textInput);
-}
-
-Expression Expression::Parse(const LayoutReference *layout) {
-  return Expression(
-      [](Tree *node) {
-        Parser::Parse(node);
-        node->removeTree();
-      },
-      layout);
 }
 
 Expression Expression::Simplify(const Expression *input) {

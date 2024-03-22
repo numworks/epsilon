@@ -1,7 +1,6 @@
 #ifndef POINCAREJ_TEST_HELPER_H
 #define POINCAREJ_TEST_HELPER_H
 
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>

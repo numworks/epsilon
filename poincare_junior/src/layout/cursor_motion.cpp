@@ -1,7 +1,5 @@
 #include "cursor_motion.h"
 
-#include <poincare_junior/include/layout.h>
-
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"
 #include "grid.h"

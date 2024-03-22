@@ -1,7 +1,6 @@
 #include "parser.h"
 
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 
 #include "../n_ary.h"

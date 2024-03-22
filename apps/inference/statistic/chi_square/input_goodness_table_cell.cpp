@@ -10,8 +10,9 @@ namespace Inference {
 
 InputGoodnessTableCell::InputGoodnessTableCell(
     Responder* parentResponder, GoodnessTest* test,
-    InputGoodnessController* inputGoodnessController)
-    : DoubleColumnTableCell(parentResponder, test),
+    InputGoodnessController* inputGoodnessController,
+    Escher::ScrollViewDelegate* scrollViewDelegate)
+    : DoubleColumnTableCell(parentResponder, test, scrollViewDelegate),
       m_inputGoodnessController(inputGoodnessController) {
   for (int i = 0; i < GoodnessTest::k_maxNumberOfColumns; i++) {
     m_header[i].setMessage(k_columnHeaders[i]);

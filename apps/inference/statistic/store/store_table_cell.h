@@ -16,7 +16,8 @@ class StoreTableCell : public DoubleColumnTableCell,
  public:
   StoreTableCell(Escher::Responder *parentResponder, Statistic *statistic,
                  Poincare::Context *parentContext,
-                 InputStoreController *inputStoreController);
+                 InputStoreController *inputStoreController,
+                 Escher::ScrollViewDelegate *scrollViewDelegate);
 
   constexpr static int k_numberOfReusableCells =
       Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;

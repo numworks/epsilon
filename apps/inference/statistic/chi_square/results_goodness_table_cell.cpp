@@ -6,8 +6,8 @@ namespace Inference {
 
 ResultGoodnessContributionsTable::ResultGoodnessContributionsTable(
     Escher::Responder *parent, CategoricalController *parentController,
-    GoodnessTest *statistic)
-    : CategoricalTableCell(parent, this),
+    GoodnessTest *statistic, Escher::ScrollViewDelegate *scrollViewDelegate)
+    : CategoricalTableCell(parent, this, scrollViewDelegate),
       DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_goodnessContributionsTableNumberOfReusableCells>(
           this),

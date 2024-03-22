@@ -9,8 +9,9 @@ extern "C" {
 namespace Escher {
 
 TableView::TableView(TableViewDataSource* dataSource,
-                     ScrollViewDataSource* scrollDataSource)
-    : ScrollView(&m_contentView, scrollDataSource),
+                     ScrollViewDataSource* scrollDataSource,
+                     Escher::ScrollViewDelegate* scrollViewDelegate)
+    : ScrollView(&m_contentView, scrollDataSource, scrollViewDelegate),
       m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness) {
   m_decorator.setVisibility(true);
 }

@@ -20,7 +20,8 @@ class SelectableTableView : public TableView, public Responder {
   SelectableTableView(
       Responder* parentResponder, TableViewDataSource* dataSource,
       SelectableTableViewDataSource* selectionDataSource = nullptr,
-      SelectableTableViewDelegate* delegate = nullptr);
+      SelectableTableViewDelegate* delegate = nullptr,
+      Escher::ScrollViewDelegate* scrollViewDelegate = nullptr);
   template <typename T>
   SelectableTableView(T* p) : SelectableTableView(p, p, p){};
 

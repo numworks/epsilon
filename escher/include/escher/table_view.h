@@ -11,7 +11,8 @@ namespace Escher {
 class TableView : public ScrollView {
  public:
   TableView(TableViewDataSource *dataSource,
-            ScrollViewDataSource *scrollDataSource);
+            ScrollViewDataSource *scrollDataSource,
+            Escher::ScrollViewDelegate *scrollViewDelegate = nullptr);
 
   void setHorizontalCellOverlap(KDCoordinate o) {
     m_contentView.setHorizontalCellOverlap(o);

@@ -9,7 +9,7 @@ InputGoodnessController::InputGoodnessController(
     GoodnessTest *statistic)
     : InputCategoricalController(parent, resultsController, statistic),
       m_degreeOfFreedomCell(&m_selectableListView, this),
-      m_inputGoodnessTableCell(&m_selectableListView, statistic, this) {
+      m_inputGoodnessTableCell(&m_selectableListView, statistic, this, this) {
   m_degreeOfFreedomCell.setMessages(I18n::Message::DegreesOfFreedom);
 }
 

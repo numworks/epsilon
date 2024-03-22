@@ -36,7 +36,7 @@ ResultsGoodnessTabController::ContributionsController::ContributionsController(
     : CategoricalController(parentResponder, nextController,
                             Escher::Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
-      m_table(&m_selectableListView, this, statistic) {}
+      m_table(&m_selectableListView, this, statistic, this) {}
 
 void ResultsGoodnessTabController::ContributionsController::
     createDynamicCells() {

@@ -13,9 +13,10 @@ namespace Inference {
 /* CategoricalTableCell */
 
 CategoricalTableCell::CategoricalTableCell(
-    Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource)
+    Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource,
+    Escher::ScrollViewDelegate *scrollViewDelegate)
     : Escher::Responder(parentResponder),
-      m_selectableTableView(this, dataSource, this, this) {
+      m_selectableTableView(this, dataSource, this, this, scrollViewDelegate) {
   m_selectableTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_selectableTableView.hideScrollBars();
 }
@@ -68,8 +69,8 @@ void CategoricalTableCell::layoutSubviews(bool force) {
 
 InputCategoricalTableCell::InputCategoricalTableCell(
     Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource,
-    Statistic *statistic)
-    : CategoricalTableCell(parentResponder, dataSource),
+    Statistic *statistic, Escher::ScrollViewDelegate *scrollViewDelegate)
+    : CategoricalTableCell(parentResponder, dataSource, scrollViewDelegate),
       m_statistic(statistic),
       m_numberOfRows(0),
       m_numberOfColumns(0) {
@@ -220,9 +221,11 @@ bool InputCategoricalTableCell::recomputeDimensionsAndReload(
 
 /* DoubleColumnTableCell */
 
-DoubleColumnTableCell::DoubleColumnTableCell(Escher::Responder *parentResponder,
-                                             Statistic *statistic)
-    : InputCategoricalTableCell(parentResponder, this, statistic),
+DoubleColumnTableCell::DoubleColumnTableCell(
+    Escher::Responder *parentResponder, Statistic *statistic,
+    Escher::ScrollViewDelegate *scrollViewDelegate)
+    : InputCategoricalTableCell(parentResponder, this, statistic,
+                                scrollViewDelegate),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_doubleColumnTableNumberOfReusableCells>(this) {}
 

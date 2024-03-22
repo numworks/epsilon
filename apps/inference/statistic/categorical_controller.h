@@ -17,7 +17,7 @@ namespace Inference {
 
 class CategoricalController
     : public Escher::SelectableListViewController<Escher::ListViewDataSource>,
-      public Escher::ScrollViewDelegate,
+      public Escher::ScrollViewDataSourceDelegate,
       public Escher::SelectableListViewDelegate {
  public:
   CategoricalController(Escher::Responder* parent,
@@ -26,7 +26,7 @@ class CategoricalController
 
   static bool ButtonAction(CategoricalController* controller, void* s);
 
-  // ScrollViewDelegate
+  // ScrollViewDataSourceDelegate
   bool updateBarIndicator(bool vertical, bool* visible) override;
 
   // SelectableListViewDelegate

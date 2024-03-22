@@ -9,7 +9,7 @@ namespace Code {
 
 class EditorView : public Escher::Responder,
                    public Escher::View,
-                   public Escher::ScrollViewDelegate {
+                   public Escher::ScrollViewDataSourceDelegate {
  public:
   EditorView(Escher::Responder* parentResponder, App* pythonDelegate);
   bool isAutocompleting() const;

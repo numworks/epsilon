@@ -227,7 +227,7 @@ View *ScrollView::BarDecorator::indicatorAtIndex(int index) {
 KDRect ScrollView::BarDecorator::layoutIndicators(
     View *parent, KDSize content, KDPoint offset, KDRect frame,
     KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
-    ScrollViewDelegate *delegate) {
+    ScrollViewDataSourceDelegate *delegate) {
   bool hBarWasVisible = m_horizontalBar.visible();
   bool vBarWasVisible = m_verticalBar.visible();
   bool hBarIsVisible, vBarIsVisible;
@@ -281,7 +281,7 @@ View *ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
 KDRect ScrollView::ArrowDecorator::layoutIndicators(
     View *parent, KDSize content, KDPoint offset, KDRect frame,
     KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
-    ScrollViewDelegate *delegate) {
+    ScrollViewDataSourceDelegate *delegate) {
   // There is no need to dirty the rects
   KDSize arrowSize = KDFont::GlyphSize(KDFont::Size::Large);
   KDCoordinate rightArrowFrameBreadth =

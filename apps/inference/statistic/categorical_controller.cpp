@@ -20,7 +20,7 @@ CategoricalController::CategoricalController(Responder *parent,
   m_selectableListView.margins()->setTop(0);
   m_selectableListView.margins()->setHorizontal({0, 0});
   m_selectableListView.setBackgroundColor(Palette::WallScreenDark);
-  setScrollViewDelegate(this);
+  setScrollViewDataSourceDelegate(this);
 }
 
 bool CategoricalController::ButtonAction(CategoricalController *controller,

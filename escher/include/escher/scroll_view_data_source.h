@@ -7,7 +7,7 @@ namespace Escher {
 
 class ScrollViewDataSource;
 
-class ScrollViewDelegate {
+class ScrollViewDataSourceDelegate {
  public:
   virtual void scrollViewDidChangeOffset(
       ScrollViewDataSource* scrollViewDataSource){};
@@ -19,15 +19,15 @@ class ScrollViewDelegate {
 class ScrollViewDataSource {
  public:
   ScrollViewDataSource() : m_delegate(nullptr), m_offset(KDPointZero) {}
-  ScrollViewDelegate* delegate() const { return m_delegate; }
+  ScrollViewDataSourceDelegate* delegate() const { return m_delegate; }
   KDPoint offset() const { return m_offset; }
   bool setOffset(KDPoint offset);
-  void setScrollViewDelegate(ScrollViewDelegate* delegate) {
+  void setScrollViewDataSourceDelegate(ScrollViewDataSourceDelegate* delegate) {
     m_delegate = delegate;
   }
 
  private:
-  ScrollViewDelegate* m_delegate;
+  ScrollViewDataSourceDelegate* m_delegate;
   KDPoint m_offset;
 };
 

@@ -12,7 +12,7 @@ class ListController;
 
 class EquationListView : public Escher::Responder,
                          public Escher::View,
-                         public Escher::ScrollViewDelegate,
+                         public Escher::ScrollViewDataSourceDelegate,
                          public Escher::ScrollViewDataSource {
  public:
   enum class BraceStyle { None, OneRowShort, Full };

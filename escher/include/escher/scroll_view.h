@@ -33,11 +33,10 @@ class ScrollView : public View {
       assert(false);
       return nullptr;
     }
-    virtual KDRect layoutIndicators(View *parent, KDSize content,
-                                    KDPoint offset, KDRect frame,
-                                    KDRect *dirtyRect1, KDRect *dirtyRect2,
-                                    bool force,
-                                    ScrollViewDelegate *delegate = nullptr) {
+    virtual KDRect layoutIndicators(
+        View *parent, KDSize content, KDPoint offset, KDRect frame,
+        KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
+        ScrollViewDataSourceDelegate *delegate = nullptr) {
       return frame;
     }
     virtual void setBackgroundColor(KDColor c) {}
@@ -56,10 +55,10 @@ class ScrollView : public View {
     }
     int numberOfIndicators() const override { return m_visible ? 2 : 0; }
     View *indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(View *parent, KDSize content, KDPoint offset,
-                            KDRect frame, KDRect *dirtyRect1,
-                            KDRect *dirtyRect2, bool force,
-                            ScrollViewDelegate *delegate = nullptr) override;
+    KDRect layoutIndicators(
+        View *parent, KDSize content, KDPoint offset, KDRect frame,
+        KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
+        ScrollViewDataSourceDelegate *delegate = nullptr) override;
     ScrollViewVerticalBar *verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar *horizontalBar() { return &m_horizontalBar; }
     void setVisibility(bool visible) { m_visible = visible; }
@@ -76,10 +75,10 @@ class ScrollView : public View {
    public:
     int numberOfIndicators() const override { return 2; }
     View *indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(View *parent, KDSize content, KDPoint offset,
-                            KDRect frame, KDRect *dirtyRect1,
-                            KDRect *dirtyRect2, bool force,
-                            ScrollViewDelegate *delegate = nullptr) override;
+    KDRect layoutIndicators(
+        View *parent, KDSize content, KDPoint offset, KDRect frame,
+        KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
+        ScrollViewDataSourceDelegate *delegate = nullptr) override;
     void setBackgroundColor(KDColor c) override;
     void setFont(KDFont::Size font);
 

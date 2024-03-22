@@ -18,7 +18,7 @@ EditorView::EditorView(Responder* parentResponder, App* pythonDelegate)
       m_textArea(parentResponder, pythonDelegate,
                  GlobalPreferences::sharedGlobalPreferences->font()),
       m_gutterView(GlobalPreferences::sharedGlobalPreferences->font()) {
-  m_textArea.setScrollViewDelegate(this);
+  m_textArea.setScrollViewDataSourceDelegate(this);
 }
 
 bool EditorView::isAutocompleting() const {

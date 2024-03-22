@@ -12,6 +12,7 @@ class Screenshot {
   void init(const char* path, bool eachStep = false, bool computeCRC32 = false);
   void capture(Events::Event nextEvent = Events::None);
   static Screenshot* commandlineScreenshot();
+  void setSkipIdle(bool skipIdle) { m_skipIdle = skipIdle; }
 
  private:
   void printCRC32();
@@ -20,6 +21,7 @@ class Screenshot {
   int m_stepNumber;
   bool m_eachStep;
   bool m_computeCRC32;
+  bool m_skipIdle;
   uint32_t m_CRC32;
 };
 

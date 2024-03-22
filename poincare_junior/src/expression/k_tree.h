@@ -81,6 +81,12 @@ constexpr auto KMixedFraction = KBinary<BlockType::MixedFraction>();
 constexpr auto KPoint = KBinary<BlockType::Point>();
 constexpr auto KStore = KBinary<BlockType::Store>();
 constexpr auto KUnitConversion = KBinary<BlockType::UnitConversion>();
+constexpr auto KEqual = KBinary<BlockType::Equal>();
+constexpr auto KNotEqual = KBinary<BlockType::NotEqual>();
+constexpr auto KSuperior = KBinary<BlockType::Superior>();
+constexpr auto KInferior = KBinary<BlockType::Inferior>();
+constexpr auto KSuperiorEqual = KBinary<BlockType::SuperiorEqual>();
+constexpr auto KInferiorEqual = KBinary<BlockType::InferiorEqual>();
 
 constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
 constexpr auto KListSlice = KFixedArity<3, BlockType::ListSlice>();
@@ -95,6 +101,7 @@ constexpr auto KAdd = KNAry<BlockType::Addition>();
 constexpr auto KMult = KNAry<BlockType::Multiplication>();
 constexpr auto KList = KNAry<BlockType::List>();
 constexpr auto KSet = KNAry<BlockType::Set>();
+constexpr auto KPiecewise = KNAry<BlockType::Piecewise>();
 
 template <uint8_t Id, uint8_t sign>
 constexpr auto KVar = KTree<BlockType::Variable, Id, sign>();

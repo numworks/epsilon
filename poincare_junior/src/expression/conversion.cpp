@@ -39,6 +39,25 @@ void PushPoincareExpressionViaParse(Poincare::Expression exp) {
   return;
 }
 
+Poincare::ComparisonNode::OperatorType ComparisonToOperator(BlockType type) {
+  switch (type) {
+    case BlockType::Equal:
+      return Poincare::ComparisonNode::OperatorType::Equal;
+    case BlockType::NotEqual:
+      return Poincare::ComparisonNode::OperatorType::NotEqual;
+    case BlockType::Superior:
+      return Poincare::ComparisonNode::OperatorType::Superior;
+    case BlockType::Inferior:
+      return Poincare::ComparisonNode::OperatorType::Inferior;
+    case BlockType::SuperiorEqual:
+      return Poincare::ComparisonNode::OperatorType::SuperiorEqual;
+    case BlockType::InferiorEqual:
+      return Poincare::ComparisonNode::OperatorType::InferiorEqual;
+    default:
+      assert(false);
+  }
+}
+
 Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
   // NOTE: Make sure new BlockTypes are handled here.
   BlockType type = exp->type();
@@ -200,6 +219,15 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
         return Poincare::Dependency::Builder(
             ToPoincareExpression(exp->child(0)), listOfDependencies);
       }
+      case BlockType::Piecewise: {
+        Poincare::List arguments = Poincare::List::Builder();
+        int i = 0;
+        for (const Tree *child : exp->children()) {
+          arguments.addChildAtIndexInPlace(ToPoincareExpression(child), i, i);
+          i++;
+        }
+        return Poincare::PiecewiseOperator::UntypedBuilder(arguments);
+      }
       default:
         // TODO: Handle missing BlockTypes
         assert(false);
@@ -282,6 +310,15 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
       return Poincare::Nonreal::Builder();
     case BlockType::Opposite:
       return Poincare::Opposite::Builder(ToPoincareExpression(exp->child(0)));
+    case BlockType::Equal:
+    case BlockType::NotEqual:
+    case BlockType::Superior:
+    case BlockType::Inferior:
+    case BlockType::SuperiorEqual:
+    case BlockType::InferiorEqual:
+      return Poincare::Comparison::Builder(ToPoincareExpression(exp->child(0)),
+                                           ComparisonToOperator(type),
+                                           ToPoincareExpression(exp->child(1)));
     case BlockType::UserFunction:
     case BlockType::UserSequence:
     case BlockType::Set:

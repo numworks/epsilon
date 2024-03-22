@@ -203,6 +203,11 @@ int main(int argc, char *argv[]) {
         allScreenshotsFolder, true);
   }
 
+  const char *skipIdle = args.pop("--skip-idle-screenshots");
+  if (skipIdle) {
+    Ion::Simulator::Screenshot::commandlineScreenshot()->setSkipIdle(true);
+  }
+
   bool computeScreenshotsHash = args.popFlag("--compute-hash");
   if (computeScreenshotsHash) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(nullptr, true,

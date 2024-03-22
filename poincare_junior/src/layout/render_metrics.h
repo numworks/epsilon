@@ -316,27 +316,31 @@ inline KDCoordinate OrderWidth(const Layout* node, KDFont::Size font) {
   return Width(node->child(k_orderIndex));
 }
 
-inline KDPoint PositionOfDInNumerator(const Layout* node, KDFont::Size font) {
+inline KDPoint PositionOfDInNumerator(const Layout* node, KDCoordinate baseline,
+                                      KDFont::Size font) {
   return KDPoint(
       (Width(node->child(k_variableIndex)) + k_dxHorizontalMargin) / 2 +
           Escher::Metric::FractionAndConjugateHorizontalMargin +
           Escher::Metric::FractionAndConjugateHorizontalOverflow,
-      Baseline(node) - KDFont::Font(font)->stringSize(k_dString).height() -
+      baseline - KDFont::Font(font)->stringSize(k_dString).height() -
           Fraction::k_lineMargin - Fraction::k_lineHeight);
 }
 
-inline KDPoint PositionOfDInDenominator(const Layout* node, KDFont::Size font) {
+inline KDPoint PositionOfDInDenominator(const Layout* node,
+                                        KDCoordinate baseline,
+                                        KDFont::Size font) {
   return KDPoint(Escher::Metric::FractionAndConjugateHorizontalMargin +
                      Escher::Metric::FractionAndConjugateHorizontalOverflow,
-                 Baseline(node) + Fraction::k_lineMargin +
+                 baseline + Fraction::k_lineMargin +
                      OrderHeightOffset(node, font) +
                      Height(node->child(k_variableIndex)) -
                      KDFont::Font(font)->stringSize(k_dString).height());
 }
 
 inline KDPoint PositionOfVariableInFractionSlot(const Layout* node,
+                                                KDCoordinate baseline,
                                                 KDFont::Size font) {
-  KDPoint positionOfD = PositionOfDInDenominator(node, font);
+  KDPoint positionOfD = PositionOfDInDenominator(node, baseline, font);
   return KDPoint(
       positionOfD.x() + KDFont::Font(font)->stringSize(k_dString).width() +
           k_dxHorizontalMargin,
@@ -356,23 +360,26 @@ inline KDCoordinate ParenthesesWidth(const Layout* node, KDFont::Size font) {
          Width(node->child(k_derivandIndex));
 }
 
-inline KDCoordinate AbscissaBaseline(const Layout* node, KDFont::Size font) {
+inline KDCoordinate AbscissaBaseline(const Layout* node, KDCoordinate baseline,
+                                     KDFont::Size font) {
   KDCoordinate variableHeight = Height(node->child(k_variableIndex));
-  KDCoordinate dfdxBottom = std::max(
-      PositionOfVariableInFractionSlot(node, font).y() + variableHeight,
-      Baseline(node) + Height(node->child(k_derivandIndex)) -
-          Baseline(node->child(k_derivandIndex)));
+  KDCoordinate dfdxBottom =
+      std::max(PositionOfVariableInFractionSlot(node, baseline, font).y() +
+                   variableHeight,
+               baseline + Height(node->child(k_derivandIndex)) -
+                   Baseline(node->child(k_derivandIndex)));
   return dfdxBottom - variableHeight + Baseline(node->child(k_variableIndex));
 }
 
 inline KDPoint PositionOfVariableInAssignmentSlot(const Layout* node,
+                                                  KDCoordinate baseline,
                                                   KDFont::Size font) {
-  return KDPoint(
-      2 * (Escher::Metric::FractionAndConjugateHorizontalMargin +
-           k_barHorizontalMargin) +
-          FractionBarWidth(node, font) + ParenthesesWidth(node, font) +
-          k_barWidth,
-      AbscissaBaseline(node, font) - Baseline(node->child(k_variableIndex)));
+  return KDPoint(2 * (Escher::Metric::FractionAndConjugateHorizontalMargin +
+                      k_barHorizontalMargin) +
+                     FractionBarWidth(node, font) +
+                     ParenthesesWidth(node, font) + k_barWidth,
+                 AbscissaBaseline(node, baseline, font) -
+                     Baseline(node->child(k_variableIndex)));
 }
 
 inline KDCoordinate ParenthesisBaseline(const Layout* node, KDFont::Size font) {
@@ -381,8 +388,9 @@ inline KDCoordinate ParenthesisBaseline(const Layout* node, KDFont::Size font) {
 }
 
 inline KDPoint PositionOfLeftParenthesis(const Layout* node,
+                                         KDCoordinate baseline,
                                          KDFont::Size font) {
-  return KDPoint(PositionOfVariableInFractionSlot(node, font).x() +
+  return KDPoint(PositionOfVariableInFractionSlot(node, baseline, font).x() +
                      Width(node->child(k_variableIndex)) +
                      OrderWidth(node, font) +
                      Escher::Metric::FractionAndConjugateHorizontalMargin +
@@ -390,24 +398,28 @@ inline KDPoint PositionOfLeftParenthesis(const Layout* node,
                  Baseline(node) - ParenthesisBaseline(node, font));
 }
 
-inline KDPoint PositionOfRightParenthesis(const Layout* node, KDFont::Size font,
+inline KDPoint PositionOfRightParenthesis(const Layout* node,
+                                          KDCoordinate baseline,
+                                          KDFont::Size font,
                                           KDSize derivandSize) {
-  return PositionOfLeftParenthesis(node, font)
+  return PositionOfLeftParenthesis(node, baseline, font)
       .translatedBy(
           KDPoint(Parenthesis::k_parenthesisWidth + derivandSize.width(), 0));
 }
 
 inline KDPoint PositionOfOrderInNumerator(const Layout* node,
+                                          KDCoordinate baseline,
                                           KDFont::Size font) {
-  KDPoint positionOfD = PositionOfDInNumerator(node, font);
+  KDPoint positionOfD = PositionOfDInNumerator(node, baseline, font);
   return KDPoint(
       positionOfD.x() + KDFont::Font(font)->stringSize(k_dString).width(),
       positionOfD.y() - OrderHeightOffset(node, font));
 }
 
 inline KDPoint PositionOfOrderInDenominator(const Layout* node,
+                                            KDCoordinate baseline,
                                             KDFont::Size font) {
-  KDPoint positionOfX = PositionOfVariableInFractionSlot(node, font);
+  KDPoint positionOfX = PositionOfVariableInFractionSlot(node, baseline, font);
   return KDPoint(positionOfX.x() + Width(node->child(k_variableIndex)),
                  positionOfX.y() - OrderHeightOffset(node, font));
 }

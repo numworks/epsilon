@@ -92,9 +92,10 @@ KDSize Render::Size(const Layout* node) {
       KDPoint abscissaPosition = PositionOfChild(node, k_abscissaIndex);
       KDSize abscissaSize = Size(node->child(k_abscissaIndex));
       width = abscissaPosition.x() + abscissaSize.width();
-      height = std::max(abscissaPosition.y() + abscissaSize.height(),
-                        PositionOfVariableInAssignmentSlot(node, s_font).y() +
-                            variableSize.height());
+      height = std::max(
+          abscissaPosition.y() + abscissaSize.height(),
+          PositionOfVariableInAssignmentSlot(node, Baseline(node), s_font).y() +
+              variableSize.height());
       break;
     }
     case LayoutType::Integral: {
@@ -336,31 +337,32 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;
+      KDCoordinate baseline = Baseline(node);
       if (childIndex == k_variableIndex) {
         return GetVariableSlot(node) == VariableSlot::Fraction
-                   ? PositionOfVariableInFractionSlot(node, s_font)
-                   : PositionOfVariableInAssignmentSlot(node, s_font);
+                   ? PositionOfVariableInFractionSlot(node, baseline, s_font)
+                   : PositionOfVariableInAssignmentSlot(node, baseline, s_font);
       }
       if (childIndex == k_derivandIndex) {
         KDCoordinate leftParenthesisPosX =
-            PositionOfLeftParenthesis(node, s_font).x();
+            PositionOfLeftParenthesis(node, baseline, s_font).x();
         return KDPoint(leftParenthesisPosX + Parenthesis::k_parenthesisWidth,
-                       Baseline(node) - Baseline(node->child(k_derivandIndex)));
+                       baseline - Baseline(node->child(k_derivandIndex)));
       }
       if (childIndex == k_orderIndex) {
         return GetOrderSlot(node) == OrderSlot::Denominator
-                   ? PositionOfOrderInDenominator(node, s_font)
-                   : PositionOfOrderInNumerator(node, s_font);
+                   ? PositionOfOrderInDenominator(node, baseline, s_font)
+                   : PositionOfOrderInNumerator(node, baseline, s_font);
       }
-      return KDPoint(PositionOfRightParenthesis(
-                         node, s_font, Size(node->child(k_derivandIndex)))
-                             .x() +
-                         Parenthesis::k_parenthesisWidth +
-                         2 * k_barHorizontalMargin + k_barWidth +
-                         Width(node->child(k_variableIndex)) +
-                         KDFont::Font(s_font)->stringSize("=").width(),
-                     AbscissaBaseline(node, s_font) -
-                         Baseline(node->child(k_abscissaIndex)));
+      return KDPoint(
+          PositionOfRightParenthesis(node, baseline, s_font,
+                                     Size(node->child(k_derivandIndex)))
+                  .x() +
+              Parenthesis::k_parenthesisWidth + 2 * k_barHorizontalMargin +
+              k_barWidth + Width(node->child(k_variableIndex)) +
+              KDFont::Font(s_font)->stringSize("=").width(),
+          AbscissaBaseline(node, baseline, s_font) -
+              Baseline(node->child(k_abscissaIndex)));
     }
     case LayoutType::Integral: {
       using namespace Integral;
@@ -996,18 +998,21 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
     case LayoutType::Derivative:
     case LayoutType::NthDerivative: {
       using namespace Derivative;
+      KDCoordinate baseline = Baseline(node);
 
       // d/dx...
-      ctx->drawString(k_dString,
-                      PositionOfDInNumerator(node, style.font).translatedBy(p),
-                      style);
       ctx->drawString(
-          k_dString, PositionOfDInDenominator(node, style.font).translatedBy(p),
+          k_dString,
+          PositionOfDInNumerator(node, baseline, style.font).translatedBy(p),
+          style);
+      ctx->drawString(
+          k_dString,
+          PositionOfDInDenominator(node, baseline, style.font).translatedBy(p),
           style);
 
       KDRect horizontalBar =
           KDRect(Escher::Metric::FractionAndConjugateHorizontalMargin,
-                 Baseline(node) - Fraction::k_lineHeight,
+                 baseline - Fraction::k_lineHeight,
                  FractionBarWidth(node, style.font), Fraction::k_lineHeight);
       ctx->fillRect(horizontalBar.translatedBy(p), style.glyphColor);
 
@@ -1015,13 +1020,13 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       KDSize derivandSize = Size(node->child(k_derivandIndex));
 
       KDPoint leftParenthesisPosition =
-          PositionOfLeftParenthesis(node, style.font);
+          PositionOfLeftParenthesis(node, baseline, style.font);
       RenderParenthesisWithChildHeight(true, derivandSize.height(), ctx,
                                        leftParenthesisPosition.translatedBy(p),
                                        style);
 
       KDPoint rightParenthesisPosition =
-          PositionOfRightParenthesis(node, style.font, derivandSize);
+          PositionOfRightParenthesis(node, baseline, style.font, derivandSize);
 
       RenderParenthesisWithChildHeight(false, derivandSize.height(), ctx,
                                        rightParenthesisPosition.translatedBy(p),
@@ -1033,12 +1038,12 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
           rightParenthesisPosition.x() + Parenthesis::k_parenthesisWidth +
               k_barHorizontalMargin,
           0, k_barWidth,
-          AbscissaBaseline(node, style.font) -
+          AbscissaBaseline(node, baseline, style.font) -
               Baseline(node->child(k_variableIndex)) + variableSize.height());
       ctx->fillRect(verticalBar.translatedBy(p), style.glyphColor);
 
       KDPoint variableAssignmentPosition =
-          PositionOfVariableInAssignmentSlot(node, style.font);
+          PositionOfVariableInAssignmentSlot(node, baseline, style.font);
       KDPoint equalPosition = variableAssignmentPosition.translatedBy(
           KDPoint(variableSize.width(),
                   Baseline(node->child(k_variableIndex)) -
@@ -1049,7 +1054,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       KDPoint copyPosition =
           GetVariableSlot(node) == VariableSlot::Fraction
               ? variableAssignmentPosition
-              : PositionOfVariableInFractionSlot(node, style.font);
+              : PositionOfVariableInFractionSlot(node, baseline, style.font);
       DrawRack(node->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
                style, {});
 
@@ -1057,8 +1062,8 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
         // Draw the copy of the order
         KDPoint copyPosition =
             GetOrderSlot(node) == OrderSlot::Denominator
-                ? PositionOfOrderInNumerator(node, style.font)
-                : PositionOfOrderInDenominator(node, style.font);
+                ? PositionOfOrderInNumerator(node, baseline, style.font)
+                : PositionOfOrderInDenominator(node, baseline, style.font);
         DrawRack(node->child(k_orderIndex), ctx, copyPosition.translatedBy(p),
                  style, {});
       }

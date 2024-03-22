@@ -22,7 +22,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(
     : CategoricalController(nullptr, resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
-      m_resultsHomogeneityTable(&m_selectableListView, statistic, this) {}
+      m_resultsHomogeneityTable(&m_selectableListView, statistic, this, this) {}
 
 void ResultsHomogeneityController::createDynamicCells() {
   m_resultsHomogeneityTable.createCells();

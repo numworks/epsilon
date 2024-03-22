@@ -17,9 +17,9 @@ class ResultGoodnessContributionsTable
           k_goodnessContributionsTableNumberOfReusableCells>,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
-  ResultGoodnessContributionsTable(Escher::Responder *parent,
-                                   CategoricalController *parentController,
-                                   GoodnessTest *statistic);
+  ResultGoodnessContributionsTable(
+      Escher::Responder *parent, CategoricalController *parentController,
+      GoodnessTest *statistic, Escher::ScrollViewDelegate *scrollViewDelegate);
 
   // View
   void drawRect(KDContext *ctx, KDRect rect) const override;

@@ -13,8 +13,9 @@ namespace Inference {
 
 StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
                                Poincare::Context *parentContext,
-                               InputStoreController *inputStoreController)
-    : DoubleColumnTableCell(parentResponder, statistic),
+                               InputStoreController *inputStoreController,
+                               Escher::ScrollViewDelegate *scrollViewDelegate)
+    : DoubleColumnTableCell(parentResponder, statistic, scrollViewDelegate),
       StoreColumnHelper(this, parentContext, this),
       m_inputStoreController(inputStoreController) {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {

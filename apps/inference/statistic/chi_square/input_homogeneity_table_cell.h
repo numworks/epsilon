@@ -18,7 +18,8 @@ class InputHomogeneityTableCell
  public:
   InputHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
-      InputHomogeneityController* inputHomogeneityController);
+      InputHomogeneityController* inputHomogeneityController,
+      Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // Responder
   void didBecomeFirstResponder() override;

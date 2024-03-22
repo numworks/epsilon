@@ -18,7 +18,8 @@ class ResultsHomogeneityTableCell
  public:
   ResultsHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
-      ResultsHomogeneityController* resultsTableController);
+      ResultsHomogeneityController* resultsTableController,
+      Escher::ScrollViewDelegate* scrollViewDelegate);
 
   enum class Mode : bool { ExpectedValue, Contribution };
   void setMode(Mode mode) { m_mode = mode; }

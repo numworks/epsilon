@@ -9,11 +9,13 @@ extern "C" {
 
 namespace Escher {
 
-ScrollView::ScrollView(View *contentView, ScrollViewDataSource *dataSource)
+ScrollView::ScrollView(View *contentView, ScrollViewDataSource *dataSource,
+                       Escher::ScrollViewDelegate *scrollViewDelegate)
     : View(),
       m_dataSource(dataSource),
       m_contentView(contentView),
       m_innerView(this),
+      m_scrollViewDelegate(scrollViewDelegate),
       m_margins(),
       m_excessWidth(0),
       m_excessHeight(0),
@@ -146,6 +148,9 @@ void ScrollView::scrollToContentRect(KDRect rect) {
 }
 
 KDRect ScrollView::visibleContentRect() {
+  if (m_scrollViewDelegate) {
+    return m_scrollViewDelegate->visibleContentRect(this);
+  }
   return KDRect(
       contentOffset(),
       bounds().size() + KDSize(m_excessWidth, m_excessHeight) - m_margins);

@@ -8,7 +8,7 @@ InputHomogeneityController::InputHomogeneityController(
     StackViewController* parent, Escher::ViewController* resultsController,
     HomogeneityTest* statistic)
     : InputCategoricalController(parent, resultsController, statistic),
-      m_inputHomogeneityTable(&m_selectableListView, statistic, this) {}
+      m_inputHomogeneityTable(&m_selectableListView, statistic, this, this) {}
 
 void InputHomogeneityController::createDynamicCells() {
   m_inputHomogeneityTable.createCells();

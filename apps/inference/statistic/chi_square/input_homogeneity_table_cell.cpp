@@ -11,8 +11,10 @@ namespace Inference {
 
 InputHomogeneityTableCell::InputHomogeneityTableCell(
     Escher::Responder *parentResponder, HomogeneityTest *test,
-    InputHomogeneityController *inputHomogeneityController)
-    : InputCategoricalTableCell(parentResponder, this, test),
+    InputHomogeneityController *inputHomogeneityController,
+    Escher::ScrollViewDelegate *scrollViewDelegate)
+    : InputCategoricalTableCell(parentResponder, this, test,
+                                scrollViewDelegate),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
           this),

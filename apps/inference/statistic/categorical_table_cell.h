@@ -25,7 +25,8 @@ class CategoricalTableCell : public Escher::HighlightCell,
                              public Escher::SelectableTableViewDelegate {
  public:
   CategoricalTableCell(Escher::Responder *parentResponder,
-                       Escher::TableViewDataSource *dataSource);
+                       Escher::TableViewDataSource *dataSource,
+                       Escher::ScrollViewDelegate *scrollViewDelegate);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -76,7 +77,8 @@ class InputCategoricalTableCell
  public:
   InputCategoricalTableCell(Escher::Responder *parentResponder,
                             Escher::TableViewDataSource *dataSource,
-                            Statistic *statistic);
+                            Statistic *statistic,
+                            Escher::ScrollViewDelegate *scrollViewDelegate);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
@@ -124,7 +126,8 @@ class DoubleColumnTableCell
                                     k_doubleColumnTableNumberOfReusableCells> {
  public:
   DoubleColumnTableCell(Escher::Responder *parentResponder,
-                        Statistic *statistic);
+                        Statistic *statistic,
+                        Escher::ScrollViewDelegate *scrollViewDelegate);
 
   // InputCategoricalTableCell
   CategoricalTableViewDataSource *tableViewDataSource() override {

@@ -10,8 +10,9 @@ namespace Escher {
 SelectableTableView::SelectableTableView(
     Responder* parentResponder, TableViewDataSource* dataSource,
     SelectableTableViewDataSource* selectionDataSource,
-    SelectableTableViewDelegate* delegate)
-    : TableView(dataSource, selectionDataSource),
+    SelectableTableViewDelegate* delegate,
+    Escher::ScrollViewDelegate* scrollViewDelegate)
+    : TableView(dataSource, selectionDataSource, scrollViewDelegate),
       Responder(parentResponder),
       m_selectionDataSource(selectionDataSource),
       m_delegate(delegate) {

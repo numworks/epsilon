@@ -9,6 +9,13 @@
 
 namespace Escher {
 
+class ScrollView;
+
+class ScrollViewDelegate {
+ public:
+  virtual KDRect visibleContentRect(ScrollView *scrollView) = 0;
+};
+
 class ScrollView : public View {
   /* TODO: Should we add a reload method that forces the relayouting of the
    * subviews? Or should ScrollView::setFrame always force the layouting of the
@@ -17,7 +24,8 @@ class ScrollView : public View {
    * cf TableView, InputViewController, EditExpressionController. */
 
  public:
-  ScrollView(View *contentView, ScrollViewDataSource *dataSource);
+  ScrollView(View *contentView, ScrollViewDataSource *dataSource,
+             Escher::ScrollViewDelegate *scrollViewDelegate = nullptr);
   KDSize contentSizeWithMargins() const;
   KDSize minimalSizeForOptimalDisplay() const override;
 
@@ -154,6 +162,7 @@ class ScrollView : public View {
   ScrollViewDataSource *m_dataSource;
   View *m_contentView;
   InnerView m_innerView;
+  Escher::ScrollViewDelegate *m_scrollViewDelegate;
 
   KDMargins m_margins;
   mutable KDCoordinate m_excessWidth;

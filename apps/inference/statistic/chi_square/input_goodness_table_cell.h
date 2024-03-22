@@ -17,7 +17,8 @@ class InputGoodnessController;
 class InputGoodnessTableCell : public DoubleColumnTableCell {
  public:
   InputGoodnessTableCell(Escher::Responder *parentResponder, GoodnessTest *test,
-                         InputGoodnessController *inputGoodnessController);
+                         InputGoodnessController *inputGoodnessController,
+                         Escher::ScrollViewDelegate *scrollViewDelegate);
 
   // Responder
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,

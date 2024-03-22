@@ -282,6 +282,10 @@ ExpressionNode::Type JuniorExpression::type() const {
     case PoincareJ::BlockType::InferiorEqual:
       // TODO_PCJ
       return ExpressionNode::Type::Comparison;
+    case PoincareJ::BlockType::DoubleFloat:
+      return ExpressionNode::Type::Double;
+    case PoincareJ::BlockType::SingleFloat:
+      return ExpressionNode::Type::Float;
     case PoincareJ::BlockType::LnReal:
     case PoincareJ::BlockType::Ln:
       return ExpressionNode::Type::NaperianLogarithm;
@@ -430,6 +434,13 @@ JuniorExpression JuniorExpression::cloneAndReduce(
   bool reduceFailure;
   return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext,
                                                 &reduceFailure);
+}
+
+JuniorExpression JuniorExpression::cloneAndApproximateKeepingSymbols(
+    ReductionContext reductionContext) const {
+  bool dummy;
+  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &dummy,
+                                                true);
 }
 
 JuniorExpression JuniorExpression::cloneAndSimplify(
@@ -768,6 +779,20 @@ bool JuniorExpression::isInRadians(Context* context) const {
   return !units.isUninitialized() &&
          units.type() == ExpressionNode::Type::Unit &&
          PoincareJ::Dimension::GetDimension(tree()).isSimpleRadianAngleUnit();
+}
+
+bool JuniorExpression::involvesDiscontinuousFunction(Context* context) const {
+  return recursivelyMatches(IsDiscontinuous, context);
+}
+
+bool JuniorExpression::IsDiscontinuous(const JuniorExpression e,
+                                       Context* context) {
+  return e.isRandom() || e.type() == ExpressionNode::Type::PiecewiseOperator ||
+         (e.isOfType({ExpressionNode::Type::Floor, ExpressionNode::Type::Round,
+                      ExpressionNode::Type::Ceiling,
+                      ExpressionNode::Type::FracPart,
+                      ExpressionNode::Type::AbsoluteValue}) &&
+          e.deepIsOfType({ExpressionNode::Type::Symbol}, context));
 }
 
 /* Matrix */

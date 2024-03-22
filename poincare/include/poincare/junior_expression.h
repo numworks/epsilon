@@ -141,6 +141,10 @@ class JuniorExpression : public OExpression {
                                     bool* reductionFailure = nullptr) const;
   JuniorExpression cloneAndReduce(ReductionContext reductionContext) const;
 
+  // This also reduces the expression. Approximation is in double.
+  JuniorExpression cloneAndApproximateKeepingSymbols(
+      ReductionContext reductionContext) const;
+
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO PCJ
     assert(false);
@@ -239,10 +243,7 @@ class JuniorExpression : public OExpression {
     return e.isOfType({ExpressionNode::Type::PercentSimple,
                        ExpressionNode::Type::PercentAddition});
   }
-  static bool IsDiscontinuous(const JuniorExpression e, Context* context) {
-    assert(false);
-    return false;
-  }
+  static bool IsDiscontinuous(const JuniorExpression e, Context* context);
   static bool IsSymbolic(const JuniorExpression e) {
     assert(false);
     return false;
@@ -279,6 +280,7 @@ class JuniorExpression : public OExpression {
                bool replaceSymbols = false, Context* ctx = nullptr) const;
   bool isPureAngleUnit() const;
   bool isInRadians(Context* context) const;
+  bool involvesDiscontinuousFunction(Context* context) const;
 #endif
 };
 

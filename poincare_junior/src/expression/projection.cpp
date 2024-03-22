@@ -190,11 +190,11 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
       // Cot(A) -> cos(A)/sin(A) (Avoid tan to for dependencies)
       PatternMatching::MatchAndReplace(ref, KCot(KA),
                                        KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
-      /* ArcCot(A) -> π/2 - atan(A) with
-       *  - acos(0) instead of π/2 to handle angle unit
-       *  - Instead of atan(1/A) to handle ArcCot(0) */
+      /* ArcCot(A) -> { π/2 if A is 0, atan(1/A) otherwise } using acos(0)
+       * instead of π/2 to handle angle unit */
       PatternMatching::MatchAndReplace(
-          ref, KArcCot(KA), KAdd(KACos(0_e), KMult(-1_e, KATan(KA)))) ||
+          ref, KArcCot(KA),
+          KPiecewise(KACos(0_e), KEqual(KA, 0_e), KATan(KPow(KA, -1_e)))) ||
       // Cosh(A) -> (exp(A)+exp(-A))*1/2
       PatternMatching::MatchAndReplace(
           ref, KCosh(KA),

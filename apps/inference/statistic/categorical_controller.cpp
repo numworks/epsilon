@@ -72,9 +72,7 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
   KDCoordinate otherCellsHeight =
       m_selectableListView.minimalSizeForOptimalDisplay().height() -
       categoricalTableCell()->bounds().height();
-  KDCoordinate trueOptimalHeight =
-      categoricalTableCell()->minimalSizeForOptimalDisplay().height() +
-      otherCellsHeight;
+  KDCoordinate trueOptimalHeight = tableCellFullHeight() + otherCellsHeight;
   *visible = decorator->verticalBar()->update(
       trueOptimalHeight, tableCellVerticalOffset() + listVerticalOffset(),
       m_selectableListView.bounds().height());
@@ -117,8 +115,7 @@ HighlightCell *CategoricalController::reusableCell(int index, int type) {
 
 KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
   if (row == indexOfTableCell()) {
-    return std::min(categoricalTableCell()->contentSizeWithMargins().height() -
-                        tableCellVerticalOffset(),
+    return std::min(tableCellFullHeight() - tableCellVerticalOffset(),
                     static_cast<int>(m_selectableListView.bounds().height()));
   }
   assert(row == indexOfNextCell());

@@ -65,6 +65,9 @@ class CategoricalController
   KDCoordinate tableCellVerticalOffset() {
     return categoricalTableCell()->selectableTableView()->contentOffset().y();
   }
+  KDCoordinate tableCellFullHeight() {
+    return categoricalTableCell()->contentSizeWithMargins().height();
+  }
 };
 
 /* Common Controller between InputHomogeneityController and

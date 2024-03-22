@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_CONVERSION_H
-#define POINCARE_JUNIOR_CONVERSION_H
+#ifndef POINCARE_JUNIOR_LAYOUT_CONVERSION_H
+#define POINCARE_JUNIOR_LAYOUT_CONVERSION_H
 
 #include <poincare/layout.h>
 #include <poincare_junior/src/memory/tree.h>

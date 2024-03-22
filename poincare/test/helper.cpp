@@ -3,7 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/print.h>
 #include <poincare/src/parsing/parser.h>
-#include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/serialize.h>
@@ -181,7 +181,7 @@ void assert_parsed_expression_is(
       mixedFractionsParameter);
   Tree *parsed = parse_expression(expression, &context, addParentheses,
                                   parseForAssignment);
-  Tree *expected = PoincareJ::Expression::FromPoincareExpression(r);
+  Tree *expected = PoincareJ::FromPoincareExpression(r);
   quiz_assert_print_if_failure(parsed, expression);
   quiz_assert_print_if_failure(expected, expression);
   quiz_assert_print_if_failure(parsed->treeIsIdenticalTo(expected), expression);

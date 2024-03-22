@@ -1,5 +1,6 @@
+#include "conversion.h"
+
 #include <poincare_expressions.h>
-#include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/builtin.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
@@ -58,7 +59,7 @@ Poincare::ComparisonNode::OperatorType ComparisonToOperator(BlockType type) {
   }
 }
 
-Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
+Poincare::Expression ToPoincareExpression(const Tree *exp) {
   // NOTE: Make sure new BlockTypes are handled here.
   BlockType type = exp->type();
 
@@ -329,7 +330,7 @@ Poincare::Expression Expression::ToPoincareExpression(const Tree *exp) {
   }
 }
 
-void Expression::PushPoincareExpression(Poincare::Expression exp) {
+void PushPoincareExpression(Poincare::Expression exp) {
   using OT = Poincare::ExpressionNode::Type;
   switch (exp.type()) {
     case OT::AbsoluteValue:
@@ -794,7 +795,7 @@ void Expression::PushPoincareExpression(Poincare::Expression exp) {
   }
 }
 
-Tree *Expression::FromPoincareExpression(Poincare::Expression exp) {
+Tree *FromPoincareExpression(Poincare::Expression exp) {
   Tree *node = Tree::FromBlocks(SharedEditionPool->lastBlock());
   PushPoincareExpression(exp);
   return node;

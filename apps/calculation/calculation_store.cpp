@@ -7,15 +7,12 @@
 #include <poincare/symbol.h>
 #include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
-#include <poincare_junior/include/expression.h>
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Calculation {
 
-#if OLD_POINCARE
-// Deactivated with PCJ
 static Expression enhancePushedExpression(Expression expression) {
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.
@@ -28,7 +25,6 @@ static Expression enhancePushedExpression(Expression expression) {
   }
   return expression;
 }
-#endif
 
 // Public
 
@@ -135,23 +131,18 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       // Push the input
       Expression inputExpression = Expression::Parse(text, &ansContext);
-#if OLD_POINCARE
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
-#endif
       cursor = pushSerializedExpression(
           cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
       if (cursor == k_pushError) {
         return errorPushUndefined();
       }
-#if OLD_POINCARE
       /* Recompute the location of the input text in case a calculation was
        * deleted. */
       char *const inputText = endOfCalculations() + sizeof(Calculation);
-#endif
 
       // Parse and compute the expression
-#if OLD_POINCARE
       inputExpression = Expression::Parse(inputText, context, false);
       assert(!inputExpression.isUninitialized());
       PoincareHelpers::CloneAndSimplifyAndApproximate(
@@ -161,26 +152,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
                ReplaceAllSymbolsWithDefinitionsOrUndefined});
       assert(!exactOutputExpression.isUninitialized() &&
              !approximateOutputExpression.isUninitialized());
-#else
-      PoincareJ::Expression pcjInput =
-          PoincareJ::Expression::FromPoincareExpression(&inputExpression);
-      PoincareJ::Expression pcjExact =
-          PoincareJ::Expression::Simplify(&pcjInput);
-      PoincareJ::Expression pcjApprox =
-          PoincareJ::Expression::Approximate(&pcjExact);
-      exactOutputExpression = pcjExact.toPoincareExpression();
-      if (exactOutputExpression.type() == ExpressionNode::Type::Dependency) {
-        // TODO PCJ : Handle dependencies.
-        exactOutputExpression = exactOutputExpression.childAtIndex(0);
-      }
-      exactOutputExpression = exactOutputExpression.addMissingParentheses();
-      approximateOutputExpression = pcjApprox.toPoincareExpression();
-#endif
 
       // Post-processing of store expression
-#if OLD_POINCARE
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
-#endif
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
         Expression exactStoredExpression =

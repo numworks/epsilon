@@ -36,7 +36,7 @@
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
 #include <poincare/variable_context.h>
-#include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/layout/layoutter.h>
 
 #include <cmath>
@@ -1132,7 +1132,7 @@ Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   if (isUninitialized()) {
     return Layout();
   }
-  PoincareJ::Tree *exp = PoincareJ::Expression::FromPoincareExpression(*this);
+  PoincareJ::Tree *exp = PoincareJ::FromPoincareExpression(*this);
   PoincareJ::Tree *lay = PoincareJ::Layoutter::LayoutExpression(
       exp, false, numberOfSignificantDigits, floatDisplayMode);
   return JuniorLayout::Builder(lay);

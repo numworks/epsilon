@@ -1,4 +1,3 @@
-#include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>

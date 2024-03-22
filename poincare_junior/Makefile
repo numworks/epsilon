@@ -49,7 +49,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/unit_representatives.cpp \
   expression/variables.cpp \
   expression/vector.cpp \
-  expression.cpp \
   layout/app_helpers.cpp \
   layout/autocompleted_pair.cpp \
   layout/code_point_layout.cpp \
@@ -118,12 +117,10 @@ poincare_junior_src += $(addprefix poincare_junior/src/probability/,\
 tests_src += $(addprefix poincare_junior/test/,\
   approximation.cpp \
   beautification.cpp \
-  calculation.cpp \
   comparison.cpp \
   dimension.cpp \
   expression_comparison.cpp \
   layout.cpp \
-  graph.cpp \
   helper.cpp \
   integer.cpp \
   k_tree.cpp \

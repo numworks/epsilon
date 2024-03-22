@@ -15,7 +15,7 @@
 #include <poincare/nth_root.h>
 #include <poincare/piecewise_operator.h>
 #include <poincare/power.h>
-#include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/layout/conversion.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_layouts.h>
@@ -68,7 +68,7 @@ void assert_parsed_layout_is(Layout l, Poincare::Expression r) {
   PoincareJ::Tree* ej =
       PoincareJ::Parser::Parse(PoincareJ::FromPoincareLayout(l));
   quiz_assert_print_if_failure(ej, buffer);
-  PoincareJ::Tree* rj = PoincareJ::Expression::FromPoincareExpression(r);
+  PoincareJ::Tree* rj = PoincareJ::FromPoincareExpression(r);
   quiz_assert_print_if_failure(rj, buffer);
   quiz_assert_print_if_failure(ej->treeIsIdenticalTo(rj), buffer);
   PoincareJ::EditionPool::SharedEditionPool->flush();

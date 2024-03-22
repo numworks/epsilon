@@ -18,14 +18,19 @@ parser.add_argument(
     help="state file (with extension .nws)",
 )
 parser.add_argument(
-    "-o", "--output_folder", default="screenshots_each_step", help="output folder"
+    "-o", "--output-folder", default="screenshots_each_step", help="output folder"
+)
+parser.add_argument(
+    "--skip-idle",
+    action="store_true",
+    help="skip screenshots associated with idle events",
 )
 
 
 def main():
     args = parser.parse_args()
     helper.generate_all_screenshots_and_create_gif(
-        args.state_file, args.executable, args.output_folder, False
+        args.state_file, args.executable, args.output_folder, args.skip_idle, False
     )
 
 

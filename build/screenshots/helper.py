@@ -46,7 +46,9 @@ def print_error(stderr, exit=True):
             sys.exit(1)
 
 
-def generate_all_screenshots(state_file, executable, folder, exit_if_error=True):
+def generate_all_screenshots(
+    state_file, executable, folder, skip_idle, exit_if_error=True
+):
     print("Generating all screenshots of", state_file)
     clean_or_create_folder(folder)
     p = Popen(
@@ -54,6 +56,7 @@ def generate_all_screenshots(state_file, executable, folder, exit_if_error=True)
         + executable
         + " --headless --load-state-file "
         + state_file
+        + (" --skip-idle-screenshots " if skip_idle else "")
         + " --take-all-screenshots "
         + folder,
         shell=True,
@@ -90,11 +93,11 @@ def create_gif(list_images, folder, gif_name="scenario"):
 
 
 def generate_all_screenshots_and_create_gif(
-    state_file, executable, folder, exit_if_error=True
+    state_file, executable, folder, skip_idle=False, exit_if_error=True
 ):
     clean_or_create_folder(folder)
     list_images = generate_all_screenshots(
-        state_file, executable, os.path.join(folder, "images"), exit_if_error
+        state_file, executable, os.path.join(folder, "images"), skip_idle, exit_if_error
     )
     create_gif(list_images, folder)
     return list_images

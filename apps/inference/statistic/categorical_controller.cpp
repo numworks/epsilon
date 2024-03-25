@@ -42,7 +42,7 @@ void CategoricalController::didScroll() {
 
   int tableCellRow = indexOfTableCell();
   KDCoordinate topMargin = m_selectableListView.margins()->top();
-  int firstVisibleRow = rowAfterCumulatedHeight(listOffset + topMargin);
+  int firstVisibleRow = rowAfterCumulatedHeight(listOffset - topMargin);
   KDCoordinate heightBeforeTableCell =
       cumulatedHeightBeforeRow(tableCellRow) + topMargin;
 

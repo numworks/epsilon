@@ -94,11 +94,20 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
    * displayed. We still want to notify the user that more solutions exist. */
   m_hasMoreSolutions = !finiteNumberOfSolutions;
   zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
-  Range2D<float> finalRange = zoom.range(false, false);
+  Range1D<float> finalRange = *(zoom.range(false, false).x());
+  /* The range was computed from the solution found with a solver in float. We
+   * need to strech the range in case it does not cover the solution found with
+   * a solver in double. */
+  constexpr static float k_securityMarginCoef = 10.0;
+  float securityMargin =
+      std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) /
+      k_securityMarginCoef;
+  finalRange.stretchEachBoundBy(securityMargin,
+                                k_maxFloatForAutoApproximateSolvingRange);
   m_autoApproximateSolvingRange = true;
   m_approximateSolvingRange =
-      Range1D<double>(static_cast<double>(finalRange.x()->min()),
-                      static_cast<double>(finalRange.x()->max()));
+      Range1D<double>(static_cast<double>(finalRange.min()),
+                      static_cast<double>(finalRange.max()));
 }
 
 void SystemOfEquations::approximateSolve(Context *context) {

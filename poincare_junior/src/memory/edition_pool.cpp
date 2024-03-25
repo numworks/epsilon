@@ -19,8 +19,7 @@ Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
     return nullptr;
   }
   assert(id < m_length);
-  uint16_t offset =
-      const_cast<EditionPool::ReferenceTable *>(this)->nodeOffsetArray()[id];
+  uint16_t offset = m_nodeOffsetForIdentifier[id];
   if (offset == InvalidatedOffset) {
     return nullptr;
   }
@@ -115,7 +114,7 @@ void EditionPool::ReferenceTable::logIdsForNode(std::ostream &stream,
   for (size_t i = 0; i < m_length; i++) {
     Tree *n = EditionPool::ReferenceTable::nodeForIdentifier(i);
     if (node == n) {
-      stream << identifierForIndex(i) << ", ";
+      stream << static_cast<int>(i) << ", ";
       found = true;
     }
   }
@@ -134,7 +133,7 @@ uint16_t EditionPool::ReferenceTable::storeNodeAtIndex(Tree *node,
     // Increment first to make firstBlock != nullptr
     m_length++;
   }
-  nodeOffsetArray()[index] =
+  m_nodeOffsetForIdentifier[index] =
       static_cast<uint16_t>(node->block() - m_pool->referenceBlock());
   // Assertion requires valid firstBlock/lastBlock (so the order matters)
   assert(m_pool->contains(node->block()) ||
@@ -208,7 +207,9 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
   if (numberOfBlocks == 0) {
     return true;
   }
-  checkForEnoughSpace(numberOfBlocks);
+  if (m_size + numberOfBlocks > k_maxNumberOfBlocks) {
+    ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
+  }
   size_t insertionSize = numberOfBlocks * sizeof(Block);
   if (at && destination == lastBlock()) {
     m_size += numberOfBlocks;
@@ -390,7 +391,7 @@ void EditionPool::logNode(std::ostream &stream, const Tree *node,
                           bool recursive, bool verbose, int indentation) {
   Indent(stream, indentation);
   stream << "<Reference id=\"";
-  referenceTable()->logIdsForNode(stream, node);
+  m_referenceTable.logIdsForNode(stream, node);
   stream << "\">\n";
   node->log(stream, recursive, verbose, indentation + 1);
   Indent(stream, indentation);
@@ -417,12 +418,6 @@ void EditionPool::log(std::ostream &stream, LogFormat format, bool verbose,
 }
 
 #endif
-
-void EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
-  if (m_size + numberOfRequiredBlock > k_maxNumberOfBlocks) {
-    ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
-  }
-}
 
 template Tree *EditionPool::push<BlockType::Addition, int>(int);
 template Tree *EditionPool::push<BlockType::Multiplication, int>(int);

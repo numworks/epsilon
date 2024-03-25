@@ -136,56 +136,6 @@ class OLayout : public TreeHandle {
   bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };
 
-template <typename T, typename U, int N, typename Parent>
-class LayoutBuilder : public Parent {
- public:
-#ifndef PLATFORM_DEVICE
-  static_assert(std::is_base_of<OLayout, Parent>::value);
-#endif
-  static T Builder() {
-    static_assert(N == 0);
-    TreeHandle h =
-        TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
-    return static_cast<T &>(h);
-  }
-  static T Builder(OLayout child) {
-    static_assert(N == 1);
-    TreeHandle h =
-        TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
-    return static_cast<T &>(h);
-  }
-  static T Builder(OLayout child1, OLayout child2) {
-    static_assert(N == 2);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
-                                                   {child1, child2});
-    return static_cast<T &>(h);
-  }
-  static T Builder(OLayout child1, OLayout child2, OLayout child3) {
-    static_assert(N == 3);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
-                                                   {child1, child2, child3});
-    return static_cast<T &>(h);
-  }
-  static T Builder(OLayout child1, OLayout child2, OLayout child3,
-                   OLayout child4) {
-    static_assert(N == 4);
-    TreeHandle h = TreeHandle::BuilderWithChildren(
-        Initializer<U>, sizeof(U), {child1, child2, child3, child4});
-    return static_cast<T &>(h);
-  }
-};
-
-template <typename T, typename U, typename P = OLayout>
-using LayoutNoChildren = LayoutBuilder<T, U, 0, P>;
-template <typename T, typename U, typename P = OLayout>
-using LayoutOneChild = LayoutBuilder<T, U, 1, P>;
-template <typename T, typename U, typename P = OLayout>
-using LayoutTwoChildren = LayoutBuilder<T, U, 2, P>;
-template <typename T, typename U, typename P = OLayout>
-using LayoutThreeChildren = LayoutBuilder<T, U, 3, P>;
-template <typename T, typename U, typename P = OLayout>
-using LayoutFourChildren = LayoutBuilder<T, U, 4, P>;
-
 }  // namespace Poincare
 
 #endif

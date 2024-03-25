@@ -68,8 +68,7 @@ class JuniorLayoutNode final : public LayoutNode {
   PoincareJ::Block m_blocks[0];
 };
 
-class JuniorLayout final
-    : public LayoutNoChildren<JuniorLayout, JuniorLayoutNode> {
+class JuniorLayout final : public OLayout {
  public:
   JuniorLayout() {}
 

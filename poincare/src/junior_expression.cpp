@@ -466,11 +466,11 @@ bool JuniorExpression::derivate(const ReductionContext& reductionContext,
 int JuniorExpression::getPolynomialCoefficients(
     Context* context, const char* symbolName,
     JuniorExpression coefficients[]) const {
-  PoincareJ::Tree* variable =
+  PoincareJ::Tree* symbol =
       PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
           symbolName, strlen(symbolName) + 1);
   PoincareJ::Tree* poly =
-      PoincareJ::PolynomialParser::Parse(tree()->clone(), variable);
+      PoincareJ::PolynomialParser::Parse(tree()->clone(), symbol);
   int degree = poly->isPolynomial() ? PoincareJ::Polynomial::Degree(poly) : 0;
   int indexExponent = 0;
   int numberOfTerms = PoincareJ::Polynomial::NumberOfTerms(poly);
@@ -487,7 +487,7 @@ int JuniorExpression::getPolynomialCoefficients(
   }
   assert(indexExponent == PoincareJ::Polynomial::NumberOfTerms(poly));
   poly->removeTree();
-  variable->removeTree();
+  symbol->removeTree();
   return degree;
 }
 
@@ -511,14 +511,14 @@ int JuniorExpression::getPolynomialReducedCoefficients(
 
 int JuniorExpression::polynomialDegree(Context* context,
                                        const char* symbolName) const {
-  PoincareJ::Tree* variable =
+  PoincareJ::Tree* symbol =
       PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
           symbolName, strlen(symbolName) + 1);
   PoincareJ::Tree* poly =
-      PoincareJ::PolynomialParser::Parse(tree()->clone(), variable);
+      PoincareJ::PolynomialParser::Parse(tree()->clone(), symbol);
   int degree = poly->isPolynomial() ? PoincareJ::Polynomial::Degree(poly) : 0;
   poly->removeTree();
-  variable->removeTree();
+  symbol->removeTree();
   return degree;
 }
 

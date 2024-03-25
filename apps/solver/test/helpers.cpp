@@ -53,6 +53,34 @@ void solve_and(std::initializer_list<const char *> equations, T &&lambda) {
   });
 }
 
+void assert_solves_with_range_to(const char *equation, double min, double max,
+                                 std::initializer_list<double> solutions,
+                                 const char *variable = nullptr) {
+  solve_and_process_error(
+      {equation}, [min, max, solutions, variable](SystemOfEquations *system,
+                                                  SystemOfEquations::Error e) {
+        Shared::GlobalContext globalContext;
+        SolverContext solverContext(&globalContext);
+        quiz_assert(e == RequireApproximateSolution);
+        assert(std::isnan(min) == std::isnan(max));
+        if (std::isnan(min)) {
+          system->autoComputeApproximateSolvingRange(&solverContext);
+        } else {
+          system->setApproximateSolvingRange(Range1D(min, max));
+        }
+        system->approximateSolve(&solverContext);
+        if (variable) {
+          quiz_assert(strcmp(system->variable(0), variable) == 0);
+        }
+        size_t i = 0;
+        for (double solution : solutions) {
+          assert_roughly_equal(system->solution(i++)->approximate(), solution,
+                               1E-5);
+        }
+        quiz_assert(system->numberOfSolutions() == i);
+      });
+}
+
 // Helpers
 
 void assert_solves_to_error(std::initializer_list<const char *> equations,
@@ -143,23 +171,13 @@ void assert_solves_to(std::initializer_list<const char *> equations,
 void assert_solves_numerically_to(const char *equation, double min, double max,
                                   std::initializer_list<double> solutions,
                                   const char *variable) {
-  solve_and_process_error(
-      {equation}, [min, max, solutions, variable](SystemOfEquations *system,
-                                                  SystemOfEquations::Error e) {
-        Shared::GlobalContext globalContext;
-        SolverContext solverContext(&globalContext);
-        quiz_assert(e == RequireApproximateSolution);
-        system->setApproximateSolvingRange(Range1D(min, max));
-        system->approximateSolve(&solverContext);
+  assert(!std::isnan(min) && !std::isnan(max));
+  return assert_solves_with_range_to(equation, min, max, solutions, variable);
+}
 
-        quiz_assert(strcmp(system->variable(0), variable) == 0);
-        size_t i = 0;
-        for (double solution : solutions) {
-          assert_roughly_equal(system->solution(i++)->approximate(), solution,
-                               1E-5);
-        }
-        quiz_assert(system->numberOfSolutions() == i);
-      });
+void assert_solves_with_auto_solving_range(
+    const char *equation, std::initializer_list<double> solutions) {
+  return assert_solves_with_range_to(equation, NAN, NAN, solutions);
 }
 
 void assert_solving_range_is(const char *equation, double min, double max) {

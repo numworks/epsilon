@@ -10,8 +10,7 @@ namespace Poincare {
 
 bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
   if (makeEditable) {
-    return Layout(this).clone().makeEditable().isIdenticalTo(
-        l.clone().makeEditable(), false);
+    assert(false);
   }
   if (l.isUninitialized()) {
     return false;
@@ -23,18 +22,8 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
 }
 
 KDPoint LayoutNode::absoluteOriginWithMargin(KDFont::Size font) {
-  LayoutNode *p = parent();
   if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {
-    if (p != nullptr) {
-      assert(!SumOverflowsKDCoordinate(p->absoluteOrigin(font).x(),
-                                       p->positionOfChild(this, font).x()));
-      assert(!SumOverflowsKDCoordinate(p->absoluteOrigin(font).y(),
-                                       p->positionOfChild(this, font).y()));
-      m_frame.setOrigin(
-          p->absoluteOrigin(font).translatedBy(p->positionOfChild(this, font)));
-    } else {
-      m_frame.setOrigin(KDPointZero);
-    }
+    m_frame.setOrigin(KDPointZero);
     m_flags.m_positioned = true;
     m_flags.m_positionFontSize = font;
   }
@@ -96,33 +85,6 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
   m_flags.m_sized = false;
   m_flags.m_positioned = false;
   m_flags.m_baselined = false;
-  for (LayoutNode *l : children()) {
-    l->invalidAllSizesPositionsAndBaselines();
-  }
-}
-
-Layout LayoutNode::makeEditable() {
-  /* We visit children if reverse order to avoid visiting the codepoints they
-   * might have inserted after them. */
-  for (int i = numberOfChildren() - 1; i >= 0; i--) {
-    childAtIndex(i)->makeEditable();
-  }
-  return Layout(this);
-}
-
-// Protected and private
-
-bool LayoutNode::protectedIsIdenticalTo(Layout l) {
-  if (numberOfChildren() != l.numberOfChildren()) {
-    return false;
-  }
-  int childrenNumber = numberOfChildren();
-  for (int i = 0; i < childrenNumber; i++) {
-    if (!childAtIndex(i)->isIdenticalTo(l.childAtIndex(i))) {
-      return false;
-    }
-  }
-  return true;
 }
 
 }  // namespace Poincare

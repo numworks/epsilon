@@ -53,26 +53,8 @@ class LayoutNode : public TreeNode {
     return 0;
   }
 
-  // Tree
-  LayoutNode *parent() const {
-    return static_cast<LayoutNode *>(TreeNode::parent());
-  }
-  LayoutNode *childAtIndex(int i) const {
-    assert(i >= 0 && i < numberOfChildren());
-    return static_cast<LayoutNode *>(TreeNode::childAtIndex(i));
-  }
-  LayoutNode *root() { return static_cast<LayoutNode *>(TreeNode::root()); }
-
-  virtual OLayout makeEditable();
-
  protected:
-  virtual bool protectedIsIdenticalTo(OLayout l);
-
-  // Tree
-  Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
-  Direct<LayoutNode> childrenFromIndex(int i) {
-    return Direct<LayoutNode>(this, i);
-  }
+  virtual bool protectedIsIdenticalTo(OLayout l) = 0;
 
   // Sizing and positioning
   virtual KDSize computeSize(KDFont::Size font) = 0;

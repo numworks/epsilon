@@ -74,28 +74,4 @@ size_t Layout::serializeParsedExpression(char *buffer, size_t bufferSize,
                      Poincare::Preferences::SharedPreferences()->displayMode());
 }
 
-Layout Layout::recursivelyMatches(LayoutTest test) const {
-  TrinaryBoolean testResult = test(*this);
-  if (testResult == TrinaryBoolean::True) {
-    return *this;
-  }
-  if (testResult == TrinaryBoolean::False) {
-    return Layout();
-  }
-  int childrenNumber = numberOfChildren();
-  for (int i = 0; i < childrenNumber; i++) {
-    Layout childResult = childAtIndex(i).recursivelyMatches(test);
-    if (!childResult.isUninitialized()) {
-      return childResult;
-    }
-  }
-  return Layout();
-}
-
-Layout Layout::childAtIndex(int i) const {
-  assert(i >= 0 && i < numberOfChildren());
-  TreeHandle c = TreeHandle::childAtIndex(i);
-  return static_cast<Layout &>(c);
-}
-
 }  // namespace Poincare

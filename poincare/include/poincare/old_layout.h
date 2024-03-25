@@ -55,24 +55,6 @@ class OLayout : public TreeHandle {
   size_t serializeParsedExpression(char *buffer, size_t bufferSize,
                                    Context *context) const;
 
-  // Layout properties
-  /* Return True if the layout succeeded the test, Unknown if its children
-   * could succeed, and False if the recursion should stop. */
-  typedef TrinaryBoolean (*LayoutTest)(const OLayout l);
-  OLayout recursivelyMatches(LayoutTest test) const;
-
-  // Tree
-  OLayout childAtIndex(int i) const;
-  OLayout root() const {
-    assert(!isUninitialized());
-    return OLayout(node()->root());
-  }
-  OLayout parent() const {
-    assert(!isUninitialized());
-    return OLayout(node()->parent());
-  }
-  // Replace strings with codepoints
-  OLayout makeEditable() { return node()->makeEditable(); }
  private:
   bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };

@@ -29,7 +29,6 @@ class EditionPool {
   uint16_t referenceNode(Tree *node);
   void flush();
   void flushFromBlock(const Block *node);
-  void resetRefs() { m_referenceTable.reset(); }
   void deleteIdentifier(uint16_t id) { m_referenceTable.deleteIdentifier(id); }
   void updateIdentifier(uint16_t id, Tree *newNode) {
     m_referenceTable.updateIdentifier(id, newNode);
@@ -37,8 +36,6 @@ class EditionPool {
 
   typedef bool (*Relax)(void *context);
   constexpr static Relax k_defaultRelax = [](void *context) { return false; };
-  void executeAndDump(ActionWithContext action, void *context, const void *data,
-                      void *address, int maxSize, Relax relax = k_defaultRelax);
   void executeAndStoreLayout(ActionWithContext action, void *context,
                              const void *data, Poincare::JuniorLayout *layout,
                              Relax relax = k_defaultRelax);
@@ -98,10 +95,6 @@ class EditionPool {
 
 #if POINCARE_TREE_LOG
   enum class LogFormat { Flat, Tree };
-#endif
- private:
-#if POINCARE_TREE_LOG
- public:
   void logNode(std::ostream &stream, const Tree *node, bool recursive,
                bool verbose, int indentation);
   void log(std::ostream &stream, LogFormat format, bool verbose,
@@ -111,18 +104,6 @@ class EditionPool {
   }
 
 #endif
-
- public:
-  Tree::ConstNodes allNodes() {
-    return Tree::ConstNodes(Tree::FromBlocks(firstBlock()), numberOfTrees());
-  }
-
-  Tree::ConstTrees trees() {
-    return Tree::ConstTrees(Tree::FromBlocks(firstBlock()), numberOfTrees());
-  }
-
- public:
-  void setNumberOfBlocks(int numberOfBlocks) { m_size = numberOfBlocks; }
 
   // Will changing the modified tree alter the other tree ?
   bool isAfter(const Tree *other, Tree *modified) {
@@ -134,13 +115,17 @@ class EditionPool {
   constexpr static int k_maxNumberOfReferences = k_maxNumberOfBlocks / 8;
 
  private:
+  Tree::ConstNodes allNodes() {
+    return Tree::ConstNodes(Tree::FromBlocks(firstBlock()), numberOfTrees());
+  }
+  Tree::ConstTrees trees() {
+    return Tree::ConstTrees(Tree::FromBlocks(firstBlock()), numberOfTrees());
+  }
   void execute(ActionWithContext action, void *context, const void *data,
                int maxSize, Relax relax = k_defaultRelax);
   // Pool memory
   void checkForEnoughSpace(size_t numberOfRequiredBlock);
-#if POINCARE_TREE_LOG
-  const char *name() { return "Edition"; }
-#endif
+
   class ReferenceTable {
     /* The edition pool reference table stores the offset of the tree in the
      * edition pool.

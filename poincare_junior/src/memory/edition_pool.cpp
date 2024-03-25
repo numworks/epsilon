@@ -134,8 +134,8 @@ uint16_t EditionPool::ReferenceTable::storeNodeAtIndex(Tree *node,
     // Increment first to make firstBlock != nullptr
     m_length++;
   }
-  nodeOffsetArray()[index] = static_cast<uint16_t>(
-      static_cast<Block *>(node->block()) - m_pool->referenceBlock());
+  nodeOffsetArray()[index] =
+      static_cast<uint16_t>(node->block() - m_pool->referenceBlock());
   // Assertion requires valid firstBlock/lastBlock (so the order matters)
   assert(m_pool->contains(node->block()) ||
          node->block() == m_pool->lastBlock());
@@ -165,16 +165,6 @@ void EditionPool::flushFromBlock(const Block *block) {
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "flushFromBlock", block);
 #endif
-}
-
-void EditionPool::executeAndDump(ActionWithContext action, void *context,
-                                 const void *data, void *address, int maxSize,
-                                 Relax relax) {
-  assert(numberOfTrees() == 0);
-  execute(action, context, data, maxSize, relax);
-  assert(Tree::FromBlocks(firstBlock())->treeSize() <= maxSize);
-  Tree::FromBlocks(firstBlock())->copyTreeTo(address);
-  flush();
 }
 
 void EditionPool::executeAndStoreLayout(ActionWithContext action, void *context,
@@ -411,8 +401,8 @@ void EditionPool::log(std::ostream &stream, LogFormat format, bool verbose,
                       int indentation) {
   const char *formatName = format == LogFormat::Tree ? "tree" : "flat";
   Indent(stream, indentation);
-  stream << "<" << name() << "Pool format=\"" << formatName << "\" size=\""
-         << size() << "\">\n";
+  stream << "<EditionPool format=\"" << formatName << "\" size=\"" << size()
+         << "\">\n";
   if (format == LogFormat::Tree) {
     for (const Tree *tree : trees()) {
       logNode(stream, tree, true, verbose, indentation + 1);
@@ -423,7 +413,7 @@ void EditionPool::log(std::ostream &stream, LogFormat format, bool verbose,
     }
   }
   Indent(stream, indentation);
-  stream << "</" << name() << "Pool>" << std::endl;
+  stream << "</EditionPool>" << std::endl;
 }
 
 #endif

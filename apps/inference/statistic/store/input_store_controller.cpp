@@ -24,6 +24,7 @@ InputStoreController::InputStoreController(StackViewController* parent,
       m_loadedDistribution(DistributionType::T),
       m_loadedTest(SignificanceTestType::OneProportion) {
   m_storeParameterController.selectRow(0);
+  m_selectableListView.margins()->setTop(Metric::CommonMargins.top());
   m_storeTableCell.selectableTableView()->margins()->setTop(
       Metric::TableSeparatorThickness);
 }

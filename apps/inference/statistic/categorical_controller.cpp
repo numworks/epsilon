@@ -50,14 +50,27 @@ void CategoricalController::didScroll() {
           listOffset < heightBeforeTableCell && tableOffset == 0) ||
          listOffset >= heightBeforeTableCell);
 
-  if (firstVisibleRow == tableCellRow && listOffset > heightBeforeTableCell) {
-    KDCoordinate translation = listOffset - heightBeforeTableCell;
+  KDCoordinate maxTableOffset = std::max(
+      0, tableCellFullHeight() - (m_selectableListView.bounds().height() -
+                                  m_selectableListView.margins()->height()));
+  assert(tableOffset <= maxTableOffset);
+
+  if (firstVisibleRow == tableCellRow && listOffset > heightBeforeTableCell &&
+      tableOffset < maxTableOffset) {
+    // Transfer list's offset to table
+    KDCoordinate translation = std::min(maxTableOffset - tableOffset,
+                                        listOffset - heightBeforeTableCell);
     assert(translation > 0);
     // Change table cell offset first (to relayout well the list)
     categoricalTableCell()->selectableTableView()->translateContentOffsetBy(
         KDPoint(0, translation));
+    assert(0 <= tableCellVerticalOffset() &&
+           tableCellVerticalOffset() <= maxTableOffset);
     m_selectableListView.translateContentOffsetBy(KDPoint(0, -translation));
-    assert(listVerticalOffset() == heightBeforeTableCell);
+    assert((listVerticalOffset() == heightBeforeTableCell &&
+            tableCellVerticalOffset() <= maxTableOffset) ||
+           (listVerticalOffset() >= heightBeforeTableCell &&
+            tableCellVerticalOffset() == maxTableOffset));
   }
 }
 

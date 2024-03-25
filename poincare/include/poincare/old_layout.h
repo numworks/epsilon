@@ -25,13 +25,13 @@ class OLayout : public TreeHandle {
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
 
-  bool isIdenticalTo(OLayout l, bool makeEditable = false) {
+  bool isIdenticalTo(OLayout l, bool makeEditable = false) const {
     return isUninitialized() ? l.isUninitialized()
                              : node()->isIdenticalTo(l, makeEditable);
   }
 
   // Rendering
-  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
+  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) const {
     return node()->render(ctx, p, style);
   }
   KDSize layoutSize(KDFont::Size font,
@@ -40,8 +40,9 @@ class OLayout : public TreeHandle {
     return node()->absoluteOrigin(font);
   }
   KDCoordinate baseline(KDFont::Size font,
-                        PoincareJ::LayoutCursor *cursor = nullptr);
+                        PoincareJ::LayoutCursor *cursor = nullptr) const;
   void invalidAllSizesPositionsAndBaselines() {
+    // TODO remember if cursor was in layout and hide this method
     return node()->invalidAllSizesPositionsAndBaselines();
   }
 
@@ -51,9 +52,6 @@ class OLayout : public TreeHandle {
   }
   size_t serializeParsedExpression(char *buffer, size_t bufferSize,
                                    Context *context) const;
-
- private:
-  bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };
 
 }  // namespace Poincare

@@ -8,7 +8,7 @@ namespace Poincare {
 
 #define Layout OLayout
 
-bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
+bool LayoutNode::isIdenticalTo(const Layout l, bool makeEditable) const {
   if (makeEditable) {
     assert(false);
   }
@@ -21,7 +21,7 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
   return protectedIsIdenticalTo(l);
 }
 
-KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) {
+KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) const {
   if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {
     m_frame.setOrigin(KDPointZero);
     m_flags.m_positioned = true;
@@ -30,7 +30,7 @@ KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) {
   return m_frame.origin();
 }
 
-KDSize LayoutNode::layoutSize(KDFont::Size font) {
+KDSize LayoutNode::layoutSize(KDFont::Size font) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
     KDSize size = computeSize(font);
 
@@ -72,7 +72,7 @@ KDSize LayoutNode::layoutSize(KDFont::Size font) {
   return m_frame.size();
 }
 
-KDCoordinate LayoutNode::baseline(KDFont::Size font) {
+KDCoordinate LayoutNode::baseline(KDFont::Size font) const {
   if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
     m_baseline = computeBaseline(font);
     m_flags.m_baselined = true;

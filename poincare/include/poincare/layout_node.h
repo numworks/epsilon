@@ -32,13 +32,13 @@ class LayoutNode : public TreeNode {
         }) {}
 
   // Comparison
-  bool isIdenticalTo(OLayout l, bool makeEditable = false);
+  bool isIdenticalTo(const OLayout l, bool makeEditable = false) const;
 
   // Rendering
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
-  KDPoint absoluteOrigin(KDFont::Size font);
-  KDSize layoutSize(KDFont::Size font);
-  KDCoordinate baseline(KDFont::Size font);
+  KDPoint absoluteOrigin(KDFont::Size font) const;
+  KDSize layoutSize(KDFont::Size font) const;
+  KDCoordinate baseline(KDFont::Size font) const;
 
   // TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();
@@ -57,11 +57,11 @@ class LayoutNode : public TreeNode {
                       KDGlyph::Style style) const = 0;
   virtual bool protectedIsIdenticalTo(OLayout l) const = 0;
 
-  KDRect m_frame;
+  mutable KDRect m_frame;
   /* m_baseline is the signed vertical distance from the top of the layout to
    * the fraction bar of an hypothetical fraction sibling layout. If the top of
    * the layout is under that bar, the baseline is negative. */
-  KDCoordinate m_baseline;
+  mutable KDCoordinate m_baseline;
   /* Squash multiple bool member variables into a packed struct. Taking
    * advantage of LayoutNode's data structure having room for many more booleans
    */
@@ -73,7 +73,7 @@ class LayoutNode : public TreeNode {
     KDFont::Size m_positionFontSize : 1;
     KDFont::Size m_sizeFontSize : 1;
   };
-  Flags m_flags;
+  mutable Flags m_flags;
 };
 
 }  // namespace Poincare

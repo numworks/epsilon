@@ -14,7 +14,7 @@ KDSize Layout::layoutSize(KDFont::Size font,
 }
 
 KDCoordinate Layout::baseline(KDFont::Size font,
-                              PoincareJ::LayoutCursor *cursor) {
+                              PoincareJ::LayoutCursor *cursor) const {
   PoincareJ::RackLayout::s_layoutCursor = cursor;
   return node()->baseline(font);
 }

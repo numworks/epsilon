@@ -30,6 +30,11 @@ void assert_solves_to_error(std::initializer_list<const char *> equations,
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char *> equations,
     std::initializer_list<const char *> solutions);
+
+// Auto solving range
+
+void assert_solves_with_auto_solving_range(
+    const char *equation, std::initializer_list<double> solutions);
 void assert_solving_range_is(const char *equation, double min, double max);
 
 // Shorthands

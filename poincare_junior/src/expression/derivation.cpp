@@ -41,17 +41,6 @@ bool Derivation::ShallowSimplify(Tree *node) {
     derivand = constDerivand->clone();
   }
 
-#if TODO_PCJ
-  /* Use reduction target SystemForAnalysis when derivating,
-   * because we don't want to have false reductions such as
-   * arccot(x) -> arctan(1/x)
-   * This will not impact the function derivate since it only
-   * use the angle unit of the reduction context, but it will
-   * impact the function deepReduce */
-  ReductionTarget initialTarget = reductionContext.target();
-  reductionContext.setTarget(ReductionTarget::SystemForAnalysis);
-#endif
-
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
     Tree *derivative = Derivate(derivand, symbolValue, symbol);
@@ -87,10 +76,6 @@ bool Derivation::ShallowSimplify(Tree *node) {
     Set::Add(setOfDependencies, formula);
     formula->removeTree();
   }
-
-#if TODO_PCJ
-  reductionContext.setTarget(initialTarget);
-#endif
 
   if (setOfDependencies->numberOfChildren() > 0) {
     derivand->cloneNodeAtNode(KDep);

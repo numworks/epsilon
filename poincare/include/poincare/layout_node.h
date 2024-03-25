@@ -50,15 +50,12 @@ class LayoutNode : public TreeNode {
     return 0;
   }
 
- protected:
-  virtual bool protectedIsIdenticalTo(OLayout l) = 0;
-
-  // Sizing and positioning
-  virtual KDSize computeSize(KDFont::Size font) = 0;
-  virtual KDCoordinate computeBaseline(KDFont::Size font) = 0;
-
  private:
-  virtual void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) = 0;
+  virtual KDSize computeSize(KDFont::Size font) const = 0;
+  virtual KDCoordinate computeBaseline(KDFont::Size font) const = 0;
+  virtual void render(KDContext *ctx, KDPoint p,
+                      KDGlyph::Style style) const = 0;
+  virtual bool protectedIsIdenticalTo(OLayout l) const = 0;
 
   KDRect m_frame;
   /* m_baseline is the signed vertical distance from the top of the layout to

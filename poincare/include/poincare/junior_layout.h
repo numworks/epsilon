@@ -18,7 +18,7 @@ namespace Poincare {
 class JuniorLayoutNode final : public LayoutNode {
   friend class JuniorLayout;
 
- public:
+ private:
   JuniorLayoutNode(const PoincareJ::Tree* tree, size_t treeSize) {
     memcpy(m_blocks, tree->block(), treeSize);
   }
@@ -38,20 +38,19 @@ class JuniorLayoutNode final : public LayoutNode {
   }
 #endif
 
- protected:
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
   // LayoutNode
-  KDSize computeSize(KDFont::Size font) override;
-  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDSize computeSize(KDFont::Size font) const override;
+  KDCoordinate computeBaseline(KDFont::Size font) const override;
 
-  bool protectedIsIdenticalTo(OLayout l) override;
+  bool protectedIsIdenticalTo(OLayout l) const override;
 
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            PoincareJ::LayoutCursor* cursor, KDColor selectionColor);
-  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
+            PoincareJ::LayoutCursor* cursor, KDColor selectionColor) const;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) const override;
 
   const PoincareJ::Tree* tree() const {
     return PoincareJ::Tree::FromBlocks(m_blocks);

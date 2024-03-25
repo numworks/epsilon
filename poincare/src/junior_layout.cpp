@@ -11,15 +11,16 @@
 
 namespace Poincare {
 
-KDSize JuniorLayoutNode::computeSize(KDFont::Size font) {
+KDSize JuniorLayoutNode::computeSize(KDFont::Size font) const {
   return PoincareJ::Render::Size(tree(), font);
 }
 
-KDCoordinate JuniorLayoutNode::computeBaseline(KDFont::Size font) {
+KDCoordinate JuniorLayoutNode::computeBaseline(KDFont::Size font) const {
   return PoincareJ::Render::Baseline(tree(), font);
 }
 
-void JuniorLayoutNode::render(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
+void JuniorLayoutNode::render(KDContext* ctx, KDPoint p,
+                              KDGlyph::Style style) const {
   PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
                           style.backgroundColor);
 }
@@ -30,7 +31,7 @@ size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
   return PoincareJ::Serialize(tree(), buffer, buffer + bufferSize) - buffer;
 }
 
-bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) {
+bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) const {
   /* TODO PCJ have a comparison with a flag to ignore separators similar to what
    * isIdenticalTo(makeEditable=true)) was doing. */
   return tree()->treeIsIdenticalTo(static_cast<const JuniorLayout&>(l).tree());
@@ -107,7 +108,7 @@ void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
 
 void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
                             PoincareJ::LayoutCursor* cursor,
-                            KDColor selectionColor) {
+                            KDColor selectionColor) const {
   PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
                           style.backgroundColor, cursor);
 }

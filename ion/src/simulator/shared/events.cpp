@@ -109,7 +109,7 @@ Event getEvent(int *timeout) {
     nextEvent = sharedGetEvent(timeout);
   }
   if (nextEvent == Events::USBPlug) {
-    /* Keep track of whever the simulator is plugged or unplugged. */
+    /* Keep track of whether the simulator is plugged or unplugged. */
     Ion::USB::togglePlug();
   }
   if (sDestinationJournal != nullptr) {

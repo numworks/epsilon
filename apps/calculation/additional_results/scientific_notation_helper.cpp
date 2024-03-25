@@ -15,7 +15,9 @@ Layout ScientificLayout(
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
   Expression e;
-  if (a.type() == ExpressionNode::Type::BasedInteger) {
+  if (a.type() == ExpressionNode::Type::BasedInteger ||
+      (a.type() == ExpressionNode::Type::Opposite &&
+       a.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger)) {
     // Based Integer must be approximated to be layouted in scientific mode
     ApproximationContext approximationContext(context);
     e = Float<double>::Builder(

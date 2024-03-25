@@ -931,5 +931,6 @@ QUIZ_CASE(calculation_additional_results) {
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.matrix = true},
                                            &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("-10", {}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("-10", {.scientificNotation = true},
+                                           &globalContext, &store);
 }

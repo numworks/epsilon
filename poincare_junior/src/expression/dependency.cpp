@@ -89,8 +89,8 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
   bool changed = false;
   int totalNumberOfDependencies = list->numberOfChildren();
   int i = 0;
+  const Tree* depI = list->nextNode();
   while (i < totalNumberOfDependencies) {
-    const Tree* depI = list->child(i);
     Tree* approximation;
 
     bool hasSymbolsOrRandom = depI->recursivelyMatches(
@@ -120,6 +120,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       totalNumberOfDependencies--;
     } else {
       i++;
+      depI = depI->nextTree();
     }
   }
 
@@ -151,8 +152,8 @@ bool RemoveUselessDependencies(Tree* dep) {
   Tree* list = dep->child(1);
   assert(list->isSet());
   bool changed = false;
+  Tree* depI = list->child(0);
   for (int i = 0; i < list->numberOfChildren(); i++) {
-    Tree* depI = list->child(i);
     // TODO is it true with infinite ? for instance -inf+inf is undef
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
     if (depI->isAddition() || depI->isMultiplication()) {
@@ -174,6 +175,7 @@ bool RemoveUselessDependencies(Tree* dep) {
       }
 #endif
     }
+    depI = depI->nextTree();
   }
   if (changed) {
     NAry::Sort(list);
@@ -204,13 +206,15 @@ bool RemoveUselessDependencies(Tree* dep) {
 
   /* Step 3: Remove dependencies already contained in main expression.
    * dep(x^2+1,{x}) -> x^2+1 */
+  depI = list->child(0);
   for (int i = 0; i < list->numberOfChildren(); i++) {
-    const Tree* depI = list->child(i);
     if (ContainsSameDependency(depI, expression)) {
       NAry::RemoveChildAtIndex(list, i);
       i--;
       changed = true;
+      continue;
     }
+    depI = depI->nextTree();
   }
 
   changed |= Dependency::RemoveDefinedDependencies(dep);

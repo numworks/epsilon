@@ -33,7 +33,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
   bool layoutChanged = false;
   m_layoutView.setEditing(isEditing);
   // TODO only useful if empty racks or matrices are changed
-  layoutView()->layout().invalidAllSizesPositionsAndBaselines();
+  layoutView()->layout()->invalidAllSizesPositionsAndBaselines();
   layoutChanged = true;
   layoutSubviews();
   markWholeFrameAsDirty();

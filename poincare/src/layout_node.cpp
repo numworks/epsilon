@@ -3,6 +3,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/layout_node.h>
 #include <poincare/old_expression.h>
+#include <poincare_junior/src/layout/rack_layout.h>
 
 namespace Poincare {
 
@@ -21,8 +22,10 @@ bool LayoutNode::isIdenticalTo(const Layout l, bool makeEditable) const {
   return protectedIsIdenticalTo(l);
 }
 
-KDSize LayoutNode::layoutSize(KDFont::Size font) const {
+KDSize LayoutNode::layoutSize(KDFont::Size font,
+                              PoincareJ::LayoutCursor *cursor) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
+    PoincareJ::RackLayout::s_layoutCursor = cursor;
     KDSize size = computeSize(font);
 
     /* This method will raise an exception if the size of the layout that is
@@ -63,8 +66,10 @@ KDSize LayoutNode::layoutSize(KDFont::Size font) const {
   return m_size;
 }
 
-KDCoordinate LayoutNode::baseline(KDFont::Size font) const {
+KDCoordinate LayoutNode::baseline(KDFont::Size font,
+                                  PoincareJ::LayoutCursor *cursor) const {
   if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
+    PoincareJ::RackLayout::s_layoutCursor = cursor;
     m_baseline = computeBaseline(font);
     m_flags.m_baselined = true;
     m_flags.m_baselineFontSize = font;

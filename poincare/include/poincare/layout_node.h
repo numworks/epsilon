@@ -9,6 +9,10 @@
 #include <omg/directions.h>
 #include <poincare/tree_node.h>
 
+namespace PoincareJ {
+class LayoutCursor;
+}
+
 namespace Poincare {
 
 class OLayout;
@@ -34,10 +38,13 @@ class LayoutNode : public TreeNode {
 
   // Rendering
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
-  KDSize layoutSize(KDFont::Size font) const;
-  KDCoordinate baseline(KDFont::Size font) const;
+  KDSize layoutSize(KDFont::Size font,
+                    PoincareJ::LayoutCursor *cursor = nullptr) const;
+  KDCoordinate baseline(KDFont::Size font,
+                        PoincareJ::LayoutCursor *cursor = nullptr) const;
 
   // TODO: invalid cache when tempering with hierarchy
+  // TODO remember if cursor was in layout and hide this method
   virtual void invalidAllSizesPositionsAndBaselines();
   size_t serialize(char *buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode =

@@ -8,10 +8,6 @@
 #include <poincare/tree_handle.h>
 #include <poincare/trinary_boolean.h>
 
-namespace PoincareJ {
-class LayoutCursor;
-}
-
 namespace Poincare {
 
 class OLayout : public TreeHandle {
@@ -19,7 +15,14 @@ class OLayout : public TreeHandle {
   OLayout() : TreeHandle() {}
   OLayout(const LayoutNode *node) : TreeHandle(node) {}
   OLayout clone() const;
-  LayoutNode *node() const {
+
+  const LayoutNode *operator->() const {
+    assert(isUninitialized() ||
+           (TreeHandle::node() && !TreeHandle::node()->isGhost()));
+    return static_cast<const LayoutNode *>(TreeHandle::node());
+  }
+
+  LayoutNode *operator->() {
     assert(isUninitialized() ||
            (TreeHandle::node() && !TreeHandle::node()->isGhost()));
     return static_cast<LayoutNode *>(TreeHandle::node());
@@ -27,25 +30,16 @@ class OLayout : public TreeHandle {
 
   bool isIdenticalTo(OLayout l, bool makeEditable = false) const {
     return isUninitialized() ? l.isUninitialized()
-                             : node()->isIdenticalTo(l, makeEditable);
-  }
-
-  // Rendering
-  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) const {
-    return node()->render(ctx, p, style);
+                             : (*this)->isIdenticalTo(l, makeEditable);
   }
   KDSize layoutSize(KDFont::Size font,
                     PoincareJ::LayoutCursor *cursor = nullptr) const;
   KDCoordinate baseline(KDFont::Size font,
                         PoincareJ::LayoutCursor *cursor = nullptr) const;
-  void invalidAllSizesPositionsAndBaselines() {
-    // TODO remember if cursor was in layout and hide this method
-    return node()->invalidAllSizesPositionsAndBaselines();
-  }
 
   // Serialization
   size_t serializeForParsing(char *buffer, size_t bufferSize) const {
-    return node()->serialize(buffer, bufferSize);
+    return (*this)->serialize(buffer, bufferSize);
   }
   size_t serializeParsedExpression(char *buffer, size_t bufferSize,
                                    Context *context) const;
@@ -54,6 +48,3 @@ class OLayout : public TreeHandle {
 }  // namespace Poincare
 
 #endif
-
-// TODO remove this hack
-#include "junior_layout.h"

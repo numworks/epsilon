@@ -9,14 +9,13 @@ namespace Poincare {
 
 KDSize Layout::layoutSize(KDFont::Size font,
                           PoincareJ::LayoutCursor *cursor) const {
-  PoincareJ::RackLayout::s_layoutCursor = cursor;
-  return node()->layoutSize(font);
+  return (*this)->layoutSize(font, cursor);
 }
 
 KDCoordinate Layout::baseline(KDFont::Size font,
                               PoincareJ::LayoutCursor *cursor) const {
   PoincareJ::RackLayout::s_layoutCursor = cursor;
-  return node()->baseline(font);
+  return (*this)->baseline(font, cursor);
 }
 
 Layout Layout::clone() const {
@@ -25,7 +24,7 @@ Layout Layout::clone() const {
   }
   TreeHandle c = TreeHandle::clone();
   Layout cast = Layout(static_cast<LayoutNode *>(c.node()));
-  cast.invalidAllSizesPositionsAndBaselines();
+  cast->invalidAllSizesPositionsAndBaselines();
   return cast;
 }
 

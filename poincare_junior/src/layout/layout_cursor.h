@@ -187,7 +187,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
   void performBackspace() { execute(&EditionPoolCursor::performBackspace); }
   void invalidateSizesAndPositions() override {
-    m_layout.invalidAllSizesPositionsAndBaselines();
+    m_layout->invalidAllSizesPositionsAndBaselines();
   }
 
   void beautifyLeft(Context* context);

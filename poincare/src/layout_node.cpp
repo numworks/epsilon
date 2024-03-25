@@ -21,15 +21,6 @@ bool LayoutNode::isIdenticalTo(const Layout l, bool makeEditable) const {
   return protectedIsIdenticalTo(l);
 }
 
-KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) const {
-  if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {
-    m_frame.setOrigin(KDPointZero);
-    m_flags.m_positioned = true;
-    m_flags.m_positionFontSize = font;
-  }
-  return m_frame.origin();
-}
-
 KDSize LayoutNode::layoutSize(KDFont::Size font) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
     KDSize size = computeSize(font);
@@ -65,11 +56,11 @@ KDSize LayoutNode::layoutSize(KDFont::Size font) const {
       ExceptionCheckpoint::Raise();
     }
 
-    m_frame.setSize(size);
+    m_size = size;
     m_flags.m_sized = true;
     m_flags.m_sizeFontSize = font;
   }
-  return m_frame.size();
+  return m_size;
 }
 
 KDCoordinate LayoutNode::baseline(KDFont::Size font) const {
@@ -83,7 +74,6 @@ KDCoordinate LayoutNode::baseline(KDFont::Size font) const {
 
 void LayoutNode::invalidAllSizesPositionsAndBaselines() {
   m_flags.m_sized = false;
-  m_flags.m_positioned = false;
   m_flags.m_baselined = false;
 }
 

@@ -20,14 +20,12 @@ class LayoutNode : public TreeNode {
   // Constructor
   LayoutNode()
       : TreeNode(),
-        m_frame(KDRectZero),
+        m_size(KDSizeZero),
         m_baseline(0),
         m_flags({
             .m_baselined = false,
-            .m_positioned = false,
             .m_sized = false,
             .m_baselineFontSize = KDFont::Size::Small,
-            .m_positionFontSize = KDFont::Size::Small,
             .m_sizeFontSize = KDFont::Size::Small,
         }) {}
 
@@ -36,7 +34,6 @@ class LayoutNode : public TreeNode {
 
   // Rendering
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
-  KDPoint absoluteOrigin(KDFont::Size font) const;
   KDSize layoutSize(KDFont::Size font) const;
   KDCoordinate baseline(KDFont::Size font) const;
 
@@ -57,7 +54,7 @@ class LayoutNode : public TreeNode {
                       KDGlyph::Style style) const = 0;
   virtual bool protectedIsIdenticalTo(OLayout l) const = 0;
 
-  mutable KDRect m_frame;
+  mutable KDSize m_size;
   /* m_baseline is the signed vertical distance from the top of the layout to
    * the fraction bar of an hypothetical fraction sibling layout. If the top of
    * the layout is under that bar, the baseline is negative. */
@@ -67,10 +64,8 @@ class LayoutNode : public TreeNode {
    */
   struct Flags {
     bool m_baselined : 1;
-    bool m_positioned : 1;
     bool m_sized : 1;
     KDFont::Size m_baselineFontSize : 1;
-    KDFont::Size m_positionFontSize : 1;
     KDFont::Size m_sizeFontSize : 1;
   };
   mutable Flags m_flags;

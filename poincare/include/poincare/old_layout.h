@@ -36,9 +36,6 @@ class OLayout : public TreeHandle {
   }
   KDSize layoutSize(KDFont::Size font,
                     PoincareJ::LayoutCursor *cursor = nullptr) const;
-  KDPoint absoluteOrigin(KDFont::Size font) const {
-    return node()->absoluteOrigin(font);
-  }
   KDCoordinate baseline(KDFont::Size font,
                         PoincareJ::LayoutCursor *cursor = nullptr) const;
   void invalidAllSizesPositionsAndBaselines() {

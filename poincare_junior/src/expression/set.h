@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 class Set {
   /*
-   * Set is a NAry with ordered and unique elements
+   * Set elements are always ordered and unique
    */
  public:
   static Tree* PushEmpty();

@@ -84,12 +84,12 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
    * modified the list and it processes all the dependencies. We should rather
    * add an AddDependency method that makes sure the dependency is interesting
    * and not already covered by another one in the list. */
-  Tree* list = dep->child(1);
+  Tree* set = dep->child(1);
 
   bool changed = false;
-  int totalNumberOfDependencies = list->numberOfChildren();
+  int totalNumberOfDependencies = set->numberOfChildren();
   int i = 0;
-  const Tree* depI = list->nextNode();
+  const Tree* depI = set->nextNode();
   while (i < totalNumberOfDependencies) {
     Tree* approximation;
 
@@ -116,7 +116,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     approximation->removeTree();
     if (!hasSymbolsOrRandom) {
       changed = true;
-      NAry::RemoveChildAtIndex(list, i);
+      NAry::RemoveChildAtIndex(set, i);
       totalNumberOfDependencies--;
     } else {
       i++;
@@ -125,7 +125,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
   }
 
   if (/*expression->isUndefined() ||*/ totalNumberOfDependencies == 0) {
-    list->removeTree();
+    set->removeTree();
     dep->removeNode();
     return true;
   }
@@ -149,16 +149,17 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
 
 bool RemoveUselessDependencies(Tree* dep) {
   const Tree* expression = dep->child(0);
-  Tree* list = dep->child(1);
-  assert(list->isSet());
+  Tree* set = dep->child(1);
+  // TODO: This function uses Set as an Nary which is an implementation detail
+  assert(set->isSet());
   bool changed = false;
-  Tree* depI = list->child(0);
-  for (int i = 0; i < list->numberOfChildren(); i++) {
+  Tree* depI = set->child(0);
+  for (int i = 0; i < set->numberOfChildren(); i++) {
     // TODO is it true with infinite ? for instance -inf+inf is undef
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
     if (depI->isAddition() || depI->isMultiplication()) {
       NAry::SetNumberOfChildren(
-          list, list->numberOfChildren() + depI->numberOfChildren() - 1);
+          set, set->numberOfChildren() + depI->numberOfChildren() - 1);
       depI->removeNode();
       i--;
       changed = true;
@@ -178,7 +179,7 @@ bool RemoveUselessDependencies(Tree* dep) {
     depI = depI->nextTree();
   }
   if (changed) {
-    NAry::Sort(list);
+    NAry::Sort(set);
   }
 
   // ShallowReduce to remove defined dependencies ({x+3}->{x, 3}->{x})
@@ -189,14 +190,14 @@ bool RemoveUselessDependencies(Tree* dep) {
 
   /* Step 2: Remove duplicate dependencies and dependencies contained in others
    * {sqrt(x), sqrt(x), 1/sqrt(x)} -> {1/sqrt(x)} */
-  for (int i = 0; i < list->numberOfChildren(); i++) {
-    Tree* depI = list->child(i);
-    for (int j = 0; j < list->numberOfChildren(); j++) {
+  for (int i = 0; i < set->numberOfChildren(); i++) {
+    Tree* depI = set->child(i);
+    for (int j = 0; j < set->numberOfChildren(); j++) {
       if (i == j) {
         continue;
       }
-      if (ContainsSameDependency(depI, list->child(j))) {
-        NAry::RemoveChildAtIndex(list, j);
+      if (ContainsSameDependency(depI, set->child(j))) {
+        NAry::RemoveChildAtIndex(set, j);
         i--;
         changed = true;
         break;
@@ -206,10 +207,10 @@ bool RemoveUselessDependencies(Tree* dep) {
 
   /* Step 3: Remove dependencies already contained in main expression.
    * dep(x^2+1,{x}) -> x^2+1 */
-  depI = list->child(0);
-  for (int i = 0; i < list->numberOfChildren(); i++) {
+  depI = set->child(0);
+  for (int i = 0; i < set->numberOfChildren(); i++) {
     if (ContainsSameDependency(depI, expression)) {
-      NAry::RemoveChildAtIndex(list, i);
+      NAry::RemoveChildAtIndex(set, i);
       i--;
       changed = true;
       continue;

@@ -666,10 +666,10 @@ void Zoom::fitWithSolver(bool *leftInterrupted, bool *rightInterrupted,
   float c = m_bounds.center();
   float d = std::max(k_marginAroundZero,
                      std::fabs(c * Solver<float>::k_relativePrecision));
-  *rightInterrupted = fitWithSolverHelper(c + d, m_bounds.max(), evaluator, aux,
-                                          test, hone, vertical, fDouble);
-  *leftInterrupted = fitWithSolverHelper(c - d, m_bounds.min(), evaluator, aux,
-                                         test, hone, vertical, fDouble);
+  fitWithSolverHelper(c + d, m_bounds.max(), rightInterrupted, evaluator, aux,
+                      test, hone, vertical, fDouble);
+  fitWithSolverHelper(c - d, m_bounds.min(), leftInterrupted, evaluator, aux,
+                      test, hone, vertical, fDouble);
 
   Coordinate2D<float> p1(c - d, evaluator(c - d, aux));
   Coordinate2D<float> p2(c, evaluator(c, aux));
@@ -683,7 +683,7 @@ void Zoom::fitWithSolver(bool *leftInterrupted, bool *rightInterrupted,
   }
 }
 
-bool Zoom::fitWithSolverHelper(float start, float end,
+void Zoom::fitWithSolverHelper(float start, float end, bool *interrupted,
                                Solver<float>::FunctionEvaluation evaluator,
                                const void *aux, Solver<float>::BracketTest test,
                                Solver<float>::HoneResult hone, bool vertical,
@@ -703,7 +703,8 @@ bool Zoom::fitWithSolverHelper(float start, float end,
    *   TODO: We should probably find a better way to detect the period of
    *         periodic functions, so that we show one or two period instead of a
    *         fixed number of points of interest. */
-
+  assert(interrupted);
+  *interrupted = false;
   Solver<float> solver(start, end);
   Range2D<float> savedRange;
   bool savedRangeIsInit = false;
@@ -718,7 +719,7 @@ bool Zoom::fitWithSolverHelper(float start, float end,
       /* The function evaluates to NAN in single-precision only. It is likely
        * we have reached the limits of the float type, such as when
        * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
-      return false;
+      return;
     }
     privateFitPoint(p, vertical);
     if (solver.lastInterest() == Solver<float>::Interest::Root) {
@@ -732,12 +733,14 @@ bool Zoom::fitWithSolverHelper(float start, float end,
       savedRangeIsInit = true;
       savedRange = m_interestingRange;
     } else if (nRoots + nOthers >= m_maxPointsOnOneSide) {
+      // The search was interrupted because too many points were found.
       assert(savedRangeIsInit);
       m_interestingRange = savedRange;
-      return true;
+      *interrupted = true;
+      return;
     }
   }
-  return false;
+  return;
 }
 
 void Zoom::privateFitPoint(Coordinate2D<float> xy, bool flipped) {

@@ -162,6 +162,18 @@ void assert_solves_numerically_to(const char *equation, double min, double max,
       });
 }
 
+void assert_solving_range_is(const char *equation, double min, double max) {
+  solve_and_process_error({equation}, [min, max](SystemOfEquations *system,
+                                                 SystemOfEquations::Error e) {
+    Shared::GlobalContext globalContext;
+    SolverContext solverContext(&globalContext);
+    quiz_assert(e == RequireApproximateSolution);
+    system->autoComputeApproximateSolvingRange(&solverContext);
+    Range1D<double> solvingRange = system->approximateSolvingRange();
+    quiz_assert(solvingRange.min() == min && solvingRange.max() == max);
+  });
+}
+
 void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
                                   Preferences::AngleUnit angleUnit) {
   Preferences::sharedPreferences->setComplexFormat(complexFormat);

@@ -24,6 +24,7 @@ i18n_files += $(call i18n_without_universal_for,solver/i18n/base)
 tests_src += $(addprefix apps/solver/test/,\
   equation_store.cpp \
   helpers.cpp \
+  solving_range.cpp \
 )
 
 # Image dependencies

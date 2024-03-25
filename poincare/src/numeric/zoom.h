@@ -173,13 +173,13 @@ class Zoom {
   bool yLengthCompatibleWithNormalization(float yLength,
                                           float yLengthNormalized) const;
   Range2D<float> prettyRange(bool forceNormalization) const;
-  void fitWithSolver(
+  bool fitWithSolver(
       bool* leftInterrupted, bool* rightInterrupted,
       Solver<float>::FunctionEvaluation evaluator, const void* aux,
       Solver<float>::BracketTest test, Solver<float>::HoneResult hone,
       bool vertical, Solver<double>::FunctionEvaluation fDouble = nullptr,
       Solver<float>::BracketTest testForCenterOfInterval = nullptr);
-  void fitWithSolverHelper(float start, float end, bool* interrupted,
+  bool fitWithSolverHelper(float start, float end, bool* interrupted,
                            Solver<float>::FunctionEvaluation evaluator,
                            const void* aux, Solver<float>::BracketTest test,
                            Solver<float>::HoneResult hone, bool vertical,

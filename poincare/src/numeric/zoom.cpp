@@ -652,7 +652,7 @@ Range2D<float> Zoom::prettyRange(bool forceNormalization) const {
   return saneRange;
 }
 
-void Zoom::fitWithSolver(bool* leftInterrupted, bool* rightInterrupted,
+bool Zoom::fitWithSolver(bool* leftInterrupted, bool* rightInterrupted,
                          Solver<float>::FunctionEvaluation evaluator,
                          const void* aux, Solver<float>::BracketTest test,
                          Solver<float>::HoneResult hone, bool vertical,
@@ -667,10 +667,12 @@ void Zoom::fitWithSolver(bool* leftInterrupted, bool* rightInterrupted,
   float c = m_bounds.center();
   float d = std::max(k_marginAroundZero,
                      std::fabs(c * Solver<float>::k_relativePrecision));
-  fitWithSolverHelper(c + d, m_bounds.max(), rightInterrupted, evaluator, aux,
-                      test, hone, vertical, fDouble);
-  fitWithSolverHelper(c - d, m_bounds.min(), leftInterrupted, evaluator, aux,
-                      test, hone, vertical, fDouble);
+  bool fitRight =
+      fitWithSolverHelper(c + d, m_bounds.max(), rightInterrupted, evaluator,
+                          aux, test, hone, vertical, fDouble);
+  bool fitLeft =
+      fitWithSolverHelper(c - d, m_bounds.min(), leftInterrupted, evaluator,
+                          aux, test, hone, vertical, fDouble);
 
   Coordinate2D<float> p1(c - d, evaluator(c - d, aux));
   Coordinate2D<float> p2(c, evaluator(c, aux));
@@ -679,12 +681,14 @@ void Zoom::fitWithSolver(bool* leftInterrupted, bool* rightInterrupted,
       testForCenterOfInterval != nullptr
           ? testForCenterOfInterval(p1, p2, p3, aux)
           : test(p1, p2, p3, aux);
-  if (centerInterest != Solver<float>::Interest::None) {
+  bool fitCenter = centerInterest != Solver<float>::Interest::None;
+  if (fitCenter) {
     privateFitPoint(p2, vertical);
   }
+  return fitRight || fitLeft || fitCenter;
 }
 
-void Zoom::fitWithSolverHelper(float start, float end, bool* interrupted,
+bool Zoom::fitWithSolverHelper(float start, float end, bool* interrupted,
                                Solver<float>::FunctionEvaluation evaluator,
                                const void* aux, Solver<float>::BracketTest test,
                                Solver<float>::HoneResult hone, bool vertical,
@@ -712,6 +716,7 @@ void Zoom::fitWithSolverHelper(float start, float end, bool* interrupted,
   int nRoots = 0;
   int nOthers = 0;
   Coordinate2D<float> p;
+  bool didFit = false;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone))
                            .x())) {  // assignment in condition
     if (fDouble != nullptr &&
@@ -720,9 +725,10 @@ void Zoom::fitWithSolverHelper(float start, float end, bool* interrupted,
       /* The function evaluates to NAN in single-precision only. It is likely
        * we have reached the limits of the float type, such as when
        * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
-      return;
+      return didFit;
     }
     privateFitPoint(p, vertical);
+    didFit = true;
     if (solver.lastInterest() == Solver<float>::Interest::Root) {
       nRoots++;
     } else {
@@ -738,10 +744,10 @@ void Zoom::fitWithSolverHelper(float start, float end, bool* interrupted,
       assert(savedRangeIsInit);
       m_interestingRange = savedRange;
       *interrupted = true;
-      return;
+      return didFit;
     }
   }
-  return;
+  return didFit;
 }
 
 void Zoom::privateFitPoint(Coordinate2D<float> xy, bool flipped) {

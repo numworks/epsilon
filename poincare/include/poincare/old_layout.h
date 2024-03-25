@@ -24,7 +24,6 @@ class OLayout : public TreeHandle {
            (TreeHandle::node() && !TreeHandle::node()->isGhost()));
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
-  static OLayout LayoutFromAddress(const void *address, size_t size);
 
   // True if horizontal layout with only code points in it
   bool isCodePointsString() const;

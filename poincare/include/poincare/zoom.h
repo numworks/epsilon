@@ -178,9 +178,7 @@ class Zoom {
       Solver<float>::BracketTest test, Solver<float>::HoneResult hone,
       bool vertical, Solver<double>::FunctionEvaluation fDouble = nullptr,
       Solver<float>::BracketTest testForCenterOfInterval = nullptr);
-  /* Return true if the search was interrupted because too many points were
-   * found. */
-  bool fitWithSolverHelper(float start, float end,
+  void fitWithSolverHelper(float start, float end, bool *interrupted,
                            Solver<float>::FunctionEvaluation evaluator,
                            const void *aux, Solver<float>::BracketTest test,
                            Solver<float>::HoneResult hone, bool vertical,

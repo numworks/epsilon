@@ -83,10 +83,8 @@ Evaluation<T> SequenceNode::templatedApproximate(
 
 Sequence Sequence::Builder(const char* name, size_t length,
                            JuniorExpression child) {
-  if (AliasesLists::k_thetaAliases.contains(name, length)) {
-    name = AliasesLists::k_thetaAliases.mainAlias();
-    length = strlen(name);
-  }
+  // If needed, handle theta like functions and symbols
+  assert(!AliasesLists::k_thetaAliases.contains(name, length));
   PoincareJ::Tree* tree =
       PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSequence>(
           name, length + 1);

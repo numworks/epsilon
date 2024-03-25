@@ -83,6 +83,17 @@ class FileSystem {
       Record::Name recordName, const void *dataChunks[], size_t sizeChunks[],
       size_t numberOfChunks, bool extensionCanOverrideItself = false);
 
+  template <typename T>
+  void initSystemRecord() {
+    assert(!hasRecord(
+        Ion::Storage::Record(T::k_recordName, Ion::Storage::systemExtension)));
+    T object;
+    createRecordWithExtension(T::k_recordName, Ion::Storage::systemExtension,
+                              &object, sizeof(object));
+    assert(hasRecord(
+        Ion::Storage::Record(T::k_recordName, Ion::Storage::systemExtension)));
+  }
+
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
   Record recordWithExtensionAtIndex(const char *extension, int index) {
@@ -109,6 +120,16 @@ class FileSystem {
   const char *extensionOfRecordBaseNamedWithExtensions(
       const char *baseName, int baseNameLength, const char *const extensions[],
       size_t numberOfExtensions);
+
+  template <typename T>
+  T *findSystemRecord() {
+    Ion::Storage::Record record = recordBaseNamedWithExtension(
+        T::k_recordName, Ion::Storage::systemExtension);
+    assert(!record.isNull());
+    Ion::Storage::Record::Data data = record.value();
+    assert(data.size == sizeof(T));
+    return static_cast<T *>(const_cast<void *>(data.buffer));
+  }
 
   // Record destruction
   void destroyAllRecords();

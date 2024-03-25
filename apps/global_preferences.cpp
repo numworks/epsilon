@@ -2,19 +2,11 @@
 
 #include "apps_container_helper.h"
 
-static GlobalPreferences* fetchFromStorage() {
-  Ion::Storage::Record record =
-      Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
-          GlobalPreferences::k_recordName, Ion::Storage::systemExtension);
-  assert(!record.isNull());
-  Ion::Storage::Record::Data data = record.value();
-  assert(data.size == sizeof(GlobalPreferences));
-  return static_cast<GlobalPreferences*>(const_cast<void*>(data.buffer));
-}
-
 GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
-  static GlobalPreferences* ptr = fetchFromStorage();
-  assert(fetchFromStorage() == ptr);
+  static GlobalPreferences* ptr = Ion::Storage::FileSystem::sharedFileSystem
+                                      ->findSystemRecord<GlobalPreferences>();
+  assert(Ion::Storage::FileSystem::sharedFileSystem
+             ->findSystemRecord<GlobalPreferences>() == ptr);
   return ptr;
 }
 

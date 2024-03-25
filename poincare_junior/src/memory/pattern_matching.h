@@ -7,7 +7,6 @@
 
 #include "k_tree.h"
 #include "node_iterator.h"
-#include "pool.h"
 #include "tree.h"
 
 namespace PoincareJ {

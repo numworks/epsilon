@@ -142,15 +142,15 @@ The EditionPool has a reference table, which is an array of node offsets. This
 array has a maximal size (`EditionPool::k_maxNumberOfReferences`).
 
 In addition, offset can be a special identifier
-(`Pool::ReferenceTable::InvalidatedOffset`), indicating the node doesn't exist
-anymore in the EditionPool.
+(`EditionPool::ReferenceTable::InvalidatedOffset`), indicating the node doesn't
+exist anymore in the EditionPool.
 
 Each EditionReference has an identifier. It represents the index at which the
 EditionReference's node offset can be found in the EditionPool's reference
 table.
 
 Similarly, the identifier can be special :
-- `Pool::ReferenceTable::NoNodeIdentifier` indicates the EditionReference
+- `EditionPool::ReferenceTable::NoNodeIdentifier` indicates the EditionReference
 doesn't point to any tree.
 - `EditionPool::ReferenceTable::DeletedOffset` indicates the EditionReference
 has been deleted.

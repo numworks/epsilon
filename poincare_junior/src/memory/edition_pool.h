@@ -2,8 +2,13 @@
 #define POINCARE_MEMORY_EDITION_POOL_H
 
 #include <omg/global_box.h>
+#include <string.h>
 
-#include "pool.h"
+#include "tree.h"
+#include "type_block.h"
+#if POINCARE_TREE_LOG
+#include <iostream>
+#endif
 
 namespace Poincare {
 class JuniorLayout;
@@ -13,7 +18,7 @@ namespace PoincareJ {
 
 typedef void (*ActionWithContext)(void *context, const void *data);
 
-class EditionPool final : public Pool {
+class EditionPool {
   friend class EditionReference;
 
  public:
@@ -65,11 +70,58 @@ class EditionPool final : public Pool {
   template <BlockType blockType, typename... Types>
   Tree *push(Types... args);
 
-  using Pool::firstBlock;
-  const Block *firstBlock() const override { return m_blocks; }
-  using Pool::lastBlock;
+  /* We delete the assignment operator because copying without care the
+   * ReferenceTable would corrupt the m_referenceTable.m_pool pointer. */
+  EditionPool &operator=(EditionPool &&) = delete;
+  EditionPool &operator=(const EditionPool &) = delete;
+
+  Block *blockAtIndex(int i) { return firstBlock() + i; }
+
+  Tree *nodeForIdentifier(uint16_t id) {
+    return referenceTable()->nodeForIdentifier(id);
+  }
+  bool contains(const Block *block) const {
+    return block >= firstBlock() && block < lastBlock();
+  }
+  const Block *firstBlock() const { return m_blocks; }
+  Block *firstBlock() { return m_blocks; }
   // If EditionPool is empty, first and last blocks are the same one
-  const Block *lastBlock() const override { return m_blocks + m_size; }
+  const Block *lastBlock() const { return m_blocks + m_size; }
+  Block *lastBlock() { return m_blocks + m_size; }
+  size_t size() const { return m_size; }
+  size_t numberOfTrees() const;
+  // Return true if block is the root node of one of the pool's trees.
+  bool isRootBlock(const Block *block, bool allowLast = false) const;
+
+  // Offset in the ReferenceTable are relative to the referenceBlock
+  Block *referenceBlock() { return firstBlock(); };
+
+#if POINCARE_TREE_LOG
+  enum class LogFormat { Flat, Tree };
+#endif
+ private:
+#if POINCARE_TREE_LOG
+ public:
+  void logNode(std::ostream &stream, const Tree *node, bool recursive,
+               bool verbose, int indentation);
+  void log(std::ostream &stream, LogFormat format, bool verbose,
+           int indentation = 0);
+  __attribute__((__used__)) void log() {
+    log(std::cout, LogFormat::Tree, false);
+  }
+
+#endif
+
+ public:
+  Tree::ConstNodes allNodes() {
+    return Tree::ConstNodes(Tree::FromBlocks(firstBlock()), numberOfTrees());
+  }
+
+  Tree::ConstTrees trees() {
+    return Tree::ConstTrees(Tree::FromBlocks(firstBlock()), numberOfTrees());
+  }
+
+ public:
   void setNumberOfBlocks(int numberOfBlocks) { m_size = numberOfBlocks; }
 
   // Will changing the modified tree alter the other tree ?
@@ -87,10 +139,9 @@ class EditionPool final : public Pool {
   // Pool memory
   void checkForEnoughSpace(size_t numberOfRequiredBlock);
 #if POINCARE_TREE_LOG
-  const char *name() override { return "Edition"; }
+  const char *name() { return "Edition"; }
 #endif
-
-  class ReferenceTable : public Pool::ReferenceTable {
+  class ReferenceTable {
     /* The edition pool reference table stores the offset of the tree in the
      * edition pool.
      * - We assume (and assert) that we never referenced more then
@@ -100,9 +151,16 @@ class EditionPool final : public Pool {
      *   in the pool.
      */
    public:
-    ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
-    Tree *nodeForIdentifier(uint16_t id) const override;
-    uint16_t storeNode(Tree *node) override;
+    /* Special m_identifier when the reference does not point to a Tree yet. */
+    constexpr static uint16_t NoNodeIdentifier = 0xFFFF;
+    constexpr static uint16_t NumberOfSpecialIdentifier = 1;
+    /* Special offset in the nodeOffsetArray when the pointed Tree has been
+     * removed or replaced. */
+    constexpr static uint16_t InvalidatedOffset = 0xFFFF;
+
+    ReferenceTable(EditionPool *pool) : m_length(0), m_pool(pool) {}
+    Tree *nodeForIdentifier(uint16_t id) const;
+    uint16_t storeNode(Tree *node);
     void updateIdentifier(uint16_t id, Tree *newNode);
     void deleteIdentifier(uint16_t id);
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, const Block *,
@@ -112,20 +170,30 @@ class EditionPool final : public Pool {
                      const Block *contextSelection2, int contextAlteration);
     void deleteIdentifiersAfterBlock(const Block *block);
 
+    bool isFull() { return numberOfStoredNodes() == maxNumberOfReferences(); }
+    bool isEmpty() const { return numberOfStoredNodes() == 0; }
+    size_t numberOfStoredNodes() const { return m_length; }
+    bool reset();
+#if POINCARE_TREE_LOG
+    void logIdsForNode(std::ostream &stream, const Tree *node) const;
+    uint16_t identifierForIndex(uint16_t index) const { return index; }
+#endif
    private:
     /* Special offset in the nodeOffsetArray when the EditionReference that
      * owned it has been deleted. */
     constexpr static uint16_t DeletedOffset = 0xFFFE;
 
-    size_t maxNumberOfReferences() const override {
+    size_t maxNumberOfReferences() const {
       return EditionPool::k_maxNumberOfReferences;
     }
-    uint16_t *nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }
+    uint16_t *nodeOffsetArray() { return m_nodeOffsetForIdentifier; }
+    uint16_t storeNodeAtIndex(Tree *node, size_t index);
+
+    uint16_t m_length;
+    EditionPool *m_pool;
     uint16_t m_nodeOffsetForIdentifier[EditionPool::k_maxNumberOfReferences];
   };
-  const ReferenceTable *referenceTable() const override {
-    return &m_referenceTable;
-  }
+  const ReferenceTable *referenceTable() const { return &m_referenceTable; }
 
   /* TODO: if we end up needing too many EditionReference, we could ref-count
    * them in m_referenceTable and implement a destructor on EditionReference. */

@@ -64,14 +64,14 @@ void Log(LoggerType type, const char* event, const void* blockAddress,
     Logger(type) << " pointerAddress=\"" << pointerAddress << "\"";
   }
   Logger(type) << ">\n";
-  Pool* pool;
-  Pool::LogFormat format;
+  EditionPool* pool;
+  EditionPool::LogFormat format;
   if (type == LoggerType::Cache) {
-    pool = CachePool::SharedCachePool;
-    format = Pool::LogFormat::Tree;
+    pool = SharedEditionPool;
+    format = EditionPool::LogFormat::Tree;
   } else {
     pool = SharedEditionPool;
-    format = Pool::LogFormat::Flat;
+    format = EditionPool::LogFormat::Flat;
   }
   pool->log(Logger(type), format, true, 2);
   Logger(type) << "\n  </" << event << ">" << std::endl;

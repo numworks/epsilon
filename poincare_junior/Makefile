@@ -74,7 +74,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   memory/edition_reference.cpp \
   memory/exception_checkpoint.cpp \
   memory/pattern_matching.cpp \
-  memory/pool.cpp \
   memory/storage_context.cpp \
   memory/tree.cpp \
   memory/value_block.cpp \

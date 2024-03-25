@@ -107,6 +107,9 @@ class JuniorLayout final : public OLayout {
   JuniorLayoutNode* node() {
     return static_cast<JuniorLayoutNode*>(OLayout::node());
   }
+
+  // True if rack with only code points in it
+  bool isCodePointsString() const;
 };
 
 }  // namespace Poincare

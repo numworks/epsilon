@@ -29,22 +29,6 @@ Layout Layout::clone() const {
   return cast;
 }
 
-bool Layout::isCodePointsString() const {
-#if 0  // TODO_PCJ
-  if (!isHorizontal()) {
-    return false;
-  }
-  int n = numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    if (childAtIndex(i).otype() != LayoutNode::Type::CodePointLayout &&
-        childAtIndex(i).otype() != LayoutNode::Type::CombinedCodePointsLayout) {
-      return false;
-    }
-  }
-#endif
-  return true;
-}
-
 size_t Layout::serializeParsedExpression(char *buffer, size_t bufferSize,
                                          Context *context) const {
   /* This method fixes the following problem:

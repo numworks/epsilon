@@ -25,8 +25,6 @@ class OLayout : public TreeHandle {
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
 
-  // True if horizontal layout with only code points in it
-  bool isCodePointsString() const;
   bool isIdenticalTo(OLayout l, bool makeEditable = false) {
     return isUninitialized() ? l.isUninitialized()
                              : node()->isIdenticalTo(l, makeEditable);

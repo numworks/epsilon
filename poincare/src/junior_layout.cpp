@@ -120,4 +120,13 @@ JuniorLayout JuniorLayout::cloneWithoutMargins() {
   return JuniorLayout::Builder(clone);
 }
 
+bool JuniorLayout::isCodePointsString() const {
+  for (const PoincareJ::Tree* child : tree()->children()) {
+    if (!(child->isCodePointLayout() || child->isCombinedCodePointsLayout())) {
+      return false;
+    }
+  }
+  return true;
+}
+
 }  // namespace Poincare

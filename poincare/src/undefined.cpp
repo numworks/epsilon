@@ -1,5 +1,5 @@
 #include <poincare/complex.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare_junior/src/memory/edition_pool.h>

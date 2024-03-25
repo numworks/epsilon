@@ -1,6 +1,6 @@
 #include <poincare/complex.h>
 #include <poincare/cosine.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/secant.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

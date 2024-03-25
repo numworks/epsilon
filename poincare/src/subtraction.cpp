@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <poincare/addition.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>

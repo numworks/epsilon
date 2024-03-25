@@ -1,9 +1,7 @@
 #include <assert.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/binomial_coefficient.h>
-#include <poincare/binomial_coefficient_layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/letter_c_with_sub_and_superscript_layout.h>
+#include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

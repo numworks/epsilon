@@ -1,14 +1,8 @@
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/combined_code_points_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/logarithm.h>
-#include <poincare/parenthesis_layout.h>
-#include <poincare/string_layout.h>
-#include <poincare/vertical_offset_layout.h>
 
 #include <utility>
 

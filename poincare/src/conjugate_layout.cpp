@@ -1,8 +1,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/conjugate.h>
-#include <poincare/conjugate_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {

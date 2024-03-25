@@ -1,7 +1,7 @@
 #include <poincare/derivative.h>
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/hyperbolic_tangent.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 

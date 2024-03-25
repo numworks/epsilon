@@ -4,7 +4,7 @@
 #include <poincare/float.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/randint.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

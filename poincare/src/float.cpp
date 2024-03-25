@@ -1,5 +1,5 @@
 #include <poincare/float.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 
 namespace Poincare {

@@ -1,6 +1,6 @@
 #include <poincare/addition.h>
 #include <poincare/determinant.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>

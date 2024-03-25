@@ -2,7 +2,7 @@
 #include <poincare/arc_tangent.h>
 #include <poincare/complex.h>
 #include <poincare/derivative.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

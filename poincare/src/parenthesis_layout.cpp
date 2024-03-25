@@ -1,4 +1,4 @@
-#include <poincare/parenthesis_layout.h>
+#include <poincare/layout.h>
 
 namespace Poincare {
 

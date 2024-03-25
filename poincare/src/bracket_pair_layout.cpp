@@ -1,4 +1,4 @@
-#include <poincare/bracket_pair_layout.h>
+#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/serialization_helper.h>
 

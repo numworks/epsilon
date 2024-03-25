@@ -1,5 +1,5 @@
 #include <poincare/arithmetic.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

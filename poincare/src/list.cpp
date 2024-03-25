@@ -1,10 +1,8 @@
 #include <poincare/addition.h>
-#include <poincare/curly_brace_layout.h>
 #include <poincare/dependency.h>
 #include <poincare/expression.h>
 #include <poincare/helpers.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/list.h>
 #include <poincare/list_complex.h>
 #include <poincare/multiplication.h>

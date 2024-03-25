@@ -1,7 +1,6 @@
 #include <poincare/ghost.h>
 #include <poincare/tree_handle.h>
 #include <poincare_expressions.h>
-#include <poincare_layouts.h>
 #if POINCARE_TREE_LOG
 #include <iostream>
 #endif

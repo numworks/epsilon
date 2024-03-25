@@ -1,17 +1,7 @@
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/binomial_coefficient_layout.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/combined_code_points_layout.h>
-#include <poincare/curly_brace_layout.h>
-#include <poincare/fraction_layout.h>
-#include <poincare/horizontal_layout.h>
 #include <poincare/input_beautification.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/matrix_layout.h>
-#include <poincare/nth_root_layout.h>
-#include <poincare/parenthesis_layout.h>
-#include <poincare/vertical_offset_layout.h>
 
 #include <algorithm>
 

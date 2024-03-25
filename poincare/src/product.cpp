@@ -1,7 +1,6 @@
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/product.h>
-#include <poincare/product_layout.h>
 #include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>

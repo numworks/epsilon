@@ -1,4 +1,4 @@
-#include <poincare/curly_brace_layout.h>
+#include <poincare/layout.h>
 
 namespace Poincare {
 

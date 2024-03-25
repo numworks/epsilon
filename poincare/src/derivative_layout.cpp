@@ -1,9 +1,6 @@
 #include <escher/metric.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/derivative.h>
-#include <poincare/derivative_layout.h>
-#include <poincare/fraction_layout.h>
-#include <poincare/parenthesis_layout.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
 
 #include <algorithm>

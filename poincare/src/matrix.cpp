@@ -6,9 +6,8 @@
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/matrix.h>
-#include <poincare/matrix_layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>

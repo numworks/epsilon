@@ -1,7 +1,5 @@
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/rightwards_arrow_expression.h>
 #include <poincare/serialization_helper.h>
 

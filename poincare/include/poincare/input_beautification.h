@@ -8,7 +8,6 @@
 #include <poincare/integral.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/layout_helper.h>
 #include <poincare/logarithm.h>
 #include <poincare/nth_root.h>
 #include <poincare/piecewise_operator.h>

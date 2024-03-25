@@ -1,7 +1,7 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

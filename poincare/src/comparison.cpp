@@ -1,11 +1,8 @@
 #include <assert.h>
 #include <poincare/boolean.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/combined_code_points_layout.h>
 #include <poincare/comparison.h>
 #include <poincare/float.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

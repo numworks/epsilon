@@ -1,10 +1,9 @@
 #include <assert.h>
 #include <poincare/addition.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/list.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
@@ -12,7 +11,6 @@
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
-#include <poincare/string_layout.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
 #include <poincare/unit.h>

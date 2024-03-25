@@ -2,7 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/conjugate.h>
 #include <poincare/derivative.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>

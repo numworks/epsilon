@@ -2,7 +2,6 @@
 #include <ion.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/cotangent.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
@@ -10,7 +9,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
 #include <poincare/infinity.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/list.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>

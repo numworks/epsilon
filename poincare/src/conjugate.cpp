@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/conjugate.h>
-#include <poincare/conjugate_layout.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>

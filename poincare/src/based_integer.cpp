@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <math.h>
 #include <poincare/based_integer.h>
-#include <poincare/code_point_layout.h>
+#include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <stdlib.h>

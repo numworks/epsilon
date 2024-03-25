@@ -4,7 +4,6 @@
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
@@ -15,7 +14,7 @@
 #include <poincare/float.h>
 #include <poincare/ghost.h>
 #include <poincare/imaginary_part.h>
-#include <poincare/junior_layout.h>
+#include <poincare/layout.h>
 #include <poincare/list.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
@@ -30,7 +29,6 @@
 #include <poincare/real_part.h>
 #include <poincare/solver.h>
 #include <poincare/store.h>
-#include <poincare/string_layout.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>

@@ -3,10 +3,9 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/constant.h>
 #include <poincare/division.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/nth_root.h>
-#include <poincare/nth_root_layout.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

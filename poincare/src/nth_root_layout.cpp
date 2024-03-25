@@ -1,7 +1,6 @@
 #include <assert.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/nth_root.h>
-#include <poincare/nth_root_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/square_root.h>
 

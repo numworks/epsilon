@@ -1,9 +1,8 @@
 #include <assert.h>
 #include <math.h>
 #include <poincare/arithmetic.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/fraction_layout.h>
 #include <poincare/infinity.h>
+#include <poincare/layout.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

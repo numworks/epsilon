@@ -1,6 +1,6 @@
 #include <poincare/dependency.h>
 #include <poincare/function.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

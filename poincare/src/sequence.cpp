@@ -1,14 +1,11 @@
 #include <apps/shared/sequence.h>
 #include <poincare/based_integer.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/complex.h>
-#include <poincare/horizontal_layout.h>
 #include <poincare/integer.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/sequence.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
-#include <poincare/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 
 namespace Poincare {

@@ -5,7 +5,6 @@
 #include <poincare/list_complex.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>
-#include <poincare/point_2D_layout.h>
 #include <poincare/point_evaluation.h>
 #include <poincare/symbol.h>
 #include <poincare_junior/src/expression/comparison.h>

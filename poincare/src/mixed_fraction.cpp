@@ -3,7 +3,7 @@
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/evaluation.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/mixed_fraction.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>

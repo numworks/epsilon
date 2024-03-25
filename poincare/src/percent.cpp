@@ -1,7 +1,6 @@
 #include <poincare/addition.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/division.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>

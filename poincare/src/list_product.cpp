@@ -1,4 +1,4 @@
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/list_product.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>

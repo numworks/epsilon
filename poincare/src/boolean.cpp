@@ -1,5 +1,5 @@
 #include <poincare/boolean.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 
 namespace Poincare {
 

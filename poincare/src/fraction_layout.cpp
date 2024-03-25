@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <escher/metric.h>
-#include <poincare/fraction_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
 
 #include <algorithm>

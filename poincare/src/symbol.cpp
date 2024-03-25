@@ -1,16 +1,14 @@
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/parametered_expression.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
-#include <poincare/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <string.h>
 

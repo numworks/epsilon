@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/round.h>

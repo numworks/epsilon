@@ -1,13 +1,12 @@
 #include <assert.h>
 #include <poincare/absolute_value.h>
-#include <poincare/absolute_value_layout.h>
 #include <poincare/complex_argument.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/constant.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/float.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>

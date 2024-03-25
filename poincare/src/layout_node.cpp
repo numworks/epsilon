@@ -1,14 +1,10 @@
 #include <escher/metric.h>
 #include <ion/display.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/horizontal_layout.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_selection.h>
-#include <poincare/matrix_layout.h>
 #include <poincare/old_expression.h>
-#include <poincare/vertical_offset_layout.h>
 
 namespace Poincare {
 
@@ -201,6 +197,7 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
 }
 
 bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout *l) {
+#if 0
   if (!GridLayoutNode::IsGridLayoutType(l->otype())) {
     return false;
   }
@@ -209,6 +206,8 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout *l) {
   } else {
     static_cast<GridLayoutNode *>(l->node())->stopEditing();
   }
+#endif
+  assert(false);
   return true;
 }
 

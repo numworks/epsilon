@@ -1,5 +1,5 @@
 #include <poincare/constant.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/logarithm.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/serialization_helper.h>

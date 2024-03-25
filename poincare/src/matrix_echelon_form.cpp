@@ -1,4 +1,4 @@
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/matrix_echelon_form.h>

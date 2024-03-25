@@ -3,7 +3,6 @@
 
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_expressions.h>
-#include <poincare_layouts.h>
 
 #include "symbol.h"
 

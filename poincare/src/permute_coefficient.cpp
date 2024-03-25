@@ -1,6 +1,5 @@
 #include <poincare/approximation_helper.h>
-#include <poincare/layout_helper.h>
-#include <poincare/letter_a_with_sub_and_superscript_layout.h>
+#include <poincare/layout.h>
 #include <poincare/permute_coefficient.h>
 #include <poincare/preferences.h>
 #include <poincare/rational.h>

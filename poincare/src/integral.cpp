@@ -2,7 +2,7 @@
 #include <poincare/addition.h>
 #include <poincare/complex.h>
 #include <poincare/integral.h>
-#include <poincare/integral_layout.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

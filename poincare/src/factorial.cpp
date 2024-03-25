@@ -1,7 +1,6 @@
-#include <poincare/code_point_layout.h>
 #include <poincare/constant.h>
 #include <poincare/factorial.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

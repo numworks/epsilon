@@ -1,8 +1,6 @@
 #include <escher/metric.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/curly_brace_layout.h>
+#include <poincare/layout.h>
 #include <poincare/list_sequence.h>
-#include <poincare/list_sequence_layout.h>
 #include <poincare/serialization_helper.h>
 
 #include <algorithm>

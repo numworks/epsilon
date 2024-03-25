@@ -2,7 +2,7 @@
 #include <ion.h>
 #include <omg/ieee754.h>
 #include <poincare/complex.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/random.h>
 #include <poincare/serialization_helper.h>
 

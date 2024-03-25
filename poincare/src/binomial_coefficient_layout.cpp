@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <poincare/binomial_coefficient.h>
-#include <poincare/binomial_coefficient_layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/parenthesis_layout.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
 
 #include <algorithm>

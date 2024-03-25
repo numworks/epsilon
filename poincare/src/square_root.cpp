@@ -2,8 +2,7 @@
 #include <ion.h>
 #include <poincare/addition.h>
 #include <poincare/division.h>
-#include <poincare/layout_helper.h>
-#include <poincare/nth_root_layout.h>
+#include <poincare/layout.h>
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>

@@ -2,16 +2,14 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <omg/ieee754.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/decimal.h>
 #include <poincare/infinity.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/string_layout.h>
 #include <poincare/undefined.h>
 
 #include <algorithm>

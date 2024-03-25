@@ -1,5 +1,5 @@
 #include <poincare/frac_part.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

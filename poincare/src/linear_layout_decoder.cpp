@@ -1,5 +1,4 @@
-#include <poincare/code_point_layout.h>
-#include <poincare/combined_code_points_layout.h>
+#include <poincare/layout.h>
 #include <poincare/linear_layout_decoder.h>
 
 namespace Poincare {

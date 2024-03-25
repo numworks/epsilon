@@ -1,8 +1,8 @@
 #include <poincare/based_integer.h>
 #include <poincare/integer.h>
+#include <poincare/layout.h>
 #include <poincare/list.h>
 #include <poincare/list_sequence.h>
-#include <poincare/list_sequence_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

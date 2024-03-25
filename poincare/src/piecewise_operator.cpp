@@ -3,9 +3,8 @@
 #include <poincare/comparison.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/piecewise_operator.h>
-#include <poincare/piecewise_operator_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>

@@ -1,5 +1,5 @@
 #include <poincare/addition.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_trace.h>
 #include <poincare/rational.h>

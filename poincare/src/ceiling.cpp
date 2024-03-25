@@ -2,9 +2,9 @@
 #include <float.h>
 #include <ion.h>
 #include <poincare/ceiling.h>
-#include <poincare/ceiling_layout.h>
 #include <poincare/constant.h>
 #include <poincare/float.h>
+#include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

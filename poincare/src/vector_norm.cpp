@@ -1,11 +1,10 @@
 #include <poincare/addition.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/matrix.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <poincare/vector_norm.h>
-#include <poincare/vector_norm_layout.h>
 
 namespace Poincare {
 

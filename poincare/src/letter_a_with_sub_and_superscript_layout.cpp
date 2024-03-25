@@ -1,4 +1,4 @@
-#include <poincare/letter_a_with_sub_and_superscript_layout.h>
+#include <poincare/layout.h>
 #include <poincare/permute_coefficient.h>
 #include <poincare/serialization_helper.h>
 

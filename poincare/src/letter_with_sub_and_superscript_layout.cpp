@@ -1,5 +1,4 @@
-#include <poincare/layout_helper.h>
-#include <poincare/letter_with_sub_and_superscript_layout.h>
+#include <poincare/layout.h>
 
 #include <algorithm>
 

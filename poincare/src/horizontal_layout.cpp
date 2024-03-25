@@ -1,7 +1,4 @@
-#include <poincare/autocompleted_bracket_pair_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/nth_root_layout.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
 
 #include <algorithm>

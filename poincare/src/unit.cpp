@@ -4,7 +4,7 @@
 #include <poincare/addition.h>
 #include <poincare/division.h>
 #include <poincare/float.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>

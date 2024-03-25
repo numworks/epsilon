@@ -11,8 +11,8 @@
 #include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/float.h>
-#include <poincare/horizontal_layout.h>
 #include <poincare/infinity.h>
+#include <poincare/layout.h>
 #include <poincare/list.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
@@ -33,7 +33,6 @@
 #include <poincare/symbol.h>
 #include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
-#include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
 #include <utility>

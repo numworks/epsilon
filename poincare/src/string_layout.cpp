@@ -1,7 +1,6 @@
 #include <escher/metric.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/layout_helper.h>
-#include <poincare/string_layout.h>
+#include <poincare/layout.h>
 
 #include <algorithm>
 

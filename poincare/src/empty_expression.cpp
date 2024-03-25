@@ -1,6 +1,6 @@
 #include <poincare/complex.h>
 #include <poincare/empty_expression.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {

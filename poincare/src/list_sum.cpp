@@ -1,5 +1,5 @@
 #include <poincare/addition.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/list_sum.h>
 #include <poincare/serialization_helper.h>
 

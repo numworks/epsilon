@@ -1,6 +1,4 @@
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/sum_layout.h>
+#include <poincare/layout.h>
 
 #include <algorithm>
 

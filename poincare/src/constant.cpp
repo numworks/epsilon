@@ -1,12 +1,10 @@
 #include <assert.h>
 #include <ion.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/constant.h>
 #include <poincare/float.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/nonreal.h>
 #include <poincare/rational.h>

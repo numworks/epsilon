@@ -1,9 +1,7 @@
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/layout_helper.h>
-#include <poincare/parenthesis_layout.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/vertical_offset_layout.h>
 #include <string.h>
 
 #include <algorithm>

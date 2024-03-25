@@ -7,7 +7,7 @@
 #include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/infinity.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/logarithm.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>

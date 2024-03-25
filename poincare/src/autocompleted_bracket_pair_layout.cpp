@@ -1,7 +1,4 @@
-#include <poincare/autocompleted_bracket_pair_layout.h>
-#include <poincare/curly_brace_layout.h>
 #include <poincare/layout.h>
-#include <poincare/parenthesis_layout.h>
 
 namespace Poincare {
 

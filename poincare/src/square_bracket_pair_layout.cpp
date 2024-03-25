@@ -1,7 +1,5 @@
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/square_bracket_pair_layout.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>

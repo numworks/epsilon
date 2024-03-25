@@ -1,8 +1,6 @@
 #include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
 #include <poincare/integral.h>
-#include <poincare/integral_layout.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
 #include <string.h>
 

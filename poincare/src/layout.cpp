@@ -1,14 +1,8 @@
-#include <poincare/autocompleted_bracket_pair_layout.h>
-#include <poincare/bracket_pair_layout.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/combined_code_points_layout.h>
-#include <poincare/horizontal_layout.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_selection.h>
 #include <poincare/linear_layout_decoder.h>
 #include <poincare/old_expression.h>
-#include <poincare/square_bracket_pair_layout.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare_junior/src/layout/rack_layout.h>
 

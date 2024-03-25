@@ -1,6 +1,6 @@
 #include <assert.h>
+#include <poincare/layout.h>
 #include <poincare/point.h>
-#include <poincare/point_2D_layout.h>
 #include <poincare/serialization_helper.h>
 
 #include <algorithm>

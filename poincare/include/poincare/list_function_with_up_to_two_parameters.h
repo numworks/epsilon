@@ -2,7 +2,6 @@
 #define POINCARE_LIST_FUNCTION_WITH_UP_TO_TWO_PARAMETERS_H
 
 #include <poincare/expression_node_with_up_to_two_children.h>
-#include <poincare/layout_helper.h>
 #include <poincare/list.h>
 #include <poincare/serialization_helper.h>
 

@@ -56,7 +56,6 @@ class LayoutNode : public TreeNode {
   // Sizing and positioning
   virtual KDSize computeSize(KDFont::Size font) = 0;
   virtual KDCoordinate computeBaseline(KDFont::Size font) = 0;
-  virtual KDPoint positionOfChild(LayoutNode *child, KDFont::Size font) = 0;
 
  private:
   virtual void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) = 0;

@@ -46,10 +46,6 @@ class JuniorLayoutNode final : public LayoutNode {
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
-  KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override {
-    assert(false);
-    return KDPointZero;
-  }
 
   bool protectedIsIdenticalTo(OLayout l) override;
 

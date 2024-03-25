@@ -262,7 +262,8 @@ bool AdditionalResultsType::HasScientificNotation(
       calculationPreferences.numberOfSignificantDigits, globalContext);
   return !historyResult.isIdenticalTo(
       ScientificNotationHelper::ScientificLayout(
-          approximateOutput, globalContext, calculationPreferences));
+          approximateOutput, globalContext, calculationPreferences),
+      true);
 }
 
 bool AdditionalResultsType::HasInteger(const Expression exactOutput) {

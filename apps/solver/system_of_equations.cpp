@@ -85,8 +85,9 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
   void *model[2] = {static_cast<void *>(&equationStandardForm),
                     static_cast<void *>(m_variables[0])};
   bool finiteNumberOfSolutions = true;
-  zoom.fitRoots(evaluator<float>, static_cast<void *>(model), false,
-                evaluator<double>, &finiteNumberOfSolutions);
+  bool didFitRoots =
+      zoom.fitRoots(evaluator<float>, static_cast<void *>(model), false,
+                    evaluator<double>, &finiteNumberOfSolutions);
   /* When there are more than k_maxNumberOfApproximateSolutions on one side of
    * 0, the zoom is setting the interval to have a maximum of 5 solutions left
    * of 0 and 5 solutions right of zero. This means that sometimes, for a
@@ -95,15 +96,17 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
   m_hasMoreSolutions = !finiteNumberOfSolutions;
   zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
   Range1D<float> finalRange = *(zoom.range(false, false).x());
-  /* The range was computed from the solution found with a solver in float. We
-   * need to strech the range in case it does not cover the solution found with
-   * a solver in double. */
-  constexpr static float k_securityMarginCoef = 10.0;
-  float securityMargin =
-      std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) /
-      k_securityMarginCoef;
-  finalRange.stretchEachBoundBy(securityMargin,
-                                k_maxFloatForAutoApproximateSolvingRange);
+  if (didFitRoots) {
+    /* The range was computed from the solution found with a solver in float. We
+     * need to strech the range in case it does not cover the solution found
+     * with a solver in double. */
+    constexpr static float k_securityMarginCoef = 10.0;
+    float securityMargin =
+        std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) /
+        k_securityMarginCoef;
+    finalRange.stretchEachBoundBy(securityMargin,
+                                  k_maxFloatForAutoApproximateSolvingRange);
+  }
   m_autoApproximateSolvingRange = true;
   m_approximateSolvingRange =
       Range1D<double>(static_cast<double>(finalRange.min()),

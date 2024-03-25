@@ -71,7 +71,7 @@ class Zoom {
                            bool vertical = false,
                            Function2DWithContext<double> fDouble = nullptr,
                            bool *finiteNumberOfPoints = nullptr);
-  void fitRoots(Function2DWithContext<float> f, const void *model,
+  bool fitRoots(Function2DWithContext<float> f, const void *model,
                 bool vertical = false,
                 Function2DWithContext<double> fDouble = nullptr,
                 bool *finiteNumberOfPoints = nullptr);

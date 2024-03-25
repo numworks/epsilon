@@ -32,10 +32,6 @@ class OLayout : public TreeHandle {
     return isUninitialized() ? l.isUninitialized()
                              : (*this)->isIdenticalTo(l, makeEditable);
   }
-  KDSize layoutSize(KDFont::Size font,
-                    PoincareJ::LayoutCursor *cursor = nullptr) const;
-  KDCoordinate baseline(KDFont::Size font,
-                        PoincareJ::LayoutCursor *cursor = nullptr) const;
 
   // Serialization
   size_t serializeForParsing(char *buffer, size_t bufferSize) const {

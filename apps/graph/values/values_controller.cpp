@@ -411,7 +411,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       result.createLayout(preferences->displayMode(),
                           preferences->numberOfSignificantDigits(), context);
   if (result.type() == ExpressionNode::Type::Point &&
-      layout.layoutSize(k_cellFont).width() >
+      layout->layoutSize(k_cellFont).width() >
           ApproximatedParametricCellSize().width() -
               2 * Metric::SmallCellMargin) {
     // Fallback on two rows point display if one row does not fit

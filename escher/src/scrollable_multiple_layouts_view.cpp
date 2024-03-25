@@ -125,7 +125,7 @@ KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
   // Left view
   KDCoordinate leftViewBaseline =
       (leftLayoutView() && !leftLayoutView()->layout().isUninitialized())
-          ? leftLayoutView()->layout().baseline(leftLayoutView()->font())
+          ? leftLayoutView()->layout()->baseline(leftLayoutView()->font())
           : 0;
   if (leftBaseline != nullptr) {
     *leftBaseline = leftViewBaseline;
@@ -133,7 +133,7 @@ KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
 
   // Center view
   KDCoordinate centerViewBaseline =
-      displayCenter() ? m_centeredLayoutView.layout().baseline(font()) : 0;
+      displayCenter() ? m_centeredLayoutView.layout()->baseline(font()) : 0;
   if (centerBaseline != nullptr) {
     *centerBaseline = centerViewBaseline;
   }
@@ -142,7 +142,7 @@ KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
   KDCoordinate rightViewBaseline =
       m_rightLayoutView.layout().isUninitialized()
           ? 0
-          : m_rightLayoutView.layout().baseline(font());
+          : m_rightLayoutView.layout()->baseline(font());
   if (rightBaseline != nullptr) {
     *rightBaseline = rightViewBaseline;
   }

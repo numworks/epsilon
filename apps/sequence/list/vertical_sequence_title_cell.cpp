@@ -51,9 +51,9 @@ float VerticalSequenceTitleCell::verticalAlignment() const {
     return KDGlyph::k_alignCenter;
   }
   Poincare::Layout l = layout();
-  float alignment = static_cast<float>(m_baseline - l.baseline(k_font)) /
+  float alignment = static_cast<float>(m_baseline - l->baseline(k_font)) /
                     static_cast<float>(subviewFrame().height() -
-                                       l.layoutSize(k_font).height());
+                                       l->layoutSize(k_font).height());
   return std::max(0.0f, std::min(1.0f, alignment));
 }
 

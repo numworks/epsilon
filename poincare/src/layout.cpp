@@ -7,17 +7,6 @@ namespace Poincare {
 
 #define Layout OLayout
 
-KDSize Layout::layoutSize(KDFont::Size font,
-                          PoincareJ::LayoutCursor *cursor) const {
-  return (*this)->layoutSize(font, cursor);
-}
-
-KDCoordinate Layout::baseline(KDFont::Size font,
-                              PoincareJ::LayoutCursor *cursor) const {
-  PoincareJ::RackLayout::s_layoutCursor = cursor;
-  return (*this)->baseline(font, cursor);
-}
-
 Layout Layout::clone() const {
   if (isUninitialized()) {
     return Layout();

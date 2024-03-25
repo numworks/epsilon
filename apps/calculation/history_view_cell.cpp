@@ -218,7 +218,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,
   KDCoordinate outputY = k_margin;
   if (m_calculationSingleLine && !m_inputView.layout().isUninitialized()) {
     KDCoordinate inputBaseline =
-        m_inputView.layout().baseline(m_inputView.font());
+        m_inputView.layout()->baseline(m_inputView.font());
     KDCoordinate outputBaseline = m_scrollableOutputView.baseline();
     KDCoordinate baselineDifference = outputBaseline - inputBaseline;
     if (baselineDifference > 0) {

@@ -90,8 +90,8 @@ FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
   ExpiringPointer<Function> function =
       graphController()->functionStore()->modelForRecord(
           graphController()->recordAtCurveIndex(row));
-  return std::max(function->layout().layoutSize(k_font).height(),
-                  nameLayoutAtIndex(row).layoutSize(k_font).height()) +
+  return std::max(function->layout()->layoutSize(k_font).height(),
+                  nameLayoutAtIndex(row)->layoutSize(k_font).height()) +
          Metric::CellMargins.height() + Metric::CellSeparatorThickness;
 }
 

@@ -302,10 +302,10 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
         valueLayout(result, preferences->numberOfSignificantDigits(),
                     preferences->displayMode());
     if (functionLayout.isUninitialized() ||
-        (sumLayout.layoutSize(k_font).width() +
-             functionLayout.layoutSize(k_font).width() +
-             equalLayout.layoutSize(k_font).width() +
-             resultLayout.layoutSize(k_font).width() >
+        (sumLayout->layoutSize(k_font).width() +
+             functionLayout->layoutSize(k_font).width() +
+             equalLayout->layoutSize(k_font).width() +
+             resultLayout->layoutSize(k_font).width() >
          bounds().width())) {
       assert(sumSymbol == UCodePointIntegral);
       leftLayout = areaMessageLayout();

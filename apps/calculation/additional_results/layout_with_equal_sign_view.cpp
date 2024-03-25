@@ -34,7 +34,7 @@ View* LayoutWithEqualSignView::subviewAtIndex(int index) {
 void LayoutWithEqualSignView::layoutSubviews(bool force) {
   KDSize layoutSize = LayoutView::minimalSizeForOptimalDisplay();
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
-  KDCoordinate layoutBaseline = layout().baseline(k_font);
+  KDCoordinate layoutBaseline = layout()->baseline(k_font);
   if (!m_showEqual) {
     setChildFrame(&m_equalSign, KDRectZero, force);
   } else {

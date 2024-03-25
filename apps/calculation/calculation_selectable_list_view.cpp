@@ -82,7 +82,7 @@ void CalculationSelectableListView::scrollToSubviewOfTypeOfCellAtRow(
     KDCoordinate inputBaseline =
         inputLayout.isUninitialized()
             ? 0
-            : inputLayout.baseline(cell->inputView()->font());
+            : inputLayout->baseline(cell->inputView()->font());
     contentOffsetY += std::min(
         dataSource()->rowHeight(row) -
             maxContentHeightDisplayableWithoutScrolling(),

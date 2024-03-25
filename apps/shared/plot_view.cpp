@@ -188,7 +188,7 @@ void AbstractPlotView::drawLayout(KDContext *ctx, KDRect rect, Layout layout,
                                   RelativePosition xPosition,
                                   RelativePosition yPosition, KDColor color,
                                   bool ignoreMargin) const {
-  KDSize layoutSize = layout.layoutSize(k_font);
+  KDSize layoutSize = layout->layoutSize(k_font);
   KDPoint layoutOrigin = computeOrigin(floatToPixel2D(xy), layoutSize,
                                        xPosition, yPosition, ignoreMargin);
   if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {

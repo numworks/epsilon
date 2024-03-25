@@ -47,7 +47,7 @@ KDCoordinate ListController::expressionRowHeight(int row) {
     layout = sequence->layout();
   }
   sequenceHeight =
-      layout.isUninitialized() ? 0 : layout.layoutSize(k_font).height();
+      layout.isUninitialized() ? 0 : layout->layoutSize(k_font).height();
   return sequenceHeight + 2 * k_defaultVerticalMargin;
 }
 
@@ -279,8 +279,8 @@ KDCoordinate ListController::baseline(int j, HighlightCell *cell) {
     return -1;  // Baseline < 0 triggers default behaviour (centered alignment)
   }
   return 0.5 * (const_cast<ListController *>(this)->rowHeight(j) -
-                layout.layoutSize(k_font).height()) +
-         layout.baseline(k_font);
+                layout->layoutSize(k_font).height()) +
+         layout->baseline(k_font);
 }
 
 void ListController::addNewModelAction() {

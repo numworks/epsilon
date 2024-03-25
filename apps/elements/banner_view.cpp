@@ -113,11 +113,12 @@ void BannerView::layoutSubviews(bool force) {
   }
   KDCoordinate bannerBaseline = k_bannerHeight / 2 + 1;
   KDCoordinate legendY = k_borderHeight + bannerBaseline -
-                         m_legendView.layout().baseline(k_legendSize);
-  setChildFrame(&m_legendView,
-                KDRect(x, legendY, bounds().width() - k_buttonWidth - x,
-                       m_legendView.layout().layoutSize(k_legendSize).height()),
-                force);
+                         m_legendView.layout()->baseline(k_legendSize);
+  setChildFrame(
+      &m_legendView,
+      KDRect(x, legendY, bounds().width() - k_buttonWidth - x,
+             m_legendView.layout()->layoutSize(k_legendSize).height()),
+      force);
 }
 
 }  // namespace Elements

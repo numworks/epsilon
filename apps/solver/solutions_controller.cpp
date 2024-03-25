@@ -426,20 +426,20 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
     KDCoordinate layoutHeight;
     if (exactLayout.isUninitialized()) {
       assert(!approximateLayout.isUninitialized());
-      layoutHeight = approximateLayout.layoutSize(k_solutionsFont).height();
+      layoutHeight = approximateLayout->layoutSize(k_solutionsFont).height();
     } else if (approximateLayout.isUninitialized()) {
-      layoutHeight = exactLayout.layoutSize(k_solutionsFont).height();
+      layoutHeight = exactLayout->layoutSize(k_solutionsFont).height();
     } else {
       KDCoordinate approximateLayoutHeight =
-          approximateLayout.layoutSize(k_solutionsFont).height();
+          approximateLayout->layoutSize(k_solutionsFont).height();
       KDCoordinate exactLayoutHeight =
-          exactLayout.layoutSize(k_solutionsFont).height();
+          exactLayout->layoutSize(k_solutionsFont).height();
       layoutHeight =
-          std::max(exactLayout.baseline(k_solutionsFont),
-                   approximateLayout.baseline(k_solutionsFont)) +
-          std::max(exactLayoutHeight - exactLayout.baseline(k_solutionsFont),
+          std::max(exactLayout->baseline(k_solutionsFont),
+                   approximateLayout->baseline(k_solutionsFont)) +
+          std::max(exactLayoutHeight - exactLayout->baseline(k_solutionsFont),
                    approximateLayoutHeight -
-                       approximateLayout.baseline(k_solutionsFont));
+                       approximateLayout->baseline(k_solutionsFont));
     }
     return layoutHeight + 2 * Metric::CommonSmallMargin;
   }
@@ -455,7 +455,7 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
       App::app()->localContext()->expressionForSymbolAbstract(
           Symbol::Builder(symbol, strlen(symbol)), false),
       App::app()->localContext());
-  return layout.layoutSize(k_solutionsFont).height() +
+  return layout->layoutSize(k_solutionsFont).height() +
          2 * Metric::CommonSmallMargin;
 }
 

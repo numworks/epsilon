@@ -237,7 +237,7 @@ void Calculation::createOutputLayouts(Layout *exactOutput,
     }
     if (canChangeDisplayOutput &&
         displayOutput(context) == DisplayOutput::ExactAndApproximate &&
-        exactOutput->layoutSize(font).width() > maxVisibleWidth) {
+        (*exactOutput)->layoutSize(font).width() > maxVisibleWidth) {
       forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
     }
   }

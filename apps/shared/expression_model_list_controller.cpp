@@ -56,9 +56,9 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   ExpiringPointer<ExpressionModelHandle> m =
       modelStore()->modelForRecord(recordAtRow(row));
-  KDCoordinate expressionHeight = m->layout().isUninitialized()
-                                      ? 0
-                                      : m->layout().layoutSize(k_font).height();
+  KDCoordinate expressionHeight =
+      m->layout().isUninitialized() ? 0
+                                    : m->layout()->layoutSize(k_font).height();
   return expressionHeight + 2 * k_defaultVerticalMargin;
 }
 

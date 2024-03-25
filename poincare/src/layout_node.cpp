@@ -13,7 +13,7 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
     return Layout(this).clone().makeEditable().isIdenticalTo(
         l.clone().makeEditable(), false);
   }
-  if (l.isUninitialized() || otype() != l.otype()) {
+  if (l.isUninitialized()) {
     return false;
   }
   if (identifier() == l.identifier()) {

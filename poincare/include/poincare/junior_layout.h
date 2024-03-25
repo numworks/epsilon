@@ -23,9 +23,6 @@ class JuniorLayoutNode final : public LayoutNode {
     memcpy(m_blocks, tree->block(), treeSize);
   }
 
-  // Layout
-  Type otype() const override { return Type::JuniorLayout; }
-
   // TreeNode
   size_t size() const override {
     return sizeof(JuniorLayoutNode) + tree()->treeSize();
@@ -99,7 +96,6 @@ class JuniorLayout final : public OLayout {
   PoincareJ::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }
-  LayoutNode::Type type() const { return otype(); }
 
   JuniorLayout cloneWithoutMargins();
   JuniorLayout makeEditable() { return cloneWithoutMargins(); }

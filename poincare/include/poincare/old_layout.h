@@ -15,13 +15,6 @@ class LayoutCursor;
 namespace Poincare {
 
 class OLayout : public TreeHandle {
-  friend class AdditionNode;
-  friend class GridLayoutNode;
-  friend class HorizontalLayoutNode;
-  friend class InputBeautification;
-  friend class LayoutNode;
-  friend class VerticalOffsetLayoutNode;
-
  public:
   OLayout() : TreeHandle() {}
   OLayout(const LayoutNode *node) : TreeHandle(node) {}
@@ -33,10 +26,6 @@ class OLayout : public TreeHandle {
   }
   static OLayout LayoutFromAddress(const void *address, size_t size);
 
-  // Properties
-  LayoutNode::Type otype() const { return node()->otype(); }
-  bool isHorizontal() const { return node()->isHorizontal(); }
-  bool isEmpty() const { return node()->isEmpty(); }
   // True if horizontal layout with only code points in it
   bool isCodePointsString() const;
   bool isIdenticalTo(OLayout l, bool makeEditable = false) {

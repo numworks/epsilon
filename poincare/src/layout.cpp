@@ -1,5 +1,4 @@
 #include <poincare/layout.h>
-#include <poincare/layout_selection.h>
 #include <poincare/old_expression.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare_junior/src/layout/rack_layout.h>
@@ -39,6 +38,7 @@ Layout Layout::LayoutFromAddress(const void *address, size_t size) {
 }
 
 bool Layout::isCodePointsString() const {
+#if 0  // TODO_PCJ
   if (!isHorizontal()) {
     return false;
   }
@@ -49,6 +49,7 @@ bool Layout::isCodePointsString() const {
       return false;
     }
   }
+#endif
   return true;
 }
 

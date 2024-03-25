@@ -18,38 +18,6 @@ class LayoutNode : public TreeNode {
   friend class OLayout;
 
  public:
-  enum class Type : uint8_t {
-    AbsoluteValueLayout,
-    BinomialCoefficientLayout,
-    BracketPairLayout,
-    CeilingLayout,
-    CodePointLayout,
-    CombinedCodePointsLayout,
-    CondensedSumLayout,
-    ConjugateLayout,
-    CurlyBraceLayout,
-    FirstOrderDerivativeLayout,
-    FloorLayout,
-    FractionLayout,
-    HigherOrderDerivativeLayout,
-    HorizontalLayout,
-    IntegralLayout,
-    LetterAWithSubAndSuperscriptLayout,
-    LetterCWithSubAndSuperscriptLayout,
-    ListSequenceLayout,
-    MatrixLayout,
-    NthRootLayout,
-    PiecewiseOperatorLayout,
-    ParenthesisLayout,
-    Point2DLayout,
-    ProductLayout,
-    StringLayout,
-    SumLayout,
-    VectorNormLayout,
-    VerticalOffsetLayout,
-    JuniorLayout
-  };
-
   // Constructor
   LayoutNode()
       : TreeNode(),
@@ -63,10 +31,6 @@ class LayoutNode : public TreeNode {
             .m_positionFontSize = KDFont::Size::Small,
             .m_sizeFontSize = KDFont::Size::Small,
         }) {}
-
-  /* Poor man's RTTI */
-  virtual Type otype() const = 0;
-  bool isHorizontal() const { return otype() == Type::HorizontalLayout; }
 
   // Comparison
   bool isIdenticalTo(OLayout l, bool makeEditable = false);
@@ -98,8 +62,6 @@ class LayoutNode : public TreeNode {
     return static_cast<LayoutNode *>(TreeNode::childAtIndex(i));
   }
   LayoutNode *root() { return static_cast<LayoutNode *>(TreeNode::root()); }
-
-  bool isEmpty() const { return isHorizontal() && numberOfChildren() == 0; }
 
   virtual OLayout makeEditable();
 

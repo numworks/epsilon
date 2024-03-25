@@ -127,7 +127,7 @@ static void assert_add_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::Addition(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pools();
+  reset_pool();
 }
 
 QUIZ_CASE(pcj_integer_addition) {
@@ -160,7 +160,7 @@ static void assert_sub_to(const char* a, const char* b, const char* c) {
   quiz_assert(IntegerHandler::Subtraction(CreateIntegerHandler(a),
                                           CreateIntegerHandler(b))
                   ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pools();
+  reset_pool();
 }
 
 QUIZ_CASE(pcj_integer_subtraction) {
@@ -197,7 +197,7 @@ static void assert_mult_to(const char* a, const char* b, const char* c) {
   quiz_assert(IntegerHandler::Multiplication(CreateIntegerHandler(a),
                                              CreateIntegerHandler(b))
                   ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pools();
+  reset_pool();
 }
 
 QUIZ_CASE(pcj_integer_multiplication) {
@@ -220,15 +220,15 @@ static void assert_div_to(const char* a, const char* b, const char* q,
       CreateIntegerHandler(a), CreateIntegerHandler(b));
   quiz_assert(quotient->treeIsIdenticalTo(CreateInteger(q)) &&
               remainder->treeIsIdenticalTo(CreateInteger(r)));
-  reset_pools();
+  reset_pool();
   quiz_assert(
       IntegerHandler::Quotient(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(q)));
-  reset_pools();
+  reset_pool();
   quiz_assert(IntegerHandler::Remainder(CreateIntegerHandler(a),
                                         CreateIntegerHandler(b))
                   ->treeIsIdenticalTo(CreateInteger(r)));
-  reset_pools();
+  reset_pool();
 }
 
 QUIZ_CASE(pcj_integer_divide) {
@@ -274,7 +274,7 @@ static void assert_pow_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::Power(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pools();
+  reset_pool();
 }
 
 QUIZ_CASE(pcj_integer_pow) {
@@ -290,7 +290,7 @@ QUIZ_CASE(pcj_integer_pow) {
 static void assert_factorial_to(const char* a, const char* b) {
   quiz_assert(IntegerHandler::Factorial(CreateIntegerHandler(a))
                   ->treeIsIdenticalTo(CreateInteger(b)));
-  reset_pools();
+  reset_pool();
 }
 
 QUIZ_CASE(pcj_integer_factorial) {
@@ -306,7 +306,7 @@ static void assert_gcd_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::GCD(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pools();
+  reset_pool();
 }
 
 QUIZ_CASE(pcj_integer_gcd) {
@@ -320,11 +320,12 @@ QUIZ_CASE(pcj_integer_gcd) {
   assert_gcd_to("0", "0", "0");
 }
 
-static void assert_might_overflow(ActionWithContext action, bool overflow) {
-  CachePool* cachePool = CachePool::SharedCachePool;
+typedef void (*Action)();
+
+// Perform the action and flush the pool afterward
+static void assert_might_overflow(Action action, bool overflow) {
   ExceptionTry {
-    cachePool->nodeForIdentifier(
-        SharedEditionPool->executeAndCache(action, nullptr, nullptr));
+    action();
     quiz_assert(!overflow);
   }
   ExceptionCatch(type) {
@@ -337,51 +338,40 @@ static void assert_might_overflow(ActionWithContext action, bool overflow) {
   SharedEditionPool->flush();
 }
 
-static void assert_did_overflow(ActionWithContext action) {
+static void assert_did_overflow(Action action) {
   assert_might_overflow(action, true);
 }
 
-static void assert_did_not_overflow(ActionWithContext action) {
+static void assert_did_not_overflow(Action action) {
   assert_might_overflow(action, false);
 }
 
 QUIZ_CASE(pcj_integer_overflows) {
   // Construction
-  assert_did_overflow([](void* context, const void* data) {
-    CreateIntegerHandler(OverflowedIntegerString());
-  });
-  assert_did_not_overflow([](void* context, const void* data) {
-    CreateIntegerHandler(MaxIntegerString());
-  });
+  assert_did_overflow(
+      []() { CreateIntegerHandler(OverflowedIntegerString()); });
+  assert_did_not_overflow([]() { CreateIntegerHandler(MaxIntegerString()); });
 
   // Operations
-  assert_did_overflow([](void* context, const void* data) {
+  assert_did_overflow([]() {
     EditionReference a = CreateInteger(MaxIntegerString());
     EditionReference b = CreateInteger("1");
     IntegerHandler::Addition(Integer::Handler(a), Integer::Handler(b));
-    a->removeTree();
-    b->removeTree();
   });
-  assert_did_not_overflow([](void* context, const void* data) {
+  assert_did_not_overflow([]() {
     EditionReference a = CreateInteger(MaxIntegerString());
     EditionReference b = CreateInteger("1");
     IntegerHandler::Subtraction(Integer::Handler(a), Integer::Handler(b));
-    a->removeTree();
-    b->removeTree();
   });
-  assert_did_overflow([](void* context, const void* data) {
+  assert_did_overflow([]() {
     EditionReference a = CreateInteger(MaxIntegerString());
     EditionReference b = CreateInteger("2");
     IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
-    a->removeTree();
-    b->removeTree();
   });
-  assert_did_not_overflow([](void* context, const void* data) {
+  assert_did_not_overflow([]() {
     EditionReference a = CreateInteger(MaxIntegerString());
     EditionReference b = CreateInteger("1");
     IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
-    a->removeTree();
-    b->removeTree();
   });
 }
 

@@ -86,7 +86,7 @@ class WorkingBuffer {
                                        k_blockOffset);
   }
   size_t initialSizeOfBuffer() {
-    return (SharedEditionPool->maximumSize() - SharedEditionPool->size() -
+    return (EditionPool::k_maxNumberOfBlocks - SharedEditionPool->size() -
             k_blockOffset);
   }
   uint8_t *m_start;

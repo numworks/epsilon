@@ -2,7 +2,6 @@
 
 #include <assert.h>
 
-#include "poincare_junior/src/memory/cache_pool.h"
 #include "poincare_junior/src/memory/edition_pool.h"
 
 #if POINCARE_POOL_VISUALIZATION
@@ -11,7 +10,7 @@
 
 namespace PoincareJ {
 
-void Init() { CachePool::SharedCachePool.init(); }
+void Init() { SharedEditionPool.init(); }
 
 void Shutdown() {
 #if POINCARE_POOL_VISUALIZATION

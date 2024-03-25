@@ -6,8 +6,8 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_edition_pool) {
-  CachePool::SharedCachePool->reset();
   EditionPool* pool = SharedEditionPool;
+  pool->flush();
 
   constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   const Tree* handingNode = k_expression;
@@ -55,7 +55,7 @@ QUIZ_CASE(pcj_edition_pool) {
 }
 
 QUIZ_CASE(pcj_edition_reference) {
-  CachePool::SharedCachePool->reset();
+  SharedEditionPool->flush();
 
   constexpr KTree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   constexpr KTree k_subExpr1 = 6_e;
@@ -78,24 +78,21 @@ QUIZ_CASE(pcj_edition_reference) {
   ref0->clone();
   EditionReference ref2 = EditionReference(
       SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(8)));
-  assert_pool_contains(SharedEditionPool, {k_expr0, k_expr1, k_expr0, 8_e});
+  assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e});
 
   // Insertions
   ref2->cloneNodeAfterNode(9_e);
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, k_expr1, k_expr0, 8_e, 9_e});
+  assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e, 9_e});
   ref2->cloneNodeAfterNode(10_e);
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, k_expr1, k_expr0, 8_e, 10_e, 9_e});
+  assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e, 10_e, 9_e});
   ref2->moveTreeAfterNode(ref0);
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr1, k_expr0, 8_e, k_expr0, 10_e, 9_e});
+  assert_edition_pool_contains({k_expr1, k_expr0, 8_e, k_expr0, 10_e, 9_e});
   ref2->cloneNodeBeforeNode(10_e);
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr1, k_expr0, 10_e, 8_e, k_expr0, 10_e, 9_e});
+  assert_edition_pool_contains(
+      {k_expr1, k_expr0, 10_e, 8_e, k_expr0, 10_e, 9_e});
   ref2->moveTreeBeforeNode(ref1);
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
+  assert_edition_pool_contains(
+      {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
   // Replacements
   ref0 = ref2;  // 8_e
@@ -105,19 +102,18 @@ QUIZ_CASE(pcj_edition_reference) {
 
   // Replacements by same
   ref2 = ref2->moveTreeOverNode(ref2);
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
+  assert_edition_pool_contains(
+      {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
   // Replacements from nodes outside of the EditionPool
   ref0 = ref0->cloneNodeOverNode(9_e);  // Same size
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});
+  assert_edition_pool_contains(
+      {k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});
   ref1 = ref1->cloneNodeOverTree(10_e);  // Smaller size
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, 10_e, k_expr1, 9_e, 10_e, 10_e, 9_e});
+  assert_edition_pool_contains({k_expr0, 10_e, k_expr1, 9_e, 10_e, 10_e, 9_e});
   ref2 = ref2->cloneTreeOverNode(k_expr1);  // Bigger size
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
+  assert_edition_pool_contains(
+      {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 
   // Replacements from nodes living in the EditionPool
   EditionReference subRef0(ref2->child(0)->child(1));
@@ -125,11 +121,9 @@ QUIZ_CASE(pcj_edition_reference) {
   ref2 = ref2->moveTreeOverTree(subRef0);  // Child
   quiz_assert(subRef1.isUninitialized());
   ref1->moveNodeOverNode(ref0);  // Before
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, 10_e, k_expr1, 9_e, k_subExpr1, 9_e});
+  assert_edition_pool_contains({k_expr0, 10_e, k_expr1, 9_e, k_subExpr1, 9_e});
   ref0->moveTreeOverTree(ref2);  // After
-  assert_pool_contains(SharedEditionPool,
-                       {k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
+  assert_edition_pool_contains({k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
 
   // Removals
   ref0 = EditionReference(SharedEditionPool->firstBlock());  // k_expr0
@@ -138,18 +132,18 @@ QUIZ_CASE(pcj_edition_reference) {
 
   ref2->removeTree();
   ref1->removeNode();
-  assert_pool_contains(SharedEditionPool, {k_expr0, k_subExpr1, 9_e});
+  assert_edition_pool_contains({k_expr0, k_subExpr1, 9_e});
 
   // Detach
   subRef0 = EditionReference(ref0->child(0));
   subRef0->cloneTreeBeforeNode(13_e);
   subRef0->detachTree();
-  assert_pool_contains(SharedEditionPool, {KMult(13_e, 3_e, 4_e), k_subExpr1,
-                                           9_e, KAdd(1_e, 2_e)});
+  assert_edition_pool_contains(
+      {KMult(13_e, 3_e, 4_e), k_subExpr1, 9_e, KAdd(1_e, 2_e)});
 }
 
 QUIZ_CASE(pcj_edition_reference_reallocation) {
-  CachePool::SharedCachePool->reset();
+  SharedEditionPool->flush();
   EditionReference reference0(KAdd(1_e, 1_e));
   EditionReference referenceSub0(reference0->child(0));
   EditionReference referenceSub1(reference0->child(1));
@@ -164,7 +158,7 @@ QUIZ_CASE(pcj_edition_reference_reallocation) {
 }
 
 QUIZ_CASE(pcj_edition_reference_destructor) {
-  CachePool::SharedCachePool->reset();
+  SharedEditionPool->flush();
   {
     EditionReference ref0(0_e);
     QUIZ_ASSERT(ref0.identifier() == 0);

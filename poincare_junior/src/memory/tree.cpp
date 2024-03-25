@@ -1,4 +1,4 @@
-#include <poincare_junior/src/memory/cache_pool.h>
+#include "tree.h"
 
 #include "edition_reference.h"
 #include "node_iterator.h"
@@ -178,20 +178,17 @@ void Tree::copyTreeTo(void* address) const {
 
 /* When navigating between nodes, assert that no undefined node is reached.
  * Also ensure that there is no navigation:
- * - crossing the borders of the CachePool
+ * - crossing the borders of the Edition pool
  * - going across a TreeBorder
  * Here are the situations indicating nextNode navigation must stop:
  * (1) From a TreeBorder
- * (2) To the Cache first block
+ * (2) To the Edition first block
  * (3) From the Edition pool last block
- * // (4) To the Cache last block / Edition pool first block
  *
  * Some notes :
  * - It is expected in (2) and (3) that any tree out of the pool ends with a
  *   TreeBorder block.
- * - For both pools, last block represent the very first out of limit block.
- * - Cache last block is also Edition first block, and we need to call nextNode
- *   on before last node, so (4) is not checked.
+ * - In the edition pool, the last block is the very first out of limit block.
  * - Source node is always expected to be defined. Allowing checks on
  *   nextNode's destination. */
 
@@ -204,6 +201,7 @@ const Tree* Tree::nextNode() const {
 #if ASSERTIONS
   assert(!isTreeBorder());
 #endif
+  assert(this + nodeSize() != SharedEditionPool->firstBlock());
   assert(this != SharedEditionPool->lastBlock());
 #if PCJ_METRICS
   if (SharedEditionPool->firstBlock() <= this &&

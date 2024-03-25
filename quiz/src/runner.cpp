@@ -59,7 +59,7 @@ static inline void ion_main_inner(const char *testFilter) {
     // TODO: clean when removing TreePool
     int initialPoolSize = Poincare::TreePool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == 0);
-    reset_pools();
+    reset_pool();
     quiz_reset_failure_ratio();
     c();
     quiz_print_failure_ratio();

@@ -3,7 +3,6 @@
 
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
-#include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <quiz.h>
@@ -35,52 +34,38 @@ inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
 }
 
 using FunctionSize = size_t (Pool::*)() const;
-inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize,
-                                   FunctionSize functionSize) {
-  CachePool* cachePool = CachePool::SharedCachePool;
-  Pool* pools[] = {cachePool, SharedEditionPool};
-  size_t theoreticalSizes[] = {cachePoolSize, editionPoolSize};
-  for (size_t i = 0; i < sizeof(theoreticalSizes) / sizeof(size_t); i++) {
+inline void assert_pool_size_is(size_t size, FunctionSize functionSize) {
 #if POINCARE_TREE_LOG
-    const char* poolNames[] = {"cache pool", "edition Pool"};
-    if ((pools[i]->*functionSize)() != theoreticalSizes[i]) {
-      std::cout << "Expected " << poolNames[i] << " of size "
-                << theoreticalSizes[i] << " but got "
-                << (pools[i]->*functionSize)() << std::endl;
-      pools[i]->log(std::cout, Pool::LogFormat::Tree, true);
-      quiz_assert(false);
-    }
-#else
-    quiz_assert((pools[i]->*functionSize)() == theoreticalSizes[i]);
-#endif
+  if ((SharedEditionPool->*functionSize)() != size) {
+    std::cout << "Expected edition Pool of size " << size << " but got "
+              << (SharedEditionPool->*functionSize)() << std::endl;
+    SharedEditionPool->log(std::cout, Pool::LogFormat::Tree, true);
+    quiz_assert(false);
   }
+#else
+  quiz_assert((SharedEditionPool->*functionSize)() == size);
+#endif
 }
 
-inline void assert_pools_block_sizes_are(size_t cachePoolSize,
-                                         size_t editionPoolSize) {
-  return assert_pools_sizes_are(cachePoolSize, editionPoolSize, &Pool::size);
+inline void assert_pool_block_sizes_is(size_t size) {
+  return assert_pool_size_is(size, &Pool::size);
 }
 
-inline void assert_pools_tree_sizes_are(size_t cachePoolSize,
-                                        size_t editionPoolSize) {
-  return assert_pools_sizes_are(cachePoolSize, editionPoolSize,
-                                &Pool::numberOfTrees);
+inline void assert_pool_tree_size_is(size_t size) {
+  return assert_pool_size_is(size, &Pool::numberOfTrees);
 }
 
-inline void reset_pools() {
-  SharedEditionPool->flush();
-  CachePool::SharedCachePool->reset();
-}
+inline void reset_pool() { SharedEditionPool->flush(); }
 
-inline void assert_pool_contains(Pool* pool,
-                                 std::initializer_list<const Tree*> nodes) {
-  quiz_assert(pool->size() > 0);
-  Tree* tree = Tree::FromBlocks(pool->firstBlock());
+inline void assert_edition_pool_contains(
+    std::initializer_list<const Tree*> nodes) {
+  quiz_assert(SharedEditionPool->size() > 0);
+  Tree* tree = Tree::FromBlocks(SharedEditionPool->firstBlock());
   for (const Tree* n : nodes) {
     assert_trees_are_equal(n, tree);
     tree = tree->nextTree();
   }
-  quiz_assert(tree->block() == pool->lastBlock());
+  quiz_assert(tree->block() == SharedEditionPool->lastBlock());
 }
 
 #if PLATFORM_DEVICE

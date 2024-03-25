@@ -19,14 +19,7 @@ class EditionPool final : public Pool {
  public:
   static OMG::GlobalBox<EditionPool> SharedEditionPool;
 
-  EditionPool(Block *firstBlock, size_t size)
-      : m_referenceTable(this),
-        m_firstBlock(firstBlock),
-        m_size(0),
-        m_maximumSize(size) {}
-
-  size_t maximumSize() const { return m_maximumSize; }
-  void setMaximumSize(size_t size);
+  EditionPool() : m_referenceTable(this), m_size(0) {}
 
   uint16_t referenceNode(Tree *node);
   void flush();
@@ -44,8 +37,6 @@ class EditionPool final : public Pool {
   void executeAndStoreLayout(ActionWithContext action, void *context,
                              const void *data, Poincare::JuniorLayout *layout,
                              Relax relax = k_defaultRelax);
-  uint16_t executeAndCache(ActionWithContext action, void *context,
-                           const void *data, Relax relax = k_defaultRelax);
   void executeAndReplaceTree(ActionWithContext action, void *context,
                              Tree *data, Relax relax = k_defaultRelax);
 
@@ -75,10 +66,10 @@ class EditionPool final : public Pool {
   Tree *push(Types... args);
 
   using Pool::firstBlock;
-  const Block *firstBlock() const override { return m_firstBlock; }
+  const Block *firstBlock() const override { return m_blocks; }
   using Pool::lastBlock;
   // If EditionPool is empty, first and last blocks are the same one
-  const Block *lastBlock() const override { return m_firstBlock + m_size; }
+  const Block *lastBlock() const override { return m_blocks + m_size; }
   void setNumberOfBlocks(int numberOfBlocks) { m_size = numberOfBlocks; }
 
   // Will changing the modified tree alter the other tree ?
@@ -86,7 +77,9 @@ class EditionPool final : public Pool {
     return !contains(other->block()) || other < modified;
   }
 
-  constexpr static int k_maxNumberOfReferences = 64;
+  // TODO: not all pool sizes are passing the tests, investigate why
+  constexpr static int k_maxNumberOfBlocks = 1024 * 16;
+  constexpr static int k_maxNumberOfReferences = k_maxNumberOfBlocks / 8;
 
  private:
   void execute(ActionWithContext action, void *context, const void *data,
@@ -137,9 +130,8 @@ class EditionPool final : public Pool {
   /* TODO: if we end up needing too many EditionReference, we could ref-count
    * them in m_referenceTable and implement a destructor on EditionReference. */
   ReferenceTable m_referenceTable;
-  Block *m_firstBlock;
+  Block m_blocks[k_maxNumberOfBlocks];
   size_t m_size;
-  size_t m_maximumSize;
 };
 
 #define SharedEditionPool EditionPool::SharedEditionPool

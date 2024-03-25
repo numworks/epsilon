@@ -133,7 +133,6 @@ void assert_parsed_expression_process_to(
   bool crash = false;
   ExceptionTry {
     assert(SharedEditionPool->numberOfTrees() == 0);
-    assert(CachePool::SharedCachePool->numberOfTrees() == 0);
     Tree *e = parse_expression(expression, &globalContext, false);
     Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
                                           angleUnit, unitFormat, target,
@@ -145,11 +144,10 @@ void assert_parsed_expression_process_to(
     bad = strcmp(buffer, result) != 0;
   }
   ExceptionCatch(type) {
-    CachePool::SharedCachePool->reset();
+    SharedEditionPool->flush();
     crash = true;
   }
   assert(SharedEditionPool->numberOfTrees() == 0);
-  assert(CachePool::SharedCachePool->numberOfTrees() == 0);
   k_bad += bad;
   k_crash += crash;
 

@@ -7,7 +7,6 @@
 
 #include <algorithm>
 
-#include "cache_pool.h"
 #include "exception_checkpoint.h"
 #include "node_constructor.h"
 
@@ -94,11 +93,6 @@ void EditionPool::ReferenceTable::deleteIdentifiersAfterBlock(
 
 OMG::GlobalBox<EditionPool> EditionPool::SharedEditionPool;
 
-void EditionPool::setMaximumSize(size_t size) {
-  assert(m_size <= size);
-  m_maximumSize = size;
-}
-
 uint16_t EditionPool::referenceNode(Tree *node) {
   return m_referenceTable.storeNode(node);
 }
@@ -113,7 +107,7 @@ void EditionPool::flush() {
 
 void EditionPool::flushFromBlock(const Block *block) {
   assert(isRootBlock(block, true));
-  m_size = block - m_firstBlock;
+  m_size = block - m_blocks;
   m_referenceTable.deleteIdentifiersAfterBlock(block);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "flushFromBlock", block);
@@ -135,23 +129,16 @@ void EditionPool::executeAndStoreLayout(ActionWithContext action, void *context,
                                         Poincare::JuniorLayout *layout,
                                         Relax relax) {
   assert(numberOfTrees() == 0);
-  execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
+  execute(action, context, data, k_maxNumberOfBlocks, relax);
   assert(Tree::FromBlocks(firstBlock())->isLayout());
   *layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(firstBlock()));
   flush();
 }
 
-uint16_t EditionPool::executeAndCache(ActionWithContext action, void *context,
-                                      const void *data, Relax relax) {
-  assert(numberOfTrees() == 0);
-  execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
-  return CachePool::SharedCachePool->storeEditedTree();
-}
-
 void EditionPool::executeAndReplaceTree(ActionWithContext action, void *context,
                                         Tree *data, Relax relax) {
   Block *previousLastBlock = lastBlock();
-  execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
+  execute(action, context, data, k_maxNumberOfBlocks, relax);
   assert(previousLastBlock != lastBlock());
   data->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
 }
@@ -333,16 +320,9 @@ Tree *EditionPool::push(Types... args) {
 }
 
 void EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
-  if (m_size + numberOfRequiredBlock > m_maximumSize) {
-    // Ask the cache to free some space
-    /* TODO: assert that we don't delete last called treeForIdentifier otherwise
-     * can't copyTreeFromAddress if in cache... */
-    if (!CachePool::SharedCachePool->freeBlocks(m_size + numberOfRequiredBlock -
-                                                m_maximumSize)) {
-      ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
-    }
+  if (m_size + numberOfRequiredBlock > k_maxNumberOfBlocks) {
+    ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
   }
-  assert(m_size + numberOfRequiredBlock <= m_maximumSize);
 }
 
 template Tree *EditionPool::push<BlockType::Addition, int>(int);

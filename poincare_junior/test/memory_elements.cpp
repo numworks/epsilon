@@ -8,7 +8,7 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_block) {
-  CachePool::SharedCachePool->reset();
+  SharedEditionPool->flush();
 
   // Create pool: [ "0" | "1" | "2" | 4 | -4 | "0" ]
   Block* firstBlock = SharedEditionPool->push(BlockType::Zero)->block();
@@ -17,7 +17,7 @@ QUIZ_CASE(pcj_block) {
   SharedEditionPool->push(ValueBlock(4));
   SharedEditionPool->push(ValueBlock(-4));
   SharedEditionPool->push(BlockType::Zero);
-  assert_pools_block_sizes_are(0, 6);
+  assert_pool_block_sizes_is(6);
 
   // Block navigation
   quiz_assert(*firstBlock->nextNth(5) == *firstBlock);
@@ -592,7 +592,7 @@ QUIZ_CASE(pcj_node_iterator) {
 }
 
 QUIZ_CASE(pcj_node) {
-  CachePool::SharedCachePool->reset();
+  SharedEditionPool->flush();
 
   // operator==
   const Tree* node0 = 42_e;

@@ -1,7 +1,7 @@
 #ifndef INFERENCE_MODELS_STATISTIC_CHI2_TEST_H
 #define INFERENCE_MODELS_STATISTIC_CHI2_TEST_H
 
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 
 #include <cmath>
 

@@ -3,14 +3,11 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <ion/unicode/code_point.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/constant.h>
 #include <poincare/expression.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
-#include <poincare/vertical_offset_layout.h>
 #include <string.h>
 
 #include "../app.h"

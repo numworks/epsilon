@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <poincare/point_evaluation.h>
 #include <poincare/print.h>
+#include <poincare/serialization_helper.h>
 
 #include "../app.h"
 #include "apps/shared/color_names.h"

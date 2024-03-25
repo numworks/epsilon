@@ -6,7 +6,7 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <poincare/integer.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/print_int.h>
 #include <string.h>

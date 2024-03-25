@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_HYPERGEOMETRIC_DISTRIBUTION_H
 #define PROBABILITE_HYPERGEOMETRIC_DISTRIBUTION_H
 
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 
 #include "three_parameters_distribution.h"
 

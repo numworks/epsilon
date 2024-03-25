@@ -5,7 +5,7 @@
 #include <float.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/helpers.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 
 #include <algorithm>
 #include <cmath>

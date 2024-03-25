@@ -7,9 +7,7 @@
 #include <inference/models/statistic/two_means_interval.h>
 #include <inference/models/statistic/two_means_test.h>
 #include <inference/text_helpers.h>
-#include <poincare/combined_code_points_layout.h>
 #include <poincare/layout.h>
-#include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
 using namespace Shared;

@@ -1,10 +1,6 @@
 #include <escher/clipboard.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/expression.h>
-#include <poincare/integral_layout.h>
-#include <poincare/matrix_layout.h>
-#include <poincare/nth_root_layout.h>
-#include <poincare/sum_layout.h>
+#include <poincare/layout.h>
 #include <quiz.h>
 #include <string.h>
 

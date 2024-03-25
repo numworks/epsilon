@@ -1,7 +1,7 @@
 #include "graph_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/matrix.h>
 #include <poincare/symbol.h>
 

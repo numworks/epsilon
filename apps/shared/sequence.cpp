@@ -5,14 +5,12 @@
 #include <float.h>
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/integer.h>
 #include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/sequence.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/sum.h>
-#include <poincare/vertical_offset_layout.h>
 #include <poincare/zoom.h>
 #include <string.h>
 

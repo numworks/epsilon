@@ -3,10 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/vertical_offset_layout.h>
 
 #include "../app.h"
 #include "list_controller.h"

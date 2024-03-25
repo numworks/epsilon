@@ -2,8 +2,7 @@
 
 #include <assert.h>
 #include <escher/clipboard.h>
-#include <poincare/condensed_sum_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/print.h>
 #include <stdlib.h>
 

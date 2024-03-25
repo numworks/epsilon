@@ -2,15 +2,12 @@
 
 #include <assert.h>
 #include <poincare/based_integer.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/constant.h>
 #include <poincare/division.h>
-#include <poincare/fraction_layout.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/print.h>
-#include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
 

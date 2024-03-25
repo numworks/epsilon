@@ -4,11 +4,10 @@
 #include <poincare/absolute_value.h>
 #include <poincare/complex_argument.h>
 #include <poincare/imaginary_part.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/real_part.h>
 #include <poincare/symbol.h>
 #include <poincare/variable_context.h>
-#include <poincare_layouts.h>
 
 #include "../app.h"
 #include "complex_list_controller.h"

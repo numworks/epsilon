@@ -5,10 +5,8 @@
 #include <apps/i18n.h>
 #include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/print.h>
-#include <poincare/vertical_offset_layout.h>
 #include <shared/poincare_helpers.h>
 #include <string.h>
 

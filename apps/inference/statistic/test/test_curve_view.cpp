@@ -1,6 +1,5 @@
 #include "test_curve_view.h"
 
-#include <poincare/absolute_value_layout.h>
 #include <poincare/layout.h>
 
 #include <algorithm>

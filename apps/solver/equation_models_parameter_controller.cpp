@@ -2,7 +2,7 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/preferences.h>
 
 #include "list_controller.h"

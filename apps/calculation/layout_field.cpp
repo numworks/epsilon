@@ -1,8 +1,7 @@
 #include "layout_field.h"
 
 #include <apps/i18n.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/symbol.h>
 
 using namespace Poincare;

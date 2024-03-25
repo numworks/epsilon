@@ -6,8 +6,6 @@
 #include <poincare/layout.h>
 #include <poincare/normal_distribution.h>
 #include <poincare/student_distribution.h>
-#include <poincare/test/helper.h>
-#include <poincare/vertical_offset_layout.h>
 
 using namespace PoincareJ;
 

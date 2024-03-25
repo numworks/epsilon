@@ -10,6 +10,7 @@
 #include <poincare/function.h>
 #include <poincare/helpers.h>
 #include <poincare/integral.h>
+#include <poincare/layout.h>
 #include <poincare/list_sort.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
@@ -18,7 +19,6 @@
 #include <poincare/print.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/sine.h>
-#include <poincare/string_layout.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
 #include <poincare/symbol_abstract.h>

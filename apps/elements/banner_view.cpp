@@ -1,9 +1,7 @@
 #include "banner_view.h"
 
 #include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 
 #include "app.h"
 

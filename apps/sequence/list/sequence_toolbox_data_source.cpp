@@ -3,9 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/sequence_store.h>
 #include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/vertical_offset_layout.h>
+#include <poincare/layout.h>
 
 using namespace Poincare;
 using namespace Escher;

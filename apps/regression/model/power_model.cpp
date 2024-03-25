@@ -1,12 +1,10 @@
 #include "power_model.h"
 
 #include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/print.h>
-#include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
 

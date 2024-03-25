@@ -3,15 +3,13 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/based_integer.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/decimal.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/number.h>
 #include <poincare/power.h>
 #include <poincare/print.h>
 #include <poincare/symbol.h>
-#include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
 using namespace PoincareJ;

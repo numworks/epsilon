@@ -3,10 +3,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/vertical_offset_layout.h>
+#include <poincare/layout.h>
 
 #include "../app.h"
 #include "graph_controller.h"

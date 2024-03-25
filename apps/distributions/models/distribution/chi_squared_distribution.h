@@ -2,8 +2,7 @@
 #define DISTRIBUTION_CHI_SQUARED_DISTRIBUTION_H
 
 #include <float.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 
 #include "one_parameter_distribution.h"
 

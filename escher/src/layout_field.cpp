@@ -4,14 +4,11 @@
 #include <escher/text_field.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/expression.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/junior_layout.h>
+#include <poincare/layout.h>
 #include <poincare/linear_layout_decoder.h>
 #include <poincare/parametered_expression.h>
-#include <poincare/parenthesis_layout.h>
-#include <poincare/string_layout.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 #include <poincare_junior/src/layout/app_helpers.h>
 #include <poincare_junior/src/layout/layout_cursor.h>

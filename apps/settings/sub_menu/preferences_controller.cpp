@@ -3,10 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/fraction_layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/vertical_offset_layout.h>
+#include <poincare/layout.h>
 
 #include <algorithm>
 #include <cmath>

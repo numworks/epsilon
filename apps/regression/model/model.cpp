@@ -7,7 +7,7 @@
 #include <poincare/decimal.h>
 #include <poincare/float.h>
 #include <poincare/function.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/subtraction.h>

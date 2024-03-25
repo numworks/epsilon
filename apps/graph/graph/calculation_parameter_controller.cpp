@@ -1,6 +1,7 @@
 #include "calculation_parameter_controller.h"
 
 #include <assert.h>
+#include <poincare/serialization_helper.h>
 
 #include <cmath>
 

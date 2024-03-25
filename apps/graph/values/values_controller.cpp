@@ -7,12 +7,8 @@
 #include <escher/clipboard.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/decimal.h>
-#include <poincare/layout_helper.h>
-#include <poincare/matrix_layout.h>
-#include <poincare/point_2D_layout.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/square_bracket_pair_layout.h>
-#include <poincare/string_layout.h>
 
 #include "../app.h"
 
@@ -175,11 +171,16 @@ void ValuesController::hideDerivative(Ion::Storage::Record record,
 /* PRIVATE */
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
+#if 0  // TODO PCJ
   KDSize layoutSize = Point2DLayoutNode::SizeGivenChildSize(
       PrintFloat::glyphLengthForFloatWithPrecision(
           Preferences::SharedPreferences()->numberOfSignificantDigits()) *
           KDFont::GlyphWidth(k_cellFont),
       KDFont::GlyphHeight(k_cellFont));
+#else
+  KDSize layoutSize = KDSizeZero;
+  assert(false);
+#endif
   return layoutSize + KDSize(Metric::SmallCellMargin * 2, 0);
 }
 

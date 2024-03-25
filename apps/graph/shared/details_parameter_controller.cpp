@@ -4,7 +4,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 
 #include "../app.h"
 

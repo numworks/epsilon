@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_POISSON_DISTRIBUTION_H
 #define PROBABILITE_POISSON_DISTRIBUTION_H
 
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 
 #include "one_parameter_distribution.h"
 

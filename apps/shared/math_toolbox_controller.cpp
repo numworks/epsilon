@@ -4,7 +4,7 @@
 #include <apps/global_preferences.h>
 #include <assert.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <string.h>
 
 #include <array>

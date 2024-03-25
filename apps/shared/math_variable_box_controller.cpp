@@ -9,7 +9,7 @@
 #include <escher/metric.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/serialization_helper.h>
 

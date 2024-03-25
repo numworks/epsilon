@@ -2,7 +2,7 @@
 
 #include <float.h>
 #include <poincare/beta_function.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/regularized_incomplete_beta_function.h>
 
 #include <algorithm>

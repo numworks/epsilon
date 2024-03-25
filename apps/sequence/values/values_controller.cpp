@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <poincare/based_integer.h>
 #include <poincare/sequence.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/sum.h>
 
 #include <cmath>

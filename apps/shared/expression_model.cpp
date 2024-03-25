@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/function.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <string.h>

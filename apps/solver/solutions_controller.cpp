@@ -3,14 +3,11 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <limits.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/print_int.h>
 #include <poincare/symbol.h>
 #include <poincare/symbol_abstract.h>
-#include <poincare/vertical_offset_layout.h>
 
 #include <algorithm>
 

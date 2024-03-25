@@ -2,8 +2,7 @@
 
 #include <assert.h>
 #include <poincare/binomial_distribution.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 
 #include <cmath>
 

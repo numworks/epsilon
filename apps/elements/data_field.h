@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <poincare/integer.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <stddef.h>
 
 #include "palette.h"

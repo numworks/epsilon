@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <limits.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 #include <stdlib.h>

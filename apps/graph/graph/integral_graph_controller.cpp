@@ -1,7 +1,7 @@
 #include "integral_graph_controller.h"
 
 #include <assert.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <stdlib.h>
 
 #include <cmath>

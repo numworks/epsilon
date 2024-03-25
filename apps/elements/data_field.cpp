@@ -1,19 +1,13 @@
 #include "data_field.h"
 
 #include <apps/apps_container.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/float.h>
-#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/multiplication.h>
-#include <poincare/vertical_offset_layout.h>
-#include <poincare_junior/src/layout/k_tree.h>
 
 #include <array>
 
 #include "elements_data_base.h"
-
-// TODO decide how apps should use this
-using PoincareJ::operator""_l;
 
 using namespace Poincare;
 

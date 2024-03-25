@@ -4,10 +4,8 @@
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
 #include <escher/metric.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/matrix_layout.h>
-#include <poincare/string_layout.h>
+#include <poincare/layout.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/symbol_abstract.h>
 
 #include "../app.h"

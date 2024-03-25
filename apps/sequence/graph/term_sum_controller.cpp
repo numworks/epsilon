@@ -1,8 +1,6 @@
 #include "term_sum_controller.h"
 
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/vertical_offset_layout.h>
+#include <poincare/layout.h>
 
 #include <cmath>
 

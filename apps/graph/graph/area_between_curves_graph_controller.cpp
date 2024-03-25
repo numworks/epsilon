@@ -2,9 +2,8 @@
 
 #include <assert.h>
 #include <poincare/absolute_value.h>
-#include <poincare/absolute_value_layout.h>
 #include <poincare/integral.h>
-#include <poincare/layout_helper.h>
+#include <poincare/layout.h>
 #include <poincare/subtraction.h>
 #include <stdlib.h>
 

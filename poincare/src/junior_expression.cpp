@@ -468,7 +468,7 @@ int JuniorExpression::getPolynomialCoefficients(
     JuniorExpression coefficients[]) const {
   PoincareJ::Tree* symbol =
       PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
-          symbolName, strlen(symbolName) + 1);
+          symbolName);
   PoincareJ::Tree* poly =
       PoincareJ::PolynomialParser::Parse(tree()->clone(), symbol);
   int degree = poly->isPolynomial() ? PoincareJ::Polynomial::Degree(poly) : 0;
@@ -513,7 +513,7 @@ int JuniorExpression::polynomialDegree(Context* context,
                                        const char* symbolName) const {
   PoincareJ::Tree* symbol =
       PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
-          symbolName, strlen(symbolName) + 1);
+          symbolName);
   PoincareJ::Tree* poly =
       PoincareJ::PolynomialParser::Parse(tree()->clone(), symbol);
   int degree = poly->isPolynomial() ? PoincareJ::Polynomial::Degree(poly) : 0;

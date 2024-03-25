@@ -54,6 +54,19 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
   return Tree::FromBlocks(copiedTree);
 }
 
+template <>
+Tree *EditionPool::push<BlockType::UserFunction>(const char *name) {
+  return push<BlockType::UserFunction>(name, strlen(name) + 1);
+}
+template <>
+Tree *EditionPool::push<BlockType::UserSequence>(const char *name) {
+  return push<BlockType::UserSequence>(name, strlen(name) + 1);
+}
+template <>
+Tree *EditionPool::push<BlockType::UserSymbol>(const char *name) {
+  return push<BlockType::UserSymbol>(name, strlen(name) + 1);
+}
+
 template <BlockType blockType, typename... Types>
 Tree *EditionPool::push(Types... args) {
   Block *newNode = lastBlock();

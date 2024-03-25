@@ -165,8 +165,9 @@ class Preferences final {
 
  private:
   CalculationPreferences m_calculationPreferences;
-  /* This flag is only to be used when writing new Preferences via DFU, to force
-   * the re-activation of the same exam mode. */
+  /* This flag can only be asserted by writing it via DFU. When set, it will
+   * force the reactivation of the exam mode after leaving DFU to synchronize
+   * the persisting bytes with the Preferences. */
   bool m_forceExamModeReload;
   mutable CombinatoricSymbols m_combinatoricSymbols;
   mutable ExamMode m_examMode;

@@ -1,7 +1,5 @@
 #include <poincare/layout.h>
-#include <poincare/layout_cursor.h>
 #include <poincare/layout_selection.h>
-#include <poincare/linear_layout_decoder.h>
 #include <poincare/old_expression.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare_junior/src/layout/rack_layout.h>
@@ -91,17 +89,6 @@ Layout Layout::recursivelyMatches(LayoutTest test) const {
     }
   }
   return Layout();
-}
-
-bool Layout::shouldCollapseSiblingsOnRight() const {
-  return otype() == LayoutNode::Type::ConjugateLayout ||
-         otype() == LayoutNode::Type::FractionLayout ||
-         otype() == LayoutNode::Type::NthRootLayout ||
-         // SquareBracketPairLayouts
-         otype() == LayoutNode::Type::AbsoluteValueLayout ||
-         otype() == LayoutNode::Type::CeilingLayout ||
-         otype() == LayoutNode::Type::FloorLayout ||
-         otype() == LayoutNode::Type::VectorNormLayout;
 }
 
 Layout Layout::childAtIndex(int i) const {

@@ -99,60 +99,9 @@ class LayoutNode : public TreeNode {
   }
   LayoutNode *root() { return static_cast<LayoutNode *>(TreeNode::root()); }
 
-  // Cursor navigation
-  constexpr static int k_outsideIndex = -1;
-  constexpr static int k_cantMoveIndex = -2;
-  // Default implementation only handles cases of 0 or 1 child
-  virtual int indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction,
-                                             int currentIndex,
-                                             bool *shouldRedrawLayout);
-  enum class PositionInLayout : uint8_t { Left, Middle, Right };
-  virtual int indexAfterVerticalCursorMove(
-      OMG::VerticalDirection direction, int currentIndex,
-      PositionInLayout positionAtCurrentIndex, bool *shouldRedrawLayout);
-
-  // Cursor deletion
-  enum class DeletionMethod {
-    DeleteLayout,
-    DeleteParent,
-    MoveLeft,
-    FractionDenominatorDeletion,
-    TwoRowsLayoutMoveFromLowertoUpper,
-    GridLayoutMoveToUpperRow,
-    GridLayoutDeleteColumnAndRow,
-    GridLayoutDeleteColumn,
-    GridLayoutDeleteRow,
-    AutocompletedBracketPairMakeTemporary
-  };
-  virtual DeletionMethod deletionMethodForCursorLeftOfChild(
-      int childIndex) const;
-  static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(
-      int childIndex, int argumentIndex);
-
-  // Cursor insertion
-  virtual int indexOfChildToPointToWhenInserting();
-
   bool isEmpty() const { return isHorizontal() && numberOfChildren() == 0; }
-  /* isCollapsable is used when adding a sibling fraction: should the layout be
-   * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
-   * become 1+ 2/3 - 4 when pressing "Divide": a CodePointLayout is collapsable
-   * if its char is not +, -, or *. */
-  virtual bool isCollapsable(int *numberOfOpenParenthesis,
-                             OMG::HorizontalDirection direction) const {
-    return true;
-  }
-  /* canBeOmittedMultiplicationLeftFactor returns true if the layout,
-   * next to another layout, might be the factor of a multiplication
-   * with an omitted multiplication sign. For instance, an absolute value
-   * layout returns true, because |3|2 means |3|*2. A '+' CodePointLayout
-   * returns false, because +'something' nevers means +*'something'. */
-  bool canBeOmittedMultiplicationLeftFactor() const;
-  virtual bool hasUpperLeftIndex() const { return false; }
 
   virtual OLayout makeEditable();
-
-  bool createGraySquaresAfterEnteringGrid(OLayout layoutToExclude);
-  bool deleteGraySquaresBeforeLeavingGrid(OLayout layoutToExclude);
 
  protected:
   virtual bool protectedIsIdenticalTo(OLayout l);
@@ -172,8 +121,6 @@ class LayoutNode : public TreeNode {
 
  private:
   virtual void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) = 0;
-  bool changeGraySquaresOfAllGridRelatives(bool add, bool ancestors,
-                                           OLayout layoutToExclude);
 
   KDRect m_frame;
   /* m_baseline is the signed vertical distance from the top of the layout to

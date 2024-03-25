@@ -2,8 +2,6 @@
 #include <ion/display.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/layout.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/layout_selection.h>
 #include <poincare/old_expression.h>
 
 namespace Poincare {
@@ -103,50 +101,6 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
   }
 }
 
-int LayoutNode::indexAfterHorizontalCursorMove(
-    OMG::HorizontalDirection direction, int currentIndex,
-    bool *shouldRedrawLayout) {
-  int nChildren = numberOfChildren();
-  if (nChildren == 0) {
-    assert(currentIndex == k_outsideIndex);
-    return k_outsideIndex;
-  }
-  if (nChildren == 1) {
-    assert(currentIndex == k_outsideIndex || currentIndex == 0);
-    return currentIndex == k_outsideIndex ? 0 : k_outsideIndex;
-  }
-  assert(false);
-  return k_cantMoveIndex;
-}
-
-int LayoutNode::indexAfterVerticalCursorMove(
-    OMG::VerticalDirection direction, int currentIndex,
-    PositionInLayout positionAtCurrentIndex, bool *shouldRedrawLayout) {
-  assert(currentIndex < numberOfChildren());
-  assert(currentIndex != k_outsideIndex ||
-         positionAtCurrentIndex != PositionInLayout::Middle);
-  return k_cantMoveIndex;
-}
-
-LayoutNode::DeletionMethod LayoutNode::deletionMethodForCursorLeftOfChild(
-    int childIndex) const {
-  assert((childIndex >= 0 || childIndex == k_outsideIndex) &&
-         childIndex < numberOfChildren());
-  return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout
-                                      : DeletionMethod::MoveLeft;
-}
-
-LayoutNode::DeletionMethod
-LayoutNode::StandardDeletionMethodForLayoutContainingArgument(
-    int childIndex, int argumentIndex) {
-  return childIndex == argumentIndex ? DeletionMethod::DeleteParent
-                                     : DeletionMethod::MoveLeft;
-}
-
-int LayoutNode::indexOfChildToPointToWhenInserting() {
-  return numberOfChildren() > 0 ? 0 : k_outsideIndex;
-}
-
 Layout LayoutNode::makeEditable() {
   /* We visit children if reverse order to avoid visiting the codepoints they
    * might have inserted after them. */
@@ -154,31 +108,6 @@ Layout LayoutNode::makeEditable() {
     childAtIndex(i)->makeEditable();
   }
   return Layout(this);
-}
-
-// Other
-bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
-#if 0
-  if (otype() == LayoutNode::Type::CodePointLayout &&
-      static_cast<const CodePointLayoutNode *>(this)
-          ->isMultiplicationCodePoint()) {
-    return false;
-  }
-#endif
-  assert(false);
-  /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
-   * isCollapsable is true too. If isCollapsable changes, it might not be the
-   * case anymore so make sure to modify this function if needed. */
-  int numberOfOpenParentheses = 0;
-  return isCollapsable(&numberOfOpenParentheses, OMG::Direction::Left());
-}
-
-bool LayoutNode::createGraySquaresAfterEnteringGrid(Layout layoutToExclude) {
-  return changeGraySquaresOfAllGridRelatives(true, true, layoutToExclude);
-}
-
-bool LayoutNode::deleteGraySquaresBeforeLeavingGrid(Layout layoutToExclude) {
-  return changeGraySquaresOfAllGridRelatives(false, true, layoutToExclude);
 }
 
 // Protected and private
@@ -194,58 +123,6 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
     }
   }
   return true;
-}
-
-bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout *l) {
-#if 0
-  if (!GridLayoutNode::IsGridLayoutType(l->otype())) {
-    return false;
-  }
-  if (add) {
-    static_cast<GridLayoutNode *>(l->node())->startEditing();
-  } else {
-    static_cast<GridLayoutNode *>(l->node())->stopEditing();
-  }
-#endif
-  assert(false);
-  return true;
-}
-
-bool LayoutNode::changeGraySquaresOfAllGridRelatives(bool add, bool ancestors,
-                                                     Layout layoutToExclude) {
-  bool changedSquares = false;
-  if (!ancestors) {
-    // If in children, we also change the squares for this
-    {
-      Layout thisLayout = Layout(this);
-      if ((layoutToExclude.isUninitialized() ||
-           !layoutToExclude.hasAncestor(thisLayout, false)) &&
-          addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
-        changedSquares = true;
-      }
-    }
-    int childrenNumber = numberOfChildren();
-    for (int i = 0; i < childrenNumber; i++) {
-      /* We cannot use "for l : children()", as the node addresses might change,
-       * especially the iterator stopping address. */
-      changedSquares = changedSquares ||
-                       childAtIndex(i)->changeGraySquaresOfAllGridRelatives(
-                           add, false, layoutToExclude);
-    }
-  } else {
-    Layout currentAncestor = Layout(parent());
-    while (!currentAncestor.isUninitialized()) {
-      if (!layoutToExclude.isUninitialized() &&
-          layoutToExclude.hasAncestor(currentAncestor, false)) {
-        break;
-      }
-      if (addRemoveGraySquaresInLayoutIfNeeded(add, &currentAncestor)) {
-        changedSquares = true;
-      }
-      currentAncestor = currentAncestor.parent();
-    }
-  }
-  return changedSquares;
 }
 
 }  // namespace Poincare

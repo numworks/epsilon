@@ -72,31 +72,6 @@ class OLayout : public TreeHandle {
   typedef TrinaryBoolean (*LayoutTest)(const OLayout l);
   OLayout recursivelyMatches(LayoutTest test) const;
 
-  bool shouldCollapseSiblingsOnLeft() const {
-    return otype() == LayoutNode::Type::FractionLayout;
-  }
-  bool shouldCollapseSiblingsOnRight() const;
-  int leftCollapsingAbsorbingChildIndex() const { return 0; }
-  int rightCollapsingAbsorbingChildIndex() const {
-    return otype() == LayoutNode::Type::FractionLayout ? 1 : 0;
-  }
-  bool isCollapsable(int *numberOfOpenParenthesis,
-                     OMG::HorizontalDirection direction) const {
-    return const_cast<OLayout *>(this)->node()->isCollapsable(
-        numberOfOpenParenthesis, direction);
-  }
-
-  // Layout modification
-  int indexOfChildToPointToWhenInserting() {
-    return node()->indexOfChildToPointToWhenInserting();
-  }
-  bool createGraySquaresAfterEnteringGrid(OLayout layoutToExclude = OLayout()) {
-    return node()->createGraySquaresAfterEnteringGrid(layoutToExclude);
-  }
-  bool deleteGraySquaresBeforeLeavingGrid(OLayout layoutToExclude = OLayout()) {
-    return node()->deleteGraySquaresBeforeLeavingGrid(layoutToExclude);
-  }
-
   // Tree
   OLayout childAtIndex(int i) const;
   OLayout root() const {
@@ -107,31 +82,8 @@ class OLayout : public TreeHandle {
     assert(!isUninitialized());
     return OLayout(node()->parent());
   }
-
   // Replace strings with codepoints
   OLayout makeEditable() { return node()->makeEditable(); }
-
-  // Cursor move
-  int indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction,
-                                     int currentIndex,
-                                     bool *shouldRedrawLayout) {
-    return node()->indexAfterHorizontalCursorMove(direction, currentIndex,
-                                                  shouldRedrawLayout);
-  }
-  int indexAfterVerticalCursorMove(
-      OMG::VerticalDirection direction, int currentIndex,
-      LayoutNode::PositionInLayout positionAtCurrentIndex,
-      bool *shouldRedrawLayout) {
-    return node()->indexAfterVerticalCursorMove(
-        direction, currentIndex, positionAtCurrentIndex, shouldRedrawLayout);
-  }
-
-  // Cursor deletion
-  LayoutNode::DeletionMethod deletionMethodForCursorLeftOfChild(
-      int childIndex) const {
-    return node()->deletionMethodForCursorLeftOfChild(childIndex);
-  }
-
  private:
   bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };

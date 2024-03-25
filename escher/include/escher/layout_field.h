@@ -6,7 +6,6 @@
 #include <escher/layout_view.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
-#include <poincare/layout_cursor.h>
 #include <poincare/preferences.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 

@@ -3,7 +3,6 @@
 
 #include <escher/glyphs_view.h>
 #include <poincare/layout.h>
-#include <poincare/layout_cursor.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 
 namespace Escher {

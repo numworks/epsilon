@@ -1,7 +1,6 @@
 #ifndef POINCARE_JUNIOR_LAYOUT_NODE_H
 #define POINCARE_JUNIOR_LAYOUT_NODE_H
 
-#include <poincare/layout_cursor.h>
 #include <poincare/old_layout.h>
 #include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/memory/pattern_matching.h>

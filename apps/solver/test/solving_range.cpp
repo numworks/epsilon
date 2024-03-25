@@ -14,4 +14,5 @@ QUIZ_CASE(solver_solving_range) {
   assert_solves_with_auto_solving_range(
       "(x+24543)^2+cos(x)-0.5^x=123456789123457890", {351339639.64352596});
   assert_solves_with_auto_solving_range("x^(1/3)=23456", {12905114402814.777});
+  assert_auto_solving_range_is("x^(1/3)=234567", -10, 10);
 }

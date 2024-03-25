@@ -194,7 +194,7 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
   }
 }
 
-void Zoom::fitRoots(Function2DWithContext<float> f, const void *model,
+bool Zoom::fitRoots(Function2DWithContext<float> f, const void *model,
                     bool vertical, Function2DWithContext<double> fDouble,
                     bool *finiteNumberOfPoints) {
   float (Coordinate2D<float>::*ordinate)() const =
@@ -218,13 +218,14 @@ void Zoom::fitRoots(Function2DWithContext<float> f, const void *model,
     return (p->fDouble(t, p->model, p->context).*p->ordinateDouble)();
   };
   bool leftInterrupted, rightInterrupted;
-  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params,
-                Solver<float>::EvenOrOddRootInBracket, HoneRoot, vertical,
-                evaluatorDouble);
+  bool didFit = fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator,
+                              &params, Solver<float>::EvenOrOddRootInBracket,
+                              HoneRoot, vertical, evaluatorDouble);
   if (finiteNumberOfPoints) {
     *finiteNumberOfPoints =
         *finiteNumberOfPoints && !leftInterrupted && !rightInterrupted;
   }
+  return didFit;
 }
 
 void Zoom::fitIntersections(Function2DWithContext<float> f1, const void *model1,

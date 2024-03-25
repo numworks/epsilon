@@ -4,12 +4,10 @@
 #include <omg/global_box.h>
 
 #include "edition_pool.h"
-#include "reference.h"
 
 namespace PoincareJ {
 
-// Before removing cache pool, remove :
-// - Expression and Layout References
+// TODO: Remove cache pool
 
 /*  <---- EditionPool ----> <------------------- CachePool ------------------>
  * +-----------------------+-------------------------+---+--------------------+
@@ -20,7 +18,6 @@ namespace PoincareJ {
 
 class CachePool final : public Pool {
   friend class OMG::GlobalBox<CachePool>;
-  friend class Reference;
   /* The CachePool respects the following assertions:
    * - the referenced addresses are physically linear on the pool,
    * - the pool can be fragmented.

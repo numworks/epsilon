@@ -13,7 +13,7 @@
 namespace PoincareJ {
 
 bool Derivation::ShallowSimplify(Tree *node) {
-  // Reference is expected to have been reduced beforehand.
+  // Tree is expected to have been reduced beforehand.
   assert(node->isDerivative() || node->isNthDerivative());
   const Tree *symbol = node->child(0);
   const Tree *symbolValue = symbol->nextTree();

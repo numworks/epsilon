@@ -4,13 +4,14 @@
 #include <omg/global_box.h>
 
 #include "pool.h"
-#include "reference.h"
 
 namespace Poincare {
 class JuniorLayout;
 }
 
 namespace PoincareJ {
+
+typedef void (*ActionWithContext)(void *context, const void *data);
 
 class EditionPool final : public Pool {
   friend class EditionReference;

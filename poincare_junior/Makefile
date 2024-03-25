@@ -76,7 +76,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   memory/exception_checkpoint.cpp \
   memory/pattern_matching.cpp \
   memory/pool.cpp \
-  memory/reference.cpp \
   memory/storage_context.cpp \
   memory/tree.cpp \
   memory/value_block.cpp \
@@ -128,7 +127,6 @@ tests_src += $(addprefix poincare_junior/test/,\
   matrix.cpp \
   memory_elements.cpp \
   memory_edition.cpp \
-  memory_cache.cpp \
   n_ary.cpp \
   parse.cpp \
   polynomial.cpp \

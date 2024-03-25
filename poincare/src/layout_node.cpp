@@ -1,7 +1,7 @@
 #include <escher/metric.h>
 #include <ion/display.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/layout.h>
+#include <poincare/layout_node.h>
 #include <poincare/old_expression.h>
 
 namespace Poincare {
@@ -21,7 +21,7 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
   return protectedIsIdenticalTo(l);
 }
 
-KDPoint LayoutNode::absoluteOriginWithMargin(KDFont::Size font) {
+KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) {
   if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {
     m_frame.setOrigin(KDPointZero);
     m_flags.m_positioned = true;

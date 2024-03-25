@@ -12,7 +12,6 @@
 namespace Poincare {
 
 class OLayout;
-class LayoutSelection;
 
 class LayoutNode : public TreeNode {
   friend class OLayout;
@@ -37,9 +36,7 @@ class LayoutNode : public TreeNode {
 
   // Rendering
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
-  KDPoint absoluteOrigin(KDFont::Size font) {
-    return absoluteOriginWithMargin(font);
-  }
+  KDPoint absoluteOrigin(KDFont::Size font);
   KDSize layoutSize(KDFont::Size font);
   KDCoordinate baseline(KDFont::Size font);
 
@@ -61,8 +58,6 @@ class LayoutNode : public TreeNode {
   virtual KDCoordinate computeBaseline(KDFont::Size font) = 0;
   virtual KDPoint positionOfChild(LayoutNode *child, KDFont::Size font) = 0;
 
-  KDPoint absoluteOriginWithMargin(KDFont::Size font);
-
  private:
   virtual void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) = 0;
 
@@ -78,8 +73,6 @@ class LayoutNode : public TreeNode {
     bool m_baselined : 1;
     bool m_positioned : 1;
     bool m_sized : 1;
-    bool m_margin : 1;
-    bool m_lockMargin : 1;
     KDFont::Size m_baselineFontSize : 1;
     KDFont::Size m_positionFontSize : 1;
     KDFont::Size m_sizeFontSize : 1;

@@ -180,7 +180,8 @@ void assert_solves_with_auto_solving_range(
   return assert_solves_with_range_to(equation, NAN, NAN, solutions);
 }
 
-void assert_solving_range_is(const char *equation, double min, double max) {
+void assert_auto_solving_range_is(const char *equation, double min,
+                                  double max) {
   solve_and_process_error({equation}, [min, max](SystemOfEquations *system,
                                                  SystemOfEquations::Error e) {
     Shared::GlobalContext globalContext;

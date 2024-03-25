@@ -35,7 +35,7 @@ void assert_solves_to_infinite_solutions(
 
 void assert_solves_with_auto_solving_range(
     const char *equation, std::initializer_list<double> solutions);
-void assert_solving_range_is(const char *equation, double min, double max);
+void assert_auto_solving_range_is(const char *equation, double min, double max);
 
 // Shorthands
 inline void assert_solves_to_no_solution(const char *equation) {

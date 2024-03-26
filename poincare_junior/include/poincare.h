@@ -14,6 +14,7 @@ void Init();
 void Shutdown();
 
 #if POINCARE_POOL_VISUALIZATION
+// See build/poincare_visualization
 
 std::ofstream& Logger();
 __attribute__((__used__)) void ResetLogger();

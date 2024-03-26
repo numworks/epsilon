@@ -25,14 +25,13 @@ endif
 OUTPUT_LOGS := output/logs
 
 .PHONY: $(OUTPUT_LOGS)/edition.xml
-$(OUTPUT_LOGS)/cache.xml: $(OUTPUT_LOGS)/edition.xml # This is a workaround because grouped target (&:) is part of Make version > 4.2
 $(OUTPUT_LOGS)/edition.xml:
 	@echo "LOG     $@"
 	@mkdir -p $(OUTPUT_LOGS)
 	@$(MAKE) -j8 $(MAKE_FLAGS) $(notdir $(EXECUTABLE_FILE))
 	@output/debug/simulator/macos/$(EXECUTABLE_FILE) $(RUN_FLAGS)
 
-poincare_log_visualization: $(OUTPUT_LOGS)/cache.xml $(OUTPUT_LOGS)/edition.xml
-	@for arg in cache edition; do cp build/poincare_visualization/visualization.html $(OUTPUT_LOGS)/$${arg}.html; sed -i '' "s/XML_FILE/$${arg}.xml/g" $(OUTPUT_LOGS)/$${arg}.html; done
-	@echo "In a browser, go to http://localhost:8000/*.html to visualize the cache logs"
+poincare_log_visualization: $(OUTPUT_LOGS)/edition.xml
+	@cp build/poincare_visualization/visualization.html $(OUTPUT_LOGS)/edition.html; sed -i '' "s/XML_FILE/edition.xml/g" $(OUTPUT_LOGS)/edition.html;
+	@echo "In a browser, go to http://localhost:8000/edition.html to visualize the logs"
 	$(PYTHON) -m http.server 8000 --directory $(OUTPUT_LOGS)

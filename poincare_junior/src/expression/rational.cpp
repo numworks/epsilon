@@ -122,7 +122,7 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
   }
   assert(IsIrreducible(node));
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "PushRational", node->block(), node->treeSize());
+  Log("PushRational", node->block(), node->treeSize());
 #endif
   return node;
 }

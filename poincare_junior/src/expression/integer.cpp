@@ -136,7 +136,7 @@ Tree *IntegerHandler::pushOnEditionPool() const {
   SharedEditionPool->push(m_numberOfDigits);
   pushDigitsOnEditionPool();
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "PushInteger", node->block(), node->treeSize());
+  Log("PushInteger", node->block(), node->treeSize());
 #endif
   return node;
 }

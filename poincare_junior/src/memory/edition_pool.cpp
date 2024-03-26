@@ -47,7 +47,7 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
     return nullptr;
   }
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Copy", copiedTree,
+  Log("Copy", copiedTree,
       isTree ? Tree::FromBlocks(copiedTree)->treeSize()
              : Tree::FromBlocks(copiedTree)->nodeSize());
 #endif
@@ -67,7 +67,7 @@ Tree *EditionPool::push(Types... args) {
     push(block);
   } while (!endOfNode);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Push", newNode, i);
+  Log("Push", newNode, i);
 #endif
   return Tree::FromBlocks(newNode);
 }
@@ -186,7 +186,7 @@ void EditionPool::flush() {
   m_size = 0;
   m_referenceTable.reset();
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Flush");
+  Log("Flush");
 #endif
 }
 
@@ -195,7 +195,7 @@ void EditionPool::flushFromBlock(const Block *block) {
   m_size = block - m_blocks;
   m_referenceTable.deleteIdentifiersAfterBlock(block);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "flushFromBlock", block);
+  Log("flushFromBlock", block);
 #endif
 }
 

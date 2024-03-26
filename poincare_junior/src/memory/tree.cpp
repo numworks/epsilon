@@ -374,7 +374,7 @@ Tree* Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
   SharedEditionPool->insertBlocks(destination->block(), nodeToClone->block(),
                                   size, at);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Insert", destination->block(), size);
+  Log("Insert", destination->block(), size);
 #endif
   return destination;
 }
@@ -388,7 +388,7 @@ Tree* Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
   Block* dst = destination->block();
   Block* addedBlock = dst > nodeToMove->block() ? dst - size : dst;
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Insert", addedBlock, size, nodeToMove->block());
+  Log("Insert", addedBlock, size, nodeToMove->block());
 #endif
   return Tree::FromBlocks(addedBlock);
 }
@@ -411,7 +411,7 @@ Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
                                     newSize - oldSize);
   }
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Replace", oldBlock, newSize);
+  Log("Replace", oldBlock, newSize);
 #endif
   return Tree::FromBlocks(oldBlock);
 }
@@ -441,7 +441,7 @@ Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
   if (oldBlock < newBlock) {
     newBlock -= oldSize;
   }
-  Log(LoggerType::Edition, "Replace", finalBlock, newSize, newBlock);
+  Log("Replace", finalBlock, newSize, newBlock);
 #endif
   return Tree::FromBlocks(finalBlock);
 }
@@ -451,7 +451,7 @@ void Tree::remove(bool isTree) {
   size_t size = isTree ? treeSize() : nodeSize();
   SharedEditionPool->removeBlocks(b, size);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Remove", nullptr, INT_MAX, b);
+  Log("Remove", nullptr, INT_MAX, b);
 #endif
 }
 
@@ -461,8 +461,7 @@ Tree* Tree::detach(bool isTree) {
   Block* source = block();
   SharedEditionPool->moveBlocks(destination, source, sizeToMove, true);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove,
-      source);
+  Log("Detach", destination - sizeToMove, sizeToMove, source);
 #endif
   return Tree::FromBlocks(destination - sizeToMove);
 }

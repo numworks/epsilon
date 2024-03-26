@@ -52,6 +52,7 @@ void CategoricalTableCell::tableViewDidChangeSelectionAndDidScroll(
     KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
   if (!withinTemporarySelection && previousOffset != t->contentOffset()) {
+    categoricalController()->didScroll();
     categoricalController()->selectableListView()->reloadData(false);
   }
 }

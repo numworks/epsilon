@@ -50,6 +50,7 @@ class CategoricalController
   void initView() override;
 
   virtual int indexOfTableCell() const { return 0; }
+  void didScroll();
 
  protected:
   KDCoordinate nonMemoizedRowHeight(int row) override;
@@ -62,7 +63,6 @@ class CategoricalController
 
  private:
   virtual void createDynamicCells() = 0;
-  void didScroll();
   KDCoordinate listVerticalOffset() {
     return m_selectableListView.contentOffset().y();
   }

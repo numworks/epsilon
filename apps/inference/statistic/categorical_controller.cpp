@@ -42,13 +42,12 @@ void CategoricalController::didScroll() {
 
   int tableCellRow = indexOfTableCell();
   KDCoordinate topMargin = m_selectableListView.margins()->top();
-  int firstVisibleRow = rowAfterCumulatedHeight(listOffset - topMargin);
+  int firstVisibleRow =
+      rowAfterCumulatedHeight(std::max(listOffset - topMargin, 0));
   KDCoordinate heightBeforeTableCell =
       cumulatedHeightBeforeRow(tableCellRow) + topMargin;
 
-  assert((firstVisibleRow < tableCellRow &&
-          listOffset < heightBeforeTableCell && tableOffset == 0) ||
-         listOffset >= heightBeforeTableCell);
+  assert(firstVisibleRow < tableCellRow == listOffset < heightBeforeTableCell);
 
   KDCoordinate maxTableOffset = std::max(
       0, tableCellFullHeight() - (m_selectableListView.bounds().height() -
@@ -71,6 +70,24 @@ void CategoricalController::didScroll() {
             tableCellVerticalOffset() <= maxTableOffset) ||
            (listVerticalOffset() >= heightBeforeTableCell &&
             tableCellVerticalOffset() == maxTableOffset));
+  } else if (firstVisibleRow < tableCellRow && tableOffset > 0) {
+    assert(listOffset < heightBeforeTableCell);
+    // Transfer table's offset to list
+    KDCoordinate translation = std::min(static_cast<int>(tableOffset),
+                                        heightBeforeTableCell - listOffset);
+    assert(translation > 0);
+    // Change table cell offset first (to relayout well the list)
+    categoricalTableCell()->selectableTableView()->translateContentOffsetBy(
+        KDPoint(0, -translation));
+    assert(0 <= tableCellVerticalOffset() &&
+           tableCellVerticalOffset() <= maxTableOffset);
+    m_selectableListView.translateContentOffsetBy(KDPoint(0, translation));
+    assert(0 <= listVerticalOffset() &&
+           listVerticalOffset() <= heightBeforeTableCell);
+    assert((listVerticalOffset() == heightBeforeTableCell &&
+            tableCellVerticalOffset() >= 0) ||
+           (listVerticalOffset() <= heightBeforeTableCell &&
+            tableCellVerticalOffset() == 0));
   }
 }
 

@@ -19,8 +19,8 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
       buffer + numberOfChar, k_textBufferSize - numberOfChar - 1,
       function->symbol());
   assert(numberOfChar <= k_textBufferSize);
-  numberOfChar += SerializationHelper::CodePoint(
-      buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
+  SerializationHelper::CodePoint(buffer + numberOfChar,
+                                 k_textBufferSize - numberOfChar, '=');
   bannerView()->abscissaSymbol()->setText(buffer);
 
   numberOfChar = function->printAbscissaValue(

@@ -73,8 +73,8 @@ void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
     labelBuffer[0] = 0;
     return;
   }
-  length += Poincare::SerializationHelper::CodePoint(labelBuffer + length,
-                                                     maxSize - length, '%');
+  Poincare::SerializationHelper::CodePoint(labelBuffer + length,
+                                           maxSize - length, '%');
 }
 
 void FrequencyController::reloadValueInBanner(

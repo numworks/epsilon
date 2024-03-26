@@ -39,8 +39,12 @@ class ContinuousFunctionProperties {
     Undefined,
     Unhandled,
     Banned,
-    NumberOfStatus
+    LastStatus = Banned,
   };
+  /* Use LastStatus instead of the usual NumberOfStatuses to have all values fit
+   * on two bits. */
+  constexpr static int k_numberOfStatuses =
+      static_cast<int>(Status::LastStatus) + 1;
 
   // Order impact order of columns in Graph/Values
   enum class SymbolType : uint8_t {
@@ -268,8 +272,7 @@ class ContinuousFunctionProperties {
   }
 
   constexpr static size_t k_numberOfBitsForStatus =
-      OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(Status::NumberOfStatus));
+      OMG::BitHelper::numberOfBitsToCountUpTo(k_numberOfStatuses);
   constexpr static size_t k_numberOfBitsForEquationType =
       OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(
           Poincare::ComparisonNode::OperatorType::NumberOfTypes));

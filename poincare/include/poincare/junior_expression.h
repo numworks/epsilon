@@ -31,6 +31,7 @@ class JuniorExpressionNode final : public ExpressionNode {
     stream << "JuniorExpression";
   }
   void logAttributes(std::ostream& stream) const override {
+    stream << '\n';
     tree()->log(stream);
   }
 #endif

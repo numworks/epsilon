@@ -132,7 +132,7 @@ JuniorExpression JuniorExpression::Parse(const PoincareJ::Tree* layout,
   return Builder(PoincareJ::Parser::Parse(layout));
 }
 
-JuniorExpression JuniorExpression::Parse(char const* string, Context* context,
+JuniorExpression JuniorExpression::Parse(const char* string, Context* context,
                                          bool addMissingParenthesis,
                                          bool parseForAssignment) {
   if (string[0] == 0) {

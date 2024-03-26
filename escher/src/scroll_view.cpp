@@ -148,12 +148,13 @@ void ScrollView::scrollToContentRect(KDRect rect) {
 }
 
 KDRect ScrollView::visibleContentRect() {
-  if (m_scrollViewDelegate) {
-    return m_scrollViewDelegate->visibleContentRect(this);
-  }
-  return KDRect(
-      contentOffset(),
-      bounds().size() + KDSize(m_excessWidth, m_excessHeight) - m_margins);
+  KDRect visibleRectInBounds =
+      m_scrollViewDelegate ? m_scrollViewDelegate->visibleRectInBounds(this)
+                           : bounds();
+  assert(bounds().containsRect(visibleRectInBounds));
+  return KDRect(contentOffset().translatedBy(visibleRectInBounds.origin()),
+                visibleRectInBounds.size() +
+                    KDSize(m_excessWidth, m_excessHeight) - m_margins);
 }
 
 void ScrollView::layoutSubviews(bool force) {

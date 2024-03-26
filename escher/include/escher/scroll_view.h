@@ -13,7 +13,7 @@ class ScrollView;
 
 class ScrollViewDelegate {
  public:
-  virtual KDRect visibleContentRect(ScrollView *scrollView) = 0;
+  virtual KDRect visibleRectInBounds(ScrollView *scrollView) = 0;
 };
 
 class ScrollView : public View {

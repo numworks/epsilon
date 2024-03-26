@@ -538,6 +538,9 @@ JuniorExpression JuniorExpression::replaceSymbolWithExpression(
   // TODO_PCJ: Ensure symbol is variable and use PoincareJ::Variables::Replace
   /* TODO_PCJ: Handle parametrics, functions and sequences as well. See
    * replaceSymbolWithExpression implementations. */
+  if (isUninitialized()) {
+    return *this;
+  }
   assert(symbol.tree()->isUserSymbol() &&
          !tree()->hasDescendantSatisfying(
              [](const PoincareJ::Tree* e) { return e->isParametric(); }));

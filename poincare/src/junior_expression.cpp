@@ -342,6 +342,8 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::HyperbolicArcTangent;
     case PoincareJ::BlockType::Det:
       return ExpressionNode::Type::Determinant;
+    case PoincareJ::BlockType::Norm:
+      return ExpressionNode::Type::VectorNorm;
   }
 }
 

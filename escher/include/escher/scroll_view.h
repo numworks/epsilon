@@ -158,6 +158,11 @@ class ScrollView : public View {
 
   KDRect layoutDecorator(bool force);
   KDRect visibleContentRect();
+  KDRect visibleRectInBounds() {
+    return m_scrollViewDelegate
+               ? m_scrollViewDelegate->visibleRectInBounds(this)
+               : bounds();
+  }
 
   ScrollViewDataSource *m_dataSource;
   View *m_contentView;

@@ -123,7 +123,6 @@ class ScrollView : public View {
   }
 
  protected:
-  KDRect visibleContentRect();
   void layoutSubviews(bool force = false) override;
   virtual KDSize contentSize() const {
     return m_contentView->minimalSizeForOptimalDisplay();
@@ -158,6 +157,7 @@ class ScrollView : public View {
   };
 
   KDRect layoutDecorator(bool force);
+  KDRect visibleContentRect();
 
   ScrollViewDataSource *m_dataSource;
   View *m_contentView;

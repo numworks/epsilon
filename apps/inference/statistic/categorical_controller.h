@@ -30,9 +30,6 @@ class CategoricalController
   // ScrollViewDataSourceDelegate
   bool updateBarIndicator(bool vertical, bool* visible) override;
 
-  // ScrollViewDelegate
-  KDRect visibleContentRect(Escher::ScrollView* scrollView) override;
-
   // SelectableListViewDelegate
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView* l, int previousRow, KDPoint previousOffset,
@@ -62,6 +59,9 @@ class CategoricalController
   Escher::ButtonCell m_next;
 
  private:
+  // ScrollViewDelegate
+  KDRect visibleContentRect(Escher::ScrollView* scrollView) override;
+
   virtual void createDynamicCells() = 0;
   KDCoordinate listVerticalOffset() {
     return m_selectableListView.contentOffset().y();

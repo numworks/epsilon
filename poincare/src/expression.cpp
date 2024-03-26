@@ -1182,7 +1182,7 @@ OExpression OExpression::cloneAndSimplify(ReductionContext reductionContext,
   }
   if (reduceFailure ||
       (otype() == ExpressionNode::Type::Store &&
-       !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
+       !static_cast<const OStore *>(this)->isTrulyReducedInShallowReduce())) {
     // We can't beautify unreduced expression
     return e;
   }
@@ -1332,7 +1332,7 @@ void OExpression::cloneAndSimplifyAndApproximate(
 
   if (reduceFailure ||
       (otype() == ExpressionNode::Type::Store &&
-       !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
+       !static_cast<const OStore *>(this)->isTrulyReducedInShallowReduce())) {
     // We can't beautify unreduced expression
     *simplifiedExpression = e;
     if (approximateExpression) {

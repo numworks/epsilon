@@ -130,7 +130,7 @@ class OExpression : public TreeHandle {
   friend class Sine;
   friend class SquareRoot;
   friend class SquareRootNode;
-  friend class Store;
+  friend class OStore;
   friend class StoreNode;
   friend class Subtraction;
   friend class SubtractionNode;

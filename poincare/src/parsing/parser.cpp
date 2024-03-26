@@ -98,8 +98,8 @@ OExpression Parser::parseExpressionWithRightwardsArrow(
     OExpression leftHandSide = parseUntil(Token::Type::RightwardsArrow);
     if (m_status != Status::Error) {
       m_status = Status::Success;
-      result = Store::Builder(leftHandSide,
-                              static_cast<SymbolAbstract &>(rightHandSide));
+      result = OStore::Builder(leftHandSide,
+                               static_cast<SymbolAbstract &>(rightHandSide));
       return result;
     }
   }

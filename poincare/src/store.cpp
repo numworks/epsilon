@@ -12,6 +12,8 @@
 
 namespace Poincare {
 
+#define Store OStore
+
 OExpression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
   return Store(this).shallowReduce(reductionContext);
 }

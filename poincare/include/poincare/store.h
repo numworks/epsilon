@@ -40,7 +40,7 @@ class StoreNode final : public RightwardsArrowExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class Store final : public ExpressionTwoChildren<Store, StoreNode> {
+class OStore final : public ExpressionTwoChildren<OStore, StoreNode> {
   friend class StoreNode;
 
  public:

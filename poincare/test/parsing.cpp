@@ -747,12 +747,13 @@ QUIZ_CASE_DISABLED(poincare_parsing_identifiers) {
   // User-defined functions
   assert_parsed_expression_is(
       "1→f(x)",
-      Store::Builder(BasedInteger::Builder(1),
-                     Function::Builder("f", 1, Symbol::Builder("x", 1))));
+      OStore::Builder(BasedInteger::Builder(1),
+                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
   assert_parsed_expression_is(
       "1→ab12AB_(x)",
-      Store::Builder(BasedInteger::Builder(1),
-                     Function::Builder("ab12AB_", 7, Symbol::Builder("x", 1))));
+      OStore::Builder(
+          BasedInteger::Builder(1),
+          Function::Builder("ab12AB_", 7, Symbol::Builder("x", 1))));
 
   // Reserved symbols
   assert_parsed_expression_is("Ans", Symbol::Builder("Ans", 3));
@@ -1076,7 +1077,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_identifiers) {
                                         Symbol::Builder("z", 1)));
   assert_parsed_expression_is(
       "3→xyz",
-      Store::Builder(BasedInteger::Builder(3), Symbol::Builder("xyz", 3)));
+      OStore::Builder(BasedInteger::Builder(3), Symbol::Builder("xyz", 3)));
   assert_parsed_expression_is("ab", Symbol::Builder("ab", 2));
   assert_parsed_expression_is(
       "ab3", Multiplication::Builder(Symbol::Builder("a", 1),
@@ -1245,45 +1246,45 @@ QUIZ_CASE_DISABLED(poincare_parsing_derivative_apostrophe) {
 
 QUIZ_CASE_DISABLED(poincare_parsing_parse_store) {
   OExpression ton = OExpression::Parse("_t", nullptr);
-  assert_parsed_expression_is(
-      "1→a", Store::Builder(BasedInteger::Builder(1), Symbol::Builder("a", 1)));
+  assert_parsed_expression_is("1→a", OStore::Builder(BasedInteger::Builder(1),
+                                                     Symbol::Builder("a", 1)));
   assert_parsed_expression_is("t→a",
-                              Store::Builder(ton, Symbol::Builder("a", 1)));
-  assert_parsed_expression_is(
-      "1→g", Store::Builder(BasedInteger::Builder(1), Symbol::Builder("g", 1)));
+                              OStore::Builder(ton, Symbol::Builder("a", 1)));
+  assert_parsed_expression_is("1→g", OStore::Builder(BasedInteger::Builder(1),
+                                                     Symbol::Builder("g", 1)));
   assert_parsed_expression_is(
       "1→f(x)",
-      Store::Builder(BasedInteger::Builder(1),
-                     Function::Builder("f", 1, Symbol::Builder("x", 1))));
+      OStore::Builder(BasedInteger::Builder(1),
+                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
   assert_parsed_expression_is(
       "x→f(x)",
-      Store::Builder(Symbol::Builder("x", 1),
-                     Function::Builder("f", 1, Symbol::Builder("x", 1))));
+      OStore::Builder(Symbol::Builder("x", 1),
+                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
   assert_parsed_expression_is(
       "n→f(x)",
-      Store::Builder(Symbol::Builder("n", 1),
-                     Function::Builder("f", 1, Symbol::Builder("x", 1))));
+      OStore::Builder(Symbol::Builder("n", 1),
+                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
   assert_parsed_expression_is(
       "ab→f(ab)",
-      Store::Builder(Symbol::Builder("ab", 2),
-                     Function::Builder("f", 1, Symbol::Builder("ab", 2))));
+      OStore::Builder(Symbol::Builder("ab", 2),
+                      Function::Builder("f", 1, Symbol::Builder("ab", 2))));
   assert_parsed_expression_is(
       "ab→f(x)",
-      Store::Builder(Multiplication::Builder(Symbol::Builder("a", 1),
-                                             Symbol::Builder("b", 1)),
-                     Function::Builder("f", 1, Symbol::Builder("x", 1))));
+      OStore::Builder(Multiplication::Builder(Symbol::Builder("a", 1),
+                                              Symbol::Builder("b", 1)),
+                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
   assert_parsed_expression_is(
       "t→f(t)",
-      Store::Builder(Symbol::Builder("t", 1),
-                     Function::Builder("f", 1, Symbol::Builder("t", 1))));
+      OStore::Builder(Symbol::Builder("t", 1),
+                      Function::Builder("f", 1, Symbol::Builder("t", 1))));
   assert_parsed_expression_is(
       "t→f(x)",
-      Store::Builder(ton, Function::Builder("f", 1, Symbol::Builder("x", 1))));
+      OStore::Builder(ton, Function::Builder("f", 1, Symbol::Builder("x", 1))));
   OExpression m0[] = {Symbol::Builder('x')};
   assert_parsed_expression_is(
       "[[x]]→f(x)",
-      Store::Builder(BuildMatrix(1, 1, m0),
-                     Function::Builder("f", 1, Symbol::Builder('x'))));
+      OStore::Builder(BuildMatrix(1, 1, m0),
+                      Function::Builder("f", 1, Symbol::Builder('x'))));
   assert_text_not_parsable("a→b→c");
   assert_text_not_parsable("0→0→c");
   assert_text_not_parsable("1→");

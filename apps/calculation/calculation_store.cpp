@@ -177,8 +177,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
                     .value()
                     .deepIsSymbolic(
                         nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
-#else
-        assert(false);
 #endif
       }
     } else {
@@ -203,7 +201,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * */
   if (!storeExpression.isUninitialized()) {
     assert(storeExpression.type() == ExpressionNode::Type::Store);
-#if 0  // TODO_PCJ
     if (static_cast<Store &>(storeExpression).storeValueForSymbol(context)) {
       exactOutputExpression = context->expressionForSymbolAbstract(
           static_cast<Store &>(storeExpression).symbol(), false);
@@ -212,9 +209,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
       exactOutputExpression = Undefined::Builder();
       approximateOutputExpression = Undefined::Builder();
     }
-#else
-    assert(false);
-#endif
   }
 
   if (m_inUsePreferences.examMode().forbidUnits() &&

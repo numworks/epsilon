@@ -238,8 +238,13 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
   /* "approximateKeepingUnits" is called because the expression might contain
    * units, and juste calling "approximate" would return undef*/
 
+#if 0  // TODO_PCJ
   Expression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(
       expression, this, params);
+#else
+  Expression approximation =
+      PoincareHelpers::Approximate<double>(expression, this);
+#endif
   // Do not store exact derivative, etc.
   if (storeApproximation ||
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(

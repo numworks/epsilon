@@ -12,6 +12,11 @@
 
 namespace Poincare {
 
+bool Store::storeValueForSymbol(Context* context) const {
+  assert(!value().isUninitialized());
+  return context->setExpressionForSymbolAbstract(value(), symbol());
+}
+
 #define Store OStore
 
 OExpression StoreNode::shallowReduce(const ReductionContext& reductionContext) {

@@ -267,6 +267,10 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Sequence;
     case PoincareJ::BlockType::Parenthesis:
       return ExpressionNode::Type::Parenthesis;
+    case PoincareJ::BlockType::SingleFloat:
+      return ExpressionNode::Type::Float;
+    case PoincareJ::BlockType::DoubleFloat:
+      return ExpressionNode::Type::Double;
 #if 0
       // No perfect PoincareJ equivalents
       return ExpressionNode::Type::Comparison;
@@ -596,25 +600,10 @@ bool JuniorExpression::recursivelyMatches(
 
   // Handle dependencies, store, symbols and functions
   ExpressionNode::Type t = type();
-  if (t == ExpressionNode::Type::Dependency) {
-#if 0  // TODO_PCJ
-    JuniorExpression e = *this;
-    return static_cast<Dependency&>(e).dependencyRecursivelyMatches(
-        test, context, replaceSymbols, auxiliary, ignoredSymbols);
-#else
-    assert(false);
-    return false;
-#endif
-  }
-  if (t == ExpressionNode::Type::Store) {
-#if 0  // TODO_PCJ
-    JuniorExpression e = *this;
-    return static_cast<Store&>(e).storeRecursivelyMatches(
-        test, context, replaceSymbols, auxiliary, ignoredSymbols);
-#else
-    assert(false);
-    return false;
-#endif
+  if (t == ExpressionNode::Type::Dependency ||
+      t == ExpressionNode::Type::Store) {
+    return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols,
+                                              auxiliary, ignoredSymbols);
   }
   if (t == ExpressionNode::Type::Symbol ||
       t == ExpressionNode::Type::Function) {

@@ -290,6 +290,7 @@ int ContinuousFunction::derivationOrderFromRelativeIndex(
              displaySecondDerivative);
       return 2;
   }
+  (void)displaySecondDerivative;
 }
 
 int ContinuousFunction::derivationOrderFromSubCurveIndex(

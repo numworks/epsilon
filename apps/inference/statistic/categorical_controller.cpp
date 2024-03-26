@@ -159,6 +159,8 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
     categoricalTableCell()->selectRow(-1);
     categoricalTableCell()->layoutSubviews(true);
   } else if (l->selectedRow() == indexOfTableCell() && previousRow >= 0) {
+    // Reset offset and let table cell scroll if necessary
+    m_selectableListView.setContentOffset(previousOffset);
     int rowToSelect;
     if (previousRow < l->selectedRow()) {
       rowToSelect = 0;

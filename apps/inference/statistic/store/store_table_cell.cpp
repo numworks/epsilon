@@ -57,7 +57,7 @@ bool StoreTableCell::textFieldDidFinishEditing(
 
 int StoreTableCell::numberOfRowsAtColumn(const SelectableTableView *t,
                                          int column) {
-  assert(t = &m_selectableTableView);
+  assert(&m_selectableTableView == t);
   Shared::DoublePairStore *s = store();
   return 1 /* column title */ + 1 /* empty row for input */ +
          s->numberOfPairsOfSeries(s->seriesAtColumn(column));

@@ -1,5 +1,5 @@
+#include <poincare/expression.h>
 #include <poincare/layout.h>
-#include <poincare/old_expression.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare_junior/src/layout/rack_layout.h>
 
@@ -29,7 +29,7 @@ size_t Layout::serializeParsedExpression(char *buffer, size_t bufferSize,
     return 0;
   }
   serializeForParsing(buffer, bufferSize);
-  Poincare::OExpression e = Poincare::OExpression::Parse(buffer, context);
+  Poincare::Expression e = Poincare::Expression::Parse(buffer, context);
   if (e.isUninitialized()) {
     buffer[0] = 0;
     return 0;

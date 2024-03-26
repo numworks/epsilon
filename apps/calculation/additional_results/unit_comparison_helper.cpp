@@ -553,7 +553,6 @@ bool ShouldDisplayUnitComparison(double inputValue, Poincare::Expression unit) {
 void FillRatioBuffer(double ratio, char *textBuffer, int bufferSize) {
   assert(bufferSize <= k_sizeOfUnitComparisonBuffer && bufferSize > 0);
   assert(ratio < 100.0 && ratio >= 0.01);
-  int bufferIndex = 0;
   bool withPercentage = false;
   // Turn all ratios below 1.05 into %
   if (ratio < k_maxPercentageRatioDisplay) {
@@ -570,14 +569,14 @@ void FillRatioBuffer(double ratio, char *textBuffer, int bufferSize) {
       ratio = 100;
     }
   }
-  bufferIndex = PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+  int bufferIndex = PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
       ratio, textBuffer, bufferSize - 1, significativeDigits,
       Poincare::Preferences::PrintFloatMode::Decimal);
   // Add % at the end
   if (withPercentage) {
     assert(bufferIndex < bufferSize - 1);
-    bufferIndex += SerializationHelper::CodePoint(
-        textBuffer + bufferIndex, bufferSize - bufferIndex, '%');
+    SerializationHelper::CodePoint(textBuffer + bufferIndex,
+                                   bufferSize - bufferIndex, '%');
   }
 }
 

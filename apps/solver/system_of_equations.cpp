@@ -100,9 +100,9 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
     /* The range was computed from the solution found with a solver in float. We
      * need to strech the range in case it does not cover the solution found
      * with a solver in double. */
-    constexpr static float k_securityMarginCoef = 10.0;
+    constexpr static float k_securityMarginCoef = 1 / 10.0;
     float securityMargin =
-        std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) /
+        std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) *
         k_securityMarginCoef;
     finalRange.stretchEachBoundBy(securityMargin,
                                   k_maxFloatForAutoApproximateSolvingRange);

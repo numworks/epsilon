@@ -58,6 +58,9 @@ void Log(const char* event, const void* blockAddress, size_t blockSize,
     Logger() << " pointerAddress=\"" << pointerAddress << "\"";
   }
   Logger() << ">\n";
+  /* TODO: This crash when an incomplete tree is being edited. We should either
+   * skip log if pool is "broken", or make the log foolproof (logging nodes
+   * instead of trees). */
   SharedEditionPool->log(Logger(), EditionPool::LogFormat::Flat, true, 2);
   Logger() << "\n  </" << event << ">" << std::endl;
 }

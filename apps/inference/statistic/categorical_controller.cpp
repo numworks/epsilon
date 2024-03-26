@@ -109,15 +109,13 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
   return true;
 }
 
-KDRect CategoricalController::visibleContentRect(ScrollView *scrollView) {
+KDRect CategoricalController::visibleRectInBounds(ScrollView *scrollView) {
   assert(scrollView == categoricalTableCell()->selectableTableView());
 
   KDCoordinate listVisibleStart = listVerticalOffset();
   KDCoordinate listVisibleHeight = m_selectableListView.bounds().height();
   KDCoordinate listVisibleEnd = listVisibleStart + listVisibleHeight;
 
-  KDPoint tableOffset =
-      categoricalTableCell()->selectableTableView()->contentOffset();
   KDSize tableBounds =
       categoricalTableCell()->selectableTableView()->bounds().size();
 
@@ -127,7 +125,7 @@ KDRect CategoricalController::visibleContentRect(ScrollView *scrollView) {
   KDCoordinate heightAfterTableCell =
       heightBeforeTableCell + tableBounds.height();
 
-  KDCoordinate tableVisibleStart = tableOffset.y();
+  KDCoordinate tableVisibleStart = 0;
   KDCoordinate tableVisibleHeight = tableBounds.height();
   if (heightBeforeTableCell < listVisibleStart) {
     KDCoordinate diff = listVisibleStart - heightBeforeTableCell;
@@ -142,10 +140,8 @@ KDRect CategoricalController::visibleContentRect(ScrollView *scrollView) {
   assert(0 <= tableVisibleStart && 0 <= tableVisibleHeight &&
          tableVisibleStart + tableVisibleHeight <= tableCellFullHeight());
 
-  return KDRect(
-      KDPoint(tableOffset.x(), tableVisibleStart),
-      KDSize(tableBounds.width(), tableVisibleHeight) -
-          categoricalTableCell()->selectableTableView()->constMargins());
+  return KDRect(KDPoint(0, tableVisibleStart),
+                KDSize(tableBounds.width(), tableVisibleHeight));
 }
 
 void CategoricalController::listViewDidChangeSelectionAndDidScroll(

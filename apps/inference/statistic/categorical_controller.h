@@ -60,7 +60,7 @@ class CategoricalController
 
  private:
   // ScrollViewDelegate
-  KDRect visibleContentRect(Escher::ScrollView* scrollView) override;
+  KDRect visibleRectInBounds(Escher::ScrollView* scrollView) override;
 
   virtual void createDynamicCells() = 0;
   KDCoordinate listVerticalOffset() {

@@ -223,6 +223,7 @@ ExpressionNode::Type JuniorExpression::type() const {
     case PoincareJ::BlockType::ListSequence:
       return ExpressionNode::Type::ListSequence;
     case PoincareJ::BlockType::Logarithm:
+    case PoincareJ::BlockType::Log:
       return ExpressionNode::Type::Logarithm;
     case PoincareJ::BlockType::Matrix:
       return ExpressionNode::Type::Matrix;

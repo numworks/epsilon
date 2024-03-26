@@ -2,12 +2,17 @@
 
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/continuity.h>
+#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 
 #include "solver_algorithms.h"
 
 namespace PoincareJ {
+
+/* Using our consteval operator- inside a template<float> does not work with
+ * llvm14 it works with 17. */
+constexpr KTree minusOne = -1_e;
 
 template <typename T>
 Solver<T>::Solver(T xStart, T xEnd, const char *unknown, Context *context,
@@ -187,7 +192,7 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree *e1, const Tree *e2,
                                       ReductionTarget::SystemForAnalysis);
 #endif
     *memoizedDifference = PatternMatching::CreateAndSimplify(
-        KAdd(KA, KMult(-1_e, KB)), {.KA = e1, .KB = e2});
+        KAdd(KA, KMult(minusOne, KB)), {.KA = e1, .KB = e2});
   }
   nextRoot(*memoizedDifference);
   // ApproximationContext approxContext(m_context, m_complexFormat,
@@ -606,27 +611,24 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree *e) const {
    * schemes won't work. We instead look for the zeroes of f, and check whether
    * they are zeroes of the whole expression. */
   ExpressionTestAuxiliary test = [](const Tree *e, Context *context,
-                                    void *aux) -> bool {
-    return e->hasDescendantSatisfying(
-        [](const Tree *e, Context *context, void *aux) {
-          const Solver<T> *solver = static_cast<const Solver<T> *>(aux);
-          T exponent = k_NAN;
-          // ApproximationContext approximationContext(
-          // context, solver->m_complexFormat, solver->m_angleUnit);
-          if (e->type() == BlockType::SquareRoot) {
-            exponent = static_cast<T>(0.5);
-          } else if (e->type() == BlockType::Power) {
-            exponent = Approximation::To<T>(e->child(1));
-          } else if (e->type() == BlockType::NthRoot) {
-            exponent = static_cast<T>(1.) / Approximation::To<T>(e->child(1));
-          }
-          if (std::isnan(exponent)) {
-            return false;
-          }
-          return k_zero < exponent && exponent < static_cast<T>(1.);
-        },
-        context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-        aux);
+                                    void *aux) {
+    /* TODO_PCJ : Either Pass ApproximationContext, ComplexFormat, AngleUnit and
+     * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
+     * expression is projected. */
+    return e->hasDescendantSatisfying([](const Tree *e) {
+      T exponent = k_NAN;
+      if (e->type() == BlockType::SquareRoot) {
+        exponent = static_cast<T>(0.5);
+      } else if (e->type() == BlockType::Power) {
+        exponent = Approximation::To<T>(e->child(1));
+      } else if (e->type() == BlockType::NthRoot) {
+        exponent = static_cast<T>(1.) / Approximation::To<T>(e->child(1));
+      }
+      if (std::isnan(exponent)) {
+        return false;
+      }
+      return k_zero < exponent && exponent < static_cast<T>(1.);
+    });
   };
   T xChildrenRoot =
       nextRootInChildren(e, test, const_cast<Solver<T> *>(this)).x();
@@ -714,7 +716,7 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
   m_lastInterest = interest;
 }
 
-// Explicit template instanciations
+// Explicit template instantiations
 
 template Solver<double>::Solver(double, double, const char *, Context *,
                                 ComplexFormat, AngleUnit);

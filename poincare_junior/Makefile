@@ -89,6 +89,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/numeric/,\
   range.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
+  solver.cpp \
   solver_algorithms.cpp \
 )
 

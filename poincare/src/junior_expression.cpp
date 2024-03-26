@@ -267,19 +267,12 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Sequence;
     case PoincareJ::BlockType::Parenthesis:
       return ExpressionNode::Type::Parenthesis;
-    case PoincareJ::BlockType::SingleFloat:
-      return ExpressionNode::Type::Float;
-    case PoincareJ::BlockType::DoubleFloat:
-      return ExpressionNode::Type::Double;
 #if 0
       // No perfect PoincareJ equivalents
       return ExpressionNode::Type::Comparison;
       return ExpressionNode::Type::ConstantMaths;
       return ExpressionNode::Type::DistributionDispatcher;
 #endif
-    default:
-      assert(false);
-      return ExpressionNode::Type::JuniorExpression;
       // Unused in apps, but they should not raise the default assert.
     case PoincareJ::BlockType::Equal:
     case PoincareJ::BlockType::NotEqual:
@@ -289,65 +282,8 @@ ExpressionNode::Type JuniorExpression::type() const {
     case PoincareJ::BlockType::InferiorEqual:
       // TODO_PCJ
       return ExpressionNode::Type::Comparison;
-    case PoincareJ::BlockType::DoubleFloat:
-      return ExpressionNode::Type::Double;
-    case PoincareJ::BlockType::SingleFloat:
-      return ExpressionNode::Type::Float;
-    case PoincareJ::BlockType::LnReal:
-    case PoincareJ::BlockType::Ln:
-      return ExpressionNode::Type::NaperianLogarithm;
-    case PoincareJ::BlockType::NthRoot:
-      return ExpressionNode::Type::NthRoot;
-    case PoincareJ::BlockType::SquareRoot:
-      return ExpressionNode::Type::SquareRoot;
-    case PoincareJ::BlockType::Subtraction:
-      return ExpressionNode::Type::Subtraction;
-    case PoincareJ::BlockType::Decimal:
-      return ExpressionNode::Type::Decimal;
-    case PoincareJ::BlockType::ComplexI:
-    case PoincareJ::BlockType::ExponentialE:
-    case PoincareJ::BlockType::Pi:
-      return ExpressionNode::Type::ConstantMaths;
-    case PoincareJ::BlockType::Cosine:
-      return ExpressionNode::Type::Cosine;
-    case PoincareJ::BlockType::Sine:
-      return ExpressionNode::Type::Sine;
-    case PoincareJ::BlockType::Tangent:
-      return ExpressionNode::Type::Tangent;
-    case PoincareJ::BlockType::Cosecant:
-      return ExpressionNode::Type::Cosecant;
-    case PoincareJ::BlockType::Secant:
-      return ExpressionNode::Type::Secant;
-    case PoincareJ::BlockType::Cotangent:
-      return ExpressionNode::Type::Cotangent;
-    case PoincareJ::BlockType::HyperbolicCosine:
-      return ExpressionNode::Type::HyperbolicCosine;
-    case PoincareJ::BlockType::HyperbolicSine:
-      return ExpressionNode::Type::HyperbolicSine;
-    case PoincareJ::BlockType::HyperbolicTangent:
-      return ExpressionNode::Type::HyperbolicTangent;
-    case PoincareJ::BlockType::ArcCosine:
-      return ExpressionNode::Type::ArcCosine;
-    case PoincareJ::BlockType::ArcSine:
-      return ExpressionNode::Type::ArcSine;
-    case PoincareJ::BlockType::ArcTangent:
-      return ExpressionNode::Type::ArcTangent;
-    case PoincareJ::BlockType::ArcCosecant:
-      return ExpressionNode::Type::ArcCosecant;
-    case PoincareJ::BlockType::ArcSecant:
-      return ExpressionNode::Type::ArcSecant;
-    case PoincareJ::BlockType::ArcCotangent:
-      return ExpressionNode::Type::ArcCotangent;
-    case PoincareJ::BlockType::HyperbolicArcCosine:
-      return ExpressionNode::Type::HyperbolicArcCosine;
-    case PoincareJ::BlockType::HyperbolicArcSine:
-      return ExpressionNode::Type::HyperbolicArcSine;
-    case PoincareJ::BlockType::HyperbolicArcTangent:
-      return ExpressionNode::Type::HyperbolicArcTangent;
-    case PoincareJ::BlockType::Det:
-      return ExpressionNode::Type::Determinant;
-    case PoincareJ::BlockType::Norm:
-      return ExpressionNode::Type::VectorNorm;
+    default:
+      return ExpressionNode::Type::JuniorExpression;
   }
 }
 

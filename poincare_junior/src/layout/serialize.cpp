@@ -52,22 +52,22 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       break;
     }
     case LayoutType::Fraction: {
-      buffer = append("\x12\x12", buffer, end);
+      buffer = append("((", buffer, end);
       buffer = Serialize(layout->child(0), buffer, end);
-      buffer = append("\x13/\x12", buffer, end);
+      buffer = append(")/(", buffer, end);
       buffer = Serialize(layout->child(1), buffer, end);
-      buffer = append("\x13\x13", buffer, end);
+      buffer = append("))", buffer, end);
       break;
     }
     case LayoutType::VerticalOffset: {
       if (VerticalOffset::IsSuffixSuperscript(layout)) {
-        buffer = append("^\x12", buffer, end);
+        buffer = append("^(", buffer, end);
         buffer = Serialize(layout->child(0), buffer, end);
-        buffer = append("\x13", buffer, end);
+        buffer = append(")", buffer, end);
       } else {
-        buffer = append("\x14{", buffer, end);
+        buffer = append("{", buffer, end);
         buffer = Serialize(layout->child(0), buffer, end);
-        buffer = append("\x14}", buffer, end);
+        buffer = append("}", buffer, end);
       }
       break;
     }

@@ -264,12 +264,13 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Function;
     case PoincareJ::BlockType::UserSequence:
       return ExpressionNode::Type::Sequence;
+    case PoincareJ::BlockType::Parenthesis:
+      return ExpressionNode::Type::Parenthesis;
 #if 0
       // No perfect PoincareJ equivalents
       return ExpressionNode::Type::Comparison;
       return ExpressionNode::Type::ConstantMaths;
       return ExpressionNode::Type::DistributionDispatcher;
-      return ExpressionNode::Type::Parenthesis;
 #endif
     default:
       assert(false);

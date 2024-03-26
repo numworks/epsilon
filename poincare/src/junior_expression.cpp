@@ -8,6 +8,7 @@
 #include <poincare/point_evaluation.h>
 #include <poincare/symbol.h>
 #include <poincare_junior/src/expression/comparison.h>
+#include <poincare_junior/src/expression/continuity.h>
 #include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/expression/matrix.h>
@@ -787,12 +788,7 @@ bool JuniorExpression::involvesDiscontinuousFunction(Context* context) const {
 
 bool JuniorExpression::IsDiscontinuous(const JuniorExpression e,
                                        Context* context) {
-  return e.isRandom() || e.type() == ExpressionNode::Type::PiecewiseOperator ||
-         (e.isOfType({ExpressionNode::Type::Floor, ExpressionNode::Type::Round,
-                      ExpressionNode::Type::Ceiling,
-                      ExpressionNode::Type::FracPart,
-                      ExpressionNode::Type::AbsoluteValue}) &&
-          e.deepIsOfType({ExpressionNode::Type::Symbol}, context));
+  return PoincareJ::Continuity::InvolvesDiscontinuousFunction(e.tree());
 }
 
 /* Matrix */

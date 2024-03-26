@@ -1181,4 +1181,9 @@ template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*,
 template bool Approximation::ApproximateAndReplaceEveryScalarT<double>(Tree*,
                                                                        bool);
 
+template int Approximation::IndexOfActivePiecewiseBranchAt<float>(
+    const Tree* piecewise, float x);
+template int Approximation::IndexOfActivePiecewiseBranchAt<double>(
+    const Tree* piecewise, double x);
+
 }  // namespace PoincareJ

@@ -22,6 +22,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/builtin.cpp \
   expression/comparison.cpp \
   expression/constant.cpp \
+  expression/continuity.cpp \
   expression/conversion.cpp \
   expression/decimal.cpp \
   expression/dependency.cpp \

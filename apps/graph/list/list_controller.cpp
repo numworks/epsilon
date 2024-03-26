@@ -79,8 +79,7 @@ void ListController::fillWithDefaultFunctionEquation(char *buffer,
     length += Shared::Function::WithArgument(symbol, buffer + length,
                                              bufferSize - length);
   }
-  length +=
-      SerializationHelper::CodePoint(buffer + length, bufferSize - length, '=');
+  SerializationHelper::CodePoint(buffer + length, bufferSize - length, '=');
 }
 
 bool ListController::shouldCompleteEquation(Poincare::Expression expression,

@@ -118,7 +118,7 @@ void TestController::viewWillAppear() {
   cell(k_indexOfChiSquare)
       ->setVisible(m_statistic->numberOfSignificancesTestTypes() ==
                    numberOfRows());
-  cell(k_indexOfChiSquare)
+  cell(k_indexOfSlope)
       ->subLabel()
       ->setMessage(m_statistic->tStatisticMessage());
 }

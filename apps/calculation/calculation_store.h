@@ -98,10 +98,8 @@ class CalculationStore {
   char *pushEmptyCalculation(
       char *location,
       Poincare::Preferences::CalculationPreferences calculationPreferences);
-  char *pushSerializedExpression(char *location, Poincare::Expression e,
-                                 int numberOfSignificantDigits);
-  char *pushSerializedExpressionAsTree(char *location, Poincare::Expression e,
-                                       int numberOfSignificantDigits);
+  char *pushExpressionTree(char *location, Poincare::Expression e,
+                           int numberOfSignificantDigits);
   char *pushUndefined(char *location);
 
   char *const m_buffer;

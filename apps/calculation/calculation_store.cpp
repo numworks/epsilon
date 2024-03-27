@@ -107,6 +107,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
    */
   m_inUsePreferences = *Preferences::SharedPreferences();
   char *cursor = endOfCalculations();
+  Calculation *current;
   Expression exactOutputExpression, approximateOutputExpression,
       storeExpression;
 
@@ -122,6 +123,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       VariableContext ansContext = createAnsContext(context);
 
       // Push a new, empty Calculation
+      current = reinterpret_cast<Calculation *>(cursor);
       cursor = pushEmptyCalculation(
           cursor,
           Poincare::Preferences::SharedPreferences()->calculationPreferences());
@@ -131,11 +133,13 @@ ExpiringPointer<Calculation> CalculationStore::push(
       Expression inputExpression = Expression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
-      cursor = pushSerializedExpressionAsTree(
+      char *nextCursor = pushExpressionTree(
           cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
-      if (cursor == k_pushError) {
+      if (nextCursor == k_pushError) {
         return errorPushUndefined();
       }
+      current->m_inputTreeSize = nextCursor - cursor;
+      cursor = nextCursor;
 
       // Parse and compute the expression
       assert(!inputExpression.isUninitialized());
@@ -216,17 +220,18 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * If one is too big for the store, push undef instead. */
   for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
     Expression e = i == 0 ? exactOutputExpression : approximateOutputExpression;
-    int digits = i == Calculation::k_numberOfExpressions - 2
-                     ? m_inUsePreferences.numberOfSignificantDigits()
-                     : PrintFloat::k_maxNumberOfSignificantDigits;
+    int digits = PrintFloat::k_maxNumberOfSignificantDigits;
 
-    char *nextCursor = pushSerializedExpression(cursor, e, digits);
+    char *nextCursor = pushExpressionTree(cursor, e, digits);
     if (nextCursor == k_pushError) {
       nextCursor = pushUndefined(cursor);
       if (nextCursor == k_pushError) {
         return errorPushUndefined();
       }
     }
+    assert(i == 0 || i == 1);
+    (i == 0 ? current->m_exactOutputTreeSize
+            : current->m_approximatedOutputTreeSize) = nextCursor - cursor;
     cursor = nextCursor;
   }
 
@@ -332,41 +337,14 @@ char *CalculationStore::pushEmptyCalculation(
   return location + sizeof(Calculation);
 }
 
-char *CalculationStore::pushSerializedExpression(
-    char *location, Expression e, int numberOfSignificantDigits) {
-  while (true) {
-    size_t availableSize = spaceForNewCalculations(location);
-    size_t length = availableSize > 0
-                        ? PoincareHelpers::Serialize(e, location, availableSize,
-                                                     numberOfSignificantDigits)
-                        : 0;
-    constexpr size_t k_maxCharSizeCodePoint = 4;
-    if (length + k_maxCharSizeCodePoint < availableSize) {
-      /* TODO: this is a hack to check that the serialization went well with the
-       * available size. In most cases the serialization stops before writting 1
-       * code point. This is a dirty hack and it doesn't cover the general case.
-       * Serialization should return a bool indicating if it completed or not.
-       * But this will change with poincare junior. */
-      assert(location[length] == '\0');
-      return location + length + 1;
-    }
-    if (numberOfCalculations() == 0) {
-      return k_pushError;
-    }
-    location -= deleteOldestCalculation(location);
-  }
-  assert(false);
-}
-
-char *CalculationStore::pushSerializedExpressionAsTree(
-    char *location, Expression e, int numberOfSignificantDigits) {
+char *CalculationStore::pushExpressionTree(char *location, Expression e,
+                                           int numberOfSignificantDigits) {
   while (true) {
     size_t availableSize = spaceForNewCalculations(location);
     size_t length = e.tree()->treeSize();
-    if (length + 2 < availableSize) {
-      memcpy(location, &length, 2);
-      memcpy(location + 2, e.tree(), length);
-      return location + length + 2;
+    if (length < availableSize) {
+      memcpy(location, e.tree(), length);
+      return location + length;
     }
     if (numberOfCalculations() == 0) {
       return k_pushError;
@@ -377,9 +355,8 @@ char *CalculationStore::pushSerializedExpressionAsTree(
 }
 
 char *CalculationStore::pushUndefined(char *location) {
-  return pushSerializedExpression(
-      location, Undefined::Builder(),
-      m_inUsePreferences.numberOfSignificantDigits());
+  return pushExpressionTree(location, Undefined::Builder(),
+                            m_inUsePreferences.numberOfSignificantDigits());
 }
 
 }  // namespace Calculation

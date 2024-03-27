@@ -138,24 +138,22 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     if (m_workingBuffer[0] == 0) {
       return false;
     }
+    assert(false);  // TODO_PCJ
     /* The input text store in m_workingBuffer might have been correct the
      * first time but then be too long when replacing ans in another context. */
     if (!isAcceptableText(m_workingBuffer, context)) {
       App::app()->displayWarning(I18n::Message::SyntaxError);
       return false;
     }
-  } else {
-    Layout layout = layoutField->layout();
-    if (!isAcceptableLayout(layout, &ansContext)) {
-      App::app()->displayWarning(I18n::Message::SyntaxError);
-      return false;
-    }
-    assert(!layout.isUninitialized());
-    layout.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
-                                     &ansContext);
   }
+  Layout layout = layoutField->layout();
+  if (!isAcceptableLayout(layout, &ansContext)) {
+    App::app()->displayWarning(I18n::Message::SyntaxError);
+    return false;
+  }
+  assert(!layout.isUninitialized());
   Calculation *calculation =
-      m_calculationStore->push(m_workingBuffer, context).pointer();
+      m_calculationStore->push(layout, context).pointer();
   if (calculation) {
     HistoryViewCell::ComputeCalculationHeights(calculation, context);
     m_historyController->reload();

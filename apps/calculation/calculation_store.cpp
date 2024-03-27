@@ -100,7 +100,7 @@ Expression CalculationStore::replaceAnsInExpression(Expression expression,
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(
-    const char *text, Poincare::Context *context) {
+    Poincare::Layout inputLayout, Poincare::Context *context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
    * interrupted during approximation, we could at least display the exact
@@ -130,7 +130,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       assert(cursor != k_pushError);
 
       // Push the input
-      Expression inputExpression = Expression::Parse(text, &ansContext);
+      Expression inputExpression = Expression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
       cursor = pushSerializedExpressionAsTree(

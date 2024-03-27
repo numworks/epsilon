@@ -51,7 +51,7 @@ class CalculationStore {
     return spaceForNewCalculations(endOfCalculations()) + sizeof(Calculation *);
   }
 
-  Shared::ExpiringPointer<Calculation> push(const char *text,
+  Shared::ExpiringPointer<Calculation> push(Poincare::Layout input,
                                             Poincare::Context *context);
   void deleteCalculationAtIndex(int index) {
     privateDeleteCalculationAtIndex(index, endOfCalculations());

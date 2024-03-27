@@ -34,10 +34,8 @@ TestController::TestController(StackViewController *parentResponder,
   cell(k_indexOfOneMean)->label()->setMessage(I18n::Message::TestOneMean);
   cell(k_indexOfTwoProps)->label()->setMessage(I18n::Message::TestTwoProps);
   cell(k_indexOfTwoMeans)->label()->setMessage(I18n::Message::TestTwoMeans);
-  cell(k_indexOfCategorical)
-      ->label()
-      ->setMessage(I18n::Message::TestCategorical);
-  cell(k_indexOfCategorical)->subLabel()->setMessage(I18n::Message::Chi2Test);
+  cell(k_indexOfChiSquare)->label()->setMessage(I18n::Message::TestCategorical);
+  cell(k_indexOfChiSquare)->subLabel()->setMessage(I18n::Message::Chi2Test);
   cell(k_indexOfSlope)->label()->setMessage(I18n::Message::Slope);
   // Init selection
   selectRow(0);
@@ -91,7 +89,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
       controller = m_hypothesisController;
     }
   } else {
-    assert(selectedRow() == k_indexOfCategorical);
+    assert(selectedRow() == k_indexOfChiSquare);
     testType = SignificanceTestType::Categorical;
     controller = m_categoricalController;
   }
@@ -117,10 +115,10 @@ void TestController::viewWillAppear() {
   cell(k_indexOfTwoMeans)
       ->subLabel()
       ->setMessage(m_statistic->tOrZStatisticMessage());
-  cell(k_indexOfCategorical)
+  cell(k_indexOfChiSquare)
       ->setVisible(m_statistic->numberOfSignificancesTestTypes() ==
                    numberOfRows());
-  cell(k_indexOfCategorical)
+  cell(k_indexOfChiSquare)
       ->subLabel()
       ->setMessage(m_statistic->tStatisticMessage());
 }

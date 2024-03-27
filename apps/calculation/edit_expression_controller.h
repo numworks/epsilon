@@ -73,10 +73,8 @@ class EditExpressionController : public Escher::ViewController,
   };
 
   void reloadView();
-  void clearWorkingBuffer() { m_workingBuffer[0] = 0; }
   void memoizeInput();
 
-  char m_workingBuffer[k_layoutBufferMaxSize];
   HistoryController* m_historyController;
   CalculationStore* m_calculationStore;
   ContentView m_contentView;

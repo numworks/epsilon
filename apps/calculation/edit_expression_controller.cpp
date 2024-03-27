@@ -54,9 +54,7 @@ EditExpressionController::EditExpressionController(
       m_contentView(this,
                     static_cast<CalculationSelectableListView *>(
                         m_historyController->view()),
-                    this) {
-  clearWorkingBuffer();
-}
+                    this) {}
 
 void EditExpressionController::insertLayout(Layout layout) {
   App::app()->setFirstResponder(this);
@@ -101,14 +99,12 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
   assert(m_contentView.layoutField() == layoutField);
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
-      clearWorkingBuffer();
       layoutField->setEditing(false);
       App::app()->setFirstResponder(m_historyController);
     }
     return true;
   }
   if (event == Ion::Events::Clear && layoutField->isEmpty()) {
-    clearWorkingBuffer();
     m_calculationStore->deleteAll();
     m_historyController->reload();
     return true;
@@ -135,16 +131,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   Context *context = this->context();
   VariableContext ansContext = m_calculationStore->createAnsContext(context);
   if (layoutField->isEmpty()) {
-    if (m_workingBuffer[0] == 0) {
-      return false;
-    }
-    assert(false);  // TODO_PCJ
-    /* The input text store in m_workingBuffer might have been correct the
-     * first time but then be too long when replacing ans in another context. */
-    if (!isAcceptableText(m_workingBuffer, context)) {
-      App::app()->displayWarning(I18n::Message::SyntaxError);
-      return false;
-    }
+    return false;
   }
   Layout layout = layoutField->layout();
   if (!isAcceptableLayout(layout, &ansContext)) {
@@ -158,7 +145,6 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     HistoryViewCell::ComputeCalculationHeights(calculation, context);
     m_historyController->reload();
     layoutField->clearAndSetEditing(true);
-    telemetryReportEvent("Input", m_workingBuffer);
     return true;
   }
   return false;

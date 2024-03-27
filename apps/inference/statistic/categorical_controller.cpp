@@ -152,11 +152,13 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
     SelectableListView *l, int previousRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
+#if 0
   if (previousRow != l->selectedRow() &&
       l->selectedRow() == indexOfTableCell()) {
     // Restore offset and let table cell scroll if necessary
     m_selectableListView.setContentOffset(previousOffset);
   }
+#endif
   if (previousRow == l->selectedRow() || withinTemporarySelection) {
     return;
   }

@@ -1,7 +1,8 @@
 #ifndef POINCARE_LAYOUT_K_TREE_H
 #define POINCARE_LAYOUT_K_TREE_H
 
-#include <poincare_junior/src/layout/code_point_layout.h>
+#include <ion/unicode/code_point.h>
+#include <omgpj/bit.h>
 #include <poincare_junior/src/memory/k_tree.h>
 
 namespace PoincareJ {
@@ -41,26 +42,25 @@ constexpr auto KEmptyMatrixL =
 
 constexpr auto KPoint2DL = KBinary<BlockType::Point2DLayout>();
 
+constexpr uint8_t SubCodePointLayoutAtIndex(CodePoint value, int index) {
+  return Bit::getByteAtIndex(value, index);
+}
+
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint
 template <uint32_t cp>
-using KCodePointL = KTree<BlockType::CodePointLayout,
-                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 0),
-                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 1),
-                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 2),
-                          CodePointLayout::SubCodePointLayoutAtIndex(cp, 3)>;
+using KCodePointL =
+    KTree<BlockType::CodePointLayout, SubCodePointLayoutAtIndex(cp, 0),
+          SubCodePointLayoutAtIndex(cp, 1), SubCodePointLayoutAtIndex(cp, 2),
+          SubCodePointLayoutAtIndex(cp, 3)>;
 
 template <uint32_t cp, uint32_t cc>
 using KCombinedCodePointL =
-    KTree<BlockType::CombinedCodePointsLayout,
-          CodePointLayout::SubCodePointLayoutAtIndex(cp, 0),
-          CodePointLayout::SubCodePointLayoutAtIndex(cp, 1),
-          CodePointLayout::SubCodePointLayoutAtIndex(cp, 2),
-          CodePointLayout::SubCodePointLayoutAtIndex(cp, 3),
-          CodePointLayout::SubCodePointLayoutAtIndex(cc, 0),
-          CodePointLayout::SubCodePointLayoutAtIndex(cc, 1),
-          CodePointLayout::SubCodePointLayoutAtIndex(cc, 2),
-          CodePointLayout::SubCodePointLayoutAtIndex(cc, 3)>;
+    KTree<BlockType::CombinedCodePointsLayout, SubCodePointLayoutAtIndex(cp, 0),
+          SubCodePointLayoutAtIndex(cp, 1), SubCodePointLayoutAtIndex(cp, 2),
+          SubCodePointLayoutAtIndex(cp, 3), SubCodePointLayoutAtIndex(cc, 0),
+          SubCodePointLayoutAtIndex(cc, 1), SubCodePointLayoutAtIndex(cc, 2),
+          SubCodePointLayoutAtIndex(cc, 3)>;
 
 template <String S,
           typename IS =

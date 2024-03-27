@@ -25,8 +25,8 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree *e,
         Approximation::To<float>(e, x1) != Approximation::To<float>(e, x2);
   } else if (e->isFracPart()) {
     // is discontinuous if the child changes int value
-    isDiscontinuous = std::floor(Approximation::To<float>(e->child(0), x1) !=
-                                 Approximation::To<float>(e->child(0), x2));
+    isDiscontinuous = std::floor(Approximation::To<float>(e->child(0), x1)) !=
+                      std::floor(Approximation::To<float>(e->child(0), x2));
   } else if (e->isOfType({BlockType::Abs, BlockType::Sign})) {
     // is discontinuous if the child changes sign
     isDiscontinuous = (Approximation::To<float>(e->child(0), x1) > 0.0) !=

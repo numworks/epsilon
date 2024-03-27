@@ -127,6 +127,11 @@ void InputStoreController::viewWillAppear() {
   InputCategoricalController::viewWillAppear();
 }
 
+void InputStoreController::initView() {
+  InputCategoricalController::initView();
+  categoricalTableCell()->recomputeDimensionsAndReload();
+}
+
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {
   if (index >= indexOfFirstExtraParameter() + numberOfExtraParameters()) {
     return InputCategoricalController::indexOfEditedParameterAtIndex(index);

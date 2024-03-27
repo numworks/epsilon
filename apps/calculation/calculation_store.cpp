@@ -133,17 +133,13 @@ ExpiringPointer<Calculation> CalculationStore::push(
       Expression inputExpression = Expression::Parse(text, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
-      cursor = pushSerializedExpression(
+      cursor = pushSerializedExpressionAsTree(
           cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
       if (cursor == k_pushError) {
         return errorPushUndefined();
       }
-      /* Recompute the location of the input text in case a calculation was
-       * deleted. */
-      char *const inputText = endOfCalculations() + sizeof(Calculation);
 
       // Parse and compute the expression
-      inputExpression = Expression::Parse(inputText, context, false);
       assert(!inputExpression.isUninitialized());
       PoincareHelpers::CloneAndSimplifyAndApproximate(
           inputExpression, &exactOutputExpression, &approximateOutputExpression,
@@ -355,6 +351,24 @@ char *CalculationStore::pushSerializedExpression(
        * But this will change with poincare junior. */
       assert(location[length] == '\0');
       return location + length + 1;
+    }
+    if (numberOfCalculations() == 0) {
+      return k_pushError;
+    }
+    location -= deleteOldestCalculation(location);
+  }
+  assert(false);
+}
+
+char *CalculationStore::pushSerializedExpressionAsTree(
+    char *location, Expression e, int numberOfSignificantDigits) {
+  while (true) {
+    size_t availableSize = spaceForNewCalculations(location);
+    size_t length = e.tree()->treeSize();
+    if (length + 2 < availableSize) {
+      memcpy(location, &length, 2);
+      memcpy(location + 2, e.tree(), length);
+      return location + length + 2;
     }
     if (numberOfCalculations() == 0) {
       return k_pushError;

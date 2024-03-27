@@ -276,7 +276,11 @@ void HistoryController::handleOK() {
 
   if (m_selectedSubviewType == SubviewType::Input) {
     m_selectableListView.deselectTable();
+#if 0  // TODO_PCJ
     editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
+#else
+    assert(false);
+#endif
     return;
   }
 

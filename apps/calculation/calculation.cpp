@@ -19,7 +19,8 @@ using namespace Shared;
 namespace Calculation {
 
 bool Calculation::operator==(const Calculation &c) {
-  return strcmp(inputText(), c.inputText()) == 0 &&
+  return inputTreeSize() == c.inputTreeSize() &&
+         memcmp(inputTree(), c.inputTree(), c.inputTreeSize()) == 0 &&
          strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
                 c.approximateOutputText(NumberOfSignificantDigits::Maximal)) ==
              0 &&
@@ -58,7 +59,7 @@ const char *Calculation::approximateOutputText(
 }
 
 Expression Calculation::input() {
-  Expression e = Expression::Parse(m_inputText, nullptr);
+  Expression e = JuniorExpression::Builder(inputTree());
   assert(!e.isUninitialized());
   return e;
 }

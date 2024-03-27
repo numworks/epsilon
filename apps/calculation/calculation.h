@@ -16,10 +16,10 @@ class CalculationStore;
 
 // clang-format off
 /* A calculation is:
- *  |     uint8_t   |  uint8_t  |KDCoordinate|  KDCoordinate  |   ...     |      ...        |          ...           |           ...          |
- *  |m_displayOutput|m_equalSign|  m_height  |m_expandedHeight|m_inputText|m_exactOutputText|m_approximateOutputText1|m_approximateOutputText2|
- *                                                                                                 with maximal            with displayed
- *                                                                                              significant digits       significant digits
+ *  |     uint8_t   |  uint8_t  |KDCoordinate|  KDCoordinate  |   uint16_t    |    ...    |          ...    |           ...          |
+ *  |m_displayOutput|m_equalSign|  m_height  |m_expandedHeight|m_inputTreeSize|m_inputTree|m_exactOutputText|m_approximateOutputText1|m_approximateOutputText2|
+ *                                                                                                                with maximal            with displayed
+ *                                                                                                             significant digits       significant digits
  *
  * */
 // clang-format on
@@ -71,9 +71,12 @@ class Calculation {
 
   // Texts
   enum class NumberOfSignificantDigits { Maximal, UserDefined };
-  const char* inputText() const { return m_inputText; }
+  const PoincareJ::Tree* inputTree() const {
+    return (const PoincareJ::Tree*)(m_inputText + 2);
+  }
+  size_t inputTreeSize() const { return *(const uint16_t*)(m_inputText); }
   const char* exactOutputText() const {
-    return m_inputText + strlen(m_inputText) + 1;
+    return 2 + m_inputText + inputTreeSize();
   }
   /* See comment in approximateOutput implementation explaining the need of two
    * approximateOutputTexts. */

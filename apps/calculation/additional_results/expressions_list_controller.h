@@ -47,8 +47,8 @@ class ExpressionsListController
   virtual void computeAdditionalResults(
       const Poincare::Expression input, const Poincare::Expression exactOutput,
       const Poincare::Expression approximateOutput) = 0;
-  virtual size_t textAtIndex(char* buffer, size_t bufferSize,
-                             Escher::HighlightCell* cell, int index);
+  virtual Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,
+                                         int index);
 
  protected:
   constexpr static int k_expressionCellType = 0;

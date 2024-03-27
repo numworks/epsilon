@@ -38,8 +38,8 @@ class ChainedExpressionsListController : public ExpressionsListController {
   int numberOfRows() const override;
 
  protected:
-  size_t textAtIndex(char* buffer, size_t bufferSize,
-                     Escher::HighlightCell* cell, int index) override;
+  Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,
+                                 int index) override;
 
  private:
   ChainableExpressionsListController* m_tail;

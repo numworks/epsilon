@@ -76,17 +76,13 @@ int ChainedExpressionsListController::numberOfRows() const {
          (m_tail ? m_tail->numberOfRows() : 0);
 }
 
-size_t ChainedExpressionsListController::textAtIndex(char* buffer,
-                                                     size_t bufferSize,
-                                                     HighlightCell* cell,
-                                                     int index) {
+Layout ChainedExpressionsListController::layoutAtIndex(HighlightCell* cell,
+                                                       int index) {
   int numberOfOwnedCells = ExpressionsListController::numberOfRows();
   if (index >= numberOfOwnedCells) {
-    return m_tail->textAtIndex(buffer, bufferSize, cell,
-                               index - numberOfOwnedCells);
+    return m_tail->layoutAtIndex(cell, index - numberOfOwnedCells);
   }
-  return ExpressionsListController::textAtIndex(buffer, bufferSize, cell,
-                                                index);
+  return ExpressionsListController::layoutAtIndex(cell, index);
 }
 
 }  // namespace Calculation

@@ -40,18 +40,11 @@ ExpressionsListController::ExpressionsListController(
 bool ExpressionsListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedRow() >= 0);
-    char buffer[Constant::MaxSerializedExpressionSize];
     HighlightCell* cell =
         m_listController.selectableListView()->cell(selectedRow());
-    textAtIndex(buffer, Constant::MaxSerializedExpressionSize, cell,
-                selectedRow());
-    /* The order is important here: we dismiss the pop-up first because it
-     * clears the Poincare pool from the layouts used to display the pop-up.
-     * Thereby it frees memory to do Poincare computations required by
-     * insertTextBody. */
+    Layout layout = layoutAtIndex(cell, selectedRow());
     App::app()->modalViewController()->dismissModal();
-    // m_editExpressionController->insertTextBody(buffer);
-    assert(false);
+    m_editExpressionController->insertLayout(layout);
     return true;
   }
   return false;
@@ -119,8 +112,8 @@ int ExpressionsListController::numberOfRows() const {
   return nbOfRows;
 }
 
-size_t ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
-                                              HighlightCell* cell, int index) {
+Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
+                                                          int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   ScrollableThreeLayoutsView::SubviewPosition position =
       static_cast<AdditionalResultCell*>(cell)
@@ -141,8 +134,7 @@ size_t ExpressionsListController::textAtIndex(char* buffer, size_t bufferSize,
     layout = m_approximatedLayouts[index];
   }
   assert(!layout.isUninitialized());
-  return layout.serializeParsedExpression(buffer, bufferSize,
-                                          App::app()->localContext());
+  return layout;
 }
 
 Layout ExpressionsListController::getExactLayoutFromExpression(

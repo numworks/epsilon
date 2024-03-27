@@ -74,17 +74,13 @@ void IllustratedExpressionsListController::setShowIllustration(
   m_listController.selectableListView()->resetSizeAndOffsetMemoization();
 }
 
-size_t IllustratedExpressionsListController::textAtIndex(char* buffer,
-                                                         size_t bufferSize,
-                                                         HighlightCell* cell,
-                                                         int index) {
+Layout IllustratedExpressionsListController::layoutAtIndex(HighlightCell* cell,
+                                                           int index) {
   if (index == 0) {
     // Illustration cell does not have a text
-    buffer[0] = 0;
-    return 0;
+    return Layout();
   }
-  return ChainedExpressionsListController::textAtIndex(buffer, bufferSize, cell,
-                                                       index - 1);
+  return ChainedExpressionsListController::layoutAtIndex(cell, index - 1);
 }
 
 void IllustratedExpressionsListController::setLineAtIndex(

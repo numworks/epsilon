@@ -253,20 +253,18 @@ void UnitListController::fillBufferCellAtIndex(BufferCell *bufferCell,
                                                   floatToTextBuffer);
 }
 
-size_t UnitListController::textAtIndex(char *buffer, size_t bufferSize,
-                                       HighlightCell *cell, int index) {
+Layout UnitListController::layoutAtIndex(HighlightCell *cell, int index) {
   assert(index >= 0);
   if (index < m_numberOfExpressionCells) {
-    return ExpressionsListController::textAtIndex(buffer, bufferSize, cell,
-                                                  index);
+    return ExpressionsListController::layoutAtIndex(cell, index);
   }
   index = index - m_numberOfExpressionCells;
   assert(index < m_numberOfBufferCells);
   return UnitComparison::BuildComparisonExpression(
              m_SIValue, m_referenceValues[index], m_tableIndexForComparison)
-      .serialize(buffer, bufferSize,
-                 Poincare::Preferences::PrintFloatMode::Decimal,
-                 Poincare::Preferences::LargeNumberOfSignificantDigits);
+      .createLayout(Preferences::PrintFloatMode::Decimal,
+                    Poincare::Preferences::LargeNumberOfSignificantDigits,
+                    nullptr);
 }
 
 }  // namespace Calculation

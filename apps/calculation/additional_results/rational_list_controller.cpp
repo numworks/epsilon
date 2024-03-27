@@ -79,11 +79,10 @@ I18n::Message RationalListController::messageAtIndex(int index) {
   }
 }
 
-size_t RationalListController::textAtIndex(char *buffer, size_t bufferSize,
-                                           Escher::HighlightCell *cell,
-                                           int index) {
-  size_t length =
-      ExpressionsListController::textAtIndex(buffer, bufferSize, cell, index);
+Layout RationalListController::layoutAtIndex(Escher::HighlightCell *cell,
+                                             int index) {
+  return ExpressionsListController::layoutAtIndex(cell, index);
+#if 0  // TODO_PCJ
   if (index == 1) {
     // Get rid of the left part of the equality
     char *equalPosition = strchr(buffer, '=');
@@ -92,6 +91,7 @@ size_t RationalListController::textAtIndex(char *buffer, size_t bufferSize,
     return buffer + length - 1 - equalPosition;
   }
   return length;
+#endif
 }
 
 }  // namespace Calculation

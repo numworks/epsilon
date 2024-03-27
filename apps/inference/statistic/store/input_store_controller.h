@@ -34,6 +34,7 @@ class InputStoreController : public InputCategoricalController,
                : ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   void viewWillAppear() override;
+  void initView() override;
 
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;

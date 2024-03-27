@@ -146,6 +146,7 @@ void EditableCellTableViewController::viewWillAppear() {
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Backspace && selectedRow() == 0) ||
       event == Ion::Events::Clear) {
+    assert(selectedRow() >= 0);
     presentClearSelectedColumnPopupIfClearable();
     return true;
   }

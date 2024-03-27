@@ -26,7 +26,8 @@ bool AbstractButtonCell::handleEvent(Ion::Events::Event event) {
     m_invocation.perform(this);
     return true;
   }
-  return event == Ion::Events::Var || event == Ion::Events::Sto;
+  return event == Ion::Events::Var || event == Ion::Events::Sto ||
+         event == Ion::Events::Clear;
 }
 
 void AbstractButtonCell::setHighlighted(bool highlight) {

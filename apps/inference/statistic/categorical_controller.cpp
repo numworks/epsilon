@@ -118,12 +118,16 @@ KDRect CategoricalController::visibleRectInBounds(ScrollView *scrollView) {
 
   KDSize tableBounds =
       categoricalTableCell()->selectableTableView()->bounds().size();
+  assert(0 <= tableBounds.height() &&
+         tableBounds.height() <= tableCellFullHeight());
 
   KDCoordinate heightBeforeTableCell =
       cumulatedHeightBeforeRow(indexOfTableCell()) +
       m_selectableListView.margins()->top();
   KDCoordinate heightAfterTableCell =
       heightBeforeTableCell + tableBounds.height();
+  assert(heightBeforeTableCell < listVisibleEnd);
+  assert(heightAfterTableCell > listVisibleStart);
 
   KDCoordinate tableVisibleStart = 0;
   KDCoordinate tableVisibleHeight = tableBounds.height();

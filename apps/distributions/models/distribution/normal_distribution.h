@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_NORMAL_DISTRIBUTION_H
 #define PROBABILITE_NORMAL_DISTRIBUTION_H
 
-#include <poincare/normal_distribution.h>
+#include <poincare_junior/src/probability/normal_distribution.h>
 
 #include "two_parameters_distribution.h"
 
@@ -10,7 +10,7 @@ namespace Distributions {
 class NormalDistribution final : public TwoParametersDistribution {
  public:
   NormalDistribution()
-      : TwoParametersDistribution(Poincare::Distribution::Type::Normal,
+      : TwoParametersDistribution(PoincareJ::Distribution::Type::Normal,
                                   k_defaultMu, k_defaultSigma) {
     computeCurveViewRange();
   }
@@ -30,9 +30,9 @@ class NormalDistribution final : public TwoParametersDistribution {
 
  private:
   constexpr static double k_defaultMu =
-      Poincare::NormalDistribution::k_standardMu;
+      PoincareJ::NormalDistribution::k_standardMu;
   constexpr static double k_defaultSigma =
-      Poincare::NormalDistribution::k_standardSigma;
+      PoincareJ::NormalDistribution::k_standardSigma;
   constexpr static double k_maxRatioMuSigma = 1000000.0f;
   enum ParamsOrder { Mu, Sigma };
   Shared::ParameterRepresentation paramRepresentationAtIndex(

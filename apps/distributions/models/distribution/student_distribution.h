@@ -11,7 +11,7 @@ namespace Distributions {
 class StudentDistribution : public OneParameterDistribution {
  public:
   StudentDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::Student,
+      : OneParameterDistribution(PoincareJ::Distribution::Type::Student,
                                  k_defaultK) {
     computeCurveViewRange();
   }

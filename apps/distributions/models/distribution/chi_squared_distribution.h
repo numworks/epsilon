@@ -11,7 +11,7 @@ namespace Distributions {
 class ChiSquaredDistribution : public OneParameterDistribution {
  public:
   ChiSquaredDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::ChiSquared,
+      : OneParameterDistribution(PoincareJ::Distribution::Type::ChiSquared,
                                  k_defaultK) {
     computeCurveViewRange();
   }

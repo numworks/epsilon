@@ -1,6 +1,6 @@
 #include "student_distribution.h"
 
-#include <poincare/student_distribution.h>
+#include <poincare_junior/src/probability/student_distribution.h>
 
 #include <cmath>
 
@@ -22,8 +22,8 @@ float StudentDistribution::privateComputeXMin() const {
 float StudentDistribution::privateComputeXMax() const { return 5.0f; }
 
 float StudentDistribution::computeYMax() const {
-  return std::exp(
-             Poincare::StudentDistribution::lnCoefficient<float>(m_parameter)) *
+  return std::exp(PoincareJ::StudentDistribution::lnCoefficient<float>(
+             m_parameter)) *
          (1.0f + k_displayTopMarginRatio);
 }
 

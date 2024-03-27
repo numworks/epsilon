@@ -1,8 +1,8 @@
 #include "binomial_distribution.h"
 
 #include <assert.h>
-#include <poincare/binomial_distribution.h>
 #include <poincare/layout.h>
+#include <poincare_junior/src/probability/binomial_distribution.h>
 
 #include <cmath>
 
@@ -25,7 +25,7 @@ bool BinomialDistribution::authorizedParameterAtIndex(double x,
 
 double BinomialDistribution::cumulativeDistributiveInverseForProbability(
     double p) const {
-  return Poincare::BinomialDistribution::
+  return PoincareJ::BinomialDistribution::
       CumulativeDistributiveInverseForProbability(p, m_parameters[0],
                                                   m_parameters[1]);
 }
@@ -43,7 +43,7 @@ double BinomialDistribution::rightIntegralInverseForProbability(
 }
 
 double BinomialDistribution::evaluateAtDiscreteAbscissa(int k) const {
-  return Poincare::BinomialDistribution::EvaluateAtAbscissa<double>(
+  return PoincareJ::BinomialDistribution::EvaluateAtAbscissa<double>(
       (double)k, m_parameters[0], m_parameters[1]);
 }
 

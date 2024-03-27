@@ -11,7 +11,7 @@ namespace Distributions {
 class ExponentialDistribution final : public OneParameterDistribution {
  public:
   ExponentialDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::Exponential,
+      : OneParameterDistribution(PoincareJ::Distribution::Type::Exponential,
                                  k_defaultLambda) {
     computeCurveViewRange();
   }

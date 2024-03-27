@@ -8,7 +8,7 @@ namespace Distributions {
 class FisherDistribution final : public TwoParametersDistribution {
  public:
   FisherDistribution()
-      : TwoParametersDistribution(Poincare::Distribution::Type::Fisher,
+      : TwoParametersDistribution(PoincareJ::Distribution::Type::Fisher,
                                   k_defaultD1, k_defaultD2) {
     computeCurveViewRange();
   }

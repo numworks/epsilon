@@ -8,7 +8,7 @@ namespace Distributions {
 class BinomialDistribution final : public TwoParametersDistribution {
  public:
   BinomialDistribution()
-      : TwoParametersDistribution(Poincare::Distribution::Type::Binomial,
+      : TwoParametersDistribution(PoincareJ::Distribution::Type::Binomial,
                                   k_defaultN, k_defaultP) {
     computeCurveViewRange();
   }

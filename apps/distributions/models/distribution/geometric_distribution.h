@@ -14,7 +14,7 @@ namespace Distributions {
 class GeometricDistribution final : public OneParameterDistribution {
  public:
   GeometricDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::Geometric,
+      : OneParameterDistribution(PoincareJ::Distribution::Type::Geometric,
                                  k_defaultP) {
     computeCurveViewRange();
   }

@@ -10,7 +10,7 @@ namespace Distributions {
 class PoissonDistribution final : public OneParameterDistribution {
  public:
   PoissonDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::Poisson,
+      : OneParameterDistribution(PoincareJ::Distribution::Type::Poisson,
                                  k_defaultLambda) {
     computeCurveViewRange();
   }

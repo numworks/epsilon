@@ -7,7 +7,7 @@ namespace Distributions {
 
 class TwoParametersDistribution : public Distribution {
  public:
-  TwoParametersDistribution(Poincare::Distribution::Type type,
+  TwoParametersDistribution(PoincareJ::Distribution::Type type,
                             double parameterValue1, double parameterValue2)
       : Distribution(type), m_parameters{parameterValue1, parameterValue2} {}
   int numberOfParameters() override { return 2; }

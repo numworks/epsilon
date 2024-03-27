@@ -1,7 +1,7 @@
 #include "distribution.h"
 
 #include <float.h>
-#include <poincare/distribution.h>
+#include <poincare_junior/src/probability/distribution.h>
 
 #include <cmath>
 
@@ -19,40 +19,40 @@
 namespace Distributions {
 
 bool Distribution::Initialize(Distribution* distribution,
-                              Poincare::Distribution::Type type) {
+                              PoincareJ::Distribution::Type type) {
   if (distribution->type() == type) {
     return false;
   }
   distribution->~Distribution();
   switch (type) {
-    case Poincare::Distribution::Type::Binomial:
+    case PoincareJ::Distribution::Type::Binomial:
       new (distribution) BinomialDistribution();
       break;
-    case Poincare::Distribution::Type::Uniform:
+    case PoincareJ::Distribution::Type::Uniform:
       new (distribution) UniformDistribution();
       break;
-    case Poincare::Distribution::Type::Exponential:
+    case PoincareJ::Distribution::Type::Exponential:
       new (distribution) ExponentialDistribution();
       break;
-    case Poincare::Distribution::Type::Normal:
+    case PoincareJ::Distribution::Type::Normal:
       new (distribution) NormalDistribution();
       break;
-    case Poincare::Distribution::Type::ChiSquared:
+    case PoincareJ::Distribution::Type::ChiSquared:
       new (distribution) ChiSquaredDistribution();
       break;
-    case Poincare::Distribution::Type::Student:
+    case PoincareJ::Distribution::Type::Student:
       new (distribution) StudentDistribution();
       break;
-    case Poincare::Distribution::Type::Geometric:
+    case PoincareJ::Distribution::Type::Geometric:
       new (distribution) GeometricDistribution();
       break;
-    case Poincare::Distribution::Type::Hypergeometric:
+    case PoincareJ::Distribution::Type::Hypergeometric:
       new (distribution) HypergeometricDistribution();
       break;
-    case Poincare::Distribution::Type::Poisson:
+    case PoincareJ::Distribution::Type::Poisson:
       new (distribution) PoissonDistribution();
       break;
-    case Poincare::Distribution::Type::Fisher:
+    case PoincareJ::Distribution::Type::Fisher:
       new (distribution) FisherDistribution();
       break;
     default:

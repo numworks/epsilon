@@ -2,7 +2,7 @@
 #define PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 
 #include <apps/shared/inference.h>
-#include <poincare/distribution.h>
+#include <poincare_junior/src/probability/distribution.h>
 
 #include <new>
 
@@ -15,16 +15,16 @@ namespace Distributions {
 
 class Distribution : public Shared::Inference {
  public:
-  Distribution(Poincare::Distribution::Type type)
+  Distribution(PoincareJ::Distribution::Type type)
       : m_calculationBuffer(),
-        m_distribution(Poincare::Distribution::Get(type)),
+        m_distribution(PoincareJ::Distribution::Get(type)),
         m_indexOfUninitializedParameter(-1) {
     m_calculationBuffer.init(this);
   }
 
   static bool Initialize(Distribution* distribution,
-                         Poincare::Distribution::Type type);
-  Poincare::Distribution::Type type() const { return m_distribution->type(); };
+                         PoincareJ::Distribution::Type type);
+  PoincareJ::Distribution::Type type() const { return m_distribution->type(); };
 
   virtual double meanAbscissa() {
     assert(false);
@@ -107,7 +107,7 @@ class Distribution : public Shared::Inference {
   };
 
   CalculationBuffer m_calculationBuffer;
-  const Poincare::Distribution* m_distribution;
+  const PoincareJ::Distribution* m_distribution;
   // Used if one of the parameters is not inputted by the user
   int m_indexOfUninitializedParameter;
 };

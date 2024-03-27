@@ -8,7 +8,7 @@ namespace Distributions {
 class UniformDistribution final : public TwoParametersDistribution {
  public:
   UniformDistribution()
-      : TwoParametersDistribution(Poincare::Distribution::Type::Uniform,
+      : TwoParametersDistribution(PoincareJ::Distribution::Type::Uniform,
                                   k_defaultA, k_defaultB) {
     computeCurveViewRange();
   }

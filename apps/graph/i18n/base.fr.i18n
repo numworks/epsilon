@@ -1,7 +1,7 @@
 FunctionApp = "Grapheur"
 FunctionAppCapital = "GRAPHEUR"
 FunctionTab = "Expressions"
-UseFunctionModel = "Ajouter un élément"
+UseFunctionModel = "Modèle"
 AddFunction = "Ajouter un élément"
 DeleteExpression = "Supprimer l'expression"
 IntervalT = "Intervalle t"

@@ -12,7 +12,6 @@
 #include "distributions/app.h"
 #include "distributions/constants.h"
 
-using namespace Poincare;
 using namespace Shared;
 using namespace Escher;
 

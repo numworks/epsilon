@@ -1,9 +1,10 @@
 #include "distribution_curve_view.h"
 
+#include <poincare/coordinate_2D.h>
+
 #include "../models/distribution/normal_distribution.h"
 
 using namespace Escher;
-using namespace Poincare;
 using namespace Shared;
 
 namespace Distributions {
@@ -16,14 +17,15 @@ static T evaluateDistribution1D(T x, void *model, void *) {
   return distribution->evaluateAtAbscissa(x);
 }
 
-static Coordinate2D<float> evaluateDistribution2D(float x, void *model,
-                                                  void *context) {
-  return Coordinate2D<float>(x,
-                             evaluateDistribution1D<float>(x, model, context));
+static Poincare::Coordinate2D<float> evaluateDistribution2D(float x,
+                                                            void *model,
+                                                            void *context) {
+  return Poincare::Coordinate2D<float>(
+      x, evaluateDistribution1D<float>(x, model, context));
 }
 
-static Coordinate2D<float> evaluateZero(float, void *, void *) {
-  return Coordinate2D<float>(0.f, 0.f);
+static Poincare::Coordinate2D<float> evaluateZero(float, void *, void *) {
+  return Poincare::Coordinate2D<float>(0.f, 0.f);
 }
 
 static bool barIsHighlighted(double x, void *, void *context) {

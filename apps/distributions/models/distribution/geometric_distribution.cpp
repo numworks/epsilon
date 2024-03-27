@@ -1,7 +1,6 @@
 #include "geometric_distribution.h"
 
 #include <assert.h>
-#include <poincare/geometric_distribution.h>
 
 #include <cmath>
 

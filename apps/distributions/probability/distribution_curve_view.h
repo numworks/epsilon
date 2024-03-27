@@ -2,7 +2,6 @@
 #define DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CURVE_VIEW_H
 
 #include <apps/shared/plot_view_policies.h>
-#include <poincare/coordinate_2D.h>
 
 #include "../models/calculation/calculation.h"
 #include "../models/distribution/distribution.h"

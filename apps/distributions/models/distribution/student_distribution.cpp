@@ -6,8 +6,6 @@
 
 namespace Distributions {
 
-using namespace Poincare;
-
 bool StudentDistribution::authorizedParameterAtIndex(double x,
                                                      int index) const {
   if (!OneParameterDistribution::authorizedParameterAtIndex(x, index)) {

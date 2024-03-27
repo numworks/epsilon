@@ -1,7 +1,6 @@
 #include "poisson_distribution.h"
 
 #include <assert.h>
-#include <poincare/poisson_distribution.h>
 
 #include <cmath>
 

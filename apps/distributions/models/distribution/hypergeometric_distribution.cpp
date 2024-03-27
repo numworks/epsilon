@@ -1,7 +1,5 @@
 #include "hypergeometric_distribution.h"
 
-#include <poincare/hypergeometric_distribution.h>
-
 namespace Distributions {
 
 bool HypergeometricDistribution::authorizedParameterAtIndex(double x,

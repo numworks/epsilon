@@ -1,9 +1,7 @@
 #include "fisher_distribution.h"
 
 #include <float.h>
-#include <poincare/beta_function.h>
 #include <poincare/layout.h>
-#include <poincare/regularized_incomplete_beta_function.h>
 
 #include <algorithm>
 #include <cmath>

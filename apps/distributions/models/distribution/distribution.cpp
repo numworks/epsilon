@@ -1,7 +1,7 @@
 #include "distribution.h"
 
 #include <float.h>
-#include <poincare/solver.h>
+#include <poincare/distribution.h>
 
 #include <cmath>
 

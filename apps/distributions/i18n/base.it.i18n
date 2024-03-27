@@ -1,5 +1,4 @@
 BinomialDistribution = "Distribuzione binomiale"
-ChiSquare = "Chi-quadrato"
 ChiSquareDistribution = "Distribuzione Chi-quadrato"
 ChooseDistribution = "Scegliere il tipo di distribuzione"
 DefineParameters = "Definire i parametri"

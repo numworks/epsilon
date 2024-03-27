@@ -51,7 +51,7 @@ class EditExpressionController : public Escher::ViewController,
     return true;
   }
 
-  void insertTextBody(const char* text);
+  void insertLayout(Poincare::Layout layout);
   void restoreInput();
 
  private:

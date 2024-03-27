@@ -276,11 +276,8 @@ void HistoryController::handleOK() {
 
   if (m_selectedSubviewType == SubviewType::Input) {
     m_selectableListView.deselectTable();
-#if 0  // TODO_PCJ
-    editController->insertTextBody(calculationAtIndex(focusRow)->inputText());
-#else
-    assert(false);
-#endif
+    editController->insertLayout(
+        calculationAtIndex(focusRow)->createInputLayout());
     return;
   }
 
@@ -290,19 +287,17 @@ void HistoryController::handleOK() {
         calculationAtIndex(focusRow);
     ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
         selectedCell->outputView()->selectedSubviewPosition();
-#if 0  // TODO_PCJ
+    bool dummy;
     if (outputSubviewPosition ==
             ScrollableTwoLayoutsView::SubviewPosition::Right &&
         displayOutput != Calculation::DisplayOutput::ExactOnly) {
-      editController->insertTextBody(calculation->approximateOutputText(
-          Calculation::NumberOfSignificantDigits::Maximal));
+      editController->insertLayout(
+          calculation->createApproximateOutputLayout(&dummy));
     } else {
       assert(displayOutput != Calculation::DisplayOutput::ApproximateOnly);
-      editController->insertTextBody(calculation->exactOutputText());
+      editController->insertLayout(
+          calculation->createExactOutputLayout(&dummy));
     }
-#else
-    assert(false);
-#endif
     return;
   }
 

@@ -35,6 +35,9 @@ class LayoutField : public EditableField {
   void setLayout(Poincare::Layout newLayout);
   size_t dumpContent(char* buffer, size_t bufferSize, int* cursorOffset,
                      int* position);
+  void insertLayoutAtCursor(Poincare::JuniorLayout layoutR,
+                            bool forceCursorRightOfLayout = false,
+                            bool forceCursorLeftOfLayout = false);
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override;
@@ -96,9 +99,6 @@ class LayoutField : public EditableField {
   bool didHandleEvent(bool didHandleEvent, bool layoutDidChange,
                       bool shouldUpdateCursor, KDSize previousSize);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::JuniorLayout layoutR,
-                            bool forceCursorRightOfLayout = false,
-                            bool forceCursorLeftOfLayout = false);
   TextCursorView::CursorFieldView* cursorCursorFieldView() override {
     return &m_contentView;
   }

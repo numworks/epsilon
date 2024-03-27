@@ -50,7 +50,8 @@ bool ExpressionsListController::handleEvent(Ion::Events::Event event) {
      * Thereby it frees memory to do Poincare computations required by
      * insertTextBody. */
     App::app()->modalViewController()->dismissModal();
-    m_editExpressionController->insertTextBody(buffer);
+    // m_editExpressionController->insertTextBody(buffer);
+    assert(false);
     return true;
   }
   return false;

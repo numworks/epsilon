@@ -42,25 +42,21 @@ constexpr auto KEmptyMatrixL =
 
 constexpr auto KPoint2DL = KBinary<BlockType::Point2DLayout>();
 
-constexpr uint8_t SubCodePointLayoutAtIndex(CodePoint value, int index) {
-  return Bit::getByteAtIndex(value, index);
-}
-
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint
 template <uint32_t cp>
 using KCodePointL =
-    KTree<BlockType::CodePointLayout, SubCodePointLayoutAtIndex(cp, 0),
-          SubCodePointLayoutAtIndex(cp, 1), SubCodePointLayoutAtIndex(cp, 2),
-          SubCodePointLayoutAtIndex(cp, 3)>;
+    KTree<BlockType::CodePointLayout, Bit::getByteAtIndex(cp, 0),
+          Bit::getByteAtIndex(cp, 1), Bit::getByteAtIndex(cp, 2),
+          Bit::getByteAtIndex(cp, 3)>;
 
 template <uint32_t cp, uint32_t cc>
 using KCombinedCodePointL =
-    KTree<BlockType::CombinedCodePointsLayout, SubCodePointLayoutAtIndex(cp, 0),
-          SubCodePointLayoutAtIndex(cp, 1), SubCodePointLayoutAtIndex(cp, 2),
-          SubCodePointLayoutAtIndex(cp, 3), SubCodePointLayoutAtIndex(cc, 0),
-          SubCodePointLayoutAtIndex(cc, 1), SubCodePointLayoutAtIndex(cc, 2),
-          SubCodePointLayoutAtIndex(cc, 3)>;
+    KTree<BlockType::CombinedCodePointsLayout, Bit::getByteAtIndex(cp, 0),
+          Bit::getByteAtIndex(cp, 1), Bit::getByteAtIndex(cp, 2),
+          Bit::getByteAtIndex(cp, 3), Bit::getByteAtIndex(cc, 0),
+          Bit::getByteAtIndex(cc, 1), Bit::getByteAtIndex(cc, 2),
+          Bit::getByteAtIndex(cc, 3)>;
 
 template <String S,
           typename IS =

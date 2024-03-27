@@ -4,16 +4,10 @@
 #include <ion/unicode/code_point.h>
 #include <poincare_junior/src/memory/tree.h>
 
-#include "k_tree.h"
-
 namespace PoincareJ {
 
 class CodePointLayout {
  public:
-  constexpr static uint8_t SubCodePointLayoutAtIndex(CodePoint value,
-                                                     int index) {
-    return KTrees::SubCodePointLayoutAtIndex(value, index);
-  }
   static CodePoint GetCodePoint(const Tree* node);
   static CodePoint GetCombinedCodePoint(const Tree* node);
 

@@ -169,10 +169,8 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, BlockType::CodePointLayout,
-      CodePointLayout::SubCodePointLayoutAtIndex(value, 0),
-      CodePointLayout::SubCodePointLayoutAtIndex(value, 1),
-      CodePointLayout::SubCodePointLayoutAtIndex(value, 2),
-      CodePointLayout::SubCodePointLayoutAtIndex(value, 3));
+      Bit::getByteAtIndex(value, 0), Bit::getByteAtIndex(value, 1),
+      Bit::getByteAtIndex(value, 2), Bit::getByteAtIndex(value, 3));
 }
 
 template <>
@@ -182,14 +180,10 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, BlockType::CodePointLayout,
-      CodePointLayout::SubCodePointLayoutAtIndex(first, 0),
-      CodePointLayout::SubCodePointLayoutAtIndex(first, 1),
-      CodePointLayout::SubCodePointLayoutAtIndex(first, 2),
-      CodePointLayout::SubCodePointLayoutAtIndex(first, 3),
-      CodePointLayout::SubCodePointLayoutAtIndex(second, 0),
-      CodePointLayout::SubCodePointLayoutAtIndex(second, 1),
-      CodePointLayout::SubCodePointLayoutAtIndex(second, 2),
-      CodePointLayout::SubCodePointLayoutAtIndex(second, 3));
+      Bit::getByteAtIndex(first, 0), Bit::getByteAtIndex(first, 1),
+      Bit::getByteAtIndex(first, 2), Bit::getByteAtIndex(first, 3),
+      Bit::getByteAtIndex(second, 0), Bit::getByteAtIndex(second, 1),
+      Bit::getByteAtIndex(second, 2), Bit::getByteAtIndex(second, 3));
 }
 
 template <>

@@ -103,6 +103,14 @@ class JuniorExpression : public OExpression {
                                 bool addMissingParenthesis = true,
                                 bool parseForAssignment = false);
 
+  static JuniorExpression Create(const PoincareJ::Tree* structure,
+                                 PoincareJ::ContextTrees ctx);
+  operator const PoincareJ::Tree*() { return tree(); }
+  // Builders from value.
+  static JuniorExpression Builder(int32_t n);
+  template <typename T>
+  static JuniorExpression Builder(T x);
+
   static JuniorExpression Builder(const PoincareJ::Tree* tree);
   // Eat the tree
   static JuniorExpression Builder(PoincareJ::Tree* tree);

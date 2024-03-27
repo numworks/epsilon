@@ -1,9 +1,9 @@
 #include "data_field.h"
 
 #include <apps/apps_container.h>
-#include <poincare/float.h>
+#include <poincare/expression.h>
 #include <poincare/layout.h>
-#include <poincare/multiplication.h>
+#include <poincare_junior/src/expression/k_tree.h>
 
 #include <array>
 
@@ -37,7 +37,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
     return DataField::UnknownValueLayout();
   }
 
-  Expression value = Float<double>::Builder(v);
+  Expression value = Expression::Builder<double>(v);
   /* Check the global context to know whether units need an underscore. */
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
@@ -48,7 +48,8 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
                               globalContext);
   }
 
-  Expression result = Multiplication::Builder(value, unit);
+  Expression result =
+      Expression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
   return result.createLayout(floatDisplayMode, significantDigits,
                              globalContext);
 }
@@ -95,14 +96,31 @@ Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
   return res;
 }
 
+// ZDataField
+
+Poincare::Layout ZDataField::getLayout(AtomicNumber z,
+                                       int significantDigits) const {
+  Preferences::PrintFloatMode floatDisplayMode =
+      Preferences::SharedPreferences()->displayMode();
+  Context* globalContext =
+      AppsContainer::sharedAppsContainer()->globalContext();
+  return Expression::Builder(static_cast<int>(z))
+      .createLayout(floatDisplayMode, significantDigits, globalContext);
+}
+
 // ADataField
 
-Layout ADataField::getLayout(AtomicNumber z, int) const {
+Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
   uint16_t a = ElementsDataBase::NumberOfMass(z);
   if (a == ElementData::k_AUnknown) {
     return DataField::UnknownValueLayout();
   }
-  return Integer(a).createLayout();
+  Preferences::PrintFloatMode floatDisplayMode =
+      Preferences::SharedPreferences()->displayMode();
+  Context* globalContext =
+      AppsContainer::sharedAppsContainer()->globalContext();
+  return Expression::Builder(static_cast<int>(a))
+      .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
 
 bool ADataField::canBeStored(AtomicNumber z) const {
@@ -127,7 +145,8 @@ void nextSubshell(int* n, int* l) {
   }
 }
 
-Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
+Layout ConfigurationDataField::getLayout(AtomicNumber z,
+                                         int significantDigits) const {
   constexpr int k_nMax = 7;
   constexpr int k_lMax = 4;
   constexpr char k_lSymbols[k_lMax] = {'s', 'p', 'd', 'f'};
@@ -182,6 +201,11 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
     conf[toIndex] += numberOfDisplacedElectrons;
   }
 
+  Preferences::PrintFloatMode floatDisplayMode =
+      Preferences::SharedPreferences()->displayMode();
+  Context* globalContext =
+      AppsContainer::sharedAppsContainer()->globalContext();
+
   /* Subshells are displayed in order of increasing n, then increasing l. */
   for (n = 1; n <= k_nMax; n++) {
     for (l = 0; l < k_lMax && l < n; l++) {
@@ -189,11 +213,15 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
       if (conf[index] == 0) {
         continue;
       }
-      res = Layout::Create(KA ^ KB ^ KC ^ KSuperscriptL(KD),
-                           {.KA = res,
-                            .KB = Layout(Integer(n).createLayout()),
-                            .KC = Layout::CodePoint(k_lSymbols[l]),
-                            .KD = Layout(Integer(conf[index]).createLayout())});
+      res = Layout::Create(
+          KA ^ KB ^ KC ^ KSuperscriptL(KD),
+          {.KA = res,
+           .KB = Expression::Builder(n).createLayout(
+               floatDisplayMode, significantDigits, globalContext),
+           .KC = Layout::CodePoint(k_lSymbols[l]),
+           .KD = Expression::Builder(conf[index])
+                     .createLayout(floatDisplayMode, significantDigits,
+                                   globalContext)});
     }
   }
 

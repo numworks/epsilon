@@ -11,6 +11,7 @@
 #include <poincare_junior/src/expression/continuity.h>
 #include <poincare_junior/src/expression/conversion.h>
 #include <poincare_junior/src/expression/dimension.h>
+#include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/matrix.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/sign.h>
@@ -20,6 +21,7 @@
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/rack_from_text.h>
 #include <poincare_junior/src/layout/serialize.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/tree.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -146,6 +148,29 @@ JuniorExpression JuniorExpression::Parse(const char* string, Context* context,
       Parse(layout, context, addMissingParenthesis, parseForAssignment);
   layout->removeTree();
   return result;
+}
+
+JuniorExpression JuniorExpression::Create(const PoincareJ::Tree* structure,
+                                          PoincareJ::ContextTrees ctx) {
+  PoincareJ::Tree* tree = PoincareJ::PatternMatching::Create(structure, ctx);
+  return Builder(tree);
+}
+
+// Builders from value.
+JuniorExpression JuniorExpression::Builder(int32_t n) {
+  return Builder(PoincareJ::Integer::Push(n));
+}
+
+template <>
+JuniorExpression JuniorExpression::Builder<float>(float x) {
+  return Builder(
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::SingleFloat>(x));
+}
+
+template <>
+JuniorExpression JuniorExpression::Builder<double>(double x) {
+  return Builder(
+      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::DoubleFloat>(x));
 }
 
 JuniorExpression JuniorExpression::Builder(const PoincareJ::Tree* tree) {
@@ -316,11 +341,11 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
   PoincareJ::Tree* e = tree()->clone();
   PoincareJ::Simplification::Simplify(e, &context);
   if (approximateExpression) {
-    *approximateExpression = JuniorExpression::Builder(
-        PoincareJ::Approximation::RootTreeToTree<double>(
+    *approximateExpression =
+        Builder(PoincareJ::Approximation::RootTreeToTree<double>(
             e, context.m_angleUnit, context.m_complexFormat));
   }
-  *simplifiedExpression = JuniorExpression::Builder(e);
+  *simplifiedExpression = Builder(e);
   return;
 }
 
@@ -343,7 +368,7 @@ JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
   // TODO_PCJ: Do not beautify !! Decide if a projection is needed.
   PoincareJ::Simplification::Simplify(e, &context);
   *reduceFailure = context.m_strategy != initialStrategy;
-  JuniorExpression simplifiedExpression = JuniorExpression::Builder(e);
+  JuniorExpression simplifiedExpression = Builder(e);
 #if 0
   if (approximateDuringReduction) {
     /* TODO_PCJ: We used to approximate after a full reduction (see comment).
@@ -434,11 +459,10 @@ int JuniorExpression::getPolynomialCoefficients(
   for (int i = degree; i >= 0; i--) {
     if (indexExponent < numberOfTerms &&
         i == PoincareJ::Polynomial::ExponentAtIndex(poly, indexExponent)) {
-      coefficients[i] =
-          JuniorExpression::Builder(poly->child(indexExponent + 1)->clone());
+      coefficients[i] = Builder(poly->child(indexExponent + 1)->clone());
       indexExponent++;
     } else {
-      coefficients[i] = JuniorExpression::Builder(
+      coefficients[i] = Builder(
           PoincareJ::SharedEditionPool->push(PoincareJ::BlockType::Zero));
     }
   }
@@ -492,7 +516,7 @@ JuniorExpression JuniorExpression::replaceSymbolWithExpression(
              [](const PoincareJ::Tree* e) { return e->isParametric(); }));
   PoincareJ::Tree* result = tree()->clone();
   if (result->deepReplaceWith(symbol.tree(), expression.tree())) {
-    JuniorExpression res = JuniorExpression::Builder(result);
+    JuniorExpression res = Builder(result);
     replaceWithInPlace(res);
     return res;
   }

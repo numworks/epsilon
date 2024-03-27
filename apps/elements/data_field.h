@@ -2,7 +2,6 @@
 #define ELEMENTS_DATA_FIELD
 
 #include <apps/i18n.h>
-#include <poincare/integer.h>
 #include <poincare/layout.h>
 #include <stddef.h>
 
@@ -105,9 +104,7 @@ class ZDataField : public DataField {
     return I18n::Message::ElementsZSymbol;
   }
   Poincare::Layout getLayout(AtomicNumber z,
-                             int significantDigits) const override {
-    return Poincare::Integer(z).createLayout();
-  }
+                             int significantDigits) const override;
   bool canBeStored(AtomicNumber z) const override { return true; }
 };
 

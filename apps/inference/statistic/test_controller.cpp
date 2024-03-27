@@ -34,7 +34,7 @@ TestController::TestController(StackViewController *parentResponder,
   cell(k_indexOfOneMean)->label()->setMessage(I18n::Message::OneMean);
   cell(k_indexOfTwoProps)->label()->setMessage(I18n::Message::TwoProportions);
   cell(k_indexOfTwoMeans)->label()->setMessage(I18n::Message::TwoMeans);
-  cell(k_indexOfChiSquare)->label()->setMessage(I18n::Message::TestCategorical);
+  cell(k_indexOfChiSquare)->label()->setMessage(I18n::Message::ChiSquare);
   cell(k_indexOfChiSquare)->subLabel()->setMessage(I18n::Message::Chi2Test);
   cell(k_indexOfSlope)->label()->setMessage(I18n::Message::Slope);
   // Init selection

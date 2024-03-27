@@ -1,5 +1,5 @@
 BinomialDistribution = "Loi binomiale"
-ChiSquare = "Khi-2"
+ChiSquare = "Khi-deux"
 ChiSquareDistribution = "Loi du Khi-2"
 ChooseDistribution = "Choisir le type de loi"
 DefineParameters = "Définir les paramètres"

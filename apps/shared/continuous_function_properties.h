@@ -150,7 +150,8 @@ class ContinuousFunctionProperties {
   bool isEnabledParametric() const { return isEnabled() && isParametric(); }
 
   bool canBeActiveInTable() const {
-    return !isAlongY() && !isOfDegreeTwo() && isEquality() && !isScatterPlot();
+    return !isAlongY() && !isOfDegreeTwo() && isEquality() &&
+           !isScatterPlot() && isEnabled();
   }
   bool canHaveCustomDomain() const {
     return !isAlongY() && isEquality() && !isScatterPlot();

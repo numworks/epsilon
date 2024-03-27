@@ -1,6 +1,6 @@
 #include "scientific_notation_helper.h"
 
-#include <poincare/float.h>
+#include <poincare/expression.h>
 
 using namespace Poincare;
 
@@ -20,7 +20,7 @@ Layout ScientificLayout(
        a.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger)) {
     // Based Integer must be approximated to be layouted in scientific mode
     ApproximationContext approximationContext(context);
-    e = Float<double>::Builder(
+    e = Expression::Builder<double>(
         a.approximateToScalar<double>(approximationContext));
   } else {
     e = a;

@@ -43,22 +43,6 @@ Float<T> Float<T>::Builder(T value) {
   return static_cast<Float &>(h);
 }
 
-template <>
-JuniorFloat<float> JuniorFloat<float>::Builder(float value) {
-  JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::SingleFloat>(
-          value));
-  return static_cast<JuniorFloat<float> &>(expr);
-}
-
-template <>
-JuniorFloat<double> JuniorFloat<double>::Builder(double value) {
-  JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::DoubleFloat>(
-          value));
-  return static_cast<JuniorFloat<double> &>(expr);
-}
-
 template class FloatNode<float>;
 template class FloatNode<double>;
 

@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <poincare/absolute_value.h>
+#include <poincare/expression.h>
 #include <poincare/integral.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -113,8 +114,8 @@ Poincare::Expression AreaBetweenCurvesGraphController::createSumExpression(
       function->expressionReduced(context).clone();
   return Integral::Builder(
       AbsoluteValue::Builder(Subtraction::Builder(expressionF, expressionG)),
-      Symbol::SystemSymbol(), Float<double>::Builder(startSum),
-      Float<double>::Builder(endSum));
+      Symbol::SystemSymbol(), Expression::Builder<double>(startSum),
+      Expression::Builder<double>(endSum));
 }
 
 }  // namespace Graph

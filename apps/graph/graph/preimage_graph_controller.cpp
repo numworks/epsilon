@@ -1,7 +1,7 @@
 #include "preimage_graph_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/float.h>
+#include <poincare/expression.h>
 #include <poincare/serialization_helper.h>
 
 using namespace Poincare;
@@ -25,7 +25,7 @@ Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
   Expression f =
       functionStore()->modelForRecord(m_record)->expressionApproximated(
           context);
-  return solver.nextIntersection(Float<double>::Builder(m_image), f);
+  return solver.nextIntersection(Expression::Builder<double>(m_image), f);
 }
 
 }  // namespace Graph

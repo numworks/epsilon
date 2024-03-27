@@ -164,12 +164,6 @@ constexpr inline double Float<double>::Max() {
   return DBL_MAX;
 }
 
-template <typename T>
-class JuniorFloat final : public JuniorExpression {
- public:
-  static JuniorFloat Builder(T value);
-};
-
 }  // namespace Poincare
 
 #endif

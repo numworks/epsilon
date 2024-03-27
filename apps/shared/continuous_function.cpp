@@ -6,7 +6,6 @@
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
-#include <poincare/float.h>
 #include <poincare/function.h>
 #include <poincare/helpers.h>
 #include <poincare/integral.h>
@@ -491,7 +490,7 @@ Expression ContinuousFunction::sumBetweenBounds(double start, double end,
   // Integral takes ownership of args
   return Integral::Builder(
       expressionReduced(context).clone(), Symbol::SystemSymbol(),
-      Float<double>::Builder(start), Float<double>::Builder(end));
+      Expression::Builder<double>(start), Expression::Builder<double>(end));
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */

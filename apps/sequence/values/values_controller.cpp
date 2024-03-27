@@ -185,7 +185,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   } else {
     Coordinate2D<double> xy =
         sequence->evaluateXYAtParameter(abscissa, context);
-    result = Float<double>::Builder(xy.y());
+    result = Expression::Builder<double>(xy.y());
   }
   *memoizedLayoutAtIndex(index) =
       result.createLayout(preferences->displayMode(),

@@ -1,7 +1,7 @@
 #include "unit_comparison_helper.h"
 
 #include <apps/i18n.h>
-#include <poincare/float.h>
+#include <poincare/expression.h>
 #include <poincare/multiplication.h>
 #include <poincare/print_float.h>
 #include <poincare/serialization_helper.h>
@@ -588,9 +588,9 @@ Expression BuildComparisonExpression(double value,
   Expression unit = Poincare::Expression::Parse(
       k_referenceTables[tableIndex].unit.displayedUnit,
       App::app()->localContext());
-  return Multiplication::Builder(Float<double>::Builder(ratio),
-                                 Float<double>::Builder(referenceValue->value),
-                                 unit);
+  return Multiplication::Builder(
+      Expression::Builder<double>(ratio),
+      Expression::Builder<double>(referenceValue->value), unit);
 }
 
 }  // namespace UnitComparison

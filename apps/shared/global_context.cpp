@@ -219,10 +219,10 @@ const Expression GlobalContext::expressionForSequence(
     rankIsInteger = std::floor(rankValue) == rankValue;
   }
   if (rankIsInteger) {
-    return JuniorFloat<double>::Builder(
+    return Expression::Builder<double>(
         seq.evaluateXYAtParameter(rankValue, sequenceContext()).y());
   }
-  return JuniorFloat<double>::Builder(NAN);
+  return Expression::Builder<double>(NAN);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(

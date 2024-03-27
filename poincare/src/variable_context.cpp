@@ -9,7 +9,7 @@ namespace Poincare {
 
 template <typename T>
 void VariableContext::setApproximationForVariable(T value) {
-  m_value = JuniorFloat<T>::Builder(value);
+  m_value = Expression::Builder<T>(value);
 }
 
 Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(

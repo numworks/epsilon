@@ -2,6 +2,7 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <omg/signaling_nan.h>
+#include <poincare/expression.h>
 
 #include <array>
 #include <cmath>
@@ -188,12 +189,12 @@ const Expression SequenceContext::protectedExpressionForSymbolAbstract(
   int index = SequenceStore::SequenceIndexForName(name);
   Ion::Storage::Record record = sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {
-    return JuniorFloat<double>::Builder(result);
+    return Expression::Builder<double>(result);
   }
   assert(record.fullName()[0] == symbol.name()[0]);
   Sequence *seq = sequenceStore()->modelForRecord(record);
   if (!seq->fullName()) {
-    return JuniorFloat<double>::Builder(result);
+    return Expression::Builder<double>(result);
   }
   Expression rankExpression = symbol.childAtIndex(0).clone();
   /* The lastDesendantContext might contain informations on variables
@@ -211,7 +212,7 @@ const Expression SequenceContext::protectedExpressionForSymbolAbstract(
       result = seq->approximateAtRank(rankValue, this);
     }
   }
-  return JuniorFloat<double>::Builder(result);
+  return Expression::Builder<double>(result);
 }
 
 void SequenceContext::resetCache() {

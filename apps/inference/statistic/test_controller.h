@@ -40,7 +40,7 @@ class TestController
   constexpr static int k_indexOfOneMean = 1;
   constexpr static int k_indexOfTwoProps = 2;
   constexpr static int k_indexOfTwoMeans = 3;
-  constexpr static int k_indexOfCategorical = 4;
+  constexpr static int k_indexOfChiSquare = 4;
   constexpr static int k_indexOfSlope = 5;
 
  private:

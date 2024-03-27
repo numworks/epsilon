@@ -19,43 +19,20 @@ using namespace Shared;
 namespace Calculation {
 
 bool Calculation::operator==(const Calculation &c) {
-  return inputTreeSize() == c.inputTreeSize() &&
-         memcmp(inputTree(), c.inputTree(), c.inputTreeSize()) == 0 &&
-         strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
-                c.approximateOutputText(NumberOfSignificantDigits::Maximal)) ==
-             0 &&
-         strcmp(approximateOutputText(NumberOfSignificantDigits::UserDefined),
-                c.approximateOutputText(
-                    NumberOfSignificantDigits::UserDefined)) == 0
-         /* Some calculations can make appear trigonometric functions in their
-          * exact output. Their argument will be different with the angle unit
-          * preferences but both input and approximate output will be the same.
-          * For example, i^(sqrt(3)) = cos(sqrt(3)*pi/2)+i*sin(sqrt(3)*pi/2) if
-          * angle unit is radian and i^(sqrt(3)) =
-          * cos(sqrt(3)*90+i*sin(sqrt(3)*90) in degree. */
-         && strcmp(exactOutputText(), c.exactOutputText()) == 0;
+  /* Some calculations can make appear trigonometric functions in their exact
+   * output. Their argument will be different with the angle unit preferences
+   * but both input and approximate output will be the same.
+   * For example, i^(sqrt(3)) = cos(sqrt(3)*pi/2)+i*sin(sqrt(3)*pi/2) if angle
+   * unit is radian and i^(sqrt(3)) = cos(sqrt(3)*90+i*sin(sqrt(3)*90) in
+   * degree. */
+  return cumulatedTreeSizes() == c.cumulatedTreeSizes() &&
+         memcmp(m_trees, c.m_trees, cumulatedTreeSizes());
 }
 
 Calculation *Calculation::next() const {
-  const char *result =
-      reinterpret_cast<const char *>(this) + sizeof(Calculation);
-  for (int i = 0; i < k_numberOfExpressions; i++) {
-    // Pass inputText, exactOutputText, ApproximateOutputText x2
-    result = result + strlen(result) + 1;
-  }
-  return reinterpret_cast<Calculation *>(const_cast<char *>(result));
-}
-
-const char *Calculation::approximateOutputText(
-    NumberOfSignificantDigits numberOfSignificantDigits) const {
-  const char *exactOutput = exactOutputText();
-  const char *approximateOutputTextWithMaxNumberOfDigits =
-      exactOutput + strlen(exactOutput) + 1;
-  if (numberOfSignificantDigits == NumberOfSignificantDigits::Maximal) {
-    return approximateOutputTextWithMaxNumberOfDigits;
-  }
-  return approximateOutputTextWithMaxNumberOfDigits +
-         strlen(approximateOutputTextWithMaxNumberOfDigits) + 1;
+  return reinterpret_cast<Calculation *>(
+      const_cast<char *>(reinterpret_cast<const char *>(this) +
+                         sizeof(Calculation) + cumulatedTreeSizes()));
 }
 
 Expression Calculation::input() {
@@ -69,7 +46,7 @@ Expression Calculation::exactOutput() {
    * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
-  Expression e = Expression::Parse(exactOutputText(), nullptr);
+  Expression e = JuniorExpression::Builder(exactOutputTree());
   assert(!e.isUninitialized());
   return e;
 }
@@ -107,8 +84,8 @@ Expression Calculation::approximateOutput(
    *
    */
   // clang-format on
-  Expression e = Expression::Parse(
-      approximateOutputText(numberOfSignificantDigits), nullptr);
+  Expression e = JuniorExpression::Builder(approximatedOutputTree());
+  // TODO_PCJ numberOfSignificantDigits is ignored, I think we can get rid of it
   assert(!e.isUninitialized());
   return e;
 }
@@ -179,27 +156,19 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
   }
   Expression inputExp = input();
   Expression outputExp = exactOutput();
-  const char *exactText = exactOutputText();
-  const char *approxText =
-      approximateOutputText(NumberOfSignificantDigits::UserDefined);
   if (inputExp.isUninitialized() || outputExp.isUninitialized() ||
       ShouldOnlyDisplayExactOutput(inputExp)) {
     m_displayOutput = DisplayOutput::ExactOnly;
-  } else if (
-      // If the exact and approximate outputs are equal
-      strcmp(approxText, exactText) == 0 ||
-      // If the exact result is 'undef'
-      strcmp(exactText, Undefined::Name()) == 0 ||
-      // If the approximate output is 'nonreal'
-      strcmp(approxText, Nonreal::Name()) == 0 ||
-      // Other conditions are factorized in ExpressionDisplayPermissions
-      ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          inputExp, outputExp,
-          approximateOutput(NumberOfSignificantDigits::UserDefined), context)) {
+  } else if (exactAndApproximatedAreEqual() ||
+             exactOutputTree()->isUndefined() ||
+             approximatedOutputTree()->isNonreal() ||
+             // Other conditions are factorized in ExpressionDisplayPermissions
+             ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+                 inputExp, outputExp,
+                 approximateOutput(NumberOfSignificantDigits::UserDefined),
+                 context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (
-      // If the approximate output is 'undef'
-      strcmp(approxText, Undefined::Name()) == 0) {
+  } else if (approximatedOutputTree()->isUndefined()) {
     // TODO_PCJ: This allow the display of exact pcj results, regulate it.
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||

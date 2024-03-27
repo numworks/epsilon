@@ -14,21 +14,30 @@ namespace Calculation {
 
 class CalculationStore;
 
-// clang-format off
 /* A calculation is:
- *  |     uint8_t   |  uint8_t  |KDCoordinate|  KDCoordinate  |   uint16_t    |    ...    |          ...    |           ...          |
- *  |m_displayOutput|m_equalSign|  m_height  |m_expandedHeight|m_inputTreeSize|m_inputTree|m_exactOutputText|m_approximateOutputText1|m_approximateOutputText2|
- *                                                                                                                with maximal            with displayed
- *                                                                                                             significant digits       significant digits
+ * struct {
+ *   uint8_t m_displayOutput;
+ *   uint8_t  m_equalSign;
+ *   KDCoordinate m_height;
+ *   KDCoordinate m_expandedHeight;
  *
- * */
-// clang-format on
+ *   uint16_t m_inputTreeSize;
+ *   uint16_t m_exactOutputTreeSize;
+ *   uint16_t m_approximatedOutputTreeSize;
+ *
+ *   PoincareJ::Tree m_inputTree;
+ *   PoincareJ::Tree m_exactOutputTree;
+ *   PoincareJ::Tree m_approximatedOutputTree;
+ * };
+ *
+ * Since the three last members have variable size, they are gathered in m_trees
+ */
 
 class Calculation {
   friend CalculationStore;
 
  public:
-  constexpr static int k_numberOfExpressions = 4;
+  constexpr static int k_numberOfExpressions = 3;
   enum class EqualSign : uint8_t { Unknown, Approximation, Equal };
 
   enum class DisplayOutput : uint8_t {
@@ -39,6 +48,8 @@ class Calculation {
     ExactAndApproximateToggle
   };
 
+  enum class NumberOfSignificantDigits { Maximal, UserDefined };
+
   Calculation(
       Poincare::Preferences::CalculationPreferences calculationPreferences)
       : m_displayOutput(DisplayOutput::Unknown),
@@ -47,7 +58,7 @@ class Calculation {
         m_additionalResultsType(),
         m_height(-1),
         m_expandedHeight(-1) {
-    assert(sizeof(m_inputText) == 0);
+    static_assert(sizeof(m_trees) == 0);
   }
   bool operator==(const Calculation& c);
   Calculation* next() const;
@@ -68,20 +79,6 @@ class Calculation {
   uint8_t numberOfSignificantDigits() const {
     return m_calculationPreferences.numberOfSignificantDigits;
   }
-
-  // Texts
-  enum class NumberOfSignificantDigits { Maximal, UserDefined };
-  const PoincareJ::Tree* inputTree() const {
-    return (const PoincareJ::Tree*)(m_inputText + 2);
-  }
-  size_t inputTreeSize() const { return *(const uint16_t*)(m_inputText); }
-  const char* exactOutputText() const {
-    return 2 + m_inputText + inputTreeSize();
-  }
-  /* See comment in approximateOutput implementation explaining the need of two
-   * approximateOutputTexts. */
-  const char* approximateOutputText(
-      NumberOfSignificantDigits numberOfSignificantDigits) const;
 
   // Expressions
   Poincare::Expression input();
@@ -120,6 +117,27 @@ class Calculation {
   }
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
+  const PoincareJ::Tree* inputTree() const {
+    return reinterpret_cast<const PoincareJ::Tree*>(m_trees);
+  }
+  const PoincareJ::Tree* exactOutputTree() const {
+    return reinterpret_cast<const PoincareJ::Tree*>(m_trees + m_inputTreeSize);
+  }
+  const PoincareJ::Tree* approximatedOutputTree() const {
+    return reinterpret_cast<const PoincareJ::Tree*>(m_trees + m_inputTreeSize +
+                                                    m_exactOutputTreeSize);
+  }
+  bool exactAndApproximatedAreEqual() const {
+    return m_exactOutputTreeSize == m_approximatedOutputTreeSize &&
+           memcmp(exactOutputTree(), approximatedOutputTree(),
+                  m_exactOutputTreeSize);
+  }
+
+  size_t cumulatedTreeSizes() const {
+    return m_inputTreeSize + m_exactOutputTreeSize +
+           m_approximatedOutputTreeSize;
+  }
+
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::MaxBufferSize()) because when we
    * print an expression we add omitted signs (multiplications, parenthesis...)
@@ -138,11 +156,17 @@ class Calculation {
       "emscripten_align1_short should have the same size as KDCoordinate");
   emscripten_align1_short m_height;
   emscripten_align1_short m_expandedHeight;
+  emscripten_align1_short m_inputTreeSize;
+  emscripten_align1_short m_exactOutputTreeSize;
+  emscripten_align1_short m_approximatedOutputTreeSize;
 #else
   KDCoordinate m_height;
   KDCoordinate m_expandedHeight;
+  uint16_t m_inputTreeSize;
+  uint16_t m_exactOutputTreeSize;
+  uint16_t m_approximatedOutputTreeSize;  // used only by ==
 #endif
-  char m_inputText[0];  // MUST be the last member variable
+  char m_trees[0];  // MUST be the last member variable
 };
 
 }  // namespace Calculation

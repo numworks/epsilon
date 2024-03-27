@@ -290,6 +290,7 @@ void HistoryController::handleOK() {
         calculationAtIndex(focusRow);
     ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
         selectedCell->outputView()->selectedSubviewPosition();
+#if 0  // TODO_PCJ
     if (outputSubviewPosition ==
             ScrollableTwoLayoutsView::SubviewPosition::Right &&
         displayOutput != Calculation::DisplayOutput::ExactOnly) {
@@ -299,6 +300,9 @@ void HistoryController::handleOK() {
       assert(displayOutput != Calculation::DisplayOutput::ApproximateOnly);
       editController->insertTextBody(calculation->exactOutputText());
     }
+#else
+    assert(false);
+#endif
     return;
   }
 

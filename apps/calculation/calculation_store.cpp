@@ -56,9 +56,7 @@ Expression CalculationStore::ansExpression(Context *context) const {
   Expression ansExpr;
   if (mostRecentCalculation->displayOutput(context) ==
           Calculation::DisplayOutput::ApproximateOnly &&
-      (strcmp(mostRecentCalculation->approximateOutputText(
-                  Calculation::NumberOfSignificantDigits::Maximal),
-              mostRecentCalculation->exactOutputText()) != 0 ||
+      (!mostRecentCalculation->exactAndApproximatedAreEqual() ||
        exactOutput.isUndefined())) {
     /* Case 1.
      * If exact output was hidden, is   should not be accessible using Ans.

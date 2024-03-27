@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <poincare/absolute_value.h>
 #include <poincare/integral.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/subtraction.h>
 #include <stdlib.h>

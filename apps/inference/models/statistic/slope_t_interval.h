@@ -44,9 +44,7 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
     return numberOfTableParameters();
   }
   Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override {
-    return Shared::ParameterRepresentation{KRackL(), I18n::Message::Default};
-  }
+      int i) const override;
 
   // Inference
   double* parametersArray() override {

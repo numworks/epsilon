@@ -1,13 +1,10 @@
 #include "layout_field.h"
 
 #include <apps/i18n.h>
-#include <poincare/layout.h>
+#include <poincare/k_tree.h>
 #include <poincare/symbol.h>
 
 using namespace Poincare;
-
-// TODO decide how apps should use this
-using PoincareJ::operator""_l;
 
 namespace Calculation {
 

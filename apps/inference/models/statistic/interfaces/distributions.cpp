@@ -3,6 +3,7 @@
 #include <inference/models/statistic/statistic.h>
 #include <inference/models/statistic/test.h>
 #include <poincare/chi2_distribution.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/normal_distribution.h>
 #include <poincare/student_distribution.h>

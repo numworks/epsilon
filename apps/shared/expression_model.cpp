@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/function.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>

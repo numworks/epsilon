@@ -2,8 +2,8 @@
 
 #include <apps/apps_container.h>
 #include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare_junior/src/expression/k_tree.h>
 
 #include <array>
 

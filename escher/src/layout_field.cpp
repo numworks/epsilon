@@ -5,6 +5,7 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/parametered_expression.h>
 #include <poincare/serialization_helper.h>

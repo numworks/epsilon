@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <poincare/constant.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>

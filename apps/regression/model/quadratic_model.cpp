@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <poincare/based_integer.h>
 #include <poincare/decimal.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/number.h>

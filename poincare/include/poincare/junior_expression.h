@@ -2,12 +2,12 @@
 #define POINCARE_JUNIOR_EXPRESSION_H
 
 #include <poincare/old_expression.h>
+#include <poincare_junior/src/memory/block.h>
 
 namespace PoincareJ {
-
 class Tree;
-
-}
+struct ContextTrees;
+}  // namespace PoincareJ
 
 namespace Poincare {
 
@@ -17,23 +17,16 @@ class JuniorExpressionNode final : public ExpressionNode {
   friend class JuniorExpression;
 
  public:
-  JuniorExpressionNode(const PoincareJ::Tree* tree, size_t treeSize) {
-    memcpy(m_blocks, tree->block(), treeSize);
-  }
+  JuniorExpressionNode(const PoincareJ::Tree* tree, size_t treeSize);
 
   // TreeNode
-  size_t size() const override {
-    return sizeof(JuniorExpressionNode) + tree()->treeSize();
-  }
+  size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
     stream << "JuniorExpression";
   }
-  void logAttributes(std::ostream& stream) const override {
-    stream << '\n';
-    tree()->log(stream);
-  }
+  void logAttributes(std::ostream& stream) const override;
 #endif
 
   // Properties
@@ -83,9 +76,8 @@ class JuniorExpressionNode final : public ExpressionNode {
                 OExpression symbolValue) override;
 
   // PCJ
-  const PoincareJ::Tree* tree() const {
-    return PoincareJ::Tree::FromBlocks(m_blocks);
-  }
+  const PoincareJ::Tree* tree() const;
+
   PoincareJ::Block m_blocks[0];
 };
 
@@ -349,10 +341,7 @@ class List final : public JuniorExpression {
 
 class Boolean final : public JuniorExpression {
  public:
-  bool value() const {
-    assert(tree()->isTrue() || tree()->isFalse());
-    return tree()->isTrue();
-  }
+  bool value() const;
 };
 
 class Unit final {

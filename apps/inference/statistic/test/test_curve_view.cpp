@@ -1,5 +1,6 @@
 #include "test_curve_view.h"
 
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
 #include <algorithm>

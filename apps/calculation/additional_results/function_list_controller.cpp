@@ -5,6 +5,7 @@
 #include <ion/unicode/code_point.h>
 #include <poincare/constant.h>
 #include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/symbol.h>

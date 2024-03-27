@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <float.h>
 #include <inference/app.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/print.h>
 

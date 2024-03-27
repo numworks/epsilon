@@ -7,6 +7,7 @@
 #include <poincare/symbol.h>
 #include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
+#include <poincare_junior/src/memory/tree.h>
 
 using namespace Poincare;
 using namespace Shared;

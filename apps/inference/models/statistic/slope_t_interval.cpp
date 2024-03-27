@@ -1,5 +1,6 @@
 #include "slope_t_interval.h"
 
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
 namespace Inference {
@@ -14,6 +15,11 @@ Poincare::Layout SlopeTInterval::estimateLayout() const {
     m_estimateLayout = Poincare::Layout::String(estimateSymbol());
   }
   return m_estimateLayout;
+}
+
+Shared::ParameterRepresentation SlopeTInterval::paramRepresentationAtIndex(
+    int i) const {
+  return Shared::ParameterRepresentation{KRackL(), I18n::Message::Default};
 }
 
 void SlopeTInterval::privateCompute() {

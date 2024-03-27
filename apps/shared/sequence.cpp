@@ -6,6 +6,7 @@
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
 #include <poincare/integer.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/rational.h>
 #include <poincare/sequence.h>

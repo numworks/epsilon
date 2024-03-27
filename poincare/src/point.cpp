@@ -1,3 +1,4 @@
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/point.h>
 #include <poincare/point_evaluation.h>

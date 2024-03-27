@@ -1,5 +1,6 @@
 #include <escher/clipboard.h>
 #include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <quiz.h>
 #include <string.h>

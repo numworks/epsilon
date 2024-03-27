@@ -2,16 +2,14 @@
 #define POINCARE_JUNIOR_LAYOUT_NODE_H
 
 #include <poincare/old_layout.h>
-#include <poincare_junior/src/layout/k_tree.h>
-#include <poincare_junior/src/memory/pattern_matching.h>
-#include <poincare_junior/src/memory/tree.h>
-
-// Expose KTrees to apps to be used to replace builders
-using namespace PoincareJ::KTrees;
+#include <poincare_junior/src/memory/block.h>
 
 namespace PoincareJ {
+class Block;
+class Tree;
 class LayoutCursor;
-}
+struct ContextTrees;
+}  // namespace PoincareJ
 
 namespace Poincare {
 
@@ -19,23 +17,16 @@ class JuniorLayoutNode final : public LayoutNode {
   friend class JuniorLayout;
 
  private:
-  JuniorLayoutNode(const PoincareJ::Tree* tree, size_t treeSize) {
-    memcpy(m_blocks, tree->block(), treeSize);
-  }
+  JuniorLayoutNode(const PoincareJ::Tree* tree, size_t treeSize);
 
   // TreeNode
-  size_t size() const override {
-    return sizeof(JuniorLayoutNode) + tree()->treeSize();
-  }
+  size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
     stream << "JuniorLayout";
   }
-  void logAttributes(std::ostream& stream) const override {
-    stream << '\n';
-    tree()->log(stream);
-  }
+  void logAttributes(std::ostream& stream) const override;
 #endif
 
   size_t serialize(char* buffer, size_t bufferSize,
@@ -52,10 +43,8 @@ class JuniorLayoutNode final : public LayoutNode {
             PoincareJ::LayoutCursor* cursor, KDColor selectionColor) const;
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) const override;
 
-  const PoincareJ::Tree* tree() const {
-    return PoincareJ::Tree::FromBlocks(m_blocks);
-  }
-  PoincareJ::Tree* tree() { return PoincareJ::Tree::FromBlocks(m_blocks); }
+  const PoincareJ::Tree* tree() const;
+  PoincareJ::Tree* tree();
   PoincareJ::Block m_blocks[0];
 };
 
@@ -64,11 +53,11 @@ class JuniorLayout final : public OLayout {
   JuniorLayout() {}
 
   JuniorLayout(const PoincareJ::Tree* tree) {
-    // TODO is copy-elimination guaranted here ?
+    // TODO is copy-elimination guaranteed here ?
     *this = Builder(tree);
   }
 
-  template <PoincareJ::TreeConcept C>
+  template <class C>
   JuniorLayout(C c) : JuniorLayout(static_cast<const PoincareJ::Tree*>(c)) {
     static_assert(c.type().isRackLayout());
   }
@@ -95,7 +84,7 @@ class JuniorLayout final : public OLayout {
   JuniorLayout cloneWithoutMargins();
   JuniorLayout makeEditable() { return cloneWithoutMargins(); }
 
-  bool isEmpty() const { return tree()->numberOfChildren() == 0; }
+  bool isEmpty() const;
 
   // Render
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,

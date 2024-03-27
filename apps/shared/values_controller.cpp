@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>

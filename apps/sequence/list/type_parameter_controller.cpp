@@ -3,6 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
 #include "../app.h"

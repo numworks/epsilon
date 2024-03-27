@@ -1,8 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_CHI2_TEST_H
 #define INFERENCE_MODELS_STATISTIC_CHI2_TEST_H
 
-#include <poincare/layout.h>
-
 #include <cmath>
 
 #include "table.h"
@@ -42,11 +40,9 @@ class Chi2Test : public Test, public Table {
  protected:
   using Test::parameterAtIndex;  // Hidden
 
-  // Instanciate unused abstract classs
+  // Instantiate unused abstract class
   Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override {
-    return Shared::ParameterRepresentation{KRackL(), I18n::Message::Default};
-  }
+      int i) const override;
 
   // Chi2 specific
   virtual double expectedValue(int index) const = 0;

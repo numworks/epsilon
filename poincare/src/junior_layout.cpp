@@ -1,15 +1,33 @@
 #include <assert.h>
 #include <poincare/junior_layout.h>
+#include <poincare/k_tree.h>
 #include <poincare_junior/src/layout/app_helpers.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/layout/serialize.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include <algorithm>
 
 namespace Poincare {
+
+JuniorLayoutNode::JuniorLayoutNode(const PoincareJ::Tree* tree,
+                                   size_t treeSize) {
+  memcpy(m_blocks, tree->block(), treeSize);
+}
+
+size_t JuniorLayoutNode::size() const {
+  return sizeof(JuniorLayoutNode) + tree()->treeSize();
+}
+
+#if POINCARE_TREE_LOG
+void JuniorLayoutNode::logAttributes(std::ostream& stream) const {
+  stream << '\n';
+  tree()->log(stream);
+}
+#endif
 
 KDSize JuniorLayoutNode::computeSize(KDFont::Size font) const {
   return PoincareJ::Render::Size(tree(), font);
@@ -35,6 +53,13 @@ bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) const {
   /* TODO PCJ have a comparison with a flag to ignore separators similar to what
    * isIdenticalTo(makeEditable=true)) was doing. */
   return tree()->treeIsIdenticalTo(static_cast<const JuniorLayout&>(l).tree());
+}
+
+const PoincareJ::Tree* JuniorLayoutNode::tree() const {
+  return PoincareJ::Tree::FromBlocks(m_blocks);
+}
+PoincareJ::Tree* JuniorLayoutNode::tree() {
+  return PoincareJ::Tree::FromBlocks(m_blocks);
 }
 
 JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
@@ -120,6 +145,8 @@ JuniorLayout JuniorLayout::cloneWithoutMargins() {
   }
   return JuniorLayout::Builder(clone);
 }
+
+bool JuniorLayout::isEmpty() const { return tree()->numberOfChildren() == 0; }
 
 bool JuniorLayout::isCodePointsString() const {
   for (const PoincareJ::Tree* child : tree()->children()) {

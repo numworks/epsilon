@@ -1,5 +1,7 @@
 #include "chi2_test.h"
 
+#include <poincare/k_tree.h>
+
 #include <algorithm>
 #include <cmath>
 
@@ -46,6 +48,11 @@ bool Chi2Test::authorizedParameterAtIndex(double p, int i) const {
     return false;
   }
   return Inference::authorizedParameterAtIndex(p, i);
+}
+
+Shared::ParameterRepresentation Chi2Test::paramRepresentationAtIndex(
+    int i) const {
+  return Shared::ParameterRepresentation{KRackL(), I18n::Message::Default};
 }
 
 double Chi2Test::computeContribution(int i) const {

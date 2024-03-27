@@ -1,5 +1,6 @@
 #include "two_proportions_z_test.h"
 
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
 namespace Inference {

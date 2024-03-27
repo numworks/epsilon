@@ -2,6 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/junior_expression.h>
 #include <poincare/junior_layout.h>
+#include <poincare/k_tree.h>
 #include <poincare/list_complex.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>
@@ -28,6 +29,22 @@
 namespace Poincare {
 
 /* JuniorExpressionNode */
+
+JuniorExpressionNode::JuniorExpressionNode(const PoincareJ::Tree* tree,
+                                           size_t treeSize) {
+  memcpy(m_blocks, tree->block(), treeSize);
+}
+
+size_t JuniorExpressionNode::size() const {
+  return sizeof(JuniorExpressionNode) + tree()->treeSize();
+}
+
+#if POINCARE_TREE_LOG
+void JuniorExpressionNode::logAttributes(std::ostream& stream) const {
+  stream << '\n';
+  tree()->log(stream);
+}
+#endif
 
 int JuniorExpressionNode::simplificationOrderSameType(
     const ExpressionNode* e, bool ascending, bool ignoreParentheses) const {
@@ -122,6 +139,10 @@ bool JuniorExpressionNode::derivate(const ReductionContext& reductionContext,
   // TODO PCJ: Remove
   assert(false);
   return false;
+}
+
+const PoincareJ::Tree* JuniorExpressionNode::tree() const {
+  return PoincareJ::Tree::FromBlocks(m_blocks);
 }
 
 /* JuniorExpression */
@@ -877,6 +898,13 @@ void List::addChildAtIndexInPlace(JuniorExpression t, int index,
   PoincareJ::NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
   JuniorExpression temp = JuniorExpression::Builder(clone);
   *this = static_cast<List&>(temp);
+}
+
+/* Boolean */
+
+bool Boolean::value() const {
+  assert(tree()->isTrue() || tree()->isFalse());
+  return tree()->isTrue();
 }
 
 /* Unit */

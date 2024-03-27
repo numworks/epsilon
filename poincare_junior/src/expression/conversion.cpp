@@ -464,6 +464,9 @@ void PushPoincareExpression(Poincare::Expression exp) {
       SharedEditionPool->push(BlockType::Dot);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::VectorNorm:
+      SharedEditionPool->push(BlockType::Norm);
+      return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ComplexArgument:
       SharedEditionPool->push(BlockType::ComplexArgument);
       return PushPoincareExpression(exp.childAtIndex(0));
@@ -476,11 +479,22 @@ void PushPoincareExpression(Poincare::Expression exp) {
     case OT::RealPart:
       SharedEditionPool->push(BlockType::RealPart);
       return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::Factor:
+      SharedEditionPool->push(BlockType::Factor);
+      return PushPoincareExpression(exp.childAtIndex(0));
     case OT::PercentSimple:
       SharedEditionPool->push(BlockType::PercentSimple);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::PercentAddition:
       SharedEditionPool->push(BlockType::PercentAddition);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::DivisionQuotient:
+      SharedEditionPool->push(BlockType::Quotient);
+      PushPoincareExpression(exp.childAtIndex(0));
+      return PushPoincareExpression(exp.childAtIndex(1));
+    case OT::DivisionRemainder:
+      SharedEditionPool->push(BlockType::Remainder);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::ListElement:
@@ -496,6 +510,49 @@ void PushPoincareExpression(Poincare::Expression exp) {
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::ListSort:
       SharedEditionPool->push(BlockType::ListSort);
+      return PushPoincareExpression(exp.childAtIndex(0));
+
+    case OT::ListMean:
+    case OT::ListVariance:
+    case OT::ListStandardDeviation:
+    case OT::ListSampleStandardDeviation:
+    case OT::ListMedian:
+    case OT::ListSum:
+    case OT::ListProduct: {
+      switch (exp.type()) {
+        case OT::ListMean:
+          SharedEditionPool->push(BlockType::Mean);
+          break;
+        case OT::ListVariance:
+          SharedEditionPool->push(BlockType::Variance);
+          break;
+        case OT::ListSampleStandardDeviation:
+          SharedEditionPool->push(BlockType::SampleStdDev);
+          break;
+        case OT::ListStandardDeviation:
+          SharedEditionPool->push(BlockType::StdDev);
+          break;
+        case OT::ListMedian:
+          SharedEditionPool->push(BlockType::Median);
+          break;
+        case OT::ListSum:
+          SharedEditionPool->push(BlockType::ListSum);
+          break;
+        case OT::ListProduct:
+          SharedEditionPool->push(BlockType::ListProduct);
+          break;
+      }
+      PushPoincareExpression(exp.childAtIndex(0));
+      if (exp.numberOfChildren() == 2) {
+        PushPoincareExpression(exp.childAtIndex(1));
+      } else {
+        (1_e)->clone();
+      }
+      return;
+    }
+    case OT::ListMinimum:
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ListMaximum:
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Store:
       SharedEditionPool->push(BlockType::Store);
@@ -615,6 +672,8 @@ void PushPoincareExpression(Poincare::Expression exp) {
     case OT::Division:
     case OT::Power:
     case OT::Matrix:
+    case OT::GreatCommonDivisor:
+    case OT::LeastCommonMultiple:
       switch (exp.type()) {
         case OT::Addition:
           SharedEditionPool->push<BlockType::Addition>(exp.numberOfChildren());
@@ -628,6 +687,14 @@ void PushPoincareExpression(Poincare::Expression exp) {
           break;
         case OT::PiecewiseOperator:
           SharedEditionPool->push<BlockType::Piecewise>(exp.numberOfChildren());
+          break;
+        case OT::GreatCommonDivisor:
+          SharedEditionPool->push(BlockType::GCD);
+          SharedEditionPool->push(exp.numberOfChildren());
+          break;
+        case OT::LeastCommonMultiple:
+          SharedEditionPool->push(BlockType::LCM);
+          SharedEditionPool->push(exp.numberOfChildren());
           break;
         case OT::Comparison: {
           Poincare::Comparison c = static_cast<Poincare::Comparison &>(exp);

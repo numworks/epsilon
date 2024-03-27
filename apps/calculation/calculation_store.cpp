@@ -324,6 +324,16 @@ ExpiringPointer<Calculation> CalculationStore::errorPushUndefined() {
   return ExpiringPointer(calculation);
 }
 
+/* TODO:
+ * We should replace pushEmptyCalculation and pushExpressionTree with a
+ * single pushCalculation that would safely set the trees and their sizes.
+ *
+ * We could also change Calculation such that treeSize = 0 represents an
+ * undefined tree. With this, trees will stay to their default undefined value
+ * if there is not enough space and we can get rid of errorPushUndefined and
+ * several if k_pushError.
+ */
+
 char *CalculationStore::pushEmptyCalculation(
     char *location,
     Poincare::Preferences::CalculationPreferences calculationPreferences) {

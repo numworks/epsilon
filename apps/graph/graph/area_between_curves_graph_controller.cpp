@@ -1,12 +1,9 @@
 #include "area_between_curves_graph_controller.h"
 
 #include <assert.h>
-#include <poincare/absolute_value.h>
 #include <poincare/expression.h>
-#include <poincare/integral.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/subtraction.h>
 #include <stdlib.h>
 
 #include <cmath>
@@ -112,10 +109,14 @@ Poincare::Expression AreaBetweenCurvesGraphController::createSumExpression(
       secondSelectedRecord());
   Poincare::Expression expressionG =
       function->expressionReduced(context).clone();
-  return Integral::Builder(
-      AbsoluteValue::Builder(Subtraction::Builder(expressionF, expressionG)),
-      Symbol::SystemSymbol(), Expression::Builder<double>(startSum),
-      Expression::Builder<double>(endSum));
+  Poincare::Expression result =
+      Poincare::Expression::Create(KIntegral(KA, KB, KC, KSub(KD, KE)),
+                                   {.KA = Symbol::SystemSymbol(),
+                                    .KB = Expression::Builder<double>(startSum),
+                                    .KC = Expression::Builder<double>(endSum),
+                                    .KD = expressionF,
+                                    .KE = expressionG});
+  return result;
 }
 
 }  // namespace Graph

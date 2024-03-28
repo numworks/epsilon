@@ -2,12 +2,12 @@
 
 #include <assert.h>
 #include <poincare/infinity.h>
+#include <poincare/k_tree.h>
 
 #include "../app.h"
 
 using namespace Shared;
 using namespace Escher;
-using namespace Poincare;
 
 namespace Graph {
 
@@ -43,10 +43,10 @@ bool DomainParameterController::textFieldDidFinishEditing(
       textField->draftText()[0] == '\0') {
     textField->setEditing(true);  // To edit draft text buffer in setText
     if (textField == m_boundsCells[0].textField()) {
-      textField->setText(Infinity::Name(true));
+      textField->setText(Poincare::Infinity::Name(true));
     } else {
       assert(textField == m_boundsCells[1].textField());
-      textField->setText(Infinity::Name(false));
+      textField->setText(Poincare::Infinity::Name(false));
     }
     textField->setEditing(false);  // set editing back to previous value
   }
@@ -121,10 +121,8 @@ DomainParameterController::function() const {
 
 Poincare::Layout DomainParameterController::extraCellLayoutAtRow(int row) {
   assert(row == 0);
-  Preferences* pref = Preferences::SharedPreferences();
-  return Infinity::Builder(m_currentTextFieldIsMinField)
-      .createLayout(pref->displayMode(), pref->numberOfSignificantDigits(),
-                    App::app()->localContext());
+  return Poincare::Layout::Create(
+      KA ^ "∞"_l, {.KA = (m_currentTextFieldIsMinField ? "-"_l : ""_l)});
 }
 
 void DomainParameterController::switchToolboxContent(

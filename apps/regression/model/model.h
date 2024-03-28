@@ -64,13 +64,6 @@ class Model {
                           Poincare::Context* context);
   virtual bool dataSuitableForFit(Store* store, int series) const;
 
-  /* The expression of the model is not reduced but build by hand. This
-   * builder is used so that, if a = 2 and b = -3, the expression ax+b is
-   * not displayed as 2x+-3 but 2x-3 (a subtraction is build instead of an
-   * addition). */
-  static Poincare::Expression AdditionOrSubtractionBuilder(
-      Poincare::Expression e1, Poincare::Expression e2, bool addition);
-
  private:
   // Model attributes
   virtual double partialDerivate(double* modelCoefficients,

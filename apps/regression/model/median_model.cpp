@@ -4,8 +4,6 @@
 
 #include "../store.h"
 
-using namespace Poincare;
-
 namespace Regression {
 
 double MedianModel::getMedianValue(Store* store, uint8_t* sortedIndex,

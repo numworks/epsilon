@@ -1,46 +1,28 @@
 #include "logistic_model.h"
 
 #include <assert.h>
-#include <poincare/based_integer.h>
-#include <poincare/constant.h>
-#include <poincare/division.h>
+#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/multiplication.h>
-#include <poincare/power.h>
-#include <poincare/print.h>
 
 #include <cmath>
 
 #include "../store.h"
 
-using namespace Poincare;
-
 namespace Regression {
 
-using namespace PoincareJ;
-
-Layout LogisticModel::templateLayout() const {
+Poincare::Layout LogisticModel::templateLayout() const {
   return KRackL(KFracL("c"_l, "1+a·e"_l ^ KSuperscriptL("-b·x"_l)));
 }
 
 Poincare::Expression LogisticModel::privateExpression(
     double* modelCoefficients) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
   // c/(1+a*e^(-b*x))
-  return Division::Builder(
-      Number::DecimalNumber(c),
-      AdditionOrSubtractionBuilder(
-          BasedInteger::Builder(1),
-          Multiplication::Builder(
-              Number::DecimalNumber(std::fabs(a)),
-              Power::Builder(
-                  Constant::ExponentialEBuilder(),
-                  Multiplication::Builder(Number::DecimalNumber(-b),
-                                          Symbol::Builder(k_xSymbol)))),
-          a >= 0.0));
+  return Poincare::Expression::Create(
+      KDiv(KC, KAdd(1_e, KMult(KA, KExp(KMult(-1_e, KB, "x"_e))))),
+      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1]),
+       .KC = Poincare::Expression::Builder<double>(modelCoefficients[2])});
 }
 
 double LogisticModel::evaluate(double* modelCoefficients, double x) const {

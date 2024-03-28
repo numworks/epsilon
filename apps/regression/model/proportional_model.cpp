@@ -1,19 +1,16 @@
 #include "proportional_model.h"
 
-#include <assert.h>
-#include <poincare/multiplication.h>
-#include <poincare/print.h>
-
-#include "../store.h"
-
-using namespace Poincare;
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
 
 namespace Regression {
 
-Expression ProportionalModel::privateExpression(
+Poincare::Expression ProportionalModel::privateExpression(
     double* modelCoefficients) const {
-  return Multiplication::Builder(Number::DecimalNumber(modelCoefficients[0]),
-                                 Symbol::Builder(k_xSymbol));
+  // a*x
+  return Poincare::Expression::Create(
+      KMult(KA, "x"_e),
+      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0])});
 }
 
 double ProportionalModel::evaluate(double* modelCoefficients, double x) const {

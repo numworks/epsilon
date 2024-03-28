@@ -1,27 +1,17 @@
 #include "affine_model.h"
 
-#include <apps/shared/poincare_helpers.h>
-#include <assert.h>
-#include <poincare/multiplication.h>
-#include <poincare/print.h>
-
-#include "../store.h"
-
-using namespace Poincare;
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
 
 namespace Regression {
 
 Poincare::Expression AffineModel::privateExpression(
     double* modelCoefficients) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
   // a*x+b
-  return AdditionOrSubtractionBuilder(Multiplication::Builder({
-                                          Number::DecimalNumber(a),
-                                          Symbol::Builder(k_xSymbol),
-                                      }),
-                                      Number::DecimalNumber(std::fabs(b)),
-                                      b >= 0.0);
+  return Poincare::Expression::Create(
+      KAdd(KMult(KA, "x"_e), KB),
+      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1])});
 }
 
 double AffineModel::evaluate(double* modelCoefficients, double x) const {

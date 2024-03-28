@@ -1,10 +1,9 @@
 #include "linear_model.h"
 
-#include <poincare/multiplication.h>
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
 
 #include "../store.h"
-
-using namespace Poincare;
 
 namespace Regression {
 
@@ -13,18 +12,16 @@ Poincare::Expression LinearModel::privateExpression(
   if (!m_isApbxForm) {
     return AffineModel::privateExpression(modelCoefficients);
   }
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
   // a+b*x
-  return AdditionOrSubtractionBuilder(
-      Number::DecimalNumber(a),
-      Multiplication::Builder(
-          {Number::DecimalNumber(std::fabs(b)), Symbol::Builder(k_xSymbol)}),
-      b >= 0.0);
+  return Poincare::Expression::Create(
+      KAdd(KA, KMult(KB, "x"_e)),
+      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1])});
 }
 
 void LinearModel::privateFit(Store* store, int series,
-                             double* modelCoefficients, Context* context) {
+                             double* modelCoefficients,
+                             Poincare::Context* context) {
   modelCoefficients[slopeCoefficientIndex()] = store->slope(series);
   modelCoefficients[yInterceptCoefficientIndex()] = store->yIntercept(series);
 }

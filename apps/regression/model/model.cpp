@@ -2,22 +2,16 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/addition.h>
 #include <poincare/comparison.h>
-#include <poincare/decimal.h>
 #include <poincare/float.h>
-#include <poincare/function.h>
 #include <poincare/layout.h>
 #include <poincare/multiplication.h>
-#include <poincare/opposite.h>
-#include <poincare/subtraction.h>
 
 #include <cmath>
 
 #include "../store.h"
 
 using namespace Poincare;
-using namespace Shared;
 
 namespace Regression {
 
@@ -57,7 +51,7 @@ double Model::levelSet(double* modelCoefficients, double xMin, double xMax,
   if (e.isUninitialized()) {
     return NAN;
   }
-  return PoincareHelpers::Solver(xMin, xMax, "x", context)
+  return Shared::PoincareHelpers::Solver(xMin, xMax, "x", context)
       .nextIntersection(Number::DecimalNumber(y), e)
       .x();
 }
@@ -85,26 +79,6 @@ bool Model::dataSuitableForFit(Store* store, int series) const {
     return false;
   }
   return store->seriesIsActive(series);
-}
-
-Expression Model::AdditionOrSubtractionBuilder(Expression e1, Expression e2,
-                                               bool addition) {
-  // Workaround difference of beautification of PCJ
-  if (e1.type() == ExpressionNode::Type::Multiplication &&
-      e1.childAtIndex(0).type() == ExpressionNode::Type::Decimal) {
-    Expression d = e1.childAtIndex(0);
-#if 0  // TODO_PCJ
-    if (static_cast<Decimal&>(d).isPositive() == TrinaryBoolean::False) {
-      static_cast<Decimal&>(d).setSign(true);
-      e1 = Opposite::Builder(e1);
-    }
-#endif
-    assert(false);
-  }
-  if (addition) {
-    return Addition::Builder(e1, e2);
-  }
-  return Subtraction::Builder(e1, e2);
 }
 
 void Model::fitLevenbergMarquardt(Store* store, int series,

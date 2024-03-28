@@ -1,44 +1,30 @@
 #include "trigonometric_model.h"
 
 #include <apps/regression/store.h>
-#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/multiplication.h>
-#include <poincare/number.h>
-#include <poincare/power.h>
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/preferences.h>
-#include <poincare/print.h>
-#include <poincare/sine.h>
 #include <poincare/statistics_dataset.h>
-#include <poincare/symbol.h>
+#include <poincare/trigonometry.h>
 
 #include <cmath>
-
-using namespace Poincare;
-using namespace Shared;
 
 namespace Regression {
 
 static double toRadians() {
-  return M_PI / Trigonometry::PiInAngleUnit(
+  return M_PI / Poincare::Trigonometry::PiInAngleUnit(
                     Poincare::Preferences::SharedPreferences()->angleUnit());
 }
 
-Expression TrigonometricModel::privateExpression(
+Poincare::Expression TrigonometricModel::privateExpression(
     double* modelCoefficients) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  double d = modelCoefficients[3];
   // a*sin(bx+c)+d
-  return AdditionOrSubtractionBuilder(
-      Multiplication::Builder(
-          Number::DecimalNumber(a),
-          Sine::Builder(AdditionOrSubtractionBuilder(
-              Multiplication::Builder(Number::DecimalNumber(b),
-                                      Symbol::Builder(k_xSymbol)),
-              Number::DecimalNumber(std::fabs(c)), c >= 0.0))),
-      Number::DecimalNumber(std::fabs(d)), d >= 0.0);
+  return Poincare::Expression::Create(
+      KAdd(KMult(KA, KSin(KAdd(KMult(KB, "x"_e), KC))), KD),
+      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1]),
+       .KC = Poincare::Expression::Builder<double>(modelCoefficients[2])});
 }
 
 double TrigonometricModel::evaluate(double* modelCoefficients, double x) const {
@@ -189,7 +175,7 @@ void TrigonometricModel::specializedInitCoefficientsForFit(
   // Init the "amplitude" coefficient a
   modelCoefficients[0] = (yMax - yMin) / 2.0;
   // Init the "period" coefficient b
-  double piInAngleUnit = Trigonometry::PiInAngleUnit(
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
       Poincare::Preferences::SharedPreferences()->angleUnit());
   double period = 2.0 * std::fabs(xMax - xMin);
   if (period > 0) {
@@ -214,7 +200,7 @@ void TrigonometricModel::specializedInitCoefficientsForFit(
 void TrigonometricModel::uniformizeCoefficientsFromFit(
     double* modelCoefficients) const {
   // Coefficients must be unique.
-  double piInAngleUnit = Trigonometry::PiInAngleUnit(
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
       Poincare::Preferences::SharedPreferences()->angleUnit());
   // A must be positive.
   if (modelCoefficients[0] < 0.0) {

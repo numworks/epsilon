@@ -1,20 +1,11 @@
 #include "exponential_model.h"
 
 #include <assert.h>
-#include <poincare/constant.h>
+#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/multiplication.h>
-#include <poincare/power.h>
-#include <poincare/print.h>
-
-#include <cmath>
 
 #include "../store.h"
-
-using namespace Poincare;
-using namespace PoincareJ;
-using namespace Shared;
 
 namespace Regression {
 
@@ -28,26 +19,19 @@ ExponentialModel::ExponentialModel(bool isAbxForm)
                                             : Model::Type::ExponentialAebx));
 }
 
-Layout ExponentialModel::templateLayout() const {
+Poincare::Layout ExponentialModel::templateLayout() const {
   return m_isAbxForm ? "a·b"_l ^ KSuperscriptL("x"_l)
                      : "a·e"_l ^ KSuperscriptL("b·x"_l);
 }
 
 Poincare::Expression ExponentialModel::privateExpression(
     double* modelCoefficients) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
   // if m_isAbxForm -> a*b^x, else a*e^bx
-  return m_isAbxForm ? Multiplication::Builder(
-                           Number::DecimalNumber(a),
-                           Power::Builder(Number::DecimalNumber(b),
-                                          Symbol::Builder(k_xSymbol)))
-                     : Multiplication::Builder(
-                           Number::DecimalNumber(a),
-                           Power::Builder(Constant::ExponentialEBuilder(),
-                                          Multiplication::Builder(
-                                              Number::DecimalNumber(b),
-                                              Symbol::Builder(k_xSymbol))));
+  return Poincare::Expression::Create(
+      m_isAbxForm ? KMult(KA, KPow(KB, "x"_e))
+                  : KMult(KA, KExp(KMult(KB, "x"_e))),
+      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1])});
 }
 
 }  // namespace Regression

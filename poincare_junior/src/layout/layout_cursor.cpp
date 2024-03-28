@@ -2,6 +2,7 @@
 
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_junior/src/layout/autocompleted_pair.h>
+#include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/grid.h>
 #include <poincare_junior/src/layout/indices.h>
 #include <poincare_junior/src/layout/input_beautification.h>
@@ -539,7 +540,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
           codePoint, nextCodePoint);
       nextCodePoint = decoder.nextCodePoint();
     } else {
-      newChild = SharedEditionPool->push<BlockType::CodePointLayout>(codePoint);
+      newChild = CodePointLayout::Push(codePoint);
     }
 
     NAry::AddOrMergeChildAtIndex(currentLayout, newChild,

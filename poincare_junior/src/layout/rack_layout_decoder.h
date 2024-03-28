@@ -75,7 +75,7 @@ class CPL {
   operator CodePoint() const {
     (void)m_content;
     const Tree* tree = reinterpret_cast<const Tree*>(this);
-    if (!tree->isCodePointLayout()) {
+    if (!tree->isAsciiCodePointLayout()) {
       return UCodePointNull;
     }
     return CodePointLayout::GetCodePoint(tree);
@@ -87,7 +87,7 @@ class CPL {
 
  private:
   static constexpr int k_codePointLayoutSize =
-      TypeBlock(BlockType::CodePointLayout).nodeSize();
+      TypeBlock(BlockType::AsciiCodePointLayout).nodeSize();
   char m_content[k_codePointLayoutSize];
 };
 
@@ -112,14 +112,8 @@ class CPLayoutDecoder : public UnicodeDecoder {
   CodePoint nextCodePoint() override { return codePointAt(m_position++); }
   CodePoint previousCodePoint() override { return codePointAt(--m_position); }
   CodePoint codePointAt(size_t index) const;
-  const Tree* codePointLayoutAt(size_t index) {
-    assert(0 <= index && index < m_end);
-    return m_firstCodePoint + index * k_codePointLayoutSize;
-  }
 
  private:
-  static constexpr int k_codePointLayoutSize =
-      TypeBlock::NumberOfMetaBlocks(BlockType::CodePointLayout);
   const Tree* m_firstCodePoint;
 };
 

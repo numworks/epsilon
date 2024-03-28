@@ -32,7 +32,8 @@ char *append(const char *text, char *buffer, char *end) {
 
 char *Serialize(const Layout *layout, char *buffer, char *end) {
   switch (layout->layoutType()) {
-    case LayoutType::CodePoint: {
+    case LayoutType::AsciiCodePoint:
+    case LayoutType::UnicodeCodePoint: {
       constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
       char codepointBuffer[bufferSize];
       CodePointLayout::CopyName(layout, codepointBuffer, bufferSize);

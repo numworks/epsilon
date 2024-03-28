@@ -54,7 +54,8 @@ Tree* Parser::Parse(const Tree* node) {
     // case LayoutType::Parenthesis:
     // return Parse(node->child(0));
     case LayoutType::VerticalOffset:
-    case LayoutType::CodePoint:
+    case LayoutType::AsciiCodePoint:
+    case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
     case LayoutType::CurlyBrace:
     case LayoutType::NthDerivative:

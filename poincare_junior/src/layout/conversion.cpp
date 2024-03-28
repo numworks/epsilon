@@ -245,7 +245,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
     case OT::HorizontalLayout:
       return PushPoincareRack(l);
     case OT::CodePointLayout:
-      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
+      CodePointLayout::Push(
           static_cast<Poincare::CodePointLayout &>(l).codePoint());
       return;
     case OT::CombinedCodePointsLayout:

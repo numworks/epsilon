@@ -435,7 +435,7 @@ uint16_t EditionPool::ReferenceTable::storeNodeAtIndex(Tree *node,
 // Edition Pool
 
 template Tree *EditionPool::push<BlockType::Addition, int>(int);
-template Tree *EditionPool::push<BlockType::CodePointLayout, CodePoint>(
+template Tree *EditionPool::push<BlockType::AsciiCodePointLayout, CodePoint>(
     CodePoint);
 template Tree *EditionPool::push<BlockType::CombinedCodePointsLayout, CodePoint,
                                  CodePoint>(CodePoint, CodePoint);
@@ -463,6 +463,8 @@ template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
 template Tree *EditionPool::push<BlockType::Set>(int);
 template Tree *EditionPool::push<BlockType::Set>(uint8_t);
 template Tree *EditionPool::push<BlockType::SingleFloat, float>(float);
+template Tree *EditionPool::push<BlockType::UnicodeCodePointLayout, CodePoint>(
+    CodePoint);
 template Tree *EditionPool::push<BlockType::Unit, uint8_t, uint8_t>(uint8_t,
                                                                     uint8_t);
 template Tree *EditionPool::push<BlockType::UserFunction, const char *, size_t>(

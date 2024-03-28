@@ -3,6 +3,7 @@
 #include <ion/unicode/utf8_decoder.h>
 
 #include "../n_ary.h"
+#include "code_point_layout.h"
 #include "k_tree.h"
 
 namespace PoincareJ {
@@ -35,8 +36,7 @@ void RackFromTextRec(UTF8Decoder *decoder, Tree *parent,
         // Insert ')' codepoint if it has no matching left parenthesis
 #endif
       default:
-        child = SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-            codePoint);
+        child = CodePointLayout::Push(codePoint);
     }
     NAry::AddOrMergeChildAtIndex(parent, child, parent->numberOfChildren());
     codePoint = decoder->nextCodePoint();

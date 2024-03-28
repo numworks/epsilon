@@ -164,11 +164,22 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::DoubleFloat>(
 
 template <>
 constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    BlockType::CodePointLayout>(Block* block, size_t blockIndex,
-                                CodePoint value) {
+    BlockType::AsciiCodePointLayout>(Block* block, size_t blockIndex,
+                                     CodePoint value) {
+  assert(value < 128);
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
+                                            BlockType::AsciiCodePointLayout,
+                                            Bit::getByteAtIndex(value, 0));
+}
+
+template <>
+constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
+    BlockType::UnicodeCodePointLayout>(Block* block, size_t blockIndex,
+                                       CodePoint value) {
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
+  // assert(value >= 128);
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::CodePointLayout,
+      block, blockIndex, BlockType::UnicodeCodePointLayout,
       Bit::getByteAtIndex(value, 0), Bit::getByteAtIndex(value, 1),
       Bit::getByteAtIndex(value, 2), Bit::getByteAtIndex(value, 3));
 }
@@ -179,7 +190,7 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
                                          CodePoint first, CodePoint second) {
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::CodePointLayout,
+      block, blockIndex, BlockType::CombinedCodePointsLayout,
       Bit::getByteAtIndex(first, 0), Bit::getByteAtIndex(first, 1),
       Bit::getByteAtIndex(first, 2), Bit::getByteAtIndex(first, 3),
       Bit::getByteAtIndex(second, 0), Bit::getByteAtIndex(second, 1),
@@ -201,7 +212,7 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
     BlockType::ParenthesisLayout>(Block* block, size_t blockIndex,
                                   bool leftIsTemporary, bool rightIsTemporary) {
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::CodePointLayout,
+      block, blockIndex, BlockType::ParenthesisLayout,
       leftIsTemporary | (0b10 && rightIsTemporary));
 }
 
@@ -210,7 +221,7 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
     BlockType::VerticalOffsetLayout>(Block* block, size_t blockIndex,
                                      bool isSubscript, bool isPrefix) {
   return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            BlockType::CodePointLayout,
+                                            BlockType::VerticalOffsetLayout,
                                             isSubscript | (0b10 && isPrefix));
 }
 

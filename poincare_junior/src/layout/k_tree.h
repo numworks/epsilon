@@ -44,11 +44,20 @@ constexpr auto KPoint2DL = KBinary<BlockType::Point2DLayout>();
 
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint
+
 template <uint32_t cp>
-using KCodePointL =
-    KTree<BlockType::CodePointLayout, Bit::getByteAtIndex(cp, 0),
-          Bit::getByteAtIndex(cp, 1), Bit::getByteAtIndex(cp, 2),
-          Bit::getByteAtIndex(cp, 3)>;
+struct KCodePointL;
+
+template <uint32_t cp>
+  requires(cp < 128)
+struct KCodePointL<cp> : KTree<BlockType::AsciiCodePointLayout, cp> {};
+
+template <uint32_t cp>
+  requires(cp >= 128)
+struct KCodePointL<cp>
+    : KTree<BlockType::UnicodeCodePointLayout, Bit::getByteAtIndex(cp, 0),
+            Bit::getByteAtIndex(cp, 1), Bit::getByteAtIndex(cp, 2),
+            Bit::getByteAtIndex(cp, 3)> {};
 
 template <uint32_t cp, uint32_t cc>
 using KCombinedCodePointL =

@@ -104,16 +104,11 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
 }
 
 static void PushCodePoint(Tree *layout, CodePoint codePoint) {
-  NAry::AddChild(layout,
-                 SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(
-                     codePoint));
+  NAry::AddChild(layout, CodePointLayout::Push(codePoint));
 }
 
 static void InsertCodePointAt(Tree *layout, CodePoint codePoint, int index) {
-  NAry::AddChildAtIndex(
-      layout,
-      SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>(codePoint),
-      index);
+  NAry::AddChildAtIndex(layout, CodePointLayout::Push(codePoint), index);
 }
 
 void Layoutter::addSeparator(Tree *layoutParent) {

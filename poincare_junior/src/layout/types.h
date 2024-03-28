@@ -6,7 +6,11 @@ NODE(ThousandSeparator)
 
 RANGE(SeparatorLayout, OperatorSeparatorLayout, ThousandSeparatorLayout)
 
-NODE(CodePoint, 0, sizeof(CodePoint))
+NODE(AsciiCodePoint, 0, 1)
+NODE(UnicodeCodePoint, 0, sizeof(CodePoint))
+
+RANGE(CodePointLayout, AsciiCodePointLayout, UnicodeCodePointLayout)
+
 NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))
 // TODO Do we need a StringLayout ?
 

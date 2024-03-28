@@ -191,7 +191,8 @@ KDSize Render::Size(const Layout* node) {
       width = Escher::Metric::OperatorHorizontalMargin;
       height = 0;
       break;
-    case LayoutType::CodePoint:
+    case LayoutType::AsciiCodePoint:
+    case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints: {
       KDSize glyph = KDFont::GlyphSize(s_font);
       // Handle the middle dot which is thinner than the other glyphs
@@ -468,7 +469,8 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
     }
     case LayoutType::OperatorSeparator:
     case LayoutType::ThousandSeparator:
-    case LayoutType::CodePoint:
+    case LayoutType::AsciiCodePoint:
+    case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
       assert(false);
     case LayoutType::PtBinomial:
@@ -571,7 +573,8 @@ KDCoordinate Render::Baseline(const Layout* node) {
       return 0;
     case LayoutType::OperatorSeparator:
     case LayoutType::ThousandSeparator:
-    case LayoutType::CodePoint:
+    case LayoutType::AsciiCodePoint:
+    case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
       return KDFont::GlyphHeight(s_font) / 2;
     case LayoutType::PtBinomial:
@@ -1273,7 +1276,8 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
     case LayoutType::OperatorSeparator:
     case LayoutType::ThousandSeparator:
       return;
-    case LayoutType::CodePoint:
+    case LayoutType::AsciiCodePoint:
+    case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints: {
       ::CodePoint codePoint = CodePointLayout::GetCodePoint(node);
       // Handle the case of the middle dot which has to be drawn by hand since

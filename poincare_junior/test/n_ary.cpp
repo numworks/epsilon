@@ -11,17 +11,17 @@ using namespace PoincareJ;
 QUIZ_CASE(pcj_n_ary_manipulation) {
   EditionReference rackLayout1 =
       SharedEditionPool->push<BlockType::RackLayout>(3);
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('x');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('x');
   SharedEditionPool->push<BlockType::VerticalOffsetLayout>(false, false);
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('2');
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('+');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('2');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('+');
   // rackLayout1 is x^2+
 
   EditionReference rackLayout2 =
       SharedEditionPool->push<BlockType::RackLayout>(3);
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('-');
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('4');
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('3');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('-');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('4');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('3');
   // rackLayout2 is -43
 
   EditionReference four = NAry::DetachChildAtIndex(rackLayout2, 1);
@@ -35,12 +35,12 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
 
   EditionReference rackLayout3 =
       SharedEditionPool->push<BlockType::RackLayout>(5);
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('x');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('x');
   SharedEditionPool->push<BlockType::VerticalOffsetLayout>(false, false);
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('2');
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('-');
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('3');
-  SharedEditionPool->push<BlockType::CodePointLayout, CodePoint>('4');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('2');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('-');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('3');
+  SharedEditionPool->push<BlockType::AsciiCodePointLayout, CodePoint>('4');
   // rackLayout3 is x^2-34
 
   assert_trees_are_equal(rackLayout1, rackLayout3);

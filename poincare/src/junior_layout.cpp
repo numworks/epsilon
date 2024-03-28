@@ -2,6 +2,7 @@
 #include <poincare/junior_layout.h>
 #include <poincare/k_tree.h>
 #include <poincare_junior/src/layout/app_helpers.h>
+#include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
@@ -92,8 +93,7 @@ JuniorLayout JuniorLayout::Create(const PoincareJ::Tree* structure,
 
 JuniorLayout JuniorLayout::CodePoint(::CodePoint cp) {
   PoincareJ::Tree* tree = KRackL.node<1>->cloneNode();
-  PoincareJ::EditionPool::SharedEditionPool
-      ->push<PoincareJ::BlockType::CodePointLayout>(cp);
+  PoincareJ::CodePointLayout::Push(cp);
   return Builder(tree);
 }
 
@@ -110,8 +110,7 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
           ->push<PoincareJ::BlockType::CombinedCodePointsLayout>(cp, cc);
     } else {
       decoder.previousCodePoint();
-      PoincareJ::EditionPool::SharedEditionPool
-          ->push<PoincareJ::BlockType::CodePointLayout>(cp);
+      PoincareJ::CodePointLayout::Push(cp);
     }
     n++;
   }

@@ -546,7 +546,8 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
       return absorbingSibling->isRackLayout() &&
              Rack::IsEmpty(absorbingSibling);
     }
-    case LayoutType::CodePoint: {
+    case LayoutType::AsciiCodePoint:
+    case LayoutType::UnicodeCodePoint: {
       CodePoint codePoint = CodePointLayout::GetCodePoint(node);
       if (codePoint == '+' || codePoint == UCodePointRightwardsArrow ||
           codePoint.isEquationOperator() || codePoint == ',') {

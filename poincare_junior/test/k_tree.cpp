@@ -76,6 +76,12 @@ QUIZ_CASE(pcj_k_tree_ternary) {
   quiz_assert((false ? 2_e : (1_e / 3_e))->treeIsIdenticalTo((1_e / 3_e)));
 }
 
+QUIZ_CASE(pcj_k_codepoints) {
+  quiz_assert("a"_cl->type() == BlockType::AsciiCodePointLayout);
+  quiz_assert("π"_cl->type() == BlockType::UnicodeCodePointLayout);
+  quiz_assert("aπc"_l->treeSize() == 3 + 2 + 5 + 2);
+}
+
 QUIZ_CASE(pcj_k_rack) {
   quiz_assert(KCodePointL<'a'>()->treeIsIdenticalTo("a"_cl));
   quiz_assert(KRackL("a"_cl, "b"_cl)->treeIsIdenticalTo("ab"_l));

@@ -10,6 +10,7 @@ class CodePointLayout {
  public:
   static CodePoint GetCodePoint(const Tree* node);
   static CodePoint GetCombinedCodePoint(const Tree* node);
+  static Tree* Push(CodePoint cp);
 
   // Print name in buffer and return end
   static char* CopyName(const Tree* node, char* buffer, size_t bufferSize);

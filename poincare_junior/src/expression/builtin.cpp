@@ -2,8 +2,8 @@
 
 #include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/tree.h>
 #include <poincare_junior/src/memory/type_block.h>
-#include <poincare_junior/src/n_ary.h>
 #include <poincare_junior/src/probability/distribution.h>
 #include <poincare_junior/src/probability/distribution_method.h>
 
@@ -200,27 +200,4 @@ bool DistributionBuiltin::checkNumberOfParameters(int n) const {
                   DistributionMethod::numberOfParameters(m_method);
 }
 
-bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
-  TypeBlock type = builtin->blockType();
-  if (!type.isNAry() &&
-      parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
-    // Add default parameters
-    if (type == BlockType::Round) {
-      NAry::AddChild(parameterList, (0_e)->clone());
-    }
-    if (type == BlockType::RandInt) {
-      NAry::AddChildAtIndex(parameterList, (1_e)->clone(), 0);
-    }
-    if (type.isListStatWithCoefficients()) {
-      NAry::AddChild(parameterList, (1_e)->clone());
-    }
-  }
-  parameterList->moveNodeOverNode(
-      builtin->pushNode(parameterList->numberOfChildren()));
-  if (TypeBlock(type).isParametric()) {
-    // Move sub-expression at the end
-    parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));
-  }
-  return true;
-}
 }  // namespace PoincareJ

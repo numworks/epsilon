@@ -772,6 +772,29 @@ void RackParser::parseReservedFunction(EditionReference &leftHandSide,
   isThereImplicitOperator();
 }
 
+static void Promote(EditionReference &parameterList, const Builtin *builtin) {
+  TypeBlock type = builtin->blockType();
+  if (!type.isNAry() &&
+      parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
+    // Add default parameters
+    if (type == BlockType::Round) {
+      NAry::AddChild(parameterList, (0_e)->clone());
+    }
+    if (type == BlockType::RandInt) {
+      NAry::AddChildAtIndex(parameterList, (1_e)->clone(), 0);
+    }
+    if (type.isListStatWithCoefficients()) {
+      NAry::AddChild(parameterList, (1_e)->clone());
+    }
+  }
+  MoveNodeOverNode(parameterList,
+                   builtin->pushNode(parameterList->numberOfChildren()));
+  if (TypeBlock(type).isParametric()) {
+    // Move sub-expression at the end
+    parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));
+  }
+}
+
 void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
                                               const Builtin *builtin) {
   const Aliases *aliasesList = builtin->aliases();
@@ -881,7 +904,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
-  Builtin::Promote(leftHandSide, builtin);
+  Promote(leftHandSide, builtin);
   if (leftHandSide.isUninitialized()) {
     // Incorrect parameter type or too few args
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);

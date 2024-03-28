@@ -1,11 +1,13 @@
 #ifndef POINCARE_EXPRESSION_BUILTINS_H
 #define POINCARE_EXPRESSION_BUILTINS_H
 
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/type_block.h>
 
 #include "aliases.h"
 
 namespace PoincareJ {
+
+class Tree;
 
 // TODO: Reorganize this class to avoid the duplication of many methods.
 
@@ -42,8 +44,6 @@ class Builtin {
   static constexpr const Builtin* GetReservedFunction(BlockType type);
   static const Builtin* GetSpecialIdentifier(UnicodeDecoder* name);
   static const Builtin* GetSpecialIdentifier(BlockType type);
-  static bool Promote(Tree* parameterList, const Builtin* builtin);
-  EDITION_REF_WRAP_1(Promote, const Builtin*);
 
  private:
   BlockType m_blockType;

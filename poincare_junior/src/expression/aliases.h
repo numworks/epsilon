@@ -3,7 +3,6 @@
 
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare_junior/src/layout/rack_layout_decoder.h>
 #include <string.h>
 
 /* This class is used to handle name's aliases for reserved functions, units
@@ -43,11 +42,6 @@ class Aliases {
 
   bool contains(const char* string) const {
     UTF8Decoder decoder(string);
-    return contains(&decoder);
-  }
-
-  bool contains(const Tree* codePoint, int length) const {
-    CPLayoutDecoder decoder(codePoint, 0, length);
     return contains(&decoder);
   }
 

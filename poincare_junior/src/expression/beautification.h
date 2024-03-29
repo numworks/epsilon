@@ -11,7 +11,8 @@ namespace PoincareJ {
 class Beautification {
  public:
   static float DegreeForSortingAddition(const Tree* expr, bool symbolsOnly);
-  static void SplitMultiplication(const Tree* expr, EditionReference& numerator,
+  // Return true if result should be opposed.
+  static bool SplitMultiplication(const Tree* expr, EditionReference& numerator,
                                   EditionReference& denominator);
   static bool BeautifyIntoDivision(Tree* expr);
   static bool AddUnits(Tree* expr, ProjectionContext projectionContext);

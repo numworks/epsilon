@@ -18,7 +18,7 @@ class Layoutter {
 
   static bool AddThousandSeparators(Tree* rack);
 
-  /* Remove OperatorSeparators and ThousandSeparators in rack */
+  // Recursively remove OperatorSeparators and ThousandSeparators in rack
   static void StripSeparators(Tree* rack);
 
   static bool ImplicitAddition(const Tree* addition);
@@ -46,6 +46,8 @@ class Layoutter {
   void layoutPowerOrDivision(EditionReference& layoutParent, Tree* expression);
   void layoutExpression(EditionReference& layoutParent, Tree* expression,
                         int parentPriority);
+  // Recursively replace "+-" into "-" in rack
+  static void StripUselessPlus(Tree* rack);
   bool m_linearMode;
   bool m_addSeparators;
   int m_numberOfSignificantDigits;

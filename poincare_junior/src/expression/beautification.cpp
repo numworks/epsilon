@@ -97,9 +97,10 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
   return false;
 }
 
-void Beautification::SplitMultiplication(const Tree* expr,
+bool Beautification::SplitMultiplication(const Tree* expr,
                                          EditionReference& numerator,
                                          EditionReference& denominator) {
+  bool result = false;
   numerator = SharedEditionPool->push<BlockType::Multiplication>(0);
   denominator = SharedEditionPool->push<BlockType::Multiplication>(0);
   // TODO replace NumberOfFactors and Factor with an iterable
@@ -114,7 +115,9 @@ void Beautification::SplitMultiplication(const Tree* expr,
         factorsNumerator = factor->clone();
       } else {
         IntegerHandler rNum = Rational::Numerator(factor);
-        if (!rNum.isOne()) {
+        if (rNum.isMinusOne()) {
+          result = !result;
+        } else if (!rNum.isOne()) {
           factorsNumerator = rNum.pushOnEditionPool();
         }
         IntegerHandler rDen = Rational::Denominator(factor);
@@ -145,12 +148,16 @@ void Beautification::SplitMultiplication(const Tree* expr,
   }
   NAry::SquashIfEmpty(numerator) || NAry::SquashIfUnary(numerator);
   NAry::SquashIfEmpty(denominator) || NAry::SquashIfUnary(denominator);
+  return result;
 }
 
 bool Beautification::BeautifyIntoDivision(Tree* expr) {
   EditionReference num;
   EditionReference den;
-  SplitMultiplication(expr, num, den);
+  if (SplitMultiplication(expr, num, den)) {
+    expr->cloneNodeBeforeNode(KOpposite);
+    expr = expr->nextNode();
+  }
   if (!den->isOne()) {
     num->cloneNodeAtNode(KDiv);
     expr->moveTreeOverTree(num);
@@ -305,12 +312,6 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     }
   }
 
-  // Turn negative factors into opposites
-  if (MakePositiveAnyNegativeNumeralFactor(ref)) {
-    ref->cloneNodeAtNode(KOpposite);
-    return true;
-  }
-
 #if 0
   // TODO: handle lnReal too
   // ln(A)      * ln(B)^(-1) -> log(A, B)
@@ -322,6 +323,11 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
                 ref, KMult(KA_s, KPow(KLn(KB), -1_e), KLn(KC), KD_s),
                 KMult(KA_s, KLogarithm(KC, KB), KD_s));
 #endif
+
+  if (PatternMatching::MatchAndReplace(ref, KMult(-1_e, KA_p),
+                                       KOpposite(KMult(KA_p)))) {
+    return true;
+  }
 
   // Turn multiplications with negative powers into divisions
   if (ref->isMultiplication() || ref->isPower() ||

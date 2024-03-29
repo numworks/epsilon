@@ -361,7 +361,7 @@ QUIZ_CASE(pcj_simplification_percent) {
   // % are left unreduced on purpose to show their exact formula
   simplifies_to("-25%", "-25/100");
   simplifies_to("2↗30%", "2×(1+30/100)");
-  simplifies_to("-2-30%", "(-2)×(1-30/100)");
+  simplifies_to("-2-30%", "-2×(1-30/100)");
 }
 
 QUIZ_CASE(pcj_simplification_list) {
@@ -491,7 +491,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("8_°C/2", "4×_°C");
   simplifies_to("2_K+2_K", "4×_K");
   simplifies_to("2_K×2_K", "4×_K^2");
-  simplifies_to("1/_K", "1×_K^(-1)");
+  simplifies_to("1/_K", "1×_K^-1");
   simplifies_to("(2_K)^2", "4×_K^2");
 
   // Undefined

@@ -99,6 +99,7 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
   layoutter.m_addSeparators =
       !linearMode && layoutter.requireSeparators(expression);
   layoutter.layoutExpression(layoutParent, expression, k_maxPriority);
+  StripUselessPlus(layoutParent);
   return layoutParent;
 }
 
@@ -817,6 +818,34 @@ void Layoutter::StripSeparators(Tree *rack) {
     }
     for (Tree *subRack : child->children()) {
       StripSeparators(subRack);
+    }
+    child = child->nextTree();
+    i++;
+  }
+  NAry::SetNumberOfChildren(rack, n);
+}
+
+void Layoutter::StripUselessPlus(Tree *rack) {
+  assert(rack->isRackLayout());
+  Tree *child = rack->nextNode();
+  int n = rack->numberOfChildren();
+  int i = 0;
+  Tree *previousPlus = nullptr;
+  while (i < n) {
+    if (child->isCodePointLayout()) {
+      if (previousPlus && CodePointLayout::GetCodePoint(child) == '-') {
+        assert(previousPlus->nextTree() == child &&
+               previousPlus->treeSize() == child->treeSize());
+        previousPlus->removeTree();
+        previousPlus = nullptr;
+        n--;
+        continue;
+      }
+      previousPlus =
+          CodePointLayout::GetCodePoint(child) == '+' ? child : nullptr;
+    }
+    for (Tree *subRack : child->children()) {
+      StripUselessPlus(subRack);
     }
     child = child->nextTree();
     i++;

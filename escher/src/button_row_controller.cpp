@@ -111,19 +111,17 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
     return;
   }
   if (m_style == Style::PlainWhite) {
+    KDCoordinate y1, y2;
     if (m_position == Position::Top) {
-      ctx->fillRect(KDRect(0, 0, bounds().width(), k_plainStyleHeight),
-                    KDColorWhite);
-      ctx->fillRect(KDRect(0, k_plainStyleHeight, bounds().width(), 1),
-                    Palette::GrayWhite);
+      y1 = 0;
+      y2 = k_plainStyleHeight;
     } else {
-      ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight,
-                           bounds().width(), k_plainStyleHeight),
-                    KDColorWhite);
-      ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight - 1,
-                           bounds().width(), 1),
-                    Palette::GrayWhite);
+      y1 = bounds().height() - k_plainStyleHeight;
+      y2 = bounds().height() - k_plainStyleHeight - 1;
     }
+    ctx->fillRect(KDRect(0, y1, bounds().width(), k_plainStyleHeight),
+                  KDColorWhite);
+    ctx->fillRect(KDRect(0, y2, bounds().width(), 1), Palette::GrayWhite);
     return;
   }
   int buttonHeight = m_size == Size::Small ? k_embossedStyleHeightSmall

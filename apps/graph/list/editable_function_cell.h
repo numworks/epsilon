@@ -49,7 +49,8 @@ class EditableFunctionCell
                Escher::Invocation invocation)
         : Escher::ButtonCell(parentResponder, I18n::Message::UseFunctionModel,
                              invocation, Escher::Palette::WallScreen, 0,
-                             KDFont::Size::Small, Style::EmbossedGray) {}
+                             KDFont::Size::Small, Style::EmbossedGray,
+                             Escher::Palette::PurpleBright) {}
     bool handleEvent(Ion::Events::Event event) override;
   };
 

@@ -92,6 +92,7 @@ class InputCategoricalTableCell
   // DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>
   void initCell(InferenceEvenOddEditableCell, void *cell, int index) override;
 
+  bool recomputeDimensions();
   virtual bool recomputeDimensionsAndReload(bool forceReloadTableCell = false,
                                             bool forceReloadPage = false);
   Table *tableModel() { return Table::FromStatistic(m_statistic); }

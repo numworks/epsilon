@@ -199,15 +199,19 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   m_selectableTableView.selectCellAtClippedLocation(column, 1, false);
 }
 
-bool InputCategoricalTableCell::recomputeDimensionsAndReload(
-    bool forceReloadTableCell, bool forceReloadPage) {
+bool InputCategoricalTableCell::recomputeDimensions() {
   Chi2Test::Index2D dimensions = tableModel()->computeDimensions();
-  bool didChange = false;
   if (m_numberOfRows != dimensions.row || m_numberOfColumns != dimensions.col) {
     m_numberOfRows = dimensions.row;
     m_numberOfColumns = dimensions.col;
-    didChange = true;
+    return true;
   }
+  return false;
+}
+
+bool InputCategoricalTableCell::recomputeDimensionsAndReload(
+    bool forceReloadTableCell, bool forceReloadPage) {
+  bool didChange = recomputeDimensions();
   /* Relayout when inner table changes size. We need to reload the table because
    * its width might change but it won't relayout as its frame isn't changed by
    * the InputCategoricalController */

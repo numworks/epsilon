@@ -18,10 +18,10 @@ class ValuesController : public Shared::ValuesController,
                    Escher::ButtonRowController *header);
 
   // ButtonRowDelegate
-  Escher::AbstractButtonCell *buttonAtIndex(
+  Escher::ButtonCell *buttonAtIndex(
       int index,
       Escher::ButtonRowController::Position position) const override {
-    return const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
+    return const_cast<Escher::SimpleButtonCell *>(&m_setIntervalButton);
   }
 
   // AlternateEmptyViewDelegate
@@ -115,7 +115,7 @@ class ValuesController : public Shared::ValuesController,
   IntervalParameterController m_intervalParameterController;
   SequenceColumnParameterController m_sequenceColumnParameterController;
   SumColumnParameterController m_sumColumnParameterController;
-  Escher::AbstractButtonCell m_setIntervalButton;
+  Escher::SimpleButtonCell m_setIntervalButton;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
   mutable bool m_hasAtLeastOneSumColumn;
 

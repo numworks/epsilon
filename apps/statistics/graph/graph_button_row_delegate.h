@@ -2,7 +2,7 @@
 #define STATISTICS_GRAPH_BUTTON_ROW_DELEGATE_H
 
 #include <apps/i18n.h>
-#include <escher/abstract_button_cell.h>
+#include <escher/button_cell.h>
 #include <escher/button_row_controller.h>
 #include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
@@ -42,12 +42,12 @@ class GraphButtonRowDelegate : public Escher::ButtonRowDelegate {
     assert(position == Escher::ButtonRowController::Position::Top);
     return 1;
   }
-  Escher::AbstractButtonCell *buttonAtIndex(
+  Escher::ButtonCell *buttonAtIndex(
       int index,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0 &&
            position == Escher::ButtonRowController::Position::Top);
-    return const_cast<Escher::AbstractButtonCell *>(&m_typeButton);
+    return const_cast<Escher::SimpleButtonCell *>(&m_typeButton);
   }
 
  private:
@@ -55,7 +55,7 @@ class GraphButtonRowDelegate : public Escher::ButtonRowDelegate {
 
   Escher::StackViewController *m_stackViewController;
   Escher::ViewController *m_typeViewController;
-  Escher::AbstractButtonCell m_typeButton;
+  Escher::SimpleButtonCell m_typeButton;
 };
 
 }  // namespace Statistics

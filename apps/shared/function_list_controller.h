@@ -24,7 +24,7 @@ class FunctionListController : public ExpressionModelListController,
   /* ButtonRowDelegate */
   int numberOfButtons(
       Escher::ButtonRowController::Position position) const override;
-  Escher::AbstractButtonCell* buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index, Escher::ButtonRowController::Position position) const override;
 
   /* Responder */
@@ -57,8 +57,8 @@ class FunctionListController : public ExpressionModelListController,
   virtual OMG::HorizontalDirection parameterColumnPosition() const = 0;
 
   Escher::SelectableListView m_selectableListView;
-  Escher::AbstractButtonCell m_plotButton;
-  Escher::AbstractButtonCell m_valuesButton;
+  Escher::SimpleButtonCell m_plotButton;
+  Escher::SimpleButtonCell m_valuesButton;
 };
 
 }  // namespace Shared

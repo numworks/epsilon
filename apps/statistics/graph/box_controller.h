@@ -27,7 +27,7 @@ class BoxController : public MultipleDataViewController {
       Escher::ButtonRowController::Position position) const override {
     return GraphButtonRowDelegate::numberOfButtons(position) + 1;
   }
-  Escher::AbstractButtonCell* buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index, Escher::ButtonRowController::Position position) const override;
 
   // MultipleDataViewController
@@ -51,7 +51,7 @@ class BoxController : public MultipleDataViewController {
 
   MultipleBoxesView m_view;
   BoxParameterController m_boxParameterController;
-  Escher::AbstractButtonCell m_parameterButton;
+  Escher::SimpleButtonCell m_parameterButton;
 };
 
 }  // namespace Statistics

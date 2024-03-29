@@ -55,7 +55,7 @@ class InteractiveCurveViewController
   // ButtonRowController
   int numberOfButtons(
       Escher::ButtonRowController::Position position) const override;
-  Escher::AbstractButtonCell* buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index, Escher::ButtonRowController::Position position) const override;
 
   // AlternateEmptyViewDelegate
@@ -155,9 +155,9 @@ class InteractiveCurveViewController
   Escher::ButtonState m_rangeButton;
   Escher::ToggleableUnequalView m_rangeUnequalView;
   // Navigation button
-  Escher::AbstractButtonCell m_navigationButton;
+  Escher::SimpleButtonCell m_navigationButton;
   // Calculus button
-  Escher::AbstractButtonCell m_calculusButton;
+  Escher::SimpleButtonCell m_calculusButton;
 };
 
 }  // namespace Shared

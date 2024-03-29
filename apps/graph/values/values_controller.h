@@ -43,7 +43,7 @@ class ValuesController : public Shared::ValuesController,
   int numberOfButtons(Escher::ButtonRowController::Position) const override {
     return isEmpty() ? 0 : 1 + displayButtonExactValues();
   }
-  Escher::AbstractButtonCell *buttonAtIndex(
+  Escher::ButtonCell *buttonAtIndex(
       int index, Escher::ButtonRowController::Position position) const override;
 
   // AlternateEmptyViewDelegate
@@ -195,7 +195,7 @@ class ValuesController : public Shared::ValuesController,
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeColumnParameterController *m_derivativeColumnParameterController;
-  Escher::AbstractButtonCell m_setIntervalButton;
+  Escher::SimpleButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;
   bool m_exactValuesAreActivated;

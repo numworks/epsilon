@@ -1,12 +1,12 @@
 #ifndef ESCHER_BUTTON_STATE_H
 #define ESCHER_BUTTON_STATE_H
 
-#include <escher/abstract_button_cell.h>
+#include <escher/button_cell.h>
 #include <escher/toggleable_view.h>
 
 namespace Escher {
 
-class ButtonState : public AbstractButtonCell {
+class ButtonState : public SimpleButtonCell {
  public:
   ButtonState(Responder* parentResponder, I18n::Message textBody,
               Invocation invocation, ToggleableView* stateView,

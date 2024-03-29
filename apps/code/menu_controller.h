@@ -79,11 +79,11 @@ class MenuController : public Escher::ViewController,
       Escher::ButtonRowController::Position position) const override {
     return 1;
   }
-  Escher::AbstractButtonCell *buttonAtIndex(
+  Escher::ButtonCell *buttonAtIndex(
       int index,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
-    return const_cast<Escher::AbstractButtonCell *>(&m_consoleButton);
+    return const_cast<Escher::SimpleButtonCell *>(&m_consoleButton);
   }
 
  private:
@@ -111,7 +111,7 @@ class MenuController : public Escher::ViewController,
       m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
   Escher::EvenOddMessageTextCell m_addNewScriptCell;
   Escher::EvenOddCell m_emptyCell;
-  Escher::AbstractButtonCell m_consoleButton;
+  Escher::SimpleButtonCell m_consoleButton;
   Escher::SelectableTableView m_selectableTableView;
   ScriptParameterController m_scriptParameterController;
   EditorController m_editorController;

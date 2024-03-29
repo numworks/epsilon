@@ -6,11 +6,38 @@ ButtonCell::ButtonCell(Responder* parentResponder, I18n::Message textBody,
                        Escher::Invocation invocation, Style style,
                        KDColor backgroundColor, KDCoordinate horizontalMargins,
                        KDFont::Size fontSize, KDColor textColor)
-    : AbstractButtonCell(parentResponder, textBody, invocation, fontSize,
-                         textColor),
+    : HighlightCell(),
+      Responder(parentResponder),
+      m_messageTextView(textBody,
+                        {.style = {.glyphColor = textColor, .font = fontSize},
+                         .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_invocation(invocation),
+      m_font(fontSize),
       m_backgroundColor(backgroundColor),
       m_horizontalMargins(horizontalMargins),
       m_style(style) {}
+
+View* ButtonCell::subviewAtIndex(int index) {
+  assert(index == 0);
+  return &m_messageTextView;
+}
+
+bool ButtonCell::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    m_invocation.perform(this);
+    return true;
+  }
+  return event == Ion::Events::Var || event == Ion::Events::Sto ||
+         event == Ion::Events::Clear;
+}
+
+void ButtonCell::setHighlighted(bool highlight) {
+  HighlightCell::setHighlighted(highlight);
+  KDColor backgroundColor =
+      highlight ? highlightedBackgroundColor() : KDColorWhite;
+  m_messageTextView.setBackgroundColor(backgroundColor);
+  markWholeFrameAsDirty();
+}
 
 void ButtonCell::drawBorder(KDContext* ctx, OMG::Direction direction, int index,
                             KDColor color) const {
@@ -76,8 +103,12 @@ void ButtonCell::layoutSubviews(bool force) {
 }
 
 KDSize ButtonCell::minimalSizeForOptimalDisplay() const {
-  KDSize buttonSize =
-      Escher::AbstractButtonCell::minimalSizeForOptimalDisplay();
+  KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
+  KDSize buttonSize = m_font == KDFont::Size::Small
+                          ? KDSize(textSize.width() + k_horizontalMarginSmall,
+                                   textSize.height() + k_verticalMarginSmall)
+                          : KDSize(textSize.width() + k_horizontalMarginLarge,
+                                   textSize.height() + k_verticalMarginLarge);
   return KDSize(buttonSize.width() + 2 * m_horizontalMargins,
                 buttonSize.height());
 }

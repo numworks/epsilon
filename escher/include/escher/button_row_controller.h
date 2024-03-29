@@ -2,7 +2,7 @@
 #define BUTTON_ROW_CONTROLLER_H
 
 #include <assert.h>
-#include <escher/abstract_button_cell.h>
+#include <escher/button_cell.h>
 #include <escher/i18n.h>
 #include <escher/invocation.h>
 #include <escher/view.h>
@@ -54,7 +54,7 @@ class ButtonRowController : public ViewController {
     int selectedButton() const { return m_selectedButton; }
     ViewController* mainViewController() const { return m_mainViewController; }
     int numberOfButtons() const;
-    AbstractButtonCell* buttonAtIndex(int index) const;
+    ButtonCell* buttonAtIndex(int index) const;
     void reload();
 
    private:
@@ -93,7 +93,7 @@ class ButtonRowDelegate {
   virtual int numberOfButtons(ButtonRowController::Position position) const {
     return 0;
   }
-  virtual AbstractButtonCell* buttonAtIndex(
+  virtual ButtonCell* buttonAtIndex(
       int index, ButtonRowController::Position position) const {
     assert(false);
     return nullptr;

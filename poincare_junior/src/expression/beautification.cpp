@@ -269,19 +269,6 @@ bool Beautification::ShallowBeautifyPercent(Tree* ref) {
   if (!PatternMatching::Match(KPercentAddition(KA, KB), ref, &ctx)) {
     return false;
   }
-  // A + -B% -> A * (1 - B / 100)
-  if (ctx.getNode(KB)->isRational() &&
-      Rational::Sign(ctx.getNode(KB)).isStrictlyNegative()) {
-    /* TODO can we avoid this special case with finer control on when this
-     * shallow is applied ? */
-    EditionReference B =
-        PatternMatching::CreateAndSimplify(KMult(-1_e, KB), ctx);
-    ref->moveTreeOverTree(PatternMatching::Create(
-        KMult(KA, KAdd(1_e, KOpposite(KDiv(KB, 100_e)))),
-        {.KA = ctx.getNode(KA), .KB = B}));
-    B->removeTree();
-    return true;
-  }
   // A + B% -> A * (1 + B / 100)
   return PatternMatching::MatchAndReplace(
       ref, KPercentAddition(KA, KB), KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));

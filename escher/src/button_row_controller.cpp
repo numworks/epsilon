@@ -133,17 +133,14 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
     return;
   }
   assert(m_style == Style::EmbossedGray);
+  assert(m_position == Position::Bottom);
   int buttonHeight = m_size == Size::Small ? k_embossedStyleHeightSmall
                                            : k_embossedStyleHeightLarge;
   int buttonMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall
                                            : k_embossedStyleHeightMarginLarge;
   drawRowFrame(ctx, buttonHeight, Palette::GrayWhite, Palette::GrayMiddle);
-  KDCoordinate y0 = m_position == Position::Top
-                        ? buttonMargin - 1
-                        : bounds().height() - buttonHeight + buttonMargin - 1;
-  KDCoordinate y1 = m_position == Position::Top
-                        ? buttonHeight - buttonMargin - 2
-                        : bounds().height() - buttonMargin;
+  KDCoordinate y0 = bounds().height() - buttonHeight + buttonMargin - 1;
+  KDCoordinate y1 = bounds().height() - buttonMargin;
   KDCoordinate totalButtonWidth = 0;
   for (int i = 0; i < numberOfButtons(); i++) {
     AbstractButtonCell *button = buttonAtIndex(i);

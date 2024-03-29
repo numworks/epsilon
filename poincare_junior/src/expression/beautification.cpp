@@ -125,7 +125,7 @@ bool Beautification::SplitMultiplication(const Tree* expr,
           factorsDenominator = rDen.pushOnEditionPool();
         }
       }
-    } else if (factor->isPower()) {
+    } else if (factor->isPower() || factor->isPowerReal()) {
       Tree* pow = factor->clone();
       if (!pow->child(0)->isUnit() &&
           MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {

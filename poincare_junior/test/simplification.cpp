@@ -178,10 +178,10 @@ QUIZ_CASE(pcj_simplification_basic) {
   // TODO: Simplify to 1/√(1+x^2).
   simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/(x^2+1)+1)");
   // TODO: Simplify to x/√(-x^2+1)
-  simplifies_to("x×(-x^2+1)^(-1/2)", "x×(-x^2+1)^(-1/2)");
+  simplifies_to("x×(-x^2+1)^(-1/2)", "x/√(-x^2+1)");
   // TODO: Simplify to x
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",
-                "x×(x^2+1)^(-1/2)×(-x^2/(x^2+1)+1)^(-1/2)");
+                "(x×(x^2+1)^(-1/2))/√(-x^2/(x^2+1)+1)");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);

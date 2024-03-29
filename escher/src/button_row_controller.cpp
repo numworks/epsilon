@@ -102,6 +102,24 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
   }
 }
 
+void ButtonRowController::ContentView::drawRowFrame(KDContext *ctx,
+                                                    KDCoordinate innerHeight,
+                                                    KDColor backgroundColor,
+                                                    KDColor borderColor) const {
+  constexpr KDCoordinate k_borderHeight = 1;
+  KDCoordinate y1, y2;
+  if (m_position == Position::Top) {
+    y1 = 0;
+    y2 = innerHeight;
+  } else {
+    y1 = bounds().height() - innerHeight;
+    y2 = bounds().height() - innerHeight - k_borderHeight;
+  }
+  ctx->fillRect(KDRect(0, y1, bounds().width(), innerHeight), backgroundColor);
+  ctx->fillRect(KDRect(0, y2, bounds().width(), k_borderHeight), borderColor);
+  return;
+}
+
 void ButtonRowController::ContentView::drawRect(KDContext *ctx,
                                                 KDRect rect) const {
   if (numberOfButtons() == 0) {
@@ -111,17 +129,7 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
     return;
   }
   if (m_style == Style::PlainWhite) {
-    KDCoordinate y1, y2;
-    if (m_position == Position::Top) {
-      y1 = 0;
-      y2 = k_plainStyleHeight;
-    } else {
-      y1 = bounds().height() - k_plainStyleHeight;
-      y2 = bounds().height() - k_plainStyleHeight - 1;
-    }
-    ctx->fillRect(KDRect(0, y1, bounds().width(), k_plainStyleHeight),
-                  KDColorWhite);
-    ctx->fillRect(KDRect(0, y2, bounds().width(), 1), Palette::GrayWhite);
+    drawRowFrame(ctx, k_plainStyleHeight, KDColorWhite, Palette::GrayWhite);
     return;
   }
   assert(m_style == Style::EmbossedGray);
@@ -129,17 +137,7 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
                                            : k_embossedStyleHeightLarge;
   int buttonMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall
                                            : k_embossedStyleHeightMarginLarge;
-  KDCoordinate Y1, Y2;
-  if (m_position == Position::Top) {
-    Y1 = 0;
-    Y2 = buttonHeight;
-  } else {
-    Y1 = bounds().height() - buttonHeight;
-    Y2 = bounds().height() - buttonHeight - 1;
-  }
-  ctx->fillRect(KDRect(0, Y1, bounds().width(), buttonHeight),
-                Palette::GrayWhite);
-  ctx->fillRect(KDRect(0, Y2, bounds().width(), 1), Palette::GrayMiddle);
+  drawRowFrame(ctx, buttonHeight, Palette::GrayWhite, Palette::GrayMiddle);
   KDCoordinate y0 = m_position == Position::Top
                         ? buttonMargin - 1
                         : bounds().height() - buttonHeight + buttonMargin - 1;

@@ -69,6 +69,9 @@ class ButtonRowController : public ViewController {
     constexpr static KDCoordinate k_embossedStyleHeightMarginLarge =
         Metric::ButtonRowEmbossedStyleHeightMarginLarge;
 
+    void drawRowFrame(KDContext* ctx, KDCoordinate innerHeight,
+                      KDColor backgroundColor, KDColor borderColor) const;
+
     ViewController* m_mainViewController;
     int m_selectedButton;
     ButtonRowDelegate* m_delegate;

@@ -49,19 +49,12 @@ void InputStoreController::onDropdownSelected(int selectedRow) {
   m_storeTableCell.recomputeDimensionsAndReload(true);
 }
 
-KDCoordinate InputStoreController::nonMemoizedRowHeight(int row) {
-  return row == indexOfTableCell() || row == indexOfSignificanceCell()
-             ? InputCategoricalController::nonMemoizedRowHeight(row)
-             : reusableCell(0, row)->minimalSizeForOptimalDisplay().height();
-}
-
-Escher::HighlightCell* InputStoreController::reusableCell(int index, int type) {
-  assert(index == 0);
-  return type == k_dropdownCellIndex ? &m_dropdownCell
-         : indexOfFirstExtraParameter() <= type &&
-                 type < indexOfSignificanceCell()
-             ? &m_extraParameters[type - indexOfFirstExtraParameter()]
-             : InputCategoricalController::reusableCell(index, type);
+Escher::HighlightCell* InputStoreController::explicitCellAtRow(int row) {
+  return row == k_dropdownCellIndex ? &m_dropdownCell
+         : indexOfFirstExtraParameter() <= row &&
+                 row < indexOfSignificanceCell()
+             ? &m_extraParameters[row - indexOfFirstExtraParameter()]
+             : InputCategoricalController::explicitCellAtRow(row);
 }
 
 void InputStoreController::createDynamicCells() {

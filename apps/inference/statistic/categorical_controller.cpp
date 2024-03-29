@@ -182,10 +182,15 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
 }
 
 HighlightCell *CategoricalController::reusableCell(int index, int type) {
+  assert(index == 0);
   if (type == indexOfTableCell()) {
     return categoricalTableCell();
   }
-  assert(type == indexOfNextCell());
+  return explicitCellAtRow(type);
+}
+
+HighlightCell *CategoricalController::explicitCellAtRow(int row) {
+  assert(row == indexOfNextCell());
   return &m_next;
 }
 
@@ -194,8 +199,8 @@ KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
     return std::min(tableCellFullHeight() - tableCellVerticalOffset(),
                     static_cast<int>(m_selectableListView.bounds().height()));
   }
-  assert(row == indexOfNextCell());
-  return m_next.minimalSizeForOptimalDisplay().height();
+  // The rest of the cells are explicit
+  return explicitCellAtRow(row)->minimalSizeForOptimalDisplay().height();
 }
 
 void CategoricalController::initView() {
@@ -267,18 +272,11 @@ void InputCategoricalController::viewWillAppear() {
   categoricalTableCell()->recomputeDimensionsAndReload(true, true);
 }
 
-HighlightCell *InputCategoricalController::reusableCell(int index, int type) {
-  if (type == indexOfSignificanceCell()) {
+HighlightCell *InputCategoricalController::explicitCellAtRow(int row) {
+  if (row == indexOfSignificanceCell()) {
     return &m_significanceCell;
   }
-  return CategoricalController::reusableCell(index, type);
-}
-
-KDCoordinate InputCategoricalController::nonMemoizedRowHeight(int row) {
-  if (row == indexOfSignificanceCell()) {
-    return m_significanceCell.minimalSizeForOptimalDisplay().height();
-  }
-  return CategoricalController::nonMemoizedRowHeight(row);
+  return CategoricalController::explicitCellAtRow(row);
 }
 
 }  // namespace Inference

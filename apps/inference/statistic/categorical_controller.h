@@ -36,10 +36,12 @@ class CategoricalController
       bool withinTemporarySelection = false) override;
 
   // ListViewDataSource
-  int typeAtRow(int row) const override { return row; }  // One cell per type
+  // Like an ExplicitListViewDataSource (only table cell is not explicit)
+  int typeAtRow(int row) const override final { return row; }
   int numberOfRows() const override { return indexOfNextCell() + 1; }
-  Escher::HighlightCell* reusableCell(int index, int type) override;
-  int reusableCellCount(int type) const override { return 1; }
+  Escher::HighlightCell* reusableCell(int index, int type) override final;
+  int reusableCellCount(int type) const override final { return 1; }
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override final {}
   KDCoordinate separatorBeforeRow(int row) override {
     return row == indexOfNextCell() ? k_defaultRowSeparator : 0;
   }
@@ -52,6 +54,7 @@ class CategoricalController
  protected:
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
+  virtual Escher::HighlightCell* explicitCellAtRow(int row);
   virtual int indexOfNextCell() const { return indexOfTableCell() + 1; }
   virtual CategoricalTableCell* categoricalTableCell() = 0;
 
@@ -63,6 +66,7 @@ class CategoricalController
   KDRect visibleRectInBounds(Escher::ScrollView* scrollView) override;
 
   virtual void createDynamicCells() = 0;
+
   KDCoordinate listVerticalOffset() {
     return m_selectableListView.contentOffset().y();
   }
@@ -101,12 +105,8 @@ class InputCategoricalController : public CategoricalController,
     return Escher::ViewController::TitlesDisplay::DisplayLastTitle;
   }
 
-  // ListViewDataSource
-  Escher::HighlightCell* reusableCell(int index, int type) override;
-
  protected:
-  KDCoordinate nonMemoizedRowHeight(int row) override;
-
+  Escher::HighlightCell* explicitCellAtRow(int row) override;
   InputCategoricalTableCell* categoricalTableCell() override = 0;
   virtual int indexOfSignificanceCell() const = 0;
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }

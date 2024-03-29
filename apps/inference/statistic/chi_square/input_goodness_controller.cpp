@@ -27,19 +27,11 @@ void InputGoodnessController::createDynamicCells() {
   m_inputGoodnessTableCell.createCells();
 }
 
-HighlightCell *InputGoodnessController::reusableCell(int index, int type) {
-  if (type == k_indexOfDegreeOfFreedom) {
-    return &m_degreeOfFreedomCell;
-  } else {
-    return InputCategoricalController::reusableCell(index, type);
-  }
-}
-
-KDCoordinate InputGoodnessController::nonMemoizedRowHeight(int row) {
+HighlightCell *InputGoodnessController::explicitCellAtRow(int row) {
   if (row == k_indexOfDegreeOfFreedom) {
-    return m_degreeOfFreedomCell.minimalSizeForOptimalDisplay().height();
+    return &m_degreeOfFreedomCell;
   }
-  return InputCategoricalController::nonMemoizedRowHeight(row);
+  return InputCategoricalController::explicitCellAtRow(row);
 }
 
 int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {

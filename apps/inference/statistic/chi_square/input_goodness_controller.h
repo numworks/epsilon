@@ -23,10 +23,6 @@ class InputGoodnessController : public InputCategoricalController {
     return I18n::translate(I18n::Message::InputGoodnessControllerTitle);
   }
 
-  // ListViewDataSource
-  Escher::HighlightCell* reusableCell(int index, int type) override;
-  KDCoordinate nonMemoizedRowHeight(int row) override;
-
  private:
   constexpr static int k_indexOfDegreeOfFreedom = 1;
 
@@ -38,6 +34,7 @@ class InputGoodnessController : public InputCategoricalController {
     return k_indexOfDegreeOfFreedom + 1;
   }
   int indexOfEditedParameterAtIndex(int index) const override;
+  Escher::HighlightCell* explicitCellAtRow(int row) override;
 
   InputCategoricalCell<Escher::MessageTextView> m_degreeOfFreedomCell;
   InputGoodnessTableCell m_inputGoodnessTableCell;

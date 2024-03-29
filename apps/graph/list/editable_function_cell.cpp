@@ -72,7 +72,6 @@ void EditableFunctionCell::layoutSubviews(bool force) {
 
   KDRect templateButtonRect = KDRectZero;
   if (m_templateButton.isVisible()) {
-    // Only draw the button if the expression is empty
     KDSize buttonSize = m_templateButton.minimalSizeForOptimalDisplay();
     templateButtonRect =
         KDRect(bounds().width() - rightMargin - buttonSize.width() -

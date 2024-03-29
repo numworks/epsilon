@@ -86,19 +86,8 @@ bool MathLayoutFieldDelegate::isAcceptableLayout(Layout layout,
     // Accept empty layouts
     return true;
   }
-  /* Simple layout serialisation. Resulting texts can be parsed but
-   * not displayed, like:
-   * - 2a
-   * - log_{2}(x) */
-  constexpr size_t bufferSize = TextField::MaxBufferSize();
-  char buffer[bufferSize];
-  size_t length = layout.serializeForParsing(buffer, bufferSize);
-  if (length >= bufferSize - 1) {
-    /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
-     * escaped before printing utterly the expression. */
-    return false;
-  }
-  return isAcceptableText(buffer, context);
+  Expression exp = Expression::Parse(layout, context);
+  return isAcceptableExpression(exp, context);
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(

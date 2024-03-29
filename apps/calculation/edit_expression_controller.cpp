@@ -139,6 +139,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     return false;
   }
   assert(!layout.isUninitialized());
+  // TODO layout is parsed twice : in isAcceptableLayout and in push
   Calculation *calculation =
       m_calculationStore->push(layout, context).pointer();
   if (calculation) {

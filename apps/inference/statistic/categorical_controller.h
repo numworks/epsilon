@@ -53,7 +53,7 @@ class CategoricalController
   void didScroll();
 
  protected:
-  KDCoordinate nonMemoizedRowHeight(int row) override;
+  KDCoordinate nonMemoizedRowHeight(int row) override final;
 
   virtual Escher::HighlightCell* explicitCellAtRow(int row);
   virtual int indexOfNextCell() const { return indexOfTableCell() + 1; }

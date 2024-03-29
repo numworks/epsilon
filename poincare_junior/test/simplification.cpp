@@ -112,7 +112,6 @@ void simplifies_to(const char* input, const char* output,
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
     *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
-    outputLayout->removeTree();
     bool visuallyOk = strcmp(output, buffer) == 0;
     if (visuallyOk) {
       ok = true;
@@ -122,8 +121,9 @@ void simplifies_to(const char* input, const char* output,
                 << std::endl;
 #endif
     }
+    quiz_assert(ok);
+    outputLayout->removeTree();
   }
-  quiz_assert(ok);
   expression->removeTree();
   expected->removeTree();
   assert(SharedEditionPool->numberOfTrees() == 0);
@@ -460,7 +460,7 @@ QUIZ_CASE(pcj_simplification_float) {
   simplifies_to("1+π+x", "x+4.1415926535898",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("random()-random()", "random()+-1×random()",
+  simplifies_to("random()-random()", "random()-1×random()",
                 {.m_strategy = Strategy::ApproximateToFloat});
 
   // This was raising asserts because of float approximation on flatten.
@@ -552,7 +552,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("∞", "∞");
   simplifies_to("-∞+1", "-∞");
   simplifies_to("∞*(-π)", "-∞");
-  simplifies_to("x-∞", "x+-∞");
+  simplifies_to("x-∞", "x-∞");
   simplifies_to("1/∞", "0");
   simplifies_to("2^-∞", "0");
   simplifies_to("0^∞", "0");

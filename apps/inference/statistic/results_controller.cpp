@@ -23,7 +23,8 @@ ResultsController::ResultsController(
       m_titleBuffer{0},
       m_next(&m_selectableListView, I18n::Message::Next,
              Invocation::Builder<ResultsController>(
-                 &ResultsController::ButtonAction, this)) {}
+                 &ResultsController::ButtonAction, this),
+             ButtonCell::Style::EmbossedLight) {}
 
 ViewController::TitlesDisplay ResultsController::titlesDisplay() {
   if (m_statistic->subApp() == Statistic::SubApp::Interval ||

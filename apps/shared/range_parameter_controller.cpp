@@ -23,7 +23,8 @@ RangeParameterController::RangeParameterController(
                 parameterController->buttonAction();
                 return true;
               },
-              this)),
+              this),
+          ButtonCell::Style::EmbossedLight),
       m_confirmPopUpController(Invocation::Builder<RangeParameterController>(
           [](RangeParameterController *controller, void *sender) {
             controller->stackController()->pop();

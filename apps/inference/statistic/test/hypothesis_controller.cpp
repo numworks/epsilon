@@ -33,7 +33,8 @@ HypothesisController::HypothesisController(
       m_haDropdown(&m_selectableListView, &m_operatorDataSource, this),
       m_next(&m_selectableListView, I18n::Message::Next,
              Invocation::Builder<HypothesisController>(
-                 &HypothesisController::ButtonAction, this)),
+                 &HypothesisController::ButtonAction, this),
+             ButtonCell::Style::EmbossedLight),
       m_test(test) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H'),

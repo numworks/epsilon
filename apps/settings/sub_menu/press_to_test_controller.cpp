@@ -31,7 +31,8 @@ PressToTestController::PressToTestController(Responder *parentResponder)
                              controller->getPressToTestParams()));
                 return true;
               },
-              this)),
+              this),
+          ButtonCell::Style::EmbossedLight),
       m_confirmPopUpController(Invocation::Builder<PressToTestController>(
           [](PressToTestController *controller, void *sender) {
             controller->resetController();

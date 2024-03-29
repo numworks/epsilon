@@ -31,7 +31,8 @@ GraphOptionsController::GraphOptionsController(Responder *parentResponder,
                 controller->removeRegression();
                 return true;
               },
-              this)),
+              this),
+          ButtonCell::Style::EmbossedLight),
       m_goToParameterController(this, range, store, cursor, graphController),
       m_residualPlotCellController(parentResponder, store),
       m_store(store),

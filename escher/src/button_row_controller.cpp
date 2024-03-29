@@ -129,19 +129,17 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
                                            : k_embossedStyleHeightLarge;
   int buttonMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall
                                            : k_embossedStyleHeightMarginLarge;
+  KDCoordinate Y1, Y2;
   if (m_position == Position::Top) {
-    ctx->fillRect(KDRect(0, 0, bounds().width(), buttonHeight),
-                  Palette::GrayWhite);
-    ctx->fillRect(KDRect(0, buttonHeight, bounds().width(), 1),
-                  Palette::GrayMiddle);
+    Y1 = 0;
+    Y2 = buttonHeight;
   } else {
-    ctx->fillRect(KDRect(0, bounds().height() - buttonHeight, bounds().width(),
-                         buttonHeight),
-                  Palette::GrayWhite);
-    ctx->fillRect(
-        KDRect(0, bounds().height() - buttonHeight - 1, bounds().width(), 1),
-        Palette::GrayMiddle);
+    Y1 = bounds().height() - buttonHeight;
+    Y2 = bounds().height() - buttonHeight - 1;
   }
+  ctx->fillRect(KDRect(0, Y1, bounds().width(), buttonHeight),
+                Palette::GrayWhite);
+  ctx->fillRect(KDRect(0, Y2, bounds().width(), 1), Palette::GrayMiddle);
   KDCoordinate y0 = m_position == Position::Top
                         ? buttonMargin - 1
                         : bounds().height() - buttonHeight + buttonMargin - 1;

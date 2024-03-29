@@ -121,8 +121,7 @@ DomainParameterController::function() const {
 
 Poincare::Layout DomainParameterController::extraCellLayoutAtRow(int row) {
   assert(row == 0);
-  return Poincare::Layout::Create(
-      KA ^ "∞"_l, {.KA = (m_currentTextFieldIsMinField ? "-"_l : ""_l)});
+  return m_currentTextFieldIsMinField ? "-∞"_l : "∞"_l;
 }
 
 void DomainParameterController::switchToolboxContent(

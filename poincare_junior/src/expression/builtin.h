@@ -65,6 +65,12 @@ class BuiltinWithLayout : public Builtin {
   LayoutType m_layoutType;
 };
 
+class BuiltinAns : public Builtin {
+  using Builtin::Builtin;
+  bool checkNumberOfParameters(int n) const override { return n == 0; }
+  Tree* pushNode(int numberOfChildren) const override;
+};
+
 namespace BuiltinsAliases {
 // Special identifiers
 constexpr static Aliases k_ansAliases = "\01Ans\00ans\00";

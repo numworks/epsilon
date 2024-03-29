@@ -25,6 +25,9 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {BlockType::True, BuiltinsAliases::k_trueAliases},
 };
 
+constexpr static BuiltinAns s_builtinAns = {/* dummy */ BlockType::Zero,
+                                            BuiltinsAliases::k_ansAliases};
+
 class DistributionBuiltin : public Builtin {
  public:
   constexpr DistributionBuiltin(Distribution::Type distribution,
@@ -99,6 +102,11 @@ Tree *DistributionBuiltin::pushNode(int numberOfChildren) const {
   return result;
 }
 
+Tree *BuiltinAns::pushNode(int numberOfChildren) const {
+  assert(numberOfChildren == 0);
+  return "Ans"_e->clone();
+}
+
 bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {
   for (Aliases aliases : s_customIdentifiers) {
     if (aliases.contains(name)) {
@@ -147,6 +155,9 @@ const Builtin *Builtin::GetReservedFunction(const Tree *tree) {
 }
 
 const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
+  if (s_builtinAns.m_aliases.contains(name)) {
+    return &s_builtinAns;
+  }
   for (const Builtin &builtin : s_specialIdentifiers) {
     if (builtin.m_aliases.contains(name)) {
       return &builtin;

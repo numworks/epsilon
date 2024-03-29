@@ -48,7 +48,8 @@ MainController::MainController(Responder *parentResponder)
                           controller->m_resetController.presentModally();
                           return true;
                         },
-                        this)),
+                        this),
+                    ButtonCell::Style::EmbossedLight),
       m_preferencesController(this),
       m_displayModeController(this),
       m_localizationController(this, LocalizationController::Mode::Language),

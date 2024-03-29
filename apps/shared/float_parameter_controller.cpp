@@ -23,7 +23,8 @@ FloatParameterController<T>::FloatParameterController(
                 parameterController->buttonAction();
                 return true;
               },
-              this)) {}
+              this),
+          ButtonCell::Style::EmbossedLight) {}
 
 template <typename T>
 bool FloatParameterController<T>::handleEvent(Ion::Events::Event event) {

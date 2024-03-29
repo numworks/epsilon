@@ -11,11 +11,10 @@ class ButtonCell : public Escher::AbstractButtonCell {
   enum class Style { EmbossedLight, EmbossedGray };
 
   ButtonCell(Responder* parentResponder, I18n::Message textBody,
-             Escher::Invocation invocation,
+             Escher::Invocation invocation, Style style,
              KDColor backgroundColor = Escher::Palette::WallScreen,
              KDCoordinate horizontalMargins = 0,
              KDFont::Size fontSize = KDFont::Size::Large,
-             Style style = Style::EmbossedLight,
              KDColor textColor = KDColorBlack);
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

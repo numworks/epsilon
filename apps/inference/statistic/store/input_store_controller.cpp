@@ -129,7 +129,7 @@ void InputStoreController::viewWillAppear() {
 
 void InputStoreController::initView() {
   InputCategoricalController::initView();
-  categoricalTableCell()->recomputeDimensionsAndReload();
+  categoricalTableCell()->recomputeDimensions();
 }
 
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {

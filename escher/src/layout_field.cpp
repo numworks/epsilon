@@ -78,7 +78,7 @@ void LayoutField::ContentView::copySelection(PoincareJ::Context *context,
   if (intoStoreMenu) {
     App::app()->storeValue(buffer);
   } else {
-    Clipboard::SharedClipboard()->store(buffer);
+    Clipboard::SharedClipboard()->storeLayout(layoutToParse);
   }
 }
 
@@ -510,8 +510,8 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   // Handle paste
   if (event == Ion::Events::Paste) {
     prepareToEdit();
-    bool didHandleEvent =
-        insertText(Clipboard::SharedClipboard()->storedText(), false, true);
+    bool didHandleEvent = true;
+    insertLayoutAtCursor(Clipboard::SharedClipboard()->storedLayout(), true);
     *layoutDidChange = didHandleEvent;
     return didHandleEvent;
   }

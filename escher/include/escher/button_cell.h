@@ -8,10 +8,10 @@ namespace Escher {
 
 class ButtonCell : public Escher::AbstractButtonCell {
  public:
-  enum class Style { EmbossedLight, EmbossedGray };
+  enum class Style { None, EmbossedLight, EmbossedGray };
 
   ButtonCell(Responder* parentResponder, I18n::Message textBody,
-             Escher::Invocation invocation, Style style,
+             Escher::Invocation invocation, Style style = Style::None,
              KDColor backgroundColor = Escher::Palette::WallScreen,
              KDCoordinate horizontalMargins = 0,
              KDFont::Size fontSize = KDFont::Size::Large,

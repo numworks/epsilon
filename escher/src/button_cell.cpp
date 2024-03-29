@@ -49,8 +49,7 @@ void ButtonCell::drawRect(KDContext* ctx, KDRect rect) const {
     drawBorder(ctx, OMG::Direction::Down(), 0, Palette::GrayMiddle);
     drawBorder(ctx, OMG::Direction::Down(), 1, Palette::GrayBright);
     drawBorder(ctx, OMG::Direction::Down(), 2, Palette::GrayWhite);
-  } else {
-    assert(m_style == Style::EmbossedGray);
+  } else if (m_style == Style::EmbossedGray) {
     drawBorder(ctx, OMG::Direction::Right(), 0, Palette::GrayMiddle);
     drawBorder(ctx, OMG::Direction::Up(), 0, Palette::GrayMiddle);
     drawBorder(ctx, OMG::Direction::Left(), 1, Palette::GrayMiddle);
@@ -84,6 +83,9 @@ KDSize ButtonCell::minimalSizeForOptimalDisplay() const {
 }
 
 int ButtonCell::numberOfBordersInDirection(OMG::Direction direction) const {
+  if (m_style == Style::None) {
+    return 0;
+  }
   if (direction.isLeft()) {
     return 1 + (m_style == Style::EmbossedGray);
   }

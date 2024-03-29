@@ -208,6 +208,16 @@ void CategoricalController::initView() {
   SelectableListViewController::initView();
 }
 
+void CategoricalController::initWidth(TableView *tableView) {
+  ListViewDataSource::initWidth(tableView);
+  int n = numberOfRows();
+  for (int row = 0; row < n; row++) {
+    if (row != indexOfTableCell()) {
+      explicitCellAtRow(row)->initSize(m_width);
+    }
+  }
+}
+
 InputCategoricalController::InputCategoricalController(
     StackViewController *parent, ViewController *nextController,
     Statistic *statistic)

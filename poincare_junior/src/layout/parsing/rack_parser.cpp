@@ -772,7 +772,8 @@ void RackParser::parseReservedFunction(EditionReference &leftHandSide,
   isThereImplicitOperator();
 }
 
-static void Promote(EditionReference &parameterList, const Builtin *builtin) {
+static void PromoteBuiltin(EditionReference &parameterList,
+                           const Builtin *builtin) {
   TypeBlock type = builtin->blockType();
   if (!type.isNAry() &&
       parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
@@ -904,7 +905,7 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
-  Promote(leftHandSide, builtin);
+  PromoteBuiltin(leftHandSide, builtin);
   if (leftHandSide.isUninitialized()) {
     // Incorrect parameter type or too few args
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);

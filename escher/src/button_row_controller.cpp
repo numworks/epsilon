@@ -124,6 +124,7 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
     ctx->fillRect(KDRect(0, y2, bounds().width(), 1), Palette::GrayWhite);
     return;
   }
+  assert(m_style == Style::EmbossedGray);
   int buttonHeight = m_size == Size::Small ? k_embossedStyleHeightSmall
                                            : k_embossedStyleHeightLarge;
   int buttonMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall

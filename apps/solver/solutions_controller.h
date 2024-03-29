@@ -45,14 +45,14 @@ class SolutionsController : public Escher::ViewController,
       Escher::ButtonRowController::Position position) const override {
     return 1;
   }
-  Escher::AbstractButtonCell *buttonAtIndex(
+  Escher::ButtonCell *buttonAtIndex(
       int index,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
     assert(solutionsAreApproximate());
     /* const_cast is valid here as long as a const SolutionsController is never
      * needed. */
-    return const_cast<Escher::AbstractButtonCell *>(&m_searchIntervalCell);
+    return const_cast<Escher::SimpleButtonCell *>(&m_searchIntervalCell);
   }
 
   // TableViewDataSource
@@ -244,7 +244,7 @@ class SolutionsController : public Escher::ViewController,
   MessageCell m_messageCells[k_numberOfMessageCells];
   Escher::SolidColorCell m_emptyCell[k_numberOfEmptyCells];
   ContentView m_contentView;
-  Escher::AbstractButtonCell m_searchIntervalCell;
+  Escher::SimpleButtonCell m_searchIntervalCell;
 };
 
 }  // namespace Solver

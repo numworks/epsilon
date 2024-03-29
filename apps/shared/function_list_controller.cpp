@@ -50,13 +50,13 @@ int FunctionListController::numberOfButtons(
   return 0;
 }
 
-AbstractButtonCell *FunctionListController::buttonAtIndex(
+ButtonCell *FunctionListController::buttonAtIndex(
     int index, ButtonRowController::Position position) const {
   if (position == ButtonRowController::Position::Top) {
     return nullptr;
   }
-  const AbstractButtonCell *buttons[2] = {&m_plotButton, &m_valuesButton};
-  return (AbstractButtonCell *)buttons[index];
+  const ButtonCell *buttons[2] = {&m_plotButton, &m_valuesButton};
+  return (ButtonCell *)buttons[index];
 }
 
 /* Responder */

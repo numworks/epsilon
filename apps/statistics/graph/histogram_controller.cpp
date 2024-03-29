@@ -43,10 +43,10 @@ HistogramController::HistogramController(
               this),
           KDFont::Size::Small) {}
 
-AbstractButtonCell *HistogramController::buttonAtIndex(
+ButtonCell *HistogramController::buttonAtIndex(
     int index, ButtonRowController::Position position) const {
   return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position)
-                    : const_cast<AbstractButtonCell *>(&m_parameterButton);
+                    : const_cast<SimpleButtonCell *>(&m_parameterButton);
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {

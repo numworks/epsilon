@@ -8,8 +8,7 @@ namespace Escher {
 ButtonState::ButtonState(Responder* parentResponder, I18n::Message textBody,
                          Invocation invocation, ToggleableView* stateView,
                          KDFont::Size font, KDColor textColor)
-    : AbstractButtonCell(parentResponder, textBody, invocation, font,
-                         textColor),
+    : SimpleButtonCell(parentResponder, textBody, invocation, font, textColor),
       m_stateView(stateView) {}
 
 void ButtonState::setState(bool state) {
@@ -28,7 +27,7 @@ View* ButtonState::subviewAtIndex(int index) {
 }
 
 void ButtonState::layoutSubviews(bool force) {
-  KDSize textSize = AbstractButtonCell::minimalSizeForOptimalDisplay();
+  KDSize textSize = SimpleButtonCell::minimalSizeForOptimalDisplay();
   KDRect textRect = KDRect(0, 0, textSize.width(), bounds().height());
   // State view will be vertically centered and aligned on the left
   KDSize stateSize = m_stateView->minimalSizeForOptimalDisplay();
@@ -47,7 +46,7 @@ void ButtonState::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 KDSize ButtonState::minimalSizeForOptimalDisplay() const {
-  KDSize textSize = AbstractButtonCell::minimalSizeForOptimalDisplay();
+  KDSize textSize = SimpleButtonCell::minimalSizeForOptimalDisplay();
   KDSize stateSize = m_stateView->minimalSizeForOptimalDisplay();
   return KDSize(
       textSize.width() +

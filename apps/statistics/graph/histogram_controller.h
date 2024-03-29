@@ -28,7 +28,7 @@ class HistogramController : public MultipleDataViewController {
       Escher::ButtonRowController::Position position) const override {
     return GraphButtonRowDelegate::numberOfButtons(position) + 1;
   }
-  Escher::AbstractButtonCell* buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index, Escher::ButtonRowController::Position position) const override;
 
   // ViewController
@@ -61,7 +61,7 @@ class HistogramController : public MultipleDataViewController {
   HistogramRange m_histogramRange;
   uint32_t* m_storeVersion;
   HistogramParameterController m_histogramParameterController;
-  Escher::AbstractButtonCell m_parameterButton;
+  Escher::SimpleButtonCell m_parameterButton;
 };
 
 }  // namespace Statistics

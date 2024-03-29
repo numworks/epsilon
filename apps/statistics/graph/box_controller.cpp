@@ -31,10 +31,10 @@ BoxController::BoxController(Responder *parentResponder,
                             this),
                         KDFont::Size::Small) {}
 
-AbstractButtonCell *BoxController::buttonAtIndex(
+ButtonCell *BoxController::buttonAtIndex(
     int index, ButtonRowController::Position position) const {
   return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position)
-                    : const_cast<AbstractButtonCell *>(&m_parameterButton);
+                    : const_cast<SimpleButtonCell *>(&m_parameterButton);
 }
 
 bool BoxController::handleEvent(Ion::Events::Event event) {

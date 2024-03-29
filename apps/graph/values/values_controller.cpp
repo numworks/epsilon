@@ -134,11 +134,11 @@ void ValuesController::rowWasDeleted(int row, int column) {
 
 // ButtonRowDelegate
 
-Escher::AbstractButtonCell *ValuesController::buttonAtIndex(
+Escher::ButtonCell *ValuesController::buttonAtIndex(
     int index, Escher::ButtonRowController::Position position) const {
   return index == 0 && displayButtonExactValues()
              ? const_cast<Escher::ButtonState *>(&m_exactValuesButton)
-             : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
+             : const_cast<Escher::SimpleButtonCell *>(&m_setIntervalButton);
 }
 
 // PrefacedTableViewDelegate

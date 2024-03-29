@@ -22,7 +22,7 @@ class ListController : public Shared::ExpressionModelListController,
   /* ButtonRowDelegate */
   int numberOfButtons(
       Escher::ButtonRowController::Position position) const override;
-  Escher::AbstractButtonCell* buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   Escher::HighlightCell* reusableCell(int index, int type) override;
@@ -80,7 +80,7 @@ class ListController : public Shared::ExpressionModelListController,
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Escher::EditableExpressionModelCell m_editableCell;
-  Escher::AbstractButtonCell m_resolveButton;
+  Escher::SimpleButtonCell m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
   Escher::StackViewController::Default m_modelsStackController;
 };

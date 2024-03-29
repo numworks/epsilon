@@ -8,11 +8,14 @@ namespace Escher {
 
 class ButtonCell : public Escher::AbstractButtonCell {
  public:
+  enum class Style { EmbossedLight, EmbossedGray };
+
   ButtonCell(Responder* parentResponder, I18n::Message textBody,
              Escher::Invocation invocation,
              KDColor backgroundColor = Escher::Palette::WallScreen,
              KDCoordinate horizontalMargins = 0,
-             KDFont::Size fontSize = KDFont::Size::Large);
+             KDFont::Size fontSize = KDFont::Size::Large,
+             Style style = Style::EmbossedLight);
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
@@ -27,9 +30,13 @@ class ButtonCell : public Escher::AbstractButtonCell {
 
  private:
   void layoutSubviews(bool force = false) override;
+  void drawBorder(KDContext* ctx, OMG::Direction direction, int index,
+                  KDColor color) const;
+  int numberOfBordersInDirection(OMG::Direction direction) const;
 
   KDColor m_backgroundColor;
   KDCoordinate m_horizontalMargins;
+  Style m_style;
 };
 
 }  // namespace Escher

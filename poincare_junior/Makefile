@@ -27,6 +27,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/dependency.cpp \
   expression/derivation.cpp \
   expression/dimension.cpp \
+  expression/float.cpp \
   expression/integer.cpp \
   expression/integer_serialization.cpp \
   expression/list.cpp \

@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_FLOAT_H
 #define POINCARE_EXPRESSION_FLOAT_H
 
+#include <omg/enums.h>
 #include <omgpj/bit.h>
 #include <poincare_junior/src/memory/tree.h>
 
@@ -26,6 +27,7 @@ class FloatNode {
     assert(tree->isFloat());
     return tree->isSingleFloat() ? FloatTo(tree) : DoubleTo(tree);
   }
+  static bool SetSign(Tree *tree, NonStrictSign sign);
 };
 
 // Helper from T  = float|double to corresponding BlockType

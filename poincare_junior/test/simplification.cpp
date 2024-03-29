@@ -362,6 +362,8 @@ QUIZ_CASE(pcj_simplification_percent) {
   simplifies_to("-25%", "-25/100");
   simplifies_to("2↗30%", "2×(1+30/100)");
   simplifies_to("-2-30%", "-2×(1-30/100)");
+  simplifies_to("x-30%", "x×(1-30/100)",
+                {.m_strategy = Strategy::ApproximateToFloat});
 }
 
 QUIZ_CASE(pcj_simplification_list) {
@@ -461,6 +463,8 @@ QUIZ_CASE(pcj_simplification_float) {
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("random()-random()", "random()-1×random()",
+                {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("y^3*x^-2", "y^3/x^2",
                 {.m_strategy = Strategy::ApproximateToFloat});
 
   // This was raising asserts because of float approximation on flatten.

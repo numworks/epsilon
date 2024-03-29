@@ -1,0 +1,20 @@
+#include "float.h"
+
+#include <poincare_junior/src/memory/edition_pool.h>
+
+namespace PoincareJ {
+
+bool FloatNode::SetSign(Tree *tree, NonStrictSign sign) {
+  double value = To(tree);
+  if (value == 0 || (value > 0.0) == (sign == NonStrictSign::Positive)) {
+    return false;
+  }
+  tree->moveTreeOverTree(
+      tree->isSingleFloat()
+          ? SharedEditionPool->push<BlockType::SingleFloat>(
+                -static_cast<float>(value))
+          : SharedEditionPool->push<BlockType::DoubleFloat>(-value));
+  return true;
+}
+
+}  // namespace PoincareJ

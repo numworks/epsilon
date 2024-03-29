@@ -50,4 +50,17 @@ Sign Number::Sign(const Tree* node) {
   }
 }
 
+bool Number::SetSign(Tree* number, NonStrictSign sign) {
+  assert(number->isNumber());
+  if (number->isRational()) {
+    return Rational::SetSign(number, NonStrictSign::Positive);
+  } else if (number->isFloat()) {
+    return FloatNode::SetSign(number, NonStrictSign::Positive);
+  }
+  assert(Number::Sign(number).isZero() ||
+         Number::Sign(number).isPositive() ==
+             (sign == NonStrictSign::Positive));
+  return false;
+}
+
 }  // namespace PoincareJ

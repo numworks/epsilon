@@ -151,11 +151,15 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   return result;
 }
 
-void Rational::SetSign(Tree* tree, NonStrictSign sign) {
+bool Rational::SetSign(Tree* tree, NonStrictSign sign) {
   IntegerHandler numerator = Numerator(tree);
   IntegerHandler denominator = Denominator(tree);
+  if (numerator.isZero() || sign == numerator.sign()) {
+    return false;
+  }
   numerator.setSign(sign);
   tree->moveTreeOverTree(PushIrreducible(numerator, denominator));
+  return true;
 }
 
 Tree* Rational::Addition(const Tree* i, const Tree* j) {

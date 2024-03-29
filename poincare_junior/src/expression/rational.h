@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_RATIONAL_H
 #define POINCARE_EXPRESSION_RATIONAL_H
 
+#include <omg/enums.h>
 #include <poincare_junior/src/memory/tree.h>
 
 #include "integer.h"
@@ -21,7 +22,7 @@ class Rational final {
     return PoincareJ::Sign(s == StrictSign::Null, s == StrictSign::Positive,
                            s == StrictSign::Negative, !node->isInteger());
   }
-  static void SetSign(Tree* reference, NonStrictSign sign);
+  static bool SetSign(Tree* reference, NonStrictSign sign);
 
   static Tree* Addition(const Tree* i, const Tree* j);
   static Tree* Multiplication(const Tree* i, const Tree* j);

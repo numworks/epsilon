@@ -200,7 +200,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
             ((type != Type::Explicit && rank.isIdenticalTo(n)) ||
              (type == Type::DoubleRecurrence &&
               rank.isIdenticalTo(
-                  Addition::Builder(n, BasedInteger::Builder(1)))))) {
+                  Addition::Builder(n, Expression::Builder(1)))))) {
           return TrinaryBoolean::False;
         }
         return TrinaryBoolean::True;

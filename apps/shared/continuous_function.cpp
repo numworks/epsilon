@@ -2,7 +2,6 @@
 
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
-#include <poincare/based_integer.h>
 #include <poincare/cosine.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
@@ -988,7 +987,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(
     Expression expression = expressionReduced(record, context).clone();
     *derivative = Derivative::Builder(expression, Symbol::SystemSymbol(),
                                       Symbol::SystemSymbol(),
-                                      BasedInteger::Builder(derivationOrder));
+                                      Expression::Builder(derivationOrder));
     /* On complex functions, this step can take a significant time.
      * A workaround could be to identify big functions to skip simplification
      * at the cost of possible inaccurate evaluations (such as

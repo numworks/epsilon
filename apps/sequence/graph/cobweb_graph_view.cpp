@@ -1,26 +1,22 @@
 #include "cobweb_graph_view.h"
 
+#include <apps/shared/continuous_function.h>
+#include <apps/shared/continuous_function_cache.h>
+#include <apps/shared/poincare_helpers.h>
+#include <escher/palette.h>
+#include <ion/unicode/code_point.h>
+#include <kandinsky/color.h>
+#include <kandinsky/measuring_context.h>
+#include <poincare/coordinate_2D.h>
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
+#include <poincare/print.h>
+#include <poincare/sequence.h>
+#include <poincare/symbol.h>
+
 #include <cmath>
 
 #include "../app.h"
-#include "apps/shared/continuous_function.h"
-#include "apps/shared/continuous_function_cache.h"
-#include "apps/shared/poincare_helpers.h"
-#include "escher/palette.h"
-#include "ion/storage/file_system.h"
-#include "ion/storage/record.h"
-#include "ion/unicode/code_point.h"
-#include "kandinsky/color.h"
-#include "kandinsky/measuring_context.h"
-#include "poincare/based_integer.h"
-#include "poincare/coordinate_2D.h"
-#include "poincare/expression.h"
-#include "poincare/function.h"
-#include "poincare/preferences.h"
-#include "poincare/print.h"
-#include "poincare/rational.h"
-#include "poincare/sequence.h"
-#include "poincare/symbol.h"
 
 using namespace Shared;
 
@@ -60,7 +56,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
    * at next step */
   Poincare::Sequence initialSymbol = Poincare::Sequence::Builder(
       name, strlen(name),
-      Poincare::BasedInteger::Builder(sequence->initialRank()));
+      Poincare::Expression::Builder(sequence->initialRank()));
   Poincare::Expression initialExpression =
       sequence->firstInitialConditionExpressionReduced(context);
   function =

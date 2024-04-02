@@ -3,7 +3,6 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/based_integer.h>
 #include <poincare/sequence.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/sum.h>
@@ -163,7 +162,7 @@ Layout ValuesController::functionTitleLayout(int column) {
                        sequence->fullName(), strlen(sequence->fullName()),
                        Symbol::Builder(k_variable, strlen(k_variable))),
                    Symbol::Builder(k_variable, strlen(k_variable)),
-                   BasedInteger::Builder(sequence->initialRank()),
+                   Expression::Builder(sequence->initialRank()),
                    Symbol::Builder(n_variable, strlen(n_variable)));
   return sumExpression.createLayout(preferences->displayMode(),
                                     preferences->numberOfSignificantDigits(),

@@ -328,7 +328,13 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
                                            ComparisonToOperator(type),
                                            ToPoincareExpression(exp->child(1)));
     case BlockType::UserFunction:
+      return Poincare::Function::Builder(Symbol::GetName(exp),
+                                         Symbol::Length(exp),
+                                         ToPoincareExpression(exp->child(0)));
     case BlockType::UserSequence:
+      return Poincare::Sequence::Builder(Symbol::GetName(exp),
+                                         Symbol::Length(exp),
+                                         ToPoincareExpression(exp->child(0)));
     case BlockType::Set:
     case BlockType::Polynomial:
     default:

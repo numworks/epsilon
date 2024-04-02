@@ -352,13 +352,12 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
   assert(!approximateExpression || approximateExpression->isUninitialized());
   assert(reductionContext.target() == ReductionTarget::User);
   PoincareJ::ProjectionContext context = {
-      .m_complexFormat =
-          PoincareJ::ComplexFormat(reductionContext.complexFormat()),
-      .m_angleUnit = PoincareJ::AngleUnit(reductionContext.angleUnit()),
+      .m_complexFormat = reductionContext.complexFormat(),
+      .m_angleUnit = reductionContext.angleUnit(),
       .m_strategy = approximateKeepingSymbols
                         ? PoincareJ::Strategy::ApproximateToFloat
                         : PoincareJ::Strategy::Default,
-      .m_unitFormat = PoincareJ::UnitFormat(reductionContext.unitFormat())};
+      .m_unitFormat = reductionContext.unitFormat()};
   PoincareJ::Tree* e = tree()->clone();
   PoincareJ::Simplification::Simplify(e, &context);
   if (approximateExpression) {
@@ -377,13 +376,12 @@ JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
       approximateDuringReduction ? PoincareJ::Strategy::ApproximateToFloat
                                  : PoincareJ::Strategy::Default;
   PoincareJ::ProjectionContext context = {
-    .m_complexFormat =
-        PoincareJ::ComplexFormat(reductionContext->complexFormat()),
-    .m_angleUnit = PoincareJ::AngleUnit(reductionContext->angleUnit()),
+    .m_complexFormat = reductionContext->complexFormat(),
+    .m_angleUnit = reductionContext->angleUnit(),
 #if 1
     .m_strategy = initialStrategy,
 #endif
-    .m_unitFormat = PoincareJ::UnitFormat(reductionContext->unitFormat())
+    .m_unitFormat = reductionContext->unitFormat()
   };
   PoincareJ::Tree* e = tree()->clone();
   // TODO_PCJ: Do not beautify !! Decide if a projection is needed.

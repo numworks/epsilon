@@ -1,43 +1,12 @@
 #include <poincare/approximation_helper.h>
 
 #include "approximation.h"
+#include "context.h"
 #include "rational.h"
 
 using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
 
 namespace PoincareJ {
-
-template <typename T>
-std::complex<T> computeNotPrincipalRealRootOfRationalPow(
-    const std::complex<T> c, T p, T q) {
-  // Assert p and q are in fact integers
-  assert(std::round(p) == p);
-  assert(std::round(q) == q);
-  /* Try to find a real root of c^(p/q) with p, q integers. We ignore cases
-   * where the principal root is real as these cases are handled generically
-   * later (for instance 1232^(1/8) which has a real principal root is not
-   * handled here). */
-  if (c.imag() == static_cast<T>(0.0) &&
-      std::pow(static_cast<T>(-1.0), q) < static_cast<T>(0.0)) {
-    /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
-     * exist (which is not necessarily the principal root)!
-     * For q even integer, a real root does not necessarily exist (example:
-     * -2 ^(1/2)). */
-    std::complex<T> absc = c;
-    absc.real(std::fabs(absc.real()));
-    // compute |c|^(p/q) which is a real
-    std::complex<T> absCPowD =
-        computeOnComplex<T>(absc, std::complex<T>(p / q), ComplexFormat::Real);
-    /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
-     *                      = sign(c)^p         * |c|^(p/q)
-     *                      = -|c|^(p/q) iff c < 0 and p odd */
-    return c.real() < static_cast<T>(0.0) &&
-                   std::pow(static_cast<T>(-1.0), p) < static_cast<T>(0.0)
-               ? -absCPowD
-               : absCPowD;
-  }
-  return NAN;
-}
 
 template <typename T>
 std::complex<T> computeOnComplex(const std::complex<T> c,
@@ -99,6 +68,38 @@ std::complex<T> computeOnComplex(const std::complex<T> c,
   std::complex<T> precision =
       d.real() < static_cast<T>(0.0) ? std::pow(c, static_cast<T>(-1.0)) : c;
   return NeglectRealOrImaginaryPartIfNeglectable(result, precision, d, false);
+}
+
+template <typename T>
+std::complex<T> computeNotPrincipalRealRootOfRationalPow(
+    const std::complex<T> c, T p, T q) {
+  // Assert p and q are in fact integers
+  assert(std::round(p) == p);
+  assert(std::round(q) == q);
+  /* Try to find a real root of c^(p/q) with p, q integers. We ignore cases
+   * where the principal root is real as these cases are handled generically
+   * later (for instance 1232^(1/8) which has a real principal root is not
+   * handled here). */
+  if (c.imag() == static_cast<T>(0.0) &&
+      std::pow(static_cast<T>(-1.0), q) < static_cast<T>(0.0)) {
+    /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
+     * exist (which is not necessarily the principal root)!
+     * For q even integer, a real root does not necessarily exist (example:
+     * -2 ^(1/2)). */
+    std::complex<T> absc = c;
+    absc.real(std::fabs(absc.real()));
+    // compute |c|^(p/q) which is a real
+    std::complex<T> absCPowD =
+        computeOnComplex<T>(absc, std::complex<T>(p / q), ComplexFormat::Real);
+    /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
+     *                      = sign(c)^p         * |c|^(p/q)
+     *                      = -|c|^(p/q) iff c < 0 and p odd */
+    return c.real() < static_cast<T>(0.0) &&
+                   std::pow(static_cast<T>(-1.0), p) < static_cast<T>(0.0)
+               ? -absCPowD
+               : absCPowD;
+  }
+  return NAN;
 }
 
 template <typename T>

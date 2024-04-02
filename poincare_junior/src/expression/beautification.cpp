@@ -7,6 +7,7 @@
 #include "advanced_simplification.h"
 #include "approximation.h"
 #include "arithmetic.h"
+#include "context.h"
 #include "float.h"
 #include "number.h"
 #include "rational.h"
@@ -212,7 +213,7 @@ bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
     mustSystematicReduce |= tempMustSystematicReduce;
   }
   // A parent simplification is required after inverse trigonometry beautify
-  *simplifyParent = (angleUnit != PoincareJ::AngleUnit::Radian &&
+  *simplifyParent = (angleUnit != AngleUnit::Radian &&
                      (tree->isATrig() || tree->isArcTangentRad()));
   if (ShallowBeautifyAngleFunctions(tree, angleUnit)) {
     return true;
@@ -228,7 +229,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
                                                    AngleUnit angleUnit) {
   // Beautify System nodes to prevent future simplifications.
   if (tree->isTrig() || tree->isTangentRad()) {
-    if (angleUnit != PoincareJ::AngleUnit::Radian) {
+    if (angleUnit != AngleUnit::Radian) {
       Tree* child = tree->child(0);
       child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
@@ -245,7 +246,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
     PatternMatching::MatchAndReplace(tree, KATrig(KA, 0_e), KACos(KA)) ||
         PatternMatching::MatchAndReplace(tree, KATrig(KA, 1_e), KASin(KA)) ||
         PatternMatching::MatchAndReplace(tree, KATanRad(KA), KATan(KA));
-    if (angleUnit != PoincareJ::AngleUnit::Radian) {
+    if (angleUnit != AngleUnit::Radian) {
       tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
           KMult(KA, KB), {.KA = tree, .KB = Angle::ToRad(angleUnit)}));
     }
@@ -364,7 +365,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   if (std::isnan(re) || std::isnan(im)) {
     return SharedEditionPool->push(BlockType::Undefined);
   }
-  if (im != 0 && complexFormat == PoincareJ::ComplexFormat::Real) {
+  if (im != 0 && complexFormat == ComplexFormat::Real) {
     return SharedEditionPool->push(BlockType::Nonreal);
   }
   if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {

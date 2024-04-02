@@ -1,16 +1,18 @@
 #ifndef POINCARE_EXPRESSION_CONTEXT_H
 #define POINCARE_EXPRESSION_CONTEXT_H
 
+#include <poincare/preferences.h>
 #include <poincare_junior/src/memory/tree.h>
 
 #include "k_tree.h"
 
 namespace PoincareJ {
 
-enum class ComplexFormat { Real, Cartesian, Polar };
-enum class AngleUnit : uint8_t { Radian = 0, Degree = 1, Gradian = 2 };
+using AngleUnit = Poincare::Preferences::AngleUnit;
+using ComplexFormat = Poincare::Preferences::ComplexFormat;
+using UnitFormat = Poincare::Preferences::UnitFormat;
+
 enum class Strategy { Default, NumbersToFloat, ApproximateToFloat };
-enum class UnitFormat : bool { Metric = 0, Imperial = 1 };
 
 class Angle {
  public:

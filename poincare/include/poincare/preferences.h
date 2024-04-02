@@ -33,7 +33,7 @@ class __attribute__((packed)) Preferences final {
     Radian = 0,
     Degree,
     Gradian,
-    NumberOfAngleUnit,
+    LastAngleUnit = Gradian,
   };
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
@@ -44,7 +44,7 @@ class __attribute__((packed)) Preferences final {
     Decimal = 0,
     Scientific,
     Engineering,
-    NumberOfPrintFloatMode,
+    LastPrintFloatMode = Engineering,
   };
   enum class EditionMode : bool {
     Edition2D,
@@ -54,19 +54,19 @@ class __attribute__((packed)) Preferences final {
     Real = 0,
     Cartesian,
     Polar,
-    NumberOfComplexFormat,
+    LastComplexFormat = Polar,
   };
   constexpr static ComplexFormat k_defautComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
   constexpr static size_t k_numberOfBitsForAngleUnit =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(AngleUnit::NumberOfAngleUnit));
+          static_cast<unsigned int>(AngleUnit::LastAngleUnit) + 1);
   constexpr static size_t k_numberOfBitsForPrintFloatMode =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(PrintFloatMode::NumberOfPrintFloatMode));
+          static_cast<unsigned int>(PrintFloatMode::LastPrintFloatMode) + 1);
   constexpr static size_t k_numberOfBitsForComplexFormat =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(ComplexFormat::NumberOfComplexFormat));
+          static_cast<unsigned int>(ComplexFormat::LastComplexFormat) + 1);
 
   struct CalculationPreferences {
     AngleUnit angleUnit : k_numberOfBitsForAngleUnit;

@@ -843,6 +843,8 @@ void Layoutter::StripUselessPlus(Tree *rack) {
       }
       previousPlus =
           CodePointLayout::GetCodePoint(child) == '+' ? child : nullptr;
+    } else {
+      previousPlus = nullptr;
     }
     for (Tree *subRack : child->children()) {
       StripUselessPlus(subRack);

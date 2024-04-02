@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <poincare/preferences.h>
+#include <poincare_junior/src/expression/angle.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/decimal.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>

@@ -5,6 +5,7 @@
 #include <poincare_junior/src/n_ary.h>
 
 #include "advanced_simplification.h"
+#include "angle.h"
 #include "approximation.h"
 #include "arithmetic.h"
 #include "context.h"

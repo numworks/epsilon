@@ -7,6 +7,7 @@
 #include <omg/global_box.h>
 #include <poincare/context.h>
 #include <poincare/exam_mode.h>
+#include <poincare_junior/src/expression/context.h>
 #include <stdint.h>
 
 namespace Poincare {
@@ -29,12 +30,7 @@ class __attribute__((packed)) Preferences final {
 
   // Calculation preferences
 
-  enum class AngleUnit : uint8_t {
-    Radian = 0,
-    Degree,
-    Gradian,
-    LastAngleUnit = Gradian,
-  };
+  using AngleUnit = PoincareJ::AngleUnit;
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
    * auto mode tries to return 'natural' float like (0.021) and switches to
@@ -50,12 +46,7 @@ class __attribute__((packed)) Preferences final {
     Edition2D,
     Edition1D,
   };
-  enum class ComplexFormat : uint8_t {
-    Real = 0,
-    Cartesian,
-    Polar,
-    LastComplexFormat = Polar,
-  };
+  using ComplexFormat = PoincareJ::ComplexFormat;
   constexpr static ComplexFormat k_defautComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
   constexpr static size_t k_numberOfBitsForAngleUnit =
@@ -82,8 +73,7 @@ class __attribute__((packed)) Preferences final {
   };
 
   // Other preferences
-
-  enum class UnitFormat : bool { Metric = 0, Imperial = 1 };
+  using UnitFormat = PoincareJ::UnitFormat;
   /* The symbol used for combinations and permutations is country-dependent and
    * set in apps but it stored there to be accessible from Poincare */
   enum class CombinatoricSymbols : uint8_t {

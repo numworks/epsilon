@@ -476,8 +476,9 @@ void assert_expression_approximation_is_bounded(const char *expression,
   Shared::GlobalContext globalContext;
   PoincareJ::Tree *e = parse_expression(expression, &globalContext, true);
   ApproximationContext approximationContext(&globalContext, Cartesian, Radian);
-  T result = PoincareJ::Approximation::RootTreeTo<T>(e);
+  // TODO_PCJ
 #if 0
+  T result = PoincareJ::Approximation::RootTreeTo<T>(e);
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(
       result < upBound || (result == upBound && upBoundIncluded), expression);

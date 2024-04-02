@@ -59,7 +59,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
     context->numberOfUserVariables = userVariables->numberOfChildren();
     Tree* userVariable = userVariables->firstChild();
     for (int i = 0; i < context->numberOfUserVariables; i++) {
-      if (userVariable->isUserNamed()) {
+      if (userVariable->isUserSymbol()) {
         Symbol::CopyName(userVariable, context->userVariables[i],
                          Symbol::k_maxNameSize);
       }

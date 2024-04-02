@@ -177,7 +177,6 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("undef", "undef");
   // TODO: Simplify to 1/√(1+x^2).
   simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/(x^2+1)+1)");
-  // TODO: Simplify to x/√(-x^2+1)
   simplifies_to("x×(-x^2+1)^(-1/2)", "x/√(-x^2+1)");
   // TODO: Simplify to x
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",

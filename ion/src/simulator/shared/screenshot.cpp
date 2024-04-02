@@ -25,7 +25,7 @@ constexpr static KDColor k_backgroundColor = KDColorBlack;
 constexpr static KDColor k_glyphColor = KDColorWhite;
 #endif
 
-Screenshot::Screenshot(const char* path) : m_skipIdle(false) { init(path); }
+Screenshot::Screenshot(const char* path) { init(path); }
 
 void Screenshot::init(const char* path, bool eachStep, bool computeCRC32) {
   if (path != m_path || computeCRC32) {
@@ -84,9 +84,6 @@ void Screenshot::capture(Events::Event nextEvent) {
   m_stepNumber++;
   bool isLastScreenshot = nextEvent == Events::None;
   if (!isLastScreenshot && !m_eachStep) {
-    return;
-  }
-  if (m_skipIdle && nextEvent == Events::Idle) {
     return;
   }
 

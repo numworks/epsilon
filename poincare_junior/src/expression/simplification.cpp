@@ -802,10 +802,7 @@ bool RelaxProjectionContext(void* context) {
     // Nothing more can be done.
     return false;
   }
-  projectionContext->m_strategy =
-      (projectionContext->m_strategy == Strategy::NumbersToFloat)
-          ? Strategy::ApproximateToFloat
-          : Strategy::NumbersToFloat;
+  projectionContext->m_strategy = Strategy::ApproximateToFloat;
   return true;
 }
 

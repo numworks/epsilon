@@ -15,7 +15,7 @@ enum class ComplexFormat : uint8_t {
   Polar,
   LastComplexFormat = Polar,
 };
-enum class Strategy { Default, NumbersToFloat, ApproximateToFloat };
+enum class Strategy { Default, ApproximateToFloat };
 enum class UnitFormat : bool { Metric = 0, Imperial = 1 };
 
 }  // namespace PoincareJ

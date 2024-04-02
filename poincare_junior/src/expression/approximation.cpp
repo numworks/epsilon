@@ -1095,18 +1095,17 @@ bool interruptApproximation(TypeBlock type, int childIndex,
 }
 
 bool Approximation::ApproximateAndReplaceEveryScalar(
-    Tree* tree, bool collapse, const ProjectionContext* ctx) {
+    Tree* tree, const ProjectionContext* ctx) {
   Context context(ctx ? ctx->m_angleUnit : AngleUnit::Radian,
                   ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
   s_context = &context;
-  bool result = ApproximateAndReplaceEveryScalarT<double>(tree, collapse);
+  bool result = ApproximateAndReplaceEveryScalarT<double>(tree);
   s_context = nullptr;
   return result;
 }
 
 template <typename T>
-bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
-                                                      bool collapse) {
+bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   // These types are either already approximated or impossible to approximate.
   if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
       tree->isComplexI() ||
@@ -1118,14 +1117,13 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree,
   }
   bool changed = false;
   bool approximateNode =
-      (collapse || (tree->numberOfChildren() == 0)) &&
       !(tree->isList() || tree->isMatrix() || tree->isPoint());
   int childIndex = 0;
   for (Tree* child : tree->children()) {
     if (interruptApproximation(tree->type(), childIndex++, child->type())) {
       break;
     }
-    changed = ApproximateAndReplaceEveryScalarT<T>(child, collapse) || changed;
+    changed = ApproximateAndReplaceEveryScalarT<T>(child) || changed;
     approximateNode = approximateNode && child->type() == FloatType<T>::type;
   }
   if (!approximateNode) {
@@ -1176,10 +1174,8 @@ template Tree* Approximation::RootTreeToTree<float>(const Tree*, AngleUnit,
 template Tree* Approximation::RootTreeToTree<double>(const Tree*, AngleUnit,
                                                      ComplexFormat);
 
-template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*,
-                                                                      bool);
-template bool Approximation::ApproximateAndReplaceEveryScalarT<double>(Tree*,
-                                                                       bool);
+template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*);
+template bool Approximation::ApproximateAndReplaceEveryScalarT<double>(Tree*);
 
 template int Approximation::IndexOfActivePiecewiseBranchAt<float>(
     const Tree* piecewise, float x);

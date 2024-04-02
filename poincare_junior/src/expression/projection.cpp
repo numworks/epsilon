@@ -25,12 +25,9 @@ ProjectionContext Projection::ContextFromSettings() {
 bool Projection::DeepSystemProject(Tree* ref,
                                    ProjectionContext projectionContext) {
   bool changed = false;
-  if (projectionContext.m_strategy != Strategy::Default) {
-    assert((projectionContext.m_strategy == Strategy::ApproximateToFloat ||
-            projectionContext.m_strategy == Strategy::NumbersToFloat));
+  if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
     changed = Approximation::ApproximateAndReplaceEveryScalar(
-        ref, projectionContext.m_strategy == Strategy::ApproximateToFloat,
-        &projectionContext);
+        ref, &projectionContext);
   }
   return Tree::ApplyShallowInDepth(ref, ShallowSystemProject,
                                    &projectionContext) ||

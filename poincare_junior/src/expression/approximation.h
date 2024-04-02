@@ -92,8 +92,8 @@ class Approximation final {
   /* If collapse is true, approximate parents if all children have approximated.
    * Also raise if result is undefined. */
   static bool ApproximateAndReplaceEveryScalar(
-      Tree* tree, bool collapse = true, const ProjectionContext* ctx = nullptr);
-  EDITION_REF_WRAP_2D(ApproximateAndReplaceEveryScalar, bool, true,
+      Tree* tree, const ProjectionContext* ctx = nullptr);
+  EDITION_REF_WRAP_1D(ApproximateAndReplaceEveryScalar,
                       const ProjectionContext*, nullptr);
 
   /* Returns -1 if every condition is false, it assumes there is no other free
@@ -110,7 +110,7 @@ class Approximation final {
   static U MapAndReduce(const Tree* node, Reductor<U> reductor,
                         Mapper<std::complex<T>, U> mapper = nullptr);
   template <typename T>
-  static bool ApproximateAndReplaceEveryScalarT(Tree* tree, bool collapse);
+  static bool ApproximateAndReplaceEveryScalarT(Tree* tree);
 
   template <typename T>
   static T ConvertToRadian(T angle);

@@ -1,7 +1,6 @@
 #ifndef POINCARE_JUNIOR_STUDENT_DISTRIBUTION_H
 #define POINCARE_JUNIOR_STUDENT_DISTRIBUTION_H
 
-#include <poincare/preferences.h>
 #include <poincare_junior/src/memory/tree.h>
 
 #include "continuous_distribution.h"

@@ -57,8 +57,8 @@ class FunctionListController : public ExpressionModelListController,
   virtual OMG::HorizontalDirection parameterColumnPosition() const = 0;
 
   Escher::SelectableListView m_selectableListView;
-  Escher::SimpleButtonCell m_plotButton;
-  Escher::SimpleButtonCell m_valuesButton;
+  Escher::ButtonCell m_plotButton;
+  Escher::ButtonCell m_valuesButton;
 };
 
 }  // namespace Shared

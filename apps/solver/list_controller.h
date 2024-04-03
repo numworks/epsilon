@@ -80,7 +80,7 @@ class ListController : public Shared::ExpressionModelListController,
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Escher::EditableExpressionModelCell m_editableCell;
-  Escher::SimpleButtonCell m_resolveButton;
+  Escher::ButtonCell m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
   Escher::StackViewController::Default m_modelsStackController;
 };

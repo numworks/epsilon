@@ -29,7 +29,7 @@ MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
                 return true;
               },
               this),
-          KDFont::Size::Large),
+          ButtonCell::Style::EmbossedGray, KDFont::Size::Large),
       m_selectableTableView(this, this, this, this),
       m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, this),
       m_editorController(this, pythonDelegate),

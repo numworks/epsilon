@@ -72,7 +72,7 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
   /* Position buttons */
   int nbOfButtons = numberOfButtons();
   KDCoordinate widthMargin = 0;
-  KDCoordinate buttonHeightMargin = 0;
+  KDCoordinate heightMargin = 0;
   KDCoordinate buttonHeight = rowHeight;
   if (m_style == Style::EmbossedGray) {
     KDCoordinate totalButtonWidth = 0;
@@ -82,15 +82,13 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
     }
     widthMargin = std::round(((float)(bounds().width() - totalButtonWidth)) /
                              ((float)(nbOfButtons + 1)));
-    buttonHeightMargin = m_size == Size::Small
-                             ? k_embossedStyleHeightMarginSmall
-                             : k_embossedStyleHeightMarginLarge;
-    buttonHeight = rowHeight - 2 * buttonHeightMargin;
+    heightMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall
+                                         : k_embossedStyleHeightMarginLarge;
+    buttonHeight = rowHeight - 2 * heightMargin;
   }
-  KDCoordinate yOrigin =
-      m_position == Position::Top
-          ? buttonHeightMargin
-          : bounds().height() - rowHeight + buttonHeightMargin;
+  KDCoordinate yOrigin = m_position == Position::Top
+                             ? heightMargin
+                             : bounds().height() - rowHeight + heightMargin;
   int currentXOrigin = widthMargin;
   for (int i = 0; i < nbOfButtons; i++) {
     ButtonCell *button = buttonAtIndex(i);
@@ -133,13 +131,13 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
   }
   assert(m_style == Style::EmbossedGray);
   assert(m_position == Position::Bottom);
-  int buttonHeight = m_size == Size::Small ? k_embossedStyleHeightSmall
-                                           : k_embossedStyleHeightLarge;
-  int buttonMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall
+  int rowHeight = m_size == Size::Small ? k_embossedStyleHeightSmall
+                                        : k_embossedStyleHeightLarge;
+  int heightMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall
                                            : k_embossedStyleHeightMarginLarge;
-  drawRowFrame(ctx, buttonHeight, Palette::GrayWhite, Palette::GrayMiddle);
-  KDCoordinate y0 = bounds().height() - buttonHeight + buttonMargin - 1;
-  KDCoordinate y1 = bounds().height() - buttonMargin;
+  drawRowFrame(ctx, rowHeight, Palette::GrayWhite, Palette::GrayMiddle);
+  KDCoordinate y0 = bounds().height() - rowHeight + heightMargin - 1;
+  KDCoordinate y1 = bounds().height() - heightMargin;
   KDCoordinate totalButtonWidth = 0;
   for (int i = 0; i < numberOfButtons(); i++) {
     ButtonCell *button = buttonAtIndex(i);

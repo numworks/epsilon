@@ -147,8 +147,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
       PoincareHelpers::CloneAndSimplifyAndApproximate(
           inputExpression, &exactOutputExpression, &approximateOutputExpression,
           context,
-          {.symbolicComputation = SymbolicComputation::
-               ReplaceAllSymbolsWithDefinitionsOrUndefined});
+          // TODO_PCJ: Was ReplaceAllSymbolsWithDefinitionsOrUndefined.
+          {.symbolicComputation =
+               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition});
       assert(!exactOutputExpression.isUninitialized() &&
              !approximateOutputExpression.isUninitialized());
 

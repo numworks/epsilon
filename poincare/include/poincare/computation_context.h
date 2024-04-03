@@ -3,6 +3,7 @@
 
 #include <poincare/context.h>
 #include <poincare/preferences.h>
+#include <poincare_junior/src/expression/context.h>
 
 namespace Poincare {
 
@@ -21,13 +22,7 @@ enum class ReductionTarget {
   User
 };
 
-enum class SymbolicComputation {
-  ReplaceAllSymbolsWithDefinitionsOrUndefined = 0,
-  ReplaceAllDefinedSymbolsWithDefinition = 1,
-  ReplaceDefinedFunctionsWithDefinitions = 2,
-  ReplaceAllSymbolsWithUndefined = 3,  // Used in UnitConvert::shallowReduce
-  DoNotReplaceAnySymbol = 4
-};
+using SymbolicComputation = PoincareJ::SymbolicComputation;
 
 enum class UnitConversion { None = 0, Default, InternationalSystem };
 

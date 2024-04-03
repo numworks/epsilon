@@ -501,15 +501,19 @@ void RackParser::parseImplicitAdditionBetweenUnits(
          ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
   /* We parse the string again, but this time with
    * ParsingMethod::ImplicitAdditionBetweenUnits. */
-  // TODO we need to be able to set the initial parsing position for this
-  // Parser p(m_currentToken.text(), /*m_parsingContext.context(),*/
-  // m_currentToken.text() + m_currentToken.length(),
-  // ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
-  // leftHandSide = p.parse();
+#if 0
+  // TODO_PCJ we need to be able to set the initial parsing position for this
+  Parser p(m_currentToken.text(),  /* m_parsingContext.context() */
+           m_currentToken.text() + m_currentToken.length(),
+           ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
+  leftHandSide = p.parse();
   if (leftHandSide.isUninitialized()) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   isThereImplicitOperator();
+#else
+  ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 void RackParser::parseSlash(EditionReference &leftHandSide,

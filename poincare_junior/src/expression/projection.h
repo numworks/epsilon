@@ -14,6 +14,7 @@ struct ProjectionContext {
   Strategy m_strategy = Strategy::Default;
   Dimension m_dimension = Dimension();
   UnitFormat m_unitFormat = UnitFormat::Metric;
+  SymbolicComputation m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
 };
 
 class Projection {

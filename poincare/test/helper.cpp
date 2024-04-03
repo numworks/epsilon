@@ -239,7 +239,8 @@ void assert_parsed_expression_simplify_to(
         PoincareJ::ProjectionContext context = {
             .m_complexFormat = reductionContext.complexFormat(),
             .m_angleUnit = reductionContext.angleUnit(),
-            .m_unitFormat = reductionContext.unitFormat()};
+            .m_unitFormat = reductionContext.unitFormat(),
+            .m_symbolic = reductionContext.symbolicComputation()};
         PoincareJ::Simplification::Simplify(e, &context);
         // TODO PCJ also approximate to see if it crashes
         return e;

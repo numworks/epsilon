@@ -71,20 +71,22 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
 
   /* Position buttons */
   int nbOfButtons = numberOfButtons();
+  assert(nbOfButtons > 0);
   KDCoordinate widthMargin = 0;
   KDCoordinate heightMargin = 0;
-  KDCoordinate buttonHeight = rowHeight;
   if (m_style == Style::EmbossedGray) {
+    KDCoordinate buttonHeight =
+        buttonAtIndex(0)->minimalSizeForOptimalDisplay().height();
+    assert(0 < buttonHeight && buttonHeight <= rowHeight);
+    heightMargin = (rowHeight - buttonHeight) / 2;  //  voir si pas pair
     KDCoordinate totalButtonWidth = 0;
     for (int i = 0; i < nbOfButtons; i++) {
-      ButtonCell *button = buttonAtIndex(i);
-      totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
+      KDSize buttonSize = buttonAtIndex(i)->minimalSizeForOptimalDisplay();
+      totalButtonWidth += buttonSize.width();
+      assert(buttonSize.height() == buttonHeight);
     }
     widthMargin = std::round(((float)(bounds().width() - totalButtonWidth)) /
                              ((float)(nbOfButtons + 1)));
-    heightMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall
-                                         : k_embossedStyleHeightMarginLarge;
-    buttonHeight = rowHeight - 2 * heightMargin;
   }
   KDCoordinate yOrigin = m_position == Position::Top
                              ? heightMargin
@@ -92,10 +94,11 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
   int currentXOrigin = widthMargin;
   for (int i = 0; i < nbOfButtons; i++) {
     ButtonCell *button = buttonAtIndex(i);
-    KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
-    KDRect buttonFrame(currentXOrigin, yOrigin, buttonWidth, buttonHeight);
+    KDSize buttonSize = button->minimalSizeForOptimalDisplay();
+    KDRect buttonFrame(currentXOrigin, yOrigin, buttonSize.width(),
+                       buttonSize.height());
     setChildFrame(button, buttonFrame, force);
-    currentXOrigin += buttonWidth + widthMargin;
+    currentXOrigin += buttonSize.width() + widthMargin;
   }
 }
 
@@ -131,24 +134,34 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
   }
   assert(m_style == Style::EmbossedGray);
   assert(m_position == Position::Bottom);
+
   int rowHeight = m_size == Size::Small ? k_embossedStyleHeightSmall
                                         : k_embossedStyleHeightLarge;
-  int heightMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall
-                                           : k_embossedStyleHeightMarginLarge;
+
+  int nbOfButtons = numberOfButtons();
+  assert(nbOfButtons > 0);
+  KDCoordinate buttonHeight =
+      buttonAtIndex(0)->minimalSizeForOptimalDisplay().height();
+  assert(0 < buttonHeight && buttonHeight <= rowHeight);
+  KDCoordinate heightMargin =
+      (rowHeight - buttonHeight) / 2;  // voir si pas pair
+
   drawRowFrame(ctx, rowHeight, Palette::GrayWhite, Palette::GrayMiddle);
   KDCoordinate y0 = bounds().height() - rowHeight + heightMargin - 1;
   KDCoordinate y1 = bounds().height() - heightMargin;
+
   KDCoordinate totalButtonWidth = 0;
-  for (int i = 0; i < numberOfButtons(); i++) {
-    ButtonCell *button = buttonAtIndex(i);
-    totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
+  for (int i = 0; i < nbOfButtons; i++) {
+    KDSize buttonSize = buttonAtIndex(i)->minimalSizeForOptimalDisplay();
+    totalButtonWidth += buttonSize.width();
+    assert(buttonSize.height() == buttonHeight);
   }
   KDCoordinate widthMargin =
       std::round(((float)(bounds().width() - totalButtonWidth)) /
-                 ((float)(numberOfButtons() + 1)));
+                 ((float)(nbOfButtons + 1)));
 
   int currentXOrigin = widthMargin - 1;
-  for (int i = 0; i < numberOfButtons(); i++) {
+  for (int i = 0; i < nbOfButtons; i++) {
     ButtonCell *button = buttonAtIndex(i);
     KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
     ctx->fillRect(KDRect(currentXOrigin, y0, 1, y1 - y0 + 1),

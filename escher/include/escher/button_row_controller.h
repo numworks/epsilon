@@ -64,10 +64,6 @@ class ButtonRowController : public ViewController {
         Metric::ButtonRowEmbossedStyleHeightSmall;
     constexpr static KDCoordinate k_embossedStyleHeightLarge =
         Metric::ButtonRowEmbossedStyleHeightLarge;
-    constexpr static KDCoordinate k_embossedStyleHeightMarginSmall =
-        Metric::ButtonRowEmbossedStyleHeightMarginSmall;
-    constexpr static KDCoordinate k_embossedStyleHeightMarginLarge =
-        Metric::ButtonRowEmbossedStyleHeightMarginLarge;
 
     void drawRowFrame(KDContext* ctx, KDCoordinate innerHeight,
                       KDColor backgroundColor, KDColor borderColor) const;

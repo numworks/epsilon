@@ -49,8 +49,6 @@ class Metric {
   constexpr static KDCoordinate ButtonRowPlainStyleHeight = 20;
   constexpr static KDCoordinate ButtonRowEmbossedStyleHeightSmall = 36;
   constexpr static KDCoordinate ButtonRowEmbossedStyleHeightLarge = 52;
-  constexpr static KDCoordinate ButtonRowEmbossedStyleHeightMarginSmall = 6;
-  constexpr static KDCoordinate ButtonRowEmbossedStyleHeightMarginLarge = 8;
 
   // Color indicators
   constexpr static KDCoordinate HorizontalColorIndicatorThickness = 2;

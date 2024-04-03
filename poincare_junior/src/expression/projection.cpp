@@ -10,6 +10,55 @@
 
 namespace PoincareJ {
 
+bool Projection::DeepReplaceUserNamed(Tree* tree,
+                                      SymbolicComputation symbolicComputation) {
+  return symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol &&
+         Tree::ApplyShallowInDepth(tree, ShallowReplaceUserNamed,
+                                   &symbolicComputation);
+}
+
+bool Projection::ShallowReplaceUserNamed(Tree* tree, void* context) {
+  SymbolicComputation symbolicComputation =
+      *(static_cast<SymbolicComputation*>(context));
+  assert(symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
+  bool treeIsUserFunction = tree->isUserFunction();
+  if (!treeIsUserFunction) {
+    if (!tree->isUserSymbol() ||
+        symbolicComputation ==
+            SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
+      return false;
+    }
+  }
+  if (symbolicComputation ==
+      SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+    ExceptionCheckpoint::Raise(ExceptionType::Undefined);
+  }
+  // Get Definition
+  // TODO: Pull definition from storage context
+  Tree* definition =
+      treeIsUserFunction ? KUnknownSymbol->clone() : (2_e)->clone();
+  if (symbolicComputation ==
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
+      !definition) {
+    ExceptionCheckpoint::Raise(ExceptionType::Undefined);
+  } else if (!definition) {
+    return false;
+  }
+  // Replace function's symbol with definition
+  EditionReference evaluateAt;
+  if (treeIsUserFunction) {
+    evaluateAt = tree->child(0)->clone();
+  }
+  tree->moveTreeOverTree(definition);
+  if (treeIsUserFunction) {
+    tree->deepReplaceWith(KUnknownSymbol, evaluateAt);
+    evaluateAt->removeTree();
+  }
+  // Replace node again in cas it has been replaced with another symbol
+  ShallowReplaceUserNamed(tree, context);
+  return true;
+}
+
 ProjectionContext Projection::ContextFromSettings() {
   return ProjectionContext{
       .m_complexFormat =

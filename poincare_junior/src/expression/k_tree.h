@@ -116,6 +116,11 @@ constexpr auto KVarK = KVar<Parametric::k_localVariableId,
 constexpr auto KVarX = KVar<Parametric::k_localVariableId,
                             Parametric::k_continuousVariableSign.getValue()>;
 
+// Default UserSymbol in functions
+constexpr auto KUnknownSymbol =
+    KTree<BlockType::UserSymbol, 2, static_cast<uint8_t>(UCodePointUnknown),
+          0>();
+
 // Booleans
 constexpr auto KFalse = KTree<BlockType::False>();
 constexpr auto KTrue = KTree<BlockType::True>();

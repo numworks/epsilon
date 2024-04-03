@@ -18,22 +18,26 @@ Random::Context::Context() {
   }
 }
 
-uint8_t Random::SeedTreeNodes(Tree* tree) {
-  uint8_t currentSeed = 0;
+uint8_t Random::SeedTreeNodes(Tree* tree, uint8_t maxSeed) {
+  uint8_t currentSeed = maxSeed;
   Tree* u = tree;
   int descendants = 1;
   while (descendants > 0) {
     descendants--;
     if (u->isRandomNode()) {
-      // RandIntNoRep needs to reserve seed for each of its elements.
-      int size = u->isRandIntNoRep() ? Dimension::GetListLength(u) : 1;
-      assert(static_cast<int>(currentSeed) + size < UINT8_MAX);
-      if (currentSeed + size > Context::k_maxNumberOfVariables) {
-        assert(GetSeed(u) == 0);
-        return currentSeed;
+      if (GetSeed(u) == 0) {
+        // RandIntNoRep needs to reserve seed for each of its elements.
+        int size = u->isRandIntNoRep() ? Dimension::GetListLength(u) : 1;
+        assert(static_cast<int>(currentSeed) + size < UINT8_MAX);
+        if (currentSeed + size > Context::k_maxNumberOfVariables) {
+          assert(GetSeed(u) == 0);
+          return currentSeed;
+        }
+        SetSeed(u, currentSeed + 1);
+        currentSeed += size;
+      } else {
+        assert(GetSeed(u) <= maxSeed);
       }
-      SetSeed(u, currentSeed + 1);
-      currentSeed += size;
     }
     descendants += u->numberOfChildren();
     u = u->nextNode();

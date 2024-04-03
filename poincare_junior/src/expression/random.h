@@ -37,9 +37,9 @@ class Random {
     static constexpr int k_maxNumberOfVariables = 16;
     VariableType m_list[k_maxNumberOfVariables];
   };
-  /* Takes a Tree containing un-seeded random nodes only, and seed them. Return
-   * the last seed. */
-  static uint8_t SeedTreeNodes(Tree* tree);
+  /* Takes a Tree containing random nodes (seeded, or not, up to maxSeed) and
+   * seed the unseeded nodes. Return the last seed. */
+  static uint8_t SeedTreeNodes(Tree* tree, uint8_t maxSeed = 0);
   static uint8_t GetSeed(const Tree* randomTree) {
     assert(randomTree->isRandomNode());
     return randomTree->nodeValue(0);

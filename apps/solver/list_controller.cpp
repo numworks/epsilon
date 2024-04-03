@@ -31,7 +31,8 @@ ListController::ListController(Responder *parentResponder,
                             return true;
                           },
                           this),
-                      KDFont::Size::Large, Palette::PurpleBright),
+                      ButtonCell::Style::EmbossedGray, KDFont::Size::Large,
+                      Palette::PurpleBright),
       m_modelsParameterController(this, equationStore, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite) {
@@ -56,7 +57,7 @@ ButtonCell *ListController::buttonAtIndex(
   if (position == ButtonRowController::Position::Top) {
     return nullptr;
   }
-  return const_cast<SimpleButtonCell *>(&m_resolveButton);
+  return const_cast<ButtonCell *>(&m_resolveButton);
 }
 
 HighlightCell *ListController::reusableCell(int index, int type) {

@@ -134,50 +134,9 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
   }
   assert(m_style == Style::EmbossedGray);
   assert(m_position == Position::Bottom);
-
   int rowHeight = m_size == Size::Small ? k_embossedStyleHeightSmall
                                         : k_embossedStyleHeightLarge;
-
-  int nbOfButtons = numberOfButtons();
-  assert(nbOfButtons > 0);
-  KDCoordinate buttonHeight =
-      buttonAtIndex(0)->minimalSizeForOptimalDisplay().height();
-  assert(0 < buttonHeight && buttonHeight <= rowHeight);
-  KDCoordinate heightMargin =
-      (rowHeight - buttonHeight) / 2;  // voir si pas pair
-
   drawRowFrame(ctx, rowHeight, Palette::GrayWhite, Palette::GrayMiddle);
-  KDCoordinate y0 = bounds().height() - rowHeight + heightMargin - 1;
-  KDCoordinate y1 = bounds().height() - heightMargin;
-
-  KDCoordinate totalButtonWidth = 0;
-  for (int i = 0; i < nbOfButtons; i++) {
-    KDSize buttonSize = buttonAtIndex(i)->minimalSizeForOptimalDisplay();
-    totalButtonWidth += buttonSize.width();
-    assert(buttonSize.height() == buttonHeight);
-  }
-  KDCoordinate widthMargin =
-      std::round(((float)(bounds().width() - totalButtonWidth)) /
-                 ((float)(nbOfButtons + 1)));
-
-  int currentXOrigin = widthMargin - 1;
-  for (int i = 0; i < nbOfButtons; i++) {
-    ButtonCell *button = buttonAtIndex(i);
-    KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
-    ctx->fillRect(KDRect(currentXOrigin, y0, 1, y1 - y0 + 1),
-                  Palette::GrayMiddle);
-    ctx->fillRect(KDRect(currentXOrigin - 1, y0, 1, y1 - y0 + 2),
-                  Palette::GrayDark);
-    ctx->fillRect(KDRect(currentXOrigin, y0, buttonWidth + 2, 1),
-                  Palette::GrayMiddle);
-    ctx->fillRect(KDRect(currentXOrigin, y1, buttonWidth + 2, 1),
-                  Palette::GrayMiddle);
-    ctx->fillRect(KDRect(currentXOrigin, y1 + 1, buttonWidth + 2, 1),
-                  Palette::GrayDark);
-    ctx->fillRect(KDRect(currentXOrigin + 1 + buttonWidth, y0, 1, y1 - y0 + 1),
-                  Palette::GrayMiddle);
-    currentXOrigin += buttonWidth + widthMargin;
-  }
 }
 
 bool ButtonRowController::ContentView::setSelectedButton(int selectedButton) {

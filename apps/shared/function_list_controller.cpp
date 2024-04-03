@@ -25,7 +25,8 @@ FunctionListController::FunctionListController(Responder *parentResponder,
                          return true;
                        },
                        this),
-                   KDFont::Size::Small, Palette::PurpleBright),
+                   ButtonCell::Style::EmbossedGray, KDFont::Size::Small,
+                   Palette::PurpleBright),
       m_valuesButton(this, I18n::Message::DisplayValues,
                      Invocation::Builder<FunctionListController>(
                          [](FunctionListController *list, void *sender) {
@@ -35,7 +36,8 @@ FunctionListController::FunctionListController(Responder *parentResponder,
                            return true;
                          },
                          this),
-                     KDFont::Size::Small, Palette::PurpleBright) {
+                     ButtonCell::Style::EmbossedGray, KDFont::Size::Small,
+                     Palette::PurpleBright) {
   m_selectableListView.resetMargins();
   m_selectableListView.setVerticalCellOverlap(0);
 }

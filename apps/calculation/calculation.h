@@ -130,7 +130,7 @@ class Calculation {
   bool exactAndApproximatedAreEqual() const {
     return m_exactOutputTreeSize == m_approximatedOutputTreeSize &&
            memcmp(exactOutputTree(), approximatedOutputTree(),
-                  m_exactOutputTreeSize);
+                  m_exactOutputTreeSize) == 0;
   }
 
   size_t cumulatedTreeSizes() const {

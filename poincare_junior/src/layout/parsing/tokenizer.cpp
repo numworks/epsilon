@@ -15,8 +15,7 @@ namespace PoincareJ {
 
 bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
 #if TODO_PCJ
-  ParsingContext pContext(
-      /*nullptr, */ ParsingContext::ParsingMethod::Assignment);
+  ParsingContext pContext(nullptr, ParsingContext::ParsingMethod::Assignment);
   Tokenizer tokenizer(decoder, &pContext);
   Token t = tokenizer.popToken();
   if (t.type() != Token::Type::CustomIdentifier ||

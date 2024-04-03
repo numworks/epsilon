@@ -228,9 +228,10 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   }
   identifiersString[bufferCurrentLength] = 0;
 
+  // TODO_PCJ: Pass a proper context instead of nullptr
   /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
    * beautify each token. */
-  ParsingContext parsingContext(/*context, */
+  ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
 
   /* The content of h will be modified if token match which would break the

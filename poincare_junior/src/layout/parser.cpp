@@ -50,7 +50,8 @@ BlockType ExpressionType(LayoutType type) {
 Tree* Parser::Parse(const Tree* node) {
   switch (node->layoutType()) {
     case LayoutType::Rack:
-      return RackParser(node).parse();
+      // TODO_PCJ: Pass a proper context instead of nullptr
+      return RackParser(node, nullptr).parse();
     // case LayoutType::Parenthesis:
     // return Parse(node->child(0));
     case LayoutType::VerticalOffset:

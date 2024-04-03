@@ -9,7 +9,8 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_layout_tokenize) {
-  ParsingContext context(ParsingContext::ParsingMethod::Classic);
+  // TODO_PCJ: Pass a proper context instead of nullptr
+  ParsingContext context(nullptr, ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer("ab*123.45"_l, &context);
   Token token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::CustomIdentifier &&
@@ -38,14 +39,16 @@ QUIZ_CASE(pcj_layout_tokenize) {
 }
 
 bool is_parsable(const Tree* layout) {
-  EditionReference expression = RackParser(layout).parse();
+  // TODO_PCJ: Pass a proper context instead of nullptr
+  EditionReference expression = RackParser(layout, nullptr).parse();
   return !expression.isUninitialized();
 }
 
 // TODO import all the parsing tests from poincare
 
 QUIZ_CASE(pcj_layout_parse) {
-  assert_trees_are_equal(RackParser("2^(3+1)^4"_l).parse(),
+  // TODO_PCJ: Pass a proper context instead of nullptr
+  assert_trees_are_equal(RackParser("2^(3+1)^4"_l, nullptr).parse(),
                          KPow(2_e, KPow(KParenthesis(KAdd(3_e, 1_e)), 4_e)));
   quiz_assert(is_parsable("12(123 +  0x2a+2*0b0101)"_l));
   // TODO _l with non-ascii codepoints

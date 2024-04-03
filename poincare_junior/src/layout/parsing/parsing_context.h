@@ -21,9 +21,8 @@ class ParsingContext {
     CommaSeparatedList  // 1,2,3 is parsed as system list of 1, 2 and 3
   };
 
-  ParsingContext(
-      /*Poincare::Context * context, */ ParsingContext::ParsingMethod
-          parsingMethod)
+  ParsingContext(Poincare::Context* context,
+                 ParsingContext::ParsingMethod parsingMethod)
       : m_context(nullptr), m_parsingMethod(parsingMethod) {}
 
   Poincare::Context* context() { return m_context; }

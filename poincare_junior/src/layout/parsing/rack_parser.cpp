@@ -503,7 +503,7 @@ void RackParser::parseImplicitAdditionBetweenUnits(
    * ParsingMethod::ImplicitAdditionBetweenUnits. */
 #if 0
   // TODO_PCJ we need to be able to set the initial parsing position for this
-  Parser p(m_currentToken.text(),  /* m_parsingContext.context() */
+  Parser p(m_currentToken.text(), m_parsingContext.context(),
            m_currentToken.text() + m_currentToken.length(),
            ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
   leftHandSide = p.parse();
@@ -1239,7 +1239,8 @@ Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
       m_nextToken.firstLayout()->isParenthesisLayout()) {
     assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
-    RackParser subParser(m_nextToken.firstLayout()->nextNode(), -1,
+    // TODO_PCJ: Pass a proper context instead of nullptr
+    RackParser subParser(m_nextToken.firstLayout()->nextNode(), nullptr, -1,
                          ParsingContext::ParsingMethod::CommaSeparatedList);
     popToken();
     return subParser.parse();

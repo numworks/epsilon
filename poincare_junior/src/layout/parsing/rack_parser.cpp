@@ -3,6 +3,7 @@
 #include <ion/unicode/utf8_decoder.h>
 // #include <poincare/empty_context.h>
 #include <omgpj/unicode_helper.h>
+#include <poincare/symbol_abstract.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/constant.h>
@@ -974,12 +975,10 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 void RackParser::privateParseCustomIdentifier(EditionReference &leftHandSide,
                                               const char *name, size_t length,
                                               Token::Type stoppingType) {
-#if 0
-  if (!SymbolAbstractNode::NameLengthIsValid(name, length)) {
+  if (!Poincare::SymbolAbstractNode::NameLengthIsValid(name, length)) {
     // Identifier name too long.
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-#endif
 
   /* Check the context: if the identifier does not already exist as a function,
    * seq or list, interpret it as a symbol, even if there are parentheses

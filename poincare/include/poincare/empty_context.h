@@ -3,7 +3,12 @@
 
 #include <assert.h>
 
+#include "context.h"
+
 namespace Poincare {
+
+class JuniorExpression;
+class ContextWithParent;
 
 class EmptyContext : public Context {
  public:
@@ -21,9 +26,7 @@ class EmptyContext : public Context {
  protected:
   const JuniorExpression protectedExpressionForSymbolAbstract(
       const SymbolAbstract& symbol, bool clone,
-      ContextWithParent* lastDescendantContext) override {
-    return JuniorExpression();
-  }
+      ContextWithParent* lastDescendantContext) override;
 };
 
 }  // namespace Poincare

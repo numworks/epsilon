@@ -1,9 +1,10 @@
 #include "rack_parser.h"
 
 #include <ion/unicode/utf8_decoder.h>
-// #include <poincare/empty_context.h>
 #include <omgpj/unicode_helper.h>
+#include <poincare/empty_context.h>
 #include <poincare/symbol_abstract.h>
+#include <poincare/variable_context.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/constant.h>
@@ -105,21 +106,19 @@ Tree *RackParser::parseExpressionWithRightwardsArrow(
         rightHandSide->child(0)->isUserSymbol()))) {
     setState(previousState);
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
-#if 0
-    EmptyContext tempContext = EmptyContext();
+    Poincare::EmptyContext tempContext = Poincare::EmptyContext();
     // This is instantiated outside the condition so that the pointer is not
     // lost.
-    VariableContext assignmentContext("", &tempContext);
+    Poincare::VariableContext assignmentContext("", &tempContext);
     if (rightHandSide->isUserFunction() && m_parsingContext.context()) {
       /* If assigning a function, set the function parameter in the context
        * for parsing leftHandSide.
        * This is to ensure that 3g->f(g) is correctly parsed */
-      EditionReference functionParameter = rightHandSide.child(0);
-      assignmentContext = VariableContext(
-          static_cast<Symbol &>(functionParameter), m_parsingContext.context());
+      EditionReference functionParameter = rightHandSide->child(0);
+      assignmentContext = Poincare::VariableContext(
+          Symbol::GetName(functionParameter), m_parsingContext.context());
       m_parsingContext.setContext(&assignmentContext);
     }
-#endif
     // Parse leftHandSide
     m_nextToken = m_tokenizer.popToken();
     EditionReference leftHandSide = parseUntil(Token::Type::RightwardsArrow);
@@ -857,8 +856,9 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
             m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
             &parameterLength)) {
       Poincare::Context *oldContext = m_parsingContext.context();
-      VariableContext parameterContext(
-          Symbol::Builder(parameterText, parameterLength), oldContext);
+      Poincare::VariableContext parameterContext(
+          Poincare::Symbol::Builder(parameterText, parameterLength),
+          oldContext);
       m_parsingContext.setContext(&parameterContext);
       leftHandSide = parseFunctionParameters();
       m_parsingContext.setContext(oldContext);
@@ -1133,24 +1133,20 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
       parameter->type() == BlockType::UserSymbol &&
       m_nextToken.type() == Token::Type::AssignmentEqual &&
       m_parsingContext.context()) {
-#if 0
     /* Set the parameter in the context to ensure that f(t)=t is not
      * understood as f(t)=1_t
      * If we decide that functions can be assigned with any parameter,
      * this will ensure that f(abc)=abc is understood like f(x)=x
      */
     Poincare::Context *previousContext = m_parsingContext.context();
-    VariableContext functionAssignmentContext(static_cast<Symbol &>(parameter),
-                                              m_parsingContext.context());
+    Poincare::VariableContext functionAssignmentContext(
+        Symbol::GetName(parameter), m_parsingContext.context());
     m_parsingContext.setContext(&functionAssignmentContext);
     // We have to parseUntil here so that we do not lose the
     // functionAssignmentContext pointer.
     leftHandSide = parseUntil(stoppingType, result);
     m_parsingContext.setContext(previousContext);
     return true;
-#else
-    ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
   }
   leftHandSide = result;
   return true;

@@ -111,6 +111,7 @@ class JuniorExpression : public OExpression {
     return isUninitialized() ? nullptr : node()->tree();
   }
   JuniorExpression childAtIndex(int i) const;
+  int numberOfDescendants(bool includeSelf) const;
   ExpressionNode::Type type() const;
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const;
 
@@ -281,6 +282,57 @@ class JuniorExpression : public OExpression {
   bool isPureAngleUnit() const;
   bool isInRadians(Context* context) const;
   bool involvesDiscontinuousFunction(Context* context) const;
+#endif
+#if 1
+  /* TODO_PCJ : Remove those methods from TreeHandle once only JuniorExpression
+   * remains. In the meantime, they are overriden there to assert false in case
+   * they are still used. */
+  /* Hierarchy */
+  bool hasChild(TreeHandle t) const {
+    assert(false);
+    return false;
+  }
+  bool hasSibling(TreeHandle t) const {
+    assert(false);
+    return false;
+  }
+  bool hasAncestor(TreeHandle t, bool includeSelf) const {
+    assert(false);
+    return false;
+  }
+  TreeHandle commonAncestorWith(TreeHandle t,
+                                bool includeTheseNodes = true) const {
+    assert(false);
+    return t;
+  }
+  void setNumberOfChildren(int numberOfChildren) { assert(false); }
+  int indexOfChild(TreeHandle t) const {
+    assert(false);
+    return 0;
+  }
+  TreeHandle parent() const {
+    assert(false);
+    return *this;
+  }
+  void setParentIdentifier(uint16_t id) { assert(false); }
+  void deleteParentIdentifier() { assert(false); }
+  void deleteParentIdentifierInChildren() { assert(false); }
+  void incrementNumberOfChildren(int increment = 1) { assert(false); }
+
+  /* Hierarchy operations */
+  // Replace
+  void replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) {
+    assert(false);
+  }
+  void replaceChildAtIndexInPlace(int oldChildIndex, TreeHandle newChild) {
+    assert(false);
+  }
+  void replaceChildAtIndexWithGhostInPlace(int index) { assert(false); }
+  void replaceChildWithGhostInPlace(TreeHandle t) { assert(false); }
+  // Merge
+  void mergeChildrenAtIndexInPlace(TreeHandle t, int i) { assert(false); }
+  // Swap
+  void swapChildrenInPlace(int i, int j) { assert(false); }
 #endif
 };
 

@@ -129,6 +129,9 @@ Symbol Symbol::Builder(CodePoint name) {
 }
 
 OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
+  assert(false);
+  return replaceWithUndefinedInPlace();
+#if 0
   SymbolicComputation symbolicComputation =
       reductionContext.symbolicComputation();
   if (symbolicComputation ==
@@ -190,6 +193,7 @@ OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
   // The stored expression is as entered by the user, so we need to call reduce
   result = result.deepReduce(reductionContext);
   return result;
+#endif
 }
 
 bool Symbol::derivate(const ReductionContext& reductionContext, Symbol symbol,

@@ -229,6 +229,11 @@ JuniorExpression JuniorExpression::childAtIndex(int i) const {
   return Builder(tree()->child(i));
 }
 
+int JuniorExpression::numberOfDescendants(bool includeSelf) const {
+  assert(tree());
+  return tree()->treeSize() - 1 + includeSelf;
+}
+
 ExpressionNode::Type JuniorExpression::type() const {
   /* TODO_PCJ: These are the types checked for in apps. Update apps to use the
    *           new blockType instead. */

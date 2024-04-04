@@ -78,7 +78,7 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
     KDCoordinate buttonHeight =
         buttonAtIndex(0)->minimalSizeForOptimalDisplay().height();
     assert(0 < buttonHeight && buttonHeight <= rowHeight);
-    heightMargin = (rowHeight - buttonHeight) / 2;  //  voir si pas pair
+    heightMargin = (rowHeight - buttonHeight) / 2;
     KDCoordinate totalButtonWidth = 0;
     for (int i = 0; i < nbOfButtons; i++) {
       KDSize buttonSize = buttonAtIndex(i)->minimalSizeForOptimalDisplay();

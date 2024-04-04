@@ -60,7 +60,7 @@ class CategoricalController
   virtual CategoricalTableCell* categoricalTableCell() = 0;
 
   Escher::ViewController* m_nextController;
-  Escher::ButtonCell m_next;
+  ButtonCategoricalCell m_next;
 
  private:
   // ScrollViewDelegate

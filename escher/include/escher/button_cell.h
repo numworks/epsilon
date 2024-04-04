@@ -17,8 +17,6 @@ class ButtonCell : public HighlightCell, public Responder {
 
   ButtonCell(Responder* parentResponder, I18n::Message textBody,
              Escher::Invocation invocation, Style style = Style::None,
-             KDColor backgroundColor = Escher::Palette::WallScreen,
-             KDCoordinate horizontalMargins = 0,
              KDFont::Size fontSize = KDFont::Size::Large,
              KDColor textColor = KDColorBlack);
 
@@ -31,11 +29,6 @@ class ButtonCell : public HighlightCell, public Responder {
   virtual KDColor highlightedBackgroundColor() const { return Palette::Select; }
   void setMessage(I18n::Message message) {
     m_messageTextView.setMessage(message);
-  }
-
-  KDColor backgroundColor() const { return m_backgroundColor; }
-  void setBackgroundColor(const KDColor backgroundColor) {
-    m_backgroundColor = backgroundColor;
   }
 
  protected:
@@ -59,8 +52,6 @@ class ButtonCell : public HighlightCell, public Responder {
 
   Invocation m_invocation;
   KDFont::Size m_font;
-  KDColor m_backgroundColor;
-  KDCoordinate m_horizontalMargins;
   Style m_style;
 };
 
@@ -70,8 +61,8 @@ class SimpleButtonCell : public ButtonCell {
                    Invocation invocation,
                    KDFont::Size font = KDFont::Size::Small,
                    KDColor textColor = KDColorBlack)
-      : ButtonCell(parentResponder, textBody, invocation, Style::None,
-                   Escher::Palette::WallScreen, 0, font, textColor) {}
+      : ButtonCell(parentResponder, textBody, invocation, Style::None, font,
+                   textColor) {}
 };
 
 }  // namespace Escher

@@ -4,7 +4,6 @@ namespace Escher {
 
 ButtonCell::ButtonCell(Responder* parentResponder, I18n::Message textBody,
                        Escher::Invocation invocation, Style style,
-                       KDColor backgroundColor, KDCoordinate horizontalMargins,
                        KDFont::Size fontSize, KDColor textColor)
     : HighlightCell(),
       Responder(parentResponder),
@@ -13,8 +12,6 @@ ButtonCell::ButtonCell(Responder* parentResponder, I18n::Message textBody,
                          .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_invocation(invocation),
       m_font(fontSize),
-      m_backgroundColor(backgroundColor),
-      m_horizontalMargins(horizontalMargins),
       m_style(style) {}
 
 View* ButtonCell::subviewAtIndex(int index) {
@@ -47,27 +44,16 @@ void ButtonCell::drawBorder(KDContext* ctx, OMG::Direction direction, int index,
   if (direction.isVertical()) {
     KDCoordinate y = direction.isUp() ? index * k_lineThickness
                                       : height - (index + 1) * k_lineThickness;
-    ctx->fillRect(KDRect(m_horizontalMargins, y,
-                         width - 2 * m_horizontalMargins, k_lineThickness),
-                  color);
+    ctx->fillRect(KDRect(0, y, width, k_lineThickness), color);
   } else {
     assert(direction.isHorizontal());
-    KDCoordinate x =
-        direction.isLeft()
-            ? m_horizontalMargins + index * k_lineThickness
-            : width - m_horizontalMargins - (index + 1) * k_lineThickness;
+    KDCoordinate x = direction.isLeft() ? index * k_lineThickness
+                                        : width - (index + 1) * k_lineThickness;
     ctx->fillRect(KDRect(x, 0, k_lineThickness, height), color);
   }
 }
 
 void ButtonCell::drawRect(KDContext* ctx, KDRect rect) const {
-  KDCoordinate width = bounds().width();
-  KDCoordinate height = bounds().height();
-  // Draw horizontal margins
-  ctx->fillRect(KDRect(0, 0, m_horizontalMargins, height), m_backgroundColor);
-  ctx->fillRect(
-      KDRect(width - m_horizontalMargins, 0, m_horizontalMargins, height),
-      m_backgroundColor);
   // Draw rectangle around cell
   if (m_style == Style::EmbossedLight) {
     drawBorder(ctx, OMG::Direction::Right(), 0, Palette::GrayBright);
@@ -93,24 +79,21 @@ void ButtonCell::layoutSubviews(bool force) {
   int nLinesBottom = numberOfBordersInDirection(OMG::Direction::Down());
   int nLinesLeft = numberOfBordersInDirection(OMG::Direction::Left());
   int nLinesRight = numberOfBordersInDirection(OMG::Direction::Right());
-  setChildFrame(&m_messageTextView,
-                KDRect(m_horizontalMargins + nLinesLeft * k_lineThickness,
-                       nLinesTop * k_lineThickness,
-                       width - 2 * m_horizontalMargins -
-                           (nLinesLeft + nLinesRight) * k_lineThickness,
-                       height - (nLinesTop + nLinesBottom) * k_lineThickness),
-                force);
+  setChildFrame(
+      &m_messageTextView,
+      KDRect(nLinesLeft * k_lineThickness, nLinesTop * k_lineThickness,
+             width - (nLinesLeft + nLinesRight) * k_lineThickness,
+             height - (nLinesTop + nLinesBottom) * k_lineThickness),
+      force);
 }
 
 KDSize ButtonCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
-  KDSize buttonSize = m_font == KDFont::Size::Small
-                          ? KDSize(textSize.width() + k_horizontalMarginSmall,
-                                   textSize.height() + k_verticalMarginSmall)
-                          : KDSize(textSize.width() + k_horizontalMarginLarge,
-                                   textSize.height() + k_verticalMarginLarge);
-  return KDSize(buttonSize.width() + 2 * m_horizontalMargins,
-                buttonSize.height());
+  return m_font == KDFont::Size::Small
+             ? KDSize(textSize.width() + k_horizontalMarginSmall,
+                      textSize.height() + k_verticalMarginSmall)
+             : KDSize(textSize.width() + k_horizontalMarginLarge,
+                      textSize.height() + k_verticalMarginLarge);
 }
 
 int ButtonCell::numberOfBordersInDirection(OMG::Direction direction) const {

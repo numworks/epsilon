@@ -47,10 +47,10 @@ class EditableFunctionCell
    public:
     ButtonCell(Escher::LayoutField* parentResponder,
                Escher::Invocation invocation)
-        : Escher::ButtonCell(
-              parentResponder, I18n::Message::UseFunctionModel, invocation,
-              Style::EmbossedGray, Escher::Palette::WallScreen, 0,
-              KDFont::Size::Small, Escher::Palette::PurpleBright) {}
+        : Escher::ButtonCell(parentResponder, I18n::Message::UseFunctionModel,
+                             invocation, Style::EmbossedGray,
+                             KDFont::Size::Small,
+                             Escher::Palette::PurpleBright) {}
     bool handleEvent(Ion::Events::Event event) override;
   };
 

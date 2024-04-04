@@ -34,6 +34,7 @@ CalculationParameterController::CalculationParameterController(
   m_maximumCell.label()->setMessage(I18n::Message::Maximum);
   m_integralCell.label()->setMessage(I18n::Message::Integral);
   m_slopeCell.label()->setMessage(I18n::Message::CartesianSlopeFormula);
+  m_slopeCell.subLabel()->setMessage(I18n::Message::CartesianSlopeDescription);
   m_tangentCell.label()->setMessage(I18n::Message::Tangent);
   m_rootCell.label()->setMessage(I18n::Message::Zeros);
   m_preimageCell.label()->setMessage(I18n::Message::Preimage);

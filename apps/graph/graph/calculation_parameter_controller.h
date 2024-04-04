@@ -77,7 +77,8 @@ class CalculationParameterController
   Escher::MenuCell<Escher::MessageTextView> m_minimumCell;
   Escher::MenuCell<Escher::MessageTextView> m_maximumCell;
   Escher::MenuCell<Escher::MessageTextView> m_integralCell;
-  Escher::MenuCell<Escher::MessageTextView> m_slopeCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView>
+      m_slopeCell;
   Escher::MenuCell<Escher::MessageTextView> m_tangentCell;
   Escher::MenuCell<Escher::MessageTextView> m_rootCell;
   Escher::MenuCell<Escher::OneLineBufferTextView<KDFont::Size::Large>,

@@ -1,7 +1,7 @@
 FunctionApp = "Grapher"
 FunctionAppCapital = "GRAPHER"
 FunctionTab = "Expressions"
-UseFunctionModel = "Templates"
+FunctionTemplates = "Templates"
 AddFunction = "Add an element"
 DeleteExpression = "Delete expression"
 IntervalT = "t interval"

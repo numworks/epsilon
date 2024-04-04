@@ -20,11 +20,8 @@ struct ProjectionContext {
 class Projection {
  public:
   static ProjectionContext ContextFromSettings();
-  static bool DeepReplaceUserNamed(
-      Tree *tree,
-      SymbolicComputation symbolicComputation);  // Context context
-  static bool DeepSystemProject(Tree *reference,
-                                ProjectionContext projectionContext = {});
+  static bool DeepReplaceUserNamed(Tree *tree, ProjectionContext ctx);
+  static bool DeepSystemProject(Tree *reference, ProjectionContext ctx = {});
   EDITION_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
 
   /* Some projections are performed during advanced reduction instead so the
@@ -32,9 +29,8 @@ class Projection {
   static bool Expand(Tree *tree);
 
  private:
-  static bool ShallowReplaceUserNamed(Tree *reference,
-                                      void *symbolicComputation);
-  static bool ShallowSystemProject(Tree *reference, void *projectionContext);
+  static bool ShallowReplaceUserNamed(Tree *reference, void *ctx);
+  static bool ShallowSystemProject(Tree *reference, void *ctx);
 };
 
 }  // namespace PoincareJ

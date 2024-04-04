@@ -10,16 +10,14 @@
 
 namespace PoincareJ {
 
-bool Projection::DeepReplaceUserNamed(Tree* tree,
-                                      SymbolicComputation symbolicComputation) {
-  return symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol &&
-         Tree::ApplyShallowInDepth(tree, ShallowReplaceUserNamed,
-                                   &symbolicComputation);
+bool Projection::DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
+  return ctx.m_symbolic != SymbolicComputation::DoNotReplaceAnySymbol &&
+         Tree::ApplyShallowInDepth(tree, ShallowReplaceUserNamed, &ctx);
 }
 
-bool Projection::ShallowReplaceUserNamed(Tree* tree, void* context) {
-  SymbolicComputation symbolicComputation =
-      *(static_cast<SymbolicComputation*>(context));
+bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
+  ProjectionContext projectionContext = *(static_cast<ProjectionContext*>(ctx));
+  SymbolicComputation symbolicComputation = projectionContext.m_symbolic;
   assert(symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
   bool treeIsUserFunction = tree->isUserFunction();
   if (!treeIsUserFunction) {
@@ -55,7 +53,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* context) {
     evaluateAt->removeTree();
   }
   // Replace node again in cas it has been replaced with another symbol
-  ShallowReplaceUserNamed(tree, context);
+  ShallowReplaceUserNamed(tree, ctx);
   return true;
 }
 

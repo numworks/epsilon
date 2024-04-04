@@ -889,8 +889,7 @@ bool Simplification::SimplifyLastTree(Tree* ref,
       Variables::BeautifyToName(ref, variables);
       variables->removeTree();
       ref = variables;
-      if (!Projection::DeepReplaceUserNamed(ref,
-                                            projectionContext.m_symbolic)) {
+      if (!Projection::DeepReplaceUserNamed(ref, projectionContext)) {
         return changed;
       }
       changed = true;

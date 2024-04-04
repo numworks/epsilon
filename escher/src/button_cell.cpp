@@ -105,8 +105,7 @@ KDSize ButtonCell::minimalSizeForOptimalDisplay() const {
     horizontalMargin = k_horizontalMarginLargeFontWithBorders;
     verticalMargin = k_verticalMarginLargeFontWithBorders;
   }
-  return KDSize(textSize.width() + horizontalMargin,
-                textSize.height() + verticalMargin);
+  return textSize + KDSize(horizontalMargin, verticalMargin);
 }
 
 int ButtonCell::numberOfBordersInDirection(OMG::Direction direction) const {

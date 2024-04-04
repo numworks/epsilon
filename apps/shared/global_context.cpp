@@ -139,10 +139,10 @@ bool GlobalContext::setExpressionForSymbolAbstract(
             Symbol::Builder(ContinuousFunction::k_polarSymbol)) ||
         childSymbol.isIdenticalTo(
             Symbol::Builder(ContinuousFunction::k_parametricSymbol)))) {
-    // Unsupported symbol. Fall back to the default cartesain function symbol
-    Expression symbolInX = symbol.clone();
-    symbolInX.replaceChildAtIndexInPlace(
-        0, Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
+    // Unsupported symbol. Fall back to the default cartesian function symbol
+    Expression symbolInX = Poincare::Function::Builder(
+        symbolToStore.name(), strlen(symbolToStore.name()),
+        Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
     symbolToStore = static_cast<const SymbolAbstract &>(symbolInX);
   }
   return setExpressionForFunction(finalExpression, symbolToStore, record) ==

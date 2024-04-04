@@ -38,10 +38,8 @@ void Boot::setMode(BootMode mode) {
 
 void Boot::busError() {
   Ion::Device::Flash::ClearInternalFlashErrors();
-  asm("mov r12, lr");
   if (config()->isBooting()) { // Bus error is normal if we are booting, it's triggered when we lock OPTCR
-    asm("mov lr, r12");
-    asm("bx lr");
+    return;
   }
   Bootloader::Recovery::crash_handler("BusFault");
 }

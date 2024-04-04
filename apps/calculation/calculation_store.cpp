@@ -2,6 +2,7 @@
 
 #include <apps/shared/expression_display_permissions.h>
 #include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/k_tree.h>
 #include <poincare/rational.h>
 #include <poincare/store.h>
 #include <poincare/symbol.h>
@@ -157,7 +158,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
-#if 0  // TODO_PCJ
         Expression exactStoredExpression =
             static_cast<Store &>(storeExpression).value();
         approximateOutputExpression =
@@ -168,8 +168,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
             ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
                 inputExpression, exactStoredExpression,
                 approximateOutputExpression, context)) {
-          storeExpression.replaceChildAtIndexInPlace(
-              0, approximateOutputExpression);
+          storeExpression = Expression::Create(
+              KStore(KA, KB), {.KA = approximateOutputExpression,
+                               .KB = storeExpression.childAtIndex(1)});
         }
         assert(static_cast<Store &>(storeExpression).symbol().type() !=
                    ExpressionNode::Type::Symbol ||
@@ -177,7 +178,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
                     .value()
                     .deepIsSymbolic(
                         nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
-#endif
       }
     } else {
       context->tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());

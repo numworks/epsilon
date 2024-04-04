@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_PROJECTION_H
 #define POINCARE_EXPRESSION_PROJECTION_H
 
+#include <poincare/context.h>
 #include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
@@ -15,6 +16,7 @@ struct ProjectionContext {
   Dimension m_dimension = Dimension();
   UnitFormat m_unitFormat = UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
+  Poincare::Context *m_context = nullptr;
 };
 
 class Projection {

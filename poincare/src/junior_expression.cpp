@@ -358,7 +358,8 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
                         ? PoincareJ::Strategy::ApproximateToFloat
                         : PoincareJ::Strategy::Default,
       .m_unitFormat = reductionContext.unitFormat(),
-      .m_symbolic = reductionContext.symbolicComputation()};
+      .m_symbolic = reductionContext.symbolicComputation(),
+      .m_context = reductionContext.context()};
   PoincareJ::Tree* e = tree()->clone();
   PoincareJ::Simplification::Simplify(e, &context);
   if (approximateExpression) {
@@ -383,7 +384,8 @@ JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
     .m_strategy = initialStrategy,
 #endif
     .m_unitFormat = reductionContext->unitFormat(),
-    .m_symbolic = reductionContext->symbolicComputation()
+    .m_symbolic = reductionContext->symbolicComputation(),
+    .m_context = reductionContext->context()
   };
   PoincareJ::Tree* e = tree()->clone();
   // TODO_PCJ: Do not beautify !! Decide if a projection is needed.

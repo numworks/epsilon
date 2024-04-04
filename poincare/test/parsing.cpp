@@ -15,7 +15,6 @@ using PoincareJ::Tokenizer;
 
 void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
   PoincareJ::Tree* inputLayout = PoincareJ::RackFromText(string);
-  // TODO_PCJ: Pass a proper context instead of nullptr
   ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer(inputLayout, &parsingContext);
@@ -46,7 +45,6 @@ void assert_tokenizes_as_constant(const char* string) {
 
 void assert_tokenizes_as_undefined_token(const char* string) {
   PoincareJ::Tree* inputLayout = PoincareJ::RackFromText(string);
-  // TODO_PCJ: Pass a proper context instead of nullptr
   ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer(inputLayout, &parsingContext);

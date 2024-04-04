@@ -151,8 +151,8 @@ JuniorExpression JuniorExpression::Parse(const PoincareJ::Tree* layout,
                                          Context* context,
                                          bool addMissingParenthesis,
                                          bool parseForAssignment) {
-  // TODO_PCJ: Use context, addMissingParenthesis and parseForAssignment.
-  return Builder(PoincareJ::Parser::Parse(layout));
+  // TODO_PCJ: Use addMissingParenthesis and parseForAssignment.
+  return Builder(PoincareJ::Parser::Parse(layout, context));
 }
 
 JuniorExpression JuniorExpression::Parse(const char* string, Context* context,

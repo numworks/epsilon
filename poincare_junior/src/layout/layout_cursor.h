@@ -3,6 +3,7 @@
 
 #include <escher/text_field.h>
 #include <omg/directions.h>
+#include <poincare/context.h>
 #include <poincare/junior_layout.h>
 #include <poincare_junior/src/layout/empty_rectangle.h>
 #include <poincare_junior/src/layout/rack_layout.h>
@@ -31,9 +32,6 @@ namespace PoincareJ {
  * It MUST be m_layout = Horizontal("01234") and m_position = 3
  *
  * */
-
-// TODO: reimplement Context
-class Context {};
 
 class LayoutCursor {
  public:
@@ -83,9 +81,10 @@ class LayoutCursor {
   /* Move */
   // Return false if could not move
   bool move(OMG::Direction direction, bool selecting, bool* shouldRedrawLayout,
-            Context* context = nullptr);
+            Poincare::Context* context = nullptr);
   bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting,
-                         bool* shouldRedrawLayout, Context* context = nullptr);
+                         bool* shouldRedrawLayout,
+                         Poincare::Context* context = nullptr);
 
   /* Layout deletion */
   void stopSelecting() { m_startOfSelection = -1; }
@@ -127,7 +126,7 @@ class LayoutCursor {
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
 
-  virtual bool beautifyRightOfRack(Rack* rack, Context* context) = 0;
+  virtual bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) = 0;
 
   // Cursor's horizontal position
   int m_position;
@@ -163,21 +162,22 @@ class LayoutBufferCursor final : public LayoutCursor {
   Rack* cursorNode() const override { return rootNode() + m_cursorNode; }
 
   /* Layout insertion */
-  void addEmptyMatrixLayout(Context* context);
-  void addEmptyPowerLayout(Context* context);
-  void addEmptySquareRootLayout(Context* context);
-  void addEmptySquarePowerLayout(Context* context);
-  void addEmptyExponentialLayout(Context* context);
-  void addEmptyTenPowerLayout(Context* context);
-  void addFractionLayoutAndCollapseSiblings(Context* context);
-  void insertText(const char* text, Context* context, bool forceRight = false,
-                  bool forceLeft = false, bool linearMode = false) {
+  void addEmptyMatrixLayout(Poincare::Context* context);
+  void addEmptyPowerLayout(Poincare::Context* context);
+  void addEmptySquareRootLayout(Poincare::Context* context);
+  void addEmptySquarePowerLayout(Poincare::Context* context);
+  void addEmptyExponentialLayout(Poincare::Context* context);
+  void addEmptyTenPowerLayout(Poincare::Context* context);
+  void addFractionLayoutAndCollapseSiblings(Poincare::Context* context);
+  void insertText(const char* text, Poincare::Context* context,
+                  bool forceRight = false, bool forceLeft = false,
+                  bool linearMode = false) {
     EditionPoolCursor::InsertTextContext insertTextContext{
         text, forceRight, forceLeft, linearMode};
     execute(&EditionPoolCursor::insertText, context, &insertTextContext);
   }
-  void insertLayout(const Tree* tree, Context* context, bool forceRight = false,
-                    bool forceLeft = false) {
+  void insertLayout(const Tree* tree, Poincare::Context* context,
+                    bool forceRight = false, bool forceLeft = false) {
     EditionPoolCursor::InsertLayoutContext insertLayoutContext{tree, forceRight,
                                                                forceLeft};
     execute(&EditionPoolCursor::insertLayout, context, &insertLayoutContext);
@@ -190,7 +190,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     m_layout->invalidAllSizesPositionsAndBaselines();
   }
 
-  void beautifyLeft(Context* context);
+  void beautifyLeft(Poincare::Context* context);
 
  private:
   class EditionPoolCursor final : public LayoutCursor {
@@ -212,18 +212,20 @@ class LayoutBufferCursor final : public LayoutCursor {
     }
 
     // EditionPoolCursor Actions
-    void performBackspace(Context* context, const void* nullptrData);
-    void deleteAndResetSelection(Context* context, const void* nullptrData);
+    void performBackspace(Poincare::Context* context, const void* nullptrData);
+    void deleteAndResetSelection(Poincare::Context* context,
+                                 const void* nullptrData);
     struct InsertLayoutContext {
       const Tree* m_tree;
       bool m_forceRight, m_forceLeft;
     };
-    void insertLayout(Context* context, const void* insertLayoutContext);
+    void insertLayout(Poincare::Context* context,
+                      const void* insertLayoutContext);
     struct InsertTextContext {
       const char* m_text;
       bool m_forceRight, m_forceLeft, m_linearMode;
     };
-    void insertText(Context* context, const void* insertTextContext);
+    void insertText(Poincare::Context* context, const void* insertTextContext);
     void balanceAutocompletedBracketsAndKeepAValidCursor();
 
     void privateDelete(DeletionMethod deletionMethod,
@@ -235,9 +237,11 @@ class LayoutBufferCursor final : public LayoutCursor {
       int m_rackOffset;
       mutable bool m_shouldRedraw;
     };
-    bool beautifyRightOfRack(Rack* rack, Context* context) override;
-    void beautifyRightOfRackAction(Context* context, const void* rack);
-    void beautifyLeftAction(Context* context, const void* /* no arg */);
+    bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
+    void beautifyRightOfRackAction(Poincare::Context* context,
+                                   const void* rack);
+    void beautifyLeftAction(Poincare::Context* context,
+                            const void* /* no arg */);
 
     EditionReference m_cursorReference;
   };
@@ -246,20 +250,21 @@ class LayoutBufferCursor final : public LayoutCursor {
                              cursorNodeOffset());
   }
   void applyEditionPoolCursor(EditionPoolCursor cursor);
-  typedef void (EditionPoolCursor::*Action)(Context* context, const void* data);
+  typedef void (EditionPoolCursor::*Action)(Poincare::Context* context,
+                                            const void* data);
   struct ExecutionContext {
     LayoutBufferCursor* m_cursor;
     Action m_action;
     int m_cursorOffset;
-    Context* m_context;
+    Poincare::Context* m_context;
   };
-  void execute(Action action, Context* context = nullptr,
+  void execute(Action action, Poincare::Context* context = nullptr,
                const void* data = nullptr);
   void setCursorNode(Rack* node) override {
     // Don't use node here as it may be invalid during execute
     m_cursorNode = node - Rack::From(static_cast<Tree*>(rootNode()));
   }
-  bool beautifyRightOfRack(Rack* rack, Context* context) override;
+  bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
 
   // Buffer of cursor's layout
   Poincare::JuniorLayout m_layout;

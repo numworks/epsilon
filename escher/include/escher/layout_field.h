@@ -6,6 +6,7 @@
 #include <escher/layout_view.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
+#include <poincare/context.h>
 #include <poincare/preferences.h>
 
 namespace Escher {
@@ -16,7 +17,7 @@ class LayoutField : public EditableField {
               LayoutFieldDelegate* delegate = nullptr,
               KDGlyph::Format format = {});
   void setDelegate(LayoutFieldDelegate* delegate);
-  PoincareJ::Context* context() const;
+  Poincare::Context* context() const;
   bool isEditing() const { return m_contentView.isEditing(); }
   void setEditing(bool isEditing);
   void clearLayout();
@@ -122,7 +123,7 @@ class LayoutField : public EditableField {
     // View
     KDSize minimalSizeForOptimalDisplay() const override;
     // Selection
-    void copySelection(PoincareJ::Context* context, bool intoStoreMenu);
+    void copySelection(Poincare::Context* context, bool intoStoreMenu);
     KDFont::Size font() const { return m_layoutView.font(); }
 
     KDRect cursorRect() const override;

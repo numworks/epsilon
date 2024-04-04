@@ -34,7 +34,6 @@ void PushPoincareExpressionViaParse(Poincare::OExpression exp) {
   char buffer[bufferSize];
   exp.serialize(buffer, bufferSize);
   EditionReference inputLayout = RackFromText(buffer);
-  // TODO_PCJ: Pass a proper context instead of nullptr
   RackParser(inputLayout, nullptr).parse();
   inputLayout->removeTree();
   return;

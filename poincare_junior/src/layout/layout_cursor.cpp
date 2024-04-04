@@ -92,7 +92,7 @@ static const Tree *mostNestedGridParent(const Tree *node, const Tree *root) {
 
 /* Move */
 bool LayoutCursor::move(OMG::Direction direction, bool selecting,
-                        bool *shouldRedrawLayout, Context *context) {
+                        bool *shouldRedrawLayout, Poincare::Context *context) {
   *shouldRedrawLayout = false;
   if (!selecting && isSelecting()) {
     stopSelecting();
@@ -136,7 +136,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   return moved;
 }
 
-void LayoutBufferCursor::beautifyLeft(Context *context) {
+void LayoutBufferCursor::beautifyLeft(Poincare::Context *context) {
   execute(&EditionPoolCursor::beautifyLeftAction, context, nullptr);
   if (position() > cursorNode()->numberOfChildren() + 1) {
     /* Beautification does not preserve the cursor so its position may be
@@ -150,12 +150,13 @@ void LayoutBufferCursor::beautifyLeft(Context *context) {
   // TODO factorize with beautifyRightOfRack
 }
 
-void LayoutBufferCursor::EditionPoolCursor::beautifyLeftAction(Context *context,
-                                                               const void *) {
+void LayoutBufferCursor::EditionPoolCursor::beautifyLeftAction(
+    Poincare::Context *context, const void *) {
   InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
 }
 
-bool LayoutBufferCursor::beautifyRightOfRack(Rack *rack, Context *context) {
+bool LayoutBufferCursor::beautifyRightOfRack(Rack *rack,
+                                             Poincare::Context *context) {
   EditionPoolCursor::BeautifyContext ctx{static_cast<int>(rack - cursorNode()),
                                          false};
   execute(&EditionPoolCursor::beautifyRightOfRackAction, context, &ctx);
@@ -163,7 +164,7 @@ bool LayoutBufferCursor::beautifyRightOfRack(Rack *rack, Context *context) {
 }
 
 bool LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRack(
-    Rack *targetRack, Context *context) {
+    Rack *targetRack, Poincare::Context *context) {
   LayoutBufferCursor::EditionPoolCursor tempCursor = *this;
   tempCursor.setLayout(targetRack, OMG::Direction::Right());
   return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(&tempCursor,
@@ -171,7 +172,7 @@ bool LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRack(
 }
 
 void LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRackAction(
-    Context *context, const void *rackOffset) {
+    Poincare::Context *context, const void *rackOffset) {
   const BeautifyContext *ctx = static_cast<const BeautifyContext *>(rackOffset);
   Rack *targetRack = cursorNode() + ctx->m_rackOffset;
   ctx->m_shouldRedraw = beautifyRightOfRack(targetRack, context);
@@ -179,7 +180,7 @@ void LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRackAction(
 
 bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
                                      bool selecting, bool *shouldRedrawLayout,
-                                     Context *context) {
+                                     Poincare::Context *context) {
   assert(step > 0);
   for (int i = 0; i < step; i++) {
     if (!move(direction, selecting, shouldRedrawLayout, context)) {
@@ -218,8 +219,8 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
 }
 
 /* const Tree* insertion */
-void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
-                                                         const void *data) {
+void LayoutBufferCursor::EditionPoolCursor::insertLayout(
+    Poincare::Context *context, const void *data) {
   const InsertLayoutContext *insertLayoutContext =
       static_cast<const InsertLayoutContext *>(data);
   bool forceRight = insertLayoutContext->m_forceRight;
@@ -394,40 +395,40 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 #endif
 }
 
-void LayoutBufferCursor::addEmptyExponentialLayout(Context *context) {
+void LayoutBufferCursor::addEmptyExponentialLayout(Poincare::Context *context) {
   insertLayout(KRackL("e"_cl, KSuperscriptL(""_l)), context, false, false);
 }
 
-void LayoutBufferCursor::addEmptyTenPowerLayout(Context *context) {
+void LayoutBufferCursor::addEmptyTenPowerLayout(Poincare::Context *context) {
   insertLayout(KRackL(KCodePointL<UCodePointMultiplicationSign>(), "1"_cl,
                       "0"_cl, KSuperscriptL(""_l)),
                context, false, false);
 }
 
-void LayoutBufferCursor::addEmptyMatrixLayout(Context *context) {
+void LayoutBufferCursor::addEmptyMatrixLayout(Poincare::Context *context) {
   insertLayout(KEmptyMatrixL, context, false, false);
 }
 
-void LayoutBufferCursor::addEmptySquareRootLayout(Context *context) {
+void LayoutBufferCursor::addEmptySquareRootLayout(Poincare::Context *context) {
   insertLayout(KSqrtL(""_l), context, false, false);
 }
 
-void LayoutBufferCursor::addEmptyPowerLayout(Context *context) {
+void LayoutBufferCursor::addEmptyPowerLayout(Poincare::Context *context) {
   insertLayout(KSuperscriptL(""_l), context, false, false);
 }
 
-void LayoutBufferCursor::addEmptySquarePowerLayout(Context *context) {
+void LayoutBufferCursor::addEmptySquarePowerLayout(Poincare::Context *context) {
   /* Force the cursor right of the layout. */
   insertLayout(KSuperscriptL("2"_l), context, true, false);
 }
 
 void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(
-    Context *context) {
+    Poincare::Context *context) {
   insertLayout(KFracL(""_l, ""_l), context, false, false);
 }
 
-void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
-                                                       const void *data) {
+void LayoutBufferCursor::EditionPoolCursor::insertText(
+    Poincare::Context *context, const void *data) {
   const InsertTextContext *insertTextContext =
       static_cast<const InsertTextContext *>(data);
   const char *text = insertTextContext->m_text;
@@ -558,8 +559,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
   // TODO: Restore beautification
 }
 
-void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
-                                                             const void *data) {
+void LayoutBufferCursor::EditionPoolCursor::performBackspace(
+    Poincare::Context *context, const void *data) {
   assert(data == nullptr);
   if (isSelecting()) {
     return deleteAndResetSelection(context, nullptr);
@@ -585,7 +586,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
 }
 
 void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
-    Context *context, const void *data) {
+    Poincare::Context *context, const void *data) {
   assert(data == nullptr);
   LayoutSelection selec = selection();
   if (selec.isEmpty()) {
@@ -1177,7 +1178,7 @@ void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
       Tree::FromBlocks(rootNode()->block() + cursor.cursorNodeOffset())));
 }
 
-void LayoutBufferCursor::execute(Action action, Context *context,
+void LayoutBufferCursor::execute(Action action, Poincare::Context *context,
                                  const void *data) {
   ExecutionContext executionContext{this, action, cursorNodeOffset(), context};
   // Perform Action within an execution
@@ -1209,7 +1210,8 @@ void LayoutBufferCursor::execute(Action action, Context *context,
         // Default implementation illustrating how the context could be
         // relaxed ExecutionContext * executionContext =
         // static_cast<ExecutionContext
-        // *>(context); Context * context = executionContext->m_context;
+        // *>(context); Poincare::Context * context =
+        // executionContext->m_context;
         return false;
       });
 }

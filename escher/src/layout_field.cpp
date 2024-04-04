@@ -4,6 +4,7 @@
 #include <escher/text_field.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -53,7 +54,7 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(evSize.width() + TextCursorView::k_width, evSize.height());
 }
 
-void LayoutField::ContentView::copySelection(PoincareJ::Context *context,
+void LayoutField::ContentView::copySelection(Poincare::Context *context,
                                              bool intoStoreMenu) {
   PoincareJ::LayoutSelection selection = m_cursor.selection();
   if (selection.isEmpty()) {
@@ -172,7 +173,7 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
   reload(previousSize);
 }
 
-PoincareJ::Context *LayoutField::context() const {
+Poincare::Context *LayoutField::context() const {
   return nullptr;
   // return m_delegate ? m_delegate->context() : nullptr;
 }
@@ -241,7 +242,7 @@ void LayoutField::reload(KDSize previousSize) {
 }
 
 using LayoutInsertionMethod =
-    void (PoincareJ::LayoutBufferCursor::*)(PoincareJ::Context *context);
+    void (PoincareJ::LayoutBufferCursor::*)(Poincare::Context *context);
 
 bool LayoutField::insertText(const char *text, bool indentation,
                              bool forceCursorRightOfText) {

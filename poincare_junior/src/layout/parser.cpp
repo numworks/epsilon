@@ -47,13 +47,12 @@ BlockType ExpressionType(LayoutType type) {
   }
 }
 
-Tree* Parser::Parse(const Tree* node) {
+Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
   switch (node->layoutType()) {
     case LayoutType::Rack:
-      // TODO_PCJ: Pass a proper context instead of nullptr
-      return RackParser(node, nullptr).parse();
+      return RackParser(node, context).parse();
     // case LayoutType::Parenthesis:
-    // return Parse(node->child(0));
+    // return Parse(node->child(0), context);
     case LayoutType::VerticalOffset:
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
@@ -77,7 +76,7 @@ Tree* Parser::Parse(const Tree* node) {
         if (grid->childIsPlaceholder(i)) {
           continue;
         }
-        Parse(grid->child(i));
+        Parse(grid->child(i), context);
         actualNumberOfChildren++;
       }
       if (expr->isPiecewise()) {
@@ -93,7 +92,7 @@ Tree* Parser::Parse(const Tree* node) {
           SharedEditionPool->push(ExpressionType(node->layoutType()));
       int n = node->numberOfChildren();
       for (int i = 0; i < n; i++) {
-        Parse(node->child(i));
+        Parse(node->child(i), context);
       }
       return ref;
     }

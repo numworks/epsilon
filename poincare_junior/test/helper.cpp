@@ -6,7 +6,6 @@
 
 Tree* parse(const char* input) {
   Tree* inputLayout = RackFromText(input);
-  // TODO_PCJ: Pass a proper context instead of nullptr
   RackParser(inputLayout, nullptr).parse();
   // quiz_assert(expression);
   inputLayout->removeTree();
@@ -52,7 +51,6 @@ const char * ApproximatedParsedIntegerString() {
 
 Tree* TextToTree(const char* input) {
   Tree* expression = RackFromText(input);
-  // TODO_PCJ: Pass a proper context instead of nullptr
   Tree* parsed = RackParser(expression, nullptr).parse();
   if (!parsed) {
     parsed = KUndef->clone();

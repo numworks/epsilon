@@ -805,8 +805,8 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   const Aliases *aliasesList = builtin->aliases();
   if (aliasesList->contains("log") && popTokenIfType(Token::Type::Subscript)) {
     // Special case for the log function (e.g. "log₂(8)")
-    EditionReference base =
-        Parser::Parse(m_currentToken.firstLayout()->child(0));
+    EditionReference base = Parser::Parse(
+        m_currentToken.firstLayout()->child(0), m_parsingContext.context());
     EditionReference parameter = parseFunctionParameters();
     if (parameter->numberOfChildren() != 1) {
       // Unexpected number of many parameters.
@@ -1234,8 +1234,8 @@ Tree *RackParser::parseCommaSeparatedList(bool isFirstToken) {
       m_nextToken.firstLayout()->isParenthesisLayout()) {
     assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
-    // TODO_PCJ: Pass a proper context instead of nullptr
-    RackParser subParser(m_nextToken.firstLayout()->nextNode(), nullptr, -1,
+    RackParser subParser(m_nextToken.firstLayout()->nextNode(),
+                         m_parsingContext.context(), -1,
                          ParsingContext::ParsingMethod::CommaSeparatedList);
     popToken();
     return subParser.parse();
@@ -1295,7 +1295,8 @@ void RackParser::parseLayout(EditionReference &leftHandSide,
   // }
   assert(m_currentToken.length() == 1);
   /* Parse standalone layouts */
-  leftHandSide = Parser::Parse(m_currentToken.firstLayout());
+  leftHandSide =
+      Parser::Parse(m_currentToken.firstLayout(), m_parsingContext.context());
   isThereImplicitOperator();
 }
 
@@ -1305,7 +1306,8 @@ void RackParser::parseSuperscript(EditionReference &leftHandSide,
   if (leftHandSide.isUninitialized()) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  EditionReference rightHandSide = Parser::Parse(layout->child(0));
+  EditionReference rightHandSide =
+      Parser::Parse(layout->child(0), m_parsingContext.context());
   if (rightHandSide.isUninitialized()) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1324,7 +1326,8 @@ void RackParser::parsePrefixSuperscript(EditionReference &leftHandSide,
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   const Tree *layout = m_currentToken.firstLayout();
-  EditionReference base = Parser::Parse(layout->child(0));
+  EditionReference base =
+      Parser::Parse(layout->child(0), m_parsingContext.context());
   if (base.isUninitialized()) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }

@@ -59,7 +59,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 }
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
-    LayoutCursor *layoutCursor, Context *context) {
+    LayoutCursor *layoutCursor, Poincare::Context *context) {
   Tree *l = layoutCursor->cursorNode();
   int position = layoutCursor->position();
   if (position == 0) {
@@ -71,7 +71,7 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
 }
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
-    LayoutCursor *layoutCursor, Context *context) {
+    LayoutCursor *layoutCursor, Poincare::Context *context) {
   Tree *l = layoutCursor->cursorNode();
   Tree *root = layoutCursor->rootNode();
   int position = layoutCursor->position();
@@ -184,8 +184,8 @@ bool InputBeautification::BeautifySymbols(Tree *h, int rightmostIndexToBeautify,
 
 bool InputBeautification::TokenizeAndBeautifyIdentifiers(
     Tree *h, int rightmostIndexToBeautify, const BeautificationRule *rulesList,
-    size_t numberOfRules, Context *context, LayoutCursor *layoutCursor,
-    bool logBeautification) {
+    size_t numberOfRules, Poincare::Context *context,
+    LayoutCursor *layoutCursor, bool logBeautification) {
   assert(h);
   assert(rightmostIndexToBeautify < h->numberOfChildren() &&
          rightmostIndexToBeautify >= 0);
@@ -228,10 +228,9 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   }
   identifiersString[bufferCurrentLength] = 0;
 
-  // TODO_PCJ: Pass a proper context instead of nullptr
   /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
    * beautify each token. */
-  ParsingContext parsingContext(nullptr,
+  ParsingContext parsingContext(context,
                                 ParsingContext::ParsingMethod::Classic);
 
   /* The content of h will be modified if token match which would break the
@@ -386,7 +385,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
 }
 
 bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
-                                      Context *context,
+                                      Poincare::Context *context,
                                       LayoutCursor *layoutCursor) {
   /* The "sum(" function is ambiguous". It can either be:
    *  - The sum of a list, which should not be beautified.

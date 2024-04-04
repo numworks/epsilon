@@ -63,9 +63,9 @@ class InputBeautification {
    * This is called only after an insertion, if the relevant char was inserted.
    */
   static bool BeautifyLeftOfCursorBeforeCursorMove(LayoutCursor* layoutCursor,
-                                                   Context* context);
+                                                   Poincare::Context* context);
   static bool BeautifyLeftOfCursorAfterInsertion(LayoutCursor* layoutCursor,
-                                                 Context* context);
+                                                 Poincare::Context* context);
 
  private:
   constexpr static int k_maxNumberOfParameters = 4;
@@ -277,7 +277,7 @@ class InputBeautification {
   static bool TokenizeAndBeautifyIdentifiers(
       Tree* rack, int rightmostIndexToBeautify,
       const BeautificationRule* rulesList, size_t numberOfRules,
-      Context* context, LayoutCursor* layoutCursor,
+      Poincare::Context* context, LayoutCursor* layoutCursor,
       bool logBeautification = false);
 
   static bool BeautifyPipeKey(Tree* rack, int indexOfPipeKey,
@@ -288,7 +288,8 @@ class InputBeautification {
   static bool BeautifyFirstOrderDerivativeIntoNthOrder(
       Tree* rack, int indexOfSuperscript, LayoutCursor* layoutCursor);
 
-  static bool BeautifySum(Tree* rack, int indexOfComma, Context* context,
+  static bool BeautifySum(Tree* rack, int indexOfComma,
+                          Poincare::Context* context,
                           LayoutCursor* layoutCursor);
 
   static bool CompareAndBeautifyIdentifier(

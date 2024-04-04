@@ -96,6 +96,15 @@ mp_obj_t modturtle_speed(size_t n_args, const mp_obj_t *args) {
   return mp_const_none;
 }
 
+mp_obj_t modturtle_position() {
+  mp_obj_t mp_pos[2];
+  mp_pos[0] = mp_obj_new_float(sTurtle.x());
+  mp_pos[1] = mp_obj_new_float(sTurtle.y());
+  return mp_obj_new_tuple(2, mp_pos);
+}
+
+mp_obj_t modturtle_heading() { return mp_obj_new_float(sTurtle.heading()); }
+
 mp_obj_t modturtle_distance(size_t n_args, const mp_obj_t *args) {
   mp_float_t x = 0;
   mp_float_t y = 0;
@@ -112,15 +121,6 @@ mp_obj_t modturtle_distance(size_t n_args, const mp_obj_t *args) {
   float distance = sqrt(pow(x - sTurtle.x(), 2) + pow(y - sTurtle.y(), 2));
   return mp_obj_new_float(distance);
 }
-
-mp_obj_t modturtle_position() {
-  mp_obj_t mp_pos[2];
-  mp_pos[0] = mp_obj_new_float(sTurtle.x());
-  mp_pos[1] = mp_obj_new_float(sTurtle.y());
-  return mp_obj_new_tuple(2, mp_pos);
-}
-
-mp_obj_t modturtle_heading() { return mp_obj_new_float(sTurtle.heading()); }
 
 mp_obj_t modturtle_pendown() {
   sTurtle.setPenDown(true);

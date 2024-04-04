@@ -410,7 +410,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
                           preferences->numberOfSignificantDigits(), context);
   if (result.type() == ExpressionNode::Type::Point &&
       layout.layoutSize(k_cellFont).width() >
-          Shared::ValuesController::defaultColumnWidth()) {
+          ApproximatedParametricCellSize().width() -
+              2 * Metric::SmallCellMargin) {
     // Fallback on two rows point display if one row does not fit
     layout = static_cast<const Point &>(result).create2DLayout(
         preferences->displayMode(), preferences->numberOfSignificantDigits(),

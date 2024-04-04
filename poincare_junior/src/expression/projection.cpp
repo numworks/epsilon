@@ -5,6 +5,7 @@
 #include <poincare_junior/src/expression/angle.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/decimal.h>
+#include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 
@@ -32,9 +33,14 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
     ExceptionCheckpoint::Raise(ExceptionType::Undefined);
   }
   // Get Definition
-  // TODO: Pull definition from storage context
-  Tree* definition =
-      treeIsUserFunction ? KUnknownSymbol->clone() : (2_e)->clone();
+  const Tree* definition =
+      projectionContext.m_context
+          ? projectionContext.m_context->treeForSymbolIdentifier(
+                Symbol::GetName(tree), Symbol::Length(tree),
+                treeIsUserFunction
+                    ? Poincare::Context::SymbolAbstractType::Function
+                    : Poincare::Context::SymbolAbstractType::Symbol)
+          : nullptr;
   if (symbolicComputation ==
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
       !definition) {
@@ -47,7 +53,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
   if (treeIsUserFunction) {
     evaluateAt = tree->child(0)->clone();
   }
-  tree->moveTreeOverTree(definition);
+  tree->cloneTreeOverTree(definition);
   if (treeIsUserFunction) {
     tree->deepReplaceWith(KUnknownSymbol, evaluateAt);
     evaluateAt->removeTree();

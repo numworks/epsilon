@@ -91,12 +91,19 @@ KDSize ButtonCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
   KDCoordinate horizontalMargin, verticalMargin;
   if (m_font == KDFont::Size::Small) {
-    horizontalMargin = k_horizontalMarginSmall;
-    verticalMargin = k_verticalMarginSmall;
+    if (m_style == Style::None) {
+      horizontalMargin = k_horizontalMarginSmallFontWithoutBorders;
+      verticalMargin = k_verticalMarginSmallFontWithoutBorders;
+    } else {
+      assert(m_style == Style::EmbossedGray || m_style == Style::EmbossedLight);
+      horizontalMargin = k_horizontalMarginSmallFontWithBorders;
+      verticalMargin = k_verticalMarginSmallFontWithBorders;
+    }
   } else {
     assert(m_font == KDFont::Size::Large);
-    horizontalMargin = k_horizontalMarginLarge;
-    verticalMargin = k_verticalMarginLarge;
+    assert(m_style == Style::EmbossedGray || m_style == Style::EmbossedLight);
+    horizontalMargin = k_horizontalMarginLargeFontWithBorders;
+    verticalMargin = k_verticalMarginLargeFontWithBorders;
   }
   return KDSize(textSize.width() + horizontalMargin,
                 textSize.height() + verticalMargin);

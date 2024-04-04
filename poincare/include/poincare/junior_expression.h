@@ -108,8 +108,7 @@ class JuniorExpression : public OExpression {
   static JuniorExpression Builder(PoincareJ::Tree* tree);
   static JuniorExpression Juniorize(OExpression e);
   const PoincareJ::Tree* tree() const {
-    assert(!isUninitialized());
-    return node()->tree();
+    return isUninitialized() ? nullptr : node()->tree();
   }
   JuniorExpression childAtIndex(int i) const;
   ExpressionNode::Type type() const;

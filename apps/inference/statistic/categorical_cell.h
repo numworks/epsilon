@@ -2,6 +2,7 @@
 #define INFERENCE_CATEGORICAL_CELL_H
 
 #include <apps/i18n.h>
+#include <escher/button_cell.h>
 #include <escher/dropdown_widget.h>
 #include <escher/menu_cell_with_editable_text.h>
 
@@ -79,6 +80,19 @@ class DropdownCategoricalCell : public AbstractCategoricalCell {
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::DropdownWidget>
       m_innerCell;
+};
+
+class ButtonCategoricalCell : public AbstractCategoricalCell {
+ public:
+  ButtonCategoricalCell(Escher::Responder* parent, I18n::Message message,
+                        Escher::Invocation invocation)
+      : m_innerCell(parent, message, invocation,
+                    Escher::ButtonCell::Style::EmbossedLight) {}
+
+ private:
+  HighlightCell* subviewAtIndex(int i) override { return &m_innerCell; }
+
+  Escher::ButtonCell m_innerCell;
 };
 
 }  // namespace Inference

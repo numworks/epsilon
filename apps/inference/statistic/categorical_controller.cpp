@@ -15,9 +15,7 @@ CategoricalController::CategoricalController(Responder *parent,
                                              Invocation invocation)
     : SelectableListViewController<ListViewDataSource>(parent, this),
       m_nextController(nextController),
-      m_next(&m_selectableListView, I18n::Message::Next, invocation,
-             ButtonCell::Style::EmbossedLight, Palette::WallScreenDark,
-             Metric::CommonMargins.left()) {
+      m_next(&m_selectableListView, I18n::Message::Next, invocation) {
   m_selectableListView.margins()->setTop(0);
   m_selectableListView.margins()->setHorizontal({0, 0});
   m_selectableListView.setBackgroundColor(Palette::WallScreenDark);

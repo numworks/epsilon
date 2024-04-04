@@ -38,10 +38,15 @@ class ButtonCell : public HighlightCell, public Responder {
   MessageTextView m_messageTextView;
 
  private:
-  constexpr static KDCoordinate k_verticalMarginSmall = 5;
-  constexpr static KDCoordinate k_verticalMarginLarge = 17;
-  constexpr static KDCoordinate k_horizontalMarginSmall = 10;
-  constexpr static KDCoordinate k_horizontalMarginLarge = 20;
+  // Small font without borders
+  constexpr static KDCoordinate k_horizontalMarginSmallFontWithoutBorders = 10;
+  constexpr static KDCoordinate k_verticalMarginSmallFontWithoutBorders = 5;
+  // Small font with borders
+  constexpr static KDCoordinate k_horizontalMarginSmallFontWithBorders = 13;
+  constexpr static KDCoordinate k_verticalMarginSmallFontWithBorders = 13;
+  // Large font with borders
+  constexpr static KDCoordinate k_horizontalMarginLargeFontWithBorders = 20;
+  constexpr static KDCoordinate k_verticalMarginLargeFontWithBorders = 17;
 
   int numberOfSubviews() const override { return 1; }
   View* subviewAtIndex(int index) override;

@@ -8,6 +8,8 @@
 
 namespace PoincareJ {
 
+// TODO: Pi and e have an odd status here, maybe Numbers should be split in two.
+
 class Number {
  public:
   static bool IsStrictRational(const Tree* t) {

@@ -394,9 +394,6 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::IntegerShort:
     case BlockType::IntegerPosBig:
     case BlockType::IntegerNegBig:
-#ifndef POINCARE_TREE_LOG
-      assert(!Rational::Sign(expression).isStrictlyNegative());
-#endif
       // TODO PCJ we need a way to layout an integer in base something
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
       break;
@@ -404,12 +401,12 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::RationalShort:
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig: {
-#if POINCARE_TREE_LOG
+#if POINCARE_TREE_LOG  // Improves Tree::logSerialize
       layoutIntegerHandler(layoutParent, Rational::Numerator(expression));
       PushCodePoint(layoutParent, '/');
       layoutIntegerHandler(layoutParent, Rational::Denominator(expression));
 #else
-      // Expression should be beautifyied before layoutting
+      // Expression should have been beautified before layoutting
       assert(false);
 #endif
       break;
@@ -671,7 +668,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
     case BlockType::UnitConversion:
       layoutInfixOperator(layoutParent, expression, UCodePointRightwardsArrow);
       break;
-#if POINCARE_TREE_LOG
+#if POINCARE_TREE_LOG  // Improves Tree::logSerialize
     case BlockType::Placeholder: {
       PushCodePoint(layoutParent, 'K');
       uint8_t offset = Placeholder::NodeToTag(expression);
@@ -707,7 +704,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       if (Builtin::IsReservedFunction(expression)) {
         layoutBuiltin(layoutParent, expression);
       } else {
-#if POINCARE_TREE_LOG
+#if POINCARE_TREE_LOG  // Improves Tree::logSerialize
         layoutFunctionCall(
             layoutParent, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);

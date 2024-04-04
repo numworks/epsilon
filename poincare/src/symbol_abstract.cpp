@@ -5,6 +5,7 @@
 #include <poincare/dependency.h>
 #include <poincare/function.h>
 #include <poincare/helpers.h>
+#include <poincare/k_tree.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/sequence.h>
@@ -206,13 +207,8 @@ JuniorExpression SymbolAbstract::Expand(
   e = JuniorExpression::ExpressionWithoutSymbols(e, context,
                                                  symbolicComputation);
   if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
-#if 0  // TODO_PCJ
-    Dependency d = Dependency::Builder(e);
-    d.addDependency(symbol.childAtIndex(0));
-    return std::move(d);
-#else
-    assert(false);
-#endif
+    e = JuniorExpression::Create(KDep(KA, KSet(KB)),
+                                 {.KA = e, .KB = e.childAtIndex(0)});
   }
   return e;
 }

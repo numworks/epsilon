@@ -89,11 +89,17 @@ void ButtonCell::layoutSubviews(bool force) {
 
 KDSize ButtonCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
-  return m_font == KDFont::Size::Small
-             ? KDSize(textSize.width() + k_horizontalMarginSmall,
-                      textSize.height() + k_verticalMarginSmall)
-             : KDSize(textSize.width() + k_horizontalMarginLarge,
-                      textSize.height() + k_verticalMarginLarge);
+  KDCoordinate horizontalMargin, verticalMargin;
+  if (m_font == KDFont::Size::Small) {
+    horizontalMargin = k_horizontalMarginSmall;
+    verticalMargin = k_verticalMarginSmall;
+  } else {
+    assert(m_font == KDFont::Size::Large);
+    horizontalMargin = k_horizontalMarginLarge;
+    verticalMargin = k_verticalMarginLarge;
+  }
+  return KDSize(textSize.width() + horizontalMargin,
+                textSize.height() + verticalMargin);
 }
 
 int ButtonCell::numberOfBordersInDirection(OMG::Direction direction) const {

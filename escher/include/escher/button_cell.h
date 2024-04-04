@@ -40,7 +40,7 @@ class ButtonCell : public HighlightCell, public Responder {
  private:
   // Small font without borders
   constexpr static KDCoordinate k_horizontalMarginSmallFontWithoutBorders = 10;
-  constexpr static KDCoordinate k_verticalMarginSmallFontWithoutBorders = 5;
+  constexpr static KDCoordinate k_verticalMarginSmallFontWithoutBorders = 6;
   // Small font with borders
   constexpr static KDCoordinate k_horizontalMarginSmallFontWithBorders = 13;
   constexpr static KDCoordinate k_verticalMarginSmallFontWithBorders = 13;

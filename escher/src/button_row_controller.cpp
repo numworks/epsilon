@@ -87,6 +87,10 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
     }
     widthMargin = std::round(((float)(bounds().width() - totalButtonWidth)) /
                              ((float)(nbOfButtons + 1)));
+  } else {
+    assert(m_style == Style::PlainWhite);
+    assert(rowHeight ==
+           buttonAtIndex(0)->minimalSizeForOptimalDisplay().height());
   }
   KDCoordinate yOrigin = m_position == Position::Top
                              ? heightMargin

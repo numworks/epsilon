@@ -1,7 +1,7 @@
 FunctionApp = "Functies"
 FunctionAppCapital = "FUNCTIES"
 FunctionTab = "Uitdrukkingen"
-UseFunctionModel = "Gebruik een template"
+UseFunctionModel = "Template"
 AddFunction = "Element toevoegen"
 DeleteExpression = "Uitdrukking verwijderen"
 IntervalT = "t interval"

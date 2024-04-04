@@ -47,7 +47,7 @@ class EditableFunctionCell
    public:
     ButtonCell(Escher::LayoutField* parentResponder,
                Escher::Invocation invocation)
-        : Escher::ButtonCell(parentResponder, I18n::Message::UseFunctionModel,
+        : Escher::ButtonCell(parentResponder, I18n::Message::FunctionTemplates,
                              invocation, Style::EmbossedGray,
                              KDFont::Size::Small,
                              Escher::Palette::PurpleBright) {}

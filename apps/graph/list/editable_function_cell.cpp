@@ -74,7 +74,8 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   if (m_templateButton.isVisible()) {
     KDSize buttonSize = m_templateButton.minimalSizeForOptimalDisplay();
     templateButtonRect =
-        KDRect(bounds().width() - rightMargin - buttonSize.width(),
+        KDRect(bounds().width() - rightMargin - buttonSize.width() -
+                   k_templateButtonMargin,
                (bounds().height() - buttonSize.height()) / 2, buttonSize);
   }
   setChildFrame(&m_templateButton, templateButtonRect, force);

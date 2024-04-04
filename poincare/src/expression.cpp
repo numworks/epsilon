@@ -211,7 +211,7 @@ bool OExpression::recursivelyMatches(ExpressionTrinaryTest test,
   }
   return false;
 #else
-  assert(false);
+  // TODO_PCJ
   return false;
 #endif
 }

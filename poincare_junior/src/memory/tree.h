@@ -146,7 +146,7 @@ class Tree : public TypeBlock {
   constexpr TypeBlock type() const { return *this; }
   constexpr LayoutType layoutType() const {
     assert(type().isLayout());
-    return static_cast<LayoutType>(static_cast<BlockType>(type().type()));
+    return static_cast<LayoutType>(static_cast<Type>(type().type()));
   }
 
   typedef bool (*Operation)(Tree* node);
@@ -366,9 +366,9 @@ class Tree : public TypeBlock {
   Tree* detach(bool isTree);
   void remove(bool isTree);
 
-  // Forbid tree == BlockType::Addition
+  // Forbid tree == Type::Addition
   using TypeBlock::operator==, TypeBlock::operator!=,
-      TypeBlock::operator PoincareJ::BlockType;
+      TypeBlock::operator PoincareJ::Type;
 
   // A tree is made of 1 TypeBlock (inherited) and nodeSize()-1 ValueBlocks
   // Should be last - and most likely only - member

@@ -30,18 +30,18 @@ class FloatNode {
   static bool SetSign(Tree *tree, NonStrictSign sign);
 };
 
-// Helper from T  = float|double to corresponding BlockType
+// Helper from T  = float|double to corresponding Type
 template <class T>
 struct FloatType;
 
 template <>
 struct FloatType<float> {
-  static constexpr BlockType type = BlockType::SingleFloat;
+  static constexpr Type type = Type::SingleFloat;
 };
 
 template <>
 struct FloatType<double> {
-  static constexpr BlockType type = BlockType::DoubleFloat;
+  static constexpr Type type = Type::DoubleFloat;
 };
 
 }  // namespace PoincareJ

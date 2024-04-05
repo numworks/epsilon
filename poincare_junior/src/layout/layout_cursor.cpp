@@ -206,8 +206,8 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
     leftParenthesisIndex--;
   }
   EditionReference parenthesis =
-      SharedEditionPool->push<BlockType::ParenthesisLayout>(false, false);
-  EditionReference tempRack = SharedEditionPool->push<BlockType::RackLayout>(0);
+      SharedEditionPool->push<Type::ParenthesisLayout>(false, false);
+  EditionReference tempRack = SharedEditionPool->push<Type::RackLayout>(0);
   int i = index;
   while (i >= leftParenthesisIndex) {
     EditionReference child = NAry::DetachChildAtIndex(rack, i);
@@ -529,7 +529,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(
 #endif
     // - Step 1.2 - Handle code points and brackets
     Tree *newChild;
-    TypeBlock bracketType(BlockType{});
+    TypeBlock bracketType(Type{});
     Side bracketSide;
     if (!linearMode && AutocompletedPair::IsAutoCompletedBracketPairCodePoint(
                            codePoint, &bracketType, &bracketSide)) {
@@ -537,7 +537,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(
       newChild = AutocompletedPair::BuildFromBracketType(bracketType);
       AutocompletedPair::SetTemporary(newChild, OtherSide(bracketSide), true);
     } else if (nextCodePoint.isCombining()) {
-      newChild = SharedEditionPool->push<BlockType::CombinedCodePointsLayout>(
+      newChild = SharedEditionPool->push<Type::CombinedCodePointsLayout>(
           codePoint, nextCodePoint);
       nextCodePoint = decoder.nextCodePoint();
     } else {

@@ -125,27 +125,27 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree *e) {
   }
 
   switch (e->type()) {
-    case BlockType::Multiplication:
+    case Type::Multiplication:
       /* x*y = 0 => x = 0 or y = 0 */
       registerSolution(nextRootInMultiplication(e), Interest::Root);
       return result();
 
-    case BlockType::Addition:
-    case BlockType::Subtraction:
+    case Type::Addition:
+    case Type::Subtraction:
       registerSolution(nextRootInAddition(e), Interest::Root);
       return result();
 
-    case BlockType::Power:
-    case BlockType::NthRoot:
-    case BlockType::Division:
+    case Type::Power:
+    case Type::NthRoot:
+    case Type::Division:
       /* f(x,y) = 0 => x = 0 */
       registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
       return result();
 
-    case BlockType::Abs:
-    case BlockType::HyperbolicSine:
-    case BlockType::Opposite:
-    case BlockType::SquareRoot:
+    case Type::Abs:
+    case Type::HyperbolicSine:
+    case Type::Opposite:
+    case Type::SquareRoot:
       /* f(x) = 0 <=> x = 0 */
       return nextRoot(e->child(0));
 
@@ -617,11 +617,11 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree *e) const {
      * expression is projected. */
     return e->hasDescendantSatisfying([](const Tree *e) {
       T exponent = k_NAN;
-      if (e->type() == BlockType::SquareRoot) {
+      if (e->type() == Type::SquareRoot) {
         exponent = static_cast<T>(0.5);
-      } else if (e->type() == BlockType::Power) {
+      } else if (e->type() == Type::Power) {
         exponent = Approximation::To<T>(e->child(1));
-      } else if (e->type() == BlockType::NthRoot) {
+      } else if (e->type() == Type::NthRoot) {
         exponent = static_cast<T>(1.) / Approximation::To<T>(e->child(1));
       }
       if (std::isnan(exponent)) {

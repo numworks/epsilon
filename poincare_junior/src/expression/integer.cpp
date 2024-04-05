@@ -114,24 +114,23 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
 
 Tree *IntegerHandler::pushOnEditionPool() const {
   if (isZero()) {
-    return SharedEditionPool->push(BlockType::Zero);
+    return SharedEditionPool->push(Type::Zero);
   }
   if (isOne()) {
-    return SharedEditionPool->push(BlockType::One);
+    return SharedEditionPool->push(Type::One);
   }
   if (isTwo()) {
-    return SharedEditionPool->push(BlockType::Two);
+    return SharedEditionPool->push(Type::Two);
   }
   if (isMinusOne()) {
-    return SharedEditionPool->push(BlockType::MinusOne);
+    return SharedEditionPool->push(Type::MinusOne);
   }
   if (isSignedType<int8_t>()) {
-    return SharedEditionPool->push<BlockType::IntegerShort>(
+    return SharedEditionPool->push<Type::IntegerShort>(
         static_cast<int8_t>(*this));
   }
-  TypeBlock typeBlock(sign() == NonStrictSign::Negative
-                          ? BlockType::IntegerNegBig
-                          : BlockType::IntegerPosBig);
+  TypeBlock typeBlock(sign() == NonStrictSign::Negative ? Type::IntegerNegBig
+                                                        : Type::IntegerPosBig);
   Tree *node = SharedEditionPool->push(typeBlock);
   SharedEditionPool->push(m_numberOfDigits);
   pushDigitsOnEditionPool();

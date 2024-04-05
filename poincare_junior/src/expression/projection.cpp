@@ -110,8 +110,8 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
     changed = true;
   }
   if (ref->isPhysicalConstant()) {
-    Tree* value = SharedEditionPool->push<BlockType::DoubleFloat>(
-        Constant::Info(ref).m_value);
+    Tree* value =
+        SharedEditionPool->push<Type::DoubleFloat>(Constant::Info(ref).m_value);
     ref->moveTreeOverTree(value);
     return true;
   }
@@ -123,14 +123,14 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
 
   // Project angles depending on context
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (ref->isOfType({BlockType::Sine, BlockType::Cosine, BlockType::Tangent}) &&
+  if (ref->isOfType({Type::Sine, Type::Cosine, Type::Tangent}) &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = ref->child(0);
     child->moveTreeOverTree(PatternMatching::Create(
         KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
     changed = true;
-  } else if (ref->isOfType({BlockType::ArcSine, BlockType::ArcCosine,
-                            BlockType::ArcTangent})) {
+  } else if (ref->isOfType(
+                 {Type::ArcSine, Type::ArcCosine, Type::ArcTangent})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
     // acos(A) -> atrig(A, 0)

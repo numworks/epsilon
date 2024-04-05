@@ -20,7 +20,7 @@ struct BeautificationRule {
   BeautifiedLayoutBuilder layoutBuilder;
 };
 
-template <BlockType type, BlockType layoutType>
+template <Type type, Type layoutType>
 consteval static BeautificationRule ruleHelper() {
   static_assert(TypeBlock::NumberOfChildren(type) ==
                 TypeBlock::NumberOfChildren(layoutType));
@@ -119,12 +119,11 @@ class InputBeautification {
       }};
 
   constexpr static BeautificationRule k_absoluteValueRule =
-      ruleHelper<BlockType::Abs, BlockType::AbsoluteValueLayout>();
+      ruleHelper<Type::Abs, Type::AbsoluteValueLayout>();
 
   constexpr static BeautificationRule k_derivativeRule = {
       "diff", 3, [](EditionReference* parameters) -> Tree* {
-        EditionReference diff =
-            SharedEditionPool->push(BlockType::DerivativeLayout);
+        EditionReference diff = SharedEditionPool->push(Type::DerivativeLayout);
         SharedEditionPool->push(0);
         parameters[1]->detachTree();
         parameters[2]->detachTree();
@@ -154,11 +153,11 @@ class InputBeautification {
   constexpr static const BeautificationRule k_identifiersRules[] = {
       /* abs( */ k_absoluteValueRule,
       /* binomial( */
-      ruleHelper<BlockType::Binomial, BlockType::BinomialLayout>(),
+      ruleHelper<Type::Binomial, Type::BinomialLayout>(),
       /* ceil( */
-      ruleHelper<BlockType::Ceiling, BlockType::CeilingLayout>(),
+      ruleHelper<Type::Ceiling, Type::CeilingLayout>(),
       /* conj( */
-      ruleHelper<BlockType::Conjugate, BlockType::ConjugateLayout>(),
+      ruleHelper<Type::Conjugate, Type::ConjugateLayout>(),
       /* diff( */ k_derivativeRule,
       {/* exp( */
        "exp", 1,
@@ -169,13 +168,13 @@ class InputBeautification {
          return exp;
        }},
       /* floor( */
-      ruleHelper<BlockType::Floor, BlockType::FloorLayout>(),
+      ruleHelper<Type::Floor, Type::FloorLayout>(),
       /* inf */ k_infRule,
       {/* int( */
        "int", 4,
        [](EditionReference* parameters) -> Tree* {
          EditionReference integral =
-             SharedEditionPool->push(BlockType::IntegralLayout);
+             SharedEditionPool->push(Type::IntegralLayout);
          parameters[1]->detachTree();
          parameters[2]->detachTree();
          parameters[3]->detachTree();
@@ -186,7 +185,7 @@ class InputBeautification {
          return integral;
        }},
       /* norm( */
-      ruleHelper<BlockType::Norm, BlockType::VectorNormLayout>(),
+      ruleHelper<Type::Norm, Type::VectorNormLayout>(),
       /* pi */ k_piRule,
       {/* piecewise( */
        "piecewise", 2,
@@ -201,8 +200,7 @@ class InputBeautification {
           * layout does not have 3 empty children. This is a fringe case
           * though, and everything works fine when "piecewise(" is inserted
           * with nothing on its right. */
-         EditionReference ref =
-             SharedEditionPool->push(BlockType::PiecewiseLayout);
+         EditionReference ref = SharedEditionPool->push(Type::PiecewiseLayout);
          // TODO we need a builder to make this safe
          SharedEditionPool->push(2);
          SharedEditionPool->push(2);
@@ -217,7 +215,7 @@ class InputBeautification {
        [](EditionReference* parameters) -> Tree* {
          // TODO factorize with diff and int
          EditionReference product =
-             SharedEditionPool->push(BlockType::ProductLayout);
+             SharedEditionPool->push(Type::ProductLayout);
          parameters[1]->detachTree();
          parameters[2]->detachTree();
          parameters[3]->detachTree();
@@ -228,9 +226,9 @@ class InputBeautification {
          return product;
        }},
       /* root( */
-      ruleHelper<BlockType::NthRoot, BlockType::NthRootLayout>(),
+      ruleHelper<Type::NthRoot, Type::NthRootLayout>(),
       /* sqrt( */
-      ruleHelper<BlockType::SquareRoot, BlockType::SquareRootLayout>(),
+      ruleHelper<Type::SquareRoot, Type::SquareRootLayout>(),
       /* theta */ k_thetaRule};
 
   constexpr static size_t k_lenOfIdentifiersRules =
@@ -239,7 +237,7 @@ class InputBeautification {
   constexpr static BeautificationRule k_sumRule = {
       "sum", 4, [](EditionReference* parameters) -> Tree* {
         // TODO factorize with diff and int
-        EditionReference sum = SharedEditionPool->push(BlockType::SumLayout);
+        EditionReference sum = SharedEditionPool->push(Type::SumLayout);
         parameters[1]->detachTree();
         parameters[2]->detachTree();
         parameters[3]->detachTree();
@@ -255,10 +253,10 @@ class InputBeautification {
         // TODO handle NL-log cf LayoutHelper::Logarithm
         EditionReference log = "log"_l->clone();
         NAry::SetNumberOfChildren(log, 5);
-        SharedEditionPool->push<BlockType::VerticalOffsetLayout>(true, false);
+        SharedEditionPool->push<Type::VerticalOffsetLayout>(true, false);
         parameters[1]->detachTree();
         // TODO would be nicer with a temporary parenthesis ?
-        SharedEditionPool->push<BlockType::ParenthesisLayout>(false, false);
+        SharedEditionPool->push<Type::ParenthesisLayout>(false, false);
         parameters[0]->detachTree();
         return log;
       }};

@@ -11,7 +11,7 @@
 namespace PoincareJ {
 
 Variables::Variable::Variable(uint8_t id, ComplexSign sign) {
-  Tree* temp = SharedEditionPool->push<BlockType::Variable>(id, sign);
+  Tree* temp = SharedEditionPool->push<Type::Variable>(id, sign);
   assert(k_size == temp->treeSize());
   temp->copyTreeTo(m_blocks);
   temp->removeTree();
@@ -115,8 +115,8 @@ bool Variables::Replace(Tree* expr, int id, const EditionReference& value,
 bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
                               ComplexSign sign) {
   if (expr->isUserSymbol() && expr->treeIsIdenticalTo(symbol)) {
-    Tree* var = SharedEditionPool->push<BlockType::Variable>(
-        static_cast<uint8_t>(id), sign);
+    Tree* var =
+        SharedEditionPool->push<Type::Variable>(static_cast<uint8_t>(id), sign);
     expr->moveTreeOverTree(var);
     return true;
   }
@@ -143,7 +143,7 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, ComplexSign sign,
   assert(!variables || SharedEditionPool->isAfter(variables, expr));
   if (variables && expr->isUserSymbol()) {
     // Project global variable
-    Tree* var = SharedEditionPool->push<BlockType::Variable>(
+    Tree* var = SharedEditionPool->push<Type::Variable>(
         static_cast<uint8_t>(
             ToId(variables, Symbol::GetName(expr), Symbol::Length(expr)) +
             depth),

@@ -17,19 +17,19 @@ uint8_t Parametric::FunctionIndex(const Tree* t) {
 
 uint8_t Parametric::FunctionIndex(TypeBlock type) {
   switch (type) {
-    case BlockType::Derivative:
-    case BlockType::DerivativeLayout:
-    case BlockType::ListSequence:
-    case BlockType::ListSequenceLayout:
+    case Type::Derivative:
+    case Type::DerivativeLayout:
+    case Type::ListSequence:
+    case Type::ListSequenceLayout:
       return 2;
-    case BlockType::NthDerivative:
-    case BlockType::NthDerivativeLayout:
-    case BlockType::Integral:
-    case BlockType::IntegralLayout:
-    case BlockType::Sum:
-    case BlockType::SumLayout:
-    case BlockType::Product:
-    case BlockType::ProductLayout:
+    case Type::NthDerivative:
+    case Type::NthDerivativeLayout:
+    case Type::Integral:
+    case Type::IntegralLayout:
+    case Type::Sum:
+    case Type::SumLayout:
+    case Type::Product:
+    case Type::ProductLayout:
       return k_integrandIndex;
     default:
       assert(false);
@@ -38,13 +38,13 @@ uint8_t Parametric::FunctionIndex(TypeBlock type) {
 
 ComplexSign Parametric::VariableSign(const Tree* t) {
   switch (t->type()) {
-    case BlockType::Derivative:
-    case BlockType::NthDerivative:
-    case BlockType::Integral:
+    case Type::Derivative:
+    case Type::NthDerivative:
+    case Type::Integral:
       return k_continuousVariableSign;
-    case BlockType::ListSequence:
-    case BlockType::Sum:
-    case BlockType::Product:
+    case Type::ListSequence:
+    case Type::Sum:
+    case Type::Product:
       return k_discreteVariableSign;
     default:
       assert(false);
@@ -173,7 +173,7 @@ bool Parametric::Explicit(Tree* expr) {
   }
   for (uint8_t step = 0; step < numberOfTerms; step++) {
     // Create k value at this step
-    Tree* value = SharedEditionPool->push<BlockType::Addition>(2);
+    Tree* value = SharedEditionPool->push<Type::Addition>(2);
     lowerBound->clone();
     Integer::Push(step);
     Simplification::ShallowSystematicReduce(value);

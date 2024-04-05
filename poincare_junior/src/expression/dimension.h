@@ -19,7 +19,7 @@ struct UnitDimension {
 };
 
 struct Dimension {
-  enum class Type {
+  enum class DimensionType {
     Scalar,
     Matrix,
     Unit,
@@ -27,16 +27,17 @@ struct Dimension {
     Point,
   };
 
-  Dimension(Type type = Type::Scalar) : type(type) {
-    assert(type == Type::Scalar || type == Type::Boolean ||
-           type == Type::Point);
+  Dimension(DimensionType type = DimensionType::Scalar) : type(type) {
+    assert(type == DimensionType::Scalar || type == DimensionType::Boolean ||
+           type == DimensionType::Point);
   };
-  Dimension(MatrixDimension iMatrix) : type(Type::Matrix), matrix(iMatrix){};
-  Dimension(UnitDimension iUnit) : type(Type::Unit), unit(iUnit){};
+  Dimension(MatrixDimension iMatrix)
+      : type(DimensionType::Matrix), matrix(iMatrix){};
+  Dimension(UnitDimension iUnit) : type(DimensionType::Unit), unit(iUnit){};
 
-  static Dimension Scalar() { return Dimension(Type::Scalar); }
-  static Dimension Boolean() { return Dimension(Type::Boolean); }
-  static Dimension Point() { return Dimension(Type::Point); }
+  static Dimension Scalar() { return Dimension(DimensionType::Scalar); }
+  static Dimension Boolean() { return Dimension(DimensionType::Boolean); }
+  static Dimension Point() { return Dimension(DimensionType::Point); }
   static Dimension Matrix(uint8_t rows, uint8_t cols) {
     return Dimension({.rows = rows, .cols = cols});
   }
@@ -54,11 +55,11 @@ struct Dimension {
            !(isUnit() && unit.vector.isEmpty());
   }
 
-  bool isScalar() const { return type == Type::Scalar; }
-  bool isMatrix() const { return type == Type::Matrix; }
-  bool isUnit() const { return type == Type::Unit; }
-  bool isBoolean() const { return type == Type::Boolean; }
-  bool isPoint() const { return type == Type::Point; }
+  bool isScalar() const { return type == DimensionType::Scalar; }
+  bool isMatrix() const { return type == DimensionType::Matrix; }
+  bool isUnit() const { return type == DimensionType::Unit; }
+  bool isBoolean() const { return type == DimensionType::Boolean; }
+  bool isPoint() const { return type == DimensionType::Point; }
   bool isSquareMatrix() const {
     return isMatrix() && matrix.rows == matrix.cols;
   }
@@ -93,7 +94,7 @@ struct Dimension {
   static Dimension GetDimension(const Tree* t);
   static bool DeepCheckDimensions(const Tree* t);
 
-  Type type;
+  DimensionType type;
   union {
     MatrixDimension matrix;
     UnitDimension unit;

@@ -10,7 +10,7 @@
 namespace PoincareJ {
 
 bool Binary::IsBinaryLogicalOperator(const CPL *name, int nameLength,
-                                     BlockType *type) {
+                                     Type *type) {
   for (int i = 0; i < k_numberOfOperators; i++) {
     if (OMG::CompareCPLWithNullTerminatedString(name, nameLength,
                                                 k_operatorNames[i].name) == 0) {
@@ -45,11 +45,11 @@ const char *Binary::ComparisonOperatorName(TypeBlock type) {
 }
 
 bool Binary::IsComparisonOperatorString(const CPL *s, int length,
-                                        BlockType *returnType,
+                                        Type *returnType,
                                         size_t *returnLength) {
   int maxOperatorLength = length;
   int lengthOfFoundOperator = 0;
-  BlockType typeOfFoundOperator;
+  Type typeOfFoundOperator;
   for (int i = 0; i < k_numberOfComparisons; i++) {
     const char *currentOperatorString = k_operatorStrings[i].mainString;
     // Loop twice, once on the main string, the other on the alternative string
@@ -160,28 +160,28 @@ bool Binary::SimplifyComparison(Tree *tree) {
     assert(complexSign.isReal());
     Sign sign = complexSign.realSign();
     switch (tree->type()) {
-      case BlockType::InferiorEqual:
+      case Type::InferiorEqual:
         if (sign.isNegative()) {
           result = KTrue;
         } else if (sign.isStrictlyPositive()) {
           result = KFalse;
         }
         break;
-      case BlockType::SuperiorEqual:
+      case Type::SuperiorEqual:
         if (sign.isPositive()) {
           result = KTrue;
         } else if (sign.isStrictlyNegative()) {
           result = KFalse;
         }
         break;
-      case BlockType::Inferior:
+      case Type::Inferior:
         if (sign.isStrictlyNegative()) {
           result = KTrue;
         } else if (sign.isPositive()) {
           result = KFalse;
         }
         break;
-      case BlockType::Superior:
+      case Type::Superior:
         if (sign.isStrictlyPositive()) {
           result = KTrue;
         } else if (sign.isNegative()) {

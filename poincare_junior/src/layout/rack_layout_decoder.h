@@ -87,7 +87,7 @@ class CPL {
 
  private:
   static constexpr int k_codePointLayoutSize =
-      TypeBlock(BlockType::AsciiCodePointLayout).nodeSize();
+      TypeBlock(Type::AsciiCodePointLayout).nodeSize();
   char m_content[k_codePointLayoutSize];
 };
 

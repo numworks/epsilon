@@ -25,7 +25,7 @@ void RackFromTextRec(UTF8Decoder *decoder, Tree *parent,
         /* Insert a ParenthesisLayout even if there are no matching right
          * parenthesis */
         child =
-            SharedEditionPool->push<BlockType::ParenthesisLayout>(false, false);
+            SharedEditionPool->push<Type::ParenthesisLayout>(false, false);
         RackFromTextRec(decoder, KRackL()->clone(), child);
         break;
       }

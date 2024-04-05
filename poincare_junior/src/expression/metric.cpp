@@ -9,18 +9,18 @@ namespace PoincareJ {
 int Metric::GetMetric(const Tree* u) {
   int result = GetMetric(u->type());
   switch (u->type()) {
-    case BlockType::Multiplication: {
+    case Type::Multiplication: {
       // Ignore (-1) in multiplications
       PatternMatching::Context ctx;
       if (u->nextNode()->isMinusOne()) {
-        result -= GetMetric(BlockType::MinusOne);
+        result -= GetMetric(Type::MinusOne);
         if (u->numberOfChildren() == 2) {
-          result -= GetMetric(BlockType::Multiplication);
+          result -= GetMetric(Type::Multiplication);
         }
       }
       break;
     }
-    case BlockType::Exponential: {
+    case Type::Exponential: {
       // exp(A*ln(B)) -> Root(B,A) exception
       PatternMatching::Context ctx;
       if (PatternMatching::Match(KExp(KMult(KA_s, KLn(KB))), u, &ctx)) {
@@ -31,9 +31,9 @@ int Metric::GetMetric(const Tree* u) {
       }
       break;
     }
-    case BlockType::Dependency:
-    case BlockType::Trig:
-    case BlockType::ATrig:
+    case Type::Dependency:
+    case Type::Trig:
+    case Type::ATrig:
       // Ignore second child
       return result + GetMetric(u->nextNode());
     default:
@@ -45,21 +45,21 @@ int Metric::GetMetric(const Tree* u) {
   return result;
 }
 
-int Metric::GetMetric(BlockType type) {
+int Metric::GetMetric(Type type) {
   switch (type) {
-    case BlockType::Zero:
-    case BlockType::One:
-    case BlockType::Two:
-    case BlockType::MinusOne:
+    case Type::Zero:
+    case Type::One:
+    case Type::Two:
+    case Type::MinusOne:
       return k_defaultMetric / 3;
     default:
       return k_defaultMetric;
-    case BlockType::PowerReal:
-    case BlockType::Random:
-    case BlockType::RandInt:
+    case Type::PowerReal:
+    case Type::Random:
+    case Type::RandInt:
       return k_defaultMetric * 2;
-    case BlockType::Sum:
-    case BlockType::Variable:
+    case Type::Sum:
+    case Type::Variable:
       return k_defaultMetric * 3;
   }
 }

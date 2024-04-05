@@ -268,7 +268,7 @@ Token Tokenizer::popToken() {
     return Token(typeForCodePoint[c - '('], m_decoder.layoutAt(start));
   }
 
-  BlockType comparisonOperatorType;
+  Type comparisonOperatorType;
   size_t comparisonOperatorLength;
   if (Binary::IsComparisonOperatorString(
           CPL::FromRack(m_decoder.mainLayout(), start), m_decoder.end() - start,
@@ -276,7 +276,7 @@ Token Tokenizer::popToken() {
     /* Change precedence of equal when assigning a function.
      * This ensures that "f(x) = x and 1" is parsed as "f(x) = (x and 1)" and
      * not "(f(x) = x) and 1" */
-    Token result(comparisonOperatorType == BlockType::Equal &&
+    Token result(comparisonOperatorType == Type::Equal &&
                          m_parsingContext->parsingMethod() ==
                              ParsingContext::ParsingMethod::Assignment
                      ? Token::Type::AssignmentEqual

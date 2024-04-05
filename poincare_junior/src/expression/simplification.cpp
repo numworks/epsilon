@@ -88,68 +88,68 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
 
 bool Simplification::SimplifySwitch(Tree* u) {
   switch (u->type()) {
-    case BlockType::Abs:
+    case Type::Abs:
       return SimplifyAbs(u);
-    case BlockType::Addition:
+    case Type::Addition:
       return SimplifyAddition(u);
-    case BlockType::ArcTangentRad:
+    case Type::ArcTangentRad:
       return Trigonometry::SimplifyArcTangentRad(u);
-    case BlockType::ATrig:
+    case Type::ATrig:
       return Trigonometry::SimplifyATrig(u);
-    case BlockType::Binomial:
+    case Type::Binomial:
       return Arithmetic::SimplifyBinomial(u);
-    case BlockType::ComplexArgument:
+    case Type::ComplexArgument:
       return SimplifyComplexArgument(u);
-    case BlockType::Derivative:
-    case BlockType::NthDerivative:
+    case Type::Derivative:
+    case Type::NthDerivative:
       return Derivation::ShallowSimplify(u);
-    case BlockType::Dim:
+    case Type::Dim:
       return SimplifyDim(u);
-    case BlockType::Distribution:
+    case Type::Distribution:
       return SimplifyDistribution(u);
-    case BlockType::Exponential:
+    case Type::Exponential:
       return SimplifyExp(u);
-    case BlockType::Factorial:
+    case Type::Factorial:
       return Arithmetic::SimplifyFactorial(u);
-    case BlockType::Floor:
+    case Type::Floor:
       return Arithmetic::SimplifyFloor(u);
-    case BlockType::GCD:
+    case Type::GCD:
       return Arithmetic::SimplifyGCD(u);
-    case BlockType::ImaginaryPart:
-    case BlockType::RealPart:
+    case Type::ImaginaryPart:
+    case Type::RealPart:
       return SimplifyComplexPart(u);
-    case BlockType::LCM:
+    case Type::LCM:
       return Arithmetic::SimplifyLCM(u);
-    case BlockType::ListSort:
-    case BlockType::Median:
+    case Type::ListSort:
+    case Type::Median:
       return List::ShallowApplyListOperators(u);
-    case BlockType::Ln:
+    case Type::Ln:
       return Logarithm::SimplifyLn(u);
-    case BlockType::LnReal:
+    case Type::LnReal:
       return SimplifyLnReal(u);
-    case BlockType::Multiplication:
+    case Type::Multiplication:
       return SimplifyMultiplication(u);
-    case BlockType::Permute:
+    case Type::Permute:
       return Arithmetic::SimplifyPermute(u);
-    case BlockType::Piecewise:
+    case Type::Piecewise:
       return Binary::SimplifyPiecewise(u);
-    case BlockType::Power:
+    case Type::Power:
       return SimplifyPower(u);
-    case BlockType::PowerReal:
+    case Type::PowerReal:
       return SimplifyPowerReal(u);
-    case BlockType::Quotient:
-    case BlockType::Remainder:
+    case Type::Quotient:
+    case Type::Remainder:
       return Arithmetic::SimplifyQuotientOrRemainder(u);
-    case BlockType::Round:
+    case Type::Round:
       return Arithmetic::SimplifyRound(u);
-    case BlockType::Sign:
+    case Type::Sign:
       return SimplifySign(u);
-    case BlockType::Sum:
-    case BlockType::Product:
+    case Type::Sum:
+    case Type::Product:
       return Parametric::SimplifySumOrProduct(u);
-    case BlockType::Trig:
+    case Type::Trig:
       return Trigonometry::SimplifyTrig(u);
-    case BlockType::TrigDiff:
+    case Type::TrigDiff:
       return Trigonometry::SimplifyTrigDiff(u);
     default:
       if (u->type().isListToScalar()) {
@@ -171,7 +171,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
 bool Simplification::SimplifyDim(Tree* u) {
   Dimension dim = Dimension::GetDimension(u->child(0));
   if (dim.isMatrix()) {
-    Tree* result = SharedEditionPool->push<BlockType::Matrix>(1, 2);
+    Tree* result = SharedEditionPool->push<Type::Matrix>(1, 2);
     Integer::Push(dim.matrix.rows);
     Integer::Push(dim.matrix.cols);
     u->moveTreeOverTree(result);
@@ -298,7 +298,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     assert(p->nextTree() == static_cast<Tree*>(n));
     // PowU PowV w p n
     v->removeNode();
-    MoveNodeAtNode(p, SharedEditionPool->push<BlockType::Multiplication>(2));
+    MoveNodeAtNode(p, SharedEditionPool->push<Type::Multiplication>(2));
     // PowU w Mult<2> p n
     SimplifyMultiplication(p);
     SimplifyPower(u);
@@ -307,7 +307,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->isMultiplication()) {
     for (Tree* w : v->children()) {
-      EditionReference m = SharedEditionPool->push(BlockType::Power);
+      EditionReference m = SharedEditionPool->push(Type::Power);
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);

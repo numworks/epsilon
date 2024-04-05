@@ -6,8 +6,8 @@ namespace PoincareJ {
 
 bool Continuity::ShallowIsDiscontinuous(const Tree *e) {
   return e->isRandomNode() || e->isPiecewise() ||
-         (e->isOfType({BlockType::Floor, BlockType::Round, BlockType::Ceiling,
-                       BlockType::FracPart, BlockType::Abs}) &&
+         (e->isOfType({Type::Floor, Type::Round, Type::Ceiling, Type::FracPart,
+                       Type::Abs}) &&
           Variables::HasVariables(e));
 };
 
@@ -19,7 +19,7 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree *e,
     return true;
   }
   bool isDiscontinuous = false;
-  if (e->isOfType({BlockType::Ceiling, BlockType::Floor, BlockType::Round})) {
+  if (e->isOfType({Type::Ceiling, Type::Floor, Type::Round})) {
     // is discontinuous if it changes value
     isDiscontinuous =
         Approximation::To<float>(e, x1) != Approximation::To<float>(e, x2);
@@ -27,7 +27,7 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree *e,
     // is discontinuous if the child changes int value
     isDiscontinuous = std::floor(Approximation::To<float>(e->child(0), x1)) !=
                       std::floor(Approximation::To<float>(e->child(0), x2));
-  } else if (e->isOfType({BlockType::Abs, BlockType::Sign})) {
+  } else if (e->isOfType({Type::Abs, Type::Sign})) {
     // is discontinuous if the child changes sign
     isDiscontinuous = (Approximation::To<float>(e->child(0), x1) > 0.0) !=
                       (Approximation::To<float>(e->child(0), x2) > 0.0);

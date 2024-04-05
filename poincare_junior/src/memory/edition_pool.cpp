@@ -55,19 +55,19 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
 }
 
 template <>
-Tree *EditionPool::push<BlockType::UserFunction>(const char *name) {
-  return push<BlockType::UserFunction>(name, strlen(name) + 1);
+Tree *EditionPool::push<Type::UserFunction>(const char *name) {
+  return push<Type::UserFunction>(name, strlen(name) + 1);
 }
 template <>
-Tree *EditionPool::push<BlockType::UserSequence>(const char *name) {
-  return push<BlockType::UserSequence>(name, strlen(name) + 1);
+Tree *EditionPool::push<Type::UserSequence>(const char *name) {
+  return push<Type::UserSequence>(name, strlen(name) + 1);
 }
 template <>
-Tree *EditionPool::push<BlockType::UserSymbol>(const char *name) {
-  return push<BlockType::UserSymbol>(name, strlen(name) + 1);
+Tree *EditionPool::push<Type::UserSymbol>(const char *name) {
+  return push<Type::UserSymbol>(name, strlen(name) + 1);
 }
 
-template <BlockType blockType, typename... Types>
+template <Type blockType, typename... Types>
 Tree *EditionPool::push(Types... args) {
   Block *newNode = lastBlock();
 
@@ -434,48 +434,48 @@ uint16_t EditionPool::ReferenceTable::storeNodeAtIndex(Tree *node,
 
 // Edition Pool
 
-template Tree *EditionPool::push<BlockType::Addition, int>(int);
-template Tree *EditionPool::push<BlockType::AsciiCodePointLayout, CodePoint>(
+template Tree *EditionPool::push<Type::Addition, int>(int);
+template Tree *EditionPool::push<Type::AsciiCodePointLayout, CodePoint>(
     CodePoint);
-template Tree *EditionPool::push<BlockType::CombinedCodePointsLayout, CodePoint,
+template Tree *EditionPool::push<Type::CombinedCodePointsLayout, CodePoint,
                                  CodePoint>(CodePoint, CodePoint);
-template Tree *EditionPool::push<BlockType::Decimal, int8_t>(int8_t);
-template Tree *EditionPool::push<BlockType::DoubleFloat, double>(double);
-template Tree *EditionPool::push<BlockType::IntegerNegBig>(uint64_t);
-template Tree *EditionPool::push<BlockType::IntegerPosBig>(uint64_t);
-template Tree *EditionPool::push<BlockType::IntegerShort>(int8_t);
-template Tree *EditionPool::push<BlockType::List, int>(int);
-template Tree *EditionPool::push<BlockType::Matrix, int, int>(int, int);
-template Tree *EditionPool::push<BlockType::Matrix, uint8_t, uint8_t>(uint8_t,
-                                                                      uint8_t);
-template Tree *EditionPool::push<BlockType::MatrixLayout, uint8_t, uint8_t>(
-    uint8_t, uint8_t);
-template Tree *EditionPool::push<BlockType::Multiplication, int>(int);
-template Tree *EditionPool::push<BlockType::ParenthesisLayout, bool, bool>(
+template Tree *EditionPool::push<Type::Decimal, int8_t>(int8_t);
+template Tree *EditionPool::push<Type::DoubleFloat, double>(double);
+template Tree *EditionPool::push<Type::IntegerNegBig>(uint64_t);
+template Tree *EditionPool::push<Type::IntegerPosBig>(uint64_t);
+template Tree *EditionPool::push<Type::IntegerShort>(int8_t);
+template Tree *EditionPool::push<Type::List, int>(int);
+template Tree *EditionPool::push<Type::Matrix, int, int>(int, int);
+template Tree *EditionPool::push<Type::Matrix, uint8_t, uint8_t>(uint8_t,
+                                                                 uint8_t);
+template Tree *EditionPool::push<Type::MatrixLayout, uint8_t, uint8_t>(uint8_t,
+                                                                       uint8_t);
+template Tree *EditionPool::push<Type::Multiplication, int>(int);
+template Tree *EditionPool::push<Type::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
-template Tree *EditionPool::push<BlockType::PhysicalConstant, uint8_t>(uint8_t);
-template Tree *EditionPool::push<BlockType::Piecewise, int>(int);
-template Tree *EditionPool::push<BlockType::PointOfInterest, double, double,
+template Tree *EditionPool::push<Type::PhysicalConstant, uint8_t>(uint8_t);
+template Tree *EditionPool::push<Type::Piecewise, int>(int);
+template Tree *EditionPool::push<Type::PointOfInterest, double, double,
                                  uint32_t, uint8_t, bool, uint8_t>(
     double, double, uint32_t, uint8_t, bool, uint8_t);
-template Tree *EditionPool::push<BlockType::Polynomial, int>(int);
-template Tree *EditionPool::push<BlockType::RackLayout, int>(int);
-template Tree *EditionPool::push<BlockType::Set>(int);
-template Tree *EditionPool::push<BlockType::Set>(uint8_t);
-template Tree *EditionPool::push<BlockType::SingleFloat, float>(float);
-template Tree *EditionPool::push<BlockType::UnicodeCodePointLayout, CodePoint>(
+template Tree *EditionPool::push<Type::Polynomial, int>(int);
+template Tree *EditionPool::push<Type::RackLayout, int>(int);
+template Tree *EditionPool::push<Type::Set>(int);
+template Tree *EditionPool::push<Type::Set>(uint8_t);
+template Tree *EditionPool::push<Type::SingleFloat, float>(float);
+template Tree *EditionPool::push<Type::UnicodeCodePointLayout, CodePoint>(
     CodePoint);
-template Tree *EditionPool::push<BlockType::Unit, uint8_t, uint8_t>(uint8_t,
-                                                                    uint8_t);
-template Tree *EditionPool::push<BlockType::UserFunction, const char *, size_t>(
+template Tree *EditionPool::push<Type::Unit, uint8_t, uint8_t>(uint8_t,
+                                                               uint8_t);
+template Tree *EditionPool::push<Type::UserFunction, const char *, size_t>(
     const char *, size_t);
-template Tree *EditionPool::push<BlockType::UserSequence, const char *, size_t>(
+template Tree *EditionPool::push<Type::UserSequence, const char *, size_t>(
     const char *, size_t);
-template Tree *EditionPool::push<BlockType::UserSymbol, const char *, size_t>(
+template Tree *EditionPool::push<Type::UserSymbol, const char *, size_t>(
     const char *, size_t);
-template Tree *EditionPool::push<BlockType::Variable, uint8_t, ComplexSign>(
+template Tree *EditionPool::push<Type::Variable, uint8_t, ComplexSign>(
     uint8_t, ComplexSign);
-template Tree *EditionPool::push<BlockType::VerticalOffsetLayout, bool, bool>(
+template Tree *EditionPool::push<Type::VerticalOffsetLayout, bool, bool>(
     bool isSubscript, bool isPrefix);
 
 }  // namespace PoincareJ

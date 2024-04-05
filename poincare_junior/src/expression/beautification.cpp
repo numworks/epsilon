@@ -19,7 +19,7 @@ namespace PoincareJ {
 float Beautification::DegreeForSortingAddition(const Tree* expr,
                                                bool symbolsOnly) {
   switch (expr->type()) {
-    case BlockType::Multiplication: {
+    case Type::Multiplication: {
       /* If we consider the symbol degree, the degree of a multiplication is
        * the sum of the degrees of its terms :
        * 3*(x^2)*y -> deg = 0+2+1 = 3.
@@ -41,7 +41,7 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
       assert(expr->numberOfChildren() > 0);
       return DegreeForSortingAddition(expr->lastChild(), symbolsOnly);
     }
-    case BlockType::Power: {
+    case Type::Power: {
       double baseDegree = DegreeForSortingAddition(expr->child(0), symbolsOnly);
       if (baseDegree == 0.) {
         /* We escape here so that even if the exponent is not a number,
@@ -56,7 +56,7 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
       }
       return NAN;
     }
-    case BlockType::Variable:
+    case Type::Variable:
       return 1.;
     default:
       return symbolsOnly ? 0. : 1.;
@@ -99,8 +99,8 @@ bool Beautification::SplitMultiplication(const Tree* expr,
                                          EditionReference& numerator,
                                          EditionReference& denominator) {
   bool result = false;
-  numerator = SharedEditionPool->push<BlockType::Multiplication>(0);
-  denominator = SharedEditionPool->push<BlockType::Multiplication>(0);
+  numerator = SharedEditionPool->push<Type::Multiplication>(0);
+  denominator = SharedEditionPool->push<Type::Multiplication>(0);
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(expr);
   for (int i = 0; i < numberOfFactors; i++) {
@@ -182,14 +182,14 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     units = dimension.toBaseUnits();
   } else {
     double value = Approximation::RootTreeTo<double>(expr);
-    units = SharedEditionPool->push<BlockType::Multiplication>(2);
+    units = SharedEditionPool->push<Type::Multiplication>(2);
     ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();
     Simplification::DeepSystematicReduce(units);
     Units::Unit::ChooseBestRepresentativeAndPrefixForValue(
         units, &value, projectionContext.m_unitFormat);
-    Tree* approximated = SharedEditionPool->push<BlockType::DoubleFloat>(
-        static_cast<double>(value));
+    Tree* approximated =
+        SharedEditionPool->push<Type::DoubleFloat>(static_cast<double>(value));
     expr->moveTreeOverTree(approximated);
   }
   Beautification::DeepBeautify(units);
@@ -322,8 +322,7 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
     }
   }
 
-  if (ref->isOfType(
-          {BlockType::Multiplication, BlockType::GCD, BlockType::LCM}) &&
+  if (ref->isOfType({Type::Multiplication, Type::GCD, Type::LCM}) &&
       NAry::Sort(ref, Comparison::Order::Beautification)) {
     return true;
   }
@@ -361,13 +360,13 @@ template <typename T>
 Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
                                             ComplexFormat complexFormat) {
   // TODO : factorize with the code above somehow ?
-  constexpr BlockType Type = FloatType<T>::type;
+  constexpr Type Type = FloatType<T>::type;
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
-    return SharedEditionPool->push(BlockType::Undefined);
+    return SharedEditionPool->push(Type::Undefined);
   }
   if (im != 0 && complexFormat == ComplexFormat::Real) {
-    return SharedEditionPool->push(BlockType::Nonreal);
+    return SharedEditionPool->push(Type::Nonreal);
   }
   if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
     return SharedEditionPool->push<Type>(re);
@@ -377,30 +376,30 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   if (complexFormat == ComplexFormat::Cartesian) {
     // [re+]
     if (re != 0) {
-      SharedEditionPool->push<BlockType::Addition>(2);
+      SharedEditionPool->push<Type::Addition>(2);
       SharedEditionPool->push<Type>(re);
     }
   } else {
     // [abs×]e^
     T abs = std::abs(value);
     if (abs != 1) {
-      SharedEditionPool->push<BlockType::Multiplication>(2);
+      SharedEditionPool->push<Type::Multiplication>(2);
       SharedEditionPool->push<Type>(abs);
     }
-    SharedEditionPool->push(BlockType::Power);
-    SharedEditionPool->push(BlockType::ExponentialE);
+    SharedEditionPool->push(Type::Power);
+    SharedEditionPool->push(Type::ExponentialE);
     im = std::arg(value);
   }
   // Complex part ±[im×]i
   if (im < 0) {
-    SharedEditionPool->push(BlockType::Opposite);
+    SharedEditionPool->push(Type::Opposite);
     im = -im;
   }
   if (im != 1) {
-    SharedEditionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->push<Type::Multiplication>(2);
     SharedEditionPool->push<Type>(im);
   }
-  SharedEditionPool->push(BlockType::ComplexI);
+  SharedEditionPool->push(Type::ComplexI);
   return result;
 }
 

@@ -27,7 +27,7 @@ class Variables {
 
    private:
     constexpr static size_t k_size =
-        TypeBlock::NumberOfMetaBlocks(BlockType::Variable);
+        TypeBlock::NumberOfMetaBlocks(Type::Variable);
     Block m_blocks[k_size];
   };
   // Push a Set with the free user symbols of the expression

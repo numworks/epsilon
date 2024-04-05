@@ -17,15 +17,15 @@ constexpr static Aliases s_customIdentifiers[] = {
 };
 
 constexpr static Builtin s_specialIdentifiers[] = {
-    {BlockType::Undefined, "undef"},
-    {BlockType::Nonreal, "nonreal"},
-    {BlockType::ComplexI, "i"},
-    {BlockType::Infinity, BuiltinsAliases::k_infinityAliases},
-    {BlockType::False, BuiltinsAliases::k_falseAliases},
-    {BlockType::True, BuiltinsAliases::k_trueAliases},
+    {Type::Undefined, "undef"},
+    {Type::Nonreal, "nonreal"},
+    {Type::ComplexI, "i"},
+    {Type::Infinity, BuiltinsAliases::k_infinityAliases},
+    {Type::False, BuiltinsAliases::k_falseAliases},
+    {Type::True, BuiltinsAliases::k_trueAliases},
 };
 
-constexpr static BuiltinAns s_builtinAns = {/* dummy */ BlockType::Zero,
+constexpr static BuiltinAns s_builtinAns = {/* dummy */ Type::Zero,
                                             BuiltinsAliases::k_ansAliases};
 
 class DistributionBuiltin : public Builtin {
@@ -33,7 +33,7 @@ class DistributionBuiltin : public Builtin {
   constexpr DistributionBuiltin(Distribution::Type distribution,
                                 DistributionMethod::Type method,
                                 Aliases aliases)
-      : Builtin(BlockType::Distribution, aliases),
+      : Builtin(Type::Distribution, aliases),
         m_distribution(distribution),
         m_method(method) {}
 
@@ -87,7 +87,7 @@ Tree *Builtin::pushNode(int numberOfChildren) const {
   } else if (TypeBlock(m_blockType).isRandomNode()) {
     // Add random seeds
     assert(result->nodeSize() == 2);
-    SharedEditionPool->push(BlockType::Zero);
+    SharedEditionPool->push(Type::Zero);
   } else {
     assert(result->nodeSize() == 1);
   }
@@ -95,10 +95,10 @@ Tree *Builtin::pushNode(int numberOfChildren) const {
 }
 
 Tree *DistributionBuiltin::pushNode(int numberOfChildren) const {
-  Tree *result = SharedEditionPool->push(BlockType::Distribution);
+  Tree *result = SharedEditionPool->push(Type::Distribution);
   SharedEditionPool->push(numberOfChildren);
-  SharedEditionPool->push(BlockType(m_distribution));
-  SharedEditionPool->push(BlockType(m_method));
+  SharedEditionPool->push(Type(m_distribution));
+  SharedEditionPool->push(Type(m_method));
   return result;
 }
 
@@ -166,7 +166,7 @@ const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
   return nullptr;
 }
 
-const Builtin *Builtin::GetSpecialIdentifier(BlockType type) {
+const Builtin *Builtin::GetSpecialIdentifier(Type type) {
   for (const Builtin &builtin : s_specialIdentifiers) {
     if (builtin.m_blockType == type) {
       return &builtin;
@@ -177,18 +177,18 @@ const Builtin *Builtin::GetSpecialIdentifier(BlockType type) {
 
 bool Builtin::checkNumberOfParameters(int n) const {
   switch (m_blockType) {
-    case BlockType::Round:
-    case BlockType::Mean:
-    case BlockType::Variance:
-    case BlockType::StdDev:
-    case BlockType::SampleStdDev:
-    case BlockType::Median:
-    case BlockType::RandInt:
+    case Type::Round:
+    case Type::Mean:
+    case Type::Variance:
+    case Type::StdDev:
+    case Type::SampleStdDev:
+    case Type::Median:
+    case Type::RandInt:
       return 1 <= n && n <= 2;
-    case BlockType::GCD:
-    case BlockType::LCM:
+    case Type::GCD:
+    case Type::LCM:
       return 2 <= n && n <= UINT8_MAX;
-    case BlockType::Piecewise:
+    case Type::Piecewise:
       return 1 <= n && n <= UINT8_MAX;
     default:
       return n == TypeBlock::NumberOfChildren(m_blockType);

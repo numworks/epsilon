@@ -38,7 +38,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
          *   dependency and replace local variable with symbol value. */
         int numberOfDependencies = exprChildSet->numberOfChildren();
         EditionReference set =
-            SharedEditionPool->push<BlockType::Set>(numberOfDependencies);
+            SharedEditionPool->push<Type::Set>(numberOfDependencies);
         for (int j = 0; j < numberOfDependencies; j++) {
           if (Variables::HasVariable(exprChildSet->firstChild(),
                                      Parametric::k_localVariableId)) {

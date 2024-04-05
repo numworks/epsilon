@@ -299,56 +299,56 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
                                   s_context ? s_context->m_listElement : -1);
   }
   switch (node->type()) {
-    case BlockType::Undefined:
+    case Type::Undefined:
       // Until we make simplification compulsory, undef may be anywhere
       return NAN;
-    case BlockType::Parenthesis:
+    case Type::Parenthesis:
       return ToComplex<T>(node->nextNode());
-    case BlockType::ComplexI:
+    case Type::ComplexI:
       return std::complex<T>(0, 1);
-    case BlockType::Pi:
+    case Type::Pi:
       return M_PI;
-    case BlockType::ExponentialE:
+    case Type::ExponentialE:
       return M_E;
-    case BlockType::SingleFloat:
+    case Type::SingleFloat:
       return FloatNode::FloatTo(node);
-    case BlockType::DoubleFloat:
+    case Type::DoubleFloat:
       return FloatNode::DoubleTo(node);
-    case BlockType::Addition:
+    case Type::Addition:
       return MapAndReduce<T, std::complex<T>>(node,
                                               FloatAddition<std::complex<T>>);
-    case BlockType::Multiplication:
+    case Type::Multiplication:
       return MapAndReduce<T, std::complex<T>>(node, FloatMultiplication<T>);
-    case BlockType::Division:
+    case Type::Division:
       return MapAndReduce<T, std::complex<T>>(node, FloatDivision<T>);
-    case BlockType::Subtraction:
+    case Type::Subtraction:
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
-    case BlockType::Power:
+    case Type::Power:
       return ApproximatePower<T>(node, s_context ? s_context->m_complexFormat
                                                  : ComplexFormat::Cartesian);
-    case BlockType::Logarithm:
+    case Type::Logarithm:
       return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>);
-    case BlockType::Trig:
+    case Type::Trig:
       return MapAndReduce<T, std::complex<T>>(node, FloatTrig<std::complex<T>>);
-    case BlockType::ATrig:
+    case Type::ATrig:
       return MapAndReduce<T, std::complex<T>>(node,
                                               FloatATrig<std::complex<T>>);
-    case BlockType::GCD:
+    case Type::GCD:
       return MapAndReduce<T, T>(node, FloatGCD<T>,
                                 PositiveIntegerApproximation<T>);
-    case BlockType::LCM:
+    case Type::LCM:
       return MapAndReduce<T, T>(node, FloatLCM<T>,
                                 PositiveIntegerApproximation<T>);
-    case BlockType::SquareRoot:
+    case Type::SquareRoot:
       return std::sqrt(ToComplex<T>(node->nextNode()));
-    case BlockType::NthRoot:
+    case Type::NthRoot:
       return std::pow(ToComplex<T>(node->nextNode()),
                       static_cast<T>(1) / ToComplex<T>(node->child(1)));
-    case BlockType::Exponential:
+    case Type::Exponential:
       return std::exp(ToComplex<T>(node->nextNode()));
-    case BlockType::Log:
-    case BlockType::Ln: {
+    case Type::Log:
+    case Type::Ln: {
       std::complex<T> c = ToComplex<T>(node->nextNode());
       /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut.
        * We followed the convention chosen by the lib c++ of llvm on ]-inf+0i,
@@ -360,61 +360,61 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
              : node->isLog()         ? std::log10(c)
                                      : std::log(c);
     }
-    case BlockType::Abs:
+    case Type::Abs:
       return std::abs(ToComplex<T>(node->nextNode()));
-    case BlockType::Infinity:
+    case Type::Infinity:
       return INFINITY;
-    case BlockType::Conjugate:
+    case Type::Conjugate:
       return std::conj(ToComplex<T>(node->nextNode()));
-    case BlockType::Opposite:
+    case Type::Opposite:
       return FloatMultiplication<T>(-1, ToComplex<T>(node->nextNode()));
-    case BlockType::RealPart: {
+    case Type::RealPart: {
       /* TODO_PCJ: Complex NAN should be used in most of the code. Make sure a
        * NAN result cannot be lost. */
       std::complex<T> c = ToComplex<T>(node->nextNode());
       return std::isnan(c.imag()) ? NAN : c.real();
     }
-    case BlockType::ImaginaryPart: {
+    case Type::ImaginaryPart: {
       std::complex<T> c = ToComplex<T>(node->nextNode());
       return std::isnan(c.real()) ? NAN : c.imag();
     }
 
     /* Trigonometry */
-    case BlockType::Cosine:
-    case BlockType::Sine:
-    case BlockType::Tangent:
-    case BlockType::Secant:
-    case BlockType::Cosecant:
-    case BlockType::Cotangent:
-    case BlockType::ArcCosine:
-    case BlockType::ArcSine:
-    case BlockType::ArcTangent:
-    case BlockType::ArcSecant:
-    case BlockType::ArcCosecant:
-    case BlockType::ArcCotangent:
+    case Type::Cosine:
+    case Type::Sine:
+    case Type::Tangent:
+    case Type::Secant:
+    case Type::Cosecant:
+    case Type::Cotangent:
+    case Type::ArcCosine:
+    case Type::ArcSine:
+    case Type::ArcTangent:
+    case Type::ArcSecant:
+    case Type::ArcCosecant:
+    case Type::ArcCotangent:
       return TrigonometricToComplex(node->type(),
                                     ToComplex<T>(node->nextNode()));
-    case BlockType::HyperbolicSine:
-    case BlockType::HyperbolicCosine:
-    case BlockType::HyperbolicTangent:
-    case BlockType::HyperbolicArcSine:
-    case BlockType::HyperbolicArcCosine:
-    case BlockType::HyperbolicArcTangent:
+    case Type::HyperbolicSine:
+    case Type::HyperbolicCosine:
+    case Type::HyperbolicTangent:
+    case Type::HyperbolicArcSine:
+    case Type::HyperbolicArcCosine:
+    case Type::HyperbolicArcTangent:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
-    case BlockType::Variable: {
+    case Type::Variable: {
       // Local variable
       int index = Variables::Id(node);
       assert(s_context);
       return s_context->variable(index);
     }
-    case BlockType::UserSymbol:
-    case BlockType::UserFunction:
-    case BlockType::UserSequence:
+    case Type::UserSymbol:
+    case Type::UserFunction:
+    case Type::UserSequence:
       // Global variable
       return NAN;
     /* Analysis */
-    case BlockType::Sum:
-    case BlockType::Product: {
+    case Type::Sum:
+    case Type::Product: {
       const Tree* lowerBoundChild = node->child(Parametric::k_lowerBoundIndex);
       std::complex<T> low = ToComplex<T>(lowerBoundChild);
       if (low.imag() != 0 || (int)low.real() != low.real()) {
@@ -445,8 +445,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->unshiftVariables();
       return result;
     }
-    case BlockType::Derivative:
-    case BlockType::NthDerivative: {
+    case Type::Derivative:
+    case Type::NthDerivative: {
       constexpr static int k_maxOrderForApproximation = 4;
       int order;
       const Tree* derivand;
@@ -489,13 +489,13 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->unshiftVariables();
       return result;
     }
-    case BlockType::Integral:
+    case Type::Integral:
       return ApproximateIntegral<T>(node);
 
     /* Matrices */
-    case BlockType::Norm:
-    case BlockType::Trace:
-    case BlockType::Det: {
+    case Type::Norm:
+    case Type::Trace:
+    case Type::Det: {
       Tree* m = ToMatrix<T>(node->child(0));
       Tree* value;
       if (node->isDet()) {
@@ -510,7 +510,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       m->removeTree();
       return v;
     }
-    case BlockType::Dot: {
+    case Type::Dot: {
       // TODO use complex conjugate ?
       Tree* u = ToMatrix<T>(node->child(0));
       Tree* v = ToMatrix<T>(node->child(1));
@@ -523,10 +523,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     }
 
     /* Lists */
-    case BlockType::List:
+    case Type::List:
       assert(s_context->m_listElement != -1);
       return ToComplex<T>(node->child(s_context->m_listElement));
-    case BlockType::ListSequence: {
+    case Type::ListSequence: {
       s_context->shiftVariables();
       // epsilon sequences starts at one
       assert(s_context->m_listElement != -1);
@@ -535,12 +535,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->unshiftVariables();
       return result;
     }
-    case BlockType::Dim: {
+    case Type::Dim: {
       int n = Dimension::GetListLength(node->child(0));
       return n >= 0 ? n : NAN;
     }
-    case BlockType::ListSum:
-    case BlockType::ListProduct: {
+    case Type::ListSum:
+    case Type::ListProduct: {
       const Tree* values = node->child(0);
       int length = Dimension::GetListLength(values);
       int old = s_context->m_listElement;
@@ -553,8 +553,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->m_listElement = old;
       return result;
     }
-    case BlockType::Minimum:
-    case BlockType::Maximum: {
+    case Type::Minimum:
+    case Type::Maximum: {
       const Tree* values = node->child(0);
       int length = Dimension::GetListLength(values);
       int old = s_context->m_listElement;
@@ -573,10 +573,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->m_listElement = old;
       return result;
     }
-    case BlockType::Mean:
-    case BlockType::StdDev:
-    case BlockType::SampleStdDev:
-    case BlockType::Variance: {
+    case Type::Mean:
+    case Type::StdDev:
+    case Type::SampleStdDev:
+    case Type::Variance: {
       const Tree* values = node->child(0);
       const Tree* coefficients = node->child(1);
       int length = Dimension::GetListLength(values);
@@ -616,7 +616,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       T sampleStdDevCoef = std::pow(1 + 1 / (coefficientsSum - 1), 0.5);
       return stdDev * sampleStdDevCoef;
     }
-    case BlockType::ListSort: {
+    case Type::ListSort: {
       /* TODO we are computing all elements and sorting the list for all
        * elements, this is awful */
       Tree* list = ToList<T>(node->child(0));
@@ -625,12 +625,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       list->removeTree();
       return result;
     }
-    case BlockType::Median:
+    case Type::Median:
       // TODO PCJ
       return NAN;
-    case BlockType::Piecewise:
+    case Type::Piecewise:
       return ToComplex<T>(SelectPiecewiseBranch<T>(node));
-    case BlockType::Distribution: {
+    case Type::Distribution: {
       const Tree* child = node->child(0);
       T abscissa[DistributionMethod::k_maxNumberOfParameters];
       DistributionMethod::Type method = DistributionMethod::Get(node);
@@ -674,10 +674,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     child[i++] = app.real();
   }
   switch (node->type()) {
-    case BlockType::Decimal:
+    case Type::Decimal:
       return child[0] *
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
-    case BlockType::PowerReal: {
+    case Type::PowerReal: {
       T a = child[0];
       T b = child[1];
       /* PowerReal could not be reduced, b's reductions cannot be safely
@@ -685,15 +685,15 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
        * negative and b isn't an integer. */
       return (a < 0.0 && b != std::round(b)) ? NAN : std::pow(a, b);
     }
-    case BlockType::Sign: {
+    case Type::Sign: {
       // TODO why no epsilon in Poincare ?
       return child[0] == 0 ? 0 : child[0] < 0 ? -1 : 1;
     }
-    case BlockType::LnReal:
+    case Type::LnReal:
       // TODO unreal
       return child[0] <= 0 ? NAN : std::log(child[0]);
-    case BlockType::Floor:
-    case BlockType::Ceiling: {
+    case Type::Floor:
+    case Type::Ceiling: {
       /* Assume low deviation from natural numbers are errors */
       T delta = std::fabs((std::round(child[0]) - child[0]) / child[0]);
       if (delta <= Float<T>::Epsilon()) {
@@ -701,18 +701,18 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       return node->isFloor() ? std::floor(child[0]) : std::ceil(child[0]);
     }
-    case BlockType::FracPart: {
+    case Type::FracPart: {
       return child[0] - std::floor(child[0]);
     }
-    case BlockType::Round: {
+    case Type::Round: {
       if (child[1] != std::round(child[1])) {
         return NAN;
       }
       T err = std::pow(10, std::round(child[1]));
       return std::round(child[0] * err) / err;
     }
-    case BlockType::Quotient:
-    case BlockType::Remainder: {
+    case Type::Quotient:
+    case Type::Remainder: {
       T a = child[0];
       T b = child[1];
       if (a != (int)a || b != (int)b) {
@@ -723,7 +723,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return node->isQuotient() ? quotient : std::round(a - b * quotient);
     }
 
-    case BlockType::Factorial: {
+    case Type::Factorial: {
       T n = child[0];
       if (n != std::round(n) || n < 0) {
         return NAN;
@@ -737,7 +737,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       return std::round(result);
     }
-    case BlockType::Binomial: {
+    case Type::Binomial: {
       T n = child[0];
       T k = child[1];
       if (k != std::round(k)) {
@@ -761,7 +761,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       // If not generalized, the output must be rounded
       return generalized ? result : std::round(result);
     }
-    case BlockType::Permute: {
+    case Type::Permute: {
       T n = child[0];
       T k = child[1];
       if (n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
@@ -779,7 +779,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       return std::round(result);
     }
-    case BlockType::MixedFraction: {
+    case Type::MixedFraction: {
       T integerPart = child[0];
       T fractionPart = child[1];
       if (fractionPart < 0.0 || integerPart != std::fabs(integerPart)) {
@@ -788,21 +788,21 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       return child[0] + child[1];
     }
-    case BlockType::Factor:
+    case Type::Factor:
       // Useful for the beautification only
       return child[0];
-    case BlockType::PercentSimple:
+    case Type::PercentSimple:
       return child[0] / 100.0;
-    case BlockType::PercentAddition:
+    case Type::PercentAddition:
       return child[0] * (1.0 + child[1] / 100.0);
 
     default:
       if (node->isParametric()) {
         // TODO: Explicit tree if it contains random nodes.
       }
-      // TODO: Implement more BlockTypes
+      // TODO: Implement more Types
       assert(false);
-    case BlockType::Undefined:
+    case Type::Undefined:
       return NAN;
   };
 }
@@ -812,13 +812,13 @@ Tree* PushComplex(std::complex<T> value) {
   if (value.imag() == 0.0) {
     return SharedEditionPool->push<FloatType<T>::type>(value.real());
   }
-  Tree* result = SharedEditionPool->push<BlockType::Addition>(2);
+  Tree* result = SharedEditionPool->push<Type::Addition>(2);
   SharedEditionPool->push<FloatType<T>::type>(value.real());
   if (value.imag() != 1.0) {
-    SharedEditionPool->push<BlockType::Multiplication>(2);
+    SharedEditionPool->push<Type::Multiplication>(2);
     SharedEditionPool->push<FloatType<T>::type>(value.imag());
   }
-  SharedEditionPool->push(BlockType::ComplexI);
+  SharedEditionPool->push(Type::ComplexI);
   return result;
 }
 
@@ -866,15 +866,15 @@ bool Approximation::ToBoolean(const Tree* node) {
   }
   bool b = ToBoolean<T>(node->child(1));
   switch (node->type()) {
-    case BlockType::LogicalAnd:
+    case Type::LogicalAnd:
       return a && b;
-    case BlockType::LogicalNand:
+    case Type::LogicalNand:
       return !(a && b);
-    case BlockType::LogicalOr:
+    case Type::LogicalOr:
       return a || b;
-    case BlockType::LogicalNor:
+    case Type::LogicalNor:
       return !(a || b);
-    case BlockType::LogicalXor:
+    case Type::LogicalXor:
       return a ^ b;
     default:
       assert(false);
@@ -885,7 +885,7 @@ template <typename T>
 Tree* Approximation::ToList(const Tree* node) {
   int length = Dimension::GetListLength(node);
   int old = s_context->m_listElement;
-  Tree* list = SharedEditionPool->push<BlockType::List>(length);
+  Tree* list = SharedEditionPool->push<Type::List>(length);
   for (int i = 0; i < length; i++) {
     s_context->m_listElement = i;
     std::complex<T> k = ToComplex<T>(node);
@@ -913,7 +913,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     return m;
   }
   switch (node->type()) {
-    case BlockType::Addition: {
+    case Type::Addition: {
       const Tree* child = node->child(0);
       int n = node->numberOfChildren() - 1;
       Tree* result = ToMatrix<T>(child);
@@ -926,7 +926,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       }
       return result;
     }
-    case BlockType::Subtraction: {
+    case Type::Subtraction: {
       Tree* a = ToMatrix<T>(node->child(0));
       Tree* b = ToMatrix<T>(node->child(1));
       b->moveTreeOverTree(Matrix::ScalarMultiplication(minusOne, b, true));
@@ -935,7 +935,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       a->removeTree();
       return a;
     }
-    case BlockType::Multiplication: {
+    case Type::Multiplication: {
       bool resultIsMatrix = false;
       Tree* result = nullptr;
       for (const Tree* child : node->children()) {
@@ -960,14 +960,14 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       }
       return result;
     }
-    case BlockType::Division: {
+    case Type::Division: {
       Tree* a = ToMatrix<T>(node->child(0));
       Tree* s = PushComplex(static_cast<T>(1) / ToComplex<T>(node->child(1)));
       s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true));
       a->removeTree();
       return a;
     }
-    case BlockType::PowerMatrix: {
+    case Type::PowerMatrix: {
       const Tree* base = node->child(0);
       const Tree* index = base->nextTree();
       T value = To<T>(index);
@@ -978,28 +978,28 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       result->moveTreeOverTree(Matrix::Power(result, value, true));
       return result;
     }
-    case BlockType::Inverse:
-    case BlockType::Transpose: {
+    case Type::Inverse:
+    case Type::Transpose: {
       Tree* result = ToMatrix<T>(node->child(0));
       result->moveTreeOverTree(node->isInverse() ? Matrix::Inverse(result, true)
                                                  : Matrix::Transpose(result));
       return result;
     }
-    case BlockType::Ref:
-    case BlockType::Rref: {
+    case Type::Ref:
+    case Type::Rref: {
       Tree* result = ToMatrix<T>(node->child(0));
       Matrix::RowCanonize(result, node->isRref(), nullptr, true);
       return result;
     }
-    case BlockType::Dim: {
+    case Type::Dim: {
       Dimension dim = Dimension::GetDimension(node->child(0));
       assert(dim.isMatrix());
-      Tree* result = SharedEditionPool->push<BlockType::Matrix>(1, 2);
+      Tree* result = SharedEditionPool->push<Type::Matrix>(1, 2);
       SharedEditionPool->push<FloatType<T>::type>(T(dim.matrix.rows));
       SharedEditionPool->push<FloatType<T>::type>(T(dim.matrix.cols));
       return result;
     }
-    case BlockType::Cross: {
+    case Type::Cross: {
       Tree* u = ToMatrix<T>(node->child(0));
       Tree* v = ToMatrix<T>(node->child(1));
       Vector::Cross(u, v);
@@ -1007,7 +1007,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       u->removeTree();
       return u;
     }
-    case BlockType::Piecewise:
+    case Type::Piecewise:
       return ToMatrix<T>(SelectPiecewiseBranch<T>(node));
     default:;
   }
@@ -1079,15 +1079,15 @@ U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
 bool interruptApproximation(TypeBlock type, int childIndex,
                             TypeBlock childType) {
   switch (type) {
-    case BlockType::ATrig:
-    case BlockType::Trig:
+    case Type::ATrig:
+    case Type::Trig:
       // Do not approximate second term in case tree isn't replaced.
       return (childIndex == 1);
-    case BlockType::PowerMatrix:
-    case BlockType::Power:
+    case Type::PowerMatrix:
+    case Type::Power:
       // Note: After projection, Power's second term should always be integer.
       return (childIndex == 1 && childType.isInteger());
-    case BlockType::Identity:
+    case Type::Identity:
       return true;
     default:
       return false;
@@ -1109,8 +1109,8 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   // These types are either already approximated or impossible to approximate.
   if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
       tree->isComplexI() ||
-      tree->isOfType({BlockType::UserSymbol, BlockType::Variable,
-                      BlockType::Unit, BlockType::PhysicalConstant}) ||
+      tree->isOfType({Type::UserSymbol, Type::Variable, Type::Unit,
+                      Type::PhysicalConstant}) ||
       !Dimension::GetDimension(tree).isScalar() ||
       Dimension::GetListLength(tree) != -1) {
     return false;

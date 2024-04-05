@@ -27,7 +27,7 @@ namespace PoincareJ {
 #define NODE2(F, N) NODE3(F, N, 0)
 #define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
 
-enum class BlockType : uint8_t {
+enum class Type : uint8_t {
 // Add all the types to the enum
 #define RANGE(...)
 #define NODE3(F, N, S) SCOPED_NODE(F),
@@ -37,9 +37,9 @@ enum class BlockType : uint8_t {
 };
 
 enum class LayoutType : uint8_t {
-// Members of LayoutType have the same values as their BlockType counterpart
+// Members of LayoutType have the same values as their Type counterpart
 #define RANGE(...)
-#define NODE3(F, N, S) F = static_cast<uint8_t>(BlockType::F##Layout),
+#define NODE3(F, N, S) F = static_cast<uint8_t>(Type::F##Layout),
 #include <poincare_junior/src/layout/types.h>
 #undef NODE3
 #undef RANGE
@@ -47,20 +47,19 @@ enum class LayoutType : uint8_t {
 
 class TypeBlock : public Block {
  public:
-  constexpr TypeBlock(BlockType content)
-      : Block(static_cast<uint8_t>(content)) {
-    assert(m_content < static_cast<uint8_t>(BlockType::NumberOfTypes));
+  constexpr TypeBlock(Type content) : Block(static_cast<uint8_t>(content)) {
+    assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
   }
-  constexpr BlockType type() const { return static_cast<BlockType>(m_content); }
+  constexpr Type type() const { return static_cast<Type>(m_content); }
 
   bool operator==(const TypeBlock &other) const = default;
-  constexpr bool operator==(BlockType t) const { return type() == t; }
+  constexpr bool operator==(Type t) const { return type() == t; }
   bool operator!=(const TypeBlock &other) const = default;
-  constexpr bool operator!=(BlockType t) const { return type() != t; }
-  constexpr operator BlockType() const { return type(); }
+  constexpr bool operator!=(Type t) const { return type() != t; }
+  constexpr operator Type() const { return type(); }
 
 #if POINCARE_TREE_LOG
-  // Add an array of names for the BlockTypes
+  // Add an array of names for the Types
   static constexpr const char *names[] = {
 #define RANGE(...)
 #define NODE3(F, N, S) #F,
@@ -71,12 +70,12 @@ class TypeBlock : public Block {
 #endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
-#define RANGE(NAME, FIRST, LAST)                                \
-  static constexpr bool Is##NAME(BlockType type) {              \
-    static_assert(BlockType::FIRST <= BlockType::LAST);         \
-    return BlockType::FIRST <= type && type <= BlockType::LAST; \
-  }                                                             \
-                                                                \
+#define RANGE(NAME, FIRST, LAST)                      \
+  static constexpr bool Is##NAME(Type type) {         \
+    static_assert(Type::FIRST <= Type::LAST);         \
+    return Type::FIRST <= type && type <= Type::LAST; \
+  }                                                   \
+                                                      \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 
 #define RANGE1(N) RANGE(N, N, N)
@@ -88,9 +87,9 @@ class TypeBlock : public Block {
 #undef RANGE1
 #undef RANGE
 
-  constexpr static bool IsOfType(BlockType thisType,
-                                 std::initializer_list<BlockType> types) {
-    for (BlockType t : types) {
+  constexpr static bool IsOfType(Type thisType,
+                                 std::initializer_list<Type> types) {
+    for (Type t : types) {
       if (thisType == t) {
         return true;
       }
@@ -98,14 +97,14 @@ class TypeBlock : public Block {
     return false;
   }
 
-  constexpr bool isOfType(std::initializer_list<BlockType> types) const {
+  constexpr bool isOfType(std::initializer_list<Type> types) const {
     return IsOfType(type(), types);
   }
 
   bool isScalarOnly() const { return !isAMatrixOrContainsMatricesAsChildren(); }
 
   // Their next metaBlock contains the numberOfChildren
-  constexpr static bool IsNAry(BlockType type) {
+  constexpr static bool IsNAry(Type type) {
     return NumberOfChildrenOrTag(type) == NAryNumberOfChildrenTag ||
            NumberOfChildrenOrTag(type) == NAryLargeNumberOfChildrenTag;
   }
@@ -114,7 +113,7 @@ class TypeBlock : public Block {
   constexpr bool isSimpleNAry() const {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
-  constexpr static bool IsNAry16(BlockType type) {
+  constexpr static bool IsNAry16(Type type) {
     return NumberOfChildrenOrTag(type) == NAryLargeNumberOfChildrenTag;
   }
   constexpr bool isNAry16() const { return IsNAry16(type()); }
@@ -132,11 +131,11 @@ class TypeBlock : public Block {
   }
 
  public:
-  constexpr static size_t NumberOfMetaBlocks(BlockType type) {
+  constexpr static size_t NumberOfMetaBlocks(Type type) {
     switch (type) {
 #define RANGE(...)
-#define NODE3(F, N, S)            \
-  case BlockType::SCOPED_NODE(F): \
+#define NODE3(F, N, S)       \
+  case Type::SCOPED_NODE(F): \
     return DefaultNumberOfMetaBlocks(N) + S;
 #include <poincare_junior/src/memory/types.h>
       default:
@@ -147,30 +146,30 @@ class TypeBlock : public Block {
 #undef RANGE
 
   constexpr size_t nodeSize() const {
-    BlockType t = type();
+    Type t = type();
     size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);
-    // NOTE: Make sure new BlockTypes are handled here.
+    // NOTE: Make sure new Types are handled here.
     switch (t) {
-      case BlockType::IntegerPosBig:
-      case BlockType::IntegerNegBig: {
+      case Type::IntegerPosBig:
+      case Type::IntegerNegBig: {
         uint8_t numberOfDigits = static_cast<uint8_t>(*next());
         return numberOfMetaBlocks + numberOfDigits;
       }
-      case BlockType::RationalPosBig:
-      case BlockType::RationalNegBig: {
+      case Type::RationalPosBig:
+      case Type::RationalNegBig: {
         uint8_t numberOfDigitsNumerator = static_cast<uint8_t>(*next());
         uint8_t numberOfDigitsDenominator = static_cast<uint8_t>(*nextNth(2));
         return numberOfMetaBlocks +
                static_cast<size_t>(numberOfDigitsNumerator) +
                static_cast<size_t>(numberOfDigitsDenominator);
       }
-      case BlockType::Polynomial: {
+      case Type::Polynomial: {
         uint8_t numberOfTerms = static_cast<uint8_t>(*next()) - 1;
         return numberOfMetaBlocks + numberOfTerms;
       }
-      case BlockType::UserFunction:
-      case BlockType::UserSequence:
-      case BlockType::UserSymbol: {
+      case Type::UserFunction:
+      case Type::UserSequence:
+      case Type::UserSymbol: {
         uint8_t numberOfChars = static_cast<uint8_t>(*next());
         return numberOfMetaBlocks + numberOfChars;
       }
@@ -193,18 +192,18 @@ class TypeBlock : public Block {
     }
   }
 
-  constexpr static int NumberOfChildren(BlockType type) {
+  constexpr static int NumberOfChildren(Type type) {
     assert(NumberOfChildrenOrTag(type) != NAryNumberOfChildrenTag &&
            NumberOfChildrenOrTag(type) != NAry2DNumberOfChildrenTag);
     return NumberOfChildrenOrTag(type);
   }
 
  private:
-  constexpr static int NumberOfChildrenOrTag(BlockType type) {
+  constexpr static int NumberOfChildrenOrTag(Type type) {
     switch (type) {
 #define RANGE(...)
-#define NODE3(F, N, S)            \
-  case BlockType::SCOPED_NODE(F): \
+#define NODE3(F, N, S)       \
+  case Type::SCOPED_NODE(F): \
     return N;
 #include <poincare_junior/src/memory/types.h>
 #undef NODE3
@@ -230,7 +229,7 @@ class BlockBuffer {
  public:
   constexpr BlockBuffer() {
 #if ASSERTIONS
-    m_blocks[size] = BlockType::TreeBorder;
+    m_blocks[size] = Type::TreeBorder;
 #endif
   }
   constexpr TypeBlock *blocks() {

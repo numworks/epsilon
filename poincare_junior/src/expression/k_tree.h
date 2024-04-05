@@ -13,100 +13,100 @@ namespace KTrees {
 
 // Constructors
 
-constexpr auto KUndef = KTree<BlockType::Undefined>();
+constexpr auto KUndef = KTree<Type::Undefined>();
 /* TODO: Remove KHalf and use 1_e/2_e. Also ensure unreduced KTree rational are
  * either forbidden or properly handled. */
-constexpr auto KHalf = KTree<BlockType::Half>();
-constexpr auto KNonreal = KTree<BlockType::Nonreal>();
-constexpr auto KInf = KTree<BlockType::Infinity>();
-constexpr auto i_e = KTree<BlockType::ComplexI>();
+constexpr auto KHalf = KTree<Type::Half>();
+constexpr auto KNonreal = KTree<Type::Nonreal>();
+constexpr auto KInf = KTree<Type::Infinity>();
+constexpr auto i_e = KTree<Type::ComplexI>();
 
-constexpr auto KAbs = KUnary<BlockType::Abs>();
-constexpr auto KCos = KUnary<BlockType::Cosine>();
-constexpr auto KSin = KUnary<BlockType::Sine>();
-constexpr auto KTan = KUnary<BlockType::Tangent>();
-constexpr auto KTanRad = KUnary<BlockType::TangentRad>();
-constexpr auto KACos = KUnary<BlockType::ArcCosine>();
-constexpr auto KASin = KUnary<BlockType::ArcSine>();
-constexpr auto KATan = KUnary<BlockType::ArcTangent>();
-constexpr auto KATanRad = KUnary<BlockType::ArcTangentRad>();
-constexpr auto KLog = KUnary<BlockType::Log>();
-constexpr auto KLn = KUnary<BlockType::Ln>();
-constexpr auto KLnReal = KUnary<BlockType::LnReal>();
-constexpr auto KExp = KUnary<BlockType::Exponential>();
-constexpr auto KFact = KUnary<BlockType::Factorial>();
-constexpr auto KSqrt = KUnary<BlockType::SquareRoot>();
-constexpr auto KRe = KUnary<BlockType::RealPart>();
-constexpr auto KIm = KUnary<BlockType::ImaginaryPart>();
-constexpr auto KArg = KUnary<BlockType::ComplexArgument>();
-constexpr auto KConj = KUnary<BlockType::Conjugate>();
-constexpr auto KOpposite = KUnary<BlockType::Opposite>();
-constexpr auto KFloor = KUnary<BlockType::Floor>();
-constexpr auto KCeil = KUnary<BlockType::Ceiling>();
-constexpr auto KFrac = KUnary<BlockType::FracPart>();
-constexpr auto KListSum = KUnary<BlockType::ListSum>();
-constexpr auto KMin = KUnary<BlockType::Minimum>();
-constexpr auto KMax = KUnary<BlockType::Maximum>();
-constexpr auto KSec = KUnary<BlockType::Secant>();
-constexpr auto KCsc = KUnary<BlockType::Cosecant>();
-constexpr auto KCot = KUnary<BlockType::Cotangent>();
-constexpr auto KArcSec = KUnary<BlockType::ArcSecant>();
-constexpr auto KArcCsc = KUnary<BlockType::ArcCosecant>();
-constexpr auto KArcCot = KUnary<BlockType::ArcCotangent>();
-constexpr auto KCosh = KUnary<BlockType::HyperbolicCosine>();
-constexpr auto KSinh = KUnary<BlockType::HyperbolicSine>();
-constexpr auto KTanh = KUnary<BlockType::HyperbolicTangent>();
-constexpr auto KArCosh = KUnary<BlockType::HyperbolicArcCosine>();
-constexpr auto KArSinh = KUnary<BlockType::HyperbolicArcSine>();
-constexpr auto KArTanh = KUnary<BlockType::HyperbolicArcTangent>();
-constexpr auto KPercentSimple = KUnary<BlockType::PercentSimple>();
-constexpr auto KParenthesis = KUnary<BlockType::Parenthesis>();
+constexpr auto KAbs = KUnary<Type::Abs>();
+constexpr auto KCos = KUnary<Type::Cosine>();
+constexpr auto KSin = KUnary<Type::Sine>();
+constexpr auto KTan = KUnary<Type::Tangent>();
+constexpr auto KTanRad = KUnary<Type::TangentRad>();
+constexpr auto KACos = KUnary<Type::ArcCosine>();
+constexpr auto KASin = KUnary<Type::ArcSine>();
+constexpr auto KATan = KUnary<Type::ArcTangent>();
+constexpr auto KATanRad = KUnary<Type::ArcTangentRad>();
+constexpr auto KLog = KUnary<Type::Log>();
+constexpr auto KLn = KUnary<Type::Ln>();
+constexpr auto KLnReal = KUnary<Type::LnReal>();
+constexpr auto KExp = KUnary<Type::Exponential>();
+constexpr auto KFact = KUnary<Type::Factorial>();
+constexpr auto KSqrt = KUnary<Type::SquareRoot>();
+constexpr auto KRe = KUnary<Type::RealPart>();
+constexpr auto KIm = KUnary<Type::ImaginaryPart>();
+constexpr auto KArg = KUnary<Type::ComplexArgument>();
+constexpr auto KConj = KUnary<Type::Conjugate>();
+constexpr auto KOpposite = KUnary<Type::Opposite>();
+constexpr auto KFloor = KUnary<Type::Floor>();
+constexpr auto KCeil = KUnary<Type::Ceiling>();
+constexpr auto KFrac = KUnary<Type::FracPart>();
+constexpr auto KListSum = KUnary<Type::ListSum>();
+constexpr auto KMin = KUnary<Type::Minimum>();
+constexpr auto KMax = KUnary<Type::Maximum>();
+constexpr auto KSec = KUnary<Type::Secant>();
+constexpr auto KCsc = KUnary<Type::Cosecant>();
+constexpr auto KCot = KUnary<Type::Cotangent>();
+constexpr auto KArcSec = KUnary<Type::ArcSecant>();
+constexpr auto KArcCsc = KUnary<Type::ArcCosecant>();
+constexpr auto KArcCot = KUnary<Type::ArcCotangent>();
+constexpr auto KCosh = KUnary<Type::HyperbolicCosine>();
+constexpr auto KSinh = KUnary<Type::HyperbolicSine>();
+constexpr auto KTanh = KUnary<Type::HyperbolicTangent>();
+constexpr auto KArCosh = KUnary<Type::HyperbolicArcCosine>();
+constexpr auto KArSinh = KUnary<Type::HyperbolicArcSine>();
+constexpr auto KArTanh = KUnary<Type::HyperbolicArcTangent>();
+constexpr auto KPercentSimple = KUnary<Type::PercentSimple>();
+constexpr auto KParenthesis = KUnary<Type::Parenthesis>();
 
-constexpr auto KATrig = KBinary<BlockType::ATrig>();
-constexpr auto KLogarithm = KBinary<BlockType::Logarithm>();
-constexpr auto KTrig = KBinary<BlockType::Trig>();
-constexpr auto KTrigDiff = KBinary<BlockType::TrigDiff>();
-constexpr auto KDiv = KBinary<BlockType::Division>();
-constexpr auto KSub = KBinary<BlockType::Subtraction>();
-constexpr auto KPow = KBinary<BlockType::Power>();
-constexpr auto KPowReal = KBinary<BlockType::PowerReal>();
-constexpr auto KPowMatrix = KBinary<BlockType::PowerMatrix>();
-constexpr auto KDep = KBinary<BlockType::Dependency>();
-constexpr auto KRound = KBinary<BlockType::Round>();
-constexpr auto KListElement = KBinary<BlockType::ListElement>();
-constexpr auto KMean = KBinary<BlockType::Mean>();
-constexpr auto KBinomial = KBinary<BlockType::Binomial>();
-constexpr auto KPermute = KBinary<BlockType::Permute>();
-constexpr auto KNthRoot = KBinary<BlockType::NthRoot>();
-constexpr auto KPercentAddition = KBinary<BlockType::PercentAddition>();
-constexpr auto KMixedFraction = KBinary<BlockType::MixedFraction>();
-constexpr auto KPoint = KBinary<BlockType::Point>();
-constexpr auto KStore = KBinary<BlockType::Store>();
-constexpr auto KUnitConversion = KBinary<BlockType::UnitConversion>();
-constexpr auto KEqual = KBinary<BlockType::Equal>();
-constexpr auto KNotEqual = KBinary<BlockType::NotEqual>();
-constexpr auto KSuperior = KBinary<BlockType::Superior>();
-constexpr auto KInferior = KBinary<BlockType::Inferior>();
-constexpr auto KSuperiorEqual = KBinary<BlockType::SuperiorEqual>();
-constexpr auto KInferiorEqual = KBinary<BlockType::InferiorEqual>();
+constexpr auto KATrig = KBinary<Type::ATrig>();
+constexpr auto KLogarithm = KBinary<Type::Logarithm>();
+constexpr auto KTrig = KBinary<Type::Trig>();
+constexpr auto KTrigDiff = KBinary<Type::TrigDiff>();
+constexpr auto KDiv = KBinary<Type::Division>();
+constexpr auto KSub = KBinary<Type::Subtraction>();
+constexpr auto KPow = KBinary<Type::Power>();
+constexpr auto KPowReal = KBinary<Type::PowerReal>();
+constexpr auto KPowMatrix = KBinary<Type::PowerMatrix>();
+constexpr auto KDep = KBinary<Type::Dependency>();
+constexpr auto KRound = KBinary<Type::Round>();
+constexpr auto KListElement = KBinary<Type::ListElement>();
+constexpr auto KMean = KBinary<Type::Mean>();
+constexpr auto KBinomial = KBinary<Type::Binomial>();
+constexpr auto KPermute = KBinary<Type::Permute>();
+constexpr auto KNthRoot = KBinary<Type::NthRoot>();
+constexpr auto KPercentAddition = KBinary<Type::PercentAddition>();
+constexpr auto KMixedFraction = KBinary<Type::MixedFraction>();
+constexpr auto KPoint = KBinary<Type::Point>();
+constexpr auto KStore = KBinary<Type::Store>();
+constexpr auto KUnitConversion = KBinary<Type::UnitConversion>();
+constexpr auto KEqual = KBinary<Type::Equal>();
+constexpr auto KNotEqual = KBinary<Type::NotEqual>();
+constexpr auto KSuperior = KBinary<Type::Superior>();
+constexpr auto KInferior = KBinary<Type::Inferior>();
+constexpr auto KSuperiorEqual = KBinary<Type::SuperiorEqual>();
+constexpr auto KInferiorEqual = KBinary<Type::InferiorEqual>();
 
-constexpr auto KDiff = KFixedArity<3, BlockType::Derivative>();
-constexpr auto KListSlice = KFixedArity<3, BlockType::ListSlice>();
-constexpr auto KListSequence = KFixedArity<3, BlockType::ListSequence>();
+constexpr auto KDiff = KFixedArity<3, Type::Derivative>();
+constexpr auto KListSlice = KFixedArity<3, Type::ListSlice>();
+constexpr auto KListSequence = KFixedArity<3, Type::ListSequence>();
 
-constexpr auto KSum = KFixedArity<4, BlockType::Sum>();
-constexpr auto KProduct = KFixedArity<4, BlockType::Product>();
-constexpr auto KIntegral = KFixedArity<4, BlockType::Integral>();
-constexpr auto KNthDiff = KFixedArity<4, BlockType::NthDerivative>();
+constexpr auto KSum = KFixedArity<4, Type::Sum>();
+constexpr auto KProduct = KFixedArity<4, Type::Product>();
+constexpr auto KIntegral = KFixedArity<4, Type::Integral>();
+constexpr auto KNthDiff = KFixedArity<4, Type::NthDerivative>();
 
-constexpr auto KAdd = KNAry<BlockType::Addition>();
-constexpr auto KMult = KNAry<BlockType::Multiplication>();
-constexpr auto KList = KNAry<BlockType::List>();
-constexpr auto KSet = KNAry<BlockType::Set>();
-constexpr auto KPiecewise = KNAry<BlockType::Piecewise>();
+constexpr auto KAdd = KNAry<Type::Addition>();
+constexpr auto KMult = KNAry<Type::Multiplication>();
+constexpr auto KList = KNAry<Type::List>();
+constexpr auto KSet = KNAry<Type::Set>();
+constexpr auto KPiecewise = KNAry<Type::Piecewise>();
 
 template <uint8_t Id, uint8_t sign>
-constexpr auto KVar = KTree<BlockType::Variable, Id, sign>();
+constexpr auto KVar = KTree<Type::Variable, Id, sign>();
 
 // Discrete local variable
 constexpr auto KVarK = KVar<Parametric::k_localVariableId,
@@ -118,20 +118,19 @@ constexpr auto KVarX = KVar<Parametric::k_localVariableId,
 
 // Default UserSymbol in functions
 constexpr auto KUnknownSymbol =
-    KTree<BlockType::UserSymbol, 2, static_cast<uint8_t>(UCodePointUnknown),
-          0>();
+    KTree<Type::UserSymbol, 2, static_cast<uint8_t>(UCodePointUnknown), 0>();
 
 // Booleans
-constexpr auto KFalse = KTree<BlockType::False>();
-constexpr auto KTrue = KTree<BlockType::True>();
+constexpr auto KFalse = KTree<Type::False>();
+constexpr auto KTrue = KTree<Type::True>();
 
-constexpr auto KLogicalNot = KUnary<BlockType::LogicalNot>();
+constexpr auto KLogicalNot = KUnary<Type::LogicalNot>();
 
-constexpr auto KLogicalAnd = KBinary<BlockType::LogicalAnd>();
-constexpr auto KLogicalOr = KBinary<BlockType::LogicalOr>();
-constexpr auto KLogicalXor = KBinary<BlockType::LogicalXor>();
-constexpr auto KLogicalNor = KBinary<BlockType::LogicalNor>();
-constexpr auto KLogicalNand = KBinary<BlockType::LogicalNand>();
+constexpr auto KLogicalAnd = KBinary<Type::LogicalAnd>();
+constexpr auto KLogicalOr = KBinary<Type::LogicalOr>();
+constexpr auto KLogicalXor = KBinary<Type::LogicalXor>();
+constexpr auto KLogicalNor = KBinary<Type::LogicalNor>();
+constexpr auto KLogicalNand = KBinary<Type::LogicalNand>();
 
 template <uint8_t Rows, uint8_t Cols>
 struct KMatrix {
@@ -141,7 +140,7 @@ struct KMatrix {
     return Concat<decltype(node), CTS...>();
   }
 
-  static constexpr KTree<BlockType::Matrix, Rows, Cols> node{};
+  static constexpr KTree<Type::Matrix, Rows, Cols> node{};
 
   template <class... Args>
     requires HasATreeConcept<Args...>
@@ -163,7 +162,7 @@ static consteval auto KPol(Exp exponents, CTS...) {
   static_assert(
       Exp::k_size == Size - 1,
       "Number of children and exponents do not match in constant polynomial");
-  return Concat<KTree<BlockType::Polynomial, Size>, Exp, CTS...>();
+  return Concat<KTree<Type::Polynomial, Size>, Exp, CTS...>();
 }
 
 /* Integer litterals are used to represent numerical constants of the code (like
@@ -187,17 +186,17 @@ struct IntegerLitteral : IntegerRepresentation<V> {
  * represent the Litteral */
 
 template <>
-struct IntegerRepresentation<0> : KTree<BlockType::Zero> {};
+struct IntegerRepresentation<0> : KTree<Type::Zero> {};
 template <>
-struct IntegerRepresentation<1> : KTree<BlockType::One> {};
+struct IntegerRepresentation<1> : KTree<Type::One> {};
 template <>
-struct IntegerRepresentation<-1> : KTree<BlockType::MinusOne> {};
+struct IntegerRepresentation<-1> : KTree<Type::MinusOne> {};
 template <>
-struct IntegerRepresentation<2> : KTree<BlockType::Two> {};
+struct IntegerRepresentation<2> : KTree<Type::Two> {};
 
 template <int64_t V>
   requires(V >= INT8_MIN && V <= INT8_MAX)
-struct IntegerRepresentation<V> : KTree<BlockType::IntegerShort, V> {};
+struct IntegerRepresentation<V> : KTree<Type::IntegerShort, V> {};
 
 /* This macro generated code adds deduction guides to construct an IntegerBig
  * with N blocks when V needs N bytes to be represented, for N from 1 to 8 and
@@ -208,7 +207,7 @@ struct IntegerRepresentation<V> : KTree<BlockType::IntegerShort, V> {};
  *  template <int64_t V>
  *  requires(V > INT8_MAX && Integer::NumberOfDigits(V) == N)
  *  struct IntegerRepresentation<V>
- *      : KTree<BlockType::IntegerPosBig, N, Bit::getByteAtIndex(V, 0),
+ *      : KTree<Type::IntegerPosBig, N, Bit::getByteAtIndex(V, 0),
  *                                           ...
  *                                           Bit::getByteAtIndex(V, N-1)> {};
  */
@@ -228,7 +227,7 @@ struct IntegerRepresentation<V> : KTree<BlockType::IntegerShort, V> {};
   template <int64_t V>                                             \
     requires(V > INT8_MAX && ::Arithmetic::NumberOfDigits(V) == N) \
   struct IntegerRepresentation<V>                                  \
-      : KTree<BlockType::IntegerPosBig, N, __VA_ARGS__> {};
+      : KTree<Type::IntegerPosBig, N, __VA_ARGS__> {};
 
 #define B(I) Bit::getByteAtIndex(V, I)
 
@@ -242,7 +241,7 @@ SPECIALIZATIONS;
   template <int64_t V>                                              \
     requires(V < INT8_MIN && ::Arithmetic::NumberOfDigits(-V) == N) \
   struct IntegerRepresentation<V>                                   \
-      : KTree<BlockType::IntegerNegBig, N, __VA_ARGS__> {};
+      : KTree<Type::IntegerNegBig, N, __VA_ARGS__> {};
 
 #define B(I) Bit::getByteAtIndex(-V, I)
 
@@ -269,19 +268,19 @@ consteval auto operator/(IntegerLitteral<N> a, IntegerLitteral<D> b) {
 }
 
 template <>
-struct RationalRepresentation<1, 2> : KTree<BlockType::Half> {};
+struct RationalRepresentation<1, 2> : KTree<Type::Half> {};
 
 template <int64_t N, int64_t D>
   requires(N >= INT8_MIN && N <= INT8_MAX && D > 0 && D <= UINT8_MAX)
-struct RationalRepresentation<N, D> : KTree<BlockType::RationalShort, N, D> {};
+struct RationalRepresentation<N, D> : KTree<Type::RationalShort, N, D> {};
 
 // TODO specializations for RationalNegBig and RationalPosBig
 
 /* Named constants */
 
-constexpr KTree π_e = KTree<BlockType::Pi>();
+constexpr KTree π_e = KTree<Type::Pi>();
 
-constexpr KTree e_e = KTree<BlockType::ExponentialE>();
+constexpr KTree e_e = KTree<Type::ExponentialE>();
 
 // TODO: move in OMG?
 /* Read decimal number in str as an int, ignoring decimal point "1.2" => 12 */
@@ -348,13 +347,13 @@ struct FloatLitteral : FloatRepresentation<Int, V> {
 
 template <uint32_t V>
 struct FloatRepresentation<uint32_t, V>
-    : KTree<BlockType::SingleFloat, Bit::getByteAtIndex(V, 0),
+    : KTree<Type::SingleFloat, Bit::getByteAtIndex(V, 0),
             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
             Bit::getByteAtIndex(V, 3)> {};
 
 template <uint64_t V>
 struct FloatRepresentation<uint64_t, V>
-    : KTree<BlockType::DoubleFloat, Bit::getByteAtIndex(V, 0),
+    : KTree<Type::DoubleFloat, Bit::getByteAtIndex(V, 0),
             Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
             Bit::getByteAtIndex(V, 3), Bit::getByteAtIndex(V, 4),
             Bit::getByteAtIndex(V, 5), Bit::getByteAtIndex(V, 6),
@@ -384,7 +383,7 @@ consteval auto operator"" _e() {
   constexpr size_t decimalPointIndex = DecimalPointIndex(value, size);
   constexpr auto digits = IntegerLitteral<IntegerValue(value, size)>();
   if constexpr (decimalPointIndex < size) {
-    return Concat<KTree<BlockType::Decimal,
+    return Concat<KTree<Type::Decimal,
                         /* -1 for the . and -1 for the \0 */
                         size - 2 - decimalPointIndex>,
                   decltype(KTree(digits))>();
@@ -404,7 +403,7 @@ template <String S, std::size_t... I>
 struct Variable<S, std::index_sequence<I...>> {
   static_assert(!OMG::Print::IsDigit(S[0]),
                 "Integer litterals should be written without quotes");
-  using tree = KTree<BlockType::UserSymbol, sizeof...(I), S[I]...>;
+  using tree = KTree<Type::UserSymbol, sizeof...(I), S[I]...>;
 };
 
 template <String S>

@@ -37,14 +37,14 @@ template <typename T>
 std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
                                                       std::complex<T> value) {
   switch (type) {
-    case BlockType::Cosine:
-    case BlockType::Sine: {
+    case Type::Cosine:
+    case Type::Sine: {
       std::complex<T> angleInput = ConvertToRadian(value);
       std::complex<T> res =
           type.isCosine() ? std::cos(angleInput) : std::sin(angleInput);
       return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
     }
-    case BlockType::Tangent: {
+    case Type::Tangent: {
       std::complex<T> angleInput = ConvertToRadian(value);
       /* tan should be undefined at (2n+1)*pi/2 for any integer n.
        * std::tan is not reliable at these values because it is diverging and
@@ -62,14 +62,13 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       std::complex<T> res = std::tan(angleInput);
       return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
     }
-    case BlockType::Secant:
-    case BlockType::Cosecant:
-    case BlockType::Cotangent: {
+    case Type::Secant:
+    case Type::Cosecant:
+    case Type::Cotangent: {
       std::complex<T> denominator = TrigonometricToComplex(
-          type.isSecant() ? BlockType::Cosine : BlockType::Sine, value);
+          type.isSecant() ? Type::Cosine : Type::Sine, value);
       std::complex<T> numerator =
-          type.isCotangent() ? TrigonometricToComplex(BlockType::Cosine, value)
-                             : 1;
+          type.isCotangent() ? TrigonometricToComplex(Type::Cosine, value) : 1;
       if (type.isCotangent() && (numerator == static_cast<T>(1.0) ||
                                  numerator == static_cast<T>(-1.0))) {
         // cf comment for Tangent
@@ -78,8 +77,8 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       return numerator / denominator;
     }
 
-    case BlockType::ArcCosine:
-    case BlockType::ArcSine: {
+    case Type::ArcCosine:
+    case Type::ArcSine: {
       std::complex<T> c = value;
       std::complex<T> result;
       if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
@@ -109,7 +108,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
       return ConvertFromRadian(result);
     }
-    case BlockType::ArcTangent: {
+    case Type::ArcTangent: {
       std::complex<T> c = value;
       std::complex<T> result;
       if (c.imag() == static_cast<T>(0.) &&
@@ -142,19 +141,19 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
       return ConvertFromRadian(result);
     }
-    case BlockType::ArcSecant:
-    case BlockType::ArcCosecant:
+    case Type::ArcSecant:
+    case Type::ArcCosecant:
       if (value == static_cast<T>(0)) {
         return NAN;
       }
       return TrigonometricToComplex(
-          type.isArcSecant() ? BlockType::ArcCosine : BlockType::ArcSine,
+          type.isArcSecant() ? Type::ArcCosine : Type::ArcSine,
           static_cast<T>(1) / value);
-    case BlockType::ArcCotangent:
+    case Type::ArcCotangent:
       if (value == static_cast<T>(0)) {
         return ConvertFromRadian(M_PI_2);
       }
-      return TrigonometricToComplex(BlockType::ArcTangent,
+      return TrigonometricToComplex(Type::ArcTangent,
                                     static_cast<T>(1) / value);
     default:
       assert(false);
@@ -165,8 +164,8 @@ template <typename T>
 std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
                                                    std::complex<T> value) {
   switch (type) {
-    case BlockType::HyperbolicCosine:
-    case BlockType::HyperbolicSine:
+    case Type::HyperbolicCosine:
+    case Type::HyperbolicSine:
       /* If c is real and large (over 100.0), the float evaluation of std::cosh
        * will return image = NaN when it should be 0.0. */
       return MakeResultRealIfInputIsReal<T>(
@@ -174,10 +173,10 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
               type.isHyperbolicSine() ? std::sinh(value) : std::cosh(value),
               value),
           value);
-    case BlockType::HyperbolicTangent:
+    case Type::HyperbolicTangent:
       return NeglectRealOrImaginaryPartIfNeglectable(std::tanh(value), value);
 
-    case BlockType::HyperbolicArcSine: {
+    case Type::HyperbolicArcSine: {
       std::complex<T> result = std::asinh(value);
       /* asinh has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then
        * multivalued on this cut. We followed the convention chosen by the lib
@@ -190,7 +189,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
       }
       return NeglectRealOrImaginaryPartIfNeglectable(result, value);
     }
-    case BlockType::HyperbolicArcCosine: {
+    case Type::HyperbolicArcCosine: {
       std::complex<T> result = std::acosh(value);
       /* acosh has a branch cut on ]-inf, 1]: it is then multivalued on this
        * cut. We followed the convention chosen by the lib c++ of llvm on
@@ -198,7 +197,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
        * on ]-inf-0i, 1-0i[).*/
       return NeglectRealOrImaginaryPartIfNeglectable(result, value);
     }
-    case BlockType::HyperbolicArcTangent: {
+    case Type::HyperbolicArcTangent: {
       std::complex<T> result = std::atanh(value);
       /* atanh has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued
        * on this cut. We followed the convention chosen by the lib c++ of llvm

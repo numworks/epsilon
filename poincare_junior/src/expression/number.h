@@ -13,8 +13,8 @@ namespace PoincareJ {
 class Number {
  public:
   static bool IsStrictRational(const Tree* t) {
-    return t->isOfType({BlockType::Half, BlockType::RationalShort,
-                        BlockType::RationalNegBig, BlockType::RationalPosBig});
+    return t->isOfType({Type::Half, Type::RationalShort, Type::RationalNegBig,
+                        Type::RationalPosBig});
   }
 
   static Tree* Addition(const Tree* i, const Tree* j);

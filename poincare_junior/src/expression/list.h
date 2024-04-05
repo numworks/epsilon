@@ -10,7 +10,7 @@ namespace PoincareJ {
 struct List {
   static Tree* PushEmpty();
   static uint8_t Size(const Tree* list) {
-    assert(list->type() == BlockType::List);
+    assert(list->type() == Type::List);
     return list->numberOfChildren();
   }
 

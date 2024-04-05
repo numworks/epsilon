@@ -15,9 +15,9 @@ static bool integer_handler_same_absolute_value(IntegerHandler a,
 }
 
 static void assert_properties(const Tree* numerator, const Tree* denominator,
-                              BlockType expectedBlockType, Sign sign) {
+                              Type expectedType, Sign sign) {
   Tree* r = Rational::Push(numerator, denominator);
-  quiz_assert(r->type() == expectedBlockType);
+  quiz_assert(r->type() == expectedType);
   quiz_assert(sign == Rational::Sign(r));
   integer_handler_same_absolute_value(Integer::Handler(numerator),
                                       Rational::Numerator(r));
@@ -27,22 +27,22 @@ static void assert_properties(const Tree* numerator, const Tree* denominator,
 }
 
 QUIZ_CASE(pcj_rational_properties) {
-  assert_properties(3_e, 8_e, BlockType::RationalShort, Sign::Positive());
-  assert_properties(-1_e, 255_e, BlockType::RationalShort, Sign::Negative());
-  assert_properties(1_e, -1_e, BlockType::MinusOne, Sign::NegativeInteger());
-  assert_properties(-1_e, -2_e, BlockType::Half, Sign::Positive());
-  assert_properties(127_e, -255_e, BlockType::RationalShort, Sign::Negative());
-  assert_properties(0_e, 5_e, BlockType::Zero, Sign::Zero());
-  assert_properties(32134123_e, 812312312_e, BlockType::RationalPosBig,
+  assert_properties(3_e, 8_e, Type::RationalShort, Sign::Positive());
+  assert_properties(-1_e, 255_e, Type::RationalShort, Sign::Negative());
+  assert_properties(1_e, -1_e, Type::MinusOne, Sign::NegativeInteger());
+  assert_properties(-1_e, -2_e, Type::Half, Sign::Positive());
+  assert_properties(127_e, -255_e, Type::RationalShort, Sign::Negative());
+  assert_properties(0_e, 5_e, Type::Zero, Sign::Zero());
+  assert_properties(32134123_e, 812312312_e, Type::RationalPosBig,
                     Sign::Positive());
-  assert_properties(32134123_e, -812312312_e, BlockType::RationalNegBig,
+  assert_properties(32134123_e, -812312312_e, Type::RationalNegBig,
                     Sign::Negative());
-  assert_properties(-32134123_e, 812312312_e, BlockType::RationalNegBig,
+  assert_properties(-32134123_e, 812312312_e, Type::RationalNegBig,
                     Sign::Negative());
-  assert_properties(-32134123_e, -812312312_e, BlockType::RationalPosBig,
+  assert_properties(-32134123_e, -812312312_e, Type::RationalPosBig,
                     Sign::Positive());
-  assert_properties(0_e, 812312312_e, BlockType::Zero, Sign::Zero());
-  assert_properties(0_e, -812312312_e, BlockType::Zero, Sign::Zero());
+  assert_properties(0_e, 812312312_e, Type::Zero, Sign::Zero());
+  assert_properties(0_e, -812312312_e, Type::Zero, Sign::Zero());
 }
 
 static void assert_set_sign(const Tree* iNumerator, const Tree* iDenominator,

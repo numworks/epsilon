@@ -9,8 +9,8 @@ copied and compared.
 Trees start with a `Node` directly followed in memory by a given number of other
 trees that are its children.
 
-The `Node` always starts with a special block of the `BlockType` enum that
-indicates what the tree represents.
+The `Node` always starts with a special block of the `Type` enum that indicates
+what the tree represents.
 
 Depending on the type of the tree, it may have a fixed number of children –
 possibly 0 – or a variable number written in the `Node` just after its type.
@@ -47,10 +47,10 @@ pointers. Moreover, the `const` keyword is used pervasively to differentiate
 
 You may find the different tree types available for
 [expressions](/poincare_junior/src/expression/types.h) and
-[layouts](/poincare_junior/src/layout/types.h).  Each NODE entry declares
-BlockType with its number of children and the number of additional bytes its
-nodes contains.  They is no class hierarchy corresponding to the types but they
-come with some helpers such as `tree->isCosine()` to test them.
+[layouts](/poincare_junior/src/layout/types.h).  Each NODE entry declares Type
+with its number of children and the number of additional bytes its nodes
+contains.  They is no class hierarchy corresponding to the types but they come
+with some helpers such as `tree->isCosine()` to test them.
 
 Types are sometimes grouped together inside RANGE that provide similarly the
 method `tree->isNumber()`.
@@ -82,9 +82,9 @@ arguments needed by various tree types.
 
 ```cpp
 // pushing an Addition node with two-children and saving its address in *add*
-Tree * add = SharedEditionPool->push<BlockType::Addition>(2);
+Tree * add = SharedEditionPool->push<Type::Addition>(2);
 // pushing a One node (that has no children) representing 1
-SharedEditionPool->push(BlockType::One);
+SharedEditionPool->push(Type::One);
 // cloning an other Tree at the end of the pool
 otherTree->clone()
 // add now points to 1 + cloneOfWhatEverOtherTreeWas

@@ -12,7 +12,7 @@ PointOfInterest PointOfInterest::Builder(
     typename Solver<double>::Interest interest, uint32_t data, bool inverted,
     int subCurveIndex) {
   JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::PointOfInterest>(
+      PoincareJ::SharedEditionPool->push<PoincareJ::Type::PointOfInterest>(
           abscissa, ordinate, data, static_cast<uint8_t>(interest), inverted,
           static_cast<uint8_t>(subCurveIndex)));
   return static_cast<PointOfInterest &>(expr);

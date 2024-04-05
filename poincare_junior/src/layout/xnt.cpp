@@ -73,18 +73,16 @@ CodePoint CodePointAtIndexInCycle(int index, const CodePoint *cycle,
 // Parametered functions
 constexpr struct {
   LayoutType layoutType;
-  BlockType expressionType;
+  Type expressionType;
   const CodePoint *XNTcycle;
 } k_parameteredFunctions[] = {
-    {LayoutType::Derivative, BlockType::Derivative,
+    {LayoutType::Derivative, Type::Derivative, k_defaultContinuousXNTCycle},
+    {LayoutType::NthDerivative, Type::NthDerivative,
      k_defaultContinuousXNTCycle},
-    {LayoutType::NthDerivative, BlockType::NthDerivative,
-     k_defaultContinuousXNTCycle},
-    {LayoutType::Integral, BlockType::Integral, k_defaultContinuousXNTCycle},
-    {LayoutType::Sum, BlockType::Sum, k_defaultDiscreteXNTCycle},
-    {LayoutType::Product, BlockType::Product, k_defaultDiscreteXNTCycle},
-    {LayoutType::ListSequence, BlockType::ListSequence,
-     k_defaultDiscreteXNTCycle},
+    {LayoutType::Integral, Type::Integral, k_defaultContinuousXNTCycle},
+    {LayoutType::Sum, Type::Sum, k_defaultDiscreteXNTCycle},
+    {LayoutType::Product, Type::Product, k_defaultDiscreteXNTCycle},
+    {LayoutType::ListSequence, Type::ListSequence, k_defaultDiscreteXNTCycle},
 };
 constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
 
@@ -341,7 +339,7 @@ bool FindXNTSymbol2D(const Tree *layout, const Tree *root, char *buffer,
         xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
     size_t size = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
     buffer[size] = 0;
-    if (childIndex == Parametric::FunctionIndex(static_cast<BlockType>(
+    if (childIndex == Parametric::FunctionIndex(static_cast<Type>(
                           k_parameteredFunctions[functionIndex].layoutType))) {
       if (isValidXNTParameter(parameterLayout)) {
         Serialize(parameterLayout, buffer, buffer + bufferSize);

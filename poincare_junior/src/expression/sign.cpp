@@ -22,26 +22,26 @@ Sign NoIntegers(Sign s) {
   return Sign(s.canBeNull(), s.canBeNegative(), s.canBePositive());
 }
 
-Sign DecimalFunction(Sign s, BlockType type) {
+Sign DecimalFunction(Sign s, Type type) {
   bool canBeNull = s.canBeNull();
   bool canBePositive = s.canBePositive();
   bool canBeNegative = s.canBeNegative();
   bool canBeNonInteger = s.canBeNonInteger();
   switch (type) {
-    case BlockType::Ceiling:
+    case Type::Ceiling:
       canBeNull |= canBeNegative;
       canBeNonInteger = false;
       break;
-    case BlockType::Floor:
+    case Type::Floor:
       canBeNull |= canBePositive;
       canBeNonInteger = false;
       break;
-    case BlockType::FracPart:
+    case Type::FracPart:
       canBeNull = true;
       canBePositive = canBeNonInteger;
       canBeNegative = false;
       break;
-    case BlockType::Round:
+    case Type::Round:
       canBeNull = true;
       break;
     default:
@@ -159,7 +159,7 @@ ComplexSign ComplexArgument(ComplexSign s) {
       Sign::Zero());
 }
 
-ComplexSign DecimalFunction(ComplexSign s, BlockType type) {
+ComplexSign DecimalFunction(ComplexSign s, Type type) {
   return ComplexSign(DecimalFunction(s.realSign(), type),
                      DecimalFunction(s.imagSign(), type));
 }
@@ -218,7 +218,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     return ComplexSign(Number::Sign(t), Sign::Zero());
   }
   switch (t->type()) {
-    case BlockType::Multiplication: {
+    case Type::Multiplication: {
       ComplexSign s = RealPositiveInteger();  // 1
       for (const Tree* c : t->children()) {
         s = Mult(s, Get(c));
@@ -228,7 +228,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       }
       return s;
     }
-    case BlockType::Addition: {
+    case Type::Addition: {
       ComplexSign s = Zero();
       for (const Tree* c : t->children()) {
         s = Add(s, Get(c));
@@ -238,61 +238,61 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       }
       return s;
     }
-    case BlockType::PowerReal:
-    case BlockType::Power:
+    case Type::PowerReal:
+    case Type::Power:
       return Power(Get(t->firstChild()), Get(t->child(1)),
                    t->child(1)->isTwo());
-    case BlockType::Norm:
+    case Type::Norm:
       // Child isn't a scalar
       return ComplexSign(Sign::PositiveOrNull(), Sign::Zero());
-    case BlockType::Abs:
+    case Type::Abs:
       return Abs(Get(t->firstChild()));
-    case BlockType::Exponential:
+    case Type::Exponential:
       return Exponential(Get(t->firstChild()));
-    case BlockType::Ln:
+    case Type::Ln:
       return Ln(Get(t->firstChild()));
-    case BlockType::RealPart:
+    case Type::RealPart:
       return ComplexSign(Get(t->firstChild()).realSign(), Sign::Zero());
-    case BlockType::ImaginaryPart:
+    case Type::ImaginaryPart:
       return ComplexSign(Get(t->firstChild()).imagSign(), Sign::Zero());
-    case BlockType::Variable:
+    case Type::Variable:
       return Variables::GetComplexSign(t);
-    case BlockType::ComplexI:
+    case Type::ComplexI:
       return ComplexSign(Sign::Zero(), Sign::PositiveInteger());
-    case BlockType::Trig:
+    case Type::Trig:
       assert(t->child(1)->isOne() || t->child(1)->isZero());
       return Trig(Get(t->firstChild()), t->child(1)->isOne());
-    case BlockType::ArcTangentRad:
+    case Type::ArcTangentRad:
       return ArcTangentRad(Get(t->firstChild()));
-    case BlockType::ComplexArgument:
+    case Type::ComplexArgument:
       return ComplexArgument(Get(t->firstChild()));
-    case BlockType::Dependency:
+    case Type::Dependency:
       return ComplexArgument(Get(t->firstChild()));
 #if 0
     // Activate these cases if necessary
-    case BlockType::ArcSine:
-    case BlockType::ArcTangent:
+    case Type::ArcSine:
+    case Type::ArcTangent:
       // Both real and imaginary part keep the same sign
       return NoIntegers(Get(t->firstChild()));
-    case BlockType::ArcCosine:
+    case Type::ArcCosine:
       return ArcCosine(Get(t->firstChild()));
-    case BlockType::Factorial:
+    case Type::Factorial:
       assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());
       return RealPositiveInteger();
-    case BlockType::Ceiling:
-    case BlockType::Floor:
-    case BlockType::FracPart:
-    case BlockType::Round:
+    case Type::Ceiling:
+    case Type::Floor:
+    case Type::FracPart:
+    case Type::Round:
       return DecimalFunction(Get(t->firstChild()), t->type());
-    case BlockType::PercentSimple:
+    case Type::PercentSimple:
       return NoIntegers(Get(t->firstChild()));
-    case BlockType::Distribution:
+    case Type::Distribution:
       return ComplexSign(
           DistributionMethod::Get(t) != DistributionMethod::Type::Inverse
               ? Sign::PositiveOrNull()
               : Sign::Unknown(),
           Sign::Zero());
-    case BlockType::MixedFraction:
+    case Type::MixedFraction:
       return Get(t->firstChild());
 #endif
     default:

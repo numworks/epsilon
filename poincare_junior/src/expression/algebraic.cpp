@@ -14,12 +14,11 @@ namespace PoincareJ {
 
 EditionReference Algebraic::Rationalize(EditionReference expression) {
   if (Number::IsStrictRational(expression)) {
-    EditionReference fraction(
-        SharedEditionPool->push<BlockType::Multiplication>(2));
+    EditionReference fraction(SharedEditionPool->push<Type::Multiplication>(2));
     Rational::Numerator(expression).pushOnEditionPool();
-    SharedEditionPool->push(BlockType::Power);
+    SharedEditionPool->push(Type::Power);
     Rational::Denominator(expression).pushOnEditionPool();
-    SharedEditionPool->push(BlockType::MinusOne);
+    SharedEditionPool->push(Type::MinusOne);
     expression->moveTreeOverTree(fraction);
     return fraction;
   }
@@ -64,18 +63,17 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     EditionReference child = std::get<EditionReference>(indexedNode);
     // Create Mult(child, commonDenominator) = a*b * b*d
     EditionReference multiplication(
-        SharedEditionPool->push<BlockType::Multiplication>(1));
+        SharedEditionPool->push<Type::Multiplication>(1));
     child->moveNodeBeforeNode(multiplication);
     child->nextTree()->moveTreeBeforeNode(
         SharedEditionPool->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
-  EditionReference fraction(
-      SharedEditionPool->push<BlockType::Multiplication>(2));
+  EditionReference fraction(SharedEditionPool->push<Type::Multiplication>(2));
   fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
-  EditionReference power(SharedEditionPool->push(BlockType::Power));
+  EditionReference power(SharedEditionPool->push(Type::Power));
   power->moveTreeAfterNode(commonDenominator);
   commonDenominator->nextTree()->cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power

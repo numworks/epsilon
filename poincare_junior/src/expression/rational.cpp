@@ -12,45 +12,45 @@ namespace PoincareJ {
 // TODO: tests
 
 IntegerHandler Rational::Numerator(const Tree* node) {
-  BlockType type = node->type();
+  Type type = node->type();
   switch (type) {
-    case BlockType::Zero:
+    case Type::Zero:
       return IntegerHandler(static_cast<int8_t>(0));
-    case BlockType::One:
+    case Type::One:
       return IntegerHandler(1);
-    case BlockType::Two:
+    case Type::Two:
       return IntegerHandler(2);
-    case BlockType::MinusOne:
+    case Type::MinusOne:
       return IntegerHandler(-1);
-    case BlockType::Half:
+    case Type::Half:
       return IntegerHandler(1);
-    case BlockType::IntegerShort: {
+    case Type::IntegerShort: {
       int8_t value = static_cast<int8_t>(node->nodeValue(0));
       return IntegerHandler(value);
     }
-    case BlockType::IntegerPosBig:
-    case BlockType::IntegerNegBig: {
+    case Type::IntegerPosBig:
+    case Type::IntegerNegBig: {
       const Block* block = node->block();
       uint8_t numberOfDigits = node->nodeValue(0);
       const uint8_t* digits =
           reinterpret_cast<const uint8_t*>(block->nextNth(2));
       return IntegerHandler(digits, numberOfDigits,
-                            type == BlockType::IntegerNegBig
+                            type == Type::IntegerNegBig
                                 ? NonStrictSign::Negative
                                 : NonStrictSign::Positive);
     }
-    case BlockType::RationalShort: {
+    case Type::RationalShort: {
       int8_t value = static_cast<int8_t>(node->nodeValue(0));
       return IntegerHandler(value);
     }
-    case BlockType::RationalPosBig:
-    case BlockType::RationalNegBig: {
+    case Type::RationalPosBig:
+    case Type::RationalNegBig: {
       const Block* block = node->block();
       uint8_t numberOfDigits = node->nodeValue(0);
       const uint8_t* digits =
           reinterpret_cast<const uint8_t*>(block->nextNth(3));
       return IntegerHandler(digits, numberOfDigits,
-                            type == BlockType::RationalNegBig
+                            type == Type::RationalNegBig
                                 ? NonStrictSign::Negative
                                 : NonStrictSign::Positive);
     }
@@ -61,21 +61,21 @@ IntegerHandler Rational::Numerator(const Tree* node) {
 
 IntegerHandler Rational::Denominator(const Tree* node) {
   switch (node->type()) {
-    case BlockType::Zero:
-    case BlockType::One:
-    case BlockType::Two:
-    case BlockType::MinusOne:
-    case BlockType::IntegerShort:
-    case BlockType::IntegerPosBig:
-    case BlockType::IntegerNegBig:
+    case Type::Zero:
+    case Type::One:
+    case Type::Two:
+    case Type::MinusOne:
+    case Type::IntegerShort:
+    case Type::IntegerPosBig:
+    case Type::IntegerNegBig:
       return IntegerHandler(1);
-    case BlockType::Half:
+    case Type::Half:
       return IntegerHandler(2);
-    case BlockType::RationalShort: {
+    case Type::RationalShort: {
       return IntegerHandler(node->nodeValue(1));
     }
-    case BlockType::RationalPosBig:
-    case BlockType::RationalNegBig: {
+    case Type::RationalPosBig:
+    case Type::RationalNegBig: {
       const Block* block = node->block();
       uint8_t numeratorNumberOfDigits = node->nodeValue(0);
       uint8_t denominatorNumberOfDigits = node->nodeValue(1);
@@ -105,16 +105,16 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
   if (denominator.isOne() || numerator.isZero()) {
     node = numerator.pushOnEditionPool();
   } else if (numerator.isOne() && denominator.isTwo()) {
-    node = SharedEditionPool->push(BlockType::Half);
+    node = SharedEditionPool->push(Type::Half);
   } else if (numerator.isSignedType<int8_t>() &&
              denominator.isUnsignedType<uint8_t>()) {
-    node = SharedEditionPool->push(BlockType::RationalShort);
+    node = SharedEditionPool->push(Type::RationalShort);
     SharedEditionPool->push(ValueBlock(static_cast<int8_t>(numerator)));
     SharedEditionPool->push(ValueBlock(static_cast<uint8_t>(denominator)));
   } else {
     node = SharedEditionPool->push(numeratorSign == NonStrictSign::Negative
-                                       ? BlockType::RationalNegBig
-                                       : BlockType::RationalPosBig);
+                                       ? Type::RationalNegBig
+                                       : Type::RationalPosBig);
     SharedEditionPool->push(ValueBlock(numerator.numberOfDigits()));
     SharedEditionPool->push(ValueBlock(denominator.numberOfDigits()));
     numerator.pushDigitsOnEditionPool();
@@ -205,8 +205,8 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
 }
 
 bool Rational::IsIrreducible(const Tree* i) {
-  if (!i->isOfType({BlockType::RationalShort, BlockType::RationalNegBig,
-                    BlockType::RationalPosBig})) {
+  if (!i->isOfType(
+          {Type::RationalShort, Type::RationalNegBig, Type::RationalPosBig})) {
     return true;
   }
   EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));

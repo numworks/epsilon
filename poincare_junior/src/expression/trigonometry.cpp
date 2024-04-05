@@ -11,9 +11,9 @@ namespace PoincareJ {
 
 bool Trigonometry::IsDirect(const Tree* node) {
   switch (node->type()) {
-    case BlockType::Cosine:
-    case BlockType::Sine:
-    case BlockType::Tangent:
+    case Type::Cosine:
+    case Type::Sine:
+    case Type::Tangent:
       return true;
     default:
       return false;
@@ -22,9 +22,9 @@ bool Trigonometry::IsDirect(const Tree* node) {
 
 bool Trigonometry::IsInverse(const Tree* node) {
   switch (node->type()) {
-    case BlockType::ArcCosine:
-    case BlockType::ArcSine:
-    case BlockType::ArcTangent:
+    case Type::ArcCosine:
+    case Type::ArcSine:
+    case Type::ArcTangent:
       return true;
     default:
       return false;
@@ -189,7 +189,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   }
   if (isOpposed && changed) {
     u->cloneTreeAtNode(-1_e);
-    u->moveNodeAtNode(SharedEditionPool->push<BlockType::Multiplication>(2));
+    u->moveNodeAtNode(SharedEditionPool->push<Type::Multiplication>(2));
     Simplification::SimplifyMultiplication(u);
   }
   return changed;
@@ -310,13 +310,13 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
 bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
   // TODO_PCJ: Add more exact values (√3, 1/√3, ...)
   switch (u->child(0)->type()) {
-    case BlockType::Zero:
+    case Type::Zero:
       u->cloneTreeOverTree(0_e);
       return true;
-    case BlockType::One:
+    case Type::One:
       u->cloneTreeOverTree(KMult(1_e / 4_e, π_e));
       return true;
-    case BlockType::MinusOne:
+    case Type::MinusOne:
       u->cloneTreeOverTree(KMult(-1_e / 4_e, π_e));
       return true;
     default:

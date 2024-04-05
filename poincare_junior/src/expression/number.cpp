@@ -8,11 +8,11 @@ namespace PoincareJ {
 
 Tree* Number::Addition(const Tree* i, const Tree* j) {
   if (i->isDoubleFloat() || j->isDoubleFloat()) {
-    return SharedEditionPool->push<BlockType::DoubleFloat>(
+    return SharedEditionPool->push<Type::DoubleFloat>(
         Approximation::To<double>(i) + Approximation::To<double>(j));
   }
   if (i->isSingleFloat() || j->isSingleFloat()) {
-    return SharedEditionPool->push<BlockType::SingleFloat>(
+    return SharedEditionPool->push<Type::SingleFloat>(
         Approximation::To<float>(i) + Approximation::To<float>(j));
   }
   assert(!i->isMathematicalConstant() && !j->isMathematicalConstant());
@@ -21,11 +21,11 @@ Tree* Number::Addition(const Tree* i, const Tree* j) {
 }
 Tree* Number::Multiplication(const Tree* i, const Tree* j) {
   if (i->isDoubleFloat() || j->isDoubleFloat()) {
-    return SharedEditionPool->push<BlockType::DoubleFloat>(
+    return SharedEditionPool->push<Type::DoubleFloat>(
         Approximation::To<double>(i) * Approximation::To<double>(j));
   }
   if (i->isSingleFloat() || j->isSingleFloat()) {
-    return SharedEditionPool->push<BlockType::SingleFloat>(
+    return SharedEditionPool->push<Type::SingleFloat>(
         Approximation::To<float>(i) * Approximation::To<float>(j));
   }
   assert(!i->isMathematicalConstant() && !j->isMathematicalConstant());
@@ -35,11 +35,11 @@ Tree* Number::Multiplication(const Tree* i, const Tree* j) {
 
 Sign Number::Sign(const Tree* node) {
   switch (node->type()) {
-    case BlockType::Pi:
-    case BlockType::ExponentialE:
+    case Type::Pi:
+    case Type::ExponentialE:
       return Sign::Positive();
-    case BlockType::DoubleFloat:
-    case BlockType::SingleFloat: {
+    case Type::DoubleFloat:
+    case Type::SingleFloat: {
       double value = FloatNode::To(node);
       // Floats are not considered integer since they may have been rounded
       return PoincareJ::Sign(value == 0, value > 0, value < 0, true);

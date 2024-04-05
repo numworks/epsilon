@@ -19,9 +19,9 @@ CodePoint CodePointLayout::GetCombinedCodePoint(const Tree* node) {
 
 Tree* CodePointLayout::Push(CodePoint cp) {
   if (cp < 128) {
-    return SharedEditionPool->push<BlockType::AsciiCodePointLayout>(cp);
+    return SharedEditionPool->push<Type::AsciiCodePointLayout>(cp);
   }
-  return SharedEditionPool->push<BlockType::UnicodeCodePointLayout>(cp);
+  return SharedEditionPool->push<Type::UnicodeCodePointLayout>(cp);
 }
 
 char* CodePointLayout::CopyName(const Tree* node, char* buffer,

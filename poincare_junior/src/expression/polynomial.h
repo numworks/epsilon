@@ -92,7 +92,7 @@ class Polynomial final {
   typedef Tree* (*OperationReduce)(Tree* result, Tree* polynomial,
                                    std::pair<Tree*, uint8_t> monomial,
                                    bool isLastTerm);
-  static Tree* Operation(Tree* polA, Tree* polB, BlockType type,
+  static Tree* Operation(Tree* polA, Tree* polB, Type type,
                          OperationMonomial operationMonomial,
                          OperationReduce operationMonomialAndReduce);
   static Tree* MultiplicationMonomial(Tree* pol,

@@ -26,30 +26,30 @@ QUIZ_CASE(pcj_edition_pool) {
   pool->flush();
   quiz_assert(pool->size() == 0);
 
-  pool->push(BlockType::Zero);
-  pool->push(BlockType::One);
-  quiz_assert(*pool->firstBlock() == BlockType::Zero &&
-              *(pool->lastBlock() - 1) == BlockType::One && pool->size() == 2);
+  pool->push(Type::Zero);
+  pool->push(Type::One);
+  quiz_assert(*pool->firstBlock() == Type::Zero &&
+              *(pool->lastBlock() - 1) == Type::One && pool->size() == 2);
   pool->popBlock();
-  quiz_assert(*(pool->lastBlock() - 1) == BlockType::Zero && pool->size() == 1);
-  pool->replaceBlock(pool->firstBlock(), BlockType::Two);
-  quiz_assert(*pool->blockAtIndex(0) == BlockType::Two);
-  pool->insertBlock(pool->firstBlock(), BlockType::One);
-  quiz_assert(*pool->firstBlock() == BlockType::One && pool->size() == 2);
+  quiz_assert(*(pool->lastBlock() - 1) == Type::Zero && pool->size() == 1);
+  pool->replaceBlock(pool->firstBlock(), Type::Two);
+  quiz_assert(*pool->blockAtIndex(0) == Type::Two);
+  pool->insertBlock(pool->firstBlock(), Type::One);
+  quiz_assert(*pool->firstBlock() == Type::One && pool->size() == 2);
   pool->insertBlocks(pool->blockAtIndex(2), pool->blockAtIndex(0), 2);
-  quiz_assert(*(pool->blockAtIndex(2)) == BlockType::One &&
-              *(pool->blockAtIndex(3)) == BlockType::Two && pool->size() == 4);
+  quiz_assert(*(pool->blockAtIndex(2)) == Type::One &&
+              *(pool->blockAtIndex(3)) == Type::Two && pool->size() == 4);
   pool->removeBlocks(pool->firstBlock(), 3);
-  quiz_assert(*(pool->firstBlock()) == BlockType::Two && pool->size() == 1);
-  pool->push(BlockType::Zero);
-  pool->push(BlockType::One);
-  pool->push(BlockType::Half);
+  quiz_assert(*(pool->firstBlock()) == Type::Two && pool->size() == 1);
+  pool->push(Type::Zero);
+  pool->push(Type::One);
+  pool->push(Type::Half);
   //[ 2 0 1 1/2 ]--> [ 2 1 1/2 0 ]
   pool->moveBlocks(pool->firstBlock() + 1, pool->blockAtIndex(2), 2);
-  quiz_assert(*(pool->blockAtIndex(0)) == BlockType::Two &&
-              *(pool->blockAtIndex(1)) == BlockType::One &&
-              *(pool->blockAtIndex(2)) == BlockType::Half &&
-              *(pool->blockAtIndex(3)) == BlockType::Zero && pool->size() == 4);
+  quiz_assert(*(pool->blockAtIndex(0)) == Type::Two &&
+              *(pool->blockAtIndex(1)) == Type::One &&
+              *(pool->blockAtIndex(2)) == Type::Half &&
+              *(pool->blockAtIndex(3)) == Type::Zero && pool->size() == 4);
   quiz_assert(pool->contains(pool->blockAtIndex(2)));
   quiz_assert(!pool->contains(pool->blockAtIndex(5)));
 }
@@ -77,7 +77,7 @@ QUIZ_CASE(pcj_edition_reference) {
   // Constructors
   ref0->clone();
   EditionReference ref2 = EditionReference(
-      SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(8)));
+      SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(8)));
   assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e});
 
   // Insertions

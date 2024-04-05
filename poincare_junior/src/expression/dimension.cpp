@@ -14,6 +14,7 @@ Dimension Dimension::Unit(const Tree* unit) {
 }
 
 bool Dimension::DeepCheckListLength(const Tree* t) {
+  using Type = PoincareJ::Type;
   // TODO complexity should be linear
   int childLength[t->numberOfChildren()];
   for (int i = 0; const Tree* child : t->children()) {
@@ -24,31 +25,31 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     i++;
   }
   switch (t->type()) {
-    case BlockType::SampleStdDev:
+    case Type::SampleStdDev:
       // SampleStdDev needs a list of length >= 2
       return childLength[0] >= 2 && (childLength[1] == k_nonListListLength ||
                                      childLength[0] == childLength[1]);
-    case BlockType::Mean:
-    case BlockType::StdDev:
-    case BlockType::Median:
-    case BlockType::Variance:
+    case Type::Mean:
+    case Type::StdDev:
+    case Type::Median:
+    case Type::Variance:
       // At least 1 child is needed.
       return childLength[0] >= 1 && (childLength[1] == k_nonListListLength ||
                                      childLength[0] == childLength[1]);
-    case BlockType::Minimum:
-    case BlockType::Maximum:
+    case Type::Minimum:
+    case Type::Maximum:
       // At least 1 child is needed.
       return childLength[0] >= 1;
-    case BlockType::ListSum:
-    case BlockType::ListProduct:
-    case BlockType::ListSort:
+    case Type::ListSum:
+    case Type::ListProduct:
+    case Type::ListSort:
       return childLength[0] >= 0;
-    case BlockType::ListElement:
+    case Type::ListElement:
       return childLength[0] >= 0 && childLength[1] == k_nonListListLength;
-    case BlockType::ListSlice:
+    case Type::ListSlice:
       return childLength[0] >= 0 && childLength[1] == k_nonListListLength &&
              childLength[2] == k_nonListListLength;
-    case BlockType::List: {
+    case Type::List: {
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (childLength[i++] >= 0) {
           // List of lists are forbidden
@@ -82,30 +83,30 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
 
 int Dimension::GetListLength(const Tree* t) {
   switch (t->type()) {
-    case BlockType::Mean:
-    case BlockType::StdDev:
-    case BlockType::Median:
-    case BlockType::Variance:
-    case BlockType::SampleStdDev:
-    case BlockType::Minimum:
-    case BlockType::Maximum:
-    case BlockType::ListSum:
-    case BlockType::ListProduct:
-    case BlockType::Dim:
-    case BlockType::ListElement:
+    case Type::Mean:
+    case Type::StdDev:
+    case Type::Median:
+    case Type::Variance:
+    case Type::SampleStdDev:
+    case Type::Minimum:
+    case Type::Maximum:
+    case Type::ListSum:
+    case Type::ListProduct:
+    case Type::Dim:
+    case Type::ListElement:
       return k_nonListListLength;
-    case BlockType::ListSort:
+    case Type::ListSort:
       return GetListLength(t->child(0));
-    case BlockType::List:
+    case Type::List:
       return t->numberOfChildren();
-    case BlockType::ListSequence:
+    case Type::ListSequence:
       // TODO: Handle undef Approximation.
       return Approximation::To<float>(t->child(1));
-    case BlockType::ListSlice:
+    case Type::ListSlice:
       // TODO: Handle undef Approximation.
       return Approximation::To<float>(t->child(2)) -
              Approximation::To<float>(t->child(1));
-    case BlockType::RandIntNoRep:
+    case Type::RandIntNoRep:
       // TODO: Handle undef Approximation.
       return Approximation::To<float>(t->child(2));
     default: {
@@ -155,17 +156,17 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
   bool unitsAllowed = false;
   bool angleUnitsAllowed = false;
   switch (t->type()) {
-    case BlockType::Addition:
-    case BlockType::Subtraction:
+    case Type::Addition:
+    case Type::Subtraction:
       for (int i = 1; i < t->numberOfChildren(); i++) {
         if (childDim[0] != childDim[i]) {
           return false;
         }
       }
       return true;
-    case BlockType::Opposite:
-    case BlockType::Division:
-    case BlockType::Multiplication: {
+    case Type::Opposite:
+    case Type::Division:
+    case Type::Multiplication: {
       /* TODO: Forbid Complex * units. Units are already forbidden in complex
        * builtins. */
       uint8_t cols = 0;
@@ -192,9 +193,9 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       // Forbid units * matrices
       return unitVector.isEmpty() || cols == 0;
     }
-    case BlockType::Power:
-    case BlockType::PowerReal:
-    case BlockType::PowerMatrix: {
+    case Type::Power:
+    case Type::PowerReal:
+    case Type::PowerMatrix: {
       if (!childDim[1].isScalar()) {
         return false;
       }
@@ -216,8 +217,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
              (index->isMultiplication() && index->numberOfChildren() == 2 &&
               index->child(0)->isMinusOne() && index->child(1)->isInteger());
     }
-    case BlockType::Sum:
-    case BlockType::Product:
+    case Type::Sum:
+    case Type::Product:
       return childDim[Parametric::k_variableIndex].isScalar() &&
              childDim[Parametric::k_lowerBoundIndex].isScalar() &&
              childDim[Parametric::k_upperBoundIndex].isScalar() &&
@@ -226,32 +227,32 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
               childDim[Parametric::k_integrandIndex].isSquareMatrix());
 
     // Matrices
-    case BlockType::Dim:
+    case Type::Dim:
       return childDim[0].isMatrix() ||
              (childDim[0].isScalar() && GetListLength(t->child(0)) >= 0);
-    case BlockType::Ref:
-    case BlockType::Rref:
-    case BlockType::Transpose:
+    case Type::Ref:
+    case Type::Rref:
+    case Type::Transpose:
       return childDim[0].isMatrix();
-    case BlockType::Det:
-    case BlockType::Trace:
-    case BlockType::Inverse:
+    case Type::Det:
+    case Type::Trace:
+    case Type::Inverse:
       return childDim[0].isSquareMatrix();
-    case BlockType::Identity:
+    case Type::Identity:
       // TODO check for unknowns and display error message if not integral
       return childDim[0].isScalar() && t->child(0)->isInteger();
-    case BlockType::Norm:
+    case Type::Norm:
       return childDim[0].isVector();
-    case BlockType::Dot:
+    case Type::Dot:
       return childDim[0].isVector() && (childDim[0] == childDim[1]);
-    case BlockType::Cross:
+    case Type::Cross:
       return childDim[0].isVector() && (childDim[0] == childDim[1]) &&
              (childDim[0].matrix.rows == 3 || childDim[0].matrix.cols == 3);
 
-    case BlockType::Round:
+    case Type::Round:
       return (childDim[0].isScalar() || childDim[0].isUnit()) &&
              childDim[1].isScalar();
-    case BlockType::Piecewise: {
+    case Type::Piecewise: {
       /* A piecewise can contain any type provided it is the same everywhere
        * Conditions are stored on odd indices and should be booleans */
       for (int i = 0; i < t->numberOfChildren(); i++) {
@@ -267,11 +268,11 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       return true;
     }
-    case BlockType::UnitConversion:
+    case Type::UnitConversion:
       assert(childDim[1].isUnit());
       return childDim[0] == childDim[1] ||
              (childDim[1].isAngleUnit() && childDim[0].isScalar());
-    case BlockType::List:
+    case Type::List:
       // Lists can contain points or scalars but not both
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (!(childDim[i].isScalar() || childDim[i].isPoint()) ||
@@ -280,29 +281,29 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         }
       }
       return true;
-    case BlockType::ListSequence:
+    case Type::ListSequence:
       if (childDim[2].isPoint()) {
         childDim[2] = Scalar();
         // continue to default
       }
       break;
-    case BlockType::Abs:
-    case BlockType::Floor:
-    case BlockType::Ceiling:
-    case BlockType::Sign:
-    // case BlockType::SquareRoot: TODO: Handle _m^(1/2)
-    case BlockType::UserFunction:
+    case Type::Abs:
+    case Type::Floor:
+    case Type::Ceiling:
+    case Type::Sign:
+    // case Type::SquareRoot: TODO: Handle _m^(1/2)
+    case Type::UserFunction:
       unitsAllowed = true;
       break;
-    case BlockType::Cosine:
-    case BlockType::Sine:
-    case BlockType::Tangent:
-    case BlockType::Trig:
+    case Type::Cosine:
+    case Type::Sine:
+    case Type::Tangent:
+    case Type::Trig:
       angleUnitsAllowed = true;
       break;
-    case BlockType::Matrix:
+    case Type::Matrix:
       break;
-    case BlockType::Parenthesis:
+    case Type::Parenthesis:
       return true;
     default:
       if (t->isLogicalOperatorOrBoolean()) {
@@ -331,8 +332,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
 
 Dimension Dimension::GetDimension(const Tree* t) {
   switch (t->type()) {
-    case BlockType::Division:
-    case BlockType::Multiplication: {
+    case Type::Division:
+    case Type::Multiplication: {
       uint8_t rows = 0;
       uint8_t cols = 0;
       const Units::Representative* representative = nullptr;
@@ -358,12 +359,12 @@ Dimension Dimension::GetDimension(const Tree* t) {
                  : (unitVector.isEmpty() ? Scalar()
                                          : Unit(unitVector, representative));
     }
-    case BlockType::Sum:
-    case BlockType::Product:
+    case Type::Sum:
+    case Type::Product:
       return GetDimension(t->child(Parametric::k_integrandIndex));
-    case BlockType::PowerMatrix:
-    case BlockType::PowerReal:
-    case BlockType::Power: {
+    case Type::PowerMatrix:
+    case Type::PowerReal:
+    case Type::Power: {
       Dimension dim = GetDimension(t->nextNode());
       if (dim.isUnit()) {
         float index = Approximation::To<float>(t->child(1));
@@ -376,49 +377,49 @@ Dimension Dimension::GetDimension(const Tree* t) {
         return Unit(unitVector, dim.unit.representative);
       }
     }
-    case BlockType::Abs:
-    case BlockType::Opposite:
-    case BlockType::SquareRoot:
-    case BlockType::Floor:
-    case BlockType::Ceiling:
-    case BlockType::Round:
-    case BlockType::UserFunction:
-    case BlockType::Addition:
-    case BlockType::Subtraction:
-    case BlockType::Cross:
-    case BlockType::Inverse:
-    case BlockType::Ref:
-    case BlockType::Rref:
-    case BlockType::Piecewise:
-    case BlockType::Parenthesis:
+    case Type::Abs:
+    case Type::Opposite:
+    case Type::SquareRoot:
+    case Type::Floor:
+    case Type::Ceiling:
+    case Type::Round:
+    case Type::UserFunction:
+    case Type::Addition:
+    case Type::Subtraction:
+    case Type::Cross:
+    case Type::Inverse:
+    case Type::Ref:
+    case Type::Rref:
+    case Type::Piecewise:
+    case Type::Parenthesis:
       return GetDimension(t->nextNode());
-    case BlockType::Matrix:
+    case Type::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
-    case BlockType::Dim:
+    case Type::Dim:
       return GetDimension(t->nextNode()).isMatrix() ? Matrix(1, 2) : Scalar();
-    case BlockType::Transpose: {
+    case Type::Transpose: {
       Dimension dim = GetDimension(t->nextNode());
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
-    case BlockType::Identity: {
+    case Type::Identity: {
       int n = Approximation::To<float>(t->child(0));
       return Matrix(n, n);
     }
-    case BlockType::Unit:
+    case Type::Unit:
       return Dimension::Unit(t);
-    case BlockType::PhysicalConstant:
+    case Type::PhysicalConstant:
       return Dimension::Unit(Constant::Info(t).m_dimension, nullptr);
-    case BlockType::Point:
+    case Type::Point:
       return Point();
-    case BlockType::List:
+    case Type::List:
       // Points inside lists are always written directly
       return t->numberOfChildren() > 0 && t->child(0)->isPoint() ? Point()
                                                                  : Scalar();
-    case BlockType::ListSequence:
+    case Type::ListSequence:
       return t->child(2)->isPoint() ? Point() : Scalar();
-    case BlockType::ArcCosine:
-    case BlockType::ArcSine:
-    case BlockType::ArcTangent:
+    case Type::ArcCosine:
+    case Type::ArcSine:
+    case Type::ArcTangent:
       // Note: Angle units could be returned here.
     default:
       if (t->isLogicalOperatorOrBoolean() || t->isComparison()) {
@@ -432,10 +433,10 @@ bool Dimension::operator==(const Dimension& other) const {
   if (type != other.type) {
     return false;
   }
-  if (type == Type::Matrix) {
+  if (type == DimensionType::Matrix) {
     return matrix.rows == other.matrix.rows && matrix.cols == other.matrix.cols;
   }
-  if (type == Type::Unit) {
+  if (type == DimensionType::Unit) {
     return unit.vector == other.unit.vector &&
            (unit.vector != Units::Temperature::Dimension ||
             unit.representative == other.unit.representative);

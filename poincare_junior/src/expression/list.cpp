@@ -13,11 +13,11 @@ Tree* List::PushEmpty() { return KList.node<0>->cloneNode(); }
 
 bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
   switch (expr->type()) {
-    case BlockType::List:
+    case Type::List:
       assert(n < expr->numberOfChildren());
       expr->moveTreeOverTree(expr->child(n));
       return true;
-    case BlockType::ListSequence: {
+    case Type::ListSequence: {
       if (Parametric::HasLocalRandom(expr)) {
         return false;
       }
@@ -30,10 +30,10 @@ bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
       expr->removeTree();
       return true;
     }
-    case BlockType::RandIntNoRep:
+    case Type::RandIntNoRep:
       return false;  // Should be projected on approximation.
-    case BlockType::ListSort:
-    case BlockType::Median:
+    case Type::ListSort:
+    case Type::Median:
       assert(false);  // Must have been removed by simplification
     default:
       if (expr->type().isListToScalar()) {
@@ -99,7 +99,7 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   if (type.isSampleStdDev()) {
     Tree* n = coefficients->isOne()
                   ? Integer::Push(Dimension::GetListLength(list))
-                  : Fold(coefficients, BlockType::ListSum);
+                  : Fold(coefficients, Type::ListSum);
     PatternMatching::CreateAndSimplify(
         sampleStdDev, {.KA = list, .KB = coefficients, .KC = n});
     n->removeTree();
@@ -107,7 +107,7 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   } else {
     assert(type.isVariance() || type.isStdDev());
     return PatternMatching::CreateAndSimplify(
-        type == BlockType::Variance ? variance : stdDev,
+        type == Type::Variance ? variance : stdDev,
         {.KA = list, .KB = coefficients});
   }
 }
@@ -115,7 +115,7 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
 Tree* List::Mean(const Tree* list, const Tree* coefficients) {
   if (coefficients->isOne()) {
     Tree* result = KMult.node<2>->cloneNode();
-    Fold(list, BlockType::ListSum);
+    Fold(list, Type::ListSum);
     Rational::Push(1, Dimension::GetListLength(list));
     Simplification::ShallowSystematicReduce(result);
     return result;
@@ -147,23 +147,23 @@ bool List::BubbleUp(Tree* expr, Tree::Operation reduction) {
 
 bool List::ShallowApplyListOperators(Tree* e) {
   switch (e->type()) {
-    case BlockType::ListSum:
-    case BlockType::ListProduct:
-    case BlockType::Minimum:
-    case BlockType::Maximum:
+    case Type::ListSum:
+    case Type::ListProduct:
+    case Type::Minimum:
+    case Type::Maximum:
       e->moveTreeOverTree(Fold(e->child(0), e->type()));
       return true;
-    case BlockType::Mean:
+    case Type::Mean:
       e->moveTreeOverTree(Mean(e->child(0), e->child(1)));
       return true;
-    case BlockType::Variance:
-    case BlockType::StdDev:
-    case BlockType::SampleStdDev: {
+    case Type::Variance:
+    case Type::StdDev:
+    case Type::SampleStdDev: {
       e->moveTreeOverTree(Variance(e->child(0), e->child(1), e->type()));
       return true;
     }
-    case BlockType::ListSort:
-    case BlockType::Median: {
+    case Type::ListSort:
+    case Type::Median: {
       Tree* list = e->child(0);
       BubbleUp(list, Simplification::ShallowSystematicReduce);
       NAry::Sort(list);
@@ -186,7 +186,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       }
       return true;
     }
-    case BlockType::ListElement: {
+    case Type::ListElement: {
       int i = Integer::Handler(e->child(1)).to<uint8_t>();
       if (i < 1 || i > e->child(0)->numberOfChildren()) {
         e->cloneTreeOverTree(KUndef);
@@ -199,10 +199,10 @@ bool List::ShallowApplyListOperators(Tree* e) {
       e->moveTreeOverTree(e->child(0));
       return true;
     }
-    case BlockType::ListSlice:
+    case Type::ListSlice:
       // TODO PCJ
       return false;
-    case BlockType::Dim:
+    case Type::Dim:
       e->moveTreeOverTree(Integer::Push(Dimension::GetListLength(e->child(0))));
       return true;
     default:

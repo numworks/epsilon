@@ -414,7 +414,7 @@ bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
     return false;
   }
   constexpr Aliases k_sumName =
-      *Builtin::GetReservedFunction(BlockType::Sum)->aliases();
+      *Builtin::GetReservedFunction(Type::Sum)->aliases();
   int nameLen = strlen(k_sumName);
   int indexOfParenthesis = horizontalParent->indexOfChild(parenthesis);
   if (indexOfParenthesis < nameLen) {

@@ -14,13 +14,13 @@
 
 namespace PoincareJ {
 
-enum class BlockType : uint8_t;
+enum class Type : uint8_t;
 class Block {
   /* A block is a byte-long object containing either a type or some value. */
 
  public:
   constexpr Block(uint8_t content = 0) : m_content(content) {}
-  constexpr Block(BlockType type) : m_content(static_cast<uint8_t>(type)) {}
+  constexpr Block(Type type) : m_content(static_cast<uint8_t>(type)) {}
   bool operator==(const Block& b) const { return b.m_content == m_content; }
   bool operator!=(const Block& b) { return b.m_content != m_content; }
 

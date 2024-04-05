@@ -18,7 +18,7 @@ class Metric {
  private:
   constexpr static int k_defaultMetric = 2 * 3 * 5;
 
-  static int GetMetric(BlockType type);
+  static int GetMetric(Type type);
 #endif
 };
 

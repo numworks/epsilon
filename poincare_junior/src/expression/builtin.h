@@ -13,10 +13,10 @@ class Tree;
 
 class Builtin {
  public:
-  constexpr Builtin(BlockType blockType, Aliases aliases)
+  constexpr Builtin(Type blockType, Aliases aliases)
       : m_blockType(blockType), m_aliases(aliases) {}
 
-  constexpr BlockType blockType() const { return m_blockType; }
+  constexpr Type blockType() const { return m_blockType; }
   constexpr const Aliases* aliases() const { return &m_aliases; }
   virtual bool has2DLayout() const { return false; }
   virtual Tree* pushNode(int numberOfChildren) const;
@@ -28,7 +28,7 @@ class Builtin {
     assert(GetReservedFunction(tree));
     return GetReservedFunction(tree)->m_aliases;
   }
-  static Aliases SpecialIdentifierName(BlockType type) {
+  static Aliases SpecialIdentifierName(Type type) {
     assert(GetSpecialIdentifier(type));
     return GetSpecialIdentifier(type)->m_aliases;
   }
@@ -41,18 +41,18 @@ class Builtin {
   static bool HasCustomIdentifier(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(const Tree* tree);
-  static constexpr const Builtin* GetReservedFunction(BlockType type);
+  static constexpr const Builtin* GetReservedFunction(Type type);
   static const Builtin* GetSpecialIdentifier(UnicodeDecoder* name);
-  static const Builtin* GetSpecialIdentifier(BlockType type);
+  static const Builtin* GetSpecialIdentifier(Type type);
 
  private:
-  BlockType m_blockType;
+  Type m_blockType;
   Aliases m_aliases;
 };
 
 class BuiltinWithLayout : public Builtin {
  public:
-  constexpr BuiltinWithLayout(BlockType blockType, Aliases aliases,
+  constexpr BuiltinWithLayout(Type blockType, Aliases aliases,
                               LayoutType layoutType)
       : Builtin(blockType, aliases), m_layoutType(layoutType) {}
   LayoutType layoutType() const { return m_layoutType; }
@@ -92,86 +92,86 @@ constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
 }  // namespace BuiltinsAliases
 
 constexpr static Builtin s_builtins[] = {
-    {BlockType::Cosine, "cos"},
-    {BlockType::Sine, "sin"},
-    {BlockType::Tangent, "tan"},
-    {BlockType::ArcCosine, BuiltinsAliases::k_acosAliases},
-    {BlockType::ArcSine, BuiltinsAliases::k_asinAliases},
-    {BlockType::ArcTangent, BuiltinsAliases::k_atanAliases},
-    {BlockType::Secant, "sec"},
-    {BlockType::Cosecant, "csc"},
-    {BlockType::Cotangent, "cot"},
-    {BlockType::ArcSecant, "arcsec"},
-    {BlockType::ArcCosecant, "arccsc"},
-    {BlockType::ArcCotangent, "arccot"},
-    {BlockType::HyperbolicCosine, "cosh"},
-    {BlockType::HyperbolicSine, "sinh"},
-    {BlockType::HyperbolicTangent, "tanh"},
-    {BlockType::HyperbolicArcCosine, "arcosh"},
-    {BlockType::HyperbolicArcSine, "arsinh"},
-    {BlockType::HyperbolicArcTangent, "artanh"},
-    {BlockType::Exponential, "exp"},
-    {BlockType::Logarithm, "log"},
-    {BlockType::Log, "log"},
-    {BlockType::Ln, "ln"},
-    {BlockType::Cross, "cross"},
-    {BlockType::Det, "det"},
-    {BlockType::Dim, "dim"},
-    {BlockType::Dot, "dot"},
-    {BlockType::Identity, "identity"},
-    {BlockType::Inverse, "inverse"},
-    {BlockType::Ref, "ref"},
-    {BlockType::Rref, "rref"},
-    {BlockType::Trace, "trace"},
-    {BlockType::Transpose, "transpose"},
-    {BlockType::ComplexArgument, "arg"},
-    {BlockType::RealPart, "re"},
-    {BlockType::ImaginaryPart, "im"},
-    {BlockType::GCD, "gcd"},
-    {BlockType::LCM, "lcm"},
-    {BlockType::Quotient, "quo"},
-    {BlockType::Remainder, "rem"},
-    {BlockType::Factor, "factor"},
-    {BlockType::FracPart, "frac"},
-    {BlockType::Round, "round"},
-    {BlockType::Sign, "sign"},
-    {BlockType::Mean, "mean"},
-    {BlockType::StdDev, "stddev"},
-    {BlockType::Median, "med"},
-    {BlockType::Variance, "var"},
-    {BlockType::SampleStdDev, "samplestddev"},
-    {BlockType::Minimum, "min"},
-    {BlockType::Maximum, "max"},
-    {BlockType::ListSum, "sum"},
-    {BlockType::ListProduct, "prod"},
-    {BlockType::ListSort, "sort"},
-    {BlockType::Permute, "permute"},
-    {BlockType::Random, "random"},
-    {BlockType::RandInt, "randint"},
-    {BlockType::RandIntNoRep, "randintnorep"},
-    {BlockType::Derivative, "diff"},      // 2D layout is special
-    {BlockType::NthDerivative, "diff"},   // 2D layout is special
-    {BlockType::Piecewise, "piecewise"},  // TODO PCJ 2D layout is a grid
-    {BlockType::Dependency, "dep"},       // TODO dummy
+    {Type::Cosine, "cos"},
+    {Type::Sine, "sin"},
+    {Type::Tangent, "tan"},
+    {Type::ArcCosine, BuiltinsAliases::k_acosAliases},
+    {Type::ArcSine, BuiltinsAliases::k_asinAliases},
+    {Type::ArcTangent, BuiltinsAliases::k_atanAliases},
+    {Type::Secant, "sec"},
+    {Type::Cosecant, "csc"},
+    {Type::Cotangent, "cot"},
+    {Type::ArcSecant, "arcsec"},
+    {Type::ArcCosecant, "arccsc"},
+    {Type::ArcCotangent, "arccot"},
+    {Type::HyperbolicCosine, "cosh"},
+    {Type::HyperbolicSine, "sinh"},
+    {Type::HyperbolicTangent, "tanh"},
+    {Type::HyperbolicArcCosine, "arcosh"},
+    {Type::HyperbolicArcSine, "arsinh"},
+    {Type::HyperbolicArcTangent, "artanh"},
+    {Type::Exponential, "exp"},
+    {Type::Logarithm, "log"},
+    {Type::Log, "log"},
+    {Type::Ln, "ln"},
+    {Type::Cross, "cross"},
+    {Type::Det, "det"},
+    {Type::Dim, "dim"},
+    {Type::Dot, "dot"},
+    {Type::Identity, "identity"},
+    {Type::Inverse, "inverse"},
+    {Type::Ref, "ref"},
+    {Type::Rref, "rref"},
+    {Type::Trace, "trace"},
+    {Type::Transpose, "transpose"},
+    {Type::ComplexArgument, "arg"},
+    {Type::RealPart, "re"},
+    {Type::ImaginaryPart, "im"},
+    {Type::GCD, "gcd"},
+    {Type::LCM, "lcm"},
+    {Type::Quotient, "quo"},
+    {Type::Remainder, "rem"},
+    {Type::Factor, "factor"},
+    {Type::FracPart, "frac"},
+    {Type::Round, "round"},
+    {Type::Sign, "sign"},
+    {Type::Mean, "mean"},
+    {Type::StdDev, "stddev"},
+    {Type::Median, "med"},
+    {Type::Variance, "var"},
+    {Type::SampleStdDev, "samplestddev"},
+    {Type::Minimum, "min"},
+    {Type::Maximum, "max"},
+    {Type::ListSum, "sum"},
+    {Type::ListProduct, "prod"},
+    {Type::ListSort, "sort"},
+    {Type::Permute, "permute"},
+    {Type::Random, "random"},
+    {Type::RandInt, "randint"},
+    {Type::RandIntNoRep, "randintnorep"},
+    {Type::Derivative, "diff"},      // 2D layout is special
+    {Type::NthDerivative, "diff"},   // 2D layout is special
+    {Type::Piecewise, "piecewise"},  // TODO PCJ 2D layout is a grid
+    {Type::Dependency, "dep"},       // TODO dummy
 };
 
 constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
-    {BlockType::Abs, "abs", LayoutType::AbsoluteValue},
-    {BlockType::Binomial, "binomial", LayoutType::Binomial},
-    {BlockType::Sum, "sum", LayoutType::Sum},
-    {BlockType::Product, "product", LayoutType::Product},
-    {BlockType::Integral, "int", LayoutType::Integral},
-    {BlockType::SquareRoot, BuiltinsAliases::k_squareRootAliases,
+    {Type::Abs, "abs", LayoutType::AbsoluteValue},
+    {Type::Binomial, "binomial", LayoutType::Binomial},
+    {Type::Sum, "sum", LayoutType::Sum},
+    {Type::Product, "product", LayoutType::Product},
+    {Type::Integral, "int", LayoutType::Integral},
+    {Type::SquareRoot, BuiltinsAliases::k_squareRootAliases,
      LayoutType::SquareRoot},
-    {BlockType::NthRoot, "root", LayoutType::NthRoot},
-    {BlockType::Norm, "norm", LayoutType::VectorNorm},
-    {BlockType::Conjugate, "conj", LayoutType::Conjugate},
-    {BlockType::Ceiling, "ceil", LayoutType::Ceiling},
-    {BlockType::Floor, "floor", LayoutType::Floor},
-    {BlockType::ListSequence, "sequence", LayoutType::ListSequence},
+    {Type::NthRoot, "root", LayoutType::NthRoot},
+    {Type::Norm, "norm", LayoutType::VectorNorm},
+    {Type::Conjugate, "conj", LayoutType::Conjugate},
+    {Type::Ceiling, "ceil", LayoutType::Ceiling},
+    {Type::Floor, "floor", LayoutType::Floor},
+    {Type::ListSequence, "sequence", LayoutType::ListSequence},
 };
 
-constexpr const Builtin* Builtin::GetReservedFunction(BlockType type) {
+constexpr const Builtin* Builtin::GetReservedFunction(Type type) {
   for (const Builtin& builtin : s_builtins) {
     if (builtin.m_blockType == type) {
       return &builtin;

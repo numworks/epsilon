@@ -144,9 +144,9 @@ QUIZ_CASE(pcj_match) {
 QUIZ_CASE(pcj_rewrite_replace) {
   const Tree* p = KAdd(KA, KA);
   const Tree* s = KMult(2_e, KA);
-  EditionReference ref(SharedEditionPool->push<BlockType::Addition>(2));
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
-  SharedEditionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+  EditionReference ref(SharedEditionPool->push<Type::Addition>(2));
+  SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(5));
+  SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(5));
   EditionReference result = PatternMatching::MatchAndCreate(ref, p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
   PatternMatching::MatchAndReplace(ref, p, s);

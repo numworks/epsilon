@@ -373,8 +373,7 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
       int offset = smallE - decimalPoint - 1;
       assert(offset > 0);
       // Decimal<offset>(integerDigits * 10^offset + fractionalDigits)
-      leftHandSide =
-          SharedEditionPool->push<BlockType::Decimal, int8_t>(offset);
+      leftHandSide = SharedEditionPool->push<Type::Decimal, int8_t>(offset);
       Tree *child =
           IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
       child->moveTreeOverTree(IntegerHandler::Multiplication(
@@ -385,8 +384,8 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
     }
     if (smallE != end) {
       // Decimal * 10^exponent
-      Tree *mult = SharedEditionPool->push<BlockType::Multiplication>(1);
-      SharedEditionPool->push(BlockType::Power);
+      Tree *mult = SharedEditionPool->push<Type::Multiplication>(1);
+      SharedEditionPool->push(Type::Power);
       (10_e)->clone();
       Integer::Push(exponent, base);
       leftHandSide->moveTreeAtNode(mult);
@@ -437,7 +436,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
   }
   assert(leftHandSide->nextTree() == static_cast<Tree *>(rightHandSide));
   if (!plus) {
-    CloneNodeAtNode(leftHandSide, KTree<BlockType::Subtraction>());
+    CloneNodeAtNode(leftHandSide, KTree<Type::Subtraction>());
     return;
   }
   if (leftHandSide->isAddition()) {
@@ -549,7 +548,7 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
   EditionReference rightHandSide;
-  BlockType operatorType;
+  Type operatorType;
   size_t operatorLength;
   bool check = Binary::IsComparisonOperatorString(
       reinterpret_cast<const CPL *>(m_currentToken.firstLayout()),
@@ -641,7 +640,7 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
   leftHandSide = rightHandSide;
 }
 
-void RackParser::parseBinaryLogicalOperator(BlockType operatorType,
+void RackParser::parseBinaryLogicalOperator(Type operatorType,
                                             EditionReference &leftHandSide,
                                             Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
@@ -651,15 +650,14 @@ void RackParser::parseBinaryLogicalOperator(BlockType operatorType,
   /* And and Nand have same precedence
    * Or, Nor and Xor have same precedence */
   Token::Type newStoppingType;
-  if (operatorType == BlockType::LogicalAnd ||
-      operatorType == BlockType::LogicalNand) {
+  if (operatorType == Type::LogicalAnd || operatorType == Type::LogicalNand) {
     static_assert(Token::Type::Nand < Token::Type::And,
                   "Wrong And/Nand precedence.");
     newStoppingType = Token::Type::And;
   } else {
-    assert(operatorType == BlockType::LogicalOr ||
-           operatorType == BlockType::LogicalNor ||
-           operatorType == BlockType::LogicalXor);
+    assert(operatorType == Type::LogicalOr ||
+           operatorType == Type::LogicalNor ||
+           operatorType == Type::LogicalXor);
     static_assert(Token::Type::Nor < Token::Type::Or &&
                       Token::Type::Xor < Token::Type::Or,
                   "Wrong Or/Nor/Xor precedence.");
@@ -741,13 +739,13 @@ void RackParser::parseConstant(EditionReference &leftHandSide,
       m_currentToken.length());
   if (index >= 0) {
     leftHandSide =
-        SharedEditionPool->push<BlockType::PhysicalConstant>(uint8_t(index));
+        SharedEditionPool->push<Type::PhysicalConstant>(uint8_t(index));
   } else {
     assert(m_currentToken.length() == 1);
     leftHandSide = SharedEditionPool->push(
         m_currentToken.toDecoder(m_root).nextCodePoint() == 'e'
-            ? BlockType::ExponentialE
-            : BlockType::Pi);
+            ? Type::ExponentialE
+            : Type::Pi);
   }
   isThereImplicitOperator();
 }
@@ -782,10 +780,10 @@ static void PromoteBuiltin(EditionReference &parameterList,
   if (!type.isNAry() &&
       parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
     // Add default parameters
-    if (type == BlockType::Round) {
+    if (type == Type::Round) {
       NAry::AddChild(parameterList, (0_e)->clone());
     }
-    if (type == BlockType::RandInt) {
+    if (type == Type::RandInt) {
       NAry::AddChildAtIndex(parameterList, (1_e)->clone(), 0);
     }
     if (type.isListStatWithCoefficients()) {
@@ -891,16 +889,14 @@ void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
   }
 #endif
 
-  if (numberOfParameters == 1 && builtin->blockType() == BlockType::Logarithm) {
+  if (numberOfParameters == 1 && builtin->blockType() == Type::Logarithm) {
     builtin = Builtin::GetReservedFunction(KLog);
-  } else if (numberOfParameters == 2 &&
-             builtin->blockType() == BlockType::Log) {
+  } else if (numberOfParameters == 2 && builtin->blockType() == Type::Log) {
     builtin = Builtin::GetReservedFunction(KLogarithm);
-  } else if (numberOfParameters == 1 &&
-             builtin->blockType() == BlockType::Sum) {
+  } else if (numberOfParameters == 1 && builtin->blockType() == Type::Sum) {
     builtin = Builtin::GetReservedFunction(KListSum);
   } else if (numberOfParameters == 4 &&
-             builtin->blockType() == BlockType::Derivative) {
+             builtin->blockType() == Type::Derivative) {
     builtin = Builtin::GetReservedFunction(KNthDiff);
   }
   assert(builtin);
@@ -996,7 +992,7 @@ void RackParser::privateParseCustomIdentifier(EditionReference &leftHandSide,
         idType != Poincare::Context::SymbolAbstractType::Sequence &&
         idType != Poincare::Context::SymbolAbstractType::List) {
       leftHandSide =
-          SharedEditionPool->push<BlockType::UserSymbol>(name, length + 1);
+          SharedEditionPool->push<Type::UserSymbol>(name, length + 1);
       return;
     }
   }
@@ -1070,8 +1066,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
       return false;
     }
 #endif
-    leftHandSide =
-        SharedEditionPool->push<BlockType::UserSymbol>(name, length + 1);
+    leftHandSide = SharedEditionPool->push<Type::UserSymbol>(name, length + 1);
     return true;
   }
 
@@ -1094,7 +1089,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
 #endif
   } else if (numberOfParameters == 1) {
     MoveTreeOverTree(parameter, parameter->child(0));
-    if (parameter->type() == BlockType::UserSymbol &&
+    if (parameter->type() == Type::UserSymbol &&
         strncmp(Symbol::GetName(parameter), name, length) == 0) {
       // Function and variable must have distinct names.
       ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1117,8 +1112,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
                                 BasedInteger::Builder(derivativeOrder));
       } else {
 #endif
-      result =
-          SharedEditionPool->push<BlockType::UserFunction>(name, length + 1);
+      result = SharedEditionPool->push<Type::UserFunction>(name, length + 1);
       parameter->moveNodeBeforeNode(result);
       assert(result->child(0) == parameter);
 #if 0
@@ -1129,8 +1123,8 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
-  if (result->type() == BlockType::UserFunction &&
-      parameter->type() == BlockType::UserSymbol &&
+  if (result->type() == Type::UserFunction &&
+      parameter->type() == Type::UserSymbol &&
       m_nextToken.type() == Token::Type::AssignmentEqual &&
       m_parsingContext.context()) {
     /* Set the parameter in the context to ensure that f(t)=t is not
@@ -1189,7 +1183,7 @@ void RackParser::parseMatrix(EditionReference &leftHandSide,
   uint8_t numberOfRows = 0;
   uint8_t numberOfColumns = 0;
   Tree *matrix =
-      SharedEditionPool->push<BlockType::Matrix>(numberOfRows, numberOfColumns);
+      SharedEditionPool->push<Type::Matrix>(numberOfRows, numberOfColumns);
   while (!popTokenIfType(Token::Type::RightBracket)) {
     EditionReference row = parseVector();
     if (numberOfRows > 0 && numberOfColumns != row->numberOfChildren()) {

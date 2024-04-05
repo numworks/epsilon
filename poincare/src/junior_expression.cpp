@@ -185,13 +185,13 @@ JuniorExpression JuniorExpression::Builder(int32_t n) {
 template <>
 JuniorExpression JuniorExpression::Builder<float>(float x) {
   return Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::SingleFloat>(x));
+      PoincareJ::SharedEditionPool->push<PoincareJ::Type::SingleFloat>(x));
 }
 
 template <>
 JuniorExpression JuniorExpression::Builder<double>(double x) {
   return Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::DoubleFloat>(x));
+      PoincareJ::SharedEditionPool->push<PoincareJ::Type::DoubleFloat>(x));
 }
 
 JuniorExpression JuniorExpression::Builder(const PoincareJ::Tree* tree) {
@@ -242,81 +242,81 @@ ExpressionNode::Type JuniorExpression::type() const {
                                : ExpressionNode::Type::Rational;
   }
   switch (tree()->type()) {
-    case PoincareJ::BlockType::Addition:
+    case PoincareJ::Type::Addition:
       return ExpressionNode::Type::Addition;
-    case PoincareJ::BlockType::True:
-    case PoincareJ::BlockType::False:
+    case PoincareJ::Type::True:
+    case PoincareJ::Type::False:
       return ExpressionNode::Type::Boolean;
-    case PoincareJ::BlockType::ComplexArgument:
+    case PoincareJ::Type::ComplexArgument:
       return ExpressionNode::Type::ComplexArgument;
-    case PoincareJ::BlockType::Conjugate:
+    case PoincareJ::Type::Conjugate:
       return ExpressionNode::Type::Conjugate;
-    case PoincareJ::BlockType::PhysicalConstant:
+    case PoincareJ::Type::PhysicalConstant:
       return ExpressionNode::Type::ConstantPhysics;
-    case PoincareJ::BlockType::Dependency:
+    case PoincareJ::Type::Dependency:
       return ExpressionNode::Type::Dependency;
-    case PoincareJ::BlockType::Derivative:
+    case PoincareJ::Type::Derivative:
       return ExpressionNode::Type::Derivative;
-    case PoincareJ::BlockType::Division:
+    case PoincareJ::Type::Division:
       return ExpressionNode::Type::Division;
-    case PoincareJ::BlockType::Factor:
+    case PoincareJ::Type::Factor:
       return ExpressionNode::Type::Factor;
-    case PoincareJ::BlockType::FracPart:
+    case PoincareJ::Type::FracPart:
       return ExpressionNode::Type::FracPart;
-    case PoincareJ::BlockType::ImaginaryPart:
+    case PoincareJ::Type::ImaginaryPart:
       return ExpressionNode::Type::ImaginaryPart;
-    case PoincareJ::BlockType::Infinity:
+    case PoincareJ::Type::Infinity:
       return ExpressionNode::Type::Infinity;
-    case PoincareJ::BlockType::Integral:
+    case PoincareJ::Type::Integral:
       return ExpressionNode::Type::Integral;
-    case PoincareJ::BlockType::List:
+    case PoincareJ::Type::List:
       return ExpressionNode::Type::List;
-    case PoincareJ::BlockType::ListSequence:
+    case PoincareJ::Type::ListSequence:
       return ExpressionNode::Type::ListSequence;
-    case PoincareJ::BlockType::Logarithm:
-    case PoincareJ::BlockType::Log:
+    case PoincareJ::Type::Logarithm:
+    case PoincareJ::Type::Log:
       return ExpressionNode::Type::Logarithm;
-    case PoincareJ::BlockType::Matrix:
+    case PoincareJ::Type::Matrix:
       return ExpressionNode::Type::Matrix;
-    case PoincareJ::BlockType::Multiplication:
+    case PoincareJ::Type::Multiplication:
       return ExpressionNode::Type::Multiplication;
-    case PoincareJ::BlockType::Nonreal:
+    case PoincareJ::Type::Nonreal:
       return ExpressionNode::Type::Nonreal;
-    case PoincareJ::BlockType::Opposite:
+    case PoincareJ::Type::Opposite:
       return ExpressionNode::Type::Opposite;
-    case PoincareJ::BlockType::Piecewise:
+    case PoincareJ::Type::Piecewise:
       return ExpressionNode::Type::PiecewiseOperator;
-    case PoincareJ::BlockType::Point:
+    case PoincareJ::Type::Point:
       return ExpressionNode::Type::Point;
-    case PoincareJ::BlockType::Power:
+    case PoincareJ::Type::Power:
       return ExpressionNode::Type::Power;
-    case PoincareJ::BlockType::Product:
+    case PoincareJ::Type::Product:
       return ExpressionNode::Type::Product;
-    case PoincareJ::BlockType::RandInt:
+    case PoincareJ::Type::RandInt:
       return ExpressionNode::Type::Randint;
-    case PoincareJ::BlockType::RandIntNoRep:
+    case PoincareJ::Type::RandIntNoRep:
       return ExpressionNode::Type::RandintNoRepeat;
-    case PoincareJ::BlockType::Random:
+    case PoincareJ::Type::Random:
       return ExpressionNode::Type::Random;
-    case PoincareJ::BlockType::RealPart:
+    case PoincareJ::Type::RealPart:
       return ExpressionNode::Type::RealPart;
-    case PoincareJ::BlockType::Round:
+    case PoincareJ::Type::Round:
       return ExpressionNode::Type::Round;
-    case PoincareJ::BlockType::Store:
+    case PoincareJ::Type::Store:
       return ExpressionNode::Type::Store;
-    case PoincareJ::BlockType::Sum:
+    case PoincareJ::Type::Sum:
       return ExpressionNode::Type::Sum;
-    case PoincareJ::BlockType::Undefined:
+    case PoincareJ::Type::Undefined:
       return ExpressionNode::Type::Undefined;
-    case PoincareJ::BlockType::UnitConversion:
+    case PoincareJ::Type::UnitConversion:
       return ExpressionNode::Type::UnitConvert;
-    case PoincareJ::BlockType::UserSymbol:
+    case PoincareJ::Type::UserSymbol:
       return ExpressionNode::Type::Symbol;
-    case PoincareJ::BlockType::UserFunction:
+    case PoincareJ::Type::UserFunction:
       return ExpressionNode::Type::Function;
-    case PoincareJ::BlockType::UserSequence:
+    case PoincareJ::Type::UserSequence:
       return ExpressionNode::Type::Sequence;
-    case PoincareJ::BlockType::Parenthesis:
+    case PoincareJ::Type::Parenthesis:
       return ExpressionNode::Type::Parenthesis;
 #if 0
       // No perfect PoincareJ equivalents
@@ -325,12 +325,12 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::DistributionDispatcher;
 #endif
       // Unused in apps, but they should not raise the default assert.
-    case PoincareJ::BlockType::Equal:
-    case PoincareJ::BlockType::NotEqual:
-    case PoincareJ::BlockType::Superior:
-    case PoincareJ::BlockType::SuperiorEqual:
-    case PoincareJ::BlockType::Inferior:
-    case PoincareJ::BlockType::InferiorEqual:
+    case PoincareJ::Type::Equal:
+    case PoincareJ::Type::NotEqual:
+    case PoincareJ::Type::Superior:
+    case PoincareJ::Type::SuperiorEqual:
+    case PoincareJ::Type::Inferior:
+    case PoincareJ::Type::InferiorEqual:
       // TODO_PCJ
       return ExpressionNode::Type::Comparison;
     default:
@@ -477,7 +477,7 @@ int JuniorExpression::getPolynomialCoefficients(
     Context* context, const char* symbolName,
     JuniorExpression coefficients[]) const {
   PoincareJ::Tree* symbol =
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
+      PoincareJ::SharedEditionPool->push<PoincareJ::Type::UserSymbol>(
           symbolName);
   PoincareJ::Tree* poly =
       PoincareJ::PolynomialParser::Parse(tree()->clone(), symbol);
@@ -490,8 +490,8 @@ int JuniorExpression::getPolynomialCoefficients(
       coefficients[i] = Builder(poly->child(indexExponent + 1)->clone());
       indexExponent++;
     } else {
-      coefficients[i] = Builder(
-          PoincareJ::SharedEditionPool->push(PoincareJ::BlockType::Zero));
+      coefficients[i] =
+          Builder(PoincareJ::SharedEditionPool->push(PoincareJ::Type::Zero));
     }
   }
   assert(indexExponent == PoincareJ::Polynomial::NumberOfTerms(poly));
@@ -521,7 +521,7 @@ int JuniorExpression::getPolynomialReducedCoefficients(
 int JuniorExpression::polynomialDegree(Context* context,
                                        const char* symbolName) const {
   PoincareJ::Tree* symbol =
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::UserSymbol>(
+      PoincareJ::SharedEditionPool->push<PoincareJ::Type::UserSymbol>(
           symbolName);
   PoincareJ::Tree* poly =
       PoincareJ::PolynomialParser::Parse(tree()->clone(), symbol);
@@ -781,7 +781,7 @@ bool JuniorExpression::IsDiscontinuous(const JuniorExpression e,
 
 Matrix Matrix::Builder() {
   JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::Matrix>(0, 0));
+      PoincareJ::SharedEditionPool->push<PoincareJ::Type::Matrix>(0, 0));
   return static_cast<Matrix&>(expr);
 }
 
@@ -893,7 +893,7 @@ template Coordinate2D<double> Point::approximate2D<double>(
 
 List List::Builder() {
   JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::BlockType::List>(0));
+      PoincareJ::SharedEditionPool->push<PoincareJ::Type::List>(0));
   return static_cast<List&>(expr);
 }
 

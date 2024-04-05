@@ -79,8 +79,7 @@ class WorkingBuffer {
    * - the maximal size of an Integer Tree* that an immediate digit represents.
    */
   constexpr static size_t k_blockOffset =
-      TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) +
-      sizeof(native_int_t);
+      TypeBlock::NumberOfMetaBlocks(Type::IntegerPosBig) + sizeof(native_int_t);
   uint8_t *initialStartOfBuffer() {
     return reinterpret_cast<uint8_t *>(SharedEditionPool->lastBlock() +
                                        k_blockOffset);

@@ -33,50 +33,50 @@ static constexpr int k_maxPriority = 20;
 
 static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
-    case BlockType::Factorial:
-    case BlockType::PercentSimple:
+    case Type::Factorial:
+    case Type::PercentSimple:
       return 0;
-    case BlockType::Power:
+    case Type::Power:
       return 1;
-    case BlockType::Division:
+    case Type::Division:
       return 2;
-    case BlockType::Multiplication:
+    case Type::Multiplication:
       return 3;
-    case BlockType::PercentAddition:
+    case Type::PercentAddition:
       return 4;
-    case BlockType::Opposite:
+    case Type::Opposite:
     // Opposite could be higher but we prefer to display 2^(-1) instead of 2^-1
-    case BlockType::Subtraction:
+    case Type::Subtraction:
       return 5;
-    case BlockType::Addition:
-    case BlockType::MixedFraction:
+    case Type::Addition:
+    case Type::MixedFraction:
       return 6;
 
-    case BlockType::Equal:
-    case BlockType::NotEqual:
-    case BlockType::InferiorEqual:
-    case BlockType::Inferior:
-    case BlockType::SuperiorEqual:
+    case Type::Equal:
+    case Type::NotEqual:
+    case Type::InferiorEqual:
+    case Type::Inferior:
+    case Type::SuperiorEqual:
       return 11;
 
-    case BlockType::LogicalNot:
+    case Type::LogicalNot:
       return 12;
-    case BlockType::LogicalAnd:
+    case Type::LogicalAnd:
       return 13;
     // TODO PCJ force parentheses on equality
-    case BlockType::LogicalOr:
-    case BlockType::LogicalXor:
+    case Type::LogicalOr:
+    case Type::LogicalXor:
       return 14;
 
-    case BlockType::Point:
-    case BlockType::Set:
-    case BlockType::List:
+    case Type::Point:
+    case Type::Set:
+    case Type::List:
       return 18;
-    case BlockType::Store:
-    case BlockType::UnitConversion:
+    case Type::Store:
+    case Type::UnitConversion:
       // 2,3→x is read as (2,3)→x not 2,(3→x) (even if invalid)
       return 19;
-    case BlockType::RackLayout:
+    case Type::RackLayout:
       return 20;
     default:
       return k_tokenPriority;
@@ -84,7 +84,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
 }
 
 // Commas have no associated block but behave like an operator
-static constexpr int k_commaPriority = OperatorPriority(BlockType::Set);
+static constexpr int k_commaPriority = OperatorPriority(Type::Set);
 
 Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
                                   int numberOfSignificantDigits,
@@ -93,8 +93,7 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
   /* expression lives before layoutParent in the EditionPool and will be
    * destroyed in the process. An EditionReference is necessary to keep track of
    * layoutParent's root. */
-  EditionReference layoutParent =
-      SharedEditionPool->push<BlockType::RackLayout>(0);
+  EditionReference layoutParent = SharedEditionPool->push<Type::RackLayout>(0);
   Layoutter layoutter(linearMode, false, numberOfSignificantDigits, floatMode);
   layoutter.m_addSeparators =
       !linearMode && layoutter.requireSeparators(expression);
@@ -146,12 +145,12 @@ void Layoutter::layoutBuiltin(EditionReference &layoutParent,
     const BuiltinWithLayout *builtinWithLayout =
         static_cast<const BuiltinWithLayout *>(builtin);
     EditionReference layout = SharedEditionPool->push(
-        static_cast<BlockType>(builtinWithLayout->layoutType()));
+        static_cast<Type>(builtinWithLayout->layoutType()));
     /* Some builtins have a bigger nodeSize. Additional parameters are not
      * handled here. TODO_PCJ: Remove this one these Layouts are moved out of
      * builtins. */
     for (size_t i = 1; i < layout->nodeSize(); i++) {
-      SharedEditionPool->push(BlockType::Zero);
+      SharedEditionPool->push(Type::Zero);
     }
     layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
@@ -162,9 +161,8 @@ void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
                                    Tree *expression, const char *name) {
   layoutText(layoutParent, name);
   EditionReference parenthesis =
-      SharedEditionPool->push<BlockType::ParenthesisLayout>(false, false);
-  EditionReference newParent =
-      SharedEditionPool->push<BlockType::RackLayout>(0);
+      SharedEditionPool->push<Type::ParenthesisLayout>(false, false);
+  EditionReference newParent = SharedEditionPool->push<Type::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (j == 1 && expression->isListStatWithCoefficients() &&
@@ -182,8 +180,7 @@ void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
 
 void Layoutter::layoutChildrenAsRacks(Tree *expression) {
   for (int j = 0; j < expression->numberOfChildren(); j++) {
-    EditionReference newParent =
-        SharedEditionPool->push<BlockType::RackLayout>(0);
+    EditionReference newParent = SharedEditionPool->push<Type::RackLayout>(0);
     layoutExpression(newParent, expression->nextNode(), k_maxPriority);
   }
 }
@@ -224,7 +221,7 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
 void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
                                     Tree *expression, CodePoint op,
                                     bool multiplication) {
-  BlockType type = expression->type();
+  Type type = expression->type();
   int childNumber = expression->numberOfChildren();
   bool previousWasUnit = false;
   for (int childIndex = 0; childIndex < childNumber; childIndex++) {
@@ -257,7 +254,7 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
 void Layoutter::layoutMatrix(EditionReference &layoutParent, Tree *expression) {
   if (!m_linearMode) {
     EditionReference layout = expression->cloneNode();
-    *layout->block() = BlockType::MatrixLayout;
+    *layout->block() = Type::MatrixLayout;
     layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
     Grid *grid = Grid::From(layout);
@@ -294,27 +291,27 @@ void Layoutter::layoutUnit(EditionReference &layoutParent, Tree *expression) {
 
 void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
                                       Tree *expression) {
-  BlockType type = expression->type();
+  Type type = expression->type();
   /* Once first child has been converted, this will point to second child. */
   expression = expression->nextNode();
   EditionReference createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (m_linearMode) {
     layoutExpression(layoutParent, expression, OperatorPriority(type));
-    PushCodePoint(layoutParent, type == BlockType::Division ? '/' : '^');
+    PushCodePoint(layoutParent, type == Type::Division ? '/' : '^');
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     return;
   }
-  if (type == BlockType::Division) {
-    createdLayout = SharedEditionPool->push(BlockType::FractionLayout);
-    EditionReference rack = SharedEditionPool->push<BlockType::RackLayout>(0);
+  if (type == Type::Division) {
+    createdLayout = SharedEditionPool->push(Type::FractionLayout);
+    EditionReference rack = SharedEditionPool->push<Type::RackLayout>(0);
     layoutExpression(rack, expression, k_maxPriority);
   } else {
-    assert(type == BlockType::Power || type == BlockType::PowerMatrix);
+    assert(type == Type::Power || type == Type::PowerMatrix);
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     createdLayout = KSuperscriptL->cloneNode();
   }
-  EditionReference rack = SharedEditionPool->push<BlockType::RackLayout>(0);
+  EditionReference rack = SharedEditionPool->push<Type::RackLayout>(0);
   layoutExpression(rack, expression, k_maxPriority);
   NAry::AddChild(layoutParent, createdLayout);
 }
@@ -335,34 +332,34 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
   }
 
   switch (type) {
-    case BlockType::Addition: {
+    case Type::Addition: {
       CodePoint op =
           ImplicitAddition(expression) ? UCodePointNull : CodePoint('+');
       layoutInfixOperator(layoutParent, expression, op);
       break;
     }
-    case BlockType::Multiplication:
+    case Type::Multiplication:
       /* TODO PCJ: Add small margins when units are present */
       layoutInfixOperator(
           layoutParent, expression,
           m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression),
           true);
       break;
-    case BlockType::Power:
-    case BlockType::PowerMatrix:
-    case BlockType::Division:
+    case Type::Power:
+    case Type::PowerMatrix:
+    case Type::Division:
       layoutPowerOrDivision(layoutParent, expression);
       break;
-    case BlockType::Subtraction:
+    case Type::Subtraction:
       layoutExpression(layoutParent, expression->nextNode(),
-                       OperatorPriority(BlockType::Addition));
+                       OperatorPriority(Type::Addition));
       addSeparator(layoutParent);
       PushCodePoint(layoutParent, '-');
       addSeparator(layoutParent);
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    case BlockType::Opposite: {
+    case Type::Opposite: {
       PushCodePoint(layoutParent, '-');
       // Add extra parentheses for -1^2 -> -(1^2) but not for -x^2
       bool addExtraParenthesis =
@@ -373,12 +370,12 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
           addExtraParenthesis ? k_forceParenthesis : OperatorPriority(type));
       break;
     }
-    case BlockType::Factorial:
+    case Type::Factorial:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       PushCodePoint(layoutParent, '!');
       break;
-    case BlockType::PercentAddition:
+    case Type::PercentAddition:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       if (expression->nextNode()->isOpposite()) {
@@ -388,25 +385,25 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
         PushCodePoint(layoutParent, UCodePointNorthEastArrow);
       }
       // continue
-    case BlockType::PercentSimple:
+    case Type::PercentSimple:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       PushCodePoint(layoutParent, '%');
       break;
-    case BlockType::Zero:
-    case BlockType::MinusOne:
-    case BlockType::One:
-    case BlockType::Two:
-    case BlockType::IntegerShort:
-    case BlockType::IntegerPosBig:
-    case BlockType::IntegerNegBig:
+    case Type::Zero:
+    case Type::MinusOne:
+    case Type::One:
+    case Type::Two:
+    case Type::IntegerShort:
+    case Type::IntegerPosBig:
+    case Type::IntegerNegBig:
       // TODO PCJ we need a way to layout an integer in base something
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
       break;
-    case BlockType::Half:
-    case BlockType::RationalShort:
-    case BlockType::RationalPosBig:
-    case BlockType::RationalNegBig: {
+    case Type::Half:
+    case Type::RationalShort:
+    case Type::RationalPosBig:
+    case Type::RationalNegBig: {
 #if POINCARE_TREE_LOG  // Improves Tree::logSerialize
       layoutIntegerHandler(layoutParent, Rational::Numerator(expression));
       PushCodePoint(layoutParent, '/');
@@ -417,8 +414,8 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
 #endif
       break;
     }
-    case BlockType::Derivative:
-    case BlockType::NthDerivative:
+    case Type::Derivative:
+    case Type::NthDerivative:
       // TODO_PCJ createValidExpandedForm
       if (expression->lastChild()->isUserFunction() &&
           expression->lastChild()->child(0)->isUserSymbol() &&
@@ -441,7 +438,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
             rack = layoutParent;
           } else {
             Tree *createdLayout = KSuperscriptL->cloneNode();
-            rack = SharedEditionPool->push<BlockType::RackLayout>(0);
+            rack = SharedEditionPool->push<Type::RackLayout>(0);
             NAry::AddChild(layoutParent, createdLayout);
           }
           layoutExpression(rack, expression->child(2), k_forceParenthesis);
@@ -466,29 +463,26 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
         NAry::AddChild(layoutParent, layout);
       }
       break;
-    case BlockType::Binomial:
-    case BlockType::Permute:
+    case Type::Binomial:
+    case Type::Permute:
       if (m_linearMode ||
           Preferences::SharedPreferences()->combinatoricSymbols() ==
               Preferences::CombinatoricSymbols::Default) {
         layoutBuiltin(layoutParent, expression);
       } else {
         EditionReference layout = SharedEditionPool->push(
-            type.isBinomial() ? BlockType::PtBinomialLayout
-                              : BlockType::PtPermuteLayout);
+            type.isBinomial() ? Type::PtBinomialLayout : Type::PtPermuteLayout);
         layoutChildrenAsRacks(expression);
         NAry::AddChild(layoutParent, layout);
       }
       break;
-    case BlockType::Logarithm: {
+    case Type::Logarithm: {
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
         break;
       }
       constexpr const char *log =
-          Builtin::GetReservedFunction(BlockType::Logarithm)
-              ->aliases()
-              ->mainAlias();
+          Builtin::GetReservedFunction(Type::Logarithm)->aliases()->mainAlias();
       bool nlLog = Preferences::SharedPreferences()->logarithmBasePosition() ==
                    Preferences::LogarithmBasePosition::TopLeft;
       if (!nlLog) {
@@ -508,7 +502,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
                        k_forceParenthesis);
       break;
     }
-    case BlockType::MixedFraction:
+    case Type::MixedFraction:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       if (m_linearMode) {
@@ -518,22 +512,22 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    case BlockType::Pi:
+    case Type::Pi:
       PushCodePoint(layoutParent, u'π');
       break;
-    case BlockType::ExponentialE:
+    case Type::ExponentialE:
       PushCodePoint(layoutParent, 'e');
       break;
-    case BlockType::ComplexI:
+    case Type::ComplexI:
       PushCodePoint(layoutParent, 'i');
       break;
-    case BlockType::PhysicalConstant:
+    case Type::PhysicalConstant:
       layoutText(layoutParent,
                  Constant::Info(expression).m_aliasesList.mainAlias());
       break;
-    case BlockType::UserSymbol:
-    case BlockType::UserSequence:
-    case BlockType::UserFunction: {
+    case Type::UserSymbol:
+    case Type::UserSequence:
+    case Type::UserFunction: {
       layoutText(layoutParent, Symbol::GetName(expression));
       if (type.isUserFunction()) {
         // minimum priority to force parentheses
@@ -553,24 +547,24 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       }
       break;
     }
-    case BlockType::Infinity:
-    case BlockType::Nonreal:
-    case BlockType::Undefined:
+    case Type::Infinity:
+    case Type::Nonreal:
+    case Type::Undefined:
       layoutText(layoutParent,
                  Builtin::SpecialIdentifierName(type).mainAlias());
       break;
-    case BlockType::Empty:
+    case Type::Empty:
       break;
-    case BlockType::Matrix:
+    case Type::Matrix:
       layoutMatrix(layoutParent, expression);
       break;
-    case BlockType::Piecewise:
+    case Type::Piecewise:
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {
         int rows = (expression->numberOfChildren() + 1) / 2;
         EditionReference layout =
-            SharedEditionPool->push(BlockType::PiecewiseLayout);
+            SharedEditionPool->push(Type::PiecewiseLayout);
         SharedEditionPool->push(rows + 1);
         SharedEditionPool->push(2);
         layoutChildrenAsRacks(expression);
@@ -583,12 +577,12 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
         NAry::AddChild(layoutParent, layout);
       }
       break;
-    case BlockType::Unit:
+    case Type::Unit:
       layoutUnit(layoutParent, expression);
       break;
-    case BlockType::Decimal:
-    case BlockType::SingleFloat:
-    case BlockType::DoubleFloat: {
+    case Type::Decimal:
+    case Type::SingleFloat:
+    case Type::DoubleFloat: {
       char buffer[100];
       if (type.isDecimal()) {
         Decimal::Serialize(expression, buffer, std::size(buffer), m_floatMode,
@@ -599,7 +593,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
             FloatNode::To(expression), buffer, std::size(buffer),
             Poincare::PrintFloat::k_maxFloatGlyphLength,
             m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
-            : type == BlockType::SingleFloat
+            : type == Type::SingleFloat
                 ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
                 : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
             m_floatMode);
@@ -610,16 +604,16 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       NAry::AddOrMergeChild(layoutParent, rack);
       break;
     }
-    case BlockType::True:
+    case Type::True:
       layoutText(layoutParent, BuiltinsAliases::k_trueAliases.mainAlias());
       break;
-    case BlockType::False:
+    case Type::False:
       layoutText(layoutParent, BuiltinsAliases::k_falseAliases.mainAlias());
       break;
-    case BlockType::LogicalAnd:
-    case BlockType::LogicalOr:
-    case BlockType::LogicalXor:
-    case BlockType::LogicalNot:
+    case Type::LogicalAnd:
+    case Type::LogicalOr:
+    case Type::LogicalXor:
+    case Type::LogicalNot:
       if (!type.isLogicalNot()) {
         layoutExpression(layoutParent, expression->nextNode(),
                          OperatorPriority(type));
@@ -630,12 +624,12 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    case BlockType::Equal:
-    case BlockType::NotEqual:
-    case BlockType::InferiorEqual:
-    case BlockType::Inferior:
-    case BlockType::SuperiorEqual:
-    case BlockType::Superior:
+    case Type::Equal:
+    case Type::NotEqual:
+    case Type::InferiorEqual:
+    case Type::Inferior:
+    case Type::SuperiorEqual:
+    case Type::Superior:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       addSeparator(layoutParent);
@@ -644,9 +638,9 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    case BlockType::List:
-    case BlockType::Set:
-    case BlockType::Point:
+    case Type::List:
+    case Type::Set:
+    case Type::Point:
       if (m_linearMode) {
         PushCodePoint(layoutParent, type.isPoint() ? '(' : '{');
         layoutInfixOperator(layoutParent, expression, ',');
@@ -660,16 +654,16 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
         layoutInfixOperator(rack, expression, ',');
         break;
       }
-    case BlockType::Parenthesis:
+    case Type::Parenthesis:
       layoutExpression(layoutParent, expression->nextNode(),
                        k_forceParenthesis);
       break;
-    case BlockType::Store:
-    case BlockType::UnitConversion:
+    case Type::Store:
+    case Type::UnitConversion:
       layoutInfixOperator(layoutParent, expression, UCodePointRightwardsArrow);
       break;
 #if POINCARE_TREE_LOG  // Improves Tree::logSerialize
-    case BlockType::Placeholder: {
+    case Type::Placeholder: {
       PushCodePoint(layoutParent, 'K');
       uint8_t offset = Placeholder::NodeToTag(expression);
       Placeholder::Filter filter = Placeholder::NodeToFilter(expression);
@@ -682,10 +676,10 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       }
       break;
     }
-    case BlockType::Exponential:
+    case Type::Exponential:
       layoutFunctionCall(layoutParent, expression, "exp");
       break;
-    case BlockType::Variable: {
+    case Type::Variable: {
       uint8_t offset = Variables::Id(expression);
       char name = 'a' + offset;
       // Skip e and i
@@ -699,7 +693,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       break;
     }
 #endif
-    case BlockType::Polynomial:
+    case Type::Polynomial:
     default:
       if (Builtin::IsReservedFunction(expression)) {
         layoutBuiltin(layoutParent, expression);
@@ -709,7 +703,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
             layoutParent, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);
 #else
-        // TODO: Handle missing BlockTypes
+        // TODO: Handle missing Types
         assert(false);
         PushCodePoint(layoutParent, '?');
 #endif
@@ -862,9 +856,8 @@ bool Layoutter::ImplicitAddition(const Tree *addition) {
   for (const Tree *child : addition->children()) {
     if (!(child->isMultiplication() && child->numberOfChildren() == 2 &&
           (child->child(0)->isInteger() ||
-           child->child(0)->isOfType({BlockType::Decimal,
-                                      BlockType::DoubleFloat,
-                                      BlockType::SingleFloat})) &&
+           child->child(0)->isOfType(
+               {Type::Decimal, Type::DoubleFloat, Type::SingleFloat})) &&
           child->child(1)->isUnit())) {
       return false;
     }

@@ -11,9 +11,9 @@ bool FloatNode::SetSign(Tree *tree, NonStrictSign sign) {
   }
   tree->moveTreeOverTree(
       tree->isSingleFloat()
-          ? SharedEditionPool->push<BlockType::SingleFloat>(
+          ? SharedEditionPool->push<Type::SingleFloat>(
                 -static_cast<float>(value))
-          : SharedEditionPool->push<BlockType::DoubleFloat>(-value));
+          : SharedEditionPool->push<Type::DoubleFloat>(-value));
   return true;
 }
 

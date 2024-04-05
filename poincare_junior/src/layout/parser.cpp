@@ -7,41 +7,41 @@
 
 namespace PoincareJ {
 
-BlockType ExpressionType(LayoutType type) {
+Type ExpressionType(LayoutType type) {
   switch (type) {
     case LayoutType::Fraction:
-      return BlockType::Division;
+      return Type::Division;
     case LayoutType::Binomial:
     case LayoutType::PtBinomial:
-      return BlockType::Binomial;
+      return Type::Binomial;
     case LayoutType::PtPermute:
-      return BlockType::Permute;
+      return Type::Permute;
     case LayoutType::AbsoluteValue:
-      return BlockType::Abs;
+      return Type::Abs;
     case LayoutType::Ceiling:
-      return BlockType::Ceiling;
+      return Type::Ceiling;
     case LayoutType::Floor:
-      return BlockType::Floor;
+      return Type::Floor;
     case LayoutType::VectorNorm:
-      return BlockType::Norm;
+      return Type::Norm;
     case LayoutType::Derivative:
-      return BlockType::Derivative;
+      return Type::Derivative;
     case LayoutType::Integral:
-      return BlockType::Integral;
+      return Type::Integral;
     case LayoutType::Product:
-      return BlockType::Product;
+      return Type::Product;
     case LayoutType::Sum:
-      return BlockType::Sum;
+      return Type::Sum;
     case LayoutType::ListSequence:
-      return BlockType::ListSequence;
+      return Type::ListSequence;
     case LayoutType::Conjugate:
-      return BlockType::Conjugate;
+      return Type::Conjugate;
     case LayoutType::SquareRoot:
-      return BlockType::SquareRoot;
+      return Type::SquareRoot;
     case LayoutType::NthRoot:
-      return BlockType::NthRoot;
+      return Type::NthRoot;
     case LayoutType::Parenthesis:
-      return BlockType::Parenthesis;
+      return Type::Parenthesis;
     default:
       assert(false);
   }
@@ -65,10 +65,10 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
       const Grid* grid = Grid::From(node);
       Tree* expr;
       if (grid->isMatrixLayout()) {
-        expr = SharedEditionPool->push<BlockType::Matrix>(
+        expr = SharedEditionPool->push<Type::Matrix>(
             grid->numberOfRows() - 1, grid->numberOfColumns() - 1);
       } else {
-        expr = SharedEditionPool->push<BlockType::Piecewise>(0);
+        expr = SharedEditionPool->push<Type::Piecewise>(0);
       }
       int n = grid->numberOfChildren();
       int actualNumberOfChildren = 0;

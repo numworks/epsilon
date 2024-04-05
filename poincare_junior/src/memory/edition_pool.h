@@ -54,7 +54,7 @@ class EditionPool {
   Tree *clone(const Tree *node, bool isTree = true) {
     return initFromAddress(static_cast<const void *>(node->block()), isTree);
   }
-  template <BlockType blockType, typename... Types>
+  template <Type blockType, typename... Types>
   Tree *push(Types... args);
   void replaceBlock(Block *previousBlock, Block newBlock);
   void replaceBlocks(Block *destination, const Block *newBlocks,

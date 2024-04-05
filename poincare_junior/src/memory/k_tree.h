@@ -38,7 +38,7 @@ class KTree : public AbstractTree {
   constexpr explicit operator const Block*() const {
 #if ASSERTION
     // Close with TreeBorder Block when cast into Tree* for navigation
-    return &Tree<Blocks..., BlockType::TreeBorder>::k_blocks[0];
+    return &Tree<Blocks..., Type::TreeBorder>::k_blocks[0];
 #else
     return &k_blocks[0];
 #endif
@@ -47,7 +47,7 @@ class KTree : public AbstractTree {
     return Tree::FromBlocks(static_cast<const Block*>(*this));
   }
   constexpr TypeBlock type() {
-    return TypeBlock(BlockType(static_cast<uint8_t>(k_blocks[0])));
+    return TypeBlock(Type(static_cast<uint8_t>(k_blocks[0])));
   }
   const Tree* operator->() const { return operator const Tree*(); }
 };
@@ -84,7 +84,7 @@ struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
 // Helpers
 
 template <Block Tag, Block... ExtraValues>
-  requires(TypeBlock(BlockType(Tag.m_content)).nodeSize() ==
+  requires(TypeBlock(Type(Tag.m_content)).nodeSize() ==
            sizeof...(ExtraValues) + 1)
 struct KUnary : public KTree<Tag, ExtraValues...> {
   template <Block... B1>
@@ -202,7 +202,7 @@ struct String {
 
 template <Placeholder::Tag T, Placeholder::Filter F>
 struct KPlaceholderFilter
-    : public KTree<BlockType::Placeholder, Placeholder::ParamsToValue(T, F)> {
+    : public KTree<Type::Placeholder, Placeholder::ParamsToValue(T, F)> {
   static constexpr Placeholder::Tag k_tag = T;
 };
 

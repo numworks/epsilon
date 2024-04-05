@@ -43,124 +43,124 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     return Fraction;
   }
   switch (expr->type()) {
-    case BlockType::Abs:
-    case BlockType::Ceiling:
-    case BlockType::Floor:
-    case BlockType::Binomial:
-    case BlockType::ListSequence:
-    case BlockType::Matrix:
-    case BlockType::Point:
-    case BlockType::Sum:
-    case BlockType::Product:
-    case BlockType::Norm:
-    case BlockType::Parenthesis:  // TODO PCJ remove this one
+    case Type::Abs:
+    case Type::Ceiling:
+    case Type::Floor:
+    case Type::Binomial:
+    case Type::ListSequence:
+    case Type::Matrix:
+    case Type::Point:
+    case Type::Sum:
+    case Type::Product:
+    case Type::Norm:
+    case Type::Parenthesis:  // TODO PCJ remove this one
       return BoundaryPunctuation;
 
-    case BlockType::Addition:
+    case Type::Addition:
       /* When beautifying a Multiplication of Additions, Parentheses are added
        * around Additions. */
       return BoundaryPunctuation;
 
 #if O
-    case BlockType::BasedInteger:
+    case Type::BasedInteger:
       return m_base == OMG::Base::Decimal ? Integer : Default;
 #endif
 
-    case BlockType::True:
-    case BlockType::False:
-    case BlockType::Infinity:
-    case BlockType::Undefined:  // should be assert(false) ?
+    case Type::True:
+    case Type::False:
+    case Type::Infinity:
+    case Type::Undefined:  // should be assert(false) ?
       return MoreLetters;
 
-    case BlockType::Equal:
-    case BlockType::NotEqual:
-    case BlockType::InferiorEqual:
-    case BlockType::Inferior:
-    case BlockType::SuperiorEqual:
-    case BlockType::Superior:
+    case Type::Equal:
+    case Type::NotEqual:
+    case Type::InferiorEqual:
+    case Type::Inferior:
+    case Type::SuperiorEqual:
+    case Type::Superior:
       return Default;
 
-    case BlockType::Conjugate:
-    case BlockType::Power:
-    case BlockType::Factorial:
-    case BlockType::PercentSimple:
-    case BlockType::PercentAddition:  // is it true ?
-    case BlockType::Subtraction:
+    case Type::Conjugate:
+    case Type::Power:
+    case Type::Factorial:
+    case Type::PercentSimple:
+    case Type::PercentAddition:  // is it true ?
+    case Type::Subtraction:
       return LeftLayoutShape(expr->child(0));
 
-    case BlockType::ComplexI:
-    case BlockType::Pi:
-    case BlockType::ExponentialE:
-    case BlockType::PhysicalConstant:  // TODO not true for all constants
+    case Type::ComplexI:
+    case Type::Pi:
+    case Type::ExponentialE:
+    case Type::PhysicalConstant:  // TODO not true for all constants
       return OneLetter;
 
-    case BlockType::Decimal:
+    case Type::Decimal:
       // assert(!m_negative) for decimal
-    case BlockType::SingleFloat:
-    case BlockType::DoubleFloat:
+    case Type::SingleFloat:
+    case Type::DoubleFloat:
       return Decimal;
 
-    case BlockType::Dependency:
+    case Type::Dependency:
       // should be assert false ?
       return LeftLayoutShape(expr->child(0));
 
-    case BlockType::Derivative:
+    case Type::Derivative:
       // why ? should be fraction ?
       return MoreLetters;
 
-    case BlockType::Division:
+    case Type::Division:
       return Fraction;
 
 #if O
-    case BlockType::EmptyExpression:
+    case Type::EmptyExpression:
       return OneLetter;
 #endif
 
-    case BlockType::Integral:
+    case Type::Integral:
       return BoundaryPunctuation;
 
-    case BlockType::List:
+    case Type::List:
       return Brace;
 
-    case BlockType::ListElement:
-    case BlockType::ListSlice:
+    case Type::ListElement:
+    case Type::ListSlice:
       return BoundaryPunctuation;
 
 #if O  // TODO PCJ
-    case BlockType::MixedFraction:
+    case Type::MixedFraction:
       return Integer;
 #endif
 
-    case BlockType::Multiplication:  // from NAry
+    case Type::Multiplication:  // from NAry
       // should be assert(false) ?
       return LeftLayoutShape(expr->child(0));
 
-    case BlockType::NthRoot:
+    case Type::NthRoot:
       return NthRoot;
 
-    case BlockType::SquareRoot:
+    case Type::SquareRoot:
       return Root;
 
-    case BlockType::Opposite:
+    case Type::Opposite:
       // leftLayoutShape of Opposite is only called from Conjugate
       // assert(parent() && parent()->type() == Type::Conjugate);
       return OneLetter;
 
-    case BlockType::Piecewise:
+    case Type::Piecewise:
       return Default;
 
 #if O
-    case BlockType::RightwardsArrow:
+    case Type::RightwardsArrow:
       assert(false);
       return MoreLetters;
 #endif
 
-    case BlockType::UserSymbol:
-    case BlockType::UserFunction:
-    case BlockType::UserSequence:
+    case Type::UserSymbol:
+    case Type::UserFunction:
+    case Type::UserSequence:
       return OneLetter;  // TODO PCJ: or MoreLetters
 
-    case BlockType::Unit:
+    case Type::Unit:
       return OneLetter;  // had "TODO" in poincare
 
     default:
@@ -175,48 +175,48 @@ LayoutShape RightLayoutShape(const Tree* expr) {
     return BoundaryPunctuation;
   }
   switch (expr->type()) {
-    case BlockType::Conjugate:
-    case BlockType::Subtraction:
+    case Type::Conjugate:
+    case Type::Subtraction:
       return RightLayoutShape(expr->child(0));
 
-    case BlockType::Dependency:
+    case Type::Dependency:
       // should be assert false ?
       // was not there
       return RightLayoutShape(expr->child(0));
 
-    case BlockType::Derivative:
+    case Type::Derivative:
       return BoundaryPunctuation;
 
-    case BlockType::Integral:
+    case Type::Integral:
       return MoreLetters;
 
 #if O  // TODO PCJ
-    case BlockType::MixedFraction:
+    case Type::MixedFraction:
       return Fraction;
 #endif
 
-    case BlockType::Multiplication:  // from NAry
+    case Type::Multiplication:  // from NAry
       // should be assert(false) ?
       return RightLayoutShape(expr->lastChild());
 
-    case BlockType::NthRoot:
-    case BlockType::SquareRoot:
+    case Type::NthRoot:
+    case Type::SquareRoot:
       return Root;
 
-    case BlockType::Opposite:
+    case Type::Opposite:
       return RightLayoutShape(expr->child(0));
 
-    case BlockType::Factorial:
-    case BlockType::Power:
-    case BlockType::PercentSimple:
-    case BlockType::PercentAddition:  // is it true ?
+    case Type::Factorial:
+    case Type::Power:
+    case Type::PercentSimple:
+    case Type::PercentAddition:  // is it true ?
       return BoundaryPunctuation;
 
-    case BlockType::UserFunction:
-    case BlockType::UserSequence:
+    case Type::UserFunction:
+    case Type::UserSequence:
       return BoundaryPunctuation;
 
-    case BlockType::UserSymbol:
+    case Type::UserSymbol:
       return LeftLayoutShape(expr);
 
     default:

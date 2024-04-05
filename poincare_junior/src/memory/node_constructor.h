@@ -15,7 +15,7 @@ namespace PoincareJ {
 
 class NodeConstructor final {
  public:
-  template <BlockType blockType, typename... Types>
+  template <Type blockType, typename... Types>
   constexpr static bool CreateBlockAtIndexForType(Block* block,
                                                   size_t blockIndex,
                                                   Types... args) {
@@ -31,7 +31,7 @@ class NodeConstructor final {
   template <typename... Types>
   constexpr static bool CreateBlockAtIndexForNthBlocksNode(Block* block,
                                                            size_t index,
-                                                           BlockType type,
+                                                           Type type,
                                                            Types... args) {
     constexpr int size = sizeof...(args);
     uint8_t values[size] = {static_cast<uint8_t>(args)...};
@@ -40,19 +40,16 @@ class NodeConstructor final {
     return index >= size;
   }
 
-  template <BlockType blockType, typename... Types>
+  template <Type blockType, typename... Types>
   constexpr static bool SpecializedCreateBlockAtIndexForType(Block* block,
                                                              size_t blockIndex,
                                                              Types... args) {
     static_assert(
-        blockType != BlockType::PhysicalConstant &&
-            blockType != BlockType::SingleFloat &&
-            blockType != BlockType::DoubleFloat &&
-            blockType != BlockType::UserSymbol &&
-            blockType != BlockType::IntegerPosBig &&
-            blockType != BlockType::RackLayout &&
-            blockType != BlockType::IntegerNegBig,
-        "BlockType associated with specific specialized creators shouldn't end "
+        blockType != Type::PhysicalConstant && blockType != Type::SingleFloat &&
+            blockType != Type::DoubleFloat && blockType != Type::UserSymbol &&
+            blockType != Type::IntegerPosBig && blockType != Type::RackLayout &&
+            blockType != Type::IntegerNegBig,
+        "Type associated with specific specialized creators shouldn't end "
         "up in the default SpecializedCreateBlockAtIndexForType");
     return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, blockType,
                                               args...);
@@ -60,12 +57,12 @@ class NodeConstructor final {
 
   constexpr static bool CreateIntegerBlockAtIndexForType(Block* block,
                                                          size_t blockIndex,
-                                                         BlockType type,
+                                                         Type type,
                                                          uint64_t value) {
-    static_assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) ==
-                  TypeBlock::NumberOfMetaBlocks(BlockType::IntegerNegBig));
+    static_assert(TypeBlock::NumberOfMetaBlocks(Type::IntegerPosBig) ==
+                  TypeBlock::NumberOfMetaBlocks(Type::IntegerNegBig));
     size_t numberOfMetaBlocks =
-        TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig);
+        TypeBlock::NumberOfMetaBlocks(Type::IntegerPosBig);
     uint8_t numberOfDigits = Integer::NumberOfDigits(value);
     if (blockIndex < numberOfMetaBlocks) {
       assert(blockIndex == 1);
@@ -79,23 +76,23 @@ class NodeConstructor final {
 };
 
 template <>
-constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    BlockType::PhysicalConstant>(Block* block, size_t blockIndex,
-                                 uint8_t index) {
+constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::PhysicalConstant>(
+    Block* block, size_t blockIndex, uint8_t index) {
   assert(index < Constant::k_numberOfConstants);
   return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            BlockType::PhysicalConstant, index);
+                                            Type::PhysicalConstant, index);
 }
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Matrix>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::Matrix>(
     Block* block, size_t blockIndex, int rows, int cols) {
-  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            BlockType::Matrix, rows, cols);
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, Type::Matrix,
+                                            rows, cols);
 }
 
-constexpr bool CreateBlockAtIndexForUserType(BlockType type, Block* block,
+constexpr bool CreateBlockAtIndexForUserType(Type type, Block* block,
                                              size_t blockIndex,
                                              const char* name,
                                              size_t nameSize) {
@@ -111,34 +108,34 @@ constexpr bool CreateBlockAtIndexForUserType(BlockType type, Block* block,
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserFunction>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::UserFunction>(
     Block* block, size_t blockIndex, const char* name, size_t nameSize) {
-  return CreateBlockAtIndexForUserType(BlockType::UserFunction, block,
-                                       blockIndex, name, nameSize);
+  return CreateBlockAtIndexForUserType(Type::UserFunction, block, blockIndex,
+                                       name, nameSize);
 }
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSequence>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::UserSequence>(
     Block* block, size_t blockIndex, const char* name, size_t nameSize) {
-  return CreateBlockAtIndexForUserType(BlockType::UserSequence, block,
-                                       blockIndex, name, nameSize);
-}
-
-template <>
-constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(
-    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
-  return CreateBlockAtIndexForUserType(BlockType::UserSymbol, block, blockIndex,
+  return CreateBlockAtIndexForUserType(Type::UserSequence, block, blockIndex,
                                        name, nameSize);
 }
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::SingleFloat>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::UserSymbol>(
+    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
+  return CreateBlockAtIndexForUserType(Type::UserSymbol, block, blockIndex,
+                                       name, nameSize);
+}
+
+template <>
+constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::SingleFloat>(
     Block* block, size_t blockIndex, float value) {
   static_assert(sizeof(float) / sizeof(uint8_t) == 4);
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::SingleFloat,
+      block, blockIndex, Type::SingleFloat,
       FloatNode::SubFloatAtIndex(value, 0),
       FloatNode::SubFloatAtIndex(value, 1),
       FloatNode::SubFloatAtIndex(value, 2),
@@ -147,11 +144,11 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::SingleFloat>(
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::DoubleFloat>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::DoubleFloat>(
     Block* block, size_t blockIndex, double value) {
   static_assert(sizeof(double) / sizeof(uint8_t) == 8);
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::DoubleFloat,
+      block, blockIndex, Type::DoubleFloat,
       FloatNode::SubFloatAtIndex(value, 0),
       FloatNode::SubFloatAtIndex(value, 1),
       FloatNode::SubFloatAtIndex(value, 2),
@@ -164,33 +161,33 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::DoubleFloat>(
 
 template <>
 constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    BlockType::AsciiCodePointLayout>(Block* block, size_t blockIndex,
-                                     CodePoint value) {
+    Type::AsciiCodePointLayout>(Block* block, size_t blockIndex,
+                                CodePoint value) {
   assert(value < 128);
   return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            BlockType::AsciiCodePointLayout,
+                                            Type::AsciiCodePointLayout,
                                             Bit::getByteAtIndex(value, 0));
 }
 
 template <>
 constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    BlockType::UnicodeCodePointLayout>(Block* block, size_t blockIndex,
-                                       CodePoint value) {
+    Type::UnicodeCodePointLayout>(Block* block, size_t blockIndex,
+                                  CodePoint value) {
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   // assert(value >= 128);
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::UnicodeCodePointLayout,
+      block, blockIndex, Type::UnicodeCodePointLayout,
       Bit::getByteAtIndex(value, 0), Bit::getByteAtIndex(value, 1),
       Bit::getByteAtIndex(value, 2), Bit::getByteAtIndex(value, 3));
 }
 
 template <>
 constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    BlockType::CombinedCodePointsLayout>(Block* block, size_t blockIndex,
-                                         CodePoint first, CodePoint second) {
+    Type::CombinedCodePointsLayout>(Block* block, size_t blockIndex,
+                                    CodePoint first, CodePoint second) {
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::CombinedCodePointsLayout,
+      block, blockIndex, Type::CombinedCodePointsLayout,
       Bit::getByteAtIndex(first, 0), Bit::getByteAtIndex(first, 1),
       Bit::getByteAtIndex(first, 2), Bit::getByteAtIndex(first, 3),
       Bit::getByteAtIndex(second, 0), Bit::getByteAtIndex(second, 1),
@@ -199,54 +196,54 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::RackLayout>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::RackLayout>(
     Block* block, size_t blockIndex, int nbChildren) {
   assert(nbChildren < UINT16_MAX);
-  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            BlockType::RackLayout,
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, Type::RackLayout,
                                             nbChildren % 256, nbChildren / 256);
 }
 
 template <>
-constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    BlockType::ParenthesisLayout>(Block* block, size_t blockIndex,
-                                  bool leftIsTemporary, bool rightIsTemporary) {
+constexpr bool
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::ParenthesisLayout>(
+    Block* block, size_t blockIndex, bool leftIsTemporary,
+    bool rightIsTemporary) {
   return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::ParenthesisLayout,
+      block, blockIndex, Type::ParenthesisLayout,
       leftIsTemporary | (0b10 && rightIsTemporary));
 }
 
 template <>
 constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    BlockType::VerticalOffsetLayout>(Block* block, size_t blockIndex,
-                                     bool isSubscript, bool isPrefix) {
+    Type::VerticalOffsetLayout>(Block* block, size_t blockIndex,
+                                bool isSubscript, bool isPrefix) {
   return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            BlockType::VerticalOffsetLayout,
+                                            Type::VerticalOffsetLayout,
                                             isSubscript | (0b10 && isPrefix));
 }
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Variable>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::Variable>(
     Block* block, size_t blockIndex, uint8_t id, ComplexSign sign) {
-  return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, BlockType::Variable, id, sign.getValue());
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, Type::Variable,
+                                            id, sign.getValue());
 }
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::IntegerPosBig>(
     Block* block, size_t blockIndex, uint64_t value) {
   return CreateIntegerBlockAtIndexForType(block, blockIndex,
-                                          BlockType::IntegerPosBig, value);
+                                          Type::IntegerPosBig, value);
 }
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::IntegerNegBig>(
+NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::IntegerNegBig>(
     Block* block, size_t blockIndex, uint64_t value) {
   return CreateIntegerBlockAtIndexForType(block, blockIndex,
-                                          BlockType::IntegerNegBig, value);
+                                          Type::IntegerNegBig, value);
 }
 }  // namespace PoincareJ
 

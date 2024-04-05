@@ -105,28 +105,23 @@ class RackParser {
                                Token::Type stoppingType = (Token::Type)0);
   void parseAndOperator(EditionReference& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
-    parseBinaryLogicalOperator(BlockType::LogicalAnd, leftHandSide,
-                               stoppingType);
+    parseBinaryLogicalOperator(Type::LogicalAnd, leftHandSide, stoppingType);
   }
   void parseNandOperator(EditionReference& leftHandSide,
                          Token::Type stoppingType = (Token::Type)0) {
-    parseBinaryLogicalOperator(BlockType::LogicalNand, leftHandSide,
-                               stoppingType);
+    parseBinaryLogicalOperator(Type::LogicalNand, leftHandSide, stoppingType);
   }
   void parseOrOperator(EditionReference& leftHandSide,
                        Token::Type stoppingType = (Token::Type)0) {
-    parseBinaryLogicalOperator(BlockType::LogicalOr, leftHandSide,
-                               stoppingType);
+    parseBinaryLogicalOperator(Type::LogicalOr, leftHandSide, stoppingType);
   }
   void parseXorOperator(EditionReference& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
-    parseBinaryLogicalOperator(BlockType::LogicalXor, leftHandSide,
-                               stoppingType);
+    parseBinaryLogicalOperator(Type::LogicalXor, leftHandSide, stoppingType);
   }
   void parseNorOperator(EditionReference& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
-    parseBinaryLogicalOperator(BlockType::LogicalNor, leftHandSide,
-                               stoppingType);
+    parseBinaryLogicalOperator(Type::LogicalNor, leftHandSide, stoppingType);
   }
 
   void parseRightwardsArrow(EditionReference& leftHandSide,
@@ -153,7 +148,7 @@ class RackParser {
   bool mergeIntoPercentAdditionIfNeeded(EditionReference& leftHandSide,
                                         EditionReference& rightHandSide,
                                         bool plus);
-  void parseBinaryLogicalOperator(BlockType operatorType,
+  void parseBinaryLogicalOperator(Type operatorType,
                                   EditionReference& leftHandSide,
                                   Token::Type stoppingType);
   void parseBinaryOperator(const EditionReference& leftHandSide,

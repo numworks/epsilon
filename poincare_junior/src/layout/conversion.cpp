@@ -187,7 +187,7 @@ void PushPoincareLayout(Poincare::OLayout l);
 void PushPoincareRack(Poincare::OLayout l) {
   if (l.isHorizontal()) {
     Tree *parent =
-        SharedEditionPool->push<BlockType::RackLayout>(l.numberOfChildren());
+        SharedEditionPool->push<Type::RackLayout>(l.numberOfChildren());
     for (int i = 0; i < l.numberOfChildren(); i++) {
       Poincare::OLayout c = l.childAtIndex(i);
       if (c.otype() == Poincare::LayoutNode::Type::StringLayout) {
@@ -208,7 +208,7 @@ void PushPoincareRack(Poincare::OLayout l) {
     Layoutter::AddThousandSeparators(rack);
   } else {
     if (l.otype() != Poincare::LayoutNode::Type::JuniorLayout) {
-      SharedEditionPool->push<BlockType::RackLayout>(1);
+      SharedEditionPool->push<Type::RackLayout>(1);
     }
     PushPoincareLayout(l);
   }
@@ -216,14 +216,14 @@ void PushPoincareRack(Poincare::OLayout l) {
 
 void PushPoincareLayout(Poincare::OLayout l) {
   if (l.otype() == PT::NthRootLayout && l.numberOfChildren() == 1) {
-    SharedEditionPool->push(BlockType::SquareRootLayout);
+    SharedEditionPool->push(Type::SquareRootLayout);
     PushPoincareRack(l.childAtIndex(0));
     return;
   }
   for (Correspondance c : oneToOne) {
     if (c.old == l.otype()) {
       Tree *tree = Tree::FromBlocks(SharedEditionPool->lastBlock());
-      SharedEditionPool->push(static_cast<BlockType>(c.junior));
+      SharedEditionPool->push(static_cast<Type>(c.junior));
       if (c.extraZero) {
         SharedEditionPool->push(0);
       }
@@ -249,7 +249,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
           static_cast<Poincare::CodePointLayout &>(l).codePoint());
       return;
     case OT::CombinedCodePointsLayout:
-      SharedEditionPool->push<BlockType::CombinedCodePointsLayout, CodePoint>(
+      SharedEditionPool->push<Type::CombinedCodePointsLayout, CodePoint>(
           static_cast<Poincare::CombinedCodePointsLayout &>(l).codePoint(),
           static_cast<Poincare::CombinedCodePointsLayout &>(l)
               .combinedCodePoint());
@@ -269,7 +269,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
     }
     case OT::MatrixLayout: {
       Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout &>(l);
-      Tree *t = SharedEditionPool->push<BlockType::MatrixLayout>(
+      Tree *t = SharedEditionPool->push<Type::MatrixLayout>(
           (uint8_t)m.numberOfRows(), (uint8_t)m.numberOfColumns());
       for (int i = 0; i < l.numberOfChildren(); i++) {
         PushPoincareRack(l.childAtIndex(i));
@@ -281,7 +281,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
     case OT::PiecewiseOperatorLayout: {
       Poincare::PiecewiseOperatorLayout m =
           static_cast<Poincare::PiecewiseOperatorLayout &>(l);
-      Tree *t = SharedEditionPool->push(BlockType::PiecewiseLayout);
+      Tree *t = SharedEditionPool->push(Type::PiecewiseLayout);
       SharedEditionPool->push(m.numberOfRows());
       SharedEditionPool->push(m.numberOfColumns());
       for (int i = 0; i < l.numberOfChildren(); i++) {

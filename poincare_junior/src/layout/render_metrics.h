@@ -198,7 +198,7 @@ constexpr KDCoordinate k_leftRadixHeight = 9;
 constexpr KDCoordinate k_leftRadixWidth = 5;
 
 inline KDSize AdjustedIndexSize(const Layout* node, KDFont::Size font) {
-  return node->isSquareRootLayout()
+  return node->isSqrtLayout()
              ? KDSize(k_leftRadixWidth, 0)
              : KDSize(std::max(k_leftRadixWidth, Width(node->child(1))),
                       Height(node->child(1)));

@@ -48,7 +48,7 @@ NODE(Piecewise, NARY2D)
 RANGE(GridLayout, MatrixLayout, PiecewiseLayout)
 
 NODE(Conjugate, 1)
-NODE(NthRoot, 2)
-NODE(SquareRoot, 1)
+NODE(Root, 2)
+NODE(Sqrt, 1)
 
-RANGE(Layout, RackLayout, SquareRootLayout)
+RANGE(Layout, RackLayout, SqrtLayout)

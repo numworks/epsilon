@@ -14,7 +14,7 @@ namespace PoincareJ {
 
 bool Logarithm::SimplifyLn(Tree* u) {
   Tree* child = u->nextNode();
-  if (child->isExponential()) {
+  if (child->isExp()) {
     // ln(exp(x)) -> x
     u->removeNode();
     u->removeNode();

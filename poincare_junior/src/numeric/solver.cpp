@@ -131,13 +131,13 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
       return result();
 
     case Type::Add:
-    case Type::Subtraction:
+    case Type::Sub:
       registerSolution(nextRootInAddition(e), Interest::Root);
       return result();
 
     case Type::Pow:
-    case Type::NthRoot:
-    case Type::Division:
+    case Type::Root:
+    case Type::Div:
       /* f(x,y) = 0 => x = 0 */
       registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
       return result();
@@ -145,7 +145,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
     case Type::Abs:
     case Type::SinH:
     case Type::Opposite:
-    case Type::SquareRoot:
+    case Type::Sqrt:
       /* f(x) = 0 <=> x = 0 */
       return nextRoot(e->child(0));
 
@@ -617,11 +617,11 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree* e) const {
      * expression is projected. */
     return e->hasDescendantSatisfying([](const Tree* e) {
       T exponent = k_NAN;
-      if (e->type() == Type::SquareRoot) {
+      if (e->type() == Type::Sqrt) {
         exponent = static_cast<T>(0.5);
       } else if (e->type() == Type::Pow) {
         exponent = Approximation::To<T>(e->child(1));
-      } else if (e->type() == Type::NthRoot) {
+      } else if (e->type() == Type::Root) {
         exponent = static_cast<T>(1.) / Approximation::To<T>(e->child(1));
       }
       if (std::isnan(exponent)) {

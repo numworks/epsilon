@@ -156,7 +156,7 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
       // Di(x0 + x1 + ... + xi + ...) = 1
       SharedTreeStack->push(Type::One);
       return true;
-    case Type::Exponential:
+    case Type::Exp:
       // Di(exp(x)) = exp(x)
       CloneReplacingSymbol(derivand, symbolValue);
       return true;

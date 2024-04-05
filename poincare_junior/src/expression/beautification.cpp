@@ -384,7 +384,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
       SharedTreeStack->push<Type>(abs);
     }
     SharedTreeStack->push(Type::Pow);
-    SharedTreeStack->push(Type::ExponentialE);
+    SharedTreeStack->push(Type::EulerE);
     im = std::arg(value);
   }
   // Complex part ±[im×]i

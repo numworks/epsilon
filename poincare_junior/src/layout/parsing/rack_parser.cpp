@@ -431,7 +431,7 @@ void RackParser::privateParsePlusAndMinus(TreeRef& leftHandSide, bool plus,
   }
   assert(leftHandSide->nextTree() == static_cast<Tree*>(rightHandSide));
   if (!plus) {
-    CloneNodeAtNode(leftHandSide, KTree<Type::Subtraction>());
+    CloneNodeAtNode(leftHandSide, KTree<Type::Sub>());
     return;
   }
   if (leftHandSide->isAdd()) {
@@ -731,9 +731,8 @@ void RackParser::parseConstant(TreeRef& leftHandSide,
   } else {
     assert(m_currentToken.length() == 1);
     leftHandSide = SharedTreeStack->push(
-        m_currentToken.toDecoder(m_root).nextCodePoint() == 'e'
-            ? Type::ExponentialE
-            : Type::Pi);
+        m_currentToken.toDecoder(m_root).nextCodePoint() == 'e' ? Type::EulerE
+                                                                : Type::Pi);
   }
   isThereImplicitOperator();
 }
@@ -1386,7 +1385,7 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
     m_waitingSlashForMixedFraction = true;
     TreeRef rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
-    if (!rightHandSide.isUninitialized() && rightHandSide->isDivision() &&
+    if (!rightHandSide.isUninitialized() && rightHandSide->isDiv() &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
       // The following expression looks like "int/int" -> it's a mixedFraction

@@ -106,7 +106,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifyDim(u);
     case Type::Distribution:
       return SimplifyDistribution(u);
-    case Type::Exponential:
+    case Type::Exp:
       return SimplifyExp(u);
     case Type::Factorial:
       return Arithmetic::SimplifyFactorial(u);
@@ -201,7 +201,7 @@ bool Simplification::SimplifyExp(Tree* u) {
      * Power logic. */
     // exp(n*ln(x)) -> x^n with n an integer or x null.
     u->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
-    assert(!u->isExponential());
+    assert(!u->isExp());
     return true;
   }
   return false;

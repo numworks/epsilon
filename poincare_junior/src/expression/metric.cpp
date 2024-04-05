@@ -20,7 +20,7 @@ int Metric::GetMetric(const Tree* u) {
       }
       break;
     }
-    case Type::Exponential: {
+    case Type::Exp: {
       // exp(A*ln(B)) -> Root(B,A) exception
       PatternMatching::Context ctx;
       if (PatternMatching::Match(KExp(KMult(KA_s, KLn(KB))), u, &ctx)) {

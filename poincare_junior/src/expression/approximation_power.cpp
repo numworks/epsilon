@@ -121,7 +121,7 @@ std::complex<T> Approximation::ApproximatePower(const Tree* power,
     }
     /* If the power has been simplified (reduced + beautified), we look for an
      * index of the for Division(Rational,Rational). */
-    if (exponent->isDivision() && exponent->child(0)->isInteger() &&
+    if (exponent->isDiv() && exponent->child(0)->isInteger() &&
         exponent->child(1)->isInteger()) {
       p = To<T>(exponent->child(0));
       q = To<T>(exponent->child(1));

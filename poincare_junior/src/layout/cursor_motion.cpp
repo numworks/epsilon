@@ -140,7 +140,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
           assert(currentIndex == k_upperBoundIndex);
           return direction.isRight() ? k_outsideIndex : k_variableIndex;
       }
-    case LayoutType::NthRoot:
+    case LayoutType::Root:
       switch (currentIndex) {
         using namespace NthRoot;
         case k_outsideIndex:
@@ -300,7 +300,7 @@ int CursorMotion::IndexAfterVerticalCursorMove(
       }
       return k_cantMoveIndex;
     }
-    case LayoutType::NthRoot: {
+    case LayoutType::Root: {
       using namespace NthRoot;
       if (direction.isUp() &&
           positionAtCurrentIndex == PositionInLayout::Left &&
@@ -444,8 +444,8 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     case LayoutType::ListSequence:
       return StandardDeletionMethodForLayoutContainingArgument(
           childIndex, ListSequence::k_functionIndex);
-    case LayoutType::SquareRoot:
-    case LayoutType::NthRoot:
+    case LayoutType::Sqrt:
+    case LayoutType::Root:
       return StandardDeletionMethodForLayoutContainingArgument(
           childIndex, NthRoot::k_radicandIndex);
     case LayoutType::VerticalOffset:
@@ -511,7 +511,7 @@ bool CursorMotion::ShouldCollapseSiblingsOnDirection(
     return node->isFractionLayout();
   } else {
     return node->isConjugateLayout() || node->isFractionLayout() ||
-           node->isSquareRootLayout() || node->isNthRootLayout() ||
+           node->isSqrtLayout() || node->isRootLayout() ||
            node->isSquareBracketPair();
   }
 }

@@ -220,9 +220,9 @@ class InputBeautification {
          return product;
        }},
       /* root( */
-      ruleHelper<Type::NthRoot, Type::NthRootLayout>(),
+      ruleHelper<Type::Root, Type::RootLayout>(),
       /* sqrt( */
-      ruleHelper<Type::SquareRoot, Type::SquareRootLayout>(),
+      ruleHelper<Type::Sqrt, Type::SqrtLayout>(),
       /* theta */ k_thetaRule};
 
   constexpr static size_t k_lenOfIdentifiersRules =

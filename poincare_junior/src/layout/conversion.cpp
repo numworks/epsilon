@@ -134,7 +134,7 @@ Poincare::OLayout ToPoincareLayout(const Tree* l) {
           VerticalOffset::IsSuffix(l)
               ? Poincare::VerticalOffsetLayoutNode::HorizontalPosition::Suffix
               : Poincare::VerticalOffsetLayoutNode::HorizontalPosition::Prefix);
-    case LayoutType::SquareRoot:
+    case LayoutType::Sqrt:
       return Poincare::NthRootLayout::Builder(ToPoincareLayout(l->child(0)));
     case LayoutType::CodePoint:
       return Poincare::CodePointLayout::Builder(
@@ -216,7 +216,7 @@ void PushPoincareRack(Poincare::OLayout l) {
 
 void PushPoincareLayout(Poincare::OLayout l) {
   if (l.otype() == PT::NthRootLayout && l.numberOfChildren() == 1) {
-    SharedTreeStack->push(Type::SquareRootLayout);
+    SharedTreeStack->push(Type::SqrtLayout);
     PushPoincareRack(l.childAtIndex(0));
     return;
   }

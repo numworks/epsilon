@@ -19,6 +19,9 @@ constexpr auto KUndef = KTree<Type::Undefined>();
 constexpr auto KHalf = KTree<Type::Half>();
 constexpr auto KNonreal = KTree<Type::Nonreal>();
 constexpr auto KInf = KTree<Type::Inf>();
+
+constexpr auto π_e = KTree<Type::Pi>();
+constexpr auto e_e = KTree<Type::EulerE>();
 constexpr auto i_e = KTree<Type::ComplexI>();
 
 constexpr auto KAbs = KUnary<Type::Abs>();
@@ -33,9 +36,9 @@ constexpr auto KATanRad = KUnary<Type::ATanRad>();
 constexpr auto KLog = KUnary<Type::Log>();
 constexpr auto KLn = KUnary<Type::Ln>();
 constexpr auto KLnReal = KUnary<Type::LnReal>();
-constexpr auto KExp = KUnary<Type::Exponential>();
+constexpr auto KExp = KUnary<Type::Exp>();
 constexpr auto KFact = KUnary<Type::Factorial>();
-constexpr auto KSqrt = KUnary<Type::SquareRoot>();
+constexpr auto KSqrt = KUnary<Type::Sqrt>();
 constexpr auto KRe = KUnary<Type::RealPart>();
 constexpr auto KIm = KUnary<Type::ImaginaryPart>();
 constexpr auto KArg = KUnary<Type::ComplexArgument>();
@@ -66,8 +69,8 @@ constexpr auto KATrig = KBinary<Type::ATrig>();
 constexpr auto KLogarithm = KBinary<Type::Logarithm>();
 constexpr auto KTrig = KBinary<Type::Trig>();
 constexpr auto KTrigDiff = KBinary<Type::TrigDiff>();
-constexpr auto KDiv = KBinary<Type::Division>();
-constexpr auto KSub = KBinary<Type::Subtraction>();
+constexpr auto KDiv = KBinary<Type::Div>();
+constexpr auto KSub = KBinary<Type::Sub>();
 constexpr auto KPow = KBinary<Type::Pow>();
 constexpr auto KPowReal = KBinary<Type::PowReal>();
 constexpr auto KPowMatrix = KBinary<Type::PowMatrix>();
@@ -77,7 +80,7 @@ constexpr auto KListElement = KBinary<Type::ListElement>();
 constexpr auto KMean = KBinary<Type::Mean>();
 constexpr auto KBinomial = KBinary<Type::Binomial>();
 constexpr auto KPermute = KBinary<Type::Permute>();
-constexpr auto KNthRoot = KBinary<Type::NthRoot>();
+constexpr auto KNthRoot = KBinary<Type::Root>();
 constexpr auto KPercentAddition = KBinary<Type::PercentAddition>();
 constexpr auto KMixedFraction = KBinary<Type::MixedFraction>();
 constexpr auto KPoint = KBinary<Type::Point>();
@@ -275,12 +278,6 @@ template <int64_t N, int64_t D>
 struct RationalRepresentation<N, D> : KTree<Type::RationalShort, N, D> {};
 
 // TODO specializations for RationalNegBig and RationalPosBig
-
-/* Named constants */
-
-constexpr KTree π_e = KTree<Type::Pi>();
-
-constexpr KTree e_e = KTree<Type::ExponentialE>();
 
 // TODO: move in OMG?
 /* Read decimal number in str as an int, ignoring decimal point "1.2" => 12 */

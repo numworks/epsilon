@@ -44,8 +44,8 @@ KDSize Render::Size(const Layout* node) {
                Conjugate::k_overlineVerticalMargin;
       break;
     }
-    case LayoutType::SquareRoot:
-    case LayoutType::NthRoot: {
+    case LayoutType::Sqrt:
+    case LayoutType::Root: {
       KDSize radicandSize = Size(node->child(0));
       KDSize indexSize = NthRoot::AdjustedIndexSize(node, s_font);
       width = indexSize.width() + 3 * NthRoot::k_widthMargin +
@@ -305,8 +305,8 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
               Escher::Metric::FractionAndConjugateHorizontalOverflow,
           Conjugate::k_overlineWidth + Conjugate::k_overlineVerticalMargin);
     }
-    case LayoutType::SquareRoot:
-    case LayoutType::NthRoot: {
+    case LayoutType::Sqrt:
+    case LayoutType::Root: {
       KDSize indexSize = NthRoot::AdjustedIndexSize(node, s_font);
       if (childIndex == 0) {
         return KDPoint(indexSize.width() + 2 * NthRoot::k_widthMargin +
@@ -503,8 +503,8 @@ KDCoordinate Render::Baseline(const Layout* node) {
     case LayoutType::Conjugate:
       return Baseline(node->child(0)) + Conjugate::k_overlineWidth +
              Conjugate::k_overlineVerticalMargin;
-    case LayoutType::SquareRoot:
-    case LayoutType::NthRoot: {
+    case LayoutType::Sqrt:
+    case LayoutType::Root: {
       return std::max<KDCoordinate>(
           Baseline(node->child(0)) + NthRoot::k_radixLineThickness +
               NthRoot::k_heightMargin,
@@ -951,8 +951,8 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
           style.glyphColor);
       return;
     }
-    case LayoutType::SquareRoot:
-    case LayoutType::NthRoot: {
+    case LayoutType::Sqrt:
+    case LayoutType::Root: {
       using namespace NthRoot;
       KDSize radicandSize = Size(node->child(0));
       KDSize indexSize = AdjustedIndexSize(node, s_font);

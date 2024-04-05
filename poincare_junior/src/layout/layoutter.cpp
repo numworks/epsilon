@@ -38,7 +38,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 0;
     case Type::Pow:
       return 1;
-    case Type::Division:
+    case Type::Div:
       return 2;
     case Type::Mult:
       return 3;
@@ -46,7 +46,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 4;
     case Type::Opposite:
     // Opposite could be higher but we prefer to display 2^(-1) instead of 2^-1
-    case Type::Subtraction:
+    case Type::Sub:
       return 5;
     case Type::Add:
     case Type::MixedFraction:
@@ -295,11 +295,11 @@ void Layoutter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   // No parentheses in Fraction roots and Power index.
   if (m_linearMode) {
     layoutExpression(layoutParent, expression, OperatorPriority(type));
-    PushCodePoint(layoutParent, type == Type::Division ? '/' : '^');
+    PushCodePoint(layoutParent, type == Type::Div ? '/' : '^');
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     return;
   }
-  if (type == Type::Division) {
+  if (type == Type::Div) {
     createdLayout = SharedTreeStack->push(Type::FractionLayout);
     TreeRef rack = SharedTreeStack->push<Type::RackLayout>(0);
     layoutExpression(rack, expression, k_maxPriority);
@@ -344,10 +344,10 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     case Type::Pow:
     case Type::PowMatrix:
-    case Type::Division:
+    case Type::Div:
       layoutPowerOrDivision(layoutParent, expression);
       break;
-    case Type::Subtraction:
+    case Type::Sub:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(Type::Add));
       addSeparator(layoutParent);
@@ -512,7 +512,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::Pi:
       PushCodePoint(layoutParent, u'π');
       break;
-    case Type::ExponentialE:
+    case Type::EulerE:
       PushCodePoint(layoutParent, 'e');
       break;
     case Type::ComplexI:
@@ -672,7 +672,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       break;
     }
-    case Type::Exponential:
+    case Type::Exp:
       layoutFunctionCall(layoutParent, expression, "exp");
       break;
     case Type::Var: {

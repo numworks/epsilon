@@ -247,7 +247,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ComplexSign(Sign::PositiveOrNull(), Sign::Zero());
     case Type::Abs:
       return Abs(Get(t->firstChild()));
-    case Type::Exponential:
+    case Type::Exp:
       return Exponential(Get(t->firstChild()));
     case Type::Ln:
       return Ln(Get(t->firstChild()));

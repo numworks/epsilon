@@ -85,12 +85,12 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::Factorial:
     case Type::PercentSimple:
     case Type::PercentAddition:  // is it true ?
-    case Type::Subtraction:
+    case Type::Sub:
       return LeftLayoutShape(expr->child(0));
 
     case Type::ComplexI:
     case Type::Pi:
-    case Type::ExponentialE:
+    case Type::EulerE:
     case Type::PhysicalConstant:  // TODO not true for all constants
       return OneLetter;
 
@@ -108,7 +108,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
       // why ? should be fraction ?
       return MoreLetters;
 
-    case Type::Division:
+    case Type::Div:
       return Fraction;
 
 #if O
@@ -135,10 +135,10 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
       // should be assert(false) ?
       return LeftLayoutShape(expr->child(0));
 
-    case Type::NthRoot:
+    case Type::Root:
       return NthRoot;
 
-    case Type::SquareRoot:
+    case Type::Sqrt:
       return Root;
 
     case Type::Opposite:
@@ -176,7 +176,7 @@ LayoutShape RightLayoutShape(const Tree* expr) {
   }
   switch (expr->type()) {
     case Type::Conjugate:
-    case Type::Subtraction:
+    case Type::Sub:
       return RightLayoutShape(expr->child(0));
 
     case Type::Dependency:
@@ -199,8 +199,8 @@ LayoutShape RightLayoutShape(const Tree* expr) {
       // should be assert(false) ?
       return RightLayoutShape(expr->lastChild());
 
-    case Type::NthRoot:
-    case Type::SquareRoot:
+    case Type::Root:
+    case Type::Sqrt:
       return Root;
 
     case Type::Opposite:

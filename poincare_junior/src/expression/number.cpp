@@ -36,7 +36,7 @@ Tree* Number::Multiplication(const Tree* i, const Tree* j) {
 Sign Number::Sign(const Tree* node) {
   switch (node->type()) {
     case Type::Pi:
-    case Type::ExponentialE:
+    case Type::EulerE:
       return Sign::Positive();
     case Type::DoubleFloat:
     case Type::SingleFloat: {

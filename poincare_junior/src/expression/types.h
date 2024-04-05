@@ -50,10 +50,10 @@ RANGE(Float, SingleFloat, DoubleFloat)
 
 // 1.4 - Mathematical constants
 
-NODE(ExponentialE)
+NODE(EulerE)
 NODE(Pi)
 
-RANGE(MathematicalConstant, ExponentialE, Pi)
+RANGE(MathematicalConstant, EulerE, Pi)
 
 RANGE(Number, Zero, Pi)
 
@@ -110,8 +110,8 @@ NODE(Decimal, 1, 1)
 /* - Distribution DS
  * | DS TAG | Distribution::Type | DistributionMethod::Type | */
 NODE(Distribution, NARY, 2)
-NODE(Division, 2)
-NODE(Exponential, 1)
+NODE(Div, 2)
+NODE(Exp, 1)
 NODE(Factorial, 1)
 NODE(Factor, 1)
 NODE(Floor, 1)
@@ -162,9 +162,9 @@ NODE(Round, 2)
 NODE(Sec, 1)
 NODE(Sign, 1)
 NODE(Sin, 1)
-NODE(SquareRoot, 1)
-NODE(NthRoot, 2)
-NODE(Subtraction, 2)
+NODE(Sqrt, 1)
+NODE(Root, 2)
+NODE(Sub, 2)
 NODE(Tan, 1)
 NODE(TanRad, 1)
 NODE(Trig, 2)

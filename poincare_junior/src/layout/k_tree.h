@@ -13,8 +13,8 @@ constexpr auto KRackL = KNAry16<Type::RackLayout>();
 constexpr auto KOperatorSeparatorL = KTree<Type::OperatorSeparatorLayout>();
 constexpr auto KThousandSeparatorL = KTree<Type::ThousandSeparatorLayout>();
 constexpr auto KFracL = KBinary<Type::FractionLayout>();
-constexpr auto KSqrtL = KUnary<Type::SquareRootLayout>();
-constexpr auto KNthSqrtL = KBinary<Type::NthRootLayout>();
+constexpr auto KSqrtL = KUnary<Type::SqrtLayout>();
+constexpr auto KNthSqrtL = KBinary<Type::RootLayout>();
 
 constexpr auto KParenthesisL = KUnary<Type::ParenthesisLayout, 0>();
 constexpr auto KCurlyBracesL = KUnary<Type::CurlyBraceLayout, 0>();

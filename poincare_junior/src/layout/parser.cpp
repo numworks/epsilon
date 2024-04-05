@@ -10,7 +10,7 @@ namespace PoincareJ {
 Type ExpressionType(LayoutType type) {
   switch (type) {
     case LayoutType::Fraction:
-      return Type::Division;
+      return Type::Div;
     case LayoutType::Binomial:
     case LayoutType::PtBinomial:
       return Type::Binomial;
@@ -36,10 +36,10 @@ Type ExpressionType(LayoutType type) {
       return Type::ListSequence;
     case LayoutType::Conjugate:
       return Type::Conjugate;
-    case LayoutType::SquareRoot:
-      return Type::SquareRoot;
-    case LayoutType::NthRoot:
-      return Type::NthRoot;
+    case LayoutType::Sqrt:
+      return Type::Sqrt;
+    case LayoutType::Root:
+      return Type::Root;
     case LayoutType::Parenthesis:
       return Type::Parenthesis;
     default:

@@ -308,7 +308,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return std::complex<T>(0, 1);
     case Type::Pi:
       return M_PI;
-    case Type::ExponentialE:
+    case Type::EulerE:
       return M_E;
     case Type::SingleFloat:
       return FloatNode::FloatTo(node);
@@ -319,9 +319,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
                                               FloatAddition<std::complex<T>>);
     case Type::Mult:
       return MapAndReduce<T, std::complex<T>>(node, FloatMultiplication<T>);
-    case Type::Division:
+    case Type::Div:
       return MapAndReduce<T, std::complex<T>>(node, FloatDivision<T>);
-    case Type::Subtraction:
+    case Type::Sub:
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
     case Type::Pow:
@@ -340,12 +340,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::LCM:
       return MapAndReduce<T, T>(node, FloatLCM<T>,
                                 PositiveIntegerApproximation<T>);
-    case Type::SquareRoot:
+    case Type::Sqrt:
       return std::sqrt(ToComplex<T>(node->nextNode()));
-    case Type::NthRoot:
+    case Type::Root:
       return std::pow(ToComplex<T>(node->nextNode()),
                       static_cast<T>(1) / ToComplex<T>(node->child(1)));
-    case Type::Exponential:
+    case Type::Exp:
       return std::exp(ToComplex<T>(node->nextNode()));
     case Type::Log:
     case Type::Ln: {
@@ -926,7 +926,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       }
       return result;
     }
-    case Type::Subtraction: {
+    case Type::Sub: {
       Tree* a = ToMatrix<T>(node->child(0));
       Tree* b = ToMatrix<T>(node->child(1));
       b->moveTreeOverTree(Matrix::ScalarMultiplication(minusOne, b, true));
@@ -960,7 +960,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       }
       return result;
     }
-    case Type::Division: {
+    case Type::Div: {
       Tree* a = ToMatrix<T>(node->child(0));
       Tree* s = PushComplex(static_cast<T>(1) / ToComplex<T>(node->child(1)));
       s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true));

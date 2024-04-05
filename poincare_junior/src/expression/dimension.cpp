@@ -157,7 +157,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
   bool angleUnitsAllowed = false;
   switch (t->type()) {
     case Type::Add:
-    case Type::Subtraction:
+    case Type::Sub:
       for (int i = 1; i < t->numberOfChildren(); i++) {
         if (childDim[0] != childDim[i]) {
           return false;
@@ -165,14 +165,14 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       return true;
     case Type::Opposite:
-    case Type::Division:
+    case Type::Div:
     case Type::Mult: {
       /* TODO: Forbid Complex * units. Units are already forbidden in complex
        * builtins. */
       uint8_t cols = 0;
       Units::DimensionVector unitVector = Units::DimensionVector::Empty();
       for (int i = 0; i < t->numberOfChildren(); i++) {
-        bool secondDivisionChild = (i == 1 && t->isDivision());
+        bool secondDivisionChild = (i == 1 && t->isDiv());
         Dimension next = childDim[i];
         if (next.isMatrix()) {
           // Matrix size must match. Forbid Matrices on denominator
@@ -291,7 +291,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case Type::Floor:
     case Type::Ceiling:
     case Type::Sign:
-    // case Type::SquareRoot: TODO: Handle _m^(1/2)
+    // case Type::Sqrt: TODO: Handle _m^(1/2)
     case Type::UserFunction:
       unitsAllowed = true;
       break;
@@ -332,7 +332,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
 
 Dimension Dimension::GetDimension(const Tree* t) {
   switch (t->type()) {
-    case Type::Division:
+    case Type::Div:
     case Type::Mult: {
       uint8_t rows = 0;
       uint8_t cols = 0;
@@ -351,7 +351,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
                                         secondDivisionChild ? -1 : 1);
           representative = dim.unit.representative;
         }
-        secondDivisionChild = (t->isDivision());
+        secondDivisionChild = (t->isDiv());
       }
       // Only unique and celsius, fahrenheit or radians representatives matter.
       return rows > 0
@@ -379,13 +379,13 @@ Dimension Dimension::GetDimension(const Tree* t) {
     }
     case Type::Abs:
     case Type::Opposite:
-    case Type::SquareRoot:
+    case Type::Sqrt:
     case Type::Floor:
     case Type::Ceiling:
     case Type::Round:
     case Type::UserFunction:
     case Type::Add:
-    case Type::Subtraction:
+    case Type::Sub:
     case Type::Cross:
     case Type::Inverse:
     case Type::Ref:

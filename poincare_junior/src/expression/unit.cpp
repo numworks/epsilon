@@ -943,7 +943,7 @@ bool IsCombinationOfUnits(const Tree* expr) {
   if (expr->isUnit()) {
     return true;
   }
-  if (expr->isMult() || expr->isDivision()) {
+  if (expr->isMult() || expr->isDiv()) {
     return !expr->hasChildSatisfying(
         [](const Tree* e) { return !IsCombinationOfUnits(e); });
   }

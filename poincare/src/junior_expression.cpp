@@ -257,7 +257,7 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Dependency;
     case PoincareJ::Type::Derivative:
       return ExpressionNode::Type::Derivative;
-    case PoincareJ::Type::Division:
+    case PoincareJ::Type::Div:
       return ExpressionNode::Type::Division;
     case PoincareJ::Type::Factor:
       return ExpressionNode::Type::Factor;

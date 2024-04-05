@@ -321,7 +321,7 @@ bool PolynomialParser::ContainsVariable(const Tree* tree) {
   int numberOfChildren = tree->numberOfChildren();
   if (numberOfChildren == 0) {
     return tree->isOfType({Type::UserFunction, Type::UserSequence,
-                           Type::UserSymbol, Type::Pi, Type::ExponentialE,
+                           Type::UserSymbol, Type::Pi, Type::EulerE,
                            Type::Var});
   }
   const Tree* child = tree->nextNode();

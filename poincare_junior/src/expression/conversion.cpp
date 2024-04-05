@@ -65,9 +65,9 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
   if (Builtin::IsReservedFunction(exp)) {
     Poincare::OExpression child = ToPoincareExpression(exp->child(0));
     switch (type) {
-      case Type::SquareRoot:
+      case Type::Sqrt:
         return Poincare::SquareRoot::Builder(child);
-      case Type::NthRoot:
+      case Type::Root:
         return Poincare::NthRoot::Builder(child,
                                           ToPoincareExpression(exp->child(1)));
       case Type::Cos:
@@ -268,16 +268,16 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
                         Matrix::NumberOfColumns(exp));
       return mat;
     }
-    case Type::Subtraction:
+    case Type::Sub:
     case Type::Pow:
     case Type::PowMatrix:
-    case Type::Division: {
+    case Type::Div: {
       Poincare::OExpression child0 = ToPoincareExpression(exp->child(0));
       Poincare::OExpression child1 = ToPoincareExpression(exp->child(1));
       Poincare::OExpression result;
-      if (type == Type::Subtraction) {
+      if (type == Type::Sub) {
         result = Poincare::Subtraction::Builder(child0, child1);
-      } else if (type == Type::Division) {
+      } else if (type == Type::Div) {
         result = Poincare::Division::Builder(child0, child1);
       } else {
         result = Poincare::Power::Builder(child0, child1);
@@ -308,7 +308,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
       return Poincare::Constant::ComplexIBuilder();
     case Type::Pi:
       return Poincare::Constant::PiBuilder();
-    case Type::ExponentialE:
+    case Type::EulerE:
       return Poincare::Constant::ExponentialEBuilder();
     case Type::Inf:
       return Poincare::Infinity::Builder(false);
@@ -367,10 +367,10 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       SharedTreeStack->push(Type::Sign);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::SquareRoot:
-      SharedTreeStack->push(Type::SquareRoot);
+      SharedTreeStack->push(Type::Sqrt);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::NthRoot:
-      SharedTreeStack->push(Type::NthRoot);
+      SharedTreeStack->push(Type::Root);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::Cosine:
@@ -742,10 +742,10 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           break;
         }
         case OT::Subtraction:
-          SharedTreeStack->push(Type::Subtraction);
+          SharedTreeStack->push(Type::Sub);
           break;
         case OT::Division:
-          SharedTreeStack->push(Type::Division);
+          SharedTreeStack->push(Type::Div);
           break;
         case OT::Power:
           SharedTreeStack->push(Type::Pow);
@@ -805,7 +805,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::ConstantMaths: {
       Poincare::Constant c = static_cast<Poincare::Constant&>(exp);
       if (c.isExponentialE()) {
-        SharedTreeStack->push(Type::ExponentialE);
+        SharedTreeStack->push(Type::EulerE);
       } else if (c.isPi()) {
         SharedTreeStack->push(Type::Pi);
       } else if (c.isComplexI()) {

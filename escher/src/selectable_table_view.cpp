@@ -177,8 +177,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   int delta = Ion::Events::longPressFactor();
   int col = selectedColumn();
   int row = selectedRow();
-  if (event == Ion::Events::Down || event == Ion::Events::Up ||
-      event == Ion::Events::Left || event == Ion::Events::Right) {
+  if (event.isMoveEvent()) {
     OMG::Direction direction = OMG::Direction(event);
     nextSelectableCellInDirection(&col, &row, direction, delta);
     return selectCellAtClippedLocation(col, row);

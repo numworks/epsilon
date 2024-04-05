@@ -100,13 +100,13 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
     Tree* n = coefficients->isOne()
                   ? Integer::Push(Dimension::GetListLength(list))
                   : Fold(coefficients, Type::ListSum);
-    PatternMatching::CreateAndSimplify(
-        sampleStdDev, {.KA = list, .KB = coefficients, .KC = n});
+    PatternMatching::CreateSimplify(sampleStdDev,
+                                    {.KA = list, .KB = coefficients, .KC = n});
     n->removeTree();
     return n;
   } else {
     assert(type.isVariance() || type.isStdDev());
-    return PatternMatching::CreateAndSimplify(
+    return PatternMatching::CreateSimplify(
         type == Type::Variance ? variance : stdDev,
         {.KA = list, .KB = coefficients});
   }
@@ -120,7 +120,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
     Simplification::ShallowSystematicReduce(result);
     return result;
   }
-  return PatternMatching::CreateAndSimplify(
+  return PatternMatching::CreateSimplify(
       KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)),
       {.KA = list, .KB = coefficients});
 }
@@ -177,7 +177,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
         if (n % 2) {
           e->moveTreeOverTree(list->child(n / 2));
         } else {
-          e->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+          e->moveTreeOverTree(PatternMatching::CreateSimplify(
               KMult(KHalf, KAdd(KA, KB)),
               {.KA = list->child(n / 2 - 1), .KB = list->child(n / 2)}));
         }

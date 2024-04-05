@@ -265,7 +265,7 @@ Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents) {
 
     assert(bestUnitExponent == 1 || bestUnitExponent == -1);
     if (bestUnitExponent == -1) {
-      PatternMatching::MatchAndReplace(derivedUnit, KA, KPow(KA, -1_e));
+      PatternMatching::MatchReplace(derivedUnit, KA, KPow(KA, -1_e));
     }
 
     const int position = unitsAccu->numberOfChildren();

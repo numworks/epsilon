@@ -58,14 +58,14 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
    *                                        a*(n-m)*sum(f(k),k,m,n)
    */
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
-  if (PatternMatching::MatchReplaceAndSimplify(
+  if (PatternMatching::MatchReplaceSimplify(
           expr, KSum(KA, KB, KC, KVarK),
           KMult(KHalf, KAdd(KMult(KC, KAdd(1_e, KC)),
                             KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
     return true;
   }
   // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
-  if (PatternMatching::MatchReplaceAndSimplify(
+  if (PatternMatching::MatchReplaceSimplify(
           expr, KSum(KA, KB, KC, KPow(KVarK, 2_e)),
           KMult(KPow(6_e, -1_e),
                 KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
@@ -86,7 +86,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   // TODO: add ceil around bounds
   constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
   Variables::LeaveScope(child);
-  Tree* result = PatternMatching::CreateAndSimplify(
+  Tree* result = PatternMatching::CreateSimplify(
       isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
       {.KA = upperBound, .KB = lowerBound, .KC = child});
   expr->moveTreeOverTree(result);
@@ -97,7 +97,7 @@ bool Parametric::ExpandSum(Tree* expr) {
   // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
   // sum(x_k, k, 0, n) = x_0 + ... + x_n
   return expr->isSum() &&
-         (PatternMatching::MatchReplaceAndSimplify(
+         (PatternMatching::MatchReplaceSimplify(
               expr, KSum(KA, KB, KC, KAdd(KD, KE_p)),
               KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KE_p)))) ||
           Explicit(expr));
@@ -106,7 +106,7 @@ bool Parametric::ExpandSum(Tree* expr) {
 bool Parametric::ExpandProduct(Tree* expr) {
   // prod(f*g,k,a,b) = prod(f,k,a,b) * prod(g,k,a,b)
   // prod(x_k, k, 0, n) = x_0 * ... * x_n
-  return expr->isProduct() && (PatternMatching::MatchReplaceAndSimplify(
+  return expr->isProduct() && (PatternMatching::MatchReplaceSimplify(
                                    expr, KProduct(KA, KB, KC, KMult(KD, KE_p)),
                                    KMult(KProduct(KA, KB, KC, KD),
                                          KProduct(KA, KB, KC, KMult(KE_p)))) ||
@@ -134,7 +134,7 @@ bool Parametric::ContractProduct(Tree* expr) {
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
           &ctx) &&
       Comparison::Compare(ctx.getNode(KF), ctx.getNode(KC)) < 0) {
-    expr->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+    expr->moveTreeOverTree(PatternMatching::CreateSimplify(
         KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx));
     return true;
   }
@@ -155,7 +155,7 @@ bool Parametric::Explicit(Tree* expr) {
   const Tree* lowerBound = expr->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* child = upperBound->nextTree();
-  Tree* boundsDifference = PatternMatching::CreateAndSimplify(
+  Tree* boundsDifference = PatternMatching::CreateSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = upperBound, .KB = lowerBound});
   // TODO larger type than uint8
   if (!Integer::Is<uint8_t>(boundsDifference)) {

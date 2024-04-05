@@ -301,8 +301,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
 }
 
 ComplexSign ComplexSign::SignOfDifference(const Tree* a, const Tree* b) {
-  Tree* difference = PatternMatching::CreateAndSimplify(
-      KAdd(KA, KMult(-1_e, KB)), {.KA = a, .KB = b});
+  Tree* difference = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
+                                                     {.KA = a, .KB = b});
   ComplexSign result = Get(difference);
   difference->removeTree();
   return result;

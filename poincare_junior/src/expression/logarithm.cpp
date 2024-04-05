@@ -180,7 +180,7 @@ Tree* PushProductCorrection(const Tree* a, const Tree* b) {
     return PushIK2Pi(k);
   }
   // Push B*arg(A) - arg(A^B)
-  return PatternMatching::CreateAndSimplify(
+  return PatternMatching::CreateSimplify(
       KMult(i_e, KAdd(KMult(KB, KArg(KA)), KMult(-1_e, KArg(KPow(KA, KB))))),
       {.KA = a, .KB = b});
 }
@@ -192,7 +192,7 @@ Tree* PushAdditionCorrection(const Tree* a, const Tree* b) {
     return PushIK2Pi(k);
   }
   // Push arg(A) + arg(B) - arg(AB)
-  return PatternMatching::CreateAndSimplify(
+  return PatternMatching::CreateSimplify(
       KMult(i_e, KAdd(KArg(KA), KArg(KB), KMult(-1_e, KArg(KMult(KA, KB))))),
       {.KA = a, .KB = b});
 }
@@ -207,7 +207,7 @@ bool Logarithm::ContractLn(Tree* e) {
     TreeRef c = PushProductCorrection(a, b);
     ctx.setNode(KC, c, 1, false);
     e->moveTreeOverTree(
-        PatternMatching::CreateAndSimplify(KAdd(KLn(KPow(KB, KA)), KC), ctx));
+        PatternMatching::CreateSimplify(KAdd(KLn(KPow(KB, KA)), KC), ctx));
     c->removeTree();
     return true;
   }
@@ -218,7 +218,7 @@ bool Logarithm::ContractLn(Tree* e) {
     const Tree* b = ctx.getNode(KD);
     TreeRef c = PushAdditionCorrection(a, b);
     ctx.setNode(KF, c, 1, false);
-    e->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(KA_s, KC_s, KLn(KMult(KB, KD)), KE_s, KF), ctx));
     c->removeTree();
     return true;
@@ -236,9 +236,9 @@ bool Logarithm::ExpandLn(Tree* e) {
   if (PatternMatching::Match(KLn(KMult(KA, KB_p)), e, &ctx)) {
     // Since KB_p can match multiple trees, we need them as a single tree.
     const Tree* a = ctx.getNode(KA);
-    TreeRef b = PatternMatching::CreateAndSimplify(KMult(KB_p), ctx);
+    TreeRef b = PatternMatching::CreateSimplify(KMult(KB_p), ctx);
     TreeRef c = PushAdditionCorrection(a, b);
-    e->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(KLn(KA), KLn(KB), KMult(-1_e, KC)), {.KA = a, .KB = b, .KC = c}));
     c->removeTree();
     b->removeTree();
@@ -250,7 +250,7 @@ bool Logarithm::ExpandLn(Tree* e) {
     const Tree* b = ctx.getNode(KB);
     TreeRef c = PushProductCorrection(a, b);
     ctx.setNode(KC, c, 1, false);
-    e->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(KMult(KB, KLn(KA)), KMult(-1_e, KC)), ctx));
     c->removeTree();
     return true;
@@ -277,8 +277,8 @@ bool Logarithm::ExpandLnOnRational(Tree* e) {
   Tree* result;
   if (denominator) {
     // ln(13/11) -> ln(13)-ln(11)
-    PatternMatching::CreateAndSimplify(KAdd(KA, KMult(-1_e, KB)),
-                                       {.KA = numerator, .KB = denominator});
+    PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
+                                    {.KA = numerator, .KB = denominator});
     numerator->removeTree();
     denominator->removeTree();
     // denominator is now KAdd(KA, KMult(-1_e, KB)

@@ -428,8 +428,8 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
   return top;
 }
 
-Tree* PatternMatching::MatchAndCreate(const Tree* source, const Tree* pattern,
-                                      const Tree* structure) {
+Tree* PatternMatching::MatchCreate(const Tree* source, const Tree* pattern,
+                                   const Tree* structure) {
   Context ctx;
   if (!Match(pattern, source, &ctx)) {
     return nullptr;
@@ -437,9 +437,9 @@ Tree* PatternMatching::MatchAndCreate(const Tree* source, const Tree* pattern,
   return Create(structure, ctx);
 }
 
-bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
-                                             const Tree* structure,
-                                             bool simplify) {
+bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
+                                          const Tree* structure,
+                                          bool simplify) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
    * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A

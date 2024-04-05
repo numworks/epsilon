@@ -74,7 +74,7 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
     return false;
   }
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
-  return PatternMatching::MatchReplaceAndSimplify(
+  return PatternMatching::MatchReplaceSimplify(
       expr, KRound(KA, KB),
       KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), KHalf)),
             KPow(10_e, KMult(-1_e, KB))));
@@ -110,8 +110,8 @@ bool Arithmetic::SimplifyFactorial(Tree* expr) {
 
 bool Arithmetic::ExpandFactorial(Tree* expr) {
   // A! = Prod(k, 1, A, k)
-  return PatternMatching::MatchReplaceAndSimplify(
-      expr, KFact(KA), KProduct("k"_e, 1_e, KA, KVarK));
+  return PatternMatching::MatchReplaceSimplify(expr, KFact(KA),
+                                               KProduct("k"_e, 1_e, KA, KVarK));
 }
 
 bool Arithmetic::SimplifyPermute(Tree* expr) {
@@ -135,7 +135,7 @@ bool Arithmetic::SimplifyPermute(Tree* expr) {
 
 bool Arithmetic::ExpandPermute(Tree* expr) {
   // permute(n, k) -> n!/(n-k)!
-  return PatternMatching::MatchReplaceAndSimplify(
+  return PatternMatching::MatchReplaceSimplify(
       expr, KPermute(KA, KB),
       KMult(KFact(KA), KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
 }
@@ -189,7 +189,7 @@ bool Arithmetic::SimplifyBinomial(Tree* expr) {
    * If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88
    */
   // binomial(n, k) -> prod((n - j) / (k - j), j, 0, k - 1)
-  PatternMatching::MatchReplaceAndSimplify(
+  PatternMatching::MatchReplaceSimplify(
       expr, KBinomial(KA, KB),
       KProduct("j"_e, 0_e, KAdd(KB, -1_e),
                KMult(KAdd(KA, KMult(-1_e, KVarK)),
@@ -202,7 +202,7 @@ bool Arithmetic::ExpandBinomial(Tree* expr) {
   // binomial(n, k) -> n!/(k!(n-k)!)
   // TODO generalized binomial formula with unknowns ?
   return false;
-  return PatternMatching::MatchReplaceAndSimplify(
+  return PatternMatching::MatchReplaceSimplify(
       expr, KBinomial(KA, KB),
       KMult(KFact(KA), KPow(KFact(KB), -1_e),
             KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));

@@ -150,7 +150,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
   // TODO: Maybe factorize even/odd functions logic
-  if (PatternMatching::MatchReplaceAndSimplify(
+  if (PatternMatching::MatchReplaceSimplify(
           firstArgument, KMult(KA_s, -1_e, KB_s), KMult(KA_s, KB_s))) {
     changed = true;
     if (isSin) {
@@ -179,9 +179,8 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
     } else {
       multipleTree->removeTree();
     }
-  } else if (PatternMatching::MatchAndReplace(u, KTrig(KATrig(KA, KB), KB),
-                                              KA) ||
-             PatternMatching::MatchReplaceAndSimplify(
+  } else if (PatternMatching::MatchReplace(u, KTrig(KATrig(KA, KB), KB), KA) ||
+             PatternMatching::MatchReplaceSimplify(
                  u, KTrig(KATrig(KA, KB), KC),
                  KPow(KAdd(1_e, KMult(-1_e, KPow(KA, 2_e))), KHalf))) {
     // sin(asin(x))=cos(acos(x))=x, sin(acos(x))=cos(asin(x))=sqrt(1-x^2)
@@ -234,26 +233,26 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
     // Compute k = ⌊y⌋ for acos, ⌊y + π/2⌋ for asin.
     // acos(cos(π*y)) = π*(y-k) if k even, π*(k-y+1) otherwise.
     // asin(sin(π*y)) = π*(y-k) if k even, π*(k-y) otherwise.
-    Tree* res = PatternMatching::CreateAndSimplify(
+    Tree* res = PatternMatching::CreateSimplify(
         isSin ? KFloor(KAdd(KA, KHalf)) : KFloor(KA), {.KA = piFactor});
     assert(res->isInteger());
     bool kIsEven = Integer::Handler(res).isEven();
-    res->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+    res->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
     if (!kIsEven) {
       res->moveTreeOverTree(
-          PatternMatching::CreateAndSimplify(KMult(-1_e, KA), {.KA = res}));
+          PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
       if (!isSin) {
         res->moveTreeOverTree(
-            PatternMatching::CreateAndSimplify(KAdd(1_e, KA), {.KA = res}));
+            PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
       }
     }
     if (swapATrig) {
-      res->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+      res->moveTreeOverTree(PatternMatching::CreateSimplify(
           KAdd(KHalf, KMult(-1_e, KA)), {.KA = res}));
     }
     res->moveTreeOverTree(
-        PatternMatching::CreateAndSimplify(KMult(π_e, KA), {.KA = res}));
+        PatternMatching::CreateSimplify(KMult(π_e, KA), {.KA = res}));
     u->moveTreeOverTree(res);
     return true;
   }
@@ -271,13 +270,13 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
   bool changed = argIsOpposed;
   if (argIsOpposed) {
     u->child(0)->moveTreeOverTree(
-        PatternMatching::CreateAndSimplify(KMult(-1_e, KA), {.KA = arg}));
+        PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = arg}));
   }
   if (arg->isOne()) {
     u->cloneTreeOverTree(isAsin ? KMult(KHalf, π_e) : 0_e);
     changed = true;
   } else if (arg->isHalf()) {
-    u->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+    u->moveTreeOverTree(PatternMatching::CreateSimplify(
         KMult(π_e, KPow(KA, -1_e)), {.KA = isAsin ? 6_e : 3_e}));
     changed = true;
   } else if (arg->isMultiplication()) {
@@ -285,15 +284,15 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
      * missing) and find a better implementation for these special cases. */
     changed =
         // acos(√2/2) = asin(√2/2) = π/4
-        PatternMatching::MatchReplaceAndSimplify(
+        PatternMatching::MatchReplaceSimplify(
             u, KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(2_e)))), KA),
             KMult(π_e, KPow(4_e, -1_e))) ||
         // acos(√3/2) = π/6
-        PatternMatching::MatchReplaceAndSimplify(
+        PatternMatching::MatchReplaceSimplify(
             u, KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(3_e)))), 0_e),
             KMult(π_e, KPow(6_e, -1_e))) ||
         // asin(√3/2) = π/3
-        PatternMatching::MatchReplaceAndSimplify(
+        PatternMatching::MatchReplaceSimplify(
             u, KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(3_e)))), 1_e),
             KMult(π_e, KPow(3_e, -1_e))) ||
         changed;
@@ -301,7 +300,7 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
   if (argIsOpposed) {
     assert(changed);
     // asin(-x) = -asin(x) and acos(-x) = π - acos(x)
-    PatternMatching::MatchReplaceAndSimplify(
+    PatternMatching::MatchReplaceSimplify(
         u, KA, isAsin ? KMult(-1_e, KA) : KAdd(π_e, KMult(-1_e, KA)));
   }
   return changed;
@@ -329,7 +328,7 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
 
 bool Trigonometry::ExpandTrigonometric(Tree* e) {
   // Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
-  return PatternMatching::MatchReplaceAndSimplify(
+  return PatternMatching::MatchReplaceSimplify(
       e, KTrig(KAdd(KA, KB_p), KD),
       KAdd(KMult(KTrig(KAdd(KA), 0_e), KTrig(KAdd(KB_p), KD)),
            KMult(KTrig(KAdd(KA), 1_e), KTrig(KAdd(KB_p), KAdd(KD, -1_e)))));
@@ -338,14 +337,14 @@ bool Trigonometry::ExpandTrigonometric(Tree* e) {
 bool Trigonometry::ContractTrigonometric(Tree* e) {
   return
       // A?+cos(B)^2+C?+sin(D)^2+E? = 1 + A + C + E
-      PatternMatching::MatchReplaceAndSimplify(
+      PatternMatching::MatchReplaceSimplify(
           e,
           KAdd(KA_s, KPow(KTrig(KB, 0_e), 2_e), KC_s, KPow(KTrig(KD, 1_e), 2_e),
                KE_s),
           KAdd(1_e, KA_s, KC_s, KE_s)) ||
       // A?*Trig(B, C)*D?*Trig(E, F)*G? =
       // 0.5*A*D*(Trig(B-E, TrigDiff(C,F)) + Trig(B+E, C+F))*G
-      PatternMatching::MatchReplaceAndSimplify(
+      PatternMatching::MatchReplaceSimplify(
           e, KMult(KA_s, KTrig(KB, KC), KD_s, KTrig(KE, KF), KG_s),
           KMult(KHalf, KA_s, KD_s,
                 KAdd(KTrig(KAdd(KB, KMult(-1_e, KE)), KTrigDiff(KC, KF)),

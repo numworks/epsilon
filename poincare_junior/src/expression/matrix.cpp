@@ -268,7 +268,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
           Approximation::SimplifyComplex(newOpHJ);
           opHJ->moveTreeOverTree(newOpHJ);
         } else {
-          opHJ->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+          opHJ->moveTreeOverTree(PatternMatching::CreateSimplify(
               KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
         }
         // TODO_PCJ : Dependency
@@ -296,7 +296,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
             Approximation::SimplifyComplex(newOpIJ);
             opIJ->moveTreeOverTree(newOpIJ);
           } else {
-            opIJ->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+            opIJ->moveTreeOverTree(PatternMatching::CreateSimplify(
                 KAdd(KA, KMult(-1_e, KB, KC)),
                 {.KA = opIJ, .KB = opHJ, .KC = factor}));
           }

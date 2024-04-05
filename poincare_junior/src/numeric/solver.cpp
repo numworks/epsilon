@@ -191,7 +191,7 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
                                       UnitFormat::Metric,
                                       ReductionTarget::SystemForAnalysis);
 #endif
-    *memoizedDifference = PatternMatching::CreateAndSimplify(
+    *memoizedDifference = PatternMatching::CreateSimplify(
         KAdd(KA, KMult(minusOne, KB)), {.KA = e1, .KB = e2});
   }
   nextRoot(*memoizedDifference);

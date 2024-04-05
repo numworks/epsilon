@@ -201,7 +201,7 @@ bool Simplification::SimplifyExp(Tree* u) {
     /* To ensure there is only one way of representing x^n. Also handle 0^y with
      * Power logic. */
     // exp(n*ln(x)) -> x^n with n an integer or x null.
-    u->moveTreeOverTree(PatternMatching::CreateAndSimplify(KPow(KB, KA), ctx));
+    u->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
     assert(!u->isExponential());
     return true;
   }
@@ -229,7 +229,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
   const Tree* minusOne = (isReal == sign.canBeNegative()) ? -1_e : 1_e;
   const Tree* complexI = isReal ? 1_e : i_e;
   // |3| = |-3| = |3i| = |-3i| = 3
-  u->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+  u->moveTreeOverTree(PatternMatching::CreateSimplify(
       KMult(KA, KB, KC), {.KA = minusOne, .KB = complexI, .KC = child}));
   return true;
 }
@@ -256,13 +256,13 @@ bool Simplification::SimplifyPower(Tree* u) {
       ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
     }
     // Use a dependency as a fallback.
-    return PatternMatching::MatchAndReplace(u, KA, KDep(0_e, KSet(KA)));
+    return PatternMatching::MatchReplace(u, KA, KDep(0_e, KSet(KA)));
   }
   // After systematic reduction, a power can only have integer index.
   if (!n->isInteger()) {
     // v^n -> exp(n*ln(v))
-    return PatternMatching::MatchReplaceAndSimplify(u, KPow(KA, KB),
-                                                    KExp(KMult(KLn(KA), KB)));
+    return PatternMatching::MatchReplaceSimplify(u, KPow(KA, KB),
+                                                 KExp(KMult(KLn(KA), KB)));
   }
   if (v->isRational()) {
     u->moveTreeOverTree(Rational::IntegerPower(v, n));
@@ -271,7 +271,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // v^0 -> 1
   if (n->isZero()) {
     if (ComplexSign::Get(v).canBeNull()) {
-      return PatternMatching::MatchAndReplace(u, KA, KDep(1_e, KSet(KA)));
+      return PatternMatching::MatchReplace(u, KA, KDep(1_e, KSet(KA)));
     }
     u->cloneTreeOverTree(1_e);
     return true;
@@ -319,8 +319,8 @@ bool Simplification::SimplifyPower(Tree* u) {
     return true;
   }
   // exp(a)^b -> exp(a*b)
-  return PatternMatching::MatchReplaceAndSimplify(u, KPow(KExp(KA), KB),
-                                                  KExp(KMult(KA, KB)));
+  return PatternMatching::MatchReplaceSimplify(u, KPow(KExp(KA), KB),
+                                               KExp(KMult(KA, KB)));
 }
 
 const Tree* Base(const Tree* u) { return u->isPower() ? u->child(0) : u; }
@@ -420,7 +420,7 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     merge = Number::Multiplication(child, next);
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
-    merge = PatternMatching::CreateAndSimplify(
+    merge = PatternMatching::CreateSimplify(
         KPow(KA, KAdd(KB, KC)),
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
     assert(!merge->isMultiplication());
@@ -602,7 +602,7 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
   } else if (TermsAreEqual(child, next)) {
     // k1 * a + k2 * a -> (k1+k2) * a
     Tree* term = PushTerm(child);
-    merge = PatternMatching::CreateAndSimplify(
+    merge = PatternMatching::CreateSimplify(
         KMult(KAdd(KA, KB), KC),
         {.KA = Constant(child), .KB = Constant(next), .KC = term});
     term->removeTree();
@@ -707,7 +707,7 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
     /* atan2(y, x) = arctan(y/x)      if x > 0
      *               arctan(y/x) + π  if y >= 0 and x < 0
      *               arctan(y/x) - π  if y < 0  and x < 0 */
-    tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+    tree->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(KATanRad(KMult(KIm(KA), KPow(KRe(KA), -1_e))), KMult(KB, π_e)),
         {.KA = child,
          .KB = realSign.isStrictlyPositive()
@@ -735,8 +735,8 @@ bool Simplification::SimplifyComplexPart(Tree* tree) {
     tree->removeNode();
   } else {
     // im(x) = -i*x
-    tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
-        KMult(-1_e, i_e, KA), {.KA = child}));
+    tree->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(-1_e, i_e, KA), {.KA = child}));
   }
   return true;
 }

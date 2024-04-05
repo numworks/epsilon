@@ -95,35 +95,35 @@ class PatternMatching {
                       bool simplify = false) {
     return CreateTree(structure, context, nullptr, simplify);
   }
-  static Tree* CreateAndSimplify(const Tree* structure, const Context context) {
+  static Tree* CreateSimplify(const Tree* structure, const Context context) {
     return CreateTree(structure, context, nullptr, true);
   }
   static Tree* Create(const Tree* structure, const ContextTrees& context,
                       bool simplify = false) {
     return Create(structure, Context(context), simplify);
   }
-  static Tree* CreateAndSimplify(const Tree* structure,
-                                 const ContextTrees& context) {
+  static Tree* CreateSimplify(const Tree* structure,
+                              const ContextTrees& context) {
     return Create(structure, Context(context), true);
   }
-  static Tree* MatchAndCreate(const Tree* source, const Tree* pattern,
-                              const Tree* structure);
+  static Tree* MatchCreate(const Tree* source, const Tree* pattern,
+                           const Tree* structure);
   // Return true if reference has been replaced
-  static bool MatchAndReplace(Tree* node, const Tree* pattern,
-                              const Tree* structure) {
-    return PrivateMatchAndReplace(node, pattern, structure, false);
+  static bool MatchReplace(Tree* node, const Tree* pattern,
+                           const Tree* structure) {
+    return PrivateMatchReplace(node, pattern, structure, false);
   }
-  EDITION_REF_WRAP_2(MatchAndReplace, const Tree*, const Tree*);
+  EDITION_REF_WRAP_2(MatchReplace, const Tree*, const Tree*);
   // Return true if reference has been replaced
-  static bool MatchReplaceAndSimplify(Tree* node, const Tree* pattern,
-                                      const Tree* structure) {
-    return PrivateMatchAndReplace(node, pattern, structure, true);
+  static bool MatchReplaceSimplify(Tree* node, const Tree* pattern,
+                                   const Tree* structure) {
+    return PrivateMatchReplace(node, pattern, structure, true);
   }
-  EDITION_REF_WRAP_2(MatchReplaceAndSimplify, const Tree*, const Tree*);
+  EDITION_REF_WRAP_2(MatchReplaceSimplify, const Tree*, const Tree*);
 
  private:
-  static bool PrivateMatchAndReplace(Tree* node, const Tree* pattern,
-                                     const Tree* structure, bool simplify);
+  static bool PrivateMatchReplace(Tree* node, const Tree* pattern,
+                                  const Tree* structure, bool simplify);
 
   /* During Match, MatchContext allow keeping track of matched Nary sizes.
    * It keeps track of both source and pattern.

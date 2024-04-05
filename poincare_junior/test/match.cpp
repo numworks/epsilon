@@ -27,7 +27,7 @@ void assert_match_and_create(const Tree* source, const Tree* pattern,
   createdRef->removeTree();
   // Also test with matchAndReplace
   TreeRef replacedSourceClone = TreeRef(SharedTreeStack->clone(source));
-  PatternMatching::MatchAndReplace(replacedSourceClone, pattern, structure);
+  PatternMatching::MatchReplace(replacedSourceClone, pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone->removeTree();
   // Nothing has leaked
@@ -146,11 +146,11 @@ QUIZ_CASE(pcj_rewrite_replace) {
   TreeRef ref(SharedTreeStack->push<Type::Addition>(2));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(5));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(5));
-  TreeRef result = PatternMatching::MatchAndCreate(ref, p, s);
+  TreeRef result = PatternMatching::MatchCreate(ref, p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
-  PatternMatching::MatchAndReplace(ref, p, s);
+  PatternMatching::MatchReplace(ref, p, s);
   assert_trees_are_equal(result, ref);
-  result = PatternMatching::MatchAndCreate(ref, p, s);
+  result = PatternMatching::MatchCreate(ref, p, s);
   quiz_assert(result.isUninitialized());
 }
 

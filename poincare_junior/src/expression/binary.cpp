@@ -96,39 +96,38 @@ bool Binary::IsComparisonOperatorString(const CPL* s, int length,
 bool Binary::SimplifyBooleanOperator(Tree* tree) {
   return
       // not true -> false
-      PatternMatching::MatchAndReplace(tree, KLogicalNot(KTrue), KFalse) ||
+      PatternMatching::MatchReplace(tree, KLogicalNot(KTrue), KFalse) ||
       // not false -> true
-      PatternMatching::MatchAndReplace(tree, KLogicalNot(KFalse), KTrue) ||
+      PatternMatching::MatchReplace(tree, KLogicalNot(KFalse), KTrue) ||
       // false and A -> false
-      PatternMatching::MatchAndReplace(tree, KLogicalAnd(KFalse, KA), KFalse) ||
-      PatternMatching::MatchAndReplace(tree, KLogicalAnd(KA, KFalse), KFalse) ||
+      PatternMatching::MatchReplace(tree, KLogicalAnd(KFalse, KA), KFalse) ||
+      PatternMatching::MatchReplace(tree, KLogicalAnd(KA, KFalse), KFalse) ||
       // true and A -> A
-      PatternMatching::MatchAndReplace(tree, KLogicalAnd(KTrue, KA), KA) ||
-      PatternMatching::MatchAndReplace(tree, KLogicalAnd(KA, KTrue), KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalAnd(KTrue, KA), KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalAnd(KA, KTrue), KA) ||
       // true or A -> true
-      PatternMatching::MatchAndReplace(tree, KLogicalOr(KTrue, KA), KTrue) ||
-      PatternMatching::MatchAndReplace(tree, KLogicalOr(KA, KTrue), KTrue) ||
+      PatternMatching::MatchReplace(tree, KLogicalOr(KTrue, KA), KTrue) ||
+      PatternMatching::MatchReplace(tree, KLogicalOr(KA, KTrue), KTrue) ||
       // false or A -> A
-      PatternMatching::MatchAndReplace(tree, KLogicalOr(KFalse, KA), KA) ||
-      PatternMatching::MatchAndReplace(tree, KLogicalOr(KA, KFalse), KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalOr(KFalse, KA), KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalOr(KA, KFalse), KA) ||
       // false xor A -> A
-      PatternMatching::MatchAndReplace(tree, KLogicalXor(KFalse, KA), KA) ||
-      PatternMatching::MatchAndReplace(tree, KLogicalXor(KA, KFalse), KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalXor(KFalse, KA), KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalXor(KA, KFalse), KA) ||
       // true xor A -> not A
-      PatternMatching::MatchReplaceAndSimplify(tree, KLogicalXor(KTrue, KA),
-                                               KLogicalNot(KA)) ||
-      PatternMatching::MatchReplaceAndSimplify(tree, KLogicalXor(KA, KTrue),
-                                               KLogicalNot(KA)) ||
+      PatternMatching::MatchReplaceSimplify(tree, KLogicalXor(KTrue, KA),
+                                            KLogicalNot(KA)) ||
+      PatternMatching::MatchReplaceSimplify(tree, KLogicalXor(KA, KTrue),
+                                            KLogicalNot(KA)) ||
 
       // not (not A) -> A
-      PatternMatching::MatchAndReplace(tree, KLogicalNot(KLogicalNot(KA)),
-                                       KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalNot(KLogicalNot(KA)), KA) ||
       // A or A -> A
-      PatternMatching::MatchAndReplace(tree, KLogicalOr(KA, KA), KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalOr(KA, KA), KA) ||
       // A and A -> A
-      PatternMatching::MatchAndReplace(tree, KLogicalAnd(KA, KA), KA) ||
+      PatternMatching::MatchReplace(tree, KLogicalAnd(KA, KA), KA) ||
       // A xor A -> false
-      PatternMatching::MatchAndReplace(tree, KLogicalXor(KA, KA), KFalse);
+      PatternMatching::MatchReplace(tree, KLogicalXor(KA, KA), KFalse);
 }
 
 bool Binary::SimplifyComparison(Tree* tree) {

@@ -263,12 +263,12 @@ push at the end of the stack a brand new tree :
 Tree * myTree = PatternMatching::Create(KAdd(1_e, KA), {.KA = otherTree});
 ```
 
-These two functions are combined into `MatchAndCreate` and `MatchAndReplace` to
+These two functions are combined into `MatchCreate` and `MatchReplace` to
 avoid dealing with the context at all :
 
 ```cpp
 // Apply simplification a + a -> 2 * a
-bool hasChanged = MatchAndReplace(myTree, KAdd(KA, KA), KMult(2_e, KA));
+bool hasChanged = MatchReplace(myTree, KAdd(KA, KA), KMult(2_e, KA));
 ```
 <details>
 <summary>Note</summary>
@@ -279,7 +279,7 @@ In this example, `x+x` would be matched with KA pointing to the first `x`.
 
 </details>
 
-Methods `CreateAndSimplify` and `MatchReplaceAndSimplify` perform the same task,
+Methods `CreateSimplify` and `MatchReplaceSimplify` perform the same task,
 but also call systematic simplification on each created tree along the way (but
 not placeholders, which are assumed to be simplified trees already).
 
@@ -294,7 +294,7 @@ create :
 
 ```cpp
 // Apply simplification a*(b+c)*d -> a*b*d + a*(c)*d
-bool hasChanged = MatchReplaceAndSimplify(
+bool hasChanged = MatchReplaceSimplify(
     myTree, KMult(KA, KAdd(KB, KC_p), KD_s),
     KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));
 ```

@@ -231,23 +231,23 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
   if (tree->isTrig() || tree->isTangentRad()) {
     if (angleUnit != AngleUnit::Radian) {
       Tree* child = tree->child(0);
-      child->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+      child->moveTreeOverTree(PatternMatching::CreateSimplify(
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
       /* This adds new potential multiplication expansions. Another advanced
        * reduction in DeepBeautify may be needed.
        * TODO: Call AdvancedReduce in DeepBeautify only if we went here. */
     }
-    PatternMatching::MatchAndReplace(tree, KTrig(KA, 0_e), KCos(KA)) ||
-        PatternMatching::MatchAndReplace(tree, KTrig(KA, 1_e), KSin(KA)) ||
-        PatternMatching::MatchAndReplace(tree, KTanRad(KA), KTan(KA));
+    PatternMatching::MatchReplace(tree, KTrig(KA, 0_e), KCos(KA)) ||
+        PatternMatching::MatchReplace(tree, KTrig(KA, 1_e), KSin(KA)) ||
+        PatternMatching::MatchReplace(tree, KTanRad(KA), KTan(KA));
     return true;
   }
   if (tree->isATrig() || tree->isArcTangentRad()) {
-    PatternMatching::MatchAndReplace(tree, KATrig(KA, 0_e), KACos(KA)) ||
-        PatternMatching::MatchAndReplace(tree, KATrig(KA, 1_e), KASin(KA)) ||
-        PatternMatching::MatchAndReplace(tree, KATanRad(KA), KATan(KA));
+    PatternMatching::MatchReplace(tree, KATrig(KA, 0_e), KACos(KA)) ||
+        PatternMatching::MatchReplace(tree, KATrig(KA, 1_e), KASin(KA)) ||
+        PatternMatching::MatchReplace(tree, KATanRad(KA), KATan(KA));
     if (angleUnit != AngleUnit::Radian) {
-      tree->moveTreeOverTree(PatternMatching::CreateAndSimplify(
+      tree->moveTreeOverTree(PatternMatching::CreateSimplify(
           KMult(KA, KB), {.KA = tree, .KB = Angle::ToRad(angleUnit)}));
     }
     return true;
@@ -257,8 +257,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
 
 bool Beautification::ShallowBeautifyPercent(Tree* e) {
   // A% -> A / 100
-  if (PatternMatching::MatchAndReplace(e, KPercentSimple(KA),
-                                       KDiv(KA, 100_e))) {
+  if (PatternMatching::MatchReplace(e, KPercentSimple(KA), KDiv(KA, 100_e))) {
     return true;
   }
   // TODO PCJ PercentAddition had a deepBeautify to preserve addition order
@@ -267,8 +266,8 @@ bool Beautification::ShallowBeautifyPercent(Tree* e) {
     return false;
   }
   // A + B% -> A * (1 + B / 100)
-  return PatternMatching::MatchAndReplace(
-      e, KPercentAddition(KA, KB), KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));
+  return PatternMatching::MatchReplace(e, KPercentAddition(KA, KB),
+                                       KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));
 }
 
 bool Beautification::DeepBeautify(Tree* expr,
@@ -300,16 +299,16 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
   // TODO: handle lnReal too
   // ln(A)      * ln(B)^(-1) -> log(A, B)
   // ln(A)^(-1) * ln(B)      -> log(B, A)
-  changed = PatternMatching::MatchAndReplace(
+  changed = PatternMatching::MatchReplace(
                 ref, KMult(KA_s, KLn(KB), KPow(KLn(KC), -1_e), KD_s),
                 KMult(KA_s, KLogarithm(KB, KC), KD_s)) ||
-            PatternMatching::MatchAndReplace(
+            PatternMatching::MatchReplace(
                 ref, KMult(KA_s, KPow(KLn(KB), -1_e), KLn(KC), KD_s),
                 KMult(KA_s, KLogarithm(KC, KB), KD_s));
 #endif
 
-  if (PatternMatching::MatchAndReplace(e, KMult(-1_e, KA_p),
-                                       KOpposite(KMult(KA_p)))) {
+  if (PatternMatching::MatchReplace(e, KMult(-1_e, KA_p),
+                                    KOpposite(KMult(KA_p)))) {
     return true;
   }
 
@@ -328,27 +327,27 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
   // PowerReal(A,B) -> A^B
   // PowerMatrix(A,B) -> A^B
   // exp(A? * ln(B) * C?) -> B^(A*C)
-  if (PatternMatching::MatchAndReplace(e, KPowMatrix(KA, KB), KPow(KA, KB)) ||
-      PatternMatching::MatchAndReplace(e, KPowReal(KA, KB), KPow(KA, KB)) ||
-      PatternMatching::MatchAndReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
-                                       KPow(KB, KMult(KA_s, KC_s)))) {
+  if (PatternMatching::MatchReplace(e, KPowMatrix(KA, KB), KPow(KA, KB)) ||
+      PatternMatching::MatchReplace(e, KPowReal(KA, KB), KPow(KA, KB)) ||
+      PatternMatching::MatchReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
+                                    KPow(KB, KMult(KA_s, KC_s)))) {
     // A^0.5 -> Sqrt(A)
-    PatternMatching::MatchAndReplace(e, KPow(KA, KHalf), KSqrt(KA));
+    PatternMatching::MatchReplace(e, KPow(KA, KHalf), KSqrt(KA));
     return true;
   }
   return
       // lnReal(x) -> ln(x)
-      PatternMatching::MatchAndReplace(e, KLnReal(KA), KLn(KA)) ||
+      PatternMatching::MatchReplace(e, KLnReal(KA), KLn(KA)) ||
       // exp(1) -> e
-      PatternMatching::MatchAndReplace(e, KExp(1_e), e_e) ||
+      PatternMatching::MatchReplace(e, KExp(1_e), e_e) ||
       // exp(A) -> e^A
-      PatternMatching::MatchAndReplace(e, KExp(KA), KPow(e_e, KA)) ||
+      PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA)) ||
       // -floor(-A) -> ceil(A)
-      PatternMatching::MatchAndReplace(
+      PatternMatching::MatchReplace(
           e, KMult(-1_e, KA_s, KFloor(KMult(-1_e, KB)), KC_s),
           KMult(KA_s, KCeil(KB), KC_s)) ||
       // A - floor(A) -> frac(A)
-      PatternMatching::MatchAndReplace(
+      PatternMatching::MatchReplace(
           e, KAdd(KA_s, KB, KC_s, KMult(-1_e, KFloor(KB)), KD_s),
           KAdd(KA_s, KC_s, KFrac(KB), KD_s)) ||
       ShallowBeautifyPercent(e) || changed;

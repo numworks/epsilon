@@ -12,7 +12,7 @@ class TreeRef {
   TreeRef() : m_identifier(TreeStack::ReferenceTable::NoNodeIdentifier) {}
   TreeRef(Tree* node);
 
-  template <TreeConcept T>
+  template <KTreeConcept T>
   TreeRef(T t) : TreeRef(static_cast<const Tree*>(t)) {}
 
   TreeRef(Block* blocks) : TreeRef(Tree::FromBlocks(blocks)) {}

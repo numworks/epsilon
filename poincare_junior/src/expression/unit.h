@@ -217,7 +217,7 @@ class Representative {
 
  protected:
   // TODO it may be marked consteval with Clang but not with GCC
-  template <TreeConcept T>
+  template <KTreeConcept T>
   constexpr Representative(Aliases rootSymbol, T ratioExpression,
                            Prefixable inputPrefixable,
                            Prefixable outputPrefixable)

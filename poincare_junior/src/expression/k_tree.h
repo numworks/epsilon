@@ -134,7 +134,7 @@ constexpr auto KLogicalNand = KBinary<Type::LogicalNand>();
 
 template <uint8_t Rows, uint8_t Cols>
 struct KMatrix {
-  template <TreeConcept... CTS>
+  template <KTreeConcept... CTS>
     requires(sizeof...(CTS) == Rows * Cols)
   consteval auto operator()(CTS...) const {
     return Concat<decltype(node), CTS...>();
@@ -156,7 +156,7 @@ struct KMatrix {
 template <uint8_t... Values>
 using Exponents = KTree<Values...>;
 
-template <TreeConcept Exp, TreeConcept... CTS>
+template <KTreeConcept Exp, KTreeConcept... CTS>
 static consteval auto KPol(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
   static_assert(

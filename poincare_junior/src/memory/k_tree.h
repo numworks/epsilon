@@ -18,10 +18,10 @@ namespace KTrees {
 
 /* Concept that gathers all KTrees */
 
-class AbstractTree {};
+class AbstractKTree {};
 
 template <class C>
-concept TreeConcept = Concept::is_derived_from<C, AbstractTree>;
+concept KTreeConcept = Concept::is_derived_from<C, AbstractKTree>;
 
 /* The KTree template class is the compile time representation of a constexpr
  * tree. It's complete block representation is specified as template parameters
@@ -31,7 +31,7 @@ concept TreeConcept = Concept::is_derived_from<C, AbstractTree>;
  */
 
 template <Block... Blocks>
-class KTree : public AbstractTree {
+class KTree : public AbstractKTree {
  public:
   static constexpr Block k_blocks[] = {Blocks...};
   static constexpr size_t k_size = sizeof...(Blocks);
@@ -55,7 +55,7 @@ class KTree : public AbstractTree {
 /* Helper to concatenate KTrees */
 
 /* Usage:
- * template <Block Tag, TreeConcept CT1, TreeConcept CT2> consteval auto
+ * template <Block Tag, KTreeConcept CT1, KTreeConcept CT2> consteval auto
  * Binary(CT1, CT2) { return Concat<Tree<Tag>, CT1, CT2>();
  * }
  */
@@ -70,15 +70,15 @@ struct __BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
   using tree = KTree<((I < N1) ? B1[I] : B2[I - N1])...>;
 };
 
-template <TreeConcept CT1, TreeConcept CT2>
+template <KTreeConcept CT1, KTreeConcept CT2>
 using __ConcatTwo = typename __BlockConcat<CT1::k_size, CT1::k_blocks,
                                            CT2::k_size, CT2::k_blocks>::tree;
 
-template <TreeConcept CT1, TreeConcept... CT>
+template <KTreeConcept CT1, KTreeConcept... CT>
 struct Concat;
-template <TreeConcept CT1>
+template <KTreeConcept CT1>
 struct Concat<CT1> : CT1 {};
-template <TreeConcept CT1, TreeConcept... CT>
+template <KTreeConcept CT1, KTreeConcept... CT>
 struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
 
 // Helpers
@@ -119,7 +119,7 @@ concept HasATreeConcept = (false || ... ||
 
 template <Block Tag>
 struct KNAry {
-  template <TreeConcept... CTS>
+  template <KTreeConcept... CTS>
   consteval auto operator()(CTS...) const {
     return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
   }
@@ -136,7 +136,7 @@ struct KNAry {
 
 template <Block Tag>
 struct KNAry16 {
-  template <TreeConcept... CTS>
+  template <KTreeConcept... CTS>
   consteval auto operator()(CTS... args) const {
     return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
   }
@@ -147,7 +147,7 @@ struct KNAry16 {
 
 template <size_t Nb, Block Tag>
 struct KFixedArity : public KTree<Tag> {
-  template <TreeConcept... CTS>
+  template <KTreeConcept... CTS>
     requires(sizeof...(CTS) == Nb)
   consteval auto operator()(CTS...) const {
     return Concat<KTree<Tag>, CTS...>();

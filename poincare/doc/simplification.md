@@ -238,19 +238,32 @@ It's expected to:
 | sign(A) | 0 / 1 / -1 if A sign is known |
 | ⌊A⌋ (with A rational) | exact value |
 | round(A, B) (with valid A, B) | floor(A×10^B + 1/2)×10^-B |
-| listSort(L) | Apply sort |
-| median(L) | result |
-| dim(A) | result |
-| L(n) | result |
-| mean(L) | result |
-| stddev(L) | result |
-| variance(L) | result |
-| sampleStdDev(L) | result |
-| minimum(L) | result |
-| maximum(L) | result |
-| sum(L) | result |
-| prod(L) | result |
 | diff(dep(x, {ln(x), z}), x, y) | dep(diff(x, x, y), {diff(ln(x), x, y), z}) |
+
+The following methods directly simplify to their result :
+- listSort(L)
+- median(L)
+- dim(A)
+- L(n)
+- mean(L)
+- stddev(L)
+- variance(L)
+- sampleStdDev(L)
+- minimum(L)
+- maximum(L)
+- sum(L)
+- prod(L)
+- identity(n)
+- cross(u, v)
+- dot(u, v)
+- det(M)
+- reff(M)
+- ref(M)
+- inverse(M)
+- norm(M)
+- power(M)
+- trace(M)
+- transpose(M)
 
 </details>
 

@@ -327,26 +327,26 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
 /* TODO: Find an easier solution for nested expand/contract smart shallow
  * simplification. */
 
-bool Trigonometry::ExpandTrigonometric(Tree* ref) {
+bool Trigonometry::ExpandTrigonometric(Tree* e) {
   // Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
   return PatternMatching::MatchReplaceAndSimplify(
-      ref, KTrig(KAdd(KA, KB_p), KD),
+      e, KTrig(KAdd(KA, KB_p), KD),
       KAdd(KMult(KTrig(KAdd(KA), 0_e), KTrig(KAdd(KB_p), KD)),
            KMult(KTrig(KAdd(KA), 1_e), KTrig(KAdd(KB_p), KAdd(KD, -1_e)))));
 }
 
-bool Trigonometry::ContractTrigonometric(Tree* ref) {
+bool Trigonometry::ContractTrigonometric(Tree* e) {
   return
       // A?+cos(B)^2+C?+sin(D)^2+E? = 1 + A + C + E
       PatternMatching::MatchReplaceAndSimplify(
-          ref,
+          e,
           KAdd(KA_s, KPow(KTrig(KB, 0_e), 2_e), KC_s, KPow(KTrig(KD, 1_e), 2_e),
                KE_s),
           KAdd(1_e, KA_s, KC_s, KE_s)) ||
       // A?*Trig(B, C)*D?*Trig(E, F)*G? =
       // 0.5*A*D*(Trig(B-E, TrigDiff(C,F)) + Trig(B+E, C+F))*G
       PatternMatching::MatchReplaceAndSimplify(
-          ref, KMult(KA_s, KTrig(KB, KC), KD_s, KTrig(KE, KF), KG_s),
+          e, KMult(KA_s, KTrig(KB, KC), KD_s, KTrig(KE, KF), KG_s),
           KMult(KHalf, KA_s, KD_s,
                 KAdd(KTrig(KAdd(KB, KMult(-1_e, KE)), KTrigDiff(KC, KF)),
                      KTrig(KAdd(KB, KE), KAdd(KF, KC))),

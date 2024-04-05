@@ -8,7 +8,7 @@ namespace PoincareJ {
 class Derivation {
  public:
   // Shallow simplify a derivation Tree* inplace.
-  static bool ShallowSimplify(Tree* ref);
+  static bool ShallowSimplify(Tree* e);
 
  private:
   // Push derivand derivation on the pool.

@@ -806,20 +806,20 @@ bool RelaxProjectionContext(void* context) {
   return true;
 }
 
-bool Simplification::Simplify(Tree* ref, ProjectionContext* projectionContext) {
-  if (ref->isStore()) {
+bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
+  if (e->isStore()) {
     // Store is an expression only for convenience
-    return Simplify(ref->child(0), projectionContext);
+    return Simplify(e->child(0), projectionContext);
   }
-  if (ref->isUnitConversion()) {
-    if (!Dimension::DeepCheckDimensions(ref)) {
+  if (e->isUnitConversion()) {
+    if (!Dimension::DeepCheckDimensions(e)) {
       // TODO: Raise appropriate exception in DeepCheckDimensions.
       ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
     }
-    Simplify(ref->child(0), projectionContext);
-    ref->moveTreeOverTree(ref->child(0));
+    Simplify(e->child(0), projectionContext);
+    e->moveTreeOverTree(e->child(0));
     // TODO PCJ actually select the required unit
-    return ref;
+    return e;
   }
   assert(projectionContext);
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
@@ -828,7 +828,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext* projectionContext) {
         SimplifyLastTree(static_cast<const Tree*>(data)->clone(),
                          *static_cast<ProjectionContext*>(context));
       },
-      projectionContext, ref, RelaxProjectionContext);
+      projectionContext, e, RelaxProjectionContext);
   /* TODO: Due to projection/beautification cycles, SimplifyLastTree will most
    *       likely return true every time anyway. */
   return true;
@@ -840,56 +840,55 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext* projectionContext) {
  *   replaced before with a parametric structure.
  * - GetUserSymbols and ProjectToId steps could be factorized.
  * - Steps could be better grouped under well constructed steps. */
-bool Simplification::SimplifyLastTree(Tree* ref,
+bool Simplification::SimplifyLastTree(Tree* e,
                                       ProjectionContext projectionContext) {
-  assert(SharedTreeStack->lastBlock() == ref->nextTree()->block());
-  ExceptionTryAfterBlock(ref->block()) {
+  assert(SharedTreeStack->lastBlock() == e->nextTree()->block());
+  ExceptionTryAfterBlock(e->block()) {
     bool changed = false;
     // Seeded random nodes may remain between Successive iterations.
     int maxRandomSeed = 0;
     do {
-      if (!Dimension::DeepCheckDimensions(ref) ||
-          !Dimension::DeepCheckListLength(ref)) {
+      if (!Dimension::DeepCheckDimensions(e) ||
+          !Dimension::DeepCheckListLength(e)) {
         // TODO: Raise appropriate exception in DeepCheckDimensions.
         ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
       }
-      projectionContext.m_dimension = Dimension::GetDimension(ref);
+      projectionContext.m_dimension = Dimension::GetDimension(e);
       if (projectionContext.m_strategy != Strategy::ApproximateToFloat &&
           ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
         ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
       }
       // Seed random nodes before anything is merged/duplicated.
-      maxRandomSeed = Random::SeedTreeNodes(ref, maxRandomSeed);
+      maxRandomSeed = Random::SeedTreeNodes(e, maxRandomSeed);
       changed = maxRandomSeed > 0;
-      changed =
-          Projection::DeepSystemProject(ref, projectionContext) || changed;
+      changed = Projection::DeepSystemProject(e, projectionContext) || changed;
       /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
        * because of the ordered structure of the set. When projecting y+x,
        * variables will be {x, y} and we must have found all user symbols to
        * properly project y to 1. */
-      Tree* variables = Variables::GetUserSymbols(ref);
-      SwapTreesPointers(&ref, &variables);
+      Tree* variables = Variables::GetUserSymbols(e);
+      SwapTreesPointers(&e, &variables);
       Variables::ProjectToId(
-          ref, variables,
+          e, variables,
           projectionContext.m_complexFormat == ComplexFormat::Real
               ? ComplexSign::RealUnknown()
               : ComplexSign::Unknown());
-      changed = DeepSystematicReduce(ref) || changed;
-      assert(!DeepSystematicReduce(ref));
-      changed = List::BubbleUp(ref, ShallowSystematicReduce) || changed;
-      changed = AdvancedSimplification::AdvancedReduce(ref) || changed;
-      changed = Dependency::DeepRemoveUselessDependencies(ref) || changed;
+      changed = DeepSystematicReduce(e) || changed;
+      assert(!DeepSystematicReduce(e));
+      changed = List::BubbleUp(e, ShallowSystematicReduce) || changed;
+      changed = AdvancedSimplification::AdvancedReduce(e) || changed;
+      changed = Dependency::DeepRemoveUselessDependencies(e) || changed;
 
       if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
         /* Approximate again in case exact numbers appeared during
          * simplification. */
-        changed = Approximation::ApproximateAndReplaceEveryScalar(ref);
+        changed = Approximation::ApproximateAndReplaceEveryScalar(e);
       }
-      changed = Beautification::DeepBeautify(ref, projectionContext) || changed;
-      Variables::BeautifyToName(ref, variables);
+      changed = Beautification::DeepBeautify(e, projectionContext) || changed;
+      Variables::BeautifyToName(e, variables);
       variables->removeTree();
-      ref = variables;
-      if (!Projection::DeepReplaceUserNamed(ref, projectionContext)) {
+      e = variables;
+      if (!Projection::DeepReplaceUserNamed(e, projectionContext)) {
         return changed;
       }
       changed = true;

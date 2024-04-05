@@ -345,10 +345,10 @@ bool Tree::hasAncestor(const Tree* node, bool includeSelf) const {
   return block() < node->block() + node->treeSize();
 }
 
-bool Tree::ApplyShallowInDepth(Tree* ref, ShallowOperation shallowOperation,
+bool Tree::ApplyShallowInDepth(Tree* e, ShallowOperation shallowOperation,
                                void* context, bool check) {
   bool changed = false;
-  for (Tree* node : ref->selfAndDescendants()) {
+  for (Tree* node : e->selfAndDescendants()) {
     changed = shallowOperation(node, context) || changed;
     assert(!check || !shallowOperation(node, context));
   }

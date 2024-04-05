@@ -75,21 +75,21 @@ ProjectionContext Projection::ContextFromSettings() {
   };
 }
 
-bool Projection::DeepSystemProject(Tree* ref,
+bool Projection::DeepSystemProject(Tree* e,
                                    ProjectionContext projectionContext) {
   bool changed = false;
   if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
-    changed = Approximation::ApproximateAndReplaceEveryScalar(
-        ref, &projectionContext);
+    changed =
+        Approximation::ApproximateAndReplaceEveryScalar(e, &projectionContext);
   }
-  return Tree::ApplyShallowInDepth(ref, ShallowSystemProject,
+  return Tree::ApplyShallowInDepth(e, ShallowSystemProject,
                                    &projectionContext) ||
          changed;
 }
 
 /* The order of nodes in NAry is not a concern here. They will be sorted before
  * SystemReduction. */
-bool Projection::ShallowSystemProject(Tree* ref, void* context) {
+bool Projection::ShallowSystemProject(Tree* e, void* context) {
   /* TODO: Most of the projections could be optimized by simply replacing and
    * inserting nodes. This optimization could be applied in matchAndReplace. See
    * comment in matchAndReplace. */
@@ -97,58 +97,57 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
       static_cast<ProjectionContext*>(context);
 
   bool changed = false;
-  if (ref->isUndefined()) {
+  if (e->isUndefined()) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
-  if (ref->isParenthesis()) {
-    ref->removeNode();
-    ShallowSystemProject(ref, context);
+  if (e->isParenthesis()) {
+    e->removeNode();
+    ShallowSystemProject(e, context);
     return true;
   }
-  if (ref->isUnit()) {
-    Units::Unit::RemoveUnit(ref);
+  if (e->isUnit()) {
+    Units::Unit::RemoveUnit(e);
     changed = true;
   }
-  if (ref->isPhysicalConstant()) {
+  if (e->isPhysicalConstant()) {
     Tree* value =
-        SharedTreeStack->push<Type::DoubleFloat>(Constant::Info(ref).m_value);
-    ref->moveTreeOverTree(value);
+        SharedTreeStack->push<Type::DoubleFloat>(Constant::Info(e).m_value);
+    e->moveTreeOverTree(value);
     return true;
   }
 
-  if (ref->isDecimal()) {
-    Decimal::Project(ref);
+  if (e->isDecimal()) {
+    Decimal::Project(e);
     changed = true;
   }
 
   // Project angles depending on context
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (ref->isOfType({Type::Sine, Type::Cosine, Type::Tangent}) &&
+  if (e->isOfType({Type::Sine, Type::Cosine, Type::Tangent}) &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
-    Tree* child = ref->child(0);
+    Tree* child = e->child(0);
     child->moveTreeOverTree(PatternMatching::Create(
         KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
     changed = true;
-  } else if (ref->isOfType(
-                 {Type::ArcSine, Type::ArcCosine, Type::ArcTangent})) {
+  } else if (e->isOfType({Type::ArcSine, Type::ArcCosine, Type::ArcTangent})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
     // acos(A) -> atrig(A, 0)
-    PatternMatching::MatchAndReplace(ref, KACos(KA), KATrig(KA, 0_e)) ||
+    PatternMatching::MatchAndReplace(e, KACos(KA), KATrig(KA, 0_e)) ||
         // asin(A) -> atrig(A, 1)
-        PatternMatching::MatchAndReplace(ref, KASin(KA), KATrig(KA, 1_e)) ||
+        PatternMatching::MatchAndReplace(e, KASin(KA), KATrig(KA, 1_e)) ||
         // atan(A) -> atanRad(A)
-        PatternMatching::MatchAndReplace(ref, KATan(KA), KATanRad(KA));
+        PatternMatching::MatchAndReplace(e, KATan(KA), KATanRad(KA));
     if (angleUnit != PoincareJ::AngleUnit::Radian) {
       // arccos_degree(x) = arccos_radians(x) * 180/π
-      ref->moveTreeOverTree(PatternMatching::Create(
-          KMult(KA, KB), {.KA = ref, .KB = Angle::RadTo(angleUnit)}));
+      e->moveTreeOverTree(PatternMatching::Create(
+          KMult(KA, KB), {.KA = e, .KB = Angle::RadTo(angleUnit)}));
     }
     return true;
   }
 
   // inf -> Float(inf) to prevent inf-inf from being 0
-  if (ref->isInfinity()) {
+  if (e->isInfinity()) {
     /* TODO: Infinity is only handled as float. Raise to try again with float
      * numbers, preventing from having to handle float contamination.
      * Later, handle exact inf (∞-∞, ∞^0, 0+, 0-, ...) and remove this Raise.*/
@@ -157,49 +156,47 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
 
   // Under Real complex format, use node alternative to properly handle nonreal.
   bool realMode = projectionContext->m_complexFormat == ComplexFormat::Real;
-  if (ref->isPower()) {
-    if (PatternMatching::MatchAndReplace(ref, KPow(e_e, KA), KExp(KA))) {
-    } else if (Dimension::GetDimension(ref->nextNode()).isMatrix()) {
-      ref->cloneNodeOverNode(KPowMatrix);
+  if (e->isPower()) {
+    if (PatternMatching::MatchAndReplace(e, KPow(e_e, KA), KExp(KA))) {
+    } else if (Dimension::GetDimension(e->nextNode()).isMatrix()) {
+      e->cloneNodeOverNode(KPowMatrix);
     } else if (realMode) {
-      ref->cloneNodeOverNode(KPowReal);
+      e->cloneNodeOverNode(KPowReal);
     } else {
       return changed;
     }
     return true;
   }
 
-  if (realMode && ref->isLn()) {
-    ref->cloneNodeOverNode(KLnReal);
+  if (realMode && e->isLn()) {
+    e->cloneNodeOverNode(KLnReal);
     return true;
   }
 
   if (  // Sqrt(A) -> A^0.5
-      PatternMatching::MatchAndReplace(ref, KSqrt(KA), KPow(KA, KHalf)) ||
+      PatternMatching::MatchAndReplace(e, KSqrt(KA), KPow(KA, KHalf)) ||
       // NthRoot(A, B) -> A^(1/B)
-      PatternMatching::MatchAndReplace(ref, KNthRoot(KA, KB),
+      PatternMatching::MatchAndReplace(e, KNthRoot(KA, KB),
                                        KPow(KA, KPow(KB, -1_e))) ||
       // log(A, e) -> ln(e)
-      PatternMatching::MatchAndReplace(ref, KLogarithm(KA, e_e), KLn(KA)) ||
+      PatternMatching::MatchAndReplace(e, KLogarithm(KA, e_e), KLn(KA)) ||
       // Sec(A) -> 1/cos(A)
-      PatternMatching::MatchAndReplace(ref, KSec(KA), KPow(KCos(KA), -1_e)) ||
+      PatternMatching::MatchAndReplace(e, KSec(KA), KPow(KCos(KA), -1_e)) ||
       // Csc(A) -> 1/sin(A)
-      PatternMatching::MatchAndReplace(ref, KCsc(KA), KPow(KSin(KA), -1_e)) ||
+      PatternMatching::MatchAndReplace(e, KCsc(KA), KPow(KSin(KA), -1_e)) ||
       // ArcSec(A) -> acos(1/A)
-      PatternMatching::MatchAndReplace(ref, KArcSec(KA),
-                                       KACos(KPow(KA, -1_e))) ||
+      PatternMatching::MatchAndReplace(e, KArcSec(KA), KACos(KPow(KA, -1_e))) ||
       // ArcCsc(A) -> asin(1/A)
-      PatternMatching::MatchAndReplace(ref, KArcCsc(KA),
-                                       KASin(KPow(KA, -1_e))) ||
+      PatternMatching::MatchAndReplace(e, KArcCsc(KA), KASin(KPow(KA, -1_e))) ||
       // ArCosh(A) -> ln(A+sqrt(A-1)*sqrt(A+1))
       PatternMatching::MatchAndReplace(
-          ref, KArCosh(KA),
+          e, KArCosh(KA),
           KLn(KAdd(KA, KMult(KSqrt(KAdd(KA, -1_e)), KSqrt(KAdd(KA, 1_e)))))) ||
       // ArSinh(A) -> ln(A+sqrt(A^2+1))
       PatternMatching::MatchAndReplace(
-          ref, KArSinh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e)))))) {
+          e, KArSinh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e)))))) {
     // Ref node may need to be projected again.
-    ShallowSystemProject(ref, context);
+    ShallowSystemProject(e, context);
     return true;
   }
 
@@ -207,72 +204,71 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
    * a node needing further projection. */
   return
       // ceil(A)  -> -floor(-A)
-      PatternMatching::MatchAndReplace(ref, KCeil(KA),
+      PatternMatching::MatchAndReplace(e, KCeil(KA),
                                        KMult(-1_e, KFloor(KMult(-1_e, KA)))) ||
       // frac(A) -> A - floor(A)
-      PatternMatching::MatchAndReplace(ref, KFrac(KA),
+      PatternMatching::MatchAndReplace(e, KFrac(KA),
                                        KAdd(KA, KMult(-1_e, KFloor(KA)))) ||
       // e -> exp(1)
-      PatternMatching::MatchAndReplace(ref, e_e, KExp(1_e)) ||
+      PatternMatching::MatchAndReplace(e, e_e, KExp(1_e)) ||
       // conj(A) -> re(A)-i*re(A)
       PatternMatching::MatchAndReplace(
-          ref, KConj(KA), KAdd(KRe(KA), KMult(-1_e, i_e, KIm(KA)))) ||
+          e, KConj(KA), KAdd(KRe(KA), KMult(-1_e, i_e, KIm(KA)))) ||
       // - A  -> (-1)*A
-      PatternMatching::MatchAndReplace(ref, KOpposite(KA), KMult(-1_e, KA)) ||
+      PatternMatching::MatchAndReplace(e, KOpposite(KA), KMult(-1_e, KA)) ||
       // A - B -> A + (-1)*B
-      PatternMatching::MatchAndReplace(ref, KSub(KA, KB),
+      PatternMatching::MatchAndReplace(e, KSub(KA, KB),
                                        KAdd(KA, KMult(-1_e, KB))) ||
       // A / B -> A * B^-1
-      PatternMatching::MatchAndReplace(ref, KDiv(KA, KB),
+      PatternMatching::MatchAndReplace(e, KDiv(KA, KB),
                                        KMult(KA, KPow(KB, -1_e))) ||
       // MixedFraction(A + B/C) -> A + B/C
       // TODO assert KB is a simple rational
-      PatternMatching::MatchAndReplace(ref, KMixedFraction(KA, KB),
+      PatternMatching::MatchAndReplace(e, KMixedFraction(KA, KB),
                                        KAdd(KA, KB)) ||
       // cos(A) -> trig(A, 0)
-      PatternMatching::MatchAndReplace(ref, KCos(KA), KTrig(KA, 0_e)) ||
+      PatternMatching::MatchAndReplace(e, KCos(KA), KTrig(KA, 0_e)) ||
       // sin(A) -> trig(A, 1)
-      PatternMatching::MatchAndReplace(ref, KSin(KA), KTrig(KA, 1_e)) ||
+      PatternMatching::MatchAndReplace(e, KSin(KA), KTrig(KA, 1_e)) ||
       // tan(A) -> tanRad(A, 1)
-      PatternMatching::MatchAndReplace(ref, KTan(KA), KTanRad(KA)) ||
+      PatternMatching::MatchAndReplace(e, KTan(KA), KTanRad(KA)) ||
       // log(A) -> ln(A) * ln(10)^(-1)
       // TODO: Maybe log(A) -> log(A, 10) and rely on next matchAndReplace
-      PatternMatching::MatchAndReplace(ref, KLog(KA),
+      PatternMatching::MatchAndReplace(e, KLog(KA),
                                        KMult(KLn(KA), KPow(KLn(10_e), -1_e))) ||
       // log(A, B) -> ln(A) * ln(B)^(-1)
-      PatternMatching::MatchAndReplace(ref, KLogarithm(KA, KB),
+      PatternMatching::MatchAndReplace(e, KLogarithm(KA, KB),
                                        KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
       // Cot(A) -> cos(A)/sin(A) (Avoid tan to for dependencies)
-      PatternMatching::MatchAndReplace(ref, KCot(KA),
+      PatternMatching::MatchAndReplace(e, KCot(KA),
                                        KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
       /* ArcCot(A) -> { π/2 if A is 0, atan(1/A) otherwise } using acos(0)
        * instead of π/2 to handle angle unit */
       PatternMatching::MatchAndReplace(
-          ref, KArcCot(KA),
+          e, KArcCot(KA),
           KPiecewise(KACos(0_e), KEqual(KA, 0_e), KATan(KPow(KA, -1_e)))) ||
       // Cosh(A) -> (exp(A)+exp(-A))*1/2
       PatternMatching::MatchAndReplace(
-          ref, KCosh(KA),
-          KMult(KHalf, KAdd(KExp(KA), KExp(KMult(-1_e, KA))))) ||
+          e, KCosh(KA), KMult(KHalf, KAdd(KExp(KA), KExp(KMult(-1_e, KA))))) ||
       // Sinh(A) -> (exp(A)-exp(-A))*1/2
       PatternMatching::MatchAndReplace(
-          ref, KSinh(KA),
+          e, KSinh(KA),
           KMult(KHalf, KAdd(KExp(KA), KMult(-1_e, KExp(KMult(-1_e, KA)))))) ||
       // Tanh(A) -> (exp(2A)-1)/(exp(2A)+1)
       PatternMatching::MatchAndReplace(
-          ref, KTanh(KA),
+          e, KTanh(KA),
           KMult(KAdd(KExp(KMult(2_e, KA)), -1_e),
                 KPow(KAdd(KExp(KMult(2_e, KA)), 1_e), -1_e))) ||
       // ArTanh(A) -> (ln(1+A)-ln(1-A))*1/2
       PatternMatching::MatchAndReplace(
-          ref, KArTanh(KA),
+          e, KArTanh(KA),
           KMult(KHalf, KAdd(KLn(KAdd(1_e, KA)),
                             KMult(-1_e, KLn(KAdd(1_e, KMult(-1_e, KA))))))) ||
       // A nor B -> not (A or B)
-      PatternMatching::MatchAndReplace(ref, KLogicalNor(KA, KB),
+      PatternMatching::MatchAndReplace(e, KLogicalNor(KA, KB),
                                        KLogicalNot(KLogicalOr(KA, KB))) ||
       // A nand B -> not (A and B)
-      PatternMatching::MatchAndReplace(ref, KLogicalNand(KA, KB),
+      PatternMatching::MatchAndReplace(e, KLogicalNand(KA, KB),
                                        KLogicalNot(KLogicalAnd(KA, KB))) ||
       changed;
 }

@@ -255,20 +255,20 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
   return false;
 }
 
-bool Beautification::ShallowBeautifyPercent(Tree* ref) {
+bool Beautification::ShallowBeautifyPercent(Tree* e) {
   // A% -> A / 100
-  if (PatternMatching::MatchAndReplace(ref, KPercentSimple(KA),
+  if (PatternMatching::MatchAndReplace(e, KPercentSimple(KA),
                                        KDiv(KA, 100_e))) {
     return true;
   }
   // TODO PCJ PercentAddition had a deepBeautify to preserve addition order
   PatternMatching::Context ctx;
-  if (!PatternMatching::Match(KPercentAddition(KA, KB), ref, &ctx)) {
+  if (!PatternMatching::Match(KPercentAddition(KA, KB), e, &ctx)) {
     return false;
   }
   // A + B% -> A * (1 + B / 100)
   return PatternMatching::MatchAndReplace(
-      ref, KPercentAddition(KA, KB), KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));
+      e, KPercentAddition(KA, KB), KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));
 }
 
 bool Beautification::DeepBeautify(Tree* expr,
@@ -286,12 +286,12 @@ bool Beautification::DeepBeautify(Tree* expr,
 }
 
 // Reverse most system projections to display better expressions
-bool Beautification::ShallowBeautify(Tree* ref, void* context) {
+bool Beautification::ShallowBeautify(Tree* e, void* context) {
   bool changed = false;
-  if (ref->isAddition()) {
-    NAry::Sort(ref, Comparison::Order::AdditionBeautification);
-  } else if (ref->isFactor()) {
-    if (Arithmetic::BeautifyFactor(ref)) {
+  if (e->isAddition()) {
+    NAry::Sort(e, Comparison::Order::AdditionBeautification);
+  } else if (e->isFactor()) {
+    if (Arithmetic::BeautifyFactor(e)) {
       return true;
     }
   }
@@ -308,51 +308,50 @@ bool Beautification::ShallowBeautify(Tree* ref, void* context) {
                 KMult(KA_s, KLogarithm(KC, KB), KD_s));
 #endif
 
-  if (PatternMatching::MatchAndReplace(ref, KMult(-1_e, KA_p),
+  if (PatternMatching::MatchAndReplace(e, KMult(-1_e, KA_p),
                                        KOpposite(KMult(KA_p)))) {
     return true;
   }
 
   // Turn multiplications with negative powers into divisions
-  if (ref->isMultiplication() || ref->isPower() ||
-      Number::IsStrictRational(ref)) {
-    if (BeautifyIntoDivision(ref)) {
+  if (e->isMultiplication() || e->isPower() || Number::IsStrictRational(e)) {
+    if (BeautifyIntoDivision(e)) {
       return true;
     }
   }
 
-  if (ref->isOfType({Type::Multiplication, Type::GCD, Type::LCM}) &&
-      NAry::Sort(ref, Comparison::Order::Beautification)) {
+  if (e->isOfType({Type::Multiplication, Type::GCD, Type::LCM}) &&
+      NAry::Sort(e, Comparison::Order::Beautification)) {
     return true;
   }
 
   // PowerReal(A,B) -> A^B
   // PowerMatrix(A,B) -> A^B
   // exp(A? * ln(B) * C?) -> B^(A*C)
-  if (PatternMatching::MatchAndReplace(ref, KPowMatrix(KA, KB), KPow(KA, KB)) ||
-      PatternMatching::MatchAndReplace(ref, KPowReal(KA, KB), KPow(KA, KB)) ||
-      PatternMatching::MatchAndReplace(ref, KExp(KMult(KA_s, KLn(KB), KC_s)),
+  if (PatternMatching::MatchAndReplace(e, KPowMatrix(KA, KB), KPow(KA, KB)) ||
+      PatternMatching::MatchAndReplace(e, KPowReal(KA, KB), KPow(KA, KB)) ||
+      PatternMatching::MatchAndReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
                                        KPow(KB, KMult(KA_s, KC_s)))) {
     // A^0.5 -> Sqrt(A)
-    PatternMatching::MatchAndReplace(ref, KPow(KA, KHalf), KSqrt(KA));
+    PatternMatching::MatchAndReplace(e, KPow(KA, KHalf), KSqrt(KA));
     return true;
   }
   return
       // lnReal(x) -> ln(x)
-      PatternMatching::MatchAndReplace(ref, KLnReal(KA), KLn(KA)) ||
+      PatternMatching::MatchAndReplace(e, KLnReal(KA), KLn(KA)) ||
       // exp(1) -> e
-      PatternMatching::MatchAndReplace(ref, KExp(1_e), e_e) ||
+      PatternMatching::MatchAndReplace(e, KExp(1_e), e_e) ||
       // exp(A) -> e^A
-      PatternMatching::MatchAndReplace(ref, KExp(KA), KPow(e_e, KA)) ||
+      PatternMatching::MatchAndReplace(e, KExp(KA), KPow(e_e, KA)) ||
       // -floor(-A) -> ceil(A)
       PatternMatching::MatchAndReplace(
-          ref, KMult(-1_e, KA_s, KFloor(KMult(-1_e, KB)), KC_s),
+          e, KMult(-1_e, KA_s, KFloor(KMult(-1_e, KB)), KC_s),
           KMult(KA_s, KCeil(KB), KC_s)) ||
       // A - floor(A) -> frac(A)
       PatternMatching::MatchAndReplace(
-          ref, KAdd(KA_s, KB, KC_s, KMult(-1_e, KFloor(KB)), KD_s),
+          e, KAdd(KA_s, KB, KC_s, KMult(-1_e, KFloor(KB)), KD_s),
           KAdd(KA_s, KC_s, KFrac(KB), KD_s)) ||
-      ShallowBeautifyPercent(ref) || changed;
+      ShallowBeautifyPercent(e) || changed;
 }
 
 template <typename T>

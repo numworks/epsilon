@@ -22,7 +22,7 @@ class Rational final {
     return PoincareJ::Sign(s == StrictSign::Null, s == StrictSign::Positive,
                            s == StrictSign::Negative, !node->isInteger());
   }
-  static bool SetSign(Tree* reference, NonStrictSign sign);
+  static bool SetSign(Tree* e, NonStrictSign sign);
 
   static Tree* Addition(const Tree* i, const Tree* j);
   static Tree* Multiplication(const Tree* i, const Tree* j);

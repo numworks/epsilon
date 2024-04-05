@@ -23,7 +23,7 @@ class Projection {
  public:
   static ProjectionContext ContextFromSettings();
   static bool DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx);
-  static bool DeepSystemProject(Tree* reference, ProjectionContext ctx = {});
+  static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {});
   EDITION_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
 
   /* Some projections are performed during advanced reduction instead so the
@@ -31,8 +31,8 @@ class Projection {
   static bool Expand(Tree* tree);
 
  private:
-  static bool ShallowReplaceUserNamed(Tree* reference, void* ctx);
-  static bool ShallowSystemProject(Tree* reference, void* ctx);
+  static bool ShallowReplaceUserNamed(Tree* e, void* ctx);
+  static bool ShallowSystemProject(Tree* e, void* ctx);
 };
 
 }  // namespace PoincareJ

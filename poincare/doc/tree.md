@@ -225,11 +225,32 @@ Some litterals are also available to write numbers is a readable way :
 const Tree * immutableExpression = KExp(KMult(2_e, i_e, π_e));
 ```
 
+You may construct large KTrees or factorize their construction using a constexpr :
+
+```cpp
+constexpr KTree twoPi = KMult(2_e, π_e);
+
+...
+  KAdd(KCos(twoPi), KSin(twoPi))->clone();
+```
+
+mind that the twoPi will appear twice in the flash in this case.
+
+
+KTrees are implemented with templates and each different tree has a different
+type so you cannot build an array of them or declare a function that takes a
+KTree for instance. However you can define a template that only accept KTrees
+using the concept that gathers them all like this :
+
+```cpp
+template <TreeConcept T> f(T ktree) { ... }
+```
+
 <details>
 <summary>Note</summary>
 
 While the construction of the KTree is constexpr, the cast to a `const Tree *`
-is not. This means you may write :
+is not (yet). This means you may write :
 
 `constexpr KTree k = 2_e`;
 
@@ -240,6 +261,10 @@ but not
 It practice it does not change anything at runtime since the compiler optimizes
 the cast away in both cases but we might fix it at some point since `KTree`
 cannot be put in an constexpr array for instance.
+
+Alternatively you can use the constexpr cast to Block * and then obtain a Tree *
+from it at runtime with Tree::FromBlock if you want to use a constexpr array for
+instance.
 
 </details>
 

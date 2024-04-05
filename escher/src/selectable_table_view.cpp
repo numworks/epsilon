@@ -26,6 +26,7 @@ HighlightCell* SelectableTableView::selectedCell() {
 
 int SelectableTableView::maxIndexInDirection(int col, int row,
                                              OMG::Direction direction) {
+  assert(numberOfRowsAtColumn(col) <= totalNumberOfRows());
   int numberOfIndexes = direction.isVertical() ? numberOfRowsAtColumn(col)
                                                : totalNumberOfColumns();
   return numberOfIndexes - 1;
@@ -72,6 +73,7 @@ void SelectableTableView::nextSelectableCellInDirection(
   bool searchForRow = direction.isVertical();
   assert((searchForRow && *col < totalNumberOfColumns() && *col >= 0) ||
          (!searchForRow && *row < numberOfRowsAtColumn(*col) && *row >= 0));
+  assert(numberOfRowsAtColumn(*col) <= totalNumberOfRows());
   assert(delta > 0);
 
   int index = searchForRow ? *row : *col;
@@ -162,6 +164,7 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
 
 bool SelectableTableView::selectCellAtClippedLocation(
     int col, int row, bool setFirstResponder, bool withinTemporarySelection) {
+  assert(numberOfRowsAtColumn(col) <= totalNumberOfRows());
   col = std::clamp(col, 0, totalNumberOfColumns() - 1);
   row = std::clamp(row, 0, numberOfRowsAtColumn(col) - 1);
   if (row == selectedRow() && col == selectedColumn()) {

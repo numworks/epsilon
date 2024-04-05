@@ -1,6 +1,6 @@
+#include <poincare/pool.h>
 #include <poincare/tree_handle.h>
 #include <poincare/tree_node.h>
-#include <poincare/tree_pool.h>
 
 namespace Poincare {
 

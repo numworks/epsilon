@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <poincare/checkpoint.h>
+#include <poincare/pool.h>
 #include <poincare/tree_node.h>
-#include <poincare/tree_pool.h>
 
 namespace Poincare {
 

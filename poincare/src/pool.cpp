@@ -1,8 +1,8 @@
 #include <poincare/checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/helpers.h>
+#include <poincare/pool.h>
 #include <poincare/tree_handle.h>
-#include <poincare/tree_pool.h>
 #include <stdint.h>
 #include <string.h>
 

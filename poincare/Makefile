@@ -179,7 +179,7 @@ poincare_src += $(addprefix poincare/src/,\
   tangent.cpp \
   tree_handle.cpp \
   tree_node.cpp \
-  tree_pool.cpp \
+  pool.cpp \
   trigonometry.cpp \
   trigonometry_cheat_table.cpp \
   undefined.cpp \
@@ -218,7 +218,7 @@ poincare_bench_src = $(addprefix poincare/src/,\
   serialization_helper.cpp \
   tree_handle.cpp \
   tree_node.cpp \
-  tree_pool.cpp \
+  pool.cpp \
 )
 
 ifeq ($(DEBUG),1)

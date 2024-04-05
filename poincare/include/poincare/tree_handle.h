@@ -1,7 +1,7 @@
 #ifndef POINCARE_TREE_HANDLE_H
 #define POINCARE_TREE_HANDLE_H
 
-#include <poincare/tree_pool.h>
+#include <poincare/pool.h>
 
 #include <initializer_list>
 

@@ -1,6 +1,6 @@
 #include <escher/app.h>
 #include <escher/window.h>
-#include <poincare/tree_pool.h>
+#include <poincare/pool.h>
 extern "C" {
 #include <assert.h>
 }

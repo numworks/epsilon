@@ -21,8 +21,7 @@ namespace Shared {
 
 class ValuesController : public EditableCellTableViewController,
                          public Escher::ButtonRowDelegate,
-                         public Escher::AlternateEmptyViewDelegate,
-                         public Escher::SelectableTableViewDelegate {
+                         public Escher::AlternateEmptyViewDelegate {
  public:
   ValuesController(Escher::Responder* parentResponder,
                    Escher::ButtonRowController* header);
@@ -55,13 +54,6 @@ class ValuesController : public EditableCellTableViewController,
 
   // AlternateEmptyViewDelegate
   Escher::Responder* responderWhenEmpty() override;
-
-  // SelectableTableViewDelegate
-  int numberOfRowsAtColumn(const Escher::SelectableTableView* t,
-                           int column) override {
-    assert(t == &m_selectableTableView);
-    return numberOfRowsAtColumn(column);
-  }
 
   virtual IntervalParameterController* intervalParameterController() = 0;
   void initializeInterval();
@@ -148,7 +140,6 @@ class ValuesController : public EditableCellTableViewController,
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;
   };
-  int numberOfRowsAtColumn(int column) const;
 
   /* Function evaluation memoization
    * The following 4 methods convert coordinate from the absolute table to the

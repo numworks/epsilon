@@ -3,21 +3,20 @@
 ## General view
 
 From a parsed user input expression, the simplification algorithm does:
-1. Ensure the expression has a valid dimension (units, matrices, lists ...)
-2. Adjust the approximation strategy if the expression's dimension requires it (units)
-3. Seed the random nodes
-4. Project the expression, approximate depending on the strategy
-5. Replace all user symbols with variables
-6. Apply systematic reduction
-7. Bubble up lists, applying systematic reduction
-8. Apply advanced reduction
-9. Simplify Dependencies
-10. Approximate again, depending on the strategy
-11. Beautify expression
-12. Replace User symbols and functions stored in context and start over at step 1.
+- [Ensure the expression has a valid dimension](#dimension-check)
+- [Adjust the approximation strategy if the expression's dimension requires it (units)](#approximation-strategy)
+- [Seed the random nodes](#random-nodes-seeding)
+- [Project the expression, approximate depending on the strategy](#projection)
+- [Replace all user symbols with variables](#user-symbols)
+- [Apply systematic reduction](#systematic-reduction)
+- [Bubble up lists, applying systematic reduction](#list-operators)
+- [Apply advanced reduction](#advanced-Reduction)
+- [Simplify Dependencies](#simplify-dependencies)
+- [Approximate again, depending on the strategy](#final-approximation)
+- [Beautify expression](#beautification)
+- [Replace User symbols and functions stored in context and start over at step 1.](#)
 
-## 1 - Dimension check
-
+## Dimension check
 
 Dimension covers units, matrix size, and list size (handled in a different functions in a similar way).
 
@@ -25,7 +24,7 @@ This is done first here so that all following steps can assume the dimension is 
 
 Some issues such as Unreal, division by zero or other undefinitions can still arise later.
 
-## 2 - Approximation strategy
+## Approximation strategy
 
 The simplification algorithm handle three simplification strategies :
  - `Default`: Default strategy.
@@ -51,7 +50,7 @@ Before projection (that could reduce approximation precision) and random nodes s
 For example:
 $$ln(cos(x))^{ln(cos(1))} = ln(cos(x))^{-0.615626}$$
 
-## 3 - Random nodes seeding
+## Random nodes seeding
 
 Since the next steps may duplicate parts of the expression, we need to seed each random node. a duplicated random node should evaluate to the same random number.
 
@@ -60,7 +59,7 @@ $$sinh(random())=\frac{e^{random()}-e^{-random()}}{2}$$
 
 Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
 
-## 4 - Projection
+## Projection
 
 It's expected to:
 - Reduce the number of equivalent representations of an expression (Div(A,B) -> Mult(A, Pow(B, -1)))
@@ -111,7 +110,7 @@ It's expected to:
 
 </details>
 
-## 5 - User symbols
+## User symbols
 
 We list all global user symbols, sorted in the alphabetical order.
 
@@ -132,7 +131,7 @@ When nested inside a parametered expression, all indexes are incremented.
 
 This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope`.
 
-## 6 - Systematic reduction
+## Systematic reduction
 
 It's expected to:
 - Be efficient and simple
@@ -256,11 +255,11 @@ It's expected to:
 
 </details>
 
-## 7 - List operators
+## List operators
 
 TO COMPLETE
 
-## 9 - Advanced Reduction
+## Advanced Reduction
 
 It's expected to:
 - Reduce any reducible expression if given enough ressources
@@ -412,15 +411,15 @@ graph TD;
 
 </details>
 
-## 9 - Simplify dependencies
+## Simplify dependencies
 
 TO COMPLETE
 
-## 10 - Final approximation
+## Final approximation
 
 With an approximation strategy, we approximate again here in case previous steps unlocked new possible approximations.
 
-## 11 - Beautification
+## Beautification
 
 This step basically undo early steps and projections in the following order :
 

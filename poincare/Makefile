@@ -178,7 +178,7 @@ poincare_src += $(addprefix poincare/src/,\
   symbol_abstract.cpp \
   tangent.cpp \
   tree_handle.cpp \
-  tree_node.cpp \
+  pool_object.cpp \
   pool.cpp \
   trigonometry.cpp \
   trigonometry_cheat_table.cpp \
@@ -217,7 +217,7 @@ poincare_bench_src = $(addprefix poincare/src/,\
   print_int.cpp \
   serialization_helper.cpp \
   tree_handle.cpp \
-  tree_node.cpp \
+  pool_object.cpp \
   pool.cpp \
 )
 

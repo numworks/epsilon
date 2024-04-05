@@ -1,7 +1,7 @@
 #ifndef POINCARE_GHOST_NODE_H
 #define POINCARE_GHOST_NODE_H
 
-#include "tree_node.h"
+#include "pool_object.h"
 
 namespace Poincare {
 

@@ -5,7 +5,7 @@
 #include <poincare/context.h>
 #include <poincare/evaluation.h>
 #include <poincare/layout.h>
-#include <poincare/tree_node.h>
+#include <poincare/pool_object.h>
 #include <poincare/trinary_boolean.h>
 #include <stdint.h>
 

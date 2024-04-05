@@ -7,7 +7,7 @@
 
 #include <new>
 
-#include "tree_node.h"
+#include "pool_object.h"
 #if POINCARE_TREE_LOG
 #include <iostream>
 #endif

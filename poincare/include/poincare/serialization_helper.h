@@ -2,7 +2,7 @@
 #define POINCARE_SERIALIZATION_HELPER_H
 
 #include <ion/unicode/code_point.h>
-#include <poincare/tree_node.h>
+#include <poincare/pool_object.h>
 
 namespace Poincare {
 

@@ -253,7 +253,7 @@ Rational Rational::Builder(const native_uint_t *i, uint8_t numeratorSize,
                            const native_uint_t *j, uint8_t denominatorSize,
                            bool negative) {
   void *bufferNode =
-      TreePool::sharedPool->alloc(RationalSize(numeratorSize, denominatorSize));
+      Pool::sharedPool->alloc(RationalSize(numeratorSize, denominatorSize));
   RationalNode *node = new (bufferNode)
       RationalNode(i, numeratorSize, j, denominatorSize, negative);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

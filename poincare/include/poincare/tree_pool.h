@@ -16,13 +16,13 @@ namespace Poincare {
 
 class TreeHandle;
 
-class TreePool final {
+class Pool final {
   friend class TreeNode;
   friend class TreeHandle;
   friend class Checkpoint;
 
  public:
-  static OMG::GlobalBox<TreePool> sharedPool
+  static OMG::GlobalBox<Pool> sharedPool
 #if PLATFORM_DEVICE
       __attribute__((section(".bss.$poincare_pool")))
 #endif
@@ -38,7 +38,7 @@ class TreePool final {
 #endif
   }
 
-  TreePool() : m_cursor(buffer()) {}
+  Pool() : m_cursor(buffer()) {}
 
   TreeNode *cursor() const { return reinterpret_cast<TreeNode *>(m_cursor); }
 
@@ -117,7 +117,7 @@ class TreePool final {
       }
     };
     Iterator begin() const { return Iterator(m_node); }
-    Iterator end() const { return Iterator(TreePool::sharedPool->last()); }
+    Iterator end() const { return Iterator(Pool::sharedPool->last()); }
 
    private:
     TreeNode *m_node;
@@ -136,7 +136,7 @@ class TreePool final {
       }
     };
     Iterator begin() const { return Iterator(m_node); }
-    Iterator end() const { return Iterator(TreePool::sharedPool->last()); }
+    Iterator end() const { return Iterator(Pool::sharedPool->last()); }
 
    private:
     TreeNode *m_node;

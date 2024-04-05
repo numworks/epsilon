@@ -14,8 +14,7 @@ OExpression PointEvaluationNode<T>::complexToExpression(
 
 template <typename T>
 PointEvaluation<T> PointEvaluation<T>::Builder(T x, T y) {
-  void *bufferNode =
-      TreePool::sharedPool->alloc(sizeof(PointEvaluationNode<T>));
+  void *bufferNode = Pool::sharedPool->alloc(sizeof(PointEvaluationNode<T>));
   PointEvaluationNode<T> *node = new (bufferNode) PointEvaluationNode<T>(x, y);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<PointEvaluation<T> &>(h);

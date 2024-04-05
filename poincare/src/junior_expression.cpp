@@ -200,7 +200,7 @@ JuniorExpression JuniorExpression::Builder(const PoincareJ::Tree* tree) {
   }
   size_t size = tree->treeSize();
   void* bufferNode =
-      TreePool::sharedPool->alloc(sizeof(JuniorExpressionNode) + size);
+      Pool::sharedPool->alloc(sizeof(JuniorExpressionNode) + size);
   JuniorExpressionNode* node =
       new (bufferNode) JuniorExpressionNode(tree, size);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

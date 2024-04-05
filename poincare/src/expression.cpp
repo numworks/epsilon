@@ -79,7 +79,7 @@ OExpression OExpression::ExpressionFromAddress(const void *address,
   }
   // Build the OExpression in the Tree Pool
   return OExpression(static_cast<ExpressionNode *>(
-      TreePool::sharedPool->copyTreeFromAddress(address, size)));
+      Pool::sharedPool->copyTreeFromAddress(address, size)));
 }
 
 /* Hierarchy */
@@ -1421,7 +1421,7 @@ OExpression OExpression::cloneAndDeepReduceWithSystemCheckpoint(
   *reduceFailure = false;
   OExpression e;
   {
-    TreeNode *treePoolCursor = TreePool::sharedPool->cursor();
+    TreeNode *treePoolCursor = Pool::sharedPool->cursor();
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
       OExpression reduced = clone().deepReduce(*reductionContext);

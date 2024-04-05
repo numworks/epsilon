@@ -247,8 +247,7 @@ void VerticalOffsetLayoutNode::render(KDContext *ctx, KDPoint p,
 VerticalOffsetLayout VerticalOffsetLayout::Builder(
     OLayout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition,
     VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition) {
-  void *bufferNode =
-      TreePool::sharedPool->alloc(sizeof(VerticalOffsetLayoutNode));
+  void *bufferNode = Pool::sharedPool->alloc(sizeof(VerticalOffsetLayoutNode));
   VerticalOffsetLayoutNode *node = new (bufferNode)
       VerticalOffsetLayoutNode(verticalPosition, horizontalPosition);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

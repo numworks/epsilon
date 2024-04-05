@@ -113,7 +113,7 @@ bool CodePointLayoutNode::protectedIsIdenticalTo(OLayout l) {
 }
 
 CodePointLayout CodePointLayout::Builder(CodePoint c) {
-  void *bufferNode = TreePool::sharedPool->alloc(sizeof(CodePointLayoutNode));
+  void *bufferNode = Pool::sharedPool->alloc(sizeof(CodePointLayoutNode));
   CodePointLayoutNode *node = new (bufferNode) CodePointLayoutNode(c);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<CodePointLayout &>(h);

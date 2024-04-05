@@ -9,12 +9,12 @@
 namespace Poincare {
 
 #if ASSERTIONS
-bool TreePool::s_treePoolLocked = false;
+bool Pool::s_treePoolLocked = false;
 #endif
 
-OMG::GlobalBox<TreePool> TreePool::sharedPool;
+OMG::GlobalBox<Pool> Pool::sharedPool;
 
-void TreePool::freeIdentifier(uint16_t identifier) {
+void Pool::freeIdentifier(uint16_t identifier) {
   if (TreeNode::IsValidIdentifier(identifier) &&
       identifier < MaxNumberOfNodes) {
     m_nodeForIdentifierOffset[identifier] = UINT16_MAX;
@@ -22,19 +22,19 @@ void TreePool::freeIdentifier(uint16_t identifier) {
   }
 }
 
-void TreePool::move(TreeNode *destination, TreeNode *source,
-                    int realNumberOfSourceChildren) {
+void Pool::move(TreeNode *destination, TreeNode *source,
+                int realNumberOfSourceChildren) {
   size_t moveSize = source->deepSize(realNumberOfSourceChildren);
   moveNodes(destination, source, moveSize);
 }
 
-void TreePool::moveChildren(TreeNode *destination, TreeNode *sourceParent) {
+void Pool::moveChildren(TreeNode *destination, TreeNode *sourceParent) {
   size_t moveSize = sourceParent->deepSize(-1) -
                     Helpers::AlignedSize(sourceParent->size(), ByteAlignment);
   moveNodes(destination, sourceParent->next(), moveSize);
 }
 
-void TreePool::removeChildren(TreeNode *node, int nodeNumberOfChildren) {
+void Pool::removeChildren(TreeNode *node, int nodeNumberOfChildren) {
   for (int i = 0; i < nodeNumberOfChildren; i++) {
     TreeNode *child = node->childAtIndex(0);
     int childNumberOfChildren = child->numberOfChildren();
@@ -49,12 +49,12 @@ void TreePool::removeChildren(TreeNode *node, int nodeNumberOfChildren) {
   node->eraseNumberOfChildren();
 }
 
-TreeNode *TreePool::deepCopy(TreeNode *node) {
+TreeNode *Pool::deepCopy(TreeNode *node) {
   size_t size = node->deepSize(-1);
   return copyTreeFromAddress(static_cast<void *>(node), size);
 }
 
-TreeNode *TreePool::copyTreeFromAddress(const void *address, size_t size) {
+TreeNode *Pool::copyTreeFromAddress(const void *address, size_t size) {
   void *ptr = alloc(size);
   memcpy(ptr, address, size);
   TreeNode *copy = reinterpret_cast<TreeNode *>(ptr);
@@ -66,14 +66,13 @@ TreeNode *TreePool::copyTreeFromAddress(const void *address, size_t size) {
   return copy;
 }
 
-void TreePool::removeChildrenAndDestroy(TreeNode *nodeToDestroy,
-                                        int nodeNumberOfChildren) {
+void Pool::removeChildrenAndDestroy(TreeNode *nodeToDestroy,
+                                    int nodeNumberOfChildren) {
   removeChildren(nodeToDestroy, nodeNumberOfChildren);
   discardTreeNode(nodeToDestroy);
 }
 
-void TreePool::moveNodes(TreeNode *destination, TreeNode *source,
-                         size_t moveSize) {
+void Pool::moveNodes(TreeNode *destination, TreeNode *source, size_t moveSize) {
   assert(destination->isAfterTopmostCheckpoint());
   assert(source->isAfterTopmostCheckpoint());
   assert(moveSize % 4 == 0);
@@ -94,30 +93,30 @@ void TreePool::moveNodes(TreeNode *destination, TreeNode *source,
 }
 
 #if POINCARE_TREE_LOG
-void TreePool::flatLog(std::ostream &stream) {
+void Pool::flatLog(std::ostream &stream) {
   size_t size = static_cast<char *>(m_cursor) - static_cast<char *>(buffer());
-  stream << "<TreePool format=\"flat\" size=\"" << size << "\">";
+  stream << "<Pool format=\"flat\" size=\"" << size << "\">";
   for (TreeNode *node : allNodes()) {
     node->log(stream, false);
   }
-  stream << "</TreePool>";
+  stream << "</Pool>";
   stream << std::endl;
 }
 
-void TreePool::treeLog(std::ostream &stream, bool verbose) {
-  stream << "<TreePool format=\"tree\" size=\"" << (int)(m_cursor - buffer())
+void Pool::treeLog(std::ostream &stream, bool verbose) {
+  stream << "<Pool format=\"tree\" size=\"" << (int)(m_cursor - buffer())
          << "\">";
   for (TreeNode *node : roots()) {
     node->log(stream, true, 1, verbose);
   }
   stream << std::endl;
-  stream << "</TreePool>";
+  stream << "</Pool>";
   stream << std::endl;
 }
 
 #endif
 
-int TreePool::numberOfNodes() const {
+int Pool::numberOfNodes() const {
   int count = 0;
   TreeNode *firstNode = first();
   TreeNode *lastNode = last();
@@ -128,7 +127,7 @@ int TreePool::numberOfNodes() const {
   return count;
 }
 
-void *TreePool::alloc(size_t size) {
+void *Pool::alloc(size_t size) {
   assert(last()->isAfterTopmostCheckpoint());
 #if ASSERTIONS
   assert(!s_treePoolLocked);
@@ -143,7 +142,7 @@ void *TreePool::alloc(size_t size) {
   return result;
 }
 
-void TreePool::dealloc(TreeNode *node, size_t size) {
+void Pool::dealloc(TreeNode *node, size_t size) {
   assert(node->isAfterTopmostCheckpoint());
 #if ASSERTIONS
   assert(!s_treePoolLocked);
@@ -161,7 +160,7 @@ void TreePool::dealloc(TreeNode *node, size_t size) {
   updateNodeForIdentifierFromNode(node);
 }
 
-void TreePool::discardTreeNode(TreeNode *node) {
+void Pool::discardTreeNode(TreeNode *node) {
   uint16_t nodeIdentifier = node->identifier();
   size_t size = node->size();
   node->~TreeNode();
@@ -169,7 +168,7 @@ void TreePool::discardTreeNode(TreeNode *node) {
   freeIdentifier(nodeIdentifier);
 }
 
-void TreePool::registerNode(TreeNode *node) {
+void Pool::registerNode(TreeNode *node) {
   uint16_t nodeID = node->identifier();
   assert(nodeID < MaxNumberOfNodes);
   const int nodeOffset =
@@ -179,27 +178,27 @@ void TreePool::registerNode(TreeNode *node) {
   m_nodeForIdentifierOffset[nodeID] = nodeOffset;
 }
 
-void TreePool::updateNodeForIdentifierFromNode(TreeNode *node) {
+void Pool::updateNodeForIdentifierFromNode(TreeNode *node) {
   for (TreeNode *n : Nodes(node)) {
     registerNode(n);
   }
 }
 
 // Reset IdentifierStack, make all identifiers available
-void TreePool::IdentifierStack::reset() {
+void Pool::IdentifierStack::reset() {
   for (uint16_t i = 0; i < MaxNumberOfNodes; i++) {
     m_availableIdentifiers[i] = i;
   }
   m_currentIndex = MaxNumberOfNodes;
 }
 
-void TreePool::IdentifierStack::push(uint16_t i) {
+void Pool::IdentifierStack::push(uint16_t i) {
   assert(TreeNode::IsValidIdentifier(m_currentIndex) &&
          m_currentIndex < MaxNumberOfNodes);
   m_availableIdentifiers[m_currentIndex++] = i;
 }
 
-uint16_t TreePool::IdentifierStack::pop() {
+uint16_t Pool::IdentifierStack::pop() {
   if (m_currentIndex == 0) {
     assert(false);
     return 0;
@@ -209,7 +208,7 @@ uint16_t TreePool::IdentifierStack::pop() {
 }
 
 // Remove an available identifier.
-void TreePool::IdentifierStack::remove(uint16_t j) {
+void Pool::IdentifierStack::remove(uint16_t j) {
   assert(TreeNode::IsValidIdentifier(j));
   /* TODO : Implement an optimized binary search using the sorted state.
    * Alternatively, it may be worth using another data type such as a sorted
@@ -224,7 +223,7 @@ void TreePool::IdentifierStack::remove(uint16_t j) {
 }
 
 // Reset m_nodeForIdentifierOffset for all available identifiers
-void TreePool::IdentifierStack::resetNodeForIdentifierOffsets(
+void Pool::IdentifierStack::resetNodeForIdentifierOffsets(
     uint16_t *nodeForIdentifierOffset) const {
   for (uint16_t i = 0; i < m_currentIndex; i++) {
     nodeForIdentifierOffset[m_availableIdentifiers[i]] = UINT16_MAX;
@@ -232,7 +231,7 @@ void TreePool::IdentifierStack::resetNodeForIdentifierOffsets(
 }
 
 // Discard all nodes after firstNodeToDiscard
-void TreePool::freePoolFromNode(TreeNode *firstNodeToDiscard) {
+void Pool::freePoolFromNode(TreeNode *firstNodeToDiscard) {
   assert(firstNodeToDiscard != nullptr);
   assert(firstNodeToDiscard >= first());
   assert(firstNodeToDiscard <= last());

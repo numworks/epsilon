@@ -37,7 +37,7 @@ size_t FloatNode<T>::serialize(char *buffer, size_t bufferSize,
 
 template <typename T>
 Float<T> Float<T>::Builder(T value) {
-  void *bufferNode = TreePool::sharedPool->alloc(sizeof(FloatNode<T>));
+  void *bufferNode = Pool::sharedPool->alloc(sizeof(FloatNode<T>));
   FloatNode<T> *node = new (bufferNode) FloatNode<T>(value);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Float &>(h);

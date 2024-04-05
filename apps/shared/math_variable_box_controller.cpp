@@ -44,7 +44,7 @@ void MathVariableBoxController::viewDidDisappear() {
    * viewDidDisappear. */
 
   /* Tidy the layouts displayed in the MathVariableBoxController to clean
-   * TreePool */
+   * Pool */
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].label()->setLayout(Layout());
     m_leafCells[i].subLabel()->setLayout(Layout());

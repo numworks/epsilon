@@ -93,7 +93,7 @@ BasedInteger BasedInteger::Builder(const char *digits, size_t length,
 
 BasedInteger BasedInteger::Builder(const Integer &m, OMG::Base base) {
   void *bufferNode =
-      TreePool::sharedPool->alloc(BasedIntegerSize(m.numberOfDigits()));
+      Pool::sharedPool->alloc(BasedIntegerSize(m.numberOfDigits()));
   BasedIntegerNode *node =
       new (bufferNode) BasedIntegerNode(m.digits(), m.numberOfDigits(), base);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

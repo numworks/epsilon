@@ -18,7 +18,7 @@ class PairNode : public TreeNode {
 class PairByReference : public TreeHandle {
  public:
   static PairByReference Builder(TreeHandle t1, TreeHandle t2) {
-    void *bufferNode = TreePool::sharedPool->alloc(sizeof(PairNode));
+    void *bufferNode = Pool::sharedPool->alloc(sizeof(PairNode));
     PairNode *node = new (bufferNode) PairNode();
     TreeHandle children[2] = {t1, t2};
     TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

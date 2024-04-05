@@ -36,7 +36,7 @@ bool CombinedCodePointsLayoutNode::protectedIsIdenticalTo(OLayout l) {
 CombinedCodePointsLayout CombinedCodePointsLayout::Builder(
     CodePoint mainCodePoint, CodePoint CombinedCodePoints) {
   void *bufferNode =
-      TreePool::sharedPool->alloc(sizeof(CombinedCodePointsLayoutNode));
+      Pool::sharedPool->alloc(sizeof(CombinedCodePointsLayoutNode));
   CombinedCodePointsLayoutNode *node = new (bufferNode)
       CombinedCodePointsLayoutNode(mainCodePoint, CombinedCodePoints);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

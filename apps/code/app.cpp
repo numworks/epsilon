@@ -133,8 +133,8 @@ bool App::textInputDidReceiveEvent(EditableField *textInput,
 void App::initPythonWithUser(const void *pythonUser) {
   if (!m_pythonUser) {
     /* Tree pool will be used as an extension of the heap. */
-    assert(Poincare::TreePool::sharedPool->numberOfNodes() == 0);
-    Poincare::TreePool::sharedPool.deinit();
+    assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
+    Poincare::Pool::sharedPool.deinit();
 
     char *heap = pythonHeap();
     MicroPython::init(heap, heap + k_pythonHeapSize);
@@ -148,7 +148,7 @@ void App::deinitPython() {
     m_pythonUser = nullptr;
     /* Re-construct the tree pool, which might have been ovewritten by the heap.
      */
-    Poincare::TreePool::sharedPool.init();
+    Poincare::Pool::sharedPool.init();
   }
 }
 

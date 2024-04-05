@@ -34,7 +34,7 @@ bool InfinityNode::derivate(const ReductionContext& reductionContext,
 }
 
 Infinity Infinity::Builder(bool negative) {
-  void* bufferNode = TreePool::sharedPool->alloc(sizeof(InfinityNode));
+  void* bufferNode = Pool::sharedPool->alloc(sizeof(InfinityNode));
   InfinityNode* node = new (bufferNode) InfinityNode(negative);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Infinity&>(h);

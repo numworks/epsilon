@@ -13,7 +13,7 @@ namespace Poincare {
  */
 class TreeHandle {
   friend class TreeNode;
-  friend class TreePool;
+  friend class Pool;
 
  public:
   /* Constructors  */
@@ -189,7 +189,7 @@ class TreeHandle {
 
    private:
     static Node* NodePointerInPool(Node* node) {
-      return node < TreePool::sharedPool->cursor() ? node : nullptr;
+      return node < Pool::sharedPool->cursor() ? node : nullptr;
     }
 
     Handle m_handle;

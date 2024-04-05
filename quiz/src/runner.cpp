@@ -56,14 +56,14 @@ static inline void ion_main_inner(const char *testFilter) {
       quiz_print(buffer);
     }
     quiz_print(quiz_case_names[i]);
-    // TODO: clean when removing TreePool
-    int initialPoolSize = Poincare::TreePool::sharedPool->numberOfNodes();
+    // TODO: clean when removing Pool
+    int initialPoolSize = Poincare::Pool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == 0);
     reset_pool();
     quiz_reset_failure_ratio();
     c();
     quiz_print_failure_ratio();
-    int currentPoolSize = Poincare::TreePool::sharedPool->numberOfNodes();
+    int currentPoolSize = Poincare::Pool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == currentPoolSize);
     i++;
   }
@@ -116,7 +116,7 @@ void ion_main(int argc, const char *const argv[]) {
   } else {
     // There has been a memory allocation problem
 #if POINCARE_TREE_LOG
-    Poincare::TreePool::sharedPool->log();
+    Poincare::Pool::sharedPool->log();
 #endif
     quiz_assert(false);
   }

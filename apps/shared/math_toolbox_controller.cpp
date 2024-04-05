@@ -882,7 +882,7 @@ void MathToolboxController::viewDidDisappear() {
    * MathToolboxController layouts only after calling the parent's
    * viewDidDisappear. */
 
-  // Tidy the layouts displayed in the MathToolboxController to clean TreePool
+  // Tidy the layouts displayed in the MathToolboxController to clean Pool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].label()->setLayout(Layout());
   }

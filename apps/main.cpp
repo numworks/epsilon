@@ -36,7 +36,7 @@ void ion_main(int argc, const char* const argv[]) {
 #else
 
 void ion_main(int argc, const char *const argv[]) {
-  // Initialize Poincare::TreePool::sharedPool
+  // Initialize Poincare::Pool::sharedPool
   Poincare::Init();
   PoincareJ::Init();
   Escher::Init();

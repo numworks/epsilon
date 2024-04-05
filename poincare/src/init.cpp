@@ -6,7 +6,7 @@ namespace Poincare {
 
 void Init() {
   Preferences::Init();
-  TreePool::sharedPool.init();
+  Pool::sharedPool.init();
 }
 
 }  // namespace Poincare

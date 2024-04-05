@@ -7,7 +7,7 @@
 namespace Poincare {
 
 /* TODO: should we keep the size of SymbolAbstractNode as a member to speed up
- * TreePool scan? */
+ * Pool scan? */
 
 /* SymbolAbstract derived classes must have a char[0] member variable as their
  * last member variable, so they can access their name, which is the string that
@@ -16,7 +16,7 @@ namespace Poincare {
  * strlen(string).
  *
  * For instance:
- *   Seen by TreePool:    |SymbolNode                               |
+ *   Seen by Pool:    |SymbolNode                               |
  *   SymbolNode layout:   |ExpressionNode|m_name|                   |
  *   Memory content:      |ExpressionNode|S     |y|m|b|o|l|N|a|m|e|0|
  * */

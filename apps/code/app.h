@@ -92,14 +92,14 @@ class App : public Shared::SharedApp {
      * buffer if Code is not the largest app.
      * We must also make sure in the linker script that the pool is located
      * right after the Apps buffer. */
-    assert(static_cast<char *>(m_pythonHeap + k_pythonHeapSize) <=
-           static_cast<char *>(
-               static_cast<void *>(Poincare::TreePool::sharedPool)) +
-               sizeof(Poincare::TreePool));
+    assert(
+        static_cast<char *>(m_pythonHeap + k_pythonHeapSize) <=
+        static_cast<char *>(static_cast<void *>(Poincare::Pool::sharedPool)) +
+            sizeof(Poincare::Pool));
     return m_pythonHeap;
   }
   constexpr static int k_pythonHeapExtensionSize =
-      k_pythonHeapSize - sizeof(Poincare::TreePool);
+      k_pythonHeapSize - sizeof(Poincare::Pool);
   char m_pythonHeap[k_pythonHeapExtensionSize];
 #else
   char *pythonHeap() { return m_pythonHeap; }

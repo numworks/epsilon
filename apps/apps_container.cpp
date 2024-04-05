@@ -314,9 +314,9 @@ void AppsContainer::run() {
      * is then asserted empty). This prevents from allocating new handles
      * with the same identifiers as potential dangling handles (that have
      * lost their nodes in the exception). */
-    TreePool::Lock();
+    Pool::Lock();
     handleRunException();
-    TreePool::Unlock();
+    Pool::Unlock();
     activeApp()->displayWarning(I18n::Message::PoolMemoryFull, true);
   }
 

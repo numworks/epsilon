@@ -15,8 +15,7 @@ void TreeNode::release(int currentNumberOfChildren) {
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     deleteParentIdentifierInChildren();
-    TreePool::sharedPool->removeChildrenAndDestroy(this,
-                                                   currentNumberOfChildren);
+    Pool::sharedPool->removeChildrenAndDestroy(this, currentNumberOfChildren);
   }
 }
 
@@ -26,11 +25,11 @@ void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
     /* The previous identifier should not always be unregistered. For instance,
      * if the node is a clone and still has the original node's identifier,
      * unregistering it would lose the access to the original node. */
-    TreePool::sharedPool->unregisterNode(this);
+    Pool::sharedPool->unregisterNode(this);
   }
   m_identifier = identifier;
   m_referenceCounter = 0;
-  TreePool::sharedPool->registerNode(this);
+  Pool::sharedPool->registerNode(this);
   if (skipChildrenUpdate) {
     return;
   }
@@ -42,7 +41,7 @@ void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
 TreeNode *TreeNode::parent() const {
   assert(m_parentIdentifier != m_identifier);
   return TreeHandle::hasNode(m_parentIdentifier)
-             ? TreePool::sharedPool->node(m_parentIdentifier)
+             ? Pool::sharedPool->node(m_parentIdentifier)
              : nullptr;
 }
 

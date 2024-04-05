@@ -311,7 +311,7 @@ Comparison Comparison::Builder(OExpression child0,
                                ComparisonNode::OperatorType operatorType,
                                OExpression child1) {
   void* bufferNode =
-      TreePool::sharedPool->alloc(SizeOfComparisonNodeWithOperators(1));
+      Pool::sharedPool->alloc(SizeOfComparisonNodeWithOperators(1));
   ComparisonNode* node = new (bufferNode) ComparisonNode(operatorType);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child0);
@@ -322,7 +322,7 @@ Comparison Comparison::Builder(OExpression child0,
 Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType,
                                      OExpression child) {
   int numberOfOperands = numberOfChildren() + 1;
-  void* bufferNode = TreePool::sharedPool->alloc(
+  void* bufferNode = Pool::sharedPool->alloc(
       SizeOfComparisonNodeWithOperators(numberOfOperands - 1));
   ComparisonNode::OperatorType* listOfOperators = node()->listOfOperators();
   ComparisonNode* node = new (bufferNode)

@@ -27,19 +27,19 @@ namespace Poincare {
 
 #if __EMSCRIPTEN__
 /* Emscripten memory representation assumes loads and stores are aligned.
- * Because the TreePool buffer is going to store double values, Node addresses
+ * Because the Pool buffer is going to store double values, Node addresses
  * have to be aligned on 8 bytes (provided that emscripten addresses are 8 bytes
  * long which ensures that v-tables are also aligned). */
 typedef uint64_t AlignedNodeBuffer;
 #else
-/* Memory copies are done quicker on 4 bytes aligned data. We force the TreePool
+/* Memory copies are done quicker on 4 bytes aligned data. We force the Pool
  * to allocate 4-byte aligned range to leverage this. */
 typedef uint32_t AlignedNodeBuffer;
 #endif
 constexpr static int ByteAlignment = sizeof(AlignedNodeBuffer);
 
 class TreeNode {
-  friend class TreePool;
+  friend class Pool;
 
  public:
   constexpr static uint16_t NoNodeIdentifier = -2;

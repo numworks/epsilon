@@ -74,7 +74,7 @@ bool ConstantNode::isConstant(const char* constantName) const {
 }
 
 Constant Constant::Builder(const char* name, int length) {
-  void* bufferNode = TreePool::sharedPool->alloc(sizeof(ConstantNode));
+  void* bufferNode = Pool::sharedPool->alloc(sizeof(ConstantNode));
   ConstantNode* node = new (bufferNode) ConstantNode(name, length);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Constant&>(h);

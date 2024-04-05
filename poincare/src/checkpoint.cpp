@@ -8,7 +8,7 @@ namespace Poincare {
 Checkpoint* Checkpoint::s_topmost = nullptr;
 
 Checkpoint::Checkpoint()
-    : m_parent(s_topmost), m_endOfPool(TreePool::sharedPool->last()) {
+    : m_parent(s_topmost), m_endOfPool(Pool::sharedPool->last()) {
   assert(!m_parent || m_endOfPool >= m_parent->m_endOfPool);
 }
 
@@ -19,7 +19,7 @@ void Checkpoint::protectedDiscard() const {
 }
 
 void Checkpoint::rollback() const {
-  TreePool::sharedPool->freePoolFromNode(m_endOfPool);
+  Pool::sharedPool->freePoolFromNode(m_endOfPool);
 }
 
 void Checkpoint::rollbackException() {

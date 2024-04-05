@@ -3,7 +3,7 @@
 
 #include <poincare/ghost_node.h>
 #include <poincare/pool.h>
-#include <poincare/tree_handle.h>
+#include <poincare/pool_handle.h>
 
 namespace Poincare {
 

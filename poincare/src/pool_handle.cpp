@@ -1,5 +1,5 @@
 #include <poincare/ghost.h>
-#include <poincare/tree_handle.h>
+#include <poincare/pool_handle.h>
 #include <poincare_expressions.h>
 #if POINCARE_TREE_LOG
 #include <iostream>

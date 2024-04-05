@@ -5,7 +5,7 @@
 #include <omg/directions.h>
 #include <poincare/context.h>
 #include <poincare/layout_node.h>
-#include <poincare/tree_handle.h>
+#include <poincare/pool_handle.h>
 #include <poincare/trinary_boolean.h>
 
 namespace Poincare {

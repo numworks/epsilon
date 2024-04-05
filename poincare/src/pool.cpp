@@ -2,7 +2,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/helpers.h>
 #include <poincare/pool.h>
-#include <poincare/tree_handle.h>
+#include <poincare/pool_handle.h>
 #include <stdint.h>
 #include <string.h>
 

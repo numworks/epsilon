@@ -1,8 +1,8 @@
 #ifndef POINCARE_TEST_BLOB_NODE_H
 #define POINCARE_TEST_BLOB_NODE_H
 
+#include <poincare/pool_handle.h>
 #include <poincare/pool_object.h>
-#include <poincare/tree_handle.h>
 
 namespace Poincare {
 

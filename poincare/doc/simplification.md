@@ -9,7 +9,7 @@ From a parsed user input expression, the simplification algorithm does:
 - [Project the expression, approximate depending on the strategy](#projection)
 - [Replace all user symbols with variables](#user-symbols)
 - [Apply systematic reduction](#systematic-reduction)
-- [Bubble up lists, applying systematic reduction](#list-operators)
+- [Bubble up lists, applying systematic reduction](#list-bubble-up)
 - [Apply advanced reduction](#advanced-Reduction)
 - [Simplify Dependencies](#simplify-dependencies)
 - [Approximate again, depending on the strategy](#final-approximation)
@@ -267,9 +267,13 @@ The following methods directly simplify to their result :
 
 </details>
 
-## List operators
+## List bubble up
 
-TO COMPLETE
+At this step, there are still nested lists in the expression, but we know the expected list length.
+
+Using `ProjectToNthElement` function, we smartly project each of the expected elements to build the output, simplified, list.
+
+For example: Applying `ProjectToNthElement` to the second element of `{4,5,6} + sequence(k,k,3)` will compute `5+2` and simplify it to `7`.
 
 ## Advanced Reduction
 
@@ -425,7 +429,14 @@ graph TD;
 
 ## Simplify dependencies
 
-TO COMPLETE
+Dependencies are already bubbled-up at each shallow reduce.
+
+In this step, we remove useless dependencies from a dependency tree :
+- Break up simple dependencies into smaller bits (`dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})`).
+- Sort dependencies.
+- Remove dependencies that are identical or contained in others dependencies, or in the main expression.
+- Remove dependencies that can be approximated to a value.
+- Replace the entire dependency with undef or nonreal if one of the dependencies is approximated to undef or nonreal.
 
 ## Final approximation
 

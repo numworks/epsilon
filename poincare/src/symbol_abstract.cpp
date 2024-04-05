@@ -13,7 +13,7 @@
 #include <poincare/symbol_abstract.h>
 #include <poincare/undefined.h>
 #include <poincare_junior/src/expression/symbol.h>
-#include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 #include <string.h>
 
 #include <algorithm>

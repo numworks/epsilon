@@ -3,8 +3,8 @@
 
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
-#include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 #include <quiz.h>
 
 #if POINCARE_TREE_LOG
@@ -57,7 +57,7 @@ inline void assert_pool_tree_size_is(size_t size) {
 
 inline void reset_pool() { SharedTreeStack->flush(); }
 
-inline void assert_edition_pool_contains(
+inline void assert_tree_stack_contains(
     std::initializer_list<const Tree*> nodes) {
   quiz_assert(SharedTreeStack->size() > 0);
   Tree* tree = Tree::FromBlocks(SharedTreeStack->firstBlock());

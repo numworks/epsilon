@@ -2,7 +2,7 @@
 #include <poincare/layout.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
-#include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 
 #include <algorithm>
 

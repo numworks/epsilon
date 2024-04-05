@@ -1,4 +1,4 @@
-#include "edition_pool.h"
+#include "tree_stack.h"
 
 #include <assert.h>
 #include <omgpj.h>

@@ -1,7 +1,7 @@
 #include "code_point_layout.h"
 
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 
 namespace PoincareJ {
 

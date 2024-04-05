@@ -1,9 +1,9 @@
 #ifndef POINCARE_MEMORY_EDITION_REFERENCE_H
 #define POINCARE_MEMORY_EDITION_REFERENCE_H
 
-#include "edition_pool.h"
 #include "k_tree.h"
 #include "tree.h"
+#include "tree_stack.h"
 
 namespace PoincareJ {
 

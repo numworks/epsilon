@@ -72,7 +72,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/render.cpp \
   layout/serialize.cpp \
   layout/xnt.cpp \
-  memory/edition_pool.cpp \
+  memory/tree_stack.cpp \
   memory/exception_checkpoint.cpp \
   memory/pattern_matching.cpp \
   memory/storage_context.cpp \

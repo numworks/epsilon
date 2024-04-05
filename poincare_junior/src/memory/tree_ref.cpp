@@ -5,9 +5,9 @@
 #include <poincare_junior/src/expression/k_tree.h>
 #include <string.h>
 
-#include "edition_pool.h"
 #include "node_iterator.h"
 #include "pattern_matching.h"
+#include "tree_stack.h"
 
 namespace PoincareJ {
 

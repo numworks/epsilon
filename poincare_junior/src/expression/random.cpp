@@ -4,7 +4,7 @@
 #include <poincare/random.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/dimension.h>
-#include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "float.h"

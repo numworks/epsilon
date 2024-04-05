@@ -1,6 +1,6 @@
 #include "variables.h"
 
-#include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 
 #include "k_tree.h"
 #include "parametric.h"

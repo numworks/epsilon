@@ -1,8 +1,8 @@
 #include <poincare_junior/src/expression/list.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/expression/solver.h>
-#include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/storage_context.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "helper.h"

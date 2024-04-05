@@ -5,7 +5,7 @@
 
 using namespace PoincareJ;
 
-QUIZ_CASE(pcj_edition_pool) {
+QUIZ_CASE(pcj_tree_stack) {
   TreeStack* pool = SharedTreeStack;
   pool->flush();
 
@@ -78,21 +78,19 @@ QUIZ_CASE(pcj_edition_reference) {
   ref0->clone();
   TreeRef ref2 = TreeRef(
       SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(8)));
-  assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e});
+  assert_tree_stack_contains({k_expr0, k_expr1, k_expr0, 8_e});
 
   // Insertions
   ref2->cloneNodeAfterNode(9_e);
-  assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e, 9_e});
+  assert_tree_stack_contains({k_expr0, k_expr1, k_expr0, 8_e, 9_e});
   ref2->cloneNodeAfterNode(10_e);
-  assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e, 10_e, 9_e});
+  assert_tree_stack_contains({k_expr0, k_expr1, k_expr0, 8_e, 10_e, 9_e});
   ref2->moveTreeAfterNode(ref0);
-  assert_edition_pool_contains({k_expr1, k_expr0, 8_e, k_expr0, 10_e, 9_e});
+  assert_tree_stack_contains({k_expr1, k_expr0, 8_e, k_expr0, 10_e, 9_e});
   ref2->cloneNodeBeforeNode(10_e);
-  assert_edition_pool_contains(
-      {k_expr1, k_expr0, 10_e, 8_e, k_expr0, 10_e, 9_e});
+  assert_tree_stack_contains({k_expr1, k_expr0, 10_e, 8_e, k_expr0, 10_e, 9_e});
   ref2->moveTreeBeforeNode(ref1);
-  assert_edition_pool_contains(
-      {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
+  assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
   // Replacements
   ref0 = ref2;  // 8_e
@@ -102,18 +100,15 @@ QUIZ_CASE(pcj_edition_reference) {
 
   // Replacements by same
   ref2 = ref2->moveTreeOverNode(ref2);
-  assert_edition_pool_contains(
-      {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
+  assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
   // Replacements from nodes outside of the TreeStack
   ref0 = ref0->cloneNodeOverNode(9_e);  // Same size
-  assert_edition_pool_contains(
-      {k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});
+  assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});
   ref1 = ref1->cloneNodeOverTree(10_e);  // Smaller size
-  assert_edition_pool_contains({k_expr0, 10_e, k_expr1, 9_e, 10_e, 10_e, 9_e});
+  assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 9_e, 10_e, 10_e, 9_e});
   ref2 = ref2->cloneTreeOverNode(k_expr1);  // Bigger size
-  assert_edition_pool_contains(
-      {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
+  assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 
   // Replacements from nodes living in the TreeStack
   TreeRef subRef0(ref2->child(0)->child(1));
@@ -121,9 +116,9 @@ QUIZ_CASE(pcj_edition_reference) {
   ref2 = ref2->moveTreeOverTree(subRef0);  // Child
   quiz_assert(subRef1.isUninitialized());
   ref1->moveNodeOverNode(ref0);  // Before
-  assert_edition_pool_contains({k_expr0, 10_e, k_expr1, 9_e, k_subExpr1, 9_e});
+  assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 9_e, k_subExpr1, 9_e});
   ref0->moveTreeOverTree(ref2);  // After
-  assert_edition_pool_contains({k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
+  assert_tree_stack_contains({k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
 
   // Removals
   ref0 = TreeRef(SharedTreeStack->firstBlock());  // k_expr0
@@ -132,13 +127,13 @@ QUIZ_CASE(pcj_edition_reference) {
 
   ref2->removeTree();
   ref1->removeNode();
-  assert_edition_pool_contains({k_expr0, k_subExpr1, 9_e});
+  assert_tree_stack_contains({k_expr0, k_subExpr1, 9_e});
 
   // Detach
   subRef0 = TreeRef(ref0->child(0));
   subRef0->cloneTreeBeforeNode(13_e);
   subRef0->detachTree();
-  assert_edition_pool_contains(
+  assert_tree_stack_contains(
       {KMult(13_e, 3_e, 4_e), k_subExpr1, 9_e, KAdd(1_e, 2_e)});
 }
 

@@ -1,8 +1,8 @@
 #include "builtin.h"
 
 #include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/tree.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 #include <poincare_junior/src/memory/type_block.h>
 #include <poincare_junior/src/probability/distribution.h>
 #include <poincare_junior/src/probability/distribution_method.h>

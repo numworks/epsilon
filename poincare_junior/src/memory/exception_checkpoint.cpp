@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "edition_pool.h"
+#include "tree_stack.h"
 
 namespace PoincareJ {
 

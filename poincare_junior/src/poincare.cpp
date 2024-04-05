@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#include "poincare_junior/src/memory/edition_pool.h"
+#include "poincare_junior/src/memory/tree_stack.h"
 
 #if POINCARE_POOL_VISUALIZATION
 #include <filesystem>

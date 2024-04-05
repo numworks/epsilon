@@ -1,6 +1,6 @@
 #include "float.h"
 
-#include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/tree_stack.h>
 
 namespace PoincareJ {
 

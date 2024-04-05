@@ -248,14 +248,14 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
           KPiecewise(KACos(0_e), KEqual(KA, 0_e), KATan(KPow(KA, -1_e)))) ||
       // Cosh(A) -> (exp(A)+exp(-A))*1/2
       PatternMatching::MatchReplace(
-          e, KCosh(KA), KMult(KHalf, KAdd(KExp(KA), KExp(KMult(-1_e, KA))))) ||
+          e, KCosH(KA), KMult(KHalf, KAdd(KExp(KA), KExp(KMult(-1_e, KA))))) ||
       // Sinh(A) -> (exp(A)-exp(-A))*1/2
       PatternMatching::MatchReplace(
-          e, KSinh(KA),
+          e, KSinH(KA),
           KMult(KHalf, KAdd(KExp(KA), KMult(-1_e, KExp(KMult(-1_e, KA)))))) ||
       // Tanh(A) -> (exp(2A)-1)/(exp(2A)+1)
       PatternMatching::MatchReplace(
-          e, KTanh(KA),
+          e, KTanH(KA),
           KMult(KAdd(KExp(KMult(2_e, KA)), -1_e),
                 KPow(KAdd(KExp(KMult(2_e, KA)), 1_e), -1_e))) ||
       // ArTanh(A) -> (ln(1+A)-ln(1-A))*1/2

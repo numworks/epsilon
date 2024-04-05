@@ -94,11 +94,11 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
         return Poincare::ArcCosecant::Builder(child);
       case Type::ArcCotangent:
         return Poincare::ArcCotangent::Builder(child);
-      case Type::Cosh:
+      case Type::CosH:
         return Poincare::HyperbolicCosine::Builder(child);
-      case Type::Sinh:
+      case Type::SinH:
         return Poincare::HyperbolicSine::Builder(child);
-      case Type::Tanh:
+      case Type::TanH:
         return Poincare::HyperbolicTangent::Builder(child);
       case Type::HyperbolicArcCosine:
         return Poincare::HyperbolicArcCosine::Builder(child);
@@ -410,13 +410,13 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       SharedTreeStack->push(Type::ArcCotangent);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::HyperbolicCosine:
-      SharedTreeStack->push(Type::Cosh);
+      SharedTreeStack->push(Type::CosH);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::HyperbolicSine:
-      SharedTreeStack->push(Type::Sinh);
+      SharedTreeStack->push(Type::SinH);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::HyperbolicTangent:
-      SharedTreeStack->push(Type::Tanh);
+      SharedTreeStack->push(Type::TanH);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::HyperbolicArcCosine:
       SharedTreeStack->push(Type::HyperbolicArcCosine);

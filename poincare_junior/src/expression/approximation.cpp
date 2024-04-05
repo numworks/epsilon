@@ -394,9 +394,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::ArcCotangent:
       return TrigonometricToComplex(node->type(),
                                     ToComplex<T>(node->nextNode()));
-    case Type::Sinh:
-    case Type::Cosh:
-    case Type::Tanh:
+    case Type::SinH:
+    case Type::CosH:
+    case Type::TanH:
     case Type::HyperbolicArcSine:
     case Type::HyperbolicArcCosine:
     case Type::HyperbolicArcTangent:

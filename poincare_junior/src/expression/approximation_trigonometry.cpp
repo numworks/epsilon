@@ -164,15 +164,15 @@ template <typename T>
 std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
                                                    std::complex<T> value) {
   switch (type) {
-    case Type::Cosh:
-    case Type::Sinh:
+    case Type::CosH:
+    case Type::SinH:
       /* If c is real and large (over 100.0), the float evaluation of std::cosh
        * will return image = NaN when it should be 0.0. */
       return MakeResultRealIfInputIsReal<T>(
           NeglectRealOrImaginaryPartIfNeglectable(
-              type.isSinh() ? std::sinh(value) : std::cosh(value), value),
+              type.isSinH() ? std::sinh(value) : std::cosh(value), value),
           value);
-    case Type::Tanh:
+    case Type::TanH:
       return NeglectRealOrImaginaryPartIfNeglectable(std::tanh(value), value);
 
     case Type::HyperbolicArcSine: {

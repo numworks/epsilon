@@ -16,8 +16,7 @@ namespace Shared {
 
 class StoreController : public EditableCellTableViewController,
                         public Escher::ButtonRowDelegate,
-                        public StoreColumnHelper,
-                        public Escher::SelectableTableViewDelegate {
+                        public StoreColumnHelper {
  public:
   StoreController(Escher::Responder* parentResponder, DoublePairStore* store,
                   Escher::ButtonRowController* header,
@@ -50,10 +49,6 @@ class StoreController : public EditableCellTableViewController,
   size_t fillColumnName(int column, char* buffer) override {
     return fillColumnNameFromStore(column, buffer);
   }
-
-  // SelectableTableViewDelegate
-  int numberOfRowsAtColumn(const Escher::SelectableTableView* t,
-                           int column) override;
 
   void loadMemoizedFormulasFromSnapshot();
 

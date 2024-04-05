@@ -15,10 +15,12 @@ namespace Shared {
 
 class ColumnParameterController;
 
-class EditableCellTableViewController : public TabTableController,
-                                        public Escher::TableViewDataSource,
-                                        public MathTextFieldDelegate,
-                                        public ClearColumnHelper {
+class EditableCellTableViewController
+    : public TabTableController,
+      public Escher::TableViewDataSource,
+      public MathTextFieldDelegate,
+      public ClearColumnHelper,
+      public Escher::SelectableTableViewDelegate {
  public:
   EditableCellTableViewController(
       Responder* parentResponder,
@@ -37,6 +39,13 @@ class EditableCellTableViewController : public TabTableController,
   void didBecomeFirstResponder() override;
 
   bool handleEvent(Ion::Events::Event event) override;
+
+  // SelectableTableViewDelegate
+  int numberOfRowsAtColumn(const Escher::SelectableTableView* t,
+                           int column) override {
+    assert(t == &m_selectableTableView);
+    return numberOfRowsAtColumn(column);
+  }
 
  protected:
   constexpr static KDFont::Size k_cellFont = KDFont::Size::Small;
@@ -71,6 +80,8 @@ class EditableCellTableViewController : public TabTableController,
   Escher::SelectableTableView* table() override {
     return selectableTableView();
   }
+
+  int numberOfRowsAtColumn(int column) const;
 
   /* Poor's man diamond inheritance */
   virtual Escher::SelectableViewController* columnParameterController() = 0;

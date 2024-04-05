@@ -167,4 +167,9 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+int EditableCellTableViewController::numberOfRowsAtColumn(int column) const {
+  // Number of elements + title + last empty cell
+  return numberOfElementsInColumn(column) + 2;
+}
+
 }  // namespace Shared

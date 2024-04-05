@@ -185,11 +185,6 @@ Responder *ValuesController::responderWhenEmpty() {
   return tabController();
 }
 
-int ValuesController::numberOfRowsAtColumn(int column) const {
-  // Number of elements + title + last empty cell
-  return numberOfElementsInColumn(column) + 2;
-}
-
 SelectableViewController *ValuesController::columnParameterController() {
   if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
     return &m_abscissaParameterController;

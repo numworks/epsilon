@@ -195,13 +195,6 @@ void StoreController::didBecomeFirstResponder() {
   EditableCellTableViewController::didBecomeFirstResponder();
 }
 
-int StoreController::numberOfRowsAtColumn(const SelectableTableView *t,
-                                          int column) {
-  assert(t == &m_selectableTableView);
-  // number of pairs + title + last empty cell
-  return numberOfElementsInColumn(column) + 2;
-}
-
 bool StoreController::deleteCellValue(int series, int i, int j,
                                       bool authorizeNonEmptyRowDeletion) {
   return m_store->deleteValueAtIndex(series, m_store->relativeColumn(i), j - 1,

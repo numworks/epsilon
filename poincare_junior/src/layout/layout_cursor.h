@@ -7,8 +7,8 @@
 #include <poincare/junior_layout.h>
 #include <poincare_junior/src/layout/empty_rectangle.h>
 #include <poincare_junior/src/layout/rack_layout.h>
-#include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/tree.h>
+#include <poincare_junior/src/memory/tree_ref.h>
 
 #include "cursor_motion.h"
 #include "layout_selection.h"

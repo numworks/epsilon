@@ -1,7 +1,7 @@
 #include "tree.h"
 
-#include "edition_reference.h"
 #include "node_iterator.h"
+#include "tree_ref.h"
 
 #if POINCARE_POOL_VISUALIZATION
 #include <poincare_junior/include/poincare.h>

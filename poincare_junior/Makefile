@@ -73,11 +73,11 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/serialize.cpp \
   layout/xnt.cpp \
   memory/edition_pool.cpp \
-  memory/edition_reference.cpp \
   memory/exception_checkpoint.cpp \
   memory/pattern_matching.cpp \
   memory/storage_context.cpp \
   memory/tree.cpp \
+  memory/tree_ref.cpp \
   memory/value_block.cpp \
   n_ary.cpp \
   poincare.cpp \

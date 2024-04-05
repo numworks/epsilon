@@ -13,7 +13,7 @@
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/layout/rack_from_text.h>
 #include <poincare_junior/src/layout/serialize.h>
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree_ref.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "poincare_junior/src/memory/type_block.h"

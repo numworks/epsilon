@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_BINARY_H
 
 #include <poincare_junior/src/layout/rack_layout_decoder.h>
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree_ref.h>
 
 namespace PoincareJ {
 

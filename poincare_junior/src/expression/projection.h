@@ -3,7 +3,7 @@
 
 #include <poincare/context.h>
 #include <poincare_junior/src/expression/dimension.h>
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree_ref.h>
 
 #include "context.h"
 

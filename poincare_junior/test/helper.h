@@ -4,7 +4,7 @@
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/memory/edition_pool.h>
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree_ref.h>
 #include <quiz.h>
 
 #if POINCARE_TREE_LOG

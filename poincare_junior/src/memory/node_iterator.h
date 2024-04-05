@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <array>
 
-#include "edition_reference.h"
+#include "tree_ref.h"
 
 namespace PoincareJ {
 

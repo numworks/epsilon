@@ -1,8 +1,8 @@
 #ifndef POINCARE_EXPRESSION_ADVANCED_SIMPLIFICATION_H
 #define POINCARE_EXPRESSION_ADVANCED_SIMPLIFICATION_H
 
-#include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/tree.h>
+#include <poincare_junior/src/memory/tree_ref.h>
 
 #include "arithmetic.h"
 #include "logarithm.h"

@@ -3,7 +3,7 @@
 
 #include <kandinsky/context.h>
 
-#include "../memory/edition_reference.h"
+#include "../memory/tree_ref.h"
 #include "rack.h"
 
 namespace PoincareJ {

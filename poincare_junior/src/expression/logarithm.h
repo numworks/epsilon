@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_LOGARITHM_H
 
 #include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree_ref.h>
 
 namespace PoincareJ {
 

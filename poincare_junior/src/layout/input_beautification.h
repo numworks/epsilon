@@ -3,7 +3,7 @@
 
 #include <poincare_junior/src/expression/aliases.h>
 #include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/tree_ref.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include <array>

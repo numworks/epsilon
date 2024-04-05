@@ -9,7 +9,7 @@ class MatrixReducedRowEchelonFormNode final : public MatrixEchelonFormNode {
  public:
   constexpr static AliasesList k_functionName = "rref";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override {
     return sizeof(MatrixReducedRowEchelonFormNode);
   }

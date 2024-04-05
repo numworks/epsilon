@@ -22,7 +22,7 @@ class GraphView : public Shared::FunctionGraphView {
   int nextDotIndex(Shared::Sequence* sequence, int currentIndex,
                    OMG::HorizontalDirection direction = OMG::Direction::Right(),
                    int scrollSpeed = 1) const;
-  void tidyModel(int i, Poincare::TreeNode* treePoolCursor) const override {
+  void tidyModel(int i, Poincare::PoolObject* treePoolCursor) const override {
     m_sequenceStore->modelForRecord(m_sequenceStore->activeRecordAtIndex(i))
         ->tidyDownstreamPoolFrom(treePoolCursor);
   }

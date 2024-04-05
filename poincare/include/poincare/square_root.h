@@ -23,7 +23,7 @@ class SquareRootNode final : public ExpressionNode {
   }
   Type otype() const override { return Type::SquareRoot; }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(SquareRootNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

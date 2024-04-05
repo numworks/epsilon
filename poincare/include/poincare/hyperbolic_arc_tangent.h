@@ -11,7 +11,7 @@ class HyperbolicArcTangentNode final
  public:
   constexpr static AliasesList k_functionName = "artanh";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(HyperbolicArcTangentNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

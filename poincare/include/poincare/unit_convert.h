@@ -9,7 +9,7 @@ namespace Poincare {
 
 class UnitConvertNode final : public RightwardsArrowExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(UnitConvertNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

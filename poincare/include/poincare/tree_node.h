@@ -13,7 +13,7 @@
 #include <poincare/helpers.h>
 #include <poincare/preferences.h>
 
-/* What's in a TreeNode, really?
+/* What's in a PoolObject, really?
  *  - a vtable pointer
  *  - an identifier
  *  - a parent identifier
@@ -21,7 +21,7 @@
  */
 
 /* CAUTION: To make node operations faster, the pool needs all addresses and
- * sizes of TreeNodes to be a multiple of 4. */
+ * sizes of PoolObjects to be a multiple of 4. */
 
 namespace Poincare {
 
@@ -38,17 +38,18 @@ typedef uint32_t AlignedNodeBuffer;
 #endif
 constexpr static int ByteAlignment = sizeof(AlignedNodeBuffer);
 
-class TreeNode {
+class PoolObject {
   friend class Pool;
 
  public:
   constexpr static uint16_t NoNodeIdentifier = -2;
   // Used for Integer
-  constexpr static uint16_t OverflowIdentifier = TreeNode::NoNodeIdentifier + 1;
+  constexpr static uint16_t OverflowIdentifier =
+      PoolObject::NoNodeIdentifier + 1;
 
   // Constructor and destructor
-  virtual ~TreeNode() {}
-  typedef TreeNode *(*const Initializer)(void *);
+  virtual ~PoolObject() {}
+  typedef PoolObject *(*const Initializer)(void *);
 
   // Attributes
   void setParentIdentifier(uint16_t parentID) { m_parentIdentifier = parentID; }
@@ -90,8 +91,8 @@ class TreeNode {
   }
 
   // Hierarchy
-  TreeNode *parent() const;
-  TreeNode *root();
+  PoolObject *parent() const;
+  PoolObject *root();
   virtual int numberOfChildren() const = 0;
   /* The following methods are only used for nodes that have a variable number
    * of children like OList, HorizontalLayout or Randint */
@@ -102,12 +103,12 @@ class TreeNode {
   }
   void eraseNumberOfChildren() { setNumberOfChildren(0); }
   int numberOfDescendants(bool includeSelf) const;
-  TreeNode *childAtIndex(int i) const;
-  int indexOfChild(const TreeNode *child) const;
+  PoolObject *childAtIndex(int i) const;
+  int indexOfChild(const PoolObject *child) const;
   int indexInParent() const;
-  bool hasChild(const TreeNode *child) const;
-  bool hasAncestor(const TreeNode *node, bool includeSelf) const;
-  bool hasSibling(const TreeNode *e) const;
+  bool hasChild(const PoolObject *child) const;
+  bool hasAncestor(const PoolObject *node, bool includeSelf) const;
+  bool hasSibling(const PoolObject *e) const;
   void deleteParentIdentifierInChildren() const {
     changeParentIdentifierInChildren(NoNodeIdentifier);
   }
@@ -138,7 +139,7 @@ class TreeNode {
    *
    * */
   virtual bool childNeedsSystemParenthesesAtSerialization(
-      const TreeNode *child) const {
+      const PoolObject *child) const {
     return false;
   }
 
@@ -158,16 +159,16 @@ class TreeNode {
    public:
     Direct(const T *node, int firstIndex = 0)
         : m_node(const_cast<T *>(node)), m_firstIndex(firstIndex) {}
-    class Iterator : public TreeNode::Iterator<T> {
+    class Iterator : public PoolObject::Iterator<T> {
      public:
-      using TreeNode::Iterator<T>::Iterator;
+      using PoolObject::Iterator<T>::Iterator;
       Iterator &operator++() {
         this->m_node = static_cast<T *>(this->m_node->nextSibling());
         return *this;
       }
     };
     Iterator begin() const {
-      TreeNode *n = m_node->next();
+      PoolObject *n = m_node->next();
       for (int i = 0; i < m_firstIndex; i++) {
         n = n->nextSibling();
       }
@@ -187,10 +188,11 @@ class TreeNode {
   template <typename T>
   class DepthFirst final {
    public:
-    DepthFirst(const TreeNode *node) : m_node(const_cast<TreeNode *>(node)) {}
-    class Iterator : public TreeNode::Iterator<T> {
+    DepthFirst(const PoolObject *node)
+        : m_node(const_cast<PoolObject *>(node)) {}
+    class Iterator : public PoolObject::Iterator<T> {
      public:
-      using TreeNode::Iterator<T>::Iterator;
+      using PoolObject::Iterator<T>::Iterator;
       Iterator &operator++() {
         this->m_node = this->m_node->next();
         return *this;
@@ -203,21 +205,21 @@ class TreeNode {
     T *m_node;
   };
 
-  Direct<TreeNode> directChildren() const { return Direct<TreeNode>(this); }
-  DepthFirst<TreeNode> depthFirstChildren() const {
-    return DepthFirst<TreeNode>(this);
+  Direct<PoolObject> directChildren() const { return Direct<PoolObject>(this); }
+  DepthFirst<PoolObject> depthFirstChildren() const {
+    return DepthFirst<PoolObject>(this);
   }
 
-  TreeNode *next() const {
+  PoolObject *next() const {
     /* Simple version would be "return this + 1;", with pointer arithmetics
-     * taken care of by the compiler. Unfortunately, we want TreeNode to have a
-     * VARIABLE size */
-    return reinterpret_cast<TreeNode *>(
-        reinterpret_cast<char *>(const_cast<TreeNode *>(this)) +
+     * taken care of by the compiler. Unfortunately, we want PoolObject to have
+     * a VARIABLE size */
+    return reinterpret_cast<PoolObject *>(
+        reinterpret_cast<char *>(const_cast<PoolObject *>(this)) +
         Helpers::AlignedSize(size(), ByteAlignment));
   }
-  TreeNode *nextSibling() const;
-  TreeNode *lastDescendant() const;
+  PoolObject *nextSibling() const;
+  PoolObject *lastDescendant() const;
 
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream &stream) const = 0;
@@ -233,7 +235,7 @@ class TreeNode {
   static bool IsValidIdentifier(uint16_t id) { return id < NoNodeIdentifier; }
 
  protected:
-  TreeNode()
+  PoolObject()
       : m_identifier(NoNodeIdentifier),
         m_parentIdentifier(NoNodeIdentifier),
         m_referenceCounter(0) {}
@@ -249,7 +251,7 @@ class TreeNode {
 };
 
 template <typename T>
-static TreeNode *Initializer(void *buffer) {
+static PoolObject *Initializer(void *buffer) {
   return new (buffer) T;
 }
 

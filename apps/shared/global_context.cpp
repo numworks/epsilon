@@ -304,7 +304,7 @@ Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(
       ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
-void GlobalContext::tidyDownstreamPoolFrom(TreeNode *treePoolCursor) {
+void GlobalContext::tidyDownstreamPoolFrom(PoolObject *treePoolCursor) {
   sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
   continuousFunctionStore->tidyDownstreamPoolFrom(treePoolCursor);
 }

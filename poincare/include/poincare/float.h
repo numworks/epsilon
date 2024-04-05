@@ -27,7 +27,7 @@ class FloatNode final : public NumberNode {
   T value() const { return m_value; }
   void setValue(T value) { m_value = value; }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(FloatNode<T>); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Float"; }

@@ -9,7 +9,7 @@ class MatrixRowEchelonFormNode final : public MatrixEchelonFormNode {
  public:
   constexpr static AliasesList k_functionName = "ref";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(MatrixRowEchelonFormNode); }
 
 #if POINCARE_TREE_LOG

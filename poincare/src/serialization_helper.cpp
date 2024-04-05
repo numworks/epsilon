@@ -65,7 +65,7 @@ static bool checkBufferSize(char *buffer, size_t bufferSize, size_t *result) {
 }
 
 size_t SerializationHelper::SerializeChild(
-    const TreeNode *childNode, const TreeNode *parentNode, char *buffer,
+    const PoolObject *childNode, const PoolObject *parentNode, char *buffer,
     size_t bufferSize, Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits) {
   {
@@ -107,7 +107,7 @@ size_t SerializationHelper::SerializeChild(
   return numberOfChar;
 }
 
-size_t InfixPrefix(bool prefix, const TreeNode *node, char *buffer,
+size_t InfixPrefix(bool prefix, const PoolObject *node, char *buffer,
                    size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfDigits, const char *operatorName,
@@ -253,7 +253,7 @@ size_t InfixPrefix(bool prefix, const TreeNode *node, char *buffer,
   return numberOfChar;
 }
 
-size_t SerializationHelper::Infix(const TreeNode *node, char *buffer,
+size_t SerializationHelper::Infix(const PoolObject *node, char *buffer,
                                   size_t bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfDigits, const char *operatorName,
@@ -263,7 +263,7 @@ size_t SerializationHelper::Infix(const TreeNode *node, char *buffer,
                      firstChildIndex, lastChildIndex);
 }
 
-size_t SerializationHelper::Prefix(const TreeNode *node, char *buffer,
+size_t SerializationHelper::Prefix(const PoolObject *node, char *buffer,
                                    size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfDigits, const char *operatorName,
@@ -295,7 +295,7 @@ size_t SerializationHelper::CodePoint(char *buffer, size_t bufferSize,
 }
 
 bool SerializationHelper::PostfixChildNeedsSystemParenthesesAtSerialization(
-    const TreeNode *child) {
+    const PoolObject *child) {
   if (static_cast<const ExpressionNode *>(child)->otype() ==
           ExpressionNode::Type::Rational &&
       !static_cast<const RationalNode *>(child)->isInteger()) {

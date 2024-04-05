@@ -19,7 +19,7 @@ class JuniorLayoutNode final : public LayoutNode {
  private:
   JuniorLayoutNode(const PoincareJ::Tree* tree, size_t treeSize);
 
-  // TreeNode
+  // PoolObject
   size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

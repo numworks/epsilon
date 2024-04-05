@@ -10,7 +10,7 @@ class HyperbolicTangentNode final : public HyperbolicTrigonometricFunctionNode {
  public:
   constexpr static AliasesList k_functionName = "tanh";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(HyperbolicTangentNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

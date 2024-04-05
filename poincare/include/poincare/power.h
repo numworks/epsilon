@@ -11,7 +11,7 @@ class Power;
 
 class PowerNode final : public ExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(PowerNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
@@ -58,7 +58,7 @@ class PowerNode final : public ExpressionNode {
 
   // Serialize
   bool childNeedsSystemParenthesesAtSerialization(
-      const TreeNode* child) const override;
+      const PoolObject* child) const override;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;

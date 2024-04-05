@@ -16,7 +16,7 @@ template <typename T>
 class Evaluation;
 
 template <typename T>
-class EvaluationNode : public TreeNode {
+class EvaluationNode : public PoolObject {
  public:
   enum class Type : uint8_t {
     Exception,
@@ -27,7 +27,7 @@ class EvaluationNode : public TreeNode {
     PointEvaluation
   };
   EvaluationNode<T> *childAtIndex(int index) const {
-    return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index));
+    return static_cast<EvaluationNode<T> *>(PoolObject::childAtIndex(index));
   }
   Direct<EvaluationNode<T>> children() const {
     return Direct<EvaluationNode<T>>(this);

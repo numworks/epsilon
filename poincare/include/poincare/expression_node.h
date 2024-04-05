@@ -18,7 +18,7 @@ class SymbolAbstract;
 class Symbol;
 class ComplexCartesian;
 
-class ExpressionNode : public TreeNode {
+class ExpressionNode : public PoolObject {
   friend class AdditionNode;
   friend class DivisionNode;
   friend class NAryExpressionNode;
@@ -298,7 +298,7 @@ class ExpressionNode : public TreeNode {
   /* Hierarchy */
   ExpressionNode* childAtIndex(int i) const {
     assert(i >= 0 && i < numberOfChildren());
-    return static_cast<ExpressionNode*>(TreeNode::childAtIndex(i));
+    return static_cast<ExpressionNode*>(PoolObject::childAtIndex(i));
   }
 
 #if ASSERTIONS
@@ -310,7 +310,7 @@ class ExpressionNode : public TreeNode {
  protected:
   /* Hierarchy */
   ExpressionNode* parent() const {
-    return static_cast<ExpressionNode*>(TreeNode::parent());
+    return static_cast<ExpressionNode*>(PoolObject::parent());
   }
   Direct<ExpressionNode> children() const {
     return Direct<ExpressionNode>(this);

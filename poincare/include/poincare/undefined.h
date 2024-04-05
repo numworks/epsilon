@@ -8,7 +8,7 @@ namespace Poincare {
 
 class UndefinedNode : public NumberNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(UndefinedNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

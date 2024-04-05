@@ -10,7 +10,7 @@ class InfinityNode final : public NumberNode {
  public:
   InfinityNode(bool negative) : NumberNode(), m_negative(negative) {}
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(InfinityNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

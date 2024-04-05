@@ -8,7 +8,7 @@ namespace Poincare {
 
 class SubtractionNode final : public ExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(SubtractionNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG

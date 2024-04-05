@@ -39,7 +39,7 @@ class SequenceLayoutNode : public LayoutNode {
     return k_lowerBoundLayoutIndex;
   }
 
-  // TreeNode
+  // PoolObject
   int numberOfChildren() const override { return 4; }
 
   constexpr static int k_argumentLayoutIndex = 0;

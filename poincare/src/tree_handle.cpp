@@ -11,13 +11,13 @@ namespace Poincare {
 
 TreeHandle TreeHandle::clone() const {
   assert(!isUninitialized());
-  TreeNode *nodeCopy = Pool::sharedPool->deepCopy(node());
+  PoolObject *nodeCopy = Pool::sharedPool->deepCopy(node());
   nodeCopy->deleteParentIdentifier();
   return TreeHandle(nodeCopy);
 }
 
 /* Hierarchy operations */
-TreeNode *TreeHandle::node() const {
+PoolObject *TreeHandle::node() const {
   assert(hasNode(m_identifier));
   return Pool::sharedPool->node(m_identifier);
 }
@@ -174,7 +174,7 @@ void TreeHandle::addChildAtIndexInPlace(TreeHandle t, int index,
   assert(t.parent().isUninitialized());
 
   // Move t
-  TreeNode *newChildPosition = node()->next();
+  PoolObject *newChildPosition = node()->next();
   for (int i = 0; i < index; i++) {
     newChildPosition = newChildPosition->nextSibling();
   }
@@ -224,7 +224,7 @@ void TreeHandle::detachFromParent() {
   assert(parent().isUninitialized());
 }
 
-TreeHandle::TreeHandle(const TreeNode *node) : TreeHandle() {
+TreeHandle::TreeHandle(const PoolObject *node) : TreeHandle() {
   if (node != nullptr) {
     setIdentifierAndRetain(node->identifier());
   }
@@ -237,15 +237,15 @@ TreeHandle TreeHandle::Builder() {
   return TreeHandle::BuildWithGhostChildren(node);
 }
 
-TreeHandle TreeHandle::Builder(TreeNode::Initializer initializer, size_t size,
+TreeHandle TreeHandle::Builder(PoolObject::Initializer initializer, size_t size,
                                int numberOfChildren) {
   void *bufferNode = Pool::sharedPool->alloc(size);
-  TreeNode *node = initializer(bufferNode);
+  PoolObject *node = initializer(bufferNode);
   node->setNumberOfChildren(numberOfChildren);
   return TreeHandle::BuildWithGhostChildren(node);
 }
 
-TreeHandle TreeHandle::BuilderWithChildren(TreeNode::Initializer initializer,
+TreeHandle TreeHandle::BuilderWithChildren(PoolObject::Initializer initializer,
                                            size_t size, const Tuple &children) {
   TreeHandle h = Builder(initializer, size, children.size());
   size_t i = 0;
@@ -276,7 +276,7 @@ T TreeHandle::FixedArityBuilder(const Tuple &children) {
   return static_cast<T &>(h);
 }
 
-TreeHandle TreeHandle::BuildWithGhostChildren(TreeNode *node) {
+TreeHandle TreeHandle::BuildWithGhostChildren(PoolObject *node) {
   assert(node != nullptr);
   Pool *pool = Pool::sharedPool;
   int expectedNumberOfChildren = node->numberOfChildren();
@@ -318,7 +318,7 @@ void TreeHandle::release(uint16_t identifier) {
   if (!hasNode(identifier)) {
     return;
   }
-  TreeNode *node = Pool::sharedPool->node(identifier);
+  PoolObject *node = Pool::sharedPool->node(identifier);
   if (node == nullptr) {
     /* The identifier is valid, but not the node: there must have been an
      * exception that deleted the pool. */

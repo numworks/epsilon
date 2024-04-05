@@ -8,7 +8,7 @@ namespace Poincare {
 class ListNode : public ExpressionNode {
  public:
   friend class OList;
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ListNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
   void setNumberOfChildren(int numberOfChildren) override {

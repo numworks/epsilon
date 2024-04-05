@@ -19,7 +19,7 @@ class ComplexNode final : public EvaluationNode<T>, public std::complex<T> {
     return *this;
   }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ComplexNode<T>); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

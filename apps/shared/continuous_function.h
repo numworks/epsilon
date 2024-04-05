@@ -76,7 +76,7 @@ class ContinuousFunction : public Function {
   Ion::Storage::Record::ErrorStatus setContent(
       const char *c, Poincare::Context *context) override;
   void tidyDownstreamPoolFrom(
-      Poincare::TreeNode *treePoolCursor = nullptr) const override;
+      Poincare::PoolObject *treePoolCursor = nullptr) const override;
 
   /* Properties */
 
@@ -436,7 +436,7 @@ class ContinuousFunction : public Function {
         Poincare::Context *context = nullptr) const override;
     // Tidy the model
     void tidyDownstreamPoolFrom(
-        Poincare::TreeNode *treePoolCursor) const override;
+        Poincare::PoolObject *treePoolCursor) const override;
     // m_plotType getter
     ContinuousFunctionProperties properties(
         const Ion::Storage::Record *record) const;

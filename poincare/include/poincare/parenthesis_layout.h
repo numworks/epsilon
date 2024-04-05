@@ -35,7 +35,7 @@ class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
   // LayoutNode
   Type otype() const override { return Type::ParenthesisLayout; }
 
-  // TreeNode
+  // PoolObject
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
     stream << "ParenthesisLayout";

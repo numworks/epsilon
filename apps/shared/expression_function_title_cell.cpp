@@ -30,7 +30,7 @@ void ExpressionFunctionTitleCell::setColor(KDColor color) {
 void ExpressionFunctionTitleCell::reloadCell() {
   /* When creating a new function, the layout has not yet been initialized, but
    * it is needed in layoutSubview to compute the vertical alignment. */
-  if (TreeNode::IsValidIdentifier(layout().identifier())) {
+  if (PoolObject::IsValidIdentifier(layout().identifier())) {
     layoutSubviews();
   }
   m_titleTextView.reloadCell();
@@ -43,7 +43,7 @@ View* ExpressionFunctionTitleCell::subviewAtIndex(int index) {
 }
 
 void ExpressionFunctionTitleCell::layoutSubviews(bool force) {
-  assert(TreeNode::IsValidIdentifier(layout().identifier()));
+  assert(PoolObject::IsValidIdentifier(layout().identifier()));
   setChildFrame(&m_titleTextView, subviewFrame(), force);
 }
 

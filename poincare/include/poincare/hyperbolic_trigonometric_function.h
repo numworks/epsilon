@@ -11,7 +11,7 @@ class HyperbolicTrigonometricFunctionNode : public ExpressionNode {
   friend class HyperbolicTrigonometricFunction;
 
  public:
-  // TreeNode
+  // PoolObject
   int numberOfChildren() const override { return 1; }
 
  private:

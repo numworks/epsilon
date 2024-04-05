@@ -33,7 +33,7 @@ class CurlyBraceLayoutNode : public AutocompletedBracketPairLayoutNode {
   // LayoutNode
   Type otype() const override { return Type::CurlyBraceLayout; }
 
-  // TreeNode
+  // PoolObject
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
     stream << "CurlyBraceLayout";

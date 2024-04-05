@@ -5,9 +5,9 @@
 
 namespace Poincare {
 
-class GhostNode final : public TreeNode {
+class GhostNode final : public PoolObject {
  public:
-  // TreeNode
+  // PoolObject
   int numberOfChildren() const override { return 0; }
   size_t size() const override { return sizeof(GhostNode); }
 #if POINCARE_TREE_LOG

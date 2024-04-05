@@ -22,7 +22,7 @@ class FloorLayoutNode final : public SquareBracketPairLayoutNode {
         SerializationHelper::ParenthesisType::System);
   }
 
-  // TreeNode
+  // PoolObject
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
     stream << "FloorLayout";

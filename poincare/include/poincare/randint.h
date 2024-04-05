@@ -14,7 +14,7 @@ class RandintNode final : public ExpressionNodeWithOneOrTwoChildren {
  public:
   constexpr static AliasesList k_functionName = "randint";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(RandintNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Randint"; }

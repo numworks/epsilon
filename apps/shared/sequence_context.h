@@ -27,7 +27,7 @@ class SequenceContext : public Poincare::ContextWithParent {
       const char* identifier, int length) override;
 
   void resetCache();
-  void tidyDownstreamPoolFrom(Poincare::TreeNode* treePoolCursor) override;
+  void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) override;
   SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(int sequenceIndex);
 

@@ -7,7 +7,7 @@ namespace Poincare {
 
 class NonrealNode final : public UndefinedNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(NonrealNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "nonreal"; }

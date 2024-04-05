@@ -7,7 +7,7 @@ namespace Poincare {
 
 class DependencyNode : public ExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(DependencyNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG

@@ -21,7 +21,7 @@ class FunctionGraphPolicy {
   virtual int numberOfDrawnRecords() const = 0;
   virtual void drawRecord(Ion::Storage::Record record, int index, KDContext *,
                           KDRect, bool firstDrawnRecord) const = 0;
-  virtual void tidyModel(int i, Poincare::TreeNode *treePoolCursor) const = 0;
+  virtual void tidyModel(int i, Poincare::PoolObject *treePoolCursor) const = 0;
   virtual int selectedRecordIndex() const = 0;
   virtual FunctionStore *functionStore() const = 0;
 

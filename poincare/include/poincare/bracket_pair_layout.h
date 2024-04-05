@@ -9,7 +9,7 @@ namespace Poincare {
 class BracketPairLayoutNode : public LayoutNode {
  public:
   constexpr static KDCoordinate k_lineThickness = 1;
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(BracketPairLayoutNode); }
   int numberOfChildren() const override { return 1; }
 

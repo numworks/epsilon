@@ -229,7 +229,7 @@ void SequenceContext::resetCache() {
   }
 }
 
-void SequenceContext::tidyDownstreamPoolFrom(TreeNode *treePoolCursor) {
+void SequenceContext::tidyDownstreamPoolFrom(PoolObject *treePoolCursor) {
   m_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 

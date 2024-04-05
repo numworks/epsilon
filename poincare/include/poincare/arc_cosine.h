@@ -14,7 +14,7 @@ class ArcCosineNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = AliasesLists::k_acosAliases;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ArcCosineNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

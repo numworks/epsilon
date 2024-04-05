@@ -17,7 +17,7 @@ namespace Poincare {
 class TreeHandle;
 
 class Pool final {
-  friend class TreeNode;
+  friend class PoolObject;
   friend class TreeHandle;
   friend class Checkpoint;
 
@@ -40,14 +40,16 @@ class Pool final {
 
   Pool() : m_cursor(buffer()) {}
 
-  TreeNode *cursor() const { return reinterpret_cast<TreeNode *>(m_cursor); }
+  PoolObject *cursor() const {
+    return reinterpret_cast<PoolObject *>(m_cursor);
+  }
 
   // Node
-  TreeNode *node(uint16_t identifier) const {
-    assert(TreeNode::IsValidIdentifier(identifier) &&
+  PoolObject *node(uint16_t identifier) const {
+    assert(PoolObject::IsValidIdentifier(identifier) &&
            identifier < MaxNumberOfNodes);
     if (m_nodeForIdentifierOffset[identifier] != UINT16_MAX) {
-      return const_cast<TreeNode *>(reinterpret_cast<const TreeNode *>(
+      return const_cast<PoolObject *>(reinterpret_cast<const PoolObject *>(
           m_alignedBuffer + m_nodeForIdentifierOffset[identifier]));
     }
     return nullptr;
@@ -55,15 +57,15 @@ class Pool final {
 
   // Pool memory
   void *alloc(size_t size);
-  void move(TreeNode *destination, TreeNode *source,
+  void move(PoolObject *destination, PoolObject *source,
             int realNumberOfSourceChildren);
-  void moveChildren(TreeNode *destination, TreeNode *sourceParent);
-  void removeChildren(TreeNode *node, int nodeNumberOfChildren);
-  void removeChildrenAndDestroy(TreeNode *nodeToDestroy,
+  void moveChildren(PoolObject *destination, PoolObject *sourceParent);
+  void removeChildren(PoolObject *node, int nodeNumberOfChildren);
+  void removeChildrenAndDestroy(PoolObject *nodeToDestroy,
                                 int nodeNumberOfChildren);
 
-  TreeNode *deepCopy(TreeNode *node);
-  TreeNode *copyTreeFromAddress(const void *address, size_t size);
+  PoolObject *deepCopy(PoolObject *node);
+  PoolObject *copyTreeFromAddress(const void *address, size_t size);
 
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream &stream);
@@ -81,36 +83,36 @@ class Pool final {
    * This can still be increased if needed */
   constexpr static int BufferSize = 32768 + 8192;
 #endif
-  constexpr static int MaxNumberOfNodes = BufferSize / sizeof(TreeNode);
+  constexpr static int MaxNumberOfNodes = BufferSize / sizeof(PoolObject);
   constexpr static int k_maxNodeOffset = BufferSize / ByteAlignment;
 #if ASSERTIONS
   static bool s_treePoolLocked;
 #endif
 
-  // TreeNode
-  void discardTreeNode(TreeNode *node);
-  void registerNode(TreeNode *node);
-  void unregisterNode(TreeNode *node) { freeIdentifier(node->identifier()); }
-  void updateNodeForIdentifierFromNode(TreeNode *node);
-  void renameNode(TreeNode *node, bool unregisterPreviousIdentifier = true) {
+  // PoolObject
+  void discardPoolObject(PoolObject *node);
+  void registerNode(PoolObject *node);
+  void unregisterNode(PoolObject *node) { freeIdentifier(node->identifier()); }
+  void updateNodeForIdentifierFromNode(PoolObject *node);
+  void renameNode(PoolObject *node, bool unregisterPreviousIdentifier = true) {
     assert(node->isAfterTopmostCheckpoint());
     node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
 
   // Iterators
-  TreeNode *first() const {
-    return reinterpret_cast<TreeNode *>(const_cast<char *>(constBuffer()));
+  PoolObject *first() const {
+    return reinterpret_cast<PoolObject *>(const_cast<char *>(constBuffer()));
   }
-  TreeNode *last() const {
-    return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor));
+  PoolObject *last() const {
+    return reinterpret_cast<PoolObject *>(const_cast<char *>(m_cursor));
   }
 
   class Nodes final {
    public:
-    Nodes(TreeNode *node) : m_node(node) {}
-    class Iterator : public TreeNode::Iterator<TreeNode> {
+    Nodes(PoolObject *node) : m_node(node) {}
+    class Iterator : public PoolObject::Iterator<PoolObject> {
      public:
-      using TreeNode::Iterator<TreeNode>::Iterator;
+      using PoolObject::Iterator<PoolObject>::Iterator;
       Iterator &operator++() {
         m_node = m_node->next();
         return *this;
@@ -120,16 +122,16 @@ class Pool final {
     Iterator end() const { return Iterator(Pool::sharedPool->last()); }
 
    private:
-    TreeNode *m_node;
+    PoolObject *m_node;
   };
   Nodes allNodes() { return Nodes(first()); }
 
   class RootNodes final {
    public:
-    RootNodes(TreeNode *node) : m_node(node) {}
-    class Iterator : public TreeNode::Iterator<TreeNode> {
+    RootNodes(PoolObject *node) : m_node(node) {}
+    class Iterator : public PoolObject::Iterator<PoolObject> {
      public:
-      using TreeNode::Iterator<TreeNode>::Iterator;
+      using PoolObject::Iterator<PoolObject>::Iterator;
       Iterator &operator++() {
         m_node = m_node->nextSibling();
         return *this;
@@ -139,13 +141,14 @@ class Pool final {
     Iterator end() const { return Iterator(Pool::sharedPool->last()); }
 
    private:
-    TreeNode *m_node;
+    PoolObject *m_node;
   };
   RootNodes roots() { return RootNodes(first()); }
 
   // Pool memory
-  void dealloc(TreeNode *ptr, size_t size);
-  void moveNodes(TreeNode *destination, TreeNode *source, size_t moveLength);
+  void dealloc(PoolObject *ptr, size_t size);
+  void moveNodes(PoolObject *destination, PoolObject *source,
+                 size_t moveLength);
 
   // Identifiers
   uint16_t generateIdentifier() { return m_identifiers.pop(); }
@@ -168,7 +171,7 @@ class Pool final {
                   "Tree node identifiers do not have the right data size.");
   };
 
-  void freePoolFromNode(TreeNode *firstNodeToDiscard);
+  void freePoolFromNode(PoolObject *firstNodeToDiscard);
 
   char *buffer() { return reinterpret_cast<char *>(m_alignedBuffer); }
   const char *constBuffer() const {

@@ -36,7 +36,7 @@ class IntegralLayoutNode final : public LayoutNode {
     return k_lowerBoundLayoutIndex;
   }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(IntegralLayoutNode); }
   int numberOfChildren() const override { return 4; }
 #if POINCARE_TREE_LOG

@@ -33,7 +33,7 @@ class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
   AutocompletedBracketPairLayoutNode()
       : m_leftIsTemporary(false), m_rightIsTemporary(false) {}
 
-  // TreeNode
+  // PoolObject
   size_t size() const override {
     return sizeof(AutocompletedBracketPairLayoutNode);
   }

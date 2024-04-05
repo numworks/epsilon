@@ -27,7 +27,7 @@ TrinaryBoolean DivisionNode::isPositive(Context *context) const {
 }
 
 bool DivisionNode::childNeedsSystemParenthesesAtSerialization(
-    const TreeNode *child) const {
+    const PoolObject *child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() &&
       Number(static_cast<const NumberNode *>(child)).isPositive() ==
           TrinaryBoolean::False) {

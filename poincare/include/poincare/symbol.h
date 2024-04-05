@@ -9,7 +9,7 @@ class SymbolNode final : public SymbolAbstractNode {
  public:
   using SymbolAbstractNode::SymbolAbstractNode;
 
-  // TreeNode
+  // PoolObject
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Symbol"; }

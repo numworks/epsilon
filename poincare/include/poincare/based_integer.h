@@ -14,7 +14,7 @@ class BasedIntegerNode final : public NumberNode {
   Integer integer() const;
   OMG::Base base() const { return m_base; }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
@@ -81,7 +81,7 @@ class BasedInteger final : public Number {
   static BasedInteger Builder(const Integer& m,
                               OMG::Base base = OMG::Base::Decimal);
 
-  // TreeNode
+  // PoolObject
   BasedIntegerNode* node() const {
     return static_cast<BasedIntegerNode*>(Number::node());
   }

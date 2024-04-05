@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class BlobNode : public TreeNode {
+class BlobNode : public PoolObject {
  public:
   BlobNode(int data) : m_data(data) {}
   size_t size() const override { return sizeof(BlobNode); }

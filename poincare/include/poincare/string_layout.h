@@ -30,7 +30,7 @@ class StringLayoutNode : public LayoutNode {
   OLayout makeEditable() override;
   int numberOfThousandsSeparators();
 
-  // TreeNode
+  // PoolObject
   size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

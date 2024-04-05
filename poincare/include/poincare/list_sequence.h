@@ -10,7 +10,7 @@ namespace Poincare {
 
 class ListSequenceNode final : public ParameteredExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ListSequenceNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

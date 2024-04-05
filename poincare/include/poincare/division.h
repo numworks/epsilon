@@ -12,7 +12,7 @@ class DivisionNode final : public ExpressionNode {
   friend class LogarithmNode;
 
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(DivisionNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
@@ -60,7 +60,7 @@ class DivisionNode final : public ExpressionNode {
 
   // Layout
   bool childNeedsSystemParenthesesAtSerialization(
-      const TreeNode* child) const override;
+      const PoolObject* child) const override;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;

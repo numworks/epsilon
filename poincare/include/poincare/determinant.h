@@ -9,7 +9,7 @@ class DeterminantNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "det";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(DeterminantNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

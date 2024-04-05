@@ -236,7 +236,7 @@ size_t ComparisonNode::serialize(char* buffer, size_t bufferSize,
 }
 
 bool ComparisonNode::childNeedsSystemParenthesesAtSerialization(
-    const TreeNode* child) const {
+    const PoolObject* child) const {
   int i = indexOfChild(child);
   OExpression e = Comparison(this).childAtIndex(i);
   // Factorials can mess up with equal signs

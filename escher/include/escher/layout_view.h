@@ -30,7 +30,7 @@ class LayoutView : public GlyphsView {
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
   bool layoutHasNode() const {
-    return Poincare::TreeNode::IsValidIdentifier(m_layout.identifier()) &&
+    return Poincare::PoolObject::IsValidIdentifier(m_layout.identifier()) &&
            !m_layout.wasErasedByException();
   }
 

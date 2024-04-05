@@ -6,7 +6,7 @@ namespace Poincare {
 
 // Node operations
 
-void TreeNode::release(int currentNumberOfChildren) {
+void PoolObject::release(int currentNumberOfChildren) {
   if (!isAfterTopmostCheckpoint()) {
     /* Do not decrease reference counters outside of the current checkpoint
      * since they were not increased. */
@@ -19,8 +19,8 @@ void TreeNode::release(int currentNumberOfChildren) {
   }
 }
 
-void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
-                      bool skipChildrenUpdate) {
+void PoolObject::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
+                        bool skipChildrenUpdate) {
   if (unregisterPreviousIdentifier) {
     /* The previous identifier should not always be unregistered. For instance,
      * if the node is a clone and still has the original node's identifier,
@@ -38,16 +38,16 @@ void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
 
 // Hierarchy
 
-TreeNode *TreeNode::parent() const {
+PoolObject *PoolObject::parent() const {
   assert(m_parentIdentifier != m_identifier);
   return TreeHandle::hasNode(m_parentIdentifier)
              ? Pool::sharedPool->node(m_parentIdentifier)
              : nullptr;
 }
 
-TreeNode *TreeNode::root() {
-  TreeNode *result = this;
-  TreeNode *resultParent = result->parent();
+PoolObject *PoolObject::root() {
+  PoolObject *result = this;
+  PoolObject *resultParent = result->parent();
   while (resultParent != nullptr) {
     result = resultParent;
     resultParent = result->parent();
@@ -55,10 +55,10 @@ TreeNode *TreeNode::root() {
   return result;
 }
 
-int TreeNode::numberOfDescendants(bool includeSelf) const {
+int PoolObject::numberOfDescendants(bool includeSelf) const {
   int result = includeSelf ? 1 : 0;
-  TreeNode *nextSiblingNode = nextSibling();
-  TreeNode *currentNode = next();
+  PoolObject *nextSiblingNode = nextSibling();
+  PoolObject *currentNode = next();
   while (currentNode != nextSiblingNode) {
     result++;
     currentNode = currentNode->next();
@@ -66,10 +66,10 @@ int TreeNode::numberOfDescendants(bool includeSelf) const {
   return result;
 }
 
-TreeNode *TreeNode::childAtIndex(int i) const {
+PoolObject *PoolObject::childAtIndex(int i) const {
   assert(i >= 0);
   assert(i < numberOfChildren());
-  TreeNode *child = next();
+  PoolObject *child = next();
   while (i > 0) {
     child = child->nextSibling();
     assert(child != nullptr);
@@ -79,10 +79,10 @@ TreeNode *TreeNode::childAtIndex(int i) const {
   return child;
 }
 
-int TreeNode::indexOfChild(const TreeNode *child) const {
+int PoolObject::indexOfChild(const PoolObject *child) const {
   assert(child != nullptr);
   int childrenCount = numberOfChildren();
-  TreeNode *childAtIndexi = next();
+  PoolObject *childAtIndexi = next();
   for (int i = 0; i < childrenCount; i++) {
     if (childAtIndexi == child) {
       return i;
@@ -92,16 +92,16 @@ int TreeNode::indexOfChild(const TreeNode *child) const {
   return -1;
 }
 
-int TreeNode::indexInParent() const {
-  TreeNode *p = parent();
+int PoolObject::indexInParent() const {
+  PoolObject *p = parent();
   if (p == nullptr) {
     return -1;
   }
   return p->indexOfChild(this);
 }
 
-bool TreeNode::hasChild(const TreeNode *child) const {
-  for (TreeNode *c : directChildren()) {
+bool PoolObject::hasChild(const PoolObject *child) const {
+  for (PoolObject *c : directChildren()) {
     if (child == c) {
       return true;
     }
@@ -109,11 +109,11 @@ bool TreeNode::hasChild(const TreeNode *child) const {
   return false;
 }
 
-bool TreeNode::hasAncestor(const TreeNode *node, bool includeSelf) const {
+bool PoolObject::hasAncestor(const PoolObject *node, bool includeSelf) const {
   if (includeSelf && node == this) {
     return true;
   }
-  for (TreeNode *t : node->depthFirstChildren()) {
+  for (PoolObject *t : node->depthFirstChildren()) {
     if (this == t) {
       return true;
     }
@@ -121,12 +121,12 @@ bool TreeNode::hasAncestor(const TreeNode *node, bool includeSelf) const {
   return false;
 }
 
-bool TreeNode::hasSibling(const TreeNode *e) const {
-  TreeNode *p = parent();
+bool PoolObject::hasSibling(const PoolObject *e) const {
+  PoolObject *p = parent();
   if (p == nullptr) {
     return false;
   }
-  for (TreeNode *childNode : p->directChildren()) {
+  for (PoolObject *childNode : p->directChildren()) {
     if (childNode == e) {
       return true;
     }
@@ -134,9 +134,9 @@ bool TreeNode::hasSibling(const TreeNode *e) const {
   return false;
 }
 
-TreeNode *TreeNode::nextSibling() const {
+PoolObject *PoolObject::nextSibling() const {
   int remainingNodesToVisit = numberOfChildren();
-  TreeNode *node = const_cast<TreeNode *>(this)->next();
+  PoolObject *node = const_cast<PoolObject *>(this)->next();
   while (remainingNodesToVisit > 0) {
     remainingNodesToVisit += node->numberOfChildren();
     node = node->next();
@@ -145,8 +145,8 @@ TreeNode *TreeNode::nextSibling() const {
   return node;
 }
 
-TreeNode *TreeNode::lastDescendant() const {
-  TreeNode *node = const_cast<TreeNode *>(this);
+PoolObject *PoolObject::lastDescendant() const {
+  PoolObject *node = const_cast<PoolObject *>(this);
   int remainingNodesToVisit = node->numberOfChildren();
   while (remainingNodesToVisit > 0) {
     node = node->next();
@@ -159,8 +159,8 @@ TreeNode *TreeNode::lastDescendant() const {
 // Protected
 
 #if POINCARE_TREE_LOG
-void TreeNode::log(std::ostream &stream, bool recursive, int indentation,
-                   bool verbose) {
+void PoolObject::log(std::ostream &stream, bool recursive, int indentation,
+                     bool verbose) {
   stream << "\n";
   for (int i = 0; i < indentation; ++i) {
     stream << "  ";
@@ -175,7 +175,7 @@ void TreeNode::log(std::ostream &stream, bool recursive, int indentation,
   logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (TreeNode *child : directChildren()) {
+    for (PoolObject *child : directChildren()) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
@@ -197,12 +197,12 @@ void TreeNode::log(std::ostream &stream, bool recursive, int indentation,
 }
 #endif
 
-size_t TreeNode::deepSize(int realNumberOfChildren) const {
+size_t PoolObject::deepSize(int realNumberOfChildren) const {
   if (realNumberOfChildren == -1) {
     return reinterpret_cast<char *>(nextSibling()) -
            reinterpret_cast<const char *>(this);
   }
-  TreeNode *realNextSibling = next();
+  PoolObject *realNextSibling = next();
   for (int i = 0; i < realNumberOfChildren; i++) {
     realNextSibling = realNextSibling->nextSibling();
   }
@@ -210,11 +210,11 @@ size_t TreeNode::deepSize(int realNumberOfChildren) const {
          reinterpret_cast<const char *>(this);
 }
 
-bool TreeNode::deepIsGhost() const {
+bool PoolObject::deepIsGhost() const {
   if (isGhost()) {
     return true;
   }
-  for (TreeNode *c : directChildren()) {
+  for (PoolObject *c : directChildren()) {
     if (c->deepIsGhost()) {
       return true;
     }
@@ -222,8 +222,8 @@ bool TreeNode::deepIsGhost() const {
   return false;
 }
 
-void TreeNode::changeParentIdentifierInChildren(uint16_t id) const {
-  for (TreeNode *c : directChildren()) {
+void PoolObject::changeParentIdentifierInChildren(uint16_t id) const {
+  for (PoolObject *c : directChildren()) {
     c->setParentIdentifier(id);
   }
 }

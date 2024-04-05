@@ -10,7 +10,7 @@ class Opposite;
 
 class OppositeNode final : public ExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(OppositeNode); }
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG

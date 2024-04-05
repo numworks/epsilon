@@ -36,10 +36,10 @@ static_assert(
 
 struct IntegerDivision;
 
-class IntegerNode final : public TreeNode {
+class IntegerNode final : public PoolObject {
  public:
   IntegerNode(const native_uint_t *digits, uint8_t numberOfDigits);
-  // TreeNode
+  // PoolObject
   size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
@@ -69,7 +69,7 @@ class Integer final : public TreeHandle {
           OMG::Base base = OMG::Base::Decimal);
   Integer(const char *digits) : Integer(digits, strlen(digits), false) {}
   static Integer Overflow(bool negative) {
-    return Integer(TreeNode::OverflowIdentifier, negative);
+    return Integer(PoolObject::OverflowIdentifier, negative);
   }
 
 #if POINCARE_TREE_LOG
@@ -125,7 +125,7 @@ class Integer final : public TreeHandle {
    * overflow, or when we want to have one more digit than usual to compute a
    * big division. */
   bool isOverflow() const {
-    return m_identifier == TreeNode::OverflowIdentifier;
+    return m_identifier == PoolObject::OverflowIdentifier;
   }
   /* If the user input is larger than 10^k_MaxNumberOfParsedDigitsBase10,
    * it is converted to decimal which is then converted to float when reduced.
@@ -269,7 +269,7 @@ class Integer final : public TreeHandle {
   }
 
   bool usesImmediateDigit() const {
-    return m_identifier == TreeNode::NoNodeIdentifier;
+    return m_identifier == PoolObject::NoNodeIdentifier;
   }
 
   bool m_negative;

@@ -10,7 +10,7 @@ class HyperbolicArcSineNode final : public HyperbolicTrigonometricFunctionNode {
  public:
   constexpr static AliasesList k_functionName = "arsinh";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(HyperbolicArcSineNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

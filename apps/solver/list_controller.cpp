@@ -173,7 +173,8 @@ void ListController::resolveEquations() {
     App::app()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
-  // Tidy model before checkpoint, during which older TreeNodes can't be altered
+  // Tidy model before checkpoint, during which older PoolObjects can't be
+  // altered
   modelStore()->tidyDownstreamPoolFrom();
   App::app()->system()->tidy();
   Poincare::Context *context = App::app()->localContext();

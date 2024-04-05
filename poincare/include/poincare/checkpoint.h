@@ -24,13 +24,13 @@ void interruptableCode() {
 
 namespace Poincare {
 
-class TreeNode;
+class PoolObject;
 
 class Checkpoint {
   friend class ExceptionCheckpoint;
 
  public:
-  static TreeNode *TopmostEndOfPool() {
+  static PoolObject *TopmostEndOfPool() {
     return s_topmost ? s_topmost->m_endOfPool : nullptr;
   }
 
@@ -39,7 +39,7 @@ class Checkpoint {
   virtual ~Checkpoint() { protectedDiscard(); }
   Checkpoint &operator=(const Checkpoint &) = delete;
 
-  TreeNode *const endOfPoolBeforeCheckpoint() { return m_endOfPool; }
+  PoolObject *const endOfPoolBeforeCheckpoint() { return m_endOfPool; }
 
   virtual void discard() const { protectedDiscard(); }
 
@@ -54,7 +54,7 @@ class Checkpoint {
  private:
   virtual void rollbackException();
 
-  TreeNode *const m_endOfPool;
+  PoolObject *const m_endOfPool;
 };
 
 }  // namespace Poincare

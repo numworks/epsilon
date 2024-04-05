@@ -23,7 +23,7 @@ class TwoRowsLayoutNode : public LayoutNode {
   DeletionMethod deletionMethodForCursorLeftOfChild(
       int childIndex) const override;
 
-  // TreeNode
+  // PoolObject
   constexpr static int k_upperLayoutIndex = 0;
   constexpr static int k_lowerLayoutIndex = 1;
   int numberOfChildren() const override final { return 2; }

@@ -50,7 +50,7 @@ class LayoutSelection {
   int leftPosition() const { return std::min(m_startPosition, m_endPosition); }
   int rightPosition() const { return std::max(m_startPosition, m_endPosition); }
 
-  bool containsNode(TreeNode *n) const {
+  bool containsNode(PoolObject *n) const {
     LayoutNode *l = reinterpret_cast<LayoutNode *>(n);
     return !isEmpty() &&
            (m_layout.isHorizontal()

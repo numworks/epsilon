@@ -10,7 +10,7 @@ class FracPartNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "frac";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(FracPartNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

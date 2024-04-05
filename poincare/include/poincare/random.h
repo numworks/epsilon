@@ -10,7 +10,7 @@ class RandomNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "random";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(RandomNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

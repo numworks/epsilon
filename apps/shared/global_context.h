@@ -58,7 +58,7 @@ class GlobalContext final : public Poincare::Context {
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext *sequenceContext() { return &m_sequenceContext; }
   void tidyDownstreamPoolFrom(
-      Poincare::TreeNode *treePoolCursor = nullptr) override;
+      Poincare::PoolObject *treePoolCursor = nullptr) override;
   void prepareForNewApp();
   void reset();
 

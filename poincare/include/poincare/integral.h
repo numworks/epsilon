@@ -8,7 +8,7 @@ namespace Poincare {
 
 class IntegralNode final : public ParameteredExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(IntegralNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

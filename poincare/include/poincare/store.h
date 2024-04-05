@@ -9,7 +9,7 @@ namespace Poincare {
 
 class StoreNode final : public RightwardsArrowExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(StoreNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Store"; }

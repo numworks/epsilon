@@ -964,7 +964,7 @@ class UnitNode final : public ExpressionNode {
   UnitNode(const Representative* representative, const Prefix* prefix)
       : ExpressionNode(), m_representative(representative), m_prefix(prefix) {}
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(UnitNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

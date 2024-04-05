@@ -7,7 +7,7 @@ namespace Poincare {
 
 class MatrixEchelonFormNode : public ExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   int numberOfChildren() const override;
   virtual bool isFormReduced() const = 0;
   constexpr static int sNumberOfChildren = 1;

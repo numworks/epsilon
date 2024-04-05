@@ -53,7 +53,7 @@ class GridLayoutNode : public Array, public LayoutNode {
     return 0;
   }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(GridLayoutNode); }
   void didChangeArity(int newNumberOfChildren) override {
     return Array::didChangeNumberOfChildren(newNumberOfChildren);

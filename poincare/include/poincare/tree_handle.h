@@ -6,13 +6,13 @@
 #include <initializer_list>
 
 namespace Poincare {
-/* A TreeHandle references a TreeNode stored somewhere is the OExpression Pool,
- * and identified by its idenfier.
- * Any method that can possibly move the object ("break the this")
- * therefore needs to be implemented in the Handle rather than the Node.
+/* A TreeHandle references a PoolObject stored somewhere is the OExpression
+ * Pool, and identified by its idenfier. Any method that can possibly move the
+ * object ("break the this") therefore needs to be implemented in the Handle
+ * rather than the Node.
  */
 class TreeHandle {
-  friend class TreeNode;
+  friend class PoolObject;
   friend class Pool;
 
  public:
@@ -21,12 +21,13 @@ class TreeHandle {
    * a TreeHandle should be marked explicit. This prevents the code from
    * compiling with, for instance: Logarithm l = clone() (which would be
    * equivalent to Logarithm l = Logarithm(clone())). */
-  TreeHandle(const TreeHandle& tr) : m_identifier(TreeNode::NoNodeIdentifier) {
+  TreeHandle(const TreeHandle& tr)
+      : m_identifier(PoolObject::NoNodeIdentifier) {
     setIdentifierAndRetain(tr.identifier());
   }
 
   TreeHandle(TreeHandle&& tr) : m_identifier(tr.m_identifier) {
-    tr.m_identifier = TreeNode::NoNodeIdentifier;
+    tr.m_identifier = PoolObject::NoNodeIdentifier;
   }
 
   ~TreeHandle() { release(m_identifier); }
@@ -40,7 +41,7 @@ class TreeHandle {
   TreeHandle& operator=(TreeHandle&& tr) {
     release(m_identifier);
     m_identifier = tr.m_identifier;
-    tr.m_identifier = TreeNode::NoNodeIdentifier;
+    tr.m_identifier = PoolObject::NoNodeIdentifier;
     return *this;
   }
 
@@ -56,7 +57,7 @@ class TreeHandle {
   TreeHandle clone() const;
 
   uint16_t identifier() const { return m_identifier; }
-  TreeNode* node() const;
+  PoolObject* node() const;
   bool wasErasedByException() const {
     return hasNode(m_identifier) && node() == nullptr;
   }
@@ -68,9 +69,9 @@ class TreeHandle {
   bool isGhost() const { return node()->isGhost(); }
   bool deepIsGhost() const { return node()->deepIsGhost(); }
   bool isUninitialized() const {
-    return m_identifier == TreeNode::NoNodeIdentifier;
+    return m_identifier == PoolObject::NoNodeIdentifier;
   }
-  bool isDownstreamOf(TreeNode* treePoolCursor) {
+  bool isDownstreamOf(PoolObject* treePoolCursor) {
     return !isUninitialized() &&
            (node() == nullptr || node() >= treePoolCursor);
   }
@@ -124,9 +125,9 @@ class TreeHandle {
 
   typedef std::initializer_list<TreeHandle> Tuple;
 
-  static TreeHandle Builder(TreeNode::Initializer initializer, size_t size,
+  static TreeHandle Builder(PoolObject::Initializer initializer, size_t size,
                             int numberOfChildren = -1);
-  static TreeHandle BuilderWithChildren(TreeNode::Initializer initializer,
+  static TreeHandle BuilderWithChildren(PoolObject::Initializer initializer,
                                         size_t size, const Tuple& children);
 
   // Iterator
@@ -175,7 +176,7 @@ class TreeHandle {
     };
 
     Iterator begin() const {
-      TreeNode* node = m_handle.node()->next();
+      PoolObject* node = m_handle.node()->next();
       for (int i = 0; i < m_firstIndex; i++) {
         node = node->nextSibling();
       }
@@ -196,15 +197,15 @@ class TreeHandle {
     int m_firstIndex;
   };
 
-  Direct<TreeHandle, TreeNode> directChildren() const {
-    return Direct<TreeHandle, TreeNode>(*this);
+  Direct<TreeHandle, PoolObject> directChildren() const {
+    return Direct<TreeHandle, PoolObject>(*this);
   }
 
  protected:
   /* Constructor */
-  TreeHandle(const TreeNode* node);
+  TreeHandle(const PoolObject* node);
   // Un-inlining this constructor actually inscreases the firmware size
-  TreeHandle(uint16_t nodeIndentifier = TreeNode::NoNodeIdentifier)
+  TreeHandle(uint16_t nodeIndentifier = PoolObject::NoNodeIdentifier)
       : m_identifier(nodeIndentifier) {
     if (hasNode(nodeIndentifier)) {
       node()->retain();
@@ -218,13 +219,13 @@ class TreeHandle {
   template <class T, class U>
   static T FixedArityBuilder(const Tuple& children = {});
 
-  static TreeHandle BuildWithGhostChildren(TreeNode* node);
+  static TreeHandle BuildWithGhostChildren(PoolObject* node);
 
   void setIdentifierAndRetain(uint16_t newId);
   void setTo(const TreeHandle& tr);
 
   static bool hasNode(uint16_t identifier) {
-    return TreeNode::IsValidIdentifier(identifier);
+    return PoolObject::IsValidIdentifier(identifier);
   }
 
   /* Hierarchy operations */

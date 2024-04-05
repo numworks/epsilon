@@ -41,7 +41,7 @@ void ExpressionModelStore::removeModel(Ion::Storage::Record record) {
 }
 
 void ExpressionModelStore::tidyDownstreamPoolFrom(
-    Poincare::TreeNode* treePoolCursor) {
+    Poincare::PoolObject* treePoolCursor) {
   for (int i = 0; i < maxNumberOfMemoizedModels(); i++) {
     memoizedModelAtIndex(i)->tidyDownstreamPoolFrom(treePoolCursor);
   }

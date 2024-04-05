@@ -8,7 +8,7 @@ namespace Poincare {
 
 class ParenthesisNode final : public ExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ParenthesisNode); }
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG

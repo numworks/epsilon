@@ -15,7 +15,7 @@ class ConstantNode final : public ExpressionNode {
 
   const char* name() const { return constantInfo().m_aliasesList.mainAlias(); }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ConstantNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

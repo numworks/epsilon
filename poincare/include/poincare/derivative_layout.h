@@ -89,7 +89,7 @@ class FirstOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
                                    PositionInLayout positionAtCurrentIndex,
                                    bool* shouldRedrawLayout) override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override {
     return sizeof(FirstOrderDerivativeLayoutNode);
   }
@@ -124,7 +124,7 @@ class HigherOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
                                    PositionInLayout positionAtCurrentIndex,
                                    bool* shouldRedrawLayout) override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override {
     return sizeof(HigherOrderDerivativeLayoutNode);
   }

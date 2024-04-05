@@ -25,7 +25,7 @@ size_t ReplaceSystemParenthesesAndBracesByUserParentheses(char* buffer,
                                                           size_t length = -1);
 
 // SerializableReference to text
-size_t Infix(const TreeNode* node, char* buffer, size_t bufferSize,
+size_t Infix(const PoolObject* node, char* buffer, size_t bufferSize,
              Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits,
              const char* operatorName, int firstChildIndex = 0,
              int lastChildIndex = -1);
@@ -37,13 +37,13 @@ size_t Infix(const TreeNode* node, char* buffer, size_t bufferSize,
  * instead of "abs(2)(3)".
  *
  * /!\ A layout that calls Prefix should put true to needsSystemParentheses */
-size_t Prefix(const TreeNode* node, char* buffer, size_t bufferSize,
+size_t Prefix(const PoolObject* node, char* buffer, size_t bufferSize,
               Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits,
               const char* operatorName,
               ParenthesisType typeOfParenthesis = ParenthesisType::Classic,
               int lastChildIndex = -1);
 
-size_t SerializeChild(const TreeNode* childNode, const TreeNode* parentNode,
+size_t SerializeChild(const PoolObject* childNode, const PoolObject* parentNode,
                       char* buffer, size_t bufferSize,
                       Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfDigits);
@@ -53,7 +53,7 @@ size_t CodePoint(char* buffer, size_t bufferSize, CodePoint c);
 
 /* Default childNeedsSystemParenthesesAtSerialization for postfix operators
  * such as % and ! */
-bool PostfixChildNeedsSystemParenthesesAtSerialization(const TreeNode* child);
+bool PostfixChildNeedsSystemParenthesesAtSerialization(const PoolObject* child);
 };  // namespace SerializationHelper
 
 }  // namespace Poincare

@@ -8,7 +8,7 @@ namespace Poincare {
 
 class ProductNode final : public SumAndProductNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ProductNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Product"; }

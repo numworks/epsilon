@@ -9,7 +9,7 @@ class MatrixInverseNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "inverse";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(MatrixInverseNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

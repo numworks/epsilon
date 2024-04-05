@@ -1421,7 +1421,7 @@ OExpression OExpression::cloneAndDeepReduceWithSystemCheckpoint(
   *reduceFailure = false;
   OExpression e;
   {
-    TreeNode *treePoolCursor = Pool::sharedPool->cursor();
+    PoolObject *treePoolCursor = Pool::sharedPool->cursor();
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
       OExpression reduced = clone().deepReduce(*reductionContext);
@@ -1862,7 +1862,7 @@ OExpression OExpression::CreateComplexExpression(
 }
 
 static OExpression maker(OExpression children, int nbChildren,
-                         TreeNode::Initializer initializer, size_t size) {
+                         PoolObject::Initializer initializer, size_t size) {
   assert(children.otype() == ExpressionNode::Type::OList);
   TreeHandle handle = TreeHandle::Builder(initializer, size, nbChildren);
   OExpression result = static_cast<OExpression &>(handle);

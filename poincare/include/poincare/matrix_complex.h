@@ -17,7 +17,7 @@ class MatrixComplexNode final : public Array, public EvaluationNode<T> {
 
   std::complex<T> complexAtIndex(int index) const override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }
   int numberOfChildren() const override {
     return isUndefined() ? 0 : m_numberOfRows * m_numberOfColumns;

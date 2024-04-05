@@ -53,7 +53,7 @@ class HorizontalLayoutNode final : public LayoutNode {
     return m_numberOfChildren != 0;
   }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(HorizontalLayoutNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
   void setNumberOfChildren(int numberOfChildren) override {

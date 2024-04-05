@@ -10,7 +10,7 @@ class NaperianLogarithmNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "ln";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(NaperianLogarithmNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

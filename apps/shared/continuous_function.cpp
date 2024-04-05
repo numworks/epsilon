@@ -170,7 +170,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
 }
 
 void ContinuousFunction::tidyDownstreamPoolFrom(
-    TreeNode *treePoolCursor) const {
+    PoolObject *treePoolCursor) const {
   ExpressionModelHandle::tidyDownstreamPoolFrom(treePoolCursor);
   m_cache = nullptr;
 }
@@ -1131,7 +1131,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
 }
 
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(
-    TreeNode *treePoolCursor) const {
+    PoolObject *treePoolCursor) const {
   if (treePoolCursor == nullptr ||
       m_expressionFirstDerivate.isDownstreamOf(treePoolCursor)) {
     m_expressionFirstDerivate = Expression();

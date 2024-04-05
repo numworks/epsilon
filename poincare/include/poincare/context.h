@@ -15,7 +15,7 @@ namespace Poincare {
 class JuniorExpression;
 class SymbolAbstract;
 class ContextWithParent;
-class TreeNode;
+class PoolObject;
 
 class Context {
   friend class ContextWithParent;
@@ -37,7 +37,7 @@ class Context {
                                                  SymbolAbstractType type);
   virtual bool setExpressionForSymbolAbstract(
       const JuniorExpression& expression, const SymbolAbstract& symbol) = 0;
-  virtual void tidyDownstreamPoolFrom(TreeNode* treePoolCursor = nullptr) {}
+  virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}
   virtual bool canRemoveUnderscoreToUnits() const { return true; }
 
  protected:

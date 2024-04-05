@@ -14,7 +14,7 @@ class PiecewiseOperatorNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "piecewise";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(PiecewiseOperatorNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
   void setNumberOfChildren(int numberOfChildren) override {

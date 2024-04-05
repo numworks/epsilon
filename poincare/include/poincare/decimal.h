@@ -27,7 +27,7 @@ class DecimalNode final : public NumberNode {
   Integer unsignedMantissa() const;
   int exponent() const { return m_exponent; }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Decimal"; }

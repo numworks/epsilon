@@ -148,7 +148,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
   }
 }
 
-void SystemOfEquations::tidy(TreeNode *treePoolCursor) {
+void SystemOfEquations::tidy(PoolObject *treePoolCursor) {
   for (int i = 0; i < k_maxNumberOfSolutions; i++) {
     if (treePoolCursor == nullptr ||
         m_solutions[i].exactLayout().isDownstreamOf(treePoolCursor) ||

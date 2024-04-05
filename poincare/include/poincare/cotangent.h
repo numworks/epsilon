@@ -10,7 +10,7 @@ class CotangentNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "cot";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(CotangentNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

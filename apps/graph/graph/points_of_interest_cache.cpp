@@ -308,7 +308,7 @@ void PointsOfInterestCache::append(double x, double y,
 }
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(
-    TreeNode *treePoolCursor) const {
+    PoolObject *treePoolCursor) const {
   ContinuousFunctionStore *store = App::app()->functionStore();
   int n = store->numberOfActiveFunctions();
   for (int i = 0; i < n; i++) {

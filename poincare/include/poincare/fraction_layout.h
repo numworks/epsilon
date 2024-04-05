@@ -34,7 +34,7 @@ class FractionLayoutNode final : public LayoutNode {
                      OMG::HorizontalDirection direction) const override;
   int indexOfChildToPointToWhenInserting() override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(FractionLayoutNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
@@ -46,7 +46,7 @@ class FractionLayoutNode final : public LayoutNode {
  protected:
   // SerializationInterface
   bool childNeedsSystemParenthesesAtSerialization(
-      const TreeNode* child) const override {
+      const PoolObject* child) const override {
     return true;
   }
   // LayoutNode

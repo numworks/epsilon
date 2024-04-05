@@ -8,7 +8,7 @@ namespace Poincare {
 
 class GreatCommonDivisorNode final : public NAryExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(GreatCommonDivisorNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

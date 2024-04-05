@@ -31,7 +31,7 @@ class CondensedSumLayoutNode final : public LayoutNode {
     return k_outsideIndex;
   }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(CondensedSumLayoutNode); }
   int numberOfChildren() const override { return 3; }
 #if POINCARE_TREE_LOG

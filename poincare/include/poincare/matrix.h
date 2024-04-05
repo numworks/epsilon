@@ -10,7 +10,7 @@ class MatrixNode final : public Array, public ExpressionNode {
  public:
   MatrixNode() : Array() {}
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(MatrixNode); }
   int numberOfChildren() const override {
     return m_numberOfRows * m_numberOfColumns;

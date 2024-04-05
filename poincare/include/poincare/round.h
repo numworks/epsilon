@@ -11,7 +11,7 @@ class RoundNode final : public ExpressionNodeWithOneOrTwoChildren {
  public:
   constexpr static AliasesList k_functionName = "round";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(RoundNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Round"; }

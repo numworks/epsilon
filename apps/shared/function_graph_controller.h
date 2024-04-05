@@ -24,7 +24,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
   void viewWillAppear() override;
 
   // InteractiveCurveViewRangeDelegate
-  void tidyModels(Poincare::TreeNode *treePoolCursor) override;
+  void tidyModels(Poincare::PoolObject *treePoolCursor) override;
 
   // InteractiveCurveViewController
   int numberOfCurves() const override;

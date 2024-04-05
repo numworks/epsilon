@@ -36,7 +36,7 @@ class InteractiveCurveViewRangeDelegate {
   Poincare::Range2D<float> addMargins(Poincare::Range2D<float> range) const;
   virtual void refreshCursorAfterComputingRange() = 0;
   virtual void updateZoomButtons() = 0;
-  virtual void tidyModels(Poincare::TreeNode* treePoolCursor) = 0;
+  virtual void tidyModels(Poincare::PoolObject* treePoolCursor) = 0;
 };
 
 }  // namespace Shared

@@ -18,7 +18,7 @@ class BooleanEvaluationNode final : public EvaluationNode<T> {
   int numberOfChildren() const override { return 0; }
   bool value() const { return m_value; }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(BooleanEvaluationNode<T>); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
@@ -60,7 +60,7 @@ class BooleanNode final : public ExpressionNode {
   constexpr static AliasesList k_falseAliases = AliasesLists::k_falseAliases;
 
   BooleanNode(bool value) : m_value(value) {}
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(BooleanNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

@@ -28,7 +28,7 @@ class MatrixLayoutNode final : public GridLayoutNode {
   void startEditing() override;
   void stopEditing() override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(MatrixLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream &stream) const override {

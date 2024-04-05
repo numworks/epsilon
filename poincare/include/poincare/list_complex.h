@@ -23,7 +23,7 @@ class ListComplexNode final : public EvaluationNode<T> {
   }
   void setUndefined() { m_numberOfChildren = -1; }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ListComplexNode<T>); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream &stream) const override {

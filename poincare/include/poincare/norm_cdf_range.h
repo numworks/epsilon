@@ -10,7 +10,7 @@ class NormCDFRangeNode final : public NormalDistributionFunctionNode {
  public:
   constexpr static AliasesList k_functionName = "normcdfrange";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(NormCDFRangeNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

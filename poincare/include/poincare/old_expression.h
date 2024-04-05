@@ -532,7 +532,7 @@ class OExpression : public TreeHandle {
     constexpr FunctionHelper(AliasesList aliasesList,
                              const int minNumberOfChildren,
                              const int maxNumberOfChildren,
-                             TreeNode::Initializer initializer, size_t size)
+                             PoolObject::Initializer initializer, size_t size)
         : FunctionHelper(aliasesList, minNumberOfChildren, maxNumberOfChildren,
                          nullptr, initializer, size) {}
     constexpr AliasesList aliasesList() const { return m_aliasesList; }
@@ -549,7 +549,7 @@ class OExpression : public TreeHandle {
                              const int minNumberOfChildren,
                              const int maxNumberOfChildren,
                              OExpression (*const builder)(OExpression),
-                             TreeNode::Initializer initializer, size_t size)
+                             PoolObject::Initializer initializer, size_t size)
         : m_aliasesList(aliasesList),
           m_minNumberOfChildren(minNumberOfChildren),
           m_maxNumberOfChildren(maxNumberOfChildren),
@@ -563,7 +563,7 @@ class OExpression : public TreeHandle {
     const int m_minNumberOfChildren;
     const int m_maxNumberOfChildren;
     OExpression (*const m_untypedBuilder)(OExpression children);
-    TreeNode::Initializer m_initializer;
+    PoolObject::Initializer m_initializer;
     const size_t m_size;
   };
 
@@ -646,7 +646,7 @@ class OExpression : public TreeHandle {
 
   /* Reference */
   ExpressionNode* node() const {
-    assert(identifier() != TreeNode::NoNodeIdentifier &&
+    assert(identifier() != PoolObject::NoNodeIdentifier &&
            !TreeHandle::node()->isGhost());
     return static_cast<ExpressionNode*>(TreeHandle::node());
   }

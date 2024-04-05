@@ -10,7 +10,7 @@ class RealPartNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "re";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(RealPartNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

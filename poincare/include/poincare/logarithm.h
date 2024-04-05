@@ -13,7 +13,7 @@ class LogarithmNode final : public ExpressionNodeWithOneOrTwoChildren {
  public:
   constexpr static AliasesList k_functionName = "log";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(LogarithmNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

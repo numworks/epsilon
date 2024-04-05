@@ -18,7 +18,7 @@ class LetterWithSubAndSuperscriptLayoutNode : public LayoutNode {
                                    PositionInLayout positionAtCurrentIndex,
                                    bool* shouldRedrawLayout) override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override {
     return sizeof(LetterWithSubAndSuperscriptLayoutNode);
   }

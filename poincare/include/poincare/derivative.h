@@ -11,7 +11,7 @@ class DerivativeNode final : public ParameteredExpressionNode {
   friend class Derivative;
 
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(DerivativeNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

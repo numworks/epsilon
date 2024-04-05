@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class PairNode : public TreeNode {
+class PairNode : public PoolObject {
  public:
   size_t size() const override { return sizeof(PairNode); }
   int numberOfChildren() const override { return 2; }

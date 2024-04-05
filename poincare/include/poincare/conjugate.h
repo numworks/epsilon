@@ -10,7 +10,7 @@ class ConjugateNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "conj";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ConjugateNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

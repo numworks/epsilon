@@ -28,7 +28,7 @@ bool PercentSimpleNode::childAtIndexNeedsUserParentheses(
 // Layout
 
 bool PercentSimpleNode::childNeedsSystemParenthesesAtSerialization(
-    const TreeNode* child) const {
+    const PoolObject* child) const {
   /*  2
    * --- % ---> [2/3]%
    *  3

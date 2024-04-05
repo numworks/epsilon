@@ -284,7 +284,7 @@ std::complex<T> PowerNode::computeOnComplex(
 // Serialize
 
 bool PowerNode::childNeedsSystemParenthesesAtSerialization(
-    const TreeNode *child) const {
+    const PoolObject *child) const {
   const ExpressionNode *childE = static_cast<const ExpressionNode *>(child);
   if (childAtIndex(0)->otype() == Type::ConstantMaths &&
       static_cast<const ConstantNode *>(childAtIndex(0))->isExponentialE() &&

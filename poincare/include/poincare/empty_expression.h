@@ -9,7 +9,7 @@ namespace Poincare {
 
 class EmptyExpressionNode final : public ExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(EmptyExpressionNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

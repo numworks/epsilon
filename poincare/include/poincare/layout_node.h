@@ -17,13 +17,13 @@ namespace Poincare {
 
 class OLayout;
 
-class LayoutNode : public TreeNode {
+class LayoutNode : public PoolObject {
   friend class OLayout;
 
  public:
   // Constructor
   LayoutNode()
-      : TreeNode(),
+      : PoolObject(),
         m_size(KDSizeZero),
         m_baseline(0),
         m_flags({

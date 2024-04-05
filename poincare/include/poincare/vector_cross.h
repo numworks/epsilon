@@ -9,7 +9,7 @@ class VectorCrossNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "cross";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(VectorCrossNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

@@ -9,7 +9,7 @@ namespace Poincare {
 
 class RightwardsArrowExpressionNode : public ExpressionNode {
  public:
-  // TreeNode
+  // PoolObject
   int numberOfChildren() const override { return 2; }
   // ExpressionNode
   int polynomialDegree(Context* context,

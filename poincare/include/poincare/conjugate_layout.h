@@ -20,7 +20,7 @@ class ConjugateLayoutNode : public LayoutNode {
   DeletionMethod deletionMethodForCursorLeftOfChild(
       int childIndex) const override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(ConjugateLayoutNode); }
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG

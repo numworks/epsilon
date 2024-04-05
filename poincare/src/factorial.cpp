@@ -31,7 +31,7 @@ bool FactorialNode::childAtIndexNeedsUserParentheses(const OExpression& child,
 // Layout
 
 bool FactorialNode::childNeedsSystemParenthesesAtSerialization(
-    const TreeNode* child) const {
+    const PoolObject* child) const {
   /*  2
    * --- ! ---> [2/3]!
    *  3

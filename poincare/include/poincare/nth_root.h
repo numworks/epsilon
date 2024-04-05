@@ -11,7 +11,7 @@ class NthRootNode final : public ExpressionNode {
   // ExpressionNode
   Type otype() const override { return Type::NthRoot; }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(NthRootNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

@@ -145,7 +145,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   drawTangent(ctx, rect, record);
 }
 
-void GraphView::tidyModel(int i, TreeNode *treePoolCursor) const {
+void GraphView::tidyModel(int i, PoolObject *treePoolCursor) const {
   functionStore()
       ->modelForRecord(functionStore()->activeRecordAtIndex(i))
       ->tidyDownstreamPoolFrom(treePoolCursor);

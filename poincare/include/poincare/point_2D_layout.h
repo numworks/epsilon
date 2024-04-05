@@ -23,7 +23,7 @@ class Point2DLayoutNode final : public TwoRowsLayoutNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(Point2DLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {

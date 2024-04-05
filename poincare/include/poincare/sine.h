@@ -11,7 +11,7 @@ class SineNode final : public ExpressionNode {
  public:
   constexpr static AliasesList k_functionName = "sin";
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(SineNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

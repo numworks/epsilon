@@ -859,7 +859,7 @@ bool Simplification::SimplifyLastTree(Tree* e,
         ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
       }
       // Seed random nodes before anything is merged/duplicated.
-      maxRandomSeed = Random::SeedTreeNodes(e, maxRandomSeed);
+      maxRandomSeed = Random::SeedPoolObjects(e, maxRandomSeed);
       changed = maxRandomSeed > 0;
       changed = Projection::DeepSystemProject(e, projectionContext) || changed;
       /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them

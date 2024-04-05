@@ -58,7 +58,7 @@ class SymbolAbstractNode : public ExpressionNode {
       const SymbolAbstract &symbol, const OExpression &expression) override;
   ExpressionNode::LayoutShape leftLayoutShape() const override;
 
-  // TreeNode
+  // PoolObject
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream &stream) const override {
     stream << "SymbolAbstract";

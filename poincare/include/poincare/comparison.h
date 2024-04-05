@@ -107,7 +107,7 @@ class ComparisonNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   bool childNeedsSystemParenthesesAtSerialization(
-      const TreeNode* child) const override;
+      const PoolObject* child) const override;
 
   // Evaluation
   Evaluation<float> approximate(

@@ -85,7 +85,7 @@ Integer Integer::BuildInteger(native_uint_t *digits, uint16_t numberOfDigits,
   // 0 can't be negative
   negative = numberOfDigits == 0 ? false : negative;
   if (numberOfDigits <= 1) {
-    Integer i(TreeNode::NoNodeIdentifier, negative);
+    Integer i(PoolObject::NoNodeIdentifier, negative);
     i.m_digit = numberOfDigits == 0 ? 0 : digits[0];
     return i;
   }
@@ -105,7 +105,7 @@ Integer::Integer(native_uint_t *digits, uint16_t numberOfDigits,
   new (this) Integer(h.identifier(), negative);
 }
 
-Integer::Integer(native_int_t i) : TreeHandle(TreeNode::NoNodeIdentifier) {
+Integer::Integer(native_int_t i) : TreeHandle(PoolObject::NoNodeIdentifier) {
   m_digit = i > 0 ? i : -i;
   m_negative = i < 0;
 }
@@ -117,7 +117,7 @@ Integer::Integer(double_native_int_t i) {
   native_uint_t mostSignificantDigit = *(d + 1);
   uint8_t numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
   if (numberOfDigits == 1) {
-    m_identifier = TreeNode::NoNodeIdentifier;
+    m_identifier = PoolObject::NoNodeIdentifier;
     m_negative = i < 0;
     m_digit = leastSignificantDigit;
   } else {

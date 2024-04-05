@@ -31,7 +31,7 @@ class CodePointLayoutNode : public LayoutNode {
   bool isCollapsable(int *numberOfOpenParenthesis,
                      OMG::HorizontalDirection direction) const override;
 
-  // TreeNode
+  // PoolObject
   size_t size() const override { return sizeof(CodePointLayoutNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

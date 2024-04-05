@@ -18,7 +18,7 @@ class RationalNode final : public NumberNode {
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) override { m_negative = negative; }
 
-  // TreeNode
+  // PoolObject
   size_t size() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
@@ -116,7 +116,7 @@ class Rational final : public Number {
   static Rational Builder(native_int_t i, native_int_t j);
   static Rational Builder(const char* iString, const char* jString);
 
-  // TreeNode
+  // PoolObject
   RationalNode* node() const {
     return static_cast<RationalNode*>(Number::node());
   }

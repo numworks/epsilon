@@ -411,24 +411,24 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
 #endif
       break;
     }
-    case Type::Derivative:
-    case Type::NthDerivative:
+    case Type::Diff:
+    case Type::NthDiff:
       // TODO_PCJ createValidExpandedForm
       if (expression->lastChild()->isUserFunction() &&
           expression->lastChild()->child(0)->isUserSymbol() &&
           expression->lastChild()->child(0)->treeIsIdenticalTo(
               Symbol::k_systemSymbol)) {
         layoutText(layoutParent, Symbol::GetName(expression->lastChild()));
-        int order = expression->isDerivative()
+        int order = expression->isDiff()
                         ? 1
                         : Integer::Handler(expression->child(2)).to<int>();
         if (order <= 2) {
           PushCodePoint(layoutParent, order == 1 ? '\'' : '"');
-          if (expression->isNthDerivative()) {
+          if (expression->isNthDiff()) {
             expression->child(2)->removeTree();
           }
         } else {
-          assert(expression->isNthDerivative());
+          assert(expression->isNthDiff());
           TreeRef rack;
           if (m_linearMode) {
             PushCodePoint(layoutParent, '^');
@@ -450,8 +450,8 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         layoutBuiltin(layoutParent, expression);
       } else {
         TreeRef layout =
-            (type.isDerivative() ? KDerivativeL : KNthDerivativeL)->cloneNode();
-        if (type.isNthDerivative()) {
+            (type.isDiff() ? KDerivativeL : KNthDerivativeL)->cloneNode();
+        if (type.isNthDiff()) {
           // Handle the peculiar order of nth-derivative layout
           // TODO fix order in derivative layout instead
           expression->child(2)->moveTreeBeforeNode(expression->child(3));

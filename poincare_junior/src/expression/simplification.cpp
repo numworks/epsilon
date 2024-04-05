@@ -99,8 +99,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Arithmetic::SimplifyBinomial(u);
     case Type::Arg:
       return SimplifyComplexArgument(u);
-    case Type::Derivative:
-    case Type::NthDerivative:
+    case Type::Diff:
+    case Type::NthDiff:
       return Derivation::ShallowSimplify(u);
     case Type::Dim:
       return SimplifyDim(u);

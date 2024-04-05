@@ -14,12 +14,12 @@ namespace PoincareJ {
 
 bool Derivation::ShallowSimplify(Tree* node) {
   // Tree is expected to have been reduced beforehand.
-  assert(node->isDerivative() || node->isNthDerivative());
+  assert(node->isDiff() || node->isNthDiff());
   const Tree* symbol = node->child(0);
   const Tree* symbolValue = symbol->nextTree();
   const Tree* constDerivand;
   int derivationOrder;
-  if (node->isDerivative()) {
+  if (node->isDiff()) {
     derivationOrder = 1;
     constDerivand = symbolValue->nextTree();
   } else {
@@ -112,7 +112,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
     Tree* mult = SharedTreeStack->push<Type::Mult>(1);
     if (!Derivate(derivandChild, symbolValue, symbol)) {
       // Could not derivate, preserve D(gi(x))
-      SharedTreeStack->push(Type::Derivative);
+      SharedTreeStack->push(Type::Diff);
       symbol->clone();
       symbolValue->clone();
       derivandChild->clone();

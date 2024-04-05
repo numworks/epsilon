@@ -24,8 +24,8 @@ Type ExpressionType(LayoutType type) {
       return Type::Floor;
     case LayoutType::VectorNorm:
       return Type::Norm;
-    case LayoutType::Derivative:
-      return Type::Derivative;
+    case LayoutType::Diff:
+      return Type::Diff;
     case LayoutType::Integral:
       return Type::Integral;
     case LayoutType::Product:
@@ -58,7 +58,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
     case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
     case LayoutType::CurlyBrace:
-    case LayoutType::NthDerivative:
+    case LayoutType::NthDiff:
       assert(false);
     case LayoutType::Piecewise:
     case LayoutType::Matrix: {

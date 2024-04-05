@@ -167,7 +167,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
       case Type::PercentAddition:
         return Poincare::PercentAddition::Builder(
             child, ToPoincareExpression(exp->child(1)));
-      case Type::Derivative: {
+      case Type::Diff: {
         Poincare::OExpression symbol = child;
         if (symbol.otype() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
@@ -643,12 +643,12 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return;
     case OT::Derivative:
       if (exp.childAtIndex(3).isOne()) {
-        SharedTreeStack->push(Type::Derivative);
+        SharedTreeStack->push(Type::Diff);
         PushPoincareExpression(exp.childAtIndex(1));
         PushPoincareExpression(exp.childAtIndex(2));
         PushPoincareExpression(exp.childAtIndex(0));
       } else {
-        SharedTreeStack->push(Type::NthDerivative);
+        SharedTreeStack->push(Type::NthDiff);
         PushPoincareExpression(exp.childAtIndex(1));
         PushPoincareExpression(exp.childAtIndex(2));
         PushPoincareExpression(exp.childAtIndex(3));

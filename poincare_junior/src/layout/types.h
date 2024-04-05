@@ -27,15 +27,15 @@ RANGE(Pair, Abs, CurlyBraceLayout)
 
 // TODO CondensedSum could draw the sigma symbol and have two children
 NODE(CondensedSum, 3)
-NODE(Derivative, 3, 1)
-NODE(NthDerivative, 4, 1)
+NODE(Diff, 3, 1)
+NODE(NthDiff, 4, 1)
 NODE(Integral, 4)
 NODE(Product, 4)
 NODE(Sum, 4)
 // TODO replace by subscript ?
 NODE(ListSequence, 3)
 
-RANGE(ParametricLayout, DerivativeLayout, ListSequenceLayout)
+RANGE(ParametricLayout, DiffLayout, ListSequenceLayout)
 
 NODE(Fraction, 2)
 NODE(Point2D, 2)

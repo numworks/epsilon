@@ -445,12 +445,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->unshiftVariables();
       return result;
     }
-    case Type::Derivative:
-    case Type::NthDerivative: {
+    case Type::Diff:
+    case Type::NthDiff: {
       constexpr static int k_maxOrderForApproximation = 4;
       int order;
       const Tree* derivand;
-      if (node->isNthDerivative()) {
+      if (node->isNthDiff()) {
         T orderReal = To<T>(node->child(2));
         if (orderReal != std::floor(orderReal)) {
           return NAN;

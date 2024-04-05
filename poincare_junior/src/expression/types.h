@@ -174,8 +174,8 @@ NODE(TrigDiff, 2)
 
 NODE(Sum, 4)
 NODE(Product, 4)
-NODE(Derivative, 3)
-NODE(NthDerivative, 4)
+NODE(Diff, 3)
+NODE(NthDiff, 4)
 NODE(Integral, 4)
 NODE(ListSequence, 3)
 

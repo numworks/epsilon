@@ -149,8 +149,8 @@ constexpr static Builtin s_builtins[] = {
     {Type::Random, "random"},
     {Type::RandInt, "randint"},
     {Type::RandIntNoRep, "randintnorep"},
-    {Type::Derivative, "diff"},      // 2D layout is special
-    {Type::NthDerivative, "diff"},   // 2D layout is special
+    {Type::Diff, "diff"},            // 2D layout is special
+    {Type::NthDiff, "diff"},         // 2D layout is special
     {Type::Piecewise, "piecewise"},  // TODO PCJ 2D layout is a grid
     {Type::Dependency, "dep"},       // TODO dummy
 };

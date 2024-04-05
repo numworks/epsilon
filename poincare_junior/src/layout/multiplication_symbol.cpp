@@ -104,7 +104,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
       // should be assert false ?
       return LeftLayoutShape(expr->child(0));
 
-    case Type::Derivative:
+    case Type::Diff:
       // why ? should be fraction ?
       return MoreLetters;
 
@@ -184,7 +184,7 @@ LayoutShape RightLayoutShape(const Tree* expr) {
       // was not there
       return RightLayoutShape(expr->child(0));
 
-    case Type::Derivative:
+    case Type::Diff:
       return BoundaryPunctuation;
 
     case Type::Integral:

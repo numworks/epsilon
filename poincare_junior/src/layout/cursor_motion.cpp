@@ -38,10 +38,10 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       int step = direction.isLeft() ? -1 : 1;
       return currentIndex + step;
     }
-    case LayoutType::Derivative:
-    case LayoutType::NthDerivative: {
+    case LayoutType::Diff:
+    case LayoutType::NthDiff: {
       using namespace Derivative;
-      if (node->isDerivativeLayout()) {
+      if (node->isDiffLayout()) {
         if (currentIndex == k_derivandIndex) {
           SetVariableSlot(node, direction.isRight() ? VariableSlot::Assignment
                                                     : VariableSlot::Fraction);
@@ -215,10 +215,10 @@ int CursorMotion::IndexAfterVerticalCursorMove(
       }
       return k_cantMoveIndex;
     }
-    case LayoutType::Derivative:
-    case LayoutType::NthDerivative: {
+    case LayoutType::Diff:
+    case LayoutType::NthDiff: {
       using namespace Derivative;
-      if (node->isDerivativeLayout()) {
+      if (node->isDiffLayout()) {
         if (direction.isDown() && currentIndex == k_derivandIndex &&
             positionAtCurrentIndex == PositionInLayout::Left) {
           SetVariableSlot(node, VariableSlot::Fraction);
@@ -364,8 +364,8 @@ int CursorMotion::IndexToPointToWhenInserting(const Tree* node) {
       return Parametric::k_lowerBoundIndex;
     case LayoutType::Integral:
       return Integral::k_lowerBoundIndex;
-    case LayoutType::Derivative:
-    case LayoutType::NthDerivative:
+    case LayoutType::Diff:
+    case LayoutType::NthDiff:
       return Derivative::k_derivandIndex;
     case LayoutType::ListSequence:
       return ListSequence::k_functionIndex;
@@ -434,8 +434,8 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     case LayoutType::VectorNorm:
     case LayoutType::Conj:
       return StandardDeletionMethodForLayoutContainingArgument(childIndex, 0);
-    case LayoutType::Derivative:
-    case LayoutType::NthDerivative:
+    case LayoutType::Diff:
+    case LayoutType::NthDiff:
       return StandardDeletionMethodForLayoutContainingArgument(
           childIndex, Derivative::k_derivandIndex);
     case LayoutType::Integral:

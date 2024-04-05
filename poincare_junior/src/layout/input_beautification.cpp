@@ -365,7 +365,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
   TreeRef firstOrderDerivative =
       layoutCursor->rootNode()->parentOfDescendant(h, &childIndex);
   if (firstOrderDerivative.isUninitialized() ||
-      !firstOrderDerivative->isDerivativeLayout() ||
+      !firstOrderDerivative->isDiffLayout() ||
       childIndex != Derivative::k_variableIndex ||
       Derivative::GetVariableSlot(firstOrderDerivative) !=
           Derivative::VariableSlot::Fraction) {

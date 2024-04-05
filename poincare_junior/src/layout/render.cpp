@@ -67,8 +67,8 @@ KDSize Render::Size(const Layout* node) {
                                       superscriptSize.height());
       break;
     }
-    case LayoutType::Derivative:
-    case LayoutType::NthDerivative: {
+    case LayoutType::Diff:
+    case LayoutType::NthDiff: {
       using namespace Derivative;
       /* The derivative layout could overflow KDCoordinate if the variable or
        * the order layouts are too large. Since they are duplicated, if there
@@ -335,8 +335,8 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
       }
       return KDPoint(x, y);
     }
-    case LayoutType::Derivative:
-    case LayoutType::NthDerivative: {
+    case LayoutType::Diff:
+    case LayoutType::NthDiff: {
       using namespace Derivative;
       KDCoordinate baseline = Baseline(node);
       if (childIndex == k_variableIndex) {
@@ -514,8 +514,8 @@ KDCoordinate Render::Baseline(const Layout* node) {
       assert(s_font == KDFont::Size::Small);
       return Baseline(node->child(0)) +
              std::max(0, Height(node->child(2)) - Height(node->child(0)) / 2);
-    case LayoutType::Derivative:
-    case LayoutType::NthDerivative: {
+    case LayoutType::Diff:
+    case LayoutType::NthDiff: {
       using namespace Derivative;
       /* The total baseline is the maximum of the baselines of the children.
        * The two candidates are the fraction: d/dx, and the parenthesis pair
@@ -998,8 +998,8 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       }
       return;
     }
-    case LayoutType::Derivative:
-    case LayoutType::NthDerivative: {
+    case LayoutType::Diff:
+    case LayoutType::NthDiff: {
       using namespace Derivative;
       KDCoordinate baseline = Baseline(node);
 
@@ -1061,7 +1061,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       DrawRack(node->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
                style, {});
 
-      if (node->isNthDerivativeLayout()) {
+      if (node->isNthDiffLayout()) {
         // Draw the copy of the order
         KDPoint copyPosition =
             GetOrderSlot(node) == OrderSlot::Denominator

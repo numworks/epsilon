@@ -93,14 +93,14 @@ constexpr auto KInferior = KBinary<Type::Inferior>();
 constexpr auto KSuperiorEqual = KBinary<Type::SuperiorEqual>();
 constexpr auto KInferiorEqual = KBinary<Type::InferiorEqual>();
 
-constexpr auto KDiff = KFixedArity<3, Type::Derivative>();
+constexpr auto KDiff = KFixedArity<3, Type::Diff>();
 constexpr auto KListSlice = KFixedArity<3, Type::ListSlice>();
 constexpr auto KListSequence = KFixedArity<3, Type::ListSequence>();
 
 constexpr auto KSum = KFixedArity<4, Type::Sum>();
 constexpr auto KProduct = KFixedArity<4, Type::Product>();
 constexpr auto KIntegral = KFixedArity<4, Type::Integral>();
-constexpr auto KNthDiff = KFixedArity<4, Type::NthDerivative>();
+constexpr auto KNthDiff = KFixedArity<4, Type::NthDiff>();
 
 constexpr auto KAdd = KNAry<Type::Add>();
 constexpr auto KMult = KNAry<Type::Mult>();

@@ -20,8 +20,8 @@ constexpr auto KParenthesisL = KUnary<Type::ParenthesisLayout, 0>();
 constexpr auto KCurlyBracesL = KUnary<Type::CurlyBraceLayout, 0>();
 constexpr auto KAbsL = KUnary<Type::AbsLayout>();
 
-constexpr auto KDerivativeL = KUnary<Type::DerivativeLayout, 0>();
-constexpr auto KNthDerivativeL = KUnary<Type::NthDerivativeLayout, 0>();
+constexpr auto KDerivativeL = KUnary<Type::DiffLayout, 0>();
+constexpr auto KNthDerivativeL = KUnary<Type::NthDiffLayout, 0>();
 constexpr auto KIntegralL = KFixedArity<4, Type::IntegralLayout>();
 constexpr auto KSumL = KFixedArity<4, Type::SumLayout>();
 constexpr auto KProductL = KFixedArity<4, Type::ProductLayout>();

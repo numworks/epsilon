@@ -312,6 +312,7 @@ void AbstractTextField::setText(const char *text) {
   }
   resetScroll();
   contentView()->setText(text);
+  layoutSubviews();
   if (this->text() == draftText()) {
     /* Set the cursor location here and not in ContentView::setText so that
      * TextInput::willSetCursorLocation is called. */

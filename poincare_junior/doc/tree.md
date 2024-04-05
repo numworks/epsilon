@@ -85,14 +85,14 @@ arguments needed by various tree types.
 Tree * add = SharedTreeStack->push<Type::Addition>(2);
 // pushing a One node (that has no children) representing 1
 SharedTreeStack->push(Type::One);
-// cloning an other Tree at the end of the pool
+// cloning an other Tree at the end of the stack
 otherTree->clone()
 // add now points to 1 + cloneOfWhatEverOtherTreeWas
 ```
 
 > [!CAUTION]
 > Be careful with `Tree *` they are easily broken when changing something above
-> them in the pool :
+> them in the stack :
 
 ```cpp
 Tree * a = someTree->clone();
@@ -101,7 +101,7 @@ Tree * b = anotherTree->clone();
 assert(a->nextTree() == b);
 
 a->removeTree();
-// the tree pointed to by a was just deleted from and the rest of the pool after
+// the tree pointed to by a was just deleted from and the rest of the stack after
 // it was shifted in the whole; since pointers are not aware of that, a now
 // points to the copy of anotherTree and b points at a corrupted place
 ```
@@ -109,10 +109,10 @@ a->removeTree();
 ## TreeRefs
 
 TreeRefs are smart pointers used to track Trees as they move inside the
-pool.
+stack.
 
 For this purpose, the TreeStack owns a table of all the alive references and
-updates each of them after each modification of a Tree inside the pool. For this
+updates each of them after each modification of a Tree inside the stack. For this
 reason, TreeRefs are intended to be temporary and used sparingly where
 performance matters. You will often see function passing `TreeRefs&` to
 avoid copies. **TODO** what are ER copies ?
@@ -156,7 +156,7 @@ doesn't point to any tree.
 has been deleted.
 
 To retrieve the node pointed by an TreeRef, we just return the node in
-the edition pool at the corresponding offset.
+the stack at the corresponding offset.
 
 Each time something is moved or changed in the TreeStack, all node offsets are
 updated (`TreeStack::ReferenceTable::updateNodes`).
@@ -257,7 +257,7 @@ obtain a Context where `ctx[KA]` points to the Addition tree inside your
 expression.
 
 Or the other way around you can use Create with a structure and a context to
-push at the end of the pool a brand new tree :
+push at the end of the stack a brand new tree :
 
 ```cpp
 Tree * myTree = PatternMatching::Create(KAdd(1_e, KA), {.KA = otherTree});

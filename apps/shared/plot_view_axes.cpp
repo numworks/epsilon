@@ -147,6 +147,12 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
   float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
                                       bounds.top() + graduationVerticalMargin);
 
+  float bannerHeight =
+      plotView->bannerView() && plotView->bannerOverlapsGraph()
+          ? plotView->bannerView()->bounds().height() * plotView->pixelHeight()
+          : 0.f;
+  yMin += bannerHeight;
+
   float labelMargin = AbstractPlotView::k_labelMargin * plotView->pixelHeight();
   float minimumSquareDistanceToCenter =
       std::pow(k_minimumGraduationDistanceToCenter * plotView->pixelWidth(), 2);

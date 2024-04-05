@@ -14,7 +14,7 @@ void Decimal::Project(Tree* tree) {
   assertValidDecimal(tree);
   // dec<n>(x) -> 10^(-n)*x
   Tree* mult = SharedTreeStack->push<Type::Mult>(1);
-  SharedTreeStack->push(Type::Power);
+  SharedTreeStack->push(Type::Pow);
   SharedTreeStack->push<Type::IntegerShort, int8_t>(10);
   IntegerHandler(DecimalOffset(tree), NonStrictSign::Negative)
       .pushOnTreeStack();

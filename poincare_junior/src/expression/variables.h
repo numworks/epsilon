@@ -26,8 +26,7 @@ class Variables {
     operator const Tree*() const { return Tree::FromBlocks(m_blocks); }
 
    private:
-    constexpr static size_t k_size =
-        TypeBlock::NumberOfMetaBlocks(Type::Variable);
+    constexpr static size_t k_size = TypeBlock::NumberOfMetaBlocks(Type::Var);
     Block m_blocks[k_size];
   };
   // Push a Set with the free user symbols of the expression

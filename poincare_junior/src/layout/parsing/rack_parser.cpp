@@ -382,7 +382,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
     if (smallE != end) {
       // Decimal * 10^exponent
       Tree* mult = SharedTreeStack->push<Type::Mult>(1);
-      SharedTreeStack->push(Type::Power);
+      SharedTreeStack->push(Type::Pow);
       (10_e)->clone();
       Integer::Push(exponent, base);
       leftHandSide->moveTreeAtNode(mult);
@@ -434,7 +434,7 @@ void RackParser::privateParsePlusAndMinus(TreeRef& leftHandSide, bool plus,
     CloneNodeAtNode(leftHandSide, KTree<Type::Subtraction>());
     return;
   }
-  if (leftHandSide->isAddition()) {
+  if (leftHandSide->isAdd()) {
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() + 1);
   } else {

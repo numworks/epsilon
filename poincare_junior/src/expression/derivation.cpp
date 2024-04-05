@@ -102,7 +102,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
     return (0_e)->clone();
   }
 
-  Tree* result = SharedTreeStack->push<Type::Addition>(0);
+  Tree* result = SharedTreeStack->push<Type::Add>(0);
   const Tree* derivandChild = derivand->nextNode();
   /* D(f(g0(x),g1(x), ...)) = Sum(D(gi(x))*Di(f)(g0(x),g1(x), ...))
    * With D being the Derivative and Di being the partial derivative on
@@ -152,7 +152,7 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
       }
       return true;
     }
-    case Type::Addition:
+    case Type::Add:
       // Di(x0 + x1 + ... + xi + ...) = 1
       SharedTreeStack->push(Type::One);
       return true;
@@ -163,7 +163,7 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
     case Type::LnReal:
     case Type::Ln: {
       // Di(ln(x)) = 1/x
-      Tree* power = SharedTreeStack->push(Type::Power);
+      Tree* power = SharedTreeStack->push(Type::Pow);
       CloneReplacingSymbol(derivand->child(0), symbolValue);
       SharedTreeStack->push(Type::MinusOne);
       Simplification::ShallowSystematicReduce(power);
@@ -171,7 +171,7 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
     }
     case Type::Trig:
       // Di(Trig(x, n)) = Trig(x, n-1)
-    case Type::Power: {
+    case Type::Pow: {
       // Di(x^n) = n*x^(n-1)
       // Second parameter cannot depend on symbol.
       assert(!Variables::HasVariables(derivand->child(1)));
@@ -180,18 +180,18 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
         return true;
       }
       Tree* multiplication;
-      if (derivand->isPower()) {
+      if (derivand->isPow()) {
         multiplication = SharedTreeStack->push<Type::Mult>(2);
         SharedTreeStack->clone(derivand->child(1));
       }
       Tree* newNode = SharedTreeStack->clone(derivand, false);
       CloneReplacingSymbol(derivand->child(0), symbolValue);
-      Tree* addition = SharedTreeStack->push<Type::Addition>(2);
+      Tree* addition = SharedTreeStack->push<Type::Add>(2);
       SharedTreeStack->clone(derivand->child(1));
       SharedTreeStack->push(Type::MinusOne);
       Simplification::ShallowSystematicReduce(addition);
       Simplification::ShallowSystematicReduce(newNode);
-      if (derivand->isPower()) {
+      if (derivand->isPow()) {
         Simplification::ShallowSystematicReduce(multiplication);
       }
       return true;

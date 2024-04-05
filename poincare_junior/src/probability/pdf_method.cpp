@@ -12,7 +12,7 @@ bool PDFMethod::shallowReduce(const Tree** abscissae,
   const Tree* x = abscissae[0];
 
   // TODO PCJ: -inf
-  if (x->isInfinity()) {
+  if (x->isInf()) {
     expression->cloneTreeOverTree(0_e);
     return true;
   }

@@ -223,11 +223,10 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
 }
 
 template <>
-constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::Variable>(
+constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::Var>(
     Block* block, size_t blockIndex, uint8_t id, ComplexSign sign) {
-  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, Type::Variable,
-                                            id, sign.getValue());
+  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, Type::Var, id,
+                                            sign.getValue());
 }
 
 template <>

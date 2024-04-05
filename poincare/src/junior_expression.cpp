@@ -242,7 +242,7 @@ ExpressionNode::Type JuniorExpression::type() const {
                                : ExpressionNode::Type::Rational;
   }
   switch (tree()->type()) {
-    case PoincareJ::Type::Addition:
+    case PoincareJ::Type::Add:
       return ExpressionNode::Type::Addition;
     case PoincareJ::Type::True:
     case PoincareJ::Type::False:
@@ -265,7 +265,7 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::FracPart;
     case PoincareJ::Type::ImaginaryPart:
       return ExpressionNode::Type::ImaginaryPart;
-    case PoincareJ::Type::Infinity:
+    case PoincareJ::Type::Inf:
       return ExpressionNode::Type::Infinity;
     case PoincareJ::Type::Integral:
       return ExpressionNode::Type::Integral;
@@ -288,7 +288,7 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::PiecewiseOperator;
     case PoincareJ::Type::Point:
       return ExpressionNode::Type::Point;
-    case PoincareJ::Type::Power:
+    case PoincareJ::Type::Pow:
       return ExpressionNode::Type::Power;
     case PoincareJ::Type::Product:
       return ExpressionNode::Type::Product;

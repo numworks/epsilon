@@ -41,7 +41,7 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
       assert(expr->numberOfChildren() > 0);
       return DegreeForSortingAddition(expr->lastChild(), symbolsOnly);
     }
-    case Type::Power: {
+    case Type::Pow: {
       double baseDegree = DegreeForSortingAddition(expr->child(0), symbolsOnly);
       if (baseDegree == 0.) {
         /* We escape here so that even if the exponent is not a number,
@@ -56,7 +56,7 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
       }
       return NAN;
     }
-    case Type::Variable:
+    case Type::Var:
       return 1.;
     default:
       return symbolsOnly ? 0. : 1.;
@@ -122,7 +122,7 @@ bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
           factorsDenominator = rDen.pushOnTreeStack();
         }
       }
-    } else if (factor->isPower() || factor->isPowerReal()) {
+    } else if (factor->isPow() || factor->isPowReal()) {
       Tree* pow = factor->clone();
       if (!pow->child(0)->isUnit() &&
           MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {
@@ -287,7 +287,7 @@ bool Beautification::DeepBeautify(Tree* expr,
 // Reverse most system projections to display better expressions
 bool Beautification::ShallowBeautify(Tree* e, void* context) {
   bool changed = false;
-  if (e->isAddition()) {
+  if (e->isAdd()) {
     NAry::Sort(e, Comparison::Order::AdditionBeautification);
   } else if (e->isFactor()) {
     if (Arithmetic::BeautifyFactor(e)) {
@@ -313,7 +313,7 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
   }
 
   // Turn multiplications with negative powers into divisions
-  if (e->isMult() || e->isPower() || Number::IsStrictRational(e)) {
+  if (e->isMult() || e->isPow() || Number::IsStrictRational(e)) {
     if (BeautifyIntoDivision(e)) {
       return true;
     }
@@ -373,7 +373,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   if (complexFormat == ComplexFormat::Cartesian) {
     // [re+]
     if (re != 0) {
-      SharedTreeStack->push<Type::Addition>(2);
+      SharedTreeStack->push<Type::Add>(2);
       SharedTreeStack->push<Type>(re);
     }
   } else {
@@ -383,7 +383,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
       SharedTreeStack->push<Type::Mult>(2);
       SharedTreeStack->push<Type>(abs);
     }
-    SharedTreeStack->push(Type::Power);
+    SharedTreeStack->push(Type::Pow);
     SharedTreeStack->push(Type::ExponentialE);
     im = std::arg(value);
   }

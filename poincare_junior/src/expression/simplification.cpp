@@ -28,7 +28,7 @@ namespace PoincareJ {
 bool Simplification::DeepSystematicReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening
    * here could save multiple ShallowSystematicReduce and flatten calls. */
-  bool modified = (u->isMult() || u->isAddition()) && NAry::Flatten(u);
+  bool modified = (u->isMult() || u->isAdd()) && NAry::Flatten(u);
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
     assert(!child->isUndefined());
@@ -89,7 +89,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
   switch (u->type()) {
     case Type::Abs:
       return SimplifyAbs(u);
-    case Type::Addition:
+    case Type::Add:
       return SimplifyAddition(u);
     case Type::ArcTangentRad:
       return Trigonometry::SimplifyArcTangentRad(u);
@@ -132,9 +132,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Arithmetic::SimplifyPermute(u);
     case Type::Piecewise:
       return Binary::SimplifyPiecewise(u);
-    case Type::Power:
+    case Type::Pow:
       return SimplifyPower(u);
-    case Type::PowerReal:
+    case Type::PowReal:
       return SimplifyPowerReal(u);
     case Type::Quotient:
     case Type::Remainder:
@@ -234,7 +234,7 @@ bool Simplification::SimplifyAbs(Tree* u) {
 }
 
 bool Simplification::SimplifyPower(Tree* u) {
-  assert(u->isPower());
+  assert(u->isPow());
   Tree* v = u->child(0);
   // 1^x -> 1
   if (v->isOne()) {
@@ -292,7 +292,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     return true;
   }
   // (w^p)^n -> w^(p*n)
-  if (v->isPower()) {
+  if (v->isPow()) {
     TreeRef p = v->child(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
     // PowU PowV w p n
@@ -306,7 +306,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->isMult()) {
     for (Tree* w : v->children()) {
-      TreeRef m = SharedTreeStack->push(Type::Power);
+      TreeRef m = SharedTreeStack->push(Type::Pow);
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);
@@ -322,9 +322,9 @@ bool Simplification::SimplifyPower(Tree* u) {
                                                KExp(KMult(KA, KB)));
 }
 
-const Tree* Base(const Tree* u) { return u->isPower() ? u->child(0) : u; }
+const Tree* Base(const Tree* u) { return u->isPow() ? u->child(0) : u; }
 
-const Tree* Exponent(const Tree* u) { return u->isPower() ? u->child(1) : 1_e; }
+const Tree* Exponent(const Tree* u) { return u->isPow() ? u->child(1) : 1_e; }
 
 void Simplification::ConvertPowerRealToPower(Tree* u) {
   u->cloneNodeOverNode(KPow);
@@ -332,7 +332,7 @@ void Simplification::ConvertPowerRealToPower(Tree* u) {
 }
 
 bool Simplification::SimplifyPowerReal(Tree* u) {
-  assert(u->isPowerReal());
+  assert(u->isPowReal());
   /* Return :
    * - x^y if x is complex or positive or y is integer
    * - PowerReal(x,y) if y is not a rational
@@ -619,7 +619,7 @@ bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
 }
 
 bool Simplification::SimplifyAddition(Tree* u) {
-  assert(u->isAddition());
+  assert(u->isAdd());
   bool modified = NAry::Flatten(u);
   if (modified && CanApproximateTree(u, &modified)) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be
@@ -644,7 +644,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
     Tree* next = child->nextTree();
     if (i + 1 < n && MergeAdditionChildWithNext(child, next)) {
       // 1 + (a + b)/2 + (a + b)/2 -> 1 + a + b
-      if (child->isAddition()) {
+      if (child->isAdd()) {
         n += child->numberOfChildren() - 1;
         child->removeNode();
         didSquashChildren = true;

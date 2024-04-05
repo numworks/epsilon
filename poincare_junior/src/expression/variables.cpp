@@ -11,19 +11,19 @@
 namespace PoincareJ {
 
 Variables::Variable::Variable(uint8_t id, ComplexSign sign) {
-  Tree* temp = SharedTreeStack->push<Type::Variable>(id, sign);
+  Tree* temp = SharedTreeStack->push<Type::Var>(id, sign);
   assert(k_size == temp->treeSize());
   temp->copyTreeTo(m_blocks);
   temp->removeTree();
 }
 
 uint8_t Variables::Id(const Tree* variable) {
-  assert(variable->isVariable());
+  assert(variable->isVar());
   return variable->nodeValue(0);
 }
 
 ComplexSign Variables::GetComplexSign(const Tree* variable) {
-  assert(variable->isVariable());
+  assert(variable->isVar());
   return ComplexSign(variable->nodeValue(1));
 }
 
@@ -72,7 +72,7 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
 
 bool Variables::Replace(Tree* expr, const Tree* variable, const Tree* value,
                         bool simplify) {
-  assert(variable->isVariable());
+  assert(variable->isVar());
   return Replace(expr, Id(variable), value, simplify);
 }
 
@@ -88,7 +88,7 @@ bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave,
 
 bool Variables::Replace(Tree* expr, int id, const TreeRef& value, bool leave,
                         bool simplify) {
-  if (expr->isVariable()) {
+  if (expr->isVar()) {
     if (Id(expr) == id) {
       expr->cloneTreeOverTree(value);
       return true;
@@ -116,7 +116,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
                               ComplexSign sign) {
   if (expr->isUserSymbol() && expr->treeIsIdenticalTo(symbol)) {
     Tree* var =
-        SharedTreeStack->push<Type::Variable>(static_cast<uint8_t>(id), sign);
+        SharedTreeStack->push<Type::Var>(static_cast<uint8_t>(id), sign);
     expr->moveTreeOverTree(var);
     return true;
   }
@@ -143,7 +143,7 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, ComplexSign sign,
   assert(!variables || SharedTreeStack->isAfter(variables, expr));
   if (variables && expr->isUserSymbol()) {
     // Project global variable
-    Tree* var = SharedTreeStack->push<Type::Variable>(
+    Tree* var = SharedTreeStack->push<Type::Var>(
         static_cast<uint8_t>(
             ToId(variables, Symbol::GetName(expr), Symbol::Length(expr)) +
             depth),
@@ -168,7 +168,7 @@ void Variables::ProjectToId(Tree* expr, const Tree* variables, ComplexSign sign,
 void Variables::BeautifyToName(Tree* expr, const Tree* variables,
                                uint8_t depth) {
   assert(SharedTreeStack->isAfter(variables, expr));
-  if (expr->isVariable()) {
+  if (expr->isVar()) {
     assert(depth <= Id(expr));
     expr->cloneTreeOverTree(ToSymbol(variables, Id(expr) - depth));
   }
@@ -190,17 +190,17 @@ bool Variables::HasVariables(const Tree* expr) {
   // TODO we probably want to ignore bound variables
   // return HasVariable(expr, 0) ?
   return expr->hasDescendantSatisfying(
-      [](const Tree* e) { return e->isVariable(); });
+      [](const Tree* e) { return e->isVar(); });
 }
 
 bool Variables::HasVariable(const Tree* expr, const Tree* variable) {
   // TODO variable must have the same scope as expr
-  assert(variable->isVariable());
+  assert(variable->isVar());
   return HasVariable(expr, Id(variable));
 }
 
 bool Variables::HasVariable(const Tree* expr, int id) {
-  if (expr->isVariable()) {
+  if (expr->isVar()) {
     return Id(expr) == id;
   }
   bool isParametric = expr->isParametric();
@@ -216,7 +216,7 @@ bool Variables::HasVariable(const Tree* expr, int id) {
 
 void Variables::EnterScope(Tree* expr) {
   for (Tree* child : expr->selfAndDescendants()) {
-    if (child->isVariable()) {
+    if (child->isVar()) {
       uint8_t id = Id(child);
       assert(id < 255);
       child->setNodeValue(0, id + 1);
@@ -226,7 +226,7 @@ void Variables::EnterScope(Tree* expr) {
 
 void Variables::LeaveScope(Tree* expr) {
   for (Tree* child : expr->selfAndDescendants()) {
-    if (child->isVariable()) {
+    if (child->isVar()) {
       uint8_t id = Id(child);
       assert(id > 0);
       child->setNodeValue(0, id - 1);

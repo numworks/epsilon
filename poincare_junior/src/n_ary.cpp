@@ -92,8 +92,8 @@ bool NAry::SquashIfEmpty(Tree* nary) {
   }
   // Return the neutral element
   Type type = nary->type();
-  assert(type == Type::Addition || type == Type::Mult);
-  nary->cloneTreeOverTree(type == Type::Addition ? 0_e : 1_e);
+  assert(type == Type::Add || type == Type::Mult);
+  nary->cloneTreeOverTree(type == Type::Add ? 0_e : 1_e);
   return true;
 }
 

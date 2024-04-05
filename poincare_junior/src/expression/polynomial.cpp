@@ -90,7 +90,7 @@ Tree* Polynomial::AddMonomial(Tree* polynomial,
 }
 
 Tree* Polynomial::Addition(Tree* polA, Tree* polB) {
-  return Operation(polA, polB, Type::Addition, AddMonomial,
+  return Operation(polA, polB, Type::Add, AddMonomial,
                    [](Tree* result, Tree* polynomial,
                       std::pair<Tree*, uint8_t> monomial, bool isLastTerm) {
                      TreeRef resultRef(result);
@@ -122,8 +122,8 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
                             OperationReduce operationMonomialAndReduce) {
   if (!polA->isPolynomial()) {
     if (!polB->isPolynomial()) {
-      TreeRef op = blockType == Type::Addition
-                       ? SharedTreeStack->push<Type::Addition>(2)
+      TreeRef op = blockType == Type::Add
+                       ? SharedTreeStack->push<Type::Add>(2)
                        : SharedTreeStack->push<Type::Mult>(2);
       // We're about to move polynomes around, we need references
       TreeRef polARef(polA);
@@ -322,7 +322,7 @@ bool PolynomialParser::ContainsVariable(const Tree* tree) {
   if (numberOfChildren == 0) {
     return tree->isOfType({Type::UserFunction, Type::UserSequence,
                            Type::UserSymbol, Type::Pi, Type::ExponentialE,
-                           Type::Variable});
+                           Type::Var});
   }
   const Tree* child = tree->nextNode();
   for (int i = 0; i < numberOfChildren; i++) {
@@ -347,16 +347,16 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
   }
   Type type = expression->type();
   // TODO: match
-  if (type == Type::Power) {
+  if (type == Type::Pow) {
     const Tree* base = expression->nextNode();
     const Tree* exponent = base->nextTree();
     assert(exponent->isInteger());
     assert(!Integer::Is<uint8_t>(exponent) ||
            Integer::Handler(exponent).to<uint8_t>() > 1);
     AddVariable(variables, Integer::Is<uint8_t>(exponent) ? base : expression);
-  } else if (type == Type::Addition || type == Type::Mult) {
+  } else if (type == Type::Add || type == Type::Mult) {
     for (const Tree* child : expression->children()) {
-      if (child->isAddition() && type != Type::Addition) {
+      if (child->isAdd() && type != Type::Add) {
         AddVariable(variables, child);
       } else {
         // TODO: variables isn't expected to actually change.
@@ -404,7 +404,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* expression,
 Tree* PolynomialParser::Parse(Tree* expression, const Tree* variable) {
   TreeRef polynomial(Polynomial::PushEmpty(variable));
   Type type = expression->type();
-  if (type == Type::Addition) {
+  if (type == Type::Add) {
     for (size_t i = 0; i < expression->numberOfChildren(); i++) {
       /* We deplete the addition from its children as we scan it so we can
        * always take the first child. */
@@ -475,7 +475,7 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
     return 1;
   }
   Type type = expression.type();
-  if (type == Type::Power) {
+  if (type == Type::Pow) {
     Tree* base = expression.nextNode();
     Tree* exponent = base.nextTree();
     if (Integer::Is<uint8_t>(exponent) && Compare::AreEqual(base, variable)) {
@@ -483,10 +483,10 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
     }
   }
   uint8_t degree = 0;
-  if (type == Type::Addition || type == Type::Mult) {
+  if (type == Type::Add || type == Type::Mult) {
     for (const Tree* child : expression->children()) {
       uint8_t childDegree = Degree(child, variables);
-      if (type == Type::Addition) {
+      if (type == Type::Add) {
         degree = std::max(degree, childDegree);
       } else {
         degree += childDegree;
@@ -499,11 +499,11 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
 
 TreeRef Polynomial::Coefficient(const Tree* expression, const Tree* variable, uint8_t exponent) {
   Type type = expression.type();
-  if (expression.isAddition()) {
+  if (expression.isAdd()) {
     if (Comparison::AreEqual(expression, variable)) {
       return exponent == 1 ? 1_e : 0_e;
     }
-    TreeRef addition = SharedTreeStack->push<Type::Addition>(0);
+    TreeRef addition = SharedTreeStack->push<Type::Add>(0);
     for (const Tree* child : expression->children()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent == exponent) {
@@ -527,7 +527,7 @@ std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expressi
     return std::make_pair((1_e)->clone(), 1);
   }
   Type type = expression.type();
-  if (type == Type::Power) {
+  if (type == Type::Pow) {
     Tree* base = expression.nextNode();
     Tree* exponent = base.nextTree();
     if (Comparison::AreEqual(exponent, variable) && Integer::Is<uint8_t>(exponent)) {

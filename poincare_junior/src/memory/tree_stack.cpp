@@ -433,7 +433,7 @@ uint16_t TreeStack::ReferenceTable::storeNodeAtIndex(Tree* node, size_t index) {
 
 // Edition Pool
 
-template Tree* TreeStack::push<Type::Addition, int>(int);
+template Tree* TreeStack::push<Type::Add, int>(int);
 template Tree* TreeStack::push<Type::AsciiCodePointLayout, CodePoint>(
     CodePoint);
 template Tree* TreeStack::push<Type::CombinedCodePointsLayout, CodePoint,
@@ -471,8 +471,8 @@ template Tree* TreeStack::push<Type::UserSequence, const char*, size_t>(
     const char*, size_t);
 template Tree* TreeStack::push<Type::UserSymbol, const char*, size_t>(
     const char*, size_t);
-template Tree* TreeStack::push<Type::Variable, uint8_t, ComplexSign>(
-    uint8_t, ComplexSign);
+template Tree* TreeStack::push<Type::Var, uint8_t, ComplexSign>(uint8_t,
+                                                                ComplexSign);
 template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
     bool isSubscript, bool isPrefix);
 

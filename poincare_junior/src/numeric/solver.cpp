@@ -130,12 +130,12 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
       registerSolution(nextRootInMultiplication(e), Interest::Root);
       return result();
 
-    case Type::Addition:
+    case Type::Add:
     case Type::Subtraction:
       registerSolution(nextRootInAddition(e), Interest::Root);
       return result();
 
-    case Type::Power:
+    case Type::Pow:
     case Type::NthRoot:
     case Type::Division:
       /* f(x,y) = 0 => x = 0 */
@@ -619,7 +619,7 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree* e) const {
       T exponent = k_NAN;
       if (e->type() == Type::SquareRoot) {
         exponent = static_cast<T>(0.5);
-      } else if (e->type() == Type::Power) {
+      } else if (e->type() == Type::Pow) {
         exponent = Approximation::To<T>(e->child(1));
       } else if (e->type() == Type::NthRoot) {
         exponent = static_cast<T>(1.) / Approximation::To<T>(e->child(1));

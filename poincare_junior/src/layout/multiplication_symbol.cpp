@@ -56,7 +56,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::Parenthesis:  // TODO PCJ remove this one
       return BoundaryPunctuation;
 
-    case Type::Addition:
+    case Type::Add:
       /* When beautifying a Multiplication of Additions, Parentheses are added
        * around Additions. */
       return BoundaryPunctuation;
@@ -68,7 +68,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
 
     case Type::True:
     case Type::False:
-    case Type::Infinity:
+    case Type::Inf:
     case Type::Undefined:  // should be assert(false) ?
       return MoreLetters;
 
@@ -81,7 +81,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
       return Default;
 
     case Type::Conjugate:
-    case Type::Power:
+    case Type::Pow:
     case Type::Factorial:
     case Type::PercentSimple:
     case Type::PercentAddition:  // is it true ?
@@ -207,7 +207,7 @@ LayoutShape RightLayoutShape(const Tree* expr) {
       return RightLayoutShape(expr->child(0));
 
     case Type::Factorial:
-    case Type::Power:
+    case Type::Pow:
     case Type::PercentSimple:
     case Type::PercentAddition:  // is it true ?
       return BoundaryPunctuation;

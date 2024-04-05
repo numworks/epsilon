@@ -61,7 +61,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   if (type0 < type1) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
-    if (type0 == Type::Power) {
+    if (type0 == Type::Pow) {
       if (order == Order::Beautification) {
         return -Compare(node0, node1, Order::System);
       }
@@ -79,7 +79,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication
      * and Power) / Multiplication (numbers) will not benefit from this
      * exception. */
-    if (type0 == Type::Addition || type0 == Type::Mult) {
+    if (type0 == Type::Add || type0 == Type::Mult) {
       // sin(x) < (1 + cos(x)) < tan(x) and cos(x) < (sin(x) * tan(x))
       return CompareLastChild(node0, node1);
     }
@@ -97,12 +97,12 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   if (type0 == Type::Polynomial) {
     return ComparePolynomial(node0, node1);
   }
-  if (type0 == Type::Variable) {
+  if (type0 == Type::Var) {
     return Variables::Id(node0) - Variables::Id(node1);
   }
   // f(0, 1, 4) < f(0, 2, 3) and (2 + 3) < (1 + 4)
   return CompareChildren(node0, node1,
-                         type0 == Type::Addition || type0 == Type::Mult);
+                         type0 == Type::Add || type0 == Type::Mult);
 }
 
 bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {

@@ -36,7 +36,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case Type::Factorial:
     case Type::PercentSimple:
       return 0;
-    case Type::Power:
+    case Type::Pow:
       return 1;
     case Type::Division:
       return 2;
@@ -48,7 +48,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
     // Opposite could be higher but we prefer to display 2^(-1) instead of 2^-1
     case Type::Subtraction:
       return 5;
-    case Type::Addition:
+    case Type::Add:
     case Type::MixedFraction:
       return 6;
 
@@ -304,7 +304,7 @@ void Layoutter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
     TreeRef rack = SharedTreeStack->push<Type::RackLayout>(0);
     layoutExpression(rack, expression, k_maxPriority);
   } else {
-    assert(type == Type::Power || type == Type::PowerMatrix);
+    assert(type == Type::Pow || type == Type::PowMatrix);
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     createdLayout = KSuperscriptL->cloneNode();
   }
@@ -329,7 +329,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
   }
 
   switch (type) {
-    case Type::Addition: {
+    case Type::Add: {
       CodePoint op =
           ImplicitAddition(expression) ? UCodePointNull : CodePoint('+');
       layoutInfixOperator(layoutParent, expression, op);
@@ -342,14 +342,14 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
           m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression),
           true);
       break;
-    case Type::Power:
-    case Type::PowerMatrix:
+    case Type::Pow:
+    case Type::PowMatrix:
     case Type::Division:
       layoutPowerOrDivision(layoutParent, expression);
       break;
     case Type::Subtraction:
       layoutExpression(layoutParent, expression->nextNode(),
-                       OperatorPriority(Type::Addition));
+                       OperatorPriority(Type::Add));
       addSeparator(layoutParent);
       PushCodePoint(layoutParent, '-');
       addSeparator(layoutParent);
@@ -360,7 +360,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       PushCodePoint(layoutParent, '-');
       // Add extra parentheses for -1^2 -> -(1^2) but not for -x^2
       bool addExtraParenthesis =
-          expression->child(0)->isPower() &&
+          expression->child(0)->isPow() &&
           !expression->child(0)->child(0)->isUserSymbol();
       layoutExpression(
           layoutParent, expression->nextNode(),
@@ -544,7 +544,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       break;
     }
-    case Type::Infinity:
+    case Type::Inf:
     case Type::Nonreal:
     case Type::Undefined:
       layoutText(layoutParent,
@@ -675,7 +675,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::Exponential:
       layoutFunctionCall(layoutParent, expression, "exp");
       break;
-    case Type::Variable: {
+    case Type::Var: {
       uint8_t offset = Variables::Id(expression);
       char name = 'a' + offset;
       // Skip e and i

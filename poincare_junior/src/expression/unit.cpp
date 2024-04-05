@@ -57,7 +57,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
   do {
     // Get the unit's exponent
     int8_t exponent = 1;
-    if (factor->isPower()) {
+    if (factor->isPow()) {
       const Tree* exp = factor->child(1);
       assert(exp->isRational());
       // Using the closest integer to the exponent.
@@ -107,7 +107,7 @@ Tree* DimensionVector::toBaseUnits() const {
       continue;
     }
     if (exponent != 1) {
-      SharedTreeStack->push(Type::Power);
+      SharedTreeStack->push(Type::Pow);
     }
     Unit::Push(representative);
     if (exponent != 1) {
@@ -564,7 +564,7 @@ static void ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     Tree* unit, double* value, UnitFormat unitFormat, bool optimizePrefix) {
   double exponent = 1.f;
   Tree* factor = unit;
-  if (factor->isPower()) {
+  if (factor->isPow()) {
     Tree* childExponent = factor->child(1);
     assert(factor->child(0)->isUnit());
     assert(factor->child(1)->isRational());
@@ -772,12 +772,12 @@ bool Unit::AllowImplicitAddition(const Representative* smallestRepresentative,
 }
 
 bool Unit::IsUnitOrPowerOfUnit(const Tree* expr) {
-  return expr->isUnit() || (expr->isPower() && expr->child(0)->isUnit());
+  return expr->isUnit() || (expr->isPow() && expr->child(0)->isUnit());
 }
 
 bool Unit::ForceMarginLeftOfUnit(const Tree* expr) {
   assert(IsUnitOrPowerOfUnit(expr));
-  if (expr->isPower()) {
+  if (expr->isPow()) {
     expr = expr->child(0);
   }
   const Representative* representative = GetRepresentative(expr);
@@ -910,7 +910,7 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
 void Unit::RemoveUnit(Tree* unit) {
   Tree* result = SharedTreeStack->push<Type::Mult>(2);
   GetRepresentative(unit)->ratioExpressionReduced()->clone();
-  SharedTreeStack->push(Type::Power);
+  SharedTreeStack->push(Type::Pow);
   Integer::Push(10);
   Integer::Push(GetPrefix(unit)->exponent());
   unit->moveTreeOverTree(result);
@@ -947,7 +947,7 @@ bool IsCombinationOfUnits(const Tree* expr) {
     return !expr->hasChildSatisfying(
         [](const Tree* e) { return !IsCombinationOfUnits(e); });
   }
-  if (expr->isPower()) {
+  if (expr->isPow()) {
     return IsCombinationOfUnits(expr->child(0));
   }
   return false;

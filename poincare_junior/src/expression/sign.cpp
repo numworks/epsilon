@@ -228,7 +228,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       }
       return s;
     }
-    case Type::Addition: {
+    case Type::Add: {
       ComplexSign s = Zero();
       for (const Tree* c : t->children()) {
         s = Add(s, Get(c));
@@ -238,8 +238,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       }
       return s;
     }
-    case Type::PowerReal:
-    case Type::Power:
+    case Type::PowReal:
+    case Type::Pow:
       return Power(Get(t->firstChild()), Get(t->child(1)),
                    t->child(1)->isTwo());
     case Type::Norm:
@@ -255,7 +255,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ComplexSign(Get(t->firstChild()).realSign(), Sign::Zero());
     case Type::ImaginaryPart:
       return ComplexSign(Get(t->firstChild()).imagSign(), Sign::Zero());
-    case Type::Variable:
+    case Type::Var:
       return Variables::GetComplexSign(t);
     case Type::ComplexI:
       return ComplexSign(Sign::Zero(), Sign::PositiveInteger());

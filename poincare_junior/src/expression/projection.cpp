@@ -147,7 +147,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   // inf -> Float(inf) to prevent inf-inf from being 0
-  if (e->isInfinity()) {
+  if (e->isInf()) {
     /* TODO: Infinity is only handled as float. Raise to try again with float
      * numbers, preventing from having to handle float contamination.
      * Later, handle exact inf (∞-∞, ∞^0, 0+, 0-, ...) and remove this Raise.*/
@@ -156,7 +156,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 
   // Under Real complex format, use node alternative to properly handle nonreal.
   bool realMode = projectionContext->m_complexFormat == ComplexFormat::Real;
-  if (e->isPower()) {
+  if (e->isPow()) {
     if (PatternMatching::MatchReplace(e, KPow(e_e, KA), KExp(KA))) {
     } else if (Dimension::GetDimension(e->nextNode()).isMatrix()) {
       e->cloneNodeOverNode(KPowMatrix);

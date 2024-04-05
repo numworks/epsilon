@@ -235,12 +235,12 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
   }
 
   switch (type) {
-    case Type::Addition:
+    case Type::Add:
     case Type::Mult: {
       Poincare::NAryExpression nary =
-          type == Type::Addition ? static_cast<Poincare::NAryExpression>(
-                                       Poincare::Addition::Builder())
-                                 : Poincare::Multiplication::Builder();
+          type == Type::Add ? static_cast<Poincare::NAryExpression>(
+                                  Poincare::Addition::Builder())
+                            : Poincare::Multiplication::Builder();
       for (const Tree* child : exp->children()) {
         nary.addChildAtIndexInPlace(ToPoincareExpression(child),
                                     nary.numberOfChildren(),
@@ -269,8 +269,8 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
       return mat;
     }
     case Type::Subtraction:
-    case Type::Power:
-    case Type::PowerMatrix:
+    case Type::Pow:
+    case Type::PowMatrix:
     case Type::Division: {
       Poincare::OExpression child0 = ToPoincareExpression(exp->child(0));
       Poincare::OExpression child1 = ToPoincareExpression(exp->child(1));
@@ -310,7 +310,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
       return Poincare::Constant::PiBuilder();
     case Type::ExponentialE:
       return Poincare::Constant::ExponentialEBuilder();
-    case Type::Infinity:
+    case Type::Inf:
       return Poincare::Infinity::Builder(false);
     case Type::Factorial:
       return Poincare::Factorial::Builder(ToPoincareExpression(exp->child(0)));
@@ -694,7 +694,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::LeastCommonMultiple:
       switch (exp.otype()) {
         case OT::Addition:
-          SharedTreeStack->push<Type::Addition>(exp.numberOfChildren());
+          SharedTreeStack->push<Type::Add>(exp.numberOfChildren());
           break;
         case OT::Multiplication:
           SharedTreeStack->push<Type::Mult>(exp.numberOfChildren());
@@ -748,7 +748,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           SharedTreeStack->push(Type::Division);
           break;
         case OT::Power:
-          SharedTreeStack->push(Type::Power);
+          SharedTreeStack->push(Type::Pow);
           break;
         case OT::OMatrix:
           SharedTreeStack->push<Type::Matrix>(
@@ -827,7 +827,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       if (exp.isPositive(nullptr) == Poincare::TrinaryBoolean::False) {
         SharedTreeStack->push(Type::Opposite);
       }
-      SharedTreeStack->push(Type::Infinity);
+      SharedTreeStack->push(Type::Inf);
       return;
     }
     case OT::DistributionDispatcher: {

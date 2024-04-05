@@ -20,7 +20,7 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {Type::Undefined, "undef"},
     {Type::Nonreal, "nonreal"},
     {Type::ComplexI, "i"},
-    {Type::Infinity, BuiltinsAliases::k_infinityAliases},
+    {Type::Inf, BuiltinsAliases::k_infinityAliases},
     {Type::False, BuiltinsAliases::k_falseAliases},
     {Type::True, BuiltinsAliases::k_trueAliases},
 };

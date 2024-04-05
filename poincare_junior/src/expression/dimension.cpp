@@ -156,7 +156,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
   bool unitsAllowed = false;
   bool angleUnitsAllowed = false;
   switch (t->type()) {
-    case Type::Addition:
+    case Type::Add:
     case Type::Subtraction:
       for (int i = 1; i < t->numberOfChildren(); i++) {
         if (childDim[0] != childDim[i]) {
@@ -193,9 +193,9 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       // Forbid units * matrices
       return unitVector.isEmpty() || cols == 0;
     }
-    case Type::Power:
-    case Type::PowerReal:
-    case Type::PowerMatrix: {
+    case Type::Pow:
+    case Type::PowReal:
+    case Type::PowMatrix: {
       if (!childDim[1].isScalar()) {
         return false;
       }
@@ -362,9 +362,9 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Sum:
     case Type::Product:
       return GetDimension(t->child(Parametric::k_integrandIndex));
-    case Type::PowerMatrix:
-    case Type::PowerReal:
-    case Type::Power: {
+    case Type::PowMatrix:
+    case Type::PowReal:
+    case Type::Pow: {
       Dimension dim = GetDimension(t->nextNode());
       if (dim.isUnit()) {
         float index = Approximation::To<float>(t->child(1));
@@ -384,7 +384,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Ceiling:
     case Type::Round:
     case Type::UserFunction:
-    case Type::Addition:
+    case Type::Add:
     case Type::Subtraction:
     case Type::Cross:
     case Type::Inverse:

@@ -16,13 +16,13 @@ TreeRef Algebraic::Rationalize(TreeRef expression) {
   if (Number::IsStrictRational(expression)) {
     TreeRef fraction(SharedTreeStack->push<Type::Mult>(2));
     Rational::Numerator(expression).pushOnTreeStack();
-    SharedTreeStack->push(Type::Power);
+    SharedTreeStack->push(Type::Pow);
     Rational::Denominator(expression).pushOnTreeStack();
     SharedTreeStack->push(Type::MinusOne);
     expression->moveTreeOverTree(fraction);
     return fraction;
   }
-  if (expression->isPower()) {
+  if (expression->isPow()) {
     Rationalize(expression->child(0));
     return expression;  // TODO return basicReduction
   }
@@ -33,7 +33,7 @@ TreeRef Algebraic::Rationalize(TreeRef expression) {
     }
     return expression;  // TODO return basicReduction
   }
-  if (expression->isAddition()) {
+  if (expression->isAdd()) {
     // Factorize on common denominator a/b + c/d
     return RationalizeAddition(expression);
   }
@@ -41,7 +41,7 @@ TreeRef Algebraic::Rationalize(TreeRef expression) {
 }
 
 TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
-  assert(expression->isAddition());
+  assert(expression->isAdd());
   TreeRef commonDenominator(KMult());
   // Step 1: We want to compute the common denominator, b*d
   for (std::pair<TreeRef, int> indexedNode :
@@ -72,7 +72,7 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
   TreeRef fraction(SharedTreeStack->push<Type::Mult>(2));
   fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
-  TreeRef power(SharedTreeStack->push(Type::Power));
+  TreeRef power(SharedTreeStack->push(Type::Pow));
   power->moveTreeAfterNode(commonDenominator);
   commonDenominator->nextTree()->cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power
@@ -88,7 +88,7 @@ TreeRef Algebraic::NormalFormator(TreeRef expression, bool numerator) {
     expression->moveNodeOverNode(result);
     return result;
   }
-  if (expression->isPower()) {
+  if (expression->isPow()) {
     TreeRef exponent = expression->child(1);
     bool negativeRationalExponent =
         exponent->isRational() && Rational::Sign(exponent).isStrictlyNegative();

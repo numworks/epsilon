@@ -18,7 +18,7 @@ constexpr auto KUndef = KTree<Type::Undefined>();
  * either forbidden or properly handled. */
 constexpr auto KHalf = KTree<Type::Half>();
 constexpr auto KNonreal = KTree<Type::Nonreal>();
-constexpr auto KInf = KTree<Type::Infinity>();
+constexpr auto KInf = KTree<Type::Inf>();
 constexpr auto i_e = KTree<Type::ComplexI>();
 
 constexpr auto KAbs = KUnary<Type::Abs>();
@@ -68,9 +68,9 @@ constexpr auto KTrig = KBinary<Type::Trig>();
 constexpr auto KTrigDiff = KBinary<Type::TrigDiff>();
 constexpr auto KDiv = KBinary<Type::Division>();
 constexpr auto KSub = KBinary<Type::Subtraction>();
-constexpr auto KPow = KBinary<Type::Power>();
-constexpr auto KPowReal = KBinary<Type::PowerReal>();
-constexpr auto KPowMatrix = KBinary<Type::PowerMatrix>();
+constexpr auto KPow = KBinary<Type::Pow>();
+constexpr auto KPowReal = KBinary<Type::PowReal>();
+constexpr auto KPowMatrix = KBinary<Type::PowMatrix>();
 constexpr auto KDep = KBinary<Type::Dependency>();
 constexpr auto KRound = KBinary<Type::Round>();
 constexpr auto KListElement = KBinary<Type::ListElement>();
@@ -99,14 +99,14 @@ constexpr auto KProduct = KFixedArity<4, Type::Product>();
 constexpr auto KIntegral = KFixedArity<4, Type::Integral>();
 constexpr auto KNthDiff = KFixedArity<4, Type::NthDerivative>();
 
-constexpr auto KAdd = KNAry<Type::Addition>();
+constexpr auto KAdd = KNAry<Type::Add>();
 constexpr auto KMult = KNAry<Type::Mult>();
 constexpr auto KList = KNAry<Type::List>();
 constexpr auto KSet = KNAry<Type::Set>();
 constexpr auto KPiecewise = KNAry<Type::Piecewise>();
 
 template <uint8_t Id, uint8_t sign>
-constexpr auto KVar = KTree<Type::Variable, Id, sign>();
+constexpr auto KVar = KTree<Type::Var, Id, sign>();
 
 // Discrete local variable
 constexpr auto KVarK = KVar<Parametric::k_localVariableId,

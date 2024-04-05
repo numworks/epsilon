@@ -143,7 +143,7 @@ QUIZ_CASE(pcj_match) {
 QUIZ_CASE(pcj_rewrite_replace) {
   const Tree* p = KAdd(KA, KA);
   const Tree* s = KMult(2_e, KA);
-  TreeRef ref(SharedTreeStack->push<Type::Addition>(2));
+  TreeRef ref(SharedTreeStack->push<Type::Add>(2));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(5));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(5));
   TreeRef result = PatternMatching::MatchCreate(ref, p, s);

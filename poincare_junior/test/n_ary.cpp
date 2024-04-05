@@ -42,23 +42,23 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
 
   assert_trees_are_equal(rackLayout1, rackLayout3);
 
-  TreeRef addition1 = SharedTreeStack->push<Type::Addition>(3);
+  TreeRef addition1 = SharedTreeStack->push<Type::Add>(3);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(1));
-  SharedTreeStack->push<Type::Addition>(3);
+  SharedTreeStack->push<Type::Add>(3);
   SharedTreeStack->push<Type::Mult>(2);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(2));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(3));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(4));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(5));
-  SharedTreeStack->push<Type::Addition>(2);
-  SharedTreeStack->push<Type::Addition>(1);
+  SharedTreeStack->push<Type::Add>(2);
+  SharedTreeStack->push<Type::Add>(1);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(6));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(7));
   // addition1 is 1+(2*3+4+5)+((+6)+7)
   NAry::Flatten(addition1);
   // addition1 is 1+2*3+4+5+6+7
 
-  TreeRef addition2 = SharedTreeStack->push<Type::Addition>(6);
+  TreeRef addition2 = SharedTreeStack->push<Type::Add>(6);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(1));
   SharedTreeStack->push<Type::Mult>(2);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(2));

@@ -265,9 +265,9 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
    * - Handle approximate display.
    */
   // TODO: Use user settings for a RealUnkown sign ?
-  solution->moveTreeBeforeNode(SharedTreeStack->push<Type::Variable>(
-      variableId, ComplexSign::Unknown()));
-  solution->moveNodeBeforeNode(SharedTreeStack->push<Type::Addition>(2));
+  solution->moveTreeBeforeNode(
+      SharedTreeStack->push<Type::Var>(variableId, ComplexSign::Unknown()));
+  solution->moveNodeBeforeNode(SharedTreeStack->push<Type::Add>(2));
   Simplification::DeepSystematicReduce(solution);
   AdvancedSimplification::AdvancedReduce(solution);
   Beautification::DeepBeautify(solution);

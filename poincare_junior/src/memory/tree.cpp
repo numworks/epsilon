@@ -113,7 +113,7 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " value=\"" << buffer << "\"";
     return;
   }
-  if (isVariable()) {
+  if (isVar()) {
     stream << " id=" << static_cast<int>(Variables::Id(this));
     return;
   }

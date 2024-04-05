@@ -93,7 +93,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     Tree* approximation;
 
     bool hasSymbolsOrRandom = depI->hasDescendantSatisfying(
-        [](const Tree* t) { return t->isVariable() || t->isRandom(); });
+        [](const Tree* t) { return t->isVar() || t->isRandom(); });
     if (hasSymbolsOrRandom) {
       /* If the dependency involves unresolved symbol/function/sequence, the
        * approximation of the dependency could be undef while the whole
@@ -156,7 +156,7 @@ bool RemoveUselessDependencies(Tree* dep) {
   for (int i = 0; i < set->numberOfChildren(); i++) {
     // TODO is it true with infinite ? for instance -inf+inf is undef
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
-    if (depI->isAddition() || depI->isMult()) {
+    if (depI->isAdd() || depI->isMult()) {
       NAry::SetNumberOfChildren(
           set, set->numberOfChildren() + depI->numberOfChildren() - 1);
       depI->removeNode();
@@ -165,7 +165,7 @@ bool RemoveUselessDependencies(Tree* dep) {
       continue;
     }
     // dep(..,{x^y}) = dep(..,{x}) if y > 0 and y != p/2*q
-    if (depI->isPower()) {
+    if (depI->isPow()) {
 #if TODO_PCJ
       Power p = static_cast<Power&>(depI);
       if (p.typeOfDependency(reductionContext) == Power::DependencyType::None) {

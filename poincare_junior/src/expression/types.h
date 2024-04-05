@@ -64,11 +64,11 @@ RANGE(Number, Zero, Pi)
 NODE(Mult, NARY)
 
 /* - Power P (same for Factorial, Subtraction, Division) | P TAG | */
-NODE(Power, 2)
+NODE(Pow, 2)
 
-NODE(Addition, NARY)
+NODE(Add, NARY)
 
-RANGE(Algebraic, Zero, Addition)
+RANGE(Algebraic, Zero, Add)
 
 /* - UserSymbol US (same for UserFunction, UserSequence) CHARN must be 0.
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
@@ -80,8 +80,8 @@ RANGE(UserNamed, UserSymbol, UserSequence)
 
 /* - Variable V
  * | V TAG | ID | Sign | */
-NODE(Variable, 0, 2)
-NODE(Infinity)
+NODE(Var, 0, 2)
+NODE(Inf)
 
 // 3 - Other expressions in Alphabetic order
 
@@ -145,7 +145,7 @@ NODE(Permute, 2)
  *  Polynomials can be recursive (have polynomials children) */
 NODE(Polynomial, NARY)
 
-NODE(PowerReal, 2)
+NODE(PowReal, 2)
 NODE(Quotient, 2)
 
 /* - RandomNode RN
@@ -194,7 +194,7 @@ NODE(Inverse, 1)
 NODE(Ref, 1)
 NODE(Rref, 1)
 NODE(Transpose, 1)
-NODE(PowerMatrix, 2)
+NODE(PowMatrix, 2)
 
 /* - Matrix M
  * | M TAG | NUMBER OF ROWS | NUMBER OF COLUMNS |

@@ -54,12 +54,12 @@ int Metric::GetMetric(Type type) {
       return k_defaultMetric / 3;
     default:
       return k_defaultMetric;
-    case Type::PowerReal:
+    case Type::PowReal:
     case Type::Random:
     case Type::RandInt:
       return k_defaultMetric * 2;
     case Type::Sum:
-    case Type::Variable:
+    case Type::Var:
       return k_defaultMetric * 3;
   }
 }

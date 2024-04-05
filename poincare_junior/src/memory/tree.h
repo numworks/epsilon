@@ -366,7 +366,7 @@ class Tree : public TypeBlock {
   Tree* detach(bool isTree);
   void remove(bool isTree);
 
-  // Forbid tree == Type::Addition
+  // Forbid tree == Type::Add
   using TypeBlock::operator==, TypeBlock::operator!=,
       TypeBlock::operator PoincareJ::Type;
 

@@ -43,7 +43,7 @@ Tree* Matrix::Identity(const Tree* n) {
 Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   int n = NumberOfRows(matrix);
   assert(n == NumberOfColumns(matrix));
-  Tree* result = SharedTreeStack->push<Type::Addition>(n);
+  Tree* result = SharedTreeStack->push<Type::Add>(n);
   const Tree* child = matrix->nextNode();
   for (int i = 0; i < n - 1; i++) {
     child->clone();
@@ -150,7 +150,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
   const Tree* childURowK;
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
-      Tree* add = SharedTreeStack->push<Type::Addition, int>(internal);
+      Tree* add = SharedTreeStack->push<Type::Add, int>(internal);
       childURowK = childURow0;
       for (int k = 0; k < internal; k++) {
         Tree* mult = SharedTreeStack->push<Type::Mult>(2);
@@ -452,7 +452,7 @@ bool Matrix::SimplifySwitch(Tree* u) {
     case Type::Norm:
       result = Vector::Norm(child);
       break;
-    case Type::PowerMatrix: {
+    case Type::PowMatrix: {
       Tree* index = child->nextTree();
       if (!Integer::Is<int>(index)) {
         // TODO: Raise to rely on approximation.

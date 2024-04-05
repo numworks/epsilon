@@ -314,7 +314,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return FloatNode::FloatTo(node);
     case Type::DoubleFloat:
       return FloatNode::DoubleTo(node);
-    case Type::Addition:
+    case Type::Add:
       return MapAndReduce<T, std::complex<T>>(node,
                                               FloatAddition<std::complex<T>>);
     case Type::Mult:
@@ -324,7 +324,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::Subtraction:
       return MapAndReduce<T, std::complex<T>>(
           node, FloatSubtraction<std::complex<T>>);
-    case Type::Power:
+    case Type::Pow:
       return ApproximatePower<T>(node, s_context ? s_context->m_complexFormat
                                                  : ComplexFormat::Cartesian);
     case Type::Logarithm:
@@ -362,7 +362,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     }
     case Type::Abs:
       return std::abs(ToComplex<T>(node->nextNode()));
-    case Type::Infinity:
+    case Type::Inf:
       return INFINITY;
     case Type::Conjugate:
       return std::conj(ToComplex<T>(node->nextNode()));
@@ -401,7 +401,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::HyperbolicArcCosine:
     case Type::HyperbolicArcTangent:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
-    case Type::Variable: {
+    case Type::Var: {
       // Local variable
       int index = Variables::Id(node);
       assert(s_context);
@@ -677,7 +677,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::Decimal:
       return child[0] *
              std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(node)));
-    case Type::PowerReal: {
+    case Type::PowReal: {
       T a = child[0];
       T b = child[1];
       /* PowerReal could not be reduced, b's reductions cannot be safely
@@ -812,7 +812,7 @@ Tree* PushComplex(std::complex<T> value) {
   if (value.imag() == 0.0) {
     return SharedTreeStack->push<FloatType<T>::type>(value.real());
   }
-  Tree* result = SharedTreeStack->push<Type::Addition>(2);
+  Tree* result = SharedTreeStack->push<Type::Add>(2);
   SharedTreeStack->push<FloatType<T>::type>(value.real());
   if (value.imag() != 1.0) {
     SharedTreeStack->push<Type::Mult>(2);
@@ -913,7 +913,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     return m;
   }
   switch (node->type()) {
-    case Type::Addition: {
+    case Type::Add: {
       const Tree* child = node->child(0);
       int n = node->numberOfChildren() - 1;
       Tree* result = ToMatrix<T>(child);
@@ -967,7 +967,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       a->removeTree();
       return a;
     }
-    case Type::PowerMatrix: {
+    case Type::PowMatrix: {
       const Tree* base = node->child(0);
       const Tree* index = base->nextTree();
       T value = To<T>(index);
@@ -1083,8 +1083,8 @@ bool interruptApproximation(TypeBlock type, int childIndex,
     case Type::Trig:
       // Do not approximate second term in case tree isn't replaced.
       return (childIndex == 1);
-    case Type::PowerMatrix:
-    case Type::Power:
+    case Type::PowMatrix:
+    case Type::Pow:
       // Note: After projection, Power's second term should always be integer.
       return (childIndex == 1 && childType.isInteger());
     case Type::Identity:
@@ -1109,8 +1109,8 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   // These types are either already approximated or impossible to approximate.
   if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
       tree->isComplexI() ||
-      tree->isOfType({Type::UserSymbol, Type::Variable, Type::Unit,
-                      Type::PhysicalConstant}) ||
+      tree->isOfType(
+          {Type::UserSymbol, Type::Var, Type::Unit, Type::PhysicalConstant}) ||
       !Dimension::GetDimension(tree).isScalar() ||
       Dimension::GetListLength(tree) != -1) {
     return false;

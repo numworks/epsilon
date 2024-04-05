@@ -50,7 +50,7 @@ void WorkingBuffer::garbageCollect(
       digits = integer->digits();
       if (digits < m_start) {
         assert(digits + integer->numberOfDigits() * sizeof(uint8_t) <= m_start);
-        // Some IntegerHandler have their digits stored in EditionPool's trees.
+        // Some IntegerHandler have their digits stored in TreeStack's trees.
         continue;
       }
       assert(digits + integer->numberOfDigits() * sizeof(uint8_t) <=
@@ -112,38 +112,38 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
   }
 }
 
-Tree *IntegerHandler::pushOnEditionPool() const {
+Tree *IntegerHandler::pushOnTreeStack() const {
   if (isZero()) {
-    return SharedEditionPool->push(Type::Zero);
+    return SharedTreeStack->push(Type::Zero);
   }
   if (isOne()) {
-    return SharedEditionPool->push(Type::One);
+    return SharedTreeStack->push(Type::One);
   }
   if (isTwo()) {
-    return SharedEditionPool->push(Type::Two);
+    return SharedTreeStack->push(Type::Two);
   }
   if (isMinusOne()) {
-    return SharedEditionPool->push(Type::MinusOne);
+    return SharedTreeStack->push(Type::MinusOne);
   }
   if (isSignedType<int8_t>()) {
-    return SharedEditionPool->push<Type::IntegerShort>(
+    return SharedTreeStack->push<Type::IntegerShort>(
         static_cast<int8_t>(*this));
   }
   TypeBlock typeBlock(sign() == NonStrictSign::Negative ? Type::IntegerNegBig
                                                         : Type::IntegerPosBig);
-  Tree *node = SharedEditionPool->push(typeBlock);
-  SharedEditionPool->push(m_numberOfDigits);
-  pushDigitsOnEditionPool();
+  Tree *node = SharedTreeStack->push(typeBlock);
+  SharedTreeStack->push(m_numberOfDigits);
+  pushDigitsOnTreeStack();
 #if POINCARE_POOL_VISUALIZATION
   Log("PushInteger", node->block(), node->treeSize());
 #endif
   return node;
 }
 
-void IntegerHandler::pushDigitsOnEditionPool() const {
+void IntegerHandler::pushDigitsOnTreeStack() const {
   assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
-    SharedEditionPool->push(ValueBlock(digit(i)));
+    SharedTreeStack->push(ValueBlock(digit(i)));
   }
 }
 
@@ -325,13 +325,13 @@ int8_t IntegerHandler::Ucmp(const IntegerHandler &a, const IntegerHandler &b) {
 Tree *IntegerHandler::Addition(const IntegerHandler &a,
                                const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
-  return Sum(a, b, false, &workingBuffer).pushOnEditionPool();
+  return Sum(a, b, false, &workingBuffer).pushOnTreeStack();
 }
 
 Tree *IntegerHandler::Subtraction(const IntegerHandler &a,
                                   const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
-  return Sum(a, b, true, &workingBuffer).pushOnEditionPool();
+  return Sum(a, b, true, &workingBuffer).pushOnTreeStack();
 }
 
 IntegerHandler IntegerHandler::Sum(const IntegerHandler &a,
@@ -402,7 +402,7 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler &a,
 Tree *IntegerHandler::Multiplication(const IntegerHandler &a,
                                      const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
-  return Mult(a, b, &workingBuffer).pushOnEditionPool();
+  return Mult(a, b, &workingBuffer).pushOnTreeStack();
 }
 
 IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
@@ -474,12 +474,12 @@ DivisionResult<Tree *> IntegerHandler::Division(
                        ? NonStrictSign::Positive
                        : NonStrictSign::Negative);
   /* If both IntegerHandler are stored on the WorkingBuffer, they need to be
-   * ordered to ensure that pushing the digits of one on the EditionPool won't
+   * ordered to ensure that pushing the digits of one on the TreeStack won't
    * override the other one. */
   assert(quotient.usesImmediateDigit() || remainder.usesImmediateDigit() ||
          quotient.digits() < remainder.digits());
-  Tree *q = quotient.pushOnEditionPool();
-  Tree *r = remainder.pushOnEditionPool();
+  Tree *q = quotient.pushOnTreeStack();
+  Tree *r = remainder.pushOnTreeStack();
   return {.quotient = q, .remainder = r};
 }
 
@@ -493,7 +493,7 @@ Tree *IntegerHandler::Quotient(const IntegerHandler &numerator,
   quotient.setSign(numerator.sign() == denominator.sign()
                        ? NonStrictSign::Positive
                        : NonStrictSign::Negative);
-  return quotient.pushOnEditionPool();
+  return quotient.pushOnTreeStack();
 }
 
 Tree *IntegerHandler::Remainder(const IntegerHandler &numerator,
@@ -505,7 +505,7 @@ Tree *IntegerHandler::Remainder(const IntegerHandler &numerator,
     remainder = Usum(denominator, remainder, true,
                      &workingBuffer);  // |denominator|-remainder
   }
-  return remainder.pushOnEditionPool();
+  return remainder.pushOnTreeStack();
 }
 
 DivisionResult<IntegerHandler> IntegerHandler::Udiv(
@@ -625,7 +625,7 @@ IntegerHandler IntegerHandler::GCD(const IntegerHandler &a,
 
 Tree *IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
-  return GCD(a, b, &workingBuffer).pushOnEditionPool();
+  return GCD(a, b, &workingBuffer).pushOnTreeStack();
 }
 
 Tree *IntegerHandler::LCM(const IntegerHandler &a, const IntegerHandler &b) {
@@ -638,14 +638,14 @@ Tree *IntegerHandler::LCM(const IntegerHandler &a, const IntegerHandler &b) {
   IntegerHandler j = b;
   j.setSign(NonStrictSign::Positive);
   if (Compare(i, j) == 0) {
-    return i.pushOnEditionPool();
+    return i.pushOnTreeStack();
   }
   /* Using LCM(i,j) = i*(j/GCD(i,j)). Knowing that GCD(i, j) divides j, and that
    * GCD(i,j) = 0 if and only if i == j == 0, which would have been escaped
    * before. Division is performed before multiplication to be more efficient.*/
   return Mult(i, Udiv(j, GCD(i, j, &workingBuffer), &workingBuffer).quotient,
               &workingBuffer)
-      .pushOnEditionPool();
+      .pushOnTreeStack();
 }
 
 IntegerHandler IntegerHandler::multiplyByPowerOf2(
@@ -727,7 +727,7 @@ Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
     i2 = squaredI2;
   }
   workingBuffer.garbageCollect({&i1, &i2}, localStart);
-  return Mult(i1, i2, &workingBuffer).pushOnEditionPool();
+  return Mult(i1, i2, &workingBuffer).pushOnTreeStack();
 }
 
 Tree *IntegerHandler::Factorial(const IntegerHandler &i) {
@@ -741,7 +741,7 @@ Tree *IntegerHandler::Factorial(const IntegerHandler &i) {
     j = Usum(j, IntegerHandler(1), false, &workingBuffer);
     workingBuffer.garbageCollect({&result, &j}, localStart);
   }
-  return result.pushOnEditionPool();
+  return result.pushOnTreeStack();
 }
 
 void IntegerHandler::sanitize() {
@@ -774,7 +774,7 @@ IntegerHandler Integer::Handler(const Tree *expression) {
 void Integer::SetSign(Tree *tree, NonStrictSign sign) {
   IntegerHandler h = Handler(tree);
   h.setSign(sign);
-  tree->moveTreeOverTree(h.pushOnEditionPool());
+  tree->moveTreeOverTree(h.pushOnTreeStack());
 }
 
 }  // namespace PoincareJ

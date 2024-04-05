@@ -203,11 +203,11 @@ const Tree* Tree::nextNode() const {
 #if ASSERTIONS
   assert(!isTreeBorder());
 #endif
-  assert(this + nodeSize() != SharedEditionPool->firstBlock());
-  assert(this != SharedEditionPool->lastBlock());
+  assert(this + nodeSize() != SharedTreeStack->firstBlock());
+  assert(this != SharedTreeStack->lastBlock());
 #if PCJ_METRICS
-  if (SharedEditionPool->firstBlock() <= this &&
-      this <= SharedEditionPool->lastBlock()) {
+  if (SharedTreeStack->firstBlock() <= this &&
+      this <= SharedTreeStack->lastBlock()) {
     nextNodeInPoolCount++;
   }
   nextNodeCount++;
@@ -392,8 +392,8 @@ bool Tree::hasChildSatisfying(Predicate predicate) const {
   return false;
 }
 
-Tree* Tree::clone() const { return SharedEditionPool->clone(this); }
-Tree* Tree::cloneNode() const { return SharedEditionPool->clone(this, false); }
+Tree* Tree::clone() const { return SharedTreeStack->clone(this); }
+Tree* Tree::cloneNode() const { return SharedTreeStack->clone(this, false); }
 
 // Tree edition
 
@@ -401,8 +401,8 @@ Tree* Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
                     bool at) {
   Tree* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize();
-  SharedEditionPool->insertBlocks(destination->block(), nodeToClone->block(),
-                                  size, at);
+  SharedTreeStack->insertBlocks(destination->block(), nodeToClone->block(),
+                                size, at);
 #if POINCARE_POOL_VISUALIZATION
   Log("Insert", destination->block(), size);
 #endif
@@ -412,9 +412,9 @@ Tree* Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
 Tree* Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
   Tree* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToMove->treeSize() : nodeToMove->nodeSize();
-  assert(SharedEditionPool->contains(nodeToMove->block()));
-  SharedEditionPool->moveBlocks(destination->block(), nodeToMove->block(), size,
-                                at);
+  assert(SharedTreeStack->contains(nodeToMove->block()));
+  SharedTreeStack->moveBlocks(destination->block(), nodeToMove->block(), size,
+                              at);
   Block* dst = destination->block();
   Block* addedBlock = dst > nodeToMove->block() ? dst - size : dst;
 #if POINCARE_POOL_VISUALIZATION
@@ -433,12 +433,12 @@ Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
     return Tree::FromBlocks(oldBlock);
   }
   size_t minSize = std::min(oldSize, newSize);
-  SharedEditionPool->replaceBlocks(oldBlock, newBlock, minSize);
+  SharedTreeStack->replaceBlocks(oldBlock, newBlock, minSize);
   if (oldSize > newSize) {
-    SharedEditionPool->removeBlocks(oldBlock + minSize, oldSize - newSize);
+    SharedTreeStack->removeBlocks(oldBlock + minSize, oldSize - newSize);
   } else {
-    SharedEditionPool->insertBlocks(oldBlock + minSize, newBlock + minSize,
-                                    newSize - oldSize);
+    SharedTreeStack->insertBlocks(oldBlock + minSize, newBlock + minSize,
+                                  newSize - oldSize);
   }
 #if POINCARE_POOL_VISUALIZATION
   Log("Replace", oldBlock, newSize);
@@ -456,17 +456,17 @@ Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
     return Tree::FromBlocks(oldBlock);
   }
   Block* finalBlock = oldBlock;
-  assert(SharedEditionPool->contains(newNode->block()));
+  assert(SharedTreeStack->contains(newNode->block()));
   // Fractal scheme
   assert(!(newIsTree && oldNode->hasAncestor(newNode, true)));
   if (oldIsTree && newNode->hasAncestor(oldNode, true)) {
     oldSize -= newSize;
   }
-  SharedEditionPool->moveBlocks(oldBlock, newBlock, newSize);
+  SharedTreeStack->moveBlocks(oldBlock, newBlock, newSize);
   if (oldBlock > newBlock) {
     finalBlock -= newSize;
   }
-  SharedEditionPool->removeBlocks(finalBlock + newSize, oldSize);
+  SharedTreeStack->removeBlocks(finalBlock + newSize, oldSize);
 #if POINCARE_POOL_VISUALIZATION
   if (oldBlock < newBlock) {
     newBlock -= oldSize;
@@ -479,17 +479,17 @@ Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
 void Tree::remove(bool isTree) {
   Block* b = block();
   size_t size = isTree ? treeSize() : nodeSize();
-  SharedEditionPool->removeBlocks(b, size);
+  SharedTreeStack->removeBlocks(b, size);
 #if POINCARE_POOL_VISUALIZATION
   Log("Remove", nullptr, INT_MAX, b);
 #endif
 }
 
 Tree* Tree::detach(bool isTree) {
-  Block* destination = SharedEditionPool->lastBlock();
+  Block* destination = SharedTreeStack->lastBlock();
   size_t sizeToMove = isTree ? treeSize() : nodeSize();
   Block* source = block();
-  SharedEditionPool->moveBlocks(destination, source, sizeToMove, true);
+  SharedTreeStack->moveBlocks(destination, source, sizeToMove, true);
 #if POINCARE_POOL_VISUALIZATION
   Log("Detach", destination - sizeToMove, sizeToMove, source);
 #endif

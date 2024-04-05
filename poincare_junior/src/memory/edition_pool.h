@@ -16,7 +16,7 @@ class JuniorLayout;
 
 namespace PoincareJ {
 
-class EditionPool {
+class TreeStack {
   friend class TreeRef;
 
  public:
@@ -24,13 +24,13 @@ class EditionPool {
   constexpr static int k_maxNumberOfBlocks = 1024 * 16;
   constexpr static int k_maxNumberOfReferences = k_maxNumberOfBlocks / 8;
 
-  static OMG::GlobalBox<EditionPool> SharedEditionPool;
+  static OMG::GlobalBox<TreeStack> SharedTreeStack;
 
-  EditionPool() : m_referenceTable(this), m_size(0) {}
+  TreeStack() : m_referenceTable(this), m_size(0) {}
 
   const Block *firstBlock() const { return m_blocks; }
   Block *firstBlock() { return m_blocks; }
-  // If EditionPool is empty, first and last blocks are the same one
+  // If TreeStack is empty, first and last blocks are the same one
   const Block *lastBlock() const { return m_blocks + m_size; }
   Block *lastBlock() { return m_blocks + m_size; }
   size_t size() const { return m_size; }
@@ -95,8 +95,8 @@ class EditionPool {
 
   /* We delete the assignment operator because copying without care the
    * ReferenceTable would corrupt the m_referenceTable.m_pool pointer. */
-  EditionPool &operator=(EditionPool &&) = delete;
-  EditionPool &operator=(const EditionPool &) = delete;
+  TreeStack &operator=(TreeStack &&) = delete;
+  TreeStack &operator=(const TreeStack &) = delete;
 
 #if POINCARE_TREE_LOG
   enum class LogFormat { Flat, Tree };
@@ -134,7 +134,7 @@ class EditionPool {
      * removed or replaced. */
     constexpr static uint16_t InvalidatedOffset = 0xFFFF;
 
-    ReferenceTable(EditionPool *pool) : m_length(0), m_pool(pool) {}
+    ReferenceTable(TreeStack *pool) : m_length(0), m_pool(pool) {}
     Tree *nodeForIdentifier(uint16_t id) const;
     uint16_t storeNode(Tree *node);
     void updateIdentifier(uint16_t id, Tree *newNode);
@@ -145,7 +145,7 @@ class EditionPool {
                      const Block *contextSelection1,
                      const Block *contextSelection2, int contextAlteration);
     void deleteIdentifiersAfterBlock(const Block *block);
-    bool isFull() { return m_length == EditionPool::k_maxNumberOfReferences; }
+    bool isFull() { return m_length == TreeStack::k_maxNumberOfReferences; }
     bool reset();
 #if POINCARE_TREE_LOG
     void logIdsForNode(std::ostream &stream, const Tree *node) const;
@@ -158,8 +158,8 @@ class EditionPool {
     uint16_t storeNodeAtIndex(Tree *node, size_t index);
 
     uint16_t m_length;
-    EditionPool *m_pool;
-    uint16_t m_nodeOffsetForIdentifier[EditionPool::k_maxNumberOfReferences];
+    TreeStack *m_pool;
+    uint16_t m_nodeOffsetForIdentifier[TreeStack::k_maxNumberOfReferences];
   };
 
   /* TODO: if we end up needing too many TreeRef, we could ref-count
@@ -169,7 +169,7 @@ class EditionPool {
   size_t m_size;
 };
 
-#define SharedEditionPool EditionPool::SharedEditionPool
+#define SharedTreeStack TreeStack::SharedTreeStack
 
 }  // namespace PoincareJ
 

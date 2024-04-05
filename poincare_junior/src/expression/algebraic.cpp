@@ -14,11 +14,11 @@ namespace PoincareJ {
 
 TreeRef Algebraic::Rationalize(TreeRef expression) {
   if (Number::IsStrictRational(expression)) {
-    TreeRef fraction(SharedEditionPool->push<Type::Multiplication>(2));
-    Rational::Numerator(expression).pushOnEditionPool();
-    SharedEditionPool->push(Type::Power);
-    Rational::Denominator(expression).pushOnEditionPool();
-    SharedEditionPool->push(Type::MinusOne);
+    TreeRef fraction(SharedTreeStack->push<Type::Multiplication>(2));
+    Rational::Numerator(expression).pushOnTreeStack();
+    SharedTreeStack->push(Type::Power);
+    Rational::Denominator(expression).pushOnTreeStack();
+    SharedTreeStack->push(Type::MinusOne);
     expression->moveTreeOverTree(fraction);
     return fraction;
   }
@@ -48,7 +48,7 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
        NodeIterator::Children<Editable>(expression)) {
     TreeRef child = std::get<TreeRef>(indexedNode);
     child = Rationalize(child);
-    TreeRef denominator = Denominator(SharedEditionPool->clone(child));
+    TreeRef denominator = Denominator(SharedTreeStack->clone(child));
     NAry::AddChild(commonDenominator, denominator);  // FIXME: do we need LCM?
   }
   // basic reduction commonDenominator
@@ -62,17 +62,17 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
        NodeIterator::Children<Editable>(expression)) {
     TreeRef child = std::get<TreeRef>(indexedNode);
     // Create Mult(child, commonDenominator) = a*b * b*d
-    TreeRef multiplication(SharedEditionPool->push<Type::Multiplication>(1));
+    TreeRef multiplication(SharedTreeStack->push<Type::Multiplication>(1));
     child->moveNodeBeforeNode(multiplication);
     child->nextTree()->moveTreeBeforeNode(
-        SharedEditionPool->clone(commonDenominator));
+        SharedTreeStack->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
-  TreeRef fraction(SharedEditionPool->push<Type::Multiplication>(2));
+  TreeRef fraction(SharedTreeStack->push<Type::Multiplication>(2));
   fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
-  TreeRef power(SharedEditionPool->push(Type::Power));
+  TreeRef power(SharedTreeStack->push(Type::Power));
   power->moveTreeAfterNode(commonDenominator);
   commonDenominator->nextTree()->cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power
@@ -84,7 +84,7 @@ TreeRef Algebraic::NormalFormator(TreeRef expression, bool numerator) {
   if (expression->isRational()) {
     IntegerHandler ator = numerator ? Rational::Numerator(expression)
                                     : Rational::Denominator(expression);
-    TreeRef result = ator.pushOnEditionPool();
+    TreeRef result = ator.pushOnTreeStack();
     expression->moveNodeOverNode(result);
     return result;
   }

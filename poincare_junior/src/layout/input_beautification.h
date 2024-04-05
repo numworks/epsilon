@@ -27,7 +27,7 @@ consteval static BeautificationRule ruleHelper() {
   return BeautificationRule{
       *Builtin::GetReservedFunction(type)->aliases(),
       TypeBlock::NumberOfChildren(type), [](TreeRef* parameters) -> Tree* {
-        TreeRef ref = SharedEditionPool->push(layoutType);
+        TreeRef ref = SharedTreeStack->push(layoutType);
         for (int i = 0; i < TypeBlock::NumberOfChildren(layoutType); i++) {
           parameters[i]->detachTree();
         }
@@ -120,8 +120,8 @@ class InputBeautification {
 
   constexpr static BeautificationRule k_derivativeRule = {
       "diff", 3, [](TreeRef* parameters) -> Tree* {
-        TreeRef diff = SharedEditionPool->push(Type::DerivativeLayout);
-        SharedEditionPool->push(0);
+        TreeRef diff = SharedTreeStack->push(Type::DerivativeLayout);
+        SharedTreeStack->push(0);
         parameters[1]->detachTree();
         parameters[2]->detachTree();
         parameters[0]->detachTree();
@@ -169,7 +169,7 @@ class InputBeautification {
       {/* int( */
        "int", 4,
        [](TreeRef* parameters) -> Tree* {
-         TreeRef integral = SharedEditionPool->push(Type::IntegralLayout);
+         TreeRef integral = SharedTreeStack->push(Type::IntegralLayout);
          parameters[1]->detachTree();
          parameters[2]->detachTree();
          parameters[3]->detachTree();
@@ -195,10 +195,10 @@ class InputBeautification {
           * layout does not have 3 empty children. This is a fringe case
           * though, and everything works fine when "piecewise(" is inserted
           * with nothing on its right. */
-         TreeRef ref = SharedEditionPool->push(Type::PiecewiseLayout);
+         TreeRef ref = SharedTreeStack->push(Type::PiecewiseLayout);
          // TODO we need a builder to make this safe
-         SharedEditionPool->push(2);
-         SharedEditionPool->push(2);
+         SharedTreeStack->push(2);
+         SharedTreeStack->push(2);
          parameters[0]->detachTree();
          parameters[1]->detachTree();
          KRackL()->clone();
@@ -209,7 +209,7 @@ class InputBeautification {
        "product", 4,
        [](TreeRef* parameters) -> Tree* {
          // TODO factorize with diff and int
-         TreeRef product = SharedEditionPool->push(Type::ProductLayout);
+         TreeRef product = SharedTreeStack->push(Type::ProductLayout);
          parameters[1]->detachTree();
          parameters[2]->detachTree();
          parameters[3]->detachTree();
@@ -231,7 +231,7 @@ class InputBeautification {
   constexpr static BeautificationRule k_sumRule = {
       "sum", 4, [](TreeRef* parameters) -> Tree* {
         // TODO factorize with diff and int
-        TreeRef sum = SharedEditionPool->push(Type::SumLayout);
+        TreeRef sum = SharedTreeStack->push(Type::SumLayout);
         parameters[1]->detachTree();
         parameters[2]->detachTree();
         parameters[3]->detachTree();
@@ -247,10 +247,10 @@ class InputBeautification {
         // TODO handle NL-log cf LayoutHelper::Logarithm
         TreeRef log = "log"_l->clone();
         NAry::SetNumberOfChildren(log, 5);
-        SharedEditionPool->push<Type::VerticalOffsetLayout>(true, false);
+        SharedTreeStack->push<Type::VerticalOffsetLayout>(true, false);
         parameters[1]->detachTree();
         // TODO would be nicer with a temporary parenthesis ?
-        SharedEditionPool->push<Type::ParenthesisLayout>(false, false);
+        SharedTreeStack->push<Type::ParenthesisLayout>(false, false);
         parameters[0]->detachTree();
         return log;
       }};

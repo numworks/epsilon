@@ -15,7 +15,7 @@
 namespace PoincareJ {
 
 Tree* Matrix::Zero(MatrixDimension d) {
-  Tree* result = SharedEditionPool->push<Type::Matrix>(d.rows, d.cols);
+  Tree* result = SharedTreeStack->push<Type::Matrix>(d.rows, d.cols);
   for (int i = 0; i < d.rows * d.cols; i++) {
     (0_e)->clone();
   }
@@ -28,7 +28,7 @@ Tree* Matrix::Identity(const Tree* n) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
   uint8_t nb = *Integer::Handler(n).digits();
-  Tree* result = SharedEditionPool->push<Type::Matrix>(nb, nb);
+  Tree* result = SharedTreeStack->push<Type::Matrix>(nb, nb);
   for (int i = 0; i < nb - 1; i++) {
     (1_e)->clone();
     // cloning n zeros is indeed a memset(0)
@@ -43,7 +43,7 @@ Tree* Matrix::Identity(const Tree* n) {
 Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   int n = NumberOfRows(matrix);
   assert(n == NumberOfColumns(matrix));
-  Tree* result = SharedEditionPool->push<Type::Addition>(n);
+  Tree* result = SharedTreeStack->push<Type::Addition>(n);
   const Tree* child = matrix->nextNode();
   for (int i = 0; i < n - 1; i++) {
     child->clone();
@@ -69,7 +69,7 @@ Tree* Matrix::Transpose(const Tree* m) {
     SetNumberOfColumns(result, rows);
     return result;
   }
-  Tree* result = SharedEditionPool->push<Type::Matrix>(cols, rows);
+  Tree* result = SharedTreeStack->push<Type::Matrix>(cols, rows);
   const Tree* rowsM[rows];
   const Tree* child = m->nextNode();
   for (int row = 0; row < rows; row++) {
@@ -114,7 +114,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
                                    bool approximate) {
   Tree* result = m->cloneNode();
   for (const Tree* child : m->children()) {
-    Tree* mult = SharedEditionPool->push<Type::Multiplication>(2);
+    Tree* mult = SharedTreeStack->push<Type::Multiplication>(2);
     scalar->clone();
     child->clone();
     if (approximate) {
@@ -131,7 +131,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
   uint8_t rows = NumberOfRows(u);
   uint8_t internal = NumberOfColumns(u);
   uint8_t cols = NumberOfColumns(v);
-  Tree* result = SharedEditionPool->push<Type::Matrix>(rows, cols);
+  Tree* result = SharedTreeStack->push<Type::Matrix>(rows, cols);
   /* The complexity of the naive multiplication is n^3 by itself but if we do
    * not take care, indexing the children with child will add an n^2
    * factor. To avoid this, we keep track of each row of v. */
@@ -150,10 +150,10 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
   const Tree* childURowK;
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
-      Tree* add = SharedEditionPool->push<Type::Addition, int>(internal);
+      Tree* add = SharedTreeStack->push<Type::Addition, int>(internal);
       childURowK = childURow0;
       for (int k = 0; k < internal; k++) {
-        Tree* mult = SharedEditionPool->push<Type::Multiplication>(2);
+        Tree* mult = SharedTreeStack->push<Type::Multiplication>(2);
         assert(childURowK == Child(u, row, k));
         childURowK->clone();
         childURowK = childURowK->nextTree();
@@ -189,7 +189,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
 
   TreeRef det;
   if (determinant) {
-    det = SharedEditionPool->push<Type::Multiplication>(0);
+    det = SharedTreeStack->push<Type::Multiplication>(0);
   }
 
   int m = NumberOfRows(matrix);
@@ -356,7 +356,7 @@ Tree* Matrix::Inverse(const Tree* m, bool approximate) {
   int dim = NumberOfRows(m);
   /* Create the matrix (A|I) with A is the input matrix and I the dim
    * identity matrix */
-  Tree* matrixAI = SharedEditionPool->push<Type::Matrix>(dim, dim * 2);
+  Tree* matrixAI = SharedTreeStack->push<Type::Matrix>(dim, dim * 2);
   const Tree* childIJ = m->nextNode();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {

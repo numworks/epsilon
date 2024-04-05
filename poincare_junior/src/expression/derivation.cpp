@@ -102,17 +102,17 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue,
     return (0_e)->clone();
   }
 
-  Tree *result = SharedEditionPool->push<Type::Addition>(0);
+  Tree *result = SharedTreeStack->push<Type::Addition>(0);
   const Tree *derivandChild = derivand->nextNode();
   /* D(f(g0(x),g1(x), ...)) = Sum(D(gi(x))*Di(f)(g0(x),g1(x), ...))
    * With D being the Derivative and Di being the partial derivative on
    * parameter i. */
   for (int i = 0; i < numberOfChildren; i++) {
     NAry::SetNumberOfChildren(result, i + 1);
-    Tree *mult = SharedEditionPool->push<Type::Multiplication>(1);
+    Tree *mult = SharedTreeStack->push<Type::Multiplication>(1);
     if (!Derivate(derivandChild, symbolValue, symbol)) {
       // Could not derivate, preserve D(gi(x))
-      SharedEditionPool->push(Type::Derivative);
+      SharedTreeStack->push(Type::Derivative);
       symbol->clone();
       symbolValue->clone();
       derivandChild->clone();
@@ -140,7 +140,7 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
       Tree *mult;
       if (numberOfChildren > 2) {
         mult =
-            SharedEditionPool->push<Type::Multiplication>(numberOfChildren - 1);
+            SharedTreeStack->push<Type::Multiplication>(numberOfChildren - 1);
       }
       for (std::pair<const Tree *, int> indexedNode :
            NodeIterator::Children<NoEditable>(derivand)) {
@@ -155,7 +155,7 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
     }
     case Type::Addition:
       // Di(x0 + x1 + ... + xi + ...) = 1
-      SharedEditionPool->push(Type::One);
+      SharedTreeStack->push(Type::One);
       return true;
     case Type::Exponential:
       // Di(exp(x)) = exp(x)
@@ -164,9 +164,9 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
     case Type::LnReal:
     case Type::Ln: {
       // Di(ln(x)) = 1/x
-      Tree *power = SharedEditionPool->push(Type::Power);
+      Tree *power = SharedTreeStack->push(Type::Power);
       CloneReplacingSymbol(derivand->child(0), symbolValue);
-      SharedEditionPool->push(Type::MinusOne);
+      SharedTreeStack->push(Type::MinusOne);
       Simplification::ShallowSystematicReduce(power);
       return true;
     }
@@ -177,19 +177,19 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
       // Second parameter cannot depend on symbol.
       assert(!Variables::HasVariables(derivand->child(1)));
       if (index == 1) {
-        SharedEditionPool->push(Type::Zero);
+        SharedTreeStack->push(Type::Zero);
         return true;
       }
       Tree *multiplication;
       if (derivand->isPower()) {
-        multiplication = SharedEditionPool->push<Type::Multiplication>(2);
-        SharedEditionPool->clone(derivand->child(1));
+        multiplication = SharedTreeStack->push<Type::Multiplication>(2);
+        SharedTreeStack->clone(derivand->child(1));
       }
-      Tree *newNode = SharedEditionPool->clone(derivand, false);
+      Tree *newNode = SharedTreeStack->clone(derivand, false);
       CloneReplacingSymbol(derivand->child(0), symbolValue);
-      Tree *addition = SharedEditionPool->push<Type::Addition>(2);
-      SharedEditionPool->clone(derivand->child(1));
-      SharedEditionPool->push(Type::MinusOne);
+      Tree *addition = SharedTreeStack->push<Type::Addition>(2);
+      SharedTreeStack->clone(derivand->child(1));
+      SharedTreeStack->push(Type::MinusOne);
       Simplification::ShallowSystematicReduce(addition);
       Simplification::ShallowSystematicReduce(newNode);
       if (derivand->isPower()) {

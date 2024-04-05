@@ -173,7 +173,7 @@ bool Parametric::Explicit(Tree* expr) {
   }
   for (uint8_t step = 0; step < numberOfTerms; step++) {
     // Create k value at this step
-    Tree* value = SharedEditionPool->push<Type::Addition>(2);
+    Tree* value = SharedTreeStack->push<Type::Addition>(2);
     lowerBound->clone();
     Integer::Push(step);
     Simplification::ShallowSystematicReduce(value);

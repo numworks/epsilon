@@ -106,7 +106,7 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
   while (n != length && (cp = decoder.nextCodePoint())) {
     ::CodePoint cc = 0;
     if (n + 1 != length && (cc = decoder.nextCodePoint()) && cc.isCombining()) {
-      PoincareJ::EditionPool::SharedEditionPool
+      PoincareJ::TreeStack::SharedTreeStack
           ->push<PoincareJ::Type::CombinedCodePointsLayout>(cp, cc);
     } else {
       decoder.previousCodePoint();

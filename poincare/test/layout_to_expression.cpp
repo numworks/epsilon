@@ -71,7 +71,7 @@ void assert_parsed_layout_is(Layout l, Poincare::OExpression r) {
   PoincareJ::Tree* rj = PoincareJ::FromPoincareExpression(r);
   quiz_assert_print_if_failure(rj, buffer);
   quiz_assert_print_if_failure(ej->treeIsIdenticalTo(rj), buffer);
-  PoincareJ::EditionPool::SharedEditionPool->flush();
+  PoincareJ::TreeStack::SharedTreeStack->flush();
 }
 
 OMatrix BuildOneChildMatrix(OExpression entry) {

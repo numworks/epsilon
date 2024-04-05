@@ -51,7 +51,7 @@ bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
 }
 
 Tree* List::Fold(const Tree* list, TypeBlock type) {
-  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   // TODO compute GetListLength less often
   int size = Dimension::GetListLength(list);
   assert(size >= 0);

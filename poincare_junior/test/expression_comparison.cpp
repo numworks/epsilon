@@ -16,7 +16,7 @@ QUIZ_CASE(pcj_expression_comparison) {
   assert_comparison_equals(1.0_fe, 2.0_fe, -1);
   assert_comparison_equals(KAdd(2_e, π_e), π_e, 1);
   // TODO: complete
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 }
 
 void assert_contain_subtree(const Tree* tree, const Tree* subtree) {
@@ -37,5 +37,5 @@ QUIZ_CASE(pcj_subtree) {
   assert_not_contain_subtree(KAdd(2_e, KMult(1_e, 3_e)), KMult(1_e, 4_e));
   assert_not_contain_subtree(KAdd(2_e, KMult(1_e, 3_e)),
                              KAdd(2_e, KMult(1_e, 4_e)));
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 }

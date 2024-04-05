@@ -8,15 +8,15 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_block) {
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 
   // Create pool: [ "0" | "1" | "2" | 4 | -4 | "0" ]
-  Block* firstBlock = SharedEditionPool->push(Type::Zero)->block();
-  SharedEditionPool->push(Type::One);
-  SharedEditionPool->push(Type::Two);
-  SharedEditionPool->push(ValueBlock(4));
-  SharedEditionPool->push(ValueBlock(-4));
-  SharedEditionPool->push(Type::Zero);
+  Block* firstBlock = SharedTreeStack->push(Type::Zero)->block();
+  SharedTreeStack->push(Type::One);
+  SharedTreeStack->push(Type::Two);
+  SharedTreeStack->push(ValueBlock(4));
+  SharedTreeStack->push(ValueBlock(-4));
+  SharedTreeStack->push(Type::Zero);
   assert_pool_block_sizes_is(6);
 
   // Block navigation
@@ -479,17 +479,17 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
 
 QUIZ_CASE(pcj_edition_node_constructor) {
   assert_node_equals_blocks(
-      SharedEditionPool->push<Type::IntegerPosBig>(
+      SharedTreeStack->push<Type::IntegerPosBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(Type::IntegerPosBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
   assert_node_equals_blocks(
-      SharedEditionPool->push<Type::IntegerNegBig>(
+      SharedTreeStack->push<Type::IntegerNegBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(Type::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
   assert_node_equals_blocks(
-      SharedEditionPool->push<Type::IntegerNegBig>(
+      SharedTreeStack->push<Type::IntegerNegBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(Type::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
@@ -573,14 +573,14 @@ QUIZ_CASE(pcj_node_iterator) {
 }
 
 QUIZ_CASE(pcj_node) {
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 
   // operator==
   const Tree* node0 = 42_e;
   Tree* node1 =
-      SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(42));
+      SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(42));
   quiz_assert(node0 != node1 && *node0->block() == *node1->block());
-  Tree* node2 = Tree::FromBlocks(SharedEditionPool->firstBlock());
+  Tree* node2 = Tree::FromBlocks(SharedTreeStack->firstBlock());
   quiz_assert(node2 == node1);
 
   // Tree navigation
@@ -640,10 +640,10 @@ QUIZ_CASE(pcj_node) {
 }
 
 QUIZ_CASE(pcj_node_size) {
-  Tree* node = SharedEditionPool->push<Type::IntegerPosBig>(
+  Tree* node = SharedTreeStack->push<Type::IntegerPosBig>(
       static_cast<uint64_t>(0x00FF0000));
   quiz_assert(node->nodeSize() == 5);
-  node = SharedEditionPool->push<Type::IntegerNegBig>(
+  node = SharedTreeStack->push<Type::IntegerNegBig>(
       static_cast<uint64_t>(0x0000FF00));
   quiz_assert(node->nodeSize() == 4);
 }

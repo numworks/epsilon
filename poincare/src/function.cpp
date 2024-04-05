@@ -105,7 +105,7 @@ Function Function::Builder(const char* name, size_t length,
     length = strlen(name);
   }
   PoincareJ::Tree* tree =
-      PoincareJ::SharedEditionPool->push<PoincareJ::Type::UserFunction>(
+      PoincareJ::SharedTreeStack->push<PoincareJ::Type::UserFunction>(
           name, length + 1);
   assert(!child.isUninitialized());
   child.tree()->clone();

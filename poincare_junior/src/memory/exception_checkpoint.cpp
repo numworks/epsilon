@@ -25,9 +25,9 @@ ExceptionCheckpoint::~ExceptionCheckpoint() {
 void ExceptionCheckpoint::rollback() {
   // Next Raise will be handled by parent.
   s_topmostExceptionCheckpoint = m_parent;
-  /* Flush everything changed on the SharedEditionPool because it may be
+  /* Flush everything changed on the SharedTreeStack because it may be
    * corrupted. */
-  SharedEditionPool->flushFromBlock(m_rightmostBlock);
+  SharedTreeStack->flushFromBlock(m_rightmostBlock);
   longjmp(m_jumpBuffer, 1);
 }
 

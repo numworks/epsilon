@@ -67,24 +67,24 @@ Most of the time, algorithms are built such that their behavior doesn't change
 depending of where your tree is or what are its siblings.
 
 
-## The EditionPool
+## The TreeStack
 
 Trees may live anywhere in memory (inside buffers in apps, in the storage or
-even in flash) but only trees within the EditionPool can be modified.
+even in flash) but only trees within the TreeStack can be modified.
 
-The EditionPool is a dedicated range of memory where you can create and play
+The TreeStack is a dedicated range of memory where you can create and play
 with your trees temporarily. It's not intended for storage and can be cleared by
 exceptions. You must save your trees elsewhere before you return from pcj.
 
 The primary way to create Trees from scratch is to push nodes at the end of the
-`SharedEditionPool`. Its push method is templated to accommodate the different
+`SharedTreeStack`. Its push method is templated to accommodate the different
 arguments needed by various tree types.
 
 ```cpp
 // pushing an Addition node with two-children and saving its address in *add*
-Tree * add = SharedEditionPool->push<Type::Addition>(2);
+Tree * add = SharedTreeStack->push<Type::Addition>(2);
 // pushing a One node (that has no children) representing 1
-SharedEditionPool->push(Type::One);
+SharedTreeStack->push(Type::One);
 // cloning an other Tree at the end of the pool
 otherTree->clone()
 // add now points to 1 + cloneOfWhatEverOtherTreeWas
@@ -97,7 +97,7 @@ otherTree->clone()
 ```cpp
 Tree * a = someTree->clone();
 Tree * b = anotherTree->clone();
-// a and b are now in the EditionPool with b just after a
+// a and b are now in the TreeStack with b just after a
 assert(a->nextTree() == b);
 
 a->removeTree();
@@ -111,7 +111,7 @@ a->removeTree();
 TreeRefs are smart pointers used to track Trees as they move inside the
 pool.
 
-For this purpose, the EditionPool owns a table of all the alive references and
+For this purpose, the TreeStack owns a table of all the alive references and
 updates each of them after each modification of a Tree inside the pool. For this
 reason, TreeRefs are intended to be temporary and used sparingly where
 performance matters. You will often see function passing `TreeRefs&` to
@@ -124,7 +124,7 @@ point when you want to track your tree safely.
 ```cpp
 TreeRef a = someTree->clone();
 TreeRef b = anotherTree->clone();
-// a and b are now in the EditionPool with b just after a
+// a and b are now in the TreeStack with b just after a
 assert(a->nextTree() == b);
 
 a->removeTree();
@@ -138,31 +138,31 @@ same function tree-wise but not reference-wise.
 
 ### Implementation
 
-The EditionPool has a reference table, which is an array of node offsets. This
-array has a maximal size (`EditionPool::k_maxNumberOfReferences`).
+The TreeStack has a reference table, which is an array of node offsets. This
+array has a maximal size (`TreeStack::k_maxNumberOfReferences`).
 
 In addition, offset can be a special identifier
-(`EditionPool::ReferenceTable::InvalidatedOffset`), indicating the node doesn't
-exist anymore in the EditionPool.
+(`TreeStack::ReferenceTable::InvalidatedOffset`), indicating the node doesn't
+exist anymore in the TreeStack.
 
 Each TreeRef has an identifier. It represents the index at which the
-TreeRef's node offset can be found in the EditionPool's reference
+TreeRef's node offset can be found in the TreeStack's reference
 table.
 
 Similarly, the identifier can be special :
-- `EditionPool::ReferenceTable::NoNodeIdentifier` indicates the TreeRef
+- `TreeStack::ReferenceTable::NoNodeIdentifier` indicates the TreeRef
 doesn't point to any tree.
-- `EditionPool::ReferenceTable::DeletedOffset` indicates the TreeRef
+- `TreeStack::ReferenceTable::DeletedOffset` indicates the TreeRef
 has been deleted.
 
 To retrieve the node pointed by an TreeRef, we just return the node in
 the edition pool at the corresponding offset.
 
-Each time something is moved or changed in the EditionPool, all node offsets are
-updated (`EditionPool::ReferenceTable::updateNodes`).
+Each time something is moved or changed in the TreeStack, all node offsets are
+updated (`TreeStack::ReferenceTable::updateNodes`).
 
 Once an TreeRef is destroyed, the corresponding node offset is set back
-to `EditionPool::ReferenceTable::DeletedOffset`.
+to `TreeStack::ReferenceTable::DeletedOffset`.
 
 ### Wrappers
 

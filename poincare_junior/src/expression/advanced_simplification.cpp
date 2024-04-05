@@ -96,10 +96,9 @@ bool AdvancedSimplification::Direction::canApply(const Tree* u,
                                                  const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(!isNextNode() ||
-         (u->nextNode()->block() < SharedEditionPool->lastBlock()) ==
+         (u->nextNode()->block() < SharedTreeStack->lastBlock()) ==
              u->nextNode()->hasAncestor(root, false));
-  return !isNextNode() ||
-         u->nextNode()->block() < SharedEditionPool->lastBlock();
+  return !isNextNode() || u->nextNode()->block() < SharedTreeStack->lastBlock();
 }
 
 bool AdvancedSimplification::Direction::apply(Tree** u, Tree* root,

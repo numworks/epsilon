@@ -350,7 +350,7 @@ bool PatternMatching::Match(const Tree* pattern, const Tree* source,
 
 Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
                                   Tree* insertedNAry, bool simplify) {
-  Tree* top = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  Tree* top = Tree::FromBlocks(SharedTreeStack->lastBlock());
   const Block* lastStructureBlock = structure->nextTree()->block();
   const bool withinNAry = insertedNAry != nullptr;
   // Skip NAry structure node because it has already been inserted.
@@ -361,7 +361,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       if (node->isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
          * be updated. */
-        Tree* insertedNode = SharedEditionPool->clone(node, false);
+        Tree* insertedNode = SharedTreeStack->clone(node, false);
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode, simplify);
@@ -379,7 +379,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         CreateTree(node, context, nullptr, simplify);
         node = node->nextTree();
       } else {
-        Tree* result = SharedEditionPool->clone(node, false);
+        Tree* result = SharedTreeStack->clone(node, false);
         node = node->nextNode();
         if (simplify) {
           for (size_t i = 0; i < numberOfChildren; i++) {
@@ -416,12 +416,12 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
           insertedNAry, insertedNAry->numberOfChildren() + treesToInsert - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
-        Tree* inserted = SharedEditionPool->clone(nodeToInsert, true);
+        Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
         assert(!(simplify && Simplification::DeepSystematicReduce(inserted)));
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
-    Tree* inserted = SharedEditionPool->clone(nodeToInsert, true);
+    Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
     assert(!(simplify && Simplification::DeepSystematicReduce(inserted)));
     node = node->nextNode();
   }
@@ -443,13 +443,13 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
    * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
-   *                                                EditionPool : +{4} x 1 y z x
+   *                                                TreeStack : +{4} x 1 y z x
    * 1 - Only keep structure's matched placeholders
-   *                                                EditionPool : y x
+   *                                                TreeStack : y x
    * 2 - Insert structure Nodes
-   *                                                EditionPool : *{4} 2 y x A
+   *                                                TreeStack : *{4} 2 y x A
    * 3 - Replace duplicated placeholders
-   *                                                EditionPool : *{4} 2 y x x
+   *                                                TreeStack : *{4} 2 y x x
    *
    * Some difficulties:
    *  - Detect if it is possible : BA->AB isn't but ABCBA->BCA is.
@@ -475,7 +475,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
    * pattern: (A + B) * C
    * structure: A * C + B * C
    *
-   * EditionPool: ..... | *{2} +{2} x y z | ....
+   * TreeStack: ..... | *{2} +{2} x y z | ....
    * With :
    * - | delimiting this reference
    * - *{2} a two children multiplication node
@@ -502,7 +502,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
       placeholders[i] = TreeRef();
     } else if (numberOfTrees == 0) {
       // Use the last block so that placeholders[i] stays initialized
-      placeholders[i] = TreeRef(SharedEditionPool->lastBlock());
+      placeholders[i] = TreeRef(SharedTreeStack->lastBlock());
     } else {
       // the context is known to point on non const parts of the source
       placeholders[i] = TreeRef(const_cast<Tree*>(ctx.getNode(i)));
@@ -511,13 +511,13 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
     ctx.setNode(i, nullptr, numberOfTrees, ctx.isAnyTree(i));
   }
 
-  // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
+  // TreeStack: ..... | *{2} +{2} x y z | 0 0 0 ....
 
-  // Detach placeholder matches at the end of the EditionPool in a system list
+  // Detach placeholder matches at the end of the TreeStack in a system list
   TreeRef placeholderMatches(
-      SharedEditionPool->push<Type::List>(initializedPlaceHolders));
+      SharedTreeStack->push<Type::List>(initializedPlaceHolders));
 
-  // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 .... _{3}
+  // TreeStack: ..... | *{2} +{2} x y z | 0 0 0 .... _{3}
 
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     if (placeholders[i].isUninitialized()) {
@@ -534,12 +534,12 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
     }
   }
 
-  // EditionPool: ..... | *{2} +{2} 0 0 0 | .... _{3} x y z
+  // TreeStack: ..... | *{2} +{2} 0 0 0 | .... _{3} x y z
 
   // Step 3 - Replace with placeholder matches only
   node->moveTreeOverTree(placeholderMatches);
 
-  // EditionPool: ..... | _{3} x y z | ....
+  // TreeStack: ..... | _{3} x y z | ....
 
   // Step 4 - Update context with new placeholder matches position
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
@@ -552,11 +552,11 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
   // Step 5 - Build the PatternMatching replacement
   Tree* created = Create(structure, ctx, simplify);
 
-  // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
+  // TreeStack: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 
   // Step 6 - Replace with created structure
   node->moveTreeOverTree(created);
 
-  // EditionPool: ..... | +{2} *{2} x z *{2} y z | ....
+  // TreeStack: ..... | +{2} *{2} x z *{2} y z | ....
   return true;
 }

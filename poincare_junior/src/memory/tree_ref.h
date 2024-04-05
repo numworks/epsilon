@@ -9,7 +9,7 @@ namespace PoincareJ {
 
 class TreeRef {
  public:
-  TreeRef() : m_identifier(EditionPool::ReferenceTable::NoNodeIdentifier) {}
+  TreeRef() : m_identifier(TreeStack::ReferenceTable::NoNodeIdentifier) {}
   TreeRef(Tree* node);
 
   template <TreeConcept T>
@@ -30,14 +30,14 @@ class TreeRef {
   // Moves steal the id
   TreeRef(TreeRef&& other) {
     m_identifier = other.m_identifier;
-    other.m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+    other.m_identifier = TreeStack::ReferenceTable::NoNodeIdentifier;
   }
 
   TreeRef& operator=(TreeRef&& other) {
     if (m_identifier != other.m_identifier) {
-      SharedEditionPool->deleteIdentifier(m_identifier);
+      SharedTreeStack->deleteIdentifier(m_identifier);
       m_identifier = other.m_identifier;
-      other.m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+      other.m_identifier = TreeStack::ReferenceTable::NoNodeIdentifier;
     }
     return *this;
   }
@@ -45,8 +45,8 @@ class TreeRef {
   ~TreeRef() { stopTracking(); }
 
   void stopTracking() {
-    SharedEditionPool->deleteIdentifier(m_identifier);
-    m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+    SharedTreeStack->deleteIdentifier(m_identifier);
+    m_identifier = TreeStack::ReferenceTable::NoNodeIdentifier;
   }
 
 #if POINCARE_TREE_LOG

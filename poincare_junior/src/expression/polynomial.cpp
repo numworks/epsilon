@@ -17,7 +17,7 @@ namespace PoincareJ {
 /* Polynomial */
 
 Tree* Polynomial::PushEmpty(const Tree* variable) {
-  Tree* pol(SharedEditionPool->push<Type::Polynomial>(1));
+  Tree* pol(SharedTreeStack->push<Type::Polynomial>(1));
   pol->cloneTreeAfterNode(variable);
   return pol;
 }
@@ -56,12 +56,12 @@ void Polynomial::SetExponentAtIndex(Tree* polynomial, int index,
 void Polynomial::InsertExponentAtIndex(Tree* polynomial, int index,
                                        uint8_t exponent) {
   ValueBlock* exponentsAddress = polynomial->nodeValueBlock(1 + index);
-  SharedEditionPool->insertBlock(exponentsAddress, ValueBlock(exponent), true);
+  SharedTreeStack->insertBlock(exponentsAddress, ValueBlock(exponent), true);
 }
 
 void Polynomial::RemoveExponentAtIndex(Tree* polynomial, int index) {
   ValueBlock* exponentsAddress = polynomial->nodeValueBlock(1 + index);
-  SharedEditionPool->removeBlocks(exponentsAddress, 1);
+  SharedTreeStack->removeBlocks(exponentsAddress, 1);
 }
 
 Tree* Polynomial::AddMonomial(Tree* polynomial,
@@ -123,8 +123,8 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
   if (!polA->isPolynomial()) {
     if (!polB->isPolynomial()) {
       TreeRef op = blockType == Type::Addition
-                       ? SharedEditionPool->push<Type::Addition>(2)
-                       : SharedEditionPool->push<Type::Multiplication>(2);
+                       ? SharedTreeStack->push<Type::Addition>(2)
+                       : SharedTreeStack->push<Type::Multiplication>(2);
       // We're about to move polynomes around, we need references
       TreeRef polARef(polA);
       op->moveTreeAfterNode(polB);
@@ -341,7 +341,7 @@ void PolynomialParser::AddVariable(Tree* set, const Tree* variable) {
 }
 
 Tree* PolynomialParser::GetVariables(const Tree* expression) {
-  Tree* variables = SharedEditionPool->push<Type::Set>(0);
+  Tree* variables = SharedTreeStack->push<Type::Set>(0);
   if (expression->isInteger()) {  // TODO: generic belongToField?
     return variables;
   }
@@ -503,7 +503,7 @@ TreeRef Polynomial::Coefficient(const Tree* expression, const Tree* variable, ui
     if (Comparison::AreEqual(expression, variable)) {
       return exponent == 1 ? 1_e : 0_e;
     }
-    TreeRef addition = SharedEditionPool->push<Type::Addition>(0);
+    TreeRef addition = SharedTreeStack->push<Type::Addition>(0);
     for (const Tree* child : expression->children()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent == exponent) {

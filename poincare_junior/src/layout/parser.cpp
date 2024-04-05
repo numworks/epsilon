@@ -65,10 +65,10 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
       const Grid* grid = Grid::From(node);
       Tree* expr;
       if (grid->isMatrixLayout()) {
-        expr = SharedEditionPool->push<Type::Matrix>(
-            grid->numberOfRows() - 1, grid->numberOfColumns() - 1);
+        expr = SharedTreeStack->push<Type::Matrix>(grid->numberOfRows() - 1,
+                                                   grid->numberOfColumns() - 1);
       } else {
-        expr = SharedEditionPool->push<Type::Piecewise>(0);
+        expr = SharedTreeStack->push<Type::Piecewise>(0);
       }
       int n = grid->numberOfChildren();
       int actualNumberOfChildren = 0;
@@ -88,7 +88,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
     }
     default: {
       // The layout children map one-to-one to the expression
-      TreeRef ref = SharedEditionPool->push(ExpressionType(node->layoutType()));
+      TreeRef ref = SharedTreeStack->push(ExpressionType(node->layoutType()));
       int n = node->numberOfChildren();
       for (int i = 0; i < n; i++) {
         Parse(node->child(i), context);

@@ -384,7 +384,7 @@ bool Arithmetic::BeautifyFactor(Tree* expr) {
   if (!child->isRational()) {
     return false;
   }
-  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   if (Rational::Sign(child).isNegative()) {
     KOpposite->cloneNode();
   }

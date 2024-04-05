@@ -14,9 +14,9 @@ namespace PoincareJ {
 
 // Edition Pool
 
-OMG::GlobalBox<EditionPool> EditionPool::SharedEditionPool;
+OMG::GlobalBox<TreeStack> TreeStack::SharedTreeStack;
 
-size_t EditionPool::numberOfTrees() const {
+size_t TreeStack::numberOfTrees() const {
   const Block *currentBlock = firstBlock();
   size_t result = 0;
   while (currentBlock < lastBlock()) {
@@ -27,7 +27,7 @@ size_t EditionPool::numberOfTrees() const {
   return result;
 }
 
-bool EditionPool::isRootBlock(const Block *block, bool allowLast) const {
+bool TreeStack::isRootBlock(const Block *block, bool allowLast) const {
   const Block *currentBlock = firstBlock();
   if (block >= lastBlock()) {
     return allowLast && block == lastBlock();
@@ -38,7 +38,7 @@ bool EditionPool::isRootBlock(const Block *block, bool allowLast) const {
   return currentBlock == block;
 }
 
-Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
+Tree *TreeStack::initFromAddress(const void *address, bool isTree) {
   const Tree *node = Tree::FromBlocks(reinterpret_cast<const Block *>(address));
   size_t size = isTree ? node->treeSize() : node->nodeSize();
   Block *copiedTree = lastBlock();
@@ -55,20 +55,20 @@ Tree *EditionPool::initFromAddress(const void *address, bool isTree) {
 }
 
 template <>
-Tree *EditionPool::push<Type::UserFunction>(const char *name) {
+Tree *TreeStack::push<Type::UserFunction>(const char *name) {
   return push<Type::UserFunction>(name, strlen(name) + 1);
 }
 template <>
-Tree *EditionPool::push<Type::UserSequence>(const char *name) {
+Tree *TreeStack::push<Type::UserSequence>(const char *name) {
   return push<Type::UserSequence>(name, strlen(name) + 1);
 }
 template <>
-Tree *EditionPool::push<Type::UserSymbol>(const char *name) {
+Tree *TreeStack::push<Type::UserSymbol>(const char *name) {
   return push<Type::UserSymbol>(name, strlen(name) + 1);
 }
 
 template <Type blockType, typename... Types>
-Tree *EditionPool::push(Types... args) {
+Tree *TreeStack::push(Types... args) {
   Block *newNode = lastBlock();
 
   size_t i = 0;
@@ -85,12 +85,12 @@ Tree *EditionPool::push(Types... args) {
   return Tree::FromBlocks(newNode);
 }
 
-void EditionPool::replaceBlock(Block *previousBlock, Block newBlock) {
+void TreeStack::replaceBlock(Block *previousBlock, Block newBlock) {
   replaceBlocks(previousBlock, &newBlock, 1);
 }
 
-void EditionPool::replaceBlocks(Block *destination, const Block *source,
-                                size_t numberOfBlocks) {
+void TreeStack::replaceBlocks(Block *destination, const Block *source,
+                              size_t numberOfBlocks) {
   memcpy(destination, source, numberOfBlocks * sizeof(Block));
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *block, const Block *destination,
@@ -102,8 +102,8 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
       destination, nullptr, numberOfBlocks);
 }
 
-bool EditionPool::insertBlocks(Block *destination, const Block *source,
-                               size_t numberOfBlocks, bool at) {
+bool TreeStack::insertBlocks(Block *destination, const Block *source,
+                             size_t numberOfBlocks, bool at) {
   if (numberOfBlocks == 0) {
     return true;
   }
@@ -136,7 +136,7 @@ bool EditionPool::insertBlocks(Block *destination, const Block *source,
   return true;
 }
 
-void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
+void TreeStack::removeBlocks(Block *address, size_t numberOfBlocks) {
   // If this assert triggers, add an escape case
   assert(numberOfBlocks != 0);
   int deletionSize = numberOfBlocks * sizeof(Block);
@@ -157,8 +157,8 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
       address, nullptr, numberOfBlocks);
 }
 
-void EditionPool::moveBlocks(Block *destination, Block *source,
-                             size_t numberOfBlocks, bool at) {
+void TreeStack::moveBlocks(Block *destination, Block *source,
+                           size_t numberOfBlocks, bool at) {
   if (destination == source || numberOfBlocks == 0) {
     return;
   }
@@ -195,7 +195,7 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
   }
 }
 
-void EditionPool::flush() {
+void TreeStack::flush() {
   m_size = 0;
   m_referenceTable.reset();
 #if POINCARE_POOL_VISUALIZATION
@@ -203,7 +203,7 @@ void EditionPool::flush() {
 #endif
 }
 
-void EditionPool::flushFromBlock(const Block *block) {
+void TreeStack::flushFromBlock(const Block *block) {
   assert(isRootBlock(block, true));
   m_size = block - m_blocks;
   m_referenceTable.deleteIdentifiersAfterBlock(block);
@@ -212,14 +212,14 @@ void EditionPool::flushFromBlock(const Block *block) {
 #endif
 }
 
-uint16_t EditionPool::referenceNode(Tree *node) {
+uint16_t TreeStack::referenceNode(Tree *node) {
   return m_referenceTable.storeNode(node);
 }
 
-void EditionPool::executeAndStoreLayout(ActionWithContext action, void *context,
-                                        const void *data,
-                                        Poincare::JuniorLayout *layout,
-                                        Relax relax) {
+void TreeStack::executeAndStoreLayout(ActionWithContext action, void *context,
+                                      const void *data,
+                                      Poincare::JuniorLayout *layout,
+                                      Relax relax) {
   assert(numberOfTrees() == 0);
   execute(action, context, data, k_maxNumberOfBlocks, relax);
   assert(Tree::FromBlocks(firstBlock())->isLayout());
@@ -227,8 +227,8 @@ void EditionPool::executeAndStoreLayout(ActionWithContext action, void *context,
   flush();
 }
 
-void EditionPool::executeAndReplaceTree(ActionWithContext action, void *context,
-                                        Tree *data, Relax relax) {
+void TreeStack::executeAndReplaceTree(ActionWithContext action, void *context,
+                                      Tree *data, Relax relax) {
   Block *previousLastBlock = lastBlock();
   execute(action, context, data, k_maxNumberOfBlocks, relax);
   assert(previousLastBlock != lastBlock());
@@ -237,8 +237,8 @@ void EditionPool::executeAndReplaceTree(ActionWithContext action, void *context,
 
 #if POINCARE_TREE_LOG
 
-void EditionPool::logNode(std::ostream &stream, const Tree *node,
-                          bool recursive, bool verbose, int indentation) {
+void TreeStack::logNode(std::ostream &stream, const Tree *node, bool recursive,
+                        bool verbose, int indentation) {
   Indent(stream, indentation);
   stream << "<Reference id=\"";
   m_referenceTable.logIdsForNode(stream, node);
@@ -248,11 +248,11 @@ void EditionPool::logNode(std::ostream &stream, const Tree *node,
   stream << "</Reference>" << std::endl;
 }
 
-void EditionPool::log(std::ostream &stream, LogFormat format, bool verbose,
-                      int indentation) {
+void TreeStack::log(std::ostream &stream, LogFormat format, bool verbose,
+                    int indentation) {
   const char *formatName = format == LogFormat::Tree ? "tree" : "flat";
   Indent(stream, indentation);
-  stream << "<EditionPool format=\"" << formatName << "\" size=\"" << size()
+  stream << "<TreeStack format=\"" << formatName << "\" size=\"" << size()
          << "\">\n";
   if (format == LogFormat::Tree) {
     for (const Tree *tree : trees()) {
@@ -264,13 +264,13 @@ void EditionPool::log(std::ostream &stream, LogFormat format, bool verbose,
     }
   }
   Indent(stream, indentation);
-  stream << "</EditionPool>" << std::endl;
+  stream << "</TreeStack>" << std::endl;
 }
 
 #endif
 
-void EditionPool::execute(ActionWithContext action, void *context,
-                          const void *data, int maxSize, Relax relax) {
+void TreeStack::execute(ActionWithContext action, void *context,
+                        const void *data, int maxSize, Relax relax) {
 #if ASSERTIONS
   size_t treesNumber = numberOfTrees();
 #endif
@@ -305,7 +305,7 @@ void EditionPool::execute(ActionWithContext action, void *context,
 
 // ReferenceTable
 
-Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
+Tree *TreeStack::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (id == NoNodeIdentifier) {
     return nullptr;
   }
@@ -323,7 +323,7 @@ Tree *EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   return n;
 }
 
-uint16_t EditionPool::ReferenceTable::storeNode(Tree *node) {
+uint16_t TreeStack::ReferenceTable::storeNode(Tree *node) {
   if (isFull()) {
     Tree *n;
     size_t index = 0;
@@ -338,13 +338,13 @@ uint16_t EditionPool::ReferenceTable::storeNode(Tree *node) {
   }
 }
 
-void EditionPool::ReferenceTable::updateIdentifier(uint16_t id, Tree *newNode) {
+void TreeStack::ReferenceTable::updateIdentifier(uint16_t id, Tree *newNode) {
   assert(id < m_length);
   storeNodeAtIndex(newNode, id);
 }
 
-void EditionPool::ReferenceTable::deleteIdentifier(uint16_t id) {
-  if (id == EditionPool::ReferenceTable::NoNodeIdentifier) {
+void TreeStack::ReferenceTable::deleteIdentifier(uint16_t id) {
+  if (id == TreeStack::ReferenceTable::NoNodeIdentifier) {
     return;
   }
   assert(id < m_length);
@@ -359,10 +359,10 @@ void EditionPool::ReferenceTable::deleteIdentifier(uint16_t id) {
   }
 }
 
-void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
-                                              const Block *contextSelection1,
-                                              const Block *contextSelection2,
-                                              int contextAlteration) {
+void TreeStack::ReferenceTable::updateNodes(AlterSelectedBlock function,
+                                            const Block *contextSelection1,
+                                            const Block *contextSelection2,
+                                            int contextAlteration) {
   Block *first = static_cast<Block *>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
     if (m_nodeOffsetForIdentifier[i] == InvalidatedOffset ||
@@ -375,7 +375,7 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
   }
 }
 
-void EditionPool::ReferenceTable::deleteIdentifiersAfterBlock(
+void TreeStack::ReferenceTable::deleteIdentifiersAfterBlock(
     const Block *block) {
   Block *first = static_cast<Block *>(m_pool->firstBlock());
   assert(block >= first && block <= first + UINT16_MAX);
@@ -388,7 +388,7 @@ void EditionPool::ReferenceTable::deleteIdentifiersAfterBlock(
   }
 }
 
-bool EditionPool::ReferenceTable::reset() {
+bool TreeStack::ReferenceTable::reset() {
   if (m_length == 0) {
     // We can't reset an empty table
     return false;
@@ -399,11 +399,11 @@ bool EditionPool::ReferenceTable::reset() {
 
 #if POINCARE_TREE_LOG
 
-void EditionPool::ReferenceTable::logIdsForNode(std::ostream &stream,
-                                                const Tree *node) const {
+void TreeStack::ReferenceTable::logIdsForNode(std::ostream &stream,
+                                              const Tree *node) const {
   bool found = false;
   for (size_t i = 0; i < m_length; i++) {
-    Tree *n = EditionPool::ReferenceTable::nodeForIdentifier(i);
+    Tree *n = TreeStack::ReferenceTable::nodeForIdentifier(i);
     if (node == n) {
       stream << static_cast<int>(i) << ", ";
       found = true;
@@ -416,8 +416,7 @@ void EditionPool::ReferenceTable::logIdsForNode(std::ostream &stream,
 
 #endif
 
-uint16_t EditionPool::ReferenceTable::storeNodeAtIndex(Tree *node,
-                                                       size_t index) {
+uint16_t TreeStack::ReferenceTable::storeNodeAtIndex(Tree *node, size_t index) {
   if (index >= m_length) {
     assert(index == m_length);
     assert(!isFull());
@@ -434,48 +433,47 @@ uint16_t EditionPool::ReferenceTable::storeNodeAtIndex(Tree *node,
 
 // Edition Pool
 
-template Tree *EditionPool::push<Type::Addition, int>(int);
-template Tree *EditionPool::push<Type::AsciiCodePointLayout, CodePoint>(
+template Tree *TreeStack::push<Type::Addition, int>(int);
+template Tree *TreeStack::push<Type::AsciiCodePointLayout, CodePoint>(
     CodePoint);
-template Tree *EditionPool::push<Type::CombinedCodePointsLayout, CodePoint,
-                                 CodePoint>(CodePoint, CodePoint);
-template Tree *EditionPool::push<Type::Decimal, int8_t>(int8_t);
-template Tree *EditionPool::push<Type::DoubleFloat, double>(double);
-template Tree *EditionPool::push<Type::IntegerNegBig>(uint64_t);
-template Tree *EditionPool::push<Type::IntegerPosBig>(uint64_t);
-template Tree *EditionPool::push<Type::IntegerShort>(int8_t);
-template Tree *EditionPool::push<Type::List, int>(int);
-template Tree *EditionPool::push<Type::Matrix, int, int>(int, int);
-template Tree *EditionPool::push<Type::Matrix, uint8_t, uint8_t>(uint8_t,
-                                                                 uint8_t);
-template Tree *EditionPool::push<Type::MatrixLayout, uint8_t, uint8_t>(uint8_t,
-                                                                       uint8_t);
-template Tree *EditionPool::push<Type::Multiplication, int>(int);
-template Tree *EditionPool::push<Type::ParenthesisLayout, bool, bool>(
-    bool leftIsTemporary, bool rightIsTemporary);
-template Tree *EditionPool::push<Type::PhysicalConstant, uint8_t>(uint8_t);
-template Tree *EditionPool::push<Type::Piecewise, int>(int);
-template Tree *EditionPool::push<Type::PointOfInterest, double, double,
-                                 uint32_t, uint8_t, bool, uint8_t>(
-    double, double, uint32_t, uint8_t, bool, uint8_t);
-template Tree *EditionPool::push<Type::Polynomial, int>(int);
-template Tree *EditionPool::push<Type::RackLayout, int>(int);
-template Tree *EditionPool::push<Type::Set>(int);
-template Tree *EditionPool::push<Type::Set>(uint8_t);
-template Tree *EditionPool::push<Type::SingleFloat, float>(float);
-template Tree *EditionPool::push<Type::UnicodeCodePointLayout, CodePoint>(
-    CodePoint);
-template Tree *EditionPool::push<Type::Unit, uint8_t, uint8_t>(uint8_t,
+template Tree *TreeStack::push<Type::CombinedCodePointsLayout, CodePoint,
+                               CodePoint>(CodePoint, CodePoint);
+template Tree *TreeStack::push<Type::Decimal, int8_t>(int8_t);
+template Tree *TreeStack::push<Type::DoubleFloat, double>(double);
+template Tree *TreeStack::push<Type::IntegerNegBig>(uint64_t);
+template Tree *TreeStack::push<Type::IntegerPosBig>(uint64_t);
+template Tree *TreeStack::push<Type::IntegerShort>(int8_t);
+template Tree *TreeStack::push<Type::List, int>(int);
+template Tree *TreeStack::push<Type::Matrix, int, int>(int, int);
+template Tree *TreeStack::push<Type::Matrix, uint8_t, uint8_t>(uint8_t,
                                                                uint8_t);
-template Tree *EditionPool::push<Type::UserFunction, const char *, size_t>(
+template Tree *TreeStack::push<Type::MatrixLayout, uint8_t, uint8_t>(uint8_t,
+                                                                     uint8_t);
+template Tree *TreeStack::push<Type::Multiplication, int>(int);
+template Tree *TreeStack::push<Type::ParenthesisLayout, bool, bool>(
+    bool leftIsTemporary, bool rightIsTemporary);
+template Tree *TreeStack::push<Type::PhysicalConstant, uint8_t>(uint8_t);
+template Tree *TreeStack::push<Type::Piecewise, int>(int);
+template Tree *TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
+                               uint8_t, bool, uint8_t>(double, double, uint32_t,
+                                                       uint8_t, bool, uint8_t);
+template Tree *TreeStack::push<Type::Polynomial, int>(int);
+template Tree *TreeStack::push<Type::RackLayout, int>(int);
+template Tree *TreeStack::push<Type::Set>(int);
+template Tree *TreeStack::push<Type::Set>(uint8_t);
+template Tree *TreeStack::push<Type::SingleFloat, float>(float);
+template Tree *TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
+    CodePoint);
+template Tree *TreeStack::push<Type::Unit, uint8_t, uint8_t>(uint8_t, uint8_t);
+template Tree *TreeStack::push<Type::UserFunction, const char *, size_t>(
     const char *, size_t);
-template Tree *EditionPool::push<Type::UserSequence, const char *, size_t>(
+template Tree *TreeStack::push<Type::UserSequence, const char *, size_t>(
     const char *, size_t);
-template Tree *EditionPool::push<Type::UserSymbol, const char *, size_t>(
+template Tree *TreeStack::push<Type::UserSymbol, const char *, size_t>(
     const char *, size_t);
-template Tree *EditionPool::push<Type::Variable, uint8_t, ComplexSign>(
+template Tree *TreeStack::push<Type::Variable, uint8_t, ComplexSign>(
     uint8_t, ComplexSign);
-template Tree *EditionPool::push<Type::VerticalOffsetLayout, bool, bool>(
+template Tree *TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
     bool isSubscript, bool isPrefix);
 
 }  // namespace PoincareJ

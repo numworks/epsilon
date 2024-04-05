@@ -137,7 +137,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
 }
 
 void LayoutBufferCursor::beautifyLeft(Poincare::Context *context) {
-  execute(&EditionPoolCursor::beautifyLeftAction, context, nullptr);
+  execute(&TreeStackCursor::beautifyLeftAction, context, nullptr);
   if (position() > cursorNode()->numberOfChildren() + 1) {
     /* Beautification does not preserve the cursor so its position may be
      * invalid. The other calls to beaufication happen just after we move the
@@ -150,28 +150,28 @@ void LayoutBufferCursor::beautifyLeft(Poincare::Context *context) {
   // TODO factorize with beautifyRightOfRack
 }
 
-void LayoutBufferCursor::EditionPoolCursor::beautifyLeftAction(
+void LayoutBufferCursor::TreeStackCursor::beautifyLeftAction(
     Poincare::Context *context, const void *) {
   InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
 }
 
 bool LayoutBufferCursor::beautifyRightOfRack(Rack *rack,
                                              Poincare::Context *context) {
-  EditionPoolCursor::BeautifyContext ctx{static_cast<int>(rack - cursorNode()),
-                                         false};
-  execute(&EditionPoolCursor::beautifyRightOfRackAction, context, &ctx);
+  TreeStackCursor::BeautifyContext ctx{static_cast<int>(rack - cursorNode()),
+                                       false};
+  execute(&TreeStackCursor::beautifyRightOfRackAction, context, &ctx);
   return ctx.m_shouldRedraw;
 }
 
-bool LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRack(
+bool LayoutBufferCursor::TreeStackCursor::beautifyRightOfRack(
     Rack *targetRack, Poincare::Context *context) {
-  LayoutBufferCursor::EditionPoolCursor tempCursor = *this;
+  LayoutBufferCursor::TreeStackCursor tempCursor = *this;
   tempCursor.setLayout(targetRack, OMG::Direction::Right());
   return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(&tempCursor,
                                                                    context);
 }
 
-void LayoutBufferCursor::EditionPoolCursor::beautifyRightOfRackAction(
+void LayoutBufferCursor::TreeStackCursor::beautifyRightOfRackAction(
     Poincare::Context *context, const void *rackOffset) {
   const BeautifyContext *ctx = static_cast<const BeautifyContext *>(rackOffset);
   Rack *targetRack = cursorNode() + ctx->m_rackOffset;
@@ -206,8 +206,8 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(TreeRef rack,
     leftParenthesisIndex--;
   }
   TreeRef parenthesis =
-      SharedEditionPool->push<Type::ParenthesisLayout>(false, false);
-  TreeRef tempRack = SharedEditionPool->push<Type::RackLayout>(0);
+      SharedTreeStack->push<Type::ParenthesisLayout>(false, false);
+  TreeRef tempRack = SharedTreeStack->push<Type::RackLayout>(0);
   int i = index;
   while (i >= leftParenthesisIndex) {
     TreeRef child = NAry::DetachChildAtIndex(rack, i);
@@ -219,7 +219,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(TreeRef rack,
 }
 
 /* const Tree* insertion */
-void LayoutBufferCursor::EditionPoolCursor::insertLayout(
+void LayoutBufferCursor::TreeStackCursor::insertLayout(
     Poincare::Context *context, const void *data) {
   const InsertLayoutContext *insertLayoutContext =
       static_cast<const InsertLayoutContext *>(data);
@@ -227,7 +227,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(
   bool forceLeft = insertLayoutContext->m_forceLeft;
 
   const Tree *tree = insertLayoutContext->m_tree;
-  Tree *copy = SharedEditionPool->contains(tree)
+  Tree *copy = SharedTreeStack->contains(tree)
                    ? const_cast<Tree *>(insertLayoutContext->m_tree)
                    : tree->clone();
   // We need to keep track of the node which must live in the edition pool
@@ -330,7 +330,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(
   }
 
   // - Step 6 - Find position to point to if layout will be merged
-  EditionPoolCursor previousCursor = *this;
+  TreeStackCursor previousCursor = *this;
   TreeRef childToPoint;
   if (ref->numberOfChildren() != 1) {
     childToPoint = (forceRight || forceLeft)
@@ -426,8 +426,8 @@ void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(
   insertLayout(KFracL(""_l, ""_l), context, false, false);
 }
 
-void LayoutBufferCursor::EditionPoolCursor::insertText(
-    Poincare::Context *context, const void *data) {
+void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context *context,
+                                                     const void *data) {
   const InsertTextContext *insertTextContext =
       static_cast<const InsertTextContext *>(data);
   const char *text = insertTextContext->m_text;
@@ -463,7 +463,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(
          * the first half of text now, and then insert the end of the text
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
-        LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext
+        LayoutBufferCursor::TreeStackCursor::InsertLayoutContext
             insertLayoutContext{layoutToInsert, forceCursorRightOfText,
                                 forceCursorLeftOfText};
         insertLayout(context, &insertLayoutContext);
@@ -536,7 +536,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(
       newChild = AutocompletedPair::BuildFromBracketType(bracketType);
       AutocompletedPair::SetTemporary(newChild, OtherSide(bracketSide), true);
     } else if (nextCodePoint.isCombining()) {
-      newChild = SharedEditionPool->push<Type::CombinedCodePointsLayout>(
+      newChild = SharedTreeStack->push<Type::CombinedCodePointsLayout>(
           codePoint, nextCodePoint);
       nextCodePoint = decoder.nextCodePoint();
     } else {
@@ -550,15 +550,14 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext
-      insertLayoutContext{layoutToInsert, forceCursorRightOfText,
-                          forceCursorLeftOfText};
+  LayoutBufferCursor::TreeStackCursor::InsertLayoutContext insertLayoutContext{
+      layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
   insertLayout(context, &insertLayoutContext);
 
   // TODO: Restore beautification
 }
 
-void LayoutBufferCursor::EditionPoolCursor::performBackspace(
+void LayoutBufferCursor::TreeStackCursor::performBackspace(
     Poincare::Context *context, const void *data) {
   assert(data == nullptr);
   if (isSelecting()) {
@@ -584,7 +583,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(
   removeEmptyRowOrColumnOfGridParentIfNeeded();
 }
 
-void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
+void LayoutBufferCursor::TreeStackCursor::deleteAndResetSelection(
     Poincare::Context *context, const void *data) {
   assert(data == nullptr);
   LayoutSelection selec = selection();
@@ -962,7 +961,7 @@ void LayoutCursor::invalidateSizesAndPositions() {
 // TODO: Nothing is memoized for now, maybe implement something ?
 #endif
 
-void LayoutBufferCursor::EditionPoolCursor::privateDelete(
+void LayoutBufferCursor::TreeStackCursor::privateDelete(
     DeletionMethod deletionMethod, bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent ||
          m_cursorReference->block() != rootNode()->block());
@@ -1139,7 +1138,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
   }
 }
 
-void LayoutBufferCursor::EditionPoolCursor::
+void LayoutBufferCursor::TreeStackCursor::
     balanceAutocompletedBracketsAndKeepAValidCursor() {
   /* Find the top horizontal layout for balancing brackets.
    *
@@ -1168,7 +1167,7 @@ void LayoutBufferCursor::EditionPoolCursor::
   m_cursorReference = static_cast<Tree *>(ref);
 }
 
-void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
+void LayoutBufferCursor::applyTreeStackCursor(TreeStackCursor cursor) {
   m_position = cursor.m_position;
   m_startOfSelection = cursor.m_startOfSelection;
   /* We need a rack cast there since the pointed rack is set before the
@@ -1181,16 +1180,15 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context *context,
                                  const void *data) {
   ExecutionContext executionContext{this, action, cursorNodeOffset(), context};
   // Perform Action within an execution
-  SharedEditionPool->executeAndStoreLayout(
+  SharedTreeStack->executeAndStoreLayout(
       [](void *context, const void *data) {
         ExecutionContext *executionContext =
             static_cast<ExecutionContext *>(context);
         LayoutBufferCursor *bufferCursor = executionContext->m_cursor;
-        // Clone layoutBuffer into the EditionPool
-        SharedEditionPool->clone(executionContext->m_cursor->rootNode());
+        // Clone layoutBuffer into the TreeStack
+        SharedTreeStack->clone(executionContext->m_cursor->rootNode());
         // Create a temporary cursor
-        EditionPoolCursor editionCursor =
-            bufferCursor->createEditionPoolCursor();
+        TreeStackCursor editionCursor = bufferCursor->createTreeStackCursor();
         // Perform the action
         (editionCursor.*(executionContext->m_action))(
             executionContext->m_context, data);
@@ -1200,9 +1198,9 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context *context,
         bufferCursor->setCursorNode(static_cast<Rack *>(
             Tree::FromBlocks(bufferCursor->rootNode()->block() +
                              editionCursor.cursorNodeOffset())));
-        bufferCursor->applyEditionPoolCursor(editionCursor);
-        /* The resulting EditionPool tree will be loaded back into
-         * m_layoutBuffer and EditionPool will be flushed. */
+        bufferCursor->applyTreeStackCursor(editionCursor);
+        /* The resulting TreeStack tree will be loaded back into
+         * m_layoutBuffer and TreeStack will be flushed. */
       },
       &executionContext, data, &m_layout);
 }

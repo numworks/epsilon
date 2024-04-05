@@ -114,7 +114,7 @@ Symbol Symbol::Builder(const char* name, int length) {
   }
   // UserSequence  UserSymbol
   JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::Type::UserSymbol>(
+      PoincareJ::SharedTreeStack->push<PoincareJ::Type::UserSymbol>(
           name, static_cast<size_t>(length + 1)));
   return static_cast<Symbol&>(expr);
 }

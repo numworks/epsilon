@@ -31,7 +31,7 @@
     checkpoint.setActive();                         \
     if (setjmp(*(checkpoint.jumpBuffer())) == 0)
 
-#define ExceptionTry ExceptionTryAfterBlock(SharedEditionPool->lastBlock())
+#define ExceptionTry ExceptionTryAfterBlock(SharedTreeStack->lastBlock())
 
 #define ExceptionCatch(typeVarName)                                   \
   }                                                                   \

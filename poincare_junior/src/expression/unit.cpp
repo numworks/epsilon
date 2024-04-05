@@ -95,7 +95,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
 }
 
 Tree* DimensionVector::toBaseUnits() const {
-  Tree* result = SharedEditionPool->push<Type::Multiplication>(0);
+  Tree* result = SharedTreeStack->push<Type::Multiplication>(0);
   int numberOfChildren = 0;
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
     // We require the base units to be the first seven in DefaultRepresentatives
@@ -107,7 +107,7 @@ Tree* DimensionVector::toBaseUnits() const {
       continue;
     }
     if (exponent != 1) {
-      SharedEditionPool->push(Type::Power);
+      SharedTreeStack->push(Type::Power);
     }
     Unit::Push(representative);
     if (exponent != 1) {
@@ -908,9 +908,9 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
 }
 
 void Unit::RemoveUnit(Tree* unit) {
-  Tree* result = SharedEditionPool->push<Type::Multiplication>(2);
+  Tree* result = SharedTreeStack->push<Type::Multiplication>(2);
   GetRepresentative(unit)->ratioExpressionReduced()->clone();
-  SharedEditionPool->push(Type::Power);
+  SharedTreeStack->push(Type::Power);
   Integer::Push(10);
   Integer::Push(GetPrefix(unit)->exponent());
   unit->moveTreeOverTree(result);
@@ -920,7 +920,7 @@ Tree* Unit::Push(const Representative* unitRepresentative,
                  const Prefix* unitPrefix) {
   uint8_t repId = Representative::ToId(unitRepresentative);
   uint8_t preId = Prefix::ToId(unitPrefix);
-  return SharedEditionPool->push<Type::Unit>(repId, preId);
+  return SharedTreeStack->push<Type::Unit>(repId, preId);
 }
 
 const Representative* Unit::GetRepresentative(const Tree* unit) {

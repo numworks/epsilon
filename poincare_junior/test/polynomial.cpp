@@ -8,7 +8,7 @@ using namespace PoincareJ;
 void assert_polynomial_is_parsed(const Tree* node,
                                  const Tree* expectedVariables,
                                  const Tree* expectedPolynomial) {
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
   Tree* variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
   Tree* clone = node->clone();
@@ -83,14 +83,14 @@ QUIZ_CASE(pcj_polynomial_operations) {
       TreeRef(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
                    KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
                    KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 
   /* B + A = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
   assert_trees_are_equal(Polynomial::Addition(polB->clone(), polA->clone()),
                          KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
                               KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
                               KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e)));
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 
   // TODO: test A-B and B-A!
 
@@ -106,7 +106,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
            KPol(Exponents<3, 2, 0>(), "y"_e, 6_e, 21_e, 23_e),
            KPol(Exponents<3, 2, 1>(), "y"_e, 2_e, 9_e, 76_e),
            KPol(Exponents<1, 0>(), "y"_e, 23_e, 23_e)));
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 
   /* Test variable order:
    * (y^2) + ((y+1)x + 1 = (y+1)x + y^2 + 1 */
@@ -117,7 +117,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
                        KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e), 1_e))),
       KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e),
            KPol(Exponents<2, 0>(), "y"_e, 1_e, 1_e)));
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 
   // A = x^2y^2 + y
   polA = KPol(Exponents<2, 0>(), "x"_e, KPol(Exponents<2>(), "y"_e, 1_e),

@@ -207,7 +207,7 @@ T integrand(T x, Substitution<T> substitution) {
 }
 
 Tree* rewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
-  Tree* value = SharedEditionPool->push<Type::Addition>(2);
+  Tree* value = SharedTreeStack->push<Type::Addition>(2);
   bound->clone();
   KVarX->clone();
   Tree* tree = integrand->clone();

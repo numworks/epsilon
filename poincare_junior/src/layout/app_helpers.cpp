@@ -30,7 +30,7 @@ void MakeAdditionImplicit(Tree* rack) {
 }
 
 void MakeAdditionImplicit(Poincare::JuniorLayout& layout) {
-  SharedEditionPool->executeAndStoreLayout(
+  SharedTreeStack->executeAndStoreLayout(
       [](void* context, const void* data) {
         MakeAdditionImplicit(static_cast<const Tree*>(data)->clone());
       },

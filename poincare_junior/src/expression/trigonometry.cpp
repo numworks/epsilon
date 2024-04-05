@@ -189,7 +189,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   }
   if (isOpposed && changed) {
     u->cloneTreeAtNode(-1_e);
-    u->moveNodeAtNode(SharedEditionPool->push<Type::Multiplication>(2));
+    u->moveNodeAtNode(SharedTreeStack->push<Type::Multiplication>(2));
     Simplification::SimplifyMultiplication(u);
   }
   return changed;

@@ -37,7 +37,7 @@ Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
     if (*error == Error::NoError) {
       /* The system becomes invalid when overriding the user variables: the
        * first solution was better. Restore inital empty set */
-      result = SharedEditionPool->push<Type::Set>(0);
+      result = SharedTreeStack->push<Type::Set>(0);
     }
   }
   return result;
@@ -129,7 +129,7 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
   // n unknown variables and rows equations
   uint8_t cols = n + 1;
   uint8_t rows = simplifiedEquationSet->numberOfChildren();
-  Tree* matrix = SharedEditionPool->push<Type::Matrix>(0, 0);
+  Tree* matrix = SharedTreeStack->push<Type::Matrix>(0, 0);
   // Create the matrix (A|b) for the equation Ax=b;
   for (const Tree* equation : simplifiedEquationSet->children()) {
     Tree* coefficients = GetLinearCoefficients(equation, n, context);
@@ -165,7 +165,7 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
        * solution. */
       matrix->removeTree();
       *error = Error::NoError;
-      return SharedEditionPool->push<Type::Set>(0);
+      return SharedTreeStack->push<Type::Set>(0);
     }
     coefficient = coefficient->nextTree();
   }
@@ -180,7 +180,7 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
         if (row < n && col == cols - 1) {
           if (*error == Error::NoError) {
             *error = RegisterSolution(child, variableId++, context);
-            // Continue anyway to preserve EditionPool integrity
+            // Continue anyway to preserve TreeStack integrity
           }
           child = child->nextTree();
         } else {
@@ -188,7 +188,7 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
         }
       }
     }
-    matrix->moveNodeOverNode(SharedEditionPool->push<Type::Set>(n));
+    matrix->moveNodeOverNode(SharedTreeStack->push<Type::Set>(n));
     return matrix;
   }
   // TODO: Introduce temporary variables to formally solve the system.
@@ -200,7 +200,7 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
 Tree* Solver::GetLinearCoefficients(const Tree* equation,
                                     uint8_t numberOfVariables,
                                     Context context) {
-  TreeRef result = SharedEditionPool->push<Type::List>(0);
+  TreeRef result = SharedTreeStack->push<Type::List>(0);
   TreeRef tree = equation->clone();
   /* TODO : y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
@@ -213,7 +213,7 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
     if (!polynomial->isPolynomial()) {
       // tree did not depend on variable. Continue.
       tree = polynomial;
-      NAry::AddChild(result, SharedEditionPool->push(Type::Zero));
+      NAry::AddChild(result, SharedTreeStack->push(Type::Zero));
       continue;
     }
     if (Polynomial::Degree(polynomial) != 1) {
@@ -232,7 +232,7 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
     polynomial->removeNode();  // Remove Node : [Variable][Coeff1][?Coeff0]
     polynomial->removeTree();  // Remove Variable : [Coeff1][?Coeff0]
     // Update tree to follow [Coeff0] if it exists for next variables.
-    tree = nullConstant ? SharedEditionPool->push(Type::Zero)
+    tree = nullConstant ? SharedTreeStack->push(Type::Zero)
                         : polynomial->nextTree();
     if (PolynomialParser::ContainsVariable(polynomial) ||
         (i == numberOfVariables - 1 &&
@@ -265,9 +265,9 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
    * - Handle approximate display.
    */
   // TODO: Use user settings for a RealUnkown sign ?
-  solution->moveTreeBeforeNode(SharedEditionPool->push<Type::Variable>(
+  solution->moveTreeBeforeNode(SharedTreeStack->push<Type::Variable>(
       variableId, ComplexSign::Unknown()));
-  solution->moveNodeBeforeNode(SharedEditionPool->push<Type::Addition>(2));
+  solution->moveNodeBeforeNode(SharedTreeStack->push<Type::Addition>(2));
   Simplification::DeepSystematicReduce(solution);
   AdvancedSimplification::AdvancedReduce(solution);
   Beautification::DeepBeautify(solution);

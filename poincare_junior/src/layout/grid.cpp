@@ -8,7 +8,7 @@
 namespace PoincareJ {
 
 bool Grid::isEditing() const {
-  if (SharedEditionPool->contains(this)) {
+  if (SharedTreeStack->contains(this)) {
     return true;
   }
   if (!RackLayout::s_layoutCursor) {

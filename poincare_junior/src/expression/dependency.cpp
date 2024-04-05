@@ -37,7 +37,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
          * - In the case of derivatives only, we could simply bubble up
          *   dependency and replace local variable with symbol value. */
         int numberOfDependencies = exprChildSet->numberOfChildren();
-        TreeRef set = SharedEditionPool->push<Type::Set>(numberOfDependencies);
+        TreeRef set = SharedTreeStack->push<Type::Set>(numberOfDependencies);
         for (int j = 0; j < numberOfDependencies; j++) {
           if (Variables::HasVariable(exprChildSet->firstChild(),
                                      Parametric::k_localVariableId)) {

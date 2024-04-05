@@ -33,39 +33,39 @@ inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
   }
 }
 
-using FunctionSize = size_t (EditionPool::*)() const;
+using FunctionSize = size_t (TreeStack::*)() const;
 inline void assert_pool_size_is(size_t size, FunctionSize functionSize) {
 #if POINCARE_TREE_LOG
-  if ((SharedEditionPool->*functionSize)() != size) {
+  if ((SharedTreeStack->*functionSize)() != size) {
     std::cout << "Expected edition Pool of size " << size << " but got "
-              << (SharedEditionPool->*functionSize)() << std::endl;
-    SharedEditionPool->log(std::cout, EditionPool::LogFormat::Tree, true);
+              << (SharedTreeStack->*functionSize)() << std::endl;
+    SharedTreeStack->log(std::cout, TreeStack::LogFormat::Tree, true);
     quiz_assert(false);
   }
 #else
-  quiz_assert((SharedEditionPool->*functionSize)() == size);
+  quiz_assert((SharedTreeStack->*functionSize)() == size);
 #endif
 }
 
 inline void assert_pool_block_sizes_is(size_t size) {
-  return assert_pool_size_is(size, &EditionPool::size);
+  return assert_pool_size_is(size, &TreeStack::size);
 }
 
 inline void assert_pool_tree_size_is(size_t size) {
-  return assert_pool_size_is(size, &EditionPool::numberOfTrees);
+  return assert_pool_size_is(size, &TreeStack::numberOfTrees);
 }
 
-inline void reset_pool() { SharedEditionPool->flush(); }
+inline void reset_pool() { SharedTreeStack->flush(); }
 
 inline void assert_edition_pool_contains(
     std::initializer_list<const Tree*> nodes) {
-  quiz_assert(SharedEditionPool->size() > 0);
-  Tree* tree = Tree::FromBlocks(SharedEditionPool->firstBlock());
+  quiz_assert(SharedTreeStack->size() > 0);
+  Tree* tree = Tree::FromBlocks(SharedTreeStack->firstBlock());
   for (const Tree* n : nodes) {
     assert_trees_are_equal(n, tree);
     tree = tree->nextTree();
   }
-  quiz_assert(tree->block() == SharedEditionPool->lastBlock());
+  quiz_assert(tree->block() == SharedTreeStack->lastBlock());
 }
 
 #if PLATFORM_DEVICE

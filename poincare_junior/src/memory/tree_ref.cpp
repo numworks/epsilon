@@ -13,21 +13,21 @@ namespace PoincareJ {
 
 TreeRef::TreeRef(Tree* node) {
   if (!node) {
-    m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+    m_identifier = TreeStack::ReferenceTable::NoNodeIdentifier;
     return;
   }
-  assert(SharedEditionPool->contains(node->block()) ||
-         node->block() == SharedEditionPool->lastBlock());
-  m_identifier = SharedEditionPool->referenceNode(node);
+  assert(SharedTreeStack->contains(node->block()) ||
+         node->block() == SharedTreeStack->lastBlock());
+  m_identifier = SharedTreeStack->referenceNode(node);
 }
 
 TreeRef& TreeRef::operator=(Tree* tree) {
   if (!tree) {
-    m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
-  } else if (m_identifier != EditionPool::ReferenceTable::NoNodeIdentifier) {
-    SharedEditionPool->updateIdentifier(m_identifier, tree);
+    m_identifier = TreeStack::ReferenceTable::NoNodeIdentifier;
+  } else if (m_identifier != TreeStack::ReferenceTable::NoNodeIdentifier) {
+    SharedTreeStack->updateIdentifier(m_identifier, tree);
   } else {
-    m_identifier = SharedEditionPool->referenceNode(tree);
+    m_identifier = SharedTreeStack->referenceNode(tree);
   }
   return *this;
 }
@@ -40,7 +40,7 @@ void TreeRef::log() const {
 #endif
 
 Tree* TreeRef::tree() const {
-  return SharedEditionPool->nodeForIdentifier(m_identifier);
+  return SharedTreeStack->nodeForIdentifier(m_identifier);
 }
 
 void TreeRef::recursivelyEdit(InPlaceTreeFunction treeFunction) {

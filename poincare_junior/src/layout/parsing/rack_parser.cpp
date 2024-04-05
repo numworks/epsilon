@@ -38,7 +38,7 @@ Tree *RackParser::parse() {
     Tree *result = initializeFirstTokenAndParseUntilEnd();
     // Only 1 tree has been created.
     assert(result &&
-           result->nextTree()->block() == SharedEditionPool->lastBlock());
+           result->nextTree()->block() == SharedTreeStack->lastBlock());
     return result;
   }
   ExceptionCatch(type) {
@@ -370,7 +370,7 @@ void RackParser::parseNumber(TreeRef &leftHandSide, Token::Type stoppingType) {
       int offset = smallE - decimalPoint - 1;
       assert(offset > 0);
       // Decimal<offset>(integerDigits * 10^offset + fractionalDigits)
-      leftHandSide = SharedEditionPool->push<Type::Decimal, int8_t>(offset);
+      leftHandSide = SharedTreeStack->push<Type::Decimal, int8_t>(offset);
       Tree *child =
           IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
       child->moveTreeOverTree(IntegerHandler::Multiplication(
@@ -381,8 +381,8 @@ void RackParser::parseNumber(TreeRef &leftHandSide, Token::Type stoppingType) {
     }
     if (smallE != end) {
       // Decimal * 10^exponent
-      Tree *mult = SharedEditionPool->push<Type::Multiplication>(1);
-      SharedEditionPool->push(Type::Power);
+      Tree *mult = SharedTreeStack->push<Type::Multiplication>(1);
+      SharedTreeStack->push(Type::Power);
       (10_e)->clone();
       Integer::Push(exponent, base);
       leftHandSide->moveTreeAtNode(mult);
@@ -555,11 +555,11 @@ void RackParser::parseComparisonOperator(TreeRef &leftHandSide,
      * It is now parsed as (a < b and b = c) to simplify code. */
     /* TODO PCJ: fix code with a < b < c < d */
     CloneTreeAtNode(rightHandSide, leftHandSide->child(1));
-    Tree *comparison = SharedEditionPool->push(operatorType);
+    Tree *comparison = SharedTreeStack->push(operatorType);
     MoveNodeAtNode(rightHandSide, comparison);
     CloneNodeAtNode(leftHandSide, KLogicalAnd);
   } else {
-    Tree *comparison = SharedEditionPool->push(operatorType);
+    Tree *comparison = SharedTreeStack->push(operatorType);
     MoveNodeAtNode(leftHandSide, comparison);
   }
 }
@@ -658,7 +658,7 @@ void RackParser::parseBinaryLogicalOperator(Type operatorType,
   if (rightHandSide.isUninitialized()) {
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  Tree *node = SharedEditionPool->push(operatorType);
+  Tree *node = SharedTreeStack->push(operatorType);
   leftHandSide->moveNodeAtNode(node);
 }
 
@@ -727,10 +727,10 @@ void RackParser::parseConstant(TreeRef &leftHandSide,
       m_currentToken.length());
   if (index >= 0) {
     leftHandSide =
-        SharedEditionPool->push<Type::PhysicalConstant>(uint8_t(index));
+        SharedTreeStack->push<Type::PhysicalConstant>(uint8_t(index));
   } else {
     assert(m_currentToken.length() == 1);
-    leftHandSide = SharedEditionPool->push(
+    leftHandSide = SharedTreeStack->push(
         m_currentToken.toDecoder(m_root).nextCodePoint() == 'e'
             ? Type::ExponentialE
             : Type::Pi);
@@ -977,8 +977,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef &leftHandSide,
     if (idType != Poincare::Context::SymbolAbstractType::Function &&
         idType != Poincare::Context::SymbolAbstractType::Sequence &&
         idType != Poincare::Context::SymbolAbstractType::List) {
-      leftHandSide =
-          SharedEditionPool->push<Type::UserSymbol>(name, length + 1);
+      leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
       return;
     }
   }
@@ -1052,7 +1051,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
       return false;
     }
 #endif
-    leftHandSide = SharedEditionPool->push<Type::UserSymbol>(name, length + 1);
+    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
     return true;
   }
 
@@ -1098,7 +1097,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
                                 BasedInteger::Builder(derivativeOrder));
       } else {
 #endif
-      result = SharedEditionPool->push<Type::UserFunction>(name, length + 1);
+      result = SharedTreeStack->push<Type::UserFunction>(name, length + 1);
       parameter->moveNodeBeforeNode(result);
       assert(result->child(0) == parameter);
 #if 0
@@ -1168,7 +1167,7 @@ void RackParser::parseMatrix(TreeRef &leftHandSide, Token::Type stoppingType) {
   uint8_t numberOfRows = 0;
   uint8_t numberOfColumns = 0;
   Tree *matrix =
-      SharedEditionPool->push<Type::Matrix>(numberOfRows, numberOfColumns);
+      SharedTreeStack->push<Type::Matrix>(numberOfRows, numberOfColumns);
   while (!popTokenIfType(Token::Type::RightBracket)) {
     TreeRef row = parseVector();
     if (numberOfRows > 0 && numberOfColumns != row->numberOfChildren()) {

@@ -75,17 +75,17 @@ class WorkingBuffer {
   /* We let an offset at the end of the edition pool before the working buffer
    * to be able to push either:
    * - the meta blocks of a Big Int before moving the digits from the
-   *   WorkingBuffer to the EditionPool,
+   *   WorkingBuffer to the TreeStack,
    * - the maximal size of an Integer Tree* that an immediate digit represents.
    */
   constexpr static size_t k_blockOffset =
       TypeBlock::NumberOfMetaBlocks(Type::IntegerPosBig) + sizeof(native_int_t);
   uint8_t *initialStartOfBuffer() {
-    return reinterpret_cast<uint8_t *>(SharedEditionPool->lastBlock() +
+    return reinterpret_cast<uint8_t *>(SharedTreeStack->lastBlock() +
                                        k_blockOffset);
   }
   size_t initialSizeOfBuffer() {
-    return (EditionPool::k_maxNumberOfBlocks - SharedEditionPool->size() -
+    return (TreeStack::k_maxNumberOfBlocks - SharedTreeStack->size() -
             k_blockOffset);
   }
   uint8_t *m_start;
@@ -99,7 +99,7 @@ struct DivisionResult {
 };
 
 class IntegerHandler final {
-  /* IntegerHandler don't own their digits but a pointer to the EditionPool
+  /* IntegerHandler don't own their digits but a pointer to the TreeStack
    * where the digits are stored. For optimization purpose, if the whole number
    * can be stored in a native_int_t, the IntegerHandler owns it instead of a
    * pointer. */
@@ -159,8 +159,8 @@ class IntegerHandler final {
   operator int8_t() const;
   operator uint8_t() const;
 
-  Tree *pushOnEditionPool() const;
-  void pushDigitsOnEditionPool() const;
+  Tree *pushOnTreeStack() const;
+  void pushDigitsOnTreeStack() const;
   template <typename T>
   T to() const;
   template <typename T>
@@ -278,14 +278,14 @@ class Integer {
   static Tree *Push(const char *digits, size_t length,
                     OMG::Base base = OMG::Base::Decimal) {
     UTF8Decoder decoder(digits, digits, digits + length);
-    return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
+    return IntegerHandler::Parse(decoder, base).pushOnTreeStack();
   }
   static Tree *Push(UnicodeDecoder &decoder,
                     OMG::Base base = OMG::Base::Decimal) {
-    return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
+    return IntegerHandler::Parse(decoder, base).pushOnTreeStack();
   }
   static Tree *Push(native_int_t value) {
-    return IntegerHandler(value).pushOnEditionPool();
+    return IntegerHandler(value).pushOnTreeStack();
   }
   static IntegerHandler Handler(const Tree *expression);
   template <typename T>

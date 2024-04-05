@@ -8,11 +8,11 @@ namespace PoincareJ {
 
 Tree* Number::Addition(const Tree* i, const Tree* j) {
   if (i->isDoubleFloat() || j->isDoubleFloat()) {
-    return SharedEditionPool->push<Type::DoubleFloat>(
+    return SharedTreeStack->push<Type::DoubleFloat>(
         Approximation::To<double>(i) + Approximation::To<double>(j));
   }
   if (i->isSingleFloat() || j->isSingleFloat()) {
-    return SharedEditionPool->push<Type::SingleFloat>(
+    return SharedTreeStack->push<Type::SingleFloat>(
         Approximation::To<float>(i) + Approximation::To<float>(j));
   }
   assert(!i->isMathematicalConstant() && !j->isMathematicalConstant());
@@ -21,11 +21,11 @@ Tree* Number::Addition(const Tree* i, const Tree* j) {
 }
 Tree* Number::Multiplication(const Tree* i, const Tree* j) {
   if (i->isDoubleFloat() || j->isDoubleFloat()) {
-    return SharedEditionPool->push<Type::DoubleFloat>(
+    return SharedTreeStack->push<Type::DoubleFloat>(
         Approximation::To<double>(i) * Approximation::To<double>(j));
   }
   if (i->isSingleFloat() || j->isSingleFloat()) {
-    return SharedEditionPool->push<Type::SingleFloat>(
+    return SharedTreeStack->push<Type::SingleFloat>(
         Approximation::To<float>(i) * Approximation::To<float>(j));
   }
   assert(!i->isMathematicalConstant() && !j->isMathematicalConstant());

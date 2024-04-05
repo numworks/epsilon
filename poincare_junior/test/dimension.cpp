@@ -62,5 +62,5 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(len("sort({1,2})", 2));
   QUIZ_ASSERT(len("{}", 0));
 
-  QUIZ_ASSERT(SharedEditionPool->numberOfTrees() == 0);
+  QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 0);
 }

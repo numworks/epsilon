@@ -98,8 +98,8 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
 bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
                                          TreeRef& denominator) {
   bool result = false;
-  numerator = SharedEditionPool->push<Type::Multiplication>(0);
-  denominator = SharedEditionPool->push<Type::Multiplication>(0);
+  numerator = SharedTreeStack->push<Type::Multiplication>(0);
+  denominator = SharedTreeStack->push<Type::Multiplication>(0);
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(expr);
   for (int i = 0; i < numberOfFactors; i++) {
@@ -115,11 +115,11 @@ bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
         if (rNum.isMinusOne()) {
           result = !result;
         } else if (!rNum.isOne()) {
-          factorsNumerator = rNum.pushOnEditionPool();
+          factorsNumerator = rNum.pushOnTreeStack();
         }
         IntegerHandler rDen = Rational::Denominator(factor);
         if (!rDen.isOne()) {
-          factorsDenominator = rDen.pushOnEditionPool();
+          factorsDenominator = rDen.pushOnTreeStack();
         }
       }
     } else if (factor->isPower() || factor->isPowerReal()) {
@@ -181,14 +181,14 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     units = dimension.toBaseUnits();
   } else {
     double value = Approximation::RootTreeTo<double>(expr);
-    units = SharedEditionPool->push<Type::Multiplication>(2);
+    units = SharedTreeStack->push<Type::Multiplication>(2);
     ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();
     Simplification::DeepSystematicReduce(units);
     Units::Unit::ChooseBestRepresentativeAndPrefixForValue(
         units, &value, projectionContext.m_unitFormat);
     Tree* approximated =
-        SharedEditionPool->push<Type::DoubleFloat>(static_cast<double>(value));
+        SharedTreeStack->push<Type::DoubleFloat>(static_cast<double>(value));
     expr->moveTreeOverTree(approximated);
   }
   Beautification::DeepBeautify(units);
@@ -362,43 +362,43 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   constexpr Type Type = FloatType<T>::type;
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
-    return SharedEditionPool->push(Type::Undefined);
+    return SharedTreeStack->push(Type::Undefined);
   }
   if (im != 0 && complexFormat == ComplexFormat::Real) {
-    return SharedEditionPool->push(Type::Nonreal);
+    return SharedTreeStack->push(Type::Nonreal);
   }
   if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
-    return SharedEditionPool->push<Type>(re);
+    return SharedTreeStack->push<Type>(re);
   }
-  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   // Real part and separator
   if (complexFormat == ComplexFormat::Cartesian) {
     // [re+]
     if (re != 0) {
-      SharedEditionPool->push<Type::Addition>(2);
-      SharedEditionPool->push<Type>(re);
+      SharedTreeStack->push<Type::Addition>(2);
+      SharedTreeStack->push<Type>(re);
     }
   } else {
     // [abs×]e^
     T abs = std::abs(value);
     if (abs != 1) {
-      SharedEditionPool->push<Type::Multiplication>(2);
-      SharedEditionPool->push<Type>(abs);
+      SharedTreeStack->push<Type::Multiplication>(2);
+      SharedTreeStack->push<Type>(abs);
     }
-    SharedEditionPool->push(Type::Power);
-    SharedEditionPool->push(Type::ExponentialE);
+    SharedTreeStack->push(Type::Power);
+    SharedTreeStack->push(Type::ExponentialE);
     im = std::arg(value);
   }
   // Complex part ±[im×]i
   if (im < 0) {
-    SharedEditionPool->push(Type::Opposite);
+    SharedTreeStack->push(Type::Opposite);
     im = -im;
   }
   if (im != 1) {
-    SharedEditionPool->push<Type::Multiplication>(2);
-    SharedEditionPool->push<Type>(im);
+    SharedTreeStack->push<Type::Multiplication>(2);
+    SharedTreeStack->push<Type>(im);
   }
-  SharedEditionPool->push(Type::ComplexI);
+  SharedTreeStack->push(Type::ComplexI);
   return result;
 }
 

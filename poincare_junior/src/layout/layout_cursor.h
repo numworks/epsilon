@@ -172,20 +172,20 @@ class LayoutBufferCursor final : public LayoutCursor {
   void insertText(const char* text, Poincare::Context* context,
                   bool forceRight = false, bool forceLeft = false,
                   bool linearMode = false) {
-    EditionPoolCursor::InsertTextContext insertTextContext{
-        text, forceRight, forceLeft, linearMode};
-    execute(&EditionPoolCursor::insertText, context, &insertTextContext);
+    TreeStackCursor::InsertTextContext insertTextContext{text, forceRight,
+                                                         forceLeft, linearMode};
+    execute(&TreeStackCursor::insertText, context, &insertTextContext);
   }
   void insertLayout(const Tree* tree, Poincare::Context* context,
                     bool forceRight = false, bool forceLeft = false) {
-    EditionPoolCursor::InsertLayoutContext insertLayoutContext{tree, forceRight,
-                                                               forceLeft};
-    execute(&EditionPoolCursor::insertLayout, context, &insertLayoutContext);
+    TreeStackCursor::InsertLayoutContext insertLayoutContext{tree, forceRight,
+                                                             forceLeft};
+    execute(&TreeStackCursor::insertLayout, context, &insertLayoutContext);
   }
   void deleteAndResetSelection() {
-    execute(&EditionPoolCursor::deleteAndResetSelection);
+    execute(&TreeStackCursor::deleteAndResetSelection);
   }
-  void performBackspace() { execute(&EditionPoolCursor::performBackspace); }
+  void performBackspace() { execute(&TreeStackCursor::performBackspace); }
   void invalidateSizesAndPositions() override {
     m_layout->invalidAllSizesPositionsAndBaselines();
   }
@@ -193,11 +193,11 @@ class LayoutBufferCursor final : public LayoutCursor {
   void beautifyLeft(Poincare::Context* context);
 
  private:
-  class EditionPoolCursor final : public LayoutCursor {
+  class TreeStackCursor final : public LayoutCursor {
     friend class LayoutBufferCursor;
     friend class InputBeautification;
 
-    EditionPoolCursor(int position, int startOfSelection, int cursorOffset)
+    TreeStackCursor(int position, int startOfSelection, int cursorOffset)
         : LayoutCursor(position, startOfSelection) {
       setCursorNode(
           Rack::From(Tree::FromBlocks(rootNode()->block() + cursorOffset)));
@@ -205,13 +205,13 @@ class LayoutBufferCursor final : public LayoutCursor {
 
     Rack* rootNode() const override {
       return static_cast<Rack*>(
-          Tree::FromBlocks(SharedEditionPool->firstBlock()));
+          Tree::FromBlocks(SharedTreeStack->firstBlock()));
     }
     Rack* cursorNode() const override {
       return static_cast<Rack*>(static_cast<Tree*>(m_cursorReference));
     }
 
-    // EditionPoolCursor Actions
+    // TreeStackCursor Actions
     void performBackspace(Poincare::Context* context, const void* nullptrData);
     void deleteAndResetSelection(Poincare::Context* context,
                                  const void* nullptrData);
@@ -245,13 +245,12 @@ class LayoutBufferCursor final : public LayoutCursor {
 
     TreeRef m_cursorReference;
   };
-  EditionPoolCursor createEditionPoolCursor() const {
-    return EditionPoolCursor(m_position, m_startOfSelection,
-                             cursorNodeOffset());
+  TreeStackCursor createTreeStackCursor() const {
+    return TreeStackCursor(m_position, m_startOfSelection, cursorNodeOffset());
   }
-  void applyEditionPoolCursor(EditionPoolCursor cursor);
-  typedef void (EditionPoolCursor::*Action)(Poincare::Context* context,
-                                            const void* data);
+  void applyTreeStackCursor(TreeStackCursor cursor);
+  typedef void (TreeStackCursor::*Action)(Poincare::Context* context,
+                                          const void* data);
   struct ExecutionContext {
     LayoutBufferCursor* m_cursor;
     Action m_action;

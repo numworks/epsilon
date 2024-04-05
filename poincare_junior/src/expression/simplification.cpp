@@ -171,7 +171,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
 bool Simplification::SimplifyDim(Tree* u) {
   Dimension dim = Dimension::GetDimension(u->child(0));
   if (dim.isMatrix()) {
-    Tree* result = SharedEditionPool->push<Type::Matrix>(1, 2);
+    Tree* result = SharedTreeStack->push<Type::Matrix>(1, 2);
     Integer::Push(dim.matrix.rows);
     Integer::Push(dim.matrix.cols);
     u->moveTreeOverTree(result);
@@ -298,7 +298,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     assert(p->nextTree() == static_cast<Tree*>(n));
     // PowU PowV w p n
     v->removeNode();
-    MoveNodeAtNode(p, SharedEditionPool->push<Type::Multiplication>(2));
+    MoveNodeAtNode(p, SharedTreeStack->push<Type::Multiplication>(2));
     // PowU w Mult<2> p n
     SimplifyMultiplication(p);
     SimplifyPower(u);
@@ -307,7 +307,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->isMultiplication()) {
     for (Tree* w : v->children()) {
-      TreeRef m = SharedEditionPool->push(Type::Power);
+      TreeRef m = SharedTreeStack->push(Type::Power);
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);
@@ -823,7 +823,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext* projectionContext) {
   }
   assert(projectionContext);
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
-  SharedEditionPool->executeAndReplaceTree(
+  SharedTreeStack->executeAndReplaceTree(
       [](void* context, const void* data) {
         SimplifyLastTree(static_cast<const Tree*>(data)->clone(),
                          *static_cast<ProjectionContext*>(context));
@@ -842,7 +842,7 @@ bool Simplification::Simplify(Tree* ref, ProjectionContext* projectionContext) {
  * - Steps could be better grouped under well constructed steps. */
 bool Simplification::SimplifyLastTree(Tree* ref,
                                       ProjectionContext projectionContext) {
-  assert(SharedEditionPool->lastBlock() == ref->nextTree()->block());
+  assert(SharedTreeStack->lastBlock() == ref->nextTree()->block());
   ExceptionTryAfterBlock(ref->block()) {
     bool changed = false;
     // Seeded random nodes may remain between Successive iterations.

@@ -13,11 +13,11 @@ namespace PoincareJ {
 void Decimal::Project(Tree *tree) {
   assertValidDecimal(tree);
   // dec<n>(x) -> 10^(-n)*x
-  Tree *mult = SharedEditionPool->push<Type::Multiplication>(1);
-  SharedEditionPool->push(Type::Power);
-  SharedEditionPool->push<Type::IntegerShort, int8_t>(10);
+  Tree *mult = SharedTreeStack->push<Type::Multiplication>(1);
+  SharedTreeStack->push(Type::Power);
+  SharedTreeStack->push<Type::IntegerShort, int8_t>(10);
   IntegerHandler(DecimalOffset(tree), NonStrictSign::Negative)
-      .pushOnEditionPool();
+      .pushOnTreeStack();
   tree->moveTreeOverNode(mult);
   NAry::SetNumberOfChildren(tree, 2);
 }

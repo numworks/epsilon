@@ -172,7 +172,7 @@ class PatternMatching {
   // Match source with pattern with given MatchContext constraints.
   static bool MatchNodes(const Tree* source, const Tree* pattern,
                          Context* context, MatchContext matchContext);
-  // Create structure tree with context's placeholder nodes in EditionPool
+  // Create structure tree with context's placeholder nodes in TreeStack
   static Tree* CreateTree(const Tree* structure, const Context context,
                           Tree* insertedNAry, bool simplify);
   /* Return true if source has been matched after squashing pattern.

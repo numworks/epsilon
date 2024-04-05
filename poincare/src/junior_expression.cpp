@@ -185,13 +185,13 @@ JuniorExpression JuniorExpression::Builder(int32_t n) {
 template <>
 JuniorExpression JuniorExpression::Builder<float>(float x) {
   return Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::Type::SingleFloat>(x));
+      PoincareJ::SharedTreeStack->push<PoincareJ::Type::SingleFloat>(x));
 }
 
 template <>
 JuniorExpression JuniorExpression::Builder<double>(double x) {
   return Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::Type::DoubleFloat>(x));
+      PoincareJ::SharedTreeStack->push<PoincareJ::Type::DoubleFloat>(x));
 }
 
 JuniorExpression JuniorExpression::Builder(const PoincareJ::Tree* tree) {
@@ -477,8 +477,7 @@ int JuniorExpression::getPolynomialCoefficients(
     Context* context, const char* symbolName,
     JuniorExpression coefficients[]) const {
   PoincareJ::Tree* symbol =
-      PoincareJ::SharedEditionPool->push<PoincareJ::Type::UserSymbol>(
-          symbolName);
+      PoincareJ::SharedTreeStack->push<PoincareJ::Type::UserSymbol>(symbolName);
   PoincareJ::Tree* poly =
       PoincareJ::PolynomialParser::Parse(tree()->clone(), symbol);
   int degree = poly->isPolynomial() ? PoincareJ::Polynomial::Degree(poly) : 0;
@@ -491,7 +490,7 @@ int JuniorExpression::getPolynomialCoefficients(
       indexExponent++;
     } else {
       coefficients[i] =
-          Builder(PoincareJ::SharedEditionPool->push(PoincareJ::Type::Zero));
+          Builder(PoincareJ::SharedTreeStack->push(PoincareJ::Type::Zero));
     }
   }
   assert(indexExponent == PoincareJ::Polynomial::NumberOfTerms(poly));
@@ -521,8 +520,7 @@ int JuniorExpression::getPolynomialReducedCoefficients(
 int JuniorExpression::polynomialDegree(Context* context,
                                        const char* symbolName) const {
   PoincareJ::Tree* symbol =
-      PoincareJ::SharedEditionPool->push<PoincareJ::Type::UserSymbol>(
-          symbolName);
+      PoincareJ::SharedTreeStack->push<PoincareJ::Type::UserSymbol>(symbolName);
   PoincareJ::Tree* poly =
       PoincareJ::PolynomialParser::Parse(tree()->clone(), symbol);
   int degree = poly->isPolynomial() ? PoincareJ::Polynomial::Degree(poly) : 0;
@@ -781,7 +779,7 @@ bool JuniorExpression::IsDiscontinuous(const JuniorExpression e,
 
 Matrix Matrix::Builder() {
   JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::Type::Matrix>(0, 0));
+      PoincareJ::SharedTreeStack->push<PoincareJ::Type::Matrix>(0, 0));
   return static_cast<Matrix&>(expr);
 }
 
@@ -893,7 +891,7 @@ template Coordinate2D<double> Point::approximate2D<double>(
 
 List List::Builder() {
   JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedEditionPool->push<PoincareJ::Type::List>(0));
+      PoincareJ::SharedTreeStack->push<PoincareJ::Type::List>(0));
   return static_cast<List&>(expr);
 }
 

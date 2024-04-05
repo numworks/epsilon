@@ -16,7 +16,7 @@ void assert_no_match(const Tree* source, const Tree* pattern) {
 // TODO: Factorize more tests with assert_match_and_create
 void assert_match_and_create(const Tree* source, const Tree* pattern,
                              const Tree* structure, const Tree* output) {
-  int numberOfTrees = SharedEditionPool->numberOfTrees();
+  int numberOfTrees = SharedTreeStack->numberOfTrees();
   PatternMatching::Context ctx;
   quiz_assert(PatternMatching::Match(pattern, source, &ctx));
   // Also test with an already matching context
@@ -26,12 +26,12 @@ void assert_match_and_create(const Tree* source, const Tree* pattern,
   assert_trees_are_equal(createdRef, output);
   createdRef->removeTree();
   // Also test with matchAndReplace
-  TreeRef replacedSourceClone = TreeRef(SharedEditionPool->clone(source));
+  TreeRef replacedSourceClone = TreeRef(SharedTreeStack->clone(source));
   PatternMatching::MatchAndReplace(replacedSourceClone, pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone->removeTree();
   // Nothing has leaked
-  quiz_assert(numberOfTrees == SharedEditionPool->numberOfTrees());
+  quiz_assert(numberOfTrees == SharedTreeStack->numberOfTrees());
 }
 
 QUIZ_CASE(pcj_context) {
@@ -143,9 +143,9 @@ QUIZ_CASE(pcj_match) {
 QUIZ_CASE(pcj_rewrite_replace) {
   const Tree* p = KAdd(KA, KA);
   const Tree* s = KMult(2_e, KA);
-  TreeRef ref(SharedEditionPool->push<Type::Addition>(2));
-  SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(5));
-  SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(5));
+  TreeRef ref(SharedTreeStack->push<Type::Addition>(2));
+  SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(5));
+  SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(5));
   TreeRef result = PatternMatching::MatchAndCreate(ref, p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
   PatternMatching::MatchAndReplace(ref, p, s);

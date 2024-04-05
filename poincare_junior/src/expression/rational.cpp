@@ -103,22 +103,22 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
   denominator.setSign(NonStrictSign::Positive);
   Tree* node;
   if (denominator.isOne() || numerator.isZero()) {
-    node = numerator.pushOnEditionPool();
+    node = numerator.pushOnTreeStack();
   } else if (numerator.isOne() && denominator.isTwo()) {
-    node = SharedEditionPool->push(Type::Half);
+    node = SharedTreeStack->push(Type::Half);
   } else if (numerator.isSignedType<int8_t>() &&
              denominator.isUnsignedType<uint8_t>()) {
-    node = SharedEditionPool->push(Type::RationalShort);
-    SharedEditionPool->push(ValueBlock(static_cast<int8_t>(numerator)));
-    SharedEditionPool->push(ValueBlock(static_cast<uint8_t>(denominator)));
+    node = SharedTreeStack->push(Type::RationalShort);
+    SharedTreeStack->push(ValueBlock(static_cast<int8_t>(numerator)));
+    SharedTreeStack->push(ValueBlock(static_cast<uint8_t>(denominator)));
   } else {
-    node = SharedEditionPool->push(numeratorSign == NonStrictSign::Negative
-                                       ? Type::RationalNegBig
-                                       : Type::RationalPosBig);
-    SharedEditionPool->push(ValueBlock(numerator.numberOfDigits()));
-    SharedEditionPool->push(ValueBlock(denominator.numberOfDigits()));
-    numerator.pushDigitsOnEditionPool();
-    denominator.pushDigitsOnEditionPool();
+    node = SharedTreeStack->push(numeratorSign == NonStrictSign::Negative
+                                     ? Type::RationalNegBig
+                                     : Type::RationalPosBig);
+    SharedTreeStack->push(ValueBlock(numerator.numberOfDigits()));
+    SharedTreeStack->push(ValueBlock(denominator.numberOfDigits()));
+    numerator.pushDigitsOnTreeStack();
+    denominator.pushDigitsOnTreeStack();
   }
   assert(IsIrreducible(node));
 #if POINCARE_POOL_VISUALIZATION
@@ -131,12 +131,12 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   /* Ensure unicity among all rationals. For example, convert 6/3 to Half node.
    * As a result there are many forbidden rational nodes. */
   assert(!denominator.isZero());
-  Tree* result = Tree::FromBlocks(SharedEditionPool->lastBlock());
-  // Push 1 temporary tree on the EditionPool.
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  // Push 1 temporary tree on the TreeStack.
   IntegerHandler gcd =
       Integer::Handler(IntegerHandler::GCD(numerator, denominator));
   if (!gcd.isOne()) {
-    // Push 2 additional temporary trees on the EditionPool.
+    // Push 2 additional temporary trees on the TreeStack.
     numerator = Integer::Handler(IntegerHandler::Quotient(numerator, gcd));
     denominator = Integer::Handler(IntegerHandler::Quotient(denominator, gcd));
   }

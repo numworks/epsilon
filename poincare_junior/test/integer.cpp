@@ -32,9 +32,8 @@ QUIZ_CASE(pcj_integer_constructor) {
   IntegerHandler minusOne(-1);
   IntegerHandler a(12);
   IntegerHandler b(-23);
-  SharedEditionPool->push<Type::IntegerPosBig>(
-      static_cast<uint64_t>(1232424242));
-  SharedEditionPool->push<Type::IntegerNegBig>(static_cast<uint64_t>(23424));
+  SharedTreeStack->push<Type::IntegerPosBig>(static_cast<uint64_t>(1232424242));
+  SharedTreeStack->push<Type::IntegerNegBig>(static_cast<uint64_t>(23424));
   Integer::Push("123", sizeof("123") - 1);
   Integer::Push("-123", sizeof("-123") - 1);
   Integer::Push("12345678910111213141516",
@@ -334,7 +333,7 @@ static void assert_might_overflow(Action action, bool overflow) {
       ExceptionCheckpoint::Raise(type);
     }
   }
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 }
 
 static void assert_did_overflow(Action action) {

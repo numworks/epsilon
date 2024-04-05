@@ -328,11 +328,11 @@ bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
   NAry::RemoveChildAtIndex(h, indexOfPipeKey);
   TreeRef parameter = KRackL()->clone();
   TreeRef toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
-  LayoutBufferCursor::EditionPoolCursor cursorForInsertion =
-      *static_cast<LayoutBufferCursor::EditionPoolCursor *>(cursor);
+  LayoutBufferCursor::TreeStackCursor cursorForInsertion =
+      *static_cast<LayoutBufferCursor::TreeStackCursor *>(cursor);
   cursorForInsertion.setLayout(h, OMG::Direction::Left());
   cursorForInsertion.setPosition(indexOfPipeKey);
-  LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext data{toInsert};
+  LayoutBufferCursor::TreeStackCursor::InsertLayoutContext data{toInsert};
   cursorForInsertion.insertLayout(nullptr, &data);
   if (cursor->cursorNode() == h && cursor->position() == indexOfPipeKey + 1) {
     cursor->setLayout(cursorForInsertion.cursorNode(),
@@ -552,8 +552,8 @@ bool InputBeautification::CreateParametersList(
   int cursorPosition = layoutCursor->cursorNode() == paramsString
                            ? layoutCursor->position()
                            : -1;
-  LayoutBufferCursor::EditionPoolCursor newCursor =
-      *static_cast<LayoutBufferCursor::EditionPoolCursor *>(layoutCursor);
+  LayoutBufferCursor::TreeStackCursor newCursor =
+      *static_cast<LayoutBufferCursor::TreeStackCursor *>(layoutCursor);
 
   while (i <= n) {
     if (parameterIndex >= beautificationRule.numberOfParameters) {

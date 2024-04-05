@@ -810,15 +810,15 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 template <typename T>
 Tree* PushComplex(std::complex<T> value) {
   if (value.imag() == 0.0) {
-    return SharedEditionPool->push<FloatType<T>::type>(value.real());
+    return SharedTreeStack->push<FloatType<T>::type>(value.real());
   }
-  Tree* result = SharedEditionPool->push<Type::Addition>(2);
-  SharedEditionPool->push<FloatType<T>::type>(value.real());
+  Tree* result = SharedTreeStack->push<Type::Addition>(2);
+  SharedTreeStack->push<FloatType<T>::type>(value.real());
   if (value.imag() != 1.0) {
-    SharedEditionPool->push<Type::Multiplication>(2);
-    SharedEditionPool->push<FloatType<T>::type>(value.imag());
+    SharedTreeStack->push<Type::Multiplication>(2);
+    SharedTreeStack->push<FloatType<T>::type>(value.imag());
   }
-  SharedEditionPool->push(Type::ComplexI);
+  SharedTreeStack->push(Type::ComplexI);
   return result;
 }
 
@@ -885,7 +885,7 @@ template <typename T>
 Tree* Approximation::ToList(const Tree* node) {
   int length = Dimension::GetListLength(node);
   int old = s_context->m_listElement;
-  Tree* list = SharedEditionPool->push<Type::List>(length);
+  Tree* list = SharedTreeStack->push<Type::List>(length);
   for (int i = 0; i < length; i++) {
     s_context->m_listElement = i;
     std::complex<T> k = ToComplex<T>(node);
@@ -994,9 +994,9 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     case Type::Dim: {
       Dimension dim = Dimension::GetDimension(node->child(0));
       assert(dim.isMatrix());
-      Tree* result = SharedEditionPool->push<Type::Matrix>(1, 2);
-      SharedEditionPool->push<FloatType<T>::type>(T(dim.matrix.rows));
-      SharedEditionPool->push<FloatType<T>::type>(T(dim.matrix.cols));
+      Tree* result = SharedTreeStack->push<Type::Matrix>(1, 2);
+      SharedTreeStack->push<FloatType<T>::type>(T(dim.matrix.rows));
+      SharedTreeStack->push<FloatType<T>::type>(T(dim.matrix.cols));
       return result;
     }
     case Type::Cross: {

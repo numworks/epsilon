@@ -6,7 +6,7 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_edition_pool) {
-  EditionPool* pool = SharedEditionPool;
+  TreeStack* pool = SharedTreeStack;
   pool->flush();
 
   constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
@@ -55,7 +55,7 @@ QUIZ_CASE(pcj_edition_pool) {
 }
 
 QUIZ_CASE(pcj_edition_reference) {
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
 
   constexpr KTree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   constexpr KTree k_subExpr1 = 6_e;
@@ -77,7 +77,7 @@ QUIZ_CASE(pcj_edition_reference) {
   // Constructors
   ref0->clone();
   TreeRef ref2 = TreeRef(
-      SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(8)));
+      SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(8)));
   assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e});
 
   // Insertions
@@ -105,7 +105,7 @@ QUIZ_CASE(pcj_edition_reference) {
   assert_edition_pool_contains(
       {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
-  // Replacements from nodes outside of the EditionPool
+  // Replacements from nodes outside of the TreeStack
   ref0 = ref0->cloneNodeOverNode(9_e);  // Same size
   assert_edition_pool_contains(
       {k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});
@@ -115,7 +115,7 @@ QUIZ_CASE(pcj_edition_reference) {
   assert_edition_pool_contains(
       {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 
-  // Replacements from nodes living in the EditionPool
+  // Replacements from nodes living in the TreeStack
   TreeRef subRef0(ref2->child(0)->child(1));
   TreeRef subRef1(ref2->child(0));
   ref2 = ref2->moveTreeOverTree(subRef0);  // Child
@@ -126,9 +126,9 @@ QUIZ_CASE(pcj_edition_reference) {
   assert_edition_pool_contains({k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
 
   // Removals
-  ref0 = TreeRef(SharedEditionPool->firstBlock());  // k_expr0
-  ref1 = ref0->nextTree();                          // 10_e
-  ref2 = ref1->nextTree();                          // k_expr1
+  ref0 = TreeRef(SharedTreeStack->firstBlock());  // k_expr0
+  ref1 = ref0->nextTree();                        // 10_e
+  ref2 = ref1->nextTree();                        // k_expr1
 
   ref2->removeTree();
   ref1->removeNode();
@@ -143,11 +143,11 @@ QUIZ_CASE(pcj_edition_reference) {
 }
 
 QUIZ_CASE(pcj_edition_reference_reallocation) {
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
   TreeRef reference0(KAdd(1_e, 1_e));
   TreeRef referenceSub0(reference0->child(0));
   TreeRef referenceSub1(reference0->child(1));
-  for (size_t i = 0; i < EditionPool::k_maxNumberOfReferences - 5; i++) {
+  for (size_t i = 0; i < TreeStack::k_maxNumberOfReferences - 5; i++) {
     TreeRef reference1(1_e);
   }
   /* The reference table is now full but we can reference a new node of another
@@ -158,7 +158,7 @@ QUIZ_CASE(pcj_edition_reference_reallocation) {
 }
 
 QUIZ_CASE(pcj_edition_reference_destructor) {
-  SharedEditionPool->flush();
+  SharedTreeStack->flush();
   {
     TreeRef ref0(0_e);
     QUIZ_ASSERT(ref0.identifier() == 0);
@@ -179,7 +179,7 @@ QUIZ_CASE(pcj_edition_reference_destructor) {
     QUIZ_ASSERT(static_cast<Tree*>(ref0) == nullptr);
   }
   // Destruction of the references does not destruct trees
-  QUIZ_ASSERT(SharedEditionPool->numberOfTrees() == 3);
+  QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 3);
 }
 
 QUIZ_CASE(pcj_tree_comments) {

@@ -111,7 +111,7 @@ bool Projection::ShallowSystemProject(Tree* ref, void* context) {
   }
   if (ref->isPhysicalConstant()) {
     Tree* value =
-        SharedEditionPool->push<Type::DoubleFloat>(Constant::Info(ref).m_value);
+        SharedTreeStack->push<Type::DoubleFloat>(Constant::Info(ref).m_value);
     ref->moveTreeOverTree(value);
     return true;
   }

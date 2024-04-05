@@ -26,12 +26,11 @@ Some issues such as Unreal, division by zero or other undefinitions can still ar
 
 ## Approximation strategy
 
-The simplification algorithm handle three simplification strategies :
+The simplification algorithm handles two simplification strategies :
  - `Default`: Default strategy.
- - `NumbersToFloat`: All numbers are approximated to floats (TODO: This is currently not used and a bit deprecated due to float propagation. We should either remove it or clarify its use.)
  - `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated).
 
-Starting from `Default`, each strategy is less and less demanding in term of tree size, but the quality of the simplification will downgrade (example of $1-0.3-0.7$).
+`ApproximateToFloat` strategy is less demanding in term of tree size, but the quality of the simplification will downgrade (example of $1-0.3-0.7$).
 
 Approximation strategy is checked here and later in the simplification algorithm (some steps may unlock new possible approximations).
 

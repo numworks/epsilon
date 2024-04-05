@@ -80,9 +80,9 @@ QUIZ_CASE(pcj_polynomial_operations) {
   /* A + B = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
   assert_trees_are_equal(
       Polynomial::Addition(polA->clone(), polB->clone()),
-      EditionReference(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
-                            KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
-                            KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
+      TreeRef(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
+                   KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
+                   KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
   SharedEditionPool->flush();
 
   /* B + A = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
@@ -98,8 +98,8 @@ QUIZ_CASE(pcj_polynomial_operations) {
   (2y^3+9y^2+
    * 76y)x + 23y + 23 */
   assert_trees_are_equal(
-      Polynomial::Multiplication(EditionReference(polA->clone()),
-                                 EditionReference(polB->clone())),
+      Polynomial::Multiplication(TreeRef(polA->clone()),
+                                 TreeRef(polB->clone())),
       KPol(Exponents<5, 4, 3, 2, 1, 0>(), "x"_e, 1_e,
            KPol(Exponents<1>(), "y"_e, 3_e),
            KPol(Exponents<2, 1, 0>(), "y"_e, 2_e, 8_e, 1_e),
@@ -111,10 +111,10 @@ QUIZ_CASE(pcj_polynomial_operations) {
   /* Test variable order:
    * (y^2) + ((y+1)x + 1 = (y+1)x + y^2 + 1 */
   assert_trees_are_equal(
-      Polynomial::Addition(EditionReference(KPol(Exponents<2>(), "y"_e, 1_e)),
-                           EditionReference(KPol(
-                               Exponents<1, 0>(), "x"_e,
-                               KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e), 1_e))),
+      Polynomial::Addition(
+          TreeRef(KPol(Exponents<2>(), "y"_e, 1_e)),
+          TreeRef(KPol(Exponents<1, 0>(), "x"_e,
+                       KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e), 1_e))),
       KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e),
            KPol(Exponents<2, 0>(), "y"_e, 1_e, 1_e)));
   SharedEditionPool->flush();

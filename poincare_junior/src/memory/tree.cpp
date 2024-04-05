@@ -141,7 +141,7 @@ void Tree::logAttributes(std::ostream& stream) const {
 }
 
 void Tree::logSerialize(std::ostream& stream) const {
-  EditionReference outputLayout = Layoutter::LayoutExpression(clone(), true);
+  TreeRef outputLayout = Layoutter::LayoutExpression(clone(), true);
   assert(!outputLayout.isUninitialized());
   constexpr size_t bufferSize = 1024;
   char buffer[bufferSize];
@@ -505,8 +505,8 @@ void Tree::swapWithTree(Tree* v) {
 }
 
 void SwapTreesPointers(Tree** u, Tree** v) {
-  EditionReference ru(*u);
-  EditionReference rv(*v);
+  TreeRef ru(*u);
+  TreeRef rv(*v);
   (*u)->swapWithTree(*v);
   *u = ru;
   *v = rv;

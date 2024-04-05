@@ -49,7 +49,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
     return false;
   }
   // Replace function's symbol with definition
-  EditionReference evaluateAt;
+  TreeRef evaluateAt;
   if (treeIsUserFunction) {
     evaluateAt = tree->child(0)->clone();
   }

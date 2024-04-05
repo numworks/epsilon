@@ -166,13 +166,13 @@ Tree* Rational::Addition(const Tree* i, const Tree* j) {
   // a/b + c/d
   Tree* ad = IntegerHandler::Multiplication(Numerator(i), Denominator(j));
   Tree* cb = IntegerHandler::Multiplication(Numerator(j), Denominator(i));
-  EditionReference newNumerator =
+  TreeRef newNumerator =
       IntegerHandler::Addition(Integer::Handler(ad), Integer::Handler(cb));
   cb->removeTree();
   ad->removeTree();
-  EditionReference newDenominator =
+  TreeRef newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
-  EditionReference result = Rational::Push(newNumerator, newDenominator);
+  TreeRef result = Rational::Push(newNumerator, newDenominator);
   newDenominator->removeTree();
   newNumerator->removeTree();
   return result;
@@ -183,7 +183,7 @@ Tree* Rational::Multiplication(const Tree* i, const Tree* j) {
       IntegerHandler::Multiplication(Numerator(i), Numerator(j));
   Tree* newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
-  EditionReference result = Rational::Push(newNumerator, newDenominator);
+  TreeRef result = Rational::Push(newNumerator, newDenominator);
   newDenominator->removeTree();
   newNumerator->removeTree();
   return result;
@@ -195,7 +195,7 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
   absJ.setSign(NonStrictSign::Positive);
   Tree* newNumerator = IntegerHandler::Power(Numerator(i), absJ);
   Tree* newDenominator = IntegerHandler::Power(Denominator(i), absJ);
-  EditionReference result =
+  TreeRef result =
       Sign(j).isNegative()
           ? Rational::PushIrreducible(newDenominator, newNumerator)
           : Rational::PushIrreducible(newNumerator, newDenominator);
@@ -209,7 +209,7 @@ bool Rational::IsIrreducible(const Tree* i) {
           {Type::RationalShort, Type::RationalNegBig, Type::RationalPosBig})) {
     return true;
   }
-  EditionReference gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
+  TreeRef gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
   bool result = gcd->isOne();
   gcd->removeTree();
   return result;
@@ -229,7 +229,7 @@ Tree* Rational::CreateMixedFraction(const Tree* r,
   DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
   Tree* integerPart = division.quotient;
   // Push the fraction
-  EditionReference fractionPart =
+  TreeRef fractionPart =
       Rational::Push(Integer::Handler(division.remainder), den);
   division.remainder->removeTree();
   // If mixed fractions are enabled

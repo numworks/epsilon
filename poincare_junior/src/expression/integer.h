@@ -216,7 +216,7 @@ class IntegerHandler final {
   static int8_t Ucmp(const IntegerHandler &a,
                      const IntegerHandler &b);  // -1, 0, or 1
   /* Warning: Usum, Sum, Mult, Udiv return IntegerHandler whose digits pointer
-   * is static working buffers. We could return EditionReference but we save the
+   * is static working buffers. We could return TreeRef but we save the
    * projection onto the right node type for public methods.
    * The buffer holding one of the IntegerHandler a or b can be used as the
    * workingBuffer because we read a and b digits before filling the working

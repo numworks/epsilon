@@ -497,7 +497,7 @@ QUIZ_CASE(pcj_edition_node_constructor) {
 
 QUIZ_CASE(pcj_node_iterator) {
   constexpr KTree k_simpleExpression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
-  EditionReference mult(k_simpleExpression);
+  TreeRef mult(k_simpleExpression);
   KTree a = KAdd(1_e, 2_e);
   KTree b = 3_e;
   KTree c = 4_e;
@@ -515,9 +515,9 @@ QUIZ_CASE(pcj_node_iterator) {
   KTree f = 7_e;
   KTree g = 8_e;
   const Tree* newChildren[] = {e, f, g};
-  for (std::pair<EditionReference, int> indexedRef :
+  for (std::pair<TreeRef, int> indexedRef :
        NodeIterator::Children<Editable>(mult)) {
-    std::get<EditionReference>(indexedRef)
+    std::get<TreeRef>(indexedRef)
         ->cloneTreeOverTree(newChildren[std::get<int>(indexedRef)]);
   }
   // Check edition
@@ -528,7 +528,7 @@ QUIZ_CASE(pcj_node_iterator) {
   }
 
   constexpr KTree k_secondSimpleExpression = KMult(KAdd(1_e, 2_e), 3_e);
-  EditionReference mult2(k_secondSimpleExpression);
+  TreeRef mult2(k_secondSimpleExpression);
   const Tree* children2[] = {a, b};
   // Scan two nodes children forward
   for (std::pair<std::array<const Tree*, 2>, int> indexedArray :
@@ -549,11 +549,11 @@ QUIZ_CASE(pcj_node_iterator) {
   const Tree* newChildren1[] = {n10, n11};
   const Tree* newChildren2[] = {n13, n14};
   // Edit two nodes children forward
-  for (std::pair<std::array<EditionReference, 2>, int> indexedRefs :
+  for (std::pair<std::array<TreeRef, 2>, int> indexedRefs :
        MultipleNodesIterator::Children<Editable, 2>(
-           std::array<EditionReference, 2>({mult, mult2}))) {
-    std::array<EditionReference, 2> childrenPair =
-        std::get<std::array<EditionReference, 2>>(indexedRefs);
+           std::array<TreeRef, 2>({mult, mult2}))) {
+    std::array<TreeRef, 2> childrenPair =
+        std::get<std::array<TreeRef, 2>>(indexedRefs);
     int pairIndex = std::get<int>(indexedRefs);
     childrenPair[0]->cloneTreeOverTree(newChildren1[pairIndex]);
     childrenPair[1]->cloneTreeOverTree(newChildren2[pairIndex]);
@@ -586,8 +586,8 @@ QUIZ_CASE(pcj_node) {
   // Tree navigation
   constexpr KTree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
   constexpr KTree e2 = KPow(5_e, 6_e);
-  Tree* n1 = EditionReference(e1);
-  Tree* n2 = EditionReference(e2);
+  Tree* n1 = TreeRef(e1);
+  Tree* n2 = TreeRef(e2);
   quiz_assert(n1->treeSize() == 16);  // TODO: Magic Number
   assert_trees_are_equal(n1->nextNode(), KAdd(1_e, 2_e));
   assert_trees_are_equal(n1->nextTree(), e2);

@@ -29,7 +29,7 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyPower);
 
  private:
-  /* These private methods should never be called on EditionReferences.
+  /* These private methods should never be called on TreeRefs.
    * TODO: ensure it cannot. */
   static bool SimplifyAbs(Tree *u);
   static bool SimplifyPowerReal(Tree *u);

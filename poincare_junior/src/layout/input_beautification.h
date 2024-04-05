@@ -12,7 +12,7 @@
 #include "layout_cursor.h"
 
 namespace PoincareJ {
-using BeautifiedLayoutBuilder = Tree* (*)(EditionReference* parameters);
+using BeautifiedLayoutBuilder = Tree* (*)(TreeRef* parameters);
 
 struct BeautificationRule {
   Aliases listOfBeautifiedAliases;
@@ -26,9 +26,8 @@ consteval static BeautificationRule ruleHelper() {
                 TypeBlock::NumberOfChildren(layoutType));
   return BeautificationRule{
       *Builtin::GetReservedFunction(type)->aliases(),
-      TypeBlock::NumberOfChildren(type),
-      [](EditionReference* parameters) -> Tree* {
-        EditionReference ref = SharedEditionPool->push(layoutType);
+      TypeBlock::NumberOfChildren(type), [](TreeRef* parameters) -> Tree* {
+        TreeRef ref = SharedEditionPool->push(layoutType);
         for (int i = 0; i < TypeBlock::NumberOfChildren(layoutType); i++) {
           parameters[i]->detachTree();
         }
@@ -78,16 +77,14 @@ class InputBeautification {
   constexpr static const BeautificationRule k_symbolsRules[] = {
       // Comparison operators
       {"<=", 0,
-       [](EditionReference* parameters) -> Tree* {
+       [](TreeRef* parameters) -> Tree* {
          // TODO factorise the comparison operators once we have them in PCJ
          return KCodePointL<u'≤'>()->clone();
        }},
       {">=", 0,
-       [](EditionReference* parameters) {
-         return KCodePointL<u'≥'>()->clone();
-       }},
+       [](TreeRef* parameters) { return KCodePointL<u'≥'>()->clone(); }},
       {"!=", 0,
-       [](EditionReference* parameters) {
+       [](TreeRef* parameters) {
          // ≠
          return KRackL("="_cl,
                        KCodePointL<UCodePointCombiningLongSolidusOverlay>())
@@ -95,26 +92,26 @@ class InputBeautification {
        }},
       // Special char
       {"->", 0,
-       [](EditionReference* parameters) {
+       [](TreeRef* parameters) {
          return KCodePointL<UCodePointRightwardsArrow>()->clone();
        }},
       {"*", 0,
-       [](EditionReference* parameters) {
+       [](TreeRef* parameters) {
          return KCodePointL<UCodePointMultiplicationSign>()->clone();
        }},
   };
 
   constexpr static BeautificationRule k_infRule = {
-      "inf", 0, [](EditionReference* parameters) {
+      "inf", 0, [](TreeRef* parameters) {
         return KCodePointL<UCodePointInfinity>()->clone();
       }};
 
   constexpr static BeautificationRule k_piRule = {
-      "pi", 0, [](EditionReference* parameters) {
+      "pi", 0, [](TreeRef* parameters) {
         return KCodePointL<UCodePointGreekSmallLetterPi>()->clone();
       }};
   constexpr static BeautificationRule k_thetaRule = {
-      "theta", 0, [](EditionReference* parameters) {
+      "theta", 0, [](TreeRef* parameters) {
         return KCodePointL<UCodePointGreekSmallLetterTheta>()->clone();
       }};
 
@@ -122,8 +119,8 @@ class InputBeautification {
       ruleHelper<Type::Abs, Type::AbsoluteValueLayout>();
 
   constexpr static BeautificationRule k_derivativeRule = {
-      "diff", 3, [](EditionReference* parameters) -> Tree* {
-        EditionReference diff = SharedEditionPool->push(Type::DerivativeLayout);
+      "diff", 3, [](TreeRef* parameters) -> Tree* {
+        TreeRef diff = SharedEditionPool->push(Type::DerivativeLayout);
         SharedEditionPool->push(0);
         parameters[1]->detachTree();
         parameters[2]->detachTree();
@@ -161,9 +158,8 @@ class InputBeautification {
       /* diff( */ k_derivativeRule,
       {/* exp( */
        "exp", 1,
-       [](EditionReference* parameters) -> Tree* {
-         EditionReference exp =
-             KRackL("e"_cl, KSuperscriptL(KRackL()))->clone();
+       [](TreeRef* parameters) -> Tree* {
+         TreeRef exp = KRackL("e"_cl, KSuperscriptL(KRackL()))->clone();
          exp->child(1)->child(0)->moveTreeOverTree(parameters[0]);
          return exp;
        }},
@@ -172,9 +168,8 @@ class InputBeautification {
       /* inf */ k_infRule,
       {/* int( */
        "int", 4,
-       [](EditionReference* parameters) -> Tree* {
-         EditionReference integral =
-             SharedEditionPool->push(Type::IntegralLayout);
+       [](TreeRef* parameters) -> Tree* {
+         TreeRef integral = SharedEditionPool->push(Type::IntegralLayout);
          parameters[1]->detachTree();
          parameters[2]->detachTree();
          parameters[3]->detachTree();
@@ -189,7 +184,7 @@ class InputBeautification {
       /* pi */ k_piRule,
       {/* piecewise( */
        "piecewise", 2,
-       [](EditionReference* parameters) -> Tree* {
+       [](TreeRef* parameters) -> Tree* {
          /* WARNING: The implementation of ReplaceEmptyLayoutsWithParameters
           * needs the created layout to have empty layouts where the
           * parameters should be inserted. Since Piecewise operator does not
@@ -200,7 +195,7 @@ class InputBeautification {
           * layout does not have 3 empty children. This is a fringe case
           * though, and everything works fine when "piecewise(" is inserted
           * with nothing on its right. */
-         EditionReference ref = SharedEditionPool->push(Type::PiecewiseLayout);
+         TreeRef ref = SharedEditionPool->push(Type::PiecewiseLayout);
          // TODO we need a builder to make this safe
          SharedEditionPool->push(2);
          SharedEditionPool->push(2);
@@ -212,10 +207,9 @@ class InputBeautification {
        }},
       {/* product( */
        "product", 4,
-       [](EditionReference* parameters) -> Tree* {
+       [](TreeRef* parameters) -> Tree* {
          // TODO factorize with diff and int
-         EditionReference product =
-             SharedEditionPool->push(Type::ProductLayout);
+         TreeRef product = SharedEditionPool->push(Type::ProductLayout);
          parameters[1]->detachTree();
          parameters[2]->detachTree();
          parameters[3]->detachTree();
@@ -235,9 +229,9 @@ class InputBeautification {
       std::size(k_identifiersRules);
 
   constexpr static BeautificationRule k_sumRule = {
-      "sum", 4, [](EditionReference* parameters) -> Tree* {
+      "sum", 4, [](TreeRef* parameters) -> Tree* {
         // TODO factorize with diff and int
-        EditionReference sum = SharedEditionPool->push(Type::SumLayout);
+        TreeRef sum = SharedEditionPool->push(Type::SumLayout);
         parameters[1]->detachTree();
         parameters[2]->detachTree();
         parameters[3]->detachTree();
@@ -249,9 +243,9 @@ class InputBeautification {
       }};
 
   constexpr static BeautificationRule k_logarithmRule = {
-      "log", 2, [](EditionReference* parameters) -> Tree* {
+      "log", 2, [](TreeRef* parameters) -> Tree* {
         // TODO handle NL-log cf LayoutHelper::Logarithm
-        EditionReference log = "log"_l->clone();
+        TreeRef log = "log"_l->clone();
         NAry::SetNumberOfChildren(log, 5);
         SharedEditionPool->push<Type::VerticalOffsetLayout>(true, false);
         parameters[1]->detachTree();
@@ -304,7 +298,7 @@ class InputBeautification {
       int indexOfPreProcessedParameter = -1);
 
   // Return false if there are too many parameters
-  static bool CreateParametersList(EditionReference* parameters, Tree* rack,
+  static bool CreateParametersList(TreeRef* parameters, Tree* rack,
                                    int parenthesisIndexInParent,
                                    BeautificationRule beautificationRule,
                                    LayoutCursor* layoutCursor);

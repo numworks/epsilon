@@ -21,7 +21,7 @@ bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
       if (Parametric::HasLocalRandom(expr)) {
         return false;
       }
-      EditionReference value = Integer::Push(n + 1);
+      TreeRef value = Integer::Push(n + 1);
       Variables::Replace(expr->child(2), 0, value);
       value->removeTree();
       // sequence(k, max, f(k)) -> f(k)

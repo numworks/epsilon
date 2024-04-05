@@ -106,24 +106,24 @@ a->removeTree();
 // points to the copy of anotherTree and b points at a corrupted place
 ```
 
-## EditionReferences
+## TreeRefs
 
-EditionReferences are smart pointers used to track Trees as they move inside the
+TreeRefs are smart pointers used to track Trees as they move inside the
 pool.
 
 For this purpose, the EditionPool owns a table of all the alive references and
 updates each of them after each modification of a Tree inside the pool. For this
-reason, EditionReferences are intended to be temporary and used sparingly where
-performance matters. You will often see function passing `EditionReferences&` to
+reason, TreeRefs are intended to be temporary and used sparingly where
+performance matters. You will often see function passing `TreeRefs&` to
 avoid copies. **TODO** what are ER copies ?
 
-All the methods on available on Trees are accessible on EditionReferences as
-well. It should be easy to upgrade a `Tree *` into an `EditionReference` at any
+All the methods on available on Trees are accessible on TreeRefs as
+well. It should be easy to upgrade a `Tree *` into an `TreeRef` at any
 point when you want to track your tree safely.
 
 ```cpp
-EditionReference a = someTree->clone();
-EditionReference b = anotherTree->clone();
+TreeRef a = someTree->clone();
+TreeRef b = anotherTree->clone();
 // a and b are now in the EditionPool with b just after a
 assert(a->nextTree() == b);
 
@@ -145,23 +145,23 @@ In addition, offset can be a special identifier
 (`EditionPool::ReferenceTable::InvalidatedOffset`), indicating the node doesn't
 exist anymore in the EditionPool.
 
-Each EditionReference has an identifier. It represents the index at which the
-EditionReference's node offset can be found in the EditionPool's reference
+Each TreeRef has an identifier. It represents the index at which the
+TreeRef's node offset can be found in the EditionPool's reference
 table.
 
 Similarly, the identifier can be special :
-- `EditionPool::ReferenceTable::NoNodeIdentifier` indicates the EditionReference
+- `EditionPool::ReferenceTable::NoNodeIdentifier` indicates the TreeRef
 doesn't point to any tree.
-- `EditionPool::ReferenceTable::DeletedOffset` indicates the EditionReference
+- `EditionPool::ReferenceTable::DeletedOffset` indicates the TreeRef
 has been deleted.
 
-To retrieve the node pointed by an EditionReference, we just return the node in
+To retrieve the node pointed by an TreeRef, we just return the node in
 the edition pool at the corresponding offset.
 
 Each time something is moved or changed in the EditionPool, all node offsets are
 updated (`EditionPool::ReferenceTable::updateNodes`).
 
-Once an EditionReference is destroyed, the corresponding node offset is set back
+Once an TreeRef is destroyed, the corresponding node offset is set back
 to `EditionPool::ReferenceTable::DeletedOffset`.
 
 ### Wrappers
@@ -170,7 +170,7 @@ Some methods manipulating `Tree *` may overwrite it with something else.
 
 This isn't an issue with `Tree *` since the tree still lives at the same place.
 
-However, EditionReference will be invalidated.
+However, TreeRef will be invalidated.
 
 ```cpp
 static void ReplaceTreeWithZero(Tree * tree) {
@@ -178,7 +178,7 @@ static void ReplaceTreeWithZero(Tree * tree) {
 }
 
 Tree * a = someTree->clone();
-EditionReference b = a
+TreeRef b = a
 ReplaceTreeWithZero(b); // Exact Equivalent of ReplaceTreeWithZero(a);
 
 assert(a->isZero()); // Ok
@@ -187,15 +187,15 @@ assert(b->isZero()); // Raise because b no longer exists, the tracked tree has
 ```
 
 To minimize the risk of mistakes, we created a wrapper allowing the use of such
-methods on EditionReference while preserving them.
+methods on TreeRef while preserving them.
 
 For the example above, just add :
 ```cpp
 static void ReplaceTreeWithZero(Tree * tree) {
   tree->cloneTreeOverTree(0_e);
 }
-/* Create a static void ReplaceTreeWithZero(EditionReference& tree) calling the
- * original ReplaceTreeWithZero, and restoring the EditionReference to the
+/* Create a static void ReplaceTreeWithZero(TreeRef& tree) calling the
+ * original ReplaceTreeWithZero, and restoring the TreeRef to the
  * original Tree */
 EDITION_REF_WRAP(ReplaceTreeWithZero);
 // ...

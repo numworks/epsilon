@@ -163,7 +163,7 @@ class Tree : public TypeBlock {
   // Tree motions
   // TODO
   /* In the following comments aaaa represents several blocks of a tree and u
-   * and v are EditionReferences that could be pointing to the targeted trees.
+   * and v are TreeRefs that could be pointing to the targeted trees.
    * Beware that the Node * used in this methods (this and n) may point to a
    * completely invalid position afterward (especially when the source was
    * before the target in the pool).

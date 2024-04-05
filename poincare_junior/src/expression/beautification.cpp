@@ -95,9 +95,8 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
   return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
 }
 
-bool Beautification::SplitMultiplication(const Tree* expr,
-                                         EditionReference& numerator,
-                                         EditionReference& denominator) {
+bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
+                                         TreeRef& denominator) {
   bool result = false;
   numerator = SharedEditionPool->push<Type::Multiplication>(0);
   denominator = SharedEditionPool->push<Type::Multiplication>(0);
@@ -105,8 +104,8 @@ bool Beautification::SplitMultiplication(const Tree* expr,
   const int numberOfFactors = NumberOfFactors(expr);
   for (int i = 0; i < numberOfFactors; i++) {
     const Tree* factor = Factor(expr, i);
-    EditionReference factorsNumerator;
-    EditionReference factorsDenominator;
+    TreeRef factorsNumerator;
+    TreeRef factorsDenominator;
     if (factor->isRational()) {
       if (factor->isOne()) {
         // Special case: add a unary numeral factor if r = 1
@@ -150,8 +149,8 @@ bool Beautification::SplitMultiplication(const Tree* expr,
 }
 
 bool Beautification::BeautifyIntoDivision(Tree* expr) {
-  EditionReference num;
-  EditionReference den;
+  TreeRef num;
+  TreeRef den;
   if (SplitMultiplication(expr, num, den)) {
     expr->cloneNodeBeforeNode(KOpposite);
     expr = expr->nextNode();
@@ -173,7 +172,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     return false;
   }
   assert(!dimension.isEmpty());
-  EditionReference units;
+  TreeRef units;
   if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
     assert(dimension.supportSize() == 1);
     units = Units::Unit::Push(projectionContext.m_dimension.unit.representative,

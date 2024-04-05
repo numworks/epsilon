@@ -231,7 +231,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     void privateDelete(DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
     void setCursorNode(Rack* node) override {
-      m_cursorReference = EditionReference(node);
+      m_cursorReference = TreeRef(node);
     }
     struct BeautifyContext {
       int m_rackOffset;
@@ -243,7 +243,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     void beautifyLeftAction(Poincare::Context* context,
                             const void* /* no arg */);
 
-    EditionReference m_cursorReference;
+    TreeRef m_cursorReference;
   };
   EditionPoolCursor createEditionPoolCursor() const {
     return EditionPoolCursor(m_position, m_startOfSelection,

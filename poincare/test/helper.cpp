@@ -260,7 +260,7 @@ void assert_expression_approximates_to(const char *expression,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) -> Tree * {
-        EditionReference result = PoincareJ::Approximation::RootTreeToTree<T>(
+        TreeRef result = PoincareJ::Approximation::RootTreeToTree<T>(
             e, PoincareJ::AngleUnit(reductionContext.angleUnit()),
             PoincareJ::ComplexFormat(reductionContext.complexFormat()));
         e->removeTree();

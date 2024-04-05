@@ -39,7 +39,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
     }
   }
 #if ASSERTIONS
-  EditionReference previousTree = u->clone();
+  TreeRef previousTree = u->clone();
 #endif
   bool shallowModified = ShallowSystematicReduce(u);
 #if ASSERTIONS
@@ -243,7 +243,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     return true;
   }
   // v^n
-  EditionReference n = v->nextTree();
+  TreeRef n = v->nextTree();
   if (v->isZero()) {
     ComplexSign indexSign = ComplexSign::Get(n);
     if (indexSign.realSign().isStrictlyPositive()) {
@@ -294,7 +294,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   }
   // (w^p)^n -> w^(p*n)
   if (v->isPower()) {
-    EditionReference p = v->child(1);
+    TreeRef p = v->child(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
     // PowU PowV w p n
     v->removeNode();
@@ -307,7 +307,7 @@ bool Simplification::SimplifyPower(Tree* u) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (v->isMultiplication()) {
     for (Tree* w : v->children()) {
-      EditionReference m = SharedEditionPool->push(Type::Power);
+      TreeRef m = SharedEditionPool->push(Type::Power);
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);

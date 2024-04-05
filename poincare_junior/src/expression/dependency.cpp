@@ -21,7 +21,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
     expr->removeNode();
     return true;
   }
-  EditionReference end = expr->nextTree();
+  TreeRef end = expr->nextTree();
   int numberOfSets = 0;
   int i = 0;
   for (Tree* exprChild : expr->children()) {
@@ -37,8 +37,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
          * - In the case of derivatives only, we could simply bubble up
          *   dependency and replace local variable with symbol value. */
         int numberOfDependencies = exprChildSet->numberOfChildren();
-        EditionReference set =
-            SharedEditionPool->push<Type::Set>(numberOfDependencies);
+        TreeRef set = SharedEditionPool->push<Type::Set>(numberOfDependencies);
         for (int j = 0; j < numberOfDependencies; j++) {
           if (Variables::HasVariable(exprChildSet->firstChild(),
                                      Parametric::k_localVariableId)) {

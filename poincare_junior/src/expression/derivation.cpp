@@ -72,7 +72,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
   SwapTreesPointers(&derivand, &setOfDependencies);
   // Do not add a dependency if nothing was derivated.
   if (currentDerivationOrder < derivationOrder) {
-    EditionReference formula = CloneReplacingSymbol(constDerivand, symbolValue);
+    TreeRef formula = CloneReplacingSymbol(constDerivand, symbolValue);
     Set::Add(setOfDependencies, formula);
     formula->removeTree();
   }

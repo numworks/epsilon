@@ -48,7 +48,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   Tree* simplifiedEquationSet = equationsSet->clone();
   if (!context->overrideUserVariables) {
     // Collect replaced user variables in context.
-    EditionReference userVariables =
+    TreeRef userVariables =
         PolynomialParser::GetVariables(simplifiedEquationSet);
     // Replace user variables before SimplifyAndFindVariables
     StorageContext::DeepReplaceIdentifiersWithTrees(simplifiedEquationSet);
@@ -74,7 +74,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   // TODO: Use user settings for a RealUnkown sign ?
   Variables::ProjectToId(simplifiedEquationSet, variables,
                          ComplexSign::Unknown());
-  EditionReference result;
+  TreeRef result;
   if (*error == Error::NoError) {
     result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables,
                                *context, error);
@@ -200,8 +200,8 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
 Tree* Solver::GetLinearCoefficients(const Tree* equation,
                                     uint8_t numberOfVariables,
                                     Context context) {
-  EditionReference result = SharedEditionPool->push<Type::List>(0);
-  EditionReference tree = equation->clone();
+  TreeRef result = SharedEditionPool->push<Type::List>(0);
+  TreeRef tree = equation->clone();
   /* TODO : y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
   AdvancedSimplification::DeepExpand(tree);

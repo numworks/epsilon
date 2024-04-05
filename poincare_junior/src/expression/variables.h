@@ -54,7 +54,7 @@ class Variables {
                       bool simplify);
   static bool Replace(Tree* expr, int id, const Tree* value, bool leave = false,
                       bool simplify = true);
-  static bool Replace(Tree* expr, int id, const EditionReference& value,
+  static bool Replace(Tree* expr, int id, const TreeRef& value,
                       bool leave = false, bool simplify = true);
 
   // Increment variables indexes

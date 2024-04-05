@@ -62,21 +62,21 @@ QUIZ_CASE(pcj_edition_reference) {
   constexpr KTree k_expr1 = KPow(KSub(5_e, k_subExpr1), 7_e);
 
   // Operator ==
-  EditionReference ref0;
-  EditionReference ref1;
+  TreeRef ref0;
+  TreeRef ref1;
   quiz_assert(ref0 == ref1);
   quiz_assert(ref0.isUninitialized());
-  ref0 = EditionReference(k_expr0);
+  ref0 = TreeRef(k_expr0);
   quiz_assert(!ref0.isUninitialized());
   quiz_assert(ref0 != ref1);
-  ref1 = EditionReference(ref0);
+  ref1 = TreeRef(ref0);
   quiz_assert(ref0 == ref1);
-  ref1 = EditionReference(k_expr1);
+  ref1 = TreeRef(k_expr1);
   quiz_assert(ref0 != ref1);
 
   // Constructors
   ref0->clone();
-  EditionReference ref2 = EditionReference(
+  TreeRef ref2 = TreeRef(
       SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(8)));
   assert_edition_pool_contains({k_expr0, k_expr1, k_expr0, 8_e});
 
@@ -116,8 +116,8 @@ QUIZ_CASE(pcj_edition_reference) {
       {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 
   // Replacements from nodes living in the EditionPool
-  EditionReference subRef0(ref2->child(0)->child(1));
-  EditionReference subRef1(ref2->child(0));
+  TreeRef subRef0(ref2->child(0)->child(1));
+  TreeRef subRef1(ref2->child(0));
   ref2 = ref2->moveTreeOverTree(subRef0);  // Child
   quiz_assert(subRef1.isUninitialized());
   ref1->moveNodeOverNode(ref0);  // Before
@@ -126,16 +126,16 @@ QUIZ_CASE(pcj_edition_reference) {
   assert_edition_pool_contains({k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
 
   // Removals
-  ref0 = EditionReference(SharedEditionPool->firstBlock());  // k_expr0
-  ref1 = ref0->nextTree();                                   // 10_e
-  ref2 = ref1->nextTree();                                   // k_expr1
+  ref0 = TreeRef(SharedEditionPool->firstBlock());  // k_expr0
+  ref1 = ref0->nextTree();                          // 10_e
+  ref2 = ref1->nextTree();                          // k_expr1
 
   ref2->removeTree();
   ref1->removeNode();
   assert_edition_pool_contains({k_expr0, k_subExpr1, 9_e});
 
   // Detach
-  subRef0 = EditionReference(ref0->child(0));
+  subRef0 = TreeRef(ref0->child(0));
   subRef0->cloneTreeBeforeNode(13_e);
   subRef0->detachTree();
   assert_edition_pool_contains(
@@ -144,36 +144,36 @@ QUIZ_CASE(pcj_edition_reference) {
 
 QUIZ_CASE(pcj_edition_reference_reallocation) {
   SharedEditionPool->flush();
-  EditionReference reference0(KAdd(1_e, 1_e));
-  EditionReference referenceSub0(reference0->child(0));
-  EditionReference referenceSub1(reference0->child(1));
+  TreeRef reference0(KAdd(1_e, 1_e));
+  TreeRef referenceSub0(reference0->child(0));
+  TreeRef referenceSub1(reference0->child(1));
   for (size_t i = 0; i < EditionPool::k_maxNumberOfReferences - 5; i++) {
-    EditionReference reference1(1_e);
+    TreeRef reference1(1_e);
   }
   /* The reference table is now full but we can reference a new node of another
    * one is out-dated. */
   reference0->removeTree();
   quiz_assert(referenceSub0.isUninitialized());
-  EditionReference reference2(2_e);
+  TreeRef reference2(2_e);
 }
 
 QUIZ_CASE(pcj_edition_reference_destructor) {
   SharedEditionPool->flush();
   {
-    EditionReference ref0(0_e);
+    TreeRef ref0(0_e);
     QUIZ_ASSERT(ref0.identifier() == 0);
-    EditionReference ref1(1_e);
+    TreeRef ref1(1_e);
     QUIZ_ASSERT(ref1.identifier() == 1);
   }
   {
     // The first ones have been deleted
-    EditionReference ref0(2_e);
+    TreeRef ref0(2_e);
     QUIZ_ASSERT(ref0.identifier() == 0);
     // Copy
-    EditionReference ref1 = ref0;
+    TreeRef ref1 = ref0;
     QUIZ_ASSERT(ref1.identifier() == 1);
     // Move
-    EditionReference stolenRef0 = std::move(ref0);
+    TreeRef stolenRef0 = std::move(ref0);
     QUIZ_ASSERT(stolenRef0.identifier() == 0);
     // ref0 has been invalidated by the move
     QUIZ_ASSERT(static_cast<Tree*>(ref0) == nullptr);
@@ -183,7 +183,7 @@ QUIZ_CASE(pcj_edition_reference_destructor) {
 }
 
 QUIZ_CASE(pcj_tree_comments) {
-  EditionReference u, v;
+  TreeRef u, v;
   auto setup = [&]() {
     u = "aaaa"_e->clone();
     "bb"_e->clone();

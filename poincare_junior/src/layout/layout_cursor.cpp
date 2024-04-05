@@ -196,8 +196,8 @@ static bool IsTemporaryAutocompletedBracketPair(const Tree *l, Side tempSide) {
 }
 
 // Return leftParenthesisIndex
-static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
-    EditionReference rack, int index) {
+static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(TreeRef rack,
+                                                               int index) {
   int leftParenthesisIndex = index + 1;
   // TODO: Use Iterator
   while (leftParenthesisIndex > 0 &&
@@ -205,12 +205,12 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
                                      rack, OMG::Direction::Left())) {
     leftParenthesisIndex--;
   }
-  EditionReference parenthesis =
+  TreeRef parenthesis =
       SharedEditionPool->push<Type::ParenthesisLayout>(false, false);
-  EditionReference tempRack = SharedEditionPool->push<Type::RackLayout>(0);
+  TreeRef tempRack = SharedEditionPool->push<Type::RackLayout>(0);
   int i = index;
   while (i >= leftParenthesisIndex) {
-    EditionReference child = NAry::DetachChildAtIndex(rack, i);
+    TreeRef child = NAry::DetachChildAtIndex(rack, i);
     NAry::AddChildAtIndex(tempRack, child, 0);
     i--;
   }
@@ -232,7 +232,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(
                    : tree->clone();
   // We need to keep track of the node which must live in the edition pool
   // TODO: do we need ConstReferences on const Nodes in the pool ?
-  EditionReference ref(copy);
+  TreeRef ref(copy);
   if (!copy->isRackLayout()) {
     copy->cloneNodeAtNode(KRackL.node<1>);
   }
@@ -331,7 +331,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(
 
   // - Step 6 - Find position to point to if layout will be merged
   EditionPoolCursor previousCursor = *this;
-  EditionReference childToPoint;
+  TreeRef childToPoint;
   if (ref->numberOfChildren() != 1) {
     childToPoint = (forceRight || forceLeft)
                        ? nullptr
@@ -346,8 +346,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(
   int numberOfInsertedChildren = ref->numberOfChildren();
   bool autocompletedPairInserted =
       (numberOfInsertedChildren == 1) && ref->child(0)->isAutocompletedPair();
-  EditionReference toCollapse =
-      numberOfInsertedChildren == 1 ? ref->child(0) : nullptr;
+  TreeRef toCollapse = numberOfInsertedChildren == 1 ? ref->child(0) : nullptr;
   /* AddOrMergeLayoutAtIndex will replace current layout with an
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
@@ -446,8 +445,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(
   /* - Step 1 -
    * Read the text from left to right and create an Horizontal layout
    * containing the layouts corresponding to each code point. */
-  EditionReference layoutToInsert = KRackL()->clone();
-  EditionReference currentLayout = layoutToInsert;
+  TreeRef layoutToInsert = KRackL()->clone();
+  TreeRef currentLayout = layoutToInsert;
   // This is only used to check if we properly left the last subscript
   int currentSubscriptDepth = 0;
 
@@ -973,8 +972,8 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(
     move(OMG::Direction::Left(), false, &dummy);
     return;
   }
-  EditionReference m_layout = m_cursorReference;
-  EditionReference parent = rootNode()->parentOfDescendant(m_layout);
+  TreeRef m_layout = m_cursorReference;
+  TreeRef parent = rootNode()->parentOfDescendant(m_layout);
 
   if (deletionMethod == DeletionMethod::DeleteParent) {
     assert(deletionAppliedToParent);
@@ -1109,7 +1108,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
    *
    * Here l = √(), and absorbingChildIndex = 0 (the inside of the sqrt)
    * */
-  EditionReference absorbingRack = l->child(absorbingChildIndex);
+  TreeRef absorbingRack = l->child(absorbingChildIndex);
   if (!RackLayout::IsEmpty(absorbingRack)) {
     return;
   }
@@ -1164,7 +1163,7 @@ void LayoutBufferCursor::EditionPoolCursor::
   }
   // If the top bracket does not have an horizontal parent, create one
   assert(currentLayout->isRackLayout());
-  EditionReference ref = cursorNode();
+  TreeRef ref = cursorNode();
   AutocompletedPair::BalanceBrackets(currentLayout, ref, &m_position);
   m_cursorReference = static_cast<Tree *>(ref);
 }

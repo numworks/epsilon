@@ -812,7 +812,7 @@ int Matrix::numberOfColumns() const {
 void Matrix::addChildAtIndexInPlace(JuniorExpression t, int index,
                                     int currentNumberOfChildren) {
   PoincareJ::Tree* clone = tree()->clone();
-  PoincareJ::EditionReference newChild = t.tree()->clone();
+  PoincareJ::TreeRef newChild = t.tree()->clone();
   if (index >= clone->numberOfChildren()) {
     int rows = PoincareJ::Matrix::NumberOfRows(clone);
     int columns = PoincareJ::Matrix::NumberOfColumns(clone);
@@ -901,7 +901,7 @@ List List::Builder() {
 void List::addChildAtIndexInPlace(JuniorExpression t, int index,
                                   int currentNumberOfChildren) {
   PoincareJ::Tree* clone = tree()->clone();
-  PoincareJ::EditionReference newChild = t.tree()->clone();
+  PoincareJ::TreeRef newChild = t.tree()->clone();
   PoincareJ::NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
   JuniorExpression temp = JuniorExpression::Builder(clone);
   *this = static_cast<List&>(temp);

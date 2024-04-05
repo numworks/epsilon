@@ -43,15 +43,15 @@ Tree* Set::Pop(Tree* set) {
   return set->nextNode()->detachTree();
 }
 
-static Tree* MergeSets(EditionReference set0, EditionReference set1,
+static Tree* MergeSets(TreeRef set0, TreeRef set1,
                        bool removeChildrenOnlyInSet0, bool pilferSet1Children,
                        bool removeCommonChildrenInSet0) {
   size_t numberOfChildren0 = set0->numberOfChildren();
   size_t numberOfChildren1 = set1->numberOfChildren();
   size_t numberOfChildren0ToScan = numberOfChildren0;
   size_t numberOfChildren1ToScan = numberOfChildren1;
-  EditionReference currentChild0 = set0->nextNode();
-  EditionReference currentChild1 = set1->nextNode();
+  TreeRef currentChild0 = set0->nextNode();
+  TreeRef currentChild1 = set1->nextNode();
   if (pilferSet1Children) {
     // Move set1 right after set0 to easily pilfer children
     set1 = set0->nextTree()->moveTreeBeforeNode(set1);
@@ -59,7 +59,7 @@ static Tree* MergeSets(EditionReference set0, EditionReference set1,
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
     int comparison = Comparison::Compare(currentChild0, currentChild1);
     if (comparison < 0) {  // Increment child of set 0
-      EditionReference nextChild0 = currentChild0->nextTree();
+      TreeRef nextChild0 = currentChild0->nextTree();
       if (removeChildrenOnlyInSet0) {
         currentChild0->removeTree();
         numberOfChildren0--;
@@ -68,8 +68,8 @@ static Tree* MergeSets(EditionReference set0, EditionReference set1,
       numberOfChildren0ToScan--;
     }
     if (comparison == 0) {  // Increment both children
-      EditionReference nextChild0 = currentChild0->nextTree();
-      EditionReference nextChild1 = currentChild1->nextTree();
+      TreeRef nextChild0 = currentChild0->nextTree();
+      TreeRef nextChild1 = currentChild1->nextTree();
       if (removeCommonChildrenInSet0) {
         currentChild0->removeTree();
         numberOfChildren0--;
@@ -84,7 +84,7 @@ static Tree* MergeSets(EditionReference set0, EditionReference set1,
       numberOfChildren1ToScan--;
     }
     if (comparison > 0) {  // Increment child of set 1
-      EditionReference nextChild1 = currentChild1->nextTree();
+      TreeRef nextChild1 = currentChild1->nextTree();
       if (pilferSet1Children) {
         currentChild0->moveTreeBeforeNode(currentChild1);
       }

@@ -15,10 +15,10 @@ namespace PoincareJ {
   * Iterator forwards concomittantly through 2 nodes' children
 
 
-  for (std::pair<std::array<EditionReference, 2>, int> indexedRefs :
+  for (std::pair<std::array<TreeRef, 2>, int> indexedRefs :
  MultipleNodesIterator::Children<Editable,
- 2>(std::array<EditionReference, 2>({node0, node1}))) { EditionReference
- childOfNode0 = std::get<0>(indexedRefs)[0]; EditionReference childOfNode1 =
+ 2>(std::array<TreeRef, 2>({node0, node1}))) { TreeRef
+ childOfNode0 = std::get<0>(indexedRefs)[0]; TreeRef childOfNode1 =
  std::get<0>(indexedRefs)[1]; int index = std::get<int>(indexedNode);
     ...
   }
@@ -170,7 +170,7 @@ class MultipleNodesIterator {
 
   class EditablePolicy {
    public:
-    typedef EditionReference NodeType;
+    typedef TreeRef NodeType;
     template <size_t N>
     using ArrayType = std::array<NodeType, N>;
 
@@ -215,10 +215,10 @@ class MultipleNodesIterator {
                                     int offset = 0) const {
       return Array::MapAction<const Tree *, NodeType, N>(
           array, &offset, [](const Tree *node, void *offset) {
-            return node ? EditionReference(Tree::FromBlocks(
+            return node ? TreeRef(Tree::FromBlocks(
                               const_cast<Tree *>(node)->block() -
                               *static_cast<int *>(offset)))
-                        : EditionReference();
+                        : TreeRef();
           });
     }
   };

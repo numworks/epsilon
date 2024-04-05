@@ -32,19 +32,19 @@ class Layoutter {
         m_floatMode(floatMode) {}
   void addSeparator(Tree* layoutParent);
   bool requireSeparators(const Tree* expr);
-  void layoutText(EditionReference& layoutParent, const char* text);
-  void layoutBuiltin(EditionReference& layoutParent, Tree* expression);
-  void layoutFunctionCall(EditionReference& layoutParent, Tree* expression,
+  void layoutText(TreeRef& layoutParent, const char* text);
+  void layoutBuiltin(TreeRef& layoutParent, Tree* expression);
+  void layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
                           const char* name);
   void layoutChildrenAsRacks(Tree* expression);
-  void layoutIntegerHandler(EditionReference& layoutParent,
-                            IntegerHandler handler, int decimalOffset = 0);
-  void layoutInfixOperator(EditionReference& layoutParent, Tree* expression,
+  void layoutIntegerHandler(TreeRef& layoutParent, IntegerHandler handler,
+                            int decimalOffset = 0);
+  void layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
                            CodePoint op, bool multiplication = false);
-  void layoutMatrix(EditionReference& layoutParent, Tree* expression);
-  void layoutUnit(EditionReference& layoutParent, Tree* expression);
-  void layoutPowerOrDivision(EditionReference& layoutParent, Tree* expression);
-  void layoutExpression(EditionReference& layoutParent, Tree* expression,
+  void layoutMatrix(TreeRef& layoutParent, Tree* expression);
+  void layoutUnit(TreeRef& layoutParent, Tree* expression);
+  void layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression);
+  void layoutExpression(TreeRef& layoutParent, Tree* expression,
                         int parentPriority);
   // Recursively replace "+-" into "-" in rack
   static void StripUselessPlus(Tree* rack);

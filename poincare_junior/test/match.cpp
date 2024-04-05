@@ -22,12 +22,11 @@ void assert_match_and_create(const Tree* source, const Tree* pattern,
   // Also test with an already matching context
   quiz_assert(PatternMatching::Match(pattern, source, &ctx));
 
-  EditionReference createdRef = PatternMatching::Create(structure, ctx);
+  TreeRef createdRef = PatternMatching::Create(structure, ctx);
   assert_trees_are_equal(createdRef, output);
   createdRef->removeTree();
   // Also test with matchAndReplace
-  EditionReference replacedSourceClone =
-      EditionReference(SharedEditionPool->clone(source));
+  TreeRef replacedSourceClone = TreeRef(SharedEditionPool->clone(source));
   PatternMatching::MatchAndReplace(replacedSourceClone, pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone->removeTree();
@@ -36,7 +35,7 @@ void assert_match_and_create(const Tree* source, const Tree* pattern,
 }
 
 QUIZ_CASE(pcj_context) {
-  EditionReference exp =
+  TreeRef exp =
       PatternMatching::Create(KMult(5_e, KAdd(KA, KA)), {.KA = KAdd(2_e, 1_e)});
   assert_trees_are_equal(exp, KMult(5_e, KAdd(2_e, 1_e, 2_e, 1_e)));
 }
@@ -67,7 +66,7 @@ QUIZ_CASE(pcj_match) {
   quiz_assert(
       PatternMatching::Match(KExp(KMult(KA_s, KFact(1_e), KC_s)), n5, &ctx5));
   PatternMatching::Context ctx6;
-  const Tree* n6 = EditionReference(KMult(1_e, KAdd(1_e, KMult(1_e, 2_e))));
+  const Tree* n6 = TreeRef(KMult(1_e, KAdd(1_e, KMult(1_e, 2_e))));
   quiz_assert(PatternMatching::Match(
       KMult(1_e, KAdd(1_e, KMult(1_e, 2_e, KA_s))), n6, &ctx6));
   PatternMatching::Context ctx7;
@@ -144,10 +143,10 @@ QUIZ_CASE(pcj_match) {
 QUIZ_CASE(pcj_rewrite_replace) {
   const Tree* p = KAdd(KA, KA);
   const Tree* s = KMult(2_e, KA);
-  EditionReference ref(SharedEditionPool->push<Type::Addition>(2));
+  TreeRef ref(SharedEditionPool->push<Type::Addition>(2));
   SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(5));
   SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(5));
-  EditionReference result = PatternMatching::MatchAndCreate(ref, p, s);
+  TreeRef result = PatternMatching::MatchAndCreate(ref, p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
   PatternMatching::MatchAndReplace(ref, p, s);
   assert_trees_are_equal(result, ref);

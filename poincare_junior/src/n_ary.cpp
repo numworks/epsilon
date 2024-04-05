@@ -19,8 +19,8 @@ void NAry::AddChildAtIndex(Tree* nary, Tree* child, int index) {
 
 // Should these useful refs be hidden in the function ?
 void NAry::AddOrMergeChildAtIndex(Tree* naryNode, Tree* childNode, int index) {
-  EditionReference nary = naryNode;
-  EditionReference child = childNode;
+  TreeRef nary = naryNode;
+  TreeRef child = childNode;
   AddChildAtIndex(nary, child, index);
   if (nary->type() == child->type()) {
     size_t numberOfChildren =
@@ -32,7 +32,7 @@ void NAry::AddOrMergeChildAtIndex(Tree* naryNode, Tree* childNode, int index) {
 
 Tree* NAry::DetachChildAtIndex(Tree* nary, int index) {
   assert(nary->isNAry());
-  EditionReference child = nary->child(index);
+  TreeRef child = nary->child(index);
   child->detachTree();
   SetNumberOfChildren(nary, nary->numberOfChildren() - 1);
   return child;

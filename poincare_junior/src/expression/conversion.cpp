@@ -21,7 +21,7 @@
 namespace PoincareJ {
 
 Poincare::OExpression ToPoincareExpressionViaParse(const Tree *exp) {
-  EditionReference outputLayout = Layoutter::LayoutExpression(exp->clone());
+  TreeRef outputLayout = Layoutter::LayoutExpression(exp->clone());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
@@ -33,7 +33,7 @@ void PushPoincareExpressionViaParse(Poincare::OExpression exp) {
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   exp.serialize(buffer, bufferSize);
-  EditionReference inputLayout = RackFromText(buffer);
+  TreeRef inputLayout = RackFromText(buffer);
   RackParser(inputLayout, nullptr).parse();
   inputLayout->removeTree();
   return;

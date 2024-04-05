@@ -44,8 +44,7 @@ static int bracketNestingLevel(Tree *rack, TypeBlock type, Tree *root) {
   return result;
 }
 
-void AutocompletedPair::BalanceBrackets(Tree *rack,
-                                        EditionReference &cursorLayout,
+void AutocompletedPair::BalanceBrackets(Tree *rack, TreeRef &cursorLayout,
                                         int *cursorPosition) {
   PrivateBalanceBrackets(Type::ParenthesisLayout, rack, cursorLayout,
                          cursorPosition, rack);
@@ -54,7 +53,7 @@ void AutocompletedPair::BalanceBrackets(Tree *rack,
 }
 
 void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree *rack,
-                                               EditionReference &cursorRack,
+                                               TreeRef &cursorRack,
                                                int *cursorPosition,
                                                Tree *rootRack) {
   assert(type.isAutocompletedPair());
@@ -90,7 +89,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree *rack,
    * */
   Tree *readRack = rack;
   int readIndex = 0;
-  EditionReference resultRack = KRackL()->clone();
+  TreeRef resultRack = KRackL()->clone();
   Tree *writtenRack = resultRack;
 
   assert((cursorRack == nullptr) == (cursorPosition == nullptr));
@@ -174,7 +173,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree *rack,
        *      and the current result is        : "A+(|]"
        * */
       if (!IsTemporary(bracketNode, Side::Left)) {
-        EditionReference newBracket = BuildFromBracketType(type);
+        TreeRef newBracket = BuildFromBracketType(type);
         SetTemporary(newBracket, Side::Right, true);
         NAry::AddOrMergeChild(writtenRack, newBracket);
         writtenRack = newBracket->child(0);
@@ -258,8 +257,8 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree *rack,
 
     /* Right side is permanent but no matching bracket was opened: create a
      * new one opened on the left. */
-    EditionReference newWrittenRack = KRackL.node<1>->cloneNode();
-    EditionReference newBracket = BuildFromBracketType(type);
+    TreeRef newWrittenRack = KRackL.node<1>->cloneNode();
+    TreeRef newBracket = BuildFromBracketType(type);
     SetTemporary(newBracket, Side::Left, true);
     if (writtenRack == resultRack) {
       resultRack = newWrittenRack;

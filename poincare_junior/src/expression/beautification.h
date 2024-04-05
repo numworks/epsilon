@@ -12,8 +12,8 @@ class Beautification {
  public:
   static float DegreeForSortingAddition(const Tree* expr, bool symbolsOnly);
   // Return true if result should be opposed.
-  static bool SplitMultiplication(const Tree* expr, EditionReference& numerator,
-                                  EditionReference& denominator);
+  static bool SplitMultiplication(const Tree* expr, TreeRef& numerator,
+                                  TreeRef& denominator);
   static bool BeautifyIntoDivision(Tree* expr);
   static bool AddUnits(Tree* expr, ProjectionContext projectionContext);
 

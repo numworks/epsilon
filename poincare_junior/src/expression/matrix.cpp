@@ -187,7 +187,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
   // The matrix children have to be reduced to be able to spot 0
   assert(approximate || !Simplification::DeepSystematicReduce(matrix));
 
-  EditionReference det;
+  TreeRef det;
   if (determinant) {
     det = SharedEditionPool->push<Type::Multiplication>(0);
   }
@@ -285,7 +285,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
         }
         Tree* factor = Child(matrix, i, k);
         Tree* opIJ = factor;
-        EditionReference opHJ = Child(matrix, h, k);  // opHJ may be after opIJ
+        TreeRef opHJ = Child(matrix, h, k);  // opHJ may be after opIJ
         for (int j = k + 1; j < n; j++) {
           opIJ = opIJ->nextTree();
           opHJ = opHJ->nextTree();

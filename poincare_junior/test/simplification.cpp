@@ -100,13 +100,13 @@ QUIZ_CASE(pcj_simplification_variables) {
 
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
-  EditionReference expected = TextToTree(output);
-  EditionReference expression = TextToTree(input);
+  TreeRef expected = TextToTree(output);
+  TreeRef expression = TextToTree(input);
   Simplification::Simplify(expression, &projectionContext);
   quiz_assert(!expression.isUninitialized());
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
-    EditionReference outputLayout =
+    TreeRef outputLayout =
         Layoutter::LayoutExpression(expression->clone(), true);
     quiz_assert(!outputLayout.isUninitialized());
     constexpr size_t bufferSize = 256;

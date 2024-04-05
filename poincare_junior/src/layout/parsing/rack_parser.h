@@ -46,8 +46,7 @@ class RackParser {
   Tree* parse();
 
  private:
-  Tree* parseUntil(Token::Type stoppingType,
-                   EditionReference leftHandSide = EditionReference());
+  Tree* parseUntil(Token::Type stoppingType, TreeRef leftHandSide = TreeRef());
   Tree* parseExpressionWithRightwardsArrow(size_t rightwardsArrowPosition);
   Tree* initializeFirstTokenAndParseUntilEnd();
 
@@ -60,121 +59,115 @@ class RackParser {
   Token::Type implicitOperatorType();
 
   // Specific Token parsers
-  void parseUnexpected(EditionReference& leftHandSide,
+  void parseUnexpected(TreeRef& leftHandSide,
                        Token::Type stoppingType = (Token::Type)0);
-  void parseNumber(EditionReference& leftHandSide,
+  void parseNumber(TreeRef& leftHandSide,
                    Token::Type stoppingType = (Token::Type)0);
-  void parseConstant(EditionReference& leftHandSide,
+  void parseConstant(TreeRef& leftHandSide,
                      Token::Type stoppingType = (Token::Type)0);
-  void parseUnit(EditionReference& leftHandSide,
+  void parseUnit(TreeRef& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
-  void parseReservedFunction(EditionReference& leftHandSide,
+  void parseReservedFunction(TreeRef& leftHandSide,
                              Token::Type stoppingType = (Token::Type)0);
-  void parseSpecialIdentifier(EditionReference& leftHandSide,
+  void parseSpecialIdentifier(TreeRef& leftHandSide,
                               Token::Type stoppingType = (Token::Type)0);
-  void parseCustomIdentifier(EditionReference& leftHandSide,
+  void parseCustomIdentifier(TreeRef& leftHandSide,
                              Token::Type stoppingType = (Token::Type)0);
-  void parseMatrix(EditionReference& leftHandSide,
+  void parseMatrix(TreeRef& leftHandSide,
                    Token::Type stoppingType = (Token::Type)0);
-  void parseLeftParenthesis(EditionReference& leftHandSide,
+  void parseLeftParenthesis(TreeRef& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseBang(EditionReference& leftHandSide,
+  void parseBang(TreeRef& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
-  void parsePercent(EditionReference& leftHandSide,
+  void parsePercent(TreeRef& leftHandSide,
                     Token::Type stoppingType = (Token::Type)0);
-  void parsePlus(EditionReference& leftHandSide,
+  void parsePlus(TreeRef& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
-  void parseMinus(EditionReference& leftHandSide,
+  void parseMinus(TreeRef& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseTimes(EditionReference& leftHandSide,
+  void parseTimes(TreeRef& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseSlash(EditionReference& leftHandSide,
+  void parseSlash(TreeRef& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseImplicitTimes(EditionReference& leftHandSide,
+  void parseImplicitTimes(TreeRef& leftHandSide,
                           Token::Type stoppingType = (Token::Type)0);
   void parseImplicitAdditionBetweenUnits(
-      EditionReference& leftHandSide,
-      Token::Type stoppingType = (Token::Type)0);
-  void parseCaret(EditionReference& leftHandSide,
+      TreeRef& leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseCaret(TreeRef& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
-  void parseComparisonOperator(EditionReference& leftHandSide,
+  void parseComparisonOperator(TreeRef& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
-  void parseAssignmentEqual(EditionReference& leftHandSide,
+  void parseAssignmentEqual(TreeRef& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseLogicalOperatorNot(EditionReference& leftHandSide,
+  void parseLogicalOperatorNot(TreeRef& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
-  void parseAndOperator(EditionReference& leftHandSide,
+  void parseAndOperator(TreeRef& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(Type::LogicalAnd, leftHandSide, stoppingType);
   }
-  void parseNandOperator(EditionReference& leftHandSide,
+  void parseNandOperator(TreeRef& leftHandSide,
                          Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(Type::LogicalNand, leftHandSide, stoppingType);
   }
-  void parseOrOperator(EditionReference& leftHandSide,
+  void parseOrOperator(TreeRef& leftHandSide,
                        Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(Type::LogicalOr, leftHandSide, stoppingType);
   }
-  void parseXorOperator(EditionReference& leftHandSide,
+  void parseXorOperator(TreeRef& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(Type::LogicalXor, leftHandSide, stoppingType);
   }
-  void parseNorOperator(EditionReference& leftHandSide,
+  void parseNorOperator(TreeRef& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0) {
     parseBinaryLogicalOperator(Type::LogicalNor, leftHandSide, stoppingType);
   }
 
-  void parseRightwardsArrow(EditionReference& leftHandSide,
+  void parseRightwardsArrow(TreeRef& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseLeftSuperscript(EditionReference& leftHandSide,
+  void parseLeftSuperscript(TreeRef& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseList(EditionReference& leftHandSide,
+  void parseList(TreeRef& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
-  void parseNorthEastArrow(EditionReference& leftHandSide,
+  void parseNorthEastArrow(TreeRef& leftHandSide,
                            Token::Type stoppingType = (Token::Type)0);
-  void parseSouthEastArrow(EditionReference& leftHandSide,
+  void parseSouthEastArrow(TreeRef& leftHandSide,
                            Token::Type stoppingType = (Token::Type)0);
-  void parseLayout(EditionReference& leftHandSide,
+  void parseLayout(TreeRef& leftHandSide,
                    Token::Type stoppingType = (Token::Type)0);
-  void parseSuperscript(EditionReference& leftHandSide,
+  void parseSuperscript(TreeRef& leftHandSide,
                         Token::Type stoppingType = (Token::Type)0);
-  void parsePrefixSuperscript(EditionReference& leftHandSide,
+  void parsePrefixSuperscript(TreeRef& leftHandSide,
                               Token::Type stoppingType = (Token::Type)0);
   // Parsing helpers
-  void privateParsePlusAndMinus(EditionReference& leftHandSide, bool plus,
+  void privateParsePlusAndMinus(TreeRef& leftHandSide, bool plus,
                                 Token::Type stoppingType = (Token::Type)0);
-  void privateParseEastArrow(EditionReference& leftHandSide, bool north,
+  void privateParseEastArrow(TreeRef& leftHandSide, bool north,
                              Token::Type stoppingType = (Token::Type)0);
-  bool mergeIntoPercentAdditionIfNeeded(EditionReference& leftHandSide,
-                                        EditionReference& rightHandSide,
-                                        bool plus);
-  void parseBinaryLogicalOperator(Type operatorType,
-                                  EditionReference& leftHandSide,
+  bool mergeIntoPercentAdditionIfNeeded(TreeRef& leftHandSide,
+                                        TreeRef& rightHandSide, bool plus);
+  void parseBinaryLogicalOperator(Type operatorType, TreeRef& leftHandSide,
                                   Token::Type stoppingType);
-  void parseBinaryOperator(const EditionReference& leftHandSide,
-                           EditionReference& rightHandSide,
+  void parseBinaryOperator(const TreeRef& leftHandSide, TreeRef& rightHandSide,
                            Token::Type stoppingType);
   Tree* parseVector();
   // Return nullptr if parentheses could not be parsed
   Tree* tryParseFunctionParameters();
   Tree* parseFunctionParameters();
   Tree* parseCommaSeparatedList(bool isFirstToken = false);
-  void privateParseTimes(EditionReference& leftHandSide,
-                         Token::Type stoppingType);
-  void privateParseReservedFunction(EditionReference& leftHandSide,
+  void privateParseTimes(TreeRef& leftHandSide, Token::Type stoppingType);
+  void privateParseReservedFunction(TreeRef& leftHandSide,
                                     const Builtin* builtin);
-  void privateParseCustomIdentifier(EditionReference& leftHandSide,
-                                    const char* name, size_t length,
-                                    Token::Type stoppingType);
+  void privateParseCustomIdentifier(TreeRef& leftHandSide, const char* name,
+                                    size_t length, Token::Type stoppingType);
   bool privateParseCustomIdentifierWithParameters(
-      EditionReference& leftHandSide, const char* name, size_t length,
+      TreeRef& leftHandSide, const char* name, size_t length,
       Token::Type stoppingType, Poincare::Context::SymbolAbstractType idType,
       bool parseApostropheAsDerivative);
-  void parseSequence(EditionReference& leftHandSide, const char* name,
+  void parseSequence(TreeRef& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
-  EditionReference parseIntegerCaretForFunction(bool allowParenthesis,
-                                                int* caretIntegerValue);
-  bool generateMixedFractionIfNeeded(EditionReference& leftHandSide);
+  TreeRef parseIntegerCaretForFunction(bool allowParenthesis,
+                                       int* caretIntegerValue);
+  bool generateMixedFractionIfNeeded(TreeRef& leftHandSide);
 
   // Save and restore parser state
   struct State {

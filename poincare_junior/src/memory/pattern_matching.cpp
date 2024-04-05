@@ -471,7 +471,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
     return false;
   }
   /* Following this example :
-   * this (EditionReference): (x + y) * z
+   * this (TreeRef): (x + y) * z
    * pattern: (A + B) * C
    * structure: A * C + B * C
    *
@@ -485,9 +485,9 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
   // Step 2 - Detach placeholder matches
   /* Create ZeroBlock for each context node to be detached so that tree size is
    * preserved. */
-  EditionReference treeNext = node->nextTree();
+  TreeRef treeNext = node->nextTree();
   int initializedPlaceHolders = 0;
-  EditionReference placeholders[Placeholder::Tag::NumberOfTags];
+  TreeRef placeholders[Placeholder::Tag::NumberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     if (!ctx.getNode(i)) {
       continue;
@@ -499,13 +499,13 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
     // Keep track of placeholder matches before detaching them
     int numberOfTrees = ctx.getNumberOfTrees(i);
     if (!ctx.getNode(i)) {
-      placeholders[i] = EditionReference();
+      placeholders[i] = TreeRef();
     } else if (numberOfTrees == 0) {
       // Use the last block so that placeholders[i] stays initialized
-      placeholders[i] = EditionReference(SharedEditionPool->lastBlock());
+      placeholders[i] = TreeRef(SharedEditionPool->lastBlock());
     } else {
       // the context is known to point on non const parts of the source
-      placeholders[i] = EditionReference(const_cast<Tree*>(ctx.getNode(i)));
+      placeholders[i] = TreeRef(const_cast<Tree*>(ctx.getNode(i)));
     }
     // Invalidate context before anything is detached.
     ctx.setNode(i, nullptr, numberOfTrees, ctx.isAnyTree(i));
@@ -514,7 +514,7 @@ bool PatternMatching::PrivateMatchAndReplace(Tree* node, const Tree* pattern,
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
 
   // Detach placeholder matches at the end of the EditionPool in a system list
-  EditionReference placeholderMatches(
+  TreeRef placeholderMatches(
       SharedEditionPool->push<Type::List>(initializedPlaceHolders));
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 .... _{3}

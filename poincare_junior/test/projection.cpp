@@ -4,7 +4,7 @@
 #include "helper.h"
 
 QUIZ_CASE(pcj_projection) {
-  EditionReference ref(KCos(KSin(
+  TreeRef ref(KCos(KSin(
       KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),
            3_e))));
   Projection::DeepSystemProject(ref,

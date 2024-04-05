@@ -96,7 +96,7 @@ inline void assertionsWarn() {
     Tree::nextNodeInPoolCount = 0;                                          \
     int refId;                                                              \
     {                                                                       \
-      EditionReference r(0_e);                                              \
+      TreeRef r(0_e);                                                       \
       refId = r.identifier();                                               \
       r->removeNode();                                                      \
     }                                                                       \
@@ -104,7 +104,7 @@ inline void assertionsWarn() {
     F;                                                                      \
     auto elapsed = std::chrono::high_resolution_clock::now() - startTime;   \
     {                                                                       \
-      EditionReference r(0_e);                                              \
+      TreeRef r(0_e);                                                       \
       refId = r.identifier() - refId;                                       \
       r->removeNode();                                                      \
     }                                                                       \

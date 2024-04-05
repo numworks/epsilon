@@ -17,7 +17,7 @@ class JuniorLayout;
 namespace PoincareJ {
 
 class EditionPool {
-  friend class EditionReference;
+  friend class TreeRef;
 
  public:
   // TODO: not all pool sizes are passing the tests, investigate why
@@ -121,7 +121,7 @@ class EditionPool {
 
   /* The reference table stores the offset of the tree in the edition pool.
    * - We assume (and assert) that we never referenced more then
-   *   k_maxNumberOfEditionReferences at the same time. We make sure of if by
+   *   k_maxNumberOfTreeRefs at the same time. We make sure of if by
    *   regularly flushing the reference table.
    * - The order of identifiers gives no guarantee on the order of the trees in
    *   the pool.
@@ -151,7 +151,7 @@ class EditionPool {
     void logIdsForNode(std::ostream &stream, const Tree *node) const;
 #endif
    private:
-    /* Special offset in the nodeOffsetArray when the EditionReference that
+    /* Special offset in the nodeOffsetArray when the TreeRef that
      * owned it has been deleted. */
     constexpr static uint16_t DeletedOffset = 0xFFFE;
 
@@ -162,8 +162,8 @@ class EditionPool {
     uint16_t m_nodeOffsetForIdentifier[EditionPool::k_maxNumberOfReferences];
   };
 
-  /* TODO: if we end up needing too many EditionReference, we could ref-count
-   * them in m_referenceTable and implement a destructor on EditionReference. */
+  /* TODO: if we end up needing too many TreeRef, we could ref-count
+   * them in m_referenceTable and implement a destructor on TreeRef. */
   ReferenceTable m_referenceTable;
   Block m_blocks[k_maxNumberOfBlocks];
   size_t m_size;

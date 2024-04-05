@@ -86,11 +86,11 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
      * insertion. --> Beautify left of its parent
      * For example "sqrt(|4+5)" -> "|" is left of "|4+5", so
      * beautify left of the parenthesis ("sqrt()"). */
-    EditionReference insertedLayout = l->parent(root);
+    TreeRef insertedLayout = l->parent(root);
     if (insertedLayout.isUninitialized()) {
       return false;
     }
-    EditionReference horizontalParent = insertedLayout->parent(root);
+    TreeRef horizontalParent = insertedLayout->parent(root);
     if (horizontalParent.isUninitialized() ||
         !horizontalParent->isRackLayout()) {
       return false;
@@ -105,7 +105,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
   }
 
   // - Step 2 - Apply the beautification
-  EditionReference insertedLayout = h->child(insertedLayoutIndex);
+  TreeRef insertedLayout = h->child(insertedLayoutIndex);
   if (insertedLayout->isParenthesisLayout()) {
     /* - Step 2.1 - Beautify after a parenthesis insertion.
      *    > Beautify identifiers and functions left of the parenthesis.
@@ -161,8 +161,7 @@ bool InputBeautification::BeautifySymbols(Tree *h, int rightmostIndexToBeautify,
     // Compare the code points of the input with the pattern
     bool matchesPattern = true;
     for (int i = 0; i < length; i++) {
-      EditionReference child =
-          h->child(rightmostIndexToBeautify - (length - 1) + i);
+      TreeRef child = h->child(rightmostIndexToBeautify - (length - 1) + i);
       if (!CodePointLayout::IsCodePoint(child, pattern[i])) {
         matchesPattern = false;
         break;
@@ -196,7 +195,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   // Get the identifiers string.
   int firstIndexOfIdentifier = 0;
   for (int i = rightmostIndexToBeautify; i >= 0; i--) {
-    EditionReference currentLayout = h->child(i);
+    TreeRef currentLayout = h->child(i);
     if (!LayoutIsIdentifierMaterial(currentLayout)) {
       firstIndexOfIdentifier = i + 1;
       break;
@@ -213,7 +212,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   char identifiersString[bufferSize];
   int bufferCurrentLength = 0;
   for (int i = firstIndexOfIdentifier; i <= rightmostIndexToBeautify; i++) {
-    EditionReference currentChild = h->child(i);
+    TreeRef currentChild = h->child(i);
     assert(currentChild->isCodePointLayout());
     CodePoint c = CodePointLayout::GetCodePoint(currentChild);
     // This does not add null termination
@@ -299,7 +298,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
       // TODO Check if N is integer
       // Check if function is "log"
       if (k_logarithmRule.listOfBeautifiedAliases.contains(&decoder)) {
-        EditionReference baseOfLog = NAry::CloneSubRange(
+        TreeRef baseOfLog = NAry::CloneSubRange(
             h, h->indexOfChild(nextIdentifier.firstLayout()),
             h->indexOfChild(nextIdentifier.firstLayout()) +
                 nextIdentifier.length());
@@ -322,13 +321,13 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
 
 bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
                                           LayoutCursor *cursor) {
-  EditionReference pipeKey = h->child(indexOfPipeKey);
+  TreeRef pipeKey = h->child(indexOfPipeKey);
   if (!CodePointLayout::IsCodePoint(pipeKey, '|')) {
     return false;
   }
   NAry::RemoveChildAtIndex(h, indexOfPipeKey);
-  EditionReference parameter = KRackL()->clone();
-  EditionReference toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
+  TreeRef parameter = KRackL()->clone();
+  TreeRef toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
   LayoutBufferCursor::EditionPoolCursor cursorForInsertion =
       *static_cast<LayoutBufferCursor::EditionPoolCursor *>(cursor);
   cursorForInsertion.setLayout(h, OMG::Direction::Left());
@@ -346,7 +345,7 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
     Tree *h, int indexOfFraction, LayoutCursor *layoutCursor) {
   assert(indexOfFraction >= 0 && indexOfFraction < h->numberOfChildren() - 1 &&
          h->child(indexOfFraction + 1)->isParenthesisLayout());
-  EditionReference childToMatch = h->child(indexOfFraction);
+  TreeRef childToMatch = h->child(indexOfFraction);
   const Tree *fractionDDXLayout = KFracL("d"_l, "dx"_l);
   if (!fractionDDXLayout->treeIsIdenticalTo(childToMatch)) {
     return false;
@@ -357,13 +356,13 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
 
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
     Tree *h, int indexOfSuperscript, LayoutCursor *layoutCursor) {
-  EditionReference superscript = h->child(indexOfSuperscript);
+  TreeRef superscript = h->child(indexOfSuperscript);
   if (!superscript->isVerticalOffsetLayout() ||
       !VerticalOffset::IsSuffixSuperscript(superscript)) {
     return false;
   }
   int childIndex;
-  EditionReference firstOrderDerivative =
+  TreeRef firstOrderDerivative =
       layoutCursor->rootNode()->parentOfDescendant(h, &childIndex);
   if (firstOrderDerivative.isUninitialized() ||
       !firstOrderDerivative->isDerivativeLayout() ||
@@ -372,9 +371,9 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
           Derivative::VariableSlot::Fraction) {
     return false;
   }
-  EditionReference derivativeOrder = superscript->child(0);
+  TreeRef derivativeOrder = superscript->child(0);
   NAry::RemoveChildAtIndex(h, indexOfSuperscript);
-  EditionReference inserted =
+  TreeRef inserted =
       firstOrderDerivative->nextTree()->cloneTreeBeforeNode(derivativeOrder);
   if (layoutCursor->cursorNode() == h &&
       layoutCursor->position() > h->numberOfChildren()) {
@@ -400,16 +399,15 @@ bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
    * */
   assert(h);
   assert(indexOfComma < h->numberOfChildren() && indexOfComma >= 0);
-  EditionReference comma = h->child(indexOfComma);
+  TreeRef comma = h->child(indexOfComma);
   if (!CodePointLayout::IsCodePoint(comma, ',')) {
     return false;
   }
-  EditionReference parenthesis = h->parent(layoutCursor->rootNode());
+  TreeRef parenthesis = h->parent(layoutCursor->rootNode());
   if (parenthesis.isUninitialized() || !parenthesis->isParenthesisLayout()) {
     return false;
   }
-  EditionReference horizontalParent =
-      parenthesis->parent(layoutCursor->rootNode());
+  TreeRef horizontalParent = parenthesis->parent(layoutCursor->rootNode());
   if (horizontalParent.isUninitialized() || !horizontalParent->isRackLayout()) {
     return false;
   }
@@ -436,7 +434,7 @@ bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
                                      &k_sumRule, 1, context, layoutCursor);
   if (result) {
     // Replace the cursor if it's in variable slot
-    EditionReference parent =
+    TreeRef parent =
         layoutCursor->cursorNode()->parent(layoutCursor->rootNode());
     assert(!parent.isUninitialized() && parent->isSumLayout());
     if (parent->indexOfChild(layoutCursor->cursorNode()) ==
@@ -476,7 +474,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
          h->child(endIndex + 1)->isParenthesisLayout());
   int currentNumberOfChildren = h->numberOfChildren();
   // Create pattern layout
-  EditionReference parameters[k_maxNumberOfParameters] = {};
+  TreeRef parameters[k_maxNumberOfParameters] = {};
   if (preProcessedParameter) {
     assert(indexOfPreProcessedParameter < k_maxNumberOfParameters);
     parameters[indexOfPreProcessedParameter] = preProcessedParameter;
@@ -490,7 +488,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
       return false;
     }
   }
-  EditionReference inserted = beautificationRule.layoutBuilder(parameters);
+  TreeRef inserted = beautificationRule.layoutBuilder(parameters);
 
   // Remove layout
   int numberOfRemovedLayouts = endIndex - startIndex + 1;
@@ -535,14 +533,14 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
 }
 
 bool InputBeautification::CreateParametersList(
-    EditionReference *parameters, Tree *h, int parenthesisIndexInParent,
+    TreeRef *parameters, Tree *h, int parenthesisIndexInParent,
     BeautificationRule beautificationRule, LayoutCursor *layoutCursor) {
-  EditionReference parenthesis = h->child(parenthesisIndexInParent);
+  TreeRef parenthesis = h->child(parenthesisIndexInParent);
   assert(parenthesis->isParenthesisLayout());
   // Left parenthesis should not be temporary
   assert(!AutocompletedPair::IsTemporary(parenthesis, Side::Left));
 
-  EditionReference paramsString = parenthesis->child(0);
+  TreeRef paramsString = parenthesis->child(0);
   assert(paramsString->isRackLayout());
   assert(beautificationRule.numberOfParameters <= k_maxNumberOfParameters);
 
@@ -567,7 +565,7 @@ bool InputBeautification::CreateParametersList(
       newCursor.setLayout(currentParameter, OMG::HorizontalDirection::Left());
     }
 
-    EditionReference child = i < n ? paramsString->child(i) : nullptr;
+    TreeRef child = i < n ? paramsString->child(i) : nullptr;
     if (i == n || CodePointLayout::IsCodePoint(child, ',')) {
       // right parenthesis or ',' reached. Add parameter
       assert(parameterIndex < k_maxNumberOfParameters);

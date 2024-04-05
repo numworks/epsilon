@@ -353,23 +353,23 @@ QUIZ_CASE(pcj_integer_overflows) {
 
   // Operations
   assert_did_overflow([]() {
-    EditionReference a = CreateInteger(MaxIntegerString());
-    EditionReference b = CreateInteger("1");
+    TreeRef a = CreateInteger(MaxIntegerString());
+    TreeRef b = CreateInteger("1");
     IntegerHandler::Addition(Integer::Handler(a), Integer::Handler(b));
   });
   assert_did_not_overflow([]() {
-    EditionReference a = CreateInteger(MaxIntegerString());
-    EditionReference b = CreateInteger("1");
+    TreeRef a = CreateInteger(MaxIntegerString());
+    TreeRef b = CreateInteger("1");
     IntegerHandler::Subtraction(Integer::Handler(a), Integer::Handler(b));
   });
   assert_did_overflow([]() {
-    EditionReference a = CreateInteger(MaxIntegerString());
-    EditionReference b = CreateInteger("2");
+    TreeRef a = CreateInteger(MaxIntegerString());
+    TreeRef b = CreateInteger("2");
     IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
   });
   assert_did_not_overflow([]() {
-    EditionReference a = CreateInteger(MaxIntegerString());
-    EditionReference b = CreateInteger("1");
+    TreeRef a = CreateInteger(MaxIntegerString());
+    TreeRef b = CreateInteger("1");
     IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
   });
 }

@@ -67,8 +67,8 @@ void Polynomial::RemoveExponentAtIndex(Tree* polynomial, int index) {
 Tree* Polynomial::AddMonomial(Tree* polynomial,
                               std::pair<Tree*, uint8_t> monomial) {
   uint8_t exponent = std::get<uint8_t>(monomial);
-  EditionReference coefficient = std::get<Tree*>(monomial);
-  EditionReference polynomialReference(polynomial);
+  TreeRef coefficient = std::get<Tree*>(monomial);
+  TreeRef polynomialReference(polynomial);
   int nbOfTerms = NumberOfTerms(polynomial);
   for (int i = 0; i <= nbOfTerms; i++) {
     int16_t exponentOfChildI =
@@ -76,7 +76,7 @@ Tree* Polynomial::AddMonomial(Tree* polynomial,
     if (exponent < exponentOfChildI) {
       continue;
     } else if (exponent == exponentOfChildI) {
-      EditionReference previousChild = polynomialReference->child(i);
+      TreeRef previousChild = polynomialReference->child(i);
       Tree* currentCoefficient = previousChild->nextTree();
       Tree* addition = Polynomial::Addition(currentCoefficient, coefficient);
       previousChild->nextTree()->moveTreeBeforeNode(addition);
@@ -93,7 +93,7 @@ Tree* Polynomial::Addition(Tree* polA, Tree* polB) {
   return Operation(polA, polB, Type::Addition, AddMonomial,
                    [](Tree* result, Tree* polynomial,
                       std::pair<Tree*, uint8_t> monomial, bool isLastTerm) {
-                     EditionReference resultRef(result);
+                     TreeRef resultRef(result);
                      polynomial = AddMonomial(polynomial, monomial);
                      return resultRef->moveTreeOverTree(polynomial);
                    });
@@ -104,7 +104,7 @@ Tree* Polynomial::Multiplication(Tree* polA, Tree* polB) {
   return Operation(polA, polB, Type::Multiplication, MultiplicationMonomial,
                    [](Tree* result, Tree* polynomial,
                       std::pair<Tree*, uint8_t> monomial, bool isLastTerm) {
-                     EditionReference resultRef(result);
+                     TreeRef resultRef(result);
                      Tree* polynomialClone =
                          isLastTerm ? polynomial : polynomial->clone();
                      Tree* multiplication =
@@ -122,12 +122,11 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
                             OperationReduce operationMonomialAndReduce) {
   if (!polA->isPolynomial()) {
     if (!polB->isPolynomial()) {
-      EditionReference op =
-          blockType == Type::Addition
-              ? SharedEditionPool->push<Type::Addition>(2)
-              : SharedEditionPool->push<Type::Multiplication>(2);
+      TreeRef op = blockType == Type::Addition
+                       ? SharedEditionPool->push<Type::Addition>(2)
+                       : SharedEditionPool->push<Type::Multiplication>(2);
       // We're about to move polynomes around, we need references
-      EditionReference polARef(polA);
+      TreeRef polARef(polA);
       op->moveTreeAfterNode(polB);
       op->moveTreeAfterNode(polARef);
       Simplification::DeepSystematicReduce(op);
@@ -146,17 +145,17 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
         operationMonomial(polA, std::make_pair(polB, static_cast<uint8_t>(0)));
   } else {
     // Both polA and polB are polynom(x)
-    EditionReference a = polA;
-    EditionReference b = polB;
+    TreeRef a = polA;
+    TreeRef b = polB;
     Tree* variableB = b->nextNode();
-    EditionReference coefficientB = variableB->nextTree();
+    TreeRef coefficientB = variableB->nextTree();
     size_t i = 0;
     uint8_t nbOfTermsB = NumberOfTerms(b);
     variableB->removeTree();
-    EditionReference result((0_e)->clone());
+    TreeRef result((0_e)->clone());
     assert(i < nbOfTermsB);
     while (i < nbOfTermsB) {
-      EditionReference nextCoefficientB = coefficientB->nextTree();
+      TreeRef nextCoefficientB = coefficientB->nextTree();
       result = operationMonomialAndReduce(
           result, a, std::make_pair(coefficientB, ExponentAtIndex(b, i)),
           i == nbOfTermsB - 1);
@@ -174,16 +173,16 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
 Tree* Polynomial::MultiplicationMonomial(Tree* polynomial,
                                          std::pair<Tree*, uint8_t> monomial) {
   uint8_t exponent = std::get<uint8_t>(monomial);
-  EditionReference coefficient(std::get<Tree*>(monomial));
+  TreeRef coefficient(std::get<Tree*>(monomial));
   int nbOfTerms = NumberOfTerms(polynomial);
   assert(0 < nbOfTerms);
-  EditionReference polynomialReference(polynomial);
+  TreeRef polynomialReference(polynomial);
   for (int i = 0; i < nbOfTerms; i++) {
     // * x^exponent
     SetExponentAtIndex(polynomialReference, i,
                        ExponentAtIndex(polynomialReference, i) + exponent);
     // * coefficient
-    EditionReference previousChild = polynomialReference->child(i);
+    TreeRef previousChild = polynomialReference->child(i);
     Tree* currentCoefficient = previousChild->nextTree();
     // Avoid one cloning for last term
     Tree* coeffClone = i == nbOfTerms - 1 ? static_cast<Tree*>(coefficient)
@@ -197,7 +196,7 @@ Tree* Polynomial::MultiplicationMonomial(Tree* polynomial,
 
 static void extractDegreeAndLeadingCoefficient(Tree* pol, const Tree* x,
                                                uint8_t* degree,
-                                               EditionReference* coefficient) {
+                                               TreeRef* coefficient) {
   if (pol->isPolynomial() &&
       Comparison::AreEqual(x, Polynomial::Variable(pol))) {
     *degree = Polynomial::Degree(pol);
@@ -209,13 +208,13 @@ static void extractDegreeAndLeadingCoefficient(Tree* pol, const Tree* x,
 }
 
 DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
-  EditionReference a(polA);
+  TreeRef a(polA);
   if (!polA->isPolynomial() && !polB->isPolynomial()) {
     assert(polA->isInteger() && polB->isInteger());
     DivisionResult<Tree*> divisionResult = IntegerHandler::Division(
         Integer::Handler(polA), Integer::Handler(polB));
-    EditionReference quotient = divisionResult.quotient;
-    EditionReference remainder = divisionResult.remainder;
+    TreeRef quotient = divisionResult.quotient;
+    TreeRef remainder = divisionResult.remainder;
     polB->removeTree();
     if (remainder->isZero()) {
       a->removeTree();
@@ -233,25 +232,25 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
   if (polB->isPolynomial() && Comparison::Compare(var, Variable(polB)) >= 0) {
     var = Variable(polB);
   }
-  EditionReference b(polB);
-  EditionReference x = var->clone();
+  TreeRef b(polB);
+  TreeRef x = var->clone();
   uint8_t degreeA, degreeB;
-  EditionReference leadingCoeffA, leadingCoeffB;
+  TreeRef leadingCoeffA, leadingCoeffB;
   extractDegreeAndLeadingCoefficient(a, x, &degreeA, &leadingCoeffA);
   extractDegreeAndLeadingCoefficient(b, x, &degreeB, &leadingCoeffB);
-  EditionReference currentQuotient(0_e);
+  TreeRef currentQuotient(0_e);
   while (degreeA >= degreeB) {
     DivisionResult result =
         PseudoDivision(leadingCoeffA->clone(), leadingCoeffB->clone());
-    EditionReference quotient = result.quotient;
-    EditionReference remainder = result.remainder;
+    TreeRef quotient = result.quotient;
+    TreeRef remainder = result.remainder;
     bool stopCondition = !remainder->isZero();
     remainder->removeTree();
     if (stopCondition) {
       quotient->removeTree();
       break;
     }
-    EditionReference xPowerDegAMinusDegB =
+    TreeRef xPowerDegAMinusDegB =
         Polynomial::PushMonomial(x->clone(), degreeA - degreeB);
     currentQuotient = Polynomial::Addition(
         currentQuotient, Polynomial::Multiplication(
@@ -289,9 +288,9 @@ void Polynomial::Normalize(Tree* pol) {
 Tree* Polynomial::Sanitize(Tree* polynomial) {
   uint8_t nbOfTerms = NumberOfTerms(polynomial);
   size_t i = 0;
-  EditionReference coefficient = polynomial->child(1);
+  TreeRef coefficient = polynomial->child(1);
   while (i < nbOfTerms) {
-    EditionReference nextCoefficient = coefficient->nextTree();
+    TreeRef nextCoefficient = coefficient->nextTree();
     if (coefficient->isZero()) {
       coefficient->removeTree();
       NAry::SetNumberOfChildren(polynomial, polynomial->numberOfChildren() - 1);
@@ -305,7 +304,7 @@ Tree* Polynomial::Sanitize(Tree* polynomial) {
     return polynomial->cloneTreeOverTree(0_e);
   }
   if (numberOfTerms == 1 && ExponentAtIndex(polynomial, 0) == 0) {
-    EditionReference result(polynomial->child(1));
+    TreeRef result(polynomial->child(1));
     polynomial->moveTreeOverTree(result);
     return result;
   }
@@ -403,7 +402,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* expression,
 }
 
 Tree* PolynomialParser::Parse(Tree* expression, const Tree* variable) {
-  EditionReference polynomial(Polynomial::PushEmpty(variable));
+  TreeRef polynomial(Polynomial::PushEmpty(variable));
   Type type = expression->type();
   if (type == Type::Addition) {
     for (size_t i = 0; i < expression->numberOfChildren(); i++) {
@@ -419,7 +418,7 @@ Tree* PolynomialParser::Parse(Tree* expression, const Tree* variable) {
   } else {
     // Move polynomial next to expression before it's parsed (and likely
     // replaced)
-    EditionReference expressionRef(expression);
+    TreeRef expressionRef(expression);
     expressionRef->moveTreeBeforeNode(polynomial);
     polynomial = Polynomial::AddMonomial(
         polynomial, ParseMonomial(expressionRef, variable));
@@ -498,13 +497,13 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
   return degree;
 }
 
-EditionReference Polynomial::Coefficient(const Tree* expression, const Tree* variable, uint8_t exponent) {
+TreeRef Polynomial::Coefficient(const Tree* expression, const Tree* variable, uint8_t exponent) {
   Type type = expression.type();
   if (expression.isAddition()) {
     if (Comparison::AreEqual(expression, variable)) {
       return exponent == 1 ? 1_e : 0_e;
     }
-    EditionReference addition = SharedEditionPool->push<Type::Addition>(0);
+    TreeRef addition = SharedEditionPool->push<Type::Addition>(0);
     for (const Tree* child : expression->children()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent == exponent) {
@@ -523,7 +522,7 @@ EditionReference Polynomial::Coefficient(const Tree* expression, const Tree* var
   return 0_e;
 }
 
-std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree* expression, const Tree* variable) {
+std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expression, const Tree* variable) {
   if (Comparison::AreEqual(expression, variable)) {
     return std::make_pair((1_e)->clone(), 1);
   }
@@ -542,7 +541,7 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree*
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at basicReduction
-        EditionReference multCopy = EditionReference::Clone(expression);
+        TreeRef multCopy = TreeRef::Clone(expression);
         multCopy.child(std::get<int>(indexedNode)).moveTreeOverTree(childCoefficient);
         return std::make_pair(multCopy, childExponent);
       }
@@ -551,7 +550,7 @@ std::pair<EditionReference, uint8_t> Polynomial::MonomialCoefficient(const Tree*
   }
   // Assertion results from IsPolynomial = true
   assert(Comparison::ContainsSubtree(expression, variable));
-  return std::make_pair(EditionReference::Clone(expression), 0);
+  return std::make_pair(TreeRef::Clone(expression), 0);
 }
 
 #endif

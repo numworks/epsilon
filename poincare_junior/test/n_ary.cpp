@@ -9,20 +9,20 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_n_ary_manipulation) {
-  EditionReference rackLayout1 = SharedEditionPool->push<Type::RackLayout>(3);
+  TreeRef rackLayout1 = SharedEditionPool->push<Type::RackLayout>(3);
   SharedEditionPool->push<Type::AsciiCodePointLayout, CodePoint>('x');
   SharedEditionPool->push<Type::VerticalOffsetLayout>(false, false);
   SharedEditionPool->push<Type::AsciiCodePointLayout, CodePoint>('2');
   SharedEditionPool->push<Type::AsciiCodePointLayout, CodePoint>('+');
   // rackLayout1 is x^2+
 
-  EditionReference rackLayout2 = SharedEditionPool->push<Type::RackLayout>(3);
+  TreeRef rackLayout2 = SharedEditionPool->push<Type::RackLayout>(3);
   SharedEditionPool->push<Type::AsciiCodePointLayout, CodePoint>('-');
   SharedEditionPool->push<Type::AsciiCodePointLayout, CodePoint>('4');
   SharedEditionPool->push<Type::AsciiCodePointLayout, CodePoint>('3');
   // rackLayout2 is -43
 
-  EditionReference four = NAry::DetachChildAtIndex(rackLayout2, 1);
+  TreeRef four = NAry::DetachChildAtIndex(rackLayout2, 1);
   // rackLayout2 is -3
   NAry::AddChildAtIndex(rackLayout1, four, 3);
   // rackLayout1 is x^2+4
@@ -31,7 +31,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   NAry::RemoveChildAtIndex(rackLayout1, 4);
   // rackLayout1 is x^2-34
 
-  EditionReference rackLayout3 = SharedEditionPool->push<Type::RackLayout>(5);
+  TreeRef rackLayout3 = SharedEditionPool->push<Type::RackLayout>(5);
   SharedEditionPool->push<Type::AsciiCodePointLayout, CodePoint>('x');
   SharedEditionPool->push<Type::VerticalOffsetLayout>(false, false);
   SharedEditionPool->push<Type::AsciiCodePointLayout, CodePoint>('2');
@@ -42,7 +42,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
 
   assert_trees_are_equal(rackLayout1, rackLayout3);
 
-  EditionReference addition1 = SharedEditionPool->push<Type::Addition>(3);
+  TreeRef addition1 = SharedEditionPool->push<Type::Addition>(3);
   SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(1));
   SharedEditionPool->push<Type::Addition>(3);
   SharedEditionPool->push<Type::Multiplication>(2);
@@ -58,7 +58,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   NAry::Flatten(addition1);
   // addition1 is 1+2*3+4+5+6+7
 
-  EditionReference addition2 = SharedEditionPool->push<Type::Addition>(6);
+  TreeRef addition2 = SharedEditionPool->push<Type::Addition>(6);
   SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(1));
   SharedEditionPool->push<Type::Multiplication>(2);
   SharedEditionPool->push<Type::IntegerShort>(static_cast<int8_t>(2));
@@ -83,9 +83,9 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
                       KPow(KTrig(3_e, 0_e), -1_e), KTrig(3_e, 0_e)));
 
   Tree* sorted = SharedEditionPool->clone(KAdd(1_e, 2_e, 3_e));
-  NAry::SortedInsertChild(sorted, EditionReference(0_e));
-  NAry::SortedInsertChild(sorted, EditionReference(2_e));
-  NAry::SortedInsertChild(sorted, EditionReference(5_e));
+  NAry::SortedInsertChild(sorted, TreeRef(0_e));
+  NAry::SortedInsertChild(sorted, TreeRef(2_e));
+  NAry::SortedInsertChild(sorted, TreeRef(5_e));
   assert_trees_are_equal(sorted, KAdd(0_e, 1_e, 2_e, 2_e, 3_e, 5_e));
 
   // CloneSubRange

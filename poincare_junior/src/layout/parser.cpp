@@ -88,8 +88,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
     }
     default: {
       // The layout children map one-to-one to the expression
-      EditionReference ref =
-          SharedEditionPool->push(ExpressionType(node->layoutType()));
+      TreeRef ref = SharedEditionPool->push(ExpressionType(node->layoutType()));
       int n = node->numberOfChildren();
       for (int i = 0; i < n; i++) {
         Parse(node->child(i), context);

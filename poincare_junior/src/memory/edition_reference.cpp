@@ -11,7 +11,7 @@
 
 namespace PoincareJ {
 
-EditionReference::EditionReference(Tree* node) {
+TreeRef::TreeRef(Tree* node) {
   if (!node) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
     return;
@@ -21,7 +21,7 @@ EditionReference::EditionReference(Tree* node) {
   m_identifier = SharedEditionPool->referenceNode(node);
 }
 
-EditionReference& EditionReference::operator=(Tree* tree) {
+TreeRef& TreeRef::operator=(Tree* tree) {
   if (!tree) {
     m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
   } else if (m_identifier != EditionPool::ReferenceTable::NoNodeIdentifier) {
@@ -33,36 +33,36 @@ EditionReference& EditionReference::operator=(Tree* tree) {
 }
 
 #if POINCARE_TREE_LOG
-void EditionReference::log() const {
+void TreeRef::log() const {
   std::cout << "id: " << m_identifier << "\n";
   tree()->log(std::cout, true, 1, true);
 }
 #endif
 
-Tree* EditionReference::tree() const {
+Tree* TreeRef::tree() const {
   return SharedEditionPool->nodeForIdentifier(m_identifier);
 }
 
-void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
+void TreeRef::recursivelyEdit(InPlaceTreeFunction treeFunction) {
   for (auto [child, index] : NodeIterator::Children<Editable>(*this)) {
     child.recursivelyEdit(treeFunction);
   }
   (*treeFunction)(*this);
 }
 
-void CloneNodeAtNode(EditionReference& target, const Tree* nodeToClone) {
+void CloneNodeAtNode(TreeRef& target, const Tree* nodeToClone) {
   Tree* previousTarget = target;
   target->cloneNodeAtNode(nodeToClone);
   target = previousTarget;
 }
 
-void CloneTreeAtNode(EditionReference& target, const Tree* treeToClone) {
+void CloneTreeAtNode(TreeRef& target, const Tree* treeToClone) {
   Tree* previousTarget = target;
   target->cloneTreeAtNode(treeToClone);
   target = previousTarget;
 }
 
-void MoveAt(EditionReference& target, Tree* source, bool tree, bool before) {
+void MoveAt(TreeRef& target, Tree* source, bool tree, bool before) {
   Tree* previousTarget = target;
   if (source->block() < previousTarget->block()) {
     previousTarget =

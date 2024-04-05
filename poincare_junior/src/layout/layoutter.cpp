@@ -91,9 +91,9 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
                                   Preferences::PrintFloatMode floatMode) {
   assert(expression->isExpression());
   /* expression lives before layoutParent in the EditionPool and will be
-   * destroyed in the process. An EditionReference is necessary to keep track of
+   * destroyed in the process. An TreeRef is necessary to keep track of
    * layoutParent's root. */
-  EditionReference layoutParent = SharedEditionPool->push<Type::RackLayout>(0);
+  TreeRef layoutParent = SharedEditionPool->push<Type::RackLayout>(0);
   Layoutter layoutter(linearMode, false, numberOfSignificantDigits, floatMode);
   layoutter.m_addSeparators =
       !linearMode && layoutter.requireSeparators(expression);
@@ -118,7 +118,7 @@ void Layoutter::addSeparator(Tree *layoutParent) {
   NAry::AddChild(layoutParent, KOperatorSeparatorL->clone());
 }
 
-void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
+void Layoutter::layoutText(TreeRef &layoutParent, const char *text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
@@ -127,8 +127,7 @@ void Layoutter::layoutText(EditionReference &layoutParent, const char *text) {
   }
 }
 
-void Layoutter::layoutBuiltin(EditionReference &layoutParent,
-                              Tree *expression) {
+void Layoutter::layoutBuiltin(TreeRef &layoutParent, Tree *expression) {
   assert(Builtin::IsReservedFunction(expression));
   const Builtin *builtin = Builtin::GetReservedFunction(expression);
   if (m_linearMode || !builtin->has2DLayout()) {
@@ -144,7 +143,7 @@ void Layoutter::layoutBuiltin(EditionReference &layoutParent,
     // Built 2D layout associated with builtin
     const BuiltinWithLayout *builtinWithLayout =
         static_cast<const BuiltinWithLayout *>(builtin);
-    EditionReference layout = SharedEditionPool->push(
+    TreeRef layout = SharedEditionPool->push(
         static_cast<Type>(builtinWithLayout->layoutType()));
     /* Some builtins have a bigger nodeSize. Additional parameters are not
      * handled here. TODO_PCJ: Remove this one these Layouts are moved out of
@@ -157,12 +156,12 @@ void Layoutter::layoutBuiltin(EditionReference &layoutParent,
   }
 }
 
-void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
-                                   Tree *expression, const char *name) {
+void Layoutter::layoutFunctionCall(TreeRef &layoutParent, Tree *expression,
+                                   const char *name) {
   layoutText(layoutParent, name);
-  EditionReference parenthesis =
+  TreeRef parenthesis =
       SharedEditionPool->push<Type::ParenthesisLayout>(false, false);
-  EditionReference newParent = SharedEditionPool->push<Type::RackLayout>(0);
+  TreeRef newParent = SharedEditionPool->push<Type::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (j == 1 && expression->isListStatWithCoefficients() &&
@@ -180,12 +179,12 @@ void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
 
 void Layoutter::layoutChildrenAsRacks(Tree *expression) {
   for (int j = 0; j < expression->numberOfChildren(); j++) {
-    EditionReference newParent = SharedEditionPool->push<Type::RackLayout>(0);
+    TreeRef newParent = SharedEditionPool->push<Type::RackLayout>(0);
     layoutExpression(newParent, expression->nextNode(), k_maxPriority);
   }
 }
 
-void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
+void Layoutter::layoutIntegerHandler(TreeRef &layoutParent,
                                      IntegerHandler handler,
                                      int decimalOffset) {
   if (handler.strictSign() == StrictSign::Negative) {
@@ -196,7 +195,7 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
    * pushing layouts on the EditionPool at each steps. Value is therefore
    * temporarily stored and updated on the EditionPool. */
-  EditionReference value = handler.pushOnEditionPool();
+  TreeRef value = handler.pushOnEditionPool();
   do {
     DivisionResult result =
         IntegerHandler::Division(Integer::Handler(value), IntegerHandler(10));
@@ -218,9 +217,8 @@ void Layoutter::layoutIntegerHandler(EditionReference &layoutParent,
   NAry::AddOrMergeChild(layoutParent, rack);
 }
 
-void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
-                                    Tree *expression, CodePoint op,
-                                    bool multiplication) {
+void Layoutter::layoutInfixOperator(TreeRef &layoutParent, Tree *expression,
+                                    CodePoint op, bool multiplication) {
   Type type = expression->type();
   int childNumber = expression->numberOfChildren();
   bool previousWasUnit = false;
@@ -251,9 +249,9 @@ void Layoutter::layoutInfixOperator(EditionReference &layoutParent,
   }
 }
 
-void Layoutter::layoutMatrix(EditionReference &layoutParent, Tree *expression) {
+void Layoutter::layoutMatrix(TreeRef &layoutParent, Tree *expression) {
   if (!m_linearMode) {
-    EditionReference layout = expression->cloneNode();
+    TreeRef layout = expression->cloneNode();
     *layout->block() = Type::MatrixLayout;
     layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
@@ -278,7 +276,7 @@ void Layoutter::layoutMatrix(EditionReference &layoutParent, Tree *expression) {
   PushCodePoint(layoutParent, ']');
 }
 
-void Layoutter::layoutUnit(EditionReference &layoutParent, Tree *expression) {
+void Layoutter::layoutUnit(TreeRef &layoutParent, Tree *expression) {
   // TODO PCJ ask the context whether to add an underscore
   if (m_linearMode) {
     PushCodePoint(layoutParent, '_');
@@ -289,12 +287,11 @@ void Layoutter::layoutUnit(EditionReference &layoutParent, Tree *expression) {
       Units::Unit::GetRepresentative(expression)->rootSymbols().mainAlias());
 }
 
-void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
-                                      Tree *expression) {
+void Layoutter::layoutPowerOrDivision(TreeRef &layoutParent, Tree *expression) {
   Type type = expression->type();
   /* Once first child has been converted, this will point to second child. */
   expression = expression->nextNode();
-  EditionReference createdLayout;
+  TreeRef createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (m_linearMode) {
     layoutExpression(layoutParent, expression, OperatorPriority(type));
@@ -304,30 +301,30 @@ void Layoutter::layoutPowerOrDivision(EditionReference &layoutParent,
   }
   if (type == Type::Division) {
     createdLayout = SharedEditionPool->push(Type::FractionLayout);
-    EditionReference rack = SharedEditionPool->push<Type::RackLayout>(0);
+    TreeRef rack = SharedEditionPool->push<Type::RackLayout>(0);
     layoutExpression(rack, expression, k_maxPriority);
   } else {
     assert(type == Type::Power || type == Type::PowerMatrix);
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     createdLayout = KSuperscriptL->cloneNode();
   }
-  EditionReference rack = SharedEditionPool->push<Type::RackLayout>(0);
+  TreeRef rack = SharedEditionPool->push<Type::RackLayout>(0);
   layoutExpression(rack, expression, k_maxPriority);
   NAry::AddChild(layoutParent, createdLayout);
 }
 
 // Remove expression while converting it to a layout in layoutParent
-void Layoutter::layoutExpression(EditionReference &layoutParent,
-                                 Tree *expression, int parentPriority) {
+void Layoutter::layoutExpression(TreeRef &layoutParent, Tree *expression,
+                                 int parentPriority) {
   assert(layoutParent->isRackLayout());
   TypeBlock type = expression->type();
 
   // Add Parentheses if necessary
   if (parentPriority < OperatorPriority(type) &&
       !(type.isPoint() || type.isList())) {
-    EditionReference parenthesis = KParenthesisL(KRackL())->clone();
+    TreeRef parenthesis = KParenthesisL(KRackL())->clone();
     NAry::AddChild(layoutParent, parenthesis);
-    EditionReference rack = parenthesis->child(0);
+    TreeRef rack = parenthesis->child(0);
     return layoutExpression(rack, expression, k_maxPriority);
   }
 
@@ -432,7 +429,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
           }
         } else {
           assert(expression->isNthDerivative());
-          EditionReference rack;
+          TreeRef rack;
           if (m_linearMode) {
             PushCodePoint(layoutParent, '^');
             rack = layoutParent;
@@ -452,7 +449,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {
-        EditionReference layout =
+        TreeRef layout =
             (type.isDerivative() ? KDerivativeL : KNthDerivativeL)->cloneNode();
         if (type.isNthDerivative()) {
           // Handle the peculiar order of nth-derivative layout
@@ -470,7 +467,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
               Preferences::CombinatoricSymbols::Default) {
         layoutBuiltin(layoutParent, expression);
       } else {
-        EditionReference layout = SharedEditionPool->push(
+        TreeRef layout = SharedEditionPool->push(
             type.isBinomial() ? Type::PtBinomialLayout : Type::PtPermuteLayout);
         layoutChildrenAsRacks(expression);
         NAry::AddChild(layoutParent, layout);
@@ -489,9 +486,9 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
         layoutText(layoutParent, log);
       }
       // Base
-      EditionReference layout =
+      TreeRef layout =
           nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();
-      EditionReference newParent = KRackL()->clone();
+      TreeRef newParent = KRackL()->clone();
       layoutExpression(newParent, expression->child(1), k_maxPriority);
       NAry::AddChild(layoutParent, layout);
       if (nlLog) {
@@ -540,7 +537,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
           layoutExpression(layoutParent, expression->nextNode(),
                            k_forceParenthesis);
         } else {
-          EditionReference layout = KSubscriptL->cloneNode();
+          TreeRef layout = KSubscriptL->cloneNode();
           layoutChildrenAsRacks(expression);
           NAry::AddChild(layoutParent, layout);
         }
@@ -563,8 +560,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
         layoutBuiltin(layoutParent, expression);
       } else {
         int rows = (expression->numberOfChildren() + 1) / 2;
-        EditionReference layout =
-            SharedEditionPool->push(Type::PiecewiseLayout);
+        TreeRef layout = SharedEditionPool->push(Type::PiecewiseLayout);
         SharedEditionPool->push(rows + 1);
         SharedEditionPool->push(2);
         layoutChildrenAsRacks(expression);
@@ -598,7 +594,7 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
                 : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
             m_floatMode);
       }
-      EditionReference rack = KRackL()->clone();
+      TreeRef rack = KRackL()->clone();
       layoutText(rack, buffer);
       AddThousandSeparators(rack);
       NAry::AddOrMergeChild(layoutParent, rack);
@@ -647,9 +643,9 @@ void Layoutter::layoutExpression(EditionReference &layoutParent,
         PushCodePoint(layoutParent, type.isPoint() ? ')' : '}');
         break;
       } else {
-        EditionReference parenthesis =
+        TreeRef parenthesis =
             (type.isList() ? KCurlyBracesL : KParenthesisL)->cloneNode();
-        EditionReference rack = KRackL()->clone();
+        TreeRef rack = KRackL()->clone();
         NAry::AddChild(layoutParent, parenthesis);
         layoutInfixOperator(rack, expression, ',');
         break;
@@ -774,7 +770,7 @@ bool Layoutter::requireSeparators(const Tree *expr) {
     /* Since rules are complex with floatDisplayMode, layout the float and check
      * if it has separators. */
     Tree *clone = expr->clone();
-    EditionReference rack = KRackL()->clone();
+    TreeRef rack = KRackL()->clone();
     layoutExpression(rack, clone, k_tokenPriority);
     for (const Tree *child : rack->children()) {
       if (child->isSeparatorLayout()) {

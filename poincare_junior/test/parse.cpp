@@ -38,7 +38,7 @@ QUIZ_CASE(pcj_layout_tokenize) {
 }
 
 bool is_parsable(const Tree* layout) {
-  EditionReference expression = RackParser(layout, nullptr).parse();
+  TreeRef expression = RackParser(layout, nullptr).parse();
   return !expression.isUninitialized();
 }
 

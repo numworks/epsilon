@@ -33,7 +33,7 @@ class AutocompletedPair {
   static Tree* BuildFromBracketType(TypeBlock type);
 
   // Deep balance the autocompleted brackets in rack
-  static void BalanceBrackets(Tree* rack, EditionReference& cursorLayout,
+  static void BalanceBrackets(Tree* rack, TreeRef& cursorLayout,
                               int* cursorPosition);
 
   static void MakeChildrenPermanent(Tree* node, Side side, bool includeThis);
@@ -41,8 +41,8 @@ class AutocompletedPair {
 
  private:
   static void PrivateBalanceBrackets(TypeBlock type, Tree* hLayout,
-                                     EditionReference& cursorLayout,
-                                     int* cursorPosition, Tree* root);
+                                     TreeRef& cursorLayout, int* cursorPosition,
+                                     Tree* root);
 };  // namespace AutocompletedPair
 
 }  // namespace PoincareJ

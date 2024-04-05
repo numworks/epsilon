@@ -50,7 +50,7 @@ static bool s_reductionEncounteredUndistributedList = false;
 /* Constructor & Destructor */
 
 OExpression OExpression::clone() const {
-  TreeHandle c = TreeHandle::clone();
+  PoolHandle c = PoolHandle::clone();
   return static_cast<OExpression &>(c);
 }
 
@@ -86,7 +86,7 @@ OExpression OExpression::ExpressionFromAddress(const void *address,
 
 OExpression OExpression::childAtIndex(int i) const {
   assert(i >= 0 && i < numberOfChildren());
-  TreeHandle c = TreeHandle::childAtIndex(i);
+  PoolHandle c = PoolHandle::childAtIndex(i);
   return static_cast<OExpression &>(c);
 }
 
@@ -762,7 +762,7 @@ OExpression OExpression::shallowReduceUsingApproximation(
 }
 
 OExpression OExpression::parent() const {
-  TreeHandle p = TreeHandle::parent();
+  PoolHandle p = PoolHandle::parent();
   return static_cast<OExpression &>(p);
 }
 
@@ -1864,7 +1864,7 @@ OExpression OExpression::CreateComplexExpression(
 static OExpression maker(OExpression children, int nbChildren,
                          PoolObject::Initializer initializer, size_t size) {
   assert(children.otype() == ExpressionNode::Type::OList);
-  TreeHandle handle = TreeHandle::Builder(initializer, size, nbChildren);
+  PoolHandle handle = PoolHandle::Builder(initializer, size, nbChildren);
   OExpression result = static_cast<OExpression &>(handle);
   for (size_t i = 0; i < static_cast<size_t>(nbChildren); i++) {
     result.replaceChildAtIndexInPlace(i, children.childAtIndex(i));

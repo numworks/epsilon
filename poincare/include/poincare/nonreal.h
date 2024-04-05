@@ -50,7 +50,7 @@ class NonrealNode final : public UndefinedNode {
 class Nonreal final : public Number {
  public:
   static Nonreal Builder() {
-    return TreeHandle::FixedArityBuilder<Nonreal, NonrealNode>();
+    return PoolHandle::FixedArityBuilder<Nonreal, NonrealNode>();
   }
   Nonreal() = delete;
   constexpr static const char* Name() { return "nonreal"; }

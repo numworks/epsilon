@@ -10,22 +10,22 @@
 
 namespace Poincare {
 
-class OLayout : public TreeHandle {
+class OLayout : public PoolHandle {
  public:
-  OLayout() : TreeHandle() {}
-  OLayout(const LayoutNode *node) : TreeHandle(node) {}
+  OLayout() : PoolHandle() {}
+  OLayout(const LayoutNode *node) : PoolHandle(node) {}
   OLayout clone() const;
 
   const LayoutNode *operator->() const {
     assert(isUninitialized() ||
-           (TreeHandle::node() && !TreeHandle::node()->isGhost()));
-    return static_cast<const LayoutNode *>(TreeHandle::node());
+           (PoolHandle::node() && !PoolHandle::node()->isGhost()));
+    return static_cast<const LayoutNode *>(PoolHandle::node());
   }
 
   LayoutNode *operator->() {
     assert(isUninitialized() ||
-           (TreeHandle::node() && !TreeHandle::node()->isGhost()));
-    return static_cast<LayoutNode *>(TreeHandle::node());
+           (PoolHandle::node() && !PoolHandle::node()->isGhost()));
+    return static_cast<LayoutNode *>(PoolHandle::node());
   }
 
   bool isIdenticalTo(OLayout l, bool makeEditable = false) const {

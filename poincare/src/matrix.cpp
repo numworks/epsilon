@@ -112,7 +112,7 @@ void OMatrix::setDimensions(int rows, int columns) {
   setNumberOfColumns(columns);
 }
 
-void OMatrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
+void OMatrix::addChildrenAsRowInPlace(PoolHandle t, int i) {
   int previousNumberOfColumns = numberOfColumns();
   if (previousNumberOfColumns > 0) {
     assert(t.numberOfChildren() == numberOfColumns());

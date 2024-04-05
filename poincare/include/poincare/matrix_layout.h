@@ -53,7 +53,7 @@ class MatrixLayout final : public GridLayout {
  public:
   MatrixLayout(const MatrixLayoutNode *n) : GridLayout(n) {}
   static MatrixLayout Builder() {
-    return TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>();
+    return PoolHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>();
   }
   static MatrixLayout Builder(OLayout l1);
   static MatrixLayout Builder(OLayout l1, OLayout l2, OLayout l3, OLayout l4);

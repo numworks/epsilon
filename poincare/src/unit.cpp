@@ -1105,7 +1105,7 @@ OUnit OUnit::Builder(const OUnit::Representative* representative,
                      const Prefix* prefix) {
   void* bufferNode = Pool::sharedPool->alloc(sizeof(UnitNode));
   UnitNode* node = new (bufferNode) UnitNode(representative, prefix);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<OUnit&>(h);
 }
 

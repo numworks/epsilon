@@ -32,7 +32,7 @@ QUIZ_CASE(tree_handle_can_be_copied) {
   {
     BlobByReference b = BlobByReference::Builder(123);
     assert_pool_size(initialPoolSize + 1);
-    TreeHandle t = b;
+    PoolHandle t = b;
     assert_pool_size(initialPoolSize + 1);
   }
   assert_pool_size(initialPoolSize);
@@ -41,22 +41,22 @@ QUIZ_CASE(tree_handle_can_be_copied) {
 QUIZ_CASE(tree_handle_can_be_moved) {
   int initialPoolSize = pool_size();
   {
-    TreeHandle t = BlobByReference::Builder(123);
+    PoolHandle t = BlobByReference::Builder(123);
     assert_pool_size(initialPoolSize + 1);
   }
   {
-    TreeHandle t = BlobByReference::Builder(123);
+    PoolHandle t = BlobByReference::Builder(123);
     t = BlobByReference::Builder(456);
     assert_pool_size(initialPoolSize + 1);
   }
   assert_pool_size(initialPoolSize);
 }
 
-static TreeHandle blob_with_data_3() { return BlobByReference::Builder(3); }
+static PoolHandle blob_with_data_3() { return BlobByReference::Builder(3); }
 
 QUIZ_CASE(tree_handle_can_be_returned) {
   int initialPoolSize = pool_size();
-  TreeHandle b = blob_with_data_3();
+  PoolHandle b = blob_with_data_3();
   assert_pool_size(initialPoolSize + 1);
 }
 
@@ -65,7 +65,7 @@ QUIZ_CASE(tree_handle_memory_failure) {
   int memoryFailureHasBeenHandled = false;
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    TreeHandle tree = BlobByReference::Builder(1);
+    PoolHandle tree = BlobByReference::Builder(1);
     while (true) {
       tree = PairByReference::Builder(tree, BlobByReference::Builder(1));
     }

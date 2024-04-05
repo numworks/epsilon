@@ -542,7 +542,7 @@ Decimal Decimal::Builder(size_t size, const Integer &m, int e) {
   void *bufferNode = Pool::sharedPool->alloc(size);
   DecimalNode *node = new (bufferNode)
       DecimalNode(m.digits(), m.numberOfDigits(), e, m.isNegative());
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<Decimal &>(h);
 }
 

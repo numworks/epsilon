@@ -6,39 +6,39 @@
 #include <initializer_list>
 
 namespace Poincare {
-/* A TreeHandle references a PoolObject stored somewhere is the OExpression
+/* A PoolHandle references a PoolObject stored somewhere is the OExpression
  * Pool, and identified by its idenfier. Any method that can possibly move the
  * object ("break the this") therefore needs to be implemented in the Handle
  * rather than the Node.
  */
-class TreeHandle {
+class PoolHandle {
   friend class PoolObject;
   friend class Pool;
 
  public:
   /* Constructors  */
-  /* TreeHandle constructors that take only one argument and this argument is
-   * a TreeHandle should be marked explicit. This prevents the code from
+  /* PoolHandle constructors that take only one argument and this argument is
+   * a PoolHandle should be marked explicit. This prevents the code from
    * compiling with, for instance: Logarithm l = clone() (which would be
    * equivalent to Logarithm l = Logarithm(clone())). */
-  TreeHandle(const TreeHandle& tr)
+  PoolHandle(const PoolHandle& tr)
       : m_identifier(PoolObject::NoNodeIdentifier) {
     setIdentifierAndRetain(tr.identifier());
   }
 
-  TreeHandle(TreeHandle&& tr) : m_identifier(tr.m_identifier) {
+  PoolHandle(PoolHandle&& tr) : m_identifier(tr.m_identifier) {
     tr.m_identifier = PoolObject::NoNodeIdentifier;
   }
 
-  ~TreeHandle() { release(m_identifier); }
+  ~PoolHandle() { release(m_identifier); }
 
   /* Operators */
-  TreeHandle& operator=(const TreeHandle& tr) {
+  PoolHandle& operator=(const PoolHandle& tr) {
     setTo(tr);
     return *this;
   }
 
-  TreeHandle& operator=(TreeHandle&& tr) {
+  PoolHandle& operator=(PoolHandle&& tr) {
     release(m_identifier);
     m_identifier = tr.m_identifier;
     tr.m_identifier = PoolObject::NoNodeIdentifier;
@@ -46,15 +46,15 @@ class TreeHandle {
   }
 
   /* Comparison */
-  inline bool operator==(const TreeHandle& t) const {
+  inline bool operator==(const PoolHandle& t) const {
     return m_identifier == t.identifier();
   }
-  inline bool operator!=(const TreeHandle& t) const {
+  inline bool operator!=(const PoolHandle& t) const {
     return m_identifier != t.identifier();
   }
 
   /* Clone */
-  TreeHandle clone() const;
+  PoolHandle clone() const;
 
   uint16_t identifier() const { return m_identifier; }
   PoolObject* node() const;
@@ -77,20 +77,20 @@ class TreeHandle {
   }
 
   /* Hierarchy */
-  bool hasChild(TreeHandle t) const;
-  bool hasSibling(TreeHandle t) const { return node()->hasSibling(t.node()); }
-  bool hasAncestor(TreeHandle t, bool includeSelf) const {
+  bool hasChild(PoolHandle t) const;
+  bool hasSibling(PoolHandle t) const { return node()->hasSibling(t.node()); }
+  bool hasAncestor(PoolHandle t, bool includeSelf) const {
     return node()->hasAncestor(t.node(), includeSelf);
   }
-  TreeHandle commonAncestorWith(TreeHandle t,
+  PoolHandle commonAncestorWith(PoolHandle t,
                                 bool includeTheseNodes = true) const;
   int numberOfChildren() const { return node()->numberOfChildren(); }
   void setNumberOfChildren(int numberOfChildren) {
     node()->setNumberOfChildren(numberOfChildren);
   }
-  int indexOfChild(TreeHandle t) const;
-  TreeHandle parent() const;
-  TreeHandle childAtIndex(int i) const;
+  int indexOfChild(PoolHandle t) const;
+  PoolHandle parent() const;
+  PoolHandle childAtIndex(int i) const;
   void setParentIdentifier(uint16_t id) { node()->setParentIdentifier(id); }
   void deleteParentIdentifier() { node()->deleteParentIdentifier(); }
   void deleteParentIdentifierInChildren() {
@@ -105,16 +105,16 @@ class TreeHandle {
 
   /* Hierarchy operations */
   // Replace
-  void replaceWithInPlace(TreeHandle t);
-  void replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild);
-  void replaceChildAtIndexInPlace(int oldChildIndex, TreeHandle newChild);
+  void replaceWithInPlace(PoolHandle t);
+  void replaceChildInPlace(PoolHandle oldChild, PoolHandle newChild);
+  void replaceChildAtIndexInPlace(int oldChildIndex, PoolHandle newChild);
   void replaceChildAtIndexWithGhostInPlace(int index) {
     assert(index >= 0 && index < numberOfChildren());
     replaceChildWithGhostInPlace(childAtIndex(index));
   }
-  void replaceChildWithGhostInPlace(TreeHandle t);
+  void replaceChildWithGhostInPlace(PoolHandle t);
   // Merge
-  void mergeChildrenAtIndexInPlace(TreeHandle t, int i);
+  void mergeChildrenAtIndexInPlace(PoolHandle t, int i);
   // Swap
   void swapChildrenInPlace(int i, int j);
 
@@ -123,11 +123,11 @@ class TreeHandle {
   void log() const;
 #endif
 
-  typedef std::initializer_list<TreeHandle> Tuple;
+  typedef std::initializer_list<PoolHandle> Tuple;
 
-  static TreeHandle Builder(PoolObject::Initializer initializer, size_t size,
+  static PoolHandle Builder(PoolObject::Initializer initializer, size_t size,
                             int numberOfChildren = -1);
-  static TreeHandle BuilderWithChildren(PoolObject::Initializer initializer,
+  static PoolHandle BuilderWithChildren(PoolObject::Initializer initializer,
                                         size_t size, const Tuple& children);
 
   // Iterator
@@ -197,15 +197,15 @@ class TreeHandle {
     int m_firstIndex;
   };
 
-  Direct<TreeHandle, PoolObject> directChildren() const {
-    return Direct<TreeHandle, PoolObject>(*this);
+  Direct<PoolHandle, PoolObject> directChildren() const {
+    return Direct<PoolHandle, PoolObject>(*this);
   }
 
  protected:
   /* Constructor */
-  TreeHandle(const PoolObject* node);
+  PoolHandle(const PoolObject* node);
   // Un-inlining this constructor actually inscreases the firmware size
-  TreeHandle(uint16_t nodeIndentifier = PoolObject::NoNodeIdentifier)
+  PoolHandle(uint16_t nodeIndentifier = PoolObject::NoNodeIdentifier)
       : m_identifier(nodeIndentifier) {
     if (hasNode(nodeIndentifier)) {
       node()->retain();
@@ -213,16 +213,16 @@ class TreeHandle {
   }
 
   /* WARNING: if the children table is the result of a cast, the object
-   * downcasted has to be the same size as a TreeHandle. */
+   * downcasted has to be the same size as a PoolHandle. */
   template <class T, class U>
   static T NAryBuilder(const Tuple& children = {});
   template <class T, class U>
   static T FixedArityBuilder(const Tuple& children = {});
 
-  static TreeHandle BuildWithGhostChildren(PoolObject* node);
+  static PoolHandle BuildWithGhostChildren(PoolObject* node);
 
   void setIdentifierAndRetain(uint16_t newId);
-  void setTo(const TreeHandle& tr);
+  void setTo(const PoolHandle& tr);
 
   static bool hasNode(uint16_t identifier) {
     return PoolObject::IsValidIdentifier(identifier);
@@ -230,18 +230,18 @@ class TreeHandle {
 
   /* Hierarchy operations */
   // Add
-  void addChildAtIndexInPlace(TreeHandle t, int index,
+  void addChildAtIndexInPlace(PoolHandle t, int index,
                               int currentNumberOfChildren);
   // Remove puts a child at the end of the pool
   void removeChildAtIndexInPlace(int i);
-  void removeChildInPlace(TreeHandle t, int childNumberOfChildren);
+  void removeChildInPlace(PoolHandle t, int childNumberOfChildren);
   void removeChildrenInPlace(int currentNumberOfChildren);
 
   uint16_t m_identifier;
 
  private:
   template <class U>
-  static TreeHandle Builder();
+  static PoolHandle Builder();
 
   void detachFromParent();
   // Add ghost children on layout construction

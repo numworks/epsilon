@@ -71,7 +71,7 @@ template <typename T>
 Complex<T> Complex<T>::Builder(std::complex<T> c) {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(ComplexNode<T>));
   ComplexNode<T> *node = new (bufferNode) ComplexNode<T>(c);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<Complex<T> &>(h);
 }
 

@@ -56,7 +56,7 @@ class IntegerNode final : public PoolObject {
   native_uint_t m_digits[0];  // Little-endian
 };
 
-class Integer final : public TreeHandle {
+class Integer final : public PoolHandle {
   friend class BasedIntegerNode;
 
  public:
@@ -213,9 +213,9 @@ class Integer final : public TreeHandle {
   // Constructors
   Integer(native_uint_t *digits, uint16_t numberOfDigits, bool negative);
   Integer(int identifier, bool negative)
-      : TreeHandle(identifier), m_negative(negative), m_digit(0) {}
+      : PoolHandle(identifier), m_negative(negative), m_digit(0) {}
   IntegerNode *node() const {
-    return static_cast<IntegerNode *>(TreeHandle::node());
+    return static_cast<IntegerNode *>(PoolHandle::node());
   }
 
   // Arithmetic

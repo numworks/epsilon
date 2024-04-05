@@ -14,7 +14,7 @@ BooleanEvaluation<T> BooleanEvaluation<T>::Builder(bool value) {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(BooleanEvaluationNode<T>));
   BooleanEvaluationNode<T> *node =
       new (bufferNode) BooleanEvaluationNode<T>(value);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<BooleanEvaluation<T> &>(h);
 }
 
@@ -33,7 +33,7 @@ size_t BooleanNode::serialize(char *buffer, size_t bufferSize,
 OBoolean OBoolean::Builder(bool value) {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(BooleanNode));
   BooleanNode *node = new (bufferNode) BooleanNode(value);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<OBoolean &>(h);
 }
 

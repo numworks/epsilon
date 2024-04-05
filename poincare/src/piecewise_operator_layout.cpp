@@ -149,7 +149,7 @@ void PiecewiseOperatorLayoutNode::makeLastConditionVisibleIfEmpty(
 // OLayout
 
 PiecewiseOperatorLayout PiecewiseOperatorLayout::Builder() {
-  TreeHandle result = TreeHandle::NAryBuilder<PiecewiseOperatorLayout,
+  PoolHandle result = PoolHandle::NAryBuilder<PiecewiseOperatorLayout,
                                               PiecewiseOperatorLayoutNode>({});
   PiecewiseOperatorLayout layout =
       static_cast<PiecewiseOperatorLayout &>(result);

@@ -40,7 +40,7 @@ void PoolObject::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
 
 PoolObject *PoolObject::parent() const {
   assert(m_parentIdentifier != m_identifier);
-  return TreeHandle::hasNode(m_parentIdentifier)
+  return PoolHandle::hasNode(m_parentIdentifier)
              ? Pool::sharedPool->node(m_parentIdentifier)
              : nullptr;
 }

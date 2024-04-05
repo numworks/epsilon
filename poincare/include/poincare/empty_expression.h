@@ -56,7 +56,7 @@ class EmptyExpressionNode final : public ExpressionNode {
 class EmptyExpression final : public OExpression {
  public:
   static EmptyExpression Builder() {
-    return TreeHandle::FixedArityBuilder<EmptyExpression,
+    return PoolHandle::FixedArityBuilder<EmptyExpression,
                                          EmptyExpressionNode>();
   }
   EmptyExpression(const EmptyExpressionNode* n) : OExpression(n) {}

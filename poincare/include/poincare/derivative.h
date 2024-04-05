@@ -90,12 +90,12 @@ class Derivative final : public ParameteredExpression {
 
   static Derivative Builder(OExpression child0, Symbol child1,
                             OExpression child2) {
-    return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(
+    return PoolHandle::FixedArityBuilder<Derivative, DerivativeNode>(
         {child0, child1, child2, Rational::Builder(1)});
   }
   static Derivative Builder(OExpression child0, Symbol child1,
                             OExpression child2, OExpression child3) {
-    return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(
+    return PoolHandle::FixedArityBuilder<Derivative, DerivativeNode>(
         {child0, child1, child2, child3});
   }
   static OExpression UntypedBuilder(OExpression children);

@@ -59,10 +59,10 @@ uint32_t PointOfInterest::data() const {
 PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
   assert(!m_list.isUninitialized());
   assert(0 <= i && i < m_list.numberOfChildren());
-  /* We need to call TreeHandle::childAtIndex instead of
+  /* We need to call PoolHandle::childAtIndex instead of
    * OExpression::childAtIndex, since a PointOfInterest is not an OExpression.
    */
-  TreeHandle h = static_cast<const TreeHandle &>(m_list).childAtIndex(i);
+  PoolHandle h = static_cast<const PoolHandle &>(m_list).childAtIndex(i);
   return static_cast<PointOfInterest &>(h);
 }
 

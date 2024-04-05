@@ -101,7 +101,7 @@ StringLayout StringLayout::Builder(const char *string, int stringSize) {
                                              sizeof(char) * stringSize);
   StringLayoutNode *node =
       new (bufferNode) StringLayoutNode(string, stringSize);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<StringLayout &>(h);
 }
 

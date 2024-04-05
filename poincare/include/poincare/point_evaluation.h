@@ -26,7 +26,7 @@ class PointEvaluationNode final : public EvaluationNode<T> {
   OExpression complexToExpression(
       Preferences::ComplexFormat complexFormat) const override;
 
-  // TreeHandle
+  // PoolHandle
   size_t size() const override { return sizeof(PointEvaluationNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

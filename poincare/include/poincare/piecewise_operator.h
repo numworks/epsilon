@@ -67,8 +67,8 @@ class PiecewiseOperator final : public OExpression {
 
  public:
   PiecewiseOperator(const PiecewiseOperatorNode* n) : OExpression(n) {}
-  using TreeHandle::addChildAtIndexInPlace;
-  using TreeHandle::removeChildAtIndexInPlace;
+  using PoolHandle::addChildAtIndexInPlace;
+  using PoolHandle::removeChildAtIndexInPlace;
   static OExpression UntypedBuilder(OExpression children);
   constexpr static OExpression::FunctionHelper s_functionHelper =
       OExpression::FunctionHelper("piecewise", 1, INT_MAX, &UntypedBuilder);
@@ -86,7 +86,7 @@ class PiecewiseOperator final : public OExpression {
 
  private:
   static PiecewiseOperator Builder(const Tuple& children) {
-    return TreeHandle::NAryBuilder<PiecewiseOperator, PiecewiseOperatorNode>(
+    return PoolHandle::NAryBuilder<PiecewiseOperator, PiecewiseOperatorNode>(
         convert(children));
   }
   // This will shallowReduce the resulting expression.

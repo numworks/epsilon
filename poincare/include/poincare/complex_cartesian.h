@@ -61,11 +61,11 @@ class ComplexCartesian final : public OExpression {
   ComplexCartesian() : OExpression() {}
   ComplexCartesian(const ComplexCartesianNode* node) : OExpression(node) {}
   static ComplexCartesian Builder() {
-    return TreeHandle::FixedArityBuilder<ComplexCartesian,
+    return PoolHandle::FixedArityBuilder<ComplexCartesian,
                                          ComplexCartesianNode>();
   }
   static ComplexCartesian Builder(OExpression child0, OExpression child1) {
-    return TreeHandle::FixedArityBuilder<ComplexCartesian,
+    return PoolHandle::FixedArityBuilder<ComplexCartesian,
                                          ComplexCartesianNode>(
         {child0, child1});
   }

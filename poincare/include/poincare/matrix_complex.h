@@ -63,7 +63,7 @@ class MatrixComplex final : public Evaluation<T> {
  public:
   MatrixComplex(MatrixComplexNode<T> *node) : Evaluation<T>(node) {}
   static MatrixComplex Builder() {
-    return TreeHandle::NAryBuilder<MatrixComplex<T>, MatrixComplexNode<T>>();
+    return PoolHandle::NAryBuilder<MatrixComplex<T>, MatrixComplexNode<T>>();
   }
   static MatrixComplex Builder(std::complex<T> *operands, int numberOfRows,
                                int numberOfColumns);

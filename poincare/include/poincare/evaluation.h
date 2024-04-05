@@ -47,9 +47,9 @@ class EvaluationNode : public PoolObject {
 };
 
 template <typename T>
-class Evaluation : public TreeHandle {
+class Evaluation : public PoolHandle {
  public:
-  Evaluation() : TreeHandle() {}
+  Evaluation() : PoolHandle() {}
 #if 0
   template<class U> U convert() const {
     /* This function allows to convert Evaluation to derived Evaluation.
@@ -64,8 +64,8 @@ class Evaluation : public TreeHandle {
   }
 #endif
   EvaluationNode<T> *node() const {
-    assert(!TreeHandle::node()->isGhost());
-    return static_cast<EvaluationNode<T> *>(TreeHandle::node());
+    assert(!PoolHandle::node()->isGhost());
+    return static_cast<EvaluationNode<T> *>(PoolHandle::node());
   }
 
   /* Hierarchy */
@@ -89,7 +89,7 @@ class Evaluation : public TreeHandle {
   bool isListOfDefinedPoints() const { return node()->isListOfDefinedPoints(); }
 
  protected:
-  Evaluation(EvaluationNode<T> *n) : TreeHandle(n) {}
+  Evaluation(EvaluationNode<T> *n) : PoolHandle(n) {}
 };
 
 }  // namespace Poincare

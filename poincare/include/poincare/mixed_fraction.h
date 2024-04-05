@@ -58,7 +58,7 @@ class MixedFraction final : public OExpression {
     return Builder(integerPart, Division::Builder(numerator, denominator));
   }
   static OExpression Builder(OExpression integerPart, Division fractionPart) {
-    return TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(
+    return PoolHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(
         {integerPart, fractionPart});
   }
 

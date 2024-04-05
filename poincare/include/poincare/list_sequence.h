@@ -55,7 +55,7 @@ class ListSequence : public ParameteredExpression {
   ListSequence(const ListSequenceNode* n) : ParameteredExpression(n) {}
   static ListSequence Builder(OExpression function, Symbol variable,
                               OExpression variableUpperBound) {
-    return TreeHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(
+    return PoolHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(
         {function, variable, variableUpperBound});
   }
   static OExpression UntypedBuilder(OExpression children);

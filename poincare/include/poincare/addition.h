@@ -104,7 +104,7 @@ class Addition final : public NAryExpression {
  public:
   Addition(const AdditionNode* n) : NAryExpression(n) {}
   static Addition Builder(const Tuple& children = {}) {
-    return TreeHandle::NAryBuilder<Addition, AdditionNode>(convert(children));
+    return PoolHandle::NAryBuilder<Addition, AdditionNode>(convert(children));
   }
   // TODO: Get rid of these two helper functions
   static Addition Builder(OExpression e1) { return Addition::Builder({e1}); }

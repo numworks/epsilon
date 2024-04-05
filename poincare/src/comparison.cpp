@@ -313,7 +313,7 @@ Comparison Comparison::Builder(OExpression child0,
   void* bufferNode =
       Pool::sharedPool->alloc(SizeOfComparisonNodeWithOperators(1));
   ComparisonNode* node = new (bufferNode) ComparisonNode(operatorType);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child0);
   h.replaceChildAtIndexInPlace(1, child1);
   return static_cast<Comparison&>(h);
@@ -327,7 +327,7 @@ Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType,
   ComparisonNode::OperatorType* listOfOperators = node()->listOfOperators();
   ComparisonNode* node = new (bufferNode)
       ComparisonNode(numberOfOperands, listOfOperators, operatorType);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   for (int i = 0; i < numberOfOperands - 1; i++) {
     h.replaceChildAtIndexInPlace(i, childAtIndex(i));
   }

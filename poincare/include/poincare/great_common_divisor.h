@@ -57,7 +57,7 @@ class GreatCommonDivisor final : public NAryExpression {
  public:
   GreatCommonDivisor(const GreatCommonDivisorNode* n) : NAryExpression(n) {}
   static GreatCommonDivisor Builder(const Tuple& children = {}) {
-    return TreeHandle::NAryBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(
+    return PoolHandle::NAryBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(
         convert(children));
   }
   constexpr static OExpression::FunctionHelper s_functionHelper =

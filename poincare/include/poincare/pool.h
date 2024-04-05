@@ -14,11 +14,11 @@
 
 namespace Poincare {
 
-class TreeHandle;
+class PoolHandle;
 
 class Pool final {
   friend class PoolObject;
-  friend class TreeHandle;
+  friend class PoolHandle;
   friend class Checkpoint;
 
  public:

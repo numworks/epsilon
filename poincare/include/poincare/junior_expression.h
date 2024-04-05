@@ -284,33 +284,33 @@ class JuniorExpression : public OExpression {
   bool involvesDiscontinuousFunction(Context* context) const;
 #endif
 #if 1
-  /* TODO_PCJ : Remove those methods from TreeHandle once only JuniorExpression
+  /* TODO_PCJ : Remove those methods from PoolHandle once only JuniorExpression
    * remains. In the meantime, they are overriden there to assert false in case
    * they are still used. */
   /* Hierarchy */
-  bool hasChild(TreeHandle t) const {
+  bool hasChild(PoolHandle t) const {
     assert(false);
     return false;
   }
-  bool hasSibling(TreeHandle t) const {
+  bool hasSibling(PoolHandle t) const {
     assert(false);
     return false;
   }
-  bool hasAncestor(TreeHandle t, bool includeSelf) const {
+  bool hasAncestor(PoolHandle t, bool includeSelf) const {
     assert(false);
     return false;
   }
-  TreeHandle commonAncestorWith(TreeHandle t,
+  PoolHandle commonAncestorWith(PoolHandle t,
                                 bool includeTheseNodes = true) const {
     assert(false);
     return t;
   }
   void setNumberOfChildren(int numberOfChildren) { assert(false); }
-  int indexOfChild(TreeHandle t) const {
+  int indexOfChild(PoolHandle t) const {
     assert(false);
     return 0;
   }
-  TreeHandle parent() const {
+  PoolHandle parent() const {
     assert(false);
     return *this;
   }
@@ -321,16 +321,16 @@ class JuniorExpression : public OExpression {
 
   /* Hierarchy operations */
   // Replace
-  void replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) {
+  void replaceChildInPlace(PoolHandle oldChild, PoolHandle newChild) {
     assert(false);
   }
-  void replaceChildAtIndexInPlace(int oldChildIndex, TreeHandle newChild) {
+  void replaceChildAtIndexInPlace(int oldChildIndex, PoolHandle newChild) {
     assert(false);
   }
   void replaceChildAtIndexWithGhostInPlace(int index) { assert(false); }
-  void replaceChildWithGhostInPlace(TreeHandle t) { assert(false); }
+  void replaceChildWithGhostInPlace(PoolHandle t) { assert(false); }
   // Merge
-  void mergeChildrenAtIndexInPlace(TreeHandle t, int i) { assert(false); }
+  void mergeChildrenAtIndexInPlace(PoolHandle t, int i) { assert(false); }
   // Swap
   void swapChildrenInPlace(int i, int j) { assert(false); }
 #endif

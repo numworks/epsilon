@@ -90,7 +90,7 @@ class Subtraction final
  public:
   using ExpressionBuilder::ExpressionBuilder, ExpressionBuilder::Builder;
   static Subtraction Builder() {
-    return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>();
+    return PoolHandle::FixedArityBuilder<Subtraction, SubtractionNode>();
   }
   // OExpression
   OExpression shallowReduce(ReductionContext reductionContext);

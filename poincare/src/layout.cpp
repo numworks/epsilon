@@ -11,7 +11,7 @@ Layout Layout::clone() const {
   if (isUninitialized()) {
     return Layout();
   }
-  TreeHandle c = TreeHandle::clone();
+  PoolHandle c = PoolHandle::clone();
   Layout cast = Layout(static_cast<LayoutNode *>(c.node()));
   cast->invalidAllSizesPositionsAndBaselines();
   return cast;

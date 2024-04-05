@@ -48,7 +48,7 @@ class BooleanEvaluation final : public Evaluation<T> {
   static BooleanEvaluation Builder(bool value);
 
   bool value() const {
-    return static_cast<BooleanEvaluationNode<T>*>(TreeHandle::node())->value();
+    return static_cast<BooleanEvaluationNode<T>*>(PoolHandle::node())->value();
   }
 };
 

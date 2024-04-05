@@ -109,7 +109,7 @@ class Integral final : public ParameteredExpression {
   Integral(const IntegralNode* n) : ParameteredExpression(n) {}
   static Integral Builder(OExpression child0, Symbol child1, OExpression child2,
                           OExpression child3) {
-    return TreeHandle::FixedArityBuilder<Integral, IntegralNode>(
+    return PoolHandle::FixedArityBuilder<Integral, IntegralNode>(
         {child0, child1, child2, child3});
   }
   static OExpression UntypedBuilder(OExpression children);

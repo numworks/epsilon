@@ -256,7 +256,7 @@ Rational Rational::Builder(const native_uint_t *i, uint8_t numeratorSize,
       Pool::sharedPool->alloc(RationalSize(numeratorSize, denominatorSize));
   RationalNode *node = new (bufferNode)
       RationalNode(i, numeratorSize, j, denominatorSize, negative);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<Rational &>(h);
 }
 

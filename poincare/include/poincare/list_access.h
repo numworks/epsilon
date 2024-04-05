@@ -50,7 +50,7 @@ class ListElement : public OExpression {
  public:
   ListElement(const ListAccessNode<1>* n) : OExpression(n) {}
   static ListElement Builder(OExpression index, OExpression list) {
-    return TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(
+    return PoolHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(
         {index, list});
   }
 
@@ -62,7 +62,7 @@ class ListSlice : public OExpression {
   ListSlice(const ListAccessNode<2>* n) : OExpression(n) {}
   static ListSlice Builder(OExpression firstIndex, OExpression lastIndex,
                            OExpression list) {
-    return TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(
+    return PoolHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(
         {firstIndex, lastIndex, list});
   }
 

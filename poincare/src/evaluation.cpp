@@ -49,7 +49,7 @@ bool EvaluationNode<T>::isListOfDefinedPoints() const {
 
 template <typename T>
 Evaluation<T> Evaluation<T>::childAtIndex(int i) const {
-  TreeHandle c = TreeHandle::childAtIndex(i);
+  PoolHandle c = PoolHandle::childAtIndex(i);
   return static_cast<Evaluation<T> &>(c);
 }
 

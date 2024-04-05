@@ -19,19 +19,19 @@ class BlobNode : public PoolObject {
   int m_data;
 };
 
-class BlobByReference : public TreeHandle {
+class BlobByReference : public PoolHandle {
  public:
   static BlobByReference Builder(int data = 0) {
     void *bufferNode = Pool::sharedPool->alloc(sizeof(BlobNode));
     BlobNode *node = new (bufferNode) BlobNode(data);
-    TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+    PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
     return static_cast<BlobByReference &>(h);
   }
   BlobByReference() = delete;
   int data() { return node()->data(); }
 
  private:
-  BlobNode *node() const { return static_cast<BlobNode *>(TreeHandle::node()); }
+  BlobNode *node() const { return static_cast<BlobNode *>(PoolHandle::node()); }
 };
 
 }  // namespace Poincare

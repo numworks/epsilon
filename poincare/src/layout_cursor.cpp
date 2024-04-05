@@ -856,7 +856,7 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
 
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != m_layout) {
-    TreeHandle commonAncestor = m_layout.commonAncestorWith(previousLayout);
+    PoolHandle commonAncestor = m_layout.commonAncestorWith(previousLayout);
     assert(!commonAncestor.isUninitialized());
     Layout layoutAncestor = static_cast<Layout &>(commonAncestor);
     // Down goes left to right and up goes right to left

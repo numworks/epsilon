@@ -72,7 +72,7 @@ class OMatrix final : public OExpression {
 
   OMatrix(const MatrixNode* node) : OExpression(node) {}
   static OMatrix Builder() {
-    return TreeHandle::NAryBuilder<OMatrix, MatrixNode>();
+    return PoolHandle::NAryBuilder<OMatrix, MatrixNode>();
   }
 
   void setDimensions(int rows, int columns);
@@ -80,9 +80,9 @@ class OMatrix final : public OExpression {
   bool isVector() const { return node()->isVector(); }
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
-  using TreeHandle::addChildAtIndexInPlace;
-  using TreeHandle::removeChildAtIndexInPlace;
-  void addChildrenAsRowInPlace(TreeHandle t, int i);
+  using PoolHandle::addChildAtIndexInPlace;
+  using PoolHandle::removeChildAtIndexInPlace;
+  void addChildrenAsRowInPlace(PoolHandle t, int i);
   OExpression matrixChild(int i, int j) {
     return childAtIndex(i * numberOfColumns() + j);
   }

@@ -72,14 +72,14 @@ class OList : public OExpression {
   friend class ListNode;
 
  public:
-  static OList Builder() { return TreeHandle::NAryBuilder<OList, ListNode>(); }
+  static OList Builder() { return PoolHandle::NAryBuilder<OList, ListNode>(); }
   static OExpression Ones(int length);
 
   OList() : OExpression() {}
   OList(const ListNode* n) : OExpression(n) {}
 
-  using TreeHandle::addChildAtIndexInPlace;
-  using TreeHandle::removeChildAtIndexInPlace;
+  using PoolHandle::addChildAtIndexInPlace;
+  using PoolHandle::removeChildAtIndexInPlace;
 
   ListNode* node() const { return static_cast<ListNode*>(OExpression::node()); }
   OExpression extremum(const ReductionContext& reductionContext, bool minimum);

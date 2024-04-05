@@ -98,14 +98,14 @@ Integer::Integer(native_uint_t *digits, uint16_t numberOfDigits,
                  bool negative) {
   void *bufferNode = Pool::sharedPool->alloc(IntegerSize(numberOfDigits));
   IntegerNode *node = new (bufferNode) IntegerNode(digits, numberOfDigits);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
-  /* Integer is a TreeHandle that keeps an extra integer. We cannot just cast
-   * the TreeHandle in Integer, we have to build a new Integer. To do so, we
-   * pilfer the TreeHandle identifier. */
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
+  /* Integer is a PoolHandle that keeps an extra integer. We cannot just cast
+   * the PoolHandle in Integer, we have to build a new Integer. To do so, we
+   * pilfer the PoolHandle identifier. */
   new (this) Integer(h.identifier(), negative);
 }
 
-Integer::Integer(native_int_t i) : TreeHandle(PoolObject::NoNodeIdentifier) {
+Integer::Integer(native_int_t i) : PoolHandle(PoolObject::NoNodeIdentifier) {
   m_digit = i > 0 ? i : -i;
   m_negative = i < 0;
 }

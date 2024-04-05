@@ -227,7 +227,7 @@ class DistributionDispatcher final : public NAryExpression {
   DistributionDispatcher(const DistributionDispatcherNode* n)
       : NAryExpression(n) {}
   static DistributionDispatcher Builder(const Tuple& children = {}) {
-    return TreeHandle::NAryBuilder<DistributionDispatcher,
+    return PoolHandle::NAryBuilder<DistributionDispatcher,
                                    DistributionDispatcherNode>(
         convert(children));
   }

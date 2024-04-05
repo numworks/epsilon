@@ -67,7 +67,7 @@ class Opposite final : public ExpressionOneChild<Opposite, OppositeNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder, ExpressionBuilder::Builder;
   static Opposite Builder() {
-    return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>();
+    return PoolHandle::FixedArityBuilder<Opposite, OppositeNode>();
   }
   OExpression shallowReduce(ReductionContext reductionContext);
 };

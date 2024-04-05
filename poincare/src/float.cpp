@@ -39,7 +39,7 @@ template <typename T>
 Float<T> Float<T>::Builder(T value) {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(FloatNode<T>));
   FloatNode<T> *node = new (bufferNode) FloatNode<T>(value);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<Float &>(h);
 }
 

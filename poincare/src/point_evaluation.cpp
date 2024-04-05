@@ -16,7 +16,7 @@ template <typename T>
 PointEvaluation<T> PointEvaluation<T>::Builder(T x, T y) {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(PointEvaluationNode<T>));
   PointEvaluationNode<T> *node = new (bufferNode) PointEvaluationNode<T>(x, y);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<PointEvaluation<T> &>(h);
 }
 

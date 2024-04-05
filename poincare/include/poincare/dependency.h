@@ -68,7 +68,7 @@ class Dependency : public OExpression {
   Dependency(const DependencyNode* n) : OExpression(n) {}
   static Dependency Builder(OExpression expression,
                             OList dependencies = OList::Builder()) {
-    return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(
+    return PoolHandle::FixedArityBuilder<Dependency, DependencyNode>(
         {expression, dependencies});
   }
 

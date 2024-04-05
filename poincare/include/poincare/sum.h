@@ -42,7 +42,7 @@ class Sum final : public SumAndProduct {
   Sum(const SumNode* n) : SumAndProduct(n) {}
   static Sum Builder(OExpression argument, Symbol symbol, OExpression subScript,
                      OExpression superScript) {
-    return TreeHandle::FixedArityBuilder<Sum, SumNode>(
+    return PoolHandle::FixedArityBuilder<Sum, SumNode>(
         {argument, symbol, subScript, superScript});
   }
   static OExpression UntypedBuilder(OExpression children);

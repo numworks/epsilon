@@ -44,10 +44,10 @@ class NAryExpressionNode
 class NAryExpression : public OExpression {
  public:
   NAryExpression(const NAryExpressionNode* n) : OExpression(n) {}
-  using TreeHandle::addChildAtIndexInPlace;
-  using TreeHandle::removeChildAtIndexInPlace;
-  using TreeHandle::removeChildInPlace;
-  using TreeHandle::removeChildrenInPlace;
+  using PoolHandle::addChildAtIndexInPlace;
+  using PoolHandle::removeChildAtIndexInPlace;
+  using PoolHandle::removeChildInPlace;
+  using PoolHandle::removeChildrenInPlace;
   OExpression squashUnaryHierarchyInPlace() {
     return node()->squashUnaryHierarchyInPlace();
   }

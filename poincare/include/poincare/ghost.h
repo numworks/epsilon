@@ -10,10 +10,10 @@ namespace Poincare {
 /* Ghost is not in ghost_node.h because GhostNode is needed in
  * pool.h and this created header inclusion problems. */
 
-class Ghost final : public TreeHandle {
+class Ghost final : public PoolHandle {
  public:
   static Ghost Builder() {
-    return TreeHandle::FixedArityBuilder<Ghost, GhostNode>();
+    return PoolHandle::FixedArityBuilder<Ghost, GhostNode>();
   }
 };
 

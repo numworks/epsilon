@@ -42,7 +42,7 @@ class Product final : public SumAndProduct {
   Product(const ProductNode* n) : SumAndProduct(n) {}
   static Product Builder(OExpression argument, Symbol symbol,
                          OExpression subScript, OExpression superScript) {
-    return TreeHandle::FixedArityBuilder<Product, ProductNode>(
+    return PoolHandle::FixedArityBuilder<Product, ProductNode>(
         {argument, symbol, subScript, superScript});
   }
   static OExpression UntypedBuilder(OExpression children);

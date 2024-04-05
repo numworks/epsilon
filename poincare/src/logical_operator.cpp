@@ -226,7 +226,7 @@ OExpression BinaryLogicalOperator::shallowReduce(
 BinaryLogicalOperator BinaryLogicalOperator::Builder(
     OExpression firstChild, OExpression secondChild,
     BinaryLogicalOperatorNode::OperatorType type) {
-  TreeHandle h = TreeHandle::BuilderWithChildren(
+  PoolHandle h = PoolHandle::BuilderWithChildren(
       Initializer<BinaryLogicalOperatorNode>, sizeof(BinaryLogicalOperatorNode),
       {firstChild, secondChild});
   BinaryLogicalOperator expression = static_cast<BinaryLogicalOperator &>(h);

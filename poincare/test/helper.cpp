@@ -65,7 +65,7 @@ void quiz_assert_print_if_failure(bool test, const char *information) {
   quiz_assert(test);
 }
 
-void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
+void quiz_assert_log_if_failure(bool test, PoolHandle tree) {
 #if POINCARE_TREE_LOG
   if (!test) {
     quiz_print("TEST FAILURE WHILE TESTING:");

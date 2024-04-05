@@ -17,7 +17,7 @@ namespace Poincare {
 
 class Context;
 
-class OExpression : public TreeHandle {
+class OExpression : public PoolHandle {
   friend class AbsoluteValue;
   friend class Addition;
   friend class AdditionNode;
@@ -155,7 +155,7 @@ class OExpression : public TreeHandle {
   static bool IsExpression() { return true; }
 
   /* Constructor & Destructor */
-  OExpression() : TreeHandle() {}
+  OExpression() : PoolHandle() {}
   OExpression clone() const;
   static OExpression Parse(char const* string, Context* context,
                            bool addMissingParenthesis = true,
@@ -582,7 +582,7 @@ class OExpression : public TreeHandle {
   Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
       const char* baseName, const char* extension) const;
 
-  OExpression(const ExpressionNode* n) : TreeHandle(n) {}
+  OExpression(const ExpressionNode* n) : PoolHandle(n) {}
 
  protected:
   template <typename U>
@@ -638,27 +638,27 @@ class OExpression : public TreeHandle {
     return *reinterpret_cast<T*>(const_cast<OExpression*>(this));
   }
 
-  static_assert(sizeof(TreeHandle::Tuple) == sizeof(Tuple), "Size mismatch");
-  static const TreeHandle::Tuple& convert(const Tuple& l) {
-    assert(sizeof(TreeHandle) == sizeof(OExpression));
-    return reinterpret_cast<const TreeHandle::Tuple&>(l);
+  static_assert(sizeof(PoolHandle::Tuple) == sizeof(Tuple), "Size mismatch");
+  static const PoolHandle::Tuple& convert(const Tuple& l) {
+    assert(sizeof(PoolHandle) == sizeof(OExpression));
+    return reinterpret_cast<const PoolHandle::Tuple&>(l);
   }
 
   /* Reference */
   ExpressionNode* node() const {
     assert(identifier() != PoolObject::NoNodeIdentifier &&
-           !TreeHandle::node()->isGhost());
-    return static_cast<ExpressionNode*>(TreeHandle::node());
+           !PoolHandle::node()->isGhost());
+    return static_cast<ExpressionNode*>(PoolHandle::node());
   }
 
   /* Hierarchy */
   OExpression parent() const;  // TODO try to inline
   OExpression replaceWithUndefinedInPlace();
   void defaultSetChildrenInPlace(OExpression other);
-  void addChildAtIndexInPlace(TreeHandle t, int index,
+  void addChildAtIndexInPlace(PoolHandle t, int index,
                               int currentNumberOfChildren) = delete;
   void removeChildAtIndexInPlace(int i) = delete;
-  void removeChildInPlace(TreeHandle t, int childNumberOfChildren) = delete;
+  void removeChildInPlace(PoolHandle t, int childNumberOfChildren) = delete;
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
@@ -803,28 +803,28 @@ class ExpressionBuilder : public Parent {
   ExpressionBuilder(const U* n) : Parent(n) {}
   static T Builder() {
     static_assert(Nmin <= 0 && Nmax >= 0);
-    TreeHandle h =
-        TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
+    PoolHandle h =
+        PoolHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
     T expression = static_cast<T&>(h);
     return expression;
   }
   static T Builder(OExpression child) {
     static_assert(Nmin <= 1 && Nmax >= 1);
-    TreeHandle h =
-        TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
+    PoolHandle h =
+        PoolHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
     T expression = static_cast<T&>(h);
     return expression;
   }
   static T Builder(OExpression child1, OExpression child2) {
     static_assert(Nmin <= 2 && Nmax >= 2);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
+    PoolHandle h = PoolHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
                                                    {child1, child2});
     T expression = static_cast<T&>(h);
     return expression;
   }
   static T Builder(OExpression child1, OExpression child2, OExpression child3) {
     static_assert(Nmin <= 3 && Nmax >= 3);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
+    PoolHandle h = PoolHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
                                                    {child1, child2, child3});
     T expression = static_cast<T&>(h);
     return expression;
@@ -832,7 +832,7 @@ class ExpressionBuilder : public Parent {
   static T Builder(OExpression child1, OExpression child2, OExpression child3,
                    OExpression child4) {
     static_assert(Nmin <= 4 && Nmax >= 4);
-    TreeHandle h = TreeHandle::BuilderWithChildren(
+    PoolHandle h = PoolHandle::BuilderWithChildren(
         Initializer<U>, sizeof(U), {child1, child2, child3, child4});
     T expression = static_cast<T&>(h);
     return expression;

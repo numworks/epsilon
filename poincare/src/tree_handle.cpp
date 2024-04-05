@@ -9,59 +9,59 @@ namespace Poincare {
 
 /* Clone */
 
-TreeHandle TreeHandle::clone() const {
+PoolHandle PoolHandle::clone() const {
   assert(!isUninitialized());
   PoolObject *nodeCopy = Pool::sharedPool->deepCopy(node());
   nodeCopy->deleteParentIdentifier();
-  return TreeHandle(nodeCopy);
+  return PoolHandle(nodeCopy);
 }
 
 /* Hierarchy operations */
-PoolObject *TreeHandle::node() const {
+PoolObject *PoolHandle::node() const {
   assert(hasNode(m_identifier));
   return Pool::sharedPool->node(m_identifier);
 }
 
-size_t TreeHandle::size() const {
+size_t PoolHandle::size() const {
   return node()->deepSize(node()->numberOfChildren());
 }
 
-TreeHandle TreeHandle::parent() const {
+PoolHandle PoolHandle::parent() const {
   return (isUninitialized() || node()->parent() == nullptr)
-             ? TreeHandle()
-             : TreeHandle(node()->parent());
+             ? PoolHandle()
+             : PoolHandle(node()->parent());
 }
 
-int TreeHandle::indexOfChild(TreeHandle t) const {
+int PoolHandle::indexOfChild(PoolHandle t) const {
   return node()->indexOfChild(t.node());
 }
 
-bool TreeHandle::hasChild(TreeHandle t) const {
+bool PoolHandle::hasChild(PoolHandle t) const {
   return node()->hasChild(t.node());
 }
 
-TreeHandle TreeHandle::commonAncestorWith(TreeHandle t,
+PoolHandle PoolHandle::commonAncestorWith(PoolHandle t,
                                           bool includeTheseNodes) const {
-  if (includeTheseNodes && *(const_cast<TreeHandle *>(this)) == t) {
+  if (includeTheseNodes && *(const_cast<PoolHandle *>(this)) == t) {
     return t;
   }
-  TreeHandle p = includeTheseNodes ? *this : parent();
+  PoolHandle p = includeTheseNodes ? *this : parent();
   while (!p.isUninitialized()) {
     if (t.hasAncestor(p, includeTheseNodes)) {
       return p;
     }
     p = p.parent();
   }
-  return TreeHandle();
+  return PoolHandle();
 }
 
-TreeHandle TreeHandle::childAtIndex(int i) const {
-  return TreeHandle(node()->childAtIndex(i));
+PoolHandle PoolHandle::childAtIndex(int i) const {
+  return PoolHandle(node()->childAtIndex(i));
 }
 
-void TreeHandle::replaceWithInPlace(TreeHandle t) {
+void PoolHandle::replaceWithInPlace(PoolHandle t) {
   assert(!isUninitialized());
-  TreeHandle p = parent();
+  PoolHandle p = parent();
   if (p.isUninitialized()) {
     t.detachFromParent();
   } else {
@@ -69,7 +69,7 @@ void TreeHandle::replaceWithInPlace(TreeHandle t) {
   }
 }
 
-void TreeHandle::replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) {
+void PoolHandle::replaceChildInPlace(PoolHandle oldChild, PoolHandle newChild) {
   assert(!oldChild.isUninitialized());
   assert(!newChild.isUninitialized());
   assert(hasChild(oldChild));
@@ -98,19 +98,19 @@ void TreeHandle::replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) {
   oldChild.deleteParentIdentifier();
 }
 
-void TreeHandle::replaceChildAtIndexInPlace(int oldChildIndex,
-                                            TreeHandle newChild) {
+void PoolHandle::replaceChildAtIndexInPlace(int oldChildIndex,
+                                            PoolHandle newChild) {
   assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
-  TreeHandle oldChild = childAtIndex(oldChildIndex);
+  PoolHandle oldChild = childAtIndex(oldChildIndex);
   replaceChildInPlace(oldChild, newChild);
 }
 
-void TreeHandle::replaceChildWithGhostInPlace(TreeHandle t) {
+void PoolHandle::replaceChildWithGhostInPlace(PoolHandle t) {
   Ghost ghost = Ghost::Builder();
   return replaceChildInPlace(t, ghost);
 }
 
-void TreeHandle::mergeChildrenAtIndexInPlace(TreeHandle t, int i) {
+void PoolHandle::mergeChildrenAtIndexInPlace(PoolHandle t, int i) {
   /* mergeChildrenAtIndexInPlace should only be called with a tree that can
    * have any number of children, so there is no need to replace the stolen
    * children with ghosts. */
@@ -135,7 +135,7 @@ void TreeHandle::mergeChildrenAtIndexInPlace(TreeHandle t, int i) {
   }
 }
 
-void TreeHandle::swapChildrenInPlace(int i, int j) {
+void PoolHandle::swapChildrenInPlace(int i, int j) {
   assert(i >= 0 && i < numberOfChildren());
   assert(j >= 0 && j < numberOfChildren());
   if (i == j) {
@@ -143,8 +143,8 @@ void TreeHandle::swapChildrenInPlace(int i, int j) {
   }
   int firstChildIndex = i < j ? i : j;
   int secondChildIndex = i > j ? i : j;
-  TreeHandle firstChild = childAtIndex(firstChildIndex);
-  TreeHandle secondChild = childAtIndex(secondChildIndex);
+  PoolHandle firstChild = childAtIndex(firstChildIndex);
+  PoolHandle secondChild = childAtIndex(secondChildIndex);
   Pool::sharedPool->move(firstChild.node()->nextSibling(), secondChild.node(),
                          secondChild.numberOfChildren());
   Pool::sharedPool->move(childAtIndex(secondChildIndex).node()->nextSibling(),
@@ -152,18 +152,18 @@ void TreeHandle::swapChildrenInPlace(int i, int j) {
 }
 
 #if POINCARE_TREE_LOG
-void TreeHandle::log() const {
+void PoolHandle::log() const {
   if (!isUninitialized()) {
     return node()->log();
   }
-  std::cout << "\n<Uninitialized TreeHandle/>" << std::endl;
+  std::cout << "\n<Uninitialized PoolHandle/>" << std::endl;
 }
 #endif
 
 /* Protected */
 
 // Add
-void TreeHandle::addChildAtIndexInPlace(TreeHandle t, int index,
+void PoolHandle::addChildAtIndexInPlace(PoolHandle t, int index,
                                         int currentNumberOfChildren) {
   assert(!isUninitialized());
   assert(!t.isUninitialized());
@@ -188,17 +188,17 @@ void TreeHandle::addChildAtIndexInPlace(TreeHandle t, int index,
 
 // Remove
 
-void TreeHandle::removeChildAtIndexInPlace(int i) {
+void PoolHandle::removeChildAtIndexInPlace(int i) {
   assert(!isUninitialized());
   int nbOfChildren = numberOfChildren();
   assert(i >= 0 && i < nbOfChildren);
-  TreeHandle t = childAtIndex(i);
+  PoolHandle t = childAtIndex(i);
   removeChildInPlace(t, t.numberOfChildren());
 
   node()->didChangeArity(nbOfChildren - 1);
 }
 
-void TreeHandle::removeChildInPlace(TreeHandle t, int childNumberOfChildren) {
+void PoolHandle::removeChildInPlace(PoolHandle t, int childNumberOfChildren) {
   assert(!isUninitialized());
   Pool::sharedPool->move(Pool::sharedPool->last(), t.node(),
                          childNumberOfChildren);
@@ -207,7 +207,7 @@ void TreeHandle::removeChildInPlace(TreeHandle t, int childNumberOfChildren) {
   node()->incrementNumberOfChildren(-1);
 }
 
-void TreeHandle::removeChildrenInPlace(int currentNumberOfChildren) {
+void PoolHandle::removeChildrenInPlace(int currentNumberOfChildren) {
   assert(!isUninitialized());
   deleteParentIdentifierInChildren();
   Pool::sharedPool->removeChildren(node(), currentNumberOfChildren);
@@ -215,8 +215,8 @@ void TreeHandle::removeChildrenInPlace(int currentNumberOfChildren) {
 
 /* Private */
 
-void TreeHandle::detachFromParent() {
-  TreeHandle myParent = parent();
+void PoolHandle::detachFromParent() {
+  PoolHandle myParent = parent();
   if (!myParent.isUninitialized()) {
     int idxInParent = myParent.indexOfChild(*this);
     myParent.replaceChildAtIndexWithGhostInPlace(idxInParent);
@@ -224,42 +224,42 @@ void TreeHandle::detachFromParent() {
   assert(parent().isUninitialized());
 }
 
-TreeHandle::TreeHandle(const PoolObject *node) : TreeHandle() {
+PoolHandle::PoolHandle(const PoolObject *node) : PoolHandle() {
   if (node != nullptr) {
     setIdentifierAndRetain(node->identifier());
   }
 }
 
 template <class U>
-TreeHandle TreeHandle::Builder() {
+PoolHandle PoolHandle::Builder() {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(U));
   U *node = new (bufferNode) U();
-  return TreeHandle::BuildWithGhostChildren(node);
+  return PoolHandle::BuildWithGhostChildren(node);
 }
 
-TreeHandle TreeHandle::Builder(PoolObject::Initializer initializer, size_t size,
+PoolHandle PoolHandle::Builder(PoolObject::Initializer initializer, size_t size,
                                int numberOfChildren) {
   void *bufferNode = Pool::sharedPool->alloc(size);
   PoolObject *node = initializer(bufferNode);
   node->setNumberOfChildren(numberOfChildren);
-  return TreeHandle::BuildWithGhostChildren(node);
+  return PoolHandle::BuildWithGhostChildren(node);
 }
 
-TreeHandle TreeHandle::BuilderWithChildren(PoolObject::Initializer initializer,
+PoolHandle PoolHandle::BuilderWithChildren(PoolObject::Initializer initializer,
                                            size_t size, const Tuple &children) {
-  TreeHandle h = Builder(initializer, size, children.size());
+  PoolHandle h = Builder(initializer, size, children.size());
   size_t i = 0;
-  for (TreeHandle child : children) {
+  for (PoolHandle child : children) {
     h.replaceChildAtIndexInPlace(i++, child);
   }
   return h;
 }
 
 template <class T, class U>
-T TreeHandle::NAryBuilder(const Tuple &children) {
-  TreeHandle h = Builder<U>();
+T PoolHandle::NAryBuilder(const Tuple &children) {
+  PoolHandle h = Builder<U>();
   size_t i = 0;
-  for (TreeHandle child : children) {
+  for (PoolHandle child : children) {
     h.addChildAtIndexInPlace(child, i, i);
     i++;
   }
@@ -267,16 +267,16 @@ T TreeHandle::NAryBuilder(const Tuple &children) {
 }
 
 template <class T, class U>
-T TreeHandle::FixedArityBuilder(const Tuple &children) {
-  TreeHandle h = Builder<U>();
+T PoolHandle::FixedArityBuilder(const Tuple &children) {
+  PoolHandle h = Builder<U>();
   size_t i = 0;
-  for (TreeHandle child : children) {
+  for (PoolHandle child : children) {
     h.replaceChildAtIndexInPlace(i++, child);
   }
   return static_cast<T &>(h);
 }
 
-TreeHandle TreeHandle::BuildWithGhostChildren(PoolObject *node) {
+PoolHandle PoolHandle::BuildWithGhostChildren(PoolObject *node) {
   assert(node != nullptr);
   Pool *pool = Pool::sharedPool;
   int expectedNumberOfChildren = node->numberOfChildren();
@@ -293,19 +293,19 @@ TreeHandle TreeHandle::BuildWithGhostChildren(PoolObject *node) {
            (char *)node->next() +
                i * Helpers::AlignedSize(sizeof(GhostNode), ByteAlignment));
   }
-  return TreeHandle(node);
+  return PoolHandle(node);
 }
 
-void TreeHandle::setIdentifierAndRetain(uint16_t newId) {
+void PoolHandle::setIdentifierAndRetain(uint16_t newId) {
   m_identifier = newId;
   if (!isUninitialized()) {
     node()->retain();
   }
 }
 
-void TreeHandle::setTo(const TreeHandle &tr) {
+void PoolHandle::setTo(const PoolHandle &tr) {
   /* We cannot use (*this)==tr because tr would need to be casted to
-   * TreeHandle, which calls setTo and triggers an infinite loop */
+   * PoolHandle, which calls setTo and triggers an infinite loop */
   if (identifier() == tr.identifier()) {
     return;
   }
@@ -314,7 +314,7 @@ void TreeHandle::setTo(const TreeHandle &tr) {
   release(currentId);
 }
 
-void TreeHandle::release(uint16_t identifier) {
+void PoolHandle::release(uint16_t identifier) {
   if (!hasNode(identifier)) {
     return;
   }
@@ -328,65 +328,65 @@ void TreeHandle::release(uint16_t identifier) {
   node->release(node->numberOfChildren());
 }
 
-template Addition TreeHandle::NAryBuilder<Addition, AdditionNode>(
+template Addition PoolHandle::NAryBuilder<Addition, AdditionNode>(
     const Tuple &);
-template ComplexCartesian TreeHandle::FixedArityBuilder<
+template ComplexCartesian PoolHandle::FixedArityBuilder<
     ComplexCartesian, ComplexCartesianNode>(const Tuple &);
-template Dependency TreeHandle::FixedArityBuilder<Dependency, DependencyNode>(
+template Dependency PoolHandle::FixedArityBuilder<Dependency, DependencyNode>(
     const Tuple &);
-template Derivative TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(
+template Derivative PoolHandle::FixedArityBuilder<Derivative, DerivativeNode>(
     const Tuple &);
-template DistributionDispatcher TreeHandle::NAryBuilder<
+template DistributionDispatcher PoolHandle::NAryBuilder<
     DistributionDispatcher, DistributionDispatcherNode>(const Tuple &);
-template EmptyExpression TreeHandle::FixedArityBuilder<
+template EmptyExpression PoolHandle::FixedArityBuilder<
     EmptyExpression, EmptyExpressionNode>(const Tuple &);
-template FloatList<double> TreeHandle::NAryBuilder<FloatList<double>, ListNode>(
+template FloatList<double> PoolHandle::NAryBuilder<FloatList<double>, ListNode>(
     const Tuple &);
-template FloatList<float> TreeHandle::NAryBuilder<FloatList<float>, ListNode>(
+template FloatList<float> PoolHandle::NAryBuilder<FloatList<float>, ListNode>(
     const Tuple &);
-template Ghost TreeHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
-template GreatCommonDivisor TreeHandle::NAryBuilder<
+template Ghost PoolHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
+template GreatCommonDivisor PoolHandle::NAryBuilder<
     GreatCommonDivisor, GreatCommonDivisorNode>(const Tuple &);
-template Integral TreeHandle::FixedArityBuilder<Integral, IntegralNode>(
+template Integral PoolHandle::FixedArityBuilder<Integral, IntegralNode>(
     const Tuple &);
-template LeastCommonMultiple TreeHandle::NAryBuilder<
+template LeastCommonMultiple PoolHandle::NAryBuilder<
     LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
-template OList TreeHandle::NAryBuilder<OList, ListNode>(const Tuple &);
-template ListComplex<double> TreeHandle::NAryBuilder<
+template OList PoolHandle::NAryBuilder<OList, ListNode>(const Tuple &);
+template ListComplex<double> PoolHandle::NAryBuilder<
     ListComplex<double>, ListComplexNode<double>>(const Tuple &);
-template ListComplex<float> TreeHandle::NAryBuilder<
+template ListComplex<float> PoolHandle::NAryBuilder<
     ListComplex<float>, ListComplexNode<float>>(const Tuple &);
 template ListElement
-TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(const Tuple &);
-template ListSlice TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(
+PoolHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(const Tuple &);
+template ListSlice PoolHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(
     const Tuple &);
 template ListSequence
-TreeHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(const Tuple &);
-template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(
+PoolHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(const Tuple &);
+template ListSort PoolHandle::FixedArityBuilder<ListSort, ListSortNode>(
     const Tuple &);
-template OMatrix TreeHandle::NAryBuilder<OMatrix, MatrixNode>(const Tuple &);
-template MatrixComplex<double> TreeHandle::NAryBuilder<
+template OMatrix PoolHandle::NAryBuilder<OMatrix, MatrixNode>(const Tuple &);
+template MatrixComplex<double> PoolHandle::NAryBuilder<
     MatrixComplex<double>, MatrixComplexNode<double>>(const Tuple &);
-template MatrixComplex<float> TreeHandle::NAryBuilder<
+template MatrixComplex<float> PoolHandle::NAryBuilder<
     MatrixComplex<float>, MatrixComplexNode<float>>(const Tuple &);
 template MixedFraction
-TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(const Tuple &);
+PoolHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(const Tuple &);
 template Multiplication
-TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
-template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(
+PoolHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
+template Opposite PoolHandle::FixedArityBuilder<Opposite, OppositeNode>(
     const Tuple &);
 template Parenthesis
-TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
-template PiecewiseOperator TreeHandle::NAryBuilder<
+PoolHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
+template PiecewiseOperator PoolHandle::NAryBuilder<
     PiecewiseOperator, PiecewiseOperatorNode>(const Tuple &);
-template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(
+template Product PoolHandle::FixedArityBuilder<Product, ProductNode>(
     const Tuple &);
 template Subtraction
-TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
-template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
-template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(
+PoolHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
+template Sum PoolHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
+template Undefined PoolHandle::FixedArityBuilder<Undefined, UndefinedNode>(
     const Tuple &);
-template Nonreal TreeHandle::FixedArityBuilder<Nonreal, NonrealNode>(
+template Nonreal PoolHandle::FixedArityBuilder<Nonreal, NonrealNode>(
     const Tuple &);
 
 }  // namespace Poincare

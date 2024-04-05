@@ -113,10 +113,10 @@ class HorizontalLayout final : public OLayout {
   HorizontalLayout() : OLayout() {}
   HorizontalLayout(HorizontalLayoutNode *n) : OLayout(n) {}
 
-  // FIXME: use OLayout instead of TreeHandle
+  // FIXME: use OLayout instead of PoolHandle
   static HorizontalLayout Builder(
-      std::initializer_list<TreeHandle> children = {}) {
-    return TreeHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(
+      std::initializer_list<PoolHandle> children = {}) {
+    return PoolHandle::NAryBuilder<HorizontalLayout, HorizontalLayoutNode>(
         children);
   }
   // TODO: Get rid of those helpers

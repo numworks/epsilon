@@ -74,7 +74,7 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
 void quiz_assert_print_if_failure(bool test, const char* information);
-void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
+void quiz_assert_log_if_failure(bool test, Poincare::PoolHandle tree);
 void quiz_reset_failure_ratio();
 void quiz_print_failure_ratio();
 

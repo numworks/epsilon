@@ -15,13 +15,13 @@ class PairNode : public PoolObject {
 #endif
 };
 
-class PairByReference : public TreeHandle {
+class PairByReference : public PoolHandle {
  public:
-  static PairByReference Builder(TreeHandle t1, TreeHandle t2) {
+  static PairByReference Builder(PoolHandle t1, PoolHandle t2) {
     void *bufferNode = Pool::sharedPool->alloc(sizeof(PairNode));
     PairNode *node = new (bufferNode) PairNode();
-    TreeHandle children[2] = {t1, t2};
-    TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+    PoolHandle children[2] = {t1, t2};
+    PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
     h.replaceChildAtIndexInPlace(0, t1);
     h.replaceChildAtIndexInPlace(1, t2);
     return static_cast<PairByReference &>(h);

@@ -39,7 +39,7 @@ CombinedCodePointsLayout CombinedCodePointsLayout::Builder(
       Pool::sharedPool->alloc(sizeof(CombinedCodePointsLayoutNode));
   CombinedCodePointsLayoutNode *node = new (bufferNode)
       CombinedCodePointsLayoutNode(mainCodePoint, CombinedCodePoints);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<CombinedCodePointsLayout &>(h);
 }
 

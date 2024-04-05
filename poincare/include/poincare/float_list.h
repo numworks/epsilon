@@ -19,12 +19,12 @@ class FloatList : public OList, public DatasetColumn<T> {
    */
  public:
   static FloatList<T> Builder() {
-    return TreeHandle::NAryBuilder<FloatList<T>, ListNode>();
+    return PoolHandle::NAryBuilder<FloatList<T>, ListNode>();
   }
 
-  void addChildAtIndexInPlace(TreeHandle t, int index,
+  void addChildAtIndexInPlace(PoolHandle t, int index,
                               int currentNumberOfChildren) = delete;
-  void replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) = delete;
+  void replaceChildInPlace(PoolHandle oldChild, PoolHandle newChild) = delete;
 
   void addValueAtIndex(T value, int index);
   void replaceValueAtIndex(T value, int index);

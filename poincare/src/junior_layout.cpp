@@ -71,7 +71,7 @@ JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
   size_t size = tree->treeSize();
   void* bufferNode = Pool::sharedPool->alloc(sizeof(JuniorLayoutNode) + size);
   JuniorLayoutNode* node = new (bufferNode) JuniorLayoutNode(tree, size);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<JuniorLayout&>(h);
 }
 

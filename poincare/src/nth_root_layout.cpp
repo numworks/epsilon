@@ -192,7 +192,7 @@ bool NthRootLayoutNode::protectedIsIdenticalTo(OLayout l) {
 NthRootLayout NthRootLayout::Builder(OLayout child) {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(NthRootLayoutNode));
   NthRootLayoutNode *node = new (bufferNode) NthRootLayoutNode(false);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child);
   return static_cast<NthRootLayout &>(h);
 }
@@ -200,7 +200,7 @@ NthRootLayout NthRootLayout::Builder(OLayout child) {
 NthRootLayout NthRootLayout::Builder(OLayout child, OLayout index) {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(NthRootLayoutNode));
   NthRootLayoutNode *node = new (bufferNode) NthRootLayoutNode(true);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child);
   h.replaceChildAtIndexInPlace(1, index);
   return static_cast<NthRootLayout &>(h);

@@ -57,7 +57,7 @@ class LeastCommonMultiple final : public NAryExpression {
  public:
   LeastCommonMultiple(const LeastCommonMultipleNode* n) : NAryExpression(n) {}
   static LeastCommonMultiple Builder(const Tuple& children = {}) {
-    return TreeHandle::NAryBuilder<LeastCommonMultiple,
+    return PoolHandle::NAryBuilder<LeastCommonMultiple,
                                    LeastCommonMultipleNode>(convert(children));
   }
   constexpr static OExpression::FunctionHelper s_functionHelper =

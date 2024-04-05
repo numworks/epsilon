@@ -96,7 +96,7 @@ BasedInteger BasedInteger::Builder(const Integer &m, OMG::Base base) {
       Pool::sharedPool->alloc(BasedIntegerSize(m.numberOfDigits()));
   BasedIntegerNode *node =
       new (bufferNode) BasedIntegerNode(m.digits(), m.numberOfDigits(), base);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<BasedInteger &>(h);
 }
 

@@ -55,7 +55,7 @@ class ListComplex final : public Evaluation<T>, public DatasetColumn<T> {
   ListComplex() : Evaluation<T>(nullptr) {}
   ListComplex(ListComplexNode<T> *node) : Evaluation<T>(node) {}
   static ListComplex Builder() {
-    return TreeHandle::NAryBuilder<ListComplex<T>, ListComplexNode<T>>();
+    return PoolHandle::NAryBuilder<ListComplex<T>, ListComplexNode<T>>();
   }
   static ListComplex<T> Undefined();
   int numberOfChildren() const { return node()->numberOfChildren(); }
@@ -65,7 +65,7 @@ class ListComplex final : public Evaluation<T>, public DatasetColumn<T> {
 
   void addChildAtIndexInPlace(Evaluation<T> t, int index,
                               int currentNumberOfChildren);
-  using TreeHandle::removeChildInPlace;
+  using PoolHandle::removeChildInPlace;
 
   // Helper function
   bool sort();

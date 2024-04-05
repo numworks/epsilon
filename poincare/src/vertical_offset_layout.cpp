@@ -250,7 +250,7 @@ VerticalOffsetLayout VerticalOffsetLayout::Builder(
   void *bufferNode = Pool::sharedPool->alloc(sizeof(VerticalOffsetLayoutNode));
   VerticalOffsetLayoutNode *node = new (bufferNode)
       VerticalOffsetLayoutNode(verticalPosition, horizontalPosition);
-  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, l);
   return static_cast<VerticalOffsetLayout &>(h);
 }

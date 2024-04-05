@@ -113,7 +113,7 @@ class Multiplication : public NAryExpression {
  public:
   Multiplication(const MultiplicationNode* n) : NAryExpression(n) {}
   static Multiplication Builder(const Tuple& children = {}) {
-    return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(
+    return PoolHandle::NAryBuilder<Multiplication, MultiplicationNode>(
         convert(children));
   }
   // TODO: Get rid of those helpers

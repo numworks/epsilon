@@ -70,7 +70,7 @@ class Undefined final : public Number {
  public:
   Undefined(const UndefinedNode* n) : Number(n) {}
   static Undefined Builder() {
-    return TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>();
+    return PoolHandle::FixedArityBuilder<Undefined, UndefinedNode>();
   }
   constexpr static const char* Name() { return "undef"; }
   constexpr static int NameSize() { return 6; }

@@ -14,7 +14,7 @@ From a parsed user input expression, the simplification algorithm does:
 - [Simplify Dependencies](#simplify-dependencies)
 - [Approximate again, depending on the strategy](#final-approximation)
 - [Beautify expression](#beautification)
-- [Replace User symbols and functions stored in context and start over at step 1.](#)
+- [Replace User symbols and functions stored in context](#context-user-symbols)
 
 ## Dimension check
 
@@ -448,3 +448,14 @@ The unit removed on projection is restored to the best prefix and representative
 ### Restore Variable names
 
 User variables, as well as nested local variables are restored to their original names.
+
+## Context user symbols
+
+User symbols and functions stored in the given context are replaced with their definition, even if nested.
+
+If anything is replaced, start over the simplification algorithm from the start.
+
+TODO: This step could be done at the very start of the algorithm, but a proper random seeding should be account for.
+
+For example if `f(x)=x+x+random()`, the expression `f(random())*f(0)` should be
+```(random_1()+random_1()+random_2())*(0+0+random_3())```

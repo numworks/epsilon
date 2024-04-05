@@ -417,9 +417,9 @@ Dimension Dimension::GetDimension(const Tree* t) {
                                                                  : Scalar();
     case Type::ListSequence:
       return t->child(2)->isPoint() ? Point() : Scalar();
-    case Type::ArcCosine:
-    case Type::ArcSine:
-    case Type::ArcTangent:
+    case Type::ACos:
+    case Type::ASin:
+    case Type::ATan:
       // Note: Angle units could be returned here.
     default:
       if (t->isLogicalOperatorOrBoolean() || t->isComparison()) {

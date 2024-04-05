@@ -91,7 +91,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifyAbs(u);
     case Type::Add:
       return SimplifyAddition(u);
-    case Type::ArcTangentRad:
+    case Type::ATanRad:
       return Trigonometry::SimplifyArcTangentRad(u);
     case Type::ATrig:
       return Trigonometry::SimplifyATrig(u);

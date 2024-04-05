@@ -214,7 +214,7 @@ bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
   }
   // A parent simplification is required after inverse trigonometry beautify
   *simplifyParent = (angleUnit != AngleUnit::Radian &&
-                     (tree->isATrig() || tree->isArcTangentRad()));
+                     (tree->isATrig() || tree->isATanRad()));
   if (ShallowBeautifyAngleFunctions(tree, angleUnit)) {
     return true;
   } else if (mustSystematicReduce) {
@@ -242,7 +242,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
         PatternMatching::MatchReplace(tree, KTanRad(KA), KTan(KA));
     return true;
   }
-  if (tree->isATrig() || tree->isArcTangentRad()) {
+  if (tree->isATrig() || tree->isATanRad()) {
     PatternMatching::MatchReplace(tree, KATrig(KA, 0_e), KACos(KA)) ||
         PatternMatching::MatchReplace(tree, KATrig(KA, 1_e), KASin(KA)) ||
         PatternMatching::MatchReplace(tree, KATanRad(KA), KATan(KA));

@@ -22,9 +22,9 @@ bool Trigonometry::IsDirect(const Tree* node) {
 
 bool Trigonometry::IsInverse(const Tree* node) {
   switch (node->type()) {
-    case Type::ArcCosine:
-    case Type::ArcSine:
-    case Type::ArcTangent:
+    case Type::ACos:
+    case Type::ASin:
+    case Type::ATan:
       return true;
     default:
       return false;

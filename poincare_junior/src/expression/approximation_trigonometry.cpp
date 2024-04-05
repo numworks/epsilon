@@ -77,8 +77,8 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       return numerator / denominator;
     }
 
-    case Type::ArcCosine:
-    case Type::ArcSine: {
+    case Type::ACos:
+    case Type::ASin: {
       std::complex<T> c = value;
       std::complex<T> result;
       if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
@@ -90,9 +90,9 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
          * - asin(0.03) = 0.0300045
          * - acos(complex<double>(0.03,0.0) = complex(1.54079,-1.11022e-16)
          * - acos(0.03) = 1.54079 */
-        result = type.isArcSine() ? std::asin(c.real()) : std::acos(c.real());
+        result = type.isASin() ? std::asin(c.real()) : std::acos(c.real());
       } else {
-        result = type.isArcSine() ? std::asin(c) : std::acos(c);
+        result = type.isASin() ? std::asin(c) : std::acos(c);
         /* asin and acos have a branch cut on ]-inf, -1[U]1, +inf[
          * We followed the convention chosen by the lib c++ of llvm on
          * ]-inf+0i, -1+0i[ (warning: it takes the other side of the cut values
@@ -108,7 +108,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
       return ConvertFromRadian(result);
     }
-    case Type::ArcTangent: {
+    case Type::ATan: {
       std::complex<T> c = value;
       std::complex<T> result;
       if (c.imag() == static_cast<T>(0.) &&
@@ -141,20 +141,18 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
       return ConvertFromRadian(result);
     }
-    case Type::ArcSecant:
-    case Type::ArcCosecant:
+    case Type::ASec:
+    case Type::ACsc:
       if (value == static_cast<T>(0)) {
         return NAN;
       }
-      return TrigonometricToComplex(
-          type.isArcSecant() ? Type::ArcCosine : Type::ArcSine,
-          static_cast<T>(1) / value);
-    case Type::ArcCotangent:
+      return TrigonometricToComplex(type.isASec() ? Type::ACos : Type::ASin,
+                                    static_cast<T>(1) / value);
+    case Type::ACot:
       if (value == static_cast<T>(0)) {
         return ConvertFromRadian(M_PI_2);
       }
-      return TrigonometricToComplex(Type::ArcTangent,
-                                    static_cast<T>(1) / value);
+      return TrigonometricToComplex(Type::ATan, static_cast<T>(1) / value);
     default:
       assert(false);
   }
@@ -175,7 +173,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
     case Type::TanH:
       return NeglectRealOrImaginaryPartIfNeglectable(std::tanh(value), value);
 
-    case Type::HyperbolicArcSine: {
+    case Type::ArSinH: {
       std::complex<T> result = std::asinh(value);
       /* asinh has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then
        * multivalued on this cut. We followed the convention chosen by the lib
@@ -188,7 +186,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
       }
       return NeglectRealOrImaginaryPartIfNeglectable(result, value);
     }
-    case Type::HyperbolicArcCosine: {
+    case Type::ArCosH: {
       std::complex<T> result = std::acosh(value);
       /* acosh has a branch cut on ]-inf, 1]: it is then multivalued on this
        * cut. We followed the convention chosen by the lib c++ of llvm on
@@ -196,7 +194,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
        * on ]-inf-0i, 1-0i[).*/
       return NeglectRealOrImaginaryPartIfNeglectable(result, value);
     }
-    case Type::HyperbolicArcTangent: {
+    case Type::ArTanH: {
       std::complex<T> result = std::atanh(value);
       /* atanh has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued
        * on this cut. We followed the convention chosen by the lib c++ of llvm

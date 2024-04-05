@@ -129,7 +129,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     child->moveTreeOverTree(PatternMatching::Create(
         KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
     changed = true;
-  } else if (e->isOfType({Type::ArcSine, Type::ArcCosine, Type::ArcTangent})) {
+  } else if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
     // acos(A) -> atrig(A, 0)
@@ -185,16 +185,16 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // Csc(A) -> 1/sin(A)
       PatternMatching::MatchReplace(e, KCsc(KA), KPow(KSin(KA), -1_e)) ||
       // ArcSec(A) -> acos(1/A)
-      PatternMatching::MatchReplace(e, KArcSec(KA), KACos(KPow(KA, -1_e))) ||
+      PatternMatching::MatchReplace(e, KASec(KA), KACos(KPow(KA, -1_e))) ||
       // ArcCsc(A) -> asin(1/A)
-      PatternMatching::MatchReplace(e, KArcCsc(KA), KASin(KPow(KA, -1_e))) ||
+      PatternMatching::MatchReplace(e, KACsc(KA), KASin(KPow(KA, -1_e))) ||
       // ArCosh(A) -> ln(A+sqrt(A-1)*sqrt(A+1))
       PatternMatching::MatchReplace(
-          e, KArCosh(KA),
+          e, KArCosH(KA),
           KLn(KAdd(KA, KMult(KSqrt(KAdd(KA, -1_e)), KSqrt(KAdd(KA, 1_e)))))) ||
       // ArSinh(A) -> ln(A+sqrt(A^2+1))
       PatternMatching::MatchReplace(
-          e, KArSinh(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e)))))) {
+          e, KArSinH(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e)))))) {
     // Ref node may need to be projected again.
     ShallowSystemProject(e, context);
     return true;
@@ -244,7 +244,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       /* ArcCot(A) -> { π/2 if A is 0, atan(1/A) otherwise } using acos(0)
        * instead of π/2 to handle angle unit */
       PatternMatching::MatchReplace(
-          e, KArcCot(KA),
+          e, KACot(KA),
           KPiecewise(KACos(0_e), KEqual(KA, 0_e), KATan(KPow(KA, -1_e)))) ||
       // Cosh(A) -> (exp(A)+exp(-A))*1/2
       PatternMatching::MatchReplace(
@@ -260,7 +260,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
                 KPow(KAdd(KExp(KMult(2_e, KA)), 1_e), -1_e))) ||
       // ArTanh(A) -> (ln(1+A)-ln(1-A))*1/2
       PatternMatching::MatchReplace(
-          e, KArTanh(KA),
+          e, KArTanH(KA),
           KMult(KHalf, KAdd(KLn(KAdd(1_e, KA)),
                             KMult(-1_e, KLn(KAdd(1_e, KMult(-1_e, KA))))))) ||
       // A nor B -> not (A or B)

@@ -262,7 +262,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::Trig:
       assert(t->child(1)->isOne() || t->child(1)->isZero());
       return Trig(Get(t->firstChild()), t->child(1)->isOne());
-    case Type::ArcTangentRad:
+    case Type::ATanRad:
       return ArcTangentRad(Get(t->firstChild()));
     case Type::ComplexArgument:
       return ComplexArgument(Get(t->firstChild()));
@@ -270,11 +270,11 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ComplexArgument(Get(t->firstChild()));
 #if 0
     // Activate these cases if necessary
-    case Type::ArcSine:
-    case Type::ArcTangent:
+    case Type::ASin:
+    case Type::ATan:
       // Both real and imaginary part keep the same sign
       return NoIntegers(Get(t->firstChild()));
-    case Type::ArcCosine:
+    case Type::ACos:
       return ArcCosine(Get(t->firstChild()));
     case Type::Factorial:
       assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());

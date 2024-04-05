@@ -386,20 +386,20 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::Sec:
     case Type::Csc:
     case Type::Cot:
-    case Type::ArcCosine:
-    case Type::ArcSine:
-    case Type::ArcTangent:
-    case Type::ArcSecant:
-    case Type::ArcCosecant:
-    case Type::ArcCotangent:
+    case Type::ACos:
+    case Type::ASin:
+    case Type::ATan:
+    case Type::ASec:
+    case Type::ACsc:
+    case Type::ACot:
       return TrigonometricToComplex(node->type(),
                                     ToComplex<T>(node->nextNode()));
     case Type::SinH:
     case Type::CosH:
     case Type::TanH:
-    case Type::HyperbolicArcSine:
-    case Type::HyperbolicArcCosine:
-    case Type::HyperbolicArcTangent:
+    case Type::ArSinH:
+    case Type::ArCosH:
+    case Type::ArTanH:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
     case Type::Var: {
       // Local variable

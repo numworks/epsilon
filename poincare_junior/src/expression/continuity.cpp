@@ -4,15 +4,15 @@
 
 namespace PoincareJ {
 
-bool Continuity::ShallowIsDiscontinuous(const Tree *e) {
+bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
   return e->isRandomNode() || e->isPiecewise() ||
          (e->isOfType({Type::Floor, Type::Round, Type::Ceiling, Type::FracPart,
                        Type::Abs}) &&
           Variables::HasVariables(e));
 };
 
-bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree *e,
-                                                       const char *symbol,
+bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree* e,
+                                                       const char* symbol,
                                                        float x1, float x2) {
   // TODO PCJ: symbol is ignored for now
   if (e->isRandomNode()) {
@@ -38,7 +38,7 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree *e,
   if (isDiscontinuous) {
     return true;
   }
-  for (const Tree *child : e->children()) {
+  for (const Tree* child : e->children()) {
     if (IsDiscontinuousBetweenValuesForSymbol(child, symbol, x1, x2)) {
       return true;
     }

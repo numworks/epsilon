@@ -86,7 +86,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
 // Commas have no associated block but behave like an operator
 static constexpr int k_commaPriority = OperatorPriority(Type::Set);
 
-Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
+Tree* Layoutter::LayoutExpression(Tree* expression, bool linearMode,
                                   int numberOfSignificantDigits,
                                   Preferences::PrintFloatMode floatMode) {
   assert(expression->isExpression());
@@ -102,15 +102,15 @@ Tree *Layoutter::LayoutExpression(Tree *expression, bool linearMode,
   return layoutParent;
 }
 
-static void PushCodePoint(Tree *layout, CodePoint codePoint) {
+static void PushCodePoint(Tree* layout, CodePoint codePoint) {
   NAry::AddChild(layout, CodePointLayout::Push(codePoint));
 }
 
-static void InsertCodePointAt(Tree *layout, CodePoint codePoint, int index) {
+static void InsertCodePointAt(Tree* layout, CodePoint codePoint, int index) {
   NAry::AddChildAtIndex(layout, CodePointLayout::Push(codePoint), index);
 }
 
-void Layoutter::addSeparator(Tree *layoutParent) {
+void Layoutter::addSeparator(Tree* layoutParent) {
   if (!m_addSeparators) {
     return;
   }
@@ -118,7 +118,7 @@ void Layoutter::addSeparator(Tree *layoutParent) {
   NAry::AddChild(layoutParent, KOperatorSeparatorL->clone());
 }
 
-void Layoutter::layoutText(TreeRef &layoutParent, const char *text) {
+void Layoutter::layoutText(TreeRef& layoutParent, const char* text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
@@ -127,9 +127,9 @@ void Layoutter::layoutText(TreeRef &layoutParent, const char *text) {
   }
 }
 
-void Layoutter::layoutBuiltin(TreeRef &layoutParent, Tree *expression) {
+void Layoutter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
   assert(Builtin::IsReservedFunction(expression));
-  const Builtin *builtin = Builtin::GetReservedFunction(expression);
+  const Builtin* builtin = Builtin::GetReservedFunction(expression);
   if (m_linearMode || !builtin->has2DLayout()) {
     // Built "builtin(child1, child2)"
     if (expression->isParametric()) {
@@ -141,8 +141,8 @@ void Layoutter::layoutBuiltin(TreeRef &layoutParent, Tree *expression) {
                        builtin->aliases()->mainAlias());
   } else {
     // Built 2D layout associated with builtin
-    const BuiltinWithLayout *builtinWithLayout =
-        static_cast<const BuiltinWithLayout *>(builtin);
+    const BuiltinWithLayout* builtinWithLayout =
+        static_cast<const BuiltinWithLayout*>(builtin);
     TreeRef layout = SharedTreeStack->push(
         static_cast<Type>(builtinWithLayout->layoutType()));
     /* Some builtins have a bigger nodeSize. Additional parameters are not
@@ -156,8 +156,8 @@ void Layoutter::layoutBuiltin(TreeRef &layoutParent, Tree *expression) {
   }
 }
 
-void Layoutter::layoutFunctionCall(TreeRef &layoutParent, Tree *expression,
-                                   const char *name) {
+void Layoutter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
+                                   const char* name) {
   layoutText(layoutParent, name);
   TreeRef parenthesis =
       SharedTreeStack->push<Type::ParenthesisLayout>(false, false);
@@ -177,21 +177,21 @@ void Layoutter::layoutFunctionCall(TreeRef &layoutParent, Tree *expression,
   }
 }
 
-void Layoutter::layoutChildrenAsRacks(Tree *expression) {
+void Layoutter::layoutChildrenAsRacks(Tree* expression) {
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     TreeRef newParent = SharedTreeStack->push<Type::RackLayout>(0);
     layoutExpression(newParent, expression->nextNode(), k_maxPriority);
   }
 }
 
-void Layoutter::layoutIntegerHandler(TreeRef &layoutParent,
+void Layoutter::layoutIntegerHandler(TreeRef& layoutParent,
                                      IntegerHandler handler,
                                      int decimalOffset) {
   if (handler.strictSign() == StrictSign::Negative) {
     PushCodePoint(layoutParent, '-');
   }
   handler.setSign(NonStrictSign::Positive);
-  Tree *rack = KRackL()->clone();
+  Tree* rack = KRackL()->clone();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
    * pushing layouts on the TreeStack at each steps. Value is therefore
    * temporarily stored and updated on the TreeStack. */
@@ -217,13 +217,13 @@ void Layoutter::layoutIntegerHandler(TreeRef &layoutParent,
   NAry::AddOrMergeChild(layoutParent, rack);
 }
 
-void Layoutter::layoutInfixOperator(TreeRef &layoutParent, Tree *expression,
+void Layoutter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
                                     CodePoint op, bool multiplication) {
   Type type = expression->type();
   int childNumber = expression->numberOfChildren();
   bool previousWasUnit = false;
   for (int childIndex = 0; childIndex < childNumber; childIndex++) {
-    Tree *child = expression->nextNode();
+    Tree* child = expression->nextNode();
     bool isUnit = Units::Unit::IsUnitOrPowerOfUnit(child);
     if (childIndex > 0) {
       if (!m_linearMode && multiplication && isUnit) {
@@ -249,13 +249,13 @@ void Layoutter::layoutInfixOperator(TreeRef &layoutParent, Tree *expression,
   }
 }
 
-void Layoutter::layoutMatrix(TreeRef &layoutParent, Tree *expression) {
+void Layoutter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
   if (!m_linearMode) {
     TreeRef layout = expression->cloneNode();
     *layout->block() = Type::MatrixLayout;
     layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
-    Grid *grid = Grid::From(layout);
+    Grid* grid = Grid::From(layout);
     grid->addEmptyColumn();
     grid->addEmptyRow();
     return;
@@ -276,7 +276,7 @@ void Layoutter::layoutMatrix(TreeRef &layoutParent, Tree *expression) {
   PushCodePoint(layoutParent, ']');
 }
 
-void Layoutter::layoutUnit(TreeRef &layoutParent, Tree *expression) {
+void Layoutter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
   // TODO PCJ ask the context whether to add an underscore
   if (m_linearMode) {
     PushCodePoint(layoutParent, '_');
@@ -287,7 +287,7 @@ void Layoutter::layoutUnit(TreeRef &layoutParent, Tree *expression) {
       Units::Unit::GetRepresentative(expression)->rootSymbols().mainAlias());
 }
 
-void Layoutter::layoutPowerOrDivision(TreeRef &layoutParent, Tree *expression) {
+void Layoutter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   Type type = expression->type();
   /* Once first child has been converted, this will point to second child. */
   expression = expression->nextNode();
@@ -314,7 +314,7 @@ void Layoutter::layoutPowerOrDivision(TreeRef &layoutParent, Tree *expression) {
 }
 
 // Remove expression while converting it to a layout in layoutParent
-void Layoutter::layoutExpression(TreeRef &layoutParent, Tree *expression,
+void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
                                  int parentPriority) {
   assert(layoutParent->isRackLayout());
   TypeBlock type = expression->type();
@@ -434,7 +434,7 @@ void Layoutter::layoutExpression(TreeRef &layoutParent, Tree *expression,
             PushCodePoint(layoutParent, '^');
             rack = layoutParent;
           } else {
-            Tree *createdLayout = KSuperscriptL->cloneNode();
+            Tree* createdLayout = KSuperscriptL->cloneNode();
             rack = SharedTreeStack->push<Type::RackLayout>(0);
             NAry::AddChild(layoutParent, createdLayout);
           }
@@ -478,7 +478,7 @@ void Layoutter::layoutExpression(TreeRef &layoutParent, Tree *expression,
         layoutBuiltin(layoutParent, expression);
         break;
       }
-      constexpr const char *log =
+      constexpr const char* log =
           Builtin::GetReservedFunction(Type::Logarithm)->aliases()->mainAlias();
       bool nlLog = Preferences::SharedPreferences()->logarithmBasePosition() ==
                    Preferences::LogarithmBasePosition::TopLeft;
@@ -710,9 +710,9 @@ void Layoutter::layoutExpression(TreeRef &layoutParent, Tree *expression,
   expression->removeNode();
 }
 
-int FirstNonDigitIndex(Tree *rack) {
+int FirstNonDigitIndex(Tree* rack) {
   int nonDigitIndex = 0;
-  for (const Tree *child : rack->children()) {
+  for (const Tree* child : rack->children()) {
     if (!child->isCodePointLayout()) {
       break;
     }
@@ -730,7 +730,7 @@ int FirstNonDigitIndex(Tree *rack) {
 constexpr int k_minDigitsForThousandSeparator = 5;
 constexpr int k_minValueForThousandSeparator = 10000;
 
-bool Layoutter::AddThousandSeparators(Tree *rack) {
+bool Layoutter::AddThousandSeparators(Tree* rack) {
   int nonDigitIndex = FirstNonDigitIndex(rack);
   bool isNegative = rack->child(0)->isCodePointLayout() &&
                     CodePointLayout::GetCodePoint(rack->child(0)) == '-';
@@ -738,7 +738,7 @@ bool Layoutter::AddThousandSeparators(Tree *rack) {
     return false;
   }
   int index = isNegative + 1;  // skip "-" and first digit
-  Tree *digit = rack->child(index);
+  Tree* digit = rack->child(index);
   while (index < nonDigitIndex) {
     if ((nonDigitIndex - index) % 3 == 0) {
       digit->cloneTreeAtNode(KThousandSeparatorL);
@@ -752,7 +752,7 @@ bool Layoutter::AddThousandSeparators(Tree *rack) {
   return true;
 }
 
-bool Layoutter::requireSeparators(const Tree *expr) {
+bool Layoutter::requireSeparators(const Tree* expr) {
   if (expr->isRational()) {
     // TODO PCJ same for decimals and floats
     IntegerHandler num = Rational::Numerator(expr);
@@ -769,10 +769,10 @@ bool Layoutter::requireSeparators(const Tree *expr) {
   if (expr->isFloat() || expr->isDecimal()) {
     /* Since rules are complex with floatDisplayMode, layout the float and check
      * if it has separators. */
-    Tree *clone = expr->clone();
+    Tree* clone = expr->clone();
     TreeRef rack = KRackL()->clone();
     layoutExpression(rack, clone, k_tokenPriority);
-    for (const Tree *child : rack->children()) {
+    for (const Tree* child : rack->children()) {
       if (child->isSeparatorLayout()) {
         rack->removeTree();
         return true;
@@ -781,7 +781,7 @@ bool Layoutter::requireSeparators(const Tree *expr) {
     rack->removeTree();
     return false;
   }
-  for (const Tree *child : expr->children()) {
+  for (const Tree* child : expr->children()) {
     if (requireSeparators(child)) {
       return true;
     }
@@ -792,9 +792,9 @@ bool Layoutter::requireSeparators(const Tree *expr) {
   return false;
 }
 
-void Layoutter::StripSeparators(Tree *rack) {
+void Layoutter::StripSeparators(Tree* rack) {
   assert(rack->isRackLayout());
-  Tree *child = rack->nextNode();
+  Tree* child = rack->nextNode();
   int n = rack->numberOfChildren();
   int i = 0;
   while (i < n) {
@@ -803,7 +803,7 @@ void Layoutter::StripSeparators(Tree *rack) {
       n--;
       continue;
     }
-    for (Tree *subRack : child->children()) {
+    for (Tree* subRack : child->children()) {
       StripSeparators(subRack);
     }
     child = child->nextTree();
@@ -812,12 +812,12 @@ void Layoutter::StripSeparators(Tree *rack) {
   NAry::SetNumberOfChildren(rack, n);
 }
 
-void Layoutter::StripUselessPlus(Tree *rack) {
+void Layoutter::StripUselessPlus(Tree* rack) {
   assert(rack->isRackLayout());
-  Tree *child = rack->nextNode();
+  Tree* child = rack->nextNode();
   int n = rack->numberOfChildren();
   int i = 0;
-  Tree *previousPlus = nullptr;
+  Tree* previousPlus = nullptr;
   while (i < n) {
     if (child->isCodePointLayout()) {
       if (previousPlus && CodePointLayout::GetCodePoint(child) == '-') {
@@ -833,7 +833,7 @@ void Layoutter::StripUselessPlus(Tree *rack) {
     } else {
       previousPlus = nullptr;
     }
-    for (Tree *subRack : child->children()) {
+    for (Tree* subRack : child->children()) {
       StripUselessPlus(subRack);
     }
     child = child->nextTree();
@@ -842,14 +842,14 @@ void Layoutter::StripUselessPlus(Tree *rack) {
   NAry::SetNumberOfChildren(rack, n);
 }
 
-bool Layoutter::ImplicitAddition(const Tree *addition) {
+bool Layoutter::ImplicitAddition(const Tree* addition) {
   if (addition->numberOfChildren() < 2) {
     return false;
   }
   // Step 1: TODO PCJ check that no ᴇ will be needed
   // Step 2: Check if units can be implicitly added
-  const Units::Representative *storedUnitRepresentative = nullptr;
-  for (const Tree *child : addition->children()) {
+  const Units::Representative* storedUnitRepresentative = nullptr;
+  for (const Tree* child : addition->children()) {
     if (!(child->isMultiplication() && child->numberOfChildren() == 2 &&
           (child->child(0)->isInteger() ||
            child->child(0)->isOfType(
@@ -861,7 +861,7 @@ bool Layoutter::ImplicitAddition(const Tree *addition) {
     if (!sign.isReal() || !sign.realSign().isPositive()) {
       return false;
     }
-    const Units::Representative *childReprensentative =
+    const Units::Representative* childReprensentative =
         Units::Unit::GetRepresentative(child->child(1));
     if (storedUnitRepresentative &&
         !Units::Unit::AllowImplicitAddition(childReprensentative,

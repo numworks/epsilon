@@ -39,7 +39,7 @@ class DistributionBuiltin : public Builtin {
 
   Distribution::Type distribution() const { return m_distribution; }
   DistributionMethod::Type method() const { return m_method; }
-  Tree *pushNode(int numberOfChildren) const override;
+  Tree* pushNode(int numberOfChildren) const override;
   bool checkNumberOfParameters(int n) const override;
 
  private:
@@ -80,8 +80,8 @@ constexpr static DistributionBuiltin s_distributionsBuiltins[] = {
      "invhgeom"},
 };
 
-Tree *Builtin::pushNode(int numberOfChildren) const {
-  Tree *result = SharedTreeStack->push(m_blockType);
+Tree* Builtin::pushNode(int numberOfChildren) const {
+  Tree* result = SharedTreeStack->push(m_blockType);
   if (TypeBlock(m_blockType).isNAry()) {
     SharedTreeStack->push(numberOfChildren);
   } else if (TypeBlock(m_blockType).isRandomNode()) {
@@ -94,20 +94,20 @@ Tree *Builtin::pushNode(int numberOfChildren) const {
   return result;
 }
 
-Tree *DistributionBuiltin::pushNode(int numberOfChildren) const {
-  Tree *result = SharedTreeStack->push(Type::Distribution);
+Tree* DistributionBuiltin::pushNode(int numberOfChildren) const {
+  Tree* result = SharedTreeStack->push(Type::Distribution);
   SharedTreeStack->push(numberOfChildren);
   SharedTreeStack->push(Type(m_distribution));
   SharedTreeStack->push(Type(m_method));
   return result;
 }
 
-Tree *BuiltinAns::pushNode(int numberOfChildren) const {
+Tree* BuiltinAns::pushNode(int numberOfChildren) const {
   assert(numberOfChildren == 0);
   return "Ans"_e->clone();
 }
 
-bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {
+bool Builtin::HasCustomIdentifier(UnicodeDecoder* name) {
   for (Aliases aliases : s_customIdentifiers) {
     if (aliases.contains(name)) {
       return true;
@@ -116,19 +116,19 @@ bool Builtin::HasCustomIdentifier(UnicodeDecoder *name) {
   return false;
 }
 
-const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
+const Builtin* Builtin::GetReservedFunction(UnicodeDecoder* name) {
   // WithLayout comes first because we want to yield Sum before ListSum
-  for (const Builtin &builtin : s_builtinsWithLayout) {
+  for (const Builtin& builtin : s_builtinsWithLayout) {
     if (builtin.m_aliases.contains(name)) {
       return &builtin;
     }
   }
-  for (const Builtin &builtin : s_builtins) {
+  for (const Builtin& builtin : s_builtins) {
     if (builtin.m_aliases.contains(name)) {
       return &builtin;
     }
   }
-  for (const DistributionBuiltin &builtin : s_distributionsBuiltins) {
+  for (const DistributionBuiltin& builtin : s_distributionsBuiltins) {
     if (builtin.m_aliases.contains(name)) {
       return &builtin;
     }
@@ -136,15 +136,15 @@ const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
   return nullptr;
 }
 
-const Builtin *Builtin::GetReservedFunction(const Tree *tree) {
-  const Builtin *builtin = GetReservedFunction(tree->type());
+const Builtin* Builtin::GetReservedFunction(const Tree* tree) {
+  const Builtin* builtin = GetReservedFunction(tree->type());
   if (builtin) {
     return builtin;
   }
   if (tree->isDistribution()) {
     DistributionMethod::Type method = DistributionMethod::Get(tree);
     Distribution::Type distribution = Distribution::Get(tree);
-    for (const DistributionBuiltin &builtin : s_distributionsBuiltins) {
+    for (const DistributionBuiltin& builtin : s_distributionsBuiltins) {
       if (builtin.method() == method &&
           builtin.distribution() == distribution) {
         return &builtin;
@@ -154,11 +154,11 @@ const Builtin *Builtin::GetReservedFunction(const Tree *tree) {
   return nullptr;
 }
 
-const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
+const Builtin* Builtin::GetSpecialIdentifier(UnicodeDecoder* name) {
   if (s_builtinAns.m_aliases.contains(name)) {
     return &s_builtinAns;
   }
-  for (const Builtin &builtin : s_specialIdentifiers) {
+  for (const Builtin& builtin : s_specialIdentifiers) {
     if (builtin.m_aliases.contains(name)) {
       return &builtin;
     }
@@ -166,8 +166,8 @@ const Builtin *Builtin::GetSpecialIdentifier(UnicodeDecoder *name) {
   return nullptr;
 }
 
-const Builtin *Builtin::GetSpecialIdentifier(Type type) {
-  for (const Builtin &builtin : s_specialIdentifiers) {
+const Builtin* Builtin::GetSpecialIdentifier(Type type) {
+  for (const Builtin& builtin : s_specialIdentifiers) {
     if (builtin.m_blockType == type) {
       return &builtin;
     }

@@ -9,8 +9,8 @@
 
 namespace PoincareJ {
 
-bool Binary::IsBinaryLogicalOperator(const CPL *name, int nameLength,
-                                     Type *type) {
+bool Binary::IsBinaryLogicalOperator(const CPL* name, int nameLength,
+                                     Type* type) {
   for (int i = 0; i < k_numberOfOperators; i++) {
     if (OMG::CompareCPLWithNullTerminatedString(name, nameLength,
                                                 k_operatorNames[i].name) == 0) {
@@ -23,11 +23,11 @@ bool Binary::IsBinaryLogicalOperator(const CPL *name, int nameLength,
   return false;
 }
 
-const char *Binary::OperatorName(TypeBlock type) {
+const char* Binary::OperatorName(TypeBlock type) {
   if (type.isLogicalNot()) {
     return k_logicalNotName;
   }
-  for (const TypeAndName &name : k_operatorNames) {
+  for (const TypeAndName& name : k_operatorNames) {
     if (type == name.type) {
       return name.name;
     }
@@ -35,8 +35,8 @@ const char *Binary::OperatorName(TypeBlock type) {
   assert(false);
 }
 
-const char *Binary::ComparisonOperatorName(TypeBlock type) {
-  for (const OperatorString &name : k_operatorStrings) {
+const char* Binary::ComparisonOperatorName(TypeBlock type) {
+  for (const OperatorString& name : k_operatorStrings) {
     if (type == name.type) {
       return name.mainString;
     }
@@ -44,14 +44,14 @@ const char *Binary::ComparisonOperatorName(TypeBlock type) {
   assert(false);
 }
 
-bool Binary::IsComparisonOperatorString(const CPL *s, int length,
-                                        Type *returnType,
-                                        size_t *returnLength) {
+bool Binary::IsComparisonOperatorString(const CPL* s, int length,
+                                        Type* returnType,
+                                        size_t* returnLength) {
   int maxOperatorLength = length;
   int lengthOfFoundOperator = 0;
   Type typeOfFoundOperator;
   for (int i = 0; i < k_numberOfComparisons; i++) {
-    const char *currentOperatorString = k_operatorStrings[i].mainString;
+    const char* currentOperatorString = k_operatorStrings[i].mainString;
     // Loop twice, once on the main string, the other on the alternative string
     for (int k = 0; k < 2; k++) {
       int operatorLength = UTF8Helper::StringGlyphLength(currentOperatorString);
@@ -93,7 +93,7 @@ bool Binary::IsComparisonOperatorString(const CPL *s, int length,
  * - hook a SAT solver
  */
 
-bool Binary::SimplifyBooleanOperator(Tree *tree) {
+bool Binary::SimplifyBooleanOperator(Tree* tree) {
   return
       // not true -> false
       PatternMatching::MatchAndReplace(tree, KLogicalNot(KTrue), KFalse) ||
@@ -131,7 +131,7 @@ bool Binary::SimplifyBooleanOperator(Tree *tree) {
       PatternMatching::MatchAndReplace(tree, KLogicalXor(KA, KA), KFalse);
 }
 
-bool Binary::SimplifyComparison(Tree *tree) {
+bool Binary::SimplifyComparison(Tree* tree) {
   assert(tree->numberOfChildren() == 2);
   // a < b => a - b < 0 ?
   if (tree->isInequality()) {
@@ -148,7 +148,7 @@ bool Binary::SimplifyComparison(Tree *tree) {
   }
   ComplexSign complexSign =
       ComplexSign::SignOfDifference(tree->child(0), tree->child(1));
-  const Tree *result = nullptr;
+  const Tree* result = nullptr;
   if (!tree->isInequality()) {
     // = or !=
     if (complexSign.isZero()) {
@@ -198,12 +198,12 @@ bool Binary::SimplifyComparison(Tree *tree) {
   return true;
 }
 
-bool Binary::SimplifyPiecewise(Tree *piecewise) {
+bool Binary::SimplifyPiecewise(Tree* piecewise) {
   int n = piecewise->numberOfChildren();
   int i = 0;
-  Tree *child = piecewise->child(0);
+  Tree* child = piecewise->child(0);
   while (i + 1 < n) {
-    Tree *condition = child->nextTree();
+    Tree* condition = child->nextTree();
     if (condition->isFalse()) {
       // Remove this clause
       child->removeTree();

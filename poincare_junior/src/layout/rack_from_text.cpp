@@ -8,13 +8,13 @@
 
 namespace PoincareJ {
 
-void RackFromTextRec(UTF8Decoder *decoder, Tree *parent,
-                     const Tree *parentheses) {
+void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
+                     const Tree* parentheses) {
   CodePoint codePoint = decoder->nextCodePoint();
   assert(parent && parent->isNAry());
   assert(!parentheses || parentheses->layoutType() == LayoutType::Parenthesis);
   while (codePoint != UCodePointNull) {
-    Tree *child;
+    Tree* child;
     switch (codePoint) {
       case UCodePointEmpty:
         child = KRackL()->clone();
@@ -43,8 +43,8 @@ void RackFromTextRec(UTF8Decoder *decoder, Tree *parent,
   }
 }
 
-Rack *RackFromText(const char *text) {
-  Rack *root = Rack::From(KRackL()->clone());
+Rack* RackFromText(const char* text) {
+  Rack* root = Rack::From(KRackL()->clone());
   UTF8Decoder decoder(text);
   RackFromTextRec(&decoder, root, nullptr);
   return root;

@@ -48,8 +48,8 @@ T StudentDistribution::CumulativeDistributiveInverseForProbability(
   };
   Args args{probability, k};
   Solver<double>::FunctionEvaluation evaluation = [](double x,
-                                                     const void *auxiliary) {
-    const Args *args = static_cast<const Args *>(auxiliary);
+                                                     const void* auxiliary) {
+    const Args* args = static_cast<const Args*>(auxiliary);
     return static_cast<double>(
         CumulativeDistributiveFunctionAtAbscissa<T>(x, args->k) - args->proba);
   };
@@ -71,8 +71,8 @@ bool StudentDistribution::KIsOK(T k) {
   // We cannot draw the curve for k > 200 (coefficient() is too small)
 }
 
-bool StudentDistribution::ExpressionKIsOK(bool *result, const Tree *k,
-                                          Context *context) {
+bool StudentDistribution::ExpressionKIsOK(bool* result, const Tree* k,
+                                          Context* context) {
   return Domain::ExpressionIsIn(result, k, Domain::Type::RPlusStar, context);
 }
 

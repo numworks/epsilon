@@ -19,29 +19,29 @@ namespace PoincareJ {
 WorkingBuffer::WorkingBuffer()
     : m_start(initialStartOfBuffer()), m_remainingSize(initialSizeOfBuffer()) {}
 
-uint8_t *WorkingBuffer::allocate(size_t size) {
+uint8_t* WorkingBuffer::allocate(size_t size) {
   /* We allow one native_uint_t of overflow that can appear when dividing a
    * Integer with k_maxNumberOfDigits. */
   assert(size <= IntegerHandler::k_maxNumberOfDigits + sizeof(native_uint_t));
   if (size > m_remainingSize) {
     ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
   }
-  uint8_t *allocatedMemory = m_start;
+  uint8_t* allocatedMemory = m_start;
   m_start += size;
   m_remainingSize -= size;
   return allocatedMemory;
 }
 
 void WorkingBuffer::garbageCollect(
-    std::initializer_list<IntegerHandler *> keptIntegers,
-    uint8_t *const localStart) {
+    std::initializer_list<IntegerHandler*> keptIntegers,
+    uint8_t* const localStart) {
   assert(initialStartOfBuffer() <= localStart && localStart <= m_start);
-  uint8_t *previousEnd = m_start;
+  uint8_t* previousEnd = m_start;
   (void)previousEnd;  // Silent warning
   m_remainingSize += (m_start - localStart);
   m_start = localStart;
-  uint8_t *digits = nullptr;
-  for (IntegerHandler *integer : keptIntegers) {
+  uint8_t* digits = nullptr;
+  for (IntegerHandler* integer : keptIntegers) {
     /* Immediate digits are actually directly stored within the integer handler
      * object */
     if (!integer->usesImmediateDigit()) {
@@ -56,7 +56,7 @@ void WorkingBuffer::garbageCollect(
       assert(digits + integer->numberOfDigits() * sizeof(uint8_t) <=
              previousEnd);
       uint8_t nbOfDigits = integer->numberOfDigits();
-      uint8_t *newDigitsPointer = allocate(nbOfDigits);
+      uint8_t* newDigitsPointer = allocate(nbOfDigits);
       memmove(newDigitsPointer, digits, nbOfDigits * sizeof(uint8_t));
       *integer = IntegerHandler(newDigitsPointer, nbOfDigits, integer->sign());
     }
@@ -65,7 +65,7 @@ void WorkingBuffer::garbageCollect(
 
 /* IntegerHandler */
 
-IntegerHandler IntegerHandler::Parse(UnicodeDecoder &decoder, OMG::Base base) {
+IntegerHandler IntegerHandler::Parse(UnicodeDecoder& decoder, OMG::Base base) {
   NonStrictSign sign = NonStrictSign::Positive;
   if (decoder.nextCodePoint() == '-') {
     sign = NonStrictSign::Negative;
@@ -75,7 +75,7 @@ IntegerHandler IntegerHandler::Parse(UnicodeDecoder &decoder, OMG::Base base) {
   IntegerHandler result(0);
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
   WorkingBuffer workingBuffer;
-  uint8_t *const localStart = workingBuffer.localStart();
+  uint8_t* const localStart = workingBuffer.localStart();
   while (CodePoint codePoint = decoder.nextCodePoint()) {
     IntegerHandler multiplication = Mult(result, baseInteger, &workingBuffer);
     workingBuffer.garbageCollect({&baseInteger, &multiplication}, localStart);
@@ -88,7 +88,7 @@ IntegerHandler IntegerHandler::Parse(UnicodeDecoder &decoder, OMG::Base base) {
   return result;
 }
 
-IntegerHandler::Digits::Digits(const uint8_t *digits, uint8_t numberOfDigits) {
+IntegerHandler::Digits::Digits(const uint8_t* digits, uint8_t numberOfDigits) {
   if (numberOfDigits <= sizeof(native_uint_t)) {
     m_digit = 0;
     memcpy(&m_digit, digits, numberOfDigits);
@@ -98,13 +98,13 @@ IntegerHandler::Digits::Digits(const uint8_t *digits, uint8_t numberOfDigits) {
 }
 
 template <typename T>
-IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
+IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer* buffer) {
   size_t sizeInBytes = size * sizeof(T);
   if (sizeInBytes <= sizeof(native_uint_t)) {
     /* Force the maximal m_numberOfDigits (4 = sizeof(native_uint_t)) to be
      * able to easily access any digit. */
     native_uint_t initialValue = 0;
-    return IntegerHandler(reinterpret_cast<const uint8_t *>(&initialValue),
+    return IntegerHandler(reinterpret_cast<const uint8_t*>(&initialValue),
                           sizeof(native_uint_t), NonStrictSign::Positive);
   } else {
     return IntegerHandler(buffer->allocate(sizeInBytes), sizeInBytes,
@@ -112,7 +112,7 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
   }
 }
 
-Tree *IntegerHandler::pushOnTreeStack() const {
+Tree* IntegerHandler::pushOnTreeStack() const {
   if (isZero()) {
     return SharedTreeStack->push(Type::Zero);
   }
@@ -131,7 +131,7 @@ Tree *IntegerHandler::pushOnTreeStack() const {
   }
   TypeBlock typeBlock(sign() == NonStrictSign::Negative ? Type::IntegerNegBig
                                                         : Type::IntegerPosBig);
-  Tree *node = SharedTreeStack->push(typeBlock);
+  Tree* node = SharedTreeStack->push(typeBlock);
   SharedTreeStack->push(m_numberOfDigits);
   pushDigitsOnTreeStack();
 #if POINCARE_POOL_VISUALIZATION
@@ -191,16 +191,16 @@ bool IntegerHandler::is<int>() const {
 
 /* Getters */
 
-uint8_t *IntegerHandler::digits() {
+uint8_t* IntegerHandler::digits() {
   if (usesImmediateDigit()) {
-    return reinterpret_cast<uint8_t *>(&m_digitAccessor.m_digit);
+    return reinterpret_cast<uint8_t*>(&m_digitAccessor.m_digit);
   }
-  return const_cast<uint8_t *>(m_digitAccessor.m_digits);
+  return const_cast<uint8_t*>(m_digitAccessor.m_digits);
 }
 
 uint8_t IntegerHandler::digit(int i) const {
   assert(m_numberOfDigits > i);
-  return const_cast<IntegerHandler *>(this)->digits()[i];
+  return const_cast<IntegerHandler*>(this)->digits()[i];
 }
 
 template <typename T>
@@ -214,10 +214,10 @@ uint8_t IntegerHandler::numberOfDigits() const {
 }
 
 int IntegerHandler::numberOfBase10DigitsWithoutSign(
-    WorkingBuffer *workingBuffer) const {
+    WorkingBuffer* workingBuffer) const {
   // TODO: This method should be optimized because udiv is a costly function
   // assert(!isOverflow());
-  uint8_t *const localStart = workingBuffer->localStart();
+  uint8_t* const localStart = workingBuffer->localStart();
   int numberOfDigits = 1;
   IntegerHandler base(10);
   IntegerHandler d = Udiv(*this, base, workingBuffer).quotient;
@@ -248,14 +248,14 @@ T IntegerHandler::digit(int i) const {
       return newDigit;
     }
   }
-  return (reinterpret_cast<typename Unaligned<T>::type *>(
-      const_cast<IntegerHandler *>(this)->digits()))[i];
+  return (reinterpret_cast<typename Unaligned<T>::type*>(
+      const_cast<IntegerHandler*>(this)->digits()))[i];
 }
 
 template <typename T>
 void IntegerHandler::setDigit(T digit, int i) {
   assert(usesImmediateDigit() || i < numberOfDigits<T>());
-  reinterpret_cast<typename Unaligned<T>::type *>(digits())[i] = digit;
+  reinterpret_cast<typename Unaligned<T>::type*>(digits())[i] = digit;
 }
 
 /* Properties */
@@ -293,14 +293,14 @@ IntegerHandler::operator uint8_t() const {
 
 /* Arithmetics */
 
-int IntegerHandler::Compare(const IntegerHandler &i, const IntegerHandler &j) {
+int IntegerHandler::Compare(const IntegerHandler& i, const IntegerHandler& j) {
   if (i.sign() != j.sign()) {
     return i.sign() == NonStrictSign::Negative ? -1 : 1;
   }
   return static_cast<int8_t>(i.sign()) * Ucmp(i, j);
 }
 
-int8_t IntegerHandler::Ucmp(const IntegerHandler &a, const IntegerHandler &b) {
+int8_t IntegerHandler::Ucmp(const IntegerHandler& a, const IntegerHandler& b) {
   if (a.numberOfDigits() < b.numberOfDigits()) {
     return -1;
   } else if (a.numberOfDigits() > b.numberOfDigits()) {
@@ -322,22 +322,22 @@ int8_t IntegerHandler::Ucmp(const IntegerHandler &a, const IntegerHandler &b) {
   return 0;
 }
 
-Tree *IntegerHandler::Addition(const IntegerHandler &a,
-                               const IntegerHandler &b) {
+Tree* IntegerHandler::Addition(const IntegerHandler& a,
+                               const IntegerHandler& b) {
   WorkingBuffer workingBuffer;
   return Sum(a, b, false, &workingBuffer).pushOnTreeStack();
 }
 
-Tree *IntegerHandler::Subtraction(const IntegerHandler &a,
-                                  const IntegerHandler &b) {
+Tree* IntegerHandler::Subtraction(const IntegerHandler& a,
+                                  const IntegerHandler& b) {
   WorkingBuffer workingBuffer;
   return Sum(a, b, true, &workingBuffer).pushOnTreeStack();
 }
 
-IntegerHandler IntegerHandler::Sum(const IntegerHandler &a,
-                                   const IntegerHandler &b,
+IntegerHandler IntegerHandler::Sum(const IntegerHandler& a,
+                                   const IntegerHandler& b,
                                    bool inverseBNegative,
-                                   WorkingBuffer *workingBuffer,
+                                   WorkingBuffer* workingBuffer,
                                    bool oneDigitOverflow) {
   NonStrictSign bSign = inverseBNegative ? InvertSign(b.sign()) : b.sign();
   IntegerHandler usum;
@@ -361,9 +361,9 @@ IntegerHandler IntegerHandler::Sum(const IntegerHandler &a,
   return usum;
 }
 
-IntegerHandler IntegerHandler::Usum(const IntegerHandler &a,
-                                    const IntegerHandler &b, bool subtract,
-                                    WorkingBuffer *workingBuffer,
+IntegerHandler IntegerHandler::Usum(const IntegerHandler& a,
+                                    const IntegerHandler& b, bool subtract,
+                                    WorkingBuffer* workingBuffer,
                                     bool oneDigitOverflow) {
   uint8_t size = std::max(a.numberOfDigits<native_uint_t>(),
                           b.numberOfDigits<native_uint_t>());
@@ -399,15 +399,15 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler &a,
   return sum;
 }
 
-Tree *IntegerHandler::Multiplication(const IntegerHandler &a,
-                                     const IntegerHandler &b) {
+Tree* IntegerHandler::Multiplication(const IntegerHandler& a,
+                                     const IntegerHandler& b) {
   WorkingBuffer workingBuffer;
   return Mult(a, b, &workingBuffer).pushOnTreeStack();
 }
 
-IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
-                                    const IntegerHandler &b,
-                                    WorkingBuffer *workingBuffer,
+IntegerHandler IntegerHandler::Mult(const IntegerHandler& a,
+                                    const IntegerHandler& b,
+                                    WorkingBuffer* workingBuffer,
                                     bool oneDigitOverflow) {
   // TODO: would be Karatsuba or Toom-Cook multiplication worth it?
   // TODO: optimize for squaring?
@@ -431,7 +431,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
       double_native_uint_t p =
           aDigit * bDigit +
           carry;  // TODO: Prove it cannot overflow double_native type
-      native_uint_t *l = (native_uint_t *)&p;
+      native_uint_t* l = (native_uint_t*)&p;
       if (i + j < k_maxNumberOfNativeDigits + oneDigitOverflow) {
         p += mult.digit<native_uint_t>(i + j);
         mult.setDigit<native_uint_t>(l[0], i + j);
@@ -461,8 +461,8 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
   return mult;
 }
 
-DivisionResult<Tree *> IntegerHandler::Division(
-    const IntegerHandler &numerator, const IntegerHandler &denominator) {
+DivisionResult<Tree*> IntegerHandler::Division(
+    const IntegerHandler& numerator, const IntegerHandler& denominator) {
   WorkingBuffer workingBuffer;
   auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
   if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
@@ -478,13 +478,13 @@ DivisionResult<Tree *> IntegerHandler::Division(
    * override the other one. */
   assert(quotient.usesImmediateDigit() || remainder.usesImmediateDigit() ||
          quotient.digits() < remainder.digits());
-  Tree *q = quotient.pushOnTreeStack();
-  Tree *r = remainder.pushOnTreeStack();
+  Tree* q = quotient.pushOnTreeStack();
+  Tree* r = remainder.pushOnTreeStack();
   return {.quotient = q, .remainder = r};
 }
 
-Tree *IntegerHandler::Quotient(const IntegerHandler &numerator,
-                               const IntegerHandler &denominator) {
+Tree* IntegerHandler::Quotient(const IntegerHandler& numerator,
+                               const IntegerHandler& denominator) {
   WorkingBuffer workingBuffer;
   auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
   if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
@@ -496,8 +496,8 @@ Tree *IntegerHandler::Quotient(const IntegerHandler &numerator,
   return quotient.pushOnTreeStack();
 }
 
-Tree *IntegerHandler::Remainder(const IntegerHandler &numerator,
-                                const IntegerHandler &denominator) {
+Tree* IntegerHandler::Remainder(const IntegerHandler& numerator,
+                                const IntegerHandler& denominator) {
   WorkingBuffer workingBuffer;
   IntegerHandler remainder =
       Udiv(numerator, denominator, &workingBuffer).remainder;
@@ -509,9 +509,9 @@ Tree *IntegerHandler::Remainder(const IntegerHandler &numerator,
 }
 
 DivisionResult<IntegerHandler> IntegerHandler::Udiv(
-    const IntegerHandler &numerator, const IntegerHandler &denominator,
-    WorkingBuffer *workingBuffer) {
-  uint8_t *const localStart = workingBuffer->localStart();
+    const IntegerHandler& numerator, const IntegerHandler& denominator,
+    WorkingBuffer* workingBuffer) {
+  uint8_t* const localStart = workingBuffer->localStart();
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
    * (Algorithm 1.6) */
   // TODO: implement Svoboda algorithm or divide and conquer methods
@@ -597,9 +597,9 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
   return {.quotient = Q, .remainder = remainder};
 }
 
-IntegerHandler IntegerHandler::GCD(const IntegerHandler &a,
-                                   const IntegerHandler &b,
-                                   WorkingBuffer *workingBuffer) {
+IntegerHandler IntegerHandler::GCD(const IntegerHandler& a,
+                                   const IntegerHandler& b,
+                                   WorkingBuffer* workingBuffer) {
   // TODO Knuth modified like in upy to avoid divisions
   IntegerHandler i = a;
   i.setSign(NonStrictSign::Positive);
@@ -623,12 +623,12 @@ IntegerHandler IntegerHandler::GCD(const IntegerHandler &a,
   } while (true);
 }
 
-Tree *IntegerHandler::GCD(const IntegerHandler &a, const IntegerHandler &b) {
+Tree* IntegerHandler::GCD(const IntegerHandler& a, const IntegerHandler& b) {
   WorkingBuffer workingBuffer;
   return GCD(a, b, &workingBuffer).pushOnTreeStack();
 }
 
-Tree *IntegerHandler::LCM(const IntegerHandler &a, const IntegerHandler &b) {
+Tree* IntegerHandler::LCM(const IntegerHandler& a, const IntegerHandler& b) {
   WorkingBuffer workingBuffer;
   if (a.isZero() || b.isZero()) {
     return (0_e)->clone();
@@ -649,7 +649,7 @@ Tree *IntegerHandler::LCM(const IntegerHandler &a, const IntegerHandler &b) {
 }
 
 IntegerHandler IntegerHandler::multiplyByPowerOf2(
-    uint8_t pow, WorkingBuffer *workingBuffer) const {
+    uint8_t pow, WorkingBuffer* workingBuffer) const {
   assert(pow < 32);
   uint8_t nbOfNativeDigits = numberOfDigits<native_uint_t>();
   IntegerHandler mult =
@@ -665,7 +665,7 @@ IntegerHandler IntegerHandler::multiplyByPowerOf2(
 }
 
 IntegerHandler IntegerHandler::divideByPowerOf2(
-    uint8_t pow, WorkingBuffer *workingBuffer) const {
+    uint8_t pow, WorkingBuffer* workingBuffer) const {
   assert(pow < 32);
   uint8_t nbOfNativeDigits = numberOfDigits<native_uint_t>();
   IntegerHandler division =
@@ -680,7 +680,7 @@ IntegerHandler IntegerHandler::divideByPowerOf2(
 }
 
 IntegerHandler IntegerHandler::multiplyByPowerOfBase(
-    uint8_t pow, WorkingBuffer *workingBuffer) const {
+    uint8_t pow, WorkingBuffer* workingBuffer) const {
   // return this*(2^16)^pow
   uint8_t nbOfHalfNativeDigits = numberOfDigits<half_native_uint_t>();
   uint8_t resultNbOfHalfNativeDigit = nbOfHalfNativeDigits + pow;
@@ -695,7 +695,7 @@ IntegerHandler IntegerHandler::multiplyByPowerOfBase(
   return mult;
 }
 
-Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
+Tree* IntegerHandler::Power(const IntegerHandler& i, const IntegerHandler& j) {
   assert(j.sign() == NonStrictSign::Positive);
   if (j.isZero()) {
     // TODO: handle 0^0.
@@ -707,7 +707,7 @@ Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
   IntegerHandler i2(i);
   IntegerHandler exp(j);
   WorkingBuffer workingBuffer;
-  uint8_t *const localStart = workingBuffer.localStart();
+  uint8_t* const localStart = workingBuffer.localStart();
   while (!exp.isOne()) {
     auto [quotient, remainder] = Udiv(exp, IntegerHandler(2), &workingBuffer);
     exp = quotient;
@@ -730,12 +730,12 @@ Tree *IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
   return Mult(i1, i2, &workingBuffer).pushOnTreeStack();
 }
 
-Tree *IntegerHandler::Factorial(const IntegerHandler &i) {
+Tree* IntegerHandler::Factorial(const IntegerHandler& i) {
   assert(i.sign() == NonStrictSign::Positive);
   IntegerHandler j(2);
   IntegerHandler result(1);
   WorkingBuffer workingBuffer;
-  uint8_t *const localStart = workingBuffer.localStart();
+  uint8_t* const localStart = workingBuffer.localStart();
   while (Ucmp(i, j) >= 0) {
     result = Mult(j, result, &workingBuffer);
     j = Usum(j, IntegerHandler(1), false, &workingBuffer);
@@ -756,7 +756,7 @@ void IntegerHandler::sanitize() {
   if (m_numberOfDigits == sizeof(native_uint_t)) {
     // Convert to immediate digit
     m_digitAccessor.m_digit =
-        *(reinterpret_cast<const Unaligned<native_uint_t>::type *>(
+        *(reinterpret_cast<const Unaligned<native_uint_t>::type*>(
             m_digitAccessor.m_digits));
     m_numberOfDigits = ::Arithmetic::NumberOfDigits(m_digitAccessor.m_digit);
   }
@@ -766,12 +766,12 @@ void IntegerHandler::sanitize() {
 
 // TODO: tests
 
-IntegerHandler Integer::Handler(const Tree *expression) {
+IntegerHandler Integer::Handler(const Tree* expression) {
   assert(Rational::Denominator(expression).isOne());
   return Rational::Numerator(expression);
 }
 
-void Integer::SetSign(Tree *tree, NonStrictSign sign) {
+void Integer::SetSign(Tree* tree, NonStrictSign sign) {
   IntegerHandler h = Handler(tree);
   h.setSign(sign);
   tree->moveTreeOverTree(h.pushOnTreeStack());

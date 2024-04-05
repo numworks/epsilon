@@ -46,7 +46,7 @@ Correspondance oneToOne[] = {
     {PT::ListSequenceLayout, LT::ListSequence, false, true},
 };
 
-Poincare::OLayout ToPoincareLayout(const Tree *l) {
+Poincare::OLayout ToPoincareLayout(const Tree* l) {
   LayoutType type = l->layoutType();
   for (Correspondance cr : oneToOne) {
     if (cr.junior == type) {
@@ -114,7 +114,7 @@ Poincare::OLayout ToPoincareLayout(const Tree *l) {
         return ToPoincareLayout(l->child(0));
       } else {
         Poincare::HorizontalLayout nary = Poincare::HorizontalLayout::Builder();
-        for (const Tree *child : l->children()) {
+        for (const Tree* child : l->children()) {
           if (child->isSeparatorLayout()) {
             continue;
           }
@@ -144,10 +144,10 @@ Poincare::OLayout ToPoincareLayout(const Tree *l) {
           CodePointLayout::GetCodePoint(l),
           CodePointLayout::GetCombinedCodePoint(l));
     case LayoutType::Matrix: {
-      const Grid *g = Grid::From(l);
+      const Grid* g = Grid::From(l);
       Poincare::MatrixLayout m = Poincare::MatrixLayout::EmptyMatrixBuilder();
       int n = 0;
-      for (int i = 0; const Tree *child : g->children()) {
+      for (int i = 0; const Tree* child : g->children()) {
         if (g->childIsPlaceholder(i)) {
           i++;
           continue;
@@ -164,10 +164,10 @@ Poincare::OLayout ToPoincareLayout(const Tree *l) {
       return m;
     }
     case LayoutType::Piecewise: {
-      const Grid *g = Grid::From(l);
+      const Grid* g = Grid::From(l);
       Poincare::PiecewiseOperatorLayout m =
           Poincare::PiecewiseOperatorLayout::Builder();
-      for (int i = 0; const Tree *child : g->children()) {
+      for (int i = 0; const Tree* child : g->children()) {
         if (g->childIsBottomOfGrid(i)) {
           break;
         }
@@ -186,24 +186,24 @@ void PushPoincareLayout(Poincare::OLayout l);
 
 void PushPoincareRack(Poincare::OLayout l) {
   if (l.isHorizontal()) {
-    Tree *parent =
+    Tree* parent =
         SharedTreeStack->push<Type::RackLayout>(l.numberOfChildren());
     for (int i = 0; i < l.numberOfChildren(); i++) {
       Poincare::OLayout c = l.childAtIndex(i);
       if (c.otype() == Poincare::LayoutNode::Type::StringLayout) {
         PushPoincareRack(c);
       } else if (c.otype() == Poincare::LayoutNode::Type::JuniorLayout) {
-        static_cast<Poincare::JuniorLayout &>(c).tree()->clone();
+        static_cast<Poincare::JuniorLayout&>(c).tree()->clone();
       } else {
         PushPoincareLayout(c);
       }
     }
     NAry::Flatten(parent);
   } else if (l.otype() == Poincare::LayoutNode::Type::StringLayout) {
-    Poincare::StringLayout s = static_cast<Poincare::StringLayout &>(l);
+    Poincare::StringLayout s = static_cast<Poincare::StringLayout&>(l);
     Poincare::OLayout editable = Poincare::OLayout();
     assert(false);
-    Tree *rack = Tree::FromBlocks(SharedTreeStack->lastBlock());
+    Tree* rack = Tree::FromBlocks(SharedTreeStack->lastBlock());
     PushPoincareRack(editable);
     Layoutter::AddThousandSeparators(rack);
   } else {
@@ -222,7 +222,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
   }
   for (Correspondance c : oneToOne) {
     if (c.old == l.otype()) {
-      Tree *tree = Tree::FromBlocks(SharedTreeStack->lastBlock());
+      Tree* tree = Tree::FromBlocks(SharedTreeStack->lastBlock());
       SharedTreeStack->push(static_cast<Type>(c.junior));
       if (c.extraZero) {
         SharedTreeStack->push(0);
@@ -246,18 +246,18 @@ void PushPoincareLayout(Poincare::OLayout l) {
       return PushPoincareRack(l);
     case OT::CodePointLayout:
       CodePointLayout::Push(
-          static_cast<Poincare::CodePointLayout &>(l).codePoint());
+          static_cast<Poincare::CodePointLayout&>(l).codePoint());
       return;
     case OT::CombinedCodePointsLayout:
       SharedTreeStack->push<Type::CombinedCodePointsLayout, CodePoint>(
-          static_cast<Poincare::CombinedCodePointsLayout &>(l).codePoint(),
-          static_cast<Poincare::CombinedCodePointsLayout &>(l)
+          static_cast<Poincare::CombinedCodePointsLayout&>(l).codePoint(),
+          static_cast<Poincare::CombinedCodePointsLayout&>(l)
               .combinedCodePoint());
       return;
     case OT::VerticalOffsetLayout: {
       using namespace Poincare;
-      VerticalOffsetLayout v = static_cast<VerticalOffsetLayout &>(l);
-      Tree *t = KSuperscriptL->cloneNode();
+      VerticalOffsetLayout v = static_cast<VerticalOffsetLayout&>(l);
+      Tree* t = KSuperscriptL->cloneNode();
       VerticalOffset::SetSuffix(
           t, v.horizontalPosition() ==
                  VerticalOffsetLayoutNode::HorizontalPosition::Suffix);
@@ -268,8 +268,8 @@ void PushPoincareLayout(Poincare::OLayout l) {
       return;
     }
     case OT::MatrixLayout: {
-      Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout &>(l);
-      Tree *t = SharedTreeStack->push<Type::MatrixLayout>(
+      Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout&>(l);
+      Tree* t = SharedTreeStack->push<Type::MatrixLayout>(
           (uint8_t)m.numberOfRows(), (uint8_t)m.numberOfColumns());
       for (int i = 0; i < l.numberOfChildren(); i++) {
         PushPoincareRack(l.childAtIndex(i));
@@ -280,8 +280,8 @@ void PushPoincareLayout(Poincare::OLayout l) {
     }
     case OT::PiecewiseOperatorLayout: {
       Poincare::PiecewiseOperatorLayout m =
-          static_cast<Poincare::PiecewiseOperatorLayout &>(l);
-      Tree *t = SharedTreeStack->push(Type::PiecewiseLayout);
+          static_cast<Poincare::PiecewiseOperatorLayout&>(l);
+      Tree* t = SharedTreeStack->push(Type::PiecewiseLayout);
       SharedTreeStack->push(m.numberOfRows());
       SharedTreeStack->push(m.numberOfColumns());
       for (int i = 0; i < l.numberOfChildren(); i++) {
@@ -291,7 +291,7 @@ void PushPoincareLayout(Poincare::OLayout l) {
       return;
     }
     case OT::JuniorLayout: {
-      SharedTreeStack->clone(static_cast<Poincare::JuniorLayout &>(l).tree());
+      SharedTreeStack->clone(static_cast<Poincare::JuniorLayout&>(l).tree());
       return;
     }
     default:
@@ -299,8 +299,8 @@ void PushPoincareLayout(Poincare::OLayout l) {
   }
 }
 
-Tree *FromPoincareLayout(Poincare::OLayout l) {
-  Tree *node = Tree::FromBlocks(SharedTreeStack->lastBlock());
+Tree* FromPoincareLayout(Poincare::OLayout l) {
+  Tree* node = Tree::FromBlocks(SharedTreeStack->lastBlock());
   PushPoincareRack(l);
   return node;
 }

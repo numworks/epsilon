@@ -4,7 +4,7 @@ namespace PoincareJ {
 
 template <typename T>
 T DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa(
-    T x, const T *parameters) const {
+    T x, const T* parameters) const {
   if (!parametersAreOK(parameters) || std::isnan(x)) {
     return NAN;
   }
@@ -14,22 +14,22 @@ T DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa(
   if (x < static_cast<T>(0.0)) {
     return static_cast<T>(0.0);
   }
-  const void *pack[2] = {this, parameters};
+  const void* pack[2] = {this, parameters};
   return SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction<T>(
       x,
-      [](T k, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        Distribution *distribution = const_cast<Distribution *>(
-            static_cast<const Distribution *>(pack[0]));
-        const T *parameters = static_cast<const T *>(pack[1]);
+      [](T k, const void* auxiliary) {
+        const void* const* pack = static_cast<const void* const*>(auxiliary);
+        Distribution* distribution = const_cast<Distribution*>(
+            static_cast<const Distribution*>(pack[0]));
+        const T* parameters = static_cast<const T*>(pack[1]);
         return distribution->evaluateAtAbscissa(k, parameters);
       },
       pack);
 }
 
 template float DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<
-    float>(float, const float *) const;
+    float>(float, const float*) const;
 template double DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<
-    double>(double, const double *) const;
+    double>(double, const double*) const;
 
 }  // namespace PoincareJ

@@ -9,9 +9,9 @@ namespace PoincareJ {
 /* Temporary bi-directional conversions between old and new poincare to smooth
  * transition. */
 
-Poincare::OExpression ToPoincareExpression(const Tree *exp);
+Poincare::OExpression ToPoincareExpression(const Tree* exp);
 void PushPoincareExpression(Poincare::OExpression exp);
-Tree *FromPoincareExpression(Poincare::OExpression exp);
+Tree* FromPoincareExpression(Poincare::OExpression exp);
 
 }  // namespace PoincareJ
 

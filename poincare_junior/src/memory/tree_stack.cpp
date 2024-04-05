@@ -17,7 +17,7 @@ namespace PoincareJ {
 OMG::GlobalBox<TreeStack> TreeStack::SharedTreeStack;
 
 size_t TreeStack::numberOfTrees() const {
-  const Block *currentBlock = firstBlock();
+  const Block* currentBlock = firstBlock();
   size_t result = 0;
   while (currentBlock < lastBlock()) {
     currentBlock = Tree::FromBlocks(currentBlock)->nextTree()->block();
@@ -27,8 +27,8 @@ size_t TreeStack::numberOfTrees() const {
   return result;
 }
 
-bool TreeStack::isRootBlock(const Block *block, bool allowLast) const {
-  const Block *currentBlock = firstBlock();
+bool TreeStack::isRootBlock(const Block* block, bool allowLast) const {
+  const Block* currentBlock = firstBlock();
   if (block >= lastBlock()) {
     return allowLast && block == lastBlock();
   }
@@ -38,11 +38,11 @@ bool TreeStack::isRootBlock(const Block *block, bool allowLast) const {
   return currentBlock == block;
 }
 
-Tree *TreeStack::initFromAddress(const void *address, bool isTree) {
-  const Tree *node = Tree::FromBlocks(reinterpret_cast<const Block *>(address));
+Tree* TreeStack::initFromAddress(const void* address, bool isTree) {
+  const Tree* node = Tree::FromBlocks(reinterpret_cast<const Block*>(address));
   size_t size = isTree ? node->treeSize() : node->nodeSize();
-  Block *copiedTree = lastBlock();
-  if (!insertBlocks(copiedTree, static_cast<const Block *>(address),
+  Block* copiedTree = lastBlock();
+  if (!insertBlocks(copiedTree, static_cast<const Block*>(address),
                     size * sizeof(Block), true)) {
     return nullptr;
   }
@@ -55,21 +55,21 @@ Tree *TreeStack::initFromAddress(const void *address, bool isTree) {
 }
 
 template <>
-Tree *TreeStack::push<Type::UserFunction>(const char *name) {
+Tree* TreeStack::push<Type::UserFunction>(const char* name) {
   return push<Type::UserFunction>(name, strlen(name) + 1);
 }
 template <>
-Tree *TreeStack::push<Type::UserSequence>(const char *name) {
+Tree* TreeStack::push<Type::UserSequence>(const char* name) {
   return push<Type::UserSequence>(name, strlen(name) + 1);
 }
 template <>
-Tree *TreeStack::push<Type::UserSymbol>(const char *name) {
+Tree* TreeStack::push<Type::UserSymbol>(const char* name) {
   return push<Type::UserSymbol>(name, strlen(name) + 1);
 }
 
 template <Type blockType, typename... Types>
-Tree *TreeStack::push(Types... args) {
-  Block *newNode = lastBlock();
+Tree* TreeStack::push(Types... args) {
+  Block* newNode = lastBlock();
 
   size_t i = 0;
   bool endOfNode = false;
@@ -85,16 +85,16 @@ Tree *TreeStack::push(Types... args) {
   return Tree::FromBlocks(newNode);
 }
 
-void TreeStack::replaceBlock(Block *previousBlock, Block newBlock) {
+void TreeStack::replaceBlock(Block* previousBlock, Block newBlock) {
   replaceBlocks(previousBlock, &newBlock, 1);
 }
 
-void TreeStack::replaceBlocks(Block *destination, const Block *source,
+void TreeStack::replaceBlocks(Block* destination, const Block* source,
                               size_t numberOfBlocks) {
   memcpy(destination, source, numberOfBlocks * sizeof(Block));
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *block, const Block *destination,
-         const Block *source, int size) {
+      [](uint16_t* offset, Block* block, const Block* destination,
+         const Block* source, int size) {
         if (block >= destination && block < destination + size) {
           *offset = ReferenceTable::InvalidatedOffset;
         }
@@ -102,7 +102,7 @@ void TreeStack::replaceBlocks(Block *destination, const Block *source,
       destination, nullptr, numberOfBlocks);
 }
 
-bool TreeStack::insertBlocks(Block *destination, const Block *source,
+bool TreeStack::insertBlocks(Block* destination, const Block* source,
                              size_t numberOfBlocks, bool at) {
   if (numberOfBlocks == 0) {
     return true;
@@ -116,7 +116,7 @@ bool TreeStack::insertBlocks(Block *destination, const Block *source,
     memcpy(destination, source, insertionSize);
     return true;
   }
-  size_t editionPoolRightSize = static_cast<Block *>(lastBlock()) - destination;
+  size_t editionPoolRightSize = static_cast<Block*>(lastBlock()) - destination;
   memmove(destination + insertionSize, destination, editionPoolRightSize);
   if (source >= destination && source < destination + editionPoolRightSize) {
     // Source has been memmoved.
@@ -126,8 +126,8 @@ bool TreeStack::insertBlocks(Block *destination, const Block *source,
   m_size += numberOfBlocks;
   memcpy(destination, source, insertionSize);
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *block, const Block *destination,
-         const Block *source, int size) {
+      [](uint16_t* offset, Block* block, const Block* destination,
+         const Block* source, int size) {
         if (destination <= block) {
           *offset += size;
         }
@@ -136,18 +136,18 @@ bool TreeStack::insertBlocks(Block *destination, const Block *source,
   return true;
 }
 
-void TreeStack::removeBlocks(Block *address, size_t numberOfBlocks) {
+void TreeStack::removeBlocks(Block* address, size_t numberOfBlocks) {
   // If this assert triggers, add an escape case
   assert(numberOfBlocks != 0);
   int deletionSize = numberOfBlocks * sizeof(Block);
   assert(m_size >= numberOfBlocks);
   m_size -= numberOfBlocks;
-  assert(static_cast<Block *>(lastBlock()) >= address);
+  assert(static_cast<Block*>(lastBlock()) >= address);
   memmove(address, address + deletionSize,
-          static_cast<Block *>(lastBlock()) - address);
+          static_cast<Block*>(lastBlock()) - address);
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *block, const Block *address,
-         const Block *source, int size) {
+      [](uint16_t* offset, Block* block, const Block* address,
+         const Block* source, int size) {
         if (block >= address + size) {
           *offset -= size;
         } else if (block >= address) {
@@ -157,18 +157,18 @@ void TreeStack::removeBlocks(Block *address, size_t numberOfBlocks) {
       address, nullptr, numberOfBlocks);
 }
 
-void TreeStack::moveBlocks(Block *destination, Block *source,
+void TreeStack::moveBlocks(Block* destination, Block* source,
                            size_t numberOfBlocks, bool at) {
   if (destination == source || numberOfBlocks == 0) {
     return;
   }
-  uint8_t *src = reinterpret_cast<uint8_t *>(source);
-  uint8_t *dst = reinterpret_cast<uint8_t *>(destination);
+  uint8_t* src = reinterpret_cast<uint8_t*>(source);
+  uint8_t* dst = reinterpret_cast<uint8_t*>(destination);
   size_t len = numberOfBlocks * sizeof(Block);
   Memory::Rotate(dst, src, len);
   if (at) {
     m_referenceTable.updateNodes(
-        [](uint16_t *offset, Block *block, const Block *dst, const Block *src,
+        [](uint16_t* offset, Block* block, const Block* dst, const Block* src,
            int size) {
           if (src <= block && block < src + size) {
             *offset += dst - src - (dst > src ? size : 0);
@@ -181,7 +181,7 @@ void TreeStack::moveBlocks(Block *destination, Block *source,
         destination, source, numberOfBlocks);
   } else {
     m_referenceTable.updateNodes(
-        [](uint16_t *offset, Block *block, const Block *dst, const Block *src,
+        [](uint16_t* offset, Block* block, const Block* dst, const Block* src,
            int size) {
           if (src <= block && block < src + size) {
             *offset += dst - src - (dst > src ? size : 0);
@@ -203,7 +203,7 @@ void TreeStack::flush() {
 #endif
 }
 
-void TreeStack::flushFromBlock(const Block *block) {
+void TreeStack::flushFromBlock(const Block* block) {
   assert(isRootBlock(block, true));
   m_size = block - m_blocks;
   m_referenceTable.deleteIdentifiersAfterBlock(block);
@@ -212,13 +212,13 @@ void TreeStack::flushFromBlock(const Block *block) {
 #endif
 }
 
-uint16_t TreeStack::referenceNode(Tree *node) {
+uint16_t TreeStack::referenceNode(Tree* node) {
   return m_referenceTable.storeNode(node);
 }
 
-void TreeStack::executeAndStoreLayout(ActionWithContext action, void *context,
-                                      const void *data,
-                                      Poincare::JuniorLayout *layout,
+void TreeStack::executeAndStoreLayout(ActionWithContext action, void* context,
+                                      const void* data,
+                                      Poincare::JuniorLayout* layout,
                                       Relax relax) {
   assert(numberOfTrees() == 0);
   execute(action, context, data, k_maxNumberOfBlocks, relax);
@@ -227,9 +227,9 @@ void TreeStack::executeAndStoreLayout(ActionWithContext action, void *context,
   flush();
 }
 
-void TreeStack::executeAndReplaceTree(ActionWithContext action, void *context,
-                                      Tree *data, Relax relax) {
-  Block *previousLastBlock = lastBlock();
+void TreeStack::executeAndReplaceTree(ActionWithContext action, void* context,
+                                      Tree* data, Relax relax) {
+  Block* previousLastBlock = lastBlock();
   execute(action, context, data, k_maxNumberOfBlocks, relax);
   assert(previousLastBlock != lastBlock());
   data->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
@@ -237,7 +237,7 @@ void TreeStack::executeAndReplaceTree(ActionWithContext action, void *context,
 
 #if POINCARE_TREE_LOG
 
-void TreeStack::logNode(std::ostream &stream, const Tree *node, bool recursive,
+void TreeStack::logNode(std::ostream& stream, const Tree* node, bool recursive,
                         bool verbose, int indentation) {
   Indent(stream, indentation);
   stream << "<Reference id=\"";
@@ -248,18 +248,18 @@ void TreeStack::logNode(std::ostream &stream, const Tree *node, bool recursive,
   stream << "</Reference>" << std::endl;
 }
 
-void TreeStack::log(std::ostream &stream, LogFormat format, bool verbose,
+void TreeStack::log(std::ostream& stream, LogFormat format, bool verbose,
                     int indentation) {
-  const char *formatName = format == LogFormat::Tree ? "tree" : "flat";
+  const char* formatName = format == LogFormat::Tree ? "tree" : "flat";
   Indent(stream, indentation);
   stream << "<TreeStack format=\"" << formatName << "\" size=\"" << size()
          << "\">\n";
   if (format == LogFormat::Tree) {
-    for (const Tree *tree : trees()) {
+    for (const Tree* tree : trees()) {
       logNode(stream, tree, true, verbose, indentation + 1);
     }
   } else {
-    for (const Tree *tree : allNodes()) {
+    for (const Tree* tree : allNodes()) {
       logNode(stream, tree, false, verbose, indentation + 1);
     }
   }
@@ -269,8 +269,8 @@ void TreeStack::log(std::ostream &stream, LogFormat format, bool verbose,
 
 #endif
 
-void TreeStack::execute(ActionWithContext action, void *context,
-                        const void *data, int maxSize, Relax relax) {
+void TreeStack::execute(ActionWithContext action, void* context,
+                        const void* data, int maxSize, Relax relax) {
 #if ASSERTIONS
   size_t treesNumber = numberOfTrees();
 #endif
@@ -305,7 +305,7 @@ void TreeStack::execute(ActionWithContext action, void *context,
 
 // ReferenceTable
 
-Tree *TreeStack::ReferenceTable::nodeForIdentifier(uint16_t id) const {
+Tree* TreeStack::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (id == NoNodeIdentifier) {
     return nullptr;
   }
@@ -314,7 +314,7 @@ Tree *TreeStack::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (offset == InvalidatedOffset) {
     return nullptr;
   }
-  Tree *n = Tree::FromBlocks(m_pool->referenceBlock() + offset);
+  Tree* n = Tree::FromBlocks(m_pool->referenceBlock() + offset);
   if (!m_pool->contains(n->block()) && n->block() != m_pool->lastBlock()) {
     /* The node has been corrupted, this is not referenced anymore. Referencing
      * the last block is tolerated though. */
@@ -323,9 +323,9 @@ Tree *TreeStack::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   return n;
 }
 
-uint16_t TreeStack::ReferenceTable::storeNode(Tree *node) {
+uint16_t TreeStack::ReferenceTable::storeNode(Tree* node) {
   if (isFull()) {
-    Tree *n;
+    Tree* n;
     size_t index = 0;
     do {
       n = nodeForIdentifier(index++);
@@ -338,7 +338,7 @@ uint16_t TreeStack::ReferenceTable::storeNode(Tree *node) {
   }
 }
 
-void TreeStack::ReferenceTable::updateIdentifier(uint16_t id, Tree *newNode) {
+void TreeStack::ReferenceTable::updateIdentifier(uint16_t id, Tree* newNode) {
   assert(id < m_length);
   storeNodeAtIndex(newNode, id);
 }
@@ -360,10 +360,10 @@ void TreeStack::ReferenceTable::deleteIdentifier(uint16_t id) {
 }
 
 void TreeStack::ReferenceTable::updateNodes(AlterSelectedBlock function,
-                                            const Block *contextSelection1,
-                                            const Block *contextSelection2,
+                                            const Block* contextSelection1,
+                                            const Block* contextSelection2,
                                             int contextAlteration) {
-  Block *first = static_cast<Block *>(m_pool->firstBlock());
+  Block* first = static_cast<Block*>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
     if (m_nodeOffsetForIdentifier[i] == InvalidatedOffset ||
         m_nodeOffsetForIdentifier[i] == DeletedOffset) {
@@ -376,8 +376,8 @@ void TreeStack::ReferenceTable::updateNodes(AlterSelectedBlock function,
 }
 
 void TreeStack::ReferenceTable::deleteIdentifiersAfterBlock(
-    const Block *block) {
-  Block *first = static_cast<Block *>(m_pool->firstBlock());
+    const Block* block) {
+  Block* first = static_cast<Block*>(m_pool->firstBlock());
   assert(block >= first && block <= first + UINT16_MAX);
   uint16_t maxOffset = block - first;
   for (int i = 0; i < m_length; i++) {
@@ -399,11 +399,11 @@ bool TreeStack::ReferenceTable::reset() {
 
 #if POINCARE_TREE_LOG
 
-void TreeStack::ReferenceTable::logIdsForNode(std::ostream &stream,
-                                              const Tree *node) const {
+void TreeStack::ReferenceTable::logIdsForNode(std::ostream& stream,
+                                              const Tree* node) const {
   bool found = false;
   for (size_t i = 0; i < m_length; i++) {
-    Tree *n = TreeStack::ReferenceTable::nodeForIdentifier(i);
+    Tree* n = TreeStack::ReferenceTable::nodeForIdentifier(i);
     if (node == n) {
       stream << static_cast<int>(i) << ", ";
       found = true;
@@ -416,7 +416,7 @@ void TreeStack::ReferenceTable::logIdsForNode(std::ostream &stream,
 
 #endif
 
-uint16_t TreeStack::ReferenceTable::storeNodeAtIndex(Tree *node, size_t index) {
+uint16_t TreeStack::ReferenceTable::storeNodeAtIndex(Tree* node, size_t index) {
   if (index >= m_length) {
     assert(index == m_length);
     assert(!isFull());
@@ -433,47 +433,47 @@ uint16_t TreeStack::ReferenceTable::storeNodeAtIndex(Tree *node, size_t index) {
 
 // Edition Pool
 
-template Tree *TreeStack::push<Type::Addition, int>(int);
-template Tree *TreeStack::push<Type::AsciiCodePointLayout, CodePoint>(
+template Tree* TreeStack::push<Type::Addition, int>(int);
+template Tree* TreeStack::push<Type::AsciiCodePointLayout, CodePoint>(
     CodePoint);
-template Tree *TreeStack::push<Type::CombinedCodePointsLayout, CodePoint,
+template Tree* TreeStack::push<Type::CombinedCodePointsLayout, CodePoint,
                                CodePoint>(CodePoint, CodePoint);
-template Tree *TreeStack::push<Type::Decimal, int8_t>(int8_t);
-template Tree *TreeStack::push<Type::DoubleFloat, double>(double);
-template Tree *TreeStack::push<Type::IntegerNegBig>(uint64_t);
-template Tree *TreeStack::push<Type::IntegerPosBig>(uint64_t);
-template Tree *TreeStack::push<Type::IntegerShort>(int8_t);
-template Tree *TreeStack::push<Type::List, int>(int);
-template Tree *TreeStack::push<Type::Matrix, int, int>(int, int);
-template Tree *TreeStack::push<Type::Matrix, uint8_t, uint8_t>(uint8_t,
+template Tree* TreeStack::push<Type::Decimal, int8_t>(int8_t);
+template Tree* TreeStack::push<Type::DoubleFloat, double>(double);
+template Tree* TreeStack::push<Type::IntegerNegBig>(uint64_t);
+template Tree* TreeStack::push<Type::IntegerPosBig>(uint64_t);
+template Tree* TreeStack::push<Type::IntegerShort>(int8_t);
+template Tree* TreeStack::push<Type::List, int>(int);
+template Tree* TreeStack::push<Type::Matrix, int, int>(int, int);
+template Tree* TreeStack::push<Type::Matrix, uint8_t, uint8_t>(uint8_t,
                                                                uint8_t);
-template Tree *TreeStack::push<Type::MatrixLayout, uint8_t, uint8_t>(uint8_t,
+template Tree* TreeStack::push<Type::MatrixLayout, uint8_t, uint8_t>(uint8_t,
                                                                      uint8_t);
-template Tree *TreeStack::push<Type::Multiplication, int>(int);
-template Tree *TreeStack::push<Type::ParenthesisLayout, bool, bool>(
+template Tree* TreeStack::push<Type::Multiplication, int>(int);
+template Tree* TreeStack::push<Type::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
-template Tree *TreeStack::push<Type::PhysicalConstant, uint8_t>(uint8_t);
-template Tree *TreeStack::push<Type::Piecewise, int>(int);
-template Tree *TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
+template Tree* TreeStack::push<Type::PhysicalConstant, uint8_t>(uint8_t);
+template Tree* TreeStack::push<Type::Piecewise, int>(int);
+template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
                                uint8_t, bool, uint8_t>(double, double, uint32_t,
                                                        uint8_t, bool, uint8_t);
-template Tree *TreeStack::push<Type::Polynomial, int>(int);
-template Tree *TreeStack::push<Type::RackLayout, int>(int);
-template Tree *TreeStack::push<Type::Set>(int);
-template Tree *TreeStack::push<Type::Set>(uint8_t);
-template Tree *TreeStack::push<Type::SingleFloat, float>(float);
-template Tree *TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
+template Tree* TreeStack::push<Type::Polynomial, int>(int);
+template Tree* TreeStack::push<Type::RackLayout, int>(int);
+template Tree* TreeStack::push<Type::Set>(int);
+template Tree* TreeStack::push<Type::Set>(uint8_t);
+template Tree* TreeStack::push<Type::SingleFloat, float>(float);
+template Tree* TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
     CodePoint);
-template Tree *TreeStack::push<Type::Unit, uint8_t, uint8_t>(uint8_t, uint8_t);
-template Tree *TreeStack::push<Type::UserFunction, const char *, size_t>(
-    const char *, size_t);
-template Tree *TreeStack::push<Type::UserSequence, const char *, size_t>(
-    const char *, size_t);
-template Tree *TreeStack::push<Type::UserSymbol, const char *, size_t>(
-    const char *, size_t);
-template Tree *TreeStack::push<Type::Variable, uint8_t, ComplexSign>(
+template Tree* TreeStack::push<Type::Unit, uint8_t, uint8_t>(uint8_t, uint8_t);
+template Tree* TreeStack::push<Type::UserFunction, const char*, size_t>(
+    const char*, size_t);
+template Tree* TreeStack::push<Type::UserSequence, const char*, size_t>(
+    const char*, size_t);
+template Tree* TreeStack::push<Type::UserSymbol, const char*, size_t>(
+    const char*, size_t);
+template Tree* TreeStack::push<Type::Variable, uint8_t, ComplexSign>(
     uint8_t, ComplexSign);
-template Tree *TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
+template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
     bool isSubscript, bool isPrefix);
 
 }  // namespace PoincareJ

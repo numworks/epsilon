@@ -66,11 +66,11 @@ class Domain {
     return true;
   }
 
-  static Troolean ExpressionIsIn(const Tree *expression, Type domain,
-                                 Context *context);
+  static Troolean ExpressionIsIn(const Tree* expression, Type domain,
+                                 Context* context);
 
-  static bool ExpressionIsIn(bool *result, const Tree *expression, Type domain,
-                             Context *context) {
+  static bool ExpressionIsIn(bool* result, const Tree* expression, Type domain,
+                             Context* context) {
     assert(result != nullptr);
     Troolean expressionsIsIn = ExpressionIsIn(expression, domain, context);
     switch (expressionsIsIn) {
@@ -86,9 +86,9 @@ class Domain {
     }
   }
 
-  static bool ExpressionsAreIn(bool *result, const Tree *expression1,
-                               Type domain1, const Tree *expression2,
-                               Type domain2, Context *context) {
+  static bool ExpressionsAreIn(bool* result, const Tree* expression1,
+                               Type domain1, const Tree* expression2,
+                               Type domain2, Context* context) {
     assert(result != nullptr);
     Troolean expressionsAreIn =
         TrinaryAnd(ExpressionIsIn(expression1, domain1, context),

@@ -7,8 +7,8 @@ namespace PoincareJ {
 
 class ParsingHelper {
  public:
-  static bool IsLogicalOperator(const CPL *name, size_t nameLength,
-                                Token::Type *returnType);
+  static bool IsLogicalOperator(const CPL* name, size_t nameLength,
+                                Token::Type* returnType);
 };
 }  // namespace PoincareJ
 #endif

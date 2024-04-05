@@ -17,7 +17,7 @@
 
 namespace PoincareJ {
 
-const Distribution *Distribution::Get(Type type) {
+const Distribution* Distribution::Get(Type type) {
   switch (type) {
     case Type::Binomial:
       constexpr static BinomialDistribution binomial;
@@ -56,7 +56,7 @@ const Distribution *Distribution::Get(Type type) {
 template <typename T>
 void Distribution::FindBoundsForBinarySearch(
     typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
-    const void *auxiliary, T &xmin, T &xmax) {
+    const void* auxiliary, T& xmin, T& xmax) {
   /* We'll simply test [0, 10], [10, 100], [100, 1000] ... until we find a
    * working interval, or symmetrically if the zero is on the left. This
    * obviously assumes that cumulativeDistributionEvaluation is an increasing
@@ -91,7 +91,7 @@ void Distribution::FindBoundsForBinarySearch(
 
 double Distribution::
     cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(
-        double p, double ax, double bx, double *parameters) const {
+        double p, double ax, double bx, double* parameters) const {
   assert(ax < bx);
   if (p > 1.0 - DBL_EPSILON) {
     return INFINITY;
@@ -99,15 +99,15 @@ double Distribution::
   if (p < DBL_EPSILON) {
     return -INFINITY;
   }
-  const void *pack[3] = {this, &p, parameters};
+  const void* pack[3] = {this, &p, parameters};
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       ax, bx, DBL_EPSILON,
-      [](double x, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        const Distribution *distribution =
-            static_cast<const Distribution *>(pack[0]);
-        const double *proba = static_cast<const double *>(pack[1]);
-        const double *parameters = static_cast<const double *>(pack[2]);
+      [](double x, const void* auxiliary) {
+        const void* const* pack = static_cast<const void* const*>(auxiliary);
+        const Distribution* distribution =
+            static_cast<const Distribution*>(pack[0]);
+        const double* proba = static_cast<const double*>(pack[1]);
+        const double* parameters = static_cast<const double*>(pack[2]);
         // This needs to be an increasing function
         return distribution->cumulativeDistributiveFunctionAtAbscissa(
                    x, parameters) -
@@ -131,8 +131,8 @@ double Distribution::
 }
 
 template void Distribution::FindBoundsForBinarySearch<float>(
-    Solver<float>::FunctionEvaluation, void const *, float &, float &);
+    Solver<float>::FunctionEvaluation, void const*, float&, float&);
 template void Distribution::FindBoundsForBinarySearch<double>(
-    Solver<double>::FunctionEvaluation, void const *, double &, double &);
+    Solver<double>::FunctionEvaluation, void const*, double&, double&);
 
 }  // namespace PoincareJ

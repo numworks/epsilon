@@ -24,7 +24,7 @@ class Zoom {
   constexpr static float k_largeUnitMantissa = 5.f;
 
   template <typename T>
-  using Function2DWithContext = Coordinate2D<T> (*)(T, const void *, Context *);
+  using Function2DWithContext = Coordinate2D<T> (*)(T, const void*, Context*);
 
   /* Sanitize will turn any random range into a range fit for display (see
    * comment on range() method below), that includes the original range. */
@@ -34,7 +34,7 @@ class Zoom {
     return Sanitize(Range2D<float>(), normalRatio, maxFloat);
   }
 
-  Zoom(float tMin, float tMax, float normalRatio, Context *context,
+  Zoom(float tMin, float tMax, float normalRatio, Context* context,
        float maxFloat)
       : m_bounds(tMin, tMax),
         m_context(context),
@@ -69,26 +69,26 @@ class Zoom {
   void fitPoint(Coordinate2D<float> xy, bool flipped = false,
                 float leftMargin = 0.f, float rightMargin = 0.f,
                 float bottomMargin = 0.f, float topMargin = 0.f);
-  void fitPointsOfInterest(Function2DWithContext<float> f, const void *model,
+  void fitPointsOfInterest(Function2DWithContext<float> f, const void* model,
                            bool vertical = false,
                            Function2DWithContext<double> fDouble = nullptr,
-                           bool *finiteNumberOfPoints = nullptr);
-  void fitRoots(Function2DWithContext<float> f, const void *model,
+                           bool* finiteNumberOfPoints = nullptr);
+  void fitRoots(Function2DWithContext<float> f, const void* model,
                 bool vertical = false,
                 Function2DWithContext<double> fDouble = nullptr,
-                bool *finiteNumberOfPoints = nullptr);
-  void fitIntersections(Function2DWithContext<float> f1, const void *model1,
-                        Function2DWithContext<float> f2, const void *model2,
+                bool* finiteNumberOfPoints = nullptr);
+  void fitIntersections(Function2DWithContext<float> f1, const void* model1,
+                        Function2DWithContext<float> f2, const void* model2,
                         bool vertical = false);
-  void fitConditions(const Tree *piecewise,
+  void fitConditions(const Tree* piecewise,
                      Function2DWithContext<float> fullFunction,
-                     const void *model, const char *symbol,
+                     const void* model, const char* symbol,
                      ComplexFormat complexFormat, AngleUnit angleUnit,
                      bool vertical = false);
   /* This function will only touch the Y axis. */
-  void fitMagnitude(Function2DWithContext<float> f, const void *model,
+  void fitMagnitude(Function2DWithContext<float> f, const void* model,
                     bool cropOutliers, bool vertical = false);
-  void fitBounds(Function2DWithContext<float> f, const void *model,
+  void fitBounds(Function2DWithContext<float> f, const void* model,
                  bool vertical = false);
 
  private:
@@ -117,7 +117,7 @@ class Zoom {
     constexpr static float k_threshold = 0.2f;    // TODO Tune
     constexpr static float k_hysteresis = 0.01f;  // TODO Tune
 
-    Coordinate2D<float> privateGet(const Coordinate2D<float> *p) const {
+    Coordinate2D<float> privateGet(const Coordinate2D<float>* p) const {
       return std::isfinite(p->x()) ? *p : Coordinate2D<float>();
     }
 
@@ -129,9 +129,9 @@ class Zoom {
   struct InterestParameters {
     Function2DWithContext<float> f;
     Function2DWithContext<double> fDouble;
-    const void *model;
-    Context *context;
-    HorizontalAsymptoteHelper *asymptotes;
+    const void* model;
+    Context* context;
+    HorizontalAsymptoteHelper* asymptotes;
     float (Coordinate2D<float>::*ordinate)() const;
     double (Coordinate2D<double>::*ordinateDouble)() const;
   };
@@ -139,9 +139,9 @@ class Zoom {
   struct IntersectionParameters {
     Function2DWithContext<float> f1;
     Function2DWithContext<float> f2;
-    const void *model1;
-    const void *model2;
-    Context *context;
+    const void* model1;
+    const void* model2;
+    Context* context;
   };
 
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
@@ -152,17 +152,17 @@ class Zoom {
   static Solver<float>::Interest PointIsInteresting(Coordinate2D<float> a,
                                                     Coordinate2D<float> b,
                                                     Coordinate2D<float> c,
-                                                    const void *aux);
+                                                    const void* aux);
   static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f,
-                                       const void *aux, float a, float b,
+                                       const void* aux, float a, float b,
                                        Solver<float>::Interest, float precision,
                                        Troolean discontinuous);
   static Coordinate2D<float> HoneRoot(Solver<float>::FunctionEvaluation f,
-                                      const void *aux, float a, float b,
+                                      const void* aux, float a, float b,
                                       Solver<float>::Interest, float precision,
                                       Troolean discontinuous);
   static Coordinate2D<float> HoneIntersection(
-      Solver<float>::FunctionEvaluation f, const void *aux, float a, float b,
+      Solver<float>::FunctionEvaluation f, const void* aux, float a, float b,
       Solver<float>::Interest, float precision, Troolean discontinuous);
 
   Range2D<float> sanitize2DHelper(Range2D<float> range) const;
@@ -175,8 +175,8 @@ class Zoom {
                                           float yLengthNormalized) const;
   Range2D<float> prettyRange(bool forceNormalization) const;
   void fitWithSolver(
-      bool *leftInterrupted, bool *rightInterrupted,
-      Solver<float>::FunctionEvaluation evaluator, const void *aux,
+      bool* leftInterrupted, bool* rightInterrupted,
+      Solver<float>::FunctionEvaluation evaluator, const void* aux,
       Solver<float>::BracketTest test, Solver<float>::HoneResult hone,
       bool vertical, Solver<double>::FunctionEvaluation fDouble = nullptr,
       Solver<float>::BracketTest testForCenterOfInterval = nullptr);
@@ -184,7 +184,7 @@ class Zoom {
    * found. */
   bool fitWithSolverHelper(float start, float end,
                            Solver<float>::FunctionEvaluation evaluator,
-                           const void *aux, Solver<float>::BracketTest test,
+                           const void* aux, Solver<float>::BracketTest test,
                            Solver<float>::HoneResult hone, bool vertical,
                            Solver<double>::FunctionEvaluation fDouble);
   void privateFitPoint(Coordinate2D<float> xy, bool flipped = false);
@@ -196,7 +196,7 @@ class Zoom {
   Range2D<float> m_magnitudeRange;
   Range2D<float> m_forcedRange;
   Range1D<float> m_bounds;
-  Context *m_context;
+  Context* m_context;
   float m_defaultHalfLength;
   float m_normalRatio;
   const float m_maxFloat;

@@ -10,8 +10,8 @@ namespace PoincareJ {
 
 InputBeautification::BeautificationMethod
 InputBeautification::BeautificationMethodWhenInsertingLayout(
-    const Tree *insertedLayout) {
-  const Tree *leftMostLayout = insertedLayout->numberOfChildren() > 0
+    const Tree* insertedLayout) {
+  const Tree* leftMostLayout = insertedLayout->numberOfChildren() > 0
                                    ? insertedLayout->child(0)
                                    : insertedLayout;
 
@@ -59,8 +59,8 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 }
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
-    LayoutCursor *layoutCursor, Poincare::Context *context) {
-  Tree *l = layoutCursor->cursorNode();
+    LayoutCursor* layoutCursor, Poincare::Context* context) {
+  Tree* l = layoutCursor->cursorNode();
   int position = layoutCursor->position();
   if (position == 0) {
     return false;
@@ -71,12 +71,12 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
 }
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
-    LayoutCursor *layoutCursor, Poincare::Context *context) {
-  Tree *l = layoutCursor->cursorNode();
-  Tree *root = layoutCursor->rootNode();
+    LayoutCursor* layoutCursor, Poincare::Context* context) {
+  Tree* l = layoutCursor->cursorNode();
+  Tree* root = layoutCursor->rootNode();
   int position = layoutCursor->position();
 
-  Tree *h = nullptr;
+  Tree* h = nullptr;
   int insertedLayoutIndex = -1;
 
   // - Step 1 - Find the inserted layout
@@ -132,13 +132,13 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
 
 // private
 
-bool InputBeautification::LayoutIsIdentifierMaterial(const Tree *l) {
+bool InputBeautification::LayoutIsIdentifierMaterial(const Tree* l) {
   return l->isCodePointLayout() &&
          Tokenizer::IsIdentifierMaterial(CodePointLayout::GetCodePoint(l));
 }
 
-bool InputBeautification::BeautifySymbols(Tree *h, int rightmostIndexToBeautify,
-                                          LayoutCursor *layoutCursor) {
+bool InputBeautification::BeautifySymbols(Tree* h, int rightmostIndexToBeautify,
+                                          LayoutCursor* layoutCursor) {
   assert(h);
   assert(rightmostIndexToBeautify < h->numberOfChildren() &&
          rightmostIndexToBeautify >= 0);
@@ -152,7 +152,7 @@ bool InputBeautification::BeautifySymbols(Tree *h, int rightmostIndexToBeautify,
      * k_symbolsRules for now). */
     assert(beautificationRule.listOfBeautifiedAliases.mainAlias() ==
            beautificationRule.listOfBeautifiedAliases);
-    const char *pattern =
+    const char* pattern =
         beautificationRule.listOfBeautifiedAliases.mainAlias();
     int length = strlen(pattern);
     if (rightmostIndexToBeautify + 1 < length) {
@@ -182,9 +182,9 @@ bool InputBeautification::BeautifySymbols(Tree *h, int rightmostIndexToBeautify,
 }
 
 bool InputBeautification::TokenizeAndBeautifyIdentifiers(
-    Tree *h, int rightmostIndexToBeautify, const BeautificationRule *rulesList,
-    size_t numberOfRules, Poincare::Context *context,
-    LayoutCursor *layoutCursor, bool logBeautification) {
+    Tree* h, int rightmostIndexToBeautify, const BeautificationRule* rulesList,
+    size_t numberOfRules, Poincare::Context* context,
+    LayoutCursor* layoutCursor, bool logBeautification) {
   assert(h);
   assert(rightmostIndexToBeautify < h->numberOfChildren() &&
          rightmostIndexToBeautify >= 0);
@@ -235,7 +235,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   /* The content of h will be modified if token match which would break the
    * tokenizer. To avoid this we run the tokenizer on h and modifications on a
    * copy of h. */
-  Tree *clone = h->clone();
+  Tree* clone = h->clone();
   /* The cursor is inside h and we need to move it inside clone for it to follow
    * editions. Since they are the still the same, we swap them. */
   h->swapWithTree(clone);
@@ -319,8 +319,8 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   return layoutsWereBeautified;
 }
 
-bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
-                                          LayoutCursor *cursor) {
+bool InputBeautification::BeautifyPipeKey(Tree* h, int indexOfPipeKey,
+                                          LayoutCursor* cursor) {
   TreeRef pipeKey = h->child(indexOfPipeKey);
   if (!CodePointLayout::IsCodePoint(pipeKey, '|')) {
     return false;
@@ -329,7 +329,7 @@ bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
   TreeRef parameter = KRackL()->clone();
   TreeRef toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
   LayoutBufferCursor::TreeStackCursor cursorForInsertion =
-      *static_cast<LayoutBufferCursor::TreeStackCursor *>(cursor);
+      *static_cast<LayoutBufferCursor::TreeStackCursor*>(cursor);
   cursorForInsertion.setLayout(h, OMG::Direction::Left());
   cursorForInsertion.setPosition(indexOfPipeKey);
   LayoutBufferCursor::TreeStackCursor::InsertLayoutContext data{toInsert};
@@ -342,11 +342,11 @@ bool InputBeautification::BeautifyPipeKey(Tree *h, int indexOfPipeKey,
 }
 
 bool InputBeautification::BeautifyFractionIntoDerivative(
-    Tree *h, int indexOfFraction, LayoutCursor *layoutCursor) {
+    Tree* h, int indexOfFraction, LayoutCursor* layoutCursor) {
   assert(indexOfFraction >= 0 && indexOfFraction < h->numberOfChildren() - 1 &&
          h->child(indexOfFraction + 1)->isParenthesisLayout());
   TreeRef childToMatch = h->child(indexOfFraction);
-  const Tree *fractionDDXLayout = KFracL("d"_l, "dx"_l);
+  const Tree* fractionDDXLayout = KFracL("d"_l, "dx"_l);
   if (!fractionDDXLayout->treeIsIdenticalTo(childToMatch)) {
     return false;
   }
@@ -355,7 +355,7 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
 }
 
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
-    Tree *h, int indexOfSuperscript, LayoutCursor *layoutCursor) {
+    Tree* h, int indexOfSuperscript, LayoutCursor* layoutCursor) {
   TreeRef superscript = h->child(indexOfSuperscript);
   if (!superscript->isVerticalOffsetLayout() ||
       !VerticalOffset::IsSuffixSuperscript(superscript)) {
@@ -383,9 +383,9 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
   return true;
 }
 
-bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
-                                      Poincare::Context *context,
-                                      LayoutCursor *layoutCursor) {
+bool InputBeautification::BeautifySum(Tree* h, int indexOfComma,
+                                      Poincare::Context* context,
+                                      LayoutCursor* layoutCursor) {
   /* The "sum(" function is ambiguous". It can either be:
    *  - The sum of a list, which should not be beautified.
    *  - The sum between k and n, which should be beautified.
@@ -447,13 +447,13 @@ bool InputBeautification::BeautifySum(Tree *h, int indexOfComma,
 }
 
 bool InputBeautification::CompareAndBeautifyIdentifier(
-    const Tree *firstLayout, size_t identifierLength,
-    BeautificationRule beautificationRule, Tree *h, int startIndex,
-    LayoutCursor *layoutCursor, int *comparisonResult,
-    int *numberOfLayoutsAddedOrRemoved) {
+    const Tree* firstLayout, size_t identifierLength,
+    BeautificationRule beautificationRule, Tree* h, int startIndex,
+    LayoutCursor* layoutCursor, int* comparisonResult,
+    int* numberOfLayoutsAddedOrRemoved) {
   Aliases patternAliases = beautificationRule.listOfBeautifiedAliases;
   int firstIndex;
-  const Tree *rack =
+  const Tree* rack =
       layoutCursor->rootNode()->parentOfDescendant(firstLayout, &firstIndex);
   RackLayoutDecoder decoder(rack, firstIndex, firstIndex + identifierLength);
   *comparisonResult = patternAliases.maxDifferenceWith(&decoder);
@@ -466,9 +466,9 @@ bool InputBeautification::CompareAndBeautifyIdentifier(
 }
 
 bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-    Tree *h, int startIndex, int endIndex,
-    BeautificationRule beautificationRule, LayoutCursor *layoutCursor,
-    int *numberOfLayoutsAddedOrRemoved, Tree *preProcessedParameter,
+    Tree* h, int startIndex, int endIndex,
+    BeautificationRule beautificationRule, LayoutCursor* layoutCursor,
+    int* numberOfLayoutsAddedOrRemoved, Tree* preProcessedParameter,
     int indexOfPreProcessedParameter) {
   assert(beautificationRule.numberOfParameters == 0 ||
          h->child(endIndex + 1)->isParenthesisLayout());
@@ -533,8 +533,8 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
 }
 
 bool InputBeautification::CreateParametersList(
-    TreeRef *parameters, Tree *h, int parenthesisIndexInParent,
-    BeautificationRule beautificationRule, LayoutCursor *layoutCursor) {
+    TreeRef* parameters, Tree* h, int parenthesisIndexInParent,
+    BeautificationRule beautificationRule, LayoutCursor* layoutCursor) {
   TreeRef parenthesis = h->child(parenthesisIndexInParent);
   assert(parenthesis->isParenthesisLayout());
   // Left parenthesis should not be temporary
@@ -547,13 +547,13 @@ bool InputBeautification::CreateParametersList(
   int i = 0;  // Index in paramsString
   int n = paramsString->numberOfChildren();
   int parameterIndex = 0;
-  Tree *currentParameter = KRackL()->clone();
+  Tree* currentParameter = KRackL()->clone();
 
   int cursorPosition = layoutCursor->cursorNode() == paramsString
                            ? layoutCursor->position()
                            : -1;
   LayoutBufferCursor::TreeStackCursor newCursor =
-      *static_cast<LayoutBufferCursor::TreeStackCursor *>(layoutCursor);
+      *static_cast<LayoutBufferCursor::TreeStackCursor*>(layoutCursor);
 
   while (i <= n) {
     if (parameterIndex >= beautificationRule.numberOfParameters) {

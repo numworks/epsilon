@@ -19,14 +19,14 @@ namespace PoincareJ {
 
 class AdvancedSimplification {
  public:
-  static bool AdvancedReduce(Tree *u);
+  static bool AdvancedReduce(Tree* u);
   EDITION_REF_WRAP(AdvancedReduce);
 
   // Bottom-up deep contract
-  static bool DeepContract(Tree *e);
+  static bool DeepContract(Tree* e);
   EDITION_REF_WRAP(DeepContract);
   // Top-Bottom deep expand
-  static bool DeepExpand(Tree *e);
+  static bool DeepExpand(Tree* e);
   EDITION_REF_WRAP(DeepExpand);
 
  private:
@@ -37,7 +37,7 @@ class AdvancedSimplification {
     // Return false if hash was already explored
     bool add(uint32_t crc, uint8_t depth);
     bool isFull() const { return m_length >= k_size; }
-    static uint32_t Hash(const Tree *tree);
+    static uint32_t Hash(const Tree* tree);
 
    private:
     // Max Expand/Contract combination possibilities
@@ -53,10 +53,10 @@ class AdvancedSimplification {
    public:
     constexpr static uint8_t k_numberOfBaseDirections = 3;
     // Return true if direction was applied.
-    bool apply(Tree **u, Tree *root, bool *rootChanged,
+    bool apply(Tree** u, Tree* root, bool* rootChanged,
                bool keepDependencies) const;
     // Return true if can apply direction.
-    bool canApply(const Tree *u, const Tree *root) const;
+    bool canApply(const Tree* u, const Tree* root) const;
     // Constructor needed for Path::m_stack
     Direction() : m_type(0) {}
     bool isNextNode() const { return !isContract() && !isExpand(); }
@@ -95,7 +95,7 @@ class AdvancedSimplification {
    public:
     Path() : m_length(0) {}
     // Return true if tree has changed. Path is expected to be valid on root.
-    bool apply(Tree *root, bool keepDependencies) const;
+    bool apply(Tree* root, bool keepDependencies) const;
     // Pop NextNode directions one at a time.
     void popBaseDirection();
     // Return if any base direction can be added.
@@ -112,14 +112,14 @@ class AdvancedSimplification {
   };
 
   struct Context {
-    Context(Tree *root, const Tree *original, int bestMetric)
+    Context(Tree* root, const Tree* original, int bestMetric)
         : m_root(root),
           m_original(original),
           m_bestMetric(bestMetric),
           m_mustResetRoot(false) {}
 
-    Tree *m_root;
-    const Tree *m_original;
+    Tree* m_root;
+    const Tree* m_original;
     Path m_path;
     Path m_bestPath;
     int m_bestMetric;
@@ -128,35 +128,35 @@ class AdvancedSimplification {
   };
   /* Recursive advanced reduction. Return true if advanced reduction
    * possibilities have all been explored. */
-  static bool AdvancedReduceRec(Tree *u, Context *ctx);
+  static bool AdvancedReduceRec(Tree* u, Context* ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
-  static bool UpwardSystematicReduce(Tree *root, const Tree *tree);
+  static bool UpwardSystematicReduce(Tree* root, const Tree* tree);
 
   /* Expand/Contract operations */
-  static bool ShallowContract(Tree *e, bool tryAll) {
+  static bool ShallowContract(Tree* e, bool tryAll) {
     return (tryAll ? TryAllOperations : TryOneOperation)(
         e, k_contractOperations, std::size(k_contractOperations));
   }
-  static bool ShallowExpand(Tree *e, bool tryAll) {
+  static bool ShallowExpand(Tree* e, bool tryAll) {
     return (tryAll ? TryAllOperations : TryOneOperation)(
         e, k_expandOperations, std::size(k_expandOperations));
   }
 
   // Try all Operations until they all fail consecutively.
-  static bool TryAllOperations(Tree *node, const Tree::Operation *operations,
+  static bool TryAllOperations(Tree* node, const Tree::Operation* operations,
                                int numberOfOperations);
   // Try all Operations until one of them succeed.
-  static bool TryOneOperation(Tree *node, const Tree::Operation *operations,
+  static bool TryOneOperation(Tree* node, const Tree::Operation* operations,
                               int numberOfOperations);
 
-  static bool ExpandImRe(Tree *node);
-  static bool ContractAbs(Tree *node);
-  static bool ExpandAbs(Tree *node);
-  static bool ContractExpMult(Tree *node);
-  static bool ExpandExp(Tree *node);
-  static bool ContractMult(Tree *node);
-  static bool ExpandMult(Tree *node);
-  static bool ExpandPower(Tree *node);
+  static bool ExpandImRe(Tree* node);
+  static bool ContractAbs(Tree* node);
+  static bool ExpandAbs(Tree* node);
+  static bool ContractExpMult(Tree* node);
+  static bool ExpandExp(Tree* node);
+  static bool ContractMult(Tree* node);
+  static bool ExpandMult(Tree* node);
+  static bool ExpandPower(Tree* node);
 
   constexpr static Tree::Operation k_contractOperations[] = {
       Logarithm::ContractLn,

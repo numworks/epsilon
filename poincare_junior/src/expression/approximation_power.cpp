@@ -103,10 +103,10 @@ std::complex<T> computeNotPrincipalRealRootOfRationalPow(
 }
 
 template <typename T>
-std::complex<T> Approximation::ApproximatePower(const Tree *power,
+std::complex<T> Approximation::ApproximatePower(const Tree* power,
                                                 ComplexFormat complexFormat) {
-  const Tree *base = power->child(0);
-  const Tree *exponent = power->child(1);
+  const Tree* base = power->child(0);
+  const Tree* exponent = power->child(1);
   std::complex<T> c = ToComplex<T>(base);
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
@@ -139,8 +139,8 @@ defaultApproximation:
 }
 
 template std::complex<float> Approximation::ApproximatePower(
-    const Tree *child, ComplexFormat complexFormat);
+    const Tree* child, ComplexFormat complexFormat);
 template std::complex<double> Approximation::ApproximatePower(
-    const Tree *child, ComplexFormat complexFormat);
+    const Tree* child, ComplexFormat complexFormat);
 
 }  // namespace PoincareJ

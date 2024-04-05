@@ -11,7 +11,7 @@ namespace PoincareJ {
 
 void Zoom::HorizontalAsymptoteHelper::update(Coordinate2D<float> p,
                                              float slope) {
-  Coordinate2D<float> *bound = p.x() < m_center ? &m_left : &m_right;
+  Coordinate2D<float>* bound = p.x() < m_center ? &m_left : &m_right;
   slope = std::fabs(slope);
   if (!std::isfinite(slope)) {
     return;
@@ -138,12 +138,12 @@ void Zoom::fitFullFunction(Function2DWithContext<float> f, const void *model) {
 static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a,
                                                         Coordinate2D<float> b,
                                                         Coordinate2D<float> c,
-                                                        const void *aux) {
+                                                        const void* aux) {
   Solver<float>::BracketTest tests[] = {
       Solver<float>::OddRootInBracket, Solver<float>::MinimumInBracket,
       Solver<float>::MaximumInBracket, Solver<float>::UndefinedInBracket};
   Solver<float>::Interest interest = Solver<float>::Interest::None;
-  for (Solver<float>::BracketTest &test : tests) {
+  for (Solver<float>::BracketTest& test : tests) {
     interest = test(a, b, c, aux);
     if (interest != Solver<float>::Interest::None) {
       break;
@@ -153,9 +153,9 @@ static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a,
 }
 
 void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
-                               const void *model, bool vertical,
+                               const void* model, bool vertical,
                                Function2DWithContext<double> fDouble,
-                               bool *finiteNumberOfPoints) {
+                               bool* finiteNumberOfPoints) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   float (Coordinate2D<float>::*ordinate)() const =
       vertical ? &Coordinate2D<float>::x : &Coordinate2D<float>::y;
@@ -168,13 +168,13 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
                                .asymptotes = &asymptotes,
                                .ordinate = ordinate,
                                .ordinateDouble = ordinateDouble};
-  Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
-    const InterestParameters *p = static_cast<const InterestParameters *>(aux);
+  Solver<float>::FunctionEvaluation evaluator = [](float t, const void* aux) {
+    const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->f(t, p->model, p->context).*p->ordinate)();
   };
   Solver<double>::FunctionEvaluation evaluatorDouble = [](double t,
-                                                          const void *aux) {
-    const InterestParameters *p = static_cast<const InterestParameters *>(aux);
+                                                          const void* aux) {
+    const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->fDouble(t, p->model, p->context).*p->ordinateDouble)();
   };
   bool leftInterrupted, rightInterrupted;
@@ -196,9 +196,9 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
   }
 }
 
-void Zoom::fitRoots(Function2DWithContext<float> f, const void *model,
+void Zoom::fitRoots(Function2DWithContext<float> f, const void* model,
                     bool vertical, Function2DWithContext<double> fDouble,
-                    bool *finiteNumberOfPoints) {
+                    bool* finiteNumberOfPoints) {
   float (Coordinate2D<float>::*ordinate)() const =
       vertical ? &Coordinate2D<float>::x : &Coordinate2D<float>::y;
   double (Coordinate2D<double>::*ordinateDouble)() const =
@@ -210,13 +210,13 @@ void Zoom::fitRoots(Function2DWithContext<float> f, const void *model,
                                .asymptotes = nullptr,
                                .ordinate = ordinate,
                                .ordinateDouble = ordinateDouble};
-  Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
-    const InterestParameters *p = static_cast<const InterestParameters *>(aux);
+  Solver<float>::FunctionEvaluation evaluator = [](float t, const void* aux) {
+    const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->f(t, p->model, p->context).*p->ordinate)();
   };
   Solver<double>::FunctionEvaluation evaluatorDouble = [](double t,
-                                                          const void *aux) {
-    const InterestParameters *p = static_cast<const InterestParameters *>(aux);
+                                                          const void* aux) {
+    const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->fDouble(t, p->model, p->context).*p->ordinateDouble)();
   };
   bool leftInterrupted, rightInterrupted;
@@ -229,8 +229,8 @@ void Zoom::fitRoots(Function2DWithContext<float> f, const void *model,
   }
 }
 
-void Zoom::fitIntersections(Function2DWithContext<float> f1, const void *model1,
-                            Function2DWithContext<float> f2, const void *model2,
+void Zoom::fitIntersections(Function2DWithContext<float> f1, const void* model1,
+                            Function2DWithContext<float> f2, const void* model2,
                             bool vertical) {
   /* TODO Function x=f(y) are not intersectable right now, there is no need to
    * handle this case yet. */
@@ -240,9 +240,9 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void *model1,
                                    .model1 = model1,
                                    .model2 = model2,
                                    .context = m_context};
-  Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
-    const IntersectionParameters *p =
-        static_cast<const IntersectionParameters *>(aux);
+  Solver<float>::FunctionEvaluation evaluator = [](float t, const void* aux) {
+    const IntersectionParameters* p =
+        static_cast<const IntersectionParameters*>(aux);
     return p->f1(t, p->model1, p->context).y() -
            p->f2(t, p->model2, p->context).y();
   };
@@ -251,18 +251,18 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void *model1,
                 Solver<float>::OddRootInBracket, HoneIntersection, vertical);
 }
 
-void Zoom::fitConditions(const Tree *piecewise,
+void Zoom::fitConditions(const Tree* piecewise,
                          Function2DWithContext<float> fullFunction,
-                         const void *model, const char *symbol,
+                         const void* model, const char* symbol,
                          ComplexFormat complexFormat, AngleUnit angleUnit,
                          bool vertical) {
   struct ConditionsParameters {
-    Zoom *zoom;
-    const Tree *piecewise;
-    const char *symbol;
+    Zoom* zoom;
+    const Tree* piecewise;
+    const char* symbol;
     // const ApproximationContext &approximationContext;
     Function2DWithContext<float> fullFunction;
-    const void *model;
+    const void* model;
     bool vertical;
   };
   // ApproximationContext approximationContext(m_context, complexFormat,
@@ -275,23 +275,23 @@ void Zoom::fitConditions(const Tree *piecewise,
       .fullFunction = fullFunction,
       .model = model,
       .vertical = vertical};
-  Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
-    const ConditionsParameters *params =
-        static_cast<const ConditionsParameters *>(aux);
+  Solver<float>::FunctionEvaluation evaluator = [](float t, const void* aux) {
+    const ConditionsParameters* params =
+        static_cast<const ConditionsParameters*>(aux);
     return static_cast<float>(Approximation::IndexOfActivePiecewiseBranchAt(
         params->piecewise, t));  // TODO symbol
   };
   Solver<float>::BracketTest test = [](Coordinate2D<float> a,
                                        Coordinate2D<float>,
-                                       Coordinate2D<float> c, const void *) {
+                                       Coordinate2D<float> c, const void*) {
     return Solver<float>::BoolToInterest(
         a.y() != c.y(), Solver<float>::Interest::Discontinuity);
   };
   Solver<float>::HoneResult hone =
-      [](Solver<float>::FunctionEvaluation, const void *aux, float a, float b,
+      [](Solver<float>::FunctionEvaluation, const void* aux, float a, float b,
          Solver<float>::Interest, float, Troolean) {
-        const ConditionsParameters *params =
-            static_cast<const ConditionsParameters *>(aux);
+        const ConditionsParameters* params =
+            static_cast<const ConditionsParameters*>(aux);
         params->zoom->fitPoint(
             params->fullFunction(a, params->model, params->zoom->m_context),
             params->vertical);
@@ -301,7 +301,7 @@ void Zoom::fitConditions(const Tree *piecewise,
   fitWithSolver(&dummy, &dummy, evaluator, &params, test, hone, vertical);
 }
 
-void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
+void Zoom::fitMagnitude(Function2DWithContext<float> f, const void* model,
                         bool cropOutliers, bool vertical) {
   /* We compute the log mean value of the expression, which gives an idea of the
    * order of magnitude of the function, to crop the Y axis. */
@@ -337,7 +337,7 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
     }
   }
 
-  Range1D<float> *magnitudeRange =
+  Range1D<float>* magnitudeRange =
       vertical ? m_magnitudeRange.x() : m_magnitudeRange.y();
   float yMax = sample.max();
   if (pPop > 0) {
@@ -353,7 +353,7 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
   magnitudeRange->extend(yMin, m_maxFloat);
 }
 
-void Zoom::fitBounds(Function2DWithContext<float> f, const void *model,
+void Zoom::fitBounds(Function2DWithContext<float> f, const void* model,
                      bool vertical) {
   float tMin = m_bounds.min(), tMax = m_bounds.max();
   if (std::fabs(tMin) >= m_maxFloat || std::fabs(tMax) >= m_maxFloat) {
@@ -378,9 +378,9 @@ void Zoom::fitBounds(Function2DWithContext<float> f, const void *model,
 Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a,
                                                  Coordinate2D<float> b,
                                                  Coordinate2D<float> c,
-                                                 const void *aux) {
-  const InterestParameters *params =
-      static_cast<const InterestParameters *>(aux);
+                                                 const void* aux) {
+  const InterestParameters* params =
+      static_cast<const InterestParameters*>(aux);
   float slope = (c.y() - a.y()) / (c.x() - a.x());
   params->asymptotes->update(c, slope);
   Solver<float>::Interest res = pointIsInterestingHelper(a, b, c, aux);
@@ -404,11 +404,11 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a,
   return res;
 }
 
-static void honeHelper(Solver<float>::FunctionEvaluation f, const void *aux,
+static void honeHelper(Solver<float>::FunctionEvaluation f, const void* aux,
                        float a, float b, Solver<float>::Interest interest,
-                       Solver<float>::BracketTest test, Coordinate2D<float> *pa,
-                       Coordinate2D<float> *pu, Coordinate2D<float> *pv,
-                       Coordinate2D<float> *pb) {
+                       Solver<float>::BracketTest test, Coordinate2D<float>* pa,
+                       Coordinate2D<float>* pu, Coordinate2D<float>* pv,
+                       Coordinate2D<float>* pb) {
   /* Use a simple dichotomy in [a,b] to hone in on the point of interest
    * without using the costly Brent methods. */
   constexpr int k_numberOfIterations = 9;  // TODO Tune
@@ -447,7 +447,7 @@ static void honeHelper(Solver<float>::FunctionEvaluation f, const void *aux,
 }
 
 Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
-                                    const void *aux, float a, float b,
+                                    const void* aux, float a, float b,
                                     Solver<float>::Interest interest,
                                     float precision, Troolean discontinuous) {
   Coordinate2D<float> pa, pu, pv, pb;
@@ -472,7 +472,7 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
 }
 
 Coordinate2D<float> Zoom::HoneRoot(Solver<float>::FunctionEvaluation f,
-                                   const void *aux, float a, float b,
+                                   const void* aux, float a, float b,
                                    Solver<float>::Interest interest,
                                    float precision, Troolean discontinuous) {
   Coordinate2D<float> pa, pu, pv, pb;
@@ -504,7 +504,7 @@ Coordinate2D<float> Zoom::HoneRoot(Solver<float>::FunctionEvaluation f,
 }
 
 Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
-                                           const void *aux, float a, float b,
+                                           const void* aux, float a, float b,
                                            Solver<float>::Interest interest,
                                            float precision,
                                            Troolean discontinuous) {
@@ -513,8 +513,8 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
   if (std::isnan(result.x())) {
     return result;
   }
-  const IntersectionParameters *p =
-      static_cast<const IntersectionParameters *>(aux);
+  const IntersectionParameters* p =
+      static_cast<const IntersectionParameters*>(aux);
   return p->f1(result.x(), p->model1, p->context);
 }
 
@@ -611,8 +611,8 @@ Range2D<float> Zoom::prettyRange(bool forceNormalization) const {
   }
   assert(normalizeX != normalizeY);
 
-  Range1D<float> *rangeToEdit;
-  const Range1D<float> *interestingRange;
+  Range1D<float>* rangeToEdit;
+  const Range1D<float>* interestingRange;
   float normalLength;
   if (normalizeX) {
     rangeToEdit = saneRange.x();
@@ -650,9 +650,9 @@ Range2D<float> Zoom::prettyRange(bool forceNormalization) const {
   return saneRange;
 }
 
-void Zoom::fitWithSolver(bool *leftInterrupted, bool *rightInterrupted,
+void Zoom::fitWithSolver(bool* leftInterrupted, bool* rightInterrupted,
                          Solver<float>::FunctionEvaluation evaluator,
-                         const void *aux, Solver<float>::BracketTest test,
+                         const void* aux, Solver<float>::BracketTest test,
                          Solver<float>::HoneResult hone, bool vertical,
                          Solver<double>::FunctionEvaluation fDouble,
                          Solver<float>::BracketTest testForCenterOfInterval) {
@@ -684,7 +684,7 @@ void Zoom::fitWithSolver(bool *leftInterrupted, bool *rightInterrupted,
 
 bool Zoom::fitWithSolverHelper(float start, float end,
                                Solver<float>::FunctionEvaluation evaluator,
-                               const void *aux, Solver<float>::BracketTest test,
+                               const void* aux, Solver<float>::BracketTest test,
                                Solver<float>::HoneResult hone, bool vertical,
                                Solver<double>::FunctionEvaluation fDouble) {
   /* Search for points of interest in one direction, up to a certain number.

@@ -42,12 +42,12 @@ T PoissonDistribution::CumulativeDistributiveInverseForProbability(
     return INFINITY;
   }
   T proba = probability;
-  const void *pack[1] = {&lambda};
+  const void* pack[1] = {&lambda};
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
-      [](T x, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        T lambda = *static_cast<const T *>(pack[0]);
+      [](T x, const void* auxiliary) {
+        const void* const* pack = static_cast<const void* const*>(auxiliary);
+        T lambda = *static_cast<const T*>(pack[0]);
         return PoissonDistribution::EvaluateAtAbscissa(x, lambda);
       },
       pack);
@@ -58,8 +58,8 @@ bool PoissonDistribution::LambdaIsOK(T lambda) {
   return Domain::Contains(lambda, Domain::Type::RPlusStar);
 }
 
-bool PoissonDistribution::ExpressionLambdaIsOK(bool *result, const Tree *lambda,
-                                               Context *context) {
+bool PoissonDistribution::ExpressionLambdaIsOK(bool* result, const Tree* lambda,
+                                               Context* context) {
   return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlusStar,
                                 context);
 }

@@ -33,7 +33,7 @@ constexpr CodePoint k_defaultDiscreteXNTCycle[] = {
 };
 
 static int indexOfCodePointInCycle(CodePoint codePoint,
-                                   const CodePoint *cycle) {
+                                   const CodePoint* cycle) {
   for (size_t i = 0; i < k_maxCycleSize - 1; i++) {
     if (cycle[i] == codePoint) {
       return i;
@@ -43,13 +43,13 @@ static int indexOfCodePointInCycle(CodePoint codePoint,
   return k_maxCycleSize - 1;
 }
 
-static size_t sizeOfCycle(const CodePoint *cycle) {
+static size_t sizeOfCycle(const CodePoint* cycle) {
   return indexOfCodePointInCycle(UCodePointNull, cycle);
 }
 
 static CodePoint codePointAtIndexInCycle(int index, int startingIndex,
-                                         const CodePoint *cycle,
-                                         size_t *cycleSize) {
+                                         const CodePoint* cycle,
+                                         size_t* cycleSize) {
   assert(index >= 0);
   assert(cycleSize);
   *cycleSize = sizeOfCycle(cycle);
@@ -58,15 +58,15 @@ static CodePoint codePointAtIndexInCycle(int index, int startingIndex,
 }
 
 CodePoint CodePointAtIndexInDefaultCycle(int index, CodePoint startingCodePoint,
-                                         size_t *cycleSize) {
+                                         size_t* cycleSize) {
   int startingIndex =
       indexOfCodePointInCycle(startingCodePoint, k_defaultXNTCycle);
   return codePointAtIndexInCycle(index, startingIndex, k_defaultXNTCycle,
                                  cycleSize);
 }
 
-CodePoint CodePointAtIndexInCycle(int index, const CodePoint *cycle,
-                                  size_t *cycleSize) {
+CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle,
+                                  size_t* cycleSize) {
   return codePointAtIndexInCycle(index, 0, cycle, cycleSize);
 }
 
@@ -74,7 +74,7 @@ CodePoint CodePointAtIndexInCycle(int index, const CodePoint *cycle,
 constexpr struct {
   LayoutType layoutType;
   Type expressionType;
-  const CodePoint *XNTcycle;
+  const CodePoint* XNTcycle;
 } k_parameteredFunctions[] = {
     {LayoutType::Derivative, Type::Derivative, k_defaultContinuousXNTCycle},
     {LayoutType::NthDerivative, Type::NthDerivative,
@@ -89,8 +89,8 @@ constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
 constexpr int k_indexOfMainExpression1D = 0;
 constexpr int k_indexOfParameter1D = 1;
 
-bool ParameterText(UnicodeDecoder &varDecoder, size_t *parameterStart,
-                   size_t *parameterLength) {
+bool ParameterText(UnicodeDecoder& varDecoder, size_t* parameterStart,
+                   size_t* parameterLength) {
   static_assert(k_indexOfParameter1D == 1,
                 "ParameteredExpression::ParameterText is outdated");
   /* Find the beginning of the parameter. Count parentheses to handle the
@@ -149,8 +149,8 @@ bool ParameterText(UnicodeDecoder &varDecoder, size_t *parameterStart,
   return true;
 }
 
-bool ParameterText(const char *text, const char **parameterText,
-                   size_t *parameterLength) {
+bool ParameterText(const char* text, const char** parameterText,
+                   size_t* parameterLength) {
   UTF8Decoder decoder(text);
   size_t parameterStart = *parameterText - text;
   bool result = ParameterText(decoder, &parameterStart, parameterLength);
@@ -158,7 +158,7 @@ bool ParameterText(const char *text, const char **parameterText,
   return result;
 }
 
-static bool Contains(UnicodeDecoder &string, UnicodeDecoder &pattern) {
+static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
   while (CodePoint c = pattern.nextCodePoint()) {
     if (string.nextCodePoint() != c) {
       return false;
@@ -167,8 +167,8 @@ static bool Contains(UnicodeDecoder &string, UnicodeDecoder &pattern) {
   return true;
 }
 
-static bool findParameteredFunction1D(UnicodeDecoder &decoder,
-                                      int *functionIndex, int *childIndex) {
+static bool findParameteredFunction1D(UnicodeDecoder& decoder,
+                                      int* functionIndex, int* childIndex) {
   assert(functionIndex && childIndex);
   *functionIndex = -1;
   *childIndex = -1;
@@ -201,7 +201,7 @@ static bool findParameteredFunction1D(UnicodeDecoder &decoder,
         location = decoder.position();
         // Identify one of the functions
         for (size_t i = 0; i < k_numberOfFunctions; i++) {
-          const char *name = Builtin::GetReservedFunction(
+          const char* name = Builtin::GetReservedFunction(
                                  k_parameteredFunctions[i].expressionType)
                                  ->aliases()
                                  ->mainAlias();
@@ -254,8 +254,8 @@ static bool findParameteredFunction1D(UnicodeDecoder &decoder,
   return functionFound;
 }
 
-bool FindXNTSymbol1D(UnicodeDecoder &decoder, char *buffer, size_t bufferSize,
-                     int xntIndex, size_t *cycleSize) {
+bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
+                     int xntIndex, size_t* cycleSize) {
   assert(cycleSize);
   int functionIndex;
   int childIndex;
@@ -286,16 +286,16 @@ bool FindXNTSymbol1D(UnicodeDecoder &decoder, char *buffer, size_t bufferSize,
 
 constexpr int k_indexOfParameter = Parametric::k_variableIndex;
 
-static bool findParameteredFunction2D(const Tree *layout, const Tree *root,
-                                      int *functionIndex, int *childIndex,
-                                      const Tree **parameterLayout) {
+static bool findParameteredFunction2D(const Tree* layout, const Tree* root,
+                                      int* functionIndex, int* childIndex,
+                                      const Tree** parameterLayout) {
   assert(functionIndex && childIndex && parameterLayout);
   *functionIndex = -1;
   *childIndex = -1;
   *parameterLayout = nullptr;
   assert(layout);
-  const Tree *child = layout;
-  const Tree *parent = root->parentOfDescendant(child, childIndex);
+  const Tree* child = layout;
+  const Tree* parent = root->parentOfDescendant(child, childIndex);
   while (parent) {
     if (parent->isParametricLayout()) {
       if (*childIndex == k_indexOfParameter ||
@@ -315,21 +315,21 @@ static bool findParameteredFunction2D(const Tree *layout, const Tree *root,
   return false;
 }
 
-static bool isValidXNTParameter(const Tree *xnt) {
+static bool isValidXNTParameter(const Tree* xnt) {
   if (xnt->hasChildSatisfying(
-          [](const Tree *e) { return !e->isCodePointLayout(); })) {
+          [](const Tree* e) { return !e->isCodePointLayout(); })) {
     return false;
   }
   RackLayoutDecoder decoder(xnt);
   return Tokenizer::CanBeCustomIdentifier(decoder);
 }
 
-bool FindXNTSymbol2D(const Tree *layout, const Tree *root, char *buffer,
-                     size_t bufferSize, int xntIndex, size_t *cycleSize) {
+bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,
+                     size_t bufferSize, int xntIndex, size_t* cycleSize) {
   assert(cycleSize);
   int functionIndex;
   int childIndex;
-  const Tree *parameterLayout;
+  const Tree* parameterLayout;
   buffer[0] = 0;
   *cycleSize = 0;
   if (findParameteredFunction2D(layout, root, &functionIndex, &childIndex,

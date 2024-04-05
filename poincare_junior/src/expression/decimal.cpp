@@ -10,10 +10,10 @@
 
 namespace PoincareJ {
 
-void Decimal::Project(Tree *tree) {
+void Decimal::Project(Tree* tree) {
   assertValidDecimal(tree);
   // dec<n>(x) -> 10^(-n)*x
-  Tree *mult = SharedTreeStack->push<Type::Multiplication>(1);
+  Tree* mult = SharedTreeStack->push<Type::Multiplication>(1);
   SharedTreeStack->push(Type::Power);
   SharedTreeStack->push<Type::IntegerShort, int8_t>(10);
   IntegerHandler(DecimalOffset(tree), NonStrictSign::Negative)
@@ -26,7 +26,7 @@ using Poincare::Preferences;
 using Poincare::PrintFloat;
 using Poincare::SerializationHelper::CodePoint;
 
-int Decimal::Serialize(const Tree *decimal, char *buffer, int bufferSize,
+int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
                        Preferences::PrintFloatMode mode,
                        int numberOfSignificantDigits) {
   assert(decimal->isDecimal() ||
@@ -35,7 +35,7 @@ int Decimal::Serialize(const Tree *decimal, char *buffer, int bufferSize,
   if (m_negative) {
     decimal = decimal->child(0);
   }
-  const Tree *unsignedMantissa = decimal->child(0);
+  const Tree* unsignedMantissa = decimal->child(0);
 
   if (bufferSize == 0) {
     return -1;

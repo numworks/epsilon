@@ -90,13 +90,13 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(
     return n;
   }
   T proba = probability;
-  const void *pack[2] = {&n, &p};
+  const void* pack[2] = {&n, &p};
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
-      [](T x, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        T n = *static_cast<const T *>(pack[0]);
-        T p = *static_cast<const T *>(pack[1]);
+      [](T x, const void* auxiliary) {
+        const void* const* pack = static_cast<const void* const*>(auxiliary);
+        T n = *static_cast<const T*>(pack[0]);
+        T p = *static_cast<const T*>(pack[1]);
         return BinomialDistribution::EvaluateAtAbscissa(x, n, p);
       },
       pack);
@@ -108,10 +108,10 @@ bool BinomialDistribution::ParametersAreOK(T n, T p) {
          Domain::Contains(p, Domain::Type::ZeroToOne);
 }
 
-bool BinomialDistribution::expressionParametersAreOK(bool *result,
-                                                     const Tree *n,
-                                                     const Tree *p,
-                                                     Context *context) {
+bool BinomialDistribution::expressionParametersAreOK(bool* result,
+                                                     const Tree* n,
+                                                     const Tree* p,
+                                                     Context* context) {
   return Domain::ExpressionsAreIn(result, n, Domain::Type::N, p,
                                   Domain::Type::ZeroToOne, context);
 }

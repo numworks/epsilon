@@ -52,15 +52,15 @@ class TypeBlock : public Block {
   }
   constexpr Type type() const { return static_cast<Type>(m_content); }
 
-  bool operator==(const TypeBlock &other) const = default;
+  bool operator==(const TypeBlock& other) const = default;
   constexpr bool operator==(Type t) const { return type() == t; }
-  bool operator!=(const TypeBlock &other) const = default;
+  bool operator!=(const TypeBlock& other) const = default;
   constexpr bool operator!=(Type t) const { return type() != t; }
   constexpr operator Type() const { return type(); }
 
 #if POINCARE_TREE_LOG
   // Add an array of names for the Types
-  static constexpr const char *names[] = {
+  static constexpr const char* names[] = {
 #define RANGE(...)
 #define NODE3(F, N, S) #F,
 #include <poincare_junior/src/memory/types.h>
@@ -185,7 +185,7 @@ class TypeBlock : public Block {
     } else if (n == NAryNumberOfChildrenTag) {
       return static_cast<uint8_t>(*next());
     } else if (n == NAryLargeNumberOfChildrenTag) {
-      return *reinterpret_cast<const uint16_t *>(next());
+      return *reinterpret_cast<const uint16_t*>(next());
     } else {
       assert(n == NAry2DNumberOfChildrenTag);
       return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));
@@ -232,11 +232,11 @@ class BlockBuffer {
     m_blocks[size] = Type::TreeBorder;
 #endif
   }
-  constexpr TypeBlock *blocks() {
-    return static_cast<TypeBlock *>(static_cast<Block *>(m_blocks));
+  constexpr TypeBlock* blocks() {
+    return static_cast<TypeBlock*>(static_cast<Block*>(m_blocks));
   }
-  consteval const TypeBlock *blocks() const {
-    return static_cast<const TypeBlock *>(m_blocks);
+  consteval const TypeBlock* blocks() const {
+    return static_cast<const TypeBlock*>(m_blocks);
   }
 
  private:

@@ -55,8 +55,8 @@ T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability,
   Args args{probability, k};
 
   Solver<double>::FunctionEvaluation evaluation = [](double x,
-                                                     const void *auxiliary) {
-    const Args *args = static_cast<const Args *>(auxiliary);
+                                                     const void* auxiliary) {
+    const Args* args = static_cast<const Args*>(auxiliary);
     return CumulativeDistributiveFunctionAtAbscissa<double>(x, args->k) -
            args->proba;
   };
@@ -74,8 +74,8 @@ bool Chi2Distribution::KIsOK(T k) {
   return Domain::Contains(k, Domain::Type::NStar);
 }
 
-bool Chi2Distribution::ExpressionKIsOK(bool *result, const Tree *k,
-                                       Context *context) {
+bool Chi2Distribution::ExpressionKIsOK(bool* result, const Tree* k,
+                                       Context* context) {
   return Domain::ExpressionIsIn(result, k, Domain::Type::NStar, context);
 }
 

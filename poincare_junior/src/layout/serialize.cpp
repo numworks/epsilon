@@ -14,8 +14,8 @@ namespace PoincareJ {
  * to use operator priority to minimize parentheses and get the correct
  * multiplication symbol. */
 
-char *Serialize(const Rack *rack, char *buffer, char *end) {
-  for (const Tree *child : rack->children()) {
+char* Serialize(const Rack* rack, char* buffer, char* end) {
+  for (const Tree* child : rack->children()) {
     buffer = Serialize(Layout::From(child), buffer, end);
     if (buffer == end) {
       return end;
@@ -24,13 +24,13 @@ char *Serialize(const Rack *rack, char *buffer, char *end) {
   return buffer;
 }
 
-char *append(const char *text, char *buffer, char *end) {
+char* append(const char* text, char* buffer, char* end) {
   size_t len = std::min<size_t>(strlen(text), end - 1 - buffer);
   memcpy(buffer, text, len);
   return buffer + len;
 }
 
-char *Serialize(const Layout *layout, char *buffer, char *end) {
+char* Serialize(const Layout* layout, char* buffer, char* end) {
   switch (layout->layoutType()) {
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint: {
@@ -76,7 +76,7 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
     case LayoutType::ThousandSeparator:
       break;
     case LayoutType::Matrix: {
-      const Grid *grid = Grid::From(layout);
+      const Grid* grid = Grid::From(layout);
       buffer = append("[", buffer, end);
       for (int j = 0; j < grid->numberOfRows() - 1; j++) {
         buffer = append("[", buffer, end);
@@ -110,7 +110,7 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       if (layout->isPiecewiseLayout()) {
         buffer = append("piecewise", buffer, end);
       } else {
-        const BuiltinWithLayout *builtin =
+        const BuiltinWithLayout* builtin =
             BuiltinWithLayout::GetReservedFunction(layout->layoutType());
         if (!builtin) {
           assert(false);
@@ -120,7 +120,7 @@ char *Serialize(const Layout *layout, char *buffer, char *end) {
       }
       buffer = append("(", buffer, end);
       bool firstChild = true;
-      for (int i = 0; const Tree *child : layout->children()) {
+      for (int i = 0; const Tree* child : layout->children()) {
         if (layout->isParametricLayout() &&
             i == layout->numberOfChildren() - 1) {
           break;

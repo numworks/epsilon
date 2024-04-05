@@ -10,7 +10,7 @@ using Poincare::SerializationHelper::CodePoint;
 namespace PoincareJ {
 
 void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
-                                        WorkingBuffer *workingBuffer) {
+                                        WorkingBuffer* workingBuffer) {
   /* Remove the zeroes at the end of an integer, respecting the minimum number
    * of digits asked for.
    *
@@ -55,8 +55,8 @@ void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
   // assert(!isOverflow());
 }
 
-size_t IntegerHandler::serializeInDecimal(char *buffer, size_t bufferSize,
-                                          WorkingBuffer *workingBuffer) const {
+size_t IntegerHandler::serializeInDecimal(char* buffer, size_t bufferSize,
+                                          WorkingBuffer* workingBuffer) const {
   IntegerHandler base(10);
   DivisionResult<IntegerHandler> d = Udiv(*this, base, workingBuffer);
 
@@ -93,8 +93,8 @@ size_t IntegerHandler::serializeInDecimal(char *buffer, size_t bufferSize,
   return length;
 }
 
-size_t IntegerHandler::serialize(char *buffer, size_t bufferSize,
-                                 WorkingBuffer *workingBuffer,
+size_t IntegerHandler::serialize(char* buffer, size_t bufferSize,
+                                 WorkingBuffer* workingBuffer,
                                  OMG::Base base) const {
   if (bufferSize == 0) {
     return bufferSize - 1;

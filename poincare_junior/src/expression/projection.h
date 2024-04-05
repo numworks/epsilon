@@ -16,23 +16,23 @@ struct ProjectionContext {
   Dimension m_dimension = Dimension();
   UnitFormat m_unitFormat = UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
-  Poincare::Context *m_context = nullptr;
+  Poincare::Context* m_context = nullptr;
 };
 
 class Projection {
  public:
   static ProjectionContext ContextFromSettings();
-  static bool DeepReplaceUserNamed(Tree *tree, ProjectionContext ctx);
-  static bool DeepSystemProject(Tree *reference, ProjectionContext ctx = {});
+  static bool DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx);
+  static bool DeepSystemProject(Tree* reference, ProjectionContext ctx = {});
   EDITION_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
 
   /* Some projections are performed during advanced reduction instead so the
    * metric can cancel it if unecessary. */
-  static bool Expand(Tree *tree);
+  static bool Expand(Tree* tree);
 
  private:
-  static bool ShallowReplaceUserNamed(Tree *reference, void *ctx);
-  static bool ShallowSystemProject(Tree *reference, void *ctx);
+  static bool ShallowReplaceUserNamed(Tree* reference, void* ctx);
+  static bool ShallowSystemProject(Tree* reference, void* ctx);
 };
 
 }  // namespace PoincareJ

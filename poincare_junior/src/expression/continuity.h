@@ -17,16 +17,16 @@ class Continuity {
    * the numerical algorithms.
    */
 
-  static bool InvolvesDiscontinuousFunction(const Tree *e) {
+  static bool InvolvesDiscontinuousFunction(const Tree* e) {
     return e->hasDescendantSatisfying(ShallowIsDiscontinuous);
   }
 
   static bool IsDiscontinuousBetweenValuesForSymbol(
-      const Tree *e, const char *symbol, float x1, float x2
+      const Tree* e, const char* symbol, float x1, float x2
       /*const ApproximationContext &approximationContext*/);
 
  private:
-  static bool ShallowIsDiscontinuous(const Tree *e);
+  static bool ShallowIsDiscontinuous(const Tree* e);
 };
 
 }  // namespace PoincareJ

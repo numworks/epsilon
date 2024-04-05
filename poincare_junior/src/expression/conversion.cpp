@@ -20,7 +20,7 @@
 
 namespace PoincareJ {
 
-Poincare::OExpression ToPoincareExpressionViaParse(const Tree *exp) {
+Poincare::OExpression ToPoincareExpressionViaParse(const Tree* exp) {
   TreeRef outputLayout = Layoutter::LayoutExpression(exp->clone());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
@@ -58,7 +58,7 @@ Poincare::ComparisonNode::OperatorType ComparisonToOperator(Type type) {
   }
 }
 
-Poincare::OExpression ToPoincareExpression(const Tree *exp) {
+Poincare::OExpression ToPoincareExpression(const Tree* exp) {
   // NOTE: Make sure new Types are handled here.
   Type type = exp->type();
 
@@ -174,7 +174,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
         }
         return Poincare::Derivative::Builder(
             ToPoincareExpression(exp->child(2)),
-            static_cast<Poincare::Symbol &>(symbol),
+            static_cast<Poincare::Symbol&>(symbol),
             ToPoincareExpression(exp->child(1)));
       }
       case Type::Integral: {
@@ -184,7 +184,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
         }
         return Poincare::Integral::Builder(
             ToPoincareExpression(exp->child(3)),
-            static_cast<Poincare::Symbol &>(symbol),
+            static_cast<Poincare::Symbol&>(symbol),
             ToPoincareExpression(exp->child(1)),
             ToPoincareExpression(exp->child(2)));
       }
@@ -194,7 +194,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Sum::Builder(ToPoincareExpression(exp->child(3)),
-                                      static_cast<Poincare::Symbol &>(symbol),
+                                      static_cast<Poincare::Symbol&>(symbol),
                                       ToPoincareExpression(exp->child(1)),
                                       ToPoincareExpression(exp->child(2)));
       }
@@ -205,14 +205,14 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
         }
         return Poincare::Product::Builder(
             ToPoincareExpression(exp->child(3)),
-            static_cast<Poincare::Symbol &>(symbol),
+            static_cast<Poincare::Symbol&>(symbol),
             ToPoincareExpression(exp->child(1)),
             ToPoincareExpression(exp->child(2)));
       }
       case Type::Dependency: {
         assert(exp->child(1)->isSet());
         Poincare::OList listOfDependencies = Poincare::OList::Builder();
-        for (const Tree *child : exp->child(1)->children()) {
+        for (const Tree* child : exp->child(1)->children()) {
           listOfDependencies.addChildAtIndexInPlace(ToPoincareExpression(child),
                                                     0, 0);
         }
@@ -222,7 +222,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
       case Type::Piecewise: {
         Poincare::List arguments = Poincare::List::Builder();
         int i = 0;
-        for (const Tree *child : exp->children()) {
+        for (const Tree* child : exp->children()) {
           arguments.addChildAtIndexInPlace(ToPoincareExpression(child), i, i);
           i++;
         }
@@ -241,7 +241,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
           type == Type::Addition ? static_cast<Poincare::NAryExpression>(
                                        Poincare::Addition::Builder())
                                  : Poincare::Multiplication::Builder();
-      for (const Tree *child : exp->children()) {
+      for (const Tree* child : exp->children()) {
         nary.addChildAtIndexInPlace(ToPoincareExpression(child),
                                     nary.numberOfChildren(),
                                     nary.numberOfChildren());
@@ -250,7 +250,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
     }
     case Type::List: {
       Poincare::OList list = Poincare::OList::Builder();
-      for (const Tree *child : exp->children()) {
+      for (const Tree* child : exp->children()) {
         list.addChildAtIndexInPlace(ToPoincareExpression(child),
                                     list.numberOfChildren(),
                                     list.numberOfChildren());
@@ -259,7 +259,7 @@ Poincare::OExpression ToPoincareExpression(const Tree *exp) {
     }
     case Type::Matrix: {
       Poincare::OMatrix mat = Poincare::OMatrix::Builder();
-      for (const Tree *child : exp->children()) {
+      for (const Tree* child : exp->children()) {
         mat.addChildAtIndexInPlace(ToPoincareExpression(child),
                                    mat.numberOfChildren(),
                                    mat.numberOfChildren());
@@ -582,7 +582,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::OBoolean:
-      SharedTreeStack->push(static_cast<Poincare::OBoolean &>(exp).value()
+      SharedTreeStack->push(static_cast<Poincare::OBoolean&>(exp).value()
                                 ? Type::True
                                 : Type::False);
       return;
@@ -591,7 +591,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::BinaryLogicalOperator: {
       Poincare::BinaryLogicalOperator op =
-          static_cast<Poincare::BinaryLogicalOperator &>(exp);
+          static_cast<Poincare::BinaryLogicalOperator&>(exp);
       Type type;
       switch (op.operatorType()) {
         case Poincare::BinaryLogicalOperatorNode::OperatorType::And:
@@ -673,7 +673,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::Comparison:
       if (exp.numberOfChildren() > 2) {
         // This will not work semantically but is sufficient for createLayout
-        Poincare::Comparison c = static_cast<Poincare::Comparison &>(exp);
+        Poincare::Comparison c = static_cast<Poincare::Comparison&>(exp);
         Poincare::OExpression e = Poincare::Comparison::Builder(
             Poincare::Comparison::Builder(
                 c.childAtIndex(0), c.operatorAtIndex(0), c.childAtIndex(1)),
@@ -714,7 +714,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           SharedTreeStack->push(exp.numberOfChildren());
           break;
         case OT::Comparison: {
-          Poincare::Comparison c = static_cast<Poincare::Comparison &>(exp);
+          Poincare::Comparison c = static_cast<Poincare::Comparison&>(exp);
           Type type;
           switch (c.operatorAtIndex(0)) {
             case Poincare::ComparisonNode::OperatorType::Equal:
@@ -752,8 +752,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           break;
         case OT::OMatrix:
           SharedTreeStack->push<Type::Matrix>(
-              static_cast<Poincare::OMatrix &>(exp).numberOfRows(),
-              static_cast<Poincare::OMatrix &>(exp).numberOfColumns());
+              static_cast<Poincare::OMatrix&>(exp).numberOfRows(),
+              static_cast<Poincare::OMatrix&>(exp).numberOfColumns());
           break;
         default:
           assert(false);
@@ -771,7 +771,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::ConstantPhysics:
       return PushPoincareExpressionViaParse(exp);
     case OT::Decimal: {
-      Poincare::Decimal d = static_cast<Poincare::Decimal &>(exp);
+      Poincare::Decimal d = static_cast<Poincare::Decimal&>(exp);
       if (d.node()->isNegative()) {
         SharedTreeStack->push(Type::Opposite);
       }
@@ -789,8 +789,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::Sequence:
     case OT::Function:
     case OT::Symbol: {
-      Poincare::Symbol s = static_cast<Poincare::Symbol &>(exp);
-      Tree *t = SharedTreeStack->push<Type::UserSymbol>(
+      Poincare::Symbol s = static_cast<Poincare::Symbol&>(exp);
+      Tree* t = SharedTreeStack->push<Type::UserSymbol>(
           s.name(), (exp.otype() == OT::Sequence ? 1 : strlen(s.name())) + 1);
       if (exp.otype() == OT::Function) {
         *t->block() = Type::UserFunction;
@@ -803,7 +803,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return;
     }
     case OT::ConstantMaths: {
-      Poincare::Constant c = static_cast<Poincare::Constant &>(exp);
+      Poincare::Constant c = static_cast<Poincare::Constant&>(exp);
       if (c.isExponentialE()) {
         SharedTreeStack->push(Type::ExponentialE);
       } else if (c.isPi()) {
@@ -817,11 +817,11 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     }
     case OT::Float:
       SharedTreeStack->push<Type::SingleFloat>(
-          static_cast<Poincare::Float<float> &>(exp).value());
+          static_cast<Poincare::Float<float>&>(exp).value());
       return;
     case OT::Double:
       SharedTreeStack->push<Type::DoubleFloat>(
-          static_cast<Poincare::Float<double> &>(exp).value());
+          static_cast<Poincare::Float<double>&>(exp).value());
       return;
     case OT::Infinity: {
       if (exp.isPositive(nullptr) == Poincare::TrinaryBoolean::False) {
@@ -834,7 +834,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       SharedTreeStack->push(Type::Distribution);
       SharedTreeStack->push(exp.numberOfChildren());
       Poincare::DistributionDispatcher dd =
-          static_cast<Poincare::DistributionDispatcher &>(exp);
+          static_cast<Poincare::DistributionDispatcher&>(exp);
       SharedTreeStack->push(static_cast<uint8_t>(dd.distributionType()));
       SharedTreeStack->push(static_cast<uint8_t>(dd.methodType()));
       for (int i = 0; i < exp.numberOfChildren(); i++) {
@@ -875,7 +875,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::JuniorExpression: {
       SharedTreeStack->clone(
-          static_cast<Poincare::JuniorExpression &>(exp).tree());
+          static_cast<Poincare::JuniorExpression&>(exp).tree());
       return;
     }
     default:
@@ -883,8 +883,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
   }
 }
 
-Tree *FromPoincareExpression(Poincare::OExpression exp) {
-  Tree *node = Tree::FromBlocks(SharedTreeStack->lastBlock());
+Tree* FromPoincareExpression(Poincare::OExpression exp) {
+  Tree* node = Tree::FromBlocks(SharedTreeStack->lastBlock());
   PushPoincareExpression(exp);
   return node;
 }

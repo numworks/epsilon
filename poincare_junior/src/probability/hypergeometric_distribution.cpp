@@ -52,14 +52,14 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(
     return std::min(n, K);
   }
   T proba = probability;
-  const void *pack[3] = {&N, &K, &n};
+  const void* pack[3] = {&N, &K, &n};
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
-      [](T x, const void *auxiliary) {
-        const void *const *pack = static_cast<const void *const *>(auxiliary);
-        T N = *static_cast<const T *>(pack[0]);
-        T K = *static_cast<const T *>(pack[1]);
-        T n = *static_cast<const T *>(pack[2]);
+      [](T x, const void* auxiliary) {
+        const void* const* pack = static_cast<const void* const*>(auxiliary);
+        T N = *static_cast<const T*>(pack[0]);
+        T K = *static_cast<const T*>(pack[1]);
+        T n = *static_cast<const T*>(pack[2]);
         return HypergeometricDistribution::EvaluateAtAbscissa(x, N, K, n);
       },
       pack);
@@ -80,18 +80,18 @@ bool HypergeometricDistribution::nIsOK(T n) {
   return Domain::Contains(n, Domain::Type::N);  // && n <= N
 }
 
-bool HypergeometricDistribution::ExpressionNIsOK(bool *result, const Tree *N,
-                                                 Context *context) {
+bool HypergeometricDistribution::ExpressionNIsOK(bool* result, const Tree* N,
+                                                 Context* context) {
   return Domain::ExpressionIsIn(result, N, Domain::Type::N, context);
 }
 
-bool HypergeometricDistribution::ExpressionKIsOK(bool *result, const Tree *K,
-                                                 Context *context) {
+bool HypergeometricDistribution::ExpressionKIsOK(bool* result, const Tree* K,
+                                                 Context* context) {
   return Domain::ExpressionIsIn(result, K, Domain::Type::N, context);
 }
 
-bool HypergeometricDistribution::ExpressionnIsOK(bool *result, const Tree *n,
-                                                 Context *context) {
+bool HypergeometricDistribution::ExpressionnIsOK(bool* result, const Tree* n,
+                                                 Context* context) {
   return Domain::ExpressionIsIn(result, n, Domain::Type::N, context);
 }
 

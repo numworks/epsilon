@@ -44,19 +44,19 @@ class MultipleNodesIterator {
   class ForwardPolicy {
    protected:
     template <size_t N>
-    std::array<const Tree *, N> firstElement(
-        std::array<const Tree *, N> array) const {
-      return Array::MapAction<const Tree *, const Tree *, N>(
+    std::array<const Tree*, N> firstElement(
+        std::array<const Tree*, N> array) const {
+      return Array::MapAction<const Tree*, const Tree*, N>(
           array, nullptr,
-          [](const Tree *node, void *context) { return node->nextNode(); });
+          [](const Tree* node, void* context) { return node->nextNode(); });
     }
 
     template <size_t N>
-    std::array<const Tree *, N> incrementeArray(
-        std::array<const Tree *, N> array) const {
-      return Array::MapAction<const Tree *, const Tree *, N>(
+    std::array<const Tree*, N> incrementeArray(
+        std::array<const Tree*, N> array) const {
+      return Array::MapAction<const Tree*, const Tree*, N>(
           array, nullptr,
-          [](const Tree *node, void *context) { return node->nextTree(); });
+          [](const Tree* node, void* context) { return node->nextTree(); });
     }
 
     int offset() const { return 1; }
@@ -75,10 +75,10 @@ class MultipleNodesIterator {
       return std::pair(
           convertToArrayType(convertFromArrayType(m_array, offset())), m_index);
     }
-    bool operator!=(Iterator<EditablePolicy, N> &it) {
+    bool operator!=(Iterator<EditablePolicy, N>& it) {
       return equality(m_array, m_index, it.m_array, it.m_index);
     }
-    Iterator<EditablePolicy, N> &operator++() {
+    Iterator<EditablePolicy, N>& operator++() {
       m_array = convertToArrayType(
           incrementeArray(convertFromArrayType(m_array, offset())), offset());
       m_index++;
@@ -137,7 +137,7 @@ class MultipleNodesIterator {
 
   class NoEditablePolicy {
    public:
-    typedef const Tree *NodeType;
+    typedef const Tree* NodeType;
     template <size_t N>
     using ArrayType = std::array<NodeType, N>;
     template <size_t N>
@@ -181,7 +181,7 @@ class MultipleNodesIterator {
      * updated at each step since children might have been inserted or deleted.
      */
     template <size_t N>
-    int endIndex(std::array<const Tree *, N> array) const {
+    int endIndex(std::array<const Tree*, N> array) const {
       return -1;
     }
     template <size_t N>
@@ -202,22 +202,22 @@ class MultipleNodesIterator {
      * ensure the validity of this hack. */
 
     template <size_t N>
-    std::array<const Tree *, N> convertFromArrayType(ArrayType<N> array,
-                                                     int offset = 0) const {
-      return Array::MapAction<NodeType, const Tree *, N>(
-          array, &offset, [](NodeType reference, void *offset) -> const Tree * {
+    std::array<const Tree*, N> convertFromArrayType(ArrayType<N> array,
+                                                    int offset = 0) const {
+      return Array::MapAction<NodeType, const Tree*, N>(
+          array, &offset, [](NodeType reference, void* offset) -> const Tree* {
             return Tree::FromBlocks(reference->block() +
-                                    *static_cast<int *>(offset));
+                                    *static_cast<int*>(offset));
           });
     }
     template <size_t N>
-    ArrayType<N> convertToArrayType(std::array<const Tree *, N> array,
+    ArrayType<N> convertToArrayType(std::array<const Tree*, N> array,
                                     int offset = 0) const {
-      return Array::MapAction<const Tree *, NodeType, N>(
-          array, &offset, [](const Tree *node, void *offset) {
+      return Array::MapAction<const Tree*, NodeType, N>(
+          array, &offset, [](const Tree* node, void* offset) {
             return node ? TreeRef(Tree::FromBlocks(
-                              const_cast<Tree *>(node)->block() -
-                              *static_cast<int *>(offset)))
+                              const_cast<Tree*>(node)->block() -
+                              *static_cast<int*>(offset)))
                         : TreeRef();
           });
     }
@@ -236,8 +236,8 @@ class NodeIterator : public MultipleNodesIterator {
     std::pair<typename EditablePolicy::NodeType, int> operator*() {
       return std::pair((*m_iterator).first[0], (*m_iterator).second);
     }
-    bool operator!=(Iterator &it) { return m_iterator != it.m_iterator; }
-    Iterator<EditablePolicy> &operator++() {
+    bool operator!=(Iterator& it) { return m_iterator != it.m_iterator; }
+    Iterator<EditablePolicy>& operator++() {
       m_iterator.operator++();
       return *this;
     }

@@ -12,26 +12,26 @@
 
 namespace PoincareJ {
 
-bool Derivation::ShallowSimplify(Tree *node) {
+bool Derivation::ShallowSimplify(Tree* node) {
   // Tree is expected to have been reduced beforehand.
   assert(node->isDerivative() || node->isNthDerivative());
-  const Tree *symbol = node->child(0);
-  const Tree *symbolValue = symbol->nextTree();
-  const Tree *constDerivand;
+  const Tree* symbol = node->child(0);
+  const Tree* symbolValue = symbol->nextTree();
+  const Tree* constDerivand;
   int derivationOrder;
   if (node->isDerivative()) {
     derivationOrder = 1;
     constDerivand = symbolValue->nextTree();
   } else {
-    const Tree *order = symbolValue->nextTree();
+    const Tree* order = symbolValue->nextTree();
     if (!Integer::Is<uint8_t>(order)) {
       ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
     }
     derivationOrder = Integer::Handler(order).to<uint8_t>();
     constDerivand = order->nextTree();
   }
-  Tree *setOfDependencies;
-  Tree *derivand;
+  Tree* setOfDependencies;
+  Tree* derivand;
   if (constDerivand->isDependency()) {
     setOfDependencies =
         CloneReplacingSymbol(constDerivand->child(1), symbolValue, false);
@@ -43,7 +43,7 @@ bool Derivation::ShallowSimplify(Tree *node) {
 
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
-    Tree *derivative = Derivate(derivand, symbolValue, symbol);
+    Tree* derivative = Derivate(derivand, symbolValue, symbol);
     if (!derivative) {
       // TODO is it worth to save the partial derivation if any ?
       derivand->removeTree();
@@ -88,8 +88,8 @@ bool Derivation::ShallowSimplify(Tree *node) {
   return true;
 }
 
-Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue,
-                           const Tree *symbol) {
+Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
+                           const Tree* symbol) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
     return (1_e)->clone();
   }
@@ -102,14 +102,14 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue,
     return (0_e)->clone();
   }
 
-  Tree *result = SharedTreeStack->push<Type::Addition>(0);
-  const Tree *derivandChild = derivand->nextNode();
+  Tree* result = SharedTreeStack->push<Type::Addition>(0);
+  const Tree* derivandChild = derivand->nextNode();
   /* D(f(g0(x),g1(x), ...)) = Sum(D(gi(x))*Di(f)(g0(x),g1(x), ...))
    * With D being the Derivative and Di being the partial derivative on
    * parameter i. */
   for (int i = 0; i < numberOfChildren; i++) {
     NAry::SetNumberOfChildren(result, i + 1);
-    Tree *mult = SharedTreeStack->push<Type::Multiplication>(1);
+    Tree* mult = SharedTreeStack->push<Type::Multiplication>(1);
     if (!Derivate(derivandChild, symbolValue, symbol)) {
       // Could not derivate, preserve D(gi(x))
       SharedTreeStack->push(Type::Derivative);
@@ -130,19 +130,19 @@ Tree *Derivation::Derivate(const Tree *derivand, const Tree *symbolValue,
   return result;
 }
 
-bool Derivation::ShallowPartialDerivate(const Tree *derivand,
-                                        const Tree *symbolValue, int index) {
+bool Derivation::ShallowPartialDerivate(const Tree* derivand,
+                                        const Tree* symbolValue, int index) {
   switch (derivand->type()) {
     case Type::Multiplication: {
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...
       int numberOfChildren = derivand->numberOfChildren();
       assert(numberOfChildren > 1 && index < numberOfChildren);
-      Tree *mult;
+      Tree* mult;
       if (numberOfChildren > 2) {
         mult =
             SharedTreeStack->push<Type::Multiplication>(numberOfChildren - 1);
       }
-      for (std::pair<const Tree *, int> indexedNode :
+      for (std::pair<const Tree*, int> indexedNode :
            NodeIterator::Children<NoEditable>(derivand)) {
         if (indexedNode.second != index) {
           CloneReplacingSymbol(indexedNode.first, symbolValue);
@@ -164,7 +164,7 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
     case Type::LnReal:
     case Type::Ln: {
       // Di(ln(x)) = 1/x
-      Tree *power = SharedTreeStack->push(Type::Power);
+      Tree* power = SharedTreeStack->push(Type::Power);
       CloneReplacingSymbol(derivand->child(0), symbolValue);
       SharedTreeStack->push(Type::MinusOne);
       Simplification::ShallowSystematicReduce(power);
@@ -180,14 +180,14 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
         SharedTreeStack->push(Type::Zero);
         return true;
       }
-      Tree *multiplication;
+      Tree* multiplication;
       if (derivand->isPower()) {
         multiplication = SharedTreeStack->push<Type::Multiplication>(2);
         SharedTreeStack->clone(derivand->child(1));
       }
-      Tree *newNode = SharedTreeStack->clone(derivand, false);
+      Tree* newNode = SharedTreeStack->clone(derivand, false);
       CloneReplacingSymbol(derivand->child(0), symbolValue);
-      Tree *addition = SharedTreeStack->push<Type::Addition>(2);
+      Tree* addition = SharedTreeStack->push<Type::Addition>(2);
       SharedTreeStack->clone(derivand->child(1));
       SharedTreeStack->push(Type::MinusOne);
       Simplification::ShallowSystematicReduce(addition);
@@ -202,9 +202,9 @@ bool Derivation::ShallowPartialDerivate(const Tree *derivand,
   }
 }
 
-Tree *Derivation::CloneReplacingSymbol(const Tree *expression,
-                                       const Tree *symbolValue, bool simplify) {
-  Tree *result = expression->clone();
+Tree* Derivation::CloneReplacingSymbol(const Tree* expression,
+                                       const Tree* symbolValue, bool simplify) {
+  Tree* result = expression->clone();
   Variables::LeaveScopeWithReplacement(result, symbolValue, simplify);
   return result;
 }

@@ -5,11 +5,11 @@
 
 namespace PoincareJ {
 
-bool InverseMethod::shallowReduce(const Tree **x,
-                                  const Distribution *distribution,
-                                  const Tree **parameters,
-                                  Tree *expression) const {
-  const Tree *a = x[0];
+bool InverseMethod::shallowReduce(const Tree** x,
+                                  const Distribution* distribution,
+                                  const Tree** parameters,
+                                  Tree* expression) const {
+  const Tree* a = x[0];
   // Check a
   if (!a->isRational()) {
     return false;
@@ -34,7 +34,7 @@ bool InverseMethod::shallowReduce(const Tree **x,
     // TODO: for all distributions with finite support
     if (distribution->hasType(Distribution::Type::Binomial)) {
       if (is0) {
-        const Tree *p = parameters[1];
+        const Tree* p = parameters[1];
         if (!p->isRational()) {
           return false;
         }
@@ -46,7 +46,7 @@ bool InverseMethod::shallowReduce(const Tree **x,
         return true;
       }
       // n if a == 1 (TODO: false if p == 0 ?)
-      const Tree *n = parameters[0];
+      const Tree* n = parameters[0];
       expression->cloneTreeOverTree(n);
       return true;
     }
@@ -58,7 +58,7 @@ bool InverseMethod::shallowReduce(const Tree **x,
       }
 
       // is1
-      const Tree *p = parameters[0];
+      const Tree* p = parameters[0];
       if (!p->isRational()) {
         return false;
       }
@@ -81,7 +81,7 @@ bool InverseMethod::shallowReduce(const Tree **x,
   // expectedValue if a == 0.5 and continuous and symmetrical
   if (a->isHalf()) {
     if (distribution->hasType(Distribution::Type::Normal)) {
-      const Tree *mu = parameters[0];
+      const Tree* mu = parameters[0];
       expression->cloneTreeOverTree(mu);
       return true;
     }

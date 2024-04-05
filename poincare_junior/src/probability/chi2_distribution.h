@@ -15,46 +15,46 @@ class Chi2Distribution final : public ContinuousDistribution {
 
   template <typename T>
   static T EvaluateAtAbscissa(T x, T k);
-  float evaluateAtAbscissa(float x, const float *parameters) const override {
+  float evaluateAtAbscissa(float x, const float* parameters) const override {
     return EvaluateAtAbscissa<float>(x, parameters[0]);
   }
-  double evaluateAtAbscissa(double x, const double *parameters) const override {
+  double evaluateAtAbscissa(double x, const double* parameters) const override {
     return EvaluateAtAbscissa<double>(x, parameters[0]);
   }
 
   template <typename T>
   static T CumulativeDistributiveFunctionAtAbscissa(T x, T k);
   float cumulativeDistributiveFunctionAtAbscissa(
-      float x, const float *parameters) const override {
+      float x, const float* parameters) const override {
     return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0]);
   }
   double cumulativeDistributiveFunctionAtAbscissa(
-      double x, const double *parameters) const override {
+      double x, const double* parameters) const override {
     return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0]);
   }
 
   template <typename T>
   static T CumulativeDistributiveInverseForProbability(T probability, T k);
   float cumulativeDistributiveInverseForProbability(
-      float x, const float *parameters) const override {
+      float x, const float* parameters) const override {
     return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]);
   }
   double cumulativeDistributiveInverseForProbability(
-      double x, const double *parameters) const override {
+      double x, const double* parameters) const override {
     return CumulativeDistributiveInverseForProbability<double>(x,
                                                                parameters[0]);
   }
 
-  bool parametersAreOK(const float *parameters) const override {
+  bool parametersAreOK(const float* parameters) const override {
     return KIsOK(parameters[0]);
   }
-  bool parametersAreOK(const double *parameters) const override {
+  bool parametersAreOK(const double* parameters) const override {
     return KIsOK(parameters[0]);
   }
 
-  static bool ExpressionKIsOK(bool *result, const Tree *k, Context *context);
-  bool expressionParametersAreOK(bool *result, const Tree **parameters,
-                                 Context *context) const override {
+  static bool ExpressionKIsOK(bool* result, const Tree* k, Context* context);
+  bool expressionParametersAreOK(bool* result, const Tree** parameters,
+                                 Context* context) const override {
     return ExpressionKIsOK(result, parameters[0], context);
   }
 

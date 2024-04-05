@@ -147,6 +147,10 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
   float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
                                       bounds.top() + graduationVerticalMargin);
 
+  float labelMargin = AbstractPlotView::k_labelMargin * plotView->pixelHeight();
+  float minimumSquareDistanceToCenter =
+      std::pow(k_minimumGraduationDistanceToCenter * plotView->pixelWidth(), 2);
+
   // Find angle bounds.
   float angleBegin;
   float angleEnd;
@@ -198,10 +202,8 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
     // Is the ray exiting the screen through a side ?
     if (std::fabs(cos) * std::fabs(yQuadrant) >
         std::fabs(sin) * std::fabs(xQuadrant)) {
-      float marginToRemove =
-          AbstractPlotView::k_labelMargin * plotView->pixelHeight();
       x = xQuadrant;
-      y = xQuadrant * sin / cos + (angle == 360 ? 0 : -marginToRemove);
+      y = xQuadrant * sin / cos + (angle == 360 ? 0 : -labelMargin);
       if (angle % 180 == 0) {
         /* Since the axis is black, we need to draw the graduation under or on
          * top of it */
@@ -219,18 +221,14 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
       }
     }
     // TODO: update condition for non-orthonormal axes
-    if (x * x + y * y >
-        std::pow(k_minimumGraduationDistanceToCenter * plotView->pixelWidth(),
-                 2)) {
+    if (x * x + y * y > minimumSquareDistanceToCenter) {
       plotView->drawLabel(ctx, rect, buffer, {x, y}, horizontalRelativePosition,
                           verticalRelativePosition, k_boldColor);
 
       if (angle == 0) {
         // Show 360° as well
         plotView->drawLabel(
-            ctx, rect, "360°",
-            {x, y + AbstractPlotView::k_labelMargin * plotView->pixelHeight()},
-            horizontalRelativePosition,
+            ctx, rect, "360°", {x, y + labelMargin}, horizontalRelativePosition,
             AbstractPlotView::RelativePosition::After, k_boldColor);
       }
     }

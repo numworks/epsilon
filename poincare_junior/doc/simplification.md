@@ -9,11 +9,12 @@ From a parsed user input expression, the simplification algorithm does:
 4. Project the expression, approximate depending on the strategy
 5. Replace all user symbols with variables
 6. Apply systematic reduction
-7. Apply Matrix operators
-8. Bubble up lists, applying systematic reduction
-9. Apply advanced reduction
+7. Bubble up lists, applying systematic reduction
+8. Apply advanced reduction
+9. Simplify Dependencies
 10. Approximate again, depending on the strategy
 11. Beautify expression
+12. Replace User symbols and functions stored in context and start over at step 1.
 
 ## 1 - Dimension check
 
@@ -255,13 +256,7 @@ It's expected to:
 
 </details>
 
-## 7 - Matrix operators
-
-TODO: Apply matrix operators in Systematic Reduction section.
-
-TO COMPLETE
-
-## 8 - List operators
+## 7 - List operators
 
 TO COMPLETE
 
@@ -416,6 +411,10 @@ graph TD;
 ```
 
 </details>
+
+## 9 - Simplify dependencies
+
+TO COMPLETE
 
 ## 10 - Final approximation
 

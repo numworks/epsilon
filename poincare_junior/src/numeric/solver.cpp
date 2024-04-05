@@ -143,7 +143,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
       return result();
 
     case Type::Abs:
-    case Type::HyperbolicSine:
+    case Type::Sinh:
     case Type::Opposite:
     case Type::SquareRoot:
       /* f(x) = 0 <=> x = 0 */

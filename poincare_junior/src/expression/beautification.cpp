@@ -228,7 +228,7 @@ bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
 bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
                                                    AngleUnit angleUnit) {
   // Beautify System nodes to prevent future simplifications.
-  if (tree->isTrig() || tree->isTangentRad()) {
+  if (tree->isTrig() || tree->isTanRad()) {
     if (angleUnit != AngleUnit::Radian) {
       Tree* child = tree->child(0);
       child->moveTreeOverTree(PatternMatching::CreateSimplify(

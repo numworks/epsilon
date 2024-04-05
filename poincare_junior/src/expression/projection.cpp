@@ -123,7 +123,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 
   // Project angles depending on context
   PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (e->isOfType({Type::Sine, Type::Cosine, Type::Tangent}) &&
+  if (e->isOfType({Type::Sin, Type::Cos, Type::Tan}) &&
       angleUnit != PoincareJ::AngleUnit::Radian) {
     Tree* child = e->child(0);
     child->moveTreeOverTree(PatternMatching::Create(

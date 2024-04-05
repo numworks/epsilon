@@ -11,9 +11,9 @@ namespace PoincareJ {
 
 bool Trigonometry::IsDirect(const Tree* node) {
   switch (node->type()) {
-    case Type::Cosine:
-    case Type::Sine:
-    case Type::Tangent:
+    case Type::Cos:
+    case Type::Sin:
+    case Type::Tan:
       return true;
     default:
       return false;

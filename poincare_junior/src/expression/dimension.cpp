@@ -295,9 +295,9 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case Type::UserFunction:
       unitsAllowed = true;
       break;
-    case Type::Cosine:
-    case Type::Sine:
-    case Type::Tangent:
+    case Type::Cos:
+    case Type::Sin:
+    case Type::Tan:
     case Type::Trig:
       angleUnitsAllowed = true;
       break;

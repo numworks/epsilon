@@ -37,3 +37,20 @@ QUIZ_CASE(python_turtle_circle) {
   // assert_command_execution_succeeds(env, "position()", "(0.0, 0.0)\n");
   deinit_environment();
 }
+
+QUIZ_CASE(python_turtle_distance) {
+  TestExecutionEnvironment env = init_environement();
+  assert_command_execution_succeeds(env, "from turtle import *");
+  assert_command_execution_succeeds(env, "goto(10,10)");
+  assert_command_execution_succeeds(env, "distance(0,0)",
+                                    "14.14213562011719\n");
+  assert_command_execution_succeeds(env, "distance((0,0))",
+                                    "14.14213562011719\n");
+  assert_command_execution_succeeds(env, "distance(10,0)", "10.0\n");
+  assert_command_execution_fails(env, "distance()");
+  assert_command_execution_fails(env, "distance(,)");
+  assert_command_execution_fails(env, "distance(10)");
+  assert_command_execution_fails(env, "distance(,10)");
+  assert_command_execution_fails(env, "distance(10,)");
+  deinit_environment();
+}

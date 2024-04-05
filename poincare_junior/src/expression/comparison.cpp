@@ -79,7 +79,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication
      * and Power) / Multiplication (numbers) will not benefit from this
      * exception. */
-    if (type0 == Type::Addition || type0 == Type::Multiplication) {
+    if (type0 == Type::Addition || type0 == Type::Mult) {
       // sin(x) < (1 + cos(x)) < tan(x) and cos(x) < (sin(x) * tan(x))
       return CompareLastChild(node0, node1);
     }
@@ -101,8 +101,8 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     return Variables::Id(node0) - Variables::Id(node1);
   }
   // f(0, 1, 4) < f(0, 2, 3) and (2 + 3) < (1 + 4)
-  return CompareChildren(
-      node0, node1, type0 == Type::Addition || type0 == Type::Multiplication);
+  return CompareChildren(node0, node1,
+                         type0 == Type::Addition || type0 == Type::Mult);
 }
 
 bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {

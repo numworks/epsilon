@@ -144,7 +144,7 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
 
 // Only additions and multiplications can be squashed.
 bool CannotBeSquashed(const Tree* pattern) {
-  return !pattern->isAddition() && !pattern->isMultiplication();
+  return !pattern->isAddition() && !pattern->isMult();
 }
 
 bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
@@ -210,7 +210,7 @@ bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
       // All placeholders were already empty, pattern can be matched with
       // addition/multiplication neutral only.
       return ((pattern->isAddition() && source->isZero()) ||
-              (pattern->isMultiplication() && source->isOne()));
+              (pattern->isMult() && source->isOne()));
     }
     // Update the emptied placeholder to hold the source as single child instead
     /* TODO: If source is addition/multiplication neutral, leaving the

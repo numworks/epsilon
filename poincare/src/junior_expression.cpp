@@ -278,7 +278,7 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Logarithm;
     case PoincareJ::Type::Matrix:
       return ExpressionNode::Type::Matrix;
-    case PoincareJ::Type::Multiplication:
+    case PoincareJ::Type::Mult:
       return ExpressionNode::Type::Multiplication;
     case PoincareJ::Type::Nonreal:
       return ExpressionNode::Type::Nonreal;

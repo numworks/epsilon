@@ -14,7 +14,7 @@ namespace PoincareJ {
 
 TreeRef Algebraic::Rationalize(TreeRef expression) {
   if (Number::IsStrictRational(expression)) {
-    TreeRef fraction(SharedTreeStack->push<Type::Multiplication>(2));
+    TreeRef fraction(SharedTreeStack->push<Type::Mult>(2));
     Rational::Numerator(expression).pushOnTreeStack();
     SharedTreeStack->push(Type::Power);
     Rational::Denominator(expression).pushOnTreeStack();
@@ -26,7 +26,7 @@ TreeRef Algebraic::Rationalize(TreeRef expression) {
     Rationalize(expression->child(0));
     return expression;  // TODO return basicReduction
   }
-  if (expression->isMultiplication()) {
+  if (expression->isMult()) {
     for (std::pair<TreeRef, int> indexedNode :
          NodeIterator::Children<Editable>(expression)) {
       Rationalize(std::get<TreeRef>(indexedNode));
@@ -62,14 +62,14 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
        NodeIterator::Children<Editable>(expression)) {
     TreeRef child = std::get<TreeRef>(indexedNode);
     // Create Mult(child, commonDenominator) = a*b * b*d
-    TreeRef multiplication(SharedTreeStack->push<Type::Multiplication>(1));
+    TreeRef multiplication(SharedTreeStack->push<Type::Mult>(1));
     child->moveNodeBeforeNode(multiplication);
     child->nextTree()->moveTreeBeforeNode(
         SharedTreeStack->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
-  TreeRef fraction(SharedTreeStack->push<Type::Multiplication>(2));
+  TreeRef fraction(SharedTreeStack->push<Type::Mult>(2));
   fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
   TreeRef power(SharedTreeStack->push(Type::Power));
@@ -101,7 +101,7 @@ TreeRef Algebraic::NormalFormator(TreeRef expression, bool numerator) {
     Simplification::DeepSystematicReduce(expression);
     return expression;
   }
-  if (expression->isMultiplication()) {
+  if (expression->isMult()) {
     for (std::pair<TreeRef, int> indexedNode :
          NodeIterator::Children<Editable>(expression)) {
       TreeRef child = std::get<TreeRef>(indexedNode);

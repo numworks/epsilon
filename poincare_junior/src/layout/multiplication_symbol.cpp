@@ -131,7 +131,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
       return Integer;
 #endif
 
-    case Type::Multiplication:  // from NAry
+    case Type::Mult:  // from NAry
       // should be assert(false) ?
       return LeftLayoutShape(expr->child(0));
 
@@ -195,7 +195,7 @@ LayoutShape RightLayoutShape(const Tree* expr) {
       return Fraction;
 #endif
 
-    case Type::Multiplication:  // from NAry
+    case Type::Mult:  // from NAry
       // should be assert(false) ?
       return RightLayoutShape(expr->lastChild());
 

@@ -569,10 +569,10 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
         }
         return false;
       }
-      bool isMultiplication = codePoint == '*' ||
-                              codePoint == UCodePointMultiplicationSign ||
-                              codePoint == UCodePointMiddleDot;
-      if (isMultiplication) {
+      bool isMult = codePoint == '*' ||
+                    codePoint == UCodePointMultiplicationSign ||
+                    codePoint == UCodePointMiddleDot;
+      if (isMult) {
         /* We want '*' to be collapsable only if the following brother is not
          * a fraction, so that the user can write intuitively "1/2 * 3/4". */
         int indexOfThis;

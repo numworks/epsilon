@@ -156,7 +156,7 @@ bool RemoveUselessDependencies(Tree* dep) {
   for (int i = 0; i < set->numberOfChildren(); i++) {
     // TODO is it true with infinite ? for instance -inf+inf is undef
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
-    if (depI->isAddition() || depI->isMultiplication()) {
+    if (depI->isAddition() || depI->isMult()) {
       NAry::SetNumberOfChildren(
           set, set->numberOfChildren() + depI->numberOfChildren() - 1);
       depI->removeNode();

@@ -457,7 +457,7 @@ PolarConic::PolarConic(const OExpression& e, Context* context,
 
   // Detect the pattern (d*e)/(1±e*cos(theta)) where e is the eccentricity
   OExpression numerator, denominator;
-  if (reducedExpression.type() == ExpressionNode::Type::Multiplication) {
+  if (reducedExpression.type() == ExpressionNode::Type::Mult) {
     static_cast<Multiplication&>(reducedExpression)
         .splitIntoNormalForm(numerator, denominator, reductionContext);
   } else if (reducedExpression.type() == ExpressionNode::Type::Power &&

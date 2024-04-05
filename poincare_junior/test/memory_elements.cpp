@@ -180,14 +180,13 @@ QUIZ_CASE(pcj_type_block) {
                                                          .rational = false,
                                                          .number = false,
                                                          .userNamed = false}),
-      std::make_pair(Type::Multiplication,
-                     TypeBlockProperties{.nAry = true,
-                                         .expression = true,
-                                         .layout = false,
-                                         .integer = false,
-                                         .rational = false,
-                                         .number = false,
-                                         .userNamed = false}),
+      std::make_pair(Type::Mult, TypeBlockProperties{.nAry = true,
+                                                     .expression = true,
+                                                     .layout = false,
+                                                     .integer = false,
+                                                     .rational = false,
+                                                     .number = false,
+                                                     .userNamed = false}),
       std::make_pair(Type::Set, TypeBlockProperties{.nAry = true,
                                                     .expression = true,
                                                     .layout = false,
@@ -460,8 +459,8 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
       KAdd(1_e, 2_e),
       {TypeBlock(Type::Addition), ValueBlock(2), Type::One, Type::Two});
   assert_tree_equals_blocks(KMult(1_e, 2_e, -1_e),
-                            {TypeBlock(Type::Multiplication), ValueBlock(3),
-                             Type::One, Type::Two, Type::MinusOne});
+                            {TypeBlock(Type::Mult), ValueBlock(3), Type::One,
+                             Type::Two, Type::MinusOne});
   assert_tree_equals_blocks(KSet(1_e),
                             {TypeBlock(Type::Set), ValueBlock(1), Type::One});
   assert_tree_equals_blocks(KPow(1_e, 2_e),

@@ -317,7 +317,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::Addition:
       return MapAndReduce<T, std::complex<T>>(node,
                                               FloatAddition<std::complex<T>>);
-    case Type::Multiplication:
+    case Type::Mult:
       return MapAndReduce<T, std::complex<T>>(node, FloatMultiplication<T>);
     case Type::Division:
       return MapAndReduce<T, std::complex<T>>(node, FloatDivision<T>);
@@ -815,7 +815,7 @@ Tree* PushComplex(std::complex<T> value) {
   Tree* result = SharedTreeStack->push<Type::Addition>(2);
   SharedTreeStack->push<FloatType<T>::type>(value.real());
   if (value.imag() != 1.0) {
-    SharedTreeStack->push<Type::Multiplication>(2);
+    SharedTreeStack->push<Type::Mult>(2);
     SharedTreeStack->push<FloatType<T>::type>(value.imag());
   }
   SharedTreeStack->push(Type::ComplexI);
@@ -935,7 +935,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       a->removeTree();
       return a;
     }
-    case Type::Multiplication: {
+    case Type::Mult: {
       bool resultIsMatrix = false;
       Tree* result = nullptr;
       for (const Tree* child : node->children()) {

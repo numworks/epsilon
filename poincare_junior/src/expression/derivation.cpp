@@ -109,7 +109,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
    * parameter i. */
   for (int i = 0; i < numberOfChildren; i++) {
     NAry::SetNumberOfChildren(result, i + 1);
-    Tree* mult = SharedTreeStack->push<Type::Multiplication>(1);
+    Tree* mult = SharedTreeStack->push<Type::Mult>(1);
     if (!Derivate(derivandChild, symbolValue, symbol)) {
       // Could not derivate, preserve D(gi(x))
       SharedTreeStack->push(Type::Derivative);
@@ -133,14 +133,13 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
 bool Derivation::ShallowPartialDerivate(const Tree* derivand,
                                         const Tree* symbolValue, int index) {
   switch (derivand->type()) {
-    case Type::Multiplication: {
+    case Type::Mult: {
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...
       int numberOfChildren = derivand->numberOfChildren();
       assert(numberOfChildren > 1 && index < numberOfChildren);
       Tree* mult;
       if (numberOfChildren > 2) {
-        mult =
-            SharedTreeStack->push<Type::Multiplication>(numberOfChildren - 1);
+        mult = SharedTreeStack->push<Type::Mult>(numberOfChildren - 1);
       }
       for (std::pair<const Tree*, int> indexedNode :
            NodeIterator::Children<NoEditable>(derivand)) {
@@ -182,7 +181,7 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
       }
       Tree* multiplication;
       if (derivand->isPower()) {
-        multiplication = SharedTreeStack->push<Type::Multiplication>(2);
+        multiplication = SharedTreeStack->push<Type::Mult>(2);
         SharedTreeStack->clone(derivand->child(1));
       }
       Tree* newNode = SharedTreeStack->clone(derivand, false);

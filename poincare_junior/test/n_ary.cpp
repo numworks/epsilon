@@ -45,7 +45,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   TreeRef addition1 = SharedTreeStack->push<Type::Addition>(3);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(1));
   SharedTreeStack->push<Type::Addition>(3);
-  SharedTreeStack->push<Type::Multiplication>(2);
+  SharedTreeStack->push<Type::Mult>(2);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(2));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(3));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(4));
@@ -60,7 +60,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
 
   TreeRef addition2 = SharedTreeStack->push<Type::Addition>(6);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(1));
-  SharedTreeStack->push<Type::Multiplication>(2);
+  SharedTreeStack->push<Type::Mult>(2);
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(2));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(3));
   SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(4));

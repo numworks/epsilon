@@ -166,7 +166,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       return true;
     case Type::Opposite:
     case Type::Division:
-    case Type::Multiplication: {
+    case Type::Mult: {
       /* TODO: Forbid Complex * units. Units are already forbidden in complex
        * builtins. */
       uint8_t cols = 0;
@@ -214,7 +214,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       // TODO: Handle operations such as m^(1+1) or m^(-1*n) or m^(1/2) or m^0.5
       return index->isInteger() ||
              (index->isOpposite() && index->child(0)->isInteger()) ||
-             (index->isMultiplication() && index->numberOfChildren() == 2 &&
+             (index->isMult() && index->numberOfChildren() == 2 &&
               index->child(0)->isMinusOne() && index->child(1)->isInteger());
     }
     case Type::Sum:
@@ -333,7 +333,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
 Dimension Dimension::GetDimension(const Tree* t) {
   switch (t->type()) {
     case Type::Division:
-    case Type::Multiplication: {
+    case Type::Mult: {
       uint8_t rows = 0;
       uint8_t cols = 0;
       const Units::Representative* representative = nullptr;

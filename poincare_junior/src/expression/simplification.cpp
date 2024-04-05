@@ -28,8 +28,7 @@ namespace PoincareJ {
 bool Simplification::DeepSystematicReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening
    * here could save multiple ShallowSystematicReduce and flatten calls. */
-  bool modified =
-      (u->isMultiplication() || u->isAddition()) && NAry::Flatten(u);
+  bool modified = (u->isMult() || u->isAddition()) && NAry::Flatten(u);
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
     assert(!child->isUndefined());
@@ -127,7 +126,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Logarithm::SimplifyLn(u);
     case Type::LnReal:
       return SimplifyLnReal(u);
-    case Type::Multiplication:
+    case Type::Mult:
       return SimplifyMultiplication(u);
     case Type::Permute:
       return Arithmetic::SimplifyPermute(u);
@@ -298,14 +297,14 @@ bool Simplification::SimplifyPower(Tree* u) {
     assert(p->nextTree() == static_cast<Tree*>(n));
     // PowU PowV w p n
     v->removeNode();
-    MoveNodeAtNode(p, SharedTreeStack->push<Type::Multiplication>(2));
+    MoveNodeAtNode(p, SharedTreeStack->push<Type::Mult>(2));
     // PowU w Mult<2> p n
     SimplifyMultiplication(p);
     SimplifyPower(u);
     return true;
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
-  if (v->isMultiplication()) {
+  if (v->isMult()) {
     for (Tree* w : v->children()) {
       TreeRef m = SharedTreeStack->push(Type::Power);
       w->clone();
@@ -423,7 +422,7 @@ bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
     merge = PatternMatching::CreateSimplify(
         KPow(KA, KAdd(KB, KC)),
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
-    assert(!merge->isMultiplication());
+    assert(!merge->isMult());
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.
     merge =
@@ -529,7 +528,7 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
 }
 
 bool Simplification::SimplifyMultiplication(Tree* u) {
-  assert(u->isMultiplication());
+  assert(u->isMult());
   bool changed = NAry::Flatten(u);
   if (changed && CanApproximateTree(u, &changed)) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be
@@ -541,18 +540,18 @@ bool Simplification::SimplifyMultiplication(Tree* u) {
   }
   changed = NAry::Sort(u, Comparison::Order::PreserveMatrices) || changed;
   changed = SimplifySortedMultiplication(u) || changed;
-  assert(!changed || !u->isMultiplication() || !SimplifyMultiplication(u));
+  assert(!changed || !u->isMult() || !SimplifyMultiplication(u));
   return changed;
 }
 
 bool TermsAreEqual(const Tree* u, const Tree* v) {
-  if (!u->isMultiplication()) {
-    if (!v->isMultiplication()) {
+  if (!u->isMult()) {
+    if (!v->isMult()) {
       return u->treeIsIdenticalTo(v);
     }
     return TermsAreEqual(v, u);
   }
-  if (!v->isMultiplication()) {
+  if (!v->isMult()) {
     return u->numberOfChildren() == 2 && u->child(0)->isRational() &&
            u->child(1)->treeIsIdenticalTo(v);
   }
@@ -577,7 +576,7 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
 // The term of 2ab is ab
 Tree* PushTerm(const Tree* u) {
   Tree* c = u->clone();
-  if (u->isMultiplication() && u->child(0)->isRational()) {
+  if (u->isMult() && u->child(0)->isRational()) {
     NAry::RemoveChildAtIndex(c, 0);
     NAry::SquashIfPossible(c);
   }
@@ -586,7 +585,7 @@ Tree* PushTerm(const Tree* u) {
 
 // The constant of 2ab is 2
 const Tree* Constant(const Tree* u) {
-  if (u->isMultiplication() && u->child(0)->isRational()) {
+  if (u->isMult() && u->child(0)->isRational()) {
     return u->child(0);
   }
   return 1_e;

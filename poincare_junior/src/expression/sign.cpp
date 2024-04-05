@@ -218,7 +218,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     return ComplexSign(Number::Sign(t), Sign::Zero());
   }
   switch (t->type()) {
-    case Type::Multiplication: {
+    case Type::Mult: {
       ComplexSign s = RealPositiveInteger();  // 1
       for (const Tree* c : t->children()) {
         s = Mult(s, Get(c));

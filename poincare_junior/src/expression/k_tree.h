@@ -100,7 +100,7 @@ constexpr auto KIntegral = KFixedArity<4, Type::Integral>();
 constexpr auto KNthDiff = KFixedArity<4, Type::NthDerivative>();
 
 constexpr auto KAdd = KNAry<Type::Addition>();
-constexpr auto KMult = KNAry<Type::Multiplication>();
+constexpr auto KMult = KNAry<Type::Mult>();
 constexpr auto KList = KNAry<Type::List>();
 constexpr auto KSet = KNAry<Type::Set>();
 constexpr auto KPiecewise = KNAry<Type::Piecewise>();

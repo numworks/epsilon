@@ -114,7 +114,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
                                    bool approximate) {
   Tree* result = m->cloneNode();
   for (const Tree* child : m->children()) {
-    Tree* mult = SharedTreeStack->push<Type::Multiplication>(2);
+    Tree* mult = SharedTreeStack->push<Type::Mult>(2);
     scalar->clone();
     child->clone();
     if (approximate) {
@@ -153,7 +153,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
       Tree* add = SharedTreeStack->push<Type::Addition, int>(internal);
       childURowK = childURow0;
       for (int k = 0; k < internal; k++) {
-        Tree* mult = SharedTreeStack->push<Type::Multiplication>(2);
+        Tree* mult = SharedTreeStack->push<Type::Mult>(2);
         assert(childURowK == Child(u, row, k));
         childURowK->clone();
         childURowK = childURowK->nextTree();
@@ -189,7 +189,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
 
   TreeRef det;
   if (determinant) {
-    det = SharedTreeStack->push<Type::Multiplication>(0);
+    det = SharedTreeStack->push<Type::Mult>(0);
   }
 
   int m = NumberOfRows(matrix);

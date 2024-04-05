@@ -101,7 +101,7 @@ Tree* Polynomial::Addition(Tree* polA, Tree* polB) {
 
 Tree* Polynomial::Multiplication(Tree* polA, Tree* polB) {
   // TODO: implement Kronecker-Shönhage trick?
-  return Operation(polA, polB, Type::Multiplication, MultiplicationMonomial,
+  return Operation(polA, polB, Type::Mult, MultiplicationMonomial,
                    [](Tree* result, Tree* polynomial,
                       std::pair<Tree*, uint8_t> monomial, bool isLastTerm) {
                      TreeRef resultRef(result);
@@ -124,7 +124,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
     if (!polB->isPolynomial()) {
       TreeRef op = blockType == Type::Addition
                        ? SharedTreeStack->push<Type::Addition>(2)
-                       : SharedTreeStack->push<Type::Multiplication>(2);
+                       : SharedTreeStack->push<Type::Mult>(2);
       // We're about to move polynomes around, we need references
       TreeRef polARef(polA);
       op->moveTreeAfterNode(polB);
@@ -354,7 +354,7 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
     assert(!Integer::Is<uint8_t>(exponent) ||
            Integer::Handler(exponent).to<uint8_t>() > 1);
     AddVariable(variables, Integer::Is<uint8_t>(exponent) ? base : expression);
-  } else if (type == Type::Addition || type == Type::Multiplication) {
+  } else if (type == Type::Addition || type == Type::Mult) {
     for (const Tree* child : expression->children()) {
       if (child->isAddition() && type != Type::Addition) {
         AddVariable(variables, child);
@@ -442,7 +442,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
       return std::make_pair(expression->cloneTreeOverTree(1_e), exp);
     }
   }
-  if (expression->isMultiplication()) {
+  if (expression->isMult()) {
     for (auto [child, index] : NodeIterator::Children<Editable>(expression)) {
       auto [childCoefficient, childExponent] =
           ParseMonomial(child->clone(), variable);
@@ -483,7 +483,7 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
     }
   }
   uint8_t degree = 0;
-  if (type == Type::Addition || type == Type::Multiplication) {
+  if (type == Type::Addition || type == Type::Mult) {
     for (const Tree* child : expression->children()) {
       uint8_t childDegree = Degree(child, variables);
       if (type == Type::Addition) {
@@ -535,7 +535,7 @@ std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expressi
       return std::make_pair((1_e)->clone(), Integer::Handler(exponent).to<uint8_t>());
     }
   }
-  if (type == Type::Multiplication) {
+  if (type == Type::Mult) {
     for (std::pair<const Tree *, int> indexedNode : NodeIterator::Children<NoEditable>(expression)) {
       Tree* child = std::get<const Tree *>(indexedNode);
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);

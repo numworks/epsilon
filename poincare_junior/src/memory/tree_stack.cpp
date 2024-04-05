@@ -449,7 +449,7 @@ template Tree* TreeStack::push<Type::Matrix, uint8_t, uint8_t>(uint8_t,
                                                                uint8_t);
 template Tree* TreeStack::push<Type::MatrixLayout, uint8_t, uint8_t>(uint8_t,
                                                                      uint8_t);
-template Tree* TreeStack::push<Type::Multiplication, int>(int);
+template Tree* TreeStack::push<Type::Mult, int>(int);
 template Tree* TreeStack::push<Type::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
 template Tree* TreeStack::push<Type::PhysicalConstant, uint8_t>(uint8_t);

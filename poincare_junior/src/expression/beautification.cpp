@@ -19,7 +19,7 @@ namespace PoincareJ {
 float Beautification::DegreeForSortingAddition(const Tree* expr,
                                                bool symbolsOnly) {
   switch (expr->type()) {
-    case Type::Multiplication: {
+    case Type::Mult: {
       /* If we consider the symbol degree, the degree of a multiplication is
        * the sum of the degrees of its terms :
        * 3*(x^2)*y -> deg = 0+2+1 = 3.
@@ -64,21 +64,21 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
 }
 
 Tree* Factor(Tree* expr, int index) {
-  if (expr->isMultiplication()) {
+  if (expr->isMult()) {
     return expr->child(index);
   }
   return expr;
 }
 
 const Tree* Factor(const Tree* expr, int index) {
-  if (expr->isMultiplication()) {
+  if (expr->isMult()) {
     return expr->child(index);
   }
   return expr;
 }
 
 int NumberOfFactors(const Tree* expr) {
-  if (expr->isMultiplication()) {
+  if (expr->isMult()) {
     return expr->numberOfChildren();
   }
   return 1;
@@ -87,7 +87,7 @@ int NumberOfFactors(const Tree* expr) {
 bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
   // The expression is a negative number
   Tree* factor = Factor(expr, 0);
-  if (factor->isMinusOne() && expr->isMultiplication()) {
+  if (factor->isMinusOne() && expr->isMult()) {
     NAry::RemoveChildAtIndex(expr, 0);
     NAry::SquashIfUnary(expr);
     return true;
@@ -98,8 +98,8 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
 bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
                                          TreeRef& denominator) {
   bool result = false;
-  numerator = SharedTreeStack->push<Type::Multiplication>(0);
-  denominator = SharedTreeStack->push<Type::Multiplication>(0);
+  numerator = SharedTreeStack->push<Type::Mult>(0);
+  denominator = SharedTreeStack->push<Type::Mult>(0);
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(expr);
   for (int i = 0; i < numberOfFactors; i++) {
@@ -181,7 +181,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
     units = dimension.toBaseUnits();
   } else {
     double value = Approximation::RootTreeTo<double>(expr);
-    units = SharedTreeStack->push<Type::Multiplication>(2);
+    units = SharedTreeStack->push<Type::Mult>(2);
     ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();
     Simplification::DeepSystematicReduce(units);
@@ -313,13 +313,13 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
   }
 
   // Turn multiplications with negative powers into divisions
-  if (e->isMultiplication() || e->isPower() || Number::IsStrictRational(e)) {
+  if (e->isMult() || e->isPower() || Number::IsStrictRational(e)) {
     if (BeautifyIntoDivision(e)) {
       return true;
     }
   }
 
-  if (e->isOfType({Type::Multiplication, Type::GCD, Type::LCM}) &&
+  if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&
       NAry::Sort(e, Comparison::Order::Beautification)) {
     return true;
   }
@@ -380,7 +380,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     // [abs×]e^
     T abs = std::abs(value);
     if (abs != 1) {
-      SharedTreeStack->push<Type::Multiplication>(2);
+      SharedTreeStack->push<Type::Mult>(2);
       SharedTreeStack->push<Type>(abs);
     }
     SharedTreeStack->push(Type::Power);
@@ -393,7 +393,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     im = -im;
   }
   if (im != 1) {
-    SharedTreeStack->push<Type::Multiplication>(2);
+    SharedTreeStack->push<Type::Mult>(2);
     SharedTreeStack->push<Type>(im);
   }
   SharedTreeStack->push(Type::ComplexI);

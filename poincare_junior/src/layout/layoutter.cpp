@@ -40,7 +40,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 1;
     case Type::Division:
       return 2;
-    case Type::Multiplication:
+    case Type::Mult:
       return 3;
     case Type::PercentAddition:
       return 4;
@@ -335,7 +335,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutInfixOperator(layoutParent, expression, op);
       break;
     }
-    case Type::Multiplication:
+    case Type::Mult:
       /* TODO PCJ: Add small margins when units are present */
       layoutInfixOperator(
           layoutParent, expression,
@@ -785,7 +785,7 @@ bool Layoutter::requireSeparators(const Tree* expr) {
     if (requireSeparators(child)) {
       return true;
     }
-    if (expr->isMultiplication() && Units::Unit::IsUnitOrPowerOfUnit(child)) {
+    if (expr->isMult() && Units::Unit::IsUnitOrPowerOfUnit(child)) {
       return true;
     }
   }
@@ -850,7 +850,7 @@ bool Layoutter::ImplicitAddition(const Tree* addition) {
   // Step 2: Check if units can be implicitly added
   const Units::Representative* storedUnitRepresentative = nullptr;
   for (const Tree* child : addition->children()) {
-    if (!(child->isMultiplication() && child->numberOfChildren() == 2 &&
+    if (!(child->isMult() && child->numberOfChildren() == 2 &&
           (child->child(0)->isInteger() ||
            child->child(0)->isOfType(
                {Type::Decimal, Type::DoubleFloat, Type::SingleFloat})) &&

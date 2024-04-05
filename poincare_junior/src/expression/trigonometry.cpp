@@ -132,8 +132,8 @@ const Tree* getPiFactor(const Tree* u) {
   if (u->isZero()) {
     return 0_e;
   }
-  if (u->isMultiplication() && u->numberOfChildren() == 2 &&
-      u->child(0)->isRational() && u->child(1)->treeIsIdenticalTo(π_e)) {
+  if (u->isMult() && u->numberOfChildren() == 2 && u->child(0)->isRational() &&
+      u->child(1)->treeIsIdenticalTo(π_e)) {
     return u->child(0);
   }
   return nullptr;
@@ -188,7 +188,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   }
   if (isOpposed && changed) {
     u->cloneTreeAtNode(-1_e);
-    u->moveNodeAtNode(SharedTreeStack->push<Type::Multiplication>(2));
+    u->moveNodeAtNode(SharedTreeStack->push<Type::Mult>(2));
     Simplification::SimplifyMultiplication(u);
   }
   return changed;
@@ -279,7 +279,7 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
     u->moveTreeOverTree(PatternMatching::CreateSimplify(
         KMult(π_e, KPow(KA, -1_e)), {.KA = isAsin ? 6_e : 3_e}));
     changed = true;
-  } else if (arg->isMultiplication()) {
+  } else if (arg->isMult()) {
     /* TODO: Handle the same angles as ExactFormula (π/12, π/10, π/8 and π/5 are
      * missing) and find a better implementation for these special cases. */
     changed =

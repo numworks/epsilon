@@ -47,7 +47,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
   int numberOfFactors;
   int factorIndex = 0;
   const Tree* factor;
-  if (baseUnits->isMultiplication()) {
+  if (baseUnits->isMult()) {
     numberOfFactors = baseUnits->numberOfChildren();
     factor = baseUnits->child(0);
   } else {
@@ -95,7 +95,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
 }
 
 Tree* DimensionVector::toBaseUnits() const {
-  Tree* result = SharedTreeStack->push<Type::Multiplication>(0);
+  Tree* result = SharedTreeStack->push<Type::Mult>(0);
   int numberOfChildren = 0;
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
     // We require the base units to be the first seven in DefaultRepresentatives
@@ -589,7 +589,7 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
                                                      UnitFormat unitFormat) {
   int numberOfFactors;
   Tree* factor;
-  if (units->isMultiplication()) {
+  if (units->isMult()) {
     numberOfFactors = units->numberOfChildren();
     factor = units->child(0);
   } else {
@@ -816,7 +816,7 @@ Expression Unit::shallowReduce(ReductionContext reductionContext) {
     Expression p = parent();
     if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert ||
         p.type() == ExpressionNode::Type::Store ||
-        (p.type() == ExpressionNode::Type::Multiplication &&
+        (p.type() == ExpressionNode::Type::Mult &&
          p.numberOfChildren() == 2) ||
         p.type() == ExpressionNode::Type::Opposite) {
       /* If the parent is a UnitConvert, the temperature is always legal.
@@ -908,7 +908,7 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
 }
 
 void Unit::RemoveUnit(Tree* unit) {
-  Tree* result = SharedTreeStack->push<Type::Multiplication>(2);
+  Tree* result = SharedTreeStack->push<Type::Mult>(2);
   GetRepresentative(unit)->ratioExpressionReduced()->clone();
   SharedTreeStack->push(Type::Power);
   Integer::Push(10);
@@ -943,7 +943,7 @@ bool IsCombinationOfUnits(const Tree* expr) {
   if (expr->isUnit()) {
     return true;
   }
-  if (expr->isMultiplication() || expr->isDivision()) {
+  if (expr->isMult() || expr->isDivision()) {
     return !expr->hasChildSatisfying(
         [](const Tree* e) { return !IsCombinationOfUnits(e); });
   }

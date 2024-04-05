@@ -61,7 +61,7 @@ RANGE(Number, Zero, Pi)
 
 /* - Multiplication M (same for Addition, Set, List)
  * | M TAG | NUMBER OF CHILDREN | */
-NODE(Multiplication, NARY)
+NODE(Mult, NARY)
 
 /* - Power P (same for Factorial, Subtraction, Division) | P TAG | */
 NODE(Power, 2)

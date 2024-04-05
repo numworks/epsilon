@@ -381,7 +381,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
     }
     if (smallE != end) {
       // Decimal * 10^exponent
-      Tree* mult = SharedTreeStack->push<Type::Multiplication>(1);
+      Tree* mult = SharedTreeStack->push<Type::Mult>(1);
       SharedTreeStack->push(Type::Power);
       (10_e)->clone();
       Integer::Push(exponent, base);
@@ -519,7 +519,7 @@ void RackParser::privateParseTimes(TreeRef& leftHandSide,
                                    Token::Type stoppingType) {
   TreeRef rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, stoppingType);
-  if (leftHandSide->isMultiplication()) {
+  if (leftHandSide->isMult()) {
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() + 1);
   } else {

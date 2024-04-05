@@ -9,13 +9,13 @@ namespace PoincareJ {
 int Metric::GetMetric(const Tree* u) {
   int result = GetMetric(u->type());
   switch (u->type()) {
-    case Type::Multiplication: {
+    case Type::Mult: {
       // Ignore (-1) in multiplications
       PatternMatching::Context ctx;
       if (u->nextNode()->isMinusOne()) {
         result -= GetMetric(Type::MinusOne);
         if (u->numberOfChildren() == 2) {
-          result -= GetMetric(Type::Multiplication);
+          result -= GetMetric(Type::Mult);
         }
       }
       break;

@@ -236,7 +236,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
 
   switch (type) {
     case Type::Addition:
-    case Type::Multiplication: {
+    case Type::Mult: {
       Poincare::NAryExpression nary =
           type == Type::Addition ? static_cast<Poincare::NAryExpression>(
                                        Poincare::Addition::Builder())
@@ -697,7 +697,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           SharedTreeStack->push<Type::Addition>(exp.numberOfChildren());
           break;
         case OT::Multiplication:
-          SharedTreeStack->push<Type::Multiplication>(exp.numberOfChildren());
+          SharedTreeStack->push<Type::Mult>(exp.numberOfChildren());
           break;
         case OT::OList:
           SharedTreeStack->push<Type::List>(exp.numberOfChildren());

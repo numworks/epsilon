@@ -125,7 +125,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
   }
 
   switch (e->type()) {
-    case Type::Multiplication:
+    case Type::Mult:
       /* x*y = 0 => x = 0 or y = 0 */
       registerSolution(nextRootInMultiplication(e), Interest::Root);
       return result();
@@ -596,7 +596,7 @@ Coordinate2D<T> Solver<T>::nextRootInChildren(const Tree* e,
 
 template <typename T>
 Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Tree* e) const {
-  assert(e->isMultiplication());
+  assert(e->isMult());
   return nextRootInChildren(
       e, [](const Tree*, Context*, void*) { return true; }, nullptr);
 }

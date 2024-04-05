@@ -13,11 +13,11 @@ namespace KTrees {
 
 // Constructors
 
-constexpr auto KUndef = KTree<Type::Undefined>();
+constexpr auto KUndef = KTree<Type::Undef>();
 /* TODO: Remove KHalf and use 1_e/2_e. Also ensure unreduced KTree rational are
  * either forbidden or properly handled. */
 constexpr auto KHalf = KTree<Type::Half>();
-constexpr auto KNonreal = KTree<Type::Nonreal>();
+constexpr auto KNonReal = KTree<Type::NonReal>();
 constexpr auto KInf = KTree<Type::Inf>();
 
 constexpr auto π_e = KTree<Type::Pi>();
@@ -37,19 +37,19 @@ constexpr auto KLog = KUnary<Type::Log>();
 constexpr auto KLn = KUnary<Type::Ln>();
 constexpr auto KLnReal = KUnary<Type::LnReal>();
 constexpr auto KExp = KUnary<Type::Exp>();
-constexpr auto KFact = KUnary<Type::Factorial>();
+constexpr auto KFact = KUnary<Type::Fact>();
 constexpr auto KSqrt = KUnary<Type::Sqrt>();
-constexpr auto KRe = KUnary<Type::RealPart>();
-constexpr auto KIm = KUnary<Type::ImaginaryPart>();
-constexpr auto KArg = KUnary<Type::ComplexArgument>();
-constexpr auto KConj = KUnary<Type::Conjugate>();
+constexpr auto KRe = KUnary<Type::Re>();
+constexpr auto KIm = KUnary<Type::Im>();
+constexpr auto KArg = KUnary<Type::Arg>();
+constexpr auto KConj = KUnary<Type::Conj>();
 constexpr auto KOpposite = KUnary<Type::Opposite>();
 constexpr auto KFloor = KUnary<Type::Floor>();
-constexpr auto KCeil = KUnary<Type::Ceiling>();
-constexpr auto KFrac = KUnary<Type::FracPart>();
+constexpr auto KCeil = KUnary<Type::Ceil>();
+constexpr auto KFrac = KUnary<Type::Frac>();
 constexpr auto KListSum = KUnary<Type::ListSum>();
-constexpr auto KMin = KUnary<Type::Minimum>();
-constexpr auto KMax = KUnary<Type::Maximum>();
+constexpr auto KMin = KUnary<Type::Min>();
+constexpr auto KMax = KUnary<Type::Max>();
 constexpr auto KSec = KUnary<Type::Sec>();
 constexpr auto KCsc = KUnary<Type::Csc>();
 constexpr auto KCot = KUnary<Type::Cot>();
@@ -80,7 +80,7 @@ constexpr auto KListElement = KBinary<Type::ListElement>();
 constexpr auto KMean = KBinary<Type::Mean>();
 constexpr auto KBinomial = KBinary<Type::Binomial>();
 constexpr auto KPermute = KBinary<Type::Permute>();
-constexpr auto KNthRoot = KBinary<Type::Root>();
+constexpr auto KRoot = KBinary<Type::Root>();
 constexpr auto KPercentAddition = KBinary<Type::PercentAddition>();
 constexpr auto KMixedFraction = KBinary<Type::MixedFraction>();
 constexpr auto KPoint = KBinary<Type::Point>();

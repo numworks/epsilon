@@ -40,7 +40,7 @@ bool EnsureIsPositiveInteger(const Tree* expr) {
 
 bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   assert(expr->numberOfChildren() == 2);
-  bool isQuotient = expr->isQuotient();
+  bool isQuo = expr->isQuo();
   const Tree* num = expr->firstChild();
   const Tree* denom = num->nextTree();
   if (!EnsureIsInteger(num) + !EnsureIsInteger(denom)) {
@@ -51,8 +51,8 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   }
   IntegerHandler n = Integer::Handler(num);
   IntegerHandler d = Integer::Handler(denom);
-  expr->moveTreeOverTree(isQuotient ? IntegerHandler::Quotient(n, d)
-                                    : IntegerHandler::Remainder(n, d));
+  expr->moveTreeOverTree(isQuo ? IntegerHandler::Quotient(n, d)
+                               : IntegerHandler::Remainder(n, d));
   return true;
 }
 

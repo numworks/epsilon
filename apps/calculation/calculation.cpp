@@ -159,16 +159,15 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
   if (inputExp.isUninitialized() || outputExp.isUninitialized() ||
       ShouldOnlyDisplayExactOutput(inputExp)) {
     m_displayOutput = DisplayOutput::ExactOnly;
-  } else if (exactAndApproximatedAreEqual() ||
-             exactOutputTree()->isUndefined() ||
-             approximatedOutputTree()->isNonreal() ||
+  } else if (exactAndApproximatedAreEqual() || exactOutputTree()->isUndef() ||
+             approximatedOutputTree()->isNonReal() ||
              // Other conditions are factorized in ExpressionDisplayPermissions
              ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
                  inputExp, outputExp,
                  approximateOutput(NumberOfSignificantDigits::UserDefined),
                  context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (approximatedOutputTree()->isUndefined()) {
+  } else if (approximatedOutputTree()->isUndef()) {
     // TODO_PCJ: This allow the display of exact pcj results, regulate it.
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||

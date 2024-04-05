@@ -299,7 +299,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
                                   s_context ? s_context->m_listElement : -1);
   }
   switch (node->type()) {
-    case Type::Undefined:
+    case Type::Undef:
       // Until we make simplification compulsory, undef may be anywhere
       return NAN;
     case Type::Parenthesis:
@@ -364,17 +364,17 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return std::abs(ToComplex<T>(node->nextNode()));
     case Type::Inf:
       return INFINITY;
-    case Type::Conjugate:
+    case Type::Conj:
       return std::conj(ToComplex<T>(node->nextNode()));
     case Type::Opposite:
       return FloatMultiplication<T>(-1, ToComplex<T>(node->nextNode()));
-    case Type::RealPart: {
+    case Type::Re: {
       /* TODO_PCJ: Complex NAN should be used in most of the code. Make sure a
        * NAN result cannot be lost. */
       std::complex<T> c = ToComplex<T>(node->nextNode());
       return std::isnan(c.imag()) ? NAN : c.real();
     }
-    case Type::ImaginaryPart: {
+    case Type::Im: {
       std::complex<T> c = ToComplex<T>(node->nextNode());
       return std::isnan(c.real()) ? NAN : c.imag();
     }
@@ -553,8 +553,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       s_context->m_listElement = old;
       return result;
     }
-    case Type::Minimum:
-    case Type::Maximum: {
+    case Type::Min:
+    case Type::Max: {
       const Tree* values = node->child(0);
       int length = Dimension::GetListLength(values);
       int old = s_context->m_listElement;
@@ -566,7 +566,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
           return NAN;
         }
         if (i == 0 ||
-            (node->isMinimum() ? (v.real() < result) : (v.real() > result))) {
+            (node->isMin() ? (v.real() < result) : (v.real() > result))) {
           result = v.real();
         }
       }
@@ -693,7 +693,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       // TODO unreal
       return child[0] <= 0 ? NAN : std::log(child[0]);
     case Type::Floor:
-    case Type::Ceiling: {
+    case Type::Ceil: {
       /* Assume low deviation from natural numbers are errors */
       T delta = std::fabs((std::round(child[0]) - child[0]) / child[0]);
       if (delta <= Float<T>::Epsilon()) {
@@ -701,7 +701,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       return node->isFloor() ? std::floor(child[0]) : std::ceil(child[0]);
     }
-    case Type::FracPart: {
+    case Type::Frac: {
       return child[0] - std::floor(child[0]);
     }
     case Type::Round: {
@@ -711,8 +711,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       T err = std::pow(10, std::round(child[1]));
       return std::round(child[0] * err) / err;
     }
-    case Type::Quotient:
-    case Type::Remainder: {
+    case Type::Quo:
+    case Type::Rem: {
       T a = child[0];
       T b = child[1];
       if (a != (int)a || b != (int)b) {
@@ -720,10 +720,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       // TODO : is this really better than std::remainder ?
       T quotient = b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
-      return node->isQuotient() ? quotient : std::round(a - b * quotient);
+      return node->isQuo() ? quotient : std::round(a - b * quotient);
     }
 
-    case Type::Factorial: {
+    case Type::Fact: {
       T n = child[0];
       if (n != std::round(n) || n < 0) {
         return NAN;
@@ -802,7 +802,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       // TODO: Implement more Types
       assert(false);
-    case Type::Undefined:
+    case Type::Undef:
       return NAN;
   };
 }
@@ -1140,10 +1140,10 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   Tree* approximatedTree = RootTreeToTree<T>(tree, previousContext->m_angleUnit,
                                              previousContext->m_complexFormat);
   s_context = previousContext;
-  if (approximatedTree->isUndefined()) {
+  if (approximatedTree->isUndef()) {
     ExceptionCheckpoint::Raise(ExceptionType::Undefined);
   }
-  if (approximatedTree->isNonreal()) {
+  if (approximatedTree->isNonReal()) {
     ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
   }
   assert(!tree->treeIsIdenticalTo(approximatedTree));

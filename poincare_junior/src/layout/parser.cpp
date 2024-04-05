@@ -16,10 +16,10 @@ Type ExpressionType(LayoutType type) {
       return Type::Binomial;
     case LayoutType::PtPermute:
       return Type::Permute;
-    case LayoutType::AbsoluteValue:
+    case LayoutType::Abs:
       return Type::Abs;
-    case LayoutType::Ceiling:
-      return Type::Ceiling;
+    case LayoutType::Ceil:
+      return Type::Ceil;
     case LayoutType::Floor:
       return Type::Floor;
     case LayoutType::VectorNorm:
@@ -34,8 +34,8 @@ Type ExpressionType(LayoutType type) {
       return Type::Sum;
     case LayoutType::ListSequence:
       return Type::ListSequence;
-    case LayoutType::Conjugate:
-      return Type::Conjugate;
+    case LayoutType::Conj:
+      return Type::Conj;
     case LayoutType::Sqrt:
       return Type::Sqrt;
     case LayoutType::Root:

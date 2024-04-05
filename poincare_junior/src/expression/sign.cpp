@@ -28,7 +28,7 @@ Sign DecimalFunction(Sign s, Type type) {
   bool canBeNegative = s.canBeNegative();
   bool canBeNonInteger = s.canBeNonInteger();
   switch (type) {
-    case Type::Ceiling:
+    case Type::Ceil:
       canBeNull |= canBeNegative;
       canBeNonInteger = false;
       break;
@@ -36,7 +36,7 @@ Sign DecimalFunction(Sign s, Type type) {
       canBeNull |= canBePositive;
       canBeNonInteger = false;
       break;
-    case Type::FracPart:
+    case Type::Frac:
       canBeNull = true;
       canBePositive = canBeNonInteger;
       canBeNegative = false;
@@ -251,9 +251,9 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return Exponential(Get(t->firstChild()));
     case Type::Ln:
       return Ln(Get(t->firstChild()));
-    case Type::RealPart:
+    case Type::Re:
       return ComplexSign(Get(t->firstChild()).realSign(), Sign::Zero());
-    case Type::ImaginaryPart:
+    case Type::Im:
       return ComplexSign(Get(t->firstChild()).imagSign(), Sign::Zero());
     case Type::Var:
       return Variables::GetComplexSign(t);
@@ -264,7 +264,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return Trig(Get(t->firstChild()), t->child(1)->isOne());
     case Type::ATanRad:
       return ArcTangentRad(Get(t->firstChild()));
-    case Type::ComplexArgument:
+    case Type::Arg:
       return ComplexArgument(Get(t->firstChild()));
     case Type::Dependency:
       return ComplexArgument(Get(t->firstChild()));
@@ -276,12 +276,12 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return NoIntegers(Get(t->firstChild()));
     case Type::ACos:
       return ArcCosine(Get(t->firstChild()));
-    case Type::Factorial:
+    case Type::Fact:
       assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());
       return RealPositiveInteger();
-    case Type::Ceiling:
+    case Type::Ceil:
     case Type::Floor:
-    case Type::FracPart:
+    case Type::Frac:
     case Type::Round:
       return DecimalFunction(Get(t->firstChild()), t->type());
     case Type::PercentSimple:

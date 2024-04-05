@@ -14,16 +14,16 @@ RANGE(CodePointLayout, AsciiCodePointLayout, UnicodeCodePointLayout)
 NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))
 // TODO Do we need a StringLayout ?
 
-NODE(AbsoluteValue, 1)
-NODE(Ceiling, 1)
+NODE(Abs, 1)
+NODE(Ceil, 1)
 NODE(Floor, 1)
 NODE(VectorNorm, 1)
 NODE(Parenthesis, 1, 1)
 NODE(CurlyBrace, 1, 1)
 
-RANGE(SquareBracketPair, AbsoluteValueLayout, VectorNormLayout)
+RANGE(SquareBracketPair, AbsLayout, VectorNormLayout)
 RANGE(AutocompletedPair, ParenthesisLayout, CurlyBraceLayout)
-RANGE(Pair, AbsoluteValueLayout, CurlyBraceLayout)
+RANGE(Pair, Abs, CurlyBraceLayout)
 
 // TODO CondensedSum could draw the sigma symbol and have two children
 NODE(CondensedSum, 3)
@@ -47,7 +47,7 @@ NODE(Matrix, NARY2D)
 NODE(Piecewise, NARY2D)
 RANGE(GridLayout, MatrixLayout, PiecewiseLayout)
 
-NODE(Conjugate, 1)
+NODE(Conj, 1)
 NODE(Root, 2)
 NODE(Sqrt, 1)
 

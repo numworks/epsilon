@@ -97,7 +97,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       static_cast<ProjectionContext*>(context);
 
   bool changed = false;
-  if (e->isUndefined()) {
+  if (e->isUndef()) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
   if (e->isParenthesis()) {
@@ -176,7 +176,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   if (  // Sqrt(A) -> A^0.5
       PatternMatching::MatchReplace(e, KSqrt(KA), KPow(KA, KHalf)) ||
       // NthRoot(A, B) -> A^(1/B)
-      PatternMatching::MatchReplace(e, KNthRoot(KA, KB),
+      PatternMatching::MatchReplace(e, KRoot(KA, KB),
                                     KPow(KA, KPow(KB, -1_e))) ||
       // log(A, e) -> ln(e)
       PatternMatching::MatchReplace(e, KLogarithm(KA, e_e), KLn(KA)) ||

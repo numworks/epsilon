@@ -13,12 +13,12 @@
 //   // Default computations.
 //   if (something_goes_wrong) {
 //     // Raising here will be handled in the following ExceptionCatch.
-//     ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+//     ExceptionCheckpoint::Raise(ExceptionType::NonReal);
 //   }
 // }
 // ExceptionCatch(type) {
 //   // Raising here will be handled by parent ExceptionCatch.
-//   if (type != ExceptionType::Nonreal) {
+//   if (type != ExceptionType::NonReal) {
 //     // Unhandled exceptions should be raised to parent.
 //     ExceptionCheckpoint::Raise(type);
 //   }

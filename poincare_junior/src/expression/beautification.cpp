@@ -360,10 +360,10 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   constexpr Type Type = FloatType<T>::type;
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
-    return SharedTreeStack->push(Type::Undefined);
+    return SharedTreeStack->push(Type::Undef);
   }
   if (im != 0 && complexFormat == ComplexFormat::Real) {
-    return SharedTreeStack->push(Type::Nonreal);
+    return SharedTreeStack->push(Type::NonReal);
   }
   if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
     return SharedTreeStack->push<Type>(re);

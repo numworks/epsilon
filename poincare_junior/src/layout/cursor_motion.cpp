@@ -428,11 +428,11 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
         return DeletionMethod::MoveLeft;
       }
       return DeletionMethod::AutocompletedBracketPairMakeTemporary;
-    case LayoutType::AbsoluteValue:
+    case LayoutType::Abs:
     case LayoutType::Floor:
-    case LayoutType::Ceiling:
+    case LayoutType::Ceil:
     case LayoutType::VectorNorm:
-    case LayoutType::Conjugate:
+    case LayoutType::Conj:
       return StandardDeletionMethodForLayoutContainingArgument(childIndex, 0);
     case LayoutType::Derivative:
     case LayoutType::NthDerivative:
@@ -510,7 +510,7 @@ bool CursorMotion::ShouldCollapseSiblingsOnDirection(
   if (direction.isLeft()) {
     return node->isFractionLayout();
   } else {
-    return node->isConjugateLayout() || node->isFractionLayout() ||
+    return node->isConjLayout() || node->isFractionLayout() ||
            node->isSqrtLayout() || node->isRootLayout() ||
            node->isSquareBracketPair();
   }

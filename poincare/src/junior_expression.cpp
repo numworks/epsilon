@@ -247,9 +247,9 @@ ExpressionNode::Type JuniorExpression::type() const {
     case PoincareJ::Type::True:
     case PoincareJ::Type::False:
       return ExpressionNode::Type::Boolean;
-    case PoincareJ::Type::ComplexArgument:
+    case PoincareJ::Type::Arg:
       return ExpressionNode::Type::ComplexArgument;
-    case PoincareJ::Type::Conjugate:
+    case PoincareJ::Type::Conj:
       return ExpressionNode::Type::Conjugate;
     case PoincareJ::Type::PhysicalConstant:
       return ExpressionNode::Type::ConstantPhysics;
@@ -261,9 +261,9 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Division;
     case PoincareJ::Type::Factor:
       return ExpressionNode::Type::Factor;
-    case PoincareJ::Type::FracPart:
+    case PoincareJ::Type::Frac:
       return ExpressionNode::Type::FracPart;
-    case PoincareJ::Type::ImaginaryPart:
+    case PoincareJ::Type::Im:
       return ExpressionNode::Type::ImaginaryPart;
     case PoincareJ::Type::Inf:
       return ExpressionNode::Type::Infinity;
@@ -280,7 +280,7 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Matrix;
     case PoincareJ::Type::Mult:
       return ExpressionNode::Type::Multiplication;
-    case PoincareJ::Type::Nonreal:
+    case PoincareJ::Type::NonReal:
       return ExpressionNode::Type::Nonreal;
     case PoincareJ::Type::Opposite:
       return ExpressionNode::Type::Opposite;
@@ -298,7 +298,7 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::RandintNoRepeat;
     case PoincareJ::Type::Random:
       return ExpressionNode::Type::Random;
-    case PoincareJ::Type::RealPart:
+    case PoincareJ::Type::Re:
       return ExpressionNode::Type::RealPart;
     case PoincareJ::Type::Round:
       return ExpressionNode::Type::Round;
@@ -306,7 +306,7 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Store;
     case PoincareJ::Type::Sum:
       return ExpressionNode::Type::Sum;
-    case PoincareJ::Type::Undefined:
+    case PoincareJ::Type::Undef:
       return ExpressionNode::Type::Undefined;
     case PoincareJ::Type::UnitConversion:
       return ExpressionNode::Type::UnitConvert;

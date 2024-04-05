@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 Troolean Domain::ExpressionIsIn(const Tree* expression, Type type,
                                 Context* context) {
-  if (expression->isUndefined() || expression->isInf()) {
+  if (expression->isUndef() || expression->isInf()) {
     return Troolean::False;
   }
 

@@ -116,7 +116,7 @@ class InputBeautification {
       }};
 
   constexpr static BeautificationRule k_absoluteValueRule =
-      ruleHelper<Type::Abs, Type::AbsoluteValueLayout>();
+      ruleHelper<Type::Abs, Type::AbsLayout>();
 
   constexpr static BeautificationRule k_derivativeRule = {
       "diff", 3, [](TreeRef* parameters) -> Tree* {
@@ -152,9 +152,9 @@ class InputBeautification {
       /* binomial( */
       ruleHelper<Type::Binomial, Type::BinomialLayout>(),
       /* ceil( */
-      ruleHelper<Type::Ceiling, Type::CeilingLayout>(),
+      ruleHelper<Type::Ceil, Type::CeilLayout>(),
       /* conj( */
-      ruleHelper<Type::Conjugate, Type::ConjugateLayout>(),
+      ruleHelper<Type::Conj, Type::ConjLayout>(),
       /* diff( */ k_derivativeRule,
       {/* exp( */
        "exp", 1,

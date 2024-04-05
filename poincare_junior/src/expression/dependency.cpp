@@ -106,10 +106,10 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       approximation = Approximation::RootTreeToTree<double>(
           depI, AngleUnit::Radian, ComplexFormat::Real);
     }
-    if (approximation->isUndefined()) {
+    if (approximation->isUndef()) {
       ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
     }
-    if (approximation->isNonreal()) {
+    if (approximation->isNonReal()) {
       ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
     }
     approximation->removeTree();
@@ -123,7 +123,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     }
   }
 
-  if (/*expression->isUndefined() ||*/ totalNumberOfDependencies == 0) {
+  if (/*expression->isUndef() ||*/ totalNumberOfDependencies == 0) {
     set->removeTree();
     dep->removeNode();
     return true;

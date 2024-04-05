@@ -33,7 +33,7 @@ KDSize Render::Size(const Layout* node) {
                LowerMargin(node, s_font);
       break;
     }
-    case LayoutType::Conjugate: {
+    case LayoutType::Conj: {
       KDSize childSize = Size(node->child(0));
       width = Escher::Metric::FractionAndConjugateHorizontalMargin +
               Escher::Metric::FractionAndConjugateHorizontalOverflow +
@@ -157,9 +157,9 @@ KDSize Render::Size(const Layout* node) {
     }
     case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
-    case LayoutType::AbsoluteValue:
+    case LayoutType::Abs:
     case LayoutType::Floor:
-    case LayoutType::Ceiling:
+    case LayoutType::Ceil:
     case LayoutType::VectorNorm: {
       KDSize childSize = Size(node->child(0), !node->isAutocompletedPair());
       width = 2 * Pair::BracketWidth(node) + childSize.width();
@@ -299,7 +299,7 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
           horizontalCenter - Width(node->child(1)) / 2,
           size.height() - Height(node->child(1)) - LowerMargin(node, s_font));
     }
-    case LayoutType::Conjugate: {
+    case LayoutType::Conj: {
       return KDPoint(
           Escher::Metric::FractionAndConjugateHorizontalMargin +
               Escher::Metric::FractionAndConjugateHorizontalOverflow,
@@ -441,9 +441,9 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
     }
     case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
-    case LayoutType::AbsoluteValue:
+    case LayoutType::Abs:
     case LayoutType::Floor:
-    case LayoutType::Ceiling:
+    case LayoutType::Ceil:
     case LayoutType::VectorNorm: {
       return Pair::ChildOffset(Pair::MinVerticalMargin(node),
                                Pair::BracketWidth(node),
@@ -500,7 +500,7 @@ KDCoordinate Render::Baseline(const Layout* node) {
     case LayoutType::Point2D:
     case LayoutType::Binomial:
       return (TwoRows::RowsHeight(node, s_font) + 1) / 2;
-    case LayoutType::Conjugate:
+    case LayoutType::Conj:
       return Baseline(node->child(0)) + Conjugate::k_overlineWidth +
              Conjugate::k_overlineVerticalMargin;
     case LayoutType::Sqrt:
@@ -557,9 +557,9 @@ KDCoordinate Render::Baseline(const Layout* node) {
              Fraction::k_lineHeight;
     case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
-    case LayoutType::AbsoluteValue:
+    case LayoutType::Abs:
     case LayoutType::Floor:
-    case LayoutType::Ceiling:
+    case LayoutType::Ceil:
     case LayoutType::VectorNorm: {
       return Pair::Baseline(Height(node->child(0)), Baseline(node->child(0)),
                             Pair::MinVerticalMargin(node));
@@ -941,7 +941,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
                       style);
       return;
     }
-    case LayoutType::Conjugate: {
+    case LayoutType::Conj: {
       ctx->fillRect(
           KDRect(p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,
                  p.y(),
@@ -1132,9 +1132,9 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
     }
     case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace:
-    case LayoutType::AbsoluteValue:
+    case LayoutType::Abs:
     case LayoutType::Floor:
-    case LayoutType::Ceiling:
+    case LayoutType::Ceil:
     case LayoutType::VectorNorm: {
       KDCoordinate rightBracketOffset =
           Pair::BracketWidth(node) +
@@ -1161,7 +1161,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
           RenderSquareBracketPair(left, Height(node->child(0)), ctx, point,
                                   style, Pair::MinVerticalMargin(node),
                                   Pair::BracketWidth(node),
-                                  node->layoutType() == LayoutType::Ceiling,
+                                  node->layoutType() == LayoutType::Ceil,
                                   node->layoutType() == LayoutType::Floor,
                                   node->layoutType() == LayoutType::VectorNorm);
         }

@@ -244,7 +244,7 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
   };
   Expression split = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
                                       reductionContext);
-  if (!split.isUndefined()) {
+  if (!split.isUndef()) {
     dest[numberOfResults++] = split;
   }
   // Conversion to radians should be added to all other units.

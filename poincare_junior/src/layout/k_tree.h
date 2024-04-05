@@ -18,7 +18,7 @@ constexpr auto KNthSqrtL = KBinary<Type::RootLayout>();
 
 constexpr auto KParenthesisL = KUnary<Type::ParenthesisLayout, 0>();
 constexpr auto KCurlyBracesL = KUnary<Type::CurlyBraceLayout, 0>();
-constexpr auto KAbsL = KUnary<Type::AbsoluteValueLayout>();
+constexpr auto KAbsL = KUnary<Type::AbsLayout>();
 
 constexpr auto KDerivativeL = KUnary<Type::DerivativeLayout, 0>();
 constexpr auto KNthDerivativeL = KUnary<Type::NthDerivativeLayout, 0>();

@@ -6,8 +6,8 @@ namespace PoincareJ {
 
 bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
   return e->isRandomNode() || e->isPiecewise() ||
-         (e->isOfType({Type::Floor, Type::Round, Type::Ceiling, Type::FracPart,
-                       Type::Abs}) &&
+         (e->isOfType(
+              {Type::Floor, Type::Round, Type::Ceil, Type::Frac, Type::Abs}) &&
           Variables::HasVariables(e));
 };
 
@@ -19,11 +19,11 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree* e,
     return true;
   }
   bool isDiscontinuous = false;
-  if (e->isOfType({Type::Ceiling, Type::Floor, Type::Round})) {
+  if (e->isOfType({Type::Ceil, Type::Floor, Type::Round})) {
     // is discontinuous if it changes value
     isDiscontinuous =
         Approximation::To<float>(e, x1) != Approximation::To<float>(e, x2);
-  } else if (e->isFracPart()) {
+  } else if (e->isFrac()) {
     // is discontinuous if the child changes int value
     isDiscontinuous = std::floor(Approximation::To<float>(e->child(0), x1)) !=
                       std::floor(Approximation::To<float>(e->child(0), x2));

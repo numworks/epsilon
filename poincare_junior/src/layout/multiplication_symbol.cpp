@@ -44,7 +44,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
   }
   switch (expr->type()) {
     case Type::Abs:
-    case Type::Ceiling:
+    case Type::Ceil:
     case Type::Floor:
     case Type::Binomial:
     case Type::ListSequence:
@@ -69,7 +69,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::True:
     case Type::False:
     case Type::Inf:
-    case Type::Undefined:  // should be assert(false) ?
+    case Type::Undef:  // should be assert(false) ?
       return MoreLetters;
 
     case Type::Equal:
@@ -80,9 +80,9 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::Superior:
       return Default;
 
-    case Type::Conjugate:
+    case Type::Conj:
     case Type::Pow:
-    case Type::Factorial:
+    case Type::Fact:
     case Type::PercentSimple:
     case Type::PercentAddition:  // is it true ?
     case Type::Sub:
@@ -143,7 +143,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
 
     case Type::Opposite:
       // leftLayoutShape of Opposite is only called from Conjugate
-      // assert(parent() && parent()->type() == Type::Conjugate);
+      // assert(parent() && parent()->type() == Type::Conj);
       return OneLetter;
 
     case Type::Piecewise:
@@ -175,7 +175,7 @@ LayoutShape RightLayoutShape(const Tree* expr) {
     return BoundaryPunctuation;
   }
   switch (expr->type()) {
-    case Type::Conjugate:
+    case Type::Conj:
     case Type::Sub:
       return RightLayoutShape(expr->child(0));
 
@@ -206,7 +206,7 @@ LayoutShape RightLayoutShape(const Tree* expr) {
     case Type::Opposite:
       return RightLayoutShape(expr->child(0));
 
-    case Type::Factorial:
+    case Type::Fact:
     case Type::Pow:
     case Type::PercentSimple:
     case Type::PercentAddition:  // is it true ?

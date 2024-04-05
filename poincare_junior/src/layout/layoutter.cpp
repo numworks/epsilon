@@ -33,7 +33,7 @@ static constexpr int k_maxPriority = 20;
 
 static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
-    case Type::Factorial:
+    case Type::Fact:
     case Type::PercentSimple:
       return 0;
     case Type::Pow:
@@ -367,7 +367,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
           addExtraParenthesis ? k_forceParenthesis : OperatorPriority(type));
       break;
     }
-    case Type::Factorial:
+    case Type::Fact:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       PushCodePoint(layoutParent, '!');
@@ -545,8 +545,8 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     }
     case Type::Inf:
-    case Type::Nonreal:
-    case Type::Undefined:
+    case Type::NonReal:
+    case Type::Undef:
       layoutText(layoutParent,
                  Builtin::SpecialIdentifierName(type).mainAlias());
       break;

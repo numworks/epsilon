@@ -36,8 +36,8 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
       // At least 1 child is needed.
       return childLength[0] >= 1 && (childLength[1] == k_nonListListLength ||
                                      childLength[0] == childLength[1]);
-    case Type::Minimum:
-    case Type::Maximum:
+    case Type::Min:
+    case Type::Max:
       // At least 1 child is needed.
       return childLength[0] >= 1;
     case Type::ListSum:
@@ -88,8 +88,8 @@ int Dimension::GetListLength(const Tree* t) {
     case Type::Median:
     case Type::Variance:
     case Type::SampleStdDev:
-    case Type::Minimum:
-    case Type::Maximum:
+    case Type::Min:
+    case Type::Max:
     case Type::ListSum:
     case Type::ListProduct:
     case Type::Dim:
@@ -289,7 +289,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       break;
     case Type::Abs:
     case Type::Floor:
-    case Type::Ceiling:
+    case Type::Ceil:
     case Type::Sign:
     // case Type::Sqrt: TODO: Handle _m^(1/2)
     case Type::UserFunction:
@@ -381,7 +381,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Opposite:
     case Type::Sqrt:
     case Type::Floor:
-    case Type::Ceiling:
+    case Type::Ceil:
     case Type::Round:
     case Type::UserFunction:
     case Type::Add:

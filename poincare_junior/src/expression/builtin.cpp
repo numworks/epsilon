@@ -17,8 +17,8 @@ constexpr static Aliases s_customIdentifiers[] = {
 };
 
 constexpr static Builtin s_specialIdentifiers[] = {
-    {Type::Undefined, "undef"},
-    {Type::Nonreal, "nonreal"},
+    {Type::Undef, "undef"},
+    {Type::NonReal, "nonreal"},
     {Type::ComplexI, "i"},
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
     {Type::False, BuiltinsAliases::k_falseAliases},

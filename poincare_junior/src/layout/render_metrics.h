@@ -149,10 +149,10 @@ constexpr KDCoordinate VerticalMargin(KDCoordinate childHeight) {
 namespace Pair {
 inline KDCoordinate BracketWidth(const Layout* node) {
   switch (node->layoutType()) {
-    case LayoutType::Ceiling:
+    case LayoutType::Ceil:
     case LayoutType::Floor:
       return SquareBracketPair::k_bracketWidth;
-    case LayoutType::AbsoluteValue:
+    case LayoutType::Abs:
       return AbsoluteValue::k_bracketWidth;
     case LayoutType::VectorNorm:
       return VectorNorm::k_bracketWidth;
@@ -167,10 +167,10 @@ inline KDCoordinate BracketWidth(const Layout* node) {
 
 inline KDCoordinate MinVerticalMargin(const Layout* node) {
   switch (node->layoutType()) {
-    case LayoutType::Ceiling:
+    case LayoutType::Ceil:
     case LayoutType::Floor:
       return SquareBracketPair::k_minVerticalMargin;
-    case LayoutType::AbsoluteValue:
+    case LayoutType::Abs:
       return AbsoluteValue::k_minVerticalMargin;
     case LayoutType::VectorNorm:
       return VectorNorm::k_minVerticalMargin;

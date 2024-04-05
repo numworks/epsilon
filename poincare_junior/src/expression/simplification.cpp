@@ -31,7 +31,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   bool modified = (u->isMult() || u->isAdd()) && NAry::Flatten(u);
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
-    assert(!child->isUndefined());
+    assert(!child->isUndef());
     if (u->isDependency()) {
       // Skip systematic simplification of Dependencies.
       break;
@@ -97,7 +97,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Trigonometry::SimplifyATrig(u);
     case Type::Binomial:
       return Arithmetic::SimplifyBinomial(u);
-    case Type::ComplexArgument:
+    case Type::Arg:
       return SimplifyComplexArgument(u);
     case Type::Derivative:
     case Type::NthDerivative:
@@ -108,14 +108,14 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifyDistribution(u);
     case Type::Exp:
       return SimplifyExp(u);
-    case Type::Factorial:
+    case Type::Fact:
       return Arithmetic::SimplifyFactorial(u);
     case Type::Floor:
       return Arithmetic::SimplifyFloor(u);
     case Type::GCD:
       return Arithmetic::SimplifyGCD(u);
-    case Type::ImaginaryPart:
-    case Type::RealPart:
+    case Type::Im:
+    case Type::Re:
       return SimplifyComplexPart(u);
     case Type::LCM:
       return Arithmetic::SimplifyLCM(u);
@@ -136,8 +136,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifyPower(u);
     case Type::PowReal:
       return SimplifyPowerReal(u);
-    case Type::Quotient:
-    case Type::Remainder:
+    case Type::Quo:
+    case Type::Rem:
       return Arithmetic::SimplifyQuotientOrRemainder(u);
     case Type::Round:
       return Arithmetic::SimplifyRound(u);
@@ -682,7 +682,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
 }
 
 bool Simplification::SimplifyComplexArgument(Tree* tree) {
-  assert(tree->isComplexArgument());
+  assert(tree->isArg());
   const Tree* child = tree->child(0);
   ComplexSign childSign = ComplexSign::Get(child);
   // arg(x + iy) = atan2(y, x)
@@ -719,17 +719,17 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
 }
 
 bool Simplification::SimplifyComplexPart(Tree* tree) {
-  assert(tree->isRealPart() || tree->isImaginaryPart());
+  assert(tree->isRe() || tree->isIm());
   Tree* child = tree->child(0);
   ComplexSign childSign = ComplexSign::Get(child);
   if (!childSign.isPure()) {
     // Rely on advanced reduction re(x+iy) -> re(x) + re(iy)
     return false;
   }
-  if (tree->isRealPart() != childSign.isReal()) {
+  if (tree->isRe() != childSign.isReal()) {
     // re(x) = 0 or im(x) = 0
     tree->cloneTreeOverTree(0_e);
-  } else if (tree->isRealPart()) {
+  } else if (tree->isRe()) {
     // re(x) = x
     tree->removeNode();
   } else {
@@ -909,7 +909,7 @@ bool Simplification::SimplifyLastTree(Tree* e,
       case ExceptionType::Undefined:
         /* TODO PCJ: We need to catch undefs when reducing children of lists and
          * points since (undef,0) and {undef,0} should be allowed. */
-        (type == ExceptionType::Nonreal ? KNonreal : KUndef)->clone();
+        (type == ExceptionType::Nonreal ? KNonReal : KUndef)->clone();
         return true;
       default:
         ExceptionCheckpoint::Raise(type);

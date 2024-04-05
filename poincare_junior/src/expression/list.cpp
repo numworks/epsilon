@@ -73,10 +73,9 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
       result->cloneNodeBeforeNode(node);
       Simplification::ShallowSystematicReduce(result);
     } else {
-      assert(type.isMinimum() || type.isMaximum());
+      assert(type.isMin() || type.isMax());
       // TODO_PCJ: we need a natural order not a comparison
-      if (Comparison::Compare(element, result) ==
-          ((type.isMaximum()) ? 1 : -1)) {
+      if (Comparison::Compare(element, result) == ((type.isMax()) ? 1 : -1)) {
         result->removeTree();
       } else {
         element->removeTree();
@@ -149,8 +148,8 @@ bool List::ShallowApplyListOperators(Tree* e) {
   switch (e->type()) {
     case Type::ListSum:
     case Type::ListProduct:
-    case Type::Minimum:
-    case Type::Maximum:
+    case Type::Min:
+    case Type::Max:
       e->moveTreeOverTree(Fold(e->child(0), e->type()));
       return true;
     case Type::Mean:

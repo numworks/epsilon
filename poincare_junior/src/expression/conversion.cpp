@@ -108,11 +108,11 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
         return Poincare::HyperbolicArcTangent::Builder(child);
       case Type::Abs:
         return Poincare::AbsoluteValue::Builder(child);
-      case Type::Ceiling:
+      case Type::Ceil:
         return Poincare::Ceiling::Builder(child);
       case Type::Floor:
         return Poincare::Floor::Builder(child);
-      case Type::FracPart:
+      case Type::Frac:
         return Poincare::FracPart::Builder(child);
       case Type::Log:
         return Poincare::Logarithm::Builder(child);
@@ -154,13 +154,13 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
         return Poincare::MatrixTrace::Builder(child);
       case Type::Transpose:
         return Poincare::MatrixTranspose::Builder(child);
-      case Type::ComplexArgument:
+      case Type::Arg:
         return Poincare::ComplexArgument::Builder(child);
-      case Type::Conjugate:
+      case Type::Conj:
         return Poincare::Conjugate::Builder(child);
-      case Type::ImaginaryPart:
+      case Type::Im:
         return Poincare::ImaginaryPart::Builder(child);
-      case Type::RealPart:
+      case Type::Re:
         return Poincare::RealPart::Builder(child);
       case Type::PercentSimple:
         return Poincare::PercentSimple::Builder(child);
@@ -312,9 +312,9 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
       return Poincare::Constant::ExponentialEBuilder();
     case Type::Inf:
       return Poincare::Infinity::Builder(false);
-    case Type::Factorial:
+    case Type::Fact:
       return Poincare::Factorial::Builder(ToPoincareExpression(exp->child(0)));
-    case Type::Nonreal:
+    case Type::NonReal:
       return Poincare::Nonreal::Builder();
     case Type::Opposite:
       return Poincare::Opposite::Builder(ToPoincareExpression(exp->child(0)));
@@ -349,16 +349,16 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       SharedTreeStack->push(Type::Abs);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Ceiling:
-      SharedTreeStack->push(Type::Ceiling);
+      SharedTreeStack->push(Type::Ceil);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Floor:
       SharedTreeStack->push(Type::Floor);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::FracPart:
-      SharedTreeStack->push(Type::FracPart);
+      SharedTreeStack->push(Type::Frac);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Factorial:
-      SharedTreeStack->push(Type::Factorial);
+      SharedTreeStack->push(Type::Fact);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Opposite:
       SharedTreeStack->push(Type::Opposite);
@@ -481,16 +481,16 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       SharedTreeStack->push(Type::Norm);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ComplexArgument:
-      SharedTreeStack->push(Type::ComplexArgument);
+      SharedTreeStack->push(Type::Arg);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Conjugate:
-      SharedTreeStack->push(Type::Conjugate);
+      SharedTreeStack->push(Type::Conj);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ImaginaryPart:
-      SharedTreeStack->push(Type::ImaginaryPart);
+      SharedTreeStack->push(Type::Im);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::RealPart:
-      SharedTreeStack->push(Type::RealPart);
+      SharedTreeStack->push(Type::Re);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Factor:
       SharedTreeStack->push(Type::Factor);
@@ -503,11 +503,11 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::DivisionQuotient:
-      SharedTreeStack->push(Type::Quotient);
+      SharedTreeStack->push(Type::Quo);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::DivisionRemainder:
-      SharedTreeStack->push(Type::Remainder);
+      SharedTreeStack->push(Type::Rem);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::ListElement:
@@ -568,10 +568,10 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       SharedTreeStack->push(Type::ListProduct);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ListMinimum:
-      SharedTreeStack->push(Type::Minimum);
+      SharedTreeStack->push(Type::Min);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ListMaximum:
-      SharedTreeStack->push(Type::Maximum);
+      SharedTreeStack->push(Type::Max);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Store:
       SharedTreeStack->push(Type::Store);
@@ -763,7 +763,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       }
       return;
     case OT::Nonreal:
-      SharedTreeStack->push(Type::Nonreal);
+      SharedTreeStack->push(Type::NonReal);
       return;
     case OT::Rational:
     case OT::BasedInteger:
@@ -811,7 +811,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       } else if (c.isComplexI()) {
         SharedTreeStack->push(Type::ComplexI);
       } else {
-        SharedTreeStack->push(Type::Undefined);
+        SharedTreeStack->push(Type::Undef);
       }
       return;
     }
@@ -865,7 +865,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       PushPoincareExpression(exp.childAtIndex(2));
       return;
     case OT::Undefined:
-      SharedTreeStack->push(Type::Undefined);
+      SharedTreeStack->push(Type::Undef);
       return;
     case OT::EmptyExpression:
       SharedTreeStack->push(Type::Empty);

@@ -99,7 +99,7 @@ It's expected to:
 | cot(A) | cos(A)/sin(A) |
 | arcsec(A) | acos(1/A) |
 | arccsc(A) | asin(1/A) |
-| arccot(A) | acos(0) - atan(A) |
+| arccot(A) | {acos(0) if A=0, atan(1/A)} |
 | cosh(A) | (exp(A)+exp(-A))×1/2 |
 | sinh(A) | (exp(A)-exp(-A))×1/2 |
 | tanh(A) | (exp(2A)-1)/(exp(2A)+1) |

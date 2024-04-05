@@ -77,13 +77,11 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(
 }
 
 int EditableCellTableViewController::numberOfRows() const {
-  int numberOfModelElements = 0;
+  int nRows = 0;
   for (int i = 0; i < numberOfColumns(); i++) {
-    numberOfModelElements =
-        std::max(numberOfModelElements, numberOfElementsInColumn(i));
+    nRows = std::max(nRows, numberOfRowsAtColumn(i));
   }
-  return 1 + numberOfModelElements +
-         (numberOfModelElements < maxNumberOfElements());
+  return nRows;
 }
 
 void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
@@ -168,8 +166,9 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
 }
 
 int EditableCellTableViewController::numberOfRowsAtColumn(int column) const {
-  // Number of elements + title + last empty cell
-  return numberOfElementsInColumn(column) + 2;
+  int numberOfElements = numberOfElementsInColumn(column);
+  // title + number of elements + last empty cell for input
+  return 1 + numberOfElements + (numberOfElements < maxNumberOfElements());
 }
 
 }  // namespace Shared

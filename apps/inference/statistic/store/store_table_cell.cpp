@@ -60,8 +60,10 @@ int StoreTableCell::numberOfRowsAtColumn(const SelectableTableView *t,
                                          int column) {
   assert(&m_selectableTableView == t);
   Shared::DoublePairStore *s = store();
-  return 1 /* column title */ + 1 /* empty row for input */ +
-         s->numberOfPairsOfSeries(s->seriesAtColumn(column));
+  int numberOfElements = s->numberOfPairsOfSeries(s->seriesAtColumn(column));
+  // title + number of elements + last empty cell for input
+  return 1 + numberOfElements +
+         (numberOfElements < tableModel()->maxNumberOfRows());
 }
 
 void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,

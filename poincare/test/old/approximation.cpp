@@ -11,7 +11,7 @@ using namespace Poincare;
 
 template <typename T>
 void assert_expression_approximates_to_scalar(
-    const char* expression, T approximation,
+    const char *expression, T approximation,
     Preferences::AngleUnit angleUnit = Degree,
     Preferences::ComplexFormat complexFormat = Cartesian,
     Preferences::MixedFractions mixedFractionsParameter =
@@ -19,7 +19,7 @@ void assert_expression_approximates_to_scalar(
   Shared::GlobalContext globalContext;
   Preferences::SharedPreferences()->enableMixedFractions(
       mixedFractionsParameter);
-  PoincareJ::Tree* e = parse_expression(expression, &globalContext, false);
+  PoincareJ::Tree *e = parse_expression(expression, &globalContext, false);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
   T result = PoincareJ::Approximation::RootTreeTo<T>(e);
@@ -86,7 +86,7 @@ QUIZ_CASE(poincare_approximation_rational) {
 }
 
 template <typename T>
-void assert_float_approximates_to(Poincare::Float<T> f, const char* result) {
+void assert_float_approximates_to(Poincare::Float<T> f, const char *result) {
   Shared::GlobalContext globalContext;
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
@@ -470,11 +470,11 @@ QUIZ_CASE(poincare_approximation_logarithm) {
 }
 
 template <typename T>
-void assert_expression_approximation_is_bounded(const char* expression,
+void assert_expression_approximation_is_bounded(const char *expression,
                                                 T lowBound, T upBound,
                                                 bool upBoundIncluded = false) {
   Shared::GlobalContext globalContext;
-  PoincareJ::Tree* e = parse_expression(expression, &globalContext, true);
+  PoincareJ::Tree *e = parse_expression(expression, &globalContext, true);
   ApproximationContext approximationContext(&globalContext, Cartesian, Radian);
   // TODO_PCJ
 #if 0
@@ -865,7 +865,7 @@ QUIZ_CASE(poincare_approximation_function) {
 }
 
 template <typename T>
-void assert_no_duplicates_in_list(const char* expression) {
+void assert_no_duplicates_in_list(const char *expression) {
 #if 0
   Shared::GlobalContext globalContext;
   OExpression e = parse_expression(expression, &globalContext, true);
@@ -2203,7 +2203,7 @@ QUIZ_CASE(poincare_approximation_mixed_fraction) {
 
 template <typename T>
 void assert_expression_approximates_with_value_for_symbol(
-    const char* expression, T approximation, const char* symbol, T symbolValue,
+    const char *expression, T approximation, const char *symbol, T symbolValue,
     Preferences::AngleUnit angleUnit = Degree,
     Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;

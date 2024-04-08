@@ -15,28 +15,34 @@ class ExamMode : public Ion::ExamMode::Configuration {
  public:
   using Ruleset = Ion::ExamMode::Ruleset;
 
-  struct PressToTestFlags {
-    bool operator==(const PressToTestFlags& other) const {
-      assert(unusedBits == 0 && discardedBits == 0);
-      assert(other.unusedBits == 0 && other.discardedBits == 0);
-      return PressToTestUnion{.flags = *this}.value ==
-             PressToTestUnion{.flags = other}.value;
-    }
+  struct PressToTestFlags : OMG::BitHelper::BitField<Ion::ExamMode::Int> {
+    enum class Flags : size_t {
+      ForbidExactResults = 0,
+      ForbidEquationSolver,
+      ForbidInequalityGraphing,
+      ForbidImplicitPlots,
+      ForbidGraphDetails,
+      ForbidElementsApp,
+      ForbidStatsDiagnostics,
+      ForbidVectors,
+      ForbidBasedLogarithm,
+      ForbidSum,
+      NumberOfFlags,
+    };
+    static_assert(static_cast<size_t>(Flags::NumberOfFlags) <=
+                  Ion::ExamMode::Configuration::k_dataSize);
 
-    bool forbidEquationSolver : 1;
-    bool forbidInequalityGraphing : 1;
-    bool forbidImplicitPlots : 1;
-    bool forbidGraphDetails : 1;
-    bool forbidStatsDiagnostics : 1;
-    bool forbidVectors : 1;
-    bool forbidBasedLogarithm : 1;
-    bool forbidSum : 1;
-    bool forbidExactResults : 1;
-    bool forbidElementsApp : 1;
-    // These bits are available, unused and preserved at 0 for == operator
-    Ion::ExamMode::Int unusedBits : 4;
-    // These bits will be discarded when cast into 14 bits in a Configuration
-    Ion::ExamMode::Int discardedBits : 2;
+    bool getFlag(Flags flag) const {
+      assert(static_cast<size_t>(flag) <
+             static_cast<size_t>(Flags::NumberOfFlags));
+      return BitField::get(flag);
+    }
+    PressToTestFlags& setFlag(Flags flag, bool value = true) {
+      assert(static_cast<size_t>(flag) <
+             static_cast<size_t>(Flags::NumberOfFlags));
+      BitField::set(flag, flag, 1);
+      return *this;
+    }
   };
   static_assert(sizeof(PressToTestFlags) == sizeof(Ion::ExamMode::Int));
 
@@ -49,40 +55,52 @@ class ExamMode : public Ion::ExamMode::Configuration {
     return PressToTestUnion{.value = Configuration::flags()}.flags;
   }
 
+  using Flags = PressToTestFlags::Flags;
+
   // Exam mode permissions
   bool forbidSolverApp() const {
-    return flags().forbidEquationSolver || ruleset() == Ruleset::Pennsylvania ||
+    return flags().getFlag(Flags::ForbidEquationSolver) ||
+           ruleset() == Ruleset::Pennsylvania ||
            ruleset() == Ruleset::SouthCarolina ||
            ruleset() == Ruleset::NorthCarolina;
   }
   bool forbidElementsApp() const {
-    return flags().forbidElementsApp || ruleset() == Ruleset::Dutch ||
-           ruleset() == Ruleset::Portuguese || ruleset() == Ruleset::English ||
-           ruleset() == Ruleset::IBTest;
+    return flags().getFlag(Flags::ForbidElementsApp) ||
+           ruleset() == Ruleset::Dutch || ruleset() == Ruleset::Portuguese ||
+           ruleset() == Ruleset::English || ruleset() == Ruleset::IBTest;
   }
   bool forbidCodeApp() const {
     return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::English;
   }
   bool forbidGraphDetails() const {
-    return flags().forbidGraphDetails || ruleset() == Ruleset::IBTest ||
-           ruleset() == Ruleset::Pennsylvania || ruleset() == Ruleset::STAAR ||
-           ruleset() == Ruleset::SouthCarolina ||
+    return flags().getFlag(Flags::ForbidGraphDetails) ||
+           ruleset() == Ruleset::IBTest || ruleset() == Ruleset::Pennsylvania ||
+           ruleset() == Ruleset::STAAR || ruleset() == Ruleset::SouthCarolina ||
            ruleset() == Ruleset::NorthCarolina;
   }
   bool forbidInequalityGraphing() const {
-    return flags().forbidInequalityGraphing || ruleset() == Ruleset::STAAR;
+    return flags().getFlag(Flags::ForbidInequalityGraphing) ||
+           ruleset() == Ruleset::STAAR;
   }
   bool forbidImplicitPlots() const {
-    return flags().forbidImplicitPlots || ruleset() == Ruleset::IBTest ||
-           ruleset() == Ruleset::Pennsylvania || ruleset() == Ruleset::STAAR;
+    return flags().getFlag(Flags::ForbidImplicitPlots) ||
+           ruleset() == Ruleset::IBTest || ruleset() == Ruleset::Pennsylvania ||
+           ruleset() == Ruleset::STAAR;
   }
-  bool forbidStatsDiagnostics() const { return flags().forbidStatsDiagnostics; }
+  bool forbidStatsDiagnostics() const {
+    return flags().getFlag(Flags::ForbidStatsDiagnostics);
+  }
   bool forbidVectorProduct() const {
-    return flags().forbidVectors || ruleset() == Ruleset::IBTest;
+    return flags().getFlag(Flags::ForbidVectors) ||
+           ruleset() == Ruleset::IBTest;
   }
-  bool forbidVectorNorm() const { return flags().forbidVectors; }
-  bool forbidBasedLogarithm() const { return flags().forbidBasedLogarithm; }
-  bool forbidSum() const { return flags().forbidSum; }
+  bool forbidVectorNorm() const {
+    return flags().getFlag(Flags::ForbidVectors);
+  }
+  bool forbidBasedLogarithm() const {
+    return flags().getFlag(Flags::ForbidBasedLogarithm);
+  }
+  bool forbidSum() const { return flags().getFlag(Flags::ForbidSum); }
   bool forbidUnits() const {
     return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::IBTest;
   }
@@ -90,8 +108,8 @@ class ExamMode : public Ion::ExamMode::Configuration {
     return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::IBTest;
   }
   bool forbidExactResults() const {
-    return flags().forbidExactResults || ruleset() == Ruleset::Dutch ||
-           ruleset() == Ruleset::Pennsylvania ||
+    return flags().getFlag(Flags::ForbidExactResults) ||
+           ruleset() == Ruleset::Dutch || ruleset() == Ruleset::Pennsylvania ||
            ruleset() == Ruleset::SouthCarolina ||
            ruleset() == Ruleset::NorthCarolina;
   }

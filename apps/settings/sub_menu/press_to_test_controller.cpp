@@ -79,68 +79,11 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int row) {
 }
 
 void PressToTestController::setParamAtIndex(int index, bool value) {
-  switch (LabelAtIndex(index)) {
-    case I18n::Message::PressToTestExactResults:
-      m_tempPressToTestParams.forbidExactResults = value;
-      break;
-    case I18n::Message::PressToTestEquationSolver:
-      m_tempPressToTestParams.forbidEquationSolver = value;
-      break;
-    case I18n::Message::PressToTestInequalityGraphing:
-      m_tempPressToTestParams.forbidInequalityGraphing = value;
-      break;
-    case I18n::Message::PressToTestImplicitPlots:
-      m_tempPressToTestParams.forbidImplicitPlots = value;
-      break;
-    case I18n::Message::PressToTestGraphDetails:
-      m_tempPressToTestParams.forbidGraphDetails = value;
-      break;
-    case I18n::Message::PressToTestElements:
-      m_tempPressToTestParams.forbidElementsApp = value;
-      break;
-    case I18n::Message::PressToTestStatDiagnostics:
-      m_tempPressToTestParams.forbidStatsDiagnostics = value;
-      break;
-    case I18n::Message::PressToTestVectors:
-      m_tempPressToTestParams.forbidVectors = value;
-      break;
-    case I18n::Message::PressToTestLogBaseA:
-      m_tempPressToTestParams.forbidBasedLogarithm = value;
-      break;
-    case I18n::Message::PressToTestSum:
-      m_tempPressToTestParams.forbidSum = value;
-      break;
-    default:
-      assert(false);
-  }
+  m_tempPressToTestParams.setFlag(static_cast<ExamMode::Flags>(index), value);
 }
 
 bool PressToTestController::getParamAtIndex(int index) {
-  switch (LabelAtIndex(index)) {
-    case I18n::Message::PressToTestExactResults:
-      return m_tempPressToTestParams.forbidExactResults;
-    case I18n::Message::PressToTestEquationSolver:
-      return m_tempPressToTestParams.forbidEquationSolver;
-    case I18n::Message::PressToTestInequalityGraphing:
-      return m_tempPressToTestParams.forbidInequalityGraphing;
-    case I18n::Message::PressToTestImplicitPlots:
-      return m_tempPressToTestParams.forbidImplicitPlots;
-    case I18n::Message::PressToTestGraphDetails:
-      return m_tempPressToTestParams.forbidGraphDetails;
-    case I18n::Message::PressToTestElements:
-      return m_tempPressToTestParams.forbidElementsApp;
-    case I18n::Message::PressToTestStatDiagnostics:
-      return m_tempPressToTestParams.forbidStatsDiagnostics;
-    case I18n::Message::PressToTestVectors:
-      return m_tempPressToTestParams.forbidVectors;
-    case I18n::Message::PressToTestLogBaseA:
-      return m_tempPressToTestParams.forbidBasedLogarithm;
-    case I18n::Message::PressToTestSum:
-      return m_tempPressToTestParams.forbidSum;
-    default:
-      assert(false);
-      return false;
-  }
+  return m_tempPressToTestParams.getFlag(static_cast<ExamMode::Flags>(index));
 }
 
 void PressToTestController::setMessages() {

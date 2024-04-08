@@ -37,7 +37,7 @@ void StoreParameterController::initializeColumnParameters() {
     int series = m_storeColumnHelper->selectedSeries();
     constexpr size_t bufferSize = Shared::StatisticsStore::k_tableNameSize;
     char tableName[bufferSize];
-    Shared::StatisticsStore::FillTableName(series, tableName, bufferSize);
+    m_store->fillTableName(series, tableName, bufferSize);
     m_clearColumn.label()->setMessageWithPlaceholders(I18n::Message::ClearTable,
                                                       tableName);
     return;

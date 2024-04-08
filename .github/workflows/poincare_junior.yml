@@ -39,8 +39,8 @@ jobs:
         run: git checkout ${{ github.event.pull_request.head.sha }}
       - name: Make head
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
-      - name: Make again to be sure
-        run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
+      - name: Verify that a single make is sufficient
+        run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin --question
       - name: Run head
         run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | tee out
       - name: Filter output

@@ -34,11 +34,11 @@ QUIZ_CASE(pcj_projection) {
   CloneTreeOverTree(ref, KSqrt("y"_e));
   Projection::DeepSystemProject(ref,
                                 {.m_complexFormat = ComplexFormat::Cartesian});
-  assert_trees_are_equal(ref, KPow("y"_e, KHalf));
+  assert_trees_are_equal(ref, KPow("y"_e, 1_e / 2_e));
 
   CloneTreeOverTree(ref, KSqrt("y"_e));
   Projection::DeepSystemProject(ref, {.m_complexFormat = ComplexFormat::Real});
-  assert_trees_are_equal(ref, KPowReal("y"_e, KHalf));
+  assert_trees_are_equal(ref, KPowReal("y"_e, 1_e / 2_e));
 
   ref->removeTree();
 }

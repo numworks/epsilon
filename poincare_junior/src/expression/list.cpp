@@ -91,10 +91,10 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   KTree variance =
       KAdd(KMean(KPow(KA, 2_e), KB), KMult(-1_e, KPow(KMean(KA, KB), 2_e)));
   // sqrt(var)
-  KTree stdDev = KPow(variance, KHalf);
+  KTree stdDev = KPow(variance, 1_e / 2_e);
   // stdDev * sqrt(1 + 1 / (n - 1))
   KTree sampleStdDev =
-      KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e))), KHalf);
+      KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e))), 1_e / 2_e);
   if (type.isSampleStdDev()) {
     Tree* n = coefficients->isOne()
                   ? Integer::Push(Dimension::GetListLength(list))
@@ -177,7 +177,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
           e->moveTreeOverTree(list->child(n / 2));
         } else {
           e->moveTreeOverTree(PatternMatching::CreateSimplify(
-              KMult(KHalf, KAdd(KA, KB)),
+              KMult(1_e / 2_e, KAdd(KA, KB)),
               {.KA = list->child(n / 2 - 1), .KB = list->child(n / 2)}));
         }
       } else {

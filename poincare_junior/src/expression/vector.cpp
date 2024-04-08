@@ -19,7 +19,7 @@ Tree* Vector::Norm(const Tree* v) {
     Simplification::ShallowSystematicReduce(squaredAbsValue);
   }
   Simplification::ShallowSystematicReduce(sum);
-  KHalf->clone();
+  (1_e / 2_e)->clone();
   Simplification::ShallowSystematicReduce(result);
   return result;
 }

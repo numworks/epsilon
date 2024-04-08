@@ -699,7 +699,7 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
     }
     // atan2(y, 0) = π/2 if y > 0, -π/2 if y < 0
     tree->cloneTreeOverTree(imagSign.isStrictlyPositive()
-                                ? KMult(KHalf, π_e)
+                                ? KMult(1_e / 2_e, π_e)
                                 : KMult(-1_e / 2_e, π_e));
   } else if (realSign.isStrictlyPositive() || imagSign.isPositive() ||
              imagSign.isStrictlyNegative()) {

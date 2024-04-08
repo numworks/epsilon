@@ -332,7 +332,7 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
                                     KPow(KB, KMult(KA_s, KC_s)))) {
     // A^0.5 -> Sqrt(A)
-    PatternMatching::MatchReplace(e, KPow(KA, KHalf), KSqrt(KA));
+    PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA));
     return true;
   }
   return

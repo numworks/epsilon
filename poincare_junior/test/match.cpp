@@ -94,7 +94,8 @@ QUIZ_CASE(pcj_match) {
   assert_trees_are_equal(ctx10.getNode(Placeholder::B), "y"_e);
 
   PatternMatching::Context ctx11;
-  const Tree* n11 = KATrig(KMult(KHalf, KExp(KMult(KHalf, KLn(3_e)))), 0_e);
+  const Tree* n11 =
+      KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 0_e);
   quiz_assert(PatternMatching::Match(n11, n11, &ctx11));
 
   PatternMatching::Context ctx12;

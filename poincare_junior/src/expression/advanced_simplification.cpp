@@ -459,8 +459,8 @@ bool AdvancedSimplification::ExpandAbs(Tree* e) {
       // |x| = √(re(x)^2+im(x)^2)
       PatternMatching::MatchReplaceSimplify(
           e, KAbs(KA),
-          KExp(
-              KMult(KHalf, KLn(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e))))));
+          KExp(KMult(1_e / 2_e,
+                     KLn(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e))))));
 }
 
 bool AdvancedSimplification::ExpandExp(Tree* e) {

@@ -60,8 +60,8 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
   if (PatternMatching::MatchReplaceSimplify(
           expr, KSum(KA, KB, KC, KVarK),
-          KMult(KHalf, KAdd(KMult(KC, KAdd(1_e, KC)),
-                            KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
+          KMult(1_e / 2_e, KAdd(KMult(KC, KAdd(1_e, KC)),
+                                KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
     return true;
   }
   // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6

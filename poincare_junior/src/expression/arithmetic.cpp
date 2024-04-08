@@ -76,7 +76,7 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
   return PatternMatching::MatchReplaceSimplify(
       expr, KRound(KA, KB),
-      KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), KHalf)),
+      KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), 1_e / 2_e)),
             KPow(10_e, KMult(-1_e, KB))));
 }
 

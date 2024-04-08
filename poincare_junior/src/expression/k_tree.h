@@ -14,9 +14,6 @@ namespace KTrees {
 // Constructors
 
 constexpr auto KUndef = KTree<Type::Undef>();
-/* TODO: Remove KHalf and use 1_e/2_e. Also ensure unreduced KTree rational are
- * either forbidden or properly handled. */
-constexpr auto KHalf = KTree<Type::Half>();
 constexpr auto KNonReal = KTree<Type::NonReal>();
 constexpr auto KInf = KTree<Type::Inf>();
 

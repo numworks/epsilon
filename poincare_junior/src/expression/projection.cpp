@@ -174,7 +174,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   if (  // Sqrt(A) -> A^0.5
-      PatternMatching::MatchReplace(e, KSqrt(KA), KPow(KA, KHalf)) ||
+      PatternMatching::MatchReplace(e, KSqrt(KA), KPow(KA, 1_e / 2_e)) ||
       // NthRoot(A, B) -> A^(1/B)
       PatternMatching::MatchReplace(e, KRoot(KA, KB),
                                     KPow(KA, KPow(KB, -1_e))) ||
@@ -248,11 +248,13 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
           KPiecewise(KACos(0_e), KEqual(KA, 0_e), KATan(KPow(KA, -1_e)))) ||
       // Cosh(A) -> (exp(A)+exp(-A))*1/2
       PatternMatching::MatchReplace(
-          e, KCosH(KA), KMult(KHalf, KAdd(KExp(KA), KExp(KMult(-1_e, KA))))) ||
+          e, KCosH(KA),
+          KMult(1_e / 2_e, KAdd(KExp(KA), KExp(KMult(-1_e, KA))))) ||
       // Sinh(A) -> (exp(A)-exp(-A))*1/2
       PatternMatching::MatchReplace(
           e, KSinH(KA),
-          KMult(KHalf, KAdd(KExp(KA), KMult(-1_e, KExp(KMult(-1_e, KA)))))) ||
+          KMult(1_e / 2_e,
+                KAdd(KExp(KA), KMult(-1_e, KExp(KMult(-1_e, KA)))))) ||
       // Tanh(A) -> (exp(2A)-1)/(exp(2A)+1)
       PatternMatching::MatchReplace(
           e, KTanH(KA),
@@ -261,8 +263,9 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // ArTanh(A) -> (ln(1+A)-ln(1-A))*1/2
       PatternMatching::MatchReplace(
           e, KArTanH(KA),
-          KMult(KHalf, KAdd(KLn(KAdd(1_e, KA)),
-                            KMult(-1_e, KLn(KAdd(1_e, KMult(-1_e, KA))))))) ||
+          KMult(1_e / 2_e,
+                KAdd(KLn(KAdd(1_e, KA)),
+                     KMult(-1_e, KLn(KAdd(1_e, KMult(-1_e, KA))))))) ||
       // A nor B -> not (A or B)
       PatternMatching::MatchReplace(e, KLogicalNor(KA, KB),
                                     KLogicalNot(KLogicalOr(KA, KB))) ||
@@ -282,8 +285,9 @@ bool Projection::Expand(Tree* tree) {
       // atan(A) -> asin(A/Sqrt(1 + A^2))
       PatternMatching::MatchReplaceSimplify(
           tree, KATanRad(KA),
-          KATrig(KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, KHalf))),
-                 1_e));
+          KATrig(
+              KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, 1_e / 2_e))),
+              1_e));
 }
 
 }  // namespace PoincareJ

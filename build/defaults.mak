@@ -37,7 +37,7 @@ SFLAGS += -Ilib -I.
 SFLAGS += -Wall
 
 # Flags - Header dependency tracking
-SFLAGS += -MD -MP
+SFLAGS += -MMD -MP
 
 # Flags - Export symbols
 # This is required to export symbols in resulting binaries. This is required to

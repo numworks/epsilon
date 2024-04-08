@@ -35,7 +35,8 @@ void StoreParameterController::initializeColumnParameters() {
   }
   if (relativeColumn == 0) {
     int series = m_storeColumnHelper->selectedSeries();
-    constexpr size_t bufferSize = Shared::DoublePairStore::k_tableNameLength;
+    constexpr size_t bufferSize =
+        Shared::DoublePairStore::k_tableNameLength + 1;
     char tableName[bufferSize];
     m_store->tableName(series, tableName, bufferSize);
     m_clearColumn.label()->setMessageWithPlaceholders(I18n::Message::ClearTable,

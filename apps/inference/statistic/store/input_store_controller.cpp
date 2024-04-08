@@ -90,7 +90,7 @@ void InputStoreController::viewWillAppear() {
   bool hasTwoSeries =
       m_statistic->significanceTestType() == SignificanceTestType::TwoMeans;
   constexpr size_t bufferSize =
-      2 * Shared::DoublePairStore::k_tableNameLength + sizeof(",");
+      2 * Shared::DoublePairStore::k_tableNameLength + sizeof(",") + 1;
   char buffer[bufferSize];
   for (int row = 0; row < nRows; row++) {
     if (hasTwoSeries) {

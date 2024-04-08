@@ -1,6 +1,6 @@
-# Poincare Junior
+# Poincare
 
-PoincareJunior is Epsilon's new computer algebra engine.
+Poincare is Epsilon's computer algebra engine.
 
 ## Documentation
 
@@ -8,11 +8,11 @@ More in-depth documentation is available [here](doc).
 
 ## Rules
 
-Keep PoincareJunior as independent as possible from the rest of Epsilon.
+Keep Poincare as independent as possible from the rest of Epsilon.
 
 Avoid heavy use of virtuality and v-table.
 
-Only edit expression and layout trees in the EditionPool.
+Only edit expression and layout trees in the TreeStack.
 
 Avoid calls to `child(index)` : use `nextTree()` or `NodeIterator`.
 

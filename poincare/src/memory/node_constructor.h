@@ -2,7 +2,6 @@
 #define POINCARE_MEMORY_NODE_CONSTRUCTOR_H
 
 #include <omg/bit_helper.h>
-#include <omg/enums.h>
 #include <poincare/src/expression/constant.h>
 #include <poincare/src/expression/float.h>
 #include <poincare/src/expression/integer.h>

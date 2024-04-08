@@ -9,6 +9,7 @@
 #include "k_tree.h"
 #include "number.h"
 #include "rational.h"
+#include "sign.h"
 #include "simplification.h"
 
 namespace PoincareJ {
@@ -293,7 +294,7 @@ bool Logarithm::ExpandLnOnRational(Tree* e) {
 }
 
 Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
-  bool isNegative = m.strictSign() == OMG::StrictSign::Negative;
+  bool isNegative = m.strictSign() == StrictSign::Negative;
   Arithmetic::FactorizedInteger factorization =
       Arithmetic::PrimeFactorization(m);
   if (escapeIfPrime && (factorization.numberOfFactors == 0 ||

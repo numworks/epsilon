@@ -2,10 +2,11 @@
 #define POINCARE_EXPRESSION_FLOAT_H
 
 #include <omg/bit_helper.h>
-#include <omg/enums.h>
 #include <poincare/src/memory/tree.h>
 
 #include <bit>
+
+#include "sign.h"
 
 namespace PoincareJ {
 
@@ -29,7 +30,7 @@ class FloatNode {
     assert(tree->isFloat());
     return tree->isSingleFloat() ? FloatTo(tree) : DoubleTo(tree);
   }
-  static bool SetSign(Tree* tree, OMG::NonStrictSign sign);
+  static bool SetSign(Tree* tree, NonStrictSign sign);
 };
 
 // Helper from T  = float|double to corresponding Type

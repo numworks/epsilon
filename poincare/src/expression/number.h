@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_NUMBER_H
 #define POINCARE_EXPRESSION_NUMBER_H
 
-#include <omg/enums.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "sign.h"
@@ -20,7 +19,7 @@ class Number {
   static Tree* Addition(const Tree* i, const Tree* j);
   static Tree* Multiplication(const Tree* i, const Tree* j);
   static PoincareJ::Sign Sign(const Tree* node);
-  static bool SetSign(Tree* number, OMG::NonStrictSign sign);
+  static bool SetSign(Tree* number, NonStrictSign sign);
 };
 
 }  // namespace PoincareJ

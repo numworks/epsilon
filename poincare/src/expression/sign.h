@@ -168,6 +168,20 @@ class ComplexSign {
 static_assert(sizeof(Sign) == sizeof(uint8_t));
 static_assert(sizeof(ComplexSign) == sizeof(uint8_t));
 
+// TODO : Sign could be used here instead.
+
+enum class NonStrictSign : int8_t { Positive = 1, Negative = -1 };
+
+enum class StrictSign : int8_t { Positive = 1, Null = 0, Negative = -1 };
+
+inline StrictSign InvertSign(StrictSign sign) {
+  return static_cast<StrictSign>(-static_cast<int8_t>(sign));
+}
+
+inline NonStrictSign InvertSign(NonStrictSign sign) {
+  return static_cast<NonStrictSign>(-static_cast<int8_t>(sign));
+}
+
 }  // namespace PoincareJ
 
 #endif

@@ -4,9 +4,10 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <omg/arithmetic.h>
 #include <omg/bit_helper.h>
-#include <omg/enums.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <stdlib.h>
+
+#include "sign.h"
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>
@@ -110,14 +111,14 @@ class IntegerHandler final {
 
  public:
   IntegerHandler(const uint8_t* digits = nullptr, uint8_t numberOfDigits = 0,
-                 OMG::NonStrictSign sign = OMG::NonStrictSign::Positive)
+                 NonStrictSign sign = NonStrictSign::Positive)
       : m_digitAccessor(digits, numberOfDigits),
         m_sign(sign),
         m_numberOfDigits(numberOfDigits) {}
   IntegerHandler(native_int_t value)
-      : IntegerHandler(abs(value), value >= 0 ? OMG::NonStrictSign::Positive
-                                              : OMG::NonStrictSign::Negative) {}
-  IntegerHandler(native_uint_t value, OMG::NonStrictSign sign)
+      : IntegerHandler(abs(value), value >= 0 ? NonStrictSign::Positive
+                                              : NonStrictSign::Negative) {}
+  IntegerHandler(native_uint_t value, NonStrictSign sign)
       : m_digitAccessor(value),
         m_sign(sign),
         m_numberOfDigits(OMG::Arithmetic::NumberOfDigits(value)) {}
@@ -129,26 +130,25 @@ class IntegerHandler final {
 
   uint8_t numberOfDigits() const { return m_numberOfDigits; }
   uint8_t* digits();
-  OMG::StrictSign strictSign() const {
-    return isZero() ? OMG::StrictSign::Null
-                    : static_cast<OMG::StrictSign>(m_sign);
+  StrictSign strictSign() const {
+    return isZero() ? StrictSign::Null : static_cast<StrictSign>(m_sign);
   }
-  OMG::NonStrictSign sign() const { return m_sign; }
-  void setSign(OMG::NonStrictSign sign) {
-    m_sign = m_numberOfDigits > 0 ? sign : OMG::NonStrictSign::Positive;
+  NonStrictSign sign() const { return m_sign; }
+  void setSign(NonStrictSign sign) {
+    m_sign = m_numberOfDigits > 0 ? sign : NonStrictSign::Positive;
   }  // -O is not represented
 
   bool isOne() const {
     return (usesImmediateDigit() && immediateDigit() == 1 &&
-            m_sign == OMG::NonStrictSign::Positive);
+            m_sign == NonStrictSign::Positive);
   };
   bool isMinusOne() const {
     return (usesImmediateDigit() && immediateDigit() == 1 &&
-            m_sign == OMG::NonStrictSign::Negative);
+            m_sign == NonStrictSign::Negative);
   };
   bool isTwo() const {
     return (usesImmediateDigit() && immediateDigit() == 2 &&
-            m_sign == OMG::NonStrictSign::Positive);
+            m_sign == NonStrictSign::Positive);
   };
   bool isZero() const;
   bool isEven() const { return isZero() || ((digit(0) & 1) == 0); }
@@ -270,7 +270,7 @@ class IntegerHandler final {
     native_uint_t m_digit;
   };
   Digits m_digitAccessor;
-  OMG::NonStrictSign m_sign;
+  NonStrictSign m_sign;
   uint8_t m_numberOfDigits;
 };
 
@@ -305,8 +305,8 @@ class Integer {
   constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
     return OMG::BitHelper::getByteAtIndex(value, index);
   }
-  static OMG::NonStrictSign Sign(Tree* tree) { return Handler(tree).sign(); }
-  static void SetSign(Tree* tree, OMG::NonStrictSign sign);
+  static NonStrictSign Sign(Tree* tree) { return Handler(tree).sign(); }
+  static void SetSign(Tree* tree, NonStrictSign sign);
 };
 
 }  // namespace PoincareJ

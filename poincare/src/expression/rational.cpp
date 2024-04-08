@@ -36,8 +36,8 @@ IntegerHandler Rational::Numerator(const Tree* node) {
           reinterpret_cast<const uint8_t*>(block->nextNth(2));
       return IntegerHandler(digits, numberOfDigits,
                             type == Type::IntegerNegBig
-                                ? OMG::NonStrictSign::Negative
-                                : OMG::NonStrictSign::Positive);
+                                ? NonStrictSign::Negative
+                                : NonStrictSign::Positive);
     }
     case Type::RationalShort: {
       int8_t value = static_cast<int8_t>(node->nodeValue(0));
@@ -51,8 +51,8 @@ IntegerHandler Rational::Numerator(const Tree* node) {
           reinterpret_cast<const uint8_t*>(block->nextNth(3));
       return IntegerHandler(digits, numberOfDigits,
                             type == Type::RationalNegBig
-                                ? OMG::NonStrictSign::Negative
-                                : OMG::NonStrictSign::Positive);
+                                ? NonStrictSign::Negative
+                                : NonStrictSign::Positive);
     }
     default:
       assert(false);
@@ -82,7 +82,7 @@ IntegerHandler Rational::Denominator(const Tree* node) {
       const uint8_t* digits = reinterpret_cast<const uint8_t*>(
           block->nextNth(3 + numeratorNumberOfDigits));
       return IntegerHandler(digits, denominatorNumberOfDigits,
-                            OMG::NonStrictSign::Positive);
+                            NonStrictSign::Positive);
     }
     default:
       assert(false);
@@ -96,11 +96,11 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
    *   x/-1 is -x
    *   -1/-2 is Half
    *   127/-255 can fit as a RationalShort */
-  OMG::NonStrictSign numeratorSign = numerator.sign() == denominator.sign()
-                                         ? OMG::NonStrictSign::Positive
-                                         : OMG::NonStrictSign::Negative;
+  NonStrictSign numeratorSign = numerator.sign() == denominator.sign()
+                                    ? NonStrictSign::Positive
+                                    : NonStrictSign::Negative;
   numerator.setSign(numeratorSign);
-  denominator.setSign(OMG::NonStrictSign::Positive);
+  denominator.setSign(NonStrictSign::Positive);
   Tree* node;
   if (denominator.isOne() || numerator.isZero()) {
     node = numerator.pushOnTreeStack();
@@ -112,7 +112,7 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
     SharedTreeStack->push(ValueBlock(static_cast<int8_t>(numerator)));
     SharedTreeStack->push(ValueBlock(static_cast<uint8_t>(denominator)));
   } else {
-    node = SharedTreeStack->push(numeratorSign == OMG::NonStrictSign::Negative
+    node = SharedTreeStack->push(numeratorSign == NonStrictSign::Negative
                                      ? Type::RationalNegBig
                                      : Type::RationalPosBig);
     SharedTreeStack->push(ValueBlock(numerator.numberOfDigits()));
@@ -151,7 +151,7 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   return result;
 }
 
-bool Rational::SetSign(Tree* tree, OMG::NonStrictSign sign) {
+bool Rational::SetSign(Tree* tree, NonStrictSign sign) {
   IntegerHandler numerator = Numerator(tree);
   IntegerHandler denominator = Denominator(tree);
   if (numerator.isZero() || sign == numerator.sign()) {
@@ -192,7 +192,7 @@ Tree* Rational::Multiplication(const Tree* i, const Tree* j) {
 Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
   assert(!(i->isZero() && Sign(j).isNegative()));
   IntegerHandler absJ = Integer::Handler(j);
-  absJ.setSign(OMG::NonStrictSign::Positive);
+  absJ.setSign(NonStrictSign::Positive);
   Tree* newNumerator = IntegerHandler::Power(Numerator(i), absJ);
   Tree* newDenominator = IntegerHandler::Power(Denominator(i), absJ);
   TreeRef result =
@@ -223,8 +223,8 @@ Tree* Rational::CreateMixedFraction(const Tree* r,
                                     bool mixedFractionsAreEnabled) {
   IntegerHandler num = Numerator(r);
   IntegerHandler den = Denominator(r);
-  bool numIsNegative = num.strictSign() == OMG::StrictSign::Negative;
-  num.setSign(OMG::NonStrictSign::Positive);
+  bool numIsNegative = num.strictSign() == StrictSign::Negative;
+  num.setSign(NonStrictSign::Positive);
   // Push quotient and remainder
   DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
   Tree* integerPart = division.quotient;

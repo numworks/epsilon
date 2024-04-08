@@ -2,6 +2,7 @@
 #include <poincare/old/serialization_helper.h>
 
 #include "integer.h"
+#include "sign.h"
 
 using Poincare::Preferences;
 using Poincare::PrintFloat;
@@ -63,7 +64,7 @@ size_t IntegerHandler::serializeInDecimal(char* buffer, size_t bufferSize,
   size_t length = 0;
   if (isZero()) {
     length += CodePoint(buffer + length, bufferSize - length, '0');
-  } else if (m_sign == OMG::NonStrictSign::Negative) {
+  } else if (m_sign == NonStrictSign::Negative) {
     length += CodePoint(buffer + length, bufferSize - length, '-');
   }
 
@@ -84,7 +85,7 @@ size_t IntegerHandler::serializeInDecimal(char* buffer, size_t bufferSize,
   assert(buffer[length] == 0);
 
   // Flip the string
-  for (int i = m_sign == OMG::NonStrictSign::Negative, j = length - 1; i < j;
+  for (int i = m_sign == NonStrictSign::Negative, j = length - 1; i < j;
        i++, j--) {
     char c = buffer[i];
     buffer[i] = buffer[j];

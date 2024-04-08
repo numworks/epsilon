@@ -1,5 +1,6 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
 #include <quiz.h>
 
@@ -9,8 +10,8 @@ using namespace PoincareJ;
 
 static bool integer_handler_same_absolute_value(IntegerHandler a,
                                                 IntegerHandler b) {
-  a.setSign(OMG::NonStrictSign::Positive);
-  b.setSign(OMG::NonStrictSign::Positive);
+  a.setSign(NonStrictSign::Positive);
+  b.setSign(NonStrictSign::Positive);
   return IntegerHandler::Compare(a, b) == 0;
 }
 
@@ -46,7 +47,7 @@ QUIZ_CASE(pcj_rational_properties) {
 }
 
 static void assert_set_sign(const Tree* iNumerator, const Tree* iDenominator,
-                            OMG::NonStrictSign sign, const Tree* resNumerator,
+                            NonStrictSign sign, const Tree* resNumerator,
                             const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Rational::SetSign(i, sign);
@@ -57,10 +58,10 @@ static void assert_set_sign(const Tree* iNumerator, const Tree* iDenominator,
 }
 
 QUIZ_CASE(pcj_rational_set_sign) {
-  assert_set_sign(0_e, 1_e, OMG::NonStrictSign::Negative, 0_e, 1_e);
-  assert_set_sign(0_e, 1_e, OMG::NonStrictSign::Positive, 0_e, 1_e);
-  assert_set_sign(2_e, 1_e, OMG::NonStrictSign::Negative, -2_e, 1_e);
-  assert_set_sign(-3_e, 4_e, OMG::NonStrictSign::Positive, 3_e, 4_e);
+  assert_set_sign(0_e, 1_e, NonStrictSign::Negative, 0_e, 1_e);
+  assert_set_sign(0_e, 1_e, NonStrictSign::Positive, 0_e, 1_e);
+  assert_set_sign(2_e, 1_e, NonStrictSign::Negative, -2_e, 1_e);
+  assert_set_sign(-3_e, 4_e, NonStrictSign::Positive, 3_e, 4_e);
 }
 
 static void assert_irreducible_form(const Tree* iNumerator,

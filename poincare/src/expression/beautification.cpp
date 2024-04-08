@@ -12,6 +12,7 @@
 #include "float.h"
 #include "number.h"
 #include "rational.h"
+#include "sign.h"
 #include "simplification.h"
 
 namespace PoincareJ {
@@ -92,8 +93,7 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
     NAry::SquashIfUnary(expr);
     return true;
   }
-  return factor->isNumber() &&
-         Number::SetSign(factor, OMG::NonStrictSign::Positive);
+  return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
 }
 
 bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,

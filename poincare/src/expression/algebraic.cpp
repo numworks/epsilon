@@ -6,6 +6,7 @@
 #include "k_tree.h"
 #include "number.h"
 #include "rational.h"
+#include "sign.h"
 #include "simplification.h"
 
 namespace PoincareJ {
@@ -93,7 +94,7 @@ TreeRef Algebraic::NormalFormator(TreeRef expression, bool numerator) {
     bool negativeRationalExponent =
         exponent->isRational() && Rational::Sign(exponent).isStrictlyNegative();
     if (!numerator && negativeRationalExponent) {
-      Rational::SetSign(exponent, OMG::NonStrictSign::Positive);
+      Rational::SetSign(exponent, NonStrictSign::Positive);
     }
     if (numerator == negativeRationalExponent) {
       return expression->cloneTreeOverTree(1_e);

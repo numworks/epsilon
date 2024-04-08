@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "integer.h"
+#include "sign.h"
 
 namespace PoincareJ {
 
@@ -17,7 +18,7 @@ void Decimal::Project(Tree* tree) {
   Tree* mult = SharedTreeStack->push<Type::Mult>(1);
   SharedTreeStack->push(Type::Pow);
   SharedTreeStack->push<Type::IntegerShort, int8_t>(10);
-  IntegerHandler(DecimalOffset(tree), OMG::NonStrictSign::Negative)
+  IntegerHandler(DecimalOffset(tree), NonStrictSign::Negative)
       .pushOnTreeStack();
   tree->moveTreeOverNode(mult);
   NAry::SetNumberOfChildren(tree, 2);

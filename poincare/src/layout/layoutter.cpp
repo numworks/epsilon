@@ -10,6 +10,7 @@
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/n_ary.h>
@@ -187,10 +188,10 @@ void Layoutter::layoutChildrenAsRacks(Tree* expression) {
 void Layoutter::layoutIntegerHandler(TreeRef& layoutParent,
                                      IntegerHandler handler,
                                      int decimalOffset) {
-  if (handler.strictSign() == OMG::StrictSign::Negative) {
+  if (handler.strictSign() == StrictSign::Negative) {
     PushCodePoint(layoutParent, '-');
   }
-  handler.setSign(OMG::NonStrictSign::Positive);
+  handler.setSign(NonStrictSign::Positive);
   Tree* rack = KRackL()->clone();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
    * pushing layouts on the TreeStack at each steps. Value is therefore
@@ -752,7 +753,7 @@ bool Layoutter::requireSeparators(const Tree* expr) {
   if (expr->isRational()) {
     // TODO_PCJ same for decimals and floats
     IntegerHandler num = Rational::Numerator(expr);
-    num.setSign(OMG::NonStrictSign::Positive);
+    num.setSign(NonStrictSign::Positive);
     if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {
       return true;
     }

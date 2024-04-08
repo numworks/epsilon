@@ -166,7 +166,7 @@ bool InputCategoricalTableCell::deleteSelectedValue() {
   } else {
     // A row and/or column has been deleted, we should recompute data
     tableModel()->recomputeData();
-    /* Due to an initial number of rows/ols of 2, we cannot ensure that at most
+    /* Due to an initial number of rows/cols of 2, we cannot ensure that at most
      * one row and one col have been deleted here */
     m_selectableTableView.deselectTable();
     /* A row has been deleted, but size didn't change, meaning the number of

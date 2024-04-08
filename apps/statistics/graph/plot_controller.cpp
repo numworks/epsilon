@@ -69,7 +69,8 @@ bool PlotController::reloadBannerView() {
   char buffer[k_bufferSize] = "";
 
   // Display series name
-  StoreController::FillTableName(selectedSeries(), buffer, k_bufferSize);
+  Shared::StatisticsStore::FillTableName(selectedSeries(), buffer,
+                                         k_bufferSize);
   bannerView()->seriesName()->setText(buffer);
 
   // Display selected value

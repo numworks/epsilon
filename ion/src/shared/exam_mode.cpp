@@ -77,7 +77,7 @@ Int Configuration::flags() const {
 }
 
 bool Configuration::isUninitialized() const {
-  bool clearBit = m_bits.get(Bits::Cleared, Bits::Cleared);
+  bool clearBit = m_bits.get(Bits::Cleared);
   return clearBit || (!configurable() &&
                       data() >= static_cast<Int>(Ruleset::NumberOfRulesets));
 }

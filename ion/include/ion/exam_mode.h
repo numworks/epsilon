@@ -61,9 +61,7 @@ class Configuration {
   static_assert(static_cast<int>(Bits::NumberOfBits) ==
                 OMG::BitHelper::numberOfBitsIn<Int>());
 
-  bool configurable() const {
-    return m_bits.get(Bits::Configurable, Bits::Configurable);
-  }
+  bool configurable() const { return m_bits.get(Bits::Configurable); }
   Int data() const { return m_bits.get(Bits::DataLast, Bits::DataFirst); }
 
   OMG::BitHelper::BitField<Int> m_bits;

@@ -166,14 +166,7 @@ bool InputCategoricalTableCell::deleteSelectedValue() {
   } else {
     // A row and/or column has been deleted, we should recompute data
     tableModel()->recomputeData();
-    /* Due to an initial number of rows/cols of 2, we cannot ensure that at most
-     * one row and one col have been deleted here */
-    m_selectableTableView.deselectTable();
-    /* A row has been deleted, but size didn't change, meaning the number of
-     * non-empty rows was k_maxNumberOfRows. However, recomputeData may have
-     * moved up multiple cells, m_inputTableView should be reloaded. */
-    recomputeDimensionsAndReload(true);
-    m_selectableTableView.selectCellAtClippedLocation(col, row, true);
+    fullReload(true);
     return true;
   }
 }
@@ -221,6 +214,15 @@ bool InputCategoricalTableCell::recomputeDimensionsAndReload(
     categoricalController()->selectableListView()->reloadData(false);
   }
   return didChange;
+}
+
+void InputCategoricalTableCell::fullReload(bool forceReloadTableCell,
+                                           bool forceReloadPage) {
+  int row = m_selectableTableView.selectedRow();
+  int col = m_selectableTableView.selectedColumn();
+  m_selectableTableView.deselectTable();
+  recomputeDimensionsAndReload(forceReloadTableCell, forceReloadPage);
+  m_selectableTableView.selectCellAtClippedLocation(col, row, true);
 }
 
 /* DoubleColumnTableCell */

@@ -147,7 +147,7 @@ void StoreController::setClearPopUpContent() {
   int column = m_store->relativeColumn(selectedColumn());
   assert(column == 0 || column == 1);
   int series = m_store->seriesAtColumn(selectedColumn());
-  constexpr size_t bufferSize = StatisticsStore::k_tableNameSize;
+  constexpr size_t bufferSize = DoublePairStore::k_tableNameLength;
   char buffer[bufferSize];
   I18n::Message message = I18n::Message::Default;
   if (column == 0) {

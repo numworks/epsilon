@@ -45,12 +45,6 @@ bool StatisticsStore::updateSeries(int series, bool delayUpdate) {
   return DoublePairStore::updateSeries(series, delayUpdate);
 }
 
-void StatisticsStore::tableName(int series, char* buffer,
-                                size_t bufferSize) const {
-  char i = static_cast<char>('1' + series);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, i, i);
-}
-
 void StatisticsStore::initDatasets() {
   /* Update series after having set the datasets, which are needed in
    * updateSeries */

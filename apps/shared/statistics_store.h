@@ -11,8 +11,6 @@ class StatisticsStore : public DoublePairStore {
  public:
   constexpr static const char* const* k_columnNames =
       DoublePairStore::k_statisticsColumNames;
-  constexpr static char k_tableName[] = "V%c/N%c";
-  constexpr static size_t k_tableNameSize = sizeof(k_tableName);
 
   StatisticsStore(GlobalContext* context,
                   DoublePairStorePreferences* preferences);
@@ -36,7 +34,6 @@ class StatisticsStore : public DoublePairStore {
     return DoublePairStore::valueValidInColumn(value, relativeColumn) &&
            (relativeColumn != 1 || value >= 0.0);
   }
-  void tableName(int series, char* buffer, size_t bufferSize) const;
 
  protected:
   void initDatasets();

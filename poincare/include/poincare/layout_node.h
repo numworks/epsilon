@@ -7,7 +7,8 @@
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
 #include <omg/directions.h>
-#include <poincare/pool_object.h>
+
+#include "pool_object.h"
 
 namespace PoincareJ {
 class LayoutCursor;

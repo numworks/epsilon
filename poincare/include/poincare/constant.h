@@ -1,11 +1,11 @@
 #ifndef POINCARE_CONSTANT_H
 #define POINCARE_CONSTANT_H
 
-#include <poincare/aliases_list.h>
-#include <poincare/expression_node.h>
-#include <poincare/old_expression.h>
-
 #include <array>
+
+#include "aliases_list.h"
+#include "expression_node.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

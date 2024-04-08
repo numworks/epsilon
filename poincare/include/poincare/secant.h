@@ -1,8 +1,8 @@
 #ifndef POINCARE_SECANT_H
 #define POINCARE_SECANT_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/old_expression.h>
+#include "approximation_helper.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

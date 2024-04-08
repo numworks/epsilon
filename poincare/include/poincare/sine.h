@@ -1,9 +1,9 @@
 #ifndef POINCARE_SINE_H
 #define POINCARE_SINE_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/old_expression.h>
-#include <poincare/trigonometry.h>
+#include "approximation_helper.h"
+#include "old_expression.h"
+#include "trigonometry.h"
 
 namespace Poincare {
 

@@ -1,8 +1,8 @@
 #ifndef POINCARE_SUBSTRACTION_H
 #define POINCARE_SUBSTRACTION_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/old_expression.h>
+#include "approximation_helper.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

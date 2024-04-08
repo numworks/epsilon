@@ -1,8 +1,8 @@
 #ifndef POINCARE_NORM_CDF_RANGE_H
 #define POINCARE_NORM_CDF_RANGE_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/normal_distribution_function.h>
+#include "approximation_helper.h"
+#include "normal_distribution_function.h"
 
 namespace Poincare {
 

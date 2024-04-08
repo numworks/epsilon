@@ -1,8 +1,8 @@
 #ifndef POINCARE_FUNCTION_H
 #define POINCARE_FUNCTION_H
 
-#include <poincare/symbol_abstract.h>
-#include <poincare/variable_context.h>
+#include "symbol_abstract.h"
+#include "variable_context.h"
 
 namespace Poincare {
 

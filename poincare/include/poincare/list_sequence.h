@@ -1,10 +1,10 @@
 #ifndef POINCARE_LIST_SEQUENCE_H
 #define POINCARE_LIST_SEQUENCE_H
 
-#include <poincare/complex.h>
-#include <poincare/list_complex.h>
-#include <poincare/parametered_expression.h>
-#include <poincare/symbol.h>
+#include "complex.h"
+#include "list_complex.h"
+#include "parametered_expression.h"
+#include "symbol.h"
 
 namespace Poincare {
 

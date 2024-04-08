@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_NODE_WITH_UP_TO_TWO_CHILDREN_H
 #define POINCARE_EXPRESSION_NODE_WITH_UP_TO_TWO_CHILDREN_H
 
-#include <poincare/expression_node.h>
+#include "expression_node.h"
 
 namespace Poincare {
 

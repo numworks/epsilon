@@ -2,7 +2,8 @@
 #define POINCARE_LEAST_COMMON_MULTIPLE_H
 
 #include <limits.h>
-#include <poincare/n_ary_expression.h>
+
+#include "n_ary_expression.h"
 
 namespace Poincare {
 

@@ -1,8 +1,8 @@
 #ifndef POINCARE_CURLY_BRACE_LAYOUT_H
 #define POINCARE_CURLY_BRACE_LAYOUT_H
 
-#include <poincare/autocompleted_bracket_pair_layout.h>
-#include <poincare/layout_helper.h>
+#include "autocompleted_bracket_pair_layout.h"
+#include "layout_helper.h"
 
 namespace Poincare {
 

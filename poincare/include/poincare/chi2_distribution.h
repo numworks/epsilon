@@ -2,8 +2,9 @@
 #define POINCARE_CHI2_DISTRIBUTION_H
 
 #include <float.h>
-#include <poincare/continuous_distribution.h>
-#include <poincare/old_expression.h>
+
+#include "continuous_distribution.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

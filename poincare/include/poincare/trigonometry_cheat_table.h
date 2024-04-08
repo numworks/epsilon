@@ -2,7 +2,8 @@
 #define POINCARE_TRIGONOMETRY_CHEAT_TABLE_H
 
 #include <assert.h>
-#include <poincare/old_expression.h>
+
+#include "old_expression.h"
 
 namespace Poincare {
 

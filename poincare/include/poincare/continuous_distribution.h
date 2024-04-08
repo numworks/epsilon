@@ -1,7 +1,7 @@
 #ifndef POINCARE_CONTINUOUS_DISTRIBUTION_H
 #define POINCARE_CONTINUOUS_DISTRIBUTION_H
 
-#include <poincare/distribution.h>
+#include "distribution.h"
 
 namespace Poincare {
 

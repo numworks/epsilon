@@ -1,8 +1,8 @@
 #ifndef POINCARE_POLYNOMIAL_H
 #define POINCARE_POLYNOMIAL_H
 
-#include <poincare/old_expression.h>
-#include <poincare/rational.h>
+#include "old_expression.h"
+#include "rational.h"
 
 namespace Poincare {
 

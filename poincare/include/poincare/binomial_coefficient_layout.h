@@ -1,7 +1,7 @@
 #ifndef POINCARE_BINOMIAL_COEFFICIENT_LAYOUT_NODE_H
 #define POINCARE_BINOMIAL_COEFFICIENT_LAYOUT_NODE_H
 
-#include <poincare/two_rows_layout.h>
+#include "two_rows_layout.h"
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_MATRIX_ECHELON_FORM_H
 #define POINCARE_MATRIX_ECHELON_FORM_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

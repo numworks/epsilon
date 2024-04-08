@@ -1,7 +1,7 @@
 #ifndef POINCARE_COMPLEX_CARTESIAN_H
 #define POINCARE_COMPLEX_CARTESIAN_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

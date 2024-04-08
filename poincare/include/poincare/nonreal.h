@@ -1,7 +1,7 @@
 #ifndef POINCARE_NONREAL_H
 #define POINCARE_NONREAL_H
 
-#include <poincare/undefined.h>
+#include "undefined.h"
 
 namespace Poincare {
 

@@ -1,9 +1,9 @@
 #ifndef POINCARE_AUTOCOMPLETED_BRACKET_PAIR_LAYOUT_H
 #define POINCARE_AUTOCOMPLETED_BRACKET_PAIR_LAYOUT_H
 
-#include <poincare/bracket_pair_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_cursor.h>
+#include "bracket_pair_layout.h"
+#include "horizontal_layout.h"
+#include "layout_cursor.h"
 
 namespace Poincare {
 

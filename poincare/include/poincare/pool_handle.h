@@ -1,9 +1,9 @@
 #ifndef POINCARE_TREE_HANDLE_H
 #define POINCARE_TREE_HANDLE_H
 
-#include <poincare/pool.h>
-
 #include <initializer_list>
+
+#include "pool.h"
 
 namespace Poincare {
 /* A PoolHandle references a PoolObject stored somewhere is the OExpression

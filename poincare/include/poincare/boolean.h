@@ -1,8 +1,8 @@
 #ifndef POINCARE_BOOLEAN_H
 #define POINCARE_BOOLEAN_H
 
-#include <poincare/aliases_list.h>
-#include <poincare/old_expression.h>
+#include "aliases_list.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_MATRIX_INVERSE_H
 #define POINCARE_MATRIX_INVERSE_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

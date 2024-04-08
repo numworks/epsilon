@@ -1,11 +1,11 @@
 #ifndef POINCARE_LOGARITHM_H
 #define POINCARE_LOGARITHM_H
 
-#include <poincare/addition.h>
-#include <poincare/complex.h>
-#include <poincare/expression_node_with_up_to_two_children.h>
-#include <poincare/integer.h>
-#include <poincare/old_expression.h>
+#include "addition.h"
+#include "complex.h"
+#include "expression_node_with_up_to_two_children.h"
+#include "integer.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

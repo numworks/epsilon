@@ -1,8 +1,8 @@
 #ifndef POINCARE_POINT_H
 #define POINCARE_POINT_H
 
-#include <poincare/coordinate_2D.h>
-#include <poincare/old_expression.h>
+#include "coordinate_2D.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

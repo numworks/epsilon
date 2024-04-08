@@ -1,9 +1,9 @@
 #ifndef POINCARE_VERTICAL_OFFSET_LAYOUT_NODE_H
 #define POINCARE_VERTICAL_OFFSET_LAYOUT_NODE_H
 
-#include <poincare/empty_rectangle.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/old_layout.h>
+#include "empty_rectangle.h"
+#include "layout_cursor.h"
+#include "old_layout.h"
 
 namespace Poincare {
 

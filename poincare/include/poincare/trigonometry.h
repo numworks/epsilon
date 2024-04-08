@@ -1,8 +1,8 @@
 #ifndef POINCARE_TRIGONOMETRY_H
 #define POINCARE_TRIGONOMETRY_H
 
-#include <poincare/evaluation.h>
-#include <poincare/old_expression.h>
+#include "evaluation.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

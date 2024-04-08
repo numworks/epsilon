@@ -1,8 +1,8 @@
 #ifndef POINCARE_PRODUCT_H
 #define POINCARE_PRODUCT_H
 
-#include <poincare/multiplication.h>
-#include <poincare/sum_and_product.h>
+#include "multiplication.h"
+#include "sum_and_product.h"
 
 namespace Poincare {
 

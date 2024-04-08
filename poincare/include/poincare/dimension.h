@@ -1,7 +1,7 @@
 #ifndef POINCARE_MATRIX_DIMENSION_H
 #define POINCARE_MATRIX_DIMENSION_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

@@ -1,8 +1,8 @@
 #ifndef LETTER_A_WITH_SUB_AND_SUPERSCRIPT_LAYOUT_NODE_H
 #define LETTER_A_WITH_SUB_AND_SUPERSCRIPT_LAYOUT_NODE_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/letter_with_sub_and_superscript_layout.h>
+#include "layout_helper.h"
+#include "letter_with_sub_and_superscript_layout.h"
 
 namespace Poincare {
 

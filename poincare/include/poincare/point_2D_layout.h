@@ -1,7 +1,7 @@
 #ifndef POINCARE_POINT_2D_LAYOUT_NODE_H
 #define POINCARE_POINT_2D_LAYOUT_NODE_H
 
-#include <poincare/two_rows_layout.h>
+#include "two_rows_layout.h"
 
 namespace Poincare {
 

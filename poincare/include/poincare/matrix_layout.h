@@ -1,10 +1,10 @@
 #ifndef POINCARE_MATRIX_LAYOUT_NODE_H
 #define POINCARE_MATRIX_LAYOUT_NODE_H
 
-#include <poincare/grid_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/old_layout.h>
+#include "grid_layout.h"
+#include "horizontal_layout.h"
+#include "layout_cursor.h"
+#include "old_layout.h"
 
 namespace Poincare {
 

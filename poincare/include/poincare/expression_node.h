@@ -1,13 +1,14 @@
 #ifndef POINCARE_EXPRESSION_NODE_H
 #define POINCARE_EXPRESSION_NODE_H
 
-#include <poincare/computation_context.h>
-#include <poincare/context.h>
-#include <poincare/evaluation.h>
-#include <poincare/layout.h>
-#include <poincare/pool_object.h>
-#include <poincare/trinary_boolean.h>
 #include <stdint.h>
+
+#include "computation_context.h"
+#include "context.h"
+#include "evaluation.h"
+#include "layout.h"
+#include "pool_object.h"
+#include "trinary_boolean.h"
 
 namespace Poincare {
 

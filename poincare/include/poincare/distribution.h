@@ -1,7 +1,7 @@
 #ifndef POINCARE_DISTRIBUTION_H
 #define POINCARE_DISTRIBUTION_H
 
-#include <poincare/solver_algorithms.h>
+#include "solver_algorithms.h"
 
 namespace Poincare {
 

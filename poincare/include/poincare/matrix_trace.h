@@ -1,7 +1,7 @@
 #ifndef POINCARE_MATRIX_TRACE_H
 #define POINCARE_MATRIX_TRACE_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

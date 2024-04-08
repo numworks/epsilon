@@ -1,9 +1,9 @@
 #ifndef POINCARE_SQUARE_BRACKET_PAIR_LAYOUT_H
 #define POINCARE_SQUARE_BRACKET_PAIR_LAYOUT_H
 
-#include <poincare/bracket_pair_layout.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/old_layout.h>
+#include "bracket_pair_layout.h"
+#include "layout_cursor.h"
+#include "old_layout.h"
 
 namespace Poincare {
 

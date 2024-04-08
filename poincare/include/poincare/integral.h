@@ -1,8 +1,8 @@
 #ifndef POINCARE_INTEGRAL_H
 #define POINCARE_INTEGRAL_H
 
-#include <poincare/parametered_expression.h>
-#include <poincare/symbol.h>
+#include "parametered_expression.h"
+#include "symbol.h"
 
 namespace Poincare {
 

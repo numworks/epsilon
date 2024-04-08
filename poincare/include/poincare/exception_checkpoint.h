@@ -1,8 +1,9 @@
 #ifndef POINCARE_EXCEPTION_CHECKPOINT_H
 #define POINCARE_EXCEPTION_CHECKPOINT_H
 
-#include <poincare/checkpoint.h>
 #include <setjmp.h>
+
+#include "checkpoint.h"
 
 #define ExceptionRun(checkpoint) \
   (CheckpointRun(checkpoint, setjmp(*checkpoint.jumpBuffer())) != 0)

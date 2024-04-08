@@ -1,10 +1,10 @@
 #ifndef POINCARE_RANDINT_H
 #define POINCARE_RANDINT_H
 
-#include <poincare/expression_node_with_up_to_two_children.h>
-#include <poincare/old_expression.h>
-#include <poincare/random.h>
-#include <poincare/rational.h>
+#include "expression_node_with_up_to_two_children.h"
+#include "old_expression.h"
+#include "random.h"
+#include "rational.h"
 
 namespace Poincare {
 

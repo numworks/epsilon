@@ -1,9 +1,9 @@
 #ifndef POINCARE_DIVISION_REMAINDER_H
 #define POINCARE_DIVISION_REMAINDER_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/integer.h>
-#include <poincare/old_expression.h>
+#include "approximation_helper.h"
+#include "integer.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

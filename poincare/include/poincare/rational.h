@@ -1,9 +1,9 @@
 #ifndef POINCARE_RATIONAL_H
 #define POINCARE_RATIONAL_H
 
-#include <poincare/complex.h>
-#include <poincare/integer.h>
-#include <poincare/number.h>
+#include "complex.h"
+#include "integer.h"
+#include "number.h"
 
 namespace Poincare {
 

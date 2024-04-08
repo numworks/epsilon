@@ -1,8 +1,8 @@
 #ifndef POINCARE_HYPERGEOMETRIC_DISTRIBUTION_H
 #define POINCARE_HYPERGEOMETRIC_DISTRIBUTION_H
 
-#include <poincare/discrete_distribution.h>
-#include <poincare/old_expression.h>
+#include "discrete_distribution.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

@@ -1,9 +1,9 @@
 #ifndef POINCARE_POWER_H
 #define POINCARE_POWER_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/multiplication.h>
-#include <poincare/rational.h>
+#include "approximation_helper.h"
+#include "multiplication.h"
+#include "rational.h"
 
 namespace Poincare {
 

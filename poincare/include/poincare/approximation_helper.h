@@ -2,11 +2,12 @@
 #define POINCARE_APPROXIMATION_HELPER_H
 
 #include <complex.h>
-#include <poincare/boolean.h>
-#include <poincare/complex.h>
-#include <poincare/expression_node.h>
-#include <poincare/list_complex.h>
-#include <poincare/matrix_complex.h>
+
+#include "boolean.h"
+#include "complex.h"
+#include "expression_node.h"
+#include "list_complex.h"
+#include "matrix_complex.h"
 
 namespace Poincare {
 

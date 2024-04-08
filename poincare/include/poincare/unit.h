@@ -1,11 +1,11 @@
 #ifndef POINCARE_UNIT_H
 #define POINCARE_UNIT_H
 
-#include <poincare/aliases_list.h>
-#include <poincare/helpers.h>
-#include <poincare/old_expression.h>
-
 #include <array>
+
+#include "aliases_list.h"
+#include "helpers.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

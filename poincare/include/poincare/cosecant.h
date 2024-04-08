@@ -1,8 +1,8 @@
 #ifndef POINCARE_COSCANT_H
 #define POINCARE_COSCANT_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/old_expression.h>
+#include "approximation_helper.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

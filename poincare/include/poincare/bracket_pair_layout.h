@@ -2,7 +2,8 @@
 #define POINCARE_BRACKET_PAIR_LAYOUT_H
 
 #include <escher/metric.h>
-#include <poincare/layout_node.h>
+
+#include "layout_node.h"
 
 namespace Poincare {
 

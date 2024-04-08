@@ -1,9 +1,9 @@
 #ifndef POINCARE_UNIFORM_DISTRIBUTION_H
 #define POINCARE_UNIFORM_DISTRIBUTION_H
 
-#include <poincare/continuous_distribution.h>
-#include <poincare/old_expression.h>
-#include <poincare/preferences.h>
+#include "continuous_distribution.h"
+#include "old_expression.h"
+#include "preferences.h"
 
 namespace Poincare {
 

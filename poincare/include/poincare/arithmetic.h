@@ -1,8 +1,8 @@
 #ifndef POINCARE_ARITHMETIC_H
 #define POINCARE_ARITHMETIC_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/integer.h>
+#include "approximation_helper.h"
+#include "integer.h"
 
 namespace Poincare {
 

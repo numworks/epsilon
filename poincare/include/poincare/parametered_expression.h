@@ -2,7 +2,8 @@
 #define POINCARE_PARAMETERED_EXPRESSION_H
 
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/old_expression.h>
+
+#include "old_expression.h"
 
 namespace Poincare {
 

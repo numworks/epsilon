@@ -1,8 +1,9 @@
 #ifndef POINCARE_JUNIOR_LAYOUT_NODE_H
 #define POINCARE_JUNIOR_LAYOUT_NODE_H
 
-#include <poincare/old_layout.h>
 #include <poincare_junior/src/memory/block.h>
+
+#include "old_layout.h"
 
 namespace PoincareJ {
 class Block;

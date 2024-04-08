@@ -2,7 +2,8 @@
 #define POINCARE_COORDINATE_2D_H
 
 #include <math.h>
-#include <poincare/helpers.h>
+
+#include "helpers.h"
 
 namespace Poincare {
 

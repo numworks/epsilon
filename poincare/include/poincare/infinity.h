@@ -1,8 +1,8 @@
 #ifndef POINCARE_INFINITY_H
 #define POINCARE_INFINITY_H
 
-#include <poincare/helpers.h>
-#include <poincare/number.h>
+#include "helpers.h"
+#include "number.h"
 
 namespace Poincare {
 

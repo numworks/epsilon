@@ -1,9 +1,9 @@
 #ifndef POINCARE_DISTRIBUTION_FUNCTION_H
 #define POINCARE_DISTRIBUTION_FUNCTION_H
 
-#include <poincare/distribution.h>
-#include <poincare/distribution_method.h>
-#include <poincare/n_ary_expression.h>
+#include "distribution.h"
+#include "distribution_method.h"
+#include "n_ary_expression.h"
 
 namespace Poincare {
 

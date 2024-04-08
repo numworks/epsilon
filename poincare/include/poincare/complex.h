@@ -1,7 +1,7 @@
 #ifndef POINCARE_COMPLEX_H
 #define POINCARE_COMPLEX_H
 
-#include <poincare/evaluation.h>
+#include "evaluation.h"
 
 namespace Poincare {
 

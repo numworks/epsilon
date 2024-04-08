@@ -1,7 +1,7 @@
 #ifndef POINCARE_LIST_SORT_H
 #define POINCARE_LIST_SORT_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

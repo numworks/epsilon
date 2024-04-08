@@ -1,7 +1,7 @@
 #ifndef POINCARE_STRING_LAYOUT_NODE_H
 #define POINCARE_STRING_LAYOUT_NODE_H
 
-#include <poincare/old_layout.h>
+#include "old_layout.h"
 
 /* Following expressions: Numbers, symbols (like cos), units and some other
  * expressions like "undefined", will be layouted into StringLayout.

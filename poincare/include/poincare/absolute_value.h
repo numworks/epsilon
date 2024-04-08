@@ -1,9 +1,9 @@
 #ifndef POINCARE_ABSOLUTE_VALUE_H
 #define POINCARE_ABSOLUTE_VALUE_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/old_expression.h>
-#include <poincare/rational.h>
+#include "approximation_helper.h"
+#include "old_expression.h"
+#include "rational.h"
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_N_ARY_INFIX_EXPRESSION_H
 #define POINCARE_N_ARY_INFIX_EXPRESSION_H
 
-#include <poincare/n_ary_expression.h>
+#include "n_ary_expression.h"
 
 // NAryInfixExpressionNode are additions and multiplications
 

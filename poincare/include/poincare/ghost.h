@@ -1,9 +1,9 @@
 #ifndef POINCARE_GHOST_H
 #define POINCARE_GHOST_H
 
-#include <poincare/ghost_node.h>
-#include <poincare/pool.h>
-#include <poincare/pool_handle.h>
+#include "ghost_node.h"
+#include "pool.h"
+#include "pool_handle.h"
 
 namespace Poincare {
 

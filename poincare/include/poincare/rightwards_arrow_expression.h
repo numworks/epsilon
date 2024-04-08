@@ -1,9 +1,9 @@
 #ifndef POINCARE_RIGHTWARDS_ARROW_EXPRESSION_H
 #define POINCARE_RIGHTWARDS_ARROW_EXPRESSION_H
 
-#include <poincare/evaluation.h>
-#include <poincare/old_expression.h>
-#include <poincare/symbol_abstract.h>
+#include "evaluation.h"
+#include "old_expression.h"
+#include "symbol_abstract.h"
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_EMPTY_EXPRESSION_H
 #define POINCARE_EMPTY_EXPRESSION_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

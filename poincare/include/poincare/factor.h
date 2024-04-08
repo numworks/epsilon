@@ -1,11 +1,11 @@
 #ifndef POINCARE_FACTOR_H
 #define POINCARE_FACTOR_H
 
-#include <poincare/multiplication.h>
-#include <poincare/old_expression.h>
-#include <poincare/rational.h>
-
 #include <cmath>
+
+#include "multiplication.h"
+#include "old_expression.h"
+#include "rational.h"
 
 namespace Poincare {
 

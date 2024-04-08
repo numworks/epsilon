@@ -1,8 +1,8 @@
 #ifndef POINCARE_HORIZONTAL_LAYOUT_NODE_H
 #define POINCARE_HORIZONTAL_LAYOUT_NODE_H
 
-#include <poincare/empty_rectangle.h>
-#include <poincare/old_layout.h>
+#include "empty_rectangle.h"
+#include "old_layout.h"
 
 namespace Poincare {
 

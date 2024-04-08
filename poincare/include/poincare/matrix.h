@@ -1,8 +1,8 @@
 #ifndef POINCARE_MATRIX_H
 #define POINCARE_MATRIX_H
 
-#include <poincare/array.h>
-#include <poincare/old_expression.h>
+#include "array.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

@@ -1,10 +1,10 @@
 #ifndef POINCARE_ABSOLUTE_VALUE_LAYOUT_NODE_H
 #define POINCARE_ABSOLUTE_VALUE_LAYOUT_NODE_H
 
-#include <poincare/absolute_value.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/square_bracket_pair_layout.h>
+#include "absolute_value.h"
+#include "layout_helper.h"
+#include "serialization_helper.h"
+#include "square_bracket_pair_layout.h"
 
 namespace Poincare {
 

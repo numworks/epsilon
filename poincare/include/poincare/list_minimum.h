@@ -1,7 +1,7 @@
 #ifndef POINCARE_LIST_MINIMUM_H
 #define POINCARE_LIST_MINIMUM_H
 
-#include <poincare/list.h>
+#include "list.h"
 
 namespace Poincare {
 

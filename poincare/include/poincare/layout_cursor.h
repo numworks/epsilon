@@ -2,9 +2,10 @@
 #define POINCARE_LAYOUT_CURSOR_H
 
 #include <omg/directions.h>
-#include <poincare/empty_rectangle.h>
-#include <poincare/layout_selection.h>
-#include <poincare/old_layout.h>
+
+#include "empty_rectangle.h"
+#include "layout_selection.h"
+#include "old_layout.h"
 
 namespace Poincare {
 

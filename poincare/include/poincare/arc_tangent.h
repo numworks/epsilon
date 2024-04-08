@@ -1,10 +1,10 @@
 #ifndef POINCARE_ARC_TANGENT_H
 #define POINCARE_ARC_TANGENT_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/arc_cotangent.h>
-#include <poincare/old_expression.h>
-#include <poincare/trigonometry.h>
+#include "approximation_helper.h"
+#include "arc_cotangent.h"
+#include "old_expression.h"
+#include "trigonometry.h"
 
 namespace Poincare {
 

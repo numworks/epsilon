@@ -1,10 +1,10 @@
 #ifndef POINCARE_GRID_LAYOUT_NODE_H
 #define POINCARE_GRID_LAYOUT_NODE_H
 
-#include <poincare/array.h>
-#include <poincare/empty_rectangle.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/old_layout.h>
+#include "array.h"
+#include "empty_rectangle.h"
+#include "layout_cursor.h"
+#include "old_layout.h"
 
 namespace Poincare {
 

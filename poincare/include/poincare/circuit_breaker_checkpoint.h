@@ -2,7 +2,8 @@
 #define POINCARE_CIRCUIT_BREAKER_CHECKPOINT
 
 #include <ion/circuit_breaker.h>
-#include <poincare/checkpoint.h>
+
+#include "checkpoint.h"
 
 #define CircuitBreakerRun(checkpoint) \
   (CheckpointRun(checkpoint,          \

@@ -1,7 +1,7 @@
 #ifndef POINCARE_LIST_PRODUCT_H
 #define POINCARE_LIST_PRODUCT_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

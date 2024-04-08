@@ -1,8 +1,9 @@
 #ifndef POINCARE_JUNIOR_EXPRESSION_H
 #define POINCARE_JUNIOR_EXPRESSION_H
 
-#include <poincare/old_expression.h>
 #include <poincare_junior/src/memory/block.h>
+
+#include "old_expression.h"
 
 namespace PoincareJ {
 class Tree;

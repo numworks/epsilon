@@ -1,9 +1,9 @@
 #ifndef POINCARE_STORE_H
 #define POINCARE_STORE_H
 
-#include <poincare/evaluation.h>
-#include <poincare/rightwards_arrow_expression.h>
-#include <poincare/symbol_abstract.h>
+#include "evaluation.h"
+#include "rightwards_arrow_expression.h"
+#include "symbol_abstract.h"
 
 namespace Poincare {
 

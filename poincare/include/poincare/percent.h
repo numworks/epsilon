@@ -1,7 +1,7 @@
 #ifndef POINCARE_PERCENT_H
 #define POINCARE_PERCENT_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

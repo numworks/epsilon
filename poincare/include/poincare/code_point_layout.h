@@ -2,9 +2,10 @@
 #define POINCARE_CODEPOINT_LAYOUT_NODE_H
 
 #include <ion/unicode/code_point.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/old_layout.h>
-#include <poincare/serialization_helper.h>
+
+#include "layout_cursor.h"
+#include "old_layout.h"
+#include "serialization_helper.h"
 
 namespace Poincare {
 

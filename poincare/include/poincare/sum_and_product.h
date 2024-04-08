@@ -1,9 +1,9 @@
 #ifndef POINCARE_SUM_AND_PRODUCT_H
 #define POINCARE_SUM_AND_PRODUCT_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/parametered_expression.h>
-#include <poincare/symbol.h>
+#include "approximation_helper.h"
+#include "parametered_expression.h"
+#include "symbol.h"
 
 namespace Poincare {
 

@@ -1,12 +1,12 @@
 #ifndef POINCARE_TREE_POOL_H
 #define POINCARE_TREE_POOL_H
 
-#include <poincare/ghost_node.h>
 #include <stddef.h>
 #include <string.h>
 
 #include <new>
 
+#include "ghost_node.h"
 #include "pool_object.h"
 #if POINCARE_TREE_LOG
 #include <iostream>

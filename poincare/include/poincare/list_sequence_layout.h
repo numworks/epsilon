@@ -1,9 +1,9 @@
 #ifndef POINCARE_LIST_SEQUENCE_LAYOUT_NODE_H
 #define POINCARE_LIST_SEQUENCE_LAYOUT_NODE_H
 
-#include <poincare/layout_cursor.h>
-#include <poincare/layout_helper.h>
-#include <poincare/old_layout.h>
+#include "layout_cursor.h"
+#include "layout_helper.h"
+#include "old_layout.h"
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_NTH_ROOT_H
 #define POINCARE_NTH_ROOT_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

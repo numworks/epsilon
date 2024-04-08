@@ -1,11 +1,11 @@
 #ifndef POINCARE_TWO_ROWS_LAYOUT_NODE_H
 #define POINCARE_TWO_ROWS_LAYOUT_NODE_H
 
-#include <poincare/grid_layout.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/layout_helper.h>
-#include <poincare/old_layout.h>
-#include <poincare/parenthesis_layout.h>
+#include "grid_layout.h"
+#include "layout_cursor.h"
+#include "layout_helper.h"
+#include "old_layout.h"
+#include "parenthesis_layout.h"
 
 namespace Poincare {
 

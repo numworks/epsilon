@@ -1,9 +1,9 @@
 #ifndef POINCARE_ADDITION_H
 #define POINCARE_ADDITION_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/n_ary_infix_expression.h>
-#include <poincare/rational.h>
+#include "approximation_helper.h"
+#include "n_ary_infix_expression.h"
+#include "rational.h"
 
 namespace Poincare {
 

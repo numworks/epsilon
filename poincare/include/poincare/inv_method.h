@@ -1,8 +1,8 @@
 #ifndef POINCARE_INV_METHOD_H
 #define POINCARE_INV_METHOD_H
 
-#include <poincare/distribution.h>
-#include <poincare/distribution_method.h>
+#include "distribution.h"
+#include "distribution_method.h"
 
 namespace Poincare {
 

@@ -1,8 +1,8 @@
 #ifndef POINCARE_HYPERBOLIC_SINE_H
 #define POINCARE_HYPERBOLIC_SINE_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/hyperbolic_trigonometric_function.h>
+#include "approximation_helper.h"
+#include "hyperbolic_trigonometric_function.h"
 
 namespace Poincare {
 

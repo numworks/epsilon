@@ -1,7 +1,7 @@
 #ifndef POINCARE_DEPENDENCY_H
 #define POINCARE_DEPENDENCY_H
 
-#include <poincare/list.h>
+#include "list.h"
 
 namespace Poincare {
 

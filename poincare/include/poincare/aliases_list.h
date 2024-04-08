@@ -2,8 +2,9 @@
 #define POINCARE_ALIASES_LIST_H
 
 #include <assert.h>
-#include <poincare/preferences.h>
 #include <string.h>
+
+#include "preferences.h"
 
 /* This class is used to handle name's aliases for reserved functions, units
  * and constants.

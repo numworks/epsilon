@@ -1,7 +1,7 @@
 #ifndef POINCARE_RANDINT_NO_REPEAT_H
 #define POINCARE_RANDINT_NO_REPEAT_H
 
-#include <poincare/old_expression.h>
+#include "old_expression.h"
 
 namespace Poincare {
 

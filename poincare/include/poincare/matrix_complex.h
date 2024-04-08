@@ -1,9 +1,9 @@
 #ifndef POINCARE_MATRIX_COMPLEX_H
 #define POINCARE_MATRIX_COMPLEX_H
 
-#include <poincare/array.h>
-#include <poincare/complex.h>
-#include <poincare/evaluation.h>
+#include "array.h"
+#include "complex.h"
+#include "evaluation.h"
 
 namespace Poincare {
 

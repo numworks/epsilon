@@ -1,8 +1,8 @@
 #ifndef POINCARE_PARENTHESIS_H
 #define POINCARE_PARENTHESIS_H
 
-#include <poincare/complex_cartesian.h>
-#include <poincare/old_expression.h>
+#include "complex_cartesian.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

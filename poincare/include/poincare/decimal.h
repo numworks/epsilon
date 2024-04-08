@@ -1,8 +1,8 @@
 #ifndef POINCARE_DECIMAL_H
 #define POINCARE_DECIMAL_H
 
-#include <poincare/integer.h>
-#include <poincare/number.h>
+#include "integer.h"
+#include "number.h"
 
 namespace Poincare {
 

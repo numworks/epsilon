@@ -3,10 +3,11 @@
 
 #include <escher/palette.h>
 #include <omg/directions.h>
-#include <poincare/context.h>
-#include <poincare/layout_node.h>
-#include <poincare/pool_handle.h>
-#include <poincare/trinary_boolean.h>
+
+#include "context.h"
+#include "layout_node.h"
+#include "pool_handle.h"
+#include "trinary_boolean.h"
 
 namespace Poincare {
 

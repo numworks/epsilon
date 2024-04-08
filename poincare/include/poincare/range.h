@@ -3,11 +3,12 @@
 
 #include <assert.h>
 #include <omg/ieee754.h>
-#include <poincare/coordinate_2D.h>
-#include <poincare/float.h>
 
 #include <algorithm>
 #include <cmath>
+
+#include "coordinate_2D.h"
+#include "float.h"
 
 namespace Poincare {
 

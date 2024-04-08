@@ -1,23 +1,24 @@
 #ifndef POINCARE_INPUT_BEAUTIFICATION_H
 #define POINCARE_INPUT_BEAUTIFICATION_H
 
-#include <poincare/binomial_coefficient.h>
-#include <poincare/comparison.h>
-#include <poincare/conjugate.h>
-#include <poincare/derivative.h>
-#include <poincare/integral.h>
-#include <poincare/layout.h>
-#include <poincare/layout_cursor.h>
-#include <poincare/logarithm.h>
-#include <poincare/nth_root.h>
-#include <poincare/piecewise_operator.h>
-#include <poincare/power.h>
-#include <poincare/product.h>
-#include <poincare/square_root.h>
-#include <poincare/sum.h>
 #include <poincare_layouts.h>
 
 #include <array>
+
+#include "binomial_coefficient.h"
+#include "comparison.h"
+#include "conjugate.h"
+#include "derivative.h"
+#include "integral.h"
+#include "layout.h"
+#include "layout_cursor.h"
+#include "logarithm.h"
+#include "nth_root.h"
+#include "piecewise_operator.h"
+#include "power.h"
+#include "product.h"
+#include "square_root.h"
+#include "sum.h"
 
 namespace Poincare {
 

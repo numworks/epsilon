@@ -1,10 +1,10 @@
 #ifndef POINCARE_LIST_COMPLEX_H
 #define POINCARE_LIST_COMPLEX_H
 
-#include <poincare/complex.h>
-#include <poincare/dataset_column.h>
-#include <poincare/evaluation.h>
-#include <poincare/list.h>
+#include "complex.h"
+#include "dataset_column.h"
+#include "evaluation.h"
+#include "list.h"
 
 namespace Poincare {
 

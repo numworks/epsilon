@@ -1,8 +1,8 @@
 #ifndef POINCARE_MULTIPLICATION_H
 #define POINCARE_MULTIPLICATION_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/n_ary_infix_expression.h>
+#include "approximation_helper.h"
+#include "n_ary_infix_expression.h"
 
 namespace Poincare {
 

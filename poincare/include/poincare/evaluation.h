@@ -5,9 +5,9 @@
 extern "C" {
 #include <stdint.h>
 }
-#include <poincare/pool_handle.h>
-#include <poincare/pool_object.h>
-#include <poincare/preferences.h>
+#include "pool_handle.h"
+#include "pool_object.h"
+#include "preferences.h"
 
 namespace Poincare {
 

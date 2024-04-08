@@ -2,9 +2,10 @@
 #define POINCARE_FLOAT_H
 
 #include <float.h>
-#include <poincare/approximation_helper.h>
-#include <poincare/junior_expression.h>
-#include <poincare/number.h>
+
+#include "approximation_helper.h"
+#include "junior_expression.h"
+#include "number.h"
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_SELECTION_H
 #define POINCARE_LAYOUT_SELECTION_H
 
-#include <poincare/old_layout.h>
+#include "old_layout.h"
 
 namespace Poincare {
 

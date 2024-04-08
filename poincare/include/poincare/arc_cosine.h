@@ -1,10 +1,10 @@
 #ifndef POINCARE_ARC_COSINE_H
 #define POINCARE_ARC_COSINE_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/arc_secant.h>
-#include <poincare/old_expression.h>
-#include <poincare/trigonometry.h>
+#include "approximation_helper.h"
+#include "arc_secant.h"
+#include "old_expression.h"
+#include "trigonometry.h"
 
 namespace Poincare {
 

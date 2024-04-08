@@ -1,8 +1,8 @@
 #ifndef POINCARE_UNDEFINED_H
 #define POINCARE_UNDEFINED_H
 
-#include <poincare/junior_expression.h>
-#include <poincare/number.h>
+#include "junior_expression.h"
+#include "number.h"
 
 namespace Poincare {
 

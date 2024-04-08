@@ -5,10 +5,11 @@
 #include <omg/bit_helper.h>
 #include <omg/code_guard.h>
 #include <omg/global_box.h>
-#include <poincare/context.h>
-#include <poincare/exam_mode.h>
 #include <poincare_junior/src/expression/context.h>
 #include <stdint.h>
+
+#include "context.h"
+#include "exam_mode.h"
 
 namespace Poincare {
 

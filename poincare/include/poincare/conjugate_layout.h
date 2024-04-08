@@ -1,8 +1,8 @@
 #ifndef POINCARE_CONJUGATE_LAYOUT_NODE_H
 #define POINCARE_CONJUGATE_LAYOUT_NODE_H
 
-#include <poincare/layout_cursor.h>
-#include <poincare/layout_helper.h>
+#include "layout_cursor.h"
+#include "layout_helper.h"
 
 namespace Poincare {
 

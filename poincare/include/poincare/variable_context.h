@@ -1,9 +1,9 @@
 #ifndef POINCARE_VARIABLE_CONTEXT_H
 #define POINCARE_VARIABLE_CONTEXT_H
 
-#include <poincare/context_with_parent.h>
-#include <poincare/float.h>
-#include <poincare/symbol_abstract.h>
+#include "context_with_parent.h"
+#include "float.h"
+#include "symbol_abstract.h"
 
 namespace Poincare {
 

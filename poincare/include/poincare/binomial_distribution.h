@@ -1,9 +1,9 @@
 #ifndef POINCARE_BINOMIAL_DISTRIBUTION_H
 #define POINCARE_BINOMIAL_DISTRIBUTION_H
 
-#include <poincare/discrete_distribution.h>
-#include <poincare/old_expression.h>
-#include <poincare/preferences.h>
+#include "discrete_distribution.h"
+#include "old_expression.h"
+#include "preferences.h"
 
 namespace Poincare {
 

@@ -2,10 +2,11 @@
 #define POINCARE_COMPARISON_EXPRESSION_H
 
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/junior_expression.h>
-#include <poincare/old_expression.h>
 
 #include <array>
+
+#include "junior_expression.h"
+#include "old_expression.h"
 
 /* This class can have any number of children.
  * This implements "x = y", "1 < x <= y" and any other sequence of comparisons

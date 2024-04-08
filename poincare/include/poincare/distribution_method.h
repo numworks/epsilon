@@ -1,8 +1,8 @@
 #ifndef POINCARE_DISTRIBUTION_METHOD_H
 #define POINCARE_DISTRIBUTION_METHOD_H
 
-#include <poincare/distribution.h>
-#include <poincare/old_expression.h>
+#include "distribution.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

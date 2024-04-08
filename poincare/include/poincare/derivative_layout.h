@@ -1,10 +1,10 @@
 #ifndef POINCARE_DERIVATIVE_LAYOUT_H
 #define POINCARE_DERIVATIVE_LAYOUT_H
 
-#include <poincare/layout_cursor.h>
-#include <poincare/layout_helper.h>
-#include <poincare/old_layout.h>
-#include <poincare/vertical_offset_layout.h>
+#include "layout_cursor.h"
+#include "layout_helper.h"
+#include "old_layout.h"
+#include "vertical_offset_layout.h"
 
 namespace Poincare {
 

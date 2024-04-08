@@ -1,9 +1,9 @@
 #ifndef POINCARE_DERIVATIVE_H
 #define POINCARE_DERIVATIVE_H
 
-#include <poincare/parametered_expression.h>
-#include <poincare/rational.h>
-#include <poincare/symbol.h>
+#include "parametered_expression.h"
+#include "rational.h"
+#include "symbol.h"
 
 namespace Poincare {
 

@@ -1,8 +1,8 @@
 #ifndef POINCARE_MIXED_FRACTION_H
 #define POINCARE_MIXED_FRACTION_H
 
-#include <poincare/division.h>
-#include <poincare/old_expression.h>
+#include "division.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

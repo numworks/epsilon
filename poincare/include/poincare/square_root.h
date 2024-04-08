@@ -1,9 +1,9 @@
 #ifndef POINCARE_SQUARE_ROOT_H
 #define POINCARE_SQUARE_ROOT_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/multiplication.h>
-#include <poincare/old_expression.h>
+#include "approximation_helper.h"
+#include "multiplication.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

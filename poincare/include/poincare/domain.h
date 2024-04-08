@@ -1,12 +1,13 @@
 #ifndef POINCARE_DOMAIN_H
 #define POINCARE_DOMAIN_H
 
-#include <poincare/float.h>
-#include <poincare/old_expression.h>
-#include <poincare/rational.h>
 #include <stdint.h>
 
 #include <algorithm>
+
+#include "float.h"
+#include "old_expression.h"
+#include "rational.h"
 
 namespace Poincare {
 

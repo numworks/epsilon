@@ -1,8 +1,8 @@
 #ifndef POINCARE_COMBINED_CODEPOINT_LAYOUT_NODE_H
 #define POINCARE_COMBINED_CODEPOINT_LAYOUT_NODE_H
 
-#include <poincare/code_point_layout.h>
-#include <poincare/print_float.h>
+#include "code_point_layout.h"
+#include "print_float.h"
 
 namespace Poincare {
 

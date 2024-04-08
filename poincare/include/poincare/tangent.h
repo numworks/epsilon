@@ -1,8 +1,8 @@
 #ifndef POINCARE_TANGENT_H
 #define POINCARE_TANGENT_H
 
-#include <poincare/approximation_helper.h>
-#include <poincare/old_expression.h>
+#include "approximation_helper.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

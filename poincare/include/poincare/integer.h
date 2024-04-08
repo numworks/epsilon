@@ -4,9 +4,10 @@
 #include <assert.h>
 #include <limits.h>
 #include <omg/print.h>
-#include <poincare/expression.h>
-#include <poincare/layout.h>
 #include <stdint.h>
+
+#include "expression.h"
+#include "layout.h"
 
 namespace Poincare {
 

@@ -1,8 +1,8 @@
 #ifndef POINCARE_N_ARY_EXPRESSION_H
 #define POINCARE_N_ARY_EXPRESSION_H
 
-#include <poincare/complex_cartesian.h>
-#include <poincare/old_expression.h>
+#include "complex_cartesian.h"
+#include "old_expression.h"
 
 namespace Poincare {
 

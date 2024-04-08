@@ -1,8 +1,8 @@
 #ifndef POINCARE_SOLVER_ALGORITHMS_H
 #define POINCARE_SOLVER_ALGORITHMS_H
 
-#include <poincare/helpers.h>
-#include <poincare/solver.h>
+#include "helpers.h"
+#include "solver.h"
 
 namespace Poincare {
 

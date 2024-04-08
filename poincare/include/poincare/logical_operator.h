@@ -1,9 +1,9 @@
 #ifndef POINCARE_LOGICAL_OPERATOR_H
 #define POINCARE_LOGICAL_OPERATOR_H
 
-#include <poincare/old_expression.h>
-
 #include <array>
+
+#include "old_expression.h"
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_MATRIX_ROW_ECHELON_FORM_H
 #define POINCARE_MATRIX_ROW_ECHELON_FORM_H
 
-#include <poincare/matrix_echelon_form.h>
+#include "matrix_echelon_form.h"
 
 namespace Poincare {
 

@@ -76,6 +76,43 @@ uint8_t log2(T v) {
   return numberOfBitsIn<T>();
 }
 
+/* FIXME This could be the base class for Ion::Device::Regs::Register, but
+ * Register gets a little more specific with inline and volatile. This should be
+ * factorised still. */
+template <typename T>
+class BitField {
+ public:
+  constexpr BitField(T bits) : m_bits(bits) {}
+  constexpr BitField() : BitField(0) {}
+
+  operator T() const { return m_bits; }
+
+  constexpr T get() const { return m_bits; }
+
+  template <typename K>
+  T get(K high, K low) const {
+    return get(static_cast<size_t>(high), static_cast<size_t>(low));
+  }
+  constexpr T get(size_t high, size_t low) const {
+    return (m_bits >> low) & ((k_one << (high - low + 1)) - 1);
+  }
+
+  template <typename K>
+  constexpr BitField& set(K high, K low, T value) {
+    return set(static_cast<size_t>(high), static_cast<size_t>(low), value);
+  }
+  constexpr BitField& set(size_t high, size_t low, T value) {
+    T mask = ((k_one << (high - low + 1)) - 1) << low;
+    m_bits = (m_bits & ~mask) | ((value << low) & mask);
+    return *this;
+  }
+
+ protected:
+  constexpr static T k_one = static_cast<T>(1);
+
+  T m_bits;
+};
+
 }  // namespace BitHelper
 }  // namespace OMG
 

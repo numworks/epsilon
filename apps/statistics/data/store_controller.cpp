@@ -149,7 +149,7 @@ void StoreController::setClearPopUpContent() {
   int series = m_store->seriesAtColumn(selectedColumn());
   if (column == 0) {
     char tableName[k_tableNameSize];
-    FillSeriesName(series, tableName);
+    FillSeriesName(series, tableName, k_tableNameSize);
     m_confirmPopUpController.setMessageWithPlaceholders(
         I18n::Message::ClearTableConfirmation, tableName);
   } else {
@@ -160,10 +160,11 @@ void StoreController::setClearPopUpContent() {
   }
 }
 
-void StoreController::FillSeriesName(int series, char *buffer) {
+void StoreController::FillSeriesName(int series, char *buffer,
+                                     size_t bufferSize) {
   char tableIndex = static_cast<char>('1' + series);
-  Poincare::Print::CustomPrintf(buffer, k_tableNameSize, k_tableName,
-                                tableIndex, tableIndex);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, tableIndex,
+                                tableIndex);
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j,

@@ -16,6 +16,7 @@ jobs:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-llvm@latest
+      - run: LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown
       - name: Fetch PR branch
         uses: actions/checkout@v3
         with:
@@ -33,16 +34,15 @@ jobs:
       - name: Make ancestor
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
       - name: Run ancestor
-        run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
+        run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
       - name: Checkout to head
         run: git checkout ${{ github.event.pull_request.head.sha }}
       - name: Make head
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
       - name: Make again to be sure
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
-        # TODO this LD_LIBRARY_PATH is quite dirty
       - name: Run head
-        run: LD_LIBRARY_PATH=/home/usain/_work/_tool/llvm/15.0.6/x64/lib/x86_64-unknown-linux-gnu/ output/release/simulator/linux/test.bin --headless --limit-stack-usage | tee out
+        run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | tee out
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
       - name: Compare logs

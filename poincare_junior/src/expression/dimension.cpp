@@ -365,7 +365,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::PowMatrix:
     case Type::PowReal:
     case Type::Pow: {
-      Dimension dim = GetDimension(t->nextNode());
+      Dimension dim = GetDimension(t->child(0));
       if (dim.isUnit()) {
         float index = Approximation::To<float>(t->child(1));
         // TODO: Handle/forbid index > int8_t
@@ -392,13 +392,13 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Rref:
     case Type::Piecewise:
     case Type::Parenthesis:
-      return GetDimension(t->nextNode());
+      return GetDimension(t->child(0));
     case Type::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
     case Type::Dim:
-      return GetDimension(t->nextNode()).isMatrix() ? Matrix(1, 2) : Scalar();
+      return GetDimension(t->child(0)).isMatrix() ? Matrix(1, 2) : Scalar();
     case Type::Transpose: {
-      Dimension dim = GetDimension(t->nextNode());
+      Dimension dim = GetDimension(t->child(0));
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case Type::Identity: {

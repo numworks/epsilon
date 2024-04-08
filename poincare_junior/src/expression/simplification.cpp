@@ -180,7 +180,7 @@ bool Simplification::SimplifyDim(Tree* u) {
 }
 
 bool Simplification::SimplifyExp(Tree* u) {
-  Tree* child = u->nextNode();
+  Tree* child = u->child(0);
   if (child->isLn()) {
     /* TODO_PCJ: Add a ln(x) dependency on user-inputted ln only when x can be
      * null. */
@@ -209,7 +209,7 @@ bool Simplification::SimplifyExp(Tree* u) {
 
 bool Simplification::SimplifyAbs(Tree* u) {
   assert(u->isAbs());
-  Tree* child = u->nextNode();
+  Tree* child = u->child(0);
   if (child->isAbs()) {
     // ||x|| -> |x|
     child->removeNode();
@@ -492,7 +492,7 @@ bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
   bool zero = false;
   /* Recursively merge children.
    * Keep track of n, changed status and presence of zero child. */
-  SimplifyMultiplicationChildRec(multiplication->nextNode(), 0, &n, &changed,
+  SimplifyMultiplicationChildRec(multiplication->child(0), 0, &n, &changed,
                                  &zero);
   NAry::SetNumberOfChildren(multiplication, n);
   if (zero) {
@@ -633,7 +633,7 @@ bool Simplification::SimplifyAddition(Tree* u) {
   bool didSquashChildren = false;
   int n = u->numberOfChildren();
   int i = 0;
-  Tree* child = u->nextNode();
+  Tree* child = u->child(0);
   while (i < n) {
     if (child->isZero()) {
       child->removeTree();

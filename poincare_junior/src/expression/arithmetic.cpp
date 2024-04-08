@@ -380,7 +380,7 @@ Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
 }
 
 bool Arithmetic::BeautifyFactor(Tree* expr) {
-  Tree* child = expr->nextNode();
+  Tree* child = expr->child(0);
   if (!child->isRational()) {
     return false;
   }

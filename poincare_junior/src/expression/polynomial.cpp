@@ -147,7 +147,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
     // Both polA and polB are polynom(x)
     TreeRef a = polA;
     TreeRef b = polB;
-    Tree* variableB = b->nextNode();
+    Tree* variableB = b->child(0);
     TreeRef coefficientB = variableB->nextTree();
     size_t i = 0;
     uint8_t nbOfTermsB = NumberOfTerms(b);
@@ -324,7 +324,7 @@ bool PolynomialParser::ContainsVariable(const Tree* tree) {
                            Type::UserSymbol, Type::Pi, Type::EulerE,
                            Type::Var});
   }
-  const Tree* child = tree->nextNode();
+  const Tree* child = tree->child(0);
   for (int i = 0; i < numberOfChildren; i++) {
     if (ContainsVariable(child)) {
       return true;
@@ -348,7 +348,7 @@ Tree* PolynomialParser::GetVariables(const Tree* expression) {
   Type type = expression->type();
   // TODO: match
   if (type == Type::Pow) {
-    const Tree* base = expression->nextNode();
+    const Tree* base = expression->child(0);
     const Tree* exponent = base->nextTree();
     assert(exponent->isInteger());
     assert(!Integer::Is<uint8_t>(exponent) ||
@@ -408,7 +408,7 @@ Tree* PolynomialParser::Parse(Tree* expression, const Tree* variable) {
     for (size_t i = 0; i < expression->numberOfChildren(); i++) {
       /* We deplete the addition from its children as we scan it so we can
        * always take the first child. */
-      Tree* child = expression->nextNode();
+      Tree* child = expression->child(0);
       auto parsedChild = ParseMonomial(child, variable);
       polynomial = Polynomial::AddMonomial(polynomial, parsedChild);
     }
@@ -476,7 +476,7 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
   }
   Type type = expression.type();
   if (type == Type::Pow) {
-    Tree* base = expression.nextNode();
+    Tree* base = expression.child(0);
     Tree* exponent = base.nextTree();
     if (Integer::Is<uint8_t>(exponent) && Compare::AreEqual(base, variable)) {
       return Integer::Handler(exponent).to<uint8_t>();
@@ -528,7 +528,7 @@ std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expressi
   }
   Type type = expression.type();
   if (type == Type::Pow) {
-    Tree* base = expression.nextNode();
+    Tree* base = expression.child(0);
     Tree* exponent = base.nextTree();
     if (Comparison::AreEqual(exponent, variable) && Integer::Is<uint8_t>(exponent)) {
       assert(Integer::Handler(exponent).to<uint8_t>() > 1);

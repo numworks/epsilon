@@ -29,7 +29,7 @@ Tree* Vector::Dot(const Tree* u, const Tree* v) {
   assert(u->numberOfChildren() == v->numberOfChildren());
   int childrenNumber = v->numberOfChildren();
   Tree* sum = SharedTreeStack->push<Type::Add>(childrenNumber);
-  const Tree* childV = v->nextNode();
+  const Tree* childV = v->child(0);
   for (const Tree* childU : u->children()) {
     Tree* product = KMult.node<2>->cloneNode();
     childU->clone();

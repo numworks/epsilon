@@ -153,7 +153,7 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
   TreeRef den;
   if (SplitMultiplication(expr, num, den)) {
     expr->cloneNodeBeforeNode(KOpposite);
-    expr = expr->nextNode();
+    expr = expr->child(0);
   }
   if (!den->isOne()) {
     num->cloneNodeAtNode(KDiv);

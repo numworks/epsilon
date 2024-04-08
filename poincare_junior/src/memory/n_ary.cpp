@@ -80,7 +80,7 @@ bool NAry::Flatten(Tree* nary) {
 
 bool NAry::SquashIfUnary(Tree* nary) {
   if (nary->numberOfChildren() == 1) {
-    nary->moveTreeOverTree(nary->nextNode());
+    nary->moveTreeOverTree(nary->child(0));
     return true;
   }
   return false;
@@ -108,7 +108,7 @@ bool NAry::Sort(Tree* nary, Comparison::Order order) {
     return false;
   }
   if (numberOfChildren == 2) {
-    Tree* child0 = nary->nextNode();
+    Tree* child0 = nary->child(0);
     Tree* child1 = child0->nextTree();
     if (Comparison::Compare(child0, child1, order) > 0) {
       child0->moveTreeAtNode(child1);

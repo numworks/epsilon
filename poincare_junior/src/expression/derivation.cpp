@@ -103,7 +103,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
   }
 
   Tree* result = SharedTreeStack->push<Type::Add>(0);
-  const Tree* derivandChild = derivand->nextNode();
+  const Tree* derivandChild = derivand->child(0);
   /* D(f(g0(x),g1(x), ...)) = Sum(D(gi(x))*Di(f)(g0(x),g1(x), ...))
    * With D being the Derivative and Di being the partial derivative on
    * parameter i. */

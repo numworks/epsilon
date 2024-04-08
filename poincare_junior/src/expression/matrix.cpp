@@ -44,7 +44,7 @@ Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   int n = NumberOfRows(matrix);
   assert(n == NumberOfColumns(matrix));
   Tree* result = SharedTreeStack->push<Type::Add>(n);
-  const Tree* child = matrix->nextNode();
+  const Tree* child = matrix->child(0);
   for (int i = 0; i < n - 1; i++) {
     child->clone();
     for (int j = 0; j < n + 1; j++) {
@@ -71,7 +71,7 @@ Tree* Matrix::Transpose(const Tree* m) {
   }
   Tree* result = SharedTreeStack->push<Type::Matrix>(cols, rows);
   const Tree* rowsM[rows];
-  const Tree* child = m->nextNode();
+  const Tree* child = m->child(0);
   for (int row = 0; row < rows; row++) {
     rowsM[row] = child;
     for (int col = 0; col < cols; col++) {
@@ -91,8 +91,8 @@ Tree* Matrix::Addition(const Tree* u, const Tree* v, bool approximate) {
   // should be an assert after dimensional analysis
   assert(NumberOfRows(u) == NumberOfRows(v) &&
          NumberOfColumns(u) == NumberOfColumns(v));
-  const Tree* childU = u->nextNode();
-  const Tree* childV = v->nextNode();
+  const Tree* childU = u->child(0);
+  const Tree* childV = v->child(0);
   int n = u->numberOfChildren();
   Tree* result = u->cloneNode();
   for (int i = 0; i < n; i++) {
@@ -138,7 +138,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
   const Tree* rowsV[internal];
   {
     // Initialize row pointers
-    const Tree* childV = v->nextNode();
+    const Tree* childV = v->child(0);
     for (int k = 0; k < internal; k++) {
       rowsV[k] = childV;
       for (int c = 0; c < cols; c++) {
@@ -146,7 +146,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
       }
     }
   }
-  const Tree* childURow0 = u->nextNode();
+  const Tree* childURow0 = u->child(0);
   const Tree* childURowK;
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
@@ -177,7 +177,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
     for (int k = internal - 1; k > 0; k--) {
       rowsV[k] = rowsV[k - 1];
     }
-    rowsV[0] = v->nextNode();
+    rowsV[0] = v->child(0);
   }
   return result;
 }
@@ -357,7 +357,7 @@ Tree* Matrix::Inverse(const Tree* m, bool approximate) {
   /* Create the matrix (A|I) with A is the input matrix and I the dim
    * identity matrix */
   Tree* matrixAI = SharedTreeStack->push<Type::Matrix>(dim, dim * 2);
-  const Tree* childIJ = m->nextNode();
+  const Tree* childIJ = m->child(0);
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       childIJ->clone();
@@ -376,7 +376,7 @@ Tree* Matrix::Inverse(const Tree* m, bool approximate) {
     }
   }
   // Remove A from (A|I)
-  Tree* child = matrixAI->nextNode();
+  Tree* child = matrixAI->child(0);
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       child->removeTree();

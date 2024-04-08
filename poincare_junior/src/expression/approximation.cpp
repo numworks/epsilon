@@ -303,7 +303,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       // Until we make simplification compulsory, undef may be anywhere
       return NAN;
     case Type::Parenthesis:
-      return ToComplex<T>(node->nextNode());
+      return ToComplex<T>(node->child(0));
     case Type::ComplexI:
       return std::complex<T>(0, 1);
     case Type::Pi:
@@ -341,15 +341,15 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return MapAndReduce<T, T>(node, FloatLCM<T>,
                                 PositiveIntegerApproximation<T>);
     case Type::Sqrt:
-      return std::sqrt(ToComplex<T>(node->nextNode()));
+      return std::sqrt(ToComplex<T>(node->child(0)));
     case Type::Root:
-      return std::pow(ToComplex<T>(node->nextNode()),
+      return std::pow(ToComplex<T>(node->child(0)),
                       static_cast<T>(1) / ToComplex<T>(node->child(1)));
     case Type::Exp:
-      return std::exp(ToComplex<T>(node->nextNode()));
+      return std::exp(ToComplex<T>(node->child(0)));
     case Type::Log:
     case Type::Ln: {
-      std::complex<T> c = ToComplex<T>(node->nextNode());
+      std::complex<T> c = ToComplex<T>(node->child(0));
       /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut.
        * We followed the convention chosen by the lib c++ of llvm on ]-inf+0i,
        * 0+0i] (warning: log takes the other side of the cut values on ]-inf-0i,
@@ -361,21 +361,21 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
                                      : std::log(c);
     }
     case Type::Abs:
-      return std::abs(ToComplex<T>(node->nextNode()));
+      return std::abs(ToComplex<T>(node->child(0)));
     case Type::Inf:
       return INFINITY;
     case Type::Conj:
-      return std::conj(ToComplex<T>(node->nextNode()));
+      return std::conj(ToComplex<T>(node->child(0)));
     case Type::Opposite:
-      return FloatMultiplication<T>(-1, ToComplex<T>(node->nextNode()));
+      return FloatMultiplication<T>(-1, ToComplex<T>(node->child(0)));
     case Type::Re: {
       /* TODO_PCJ: Complex NAN should be used in most of the code. Make sure a
        * NAN result cannot be lost. */
-      std::complex<T> c = ToComplex<T>(node->nextNode());
+      std::complex<T> c = ToComplex<T>(node->child(0));
       return std::isnan(c.imag()) ? NAN : c.real();
     }
     case Type::Im: {
-      std::complex<T> c = ToComplex<T>(node->nextNode());
+      std::complex<T> c = ToComplex<T>(node->child(0));
       return std::isnan(c.real()) ? NAN : c.imag();
     }
 
@@ -392,15 +392,14 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::ASec:
     case Type::ACsc:
     case Type::ACot:
-      return TrigonometricToComplex(node->type(),
-                                    ToComplex<T>(node->nextNode()));
+      return TrigonometricToComplex(node->type(), ToComplex<T>(node->child(0)));
     case Type::SinH:
     case Type::CosH:
     case Type::TanH:
     case Type::ArSinH:
     case Type::ArCosH:
     case Type::ArTanH:
-      return HyperbolicToComplex(node->type(), ToComplex<T>(node->nextNode()));
+      return HyperbolicToComplex(node->type(), ToComplex<T>(node->child(0)));
     case Type::Var: {
       // Local variable
       int index = Variables::Id(node);

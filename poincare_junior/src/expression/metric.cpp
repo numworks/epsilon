@@ -12,7 +12,7 @@ int Metric::GetMetric(const Tree* u) {
     case Type::Mult: {
       // Ignore (-1) in multiplications
       PatternMatching::Context ctx;
-      if (u->nextNode()->isMinusOne()) {
+      if (u->child(0)->isMinusOne()) {
         result -= GetMetric(Type::MinusOne);
         if (u->numberOfChildren() == 2) {
           result -= GetMetric(Type::Mult);
@@ -35,7 +35,7 @@ int Metric::GetMetric(const Tree* u) {
     case Type::Trig:
     case Type::ATrig:
       // Ignore second child
-      return result + GetMetric(u->nextNode());
+      return result + GetMetric(u->child(0));
     default:
       break;
   }

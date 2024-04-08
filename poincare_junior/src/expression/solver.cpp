@@ -151,7 +151,7 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
     matrix->removeTree();
     return nullptr;
   }
-  const Tree* coefficient = matrix->nextNode();
+  const Tree* coefficient = matrix->child(0);
   for (uint8_t row = 0; row < rows; row++) {
     bool allCoefficientsNull = true;
     for (uint8_t col = 0; col < n; col++) {
@@ -174,7 +174,7 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
      * solutions, and after canonization their values are the first n values on
      * the last column. */
     uint8_t variableId = 0;
-    Tree* child = matrix->nextNode();
+    Tree* child = matrix->child(0);
     for (uint8_t row = 0; row < rows; row++) {
       for (uint8_t col = 0; col < cols; col++) {
         if (row < n && col == cols - 1) {

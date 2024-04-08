@@ -158,7 +158,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   bool realMode = projectionContext->m_complexFormat == ComplexFormat::Real;
   if (e->isPow()) {
     if (PatternMatching::MatchReplace(e, KPow(e_e, KA), KExp(KA))) {
-    } else if (Dimension::GetDimension(e->nextNode()).isMatrix()) {
+    } else if (Dimension::GetDimension(e->child(0)).isMatrix()) {
       e->cloneNodeOverNode(KPowMatrix);
     } else if (realMode) {
       e->cloneNodeOverNode(KPowReal);

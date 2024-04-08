@@ -13,7 +13,7 @@
 namespace PoincareJ {
 
 bool Logarithm::SimplifyLn(Tree* u) {
-  Tree* child = u->nextNode();
+  Tree* child = u->child(0);
   if (child->isExp()) {
     // ln(exp(x)) -> x
     u->removeNode();

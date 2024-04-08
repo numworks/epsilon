@@ -290,7 +290,7 @@ void Layoutter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
 void Layoutter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   Type type = expression->type();
   /* Once first child has been converted, this will point to second child. */
-  expression = expression->nextNode();
+  expression = expression->child(0);
   TreeRef createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (m_linearMode) {
@@ -790,7 +790,7 @@ bool Layoutter::requireSeparators(const Tree* expr) {
 
 void Layoutter::StripSeparators(Tree* rack) {
   assert(rack->isRackLayout());
-  Tree* child = rack->nextNode();
+  Tree* child = rack->child(0);
   int n = rack->numberOfChildren();
   int i = 0;
   while (i < n) {

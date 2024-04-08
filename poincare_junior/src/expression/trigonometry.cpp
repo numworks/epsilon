@@ -1,11 +1,12 @@
 #include "trigonometry.h"
 
-#include <poincare_junior/src/expression/comparison.h>
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/number.h>
-#include <poincare_junior/src/expression/rational.h>
-#include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
+
+#include "comparison.h"
+#include "k_tree.h"
+#include "number.h"
+#include "rational.h"
+#include "simplification.h"
 
 namespace PoincareJ {
 

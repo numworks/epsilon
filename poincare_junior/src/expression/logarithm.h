@@ -1,8 +1,9 @@
 #ifndef POINCARE_EXPRESSION_LOGARITHM_H
 #define POINCARE_EXPRESSION_LOGARITHM_H
 
-#include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/memory/tree_ref.h>
+
+#include "integer.h"
 
 namespace PoincareJ {
 

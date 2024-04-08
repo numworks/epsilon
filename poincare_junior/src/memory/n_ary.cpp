@@ -4,8 +4,9 @@
 #include <omgpj/list.h>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/memory/node_iterator.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+
+#include "node_iterator.h"
+#include "tree_ref.h"
 
 namespace PoincareJ {
 

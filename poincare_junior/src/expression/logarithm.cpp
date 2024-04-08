@@ -1,14 +1,15 @@
 #include "logarithm.h"
 
 #include <limits.h>
-#include <poincare_junior/src/expression/arithmetic.h>
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/number.h>
-#include <poincare_junior/src/expression/rational.h>
-#include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
+
+#include "arithmetic.h"
+#include "k_tree.h"
+#include "number.h"
+#include "rational.h"
+#include "simplification.h"
 
 namespace PoincareJ {
 

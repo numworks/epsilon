@@ -31,7 +31,7 @@ enum class Type : uint8_t {
 // Add all the types to the enum
 #define RANGE(...)
 #define NODE3(F, N, S) SCOPED_NODE(F),
-#include <poincare_junior/src/memory/types.h>
+#include "types.h"
 #undef NODE3
 #undef RANGE
 };
@@ -63,7 +63,7 @@ class TypeBlock : public Block {
   static constexpr const char* names[] = {
 #define RANGE(...)
 #define NODE3(F, N, S) #F,
-#include <poincare_junior/src/memory/types.h>
+#include "types.h"
 #undef NODE3
 #undef RANGE
   };
@@ -82,7 +82,7 @@ class TypeBlock : public Block {
 
 #define NODE3(F, N, S) RANGE1(SCOPED_NODE(F))
 
-#include <poincare_junior/src/memory/types.h>
+#include "types.h"
 #undef NODE3
 #undef RANGE1
 #undef RANGE
@@ -137,7 +137,7 @@ class TypeBlock : public Block {
 #define NODE3(F, N, S)       \
   case Type::SCOPED_NODE(F): \
     return DefaultNumberOfMetaBlocks(N) + S;
-#include <poincare_junior/src/memory/types.h>
+#include "types.h"
       default:
         return 1;
     }
@@ -205,7 +205,7 @@ class TypeBlock : public Block {
 #define NODE3(F, N, S)       \
   case Type::SCOPED_NODE(F): \
     return N;
-#include <poincare_junior/src/memory/types.h>
+#include "types.h"
 #undef NODE3
 #undef RANGE
       default:

@@ -1,9 +1,9 @@
 #include "advanced_simplification.h"
 
 #include <ion.h>
-#include <poincare_junior/src/expression/dependency.h>
-#include <poincare_junior/src/expression/metric.h>
-#include <poincare_junior/src/expression/simplification.h>
+#include "dependency.h"
+#include "metric.h"
+#include "simplification.h"
 #include <poincare_junior/src/memory/pattern_matching.h>
 
 #include "k_tree.h"

@@ -1,8 +1,9 @@
 #if 0
 #include "metric.h"
 
-#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
+
+#include "k_tree.h"
 
 namespace PoincareJ {
 

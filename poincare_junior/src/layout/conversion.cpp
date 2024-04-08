@@ -1,15 +1,15 @@
 #include "conversion.h"
 
-#include <poincare_junior/src/layout/grid.h>
-#include <poincare_junior/src/layout/indices.h>
-#include <poincare_junior/src/layout/layoutter.h>
-#include <poincare_junior/src/layout/parser.h>
-#include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare_junior/src/memory/type_block.h>
 #include <poincare_layouts.h>
 
-#include "poincare_junior/src/memory/type_block.h"
+#include "grid.h"
+#include "indices.h"
+#include "layoutter.h"
+#include "parser.h"
+#include "parsing/rack_parser.h"
 
 namespace PoincareJ {
 

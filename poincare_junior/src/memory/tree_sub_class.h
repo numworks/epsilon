@@ -1,9 +1,9 @@
 #ifndef POINCARE_MEMORY_TREE_SUB_CLASS_H
 #define POINCARE_MEMORY_TREE_SUB_CLASS_H
 
-#include <poincare_junior/src/memory/tree.h>
-
 #include <type_traits>
+
+#include "tree.h"
 
 namespace PoincareJ {
 

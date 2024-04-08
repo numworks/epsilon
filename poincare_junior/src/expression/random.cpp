@@ -2,11 +2,11 @@
 
 #include <math.h>
 #include <poincare/random.h>
-#include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/tree_stack.h>
 
+#include "approximation.h"
+#include "dimension.h"
 #include "float.h"
 #include "k_tree.h"
 

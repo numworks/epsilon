@@ -1,12 +1,11 @@
 #ifndef POINCARE_MEMORY_PATTERN_MATCHING_H
 #define POINCARE_MEMORY_PATTERN_MATCHING_H
 
-#include <poincare_junior/src/memory/placeholder.h>
-
 #include <array>
 
 #include "k_tree.h"
 #include "node_iterator.h"
+#include "placeholder.h"
 #include "tree.h"
 
 namespace PoincareJ {

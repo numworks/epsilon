@@ -21,7 +21,8 @@
 #include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/serialize.h>
-#include <poincare_junior/src/memory/placeholder.h>
+
+#include "placeholder.h"
 #endif
 
 namespace PoincareJ {

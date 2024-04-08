@@ -1,11 +1,11 @@
 #include "app_helpers.h"
 
 #include <poincare/junior_layout.h>
-#include <poincare_junior/src/layout/k_tree.h>
 #include <poincare_junior/src/memory/n_ary.h>
 
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"
+#include "k_tree.h"
 
 namespace PoincareJ {
 namespace AppHelpers {

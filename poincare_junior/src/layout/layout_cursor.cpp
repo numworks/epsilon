@@ -1,19 +1,20 @@
 #include "layout_cursor.h"
 
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare_junior/src/layout/autocompleted_pair.h>
-#include <poincare_junior/src/layout/code_point_layout.h>
-#include <poincare_junior/src/layout/grid.h>
-#include <poincare_junior/src/layout/indices.h>
-#include <poincare_junior/src/layout/input_beautification.h>
-#include <poincare_junior/src/layout/k_tree.h>
-#include <poincare_junior/src/layout/layout_cursor.h>
-#include <poincare_junior/src/layout/rack_layout.h>
-#include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/tree_ref.h>
 
 #include <algorithm>
+
+#include "autocompleted_pair.h"
+#include "code_point_layout.h"
+#include "grid.h"
+#include "indices.h"
+#include "input_beautification.h"
+#include "k_tree.h"
+#include "layout_cursor.h"
+#include "rack_layout.h"
+#include "render.h"
 
 namespace PoincareJ {
 

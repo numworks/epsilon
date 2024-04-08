@@ -1,17 +1,18 @@
 #include "solver.h"
 
-#include <poincare_junior/src/expression/advanced_simplification.h>
-#include <poincare_junior/src/expression/beautification.h>
-#include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/polynomial.h>
-#include <poincare_junior/src/expression/set.h>
-#include <poincare_junior/src/expression/sign.h>
-#include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/expression/symbol.h>
-#include <poincare_junior/src/expression/variables.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/storage_context.h>
 #include <poincare_junior/src/memory/tree_ref.h>
+
+#include "advanced_simplification.h"
+#include "beautification.h"
+#include "matrix.h"
+#include "polynomial.h"
+#include "set.h"
+#include "sign.h"
+#include "simplification.h"
+#include "symbol.h"
+#include "variables.h"
 
 namespace PoincareJ {
 

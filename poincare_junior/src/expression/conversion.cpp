@@ -1,13 +1,6 @@
 #include "conversion.h"
 
 #include <poincare_expressions.h>
-#include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/expression/float.h>
-#include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/rational.h>
-#include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
@@ -15,8 +8,15 @@
 #include <poincare_junior/src/layout/serialize.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare_junior/src/memory/type_block.h>
 
-#include "poincare_junior/src/memory/type_block.h"
+#include "builtin.h"
+#include "float.h"
+#include "integer.h"
+#include "matrix.h"
+#include "rational.h"
+#include "simplification.h"
+#include "symbol.h"
 
 namespace PoincareJ {
 

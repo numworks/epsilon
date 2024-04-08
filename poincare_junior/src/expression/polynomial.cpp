@@ -1,13 +1,13 @@
 #include "polynomial.h"
 
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/number.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/value_block.h>
 
 #include "comparison.h"
+#include "k_tree.h"
+#include "number.h"
 #include "rational.h"
 #include "set.h"
 #include "simplification.h"

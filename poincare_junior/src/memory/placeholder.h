@@ -3,8 +3,9 @@
 
 #include <omg/bit_helper.h>
 #include <omgpj/bit.h>
-#include <poincare_junior/src/memory/tree.h>
-#include <poincare_junior/src/memory/value_block.h>
+
+#include "tree.h"
+#include "value_block.h"
 
 namespace PoincareJ {
 

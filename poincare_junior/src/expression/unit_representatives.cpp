@@ -1,6 +1,6 @@
 #include "unit_representatives.h"
 
-#include "poincare_junior/src/expression/unit.h"
+#include "unit.h"
 
 namespace PoincareJ {
 namespace Units {

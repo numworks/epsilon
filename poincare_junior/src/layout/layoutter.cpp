@@ -12,10 +12,10 @@
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/expression/variables.h>
-#include <poincare_junior/src/layout/grid.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/placeholder.h>
 
+#include "grid.h"
 #include "k_tree.h"
 #include "multiplication_symbol.h"
 

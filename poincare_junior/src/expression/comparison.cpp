@@ -1,12 +1,12 @@
 #include "comparison.h"
 
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/src/memory/type_block.h>
 
 #include "approximation.h"
 #include "beautification.h"
 #include "dimension.h"
 #include "k_tree.h"
-#include "poincare_junior/src/memory/type_block.h"
 #include "polynomial.h"
 #include "symbol.h"
 #include "variables.h"

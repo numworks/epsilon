@@ -1,9 +1,10 @@
 #include "set.h"
 
-#include <poincare_junior/src/expression/comparison.h>
-#include <poincare_junior/src/expression/k_tree.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/node_iterator.h>
+
+#include "comparison.h"
+#include "k_tree.h"
 
 namespace PoincareJ {
 

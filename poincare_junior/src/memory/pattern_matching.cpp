@@ -3,7 +3,7 @@
 #include <poincare_junior/src/expression/simplification.h>
 
 #include "n_ary.h"
-#include "poincare_junior/src/memory/type_block.h"
+#include "type_block.h"
 
 using namespace PoincareJ;
 

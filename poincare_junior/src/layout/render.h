@@ -5,9 +5,9 @@
 #include <kandinsky/coordinate.h>
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
-#include <poincare_junior/src/layout/layout_selection.h>
 #include <poincare_junior/src/memory/tree.h>
 
+#include "layout_selection.h"
 #include "rack.h"
 
 namespace PoincareJ {

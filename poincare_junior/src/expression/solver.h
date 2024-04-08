@@ -1,8 +1,9 @@
 #ifndef POINCARE_EXPRESSION_SOLVER_H
 #define POINCARE_EXPRESSION_SOLVER_H
 
-#include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/memory/tree.h>
+
+#include "symbol.h"
 
 namespace PoincareJ {
 

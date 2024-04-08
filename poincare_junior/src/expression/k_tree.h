@@ -2,11 +2,12 @@
 #define POINCARE_EXPRESSION_K_TREE_H
 
 #include <omgpj/arithmetic.h>
-#include <poincare_junior/src/expression/parametric.h>
-#include <poincare_junior/src/expression/sign.h>
 #include <poincare_junior/src/memory/k_tree.h>
 
 #include <bit>
+
+#include "parametric.h"
+#include "sign.h"
 
 namespace PoincareJ {
 namespace KTrees {

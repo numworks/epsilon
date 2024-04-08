@@ -2,10 +2,10 @@
 #define POINCARE_EXPRESSION_PROJECTION_H
 
 #include <poincare/context.h>
-#include <poincare_junior/src/expression/dimension.h>
 #include <poincare_junior/src/memory/tree_ref.h>
 
 #include "context.h"
+#include "dimension.h"
 
 namespace PoincareJ {
 

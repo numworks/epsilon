@@ -53,9 +53,9 @@ QUIZ_CASE(pcj_integer_properties) {
   IntegerHandler a = CreateIntegerHandler("254");
   IntegerHandler b = CreateIntegerHandler("-13");
 
-  assert(a.strictSign() == StrictSign::Positive);
-  assert(b.strictSign() == StrictSign::Negative);
-  assert(zero.strictSign() == StrictSign::Null);
+  assert(a.strictSign() == OMG::StrictSign::Positive);
+  assert(b.strictSign() == OMG::StrictSign::Negative);
+  assert(zero.strictSign() == OMG::StrictSign::Null);
   assert(!a.isZero() && zero.isZero());
   assert(!a.isOne() && one.isOne());
   assert(!a.isMinusOne() && minusOne.isMinusOne());
@@ -106,7 +106,7 @@ QUIZ_CASE(pcj_integer_compare) {
   assert_equal("0b1011", "11");
 }
 
-static void assert_set_sign_to(const Tree* i, NonStrictSign sign,
+static void assert_set_sign_to(const Tree* i, OMG::NonStrictSign sign,
                                const Tree* r) {
   Tree* t = i->clone();
   Integer::SetSign(t, sign);
@@ -115,10 +115,10 @@ static void assert_set_sign_to(const Tree* i, NonStrictSign sign,
 }
 
 QUIZ_CASE(pcj_integer_set_sign) {
-  assert_set_sign_to(0_e, NonStrictSign::Negative, 0_e);
-  assert_set_sign_to(0_e, NonStrictSign::Positive, 0_e);
-  assert_set_sign_to(2_e, NonStrictSign::Negative, -2_e);
-  assert_set_sign_to(-3_e, NonStrictSign::Positive, 3_e);
+  assert_set_sign_to(0_e, OMG::NonStrictSign::Negative, 0_e);
+  assert_set_sign_to(0_e, OMG::NonStrictSign::Positive, 0_e);
+  assert_set_sign_to(2_e, OMG::NonStrictSign::Negative, -2_e);
+  assert_set_sign_to(-3_e, OMG::NonStrictSign::Positive, 3_e);
 }
 
 static void assert_add_to(const char* a, const char* b, const char* c) {

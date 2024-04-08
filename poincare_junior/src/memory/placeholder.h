@@ -2,7 +2,6 @@
 #define POINCARE_MEMORY_PLACEHOLDER_H
 
 #include <omg/bit_helper.h>
-#include <omgpj/bit.h>
 
 #include "tree.h"
 #include "value_block.h"
@@ -54,10 +53,11 @@ class Placeholder {
     return placeholder->nodeValue(0);
   }
   constexpr static Tag ValueToTag(uint8_t value) {
-    return static_cast<Tag>(Bit::getBitRange(value, k_bitsForTag - 1, 0));
+    return static_cast<Tag>(
+        OMG::BitHelper::getBitRange(value, k_bitsForTag - 1, 0));
   }
   constexpr static Filter ValueToFilter(uint8_t value) {
-    return static_cast<Filter>(Bit::getBitRange(
+    return static_cast<Filter>(OMG::BitHelper::getBitRange(
         value, k_bitsForTag + k_bitsForFilter - 1, k_bitsForTag));
   }
 };

@@ -1,8 +1,10 @@
-#ifndef OMGPJ_TROOLEAN_H
-#define OMGPJ_TROOLEAN_H
+#ifndef OMG_TROOLEAN_H
+#define OMG_TROOLEAN_H
 
 #include <assert.h>
 #include <stdint.h>
+
+namespace OMG {
 
 enum class Troolean : int8_t { False = -1, Unknown = 0, True = 1 };
 
@@ -68,5 +70,7 @@ inline Troolean TrinaryOr(Troolean b1, Troolean b2) {
 inline Troolean BinaryToTrinaryBool(bool b) {
   return b ? Troolean::True : Troolean::False;
 }
+
+}  // namespace OMG
 
 #endif

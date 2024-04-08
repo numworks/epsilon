@@ -1,4 +1,6 @@
-#include <omgpj/list.h>
+#include <omg/list.h>
+
+namespace OMG::List {
 
 void List::Sort(Swap swap, Compare compare, void* context,
                 int numberOfElements) {
@@ -26,3 +28,5 @@ int List::ExtremumIndex(Compare compare, void* context, int numberOfElements,
   }
   return returnIndex;
 }
+
+}  // namespace OMG::List

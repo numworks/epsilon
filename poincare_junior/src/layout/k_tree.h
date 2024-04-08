@@ -2,7 +2,7 @@
 #define POINCARE_LAYOUT_K_TREE_H
 
 #include <ion/unicode/code_point.h>
-#include <omgpj/bit.h>
+#include <omg/bit_helper.h>
 #include <poincare_junior/src/memory/k_tree.h>
 
 namespace PoincareJ {
@@ -51,17 +51,21 @@ struct KCodePointL<cp> : KTree<Type::AsciiCodePointLayout, cp> {};
 template <uint32_t cp>
   requires(cp >= 128)
 struct KCodePointL<cp>
-    : KTree<Type::UnicodeCodePointLayout, Bit::getByteAtIndex(cp, 0),
-            Bit::getByteAtIndex(cp, 1), Bit::getByteAtIndex(cp, 2),
-            Bit::getByteAtIndex(cp, 3)> {};
+    : KTree<Type::UnicodeCodePointLayout, OMG::BitHelper::getByteAtIndex(cp, 0),
+            OMG::BitHelper::getByteAtIndex(cp, 1),
+            OMG::BitHelper::getByteAtIndex(cp, 2),
+            OMG::BitHelper::getByteAtIndex(cp, 3)> {};
 
 template <uint32_t cp, uint32_t cc>
 using KCombinedCodePointL =
-    KTree<Type::CombinedCodePointsLayout, Bit::getByteAtIndex(cp, 0),
-          Bit::getByteAtIndex(cp, 1), Bit::getByteAtIndex(cp, 2),
-          Bit::getByteAtIndex(cp, 3), Bit::getByteAtIndex(cc, 0),
-          Bit::getByteAtIndex(cc, 1), Bit::getByteAtIndex(cc, 2),
-          Bit::getByteAtIndex(cc, 3)>;
+    KTree<Type::CombinedCodePointsLayout, OMG::BitHelper::getByteAtIndex(cp, 0),
+          OMG::BitHelper::getByteAtIndex(cp, 1),
+          OMG::BitHelper::getByteAtIndex(cp, 2),
+          OMG::BitHelper::getByteAtIndex(cp, 3),
+          OMG::BitHelper::getByteAtIndex(cc, 0),
+          OMG::BitHelper::getByteAtIndex(cc, 1),
+          OMG::BitHelper::getByteAtIndex(cc, 2),
+          OMG::BitHelper::getByteAtIndex(cc, 3)>;
 
 template <String S,
           typename IS =

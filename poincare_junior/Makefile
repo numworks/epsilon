@@ -3,10 +3,6 @@ DEBUG ?= 1
 DEVELOPMENT ?= 1
 ARCH = arm64
 
-include poincare_junior/omgpj/Makefile
-
-poincare_junior_src += $(omgpj_src)
-
 poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/advanced_simplification.cpp \
   expression/algebraic.cpp \

@@ -1,7 +1,7 @@
-#ifndef OMGPJ_DECONSTIFIER_H
-#define OMGPJ_DECONSTIFIER_H
+#ifndef OMG_DECONSTIFIER_H
+#define OMG_DECONSTIFIER_H
 
-namespace Utils {
+namespace OMG::Utils {
 
 // TODO Ensure that we don't emit multiple functions
 
@@ -25,6 +25,6 @@ constexpr inline T DeconstifyObj(ConstActionByObject<T, Args...> action,
   return T((object->*action)(args...));
 }
 
-}  // namespace Utils
+}  // namespace OMG::Utils
 
 #endif

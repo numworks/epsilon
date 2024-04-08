@@ -17,7 +17,7 @@ void Decimal::Project(Tree* tree) {
   Tree* mult = SharedTreeStack->push<Type::Mult>(1);
   SharedTreeStack->push(Type::Pow);
   SharedTreeStack->push<Type::IntegerShort, int8_t>(10);
-  IntegerHandler(DecimalOffset(tree), NonStrictSign::Negative)
+  IntegerHandler(DecimalOffset(tree), OMG::NonStrictSign::Negative)
       .pushOnTreeStack();
   tree->moveTreeOverNode(mult);
   NAry::SetNumberOfChildren(tree, 2);

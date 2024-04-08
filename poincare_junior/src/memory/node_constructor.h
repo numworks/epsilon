@@ -164,9 +164,9 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
     Type::AsciiCodePointLayout>(Block* block, size_t blockIndex,
                                 CodePoint value) {
   assert(value < 128);
-  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            Type::AsciiCodePointLayout,
-                                            Bit::getByteAtIndex(value, 0));
+  return CreateBlockAtIndexForNthBlocksNode(
+      block, blockIndex, Type::AsciiCodePointLayout,
+      OMG::BitHelper::getByteAtIndex(value, 0));
 }
 
 template <>
@@ -177,8 +177,10 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
   // assert(value >= 128);
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, Type::UnicodeCodePointLayout,
-      Bit::getByteAtIndex(value, 0), Bit::getByteAtIndex(value, 1),
-      Bit::getByteAtIndex(value, 2), Bit::getByteAtIndex(value, 3));
+      OMG::BitHelper::getByteAtIndex(value, 0),
+      OMG::BitHelper::getByteAtIndex(value, 1),
+      OMG::BitHelper::getByteAtIndex(value, 2),
+      OMG::BitHelper::getByteAtIndex(value, 3));
 }
 
 template <>
@@ -188,10 +190,14 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   return CreateBlockAtIndexForNthBlocksNode(
       block, blockIndex, Type::CombinedCodePointsLayout,
-      Bit::getByteAtIndex(first, 0), Bit::getByteAtIndex(first, 1),
-      Bit::getByteAtIndex(first, 2), Bit::getByteAtIndex(first, 3),
-      Bit::getByteAtIndex(second, 0), Bit::getByteAtIndex(second, 1),
-      Bit::getByteAtIndex(second, 2), Bit::getByteAtIndex(second, 3));
+      OMG::BitHelper::getByteAtIndex(first, 0),
+      OMG::BitHelper::getByteAtIndex(first, 1),
+      OMG::BitHelper::getByteAtIndex(first, 2),
+      OMG::BitHelper::getByteAtIndex(first, 3),
+      OMG::BitHelper::getByteAtIndex(second, 0),
+      OMG::BitHelper::getByteAtIndex(second, 1),
+      OMG::BitHelper::getByteAtIndex(second, 2),
+      OMG::BitHelper::getByteAtIndex(second, 3));
 }
 
 template <>

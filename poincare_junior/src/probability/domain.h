@@ -1,7 +1,7 @@
 #ifndef POINCARE_PROBABILITY_DOMAIN_H
 #define POINCARE_PROBABILITY_DOMAIN_H
 
-#include <omgpj/troolean.h>
+#include <omg/troolean.h>
 #include <poincare_junior/src/memory/tree.h>
 #include <poincare_junior/src/numeric/float.h>
 #include <stdint.h>
@@ -66,21 +66,21 @@ class Domain {
     return true;
   }
 
-  static Troolean ExpressionIsIn(const Tree* expression, Type domain,
-                                 Context* context);
+  static OMG::Troolean ExpressionIsIn(const Tree* expression, Type domain,
+                                      Context* context);
 
   static bool ExpressionIsIn(bool* result, const Tree* expression, Type domain,
                              Context* context) {
     assert(result != nullptr);
-    Troolean expressionsIsIn = ExpressionIsIn(expression, domain, context);
+    OMG::Troolean expressionsIsIn = ExpressionIsIn(expression, domain, context);
     switch (expressionsIsIn) {
-      case Troolean::Unknown:
+      case OMG::Troolean::Unknown:
         return false;
-      case Troolean::True:
+      case OMG::Troolean::True:
         *result = true;
         return true;
       default:
-        assert(expressionsIsIn == Troolean::False);
+        assert(expressionsIsIn == OMG::Troolean::False);
         *result = false;
         return true;
     }
@@ -90,17 +90,17 @@ class Domain {
                                Type domain1, const Tree* expression2,
                                Type domain2, Context* context) {
     assert(result != nullptr);
-    Troolean expressionsAreIn =
+    OMG::Troolean expressionsAreIn =
         TrinaryAnd(ExpressionIsIn(expression1, domain1, context),
                    ExpressionIsIn(expression2, domain2, context));
     switch (expressionsAreIn) {
-      case Troolean::Unknown:
+      case OMG::Troolean::Unknown:
         return false;
-      case Troolean::True:
+      case OMG::Troolean::True:
         *result = true;
         return true;
       default:
-        assert(expressionsAreIn == Troolean::False);
+        assert(expressionsAreIn == OMG::Troolean::False);
         *result = false;
         return true;
     }

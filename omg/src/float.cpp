@@ -1,8 +1,10 @@
-#include <omgpj/float.h>
+#include <omg/float.h>
 
 #include <cmath>
 
-bool OMG::Float::IsGreater(float xI, float xJ, bool nanIsGreatest) {
+namespace OMG::Float {
+
+bool Float::IsGreater(float xI, float xJ, bool nanIsGreatest) {
   if (std::isnan(xI)) {
     return nanIsGreatest;
   }
@@ -11,3 +13,5 @@ bool OMG::Float::IsGreater(float xI, float xJ, bool nanIsGreatest) {
   }
   return xI > xJ;
 }
+
+}  // namespace OMG::Float

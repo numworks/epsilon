@@ -1,4 +1,6 @@
-#include <omgpj/arithmetic.h>
+#include <omg/arithmetic.h>
+
+namespace OMG::Arithmetic {
 
 size_t Arithmetic::Gcd(size_t a, size_t b) {
   int i = a;
@@ -17,3 +19,5 @@ size_t Arithmetic::Gcd(size_t a, size_t b) {
     }
   } while (true);
 }
+
+}  // namespace OMG::Arithmetic

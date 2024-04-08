@@ -1,10 +1,10 @@
-#ifndef OMGPJ_ARITHMETIC_H
-#define OMGPJ_ARITHMETIC_H
+#ifndef OMG_ARITHMETIC_H
+#define OMG_ARITHMETIC_H
 
 #include <omg/bit_helper.h>
 #include <stddef.h>
 
-namespace Arithmetic {
+namespace OMG::Arithmetic {
 
 size_t Gcd(size_t a, size_t b);
 
@@ -41,6 +41,6 @@ constexpr size_t NumberOfDigits(uint32_t value) {
       OMG::BitHelper::k_numberOfBitsInByte);
 }
 
-}  // namespace Arithmetic
+}  // namespace OMG::Arithmetic
 
 #endif

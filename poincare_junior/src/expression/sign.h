@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_SIGN_H
 
 #include <assert.h>
-#include <omgpj/bit.h>
+#include <omg/bit_helper.h>
 #include <stdint.h>
 
 namespace PoincareJ {
@@ -25,8 +25,10 @@ class Sign {
     assert(isValid());
   }
   constexpr Sign(uint8_t value)
-      : Sign(Bit::getBitRange(value, 0, 0), Bit::getBitRange(value, 1, 1),
-             Bit::getBitRange(value, 2, 2), Bit::getBitRange(value, 3, 3)) {}
+      : Sign(OMG::BitHelper::getBitRange(value, 0, 0),
+             OMG::BitHelper::getBitRange(value, 1, 1),
+             OMG::BitHelper::getBitRange(value, 2, 2),
+             OMG::BitHelper::getBitRange(value, 3, 3)) {}
 
   constexpr bool canBeNull() const { return m_canBeNull; }
   constexpr bool canBePositive() const { return m_canBePositive; }
@@ -102,8 +104,8 @@ class ComplexSign {
   constexpr ComplexSign(Sign realSign, Sign imagSign)
       : m_realValue(realSign.getValue()), m_imagValue(imagSign.getValue()) {}
   constexpr ComplexSign(uint8_t value)
-      : m_realValue(Bit::getBitRange(value, 3, 0)),
-        m_imagValue(Bit::getBitRange(value, 7, 4)) {}
+      : m_realValue(OMG::BitHelper::getBitRange(value, 3, 0)),
+        m_imagValue(OMG::BitHelper::getBitRange(value, 7, 4)) {}
 
   constexpr uint8_t getValue() const { return m_realValue | m_imagValue << 4; }
 

@@ -1,7 +1,7 @@
 #include "tree_stack.h"
 
 #include <assert.h>
-#include <omgpj.h>
+#include <omg/memory.h>
 #include <poincare/junior_layout.h>
 #include <poincare_junior/include/poincare.h>
 
@@ -165,7 +165,7 @@ void TreeStack::moveBlocks(Block* destination, Block* source,
   uint8_t* src = reinterpret_cast<uint8_t*>(source);
   uint8_t* dst = reinterpret_cast<uint8_t*>(destination);
   size_t len = numberOfBlocks * sizeof(Block);
-  Memory::Rotate(dst, src, len);
+  OMG::Memory::Rotate(dst, src, len);
   if (at) {
     m_referenceTable.updateNodes(
         [](uint16_t* offset, Block* block, const Block* dst, const Block* src,

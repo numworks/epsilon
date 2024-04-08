@@ -1,6 +1,6 @@
 #include "aliases.h"
 
-#include <omgpj/unicode_helper.h>
+#include <omg/unicode_helper.h>
 
 namespace PoincareJ {
 

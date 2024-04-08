@@ -1,7 +1,7 @@
-#ifndef OMGPJ_LIST_H
-#define OMGPJ_LIST_H
+#ifndef OMG_LIST_H
+#define OMG_LIST_H
 
-namespace List {
+namespace OMG::List {
 
 typedef void (*Swap)(int i, int j, void* context, int numberOfElements);
 typedef bool (*Compare)(int i, int j, void* context, int numberOfElements);
@@ -10,6 +10,6 @@ void Sort(Swap swap, Compare compare, void* context, int numberOfElements);
 int ExtremumIndex(Compare compare, void* context, int numberOfElements,
                   bool minimum);
 
-}  // namespace List
+}  // namespace OMG::List
 
 #endif

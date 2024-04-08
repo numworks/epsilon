@@ -1,9 +1,9 @@
-#ifndef OMGPJ_ARRAY_H
-#define OMGPJ_ARRAY_H
+#ifndef OMG_ARRAY_H
+#define OMG_ARRAY_H
 
 #include <array>
 
-namespace Array {
+namespace OMG::Array {
 
 template <typename T, typename U>
 using Action = U (*)(T, void*);
@@ -18,6 +18,6 @@ static std::array<U, N> MapAction(std::array<T, N> array, void* context,
   return newArray;
 }
 
-}  // namespace Array
+}  // namespace OMG::Array
 
 #endif

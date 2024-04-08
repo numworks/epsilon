@@ -293,7 +293,7 @@ bool Logarithm::ExpandLnOnRational(Tree* e) {
 }
 
 Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
-  bool isNegative = m.strictSign() == StrictSign::Negative;
+  bool isNegative = m.strictSign() == OMG::StrictSign::Negative;
   Arithmetic::FactorizedInteger factorization =
       Arithmetic::PrimeFactorization(m);
   if (escapeIfPrime && (factorization.numberOfFactors == 0 ||

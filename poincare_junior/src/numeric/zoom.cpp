@@ -289,7 +289,7 @@ void Zoom::fitConditions(const Tree* piecewise,
   };
   Solver<float>::HoneResult hone =
       [](Solver<float>::FunctionEvaluation, const void* aux, float a, float b,
-         Solver<float>::Interest, float, Troolean) {
+         Solver<float>::Interest, float, OMG::Troolean) {
         const ConditionsParameters* params =
             static_cast<const ConditionsParameters*>(aux);
         params->zoom->fitPoint(
@@ -449,7 +449,8 @@ static void honeHelper(Solver<float>::FunctionEvaluation f, const void* aux,
 Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
                                     const void* aux, float a, float b,
                                     Solver<float>::Interest interest,
-                                    float precision, Troolean discontinuous) {
+                                    float precision,
+                                    OMG::Troolean discontinuous) {
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, pointIsInterestingHelper, &pa, &pu, &pv,
              &pb);
@@ -458,7 +459,7 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
   /* Most functions will taper off near a local extremum. If the slope
    * diverges, it is more likely we have found an even vertical asymptote. */
   bool isDiscontinuous =
-      discontinuous == Troolean::True ||
+      discontinuous == OMG::Troolean::True ||
       ((interest == Solver<float>::Interest::LocalMinimum ||
         interest == Solver<float>::Interest::LocalMaximum) &&
        (std::max((pu.y() - pa.y()) / (pu.x() - pa.x()),
@@ -474,7 +475,8 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
 Coordinate2D<float> Zoom::HoneRoot(Solver<float>::FunctionEvaluation f,
                                    const void* aux, float a, float b,
                                    Solver<float>::Interest interest,
-                                   float precision, Troolean discontinuous) {
+                                   float precision,
+                                   OMG::Troolean discontinuous) {
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
              &pu, &pv, &pb);
@@ -507,7 +509,7 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
                                            const void* aux, float a, float b,
                                            Solver<float>::Interest interest,
                                            float precision,
-                                           Troolean discontinuous) {
+                                           OMG::Troolean discontinuous) {
   Coordinate2D<float> result =
       HoneRoot(f, aux, a, b, interest, precision, discontinuous);
   if (std::isnan(result.x())) {

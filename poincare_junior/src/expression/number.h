@@ -20,7 +20,7 @@ class Number {
   static Tree* Addition(const Tree* i, const Tree* j);
   static Tree* Multiplication(const Tree* i, const Tree* j);
   static PoincareJ::Sign Sign(const Tree* node);
-  static bool SetSign(Tree* number, NonStrictSign sign);
+  static bool SetSign(Tree* number, OMG::NonStrictSign sign);
 };
 
 }  // namespace PoincareJ

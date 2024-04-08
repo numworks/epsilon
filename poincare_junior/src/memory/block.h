@@ -6,7 +6,7 @@
 #endif
 
 #include <assert.h>
-#include <omgpj.h>
+#include <omg/deconstifier.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -26,10 +26,12 @@ class Block {
 
   // Block Navigation
   constexpr const Block* next() const { return this + 1; }
-  constexpr Block* next() { return Utils::DeconstifyPtr(&Block::next, this); }
+  constexpr Block* next() {
+    return OMG::Utils::DeconstifyPtr(&Block::next, this);
+  }
   constexpr const Block* nextNth(int i) const { return this + i; }
   constexpr Block* nextNth(int i) {
-    return Utils::DeconstifyPtr(&Block::nextNth, this, i);
+    return OMG::Utils::DeconstifyPtr(&Block::nextNth, this, i);
   }
 
   constexpr explicit operator uint8_t() const { return m_content; }

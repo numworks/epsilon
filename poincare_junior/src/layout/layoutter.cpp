@@ -187,10 +187,10 @@ void Layoutter::layoutChildrenAsRacks(Tree* expression) {
 void Layoutter::layoutIntegerHandler(TreeRef& layoutParent,
                                      IntegerHandler handler,
                                      int decimalOffset) {
-  if (handler.strictSign() == StrictSign::Negative) {
+  if (handler.strictSign() == OMG::StrictSign::Negative) {
     PushCodePoint(layoutParent, '-');
   }
-  handler.setSign(NonStrictSign::Positive);
+  handler.setSign(OMG::NonStrictSign::Positive);
   Tree* rack = KRackL()->clone();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
    * pushing layouts on the TreeStack at each steps. Value is therefore
@@ -752,7 +752,7 @@ bool Layoutter::requireSeparators(const Tree* expr) {
   if (expr->isRational()) {
     // TODO_PCJ same for decimals and floats
     IntegerHandler num = Rational::Numerator(expr);
-    num.setSign(NonStrictSign::Positive);
+    num.setSign(OMG::NonStrictSign::Positive);
     if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {
       return true;
     }

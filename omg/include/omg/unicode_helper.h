@@ -1,5 +1,5 @@
-#ifndef OMGPJ_UNICODE_HELPER_H
-#define OMGPJ_UNICODE_HELPER_H
+#ifndef OMG_UNICODE_HELPER_H
+#define OMG_UNICODE_HELPER_H
 
 #include <ion/unicode/utf8_decoder.h>
 

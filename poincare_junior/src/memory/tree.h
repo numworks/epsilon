@@ -130,8 +130,8 @@ class Tree : public TypeBlock {
   }
   Tree* parentOfDescendant(const Tree* descendant) {
     int dummyPosition;
-    return Utils::DeconstifyPtr(&Tree::parentOfDescendant, this, descendant,
-                                &dummyPosition);
+    return OMG::Utils::DeconstifyPtr(&Tree::parentOfDescendant, this,
+                                     descendant, &dummyPosition);
   }
   int numberOfDescendants(bool includeSelf) const;
   const Tree* child(int index) const;

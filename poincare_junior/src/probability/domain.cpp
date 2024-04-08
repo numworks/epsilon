@@ -5,57 +5,59 @@
 
 namespace PoincareJ {
 
-Troolean Domain::ExpressionIsIn(const Tree* expression, Type type,
-                                Context* context) {
+OMG::Troolean Domain::ExpressionIsIn(const Tree* expression, Type type,
+                                     Context* context) {
   if (expression->isUndef() || expression->isInf()) {
-    return Troolean::False;
+    return OMG::Troolean::False;
   }
 
   ComplexSign sign = ComplexSign::Get(expression);
 
   if (!sign.isReal()) {
-    return Troolean::Unknown;
+    return OMG::Troolean::Unknown;
   }
 
-  Troolean isPositive = sign.realSign().isPositive()      ? Troolean::True
-                        : sign.realSign().canBePositive() ? Troolean::Unknown
-                                                          : Troolean::False;
+  OMG::Troolean isPositive = sign.realSign().isPositive() ? OMG::Troolean::True
+                             : sign.realSign().canBePositive()
+                                 ? OMG::Troolean::Unknown
+                                 : OMG::Troolean::False;
   if (type & k_onlyPositive) {
-    if (isPositive != Troolean::True) {
+    if (isPositive != OMG::Troolean::True) {
       return isPositive;
     }
   }
 
   if (type & k_onlyNegative) {
-    if (isPositive != Troolean::False) {
-      return isPositive == Troolean::True ? Troolean::False : Troolean::Unknown;
+    if (isPositive != OMG::Troolean::False) {
+      return isPositive == OMG::Troolean::True ? OMG::Troolean::False
+                                               : OMG::Troolean::Unknown;
     }
   }
 
   if (!expression->isRational()) {
     // TODO we could leverage sign analysis to give an anwser on some domains
-    return Troolean::Unknown;
+    return OMG::Troolean::Unknown;
   }
 
   if (type & k_onlyIntegers && !expression->isInteger()) {
-    return Troolean::False;
+    return OMG::Troolean::False;
   }
 
   if (type & k_nonZero && expression->isZero()) {
-    return Troolean::False;
+    return OMG::Troolean::False;
   }
 
   if (type & (ZeroToOne | ZeroExcludedToOne | ZeroExcludedToOneExcluded) &&
       Rational::IsGreaterThanOne(expression)) {
     assert(Rational::Sign(expression).isPositive());
-    return Troolean::False;
+    return OMG::Troolean::False;
   }
 
   if (type == ZeroExcludedToOneExcluded && expression->isOne()) {
-    return Troolean::False;
+    return OMG::Troolean::False;
   }
 
-  return Troolean::True;
+  return OMG::Troolean::True;
 }
 
 }  // namespace PoincareJ

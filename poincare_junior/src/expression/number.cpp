@@ -50,16 +50,16 @@ Sign Number::Sign(const Tree* node) {
   }
 }
 
-bool Number::SetSign(Tree* number, NonStrictSign sign) {
+bool Number::SetSign(Tree* number, OMG::NonStrictSign sign) {
   assert(number->isNumber());
   if (number->isRational()) {
-    return Rational::SetSign(number, NonStrictSign::Positive);
+    return Rational::SetSign(number, OMG::NonStrictSign::Positive);
   } else if (number->isFloat()) {
-    return FloatNode::SetSign(number, NonStrictSign::Positive);
+    return FloatNode::SetSign(number, OMG::NonStrictSign::Positive);
   }
   assert(Number::Sign(number).isZero() ||
          Number::Sign(number).isPositive() ==
-             (sign == NonStrictSign::Positive));
+             (sign == OMG::NonStrictSign::Positive));
   return false;
 }
 

@@ -268,9 +268,9 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
 
 void Polynomial::Inverse(Tree* pol) {
   if (!pol->isPolynomial()) {
-    Integer::SetSign(pol, Integer::Sign(pol) == NonStrictSign::Positive
-                              ? NonStrictSign::Negative
-                              : NonStrictSign::Positive);
+    Integer::SetSign(pol, Integer::Sign(pol) == OMG::NonStrictSign::Positive
+                              ? OMG::NonStrictSign::Negative
+                              : OMG::NonStrictSign::Positive);
     return;
   }
   for (int i = 1; i <= NumberOfTerms(pol); i++) {
@@ -280,7 +280,7 @@ void Polynomial::Inverse(Tree* pol) {
 
 void Polynomial::Normalize(Tree* pol) {
   Tree* leadingIntCoeff = LeadingIntegerCoefficient(pol);
-  if (Integer::Sign(leadingIntCoeff) == NonStrictSign::Negative) {
+  if (Integer::Sign(leadingIntCoeff) == OMG::NonStrictSign::Negative) {
     Inverse(pol);
   }
 }

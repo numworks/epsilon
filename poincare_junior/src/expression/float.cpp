@@ -4,9 +4,9 @@
 
 namespace PoincareJ {
 
-bool FloatNode::SetSign(Tree* tree, NonStrictSign sign) {
+bool FloatNode::SetSign(Tree* tree, OMG::NonStrictSign sign) {
   double value = To(tree);
-  if (value == 0 || (value > 0.0) == (sign == NonStrictSign::Positive)) {
+  if (value == 0 || (value > 0.0) == (sign == OMG::NonStrictSign::Positive)) {
     return false;
   }
   tree->moveTreeOverTree(

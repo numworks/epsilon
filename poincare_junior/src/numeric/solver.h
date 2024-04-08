@@ -2,7 +2,7 @@
 #define POINCARE_NUMERIC_SOLVER_H
 
 #include <math.h>
-#include <omgpj/troolean.h>
+#include <omg/troolean.h>
 #include <poincare_junior/src/expression/context.h>
 #include <poincare_junior/src/memory/tree.h>
 
@@ -38,7 +38,7 @@ class Solver {
   typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>,
                                   Coordinate2D<T>, const void*);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void*, T, T,
-                                        Interest, T, Troolean);
+                                        Interest, T, OMG::Troolean);
   typedef bool (*DiscontinuityEvaluation)(T, T, const void*);
 
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
@@ -141,14 +141,16 @@ class Solver {
 
   static Coordinate2D<T> SafeBrentMinimum(FunctionEvaluation f, const void* aux,
                                           T xMin, T xMax, Interest interest,
-                                          T precision, Troolean discontinuous);
+                                          T precision,
+                                          OMG::Troolean discontinuous);
   static Coordinate2D<T> SafeBrentMaximum(FunctionEvaluation f, const void* aux,
                                           T xMin, T xMax, Interest interest,
-                                          T precision, Troolean discontinuous);
+                                          T precision,
+                                          OMG::Troolean discontinuous);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f,
                                                const void* aux, T xMin, T xMax,
                                                Interest interest, T precision,
-                                               Troolean discontinuous);
+                                               OMG::Troolean discontinuous);
 
   static bool DiscontinuityTestForExpression(T x1, T x2, const void* aux);
   static void ExcludeUndefinedFromBracket(Coordinate2D<T>* p1,

@@ -55,6 +55,10 @@ constexpr size_t LengthOfUInt32(Base base, uint32_t integer) {
 int UInt32(Base base, uint32_t integer, LeadingZeros printLeadingZeros,
            char* buffer, int bufferSize);
 
+inline constexpr bool IsLowercaseLetter(char c) { return 'a' <= c && c <= 'z'; }
+
+inline constexpr bool IsDigit(char c) { return '0' <= c && c <= '9'; }
+
 }  // namespace Print
 
 }  // namespace OMG

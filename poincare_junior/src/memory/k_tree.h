@@ -1,9 +1,8 @@
 #ifndef POINCARE_MEMORY_K_TREE_H
 #define POINCARE_MEMORY_K_TREE_H
 
+#include <omg/concept.h>
 #include <omg/print.h>
-#include <omgpj/concept.h>
-#include <omgpj/print.h>
 
 #include <array>
 
@@ -21,7 +20,7 @@ namespace KTrees {
 class AbstractKTree {};
 
 template <class C>
-concept KTreeConcept = Concept::is_derived_from<C, AbstractKTree>;
+concept KTreeConcept = OMG::Concept::is_derived_from<C, AbstractKTree>;
 
 /* The KTree template class is the compile time representation of a constexpr
  * tree. It's complete block representation is specified as template parameters

@@ -1,6 +1,8 @@
 #include <assert.h>
-#include <omgpj/arithmetic.h>
-#include <omgpj/memory.h>
+#include <omg/arithmetic.h>
+#include <omg/memory.h>
+
+namespace OMG::Memory {
 
 size_t Memory::AlignedSize(size_t realSize, size_t alignment) {
   size_t modulo = realSize % alignment;
@@ -77,3 +79,5 @@ bool Memory::Rotate(uint8_t* dst, uint8_t* src, size_t len) {
   }
   return true;
 }
+
+}  // namespace OMG::Memory

@@ -1,7 +1,7 @@
 #include "integer.h"
 
+#include <omg/arithmetic.h>
 #include <omg/print.h>
-#include <omgpj/arithmetic.h>
 #include <poincare_junior/include/poincare.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/value_block.h>
@@ -66,9 +66,9 @@ void WorkingBuffer::garbageCollect(
 /* IntegerHandler */
 
 IntegerHandler IntegerHandler::Parse(UnicodeDecoder& decoder, OMG::Base base) {
-  NonStrictSign sign = NonStrictSign::Positive;
+  OMG::NonStrictSign sign = OMG::NonStrictSign::Positive;
   if (decoder.nextCodePoint() == '-') {
-    sign = NonStrictSign::Negative;
+    sign = OMG::NonStrictSign::Negative;
   } else {
     decoder.previousCodePoint();
   }
@@ -105,10 +105,10 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer* buffer) {
      * able to easily access any digit. */
     native_uint_t initialValue = 0;
     return IntegerHandler(reinterpret_cast<const uint8_t*>(&initialValue),
-                          sizeof(native_uint_t), NonStrictSign::Positive);
+                          sizeof(native_uint_t), OMG::NonStrictSign::Positive);
   } else {
     return IntegerHandler(buffer->allocate(sizeInBytes), sizeInBytes,
-                          NonStrictSign::Positive);
+                          OMG::NonStrictSign::Positive);
   }
 }
 
@@ -129,8 +129,9 @@ Tree* IntegerHandler::pushOnTreeStack() const {
     return SharedTreeStack->push<Type::IntegerShort>(
         static_cast<int8_t>(*this));
   }
-  TypeBlock typeBlock(sign() == NonStrictSign::Negative ? Type::IntegerNegBig
-                                                        : Type::IntegerPosBig);
+  TypeBlock typeBlock(sign() == OMG::NonStrictSign::Negative
+                          ? Type::IntegerNegBig
+                          : Type::IntegerPosBig);
   Tree* node = SharedTreeStack->push(typeBlock);
   SharedTreeStack->push(m_numberOfDigits);
   pushDigitsOnTreeStack();
@@ -210,7 +211,7 @@ uint8_t IntegerHandler::numberOfDigits() const {
   if (nbOfDigits == 0) {
     return 0;
   }
-  return Arithmetic::CeilDivision<uint8_t>(nbOfDigits, sizeof(T));
+  return OMG::Arithmetic::CeilDivision<uint8_t>(nbOfDigits, sizeof(T));
 }
 
 int IntegerHandler::numberOfBase10DigitsWithoutSign(
@@ -243,7 +244,8 @@ T IntegerHandler::digit(int i) const {
       T newDigit = 0;
       for (size_t index = 0; index < numberOfRemainderDigits; index++) {
         uint8_t byteDigit = digit(--numberOfByteDigits);
-        newDigit = (newDigit << Bit::k_numberOfBitsInByte) | byteDigit;
+        newDigit =
+            (newDigit << OMG::BitHelper::k_numberOfBitsInByte) | byteDigit;
       }
       return newDigit;
     }
@@ -262,7 +264,8 @@ void IntegerHandler::setDigit(T digit, int i) {
 
 bool IntegerHandler::isZero() const {
   assert(!usesImmediateDigit() || immediateDigit() != 0 ||
-         m_sign == NonStrictSign::Positive);  // TODO: should we represent -0?
+         m_sign ==
+             OMG::NonStrictSign::Positive);  // TODO: should we represent -0?
   return usesImmediateDigit() && immediateDigit() == 0;
 }
 
@@ -278,7 +281,7 @@ template <typename T>
 bool IntegerHandler::isUnsignedType() const {
   size_t maxNumberOfDigits = sizeof(T) / sizeof(uint8_t);
   return m_numberOfDigits <= maxNumberOfDigits &&
-         m_sign == NonStrictSign::Positive;
+         m_sign == OMG::NonStrictSign::Positive;
 }
 
 IntegerHandler::operator int8_t() const {
@@ -295,7 +298,7 @@ IntegerHandler::operator uint8_t() const {
 
 int IntegerHandler::Compare(const IntegerHandler& i, const IntegerHandler& j) {
   if (i.sign() != j.sign()) {
-    return i.sign() == NonStrictSign::Negative ? -1 : 1;
+    return i.sign() == OMG::NonStrictSign::Negative ? -1 : 1;
   }
   return static_cast<int8_t>(i.sign()) * Ucmp(i, j);
 }
@@ -339,7 +342,7 @@ IntegerHandler IntegerHandler::Sum(const IntegerHandler& a,
                                    bool inverseBNegative,
                                    WorkingBuffer* workingBuffer,
                                    bool oneDigitOverflow) {
-  NonStrictSign bSign = inverseBNegative ? InvertSign(b.sign()) : b.sign();
+  OMG::NonStrictSign bSign = inverseBNegative ? InvertSign(b.sign()) : b.sign();
   IntegerHandler usum;
   if (a.sign() == bSign) {
     usum = Usum(a, b, false, workingBuffer, oneDigitOverflow);
@@ -456,8 +459,8 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler& a,
     }
   }
   mult.sanitize();
-  mult.setSign(a.sign() == b.sign() ? NonStrictSign::Positive
-                                    : NonStrictSign::Negative);
+  mult.setSign(a.sign() == b.sign() ? OMG::NonStrictSign::Positive
+                                    : OMG::NonStrictSign::Negative);
   return mult;
 }
 
@@ -465,14 +468,14 @@ DivisionResult<Tree*> IntegerHandler::Division(
     const IntegerHandler& numerator, const IntegerHandler& denominator) {
   WorkingBuffer workingBuffer;
   auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
-  if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
+  if (!remainder.isZero() && numerator.sign() == OMG::NonStrictSign::Negative) {
     quotient = Usum(quotient, IntegerHandler(1), false, &workingBuffer);
     remainder = Usum(denominator, remainder, true,
                      &workingBuffer);  // |denominator|-remainder
   }
   quotient.setSign(numerator.sign() == denominator.sign()
-                       ? NonStrictSign::Positive
-                       : NonStrictSign::Negative);
+                       ? OMG::NonStrictSign::Positive
+                       : OMG::NonStrictSign::Negative);
   /* If both IntegerHandler are stored on the WorkingBuffer, they need to be
    * ordered to ensure that pushing the digits of one on the TreeStack won't
    * override the other one. */
@@ -487,12 +490,12 @@ Tree* IntegerHandler::Quotient(const IntegerHandler& numerator,
                                const IntegerHandler& denominator) {
   WorkingBuffer workingBuffer;
   auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
-  if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
+  if (!remainder.isZero() && numerator.sign() == OMG::NonStrictSign::Negative) {
     quotient = Usum(quotient, IntegerHandler(1), false, &workingBuffer);
   }
   quotient.setSign(numerator.sign() == denominator.sign()
-                       ? NonStrictSign::Positive
-                       : NonStrictSign::Negative);
+                       ? OMG::NonStrictSign::Positive
+                       : OMG::NonStrictSign::Negative);
   return quotient.pushOnTreeStack();
 }
 
@@ -501,7 +504,7 @@ Tree* IntegerHandler::Remainder(const IntegerHandler& numerator,
   WorkingBuffer workingBuffer;
   IntegerHandler remainder =
       Udiv(numerator, denominator, &workingBuffer).remainder;
-  if (!remainder.isZero() && numerator.sign() == NonStrictSign::Negative) {
+  if (!remainder.isZero() && numerator.sign() == OMG::NonStrictSign::Negative) {
     remainder = Usum(denominator, remainder, true,
                      &workingBuffer);  // |denominator|-remainder
   }
@@ -526,7 +529,8 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
   half_native_uint_t b = denominator.digit<half_native_uint_t>(
       denominator.numberOfDigits<half_native_uint_t>() - 1);
   half_native_uint_t halfBase =
-      1 << (sizeof(half_native_uint_t) * Bit::k_numberOfBitsInByte - 1);
+      1 << (sizeof(half_native_uint_t) * OMG::BitHelper::k_numberOfBitsInByte -
+            1);
   int pow = 0;
   assert(b != 0);
   while (!(b & halfBase)) {
@@ -553,7 +557,7 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
     A = newA;
   }
   native_uint_t base =
-      1 << (sizeof(half_native_uint_t) * Bit::k_numberOfBitsInByte);
+      1 << (sizeof(half_native_uint_t) * OMG::BitHelper::k_numberOfBitsInByte);
   half_native_uint_t baseMinus1 = base - 1;  // beta-1
   for (int j = m - 1; j >= 0; j--) {
     half_native_uint_t bnMinus1 = B.digit<half_native_uint_t>(n - 1);
@@ -574,8 +578,8 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
     workingBuffer->garbageCollect({&B, &Q, &betaMB, &betaJM, &newA},
                                   localStart);
     A = newA;
-    if (A.sign() == NonStrictSign::Negative) {
-      while (A.sign() == NonStrictSign::Negative) {
+    if (A.sign() == OMG::NonStrictSign::Negative) {
+      while (A.sign() == OMG::NonStrictSign::Negative) {
         Q.setDigit<half_native_uint_t>(Q.digit<half_native_uint_t>(j) - 1,
                                        j);                  // q[j] = q[j]-1
         newA = Sum(A, betaJM, false, workingBuffer, true);  // A = B*beta^j+A
@@ -602,9 +606,9 @@ IntegerHandler IntegerHandler::GCD(const IntegerHandler& a,
                                    WorkingBuffer* workingBuffer) {
   // TODO Knuth modified like in upy to avoid divisions
   IntegerHandler i = a;
-  i.setSign(NonStrictSign::Positive);
+  i.setSign(OMG::NonStrictSign::Positive);
   IntegerHandler j = b;
-  j.setSign(NonStrictSign::Positive);
+  j.setSign(OMG::NonStrictSign::Positive);
   if (Compare(i, j) == 0) {
     return i;
   }
@@ -634,9 +638,9 @@ Tree* IntegerHandler::LCM(const IntegerHandler& a, const IntegerHandler& b) {
     return (0_e)->clone();
   }
   IntegerHandler i = a;
-  i.setSign(NonStrictSign::Positive);
+  i.setSign(OMG::NonStrictSign::Positive);
   IntegerHandler j = b;
-  j.setSign(NonStrictSign::Positive);
+  j.setSign(OMG::NonStrictSign::Positive);
   if (Compare(i, j) == 0) {
     return i.pushOnTreeStack();
   }
@@ -696,7 +700,7 @@ IntegerHandler IntegerHandler::multiplyByPowerOfBase(
 }
 
 Tree* IntegerHandler::Power(const IntegerHandler& i, const IntegerHandler& j) {
-  assert(j.sign() == NonStrictSign::Positive);
+  assert(j.sign() == OMG::NonStrictSign::Positive);
   if (j.isZero()) {
     // TODO: handle 0^0.
     assert(!i.isZero());
@@ -731,7 +735,7 @@ Tree* IntegerHandler::Power(const IntegerHandler& i, const IntegerHandler& j) {
 }
 
 Tree* IntegerHandler::Factorial(const IntegerHandler& i) {
-  assert(i.sign() == NonStrictSign::Positive);
+  assert(i.sign() == OMG::NonStrictSign::Positive);
   IntegerHandler j(2);
   IntegerHandler result(1);
   WorkingBuffer workingBuffer;
@@ -746,7 +750,7 @@ Tree* IntegerHandler::Factorial(const IntegerHandler& i) {
 
 void IntegerHandler::sanitize() {
   if (usesImmediateDigit()) {
-    m_numberOfDigits = ::Arithmetic::NumberOfDigits(m_digitAccessor.m_digit);
+    m_numberOfDigits = OMG::Arithmetic::NumberOfDigits(m_digitAccessor.m_digit);
     return;
   }
   while (m_numberOfDigits > sizeof(native_uint_t) &&
@@ -758,7 +762,7 @@ void IntegerHandler::sanitize() {
     m_digitAccessor.m_digit =
         *(reinterpret_cast<const Unaligned<native_uint_t>::type*>(
             m_digitAccessor.m_digits));
-    m_numberOfDigits = ::Arithmetic::NumberOfDigits(m_digitAccessor.m_digit);
+    m_numberOfDigits = OMG::Arithmetic::NumberOfDigits(m_digitAccessor.m_digit);
   }
 }
 
@@ -771,7 +775,7 @@ IntegerHandler Integer::Handler(const Tree* expression) {
   return Rational::Numerator(expression);
 }
 
-void Integer::SetSign(Tree* tree, NonStrictSign sign) {
+void Integer::SetSign(Tree* tree, OMG::NonStrictSign sign) {
   IntegerHandler h = Handler(tree);
   h.setSign(sign);
   tree->moveTreeOverTree(h.pushOnTreeStack());

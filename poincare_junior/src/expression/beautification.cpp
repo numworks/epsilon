@@ -92,7 +92,8 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
     NAry::SquashIfUnary(expr);
     return true;
   }
-  return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
+  return factor->isNumber() &&
+         Number::SetSign(factor, OMG::NonStrictSign::Positive);
 }
 
 bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,

@@ -1,7 +1,7 @@
 #include "n_ary.h"
 
 #include <assert.h>
-#include <omgpj/list.h>
+#include <omg/list.h>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/k_tree.h>
 
@@ -126,7 +126,7 @@ bool NAry::Sort(Tree* nary, Comparison::Order order) {
   }
   // Sort a list of indexes first
   void* contextArray[] = {&indexes, &children, &order};
-  List::Sort(
+  OMG::List::Sort(
       [](int i, int j, void* context, int numberOfElements) {
         void** contextArray = static_cast<void**>(context);
         uint8_t* indexes = static_cast<decltype(indexes)>(contextArray[0]);

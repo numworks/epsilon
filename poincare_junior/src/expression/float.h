@@ -1,8 +1,8 @@
 #ifndef POINCARE_EXPRESSION_FLOAT_H
 #define POINCARE_EXPRESSION_FLOAT_H
 
+#include <omg/bit_helper.h>
 #include <omg/enums.h>
-#include <omgpj/bit.h>
 #include <poincare_junior/src/memory/tree.h>
 
 #include <bit>
@@ -12,10 +12,12 @@ namespace PoincareJ {
 class FloatNode {
  public:
   constexpr static uint8_t SubFloatAtIndex(float value, int index) {
-    return Bit::getByteAtIndex(std::bit_cast<uint32_t>(value), index);
+    return OMG::BitHelper::getByteAtIndex(std::bit_cast<uint32_t>(value),
+                                          index);
   }
   constexpr static uint8_t SubFloatAtIndex(double value, int index) {
-    return Bit::getByteAtIndex(std::bit_cast<uint64_t>(value), index);
+    return OMG::BitHelper::getByteAtIndex(std::bit_cast<uint64_t>(value),
+                                          index);
   }
   static float FloatTo(const Tree* tree) {
     return tree->nodeValueBlock(0)->get<float>();
@@ -27,7 +29,7 @@ class FloatNode {
     assert(tree->isFloat());
     return tree->isSingleFloat() ? FloatTo(tree) : DoubleTo(tree);
   }
-  static bool SetSign(Tree* tree, NonStrictSign sign);
+  static bool SetSign(Tree* tree, OMG::NonStrictSign sign);
 };
 
 // Helper from T  = float|double to corresponding Type

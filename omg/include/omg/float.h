@@ -1,5 +1,5 @@
-#ifndef OMGPJ_FLOAT_H
-#define OMGPJ_FLOAT_H
+#ifndef OMG_FLOAT_H
+#define OMG_FLOAT_H
 
 #include <assert.h>
 

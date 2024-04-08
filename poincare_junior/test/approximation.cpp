@@ -1,5 +1,5 @@
 #include <float.h>
-#include <omgpj/float.h>
+#include <omg/float.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/k_tree.h>
 

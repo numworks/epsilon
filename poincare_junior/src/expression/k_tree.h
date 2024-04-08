@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_K_TREE_H
 #define POINCARE_EXPRESSION_K_TREE_H
 
-#include <omgpj/arithmetic.h>
+#include <omg/arithmetic.h>
 #include <poincare_junior/src/memory/k_tree.h>
 
 #include <bit>
@@ -208,9 +208,11 @@ struct IntegerRepresentation<V> : KTree<Type::IntegerShort, V> {};
  *  template <int64_t V>
  *  requires(V > INT8_MAX && Integer::NumberOfDigits(V) == N)
  *  struct IntegerRepresentation<V>
- *      : KTree<Type::IntegerPosBig, N, Bit::getByteAtIndex(V, 0),
+ *      : KTree<Type::IntegerPosBig, N, OMG::BitHelper::getByteAtIndex(V, 0),
  *                                           ...
- *                                           Bit::getByteAtIndex(V, N-1)> {};
+ *                                           OMG::BitHelper::getByteAtIndex(V,
+ * N-1)>
+ * {};
  */
 
 #define SPECIALIZATIONS                               \
@@ -224,13 +226,13 @@ struct IntegerRepresentation<V> : KTree<Type::IntegerShort, V> {};
   GUIDE(8, B(0), B(1), B(2), B(3), B(4), B(5), B(6), B(7));
 
 // IntegerPosBig
-#define GUIDE(N, ...)                                              \
-  template <int64_t V>                                             \
-    requires(V > INT8_MAX && ::Arithmetic::NumberOfDigits(V) == N) \
-  struct IntegerRepresentation<V>                                  \
+#define GUIDE(N, ...)                                                 \
+  template <int64_t V>                                                \
+    requires(V > INT8_MAX && OMG::Arithmetic::NumberOfDigits(V) == N) \
+  struct IntegerRepresentation<V>                                     \
       : KTree<Type::IntegerPosBig, N, __VA_ARGS__> {};
 
-#define B(I) Bit::getByteAtIndex(V, I)
+#define B(I) OMG::BitHelper::getByteAtIndex(V, I)
 
 SPECIALIZATIONS;
 
@@ -238,13 +240,13 @@ SPECIALIZATIONS;
 #undef GUIDE
 
 // IntegerNegBig
-#define GUIDE(N, ...)                                               \
-  template <int64_t V>                                              \
-    requires(V < INT8_MIN && ::Arithmetic::NumberOfDigits(-V) == N) \
-  struct IntegerRepresentation<V>                                   \
+#define GUIDE(N, ...)                                                  \
+  template <int64_t V>                                                 \
+    requires(V < INT8_MIN && OMG::Arithmetic::NumberOfDigits(-V) == N) \
+  struct IntegerRepresentation<V>                                      \
       : KTree<Type::IntegerNegBig, N, __VA_ARGS__> {};
 
-#define B(I) Bit::getByteAtIndex(-V, I)
+#define B(I) OMG::BitHelper::getByteAtIndex(-V, I)
 
 SPECIALIZATIONS;
 
@@ -263,7 +265,7 @@ struct RationalLitteral : RationalRepresentation<N, D> {
 };
 
 template <int64_t N, int64_t D>
-  requires(D > 0 && ::Arithmetic::GcdI64(N, D) == 1)
+  requires(D > 0 && OMG::Arithmetic::GcdI64(N, D) == 1)
 consteval auto operator/(IntegerLitteral<N> a, IntegerLitteral<D> b) {
   return RationalLitteral<N, D>();
 }
@@ -342,17 +344,21 @@ struct FloatLitteral : FloatRepresentation<Int, V> {
 
 template <uint32_t V>
 struct FloatRepresentation<uint32_t, V>
-    : KTree<Type::SingleFloat, Bit::getByteAtIndex(V, 0),
-            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-            Bit::getByteAtIndex(V, 3)> {};
+    : KTree<Type::SingleFloat, OMG::BitHelper::getByteAtIndex(V, 0),
+            OMG::BitHelper::getByteAtIndex(V, 1),
+            OMG::BitHelper::getByteAtIndex(V, 2),
+            OMG::BitHelper::getByteAtIndex(V, 3)> {};
 
 template <uint64_t V>
 struct FloatRepresentation<uint64_t, V>
-    : KTree<Type::DoubleFloat, Bit::getByteAtIndex(V, 0),
-            Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2),
-            Bit::getByteAtIndex(V, 3), Bit::getByteAtIndex(V, 4),
-            Bit::getByteAtIndex(V, 5), Bit::getByteAtIndex(V, 6),
-            Bit::getByteAtIndex(V, 7)> {};
+    : KTree<Type::DoubleFloat, OMG::BitHelper::getByteAtIndex(V, 0),
+            OMG::BitHelper::getByteAtIndex(V, 1),
+            OMG::BitHelper::getByteAtIndex(V, 2),
+            OMG::BitHelper::getByteAtIndex(V, 3),
+            OMG::BitHelper::getByteAtIndex(V, 4),
+            OMG::BitHelper::getByteAtIndex(V, 5),
+            OMG::BitHelper::getByteAtIndex(V, 6),
+            OMG::BitHelper::getByteAtIndex(V, 7)> {};
 
 template <class Float, class Int, char... C>
 consteval auto FloatLitteralOperator() {

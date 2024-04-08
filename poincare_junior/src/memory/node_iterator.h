@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_NODE_ITERATOR_H
 #define POINCARE_MEMORY_NODE_ITERATOR_H
 
-#include <omgpj/array.h>
+#include <omg/array.h>
 
 #include <algorithm>
 #include <array>
@@ -46,7 +46,7 @@ class MultipleNodesIterator {
     template <size_t N>
     std::array<const Tree*, N> firstElement(
         std::array<const Tree*, N> array) const {
-      return Array::MapAction<const Tree*, const Tree*, N>(
+      return OMG::Array::MapAction<const Tree*, const Tree*, N>(
           array, nullptr,
           [](const Tree* node, void* context) { return node->nextNode(); });
     }
@@ -54,7 +54,7 @@ class MultipleNodesIterator {
     template <size_t N>
     std::array<const Tree*, N> incrementeArray(
         std::array<const Tree*, N> array) const {
-      return Array::MapAction<const Tree*, const Tree*, N>(
+      return OMG::Array::MapAction<const Tree*, const Tree*, N>(
           array, nullptr,
           [](const Tree* node, void* context) { return node->nextTree(); });
     }
@@ -204,7 +204,7 @@ class MultipleNodesIterator {
     template <size_t N>
     std::array<const Tree*, N> convertFromArrayType(ArrayType<N> array,
                                                     int offset = 0) const {
-      return Array::MapAction<NodeType, const Tree*, N>(
+      return OMG::Array::MapAction<NodeType, const Tree*, N>(
           array, &offset, [](NodeType reference, void* offset) -> const Tree* {
             return Tree::FromBlocks(reference->block() +
                                     *static_cast<int*>(offset));
@@ -213,7 +213,7 @@ class MultipleNodesIterator {
     template <size_t N>
     ArrayType<N> convertToArrayType(std::array<const Tree*, N> array,
                                     int offset = 0) const {
-      return Array::MapAction<const Tree*, NodeType, N>(
+      return OMG::Array::MapAction<const Tree*, NodeType, N>(
           array, &offset, [](const Tree* node, void* offset) {
             return node ? TreeRef(Tree::FromBlocks(
                               const_cast<Tree*>(node)->block() -

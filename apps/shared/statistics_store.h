@@ -36,7 +36,7 @@ class StatisticsStore : public DoublePairStore {
     return DoublePairStore::valueValidInColumn(value, relativeColumn) &&
            (relativeColumn != 1 || value >= 0.0);
   }
-  void fillTableName(int series, char* buffer, size_t bufferSize) const;
+  void tableName(int series, char* buffer, size_t bufferSize) const;
 
  protected:
   void initDatasets();

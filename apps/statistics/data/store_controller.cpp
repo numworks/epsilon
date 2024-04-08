@@ -150,7 +150,7 @@ void StoreController::setClearPopUpContent() {
   if (column == 0) {
     constexpr size_t bufferSize = StatisticsStore::k_tableNameSize;
     char tableName[bufferSize];
-    m_store->fillTableName(series, tableName, bufferSize);
+    m_store->tableName(series, tableName, bufferSize);
     m_confirmPopUpController.setMessageWithPlaceholders(
         I18n::Message::ClearTableConfirmation, tableName);
   } else {

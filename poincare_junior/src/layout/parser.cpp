@@ -1,8 +1,8 @@
 #include "parser.h"
 
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
+#include <poincare_junior/src/memory/n_ary.h>
 
-#include "../n_ary.h"
 #include "grid.h"
 
 namespace PoincareJ {

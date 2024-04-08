@@ -7,8 +7,8 @@
 #include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/layout/serialize.h>
+#include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
-#include <poincare_junior/src/n_ary.h>
 
 #include <algorithm>
 

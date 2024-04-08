@@ -1,6 +1,6 @@
 #include "autocompleted_pair.h"
 
-#include <poincare_junior/src/n_ary.h>
+#include <poincare_junior/src/memory/n_ary.h>
 
 #include "k_tree.h"
 

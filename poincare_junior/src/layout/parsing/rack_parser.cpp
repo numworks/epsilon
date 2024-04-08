@@ -16,8 +16,8 @@
 #include <poincare_junior/src/expression/unit.h>
 #include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
+#include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
-#include <poincare_junior/src/n_ary.h>
 #include <stdlib.h>
 
 #include <algorithm>

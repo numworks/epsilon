@@ -7,8 +7,8 @@
 #include "poincare_junior/src/expression/variables.h"
 #include "poincare_junior/src/memory/block.h"
 #include "poincare_junior/src/memory/exception_checkpoint.h"
+#include "poincare_junior/src/memory/n_ary.h"
 #include "poincare_junior/src/memory/tree_ref.h"
-#include "poincare_junior/src/n_ary.h"
 
 namespace PoincareJ {
 

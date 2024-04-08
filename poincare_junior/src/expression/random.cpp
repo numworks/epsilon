@@ -4,8 +4,8 @@
 #include <poincare/random.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/dimension.h>
+#include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/tree_stack.h>
-#include <poincare_junior/src/n_ary.h>
 
 #include "float.h"
 #include "k_tree.h"

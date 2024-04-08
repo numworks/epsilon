@@ -3,8 +3,8 @@
 #include <poincare/print_float.h>
 #include <poincare/serialization_helper.h>
 #include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/tree_stack.h>
-#include <poincare_junior/src/n_ary.h>
 
 #include <algorithm>
 

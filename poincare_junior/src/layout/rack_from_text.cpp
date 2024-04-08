@@ -1,8 +1,8 @@
 #include "rack_from_text.h"
 
 #include <ion/unicode/utf8_decoder.h>
+#include <poincare_junior/src/memory/n_ary.h>
 
-#include "../n_ary.h"
 #include "code_point_layout.h"
 #include "k_tree.h"
 

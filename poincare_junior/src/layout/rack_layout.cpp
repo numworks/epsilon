@@ -1,7 +1,7 @@
 #include "rack_layout.h"
 
+#include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/node_iterator.h>
-#include <poincare_junior/src/n_ary.h>
 
 #include "empty_rectangle.h"
 #include "indices.h"

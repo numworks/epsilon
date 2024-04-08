@@ -74,12 +74,12 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/xnt.cpp \
   memory/tree_stack.cpp \
   memory/exception_checkpoint.cpp \
+  memory/n_ary.cpp \
   memory/pattern_matching.cpp \
   memory/storage_context.cpp \
   memory/tree.cpp \
   memory/tree_ref.cpp \
   memory/value_block.cpp \
-  n_ary.cpp \
   poincare.cpp \
 )
 

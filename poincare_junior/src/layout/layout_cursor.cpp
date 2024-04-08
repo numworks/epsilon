@@ -10,8 +10,8 @@
 #include <poincare_junior/src/layout/layout_cursor.h>
 #include <poincare_junior/src/layout/rack_layout.h>
 #include <poincare_junior/src/layout/render.h>
+#include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/tree_ref.h>
-#include <poincare_junior/src/n_ary.h>
 
 #include <algorithm>
 

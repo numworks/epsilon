@@ -119,6 +119,7 @@ class GlobalPreferences {
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
 
+  int m_version = 0x20240401;
 #if __EMSCRIPTEN__
   emscripten_align1_int m_brightnessLevel;
 #else
@@ -129,6 +130,17 @@ class GlobalPreferences {
   bool m_showPopUp;
   KDFont::Size m_font;
 };
+
+#if PLATFORM_DEVICE
+static_assert(sizeof(GlobalPreferences) == 12,
+              "Class GlobalPreferences changed size");
+
+static_assert(sizeof(GlobalPreferences) ==
+                  sizeof(int) + sizeof(int) + sizeof(I18n::Language) +
+                      sizeof(I18n::Country) + sizeof(bool) +
+                      sizeof(KDFont::Size),
+              "Padding in class GlobalPreferences unaccounted for");
+#endif
 
 #if __EMSCRIPTEN
 /* GlobalPreferences live in the Storage which does not enforce alignment, so

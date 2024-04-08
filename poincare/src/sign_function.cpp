@@ -1,10 +1,12 @@
 #include <assert.h>
 #include <ion.h>
+#include <poincare/comparison.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/derivative.h>
 #include <poincare/float.h>
 #include <poincare/layout.h>
 #include <poincare/multiplication.h>
+#include <poincare/piecewise_operator.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/sign_function.h>
@@ -15,9 +17,6 @@
 
 #include <cmath>
 #include <utility>
-
-#include "poincare/comparison.h"
-#include "poincare/piecewise_operator.h"
 
 namespace Poincare {
 

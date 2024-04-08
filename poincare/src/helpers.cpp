@@ -2,11 +2,10 @@
 #include <poincare/helpers.h>
 #include <poincare/list.h>
 #include <poincare/list_complex.h>
+#include <poincare/point.h>
 #include <poincare/point_evaluation.h>
 
 #include <cmath>
-
-#include "poincare/point.h"
 
 namespace Poincare {
 

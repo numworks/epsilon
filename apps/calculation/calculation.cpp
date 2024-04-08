@@ -3,6 +3,7 @@
 #include <apps/apps_container_helper.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/expression_node.h>
 #include <poincare/nonreal.h>
 #include <poincare/undefined.h>
 #include <string.h>
@@ -11,7 +12,6 @@
 #include <cmath>
 
 #include "app.h"
-#include "poincare/expression_node.h"
 
 using namespace Poincare;
 using namespace Shared;

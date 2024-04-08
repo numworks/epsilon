@@ -4,15 +4,15 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/empty_context.h>
 #include <poincare/matrix.h>
 #include <poincare/polynomial.h>
 #include <poincare/print_int.h>
 #include <poincare/symbol.h>
+#include <poincare/variable_context.h>
 #include <poincare/zoom.h>
 
 #include "app.h"
-#include "poincare/empty_context.h"
-#include "poincare/variable_context.h"
 
 using namespace Poincare;
 using namespace Shared;

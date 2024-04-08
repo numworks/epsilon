@@ -1,12 +1,13 @@
 #include "function_graph_cell.h"
 
+#include <poincare/context.h>
+#include <poincare/print.h>
+
 #include <cmath>
 
 #include "../app.h"
 #include "escher/palette.h"
 #include "kandinsky/color.h"
-#include "poincare/context.h"
-#include "poincare/print.h"
 
 using namespace Shared;
 using namespace Poincare;

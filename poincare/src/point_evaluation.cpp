@@ -1,8 +1,7 @@
+#include <poincare/float.h>
+#include <poincare/old_expression.h>
+#include <poincare/point.h>
 #include <poincare/point_evaluation.h>
-
-#include "poincare/float.h"
-#include "poincare/old_expression.h"
-#include "poincare/point.h"
 
 namespace Poincare {
 

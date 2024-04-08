@@ -1,6 +1,9 @@
 #include "cobweb_controller.h"
 
 #include <poincare/layout.h>
+#include <poincare/preferences.h>
+#include <poincare/print.h>
+#include <poincare/sequence.h>
 
 #include "../app.h"
 #include "apps/sequence/graph/cobweb_graph_view.h"
@@ -10,9 +13,6 @@
 #include "apps/shared/sequence_store.h"
 #include "ion/events.h"
 #include "ion/unicode/code_point.h"
-#include "poincare/preferences.h"
-#include "poincare/print.h"
-#include "poincare/sequence.h"
 
 using namespace Shared;
 using namespace Poincare;

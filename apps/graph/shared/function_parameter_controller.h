@@ -51,7 +51,7 @@ class FunctionParameterController : public Shared::ListParameterController,
 
   // ColumnParameters
   void initializeColumnParameters() override;
-  Shared::ColumnNameHelper* columnNameHelper() override;
+  Shared::ClearColumnHelper* clearColumnHelper() override;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>

@@ -35,7 +35,7 @@ class StoreParameterController : public ColumnParameterController {
       m_hideCell;
 
  private:
-  ColumnNameHelper* columnNameHelper() override;
+  ClearColumnHelper* clearColumnHelper() override;
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
   void updateHideCellSwitch() {
     m_hideCell.accessory()->setState(

@@ -23,7 +23,7 @@ class ValuesParameterController : public ColumnParameterController {
   void initializeColumnParameters() override;
 
  private:
-  ColumnNameHelper* columnNameHelper() override;
+  ClearColumnHelper* clearColumnHelper() override;
   constexpr static int k_totalNumberOfCell = 2;
 
   Escher::MenuCell<Escher::MessageTextView> m_clearColumn;

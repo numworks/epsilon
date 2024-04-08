@@ -379,7 +379,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
       layoutCursor->position() > h->numberOfChildren()) {
     layoutCursor->setLayout(inserted, OMG::Direction::Right());
   }
-  firstOrderDerivative->cloneNodeOverNode(KNthDerivativeL);
+  firstOrderDerivative->cloneNodeOverNode(KNthDiffL);
   return true;
 }
 

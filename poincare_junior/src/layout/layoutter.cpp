@@ -449,8 +449,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {
-        TreeRef layout =
-            (type.isDiff() ? KDerivativeL : KNthDerivativeL)->cloneNode();
+        TreeRef layout = (type.isDiff() ? KDiffL : KNthDiffL)->cloneNode();
         if (type.isNthDiff()) {
           // Handle the peculiar order of nth-derivative layout
           // TODO fix order in derivative layout instead

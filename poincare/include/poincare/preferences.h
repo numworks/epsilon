@@ -177,7 +177,7 @@ class Preferences final {
   mutable LogarithmKeyEvent m_logarithmKeyEvent;
   mutable ParabolaParameter m_parabolaParameter;
 #if PLATFORM_DEVICE
-  /* Explicitly declare padding to ensure the structure of the class stay
+  /* Explicitly declare padding to ensure the structure of the class stays
    * consistent across versions. */
   char m_padding[2];
 #endif

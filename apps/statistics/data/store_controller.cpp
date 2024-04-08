@@ -74,7 +74,7 @@ void StoreController::fillCellForLocation(HighlightCell *cell, int column,
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
     char buffer[bufferSize];
-    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+    PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
         value, buffer, bufferSize,
         AbstractEvenOddBufferTextCell::k_defaultPrecision,
         Preferences::sharedPreferences->displayMode());
@@ -115,7 +115,7 @@ void StoreController::setTitleCellText(HighlightCell *cell, int column) {
     myTitleCell->setText(
         I18n::translate(I18n::Message::CumulatedFrequencyColumnName));
   } else {
-    char columnName[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
+    char columnName[ClearColumnHelper::k_maxSizeOfColumnName];
     fillColumnName(column, columnName);
     /* 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the
      * glyph can take more space than 1 byte in memory. */
@@ -123,8 +123,8 @@ void StoreController::setTitleCellText(HighlightCell *cell, int column) {
     I18n::Message titleType = m_store->relativeColumn(column) % 2 == 1
                                   ? I18n::Message::Frequencies
                                   : I18n::Message::Values;
-    Poincare::Print::CustomPrintf(columnTitle, k_columnTitleSize,
-                                  I18n::translate(titleType), columnName);
+    Print::CustomPrintf(columnTitle, k_columnTitleSize,
+                        I18n::translate(titleType), columnName);
     myTitleCell->setText(columnTitle);
   }
 }
@@ -162,7 +162,7 @@ void StoreController::setClearPopUpContent() {
 
 bool StoreController::deleteCellValue(int series, int i, int j,
                                       bool authorizeNonEmptyRowDeletion) {
-  Escher::HighlightCell *selectedCell = nullptr;
+  HighlightCell *selectedCell = nullptr;
   if (isCumulatedFrequencyColumn(i)) {
     selectedCell = selectableTableView()->selectedCell();
   }

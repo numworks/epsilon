@@ -17,6 +17,7 @@ jobs:
     steps:
       - uses: numworks/setup-llvm@latest
       - run: LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown
+      - run: set -o pipefail # Commands should fail if one of its parts fail
       - name: Fetch PR branch
         uses: actions/checkout@v3
         with:

@@ -34,6 +34,8 @@ class DoublePairStore {
   static_assert(std::size(k_statisticsColumNames) == k_numberOfColumnsPerSeries,
                 "Number of columns per series does not match number of column "
                 "names in Statistics.");
+  constexpr static size_t k_tableNameLength =
+      2 * k_columnNamesLength + sizeof("/");
 
   DoublePairStore(GlobalContext *context,
                   DoublePairStorePreferences *preferences);
@@ -52,6 +54,7 @@ class DoublePairStore {
   size_t fillColumnName(int series, int column, char *buffer) const;
   bool isColumnName(const char *name, int nameLen, int *returnSeries = nullptr,
                     int *returnColumn = nullptr);
+  size_t tableName(int series, char *buffer, size_t bufferSize) const;
 
   // Get and set data
   double get(int series, int i, int j) const;

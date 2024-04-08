@@ -5,6 +5,7 @@
 #include <ion/storage/file_system.h>
 #include <poincare/helpers.h>
 #include <poincare/list.h>
+#include <poincare/serialization_helper.h>
 #include <stddef.h>
 
 #include <algorithm>
@@ -89,6 +90,15 @@ bool DoublePairStore::isColumnName(const char *name, int nameLen,
     }
   }
   return false;
+}
+
+size_t DoublePairStore::tableName(int series, char *buffer,
+                                  size_t bufferSize) const {
+  size_t length = fillColumnName(series, 0, buffer);
+  length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
+                                           UCodePointSolidus);
+  length += fillColumnName(series, 1, buffer + length);
+  return length;
 }
 
 double DoublePairStore::get(int series, int i, int j) const {

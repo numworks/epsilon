@@ -57,6 +57,8 @@ constexpr static CodePoint UCodePointLeftSystemParenthesis         = 0x12;
 constexpr static CodePoint UCodePointRightSystemParenthesis        = 0x13;
 constexpr static CodePoint UCodePointSystem                        = 0x14;
 
+constexpr static CodePoint UCodePointSolidus                       = 0x2f;    // /
+
 constexpr static CodePoint UCodePointDegreeSign                    = 0xb0;    // °
 constexpr static CodePoint UCodePointMiddleDot                     = 0xb7;    // ·
 constexpr static CodePoint UCodePointMultiplicationSign            = 0xd7;    // ×

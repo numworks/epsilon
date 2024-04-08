@@ -162,9 +162,8 @@ void StoreController::setClearPopUpContent() {
 
 void StoreController::FillSeriesName(int series, char *buffer,
                                      size_t bufferSize) {
-  char tableIndex = static_cast<char>('1' + series);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, tableIndex,
-                                tableIndex);
+  char i = static_cast<char>('1' + series);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, i, i);
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j,

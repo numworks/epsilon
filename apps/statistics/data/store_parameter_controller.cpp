@@ -1,5 +1,7 @@
 #include "store_parameter_controller.h"
 
+#include <apps/shared/statistics_store.h>
+
 #include "../store.h"
 #include "store_controller.h"
 
@@ -33,9 +35,9 @@ void StoreParameterController::initializeColumnParameters() {
   }
   if (relativeColumn == 0) {
     int series = m_storeColumnHelper->selectedSeries();
-    char tableName[StoreController::k_tableNameSize];
-    StoreController::FillTableName(series, tableName,
-                                   StoreController::k_tableNameSize);
+    constexpr size_t bufferSize = Shared::StatisticsStore::k_tableNameSize;
+    char tableName[bufferSize];
+    Shared::StatisticsStore::FillTableName(series, tableName, bufferSize);
     m_clearColumn.label()->setMessageWithPlaceholders(I18n::Message::ClearTable,
                                                       tableName);
     return;

@@ -1,6 +1,14 @@
 #include "statistics_store.h"
 
+#include <poincare/print.h>
+
 namespace Shared {
+
+void StatisticsStore::FillTableName(int series, char* buffer,
+                                    size_t bufferSize) {
+  char i = static_cast<char>('1' + series);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, i, i);
+}
 
 StatisticsStore::StatisticsStore(GlobalContext* context,
                                  DoublePairStorePreferences* preferences)

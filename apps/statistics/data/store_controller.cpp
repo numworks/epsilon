@@ -148,8 +148,9 @@ void StoreController::setClearPopUpContent() {
   assert(column == 0 || column == 1);
   int series = m_store->seriesAtColumn(selectedColumn());
   if (column == 0) {
-    char tableName[k_tableNameSize];
-    FillTableName(series, tableName, k_tableNameSize);
+    constexpr size_t bufferSize = StatisticsStore::k_tableNameSize;
+    char tableName[bufferSize];
+    StatisticsStore::FillTableName(series, tableName, bufferSize);
     m_confirmPopUpController.setMessageWithPlaceholders(
         I18n::Message::ClearTableConfirmation, tableName);
   } else {
@@ -158,12 +159,6 @@ void StoreController::setClearPopUpContent() {
     m_confirmPopUpController.setMessageWithPlaceholders(
         I18n::Message::ResetFreqConfirmation, columnNameBuffer);
   }
-}
-
-void StoreController::FillTableName(int series, char *buffer,
-                                    size_t bufferSize) {
-  char i = static_cast<char>('1' + series);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, i, i);
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j,

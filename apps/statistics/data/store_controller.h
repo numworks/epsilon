@@ -10,7 +10,7 @@ namespace Statistics {
 
 class StoreController : public Shared::StoreController {
  public:
-  constexpr static char k_tableName[] = "V%c/N%c ";
+  constexpr static char k_tableName[] = "V%c/N%c";
   constexpr static size_t k_tableNameSize = sizeof(k_tableName);
   static void FillSeriesName(int series, char* buffer);
 

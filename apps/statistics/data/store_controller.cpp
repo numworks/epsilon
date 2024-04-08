@@ -164,7 +164,6 @@ void StoreController::FillSeriesName(int series, char *buffer) {
   char tableIndex = static_cast<char>('1' + series);
   Poincare::Print::CustomPrintf(buffer, k_tableNameSize, k_tableName,
                                 tableIndex, tableIndex);
-  buffer[5] = 0;
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j,

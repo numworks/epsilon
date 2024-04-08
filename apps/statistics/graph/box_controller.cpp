@@ -66,7 +66,7 @@ bool BoxController::reloadBannerView() {
   char buffer[k_bufferSize] = "";
 
   // Display series name
-  StoreController::FillSeriesName(selectedSeries(), buffer);
+  StoreController::FillSeriesName(selectedSeries(), buffer, k_bufferSize);
   m_view.bannerView()->seriesName()->setText(buffer);
 
   // Display calculation

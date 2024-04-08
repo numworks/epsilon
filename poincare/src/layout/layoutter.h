@@ -1,9 +1,9 @@
 #ifndef POINCARE_LAYOUTTER_H
 #define POINCARE_LAYOUTTER_H
 
-#include <poincare_junior/src/expression/decimal.h>
-#include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/expression/decimal.h>
+#include <poincare/src/expression/integer.h>
+#include <poincare/src/memory/tree_ref.h>
 
 using Poincare::Preferences;
 

@@ -6,7 +6,7 @@
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
-#include <poincare_junior/src/memory/tree_stack.h>
+#include <poincare/src/memory/tree_stack.h>
 
 #include <cmath>
 

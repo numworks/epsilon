@@ -1,6 +1,6 @@
 #include "parser.h"
 
-#include <poincare_junior/src/memory/n_ary.h>
+#include <poincare/src/memory/n_ary.h>
 
 #include "grid.h"
 #include "parsing/rack_parser.h"

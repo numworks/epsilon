@@ -1,6 +1,6 @@
 #include "parametric.h"
 
-#include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "comparison.h"
 #include "integer.h"

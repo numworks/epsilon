@@ -1,7 +1,7 @@
 #include "inv_method.h"
 
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/rational.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/rational.h>
 
 namespace PoincareJ {
 

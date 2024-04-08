@@ -2,8 +2,8 @@
 #define POINCARE_PROBABILITY_DOMAIN_H
 
 #include <omg/troolean.h>
-#include <poincare_junior/src/memory/tree.h>
-#include <poincare_junior/src/numeric/float.h>
+#include <poincare/src/memory/tree.h>
+#include <poincare/src/numeric/float.h>
 #include <stdint.h>
 
 #include <algorithm>

@@ -1,8 +1,8 @@
 #include "solver.h"
 
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/storage_context.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/storage_context.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include "advanced_simplification.h"
 #include "beautification.h"

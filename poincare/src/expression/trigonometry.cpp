@@ -1,6 +1,6 @@
 #include "trigonometry.h"
 
-#include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "comparison.h"
 #include "k_tree.h"

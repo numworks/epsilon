@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_NUMBER_H
 
 #include <omg/enums.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include "sign.h"
 

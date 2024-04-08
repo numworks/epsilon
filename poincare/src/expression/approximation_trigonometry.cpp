@@ -1,6 +1,6 @@
 #include <math.h>
 #include <poincare/old/approximation_helper.h>
-#include <poincare_junior/src/numeric/float.h>
+#include <poincare/src/numeric/float.h>
 
 #include <bit>
 #include <complex>

@@ -1,7 +1,7 @@
 #include <poincare/old/expression.h>
 #include <poincare/old/layout.h>
 #include <poincare/old/symbol_abstract.h>
-#include <poincare_junior/src/layout/rack_layout.h>
+#include <poincare/src/layout/rack_layout.h>
 
 namespace Poincare {
 

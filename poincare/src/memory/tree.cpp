@@ -4,23 +4,23 @@
 #include "tree_ref.h"
 
 #if POINCARE_POOL_VISUALIZATION
-#include <poincare_junior/include/poincare.h>
+#include <poincare/include/poincare.h>
 #endif
 
 #if POINCARE_TREE_LOG
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare_junior/include/poincare.h>
-#include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/constant.h>
-#include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/polynomial.h>
-#include <poincare_junior/src/expression/random.h>
-#include <poincare_junior/src/expression/symbol.h>
-#include <poincare_junior/src/expression/variables.h>
-#include <poincare_junior/src/layout/autocompleted_pair.h>
-#include <poincare_junior/src/layout/code_point_layout.h>
-#include <poincare_junior/src/layout/layoutter.h>
-#include <poincare_junior/src/layout/serialize.h>
+#include <poincare/include/poincare.h>
+#include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/constant.h>
+#include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/polynomial.h>
+#include <poincare/src/expression/random.h>
+#include <poincare/src/expression/symbol.h>
+#include <poincare/src/expression/variables.h>
+#include <poincare/src/layout/autocompleted_pair.h>
+#include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/serialize.h>
 
 #include "placeholder.h"
 #endif

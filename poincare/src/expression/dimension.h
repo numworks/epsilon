@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_DIMENSION_H
 #define POINCARE_EXPRESSION_DIMENSION_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "unit_representatives.h"
 

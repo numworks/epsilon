@@ -2,8 +2,8 @@
 
 #include <ion/unicode/utf8_helper.h>
 #include <omg/unicode_helper.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "k_tree.h"
 

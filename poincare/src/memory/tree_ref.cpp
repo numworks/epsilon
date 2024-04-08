@@ -1,8 +1,8 @@
 #include "tree_ref.h"
 
 #include <ion/unicode/code_point.h>
-#include <poincare_junior/include/poincare.h>
-#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare/include/poincare.h>
+#include <poincare/src/expression/k_tree.h>
 #include <string.h>
 
 #include "node_iterator.h"

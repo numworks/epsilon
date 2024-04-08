@@ -1,11 +1,11 @@
 #include "approximation.h"
 
 #include <math.h>
-#include <poincare_junior/src/memory/exception_checkpoint.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/node_iterator.h>
-#include <poincare_junior/src/numeric/float.h>
-#include <poincare_junior/src/probability/distribution_method.h>
+#include <poincare/src/memory/exception_checkpoint.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/node_iterator.h>
+#include <poincare/src/numeric/float.h>
+#include <poincare/src/probability/distribution_method.h>
 
 #include <bit>
 #include <complex>

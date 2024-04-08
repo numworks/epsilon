@@ -1,7 +1,7 @@
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/layout/k_tree.h>
-#include <poincare_junior/src/layout/parsing/rack_parser.h>
-#include <poincare_junior/src/layout/parsing/tokenizer.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/parsing/rack_parser.h>
+#include <poincare/src/layout/parsing/tokenizer.h>
 #include <quiz.h>
 
 #include "helper.h"

@@ -2,7 +2,7 @@
 
 #include <ion/unicode/utf8_helper.h>
 #include <omg/unicode_helper.h>
-#include <poincare_junior/src/expression/binary.h>
+#include <poincare/src/expression/binary.h>
 
 namespace PoincareJ {
 bool ParsingHelper::IsLogicalOperator(const CPL* name, size_t nameLength,

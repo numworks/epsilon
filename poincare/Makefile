@@ -222,7 +222,7 @@ poincare_bench_src = $(addprefix poincare/src/old/,\
 )
 
 
-poincare_junior_src += $(addprefix poincare_junior/src/,\
+poincare_src += $(addprefix poincare/src/,\
   expression/advanced_simplification.cpp \
   expression/algebraic.cpp \
   expression/aliases.cpp \
@@ -298,7 +298,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   poincare.cpp \
 )
 
-poincare_junior_src += $(addprefix poincare_junior/src/numeric/,\
+poincare_src += $(addprefix poincare/src/numeric/,\
   beta_function.cpp \
   erf_inv.cpp \
   range.cpp \
@@ -308,7 +308,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/numeric/,\
   solver_algorithms.cpp \
 )
 
-poincare_junior_src += $(addprefix poincare_junior/src/probability/,\
+poincare_src += $(addprefix poincare/src/probability/,\
   binomial_distribution.cpp \
   cdf_method.cpp \
   cdf_range_method.cpp \
@@ -329,7 +329,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/probability/,\
   uniform_distribution.cpp \
 )
 
-tests_src += $(addprefix poincare_junior/test/,\
+tests_src += $(addprefix poincare/test/,\
   approximation.cpp \
   beautification.cpp \
   comparison.cpp \
@@ -355,7 +355,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   storage_context.cpp \
 )
 
-tests_src += $(poincare_junior_src)
+tests_src += $(poincare_src)
 
 ifeq ($(DEBUG),1)
   ifeq ($(PLATFORM),simulator)

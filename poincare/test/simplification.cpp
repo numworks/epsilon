@@ -1,10 +1,10 @@
-#include <poincare_junior/src/expression/advanced_simplification.h>
-#include <poincare_junior/src/expression/dependency.h>
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/expression/variables.h>
-#include <poincare_junior/src/layout/layoutter.h>
-#include <poincare_junior/src/layout/serialize.h>
+#include <poincare/src/expression/advanced_simplification.h>
+#include <poincare/src/expression/dependency.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/variables.h>
+#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/serialize.h>
 
 #include "helper.h"
 

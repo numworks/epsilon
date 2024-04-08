@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_BEAUTIFICATION_H
 #define POINCARE_EXPRESSION_BEAUTIFICATION_H
 
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include "context.h"
 #include "projection.h"

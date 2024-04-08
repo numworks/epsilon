@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_PARAMETRIC_H
 #define POINCARE_EXPRESSION_PARAMETRIC_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "sign.h"
 

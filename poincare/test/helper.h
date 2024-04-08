@@ -1,10 +1,10 @@
 #ifndef POINCAREJ_TEST_HELPER_H
 #define POINCAREJ_TEST_HELPER_H
 
-#include <poincare_junior/src/expression/comparison.h>
-#include <poincare_junior/src/layout/parsing/rack_parser.h>
-#include <poincare_junior/src/memory/tree_ref.h>
-#include <poincare_junior/src/memory/tree_stack.h>
+#include <poincare/src/expression/comparison.h>
+#include <poincare/src/layout/parsing/rack_parser.h>
+#include <poincare/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree_stack.h>
 #include <quiz.h>
 
 #if POINCARE_TREE_LOG

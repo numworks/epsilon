@@ -7,7 +7,7 @@
  * Tokenizer determines a Type and may save other relevant data intended for the
  * Parser. */
 
-#include <poincare_junior/src/layout/rack_layout_decoder.h>
+#include <poincare/src/layout/rack_layout_decoder.h>
 
 #include "parsing_context.h"
 #include "token.h"

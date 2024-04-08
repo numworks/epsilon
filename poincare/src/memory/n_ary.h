@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_N_ARY_H
 #define POINCARE_MEMORY_N_ARY_H
 
-#include <poincare_junior/src/expression/comparison.h>
+#include <poincare/src/expression/comparison.h>
 
 namespace PoincareJ {
 

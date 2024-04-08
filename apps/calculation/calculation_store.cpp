@@ -8,7 +8,7 @@
 #include <poincare/old/symbol.h>
 #include <poincare/old/trigonometry.h>
 #include <poincare/old/undefined.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 using namespace Poincare;
 using namespace Shared;

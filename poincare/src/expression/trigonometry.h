@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_TRIGONOMETRY_H
 #define POINCARE_EXPRESSION_TRIGONOMETRY_H
 
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree_ref.h>
 
 namespace PoincareJ {
 

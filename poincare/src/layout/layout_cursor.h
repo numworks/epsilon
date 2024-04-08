@@ -5,8 +5,8 @@
 #include <omg/directions.h>
 #include <poincare/old/context.h>
 #include <poincare/old/junior_layout.h>
-#include <poincare_junior/src/memory/tree.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include "cursor_motion.h"
 #include "empty_rectangle.h"

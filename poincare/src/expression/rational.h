@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_RATIONAL_H
 
 #include <omg/enums.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "integer.h"
 #include "sign.h"

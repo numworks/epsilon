@@ -1,6 +1,6 @@
 #include "student_distribution.h"
 
-#include <poincare_junior/src/probability/student_distribution.h>
+#include <poincare/src/probability/student_distribution.h>
 
 #include <cmath>
 

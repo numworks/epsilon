@@ -3,11 +3,11 @@
 
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
-#include <poincare_junior/src/expression/constant.h>
-#include <poincare_junior/src/expression/float.h>
-#include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/sign.h>
-#include <poincare_junior/src/layout/code_point_layout.h>
+#include <poincare/src/expression/constant.h>
+#include <poincare/src/expression/float.h>
+#include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/sign.h>
+#include <poincare/src/layout/code_point_layout.h>
 
 #include "value_block.h"
 

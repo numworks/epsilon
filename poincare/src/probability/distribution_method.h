@@ -1,7 +1,7 @@
 #ifndef POINCARE_PROBABILITY_DISTRIBUTION_METHOD_H
 #define POINCARE_PROBABILITY_DISTRIBUTION_METHOD_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "distribution.h"
 

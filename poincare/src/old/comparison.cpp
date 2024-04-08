@@ -8,7 +8,7 @@
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/subtraction.h>
 #include <poincare/old/undefined.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 namespace Poincare {
 

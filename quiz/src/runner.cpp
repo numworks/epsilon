@@ -1,13 +1,13 @@
 #include <apps/init.h>
 #include <escher/init.h>
 #include <ion.h>
+#include <poincare/include/poincare.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/init.h>
 #include <poincare/old/pool.h>
 #include <poincare/old/print.h>
+#include <poincare/test/helper.h>
 #include <poincare/test/old/helper.h>
-#include <poincare_junior/include/poincare.h>
-#include <poincare_junior/test/helper.h>
 
 #include "quiz.h"
 #include "symbols.h"

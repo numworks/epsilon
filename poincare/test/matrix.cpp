@@ -1,6 +1,6 @@
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/simplification.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/simplification.h>
 
 #include "helper.h"
 

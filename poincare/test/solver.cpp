@@ -1,9 +1,9 @@
-#include <poincare_junior/src/expression/list.h>
-#include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/expression/solver.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/storage_context.h>
-#include <poincare_junior/src/memory/tree_stack.h>
+#include <poincare/src/expression/list.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/solver.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/storage_context.h>
+#include <poincare/src/memory/tree_stack.h>
 
 #include "helper.h"
 using namespace PoincareJ;

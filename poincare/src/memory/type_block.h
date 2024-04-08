@@ -40,7 +40,7 @@ enum class LayoutType : uint8_t {
 // Members of LayoutType have the same values as their Type counterpart
 #define RANGE(...)
 #define NODE3(F, N, S) F = static_cast<uint8_t>(Type::F##Layout),
-#include <poincare_junior/src/layout/types.h>
+#include <poincare/src/layout/types.h>
 #undef NODE3
 #undef RANGE
 };

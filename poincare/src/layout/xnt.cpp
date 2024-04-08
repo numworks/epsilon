@@ -1,9 +1,9 @@
 #include "xnt.h"
 
 #include <ion/unicode/utf8_helper.h>
-#include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/expression/parametric.h>
-#include <poincare_junior/src/expression/symbol.h>
+#include <poincare/src/expression/builtin.h>
+#include <poincare/src/expression/parametric.h>
+#include <poincare/src/expression/symbol.h>
 
 #include "k_tree.h"
 #include "parsing/tokenizer.h"

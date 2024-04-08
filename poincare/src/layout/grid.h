@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_GRID_H
 #define POINCARE_LAYOUT_GRID_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "empty_rectangle.h"
 #include "k_tree.h"

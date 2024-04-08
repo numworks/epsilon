@@ -1,10 +1,10 @@
 #include "builtin.h"
 
-#include <poincare_junior/src/memory/tree.h>
-#include <poincare_junior/src/memory/tree_stack.h>
-#include <poincare_junior/src/memory/type_block.h>
-#include <poincare_junior/src/probability/distribution.h>
-#include <poincare_junior/src/probability/distribution_method.h>
+#include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/tree_stack.h>
+#include <poincare/src/memory/type_block.h>
+#include <poincare/src/probability/distribution.h>
+#include <poincare/src/probability/distribution_method.h>
 
 #include "k_tree.h"
 

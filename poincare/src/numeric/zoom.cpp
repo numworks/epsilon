@@ -1,6 +1,6 @@
 #include "zoom.h"
 
-#include <poincare_junior/src/expression/approximation.h>
+#include <poincare/src/expression/approximation.h>
 #include <string.h>
 
 #include "solver_algorithms.h"

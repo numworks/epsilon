@@ -8,7 +8,7 @@
  *   an efficient but less readable shunting-yard parser. */
 
 // #include "helper.h"
-#include <poincare_junior/src/expression/builtin.h>
+#include <poincare/src/expression/builtin.h>
 
 #include "parsing_context.h"
 #include "tokenizer.h"

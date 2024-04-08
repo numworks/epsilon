@@ -1,5 +1,5 @@
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/polynomial.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/polynomial.h>
 
 #include "helper.h"
 

@@ -1,7 +1,7 @@
-#ifndef POINCARE_JUNIOR_EXPRESSION_H
-#define POINCARE_JUNIOR_EXPRESSION_H
+#ifndef POINCARE_EXPRESSION_H
+#define POINCARE_EXPRESSION_H
 
-#include <poincare_junior/src/memory/block.h>
+#include <poincare/src/memory/block.h>
 
 #include "old_expression.h"
 

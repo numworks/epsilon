@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_CONTINUITY_H
 #define POINCARE_EXPRESSION_CONTINUITY_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "variables.h"
 

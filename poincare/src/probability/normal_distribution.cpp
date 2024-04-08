@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <float.h>
-#include <poincare_junior/src/numeric/erf_inv.h>
-#include <poincare_junior/src/numeric/float.h>
+#include <poincare/src/numeric/erf_inv.h>
+#include <poincare/src/numeric/float.h>
 
 #include <cmath>
 

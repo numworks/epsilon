@@ -7,7 +7,7 @@ You can visualize the evolution of the poincare edition pool by running:
 
 You can also wrap a snippet of code with:
 ```C++
-#include <poincare_junior/include/poincare.h>
+#include <poincare/include/poincare.h>
 
 /* ... */
 

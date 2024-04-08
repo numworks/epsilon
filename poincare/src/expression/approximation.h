@@ -2,8 +2,8 @@
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
 #include <float.h>
-#include <poincare_junior/src/memory/tree.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include <cmath>
 #include <complex>

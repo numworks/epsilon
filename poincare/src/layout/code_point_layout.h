@@ -2,7 +2,7 @@
 #define POINCARE_LAYOUT_CODE_POINT_LAYOUT_H
 
 #include <ion/unicode/code_point.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 namespace PoincareJ {
 

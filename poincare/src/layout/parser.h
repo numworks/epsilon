@@ -2,8 +2,8 @@
 #define POINCARE_LAYOUT_PARSER_H
 
 #include <poincare/old/context.h>
-#include <poincare_junior/src/memory/tree.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/tree_ref.h>
 
 namespace PoincareJ {
 

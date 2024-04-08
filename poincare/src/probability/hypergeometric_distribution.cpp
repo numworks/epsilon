@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <float.h>
 #include <poincare/old/binomial_coefficient.h>
-#include <poincare_junior/src/numeric/float.h>
-#include <poincare_junior/src/numeric/solver_algorithms.h>
+#include <poincare/src/numeric/float.h>
+#include <poincare/src/numeric/solver_algorithms.h>
 
 #include <cmath>
 

@@ -1,7 +1,7 @@
 #include <poincare/old/point_of_interest.h>
-#include <poincare_junior/src/expression/point_of_interest.h>
-#include <poincare_junior/src/memory/tree.h>
-#include <poincare_junior/src/memory/tree_stack.h>
+#include <poincare/src/expression/point_of_interest.h>
+#include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/tree_stack.h>
 
 namespace Poincare {
 

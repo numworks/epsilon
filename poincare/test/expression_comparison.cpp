@@ -1,5 +1,5 @@
-#include <poincare_junior/src/expression/comparison.h>
-#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare/src/expression/comparison.h>
+#include <poincare/src/expression/k_tree.h>
 
 #include "helper.h"
 

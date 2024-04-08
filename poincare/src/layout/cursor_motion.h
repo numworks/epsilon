@@ -2,7 +2,7 @@
 #define POINCARE_LAYOUT_CURSOR_MOTION_H
 
 #include <omg/directions.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 namespace PoincareJ {
 

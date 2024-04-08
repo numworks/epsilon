@@ -34,8 +34,8 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
 #include <poincare/old/variable_context.h>
-#include <poincare_junior/src/expression/conversion.h>
-#include <poincare_junior/src/layout/layoutter.h>
+#include <poincare/src/expression/conversion.h>
+#include <poincare/src/layout/layoutter.h>
 
 #include <cmath>
 #include <utility>

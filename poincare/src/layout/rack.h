@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_RACK_H
 #define POINCARE_LAYOUT_RACK_H
 
-#include <poincare_junior/src/memory/tree_sub_class.h>
+#include <poincare/src/memory/tree_sub_class.h>
 
 namespace PoincareJ {
 

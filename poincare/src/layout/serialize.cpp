@@ -1,6 +1,6 @@
 #include "serialize.h"
 
-#include <poincare_junior/src/expression/builtin.h>
+#include <poincare/src/expression/builtin.h>
 
 #include <algorithm>
 

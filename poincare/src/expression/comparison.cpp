@@ -1,7 +1,7 @@
 #include "comparison.h"
 
-#include <poincare_junior/src/memory/node_iterator.h>
-#include <poincare_junior/src/memory/type_block.h>
+#include <poincare/src/memory/node_iterator.h>
+#include <poincare/src/memory/type_block.h>
 
 #include "approximation.h"
 #include "beautification.h"

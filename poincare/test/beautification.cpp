@@ -1,5 +1,5 @@
-#include <poincare_junior/src/expression/beautification.h>
-#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare/src/expression/beautification.h>
+#include <poincare/src/expression/k_tree.h>
 
 #include "helper.h"
 

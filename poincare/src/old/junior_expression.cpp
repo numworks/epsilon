@@ -8,23 +8,23 @@
 #include <poincare/old/matrix_complex.h>
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/symbol.h>
-#include <poincare_junior/src/expression/comparison.h>
-#include <poincare_junior/src/expression/continuity.h>
-#include <poincare_junior/src/expression/conversion.h>
-#include <poincare_junior/src/expression/dimension.h>
-#include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/polynomial.h>
-#include <poincare_junior/src/expression/sign.h>
-#include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/expression/unit.h>
-#include <poincare_junior/src/layout/layoutter.h>
-#include <poincare_junior/src/layout/parser.h>
-#include <poincare_junior/src/layout/rack_from_text.h>
-#include <poincare_junior/src/layout/serialize.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/pattern_matching.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/expression/comparison.h>
+#include <poincare/src/expression/continuity.h>
+#include <poincare/src/expression/conversion.h>
+#include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/polynomial.h>
+#include <poincare/src/expression/sign.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/unit.h>
+#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/parser.h>
+#include <poincare/src/layout/rack_from_text.h>
+#include <poincare/src/layout/serialize.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree.h>
 
 namespace Poincare {
 

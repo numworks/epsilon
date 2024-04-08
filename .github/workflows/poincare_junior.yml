@@ -47,7 +47,7 @@ jobs:
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
       - name: Compare logs
         id: compare_logs
-        run: python3 poincare_junior/test/compare.py --markdown ancestor.csv head.csv > comment.md
+        run: python3 poincare/test/compare.py --markdown ancestor.csv head.csv > comment.md
       - name: Add comment
         uses: actions/github-script@v6
         with:

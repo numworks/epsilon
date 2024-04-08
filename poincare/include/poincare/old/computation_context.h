@@ -1,7 +1,7 @@
 #ifndef POINCARE_COMPUTATION_CONTEXT_H
 #define POINCARE_COMPUTATION_CONTEXT_H
 
-#include <poincare_junior/src/expression/context.h>
+#include <poincare/src/expression/context.h>
 
 #include "context.h"
 #include "preferences.h"

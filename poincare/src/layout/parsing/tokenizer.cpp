@@ -2,12 +2,12 @@
 
 #include <ion/unicode/utf8_helper.h>
 #include <omg/unicode_helper.h>
-#include <poincare_junior/src/expression/aliases.h>
-#include <poincare_junior/src/expression/binary.h>
-#include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/expression/constant.h>
-#include <poincare_junior/src/expression/unit.h>
-#include <poincare_junior/src/layout/vertical_offset.h>
+#include <poincare/src/expression/aliases.h>
+#include <poincare/src/expression/binary.h>
+#include <poincare/src/expression/builtin.h>
+#include <poincare/src/expression/constant.h>
+#include <poincare/src/expression/unit.h>
+#include <poincare/src/layout/vertical_offset.h>
 
 #include "helper.h"
 

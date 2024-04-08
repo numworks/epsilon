@@ -2,8 +2,8 @@
 
 #include <apps/global_preferences.h>
 #include <poincare/old/preferences.h>
-#include <poincare_junior/src/memory/exception_checkpoint.h>
-#include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare/src/memory/exception_checkpoint.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "angle.h"
 #include "constant.h"

@@ -1,6 +1,6 @@
 #include "sign.h"
 
-#include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "dimension.h"
 #include "number.h"

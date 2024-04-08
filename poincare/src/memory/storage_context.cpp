@@ -1,7 +1,7 @@
 #include "storage_context.h"
 
 #include <ion/storage/file_system.h>
-#include <poincare_junior/src/expression/symbol.h>
+#include <poincare/src/expression/symbol.h>
 
 namespace PoincareJ {
 

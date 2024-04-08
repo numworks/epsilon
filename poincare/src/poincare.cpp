@@ -1,6 +1,6 @@
 #include <assert.h>
-#include <poincare_junior/include/poincare.h>
-#include <poincare_junior/src/memory/tree_stack.h>
+#include <poincare/include/poincare.h>
+#include <poincare/src/memory/tree_stack.h>
 
 #if POINCARE_POOL_VISUALIZATION
 #include <filesystem>

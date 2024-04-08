@@ -3,8 +3,8 @@
 
 #include <math.h>
 #include <omg/troolean.h>
-#include <poincare_junior/src/expression/context.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/expression/context.h>
+#include <poincare/src/memory/tree.h>
 
 #include <algorithm>
 

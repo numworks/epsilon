@@ -2,9 +2,9 @@
 
 #include <omg/arithmetic.h>
 #include <omg/print.h>
-#include <poincare_junior/include/poincare.h>
-#include <poincare_junior/src/memory/exception_checkpoint.h>
-#include <poincare_junior/src/memory/value_block.h>
+#include <poincare/include/poincare.h>
+#include <poincare/src/memory/exception_checkpoint.h>
+#include <poincare/src/memory/value_block.h>
 
 #include <algorithm>
 #include <new>

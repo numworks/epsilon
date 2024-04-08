@@ -1,9 +1,9 @@
 #include "unit.h"
 
 #include <omg/round.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/pattern_matching.h>
-#include <poincare_junior/src/numeric/float.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/numeric/float.h>
 
 #include "approximation.h"
 #include "integer.h"

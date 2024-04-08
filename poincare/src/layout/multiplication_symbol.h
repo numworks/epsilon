@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_MULTIPLICATION_SYMBOL_H
 #define POINCARE_LAYOUT_MULTIPLICATION_SYMBOL_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 namespace PoincareJ {
 

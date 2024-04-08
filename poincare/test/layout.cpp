@@ -1,10 +1,10 @@
 #include <kandinsky/ion_context.h>
 #include <omg/unicode_helper.h>
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/layout/k_tree.h>
-#include <poincare_junior/src/layout/layoutter.h>
-#include <poincare_junior/src/layout/multiplication_symbol.h>
-#include <poincare_junior/src/layout/render.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/multiplication_symbol.h>
+#include <poincare/src/layout/render.h>
 
 #include "helper.h"
 

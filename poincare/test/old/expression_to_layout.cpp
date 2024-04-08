@@ -1,6 +1,6 @@
+#include <poincare/src/layout/conversion.h>
+#include <poincare/src/layout/layoutter.h>
 #include <poincare_expressions.h>
-#include <poincare_junior/src/layout/conversion.h>
-#include <poincare_junior/src/layout/layoutter.h>
 #include <poincare_layouts.h>
 
 #include "helper.h"

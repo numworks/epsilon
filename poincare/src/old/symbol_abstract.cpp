@@ -12,8 +12,8 @@
 #include <poincare/old/symbol.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/old/undefined.h>
-#include <poincare_junior/src/expression/symbol.h>
-#include <poincare_junior/src/memory/tree_stack.h>
+#include <poincare/src/expression/symbol.h>
+#include <poincare/src/memory/tree_stack.h>
 #include <string.h>
 
 #include <algorithm>

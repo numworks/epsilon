@@ -1,7 +1,7 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_NODE_H
-#define POINCARE_JUNIOR_LAYOUT_NODE_H
+#ifndef POINCARE_LAYOUT_H
+#define POINCARE_LAYOUT_H
 
-#include <poincare_junior/src/memory/block.h>
+#include <poincare/src/memory/block.h>
 
 #include "old_layout.h"
 

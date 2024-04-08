@@ -1,6 +1,6 @@
 #include "data.h"
 
-#include <poincare_junior/src/numeric/solver.h>
+#include <poincare/src/numeric/solver.h>
 #include <stdint.h>
 
 #include <cmath>

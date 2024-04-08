@@ -15,9 +15,9 @@
 #include <poincare/old/nth_root.h>
 #include <poincare/old/piecewise_operator.h>
 #include <poincare/old/power.h>
-#include <poincare_junior/src/expression/conversion.h>
-#include <poincare_junior/src/layout/conversion.h>
-#include <poincare_junior/src/layout/parser.h>
+#include <poincare/src/expression/conversion.h>
+#include <poincare/src/layout/conversion.h>
+#include <poincare/src/layout/parser.h>
 #include <poincare_layouts.h>
 
 #include "helper.h"

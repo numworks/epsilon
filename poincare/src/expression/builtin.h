@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_BUILTINS_H
 #define POINCARE_EXPRESSION_BUILTINS_H
 
-#include <poincare_junior/src/memory/type_block.h>
+#include <poincare/src/memory/type_block.h>
 
 #include "aliases.h"
 

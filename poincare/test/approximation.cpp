@@ -1,7 +1,7 @@
 #include <float.h>
 #include <omg/float.h>
-#include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/k_tree.h>
 
 #include <cmath>
 

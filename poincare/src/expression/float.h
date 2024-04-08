@@ -3,7 +3,7 @@
 
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include <bit>
 

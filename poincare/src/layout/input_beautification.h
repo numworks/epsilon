@@ -1,10 +1,10 @@
 #ifndef POINCARE_INPUT_BEAUTIFICATION_H
 #define POINCARE_INPUT_BEAUTIFICATION_H
 
-#include <poincare_junior/src/expression/aliases.h>
-#include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/expression/aliases.h>
+#include <poincare/src/expression/builtin.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include <array>
 

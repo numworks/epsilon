@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_K_TREE_H
 
 #include <omg/arithmetic.h>
-#include <poincare_junior/src/memory/k_tree.h>
+#include <poincare/src/memory/k_tree.h>
 
 #include <bit>
 

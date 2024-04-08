@@ -2,8 +2,8 @@
 #define POINCARE_EXPRESSION_CONSTANT_H
 
 #include <assert.h>
-#include <poincare_junior/src/layout/rack_layout_decoder.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/layout/rack_layout_decoder.h>
+#include <poincare/src/memory/tree.h>
 #include <stdint.h>
 
 #include "aliases.h"

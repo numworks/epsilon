@@ -1,6 +1,6 @@
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/rational.h>
-#include <poincare_junior/src/expression/simplification.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/simplification.h>
 #include <quiz.h>
 
 #include "helper.h"

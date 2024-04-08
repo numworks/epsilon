@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_ANGLE_H
 #define POINCARE_EXPRESSION_ANGLE_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "context.h"
 #include "k_tree.h"

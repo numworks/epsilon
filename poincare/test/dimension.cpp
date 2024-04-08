@@ -1,4 +1,4 @@
-#include <poincare_junior/src/expression/dimension.h>
+#include <poincare/src/expression/dimension.h>
 
 #include "helper.h"
 

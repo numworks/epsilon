@@ -6,8 +6,8 @@
  * the successive Tokens, that are then consumed by the Parser.
  * Each Token has a Type and a range (firstLayout, length). */
 
-#include <poincare_junior/src/layout/rack_layout_decoder.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/layout/rack_layout_decoder.h>
+#include <poincare/src/memory/tree.h>
 
 namespace PoincareJ {
 

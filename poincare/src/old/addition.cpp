@@ -14,7 +14,7 @@
 #include <poincare/old/subtraction.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
-#include <poincare_junior/src/layout/app_helpers.h>
+#include <poincare/src/layout/app_helpers.h>
 
 #include <utility>
 

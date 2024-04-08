@@ -1,6 +1,6 @@
 #include "chi2_distribution.h"
 
-#include <poincare_junior/src/numeric/regularized_gamma_function.h>
+#include <poincare/src/numeric/regularized_gamma_function.h>
 
 #include <cmath>
 

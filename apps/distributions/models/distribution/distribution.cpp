@@ -1,7 +1,7 @@
 #include "distribution.h"
 
 #include <float.h>
-#include <poincare_junior/src/probability/distribution.h>
+#include <poincare/src/probability/distribution.h>
 
 #include <cmath>
 

@@ -1,6 +1,6 @@
 #include "pattern_matching.h"
 
-#include <poincare_junior/src/expression/simplification.h>
+#include <poincare/src/expression/simplification.h>
 
 #include "n_ary.h"
 #include "type_block.h"

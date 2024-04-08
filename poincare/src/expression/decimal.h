@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_DECIMAL_H
 
 #include <poincare/old/preferences.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 namespace PoincareJ {
 

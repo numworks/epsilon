@@ -11,11 +11,11 @@
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
-#include <poincare_junior/src/layout/app_helpers.h>
-#include <poincare_junior/src/layout/layout_cursor.h>
-#include <poincare_junior/src/layout/rack_layout.h>
-#include <poincare_junior/src/layout/rack_layout_decoder.h>
-#include <poincare_junior/src/layout/xnt.h>
+#include <poincare/src/layout/app_helpers.h>
+#include <poincare/src/layout/layout_cursor.h>
+#include <poincare/src/layout/rack_layout.h>
+#include <poincare/src/layout/rack_layout_decoder.h>
+#include <poincare/src/layout/xnt.h>
 #include <string.h>
 
 #include <algorithm>

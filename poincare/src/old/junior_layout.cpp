@@ -1,14 +1,14 @@
 #include <assert.h>
 #include <poincare/old/junior_layout.h>
 #include <poincare/old/k_tree.h>
-#include <poincare_junior/src/layout/app_helpers.h>
-#include <poincare_junior/src/layout/code_point_layout.h>
-#include <poincare_junior/src/layout/layout_cursor.h>
-#include <poincare_junior/src/layout/layoutter.h>
-#include <poincare_junior/src/layout/render.h>
-#include <poincare_junior/src/layout/serialize.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare/src/layout/app_helpers.h>
+#include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/layout/layout_cursor.h>
+#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/render.h>
+#include <poincare/src/layout/serialize.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include <algorithm>
 

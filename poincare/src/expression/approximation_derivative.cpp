@@ -1,5 +1,5 @@
 #include <omg/ieee754.h>
-#include <poincare_junior/src/numeric/float.h>
+#include <poincare/src/numeric/float.h>
 
 #include "approximation.h"
 

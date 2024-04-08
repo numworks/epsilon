@@ -2,8 +2,8 @@
 
 #include <math.h>
 #include <poincare/old/random.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/tree_stack.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/tree_stack.h>
 
 #include "approximation.h"
 #include "dimension.h"

@@ -1,12 +1,12 @@
 #include "advanced_simplification.h"
 
 #include <ion.h>
+#include <poincare/src/memory/pattern_matching.h>
+
 #include "dependency.h"
+#include "k_tree.h"
 #include "metric.h"
 #include "simplification.h"
-#include <poincare_junior/src/memory/pattern_matching.h>
-
-#include "k_tree.h"
 
 namespace PoincareJ {
 

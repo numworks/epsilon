@@ -1,10 +1,10 @@
 #include "solver.h"
 
-#include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/continuity.h>
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/sign.h>
-#include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/continuity.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/sign.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "solver_algorithms.h"
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_PROBABILITY_EXPONENTIAL_DISTRIBUTION_H
 #define POINCARE_PROBABILITY_EXPONENTIAL_DISTRIBUTION_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "continuous_distribution.h"
 

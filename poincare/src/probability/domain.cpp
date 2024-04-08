@@ -1,7 +1,7 @@
 #include "domain.h"
 
-#include <poincare_junior/src/expression/rational.h>
-#include <poincare_junior/src/expression/sign.h>
+#include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/sign.h>
 
 namespace PoincareJ {
 

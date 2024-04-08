@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_POLYNOMIAL_H
 #define POINCARE_EXPRESSION_POLYNOMIAL_H
 
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include "integer.h"
 #include "k_tree.h"

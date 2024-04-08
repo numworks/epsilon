@@ -1,9 +1,9 @@
 #include "dependency.h"
 
-#include <poincare_junior/src/memory/block.h>
-#include <poincare_junior/src/memory/exception_checkpoint.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/block.h>
+#include <poincare/src/memory/exception_checkpoint.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include "approximation.h"
 #include "k_tree.h"

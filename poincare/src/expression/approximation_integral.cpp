@@ -1,4 +1,4 @@
-#include <poincare_junior/src/numeric/float.h>
+#include <poincare/src/numeric/float.h>
 
 #include <algorithm>
 

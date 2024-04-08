@@ -2,7 +2,7 @@
 #define POINCARE_PROBABILITY_CHI2_DISTRIBUTION_H
 
 #include <float.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "continuous_distribution.h"
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_SELECTION_H
 #define POINCARE_LAYOUT_SELECTION_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include <algorithm>
 

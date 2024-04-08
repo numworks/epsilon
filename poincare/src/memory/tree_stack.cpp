@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <omg/memory.h>
+#include <poincare/include/poincare.h>
 #include <poincare/old/junior_layout.h>
-#include <poincare_junior/include/poincare.h>
 
 #include <algorithm>
 

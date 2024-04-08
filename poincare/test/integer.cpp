@@ -1,6 +1,6 @@
-#include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/memory/exception_checkpoint.h>
+#include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/memory/exception_checkpoint.h>
 #include <quiz.h>
 
 #include "helper.h"

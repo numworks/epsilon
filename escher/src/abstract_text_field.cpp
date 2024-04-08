@@ -10,7 +10,7 @@
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol_abstract.h>
-#include <poincare_junior/src/layout/xnt.h>
+#include <poincare/src/layout/xnt.h>
 
 #include <algorithm>
 

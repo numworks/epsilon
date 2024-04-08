@@ -1,8 +1,8 @@
 #include "pdf_method.h"
 
-#include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/expression/rational.h>
+#include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/rational.h>
 
 namespace PoincareJ {
 

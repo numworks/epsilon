@@ -3,7 +3,7 @@
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/layout_node.h>
 #include <poincare/old/old_expression.h>
-#include <poincare_junior/src/layout/rack_layout.h>
+#include <poincare/src/layout/rack_layout.h>
 
 namespace Poincare {
 

@@ -5,7 +5,7 @@
 #include <poincare/old/float.h>
 #include <poincare/old/helpers.h>
 #include <poincare/old/print_float.h>
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 #include <quiz.h>
 
 #include <algorithm>

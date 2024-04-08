@@ -6,7 +6,7 @@
 #include <poincare/old/sequence.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
-#include <poincare_junior/src/memory/tree_stack.h>
+#include <poincare/src/memory/tree_stack.h>
 
 namespace Poincare {
 

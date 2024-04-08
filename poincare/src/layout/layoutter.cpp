@@ -1,19 +1,19 @@
 #include "layoutter.h"
 
 #include <poincare/old/print_float.h>
-#include <poincare_junior/src/expression/binary.h>
-#include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/expression/constant.h>
-#include <poincare_junior/src/expression/decimal.h>
-#include <poincare_junior/src/expression/float.h>
-#include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/matrix.h>
-#include <poincare_junior/src/expression/number.h>
-#include <poincare_junior/src/expression/rational.h>
-#include <poincare_junior/src/expression/symbol.h>
-#include <poincare_junior/src/expression/variables.h>
-#include <poincare_junior/src/memory/n_ary.h>
-#include <poincare_junior/src/memory/placeholder.h>
+#include <poincare/src/expression/binary.h>
+#include <poincare/src/expression/builtin.h>
+#include <poincare/src/expression/constant.h>
+#include <poincare/src/expression/decimal.h>
+#include <poincare/src/expression/float.h>
+#include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/number.h>
+#include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/symbol.h>
+#include <poincare/src/expression/variables.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/placeholder.h>
 
 #include "grid.h"
 #include "k_tree.h"

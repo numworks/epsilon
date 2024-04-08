@@ -1,7 +1,7 @@
 #include "app_helpers.h"
 
 #include <poincare/old/junior_layout.h>
-#include <poincare_junior/src/memory/n_ary.h>
+#include <poincare/src/memory/n_ary.h>
 
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"

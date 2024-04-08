@@ -1,7 +1,7 @@
-#include <poincare_junior/src/expression/projection.h>
-#include <poincare_junior/src/expression/sign.h>
-#include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/expression/variables.h>
+#include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/sign.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/variables.h>
 
 #include "helper.h"
 using namespace PoincareJ;

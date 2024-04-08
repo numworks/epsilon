@@ -3,7 +3,7 @@
 
 #include <ion/unicode/code_point.h>
 #include <omg/bit_helper.h>
-#include <poincare_junior/src/memory/k_tree.h>
+#include <poincare/src/memory/k_tree.h>
 
 namespace PoincareJ {
 namespace KTrees {

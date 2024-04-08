@@ -1,6 +1,6 @@
 #include "cdf_range_method.h"
 
-#include <poincare_junior/src/expression/k_tree.h>
+#include <poincare/src/expression/k_tree.h>
 
 namespace PoincareJ {
 

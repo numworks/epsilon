@@ -1,7 +1,7 @@
 #ifndef POINCARE_PROBABILITY_POISSON_DISTRIBUTION_H
 #define POINCARE_PROBABILITY_POISSON_DISTRIBUTION_H
 
-#include <poincare_junior/src/memory/tree.h>
+#include <poincare/src/memory/tree.h>
 
 #include "discrete_distribution.h"
 

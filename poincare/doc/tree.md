@@ -46,8 +46,8 @@ pointers. Moreover, the `const` keyword is used pervasively to differentiate
 `const Tree *` from `Tree *` to constrain signatures.
 
 You may find the different tree types available for
-[expressions](/poincare_junior/src/expression/types.h) and
-[layouts](/poincare_junior/src/layout/types.h).  Each NODE entry declares Type
+[expressions](/poincare/src/expression/types.h) and
+[layouts](/poincare/src/layout/types.h).  Each NODE entry declares Type
 with its number of children and the number of additional bytes its nodes
 contains.  They is no class hierarchy corresponding to the types but they come
 with some helpers such as `tree->isCosine()` to test them.
@@ -210,8 +210,8 @@ that won't change.
 
 To do this you need to use the constexpr tree constructors, prefixed by `K`.
 Here the up-to-date list for
-[expressions](/poincare_junior/src/expression/k_tree.h) and
-[layouts](/poincare_junior/src/layout/k_tree.h).
+[expressions](/poincare/src/expression/k_tree.h) and
+[layouts](/poincare/src/layout/k_tree.h).
 
 Some litterals are also available to write numbers is a readable way :
  - `23_e` is the integer 23

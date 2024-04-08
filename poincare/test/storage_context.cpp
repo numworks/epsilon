@@ -1,5 +1,5 @@
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/memory/storage_context.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/memory/storage_context.h>
 
 #include "helper.h"
 

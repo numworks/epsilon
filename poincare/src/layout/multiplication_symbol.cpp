@@ -1,7 +1,7 @@
 #include "multiplication_symbol.h"
 
-#include <poincare_junior/src/expression/builtin.h>
-#include <poincare_junior/src/expression/unit.h>
+#include <poincare/src/expression/builtin.h>
+#include <poincare/src/expression/unit.h>
 
 #include <algorithm>
 

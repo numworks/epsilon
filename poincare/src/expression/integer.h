@@ -5,7 +5,7 @@
 #include <omg/arithmetic.h>
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
-#include <poincare_junior/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree_ref.h>
 #include <stdlib.h>
 
 #if __EMSCRIPTEN__

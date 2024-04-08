@@ -1,8 +1,8 @@
 #include "helper.h"
 
-#include <poincare_junior/src/expression/k_tree.h>
-#include <poincare_junior/src/layout/parsing/rack_parser.h>
-#include <poincare_junior/src/layout/rack_from_text.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/layout/parsing/rack_parser.h>
+#include <poincare/src/layout/rack_from_text.h>
 
 Tree* parse(const char* input) {
   Tree* inputLayout = RackFromText(input);

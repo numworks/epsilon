@@ -90,6 +90,11 @@ class BitField {
   constexpr T get() const { return m_bits; }
 
   template <typename K>
+  bool get(K bit) const {
+    return get(bit, bit);
+  }
+
+  template <typename K>
   T get(K high, K low) const {
     return get(static_cast<size_t>(high), static_cast<size_t>(low));
   }

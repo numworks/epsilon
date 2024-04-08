@@ -672,9 +672,6 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       break;
     }
-    case Type::Exp:
-      layoutFunctionCall(layoutParent, expression, "exp");
-      break;
     case Type::Var: {
       uint8_t offset = Variables::Id(expression);
       char name = 'a' + offset;

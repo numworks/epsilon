@@ -1,5 +1,5 @@
-#ifndef UTILS_ARRAY_H
-#define UTILS_ARRAY_H
+#ifndef OMGPJ_ARRAY_H
+#define OMGPJ_ARRAY_H
 
 #include <array>
 

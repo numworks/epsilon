@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_EMPTY_RECTANGLE_H
-#define POINCARE_JUNIOR_EMPTY_RECTANGLE_H
+#ifndef POINCARE_EMPTY_RECTANGLE_H
+#define POINCARE_EMPTY_RECTANGLE_H
 
 #include <kandinsky/color.h>
 #include <kandinsky/context.h>

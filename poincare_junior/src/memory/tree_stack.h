@@ -1,5 +1,5 @@
-#ifndef POINCARE_MEMORY_EDITION_POOL_H
-#define POINCARE_MEMORY_EDITION_POOL_H
+#ifndef POINCARE_MEMORY_TREE_STACK_H
+#define POINCARE_MEMORY_TREE_STACK_H
 
 #include <omg/global_box.h>
 #include <string.h>

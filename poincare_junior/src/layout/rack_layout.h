@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_RACK_LAYOUT_H
-#define POINCARE_JUNIOR_RACK_LAYOUT_H
+#ifndef POINCARE_LAYOUT_RACK_LAYOUT_H
+#define POINCARE_LAYOUT_RACK_LAYOUT_H
 
 #include <kandinsky/context.h>
 

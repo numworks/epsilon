@@ -1,5 +1,5 @@
-#ifndef UTILS_ENUMS_H
-#define UTILS_ENUMS_H
+#ifndef OMGPJ_ENUMS_H
+#define OMGPJ_ENUMS_H
 
 #include <stdint.h>
 

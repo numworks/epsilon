@@ -1,5 +1,5 @@
-#ifndef POINCARE_MEMORY_EDITION_REFERENCE_H
-#define POINCARE_MEMORY_EDITION_REFERENCE_H
+#ifndef POINCARE_MEMORY_TREE_REF_H
+#define POINCARE_MEMORY_TREE_REF_H
 
 #include "k_tree.h"
 #include "tree.h"

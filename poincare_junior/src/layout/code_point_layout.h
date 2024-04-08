@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_CODE_POINT_LAYOUT_H
-#define POINCARE_JUNIOR_LAYOUT_CODE_POINT_LAYOUT_H
+#ifndef POINCARE_LAYOUT_CODE_POINT_LAYOUT_H
+#define POINCARE_LAYOUT_CODE_POINT_LAYOUT_H
 
 #include <ion/unicode/code_point.h>
 #include <poincare_junior/src/memory/tree.h>

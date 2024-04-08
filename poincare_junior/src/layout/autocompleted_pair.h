@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_AUTOCOMPLETED_PAIR_H
-#define POINCARE_JUNIOR_LAYOUT_AUTOCOMPLETED_PAIR_H
+#ifndef POINCARE_LAYOUT_AUTOCOMPLETED_PAIR_H
+#define POINCARE_LAYOUT_AUTOCOMPLETED_PAIR_H
 
 #include <poincare_junior/src/memory/tree.h>
 #include <poincare_junior/src/memory/tree_ref.h>

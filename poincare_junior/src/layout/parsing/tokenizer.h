@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_PARSING_TOKENIZER_H
-#define POINCARE_JUNIOR_LAYOUT_PARSING_TOKENIZER_H
+#ifndef POINCARE_LAYOUT_PARSING_TOKENIZER_H
+#define POINCARE_LAYOUT_PARSING_TOKENIZER_H
 
 /* In order to parse a text input into an Expression, (an instance of) the
  * Tokenizer reads the successive characters of the input, pops the Tokens it

@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_MEMORY_TREE_SUB_CLASS_H
-#define POINCARE_JUNIOR_MEMORY_TREE_SUB_CLASS_H
+#ifndef POINCARE_MEMORY_TREE_SUB_CLASS_H
+#define POINCARE_MEMORY_TREE_SUB_CLASS_H
 
 #include <poincare_junior/src/memory/tree.h>
 

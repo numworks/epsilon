@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_GRID_H
-#define POINCARE_JUNIOR_LAYOUT_GRID_H
+#ifndef POINCARE_LAYOUT_GRID_H
+#define POINCARE_LAYOUT_GRID_H
 
 #include <poincare_junior/src/memory/tree.h>
 

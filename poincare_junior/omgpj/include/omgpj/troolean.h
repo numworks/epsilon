@@ -1,5 +1,5 @@
-#ifndef UTILS_TROOLEAN_H
-#define UTILS_TROOLEAN_H
+#ifndef OMGPJ_TROOLEAN_H
+#define OMGPJ_TROOLEAN_H
 
 #include <assert.h>
 #include <stdint.h>

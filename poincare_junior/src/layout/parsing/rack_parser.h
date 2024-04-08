@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_PARSING_PARSER_H
-#define POINCARE_JUNIOR_LAYOUT_PARSING_PARSER_H
+#ifndef POINCARE_LAYOUT_PARSING_RACK_PARSER_H
+#define POINCARE_LAYOUT_PARSING_RACK_PARSER_H
 
 /* A precedence-climbing parser is implemented hereafter.
  * It is a trade-off between

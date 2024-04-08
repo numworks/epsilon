@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_DOMAIN_H
-#define POINCARE_JUNIOR_DOMAIN_H
+#ifndef POINCARE_PROBABILITY_DOMAIN_H
+#define POINCARE_PROBABILITY_DOMAIN_H
 
 #include <omgpj/troolean.h>
 #include <poincare_junior/src/memory/tree.h>

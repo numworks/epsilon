@@ -1,5 +1,5 @@
-#ifndef UTILS_BIT_H
-#define UTILS_BIT_H
+#ifndef OMGPJ_BIT_H
+#define OMGPJ_BIT_H
 
 #include <assert.h>
 #include <stdint.h>

@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_NUMERIC_RANGE_H
-#define POINCARE_JUNIOR_NUMERIC_RANGE_H
+#ifndef POINCARE_NUMERIC_RANGE_H
+#define POINCARE_NUMERIC_RANGE_H
 
 #include <assert.h>
 #include <omg/ieee754.h>

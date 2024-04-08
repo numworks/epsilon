@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_CURSOR_MOTION_H
-#define POINCARE_JUNIOR_LAYOUT_CURSOR_MOTION_H
+#ifndef POINCARE_LAYOUT_CURSOR_MOTION_H
+#define POINCARE_LAYOUT_CURSOR_MOTION_H
 
 #include <omg/directions.h>
 #include <poincare_junior/src/memory/tree.h>

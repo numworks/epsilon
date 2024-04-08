@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_PDF_METHOD_H
-#define POINCARE_JUNIOR_PDF_METHOD_H
+#ifndef POINCARE_PROBABILITY_PDF_METHOD_H
+#define POINCARE_PROBABILITY_PDF_METHOD_H
 
 #include "distribution.h"
 #include "distribution_method.h"

@@ -1,5 +1,5 @@
-#ifndef UTILS_DECONSTIFIER_H
-#define UTILS_DECONSTIFIER_H
+#ifndef OMGPJ_DECONSTIFIER_H
+#define OMGPJ_DECONSTIFIER_H
 
 namespace Utils {
 

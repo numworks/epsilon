@@ -1,5 +1,5 @@
-#ifndef UTILS_ARITHMETIC_H
-#define UTILS_ARITHMETIC_H
+#ifndef OMGPJ_ARITHMETIC_H
+#define OMGPJ_ARITHMETIC_H
 
 #include <omg/bit_helper.h>
 #include <stddef.h>

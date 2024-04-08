@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_RENDER_H
-#define POINCARE_JUNIOR_LAYOUT_RENDER_H
+#ifndef POINCARE_LAYOUT_RENDER_H
+#define POINCARE_LAYOUT_RENDER_H
 
 #include <kandinsky/context.h>
 #include <kandinsky/coordinate.h>

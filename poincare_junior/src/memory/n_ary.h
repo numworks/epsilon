@@ -1,5 +1,5 @@
-#ifndef POINCARE_N_ARY_H
-#define POINCARE_N_ARY_H
+#ifndef POINCARE_MEMORY_N_ARY_H
+#define POINCARE_MEMORY_N_ARY_H
 
 #include <poincare_junior/src/expression/comparison.h>
 

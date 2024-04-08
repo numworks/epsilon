@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_CURSOR_H
-#define POINCARE_JUNIOR_LAYOUT_CURSOR_H
+#ifndef POINCARE_LAYOUT_CURSOR_H
+#define POINCARE_LAYOUT_CURSOR_H
 
 #include <escher/text_field.h>
 #include <omg/directions.h>

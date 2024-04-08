@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_NUMERIC_CONIC_H
-#define POINCARE_JUNIOR_NUMERIC_CONIC_H
+#ifndef POINCARE_NUMERIC_CONIC_H
+#define POINCARE_NUMERIC_CONIC_H
 
 #include <float.h>
 #include <poincare/expression.h>

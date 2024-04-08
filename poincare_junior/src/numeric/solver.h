@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_NUMERIC_SOLVER_H
-#define POINCARE_JUNIOR_NUMERIC_SOLVER_H
+#ifndef POINCARE_NUMERIC_SOLVER_H
+#define POINCARE_NUMERIC_SOLVER_H
 
 #include <math.h>
 #include <omgpj/troolean.h>

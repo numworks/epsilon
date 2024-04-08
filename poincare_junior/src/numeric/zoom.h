@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_NUMERIC_ZOOM_H
-#define POINCARE_JUNIOR_NUMERIC_ZOOM_H
+#ifndef POINCARE_NUMERIC_ZOOM_H
+#define POINCARE_NUMERIC_ZOOM_H
 
 #include <ion/display.h>
 #include <poincare_junior/src/expression/context.h>

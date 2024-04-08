@@ -1,5 +1,5 @@
-#ifndef UTILS_UNICODE_HELPER_H
-#define UTILS_UNICODE_HELPER_H
+#ifndef OMGPJ_UNICODE_HELPER_H
+#define OMGPJ_UNICODE_HELPER_H
 
 #include <ion/unicode/utf8_decoder.h>
 

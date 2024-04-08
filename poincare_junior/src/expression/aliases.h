@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_EXPRESSION_ALIASES_H
-#define POINCARE_JUNIOR_EXPRESSION_ALIASES_H
+#ifndef POINCARE_EXPRESSION_ALIASES_H
+#define POINCARE_EXPRESSION_ALIASES_H
 
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>

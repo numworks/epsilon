@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_EXPRESSION_CONVERSION_H
-#define POINCARE_JUNIOR_EXPRESSION_CONVERSION_H
+#ifndef POINCARE_EXPRESSION_CONVERSION_H
+#define POINCARE_EXPRESSION_CONVERSION_H
 
 #include <poincare/expression.h>
 #include <poincare_junior/src/memory/tree.h>

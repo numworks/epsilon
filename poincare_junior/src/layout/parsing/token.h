@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_PARSING_TOKEN_H
-#define POINCARE_JUNIOR_LAYOUT_PARSING_TOKEN_H
+#ifndef POINCARE_LAYOUT_PARSING_TOKEN_H
+#define POINCARE_LAYOUT_PARSING_TOKEN_H
 
 /* The Token class is meant to be the output type of the Tokenizer.
  * While processing a text input, the Tokenizer indeed produces (pops)

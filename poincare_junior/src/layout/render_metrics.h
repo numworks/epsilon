@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_RENDER_METRICS_H
-#define POINCARE_JUNIOR_LAYOUT_RENDER_METRICS_H
+#ifndef POINCARE_LAYOUT_RENDER_METRICS_H
+#define POINCARE_LAYOUT_RENDER_METRICS_H
 
 #include <escher/metric.h>
 #include <kandinsky/coordinate.h>

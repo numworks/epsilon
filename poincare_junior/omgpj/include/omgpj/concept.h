@@ -1,5 +1,5 @@
-#ifndef UTILS_CONCEPT_H
-#define UTILS_CONCEPT_H
+#ifndef OMGPJ_CONCEPT_H
+#define OMGPJ_CONCEPT_H
 
 namespace Concept {
 

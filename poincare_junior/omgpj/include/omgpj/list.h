@@ -1,5 +1,5 @@
-#ifndef UTILS_LIST_H
-#define UTILS_LIST_H
+#ifndef OMGPJ_LIST_H
+#define OMGPJ_LIST_H
 
 namespace List {
 

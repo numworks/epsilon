@@ -1,5 +1,5 @@
-#ifndef POINCARE_EXPRESSION_PLACEHOLDER_H
-#define POINCARE_EXPRESSION_PLACEHOLDER_H
+#ifndef POINCARE_MEMORY_PLACEHOLDER_H
+#define POINCARE_MEMORY_PLACEHOLDER_H
 
 #include <omg/bit_helper.h>
 #include <omgpj/bit.h>

@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_LAYOUT_XNT_H
-#define POINCARE_JUNIOR_LAYOUT_XNT_H
+#ifndef POINCARE_LAYOUT_XNT_H
+#define POINCARE_LAYOUT_XNT_H
 
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare_junior/src/memory/tree.h>

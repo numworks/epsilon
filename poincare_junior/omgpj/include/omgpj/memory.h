@@ -1,5 +1,5 @@
-#ifndef UTILS_MEMORY_H
-#define UTILS_MEMORY_H
+#ifndef OMGPJ_MEMORY_H
+#define OMGPJ_MEMORY_H
 
 #include <stddef.h>
 #include <stdint.h>

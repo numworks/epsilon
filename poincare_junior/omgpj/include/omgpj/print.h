@@ -1,5 +1,5 @@
-#ifndef UTILS_PRINT_H
-#define UTILS_PRINT_H
+#ifndef OMGPJ_PRINT_H
+#define OMGPJ_PRINT_H
 
 #include <omg/bit_helper.h>
 #include <omg/enums.h>

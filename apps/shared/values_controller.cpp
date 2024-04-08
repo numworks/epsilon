@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -475,8 +476,9 @@ void ValuesController::clearSelectedColumn() {
 
 size_t ValuesController::fillColumnName(int column, char *buffer) {
   assert(typeAtLocation(column, 0) == k_abscissaTitleCellType);
-  return FillColumnNameWithMessage(buffer,
-                                   valuesParameterMessageAtColumn(column));
+  I18n::Message message = valuesParameterMessageAtColumn(column);
+  return Print::CustomPrintf(buffer, k_maxSizeOfColumnName,
+                             I18n::translate(message));
 }
 
 void ValuesController::setTitleCellText(HighlightCell *cell, int column) {

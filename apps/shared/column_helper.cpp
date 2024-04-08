@@ -14,14 +14,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-/* ColumnNameHelper */
-
-int ColumnNameHelper::FillColumnNameWithMessage(char *buffer,
-                                                I18n::Message message) {
-  return Poincare::Print::CustomPrintf(buffer, k_maxSizeOfColumnName,
-                                       I18n::translate(message));
-}
-
 /* ClearColumnHelper */
 
 ClearColumnHelper::ClearColumnHelper()

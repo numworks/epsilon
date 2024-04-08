@@ -1,6 +1,8 @@
 #ifndef POINCARE_EXPRESSION_CONTEXT_H
 #define POINCARE_EXPRESSION_CONTEXT_H
 
+#include <stdint.h>
+
 namespace PoincareJ {
 
 enum class AngleUnit : uint8_t {

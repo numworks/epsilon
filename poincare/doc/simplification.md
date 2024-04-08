@@ -109,6 +109,22 @@ It's expected to:
 
 </details>
 
+### Projection in advanced reduction
+
+When a projection is too difficult to undo, and we want it to appear back in the result only if it improve the result, the projection can be made in advanced simplification.
+
+For example, in `Projection::Expand` method, called during advanced simplification, `tan(x)` may be "expanded" to `sin(x)/cos(x)`.
+
+Advanced simplification can undo it if it doesn't improve the overall expression, and systematic simplification will just ignore the unprojected node.
+
+Since this step is applied long after projection step, the Tree replacement must be in its projected form.
+
+In practice, we replace `tanRad(x)` (projected tree for tan) into `trig(x,1) * trig(x, 0)^(-1)`.
+
+This practice tends to slow down advanced reduction so we limit it to the very minimal.
+
+For example, advanced trigonometry functions are projected in projection because we don't really want them to appear in results.
+
 ## User symbols
 
 We list all global user symbols, sorted in the alphabetical order.

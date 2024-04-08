@@ -284,7 +284,7 @@ class JuniorExpression : public OExpression {
   bool involvesDiscontinuousFunction(Context* context) const;
 #endif
 #if 1
-  /* TODO_PCJ : Remove those methods from PoolHandle once only JuniorExpression
+  /* TODO_PCJ: Remove those methods from PoolHandle once only JuniorExpression
    * remains. In the meantime, they are overriden there to assert false in case
    * they are still used. */
   /* Hierarchy */

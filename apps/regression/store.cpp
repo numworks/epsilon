@@ -196,7 +196,7 @@ void Store::updateCoefficients(int series, Context *globalContext) {
   seriesModel->fit(this, series, m_regressionCoefficients[series],
                    globalContext);
   m_recomputeCoefficients[series] = false;
-  /* TODO_PCJ : coefficients used to be Decimals and are now Doubles. Maybe this
+  /* TODO_PCJ: coefficients used to be Decimals and are now Doubles. Maybe this
    * will be an issue ? */
   storeRegressionFunction(
       series, seriesModel->expression(m_regressionCoefficients[series]));

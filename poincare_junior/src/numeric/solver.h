@@ -99,7 +99,7 @@ class Solver {
 
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist.
-   * TODO_PCJ : The unknown variable must have been projected to id 0. */
+   * TODO_PCJ: The unknown variable must have been projected to id 0. */
   Coordinate2D<T> next(const Tree* e, BracketTest test, HoneResult hone);
   Coordinate2D<T> next(FunctionEvaluation f, const void* aux, BracketTest test,
                        HoneResult hone,

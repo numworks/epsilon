@@ -271,7 +271,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
           opHJ->moveTreeOverTree(PatternMatching::CreateSimplify(
               KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
         }
-        // TODO_PCJ : Dependency
+        // TODO_PCJ: Dependency
       }
       divisor->cloneTreeOverTree(1_e);
 
@@ -300,7 +300,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
                 KAdd(KA, KMult(-1_e, KB, KC)),
                 {.KA = opIJ, .KB = opHJ, .KC = factor}));
           }
-          // TODO_PCJ : Dependency
+          // TODO_PCJ: Dependency
         }
         factor->cloneTreeOverTree(0_e);
       }

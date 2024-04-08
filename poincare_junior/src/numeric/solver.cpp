@@ -612,7 +612,7 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree* e) const {
    * they are zeroes of the whole expression. */
   ExpressionTestAuxiliary test = [](const Tree* e, Context* context,
                                     void* aux) {
-    /* TODO_PCJ : Either Pass ApproximationContext, ComplexFormat, AngleUnit and
+    /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
      * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
      * expression is projected. */
     return e->hasDescendantSatisfying([](const Tree* e) {

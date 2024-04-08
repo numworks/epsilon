@@ -15,7 +15,7 @@
 
 namespace PoincareJ {
 
-/* TODO_PCJ : This class closely follows Poincare::Parser. Last update was on
+/* TODO_PCJ: This class closely follows Poincare::Parser. Last update was on
  * 5fa0f7c. When Poincare::Parser is removed, updated  with latest changes and
  * remove this comment. */
 

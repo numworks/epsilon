@@ -23,7 +23,7 @@ const PoincareJ::Tree* Context::treeForSymbolIdentifier(
                false)
         .tree();
   }
-  // TODO_PCJ : Not implemented.
+  // TODO_PCJ: Not implemented.
   assert(false);
   return nullptr;
 }

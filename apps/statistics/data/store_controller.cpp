@@ -149,7 +149,7 @@ void StoreController::setClearPopUpContent() {
   int series = m_store->seriesAtColumn(selectedColumn());
   if (column == 0) {
     char tableName[k_tableNameSize];
-    FillSeriesName(series, tableName, true);
+    FillSeriesName(series, tableName);
     m_confirmPopUpController.setMessageWithPlaceholders(
         I18n::Message::ClearTableConfirmation, tableName);
   } else {

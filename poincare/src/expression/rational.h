@@ -8,6 +8,11 @@
 
 namespace Poincare::Internal {
 
+/* Rationals should only exist in their irreducible form, this is ensure from
+ * Rational Tree creation.
+ * Since many form are forbidden, there could be room for a rational size
+ * optimization. */
+
 class Rational final {
  public:
   static Tree* Push(IntegerHandler numerator, IntegerHandler denominator);

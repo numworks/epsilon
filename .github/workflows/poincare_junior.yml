@@ -28,16 +28,11 @@ jobs:
       - name: Find most recent ancestor of PR and target branch
         id: common_ancestor
         run: echo "commit_sha=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
-      - name: Checkout to most recent ancestor
-        run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
-      - name: Install dependencies
-        run: build/setup.sh --only-simulator
-      - name: Make ancestor
-        run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
-      - name: Run ancestor
-        run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
+
       - name: Checkout to head
         run: git checkout ${{ github.event.pull_request.head.sha }}
+      - name: Install dependencies
+        run: build/setup.sh --only-simulator
       - name: Make head
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
       - name: Verify that a single make is sufficient
@@ -46,6 +41,14 @@ jobs:
         run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | tee out
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
+
+      - name: Checkout to most recent ancestor
+        run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
+      - name: Make ancestor
+        run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
+      - name: Run ancestor
+        run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
+
       - name: Compare logs
         id: compare_logs
         run: python3 poincare/test/compare.py --markdown ancestor.csv head.csv > comment.md

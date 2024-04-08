@@ -99,7 +99,7 @@ bool HistogramController::reloadBannerView() {
   char buffer[k_bufferSize] = "";
 
   // Display series name
-  StoreController::FillSeriesName(selectedSeries(), buffer, false);
+  StoreController::FillSeriesName(selectedSeries(), buffer);
   m_view.bannerView()->seriesName()->setText(buffer);
 
   // Display interval

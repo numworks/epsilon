@@ -160,18 +160,11 @@ void StoreController::setClearPopUpContent() {
   }
 }
 
-void StoreController::FillSeriesName(int series, char *buffer,
-                                     bool withFinalSpace) {
-  /* We have to add a space in some cases because we use this table name in the
-   * message for deleting the table in Graph and Sequence, but the table name is
-   * empty in Sequence.
-   */
+void StoreController::FillSeriesName(int series, char *buffer) {
   char tableIndex = static_cast<char>('1' + series);
   Poincare::Print::CustomPrintf(buffer, k_tableNameSize, k_tableName,
                                 tableIndex, tableIndex);
-  if (!withFinalSpace) {
-    buffer[5] = 0;
-  }
+  buffer[5] = 0;
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j,

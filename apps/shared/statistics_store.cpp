@@ -4,12 +4,6 @@
 
 namespace Shared {
 
-void StatisticsStore::FillTableName(int series, char* buffer,
-                                    size_t bufferSize) {
-  char i = static_cast<char>('1' + series);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, i, i);
-}
-
 StatisticsStore::StatisticsStore(GlobalContext* context,
                                  DoublePairStorePreferences* preferences)
     : DoublePairStore(context, preferences) {}
@@ -49,6 +43,12 @@ double StatisticsStore::sampleStandardDeviation(int series) const {
 bool StatisticsStore::updateSeries(int series, bool delayUpdate) {
   m_datasets[series].setHasBeenModified();
   return DoublePairStore::updateSeries(series, delayUpdate);
+}
+
+void StatisticsStore::fillTableName(int series, char* buffer,
+                                    size_t bufferSize) const {
+  char i = static_cast<char>('1' + series);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, i, i);
 }
 
 void StatisticsStore::initDatasets() {

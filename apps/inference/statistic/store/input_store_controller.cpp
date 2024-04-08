@@ -1,8 +1,11 @@
 #include "input_store_controller.h"
 
+#include <poincare/serialization_helper.h>
+
 #include "inference/text_helpers.h"
 
 using namespace Escher;
+using namespace Poincare;
 
 namespace Inference {
 
@@ -83,21 +86,22 @@ void InputStoreController::viewWillAppear() {
     m_dropdownCell.dropdown()->selectRow(tableModel->seriesAt(0));
     m_dropdownCell.setMessage(I18n::Message::DataSet);
   }
-  for (int row = 0; row < m_dropdownDataSource.numberOfRows(); row++) {
-    char buffer[] = "Ai/Bi,Aj/Bj";
-    buffer[0] = listPrefix(0);
-    buffer[3] = listPrefix(1);
-    if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
-      char i = '1' + DropdownDataSource::Series1ForRow(row);
-      char j = '1' + DropdownDataSource::Series2ForRow(row);
-      buffer[6] = listPrefix(0);
-      buffer[9] = listPrefix(1);
-      buffer[1] = buffer[4] = i;
-      buffer[7] = buffer[10] = j;
+  int nRows = m_dropdownDataSource.numberOfRows();
+  bool hasTwoSeries =
+      m_statistic->significanceTestType() == SignificanceTestType::TwoMeans;
+  constexpr size_t bufferSize =
+      2 * Shared::DoublePairStore::k_tableNameLength + sizeof(",");
+  char buffer[bufferSize];
+  for (int row = 0; row < nRows; row++) {
+    if (hasTwoSeries) {
+      size_t length = store()->tableName(DropdownDataSource::Series1ForRow(row),
+                                         buffer, bufferSize);
+      length += SerializationHelper::CodePoint(buffer + length,
+                                               bufferSize - length, ',');
+      store()->tableName(DropdownDataSource::Series2ForRow(row),
+                         buffer + length, bufferSize - length);
     } else {
-      char i = '1' + row;
-      buffer[1] = buffer[4] = i;
-      buffer[5] = '\0';
+      store()->tableName(row, buffer, bufferSize);
     }
     static_cast<SmallBufferTextHighlightCell*>(m_dropdownDataSource.cell(row))
         ->setText(buffer);

@@ -89,9 +89,6 @@ class InputStoreController : public InputCategoricalController,
   Escher::StackViewController* stackController() const {
     return static_cast<Escher::StackViewController*>(parentResponder());
   }
-  char listPrefix(int column) const {
-    return store()->columnNamePrefixAtIndex(column);
-  }
   const Shared::DoublePairStore* store() const {
     return m_storeTableCell.store();
   }

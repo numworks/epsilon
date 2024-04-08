@@ -2,6 +2,7 @@
 #include <quiz.h>
 
 using namespace Poincare;
+using PTTFlags = ExamMode::PressToTestFlags::Flags;
 
 void assert_exam_mode(ExamMode::Ruleset ruleset) {
   ExamMode mode(ruleset);
@@ -169,8 +170,9 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
 
 void assert_press_to_test() {
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest,
-                  {.forbidEquationSolver = true});
+    ExamMode mode(
+        ExamMode::Ruleset::PressToTest,
+        ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidEquationSolver));
     quiz_assert(mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -188,7 +190,8 @@ void assert_press_to_test() {
   }
   {
     ExamMode mode(ExamMode::Ruleset::PressToTest,
-                  {.forbidInequalityGraphing = true});
+                  ExamMode::PressToTestFlags().setFlag(
+                      PTTFlags::ForbidInequalityGraphing));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -205,8 +208,9 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest,
-                  {.forbidImplicitPlots = true});
+    ExamMode mode(
+        ExamMode::Ruleset::PressToTest,
+        ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidImplicitPlots));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -223,7 +227,9 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidGraphDetails = true});
+    ExamMode mode(
+        ExamMode::Ruleset::PressToTest,
+        ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidGraphDetails));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -240,8 +246,9 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest,
-                  {.forbidStatsDiagnostics = true});
+    ExamMode mode(
+        ExamMode::Ruleset::PressToTest,
+        ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidStatsDiagnostics));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -258,7 +265,9 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidVectors = true});
+    ExamMode mode(
+        ExamMode::Ruleset::PressToTest,
+        ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidVectors));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -275,8 +284,9 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest,
-                  {.forbidBasedLogarithm = true});
+    ExamMode mode(
+        ExamMode::Ruleset::PressToTest,
+        ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidBasedLogarithm));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -293,7 +303,8 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidSum = true});
+    ExamMode mode(ExamMode::Ruleset::PressToTest,
+                  ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidSum));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -310,7 +321,9 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidExactResults = true});
+    ExamMode mode(
+        ExamMode::Ruleset::PressToTest,
+        ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidExactResults));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -327,7 +340,9 @@ void assert_press_to_test() {
     quiz_assert(mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidElementsApp = true});
+    ExamMode mode(
+        ExamMode::Ruleset::PressToTest,
+        ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidElementsApp));
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());

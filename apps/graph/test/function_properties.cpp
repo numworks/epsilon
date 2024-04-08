@@ -89,13 +89,19 @@ QUIZ_CASE(graph_function_properties) {
       Preferences::ComplexFormat::Cartesian);
 
   // Test the plot type under different Press-to-test parameters :
+  using PTTFlags = ExamMode::PressToTestFlags::Flags;
   const ExamMode examModes[] = {
       ExamMode(ExamMode::Ruleset::Off),
       ExamMode(ExamMode::Ruleset::PressToTest,
-               {.forbidInequalityGraphing = true}),
-      ExamMode(ExamMode::Ruleset::PressToTest, {.forbidImplicitPlots = true}),
+               ExamMode::PressToTestFlags().setFlag(
+                   PTTFlags::ForbidInequalityGraphing)),
+      ExamMode(
+          ExamMode::Ruleset::PressToTest,
+          ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidImplicitPlots)),
       ExamMode(ExamMode::Ruleset::PressToTest,
-               {.forbidInequalityGraphing = true, .forbidImplicitPlots = true}),
+               ExamMode::PressToTestFlags()
+                   .setFlag(PTTFlags::ForbidInequalityGraphing)
+                   .setFlag(PTTFlags::ForbidImplicitPlots)),
   };
   for (const ExamMode examMode : examModes) {
     Preferences::SharedPreferences()->setExamMode(examMode);

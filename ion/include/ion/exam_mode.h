@@ -33,7 +33,18 @@ enum class Ruleset : Int {
  * compatibility with the PersistingBytes API.
  */
 class Configuration {
+  enum class Bits : size_t {
+    Configurable = 0,
+    DataFirst,
+    DataLast = 14,
+    Cleared,
+    NumberOfBits
+  };
+
  public:
+  constexpr static size_t k_dataSize = static_cast<size_t>(Bits::DataLast) -
+                                       static_cast<size_t>(Bits::DataFirst) + 1;
+
   explicit Configuration(Ruleset rules, Int flags = 0);
   Configuration() : Configuration(-1) {}
   Configuration(Int raw) : m_bits(raw) {}
@@ -51,13 +62,6 @@ class Configuration {
   KDColor color() const;
 
  private:
-  enum class Bits : size_t {
-    Configurable = 0,
-    DataFirst,
-    DataLast = 14,
-    Cleared,
-    NumberOfBits
-  };
   static_assert(static_cast<int>(Bits::NumberOfBits) ==
                 OMG::BitHelper::numberOfBitsIn<Int>());
 

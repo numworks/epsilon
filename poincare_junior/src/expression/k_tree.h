@@ -262,7 +262,7 @@ struct RationalLitteral : RationalRepresentation<N, D> {
 };
 
 template <int64_t N, int64_t D>
-  requires(D > 0)
+  requires(D > 0 && ::Arithmetic::GcdI64(N, D) == 1)
 consteval auto operator/(IntegerLitteral<N> a, IntegerLitteral<D> b) {
   return RationalLitteral<N, D>();
 }

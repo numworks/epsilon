@@ -34,8 +34,8 @@ void StoreParameterController::initializeColumnParameters() {
   if (relativeColumn == 0) {
     int series = m_storeColumnHelper->selectedSeries();
     char tableName[StoreController::k_tableNameSize];
-    StoreController::FillSeriesName(series, tableName,
-                                    StoreController::k_tableNameSize);
+    StoreController::FillTableName(series, tableName,
+                                   StoreController::k_tableNameSize);
     m_clearColumn.label()->setMessageWithPlaceholders(I18n::Message::ClearTable,
                                                       tableName);
     return;

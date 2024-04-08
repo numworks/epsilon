@@ -164,20 +164,40 @@ class Preferences final {
   }
 
  private:
+  int m_version = 0x20240401;
   CalculationPreferences m_calculationPreferences;
+  mutable ExamMode m_examMode;
   /* This flag can only be asserted by writing it via DFU. When set, it will
    * force the reactivation of the exam mode after leaving DFU to synchronize
    * the persisting bytes with the Preferences. */
   bool m_forceExamModeReload;
   mutable CombinatoricSymbols m_combinatoricSymbols;
-  mutable ExamMode m_examMode;
   mutable bool m_mixedFractionsAreEnabled;
   mutable LogarithmBasePosition m_logarithmBasePosition;
   mutable LogarithmKeyEvent m_logarithmKeyEvent;
   mutable ParabolaParameter m_parabolaParameter;
+#if PLATFORM_DEVICE
+  /* Explicitly declare padding to ensure the structure of the class stay
+   * consistent across versions. */
+  char m_padding[2];
+#endif
+
   /* Settings that alter layouts should be tracked by
    * CalculationStore::preferencesMightHaveChanged */
 };
+
+#if PLATFORM_DEVICE
+static_assert(sizeof(Preferences) == 16, "Class Preferences changed size");
+
+static_assert(sizeof(Preferences) ==
+                  sizeof(int) + sizeof(Preferences::CalculationPreferences) +
+                      sizeof(ExamMode) + sizeof(bool) +
+                      sizeof(Preferences::CombinatoricSymbols) + sizeof(bool) +
+                      sizeof(Preferences::LogarithmBasePosition) +
+                      sizeof(Preferences::LogarithmKeyEvent) +
+                      sizeof(Preferences::ParabolaParameter) + 2 * sizeof(char),
+              "Padding in class Preferences unaccounted for");
+#endif
 
 #if __EMSCRIPTEN__
 /* Preferences live in the Storage which does not enforce alignment, so make

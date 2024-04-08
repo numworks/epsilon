@@ -220,9 +220,13 @@ void InputCategoricalTableCell::fullReload(bool forceReloadTableCell,
                                            bool forceReloadPage) {
   int row = m_selectableTableView.selectedRow();
   int col = m_selectableTableView.selectedColumn();
-  m_selectableTableView.deselectTable();
+  if (row >= 0) {
+    m_selectableTableView.deselectTable();
+  }
   recomputeDimensionsAndReload(forceReloadTableCell, forceReloadPage);
-  m_selectableTableView.selectCellAtClippedLocation(col, row, true);
+  if (row >= 0) {
+    m_selectableTableView.selectCellAtClippedLocation(col, row, true);
+  }
 }
 
 /* DoubleColumnTableCell */

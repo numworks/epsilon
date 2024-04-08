@@ -20,7 +20,6 @@ class ColumnNameHelper {
   virtual size_t fillColumnName(int column, char* buffer) = 0;
 
  protected:
-  static int FillColumnNameWithMessage(char* buffer, I18n::Message message);
   virtual int numberOfElementsInColumn(int column) const = 0;
 };
 

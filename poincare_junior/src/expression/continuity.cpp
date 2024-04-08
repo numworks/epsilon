@@ -14,7 +14,7 @@ bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
 bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree* e,
                                                        const char* symbol,
                                                        float x1, float x2) {
-  // TODO PCJ: symbol is ignored for now
+  // TODO_PCJ: symbol is ignored for now
   if (e->isRandomNode()) {
     return true;
   }

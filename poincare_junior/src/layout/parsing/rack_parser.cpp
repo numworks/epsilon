@@ -553,7 +553,7 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
   if (leftHandSide->isComparison()) {
     /* TODO a < b = c was parsed in Comparison[<,=](a,b,c)
      * It is now parsed as (a < b and b = c) to simplify code. */
-    /* TODO PCJ: fix code with a < b < c < d */
+    /* TODO_PCJ: fix code with a < b < c < d */
     CloneTreeAtNode(rightHandSide, leftHandSide->child(1));
     Tree* comparison = SharedTreeStack->push(operatorType);
     MoveNodeAtNode(rightHandSide, comparison);
@@ -1318,8 +1318,8 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
 }
 
 bool IsIntegerBaseTenOrEmptyExpression(const Tree* e) {
-  // TODO PCJ: enforce a decimal base
-  /* TODO PCJ: the OrEmpty part was used to parsed a mixed fraction with three
+  // TODO_PCJ: enforce a decimal base
+  /* TODO_PCJ: the OrEmpty part was used to parsed a mixed fraction with three
    * empty squares inserted from the toolbox: make sure it works by inserting a
    * layout directly and remove this part. */
   return e->isInteger();
@@ -1380,7 +1380,7 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
   if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
       // The next token is either a number or empty
       && m_nextToken.is(Token::Type::Number)) {
-    // TODO PCJ: or popToken is a FractionLayout
+    // TODO_PCJ: or popToken is a FractionLayout
     m_waitingSlashForMixedFraction = true;
     TreeRef rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;

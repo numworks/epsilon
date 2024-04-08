@@ -2379,7 +2379,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("iiii", "1");
   assert_parsed_expression_simplify_to("√(-i)", "√(2)/2-√(2)/2×i");
   assert_parsed_expression_simplify_to("P×cos(9)iiln(2)", "-P×cos(9)×ln(2)");
-  // TODO PCJ: broken on the CI but can't reproduce on bob with clang16
+  // TODO_PCJ: broken on the CI but can't reproduce on bob with clang16
   // assert_parsed_expression_simplify_to(
   // "(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2", "√(2)/32-√(2)/32×i");
   assert_parsed_expression_simplify_to("root(5^((-i)3^9),i)",

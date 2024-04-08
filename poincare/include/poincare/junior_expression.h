@@ -31,7 +31,7 @@ class JuniorExpressionNode final : public ExpressionNode {
 
   // Properties
   Type otype() const override { return Type::JuniorExpression; }
-  // TODO PCJ: Plug in approximation
+  // TODO_PCJ: Plug in approximation
   // TrinaryBoolean isPositive(Context* context) const override;
   // TrinaryBoolean isNull(Context* context) const override;
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
@@ -42,7 +42,7 @@ class JuniorExpressionNode final : public ExpressionNode {
   static std::complex<T> computeOnComplex(
       const std::complex<T> c, Preferences::ComplexFormat complexFormat,
       Preferences::AngleUnit angleUnit) {
-    // TODO PCJ: Plug in approximation
+    // TODO_PCJ: Plug in approximation
     assert(false);
     return NAN;
   }
@@ -66,7 +66,7 @@ class JuniorExpressionNode final : public ExpressionNode {
     return OExpression();
   }
   LayoutShape leftLayoutShape() const override {
-    // TODO PCJ: Remove
+    // TODO_PCJ: Remove
     assert(false);
     return LayoutShape::BoundaryPunctuation;
   }
@@ -147,7 +147,7 @@ class JuniorExpression : public OExpression {
       ReductionContext reductionContext) const;
 
   OExpression shallowReduce(ReductionContext reductionContext) {
-    // TODO PCJ
+    // TODO_PCJ
     assert(false);
     return OExpression();
   }

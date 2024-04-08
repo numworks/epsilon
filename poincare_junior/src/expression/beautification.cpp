@@ -260,7 +260,7 @@ bool Beautification::ShallowBeautifyPercent(Tree* e) {
   if (PatternMatching::MatchReplace(e, KPercentSimple(KA), KDiv(KA, 100_e))) {
     return true;
   }
-  // TODO PCJ PercentAddition had a deepBeautify to preserve addition order
+  // TODO_PCJ PercentAddition had a deepBeautify to preserve addition order
   PatternMatching::Context ctx;
   if (!PatternMatching::Match(KPercentAddition(KA, KB), e, &ctx)) {
     return false;

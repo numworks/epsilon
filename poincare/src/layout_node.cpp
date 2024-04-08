@@ -11,7 +11,7 @@ namespace Poincare {
 
 bool LayoutNode::isIdenticalTo(const Layout l, bool makeEditable) const {
   if (makeEditable) {
-    // TODO PCJ
+    // TODO_PCJ
   }
   if (l.isUninitialized()) {
     return false;

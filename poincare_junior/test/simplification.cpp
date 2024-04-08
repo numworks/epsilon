@@ -10,7 +10,7 @@
 
 using namespace PoincareJ;
 
-/* TODO PCJ: Reactivate these tests once we can increase ADVANCED_MAX_DEPTH to
+/* TODO_PCJ: Reactivate these tests once we can increase ADVANCED_MAX_DEPTH to
  * 12 and ADVANCED_MAX_BREADTH to 128 */
 #define ACTIVATE_IF_INCREASED_PATH_SIZE 0
 

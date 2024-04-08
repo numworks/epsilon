@@ -49,7 +49,7 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
-  Render::s_font = font;  // TODO PCJ clean this code
+  Render::s_font = font;  // TODO_PCJ clean this code
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
   int left, right;

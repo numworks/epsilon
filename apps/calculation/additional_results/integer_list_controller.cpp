@@ -39,7 +39,7 @@ void IntegerListController::computeAdditionalResults(
 #endif
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
     if (baseAtIndex(index) == OMG::Base::Decimal) {
-      // TODO PCJ only handle this one yet
+      // TODO_PCJ only handle this one yet
       m_layouts[index] = exactOutput.createLayout(
           Preferences::PrintFloatMode::Decimal,
           Preferences::LargeNumberOfSignificantDigits, nullptr);

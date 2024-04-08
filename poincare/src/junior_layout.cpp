@@ -51,7 +51,7 @@ size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
 }
 
 bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) const {
-  /* TODO PCJ have a comparison with a flag to ignore separators similar to what
+  /* TODO_PCJ have a comparison with a flag to ignore separators similar to what
    * isIdenticalTo(makeEditable=true)) was doing. */
   return tree()->treeIsIdenticalTo(static_cast<const JuniorLayout&>(l).tree());
 }

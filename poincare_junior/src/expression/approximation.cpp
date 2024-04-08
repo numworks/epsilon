@@ -626,7 +626,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return result;
     }
     case Type::Median:
-      // TODO PCJ
+      // TODO_PCJ
       return NAN;
     case Type::Piecewise:
       return ToComplex<T>(SelectPiecewiseBranch<T>(node));

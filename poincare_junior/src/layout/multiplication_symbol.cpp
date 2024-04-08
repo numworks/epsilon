@@ -53,7 +53,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::Sum:
     case Type::Product:
     case Type::Norm:
-    case Type::Parenthesis:  // TODO PCJ remove this one
+    case Type::Parenthesis:  // TODO_PCJ remove this one
       return BoundaryPunctuation;
 
     case Type::Add:
@@ -126,7 +126,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::ListSlice:
       return BoundaryPunctuation;
 
-#if O  // TODO PCJ
+#if O  // TODO_PCJ
     case Type::MixedFraction:
       return Integer;
 #endif
@@ -158,7 +158,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::UserSymbol:
     case Type::UserFunction:
     case Type::UserSequence:
-      return OneLetter;  // TODO PCJ: or MoreLetters
+      return OneLetter;  // TODO_PCJ: or MoreLetters
 
     case Type::Unit:
       return OneLetter;  // had "TODO" in poincare
@@ -190,7 +190,7 @@ LayoutShape RightLayoutShape(const Tree* expr) {
     case Type::Integral:
       return MoreLetters;
 
-#if O  // TODO PCJ
+#if O  // TODO_PCJ
     case Type::MixedFraction:
       return Fraction;
 #endif

@@ -91,7 +91,7 @@ void assert_expression_layouts_and_serializes_to(OExpression expression,
   OLayout layout = expression.createLayout(
       DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
 #if O
-  // TODO PCJ ? should be adapted since system parentheses are gone
+  // TODO_PCJ ? should be adapted since system parentheses are gone
   assert_layout_serializes_to(layout, serialization);
 #endif
 }

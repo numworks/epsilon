@@ -42,7 +42,7 @@ void Clipboard::storeLayout(Poincare::Layout layout) {
   }
   // Serialize in case we need it in python or outside epsilon
   layout.serializeForParsing(m_textBuffer, k_bufferSize);
-  // TODO PCJ check that it fits
+  // TODO_PCJ check that it fits
   Ion::Clipboard::write(m_textBuffer);
 }
 

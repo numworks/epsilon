@@ -11,7 +11,7 @@ bool CDFRangeMethod::shallowReduce(const Tree** abscissae,
   const Tree* x = abscissae[0];
   const Tree* y = abscissae[1];
 
-  // TODO PCJ: -inf
+  // TODO_PCJ: -inf
   if (x->isInf() && false
       /* x.isPositive(reductionContext.context()) == TrinaryBoolean::False */) {
     if (y->isInf()) {

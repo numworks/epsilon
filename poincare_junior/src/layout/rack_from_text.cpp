@@ -20,7 +20,7 @@ void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
         child = KRackL()->clone();
         break;
 #if 0
-      // TODO PCJ: renable and treat braces the same way
+      // TODO_PCJ: renable and treat braces the same way
       case '(': {
         /* Insert a ParenthesisLayout even if there are no matching right
          * parenthesis */

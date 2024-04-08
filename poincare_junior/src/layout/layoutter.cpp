@@ -63,7 +63,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 12;
     case Type::LogicalAnd:
       return 13;
-    // TODO PCJ force parentheses on equality
+    // TODO_PCJ force parentheses on equality
     case Type::LogicalOr:
     case Type::LogicalXor:
       return 14;
@@ -277,7 +277,7 @@ void Layoutter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
 }
 
 void Layoutter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
-  // TODO PCJ ask the context whether to add an underscore
+  // TODO_PCJ ask the context whether to add an underscore
   if (m_linearMode) {
     PushCodePoint(layoutParent, '_');
   }
@@ -336,7 +336,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     }
     case Type::Mult:
-      /* TODO PCJ: Add small margins when units are present */
+      /* TODO_PCJ: Add small margins when units are present */
       layoutInfixOperator(
           layoutParent, expression,
           m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression),
@@ -394,7 +394,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::IntegerShort:
     case Type::IntegerPosBig:
     case Type::IntegerNegBig:
-      // TODO PCJ we need a way to layout an integer in base something
+      // TODO_PCJ we need a way to layout an integer in base something
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
       break;
     case Type::Half:
@@ -502,7 +502,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       if (m_linearMode) {
-        // TODO PCJ make sure the serializer makes the distinction too
+        // TODO_PCJ make sure the serializer makes the distinction too
         PushCodePoint(layoutParent, ' ');
       }
       layoutExpression(layoutParent, expression->nextNode(),
@@ -750,7 +750,7 @@ bool Layoutter::AddThousandSeparators(Tree* rack) {
 
 bool Layoutter::requireSeparators(const Tree* expr) {
   if (expr->isRational()) {
-    // TODO PCJ same for decimals and floats
+    // TODO_PCJ same for decimals and floats
     IntegerHandler num = Rational::Numerator(expr);
     num.setSign(NonStrictSign::Positive);
     if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {
@@ -842,7 +842,7 @@ bool Layoutter::ImplicitAddition(const Tree* addition) {
   if (addition->numberOfChildren() < 2) {
     return false;
   }
-  // Step 1: TODO PCJ check that no ᴇ will be needed
+  // Step 1: TODO_PCJ check that no ᴇ will be needed
   // Step 2: Check if units can be implicitly added
   const Units::Representative* storedUnitRepresentative = nullptr;
   for (const Tree* child : addition->children()) {

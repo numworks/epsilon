@@ -817,7 +817,7 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
     }
     Simplify(e->child(0), projectionContext);
     e->moveTreeOverTree(e->child(0));
-    // TODO PCJ actually select the required unit
+    // TODO_PCJ actually select the required unit
     return e;
   }
   assert(projectionContext);
@@ -907,7 +907,7 @@ bool Simplification::SimplifyLastTree(Tree* e,
       case ExceptionType::UnhandledDimension:
       case ExceptionType::Unhandled:
       case ExceptionType::Undefined:
-        /* TODO PCJ: We need to catch undefs when reducing children of lists and
+        /* TODO_PCJ: We need to catch undefs when reducing children of lists and
          * points since (undef,0) and {undef,0} should be allowed. */
         (type == ExceptionType::Nonreal ? KNonReal : KUndef)->clone();
         return true;

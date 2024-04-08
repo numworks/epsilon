@@ -136,7 +136,7 @@ size_t JuniorExpressionNode::serialize(
 
 bool JuniorExpressionNode::derivate(const ReductionContext& reductionContext,
                                     Symbol symbol, OExpression symbolValue) {
-  // TODO PCJ: Remove
+  // TODO_PCJ: Remove
   assert(false);
   return false;
 }
@@ -468,7 +468,7 @@ JuniorExpression JuniorExpression::cloneAndSimplify(
 
 bool JuniorExpression::derivate(const ReductionContext& reductionContext,
                                 Symbol symbol, OExpression symbolValue) {
-  // TODO PCJ: Remove
+  // TODO_PCJ: Remove
   assert(false);
   return false;
 }

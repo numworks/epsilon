@@ -171,7 +171,7 @@ void ValuesController::hideDerivative(Ion::Storage::Record record,
 /* PRIVATE */
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
-#if 0  // TODO PCJ
+#if 0  // TODO_PCJ
   KDSize layoutSize = Point2DLayoutNode::SizeGivenChildSize(
       PrintFloat::glyphLengthForFloatWithPrecision(
           Preferences::SharedPreferences()->numberOfSignificantDigits()) *

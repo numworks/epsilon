@@ -102,7 +102,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       approximation = depI->clone();
       Approximation::ApproximateAndReplaceEveryScalar(approximation);
     } else {
-      // TODO PCJ
+      // TODO_PCJ
       approximation = Approximation::RootTreeToTree<double>(
           depI, AngleUnit::Radian, ComplexFormat::Real);
     }
@@ -137,7 +137,7 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
-  // TODO PCJ if power and same type of power return true
+  // TODO_PCJ if power and same type of power return true
   for (const Tree* child : container->children()) {
     if (ContainsSameDependency(searched, child)) {
       return true;

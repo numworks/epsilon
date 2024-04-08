@@ -328,7 +328,7 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
       Symbol::Builder("Var", 3), Cosine::Builder(BasedInteger::Builder(2)),
       Rational::Builder(1));
 
-  // TODO PCJ: disabled because Var is a multi-letter variable
+  // TODO_PCJ: disabled because Var is a multi-letter variable
   // assert_parsed_layout_is(l, e);
 
   // diff(1/Var, Var, cos(2), 2)

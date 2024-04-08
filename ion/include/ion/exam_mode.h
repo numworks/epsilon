@@ -3,6 +3,7 @@
 
 #include <ion/exam_bytes.h>
 #include <kandinsky/color.h>
+#include <omg/bit_helper.h>
 
 namespace Ion {
 namespace ExamMode {
@@ -35,31 +36,37 @@ class Configuration {
  public:
   explicit Configuration(Ruleset rules, Int flags = 0);
   Configuration() : Configuration(-1) {}
-  Configuration(Int raw) : m_internals{.raw = raw} {}
+  Configuration(Int raw) : m_bits(raw) {}
 
-  bool operator==(const Configuration& other) const {
-    return m_internals.raw == other.m_internals.raw;
-  }
+  bool operator==(const Configuration& other) const { return m_bits == m_bits; }
   bool operator!=(const Configuration& other) const {
     return !(*this == other);
   }
 
   Ruleset ruleset() const;
   Int flags() const;
-  Int raw() const { return m_internals.raw; }
+  Int raw() const { return m_bits; }
   bool isUninitialized() const;
   bool isActive() const;
   KDColor color() const;
 
  private:
-  union {
-    Int raw;
-    struct {
-      bool configurable : 1;
-      Int data : 14;
-      bool clearBit : 1;
-    } fields;
-  } m_internals;
+  enum class Bits : size_t {
+    Configurable = 0,
+    DataFirst,
+    DataLast = 14,
+    Cleared,
+    NumberOfBits
+  };
+  static_assert(static_cast<int>(Bits::NumberOfBits) ==
+                OMG::BitHelper::numberOfBitsIn<Int>());
+
+  bool configurable() const {
+    return m_bits.get(Bits::Configurable, Bits::Configurable);
+  }
+  Int data() const { return m_bits.get(Bits::DataLast, Bits::DataFirst); }
+
+  OMG::BitHelper::BitField<Int> m_bits;
 };
 
 static_assert(

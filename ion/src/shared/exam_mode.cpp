@@ -57,34 +57,29 @@ void set(Configuration config) {
 
 // Class Configuration
 
-Configuration::Configuration(Ruleset rules, Int flags)
-    : m_internals{.fields = {
-                      .configurable = rules == Ruleset::PressToTest,
-                      .data = rules == Ruleset::PressToTest
-                                  ? flags
-                                  : static_cast<Int>(rules),
-                      .clearBit = 0,
-                  }} {
+Configuration::Configuration(Ruleset rules, Int flags) {
+  bool configurable = rules == Ruleset::PressToTest;
+  m_bits.set(Bits::Configurable, Bits::Configurable, configurable)
+      .set(Bits::DataLast, Bits::DataFirst,
+           configurable ? flags : static_cast<Int>(rules));
+
   assert(!isUninitialized());
 }
 
 Ruleset Configuration::ruleset() const {
   assert(!isUninitialized());
-  return m_internals.fields.configurable
-             ? Ruleset::PressToTest
-             : static_cast<Ruleset>(m_internals.fields.data);
+  return configurable() ? Ruleset::PressToTest : static_cast<Ruleset>(data());
 }
 
 Int Configuration::flags() const {
   assert(!isUninitialized());
-  return m_internals.fields.configurable ? m_internals.fields.data : 0;
+  return configurable() ? data() : 0;
 }
 
 bool Configuration::isUninitialized() const {
-  return m_internals.fields.clearBit ||
-         (!m_internals.fields.configurable &&
-          m_internals.fields.data >=
-              static_cast<Int>(Ruleset::NumberOfRulesets));
+  bool clearBit = m_bits.get(Bits::Cleared, Bits::Cleared);
+  return clearBit || (!configurable() &&
+                      data() >= static_cast<Int>(Ruleset::NumberOfRulesets));
 }
 
 bool Configuration::isActive() const {

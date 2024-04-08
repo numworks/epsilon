@@ -30,7 +30,7 @@ OExpression LeastCommonMultipleNode::shallowBeautify(
 template <typename T>
 Evaluation<T> LeastCommonMultipleNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
-  /* TODO : distribute approx over list with Map */
+  /* TODO: distribute approx over list with Map */
   return Arithmetic::LCM<T>(*this, approximationContext);
 }
 

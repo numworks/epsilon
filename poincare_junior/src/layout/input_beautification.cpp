@@ -207,7 +207,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   }
 
   /* Fill a buffer with the identifiers string
-   * TODO : Factorize bufferSize with TextField::k_maxBufferSize */
+   * TODO: Factorize bufferSize with TextField::k_maxBufferSize */
   constexpr static size_t bufferSize = 220;
   char identifiersString[bufferSize];
   int bufferCurrentLength = 0;

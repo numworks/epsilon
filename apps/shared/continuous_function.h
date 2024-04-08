@@ -95,7 +95,7 @@ class ContinuousFunction : public Function {
   bool isNamed() const;
   /* If we can compute the ContinuousFunction intersections
    * isAlongY must be false, but it is checked by "isActiveInTable()".
-   * TODO : Handle more types of curves ?
+   * TODO: Handle more types of curves ?
    * If intersections are implemented for verticalLines, isActiveInTable might
    * need a change. */
   bool shouldDisplayIntersections() const {

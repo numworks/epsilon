@@ -5,7 +5,7 @@
 #include <iostream>
 #include <random>
 
-// TODO : Update this script to handle state file headers
+// TODO: Update this script to handle state file headers
 
 void writeEventsToFile(std::ofstream& file, int numberOfEvents,
                        std::mt19937& rng) {

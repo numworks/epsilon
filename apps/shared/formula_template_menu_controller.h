@@ -65,7 +65,7 @@ class FormulaTemplateMenuController
       k_templates[k_numberOfExpressionCellsWithMessage] = {
           "sequence(k,k,10)", "sequence(random(),k,10)",
           "sequence(ln(k),k,10)"};
-  // TODO : Replace with translations
+  // TODO: Replace with translations
   constexpr static I18n::Message
       k_subLabelMessages[k_numberOfExpressionCellsWithMessage +
                          k_numberOfExpressionCellsWithBuffer] = {

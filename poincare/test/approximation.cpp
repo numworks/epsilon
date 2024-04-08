@@ -1698,7 +1698,7 @@ QUIZ_CASE(poincare_approximation_map_on_list) {
   assert_expression_approximates_to<double>("abs([[1,-2][3,-4]])",
                                             Undefined::Name());
 
-  // TODO : Implement more tests on lists, with every functions
+  // TODO: Implement more tests on lists, with every functions
   assert_expression_approximates_to<float>("abs({1,-1,2,-3})", "{1,1,2,3}");
   assert_expression_approximates_to<float>("ceil({0.3,180})", "{1,180}");
   assert_expression_approximates_to<float>("cos({0,π})", "{1,-1}", Radian);

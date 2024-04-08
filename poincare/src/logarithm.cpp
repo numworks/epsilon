@@ -342,7 +342,7 @@ bool Logarithm::derivate(const ReductionContext& reductionContext,
 
   /* We do nothing if the base is a function of the derivation variable, as the
    * log is then not an unary function anymore.
-   * TODO : Check whether we want to deal with the case log(..., f(x)). */
+   * TODO: Check whether we want to deal with the case log(..., f(x)). */
   if (childAtIndex(1).polynomialDegree(reductionContext.context(),
                                        symbol.name()) != 0) {
     return false;

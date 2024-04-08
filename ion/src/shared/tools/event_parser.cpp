@@ -8,7 +8,7 @@
 
 using namespace Ion::Events;
 
-// TODO : Update this script to handle state file headers
+// TODO: Update this script to handle state file headers
 
 int eventIndexFromName(std::string name) {
   for (int i = 0; i < 255; i++) {

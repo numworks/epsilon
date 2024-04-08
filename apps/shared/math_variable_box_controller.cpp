@@ -77,7 +77,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
       }
       return true;
     } else {
-      // TODO : The record deletion has been denied. Add a warning.
+      // TODO: The record deletion has been denied. Add a warning.
     }
   }
   if (m_currentPage == Page::RootMenu &&

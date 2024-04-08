@@ -725,7 +725,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
-  // TODO : Should be ln(2), but overflows the pool
+  // TODO: Should be ln(2), but overflows the pool
   // simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
 #endif

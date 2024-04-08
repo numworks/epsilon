@@ -51,7 +51,7 @@ OExpression IntegralNode::shallowReduce(
 template <typename T>
 Evaluation<T> IntegralNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
-  /* TODO : Reduction is mapped on list, but not approximation.
+  /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   Evaluation<T> aInput =
       childAtIndex(2)->approximate(T(), approximationContext);

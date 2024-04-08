@@ -180,7 +180,7 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
         return false;
       }
     } else {
-      // TODO : Notify the user that the pool is full
+      // TODO: Notify the user that the pool is full
       m_interestingPointsOverflowPool = true;
       tidyDownstreamPoolFrom(ecp.endOfPoolBeforeCheckpoint());
       return false;

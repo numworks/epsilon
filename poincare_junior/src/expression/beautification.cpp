@@ -356,7 +356,7 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
 template <typename T>
 Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
                                             ComplexFormat complexFormat) {
-  // TODO : factorize with the code above somehow ?
+  // TODO: factorize with the code above somehow ?
   constexpr Type Type = FloatType<T>::type;
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {

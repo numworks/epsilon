@@ -61,7 +61,7 @@ class InputBeautification {
     BeautifiedLayoutBuilder layoutBuilder;
   };
 
-  /* TODO : Beautification input is applied within HorizontalLayouts only.
+  /* TODO: Beautification input is applied within HorizontalLayouts only.
    * This excludes beautification of single char inputs that have not yet been
    * placed within a HorizontalLayouts (such as |*_|, _ being the cursor). This
    * means that BeautificationRule on 1 char aliases isn't always ensured.

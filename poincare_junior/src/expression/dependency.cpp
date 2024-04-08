@@ -79,7 +79,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
 };
 
 bool Dependency::RemoveDefinedDependencies(Tree* dep) {
-  /* TODO : We call this function to eliminate some dependencies after we
+  /* TODO: We call this function to eliminate some dependencies after we
    * modified the list and it processes all the dependencies. We should rather
    * add an AddDependency method that makes sure the dependency is interesting
    * and not already covered by another one in the list. */

@@ -495,7 +495,7 @@ constexpr ToolboxMessageTree TimeModuleChildren[] = {
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSleep,
                              I18n::Message::PythonSleep)};
 
-// TODO : Add these commands in the catalog
+// TODO: Add these commands in the catalog
 constexpr ToolboxMessageTree NumpyModuleChildren[] = {
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportNumpy,
                              I18n::Message::PythonImportNumpy, false),

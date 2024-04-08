@@ -116,7 +116,7 @@ PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
     if (!pointsOfInterest->computeNextStep(false)) {
       /* Next step computation overflowed the pool. Returning an empty point of
        * interest will wrongfully display that nothing has been found in the
-       * window. TODO : Fix this behavior. */
+       * window. TODO: Fix this behavior. */
       break;
     }
   }

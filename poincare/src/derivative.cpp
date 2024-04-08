@@ -133,7 +133,7 @@ template <typename T>
 T DerivativeNode::scalarApproximateWithValueForArgumentAndOrder(
     T evaluationArgument, int order,
     const ApproximationContext& approximationContext) const {
-  /* TODO : Reduction is mapped on list, but not approximation.
+  /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   assert(order >= 0);
   if (order == 0) {

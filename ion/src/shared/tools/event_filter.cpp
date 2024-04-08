@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-// TODO : Update this script to handle state file headers
+// TODO: Update this script to handle state file headers
 
 int main(int argc, char* argv[]) {
   unsigned char c = 0;

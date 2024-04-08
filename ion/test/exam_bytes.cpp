@@ -35,7 +35,7 @@ QUIZ_CASE(ion_exam_bytes) {
   constexpr uint8_t k_numberOfTests = 10;
   uint8_t pressToTest[k_numberOfTests] = {0, 0, 0, 0, 255, 1, 2, 0, 0, 0};
   uint8_t examModes[k_numberOfTests] = {0, 1, 2, 3, 4, 4, 4, 4, 5, 0};
-  // TODO : Test a sector erase by writting a lot more (very slow on device)
+  // TODO: Test a sector erase by writting a lot more (very slow on device)
   for (uint8_t i = 1; i < k_numberOfTests; i++) {
     ExamBytes::Int value = pressToTest[i - 1] | (examModes[i - 1] << 8);
     testExamByte(value);

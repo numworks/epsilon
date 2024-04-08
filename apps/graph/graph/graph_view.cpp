@@ -320,7 +320,7 @@ void GraphView::drawTangent(KDContext *ctx, KDRect rect,
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
   assert(f->canComputeTangent());
-  /* TODO : We could handle tangent on second curve here by finding out
+  /* TODO: We could handle tangent on second curve here by finding out
    * which of the two curves is selected. */
   float tangentParameterA = f->approximateSlope(m_cursor->t(), context());
   float tangentParameterB = -tangentParameterA * m_cursor->x() + m_cursor->y();

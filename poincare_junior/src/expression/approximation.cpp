@@ -284,7 +284,7 @@ std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
 
 template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* node) {
-  /* TODO : the second part of this function and several ifs in different cases
+  /* TODO: the second part of this function and several ifs in different cases
    * act differently / more precisely on reals. We should have a dedicated,
    * faster, simpler and more precise real approximation to be used in every
    * cases where we know for sure there are no complexes. */
@@ -718,7 +718,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       if (a != (int)a || b != (int)b) {
         return NAN;
       }
-      // TODO : is this really better than std::remainder ?
+      // TODO: is this really better than std::remainder ?
       T quotient = b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
       return node->isQuo() ? quotient : std::round(a - b * quotient);
     }
@@ -901,7 +901,7 @@ constexpr KTree minusOne = -1_e;
 
 template <typename T>
 Tree* Approximation::ToMatrix(const Tree* node) {
-  /* TODO : Normal matrix nodes and operations with approximated children are
+  /* TODO: Normal matrix nodes and operations with approximated children are
    * used to carry matrix approximation. A dedicated node that knows its
    * children have a fixed size would be more efficient. */
   if (node->isMatrix()) {
@@ -1047,7 +1047,7 @@ int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
 template <typename T, typename U>
 U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
                               Mapper<std::complex<T>, U> mapper) {
-  /* TODO : this function, the use of function pointers and the general
+  /* TODO: this function, the use of function pointers and the general
    * recursive design of ToComplex incurs some overhead when approximating. For
    * instance (a+b)*c, will execute nextNode() on a twice (one for + and one
    * for *). We should use a non-recursive and more C-like algorithm. */
@@ -1151,7 +1151,7 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   return true;
 }
 
-/* TODO : not all this functions are worth templating on float and
+/* TODO: not all this functions are worth templating on float and
  * double. ToComplex needs it but ToMatrix could take a bool and call the
  * correct ToComplex<T> as needed since the code is mostly independant of the
  * float type used in the tree. */

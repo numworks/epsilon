@@ -61,7 +61,7 @@ const Tree* integrandExpression;
 
 template <typename T>
 T Approximation::ApproximateIntegral(const Tree* integral) {
-  /* TODO : Reduction is mapped on list, but not approximation.
+  /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
@@ -211,7 +211,7 @@ Tree* rewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   bound->clone();
   KVarX->clone();
   Tree* tree = integrand->clone();
-  /* TODO :
+  /* TODO:
    * - The tree needs to be projected which is not the case currently
    * - Replace does a systematic simplification already, do we need something
    * more powerful ? */

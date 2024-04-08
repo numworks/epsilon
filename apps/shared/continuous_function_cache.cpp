@@ -164,7 +164,7 @@ void ContinuousFunctionCache::pan(ContinuousFunction *function, float newTMin) {
     clear();
     return;
   }
-  /* TODO : Instead of invalidating the entire cache when
+  /* TODO: Instead of invalidating the entire cache when
    * std::fabs(dT - dI) > k_cacheHitTolerance
    * Incrementing m_tMin by dI * m_tStep could preserve most of computed values
    * and increase performances as we could still have many cache hits.

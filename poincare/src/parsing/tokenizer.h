@@ -122,7 +122,7 @@ class Tokenizer {
    * When it is parsed again without any context, the tokenizer must not
    * turn "ab(5)" into "a*b*(5)".
    *
-   * TODO : handle combined code points? For now combining code points will
+   * TODO: handle combined code points? For now combining code points will
    * trigger a syntax error.
    * */
   size_t popIdentifiersString();

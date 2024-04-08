@@ -170,7 +170,7 @@ I18n::Message ExamModeController::examModeActivationMessage(
       // IBTest
       I18n::Message::ActivateIBExamMode,
       I18n::Message::ReactivateIBExamMode,
-      // PressToTest, unused // TODO : move it add the end of the ruleset list
+      // PressToTest, unused // TODO: move it add the end of the ruleset list
       I18n::Message::Default,
       I18n::Message::Default,
       // Portuguese

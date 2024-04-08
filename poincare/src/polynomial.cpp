@@ -257,7 +257,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
       /* Approximate roots if root1 is uninitialized, too big (roots 2 and 3
        * might be twice root1's size), or if complex format is Polar, which can
        * serverly complexify roots when beautifying.
-       * TODO : Improve simplification on Polar complex format. */
+       * TODO: Improve simplification on Polar complex format. */
       approximate = true;
       *root1 = NthRoot::Builder(
           Division::Builder(Opposite::Builder(d.clone()), a.clone()),

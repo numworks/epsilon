@@ -405,7 +405,7 @@ double Store::computeDeterminationCoefficient(int series,
   }
   double r2 = 1.0 - ssr / sst;
   /* Check if regression fit was optimal.
-   * TODO : Optimize regression fitting so that r2 cannot be negative.
+   * TODO: Optimize regression fitting so that r2 cannot be negative.
    * assert(r2 >= 0 || seriesRegressionType(series) ==
    * Model::Type::Proportional); */
   return r2;

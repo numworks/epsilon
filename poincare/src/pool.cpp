@@ -211,7 +211,7 @@ uint16_t Pool::IdentifierStack::pop() {
 // Remove an available identifier.
 void Pool::IdentifierStack::remove(uint16_t j) {
   assert(PoolObject::IsValidIdentifier(j));
-  /* TODO : Implement an optimized binary search using the sorted state.
+  /* TODO: Implement an optimized binary search using the sorted state.
    * Alternatively, it may be worth using another data type such as a sorted
    * list instead of a stack. */
   for (uint16_t i = 0; i < m_currentIndex; i++) {
@@ -247,7 +247,7 @@ void Pool::freePoolFromNode(PoolObject *firstNodeToDiscard) {
   assert(currentNode == firstNodeToDiscard);
   m_identifiers.resetNodeForIdentifierOffsets(m_nodeForIdentifierOffset);
   m_cursor = reinterpret_cast<char *>(currentNode);
-  // TODO : Assert that no tree continues into the discarded pool zone
+  // TODO: Assert that no tree continues into the discarded pool zone
 }
 
 }  // namespace Poincare

@@ -30,7 +30,7 @@ OExpression GreatCommonDivisorNode::shallowBeautify(
 template <typename T>
 Evaluation<T> GreatCommonDivisorNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
-  /* TODO : distribute approx over list with Map */
+  /* TODO: distribute approx over list with Map */
   return Arithmetic::GCD<T>(*this, approximationContext);
 }
 

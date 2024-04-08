@@ -400,7 +400,7 @@ IntegerDivision Integer::Division(const Integer &numerator,
 Integer Integer::Power(const Integer &i, const Integer &j) {
   assert(!j.isNegative());
   if (j.isZero()) {
-    // TODO : handle 0^0.
+    // TODO: handle 0^0.
     assert(!i.isZero());
     return Integer(1);
   }

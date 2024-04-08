@@ -202,7 +202,7 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
                                     Context context) {
   TreeRef result = SharedTreeStack->push<Type::List>(0);
   TreeRef tree = equation->clone();
-  /* TODO : y*(1+x) is not handled by PolynomialParser. We expand everything as
+  /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
   AdvancedSimplification::DeepExpand(tree);
   for (uint8_t i = 0; i < numberOfVariables; i++) {

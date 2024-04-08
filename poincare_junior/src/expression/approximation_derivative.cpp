@@ -29,7 +29,7 @@ constexpr static double k_minSignificantError = 3e-11;
 template <typename T>
 T scalarApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order,
                                                 const Tree* child) {
-  /* TODO : Reduction is mapped on list, but not approximation.
+  /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   assert(order >= 0);
   if (order == 0) {

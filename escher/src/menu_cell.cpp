@@ -86,7 +86,7 @@ View *AbstractMenuCell::subviewAtIndex(int index) {
 void AbstractMenuCell::layoutSubviews(bool force) {
   /* Apply margins and separators on every side. At this point, we assume cell's
    * frame has been updated to add bottom and right overlapping borders. */
-  // TODO : improve overlapping borders so that we don't need to assume that.
+  // TODO: improve overlapping borders so that we don't need to assume that.
   KDCoordinate width = innerWidth();
   KDCoordinate height = innerHeight();
   if (width == 0 || height == 0) {

@@ -925,7 +925,7 @@ bool MathToolboxController::isMessageTreeDisabled(
 bool MathToolboxController::displayMessageTreeDisabledPopUp(
     const Escher::ToolboxMessageTree *messageTree) {
   if (isMessageTreeDisabled(messageTree)) {
-    // TODO : It would be better if warning did not dismiss the toolbox
+    // TODO: It would be better if warning did not dismiss the toolbox
     App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode);
     return true;
   }

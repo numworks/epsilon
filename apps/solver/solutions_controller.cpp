@@ -237,7 +237,7 @@ void SolutionsController::viewWillAppear() {
       /* TODO: Incorrect message! Sometimes we just can't compute the solutions
        * because it overflows (ex: try to solve x^2sin(10^-900)=0). */
     } else {
-      // TODO : Message could be updated. The user did not input any interval.
+      // TODO: Message could be updated. The user did not input any interval.
       m_contentView.setWarningMessage(I18n::Message::NoSolutionInterval);
     }
   } else if (system->type() == SystemOfEquations::Type::LinearSystem &&

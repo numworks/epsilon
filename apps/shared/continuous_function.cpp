@@ -725,7 +725,7 @@ Expression ContinuousFunction::Model::expressionReduced(
           m_expression = newExpr.shallowReduce(reductionContext);
         }
       } else {
-        /* TODO : We could handle simple equations of any degree by solving the
+        /* TODO: We could handle simple equations of any degree by solving the
          * equation within the graph view bounds, to plot as many vertical or
          * horizontal lines as needed. */
         m_expression = Undefined::Builder();

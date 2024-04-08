@@ -32,7 +32,7 @@ class DerivativeColumnParameterController
   }
 
  private:
-  Shared::ColumnNameHelper* columnNameHelper() override;
+  Shared::ClearColumnHelper* clearColumnHelper() override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,

@@ -72,7 +72,7 @@ void StoreParameterController::viewWillAppear() {
   ColumnParameterController::viewWillAppear();
 }
 
-ColumnNameHelper* StoreParameterController::columnNameHelper() {
+ClearColumnHelper* StoreParameterController::clearColumnHelper() {
   return m_storeColumnHelper->clearColumnHelper();
 }
 

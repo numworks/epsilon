@@ -21,7 +21,7 @@ class SumColumnParameterController : public Shared::ColumnParameterController {
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 
  protected:
-  Shared::ColumnNameHelper* columnNameHelper() override {
+  Shared::ClearColumnHelper* clearColumnHelper() override {
     return m_valuesController;
   }
   constexpr static int k_totalNumberOfCell = 1;

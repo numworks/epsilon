@@ -11,24 +11,21 @@
 
 namespace Shared {
 
-class ColumnNameHelper {
+class ClearColumnHelper {
  public:
-  virtual Escher::SelectableTableView* table() = 0;
   /* this is an ad hoc value. Most of the time, colum_name are very short like
    * "X1", "n" or "f(x)" */
   constexpr static int k_maxSizeOfColumnName = 17;
-  virtual size_t fillColumnName(int column, char* buffer) = 0;
 
- protected:
-  virtual int numberOfElementsInColumn(int column) const = 0;
-};
-
-class ClearColumnHelper : public ColumnNameHelper {
- public:
   ClearColumnHelper();
+
+  virtual Escher::SelectableTableView* table() = 0;
+  virtual size_t fillColumnName(int column, char* buffer) = 0;
   void presentClearSelectedColumnPopupIfClearable();
 
  protected:
+  virtual int numberOfElementsInColumn(int column) const = 0;
+
   Shared::BufferPopUpController m_confirmPopUpController;
 
  private:

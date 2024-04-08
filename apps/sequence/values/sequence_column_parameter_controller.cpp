@@ -18,8 +18,8 @@ SequenceColumnParameterController::SequenceColumnParameterController(
   m_showSumCell.subLabel()->setMessage(I18n::Message::ShowSumOfTermsSublabel);
 }
 
-Shared::ColumnNameHelper*
-SequenceColumnParameterController::columnNameHelper() {
+Shared::ClearColumnHelper*
+SequenceColumnParameterController::clearColumnHelper() {
   return m_valuesController;
 }
 

@@ -40,7 +40,7 @@ void ValuesParameterController::initializeColumnParameters() {
   m_valuesController->initializeInterval();
 }
 
-ColumnNameHelper* ValuesParameterController::columnNameHelper() {
+ClearColumnHelper* ValuesParameterController::clearColumnHelper() {
   return m_valuesController;
 }
 

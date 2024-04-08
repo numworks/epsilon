@@ -90,7 +90,10 @@ class InputStoreController : public InputCategoricalController,
     return static_cast<Escher::StackViewController*>(parentResponder());
   }
   char listPrefix(int column) const {
-    return m_storeTableCell.store()->columnNamePrefixAtIndex(column);
+    return store()->columnNamePrefixAtIndex(column);
+  }
+  const Shared::DoublePairStore* store() const {
+    return m_storeTableCell.store();
   }
   int numberOfExtraParameters() const {
     return m_statistic->distributionType() == DistributionType::Z

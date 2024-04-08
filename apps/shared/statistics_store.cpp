@@ -45,8 +45,8 @@ bool StatisticsStore::updateSeries(int series, bool delayUpdate) {
   return DoublePairStore::updateSeries(series, delayUpdate);
 }
 
-void StatisticsStore::fillTableName(int series, char* buffer,
-                                    size_t bufferSize) const {
+void StatisticsStore::tableName(int series, char* buffer,
+                                size_t bufferSize) const {
   char i = static_cast<char>('1' + series);
   Poincare::Print::CustomPrintf(buffer, bufferSize, k_tableName, i, i);
 }

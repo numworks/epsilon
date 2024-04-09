@@ -113,11 +113,9 @@ void StoreTableCell::setClearPopUpContent() {
          m_statistic->significanceTestType() == SignificanceTestType::TwoMeans);
   RawDataStatistic *store = static_cast<RawDataStatistic *>(this->store());
 
-  int series = store->seriesAtColumn(selectedColumn());
-  int column = store->relativeColumn(selectedColumn());
   constexpr size_t bufferSize = Shared::BufferPopUpController::MaxTextSize();
   char buffer[bufferSize];
-  store->clearPopUpText(series, column, buffer, bufferSize);
+  store->clearPopUpText(selectedColumn(), buffer, bufferSize);
   m_confirmPopUpController.setContentText(buffer);
 }
 

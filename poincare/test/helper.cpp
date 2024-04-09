@@ -6,10 +6,10 @@
 
 Tree* parse(const char* input) {
   Tree* inputLayout = RackFromText(input);
-  RackParser(inputLayout, nullptr).parse();
+  bool success = RackParser(inputLayout, nullptr).parse() != nullptr;
   // quiz_assert(expression);
   inputLayout->removeTree();
-  return inputLayout;
+  return success ? inputLayout : nullptr;
 }
 
 const char* AlmostMaxIntegerString() {

@@ -13,7 +13,7 @@ namespace Shared {
 
 class ClearColumnHelper {
  public:
-  /* this is an ad hoc value. Most of the time, colum_name are very short like
+  /* this is an ad hoc value. Most of the time, column name are very short like
    * "X1", "n" or "f(x)" */
   constexpr static int k_maxSizeOfColumnName = 17;
 

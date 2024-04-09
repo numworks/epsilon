@@ -1,9 +1,9 @@
 #include <apps/shared/global_context.h>
 #include <poincare/init.h>
 #include <poincare/old/exception_checkpoint.h>
+#include <poincare/old/poincare_expressions.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
-#include <poincare_expressions.h>
 
 #include "helper.h"
 #include "tree/helpers.h"

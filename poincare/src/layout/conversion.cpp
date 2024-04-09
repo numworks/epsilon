@@ -1,9 +1,9 @@
 #include "conversion.h"
 
+#include <poincare/old/poincare_expressions.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/memory/type_block.h>
-#include <poincare_layouts.h>
 
 #include "grid.h"
 #include "indices.h"

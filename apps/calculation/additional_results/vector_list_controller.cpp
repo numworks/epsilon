@@ -4,7 +4,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <omg/round.h>
 #include <poincare/old/layout.h>
-#include <poincare_expressions.h>
+#include <poincare/old/poincare_expressions.h>
 #include <string.h>
 
 #include "../app.h"

@@ -2,9 +2,9 @@
 #include <poincare/old/cosine.h>
 #include <poincare/old/empty_expression.h>
 #include <poincare/old/integral.h>
+#include <poincare/old/poincare_expressions.h>
 #include <poincare/old/power.h>
 #include <poincare/old/random.h>
-#include <poincare_layouts.h>
 
 #include "helper.h"
 

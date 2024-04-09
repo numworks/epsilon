@@ -2,7 +2,7 @@
 #define POINCARE_XNT_HELPERS_H
 
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare_expressions.h>
+#include <poincare/old/poincare_expressions.h>
 
 #include "symbol.h"
 

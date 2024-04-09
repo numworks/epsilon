@@ -4,9 +4,9 @@
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
+#include <poincare/old/poincare_expressions.h>
 #include <poincare/old/preferences.h>
 #include <poincare/test/old/helper.h>
-#include <poincare_expressions.h>
 #include <quiz.h>
 #include <string.h>
 

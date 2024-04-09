@@ -1,6 +1,6 @@
 #include <poincare/old/ghost.h>
+#include <poincare/old/poincare_expressions.h>
 #include <poincare/old/pool_handle.h>
-#include <poincare_expressions.h>
 #if POINCARE_TREE_LOG
 #include <iostream>
 #endif

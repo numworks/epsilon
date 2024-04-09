@@ -1,7 +1,7 @@
 #ifndef POINCARE_PARSING_HELPER_H
 #define POINCARE_PARSING_HELPER_H
 
-#include <poincare_expressions.h>
+#include <poincare/old/poincare_expressions.h>
 
 #include <array>
 

@@ -14,11 +14,11 @@
 #include <poincare/old/multiplication.h>
 #include <poincare/old/nth_root.h>
 #include <poincare/old/piecewise_operator.h>
+#include <poincare/old/poincare_expressions.h>
 #include <poincare/old/power.h>
 #include <poincare/src/expression/conversion.h>
 #include <poincare/src/layout/conversion.h>
 #include <poincare/src/layout/parser.h>
-#include <poincare_layouts.h>
 
 #include "helper.h"
 

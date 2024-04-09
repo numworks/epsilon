@@ -1,5 +1,5 @@
 #include <apps/shared/global_context.h>
-#include <poincare_layouts.h>
+#include <poincare/old/poincare_expressions.h>
 
 #include <array>
 

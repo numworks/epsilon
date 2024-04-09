@@ -1,7 +1,7 @@
 #ifndef POINCARE_INPUT_BEAUTIFICATION_H
 #define POINCARE_INPUT_BEAUTIFICATION_H
 
-#include <poincare_layouts.h>
+#include <poincare/old/poincare_expressions.h>
 
 #include <array>
 

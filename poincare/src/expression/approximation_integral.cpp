@@ -215,7 +215,7 @@ Tree* rewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
    * - The tree needs to be projected which is not the case currently
    * - Replace does a systematic simplification already, do we need something
    * more powerful ? */
-  Variables::Replace(tree, 0, value);
+  Variables::Replace(tree, 0, value, false, false);
   value->removeTree();
   return value;
 }

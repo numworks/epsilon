@@ -27,23 +27,6 @@ void StoreParameterController::initializeColumnParameters() {
   Shared::StoreParameterController::initializeColumnParameters();
   int relativeColumn = m_store->relativeColumn(m_column);
   m_isCumulatedFrequencyColumnSelected = relativeColumn == 2;
-  // Initialize clear column message
-  if (relativeColumn == 1) {
-    m_clearColumn.label()->setMessageWithPlaceholders(
-        I18n::Message::ResetFrequencies);
-    return;
-  }
-  if (relativeColumn == 0) {
-    int series = m_storeColumnHelper->selectedSeries();
-    constexpr size_t bufferSize =
-        Shared::DoublePairStore::k_tableNameLength + 1;
-    char tableName[bufferSize];
-    m_store->tableName(series, tableName, bufferSize);
-    m_clearColumn.label()->setMessageWithPlaceholders(I18n::Message::ClearTable,
-                                                      tableName);
-    return;
-  }
-  assert(relativeColumn == 2);
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {

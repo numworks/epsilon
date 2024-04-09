@@ -264,6 +264,30 @@ size_t StoreColumnHelper::clearPopUpText(int column, char *buffer,
                                        I18n::translate(message), placeHolder);
 }
 
+size_t StoreColumnHelper::clearCellText(int column, char *buffer,
+                                        size_t bufferSize) {
+  DoublePairStore *store = this->store();
+  int series = store->seriesAtColumn(column);
+  int relativeColumn = store->relativeColumn(column);
+  DoublePairStore::ClearType type = store->clearType(relativeColumn);
+  if (type == DoublePairStore::ClearType::ClearTable) {
+    constexpr size_t placeHolderSize = DoublePairStore::k_tableNameLength + 1;
+    char placeHolder[placeHolderSize];
+    store->tableName(series, placeHolder, placeHolderSize);
+    return Poincare::Print::CustomPrintf(
+        buffer, bufferSize, I18n::translate(I18n::Message::ClearTable),
+        placeHolder);
+  } else {
+    assert(type == DoublePairStore::ClearType::ClearColumn ||
+           type == DoublePairStore::ClearType::ResetColumn);
+    I18n::Message message = type == DoublePairStore::ClearType::ClearColumn
+                                ? I18n::Message::ClearColumn
+                                : I18n::Message::ResetFrequencies;
+    return Poincare::Print::CustomPrintf(buffer, bufferSize,
+                                         I18n::translate(message));
+  }
+}
+
 void StoreColumnHelper::reloadSeriesVisibleCells(int series,
                                                  int relativeColumn) {
   // Reload visible cells of the series and, if not -1, relative column

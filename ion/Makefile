@@ -13,7 +13,6 @@ include ion/src/shared/tools/Makefile
 
 ion_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
-  crc32_eat_byte.cpp \
   decompress.cpp \
   events.cpp \
   events_modifier.cpp \
@@ -47,7 +46,6 @@ ion_device_flasher_src += ion/src/shared/dummy/assert.cpp
 
 ion_device_kernel_src += $(addprefix ion/src/shared/, \
   console_line.cpp:+kernelassert \
-  crc32_eat_byte.cpp \
   decompress.cpp \
   events.cpp \
   events_modifier.cpp \

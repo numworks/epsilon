@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <omg/bit_helper.h>
+#include <omg/code_guard.h>
 #include <omg/global_box.h>
 #include <poincare/context.h>
 #include <poincare/exam_mode.h>
@@ -164,21 +165,22 @@ class Preferences final {
   }
 
  private:
-  int m_version = 0x20240401;
-  CalculationPreferences m_calculationPreferences;
-  mutable ExamMode m_examMode;
-  /* This flag can only be asserted by writing it via DFU. When set, it will
-   * force the reactivation of the exam mode after leaving DFU to synchronize
-   * the persisting bytes with the Preferences. */
-  bool m_forceExamModeReload;
-  mutable CombinatoricSymbols m_combinatoricSymbols;
-  mutable bool m_mixedFractionsAreEnabled;
-  mutable LogarithmBasePosition m_logarithmBasePosition;
-  mutable LogarithmKeyEvent m_logarithmKeyEvent;
-  mutable ParabolaParameter m_parabolaParameter;
+  CODE_GUARD(poincare_preferences, 4011524516,  //
+             int m_version = 0x20240401;
+             CalculationPreferences m_calculationPreferences;
+             mutable ExamMode m_examMode;
+             /* This flag can only be asserted by writing it via DFU. When set,
+              * it will force the reactivation of the exam mode after leaving
+              * DFU to synchronize the persisting bytes with the Preferences. */
+             bool m_forceExamModeReload;
+             mutable CombinatoricSymbols m_combinatoricSymbols;
+             mutable bool m_mixedFractionsAreEnabled;
+             mutable LogarithmBasePosition m_logarithmBasePosition;
+             mutable LogarithmKeyEvent m_logarithmKeyEvent;
+             mutable ParabolaParameter m_parabolaParameter;)
 #if PLATFORM_DEVICE
-  /* Explicitly declare padding to ensure the structure of the class stays
-   * consistent across versions. */
+  /* Explicitly declare padding to ensure the structure of the class
+   * stays consistent across versions. */
   char m_padding[2];
 #endif
 

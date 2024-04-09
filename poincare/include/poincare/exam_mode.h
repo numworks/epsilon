@@ -8,6 +8,7 @@
 
 #include <assert.h>
 #include <ion/exam_mode.h>
+#include <omg/code_guard.h>
 
 namespace Poincare {
 
@@ -16,19 +17,21 @@ class ExamMode : public Ion::ExamMode::Configuration {
   using Ruleset = Ion::ExamMode::Ruleset;
 
   struct PressToTestFlags : OMG::BitHelper::BitField<Ion::ExamMode::Int> {
-    enum class Flags : size_t {
-      ForbidExactResults = 0,
-      ForbidEquationSolver,
-      ForbidInequalityGraphing,
-      ForbidImplicitPlots,
-      ForbidGraphDetails,
-      ForbidElementsApp,
-      ForbidStatsDiagnostics,
-      ForbidVectors,
-      ForbidBasedLogarithm,
-      ForbidSum,
-      NumberOfFlags,
-    };
+    CODE_GUARD(press_to_test_flags, 2156906052,  //
+               enum class Flags
+               : size_t{
+                   ForbidExactResults = 0,
+                   ForbidEquationSolver,
+                   ForbidInequalityGraphing,
+                   ForbidImplicitPlots,
+                   ForbidGraphDetails,
+                   ForbidElementsApp,
+                   ForbidStatsDiagnostics,
+                   ForbidVectors,
+                   ForbidBasedLogarithm,
+                   ForbidSum,
+                   NumberOfFlags,
+               };)
     static_assert(static_cast<size_t>(Flags::NumberOfFlags) <=
                   Ion::ExamMode::Configuration::k_dataSize);
 

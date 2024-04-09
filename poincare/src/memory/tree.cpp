@@ -4,12 +4,11 @@
 #include "tree_ref.h"
 
 #if POINCARE_POOL_VISUALIZATION
-#include <poincare/include/poincare.h>
+#include <poincare/src/memory/visualization.h>
 #endif
 
 #if POINCARE_TREE_LOG
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/include/poincare.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/constant.h>
 #include <poincare/src/expression/matrix.h>
@@ -28,6 +27,12 @@
 namespace Poincare::Internal {
 
 #if POINCARE_TREE_LOG
+
+void Indent(std::ostream& stream, int indentation) {
+  for (int i = 0; i < indentation; ++i) {
+    stream << "  ";
+  }
+}
 
 void Tree::log(std::ostream& stream, bool recursive, bool verbose,
                int indentation, const Tree* comparison) const {

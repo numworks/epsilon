@@ -296,9 +296,9 @@ poincare_src += $(addprefix poincare/src/,\
   memory/tree.cpp \
   memory/tree_ref.cpp \
   memory/value_block.cpp \
+  memory/visualization.cpp \
   print_float.cpp \
   print_int.cpp \
-  poincare.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/numeric/,\

@@ -4,7 +4,8 @@
 namespace Poincare {
 
 void Init();
+void Shutdown();
 
-}
+}  // namespace Poincare
 
 #endif

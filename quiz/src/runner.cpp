@@ -1,7 +1,6 @@
 #include <apps/init.h>
 #include <escher/init.h>
 #include <ion.h>
-#include <poincare/include/poincare.h>
 #include <poincare/init.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/pool.h>
@@ -86,8 +85,8 @@ static inline void ion_main_inner(const char *testFilter) {
 }
 
 void ion_main(int argc, const char *const argv[]) {
-  Poincare::Init();  // Initialize Poincare::TreePool::sharedPool
-  Poincare::Internal::Init();
+  // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
+  Poincare::Init();
   Escher::Init();
   Apps::Init();
 
@@ -120,5 +119,5 @@ void ion_main(int argc, const char *const argv[]) {
 #endif
     quiz_assert(false);
   }
-  Poincare::Internal::Shutdown();
+  Poincare::Shutdown();
 }

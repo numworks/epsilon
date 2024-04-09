@@ -12,7 +12,7 @@
 #include "rational.h"
 
 #if POINCARE_POOL_VISUALIZATION
-#include <poincare/include/poincare.h>
+#include <poincare/src/memory/visualization.h>
 #endif
 
 namespace Poincare::Internal {

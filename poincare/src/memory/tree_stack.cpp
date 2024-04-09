@@ -9,8 +9,8 @@
 #include "exception_checkpoint.h"
 #include "node_constructor.h"
 
-#if POINCARE_TREE_LOG
-#include <poincare/include/poincare.h>
+#if POINCARE_POOL_VISUALIZATION
+#include <poincare/src/memory/visualization.h>
 #endif
 
 namespace Poincare::Internal {

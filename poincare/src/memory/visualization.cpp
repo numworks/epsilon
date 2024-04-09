@@ -1,22 +1,12 @@
-#include <assert.h>
-#include <poincare/include/poincare.h>
-#include <poincare/src/memory/tree_stack.h>
-
 #if POINCARE_POOL_VISUALIZATION
-#include <filesystem>
-#endif
+#include <assert.h>
+#include <poincare/src/memory/tree_stack.h>
+#include <poincare/src/memory/visualization.h>
+
+#include <fstream>
 
 namespace Poincare::Internal {
 
-void Init() { SharedTreeStack.init(); }
-
-void Shutdown() {
-#if POINCARE_POOL_VISUALIZATION
-  CloseLogger();
-#endif
-}
-
-#if POINCARE_POOL_VISUALIZATION
 static bool s_forceClosed = false;
 
 std::ofstream& Logger() {
@@ -63,14 +53,6 @@ void Log(const char* event, const void* blockAddress, size_t blockSize,
   Logger() << "\n  </" << event << ">" << std::endl;
 }
 
-#endif
-
-#if POINCARE_TREE_LOG
-void Indent(std::ostream& stream, int indentation) {
-  for (int i = 0; i < indentation; ++i) {
-    stream << "  ";
-  }
-}
-#endif
-
 }  // namespace Poincare::Internal
+
+#endif

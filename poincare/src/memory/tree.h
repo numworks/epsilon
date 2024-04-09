@@ -14,6 +14,10 @@
 
 namespace Poincare::Internal {
 
+#if POINCARE_TREE_LOG
+void Indent(std::ostream& stream, int indentation);
+#endif
+
 /* A block is a byte-long object containing either a type or some value.
  * Several blocks can form a node, like:
  * [INT][LENGTH][DIGIT0][DIGIT1]...[DIGITN][LENGTH][INT]

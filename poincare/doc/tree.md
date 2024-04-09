@@ -1,15 +1,21 @@
 # Trees
 
-`Tree` is the main data structure inside poincare-junior. It stores an arbitrary
+[`Tree`](../src/memory/tree.h) is the central data structure in Poincare.
+
+It stores an arbitrary
 long, editable tree as a contiguous chunk of memory that can be easily moved,
-copied and compared.
+copied and compared. Tools are provided to edit them safely, build them at 
+compile time or runtime and rewrite them using pattern-matching.
 
-## Block, Node and tree types
+It is designed for space-efficiency and may be manipulated at a low-level
+when fine control is preferred over safe abstractions.
 
-Trees start with a `Node` directly followed in memory by a given number of other
+## Block, Node, Type and Tree
+
+Every `Tree` starts with a `Node` directly followed in memory by a given number of other
 trees that are its children.
 
-The `Node` always starts with a special block of the `Type` enum that indicates
+The `Node` always starts with a special `Block` of the `Type` enum that indicates
 what the tree represents.
 
 Depending on the type of the tree, it may have a fixed number of children –
@@ -19,48 +25,60 @@ Nodes can also contain some more bytes to be interpreted according to their
 types. In particular, numbers are represented with leaves (trees with no
 children) and their value is contained inside their node.
 
-<details>
-<summary>Example</summary>
+> [!NOTE]
+> For instance, $cos(4×x)$ is represented by this tree of 9 blocks:
+>
+> |Cos|Mult|2|IntegerShort|4|UserSymbol|2|'x'|0|
+> |-|-|-|-|-|-|-|-|-|
+>
+> `Cos` is a unary tree so the next block is the start of its only child.
+>
+> `Mult` is n-ary, the next block `2` indicates its number of children.
+>
+> `IntegerShort` has always 0 children but its node has an additional byte to be
+> interpreted as its value, `4`
+>
+> `UserSymbol` has no children, the next block indicates the number of chars,
+> stored in the following blocks.
+>
 
-For instance, $cos(4×x)$ is represented by the tree :
+You will find all the available types in [expression/types.h](/poincare/src/expression/types.h) and
+ [layout/types.h](/poincare/src/layout/types.h).
 
-|Cosine|Multiplication|2|IntegerShort|4|UserSymbol|2|'x'|0|
-|-|-|-|-|-|-|-|-|-|
+Each NODE entry declares a Type with its number of children and the number of additional bytes its node
+contains.
 
-The first block `Cosine` is always unary so the next block is the start of its
-only child.
+There is no class hierarchy corresponding to the types and they are intended to
+be used in a C-style manner :
 
-`Multiplication` is n-ary, the next-block 2 indicates its number of children.
+```cpp
+switch (tree->type()) {
+  case Type::Cos:
+  case Type::Sin:
+    ...
+}
+```
 
-`IntegerShort` has always 0 children but its node has a additional byte to be
-interpreted as its value here 4
+For convenience, `tree->isCos()` is defined as an equivalent to `tree->type() == Type::Cos`.
 
-`UserSymbol` has no children, the next block indicates the number of chars,
-stored in the following blocks.
-
-</details>
-
+Related types are sometimes grouped inside ranges that provide a similar
+method `tree->isNumber()`.
 
 Since trees have a variable size, code manipulates them via `Tree *`
 pointers. Moreover, the `const` keyword is used pervasively to differentiate
 `const Tree *` from `Tree *` to constrain signatures.
 
-You may find the different tree types available for
-[expressions](/poincare/src/expression/types.h) and
-[layouts](/poincare/src/layout/types.h).  Each NODE entry declares Type
-with its number of children and the number of additional bytes its nodes
-contains.  They is no class hierarchy corresponding to the types but they come
-with some helpers such as `tree->isCosine()` to test them.
+Once you have a tree pointer, you may navigate with :
+```cpp
+Tree * sibling = tree->nextTree();
+const Tree * child = constTree->child(0);
+for (Tree * child : tree->children()) { ... }
+for (const Tree * subTree : tree->selfAndDescendants()) { ... }
+```
 
-Types are sometimes grouped together inside RANGE that provide similarly the
-method `tree->isNumber()`.
-
-You may also be interested by the various tree methods that you will find here :
-**TODO**
-
-Unlike the previous poincare, Tree can only be iterated forward.  You can't
+Unlike the previous Poincare, Tree can only be iterated forward.  You can't
 access the previous child or the parent of a tree, unless you know a root tree
-above this parent and your tree and go downward from there (this is what
+above this parent and walk downward from there (this is what
 `parentOfDescendant` does).
 
 Most of the time, algorithms are built such that their behavior doesn't change
@@ -69,12 +87,11 @@ depending of where your tree is or what are its siblings.
 
 ## The TreeStack
 
-Trees may live anywhere in memory (inside buffers in apps, in the storage or
-even in flash) but only trees within the TreeStack can be modified.
+Trees may live anywhere (inside buffers in apps, in the storage, in flash) but only trees within the TreeStack can be modified.
 
 The TreeStack is a dedicated range of memory where you can create and play
-with your trees temporarily. It's not intended for storage and can be cleared by
-exceptions. You must save your trees elsewhere before you return from pcj.
+with your trees temporarily. It is not intended for storage and can be cleared by
+exceptions. You must save your trees elsewhere before you return to the app’s code.
 
 The primary way to create Trees from scratch is to push nodes at the end of the
 `SharedTreeStack`. Its push method is templated to accommodate the different
@@ -87,7 +104,7 @@ Tree * add = SharedTreeStack->push<Type::Addition>(2);
 SharedTreeStack->push(Type::One);
 // cloning an other Tree at the end of the TreeStack
 otherTree->clone()
-// add now points to 1 + cloneOfWhatEverOtherTreeWas
+// add now points to 1 + cloneOfOtherTree
 ```
 
 > [!CAUTION]
@@ -225,7 +242,8 @@ Some litterals are also available to write numbers is a readable way :
 const Tree * immutableExpression = KExp(KMult(2_e, i_e, π_e));
 ```
 
-You may construct large KTrees or factorize their construction using a constexpr :
+You may construct large KTrees or factorize their construction using a constexpr 
+(mind that the twoPi will appear twice in the flash in this case) :
 
 ```cpp
 constexpr KTree twoPi = KMult(2_e, π_e);
@@ -234,16 +252,16 @@ constexpr KTree twoPi = KMult(2_e, π_e);
   KAdd(KCos(twoPi), KSin(twoPi))->clone();
 ```
 
-mind that the twoPi will appear twice in the flash in this case.
-
 
 KTrees are implemented with templates and each different tree has a different
 type so you cannot build an array of them or declare a function that takes a
-KTree for instance. However you can define a template that only accept KTrees
+KTree. However you can define a template that only accept KTrees
 using the concept that gathers them all like this :
 
 ```cpp
-template <TreeConcept T> f(T ktree) { ... }
+template <KTreeConcept KT> f(KT ktree) {
+  ...
+}
 ```
 
 <details>
@@ -252,11 +270,15 @@ template <TreeConcept T> f(T ktree) { ... }
 While the construction of the KTree is constexpr, the cast to a `const Tree *`
 is not (yet). This means you may write :
 
-`constexpr KTree k = 2_e`;
+```cpp
+constexpr KTree k = 2_e;
+```
 
 but not
 
-`constexpr const Tree * t = 2_e;`
+```cpp
+constexpr const Tree * t = 2_e;
+```
 
 It practice it does not change anything at runtime since the compiler optimizes
 the cast away in both cases but we might fix it at some point since `KTree`

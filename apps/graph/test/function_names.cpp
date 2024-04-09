@@ -1,4 +1,4 @@
-#include <apps/graph/shared/function_name_helper.h>
+#include <apps/shared/function_name_helper.h>
 #include <apps/shared/global_context.h>
 #include <quiz.h>
 

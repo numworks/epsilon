@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
+#include <apps/shared/function_name_helper.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <poincare/integer.h>
@@ -11,7 +12,6 @@
 #include <string.h>
 
 #include "../app.h"
-#include "../shared/function_name_helper.h"
 #include "list_controller.h"
 
 using namespace Poincare;
@@ -81,8 +81,8 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
                            : CodePoint(modelString[constantNameLength + 1]);
   /* Model starts with a named function. If that name is already taken, use
    * another one. */
-  int functionNameLength =
-      FunctionNameHelper::DefaultName(buffer, k_maxSizeOfNamedModel, symbol);
+  int functionNameLength = Shared::FunctionNameHelper::DefaultName(
+      buffer, k_maxSizeOfNamedModel, symbol);
   assert(strlen(modelString + constantNameLength) + functionNameLength <
          k_maxSizeOfNamedModel);
   strlcpy(buffer + functionNameLength, modelString + constantNameLength,

@@ -24,10 +24,6 @@ class ListController : public Shared::FunctionListController,
       FunctionParameterController* functionParameterController,
       DerivativeColumnParameterController* derivativeColumnParameterController);
 
-  static void DeleteParametricComponentsWithBaseName(char* baseName,
-                                                     size_t baseNameLength,
-                                                     size_t bufferSize);
-
   Escher::HighlightCell* reusableCell(int index, int type) override;
   // ViewController
   void viewWillAppear() override;

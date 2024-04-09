@@ -13,6 +13,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   expression_model_handle.cpp \
   expression_model_store.cpp \
   function.cpp \
+  function_name_helper.cpp \
   global_context.cpp \
   inference.cpp \
   interactive_curve_view_range.cpp \

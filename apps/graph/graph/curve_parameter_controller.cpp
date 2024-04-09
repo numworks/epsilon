@@ -1,12 +1,12 @@
 #include "curve_parameter_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/function_name_helper.h>
 #include <assert.h>
 #include <poincare/point_evaluation.h>
 #include <poincare/print.h>
 
 #include "../app.h"
-#include "../shared/function_name_helper.h"
 #include "apps/shared/color_names.h"
 #include "graph_controller.h"
 

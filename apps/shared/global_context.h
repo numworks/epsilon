@@ -38,6 +38,11 @@ class GlobalContext final : public Poincare::Context {
   // Destroy records
   static void DestroyRecordsBaseNamedWithoutExtension(const char *baseName,
                                                       const char *extension);
+  static void DeleteParametricComponentsWithBaseName(char *baseName,
+                                                     size_t baseNameLength,
+                                                     size_t bufferSize);
+  static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
+  static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
 
   GlobalContext() : m_sequenceContext(this, sequenceStore){};
   /* Expression for symbol

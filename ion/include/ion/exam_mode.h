@@ -4,26 +4,29 @@
 #include <ion/exam_bytes.h>
 #include <kandinsky/color.h>
 #include <omg/bit_helper.h>
+#include <omg/code_guard.h>
 
 namespace Ion {
 namespace ExamMode {
 
 using Int = ExamBytes::Int;
 
-enum class Ruleset : Int {
-  Off = 0,
-  Standard,
-  Dutch,
-  IBTest,
-  PressToTest,
-  Portuguese,
-  English,
-  STAAR,
-  Pennsylvania,
-  SouthCarolina,
-  NorthCarolina,
-  NumberOfRulesets,
-};
+CODE_GUARD(exam_mode_rulesets, 2664271436,  //
+           enum class Ruleset
+           : Int{
+               Off = 0,
+               Standard,
+               Dutch,
+               IBTest,
+               PressToTest,
+               Portuguese,
+               English,
+               STAAR,
+               Pennsylvania,
+               SouthCarolina,
+               NorthCarolina,
+               NumberOfRulesets,
+           };)
 
 /* Encode exam mode permissions on a 16 bits integer.
  * The first bit "configurable" is set to 1 if "data" encodes press-to-test
@@ -33,13 +36,15 @@ enum class Ruleset : Int {
  * compatibility with the PersistingBytes API.
  */
 class Configuration {
-  enum class Bits : size_t {
-    Configurable = 0,
-    DataFirst,
-    DataLast = 14,
-    Cleared,
-    NumberOfBits
-  };
+  CODE_GUARD(exam_mode_configuration, 3023708496,  //
+             enum class Bits
+             : size_t{
+                 Configurable = 0,
+                 DataFirst,
+                 DataLast = 14,
+                 Cleared,
+                 NumberOfBits,
+             };)
 
  public:
   constexpr static size_t k_dataSize = static_cast<size_t>(Bits::DataLast) -

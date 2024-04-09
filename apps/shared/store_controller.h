@@ -49,6 +49,7 @@ class StoreController : public EditableCellTableViewController,
   size_t fillColumnName(int column, char* buffer) override {
     return fillColumnNameFromStore(column, buffer);
   }
+  void setClearPopUpContent() override;
 
   void loadMemoizedFormulasFromSnapshot();
 

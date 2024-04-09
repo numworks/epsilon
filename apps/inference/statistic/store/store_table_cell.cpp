@@ -106,13 +106,6 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
 }
 
 void StoreTableCell::setClearPopUpContent() {
-  if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
-    return ClearColumnHelper::setClearPopUpContent();
-  }
-  assert(m_statistic->significanceTestType() == SignificanceTestType::OneMean ||
-         m_statistic->significanceTestType() == SignificanceTestType::TwoMeans);
-  RawDataStatistic *store = static_cast<RawDataStatistic *>(this->store());
-
   constexpr size_t bufferSize = Shared::BufferPopUpController::MaxTextSize();
   char buffer[bufferSize];
   clearPopUpText(selectedColumn(), buffer, bufferSize);

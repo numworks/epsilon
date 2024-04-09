@@ -23,6 +23,15 @@ constexpr uint32_t crc32EatByte(uint32_t crc, uint8_t data) {
   return crc;
 }
 
+constexpr uint32_t crc32String(const char *str) {
+  assert(str);
+  uint32_t crc = ~0u;
+  for (size_t i = 0; str[i] != '\0'; i++) {
+    crc = crc32EatByte(crc, str[i]);
+  }
+  return crc;
+}
+
 }  // namespace Ion
 
 #endif

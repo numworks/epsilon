@@ -14,7 +14,6 @@ StoreParameterController::StoreParameterController(
     Responder* parentResponder, StoreColumnHelper* storeColumnHelper)
     : ColumnParameterController(parentResponder),
       m_storeColumnHelper(storeColumnHelper) {
-  m_clearColumn.label()->setMessageWithPlaceholders(I18n::Message::ClearColumn);
   m_hideCell.label()->setMessage(
       I18n::Message::ActivateDeactivateStoreParamTitle);
   m_hideCell.subLabel()->setMessage(
@@ -26,6 +25,14 @@ StoreParameterController::StoreParameterController(
 void StoreParameterController::initializeColumnParameters() {
   ColumnParameterController::initializeColumnParameters();
   m_sortCell.subLabel()->setMessage(sortMessage());
+  // Clear cell text
+  int relativeColumn = m_storeColumnHelper->store()->relativeColumn(m_column);
+  if (relativeColumn < DoublePairStore::k_numberOfColumnsPerSeries) {
+    constexpr size_t bufferSize = Shared::BufferPopUpController::MaxTextSize();
+    char buffer[bufferSize];
+    m_storeColumnHelper->clearCellText(m_column, buffer, bufferSize);
+    m_clearColumn.label()->setText(buffer);
+  }
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {

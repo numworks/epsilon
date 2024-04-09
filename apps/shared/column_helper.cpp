@@ -240,6 +240,30 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
   return FillColumnStatus::Success;
 }
 
+size_t StoreColumnHelper::clearPopUpText(int column, char *buffer,
+                                         size_t bufferSize) {
+  DoublePairStore *store = this->store();
+  int series = store->seriesAtColumn(column);
+  int relativeColumn = store->relativeColumn(column);
+  DoublePairStore::ClearType type = store->clearType(relativeColumn);
+  constexpr size_t placeHolderSize = DoublePairStore::k_tableNameLength + 1;
+  char placeHolder[placeHolderSize];
+  I18n::Message message = I18n::Message::Default;
+  if (type == DoublePairStore::ClearType::ClearTable) {
+    store->tableName(series, placeHolder, placeHolderSize);
+    message = I18n::Message::ClearTableConfirmation;
+  } else {
+    store->fillColumnName(series, relativeColumn, placeHolder);
+    assert(type == DoublePairStore::ClearType::ClearColumn ||
+           type == DoublePairStore::ClearType::ResetColumn);
+    message = type == DoublePairStore::ClearType::ClearColumn
+                  ? I18n::Message::ClearColumnConfirmation
+                  : I18n::Message::ResetFreqConfirmation;
+  }
+  return Poincare::Print::CustomPrintf(buffer, bufferSize,
+                                       I18n::translate(message), placeHolder);
+}
+
 void StoreColumnHelper::reloadSeriesVisibleCells(int series,
                                                  int relativeColumn) {
   // Reload visible cells of the series and, if not -1, relative column

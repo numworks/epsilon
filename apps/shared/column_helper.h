@@ -68,6 +68,7 @@ class StoreColumnHelper {
     return store()->fillColumnName(store()->seriesAtColumn(column),
                                    store()->relativeColumn(column), buffer);
   }
+  size_t clearPopUpText(int column, char* buffer, size_t bufferSize);
 
   virtual Escher::InputViewController* inputViewController() = 0;
   virtual DoublePairStore* store() = 0;

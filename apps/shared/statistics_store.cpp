@@ -46,25 +46,6 @@ bool StatisticsStore::updateSeries(int series, bool delayUpdate) {
   return DoublePairStore::updateSeries(series, delayUpdate);
 }
 
-size_t StatisticsStore::clearPopUpText(int column, char* buffer,
-                                       size_t bufferSize) const {
-  int series = seriesAtColumn(column);
-  int relativeCol = relativeColumn(column);
-  assert(relativeCol == 0 || relativeCol == 1);
-  constexpr size_t placeHolderSize = DoublePairStore::k_tableNameLength + 1;
-  char placeHolder[placeHolderSize];
-  I18n::Message message = I18n::Message::Default;
-  if (relativeCol == 0) {
-    tableName(series, placeHolder, placeHolderSize);
-    message = I18n::Message::ClearTableConfirmation;
-  } else {
-    fillColumnName(series, relativeCol, placeHolder);
-    message = I18n::Message::ResetFreqConfirmation;
-  }
-  return Poincare::Print::CustomPrintf(buffer, bufferSize,
-                                       I18n::translate(message), placeHolder);
-}
-
 void StatisticsStore::initDatasets() {
   /* Update series after having set the datasets, which are needed in
    * updateSeries */

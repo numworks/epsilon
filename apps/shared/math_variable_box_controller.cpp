@@ -460,8 +460,8 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
       return false;
     }
     if (isParametricFunction) {
-      Graph::ListController::DeleteParametricComponentsWithBaseName(
-          buffer, length, bufferSize);
+      GlobalContext::DeleteParametricComponentsWithBaseName(buffer, length,
+                                                            bufferSize);
     }
   }
   // Shift the memoization if needed

@@ -1,6 +1,7 @@
 #include "list_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/function_name_helper.h>
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/code_point_layout.h>
@@ -10,7 +11,6 @@
 #include <poincare/symbol_abstract.h>
 
 #include "../app.h"
-#include "../shared/function_name_helper.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -346,64 +346,12 @@ ContinuousFunctionStore *ListController::modelStore() const {
   return App::app()->functionStore();
 }
 
-static void deleteParametricComponent(char *baseName, size_t baseNameLength,
-                                      size_t bufferSize, bool first) {
-  FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
-                                                      bufferSize, first);
-  Ion::Storage::Record record =
-      Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
-          baseName, Ion::Storage::parametricComponentExtension);
-  record.destroy();
-}
-
-static void storeParametricComponent(char *baseName, size_t baseNameLength,
-                                     size_t bufferSize, const Expression &e,
-                                     bool first) {
-  assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point &&
-         e.numberOfChildren() == 2);
-  Expression child = e.childAtIndex(first ? 0 : 1).clone();
-  FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
-                                                      bufferSize, first);
-  child.storeWithNameAndExtension(baseName,
-                                  Ion::Storage::parametricComponentExtension);
-}
-
-void ListController::DeleteParametricComponentsWithBaseName(
-    char *baseName, size_t baseNameLength, size_t bufferSize) {
-  deleteParametricComponent(baseName, baseNameLength, bufferSize, true);
-  deleteParametricComponent(baseName, baseNameLength, bufferSize, false);
-}
-
 void ListController::deleteParametricComponentsOfSelectedModel() {
-  ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(selectedRecord());
-  if (!f->properties().isEnabledParametric()) {
-    return;
-  }
-  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
-  char buffer[bufferSize];
-  size_t length = f->name(buffer, bufferSize);
-  DeleteParametricComponentsWithBaseName(buffer, length, bufferSize);
+  GlobalContext::DeleteParametricComponentsOfRecord(selectedRecord());
 }
 
 void ListController::storeParametricComponentsOfSelectedModel() {
-  ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(selectedRecord());
-  if (!f->properties().isEnabledParametric()) {
-    return;
-  }
-  Expression e = f->expressionClone();
-  if (e.type() != ExpressionNode::Type::Point) {
-    // For example: g(t)=f'(t) or g(t)=diff(f(t),t,t)
-    return;
-  }
-  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
-  char buffer[bufferSize];
-  size_t length = f->name(buffer, bufferSize);
-  assert(FunctionNameHelper::ParametricComponentsNamesAreFree(buffer, length,
-                                                              bufferSize));
-  storeParametricComponent(buffer, length, bufferSize, e, true);
-  storeParametricComponent(buffer, length, bufferSize, e, false);
+  GlobalContext::StoreParametricComponentsOfRecord(selectedRecord());
 }
 
 int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {

@@ -4,9 +4,8 @@
 #include <poincare/serialization_helper.h>
 
 using namespace Poincare;
-using namespace Shared;
 
-namespace Graph {
+namespace Shared {
 
 namespace FunctionNameHelper {
 
@@ -134,4 +133,4 @@ bool ParametricComponentsNameError(Expression expression,
 
 }  // namespace FunctionNameHelper
 
-}  // namespace Graph
+}  // namespace Shared

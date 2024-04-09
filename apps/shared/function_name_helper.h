@@ -1,12 +1,12 @@
-#ifndef GRAPH_FUNCTION_MODELS_NAMES_H
-#define GRAPH_FUNCTION_MODELS_NAMES_H
+#ifndef SHARED_FUNCTION_MODELS_NAMES_H
+#define SHARED_FUNCTION_MODELS_NAMES_H
 
 #include <apps/shared/continuous_function.h>
 #include <ion/unicode/code_point.h>
 
 #include <array>
 
-namespace Graph {
+namespace Shared {
 
 namespace FunctionNameHelper {
 
@@ -23,6 +23,6 @@ bool ParametricComponentsNameError(Poincare::Expression expression,
 
 }  // namespace FunctionNameHelper
 
-}  // namespace Graph
+}  // namespace Shared
 
 #endif

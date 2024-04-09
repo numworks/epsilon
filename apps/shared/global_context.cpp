@@ -11,6 +11,7 @@
 #include "continuous_function.h"
 #include "continuous_function_store.h"
 #include "expression_display_permissions.h"
+#include "function_name_helper.h"
 #include "poincare_helpers.h"
 #include "sequence.h"
 #include "sequence_context.h"
@@ -302,6 +303,70 @@ void GlobalContext::prepareForNewApp() {
 void GlobalContext::reset() {
   sequenceStore->reset();
   continuousFunctionStore->reset();
+}
+
+// Parametric components
+
+static void deleteParametricComponent(char *baseName, size_t baseNameLength,
+                                      size_t bufferSize, bool first) {
+  FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
+                                                      bufferSize, first);
+  Ion::Storage::Record record =
+      Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
+          baseName, Ion::Storage::parametricComponentExtension);
+  record.destroy();
+}
+
+void GlobalContext::DeleteParametricComponentsWithBaseName(
+    char *baseName, size_t baseNameLength, size_t bufferSize) {
+  deleteParametricComponent(baseName, baseNameLength, bufferSize, true);
+  deleteParametricComponent(baseName, baseNameLength, bufferSize, false);
+}
+
+void GlobalContext::DeleteParametricComponentsOfRecord(
+    Ion::Storage::Record record) {
+  ExpiringPointer<ContinuousFunction> f =
+      GlobalContext::continuousFunctionStore->modelForRecord(record);
+  if (!f->properties().isEnabledParametric()) {
+    return;
+  }
+  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+  char buffer[bufferSize];
+  size_t length = f->name(buffer, bufferSize);
+  DeleteParametricComponentsWithBaseName(buffer, length, bufferSize);
+}
+
+static void storeParametricComponent(char *baseName, size_t baseNameLength,
+                                     size_t bufferSize, const Expression &e,
+                                     bool first) {
+  assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point &&
+         e.numberOfChildren() == 2);
+  Expression child = e.childAtIndex(first ? 0 : 1).clone();
+  FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
+                                                      bufferSize, first);
+  child.storeWithNameAndExtension(baseName,
+                                  Ion::Storage::parametricComponentExtension);
+}
+
+void GlobalContext::StoreParametricComponentsOfRecord(
+    Ion::Storage::Record record) {
+  ExpiringPointer<ContinuousFunction> f =
+      GlobalContext::continuousFunctionStore->modelForRecord(record);
+  if (!f->properties().isEnabledParametric()) {
+    return;
+  }
+  Expression e = f->expressionClone();
+  if (e.type() != ExpressionNode::Type::Point) {
+    // For example: g(t)=f'(t) or g(t)=diff(f(t),t,t)
+    return;
+  }
+  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+  char buffer[bufferSize];
+  size_t length = f->name(buffer, bufferSize);
+  assert(FunctionNameHelper::ParametricComponentsNamesAreFree(buffer, length,
+                                                              bufferSize));
+  storeParametricComponent(buffer, length, bufferSize, e, true);
+  storeParametricComponent(buffer, length, bufferSize, e, false);
 }
 
 }  // namespace Shared

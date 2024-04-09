@@ -187,9 +187,9 @@ void ListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ListController::editSelectedRecordWithText(const char *text) {
-  deleteParametricComponentsOfSelectedModel();
+  GlobalContext::DeleteParametricComponentsOfRecord(selectedRecord());
   bool result = FunctionListController::editSelectedRecordWithText(text);
-  storeParametricComponentsOfSelectedModel();
+  GlobalContext::StoreParametricComponentsOfRecord(selectedRecord());
   return result;
 }
 
@@ -237,11 +237,11 @@ Shared::ListParameterController *ListController::parameterController() {
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {
   // Remove parametric components too
-  deleteParametricComponentsOfSelectedModel();
-  // If we are on a derivative row, only hide derivative
   int relativeRow;
-  ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(selectedRecord(&relativeRow));
+  Ion::Storage::Record r = selectedRecord(&relativeRow);
+  GlobalContext::DeleteParametricComponentsOfRecord(r);
+  // If we are on a derivative row, only hide derivative
+  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(r);
   int derivationOrder =
       derivationOrderFromRelativeRow(f.pointer(), relativeRow);
   if (derivationOrder > 0) {
@@ -344,14 +344,6 @@ void ListController::addNewModelAction() {
 
 ContinuousFunctionStore *ListController::modelStore() const {
   return App::app()->functionStore();
-}
-
-void ListController::deleteParametricComponentsOfSelectedModel() {
-  GlobalContext::DeleteParametricComponentsOfRecord(selectedRecord());
-}
-
-void ListController::storeParametricComponentsOfSelectedModel() {
-  GlobalContext::StoreParametricComponentsOfRecord(selectedRecord());
 }
 
 int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {

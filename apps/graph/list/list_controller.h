@@ -84,9 +84,6 @@ class ListController : public Shared::FunctionListController,
   int derivationOrderFromRelativeRow(Shared::ContinuousFunction* f,
                                      int relativeRow) const;
 
-  void deleteParametricComponentsOfSelectedModel();
-  void storeParametricComponentsOfSelectedModel();
-
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;
   FunctionParameterController* m_functionParameterController;

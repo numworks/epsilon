@@ -4,7 +4,7 @@
 
 namespace OMG::Float {
 
-bool Float::IsGreater(float xI, float xJ, bool nanIsGreatest) {
+bool IsGreater(float xI, float xJ, bool nanIsGreatest) {
   if (std::isnan(xI)) {
     return nanIsGreatest;
   }

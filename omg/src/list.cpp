@@ -2,8 +2,7 @@
 
 namespace OMG::List {
 
-void List::Sort(Swap swap, Compare compare, void* context,
-                int numberOfElements) {
+void Sort(Swap swap, Compare compare, void* context, int numberOfElements) {
   /* Using an insertion-sort algorithm, which has the advantage of being
    * in-place and efficient when already sorted. It is optimal if Compare is
    * more lenient with equalities ( >= instead of > ) */
@@ -17,8 +16,8 @@ void List::Sort(Swap swap, Compare compare, void* context,
   }
 }
 
-int List::ExtremumIndex(Compare compare, void* context, int numberOfElements,
-                        bool minimum) {
+int ExtremumIndex(Compare compare, void* context, int numberOfElements,
+                  bool minimum) {
   int returnIndex = 0;
   for (int i = 0; i < numberOfElements; i++) {
     bool newIsGreater = compare(i, returnIndex, context, numberOfElements);

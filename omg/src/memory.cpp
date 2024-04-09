@@ -4,14 +4,14 @@
 
 namespace OMG::Memory {
 
-size_t Memory::AlignedSize(size_t realSize, size_t alignment) {
+size_t AlignedSize(size_t realSize, size_t alignment) {
   size_t modulo = realSize % alignment;
   size_t result = realSize + (modulo == 0 ? 0 : alignment - modulo);
   assert(result % alignment == 0);
   return result;
 }
 
-bool Memory::Rotate(uint8_t* dst, uint8_t* src, size_t len) {
+bool Rotate(uint8_t* dst, uint8_t* src, size_t len) {
   /* This method "rotates" an array to insert data at src with length len at
    * address dst.
    *

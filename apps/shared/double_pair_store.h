@@ -173,6 +173,11 @@ class DoublePairStore {
            m_dataLists[i][1].wasErasedByException();
   }
 
+  enum class ClearType { ClearColumn, ClearTable, ResetColumn };
+  virtual ClearType clearType(int relativeColumn) const {
+    return ClearType::ClearColumn;
+  }
+
  protected:
   void initListsInPool();
   double defaultValue(int series, int i, int j) const;

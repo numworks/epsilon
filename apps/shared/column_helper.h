@@ -93,6 +93,10 @@ class StoreColumnHelper {
       const char* text, int* series, int* column,
       Poincare::Layout* formulaLayout);
 
+  DoublePairStore::ClearType clearType(int column) {
+    return store()->clearType(store()->relativeColumn(column));
+  }
+
   ClearColumnHelper* m_clearColumnHelper;
   /* Fill with formula */
   FormulaTemplateMenuController m_templateController;

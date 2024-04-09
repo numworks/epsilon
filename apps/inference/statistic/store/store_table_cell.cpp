@@ -105,6 +105,22 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
                                   store()->seriesAtColumn(column)));
 }
 
+void StoreTableCell::setClearPopUpContent() {
+  if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
+    return ClearColumnHelper::setClearPopUpContent();
+  }
+  assert(m_statistic->significanceTestType() == SignificanceTestType::OneMean ||
+         m_statistic->significanceTestType() == SignificanceTestType::TwoMeans);
+  RawDataStatistic *store = static_cast<RawDataStatistic *>(this->store());
+
+  int series = store->seriesAtColumn(selectedColumn());
+  int column = store->relativeColumn(selectedColumn());
+  constexpr size_t bufferSize = Shared::BufferPopUpController::MaxTextSize();
+  char buffer[bufferSize];
+  store->clearPopUpText(series, column, buffer, bufferSize);
+  m_confirmPopUpController.setContentText(buffer);
+}
+
 InputViewController *StoreTableCell::inputViewController() {
   return App::app()->inputViewController();
 }

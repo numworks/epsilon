@@ -3,7 +3,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_storage_context) {
   quiz_assert(!StorageContext::TreeForIdentifier("x"));

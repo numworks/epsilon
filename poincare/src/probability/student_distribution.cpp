@@ -7,7 +7,7 @@
 
 #include "domain.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 T StudentDistribution::EvaluateAtAbscissa(T x, T k) {
@@ -102,4 +102,4 @@ StudentDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool StudentDistribution::KIsOK(float k);
 template bool StudentDistribution::KIsOK(double k);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

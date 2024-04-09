@@ -6,7 +6,7 @@
 #include "code_point_layout.h"
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
                      const Tree* parentheses) {
@@ -50,4 +50,4 @@ Rack* RackFromText(const char* text) {
   return root;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

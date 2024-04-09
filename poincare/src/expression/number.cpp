@@ -4,7 +4,7 @@
 #include "float.h"
 #include "rational.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Tree* Number::Addition(const Tree* i, const Tree* j) {
   if (i->isDoubleFloat() || j->isDoubleFloat()) {
@@ -42,7 +42,7 @@ Sign Number::Sign(const Tree* node) {
     case Type::SingleFloat: {
       double value = FloatNode::To(node);
       // Floats are not considered integer since they may have been rounded
-      return PoincareJ::Sign(value == 0, value > 0, value < 0, true);
+      return Internal::Sign(value == 0, value > 0, value < 0, true);
     }
     default:
       assert(node->isRational());
@@ -63,4 +63,4 @@ bool Number::SetSign(Tree* number, NonStrictSign sign) {
   return false;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

@@ -9,7 +9,7 @@
 #include "placeholder.h"
 #include "tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace KTrees {
 
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
@@ -219,6 +219,6 @@ using KZeroOrMorePlaceholder =
 }  // namespace KTrees
 
 using namespace KTrees;
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

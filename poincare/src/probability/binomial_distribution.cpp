@@ -9,7 +9,7 @@
 
 #include "domain.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
@@ -138,4 +138,4 @@ BinomialDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool BinomialDistribution::ParametersAreOK(float, float);
 template bool BinomialDistribution::ParametersAreOK(double, double);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

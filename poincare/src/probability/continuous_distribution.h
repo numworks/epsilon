@@ -3,7 +3,7 @@
 
 #include "distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class ContinuousDistribution : public Distribution {
  public:
@@ -29,6 +29,6 @@ class ContinuousDistribution : public Distribution {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

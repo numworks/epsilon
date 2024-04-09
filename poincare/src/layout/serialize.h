@@ -3,7 +3,7 @@
 
 #include "rack.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 char* Serialize(const Rack* rack, char* buffer, char* end);
 char* Serialize(const Layout* layout, char* buffer, char* end);
@@ -16,6 +16,6 @@ inline char* Serialize(const Tree* tree, char* buffer, char* end) {
   return used;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

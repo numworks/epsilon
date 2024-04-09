@@ -5,7 +5,7 @@
 
 #include "symbol.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Solver methods are a direct (and incomplete for now) adaptation of methods in
  * apps/solver/system_of_equations.cpp. */
@@ -63,6 +63,6 @@ class Solver {
                                 Context context);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

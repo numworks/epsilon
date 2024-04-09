@@ -7,7 +7,7 @@
 #include "rational.h"
 #include "variables.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Tree* List::PushEmpty() { return KList.node<0>->cloneNode(); }
 
@@ -209,4 +209,4 @@ bool List::ShallowApplyListOperators(Tree* e) {
   }
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

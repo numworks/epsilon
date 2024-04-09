@@ -2,7 +2,7 @@
 
 #include <escher/palette.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 KDSize EmptyRectangle::Size(KDFont::Size font, bool withMargins) {
   return KDSize(
@@ -23,4 +23,4 @@ void EmptyRectangle::DrawEmptyRectangle(KDContext* ctx, KDPoint p,
       fillColor);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

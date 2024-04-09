@@ -31,7 +31,7 @@ class __attribute__((packed)) Preferences final {
 
   // Calculation preferences
 
-  using AngleUnit = PoincareJ::AngleUnit;
+  using AngleUnit = Internal::AngleUnit;
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
    * auto mode tries to return 'natural' float like (0.021) and switches to
@@ -47,7 +47,7 @@ class __attribute__((packed)) Preferences final {
     Edition2D,
     Edition1D,
   };
-  using ComplexFormat = PoincareJ::ComplexFormat;
+  using ComplexFormat = Internal::ComplexFormat;
   constexpr static ComplexFormat k_defautComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
   constexpr static size_t k_numberOfBitsForAngleUnit =
@@ -74,7 +74,7 @@ class __attribute__((packed)) Preferences final {
   };
 
   // Other preferences
-  using UnitFormat = PoincareJ::UnitFormat;
+  using UnitFormat = Internal::UnitFormat;
   /* The symbol used for combinations and permutations is country-dependent and
    * set in apps but it stored there to be accessible from Poincare */
   enum class CombinatoricSymbols : uint8_t {

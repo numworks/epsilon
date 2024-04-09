@@ -27,7 +27,7 @@
  */
 
 // WARNING: this code has been modified
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 double RegularizedIncompleteBetaFunction(double a, double b, double x);
 

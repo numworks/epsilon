@@ -10,7 +10,7 @@
 #include "decimal.h"
 #include "symbol.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Projection::DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
   return ctx.m_symbolic != SymbolicComputation::DoNotReplaceAnySymbol &&
@@ -123,9 +123,9 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   // Project angles depending on context
-  PoincareJ::AngleUnit angleUnit = projectionContext->m_angleUnit;
+  Internal::AngleUnit angleUnit = projectionContext->m_angleUnit;
   if (e->isOfType({Type::Sin, Type::Cos, Type::Tan}) &&
-      angleUnit != PoincareJ::AngleUnit::Radian) {
+      angleUnit != Internal::AngleUnit::Radian) {
     Tree* child = e->child(0);
     child->moveTreeOverTree(PatternMatching::Create(
         KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
@@ -139,7 +139,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
         PatternMatching::MatchReplace(e, KASin(KA), KATrig(KA, 1_e)) ||
         // atan(A) -> atanRad(A)
         PatternMatching::MatchReplace(e, KATan(KA), KATanRad(KA));
-    if (angleUnit != PoincareJ::AngleUnit::Radian) {
+    if (angleUnit != Internal::AngleUnit::Radian) {
       // arccos_degree(x) = arccos_radians(x) * 180/π
       e->moveTreeOverTree(PatternMatching::Create(
           KMult(KA, KB), {.KA = e, .KB = Angle::RadTo(angleUnit)}));
@@ -291,4 +291,4 @@ bool Projection::Expand(Tree* tree) {
               1_e));
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

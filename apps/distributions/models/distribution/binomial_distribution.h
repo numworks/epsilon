@@ -8,8 +8,9 @@ namespace Distributions {
 class BinomialDistribution final : public TwoParametersDistribution {
  public:
   BinomialDistribution()
-      : TwoParametersDistribution(PoincareJ::Distribution::Type::Binomial,
-                                  k_defaultN, k_defaultP) {
+      : TwoParametersDistribution(
+            Poincare::Internal::Distribution::Type::Binomial, k_defaultN,
+            k_defaultP) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {

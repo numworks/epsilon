@@ -4,7 +4,7 @@
 #include "distribution.h"
 #include "distribution_method.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class PDFMethod final : public DistributionMethod {
   float EvaluateAtAbscissa(float* x, const Distribution* distribution,
@@ -21,6 +21,6 @@ class PDFMethod final : public DistributionMethod {
                      const Tree** parameters, Tree* expression) const override;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

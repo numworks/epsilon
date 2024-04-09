@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 char* Symbol::CopyName(const Tree* node, char* buffer, size_t bufferSize) {
   assert(node->isUserNamed());
@@ -19,4 +19,4 @@ const char* Symbol::GetName(const Tree* node) {
   return reinterpret_cast<const char*>(node->block()->nextNth(2));
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

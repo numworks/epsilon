@@ -11,7 +11,7 @@
 #include <iostream>
 #endif
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 inline void assert_node_equals_blocks(const Tree* node,
                                       std::initializer_list<Block> blocks) {

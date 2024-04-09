@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class LayoutSelection {
  public:
@@ -56,6 +56,6 @@ class LayoutSelection {
   int m_endPosition;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

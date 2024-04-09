@@ -5,7 +5,7 @@
 
 #include "simplification.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 struct List {
   static Tree* PushEmpty();
@@ -28,6 +28,6 @@ struct List {
   static bool ShallowApplyListOperators(Tree* expr);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

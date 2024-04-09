@@ -3,12 +3,12 @@
 
 #include "token.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class ParsingHelper {
  public:
   static bool IsLogicalOperator(const CPL* name, size_t nameLength,
                                 Token::Type* returnType);
 };
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

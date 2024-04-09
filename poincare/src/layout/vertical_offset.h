@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace VerticalOffset {
 inline bool IsSuperscript(const Tree* node) {
   assert(node->isVerticalOffsetLayout());
@@ -35,6 +35,6 @@ inline bool IsSuffixSuperscript(const Tree* node) {
 }
 }  // namespace VerticalOffset
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

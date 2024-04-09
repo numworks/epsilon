@@ -5,7 +5,7 @@
 
 #include "aliases.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Tree;
 
@@ -194,6 +194,6 @@ constexpr const BuiltinWithLayout* BuiltinWithLayout::GetReservedFunction(
   return nullptr;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

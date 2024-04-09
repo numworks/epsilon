@@ -23,7 +23,7 @@
 #include "variables.h"
 #include "vector.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Simplification::DeepSystematicReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening
@@ -919,4 +919,4 @@ bool Simplification::SimplifyLastTree(Tree* e,
   return false;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

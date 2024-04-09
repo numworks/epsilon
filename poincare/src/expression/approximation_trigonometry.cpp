@@ -11,7 +11,7 @@
 using Poincare::ApproximationHelper::MakeResultRealIfInputIsReal;
 using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 T Approximation::ConvertToRadian(T angle) {
@@ -223,4 +223,4 @@ template std::complex<float> Approximation::HyperbolicToComplex(
 template std::complex<double> Approximation::HyperbolicToComplex(
     TypeBlock type, std::complex<double> value);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

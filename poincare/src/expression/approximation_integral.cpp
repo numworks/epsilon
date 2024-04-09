@@ -7,7 +7,7 @@
 #include "simplification.h"
 #include "variables.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 struct DetailedResult {
@@ -463,4 +463,4 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
 template float Approximation::ApproximateIntegral(const Tree* integral);
 template double Approximation::ApproximateIntegral(const Tree* integral);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

@@ -10,7 +10,7 @@
 #include "exception_checkpoint.h"
 #include "node_constructor.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // Edition Pool
 
@@ -476,4 +476,4 @@ template Tree* TreeStack::push<Type::Var, uint8_t, ComplexSign>(uint8_t,
 template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
     bool isSubscript, bool isPrefix);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

@@ -3,7 +3,7 @@
 #include <ion/storage/file_system.h>
 #include <poincare/src/expression/symbol.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool StorageContext::DeepReplaceIdentifiersWithTrees(Tree* tree) {
   bool changed = false;
@@ -56,4 +56,4 @@ void StorageContext::DeleteTreeForIdentifier(const char* identifier) {
   r.destroy();
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

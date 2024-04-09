@@ -1,6 +1,6 @@
 #include "range.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // Range1D
 
@@ -166,4 +166,4 @@ template class Range1D<double>;
 template class Range2D<float>;
 template class Range2D<double>;
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

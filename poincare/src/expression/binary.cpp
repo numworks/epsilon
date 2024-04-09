@@ -7,7 +7,7 @@
 
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Binary::IsBinaryLogicalOperator(const CPL* name, int nameLength,
                                      Type* type) {
@@ -237,4 +237,4 @@ bool Binary::SimplifyPiecewise(Tree* piecewise) {
   return changed;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

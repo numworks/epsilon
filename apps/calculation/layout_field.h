@@ -30,11 +30,11 @@ class LayoutField : public Escher::LayoutField {
   };
 
   void resetInsertionCursor() {
-    m_insertionCursor = PoincareJ::LayoutBufferCursor();
+    m_insertionCursor = Poincare::Internal::LayoutBufferCursor();
   }
   bool handleDivision();
 
-  PoincareJ::LayoutBufferCursor m_insertionCursor;
+  Poincare::Internal::LayoutBufferCursor m_insertionCursor;
   DivisionCycleStep m_currentStep;
   Poincare::TrinaryBoolean m_divisionCycleWithAns;
 };

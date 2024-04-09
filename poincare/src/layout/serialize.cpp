@@ -8,7 +8,7 @@
 #include "grid.h"
 #include "vertical_offset.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO Serialization needs to go through expressions when possible to be able
  * to use operator priority to minimize parentheses and get the correct
@@ -151,4 +151,4 @@ char* Serialize(const Layout* layout, char* buffer, char* end) {
   return buffer;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO_PCJ: This tree is a bit odd. It would be better if it was handled in the
  *           apps. Maybe we need a generic, fixed-sized tree that can be
@@ -47,6 +47,6 @@ class PointOfInterest final {
       k_invertedValueIndex + sizeof(bool);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

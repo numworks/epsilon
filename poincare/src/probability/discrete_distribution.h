@@ -3,7 +3,7 @@
 
 #include "distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // More precisely distributions deriving from this should be defined on N
 class DiscreteDistribution : public Distribution {
@@ -41,6 +41,6 @@ class DiscreteDistribution : public Distribution {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

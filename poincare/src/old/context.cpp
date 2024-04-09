@@ -10,7 +10,7 @@ const Expression Context::expressionForSymbolAbstract(
   return protectedExpressionForSymbolAbstract(symbol, clone, nullptr);
 }
 
-const PoincareJ::Tree* Context::treeForSymbolIdentifier(
+const Internal::Tree* Context::treeForSymbolIdentifier(
     const char* identifier, int length, SymbolAbstractType type) {
   if (type == SymbolAbstractType::Symbol) {
     return expressionForSymbolAbstract(Symbol::Builder(identifier, length),

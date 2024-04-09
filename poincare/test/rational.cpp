@@ -6,7 +6,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 static bool integer_handler_same_absolute_value(IntegerHandler a,
                                                 IntegerHandler b) {

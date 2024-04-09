@@ -15,16 +15,18 @@ namespace Distributions {
 
 class Distribution : public Shared::Inference {
  public:
-  Distribution(PoincareJ::Distribution::Type type)
+  Distribution(Poincare::Internal::Distribution::Type type)
       : m_calculationBuffer(),
-        m_distribution(PoincareJ::Distribution::Get(type)),
+        m_distribution(Poincare::Internal::Distribution::Get(type)),
         m_indexOfUninitializedParameter(-1) {
     m_calculationBuffer.init(this);
   }
 
   static bool Initialize(Distribution* distribution,
-                         PoincareJ::Distribution::Type type);
-  PoincareJ::Distribution::Type type() const { return m_distribution->type(); };
+                         Poincare::Internal::Distribution::Type type);
+  Poincare::Internal::Distribution::Type type() const {
+    return m_distribution->type();
+  };
 
   virtual double meanAbscissa() {
     assert(false);
@@ -107,7 +109,7 @@ class Distribution : public Shared::Inference {
   };
 
   CalculationBuffer m_calculationBuffer;
-  const PoincareJ::Distribution* m_distribution;
+  const Poincare::Internal::Distribution* m_distribution;
   // Used if one of the parameters is not inputted by the user
   int m_indexOfUninitializedParameter;
 };

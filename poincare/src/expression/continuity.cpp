@@ -2,7 +2,7 @@
 
 #include "approximation.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
   return e->isRandomNode() || e->isPiecewise() ||
@@ -46,4 +46,4 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree* e,
   return false;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

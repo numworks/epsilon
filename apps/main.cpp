@@ -38,7 +38,7 @@ void ion_main(int argc, const char* const argv[]) {
 void ion_main(int argc, const char *const argv[]) {
   // Initialize Poincare::Pool::sharedPool
   Poincare::Init();
-  PoincareJ::Init();
+  Poincare::Internal::Init();
   Escher::Init();
   Apps::Init();
 
@@ -111,7 +111,7 @@ void ion_main(int argc, const char *const argv[]) {
 
   AppsContainer::sharedAppsContainer()->run();
 
-  PoincareJ::Shutdown();
+  Poincare::Internal::Shutdown();
 }
 
 #endif

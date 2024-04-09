@@ -7,7 +7,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 void assert_approximation_is(const Tree* n, float f) {
   float approx = Approximation::RootTreeTo<float>(n);

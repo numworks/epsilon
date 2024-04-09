@@ -4,7 +4,7 @@
 #include "indices.h"
 #include "parsing/tokenizer.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // public
 
@@ -600,4 +600,4 @@ bool InputBeautification::CreateParametersList(
   return true;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

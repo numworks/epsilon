@@ -5,4 +5,4 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 // Expose KTrees namespace for shorter pattern code
-using namespace PoincareJ::KTrees;
+using namespace Poincare::Internal::KTrees;

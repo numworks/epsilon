@@ -6,7 +6,7 @@
 #include <emscripten.h>
 #endif
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 #if __EMSCRIPTEN__
 template <>
@@ -51,4 +51,4 @@ double ValueBlock::get<double>() const {
 }
 #endif
 
-};  // namespace PoincareJ
+};  // namespace Poincare::Internal

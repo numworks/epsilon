@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree_ref.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Algebraic final {
  public:
@@ -28,6 +28,6 @@ class Algebraic final {
   static TreeRef NormalFormator(TreeRef expression, bool numerator);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

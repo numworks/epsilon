@@ -133,7 +133,7 @@ bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
 }
 
 const char *SymbolAbstract::name() const {
-  return PoincareJ::Symbol::GetName(tree());
+  return Internal::Symbol::GetName(tree());
 }
 
 bool SymbolAbstract::hasSameNameAs(const SymbolAbstract &other) const {

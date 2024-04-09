@@ -1,6 +1,6 @@
 #include "rack_layout_decoder.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 CodePoint CPLayoutDecoder::codePointAt(size_t index) const {
   if (index == m_end) {
@@ -22,4 +22,4 @@ CodePoint CPLayoutDecoder::codePointAt(size_t index) const {
   return CodePointLayout::GetCodePoint(codePoint);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

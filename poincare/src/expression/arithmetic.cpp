@@ -11,7 +11,7 @@
 #include "parametric.h"
 #include "rational.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO everything in this file is defined on rationals only, this could be
  * checked earlier. */
@@ -431,4 +431,4 @@ uint32_t Arithmetic::LCM(uint32_t a, uint32_t b, bool* hasOverflown) {
   return a * (b / gcd);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

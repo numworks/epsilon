@@ -7,7 +7,7 @@ namespace Distributions {
 
 class ThreeParametersDistribution : public Distribution {
  public:
-  ThreeParametersDistribution(PoincareJ::Distribution::Type type,
+  ThreeParametersDistribution(Poincare::Internal::Distribution::Type type,
                               double parameterValue1, double parameterValue2,
                               double parameterValue3)
       : Distribution(type),

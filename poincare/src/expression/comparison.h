@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree_ref.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Comparison {
  public:
@@ -35,6 +35,6 @@ class Comparison {
   static int CompareLastChild(const Tree* node0, const Tree* node1);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -3,7 +3,7 @@
 #include "k_tree.h"
 #include "simplification.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Tree* Vector::Norm(const Tree* v) {
   // Norm is defined on vectors only
@@ -63,4 +63,4 @@ Tree* Vector::Cross(const Tree* u, const Tree* v) {
   return result;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

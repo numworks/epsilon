@@ -3,7 +3,7 @@
 
 #include "unit.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace Units {
 
 // Helper class to add overrides using the static member "representatives"
@@ -600,5 +600,5 @@ constexpr static const Representative* k_representativesWithoutLeftMargin[] = {
 };
 
 }  // namespace Units
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

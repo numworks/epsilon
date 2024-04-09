@@ -5,10 +5,10 @@
 
 #include "old_expression.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 namespace Poincare {
 
@@ -18,7 +18,7 @@ class JuniorExpressionNode final : public ExpressionNode {
   friend class JuniorExpression;
 
  public:
-  JuniorExpressionNode(const PoincareJ::Tree* tree, size_t treeSize);
+  JuniorExpressionNode(const Internal::Tree* tree, size_t treeSize);
 
   // PoolObject
   size_t size() const override;
@@ -77,9 +77,9 @@ class JuniorExpressionNode final : public ExpressionNode {
                 OExpression symbolValue) override;
 
   // PCJ
-  const PoincareJ::Tree* tree() const;
+  const Internal::Tree* tree() const;
 
-  PoincareJ::Block m_blocks[0];
+  Internal::Block m_blocks[0];
 };
 
 class JuniorExpression : public OExpression {
@@ -89,26 +89,26 @@ class JuniorExpression : public OExpression {
   JuniorExpression() {}
   JuniorExpression(const OExpression& other) { *this = other; }
 
-  static JuniorExpression Parse(const PoincareJ::Tree* layout, Context* context,
+  static JuniorExpression Parse(const Internal::Tree* layout, Context* context,
                                 bool addMissingParenthesis = true,
                                 bool parseForAssignment = false);
   static JuniorExpression Parse(const char* layout, Context* context,
                                 bool addMissingParenthesis = true,
                                 bool parseForAssignment = false);
 
-  static JuniorExpression Create(const PoincareJ::Tree* structure,
-                                 PoincareJ::ContextTrees ctx);
-  operator const PoincareJ::Tree*() { return tree(); }
+  static JuniorExpression Create(const Internal::Tree* structure,
+                                 Internal::ContextTrees ctx);
+  operator const Internal::Tree*() { return tree(); }
   // Builders from value.
   static JuniorExpression Builder(int32_t n);
   template <typename T>
   static JuniorExpression Builder(T x);
 
-  static JuniorExpression Builder(const PoincareJ::Tree* tree);
+  static JuniorExpression Builder(const Internal::Tree* tree);
   // Eat the tree
-  static JuniorExpression Builder(PoincareJ::Tree* tree);
+  static JuniorExpression Builder(Internal::Tree* tree);
   static JuniorExpression Juniorize(OExpression e);
-  const PoincareJ::Tree* tree() const {
+  const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : node()->tree();
   }
   JuniorExpression childAtIndex(int i) const;

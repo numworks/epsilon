@@ -15,7 +15,7 @@
 #include "sign.h"
 #include "simplification.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 float Beautification::DegreeForSortingAddition(const Tree* expr,
                                                bool symbolsOnly) {
@@ -406,4 +406,4 @@ template Tree* Beautification::PushBeautifiedComplex(
 template Tree* Beautification::PushBeautifiedComplex(
     std::complex<double>, ComplexFormat complexFormat);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

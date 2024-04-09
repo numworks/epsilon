@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 class Coordinate2D final {
@@ -47,6 +47,6 @@ class Coordinate2D final {
   T m_y;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

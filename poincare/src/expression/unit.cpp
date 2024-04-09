@@ -10,7 +10,7 @@
 #include "simplification.h"
 #include "unit_representatives.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace Units {
 
 // Prefix
@@ -965,4 +965,4 @@ bool IsPureAngleUnit(const Tree* expr) {
 }
 
 }  // namespace Units
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

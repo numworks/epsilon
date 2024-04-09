@@ -3,7 +3,7 @@
 
 #include "unit_representatives.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace Units {
 
 // constexpr helpers to manipulate SI and derived units with the usual notations
@@ -62,6 +62,6 @@ static_assert(J == N * m);
 static_assert(W == J / s);
 
 }  // namespace Units
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -4,7 +4,7 @@
 #include "block.h"
 #include "type_block.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class ValueBlock : public Block {
  public:
@@ -42,6 +42,6 @@ class ValueBlock : public Block {
 
 static_assert(sizeof(ValueBlock) == sizeof(Block));
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

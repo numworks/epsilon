@@ -403,7 +403,9 @@ double MassDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::MolarMass(z);
 }
 
-const PoincareJ::Tree* MassDataField::rawUnit() const { return "_g×_mol^-2"_l; }
+const Poincare::Internal::Tree* MassDataField::rawUnit() const {
+  return "_g×_mol^-2"_l;
+}
 
 // ElectronegativityDataField
 
@@ -411,7 +413,7 @@ double ElectronegativityDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::Electronegativity(z);
 }
 
-const PoincareJ::Tree* ElectronegativityDataField::rawUnit() const {
+const Poincare::Internal::Tree* ElectronegativityDataField::rawUnit() const {
   return ""_l;
 }
 
@@ -421,7 +423,9 @@ double RadiusDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::Radius(z);
 }
 
-const PoincareJ::Tree* RadiusDataField::rawUnit() const { return "_pm"_l; }
+const Poincare::Internal::Tree* RadiusDataField::rawUnit() const {
+  return "_pm"_l;
+}
 
 // MeltingPointDataField
 
@@ -429,7 +433,7 @@ double MeltingPointDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::MeltingPoint(z);
 }
 
-const PoincareJ::Tree* MeltingPointDataField::rawUnit() const {
+const Poincare::Internal::Tree* MeltingPointDataField::rawUnit() const {
   return "_°C"_l;
 }
 
@@ -439,7 +443,7 @@ double BoilingPointDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::BoilingPoint(z);
 }
 
-const PoincareJ::Tree* BoilingPointDataField::rawUnit() const {
+const Poincare::Internal::Tree* BoilingPointDataField::rawUnit() const {
   return "_°C"_l;
 }
 
@@ -449,7 +453,7 @@ double DensityDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::Density(z);
 }
 
-const PoincareJ::Tree* DensityDataField::rawUnit() const {
+const Poincare::Internal::Tree* DensityDataField::rawUnit() const {
   return "_g×_cm^-3"_l;
 }
 
@@ -468,7 +472,7 @@ Layout AffinityDataField::getLayout(AtomicNumber z,
   return DoubleDataFieldWithSubscriptSymbol::getLayout(z, significantDigits);
 }
 
-const PoincareJ::Tree* AffinityDataField::rawUnit() const {
+const Poincare::Internal::Tree* AffinityDataField::rawUnit() const {
   return "_kJ×_mol^-1"_l;
 }
 
@@ -478,7 +482,7 @@ double IonizationDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::EnergyOfIonization(z);
 }
 
-const PoincareJ::Tree* IonizationDataField::rawUnit() const {
+const Poincare::Internal::Tree* IonizationDataField::rawUnit() const {
   return "_kJ×_mol^-1"_l;
 }
 

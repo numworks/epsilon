@@ -5,7 +5,7 @@
 #include "grid.h"
 #include "parsing/rack_parser.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Type ExpressionType(LayoutType type) {
   switch (type) {
@@ -98,4 +98,4 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
   }
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

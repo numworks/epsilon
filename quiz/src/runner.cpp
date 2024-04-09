@@ -87,7 +87,7 @@ static inline void ion_main_inner(const char *testFilter) {
 
 void ion_main(int argc, const char *const argv[]) {
   Poincare::Init();  // Initialize Poincare::TreePool::sharedPool
-  PoincareJ::Init();
+  Poincare::Internal::Init();
   Escher::Init();
   Apps::Init();
 
@@ -120,5 +120,5 @@ void ion_main(int argc, const char *const argv[]) {
 #endif
     quiz_assert(false);
   }
-  PoincareJ::Shutdown();
+  Poincare::Internal::Shutdown();
 }

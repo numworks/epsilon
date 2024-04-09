@@ -7,7 +7,7 @@
 
 using Poincare::Preferences;
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Layoutter {
  public:
@@ -53,6 +53,6 @@ class Layoutter {
   int m_numberOfSignificantDigits;
   Preferences::PrintFloatMode m_floatMode;
 };
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

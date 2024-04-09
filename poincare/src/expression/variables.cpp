@@ -8,7 +8,7 @@
 #include "simplification.h"
 #include "symbol.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Variables::Variable::Variable(uint8_t id, ComplexSign sign) {
   Tree* temp = SharedTreeStack->push<Type::Var>(id, sign);
@@ -234,4 +234,4 @@ void Variables::LeaveScope(Tree* expr) {
   }
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

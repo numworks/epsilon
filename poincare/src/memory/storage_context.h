@@ -3,7 +3,7 @@
 
 #include "tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 constexpr static char pcjExtension[] = "pcj";
 
@@ -21,6 +21,6 @@ class StorageContext {
   static void DeleteTreeForIdentifier(const char* identifier);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

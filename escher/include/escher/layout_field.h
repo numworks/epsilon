@@ -56,7 +56,9 @@ class LayoutField : public EditableField {
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;
 
-  PoincareJ::LayoutBufferCursor* cursor() { return m_contentView.cursor(); }
+  Poincare::Internal::LayoutBufferCursor* cursor() {
+    return m_contentView.cursor();
+  }
   const LayoutView* layoutView() const { return m_contentView.layoutView(); }
   LayoutView* layoutView() { return m_contentView.layoutView(); }
 
@@ -114,9 +116,11 @@ class LayoutField : public EditableField {
     // returns True if LayoutField should reload
     bool setEditing(bool isEditing);
     void setBackgroundColor(KDColor c) { m_layoutView.setBackgroundColor(c); }
-    void setCursor(PoincareJ::LayoutBufferCursor cursor) { m_cursor = cursor; }
+    void setCursor(Poincare::Internal::LayoutBufferCursor cursor) {
+      m_cursor = cursor;
+    }
     void cursorPositionChanged() { layoutCursorSubview(false); }
-    PoincareJ::LayoutBufferCursor* cursor() { return &m_cursor; }
+    Poincare::Internal::LayoutBufferCursor* cursor() { return &m_cursor; }
     const LayoutView* layoutView() const { return &m_layoutView; }
     LayoutView* layoutView() { return &m_layoutView; }
     void clearLayout();
@@ -134,7 +138,7 @@ class LayoutField : public EditableField {
     }
     View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    PoincareJ::LayoutBufferCursor m_cursor;
+    Poincare::Internal::LayoutBufferCursor m_cursor;
     LayoutViewWithCursor m_layoutView;
     bool m_isEditing;
   };

@@ -5,7 +5,7 @@
 
 #include "sign.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Textual UserSymbols in expressions are projected into de Bruijn indices.  The
  * global free variables have an index corresponding to their alphabetical order
@@ -73,5 +73,5 @@ class Variables {
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

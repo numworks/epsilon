@@ -10,7 +10,7 @@
 #include "integer.h"
 #include "sign.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 void Decimal::Project(Tree* tree) {
   assertValidDecimal(tree);
@@ -269,4 +269,4 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   return currentChar;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

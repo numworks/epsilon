@@ -6,7 +6,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_layout_tokenize) {
   ParsingContext context(nullptr, ParsingContext::ParsingMethod::Classic);

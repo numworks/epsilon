@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 class Float {
@@ -90,6 +90,6 @@ constexpr inline double Float<double>::Max() {
   return DBL_MAX;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -339,8 +339,8 @@ bool AbstractTextField::prepareToEdit() {
 bool AbstractTextField::findXNT(char *buffer, size_t bufferSize, int xntIndex,
                                 size_t *cycleSize) {
   UTF8Decoder decoder(text(), cursorLocation());
-  return PoincareJ::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
-                                    cycleSize);
+  return Poincare::Internal::FindXNTSymbol1D(decoder, buffer, bufferSize,
+                                             xntIndex, cycleSize);
 }
 
 void AbstractTextField::removePreviousXNT() {

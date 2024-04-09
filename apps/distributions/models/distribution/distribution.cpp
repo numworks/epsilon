@@ -19,40 +19,40 @@
 namespace Distributions {
 
 bool Distribution::Initialize(Distribution* distribution,
-                              PoincareJ::Distribution::Type type) {
+                              Poincare::Internal::Distribution::Type type) {
   if (distribution->type() == type) {
     return false;
   }
   distribution->~Distribution();
   switch (type) {
-    case PoincareJ::Distribution::Type::Binomial:
+    case Poincare::Internal::Distribution::Type::Binomial:
       new (distribution) BinomialDistribution();
       break;
-    case PoincareJ::Distribution::Type::Uniform:
+    case Poincare::Internal::Distribution::Type::Uniform:
       new (distribution) UniformDistribution();
       break;
-    case PoincareJ::Distribution::Type::Exponential:
+    case Poincare::Internal::Distribution::Type::Exponential:
       new (distribution) ExponentialDistribution();
       break;
-    case PoincareJ::Distribution::Type::Normal:
+    case Poincare::Internal::Distribution::Type::Normal:
       new (distribution) NormalDistribution();
       break;
-    case PoincareJ::Distribution::Type::ChiSquared:
+    case Poincare::Internal::Distribution::Type::ChiSquared:
       new (distribution) ChiSquaredDistribution();
       break;
-    case PoincareJ::Distribution::Type::Student:
+    case Poincare::Internal::Distribution::Type::Student:
       new (distribution) StudentDistribution();
       break;
-    case PoincareJ::Distribution::Type::Geometric:
+    case Poincare::Internal::Distribution::Type::Geometric:
       new (distribution) GeometricDistribution();
       break;
-    case PoincareJ::Distribution::Type::Hypergeometric:
+    case Poincare::Internal::Distribution::Type::Hypergeometric:
       new (distribution) HypergeometricDistribution();
       break;
-    case PoincareJ::Distribution::Type::Poisson:
+    case Poincare::Internal::Distribution::Type::Poisson:
       new (distribution) PoissonDistribution();
       break;
-    case PoincareJ::Distribution::Type::Fisher:
+    case Poincare::Internal::Distribution::Type::Fisher:
       new (distribution) FisherDistribution();
       break;
     default:

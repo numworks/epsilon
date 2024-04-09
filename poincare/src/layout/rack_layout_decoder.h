@@ -7,7 +7,7 @@
 #include "k_tree.h"
 #include "rack_layout.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO: If we decide to keep StringLayouts, the RackLayoutDecoder should
  * probably enter strings and yield its codepoints instead of yielding the
@@ -117,6 +117,6 @@ class CPLayoutDecoder : public UnicodeDecoder {
   const Tree* m_firstCodePoint;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

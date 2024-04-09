@@ -8,7 +8,7 @@
 #include "rational.h"
 #include "simplification.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Trigonometry::IsDirect(const Tree* node) {
   switch (node->type()) {
@@ -361,4 +361,4 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
 /* TODO: Maybe expand arccos(x) = π/2 - arcsin(x).
  * Beware of infinite expansion. */
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

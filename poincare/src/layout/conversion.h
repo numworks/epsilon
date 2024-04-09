@@ -4,7 +4,7 @@
 #include <poincare/old/layout.h>
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Temporary bi-directional conversions between old and new poincare to smooth
  * transition. */
@@ -12,6 +12,6 @@ namespace PoincareJ {
 Poincare::OLayout ToPoincareLayout(const Tree* exp);
 Tree* FromPoincareLayout(Poincare::OLayout exp);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

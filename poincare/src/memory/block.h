@@ -12,7 +12,7 @@
 
 #include <initializer_list>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 enum class Type : uint8_t;
 class Block {
@@ -45,6 +45,6 @@ class Block {
 
 static_assert(sizeof(Block) == 1);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

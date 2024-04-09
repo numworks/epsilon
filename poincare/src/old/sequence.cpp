@@ -82,8 +82,8 @@ Sequence Sequence::Builder(const char* name, size_t length,
                            JuniorExpression child) {
   // If needed, handle theta like functions and symbols
   assert(!AliasesLists::k_thetaAliases.contains(name, length));
-  PoincareJ::Tree* tree =
-      PoincareJ::SharedTreeStack->push<PoincareJ::Type::UserSequence>(name);
+  Internal::Tree* tree =
+      Internal::SharedTreeStack->push<Internal::Type::UserSequence>(name);
   assert(!child.isUninitialized());
   child.tree()->clone();
 

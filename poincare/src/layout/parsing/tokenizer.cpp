@@ -11,7 +11,7 @@
 
 #include "helper.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
 #if TODO_PCJ
@@ -608,4 +608,4 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   return 0;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

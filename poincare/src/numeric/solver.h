@@ -11,7 +11,7 @@
 #include "coordinate_2D.h"
 #include "float.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Context;
 
@@ -190,6 +190,6 @@ class Solver {
   GrowthSpeed m_growthSpeed;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -14,7 +14,7 @@ namespace Poincare {
 class JuniorLayout;
 }
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class TreeStack {
   friend class TreeRef;
@@ -171,6 +171,6 @@ class TreeStack {
 
 #define SharedTreeStack TreeStack::SharedTreeStack
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

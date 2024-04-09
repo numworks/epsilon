@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO_PCJ: Metric should never return a same score for two different
  * expressions. */
@@ -22,6 +22,6 @@ class Metric {
 #endif
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

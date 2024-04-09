@@ -8,7 +8,7 @@
 #include <poincare/old/normal_distribution.h>
 #include <poincare/old/student_distribution.h>
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 namespace Inference {
 

@@ -4,7 +4,7 @@
 #include <ion/unicode/code_point.h>
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class CodePointLayout {
  public:
@@ -18,6 +18,6 @@ class CodePointLayout {
   static bool IsCodePoint(const Tree* node, CodePoint cp);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

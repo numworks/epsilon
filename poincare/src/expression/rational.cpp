@@ -7,7 +7,7 @@
 #include "k_tree.h"
 #include "number.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // TODO: tests
 
@@ -251,4 +251,4 @@ Tree* Rational::CreateMixedFraction(const Tree* r,
   return integerPart;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

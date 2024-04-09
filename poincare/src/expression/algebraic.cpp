@@ -9,7 +9,7 @@
 #include "sign.h"
 #include "simplification.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // TODO: tests
 
@@ -113,4 +113,4 @@ TreeRef Algebraic::NormalFormator(TreeRef expression, bool numerator) {
   return expression;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

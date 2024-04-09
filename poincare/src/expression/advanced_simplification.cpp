@@ -8,7 +8,7 @@
 #include "metric.h"
 #include "simplification.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 #define LOG_NEW_ADVANCED_REDUCTION_VERBOSE 0
 
@@ -519,4 +519,4 @@ bool AdvancedSimplification::ExpandPower(Tree* e) {
       KAdd(KPow(KA, 2_e), KMult(2_e, KA, KAdd(KB_p)), KPow(KAdd(KB_p), 2_e)));
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

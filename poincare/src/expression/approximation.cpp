@@ -23,7 +23,7 @@
 #include "variables.h"
 #include "vector.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Static members */
 
@@ -1181,4 +1181,4 @@ template int Approximation::IndexOfActivePiecewiseBranchAt<float>(
 template int Approximation::IndexOfActivePiecewiseBranchAt<double>(
     const Tree* piecewise, double x);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

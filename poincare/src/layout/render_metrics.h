@@ -8,7 +8,7 @@
 #include "indices.h"
 #include "render.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // Helpers to access the private methods of Render
 inline KDCoordinate Baseline(const Layout* l) { return Render::Baseline(l); }
@@ -641,6 +641,6 @@ inline KDPoint PositionOfVariable(const Layout* node, KDFont::Size font) {
 }
 
 }  // namespace ListSequence
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

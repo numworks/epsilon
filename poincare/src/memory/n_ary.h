@@ -3,7 +3,7 @@
 
 #include <poincare/src/expression/comparison.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class NAry {
  public:
@@ -41,6 +41,6 @@ class NAry {
   static constexpr size_t k_maxNumberOfChildren = 255;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

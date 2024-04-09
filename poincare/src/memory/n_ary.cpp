@@ -8,7 +8,7 @@
 #include "node_iterator.h"
 #include "tree_ref.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 void NAry::AddChildAtIndex(Tree* nary, Tree* child, int index) {
   assert(nary->isNAry());
@@ -199,4 +199,4 @@ Tree* NAry::CloneSubRange(const Tree* nary, int startIndex, int endIndex) {
   return result;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

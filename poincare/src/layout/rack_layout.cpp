@@ -8,7 +8,7 @@
 #include "layout_cursor.h"
 #include "render.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 namespace VerticalOffset {
 constexpr static KDCoordinate IndiceHeight = 10;
@@ -265,4 +265,4 @@ void RackLayout::RenderNode(const Rack* node, KDContext* ctx, KDPoint pos,
   }
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

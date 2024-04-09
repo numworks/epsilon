@@ -6,7 +6,7 @@
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // Static methods to draw the empty yellow rectangles in layouts
 
@@ -27,6 +27,6 @@ class EmptyRectangle {
   constexpr static KDCoordinate k_marginHeight = 3;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

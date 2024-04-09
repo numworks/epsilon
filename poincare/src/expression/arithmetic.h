@@ -5,7 +5,7 @@
 
 #include "integer.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Arithmetic {
  public:
@@ -43,5 +43,5 @@ class Arithmetic {
   static Tree* PushPrimeFactorization(IntegerHandler m);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

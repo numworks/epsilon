@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* LayoutShape is used to check if the multiplication sign can be omitted
  * between two expressions. It depends on the "layout style" on the right of the
@@ -356,4 +356,4 @@ CodePoint MultiplicationSymbol(const Tree* mult) {
   return CodePointForOperatorSymbol(static_cast<Symbol>(sign));
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

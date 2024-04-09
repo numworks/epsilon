@@ -65,13 +65,13 @@ void assert_parsed_layout_is(Layout l, Poincare::OExpression r) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   l.serializeForParsing(buffer, bufferSize);
-  PoincareJ::Tree* ej =
-      PoincareJ::Parser::Parse(PoincareJ::FromPoincareLayout(l), nullptr);
+  Internal::Tree* ej =
+      Internal::Parser::Parse(Internal::FromPoincareLayout(l), nullptr);
   quiz_assert_print_if_failure(ej, buffer);
-  PoincareJ::Tree* rj = PoincareJ::FromPoincareExpression(r);
+  Internal::Tree* rj = Internal::FromPoincareExpression(r);
   quiz_assert_print_if_failure(rj, buffer);
   quiz_assert_print_if_failure(ej->treeIsIdenticalTo(rj), buffer);
-  PoincareJ::TreeStack::SharedTreeStack->flush();
+  Internal::TreeStack::SharedTreeStack->flush();
 }
 
 OMatrix BuildOneChildMatrix(OExpression entry) {

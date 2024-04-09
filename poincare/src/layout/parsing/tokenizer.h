@@ -12,7 +12,7 @@
 #include "parsing_context.h"
 #include "token.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Tokenizer {
   friend class InputBeautification;
@@ -150,6 +150,6 @@ class Tokenizer {
   int m_numberOfStoredIdentifiers;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

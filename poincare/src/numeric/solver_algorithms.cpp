@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
     double ax, double bx, double resultPrecision,
@@ -316,4 +316,4 @@ SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
 template double
 SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
     double x, Solver<double>::FunctionEvaluation f, const void* aux);
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

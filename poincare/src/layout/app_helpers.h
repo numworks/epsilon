@@ -7,7 +7,7 @@ namespace Poincare {
 class JuniorLayout;
 }
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace AppHelpers {
 
 void MakeRightMostParenthesisTemporary(Tree* tree);
@@ -22,6 +22,6 @@ void SanitizeRack(Tree* rack);
 bool IsSanitizedRack(const Tree* rack);
 
 }  // namespace AppHelpers
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

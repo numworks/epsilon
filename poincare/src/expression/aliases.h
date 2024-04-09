@@ -29,7 +29,7 @@
  * alias of "pi" is "π".
  * */
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Aliases {
  public:
@@ -97,5 +97,5 @@ class Aliases {
   const char* m_formattedAliases;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

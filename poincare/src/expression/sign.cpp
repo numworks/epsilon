@@ -10,7 +10,7 @@
 #include <iostream>
 #endif
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Must at least handle Additions, Multiplications, Numbers and Real/Imaginary
  * parts so that any simplified complex is sanitized. Also handle Exp, Ln and
@@ -318,4 +318,4 @@ void ComplexSign::log() const {
 }
 #endif
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

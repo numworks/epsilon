@@ -5,7 +5,7 @@
 
 #include "continuous_distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class StudentDistribution final : public ContinuousDistribution {
  public:
@@ -69,6 +69,6 @@ class StudentDistribution final : public ContinuousDistribution {
   static bool KIsOK(T k);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

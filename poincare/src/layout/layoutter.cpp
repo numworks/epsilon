@@ -22,7 +22,7 @@
 
 using Poincare::Preferences;
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 static constexpr int k_forceParenthesis = -2;
 
@@ -870,4 +870,4 @@ bool Layoutter::ImplicitAddition(const Tree* addition) {
   return true;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

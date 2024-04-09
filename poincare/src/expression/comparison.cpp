@@ -11,7 +11,7 @@
 #include "symbol.h"
 #include "variables.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   if (order == Order::AdditionBeautification) {
@@ -250,4 +250,4 @@ bool Comparison::AreEqual(const Tree* node0, const Tree* node1) {
   return areEqual;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

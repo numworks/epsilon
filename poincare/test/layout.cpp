@@ -8,7 +8,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_expression_to_layout) {
   assert_trees_are_equal(

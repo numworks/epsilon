@@ -6,12 +6,12 @@
 #include <poincare/src/memory/tree_stack.h>
 
 #include "helper.h"
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 bool check_solutions(std::initializer_list<const char*> inputs,
                      std::initializer_list<const char*> outputs,
                      Solver::Error expectedError = Solver::Error::NoError) {
-  Tree* equationSet = PoincareJ::List::PushEmpty();
+  Tree* equationSet = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
     NAry::AddChild(equationSet, TextToTree(equation));
   }

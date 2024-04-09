@@ -3,7 +3,7 @@
 
 #include "render_metrics.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 namespace Parenthesis {
 constexpr static uint8_t topLeftCurve[k_curveHeight][k_curveWidth] = {
@@ -80,6 +80,6 @@ const uint8_t symbolUpperHalf[k_symbolWidth * k_symbolHeight / 2] = {
 };
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

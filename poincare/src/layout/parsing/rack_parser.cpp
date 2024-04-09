@@ -25,7 +25,7 @@
 
 // #include "helper.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Tree* RackParser::parse() {
   ExceptionTry {
@@ -1404,4 +1404,4 @@ void RackParser::setState(State state) {
   m_waitingSlashForMixedFraction = state.waitingSlashForMixedFraction;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

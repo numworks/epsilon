@@ -14,7 +14,7 @@
 #include "render_masks.h"
 #include "render_metrics.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 KDFont::Size Render::s_font = KDFont::Size::Large;
 
@@ -1404,4 +1404,4 @@ KDPoint Render::PositionOfChild(const Rack* node, int childIndex) {
   return RackLayout::ChildPosition(node, childIndex);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

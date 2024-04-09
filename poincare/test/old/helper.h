@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 class Tree;
 }
 
@@ -78,8 +78,8 @@ void quiz_assert_log_if_failure(bool test, Poincare::PoolHandle tree);
 void quiz_reset_failure_ratio();
 void quiz_print_failure_ratio();
 
-typedef PoincareJ::Tree* (*ProcessExpression)(
-    PoincareJ::Tree*, Poincare::ReductionContext reductionContext);
+typedef Poincare::Internal::Tree* (*ProcessExpression)(
+    Poincare::Internal::Tree*, Poincare::ReductionContext reductionContext);
 
 void assert_parsed_expression_process_to(
     const char* expression, const char* result,
@@ -94,10 +94,10 @@ void assert_parsed_expression_process_to(
 
 // Parsing
 
-PoincareJ::Tree* parse_expression(const char* expression,
-                                  Poincare::Context* context,
-                                  bool addParentheses,
-                                  bool parseForAssignment = false);
+Poincare::Internal::Tree* parse_expression(const char* expression,
+                                           Poincare::Context* context,
+                                           bool addParentheses,
+                                           bool parseForAssignment = false);
 
 void assert_parsed_expression_is(
     const char* expression, Poincare::OExpression r,
@@ -195,7 +195,7 @@ void assert_expression_simplifies_approximates_to(
 // OExpression serializing
 
 void assert_expression_serializes_to(
-    PoincareJ::Tree* expression, const char* serialization,
+    Poincare::Internal::Tree* expression, const char* serialization,
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7);
 
@@ -207,12 +207,12 @@ void assert_expression_parses_and_serializes_to_itself(const char* expression);
 
 // Layout serializing
 
-void assert_layout_serializes_to(PoincareJ::Tree* layout,
+void assert_layout_serializes_to(Poincare::Internal::Tree* layout,
                                  const char* serialization);
 
 // OExpression layouting
 
-void assert_expression_layouts_as(PoincareJ::Tree* expression,
-                                  PoincareJ::Tree* layout);
+void assert_expression_layouts_as(Poincare::Internal::Tree* expression,
+                                  Poincare::Internal::Tree* layout);
 
 #endif

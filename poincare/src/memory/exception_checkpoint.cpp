@@ -4,7 +4,7 @@
 
 #include "tree_stack.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 ExceptionCheckpoint* ExceptionCheckpoint::s_topmostExceptionCheckpoint;
 ExceptionType ExceptionCheckpoint::s_exceptionType = ExceptionType::None;
@@ -48,10 +48,11 @@ ExceptionType ExceptionCheckpoint::GetTypeAndClear() {
   return type;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 extern "C" {
 void ExceptionCheckpointRaise() {
-  PoincareJ::ExceptionCheckpoint::Raise(PoincareJ::ExceptionType::Other);
+  Poincare::Internal::ExceptionCheckpoint::Raise(
+      Poincare::Internal::ExceptionType::Other);
 }
 }

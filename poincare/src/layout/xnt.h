@@ -4,7 +4,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
                      int xntIndex, size_t* cycleSize);
@@ -12,6 +12,6 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
 bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,
                      size_t bufferSize, int xntIndex, size_t* cycleSize);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -9,7 +9,7 @@
 #include "pattern_matching.h"
 #include "tree_stack.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 TreeRef::TreeRef(Tree* node) {
   if (!node) {
@@ -85,4 +85,4 @@ void MoveAt(TreeRef& target, Tree* source, bool tree, bool before) {
   target = previousTarget;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

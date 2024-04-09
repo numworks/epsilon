@@ -6,7 +6,7 @@
 
 using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 std::complex<T> computeOnComplex(const std::complex<T> c,
@@ -143,4 +143,4 @@ template std::complex<float> Approximation::ApproximatePower(
 template std::complex<double> Approximation::ApproximatePower(
     const Tree* child, ComplexFormat complexFormat);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

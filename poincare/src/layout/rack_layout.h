@@ -6,7 +6,7 @@
 #include "../memory/tree_ref.h"
 #include "rack.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class LayoutCursor;
 class Rack;
@@ -42,6 +42,6 @@ class RackLayout {
   static const LayoutCursor* s_layoutCursor;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

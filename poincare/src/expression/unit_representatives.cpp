@@ -2,7 +2,7 @@
 
 #include "unit.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace Units {
 
 using enum Representative::Prefixable;
@@ -484,4 +484,4 @@ int Speed::setAdditionalExpressions(double value, Expression* dest,
 #endif
 
 }  // namespace Units
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

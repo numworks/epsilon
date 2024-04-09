@@ -38,7 +38,7 @@
   ExceptionType typeVarName = ExceptionCheckpoint::GetTypeAndClear(); \
   if (typeVarName != ExceptionType::None)
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // All ExceptionType must be handled in ExceptionRunAndStoreExceptionType.
 enum class ExceptionType : int {
@@ -85,6 +85,6 @@ class ExceptionCheckpoint final {
   Block* m_rightmostBlock;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

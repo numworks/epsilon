@@ -2,7 +2,7 @@
 
 #include <poincare/src/memory/tree_stack.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool FloatNode::SetSign(Tree* tree, NonStrictSign sign) {
   double value = To(tree);
@@ -16,4 +16,4 @@ bool FloatNode::SetSign(Tree* tree, NonStrictSign sign) {
   return true;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

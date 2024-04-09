@@ -5,7 +5,7 @@
 
 #include "solver_algorithms.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // HorizontalAsymptoteHelper
 
@@ -746,4 +746,4 @@ void Zoom::privateFitPoint(Coordinate2D<float> xy, bool flipped) {
                             m_maxFloat);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

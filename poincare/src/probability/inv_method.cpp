@@ -3,7 +3,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool InverseMethod::shallowReduce(const Tree** x,
                                   const Distribution* distribution,
@@ -94,4 +94,4 @@ bool InverseMethod::shallowReduce(const Tree** x,
   return false;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

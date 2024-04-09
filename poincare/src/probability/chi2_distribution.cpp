@@ -6,7 +6,7 @@
 
 #include "domain.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 T Chi2Distribution::EvaluateAtAbscissa(T x, T k) {
@@ -96,4 +96,4 @@ Chi2Distribution::CumulativeDistributiveInverseForProbability<double>(double,
 template bool Chi2Distribution::KIsOK(float k);
 template bool Chi2Distribution::KIsOK(double k);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

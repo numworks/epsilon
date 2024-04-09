@@ -3,7 +3,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 void assert_polynomial_is_parsed(const Tree* node,
                                  const Tree* expectedVariables,

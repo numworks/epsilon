@@ -5,7 +5,7 @@
 #include "tree.h"
 #include "tree_stack.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class TreeRef {
  public:
@@ -185,6 +185,6 @@ inline void CloneNodeOverTree(TreeRef& u, const Tree* n) {
   u = u->cloneNodeOverTree(n);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

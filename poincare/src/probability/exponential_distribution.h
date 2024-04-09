@@ -5,7 +5,7 @@
 
 #include "continuous_distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class ExponentialDistribution final : public ContinuousDistribution {
  public:
@@ -67,6 +67,6 @@ class ExponentialDistribution final : public ContinuousDistribution {
   static bool LambdaIsOK(T lambda);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -4,7 +4,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/numeric/solver_algorithms.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Context;
 
@@ -111,6 +111,6 @@ class Distribution {
       double p, double ax, double bx, double* parameters) const;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

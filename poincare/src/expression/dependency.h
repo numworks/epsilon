@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 struct Dependency {
   static bool RemoveDefinedDependencies(Tree* expr);
@@ -11,5 +11,5 @@ struct Dependency {
   static bool DeepRemoveUselessDependencies(Tree* expr);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

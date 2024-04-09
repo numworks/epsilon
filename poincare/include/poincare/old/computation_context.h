@@ -23,7 +23,7 @@ enum class ReductionTarget {
   User
 };
 
-using SymbolicComputation = PoincareJ::SymbolicComputation;
+using SymbolicComputation = Internal::SymbolicComputation;
 
 enum class UnitConversion { None = 0, Default, InternationalSystem };
 

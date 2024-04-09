@@ -4,7 +4,7 @@
 #include <float.h>
 #include <poincare/old/expression.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Conic {
  public:
@@ -154,6 +154,6 @@ class ParametricConic : public Conic {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

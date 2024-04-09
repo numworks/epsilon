@@ -5,7 +5,7 @@
 
 #include "variables.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Continuity {
  public:
@@ -29,5 +29,5 @@ class Continuity {
   static bool ShallowIsDiscontinuous(const Tree* e);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

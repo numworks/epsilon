@@ -18,7 +18,7 @@
 #include "simplification.h"
 #include "symbol.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Poincare::OExpression ToPoincareExpressionViaParse(const Tree* exp) {
   TreeRef outputLayout = Layoutter::LayoutExpression(exp->clone());
@@ -889,4 +889,4 @@ Tree* FromPoincareExpression(Poincare::OExpression exp) {
   return node;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

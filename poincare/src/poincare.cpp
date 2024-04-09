@@ -6,7 +6,7 @@
 #include <filesystem>
 #endif
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 void Init() { SharedTreeStack.init(); }
 
@@ -73,4 +73,4 @@ void Indent(std::ostream& stream, int indentation) {
 }
 #endif
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

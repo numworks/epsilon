@@ -6,7 +6,7 @@
 #include "integer.h"
 #include "sign.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Rational final {
  public:
@@ -16,10 +16,10 @@ class Rational final {
   }
   static IntegerHandler Numerator(const Tree* node);
   static IntegerHandler Denominator(const Tree* node);
-  static PoincareJ::Sign Sign(const Tree* node) {
+  static Internal::Sign Sign(const Tree* node) {
     StrictSign s = Numerator(node).strictSign();
-    return PoincareJ::Sign(s == StrictSign::Null, s == StrictSign::Positive,
-                           s == StrictSign::Negative, !node->isInteger());
+    return Internal::Sign(s == StrictSign::Null, s == StrictSign::Positive,
+                          s == StrictSign::Negative, !node->isInteger());
   }
   static bool SetSign(Tree* e, NonStrictSign sign);
 
@@ -42,6 +42,6 @@ class Rational final {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -4,7 +4,7 @@
 #include <omg/directions.h>
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 enum class DeletionMethod {
   DeleteLayout,
@@ -48,6 +48,6 @@ class CursorMotion {
   constexpr static int k_outsideIndex = -1;
   constexpr static int k_cantMoveIndex = -2;
 };
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

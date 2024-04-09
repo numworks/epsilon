@@ -10,8 +10,9 @@ namespace Distributions {
 class NormalDistribution final : public TwoParametersDistribution {
  public:
   NormalDistribution()
-      : TwoParametersDistribution(PoincareJ::Distribution::Type::Normal,
-                                  k_defaultMu, k_defaultSigma) {
+      : TwoParametersDistribution(
+            Poincare::Internal::Distribution::Type::Normal, k_defaultMu,
+            k_defaultSigma) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {
@@ -30,9 +31,9 @@ class NormalDistribution final : public TwoParametersDistribution {
 
  private:
   constexpr static double k_defaultMu =
-      PoincareJ::NormalDistribution::k_standardMu;
+      Poincare::Internal::NormalDistribution::k_standardMu;
   constexpr static double k_defaultSigma =
-      PoincareJ::NormalDistribution::k_standardSigma;
+      Poincare::Internal::NormalDistribution::k_standardSigma;
   constexpr static double k_maxRatioMuSigma = 1000000.0f;
   enum ParamsOrder { Mu, Sigma };
   Shared::ParameterRepresentation paramRepresentationAtIndex(

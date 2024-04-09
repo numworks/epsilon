@@ -2,7 +2,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0)) {
   Tree* expression = TextToTree(input);

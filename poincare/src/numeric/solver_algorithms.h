@@ -5,7 +5,7 @@
 #include "float.h"
 #include "solver.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class SolverAlgorithms {
  public:
@@ -51,6 +51,6 @@ class SolverAlgorithms {
   constexpr static double k_maxProbability = 0.9999995;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

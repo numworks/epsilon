@@ -6,7 +6,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_n_ary_manipulation) {
   TreeRef rackLayout1 = SharedTreeStack->push<Type::RackLayout>(3);

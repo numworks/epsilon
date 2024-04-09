@@ -5,7 +5,7 @@
 #include "n_ary.h"
 #include "type_block.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 bool PatternMatching::Context::isUninitialized() const {
   for (const Tree* node : m_array) {

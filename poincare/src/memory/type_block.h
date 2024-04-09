@@ -5,7 +5,7 @@
 
 #include "block.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* The items to include in the enum are wrapped with a macro and split in
  * different files to tidy them and be able to use them in different ways. */
@@ -247,6 +247,6 @@ class BlockBuffer {
 #endif
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

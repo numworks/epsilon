@@ -15,7 +15,7 @@
 #include "student_distribution.h"
 #include "uniform_distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 const Distribution* Distribution::Get(Type type) {
   switch (type) {
@@ -135,4 +135,4 @@ template void Distribution::FindBoundsForBinarySearch<float>(
 template void Distribution::FindBoundsForBinarySearch<double>(
     Solver<double>::FunctionEvaluation, void const*, double&, double&);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

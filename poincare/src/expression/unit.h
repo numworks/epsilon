@@ -10,7 +10,7 @@
 #include "context.h"
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace Units {
 
 /* The units having the same physical dimension are grouped together.
@@ -373,6 +373,6 @@ bool HasUnit(const Tree* expr);
 bool IsPureAngleUnit(const Tree* expr);
 
 }  // namespace Units
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -5,7 +5,7 @@
 #include <omg/bit_helper.h>
 #include <stdint.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 class Tree;
 
 /* Note: The expressions handled here are assumed to have been systematic
@@ -182,6 +182,6 @@ inline NonStrictSign InvertSign(NonStrictSign sign) {
   return static_cast<NonStrictSign>(-static_cast<int8_t>(sign));
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

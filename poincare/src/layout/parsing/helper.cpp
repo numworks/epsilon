@@ -4,7 +4,7 @@
 #include <omg/unicode_helper.h>
 #include <poincare/src/expression/binary.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 bool ParsingHelper::IsLogicalOperator(const CPL* name, size_t nameLength,
                                       Token::Type* returnType) {
   if (OMG::CompareCPLWithNullTerminatedString(
@@ -38,4 +38,4 @@ bool ParsingHelper::IsLogicalOperator(const CPL* name, size_t nameLength,
   return false;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

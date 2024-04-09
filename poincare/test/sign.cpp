@@ -4,7 +4,7 @@
 #include <poincare/src/expression/variables.h>
 
 #include "helper.h"
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
               ComplexSign::RealInteger());

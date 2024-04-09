@@ -11,7 +11,7 @@
 #include "context.h"
 #include "random.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 struct ProjectionContext;
 
@@ -171,6 +171,6 @@ class Approximation final {
   static Random::Context* s_randomContext;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

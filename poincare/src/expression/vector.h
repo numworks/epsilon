@@ -3,7 +3,7 @@
 
 #include "matrix.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 struct Vector {
   static Tree* Cross(const Tree* u, const Tree* v);
@@ -11,6 +11,6 @@ struct Vector {
   static Tree* Norm(const Tree* v);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -4,7 +4,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 enum class Side : uint8_t {
   Left = 0,
@@ -45,6 +45,6 @@ class AutocompletedPair {
                                      Tree* root);
 };  // namespace AutocompletedPair
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

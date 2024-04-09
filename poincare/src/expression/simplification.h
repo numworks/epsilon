@@ -5,7 +5,7 @@
 
 #include "projection.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO: Implement PolynomialInterpretation. Prepare the expression for
  * Polynomial interpretation (expand TranscendentalOnRationals and algebraic
@@ -62,6 +62,6 @@ class Simplification {
   static void ConvertPowerRealToPower(Tree* u);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

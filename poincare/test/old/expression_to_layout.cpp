@@ -8,9 +8,9 @@
 using namespace Poincare;
 
 void assert_parsed_expression_layouts_to(const char* expression, Layout l) {
-  PoincareJ::Tree* e = parse_expression(expression, nullptr, true);
-  PoincareJ::Tree* t = PoincareJ::Layoutter::LayoutExpression(e);
-  Layout el = PoincareJ::ToPoincareLayout(t);
+  Internal::Tree* e = parse_expression(expression, nullptr, true);
+  Internal::Tree* t = Internal::Layoutter::LayoutExpression(e);
+  Layout el = Internal::ToPoincareLayout(t);
   quiz_assert_print_if_failure(el.isIdenticalTo(l), expression);
 }
 

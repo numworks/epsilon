@@ -8,7 +8,7 @@
 
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO Choose between the map and the switch, and sort along one of the two
  * keys to enable dichotomy. Devise a pattern for maps and move it in OMG. */
@@ -201,4 +201,4 @@ bool DistributionBuiltin::checkNumberOfParameters(int n) const {
                   DistributionMethod::numberOfParameters(m_method);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

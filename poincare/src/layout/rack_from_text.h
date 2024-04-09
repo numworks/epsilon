@@ -3,10 +3,10 @@
 
 #include "rack.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Rack* RackFromText(const char* text);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

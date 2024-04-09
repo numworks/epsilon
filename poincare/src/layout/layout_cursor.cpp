@@ -16,7 +16,7 @@
 #include "rack_layout.h"
 #include "render.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 #if 0
 void LayoutCursor::safeSetLayout(Layout layout,
@@ -1206,4 +1206,4 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
       &executionContext, data, &m_layout);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

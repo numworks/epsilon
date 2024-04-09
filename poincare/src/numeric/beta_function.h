@@ -27,7 +27,7 @@
  */
 
 // WARNING: this code has been modified
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 double BetaFunction(double a, double b);
 

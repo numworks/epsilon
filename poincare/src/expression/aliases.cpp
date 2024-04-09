@@ -2,7 +2,7 @@
 
 #include <omg/unicode_helper.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 int Aliases::maxDifferenceWith(UnicodeDecoder* decoder) const {
   if (!hasMultipleAliases()) {
@@ -37,4 +37,4 @@ const char* Aliases::nextAlias(const char* currentPositionInAliases) const {
   return beginningOfNextAlias;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

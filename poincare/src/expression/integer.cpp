@@ -12,7 +12,7 @@
 #include "k_tree.h"
 #include "rational.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* WorkingBuffer */
 
@@ -779,14 +779,15 @@ void Integer::SetSign(Tree* tree, NonStrictSign sign) {
   tree->moveTreeOverTree(h.pushOnTreeStack());
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
-template float PoincareJ::IntegerHandler::to<float>() const;
-template double PoincareJ::IntegerHandler::to<double>() const;
-template uint8_t PoincareJ::IntegerHandler::to<uint8_t>() const;
-template int8_t PoincareJ::IntegerHandler::to<int8_t>() const;
-template int PoincareJ::IntegerHandler::to<int>() const;
+template float Poincare::Internal::IntegerHandler::to<float>() const;
+template double Poincare::Internal::IntegerHandler::to<double>() const;
+template uint8_t Poincare::Internal::IntegerHandler::to<uint8_t>() const;
+template int8_t Poincare::Internal::IntegerHandler::to<int8_t>() const;
+template int Poincare::Internal::IntegerHandler::to<int>() const;
 
-template bool PoincareJ::IntegerHandler::isUnsignedType<uint8_t>() const;
-template bool PoincareJ::IntegerHandler::isSignedType<int8_t>() const;
-template bool PoincareJ::IntegerHandler::isSignedType<int>() const;
+template bool Poincare::Internal::IntegerHandler::isUnsignedType<uint8_t>()
+    const;
+template bool Poincare::Internal::IntegerHandler::isSignedType<int8_t>() const;
+template bool Poincare::Internal::IntegerHandler::isSignedType<int>() const;

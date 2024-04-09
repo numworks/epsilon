@@ -14,7 +14,7 @@
 #include "symbol.h"
 #include "variables.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
                          Error* error) {
@@ -275,4 +275,4 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
   return Error::NoError;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

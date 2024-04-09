@@ -6,7 +6,7 @@
 #include "context.h"
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Angle {
  public:
@@ -33,6 +33,6 @@ class Angle {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

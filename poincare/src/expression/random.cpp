@@ -10,7 +10,7 @@
 #include "float.h"
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Random::Context::Context() {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
@@ -146,4 +146,4 @@ template double Random::PrivateApproximate<double>(const Tree*, Context*, int);
 template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

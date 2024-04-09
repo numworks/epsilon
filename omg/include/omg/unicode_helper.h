@@ -3,26 +3,27 @@
 
 #include <ion/unicode/utf8_decoder.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 class CPL;
 class Tree;
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 namespace OMG {
 
 size_t CodePointSearch(UnicodeDecoder* decoder, CodePoint c);
 
 inline size_t CodePointSearch(const char* string, CodePoint c);
-inline size_t CodePointSearch(const PoincareJ::Tree* first, int length,
+inline size_t CodePointSearch(const Poincare::Internal::Tree* first, int length,
                               CodePoint c);
 
 int CompareDecoders(UnicodeDecoder* a, UnicodeDecoder* b);
 int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
                                            const char* string);
-int CompareCPLWithNullTerminatedString(const PoincareJ::CPL* s, int length,
-                                       const char* string);
-const PoincareJ::CPL* CodePointLSearch(const PoincareJ::CPL* s, CodePoint c,
-                                       const PoincareJ::CPL* stop);
+int CompareCPLWithNullTerminatedString(const Poincare::Internal::CPL* s,
+                                       int length, const char* string);
+const Poincare::Internal::CPL* CodePointLSearch(
+    const Poincare::Internal::CPL* s, CodePoint c,
+    const Poincare::Internal::CPL* stop);
 
 }  // namespace OMG
 

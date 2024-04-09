@@ -13,7 +13,7 @@
 #include "sign.h"
 #include "simplification.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Polynomial */
 
@@ -555,4 +555,4 @@ std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expressi
 }
 
 #endif
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

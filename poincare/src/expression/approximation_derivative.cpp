@@ -3,7 +3,7 @@
 
 #include "approximation.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class ApproximationContext;
 
@@ -153,4 +153,4 @@ template float Approximation::ApproximateDerivative(const Tree* child, float at,
 template double Approximation::ApproximateDerivative(const Tree* child,
                                                      double at, int order);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

@@ -1,5 +1,5 @@
-#ifndef POINCAREJ_POINCARE_H
-#define POINCAREJ_POINCARE_H
+#ifndef POINCARE_H
+#define POINCARE_H
 
 #if POINCARE_POOL_VISUALIZATION
 #include <fstream>
@@ -8,7 +8,7 @@
 #include <iostream>
 #endif
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 void Init();
 void Shutdown();
@@ -28,6 +28,6 @@ void Log(const char* event, const void* blockAddress = nullptr,
 void Indent(std::ostream& stream, int indentation);
 #endif
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

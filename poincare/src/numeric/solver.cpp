@@ -8,7 +8,7 @@
 
 #include "solver_algorithms.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Using our consteval operator- inside a template<float> does not work with
  * llvm14 it works with 17. */
@@ -750,4 +750,4 @@ template Coordinate2D<float> Solver<float>::next(
     DiscontinuityEvaluation discontinuityTest);
 template float Solver<float>::MaximalStep(float);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

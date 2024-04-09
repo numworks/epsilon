@@ -2,7 +2,7 @@
 
 #include <poincare/src/expression/k_tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool CDFRangeMethod::shallowReduce(const Tree** abscissae,
                                    const Distribution* distribution,
@@ -27,4 +27,4 @@ bool CDFRangeMethod::shallowReduce(const Tree** abscissae,
   return false;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

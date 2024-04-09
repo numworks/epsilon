@@ -3,7 +3,7 @@
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 OMG::Troolean Domain::ExpressionIsIn(const Tree* expression, Type type,
                                      Context* context) {
@@ -60,4 +60,4 @@ OMG::Troolean Domain::ExpressionIsIn(const Tree* expression, Type type,
   return OMG::Troolean::True;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

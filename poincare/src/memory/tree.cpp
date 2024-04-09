@@ -25,7 +25,7 @@
 #include "placeholder.h"
 #endif
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 #if POINCARE_TREE_LOG
 
@@ -513,4 +513,4 @@ void SwapTreesPointers(Tree** u, Tree** v) {
   *v = rv;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

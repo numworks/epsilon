@@ -86,22 +86,22 @@ bool ComparisonNode::IsBinaryComparison(JuniorExpression e,
     assert(e.otype() == ExpressionNode::Type::JuniorExpression &&
            e.tree()->numberOfChildren() == 2);
     switch (e.tree()->type()) {
-      case PoincareJ::Type::Equal:
+      case Internal::Type::Equal:
         *operatorType = OperatorType::Equal;
         break;
-      case PoincareJ::Type::NotEqual:
+      case Internal::Type::NotEqual:
         *operatorType = OperatorType::NotEqual;
         break;
-      case PoincareJ::Type::Superior:
+      case Internal::Type::Superior:
         *operatorType = OperatorType::Superior;
         break;
-      case PoincareJ::Type::SuperiorEqual:
+      case Internal::Type::SuperiorEqual:
         *operatorType = OperatorType::SuperiorEqual;
         break;
-      case PoincareJ::Type::Inferior:
+      case Internal::Type::Inferior:
         *operatorType = OperatorType::Inferior;
         break;
-      case PoincareJ::Type::InferiorEqual:
+      case Internal::Type::InferiorEqual:
         *operatorType = OperatorType::InferiorEqual;
         break;
       default:

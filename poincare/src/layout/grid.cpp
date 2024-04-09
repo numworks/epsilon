@@ -5,7 +5,7 @@
 #include "rack_layout.h"
 #include "render.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Grid::isEditing() const {
   if (SharedTreeStack->contains(this)) {
@@ -274,4 +274,4 @@ void Grid::addEmptyColumn() {
   }
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

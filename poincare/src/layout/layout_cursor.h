@@ -14,7 +14,7 @@
 #include "rack_layout.h"
 #include "render.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* The LayoutCursor has two main attributes: m_layout and m_position
  *
@@ -271,6 +271,6 @@ class LayoutBufferCursor final : public LayoutCursor {
   int m_cursorNode;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

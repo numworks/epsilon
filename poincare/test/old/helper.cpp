@@ -137,9 +137,9 @@ void assert_parsed_expression_process_to(
     Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
                                           angleUnit, unitFormat, target,
                                           symbolicComputation, unitConversion));
-    Tree *l = PoincareJ::Layoutter::LayoutExpression(m, true,
-                                                     numberOfSignificantDigits);
-    *PoincareJ::Serialize(l, buffer, buffer + bufferSize) = 0;
+    Tree *l = Internal::Layoutter::LayoutExpression(m, true,
+                                                    numberOfSignificantDigits);
+    *Internal::Serialize(l, buffer, buffer + bufferSize) = 0;
     l->removeTree();
     bad = strcmp(buffer, result) != 0;
   }
@@ -162,9 +162,8 @@ void assert_parsed_expression_process_to(
   quiz_print(information);
 }
 
-PoincareJ::Tree *parse_expression(const char *expression, Context *context,
-                                  bool addParentheses,
-                                  bool parseForAssignment) {
+Internal::Tree *parse_expression(const char *expression, Context *context,
+                                 bool addParentheses, bool parseForAssignment) {
   Tree *result = parse(expression);
   quiz_assert_print_if_failure(result != nullptr, expression);
   return result;
@@ -179,7 +178,7 @@ void assert_parsed_expression_is(
       mixedFractionsParameter);
   Tree *parsed = parse_expression(expression, &context, addParentheses,
                                   parseForAssignment);
-  Tree *expected = PoincareJ::FromPoincareExpression(r);
+  Tree *expected = Internal::FromPoincareExpression(r);
   quiz_assert_print_if_failure(parsed, expression);
   quiz_assert_print_if_failure(expected, expression);
   quiz_assert_print_if_failure(parsed->treeIsIdenticalTo(expected), expression);
@@ -236,13 +235,13 @@ void assert_parsed_expression_simplify_to(
       expression, simplifiedExpression, target, complexFormat, angleUnit,
       unitFormat, symbolicComputation, unitConversion,
       [](Tree *e, ReductionContext reductionContext) {
-        PoincareJ::ProjectionContext context = {
+        Internal::ProjectionContext context = {
             .m_complexFormat = reductionContext.complexFormat(),
             .m_angleUnit = reductionContext.angleUnit(),
             .m_unitFormat = reductionContext.unitFormat(),
             .m_symbolic = reductionContext.symbolicComputation(),
             .m_context = reductionContext.context()};
-        PoincareJ::Simplification::Simplify(e, &context);
+        Internal::Simplification::Simplify(e, &context);
         // TODO_PCJ also approximate to see if it crashes
         return e;
       });
@@ -260,9 +259,9 @@ void assert_expression_approximates_to(const char *expression,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) -> Tree * {
-        TreeRef result = PoincareJ::Approximation::RootTreeToTree<T>(
-            e, PoincareJ::AngleUnit(reductionContext.angleUnit()),
-            PoincareJ::ComplexFormat(reductionContext.complexFormat()));
+        TreeRef result = Internal::Approximation::RootTreeToTree<T>(
+            e, Internal::AngleUnit(reductionContext.angleUnit()),
+            Internal::ComplexFormat(reductionContext.complexFormat()));
         e->removeTree();
         return result;
       },
@@ -369,7 +368,7 @@ void assert_layout_serializes_to(Tree *layout, const char *serialization) {
 }
 
 void assert_expression_layouts_as(Tree *expression, Tree *layout) {
-  Tree *l = PoincareJ::Layoutter::LayoutExpression(expression);
+  Tree *l = Internal::Layoutter::LayoutExpression(expression);
   quiz_assert(l->treeIsIdenticalTo(layout));
 }
 

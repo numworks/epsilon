@@ -9,7 +9,7 @@
 #include "parametric.h"
 #include "sign.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace KTrees {
 
 // Constructors
@@ -413,6 +413,6 @@ consteval auto operator"" _e() {
 }
 
 }  // namespace KTrees
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

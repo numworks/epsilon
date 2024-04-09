@@ -5,7 +5,7 @@
 
 #include "unit_representatives.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 struct MatrixDimension {
   uint8_t rows;
@@ -101,6 +101,6 @@ struct Dimension {
   };
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

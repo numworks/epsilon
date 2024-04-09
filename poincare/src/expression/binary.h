@@ -4,7 +4,7 @@
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/src/memory/tree_ref.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Binary {
  public:
@@ -60,6 +60,6 @@ class Binary {
                 "Missing string for comparison operator.");
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

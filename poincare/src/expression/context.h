@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 enum class AngleUnit : uint8_t {
   Radian = 0,
@@ -31,6 +31,6 @@ enum class SymbolicComputation {
   DoNotReplaceAnySymbol = 4
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

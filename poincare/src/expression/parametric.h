@@ -5,7 +5,7 @@
 
 #include "sign.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* In nodes that introduce a variable, the variable is the first child, the
  * child expression last and bounds are in between. The variable is always
@@ -43,5 +43,5 @@ class Parametric {
   static constexpr uint8_t k_derivandIndex = 2;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

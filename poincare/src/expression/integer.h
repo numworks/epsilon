@@ -13,7 +13,7 @@
 #include <emscripten.h>
 #endif
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO:I'm not sure using uint32_t over uint8_t is worth the trouble.
  * The set of operations of test/integer.cpp was only 14% slower when
@@ -309,6 +309,6 @@ class Integer {
   static void SetSign(Tree* tree, NonStrictSign sign);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

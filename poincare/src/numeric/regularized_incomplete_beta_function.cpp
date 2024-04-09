@@ -29,7 +29,7 @@
 
 #include <cmath>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 #define STOP 1.0e-8
 #define TINY 1.0e-30
@@ -88,4 +88,4 @@ double RegularizedIncompleteBetaFunction(double a, double b, double x) {
   return NAN; /*Needed more loops, did not converge.*/
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

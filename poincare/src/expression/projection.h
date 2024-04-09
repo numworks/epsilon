@@ -7,7 +7,7 @@
 #include "context.h"
 #include "dimension.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 struct ProjectionContext {
   ComplexFormat m_complexFormat = ComplexFormat::Real;
@@ -35,6 +35,6 @@ class Projection {
   static bool ShallowSystemProject(Tree* e, void* ctx);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

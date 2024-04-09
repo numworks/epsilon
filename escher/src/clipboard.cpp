@@ -84,7 +84,7 @@ Poincare::Layout Clipboard::storedLayout() {
                       nullptr);
   }
   return Poincare::Layout::Builder(
-      reinterpret_cast<const PoincareJ::Tree*>(m_treeBuffer));
+      reinterpret_cast<const Poincare::Internal::Tree*>(m_treeBuffer));
 }
 
 void Clipboard::reset() {

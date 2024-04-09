@@ -14,7 +14,7 @@
 
 namespace Poincare {
 
-JuniorLayoutNode::JuniorLayoutNode(const PoincareJ::Tree* tree,
+JuniorLayoutNode::JuniorLayoutNode(const Internal::Tree* tree,
                                    size_t treeSize) {
   memcpy(m_blocks, tree->block(), treeSize);
 }
@@ -31,23 +31,23 @@ void JuniorLayoutNode::logAttributes(std::ostream& stream) const {
 #endif
 
 KDSize JuniorLayoutNode::computeSize(KDFont::Size font) const {
-  return PoincareJ::Render::Size(tree(), font);
+  return Internal::Render::Size(tree(), font);
 }
 
 KDCoordinate JuniorLayoutNode::computeBaseline(KDFont::Size font) const {
-  return PoincareJ::Render::Baseline(tree(), font);
+  return Internal::Render::Baseline(tree(), font);
 }
 
 void JuniorLayoutNode::render(KDContext* ctx, KDPoint p,
                               KDGlyph::Style style) const {
-  PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
-                          style.backgroundColor);
+  Internal::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
+                         style.backgroundColor);
 }
 
 size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {
-  return PoincareJ::Serialize(tree(), buffer, buffer + bufferSize) - buffer;
+  return Internal::Serialize(tree(), buffer, buffer + bufferSize) - buffer;
 }
 
 bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) const {
@@ -56,15 +56,15 @@ bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) const {
   return tree()->treeIsIdenticalTo(static_cast<const JuniorLayout&>(l).tree());
 }
 
-const PoincareJ::Tree* JuniorLayoutNode::tree() const {
-  return PoincareJ::Tree::FromBlocks(m_blocks);
+const Internal::Tree* JuniorLayoutNode::tree() const {
+  return Internal::Tree::FromBlocks(m_blocks);
 }
-PoincareJ::Tree* JuniorLayoutNode::tree() {
-  return PoincareJ::Tree::FromBlocks(m_blocks);
+Internal::Tree* JuniorLayoutNode::tree() {
+  return Internal::Tree::FromBlocks(m_blocks);
 }
 
-JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
-  assert(PoincareJ::AppHelpers::IsSanitizedRack(tree));
+JuniorLayout JuniorLayout::Builder(const Internal::Tree* tree) {
+  assert(Internal::AppHelpers::IsSanitizedRack(tree));
   if (!tree) {
     return JuniorLayout();
   }
@@ -75,29 +75,29 @@ JuniorLayout JuniorLayout::Builder(const PoincareJ::Tree* tree) {
   return static_cast<JuniorLayout&>(h);
 }
 
-JuniorLayout JuniorLayout::Builder(PoincareJ::Tree* tree) {
-  JuniorLayout result = Builder(const_cast<const PoincareJ::Tree*>(tree));
+JuniorLayout JuniorLayout::Builder(Internal::Tree* tree) {
+  JuniorLayout result = Builder(const_cast<const Internal::Tree*>(tree));
   if (tree) {
     tree->removeTree();
   }
   return result;
 }
 
-JuniorLayout JuniorLayout::Create(const PoincareJ::Tree* structure,
-                                  PoincareJ::ContextTrees ctx) {
-  PoincareJ::Tree* tree = PoincareJ::PatternMatching::Create(structure, ctx);
-  PoincareJ::AppHelpers::SanitizeRack(tree);
+JuniorLayout JuniorLayout::Create(const Internal::Tree* structure,
+                                  Internal::ContextTrees ctx) {
+  Internal::Tree* tree = Internal::PatternMatching::Create(structure, ctx);
+  Internal::AppHelpers::SanitizeRack(tree);
   return Builder(tree);
 }
 
 JuniorLayout JuniorLayout::CodePoint(::CodePoint cp) {
-  PoincareJ::Tree* tree = KRackL.node<1>->cloneNode();
-  PoincareJ::CodePointLayout::Push(cp);
+  Internal::Tree* tree = KRackL.node<1>->cloneNode();
+  Internal::CodePointLayout::Push(cp);
   return Builder(tree);
 }
 
 JuniorLayout JuniorLayout::String(const char* str, int length) {
-  PoincareJ::Tree* tree = KRackL()->clone();
+  Internal::Tree* tree = KRackL()->clone();
   UTF8Decoder decoder(str);
   int n = 0;
   ::CodePoint cp = 0;
@@ -105,20 +105,20 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
   while (n != length && (cp = decoder.nextCodePoint())) {
     ::CodePoint cc = 0;
     if (n + 1 != length && (cc = decoder.nextCodePoint()) && cc.isCombining()) {
-      PoincareJ::TreeStack::SharedTreeStack
-          ->push<PoincareJ::Type::CombinedCodePointsLayout>(cp, cc);
+      Internal::TreeStack::SharedTreeStack
+          ->push<Internal::Type::CombinedCodePointsLayout>(cp, cc);
     } else {
       decoder.previousCodePoint();
-      PoincareJ::CodePointLayout::Push(cp);
+      Internal::CodePointLayout::Push(cp);
     }
     n++;
   }
-  PoincareJ::NAry::SetNumberOfChildren(tree, n);
+  Internal::NAry::SetNumberOfChildren(tree, n);
   return Builder(tree);
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                        PoincareJ::LayoutCursor* cursor,
+                        Internal::LayoutCursor* cursor,
                         KDColor selectionColor) {
   node()->draw(ctx, p, style, cursor, selectionColor);
 }
@@ -130,16 +130,16 @@ void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
 // Rendering
 
 void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                            PoincareJ::LayoutCursor* cursor,
+                            Internal::LayoutCursor* cursor,
                             KDColor selectionColor) const {
-  PoincareJ::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
-                          style.backgroundColor, cursor);
+  Internal::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
+                         style.backgroundColor, cursor);
 }
 
 JuniorLayout JuniorLayout::cloneWithoutMargins() {
-  PoincareJ::Tree* clone = tree()->clone();
+  Internal::Tree* clone = tree()->clone();
   if (clone->isRackLayout()) {
-    PoincareJ::Layoutter::StripSeparators(clone);
+    Internal::Layoutter::StripSeparators(clone);
   }
   return JuniorLayout::Builder(clone);
 }
@@ -147,7 +147,7 @@ JuniorLayout JuniorLayout::cloneWithoutMargins() {
 bool JuniorLayout::isEmpty() const { return tree()->numberOfChildren() == 0; }
 
 bool JuniorLayout::isCodePointsString() const {
-  for (const PoincareJ::Tree* child : tree()->children()) {
+  for (const Internal::Tree* child : tree()->children()) {
     if (!(child->isCodePointLayout() || child->isCombinedCodePointsLayout())) {
       return false;
     }

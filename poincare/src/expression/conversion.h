@@ -4,7 +4,7 @@
 #include <poincare/old/expression.h>
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Temporary bi-directional conversions between old and new poincare to smooth
  * transition. */
@@ -13,6 +13,6 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp);
 void PushPoincareExpression(Poincare::OExpression exp);
 Tree* FromPoincareExpression(Poincare::OExpression exp);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

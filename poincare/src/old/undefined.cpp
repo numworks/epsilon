@@ -40,7 +40,7 @@ Evaluation<T> UndefinedNode::templatedApproximate() const {
 
 JuniorUndefined JuniorUndefined::Builder() {
   JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedTreeStack->push(PoincareJ::Type::Undef));
+      Internal::SharedTreeStack->push(Internal::Type::Undef));
   return static_cast<JuniorUndefined&>(expr);
 }
 

@@ -10,7 +10,7 @@
 #include "layout_selection.h"
 #include "rack.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Render {
   friend class RackLayout;
@@ -71,6 +71,6 @@ class Render {
   static KDFont::Size s_font;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

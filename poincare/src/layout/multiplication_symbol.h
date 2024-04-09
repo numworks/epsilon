@@ -3,12 +3,12 @@
 
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Take a beautified multiplication and return the appropriate operator symbol
  * between "×", "·" and nothing according to the shape of the children. */
 CodePoint MultiplicationSymbol(const Tree* mult);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -10,7 +10,7 @@
 
 #include "value_block.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class NodeConstructor final {
  public:
@@ -249,6 +249,6 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::IntegerNegBig>(
   return CreateIntegerBlockAtIndexForType(block, blockIndex,
                                           Type::IntegerNegBig, value);
 }
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

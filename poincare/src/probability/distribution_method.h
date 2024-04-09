@@ -5,7 +5,7 @@
 
 #include "distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class DistributionMethod {
  public:
@@ -48,6 +48,6 @@ class DistributionMethod {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

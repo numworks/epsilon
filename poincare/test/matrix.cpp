@@ -4,7 +4,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_matrix) {
   const Tree* u = KMatrix<1, 2>()(1_e, 2_e);

@@ -5,7 +5,7 @@
 
 #include "integer.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Logarithm final {
  public:
@@ -23,6 +23,6 @@ class Logarithm final {
   static Tree* ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

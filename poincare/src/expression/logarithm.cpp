@@ -12,7 +12,7 @@
 #include "sign.h"
 #include "simplification.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Logarithm::SimplifyLn(Tree* u) {
   Tree* child = u->child(0);
@@ -321,4 +321,4 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
   return result;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

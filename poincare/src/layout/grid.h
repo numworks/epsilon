@@ -7,7 +7,7 @@
 #include "k_tree.h"
 #include "render.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Grid : public Layout {
  public:
@@ -95,5 +95,5 @@ class Grid : public Layout {
   void colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int lineIndex);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

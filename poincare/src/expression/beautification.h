@@ -6,7 +6,7 @@
 #include "context.h"
 #include "projection.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Beautification {
  public:
@@ -37,6 +37,6 @@ class Beautification {
   EDITION_REF_WRAP(ShallowBeautifyPercent);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -5,12 +5,12 @@
 
 #include "old_layout.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 class Block;
 class Tree;
 class LayoutCursor;
 struct ContextTrees;
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 namespace Poincare {
 
@@ -18,7 +18,7 @@ class JuniorLayoutNode final : public LayoutNode {
   friend class JuniorLayout;
 
  private:
-  JuniorLayoutNode(const PoincareJ::Tree* tree, size_t treeSize);
+  JuniorLayoutNode(const Internal::Tree* tree, size_t treeSize);
 
   // PoolObject
   size_t size() const override;
@@ -41,25 +41,25 @@ class JuniorLayoutNode final : public LayoutNode {
   bool protectedIsIdenticalTo(OLayout l) const override;
 
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            PoincareJ::LayoutCursor* cursor, KDColor selectionColor) const;
+            Internal::LayoutCursor* cursor, KDColor selectionColor) const;
   void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) const override;
 
-  const PoincareJ::Tree* tree() const;
-  PoincareJ::Tree* tree();
-  PoincareJ::Block m_blocks[0];
+  const Internal::Tree* tree() const;
+  Internal::Tree* tree();
+  Internal::Block m_blocks[0];
 };
 
 class JuniorLayout final : public OLayout {
  public:
   JuniorLayout() {}
 
-  JuniorLayout(const PoincareJ::Tree* tree) {
+  JuniorLayout(const Internal::Tree* tree) {
     // TODO is copy-elimination guaranteed here ?
     *this = Builder(tree);
   }
 
   template <class C>
-  JuniorLayout(C c) : JuniorLayout(static_cast<const PoincareJ::Tree*>(c)) {
+  JuniorLayout(C c) : JuniorLayout(static_cast<const Internal::Tree*>(c)) {
     static_assert(c.type().isRackLayout());
   }
 
@@ -68,17 +68,17 @@ class JuniorLayout final : public OLayout {
     return static_cast<JuniorLayout&>(clone);
   }
 
-  static JuniorLayout Create(const PoincareJ::Tree* structure,
-                             PoincareJ::ContextTrees ctx);
-  operator const PoincareJ::Tree*() { return tree(); }
+  static JuniorLayout Create(const Internal::Tree* structure,
+                             Internal::ContextTrees ctx);
+  operator const Internal::Tree*() { return tree(); }
 
   static JuniorLayout CodePoint(CodePoint cp);
   static JuniorLayout String(const char* str, int length = -1);
 
-  static JuniorLayout Builder(const PoincareJ::Tree* tree);
+  static JuniorLayout Builder(const Internal::Tree* tree);
   // Eat the tree
-  static JuniorLayout Builder(PoincareJ::Tree* tree);
-  PoincareJ::Tree* tree() const {
+  static JuniorLayout Builder(Internal::Tree* tree);
+  Internal::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }
 
@@ -89,7 +89,7 @@ class JuniorLayout final : public OLayout {
 
   // Render
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            PoincareJ::LayoutCursor* cursor,
+            Internal::LayoutCursor* cursor,
             KDColor selectionColor = Escher::Palette::Select);
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style);
 

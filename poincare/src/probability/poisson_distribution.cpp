@@ -11,7 +11,7 @@
 #include "distribution.h"
 #include "domain.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 T PoissonDistribution::EvaluateAtAbscissa(T x, T lambda) {
@@ -75,4 +75,4 @@ PoissonDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool PoissonDistribution::LambdaIsOK(float);
 template bool PoissonDistribution::LambdaIsOK(double);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

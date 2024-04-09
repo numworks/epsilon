@@ -25,9 +25,9 @@ class CalculationStore;
  *   uint16_t m_exactOutputTreeSize;
  *   uint16_t m_approximatedOutputTreeSize;
  *
- *   PoincareJ::Tree m_inputTree;
- *   PoincareJ::Tree m_exactOutputTree;
- *   PoincareJ::Tree m_approximatedOutputTree;
+ *   Poincare::Internal::Tree m_inputTree;
+ *   Poincare::Internal::Tree m_exactOutputTree;
+ *   Poincare::Internal::Tree m_approximatedOutputTree;
  * };
  *
  * Since the three last members have variable size, they are gathered in m_trees
@@ -117,15 +117,16 @@ class Calculation {
   }
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
-  const PoincareJ::Tree* inputTree() const {
-    return reinterpret_cast<const PoincareJ::Tree*>(m_trees);
+  const Poincare::Internal::Tree* inputTree() const {
+    return reinterpret_cast<const Poincare::Internal::Tree*>(m_trees);
   }
-  const PoincareJ::Tree* exactOutputTree() const {
-    return reinterpret_cast<const PoincareJ::Tree*>(m_trees + m_inputTreeSize);
+  const Poincare::Internal::Tree* exactOutputTree() const {
+    return reinterpret_cast<const Poincare::Internal::Tree*>(m_trees +
+                                                             m_inputTreeSize);
   }
-  const PoincareJ::Tree* approximatedOutputTree() const {
-    return reinterpret_cast<const PoincareJ::Tree*>(m_trees + m_inputTreeSize +
-                                                    m_exactOutputTreeSize);
+  const Poincare::Internal::Tree* approximatedOutputTree() const {
+    return reinterpret_cast<const Poincare::Internal::Tree*>(
+        m_trees + m_inputTreeSize + m_exactOutputTreeSize);
   }
   bool exactAndApproximatedAreEqual() const {
     return m_exactOutputTreeSize == m_approximatedOutputTreeSize &&

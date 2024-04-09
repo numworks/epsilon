@@ -10,7 +10,7 @@
 
 #include "domain.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
@@ -116,4 +116,4 @@ template bool HypergeometricDistribution::KIsOK(double);
 template bool HypergeometricDistribution::nIsOK(float);
 template bool HypergeometricDistribution::nIsOK(double);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

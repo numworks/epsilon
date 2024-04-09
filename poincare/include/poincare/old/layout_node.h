@@ -10,7 +10,7 @@
 
 #include "pool_object.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 class LayoutCursor;
 }
 
@@ -40,9 +40,9 @@ class LayoutNode : public PoolObject {
   // Rendering
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
   KDSize layoutSize(KDFont::Size font,
-                    PoincareJ::LayoutCursor *cursor = nullptr) const;
+                    Internal::LayoutCursor *cursor = nullptr) const;
   KDCoordinate baseline(KDFont::Size font,
-                        PoincareJ::LayoutCursor *cursor = nullptr) const;
+                        Internal::LayoutCursor *cursor = nullptr) const;
 
   // TODO: invalid cache when tempering with hierarchy
   // TODO remember if cursor was in layout and hide this method

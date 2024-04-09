@@ -10,7 +10,7 @@
 #include "coordinate_2D.h"
 #include "float.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 class Range1D {
@@ -118,6 +118,6 @@ class Range2D {
   Range1D<T> m_y;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

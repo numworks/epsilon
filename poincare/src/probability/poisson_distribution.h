@@ -5,7 +5,7 @@
 
 #include "discrete_distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class PoissonDistribution final : public DiscreteDistribution {
  public:
@@ -57,6 +57,6 @@ class PoissonDistribution final : public DiscreteDistribution {
   static bool LambdaIsOK(T lambda);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

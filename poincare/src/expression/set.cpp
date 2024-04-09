@@ -6,7 +6,7 @@
 #include "comparison.h"
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Tree* Set::PushEmpty() { return KSet.node<0>->cloneNode(); }
 
@@ -115,4 +115,4 @@ Tree* Set::Difference(Tree* set0, Tree* set1) {
   return MergeSets(set0, set1, false, false, true);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

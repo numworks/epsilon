@@ -4,7 +4,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* For now, random node prevent some simplifications in parametric trees.
  *
@@ -60,6 +60,6 @@ class Random {
   static T RandomInt(T a, T b);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -9,7 +9,7 @@
 #include "parsing/tokenizer.h"
 #include "serialize.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 // Cycles
 constexpr int k_maxCycleSize = 5;
@@ -352,4 +352,4 @@ bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,
   return false;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

@@ -5,7 +5,7 @@
 
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 int Metric::GetMetric(const Tree* u) {
   int result = GetMetric(u->type());
@@ -65,5 +65,5 @@ int Metric::GetMetric(Type type) {
   }
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 #endif

@@ -4,7 +4,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool PDFMethod::shallowReduce(const Tree** abscissae,
                               const Distribution* distribution,
@@ -42,4 +42,4 @@ bool PDFMethod::shallowReduce(const Tree** abscissae,
   return false;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

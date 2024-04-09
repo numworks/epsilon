@@ -9,12 +9,12 @@
 #include "tree/helpers.h"
 
 using namespace Poincare;
-using PoincareJ::ParsingContext;
-using PoincareJ::Token;
-using PoincareJ::Tokenizer;
+using Internal::ParsingContext;
+using Internal::Token;
+using Internal::Tokenizer;
 
 void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
-  PoincareJ::Tree* inputLayout = PoincareJ::RackFromText(string);
+  Internal::Tree* inputLayout = Internal::RackFromText(string);
   ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer(inputLayout, &parsingContext);
@@ -44,7 +44,7 @@ void assert_tokenizes_as_constant(const char* string) {
 }
 
 void assert_tokenizes_as_undefined_token(const char* string) {
-  PoincareJ::Tree* inputLayout = PoincareJ::RackFromText(string);
+  Internal::Tree* inputLayout = Internal::RackFromText(string);
   ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer(inputLayout, &parsingContext);

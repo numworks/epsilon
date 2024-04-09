@@ -4,7 +4,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_k_tree) {
   constexpr KTree tree = 3_e;

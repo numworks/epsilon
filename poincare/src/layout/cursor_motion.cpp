@@ -6,7 +6,7 @@
 #include "indices.h"
 #include "rack_layout.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 int CursorMotion::IndexAfterHorizontalCursorMove(
     Tree* node, OMG::HorizontalDirection direction, int currentIndex) {
@@ -596,4 +596,4 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
   }
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

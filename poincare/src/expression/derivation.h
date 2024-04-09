@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree_ref.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Derivation {
  public:
@@ -27,6 +27,6 @@ class Derivation {
                                     bool simplify = true);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -8,7 +8,7 @@
 
 #include "sign.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class FloatNode {
  public:
@@ -47,6 +47,6 @@ struct FloatType<double> {
   static constexpr Type type = Type::DoubleFloat;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

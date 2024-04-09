@@ -11,7 +11,7 @@
 #include "parser.h"
 #include "parsing/rack_parser.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 using PT = Poincare::LayoutNode::Type;
 using LT = LayoutType;
@@ -305,4 +305,4 @@ Tree* FromPoincareLayout(Poincare::OLayout l) {
   return node;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

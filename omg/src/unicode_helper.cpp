@@ -18,14 +18,15 @@ inline size_t CodePointSearch(const char* string, CodePoint c) {
   return CodePointSearch(&dec, c);
 }
 
-inline size_t CodePointSearch(const PoincareJ::Tree* first, int length,
+inline size_t CodePointSearch(const Poincare::Internal::Tree* first, int length,
                               CodePoint c) {
-  PoincareJ::CPLayoutDecoder dec(first, length);
+  Poincare::Internal::CPLayoutDecoder dec(first, length);
   return CodePointSearch(&dec, c);
 }
 
-const PoincareJ::CPL* CodePointLSearch(const PoincareJ::CPL* s, CodePoint c,
-                                       const PoincareJ::CPL* stop) {
+const Poincare::Internal::CPL* CodePointLSearch(
+    const Poincare::Internal::CPL* s, CodePoint c,
+    const Poincare::Internal::CPL* stop) {
   while (s != stop && *s != 0) {
     if (*s == c) {
       return s;
@@ -55,10 +56,10 @@ int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
   return result;
 }
 
-int CompareCPLWithNullTerminatedString(const PoincareJ::CPL* s, int length,
-                                       const char* string) {
-  PoincareJ::CPLayoutDecoder decoder(
-      reinterpret_cast<const PoincareJ::Tree*>(s), 0, length);
+int CompareCPLWithNullTerminatedString(const Poincare::Internal::CPL* s,
+                                       int length, const char* string) {
+  Poincare::Internal::CPLayoutDecoder decoder(
+      reinterpret_cast<const Poincare::Internal::Tree*>(s), 0, length);
   return CompareDecoderWithNullTerminatedString(&decoder, string);
 }
 

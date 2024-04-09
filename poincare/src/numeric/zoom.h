@@ -13,7 +13,7 @@
  * getters for those as it would weaken the Zoom API. */
 class ZoomTest;
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Zoom {
   friend class ::ZoomTest;
@@ -204,6 +204,6 @@ class Zoom {
   int m_thresholdForFunctionsExceedingNbOfPoints;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

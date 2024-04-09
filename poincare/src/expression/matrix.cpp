@@ -12,7 +12,7 @@
 #include "simplification.h"
 #include "vector.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Tree* Matrix::Zero(MatrixDimension d) {
   Tree* result = SharedTreeStack->push<Type::Matrix>(d.rows, d.cols);
@@ -475,4 +475,4 @@ bool Matrix::SimplifySwitch(Tree* u) {
   return true;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

@@ -23,9 +23,9 @@ bool LayoutNode::isIdenticalTo(const Layout l, bool makeEditable) const {
 }
 
 KDSize LayoutNode::layoutSize(KDFont::Size font,
-                              PoincareJ::LayoutCursor *cursor) const {
+                              Internal::LayoutCursor *cursor) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
-    PoincareJ::RackLayout::s_layoutCursor = cursor;
+    Internal::RackLayout::s_layoutCursor = cursor;
     KDSize size = computeSize(font);
 
     /* This method will raise an exception if the size of the layout that is
@@ -67,9 +67,9 @@ KDSize LayoutNode::layoutSize(KDFont::Size font,
 }
 
 KDCoordinate LayoutNode::baseline(KDFont::Size font,
-                                  PoincareJ::LayoutCursor *cursor) const {
+                                  Internal::LayoutCursor *cursor) const {
   if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
-    PoincareJ::RackLayout::s_layoutCursor = cursor;
+    Internal::RackLayout::s_layoutCursor = cursor;
     m_baseline = computeBaseline(font);
     m_flags.m_baselined = true;
     m_flags.m_baselineFontSize = font;

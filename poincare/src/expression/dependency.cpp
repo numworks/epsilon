@@ -11,7 +11,7 @@
 #include "set.h"
 #include "variables.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   if (expr->isDependency()) {
@@ -234,4 +234,4 @@ bool Dependency::DeepRemoveUselessDependencies(Tree* expr) {
   return changed;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

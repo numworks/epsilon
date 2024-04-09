@@ -6,7 +6,7 @@
 #include "tree.h"
 #include "value_block.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* TODO: This class could use an union to hide bit manipulation */
 class Placeholder {
@@ -62,6 +62,6 @@ class Placeholder {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

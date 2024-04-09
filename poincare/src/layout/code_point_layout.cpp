@@ -3,7 +3,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/src/memory/tree_stack.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 CodePoint CodePointLayout::GetCodePoint(const Tree* node) {
   if (node->isAsciiCodePointLayout()) {
@@ -40,4 +40,4 @@ bool CodePointLayout::IsCodePoint(const Tree* node, CodePoint cp) {
   return node->isCodePointLayout() && GetCodePoint(node) == cp;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

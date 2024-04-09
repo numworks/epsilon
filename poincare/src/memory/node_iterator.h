@@ -8,7 +8,7 @@
 
 #include "tree_ref.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Usage
  *
@@ -274,6 +274,6 @@ class NodeIterator : public MultipleNodesIterator {
 typedef MultipleNodesIterator::NoEditablePolicy NoEditable;
 typedef MultipleNodesIterator::EditablePolicy Editable;
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

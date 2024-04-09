@@ -6,7 +6,7 @@
 #include "parametric.h"
 #include "symbol.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Dimension Dimension::Unit(const Tree* unit) {
   return Unit(Units::DimensionVector::FromBaseUnits(unit),
@@ -14,7 +14,7 @@ Dimension Dimension::Unit(const Tree* unit) {
 }
 
 bool Dimension::DeepCheckListLength(const Tree* t) {
-  using Type = PoincareJ::Type;
+  using Type = Internal::Type;
   // TODO complexity should be linear
   int childLength[t->numberOfChildren()];
   for (int i = 0; const Tree* child : t->children()) {
@@ -444,4 +444,4 @@ bool Dimension::operator==(const Dimension& other) const {
   return true;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

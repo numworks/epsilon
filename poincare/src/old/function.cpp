@@ -104,9 +104,9 @@ Function Function::Builder(const char* name, size_t length,
     name = AliasesLists::k_thetaAliases.mainAlias();
     length = strlen(name);
   }
-  PoincareJ::Tree* tree =
-      PoincareJ::SharedTreeStack->push<PoincareJ::Type::UserFunction>(
-          name, length + 1);
+  Internal::Tree* tree =
+      Internal::SharedTreeStack->push<Internal::Type::UserFunction>(name,
+                                                                    length + 1);
   assert(!child.isUninitialized());
   child.tree()->clone();
 

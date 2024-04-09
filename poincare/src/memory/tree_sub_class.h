@@ -5,7 +5,7 @@
 
 #include "tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* Helper to be inherited to create NewType, a sub-type of Tree with the
  * restrictions that its siblings are of type NewType as well and its children
@@ -50,6 +50,6 @@ struct TreeSubClass : Tree {
 /* TODO have a way (external to C++) to ensure that all our typing helpers do
  * not generate any code in release. */
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -5,7 +5,7 @@
 
 #include "continuous_distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class FisherDistribution final : public ContinuousDistribution {
  public:
@@ -77,6 +77,6 @@ class FisherDistribution final : public ContinuousDistribution {
   static bool D1AndD2AreOK(T d1, T d2);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

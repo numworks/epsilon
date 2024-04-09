@@ -19,10 +19,10 @@ void assert_expression_approximates_to_scalar(
   Shared::GlobalContext globalContext;
   Preferences::SharedPreferences()->enableMixedFractions(
       mixedFractionsParameter);
-  PoincareJ::Tree *e = parse_expression(expression, &globalContext, false);
+  Internal::Tree *e = parse_expression(expression, &globalContext, false);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
-  T result = PoincareJ::Approximation::RootTreeTo<T>(e);
+  T result = Internal::Approximation::RootTreeTo<T>(e);
   e->removeTree();
   bool test = roughly_equal(result, approximation,
                             Poincare::Float<T>::EpsilonLax(), true);
@@ -474,11 +474,11 @@ void assert_expression_approximation_is_bounded(const char *expression,
                                                 T lowBound, T upBound,
                                                 bool upBoundIncluded = false) {
   Shared::GlobalContext globalContext;
-  PoincareJ::Tree *e = parse_expression(expression, &globalContext, true);
+  Internal::Tree *e = parse_expression(expression, &globalContext, true);
   ApproximationContext approximationContext(&globalContext, Cartesian, Radian);
   // TODO_PCJ
 #if 0
-  T result = PoincareJ::Approximation::RootTreeTo<T>(e);
+  T result = Internal::Approximation::RootTreeTo<T>(e);
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(
       result < upBound || (result == upBound && upBoundIncluded), expression);
@@ -2208,7 +2208,7 @@ void assert_expression_approximates_with_value_for_symbol(
     Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
 #if 0
-  PoincareJ::Tree *e = parse_expression(expression, &globalContext, false);
+  Internal::Tree *e = parse_expression(expression, &globalContext, false);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
   T result = e.approximateToScalarWithValueForSymbol<T>(symbol, symbolValue,

@@ -12,37 +12,37 @@ PointOfInterest PointOfInterest::Builder(
     typename Solver<double>::Interest interest, uint32_t data, bool inverted,
     int subCurveIndex) {
   JuniorExpression expr = JuniorExpression::Builder(
-      PoincareJ::SharedTreeStack->push<PoincareJ::Type::PointOfInterest>(
+      Internal::SharedTreeStack->push<Internal::Type::PointOfInterest>(
           abscissa, ordinate, data, static_cast<uint8_t>(interest), inverted,
           static_cast<uint8_t>(subCurveIndex)));
   return static_cast<PointOfInterest &>(expr);
 }
 
 double PointOfInterest::abscissa() const {
-  return PoincareJ::PointOfInterest::GetAbscissa(tree());
+  return Internal::PointOfInterest::GetAbscissa(tree());
 }
 
 double PointOfInterest::ordinate() const {
-  return PoincareJ::PointOfInterest::GetOrdinate(tree());
+  return Internal::PointOfInterest::GetOrdinate(tree());
 }
 
 double PointOfInterest::x() const {
-  return PoincareJ::PointOfInterest::IsInverted(tree()) ? ordinate()
-                                                        : abscissa();
+  return Internal::PointOfInterest::IsInverted(tree()) ? ordinate()
+                                                       : abscissa();
 }
 
 double PointOfInterest::y() const {
-  return PoincareJ::PointOfInterest::IsInverted(tree()) ? abscissa()
-                                                        : ordinate();
+  return Internal::PointOfInterest::IsInverted(tree()) ? abscissa()
+                                                       : ordinate();
 }
 
 int PointOfInterest::subCurveIndex() const {
-  return PoincareJ::PointOfInterest::GetSubCurveIndex(tree());
+  return Internal::PointOfInterest::GetSubCurveIndex(tree());
 }
 
 typename Solver<double>::Interest PointOfInterest::interest() const {
   return static_cast<Solver<double>::Interest>(
-      PoincareJ::PointOfInterest::GetInterest(tree()));
+      Internal::PointOfInterest::GetInterest(tree()));
 }
 
 Coordinate2D<double> PointOfInterest::xy() const {
@@ -51,7 +51,7 @@ Coordinate2D<double> PointOfInterest::xy() const {
 }
 
 uint32_t PointOfInterest::data() const {
-  return PoincareJ::PointOfInterest::GetData(tree());
+  return Internal::PointOfInterest::GetData(tree());
 }
 
 // PointsOfInterestList

@@ -8,7 +8,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 /* TODO_PCJ: Reactivate these tests once we can increase ADVANCED_MAX_DEPTH to
  * 12 and ADVANCED_MAX_BREADTH to 128 */

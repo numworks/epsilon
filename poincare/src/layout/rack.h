@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree_sub_class.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class LayoutCursor;
 
@@ -25,6 +25,6 @@ class Rack : public TreeSubClass<Rack, Layout> {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

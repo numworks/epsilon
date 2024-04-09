@@ -15,7 +15,7 @@
 // Max depth of path advanced reduction can handle
 #define ADVANCED_MAX_DEPTH 6
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class AdvancedSimplification {
  public:
@@ -182,6 +182,6 @@ class AdvancedSimplification {
   };
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

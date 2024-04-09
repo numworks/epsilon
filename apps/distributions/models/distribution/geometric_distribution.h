@@ -14,8 +14,8 @@ namespace Distributions {
 class GeometricDistribution final : public OneParameterDistribution {
  public:
   GeometricDistribution()
-      : OneParameterDistribution(PoincareJ::Distribution::Type::Geometric,
-                                 k_defaultP) {
+      : OneParameterDistribution(
+            Poincare::Internal::Distribution::Type::Geometric, k_defaultP) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {

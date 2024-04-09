@@ -11,7 +11,7 @@
 #include "k_tree.h"
 #include "layout_cursor.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 using BeautifiedLayoutBuilder = Tree* (*)(TreeRef* parameters);
 
 struct BeautificationRule {
@@ -304,6 +304,6 @@ class InputBeautification {
                                    LayoutCursor* layoutCursor);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

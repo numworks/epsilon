@@ -6,7 +6,7 @@
 #include "integer.h"
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Polynomial final {
   /* We opt for the recursive representation.
@@ -139,7 +139,7 @@ private:
 #endif
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif
 /*

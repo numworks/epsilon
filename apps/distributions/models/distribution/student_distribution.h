@@ -11,8 +11,8 @@ namespace Distributions {
 class StudentDistribution : public OneParameterDistribution {
  public:
   StudentDistribution()
-      : OneParameterDistribution(PoincareJ::Distribution::Type::Student,
-                                 k_defaultK) {
+      : OneParameterDistribution(
+            Poincare::Internal::Distribution::Type::Student, k_defaultK) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {

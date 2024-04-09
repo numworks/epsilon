@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Set {
   /*
@@ -19,6 +19,6 @@ class Set {
   static Tree* Difference(Tree* set0, Tree* set1);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

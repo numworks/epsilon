@@ -11,7 +11,7 @@
 #include "distribution.h"
 #include "domain.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 template <typename T>
 T GeometricDistribution::EvaluateAtAbscissa(T x, T p) {
@@ -84,4 +84,4 @@ GeometricDistribution::CumulativeDistributiveInverseForProbability<double>(
 template bool GeometricDistribution::PIsOK(float);
 template bool GeometricDistribution::PIsOK(double);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

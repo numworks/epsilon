@@ -4,7 +4,7 @@
 
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 Tree* LayoutSelection::cloneSelection() const {
   if (!m_node) {
@@ -13,4 +13,4 @@ Tree* LayoutSelection::cloneSelection() const {
   return NAry::CloneSubRange(m_node, leftPosition(), rightPosition());
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

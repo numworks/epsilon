@@ -5,7 +5,7 @@
 
 #include "discrete_distribution.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* We chose the definition:
  * 0 < p <= 1 for distribution of success
@@ -59,6 +59,6 @@ class GeometricDistribution final : public DiscreteDistribution {
   static bool PIsOK(T p);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

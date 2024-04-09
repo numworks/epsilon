@@ -92,7 +92,7 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
    * If it's the case, return false, since implicit
    * addition should not contain any 'ᴇ'.
    * */
-  if (PoincareJ::AppHelpers::ContainsSmallCapitalE(l.tree())) {
+  if (Internal::AppHelpers::ContainsSmallCapitalE(l.tree())) {
     return false;
   }
   // Step 2: Check if units can be implicitly added

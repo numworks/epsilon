@@ -5,7 +5,7 @@
 #include <omg/bit_helper.h>
 #include <poincare/src/memory/k_tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace KTrees {
 
 // TODO: A RackLayout shouldn't have RackLayout children.
@@ -130,6 +130,6 @@ consteval auto operator^(KTree<T1, B1...>, KTree<T2, B2...>) {
 }
 
 }  // namespace KTrees
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

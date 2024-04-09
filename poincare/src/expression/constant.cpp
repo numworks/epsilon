@@ -2,7 +2,7 @@
 
 #include "unit_si_constants.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 using namespace Units;
 
@@ -47,4 +47,4 @@ const Constant::ConstantInfo& Constant::Info(const Tree* constant) {
   return k_constants[index];
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

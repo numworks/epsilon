@@ -5,13 +5,13 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Parser final {
  public:
   static Tree* Parse(const Tree* node, Poincare::Context* context);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

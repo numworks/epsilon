@@ -9,7 +9,7 @@
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Token {
  public:
@@ -97,6 +97,6 @@ class Token {
   size_t m_length;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

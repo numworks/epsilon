@@ -3,7 +3,7 @@
 
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Symbol final {
  public:
@@ -34,6 +34,6 @@ class Symbol final {
   static const char* GetName(const Tree* node);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

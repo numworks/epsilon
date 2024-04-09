@@ -12,7 +12,7 @@
 #include <iostream>
 #endif
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 /* A block is a byte-long object containing either a type or some value.
  * Several blocks can form a node, like:
@@ -368,7 +368,7 @@ class Tree : public TypeBlock {
 
   // Forbid tree == Type::Add
   using TypeBlock::operator==, TypeBlock::operator!=,
-      TypeBlock::operator PoincareJ::Type;
+      TypeBlock::operator Internal::Type;
 
   // A tree is made of 1 TypeBlock (inherited) and nodeSize()-1 ValueBlocks
   // Should be last - and most likely only - member
@@ -383,6 +383,6 @@ static_assert(sizeof(Tree) == sizeof(Block));
  * pointers. */
 void SwapTreesPointers(Tree** u, Tree** v);
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

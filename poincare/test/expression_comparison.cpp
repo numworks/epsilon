@@ -3,7 +3,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 void assert_comparison_equals(const Tree* node0, const Tree* node1,
                               int result) {

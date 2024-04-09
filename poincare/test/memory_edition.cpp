@@ -3,7 +3,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_tree_stack) {
   TreeStack* pool = SharedTreeStack;

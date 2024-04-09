@@ -1138,8 +1138,8 @@ Layout OExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   if (isUninitialized()) {
     return Layout();
   }
-  PoincareJ::Tree *exp = PoincareJ::FromPoincareExpression(*this);
-  PoincareJ::Tree *lay = PoincareJ::Layoutter::LayoutExpression(
+  Internal::Tree *exp = Internal::FromPoincareExpression(*this);
+  Internal::Tree *lay = Internal::Layoutter::LayoutExpression(
       exp, false, numberOfSignificantDigits, floatDisplayMode);
   return JuniorLayout::Builder(lay);
 }

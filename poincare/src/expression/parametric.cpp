@@ -9,7 +9,7 @@
 #include "simplification.h"
 #include "variables.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 uint8_t Parametric::FunctionIndex(const Tree* t) {
   return FunctionIndex(t->type());
@@ -189,4 +189,4 @@ bool Parametric::Explicit(Tree* expr) {
   return true;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

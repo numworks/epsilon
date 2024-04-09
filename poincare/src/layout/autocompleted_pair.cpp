@@ -4,7 +4,7 @@
 
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 bool AutocompletedPair::IsAutoCompletedBracketPairCodePoint(CodePoint c,
                                                             TypeBlock* type,
@@ -334,4 +334,4 @@ Tree* AutocompletedPair::ChildOnSide(Tree* node, Side side) {
   return child;
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

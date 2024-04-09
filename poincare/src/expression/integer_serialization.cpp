@@ -8,7 +8,7 @@ using Poincare::Preferences;
 using Poincare::PrintFloat;
 using Poincare::SerializationHelper::CodePoint;
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
                                         WorkingBuffer* workingBuffer) {
@@ -128,4 +128,4 @@ size_t IntegerHandler::serialize(char* buffer, size_t bufferSize,
   return serializeInDecimal(buffer, bufferSize, workingBuffer);
 }
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

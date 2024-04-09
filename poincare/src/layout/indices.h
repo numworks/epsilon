@@ -5,7 +5,7 @@
 
 #include "vertical_offset.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 namespace TwoRows {
 // Fraction, point2D and binomial
@@ -80,6 +80,6 @@ constexpr static int k_upperBoundIndex = 1;
 constexpr static int k_functionIndex = 2;
 }  // namespace ListSequence
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -6,7 +6,7 @@
 
 #include "helper.h"
 
-using namespace PoincareJ;
+using namespace Poincare::Internal;
 
 static Tree* CreateInteger(const char* digits) {
   size_t length = strlen(digits);

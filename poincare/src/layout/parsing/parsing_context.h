@@ -3,7 +3,7 @@
 
 #include <poincare/old/context.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class ParsingContext {
  public:
@@ -36,6 +36,6 @@ class ParsingContext {
   ParsingMethod m_parsingMethod;
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -7,7 +7,7 @@
 #include "code_point_layout.h"
 #include "k_tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 namespace AppHelpers {
 
 void MakeRightMostParenthesisTemporary(Tree* tree) {
@@ -43,7 +43,7 @@ bool ContainsSmallCapitalE(const Tree* rack) {
   });
 }
 
-void SanitizeRack(PoincareJ::Tree* rack) {
+void SanitizeRack(Internal::Tree* rack) {
   if (!rack->isRackLayout()) {
     rack->cloneNodeAtNode(KRackL.node<1>);
   }
@@ -61,7 +61,7 @@ void SanitizeRack(PoincareJ::Tree* rack) {
   }
 }
 
-bool IsSanitizedRack(const PoincareJ::Tree* rack) {
+bool IsSanitizedRack(const Internal::Tree* rack) {
   if (!rack->isRackLayout()) {
     return false;
   }
@@ -79,4 +79,4 @@ bool IsSanitizedRack(const PoincareJ::Tree* rack) {
 }
 
 }  // namespace AppHelpers
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal

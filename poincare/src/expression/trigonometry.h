@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree_ref.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Trigonometry final {
  public:
@@ -29,6 +29,6 @@ class Trigonometry final {
   EDITION_REF_WRAP_1(SimplifyTrigSecondElement, bool*);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

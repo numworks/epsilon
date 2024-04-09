@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 class Tree;
 }
 
@@ -32,9 +32,9 @@ class Context {
                                                          int length) = 0;
   const JuniorExpression expressionForSymbolAbstract(
       const SymbolAbstract& symbol, bool clone);
-  const PoincareJ::Tree* treeForSymbolIdentifier(const char* identifier,
-                                                 int length,
-                                                 SymbolAbstractType type);
+  const Internal::Tree* treeForSymbolIdentifier(const char* identifier,
+                                                int length,
+                                                SymbolAbstractType type);
   virtual bool setExpressionForSymbolAbstract(
       const JuniorExpression& expression, const SymbolAbstract& symbol) = 0;
   virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}

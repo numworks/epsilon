@@ -5,7 +5,7 @@
 
 #include "dimension.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 struct Matrix {
   static uint8_t NumberOfRows(const Tree* matrix) {
@@ -48,6 +48,6 @@ struct Matrix {
   static bool SimplifySwitch(Tree* u);
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

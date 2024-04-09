@@ -45,8 +45,8 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 void LayoutField::ContentView::clearLayout() {
   Layout l = KRackL();
   m_layoutView.setLayout(l);
-  m_cursor =
-      PoincareJ::LayoutBufferCursor(l, const_cast<PoincareJ::Tree *>(l.tree()));
+  m_cursor = Poincare::Internal::LayoutBufferCursor(
+      l, const_cast<Poincare::Internal::Tree *>(l.tree()));
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -56,7 +56,7 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
 
 void LayoutField::ContentView::copySelection(Poincare::Context *context,
                                              bool intoStoreMenu) {
-  PoincareJ::LayoutSelection selection = m_cursor.selection();
+  Poincare::Internal::LayoutSelection selection = m_cursor.selection();
   if (selection.isEmpty()) {
     if (intoStoreMenu) {
       App::app()->storeValue();
@@ -65,7 +65,7 @@ void LayoutField::ContentView::copySelection(Poincare::Context *context,
   }
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
-  PoincareJ::Tree *t = selection.cloneSelection();
+  Poincare::Internal::Tree *t = selection.cloneSelection();
   Layout layoutToParse = JuniorLayout::Builder(t);
 
   layoutToParse.serializeParsedExpression(buffer, bufferSize,
@@ -97,7 +97,7 @@ void LayoutField::ContentView::layoutSubviews(bool force) {
 
 KDRect LayoutField::ContentView::cursorRect() const {
   // TODO forward cursor through the API
-  PoincareJ::RackLayout::s_layoutCursor = &m_cursor;
+  Poincare::Internal::RackLayout::s_layoutCursor = &m_cursor;
   KDPoint cursorTopLeftPosition = m_layoutView.drawingOrigin().translatedBy(
       m_cursor.cursorAbsoluteOrigin(font()));
   if (!m_isEditing) {
@@ -113,7 +113,7 @@ KDRect LayoutField::ContentView::cursorRect() const {
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
     : m_cursor(), m_layoutView(&m_cursor, format), m_isEditing(false) {
-  PoincareJ::RackLayout::s_layoutCursor = &m_cursor;
+  Poincare::Internal::RackLayout::s_layoutCursor = &m_cursor;
   clearLayout();
 }
 
@@ -211,14 +211,14 @@ bool LayoutField::prepareToEdit() {
 bool LayoutField::findXNT(char *buffer, size_t bufferSize, int xntIndex,
                           size_t *cycleSize) {
   if (linearMode()) {
-    PoincareJ::RackLayoutDecoder decoder(cursor()->cursorNode(),
-                                         cursor()->position());
-    return PoincareJ::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
-                                      cycleSize);
+    Poincare::Internal::RackLayoutDecoder decoder(cursor()->cursorNode(),
+                                                  cursor()->position());
+    return Poincare::Internal::FindXNTSymbol1D(decoder, buffer, bufferSize,
+                                               xntIndex, cycleSize);
   }
-  return PoincareJ::FindXNTSymbol2D(cursor()->cursorNode(),
-                                    cursor()->rootNode(), buffer, bufferSize,
-                                    xntIndex, cycleSize);
+  return Poincare::Internal::FindXNTSymbol2D(cursor()->cursorNode(),
+                                             cursor()->rootNode(), buffer,
+                                             bufferSize, xntIndex, cycleSize);
 }
 
 void LayoutField::removePreviousXNT() {
@@ -241,8 +241,8 @@ void LayoutField::reload(KDSize previousSize) {
   markWholeFrameAsDirty();
 }
 
-using LayoutInsertionMethod =
-    void (PoincareJ::LayoutBufferCursor::*)(Poincare::Context *context);
+using LayoutInsertionMethod = void (Poincare::Internal::LayoutBufferCursor::*)(
+    Poincare::Context *context);
 
 bool LayoutField::insertText(const char *text, bool indentation,
                              bool forceCursorRightOfText) {
@@ -264,18 +264,19 @@ bool LayoutField::insertText(const char *text, bool indentation,
     return false;
   }
 
-  PoincareJ::LayoutBufferCursor *cursor = this->cursor();
+  Poincare::Internal::LayoutBufferCursor *cursor = this->cursor();
   // Handle special cases
   constexpr Ion::Events::Event specialEvents[] = {
       Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
       Ion::Events::Sqrt,     Ion::Events::Square, Ion::Events::EE};
   constexpr LayoutInsertionMethod handleSpecialEvents[] = {
-      &PoincareJ::LayoutBufferCursor::addFractionLayoutAndCollapseSiblings,
-      &PoincareJ::LayoutBufferCursor::addEmptyExponentialLayout,
-      &PoincareJ::LayoutBufferCursor::addEmptyPowerLayout,
-      &PoincareJ::LayoutBufferCursor::addEmptySquareRootLayout,
-      &PoincareJ::LayoutBufferCursor::addEmptySquarePowerLayout,
-      &PoincareJ::LayoutBufferCursor::addEmptyTenPowerLayout};
+      &Poincare::Internal::LayoutBufferCursor::
+          addFractionLayoutAndCollapseSiblings,
+      &Poincare::Internal::LayoutBufferCursor::addEmptyExponentialLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptyPowerLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptySquareRootLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptySquarePowerLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptyTenPowerLayout};
   constexpr int numberOfSpecialEvents = std::size(specialEvents);
   static_assert(numberOfSpecialEvents == std::size(handleSpecialEvents),
                 "Wrong number of layout insertion methods");
@@ -347,7 +348,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
    * be analyzed to know if the parenthesis should be made temporary or not.
    * */
   if (!forceCursorRightOfText) {
-    PoincareJ::AppHelpers::MakeRightMostParenthesisTemporary(
+    Poincare::Internal::AppHelpers::MakeRightMostParenthesisTemporary(
         static_cast<JuniorLayout &>(resultLayout).tree());
   }
 
@@ -397,14 +398,15 @@ void LayoutField::restoreContent(const char *buffer, size_t size,
   if (size == 0) {
     return;
   }
-  JuniorLayout l =
-      JuniorLayout::Builder(reinterpret_cast<const PoincareJ::Tree *>(buffer));
+  JuniorLayout l = JuniorLayout::Builder(
+      reinterpret_cast<const Poincare::Internal::Tree *>(buffer));
   setLayout(l);
   if (*cursorOffset != -1) {
-    *cursor() = PoincareJ::LayoutBufferCursor(l, l.tree() + *cursorOffset);
+    *cursor() =
+        Poincare::Internal::LayoutBufferCursor(l, l.tree() + *cursorOffset);
     cursor()->setPosition(*position);
   } else {
-    *cursor() = PoincareJ::LayoutBufferCursor(l, l.tree());
+    *cursor() = Poincare::Internal::LayoutBufferCursor(l, l.tree());
   }
 }
 

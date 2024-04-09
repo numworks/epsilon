@@ -9,7 +9,7 @@
 #include "aliases.h"
 #include "unit.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Constant {
  public:
@@ -34,6 +34,6 @@ class Constant {
   static const ConstantInfo k_constants[k_numberOfConstants];
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

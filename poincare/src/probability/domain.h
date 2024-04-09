@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Context;
 
@@ -107,6 +107,6 @@ class Domain {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

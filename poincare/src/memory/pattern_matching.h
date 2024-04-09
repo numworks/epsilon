@@ -8,7 +8,7 @@
 #include "placeholder.h"
 #include "tree.h"
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 struct ContextTrees {
   const Tree* KA = nullptr;
@@ -211,6 +211,6 @@ constexpr auto KG_s = KZeroOrMorePlaceholder<Placeholder::Tag::G>();
 constexpr auto KH_s = KZeroOrMorePlaceholder<Placeholder::Tag::H>();
 }  // namespace KTrees
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

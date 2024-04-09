@@ -4,7 +4,7 @@
 #include <poincare/old/preferences.h>
 #include <poincare/src/memory/tree.h>
 
-namespace PoincareJ {
+namespace Poincare::Internal {
 
 class Decimal final {
  public:
@@ -23,6 +23,6 @@ class Decimal final {
   }
 };
 
-}  // namespace PoincareJ
+}  // namespace Poincare::Internal
 
 #endif

@@ -8,7 +8,7 @@
 
 namespace Poincare::Internal {
 
-/* Rationals should only exist in their irreducible form, this is ensure from
+/* Rationals should only exist in their irreducible form, this is ensured at
  * Rational Tree creation.
  * Since many form are forbidden, there could be room for a rational size
  * optimization. */

@@ -121,7 +121,7 @@ Since this step is applied long after projection step, the Tree replacement must
 
 In practice, we replace `tanRad(x)` (projected tree for tan) into `trig(x,1) * trig(x, 0)^(-1)`.
 
-This practice tends to slow down advanced reduction so we limit it to the very minimal.
+This practice tends to slow down advanced reduction so we limit it to the very minimum.
 
 For example, advanced trigonometry functions are projected in projection because we don't really want them to appear in results.
 

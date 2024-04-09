@@ -82,15 +82,20 @@ class MessagePopUpControllerWithCustomCancel : public PopUpController {
 
 class BufferPopUpController : public PopUpController {
  public:
+  constexpr static int k_maxNumberOfLines = 5;
+  using BufferTextView =
+      MultipleLinesBufferTextView<KDFont::Size::Small, k_maxNumberOfLines>;
+  constexpr static size_t MaxTextSize() {
+    return BufferTextView::MaxTextSize();
+  }
+
   BufferPopUpController(Invocation OkInvocation, I18n::Message warningMessage,
                         I18n::Message okMessage, I18n::Message cancelMessage);
   void setContentText(const char* text);
   void setMessageWithPlaceholders(I18n::Message message, ...);
 
  private:
-  constexpr static int k_maxNumberOfLines = 5;
-  MultipleLinesBufferTextView<KDFont::Size::Small, k_maxNumberOfLines>
-      m_bufferTextView;
+  BufferTextView m_bufferTextView;
 };
 
 }  // namespace Escher

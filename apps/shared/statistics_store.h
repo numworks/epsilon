@@ -34,6 +34,8 @@ class StatisticsStore : public DoublePairStore {
     return DoublePairStore::valueValidInColumn(value, relativeColumn) &&
            (relativeColumn != 1 || value >= 0.0);
   }
+  size_t clearPopUpText(int series, int column, char* buffer,
+                        size_t bufferSize) const;
 
  protected:
   void initDatasets();

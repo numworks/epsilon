@@ -55,6 +55,8 @@ class StoreTableCell : public DoubleColumnTableCell,
   size_t fillColumnName(int column, char *buffer) override {
     return fillColumnNameFromStore(column, buffer);
   }
+  void setClearPopUpContent() override;
+
   Escher::InputViewController *inputViewController() override;
   void reload() override;
   CategoricalController *categoricalController() override;

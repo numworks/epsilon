@@ -25,12 +25,12 @@ class ClearColumnHelper {
 
  protected:
   virtual int numberOfElementsInColumn(int column) const = 0;
+  virtual void setClearPopUpContent();
 
   Shared::BufferPopUpController m_confirmPopUpController;
 
  private:
   virtual void clearSelectedColumn() = 0;
-  virtual void setClearPopUpContent();
   virtual bool isColumnClearable(int column) { return true; }
 };
 

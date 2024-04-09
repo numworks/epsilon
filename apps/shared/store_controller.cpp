@@ -268,4 +268,11 @@ void StoreController::memoizeFormula(Poincare::Layout formula, int index) {
   StoreApp::storeApp()->storeAppSnapshot()->memoizeFormula(formula, index);
 }
 
+void StoreController::setClearPopUpContent() {
+  constexpr size_t bufferSize = Shared::BufferPopUpController::MaxTextSize();
+  char buffer[bufferSize];
+  clearPopUpText(selectedColumn(), buffer, bufferSize);
+  m_confirmPopUpController.setContentText(buffer);
+}
+
 }  // namespace Shared

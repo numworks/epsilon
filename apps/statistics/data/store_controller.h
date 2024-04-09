@@ -66,7 +66,6 @@ class StoreController : public Shared::StoreController {
   double dataAtLocation(int column, int row) override;
   void setTitleCellText(Escher::HighlightCell* titleCell, int column) override;
   void clearSelectedColumn() override;
-  void setClearPopUpContent() override;
   bool isColumnClearable(int column) override {
     return !isCumulatedFrequencyColumn(column);
   }

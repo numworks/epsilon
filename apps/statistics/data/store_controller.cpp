@@ -144,11 +144,9 @@ void StoreController::clearSelectedColumn() {
 }
 
 void StoreController::setClearPopUpContent() {
-  int series = m_store->seriesAtColumn(selectedColumn());
-  int column = m_store->relativeColumn(selectedColumn());
   constexpr size_t bufferSize = Shared::BufferPopUpController::MaxTextSize();
   char buffer[bufferSize];
-  m_store->clearPopUpText(series, column, buffer, bufferSize);
+  m_store->clearPopUpText(selectedColumn(), buffer, bufferSize);
   m_confirmPopUpController.setContentText(buffer);
 }
 

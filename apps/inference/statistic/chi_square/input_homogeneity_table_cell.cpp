@@ -1,6 +1,6 @@
 #include "input_homogeneity_table_cell.h"
 
-#include <poincare/old/print_int.h>
+#include <poincare/print_int.h>
 #include <shared/column_parameter_controller.h>
 
 #include "input_homogeneity_controller.h"

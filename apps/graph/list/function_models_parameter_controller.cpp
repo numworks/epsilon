@@ -8,7 +8,7 @@
 #include <poincare/old/integer.h>
 #include <poincare/old/layout.h>
 #include <poincare/old/preferences.h>
-#include <poincare/old/print_int.h>
+#include <poincare/print_int.h>
 #include <string.h>
 
 #include "../app.h"

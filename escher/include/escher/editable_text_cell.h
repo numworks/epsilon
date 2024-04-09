@@ -6,7 +6,7 @@
 #include <escher/responder.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 namespace Escher {
 

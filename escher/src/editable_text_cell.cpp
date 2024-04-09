@@ -2,7 +2,7 @@
 #include <escher/container.h>
 #include <escher/editable_text_cell.h>
 #include <escher/palette.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 namespace Escher {
 

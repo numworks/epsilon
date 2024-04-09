@@ -4,7 +4,7 @@
 #include <poincare/old/expression_node.h>
 #include <poincare/old/float.h>
 #include <poincare/old/helpers.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 #include <poincare/src/memory/tree.h>
 #include <quiz.h>
 

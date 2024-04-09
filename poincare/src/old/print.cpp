@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/old/print.h>
-#include <poincare/old/print_float.h>
-#include <poincare/old/print_int.h>
+#include <poincare/print_float.h>
+#include <poincare/print_int.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <string.h>

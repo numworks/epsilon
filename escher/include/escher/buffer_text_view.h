@@ -3,7 +3,7 @@
 
 #include <escher/i18n.h>
 #include <escher/text_view.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 #include <stdarg.h>
 
 namespace Escher {

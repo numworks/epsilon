@@ -1,7 +1,7 @@
 #include "interval.h"
 
 #include <assert.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 #include <cmath>
 

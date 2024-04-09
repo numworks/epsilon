@@ -1,7 +1,7 @@
 #ifndef INFERENCE_CONSTANTS_H
 #define INFERENCE_CONSTANTS_H
 
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 namespace Inference {
 

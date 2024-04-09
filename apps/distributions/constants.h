@@ -1,7 +1,7 @@
 #ifndef DISTRIBUTIONS_CONSTANTS_H
 #define DISTRIBUTIONS_CONSTANTS_H
 
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 namespace Distributions {
 

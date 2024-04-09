@@ -1,7 +1,7 @@
 #include "elements_view_data_source.h"
 
 #include <assert.h>
-#include <poincare/old/print_int.h>
+#include <poincare/print_int.h>
 
 #include "app.h"
 

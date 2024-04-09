@@ -150,8 +150,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   preferences.cpp \
   preferences_in_storage.cpp \
   print.cpp \
-  print_float.cpp \
-  print_int.cpp \
   product.cpp \
   randint.cpp \
   randint_no_repeat.cpp \
@@ -207,6 +205,8 @@ tests_src += $(addprefix poincare/test/old/,\
 
 poincare_bench_src = $(addprefix poincare/src/,\
   init.cpp \
+  print_float.cpp \
+  print_int.cpp \
 )
 
 poincare_bench_src = $(addprefix poincare/src/old/,\
@@ -215,8 +215,6 @@ poincare_bench_src = $(addprefix poincare/src/old/,\
   integer.cpp \
   preferences.cpp \
   preferences_no_storage.cpp \
-  print_float.cpp \
-  print_int.cpp \
   serialization_helper.cpp \
   pool_handle.cpp \
   pool_object.cpp \
@@ -298,6 +296,8 @@ poincare_src += $(addprefix poincare/src/,\
   memory/tree.cpp \
   memory/tree_ref.cpp \
   memory/value_block.cpp \
+  print_float.cpp \
+  print_int.cpp \
   poincare.cpp \
 )
 

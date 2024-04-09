@@ -1,7 +1,7 @@
 #include "decimal.h"
 
-#include <poincare/old/print_float.h>
 #include <poincare/old/serialization_helper.h>
+#include <poincare/print_float.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
 

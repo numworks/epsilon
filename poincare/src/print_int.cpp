@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <omg/ieee754.h>
-#include <poincare/old/print_int.h>
+#include <poincare/print_int.h>
 
 #include <cmath>
 

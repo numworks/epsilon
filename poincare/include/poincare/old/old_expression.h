@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_REFERENCE_H
 
 #include <ion/storage/file_system.h>
+#include <poincare/print_float.h>
 
 #include <utility>
 
@@ -12,7 +13,6 @@
 #include "layout.h"
 #include "pool_handle.h"
 #include "preferences.h"
-#include "print_float.h"
 
 namespace Poincare {
 

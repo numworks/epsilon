@@ -2,7 +2,7 @@
 #define OSTREAM
 
 #include <ion/console.h>
-#include <poincare/old/print_int.h>
+#include <poincare/print_int.h>
 
 namespace std {
 

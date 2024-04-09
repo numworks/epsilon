@@ -1,6 +1,6 @@
 #include "single_element_view.h"
 
-#include <poincare/old/print_int.h>
+#include <poincare/print_int.h>
 
 #include "app.h"
 

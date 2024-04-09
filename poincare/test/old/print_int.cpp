@@ -1,4 +1,4 @@
-#include <poincare/old/print_int.h>
+#include <poincare/print_int.h>
 
 #include "helper.h"
 

@@ -4,7 +4,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/responder.h>
 #include <escher/text_field.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 #include "banner_view.h"
 

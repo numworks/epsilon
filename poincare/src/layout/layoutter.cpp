@@ -1,6 +1,6 @@
 #include "layoutter.h"
 
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/constant.h>

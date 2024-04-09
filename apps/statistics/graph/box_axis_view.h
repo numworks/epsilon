@@ -3,7 +3,7 @@
 
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 #include "../store.h"
 #include "box_range.h"

@@ -2,9 +2,8 @@
 #define POINCARE_PRINT_FLOAT_H
 
 #include <assert.h>
+#include <poincare/old/preferences.h>
 #include <stdint.h>
-
-#include "preferences.h"
 
 namespace Poincare {
 

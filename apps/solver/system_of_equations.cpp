@@ -7,10 +7,10 @@
 #include <poincare/old/empty_context.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/polynomial.h>
-#include <poincare/old/print_int.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>
 #include <poincare/old/zoom.h>
+#include <poincare/print_int.h>
 
 #include "app.h"
 

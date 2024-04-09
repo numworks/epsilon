@@ -2,7 +2,7 @@
 #define SHARED_SUM_GRAPH_CONTROLLER_H
 
 #include <escher/layout_view.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 #include "expiring_pointer.h"
 #include "function.h"

@@ -3,9 +3,9 @@
 #include <apps/i18n.h>
 #include <poincare/old/expression.h>
 #include <poincare/old/multiplication.h>
-#include <poincare/old/print_float.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/unit.h>
+#include <poincare/print_float.h>
 
 #include <array>
 #include <cmath>

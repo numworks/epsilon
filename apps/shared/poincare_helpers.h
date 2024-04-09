@@ -4,8 +4,8 @@
 #include <apps/global_preferences.h>
 #include <poincare/old/expression.h>
 #include <poincare/old/preferences.h>
-#include <poincare/old/print_float.h>
 #include <poincare/old/solver.h>
+#include <poincare/print_float.h>
 
 namespace Shared {
 

@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <float.h>
 #include <poincare/old/preferences.h>
-#include <poincare/old/print_int.h>
 #include <poincare/old/symbol.h>
+#include <poincare/print_int.h>
 #include <string.h>
 
 #include <algorithm>

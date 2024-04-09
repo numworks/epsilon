@@ -6,9 +6,9 @@
 #include <poincare/old/k_tree.h>
 #include <poincare/old/layout.h>
 #include <poincare/old/preferences.h>
-#include <poincare/old/print_int.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/symbol_abstract.h>
+#include <poincare/print_int.h>
 
 #include <algorithm>
 

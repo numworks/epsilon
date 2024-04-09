@@ -3,7 +3,7 @@
 #include <ion/backlight.h>
 #include <ion/display.h>
 #include <ion/post_and_hardware_tests.h>
-#include <poincare/old/print_int.h>
+#include <poincare/print_int.h>
 
 using namespace Poincare;
 

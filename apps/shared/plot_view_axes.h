@@ -1,7 +1,7 @@
 #ifndef SHARED_PLOT_VIEW_AXES_H
 #define SHARED_PLOT_VIEW_AXES_H
 
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 #include "plot_view.h"
 

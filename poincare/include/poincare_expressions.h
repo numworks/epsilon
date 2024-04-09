@@ -90,7 +90,6 @@
 #include <poincare/old/point.h>
 #include <poincare/old/power.h>
 #include <poincare/old/preferences.h>
-#include <poincare/old/print_float.h>
 #include <poincare/old/product.h>
 #include <poincare/old/randint.h>
 #include <poincare/old/randint_no_repeat.h>
@@ -115,5 +114,6 @@
 #include <poincare/old/vector_cross.h>
 #include <poincare/old/vector_dot.h>
 #include <poincare/old/vector_norm.h>
+#include <poincare/print_float.h>
 
 #endif

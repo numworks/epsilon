@@ -4,7 +4,7 @@
 #include <apps/shared/banner_view.h>
 #include <escher/buffer_text_view.h>
 #include <escher/responder.h>
-#include <poincare/old/print_float.h>
+#include <poincare/print_float.h>
 
 namespace Regression {
 

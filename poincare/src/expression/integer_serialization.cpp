@@ -1,5 +1,5 @@
-#include <poincare/old/print_float.h>
 #include <poincare/old/serialization_helper.h>
+#include <poincare/print_float.h>
 
 #include "integer.h"
 #include "sign.h"

@@ -35,6 +35,10 @@ class StatisticsStore : public DoublePairStore {
            (relativeColumn != 1 || value >= 0.0);
   }
   size_t clearPopUpText(int column, char* buffer, size_t bufferSize) const;
+  ClearType clearType(int relativeColumn) const override {
+    assert(relativeColumn == 0 || relativeColumn == 1);
+    return relativeColumn == 0 ? ClearType::ClearTable : ClearType::ResetColumn;
+  }
 
  protected:
   void initDatasets();

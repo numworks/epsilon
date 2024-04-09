@@ -15,10 +15,11 @@ void StatisticsStore::invalidateSortedIndexes() {
 }
 
 void StatisticsStore::clearColumn(int series, int column) {
-  if (column == 0) {
+  ClearType type = clearType(column);
+  if (type == ClearType::ClearTable) {
     deleteAllPairsOfSeries(series);
   } else {
-    assert(column == 1);
+    assert(type == ClearType::ResetColumn);
     // Column won't be empty, all values are set to 1
     resetColumn(series, column);
   }

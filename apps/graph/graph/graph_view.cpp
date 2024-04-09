@@ -295,11 +295,12 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
     Curve2DEvaluation<double> evaluationDouble =
         subCurveEvaluation<double>(f, i);
     secondCurve.setPrecisionOptions(true, evaluationDouble, discontinuity);
-    Curve2D pLower = patternLower;
-    Curve2D pUpper = patternUpper;
-    if (hasTwoCurves && i == 1) {
+    Curve2D pLower, pUpper;
+    if (i == 0) {
+      pLower = patternLower;
+      pUpper = patternUpper;
+    } else if (hasTwoCurves && i == 1) {
       pLower = patternLower2;
-      pUpper = Curve2D();
     }
     secondCurve.setPatternOptions(pattern, patternStart, patternEnd, pLower,
                                   pUpper, patternWithoutCurve, axis);

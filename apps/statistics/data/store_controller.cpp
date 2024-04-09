@@ -144,20 +144,12 @@ void StoreController::clearSelectedColumn() {
 }
 
 void StoreController::setClearPopUpContent() {
-  int column = m_store->relativeColumn(selectedColumn());
-  assert(column == 0 || column == 1);
   int series = m_store->seriesAtColumn(selectedColumn());
-  constexpr size_t bufferSize = DoublePairStore::k_tableNameLength;
+  int column = m_store->relativeColumn(selectedColumn());
+  constexpr size_t bufferSize = Shared::BufferPopUpController::MaxTextSize();
   char buffer[bufferSize];
-  I18n::Message message = I18n::Message::Default;
-  if (column == 0) {
-    m_store->tableName(series, buffer, bufferSize);
-    message = I18n::Message::ClearTableConfirmation;
-  } else {
-    fillColumnName(selectedColumn(), buffer);
-    message = I18n::Message::ResetFreqConfirmation;
-  }
-  m_confirmPopUpController.setMessageWithPlaceholders(message, buffer);
+  m_store->clearPopUpText(series, column, buffer, bufferSize);
+  m_confirmPopUpController.setContentText(buffer);
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j,

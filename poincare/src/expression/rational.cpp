@@ -1,11 +1,14 @@
 #include "rational.h"
 
-#include <poincare/include/poincare.h>
 #include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/value_block.h>
 
 #include "k_tree.h"
 #include "number.h"
+
+#if POINCARE_POOL_VISUALIZATION
+#include <poincare/include/poincare.h>
+#endif
 
 namespace Poincare::Internal {
 

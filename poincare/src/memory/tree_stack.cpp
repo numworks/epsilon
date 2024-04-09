@@ -2,13 +2,16 @@
 
 #include <assert.h>
 #include <omg/memory.h>
-#include <poincare/include/poincare.h>
 #include <poincare/old/junior_layout.h>
 
 #include <algorithm>
 
 #include "exception_checkpoint.h"
 #include "node_constructor.h"
+
+#if POINCARE_TREE_LOG
+#include <poincare/include/poincare.h>
+#endif
 
 namespace Poincare::Internal {
 

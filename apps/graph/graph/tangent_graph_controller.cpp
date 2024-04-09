@@ -52,14 +52,16 @@ void TangentGraphController::didBecomeFirstResponder() {
 
 bool TangentGraphController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
+  /* TODO: factorise with
+   * InteractiveCurveViewController::textFieldDidFinishEditing */
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
   ExpiringPointer<ContinuousFunction> f = function();
-  double y =
-      f->evaluate2DAtParameter(floatBody, App::app()->localContext()).y();
-  m_cursor->moveTo(floatBody, floatBody, y);
+  Coordinate2D<double> xy =
+      f->evaluateXYAtParameter(floatBody, App::app()->localContext());
+  m_cursor->moveTo(floatBody, xy.x(), xy.y());
   panToMakeCursorVisible();
   reloadBannerView();
   curveView()->reload();

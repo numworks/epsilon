@@ -1,5 +1,4 @@
-#include <ion.h>
-#include <ion/src/shared/crc32_eat_byte.h>
+#include <ion/crc.h>
 
 namespace Ion {
 

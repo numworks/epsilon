@@ -1,7 +1,8 @@
 #ifndef POINCARE_POINT_OF_INTEREST_H
 #define POINCARE_POINT_OF_INTEREST_H
 
-#include "expression.h"
+#include <poincare/expression.h>
+
 #include "solver.h"
 
 namespace Poincare {

@@ -1,4 +1,4 @@
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/list.h>
 #include <poincare/old/list_minimum.h>
 #include <poincare/old/serialization_helper.h>

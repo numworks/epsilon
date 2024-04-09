@@ -3,9 +3,9 @@
 
 #include <apps/i18n.h>
 #include <omg/bit_helper.h>
+#include <poincare/expression.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/conic.h>
-#include <poincare/old/expression.h>
 #include <poincare/old/helpers.h>
 #include <poincare/old/symbol.h>
 

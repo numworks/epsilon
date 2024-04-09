@@ -1,9 +1,9 @@
 #include <assert.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/approximation_helper.h>
 #include <poincare/old/constant.h>
 #include <poincare/old/division.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/naperian_logarithm.h>
 #include <poincare/old/nth_root.h>
 #include <poincare/old/power.h>

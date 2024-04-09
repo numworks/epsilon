@@ -1,5 +1,5 @@
-#include <poincare/old/expression.h>
-#include <poincare/old/layout.h>
+#include <poincare/expression.h>
+#include <poincare/layout.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/src/layout/rack_layout.h>
 

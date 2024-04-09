@@ -1,9 +1,9 @@
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/expression.h>
+#include <poincare/layout.h>
 #include <poincare/old/context.h>
-#include <poincare/old/expression.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>

@@ -2,7 +2,7 @@
 #define APPS_SHARED_EXPRESSION_FUNCTION_TITLE_CELL_H
 
 #include <escher/even_odd_expression_cell.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 #include "function_title_cell.h"
 

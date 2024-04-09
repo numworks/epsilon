@@ -1,7 +1,7 @@
+#include <poincare/layout.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/cosine.h>
 #include <poincare/old/cotangent.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/sine.h>

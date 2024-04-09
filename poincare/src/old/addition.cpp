@@ -1,9 +1,9 @@
 #include <assert.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/complex_cartesian.h>
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>

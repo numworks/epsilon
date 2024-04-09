@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/division.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>

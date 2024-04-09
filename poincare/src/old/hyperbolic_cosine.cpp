@@ -1,7 +1,7 @@
+#include <poincare/layout.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/hyperbolic_cosine.h>
 #include <poincare/old/hyperbolic_sine.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/serialization_helper.h>
 
 namespace Poincare {

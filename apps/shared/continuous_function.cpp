@@ -2,13 +2,13 @@
 
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
+#include <poincare/layout.h>
 #include <poincare/old/cosine.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/division.h>
 #include <poincare/old/function.h>
 #include <poincare/old/helpers.h>
 #include <poincare/old/integral.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list_sort.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>

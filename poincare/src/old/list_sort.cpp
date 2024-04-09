@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/helpers.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list_complex.h>
 #include <poincare/old/list_sort.h>
 #include <poincare/old/point_evaluation.h>

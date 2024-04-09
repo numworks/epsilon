@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <ion.h>
 #include <omg/ieee754.h>
+#include <poincare/layout.h>
 #include <poincare/old/complex.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/random.h>
 #include <poincare/old/serialization_helper.h>
 

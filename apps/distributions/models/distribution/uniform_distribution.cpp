@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 #include <algorithm>
 #include <cmath>

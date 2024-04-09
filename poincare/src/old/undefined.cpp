@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/complex.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
 #include <poincare/src/memory/tree_stack.h>

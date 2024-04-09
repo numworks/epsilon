@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/complex.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list.h>
 #include <poincare/old/list_access.h>
 #include <poincare/old/list_complex.h>

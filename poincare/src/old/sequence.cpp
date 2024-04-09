@@ -1,8 +1,8 @@
 #include <apps/shared/sequence.h>
+#include <poincare/layout.h>
 #include <poincare/old/based_integer.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/integer.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/sequence.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>

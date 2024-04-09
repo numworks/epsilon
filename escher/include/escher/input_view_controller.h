@@ -7,7 +7,7 @@
 #include <escher/modal_view_controller.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 namespace Escher {
 

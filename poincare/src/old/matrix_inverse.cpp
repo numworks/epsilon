@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/division.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/matrix_inverse.h>
 #include <poincare/old/power.h>

@@ -1,6 +1,6 @@
 #include <assert.h>
+#include <poincare/layout.h>
 #include <poincare/old/complex_cartesian.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/real_part.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>

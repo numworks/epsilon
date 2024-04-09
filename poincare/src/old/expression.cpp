@@ -2,6 +2,7 @@
 #include <float.h>
 #include <ion.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/based_integer.h>
 #include <poincare/old/complex_cartesian.h>
@@ -14,7 +15,6 @@
 #include <poincare/old/float.h>
 #include <poincare/old/ghost.h>
 #include <poincare/old/imaginary_part.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>

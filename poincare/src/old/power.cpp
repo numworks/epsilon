@@ -2,6 +2,7 @@
 #include <float.h>
 #include <ion.h>
 #include <math.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arithmetic.h>
 #include <poincare/old/binomial_coefficient.h>
@@ -12,7 +13,6 @@
 #include <poincare/old/division.h>
 #include <poincare/old/float.h>
 #include <poincare/old/infinity.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list.h>
 #include <poincare/old/logarithm.h>
 #include <poincare/old/matrix.h>

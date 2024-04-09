@@ -1,9 +1,9 @@
 #ifndef SHARED_EXPRESSION_MODEL_H
 #define SHARED_EXPRESSION_MODEL_H
 
+#include <poincare/expression.h>
+#include <poincare/layout.h>
 #include <poincare/old/context.h>
-#include <poincare/old/expression.h>
-#include <poincare/old/layout.h>
 
 namespace Shared {
 

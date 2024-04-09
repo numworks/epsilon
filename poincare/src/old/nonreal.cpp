@@ -1,4 +1,4 @@
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/nonreal.h>
 #include <poincare/old/symbol.h>
 

@@ -1,10 +1,10 @@
 #include <ion.h>
+#include <poincare/layout.h>
 #include <poincare/old/based_integer.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/float.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/integer.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/randint.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>

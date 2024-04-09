@@ -1,9 +1,9 @@
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/piecewise_operator.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>

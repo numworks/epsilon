@@ -7,8 +7,8 @@
 #include <inference/models/statistic/two_means_interval.h>
 #include <inference/models/statistic/two_means_test.h>
 #include <inference/text_helpers.h>
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 
 using namespace Poincare;
 using namespace Shared;

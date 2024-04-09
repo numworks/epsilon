@@ -1,4 +1,4 @@
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 #include <algorithm>
 

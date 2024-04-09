@@ -1,12 +1,12 @@
 #ifndef POINCARE_EXPRESSION_NODE_H
 #define POINCARE_EXPRESSION_NODE_H
 
+#include <poincare/layout.h>
 #include <stdint.h>
 
 #include "computation_context.h"
 #include "context.h"
 #include "evaluation.h"
-#include "layout.h"
 #include "pool_object.h"
 #include "trinary_boolean.h"
 

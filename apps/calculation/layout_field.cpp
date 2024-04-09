@@ -1,7 +1,7 @@
 #include "layout_field.h"
 
 #include <apps/i18n.h>
-#include <poincare/old/k_tree.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/symbol.h>
 
 using namespace Poincare;

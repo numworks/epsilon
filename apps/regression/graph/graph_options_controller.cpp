@@ -3,8 +3,8 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 
 #include "../app.h"
 #include "graph_controller.h"

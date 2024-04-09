@@ -1,8 +1,8 @@
 #ifndef APPS_SHARED_SEQUENCE_CONTEXT_H
 #define APPS_SHARED_SEQUENCE_CONTEXT_H
 
+#include <poincare/expression.h>
 #include <poincare/old/context_with_parent.h>
-#include <poincare/old/expression.h>
 #include <poincare/old/symbol.h>
 
 #include "sequence_store.h"

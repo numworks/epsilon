@@ -1,6 +1,6 @@
+#include <poincare/layout.h>
 #include <poincare/old/arithmetic.h>
 #include <poincare/old/great_common_divisor.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
 

@@ -3,10 +3,10 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <ion/unicode/code_point.h>
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 #include <poincare/old/constant.h>
-#include <poincare/old/expression.h>
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/symbol.h>
 #include <string.h>

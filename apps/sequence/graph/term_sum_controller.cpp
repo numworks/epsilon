@@ -1,6 +1,6 @@
 #include "term_sum_controller.h"
 
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 #include <cmath>
 

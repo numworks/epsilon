@@ -1,10 +1,10 @@
 #include <assert.h>
 #include <limits.h>
 #include <omg/round.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/division.h>
 #include <poincare/old/float.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/power.h>
 #include <poincare/old/rational.h>

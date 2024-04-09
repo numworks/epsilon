@@ -5,7 +5,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 
 #include "expressions_list_controller.h"
 #include "unit_comparison_helper.h"

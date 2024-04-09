@@ -1,5 +1,5 @@
 #include <escher/metric.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/list_sequence.h>
 #include <poincare/old/serialization_helper.h>
 

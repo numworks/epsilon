@@ -1,11 +1,11 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/complex_cartesian.h>
 #include <poincare/old/constant.h>
 #include <poincare/old/dependency.h>
 #include <poincare/old/function.h>
 #include <poincare/old/helpers.h>
-#include <poincare/old/k_tree.h>
 #include <poincare/old/parenthesis.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/sequence.h>

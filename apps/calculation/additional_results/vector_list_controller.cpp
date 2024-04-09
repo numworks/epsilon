@@ -3,7 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/round.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/poincare_expressions.h>
 #include <string.h>
 

@@ -3,8 +3,8 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <assert.h>
+#include <poincare/layout.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/layout.h>
 #include <string.h>
 
 #include <array>

@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/float.h>
-#include <poincare/old/layout.h>
 #include <poincare/src/memory/tree_stack.h>
 
 namespace Poincare {

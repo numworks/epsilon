@@ -1,7 +1,7 @@
 #include <assert.h>
+#include <poincare/layout.h>
 #include <poincare/old/approximation_helper.h>
 #include <poincare/old/distribution_dispatcher.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
 

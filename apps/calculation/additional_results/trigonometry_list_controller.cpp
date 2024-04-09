@@ -2,7 +2,7 @@
 
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/old/trigonometry.h>
 

@@ -1,4 +1,4 @@
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/linear_layout_decoder.h>
 
 namespace Poincare {

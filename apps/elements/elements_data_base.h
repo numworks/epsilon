@@ -1,7 +1,7 @@
 #ifndef ELEMENTS_ELEMENTS_DATA_BASE
 #define ELEMENTS_ELEMENTS_DATA_BASE
 
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 #include "data_field.h"
 #include "element_data.h"

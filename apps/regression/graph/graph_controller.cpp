@@ -3,8 +3,8 @@
 #include <apps/apps_container_helper.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/layout.h>
 #include <poincare/old/helpers.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/preferences.h>
 #include <poincare/old/print.h>
 #include <poincare/old/serialization_helper.h>

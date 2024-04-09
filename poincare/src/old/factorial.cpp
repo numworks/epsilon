@@ -1,6 +1,6 @@
+#include <poincare/layout.h>
 #include <poincare/old/constant.h>
 #include <poincare/old/factorial.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/parenthesis.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>

@@ -2,9 +2,9 @@
 #define POINCARE_CONTEXT_WITH_PARENT_H
 
 #include <assert.h>
+#include <poincare/expression.h>
 
 #include "context.h"
-#include "expression.h"
 
 namespace Poincare {
 

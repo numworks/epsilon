@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/logarithm.h>
 
 #include <utility>

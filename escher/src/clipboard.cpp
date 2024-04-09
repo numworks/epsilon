@@ -2,7 +2,7 @@
 #include <escher/text_field.h>
 #include <ion/clipboard.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 #include <poincare/src/memory/tree.h>
 
 #include <algorithm>

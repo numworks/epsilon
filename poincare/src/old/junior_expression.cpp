@@ -1,8 +1,8 @@
+#include <poincare/k_tree.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/junior_expression.h>
 #include <poincare/old/junior_layout.h>
-#include <poincare/old/k_tree.h>
 #include <poincare/old/list_complex.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/matrix_complex.h>

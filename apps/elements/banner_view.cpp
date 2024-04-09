@@ -1,8 +1,8 @@
 #include "banner_view.h"
 
 #include <assert.h>
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 
 #include "app.h"
 

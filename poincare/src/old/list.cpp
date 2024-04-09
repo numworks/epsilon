@@ -1,8 +1,8 @@
+#include <poincare/expression.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/dependency.h>
-#include <poincare/old/expression.h>
 #include <poincare/old/helpers.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list.h>
 #include <poincare/old/list_complex.h>
 #include <poincare/old/multiplication.h>

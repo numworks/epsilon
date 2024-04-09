@@ -3,8 +3,8 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <limits.h>
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 #include <poincare/old/preferences.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/symbol_abstract.h>

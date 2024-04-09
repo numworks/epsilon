@@ -1,8 +1,8 @@
 #include "quadratic_model.h"
 
-#include <poincare/old/expression.h>
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 
 namespace Regression {
 

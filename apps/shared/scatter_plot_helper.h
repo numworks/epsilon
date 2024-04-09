@@ -1,7 +1,7 @@
 #ifndef SHARED_SCATTER_PLOT_HELPER_H
 #define SHARED_SCATTER_PLOT_HELPER_H
 
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 #include <poincare/old/list.h>
 #include <poincare/old/list_sort.h>
 #include <poincare/old/old_expression.h>

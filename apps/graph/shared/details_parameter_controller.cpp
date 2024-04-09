@@ -3,8 +3,8 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/old/expression.h>
-#include <poincare/old/layout.h>
+#include <poincare/expression.h>
+#include <poincare/layout.h>
 
 #include "../app.h"
 

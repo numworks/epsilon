@@ -2,7 +2,7 @@
 #define CALCULATION_UNIT_COMPARISON_HELPER_H
 
 #include <apps/i18n.h>
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 #include <poincare/old/unit.h>
 
 namespace Calculation {

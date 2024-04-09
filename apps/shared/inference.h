@@ -2,7 +2,7 @@
 #define SHARED_INFERENCE_H
 
 #include <apps/i18n.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/preferences.h>
 
 #include "memoized_curve_view_range.h"

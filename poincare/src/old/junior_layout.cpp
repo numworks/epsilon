@@ -1,6 +1,6 @@
 #include <assert.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/junior_layout.h>
-#include <poincare/old/k_tree.h>
 #include <poincare/src/layout/app_helpers.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/layout_cursor.h>

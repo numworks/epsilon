@@ -1,8 +1,8 @@
 #include <assert.h>
+#include <poincare/layout.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/float.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>

@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/approximation_helper.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list_complex.h>
 #include <poincare/old/randint.h>
 #include <poincare/old/randint_no_repeat.h>

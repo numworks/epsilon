@@ -2,7 +2,7 @@
 #define SHARED_POINCARE_HELPERS_H
 
 #include <apps/global_preferences.h>
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 #include <poincare/old/preferences.h>
 #include <poincare/old/solver.h>
 #include <poincare/print_float.h>

@@ -1,6 +1,6 @@
 #include "cobweb_controller.h"
 
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/preferences.h>
 #include <poincare/old/print.h>
 #include <poincare/old/sequence.h>

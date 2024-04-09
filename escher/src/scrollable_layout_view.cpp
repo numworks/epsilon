@@ -2,7 +2,7 @@
 #include <escher/menu_cell.h>
 #include <escher/metric.h>
 #include <escher/scrollable_layout_view.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 namespace Escher {
 

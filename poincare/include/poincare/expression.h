@@ -2,8 +2,8 @@
 #define POINCARE_EXPRESSION_ALIAS_H
 
 // clang-format off
-#include "old_expression.h"
-#include "junior_expression.h"
+#include <poincare/old/old_expression.h>
+#include <poincare/old/junior_expression.h>
 
 namespace Poincare {
 using Expression = JuniorExpression;

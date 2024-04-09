@@ -1,9 +1,9 @@
 #include "list_controller.h"
 
 #include <assert.h>
+#include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/comparison.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/variable_context.h>
 
 #include "app.h"

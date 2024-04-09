@@ -4,7 +4,7 @@
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
 #include <escher/metric.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol_abstract.h>
 

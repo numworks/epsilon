@@ -1,8 +1,8 @@
+#include <poincare/layout.h>
 #include <poincare/old/arc_cosine.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/conjugate.h>
 #include <poincare/old/derivative.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/power.h>
 #include <poincare/old/rational.h>

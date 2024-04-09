@@ -2,9 +2,9 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <omg/ieee754.h>
+#include <poincare/layout.h>
 #include <poincare/old/decimal.h>
 #include <poincare/old/infinity.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/opposite.h>
 #include <poincare/old/power.h>

@@ -1,7 +1,7 @@
 #include "slope_t_interval.h"
 
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 
 namespace Inference {
 

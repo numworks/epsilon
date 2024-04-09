@@ -1,6 +1,6 @@
 #include <ion/unicode/utf8_decoder.h>
+#include <poincare/layout.h>
 #include <poincare/old/input_beautification.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/layout_cursor.h>
 
 #include <algorithm>

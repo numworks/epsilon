@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 #include <string.h>
 
 #include <algorithm>

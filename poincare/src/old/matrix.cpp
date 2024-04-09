@@ -1,12 +1,12 @@
 #include <assert.h>
 #include <float.h>
 #include <ion/circuit_breaker.h>
+#include <poincare/layout.h>
 #include <poincare/old/absolute_value.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/division.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/float.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/power.h>

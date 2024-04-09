@@ -1,6 +1,6 @@
+#include <poincare/layout.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/infinity.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/symbol.h>
 
 extern "C" {

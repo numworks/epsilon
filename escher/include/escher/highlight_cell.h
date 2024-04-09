@@ -3,7 +3,7 @@
 
 #include <escher/responder.h>
 #include <escher/view.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 namespace Escher {
 

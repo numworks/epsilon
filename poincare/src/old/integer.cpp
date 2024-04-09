@@ -1,12 +1,12 @@
 #include <ion.h>
 #include <omg/ieee754.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/division.h>
 #include <poincare/old/division_quotient.h>
 #include <poincare/old/division_remainder.h>
 #include <poincare/old/integer.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/mixed_fraction.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/opposite.h>

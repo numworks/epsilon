@@ -1,6 +1,6 @@
 #include <limits.h>
+#include <poincare/layout.h>
 #include <poincare/old/integer.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/matrix_complex.h>
 #include <poincare/old/matrix_identity.h>

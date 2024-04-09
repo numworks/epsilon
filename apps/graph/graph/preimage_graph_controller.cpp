@@ -1,7 +1,7 @@
 #include "preimage_graph_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 #include <poincare/old/serialization_helper.h>
 
 using namespace Poincare;

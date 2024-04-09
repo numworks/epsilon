@@ -1,7 +1,7 @@
+#include <poincare/layout.h>
 #include <poincare/old/approximation_helper.h>
 #include <poincare/old/division_quotient.h>
 #include <poincare/old/infinity.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>

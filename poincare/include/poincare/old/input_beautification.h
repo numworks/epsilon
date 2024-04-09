@@ -1,6 +1,7 @@
 #ifndef POINCARE_INPUT_BEAUTIFICATION_H
 #define POINCARE_INPUT_BEAUTIFICATION_H
 
+#include <poincare/layout.h>
 #include <poincare/old/poincare_expressions.h>
 
 #include <array>
@@ -10,7 +11,6 @@
 #include "conjugate.h"
 #include "derivative.h"
 #include "integral.h"
-#include "layout.h"
 #include "layout_cursor.h"
 #include "logarithm.h"
 #include "nth_root.h"

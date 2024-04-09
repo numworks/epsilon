@@ -1,7 +1,7 @@
 #include "unit_comparison_helper.h"
 
 #include <apps/i18n.h>
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/unit.h>

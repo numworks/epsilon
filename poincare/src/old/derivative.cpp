@@ -1,10 +1,10 @@
 #include <assert.h>
 #include <float.h>
 #include <omg/ieee754.h>
+#include <poincare/layout.h>
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/float.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/point.h>
 #include <poincare/old/serialization_helper.h>

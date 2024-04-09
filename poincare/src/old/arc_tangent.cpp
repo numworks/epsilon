@@ -1,8 +1,8 @@
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arc_tangent.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/derivative.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/power.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>

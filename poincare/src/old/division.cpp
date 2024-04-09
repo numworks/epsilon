@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <float.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/division.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/opposite.h>
 #include <poincare/old/power.h>

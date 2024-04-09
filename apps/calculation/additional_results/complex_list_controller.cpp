@@ -1,10 +1,10 @@
 #include "complex_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/layout.h>
 #include <poincare/old/absolute_value.h>
 #include <poincare/old/complex_argument.h>
 #include <poincare/old/imaginary_part.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/real_part.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>

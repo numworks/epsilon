@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/binomial_coefficient.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/serialization_helper.h>
 
 namespace Poincare {

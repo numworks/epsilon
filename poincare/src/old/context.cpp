@@ -1,5 +1,5 @@
+#include <poincare/expression.h>
 #include <poincare/old/context.h>
-#include <poincare/old/expression.h>
 #include <poincare/old/function.h>
 #include <poincare/old/symbol.h>
 

@@ -1,6 +1,6 @@
+#include <poincare/layout.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/hyperbolic_arc_sine.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/serialization_helper.h>
 
 #include <cmath>

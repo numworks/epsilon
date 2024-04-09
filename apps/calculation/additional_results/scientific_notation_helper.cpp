@@ -1,6 +1,6 @@
 #include "scientific_notation_helper.h"
 
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 
 using namespace Poincare;
 

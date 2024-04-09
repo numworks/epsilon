@@ -1,8 +1,9 @@
 #ifndef POINCARE_LAYOUT_HELPER_H
 #define POINCARE_LAYOUT_HELPER_H
 
+#include <poincare/layout.h>
+
 #include "horizontal_layout.h"
-#include "layout.h"
 #include "old_expression.h"
 
 /* WARNING : "String" creates a stringLayout if the buffer is more than 1

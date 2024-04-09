@@ -1,8 +1,8 @@
 #include "calculation_store.h"
 
 #include <apps/shared/expression_display_permissions.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/k_tree.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/store.h>
 #include <poincare/old/symbol.h>

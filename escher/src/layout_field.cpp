@@ -4,10 +4,10 @@
 #include <escher/text_field.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 #include <poincare/old/context.h>
-#include <poincare/old/expression.h>
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>

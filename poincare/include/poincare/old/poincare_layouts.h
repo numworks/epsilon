@@ -1,6 +1,7 @@
 #ifndef POINCARE_LAYOUTS_H
 #define POINCARE_LAYOUTS_H
 
+#include <poincare/layout.h>
 #include <poincare/old/absolute_value_layout.h>
 #include <poincare/old/binomial_coefficient_layout.h>
 #include <poincare/old/bracket_pair_layout.h>
@@ -15,7 +16,6 @@
 #include <poincare/old/fraction_layout.h>
 #include <poincare/old/horizontal_layout.h>
 #include <poincare/old/integral_layout.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/layout_cursor.h>
 #include <poincare/old/letter_a_with_sub_and_superscript_layout.h>
 #include <poincare/old/letter_c_with_sub_and_superscript_layout.h>

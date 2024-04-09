@@ -1,5 +1,5 @@
+#include <poincare/layout.h>
 #include <poincare/old/dimension.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list_complex.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/matrix_complex.h>

@@ -1,7 +1,7 @@
 #include <float.h>
+#include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/division.h>
-#include <poincare/old/layout.h>
 #include <poincare/old/list.h>
 #include <poincare/old/list_median.h>
 #include <poincare/old/multiplication.h>

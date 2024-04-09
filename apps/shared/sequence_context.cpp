@@ -2,7 +2,7 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <omg/signaling_nan.h>
-#include <poincare/old/expression.h>
+#include <poincare/expression.h>
 
 #include <array>
 #include <cmath>

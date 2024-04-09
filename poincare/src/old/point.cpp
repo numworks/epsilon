@@ -1,5 +1,5 @@
-#include <poincare/old/k_tree.h>
-#include <poincare/old/layout.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 #include <poincare/old/point.h>
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/serialization_helper.h>

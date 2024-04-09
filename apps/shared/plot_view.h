@@ -1,8 +1,8 @@
 #ifndef SHARED_PLOT_VIEW_H
 #define SHARED_PLOT_VIEW_H
 
+#include <poincare/layout.h>
 #include <poincare/old/coordinate_2D.h>
-#include <poincare/old/layout.h>
 
 #include "banner_view.h"
 #include "cursor_view.h"

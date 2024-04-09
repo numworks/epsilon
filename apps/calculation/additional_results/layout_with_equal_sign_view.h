@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <escher/layout_view.h>
 #include <escher/message_text_view.h>
-#include <poincare/old/layout.h>
+#include <poincare/layout.h>
 
 namespace Calculation {
 

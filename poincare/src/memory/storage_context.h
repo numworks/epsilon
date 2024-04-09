@@ -1,6 +1,8 @@
 #ifndef POINCARE_MEMORY_STORAGE_CONTEXT_H
 #define POINCARE_MEMORY_STORAGE_CONTEXT_H
 
+#include <array>
+
 #include "tree.h"
 
 namespace Poincare::Internal {

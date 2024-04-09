@@ -274,6 +274,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   Poincare::Expression equation = Poincare::Comparison::Builder(
       symbol.clone(), ComparisonNode::OperatorType::Equal, expressionToStore);
   ContinuousFunction model = ContinuousFunction(recordToSet);
+  // TODO: factorise with ContinuousFunction::setContent
   bool wasCartesian = model.properties().isCartesian();
   error = model.setExpressionContent(equation);
   if (error == Ion::Storage::Record::ErrorStatus::None) {

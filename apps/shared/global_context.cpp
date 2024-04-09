@@ -271,6 +271,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
       return error;
     }
     recordToSet = newModel;
+  } else {
+    GlobalContext::DeleteParametricComponentsOfRecord(recordToSet);
   }
   Poincare::Expression equation = Poincare::Comparison::Builder(
       symbol.clone(), ComparisonNode::OperatorType::Equal, expressionToStore);
@@ -281,6 +283,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   if (error == Ion::Storage::Record::ErrorStatus::None) {
     model.updateModel(this, wasCartesian);
   }
+  GlobalContext::StoreParametricComponentsOfRecord(recordToSet);
   return error;
 }
 

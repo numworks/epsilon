@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <escher/container.h>
 #include <omg/ieee754.h>
-#include <poincare/old/print.h>
 #include <poincare/old/serialization_helper.h>
+#include <poincare/print.h>
 
 #include "../app.h"
 

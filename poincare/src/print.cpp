@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/old/print.h>
+#include <poincare/print.h>
 #include <poincare/print_float.h>
 #include <poincare/print_int.h>
 #include <stdarg.h>
@@ -11,12 +11,12 @@
 
 namespace Poincare {
 
-int Print::PrivateCustomPrintf(char *buffer, size_t bufferSize,
+int Print::PrivateCustomPrintf(char* buffer, size_t bufferSize,
                                int numberOfSignificantDigits,
-                               const char *format, va_list args) {
+                               const char* format, va_list args) {
   /* We still return the required sizes even if we could not write in the
    * buffer in order to indicate that we overflew the buffer. */
-  char *const origin = buffer;
+  char* const origin = buffer;
   assert(bufferSize > 0);
   while (*format != 0) {
     if (*format == '%') {
@@ -30,9 +30,9 @@ int Print::PrivateCustomPrintf(char *buffer, size_t bufferSize,
       }
       if (*(format + 1) == 's' ||
           (*(format + 1) != 0 && *(format + 2) == 's')) {
-        char *insertedText = buffer;
+        char* insertedText = buffer;
         // Insert text now
-        buffer += strlcpy(buffer, va_arg(args, char *),
+        buffer += strlcpy(buffer, va_arg(args, char*),
                           bufferSize - (buffer - origin));
         if (*(format + 1) == 'C') {
           Capitalize(insertedText);
@@ -110,7 +110,7 @@ int Print::PrivateCustomPrintf(char *buffer, size_t bufferSize,
   return buffer - origin;
 }
 
-int Print::CustomPrintf(char *buffer, size_t bufferSize, const char *format,
+int Print::CustomPrintf(char* buffer, size_t bufferSize, const char* format,
                         ...) {
   va_list args;
   va_start(args, format);
@@ -120,8 +120,8 @@ int Print::CustomPrintf(char *buffer, size_t bufferSize, const char *format,
   return length;
 }
 
-int Print::UnsafeCustomPrintf(char *buffer, size_t bufferSize,
-                              const char *format, ...) {
+int Print::UnsafeCustomPrintf(char* buffer, size_t bufferSize,
+                              const char* format, ...) {
   va_list args;
   va_start(args, format);
   int length = PrivateCustomPrintf(buffer, bufferSize, format, args);
@@ -129,10 +129,10 @@ int Print::UnsafeCustomPrintf(char *buffer, size_t bufferSize,
   return length;
 }
 
-int Print::CustomPrintfWithMaxNumberOfGlyphs(char *buffer, size_t bufferSize,
+int Print::CustomPrintfWithMaxNumberOfGlyphs(char* buffer, size_t bufferSize,
                                              int maxNumberOfSignificantDigits,
                                              int maxNumberOfGlyphs,
-                                             const char *format, ...) {
+                                             const char* format, ...) {
   assert(maxNumberOfSignificantDigits > 0);
   int length = bufferSize;
   int nbGlyph = maxNumberOfGlyphs + 1;
@@ -151,14 +151,14 @@ int Print::CustomPrintfWithMaxNumberOfGlyphs(char *buffer, size_t bufferSize,
   return length;
 }
 
-void Print::Capitalize(char *text) {
+void Print::Capitalize(char* text) {
   constexpr static int jumpToUpperCase = 'A' - 'a';
   if (text[0] >= 'a' && text[0] <= 'z') {
     text[0] += jumpToUpperCase;
   }
 }
 
-void Print::Decapitalize(char *text) {
+void Print::Decapitalize(char* text) {
   constexpr static int jumpToLowerCase = 'a' - 'A';
   if (text[0] >= 'A' && text[0] <= 'Z') {
     text[0] += jumpToLowerCase;

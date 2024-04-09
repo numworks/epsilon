@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <escher/stack_view_controller.h>
-#include <poincare/old/print.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 
 namespace Regression {
 

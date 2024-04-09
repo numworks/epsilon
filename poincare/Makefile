@@ -148,7 +148,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   polynomial.cpp \
   power.cpp \
   preferences_in_storage.cpp \
-  print.cpp \
   product.cpp \
   randint.cpp \
   randint_no_repeat.cpp \
@@ -297,6 +296,7 @@ poincare_src += $(addprefix poincare/src/,\
   memory/value_block.cpp \
   memory/visualization.cpp \
   preferences.cpp \
+  print.cpp \
   print_float.cpp \
   print_int.cpp \
 )

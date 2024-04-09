@@ -1,7 +1,7 @@
 #include "helper.h"
 
 #include <apps/shared/global_context.h>
-#include <poincare/old/print.h>
+#include <poincare/print.h>
 #include <poincare/src/expression/conversion.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layoutter.h>

@@ -4,8 +4,8 @@
 #include <limits.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/print.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 #include <stdlib.h>
 
 #include <algorithm>

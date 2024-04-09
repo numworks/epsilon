@@ -1,7 +1,7 @@
 #include "function_graph_cell.h"
 
 #include <poincare/old/context.h>
-#include <poincare/old/print.h>
+#include <poincare/print.h>
 
 #include <cmath>
 

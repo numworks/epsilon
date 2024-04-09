@@ -4,7 +4,7 @@
 #include <poincare/init.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/pool.h>
-#include <poincare/old/print.h>
+#include <poincare/print.h>
 #include <poincare/test/helper.h>
 #include <poincare/test/old/helper.h>
 

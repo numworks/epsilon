@@ -2,8 +2,8 @@
 
 #include <ion/storage/record.h>
 #include <poincare/old/addition.h>
-#include <poincare/old/print.h>
 #include <poincare/old/symbol.h>
+#include <poincare/print.h>
 
 #include "column_helper.h"
 

@@ -6,7 +6,7 @@
 #include <inference/app.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/print.h>
+#include <poincare/print.h>
 
 #include <new>
 

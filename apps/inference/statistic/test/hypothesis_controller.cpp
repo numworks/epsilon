@@ -7,7 +7,7 @@
 #include <escher/stack_view_controller.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/print.h>
+#include <poincare/print.h>
 #include <shared/poincare_helpers.h>
 #include <string.h>
 

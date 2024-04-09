@@ -14,7 +14,6 @@
 #include <poincare/old/multiplication.h>
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/polynomial.h>
-#include <poincare/old/print.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/sine.h>
 #include <poincare/old/subtraction.h>
@@ -23,6 +22,7 @@
 #include <poincare/old/trigonometry.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/zoom.h>
+#include <poincare/print.h>
 
 #include <algorithm>
 

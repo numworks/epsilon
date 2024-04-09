@@ -3,8 +3,8 @@
 #include <apps/constant.h>
 #include <escher/container.h>
 #include <poincare/old/comparison.h>
-#include <poincare/old/print.h>
 #include <poincare/old/serialization_helper.h>
+#include <poincare/print.h>
 
 #include "column_parameter_controller.h"
 #include "poincare_helpers.h"

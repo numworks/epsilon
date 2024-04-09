@@ -1,9 +1,9 @@
 #include "cobweb_controller.h"
 
 #include <poincare/layout.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/print.h>
 #include <poincare/old/sequence.h>
+#include <poincare/preferences.h>
 
 #include "../app.h"
 #include "apps/sequence/graph/cobweb_graph_view.h"

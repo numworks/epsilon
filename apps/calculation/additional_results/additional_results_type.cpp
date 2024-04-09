@@ -1,9 +1,9 @@
 #include "additional_results_type.h"
 
 #include <apps/apps_container_helper.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/trigonometry.h>
 #include <poincare/old/unit.h>
+#include <poincare/preferences.h>
 
 #include "../calculation.h"
 #include "scientific_notation_helper.h"

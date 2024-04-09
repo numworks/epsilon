@@ -1,9 +1,10 @@
 #ifndef POINCARE_GEOMETRIC_DISTRIBUTION_H
 #define POINCARE_GEOMETRIC_DISTRIBUTION_H
 
+#include <poincare/preferences.h>
+
 #include "discrete_distribution.h"
 #include "old_expression.h"
-#include "preferences.h"
 
 namespace Poincare {
 

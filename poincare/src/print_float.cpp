@@ -2,9 +2,9 @@
 #include <ion/unicode/utf8_helper.h>
 #include <omg/ieee754.h>
 #include <poincare/old/infinity.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/undefined.h>
+#include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/print_int.h>
 extern "C" {

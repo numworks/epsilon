@@ -3,8 +3,8 @@
 
 #include <apps/global_preferences.h>
 #include <poincare/expression.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/solver.h>
+#include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
 namespace Shared {

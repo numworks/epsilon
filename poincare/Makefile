@@ -147,7 +147,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   point_of_interest.cpp \
   polynomial.cpp \
   power.cpp \
-  preferences.cpp \
   preferences_in_storage.cpp \
   print.cpp \
   product.cpp \
@@ -205,6 +204,7 @@ tests_src += $(addprefix poincare/test/old/,\
 
 poincare_bench_src = $(addprefix poincare/src/,\
   init.cpp \
+  preferences.cpp \
   print_float.cpp \
   print_int.cpp \
 )
@@ -213,7 +213,6 @@ poincare_bench_src = $(addprefix poincare/src/old/,\
   checkpoint_dummy.cpp \
   helpers.cpp \
   integer.cpp \
-  preferences.cpp \
   preferences_no_storage.cpp \
   serialization_helper.cpp \
   pool_handle.cpp \
@@ -297,6 +296,7 @@ poincare_src += $(addprefix poincare/src/,\
   memory/tree_ref.cpp \
   memory/value_block.cpp \
   memory/visualization.cpp \
+  preferences.cpp \
   print_float.cpp \
   print_int.cpp \
 )

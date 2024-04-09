@@ -1,7 +1,7 @@
 #ifndef SHARED_FUNCTION_BANNER_DELEGATE_H
 #define SHARED_FUNCTION_BANNER_DELEGATE_H
 
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 
 #include "curve_view_cursor.h"
 #include "function_store.h"

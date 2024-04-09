@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <poincare/layout.h>
 #include <poincare/old/integer.h>
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 #include <poincare/print_int.h>
 #include <string.h>
 

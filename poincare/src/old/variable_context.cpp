@@ -1,7 +1,7 @@
-#include <poincare/old/preferences.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/variable_context.h>
+#include <poincare/preferences.h>
 
 #include <cmath>
 

@@ -1,7 +1,7 @@
 #ifndef COUNTRY_PREFERENCES_H
 #define COUNTRY_PREFERENCES_H
 
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 
 class CountryPreferences {
  public:

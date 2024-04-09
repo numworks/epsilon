@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_DECIMAL_H
 #define POINCARE_EXPRESSION_DECIMAL_H
 
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 #include <poincare/src/memory/tree.h>
 
 namespace Poincare::Internal {

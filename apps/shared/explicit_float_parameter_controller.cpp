@@ -1,7 +1,7 @@
 #include "explicit_float_parameter_controller.h"
 
 #include <assert.h>
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 
 #include <cmath>
 

@@ -3,7 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <poincare/old/comparison.h>
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 
 #include "solver_icon.h"
 

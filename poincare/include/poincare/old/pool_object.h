@@ -9,9 +9,10 @@
 #include <iostream>
 #include <ostream>
 #endif
+#include <poincare/preferences.h>
+
 #include "checkpoint.h"
 #include "helpers.h"
-#include "preferences.h"
 
 /* What's in a PoolObject, really?
  *  - a vtable pointer

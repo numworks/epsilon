@@ -19,7 +19,6 @@
 #include <poincare/old/opposite.h>
 #include <poincare/old/parenthesis.h>
 #include <poincare/old/power.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/secant.h>
 #include <poincare/old/serialization_helper.h>
@@ -33,6 +32,7 @@
 #include <poincare/old/trigonometry_cheat_table.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
+#include <poincare/preferences.h>
 
 #include <cmath>
 

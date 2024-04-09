@@ -3,8 +3,8 @@
 
 #include <apps/constant.h>
 #include <apps/shared/expiring_pointer.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/variable_context.h>
+#include <poincare/preferences.h>
 #include <stddef.h>
 
 #include "calculation.h"

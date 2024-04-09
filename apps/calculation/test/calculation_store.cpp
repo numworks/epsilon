@@ -5,7 +5,7 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <poincare/old/poincare_expressions.h>
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>

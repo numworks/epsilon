@@ -7,8 +7,8 @@ extern "C" {
 #include <assert.h>
 }
 #include <ion/post_and_hardware_tests.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/print.h>
+#include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
 using namespace Poincare;

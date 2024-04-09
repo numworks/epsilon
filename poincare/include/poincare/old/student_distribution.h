@@ -1,9 +1,10 @@
 #ifndef POINCARE_STUDENT_DISTRIBUTION_H
 #define POINCARE_STUDENT_DISTRIBUTION_H
 
+#include <poincare/preferences.h>
+
 #include "continuous_distribution.h"
 #include "old_expression.h"
-#include "preferences.h"
 
 namespace Poincare {
 

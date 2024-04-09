@@ -3,6 +3,7 @@
 
 #include <ion/storage/file_system.h>
 #include <poincare/layout.h>
+#include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
 #include <utility>
@@ -12,7 +13,6 @@
 #include "coordinate_2D.h"
 #include "expression_node.h"
 #include "pool_handle.h"
-#include "preferences.h"
 
 namespace Poincare {
 

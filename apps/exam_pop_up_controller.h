@@ -1,7 +1,7 @@
 #ifndef APPS_EXAM_POP_UP_CONTROLLER_H
 #define APPS_EXAM_POP_UP_CONTROLLER_H
 
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 
 #include "shared/pop_up_controller.h"
 

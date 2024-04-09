@@ -2,8 +2,8 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/print.h>
+#include <poincare/preferences.h>
 
 #include "../app.h"
 

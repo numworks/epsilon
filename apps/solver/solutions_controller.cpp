@@ -5,9 +5,9 @@
 #include <limits.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/symbol_abstract.h>
+#include <poincare/preferences.h>
 #include <poincare/print_int.h>
 
 #include <algorithm>

@@ -10,8 +10,8 @@
 #include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/serialization_helper.h>
+#include <poincare/preferences.h>
 
 #include <algorithm>
 

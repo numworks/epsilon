@@ -1,11 +1,11 @@
 #include <poincare/layout.h>
 #include <poincare/old/approximation_helper.h>
 #include <poincare/old/permute_coefficient.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/undefined.h>
+#include <poincare/preferences.h>
 
 extern "C" {
 #include <assert.h>

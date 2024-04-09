@@ -1,8 +1,7 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/preferences.h>
-#include <poincare/old/unit.h>
+#include <poincare/preferences.h>
 
 namespace Poincare {
 

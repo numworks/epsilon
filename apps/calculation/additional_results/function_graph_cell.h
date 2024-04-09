@@ -2,7 +2,7 @@
 #define CALCULATION_FUNCTION_GRAPH_CELL_H
 
 #include <apps/shared/plot_view_policies.h>
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 
 #include "function_model.h"
 #include "illustration_cell.h"

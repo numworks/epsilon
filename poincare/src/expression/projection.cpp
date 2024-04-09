@@ -1,7 +1,7 @@
 #include "projection.h"
 
 #include <apps/global_preferences.h>
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 #include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/pattern_matching.h>
 

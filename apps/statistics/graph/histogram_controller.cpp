@@ -5,8 +5,8 @@
 #include <assert.h>
 #include <float.h>
 #include <omg/ieee754.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/print.h>
+#include <poincare/preferences.h>
 
 #include <algorithm>
 #include <cmath>

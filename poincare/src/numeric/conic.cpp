@@ -5,8 +5,8 @@
 #include <poincare/old/multiplication.h>
 #include <poincare/old/polynomial.h>
 #include <poincare/old/power.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/trigonometry.h>
+#include <poincare/preferences.h>
 
 #include <algorithm>
 

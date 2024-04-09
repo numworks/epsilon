@@ -4,7 +4,7 @@
 #include <apps/shared/buffer_function_title_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
 #include <escher/even_odd_buffer_text_cell.h>
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
 #include <array>

@@ -12,8 +12,8 @@
 #include <apps/i18n.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/conic.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/symbol_abstract.h>
+#include <poincare/preferences.h>
 
 #include "continuous_function_cache.h"
 #include "continuous_function_properties.h"

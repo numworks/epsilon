@@ -3,8 +3,8 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/old/preferences.h>
 #include <poincare/old/print.h>
+#include <poincare/preferences.h>
 
 using namespace Shared;
 using namespace Poincare;

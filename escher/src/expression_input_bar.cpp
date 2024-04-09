@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <escher/expression_input_bar.h>
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 
 #include <algorithm>
 

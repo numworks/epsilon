@@ -1,7 +1,7 @@
 #ifndef APPS_SOLVER_TEST_HELPERS_H
 #define APPS_SOLVER_TEST_HELPERS_H
 
-#include <poincare/old/preferences.h>
+#include <poincare/preferences.h>
 #include <poincare/test/old/helper.h>
 
 #include <initializer_list>

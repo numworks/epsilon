@@ -1,6 +1,6 @@
 #include <escher/init.h>
 #include <poincare/include/poincare.h>
-#include <poincare/old/init.h>
+#include <poincare/init.h>
 
 #include "apps_container.h"
 #include "global_preferences.h"

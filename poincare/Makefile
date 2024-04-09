@@ -26,7 +26,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   geometric_distribution.cpp \
   helpers.cpp \
   hypergeometric_distribution.cpp \
-  init.cpp \
   inv_method.cpp \
   normal_distribution.cpp \
   pdf_method.cpp \
@@ -206,10 +205,13 @@ tests_src += $(addprefix poincare/test/old/,\
   simplification.cpp \
 )
 
+poincare_bench_src = $(addprefix poincare/src/,\
+  init.cpp \
+)
+
 poincare_bench_src = $(addprefix poincare/src/old/,\
   checkpoint_dummy.cpp \
   helpers.cpp \
-  init.cpp \
   integer.cpp \
   preferences.cpp \
   preferences_no_storage.cpp \
@@ -266,6 +268,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/unit_representatives.cpp \
   expression/variables.cpp \
   expression/vector.cpp \
+  init.cpp \
   layout/app_helpers.cpp \
   layout/autocompleted_pair.cpp \
   layout/code_point_layout.cpp \

@@ -2,9 +2,9 @@
 
 #include <escher/clipboard.h>
 #include <ion.h>
+#include <poincare/init.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/init.h>
 
 #include "apps_container_storage.h"
 #include "global_preferences.h"

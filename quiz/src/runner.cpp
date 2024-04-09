@@ -2,8 +2,8 @@
 #include <escher/init.h>
 #include <ion.h>
 #include <poincare/include/poincare.h>
+#include <poincare/init.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/init.h>
 #include <poincare/old/pool.h>
 #include <poincare/old/print.h>
 #include <poincare/test/helper.h>

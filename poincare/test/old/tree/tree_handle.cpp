@@ -1,5 +1,5 @@
+#include <poincare/init.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/init.h>
 #include <poincare/old/pool_handle.h>
 #include <quiz.h>
 

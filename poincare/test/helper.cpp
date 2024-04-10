@@ -58,3 +58,11 @@ Tree* TextToTree(const char* input, Poincare::Context* context) {
   expression->moveTreeOverTree(parsed);
   return expression;
 }
+
+void quiz_assert_print_if_failure(bool test, const char* information) {
+  if (!test) {
+    quiz_print("TEST FAILURE WHILE TESTING:");
+    quiz_print(information);
+  }
+  quiz_assert(test);
+}

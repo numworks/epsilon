@@ -3,6 +3,7 @@
 #include "helper.h"
 
 using namespace Poincare;
+using enum Preferences::PrintFloatMode;
 
 void assert_string_equality(const char* buffer, const char* result) {
   quiz_assert_print_if_failure(strcmp(result, buffer) == 0, result);
@@ -29,11 +30,11 @@ QUIZ_CASE(poincare_print_custom_print) {
   assert_string_equality(buffer, "Hello 123");
 
   Poincare::Print::CustomPrintf(buffer, bufferSize, "A float: %*.*ef!",
-                                0.0123456789f, DecimalMode, 7);
+                                0.0123456789f, Decimal, 7);
   assert_string_equality(buffer, "A float: 0.01234568!");
 
   Poincare::Print::CustomPrintf(buffer, bufferSize, "A double: %*.*ed!",
-                                0.0123456789, ScientificMode, 4);
+                                0.0123456789, Scientific, 4);
   assert_string_equality(buffer, "A double: 1.235ᴇ-2!");
 
   constexpr int shortBufferSize = 5;

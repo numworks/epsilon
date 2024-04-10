@@ -350,6 +350,9 @@ tests_src += $(addprefix poincare/test/,\
   parse.cpp \
   polynomial.cpp \
   projection.cpp \
+  print.cpp \
+  print_float.cpp \
+  print_int.cpp \
   rational.cpp \
   set.cpp \
   sign.cpp \

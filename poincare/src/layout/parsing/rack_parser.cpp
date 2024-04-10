@@ -7,11 +7,11 @@
 #include <poincare/old/variable_context.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/binary.h>
-#include <poincare/src/expression/constant.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/unit.h>
 #include <poincare/src/layout/parser.h>
@@ -722,7 +722,7 @@ void RackParser::parsePercent(TreeRef& leftHandSide, Token::Type stoppingType) {
 void RackParser::parseConstant(TreeRef& leftHandSide,
                                Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  int index = Constant::ConstantIndex(
+  int index = PhysicalConstant::Index(
       CPL::FromRack(m_root, m_root->indexOfChild(m_currentToken.firstLayout())),
       m_currentToken.length());
   if (index >= 0) {

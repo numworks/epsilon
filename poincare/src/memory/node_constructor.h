@@ -2,9 +2,9 @@
 #define POINCARE_MEMORY_NODE_CONSTRUCTOR_H
 
 #include <omg/bit_helper.h>
-#include <poincare/src/expression/constant.h>
 #include <poincare/src/expression/float.h>
 #include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/layout/code_point_layout.h>
 
@@ -78,7 +78,7 @@ template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::PhysicalConstant>(
     Block* block, size_t blockIndex, uint8_t index) {
-  assert(index < Constant::k_numberOfConstants);
+  assert(index < PhysicalConstant::k_numberOfConstants);
   return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
                                             Type::PhysicalConstant, index);
 }

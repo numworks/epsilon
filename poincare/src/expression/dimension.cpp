@@ -1,9 +1,9 @@
 #include "dimension.h"
 
 #include "approximation.h"
-#include "constant.h"
 #include "matrix.h"
 #include "parametric.h"
+#include "physical_constant.h"
 #include "symbol.h"
 
 namespace Poincare::Internal {
@@ -408,7 +408,8 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Unit:
       return Dimension::Unit(t);
     case Type::PhysicalConstant:
-      return Dimension::Unit(Constant::Info(t).m_dimension, nullptr);
+      return Dimension::Unit(PhysicalConstant::GetProperties(t).m_dimension,
+                             nullptr);
     case Type::Point:
       return Point();
     case Type::List:

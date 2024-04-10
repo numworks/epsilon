@@ -5,7 +5,7 @@
 #include <poincare/src/expression/aliases.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
-#include <poincare/src/expression/constant.h>
+#include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/unit.h>
 #include <poincare/src/layout/vertical_offset.h>
 
@@ -442,7 +442,7 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
   if (*length == 1 && *string == 'e') {
     return Token::Type::Constant;
   }
-  if (Constant::IsConstant(string, *length)) {
+  if (PhysicalConstant::IsPhysicalConstant(string, *length)) {
     return Token::Type::Constant;
   }
 

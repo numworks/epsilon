@@ -3,12 +3,12 @@
 #include <poincare/print_float.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
-#include <poincare/src/expression/constant.h>
 #include <poincare/src/expression/decimal.h>
 #include <poincare/src/expression/float.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/number.h>
+#include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/symbol.h>
@@ -519,8 +519,8 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       PushCodePoint(layoutParent, 'i');
       break;
     case Type::PhysicalConstant:
-      layoutText(layoutParent,
-                 Constant::Info(expression).m_aliasesList.mainAlias());
+      layoutText(layoutParent, PhysicalConstant::GetProperties(expression)
+                                   .m_aliasesList.mainAlias());
       break;
     case Type::UserSymbol:
     case Type::UserSequence:

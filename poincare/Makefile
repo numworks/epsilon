@@ -234,7 +234,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/binary.cpp \
   expression/builtin.cpp \
   expression/comparison.cpp \
-  expression/constant.cpp \
+  expression/physical_constant.cpp \
   expression/continuity.cpp \
   expression/conversion.cpp \
   expression/decimal.cpp \

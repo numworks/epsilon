@@ -10,7 +10,6 @@
 #if POINCARE_TREE_LOG
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/expression/constant.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/random.h>
@@ -96,15 +95,6 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " numberOfColumns=\""
            << static_cast<int>(Matrix::NumberOfColumns(this)) << "\"";
   }
-#if O
-  if (isConstant()) {
-    char buffer[4];
-    size_t size = UTF8Decoder::CodePointToChars(
-        Constant::ToCodePoint(Constant::Type(this)), buffer, 4);
-    buffer[size] = 0;
-    stream << " type=\"" << buffer << "\"";
-  }
-#endif
   if (isNumber()) {
     stream << " value=\"" << Approximation::To<float>(this) << "\"";
     return;

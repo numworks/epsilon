@@ -6,8 +6,8 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "angle.h"
-#include "constant.h"
 #include "decimal.h"
+#include "physical_constant.h"
 #include "symbol.h"
 
 namespace Poincare::Internal {
@@ -111,8 +111,8 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     changed = true;
   }
   if (e->isPhysicalConstant()) {
-    Tree* value =
-        SharedTreeStack->push<Type::DoubleFloat>(Constant::Info(e).m_value);
+    Tree* value = SharedTreeStack->push<Type::DoubleFloat>(
+        PhysicalConstant::GetProperties(e).m_value);
     e->moveTreeOverTree(value);
     return true;
   }

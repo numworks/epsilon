@@ -12,7 +12,6 @@
 
 #include "arithmetic.h"
 #include "beautification.h"
-#include "constant.h"
 #include "context.h"
 #include "decimal.h"
 #include "float.h"

@@ -1,13 +1,15 @@
 #include <float.h>
-#include <poincare/old/erf_inv.h>
-#include <poincare/test/old/helper.h>
+#include <poincare/src/numeric/erf_inv.h>
+#include <poincare/src/numeric/float.h>
 #include <quiz.h>
 
 #include <cmath>
 
-using namespace Poincare;
+#include "float_helper.h"
 
-QUIZ_CASE(erf_inv) {
+using namespace Poincare::Internal;
+
+QUIZ_CASE(poincare_erf_inv) {
   quiz_assert(erfInv(0.0) == 0.0);
   quiz_assert(std::isinf(erfInv(1.0)) && erfInv(1.0) > 0.0);
   quiz_assert(std::isinf(erfInv(-1.0)) && erfInv(-1.0) < 0.0);

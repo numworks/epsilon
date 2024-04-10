@@ -1,13 +1,14 @@
-#include <poincare/old/chi2_distribution.h>
-#include <poincare/old/normal_distribution.h>
-#include <poincare/old/student_distribution.h>
+#include <poincare/src/probability/chi2_distribution.h>
+#include <poincare/src/probability/normal_distribution.h>
+#include <poincare/src/probability/student_distribution.h>
 
 #include <algorithm>
 #include <cmath>
 
+#include "float_helper.h"
 #include "helper.h"
 
-using namespace Poincare;
+using namespace Poincare::Internal;
 
 struct DistributionTestCase {
   DistributionTestCase(double K, double X, double d, double p,

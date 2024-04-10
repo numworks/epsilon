@@ -337,6 +337,8 @@ tests_src += $(addprefix poincare/test/,\
   beautification.cpp \
   comparison.cpp \
   dimension.cpp \
+  distribution.cpp \
+  erf_inv.cpp \
   expression_comparison.cpp \
   float_helper.cpp \
   layout.cpp \
@@ -355,6 +357,7 @@ tests_src += $(addprefix poincare/test/,\
   print_float.cpp \
   print_int.cpp \
   rational.cpp \
+  regularized_function.cpp \
   set.cpp \
   sign.cpp \
   simplification.cpp \

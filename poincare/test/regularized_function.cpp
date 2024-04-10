@@ -1,12 +1,13 @@
 #include <float.h>
-#include <poincare/old/regularized_gamma_function.h>
-#include <poincare/old/regularized_incomplete_beta_function.h>
-#include <poincare/test/old/helper.h>
+#include <poincare/src/numeric/regularized_gamma_function.h>
+#include <poincare/src/numeric/regularized_incomplete_beta_function.h>
 #include <quiz.h>
 
 #include <cmath>
 
-using namespace Poincare;
+#include "float_helper.h"
+
+using namespace Poincare::Internal;
 
 void assert_regularized_incomplete_beta_function_is(double a, double b,
                                                     double x, double result) {
@@ -14,7 +15,7 @@ void assert_regularized_incomplete_beta_function_is(double a, double b,
   assert_roughly_equal(r, result, 10E-6);
 }
 
-QUIZ_CASE(regularized_incomplete_beta_function) {
+QUIZ_CASE(poincare_regularized_incomplete_beta_function) {
   assert_regularized_incomplete_beta_function_is(1.0, 2.0, 0.0, 0.0);
   assert_regularized_incomplete_beta_function_is(1.0, 2.0, 1.0, 1.0);
   assert_regularized_incomplete_beta_function_is(

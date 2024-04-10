@@ -1,5 +1,4 @@
 #include <poincare/old/poincare_expressions.h>
-#include <poincare/src/layout/conversion.h>
 #include <poincare/src/layout/layoutter.h>
 
 #include "helper.h"
@@ -9,7 +8,7 @@ using namespace Poincare;
 void assert_parsed_expression_layouts_to(const char* expression, Layout l) {
   Internal::Tree* e = parse_expression(expression, nullptr, true);
   Internal::Tree* t = Internal::Layoutter::LayoutExpression(e);
-  Layout el = Internal::ToPoincareLayout(t);
+  Layout el = Layout::Builder(t);
   quiz_assert_print_if_failure(el.isIdenticalTo(l), expression);
 }
 

@@ -65,8 +65,8 @@ void assert_parsed_layout_is(Layout l, Poincare::OExpression r) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   l.serializeForParsing(buffer, bufferSize);
-  Internal::Tree* ej =
-      Internal::Parser::Parse(Internal::FromPoincareLayout(l), nullptr);
+
+  Internal::Tree* ej = l.tree()->clone();
   quiz_assert_print_if_failure(ej, buffer);
   Internal::Tree* rj = Internal::FromPoincareExpression(r);
   quiz_assert_print_if_failure(rj, buffer);

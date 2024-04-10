@@ -58,12 +58,16 @@ const char *ApproximatedParsedIntegerString() {
 }
 
 void quiz_assert_log_if_failure(bool test, PoolHandle tree) {
-#if POINCARE_TREE_LOG
   if (!test) {
+#if 0  // TODO_PCJ
+#if POINCARE_TREE_LOG
     quiz_print("TEST FAILURE WHILE TESTING:");
     tree.log();
-  }
 #endif
+#else
+    ExceptionCheckpoint::Raise(ExceptionType::Other);
+#endif
+  }
   quiz_assert(test);
 }
 

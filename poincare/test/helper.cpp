@@ -3,6 +3,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
+#include <poincare/src/memory/exception_checkpoint.h>
 
 Tree* parse(const char* input) {
   Tree* inputLayout = RackFromText(input);
@@ -61,8 +62,12 @@ Tree* TextToTree(const char* input, Poincare::Context* context) {
 
 void quiz_assert_print_if_failure(bool test, const char* information) {
   if (!test) {
+#if 0  // TODO_PCJ
     quiz_print("TEST FAILURE WHILE TESTING:");
     quiz_print(information);
+#else
+    ExceptionCheckpoint::Raise(ExceptionType::Other);
+#endif
   }
   quiz_assert(test);
 }

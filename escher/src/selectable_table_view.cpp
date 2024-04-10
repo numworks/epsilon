@@ -171,10 +171,6 @@ bool SelectableTableView::selectCellAtClippedLocation(
   }
   col = std::clamp(col, 0, totalNumberOfColumns() - 1);
   row = std::clamp(row, 0, numberOfRowsAtColumn(col) - 1);
-  if (row == selectedRow() && col == selectedColumn()) {
-    // Cell was already selected.
-    return false;
-  }
   return selectCellAtLocation(col, row, setFirstResponder,
                               withinTemporarySelection);
 }
@@ -187,6 +183,10 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   if (event.isMoveEvent()) {
     OMG::Direction direction = OMG::Direction(event);
     nextSelectableCellInDirection(&col, &row, direction, delta);
+    if (col == selectedColumn() && row == selectedRow()) {
+      // Cell was already selected.
+      return false;
+    }
     return selectCellAtClippedLocation(col, row);
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut ||

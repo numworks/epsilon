@@ -119,12 +119,8 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
     return;
   }
-  int selRow = selectedRow();
-  selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
-  int selColumn = selectedColumn();
-  selColumn =
-      selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
-  selectCellAtLocation(selColumn, selRow);
+  m_selectableTableView.selectCellAtClippedLocation(selectedColumn(),
+                                                    selectedRow());
   TabTableController::didBecomeFirstResponder();
 }
 
@@ -134,12 +130,8 @@ void EditableCellTableViewController::viewWillAppear() {
     selectCellAtLocation(0, 1);
     return;
   }
-  int selRow = selectedRow();
-  selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
-  int selColumn = selectedColumn();
-  selColumn =
-      selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
-  selectCellAtLocation(selColumn, selRow);
+  m_selectableTableView.selectCellAtClippedLocation(selectedColumn(),
+                                                    selectedRow());
 }
 
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {

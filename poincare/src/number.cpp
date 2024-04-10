@@ -54,6 +54,20 @@ Number Number::ParseNumber(const char *integralPart, size_t integralLength,
                            const char *decimalPart, size_t decimalLength,
                            bool exponentIsNegative, const char *exponentPart,
                            size_t exponentLength) {
+  // Remove useless zeros
+  if (integralLength > 0) {
+    while (integralLength > 1 && integralPart[0] == '0') {
+      integralPart++;
+      integralLength--;
+    }
+    assert(integralLength > 0);
+  }
+  if (decimalLength > 0) {
+    while (decimalLength > 1 && decimalPart[decimalLength - 1] == '0') {
+      decimalLength--;
+    }
+    assert(decimalLength > 0);
+  }
   // Integer
   if (exponentLength == 0 && decimalLength == 0) {
     Integer i(integralPart, integralLength, false);

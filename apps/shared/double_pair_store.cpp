@@ -95,8 +95,8 @@ bool DoublePairStore::isColumnName(const char *name, int nameLen,
 size_t DoublePairStore::tableName(int series, char *buffer,
                                   size_t bufferSize) const {
   size_t length = fillColumnName(series, 0, buffer);
-  length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
-                                           UCodePointSolidus);
+  length +=
+      SerializationHelper::CodePoint(buffer + length, bufferSize - length, '/');
   length += fillColumnName(series, 1, buffer + length);
   return length;
 }

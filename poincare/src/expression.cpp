@@ -23,6 +23,7 @@
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/piecewise_operator.h>
+#include <poincare/point_evaluation.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/real_part.h>
@@ -818,7 +819,18 @@ Evaluation<U> Expression::approximateToEvaluation(
   if (approximationContext.complexFormat() ==
           Preferences::ComplexFormat::Real &&
       s_approximationEncounteredComplex) {
-    e = Complex<U>::Undefined();
+    switch (e.type()) {
+      case EvaluationNode<U>::Type::MatrixComplex:
+        return MatrixComplex<U>::Undefined();
+      case EvaluationNode<U>::Type::ListComplex:
+        return ListComplex<U>::Undefined();
+      case EvaluationNode<U>::Type::PointEvaluation:
+        return PointEvaluation<U>::Undefined();
+      default:
+        assert(e.type() == EvaluationNode<U>::Type::BooleanEvaluation ||
+               e.type() == EvaluationNode<U>::Type::Complex);
+        return Complex<U>::Undefined();
+    }
   }
   return e;
 }

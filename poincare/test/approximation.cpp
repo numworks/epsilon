@@ -2239,8 +2239,8 @@ QUIZ_CASE(poincare_approximation_point) {
                                             "{(3,7),(11,15)}");
 
   assert_expression_approximates_to<double>("(undef,i)", "(undef,undef)");
-  assert_expression_approximates_to<double>("(undef,i)", "nonreal", Degree,
-                                            MetricUnitFormat, Real);
+  assert_expression_approximates_to<double>("(undef,i)", "(undef,undef)",
+                                            Degree, MetricUnitFormat, Real);
 }
 
 QUIZ_CASE(poincare_approximation_keeping_symbols) {

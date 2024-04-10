@@ -11,7 +11,10 @@
 #include <emscripten.h>
 #endif
 
-class GlobalPreferences {
+/* GlobalPreferences live in the Storage, which does not enforce alignment. The
+ * packed attribute ensures the compiler will not emit instructions that require
+ * the data to be aligned. */
+class __attribute__((packed)) GlobalPreferences {
   friend OMG::GlobalBox<GlobalPreferences>;
   friend Ion::Storage::FileSystem;
 
@@ -96,7 +99,7 @@ class GlobalPreferences {
   void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }
 
   constexpr static int NumberOfBrightnessStates = 12;
-  int brightnessLevel() const;
+  int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
 
   KDFont::Size font() const { return m_font; }
@@ -134,21 +137,16 @@ class GlobalPreferences {
   int m_version;
   int m_brightnessLevel;
 #endif
-  I18n::Language m_language;
-  I18n::Country m_country;
-  bool m_showPopUp;
-  KDFont::Size m_font;
+  CODE_GUARD(global_preferences, 3045158492,  //
+             I18n::Language m_language;       //
+             I18n::Country m_country;         //
+             bool m_showPopUp;                //
+             KDFont::Size m_font;)
 };
 
 #if PLATFORM_DEVICE
 static_assert(sizeof(GlobalPreferences) == 12,
               "Class GlobalPreferences changed size");
-
-static_assert(sizeof(GlobalPreferences) ==
-                  sizeof(int) + sizeof(int) + sizeof(I18n::Language) +
-                      sizeof(I18n::Country) + sizeof(bool) +
-                      sizeof(KDFont::Size),
-              "Padding in class GlobalPreferences unaccounted for");
 #endif
 
 #if __EMSCRIPTEN

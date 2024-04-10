@@ -12,7 +12,7 @@
 
 namespace Poincare {
 
-class ExamMode : public Ion::ExamMode::Configuration {
+class __attribute__((packed)) ExamMode : public Ion::ExamMode::Configuration {
  public:
   using Ruleset = Ion::ExamMode::Ruleset;
 

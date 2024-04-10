@@ -231,7 +231,7 @@ JuniorExpression JuniorExpression::childAtIndex(int i) const {
 
 int JuniorExpression::numberOfDescendants(bool includeSelf) const {
   assert(tree());
-  return tree()->treeSize() - 1 + includeSelf;
+  return tree()->numberOfDescendants(includeSelf);
 }
 
 ExpressionNode::Type JuniorExpression::type() const {

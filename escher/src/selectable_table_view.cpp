@@ -63,6 +63,8 @@ int SelectableTableView::lastSelectableIndexInDirection(
 }
 
 bool SelectableTableView::canSelectCellAtLocation(int column, int row) {
+  assert(0 <= column && column < totalNumberOfColumns());
+  assert(0 <= row && row < totalNumberOfRows());
   HighlightCell* cell = cellAtLocation(column, row);
   return (!cell || cell->isVisible()) &&
          dataSource()->canSelectCellAtLocation(column, row);
@@ -131,10 +133,11 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   // Selection
   selectColumn(col);
   selectRow(row);
+  assert(selectedColumn() == col && selectedRow() == row);
 
   // Scroll
-  if (selectedRow() >= 0) {
-    scrollToCell(selectedColumn(), selectedRow());
+  if (row >= 0) {
+    scrollToCell(col, row);
   }
 
   if (m_delegate) {
@@ -151,7 +154,7 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
         /* Sometimes reusable cells must be re-set as first responder if the row
            changed. Other times, the row did not change but the responder did
            (when going back in previous menu for example). */
-        ((selectedColumn() != previousColumn || selectedRow() != previousRow) ||
+        ((col != previousColumn || row != previousRow) ||
          App::app()->firstResponder() != r)) {
       App::app()->setFirstResponder(r, true);
     }

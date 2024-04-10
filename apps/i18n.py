@@ -23,7 +23,19 @@ parser = argparse.ArgumentParser(description="Process some i18n files.")
 parser.add_argument("--header", help="the .h file to generate")
 parser.add_argument("--implementation", help="the .cpp file to generate")
 parser.add_argument("--locales", nargs="+", help="locale to actually generate")
+parser.add_argument(
+    "--supported-locales",
+    nargs="+",
+    dest="supported_locales",
+    help="locales supported by the firmware",
+)
 parser.add_argument("--countries", nargs="+", help="countries to actually generate")
+parser.add_argument(
+    "--supported-countries",
+    nargs="+",
+    dest="supported_countries",
+    help="countries supported by the firmware",
+)
 parser.add_argument("--codepoints", help="the code_points.h file")
 parser.add_argument("--countrypreferences", help="the country_preferences.csv file")
 parser.add_argument("--languagepreferences", help="the language_preferences.csv file")
@@ -414,7 +426,10 @@ def print_header(data, path, locales, countries):
 
     # Languages enumeration
     print_block_from_list(
-        f, "enum class Language : uint8_t {\n", locales, lambda arg: arg.upper()
+        f,
+        "enum class Language : uint8_t {\n",
+        locales,
+        lambda arg: f"{arg.upper()} = {args.supported_locales.index(arg)}",
     )
 
     # Language names
@@ -428,7 +443,10 @@ def print_header(data, path, locales, countries):
 
     # Countries enumeration
     print_block_from_list(
-        f, "enum class Country : uint8_t {\n", countries, lambda arg: arg.upper()
+        f,
+        "enum class Country : uint8_t {\n",
+        countries,
+        lambda arg: f"{arg.upper()} = {args.supported_countries.index(arg)}",
     )
     defaultCountry = countries[-1]
 

@@ -70,7 +70,17 @@ $(eval $(call rule_for, \
   I18N, \
   apps/i18n.h, \
   apps/i18n.py $(i18n_files) $(country_preferences) $(language_preferences), \
-  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --languagepreferences $(language_preferences) --header $$@ --implementation $$(subst .h,.cpp,$$@) --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $(i18n_files) $(if $(filter $(I18N_COMPRESS),1),--compress,), \
+  $$(PYTHON) apps/i18n.py \
+    --header $$@ \
+    --implementation $$(subst .h,.cpp,$$@) \
+    --locales $$(EPSILON_I18N) \
+    --supported-locales $(supported_locales) \
+    --countries $$(EPSILON_COUNTRIES) \
+    --supported-countries $(supported_countries) \
+    --codepoints $(code_points) \
+    --countrypreferences $(country_preferences) \
+    --languagepreferences $(language_preferences) \
+    --files $(i18n_files) $(if $(filter $(I18N_COMPRESS),1),--compress,), \
   global \
 ))
 

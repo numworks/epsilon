@@ -136,9 +136,7 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   assert(selectedColumn() == col && selectedRow() == row);
 
   // Scroll
-  if (row >= 0) {
-    scrollToCell(col, row);
-  }
+  scrollToCell(col, row);
 
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelectionAndDidScroll(

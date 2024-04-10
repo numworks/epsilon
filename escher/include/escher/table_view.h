@@ -40,6 +40,7 @@ class TableView : public ScrollView {
   /* This method computes the minimal scrolling needed to properly display the
    * requested cell. */
   void scrollToCell(int col, int row) {
+    assert(row >= 0);
     scrollToContentRect(m_contentView.cellFrame(col, row));
   }
   void scrollToBottom();

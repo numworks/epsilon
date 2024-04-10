@@ -23,7 +23,11 @@ class GlobalPreferences {
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
-  void setCountry(I18n::Country country, bool updateSnapshots = true);
+  void setCountry(I18n::Country country, bool updateSnapshots = true) {
+    m_country = country;
+    countryHasChanged(updateSnapshots);
+  }
+  void countryHasChanged(bool updateSnapshots = true);
 
   CountryPreferences::AvailableExamModes availableExamModes() const {
     return preferences().availableExamModes();

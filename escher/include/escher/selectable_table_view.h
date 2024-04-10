@@ -37,7 +37,7 @@ class SelectableTableView : public TableView, public Responder {
   }
 
   HighlightCell* selectedCell();
-  bool selectCellAtLocation(int col, int row, bool setFirstResponder = true,
+  void selectCellAtLocation(int col, int row, bool setFirstResponder = true,
                             bool withinTemporarySelection = false);
 
   bool handleEvent(Ion::Events::Event event) override;

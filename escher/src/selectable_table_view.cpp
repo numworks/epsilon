@@ -107,12 +107,12 @@ void SelectableTableView::nextSelectableCellInDirection(
   (searchForRow ? *row : *col) = selectableIndex;
 }
 
-bool SelectableTableView::selectCellAtLocation(int col, int row,
+void SelectableTableView::selectCellAtLocation(int col, int row,
                                                bool setFirstResponder,
                                                bool withinTemporarySelection) {
   assert(numberOfRowsAtColumn(col) <= totalNumberOfRows());
   if (row == -1) {
-    return false;
+    return;
   }
   col = std::clamp(col, 0, totalNumberOfColumns() - 1);
   row = std::clamp(row, 0, numberOfRowsAtColumn(col) - 1);
@@ -161,8 +161,6 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
     // Highlight new cell
     cell->setHighlighted(true);
   }
-
-  return true;
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
@@ -177,7 +175,8 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       // Cell was already selected.
       return false;
     }
-    return selectCellAtLocation(col, row);
+    selectCellAtLocation(col, row);
+    return true;
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut ||
       event == Ion::Events::Sto || event == Ion::Events::Var) {

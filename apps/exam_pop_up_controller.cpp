@@ -27,6 +27,9 @@ void ExamPopUpController::setTargetExamMode(ExamMode mode) {
 
 void ExamPopUpController::viewWillAppear() {
   if (!m_targetExamMode.isActive()) {
+    /* Activate the DFU when the pop-up to turn off the exam mode is displayed.
+     * This is to allow exiting exam mode from a DFU request, as the exam mode
+     * would otherwise disable the "Calculator connected" screen. */
     AppsContainer::sharedAppsContainer()->setDFUBetweenEvents(true);
   }
 }

@@ -27,6 +27,8 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_infinite_solutions("0=0");
   assert_solves_to_infinite_solutions({"x+y=0"}, {"x=-t", "y=t"});
   assert_solves_to_infinite_solutions({"x-x=0"}, {"x=t"});
+  assert_solves_to_infinite_solutions(
+      {"t*arctan(0000000000000000000000000000000000000000)=0"}, {"t=t1"});
   assert_solves_to_infinite_solutions({"4y+(1-√(5))x=0", "x=(1+√(5))y"},
                                       {"x=√(5)t+t", "y=t"});
   assert_solves_to_infinite_solutions({"x+y+z=0"},

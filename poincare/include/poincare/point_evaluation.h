@@ -49,6 +49,9 @@ class PointEvaluation final : public Evaluation<T> {
  public:
   PointEvaluation(PointEvaluation<T>* node) : Evaluation<T>(node) {}
   static PointEvaluation Builder(T x, T y);
+  static PointEvaluation<T> Undefined() {
+    return PointEvaluation<T>::Builder(NAN, NAN);
+  }
 
   Coordinate2D<T> xy() const {
     return static_cast<PointEvaluationNode<T>*>(this->node())->xy();

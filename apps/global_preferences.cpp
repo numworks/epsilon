@@ -48,10 +48,3 @@ int GlobalPreferences::sequencesInitialRank() const {
       return 1;
   }
 }
-
-/* m_brightnessLevel is stored in unaligned memory, and is sometimes converted
- * to floating-point. If brightnessLevel() was inlined, it could lead to
- * unaligned FPU access. */
-int __attribute__((noinline)) GlobalPreferences::brightnessLevel() const {
-  return m_brightnessLevel;
-}

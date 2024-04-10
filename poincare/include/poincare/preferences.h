@@ -13,7 +13,10 @@ namespace Poincare {
 
 class Expression;
 
-class Preferences final {
+/* Preferences live in the Storage, which does not enforce alignment. The packed
+ * attribute ensures the compiler will not emit instructions that require the
+ * data to be aligned. */
+class __attribute__((packed)) Preferences final {
  public:
   constexpr static int DefaultNumberOfPrintedSignificantDigits = 10;
   constexpr static int VeryLargeNumberOfSignificantDigits = 7;
@@ -186,27 +189,12 @@ class Preferences final {
              mutable LogarithmKeyEvent m_logarithmKeyEvent;
              mutable ParabolaParameter m_parabolaParameter;)
 
-#if PLATFORM_DEVICE
-  /* Explicitly declare padding to ensure the structure of the class
-   * stays consistent across versions. */
-  char m_padding[2];
-#endif
-
   /* Settings that alter layouts should be tracked by
    * CalculationStore::preferencesMightHaveChanged */
 };
 
 #if PLATFORM_DEVICE
-static_assert(sizeof(Preferences) == 16, "Class Preferences changed size");
-
-static_assert(sizeof(Preferences) ==
-                  sizeof(int) + sizeof(Preferences::CalculationPreferences) +
-                      sizeof(ExamMode) + sizeof(bool) +
-                      sizeof(Preferences::CombinatoricSymbols) + sizeof(bool) +
-                      sizeof(Preferences::LogarithmBasePosition) +
-                      sizeof(Preferences::LogarithmKeyEvent) +
-                      sizeof(Preferences::ParabolaParameter) + 2 * sizeof(char),
-              "Padding in class Preferences unaccounted for");
+static_assert(sizeof(Preferences) == 14, "Class Preferences changed size");
 #endif
 
 #if __EMSCRIPTEN__

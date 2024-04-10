@@ -263,7 +263,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
-  if (!previousRecord.hasExtension(Ion::Storage::functionExtension)) {
+  if (previousRecord.hasExtension(Ion::Storage::functionExtension)) {
+    GlobalContext::DeleteParametricComponentsOfRecord(recordToSet);
+  } else {
     // The previous record was not a function. Create a new model.
     ContinuousFunction newModel =
         continuousFunctionStore->newModel(symbol.name(), &error);
@@ -271,8 +273,6 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
       return error;
     }
     recordToSet = newModel;
-  } else {
-    GlobalContext::DeleteParametricComponentsOfRecord(recordToSet);
   }
   Poincare::Expression equation = Poincare::Comparison::Builder(
       symbol.clone(), ComparisonNode::OperatorType::Equal, expressionToStore);

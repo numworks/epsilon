@@ -10,9 +10,7 @@ GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
   return ptr;
 }
 
-void GlobalPreferences::setCountry(I18n::Country country,
-                                   bool updateSnapshots) {
-  m_country = country;
+void GlobalPreferences::countryHasChanged(bool updateSnapshots) {
   Poincare::Preferences::SharedPreferences()->setCombinatoricSymbols(
       combinatoricsSymbols());
   Poincare::Preferences::SharedPreferences()->enableMixedFractions(

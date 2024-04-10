@@ -443,9 +443,8 @@ void AppsContainer::openDFU(bool blocking) {
                          : Ion::USB::DFUParameters::PassThrough());
 
   /* DFU might have changed preferences and global preferences, update those
-   * that have callbacks : country and exam mode.*/
-  GlobalPreferences::SharedGlobalPreferences()->setCountry(
-      GlobalPreferences::SharedGlobalPreferences()->country());
+   * that have callbacks: country and exam mode.*/
+  GlobalPreferences::SharedGlobalPreferences()->countryHasChanged();
   if (preferences->examMode() != activeExamMode ||
       preferences->forceExamModeReload()) {
     setExamMode(preferences->examMode(), Ion::ExamMode::get());

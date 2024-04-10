@@ -276,7 +276,6 @@ void SelectableTableView::didEnterResponderChain(
     Responder* previousFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
-  selectColumn(0);
   selectRow(-1);
   if (row >= 0) {
     selectCellAtClippedLocation(col, row, false);

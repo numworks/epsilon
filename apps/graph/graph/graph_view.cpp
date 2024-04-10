@@ -296,10 +296,14 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
         subCurveEvaluation<double>(f, i);
     secondCurve.setPrecisionOptions(true, evaluationDouble, discontinuity);
     Curve2D pLower, pUpper;
+    /* If the function only has 1 real subcurve (f->numberOfSubCurves(false)),
+     * it means that the remaining subcurves (f->numberOfSubCurves(true)) are
+     * the derivatives. */
     if (i == 0) {
       pLower = patternLower;
       pUpper = patternUpper;
-    } else if (hasTwoCurves && i == 1) {
+    } else if (hasTwoCurves) {
+      assert(i == 1);
       pLower = patternLower2;
     }
     secondCurve.setPatternOptions(pattern, patternStart, patternEnd, pLower,

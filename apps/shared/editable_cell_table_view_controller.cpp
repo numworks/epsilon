@@ -119,8 +119,7 @@ void EditableCellTableViewController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
     return;
   }
-  m_selectableTableView.selectCellAtClippedLocation(selectedColumn(),
-                                                    selectedRow());
+  m_selectableTableView.selectCellAtLocation(selectedColumn(), selectedRow());
   TabTableController::didBecomeFirstResponder();
 }
 
@@ -130,8 +129,7 @@ void EditableCellTableViewController::viewWillAppear() {
     selectCellAtLocation(0, 1);
     return;
   }
-  m_selectableTableView.selectCellAtClippedLocation(selectedColumn(),
-                                                    selectedRow());
+  m_selectableTableView.selectCellAtLocation(selectedColumn(), selectedRow());
 }
 
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {

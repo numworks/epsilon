@@ -67,16 +67,19 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
-    return m_view.selectableTableView()->selectCellAtLocation(0, 0);
+    m_view.selectableTableView()->selectCellAtLocation(0, 0);
+    return true;
   }
   if (event == Ion::Events::Right &&
       selectionDataSource()->selectedRow() < numberOfRows() - 1) {
-    return m_view.selectableTableView()->selectCellAtLocation(
+    m_view.selectableTableView()->selectCellAtLocation(
         0, selectionDataSource()->selectedRow() + 1);
+    return true;
   }
   if (event == Ion::Events::Left && selectionDataSource()->selectedRow() > 0) {
-    return m_view.selectableTableView()->selectCellAtLocation(
+    m_view.selectableTableView()->selectCellAtLocation(
         k_numberOfColumns - 1, selectionDataSource()->selectedRow() - 1);
+    return true;
   }
   // Handle keys from 0 to 9
   char eventText[Ion::Events::EventData::k_maxDataSize] = {0};
@@ -99,15 +102,17 @@ bool Controller::handleEvent(Ion::Events::Event event) {
       switchToSelectedApp();
       return true;
     }
-    return m_view.selectableTableView()->selectCellAtLocation(col, row);
+    m_view.selectableTableView()->selectCellAtLocation(col, row);
+    return true;
   }
   // Handle Down when less than 3 icons at last row
   if (event == Ion::Events::Down &&
       selectionDataSource()->selectedRow() == numberOfRows() - 2) {
     // Otherwise would have been handled by SelectableTableView
     assert(selectionDataSource()->selectedColumn() > columnOfLastIcon());
-    return m_view.selectableTableView()->selectCellAtLocation(
-        columnOfLastIcon(), numberOfRows() - 1);
+    m_view.selectableTableView()->selectCellAtLocation(columnOfLastIcon(),
+                                                       numberOfRows() - 1);
+    return true;
   }
   return false;
 }

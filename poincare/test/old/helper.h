@@ -6,6 +6,7 @@
 #include <poincare/old/helpers.h>
 #include <poincare/print_float.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/test/float_helper.h>
 #include <quiz.h>
 
 #include <algorithm>
@@ -134,38 +135,6 @@ void assert_parsed_expression_simplify_to(
     Poincare::UnitConversion unitConversion = DefaultUnitConversion);
 
 // Approximation
-
-/* Return true if observed and expected are approximately equal, according to
- * threshold and acceptNAN parameters. */
-template <typename T>
-bool inline roughly_equal(T observed, T expected,
-                          T threshold = Poincare::Float<T>::Epsilon(),
-                          bool acceptNAN = false,
-                          T nullExpectedThreshold = NAN) {
-  if (std::isnan(observed) || std::isnan(expected)) {
-    return acceptNAN && std::isnan(observed) && std::isnan(expected);
-  }
-  T max = std::max(std::fabs(observed), std::fabs(expected));
-  if (max == INFINITY) {
-    return observed == expected;
-  }
-  if (expected == 0.0) {
-    if (std::isnan(nullExpectedThreshold)) {
-      nullExpectedThreshold = threshold;
-    }
-    return max <= nullExpectedThreshold;
-  }
-  return Poincare::Helpers::RelativelyEqual<T>(observed, expected, threshold);
-}
-
-template <typename T>
-void inline assert_roughly_equal(T observed, T expected,
-                                 T threshold = Poincare::Float<T>::Epsilon(),
-                                 bool acceptNAN = false,
-                                 T nullExpectedThreshold = NAN) {
-  quiz_assert(roughly_equal<T>(observed, expected, threshold, acceptNAN,
-                               nullExpectedThreshold));
-}
 
 template <typename T>
 void assert_expression_approximates_to(

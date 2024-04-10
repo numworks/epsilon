@@ -338,6 +338,7 @@ tests_src += $(addprefix poincare/test/,\
   comparison.cpp \
   dimension.cpp \
   expression_comparison.cpp \
+  float_helper.cpp \
   layout.cpp \
   helper.cpp \
   integer.cpp \

@@ -1205,15 +1205,7 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context *context,
         /* The resulting EditionPool tree will be loaded back into
          * m_layoutBuffer and EditionPool will be flushed. */
       },
-      &executionContext, data, &m_layout,
-      [](void *context) {
-        // Default implementation illustrating how the context could be
-        // relaxed ExecutionContext * executionContext =
-        // static_cast<ExecutionContext
-        // *>(context); Poincare::Context * context =
-        // executionContext->m_context;
-        return false;
-      });
+      &executionContext, data, &m_layout);
 }
 
 }  // namespace PoincareJ

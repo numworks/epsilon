@@ -182,6 +182,12 @@ bool IsIntegerRepresentationAccurate(T x) {
   return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
 }
 
+// Dummy reductor used with Dependency.
+template <typename T>
+static T FloatDependency(T a, T b) {
+  return 0;
+}
+
 template <typename T>
 static T FloatAddition(T a, T b) {
   return a + b;
@@ -668,6 +674,16 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return DistributionMethod::Get(method)->EvaluateAtAbscissa(
           abscissa, Distribution::Get(distribution), parameters);
     }
+    case Type::Dependency: {
+      std::complex<T> c = MapAndReduce<T, std::complex<T>>(
+          node->child(1), FloatDependency<std::complex<T>>);
+      if (std::isnan(c.real())) {
+        return NAN;
+      }
+      assert(!std::isnan(c.imag()));
+      // None of the dependencies are NAN.
+      return ToComplex<T>(node->child(0));
+    }
     default:;
   }
   // The remaining operators are defined only on reals
@@ -815,6 +831,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       // TODO: Implement more Types
       assert(false);
+    case Type::NonReal:
     case Type::Undef:
       return NAN;
   };

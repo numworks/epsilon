@@ -54,7 +54,9 @@ class Configuration {
   Configuration() : Configuration(-1) {}
   Configuration(Int raw) : m_bits(raw) {}
 
-  bool operator==(const Configuration& other) const { return m_bits == m_bits; }
+  bool operator==(const Configuration& other) const {
+    return m_bits == other.m_bits;
+  }
   bool operator!=(const Configuration& other) const {
     return !(*this == other);
   }
@@ -70,10 +72,15 @@ class Configuration {
   static_assert(static_cast<int>(Bits::NumberOfBits) ==
                 OMG::BitHelper::numberOfBitsIn<Int>());
 
-  bool configurable() const { return m_bits.get(Bits::Configurable); }
-  Int data() const { return m_bits.get(Bits::DataLast, Bits::DataFirst); }
+  bool configurable() const {
+    return OMG::BitHelper::bitAtIndex(m_bits, Bits::Configurable);
+  }
+  Int data() const {
+    return OMG::BitHelper::bitsBetweenIndexes(m_bits, Bits::DataLast,
+                                              Bits::DataFirst);
+  }
 
-  OMG::BitHelper::BitField<Int> m_bits;
+  Int m_bits;
 };
 
 static_assert(

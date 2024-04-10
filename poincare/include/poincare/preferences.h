@@ -165,8 +165,15 @@ class Preferences final {
   }
 
  private:
-  CODE_GUARD(poincare_preferences, 4011524516,  //
-             int m_version = 0x20240401;
+  constexpr static int k_version = 0x20240401;
+
+#if __EMSCRIPTEN__
+  emscripten_align1_int m_version;
+#else
+  int m_version;
+#endif
+
+  CODE_GUARD(poincare_preferences, 4027384180,  //
              CalculationPreferences m_calculationPreferences;
              mutable ExamMode m_examMode;
              /* This flag can only be asserted by writing it via DFU. When set,
@@ -178,6 +185,7 @@ class Preferences final {
              mutable LogarithmBasePosition m_logarithmBasePosition;
              mutable LogarithmKeyEvent m_logarithmKeyEvent;
              mutable ParabolaParameter m_parabolaParameter;)
+
 #if PLATFORM_DEVICE
   /* Explicitly declare padding to ensure the structure of the class
    * stays consistent across versions. */

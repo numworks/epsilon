@@ -57,11 +57,12 @@ void set(Configuration config) {
 
 // Class Configuration
 
-Configuration::Configuration(Ruleset rules, Int flags) {
+Configuration::Configuration(Ruleset rules, Int flags) : m_bits(0) {
   bool configurable = rules == Ruleset::PressToTest;
-  m_bits.set(Bits::Configurable, Bits::Configurable, configurable)
-      .set(Bits::DataLast, Bits::DataFirst,
-           configurable ? flags : static_cast<Int>(rules));
+  OMG::BitHelper::setBitAtIndex(m_bits, Bits::Configurable, configurable);
+  OMG::BitHelper::setBitsBetweenIndexes(
+      m_bits, Bits::DataLast, Bits::DataFirst,
+      configurable ? flags : static_cast<Int>(rules));
 
   assert(!isUninitialized());
 }
@@ -77,7 +78,7 @@ Int Configuration::flags() const {
 }
 
 bool Configuration::isUninitialized() const {
-  bool clearBit = m_bits.get(Bits::Cleared);
+  bool clearBit = OMG::BitHelper::bitAtIndex(m_bits, Bits::Cleared);
   return clearBit || (!configurable() &&
                       data() >= static_cast<Int>(Ruleset::NumberOfRulesets));
 }

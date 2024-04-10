@@ -14,14 +14,14 @@ constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 
 Preferences::Preferences()
-    : m_calculationPreferences{.angleUnit = AngleUnit::Radian,
-                               .displayMode =
-                                   Preferences::PrintFloatMode::Decimal,
-                               .editionMode = EditionMode::Edition2D,
-                               .complexFormat =
-                                   Preferences::ComplexFormat::Real,
-                               .numberOfSignificantDigits = Preferences::
-                                   DefaultNumberOfPrintedSignificantDigits},
+    : m_version(k_version),
+      m_calculationPreferences{
+          .angleUnit = AngleUnit::Radian,
+          .displayMode = Preferences::PrintFloatMode::Decimal,
+          .editionMode = EditionMode::Edition2D,
+          .complexFormat = Preferences::ComplexFormat::Real,
+          .numberOfSignificantDigits =
+              Preferences::DefaultNumberOfPrintedSignificantDigits},
       m_forceExamModeReload(false) {}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(

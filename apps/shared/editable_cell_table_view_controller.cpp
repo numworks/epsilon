@@ -116,29 +116,30 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
 }
 
 void EditableCellTableViewController::didBecomeFirstResponder() {
-  if (selectedRow() >= 0) {
-    int selRow = selectedRow();
-    selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
-    int selColumn = selectedColumn();
-    selColumn =
-        selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
-    selectCellAtLocation(selColumn, selRow);
-    TabTableController::didBecomeFirstResponder();
+  if (selectedRow() == -1) {
+    return;
   }
+  int selRow = selectedRow();
+  selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
+  int selColumn = selectedColumn();
+  selColumn =
+      selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+  selectCellAtLocation(selColumn, selRow);
+  TabTableController::didBecomeFirstResponder();
 }
 
 void EditableCellTableViewController::viewWillAppear() {
   TabTableController::viewWillAppear();
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 1);
-  } else {
-    int selRow = selectedRow();
-    selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
-    int selColumn = selectedColumn();
-    selColumn =
-        selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
-    selectCellAtLocation(selColumn, selRow);
+    return;
   }
+  int selRow = selectedRow();
+  selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
+  int selColumn = selectedColumn();
+  selColumn =
+      selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+  selectCellAtLocation(selColumn, selRow);
 }
 
 bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {

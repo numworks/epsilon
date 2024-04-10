@@ -20,7 +20,8 @@ class GlobalPreferences {
   static GlobalPreferences* SharedGlobalPreferences();
 
   GlobalPreferences()
-      : m_brightnessLevel(Ion::Backlight::MaxBrightness),
+      : m_version(k_version),
+        m_brightnessLevel(Ion::Backlight::MaxBrightness),
         m_showPopUp(true),
         m_font(KDFont::Size::Large) {
     setLanguage(I18n::Language::EN);
@@ -106,6 +107,8 @@ class GlobalPreferences {
   void setFont(KDFont::Size font) { m_font = font; }
 
  private:
+  constexpr static int k_version = 0x20240401;
+
   const CountryPreferences& preferences() const {
     return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)];
   }
@@ -119,10 +122,11 @@ class GlobalPreferences {
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
 
-  int m_version = 0x20240401;
 #if __EMSCRIPTEN__
+  emscripten_align1_int m_version;
   emscripten_align1_int m_brightnessLevel;
 #else
+  int m_version;
   int m_brightnessLevel;
 #endif
   I18n::Language m_language;

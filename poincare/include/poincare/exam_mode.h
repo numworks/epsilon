@@ -16,7 +16,7 @@ class ExamMode : public Ion::ExamMode::Configuration {
  public:
   using Ruleset = Ion::ExamMode::Ruleset;
 
-  struct PressToTestFlags : OMG::BitHelper::BitField<Ion::ExamMode::Int> {
+  struct PressToTestFlags {
     CODE_GUARD(press_to_test_flags, 2156906052,  //
                enum class Flags
                : size_t{
@@ -35,17 +35,23 @@ class ExamMode : public Ion::ExamMode::Configuration {
     static_assert(static_cast<size_t>(Flags::NumberOfFlags) <=
                   Ion::ExamMode::Configuration::k_dataSize);
 
+    bool operator==(const PressToTestFlags& other) {
+      return m_bits == other.m_bits;
+    }
+
     bool getFlag(Flags flag) const {
       assert(static_cast<size_t>(flag) <
              static_cast<size_t>(Flags::NumberOfFlags));
-      return BitField::get(flag);
+      return OMG::BitHelper::bitAtIndex(m_bits, flag);
     }
     PressToTestFlags& setFlag(Flags flag, bool value = true) {
       assert(static_cast<size_t>(flag) <
              static_cast<size_t>(Flags::NumberOfFlags));
-      BitField::set(flag, flag, 1);
+      OMG::BitHelper::setBitAtIndex(m_bits, flag, value);
       return *this;
     }
+
+    Ion::ExamMode::Int m_bits;
   };
   static_assert(sizeof(PressToTestFlags) == sizeof(Ion::ExamMode::Int));
 

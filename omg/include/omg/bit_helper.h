@@ -29,6 +29,10 @@ constexpr bool bitAtIndex(T mask, size_t i) {
   assert(i >= 0 && i < numberOfBitsIn<T>());
   return (mask >> i) & 1U;
 }
+template <typename T, typename I>
+constexpr bool bitAtIndex(T mask, I i) {
+  return bitAtIndex(mask, static_cast<size_t>(i));
+}
 
 template <typename T>
 constexpr void setBitAtIndex(T& mask, size_t i, bool b) {
@@ -39,6 +43,32 @@ constexpr void setBitAtIndex(T& mask, size_t i, bool b) {
   } else {
     mask &= ~(one << i);
   }
+}
+template <typename T, typename I>
+constexpr void setBitAtIndex(T& mask, I i, bool b) {
+  setBitAtIndex(mask, static_cast<size_t>(i), b);
+}
+
+template <typename T>
+constexpr T bitsBetweenIndexes(T bits, size_t high, size_t low) {
+  return (bits >> low) & ((static_cast<T>(1) << (high - low + 1)) - 1);
+}
+template <typename T, typename I>
+constexpr T bitsBetweenIndexes(T bits, I high, I low) {
+  return bitsBetweenIndexes<T>(bits, static_cast<size_t>(high),
+                               static_cast<size_t>(low));
+}
+
+template <typename T>
+constexpr void setBitsBetweenIndexes(T& bits, size_t high, size_t low,
+                                     T value) {
+  T mask = ((static_cast<T>(1) << (high - low + 1)) - static_cast<T>(1)) << low;
+  bits = (bits & ~mask) | ((value << low) & mask);
+}
+template <typename T, typename I>
+constexpr void setBitsBetweenIndexes(T& bits, I high, I low, T value) {
+  setBitsBetweenIndexes<T>(bits, static_cast<size_t>(high),
+                           static_cast<size_t>(low), value);
 }
 
 constexpr inline size_t countLeadingZeros(uint32_t i) {
@@ -75,48 +105,6 @@ uint8_t log2(T v) {
   }
   return numberOfBitsIn<T>();
 }
-
-/* FIXME This could be the base class for Ion::Device::Regs::Register, but
- * Register gets a little more specific with inline and volatile. This should be
- * factorised still. */
-template <typename T>
-class BitField {
- public:
-  constexpr BitField(T bits) : m_bits(bits) {}
-  constexpr BitField() : BitField(0) {}
-
-  operator T() const { return m_bits; }
-
-  constexpr T get() const { return m_bits; }
-
-  template <typename K>
-  bool get(K bit) const {
-    return get(bit, bit);
-  }
-
-  template <typename K>
-  T get(K high, K low) const {
-    return get(static_cast<size_t>(high), static_cast<size_t>(low));
-  }
-  constexpr T get(size_t high, size_t low) const {
-    return (m_bits >> low) & ((k_one << (high - low + 1)) - 1);
-  }
-
-  template <typename K>
-  constexpr BitField& set(K high, K low, T value) {
-    return set(static_cast<size_t>(high), static_cast<size_t>(low), value);
-  }
-  constexpr BitField& set(size_t high, size_t low, T value) {
-    T mask = ((k_one << (high - low + 1)) - 1) << low;
-    m_bits = (m_bits & ~mask) | ((value << low) & mask);
-    return *this;
-  }
-
- protected:
-  constexpr static T k_one = static_cast<T>(1);
-
-  T m_bits;
-};
 
 }  // namespace BitHelper
 }  // namespace OMG

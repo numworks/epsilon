@@ -107,6 +107,12 @@ void InputStoreController::viewWillAppear() {
         ->setText(buffer);
   }
   m_dropdownCell.dropdown()->reloadCell();
+  InputCategoricalController::viewWillAppear();
+}
+
+void InputStoreController::initView() {
+  InputCategoricalController::initView();
+  categoricalTableCell()->recomputeDimensions();
 
   if (m_loadedSubApp != m_statistic->subApp() ||
       m_loadedDistribution != m_statistic->distributionType() ||
@@ -120,13 +126,6 @@ void InputStoreController::viewWillAppear() {
   m_loadedSubApp = m_statistic->subApp();
   m_loadedDistribution = m_statistic->distributionType();
   m_loadedTest = m_statistic->significanceTestType();
-
-  InputCategoricalController::viewWillAppear();
-}
-
-void InputStoreController::initView() {
-  InputCategoricalController::initView();
-  categoricalTableCell()->recomputeDimensions();
 }
 
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {

@@ -224,9 +224,7 @@ void InputCategoricalTableCell::fullReload(bool forceReloadTableCell,
     m_selectableTableView.deselectTable();
   }
   recomputeDimensionsAndReload(forceReloadTableCell, forceReloadPage);
-  if (row >= 0) {
-    m_selectableTableView.selectCellAtClippedLocation(col, row, true);
-  }
+  m_selectableTableView.selectCellAtClippedLocation(col, row, true);
 }
 
 /* DoubleColumnTableCell */

@@ -165,6 +165,9 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
 bool SelectableTableView::selectCellAtClippedLocation(
     int col, int row, bool setFirstResponder, bool withinTemporarySelection) {
   assert(numberOfRowsAtColumn(col) <= totalNumberOfRows());
+  if (row == -1) {
+    return false;
+  }
   col = std::clamp(col, 0, totalNumberOfColumns() - 1);
   row = std::clamp(row, 0, numberOfRowsAtColumn(col) - 1);
   if (row == selectedRow() && col == selectedColumn()) {
@@ -277,9 +280,7 @@ void SelectableTableView::didEnterResponderChain(
   int col = selectedColumn();
   int row = selectedRow();
   selectRow(-1);
-  if (row >= 0) {
-    selectCellAtClippedLocation(col, row, false);
-  }
+  selectCellAtClippedLocation(col, row, false);
 }
 
 void SelectableTableView::willExitResponderChain(

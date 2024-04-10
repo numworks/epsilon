@@ -150,6 +150,33 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       /* Only booleans operators can have boolean child yet. */
       return false;
     }
+    if (childDim[i].isPoint()) {
+      // A few operations are allowed on points.
+      switch (t->type()) {
+        case Type::Piecewise:
+          if (i % 2 == 1) {
+            return false;
+          }
+          break;
+        case Type::Diff:
+        case Type::NthDiff:
+        case Type::ListSequence:
+          if (i != Parametric::FunctionIndex(t)) {
+            return false;
+          }
+          break;
+        case Type::Dim:
+        case Type::Dependency:
+        case Type::Set:
+        case Type::List:
+        case Type::ListElement:
+        case Type::ListSlice:
+        case Type::ListSort:
+          break;
+        default:
+          return false;
+      }
+    }
     assert(childDim[i].isSanitized());
     i++;
   }
@@ -228,8 +255,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
 
     // Matrices
     case Type::Dim:
-      return childDim[0].isMatrix() ||
-             (childDim[0].isScalar() && GetListLength(t->child(0)) >= 0);
+      return childDim[0].isMatrix() || GetListLength(t->child(0)) >= 0;
     case Type::Ref:
     case Type::Rref:
     case Type::Transpose:
@@ -272,6 +298,10 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       assert(childDim[1].isUnit());
       return childDim[0] == childDim[1] ||
              (childDim[1].isAngleUnit() && childDim[0].isScalar());
+    case Type::Dependency:
+      // Children are expected to be of the same dimension for approximation
+      return childDim[0] == childDim[1] || GetListLength(t->child(1)) == 0;
+    case Type::Set:
     case Type::List:
       // Lists can contain points or scalars but not both
       for (int i = 0; i < t->numberOfChildren(); i++) {
@@ -281,12 +311,6 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         }
       }
       return true;
-    case Type::ListSequence:
-      if (childDim[2].isPoint()) {
-        childDim[2] = Scalar();
-        // continue to default
-      }
-      break;
     case Type::Abs:
     case Type::Floor:
     case Type::Ceil:
@@ -319,7 +343,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
   }
   // Check each child against the flags
   for (int i = 0; i < t->numberOfChildren(); i++) {
-    if (childDim[i].isScalar() ||
+    if (childDim[i].isScalar() || childDim[i].isPoint() ||
         (childDim[i].isUnit() &&
          (unitsAllowed ||
           (angleUnitsAllowed && childDim[i].isSimpleAngleUnit())))) {
@@ -361,7 +385,10 @@ Dimension Dimension::GetDimension(const Tree* t) {
     }
     case Type::Sum:
     case Type::Product:
-      return GetDimension(t->child(Parametric::k_integrandIndex));
+    case Type::ListSequence:
+    case Type::Diff:
+    case Type::NthDiff:
+      return GetDimension(t->child(Parametric::FunctionIndex(t)));
     case Type::PowMatrix:
     case Type::PowReal:
     case Type::Pow: {
@@ -392,6 +419,9 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Rref:
     case Type::Piecewise:
     case Type::Parenthesis:
+    case Type::Dependency:
+    case Type::ListElement:
+    case Type::ListSort:
       return GetDimension(t->child(0));
     case Type::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
@@ -412,12 +442,10 @@ Dimension Dimension::GetDimension(const Tree* t) {
                              nullptr);
     case Type::Point:
       return Point();
+    case Type::Set:
+    case Type::ListSlice:
     case Type::List:
-      // Points inside lists are always written directly
-      return t->numberOfChildren() > 0 && t->child(0)->isPoint() ? Point()
-                                                                 : Scalar();
-    case Type::ListSequence:
-      return t->child(2)->isPoint() ? Point() : Scalar();
+      return GetListLength(t) > 0 ? GetDimension(t->child(0)) : Scalar();
     case Type::ACos:
     case Type::ASin:
     case Type::ATan:

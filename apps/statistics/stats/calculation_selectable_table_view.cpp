@@ -10,7 +10,8 @@ bool CalculationSelectableTableView::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Left && selectedColumn() == 2 &&
       selectedRow() == 0) {
-    return selectCellAtLocation(0, 1);
+    selectCellAtLocation(0, 1);
+    return true;
   }
   return SelectableTableView::handleEvent(event);
 }

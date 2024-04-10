@@ -110,10 +110,12 @@ void SelectableTableView::nextSelectableCellInDirection(
 bool SelectableTableView::selectCellAtLocation(int col, int row,
                                                bool setFirstResponder,
                                                bool withinTemporarySelection) {
-  if (row < 0 || col < 0 || row >= totalNumberOfRows() ||
-      col >= totalNumberOfColumns()) {
+  assert(numberOfRowsAtColumn(col) <= totalNumberOfRows());
+  if (row == -1) {
     return false;
   }
+  col = std::clamp(col, 0, totalNumberOfColumns() - 1);
+  row = std::clamp(row, 0, numberOfRowsAtColumn(col) - 1);
 
   if (!canSelectCellAtLocation(col, row)) {
     /* If the cell is not selectable, go down by default.
@@ -163,18 +165,6 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   return true;
 }
 
-bool SelectableTableView::selectCellAtClippedLocation(
-    int col, int row, bool setFirstResponder, bool withinTemporarySelection) {
-  assert(numberOfRowsAtColumn(col) <= totalNumberOfRows());
-  if (row == -1) {
-    return false;
-  }
-  col = std::clamp(col, 0, totalNumberOfColumns() - 1);
-  row = std::clamp(row, 0, numberOfRowsAtColumn(col) - 1);
-  return selectCellAtLocation(col, row, setFirstResponder,
-                              withinTemporarySelection);
-}
-
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   assert(totalNumberOfRows() > 0);
   int delta = Ion::Events::longPressFactor();
@@ -187,7 +177,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       // Cell was already selected.
       return false;
     }
-    return selectCellAtClippedLocation(col, row);
+    return selectCellAtLocation(col, row);
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut ||
       event == Ion::Events::Sto || event == Ion::Events::Var) {
@@ -281,7 +271,7 @@ void SelectableTableView::didEnterResponderChain(
   int col = selectedColumn();
   int row = selectedRow();
   selectRow(-1);
-  selectCellAtClippedLocation(col, row, false);
+  selectCellAtLocation(col, row, false);
 }
 
 void SelectableTableView::willExitResponderChain(

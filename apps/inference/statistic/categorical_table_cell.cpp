@@ -119,7 +119,7 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
     recomputeDimensionsAndReload();
   }
   m_selectableTableView.reloadCellAtLocation(column, row);
-  m_selectableTableView.selectCellAtClippedLocation(column, row);
+  m_selectableTableView.selectCellAtLocation(column, row);
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     event = Ion::Events::Down;
   }
@@ -188,7 +188,7 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   m_selectableTableView.deselectTable();
   m_selectableTableView.resetScroll();
   recomputeDimensionsAndReload(true, true);
-  m_selectableTableView.selectCellAtClippedLocation(column, 1, false);
+  m_selectableTableView.selectCellAtLocation(column, 1, false);
 }
 
 bool InputCategoricalTableCell::recomputeDimensions() {
@@ -224,7 +224,7 @@ void InputCategoricalTableCell::fullReload(bool forceReloadTableCell,
     m_selectableTableView.deselectTable();
   }
   recomputeDimensionsAndReload(forceReloadTableCell, forceReloadPage);
-  m_selectableTableView.selectCellAtClippedLocation(col, row, true);
+  m_selectableTableView.selectCellAtLocation(col, row, true);
 }
 
 /* DoubleColumnTableCell */

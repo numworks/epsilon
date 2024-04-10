@@ -38,7 +38,6 @@ class SelectableListView : public SelectableTableView {
 
  private:
   // Hide column-related methods
-  using SelectableTableView::selectCellAtClippedLocation;
   using SelectableTableView::selectCellAtLocation;
   using SelectableTableView::selectColumn;
   using SelectableTableView::selectedColumn;

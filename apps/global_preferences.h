@@ -13,20 +13,12 @@
 
 class GlobalPreferences {
   friend OMG::GlobalBox<GlobalPreferences>;
+  friend Ion::Storage::FileSystem;
 
  public:
   constexpr static char k_recordName[] = "gp";
 
   static GlobalPreferences* SharedGlobalPreferences();
-
-  GlobalPreferences()
-      : m_version(k_version),
-        m_brightnessLevel(Ion::Backlight::MaxBrightness),
-        m_showPopUp(true),
-        m_font(KDFont::Size::Large) {
-    setLanguage(I18n::Language::EN);
-    setCountry(I18n::Country::WW, false);
-  }
 
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
@@ -108,6 +100,15 @@ class GlobalPreferences {
 
  private:
   constexpr static int k_version = 0x20240401;
+
+  GlobalPreferences()
+      : m_version(k_version),
+        m_brightnessLevel(Ion::Backlight::MaxBrightness),
+        m_showPopUp(true),
+        m_font(KDFont::Size::Large) {
+    setLanguage(I18n::Language::EN);
+    setCountry(I18n::Country::WW, false);
+  }
 
   const CountryPreferences& preferences() const {
     return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)];

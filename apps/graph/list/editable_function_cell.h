@@ -43,10 +43,10 @@ class EditableFunctionCell
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
 
-  class ButtonCell : public Escher::ButtonCell {
+  class TemplateButtonCell : public Escher::ButtonCell {
    public:
-    ButtonCell(Escher::LayoutField* parentResponder,
-               Escher::Invocation invocation)
+    TemplateButtonCell(Escher::LayoutField* parentResponder,
+                       Escher::Invocation invocation)
         : Escher::ButtonCell(parentResponder, I18n::Message::FunctionTemplates,
                              invocation, Style::EmbossedGray,
                              KDFont::Size::Small,
@@ -56,7 +56,7 @@ class EditableFunctionCell
 
   static constexpr KDCoordinate k_expressionMargin = 5;
   static constexpr KDCoordinate k_templateButtonMargin = 5;
-  ButtonCell m_templateButton;
+  TemplateButtonCell m_templateButton;
 };
 
 }  // namespace Graph

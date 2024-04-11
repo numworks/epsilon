@@ -843,60 +843,52 @@ bool Simplification::SimplifyLastTree(Tree* e,
                                       ProjectionContext projectionContext) {
   assert(SharedTreeStack->lastBlock() == e->nextTree()->block());
   ExceptionTryAfterBlock(e->block()) {
-    bool changed = false;
-    // Seeded random nodes may remain between Successive iterations.
-    int maxRandomSeed = 0;
-    do {
-      if (!Dimension::DeepCheckDimensions(e) ||
-          !Dimension::DeepCheckListLength(e)) {
-        // TODO: Raise appropriate exception in DeepCheckDimensions.
-        ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
-      }
-      projectionContext.m_dimension = Dimension::GetDimension(e);
-      if (projectionContext.m_strategy != Strategy::ApproximateToFloat &&
-          ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
-        ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
-      }
-      // Seed random nodes before anything is merged/duplicated.
+    // Seed random nodes before anything is merged/duplicated.
+    int maxRandomSeed = Random::SeedPoolObjects(e, 0);
+    bool changed = maxRandomSeed > 0;
+    // Replace functions and variable before dimension check
+    if (Projection::DeepReplaceUserNamed(e, projectionContext)) {
+      // Seed random nodes that may have appeared after replacing.
       maxRandomSeed = Random::SeedPoolObjects(e, maxRandomSeed);
-      changed = maxRandomSeed > 0;
-      changed = Projection::DeepSystemProject(e, projectionContext) || changed;
-      /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
-       * because of the ordered structure of the set. When projecting y+x,
-       * variables will be {x, y} and we must have found all user symbols to
-       * properly project y to 1. */
-      Tree* variables = Variables::GetUserSymbols(e);
-      SwapTreesPointers(&e, &variables);
-      Variables::ProjectToId(
-          e, variables,
-          projectionContext.m_complexFormat == ComplexFormat::Real
-              ? ComplexSign::RealUnknown()
-              : ComplexSign::Unknown());
-      changed = DeepSystematicReduce(e) || changed;
-      assert(!DeepSystematicReduce(e));
-      changed = List::BubbleUp(e, ShallowSystematicReduce) || changed;
-      changed = AdvancedSimplification::AdvancedReduce(e) || changed;
-      changed = Dependency::DeepRemoveUselessDependencies(e) || changed;
-
-      if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
-        /* Approximate again in case exact numbers appeared during
-         * simplification. */
-        changed = Approximation::ApproximateAndReplaceEveryScalar(e);
-      }
-      changed = Beautification::DeepBeautify(e, projectionContext) || changed;
-      Variables::BeautifyToName(e, variables);
-      variables->removeTree();
-      e = variables;
-      if (!Projection::DeepReplaceUserNamed(e, projectionContext)) {
-        return changed;
-      }
       changed = true;
-      /* If functions and variables can be replaced with their definitions,
-       * iterate again to simplify the expression further. */
-      assert(projectionContext.m_symbolic !=
-             SymbolicComputation::DoNotReplaceAnySymbol);
-      projectionContext.m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
-    } while (true);
+    }
+    if (!Dimension::DeepCheckDimensions(e) ||
+        !Dimension::DeepCheckListLength(e)) {
+      // TODO: Raise appropriate exception in DeepCheckDimensions.
+      ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
+    }
+    projectionContext.m_dimension = Dimension::GetDimension(e);
+    if (projectionContext.m_strategy != Strategy::ApproximateToFloat &&
+        ShouldApproximateOnSimplify(projectionContext.m_dimension)) {
+      ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
+    }
+    changed = Projection::DeepSystemProject(e, projectionContext) || changed;
+    /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
+     * because of the ordered structure of the set. When projecting y+x,
+     * variables will be {x, y} and we must have found all user symbols to
+     * properly project y to 1. */
+    Tree* variables = Variables::GetUserSymbols(e);
+    SwapTreesPointers(&e, &variables);
+    Variables::ProjectToId(
+        e, variables,
+        projectionContext.m_complexFormat == ComplexFormat::Real
+            ? ComplexSign::RealUnknown()
+            : ComplexSign::Unknown());
+    changed = DeepSystematicReduce(e) || changed;
+    assert(!DeepSystematicReduce(e));
+    changed = List::BubbleUp(e, ShallowSystematicReduce) || changed;
+    changed = AdvancedSimplification::AdvancedReduce(e) || changed;
+    changed = Dependency::DeepRemoveUselessDependencies(e) || changed;
+
+    if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
+      /* Approximate again in case exact numbers appeared during
+       * simplification. */
+      changed = Approximation::ApproximateAndReplaceEveryScalar(e) || changed;
+    }
+    changed = Beautification::DeepBeautify(e, projectionContext) || changed;
+    Variables::BeautifyToName(e, variables);
+    variables->removeTree();
+    e = variables;
   }
   ExceptionCatch(type) {
     switch (type) {

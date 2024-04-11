@@ -73,6 +73,11 @@ class __attribute__((packed)) Preferences final {
     PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
     EditionMode editionMode : 1;
     ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
+    /* Explicitly declare padding bits to avoid uninitalized values. */
+    uint8_t padding
+        : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
+          k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -
+          1 - k_numberOfBitsForComplexFormat;
     uint8_t numberOfSignificantDigits;
   };
 

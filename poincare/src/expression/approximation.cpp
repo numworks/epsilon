@@ -142,8 +142,6 @@ template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
                                                  AngleUnit angleUnit,
                                                  ComplexFormat complexFormat) {
-  assert(Dimension::GetListLength(node) == Dimension::k_nonListListLength);
-  assert(Dimension::GetDimension(node).isScalar());
   Random::Context randomContext;
   s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat);

@@ -22,15 +22,10 @@ class EditableFunctionCell
     m_expressionBackground = backgroundColor();
   }
 
-  bool isEditing() { return expressionCell()->layoutField()->isEditing(); }
-
-  bool templateButtonShouldBeVisible() {
-    return expressionCell()->layoutField()->isEmpty();
-  }
-
+  bool isEditing() { return layoutField()->isEditing(); }
+  bool templateButtonShouldBeVisible() { return layoutField()->isEmpty(); }
   void setTemplateButtonVisible(bool visible);
   void setTemplateButtonHighlighted(bool highlighted);
-
   bool isTemplateButtonVisible() const { return m_templateButton.isVisible(); }
   bool isTemplateButtonHighlighted() const {
     return m_templateButton.isHighlighted();
@@ -42,6 +37,7 @@ class EditableFunctionCell
   }
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
+  Escher::LayoutField* layoutField() { return expressionCell()->layoutField(); }
 
   class TemplateButtonCell : public Escher::ButtonCell {
    public:

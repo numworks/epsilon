@@ -10,7 +10,7 @@ EditableFunctionCell::EditableFunctionCell(
     Responder* parentResponder, LayoutFieldDelegate* layoutFieldDelegate,
     StackViewController* modelsStackController)
     : TemplatedFunctionCell<Shared::WithEditableExpressionCell>(),
-      m_templateButton(expressionCell()->layoutField(),
+      m_templateButton(layoutField(),
                        Invocation::Builder<ViewController>(
                            [](ViewController* controller, void* sender) {
                              App::app()->displayModalViewController(
@@ -20,8 +20,8 @@ EditableFunctionCell::EditableFunctionCell(
                            },
                            modelsStackController)) {
   // Initialize expression cell
-  expressionCell()->layoutField()->setParentResponder(parentResponder);
-  expressionCell()->layoutField()->setDelegate(layoutFieldDelegate);
+  layoutField()->setParentResponder(parentResponder);
+  layoutField()->setDelegate(layoutFieldDelegate);
 }
 
 void EditableFunctionCell::setTemplateButtonVisible(bool visible) {
@@ -29,7 +29,6 @@ void EditableFunctionCell::setTemplateButtonVisible(bool visible) {
   if (m_templateButton.isVisible() == visible) {
     return;
   }
-
   m_templateButton.setVisible(visible);
   layoutSubviews();
 }
@@ -39,12 +38,11 @@ void EditableFunctionCell::setTemplateButtonHighlighted(bool highlighted) {
   if (m_templateButton.isHighlighted() == highlighted) {
     return;
   }
-
   m_templateButton.setHighlighted(highlighted);
   if (highlighted) {
     App::app()->setFirstResponder(&m_templateButton);
   } else {
-    App::app()->setFirstResponder(expressionCell()->layoutField());
+    App::app()->setFirstResponder(layoutField());
   }
 }
 

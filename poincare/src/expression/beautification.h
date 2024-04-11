@@ -9,6 +9,8 @@
 namespace Poincare::Internal {
 
 class Beautification {
+  friend class Approximation;
+
  public:
   static float DegreeForSortingAddition(const Tree* expr, bool symbolsOnly);
   // Return true if result should be opposed.

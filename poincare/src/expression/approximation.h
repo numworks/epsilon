@@ -24,6 +24,19 @@ struct ProjectionContext;
 
 class Approximation final {
  public:
+  // Optimize function for efficient approximations
+  static void PrepareFunctionForApproximation(Tree* expr, const char* variable,
+                                              AngleUnit angleUnit,
+                                              ComplexFormat complexFormat);
+
+  template <typename T>
+  static T ToReal(const Tree* preparedExpression) {
+    return ToReal<T>(preparedExpression, NAN);
+  }
+
+  template <typename T>
+  static T ToReal(const Tree* preparedFunction, T abscissa);
+
   // Approximate a tree with any dimension
   template <typename T>
   static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
@@ -102,6 +115,8 @@ class Approximation final {
   static int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
 
  private:
+  static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
+
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T, typename U>

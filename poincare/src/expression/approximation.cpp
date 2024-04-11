@@ -48,6 +48,20 @@ Approximation::Context::Context(AngleUnit angleUnit,
   }
 }
 
+// Function should have been prepared by PrepareFunctionForApproximation
+template <typename T>
+T Approximation::ToReal(const Tree* preparedFunction, T abscissa) {
+  Random::Context randomContext;
+  s_randomContext = &randomContext;
+  Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
+  s_context = &context;
+  s_context->setLocalValue(abscissa);
+  std::complex<T> value = ToComplex<T>(preparedFunction);
+  s_randomContext = nullptr;
+  s_context = nullptr;
+  return value.imag() == 0 ? value.real() : NAN;
+}
+
 template <typename T>
 Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
@@ -1153,6 +1167,9 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
  * double. ToComplex needs it but ToMatrix could take a bool and call the
  * correct ToComplex<T> as needed since the code is mostly independant of the
  * float type used in the tree. */
+
+template float Approximation::ToReal(const Tree*, float);
+template double Approximation::ToReal(const Tree*, double);
 
 template std::complex<float> Approximation::RootTreeToComplex<float>(
     const Tree*, AngleUnit, ComplexFormat);

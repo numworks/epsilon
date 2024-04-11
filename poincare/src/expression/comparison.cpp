@@ -129,7 +129,7 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
   }
   float approximation =
       Approximation::To<float>(node0) - Approximation::To<float>(node1);
-  if (approximation == 0.0f) {
+  if (approximation == 0.0f || std::isnan(approximation)) {
     if (node0->treeIsIdenticalTo(node1)) {
       return 0;
     }

@@ -55,12 +55,9 @@ View* EditableFunctionCell::subviewAtIndex(int index) {
 }
 
 void EditableFunctionCell::layoutSubviews(bool force) {
-  setChildFrame(&m_ellipsisView,
-                KDRect(bounds().width() - k_parametersColumnWidth, 0,
-                       k_parametersColumnWidth, bounds().height()),
-                force);
+  setChildFrame(&m_ellipsisView, KDRectZero, force);
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_expressionMargin;
-  KDCoordinate rightMargin = k_expressionMargin + k_parametersColumnWidth;
+  KDCoordinate rightMargin = k_expressionMargin;
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
   setChildFrame(expressionCell(),
                 KDRect(leftMargin, 0, availableWidth, bounds().height()),

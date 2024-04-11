@@ -38,6 +38,7 @@ class EditableFunctionCell
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
   Escher::LayoutField* layoutField() { return expressionCell()->layoutField(); }
+  bool displayEllipsis() const override { return false; }
 
   class TemplateButtonCell : public Escher::ButtonCell {
    public:

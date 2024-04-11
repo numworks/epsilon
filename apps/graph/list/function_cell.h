@@ -38,10 +38,14 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
  protected:
   // View
   bool displayFunctionType() const;
+  virtual bool displayEllipsis() const = 0;
   int numberOfSubviews() const override { return 2 + displayFunctionType(); }
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   KDCoordinate messageTextHeight() const;
+  KDCoordinate ellipsisViewWidth() const {
+    return displayEllipsis() ? Escher::Metric::EllipsisCellWidth : 0;
+  }
 
   constexpr static KDCoordinate k_colorIndicatorThickness =
       Escher::Metric::VerticalColorIndicatorThickness;
@@ -49,8 +53,6 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
       Shared::ExpressionModelListController::k_defaultVerticalMargin;
   constexpr static KDCoordinate k_messageMargin =
       Escher::Metric::CellVerticalElementMargin;
-  constexpr static KDCoordinate k_parametersColumnWidth =
-      Escher::Metric::EllipsisCellWidth;
   Escher::MessageTextView m_messageTextView;
   Escher::EllipsisView m_ellipsisView;
   KDColor m_functionColor;
@@ -79,6 +81,8 @@ class FunctionCell
 
  private:
   void updateSubviewsBackgroundAfterChangingState() override;
+  bool displayEllipsis() const override { return true; }
+
   bool m_parameterSelected;
 };
 

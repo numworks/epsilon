@@ -351,6 +351,7 @@ tests_src += $(addprefix poincare/test/,\
   memory_elements.cpp \
   memory_edition.cpp \
   n_ary.cpp \
+  numeric_solver.cpp \
   parse.cpp \
   polynomial.cpp \
   projection.cpp \

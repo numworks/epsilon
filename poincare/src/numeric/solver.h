@@ -11,9 +11,11 @@
 #include "coordinate_2D.h"
 #include "float.h"
 
-namespace Poincare::Internal {
-
+namespace Poincare {
 class Context;
+}
+
+namespace Poincare::Internal {
 
 template <typename T>
 class Solver {

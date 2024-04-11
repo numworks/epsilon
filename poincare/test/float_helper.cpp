@@ -40,6 +40,8 @@ void assert_roughly_equal(T observed, T expected, T threshold, bool acceptNAN,
                                nullExpectedThreshold));
 }
 
+template bool relatively_equal<float>(float, float, float);
+template bool relatively_equal<double>(double, double, double);
 template bool roughly_equal<float>(float, float, float, bool, float);
 template bool roughly_equal<double>(double, double, double, bool, double);
 template void assert_roughly_equal<float>(float, float, float, bool, float);

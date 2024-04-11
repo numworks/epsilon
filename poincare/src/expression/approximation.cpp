@@ -124,6 +124,10 @@ Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
   assert(dim.isPoint() || dim.isMatrix());
   Tree* result = dim.isPoint() ? ToPoint<T>(node) : ToMatrix<T>(node);
   for (Tree* child : result->children()) {
+    if (child->isUndef()) {
+      result->cloneTreeOverTree(KUndef);
+      break;
+    }
     child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
         ToComplex<T>(child), s_context->m_complexFormat));
   }
@@ -830,7 +834,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 
 template <typename T>
 Tree* PushComplex(std::complex<T> value) {
-  assert(!(std::isnan(value.real()) || std::isnan(value.imag())));
+  if (std::isnan(value.real()) || std::isnan(value.imag())) {
+    return KUndef->clone();
+  }
   if (value.imag() == 0.0) {
     return SharedTreeStack->push<FloatType<T>::type>(value.real());
   }
@@ -920,18 +926,12 @@ Tree* Approximation::ToList(const Tree* node) {
 template <typename T>
 Tree* Approximation::ToPoint(const Tree* node) {
   int old = s_context->m_pointElement;
-  s_context->m_pointElement = 0;
-  std::complex<T> x = ToComplex<T>(node);
-  s_context->m_pointElement = 1;
-  std::complex<T> y = ToComplex<T>(node);
-  s_context->m_pointElement = old;
-  if (std::isnan(x.real()) || std::isnan(x.imag()) || std::isnan(y.real()) ||
-      std::isnan(y.imag())) {
-    return KUndef->clone();
-  }
   Tree* point = SharedTreeStack->push(Type::Point);
-  PushComplex(x);
-  PushComplex(y);
+  s_context->m_pointElement = 0;
+  PushComplex(ToComplex<T>(node));
+  s_context->m_pointElement = 1;
+  PushComplex(ToComplex<T>(node));
+  s_context->m_pointElement = old;
   return point;
 }
 
@@ -947,8 +947,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
   if (node->isMatrix()) {
     Tree* m = node->cloneNode();
     for (const Tree* child : node->children()) {
-      std::complex<T> v = ToComplex<T>(child);
-      PushComplex(v);
+      PushComplex(ToComplex<T>(child));
     }
     return m;
   }

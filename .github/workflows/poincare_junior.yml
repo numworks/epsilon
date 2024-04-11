@@ -17,7 +17,6 @@ jobs:
     steps:
       - uses: numworks/setup-llvm@latest
       - run: LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/
-      - run: set -o pipefail # Commands should fail if one of its parts fail
       - name: Fetch PR branch
         uses: actions/checkout@v3
         with:
@@ -38,6 +37,7 @@ jobs:
       - name: Verify that a single make is sufficient
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin --question
       - name: Run head
+        shell: bash
         run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | tee out
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
@@ -47,6 +47,7 @@ jobs:
       - name: Make ancestor
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
       - name: Run ancestor
+        shell: bash
         run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
 
       - name: Compare logs

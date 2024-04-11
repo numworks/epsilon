@@ -37,18 +37,19 @@ AbstractFunctionCell::AbstractFunctionCell()
       m_hideMessage(false) {}
 
 void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
+  KDCoordinate ellipsisWidth = ellipsisViewWidth();
   // Draw the color indicator
   ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()),
                 m_functionColor);
   // Color the main background
-  ctx->fillRect(KDRect(k_colorIndicatorThickness, 0,
-                       bounds().width() - k_colorIndicatorThickness -
-                           k_parametersColumnWidth,
-                       bounds().height()),
-                m_expressionBackground);
+  ctx->fillRect(
+      KDRect(k_colorIndicatorThickness, 0,
+             bounds().width() - k_colorIndicatorThickness - ellipsisWidth,
+             bounds().height()),
+      m_expressionBackground);
   // Color the ellipsis view
-  ctx->fillRect(KDRect(bounds().width() - k_parametersColumnWidth, 0,
-                       k_parametersColumnWidth, bounds().height()),
+  ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
+                       bounds().height()),
                 m_ellipsisBackground);
 }
 
@@ -80,12 +81,13 @@ View* AbstractFunctionCell::subviewAtIndex(int index) {
 }
 
 void AbstractFunctionCell::layoutSubviews(bool force) {
+  KDCoordinate ellipsisWidth = ellipsisViewWidth();
   setChildFrame(&m_ellipsisView,
-                KDRect(bounds().width() - k_parametersColumnWidth, 0,
-                       k_parametersColumnWidth, bounds().height()),
+                KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
+                       bounds().height()),
                 force);
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_margin;
-  KDCoordinate rightMargin = k_margin + k_parametersColumnWidth;
+  KDCoordinate rightMargin = k_margin + ellipsisWidth;
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
 
   KDCoordinate totalMessageHeight = 0;

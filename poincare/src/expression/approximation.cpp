@@ -14,6 +14,7 @@
 #include "beautification.h"
 #include "context.h"
 #include "decimal.h"
+#include "dimension.h"
 #include "float.h"
 #include "list.h"
 #include "matrix.h"
@@ -70,27 +71,63 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
       !Dimension::DeepCheckListLength(node)) {
     return KUndef->clone();
   }
-  Dimension dim = Dimension::GetDimension(node);
+  return RootTreeToTree<T>(node, angleUnit, complexFormat,
+                           Dimension::GetDimension(node),
+                           Dimension::GetListLength(node));
+}
+
+template <typename T>
+Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
+                                    ComplexFormat complexFormat, Dimension dim,
+                                    int listLength) {
+  assert(Dimension::DeepCheckDimensions(node) &&
+         Dimension::DeepCheckListLength(node));
+  assert(listLength == Dimension::GetListLength(node));
+  assert(dim == Dimension::GetDimension(node));
+
+  Random::Context randomContext;
+  s_randomContext = &randomContext;
+  Context context(angleUnit, complexFormat);
+  s_context = &context;
+  Tree* clone = node->clone();
+  // TODO we should rather assume variable projection has already been done
+  Variables::ProjectLocalVariablesToId(clone);
+
+  if (listLength != Dimension::k_nonListListLength) {
+    assert(!dim.isMatrix());
+    int old = s_context->m_listElement;
+    SharedTreeStack->push<Type::List>(listLength);
+    for (int i = 0; i < listLength; i++) {
+      s_context->m_listElement = i;
+      ToTree<T>(clone, dim);
+    }
+    s_context->m_listElement = old;
+  } else {
+    ToTree<T>(clone, dim);
+  }
+
+  clone->removeTree();
+  s_randomContext = nullptr;
+  s_context = nullptr;
+  return clone;
+}
+
+template <typename T>
+Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
   if (dim.isBoolean()) {
-    bool result =
-        Approximation::RootTreeToBoolean<T>(node, angleUnit, complexFormat);
-    return (result ? KTrue : KFalse)->clone();
+    return (ToBoolean<T>(node) ? KTrue : KFalse)->clone();
   }
-  if (dim.isPoint()) {
-    return Approximation::RootTreeToPoint<T>(node, angleUnit, complexFormat);
+  if (dim.isScalar()) {
+    return Beautification::PushBeautifiedComplex(ToComplex<T>(node),
+                                                 s_context->m_complexFormat);
   }
-  if (dim.isMatrix()) {
-    assert(Dimension::GetListLength(node) < 0);
-    return Approximation::RootTreeToMatrix<T>(node, angleUnit, complexFormat);
+  assert(dim.isPoint() || dim.isMatrix());
+  Tree* result = dim.isPoint() ? ToPoint<T>(node) : ToMatrix<T>(node);
+  for (Tree* child : result->children()) {
+    child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
+        ToComplex<T>(child), s_context->m_complexFormat));
   }
-  // TODO: Handle list of booleans and list of Points
-  assert(dim.isScalar());
-  if (Dimension::GetListLength(node) >= 0) {
-    return Approximation::RootTreeToList<T>(node, angleUnit, complexFormat);
-  }
-  std::complex<T> value =
-      Approximation::RootTreeToComplex<T>(node, angleUnit, complexFormat);
-  return Beautification::PushBeautifiedComplex(value, complexFormat);
+  return result;
 }
 
 /* Entry points */
@@ -105,6 +142,8 @@ template <typename T>
 std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
                                                  AngleUnit angleUnit,
                                                  ComplexFormat complexFormat) {
+  assert(Dimension::GetListLength(node) == Dimension::k_nonListListLength);
+  assert(Dimension::GetDimension(node).isScalar());
   Random::Context randomContext;
   s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat);
@@ -116,79 +155,7 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   clone->removeTree();
   s_randomContext = nullptr;
   s_context = nullptr;
-  return result;
-}
-
-template <typename T>
-bool Approximation::RootTreeToBoolean(const Tree* node, AngleUnit angleUnit,
-                                      ComplexFormat complexFormat) {
-  Random::Context randomContext;
-  s_randomContext = &randomContext;
-  Context context(angleUnit, complexFormat);
-  s_context = &context;
-  Tree* clone = node->clone();
-  // TODO we should rather assume variable projection has already been done
-  Variables::ProjectLocalVariablesToId(clone);
-  bool result = ToBoolean<T>(clone);
-  clone->removeTree();
-  s_randomContext = nullptr;
-  s_context = nullptr;
-  return result;
-}
-
-template <typename T>
-Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
-                                    ComplexFormat complexFormat) {
-  Random::Context randomContext;
-  s_randomContext = &randomContext;
-  Context context(angleUnit, complexFormat);
-  s_context = &context;
-  Tree* clone = node->clone();
-  // TODO we should rather assume variable projection has already been done
-  Variables::ProjectLocalVariablesToId(clone);
-  ToList<T>(clone);
-  clone->removeTree();
-  s_randomContext = nullptr;
-  s_context = nullptr;
-  return clone;
-}
-
-template <typename T>
-Tree* Approximation::RootTreeToPoint(const Tree* node, AngleUnit angleUnit,
-                                     ComplexFormat complexFormat) {
-  Random::Context randomContext;
-  s_randomContext = &randomContext;
-  Context context(angleUnit, complexFormat);
-  s_context = &context;
-  Tree* clone = node->clone();
-  // TODO we should rather assume variable projection has already been done
-  Variables::ProjectLocalVariablesToId(clone);
-  ToPoint<T>(clone);
-  clone->removeTree();
-  s_randomContext = nullptr;
-  s_context = nullptr;
-  return clone;
-}
-
-template <typename T>
-Tree* Approximation::RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
-                                      ComplexFormat complexFormat) {
-  Random::Context randomContext;
-  s_randomContext = &randomContext;
-  Context context(angleUnit, complexFormat);
-  s_context = &context;
-  Tree* clone = node->clone();
-  // TODO we should rather assume variable projection has already been done
-  Variables::ProjectLocalVariablesToId(clone);
-  Tree* m = ToMatrix<T>(clone);
-  for (Tree* child : m->children()) {
-    child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
-        ToComplex<T>(child), complexFormat));
-  }
-  clone->removeTree();
-  s_randomContext = nullptr;
-  s_context = nullptr;
-  return clone;
+  return result.imag() == 0 ? result.real() : NAN;
 }
 
 /* Helpers */
@@ -965,8 +932,8 @@ Tree* Approximation::ToPoint(const Tree* node) {
     return KUndef->clone();
   }
   Tree* point = SharedTreeStack->push(Type::Point);
-  Beautification::PushBeautifiedComplex(x, s_context->m_complexFormat);
-  Beautification::PushBeautifiedComplex(y, s_context->m_complexFormat);
+  PushComplex(x);
+  PushComplex(y);
   return point;
 }
 
@@ -1244,16 +1211,6 @@ template std::complex<double> Approximation::ToComplex<double>(const Tree*);
 
 template Tree* Approximation::ToPoint<float>(const Tree*);
 template Tree* Approximation::ToPoint<double>(const Tree*);
-
-template Tree* Approximation::RootTreeToList<float>(const Tree*, AngleUnit,
-                                                    ComplexFormat);
-template Tree* Approximation::RootTreeToList<double>(const Tree*, AngleUnit,
-                                                     ComplexFormat);
-
-template Tree* Approximation::RootTreeToPoint<float>(const Tree*, AngleUnit,
-                                                     ComplexFormat);
-template Tree* Approximation::RootTreeToPoint<double>(const Tree*, AngleUnit,
-                                                      ComplexFormat);
 
 template Tree* Approximation::RootTreeToTree<float>(const Tree*, AngleUnit,
                                                     ComplexFormat);

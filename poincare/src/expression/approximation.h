@@ -14,6 +14,7 @@
 namespace Poincare::Internal {
 
 struct ProjectionContext;
+struct Dimension;
 
 /* Approximation is implemented on all block types.
  * We could have asserted that we reduce before approximating (and thus
@@ -37,18 +38,23 @@ class Approximation final {
   template <typename T>
   static T ToReal(const Tree* preparedFunction, T abscissa);
 
-  // Approximate a tree with any dimension
+  // Approximate a tree with any dimension, isolated from any outer context.
   template <typename T>
   static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                               ComplexFormat complexFormat);
+  // Approximate a tree with any dimension, isolated from any outer context.
+  template <typename T>
+  static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
+                              ComplexFormat complexFormat, Dimension dim,
+                              int listLength);
 
-  // Approximate an entire tree, isolated from any outer context.
+  // Approximate an entire scalar tree, isolated from any outer context.
   template <typename T>
   static std::complex<T> RootTreeToComplex(const Tree* node,
                                            AngleUnit angleUnit,
                                            ComplexFormat complexFormat);
 
-  // Approximate an entire tree, isolated from any outer context.
+  // Approximate an entire scalar tree, isolated from any outer context.
   template <typename T>
   static T RootTreeTo(const Tree* node, AngleUnit angleUnit = AngleUnit::Radian,
                       ComplexFormat complexFormat = ComplexFormat::Real) {
@@ -57,29 +63,13 @@ class Approximation final {
     return value.imag() == 0 ? value.real() : NAN;
   }
 
-  // Approximate an entire tree, isolated from any outer context.
-  template <typename T>
-  static bool RootTreeToBoolean(const Tree* node, AngleUnit angleUnit,
-                                ComplexFormat complexFormat);
-
-  // Approximate a point
-  template <typename T>
-  static Tree* RootTreeToPoint(const Tree* node, AngleUnit angleUnit,
-                               ComplexFormat complexFormat);
-
-  // Approximate a matrix
-  template <typename T>
-  static Tree* RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
-                                ComplexFormat complexFormat);
-
-  // Approximate a list
-  template <typename T>
-  static Tree* RootTreeToList(const Tree* node, AngleUnit angleUnit,
-                              ComplexFormat complexFormat);
-
   // Helper to replace a tree by its approximation
   static bool SimplifyComplex(Tree* node);
   EDITION_REF_WRAP(SimplifyComplex);
+
+  // Approximate a tree with any dimension
+  template <typename T>
+  static Tree* ToTree(const Tree* node, Dimension dim);
 
   template <typename T>
   static std::complex<T> ToComplex(const Tree* node);

@@ -118,18 +118,19 @@ bool StoreColumnHelper::fillColumnWithFormula(const char *text) {
       privateFillColumnWithFormula(text, &series, &column, &formulaLayout);
   if (status == FillColumnStatus::Success ||
       status == FillColumnStatus::NoDataToStore) {
-    App::app()->setFirstResponder(table());
     if (status == FillColumnStatus::Success) {
       /* We want to update the series only after the expression of the formula
        * is destroyed, to avoid carrying multiple huge lists in the pool. That's
        * why the formula is created in another scope
        * (privateFillColumnWithFormula). */
       if (!store()->updateSeries(series)) {
+        App::app()->setFirstResponder(table());
         return false;
       }
       reload();
       memoizeFormula(formulaLayout, formulaMemoizationIndex(series, column));
     }
+    App::app()->setFirstResponder(table());
     return true;
   }
   if (status == FillColumnStatus::SyntaxError ||

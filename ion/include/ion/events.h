@@ -20,40 +20,31 @@ class ShiftAlphaStatus {
   };
 
   constexpr ShiftAlphaStatus(ShiftStatus shift, AlphaStatus alpha)
-      : m_value{.fields = {.shift = shift, .alpha = alpha}} {}
+      : m_shift(shift), m_alpha(alpha) {}
 
   constexpr ShiftAlphaStatus()
       : ShiftAlphaStatus(ShiftStatus::Inactive, AlphaStatus::Inactive) {}
 
-  operator uint8_t() const { return m_value.raw; }
-
   bool operator==(const ShiftAlphaStatus& other) {
-    return m_value.raw == other.m_value.raw;
+    return m_shift == other.m_shift && m_alpha == other.m_alpha;
   }
   bool operator!=(const ShiftAlphaStatus& other) { return !(*this == other); }
 
-  bool shiftIsActive() const {
-    return m_value.fields.shift != ShiftStatus::Inactive;
-  }
-  bool alphaIsActive() const {
-    return m_value.fields.alpha != AlphaStatus::Inactive;
-  }
-  bool alphaIsLocked() const {
-    return m_value.fields.alpha == AlphaStatus::Locked;
-  }
+  bool shiftIsActive() const { return m_shift != ShiftStatus::Inactive; }
+  bool alphaIsActive() const { return m_alpha != AlphaStatus::Inactive; }
+  bool alphaIsLocked() const { return m_alpha == AlphaStatus::Locked; }
 
-  void removeShift() { m_value.fields.shift = ShiftStatus::Inactive; }
-  void removeAlpha() { m_value.fields.alpha = AlphaStatus::Inactive; }
+  void removeShift() { m_shift = ShiftStatus::Inactive; }
+  void removeAlpha() { m_alpha = AlphaStatus::Inactive; }
 
   void toggleShift() {
-    m_value.fields.shift =
-        static_cast<ShiftStatus>(!static_cast<bool>(m_value.fields.shift));
+    m_shift = static_cast<ShiftStatus>(!static_cast<bool>(m_shift));
   }
   void cycleAlpha() {
-    m_value.fields.alpha = static_cast<AlphaStatus>(
-        (static_cast<uint8_t>(m_value.fields.alpha) + 1) %
+    m_alpha = static_cast<AlphaStatus>(
+        (static_cast<uint8_t>(m_alpha) + 1) %
         static_cast<uint8_t>(AlphaStatus::NumberOfStatuses));
-    if (m_value.fields.alpha == AlphaStatus::Inactive) {
+    if (m_alpha == AlphaStatus::Inactive) {
       removeShift();
     }
   }
@@ -61,14 +52,10 @@ class ShiftAlphaStatus {
  private:
   /* This is implemented as an uint8_t so that only 1 register has to be passed
    * through SVCalls. */
-  union {
-    uint8_t raw;
-    struct {
-      ShiftStatus shift : 1;
-      AlphaStatus alpha : 2;
-    } fields;
-  } m_value;
+  ShiftStatus m_shift : 1;
+  AlphaStatus m_alpha : 7;
 };
+static_assert(sizeof(ShiftAlphaStatus) == sizeof(uint8_t));
 
 class Event {
  public:

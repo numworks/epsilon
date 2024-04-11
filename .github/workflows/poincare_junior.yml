@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-llvm@latest
-      - run: LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/
+      - run: echo "LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/" >> $GITHUB_ENV
       - name: Fetch PR branch
         uses: actions/checkout@v3
         with:

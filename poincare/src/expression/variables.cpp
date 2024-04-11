@@ -1,6 +1,7 @@
 #include "variables.h"
 
 #include <poincare/src/memory/tree_stack.h>
+#include <string.h>
 
 #include "k_tree.h"
 #include "parametric.h"
@@ -114,7 +115,12 @@ bool Variables::Replace(Tree* expr, int id, const TreeRef& value, bool leave,
 
 bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
                               ComplexSign sign) {
-  if (expr->isUserSymbol() && expr->treeIsIdenticalTo(symbol)) {
+  return ReplaceSymbol(expr, Symbol::GetName(symbol), id, sign);
+}
+
+bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
+                              ComplexSign sign) {
+  if (expr->isUserSymbol() && strcmp(Symbol::GetName(expr), symbol) == 0) {
     Tree* var =
         SharedTreeStack->push<Type::Var>(static_cast<uint8_t>(id), sign);
     expr->moveTreeOverTree(var);
@@ -127,7 +133,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
       Tree* newSymbol = expr->child(Parametric::k_variableIndex);
       // No need to continue if symbol is hidden by a local definition
-      if (!newSymbol->treeIsIdenticalTo(symbol)) {
+      if (strcmp(Symbol::GetName(newSymbol), symbol) != 0) {
         changed = ReplaceSymbol(child, symbol, id + 1, sign) || changed;
       }
     } else {

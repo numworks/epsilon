@@ -56,6 +56,12 @@ class Variables {
   static bool Replace(Tree* expr, int id, const TreeRef& value,
                       bool leave = false, bool simplify = true);
 
+  // Replace symbol with Var<id>
+  static bool ReplaceSymbol(Tree* expr, const char* symbol, int id,
+                            ComplexSign sign);
+  static bool ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
+                            ComplexSign sign);
+
   // Increment variables indexes
   static void EnterScope(Tree* expr);
   // Decrement variables indexes
@@ -67,8 +73,6 @@ class Variables {
 
  private:
   static void GetUserSymbols(const Tree* t, Tree* set);
-  static bool ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
-                            ComplexSign sign);
   static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);
 };

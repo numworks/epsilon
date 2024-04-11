@@ -40,7 +40,8 @@ Approximation::Context::Context(AngleUnit angleUnit,
       m_variablesOffset(k_maxNumberOfVariables)
 #if ASSERTIONS
       ,
-      m_listElement(-1)
+      m_listElement(-1),
+      m_pointElement(-1)
 #endif
 {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
@@ -75,9 +76,15 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
         Approximation::RootTreeToBoolean<T>(node, angleUnit, complexFormat);
     return (result ? KTrue : KFalse)->clone();
   }
+  if (dim.isPoint()) {
+    return Approximation::RootTreeToPoint<T>(node, angleUnit, complexFormat);
+  }
   if (dim.isMatrix()) {
+    assert(Dimension::GetListLength(node) < 0);
     return Approximation::RootTreeToMatrix<T>(node, angleUnit, complexFormat);
   }
+  // TODO: Handle list of booleans and list of Points
+  assert(dim.isScalar());
   if (Dimension::GetListLength(node) >= 0) {
     return Approximation::RootTreeToList<T>(node, angleUnit, complexFormat);
   }
@@ -140,6 +147,23 @@ Tree* Approximation::RootTreeToList(const Tree* node, AngleUnit angleUnit,
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
   ToList<T>(clone);
+  clone->removeTree();
+  s_randomContext = nullptr;
+  s_context = nullptr;
+  return clone;
+}
+
+template <typename T>
+Tree* Approximation::RootTreeToPoint(const Tree* node, AngleUnit angleUnit,
+                                     ComplexFormat complexFormat) {
+  Random::Context randomContext;
+  s_randomContext = &randomContext;
+  Context context(angleUnit, complexFormat);
+  s_context = &context;
+  Tree* clone = node->clone();
+  // TODO we should rather assume variable projection has already been done
+  Variables::ProjectLocalVariablesToId(clone);
+  ToPoint<T>(clone);
   clone->removeTree();
   s_randomContext = nullptr;
   s_context = nullptr;
@@ -540,7 +564,9 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       u->removeTree();
       return result;
     }
-
+    case Type::Point:
+      assert(s_context->m_pointElement != -1);
+      return ToComplex<T>(node->child(s_context->m_pointElement));
     /* Lists */
     case Type::List:
       assert(s_context->m_listElement != -1);
@@ -839,6 +865,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
 
 template <typename T>
 Tree* PushComplex(std::complex<T> value) {
+  assert(!(std::isnan(value.real()) || std::isnan(value.imag())));
   if (value.imag() == 0.0) {
     return SharedTreeStack->push<FloatType<T>::type>(value.real());
   }
@@ -923,6 +950,24 @@ Tree* Approximation::ToList(const Tree* node) {
   }
   s_context->m_listElement = old;
   return list;
+}
+
+template <typename T>
+Tree* Approximation::ToPoint(const Tree* node) {
+  int old = s_context->m_pointElement;
+  s_context->m_pointElement = 0;
+  std::complex<T> x = ToComplex<T>(node);
+  s_context->m_pointElement = 1;
+  std::complex<T> y = ToComplex<T>(node);
+  s_context->m_pointElement = old;
+  if (std::isnan(x.real()) || std::isnan(x.imag()) || std::isnan(y.real()) ||
+      std::isnan(y.imag())) {
+    return KUndef->clone();
+  }
+  Tree* point = SharedTreeStack->push(Type::Point);
+  Beautification::PushBeautifiedComplex(x, s_context->m_complexFormat);
+  Beautification::PushBeautifiedComplex(y, s_context->m_complexFormat);
+  return point;
 }
 
 /* Using our consteval operator- inside a template<float> does not work with
@@ -1197,10 +1242,18 @@ template std::complex<double> Approximation::RootTreeToComplex<double>(
 template std::complex<float> Approximation::ToComplex<float>(const Tree*);
 template std::complex<double> Approximation::ToComplex<double>(const Tree*);
 
+template Tree* Approximation::ToPoint<float>(const Tree*);
+template Tree* Approximation::ToPoint<double>(const Tree*);
+
 template Tree* Approximation::RootTreeToList<float>(const Tree*, AngleUnit,
                                                     ComplexFormat);
 template Tree* Approximation::RootTreeToList<double>(const Tree*, AngleUnit,
                                                      ComplexFormat);
+
+template Tree* Approximation::RootTreeToPoint<float>(const Tree*, AngleUnit,
+                                                     ComplexFormat);
+template Tree* Approximation::RootTreeToPoint<double>(const Tree*, AngleUnit,
+                                                      ComplexFormat);
 
 template Tree* Approximation::RootTreeToTree<float>(const Tree*, AngleUnit,
                                                     ComplexFormat);

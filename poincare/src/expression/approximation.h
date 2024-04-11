@@ -62,6 +62,11 @@ class Approximation final {
   static bool RootTreeToBoolean(const Tree* node, AngleUnit angleUnit,
                                 ComplexFormat complexFormat);
 
+  // Approximate a point
+  template <typename T>
+  static Tree* RootTreeToPoint(const Tree* node, AngleUnit angleUnit,
+                               ComplexFormat complexFormat);
+
   // Approximate a matrix
   template <typename T>
   static Tree* RootTreeToMatrix(const Tree* node, AngleUnit angleUnit,
@@ -98,6 +103,9 @@ class Approximation final {
 
   template <typename T>
   static Tree* ToList(const Tree* node);
+
+  template <typename T>
+  static Tree* ToPoint(const Tree* node);
 
   template <typename T>
   static Tree* ToMatrix(const Tree* node);
@@ -172,6 +180,8 @@ class Approximation final {
 
     // Tells if we are approximating to get the nth-element of a list
     int m_listElement;
+    // Tells if we are approximating to get the nth-element of a point
+    int m_pointElement;
   };
 
   /* Approximation context is created by entry points RootTreeTo* and passed

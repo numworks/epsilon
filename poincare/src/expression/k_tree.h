@@ -118,6 +118,7 @@ constexpr auto KVarX = KVar<Parametric::k_localVariableId,
                             Parametric::k_continuousVariableSign.getValue()>;
 
 // Default UserSymbol in functions
+// TODO: Try to limit the usage of UCodePointUnknown
 constexpr auto KUnknownSymbol =
     KTree<Type::UserSymbol, 2, static_cast<uint8_t>(UCodePointUnknown), 0>();
 

@@ -81,11 +81,11 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   setChildFrame(&m_templateButton, templateButtonRect, force);
 }
 
-bool EditableFunctionCell::ButtonCell::handleEvent(Ion::Events::Event event) {
+bool EditableFunctionCell::TemplateButtonCell::handleEvent(
+    Ion::Events::Event event) {
   if (event == Ion::Events::Backspace) {
     return true;
   }
-
   return Escher::ButtonCell::handleEvent(event);
 }
 

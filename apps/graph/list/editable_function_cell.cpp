@@ -7,9 +7,8 @@ using namespace Escher;
 namespace Graph {
 
 EditableFunctionCell::EditableFunctionCell(
-    Escher::Responder* parentResponder,
-    Escher::LayoutFieldDelegate* layoutFieldDelegate,
-    Escher::StackViewController* modelsStackController)
+    Responder* parentResponder, LayoutFieldDelegate* layoutFieldDelegate,
+    StackViewController* modelsStackController)
     : TemplatedFunctionCell<Shared::WithEditableExpressionCell>(),
       m_templateButton(expressionCell()->layoutField(),
                        Invocation::Builder<ViewController>(
@@ -86,7 +85,7 @@ bool EditableFunctionCell::TemplateButtonCell::handleEvent(
   if (event == Ion::Events::Backspace) {
     return true;
   }
-  return Escher::ButtonCell::handleEvent(event);
+  return ButtonCell::handleEvent(event);
 }
 
 }  // namespace Graph

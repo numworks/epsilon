@@ -25,6 +25,13 @@ parser.add_argument(
     default="",
     help="Specify a regular expression to filter scenari by name.",
 )
+parser.add_argument(
+    "-u",
+    "--update",
+    action="store_true",
+    default=0,
+    help="Update crc32 of failed scenari.",
+)
 
 
 def run_test(scenario_name, state_file, executable, computed_crc32_list):
@@ -148,6 +155,11 @@ def main():
                 helper.create_diff_gif(
                     list_reference_images, list_computed_images, output_scenario_folder
                 )
+
+            if args.update:
+                # Update crc32
+                print_underlined("Updating crc32")
+                helper.store_crc32(computed_crc32, reference_crc32_file)
 
             print("--------")
 

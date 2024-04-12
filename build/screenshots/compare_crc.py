@@ -94,7 +94,10 @@ def main():
             reference_crc32 = f.read().splitlines()
 
         success = False
-        if len(reference_crc32) != 1 and len(reference_crc32) != 2:
+        if len(reference_crc32) in [1, 2]:
+            # Compare crc32
+            success = computed_crc32 in reference_crc32
+        else:
             # There can be several lines if crc32 differs between computer architectures
             # TODO: fix inconsistent approximation accross platforms to only have one crc32
             print(
@@ -104,9 +107,6 @@ def main():
                 len(reference_crc32),
                 "lines",
             )
-        else:
-            # Compare crc32
-            success = computed_crc32 in reference_crc32
 
         # Print report
         count = count + 1

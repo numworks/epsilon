@@ -1,6 +1,7 @@
 #ifndef POINCAREJ_TEST_HELPER_H
 #define POINCAREJ_TEST_HELPER_H
 
+#include <poincare/old/context.h>
 #include <poincare/src/expression/comparison.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -139,6 +140,6 @@ const char* ApproximatedParsedIntegerString();
 
 // Parsing
 
-Tree* TextToTree(const char* input);
+Tree* TextToTree(const char* input, Poincare::Context* context = nullptr);
 
 #endif

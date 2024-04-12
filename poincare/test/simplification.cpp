@@ -1,3 +1,6 @@
+#include <apps/shared/global_context.h>
+#include <poincare/expression.h>
+#include <poincare/old/store.h>
 #include <poincare/src/expression/advanced_simplification.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
@@ -102,8 +105,8 @@ QUIZ_CASE(pcj_simplification_variables) {
 
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
-  TreeRef expected = TextToTree(output);
-  TreeRef expression = TextToTree(input);
+  TreeRef expected = TextToTree(output, projectionContext.m_context);
+  TreeRef expression = TextToTree(input, projectionContext.m_context);
   Simplification::Simplify(expression, &projectionContext);
   quiz_assert(!expression.isUninitialized());
   bool ok = expression->treeIsIdenticalTo(expected);
@@ -779,4 +782,32 @@ QUIZ_CASE(pcj_simplification_function) {
   simplifies_to("f(x)", "f(x)");
   simplifies_to("f(2+2)", "f(4)");
   simplifies_to("f(y)+f(x)-f(x)", "f(y)");
+}
+
+void store(const char* storeExpression, Poincare::Context* ctx) {
+  Poincare::Expression s = Poincare::Expression::Parse(storeExpression, ctx);
+  static_cast<const Poincare::Store&>(s).storeValueForSymbol(ctx);
+}
+
+QUIZ_CASE(pcj_simplification_variable_replace) {
+  Shared::GlobalContext globalContext;
+  assert(Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() == 0);
+
+  ProjectionContext projCtx = {
+      .m_context = &globalContext,
+      .m_symbolic =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition};
+
+  store("4→y", &globalContext);
+  simplifies_to("x+y", "x+4", projCtx);
+
+  store("x^2→f(x)", &globalContext);
+  simplifies_to("f(z+f(y))", "(z+16)^2", projCtx);
+
+  store("{5,4,3,2,1}→l", &globalContext);
+  simplifies_to("sum(l)", "15", projCtx);
+  // TODO: Properly parse list access and slices on variables
+  // simplifies_to("l(2)", "4", projCtx);
+
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

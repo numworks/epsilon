@@ -192,6 +192,16 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(
   return Record::ErrorStatus::None;
 }
 
+int FileSystem::numberOfRecords() {
+  int count = 0;
+  for (char *p : *this) {
+    Record::Name currentName = nameOfRecordStarting(p);
+    assert(!Record::NameIsEmpty(currentName));
+    count++;
+  }
+  return count;
+}
+
 int FileSystem::numberOfRecordsWithFilter(const char *extension,
                                           RecordFilter filter,
                                           const void *auxiliary) {

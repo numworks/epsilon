@@ -52,6 +52,7 @@ class FileSystem {
   RecordNameVerifier *recordNameVerifier() { return &m_recordNameVerifier; }
 
   // Record counters
+  int numberOfRecords();
   int numberOfRecordsWithExtension(const char *extension) {
     return numberOfRecordsWithFilter(extension, ExtensionOnlyFilter);
   }

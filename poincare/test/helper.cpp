@@ -49,9 +49,9 @@ const char * ApproximatedParsedIntegerString() {
 }
 #endif
 
-Tree* TextToTree(const char* input) {
+Tree* TextToTree(const char* input, Poincare::Context* context) {
   Tree* expression = RackFromText(input);
-  Tree* parsed = RackParser(expression, nullptr).parse();
+  Tree* parsed = RackParser(expression, context).parse();
   if (!parsed) {
     parsed = KUndef->clone();
   }

@@ -879,11 +879,12 @@ bool Simplification::SimplifyLastTree(Tree* e,
     changed = List::BubbleUp(e, ShallowSystematicReduce) || changed;
     changed = AdvancedSimplification::AdvancedReduce(e) || changed;
     changed = Dependency::DeepRemoveUselessDependencies(e) || changed;
-
-    if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
-      /* Approximate again in case exact numbers appeared during
-       * simplification. */
-      changed = Approximation::ApproximateAndReplaceEveryScalar(e) || changed;
+    // Approximate again in case exact numbers appeared during simplification.
+    if (projectionContext.m_strategy == Strategy::ApproximateToFloat &&
+        Approximation::ApproximateAndReplaceEveryScalar(e)) {
+      changed = true;
+      // NAries could be sorted again, some children may be merged.
+      DeepSystematicReduce(e);
     }
     changed = Beautification::DeepBeautify(e, projectionContext) || changed;
     Variables::BeautifyToName(e, variables);

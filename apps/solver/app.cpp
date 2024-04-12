@@ -52,8 +52,11 @@ void App::openIntervalController() {
 App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_stackViewController),
       m_solutionsController(&m_stackViewController, &m_solutionHeader),
-      m_solutionHeader(&m_stackViewController, &m_solutionsController,
-                       &m_solutionsController),
+      m_solutionHeader(
+          &m_stackViewController, &m_solutionsController,
+          &m_solutionsController, ButtonRowController::Position::Top,
+          ButtonRowController::Style::PlainWhite,
+          ButtonRowController::Size::Small, Metric::CommonSmallMargin),
       m_intervalController(nullptr),
       m_listController(&m_listFooter, &m_equationStore, &m_listFooter),
       m_listFooter(&m_stackViewController, &m_listController, &m_listController,

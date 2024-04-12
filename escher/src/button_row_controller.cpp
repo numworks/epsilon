@@ -12,14 +12,15 @@ ButtonRowDelegate::ButtonRowDelegate(ButtonRowController *header,
 
 ButtonRowController::ContentView::ContentView(
     ViewController *mainViewController, ButtonRowDelegate *delegate,
-    Position position, Style style, Size size)
+    Position position, Style style, Size size, KDCoordinate verticalMargin)
     : View(),
       m_mainViewController(mainViewController),
       m_selectedButton(-1),
       m_delegate(delegate),
       m_position(position),
       m_style(style),
-      m_size(size) {}
+      m_size(size),
+      m_verticalMargin(verticalMargin) {}
 
 int ButtonRowController::ContentView::numberOfButtons() const {
   return m_delegate->numberOfButtons(m_position);
@@ -67,9 +68,10 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
     return;
   }
   KDCoordinate rowHeight = buttonRowHeight();
-  KDCoordinate frameOrigin = m_position == Position::Top ? rowHeight + 1 : 0;
+  KDCoordinate fullHeight = m_verticalMargin + rowHeight + 1;
+  KDCoordinate frameOrigin = m_position == Position::Top ? fullHeight : 0;
   KDRect mainViewFrame(0, frameOrigin, bounds().width(),
-                       bounds().height() - rowHeight - 1);
+                       bounds().height() - fullHeight);
   setChildFrame(m_mainViewController->view(), mainViewFrame, force);
 
   /* Position buttons */
@@ -95,9 +97,10 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
     assert(rowHeight ==
            buttonAtIndex(0)->minimalSizeForOptimalDisplay().height());
   }
+  KDCoordinate fullHeightMargin = m_verticalMargin + heightMargin;
   KDCoordinate yOrigin = m_position == Position::Top
-                             ? heightMargin
-                             : bounds().height() - rowHeight + heightMargin;
+                             ? fullHeightMargin
+                             : bounds().height() - rowHeight + fullHeightMargin;
   int currentXOrigin = widthMargin;
   for (int i = 0; i < nbOfButtons; i++) {
     ButtonCell *button = buttonAtIndex(i);
@@ -114,15 +117,16 @@ void ButtonRowController::ContentView::drawRowFrame(KDContext *ctx,
                                                     KDColor backgroundColor,
                                                     KDColor borderColor) const {
   constexpr KDCoordinate k_borderHeight = 1;
+  KDCoordinate height = innerHeight + m_verticalMargin;
   KDCoordinate y1, y2;
   if (m_position == Position::Top) {
     y1 = 0;
-    y2 = innerHeight;
+    y2 = height;
   } else {
-    y1 = bounds().height() - innerHeight;
-    y2 = bounds().height() - innerHeight - k_borderHeight;
+    y1 = bounds().height() - height;
+    y2 = bounds().height() - height - k_borderHeight;
   }
-  ctx->fillRect(KDRect(0, y1, bounds().width(), innerHeight), backgroundColor);
+  ctx->fillRect(KDRect(0, y1, bounds().width(), height), backgroundColor);
   ctx->fillRect(KDRect(0, y2, bounds().width(), k_borderHeight), borderColor);
   return;
 }
@@ -180,9 +184,10 @@ ButtonRowController::ButtonRowController(Responder *parentResponder,
                                          ViewController *mainViewController,
                                          ButtonRowDelegate *delegate,
                                          Position position, Style style,
-                                         Size size)
+                                         Size size, KDCoordinate verticalMargin)
     : ViewController(parentResponder),
-      m_contentView(mainViewController, delegate, position, style, size) {}
+      m_contentView(mainViewController, delegate, position, style, size,
+                    verticalMargin) {}
 
 const char *ButtonRowController::title() {
   return m_contentView.mainViewController()->title();

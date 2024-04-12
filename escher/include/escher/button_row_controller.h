@@ -22,7 +22,8 @@ class ButtonRowController : public ViewController {
                       ViewController* mainViewController,
                       ButtonRowDelegate* delegate,
                       Position position = Position::Top,
-                      Style = Style::PlainWhite, Size size = Size::Small);
+                      Style = Style::PlainWhite, Size size = Size::Small,
+                      KDCoordinate verticalMargin = 0);
 
   View* view() override { return &m_contentView; }
   const char* title() override;
@@ -43,7 +44,8 @@ class ButtonRowController : public ViewController {
   class ContentView : public View {
    public:
     ContentView(ViewController* mainViewController, ButtonRowDelegate* delegate,
-                Position position, Style style, Size size);
+                Position position, Style style, Size size,
+                KDCoordinate verticalMargin);
 
     int numberOfSubviews() const override;
     View* subviewAtIndex(int index) override;
@@ -68,6 +70,7 @@ class ButtonRowController : public ViewController {
     Position m_position;
     Style m_style;
     Size m_size;
+    KDCoordinate m_verticalMargin;
   };
 
   void privateModalViewAltersFirstResponder(

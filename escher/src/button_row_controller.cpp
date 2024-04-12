@@ -48,6 +48,15 @@ View *ButtonRowController::ContentView::subviewAtIndex(int index) {
   }
 }
 
+KDCoordinate ButtonRowController::ContentView::buttonRowHeight() const {
+  if (m_style == Style::PlainWhite) {
+    return Metric::ButtonRowPlainStyleHeight;
+  }
+  assert(m_style == Style::EmbossedGray);
+  return m_size == Size::Small ? Metric::ButtonRowEmbossedStyleHeightSmall
+                               : Metric::ButtonRowEmbossedStyleHeightLarge;
+}
+
 void ButtonRowController::ContentView::layoutSubviews(bool force) {
   /* Position the main view */
   if (numberOfButtons() == 0) {
@@ -57,13 +66,7 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
     setChildFrame(m_mainViewController->view(), mainViewFrame, force);
     return;
   }
-  KDCoordinate rowHeight;
-  if (m_style == Style::PlainWhite) {
-    rowHeight = k_plainStyleHeight;
-  } else {
-    rowHeight = m_size == Size::Small ? k_embossedStyleHeightSmall
-                                      : k_embossedStyleHeightLarge;
-  }
+  KDCoordinate rowHeight = buttonRowHeight();
   KDCoordinate frameOrigin = m_position == Position::Top ? rowHeight + 1 : 0;
   KDRect mainViewFrame(0, frameOrigin, bounds().width(),
                        bounds().height() - rowHeight - 1);
@@ -132,14 +135,13 @@ void ButtonRowController::ContentView::drawRect(KDContext *ctx,
     }
     return;
   }
+  KDCoordinate rowHeight = buttonRowHeight();
   if (m_style == Style::PlainWhite) {
-    drawRowFrame(ctx, k_plainStyleHeight, KDColorWhite, Palette::GrayWhite);
+    drawRowFrame(ctx, rowHeight, KDColorWhite, Palette::GrayWhite);
     return;
   }
   assert(m_style == Style::EmbossedGray);
   assert(m_position == Position::Bottom);
-  int rowHeight = m_size == Size::Small ? k_embossedStyleHeightSmall
-                                        : k_embossedStyleHeightLarge;
   drawRowFrame(ctx, rowHeight, Palette::GrayWhite, Palette::GrayMiddle);
 }
 

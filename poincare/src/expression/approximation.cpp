@@ -25,9 +25,18 @@
 
 namespace Poincare::Internal {
 
+/* For function calls that may alter s_context.
+ * TODO : There is no clear indication s_context will be altered or not, and
+ * this could be avoided by reworking how s_context is handled. */
+#define OutOfContext(F)         \
+  Context* context = s_context; \
+  s_context = nullptr;          \
+  F;                            \
+  s_context = context;
+
 /* Static members */
 
-Approximation::Context* Approximation::s_context;
+Approximation::Context* Approximation::s_context = nullptr;
 
 // With a nullptr context, seeded random will be undef.
 Random::Context* Approximation::s_randomContext = nullptr;
@@ -414,10 +423,11 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
                                     ToComplex<T>(node->child(0)),
                                     AngleUnit::Radian);
     case Type::Var: {
+      if (!s_context) {
+        return NAN;
+      }
       // Local variable
-      int index = Variables::Id(node);
-      assert(s_context);
-      return s_context->variable(index);
+      return s_context->variable(Variables::Id(node));
     }
     case Type::UserSymbol:
     case Type::UserFunction:
@@ -510,13 +520,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::Det: {
       Tree* m = ToMatrix<T>(node->child(0));
       Tree* value;
-      if (node->isDet()) {
-        Matrix::RowCanonize(m, true, &value, true);
-      } else if (node->isNorm()) {
-        value = Vector::Norm(m);
-      } else {
-        value = Matrix::Trace(m);
-      }
+      OutOfContext(
+          if (node->isDet()) {
+            Matrix::RowCanonize(m, true, &value, true);
+          } else if (node->isNorm()) { value = Vector::Norm(m); } else {
+            value = Matrix::Trace(m);
+          });
       std::complex<T> v = ToComplex<T>(value);
       value->removeTree();
       m->removeTree();
@@ -526,7 +535,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       // TODO use complex conjugate ?
       Tree* u = ToMatrix<T>(node->child(0));
       Tree* v = ToMatrix<T>(node->child(1));
-      Tree* r = Vector::Dot(u, v);
+      OutOfContext(Tree* r = Vector::Dot(u, v););
       std::complex<T> result = ToComplex<T>(r);
       r->removeTree();
       v->removeTree();
@@ -634,7 +643,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       /* TODO we are computing all elements and sorting the list for all
        * elements, this is awful */
       Tree* list = ToList<T>(node->child(0));
-      NAry::Sort(list);
+      OutOfContext(NAry::Sort(list););
       std::complex<T> result = ToComplex<T>(list);
       list->removeTree();
       return result;
@@ -959,7 +968,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       while (n--) {
         child = child->nextTree();
         Tree* approximatedChild = ToMatrix<T>(child);
-        Matrix::Addition(result, approximatedChild, true);
+        OutOfContext(Matrix::Addition(result, approximatedChild, true););
         approximatedChild->removeTree();
         result->removeTree();
       }
@@ -968,8 +977,9 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     case Type::Sub: {
       Tree* a = ToMatrix<T>(node->child(0));
       Tree* b = ToMatrix<T>(node->child(1));
-      b->moveTreeOverTree(Matrix::ScalarMultiplication(minusOne, b, true));
-      Matrix::Addition(a, b);
+      OutOfContext(
+          b->moveTreeOverTree(Matrix::ScalarMultiplication(minusOne, b, true));
+          Matrix::Addition(a, b););
       a->removeTree();
       a->removeTree();
       return a;
@@ -986,13 +996,12 @@ Tree* Approximation::ToMatrix(const Tree* node) {
           result = approx;
           continue;
         }
-        if (resultIsMatrix && childIsMatrix) {
-          Matrix::Multiplication(result, approx, true);
-        } else if (resultIsMatrix) {
-          Matrix::ScalarMultiplication(approx, result, true);
-        } else {
-          Matrix::ScalarMultiplication(result, approx, true);
-        }
+        OutOfContext(
+            if (resultIsMatrix && childIsMatrix) {
+              Matrix::Multiplication(result, approx, true);
+            } else if (resultIsMatrix) {
+              Matrix::ScalarMultiplication(approx, result, true);
+            } else { Matrix::ScalarMultiplication(result, approx, true); });
         resultIsMatrix |= childIsMatrix;
         approx->removeTree();
         result->removeTree();
@@ -1002,7 +1011,8 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     case Type::Div: {
       Tree* a = ToMatrix<T>(node->child(0));
       Tree* s = PushComplex(static_cast<T>(1) / ToComplex<T>(node->child(1)));
-      s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true));
+      OutOfContext(
+          s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true)););
       a->removeTree();
       return a;
     }
@@ -1014,20 +1024,22 @@ Tree* Approximation::ToMatrix(const Tree* node) {
         return KUndef->clone();
       }
       Tree* result = ToMatrix<T>(base);
-      result->moveTreeOverTree(Matrix::Power(result, value, true));
+      OutOfContext(
+          result->moveTreeOverTree(Matrix::Power(result, value, true)););
       return result;
     }
     case Type::Inverse:
     case Type::Transpose: {
       Tree* result = ToMatrix<T>(node->child(0));
-      result->moveTreeOverTree(node->isInverse() ? Matrix::Inverse(result, true)
-                                                 : Matrix::Transpose(result));
+      OutOfContext(result->moveTreeOverTree(node->isInverse()
+                                                ? Matrix::Inverse(result, true)
+                                                : Matrix::Transpose(result)););
       return result;
     }
     case Type::Ref:
     case Type::Rref: {
       Tree* result = ToMatrix<T>(node->child(0));
-      Matrix::RowCanonize(result, node->isRref(), nullptr, true);
+      OutOfContext(Matrix::RowCanonize(result, node->isRref(), nullptr, true););
       return result;
     }
     case Type::Dim: {
@@ -1041,7 +1053,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     case Type::Cross: {
       Tree* u = ToMatrix<T>(node->child(0));
       Tree* v = ToMatrix<T>(node->child(1));
-      Vector::Cross(u, v);
+      OutOfContext(Vector::Cross(u, v););
       u->removeTree();
       u->removeTree();
       return u;

@@ -27,7 +27,7 @@ double smallestPositive(double x, double y) {
   return (x > 0.0) ? x : y;
 }
 
-CartesianConic::CartesianConic(const OExpression e, Context* context,
+CartesianConic::CartesianConic(const Expression e, Context* context,
                                Preferences::ComplexFormat complexFormat,
                                const char* x, const char* y)
     : Conic(),
@@ -40,7 +40,7 @@ CartesianConic::CartesianConic(const OExpression e, Context* context,
       m_cx(0.0),
       m_cy(0.0),
       m_r(0.0) {
-  /* OExpression e represents an equation of the form :
+  /* Expression e represents an equation of the form :
    * A*x^2 + B*x*y + C*y^2 + D*x + E*y + F = 0
    * In this constructor, we extract the coefficients parameters.
    * We then compute the conic's type and canonize the coefficients. */
@@ -51,11 +51,11 @@ CartesianConic::CartesianConic(const OExpression e, Context* context,
       SymbolicComputation::DoNotReplaceAnySymbol;
   ApproximationContext approximationContext(context, complexFormat, angleUnit);
   // Reduce Conic for analysis
-  OExpression reducedExpression = e.cloneAndReduce(
+  Expression reducedExpression = e.cloneAndReduce(
       ReductionContext(context, complexFormat, angleUnit, unitFormat,
                        ReductionTarget::SystemForAnalysis));
   // Extracting y parameters : C, B+E and A+D+F
-  OExpression coefficientsY[OExpression::k_maxNumberOfPolynomialCoefficients];
+  Expression coefficientsY[Expression::k_maxNumberOfPolynomialCoefficients];
   int dy = reducedExpression.getPolynomialReducedCoefficients(
       y, coefficientsY, context, complexFormat, angleUnit, unitFormat,
       symbolicComputation);
@@ -63,7 +63,7 @@ CartesianConic::CartesianConic(const OExpression e, Context* context,
     m_shape = Shape::Undefined;
     return;
   }
-  OExpression coefficientsX[OExpression::k_maxNumberOfPolynomialCoefficients];
+  Expression coefficientsX[Expression::k_maxNumberOfPolynomialCoefficients];
   // Extract C term
   if (dy == 2) {
     // Ensure coefficient C does not depend on x
@@ -421,7 +421,7 @@ double CartesianConic::getRadius() const {
   return std::sqrt(1 / m_a);
 }
 
-PolarConic::PolarConic(const OExpression& e, Context* context,
+PolarConic::PolarConic(const Expression& e, Context* context,
                        Preferences::ComplexFormat complexFormat,
                        const char* theta) {
   Preferences::AngleUnit angleUnit =
@@ -431,7 +431,7 @@ PolarConic::PolarConic(const OExpression& e, Context* context,
   ReductionContext reductionContext =
       ReductionContext(context, complexFormat, angleUnit, unitFormat,
                        ReductionTarget::SystemForAnalysis);
-  OExpression reducedExpression = e.cloneAndReduce(reductionContext);
+  Expression reducedExpression = e.cloneAndReduce(reductionContext);
 
   // Detect the pattern r = a
   int thetaDeg = reducedExpression.polynomialDegree(context, theta);
@@ -456,10 +456,15 @@ PolarConic::PolarConic(const OExpression& e, Context* context,
   }
 
   // Detect the pattern (d*e)/(1±e*cos(theta)) where e is the eccentricity
-  OExpression numerator, denominator;
+  Expression numerator, denominator;
   if (reducedExpression.otype() == ExpressionNode::Type::Multiplication) {
+#if 0  // TODO_PCJ
     static_cast<Multiplication&>(reducedExpression)
         .splitIntoNormalForm(numerator, denominator, reductionContext);
+#else
+    m_shape = Shape::Undefined;
+    return;
+#endif
   } else if (reducedExpression.otype() == ExpressionNode::Type::Power &&
              reducedExpression.childAtIndex(1).isMinusOne()) {
     denominator = reducedExpression.childAtIndex(0);
@@ -496,7 +501,12 @@ PolarConic::PolarConic(const OExpression& e, Context* context,
   // Go backwards to prevent corrupting the loop when removing children
   for (int i = nChildren - 1; i >= 0; i--) {
     if (denominator.childAtIndex(i).polynomialDegree(context, theta) != 0) {
+#if 0  // TODO_PCJ
       static_cast<Addition&>(denominator).removeChildAtIndexInPlace(i);
+#else
+      m_shape = Shape::Undefined;
+      return;
+#endif
     }
   }
 
@@ -518,7 +528,7 @@ PolarConic::PolarConic(const OExpression& e, Context* context,
   }
 }
 
-ParametricConic::ParametricConic(const OExpression& e, Context* context,
+ParametricConic::ParametricConic(const Expression& e, Context* context,
                                  Preferences::ComplexFormat complexFormat,
                                  const char* symbol) {
   Preferences::AngleUnit angleUnit =
@@ -528,11 +538,11 @@ ParametricConic::ParametricConic(const OExpression& e, Context* context,
   ReductionContext reductionContext =
       ReductionContext(context, complexFormat, angleUnit, unitFormat,
                        ReductionTarget::SystemForAnalysis);
-  OExpression reducedExpression = e.cloneAndReduce(reductionContext);
+  Expression reducedExpression = e.cloneAndReduce(reductionContext);
   assert(reducedExpression.otype() == ExpressionNode::Type::OPoint);
 
-  const OExpression xOfT = reducedExpression.childAtIndex(0);
-  const OExpression yOfT = reducedExpression.childAtIndex(1);
+  const Expression xOfT = reducedExpression.childAtIndex(0);
+  const Expression yOfT = reducedExpression.childAtIndex(1);
 
   int degOfTinX = xOfT.polynomialDegree(context, symbol);
   int degOfTinY = yOfT.polynomialDegree(context, symbol);
@@ -545,7 +555,7 @@ ParametricConic::ParametricConic(const OExpression& e, Context* context,
 
   /* Detect parabola (x , y) = (a*f(t) , b*f(t)^2)
    * TODO: This does not detect parabolas of the form (a*f(t)+c, b*f(t)^2+d) */
-  OExpression quotientWithXSquared = Division::Builder(
+  Expression quotientWithXSquared = Division::Builder(
       Power::Builder(xOfT.clone(), Rational::Builder(2)), yOfT.clone());
   quotientWithXSquared = quotientWithXSquared.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(context));
@@ -553,7 +563,7 @@ ParametricConic::ParametricConic(const OExpression& e, Context* context,
     m_shape = Shape::Parabola;
     return;
   }
-  OExpression quotientWithYSquared = Division::Builder(
+  Expression quotientWithYSquared = Division::Builder(
       Power::Builder(yOfT.clone(), Rational::Builder(2)), xOfT.clone());
   quotientWithYSquared = quotientWithYSquared.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(context));

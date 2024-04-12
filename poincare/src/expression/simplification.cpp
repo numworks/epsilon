@@ -844,12 +844,12 @@ bool Simplification::SimplifyLastTree(Tree* e,
   assert(SharedTreeStack->lastBlock() == e->nextTree()->block());
   ExceptionTryAfterBlock(e->block()) {
     // Seed random nodes before anything is merged/duplicated.
-    int maxRandomSeed = Random::SeedPoolObjects(e, 0);
+    int maxRandomSeed = Random::SeedRandomNodes(e, 0);
     bool changed = maxRandomSeed > 0;
     // Replace functions and variable before dimension check
     if (Projection::DeepReplaceUserNamed(e, projectionContext)) {
       // Seed random nodes that may have appeared after replacing.
-      maxRandomSeed = Random::SeedPoolObjects(e, maxRandomSeed);
+      maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
       changed = true;
     }
     if (!Dimension::DeepCheckDimensions(e) ||

@@ -115,6 +115,7 @@ bool Variables::Replace(Tree* expr, int id, const TreeRef& value, bool leave,
 
 bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
                               ComplexSign sign) {
+  assert(symbol->isUserSymbol());
   return ReplaceSymbol(expr, Symbol::GetName(symbol), id, sign);
 }
 

@@ -1,10 +1,10 @@
-# Trees
+# Tree data structure
 
 [`Tree`](../src/memory/tree.h) is the central data structure in Poincare.
 
 It stores an arbitrary
 long, editable tree as a contiguous chunk of memory that can be easily moved,
-copied and compared. Tools are provided to edit them safely, build them at 
+copied and compared. Tools are provided to edit them safely, build them at
 compile time or runtime and rewrite them using pattern-matching.
 
 It is designed for space-efficiency and may be manipulated at a low-level
@@ -132,7 +132,7 @@ For this purpose, the TreeStack owns a table of all the alive references and
 updates each of them after each modification of a Tree inside the TreeStack. For this
 reason, TreeRefs are intended to be temporary and used sparingly where
 performance matters. You will often see function passing `TreeRefs&` to
-avoid copies. **TODO** what are ER copies ?
+avoid `TreeRef` object copy that would uselessly multiply the number of references pointing to a same tree.
 
 All the methods on available on Trees are accessible on TreeRefs as
 well. It should be easy to upgrade a `Tree *` into an `TreeRef` at any
@@ -242,7 +242,7 @@ Some litterals are also available to write numbers is a readable way :
 const Tree * immutableExpression = KExp(KMult(2_e, i_e, π_e));
 ```
 
-You may construct large KTrees or factorize their construction using a constexpr 
+You may construct large KTrees or factorize their construction using a constexpr
 (mind that the twoPi will appear twice in the flash in this case) :
 
 ```cpp

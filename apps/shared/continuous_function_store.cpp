@@ -51,13 +51,41 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
 
   KDColor nextColor;
 
+  /* Compare to the last paletteSize-1 functions. There will be at least 1 color
+   * that is not taken. */
+  int maxSize = paletteSize - 1;
+  KDColor lastColorsTaken[maxSize];
+  int size = 0;
+  for (int i = functionsCount - 1; i >= 0; i--) {
+    ExpiringPointer<ContinuousFunction> f = modelForRecord(recordAtIndex(i));
+    KDColor color0 = f->color(0);
+    lastColorsTaken[size++] = color0;
+    if (size >= maxSize) {
+      break;
+    }
+    if (f->canDisplayDerivative()) {
+      KDColor color1 = f->color(1);
+      if (color1 != color0) {
+        lastColorsTaken[size++] = color1;
+        if (size >= maxSize) {
+          break;
+        }
+      }
+      KDColor color2 = f->color(2);
+      if (color2 != color0 && color2 != color1) {
+        lastColorsTaken[size++] = color2;
+        if (size >= maxSize) {
+          break;
+        }
+      }
+    }
+  }
+
+  // Among those non taken color, choose the first one in the palette.
   for (KDColor color : Palette::DataColor) {
     bool isCandidate = true;
-
-    for (int i = std::max(0, functionsCount - (paletteSize - 1));
-         i < functionsCount; i++) {
-      if (modelForRecord(recordAtIndex(i))->color() ==
-          color) {  // TODO: cycle over derivatives plots colors too
+    for (int i = 0; i < size; i++) {
+      if (lastColorsTaken[i] == color) {
         isCandidate = false;
         break;
       }

@@ -1,8 +1,34 @@
 # Simplification algorithm
 
-## General view
+## Generalities
 
-From a parsed user input expression, the simplification algorithm does:
+Starting from a any expression, the simplification algorithm finds an better, and reduced mathematically equivalent expression.
+
+Steps can be summarize to this :
+
+```mermaid
+graph TD;
+  A["Expression"]-->|Projection|B["Projected Expression"]
+  B-->|SystematicReduction|D["Reduced Expression"]
+  D-->|AdvancedReduction|E["Reduced Expression"]
+  E-->|Beautification|F["Expression"]
+```
+
+We ensure a few properties:
+- Projected Expressions are made of specific Nodes
+- Projected Expressions are independent from ComplexMode, AngleUnit, ...
+- Reduced Expressions are Projected Expressions
+- SystematicReduction applies obvious reductions.
+- AdvancedReduction finds the best reduced representation
+- Beautification restore ComplexMode, AngleUnit, dependency, ...
+- Beautification uses maths and apply readability improvements
+- In practice, Beautification also undoes Projection and prepare for Layoutter
+
+These operations never need to be applied twice.
+
+
+## Detailled steps
+
 - [Ensure the expression has a valid dimension](#dimension-check)
 - [Adjust the approximation strategy if the expression's dimension requires it (units)](#approximation-strategy)
 - [Seed the random nodes](#random-nodes-seeding)
@@ -77,6 +103,14 @@ It's expected to:
 - Do nothing if applied a second time
 
 ### Effects
+
+For example, in degrees, $cos(x)-y+frac(z)+arccot(x)$ would be projected to
+$$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+
+\begin{dcases}
+        π/2 & x=0 \\
+        atan(1/x) \\
+\end{dcases}
+$$
 
 <details>
 
@@ -166,6 +200,8 @@ It's expected to:
 - Ignore second term of dependencies
 
 ### Effects
+
+Systematic simplification can simplify rational operations, convert non-integer powers to their exponential/logarithm form, factorize variables in simple additions or even compute exact derivatives.
 
 <details>
 
@@ -311,6 +347,8 @@ It's expected to:
 - Ignore second term of dependencies
 
 ### Effects
+
+Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and call systematic reduction at each steps.
 
 <details>
 
@@ -490,6 +528,11 @@ An advanced reduction may be called again after that because the created angle f
 This step undo the projection by re-introducing nodes unhandled by simplification (For example, `Division`, `Log`, `Power` with non-integer indexes...).
 
 `Addition`, `Multiplication`, `GCD` and `LCM` are also sorted differently.
+
+Expressions such as PercentAddition are also beautified:
+$A+B\%$ becomes $A*(1+\frac{B}{100})$.
+
+Rationals are turned into fractions, $0.25$ becoming $\frac{1}{4}$ for example.
 
 ### Restore Unit
 

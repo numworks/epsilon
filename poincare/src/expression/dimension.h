@@ -90,6 +90,7 @@ struct Dimension {
   constexpr static int k_nonListListLength = -1;
   // Return k_nonListListLength if tree isn't a list.
   static int GetListLength(const Tree* t);
+  static bool IsList(const Tree* t) { return GetListLength(t) >= 0; }
   static bool DeepCheckListLength(const Tree* t);
   static Dimension GetDimension(const Tree* t);
   static bool DeepCheckDimensions(const Tree* t);

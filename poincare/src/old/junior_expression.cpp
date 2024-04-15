@@ -707,7 +707,7 @@ bool JuniorExpression::deepIsMatrix(Context* context, bool canContainMatrices,
 }
 
 bool JuniorExpression::deepIsList(Context* context) const {
-  return Internal::Dimension::GetListLength(tree()) >= 0;
+  return Internal::Dimension::IsList(tree());
 }
 
 bool JuniorExpression::hasComplexI(Context* context,

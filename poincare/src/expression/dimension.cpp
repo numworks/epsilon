@@ -259,7 +259,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
 
     // Matrices
     case Type::Dim:
-      return childDim[0].isMatrix() || GetListLength(t->child(0)) >= 0;
+      return childDim[0].isMatrix() || IsList(t->child(0));
     case Type::Ref:
     case Type::Rref:
     case Type::Transpose:

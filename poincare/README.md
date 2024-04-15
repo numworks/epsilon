@@ -23,7 +23,7 @@ These practices ensure an optimized, uniform and self-contained code base.
 | `#include <poincare/src/*>` anywhere but `poincare/src/*` or `poincare/**/*.cpp` | Forward class declaration or source implementation |
 | Tree edition outside of the TreeStack | Copy it on the TreeStack, edit it and overwrite the original |
 | Using virtuality and v-tables | Switch and C-style code |
-| Creating Trees in the middle of the TreeStack | Pushing them a the end of the TreeStack |
+| Creating Trees in the middle of the TreeStack | Pushing them at the end of the TreeStack |
 | `Tree::alter(bool * changed)` | `bool AlterTree(Tree* tree)` |
 | <pre>for (int i = 0; i < e->numberOfChildren(); i++) {<br>&emsp; f(e->child(i));<br>} | <pre>for(Tree * child : e->children()) {<br>&emsp; f(child);<br>} |
 | `Tree * parent = e->parent(root);` | Handle it at parent's level |

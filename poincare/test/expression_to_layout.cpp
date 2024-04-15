@@ -1,9 +1,11 @@
 #include <poincare/old/poincare_expressions.h>
+#include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/layoutter.h>
 
-#include "helper.h"
+#include "old/helper.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal::KTrees;
 
 void assert_parsed_expression_layouts_to(const char* expression, Layout l) {
   Internal::Tree* e = parse_expression(expression, nullptr, true);
@@ -13,75 +15,31 @@ void assert_parsed_expression_layouts_to(const char* expression, Layout l) {
 }
 
 QUIZ_CASE(poincare_expression_to_layout) {
-  assert_parsed_expression_layouts_to(
-      "abs(1)", AbsoluteValueLayout::Builder(CodePointLayout::Builder('1')));
-  assert_parsed_expression_layouts_to(
-      "binomial(1,2)",
-      BinomialCoefficientLayout::Builder(CodePointLayout::Builder('1'),
-                                         CodePointLayout::Builder('2')));
-  assert_parsed_expression_layouts_to(
-      "[[1,2][3,4]]", MatrixLayout::Builder(CodePointLayout::Builder('1'),
-                                            CodePointLayout::Builder('2'),
-                                            CodePointLayout::Builder('3'),
-                                            CodePointLayout::Builder('4')));
-  assert_parsed_expression_layouts_to(
-      "1+2", HorizontalLayout::Builder(CodePointLayout::Builder('1'),
-                                       CodePointLayout::Builder('+'),
-                                       CodePointLayout::Builder('2')));
-  assert_parsed_expression_layouts_to(
-      "ceil(1)", CeilingLayout::Builder(CodePointLayout::Builder('1')));
-  assert_parsed_expression_layouts_to(
-      "conj(1)", ConjugateLayout::Builder(CodePointLayout::Builder('1')));
-  assert_parsed_expression_layouts_to(
-      "floor(1)", FloorLayout::Builder(CodePointLayout::Builder('1')));
-  assert_parsed_expression_layouts_to(
-      "1/2", FractionLayout::Builder(CodePointLayout::Builder('1'),
-                                     CodePointLayout::Builder('2')));
-  assert_parsed_expression_layouts_to(
-      "int(1,x,2,3)", IntegralLayout::Builder(CodePointLayout::Builder('1'),
-                                              CodePointLayout::Builder('x'),
-                                              CodePointLayout::Builder('2'),
-                                              CodePointLayout::Builder('3')));
-  // PCJ expressions do not preserve parentheses
+  assert_parsed_expression_layouts_to("abs(1)", KRackL(KAbsL("1"_l)));
+  assert_parsed_expression_layouts_to("binomial(1,2)",
+                                      KRackL(KBinomialL("1"_l, "2"_l)));
   // assert_parsed_expression_layouts_to(
-  // "(1)", ParenthesisLayout::Builder(CodePointLayout::Builder('1')));
+  // "[[1,2][3,4]]", MatrixLayout::Builder("1"_l, "2"_l, "3"_l, "4"_l));
+  assert_parsed_expression_layouts_to("1+2", "1+2"_l);
+  assert_parsed_expression_layouts_to("ceil(1)", KRackL(KCeilL("1"_l)));
+  assert_parsed_expression_layouts_to("conj(1)", KRackL(KConjL("1"_l)));
+  assert_parsed_expression_layouts_to("floor(1)", KRackL(KFloorL("1"_l)));
+  assert_parsed_expression_layouts_to("1/2", KRackL(KFracL("1"_l, "2"_l)));
   assert_parsed_expression_layouts_to(
-      "√(1)", NthRootLayout::Builder(CodePointLayout::Builder('1')));
+      "int(1,x,2,3)", KRackL(KIntegralL("x"_l, "2"_l, "3"_l, "1"_l)));
+  // PCJ expressions do not preserve parentheses
+  assert_parsed_expression_layouts_to("(1)", KRackL(KParenthesisL("1"_l)));
+  assert_parsed_expression_layouts_to("√(1)", KRackL(KSqrtL("1"_l)));
+  assert_parsed_expression_layouts_to("root(1,2)",
+                                      KRackL(KRootL("1"_l, "2"_l)));
   assert_parsed_expression_layouts_to(
-      "root(1,2)", NthRootLayout::Builder(CodePointLayout::Builder('1'),
-                                          CodePointLayout::Builder('2')));
+      "sum(1,n,2,3)", KRackL(KSumL("n"_l, "2"_l, "3"_l, "1"_l)));
   assert_parsed_expression_layouts_to(
-      "sum(1,n,2,3)", SumLayout::Builder(CodePointLayout::Builder('1'),
-                                         CodePointLayout::Builder('n'),
-                                         CodePointLayout::Builder('2'),
-                                         CodePointLayout::Builder('3')));
+      "product(1,n,2,3)", KRackL(KProductL("n"_l, "2"_l, "3"_l, "1"_l)));
+  assert_parsed_expression_layouts_to("1^2", "1"_l ^ KSuperscriptL("2"_l));
   assert_parsed_expression_layouts_to(
-      "product(1,n,2,3)",
-      ProductLayout::Builder(
-          CodePointLayout::Builder('1'), CodePointLayout::Builder('n'),
-          CodePointLayout::Builder('2'), CodePointLayout::Builder('3')));
-  assert_parsed_expression_layouts_to(
-      "1^2", HorizontalLayout::Builder(
-                 CodePointLayout::Builder('1'),
-                 VerticalOffsetLayout::Builder(
-                     CodePointLayout::Builder('2'),
-                     VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
-  assert_parsed_expression_layouts_to(
-      "-1^2",
-      HorizontalLayout::Builder(
-          CodePointLayout::Builder('-'),
-          ParenthesisLayout::Builder(HorizontalLayout::Builder(
-              CodePointLayout::Builder('1'),
-              VerticalOffsetLayout::Builder(
-                  CodePointLayout::Builder('2'),
-                  VerticalOffsetLayoutNode::VerticalPosition::Superscript)))));
-  assert_parsed_expression_layouts_to(
-      "-x^2",
-      HorizontalLayout::Builder(
-          CodePointLayout::Builder('-'), CodePointLayout::Builder('x'),
-          VerticalOffsetLayout::Builder(
-              CodePointLayout::Builder('2'),
-              VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
+      "-1^2", "-"_l ^ KParenthesisL("1"_l ^ KSuperscriptL("2"_l)));
+  assert_parsed_expression_layouts_to("-x^2", "-x"_l ^ KSuperscriptL("2"_l));
 }
 
 void assert_expression_layouts_and_serializes_to(OExpression expression,

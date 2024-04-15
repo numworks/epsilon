@@ -341,6 +341,7 @@ tests_src += $(addprefix poincare/test/,\
   distribution.cpp \
   erf_inv.cpp \
   expression_comparison.cpp \
+  expression_to_layout.cpp \
   float_helper.cpp \
   layout.cpp \
   helper.cpp \

@@ -27,8 +27,8 @@ constexpr auto KParenthesisL = KUnary<Type::ParenthesisLayout, 0>();
 constexpr auto KCurlyBracesL = KUnary<Type::CurlyBraceLayout, 0>();
 
 constexpr auto KCondensedSumL = KFixedArity<3, Type::CondensedSumLayout>();
-constexpr auto KDiffL = KUnary<Type::DiffLayout, 0>();
-constexpr auto KNthDiffL = KUnary<Type::NthDiffLayout, 0>();
+constexpr auto KDiffL = KFixedArity<3, Type::DiffLayout, 0>();
+constexpr auto KNthDiffL = KFixedArity<4, Type::NthDiffLayout, 0>();
 constexpr auto KIntegralL = KFixedArity<4, Type::IntegralLayout>();
 constexpr auto KProductL = KFixedArity<4, Type::ProductLayout>();
 constexpr auto KSumL = KFixedArity<4, Type::SumLayout>();

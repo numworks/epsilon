@@ -100,11 +100,11 @@ struct KUnary : public KTree<Tag, ExtraValues...> {
   consteval const Tree* operator()(const Tree* a) const { return KTree<>(); }
 };
 
-template <Block Tag>
-struct KBinary : public KTree<Tag> {
+template <Block Tag, Block... ExtraValues>
+struct KBinary : public KTree<Tag, ExtraValues...> {
   template <Block... B1, Block... B2>
   consteval auto operator()(KTree<B1...>, KTree<B2...>) const {
-    return KTree<Tag, B1..., B2...>();
+    return KTree<Tag, ExtraValues..., B1..., B2...>();
   }
 
   consteval const Tree* operator()(const Tree* a, const Tree* b) const {
@@ -115,6 +115,21 @@ struct KBinary : public KTree<Tag> {
 template <class... Args>
 concept HasATreeConcept = (false || ... ||
                            std::is_same<const Tree*, Args>::value);
+
+template <size_t Nb, Block Tag, Block... ExtraValues>
+struct KFixedArity : public KTree<Tag, ExtraValues...> {
+  template <KTreeConcept... CTS>
+    requires(sizeof...(CTS) == Nb)
+  consteval auto operator()(CTS...) const {
+    return Concat<KTree<Tag, ExtraValues...>, CTS...>();
+  }
+
+  template <class... Args>
+    requires(HasATreeConcept<Args...> && sizeof...(Args) == Nb)
+  consteval const Tree* operator()(Args... args) const {
+    return KTree<>();
+  }
+};
 
 template <Block Tag>
 struct KNAry {
@@ -142,21 +157,6 @@ struct KNAry16 {
 
   template <size_t Nb>
   static constexpr KTree<Tag, Nb % 256, Nb / 256> node{};
-};
-
-template <size_t Nb, Block Tag>
-struct KFixedArity : public KTree<Tag> {
-  template <KTreeConcept... CTS>
-    requires(sizeof...(CTS) == Nb)
-  consteval auto operator()(CTS...) const {
-    return Concat<KTree<Tag>, CTS...>();
-  }
-
-  template <class... Args>
-    requires(HasATreeConcept<Args...> && sizeof...(Args) == Nb)
-  consteval const Tree* operator()(Args... args) const {
-    return KTree<>();
-  }
 };
 
 // String type used for templated string litterals

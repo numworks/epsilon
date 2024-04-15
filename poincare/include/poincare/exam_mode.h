@@ -47,7 +47,12 @@ class __attribute__((packed)) ExamMode : public Ion::ExamMode::Configuration {
     PressToTestFlags& setFlag(Flags flag, bool value = true) {
       assert(static_cast<size_t>(flag) <
              static_cast<size_t>(Flags::NumberOfFlags));
-      OMG::BitHelper::setBitAtIndex(m_bits, flag, value);
+      /* Do not use setBitAtIndex as the template drops attributes, and
+       * Emscripten does not like taking an align(2) reference to an align(1)
+       * value. */
+      m_bits = OMG::BitHelper::withBitsBetweenIndexes(
+          m_bits, static_cast<size_t>(flag), static_cast<size_t>(flag),
+          static_cast<Ion::ExamMode::Int>(value));
       return *this;
     }
 

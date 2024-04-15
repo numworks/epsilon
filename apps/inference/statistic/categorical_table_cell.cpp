@@ -202,12 +202,12 @@ bool InputCategoricalTableCell::recomputeDimensions() {
 }
 
 bool InputCategoricalTableCell::recomputeDimensionsAndReload(
-    bool forceReloadTableCell, bool forceReloadPage) {
+    bool forceReloadTable, bool forceReloadPage) {
   bool didChange = recomputeDimensions();
   /* Relayout when inner table changes size. We need to reload the table because
    * its width might change but it won't relayout as its frame isn't changed by
    * the InputCategoricalController */
-  if (didChange || forceReloadTableCell) {
+  if (didChange || forceReloadTable) {
     m_selectableTableView.reloadData(false);
   }
   if (didChange || forceReloadPage) {
@@ -216,14 +216,14 @@ bool InputCategoricalTableCell::recomputeDimensionsAndReload(
   return didChange;
 }
 
-void InputCategoricalTableCell::fullReload(bool forceReloadTableCell,
+void InputCategoricalTableCell::fullReload(bool forceReloadTable,
                                            bool forceReloadPage) {
   int row = m_selectableTableView.selectedRow();
   int col = m_selectableTableView.selectedColumn();
   if (row >= 0) {
     m_selectableTableView.deselectTable();
   }
-  recomputeDimensionsAndReload(forceReloadTableCell, forceReloadPage);
+  recomputeDimensionsAndReload(forceReloadTable, forceReloadPage);
   m_selectableTableView.selectCellAtLocation(col, row, true);
 }
 

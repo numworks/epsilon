@@ -225,18 +225,23 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
       BasedInteger::Builder(2));
 
   // assert_parsed_layout_is(l, e);
-#if 0
+
   // Piecewise
-  PiecewiseOperatorLayout p = PiecewiseOperatorLayout::Builder();
-  p.addRow("3"_l,
-           HorizontalLayout::Builder("2"_l,
-                                     ">"_l,
-                                     "3"_l));
-  p.addRow("2"_l,
-           HorizontalLayout::Builder("2"_l,
-                                     "<"_l,
-                                     "3"_l));
-  p.addRow("1"_l);
+  using namespace Poincare::Internal;
+  // TODO: this is tedious and fragile
+  Tree* p = SharedTreeStack->push<Type::RackLayout>(1);
+  SharedTreeStack->push(Type::PiecewiseLayout);
+  SharedTreeStack->push(4);
+  SharedTreeStack->push(2);
+  "3"_l->clone();
+  "2>3"_l->clone();
+  "2"_l->clone();
+  "2<3"_l->clone();
+  "1"_l->clone();
+  ""_l->clone();
+  ""_l->clone();
+  ""_l->clone();
+  l = Layout::Builder(p);
 
   OList args = OList::Builder();
   args.addChildAtIndexInPlace(BasedInteger::Builder(3), 0, 0);
@@ -254,6 +259,5 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   args.addChildAtIndexInPlace(BasedInteger::Builder(1), 4, 4);
   e = PiecewiseOperator::UntypedBuilder(args);
 
-  assert_parsed_layout_is(p, e);
-#endif
+  assert_parsed_layout_is(l, e);
 }

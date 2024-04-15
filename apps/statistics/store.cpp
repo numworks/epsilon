@@ -165,12 +165,13 @@ void Store::updateSeriesValidity(int series) {
   DoublePairStore::updateSeriesValidity(series);
   userPreferences()->setSeriesValid(
       series, seriesIsValid(series) && frequenciesAreValid(series));
-  bool didInvalidate = oldValidity && !seriesIsValid(series);
-  // Reset the graph view any time one of the series gets invalidated
-  m_graphViewInvalidated = m_graphViewInvalidated || didInvalidate;
-  if (didInvalidate && numberOfPairsOfSeries(series) == 0) {
-    // Hide the cumulated frequencies if series is invalidated and empty
-    userPreferences()->setDisplayCumulatedFrequencies(series, false);
+  if (oldValidity && !seriesIsValid(series)) {
+    // Reset the graph view any time one of the series gets invalidated
+    m_graphViewInvalidated = true;
+    if (numberOfPairsOfSeries(series) == 0) {
+      // Hide the cumulated frequencies if series is invalidated and empty
+      userPreferences()->setDisplayCumulatedFrequencies(series, false);
+    }
   }
 }
 

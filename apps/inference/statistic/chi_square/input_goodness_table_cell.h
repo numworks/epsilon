@@ -24,7 +24,7 @@ class InputGoodnessTableCell : public DoubleColumnTableCell {
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  Ion::Events::Event event) override;
 
-  bool recomputeDimensionsAndReload(bool forceReloadTableCell = false,
+  bool recomputeDimensionsAndReload(bool forceReloadTable = false,
                                     bool forceReloadPage = false) override;
 
  private:

@@ -25,7 +25,8 @@ class InputGoodnessTableCell : public DoubleColumnTableCell {
                                  Ion::Events::Event event) override;
 
   bool recomputeDimensionsAndReload(bool forceReloadTable = false,
-                                    bool forceReloadPage = false) override;
+                                    bool forceReloadPage = false,
+                                    bool forceReloadCell = false) override;
 
  private:
   static_assert(GoodnessTest::k_maxNumberOfColumns <=

@@ -94,8 +94,8 @@ class InputCategoricalTableCell
 
   bool recomputeDimensions();
   virtual bool recomputeDimensionsAndReload(bool forceReloadTable = false,
-                                            bool forceReloadPage = false);
-  void fullReload(bool forceReloadTable = false, bool forceReloadPage = false);
+                                            bool forceReloadPage = false,
+                                            bool forceReloadCell = false);
   Table *tableModel() { return Table::FromStatistic(m_statistic); }
 
  protected:

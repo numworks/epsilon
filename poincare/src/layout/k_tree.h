@@ -10,33 +10,43 @@ namespace KTrees {
 
 // TODO: A RackLayout shouldn't have RackLayout children.
 constexpr auto KRackL = KNAry16<Type::RackLayout>();
-constexpr auto KOperatorSeparatorL = KTree<Type::OperatorSeparatorLayout>();
-constexpr auto KThousandSeparatorL = KTree<Type::ThousandSeparatorLayout>();
-constexpr auto KFracL = KBinary<Type::FractionLayout>();
-constexpr auto KSqrtL = KUnary<Type::SqrtLayout>();
-constexpr auto KNthSqrtL = KBinary<Type::RootLayout>();
-
-constexpr auto KParenthesisL = KUnary<Type::ParenthesisLayout, 0>();
-constexpr auto KCurlyBracesL = KUnary<Type::CurlyBraceLayout, 0>();
-constexpr auto KAbsL = KUnary<Type::AbsLayout>();
-
-constexpr auto KDiffL = KUnary<Type::DiffLayout, 0>();
-constexpr auto KNthDiffL = KUnary<Type::NthDiffLayout, 0>();
-constexpr auto KIntegralL = KFixedArity<4, Type::IntegralLayout>();
-constexpr auto KSumL = KFixedArity<4, Type::SumLayout>();
-constexpr auto KProductL = KFixedArity<4, Type::ProductLayout>();
-constexpr auto KCondensedSumL = KFixedArity<3, Type::CondensedSumLayout>();
 
 constexpr auto KSuperscriptL = KUnary<Type::VerticalOffsetLayout, 0>();
 constexpr auto KSubscriptL = KUnary<Type::VerticalOffsetLayout, 1>();
 constexpr auto KPrefixSuperscriptL = KUnary<Type::VerticalOffsetLayout, 2>();
 constexpr auto KPrefixSubscriptL = KUnary<Type::VerticalOffsetLayout, 3>();
 
+constexpr auto KOperatorSeparatorL = KTree<Type::OperatorSeparatorLayout>();
+constexpr auto KThousandSeparatorL = KTree<Type::ThousandSeparatorLayout>();
+
+constexpr auto KAbsL = KUnary<Type::AbsLayout>();
+constexpr auto KCeilL = KUnary<Type::CeilLayout>();
+constexpr auto KFloorL = KUnary<Type::FloorLayout>();
+constexpr auto KVectorNormL = KUnary<Type::VectorNormLayout>();
+constexpr auto KParenthesisL = KUnary<Type::ParenthesisLayout, 0>();
+constexpr auto KCurlyBracesL = KUnary<Type::CurlyBraceLayout, 0>();
+
+constexpr auto KCondensedSumL = KFixedArity<3, Type::CondensedSumLayout>();
+constexpr auto KDiffL = KUnary<Type::DiffLayout, 0>();
+constexpr auto KNthDiffL = KUnary<Type::NthDiffLayout, 0>();
+constexpr auto KIntegralL = KFixedArity<4, Type::IntegralLayout>();
+constexpr auto KProductL = KFixedArity<4, Type::ProductLayout>();
+constexpr auto KSumL = KFixedArity<4, Type::SumLayout>();
+constexpr auto KListSequenceL = KFixedArity<3, Type::ListSequenceLayout>();
+
+constexpr auto KFracL = KBinary<Type::FractionLayout>();
+constexpr auto KPoint2DL = KBinary<Type::Point2DLayout>();
+constexpr auto KBinomialL = KBinary<Type::BinomialLayout>();
+constexpr auto KPtBinomialL = KBinary<Type::PtBinomialLayout>();
+constexpr auto KPtPermuteL = KBinary<Type::PtPermuteLayout>();
+
 constexpr auto KEmptyMatrixL =
     KTree<Type::MatrixLayout, 2, 2, Type::RackLayout, 0, 0, Type::RackLayout, 0,
           0, Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>();
 
-constexpr auto KPoint2DL = KBinary<Type::Point2DLayout>();
+constexpr auto KConjL = KUnary<Type::ConjLayout>();
+constexpr auto KSqrtL = KUnary<Type::SqrtLayout>();
+constexpr auto KRootL = KBinary<Type::RootLayout>();
 
 // Templating over uint32_t and not CodePoint to keep m_code private in
 // CodePoint

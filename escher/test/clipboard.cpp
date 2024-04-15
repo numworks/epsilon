@@ -24,7 +24,7 @@ void assert_stored_text_is_parseable(Layout layout) {
 QUIZ_CASE(escher_clipboard_stored_text_is_parseable) {
   Layout l = KRackL(KIntegralL("x"_l, KRackL(), KRackL(), KRackL()));
   assert_stored_text_is_parseable(l);
-  l = KRackL(KNthSqrtL(KRackL(), KRackL()));
+  l = KRackL(KRootL(KRackL(), KRackL()));
   assert_stored_text_is_parseable(l);
   l = KRackL(KEmptyMatrixL);
   assert_stored_text_is_parseable(l);

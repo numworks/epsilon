@@ -278,7 +278,7 @@ void InputCategoricalController::viewWillAppear() {
   m_significanceCell.setMessages(m_statistic->thresholdName(),
                                  m_statistic->thresholdDescription());
 
-  categoricalTableCell()->fullReload(true, true);
+  categoricalTableCell()->recomputeDimensionsAndReload(true, true);
 }
 
 HighlightCell *InputCategoricalController::explicitCellAtRow(int row) {

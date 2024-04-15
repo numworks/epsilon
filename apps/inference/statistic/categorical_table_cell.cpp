@@ -107,19 +107,7 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
   }
   tableModel()->setParameterAtPosition(p, relativeRow(row),
                                        relativeColumn(column));
-
-  m_selectableTableView.deselectTable(true);
-  // Add row or column
-  if ((row == tableViewDataSource()->numberOfRows() - 1 &&
-       relativeRow(tableViewDataSource()->numberOfRows()) <
-           tableModel()->maxNumberOfRows()) ||
-      (column == tableViewDataSource()->numberOfColumns() - 1 &&
-       relativeColumn(tableViewDataSource()->numberOfColumns()) <
-           tableModel()->maxNumberOfColumns())) {
-    recomputeDimensionsAndReload();
-  }
-  m_selectableTableView.reloadCellAtLocation(column, row);
-  m_selectableTableView.selectCellAtLocation(column, row);
+  recomputeDimensionsAndReload(false, false, true);
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     event = Ion::Events::Down;
   }
@@ -166,7 +154,7 @@ bool InputCategoricalTableCell::deleteSelectedValue() {
   } else {
     // A row and/or column has been deleted, we should recompute data
     tableModel()->recomputeData();
-    fullReload(true);
+    recomputeDimensionsAndReload(true);
     return true;
   }
 }
@@ -185,10 +173,9 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   int column = m_selectableTableView.selectedColumn();
   tableModel()->deleteParametersInColumn(relativeColumn(column));
   tableModel()->recomputeData();
-  m_selectableTableView.deselectTable();
   m_selectableTableView.resetScroll();
+  selectRow(1);
   recomputeDimensionsAndReload(true, true);
-  m_selectableTableView.selectCellAtLocation(column, 1, false);
 }
 
 bool InputCategoricalTableCell::recomputeDimensions() {
@@ -202,29 +189,35 @@ bool InputCategoricalTableCell::recomputeDimensions() {
 }
 
 bool InputCategoricalTableCell::recomputeDimensionsAndReload(
-    bool forceReloadTable, bool forceReloadPage) {
+    bool forceReloadTable, bool forceReloadPage, bool forceReloadCell) {
+  int row = m_selectableTableView.selectedRow();
+  int col = m_selectableTableView.selectedColumn();
+
+  // Deselect table
+  if (row >= 0) {
+    m_selectableTableView.deselectTable();
+  }
+
+  // Recompute dimensions
   bool didChange = recomputeDimensions();
-  /* Relayout when inner table changes size. We need to reload the table because
+
+  /* Reload
+   * Relayout when inner table changes size. We need to reload the table because
    * its width might change but it won't relayout as its frame isn't changed by
    * the InputCategoricalController */
   if (didChange || forceReloadTable) {
     m_selectableTableView.reloadData(false);
+  } else if (forceReloadCell) {
+    m_selectableTableView.reloadCellAtLocation(col, row);
   }
   if (didChange || forceReloadPage) {
     categoricalController()->selectableListView()->reloadData(false);
   }
-  return didChange;
-}
 
-void InputCategoricalTableCell::fullReload(bool forceReloadTable,
-                                           bool forceReloadPage) {
-  int row = m_selectableTableView.selectedRow();
-  int col = m_selectableTableView.selectedColumn();
-  if (row >= 0) {
-    m_selectableTableView.deselectTable();
-  }
-  recomputeDimensionsAndReload(forceReloadTable, forceReloadPage);
+  // Restore selection
   m_selectableTableView.selectCellAtLocation(col, row, true);
+
+  return didChange;
 }
 
 /* DoubleColumnTableCell */

@@ -38,14 +38,6 @@ int ContinuousFunctionStore::numberOfActiveFunctions() const {
 
 using ErrorStatus = Ion::Storage::Record::ErrorStatus;
 
-static int numberOfTrue(const bool* array, size_t arraySize) {
-  int n = 0;
-  for (int i = 0; i < arraySize; i++) {
-    n += array[i];
-  }
-  return n;
-}
-
 static int indexInArray(KDColor value, const KDColor* array, size_t arraySize) {
   for (int i = 0; i < arraySize - 1; i++) {
     if (value == array[i]) {
@@ -58,19 +50,24 @@ static int indexInArray(KDColor value, const KDColor* array, size_t arraySize) {
 
 void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
   constexpr int paletteSize = std::size(Palette::DataColor);
+  int nFree = paletteSize;
   for (int c = 0; c < paletteSize - 1; c++) {
     // Initialize at true
     colorIsFree[c] = true;
   }
+
   int i = numberOfModels() - 1;
   while (i >= 0) {
     ExpiringPointer<ContinuousFunction> f = modelForRecord(recordAtIndex(i));
     int nDerivatives = 1 + 2 * f->canDisplayDerivative();
     for (int d = 0; d < nDerivatives; d++) {
       int c = indexInArray(f->color(d), Palette::DataColor, paletteSize);
-      colorIsFree[c] = false;
+      if (colorIsFree[c]) {
+        colorIsFree[c] = false;
+        nFree--;
+      }
       // Stop when there is at most 1 free color
-      if (numberOfTrue(colorIsFree, paletteSize) <= 1) {
+      if (nFree <= 1) {
         return;
       }
     }

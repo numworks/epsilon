@@ -114,12 +114,12 @@ void SelectableTableView::selectCellAtLocation(int col, int row,
     return;
   }
   int nCols = totalNumberOfColumns();
+  col = std::clamp(col, 0, nCols - 1);
   int nRows = numberOfRowsAtColumn(col);
   assert(nRows <= totalNumberOfRows());
   if (nCols == 0 || nRows == 0) {
     return;
   }
-  col = std::clamp(col, 0, nCols - 1);
   row = std::clamp(row, 0, nRows - 1);
 
   if (!canSelectCellAtLocation(col, row)) {

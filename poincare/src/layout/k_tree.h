@@ -44,6 +44,22 @@ constexpr auto KEmptyMatrixL =
     KTree<Type::MatrixLayout, 2, 2, Type::RackLayout, 0, 0, Type::RackLayout, 0,
           0, Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>();
 
+template <KTreeConcept A>
+constexpr auto KMatrix1x1L(A) {
+  return Concat<KTree<Type::MatrixLayout, 2, 2>, A,
+                KTree<Type::RackLayout, 0, 0, Type::RackLayout, 0, 0,
+                      Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>>();
+}
+
+template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D>
+constexpr auto KMatrix2x2L(A, B, C, D) {
+  return Concat<
+      KTree<Type::MatrixLayout, 3, 3>, A, B, KTree<Type::RackLayout, 0, 0>, C,
+      D,
+      KTree<Type::RackLayout, 0, 0, Type::RackLayout, 0, 0, Type::RackLayout, 0,
+            0, Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>>();
+}
+
 constexpr auto KConjL = KUnary<Type::ConjLayout>();
 constexpr auto KSqrtL = KUnary<Type::SqrtLayout>();
 constexpr auto KRootL = KBinary<Type::RootLayout>();

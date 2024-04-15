@@ -116,7 +116,7 @@ InputViewController *StoreTableCell::inputViewController() {
   return App::app()->inputViewController();
 }
 
-void StoreTableCell::reload() { recomputeDimensionsAndReload(true); }
+void StoreTableCell::reload() { fullReload(true); }
 
 CategoricalController *StoreTableCell::categoricalController() {
   return m_inputStoreController;

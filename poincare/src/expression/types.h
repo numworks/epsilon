@@ -174,14 +174,19 @@ NODE(TrigDiff, 2)
 
 // Sum(Symbol, LowerBound, UpperBound, Function)
 NODE(Sum, 4)
+
 // Product(Symbol, LowerBound, UpperBound, Function)
 NODE(Product, 4)
+
 // Diff(Symbol, SymbolValue, Derivand)
 NODE(Diff, 3)
+
 // NthDiff(Symbol, SymbolValue, Order, Derivand)
 NODE(NthDiff, 4)
+
 // Integral(Symbol, LowerBound, UpperBound, Integrand)
 NODE(Integral, 4)
+
 // Sequence(Symbol, SymbolMax, Function)
 NODE(ListSequence, 3)
 

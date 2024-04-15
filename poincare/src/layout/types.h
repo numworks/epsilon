@@ -26,19 +26,26 @@ RANGE(AutocompletedPair, ParenthesisLayout, CurlyBraceLayout)
 RANGE(Pair, Abs, CurlyBraceLayout)
 
 // TODO CondensedSum could draw the sigma symbol and have two children
+// CondensedSum(sumSymbol, start, end)
 NODE(CondensedSum, 3)
-// Diff(Derivand, Symbol, SymbolValue)
+
+// Diff(Symbol, SymbolValue, Derivand)
 NODE(Diff, 3, 1)
-// Diff(Derivand, Symbol, SymbolValue, Order)
+
+// Diff(Symbol, SymbolValue, Derivand, Order)
 NODE(NthDiff, 4, 1)
-// Integral(Integrand, Symbol, LowerBound, UpperBound)
+
+// Integral(Symbol, LowerBound, UpperBound, Integrand)
 NODE(Integral, 4)
-// Product(Function, Symbol, LowerBound, UpperBound)
+
+// Product(Symbol, LowerBound, UpperBound, Function)
 NODE(Product, 4)
-// Sum(Function, Symbol, LowerBound, UpperBound, )
+
+// Sum(Symbol, LowerBound, UpperBound, Function)
 NODE(Sum, 4)
+
 // TODO replace by subscript ?
-// Sequence(Function, Symbol, SymbolMax)
+// Sequence(Symbol, SymbolMax, Function)
 NODE(ListSequence, 3)
 
 RANGE(ParametricLayout, DiffLayout, ListSequenceLayout)

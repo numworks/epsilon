@@ -110,12 +110,17 @@ void SelectableTableView::nextSelectableCellInDirection(
 void SelectableTableView::selectCellAtLocation(int col, int row,
                                                bool setFirstResponder,
                                                bool withinTemporarySelection) {
-  assert(numberOfRowsAtColumn(col) <= totalNumberOfRows());
   if (row == -1) {
     return;
   }
-  col = std::clamp(col, 0, totalNumberOfColumns() - 1);
-  row = std::clamp(row, 0, numberOfRowsAtColumn(col) - 1);
+  int nCols = totalNumberOfColumns();
+  int nRows = numberOfRowsAtColumn(col);
+  assert(nRows <= totalNumberOfRows());
+  if (nCols == 0 || nRows == 0) {
+    return;
+  }
+  col = std::clamp(col, 0, nCols - 1);
+  row = std::clamp(row, 0, nRows - 1);
 
   if (!canSelectCellAtLocation(col, row)) {
     /* If the cell is not selectable, go down by default.

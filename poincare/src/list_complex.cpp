@@ -61,6 +61,9 @@ ListComplex<T> ListComplex<T>::Undefined() {
 
 template <typename T>
 bool ListComplex<T>::sort() {
+  if (numberOfChildren() == 0) {
+    return true;
+  }
   bool listOfDefinedScalars = this->isListOfDefinedScalars();
   bool listOfDefinedPoints = this->isListOfDefinedPoints();
   if (!listOfDefinedScalars && !listOfDefinedPoints) {

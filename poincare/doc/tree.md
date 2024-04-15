@@ -252,9 +252,32 @@ constexpr KTree twoPi = KMult(2_e, π_e);
   KAdd(KCos(twoPi), KSin(twoPi))->clone();
 ```
 
+You can use the name of a Node that expect children without the invocation to refer to its node.
+However if the node is n-ary you need to provide the number of arguments with node :
+
+```cpp
+KCos->cloneNode(); // equivalent to SharedTreeStack->push(Type::Cos)
+if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
+```
+
+
+
+<details>
+<summary>Implementation details</summary>
 
 KTrees are implemented with templates and each different tree has a different
-type so you cannot build an array of them or declare a function that takes a
+type. The type includes as template parameters the complete list of blocks needed to represent the Tree.
+`KCos(2_e)` is under-the-hood an alias to `KTree<Type::Cos, Type::Two>()`, ie an object of a special type used to represent only trees with a 2 in a cos.
+
+These objects are empty and when they need to be casted to a `const Tree *` they instead 
+return the pointer to a static member in their type that contains an array of blocks with the same content as the type.
+This means all KCos(2_e) will point to the same object and that the pointer can out-live the object.
+
+The behavior is similar to `const char * name() { return "poincare"; }` where the pointer is not a pointer to a local "poincare" const array but a static one that somehow escaped the function.
+
+The only role of the template machinery in k_tree.h is to set-up these type aliases where `KAdd(a, b)` expands to `KTree<Type::Add, 2, blocks of the type of a..., blocks of the type of b...>()`.
+
+As a consequence, you cannot build an array of different KTrees or declare a function that takes a
 KTree. However you can define a template that only accept KTrees
 using the concept that gathers them all like this :
 
@@ -263,9 +286,6 @@ template <KTreeConcept KT> f(KT ktree) {
   ...
 }
 ```
-
-<details>
-<summary>Note</summary>
 
 While the construction of the KTree is constexpr, the cast to a `const Tree *`
 is not (yet). This means you may write :
@@ -281,8 +301,7 @@ constexpr const Tree * t = 2_e;
 ```
 
 It practice it does not change anything at runtime since the compiler optimizes
-the cast away in both cases but we might fix it at some point since `KTree`
-cannot be put in an constexpr array for instance.
+the cast away in both cases.
 
 Alternatively you can use the constexpr cast to Block * and then obtain a Tree *
 from it at runtime with Tree::FromBlock if you want to use a constexpr array for

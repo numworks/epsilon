@@ -168,15 +168,10 @@ class __attribute__((packed)) Preferences final {
   }
 
  private:
-  constexpr static int k_version = 0x20240401;
+  constexpr static uint8_t k_version = 0;
 
-#if __EMSCRIPTEN__
-  emscripten_align1_int m_version;
-#else
-  int m_version;
-#endif
-
-  CODE_GUARD(poincare_preferences, 4027384180,  //
+  CODE_GUARD(poincare_preferences, 524861357,  //
+             uint8_t m_version;
              CalculationPreferences m_calculationPreferences;
              mutable ExamMode m_examMode;
              /* This flag can only be asserted by writing it via DFU. When set,
@@ -194,7 +189,7 @@ class __attribute__((packed)) Preferences final {
 };
 
 #if PLATFORM_DEVICE
-static_assert(sizeof(Preferences) == 14, "Class Preferences changed size");
+static_assert(sizeof(Preferences) == 11, "Class Preferences changed size");
 #endif
 
 #if __EMSCRIPTEN__

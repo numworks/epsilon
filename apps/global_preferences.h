@@ -106,7 +106,7 @@ class __attribute__((packed)) GlobalPreferences {
   void setFont(KDFont::Size font) { m_font = font; }
 
  private:
-  constexpr static int k_version = 0x20240401;
+  constexpr static uint8_t k_version = 0;
 
   GlobalPreferences()
       : m_version(k_version),
@@ -131,21 +131,26 @@ class __attribute__((packed)) GlobalPreferences {
                 "I18n::NumberOfCountries is not superior to 0");
 
 #if __EMSCRIPTEN__
-  emscripten_align1_int m_version;
-  emscripten_align1_int m_brightnessLevel;
+  CODE_GUARD(global_preferences, 3643843895,           //
+             uint8_t m_version;                        //
+             emscripten_align1_int m_brightnessLevel;  //
+             I18n::Language m_language;                //
+             I18n::Country m_country;                  //
+             bool m_showPopUp;                         //
+             KDFont::Size m_font;)
 #else
-  int m_version;
-  int m_brightnessLevel;
-#endif
-  CODE_GUARD(global_preferences, 3045158492,  //
+  CODE_GUARD(global_preferences, 1861289878,  //
+             uint8_t m_version;               //
+             int m_brightnessLevel;           //
              I18n::Language m_language;       //
              I18n::Country m_country;         //
              bool m_showPopUp;                //
              KDFont::Size m_font;)
+#endif
 };
 
 #if PLATFORM_DEVICE
-static_assert(sizeof(GlobalPreferences) == 12,
+static_assert(sizeof(GlobalPreferences) == 9,
               "Class GlobalPreferences changed size");
 #endif
 

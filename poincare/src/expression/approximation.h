@@ -56,8 +56,9 @@ class Approximation final {
 
   // Approximate an entire scalar tree, isolated from any outer context.
   template <typename T>
-  static T RootTreeTo(const Tree* node, AngleUnit angleUnit = AngleUnit::Radian,
-                      ComplexFormat complexFormat = ComplexFormat::Real) {
+  static T RootTreeToReal(const Tree* node,
+                          AngleUnit angleUnit = AngleUnit::Radian,
+                          ComplexFormat complexFormat = ComplexFormat::Real) {
     std::complex<T> value =
         RootTreeToComplex<T>(node, angleUnit, complexFormat);
     return value.imag() == 0 ? value.real() : NAN;

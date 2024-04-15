@@ -22,7 +22,7 @@ void assert_expression_approximates_to_scalar(
   Internal::Tree *e = parse_expression(expression, &globalContext, false);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
-  T result = Internal::Approximation::RootTreeTo<T>(e);
+  T result = Internal::Approximation::RootTreeToReal<T>(e);
   e->removeTree();
   bool test = roughly_equal(result, approximation,
                             Poincare::Float<T>::EpsilonLax(), true);
@@ -478,7 +478,7 @@ void assert_expression_approximation_is_bounded(const char *expression,
   ApproximationContext approximationContext(&globalContext, Cartesian, Radian);
   // TODO_PCJ
 #if 0
-  T result = Internal::Approximation::RootTreeTo<T>(e);
+  T result = Internal::Approximation::RootTreeToReal<T>(e);
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(
       result < upBound || (result == upBound && upBoundIncluded), expression);

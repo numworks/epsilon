@@ -23,12 +23,12 @@ QUIZ_CASE(pcj_k_tree) {
 
   (void)KPol(Exponents<1>(), "x"_e, 2_e);
 
-  quiz_assert(Approximation::RootTreeTo<float>(0.125_fe) == 0.125);
-  quiz_assert(Approximation::RootTreeTo<float>(-2.5_fe) == -2.5);
+  quiz_assert(Approximation::RootTreeToReal<float>(0.125_fe) == 0.125);
+  quiz_assert(Approximation::RootTreeToReal<float>(-2.5_fe) == -2.5);
 
   const Tree* rational = -3_e / 8_e;
   quiz_assert(rational->isRational());
-  quiz_assert(Approximation::RootTreeTo<float>(rational) == -0.375);
+  quiz_assert(Approximation::RootTreeToReal<float>(rational) == -0.375);
 }
 
 QUIZ_CASE(pcj_k_tree_integer) {

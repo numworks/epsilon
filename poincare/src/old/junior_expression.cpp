@@ -869,8 +869,8 @@ Coordinate2D<T> Point::approximate2D(
     const ApproximationContext& approximationContext) {
   // TODO_PCJ: Add context for angle unit and complex format.
   return Coordinate2D<T>(
-      Internal::Approximation::RootTreeTo<T>(tree()->child(0)),
-      Internal::Approximation::RootTreeTo<T>(tree()->child(1)));
+      Internal::Approximation::RootTreeToReal<T>(tree()->child(0)),
+      Internal::Approximation::RootTreeToReal<T>(tree()->child(1)));
 }
 
 Layout Point::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,

@@ -10,7 +10,7 @@
 using namespace Poincare::Internal;
 
 void assert_approximation_is(const Tree* n, float f) {
-  float approx = Approximation::RootTreeTo<float>(n);
+  float approx = Approximation::RootTreeToReal<float>(n);
   bool result = OMG::Float::RoughlyEqual<float>(approx, f, FLT_EPSILON, true);
 #if POINCARE_TREE_LOG
   if (!result) {

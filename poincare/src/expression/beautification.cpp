@@ -181,7 +181,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   } else if (projectionContext.m_dimension.isAngleUnit()) {
     units = dimension.toBaseUnits();
   } else {
-    double value = Approximation::RootTreeTo<double>(expr);
+    double value = Approximation::RootTreeToReal<double>(expr);
     units = SharedTreeStack->push<Type::Mult>(2);
     ChooseBestDerivedUnits(&dimension);
     dimension.toBaseUnits();

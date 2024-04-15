@@ -347,6 +347,7 @@ tests_src += $(addprefix poincare/test/,\
   helper.cpp \
   integer.cpp \
   k_tree.cpp \
+  layout_to_expression.cpp \
   match.cpp \
   matrix.cpp \
   memory_elements.cpp \

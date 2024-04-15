@@ -1,11 +1,15 @@
 import argparse
+import args_types
 import helper
 
 parser = argparse.ArgumentParser(
     description="This script creates a gif from a folder of screenshots"
 )
 parser.add_argument(
-    "-o", "--output-folder", default="screenshots_each_step", help="output folder"
+    "images_folder",
+    metavar="FOLDER",
+    type=args_types.existing_directory,
+    help="folder containing a subfolder images",
 )
 parser.add_argument(
     "--delay",
@@ -24,8 +28,8 @@ parser.add_argument(
 def main():
     args = parser.parse_args()
     helper.create_gif(
-        helper.list_images_in_folder(helper.folder_images(args.output_folder)),
-        args.output_folder,
+        helper.list_images_in_folder(helper.folder_images(args.images_folder)),
+        args.images_folder,
         delay=args.delay,
         end_delay=args.end_delay,
     )

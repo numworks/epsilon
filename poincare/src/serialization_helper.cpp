@@ -133,11 +133,7 @@ size_t InfixPrefix(bool prefix, const TreeNode *node, char *buffer,
       return numberOfChar;
     }
     numberOfChar = strlcpy(buffer, operatorName, bufferSize);
-    if (numberOfChar >= bufferSize - 1) {
-      // Erase the inserted chars to prevent truncated operator names.
-      memset(buffer, 0, bufferSize);
-      return bufferSize - 1;
-    }
+    assert(numberOfChar < bufferSize - 1);
     // Add the opening (system or user) parenthesis
     switch (typeOfParenthesis) {
       case SerializationHelper::ParenthesisType::Classic:

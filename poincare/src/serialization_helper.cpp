@@ -124,8 +124,14 @@ size_t InfixPrefix(bool prefix, const TreeNode *node, char *buffer,
   CodePoint openingCodePoint = UCodePointNull;
   CodePoint closingCodePoint = UCodePointNull;
 
+  size_t operatorNameLength = strlen(operatorName);
+
   if (prefix) {
     // Prefix: Copy the operator name
+    if (numberOfChar + operatorNameLength >= bufferSize - 1) {
+      buffer[numberOfChar] = 0;
+      return numberOfChar;
+    }
     numberOfChar = strlcpy(buffer, operatorName, bufferSize);
     if (numberOfChar >= bufferSize - 1) {
       // Erase the inserted chars to prevent truncated operator names.
@@ -174,14 +180,21 @@ size_t InfixPrefix(bool prefix, const TreeNode *node, char *buffer,
     for (int i = firstChildIndex; i <= lastIndex; i++) {
       if (i != firstChildIndex) {
         // Write the operator or the comma
-        numberOfChar +=
-            prefix ? SerializationHelper::CodePoint(
-                         buffer + numberOfChar, bufferSize - numberOfChar, ',')
-                   : strlcpy(buffer + numberOfChar, operatorName,
-                             bufferSize - numberOfChar);
-        if (numberOfChar >= bufferSize - 1) {
-          assert(buffer[bufferSize - 1] == 0);
-          return bufferSize - 1;
+        if (prefix) {
+          numberOfChar += SerializationHelper::CodePoint(
+              buffer + numberOfChar, bufferSize - numberOfChar, ',');
+          if (numberOfChar >= bufferSize - 1) {
+            assert(buffer[bufferSize - 1] == 0);
+            return bufferSize - 1;
+          }
+        } else {
+          if (numberOfChar + operatorNameLength >= bufferSize - 1) {
+            assert(buffer[numberOfChar] == 0);
+            return numberOfChar;
+          }
+          numberOfChar += strlcpy(buffer + numberOfChar, operatorName,
+                                  bufferSize - numberOfChar);
+          assert(numberOfChar < bufferSize - 1);
         }
       }
       // Write the child, with or without parentheses if needed

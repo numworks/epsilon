@@ -165,12 +165,16 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
             return false;
           }
           break;
+        case Type::ListElement:
+        case Type::ListSlice:
+          if (i > 0) {
+            return false;
+          }
+          break;
         case Type::Dim:
         case Type::Dependency:
         case Type::Set:
         case Type::List:
-        case Type::ListElement:
-        case Type::ListSlice:
         case Type::ListSort:
           break;
         default:

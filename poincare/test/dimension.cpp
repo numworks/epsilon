@@ -77,6 +77,7 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(!dim("dep((1,2), {(1,3),3})"));
   QUIZ_ASSERT(!dim("(1,2)+(1,3)"));
   QUIZ_ASSERT(!dim("cos((1,2))"));
+  QUIZ_ASSERT(!dim("{(1,3), (2,4)}((2,4))"));
 
   QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 0);
 }

@@ -14,8 +14,7 @@ bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
                                        KPow(KB, KMult(KA_s, KC_s))) ||
          PatternMatching::MatchReplace(expr, KPowReal(KA, 1_e / 2_e),
                                        KSqrt(KA)) ||
-         PatternMatching::MatchReplace(expr, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
-         Beautification::ShallowBeautifyAngleFunctions(expr, AngleUnit::Radian);
+         PatternMatching::MatchReplace(expr, KPow(KA, 1_e / 2_e), KSqrt(KA));
 }
 
 void Approximation::PrepareFunctionForApproximation(

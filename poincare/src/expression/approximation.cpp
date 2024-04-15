@@ -235,19 +235,6 @@ static T FloatLCM(T a, T b) {
 }
 
 template <typename T>
-static T FloatTrig(T a, T b) {
-  // Otherwise, handle any b, multiply by -1 if b%4 >= 2 then use b%2.
-  assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
-  return (b == static_cast<T>(0.0)) ? std::cos(a) : std::sin(a);
-}
-
-template <typename T>
-static T FloatATrig(T a, T b) {
-  assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
-  return (b == static_cast<T>(0.0)) ? std::acos(a) : std::asin(a);
-}
-
-template <typename T>
 std::complex<T> FloatMultiplication(std::complex<T> c, std::complex<T> d) {
   // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
   if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
@@ -342,11 +329,6 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
                                                  : ComplexFormat::Cartesian);
     case Type::Logarithm:
       return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>);
-    case Type::Trig:
-      return MapAndReduce<T, std::complex<T>>(node, FloatTrig<std::complex<T>>);
-    case Type::ATrig:
-      return MapAndReduce<T, std::complex<T>>(node,
-                                              FloatATrig<std::complex<T>>);
     case Type::GCD:
       return MapAndReduce<T, T>(node, FloatGCD<T>,
                                 PositiveIntegerApproximation<T>);
@@ -413,6 +395,23 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::ArCosH:
     case Type::ArTanH:
       return HyperbolicToComplex(node->type(), ToComplex<T>(node->child(0)));
+    case Type::Trig:
+    case Type::ATrig: {
+      std::complex<T> a = ToComplex<T>(node->child(0));
+      std::complex<T> b = ToComplex<T>(node->child(1));
+      assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
+      bool isCos = b == static_cast<T>(0.0);
+      assert(s_context->m_angleUnit == AngleUnit::Radian);
+      if (node->isTrig()) {
+        return TrigonometricToComplex(isCos ? Type::Cos : Type::Sin, a);
+      }
+      return TrigonometricToComplex(isCos ? Type::ACos : Type::ASin, a);
+    }
+    case Type::TanRad:
+    case Type::ATanRad:
+      assert(s_context->m_angleUnit == AngleUnit::Radian);
+      return TrigonometricToComplex(node->isTanRad() ? Type::Tan : Type::ATan,
+                                    ToComplex<T>(node->child(0)));
     case Type::Var: {
       // Local variable
       int index = Variables::Id(node);

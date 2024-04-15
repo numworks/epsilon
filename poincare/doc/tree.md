@@ -153,7 +153,8 @@ You can now read the various Tree motions in `tree.h` and see how they update
 references. Mind the difference between `moveBefore` and `moveAt` that are the
 same function tree-wise but not reference-wise.
 
-### Implementation
+<details>
+<summary>Implementation details </summary>
 
 The TreeStack has a reference table, which is an array of node offsets. This
 array has a maximal size (`TreeStack::k_maxNumberOfReferences`).
@@ -180,6 +181,8 @@ updated (`TreeStack::ReferenceTable::updateNodes`).
 
 Once an TreeRef is destroyed, the corresponding node offset is set back
 to `TreeStack::ReferenceTable::DeletedOffset`.
+
+</details>
 
 ### Wrappers
 
@@ -219,6 +222,18 @@ EDITION_REF_WRAP(ReplaceTreeWithZero);
 assert(b->isZero()); // Ok
 ```
 
+### When to use TreeRef
+
+TreeRefs allow a safer and more readable Tree manipulation.
+
+The only requirement is to ensure that they are only used in methods:
+- Where efficiency isn't critical
+- Expecting `TreeRef&` or `const Tree *`
+- Expecting `Tree *`, but having a `EDITION_REF_WRAP` wrapper
+// been overwritten.
+- Expecting `Tree *`, but the tracked tree being overridden is either impossible or handled
+
+Also remember that there is a limit to the number of TreeRef used at the same time (`TreeStack::k_maxNumberOfReferences`).
 
 ## KTrees
 

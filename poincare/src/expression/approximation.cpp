@@ -387,7 +387,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::ASec:
     case Type::ACsc:
     case Type::ACot:
-      return TrigonometricToComplex(node->type(), ToComplex<T>(node->child(0)));
+      return TrigonometricToComplex(node->type(), ToComplex<T>(node->child(0)),
+                                    s_context->m_angleUnit);
     case Type::SinH:
     case Type::CosH:
     case Type::TanH:
@@ -401,17 +402,18 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       std::complex<T> b = ToComplex<T>(node->child(1));
       assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
       bool isCos = b == static_cast<T>(0.0);
-      assert(s_context->m_angleUnit == AngleUnit::Radian);
       if (node->isTrig()) {
-        return TrigonometricToComplex(isCos ? Type::Cos : Type::Sin, a);
+        return TrigonometricToComplex(isCos ? Type::Cos : Type::Sin, a,
+                                      AngleUnit::Radian);
       }
-      return TrigonometricToComplex(isCos ? Type::ACos : Type::ASin, a);
+      return TrigonometricToComplex(isCos ? Type::ACos : Type::ASin, a,
+                                    AngleUnit::Radian);
     }
     case Type::TanRad:
     case Type::ATanRad:
-      assert(s_context->m_angleUnit == AngleUnit::Radian);
       return TrigonometricToComplex(node->isTanRad() ? Type::Tan : Type::ATan,
-                                    ToComplex<T>(node->child(0)));
+                                    ToComplex<T>(node->child(0)),
+                                    AngleUnit::Radian);
     case Type::Var: {
       // Local variable
       int index = Variables::Id(node);

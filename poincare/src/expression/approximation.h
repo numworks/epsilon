@@ -128,14 +128,9 @@ class Approximation final {
   static bool ApproximateAndReplaceEveryScalarT(Tree* tree);
 
   template <typename T>
-  static T ConvertToRadian(T angle);
-
-  template <typename T>
-  static T ConvertFromRadian(T angle);
-
-  template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,
-                                                std::complex<T> value);
+                                                std::complex<T> value,
+                                                AngleUnit angleUnit);
   template <typename T>
   static std::complex<T> HyperbolicToComplex(TypeBlock type,
                                              std::complex<T> value);

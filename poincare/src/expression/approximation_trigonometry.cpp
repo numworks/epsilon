@@ -14,38 +14,39 @@ using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
 namespace Poincare::Internal {
 
 template <typename T>
-T Approximation::ConvertToRadian(T angle) {
-  if (s_context->m_angleUnit == AngleUnit::Radian) {
+T ConvertToRadian(T angle, AngleUnit angleUnit) {
+  if (angleUnit == AngleUnit::Radian) {
     return angle;
   }
-  return angle * (s_context->m_angleUnit == AngleUnit::Degree
+  return angle * (angleUnit == AngleUnit::Degree
                       ? static_cast<T>(M_PI / 180.0)
                       : static_cast<T>(M_PI / 200.0));
 }
 
 template <typename T>
-T Approximation::ConvertFromRadian(T angle) {
-  if (s_context->m_angleUnit == AngleUnit::Radian) {
+T ConvertFromRadian(T angle, AngleUnit angleUnit) {
+  if (angleUnit == AngleUnit::Radian) {
     return angle;
   }
-  return angle * (s_context->m_angleUnit == AngleUnit::Degree
+  return angle * (angleUnit == AngleUnit::Degree
                       ? static_cast<T>(180.0 / M_PI)
                       : static_cast<T>(200.0 / M_PI));
 }
 
 template <typename T>
 std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
-                                                      std::complex<T> value) {
+                                                      std::complex<T> value,
+                                                      AngleUnit angleUnit) {
   switch (type) {
     case Type::Cos:
     case Type::Sin: {
-      std::complex<T> angleInput = ConvertToRadian(value);
+      std::complex<T> angleInput = ConvertToRadian(value, angleUnit);
       std::complex<T> res =
           type.isCos() ? std::cos(angleInput) : std::sin(angleInput);
       return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
     }
     case Type::Tan: {
-      std::complex<T> angleInput = ConvertToRadian(value);
+      std::complex<T> angleInput = ConvertToRadian(value, angleUnit);
       /* tan should be undefined at (2n+1)*pi/2 for any integer n.
        * std::tan is not reliable at these values because it is diverging and
        * any approximation errors on pi could easily yield a finite result. At
@@ -65,10 +66,11 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
     case Type::Sec:
     case Type::Csc:
     case Type::Cot: {
-      std::complex<T> denominator =
-          TrigonometricToComplex(type.isSec() ? Type::Cos : Type::Sin, value);
+      std::complex<T> denominator = TrigonometricToComplex(
+          type.isSec() ? Type::Cos : Type::Sin, value, angleUnit);
       std::complex<T> numerator =
-          type.isCot() ? TrigonometricToComplex(Type::Cos, value) : 1;
+          type.isCot() ? TrigonometricToComplex(Type::Cos, value, angleUnit)
+                       : 1;
       if (type.isCot() && (numerator == static_cast<T>(1.0) ||
                            numerator == static_cast<T>(-1.0))) {
         // cf comment for Tangent
@@ -106,7 +108,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
         }
       }
       result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
-      return ConvertFromRadian(result);
+      return ConvertFromRadian(result, angleUnit);
     }
     case Type::ATan: {
       std::complex<T> c = value;
@@ -139,7 +141,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
         }
       }
       result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
-      return ConvertFromRadian(result);
+      return ConvertFromRadian(result, angleUnit);
     }
     case Type::ASec:
     case Type::ACsc:
@@ -147,12 +149,13 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
         return NAN;
       }
       return TrigonometricToComplex(type.isASec() ? Type::ACos : Type::ASin,
-                                    static_cast<T>(1) / value);
+                                    static_cast<T>(1) / value, angleUnit);
     case Type::ACot:
       if (value == static_cast<T>(0)) {
-        return ConvertFromRadian(M_PI_2);
+        return ConvertFromRadian(M_PI_2, angleUnit);
       }
-      return TrigonometricToComplex(Type::ATan, static_cast<T>(1) / value);
+      return TrigonometricToComplex(Type::ATan, static_cast<T>(1) / value,
+                                    angleUnit);
     default:
       assert(false);
   }
@@ -214,13 +217,13 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
 }
 
 template std::complex<float> Approximation::TrigonometricToComplex(
-    TypeBlock type, std::complex<float> value);
+    TypeBlock, std::complex<float>, AngleUnit);
 template std::complex<double> Approximation::TrigonometricToComplex(
-    TypeBlock type, std::complex<double> value);
+    TypeBlock, std::complex<double>, AngleUnit);
 
 template std::complex<float> Approximation::HyperbolicToComplex(
-    TypeBlock type, std::complex<float> value);
+    TypeBlock, std::complex<float>);
 template std::complex<double> Approximation::HyperbolicToComplex(
-    TypeBlock type, std::complex<double> value);
+    TypeBlock, std::complex<double>);
 
 }  // namespace Poincare::Internal

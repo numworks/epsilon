@@ -52,7 +52,9 @@ Expression ListSort::shallowReduce(ReductionContext reductionContext) {
     }
     return *this;
   }
-  if (recursivelyMatches(Expression::IsUndefined, nullptr)) {
+
+  if (child.numberOfChildren() == 0 ||
+      recursivelyMatches(Expression::IsUndefined, nullptr)) {
     // Cannot sort if a child is the expression Undefined
     replaceWithInPlace(child);
     return child;
@@ -62,6 +64,10 @@ Expression ListSort::shallowReduce(ReductionContext reductionContext) {
   ApproximationContext approximationContext(reductionContext, true);
   Evaluation<float> approximatedList =
       list.approximateToEvaluation<float>(approximationContext);
+  if (list.numberOfChildren() != approximatedList.numberOfChildren()) {
+    return *this;
+  }
+
   bool listOfDefinedScalars = approximatedList.isListOfDefinedScalars();
   bool listOfDefinedPoints = approximatedList.isListOfDefinedPoints();
   if (!listOfDefinedScalars && !listOfDefinedPoints) {
@@ -73,6 +79,7 @@ Expression ListSort::shallowReduce(ReductionContext reductionContext) {
       listOfDefinedScalars};
   Helpers::Sort(Helpers::SwapInList<float>, Helpers::CompareInList<float>,
                 &pack, child.numberOfChildren());
+
   replaceWithInPlace(child);
   return child;
 }

@@ -23,6 +23,7 @@ bool EvaluationNode<T>::isListOfDefinedScalars() const {
     return false;
   }
   const int n = numberOfChildren();
+  assert(n > 0);
   for (int i = 0; i < n; i++) {
     if (!childAtIndex(i)->isDefinedScalar()) {
       return false;
@@ -37,6 +38,7 @@ bool EvaluationNode<T>::isListOfDefinedPoints() const {
     return false;
   }
   const int n = numberOfChildren();
+  assert(n > 0);
   for (int i = 0; i < n; i++) {
     if (!childAtIndex(i)->isDefinedPoint()) {
       return false;

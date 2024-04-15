@@ -110,9 +110,12 @@ void SelectableTableView::nextSelectableCellInDirection(
 void SelectableTableView::selectCellAtLocation(int col, int row,
                                                bool setFirstResponder,
                                                bool withinTemporarySelection) {
+  // Table deselected
   if (row == -1) {
     return;
   }
+
+  // Clip col and row
   int nCols = totalNumberOfColumns();
   if (nCols == 0) {
     return;

@@ -6,6 +6,7 @@ From a parsed user input expression, the simplification algorithm does:
 - [Ensure the expression has a valid dimension](#dimension-check)
 - [Adjust the approximation strategy if the expression's dimension requires it (units)](#approximation-strategy)
 - [Seed the random nodes](#random-nodes-seeding)
+- [Replace User symbols and functions stored in context](#context-user-symbols)
 - [Project the expression, approximate depending on the strategy](#projection)
 - [Replace all user symbols with variables](#user-symbols)
 - [Apply systematic reduction](#systematic-reduction)
@@ -14,7 +15,6 @@ From a parsed user input expression, the simplification algorithm does:
 - [Simplify Dependencies](#simplify-dependencies)
 - [Approximate again, depending on the strategy](#final-approximation)
 - [Beautify expression](#beautification)
-- [Replace User symbols and functions stored in context](#context-user-symbols)
 
 ## Dimension check
 
@@ -57,6 +57,17 @@ For example, with this projection, both random should never approximate to diffe
 $$sinh(random())=\frac{e^{random()}-e^{-random()}}{2}$$
 
 Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
+
+## Context user symbols
+
+User symbols and functions stored in the given context are replaced with their definition, even if nested.
+
+If anything has been replaced, reapply previous step to seed new random nodes.
+
+For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
+- Seeded to $f(random_1())*f(0)$
+- Replaced to $(random_1()+random_1()+random())*(0+0+random())$,
+- Seeded again to $(random_1()+random_1()+random_2())*(0+0+random_3())$
 
 ## Projection
 
@@ -487,14 +498,3 @@ The unit removed on projection is restored to the best prefix and representative
 ### Restore Variable names
 
 User variables, as well as nested local variables are restored to their original names.
-
-## Context user symbols
-
-User symbols and functions stored in the given context are replaced with their definition, even if nested.
-
-If anything is replaced, start over the simplification algorithm from the start.
-
-TODO: This step could be done at the very start of the algorithm, but a proper random seeding should be account for.
-
-For example if `f(x)=x+x+random()`, the expression `f(random())*f(0)` should be
-```(random_1()+random_1()+random_2())*(0+0+random_3())```

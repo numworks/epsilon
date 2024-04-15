@@ -51,7 +51,7 @@ static int indexInArray(KDColor value, const KDColor* array, size_t arraySize) {
 void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
   constexpr int paletteSize = std::size(Palette::DataColor);
   int nFree = paletteSize;
-  for (int c = 0; c < paletteSize - 1; c++) {
+  for (int c = 0; c < paletteSize; c++) {
     // Initialize at true
     colorIsFree[c] = true;
   }

@@ -38,64 +38,65 @@ int ContinuousFunctionStore::numberOfActiveFunctions() const {
 
 using ErrorStatus = Ion::Storage::Record::ErrorStatus;
 
+static int numberOfTrue(const bool* array, size_t arraySize) {
+  int n = 0;
+  for (int i = 0; i < arraySize; i++) {
+    n += array[i];
+  }
+  return n;
+}
+
+static int indexInArray(KDColor value, const KDColor* array, size_t arraySize) {
+  for (int i = 0; i < arraySize - 1; i++) {
+    if (value == array[i]) {
+      return i;
+    }
+  }
+  assert(value == array[arraySize - 1]);
+  return arraySize - 1;
+}
+
+void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
+  constexpr int paletteSize = std::size(Palette::DataColor);
+  for (int c = 0; c < paletteSize - 1; c++) {
+    // Initialize at true
+    colorIsFree[c] = true;
+  }
+  int i = numberOfModels() - 1;
+  while (i >= 0) {
+    ExpiringPointer<ContinuousFunction> f = modelForRecord(recordAtIndex(i));
+    int nDerivatives = 1 + 2 * f->canDisplayDerivative();
+    for (int d = 0; d < nDerivatives; d++) {
+      int c = indexInArray(f->color(d), Palette::DataColor, paletteSize);
+      colorIsFree[c] = false;
+      // Stop when there is at most 1 free color
+      if (numberOfTrue(colorIsFree, paletteSize) <= 1) {
+        return;
+      }
+    }
+    i--;
+  }
+}
+
+KDColor ContinuousFunctionStore::colorForNewModel() const {
+  // Check first last functions colors until there is at most 1 free color
+  constexpr int paletteSize = std::size(Palette::DataColor);
+  bool colorIsFree[paletteSize];
+  fillLastFreeColors(colorIsFree);
+
+  // Take first free color
+  for (int c = 0; c < paletteSize - 1; c++) {
+    if (colorIsFree[c]) {
+      return Palette::DataColor[c];
+    }
+  }
+  assert(colorIsFree[paletteSize - 1]);
+  return Palette::DataColor[paletteSize - 1];
+}
+
 ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
                                                      ErrorStatus* error) {
-  /* Choose the next color following the rule:
-   * - no other function is the same color among the last
-   * size(Palette::DataColor) - 1 ones in the list */
-  constexpr int paletteSize = std::size(Palette::DataColor);
-
-  int functionsCount = numberOfModels();
-
-  // Find the first color in the palette that is different
-
-  KDColor nextColor;
-
-  /* Compare to the last paletteSize-1 functions. There will be at least 1 color
-   * that is not taken. */
-  int maxSize = paletteSize - 1;
-  KDColor lastColorsTaken[maxSize];
-  int size = 0;
-  for (int i = functionsCount - 1; i >= 0; i--) {
-    ExpiringPointer<ContinuousFunction> f = modelForRecord(recordAtIndex(i));
-    KDColor color0 = f->color(0);
-    lastColorsTaken[size++] = color0;
-    if (size >= maxSize) {
-      break;
-    }
-    if (f->canDisplayDerivative()) {
-      KDColor color1 = f->color(1);
-      if (color1 != color0) {
-        lastColorsTaken[size++] = color1;
-        if (size >= maxSize) {
-          break;
-        }
-      }
-      KDColor color2 = f->color(2);
-      if (color2 != color0 && color2 != color1) {
-        lastColorsTaken[size++] = color2;
-        if (size >= maxSize) {
-          break;
-        }
-      }
-    }
-  }
-
-  // Among those non taken color, choose the first one in the palette.
-  for (KDColor color : Palette::DataColor) {
-    bool isCandidate = true;
-    for (int i = 0; i < size; i++) {
-      if (lastColorsTaken[i] == color) {
-        isCandidate = false;
-        break;
-      }
-    }
-    if (isCandidate) {
-      nextColor = color;
-      break;
-    }
-  }
-
+  KDColor nextColor = colorForNewModel();
   return ContinuousFunction::NewModel(error, name, nextColor);
 }
 

@@ -109,6 +109,9 @@ class ContinuousFunctionStore : public FunctionStore {
       int cacheIndex, Ion::Storage::Record record) const override;
   ExpressionModelHandle *memoizedModelAtIndex(int cacheIndex) const override;
 
+  void fillLastFreeColors(bool *colorIsFree) const;
+  KDColor colorForNewModel() const;
+
   mutable uint32_t m_storageCheckSum;
   mutable int m_memoizedNumberOfActiveFunctions;
   mutable ContinuousFunction m_functions[k_maxNumberOfMemoizedModels];

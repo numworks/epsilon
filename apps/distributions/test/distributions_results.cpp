@@ -356,8 +356,7 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   distribution.setParameterAtIndex(68, 1);
   distribution.setParameterAtIndex(88888888888888880, 2);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(68), 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(66), NAN, 0,
-                              true);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(66), 0, 0, true);
 }
 
 QUIZ_CASE(distributions_results_poisson) {

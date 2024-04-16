@@ -22,8 +22,12 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
   if (k < std::max(static_cast<T>(0), n + K - N) || k > std::min(n, K)) {
     return 0;
   }
-  // We don't want BinomialCoefficient to generalize the formula
-  if (k > K || (n - k) > (N - K)) {
+  /* We don't want BinomialCoefficient to generalize the formula
+   * (K - k) > (N - n) is equivalent to (n - k) > (N - K), but numerically it
+   * can give different results. The first comparison is the "understandable"
+   * one, the second comparison is the same but subtracts values with same
+   * magnitude. */
+  if (k > K || (n - k) > (N - K) || (K - k) > (N - n)) {
     return 0;
   }
   T result = BinomialCoefficientNode::compute(k, K) *

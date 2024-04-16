@@ -207,7 +207,12 @@ void TreeStack::flush() {
 }
 
 void TreeStack::flushFromBlock(const Block* block) {
-  assert(isRootBlock(block, true));
+  /* This function is used to flush the right side of the pool when we revert to
+   * a checkpoint. We initially expected the block to revert to to be a root
+   * block, in order to have only well-formed trees on the stack during the
+   * catch. This condition was removed and it is the responsability of the catch
+   * to leave the stack in a state similar to what would have happened with no
+   * raise. */
   m_size = block - m_blocks;
   m_referenceTable.deleteIdentifiersAfterBlock(block);
 #if POINCARE_POOL_VISUALIZATION

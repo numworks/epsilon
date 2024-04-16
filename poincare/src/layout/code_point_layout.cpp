@@ -9,7 +9,8 @@ CodePoint CodePointLayout::GetCodePoint(const Tree* node) {
   if (node->isAsciiCodePointLayout()) {
     return CodePoint(node->nodeValueBlock(0)->get<uint8_t>());
   }
-  assert(node->isUnicodeCodePointLayout());
+  assert(node->isUnicodeCodePointLayout() ||
+         node->isCombinedCodePointsLayout());
   return CodePoint(node->nodeValueBlock(0)->get<uint32_t>());
 }
 

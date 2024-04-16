@@ -6,6 +6,8 @@
 #include <poincare/src/expression/dimension_vector.h>
 #include <poincare/src/memory/block.h>
 
+#include "preferences.h"
+
 namespace Poincare {
 
 namespace Internal {
@@ -125,6 +127,15 @@ class UserExpression : public JuniorPoolHandle {
    * TODO: what if the dimension is invalid ?
    */
   SystemExpression projected() const;
+
+  /**
+   * Change complex format from Real to Complex if the expression contains "i".
+   */
+  void guessAndUpdateComplexFormat();
+
+ private:
+  Internal::ComplexFormat m_complexFormat;
+  Internal::ComplexFormat m_angleUnit;  // gathered under a Preference Context ?
 };
 
 /**

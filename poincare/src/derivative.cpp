@@ -42,7 +42,7 @@ Layout DerivativeNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   // Case 1: layout is f'(a)
-  if (displayInCondensedForm()) {
+  if (isValidCondensedForm()) {
     const char* functionName =
         static_cast<SymbolAbstractNode*>(childAtIndex(0))->name();
     Layout name = LayoutHelper::String(functionName, strlen(functionName));
@@ -64,31 +64,32 @@ Layout DerivativeNode::createLayout(
                                      ParenthesisLayout::Builder(argument));
   }
   // Case 2: layout is d^n(f(x))/dx|x=a
+  Expression e = createValidExpandedForm();
   if (isFirstOrder()) {
     return FirstOrderDerivativeLayout::Builder(
-        childAtIndex(0)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context),
-        childAtIndex(1)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context),
-        childAtIndex(2)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context));
+        e.childAtIndex(0).createLayout(floatDisplayMode,
+                                       numberOfSignificantDigits, context),
+        e.childAtIndex(1).createLayout(floatDisplayMode,
+                                       numberOfSignificantDigits, context),
+        e.childAtIndex(2).createLayout(floatDisplayMode,
+                                       numberOfSignificantDigits, context));
   }
   return HigherOrderDerivativeLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context),
-      childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                    context));
+      e.childAtIndex(0).createLayout(floatDisplayMode,
+                                     numberOfSignificantDigits, context),
+      e.childAtIndex(1).createLayout(floatDisplayMode,
+                                     numberOfSignificantDigits, context),
+      e.childAtIndex(2).createLayout(floatDisplayMode,
+                                     numberOfSignificantDigits, context),
+      e.childAtIndex(3).createLayout(floatDisplayMode,
+                                     numberOfSignificantDigits, context));
 }
 
 size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {
   // Case 1: serialize as f'(a)
-  if (displayInCondensedForm()) {
+  if (isValidCondensedForm()) {
     const char* name =
         static_cast<SymbolAbstractNode*>(childAtIndex(0))->name();
     size_t length = strlen(name);
@@ -123,8 +124,9 @@ size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
   // Case 2: serialize as diff(f(x),x,a,n)
   int lastChildIndex =
       isFirstOrder() ? numberOfChildren() - 2 : numberOfChildren() - 1;
+  Expression e = createValidExpandedForm();
   return SerializationHelper::Prefix(
-      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      e.node(), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       Derivative::s_functionHelper.aliasesList().mainAlias(),
       SerializationHelper::ParenthesisType::Classic, lastChildIndex);
 }
@@ -305,15 +307,15 @@ T DerivativeNode::riddersApproximation(
   return ans;
 }
 
-bool DerivativeNode::displayInCondensedForm() const {
+bool DerivativeNode::isValidCondensedForm() const {
   // Returns true if of the form diff(f(SystemSymbol),SystemSymbol,x,n)
-  assert(childAtIndex(1)->type() == ExpressionNode::Type::Symbol);
-  if (childAtIndex(1)->isSystemSymbol()) {
-    assert(childAtIndex(0)->type() == ExpressionNode::Type::Function);
-    assert(childAtIndex(0)->childAtIndex(0)->isSystemSymbol());
-    return true;
-  }
-  return false;
+  return childAtIndex(0)->type() == ExpressionNode::Type::Function &&
+         childAtIndex(0)->childAtIndex(0)->isSystemSymbol() &&
+         childAtIndex(1)->isSystemSymbol();
+}
+
+Expression DerivativeNode::createValidExpandedForm() const {
+  return Derivative(this).createValidExpandedForm();
 }
 
 int DerivativeNode::extractIntegerOrder() const {
@@ -529,6 +531,21 @@ Expression Derivative::distributeOverPoint() {
     point.replaceChildAtIndexInPlace(i, newDerivand);
   }
   return point;
+}
+
+Expression Derivative::createValidExpandedForm() const {
+  if (childAtIndex(1).isSystemSymbol() && !isValidCondensedForm()) {
+    /* An originally condensed form diff(f(SystemSymbol),SystemSymbol,x,n) might
+     * have became invalid if the function was replaced by its expression and
+     * the derivative was not reduced. */
+    Expression e = clone();
+    e.childAtIndex(0).replaceSymbolWithExpression(Symbol::SystemSymbol(),
+                                                  Symbol::Builder('x'));
+    e.childAtIndex(1).replaceSymbolWithExpression(Symbol::SystemSymbol(),
+                                                  Symbol::Builder('x'));
+    return e;
+  }
+  return *this;
 }
 
 }  // namespace Poincare

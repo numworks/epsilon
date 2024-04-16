@@ -207,6 +207,8 @@ class Expression : public TreeHandle {
    * (i.e. for the functions random, randint, round, floor and ceil).
    * Functions like 1/x are not handled here since it "obvious" that they are
    * discontinuous. */
+  bool isSystemSymbol() const { return node()->isSystemSymbol(); }
+
   bool involvesDiscontinuousFunction(Context* context) const;
   bool isDiscontinuousBetweenValuesForSymbol(
       const char* symbol, float x1, float x2,

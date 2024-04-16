@@ -1,3 +1,4 @@
+#include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
 #include <poincare/comparison.h>
@@ -11,6 +12,7 @@
 #include <poincare/infinity.h>
 #include <poincare/logical_operator.h>
 #include <poincare/opposite.h>
+#include <poincare/parenthesis.h>
 #include <poincare/percent.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -314,6 +316,17 @@ QUIZ_CASE(poincare_serialization_power) {
                      BinaryLogicalOperator::Builder(
                          BasedInteger::Builder(3), BasedInteger::Builder(4),
                          BinaryLogicalOperatorNode::OperatorType::Or))));
+  assert_expression_serializes_and_parses_to_itself(
+      AbsoluteValue::Builder(PercentAddition::Builder(
+          BasedInteger::Builder(0),
+          Division::Builder(
+              BasedInteger::Builder(0),
+              BinaryLogicalOperator::Builder(
+                  Symbol::Builder("r", 1),
+                  Multiplication::Builder(
+                      Symbol::Builder("o", 1), Symbol::Builder("m0", 2),
+                      Parenthesis::Builder(BasedInteger::Builder(0))),
+                  BinaryLogicalOperatorNode::OperatorType::And)))));
 }
 
 QUIZ_CASE(poincare_serialization_derivative) {

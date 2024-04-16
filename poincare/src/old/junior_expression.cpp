@@ -531,17 +531,17 @@ int JuniorExpression::polynomialDegree(Context* context,
 
 JuniorExpression JuniorExpression::replaceSymbolWithExpression(
     const SymbolAbstract& symbol, const JuniorExpression& expression) {
-  // TODO_PCJ: Ensure symbol is variable and use Internal::Variables::Replace
-  /* TODO_PCJ: Handle parametrics, functions and sequences as well. See
+  /* TODO_PCJ: Handle functions and sequences as well. See
    * replaceSymbolWithExpression implementations. */
   if (isUninitialized()) {
     return *this;
   }
-  assert(symbol.tree()->isUserSymbol() &&
-         !tree()->hasDescendantSatisfying(
-             [](const Internal::Tree* e) { return e->isParametric(); }));
+  assert(symbol.tree()->isUserSymbol());
   Internal::Tree* result = tree()->clone();
-  if (result->deepReplaceWith(symbol.tree(), expression.tree())) {
+  Internal::Variables::ReplaceSymbol(result, symbol.tree(), 0,
+                                     Internal::ComplexSign::Unknown());
+  if (Internal::Variables::Replace(result, 0, expression.tree(), false,
+                                   false)) {
     JuniorExpression res = Builder(result);
     replaceWithInPlace(res);
     return res;

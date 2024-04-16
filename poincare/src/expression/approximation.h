@@ -156,7 +156,9 @@ class Approximation final {
     void shiftVariables() { m_variablesOffset--; }
     void unshiftVariables() { m_variablesOffset++; }
 
-    void setLocalValue(VariableType value) { m_variables[0] = value; }
+    void setLocalValue(VariableType value) {
+      m_variables[indexForVariable(0)] = value;
+    }
     // with sum(sum(l,l,1,k),k,1,n) m_variables stores [n, NaN, …, NaN, l, k]
     uint8_t indexForVariable(uint8_t index) const {
       assert(index < m_variablesOffset);

@@ -39,7 +39,7 @@ int ContinuousFunctionStore::numberOfActiveFunctions() const {
 using ErrorStatus = Ion::Storage::Record::ErrorStatus;
 
 static int indexInArray(KDColor value, const KDColor* array, size_t arraySize) {
-  for (int i = 0; i < arraySize - 1; i++) {
+  for (size_t i = 0; i < arraySize - 1; i++) {
     if (value == array[i]) {
       return i;
     }

@@ -29,10 +29,12 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyPower);
 
   // SimplificationSteps
-  static bool Step1(Tree* e, ProjectionContext projectionContext);
-  static bool Step2(Tree* e, ProjectionContext* projectionContext);
-  static bool Step3(Tree* e);
-  static bool Step4(Tree* e, ProjectionContext projectionContext);
+  static bool PrepareForProjection(Tree* e,
+                                   ProjectionContext projectionContext);
+  static void ExtractUnits(Tree* e, ProjectionContext* projectionContext);
+  static bool SimplifyProjectedTree(Tree* e);
+  static bool TryApproximationStrategyAgain(
+      Tree* e, ProjectionContext projectionContext);
 
  private:
   /* These private methods should never be called on TreeRefs.

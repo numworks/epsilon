@@ -833,7 +833,8 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
   return true;
 }
 
-bool Simplification::Step1(Tree* e, ProjectionContext projectionContext) {
+bool Simplification::PrepareForProjection(Tree* e,
+                                          ProjectionContext projectionContext) {
   // Seed random nodes before anything is merged/duplicated.
   int maxRandomSeed = Random::SeedRandomNodes(e, 0);
   bool changed = maxRandomSeed > 0;
@@ -851,39 +852,41 @@ bool Simplification::Step1(Tree* e, ProjectionContext projectionContext) {
   return changed;
 }
 
-bool Simplification::Step2(Tree* e, ProjectionContext* projectionContext) {
+void Simplification::ExtractUnits(Tree* e,
+                                  ProjectionContext* projectionContext) {
   projectionContext->m_dimension = Dimension::GetDimension(e);
   if (projectionContext->m_strategy != Strategy::ApproximateToFloat &&
       ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
     ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
   }
-  return Projection::DeepSystemProject(e, *projectionContext);
 }
 
-bool Simplification::Step3(Tree* e) {
-  return DeepSystematicReduce(e) | List::BubbleUp(e, ShallowSystematicReduce) |
-         AdvancedSimplification::AdvancedReduce(e) |
-         Dependency::DeepRemoveUselessDependencies(e);
+bool Simplification::SimplifyProjectedTree(Tree* e) {
+  bool changed = DeepSystematicReduce(e);
+  changed = List::BubbleUp(e, ShallowSystematicReduce) || changed;
+  changed = AdvancedSimplification::AdvancedReduce(e) || changed;
+  return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }
 
-bool Simplification::Step4(Tree* e, ProjectionContext projectionContext) {
-  bool changed = false;
+bool Simplification::TryApproximationStrategyAgain(
+    Tree* e, ProjectionContext projectionContext) {
   // Approximate again in case exact numbers appeared during simplification.
-  if (projectionContext.m_strategy == Strategy::ApproximateToFloat &&
-      Approximation::ApproximateAndReplaceEveryScalar(e)) {
-    changed = true;
-    // NAries could be sorted again, some children may be merged.
-    DeepSystematicReduce(e);
+  if (projectionContext.m_strategy != Strategy::ApproximateToFloat ||
+      !Approximation::ApproximateAndReplaceEveryScalar(e)) {
+    return false;
   }
-  return Beautification::DeepBeautify(e, projectionContext) || changed;
+  // NAries could be sorted again, some children may be merged.
+  DeepSystematicReduce(e);
+  return true;
 }
 
 bool Simplification::SimplifyLastTree(Tree* e,
                                       ProjectionContext projectionContext) {
   assert(SharedTreeStack->lastBlock() == e->nextTree()->block());
   ExceptionTryAfterBlock(e->block()) {
-    bool changed = Step1(e, projectionContext);
-    changed = Step2(e, &projectionContext) || changed;
+    bool changed = PrepareForProjection(e, projectionContext);
+    ExtractUnits(e, &projectionContext);
+    changed = Projection::DeepSystemProject(e, projectionContext) || changed;
     /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
      * because of the ordered structure of the set. When projecting y+x,
      * variables will be {x, y} and we must have found all user symbols to
@@ -895,8 +898,9 @@ bool Simplification::SimplifyLastTree(Tree* e,
         projectionContext.m_complexFormat == ComplexFormat::Real
             ? ComplexSign::RealUnknown()
             : ComplexSign::Unknown());
-    changed = Step3(e) || changed;
-    changed = Step4(e, projectionContext) || changed;
+    changed = SimplifyProjectedTree(e) || changed;
+    changed = TryApproximationStrategyAgain(e, projectionContext) || changed;
+    changed = Beautification::DeepBeautify(e, projectionContext) || changed;
     Variables::BeautifyToName(e, variables);
     variables->removeTree();
     return changed;

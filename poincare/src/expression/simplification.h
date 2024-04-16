@@ -28,14 +28,6 @@ class Simplification {
   static bool SimplifyPower(Tree* u);
   EDITION_REF_WRAP(SimplifyPower);
 
-  // SimplificationSteps
-  static bool PrepareForProjection(Tree* e,
-                                   ProjectionContext projectionContext);
-  static void ExtractUnits(Tree* e, ProjectionContext* projectionContext);
-  static bool SimplifyProjectedTree(Tree* e);
-  static bool TryApproximationStrategyAgain(
-      Tree* e, ProjectionContext projectionContext);
-
  private:
   /* These private methods should never be called on TreeRefs.
    * TODO: ensure it cannot. */
@@ -49,8 +41,6 @@ class Simplification {
   static bool SimplifyDistribution(Tree* t);
   static bool SimplifyDim(Tree* t);
 
-  static bool SimplifyLastTree(Tree* node,
-                               ProjectionContext projectionContext = {});
   static bool SimplifySwitch(Tree* u);
   // Return true if child has been merged with next sibling.
   static bool MergeAdditionChildWithNext(Tree* child, Tree* next);
@@ -68,6 +58,15 @@ class Simplification {
   // Simplify a sorted and sanitized multiplication.
   static bool SimplifySortedMultiplication(Tree* multiplication);
   static void ConvertPowerRealToPower(Tree* u);
+
+  static bool PrepareForProjection(Tree* e,
+                                   ProjectionContext projectionContext);
+  static void ExtractUnits(Tree* e, ProjectionContext* projectionContext);
+  static bool SimplifyProjectedTree(Tree* e);
+  static bool TryApproximationStrategyAgain(
+      Tree* e, ProjectionContext projectionContext);
+  static bool SimplifyLastTree(Tree* node,
+                               ProjectionContext projectionContext = {});
 };
 
 }  // namespace Poincare::Internal

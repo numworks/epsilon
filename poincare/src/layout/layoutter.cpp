@@ -791,7 +791,7 @@ bool Layoutter::requireSeparators(const Tree* expr) {
 
 void Layoutter::StripSeparators(Tree* rack) {
   assert(rack->isRackLayout());
-  Tree* child = rack->child(0);
+  Tree* child = rack->nextNode();
   int n = rack->numberOfChildren();
   int i = 0;
   while (i < n) {

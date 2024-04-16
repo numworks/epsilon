@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
 
 #include "grid.h"
@@ -76,7 +77,9 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
         if (grid->childIsPlaceholder(i)) {
           continue;
         }
-        Parse(grid->child(i), context);
+        if (!Parse(grid->child(i), context)) {
+          ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+        }
         actualNumberOfChildren++;
       }
       if (expr->isPiecewise()) {
@@ -91,7 +94,9 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
       TreeRef ref = SharedTreeStack->push(ExpressionType(node->layoutType()));
       int n = node->numberOfChildren();
       for (int i = 0; i < n; i++) {
-        Parse(node->child(i), context);
+        if (!Parse(node->child(i), context)) {
+          ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+        }
       }
       return ref;
     }

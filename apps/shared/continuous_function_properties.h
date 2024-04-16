@@ -156,6 +156,16 @@ class ContinuousFunctionProperties {
   bool canHaveCustomDomain() const {
     return !isAlongY() && isEquality() && !isScatterPlot();
   }
+  bool canDisplayDerivative() const {
+    return canBeActiveInTable() && !isInversePolar();
+  }
+  bool canComputeArea() const {
+    return canDisplayDerivative() && isCartesian();
+  }
+  bool canPlotDerivatives() const {
+    return canDisplayDerivative() && isCartesian();
+  }
+  bool canComputeTangent() const { return canDisplayDerivative(); }
 
   bool isLine() const {
     return getCurveParameterType() == CurveParameterType::VerticalLine ||

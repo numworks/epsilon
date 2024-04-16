@@ -1,6 +1,7 @@
 #include <kandinsky/ion_context.h>
 #include <omg/unicode_helper.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/layoutter.h>
 #include <poincare/src/layout/multiplication_symbol.h>
@@ -55,4 +56,16 @@ QUIZ_CASE(pcj_layout_multiplication_symbol) {
   quiz_assert(MultiplicationSymbol(KMult(2_e, 3_e)) == u'×');
   quiz_assert(MultiplicationSymbol(KMult(2_e, "a"_e)) == UCodePointNull);
   quiz_assert(MultiplicationSymbol(KMult(2_e, KCos(π_e), KSqrt(2_e))) == u'·');
+}
+
+QUIZ_CASE(pcj_k_matrix_l) {
+  const Grid* mat = Grid::From(KMatrix1x1L("a"_l));
+  quiz_assert(mat->numberOfColumns() == 2);
+  quiz_assert(mat->numberOfRows() == 2);
+  quiz_assert(mat->childAt(0, 0)->treeIsIdenticalTo("a"_l));
+
+  mat = Grid::From(KMatrix2x2L("a"_l, "b"_l, "c"_l, "d"_l));
+  quiz_assert(mat->numberOfColumns() == 3);
+  quiz_assert(mat->numberOfRows() == 3);
+  quiz_assert(mat->childAt(1, 1)->treeIsIdenticalTo("d"_l));
 }

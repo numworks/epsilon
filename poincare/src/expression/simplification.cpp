@@ -834,9 +834,6 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
 }
 
 /* TODO: The operation order could be rearranged :
- * - UserNamed nodes could be replaced from the start (to avoid simplifying
- *   twice). To properly account for random seeding, UserFunctions could be
- *   replaced before with a parametric structure.
  * - GetUserSymbols and ProjectToId steps could be factorized.
  * - Steps could be better grouped under well constructed steps. */
 bool Simplification::SimplifyLastTree(Tree* e,

@@ -168,6 +168,8 @@ class ExpressionNode : public TreeNode {
   bool isUndefined() const {
     return isOfType({Type::Undefined, Type::Nonreal});
   }
+  bool isSystemSymbol() const;
+
   int numberOfNumericalValues() const;
   /* childAtIndexNeedsUserParentheses checks if parentheses are required by
    * mathematical rules:

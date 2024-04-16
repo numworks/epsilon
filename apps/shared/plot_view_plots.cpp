@@ -457,6 +457,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
     //   Step 2.2: Bar height
     KDCoordinate top =
         plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, y);
+    assert(top >= 0);
     KDCoordinate barHeight = plotViewHeight - top;
     assert(barHeight >= 0);
     KDCoordinate minBarHeight = 1 + borderWidth;

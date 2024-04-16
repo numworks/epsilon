@@ -350,6 +350,14 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   assert_cumulative_distributive_function_direct_is(&distribution, 70.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 95.0, 102.0,
                                               0.67319633087273711);
+
+  // H(88888888888888880, 68, 88888888888888880)
+  distribution.setParameterAtIndex(88888888888888880, 0);
+  distribution.setParameterAtIndex(68, 1);
+  distribution.setParameterAtIndex(88888888888888880, 2);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(68), 1);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(66), NAN, 0,
+                              true);
 }
 
 QUIZ_CASE(distributions_results_poisson) {

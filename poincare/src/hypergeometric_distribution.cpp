@@ -26,9 +26,14 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
   if (k > K || (n - k) > (N - K)) {
     return 0;
   }
-  return BinomialCoefficientNode::compute(k, K) *
-         BinomialCoefficientNode::compute(n - k, N - K) /
-         BinomialCoefficientNode::compute(n, N);
+  T result = BinomialCoefficientNode::compute(k, K) *
+             BinomialCoefficientNode::compute(n - k, N - K) /
+             BinomialCoefficientNode::compute(n, N);
+  if (result < 0 || result > 1) {
+    // Precision errors
+    return NAN;
+  }
+  return result;
 }
 
 template <typename T>

@@ -308,12 +308,9 @@ T DerivativeNode::riddersApproximation(
 bool DerivativeNode::displayInCondensedForm() const {
   // Returns true if of the form diff(f(SystemSymbol),SystemSymbol,x,n)
   assert(childAtIndex(1)->type() == ExpressionNode::Type::Symbol);
-  if (static_cast<SymbolNode*>(childAtIndex(1))->isSystemSymbol()) {
+  if (childAtIndex(1)->isSystemSymbol()) {
     assert(childAtIndex(0)->type() == ExpressionNode::Type::Function);
-    assert(childAtIndex(0)->childAtIndex(0)->type() ==
-               ExpressionNode::Type::Symbol &&
-           static_cast<SymbolNode*>(childAtIndex(0)->childAtIndex(0))
-               ->isSystemSymbol());
+    assert(childAtIndex(0)->childAtIndex(0)->isSystemSymbol());
     return true;
   }
   return false;

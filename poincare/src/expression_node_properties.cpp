@@ -7,6 +7,7 @@
 #include <poincare/power.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/store.h>
+#include <poincare/symbol.h>
 #include <poincare/unit_convert.h>
 
 namespace Poincare {
@@ -49,6 +50,11 @@ bool ExpressionNode::isCombinationOfUnits() const {
     return childAtIndex(0)->isCombinationOfUnits();
   }
   return false;
+}
+
+bool ExpressionNode::isSystemSymbol() const {
+  return type() == ExpressionNode::Type::Symbol &&
+         Expression(this).convert<Symbol>().isSystemSymbol();
 }
 
 Expression ExpressionNode::denominator(

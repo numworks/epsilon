@@ -58,9 +58,17 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
-    case LayoutType::CurlyBrace:
     case LayoutType::NthDiff:
       assert(false);
+    case LayoutType::CurlyBrace: {
+      Tree* list = RackParser(node->child(0), context, -1,
+                              ParsingContext::ParsingMethod::CommaSeparatedList)
+                       .parse();
+      if (!list) {
+        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      return list;
+    }
     case LayoutType::Piecewise:
     case LayoutType::Matrix: {
       const Grid* grid = Grid::From(node);

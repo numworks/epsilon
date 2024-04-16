@@ -19,7 +19,7 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
     return NAN;
   }
   k = std::floor(k);
-  if (k < std::max(static_cast<T>(0), n + K - N) || k > std::min(n, K)) {
+  if (k < 0 || k > std::min(n, K)) {
     return 0;
   }
   /* We don't want BinomialCoefficient to generalize the formula

@@ -643,6 +643,12 @@ QUIZ_CASE(calculation_symbolic_computation) {
   store.push("x→f(x)", &globalContext);
   assertMainCalculationOutputIs("f(Ans)→A", "undef", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+
+  // Derivatives condensed form
+  store.push("2→c(x)", &globalContext);
+  assertMainCalculationOutputIs("c''(0)→c(x)", "diff(2,x,0,2)", &globalContext,
+                                &store);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("c.func").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

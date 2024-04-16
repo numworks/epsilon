@@ -8,6 +8,8 @@
 namespace Poincare {
 
 class DerivativeNode final : public ParameteredExpressionNode {
+  friend class Derivative;
+
  public:
   // TreeNode
   size_t size() const override { return sizeof(DerivativeNode); }
@@ -80,7 +82,8 @@ class DerivativeNode final : public ParameteredExpressionNode {
 
   constexpr static int k_maxOrderForApproximation = 4;
 
-  bool displayInCondensedForm() const;
+  bool isValidCondensedForm() const;
+  Expression createValidExpandedForm() const;
   int extractIntegerOrder() const;
 };
 
@@ -116,6 +119,10 @@ class Derivative final : public ParameteredExpression {
   Expression shallowReduce(ReductionContext reductionContext);
 
   Expression distributeOverPoint();
+  Expression createValidExpandedForm() const;
+  bool isValidCondensedForm() const {
+    return static_cast<DerivativeNode*>(node())->isValidCondensedForm();
+  }
 };
 
 }  // namespace Poincare

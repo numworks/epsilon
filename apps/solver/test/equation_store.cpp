@@ -53,6 +53,7 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_no_solution("i=5");
   assert_solves_to_no_solution("x-x+2=0");
   assert_solves_to_no_solution("x/x-1+x=0");
+  assert_solves_to_no_solution("x+y=0*diff(tan(2x),x,0,x)");
 
   assert_solves_to("√(x)^(2)=-1", {"x=-1"});
   assert_solves_to("sin(asin(x))=2", {"x=2"});

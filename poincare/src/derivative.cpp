@@ -536,7 +536,7 @@ Expression Derivative::distributeOverPoint() {
 Expression Derivative::createValidExpandedForm() const {
   if (childAtIndex(1).isSystemSymbol() && !isValidCondensedForm()) {
     /* An originally condensed form diff(f(SystemSymbol),SystemSymbol,x,n) might
-     * have became invalid if the function was replaced by its expression and
+     * have become invalid if the function was replaced by its expression and
      * the derivative was not reduced. */
     Expression e = clone();
     e.childAtIndex(0).replaceSymbolWithExpression(Symbol::SystemSymbol(),

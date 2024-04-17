@@ -294,7 +294,8 @@ bool Expression::deepIsMatrix(Context *context, bool canContainMatrices,
         if (e.isOfType(
                 {ExpressionNode::Type::Power, ExpressionNode::Type::Opposite,
                  ExpressionNode::Type::Sum, ExpressionNode::Type::Product,
-                 ExpressionNode::Type::Dependency})) {
+                 ExpressionNode::Type::Dependency,
+                 ExpressionNode::Type::PiecewiseOperator})) {
           return TrinaryBoolean::Unknown;
         }
         // Any other type is not a matrix

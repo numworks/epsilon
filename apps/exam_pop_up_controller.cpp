@@ -54,7 +54,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveExamModeWithResetMessage,
       // Dutch
       I18n::Message::ActiveDutchExamModeMessage,
-      I18n::Message::ActiveDutchExamModeWithResetMessage,
+      I18n::Message::ActiveDutchOrEnglishExamModeWithResetMessage,
       // IBTest
       I18n::Message::ActiveUSAExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
@@ -66,7 +66,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveExamModeWithResetMessage,
       // English
       I18n::Message::ActiveEnglishExamModeMessage,
-      I18n::Message::ActiveEnglishExamModeWithResetMessage,
+      I18n::Message::ActiveDutchOrEnglishExamModeWithResetMessage,
       // STAAR
       I18n::Message::ActiveUSAExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,

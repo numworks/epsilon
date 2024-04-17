@@ -59,9 +59,12 @@ void set(Configuration config) {
 
 Configuration::Configuration(Ruleset rules, Int flags) : m_bits(0) {
   bool configurable = rules == Ruleset::PressToTest;
-  OMG::BitHelper::setBitAtIndex(m_bits, Bits::Configurable, configurable);
-  OMG::BitHelper::setBitsBetweenIndexes(
-      m_bits, Bits::DataLast, Bits::DataFirst,
+  m_bits = OMG::BitHelper::withBitsBetweenIndexes(
+      m_bits, static_cast<size_t>(Bits::Configurable),
+      static_cast<size_t>(Bits::Configurable), static_cast<Int>(configurable));
+  m_bits = OMG::BitHelper::withBitsBetweenIndexes(
+      m_bits, static_cast<size_t>(Bits::DataLast),
+      static_cast<size_t>(Bits::DataFirst),
       configurable ? flags : static_cast<Int>(rules));
 
   assert(!isUninitialized());

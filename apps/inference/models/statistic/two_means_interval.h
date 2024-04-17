@@ -81,8 +81,6 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
     syncParametersWithStore(this);
     TwoMeans::ComputeInterval(twoMeansType(this), this);
   }
-
-  double m_params[TwoMeans::k_numberOfParams];
 };
 
 class TwoMeansTInterval : public TwoMeansInterval {

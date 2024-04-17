@@ -97,7 +97,7 @@ Evaluation<T> SymbolNode::templatedApproximate(
   Symbol s(this);
   // No need to preserve undefined symbols because they will be approximated.
   Expression e = SymbolAbstract::Expand(
-      s, approximationContext.context(), false,
+      s, approximationContext.context(), true,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();

@@ -17,13 +17,13 @@ This layout:
 ```
 is represented by:
 ```
-rack
-├─ fraction_layout
-│  ├─ rack
+Rack
+├─ FractionLayout
+│  ├─ Rack
 │  │  ├─ '3'
 │  │  ├─ '+'
 │  │  └─ '4'
-│  └─ rack
+│  └─ Rack
 │     └─ '5'
 ├─ '*'
 └─ '2'
@@ -44,7 +44,7 @@ Tree -> Rack
 
 ### Simple cursor
 
-The **layout cursor** is always at a given index inside a Rack.
+The **layout cursor** is always at a given index inside a Rack. Index may be equal to `rack->numberOfChildren()` to point to the right of the last child.
 
 #### Example
 In this layout (where `|` is the cursor):
@@ -55,14 +55,14 @@ In this layout (where `|` is the cursor):
 ```
 the cursor is here
 ```
-rack
-├─ fraction_layout
-│  ├─ rack
+Rack
+├─ FractionLayout
+│  ├─ Rack
 │  │  ├─ '3'
 │  │  ├─ '+'
 │  │  ├──> cursor in this rack at index 2
 │  │  └─ '4'
-│  └─ rack
+│  └─ Rack
 │     └─ '5'
 ├─ '*'
 └─ '2'
@@ -81,15 +81,15 @@ In this layout (where the selection is between the `|`):
 ```
 the selection is here
 ```
-rack
-├─ fraction_layout
-│  ├─ rack
+Rack
+├─ FractionLayout
+│  ├─ Rack
 │  │  ├─ '3'
 │  │  ├──> cursor selection in this rack between index 1 ...
 │  │  ├─ '+'
 │  │  ├─ '4'
 │  │  └──> ... and index 4
-│  └─ rack
+│  └─ Rack
 │     └─ '5'
 ├─ '*'
 └─ '2'
@@ -101,25 +101,25 @@ rack
 
 Layouts can be defined in constexprs.
 
-Most of it is defined using literals:
+Most of them have a constructor named K + the name of the associated builtin + L:
 - `KRackL()` builds a rack
 - `KAbsL()` builds an absolute value layout
 - `KSumL()` builds a sum layout
 - etc.
 
-Special case: You can use the operator `"foo"_l` to build a rack layout only containing codepoints.
+Special case: You can use the operator `"foo"_l` to build a rack containing only codepoints.
 
-_See the [layout/k_tree.h file](../src/layout/k_tree.h) to have the full list of all literals._
+_See the [layout/k_tree.h file](../src/layout/k_tree.h) for the full list of all literals._
 
 #### Example
 This expression
-```constexpr foo = KAbsL("abc"_l)```
+```constexpr KTree foo = KAbsL("abc"_l)```
 
 builds an Abs layout containing a Rack with 3 codepoints layouts "a", "b" and "c".
 
 ```
-abs_layout
-└─ rack
+AbsLayout
+└─ Rack
    ├─ 'a'
    ├─ 'b'
    └─ 'c'
@@ -131,14 +131,14 @@ You can use `^` to concatenate 2 racks, 2 layouts, or a rack and a layout.
 
 #### Example
 This expression
-```constexpr foo = KAbsL("abc"_l) ^ "*2"_l```
+```constexpr KTree foo = KAbsL("abc"_l) ^ "*2"_l```
 
 concatenates the absolute value with `*2`
 
 ```
-rack
-├─ abs_layout
-│  └─ rack
+Rack
+├─ AbsLayout
+│  └─ Rack
 │     ├─ 'a'
 │     ├─ 'b'
 │     └─ 'c'
@@ -157,25 +157,18 @@ Algorithms on racks and matrices iterates their children in the correct order to
 `ThousandSeparator` and `OperatorSeparator` layouts are inserted in Racks by the layoutter.
 
 #### Example
-This layout
+The expression
 ```
 # 12345+6789
-rack
-├─ '1'
-├─ '2'
-├─ '3'
-├─ '4'
-├─ '5'
-├─ '+'
-├─ '6'
-├─ '7'
-├─ '8'
-└─ '9'
+Add
+├─ Integer 12345
+└─ Integer 6789
 ```
-is turned into this one by the layoutter:
+
+is turned into this layout by the layoutter:
 ```
 # 12 345 + 6 789
-rack
+Rack
 ├─ '1'
 ├─ '2'
 ├─ ThousandSeparator
@@ -191,6 +184,8 @@ rack
 ├─ '8'
 └─ '9'
 ```
+
+Separators are ignored by the char* serialization and by the parser.
 
 ### Empty layouts
 
@@ -205,16 +200,16 @@ They are displayed as gray squares, if the cursor is in the grid or one of its d
 #  2
 # ---
 #  Ø
-fraction_layout
-├─ rack
+FractionLayout
+├─ Rack
 │  └─ '2'
-└─ rack (EMPTY)
+└─ Rack (EMPTY)
    └──> if cursor is not here, display rack as a yellow square
 ```
 
 ### VerticalOffset
 
-When a Rack encounter a `VerticalOffset` when iterating over their children, it places it relatively to the anchor child height. `VerticalOffset` does nothing by itself.
+When a Rack encounters a `VerticalOffset` while iterating over their children, it places it relatively to the anchor child height. `VerticalOffset` does nothing by itself.
 
 The vertical offset has two properties (`isSubScript` and `isPrefix`) that respectively determine how to place it (up or down) and what is its anchor (previous or next layout).
 
@@ -223,12 +218,12 @@ If there is no anchor, an empty yellow square is displayed instead.
 #### Example
 The expression `2+3^5` is represented by the tree:
 ```
-rack
+Rack
 ├─ '2'
 ├─ '+'
 ├─ '3' ──> anchor of the vertical offset layout
-└─ vertical_offset_layout(isSubscript: false, isPrefix: false)
-   └─ rack
+└─ VerticalOffsetLayout(isSubscript: false, isPrefix: false)
+   └─ Rack
       └─ '5'
 ```
 

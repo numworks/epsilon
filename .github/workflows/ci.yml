@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master, 'version-*' ]
     paths-ignore:
-      - 'poincare-junior/doc/**'
+      - 'poincare/doc/**'
 
   workflow_dispatch:
     inputs:

@@ -785,6 +785,8 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("f(x)=diff((x^2,x^2),x,x,1)",
                                      k_undefinedCartesian);
     assert_check_function_properties("f(θ)=(θ,θ)", k_undefinedPolar);
+    assert_check_function_properties("f(x)=piecewise(x,x<0,3,x>6,[[0]])",
+                                     k_undefinedCartesian);
 
     // === Updated complex format ===
 

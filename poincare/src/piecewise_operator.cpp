@@ -107,6 +107,8 @@ Expression PiecewiseOperator::UntypedBuilder(Expression children) {
 }
 
 Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
+  /* TODO: add a check that all children expressions (not the conditions) have
+   * the same dimension, otherwise reduce to undef */
   {
     // Use custom dependencies bubbling-up for piecewise.
     Expression e = bubbleUpPiecewiseDependencies(reductionContext);

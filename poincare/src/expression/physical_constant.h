@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 #include "aliases.h"
-#include "unit.h"
+#include "dimension_vector.h"
 
 namespace Poincare::Internal {
 

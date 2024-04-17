@@ -787,6 +787,9 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("f(θ)=(θ,θ)", k_undefinedPolar);
     assert_check_function_properties("f(x)=piecewise(x,x<0,3,x>6,[[0]])",
                                      k_undefinedCartesian);
+    assert_check_function_properties(
+        "f(t)=(t,[[tan(tan(tan(tan(tan(tan(tan(tan(tan(4)))))))))]])",
+        k_undefinedParametric);
 
     // === Updated complex format ===
 

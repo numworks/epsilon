@@ -1,7 +1,16 @@
 #ifndef POINCARE_EXPRESSION_API_H
 #define POINCARE_EXPRESSION_API_H
 
+#include <poincare/old/pool_handle.h>
+#include <poincare/old/pool_object.h>
+#include <poincare/src/memory/block.h>
+
 namespace Poincare {
+
+class Internal::Tree;
+struct Internal::ContextTrees;
+
+class Layout;
 
 class UserExpression;
 class SystemExpression;
@@ -10,10 +19,40 @@ class SystemFunction;
 class Dimension;
 class Symbol;
 
+class JuniorPoolObject : PoolObject {
+  friend class JuniorPoolHandle;
+
+ public:
+  JuniorPoolObject(const Internal::Tree* tree, size_t treeSize);
+  // PoolObject
+  size_t size() const override;
+  int numberOfChildren() const override { return 0; }
+
+ private:
+  // PCJ
+  const Internal::Tree* tree() const;
+
+  Internal::Block m_blocks[0];
+}
+
+class JuniorPoolHandle : public PoolHandle {
+  JuniorPoolHandle() {}
+  static JuniorPoolHandle Builder(const Internal::Tree* tree);
+  // Eat the tree
+  static JuniorPoolHandle Builder(Internal::Tree* tree);
+
+  static JuniorExpression Create(const Internal::Tree* structure,
+                                 Internal::ContextTrees ctx);
+
+  const Internal::Tree* tree() const {
+    return isUninitialized() ? nullptr : node()->tree();
+  }
+}
+
 /* TODO */
-class Layout {
+class NewLayout : private JuniorPoolHandle {
   /* TODO */
-  void render();
+  void render() {}
   /* TODO */
   UserExpression parse();
 };
@@ -28,7 +67,7 @@ class Layout {
  * Equivalent to old ReductionTarget::User + Beautification
  * Dimension may be invalid.
  */
-class UserExpression {
+class UserExpression : private JuniorPoolHandle {
   /**
    * Create a layout to represent the expression
    *
@@ -53,6 +92,7 @@ class UserExpression {
    *     Sub(a,b) -> Add(a, Mult(-1, b))
    *   - Index local variables with an id instead of a name
    *   - Replace unit by their ratio in SI e.g. cm -> 1/100
+   *   - Apply SystematicReduction
    *
    * TODO: what if the dimension is invalid ?
    */
@@ -68,7 +108,7 @@ class UserExpression {
  * Equivalent to old ReductionTarget::SystemForAnalysis once reduced.
  * Dimension is consistent and may be asked at any time.
  */
-class SystemExpression {
+class SystemExpression : private JuniorPoolHandle {
   /** Turn the expression back into a more user-friendly form.
    *
    * This includes:
@@ -83,23 +123,10 @@ class SystemExpression {
 
   SystemExpression clone() const;
 
-  bool advancedSimplify();  // -> move to a "factory" on SE -> SE ?
-  bool expand();
-
-  bool systematicReduce();  // automatic ? or private ?
-
-  SystemExpression simplified() const {  // take a &&this to mark moved to ?
-    SystemExpression e = clone();
-    e.systematicReduce();
-    return e;
-  }
+  SystemExpression advancedSimplified();
+  SystemExpression expanded();
 
   SystemFunction preparedForApproximation(Symbol symbol);
-
- private:
-  Dimension m_dimension;
-  // Variables m_variables ? -> probably simpler to hold them inside the tree
-  // and make tree point to the tree inside the contexts
 };
 
 /**
@@ -107,7 +134,7 @@ class SystemExpression {
  *
  * Dimension is correct, only a scalars and points are allowed.
  */
-class SystemFunction {
+class SystemFunction : private JuniorPoolHandle {
   /* A projected tree with a global VarX and dim = scalar */
   double evaluate(double x);
 
@@ -128,7 +155,7 @@ class SystemCartesianFunction {
   // name of the unique variable ?
 };
 
-class SystemParametricFunction {
+class SystemParametricFunction : private JuniorPoolHandle {
   /* A projected tree with a global VarX and dim = point */
   std::pair<double, double> evaluate(double t);
 

@@ -852,13 +852,19 @@ bool Simplification::PrepareForProjection(Tree* e,
   return changed;
 }
 
-void Simplification::ExtractUnits(Tree* e,
+bool Simplification::ExtractUnits(Tree* e,
                                   ProjectionContext* projectionContext) {
   projectionContext->m_dimension = Dimension::GetDimension(e);
   if (projectionContext->m_strategy != Strategy::ApproximateToFloat &&
       ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
     ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
   }
+  if (!projectionContext->m_dimension.hasNonKelvinTemperatureUnit()) {
+    return false;
+  }
+  // Convert the expression to Kelvin at root level.
+  Units::Unit::RemoveTemperatureUnit(e);
+  return true;
 }
 
 bool Simplification::SimplifyProjectedTree(Tree* e) {
@@ -885,7 +891,7 @@ bool Simplification::SimplifyLastTree(Tree* e,
   assert(SharedTreeStack->lastBlock() == e->nextTree()->block());
   ExceptionTryAfterBlock(e->block()) {
     bool changed = PrepareForProjection(e, projectionContext);
-    ExtractUnits(e, &projectionContext);
+    changed = ExtractUnits(e, &projectionContext) || changed;
     changed = Projection::DeepSystemProject(e, projectionContext) || changed;
     /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
      * because of the ordered structure of the set. When projecting y+x,

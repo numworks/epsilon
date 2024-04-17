@@ -514,11 +514,11 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("sum(_s,x,0,1)", "2×_s");
 
   // Temperature
-  simplifies_to("4_°C", "4×_°C");
+  simplifies_to("4_°C", "277.15×_K");
   // Note: this used to be undef in previous Poincare.
-  simplifies_to("((4-2)_°C)×2", "4×_°C");
-  simplifies_to("((4-2)_°F)×2", "4×_°F");
-  simplifies_to("8_°C/2", "4×_°C");
+  simplifies_to("((4-2)_°C)×2", "277.15×_K");
+  simplifies_to("((4-2)_°F)×2", "257.59444444444×_K");
+  simplifies_to("8_°C/2", "277.15×_K");
   simplifies_to("2_K+2_K", "4×_K");
   simplifies_to("2_K×2_K", "4×_K^2");
   simplifies_to("1/_K", "1×_K^-1");

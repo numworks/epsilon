@@ -50,11 +50,15 @@ const Mass::Representatives<const Mass> Mass::representatives = {
 const Current::Representatives<const Current> Current::representatives = {
     .ampere = {"A", 1_e, All, LongScale}};
 
-// Ratios are 1.0 because temperatures conversion are an exception.
+// Origin must be used in addition to ratios for temperature conversions.
 const Temperature::Representatives<const Temperature>
-    Temperature::representatives = {.kelvin = {"K", 1_e, All, None},
-                                    .celsius = {"°C", 1_e, None, None},
-                                    .fahrenheit = {"°F", 1_e, None, None}};
+    Temperature::representatives = {
+        .kelvin = {"K", 1_e, All, None},
+        .celsius = {"°C", 1_e, None, None},
+        .fahrenheit = {"°F", 5_e / 9_e, None, None}};
+
+const Tree* Temperature::celsiusOrigin = 273.15_e;
+const Tree* Temperature::fahrenheitOrigin = 459.67_e;
 
 const AmountOfSubstance::Representatives<const AmountOfSubstance>
     AmountOfSubstance::representatives = {.mole = {"mol", 1_e, All, LongScale}};
@@ -290,26 +294,6 @@ int Mass::setAdditionalExpressions(double value, Expression* dest,
   dest[0] = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
                              reductionContext);
   return 1;
-}
-
-double Temperature::ConvertTemperatures(double value,
-                                        const Representative* source,
-                                        const Representative* target) {
-  assert(source->dimensionVector() == Temperature::Default().dimensionVector());
-  assert(target->dimensionVector() == Temperature::Default().dimensionVector());
-  if (source == target) {
-    return value;
-  }
-  constexpr double origin[] = {0, k_celsiusOrigin, k_fahrenheitOrigin};
-  assert(sizeof(origin) == source->numberOfRepresentatives() * sizeof(double));
-  double sourceOrigin =
-      origin[source - source->representativesOfSameDimension()];
-  double targetOrigin =
-      origin[target - target->representativesOfSameDimension()];
-  /* (T + origin) * ration converts T to Kelvin.
-   * T/ratio - origin converts T from Kelvin. */
-  return (value + sourceOrigin) * source->ratio() / target->ratio() -
-         targetOrigin;
 }
 
 int Temperature::setAdditionalExpressions(double value, Expression* dest,

@@ -222,9 +222,8 @@ class Temperature : public Helper<Temperature> {
   using Helper::Helper;
   const static Representatives<const Self> representatives;
 
- private:
-  constexpr static double k_celsiusOrigin = 273.15;
-  constexpr static double k_fahrenheitOrigin = 459.67;
+  static const Tree* celsiusOrigin;
+  static const Tree* fahrenheitOrigin;
 };
 
 class AmountOfSubstance : public Helper<AmountOfSubstance> {

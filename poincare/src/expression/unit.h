@@ -267,6 +267,8 @@ class Unit {
                                                 UnitFormat unitFormat,
                                                 bool optimizePrefix);
 
+  // Remove units and Convert tree to Kelvin.
+  static void RemoveTemperatureUnit(Tree* root);
   // Replace with SI ratio only.
   static void RemoveUnit(Tree* unit);
   // Push Unit

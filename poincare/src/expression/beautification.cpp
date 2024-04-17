@@ -174,11 +174,7 @@ bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   }
   assert(!dimension.isEmpty());
   TreeRef units;
-  if (projectionContext.m_dimension.hasNonKelvinTemperatureUnit()) {
-    assert(dimension.supportSize() == 1);
-    units = Units::Unit::Push(projectionContext.m_dimension.unit.representative,
-                              Units::Prefix::EmptyPrefix());
-  } else if (projectionContext.m_dimension.isAngleUnit()) {
+  if (projectionContext.m_dimension.isAngleUnit()) {
     units = dimension.toBaseUnits();
   } else {
     double value = Approximation::RootTreeToReal<double>(expr);

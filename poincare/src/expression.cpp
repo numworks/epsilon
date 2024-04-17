@@ -291,10 +291,12 @@ bool Expression::deepIsMatrix(Context *context, bool canContainMatrices,
         /* These types are matrices if one of their children is one.
          * For dependencies, we will check only the first child thanks
          * to dependencyRecursivelyMatches.*/
+        /* A point should be undef on matrix but we still need add a check here
+         * because reduction can fail. */
         if (e.isOfType(
                 {ExpressionNode::Type::Power, ExpressionNode::Type::Opposite,
                  ExpressionNode::Type::Sum, ExpressionNode::Type::Product,
-                 ExpressionNode::Type::Dependency,
+                 ExpressionNode::Type::Dependency, ExpressionNode::Type::Point,
                  ExpressionNode::Type::PiecewiseOperator})) {
           return TrinaryBoolean::Unknown;
         }

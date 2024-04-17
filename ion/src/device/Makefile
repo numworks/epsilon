@@ -9,7 +9,7 @@ endif
 -include ion/src/$(PLATFORM)/shared/$(FIRMWARE_COMPONENT).mak
 
 # We need to work around a GCC bug (concerning versions < 5.1). It is valid in
-# C++11 to initialize a character array by providing a string litteral (e.g.
+# C++11 to initialize a character array by providing a string literal (e.g.
 # char test[4]= "ab"; is valid and should initialize test to 'a','b',0,0).
 # Older versions of GCC are not conformant so we resort to an initializer list.
 initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0

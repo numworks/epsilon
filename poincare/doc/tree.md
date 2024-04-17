@@ -230,7 +230,7 @@ Here the up-to-date list for
 [expressions](/poincare/src/expression/k_tree.h) and
 [layouts](/poincare/src/layout/k_tree.h).
 
-Some litterals are also available to write numbers is a readable way :
+Some literals are also available to write numbers is a readable way :
  - `23_e` is the integer 23
  - `-4_e/5_e` is the rational -4/5 (a single Tree with no children, unlike
    Opposite(Division(4,5)))

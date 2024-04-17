@@ -167,25 +167,25 @@ static consteval auto KPol(Exp exponents, CTS...) {
   return Concat<KTree<Type::Polynomial, Size>, Exp, CTS...>();
 }
 
-/* Integer litterals are used to represent numerical constants of the code (like
+/* Integer literals are used to represent numerical constants of the code (like
  * 2_e) temporarily before they are cast to Trees, to allow writing -2_e. */
 
-/* Each litteral is defined with a Representation empty struct that is in charge
+/* Each literal is defined with a Representation empty struct that is in charge
  * of inheriting the correct KTree according to the template value and a
- * Litteral struct that adds features on top of Representation. */
+ * Literal struct that adds features on top of Representation. */
 
 template <int64_t V>
 struct IntegerRepresentation;
 
 template <int64_t V>
-struct IntegerLitteral : IntegerRepresentation<V> {
-  // IntegerLitteral inherits KTree via IntegerRepresentation
-  consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
+struct IntegerLiteral : IntegerRepresentation<V> {
+  // IntegerLiteral inherits KTree via IntegerRepresentation
+  consteval IntegerLiteral<-V> operator-() { return IntegerLiteral<-V>(); }
   // Note : we could decide to implement constant propagation operators here
 };
 
 /* Specializations of IntegerRepresentation to create the smallest Tree that can
- * represent the Litteral */
+ * represent the Literal */
 
 template <>
 struct IntegerRepresentation<0> : KTree<Type::Zero> {};
@@ -255,20 +255,20 @@ SPECIALIZATIONS;
 #undef GUIDE
 #undef SPECIALIZATIONS
 
-/* Rationals litterals are written 2_e / 3_e */
+/* Rationals literals are written 2_e / 3_e */
 
 template <int64_t N, int64_t D>
 struct RationalRepresentation;
 
 template <int64_t N, int64_t D>
-struct RationalLitteral : RationalRepresentation<N, D> {
-  consteval auto operator-() { return RationalLitteral<-N, D>(); }
+struct RationalLiteral : RationalRepresentation<N, D> {
+  consteval auto operator-() { return RationalLiteral<-N, D>(); }
 };
 
 template <int64_t N, int64_t D>
   requires(D > 0 && OMG::Arithmetic::GcdI64(N, D) == 1)
-consteval auto operator/(IntegerLitteral<N> a, IntegerLitteral<D> b) {
-  return RationalLitteral<N, D>();
+consteval auto operator/(IntegerLiteral<N> a, IntegerLiteral<D> b) {
+  return RationalLiteral<N, D>();
 }
 
 template <>
@@ -337,10 +337,10 @@ template <class Int, Int V>
 struct FloatRepresentation;
 
 template <class Int, Int V>
-struct FloatLitteral : FloatRepresentation<Int, V> {
+struct FloatLiteral : FloatRepresentation<Int, V> {
   // Since we are using the representation we have to manually flip the sign bit
   static constexpr Int SignBitMask = Int(1) << (sizeof(Int) * 8 - 1);
-  consteval auto operator-() { return FloatLitteral<Int, V ^ SignBitMask>(); }
+  consteval auto operator-() { return FloatLiteral<Int, V ^ SignBitMask>(); }
 };
 
 template <uint32_t V>
@@ -362,20 +362,20 @@ struct FloatRepresentation<uint64_t, V>
             OMG::BitHelper::getByteAtIndex(V, 7)> {};
 
 template <class Float, class Int, char... C>
-consteval auto FloatLitteralOperator() {
+consteval auto FloatLiteralOperator() {
   constexpr const char value[] = {C..., '\0'};
-  return FloatLitteral<Int, std::bit_cast<Int>(
-                                FloatValue<Float>(value, sizeof...(C) + 1))>();
+  return FloatLiteral<Int, std::bit_cast<Int>(
+                               FloatValue<Float>(value, sizeof...(C) + 1))>();
 }
 
 template <char... C>
 consteval auto operator"" _fe() {
-  return FloatLitteralOperator<float, uint32_t, C...>();
+  return FloatLiteralOperator<float, uint32_t, C...>();
 }
 
 template <char... C>
 consteval auto operator"" _de() {
-  return FloatLitteralOperator<double, uint64_t, C...>();
+  return FloatLiteralOperator<double, uint64_t, C...>();
 }
 
 template <char... C>
@@ -383,7 +383,7 @@ consteval auto operator"" _e() {
   constexpr const char value[] = {C..., '\0'};
   constexpr size_t size = sizeof...(C) + 1;
   constexpr size_t decimalPointIndex = DecimalPointIndex(value, size);
-  constexpr auto digits = IntegerLitteral<IntegerValue(value, size)>();
+  constexpr auto digits = IntegerLiteral<IntegerValue(value, size)>();
   if constexpr (decimalPointIndex < size) {
     return Concat<KTree<Type::Decimal,
                         /* -1 for the . and -1 for the \0 */
@@ -404,7 +404,7 @@ struct Variable;
 template <String S, std::size_t... I>
 struct Variable<S, std::index_sequence<I...>> {
   static_assert(!OMG::Print::IsDigit(S[0]),
-                "Integer litterals should be written without quotes");
+                "Integer literals should be written without quotes");
   using tree = KTree<Type::UserSymbol, sizeof...(I), S[I]...>;
 };
 

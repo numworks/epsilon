@@ -159,7 +159,7 @@ struct KNAry16 {
   static constexpr KTree<Tag, Nb % 256, Nb / 256> node{};
 };
 
-// String type used for templated string litterals
+// String type used for templated string literals
 
 template <size_t N>
 struct String {

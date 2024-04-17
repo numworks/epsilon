@@ -54,22 +54,22 @@ QUIZ_CASE(pcj_k_tree_integer) {
 
 QUIZ_CASE(pcj_k_tree_ternary) {
   /* Ternaries are guessing a common type for both expressions which led to
-   * issues with an IntegerLitteral and a KTree, the deduction guide of the
-   * litteral was bypassed. */
+   * issues with an IntegerLiteral and a KTree, the deduction guide of the
+   * literal was bypassed. */
 
-  // KTree vs IntegerLitteral<U>
+  // KTree vs IntegerLiteral<U>
   quiz_assert((true ? i_e : 1_e)->treeIsIdenticalTo(i_e));
   quiz_assert((false ? 1_e : i_e)->treeIsIdenticalTo(i_e));
   quiz_assert((true ? 1_e : i_e)->treeIsIdenticalTo(1_e));
   quiz_assert((false ? i_e : 1_e)->treeIsIdenticalTo(1_e));
 
-  // IntegerLitteral<U> vs IntegerLitteral<V>
+  // IntegerLiteral<U> vs IntegerLiteral<V>
   quiz_assert((true ? 2_e : 1_e)->treeIsIdenticalTo(2_e));
   quiz_assert((false ? 1_e : 2_e)->treeIsIdenticalTo(2_e));
   quiz_assert((true ? 1_e : 2_e)->treeIsIdenticalTo(1_e));
   quiz_assert((false ? 2_e : 1_e)->treeIsIdenticalTo(1_e));
 
-  // IntegerLitteral<U> vs RationalLitteral<N, D>
+  // IntegerLiteral<U> vs RationalLiteral<N, D>
   quiz_assert((true ? 2_e : (1_e / 3_e))->treeIsIdenticalTo(2_e));
   quiz_assert((false ? (1_e / 3_e) : 2_e)->treeIsIdenticalTo(2_e));
   quiz_assert((true ? (1_e / 3_e) : 2_e)->treeIsIdenticalTo((1_e / 3_e)));

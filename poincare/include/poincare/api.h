@@ -71,6 +71,7 @@ class JuniorPoolHandle : public PoolHandle {
 #if 0
 /* TODO */
 class NewLayout : private JuniorPoolHandle {
+ public:
   /* TODO */
   void render() {}
   /* TODO */
@@ -80,13 +81,15 @@ class NewLayout : private JuniorPoolHandle {
 #endif
 
 /**
+ * Represent mathematical expression in form close to what users input and read.
+ *
  * Used to:
  *   - display expressions via layouts
  *   - save user input as it have been parsed
  *   - make some simple enhancements
  *   - guess the context
  *
- * Equivalent to old ReductionTarget::User + Beautification
+ * Equivalent to old `ReductionTarget::User` + Beautification
  * Dimension may be invalid.
  */
 class UserExpression : public JuniorPoolHandle {
@@ -101,7 +104,7 @@ class UserExpression : public JuniorPoolHandle {
    * Create a layout to represent the expression
    *
    * Includes:
-   *   - Adding parentheses if needed Mult(Add(…,…),…) -> (…+…)*…
+   *   - Adding parentheses if needed `Mult(Add(…,…),…)` → `(…+…)*…`
    *   - Chose the suitable multiplication symbol and apply it everywhere
    *   - Insert separators everywhere if they are needed somewhere
    *     For instance thousand separators if a integer has >= 5 digits
@@ -190,6 +193,7 @@ class SystemExpression : public JuniorPoolHandle {
  * Dimension is correct, only a scalars and points are allowed.
  */
 class SystemFunction : private JuniorPoolHandle {
+ public:
   /* A projected tree with a global VarX and dim = scalar */
   double evaluate(double x);
 

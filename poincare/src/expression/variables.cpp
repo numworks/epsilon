@@ -221,23 +221,35 @@ bool Variables::HasVariable(const Tree* expr, int id) {
   return false;
 }
 
-void Variables::EnterScope(Tree* expr) {
-  for (Tree* child : expr->selfAndDescendants()) {
-    if (child->isVar()) {
-      uint8_t id = Id(child);
-      assert(id < 255);
-      child->setNodeValue(0, id + 1);
+void Variables::EnterScope(Tree* expr, int var) {
+  if (expr->isVar()) {
+    uint8_t id = Id(expr);
+    if (id >= var) {
+      expr->setNodeValue(0, id + 1);
     }
+    return;
+  }
+  bool isParametric = expr->isParametric();
+  for (int i = 0; Tree * child : expr->children()) {
+    int updatedId =
+        var + (isParametric && i++ == Parametric::FunctionIndex(expr));
+    EnterScope(child, updatedId);
   }
 }
 
-void Variables::LeaveScope(Tree* expr) {
-  for (Tree* child : expr->selfAndDescendants()) {
-    if (child->isVar()) {
-      uint8_t id = Id(child);
-      assert(id > 0);
-      child->setNodeValue(0, id - 1);
+void Variables::LeaveScope(Tree* expr, int var) {
+  if (expr->isVar()) {
+    uint8_t id = Id(expr);
+    if (id > var) {
+      expr->setNodeValue(0, id - 1);
     }
+    return;
+  }
+  bool isParametric = expr->isParametric();
+  for (int i = 0; Tree * child : expr->children()) {
+    int updatedId =
+        var + (isParametric && i++ == Parametric::FunctionIndex(expr));
+    LeaveScope(child, updatedId);
   }
 }
 

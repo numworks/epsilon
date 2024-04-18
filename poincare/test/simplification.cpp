@@ -276,12 +276,24 @@ QUIZ_CASE(pcj_simplification_complex) {
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {
+  // Leave and enter with a nested parametric
+  const Tree* a = KSum("k"_e, 0_e, 2_e, KMult(KVarK, KVar<2, 0>));
+  const Tree* b = KSum("k"_e, 0_e, 2_e, KMult(KVarK, KVar<1, 0>));
+  Tree* e = a->clone();
+  Variables::LeaveScope(e);
+  assert_trees_are_equal(e, b);
+  Variables::EnterScope(e);
+  assert_trees_are_equal(e, a);
+  e->removeTree();
+
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
   simplifies_to("sum(k^2, k, 2, 5)", "54");
   simplifies_to("2×sum(k, k, 0, n)+n", "n×(n+2)");
   simplifies_to("2×sum(k, k, 3, n)+n", "n^2+2×n-6");
+  simplifies_to("sum(x*k!, k, 1, 2)", "3*x");
+  simplifies_to("sum(sum(x*j, j, 1, n), k, 1, 2)", "2 * sum(j*x, j, 1, n)");
 }
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {

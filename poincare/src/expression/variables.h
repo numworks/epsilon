@@ -63,9 +63,9 @@ class Variables {
                             ComplexSign sign);
 
   // Increment variables indexes
-  static void EnterScope(Tree* expr);
+  static void EnterScope(Tree* expr, int var = 0);
   // Decrement variables indexes
-  static void LeaveScope(Tree* expr);
+  static void LeaveScope(Tree* expr, int var = 0);
   static void LeaveScopeWithReplacement(Tree* expr, const Tree* value,
                                         bool simplify) {
     Replace(expr, 0, value, true, simplify);

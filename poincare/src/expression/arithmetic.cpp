@@ -110,8 +110,16 @@ bool Arithmetic::SimplifyFactorial(Tree* expr) {
 
 bool Arithmetic::ExpandFactorial(Tree* expr) {
   // A! = Prod(k, 1, A, k)
-  return PatternMatching::MatchReplaceSimplify(expr, KFact(KA),
-                                               KProduct("k"_e, 1_e, KA, KVarK));
+  PatternMatching::MatchReplaceSimplify(expr, KFact(KA),
+                                        KProduct("k"_e, 1_e, KA, KVarK));
+  /* Explicit the product directly to compute the factorial if the argument was
+   * a rational */
+  if (expr->isProduct() && expr->child(2)->isRational()) {
+    assert(expr->child(2)->isInteger() &&
+           Rational::Sign(expr->child(2)).isPositive());
+    Parametric::Explicit(expr);
+  }
+  return true;
 }
 
 bool Arithmetic::SimplifyPermute(Tree* expr) {

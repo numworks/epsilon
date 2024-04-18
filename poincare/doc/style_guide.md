@@ -72,7 +72,7 @@ class AdditionTree : Public Tree {
 
 ```cpp
 // Static method of Simplification module. Tree is a final class.
-bool Simplify(Tree * t) {
+bool Simplify(Tree* t) {
   switch (t->type()) {
     case Type::Add:
       return SimplifyAdd(t);
@@ -83,14 +83,14 @@ bool Simplify(Tree * t) {
 
 ## Tree creation on TreeStack
 
-To preserve valid `Tree *` pointers whenever something is put on the TreeStack, it must be pushed at the end.
+To preserve valid `Tree*` pointers whenever something is put on the TreeStack, it must be pushed at the end.
 
 > [!CAUTION]
 > Avoid this:
 
 ```cpp
 // Create a Undef Tree right after u
-Tree * v = u->nextTree()->cloneTreeBeforeNode(KUndef);
+Tree* v = u->nextTree()->cloneTreeBeforeNode(KUndef);
 // Edit v
 ```
 
@@ -99,7 +99,7 @@ Tree * v = u->nextTree()->cloneTreeBeforeNode(KUndef);
 
 ```cpp
 // Create a Undef Tree at the end of the tree Stack
-Tree * v = KUndef->clone();
+Tree* v = KUndef->clone();
 // Edit v
 ```
 
@@ -132,7 +132,7 @@ static bool Alter(Tree* tree, Context ctx);
 
 ```cpp
 for (int i = 0; i < tree->numberOfChildren(); i++) {
-  f(tree->child(i));
+  f(tree->child(i));
 }
 ```
 
@@ -140,13 +140,13 @@ for (int i = 0; i < tree->numberOfChildren(); i++) {
 > Prefer this:
 
 ```cpp
-for (Tree * child : tree->children()) {
-  f(child);
+for (Tree* child : tree->children()) {
+  f(child);
 }
 ```
 For more advanced operations, you can use :
 ```cpp
-Tree * child = tree->child(0);
+Tree* child = tree->child(0);
 while (n < tree->numberOfChildren()) {
   f(child);
   child = child->nextTree();
@@ -183,7 +183,7 @@ if (isVerticalOffset()) {
 |-------|------|
 | Non-recursive bottom-up iteration | Iterate in the right direction to always change the downstream children |
 | Handling ill-formatted expression during simplification | Implement check in `DeepCheckDimensions` or `DeepCheckListLength` to always assume valid expressions |
-| Uncertain manipulation of multiple `Tree *` | Using `TreeRef` |
+| Uncertain manipulation of multiple `Tree* ` | Using `TreeRef` |
 | Public methods susceptible of overwriting their input Tree | Use EDITION_REF_WRAP |
 | `isUserSymbol() \|\| isUserSequence() \|\| isUserFunction()` | Organize types.h and create a `RANGE`: `isUserNamed()` |
 | With layout trees, `switch (type())` | `switch (layoutType())` |

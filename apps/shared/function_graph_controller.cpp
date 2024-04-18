@@ -62,11 +62,14 @@ void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
 }
 
 void FunctionGraphController::selectCurveAtIndex(int curveIndex,
-                                                 bool willBeVisible) {
-  if (curveIndex != *m_selectedCurveIndex) {
+                                                 bool willBeVisible,
+                                                 int subCurveIndex) {
+  if (subCurveIndex >= 0) {
+    m_selectedSubCurveIndex = subCurveIndex;
+  } else if (curveIndex != *m_selectedCurveIndex) {
     m_selectedSubCurveIndex = 0;
-    *m_selectedCurveIndex = curveIndex;
   }
+  *m_selectedCurveIndex = curveIndex;
 
   Ion::Storage::Record r = recordAtCurveIndex(curveIndex);
   functionGraphView()->selectRecord(r);
@@ -227,8 +230,7 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
   Poincare::Coordinate2D<double> cursorPosition =
       f->evaluateXYAtParameter(nextT, context, nextSubCurve);
   m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
-  m_selectedSubCurveIndex = nextSubCurve;
-  selectCurveAtIndex(nextCurve, true);
+  selectCurveAtIndex(nextCurve, true, nextSubCurve);
   // Prevent the abscissaValue from edition if the function is along y
   Escher::Responder *responder = isAlongY(*m_selectedCurveIndex)
                                      ? static_cast<Responder *>(this)

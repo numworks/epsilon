@@ -325,12 +325,14 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
       record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
 
-void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible) {
+void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
+                                         int subCurveIndex) {
   m_cursorView.setIsRing(functionStore()
                              ->modelForRecord(recordAtCurveIndex(curveIndex))
                              ->properties()
                              .isScatterPlot());
-  FunctionGraphController::selectCurveAtIndex(curveIndex, willBeVisible);
+  FunctionGraphController::selectCurveAtIndex(curveIndex, willBeVisible,
+                                              subCurveIndex);
 }
 
 int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,

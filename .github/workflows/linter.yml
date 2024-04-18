@@ -2,7 +2,8 @@ name: Lint Code Base
 on:
   pull_request:
     paths-ignore:
-      - 'poincare-junior/doc/**'
+      - '**/*.md'
+      - 'poincare/doc/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -1,6 +1,10 @@
 name: Build metrics
 # read-only repo token
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'poincare/doc/**'
 env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
 

@@ -637,7 +637,7 @@ QUIZ_CASE(probability_slope_t_statistic) {
   testInterval(&interval, testCase);
 }
 
-QUIZ_CASE(one_mean_t_with_table) {
+QUIZ_CASE(probability_one_mean_t_with_table) {
   /* Create a random dataset and make sure the computed values match whether the
    * raw data or their statistics are the inputs. */
 

@@ -21,30 +21,23 @@ jobs:
       - run: build/setup.sh --only-simulator
       # TODO: Add ASAN=1 and TIDY=1
       - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f alignment
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f calculation
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f code
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f distributions
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f double
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f escher
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f finance
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f float
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f graph
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f interval
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f ion
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f kandinsky
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f liba
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f long
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f name
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f omg
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f one
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f pcj
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f poincare
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f pool
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f probability
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f python
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f regression
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f sequence
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f set
+      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f shared
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f solver
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f statistics

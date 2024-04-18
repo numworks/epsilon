@@ -1,8 +1,8 @@
+#include <assert.h>
 #include <quiz.h>
 #include <setjmp.h>
-#include <assert.h>
 
-QUIZ_CASE(set_jmp_long_jmp) {
+QUIZ_CASE(liba_set_jmp_long_jmp) {
   jmp_buf env;
   int res = setjmp(env);
   if (res == 1) {

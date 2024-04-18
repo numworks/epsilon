@@ -73,7 +73,7 @@ void testAlignmentHandlingFor() {
   sharedFileSystem->destroyAllRecords();
 }
 
-QUIZ_CASE(alignment_handling) {
+QUIZ_CASE(shared_alignment_handling) {
   /* This test main function is to crash if storage alignment is not handled
    * properly. It also ensures that the right test - load and store of
    * differently-aligned objects - is performed (if storage/record

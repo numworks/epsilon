@@ -230,7 +230,6 @@ The only requirement is to ensure that they are only used in methods:
 - Where efficiency isn't critical
 - Expecting `TreeRef&` or `const Tree *`
 - Expecting `Tree *`, but having a `EDITION_REF_WRAP` wrapper
-// been overwritten.
 - Expecting `Tree *`, but the tracked tree being overridden is either impossible or handled
 
 Also remember that there is a limit to the number of TreeRef used at the same time (`TreeStack::k_maxNumberOfReferences`).

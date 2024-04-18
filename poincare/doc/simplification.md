@@ -348,7 +348,7 @@ It's expected to:
 
 ### Effects
 
-Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and call systematic reduction at each steps.
+Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and call systematic reduction at every steps.
 
 <details>
 

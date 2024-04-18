@@ -20,7 +20,7 @@ QUIZ_CASE(pcj_expression_to_layout) {
       KRackL(KParenthesisL("x·y"_l), KSuperscriptL("2"_l)));
   assert_trees_are_equal(
       Layoutter::LayoutExpression(
-          KAdd(KMixedFraction(2_e, 1_e / 3_e), 4_e)->clone(), true),
+          KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e)->clone(), true),
       "2 1/3+4"_l);
 }
 

@@ -152,7 +152,6 @@ void InteractiveCurveViewController::willExitResponderChain(
     Responder *nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
-    m_selectedSubCurveIndex = 0;
     curveView()->setFocus(false);
     header()->setSelectedButton(-1);
     /* The curve view controller will not be around to reset interruption when

@@ -14,7 +14,6 @@ DerivativeColumnParameterController::DerivativeColumnParameterController(
       m_derivationOrder(-1),
       m_parameterDelegate(nullptr) {
   m_colorCell.label()->setMessage(I18n::Message::Color);
-  m_hideCell.label()->setMessage(I18n::Message::HideDerivativeColumn);
 }
 
 const char* DerivativeColumnParameterController::title() {
@@ -25,6 +24,8 @@ const char* DerivativeColumnParameterController::title() {
 }
 
 void DerivativeColumnParameterController::viewWillAppear() {
+  assert(m_parameterDelegate);
+  m_hideCell.label()->setMessage(m_parameterDelegate->hideDerivativeMessage());
   m_colorCell.subLabel()->setMessage(
       ColorNames::NameForColor(function()->color(m_derivationOrder)));
   ColumnParameterController::viewWillAppear();

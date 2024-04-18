@@ -6,6 +6,7 @@
 #include "integer.h"
 #include "k_tree.h"
 #include "matrix.h"
+#include "sign.h"
 #include "simplification.h"
 #include "variables.h"
 
@@ -53,10 +54,17 @@ ComplexSign Parametric::VariableSign(const Tree* t) {
 
 bool Parametric::SimplifySumOrProduct(Tree* expr) {
   /* TODO:
-   * - Handle upperBound < lowerBound -> 0
    * - Distribute multiplicative constant : sum(a*f(k),k,m,n) ->
    *                                        a*(n-m)*sum(f(k),k,m,n)
    */
+  bool isSum = expr->isSum();
+  Tree* lowerBound = expr->child(k_lowerBoundIndex);
+  Tree* upperBound = lowerBound->nextTree();
+  ComplexSign sign = ComplexSign::SignOfDifference(lowerBound, upperBound);
+  if (sign.isReal() && sign.realSign().isStrictlyPositive()) {
+    expr->cloneTreeOverTree(isSum ? 0_e : 1_e);
+    return true;
+  }
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
   if (PatternMatching::MatchReplaceSimplify(
           expr, KSum(KA, KB, KC, KVarK),
@@ -73,9 +81,6 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
                            KAdd(KMult(2_e, KB), -1_e)))))) {
     return true;
   }
-  bool isSum = expr->isSum();
-  Tree* lowerBound = expr->child(k_lowerBoundIndex);
-  Tree* upperBound = lowerBound->nextTree();
   Tree* child = upperBound->nextTree();
   // HasVariable and HasLocalRandom could be factorized.
   if (Variables::HasVariable(child, k_localVariableId) ||

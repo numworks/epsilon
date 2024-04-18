@@ -294,6 +294,8 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("2×sum(k, k, 3, n)+n", "n^2+2×n-6");
   simplifies_to("sum(x*k!, k, 1, 2)", "3*x");
   simplifies_to("sum(sum(x*j, j, 1, n), k, 1, 2)", "2 * sum(j*x, j, 1, n)");
+  simplifies_to("sum(π^k, k, 4, 2)", "0");
+  simplifies_to("0!", "1");
 }
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {

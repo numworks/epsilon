@@ -11,11 +11,11 @@ These practices ensure an optimized, uniform and self-contained code base.
 
 ## Keep internal API private
 
-Poincare has an internal and external API. Only the external API should be available and accessed from outside.
+Poincare has an internal and an external API. Only the external API should be available and accessed from outside.
 
 Poincare should never use code from `apps/*`.
 
-Code from `poincare/src/*` should only be used un `poincare/src/*` or `poincare/**/*.cpp`.
+Code from `poincare/src/*` should only be used in `poincare/src/*` or `poincare/**/*.cpp`.
 
 > [!CAUTION]
 > Avoid this:
@@ -51,9 +51,9 @@ TreeStack is the only place Tree edition is allowed.
 
 When a Tree is stored out of the TreeStack and needs to be changed, it is copied onto TreeStack, edited there, and the original tree is overwritten with the result.
 
-## Use switch and C-style code
+## Use switch and C-style code with Tree structure
 
-To avoid heavy v-tables and better organize the code, we steer away from heavy use of virtuality.
+To avoid heavy v-tables and better organize the code, we steer away from heavy use of virtuality on our Tree structure.
 
 > [!CAUTION]
 > Avoid this:
@@ -112,7 +112,7 @@ We try to use a consistent signature for methods altering trees inplace.
 
 ```cpp
 // Alter tree and set changed to true if something changed.
-Tree::alter(bool * changed, Context ctx);
+void Tree::alter(bool* changed, Context ctx);
 ```
 
 > [!TIP]
@@ -140,7 +140,7 @@ for (int i = 0; i < tree->numberOfChildren(); i++) {
 > Prefer this:
 
 ```cpp
-for(Tree * child : tree->children()) {
+for (Tree * child : tree->children()) {
   f(child);
 }
 ```
@@ -148,8 +148,8 @@ For more advanced operations, you can use :
 ```cpp
 Tree * child = tree->child(0);
 while (n < tree->numberOfChildren()) {
+  f(child);
   child = child->nextTree();
-  f(child);
 }
 ```
 
@@ -162,7 +162,7 @@ Accessing a Tree's parent requires a root node and is costly.
 
 ```cpp
 /* At child's level */
-if (e->parent(root)->type() == Type::VerticalOffset) {
+if (e->parent(root)->isVerticalOffset()) {
   // ...
 }
 ```
@@ -172,7 +172,7 @@ if (e->parent(root)->type() == Type::VerticalOffset) {
 
 ```cpp
 /* At parent's level */
-if (type() == Type::VerticalOffset) {
+if (isVerticalOffset()) {
   // ...
 }
 ```
@@ -183,4 +183,8 @@ if (type() == Type::VerticalOffset) {
 |-------|------|
 | Non-recursive bottom-up iteration | Iterate in the right direction to always change the downstream children |
 | Handling ill-formatted expression during simplification | Implement check in `DeepCheckDimensions` or `DeepCheckListLength` to always assume valid expressions |
-| Uncertain manipulation of multiple `Tree *` | Using `TreeRef`
+| Uncertain manipulation of multiple `Tree *` | Using `TreeRef` |
+| Public methods susceptible of overwriting their input Tree | Use EDITION_REF_WRAP |
+| `isUserSymbol() \|\| isUserSequence() \|\| isUserFunction()` | Organize types.h and create a `RANGE`: `isUserNamed()` |
+| With layout trees, `switch (type())` | `switch (layoutType())` |
+| With layout trees, `Tree*` | `Rack*` or `Layout*` |

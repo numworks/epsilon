@@ -77,8 +77,6 @@ void DerivativesParameterController::toggleSwitch(int row) {
     case k_indexOfFirstDerivativePlot:
       function()->setDisplayPlotFirstDerivative(
           !function()->displayPlotFirstDerivative());
-      function()->setDisplayValueFirstDerivative(
-          function()->displayPlotFirstDerivative());
       break;
     case k_indexOfSecondDerivativeValue:
       function()->setDisplayValueSecondDerivative(
@@ -88,8 +86,6 @@ void DerivativesParameterController::toggleSwitch(int row) {
       assert(row == k_indexOfSecondDerivativePlot);
       function()->setDisplayPlotSecondDerivative(
           !function()->displayPlotSecondDerivative());
-      function()->setDisplayValueSecondDerivative(
-          function()->displayPlotSecondDerivative());
       break;
   }
   updateSwitchs();

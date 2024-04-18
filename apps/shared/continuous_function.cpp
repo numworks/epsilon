@@ -261,11 +261,25 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
     setTAuto(true);
   }
   if (!canDisplayDerivative()) {
-    setDisplayValueFirstDerivative(false);
+    // No need to setDisplayValues, it is already included in setDisplayPlot
     setDisplayPlotFirstDerivative(false);
-    setDisplayValueSecondDerivative(false);
     setDisplayPlotSecondDerivative(false);
   }
+}
+
+void ContinuousFunction::setDisplayValueFirstDerivative(bool display) {
+  recordData()->setDisplayValueFirstDerivative(display);
+}
+void ContinuousFunction::setDisplayPlotFirstDerivative(bool display) {
+  recordData()->setDisplayPlotFirstDerivative(display);
+  recordData()->setDisplayValueFirstDerivative(display);
+}
+void ContinuousFunction::setDisplayValueSecondDerivative(bool display) {
+  recordData()->setDisplayValueSecondDerivative(display);
+}
+void ContinuousFunction::setDisplayPlotSecondDerivative(bool display) {
+  recordData()->setDisplayPlotSecondDerivative(display);
+  recordData()->setDisplayValueSecondDerivative(display);
 }
 
 int ContinuousFunction::derivationOrderFromRelativeIndex(

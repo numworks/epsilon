@@ -186,18 +186,10 @@ class ContinuousFunction : public Function {
     return recordData()->displayPlotSecondDerivative();
   }
   // Set derivative display status
-  void setDisplayValueFirstDerivative(bool display) {
-    return recordData()->setDisplayValueFirstDerivative(display);
-  }
-  void setDisplayPlotFirstDerivative(bool display) {
-    return recordData()->setDisplayPlotFirstDerivative(display);
-  }
-  void setDisplayValueSecondDerivative(bool display) {
-    return recordData()->setDisplayValueSecondDerivative(display);
-  }
-  void setDisplayPlotSecondDerivative(bool display) {
-    return recordData()->setDisplayPlotSecondDerivative(display);
-  }
+  void setDisplayValueFirstDerivative(bool display);
+  void setDisplayPlotFirstDerivative(bool display);
+  void setDisplayValueSecondDerivative(bool display);
+  void setDisplayPlotSecondDerivative(bool display);
 
   enum class DerivativeDisplayType : bool { Plot, Value };
   int derivationOrderFromRelativeIndex(int relativeIndex,

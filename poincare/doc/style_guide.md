@@ -177,6 +177,42 @@ if (isVerticalOffset()) {
 }
 ```
 
+## Access to first child
+
+To access a tree's first child, they are equivalent, but the later asserts the Tree has a child.
+
+> [!CAUTION]
+> Avoid this:
+
+```cpp
+Tree* firstChild = tree->nextNode();
+```
+
+> [!TIP]
+> Prefer this:
+
+```cpp
+Tree* firstChild = tree->child(0);
+```
+
+## Distinguish Trees from Nodes
+
+Childless Trees are equivalent to their Node. We avoid mixing the definition for clarity, and in case children are added later.
+
+> [!CAUTION]
+> Avoid this:
+
+```cpp
+tree->cloneNodeOverTree(KUndef);
+```
+
+> [!TIP]
+> Prefer this:
+
+```cpp
+tree->cloneTreeOverTree(KUndef);
+```
+
 ## Others
 
 | Avoid | Prefer |

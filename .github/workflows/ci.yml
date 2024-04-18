@@ -1,11 +1,14 @@
 name: Continuous Integration
 
 on:
-  push:
-    branches: [ master, 'version-*' ]
+  # push:
+  #   branches: [ master, 'version-*' ]
+  pull_request:
     paths-ignore:
       - 'poincare/doc/**'
-  # pull_request:
+    # TODO_PCJ: Remove this condition and uncomment push to reactivate CI
+    branches:
+      - workflow-disabled
 
   workflow_dispatch:
     inputs:

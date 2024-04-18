@@ -19,8 +19,9 @@ jobs:
       - uses: numworks/setup-llvm@latest
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
-      # TODO: Add ASAN=1 and TIDY=1
+      # TODO_PCJ: Add ASAN=1 and TIDY=1
       - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
+      # TODO_PCJ: Uncomment all filters, delete this workflow and re-activate ci.yml once they all run.
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f calculation
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f code
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f distributions

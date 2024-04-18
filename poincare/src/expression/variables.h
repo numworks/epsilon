@@ -63,15 +63,21 @@ class Variables {
                             ComplexSign sign);
 
   // Increment variables indexes
-  static void EnterScope(Tree* expr, int var = 0);
+  static void EnterScope(Tree* expr) {
+    return EnterOrLeaveScope(expr, true, -1);
+  }
   // Decrement variables indexes
-  static void LeaveScope(Tree* expr, int var = 0);
+  static void LeaveScope(Tree* expr) {
+    return EnterOrLeaveScope(expr, false, 0);
+  }
   static void LeaveScopeWithReplacement(Tree* expr, const Tree* value,
                                         bool simplify) {
     Replace(expr, 0, value, true, simplify);
   }
 
  private:
+  // Variables below preserveUnder are considered local and preserved
+  static void EnterOrLeaveScope(Tree* expr, bool enter, int preserveUnder);
   static void GetUserSymbols(const Tree* t, Tree* set);
   static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);

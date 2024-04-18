@@ -221,27 +221,12 @@ bool Variables::HasVariable(const Tree* expr, int id) {
   return false;
 }
 
-void Variables::EnterScope(Tree* expr, int var) {
-  if (expr->isVar()) {
-    uint8_t id = Id(expr);
-    if (id >= var) {
-      expr->setNodeValue(0, id + 1);
-    }
-    return;
-  }
-  bool isParametric = expr->isParametric();
-  for (int i = 0; Tree * child : expr->children()) {
-    int updatedId =
-        var + (isParametric && i++ == Parametric::FunctionIndex(expr));
-    EnterScope(child, updatedId);
-  }
-}
-
-void Variables::LeaveScope(Tree* expr, int var) {
+void Variables::EnterOrLeaveScope(Tree* expr, bool enter, int var) {
   if (expr->isVar()) {
     uint8_t id = Id(expr);
     if (id > var) {
-      expr->setNodeValue(0, id - 1);
+      assert(enter || id > 0);
+      expr->setNodeValue(0, enter ? id + 1 : id - 1);
     }
     return;
   }
@@ -249,7 +234,7 @@ void Variables::LeaveScope(Tree* expr, int var) {
   for (int i = 0; Tree * child : expr->children()) {
     int updatedId =
         var + (isParametric && i++ == Parametric::FunctionIndex(expr));
-    LeaveScope(child, updatedId);
+    EnterOrLeaveScope(child, enter, updatedId);
   }
 }
 

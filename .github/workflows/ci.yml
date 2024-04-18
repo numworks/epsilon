@@ -5,6 +5,7 @@ on:
     branches: [ master, 'version-*' ]
     paths-ignore:
       - 'poincare/doc/**'
+  # pull_request:
 
   workflow_dispatch:
     inputs:

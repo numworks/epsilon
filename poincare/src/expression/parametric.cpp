@@ -179,7 +179,7 @@ bool Parametric::Explicit(Tree* expr) {
     Simplification::ShallowSystematicReduce(value);
     // Clone the child and replace k with its value
     Tree* clone = child->clone();
-    Variables::Replace(clone, k_localVariableId, value);
+    Variables::Replace(clone, k_localVariableId, value, true);
     value->removeTree();
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);
     // Terms are simplified one at a time to avoid overflowing the pool

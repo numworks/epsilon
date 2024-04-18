@@ -267,6 +267,7 @@ class Unit {
                                                 UnitFormat unitFormat,
                                                 bool optimizePrefix);
 
+  static bool IsNonKelvinTemperature(const Representative* representative);
   // Remove units and Convert tree to Kelvin.
   static void RemoveTemperatureUnit(Tree* root);
   // Replace with SI ratio only.

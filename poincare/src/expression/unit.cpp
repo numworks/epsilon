@@ -825,11 +825,15 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
   }
 }
 
+bool Unit::IsNonKelvinTemperature(const Representative* representative) {
+  return representative == &Temperature::representatives.celsius ||
+         representative == &Temperature::representatives.fahrenheit;
+}
+
 void Unit::RemoveUnit(Tree* unit) {
   const Representative* representative = GetRepresentative(unit);
   // Temperature units should have been handled with ConvertTreeToKelvin.
-  assert(representative != &Temperature::representatives.celsius &&
-         representative != &Temperature::representatives.fahrenheit);
+  assert(!IsNonKelvinTemperature(representative));
   Tree* result = SharedTreeStack->push<Type::Mult>(2);
   representative->ratioExpressionReduced()->clone();
   SharedTreeStack->push(Type::Pow);
@@ -844,17 +848,20 @@ void Unit::RemoveTemperatureUnit(Tree* root) {
   const Representative* representative = nullptr;
   for (Tree* child : root->selfAndDescendants()) {
     if (child->isUnit()) {
-      assert(representative == nullptr);
-      representative = Units::Unit::GetRepresentative(child);
-      child->cloneTreeOverTree(1_e);
+      const Representative* childRepresentative =
+          Units::Unit::GetRepresentative(child);
+      if (IsNonKelvinTemperature(childRepresentative)) {
+        assert(representative == nullptr);
+        representative = childRepresentative;
+        child->cloneTreeOverTree(1_e);
 #if !ASSERTIONS
-      break;
+        break;
 #endif
+      }
     }
   }
+  assert(IsNonKelvinTemperature(representative));
   bool isCelsius = (representative == &Temperature::representatives.celsius);
-  assert(isCelsius ||
-         representative == &Temperature::representatives.fahrenheit);
   // A -> (A + origin) * ratio
   root->moveTreeOverTree(PatternMatching::Create(
       KMult(KAdd(KA, KB), KC),

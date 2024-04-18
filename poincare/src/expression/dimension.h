@@ -77,13 +77,7 @@ struct Dimension {
            unit.representative == &Units::Angle::representatives.radian;
   }
   bool hasNonKelvinTemperatureUnit() const {
-    return isUnit() &&
-           IsNonKelvinTemperatureRepresentative(unit.representative);
-  }
-  static bool IsNonKelvinTemperatureRepresentative(
-      const Units::Representative* representative) {
-    return representative == &Units::Temperature::representatives.celsius ||
-           representative == &Units::Temperature::representatives.fahrenheit;
+    return isUnit() && Units::Unit::IsNonKelvinTemperature(unit.representative);
   }
 
   constexpr static int k_unknownListLength = -2;

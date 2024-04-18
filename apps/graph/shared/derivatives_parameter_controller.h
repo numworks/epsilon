@@ -31,7 +31,7 @@ class DerivativesParameterController
  private:
   Escher::StackViewController* stackController() const;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
-  void updateSwitch(int row);
+  void updateSwitchs();
   void toggleSwitch(int row);
   bool switchState(int row) const;
 

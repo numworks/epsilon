@@ -12,6 +12,9 @@ ButtonState::ButtonState(Responder* parentResponder, I18n::Message textBody,
       m_stateView(stateView) {}
 
 void ButtonState::setState(bool state) {
+  if (m_stateView->state() == state) {
+    return;
+  }
   m_stateView->setState(state);
   // Some stateViews like dot and unequal are transparent
   markRectAsDirty(relativeChildFrame(m_stateView));

@@ -36,9 +36,7 @@ bool DerivativesParameterController::handleEvent(Ion::Events::Event event) {
 
 void DerivativesParameterController::viewWillAppear() {
   assert(!m_record.isNull());
-  for (int row = 0; row < k_numberOfCells; row++) {
-    updateSwitch(row);
-  }
+  updateSwitchs();
   selectRow(0);
   m_selectableListView.reloadData();
   UniformSelectableListController::viewWillAppear();
@@ -63,9 +61,10 @@ DerivativesParameterController::function() const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 
-void DerivativesParameterController::updateSwitch(int row) {
-  assert(0 <= row && row < k_numberOfCells);
-  cell(row)->accessory()->setState(switchState(row));
+void DerivativesParameterController::updateSwitchs() {
+  for (int row = 0; row < k_numberOfCells; row++) {
+    cell(row)->accessory()->setState(switchState(row));
+  }
 }
 
 void DerivativesParameterController::toggleSwitch(int row) {
@@ -78,10 +77,8 @@ void DerivativesParameterController::toggleSwitch(int row) {
     case k_indexOfFirstDerivativePlot:
       function()->setDisplayPlotFirstDerivative(
           !function()->displayPlotFirstDerivative());
-      if (function()->displayValueFirstDerivative() !=
-          function()->displayPlotFirstDerivative()) {
-        toggleSwitch(k_indexOfFirstDerivativeValue);
-      }
+      function()->setDisplayValueFirstDerivative(
+          function()->displayPlotFirstDerivative());
       break;
     case k_indexOfSecondDerivativeValue:
       function()->setDisplayValueSecondDerivative(
@@ -91,13 +88,11 @@ void DerivativesParameterController::toggleSwitch(int row) {
       assert(row == k_indexOfSecondDerivativePlot);
       function()->setDisplayPlotSecondDerivative(
           !function()->displayPlotSecondDerivative());
-      if (function()->displayValueSecondDerivative() !=
-          function()->displayPlotSecondDerivative()) {
-        toggleSwitch(k_indexOfSecondDerivativeValue);
-      }
+      function()->setDisplayValueSecondDerivative(
+          function()->displayPlotSecondDerivative());
       break;
   }
-  updateSwitch(row);
+  updateSwitchs();
 }
 
 bool DerivativesParameterController::switchState(int row) const {

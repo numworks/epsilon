@@ -1,8 +1,9 @@
-name: CI Poincare junior
+name: CI Poincare update
 on:
   pull_request:
     paths-ignore:
-      - 'poincare-junior/doc/**'
+      - '**/*.md'
+      - 'poincare/doc/**'
 
 env:
   MAKEFLAGS: ${{ endswith(github.repository, '/epsilon-internal') && '-j32' || '-j2' }}
@@ -38,7 +39,7 @@ jobs:
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin --question
       - name: Run head
         shell: bash
-        run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | tee out
+        run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f poincare | tee out
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
 
@@ -48,7 +49,7 @@ jobs:
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
       - name: Run ancestor
         shell: bash
-        run: output/release/simulator/linux/test.bin --headless --limit-stack-usage | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
+        run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f poincare | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
 
       - name: Compare logs
         id: compare_logs

@@ -97,7 +97,8 @@ class GraphController : public Shared::FunctionGraphController,
                               int scrollSpeed = 1) override;
 
   // FunctionGraphController
-  void selectCurveAtIndex(int curveIndex, bool willBeVisible) override;
+  void selectCurveAtIndex(int curveIndex, bool willBeVisible,
+                          int subCurveIndex = -1) override;
   int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                int currentCurveIndex,
                                Poincare::Context *context,

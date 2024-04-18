@@ -152,7 +152,9 @@ bool Parametric::HasLocalRandom(Tree* expr) {
 }
 
 bool Parametric::Explicit(Tree* expr) {
-  assert(expr->isSum() || expr->isProduct());
+  if (!(expr->isSum() || expr->isProduct())) {
+    return false;
+  }
   if (HasLocalRandom(expr)) {
     return false;
   }

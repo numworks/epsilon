@@ -12,6 +12,7 @@ namespace Graph {
 class ParameterDelegate {
  public:
   virtual bool usePersonalizedTitle() const = 0;
+  virtual I18n::Message hideDerivativeMessage() const = 0;
   virtual void hideDerivative(Ion::Storage::Record record,
                               int derivationOrder) = 0;
 };

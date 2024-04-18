@@ -51,6 +51,9 @@ class ListController : public Shared::FunctionListController,
 
   // ParameterDelegate
   bool usePersonalizedTitle() const override { return false; }
+  I18n::Message hideDerivativeMessage() const override {
+    return I18n::Message::HideDerivative;
+  }
   void hideDerivative(Ion::Storage::Record record,
                       int derivationOrder) override;
 

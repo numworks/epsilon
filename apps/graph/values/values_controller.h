@@ -70,6 +70,9 @@ class ValuesController : public Shared::ValuesController,
 
   // ParameterDelegate
   bool usePersonalizedTitle() const override { return true; }
+  I18n::Message hideDerivativeMessage() const override {
+    return I18n::Message::HideDerivativeColumn;
+  }
   void hideDerivative(Ion::Storage::Record record,
                       int derivationOrder) override;
 

@@ -94,7 +94,7 @@ bool Variables::Replace(Tree* expr, int id, const TreeRef& value, bool leave,
       expr->cloneTreeOverTree(value);
       return true;
     }
-    if (leave) {
+    if (leave && Id(expr) > id) {
       expr->setNodeValue(0, Id(expr) - 1);
       return true;
     }

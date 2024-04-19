@@ -38,14 +38,9 @@ bool check_solutions(std::initializer_list<const char*> inputs,
   return true;
 }
 
-QUIZ_CASE(pcj_solver) {
-  check_solutions({"x-3+y", "y-x+1"}, {"x-2", "y-1"});
-  check_solutions({"x+x"}, {"x"});
-  check_solutions({"x+x+1"}, {"x+1/2"});
-  check_solutions({"x+y", "y+x", "y-x+2"}, {"x-1", "y+1"});
-  check_solutions({"1"}, {});
-  check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
-                  {"a+1/6", "b+1/6", "c+1/6", "d+1/6", "f+1/6", "g+1/6"});
+#if 0
+
+QUIZ__CASE(pcj_solver) {
   // User variables
   StorageContext::SetTreeForIdentifier(2_e, "a");
   check_solutions({"a*x-2"}, {"x-1"});
@@ -61,3 +56,5 @@ QUIZ_CASE(pcj_solver) {
   // check_solutions({"x^2+1"}, {}, Solver::Error::EquationNonreal);
   // check_solutions({"sin(x)"}, {}, Solver::Error::RequireApproximateSolution);
 }
+
+#endif

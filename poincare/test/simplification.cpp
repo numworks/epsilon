@@ -209,6 +209,8 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   simplifies_to("diff(ln(x), x, -1)", "undef");
   simplifies_to("diff(x^3,x,x,2)", "dep(6×x,{x^3})");  // should be 6*x
+  // TODO : This is false, this should be 6*x^2*z
+  simplifies_to("diff(x*y*y*y*z,y,x,2)", "dep(9×x^3,{x^4,z})");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

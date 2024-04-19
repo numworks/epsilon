@@ -31,13 +31,8 @@ class Variables {
   };
   // Push a Set with the free user symbols of the expression
   static Tree* GetUserSymbols(const Tree* t);
-  // Project global variables, return the expression within their context
-  static Tree* ProjectRootToId(Tree* t, ComplexSign sign);
-  static void ProjectToId(Tree* t, ComplexSign sign, uint8_t depth);
-  static void ProjectLocalVariablesToId(Tree* t) {
-    ProjectToId(t, ComplexSign::Unknown(), 0);
-  }
-  static void BeautifyToName(Tree* t, uint8_t depth = 0);
+  static bool ProjectLocalVariablesToId(Tree* t, uint8_t depth = 0);
+  static bool BeautifyToName(Tree* t, uint8_t depth = 0);
   static uint8_t Id(const Tree* variable);
   static ComplexSign GetComplexSign(const Tree* variable);
 

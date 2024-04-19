@@ -190,10 +190,7 @@ NODE(Integral, 4)
 // Sequence(Symbol, SymbolMax, Function)
 NODE(ListSequence, 3)
 
-// GlobalVar(Symbol, Expression)
-NODE(GlobalVar, 2)
-
-RANGE(Parametric, Sum, GlobalVar)
+RANGE(Parametric, Sum, ListSequence)
 
 // 5 - Matrix and vector builtins
 

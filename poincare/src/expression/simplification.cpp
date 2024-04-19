@@ -20,7 +20,6 @@
 #include "random.h"
 #include "rational.h"
 #include "unit.h"
-#include "variables.h"
 #include "vector.h"
 
 namespace Poincare::Internal {
@@ -893,16 +892,9 @@ bool Simplification::SimplifyLastTree(Tree* e,
     bool changed = PrepareForProjection(e, projectionContext);
     changed = ExtractUnits(e, &projectionContext) || changed;
     changed = Projection::DeepSystemProject(e, projectionContext) || changed;
-    Tree* mainExpr = Variables::ProjectRootToId(
-        e, projectionContext.m_complexFormat == ComplexFormat::Real
-               ? ComplexSign::RealUnknown()
-               : ComplexSign::Unknown());
-    changed = SimplifyProjectedTree(mainExpr) || changed;
-    changed =
-        TryApproximationStrategyAgain(mainExpr, projectionContext) || changed;
-    changed =
-        Beautification::DeepBeautify(mainExpr, projectionContext) || changed;
-    Variables::BeautifyToName(e);
+    changed = SimplifyProjectedTree(e) || changed;
+    changed = TryApproximationStrategyAgain(e, projectionContext) || changed;
+    changed = Beautification::DeepBeautify(e, projectionContext) || changed;
     return changed;
   }
   ExceptionCatch(type) {

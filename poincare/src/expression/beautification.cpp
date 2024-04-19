@@ -14,6 +14,7 @@
 #include "rational.h"
 #include "sign.h"
 #include "simplification.h"
+#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -57,6 +58,7 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
       }
       return NAN;
     }
+    case Type::UserSymbol:
     case Type::Var:
       return 1.;
     default:
@@ -280,6 +282,7 @@ bool Beautification::DeepBeautify(Tree* expr,
   }
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify, nullptr, false) ||
             changed;
+  changed = Variables::BeautifyToName(expr) || changed;
   return AddUnits(expr, projectionContext) || changed;
 }
 

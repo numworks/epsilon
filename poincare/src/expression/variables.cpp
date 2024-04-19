@@ -145,64 +145,41 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   return changed;
 }
 
-Tree* Variables::ProjectRootToId(Tree* expr, ComplexSign sign) {
-  /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
-   * because of the ordered structure of the set. When projecting y+x,
-   * variables will be {x, y} and we must have found all user symbols to
-   * properly project y to 1. */
-  Tree* variables = GetUserSymbols(expr);
-  int n = variables->numberOfChildren();
-  // From [Set][x][y][z][expr] to [GlobVar][x][GlobVar][y][GlobVar][z][expr]
-  expr->moveTreeBeforeNode(variables);
-  // [x][y][z][expr]
-  expr->removeNode();
-  Tree* var = expr;
-
-  for (int i = 0; i < n; i++) {
-    var->cloneNodeBeforeNode(KGlobalVar);
-    // [GlobVar][x][y][z][expr], [GlobVar][x][GlobVar][y][z][expr], ...
-    var = var->nextNode()->nextTree();
-  }
-  ProjectToId(expr, sign, 0);
-  return var;
-}
-
-void Variables::ProjectToId(Tree* expr, ComplexSign sign, uint8_t depth) {
+bool Variables::ProjectLocalVariablesToId(Tree* expr, uint8_t depth) {
+  bool changed = false;
   bool isParametric = expr->isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
       // Project local variable
-      ComplexSign localSign =
-          expr->isGlobalVar() ? sign : Parametric::VariableSign(expr);
       ReplaceSymbol(child, expr->child(Parametric::k_variableIndex), 0,
-                    localSign);
-      ProjectToId(child, sign, depth + 1);
+                    Parametric::VariableSign(expr));
+      changed = ProjectLocalVariablesToId(child, depth + 1) || changed;
     } else {
-      ProjectToId(child, sign, depth);
+      changed = ProjectLocalVariablesToId(child, depth) || changed;
     }
     i++;
   }
+  return changed;
 }
 
-void Variables::BeautifyToName(Tree* expr, uint8_t depth) {
+bool Variables::BeautifyToName(Tree* expr, uint8_t depth) {
   assert(!expr->isVar());
+  bool changed = false;
   bool isParametric = expr->isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i++ == Parametric::FunctionIndex(expr)) {
       // beautify variable introduced by this scope
       // TODO check that name is available here or make new name
-      Replace(child, 0, expr->child(Parametric::k_variableIndex));
+      changed = Replace(child, 0, expr->child(Parametric::k_variableIndex)) ||
+                changed;
       // beautify outer variables
-      BeautifyToName(child, depth + 1);
+      changed = BeautifyToName(child, depth + 1) || changed;
       continue;
     }
-    BeautifyToName(child, depth);
+    changed = BeautifyToName(child, depth) || changed;
   }
-  if (expr->isGlobalVar()) {
-    expr->removeNode();
-    expr->removeTree();
-  }
+  return changed;
 }
 
 bool Variables::HasVariables(const Tree* expr) {

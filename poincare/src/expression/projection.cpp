@@ -9,6 +9,7 @@
 #include "decimal.h"
 #include "physical_constant.h"
 #include "symbol.h"
+#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -83,6 +84,7 @@ bool Projection::DeepSystemProject(Tree* e,
     changed =
         Approximation::ApproximateAndReplaceEveryScalar(e, &projectionContext);
   }
+  changed = Variables::ProjectLocalVariablesToId(e) || changed;
   return Tree::ApplyShallowInDepth(e, ShallowSystemProject,
                                    &projectionContext) ||
          changed;
@@ -101,6 +103,14 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   if (e->isUndef()) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
+#if 0
+  if (e->isUserSymbol() &&
+      projectionContext->m_complexFormat == ComplexFormat::Real) {
+        // TODO: Find a way to flage the user symbol as real.
+    e->cloneNodeOverNode(KUserSymbolReal);
+    changed = true;
+  }
+#endif
   if (e->isParenthesis()) {
     e->removeNode();
     ShallowSystemProject(e, context);

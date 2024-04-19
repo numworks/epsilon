@@ -90,7 +90,6 @@ constexpr auto KSuperior = KBinary<Type::Superior>();
 constexpr auto KInferior = KBinary<Type::Inferior>();
 constexpr auto KSuperiorEqual = KBinary<Type::SuperiorEqual>();
 constexpr auto KInferiorEqual = KBinary<Type::InferiorEqual>();
-constexpr auto KGlobalVar = KBinary<Type::GlobalVar>();
 
 constexpr auto KDiff = KFixedArity<3, Type::Diff>();
 constexpr auto KListSlice = KFixedArity<3, Type::ListSlice>();

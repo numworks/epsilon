@@ -893,22 +893,16 @@ bool Simplification::SimplifyLastTree(Tree* e,
     bool changed = PrepareForProjection(e, projectionContext);
     changed = ExtractUnits(e, &projectionContext) || changed;
     changed = Projection::DeepSystemProject(e, projectionContext) || changed;
-    /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
-     * because of the ordered structure of the set. When projecting y+x,
-     * variables will be {x, y} and we must have found all user symbols to
-     * properly project y to 1. */
-    Tree* variables = Variables::GetUserSymbols(e);
-    SwapTreesPointers(&e, &variables);
-    Variables::ProjectToId(
-        e, variables,
-        projectionContext.m_complexFormat == ComplexFormat::Real
-            ? ComplexSign::RealUnknown()
-            : ComplexSign::Unknown());
-    changed = SimplifyProjectedTree(e) || changed;
-    changed = TryApproximationStrategyAgain(e, projectionContext) || changed;
-    changed = Beautification::DeepBeautify(e, projectionContext) || changed;
-    Variables::BeautifyToName(e, variables);
-    variables->removeTree();
+    Tree* mainExpr = Variables::ProjectRootToId(
+        e, projectionContext.m_complexFormat == ComplexFormat::Real
+               ? ComplexSign::RealUnknown()
+               : ComplexSign::Unknown());
+    changed = SimplifyProjectedTree(mainExpr) || changed;
+    changed =
+        TryApproximationStrategyAgain(mainExpr, projectionContext) || changed;
+    changed =
+        Beautification::DeepBeautify(mainExpr, projectionContext) || changed;
+    Variables::BeautifyToName(e);
     return changed;
   }
   ExceptionCatch(type) {

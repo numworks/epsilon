@@ -68,6 +68,8 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
     }
     userVariables->removeNode();
   }
+  return nullptr;
+#if 0
   Tree* variables =
       SimplifyAndFindVariables(simplifiedEquationSet, *context, error);
   uint8_t numberOfVariables = variables->numberOfChildren();
@@ -97,6 +99,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   simplifiedEquationSet->removeTree();
   variables->removeTree();
   return result;
+#endif
 }
 
 Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,

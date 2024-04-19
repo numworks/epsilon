@@ -18,6 +18,8 @@ uint8_t Parametric::FunctionIndex(const Tree* t) {
 
 uint8_t Parametric::FunctionIndex(TypeBlock type) {
   switch (type) {
+    case Type::GlobalVar:
+      return 1;
     case Type::Diff:
     case Type::DiffLayout:
     case Type::ListSequence:
@@ -47,6 +49,7 @@ ComplexSign Parametric::VariableSign(const Tree* t) {
     case Type::Sum:
     case Type::Product:
       return k_discreteVariableSign;
+    case Type::GlobalVar:
     default:
       assert(false);
   }

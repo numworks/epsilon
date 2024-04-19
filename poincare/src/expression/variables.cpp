@@ -145,40 +145,48 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   return changed;
 }
 
-void Variables::ProjectToId(Tree* expr, const Tree* variables, ComplexSign sign,
-                            uint8_t depth) {
-  assert(!variables || SharedTreeStack->isAfter(variables, expr));
-  if (variables && expr->isUserSymbol()) {
-    // Project global variable
-    Tree* var = SharedTreeStack->push<Type::Var>(
-        static_cast<uint8_t>(
-            ToId(variables, Symbol::GetName(expr), Symbol::Length(expr)) +
-            depth),
-        sign);
-    expr->moveTreeOverTree(var);
+Tree* Variables::ProjectRootToId(Tree* expr, ComplexSign sign) {
+  /* TODO: GetUserSymbols and ProjectToId could be factorized. We split them
+   * because of the ordered structure of the set. When projecting y+x,
+   * variables will be {x, y} and we must have found all user symbols to
+   * properly project y to 1. */
+  Tree* variables = GetUserSymbols(expr);
+  int n = variables->numberOfChildren();
+  // From [Set][x][y][z][expr] to [GlobVar][x][GlobVar][y][GlobVar][z][expr]
+  expr->moveTreeBeforeNode(variables);
+  // [x][y][z][expr]
+  expr->removeNode();
+  Tree* var = expr;
+
+  for (int i = 0; i < n; i++) {
+    var->cloneNodeBeforeNode(KGlobalVar);
+    // [GlobVar][x][y][z][expr], [GlobVar][x][GlobVar][y][z][expr], ...
+    var = var->nextNode()->nextTree();
   }
+  ProjectToId(expr, sign, 0);
+  return var;
+}
+
+void Variables::ProjectToId(Tree* expr, ComplexSign sign, uint8_t depth) {
   bool isParametric = expr->isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
       // Project local variable
+      ComplexSign localSign =
+          expr->isGlobalVar() ? sign : Parametric::VariableSign(expr);
       ReplaceSymbol(child, expr->child(Parametric::k_variableIndex), 0,
-                    Parametric::VariableSign(expr));
-      ProjectToId(child, variables, sign, depth + 1);
+                    localSign);
+      ProjectToId(child, sign, depth + 1);
     } else {
-      ProjectToId(child, variables, sign, depth);
+      ProjectToId(child, sign, depth);
     }
     i++;
   }
 }
 
-void Variables::BeautifyToName(Tree* expr, const Tree* variables,
-                               uint8_t depth) {
-  assert(SharedTreeStack->isAfter(variables, expr));
-  if (expr->isVar()) {
-    assert(depth <= Id(expr));
-    expr->cloneTreeOverTree(ToSymbol(variables, Id(expr) - depth));
-  }
+void Variables::BeautifyToName(Tree* expr, uint8_t depth) {
+  assert(!expr->isVar());
   bool isParametric = expr->isParametric();
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i++ == Parametric::FunctionIndex(expr)) {
@@ -186,10 +194,14 @@ void Variables::BeautifyToName(Tree* expr, const Tree* variables,
       // TODO check that name is available here or make new name
       Replace(child, 0, expr->child(Parametric::k_variableIndex));
       // beautify outer variables
-      BeautifyToName(child, variables, depth + 1);
+      BeautifyToName(child, depth + 1);
       continue;
     }
-    BeautifyToName(child, variables, depth);
+    BeautifyToName(child, depth);
+  }
+  if (expr->isGlobalVar()) {
+    expr->removeNode();
+    expr->removeTree();
   }
 }
 

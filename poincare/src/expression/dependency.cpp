@@ -197,7 +197,7 @@ bool RemoveUselessDependencies(Tree* dep) {
         continue;
       }
       if (ContainsSameDependency(depI, set->child(j))) {
-        NAry::RemoveChildAtIndex(set, j);
+        NAry::RemoveChildAtIndex(set, i);
         i--;
         changed = true;
         break;

@@ -145,7 +145,8 @@ Layout Calculation::createApproximateOutputLayout(
   if (ExceptionRun(ecp)) {
     Expression e = approximateOutput(NumberOfSignificantDigits::UserDefined);
     if (!e.isUninitialized()) {
-      return PoincareHelpers::CreateLayout(e, App::app()->localContext());
+      return e.createLayout(displayMode(), numberOfSignificantDigits(),
+                            App::app()->localContext());
     }
   }
   *couldNotCreateApproximateLayout = true;

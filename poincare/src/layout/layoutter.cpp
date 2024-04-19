@@ -674,15 +674,19 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     }
     case Type::Var: {
       uint8_t offset = Variables::Id(expression);
-      char name = 'a' + offset;
-      // Skip e and i
-      if (name >= 'e') {
-        name++;
-      }
-      if (name >= 'i') {
-        name++;
-      }
-      PushCodePoint(layoutParent, name);
+      do {
+        uint8_t localOffset = offset % 24;
+        char name = 'a' + localOffset;
+        // Skip e and i
+        if (name >= 'e') {
+          name++;
+        }
+        if (name >= 'i') {
+          name++;
+        }
+        PushCodePoint(layoutParent, name);
+        offset = (offset - localOffset) / 24;
+      } while (offset != 0);
       break;
     }
 #endif

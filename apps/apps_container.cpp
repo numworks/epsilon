@@ -445,8 +445,12 @@ void AppsContainer::openDFU(bool blocking) {
   /* DFU might have changed preferences and global preferences, update those
    * that have callbacks: country and exam mode.*/
   GlobalPreferences::SharedGlobalPreferences()->countryHasChanged();
-  if (preferences->examMode() != activeExamMode ||
-      preferences->forceExamModeReload()) {
+  if (activeExamMode.isActive() &&
+      Ion::Authentication::clearanceLevel() !=
+          Ion::Authentication::ClearanceLevel::NumWorks) {
+    setExamMode(ExamMode(ExamMode::Ruleset::Off), Ion::ExamMode::get());
+  } else if (preferences->examMode() != activeExamMode ||
+             preferences->forceExamModeReload()) {
     setExamMode(preferences->examMode(), Ion::ExamMode::get());
   }
   // Update LED when exiting DFU mode

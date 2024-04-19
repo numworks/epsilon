@@ -97,7 +97,7 @@ constexpr bool CreateBlockAtIndexForUserType(Type type, Block* block,
                                              size_t nameSize) {
   size_t numberOfMetaBlocks = TypeBlock::NumberOfMetaBlocks(type);
   if (blockIndex < numberOfMetaBlocks) {
-    assert(blockIndex == 1);
+    assert(blockIndex == numberOfMetaBlocks - 1);
     *block = ValueBlock(nameSize);
     return nameSize == 0;
   }
@@ -124,6 +124,11 @@ template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::UserSymbol>(
     Block* block, size_t blockIndex, const char* name, size_t nameSize) {
+  if (blockIndex == 1) {
+    // Always push with default Unknown sign
+    *block = ComplexSign::Unknown().getValue();
+    return false;
+  }
   return CreateBlockAtIndexForUserType(Type::UserSymbol, block, blockIndex,
                                        name, nameSize);
 }

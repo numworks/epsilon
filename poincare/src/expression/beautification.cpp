@@ -14,6 +14,7 @@
 #include "rational.h"
 #include "sign.h"
 #include "simplification.h"
+#include "symbol.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -319,6 +320,13 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
     if (BeautifyIntoDivision(e)) {
       return true;
     }
+  }
+
+  if (e->isUserSymbol() &&
+      Symbol::GetComplexSign(e) != ComplexSign::Unknown()) {
+    // Reset symbol sign to default.
+    Symbol::SetComplexSign(e, ComplexSign::Unknown());
+    return true;
   }
 
   if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&

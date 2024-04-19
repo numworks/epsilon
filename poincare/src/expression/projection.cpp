@@ -103,14 +103,12 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   if (e->isUndef()) {
     ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
   }
-#if 0
   if (e->isUserSymbol() &&
-      projectionContext->m_complexFormat == ComplexFormat::Real) {
-        // TODO: Find a way to flage the user symbol as real.
-    e->cloneNodeOverNode(KUserSymbolReal);
+      projectionContext->m_complexFormat == ComplexFormat::Real &&
+      Symbol::GetComplexSign(e) == ComplexSign::Unknown()) {
+    Symbol::SetComplexSign(e, ComplexSign::RealUnknown());
     changed = true;
   }
-#endif
   if (e->isParenthesis()) {
     e->removeNode();
     ShallowSystemProject(e, context);

@@ -31,14 +31,14 @@ QUIZ_CASE(pcj_projection) {
   Projection::DeepSystemProject(ref, {.m_angleUnit = AngleUnit::Degree});
   assert_trees_are_equal(ref, KTrig(KMult(100_e, 1_e / 180_e, π_e), 0_e));
 
-  CloneTreeOverTree(ref, KSqrt("y"_e));
+  CloneTreeOverTree(ref, KSqrt(π_e));
   Projection::DeepSystemProject(ref,
                                 {.m_complexFormat = ComplexFormat::Cartesian});
-  assert_trees_are_equal(ref, KPow("y"_e, 1_e / 2_e));
+  assert_trees_are_equal(ref, KPow(π_e, 1_e / 2_e));
 
-  CloneTreeOverTree(ref, KSqrt("y"_e));
+  CloneTreeOverTree(ref, KSqrt(π_e));
   Projection::DeepSystemProject(ref, {.m_complexFormat = ComplexFormat::Real});
-  assert_trees_are_equal(ref, KPowReal("y"_e, 1_e / 2_e));
+  assert_trees_are_equal(ref, KPowReal(π_e, 1_e / 2_e));
 
   ref->removeTree();
 }

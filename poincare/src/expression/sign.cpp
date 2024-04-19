@@ -4,6 +4,7 @@
 
 #include "dimension.h"
 #include "number.h"
+#include "symbol.h"
 #include "variables.h"
 
 #if POINCARE_TREE_LOG
@@ -268,6 +269,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ComplexArgument(Get(t->firstChild()));
     case Type::Dependency:
       return ComplexArgument(Get(t->firstChild()));
+    case Type::UserSymbol:
+      return Symbol::GetComplexSign(t);
 #if 0
     // Activate these cases if necessary
     case Type::ASin:

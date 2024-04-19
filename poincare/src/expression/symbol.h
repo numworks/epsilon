@@ -5,6 +5,8 @@
 
 namespace Poincare::Internal {
 
+class ComplexSign;
+
 class Symbol final {
  public:
   /* A symbol abstract can have a max length of 7 chars, or 9 if it's
@@ -28,10 +30,19 @@ class Symbol final {
 
   static uint8_t Length(const Tree* node) {
     assert(node->isUserNamed());
-    return node->nodeValue(0) - 1;
+    return node->nodeValue(NameSizeValueIndex(node->type())) - 1;
   }
   static char* CopyName(const Tree* node, char* buffer, size_t bufferSize);
   static const char* GetName(const Tree* node);
+
+  static ComplexSign GetComplexSign(const Tree* node);
+  // Only userSymbols have a complexSign in their node.
+  static void SetComplexSign(Tree* userSymbol, ComplexSign sign);
+
+ private:
+  constexpr static uint8_t NameSizeValueIndex(Type type) {
+    return type == Type::UserSymbol ? 1 : 0;
+  }
 };
 
 }  // namespace Poincare::Internal

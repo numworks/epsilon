@@ -70,9 +70,11 @@ NODE(Add, NARY)
 
 RANGE(Algebraic, Zero, Add)
 
-/* - UserSymbol US (same for UserFunction, UserSequence) CHARN must be 0.
- * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
-NODE(UserSymbol, 0, 1)
+/* - UserSymbol US, CHARN must be 0.
+ * | US TAG | SIGN | NUMBER CHARS | CHAR0 | ... | CHARN | */
+NODE(UserSymbol, 0, 2)
+/* - UserFunction UF (same for UserSequence) CHARN must be 0.
+ * | UF TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
 NODE(UserFunction, 1, 1)
 NODE(UserSequence, 1, 1)
 

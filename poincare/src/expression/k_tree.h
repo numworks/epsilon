@@ -120,7 +120,8 @@ constexpr auto KVarX = KVar<Parametric::k_localVariableId,
 // Default UserSymbol in functions
 // TODO: Try to limit the usage of UCodePointUnknown
 constexpr auto KUnknownSymbol =
-    KTree<Type::UserSymbol, 2, static_cast<uint8_t>(UCodePointUnknown), 0>();
+    KTree<Type::UserSymbol, ComplexSign::Unknown().getValue(), 2,
+          static_cast<uint8_t>(UCodePointUnknown), 0>();
 
 // Booleans
 constexpr auto KFalse = KTree<Type::False>();
@@ -405,7 +406,8 @@ template <String S, std::size_t... I>
 struct Variable<S, std::index_sequence<I...>> {
   static_assert(!OMG::Print::IsDigit(S[0]),
                 "Integer literals should be written without quotes");
-  using tree = KTree<Type::UserSymbol, sizeof...(I), S[I]...>;
+  using tree = KTree<Type::UserSymbol, ComplexSign::Unknown().getValue(),
+                     sizeof...(I), S[I]...>;
 };
 
 template <String S>

@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include "sign.h"
+
 namespace Poincare::Internal {
 
 char* Symbol::CopyName(const Tree* node, char* buffer, size_t bufferSize) {
@@ -16,7 +18,20 @@ char* Symbol::CopyName(const Tree* node, char* buffer, size_t bufferSize) {
 
 const char* Symbol::GetName(const Tree* node) {
   assert(node->isUserNamed());
-  return reinterpret_cast<const char*>(node->block()->nextNth(2));
+  // BlockType, (ComplexSign,) Size, Name
+  return reinterpret_cast<const char*>(
+      node->block()->nextNth(1 + NameSizeValueIndex(node->type()) + 1));
+}
+
+ComplexSign Symbol::GetComplexSign(const Tree* node) {
+  assert(node->isUserNamed());
+  return node->isUserSymbol() ? ComplexSign(node->nodeValue(0))
+                              : ComplexSign::Unknown();
+}
+
+void Symbol::SetComplexSign(Tree* userSymbol, ComplexSign sign) {
+  assert(userSymbol->isUserSymbol());
+  userSymbol->setNodeValue(0, sign.getValue());
 }
 
 }  // namespace Poincare::Internal

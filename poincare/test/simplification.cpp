@@ -202,13 +202,12 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "dep(1,{y})");
   simplifies_to("diff(sin(ln(x)), x, y)",
-                "dep(cos(ln(y))/y,{dep(sin(ln(y)),dep({ln(y)},{ln(y)}))})");
+                "dep(cos(ln(y))/y,{ln(y),sin(ln(y))})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "dep(e^(3×y)×(3×y^4×ln(y)+(1+4×ln(y))×y^3),{dep(y^4×e^(3×y)×ln("
-                "y),dep({ln(y)},{ln(y)}))})");
-  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{dep(4×y^2,{y^2})})");
+                "dep(e^(3×y)×(3×y^4×ln(y)+(1+4×ln(y))×y^3),{ln(y)})");
+  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{y^2})");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
-  simplifies_to("diff(ln(x), x, -1)", "nonreal");
+  simplifies_to("diff(ln(x), x, -1)", "undef");
   simplifies_to("diff(x^3,x,x,2)", "dep(6×x,{x^3})");  // should be 6*x
 }
 
@@ -569,7 +568,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
 
   Tree* e4 =
       KDiff("x"_e, "y"_e, KDep("x"_e, KSet(KAbs("x"_e), "z"_e)))->clone();
-  const Tree* r4 = KDep(1_e, KSet(KDep("y"_e, KSet(KAbs("y"_e), "z"_e))));
+  const Tree* r4 = KDep(1_e, KSet(KAbs("y"_e), "z"_e));
   Simplification::Simplify(e4, &context);
   QUIZ_ASSERT(e4->treeIsIdenticalTo(r4));
 }

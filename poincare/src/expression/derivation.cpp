@@ -36,11 +36,11 @@ bool Derivation::ShallowSimplify(Tree* node) {
   if (constDerivand->isDependency()) {
     setOfDependencies =
         CloneReplacingSymbol(constDerivand->child(1), symbolValue, false);
-    derivand = constDerivand->child(0)->clone();
+    constDerivand = constDerivand->child(0);
   } else {
     setOfDependencies = Set::PushEmpty();
-    derivand = constDerivand->clone();
   }
+  derivand = constDerivand->clone();
 
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
@@ -71,13 +71,12 @@ bool Derivation::ShallowSimplify(Tree* node) {
   }
 
   SwapTreesPointers(&derivand, &setOfDependencies);
-  // Do not add a dependency if nothing was derivated.
+  // Add a dependency on derivant if anything has been derivated.
   if (currentDerivationOrder < derivationOrder) {
     TreeRef formula = CloneReplacingSymbol(constDerivand, symbolValue);
     Set::Add(setOfDependencies, formula);
     formula->removeTree();
   }
-
   if (setOfDependencies->numberOfChildren() > 0) {
     derivand->cloneNodeAtNode(KDep);
     Dependency::RemoveDefinedDependencies(derivand);

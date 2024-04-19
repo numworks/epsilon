@@ -19,12 +19,7 @@ class Derivation {
 
   /* Push shallow partial derivate parameterized expression at given index.
    * If unhandled, push nothing and return false. */
-  static bool ShallowPartialDerivate(const Tree* derivand,
-                                     const Tree* symbolValue, int index);
-  // Clone expression replacing symbol with symbolValue.
-  static Tree* CloneReplacingSymbol(const Tree* expression,
-                                    const Tree* symbolValue,
-                                    bool simplify = true);
+  static bool ShallowPartialDerivate(const Tree* derivand, int index);
 };
 
 }  // namespace Poincare::Internal

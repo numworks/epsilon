@@ -34,14 +34,12 @@ bool Derivation::ShallowSimplify(Tree* node) {
   Tree* setOfDependencies;
   Tree* derivand;
   if (constDerivand->isDependency()) {
-    setOfDependencies =
-        CloneReplacingSymbol(constDerivand->child(1), symbolValue, false);
+    setOfDependencies = constDerivand->child(1)->clone();
     constDerivand = constDerivand->child(0);
   } else {
     setOfDependencies = Set::PushEmpty();
   }
   derivand = constDerivand->clone();
-
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
     Tree* derivative = Derivate(derivand, symbolValue, symbol);
@@ -70,14 +68,17 @@ bool Derivation::ShallowSimplify(Tree* node) {
     derivand->removeTree();
   }
 
+  Variables::LeaveScopeWithReplacement(derivand, symbolValue, true);
+
   SwapTreesPointers(&derivand, &setOfDependencies);
   // Add a dependency on derivant if anything has been derivated.
   if (currentDerivationOrder < derivationOrder) {
-    TreeRef formula = CloneReplacingSymbol(constDerivand, symbolValue);
+    TreeRef formula = constDerivand->clone();
     Set::Add(setOfDependencies, formula);
     formula->removeTree();
   }
   if (setOfDependencies->numberOfChildren() > 0) {
+    Variables::LeaveScopeWithReplacement(setOfDependencies, symbolValue, false);
     derivand->cloneNodeAtNode(KDep);
     Dependency::RemoveDefinedDependencies(derivand);
   } else {
@@ -117,7 +118,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
       symbolValue->clone();
       derivandChild->clone();
     }
-    if (!ShallowPartialDerivate(derivand, symbolValue, i)) {
+    if (!ShallowPartialDerivate(derivand, i)) {
       // Cancel current derivation.
       result->removeTree();
       return nullptr;
@@ -130,8 +131,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
   return result;
 }
 
-bool Derivation::ShallowPartialDerivate(const Tree* derivand,
-                                        const Tree* symbolValue, int index) {
+bool Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
   switch (derivand->type()) {
     case Type::Mult: {
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...
@@ -144,7 +144,7 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
       for (std::pair<const Tree*, int> indexedNode :
            NodeIterator::Children<NoEditable>(derivand)) {
         if (indexedNode.second != index) {
-          CloneReplacingSymbol(indexedNode.first, symbolValue);
+          indexedNode.first->clone();
         }
       }
       if (numberOfChildren > 2) {
@@ -158,13 +158,13 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
       return true;
     case Type::Exp:
       // Di(exp(x)) = exp(x)
-      CloneReplacingSymbol(derivand, symbolValue);
+      derivand->clone();
       return true;
     case Type::LnReal:
     case Type::Ln: {
       // Di(ln(x)) = 1/x
       Tree* power = SharedTreeStack->push(Type::Pow);
-      CloneReplacingSymbol(derivand->child(0), symbolValue);
+      derivand->child(0)->clone();
       SharedTreeStack->push(Type::MinusOne);
       Simplification::ShallowSystematicReduce(power);
       return true;
@@ -185,7 +185,7 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
         SharedTreeStack->clone(derivand->child(1));
       }
       Tree* newNode = SharedTreeStack->clone(derivand, false);
-      CloneReplacingSymbol(derivand->child(0), symbolValue);
+      derivand->child(0)->clone();
       Tree* addition = SharedTreeStack->push<Type::Add>(2);
       SharedTreeStack->clone(derivand->child(1));
       SharedTreeStack->push(Type::MinusOne);
@@ -199,13 +199,6 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand,
     default:
       return false;
   }
-}
-
-Tree* Derivation::CloneReplacingSymbol(const Tree* expression,
-                                       const Tree* symbolValue, bool simplify) {
-  Tree* result = expression->clone();
-  Variables::LeaveScopeWithReplacement(result, symbolValue, simplify);
-  return result;
 }
 
 // TODO: Diff(g(x,y),y,h(x,y)) -> Diff(g(f(y),z),z,h(f(y),y))

@@ -210,6 +210,12 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(ln(x), x, -1)", "nonreal");
   simplifies_to("diff(x^3,x,x,2)", "dep(6×x,{x^3})");  // should be 6*x
   simplifies_to("diff(x*y*y*y*z,y,x,2)", "dep(6×x^2×z,{x^3})");
+
+  simplifies_to("k*x*sum(y*x*k,k,1,2)", "3×x^2×k×y");
+  simplifies_to("diff(3×x^2×k×y,x,k,2)", "dep(6×k×y,{k^2})");
+  // TODO: To fix
+  simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)",
+                "dep(6×k^2,{sum(k^2×y,k,1,2)})");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

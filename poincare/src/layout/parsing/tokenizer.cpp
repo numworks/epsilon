@@ -96,7 +96,9 @@ size_t Tokenizer::popHexadecimalDigits() {
 
 Token Tokenizer::popNumber() {
   size_t integralPartText = m_decoder.position();
+  const Layout* integralPartStart = m_decoder.layout();
   size_t integralPartLength = popDigits();
+  LayoutSpan integralPart = LayoutSpan(integralPartStart, integralPartLength);
 
 #if 0
   size_t fractionalPartText = m_decoder.position();
@@ -104,7 +106,8 @@ Token Tokenizer::popNumber() {
   size_t fractionalPartLength = 0;
 
   // Check for binary or hexadecimal number
-  if (integralPartLength == 1 && m_decoder.codePoint() == '0') {
+  if (integralPartLength == 1 &&
+      CodePointLayout::IsCodePoint(integralPart.start, '0')) {
     // Save string position if no binary/hexadecimal number
     LayoutSpanDecoder savedPosition = m_decoder;
     // Look for "0b"
@@ -120,7 +123,7 @@ Token Tokenizer::popNumber() {
       if (binaryOrHexaLength > 0) {
         Token result(
             binary ? Token::Type::BinaryNumber : Token::Type::HexadecimalNumber,
-            m_decoder.layout(), integralPartLength + 1 + binaryOrHexaLength);
+            integralPartStart, integralPartLength + 1 + binaryOrHexaLength);
         return result;
       } else {
         // Rewind before 'b'/'x' letter
@@ -166,7 +169,7 @@ Token Tokenizer::popNumber() {
       fractionalPartLength, exponentIsNegative, exponentPartText,
       exponentPartLength));
 #endif
-  result.setRange(m_decoder.layout(),
+  result.setRange(integralPartStart,
                   exponentPartText - integralPartText + exponentPartLength);
   return result;
 }
@@ -377,8 +380,8 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
   size_t tokenLength;
   while (tokenType == Token::Type::Undefined && nextTokenStart < *stringEnd) {
     stringStart = nextTokenStart;
-    tokenLength = *stringEnd - stringStart;
-    tokenType = stringTokenType(m_decoder.layout(), &tokenLength);
+    tokenLength = numberOfNextTreeTo(stringStart, *stringEnd);
+    tokenType = stringTokenType(stringStart, &tokenLength);
     decoder.nextCodePoint();
     nextTokenStart = decoder.layout();
   }
@@ -393,7 +396,7 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
     m_numberOfStoredIdentifiers = 0;
   }
   *stringEnd = stringStart;
-  return Token(tokenType, m_decoder.layout(), tokenLength);
+  return Token(tokenType, stringStart, tokenLength);
 }
 
 static bool stringIsACodePointFollowedByNumbers(LayoutSpan span) {

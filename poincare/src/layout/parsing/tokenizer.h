@@ -37,15 +37,15 @@ class Tokenizer {
   size_t endPosition() { return m_decoder.end(); }
 
   struct State {
-    size_t position = UnicodeDecoder::k_noSize;
+    LayoutSpanDecoder decoder;
     int numberOfStoredIdentifiers = -1;
   };
   State currentState() {
-    return State{.position = currentPosition(),
+    return State{.decoder = m_decoder,
                  .numberOfStoredIdentifiers = m_numberOfStoredIdentifiers};
   }
   void setState(State state) {
-    goToPosition(state.position);
+    m_decoder = state.decoder;
     m_numberOfStoredIdentifiers = state.numberOfStoredIdentifiers;
   }
 

@@ -15,7 +15,7 @@ Poincare has an internal and an external API. Only the external API should be av
 
 Poincare should never use code from `apps/*`.
 
-Code from `poincare/src/*` should only be used in `poincare/src/*` or `poincare/**/*.cpp`.
+In general, avoid exposing `poincare/src/*` in apps, directly or indirectly (via poincare's external headers for example).
 
 > [!CAUTION]
 > Avoid this:
@@ -179,8 +179,6 @@ if (isVerticalOffset()) {
 
 ## Access to first child
 
-To access a tree's first child, they are equivalent, but the later asserts the Tree has a child.
-
 > [!CAUTION]
 > Avoid this:
 
@@ -194,6 +192,8 @@ Tree* firstChild = tree->nextNode();
 ```cpp
 Tree* firstChild = tree->child(0);
 ```
+
+Both examples are equivalent to access a tree's first child, but the later asserts the Tree has a child and makes the intent clear.
 
 ## Distinguish Trees from Nodes
 

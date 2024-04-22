@@ -71,7 +71,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
   Variables::LeaveScopeWithReplacement(derivand, symbolValue, true);
 
   SwapTreesPointers(&derivand, &setOfDependencies);
-  // Add a dependency on derivant if anything has been derivated.
+  // Add a dependency on derivand if anything has been derived.
   if (currentDerivationOrder < derivationOrder) {
     TreeRef formula = constDerivand->clone();
     Set::Add(setOfDependencies, formula);

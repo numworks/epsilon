@@ -89,6 +89,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
   return true;
 }
 
+// Derivate derivand preserving scope (V0^2 is derived to 2*V0).
 Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
                            const Tree* symbol) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
@@ -113,10 +114,12 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
     Tree* mult = SharedTreeStack->push<Type::Mult>(1);
     if (!Derivate(derivandChild, symbolValue, symbol)) {
       // Could not derivate, preserve D(gi(x))
-      SharedTreeStack->push(Type::Diff);
+      Tree* preservedDerivative = SharedTreeStack->push(Type::Diff);
       symbol->clone();
       symbolValue->clone();
       derivandChild->clone();
+      // EnterScope here since scope is preserved in Derivation::Derivate.
+      Variables::EnterScope(preservedDerivative);
     }
     if (!ShallowPartialDerivate(derivand, i)) {
       // Cancel current derivation.

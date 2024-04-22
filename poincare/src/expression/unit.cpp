@@ -460,7 +460,8 @@ Evaluation<T> templatedApproximate(
 bool Unit::CanParse(UnicodeDecoder* name, const Representative** representative,
                     const Prefix** prefix) {
   if (name->nextCodePoint() != '_') {
-    name->previousCodePoint();
+    return false;  // TODO ?
+    // name->previousCodePoint();
   }
   // TODO: Better use of UnicodeDecoder. Here we assume units cannot be longer.
   constexpr static size_t bufferSize = 10;

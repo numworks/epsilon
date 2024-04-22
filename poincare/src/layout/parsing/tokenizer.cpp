@@ -30,23 +30,24 @@ bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
 }
 
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, bool* testResult) {
+  LayoutSpanDecoder save = m_decoder;
   CodePoint c = m_decoder.nextCodePoint();
   bool shouldPop = popTest(c);
   if (testResult != nullptr) {
     *testResult = shouldPop;
   }
   if (!shouldPop) {
-    m_decoder.previousCodePoint();
+    m_decoder = save;
   }
   return c;
 }
 
 bool Tokenizer::canPopCodePoint(const CodePoint c) {
   if (m_decoder.nextLayoutIsCodePoint()) {
-    if (m_decoder.nextCodePoint() == c) {
+    if (m_decoder.codePoint() == c) {
+      m_decoder.skip(1);
       return true;
     }
-    m_decoder.previousCodePoint();
   }
   return false;
 }
@@ -198,6 +199,7 @@ Token Tokenizer::popToken() {
   /* Save for later use (since m_decoder.position() is altered by
    * popNumber and popIdentifiersString). */
   size_t start = m_decoder.position();
+  LayoutSpanDecoder save = m_decoder;
 
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */
@@ -239,7 +241,8 @@ Token Tokenizer::popToken() {
     }
 #endif
     // Decoder is one CodePoint ahead of the beginning of the identifier string
-    m_decoder.previousCodePoint();
+    // m_decoder.previousCodePoint();
+    m_decoder = save;
     assert(m_numberOfStoredIdentifiers ==
            0);  // assert we're done with previous tokenization
     fillIdentifiersList();
@@ -538,13 +541,14 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
 // ========== Implicit addition between units ==========
 
 size_t Tokenizer::popImplicitAdditionBetweenUnits() {
-  size_t stringStart = m_decoder.position();
+  LayoutSpanDecoder start = m_decoder;
   CodePoint c = m_decoder.nextCodePoint();
   assert(c.isDecimalDigit() || c == '.');
   bool isImplicitAddition = false;
   bool nextLayoutIsCodePoint = true;
   size_t length = 0;
   const Units::Representative* storedUnitRepresentative = nullptr;
+  LayoutSpanDecoder save(LayoutSpan(nullptr, 0));
   while (true) {
     /* Check if the string is of the form:
      * decimalNumber-unit-decimalNumber-unit...
@@ -569,6 +573,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       lengthOfPotentialUnit += 1;
       nextLayoutIsCodePoint = m_decoder.nextLayoutIsCodePoint();
       if (nextLayoutIsCodePoint) {
+        save = m_decoder;
         c = m_decoder.nextCodePoint();
       }
     }
@@ -602,13 +607,14 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     storedUnitRepresentative = unitRepresentative;
   }
   if (nextLayoutIsCodePoint) {
-    m_decoder.previousCodePoint();
+    m_decoder = save;
+    // m_decoder.previousCodePoint();
   }
   if (isImplicitAddition) {
     return length;
   }
   // Rewind decoder if nothing was found
-  goToPosition(stringStart);
+  m_decoder = start;
   return 0;
 }
 

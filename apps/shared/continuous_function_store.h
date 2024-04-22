@@ -66,6 +66,7 @@ class ContinuousFunctionStore : public FunctionStore {
                : nullptr;
   }
 
+  KDColor colorForNewModel() const;
   ContinuousFunction newModel(const char *name,
                               Ion::Storage::Record::ErrorStatus *error);
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
@@ -110,7 +111,6 @@ class ContinuousFunctionStore : public FunctionStore {
   ExpressionModelHandle *memoizedModelAtIndex(int cacheIndex) const override;
 
   void fillLastFreeColors(bool *colorIsFree) const;
-  KDColor colorForNewModel() const;
 
   mutable uint32_t m_storageCheckSum;
   mutable int m_memoizedNumberOfActiveFunctions;

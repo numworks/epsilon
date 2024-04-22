@@ -290,6 +290,9 @@ class ContinuousFunction : public Function {
     return m_model.expressionSlopeReduced(this, context);
   }
 
+  void updateDerivativeColorAfterChangingPlotDisplay(bool newDisplay,
+                                                     int derivationOrder) const;
+
   /* Evaluation */
 
   // Evaluate XY at parameter (distinct from approximation with Polar types)

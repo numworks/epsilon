@@ -267,19 +267,40 @@ void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
   }
 }
 
+void ContinuousFunction::updateDerivativeColorAfterChangingPlotDisplay(
+    bool newDisplay, int derivationOrder) const {
+  /* - if we are displaying the plot: use a new color
+   * - if we are hidding the plot: use the color of the main function */
+  KDColor newColor =
+      newDisplay ? GlobalContext::continuousFunctionStore->colorForNewModel()
+                 : color();
+  recordData()->setColor(newColor, derivationOrder);
+}
+
 void ContinuousFunction::setDisplayValueFirstDerivative(bool display) {
   recordData()->setDisplayValueFirstDerivative(display);
 }
+
 void ContinuousFunction::setDisplayPlotFirstDerivative(bool display) {
+  bool previousDisplay = displayPlotFirstDerivative();
   recordData()->setDisplayPlotFirstDerivative(display);
   recordData()->setDisplayValueFirstDerivative(display);
+  if (previousDisplay != display) {
+    updateDerivativeColorAfterChangingPlotDisplay(display, 1);
+  }
 }
+
 void ContinuousFunction::setDisplayValueSecondDerivative(bool display) {
   recordData()->setDisplayValueSecondDerivative(display);
 }
+
 void ContinuousFunction::setDisplayPlotSecondDerivative(bool display) {
+  bool previousDisplay = displayPlotSecondDerivative();
   recordData()->setDisplayPlotSecondDerivative(display);
   recordData()->setDisplayValueSecondDerivative(display);
+  if (previousDisplay != display) {
+    updateDerivativeColorAfterChangingPlotDisplay(display, 2);
+  }
 }
 
 int ContinuousFunction::derivationOrderFromRelativeIndex(

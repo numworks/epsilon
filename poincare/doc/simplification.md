@@ -2,9 +2,9 @@
 
 ## Generalities
 
-Starting from a any expression, the simplification algorithm finds an better, and reduced mathematically equivalent expression.
+Starting from any expression, the simplification algorithm finds an better, and reduced mathematically equivalent expression.
 
-Steps can be summarize to this :
+Steps can be summarized to this :
 
 ```mermaid
 graph TD;
@@ -27,7 +27,7 @@ We ensure a few properties:
 These operations never need to be applied twice.
 
 
-## Detailled steps
+## Detailed steps
 
 - [Ensure the expression has a valid dimension](#dimension-check)
 - [Adjust the approximation strategy if the expression's dimension requires it (units)](#approximation-strategy)
@@ -341,8 +341,8 @@ For example: Applying `ProjectToNthElement` to the second element of `{4,5,6} + 
 ## Advanced Reduction
 
 It's expected to:
-- Reduce any reducible expression if given enough ressources
-- Do its best with reduced ressources
+- Reduce any reducible expression if given enough resources
+- Do its best with reduced resources
 - Be deterministic
 - Ignore second term of dependencies
 

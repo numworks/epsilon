@@ -148,7 +148,7 @@ struct KMatrix {
   template <class... Args>
     requires HasATreeConcept<Args...>
   consteval const Tree* operator()(Args... args) const {
-    return KTree<>();
+    return nullptr;
   }
 };
 

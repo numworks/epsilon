@@ -97,7 +97,7 @@ struct KUnary : public KTree<Tag, ExtraValues...> {
    * why each candidate concept is unmatched.  With these constructors, they
    * match and then you get a "call to consteval function ... is not a
    * constant expression" since they are marked consteval. */
-  consteval const Tree* operator()(const Tree* a) const { return KTree<>(); }
+  consteval const Tree* operator()(const Tree* a) const { return nullptr; }
 };
 
 template <Block Tag, Block... ExtraValues>
@@ -108,7 +108,7 @@ struct KBinary : public KTree<Tag, ExtraValues...> {
   }
 
   consteval const Tree* operator()(const Tree* a, const Tree* b) const {
-    return KTree<>();
+    return nullptr;
   }
 };
 
@@ -127,7 +127,7 @@ struct KFixedArity : public KTree<Tag, ExtraValues...> {
   template <class... Args>
     requires(HasATreeConcept<Args...> && sizeof...(Args) == Nb)
   consteval const Tree* operator()(Args... args) const {
-    return KTree<>();
+    return nullptr;
   }
 };
 
@@ -144,7 +144,7 @@ struct KNAry {
   template <class... Args>
     requires HasATreeConcept<Args...>
   consteval const Tree* operator()(Args... args) const {
-    return KTree<>();
+    return nullptr;
   }
 };
 

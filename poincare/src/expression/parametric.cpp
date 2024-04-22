@@ -61,7 +61,10 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   Tree* lowerBound = expr->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   ComplexSign sign = ComplexSign::SignOfDifference(lowerBound, upperBound);
-  if (sign.isReal() && sign.realSign().isStrictlyPositive()) {
+  if (!sign.isReal()) {
+    return false;
+  }
+  if (sign.realSign().isStrictlyPositive()) {
     expr->cloneTreeOverTree(isSum ? 0_e : 1_e);
     return true;
   }

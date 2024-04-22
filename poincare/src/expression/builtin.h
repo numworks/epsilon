@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_BUILTINS_H
 #define POINCARE_EXPRESSION_BUILTINS_H
 
+#include <poincare/src/layout/layout_span_decoder.h>
 #include <poincare/src/memory/type_block.h>
 
 #include "aliases.h"
@@ -32,20 +33,20 @@ class Builtin {
     assert(GetSpecialIdentifier(type));
     return GetSpecialIdentifier(type)->m_aliases;
   }
-  static bool HasReservedFunction(UnicodeDecoder* name) {
+  static bool HasReservedFunction(LayoutSpan name) {
     return GetReservedFunction(name) != nullptr;
   }
-  static bool HasSpecialIdentifier(UnicodeDecoder* name) {
+  static bool HasSpecialIdentifier(LayoutSpan name) {
     return GetSpecialIdentifier(name) != nullptr;
   }
   static bool HasSpecialIdentifier(Type type) {
     return GetSpecialIdentifier(type) != nullptr;
   }
-  static bool HasCustomIdentifier(UnicodeDecoder* name);
-  static const Builtin* GetReservedFunction(UnicodeDecoder* name);
+  static bool HasCustomIdentifier(LayoutSpan name);
+  static const Builtin* GetReservedFunction(LayoutSpan name);
   static const Builtin* GetReservedFunction(const Tree* tree);
   static constexpr const Builtin* GetReservedFunction(Type type);
-  static const Builtin* GetSpecialIdentifier(UnicodeDecoder* name);
+  static const Builtin* GetSpecialIdentifier(LayoutSpan name);
   static const Builtin* GetSpecialIdentifier(Type type);
 
  private:

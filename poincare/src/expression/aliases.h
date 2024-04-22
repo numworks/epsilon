@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <omg/utf8_decoder.h>
+#include <poincare/src/layout/layout_span_decoder.h>
 #include <string.h>
 
 /* This class is used to handle name's aliases for reserved functions, units
@@ -42,11 +43,12 @@ class Aliases {
 
   bool contains(const char* string) const {
     UTF8Decoder decoder(string);
-    return contains(&decoder);
+    return maxDifferenceWith(&decoder) == 0;
   }
 
-  bool contains(UnicodeDecoder* decoder) const {
-    return maxDifferenceWith(decoder) == 0;
+  bool contains(LayoutSpan span) const {
+    LayoutSpanDecoder decoder(span);
+    return maxDifferenceWith(&decoder) == 0;
   }
 
   bool isEquivalentTo(Aliases other) {

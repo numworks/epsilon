@@ -747,8 +747,8 @@ void RackParser::parseUnit(TreeRef& leftHandSide, Token::Type stoppingType) {
 void RackParser::parseReservedFunction(TreeRef& leftHandSide,
                                        Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
-  const Builtin* builtin = Builtin::GetReservedFunction(&decoder);
+  const Builtin* builtin =
+      Builtin::GetReservedFunction(m_currentToken.toSpan());
   assert(builtin);
   privateParseReservedFunction(leftHandSide, builtin);
   isThereImplicitOperator();
@@ -919,8 +919,8 @@ void RackParser::parseSequence(TreeRef& leftHandSide, const char* name,
 void RackParser::parseSpecialIdentifier(TreeRef& leftHandSide,
                                         Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
-  const Builtin* builtin = Builtin::GetSpecialIdentifier(&decoder);
+  const Builtin* builtin =
+      Builtin::GetSpecialIdentifier(m_currentToken.toSpan());
   assert(builtin);
   leftHandSide = builtin->pushNode(0);
   assert(leftHandSide->numberOfChildren() == 0);

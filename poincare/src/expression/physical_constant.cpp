@@ -31,8 +31,7 @@ const PhysicalConstant::Properties PhysicalConstant::k_constants[] = {
 
 int PhysicalConstant::Index(LayoutSpan name) {
   for (int i = 0; const Properties& ci : k_constants) {
-    LayoutSpanDecoder decoder(name);
-    if (ci.m_aliasesList.contains(&decoder)) {
+    if (ci.m_aliasesList.contains(name)) {
       return i;
     }
     i++;

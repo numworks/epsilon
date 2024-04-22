@@ -426,8 +426,8 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
   if (identifierLength == *length) {
     return false;
   }
-  LayoutSpanDecoder subString(start, identifierLength);
-  if (Builtin::ReservedFunctionName(KLogarithm).contains(&subString)) {
+  if (Builtin::ReservedFunctionName(KLogarithm)
+          .contains(LayoutSpan(start, identifierLength))) {
     *returnType = Token::Type::ReservedFunction;
     *length = identifierLength;
     return true;
@@ -457,13 +457,13 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
     return Token::Type::Constant;
   }
 
-  LayoutSpanDecoder subString(span);
-  if (Builtin::HasCustomIdentifier(&subString)) {
+  if (Builtin::HasCustomIdentifier(span)) {
     return Token::Type::CustomIdentifier;
   }
-  if (Builtin::HasSpecialIdentifier(&subString)) {
+  if (Builtin::HasSpecialIdentifier(span)) {
     return Token::Type::SpecialIdentifier;
   }
+  LayoutSpanDecoder subString(span);
   Token::Type logicalOperatorType;
   if (ParsingHelper::IsLogicalOperator(span, &logicalOperatorType)) {
     return logicalOperatorType;
@@ -486,7 +486,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
                                       : Token::Type::Unit;
   }
 #endif
-  if (Builtin::HasReservedFunction(&subString)) {
+  if (Builtin::HasReservedFunction(span)) {
     return Token::Type::ReservedFunction;
   }
 /* When parsing for unit conversion, the identifier "m" should always

@@ -117,7 +117,7 @@ Tree* BuiltinAns::pushNode(int numberOfChildren) const {
   return "Ans"_e->clone();
 }
 
-bool Builtin::HasCustomIdentifier(UnicodeDecoder* name) {
+bool Builtin::HasCustomIdentifier(LayoutSpan name) {
   for (Aliases aliases : s_customIdentifiers) {
     if (aliases.contains(name)) {
       return true;
@@ -126,7 +126,7 @@ bool Builtin::HasCustomIdentifier(UnicodeDecoder* name) {
   return false;
 }
 
-const Builtin* Builtin::GetReservedFunction(UnicodeDecoder* name) {
+const Builtin* Builtin::GetReservedFunction(LayoutSpan name) {
   // WithLayout comes first because we want to yield Sum before ListSum
   for (const Builtin& builtin : s_builtinsWithLayout) {
     if (builtin.m_aliases.contains(name)) {
@@ -164,7 +164,7 @@ const Builtin* Builtin::GetReservedFunction(const Tree* tree) {
   return nullptr;
 }
 
-const Builtin* Builtin::GetSpecialIdentifier(UnicodeDecoder* name) {
+const Builtin* Builtin::GetSpecialIdentifier(LayoutSpan name) {
   if (s_builtinAns.m_aliases.contains(name)) {
     return &s_builtinAns;
   }

@@ -299,7 +299,8 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
               currentIdentifier.length());
       // TODO Check if N is integer
       // Check if function is "log"
-      if (k_logarithmRule.listOfBeautifiedAliases.contains(&decoder)) {
+      if (k_logarithmRule.listOfBeautifiedAliases.contains(
+              currentIdentifier.toSpan())) {
         TreeRef baseOfLog = NAry::CloneSubRange(
             h, h->indexOfChild(nextIdentifier.firstLayout()),
             h->indexOfChild(nextIdentifier.firstLayout()) +

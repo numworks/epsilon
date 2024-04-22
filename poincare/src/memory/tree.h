@@ -32,9 +32,13 @@ class Tree : public TypeBlock {
   static uint32_t nextNodeCount;
   static uint32_t nextNodeInPoolCount;
 #endif
-  // Prevent using Nodes objects directly
+  // Prevent using Tree objects directly
   Tree() = delete;
   void operator=(Tree&& other) = delete;
+
+  // Consteval constructor to build KTrees
+  consteval Tree(Block type)
+      : TypeBlock(static_cast<Type>(static_cast<uint8_t>(type))) {}
 
   static const Tree* FromBlocks(const Block* blocks) {
     return reinterpret_cast<const Tree*>(blocks);

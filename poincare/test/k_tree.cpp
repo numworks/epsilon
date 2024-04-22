@@ -90,3 +90,8 @@ QUIZ_CASE(pcj_k_rack) {
   quiz_assert(("a"_l ^ "b"_cl)->treeIsIdenticalTo("ab"_l));
   quiz_assert(("a"_cl ^ "b"_cl)->treeIsIdenticalTo("ab"_l));
 }
+
+QUIZ_CASE(pcj_k_tree_to_tree_pointer) {
+  constexpr const Tree* a = KAdd(2_e, 3_e);
+  assert(a->treeSize() == 5);
+}

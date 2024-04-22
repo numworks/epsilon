@@ -22,6 +22,24 @@ class AbstractKTree {};
 template <class C>
 concept KTreeConcept = OMG::Concept::is_derived_from<C, AbstractKTree>;
 
+/* Tree has a false flexible member m_valueBlocks[0]. It can be used to access
+ * and set the value blocks as expected but it cannot be filled in a constexpr
+ * way since it is of size zero.
+ * This sub-classes adds a real flexible member m_valueBlock[].
+ * It should be merged with Tree but Clang does not accept flexible members in
+ * base classes even when inherited classes (Rack...) have no members. */
+class ConstexprTree : public Tree {
+ public:
+  template <class... Blocks>
+  consteval ConstexprTree(Block type, Blocks... blocks)
+      : Tree(static_cast<Type>(static_cast<uint8_t>(type))),
+        m_valueBlocks{
+            static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
+
+ private:
+  ValueBlock m_valueBlocks[];
+};
+
 /* The KTree template class is the compile time representation of a constexpr
  * tree. It's complete block representation is specified as template parameters
  * in order to be able to use the address of the static singleton (in flash) as
@@ -32,8 +50,10 @@ concept KTreeConcept = OMG::Concept::is_derived_from<C, AbstractKTree>;
 template <Block... Blocks>
 class KTree : public AbstractKTree {
  public:
-  static constexpr Block k_blocks[] = {Blocks...};
   static constexpr size_t k_size = sizeof...(Blocks);
+  static_assert(k_size > 0);
+  static constexpr Block k_blocks[k_size] = {Blocks...};
+  static constexpr ConstexprTree k_tree = ConstexprTree(Blocks...);
   constexpr explicit operator const Block*() const {
 #if ASSERTION
     // Close with TreeBorder Block when cast into Tree* for navigation
@@ -42,9 +62,7 @@ class KTree : public AbstractKTree {
     return &k_blocks[0];
 #endif
   }
-  constexpr operator const Tree*() const {
-    return Tree::FromBlocks(static_cast<const Block*>(*this));
-  }
+  constexpr operator const Tree*() const { return &k_tree; }
   constexpr TypeBlock type() {
     return TypeBlock(Type(static_cast<uint8_t>(k_blocks[0])));
   }

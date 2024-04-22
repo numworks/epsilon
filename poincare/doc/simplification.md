@@ -284,7 +284,9 @@ Systematic simplification can simplify rational operations, convert non-integer 
 | sum(k, k, m, n) | n(n + 1)/2 - (m - 1)m/2 |
 | sum(k^2, k, m, n) | n(n + 1)(2n + 1)/6 - (m - 1)(m)(2m - 1)/6 |
 | sum(f, k, m, n) (with f independent of k or random nodes) | f×(1 + n - m) |
+| sum(f, k, m, n) (with m > n) | 0 |
 | prod(f, k, m, n) (with f independent of k or random nodes) | f^(1 + n - m) |
+| prod(f, k, m, n) (with m > n) | 1 |
 | gcd(B, gcd(C, A)) | gcd(A, B, C) |
 | lcm(B, lcm(C, A)) | lcm(A, B, C) |
 | gcd(A) | A |
@@ -295,7 +297,8 @@ Systematic simplification can simplify rational operations, convert non-integer 
 | quo(A, 0) | undef |
 | rem(A, B) (with A, B integers) | exact value |
 | quo(A, B) (with A, B integers) | exact value |
-| A! (with A positive integer) | Prod(k, 1, A, k) |
+| A! (with A positive integer) | exact value |
+| A! (else) | Prod(k, 1, A, k) |
 | binomial(n,k) (with valid n, k) | (n - 0)/(k - 0) × ... × (n - j)/(k - j) × ... × (n - k - 1)/(k - k + 1) |
 | permute(n, k) (with valid n, k) | n!/(n-k)! |
 | sign(A) | 0 / 1 / -1 if A sign is known |

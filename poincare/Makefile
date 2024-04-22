@@ -222,6 +222,7 @@ poincare_bench_src = $(addprefix poincare/src/old/,\
 
 
 poincare_src += $(addprefix poincare/src/,\
+  api.cpp \
   expression/advanced_operation.cpp \
   expression/advanced_reduction.cpp \
   expression/algebraic.cpp \
@@ -377,6 +378,7 @@ tests_src += $(addprefix poincare/src/,\
 )
 
 tests_src += $(addprefix poincare/test/,\
+  api.cpp \
   approximation.cpp \
   beautification.cpp \
   comparison.cpp \

@@ -1,4 +1,6 @@
 #include <poincare/api.h>
+#include <poincare/src/expression/beautification.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layoutter.h>
 #include <poincare/src/layout/parser.h>
@@ -42,29 +44,73 @@ JuniorPoolHandle JuniorPoolHandle::Builder(Internal::Tree* tree) {
   return result;
 }
 
+#if 0
 /* NewLayout */
 
 UserExpression NewLayout::parse() {
   // TODO: Pass context
-  return UserExpression::Builder(Internal::Parser::Parse(layout, nullptr));
+  return UserExpression::Builder(Internal::Parser::Parse(tree(), nullptr));
 }
 
+#endif
 /* UserExpression */
 
+UserExpression UserExpression::Builder(const Internal::Tree* tree) {
+  JuniorPoolHandle result = JuniorPoolHandle::Builder(tree);
+  return static_cast<UserExpression&>(result);
+}
+
+UserExpression UserExpression::Builder(Internal::Tree* tree) {
+  JuniorPoolHandle result = JuniorPoolHandle::Builder(tree);
+  return static_cast<UserExpression&>(result);
+}
+
+#if 0
 NewLayout UserExpression::createLayout(bool linearMode) const {
   // TODO: Pass other optional parameters
   return NewLayout::Builder(
       Internal::Layoutter::LayoutExpression(tree()->clone(), linearMode));
 }
+#endif
 
 SystemExpression UserExpression::projected() const {
   // TODO: Pass context.
   Internal::ProjectionContext context;
-  return SystemExpression::Builder(
-      Internal::Simplification::Simplify(tree()->clone(), context));
+  // TODO: Handle Store and UnitConversion like in Simplification::Simplify.
+  Internal::Tree* e = tree()->clone();
+  Internal::Simplification::PrepareForProjection(e, context);
+  Internal::Simplification::ExtractUnits(e, &context);
+  Internal::Projection::DeepSystemProject(e, context);
+  Internal::Simplification::SimplifyProjectedTree(e);
+  Internal::Simplification::TryApproximationStrategyAgain(e, context);
+  return SystemExpression::Builder(e, context.m_dimension.unit.vector);
 }
 
 /* SystemExpression */
+
+SystemExpression SystemExpression::Builder(
+    const Internal::Tree* tree, Internal::Units::DimensionVector dimension) {
+  JuniorPoolHandle result = JuniorPoolHandle::Builder(tree);
+  static_cast<SystemExpression&>(result).setDimension(dimension);
+  return static_cast<SystemExpression&>(result);
+}
+
+SystemExpression SystemExpression::Builder(
+    Internal::Tree* tree, Internal::Units::DimensionVector dimension) {
+  JuniorPoolHandle result = JuniorPoolHandle::Builder(tree);
+  static_cast<SystemExpression&>(result).setDimension(dimension);
+  return static_cast<SystemExpression&>(result);
+}
+
+UserExpression SystemExpression::beautified() const {
+  // TODO: Pass context.
+  Internal::ProjectionContext context;
+  context.m_dimension.unit.vector = m_dimension;
+  Internal::Tree* e = tree()->clone();
+  Internal::Beautification::DeepBeautify(e, context);
+  return UserExpression::Builder(e);
+}
+
 /* SystemFunction */
 /* SystemParametricFunction */
 

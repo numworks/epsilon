@@ -3,12 +3,15 @@
 
 #include <poincare/old/pool_handle.h>
 #include <poincare/old/pool_object.h>
+#include <poincare/src/expression/dimension_vector.h>
 #include <poincare/src/memory/block.h>
 
 namespace Poincare {
 
-class Internal::Tree;
-struct Internal::ContextTrees;
+namespace Internal {
+class Tree;
+struct ContextTrees;
+}  // namespace Internal
 
 class Layout;
 
@@ -28,14 +31,21 @@ class JuniorPoolObject : PoolObject {
   size_t size() const override;
   int numberOfChildren() const override { return 0; }
 
- private:
+#if POINCARE_TREE_LOG
+  void logNodeName(std::ostream& stream) const override {
+    stream << "JuniorPoolObject";
+  }
+#endif
+
   // PCJ
   const Internal::Tree* tree() const;
 
+ private:
   Internal::Block m_blocks[0];
-}
+};
 
 class JuniorPoolHandle : public PoolHandle {
+ public:
   JuniorPoolHandle() {}
   static JuniorPoolHandle Builder(const Internal::Tree* tree);
   // Eat the tree
@@ -44,11 +54,19 @@ class JuniorPoolHandle : public PoolHandle {
   static JuniorExpression Create(const Internal::Tree* structure,
                                  Internal::ContextTrees ctx);
 
+  /* Reference */
+  JuniorPoolObject* node() const {
+    assert(identifier() != PoolObject::NoNodeIdentifier &&
+           !PoolHandle::node()->isGhost());
+    return static_cast<JuniorPoolObject*>(PoolHandle::node());
+  }
+
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : node()->tree();
   }
-}
+};
 
+#if 0
 /* TODO */
 class NewLayout : private JuniorPoolHandle {
   /* TODO */
@@ -56,6 +74,8 @@ class NewLayout : private JuniorPoolHandle {
   /* TODO */
   UserExpression parse();
 };
+
+#endif
 
 /**
  * Used to:
@@ -67,7 +87,14 @@ class NewLayout : private JuniorPoolHandle {
  * Equivalent to old ReductionTarget::User + Beautification
  * Dimension may be invalid.
  */
-class UserExpression : private JuniorPoolHandle {
+class UserExpression : public JuniorPoolHandle {
+ public:
+  // Builders
+  static UserExpression Builder(const Internal::Tree* tree);
+  // Eat the tree
+  static UserExpression Builder(Internal::Tree* tree);
+
+#if 0
   /**
    * Create a layout to represent the expression
    *
@@ -82,6 +109,7 @@ class UserExpression : private JuniorPoolHandle {
    *   Div(a,b) will be rendered as a/b instead of Fraction(a,b) for instance.
    */
   Layout createLayout(bool linearMode) const;
+#endif
 
   /**
    * Turn the UserExpression into a SystemExpression
@@ -108,7 +136,14 @@ class UserExpression : private JuniorPoolHandle {
  * Equivalent to old ReductionTarget::SystemForAnalysis once reduced.
  * Dimension is consistent and may be asked at any time.
  */
-class SystemExpression : private JuniorPoolHandle {
+class SystemExpression : public JuniorPoolHandle {
+ public:
+  // Builders
+  static SystemExpression Builder(const Internal::Tree* tree,
+                                  Internal::Units::DimensionVector dimension);
+  // Eat the tree
+  static SystemExpression Builder(Internal::Tree* tree,
+                                  Internal::Units::DimensionVector dimension);
   /** Turn the expression back into a more user-friendly form.
    *
    * This includes:
@@ -117,6 +152,7 @@ class SystemExpression : private JuniorPoolHandle {
    */
   UserExpression beautified() const;  // + old target::User behavior
 
+#if 0
   /** Return an expression where every known value has been replaced by a
    * floating point approximation. Mult(π,x) -> Mult(3.14159,x) */
   SystemExpression approximated();
@@ -127,8 +163,16 @@ class SystemExpression : private JuniorPoolHandle {
   SystemExpression expanded();
 
   SystemFunction preparedForApproximation(Symbol symbol);
+#endif
+  void setDimension(Internal::Units::DimensionVector dimension) {
+    m_dimension = dimension;
+  }
+
+ private:
+  Internal::Units::DimensionVector m_dimension;
 };
 
+#if 0
 /**
  * Compute as much stuff as possible before grapher or solver.
  *
@@ -167,6 +211,7 @@ class SystemParametricFunction : private JuniorPoolHandle {
    derivative on function or SE ?
    don't forget to prepare for approx in a integral approx
  */
+#endif
 
 }  // namespace Poincare
 

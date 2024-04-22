@@ -167,6 +167,8 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
   return false;
 }
 
+/* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
+ *           output 5°C, 41°F should output 41°F). */
 bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   Units::DimensionVector dimension = projectionContext.m_dimension.unit.vector;
   if (!projectionContext.m_dimension.isUnit()) {

@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_PHYSICAL_CONSTANT_H
 
 #include <assert.h>
-#include <poincare/src/layout/rack_layout_decoder.h>
+#include <poincare/src/layout/layout_span_decoder.h>
 #include <poincare/src/memory/tree.h>
 #include <stdint.h>
 
@@ -20,11 +20,9 @@ class PhysicalConstant {
     Units::DimensionVector m_dimension;
   };
 
-  static int Index(const CPL* name, int length);
+  static int Index(LayoutSpan name);
 
-  static bool IsPhysicalConstant(const CPL* name, int length) {
-    return Index(name, length) >= 0;
-  }
+  static bool IsPhysicalConstant(LayoutSpan name) { return Index(name) >= 0; }
 
   static const Properties& GetProperties(const Tree* constant);
 

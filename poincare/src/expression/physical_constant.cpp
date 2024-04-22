@@ -29,9 +29,9 @@ const PhysicalConstant::Properties PhysicalConstant::k_constants[] = {
     Properties{"_hplanck", 6.62607015e-34, (J * s)},
 };
 
-int PhysicalConstant::Index(const CPL* name, int length) {
+int PhysicalConstant::Index(LayoutSpan name) {
   for (int i = 0; const Properties& ci : k_constants) {
-    CPLayoutDecoder decoder(name, 0, length);
+    LayoutSpanDecoder decoder(name);
     if (ci.m_aliasesList.contains(&decoder)) {
       return i;
     }

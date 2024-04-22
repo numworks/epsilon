@@ -6,6 +6,7 @@
  * the successive Tokens, that are then consumed by the Parser.
  * Each Token has a Type and a range (firstLayout, length). */
 
+#include <poincare/src/layout/layout_span_decoder.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/src/memory/tree.h>
 
@@ -65,8 +66,10 @@ class Token {
 
   Token(Type type = Type::Undefined)
       : m_type(type), m_firstLayout(), m_length(0){};
-  Token(Type type, const Tree* layout, size_t length = 1)
+  Token(Type type, const Layout* layout, size_t length = 1)
       : m_type(type), m_firstLayout(layout), m_length(length){};
+  Token(Type type, LayoutSpan span)
+      : m_type(type), m_firstLayout(span.start), m_length(span.length){};
 
   Type type() const { return m_type; }
   void setType(Type t) { m_type = t; }
@@ -77,10 +80,10 @@ class Token {
   }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
-  const Tree* firstLayout() const { return m_firstLayout; }
+  const Layout* firstLayout() const { return m_firstLayout; }
   size_t length() const { return m_length; }
 
-  void setRange(const Tree* firstLayout, size_t length) {
+  void setRange(const Layout* firstLayout, size_t length) {
     m_firstLayout = firstLayout;
     m_length = length;
   }
@@ -91,9 +94,11 @@ class Token {
     return RackLayoutDecoder(rack, start, start + m_length);
   }
 
+  LayoutSpan toSpan() const { return LayoutSpan(m_firstLayout, m_length); }
+
  private:
   Type m_type;
-  const Tree* m_firstLayout;
+  const Layout* m_firstLayout;
   size_t m_length;
 };
 

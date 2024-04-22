@@ -10,7 +10,7 @@ using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_layout_tokenize) {
   ParsingContext context(nullptr, ParsingContext::ParsingMethod::Classic);
-  Tokenizer tokenizer("ab*123.45"_l, &context);
+  Tokenizer tokenizer(Rack::From("ab*123.45"_l), &context);
   Token token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::CustomIdentifier &&
               token.length() == 1);
@@ -24,15 +24,15 @@ QUIZ_CASE(pcj_layout_tokenize) {
   token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::EndOfStream);
 
-  token = Tokenizer("log2"_l, &context).popToken();
+  token = Tokenizer(Rack::From("log2"_l), &context).popToken();
   quiz_assert(token.type() == Token::Type::ReservedFunction &&
               token.length() == 3);
 
-  token = Tokenizer("tantan"_l, &context).popToken();
+  token = Tokenizer(Rack::From("tantan"_l), &context).popToken();
   quiz_assert(token.type() == Token::Type::ReservedFunction &&
               token.length() == 3);
 
-  token = Tokenizer("atan"_l, &context).popToken();
+  token = Tokenizer(Rack::From("atan"_l), &context).popToken();
   quiz_assert(token.type() == Token::Type::ReservedFunction &&
               token.length() == 4);
 }

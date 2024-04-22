@@ -9,6 +9,7 @@
 
 // #include "helper.h"
 #include <poincare/src/expression/builtin.h>
+#include <poincare/src/memory/tree_ref.h>
 
 #include "parsing_context.h"
 #include "tokenizer.h"
@@ -32,16 +33,16 @@ class RackParser {
    * but the parser will set parseForAssignment = false when it encounters a
    * "=". (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as
    * f(x)=xy) */
-  RackParser(const Tree* node, Poincare::Context* context, int textEnd = -1,
+  RackParser(const Tree* rack, Poincare::Context* context, int textEnd = -1,
              ParsingContext::ParsingMethod parsingMethod =
                  ParsingContext::ParsingMethod::Classic)
       : m_parsingContext(context, parsingMethod),
-        m_tokenizer(node, &m_parsingContext, 0, textEnd),
+        m_tokenizer(Rack::From(rack), &m_parsingContext, 0, textEnd),
         m_currentToken(Token(Token::Type::Undefined)),
         m_nextToken(Token(Token::Type::Undefined)),
         m_pendingImplicitOperator(false),
         m_waitingSlashForMixedFraction(false),
-        m_root(node) {}
+        m_root(rack) {}
 
   Tree* parse();
 

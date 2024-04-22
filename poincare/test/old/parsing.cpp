@@ -14,7 +14,7 @@ using Internal::Token;
 using Internal::Tokenizer;
 
 void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
-  Internal::Tree* inputLayout = Internal::RackFromText(string);
+  Internal::Rack* inputLayout = Internal::RackFromText(string);
   ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer(inputLayout, &parsingContext);
@@ -44,7 +44,7 @@ void assert_tokenizes_as_constant(const char* string) {
 }
 
 void assert_tokenizes_as_undefined_token(const char* string) {
-  Internal::Tree* inputLayout = Internal::RackFromText(string);
+  Internal::Rack* inputLayout = Internal::RackFromText(string);
   ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer(inputLayout, &parsingContext);

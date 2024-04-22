@@ -103,10 +103,9 @@ Token Tokenizer::popNumber() {
   size_t fractionalPartLength = 0;
 
   // Check for binary or hexadecimal number
-  if (integralPartLength == 1 &&
-      m_decoder.codePointAt(integralPartText) == '0') {
+  if (integralPartLength == 1 && m_decoder.codePoint() == '0') {
     // Save string position if no binary/hexadecimal number
-    size_t string = m_decoder.position();
+    LayoutSpanDecoder savedPosition = m_decoder;
     // Look for "0b"
     bool binary = canPopCodePoint('b');
     bool hexa = false;
@@ -118,14 +117,13 @@ Token Tokenizer::popNumber() {
       size_t binaryOrHexaLength =
           binary ? popBinaryDigits() : popHexadecimalDigits();
       if (binaryOrHexaLength > 0) {
-        Token result(binary ? Token::Type::BinaryNumber
-                            : Token::Type::HexadecimalNumber);
-        result.setRange(m_decoder.layoutAt(integralPartText),
-                        integralPartLength + 1 + binaryOrHexaLength);
+        Token result(
+            binary ? Token::Type::BinaryNumber : Token::Type::HexadecimalNumber,
+            m_decoder.layout(), integralPartLength + 1 + binaryOrHexaLength);
         return result;
       } else {
         // Rewind before 'b'/'x' letter
-        m_decoder.setPosition(string);
+        m_decoder = savedPosition;
       }
     }
   }
@@ -167,7 +165,7 @@ Token Tokenizer::popNumber() {
       fractionalPartLength, exponentIsNegative, exponentPartText,
       exponentPartLength));
 #endif
-  result.setRange(m_decoder.layoutAt(integralPartText),
+  result.setRange(m_decoder.layout(),
                   exponentPartText - integralPartText + exponentPartLength);
   return result;
 }
@@ -184,7 +182,7 @@ Token Tokenizer::popToken() {
   }
 
   if (!m_decoder.nextLayoutIsCodePoint()) {
-    const Tree* layout = m_decoder.nextLayout();
+    const Layout* layout = m_decoder.nextLayout();
     Token::Type type = Token::Type::Layout;
     if (layout->isVerticalOffsetLayout()) {
       if (VerticalOffset::IsSuffix(layout)) {
@@ -219,8 +217,7 @@ Token Tokenizer::popToken() {
           popImplicitAdditionBetweenUnits();
       if (lengthOfImplicitAdditionBetweenUnits > 0) {
         return Token(Token::Type::ImplicitAdditionBetweenUnits,
-                     m_decoder.layoutAt(start),
-                     lengthOfImplicitAdditionBetweenUnits);
+                     m_decoder.layout(), lengthOfImplicitAdditionBetweenUnits);
       }
     }
     // Pop number
@@ -261,15 +258,14 @@ Token Tokenizer::popToken() {
     /* The dot code point is the second last of that range, but it is matched
      * before (with popNumber). */
     assert(c != '.');
-    return Token(typeForCodePoint[c - '('], m_decoder.layoutAt(start));
+    return Token(typeForCodePoint[c - '('], m_decoder.layout());
   }
 
   Type comparisonOperatorType;
   size_t comparisonOperatorLength;
-  if (Binary::IsComparisonOperatorString(
-          LayoutSpan(static_cast<const Layout*>(m_decoder.layoutAt(start)),
-                     m_decoder.end() - start),
-          &comparisonOperatorType, &comparisonOperatorLength)) {
+  if (Binary::IsComparisonOperatorString(m_decoder.toSpan(),
+                                         &comparisonOperatorType,
+                                         &comparisonOperatorLength)) {
     /* Change precedence of equal when assigning a function.
      * This ensures that "f(x) = x and 1" is parsed as "f(x) = (x and 1)" and
      * not "(f(x) = x) and 1" */
@@ -278,10 +274,10 @@ Token Tokenizer::popToken() {
                              ParsingContext::ParsingMethod::Assignment
                      ? Token::Type::AssignmentEqual
                      : Token::Type::ComparisonOperator);
-    result.setRange(m_decoder.layoutAt(start), comparisonOperatorLength);
+    result.setRange(m_decoder.layout(), comparisonOperatorLength);
     /* Set decoder after comparison operator in case not all codepoints were
      * popped. */
-    m_decoder.setPosition(start + comparisonOperatorLength);
+    m_decoder.skip(comparisonOperatorLength);
     return result;
   }
 
@@ -290,7 +286,7 @@ Token Tokenizer::popToken() {
   }
 
   // All the remaining cases are single codepoint tokens
-  const Tree* layout = m_decoder.layoutAt(start);
+  const Layout* layout = m_decoder.layout();
   switch (c) {
     case UCodePointMultiplicationSign:
     case UCodePointMiddleDot:
@@ -328,9 +324,10 @@ Token Tokenizer::popToken() {
 // ========== Identifiers ==========
 
 void Tokenizer::fillIdentifiersList() {
-  size_t identifiersStringStart = currentPosition();
+  const Layout* identifiersStringStart =
+      m_decoder.layout();  // currentPosition();
   popIdentifiersString();
-  size_t currentStringEnd = currentPosition();
+  const Layout* currentStringEnd = m_decoder.layout();  // currentPosition();
   assert(currentStringEnd - identifiersStringStart > 0);
   while (identifiersStringStart < currentStringEnd) {
     if (m_numberOfStoredIdentifiers >= k_maxNumberOfIdentifiersInList) {
@@ -350,25 +347,37 @@ void Tokenizer::fillIdentifiersList() {
    * If it's the case, rewind decoder to the end of the right-most parsed token
    * */
   Token rightMostParsedToken = m_storedIdentifiersList[0];
-  m_decoder.setPosition(rightMostParsedToken.firstLayout());
-  m_decoder.setPosition(m_decoder.position() + rightMostParsedToken.length());
+#if 0
+  m_decoder = LayoutSpanDecoder(rightMostParsedToken.firstLayout() +
+                                rightMostParsedToken.length());
+#endif
 }
 
-Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart,
-                                               size_t* stringEnd) {
-  RackLayoutDecoder decoder(m_decoder.mainLayout(), stringStart);
+int numberOfNextTreeTo(const Tree* from, const Tree* to) {
+  int i = 0;
+  while (from < to) {
+    from = from->nextTree();
+    i++;
+  }
+  assert(from == to);
+  return i;
+}
+
+Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
+                                               const Layout** stringEnd) {
+  int length = numberOfNextTreeTo(stringStart, *stringEnd);
+  LayoutSpanDecoder decoder(stringStart, length);
   Token::Type tokenType = Token::Type::Undefined;
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
    * then 'cd' and then 'd' until you find a defined identifier. */
-  size_t nextTokenStart = stringStart;
+  const Layout* nextTokenStart = stringStart;
   size_t tokenLength;
   while (tokenType == Token::Type::Undefined && nextTokenStart < *stringEnd) {
     stringStart = nextTokenStart;
     tokenLength = *stringEnd - stringStart;
-    tokenType = stringTokenType(
-        CPL::FromRack(m_decoder.mainLayout(), stringStart), &tokenLength);
+    tokenType = stringTokenType(m_decoder.layout(), &tokenLength);
     decoder.nextCodePoint();
-    nextTokenStart = decoder.position();
+    nextTokenStart = decoder.layout();
   }
   if (stringStart + tokenLength != *stringEnd) {
     /* The token doesn't go to the end of the string.
@@ -381,18 +390,17 @@ Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart,
     m_numberOfStoredIdentifiers = 0;
   }
   *stringEnd = stringStart;
-  return Token(tokenType, m_decoder.layoutAt(stringStart), tokenLength);
+  return Token(tokenType, m_decoder.layout(), tokenLength);
 }
 
-static bool stringIsACodePointFollowedByNumbers(const CPL* string,
-                                                size_t length) {
-  const CPL* end = string + length;
-  CodePoint c = *string++;
+static bool stringIsACodePointFollowedByNumbers(LayoutSpan span) {
+  LayoutSpanDecoder decoder(span);
+  CodePoint c = decoder.nextCodePoint();
   if (!IsNonDigitalIdentifierMaterial(c)) {
     return false;
   }
-  while (string < end) {
-    CodePoint c = *string++;
+  while (!decoder.isEmpty()) {
+    CodePoint c = decoder.nextCodePoint();
     if (!c.isDecimalDigit()) {
       return false;
     }
@@ -401,11 +409,12 @@ static bool stringIsACodePointFollowedByNumbers(const CPL* string,
 }
 
 static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
-    const CPL* string, size_t* length, Token::Type* returnType) {
+    const Layout* start, size_t* length, Token::Type* returnType) {
   size_t identifierLength = 0;
-  const CPL* temp = string;
+  const Layout* temp = start;
+  LayoutSpanDecoder decoder(start, *length);
   while (identifierLength < *length) {
-    CodePoint c = *temp++;
+    CodePoint c = decoder.nextCodePoint();
     if (c.isDecimalDigit()) {
       break;
     }
@@ -414,7 +423,7 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
   if (identifierLength == *length) {
     return false;
   }
-  CPLayoutDecoder subString(string, 0, identifierLength);
+  LayoutSpanDecoder subString(start, identifierLength);
   if (Builtin::ReservedFunctionName(KLogarithm).contains(&subString)) {
     *returnType = Token::Type::ReservedFunction;
     *length = identifierLength;
@@ -423,25 +432,29 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
   return false;
 }
 
-Token::Type Tokenizer::stringTokenType(const CPL* string,
+Token::Type Tokenizer::stringTokenType(const Layout* start,
                                        size_t* length) const {
+  LayoutSpan span(start, *length);
+#if 0
   // If there are two \" around an identifier, it is a forced custom identifier
   const CPL* lastCharOfString = string + *length - 1;
-  if (*length > 2 && string[0] == '"' && *lastCharOfString == '"' &&
+  if (*length > 2 && CodePointLayout::IsCodePoint(start, '"') &&
+      *lastCharOfString == '"' &&
       CPL::CodePointLSearch(string + 1, '"', lastCharOfString) ==
           lastCharOfString) {
     return Token::Type::CustomIdentifier;
   }
+#endif
 #if 0
   if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
     return Token::Type::SpecialIdentifier;
   }
 #endif
-  if (PhysicalConstant::IsPhysicalConstant(string, *length)) {
+  if (PhysicalConstant::IsPhysicalConstant(span)) {
     return Token::Type::Constant;
   }
 
-  CPLayoutDecoder subString(string, 0, *length);
+  LayoutSpanDecoder subString(span);
   if (Builtin::HasCustomIdentifier(&subString)) {
     return Token::Type::CustomIdentifier;
   }
@@ -449,12 +462,10 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
     return Token::Type::SpecialIdentifier;
   }
   Token::Type logicalOperatorType;
-  if (ParsingHelper::IsLogicalOperator(
-          LayoutSpan(reinterpret_cast<const Layout*>(string), *length),
-          &logicalOperatorType)) {
+  if (ParsingHelper::IsLogicalOperator(span, &logicalOperatorType)) {
     return logicalOperatorType;
   }
-  if (string[0] == '_') {
+  if (CodePointLayout::IsCodePoint(start, '_')) {
     if (Units::Unit::CanParse(&subString, nullptr, nullptr)) {
       return Token::Type::Unit;
     }
@@ -512,14 +523,13 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
 // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
 #endif
   Token::Type type;
-  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(string, length,
+  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(span.start, length,
                                                         &type)) {
     // If true, the length has been modified to match the end of the identifier
     return type;
   }
   // "x12" should not be parsed as "x*12" but "x12"
-  if (!hasUnitOnlyCodePoint &&
-      stringIsACodePointFollowedByNumbers(string, *length)) {
+  if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(span)) {
     return Token::Type::CustomIdentifier;
   }
   return Token::Type::Undefined;
@@ -570,8 +580,8 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     length += lengthOfPotentialUnit;
     const Units::Representative* unitRepresentative;
     const Units::Prefix* unitPrefix;
-    RackLayoutDecoder decoder(m_decoder.mainLayout(), currentStringStart,
-                              currentStringStart + lengthOfPotentialUnit);
+    LayoutSpanDecoder decoder(m_decoder.layout(),
+                              lengthOfPotentialUnit); /* TODO -1 */
     if (!Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
       // Second element is not a unit : the string is not an implicit addition
       isImplicitAddition = false;
@@ -598,7 +608,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     return length;
   }
   // Rewind decoder if nothing was found
-  m_decoder.setPosition(stringStart);
+  goToPosition(stringStart);
   return 0;
 }
 

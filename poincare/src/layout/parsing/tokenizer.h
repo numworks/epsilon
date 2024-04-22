@@ -7,7 +7,7 @@
  * Tokenizer determines a Type and may save other relevant data intended for the
  * Parser. */
 
-#include <poincare/src/layout/rack_layout_decoder.h>
+#include <poincare/src/layout/layout_span_decoder.h>
 
 #include "parsing_context.h"
 #include "token.h"
@@ -18,19 +18,21 @@ class Tokenizer {
   friend class InputBeautification;
 
  public:
-  Tokenizer(const Tree* node, ParsingContext* parsingContext,
+  Tokenizer(const Rack* rack, ParsingContext* parsingContext,
             size_t textStart = 0, int textEnd = -1)
-      : m_decoder(node, textStart, textEnd),
+      : m_decoder(rack, textStart, textEnd),
         m_parsingContext(parsingContext),
         m_numberOfStoredIdentifiers(0) {}
-  Tokenizer(RackLayoutDecoder& decoder, ParsingContext* parsingContext)
+  Tokenizer(LayoutSpanDecoder& decoder, ParsingContext* parsingContext)
       : m_decoder(decoder),
         m_parsingContext(parsingContext),
         m_numberOfStoredIdentifiers(0) {}
   Token popToken();
 
   // Rewind tokenizer
-  void goToPosition(size_t position) { m_decoder.setPosition(position); }
+  void goToPosition(size_t position) {
+    assert(false); /*m_decoder.setPosition(position);*/
+  }
   size_t currentPosition() { return m_decoder.position(); }
   size_t endPosition() { return m_decoder.end(); }
 
@@ -122,8 +124,9 @@ class Tokenizer {
    * */
   size_t popIdentifiersString();
   void fillIdentifiersList();
-  Token popLongestRightMostIdentifier(size_t stringStart, size_t* stringEnd);
-  Token::Type stringTokenType(const CPL* string, size_t* length) const;
+  Token popLongestRightMostIdentifier(const Layout* stringStart,
+                                      const Layout** stringEnd);
+  Token::Type stringTokenType(const Layout* start, size_t* length) const;
 
   /* ========== IMPLICIT ADDITION BETWEEN UNITS ==========
    * An implicit addition between units is an expression like "3h40min32.5s".
@@ -137,7 +140,7 @@ class Tokenizer {
    * Same for "2h30mincos(x) = 2*h30*min*cos(x)". */
   size_t popImplicitAdditionBetweenUnits();
 
-  RackLayoutDecoder m_decoder;
+  LayoutSpanDecoder m_decoder;
   ParsingContext* m_parsingContext;
   /* This list is used to memoize the identifiers we already parsed.
    * Ex: When parsing abc, we first turn it into ab*c and store "c",

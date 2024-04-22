@@ -14,7 +14,9 @@
 #include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/unit.h>
+#include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parser.h>
+#include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -723,9 +725,7 @@ void RackParser::parsePercent(TreeRef& leftHandSide, Token::Type stoppingType) {
 void RackParser::parseConstant(TreeRef& leftHandSide,
                                Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  int index = PhysicalConstant::Index(
-      CPL::FromRack(m_root, m_root->indexOfChild(m_currentToken.firstLayout())),
-      m_currentToken.length());
+  int index = PhysicalConstant::Index(m_currentToken.toSpan());
   assert(index >= 0);
   leftHandSide = SharedTreeStack->push<Type::PhysicalConstant>(uint8_t(index));
   isThereImplicitOperator();

@@ -3,6 +3,7 @@
 #include "autocompleted_pair.h"
 #include "indices.h"
 #include "parsing/tokenizer.h"
+#include "rack_layout_decoder.h"
 
 namespace Poincare::Internal {
 
@@ -239,8 +240,9 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   /* The cursor is inside h and we need to move it inside clone for it to follow
    * editions. Since they are the still the same, we swap them. */
   h->swapWithTree(clone);
-  Tokenizer tokenizer = Tokenizer(h, &parsingContext, firstIndexOfIdentifier,
-                                  rightmostIndexToBeautify + 1);
+  Tokenizer tokenizer =
+      Tokenizer(Rack::From(h), &parsingContext, firstIndexOfIdentifier,
+                rightmostIndexToBeautify + 1);
   Token currentIdentifier = Token(Token::Type::Undefined);
   Token nextIdentifier = tokenizer.popToken();
   bool layoutsWereBeautified = false;

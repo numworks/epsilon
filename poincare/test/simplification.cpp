@@ -815,9 +815,8 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   assert(Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() == 0);
 
   ProjectionContext projCtx = {
-      .m_context = &globalContext,
-      .m_symbolic =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition};
+      .m_symbolic = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_context = &globalContext};
 
   store("4→y", &globalContext);
   simplifies_to("x+y", "x+4", projCtx);

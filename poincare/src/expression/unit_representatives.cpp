@@ -57,11 +57,8 @@ const Temperature::Representatives<const Temperature>
         .celsius = {"°C", 1_e, None, None},
         .fahrenheit = {"°F", 5_e / 9_e, None, None}};
 
-/* KTree to const Block * cast must be written explicitely because it is marked
- * explicit, otherwise it goes through const Tree * which is not constexpr */
-const Block* Temperature::celsiusOrigin = static_cast<const Block*>(273.15_e);
-const Block* Temperature::fahrenheitOrigin =
-    static_cast<const Block*>(459.67_e);
+const Tree* Temperature::celsiusOrigin = 273.15_e;
+const Tree* Temperature::fahrenheitOrigin = 459.67_e;
 
 const AmountOfSubstance::Representatives<const AmountOfSubstance>
     AmountOfSubstance::representatives = {.mole = {"mol", 1_e, All, LongScale}};

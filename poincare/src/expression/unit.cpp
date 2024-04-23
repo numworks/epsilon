@@ -866,8 +866,8 @@ void Unit::RemoveTemperatureUnit(Tree* root) {
   root->moveTreeOverTree(PatternMatching::Create(
       KMult(KAdd(KA, KB), KC),
       {.KA = root,
-       .KB = Tree::FromBlocks((isCelsius ? Temperature::celsiusOrigin
-                                         : Temperature::fahrenheitOrigin)),
+       .KB = isCelsius ? Temperature::celsiusOrigin
+                       : Temperature::fahrenheitOrigin,
        .KC = representative->ratioExpressionReduced()}));
 }
 

@@ -124,9 +124,7 @@ class Representative {
   bool canParse(const char* symbol, size_t length, const Prefix** prefix) const;
   bool canPrefix(const Prefix* prefix, bool input) const;
   const Prefix* findBestPrefix(double value, double exponent) const;
-  const Tree* ratioExpressionReduced() const {
-    return Tree::FromBlocks(m_ratioExpression);
-  }
+  const Tree* ratioExpressionReduced() const { return m_ratioExpression; }
 
  protected:
   // TODO it may be marked consteval with Clang but not with GCC
@@ -135,7 +133,7 @@ class Representative {
                            Prefixable inputPrefixable,
                            Prefixable outputPrefixable)
       : m_rootSymbols(rootSymbol),
-        m_ratioExpression(static_cast<const Block*>(KTree(ratioExpression))),
+        m_ratioExpression(ratioExpression),
         m_inputPrefixable(inputPrefixable),
         m_outputPrefixable(outputPrefixable) {}
 
@@ -150,7 +148,7 @@ class Representative {
    * m_ratio for gram is 1 (as k is its best prefix and _kg is SI)
    * */
 
-  const Block* m_ratioExpression;
+  const Tree* m_ratioExpression;
   const Prefixable m_inputPrefixable;
   const Prefixable m_outputPrefixable;
 };

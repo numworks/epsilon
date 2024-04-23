@@ -33,14 +33,14 @@ class Tree : public TypeBlock {
   static uint32_t nextNodeInPoolCount;
 #endif
 
-#ifdef __clang__
-  /* With GCC we rely on brace the initialization that works with flexible
-   * members, but it is not yet supported by Clang. */
+  // Prevent using Tree objects directly
+  Tree() = delete;
+  void operator=(Tree&& other) = delete;
 
   // Consteval constructor to build KTrees
   consteval Tree(Block type)
-      : TypeBlock(static_cast<Type>(static_cast<uint8_t>(type))) {}
-#endif
+      : TypeBlock(static_cast<Type>(static_cast<uint8_t>(type))),
+        m_valueBlocks{} {}
 
   static const Tree* FromBlocks(const Block* blocks) {
     return reinterpret_cast<const Tree*>(blocks);
@@ -380,10 +380,6 @@ class Tree : public TypeBlock {
   using TypeBlock::operator==, TypeBlock::operator!=,
       TypeBlock::operator Internal::Type;
 
-#ifndef __clang__
-  // Brace initialization of constexpr Trees needs an aggregate type
- public:
-#endif
   // A tree is made of 1 TypeBlock (inherited) and nodeSize()-1 ValueBlocks
   // Should be last - and most likely only - member
   ValueBlock m_valueBlocks[0];

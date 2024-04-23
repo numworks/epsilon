@@ -25,47 +25,33 @@ concept KTreeConcept = OMG::Concept::is_derived_from<C, AbstractKTree>;
 /* Tree has a false flexible member m_valueBlocks[0]. It can be used to access
  * and set the value blocks as expected but it cannot be filled in a constexpr
  * way since it is of size zero.
- * This sub-classes adds a real flexible member m_valueBlock[].
- * It should be merged with Tree but Clang does not accept flexible members in
- * base classes even when inherited classes (Rack...) have no members. */
+ * This sub-class adds an array member m_valueBlock[] of the suitable size.
+ *
+ * As an alternative, we could use a real flexible member directly in Tree but
+ * Clang does not accept flexible members in base classes even when inherited
+ * classes (Rack...) have no members. */
+template <size_t N>
 struct ConstexprTree : public Tree {
-#ifdef __clang__
   template <class... Blocks>
   consteval ConstexprTree(Block type, Blocks... blocks)
       : Tree(static_cast<Type>(static_cast<uint8_t>(type))),
         m_valueBlocks{
             static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
-#endif
-  ValueBlock m_valueBlocks[];
-};
 
-/* This helper has a simple role : split the first Block (the type) out of the
- * Blocks... template parameters pack */
-template <Block type, Block... blocks>
-struct ConstexprTreeHelper {
-  static constexpr ConstexprTree k_tree =
-#ifdef __clang__
-      ConstexprTree(type, blocks...);
-#else
-      {Tree(static_cast<Type>(static_cast<uint8_t>(type))),
-       {static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...}};
-#endif
+  ValueBlock m_valueBlocks[N - 1];  // 1 for the type, N-1 for the values
 };
 
 /* The KTree template class is the compile time representation of a constexpr
  * tree. It's complete block representation is specified as template parameters
  * in order to be able to use the address of the static singleton (in flash) as
  * a Tree*. It also eliminated identical trees since their are all using the
- * same specialized function.
- */
+ * same specialized function. */
 template <Block... Blocks>
-class KTree : public AbstractKTree {
- public:
+struct KTree : public AbstractKTree {
   static constexpr size_t k_size = sizeof...(Blocks);
   static_assert(k_size > 0);
   static constexpr Block k_blocks[k_size] = {Blocks...};
-  static constexpr ConstexprTree k_tree =
-      ConstexprTreeHelper<Blocks...>::k_tree;
+  static constexpr ConstexprTree<k_size> k_tree{Blocks...};
   constexpr explicit operator const Block*() const {
 #if ASSERTION
     // Close with TreeBorder Block when cast into Tree* for navigation

@@ -26,6 +26,7 @@ const char* DerivativeColumnParameterController::title() {
 void DerivativeColumnParameterController::viewWillAppear() {
   assert(m_parameterDelegate);
   m_hideCell.label()->setMessage(m_parameterDelegate->hideDerivativeMessage());
+  m_colorCell.setVisible(m_parameterDelegate->showColorCell());
   m_colorCell.subLabel()->setMessage(
       ColorNames::NameForColor(function()->color(m_derivationOrder)));
   ColumnParameterController::viewWillAppear();

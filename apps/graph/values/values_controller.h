@@ -70,6 +70,7 @@ class ValuesController : public Shared::ValuesController,
 
   // ParameterDelegate
   bool usePersonalizedTitle() const override { return true; }
+  bool showColorCell() const override { return false; }
   I18n::Message hideDerivativeMessage() const override {
     return I18n::Message::HideDerivativeColumn;
   }

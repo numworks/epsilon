@@ -37,6 +37,7 @@ class CurveParameterController
 
   // ParameterDelegate
   bool usePersonalizedTitle() const override { return false; }
+  bool showColorCell() const override { return true; }
   I18n::Message hideDerivativeMessage() const override {
     return I18n::Message::HideDerivative;
   }

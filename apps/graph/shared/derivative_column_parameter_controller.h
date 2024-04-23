@@ -9,9 +9,14 @@
 
 namespace Graph {
 
+/* TODO: ParameterDelegate should only ask if the parameter is about Values or
+ * Plot, but first we would need to factorise inside ContinuousFunction with an
+ * enum {Plot,Values}. Most of the delegate's methods could then be factorized.
+ */
 class ParameterDelegate {
  public:
   virtual bool usePersonalizedTitle() const = 0;
+  virtual bool showColorCell() const = 0;
   virtual I18n::Message hideDerivativeMessage() const = 0;
   virtual void hideDerivative(Ion::Storage::Record record,
                               int derivationOrder) = 0;

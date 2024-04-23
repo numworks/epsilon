@@ -27,7 +27,8 @@ struct Dimension {
     Point,
   };
 
-  Dimension(DimensionType type = DimensionType::Scalar) : type(type) {
+  constexpr Dimension(DimensionType type = DimensionType::Scalar)
+      : type(type), matrix({0, 0}) {
     assert(type == DimensionType::Scalar || type == DimensionType::Boolean ||
            type == DimensionType::Point);
   };

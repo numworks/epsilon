@@ -17,9 +17,10 @@ using namespace Poincare::Internal;
  * 12 and ADVANCED_MAX_BREADTH to 128 */
 #define ACTIVATE_IF_INCREASED_PATH_SIZE 0
 
-ProjectionContext cartesianCtx = {.m_complexFormat = ComplexFormat::Cartesian};
+constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
+                                                ComplexFormat::Cartesian};
 // Default complex format
-ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
+constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 
 void deepSystematicReduce_and_operation_to(const Tree* input,
                                            Tree::Operation operation,

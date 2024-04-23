@@ -1,6 +1,8 @@
 import argparse
-import helper
-import args_types
+
+from helpers.args_types import *
+from helpers.screenshot_helper import *
+
 
 parser = argparse.ArgumentParser(
     description="This script takes a screenshot for each event of a scenario and creates a gif."
@@ -8,13 +10,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "executable",
     metavar="EXE",
-    type=args_types.existing_file,
+    type=existing_file,
     help="epsilon executable",
 )
 parser.add_argument(
     "state_file",
     metavar="STATE_FILE",
-    type=args_types.existing_state_file,
+    type=existing_state_file,
     help="state file (with extension .nws)",
 )
 parser.add_argument(
@@ -24,7 +26,7 @@ parser.add_argument(
 
 def main():
     args = parser.parse_args()
-    helper.generate_all_screenshots_and_create_gif(
+    generate_all_screenshots_and_create_gif(
         args.state_file, args.executable, args.output_folder, False
     )
 

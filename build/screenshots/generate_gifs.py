@@ -1,6 +1,8 @@
 import os, shutil, glob, argparse
-import helper
-import args_types
+
+from helpers.args_types import *
+from helpers.miscellaneous import *
+from helpers.screenshot_helper import *
 
 parser = argparse.ArgumentParser(
     description="This script generates gifs for all scenarios in the screenshots test folder."
@@ -8,7 +10,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "executable",
     metavar="EXE",
-    type=args_types.existing_file,
+    type=existing_file,
     help="epsilon executable to test",
 )
 parser.add_argument(
@@ -25,9 +27,9 @@ def main():
 
     # Create output folder
     output_folder = "generate_gifs_output"
-    helper.clean_or_create_folder(output_folder)
+    clean_or_create_folder(output_folder)
 
-    regex = helper.dataset() + "/" + args.filter + "*"
+    regex = dataset() + "/" + args.filter + "*"
     print("Generating gifs of all scenarios matching " + regex)
     print("------------------------------")
 
@@ -37,12 +39,12 @@ def main():
             continue
 
         scenario_name = os.path.split(scenario_folder)[-1]
-        state_file = helper.get_file_with_extension(scenario_folder, ".nws")
+        state_file = get_file_with_extension(scenario_folder, ".nws")
         if state_file == "":
             continue
 
         # Create gif
-        helper.create_gif_from_state_file(
+        create_gif_from_state_file(
             state_file, args.executable, output_folder, scenario_name
         )
 

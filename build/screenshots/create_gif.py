@@ -1,6 +1,8 @@
 import argparse
-import args_types
-import helper
+
+from helpers.args_types import *
+from helpers.gif_helper import *
+from helpers.screenshot_helper import *
 
 parser = argparse.ArgumentParser(
     description="This script creates a gif from a folder of screenshots"
@@ -8,7 +10,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "images_folder",
     metavar="FOLDER",
-    type=args_types.existing_directory,
+    type=existing_directory,
     help="folder containing a subfolder images",
 )
 parser.add_argument(
@@ -27,8 +29,8 @@ parser.add_argument(
 
 def main():
     args = parser.parse_args()
-    helper.create_gif_from_images(
-        helper.list_images_in_folder(helper.folder_images(args.images_folder)),
+    create_gif_from_images(
+        list_images_in_folder(folder_images(args.images_folder)),
         args.images_folder,
         delay=args.delay,
         end_delay=args.end_delay,

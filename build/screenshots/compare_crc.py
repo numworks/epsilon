@@ -1,8 +1,13 @@
 import sys, os, shutil, argparse, re
-import helper
-import args_types
-from print_format import bold, red, green, print_underlined
 from concurrent.futures import ThreadPoolExecutor
+
+from helpers.args_types import *
+from helpers.print_format import *
+from helpers.crc_helper import *
+from helpers.gif_helper import *
+from helpers.miscellaneous import *
+from helpers.screenshot_helper import *
+
 
 parser = argparse.ArgumentParser(
     description="This script compares the crc32 of the test screenshots dataset with crc32 generated from a given epsilon executable."
@@ -10,13 +15,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "executable",
     metavar="EXE",
-    type=args_types.existing_file,
+    type=existing_file,
     help="epsilon executable to test",
 )
 parser.add_argument(
     "-r",
     "--ref",
-    type=args_types.existing_file,
+    type=existing_file,
     help="epsilon reference executable, only used for failed scenari to generate screenshots at each step",
 )
 parser.add_argument(
@@ -36,10 +41,10 @@ parser.add_argument(
 
 def run_test(scenario_name, state_file, executable, computed_crc32_list):
     try:
-        p = helper.compute_crc32_process(state_file, executable)
+        p = compute_crc32_process(state_file, executable)
         p.wait()
         print("Computing crc32 of", scenario_name)
-        computed_crc32_list.append((scenario_name, helper.find_crc32_in_log(p.stdout)))
+        computed_crc32_list.append((scenario_name, find_crc32_in_log(p.stdout)))
     except:  # Handle Interrupt exceptions
         sys.exit(1)
 
@@ -50,7 +55,7 @@ def main():
 
     # Create output folder
     output_folder = "compare_crc_output"
-    helper.clean_or_create_folder(output_folder)
+    clean_or_create_folder(output_folder)
 
     # Collect data from dataset
     print("\nCollecting data")
@@ -59,19 +64,17 @@ def main():
     computed_crc32_list = []
 
     with ThreadPoolExecutor(max_workers=8) as pool:
-        for scenario_name in sorted(os.listdir(helper.dataset())):
+        for scenario_name in sorted(os.listdir(dataset())):
             if not re.match(args.filter, scenario_name):
                 continue
 
-            scenario_folder = helper.folder(scenario_name)
+            scenario_folder = folder(scenario_name)
             if not os.path.isdir(scenario_folder):
                 continue
 
             print("Collecting data from", scenario_folder)
-            state_file = helper.get_file_with_extension(scenario_folder, ".nws")
-            reference_crc32_file = helper.get_file_with_extension(
-                scenario_folder, ".txt"
-            )
+            state_file = get_file_with_extension(scenario_folder, ".nws")
+            reference_crc32_file = get_file_with_extension(scenario_folder, ".txt")
             if state_file == "" or reference_crc32_file == "":
                 ignored = ignored + 1
                 continue
@@ -90,11 +93,11 @@ def main():
     fails = 0
     count = 0
     for scenario_name, computed_crc32 in computed_crc32_list:
-        scenario_folder = helper.folder(scenario_name)
+        scenario_folder = folder(scenario_name)
         assert os.path.isdir(scenario_folder)
-        state_file = helper.get_file_with_extension(scenario_folder, ".nws")
+        state_file = get_file_with_extension(scenario_folder, ".nws")
         assert state_file != ""
-        reference_crc32_file = helper.get_file_with_extension(scenario_folder, ".txt")
+        reference_crc32_file = get_file_with_extension(scenario_folder, ".txt")
         assert reference_crc32_file != ""
 
         with open(reference_crc32_file) as f:
@@ -132,18 +135,16 @@ def main():
             # Generate all screenshots and create a gif
             print_underlined("Tested executable")
             computed_folder = os.path.join(output_scenario_folder, "computed")
-            list_computed_images = helper.generate_all_screenshots_and_create_gif(
+            list_computed_images = generate_all_screenshots_and_create_gif(
                 state_file, args.executable, computed_folder
             )
-            helper.store_crc32(
-                computed_crc32, os.path.join(computed_folder, "crc32.txt")
-            )
+            store_crc32(computed_crc32, os.path.join(computed_folder, "crc32.txt"))
 
             # Compare with ref
             if args.ref is not None:
                 print_underlined("Reference executable")
                 reference_folder = os.path.join(output_scenario_folder, "reference")
-                list_reference_images = helper.generate_all_screenshots_and_create_gif(
+                list_reference_images = generate_all_screenshots_and_create_gif(
                     state_file, args.ref, reference_folder
                 )
                 shutil.copy(
@@ -152,14 +153,14 @@ def main():
 
                 # Generate diff gif
                 print_underlined("Diff")
-                helper.create_diff_gif(
+                create_diff_gif(
                     list_reference_images, list_computed_images, output_scenario_folder
                 )
 
             if args.update:
                 # Update crc32
                 print_underlined("Updating crc32")
-                helper.store_crc32(computed_crc32, reference_crc32_file)
+                store_crc32(computed_crc32, reference_crc32_file)
 
             print("--------")
 

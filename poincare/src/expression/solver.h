@@ -3,6 +3,7 @@
 
 #include <poincare/src/memory/tree.h>
 
+#include "projection.h"
 #include "symbol.h"
 
 namespace Poincare::Internal {
@@ -33,15 +34,17 @@ class Solver {
 
   // Return list of exact solutions.
   static Tree* ExactSolve(const Tree* equationsSet, Context* context,
-                          Error* error);
+                          ProjectionContext projectionContext, Error* error);
 
  private:
   // Return list of exact solutions.
   static Tree* PrivateExactSolve(const Tree* equationsSet, Context* context,
+                                 ProjectionContext projectionContext,
                                  Error* error);
-  // Return variables, simplifies equations.
-  static Tree* SimplifyAndFindVariables(Tree* equationsSet, Context context,
-                                        Error* error);
+  static void ProjectAndSimplify(Tree* equationsSet,
+                                 ProjectionContext projectionContext,
+                                 Error* error);
+  static void Beautify(Tree* equationsSet, ProjectionContext projectionContext);
   // Return list of solutions for linear system.
   static Tree* SolveLinearSystem(const Tree* equationsSet,
                                  uint8_t numberOfVariables, Context context,

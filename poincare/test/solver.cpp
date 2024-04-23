@@ -1,8 +1,8 @@
+#include <apps/shared/global_context.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/solver.h>
 #include <poincare/src/memory/n_ary.h>
-#include <poincare/src/memory/storage_context.h>
 #include <poincare/src/memory/tree_stack.h>
 
 #include "helper.h"
@@ -10,6 +10,7 @@ using namespace Poincare::Internal;
 
 bool check_solutions(std::initializer_list<const char*> inputs,
                      std::initializer_list<const char*> outputs,
+                     ProjectionContext projectionContext,
                      Solver::Error expectedError = Solver::Error::NoError) {
   Tree* equationSet = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
@@ -17,14 +18,18 @@ bool check_solutions(std::initializer_list<const char*> inputs,
   }
   Solver::Context context = Solver::Context();
   Solver::Error error = Solver::Error::NoError;
-  Tree* solutions = Solver::ExactSolve(equationSet, &context, &error);
+  Tree* solutions =
+      Solver::ExactSolve(equationSet, &context, projectionContext, &error);
   quiz_assert(error == expectedError);
   if (solutions) {
     quiz_assert(solutions->numberOfChildren() == outputs.size());
+    projectionContext.m_symbolic =
+        context.overrideUserVariables
+            ? SymbolicComputation::DoNotReplaceAnySymbol
+            : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
       Tree* expectedSolution = TextToTree(output);
-      ProjectionContext projectionContext;
       Simplification::Simplify(expectedSolution, &projectionContext);
       quiz_assert(solution->treeIsIdenticalTo(expectedSolution));
       solution = solution->nextTree();
@@ -38,23 +43,39 @@ bool check_solutions(std::initializer_list<const char*> inputs,
   return true;
 }
 
-#if 0
+QUIZ_CASE(pcj_solver) {
+  Shared::GlobalContext globalContext;
+  assert(Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() == 0);
+  ProjectionContext projCtx = {.m_context = &globalContext};
 
-QUIZ__CASE(pcj_solver) {
+  check_solutions({"x-3+y", "y-x+1"}, {"x-2", "y-1"}, projCtx);
+  check_solutions({"x+x"}, {"x"}, projCtx);
+  check_solutions({"x+x+1"}, {"x+1/2"}, projCtx);
+  check_solutions({"x+y", "y+x", "y-x+2"}, {"x-1", "y+1"}, projCtx);
+  check_solutions({"1"}, {}, projCtx);
+  check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
+                  {"a+1/6", "b+1/6", "c+1/6", "d+1/6", "f+1/6", "g+1/6"},
+                  projCtx);
   // User variables
-  StorageContext::SetTreeForIdentifier(2_e, "a");
-  check_solutions({"a*x-2"}, {"x-1"});
-  check_solutions({"a+x-2", "x"}, {"x"});
-  check_solutions({"a+x-3", "x"}, {"a-3", "x"});
-  StorageContext::DeleteTreeForIdentifier("a");
+  store("2→a", &globalContext);
+  check_solutions({"a*x-2"}, {"x-1"}, projCtx);
+  check_solutions({"a+x-2", "x"}, {"x"}, projCtx);
+  check_solutions({"a+x-3", "x"}, {"a-3", "x"}, projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   // Errors
-  check_solutions({"x+y+z", "x-y"}, {}, Solver::Error::TooManyVariables);
-  check_solutions({"x^2", "y"}, {}, Solver::Error::NonLinearSystem);
-  check_solutions({"y*(1+x)", "y-1"}, {}, Solver::Error::NonLinearSystem);
-  check_solutions({"x*y+y", "y-1"}, {}, Solver::Error::NonLinearSystem);
-  check_solutions({"identity(3)"}, {}, Solver::Error::EquationUndefined);
-  // check_solutions({"x^2+1"}, {}, Solver::Error::EquationNonreal);
-  // check_solutions({"sin(x)"}, {}, Solver::Error::RequireApproximateSolution);
-}
+  check_solutions({"x+y+z", "x-y"}, {}, projCtx,
+                  Solver::Error::TooManyVariables);
+  check_solutions({"x^2", "y"}, {}, projCtx, Solver::Error::NonLinearSystem);
+  check_solutions({"y*(1+x)", "y-1"}, {}, projCtx,
+                  Solver::Error::NonLinearSystem);
+  check_solutions({"x*y+y", "y-1"}, {}, projCtx,
+                  Solver::Error::NonLinearSystem);
+  check_solutions({"identity(3)"}, {}, projCtx,
+                  Solver::Error::EquationUndefined);
 
+#if 0
+  check_solutions({"x^2+1"}, {}, projCtx, Solver::Error::EquationNonreal);
+  check_solutions({"sin(x)"}, {}, projCtx,
+                  Solver::Error::RequireApproximateSolution);
 #endif
+}

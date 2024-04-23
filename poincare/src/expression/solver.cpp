@@ -1,7 +1,7 @@
 #include "solver.h"
 
+#include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
-#include <poincare/src/memory/storage_context.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "advanced_simplification.h"
@@ -17,9 +17,12 @@
 namespace Poincare::Internal {
 
 Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
-                         Error* error) {
+                         ProjectionContext projectionContext, Error* error) {
   context->overrideUserVariables = false;
-  Tree* result = PrivateExactSolve(equationsSet, context, error);
+  projectionContext.m_symbolic =
+      SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+  Tree* result =
+      PrivateExactSolve(equationsSet, context, projectionContext, error);
   if (*error == Error::RequireApproximateSolution ||
       (*error == Error::NoError && result->numberOfChildren() > 0)) {
     return result;
@@ -28,7 +31,9 @@ Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
 
   Error secondError = Error::NoError;
   context->overrideUserVariables = true;
-  result = PrivateExactSolve(equationsSet, context, &secondError);
+  projectionContext.m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
+  result =
+      PrivateExactSolve(equationsSet, context, projectionContext, &secondError);
   if (*error != Error::NoError || secondError == Error::NoError ||
       secondError == Error::RequireApproximateSolution) {
     *error = secondError;
@@ -44,87 +49,115 @@ Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
   return result;
 }
 
+/* TODO:
+ * - Implement a number of variable limit (Error::TooManyVariables).
+ * - Catch Undefined and Nonreal simplified equations (Error::EquationNonreal
+ *   and Error::EquationUndefined).
+ * - Project equality into subtraction.  */
 Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
+                                ProjectionContext projectionContext,
                                 Error* error) {
+  /* Clone and simplify the equations */
   Tree* simplifiedEquationSet = equationsSet->clone();
-  if (!context->overrideUserVariables) {
-    // Collect replaced user variables in context.
-    TreeRef userVariables =
-        PolynomialParser::GetVariables(simplifiedEquationSet);
-    // Replace user variables before SimplifyAndFindVariables
-    StorageContext::DeepReplaceIdentifiersWithTrees(simplifiedEquationSet);
-    // Find replaced variables using set difference
-    userVariables = Set::Difference(
-        userVariables, PolynomialParser::GetVariables(simplifiedEquationSet));
-    // Update context
-    context->numberOfUserVariables = userVariables->numberOfChildren();
-    Tree* userVariable = userVariables->firstChild();
-    for (int i = 0; i < context->numberOfUserVariables; i++) {
-      if (userVariable->isUserSymbol()) {
-        Symbol::CopyName(userVariable, context->userVariables[i],
-                         Symbol::k_maxNameSize);
-      }
-      userVariable->removeTree();
-    }
-    userVariables->removeNode();
+  ProjectAndSimplify(simplifiedEquationSet, projectionContext, error);
+  if (*error != Error::NoError) {
+    // simplifiedEquationSet has been removed
+    return nullptr;
   }
-  return nullptr;
-#if 0
-  Tree* variables =
-      SimplifyAndFindVariables(simplifiedEquationSet, *context, error);
-  uint8_t numberOfVariables = variables->numberOfChildren();
-  SwapTreesPointers(&simplifiedEquationSet, &variables);
-  // TODO: Use user settings for a RealUnkown sign ?
-  Variables::ProjectToId(simplifiedEquationSet, variables,
-                         ComplexSign::Unknown());
+
+  /* Count and collect used and replaced UserSymbols */
+  Tree* userSymbols = Variables::GetUserSymbols(simplifiedEquationSet);
+  uint8_t numberOfVariables = userSymbols->numberOfChildren();
+  Tree* replacedSymbols = Set::Difference(
+      Variables::GetUserSymbols(equationsSet), userSymbols->clone());
+  if (replacedSymbols->numberOfChildren() > 0) {
+    int i = 0;
+    for (const Tree* variable : replacedSymbols->children()) {
+      Symbol::CopyName(variable, context->userVariables[i++],
+                       Symbol::k_maxNameSize);
+    }
+  }
+  replacedSymbols->removeTree();
+
+  /* Replace UserSymbols with variables for easier solution handling */
+  SwapTreesPointers(&simplifiedEquationSet, &userSymbols);
+  int i = 0;
+  for (const Tree* variable : userSymbols->children()) {
+    Variables::ReplaceSymbol(simplifiedEquationSet, variable, i++,
+                             ComplexSign::Unknown());
+  }
+
+  /* Find equation's results */
   TreeRef result;
-  if (*error == Error::NoError) {
-    result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables,
-                               *context, error);
-    if (*error == Error::NonLinearSystem &&
-        variables->numberOfChildren() <= 1 &&
-        equationsSet->numberOfChildren() <= 1) {
+  assert(*error == Error::NoError);
+  result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables, *context,
+                             error);
+  if (*error == Error::NonLinearSystem && numberOfVariables <= 1 &&
+      equationsSet->numberOfChildren() <= 1) {
+    assert(result.isUninitialized());
+    result = SolvePolynomial(simplifiedEquationSet, numberOfVariables, *context,
+                             error);
+    if (*error == Error::RequireApproximateSolution) {
+      // TODO: Handle GeneralMonovariable solving.
       assert(result.isUninitialized());
-      result = SolvePolynomial(simplifiedEquationSet, numberOfVariables,
-                               *context, error);
-      if (*error == Error::RequireApproximateSolution) {
-        // TODO: Handle GeneralMonovariable solving.
-        assert(result.isUninitialized());
-      }
     }
-  }
-  if (!result.isUninitialized()) {
-    Variables::BeautifyToName(result, variables);
   }
   simplifiedEquationSet->removeTree();
-  variables->removeTree();
+
+  /* Replace variables back to UserSymbols */
+  if (!result.isUninitialized()) {
+    for (const Tree* variable : userSymbols->children()) {
+      Variables::LeaveScopeWithReplacement(result, variable, false);
+    }
+  }
+  userSymbols->removeTree();
+
+  /* Beautify result */
+  if (!result.isUninitialized()) {
+    Beautify(result, projectionContext);
+  }
+
   return result;
-#endif
 }
 
-Tree* Solver::SimplifyAndFindVariables(Tree* equationsSet, Context context,
-                                       Error* error) {
+void Solver::ProjectAndSimplify(Tree* equationsSet,
+                                ProjectionContext projectionContext,
+                                Error* error) {
   assert(*error == Error::NoError);
-  /* TODO:
-   * - Implement a number of variable limit (Error::TooManyVariables).
-   * - Catch Undefined and Nonreal simplified equations (Error::EquationNonreal
-   *   and Error::EquationUndefined).
-   * - Pass ProjectionContext and project equality into subtraction.
-   */
-  Tree* variables = Variables::GetUserSymbols(equationsSet);
-  SwapTreesPointers(&equationsSet, &variables);
-  for (Tree* equation : equationsSet->children()) {
-    if (!Dimension::DeepCheckDimensions(equation) ||
-        !Dimension::GetDimension(equation).isScalar()) {
-      *error = Error::EquationUndefined;
-      break;
+  assert(SharedTreeStack->lastBlock() == equationsSet->nextTree()->block());
+  ExceptionTryAfterBlock(equationsSet->block()) {
+    Simplification::PrepareForProjection(equationsSet, projectionContext);
+    Simplification::ExtractUnits(equationsSet, &projectionContext);
+    if (projectionContext.m_dimension.isUnit()) {
+      ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
     }
-    Projection::DeepSystemProject(equation);
-    Simplification::DeepSystematicReduce(equation);
-    AdvancedSimplification::AdvancedReduce(equation);
+    Projection::DeepSystemProject(equationsSet, projectionContext);
+    Simplification::SimplifyProjectedTree(equationsSet);
+    Simplification::TryApproximationStrategyAgain(equationsSet,
+                                                  projectionContext);
   }
-  SwapTreesPointers(&variables, &equationsSet);
-  return variables;
+  ExceptionCatch(type) {
+    switch (type) {
+      case ExceptionType::BadType:
+      case ExceptionType::Nonreal:
+      case ExceptionType::ZeroPowerZero:
+      case ExceptionType::ZeroDivision:
+      case ExceptionType::UnhandledDimension:
+      case ExceptionType::Unhandled:
+      case ExceptionType::Undefined:
+        /* TODO_PCJ: We need to catch undefs when reducing children of lists and
+         * points since (undef,0) and {undef,0} should be allowed. */
+        *error = Error::EquationUndefined;
+        return;
+      default:
+        ExceptionCheckpoint::Raise(type);
+    }
+  }
+}
+
+void Solver::Beautify(Tree* equationsSet, ProjectionContext projectionContext) {
+  // No ExceptionCheckpoint::Raise is expected here.
+  Beautification::DeepBeautify(equationsSet, projectionContext);
 }
 
 Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
@@ -272,9 +305,9 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
   solution->moveTreeBeforeNode(
       SharedTreeStack->push<Type::Var>(variableId, ComplexSign::Unknown()));
   solution->moveNodeBeforeNode(SharedTreeStack->push<Type::Add>(2));
+  // No ExceptionCheckpoint::Raise is expected here.
   Simplification::DeepSystematicReduce(solution);
   AdvancedSimplification::AdvancedReduce(solution);
-  Beautification::DeepBeautify(solution);
   return Error::NoError;
 }
 

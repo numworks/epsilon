@@ -28,6 +28,14 @@ class Simplification {
   static bool SimplifyPower(Tree* u);
   EDITION_REF_WRAP(SimplifyPower);
 
+  // Simplification steps
+  static bool PrepareForProjection(Tree* e,
+                                   ProjectionContext projectionContext);
+  static bool ExtractUnits(Tree* e, ProjectionContext* projectionContext);
+  static bool SimplifyProjectedTree(Tree* e);
+  static bool TryApproximationStrategyAgain(
+      Tree* e, ProjectionContext projectionContext);
+
  private:
   /* These private methods should never be called on TreeRefs.
    * TODO: ensure it cannot. */
@@ -59,12 +67,6 @@ class Simplification {
   static bool SimplifySortedMultiplication(Tree* multiplication);
   static void ConvertPowerRealToPower(Tree* u);
 
-  static bool PrepareForProjection(Tree* e,
-                                   ProjectionContext projectionContext);
-  static bool ExtractUnits(Tree* e, ProjectionContext* projectionContext);
-  static bool SimplifyProjectedTree(Tree* e);
-  static bool TryApproximationStrategyAgain(
-      Tree* e, ProjectionContext projectionContext);
   static bool SimplifyLastTree(Tree* node,
                                ProjectionContext projectionContext = {});
 };

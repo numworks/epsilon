@@ -1,6 +1,8 @@
 import argparse
-import args_types
 import pathlib
+
+from helpers.args_types import *
+
 
 parser = argparse.ArgumentParser(
     description="This script deletes images in the folder corresponding to events before the given event, used as start marker to create gifs. If the event occurs several times, it starts from the last occurrence."
@@ -8,7 +10,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "state_file",
     metavar="STATE_FILE",
-    type=args_types.existing_state_file,
+    type=existing_state_file,
     help="state file (with extension .nws)",
 )
 parser.add_argument(

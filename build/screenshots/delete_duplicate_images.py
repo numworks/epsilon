@@ -1,6 +1,8 @@
 import argparse
-import args_types
 import pathlib
+
+from helpers.args_types import *
+
 
 parser = argparse.ArgumentParser(
     description="This script deletes successions of duplicated images inside folder/images, leaving just one per event entailing a visual change."
@@ -9,7 +11,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "folder",
     metavar="FOLDER",
-    type=args_types.existing_directory,
+    type=existing_directory,
     help="folder containing a subfolder images",
 )
 

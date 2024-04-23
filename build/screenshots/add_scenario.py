@@ -1,6 +1,9 @@
 import sys, os, shutil, argparse
-import helper
-import args_types
+
+from helpers.args_types import *
+from helpers.crc_helper import *
+from helpers.screenshot_helper import *
+
 
 parser = argparse.ArgumentParser(
     description="This script adds a scenario to the test screenshots dataset. It takes a state file, computes its crc32 and place them in a subfolder of the screenshots dataset."
@@ -8,13 +11,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "executable",
     metavar="EXE",
-    type=args_types.existing_file,
+    type=existing_file,
     help="epsilon executable",
 )
 parser.add_argument(
     "state_file",
     metavar="STATE_FILE",
-    type=args_types.existing_state_file,
+    type=existing_state_file,
     help="state file (with extension .nws)",
 )
 parser.add_argument(
@@ -33,7 +36,7 @@ def main():
         name = os.path.splitext(args.state_file)[0]
 
     # Create new folder
-    new_dir = helper.folder(name)
+    new_dir = folder(name)
     if os.path.exists(new_dir):
         print("Error:", new_dir, "already exists. Choose another name.")
         sys.exit(1)
@@ -46,7 +49,7 @@ def main():
 
     # Compute the corresponding crc32
     crc_file = os.path.join(new_dir, "crc32.txt")
-    helper.compute_and_store_crc32(new_state_file_path, args.executable, crc_file)
+    compute_and_store_crc32(new_state_file_path, args.executable, crc_file)
 
 
 if __name__ == "__main__":

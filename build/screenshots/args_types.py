@@ -22,5 +22,5 @@ def existing_state_file(string):
     if not os.path.exists(string):
         raise argparse.ArgumentTypeError(string + " does not exist")
     if not os.path.isfile(string) or os.path.splitext(string)[1] != ".nws":
-        raise argparse.ArgumentTypeError(string + " not a state file")
+        raise argparse.ArgumentTypeError(string + " is not a state file")
     return string

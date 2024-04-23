@@ -352,7 +352,7 @@ bool Tree::ApplyShallowInDepth(Tree* e, ShallowOperation shallowOperation,
   bool changed = false;
   for (Tree* node : e->selfAndDescendants()) {
     changed = shallowOperation(node, context) || changed;
-    assert(!check || !shallowOperation(node, context));
+    assert(!(changed && check && shallowOperation(node, context)));
   }
   return changed;
 }

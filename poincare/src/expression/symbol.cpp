@@ -10,10 +10,10 @@ namespace Poincare::Internal {
 
 char* Symbol::CopyName(const Tree* node, char* buffer, size_t bufferSize) {
   assert(node->isUserNamed());
-  size_t nameSize = Length(node) + 1;
-  assert(GetName(node)[nameSize] == 0);
+  size_t length = Length(node);
+  assert(GetName(node)[length] == 0);
   return buffer +
-         strlcpy(buffer, GetName(node), std::min(bufferSize, nameSize));
+         strlcpy(buffer, GetName(node), std::min(bufferSize, length + 1));
 }
 
 const char* Symbol::GetName(const Tree* node) {

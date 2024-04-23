@@ -42,7 +42,7 @@ def main():
     shutil.copytree(
         args.reference_images, os.path.join(reference_output_folder, "images")
     )
-    helper.create_gif(list_reference_images, reference_output_folder)
+    helper.create_gif_from_images(list_reference_images, reference_output_folder)
 
     # Computed images
     print_underlined("New images")

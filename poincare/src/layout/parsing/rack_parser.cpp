@@ -431,7 +431,7 @@ void RackParser::privateParsePlusAndMinus(TreeRef& leftHandSide, bool plus,
   }
   assert(leftHandSide->nextTree() == static_cast<Tree*>(rightHandSide));
   if (!plus) {
-    CloneNodeAtNode(leftHandSide, KTree<Type::Sub>());
+    CloneNodeAtNode(leftHandSide, KSub);
     return;
   }
   if (leftHandSide->isAdd()) {

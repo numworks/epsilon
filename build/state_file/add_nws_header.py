@@ -1,5 +1,8 @@
 import sys
 
+# Script used in bob-internal:
+# sullivan/fuzzer/scripts/default_format_and_move_crashes_routine.sh
+
 src = sys.argv[1]
 if len(sys.argv) > 2:
     output = sys.argv[2]

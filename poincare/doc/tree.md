@@ -301,26 +301,6 @@ template <KTreeConcept KT> f(KT ktree) {
 }
 ```
 
-While the construction of the KTree is constexpr, the cast to a `const Tree *`
-is not (yet). This means you may write :
-
-```cpp
-constexpr KTree k = 2_e;
-```
-
-but not
-
-```cpp
-constexpr const Tree * t = 2_e;
-```
-
-It practice it does not change anything at runtime since the compiler optimizes
-the cast away in both cases.
-
-Alternatively you can use the constexpr cast to Block * and then obtain a Tree *
-from it at runtime with Tree::FromBlock if you want to use a constexpr array for
-instance.
-
 </details>
 
 

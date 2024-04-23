@@ -41,20 +41,10 @@ def main():
         if state_file == "":
             continue
 
-        # Take screenshot at each step and create gif
-        output_scenario_folder = os.path.join(output_folder, scenario_name)
-        helper.generate_all_screenshots_and_create_gif(
-            state_file, args.executable, output_scenario_folder
+        # Create gif
+        helper.create_gif_from_state_file(
+            state_file, args.executable, output_folder, scenario_name
         )
-
-        # Move gif out of subfolder
-        shutil.move(
-            os.path.join(output_scenario_folder, "scenario.gif"),
-            os.path.join(output_folder, scenario_name + ".gif"),
-        )
-
-        # Remove subfolder
-        shutil.rmtree(output_scenario_folder)
 
         count = count + 1
         print("------------------------------")

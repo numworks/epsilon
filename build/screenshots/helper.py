@@ -70,7 +70,9 @@ def generate_all_screenshots(state_file, executable, folder, exit_if_error=True)
     return list_images
 
 
-def create_gif(list_images, folder, gif_name="scenario", delay=350, end_delay=1750):
+def create_gif_from_images(
+    list_images, folder, gif_name="scenario", delay=350, end_delay=1750
+):
     print("Creating gif")
     gif = os.path.join(folder, gif_name + ".gif")
     p = Popen(
@@ -96,14 +98,29 @@ def folder_images(folder):
 
 
 def generate_all_screenshots_and_create_gif(
-    state_file, executable, folder, exit_if_error=True
+    state_file, executable, folder, exit_if_error=True, gif_name="scenario"
 ):
     clean_or_create_folder(folder)
     list_images = generate_all_screenshots(
         state_file, executable, folder_images(folder), exit_if_error
     )
-    create_gif(list_images, folder)
+    create_gif_from_images(list_images, folder, gif_name)
     return list_images
+
+
+def create_gif_from_state_file(state_file, executable, folder, gif_name="scenario"):
+    temp_folder = os.path.join(folder, "temp")
+    generate_all_screenshots_and_create_gif(
+        state_file, executable, temp_folder, True, gif_name
+    )
+    # Move gif out of temp folder
+    gif = gif_name + ".gif"
+    shutil.move(
+        os.path.join(temp_folder, gif),
+        os.path.join(folder, gif),
+    )
+    # Delete temp folder
+    shutil.rmtree(temp_folder)
 
 
 def compute_crc32_process(state_file, executable):
@@ -191,6 +208,6 @@ def create_diff_gif(list_images_1, list_images_2, gif_destination_folder):
     print("All done")
     list_diff_images = list_images_in_folder(diff_folder)
     assert len(list_diff_images) == n
-    create_gif(list_diff_images, gif_destination_folder, "diff")
+    create_gif_from_images(list_diff_images, gif_destination_folder, "diff")
     for image in images_to_remove:
         os.remove(image)

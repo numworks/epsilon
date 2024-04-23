@@ -27,7 +27,7 @@ parser.add_argument(
 
 def main():
     args = parser.parse_args()
-    helper.create_gif(
+    helper.create_gif_from_images(
         helper.list_images_in_folder(helper.folder_images(args.images_folder)),
         args.images_folder,
         delay=args.delay,

@@ -28,16 +28,28 @@ concept KTreeConcept = OMG::Concept::is_derived_from<C, AbstractKTree>;
  * This sub-classes adds a real flexible member m_valueBlock[].
  * It should be merged with Tree but Clang does not accept flexible members in
  * base classes even when inherited classes (Rack...) have no members. */
-class ConstexprTree : public Tree {
- public:
+struct ConstexprTree : public Tree {
+#ifdef __clang__
   template <class... Blocks>
   consteval ConstexprTree(Block type, Blocks... blocks)
       : Tree(static_cast<Type>(static_cast<uint8_t>(type))),
         m_valueBlocks{
             static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
-
- private:
+#endif
   ValueBlock m_valueBlocks[];
+};
+
+/* This helper has a simple role : split the first Block (the type) out of the
+ * Blocks... template parameters pack */
+template <Block type, Block... blocks>
+struct ConstexprTreeHelper {
+  static constexpr ConstexprTree k_tree =
+#ifdef __clang__
+      ConstexprTree(type, blocks...);
+#else
+      {Tree(static_cast<Type>(static_cast<uint8_t>(type))),
+       {static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...}};
+#endif
 };
 
 /* The KTree template class is the compile time representation of a constexpr
@@ -46,14 +58,14 @@ class ConstexprTree : public Tree {
  * a Tree*. It also eliminated identical trees since their are all using the
  * same specialized function.
  */
-
 template <Block... Blocks>
 class KTree : public AbstractKTree {
  public:
   static constexpr size_t k_size = sizeof...(Blocks);
   static_assert(k_size > 0);
   static constexpr Block k_blocks[k_size] = {Blocks...};
-  static constexpr ConstexprTree k_tree = ConstexprTree(Blocks...);
+  static constexpr ConstexprTree k_tree =
+      ConstexprTreeHelper<Blocks...>::k_tree;
   constexpr explicit operator const Block*() const {
 #if ASSERTION
     // Close with TreeBorder Block when cast into Tree* for navigation

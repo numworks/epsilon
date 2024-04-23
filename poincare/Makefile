@@ -292,7 +292,6 @@ poincare_src += $(addprefix poincare/src/,\
   memory/exception_checkpoint.cpp \
   memory/n_ary.cpp \
   memory/pattern_matching.cpp \
-  memory/storage_context.cpp \
   memory/tree.cpp \
   memory/tree_ref.cpp \
   memory/value_block.cpp \
@@ -367,7 +366,6 @@ tests_src += $(addprefix poincare/test/,\
   sign.cpp \
   simplification.cpp \
   solver.cpp \
-  storage_context.cpp \
 )
 
 tests_src += $(poincare_src)

@@ -204,7 +204,4 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
   }
 }
 
-// TODO: Diff(g(x,y),y,h(x,y)) -> Diff(g(f(y),z),z,h(f(y),y))
-// Diff(g(x),z,h(x)) -> Diff(g(f(y)),z,h(f(y)))
-
 }  // namespace Poincare::Internal

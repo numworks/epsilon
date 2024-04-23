@@ -20,7 +20,6 @@ class TreeStack {
   friend class TreeRef;
 
  public:
-  // TODO: not all pool sizes are passing the tests, investigate why
   constexpr static int k_maxNumberOfBlocks = 1024 * 16;
   constexpr static int k_maxNumberOfReferences = k_maxNumberOfBlocks / 8;
 
@@ -162,8 +161,8 @@ class TreeStack {
     uint16_t m_nodeOffsetForIdentifier[TreeStack::k_maxNumberOfReferences];
   };
 
-  /* TODO: if we end up needing too many TreeRef, we could ref-count
-   * them in m_referenceTable and implement a destructor on TreeRef. */
+  /* If we end up needing too many TreeRef, we could ref-count  them in
+   * m_referenceTable and implement a destructor on TreeRef. */
   ReferenceTable m_referenceTable;
   Block m_blocks[k_maxNumberOfBlocks];
   size_t m_size;

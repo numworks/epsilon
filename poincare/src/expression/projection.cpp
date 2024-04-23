@@ -241,7 +241,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // tan(A) -> tanRad(A, 1)
       PatternMatching::MatchReplace(e, KTan(KA), KTanRad(KA)) ||
       // log(A) -> ln(A) * ln(10)^(-1)
-      // TODO: Maybe log(A) -> log(A, 10) and rely on next matchAndReplace
       PatternMatching::MatchReplace(e, KLog(KA),
                                     KMult(KLn(KA), KPow(KLn(10_e), -1_e))) ||
       // log(A, B) -> ln(A) * ln(B)^(-1)
@@ -290,7 +289,7 @@ bool Projection::Expand(Tree* tree) {
       PatternMatching::MatchReplaceSimplify(
           tree, KTanRad(KA),
           KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
-      // TODO: This expansion introduces KPow when KPowReal could be needed.
+      // TODO_PCJ: This expansion introduces KPow when KPowReal could be needed.
       // atan(A) -> asin(A/Sqrt(1 + A^2))
       PatternMatching::MatchReplaceSimplify(
           tree, KATanRad(KA),

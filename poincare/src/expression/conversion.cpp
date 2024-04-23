@@ -229,7 +229,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
         return Poincare::PiecewiseOperator::UntypedBuilder(arguments);
       }
       default:
-        // TODO: Handle missing Types
+        // Unhandled types.
         assert(false);
     }
   }

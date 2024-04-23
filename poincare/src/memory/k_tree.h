@@ -39,6 +39,10 @@ struct ConstexprTree : public Tree {
             static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
 
   ValueBlock m_valueBlocks[N - 1];  // 1 for the type, N-1 for the values
+#if ASSERTIONS
+  // Marker used by assertion to ensure we never access out
+  ValueBlock m_border = static_cast<uint8_t>(Type::TreeBorder);
+#endif
 };
 
 /* The KTree template class is the compile time representation of a constexpr
@@ -52,18 +56,8 @@ struct KTree : public AbstractKTree {
   static_assert(k_size > 0);
   static constexpr Block k_blocks[k_size] = {Blocks...};
   static constexpr ConstexprTree<k_size> k_tree{Blocks...};
-  constexpr explicit operator const Block*() const {
-#if ASSERTION
-    // Close with TreeBorder Block when cast into Tree* for navigation
-    return &Tree<Blocks..., Type::TreeBorder>::k_blocks[0];
-#else
-    return &k_blocks[0];
-#endif
-  }
   constexpr operator const Tree*() const { return &k_tree; }
-  constexpr TypeBlock type() {
-    return TypeBlock(Type(static_cast<uint8_t>(k_blocks[0])));
-  }
+  constexpr TypeBlock type() { return k_tree.type(); }
   const Tree* operator->() const { return operator const Tree*(); }
 };
 

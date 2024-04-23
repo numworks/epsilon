@@ -145,4 +145,6 @@ const char* ApproximatedParsedIntegerString();
 
 Tree* TextToTree(const char* input, Poincare::Context* context = nullptr);
 
+void store(const char* storeExpression, Poincare::Context* ctx);
+
 #endif

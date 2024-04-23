@@ -1,6 +1,4 @@
 #include <apps/shared/global_context.h>
-#include <poincare/expression.h>
-#include <poincare/old/store.h>
 #include <poincare/src/expression/advanced_simplification.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
@@ -804,11 +802,6 @@ QUIZ_CASE(pcj_simplification_function) {
   simplifies_to("f(x)", "f(x)");
   simplifies_to("f(2+2)", "f(4)");
   simplifies_to("f(y)+f(x)-f(x)", "f(y)");
-}
-
-void store(const char* storeExpression, Poincare::Context* ctx) {
-  Poincare::Expression s = Poincare::Expression::Parse(storeExpression, ctx);
-  static_cast<const Poincare::Store&>(s).storeValueForSymbol(ctx);
 }
 
 QUIZ_CASE(pcj_simplification_variable_replace) {

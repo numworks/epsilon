@@ -1,5 +1,8 @@
 #include "helper.h"
 
+#include <apps/shared/global_context.h>
+#include <poincare/expression.h>
+#include <poincare/old/store.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
@@ -70,4 +73,9 @@ void quiz_assert_print_if_failure(bool test, const char* information) {
 #endif
   }
   quiz_assert(test);
+}
+
+void store(const char* storeExpression, Poincare::Context* ctx) {
+  Poincare::Expression s = Poincare::Expression::Parse(storeExpression, ctx);
+  static_cast<const Poincare::Store&>(s).storeValueForSymbol(ctx);
 }

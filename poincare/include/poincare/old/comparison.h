@@ -72,6 +72,11 @@ class ComparisonNode : public ExpressionNode {
   }
   OperatorType* listOfOperators() { return m_operatorsList; }
 
+  int numberOfOperators() const {
+    assert(m_numberOfOperands >= 2);
+    return m_numberOfOperands - 1;
+  }
+
  private:
   struct OperatorString {
     OperatorType type;
@@ -96,11 +101,6 @@ class ComparisonNode : public ExpressionNode {
                  OperatorType lastOperatorOfList);
   ComparisonNode(OperatorType operatorType)
       : ComparisonNode(2, nullptr, operatorType) {}
-
-  int numberOfOperators() const {
-    assert(m_numberOfOperands >= 2);
-    return m_numberOfOperands - 1;
-  }
 
   // Layout
   LayoutShape leftLayoutShape() const override { return LayoutShape::Default; }

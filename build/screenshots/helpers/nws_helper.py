@@ -3,10 +3,6 @@ import sys, os
 BIN_HEADER = b"NWSF"
 TXT_HEADER = "NWS"
 
-# You can setup git to use it to show diff of nws files with :
-#   echo "*.nws diff=nws" >> .git/info/attributes
-#   git config diff.nws.textconv "python3 build/screenshots/nws2txt.py"
-
 events_names = []
 events_names_extended = []
 
@@ -26,7 +22,7 @@ events_names += [""] * (256 - len(events_names))
 events_ids = {events_names[i]: i for i in range(256) if events_names[i]}
 
 
-def convert_nws_to_txt(nwspath, txtpath):
+def convert_nws_to_txt(nwspath, txtpath=None):
     if not os.path.isfile(nwspath) or os.path.splitext(nwspath)[1] != ".nws":
         raise argparse.ArgumentTypeError(nwspath + " is not a .nws")
 
@@ -39,17 +35,22 @@ def convert_nws_to_txt(nwspath, txtpath):
         language = f.read(2)
         events = f.read()
 
-    with open(txtpath, "w", encoding="ascii") as f:
-        f.write(TXT_HEADER)
+    if txtpath is None:
+        f = sys.stdout
+    else:
+        f = open(txtpath, "w", encoding="ascii")
+
+    f.write(TXT_HEADER)
+    f.write("\n")
+    f.write(version.decode())
+    f.write("\n")
+    f.write(str(formatVersion[0]))
+    f.write("\n")
+    f.write(language.decode())
+    for c in events:
         f.write("\n")
-        f.write(version.decode())
-        f.write("\n")
-        f.write(str(formatVersion[0]))
-        f.write("\n")
-        f.write(language.decode())
-        for c in events:
-            f.write("\n")
-            f.write(events_names_extended[c])
+        f.write(events_names_extended[c])
+    f.close()
 
 
 def convert_txt_to_nws(txtpath, nwspath):

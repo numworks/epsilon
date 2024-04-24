@@ -125,6 +125,12 @@ init_git_pre_push_hook() {
   git init
 }
 
+setup_nws_diff_converter() {
+  # Convert .nws to .txt when displaying diff
+  echo "*.nws diff=nws" >> .git/info/attributes
+  git config diff.nws.textconv "python3 build/screenshots/nws2txt.py"
+}
+
 install_binary_deps
 install_python_deps
 init_git_pre_push_hook

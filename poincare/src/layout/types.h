@@ -23,7 +23,7 @@ NODE(CurlyBrace, 1, 1)
 
 RANGE(SquareBracketPair, AbsLayout, VectorNormLayout)
 RANGE(AutocompletedPair, ParenthesisLayout, CurlyBraceLayout)
-RANGE(Pair, Abs, CurlyBraceLayout)
+RANGE(Pair, AbsLayout, CurlyBraceLayout)
 
 // TODO CondensedSum could draw the sigma symbol and have two children
 // CondensedSum(sumSymbol, start, end)

@@ -440,16 +440,19 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
 Token::Type Tokenizer::stringTokenType(const Layout* start,
                                        size_t* length) const {
   LayoutSpan span(start, *length);
-#if 0
   // If there are two \" around an identifier, it is a forced custom identifier
-  const CPL* lastCharOfString = string + *length - 1;
+  const Layout* lastCharOfString = start;
+  for (int i = 0; i < *length - 1; i++) {
+    lastCharOfString = static_cast<const Layout*>(lastCharOfString->nextTree());
+  }
   if (*length > 2 && CodePointLayout::IsCodePoint(start, '"') &&
-      *lastCharOfString == '"' &&
-      CPL::CodePointLSearch(string + 1, '"', lastCharOfString) ==
-          lastCharOfString) {
+      CodePointLayout::IsCodePoint(lastCharOfString, '"') &&
+      OMG::CodePointSearch(
+          LayoutSpan(static_cast<const Layout*>(start->nextTree()),
+                     *length - 2),
+          '"') == *length - 2) {
     return Token::Type::CustomIdentifier;
   }
-#endif
 #if 0
   if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
     return Token::Type::SpecialIdentifier;

@@ -39,6 +39,11 @@ QUIZ_CASE(pcj_layout_tokenize) {
   token = Tokenizer(Rack::From("\"apple\""_l), &context).popToken();
   quiz_assert(token.type() == Token::Type::CustomIdentifier &&
               token.length() == 7);
+
+  token =
+      Tokenizer(Rack::From("12"_l ^ KCodePointL<u'ᴇ'>() ^ "-34"_l), &context)
+          .popToken();
+  quiz_assert(token.type() == Token::Type::Number && token.length() == 6);
 }
 
 bool is_parsable(const Tree* layout) {

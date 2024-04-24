@@ -100,9 +100,6 @@ Token Tokenizer::popNumber() {
   size_t integralPartLength = popDigits();
   LayoutSpan integralPart = LayoutSpan(integralPartStart, integralPartLength);
 
-#if 0
-  size_t fractionalPartText = m_decoder.position();
-#endif
   size_t fractionalPartLength = 0;
 
   // Check for binary or hexadecimal number
@@ -133,9 +130,6 @@ Token Tokenizer::popNumber() {
   }
 
   if (canPopCodePoint('.')) {
-#if 0
-    fractionalPartText = m_decoder.position();
-#endif
     fractionalPartLength = popDigits();
   } else {
     assert(integralPartLength > 0);
@@ -147,13 +141,7 @@ Token Tokenizer::popNumber() {
 
   size_t exponentPartText = m_decoder.position();
   size_t exponentPartLength = 0;
-#if 0
-  bool exponentIsNegative = false;
-#endif
   if (canPopCodePoint(UCodePointLatinLetterSmallCapitalE)) {
-#if 0
-    exponentIsNegative =
-#endif
     canPopCodePoint('-');
     exponentPartText = m_decoder.position();
     exponentPartLength = popDigits();
@@ -163,12 +151,6 @@ Token Tokenizer::popNumber() {
   }
 
   Token result(Token::Type::Number);
-#if 0
-  result.setExpression(Number::ParseNumber(
-      integralPartText, integralPartLength, fractionalPartText,
-      fractionalPartLength, exponentIsNegative, exponentPartText,
-      exponentPartLength));
-#endif
   result.setRange(integralPartStart,
                   exponentPartText - integralPartText + exponentPartLength);
   return result;

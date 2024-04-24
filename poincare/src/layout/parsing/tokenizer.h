@@ -29,10 +29,7 @@ class Tokenizer {
         m_numberOfStoredIdentifiers(0) {}
   Token popToken();
 
-  // Rewind tokenizer
-  void goToPosition(size_t position) {
-    assert(false); /*m_decoder.setPosition(position);*/
-  }
+  void skip(int n) { m_decoder.skip(n); }
   size_t currentPosition() { return m_decoder.position(); }
   size_t endPosition() { return m_decoder.end(); }
 

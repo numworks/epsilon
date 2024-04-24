@@ -97,7 +97,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
 
   // Step 2. Parse as assignment, starting with rightHandSide.
   m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
-  m_tokenizer.goToPosition(rightwardsArrowPosition + 1);
+  m_tokenizer.skip(rightwardsArrowPosition + 1);
   TreeRef rightHandSide = initializeFirstTokenAndParseUntilEnd();
   if (m_nextToken.is(Token::Type::EndOfStream) &&
       !rightHandSide.isUninitialized() &&

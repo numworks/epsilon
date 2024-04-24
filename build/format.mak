@@ -14,3 +14,11 @@ format:
 	$(Q) echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
 	$(Q) echo "=== Formatting .py files ==="
 	$(Q) echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)
+
+.PHONY: reformat
+reformat:
+	@if [ "$(BASE)" == "" ]; then \
+	  echo "Please provide a base commit with \"make reformat BASE=<ref>\""; \
+	else \
+	  git rebase --autostash --strategy-option=theirs --exec "make format BASE=HEAD~; git commit -a --amend --no-edit" $(BASE); \
+	fi

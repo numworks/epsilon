@@ -88,12 +88,6 @@ class Token {
     m_length = length;
   }
 
-  RackLayoutDecoder toDecoder(const Tree* root) {
-    int start = 0;
-    const Tree* rack = root->parentOfDescendant(m_firstLayout, &start);
-    return RackLayoutDecoder(rack, start, start + m_length);
-  }
-
   LayoutSpan toSpan() const { return LayoutSpan(m_firstLayout, m_length); }
 
  private:

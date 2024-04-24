@@ -735,7 +735,7 @@ void RackParser::parseUnit(TreeRef& leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   const Units::Representative* unitRepresentative = nullptr;
   const Units::Prefix* unitPrefix = nullptr;
-  RackLayoutDecoder decoder = m_currentToken.toDecoder(m_root);
+  LayoutSpanDecoder decoder(m_currentToken.toSpan());
   if (!Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
     // Unit does not exist
     ExceptionCheckpoint::Raise(ExceptionType::ParseFail);

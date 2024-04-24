@@ -282,7 +282,9 @@ void ContinuousFunction::setDisplayValueFirstDerivative(bool display) {
 }
 
 void ContinuousFunction::setDisplayPlotFirstDerivative(bool display) {
-  bool previousDisplay = displayPlotFirstDerivative();
+  /* Call recordData()->displayPlotFirstDerivative() instead of
+   * displayPlotFirstDerivative() to avoid the assert. */
+  bool previousDisplay = recordData()->displayPlotFirstDerivative();
   recordData()->setDisplayPlotFirstDerivative(display);
   recordData()->setDisplayValueFirstDerivative(display);
   if (previousDisplay != display) {
@@ -295,7 +297,9 @@ void ContinuousFunction::setDisplayValueSecondDerivative(bool display) {
 }
 
 void ContinuousFunction::setDisplayPlotSecondDerivative(bool display) {
-  bool previousDisplay = displayPlotSecondDerivative();
+  /* Call recordData()->displayPlotSecondDerivative() instead of
+   * displayPlotSecondDerivative() to avoid the assert. */
+  bool previousDisplay = recordData()->displayPlotSecondDerivative();
   recordData()->setDisplayPlotSecondDerivative(display);
   recordData()->setDisplayValueSecondDerivative(display);
   if (previousDisplay != display) {

@@ -24,6 +24,26 @@ int Aliases::maxDifferenceWith(UnicodeDecoder* decoder) const {
   return maxValueOfComparison;
 }
 
+int Aliases::maxDifferenceWith(LayoutSpan span) const {
+  // TODO factorize with function above
+  if (!hasMultipleAliases()) {
+    return CompareLayoutSpanWithNullTerminatedString(span, m_formattedAliases);
+  }
+  int maxValueOfComparison = 0;
+  for (const char* aliasInList : *this) {
+    int tempValueOfComparison =
+        CompareLayoutSpanWithNullTerminatedString(span, aliasInList);
+    if (tempValueOfComparison == 0) {
+      return 0;
+    }
+    if (maxValueOfComparison < tempValueOfComparison ||
+        maxValueOfComparison == 0) {
+      maxValueOfComparison = tempValueOfComparison;
+    }
+  }
+  return maxValueOfComparison;
+}
+
 const char* Aliases::nextAlias(const char* currentPositionInAliases) const {
   if (!hasMultipleAliases()) {
     return nullptr;

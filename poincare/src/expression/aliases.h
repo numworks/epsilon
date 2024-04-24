@@ -46,19 +46,18 @@ class Aliases {
     return maxDifferenceWith(&decoder) == 0;
   }
 
-  bool contains(LayoutSpan span) const {
-    LayoutSpanDecoder decoder(span);
-    return maxDifferenceWith(&decoder) == 0;
-  }
+  bool contains(LayoutSpan span) const { return maxDifferenceWith(span) == 0; }
 
   bool isEquivalentTo(Aliases other) {
     return strcmp(mainAlias(), other.mainAlias()) == 0;
   }
 
+  int maxDifferenceWith(UnicodeDecoder* decoder) const;
+
   /* Return 0 if name is alias of this,
    * else, return the max difference value between name and the aliases
    * of this. */
-  int maxDifferenceWith(UnicodeDecoder* decoder) const;
+  int maxDifferenceWith(LayoutSpan span) const;
 
   /* You can iterate through the names list with syntax:
    * for (const char * alias : name ) {} */

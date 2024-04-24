@@ -39,10 +39,10 @@ namespace Poincare::Internal {
  * a CodePointLayout and iter its siblings until a non-codepoint layout is
  * reached. Thus the API is more similar to const char *. */
 /* TODO move to cpp */
-class LayoutSpanDecoder : public UnicodeDecoder {
+class LayoutSpanDecoder : public ForwardUnicodeDecoder {
  public:
   LayoutSpanDecoder(const Layout* start, size_t length)
-      : UnicodeDecoder(0, length), m_layout(start), m_length(length) {}
+      : ForwardUnicodeDecoder(0, length), m_layout(start), m_length(length) {}
 
   LayoutSpanDecoder(const Rack* rack, size_t initialPosition = 0,
                     size_t lastPosition = k_noSize)
@@ -71,7 +71,6 @@ class LayoutSpanDecoder : public UnicodeDecoder {
     next();
     return cp;
   }
-  CodePoint previousCodePoint() override { assert(false); }
 
   bool nextLayoutIsCodePoint() {
     return m_length == 0 || m_layout->isCodePointLayout();

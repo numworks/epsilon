@@ -1,23 +1,33 @@
 #include <omg/unicode_helper.h>
+#include <poincare/src/layout/layout_span_decoder.h>
 
 namespace OMG {
 
-size_t CodePointSearch(UnicodeDecoder* decoder, CodePoint c) {
-  while (CodePoint codePoint = decoder->nextCodePoint()) {
+size_t CodePointSearch(ForwardUnicodeDecoder* decoder, CodePoint c) {
+  while (CodePoint codePoint = decoder->codePoint()) {
     if (codePoint == c) {
-      return decoder->position() - 1;
+      return decoder->position();
     }
+    decoder->nextCodePoint();
   }
-  decoder->previousCodePoint();
   return decoder->position();
 }
 
-inline size_t CodePointSearch(const char* string, CodePoint c) {
-  UTF8Decoder dec(string);
-  return CodePointSearch(&dec, c);
+size_t CodePointSearch(const char* string, CodePoint c) {
+  UTF8Decoder decoder(string);
+  size_t result = CodePointSearch(&decoder, c);
+  if (result == static_cast<size_t>(-1)) {
+    return strlen(string);
+  }
+  return result;
 }
 
-int CompareDecoders(UnicodeDecoder* a, UnicodeDecoder* b) {
+size_t CodePointSearch(Poincare::Internal::LayoutSpan span, CodePoint c) {
+  Poincare::Internal::LayoutSpanDecoder decoder(span);
+  return CodePointSearch(&decoder, c);
+}
+
+int CompareDecoders(ForwardUnicodeDecoder* a, ForwardUnicodeDecoder* b) {
   while (CodePoint c = a->nextCodePoint()) {
     CodePoint d = b->nextCodePoint();
     if (c != d) {

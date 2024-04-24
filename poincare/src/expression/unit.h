@@ -224,7 +224,7 @@ class Unit {
 
   using Prefixable = Representative::Prefixable;
 
-  static bool CanParse(UnicodeDecoder* name,
+  static bool CanParse(ForwardUnicodeDecoder* name,
                        const Representative** representative,
                        const Prefix** prefix);
   static void ChooseBestRepresentativeAndPrefixForValue(Tree* units,

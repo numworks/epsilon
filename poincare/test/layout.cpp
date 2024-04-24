@@ -34,9 +34,9 @@ QUIZ_CASE(pcj_layout_decoder) {
 }
 
 QUIZ_CASE(pcj_omg_code_point) {
-  const CPL* l = CPL::FromRack("123"_l);
-  assert(CPL::CodePointLSearch(l, '2', l + 3) == l + 1);
-  assert(CPL::CodePointLSearch(l, '4', l + 3) == l + 3);
+  const LayoutSpan l(Rack::From("123"_l));
+  assert(OMG::CodePointSearch(l, '2') == 1);
+  assert(OMG::CodePointSearch(l, '4') == l.length);
 }
 
 #if 0

@@ -457,7 +457,8 @@ Evaluation<T> templatedApproximate(
 #endif
 
 // Unit
-bool Unit::CanParse(UnicodeDecoder* name, const Representative** representative,
+bool Unit::CanParse(ForwardUnicodeDecoder* name,
+                    const Representative** representative,
                     const Prefix** prefix) {
   if (name->nextCodePoint() != '_') {
     return false;  // TODO ?

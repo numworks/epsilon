@@ -62,10 +62,21 @@ def convert_txt_to_nws(txtpath, nwspath):
             sys.exit(1)
         version = f.readline().strip()
         formatVersion = int(f.readline())
-        assert 0 < formatVersion < 256
+        if formatVersion <= 0 or 256 <= formatVersion:
+            print("Error:", formatVersion, "is not a valid format version")
+            sys.exit(1)
         language = f.readline().strip()
-        assert len(language) == 2
-        events = [events_ids[line.strip()] for line in f]
+        if len(language) != 2:
+            print("Error:", language, "is not a valid language")
+            sys.exit(1)
+        events = []
+        for line in f:
+            event = line.strip()
+            event_id = events_ids.get(event)
+            if event_id is None:
+                print("Error:", event, "is not a valid event")
+                sys.exit(1)
+            events.append(events_ids[event])
 
     with open(nwspath, "wb") as f:
         f.write(BIN_HEADER)

@@ -53,7 +53,7 @@ def convert_nws_to_txt(nwspath, txtpath=None):
     f.close()
 
 
-def convert_txt_to_nws(txtpath, nwspath):
+def convert_txt_to_nws(txtpath, nwspath, filter):
     if not os.path.isfile(txtpath) or os.path.splitext(txtpath)[1] != ".txt":
         raise argparse.ArgumentTypeError(txtpath + " is not a .txt")
 
@@ -77,6 +77,8 @@ def convert_txt_to_nws(txtpath, nwspath):
             if event_id is None:
                 print("Error:", event, "is not a valid event")
                 sys.exit(1)
+            if event in filter:
+                continue
             events.append(events_ids[event])
 
     with open(nwspath, "wb") as f:

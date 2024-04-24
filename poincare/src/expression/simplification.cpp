@@ -298,8 +298,8 @@ bool Simplification::SimplifyPower(Tree* u) {
     v->removeNode();
     MoveNodeAtNode(p, SharedTreeStack->push<Type::Mult>(2));
     // PowU w Mult<2> p n
-    SimplifyMultiplication(p);
-    SimplifyPower(u);
+    ShallowSystematicReduce(p);
+    ShallowSystematicReduce(u);
     return true;
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
@@ -309,11 +309,11 @@ bool Simplification::SimplifyPower(Tree* u) {
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);
-      SimplifyPower(m);
+      ShallowSystematicReduce(m);
     }
     n->removeTree();
     u->removeNode();
-    SimplifyMultiplication(u);
+    ShallowSystematicReduce(u);
     return true;
   }
   // exp(a)^b -> exp(a*b)
@@ -327,7 +327,7 @@ const Tree* Exponent(const Tree* u) { return u->isPow() ? u->child(1) : 1_e; }
 
 void Simplification::ConvertPowerRealToPower(Tree* u) {
   u->cloneNodeOverNode(KPow);
-  SimplifyPower(u);
+  ShallowSystematicReduce(u);
 }
 
 bool Simplification::SimplifyPowerReal(Tree* u) {
@@ -375,14 +375,14 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
 
   // We can fallback to |x|^y
   x->cloneNodeAtNode(KAbs);
-  SimplifyAbs(x);
+  ShallowSystematicReduce(x);
   ConvertPowerRealToPower(u);
 
   if (xNegative && !pIsEven) {
     // -|x|^y
     u->cloneTreeAtNode(KMult(-1_e));
     NAry::SetNumberOfChildren(u, 2);
-    SimplifyMultiplication(u);
+    ShallowSystematicReduce(u);
   }
   return true;
 }
@@ -406,7 +406,7 @@ bool Simplification::SimplifyLnReal(Tree* u) {
     // Safely fallback to complex logarithm.
     u->cloneNodeOverNode(KLn);
   }
-  Logarithm::SimplifyLn(u);
+  ShallowSystematicReduce(u);
   return true;
 }
 
@@ -540,7 +540,10 @@ bool Simplification::SimplifyMultiplication(Tree* u) {
   }
   changed = NAry::Sort(u, Comparison::Order::PreserveMatrices) || changed;
   changed = SimplifySortedMultiplication(u) || changed;
-  assert(!changed || !u->isMult() || !SimplifyMultiplication(u));
+  // TODO_PR: Have this back as an assert
+  if (changed && u->isMult()) {
+    ShallowSystematicReduce(u);
+  }
   return changed;
 }
 
@@ -677,7 +680,10 @@ bool Simplification::SimplifyAddition(Tree* u) {
    * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
    * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
    * merging again when child merged with nextChild) */
-  assert(!modified || !SimplifyAddition(u));
+  // TODO_PR: Have this back as an assert
+  if (modified && u->isAdd()) {
+    ShallowSystematicReduce(u);
+  }
   return modified;
 }
 

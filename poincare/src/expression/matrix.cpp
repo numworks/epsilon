@@ -55,7 +55,7 @@ Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   if (approximate) {
     Approximation::SimplifyComplex(result);
   } else {
-    Simplification::SimplifyAddition(result);
+    Simplification::ShallowSystematicReduce(result);
   }
   return result;
 }
@@ -102,7 +102,7 @@ Tree* Matrix::Addition(const Tree* u, const Tree* v, bool approximate) {
     if (approximate) {
       Approximation::SimplifyComplex(child);
     } else {
-      Simplification::SimplifyAddition(child);
+      Simplification::ShallowSystematicReduce(child);
     }
     childU = childU->nextTree();
     childV = childV->nextTree();
@@ -120,7 +120,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
     if (approximate) {
       Approximation::SimplifyComplex(mult);
     } else {
-      Simplification::SimplifyMultiplication(mult);
+      Simplification::ShallowSystematicReduce(mult);
     }
   }
   return result;
@@ -163,13 +163,13 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
         if (approximate) {
           Approximation::SimplifyComplex(mult);
         } else {
-          Simplification::SimplifyMultiplication(mult);
+          Simplification::ShallowSystematicReduce(mult);
         }
       }
       if (approximate) {
         Approximation::SimplifyComplex(add);
       } else {
-        Simplification::SimplifyAddition(add);
+        Simplification::ShallowSystematicReduce(add);
       }
     }
     childURow0 = childURowK;

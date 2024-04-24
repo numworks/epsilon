@@ -201,8 +201,7 @@ Token Tokenizer::popToken() {
 
   /* Save for later use (since m_decoder.position() is altered by
    * popNumber and popIdentifiersString). */
-  size_t start = m_decoder.position();
-  LayoutSpanDecoder save = m_decoder;
+  LayoutSpanDecoder start = m_decoder;
 
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */
@@ -221,8 +220,8 @@ Token Tokenizer::popToken() {
       size_t lengthOfImplicitAdditionBetweenUnits =
           popImplicitAdditionBetweenUnits();
       if (lengthOfImplicitAdditionBetweenUnits > 0) {
-        return Token(Token::Type::ImplicitAdditionBetweenUnits,
-                     m_decoder.layout(), lengthOfImplicitAdditionBetweenUnits);
+        return Token(Token::Type::ImplicitAdditionBetweenUnits, start.layout(),
+                     lengthOfImplicitAdditionBetweenUnits);
       }
     }
     // Pop number
@@ -244,8 +243,7 @@ Token Tokenizer::popToken() {
     }
 #endif
     // Decoder is one CodePoint ahead of the beginning of the identifier string
-    // m_decoder.previousCodePoint();
-    m_decoder = save;
+    m_decoder = start;
     assert(m_numberOfStoredIdentifiers ==
            0);  // assert we're done with previous tokenization
     fillIdentifiersList();
@@ -264,14 +262,13 @@ Token Tokenizer::popToken() {
     /* The dot code point is the second last of that range, but it is matched
      * before (with popNumber). */
     assert(c != '.');
-    return Token(typeForCodePoint[c - '('], m_decoder.layout());
+    return Token(typeForCodePoint[c - '('], start.layout());
   }
 
   Type comparisonOperatorType;
   size_t comparisonOperatorLength;
-  if (Binary::IsComparisonOperatorString(m_decoder.toSpan(),
-                                         &comparisonOperatorType,
-                                         &comparisonOperatorLength)) {
+  if (Binary::IsComparisonOperatorString(
+          start.toSpan(), &comparisonOperatorType, &comparisonOperatorLength)) {
     /* Change precedence of equal when assigning a function.
      * This ensures that "f(x) = x and 1" is parsed as "f(x) = (x and 1)" and
      * not "(f(x) = x) and 1" */
@@ -280,9 +277,10 @@ Token Tokenizer::popToken() {
                              ParsingContext::ParsingMethod::Assignment
                      ? Token::Type::AssignmentEqual
                      : Token::Type::ComparisonOperator);
-    result.setRange(m_decoder.layout(), comparisonOperatorLength);
+    result.setRange(start.layout(), comparisonOperatorLength);
     /* Set decoder after comparison operator in case not all codepoints were
      * popped. */
+    m_decoder = start;
     m_decoder.skip(comparisonOperatorLength);
     return result;
   }
@@ -292,7 +290,7 @@ Token Tokenizer::popToken() {
   }
 
   // All the remaining cases are single codepoint tokens
-  const Layout* layout = m_decoder.layout();
+  const Layout* layout = start.layout();
   switch (c) {
     case UCodePointMultiplicationSign:
     case UCodePointMiddleDot:
@@ -330,10 +328,10 @@ Token Tokenizer::popToken() {
 // ========== Identifiers ==========
 
 void Tokenizer::fillIdentifiersList() {
-  const Layout* identifiersStringStart =
-      m_decoder.layout();  // currentPosition();
+  LayoutSpanDecoder save = m_decoder;
+  const Layout* identifiersStringStart = m_decoder.layout();
   popIdentifiersString();
-  const Layout* currentStringEnd = m_decoder.layout();  // currentPosition();
+  const Layout* currentStringEnd = m_decoder.layout();
   assert(currentStringEnd - identifiersStringStart > 0);
   while (identifiersStringStart < currentStringEnd) {
     if (m_numberOfStoredIdentifiers >= k_maxNumberOfIdentifiersInList) {
@@ -353,10 +351,11 @@ void Tokenizer::fillIdentifiersList() {
    * If it's the case, rewind decoder to the end of the right-most parsed token
    * */
   Token rightMostParsedToken = m_storedIdentifiersList[0];
-#if 0
-  m_decoder = LayoutSpanDecoder(rightMostParsedToken.firstLayout() +
-                                rightMostParsedToken.length());
-#endif
+  m_decoder = save;
+  while (m_decoder.layout() != rightMostParsedToken.firstLayout()) {
+    m_decoder.skip(1);
+  }
+  m_decoder.skip(rightMostParsedToken.length());
 }
 
 int numberOfNextTreeTo(const Tree* from, const Tree* to) {
@@ -557,10 +556,12 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
      * decimalNumber-unit-decimalNumber-unit...
      * Each loop will check for a pair decimalNumber-unit */
     size_t lengthOfNumber = 0;
+    const Layout* currentStringStart = m_decoder.layout();
     while (nextLayoutIsCodePoint && (c.isDecimalDigit() || c == '.')) {
       lengthOfNumber += 1;
       nextLayoutIsCodePoint = m_decoder.nextLayoutIsCodePoint();
       if (nextLayoutIsCodePoint) {
+        currentStringStart = m_decoder.layout();
         c = m_decoder.nextCodePoint();
       }
     }
@@ -570,7 +571,6 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfNumber;
-    size_t currentStringStart = m_decoder.position() - 1;
     size_t lengthOfPotentialUnit = 0;
     while (nextLayoutIsCodePoint && IsNonDigitalIdentifierMaterial(c)) {
       lengthOfPotentialUnit += 1;
@@ -588,8 +588,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     length += lengthOfPotentialUnit;
     const Units::Representative* unitRepresentative;
     const Units::Prefix* unitPrefix;
-    LayoutSpanDecoder decoder(m_decoder.layout(),
-                              lengthOfPotentialUnit); /* TODO -1 */
+    LayoutSpanDecoder decoder(currentStringStart, lengthOfPotentialUnit);
     if (!Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
       // Second element is not a unit : the string is not an implicit addition
       isImplicitAddition = false;

@@ -5,6 +5,7 @@
 #include <omg/utf8_decoder.h>
 
 #include "code_point_layout.h"
+#include "layout_span.h"
 #include "rack.h"
 
 namespace Poincare::Internal {
@@ -27,16 +28,6 @@ namespace Poincare::Internal {
  *  when an helper has to work on racks and str, take a unicodedecoder* and
  *  create wrappers as needed
  */
-
-struct LayoutSpan {
-  LayoutSpan(const Layout* start, uint16_t length)
-      : start(start), length(length) {}
-  LayoutSpan(const Rack* rack)
-      : start(rack->child(0)), length(rack->numberOfChildren()) {}
-
-  const Layout* start;
-  uint16_t length;
-};
 
 /* the decoder adds state over the span, it can move forward but not backward
  * copy it if you need to get back to a previous state,

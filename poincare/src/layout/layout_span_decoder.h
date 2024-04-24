@@ -57,7 +57,7 @@ class LayoutSpanDecoder : public UnicodeDecoder {
   bool isEmpty() const { return m_length == 0; }
 
   const Layout* layout() const { return m_layout; }
-  CodePoint codePoint() const {
+  CodePoint codePoint() override {
     if (m_length == 0) {
       return UCodePointNull;
     }

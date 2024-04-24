@@ -2,7 +2,7 @@
 #include <omg/utf8_decoder.h>
 #include <string.h>
 
-size_t UnicodeDecoder::nextGlyphPosition() {
+size_t ForwardUnicodeDecoder::nextGlyphPosition() {
   CodePoint followingCodePoint = nextCodePoint();
   size_t resultGlyphPosition = m_position;
   followingCodePoint = nextCodePoint();
@@ -26,8 +26,8 @@ size_t UnicodeDecoder::previousGlyphPosition() {
   return resultGlyphPosition;
 }
 
-size_t UnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
-                                     size_t printLength) {
+size_t ForwardUnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
+                                            size_t printLength) {
   assert(m_end == k_noSize || printLength == k_noSize ||
          m_position + printLength <= m_end);
   size_t result = 0;

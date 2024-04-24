@@ -7,14 +7,13 @@
 
 #include "code_point.h"
 
-class UnicodeDecoder {
+class ForwardUnicodeDecoder {
  public:
-  UnicodeDecoder(size_t initialPosition, size_t end)
+  ForwardUnicodeDecoder(size_t initialPosition, size_t end)
       : m_position(initialPosition), m_end(end) {}
+  virtual CodePoint codePoint() = 0;
   virtual CodePoint nextCodePoint() = 0;
-  virtual CodePoint previousCodePoint() = 0;
   size_t nextGlyphPosition();
-  size_t previousGlyphPosition();
   size_t position() const { return m_position; }
   size_t start() const { return 0; }
   size_t end() const { return m_end; }
@@ -27,6 +26,13 @@ class UnicodeDecoder {
  protected:
   size_t m_position;
   size_t m_end;
+};
+
+class UnicodeDecoder : public ForwardUnicodeDecoder {
+ public:
+  using ForwardUnicodeDecoder::ForwardUnicodeDecoder;
+  virtual CodePoint previousCodePoint() = 0;
+  size_t previousGlyphPosition();
 };
 
 /* UTF-8 encodes all valid code points using at most 4 bytes (= 28 bits), the
@@ -62,6 +68,11 @@ class UTF8Decoder : public UnicodeDecoder {
     assert(string != nullptr);
   }
 
+  CodePoint codePoint() override {
+    CodePoint cp = nextCodePoint();
+    previousCodePoint();
+    return cp;
+  }
   CodePoint nextCodePoint() override;
   CodePoint previousCodePoint() override;
   const char* nextGlyphPosition() {

@@ -33,6 +33,7 @@ class RackLayoutDecoder : public UnicodeDecoder {
            (m_position < m_end &&
             m_layout->child(m_position)->isCodePointLayout());
   }
+  CodePoint codePoint() override { return codePointAt(m_position); }
   CodePoint nextCodePoint() override { return codePointAt(m_position++); }
   CodePoint previousCodePoint() override { return codePointAt(--m_position); }
   void setPosition(size_t index) {
@@ -117,6 +118,7 @@ class CPLayoutDecoder : public UnicodeDecoder {
       : CPLayoutDecoder(reinterpret_cast<const Tree*>(firstCodePoint),
                         initialPosition, layoutEnd) {}
 
+  CodePoint codePoint() override { return codePointAt(m_position); }
   CodePoint nextCodePoint() override { return codePointAt(m_position++); }
   CodePoint previousCodePoint() override { return codePointAt(--m_position); }
   CodePoint codePointAt(size_t index) const;

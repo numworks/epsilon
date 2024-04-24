@@ -9,6 +9,7 @@
 #include "rational.h"
 #include "set.h"
 #include "simplification.h"
+#include "undefined.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -26,7 +27,8 @@ bool Derivation::ShallowSimplify(Tree* node) {
   } else {
     const Tree* order = symbolValue->nextTree();
     if (!Integer::Is<uint8_t>(order)) {
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+      Undefined::Set(node, Undefined::Type::Unhandled);
+      return true;
     }
     derivationOrder = Integer::Handler(order).to<uint8_t>();
     constDerivand = order->nextTree();
@@ -97,7 +99,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
   }
   if (derivand->isRandomNode()) {
     // Do not handle random nodes in derivation.
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    return Undefined::Push(Undefined::Type::Unhandled);
   }
   int numberOfChildren = derivand->numberOfChildren();
   if (numberOfChildren == 0) {

@@ -32,7 +32,8 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
   }
   if (symbolicComputation ==
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
-    ExceptionCheckpoint::Raise(ExceptionType::Undefined);
+    Undefined::Set(tree, Undefined::Type::NotDefined);
+    return true;
   }
   // Get Definition
   const Tree* definition =
@@ -46,7 +47,8 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
   if (symbolicComputation ==
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
       !definition) {
-    ExceptionCheckpoint::Raise(ExceptionType::Undefined);
+    Undefined::Set(tree, Undefined::Type::NotDefined);
+    return true;
   } else if (!definition) {
     return false;
   }
@@ -101,7 +103,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 
   bool changed = false;
   if (e->isUndef()) {
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    return changed;
   }
   if (e->isUserSymbol() &&
       projectionContext->m_complexFormat == ComplexFormat::Real &&

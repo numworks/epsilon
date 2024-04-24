@@ -8,13 +8,19 @@
 
 #include "parametric.h"
 #include "sign.h"
+#include "undefined.h"
 
 namespace Poincare::Internal {
 namespace KTrees {
 
 // Constructors
 
-constexpr auto KUndef = KTree<Type::Undef>();
+template <uint8_t undefType>
+constexpr auto KUndefined = KTree<Type::Undef, undefType>();
+constexpr auto KUndef = KUndefined<static_cast<uint8_t>(Undefined::Type::None)>;
+// TODO_PR: constexpr auto KNonReal =
+// KUndefined<static_cast<uint8_t>(Undefined::Type::Nonreal)>;
+
 constexpr auto KNonReal = KTree<Type::NonReal>();
 constexpr auto KInf = KTree<Type::Inf>();
 

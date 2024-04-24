@@ -61,7 +61,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   Tree* simplifiedEquationSet = equationsSet->clone();
   ProjectAndSimplify(simplifiedEquationSet, projectionContext, error);
   if (*error != Error::NoError) {
-    // simplifiedEquationSet has been removed
+    simplifiedEquationSet->removeTree();
     return nullptr;
   }
 
@@ -124,39 +124,22 @@ void Solver::ProjectAndSimplify(Tree* equationsSet,
                                 ProjectionContext projectionContext,
                                 Error* error) {
   assert(*error == Error::NoError);
-  assert(SharedTreeStack->lastBlock() == equationsSet->nextTree()->block());
-  ExceptionTryAfterBlock(equationsSet->block()) {
-    Simplification::PrepareForProjection(equationsSet, projectionContext);
-    Simplification::ExtractUnits(equationsSet, &projectionContext);
-    if (projectionContext.m_dimension.isUnit()) {
-      ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
-    }
-    Projection::DeepSystemProject(equationsSet, projectionContext);
-    Simplification::SimplifyProjectedTree(equationsSet);
-    Simplification::TryApproximationStrategyAgain(equationsSet,
-                                                  projectionContext);
+  Simplification::PrepareForProjection(equationsSet, projectionContext);
+  Simplification::ExtractUnits(equationsSet, &projectionContext);
+  if (projectionContext.m_dimension.isUnit()) {
+    *error = Error::EquationUndefined;
+    return;
   }
-  ExceptionCatch(type) {
-    switch (type) {
-      case ExceptionType::BadType:
-      case ExceptionType::Nonreal:
-      case ExceptionType::ZeroPowerZero:
-      case ExceptionType::ZeroDivision:
-      case ExceptionType::UnhandledDimension:
-      case ExceptionType::Unhandled:
-      case ExceptionType::Undefined:
-        /* TODO_PCJ: We need to catch undefs when reducing children of lists and
-         * points since (undef,0) and {undef,0} should be allowed. */
-        *error = Error::EquationUndefined;
-        return;
-      default:
-        ExceptionCheckpoint::Raise(type);
-    }
+  Projection::DeepSystemProject(equationsSet, projectionContext);
+  Simplification::SimplifyProjectedTree(equationsSet);
+  Simplification::TryApproximationStrategyAgain(equationsSet,
+                                                projectionContext);
+  if (equationsSet->isUndef()) {
+    *error = Error::EquationUndefined;
   }
 }
 
 void Solver::Beautify(Tree* equationsSet, ProjectionContext projectionContext) {
-  // No ExceptionCheckpoint::Raise is expected here.
   Beautification::DeepBeautify(equationsSet, projectionContext);
 }
 
@@ -305,7 +288,6 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
   solution->moveTreeBeforeNode(
       SharedTreeStack->push<Type::Var>(variableId, ComplexSign::Unknown()));
   solution->moveNodeBeforeNode(SharedTreeStack->push<Type::Add>(2));
-  // No ExceptionCheckpoint::Raise is expected here.
   Simplification::DeepSystematicReduce(solution);
   AdvancedSimplification::AdvancedReduce(solution);
   return Error::NoError;

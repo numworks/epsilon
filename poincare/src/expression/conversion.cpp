@@ -17,6 +17,7 @@
 #include "rational.h"
 #include "simplification.h"
 #include "symbol.h"
+#include "undefined.h"
 
 namespace Poincare::Internal {
 
@@ -811,7 +812,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       } else if (c.isComplexI()) {
         SharedTreeStack->push(Type::ComplexI);
       } else {
-        SharedTreeStack->push(Type::Undef);
+        Undefined::Push(Undefined::Type::Unhandled);
       }
       return;
     }
@@ -865,7 +866,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       PushPoincareExpression(exp.childAtIndex(2));
       return;
     case OT::Undefined:
-      SharedTreeStack->push(Type::Undef);
+      Undefined::Push(Undefined::Type::None);
       return;
     case OT::EmptyExpression:
       SharedTreeStack->push(Type::Empty);

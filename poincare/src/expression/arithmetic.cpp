@@ -10,44 +10,29 @@
 #include "k_tree.h"
 #include "parametric.h"
 #include "rational.h"
+#include "undefined.h"
 
 namespace Poincare::Internal {
 
 /* TODO everything in this file is defined on rationals only, this could be
  * checked earlier. */
 
-// Return true if it is true, false if it is unknown and raise if it is false
-bool EnsureIsInteger(const Tree* expr) {
-  // TODO if expr is a known irrational raise BadType
-  if (!expr->isRational()) {
-    return false;
-  }
-  if (!expr->isInteger()) {
-    ExceptionCheckpoint::Raise(ExceptionType::BadType);
-  }
-  return true;
-}
-
-bool EnsureIsPositiveInteger(const Tree* expr) {
-  if (!EnsureIsInteger(expr)) {
-    return false;
-  }
-  if (Rational::Sign(expr).isStrictlyNegative()) {
-    ExceptionCheckpoint::Raise(ExceptionType::BadType);
-  }
-  return true;
-}
-
 bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   assert(expr->numberOfChildren() == 2);
   bool isQuo = expr->isQuo();
   const Tree* num = expr->firstChild();
   const Tree* denom = num->nextTree();
-  if (!EnsureIsInteger(num) + !EnsureIsInteger(denom)) {
-    return false;
+  if ((num->isRational() && !num->isInteger()) ||
+      (denom->isRational() && !denom->isInteger())) {
+    Undefined::Set(expr, Undefined::Type::BadType);
+    return true;
   }
   if (denom->isZero()) {
-    ExceptionCheckpoint::Raise(ExceptionType::ZeroDivision);
+    Undefined::Set(expr, Undefined::Type::ZeroDivision);
+    return true;
+  }
+  if (!num->isRational() || !denom->isRational()) {
+    return false;
   }
   IntegerHandler n = Integer::Handler(num);
   IntegerHandler d = Integer::Handler(denom);
@@ -69,9 +54,14 @@ bool Arithmetic::SimplifyFloor(Tree* expr) {
 }
 
 bool Arithmetic::SimplifyRound(Tree* expr) {
-  Tree* child = expr->firstChild();
-  if (!EnsureIsInteger(child->nextTree()) || !child->isRational()) {
+  const Tree* child = expr->firstChild();
+  const Tree* parameter = child->nextTree();
+  if (!child->isRational() || !parameter->isRational()) {
     return false;
+  }
+  if (!parameter->isInteger()) {
+    Undefined::Set(expr, Undefined::Type::BadType);
+    return true;
   }
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
   return PatternMatching::MatchReplaceSimplify(
@@ -85,8 +75,12 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   Tree* first = expr->firstChild();
   Tree* next = first;
   while (expr->numberOfChildren() > 1) {
-    if (!EnsureIsInteger(next)) {
+    if (!next->isRational()) {
       return changed;
+    }
+    if (!next->isInteger()) {
+      Undefined::Set(expr, Undefined::Type::BadType);
+      return true;
     }
     if (first != next) {
       // TODO keep a handler on first out of the loop
@@ -105,7 +99,15 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
 }
 
 bool Arithmetic::SimplifyFactorial(Tree* expr) {
-  return EnsureIsPositiveInteger(expr->child(0)) && ExpandFactorial(expr);
+  const Tree* child = expr->child(0);
+  if (!child->isRational()) {
+    return false;
+  }
+  if (!child->isInteger() || Rational::Sign(child).isStrictlyNegative()) {
+    Undefined::Set(expr, Undefined::Type::BadType);
+    return true;
+  }
+  return ExpandFactorial(expr);
 }
 
 bool Arithmetic::ExpandFactorial(Tree* expr) {
@@ -125,7 +127,14 @@ bool Arithmetic::ExpandFactorial(Tree* expr) {
 bool Arithmetic::SimplifyPermute(Tree* expr) {
   Tree* n = expr->child(0);
   Tree* k = n->nextTree();
-  if (!EnsureIsPositiveInteger(n) + !EnsureIsPositiveInteger(k)) {
+  if ((n->isRational() &&
+       (!n->isInteger() || Rational::Sign(n).isStrictlyNegative())) ||
+      (k->isRational() &&
+       (!k->isInteger() || Rational::Sign(k).isStrictlyNegative()))) {
+    Undefined::Set(expr, Undefined::Type::BadType);
+    return true;
+  }
+  if (!k->isRational() || !n->isRational()) {
     return false;
   }
   // TODO Rational::Compare
@@ -151,7 +160,14 @@ bool Arithmetic::ExpandPermute(Tree* expr) {
 bool Arithmetic::SimplifyBinomial(Tree* expr) {
   Tree* n = expr->child(0);
   Tree* k = n->nextTree();
-  if (!EnsureIsInteger(k) || !n->isRational()) {
+  if (!k->isRational()) {
+    return false;
+  }
+  if (!k->isInteger()) {
+    Undefined::Set(expr, Undefined::Type::BadType);
+    return true;
+  }
+  if (!n->isRational()) {
     return false;
   }
   if (k->isZero()) {
@@ -350,19 +366,16 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     workingBuffer.garbageCollect({&m}, localStart);
   } while (stopCondition && testedPrimeFactor < k_biggestPrimeFactor &&
            t < FactorizedInteger::k_maxNumberOfFactors);
-  if (t == FactorizedInteger::k_maxNumberOfFactors) {
-    // tooManyFactors
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
-  }
-  if (IntegerHandler::Ucmp(
+  if (t == FactorizedInteger::k_maxNumberOfFactors ||
+      IntegerHandler::Ucmp(
           m, IntegerHandler::Mult(IntegerHandler(k_biggestPrimeFactor),
                                   IntegerHandler(k_biggestPrimeFactor),
                                   &workingBuffer)) > 0) {
-    /* Special case 2: We do not want to break i in prime factor because it
-     * take too much time: the prime factor that should be tested is above
-     * k_biggestPrimeFactor. */
-    // factorTooLarge
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    /* tooManyFactors or factorTooLarge. In the later case, we do not want to
+     * break i in prime factor because it take too much time: the prime factor
+     * that should be tested is above k_biggestPrimeFactor. */
+    result.numberOfFactors = 0;
+    return result;
   }
   result.factors[t] = m.to<float>();  // TODO use uint16 when rebased
   result.coefficients[t]++;
@@ -372,6 +385,9 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
 
 Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
   FactorizedInteger result = PrimeFactorization(m);
+  if (result.numberOfFactors == 0) {
+    return Undefined::Push(Undefined::Type::Unhandled);
+  }
   assert(result.numberOfFactors);  // TODO #85
   Tree* mult = KMult()->clone();
   for (int i = 0; i < result.numberOfFactors; i++) {

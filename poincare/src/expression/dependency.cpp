@@ -9,6 +9,7 @@
 #include "k_tree.h"
 #include "parametric.h"
 #include "set.h"
+#include "undefined.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -109,10 +110,16 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
           depI, AngleUnit::Radian, ComplexFormat::Real);
     }
     if (approximation->isUndef()) {
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+      Undefined::Type type = Undefined::GetType(approximation);
+      approximation->removeTree();
+      Undefined::Set(dep, type);
+      return true;
     }
+    // TODO_PR: Delete and handle with undefined type
     if (approximation->isNonReal()) {
-      ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+      approximation->removeTree();
+      dep->cloneTreeOverTree(KNonReal);
+      return true;
     }
     approximation->removeTree();
     if (!hasSymbolsOrRandom) {

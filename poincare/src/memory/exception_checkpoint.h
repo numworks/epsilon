@@ -13,12 +13,12 @@
 //   // Default computations.
 //   if (something_goes_wrong) {
 //     // Raising here will be handled in the following ExceptionCatch.
-//     ExceptionCheckpoint::Raise(ExceptionType::NonReal);
+//     ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
 //   }
 // }
 // ExceptionCatch(type) {
 //   // Raising here will be handled by parent ExceptionCatch.
-//   if (type != ExceptionType::NonReal) {
+//   if (type != ExceptionType::PoolIsFull) {
 //     // Unhandled exceptions should be raised to parent.
 //     ExceptionCheckpoint::Raise(type);
 //   }
@@ -47,15 +47,6 @@ enum class ExceptionType : int {
   PoolIsFull,
   IntegerOverflow,
   RelaxContext,
-  // Undefined result in given context
-  Nonreal,  // sqrt(-1), ln(-2), asin(2)
-  // Undefined result
-  ZeroPowerZero,       // 0^0 -> Should be ZeroDivision ?
-  ZeroDivision,        // 1/0, tan(nπ/2)
-  UnhandledDimension,  // [[1,2]] + [[1],[2]]
-  Unhandled,           // inf - inf, 0 * inf, unimplemented
-  BadType,             // non-integers in gcd,lcm,...
-  Undefined,           // arg(0)
   // Misc
   ParseFail,  // Used by parser, TODO: Use more distinct errors.
   Other,      // Used internally for Unit tests.

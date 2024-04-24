@@ -10,6 +10,7 @@
 #include "k_tree.h"
 #include "number.h"
 #include "simplification.h"
+#include "undefined.h"
 #include "vector.h"
 
 namespace Poincare::Internal {
@@ -25,7 +26,7 @@ Tree* Matrix::Zero(MatrixDimension d) {
 Tree* Matrix::Identity(const Tree* n) {
   assert(n->isNumber());
   if (Integer::Handler(n).numberOfDigits() > 1) {
-    ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+    return Undefined::Push(Undefined::Type::Unhandled);
   }
   uint8_t nb = *Integer::Handler(n).digits();
   Tree* result = SharedTreeStack->push<Type::Matrix>(nb, nb);
@@ -372,7 +373,8 @@ Tree* Matrix::Inverse(const Tree* m, bool approximate) {
   // Check inversibility
   for (int i = 0; i < dim; i++) {
     if (!Child(matrixAI, i, i)->isOne()) {
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+      Undefined::Set(matrixAI, Undefined::Type::Unhandled);
+      return matrixAI;
     }
   }
   // Remove A from (A|I)

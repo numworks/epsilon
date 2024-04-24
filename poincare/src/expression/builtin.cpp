@@ -89,6 +89,12 @@ Tree* Builtin::pushNode(int numberOfChildren) const {
     // Add random seeds
     assert(result->nodeSize() == 2);
     SharedTreeStack->push(Type::Zero);
+  } else if (TypeBlock(m_blockType).isUndef()) {
+    // Add undefined type
+    assert(result->nodeSize() == 2);
+    static_assert(static_cast<uint8_t>(Type::Zero) ==
+                  static_cast<uint8_t>(Undefined::Type::None));
+    SharedTreeStack->push(Type::Zero);
   } else {
     assert(result->nodeSize() == 1);
   }

@@ -1169,7 +1169,7 @@ template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   // These types are either already approximated or impossible to approximate.
   if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
-      tree->isComplexI() ||
+      tree->isComplexI() || tree->isUndef() ||
       tree->isOfType(
           {Type::UserSymbol, Type::Var, Type::Unit, Type::PhysicalConstant}) ||
       !Dimension::GetDimension(tree).isScalar() || Dimension::IsList(tree)) {
@@ -1200,12 +1200,6 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   Tree* approximatedTree = RootTreeToTree<T>(tree, previousContext->m_angleUnit,
                                              previousContext->m_complexFormat);
   s_context = previousContext;
-  if (approximatedTree->isUndef()) {
-    ExceptionCheckpoint::Raise(ExceptionType::Undefined);
-  }
-  if (approximatedTree->isNonReal()) {
-    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
-  }
   assert(!tree->treeIsIdenticalTo(approximatedTree));
   tree->moveTreeOverTree(approximatedTree);
   return true;

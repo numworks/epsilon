@@ -19,6 +19,7 @@
 #include "number.h"
 #include "random.h"
 #include "rational.h"
+#include "undefined.h"
 #include "unit.h"
 #include "vector.h"
 
@@ -30,7 +31,6 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   bool modified = (u->isMult() || u->isAdd()) && NAry::Flatten(u);
   for (Tree* child : u->children()) {
     modified |= DeepSystematicReduce(child);
-    assert(!child->isUndef());
     if (u->isDependency()) {
       // Skip systematic simplification of Dependencies.
       break;
@@ -251,7 +251,8 @@ bool Simplification::SimplifyPower(Tree* u) {
     }
     if (!indexSign.realSign().canBeStriclyPositive()) {
       // 0^x cannot be defined
-      ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
+      Undefined::Set(u, Undefined::Type::OutOfDefinition);
+      return true;
     }
     // Use a dependency as a fallback.
     return PatternMatching::MatchReplace(u, KA, KDep(0_e, KSet(KA)));
@@ -370,7 +371,9 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   assert(xNegative || pIsEven);
 
   if (xNegative && qIsEven) {
-    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+    // TODO_PR: Undefined::Set(u, Undefined::Type::Nonreal);
+    u->cloneTreeOverTree(KNonReal);
+    return true;
   }
 
   // We can fallback to |x|^y
@@ -394,7 +397,9 @@ bool Simplification::SimplifyLnReal(Tree* u) {
   if (childSign.realSign().isStrictlyNegative() ||
       !childSign.imagSign().canBeNull()) {
     // Child can't be real, positive or null
-    ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
+    // TODO_PR: Undefined::Set(u, Undefined::Type::Nonreal);
+    u->cloneTreeOverTree(KNonReal);
+    return true;
   }
   if (childSign.realSign().canBeStriclyNegative() ||
       !childSign.imagSign().isZero()) {
@@ -701,7 +706,8 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
   if (realSign.isZero() && imagSign.isKnown()) {
     if (imagSign.isZero()) {
       // atan2(0, 0) = undef
-      ExceptionCheckpoint::Raise(ExceptionType::Undefined);
+      Undefined::Set(tree, Undefined::Type::OutOfDefinition);
+      return true;
     }
     // atan2(y, 0) = π/2 if y > 0, -π/2 if y < 0
     tree->cloneTreeOverTree(imagSign.isStrictlyPositive()
@@ -819,7 +825,8 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
   if (e->isUnitConversion()) {
     if (!Dimension::DeepCheckDimensions(e)) {
       // TODO: Raise appropriate exception in DeepCheckDimensions.
-      ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
+      Undefined::Set(e, Undefined::Type::UnhandledDimension);
+      return true;
     }
     Simplify(e->child(0), projectionContext);
     e->moveTreeOverTree(e->child(0));
@@ -852,8 +859,8 @@ bool Simplification::PrepareForProjection(Tree* e,
   }
   if (!Dimension::DeepCheckDimensions(e) ||
       !Dimension::DeepCheckListLength(e)) {
-    // TODO: Raise appropriate exception in DeepCheckDimensions.
-    ExceptionCheckpoint::Raise(ExceptionType::UnhandledDimension);
+    Undefined::Set(e, Undefined::Type::UnhandledDimension);
+    changed = true;
   }
   return changed;
 }
@@ -892,37 +899,17 @@ bool Simplification::TryApproximationStrategyAgain(
   return true;
 }
 
+// TODO_PR: Rename methods
 bool Simplification::SimplifyLastTree(Tree* e,
                                       ProjectionContext projectionContext) {
-  assert(SharedTreeStack->lastBlock() == e->nextTree()->block());
-  ExceptionTryAfterBlock(e->block()) {
-    bool changed = PrepareForProjection(e, projectionContext);
-    changed = ExtractUnits(e, &projectionContext) || changed;
-    changed = Projection::DeepSystemProject(e, projectionContext) || changed;
-    changed = SimplifyProjectedTree(e) || changed;
-    changed = TryApproximationStrategyAgain(e, projectionContext) || changed;
-    changed = Beautification::DeepBeautify(e, projectionContext) || changed;
-    return changed;
-  }
-  ExceptionCatch(type) {
-    switch (type) {
-      case ExceptionType::BadType:
-      case ExceptionType::Nonreal:
-      case ExceptionType::ZeroPowerZero:
-      case ExceptionType::ZeroDivision:
-      case ExceptionType::UnhandledDimension:
-      case ExceptionType::Unhandled:
-      case ExceptionType::Undefined:
-        /* TODO_PCJ: We need to catch undefs when reducing children of lists and
-         * points since (undef,0) and {undef,0} should be allowed. */
-        (type == ExceptionType::Nonreal ? KNonReal : KUndef)->clone();
-        return true;
-      default:
-        ExceptionCheckpoint::Raise(type);
-    }
-  }
-  // Silence warning
-  return false;
+  // TODO_PR: Bubble up undef
+  bool changed = PrepareForProjection(e, projectionContext);
+  changed = ExtractUnits(e, &projectionContext) || changed;
+  changed = Projection::DeepSystemProject(e, projectionContext) || changed;
+  changed = SimplifyProjectedTree(e) || changed;
+  changed = TryApproximationStrategyAgain(e, projectionContext) || changed;
+  changed = Beautification::DeepBeautify(e, projectionContext) || changed;
+  return changed;
 }
 
 }  // namespace Poincare::Internal

@@ -283,8 +283,11 @@ NODE(Piecewise, NARY)
 NODE(Set, NARY)
 NODE(Parenthesis, 1)
 NODE(Empty)  // TODO_PCJ temporary
+// TODO_PR: Remove NonReal and use it as an Undef type
 NODE(NonReal)
-NODE(Undef)
+/* - Undef U
+ * | U TAG | UNDEF TYPE | */
+NODE(Undef, 0, 1)
 
 // 10 - Operations on expressions
 

@@ -18,6 +18,8 @@ namespace Shared {
 // Actual toolbox content is in math_toolbox_content.cpp
 extern const ToolboxMessage listsStatsFork[];
 extern const ToolboxMessage arithmeticFork[];
+extern const ToolboxMessage binomialFork[];
+extern const ToolboxMessage permuteFork[];
 extern const ToolboxMessage logFork[];
 extern const ToolboxMessage toolboxModel;
 
@@ -248,6 +250,14 @@ int MathToolboxController::indexAfterFork(
   if (forkMessageTree->childrenList() == logFork) {
     if (GlobalPreferences::SharedGlobalPreferences()->logarithmBasePosition() ==
         Preferences::LogarithmBasePosition::TopLeft) {
+      return 1;
+    }
+    return 0;
+  }
+  if (forkMessageTree->childrenList() == binomialFork ||
+      forkMessageTree->childrenList() == permuteFork) {
+    if (GlobalPreferences::SharedGlobalPreferences()->combinatoricsSymbols() ==
+        Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript) {
       return 1;
     }
     return 0;

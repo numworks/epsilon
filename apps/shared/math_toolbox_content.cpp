@@ -526,12 +526,21 @@ constexpr ToolboxMessage complexChildren[] = {
                        I18n::Message::ImaginaryPart),
     ToolboxMessageMath(KRackL(KConjL("z"_l)), I18n::Message::Conjugate)};
 
-constexpr ToolboxMessage combinatoricsChildren[] = {
-    // TODO_PCJ PT binom and permute
-    ToolboxMessageMath(KRackL(KBinomialL("k"_l, "n"_l)),
+extern constexpr ToolboxMessage binomialFork[] = {
+    ToolboxMessageMath(KRackL(KBinomialL("n"_l, "k"_l)),
                        I18n::Message::Combination),
+    ToolboxMessageMath(KRackL(KPtBinomialL("n"_l, "k"_l)),
+                       I18n::Message::Combination)};
+
+extern constexpr ToolboxMessage permuteFork[] = {
     ToolboxMessageLeaf(I18n::Message::PermuteCommandWithArg,
                        I18n::Message::Permutation),
+    ToolboxMessageMath(KRackL(KPtPermuteL("n"_l, "k"_l)),
+                       I18n::Message::Permutation)};
+
+constexpr ToolboxMessage combinatoricsChildren[] = {
+    ToolboxMessageNode(I18n::Message::Combination, binomialFork, true),
+    ToolboxMessageNode(I18n::Message::Permutation, permuteFork, true),
     ToolboxMessageLeaf(I18n::Message::FactorialCommandWithArg,
                        I18n::Message::Factorial, false,
                        I18n::Message::FactorialCommand),

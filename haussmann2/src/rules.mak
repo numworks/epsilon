@@ -21,6 +21,9 @@ $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(QUIET) $(AR) $(ARFLAGS) $@ $^
 
 # Rules for object files
+$(OUTPUT_DIRECTORY)/%.o: %.c | $$(@D)/.
+	$(QUIET) $(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
+
 $(OUTPUT_DIRECTORY)/%.o: %.cpp | $$(@D)/.
 	$(QUIET) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 

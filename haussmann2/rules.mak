@@ -1,0 +1,25 @@
+# TODO documentation
+
+# Load source-based dependencies.
+# When compiling a source file, the compiler can emit makefile fragements
+# adding prerequisites on headers included. This enables recompilation of a
+# source file when the headers change.
+-include $(shell find $(OUTPUT_DIRECTORY) -name '*.d' 2>/dev/null)
+
+# Create the output directories tree
+$(OUTPUT_DIRECTORY)/.:
+	$(QUIET) mkdir -p $@
+$(OUTPUT_DIRECTORY)%/.:
+	$(QUIET) mkdir -p $@
+
+# Rules for executable applications
+$(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $(OUTPUT_DIRECTORY)/$$(addsuffix .a,$$(MODULES_%)) | $$(@D)/.
+	$(QUIET) $(LD) $(SFLAGS) $^ $(LDFLAGS) -o $@
+
+# Rules for modules as static libraries
+$(OUTPUT_DIRECTORY)/%.a: $$(addprefix $$(OUTPUT_DIRECTORY)/,$$(addsuffix .o,$$(basename $$(SOURCES_%)))) | $$(@D)/.
+	$(QUIET) $(AR) $(ARFLAGS) $@ $^
+
+# Rules for object files
+$(OUTPUT_DIRECTORY)/%.o: %.cpp | $$(@D)/.
+	$(QUIET) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@

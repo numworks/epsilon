@@ -1,1 +1,1 @@
-int f(int n) { return n + 1; }
+int magic() { return 123; }

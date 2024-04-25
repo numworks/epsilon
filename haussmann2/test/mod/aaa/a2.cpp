@@ -1,1 +1,1 @@
-int g(int n) { return 2 * n; }
+int magic() { return 99; }

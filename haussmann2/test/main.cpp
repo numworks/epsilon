@@ -1,3 +1,3 @@
 #include <aaa.h>
 
-int main() { return f(f(g(-1))); }
+int main() { return magic(); }

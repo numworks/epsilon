@@ -3,3 +3,5 @@ $(eval $(call define_module,aaa,\
 	a2.cpp:+alternate\
 	forbidden.cpp:+forbidden\
 ))
+
+PRIVATE_SFLAGS_aaa := -fno-lto

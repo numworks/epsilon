@@ -6,6 +6,8 @@ PATH_$1 ?= .
 SOURCES_$1 = $(addprefix $$(PATH_$1)/,$(strip $2))
 SFLAGS_$1 = -I$$(PATH_$1)/include
 
+$(OUTPUT_DIRECTORY)/$1%a: SFLAGS += $$(PRIVATE_SFLAGS_$1)
+
 endef
 
 define declare_module

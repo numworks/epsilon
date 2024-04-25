@@ -13,7 +13,7 @@ $(OUTPUT_DIRECTORY)%/.:
 	$(QUIET) mkdir -p $@
 
 # Rules for executable applications
-$(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $(OUTPUT_DIRECTORY)/$$(addsuffix .a,$$(MODULES_%)) | $$(@D)/.
+$(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(addprefix $(OUTPUT_DIRECTORY)/,$$(addsuffix .a,$$(MODULES_%))) | $$(@D)/.
 	$(QUIET) $(LD) $(SFLAGS) $^ $(LDFLAGS) -o $@
 
 # Rules for modules as static libraries

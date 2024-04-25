@@ -40,67 +40,69 @@ class ToolboxMessageLeaf : public ToolboxMessageTree {
   bool m_stripInsertedText;
 };
 
-class ToolboxMessageNode : public ToolboxMessageTree {
+class ToolboxMessageNodeDirect : public ToolboxMessageTree {
  public:
-  template <int N>
-  constexpr ToolboxMessageNode(I18n::Message label,
-                               const ToolboxMessage (&children)[N],
-                               bool fork = false)
-      : ToolboxMessageNode(label, children, fork ? -N : N) {}
-  template <int N>
-  constexpr ToolboxMessageNode(I18n::Message label,
-                               const ToolboxMessage *const (&children)[N],
-                               bool fork = false)
-      : ToolboxMessageNode(label, children, fork ? -N : N) {}
-
- private:
-  constexpr ToolboxMessageNode(I18n::Message label,
-                               const ToolboxMessage *const children,
-                               int numberOfChildren)
+  constexpr ToolboxMessageNodeDirect(I18n::Message label,
+                                     const ToolboxMessage *const children,
+                                     int numberOfChildren)
       : ToolboxMessageTree(label, numberOfChildren),
-        m_children(children),
-        m_childrenConsecutive(true) {}
-  constexpr ToolboxMessageNode(I18n::Message label,
-                               const ToolboxMessage *const *children,
-                               int numberOfChildren)
-      : ToolboxMessageTree(label, numberOfChildren),
-        m_children(children),
-        m_childrenConsecutive(false) {}
+        m_directChildren(children) {}
 
   const MessageTree *childAtIndex(int index) const override;
   const ToolboxMessage *childrenList() const override {
-    return m_childrenConsecutive ? m_children.m_direct : nullptr;
+    return m_directChildren;
   }
 
-  union Children {
-   public:
-    constexpr Children(const ToolboxMessage *const children)
-        : m_direct(children) {}
-    constexpr Children(const ToolboxMessage *const *children)
-        : m_indirect(children) {}
-    const ToolboxMessage *const m_direct;
-    const ToolboxMessage *const *m_indirect;
-  };
+ private:
+  const ToolboxMessage *const m_directChildren;
+};
+
+class ToolboxMessageNodeIndirect : public ToolboxMessageTree {
+ public:
+  constexpr ToolboxMessageNodeIndirect(I18n::Message label,
+                                       const ToolboxMessage *const *children,
+                                       int numberOfChildren)
+      : ToolboxMessageTree(label, numberOfChildren),
+        m_indirectChildren(children) {}
+
+  const MessageTree *childAtIndex(int index) const override {
+    return reinterpret_cast<const MessageTree *>(m_indirectChildren[index]);
+  }
 
  private:
-  const Children m_children;
-  const bool m_childrenConsecutive;
+  const ToolboxMessage *const *m_indirectChildren;
 };
+
+template <int N>
+constexpr ToolboxMessageNodeDirect ToolboxMessageNode(
+    I18n::Message label, const ToolboxMessage (&children)[N],
+    bool fork = false) {
+  return ToolboxMessageNodeDirect(label, children, fork ? -N : N);
+}
+
+template <int N>
+constexpr ToolboxMessageNodeIndirect ToolboxMessageNode(
+    I18n::Message label, const ToolboxMessage *const (&children)[N],
+    bool fork = false) {
+  return ToolboxMessageNodeIndirect(label, children, fork ? -N : N);
+}
 
 union ToolboxMessage {
   constexpr ToolboxMessage(ToolboxMessageLeaf leaf) : leaf(leaf) {}
-  constexpr ToolboxMessage(ToolboxMessageNode node) : node(node) {}
+  constexpr ToolboxMessage(ToolboxMessageNodeDirect node) : nodeDirect(node) {}
+  constexpr ToolboxMessage(ToolboxMessageNodeIndirect node)
+      : nodeIndirect(node) {}
   const ToolboxMessageTree *toMessageTree() const {
     return reinterpret_cast<const ToolboxMessageTree *>(this);
   }
   ToolboxMessageLeaf leaf;
-  ToolboxMessageNode node;
+  ToolboxMessageNodeDirect nodeDirect;
+  ToolboxMessageNodeIndirect nodeIndirect;
 };
 
-inline const MessageTree *ToolboxMessageNode::childAtIndex(int index) const {
-  return reinterpret_cast<const MessageTree *>(
-      m_childrenConsecutive ? m_children.m_direct + index
-                            : m_children.m_indirect[index]);
+inline const MessageTree *ToolboxMessageNodeDirect::childAtIndex(
+    int index) const {
+  return reinterpret_cast<const MessageTree *>(m_directChildren + index);
 }
 
 }  // namespace Escher

@@ -21,3 +21,10 @@ endef
 define objects_for_sources
 $(addprefix $(OUTPUT_DIRECTORY)/,$(addsuffix .o,$(basename $1)))
 endef
+
+# document_extension, <name>, <documentation>
+define document_extension
+ALL_EXTENSIONS += $1
+HELP_$1 := $2
+
+endef

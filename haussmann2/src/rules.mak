@@ -17,6 +17,8 @@ $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_go
 	$(QUIET) echo "LD\t$@"
 	$(QUIET) $(LD) $(SFLAGS) $^ $(LDFLAGS) -o $@
 
+$(eval $(call document_extension,$(EXECUTABLE_EXTENSION)))
+
 # Rules for modules as static libraries
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(QUIET) echo "AR\t$@"

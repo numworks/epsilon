@@ -45,9 +45,11 @@ class ToolboxMessageNodeDirect : public ToolboxMessageTree {
   constexpr ToolboxMessageNodeDirect(I18n::Message label,
                                      const ToolboxMessage *const children,
                                      int numberOfChildren)
-      : ToolboxMessageTree(label, numberOfChildren),
-        m_directChildren(children) {}
+      : ToolboxMessageTree(label),
+        m_directChildren(children),
+        m_numberOfChildren(numberOfChildren) {}
 
+  int numberOfChildren() const override { return m_numberOfChildren; }
   const MessageTree *childAtIndex(int index) const override;
   const ToolboxMessage *childrenList() const override {
     return m_directChildren;
@@ -55,6 +57,7 @@ class ToolboxMessageNodeDirect : public ToolboxMessageTree {
 
  private:
   const ToolboxMessage *const m_directChildren;
+  const int16_t m_numberOfChildren;
 };
 
 class ToolboxMessageNodeIndirect : public ToolboxMessageTree {
@@ -62,15 +65,18 @@ class ToolboxMessageNodeIndirect : public ToolboxMessageTree {
   constexpr ToolboxMessageNodeIndirect(I18n::Message label,
                                        const ToolboxMessage *const *children,
                                        int numberOfChildren)
-      : ToolboxMessageTree(label, numberOfChildren),
-        m_indirectChildren(children) {}
+      : ToolboxMessageTree(label),
+        m_indirectChildren(children),
+        m_numberOfChildren(numberOfChildren) {}
 
+  int numberOfChildren() const override { return m_numberOfChildren; }
   const MessageTree *childAtIndex(int index) const override {
     return reinterpret_cast<const MessageTree *>(m_indirectChildren[index]);
   }
 
  private:
   const ToolboxMessage *const *m_indirectChildren;
+  const int16_t m_numberOfChildren;
 };
 
 template <int N>

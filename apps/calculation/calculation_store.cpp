@@ -344,7 +344,13 @@ char *CalculationStore::pushSerializedExpression(
                         ? PoincareHelpers::Serialize(e, location, availableSize,
                                                      numberOfSignificantDigits)
                         : 0;
-    if (length + 1 < availableSize) {
+    constexpr size_t k_maxCharSizeCodePoint = 4;
+    if (length + k_maxCharSizeCodePoint < availableSize) {
+      /* TODO: this is a hack to check that the serialization went well with the
+       * available size. In most cases the serialization stops before writting 1
+       * code point. This is a dirty hack and it doesn't cover the general case.
+       * Serialization should return a bool indicating if it completed or not.
+       * But this will change with poincare junior. */
       assert(location[length] == '\0');
       return location + length + 1;
     }

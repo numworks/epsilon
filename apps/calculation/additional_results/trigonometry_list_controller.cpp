@@ -59,6 +59,7 @@ void TrigonometryListController::computeAdditionalResults(
   PoincareHelpers::CloneAndSimplify(
       &simplifiedAngle, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
+  assert(simplifiedAngle.isUninitialized() || !simplifiedAngle.isUndefined());
 
   /* Approximate the angle if:
    * - The reduction failed
@@ -96,6 +97,7 @@ void TrigonometryListController::computeAdditionalResults(
     exactAngle = simplifiedAngle;
     m_isStrictlyEqual[index] = true;
   }
+  assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
   m_layouts[index] = LayoutHelper::String("θ");
 

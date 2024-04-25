@@ -1,4 +1,4 @@
-# TODO documentation
+# Short helper functions
 
 # Define variables to help manipulate special characters
 _null :=
@@ -17,6 +17,7 @@ define flavors_for_flavored_target
 $(subst .,,$(filter .%,$(subst ., .,$1)))
 endef
 
+# objects_for_sources, <sources list>
 define objects_for_sources
 $(addprefix $(OUTPUT_DIRECTORY)/,$(addsuffix .o,$(basename $1)))
 endef

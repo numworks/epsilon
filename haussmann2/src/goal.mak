@@ -1,5 +1,20 @@
-# TODO documentation
+# Provide functions to create goals.
+#
+# Goals are the main entrypoints into the build sytem. They are defined as the
+# list of modules used to build the executable.
+# Each module in the goal declaration can be followed by a dot-separated list of
+# flavors. Flavors added this way will always be sent to the relevant module
+# (and only this one) no matter what flavors are passed to the goal.
+#
+# Applications use the following function to create a goal:
+#   declare_goal, <name>, <modules>
+# This will create a variable MODULE_<name> holding the list of modules, along
+# with a short target allowing a user to build the goal without having to type
+# the full path (e.g. goal.a.bin instead of out/put/dir/ect/ory/goal.a.bin).
 
+# Public API
+
+# declare_goal, <name>, <modules>
 define declare_goal
 $(call _assert_valid_goal_name,$1)
 MODULES_$1 := $2
@@ -12,6 +27,9 @@ $1%: $(OUTPUT_DIRECTORY)/$1%
 
 endef
 
+# Private API
+
+# libraries_for_flavored_goal, <flavored goal>
 # Do not use flavors_for_flavored_target to avoid an extraneous subst.
 define libraries_for_flavored_goal
 $(addprefix $(OUTPUT_DIRECTORY)/,\

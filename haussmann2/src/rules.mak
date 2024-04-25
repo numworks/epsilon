@@ -1,4 +1,4 @@
-# TODO documentation
+# Main compilation rules
 
 # Load source-based dependencies.
 # When compiling a source file, the compiler can emit makefile fragements

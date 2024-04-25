@@ -1,4 +1,4 @@
-# TODO documentation
+# Compiler commands and parameters
 
 AR := ar
 ARFLAGS := rcs

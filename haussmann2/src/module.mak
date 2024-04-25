@@ -1,5 +1,40 @@
-# TODO documentation
+# Provide functions to create and use modules.
+#
+# Modules are collections of source files with a well defined public API, that
+# are compiled to a static library during the build process. They can be
+# configured by selecting which files are compiled as part of the library, using
+# the flavor syntax.
+#
+# A module should define these variables in a Makefile at its root:
+# - SOURCES_<module>: the list of source files for this module, with optional
+#   tastes
+# - SFLAGS_<module>: compilation flags for users of this module ; it should at
+#   least contain the -I flag to the module API
+# - PRIVATE_SFLAGS_<module>: compilation flags used when compiling the sources
+#   this module
+# - LDFLAGS_<module>: linker flags for users of this module ; for instance,
+#   libraries required by the module, or a custom linker script
+#
+# A module will expect the following variables to be defined prior to its
+# inclusion:
+# - PATH_<module>: the location of the module in the user application
+#
+# Inside a module, use:
+#   define_module, <name>, <sources>
+# This will create the SOURCES_<...> variable, and a SFLAGS_<...> variable with
+# only the -I flag to the module API.
+# The files in SOURCES_<...> can be suffixed with tastes (e.g. a.cpp:+b) that
+# determine which combination of flavors will cause the file to be compiled.
+#
+# Inside an application, for each module required, use:
+#   declare_module, <name>, <path>
+# <name> is the identifier of the module, used as a suffix to the module
+# variables. <path> is the location of the module inside the application and
+# will be used to define PATH_<module>.
 
+# Public API
+
+# define_module, <name>, <sources>
 define define_module
 $(call _assert_valid_module_name,$1)
 $(call assert_defined,PATH_$1)
@@ -10,6 +45,7 @@ $(OUTPUT_DIRECTORY)/$1%a: SFLAGS += $$(PRIVATE_SFLAGS_$1)
 
 endef
 
+# declare_module, <name>, <path>
 define declare_module
 $(call _assert_valid_module_name,$1)
 PATH_$1 := $2
@@ -17,6 +53,9 @@ PATH_$1 := $2
 
 endef
 
+# Private API
+
+# objects_for_flavored_module, <dot-separated flavored module>
 define objects_for_flavored_module
 $(call objects_for_sources,$(call flavor_filter,\
 	$(SOURCES_$(call name_for_flavored_target,$1)),\

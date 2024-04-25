@@ -1,4 +1,4 @@
-# TODO documentation
+# Configuration variables, may be edited on the command line.
 
 $(call assert_defined,OUTPUT_ROOT)
 $(call assert_defined,DEBUG)

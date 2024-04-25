@@ -1,8 +1,12 @@
+# Disable built-in rules.
 .SUFFIXES:
 
-.SECONDARY:
-
+# Activate second expansion, necessary to use call in prerequisites of pattern
+# rules.
 .SECONDEXPANSION:
+
+# Never delete intermediate targets.
+.SECONDARY:
 
 # assert_defined, <variable>
 define assert_defined
@@ -11,6 +15,7 @@ endef
 
 $(call assert_defined,PATH_haussmann)
 
+# Load the build engine. Order matters.
 include $(PATH_haussmann)/src/config.mak
 include $(PATH_haussmann)/src/toolchain.mak
 

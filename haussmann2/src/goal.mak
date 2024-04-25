@@ -17,6 +17,7 @@
 # create_goal, <name>, <modules>
 define create_goal
 $(call _assert_valid_goal_name,$1)
+ALL_GOALS += $1
 MODULES_$1 := $2
 
 $(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): SFLAGS += $$(foreach m,$2,$$(SFLAGS_$$(call name_for_flavored_target,$$m)))

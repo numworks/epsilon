@@ -16,3 +16,4 @@ $(eval $(call create_module,main,\
 ))
 
 $(eval $(call create_goal,test,main.do_something aaa))
+$(eval $(call create_goal,test_dummy,main))

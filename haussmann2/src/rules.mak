@@ -23,3 +23,6 @@ $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 # Rules for object files
 $(OUTPUT_DIRECTORY)/%.o: %.cpp | $$(@D)/.
 	$(QUIET) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
+
+# Platform-specific rules
+-include $(PATH_haussmann)/src/rules.$(PLATFORM).mak

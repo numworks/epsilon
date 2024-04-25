@@ -6,6 +6,9 @@
 
 namespace Escher {
 
+/* TODO: Currently Escher needs to know the closed list of the
+ * ToolboxMessageTree children to build the union. As an alternative we could
+ * template over the union to allow the user to provide the list. */
 union ToolboxMessage;
 
 class ToolboxMessageTree : public MessageTree {

@@ -804,12 +804,16 @@ constexpr ToolboxMessage logicChildren[] = {
     ToolboxMessageLeaf(I18n::Message::NandCommand, I18n::Message::NandMessage,
                        false, I18n::Message::NandCommandWithSpaces)};
 
+extern constexpr ToolboxMessage logFork[] = {
+    ToolboxMessageMath("log"_l ^ KSubscriptL("a"_l) ^ "(x)"_l,
+                       I18n::Message::BasedLogarithm),
+    ToolboxMessageMath(KPrefixSuperscriptL("a"_l) ^ "log"_l ^ "(x)"_l,
+                       I18n::Message::BasedLogarithm)};
+
 constexpr ToolboxMessage menu[] = {
     ToolboxMessageMath(KRackL(KAbsL("x"_l)), I18n::Message::AbsoluteValue),
     ToolboxMessageMath(KRackL(KRootL("x"_l, "n"_l)), I18n::Message::NthRoot),
-    // TODO_PCJ: NL log
-    ToolboxMessageMath("log"_l ^ KSubscriptL("a"_l) ^ "(x)"_l,
-                       I18n::Message::BasedLogarithm),
+    ToolboxMessageNode(I18n::Message::BasedLogarithm, logFork, true),
     ToolboxMessageNode(I18n::Message::Calculus, calculChildren),
     ToolboxMessageNode(I18n::Message::ComplexNumber, complexChildren),
     ToolboxMessageNode(I18n::Message::Probability, probabilityChildren),

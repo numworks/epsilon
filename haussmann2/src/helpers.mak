@@ -25,6 +25,6 @@ endef
 # document_extension, <name>, <documentation>
 define document_extension
 ALL_EXTENSIONS += $1
-HELP_$1 := $2
+HELP_EXTENSION_$1 := $2
 
 endef

@@ -20,7 +20,7 @@ define create_goal
 $(call _assert_valid_goal_name,$1)
 ALL_GOALS += $1
 MODULES_$1 := $2
-HELP_$1 := $3
+HELP_GOAL_$1 := $3
 
 $(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): SFLAGS += $$(foreach m,$2,$$(SFLAGS_$$(call name_for_flavored_target,$$m)))
 $(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): LDFLAGS += $$(foreach m,$2,$$(LDFLAGS_$$(call name_for_flavored_target,$$m)))

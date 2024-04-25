@@ -1,5 +1,10 @@
 # TODO documentation
 
+# Define variables to help manipulate special characters
+_null :=
+_space := $(_null) $(_null)
+$(_space) := $(_space)
+
 # name_for_flavored_target, <flavored target>
 #   name.flavor1.flavor2 -> name
 define name_for_flavored_target

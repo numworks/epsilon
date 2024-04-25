@@ -7,15 +7,15 @@
 # (and only this one) no matter what flavors are passed to the goal.
 #
 # Applications use the following function to create a goal:
-#   declare_goal, <name>, <modules>
+#   create_goal, <name>, <modules>
 # This will create a variable MODULE_<name> holding the list of modules, along
 # with a short target allowing a user to build the goal without having to type
 # the full path (e.g. goal.a.bin instead of out/put/dir/ect/ory/goal.a.bin).
 
 # Public API
 
-# declare_goal, <name>, <modules>
-define declare_goal
+# create_goal, <name>, <modules>
+define create_goal
 $(call _assert_valid_goal_name,$1)
 MODULES_$1 := $2
 

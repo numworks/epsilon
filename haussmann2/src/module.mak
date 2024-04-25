@@ -20,22 +20,22 @@
 # - PATH_<module>: the location of the module in the user application
 #
 # Inside a module, use:
-#   define_module, <name>, <sources>
+#   create_module, <name>, <sources>
 # This will create the SOURCES_<...> variable, and a SFLAGS_<...> variable with
 # only the -I flag to the module API.
 # The files in SOURCES_<...> can be suffixed with tastes (e.g. a.cpp:+b) that
 # determine which combination of flavors will cause the file to be compiled.
 #
 # Inside an application, for each module required, use:
-#   declare_module, <name>, <path>
+#   import_module, <name>, <path>
 # <name> is the identifier of the module, used as a suffix to the module
 # variables. <path> is the location of the module inside the application and
 # will be used to define PATH_<module>.
 
 # Public API
 
-# define_module, <name>, <sources>
-define define_module
+# create_module, <name>, <sources>
+define create_module
 $(call _assert_valid_module_name,$1)
 $(call assert_defined,PATH_$1)
 SOURCES_$1 = $(addprefix $$(PATH_$1)/,$(strip $2))
@@ -48,8 +48,8 @@ $1%a: $(OUTPUT_DIRECTORY)/$1%a
 
 endef
 
-# declare_module, <name>, <path>
-define declare_module
+# import_module, <name>, <path>
+define import_module
 $(call _assert_valid_module_name,$1)
 PATH_$1 := $2
 -include $2/Makefile

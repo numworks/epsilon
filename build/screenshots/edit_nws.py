@@ -7,7 +7,7 @@ from helpers.screenshot_helper import *
 from helpers.nws_helper import *
 
 parser = argparse.ArgumentParser(
-    description="This script enables editing a state file. You can give a executable to follow the changes."
+    description="This script enables editing a state file. You can give an executable to follow the changes."
 )
 parser.add_argument(
     "state_file",

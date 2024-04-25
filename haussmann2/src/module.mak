@@ -2,7 +2,7 @@
 
 define define_module
 $(call _assert_valid_module_name,$1)
-PATH_$1 ?= .
+$(call assert_defined,PATH_$1)
 SOURCES_$1 = $(addprefix $$(PATH_$1)/,$(strip $2))
 SFLAGS_$1 = -I$$(PATH_$1)/include
 

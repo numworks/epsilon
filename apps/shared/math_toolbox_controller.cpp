@@ -120,24 +120,28 @@ void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
       messageTree = messageTreeModelAtIndex(alternateListsStatsOrder[row]);
     }
     LeafCell *myCell = static_cast<LeafCell *>(cell);
-    const char *text = I18n::translate(messageTree->label());
-    Layout resultLayout;
 
-    if (Poincare::Preferences::SharedPreferences()->editionMode() ==
-        Poincare::Preferences::EditionMode::Edition2D) {
-      // No context is given so that f(x) is never parsed as f×(x)
-      Expression resultExpression = Expression::Parse(text, nullptr);
-      if (!resultExpression.isUninitialized()) {
-        // The text is parsable, we create its layout an insert it.
-        resultLayout = resultExpression.createLayout(
-            Poincare::Preferences::SharedPreferences()->displayMode(),
-            Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-            App::app()->localContext());
-      }
-    }
+    Layout resultLayout = messageTree->layout();
+
     if (resultLayout.isUninitialized()) {
-      // If 2D parsing failed or edition is in 1D, try a simpler layout
-      resultLayout = Layout::String(text, strlen(text));
+      const char *text = I18n::translate(messageTree->label());
+
+      if (Poincare::Preferences::SharedPreferences()->editionMode() ==
+          Poincare::Preferences::EditionMode::Edition2D) {
+        // No context is given so that f(x) is never parsed as f×(x)
+        Expression resultExpression = Expression::Parse(text, nullptr);
+        if (!resultExpression.isUninitialized()) {
+          // The text is parsable, we create its layout an insert it.
+          resultLayout = resultExpression.createLayout(
+              Poincare::Preferences::SharedPreferences()->displayMode(),
+              Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
+              App::app()->localContext());
+        }
+      }
+      if (resultLayout.isUninitialized()) {
+        // If 2D parsing failed or edition is in 1D, try a simpler layout
+        resultLayout = Layout::String(text, strlen(text));
+      }
     }
 
     myCell->label()->setLayout(resultLayout);

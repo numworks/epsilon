@@ -2,6 +2,7 @@
 #define ESCHER_TOOLBOX_MESSAGE_TREE_H
 
 #include <escher/message_tree.h>
+#include <poincare/layout.h>
 
 namespace Escher {
 
@@ -12,6 +13,7 @@ class ToolboxMessageTree : public MessageTree {
   using MessageTree::MessageTree;
   const MessageTree *childAtIndex(int index) const override { return nullptr; }
   virtual const ToolboxMessage *childrenList() const { return nullptr; }
+  virtual Poincare::Layout layout() const { return {}; }
   virtual constexpr I18n::Message text() const { return I18n::Message(0); }
   virtual I18n::Message insertedText() const { return I18n::Message(0); }
   virtual bool stripInsertedText() const { return true; }
@@ -37,6 +39,32 @@ class ToolboxMessageLeaf : public ToolboxMessageTree {
   I18n::Message m_text;
   I18n::Message m_insertedText;
   bool m_stripInsertedText;
+};
+
+class ToolboxMessageMath : public ToolboxMessageTree {
+ public:
+  constexpr ToolboxMessageMath(const Poincare::Internal::Tree *layout,
+                               I18n::Message text,
+                               bool stripInsertedText = true,
+                               I18n::Message insertedText = (I18n::Message)0)
+      : ToolboxMessageTree(I18n::Message(0)),
+        m_layout(layout),
+        m_text(text),
+        m_insertedText(insertedText == (I18n::Message)0 ? I18n::Message(0)
+                                                        : insertedText),
+        m_stripInsertedText(stripInsertedText){};
+
+ private:
+  constexpr I18n::Message text() const override { return m_text; }
+  Poincare::Layout layout() const override { return m_layout; }
+  I18n::Message insertedText() const override { return m_insertedText; }
+  bool stripInsertedText() const override { return m_stripInsertedText; }
+
+ private:
+  const Poincare::Internal::Tree *m_layout;
+  I18n::Message m_text;          // TODO swap with layout to save space
+  I18n::Message m_insertedText;  // ??
+  bool m_stripInsertedText;      // ??
 };
 
 class ToolboxMessageNodeDirect : public ToolboxMessageTree {
@@ -98,6 +126,7 @@ constexpr ToolboxMessageNodeIndirect ToolboxMessageNode(
  * ToolboxMessageTree and is the type of the array elements. */
 union ToolboxMessage {
   constexpr ToolboxMessage(ToolboxMessageLeaf leaf) : leaf(leaf) {}
+  constexpr ToolboxMessage(ToolboxMessageMath math) : math(math) {}
   constexpr ToolboxMessage(ToolboxMessageNodeDirect node) : nodeDirect(node) {}
   constexpr ToolboxMessage(ToolboxMessageNodeIndirect node)
       : nodeIndirect(node) {}
@@ -105,6 +134,7 @@ union ToolboxMessage {
     return reinterpret_cast<const ToolboxMessageTree *>(this);
   }
   ToolboxMessageLeaf leaf;
+  ToolboxMessageMath math;
   ToolboxMessageNodeDirect nodeDirect;
   ToolboxMessageNodeIndirect nodeIndirect;
 };

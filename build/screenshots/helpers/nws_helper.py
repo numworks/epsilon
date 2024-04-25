@@ -53,7 +53,7 @@ def convert_nws_to_txt(nwspath, txtpath=None):
     f.close()
 
 
-def convert_txt_to_nws(txtpath, nwspath, filter):
+def convert_txt_to_nws(txtpath, nwspath, filter=[]):
     if not os.path.isfile(txtpath) or os.path.splitext(txtpath)[1] != ".txt":
         raise argparse.ArgumentTypeError(txtpath + " is not a .txt")
 

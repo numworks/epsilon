@@ -4,10 +4,10 @@
 
 .SECONDEXPANSION:
 
-include config.mak
-include toolchain.mak
+include src/config.mak
+include src/toolchain.mak
 
-include goal.mak
-include module.mak
+include src/goal.mak
+include src/module.mak
 
-include rules.mak
+include src/rules.mak

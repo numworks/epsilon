@@ -211,19 +211,21 @@ Token Tokenizer::popToken() {
   }
 
   if (IsIdentifierMaterial(c)) {
-#if 0
     if (m_parsingContext->parsingMethod() ==
         ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
       /* If currently popping an implicit addition, we have already checked that
        * any identifier is a unit. */
       Token result(Token::Type::Unit);
-      result.setRange(m_decoder.layoutAt(start),
+      result.setRange(start.layout(),
                       UTF8Decoder::CharSizeOfCodePoint(c) +
                           popWhile(IsNonDigitalIdentifierMaterial));
-      assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
+#if ASSERTIONS
+      LayoutSpanDecoder decoder(result.toSpan());
+      assert(Units::Unit::CanParse(&decoder, nullptr, nullptr));
+#endif
       return result;
     }
-#endif
+
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder = start;
     assert(m_numberOfStoredIdentifiers ==
@@ -435,11 +437,6 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
           '"') == *length - 2) {
     return Token::Type::CustomIdentifier;
   }
-#if 0
-  if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
-    return Token::Type::SpecialIdentifier;
-  }
-#endif
   if (PhysicalConstant::IsPhysicalConstant(span)) {
     return Token::Type::Constant;
   }
@@ -476,15 +473,14 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   if (Builtin::HasReservedFunction(span)) {
     return Token::Type::ReservedFunction;
   }
-/* When parsing for unit conversion, the identifier "m" should always
- * be understood as the unit and not the variable. */
-#if 0
+  /* When parsing for unit conversion, the identifier "m" should always
+   * be understood as the unit and not the variable. */
+  LayoutSpanDecoder subString2(span);
   if (m_parsingContext->parsingMethod() ==
           ParsingContext::ParsingMethod::UnitConversion &&
-      Unit::CanParse(string, *length, nullptr, nullptr)) {
+      Units::Unit::CanParse(&subString2, nullptr, nullptr)) {
     return Token::Type::Unit;
   }
-#endif
 
   bool hasUnitOnlyCodePoint = false;
 #if 0

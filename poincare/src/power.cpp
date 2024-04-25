@@ -222,6 +222,12 @@ std::complex<T> PowerNode::computeOnComplex(
      * complex infinity, which we don't handle. We decide to return undef. */
     return complexNAN<T>();
   }
+  if (c.real() == static_cast<T>(0.0) && c.imag() == static_cast<T>(0.0) &&
+      d.imag() != static_cast<T>(0.0)) {
+    /* 0^complex should return undef
+     * std lib returns 0 in some cases, so we enforce the behavior here */
+    return complexNAN<T>();
+  }
   std::complex<T> result;
   if (c.imag() == static_cast<T>(0.0) && d.imag() == static_cast<T>(0.0) &&
       c.real() != static_cast<T>(0.0) &&

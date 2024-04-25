@@ -26,3 +26,9 @@ include $(PATH_haussmann)/src/goal.mak
 include $(PATH_haussmann)/src/module.mak
 
 include $(PATH_haussmann)/src/rules.mak
+
+# Miscellaneous rules
+
+.PHONY: clean
+clean:
+	$(QUIET) rm -rf $(OUTPUT_DIRECTORY)

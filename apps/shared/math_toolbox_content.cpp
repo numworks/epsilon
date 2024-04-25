@@ -1,9 +1,11 @@
 #include <apps/i18n.h>
 #include <escher/toolbox_message_tree.h>
+#include <poincare/k_layout.h>
 
 #include <array>
 
 using namespace Escher;
+using namespace Poincare;
 
 namespace Shared {
 
@@ -498,18 +500,18 @@ constexpr ToolboxMessage unitChildren[] = {
 };
 
 constexpr ToolboxMessage calculChildren[] = {
-    ToolboxMessageLeaf(I18n::Message::DiffCommandWithArg,
+    ToolboxMessageMath(KRackL(KDiffL("x"_l, "a"_l, "f(x)"_l)),
                        I18n::Message::DerivateNumber, false,
                        I18n::Message::DiffCommand),
-    ToolboxMessageLeaf(I18n::Message::HigherOrderDiffCommandWithArg,
+    ToolboxMessageMath(KRackL(KNthDiffL("x"_l, "a"_l, "f(x)"_l, "n"_l)),
                        I18n::Message::HigherOrderDerivateNumber, false,
                        I18n::Message::HigherOrderDiffCommand),
-    ToolboxMessageLeaf(I18n::Message::IntCommandWithArg,
+    ToolboxMessageMath(KRackL(KIntegralL("x"_l, "a"_l, "b"_l, "f(x)"_l)),
                        I18n::Message::Integral, false,
                        I18n::Message::IntCommand),
-    ToolboxMessageLeaf(I18n::Message::SumCommandWithArg, I18n::Message::Sum,
-                       false, I18n::Message::SumCommand),
-    ToolboxMessageLeaf(I18n::Message::ProductCommandWithArg,
+    ToolboxMessageMath(KRackL(KSumL("k"_l, "m"_l, "n"_l, "f(k)"_l)),
+                       I18n::Message::Sum, false, I18n::Message::SumCommand),
+    ToolboxMessageMath(KRackL(KProductL("k"_l, "m"_l, "n"_l, "f(k)"_l)),
                        I18n::Message::Product, false,
                        I18n::Message::ProductCommand)};
 
@@ -522,11 +524,11 @@ constexpr ToolboxMessage complexChildren[] = {
                        I18n::Message::RealPart),
     ToolboxMessageLeaf(I18n::Message::ImCommandWithArg,
                        I18n::Message::ImaginaryPart),
-    ToolboxMessageLeaf(I18n::Message::ConjCommandWithArg,
-                       I18n::Message::Conjugate)};
+    ToolboxMessageMath(KRackL(KConjL("z"_l)), I18n::Message::Conjugate)};
 
 constexpr ToolboxMessage combinatoricsChildren[] = {
-    ToolboxMessageLeaf(I18n::Message::BinomialCommandWithArg,
+    // TODO_PCJ PT binom and permute
+    ToolboxMessageMath(KRackL(KBinomialL("k"_l, "n"_l)),
                        I18n::Message::Combination),
     ToolboxMessageLeaf(I18n::Message::PermuteCommandWithArg,
                        I18n::Message::Permutation),
@@ -635,12 +637,11 @@ constexpr ToolboxMessage vectorsChildren[] = {
     ToolboxMessageLeaf(I18n::Message::DotCommandWithArg, I18n::Message::Dot),
     ToolboxMessageLeaf(I18n::Message::CrossCommandWithArg,
                        I18n::Message::Cross),
-    ToolboxMessageLeaf(I18n::Message::NormVectorCommandWithArg,
-                       I18n::Message::NormVector),
+    ToolboxMessageMath(KRackL(KVectorNormL("U"_l)), I18n::Message::NormVector),
 };
 
 constexpr ToolboxMessage matricesVectorsChildren[] = {
-    ToolboxMessageLeaf(I18n::Message::MatrixCommandWithArg,
+    ToolboxMessageMath(KRackL(KMatrix2x2L("1"_l, "2"_l, "3"_l, "4"_l)),
                        I18n::Message::NewMatrix, false,
                        I18n::Message::MatrixCommand),
     ToolboxMessageLeaf(I18n::Message::TransposeCommandWithArg,
@@ -719,12 +720,10 @@ constexpr ToolboxMessage trigonometryChildren[] = {
 };
 
 constexpr ToolboxMessage decimalNumbersChildren[] = {
-    ToolboxMessageLeaf(I18n::Message::FloorCommandWithArg,
-                       I18n::Message::Floor),
+    ToolboxMessageMath(KRackL(KFloorL("x"_l)), I18n::Message::Floor),
     ToolboxMessageLeaf(I18n::Message::FracCommandWithArg,
                        I18n::Message::FracPart),
-    ToolboxMessageLeaf(I18n::Message::CeilCommandWithArg,
-                       I18n::Message::Ceiling),
+    ToolboxMessageMath(KRackL(KCeilL("x"_l)), I18n::Message::Ceiling),
     ToolboxMessageLeaf(I18n::Message::RoundCommandWithArg,
                        I18n::Message::Rounding),
 };
@@ -768,10 +767,9 @@ constexpr ToolboxMessage listsOperationsChildren[] = {
                        I18n::Message::ProductOfElements)};
 
 constexpr ToolboxMessage listsChildren[] = {
-    ToolboxMessageLeaf(I18n::Message::ListCommandWithArg,
-                       I18n::Message::NewList, false,
-                       I18n::Message::ListCommand),
-    ToolboxMessageLeaf(I18n::Message::ListSequenceCommandWithArg,
+    ToolboxMessageMath(KRackL(KCurlyBracesL("1,2,3"_l)), I18n::Message::NewList,
+                       false, I18n::Message::ListCommand),
+    ToolboxMessageMath(KRackL(KListSequenceL("k"_l, "n"_l, "f(k)"_l)),
                        I18n::Message::ListSequenceDescription, false,
                        I18n::Message::ListSequenceCommand),
     ToolboxMessageNode(I18n::Message::StatsApp, listsStatsChildren),
@@ -800,11 +798,10 @@ constexpr ToolboxMessage logicChildren[] = {
                        false, I18n::Message::NandCommandWithSpaces)};
 
 constexpr ToolboxMessage menu[] = {
-    ToolboxMessageLeaf(I18n::Message::AbsCommandWithArg,
-                       I18n::Message::AbsoluteValue),
-    ToolboxMessageLeaf(I18n::Message::RootCommandWithArg,
-                       I18n::Message::NthRoot),
-    ToolboxMessageLeaf(I18n::Message::LogCommandWithArg,
+    ToolboxMessageMath(KRackL(KAbsL("x"_l)), I18n::Message::AbsoluteValue),
+    ToolboxMessageMath(KRackL(KRootL("x"_l, "n"_l)), I18n::Message::NthRoot),
+    // TODO_PCJ: NL log
+    ToolboxMessageMath("log"_l ^ KSubscriptL("a"_l) ^ "(x)"_l,
                        I18n::Message::BasedLogarithm),
     ToolboxMessageNode(I18n::Message::Calculus, calculChildren),
     ToolboxMessageNode(I18n::Message::ComplexNumber, complexChildren),

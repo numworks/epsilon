@@ -1,11 +1,13 @@
 
-include Makefile
+PATH_haussmann := ..
 
-$(eval $(call declare_module,aaa,test/mod/aaa))
+include $(PATH_haussmann)/Makefile
+
+$(eval $(call declare_module,aaa,mod/aaa))
 
 $(eval $(call define_module,main,\
-	test/dummy.cpp:-do_something\
-	test/main.cpp:+do_something\
+	dummy.cpp:-do_something\
+	main.cpp:+do_something\
 ))
 
 $(eval $(call declare_goal,test,main.do_something aaa))

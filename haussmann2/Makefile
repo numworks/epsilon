@@ -4,13 +4,15 @@
 
 .SECONDEXPANSION:
 
-include src/config.mak
-include src/toolchain.mak
+PATH_haussmann ?= .
 
-include src/helpers.mak
-include src/flavor.mak
+include $(PATH_haussmann)/src/config.mak
+include $(PATH_haussmann)/src/toolchain.mak
 
-include src/goal.mak
-include src/module.mak
+include $(PATH_haussmann)/src/helpers.mak
+include $(PATH_haussmann)/src/flavor.mak
 
-include src/rules.mak
+include $(PATH_haussmann)/src/goal.mak
+include $(PATH_haussmann)/src/module.mak
+
+include $(PATH_haussmann)/src/rules.mak

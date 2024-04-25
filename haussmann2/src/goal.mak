@@ -7,18 +7,20 @@
 # (and only this one) no matter what flavors are passed to the goal.
 #
 # Applications use the following function to create a goal:
-#   create_goal, <name>, <modules>
+#   create_goal, <name>, <modules>, <optional description>
 # This will create a variable MODULE_<name> holding the list of modules, along
 # with a short target allowing a user to build the goal without having to type
 # the full path (e.g. goal.a.bin instead of out/put/dir/ect/ory/goal.a.bin).
+# The description will be displayed in the make help message.
 
 # Public API
 
-# create_goal, <name>, <modules>
+# create_goal, <name>, <modules>, <optional description>
 define create_goal
 $(call _assert_valid_goal_name,$1)
 ALL_GOALS += $1
 MODULES_$1 := $2
+HELP_$1 := $3
 
 $(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): SFLAGS += $$(foreach m,$2,$$(SFLAGS_$$(call name_for_flavored_target,$$m)))
 $(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): LDFLAGS += $$(foreach m,$2,$$(LDFLAGS_$$(call name_for_flavored_target,$$m)))

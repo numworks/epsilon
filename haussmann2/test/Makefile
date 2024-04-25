@@ -15,5 +15,8 @@ $(eval $(call create_module,main,\
 	main.cpp:+do_something\
 ))
 
-$(eval $(call create_goal,test,main.do_something aaa))
+$(eval $(call create_goal,test,\
+	main.do_something aaa,\
+	Some test executable that should exit with an error\
+))
 $(eval $(call create_goal,test_dummy,main))

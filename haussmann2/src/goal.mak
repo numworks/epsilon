@@ -7,6 +7,9 @@ MODULES_$1 := $2
 $(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): SFLAGS += $$(foreach m,$2,$$(SFLAGS_$$(call name_for_flavored_target,$$m)))
 $(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): LDFLAGS += $$(foreach m,$2,$$(LDFLAGS_$$(call name_for_flavored_target,$$m)))
 
+$1%: $(OUTPUT_DIRECTORY)/$1%
+	@ :
+
 endef
 
 # Do not use flavors_for_flavored_target to avoid an extraneous subst.

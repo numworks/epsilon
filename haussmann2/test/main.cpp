@@ -1,4 +1,3 @@
-extern int f(int);
-extern int g(int);
+#include <aaa.h>
 
 int main() { return f(f(g(-1))); }

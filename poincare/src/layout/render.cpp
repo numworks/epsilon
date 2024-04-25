@@ -1310,7 +1310,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
           p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));
 
       // Margin around the letter is left to the letter renderer
-      if (node->isPtBinomialLayout()) {
+      if (node->isPtPermuteLayout()) {
         // Big A
         /* Given that the A shape is closer to the subscript than the
          * superscript, we make the right margin one pixel larger to use the

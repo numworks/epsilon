@@ -728,29 +728,36 @@ constexpr ToolboxMessage decimalNumbersChildren[] = {
                        I18n::Message::Rounding),
 };
 
-extern constexpr ToolboxMessage listsStatsChildren[] = {
-    ToolboxMessageLeaf(I18n::Message::ListMeanCommandWithArg,
-                       I18n::Message::Mean),
+constexpr ToolboxMessage listMean = ToolboxMessageLeaf(
+    I18n::Message::ListMeanCommandWithArg, I18n::Message::Mean);
+constexpr ToolboxMessage listStandardDeviation =
     ToolboxMessageLeaf(I18n::Message::ListStandardDevCommandWithArg,
-                       I18n::Message::StandardDeviation),
-    ToolboxMessageLeaf(I18n::Message::ListMedianCommandWithArg,
-                       I18n::Message::Median),
-    ToolboxMessageLeaf(I18n::Message::ListVarianceCommandWithArg,
-                       I18n::Message::Deviation),
+                       I18n::Message::StandardDeviation);
+constexpr ToolboxMessage listMedian = ToolboxMessageLeaf(
+    I18n::Message::ListMedianCommandWithArg, I18n::Message::Median);
+constexpr ToolboxMessage listVariance = ToolboxMessageLeaf(
+    I18n::Message::ListVarianceCommandWithArg, I18n::Message::Deviation);
+constexpr ToolboxMessage listSampleSTD =
     ToolboxMessageLeaf(I18n::Message::ListSampleStandardDevCommandWithArg,
-                       I18n::Message::SampleSTD)};
+                       I18n::Message::SampleSTD);
 
-extern constexpr int alternateListsStatsOrder[]{
-    0,  // Mean
-    1,  // StandardDev
-    4,  // SampleStandardDev
-    2,  // Median
-    3   // Variance
+constexpr const ToolboxMessage *const listStatsDefaultOrder[] = {
+    &listMean,     &listStandardDeviation, &listMedian,
+    &listVariance, &listSampleSTD,
 };
 
-static_assert(std::size(alternateListsStatsOrder) ==
-                  std::size(listsStatsChildren),
+constexpr const ToolboxMessage *const listStatsAlternateOrder[]{
+    &listMean,   &listStandardDeviation, &listSampleSTD,
+    &listMedian, &listVariance,
+};
+
+static_assert(std::size(listStatsDefaultOrder) ==
+                  std::size(listStatsAlternateOrder),
               "Alternate lists stats order in toolbox has wrong size");
+
+extern constexpr ToolboxMessage listsStatsFork[] = {
+    ToolboxMessageNode(I18n::Message::StatsApp, listStatsDefaultOrder),
+    ToolboxMessageNode(I18n::Message::StatsApp, listStatsAlternateOrder)};
 
 constexpr ToolboxMessage listsOperationsChildren[] = {
     ToolboxMessageLeaf(I18n::Message::ListLengthCommandWithArg,
@@ -772,7 +779,7 @@ constexpr ToolboxMessage listsChildren[] = {
     ToolboxMessageMath(KRackL(KListSequenceL("k"_l, "n"_l, "f(k)"_l)),
                        I18n::Message::ListSequenceDescription, false,
                        I18n::Message::ListSequenceCommand),
-    ToolboxMessageNode(I18n::Message::StatsApp, listsStatsChildren),
+    ToolboxMessageNode(I18n::Message::StatsApp, listsStatsFork, true),
     ToolboxMessageNode(I18n::Message::Operations, listsOperationsChildren)};
 
 constexpr ToolboxMessage logicChildren[] = {

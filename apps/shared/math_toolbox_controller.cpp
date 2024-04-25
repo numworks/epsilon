@@ -16,9 +16,8 @@ using namespace Escher;
 namespace Shared {
 
 // Actual toolbox content is in math_toolbox_content.cpp
-extern const ToolboxMessage listsStatsChildren[];
+extern const ToolboxMessage listsStatsFork[];
 extern const ToolboxMessage arithmeticFork[];
-extern int alternateListsStatsOrder[];
 extern const ToolboxMessage toolboxModel;
 
 MathToolboxController::MathToolboxController()
@@ -112,13 +111,6 @@ void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
            static_cast<void *>(cell) >=
                static_cast<void *>(m_nodeCells + k_maxNumberOfDisplayedRows));
     // Message is leaf
-    if (GlobalPreferences::SharedGlobalPreferences()
-                ->listsStatsOrderInToolbox() ==
-            CountryPreferences::ListsStatsOrderInToolbox::Alternate &&
-        m_messageTreeModel->childrenList() == listsStatsChildren) {
-      // We are in lists stats sub-menu
-      messageTree = messageTreeModelAtIndex(alternateListsStatsOrder[row]);
-    }
     LeafCell *myCell = static_cast<LeafCell *>(cell);
 
     Layout resultLayout = messageTree->layout();
@@ -166,13 +158,6 @@ bool MathToolboxController::selectSubMenu(int selectedRow) {
 
 bool MathToolboxController::selectLeaf(int selectedRow) {
   assert(typeAtRow(selectedRow) == k_leafCellType);
-  if (GlobalPreferences::SharedGlobalPreferences()
-              ->listsStatsOrderInToolbox() ==
-          CountryPreferences::ListsStatsOrderInToolbox::Alternate &&
-      m_messageTreeModel->childrenList() == listsStatsChildren) {
-    // We are in lists stats sub-menu
-    selectedRow = alternateListsStatsOrder[selectedRow];
-  }
   const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(selectedRow);
   if (displayMessageTreeDisabledPopUp(messageTree)) {
     return true;
@@ -250,6 +235,14 @@ int MathToolboxController::indexAfterFork(
       return 0;
     }
     return 1;
+  }
+  if (forkMessageTree->childrenList() == listsStatsFork) {
+    if (GlobalPreferences::SharedGlobalPreferences()
+            ->listsStatsOrderInToolbox() ==
+        CountryPreferences::ListsStatsOrderInToolbox::Alternate) {
+      return 1;
+    }
+    return 0;
   }
   Preferences::UnitFormat unitFormat =
       GlobalPreferences::SharedGlobalPreferences()->unitFormat();

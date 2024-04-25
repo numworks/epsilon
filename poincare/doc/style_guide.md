@@ -11,7 +11,7 @@ These practices ensure an optimized, uniform and self-contained code base.
 
 ## Keep internal API private
 
-Poincare has an internal and an external API. Only the external API should be available and accessed from outside.
+Poincare has an internal and an external API. Only the external API should be accessible from outside.
 
 Poincare should never use code from `apps/*`.
 
@@ -47,13 +47,13 @@ void myMethod(Internal::Context ctx) const;
 
 ## Only edit Trees on the TreeStack
 
-TreeStack is the only place Tree edition is allowed.
+The `TreeStack` is the only place where `Tree` edition is allowed.
 
-When a Tree is stored out of the TreeStack and needs to be changed, it is copied onto TreeStack, edited there, and the original tree is overwritten with the result.
+When a `Tree` is stored out of the `TreeStack` and needs to be changed, it is copied onto `TreeStack`, edited there, and then the original `Tree` is overwritten with the result.
 
 ## Use switch and C-style code with Tree structure
 
-To avoid heavy v-tables and better organize the code, we steer away from heavy use of virtuality on our Tree structure.
+To avoid heavy v-tables and better organize the code, we steer away from heavy use of virtuality on our `Tree` structure.
 
 > [!CAUTION]
 > Avoid this:
@@ -83,7 +83,7 @@ bool Simplify(Tree* t) {
 
 ## Tree creation on TreeStack
 
-To preserve valid `Tree*` pointers whenever something is put on the TreeStack, it must be pushed at the end.
+To preserve valid tree pointers whenever something is put on the `TreeStack`, trees must be pushed at the end.
 
 > [!CAUTION]
 > Avoid this:
@@ -98,7 +98,7 @@ Tree* v = u->nextTree()->cloneTreeBeforeNode(KUndef);
 > Prefer this:
 
 ```cpp
-// Create a Undef Tree at the end of the tree Stack
+// Create a Undef Tree at the end of the TreeStack
 Tree* v = KUndef->clone();
 // Edit v
 ```
@@ -197,7 +197,7 @@ Both examples are equivalent to access a tree's first child, but the later asser
 
 ## Distinguish Trees from Nodes
 
-Childless Trees are equivalent to their Node. We avoid mixing the definition for clarity, and in case children are added later.
+Childless trees are equivalent to their node. We avoid mixing the definition for clarity, and in case children are added later.
 
 > [!CAUTION]
 > Avoid this:

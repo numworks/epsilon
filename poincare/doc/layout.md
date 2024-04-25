@@ -5,8 +5,8 @@
 ### Racks and Layouts
 
 The Tree structure is bipartite:
-- **Racks** have **Layouts** children
-- **Layouts** have **Racks** children (or no children like codepoints layouts).
+- `Racks` have `Layouts` children
+- `Layouts` have `Racks` children (or no children like codepoints layouts).
 
 #### Example
 This layout:
@@ -31,7 +31,7 @@ Rack
 
 ### Class hierarchy
 
-**Rack** and **Layout** are subclasses of **Tree**, **Grid** is a subclass of **Layout**.
+`Rack` and `Layout` are subclasses of `Tree`, `Grid` is a subclass of `Layout`.
 They have no virtuality and are only here to make clear what is expected in signatures.
 
 ```
@@ -44,7 +44,7 @@ Tree -> Rack
 
 ### Simple cursor
 
-The **layout cursor** is always at a given index inside a Rack. Index may be equal to `rack->numberOfChildren()` to point to the right of the last child.
+The layout cursor is always at a given index inside a `Rack`, corresponding to the index of the child on the right after the cursor (the cursor is at the left of the child). This index may be equal to `rack->numberOfChildren()` to point to the right of the last child.
 
 #### Example
 In this layout (where `|` is the cursor):
@@ -70,7 +70,7 @@ Rack
 
 ### Cursor selection
 
-A **cursor selection** is between two indexes of a Rack.
+A cursor selection is between two indexes of a `Rack`.
 
 #### Example
 In this layout (where the selection is between the `|`):
@@ -146,15 +146,16 @@ Rack
 └─ '2'
 ```
 
-## Layoutter
+## Layouter
 
-There is no memoization of the computed layout properties inside poincare-junior.
+There is no memoization of layout properties (size, baseline, absolute position) inside poincare-junior.
 
-Algorithms on racks and matrices iterates their children in the correct order to avoid computing several times the same properties.
+Racks and matrices computes their children properties instead of each children computing them. It avoids computing several times the same properties.
+
 
 ### Separators
 
-`ThousandSeparator` and `OperatorSeparator` layouts are inserted in Racks by the layoutter.
+`ThousandSeparator` and `OperatorSeparator` layouts are inserted in `Racks by the layouter.
 
 #### Example
 The expression
@@ -189,7 +190,7 @@ Separators are ignored by the char* serialization and by the parser.
 
 ### Empty layouts
 
-An empty Rack displays itself as a yellow square, unless the cursor is pointing to it.
+An empty rack displays itself as a yellow square, unless the cursor is pointing to it.
 
 Grids (matrices and piecewise layouts) always possess an additional row and column filled with empty racks called placeholders.
 They are displayed as gray squares, if the cursor is in the grid or one of its descendants.
@@ -209,7 +210,9 @@ FractionLayout
 
 ### VerticalOffset
 
-When a Rack encounters a `VerticalOffset` while iterating over their children, it places it relatively to the anchor child height. `VerticalOffset` does nothing by itself.
+A `VerticalOffset` is related to the a layout positionned before or after him in the same rack. Let's call this layout the anchor of the `VerticalOffset`.
+
+When a rack encounters a `VerticalOffset` while iterating over their children, it places it relatively it's anchor height. `VerticalOffset` does nothing by itself.
 
 The vertical offset has two properties (`isSubScript` and `isPrefix`) that respectively determine how to place it (up or down) and what is its anchor (previous or next layout).
 
@@ -229,9 +232,12 @@ Rack
 
 ### Derivative
 
-The derivative (and nth derivative) layout have a boolean flag to tell whether the cursor is in the right or the left copy of the variable layout.
+$$\frac{d^{\textcolor{cyan}{n}}}{d{\textcolor{green}{x}}^{\textcolor{cyan}{n}}} (f(x)) \bigg|_{{\textcolor{green}{x}}=a}$$
 
-Its variable child will be placed (`positionOfChild`) to the side where the cursor is and a copy is rendered on the other side.
+The derivative (and nth derivative) layout have a boolean flag to tell whether the cursor is in the right or the left spot of the variable layout.
+
+The variable child will be placed at the spot where the cursor is and a copy is rendered at the other spot.
 
 If the cursor is not inside the variable layout, the flag has no importance.
+
 Nth derivative has a similar flag for the order.

@@ -2,9 +2,9 @@
 
 ## Generalities
 
-Starting from any expression, the simplification algorithm finds an better, and reduced mathematically equivalent expression.
+Starting from any expression, the simplification algorithm finds an better and reduced mathematically equivalent expression.
 
-Steps can be summarized to this :
+Steps can be summarized to this:
 
 ```mermaid
 graph TD;
@@ -14,15 +14,17 @@ graph TD;
   E-->|Beautification|F["Expression"]
 ```
 
-We ensure a few properties:
+Steps:
+- Projection projects remove complexMode, angleUnit, ...
+- SystematicReduction applies obvious reductions
+- AdvancedReduction finds the best reduced representation
+- Beautification undoes Projection and apply readability improvements
+- In practice, Beautification also prepare for Layouter
+
+Expression properties:
 - Projected Expressions are made of specific Nodes
 - Projected Expressions are independent from ComplexMode, AngleUnit, ...
 - Reduced Expressions are Projected Expressions
-- SystematicReduction applies obvious reductions.
-- AdvancedReduction finds the best reduced representation
-- Beautification restore ComplexMode, AngleUnit, dependency, ...
-- Beautification uses maths and apply readability improvements
-- In practice, Beautification also undoes Projection and prepare for Layoutter
 
 These operations never need to be applied twice.
 
@@ -44,7 +46,7 @@ These operations never need to be applied twice.
 
 ## Dimension check
 
-Dimension covers units, matrix size, and list size (handled in a different functions in a similar way).
+Dimension covers scalars, points, booleans, units, matrix size, and list size (handled in a different functions in a similar way).
 
 This is done first here so that all following steps can assume the dimension is correct, removing the need for many checks.
 
@@ -52,41 +54,39 @@ Some issues such as Unreal, division by zero or other undefinitions can still ar
 
 ## Approximation strategy
 
-The simplification algorithm handles two simplification strategies :
+The simplification algorithm handles two simplification strategies:
  - `Default`: Default strategy.
  - `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated).
 
-`ApproximateToFloat` strategy is less demanding in term of tree size, but the quality of the simplification will downgrade (example of $1-0.3-0.7$).
+`ApproximateToFloat` strategy is less demanding in term of tree size, but the quality of the simplification will downgrade (example of $1-0.3-0.7$). It is a downgraded strategy compared to the `Default` one.
 
-Approximation strategy is checked here and later in the simplification algorithm (some steps may unlock new possible approximations).
+Strategy is a parameter given to the simplification. We start simplification with the given startegy, and we can downgrade the strategy during the simplification process for example if:
+- we detected units in the expression: most units (except angle ones) enforce an approximation of the expression
+- `TreeStack` is full
 
-At this step :
+To ensure a constant strategy throughout the simplification process, we raise a `RelaxContext` exception that restarts the simplification with a downgraded strategy, unless it is already at the downgraded strategy.
 
-### If we detected units in the expression
-
-Most units (except angle ones) enforce an approximation of the expression. There is no need to simplify with `Default` strategy in that case (since strategy will be accounted for later as well).
-
-To ensure a constant strategy throughout the Simplification process, we simply raise a `RelaxContext` exception, restarting the simplification with a downgraded strategy, unless it is already at `ApproximateToFloat`.
+Most of the time, we use the `Default` strategy and let the simplification handle eventual strategy change.
 
 ### If strategy is `ApproximateToFloat`
 
-Before projection (that could reduce approximation precision) and random nodes seeding (that is not yet relevant), apply the approximation to reduce the expression as much as possible.
+We apply a first round of approximation here to reduce the expression as much as possible. We do it before projection because it can reduce approximation precision, and before random nodes seeding because it is not yet relevant.
 
 For example:
 $$ln(cos(x))^{ln(cos(1))} = ln(cos(x))^{-0.615626}$$
 
 ## Random nodes seeding
 
-Since the next steps may duplicate parts of the expression, we need to seed each random node. a duplicated random node should evaluate to the same random number.
+Since the next steps may duplicate parts of the expression, we need to seed each random node because a duplicated random node should evaluate to the same random number.
 
-For example, with this projection, both random should never approximate to different values.
+For example, with this projection, both random should always approximate to the same value.
 $$sinh(random())=\frac{e^{random()}-e^{-random()}}{2}$$
 
 Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
 
 ## Context user symbols
 
-User symbols and functions stored in the given context are replaced with their definition, even if nested.
+User symbols and functions stored in the given context are replaced with their definition (see `SymbolicComputation` enum for replacement rules), even if nested.
 
 If anything has been replaced, reapply previous step to seed new random nodes.
 
@@ -97,8 +97,8 @@ For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
 
 ## Projection
 
-It's expected to:
-- Reduce the number of equivalent representations of an expression (Div(A,B) -> Mult(A, Pow(B, -1)))
+It is expected to:
+- Reduce the number of equivalent representations of an expression (Div(A,B) -> Mult(A, Pow(B, -1))). It replace nodes not handled by reduction with other nodes handled by reduction.
 - Un-contextualize the expression (remove unit, complex format and angle units considerations from reduction algorithm)
 - Do nothing if applied a second time
 
@@ -113,6 +113,7 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+
 $$
 
 <details>
+<summary>List of projections</summary>
 
 | Match | Replace |
 |---|---|
@@ -156,13 +157,13 @@ $$
 
 ### Projection in advanced reduction
 
-When a projection is too difficult to undo, and we want it to appear back in the result only if it improve the result, the projection can be made in advanced simplification.
+Some projections are too difficult to undo to be applied at projection. But we still want to try them to see it it improves the result. We then try the projection during advanced reduction.
 
-For example, in `Projection::Expand` method, called during advanced simplification, `tan(x)` may be "expanded" to `sin(x)/cos(x)`.
+For example, `tan` should be projected in `sin(x)/cos(x)` because systematic reduction doesn't handle `tan` nodes. But `sin(x)/cos(x)` can be too difficult to convert back to `tan`. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
 
-Advanced simplification can undo it if it doesn't improve the overall expression, and systematic simplification will just ignore the unprojected node.
+Advanced reduction can undo it if it doesn't improve the overall expression, and systematic reduction will just ignore the unprojected node.
 
-Since this step is applied long after projection step, the Tree replacement must be in its projected form.
+Since this step is applied long after projection step, the new tree must already be in its projected form.
 
 In practice, we replace `tanRad(x)` (projected tree for tan) into `trig(x,1) * trig(x, 0)^(-1)`.
 
@@ -172,38 +173,41 @@ For example, advanced trigonometry functions are projected in projection because
 
 ## User symbols
 
-We list all global user symbols, sorted in the alphabetical order.
+We list all global user symbols in the alphabetical order.
 
-All symbols (global and local) are then projected to an id, based on if they are global or local, and how nested they are in the local contexts, using Bruijn indices.
+All symbols (global and local) are then projected to an id, based on if they are global or local, and how nested they are in the local contexts, using de Bruijn indexes.
 
-For example, under the expression are the projected id of the user symbols. Some of the local user symbols are preserved for beautification (since we don't list them with the global user-symbols).
-
-This step converts the `UserVariable` trees (containing the variable name) into a `Variable` (containing the id only).
+For example, under the expression are the projected id of the user symbols.
 
 ```
 a+b+diff(a+c+x+sum(k+a+x, k, 1, b), x, b)+a
 0 1      1 3 0     0 2 1  k  1  2   x  1  0
 ```
 
-In other words, within a parametered expression, `0` is the local parameter.
+Some of the local user symbols are preserved for beautification (since we don't list them with the global user-symbols).
 
-When nested inside a parametered expression, all indexes are incremented.
+This step converts the `UserVariable` trees (containing the variable name) into a `Variable` (containing the id only).
 
-This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope`.
+When nested inside a parametered expression, all id are incremented. In the parametered expression, `0` is the local parameter.
+
+This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope` (increment/decrement the id).
 
 ## Systematic reduction
 
-It's expected to:
+It is expected to:
 - Be efficient and simple
 - Apply obvious and definitive changes
 - Do nothing if applied a second time
-- Ignore second term of dependencies
+- Ignore dependencies
 
 ### Effects
 
-Systematic simplification can simplify rational operations, convert non-integer powers to their exponential/logarithm form, factorize variables in simple additions or even compute exact derivatives.
+Systematic reduction can simplify rational operations, convert non-integer powers to their exponential/logarithm form, factorize variables in simple additions or even compute exact derivatives.
+
+Dependencies are already bubbled-up at each shallow systematic reduce.
 
 <details>
+<summary>List systematic reductions</summary>
 
 | Match | Replace |
 |---|---|
@@ -306,7 +310,7 @@ Systematic simplification can simplify rational operations, convert non-integer 
 | round(A, B) (with valid A, B) | floor(A×10^B + 1/2)×10^-B |
 | diff(dep(x, {ln(x), z}), x, y) | dep(diff(x, x, y), {diff(ln(x), x, y), z}) |
 
-The following methods directly simplify to their result :
+The following methods directly simplify to their result:
 - listSort(L)
 - median(L)
 - dim(A)
@@ -337,23 +341,24 @@ The following methods directly simplify to their result :
 
 At this step, there are still nested lists in the expression, but we know the expected list length.
 
-Using `ProjectToNthElement` function, we smartly project each of the expected elements to build the output, simplified, list.
+Using `ProjectToNthElement` function, we smartly project each of the expected elements to build the output simplified list.
 
 For example: Applying `ProjectToNthElement` to the second element of `{4,5,6} + sequence(k,k,3)` will compute `5+2` and simplify it to `7`.
 
 ## Advanced Reduction
 
-It's expected to:
+It is expected to:
 - Reduce any reducible expression if given enough resources
 - Do its best with reduced resources
 - Be deterministic
-- Ignore second term of dependencies
+- Ignore dependencies
 
 ### Effects
 
 Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and call systematic reduction at every steps.
 
 <details>
+<summary>List advanded reductions</summary>
 
 | Match | Replace |
 |---|---|
@@ -395,13 +400,12 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 
 </details>
 
-### Examples
-
 <details>
-
-Unsuccessful advanced reduction on simple tree $a+b$.
+<summary>Examples</summary>
 
 `_` represent the node that is being examined.
+
+- Unsuccessful advanced reduction on simple tree $a+b$.
 
 ```mermaid
 graph TD;
@@ -416,7 +420,7 @@ graph TD;
   C-->|Expand|CE["Impossible"]
 ```
 
-Successful advanced reduction on $|a||b|-|ab|=0$.
+- Successful advanced reduction on $|a||b|-|ab|=0$.
 
 For clarity, Impossible paths are removed and nextNode are concatenated.
 
@@ -430,7 +434,7 @@ graph TD;
   L-->M["Already explored"]
 ```
 
-Successful advanced reduction on
+- Successful advanced reduction on
 $$-a^2-b^2+(a+b)^2+a(c+d)^2=a(2b+(c+d)^2)$$
 NextNode explorations are hidden for clarity.
 
@@ -497,11 +501,8 @@ graph TD;
 
 ## Simplify dependencies
 
-Dependencies are already bubbled-up at each shallow reduce.
-
-In this step, we remove useless dependencies from a dependency tree :
-- Break up simple dependencies into smaller bits (`dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})`).
-- Sort dependencies.
+In this step, we remove useless dependencies from a dependency tree:
+- Break up simple dependencies into smaller bits (`dep(..,{x*y})` and `dep(..,{x+y})` become `dep(..,{x ,y})`).
 - Remove dependencies that are identical or contained in others dependencies, or in the main expression.
 - Remove dependencies that can be approximated to a value.
 - Replace the entire dependency with undef or nonreal if one of the dependencies is approximated to undef or nonreal.
@@ -512,7 +513,7 @@ With an approximation strategy, we approximate again here in case previous steps
 
 ## Beautification
 
-This step basically undo early steps and projections in the following order :
+This step basically undo earlier steps in the following order:
 
 ### Restore complex format
 
@@ -520,7 +521,7 @@ Unimplemented yet.
 
 ### Restore angle unit
 
-All angle-dependant functions have been projected to radians in projection.
+All angle-dependant functions have been projected to radians during projection.
 
 They are restored to the initial angle unit.
 
@@ -528,7 +529,7 @@ An advanced reduction may be called again after that because the created angle f
 
 ### Beautify
 
-This step undo the projection by re-introducing nodes unhandled by simplification (For example, `Division`, `Log`, `Power` with non-integer indexes...).
+This step undo the projection by re-introducing nodes unhandled by reduction (For example, `Division`, `Log`, `Power` with non-integer indexes...).
 
 `Addition`, `Multiplication`, `GCD` and `LCM` are also sorted differently.
 

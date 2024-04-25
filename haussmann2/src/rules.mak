@@ -13,11 +13,11 @@ $(OUTPUT_DIRECTORY)%/.:
 	$(QUIET) mkdir -p $@
 
 # Rules for executable applications
-$(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(addprefix $(OUTPUT_DIRECTORY)/,$$(addsuffix .a,$$(MODULES_%))) | $$(@D)/.
+$(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) | $$(@D)/.
 	$(QUIET) $(LD) $(SFLAGS) $^ $(LDFLAGS) -o $@
 
 # Rules for modules as static libraries
-$(OUTPUT_DIRECTORY)/%.a: $$(addprefix $$(OUTPUT_DIRECTORY)/,$$(addsuffix .o,$$(basename $$(SOURCES_%)))) | $$(@D)/.
+$(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(QUIET) $(AR) $(ARFLAGS) $@ $^
 
 # Rules for object files

@@ -15,6 +15,12 @@ PATH_$1 := $2
 
 endef
 
+define objects_for_flavored_module
+$(call objects_for_sources,$(call flavor_filter,\
+	$(SOURCES_$(call name_for_flavored_target,$1)),\
+	$(call flavors_for_flavored_target,$1)))
+endef
+
 # Helpers
 
 # _assert_valid_module_name, <name>

@@ -14,17 +14,21 @@ $(OUTPUT_DIRECTORY)%/.:
 
 # Rules for executable applications
 $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) | $$(@D)/.
+	$(QUIET) echo "LD\t$@"
 	$(QUIET) $(LD) $(SFLAGS) $^ $(LDFLAGS) -o $@
 
 # Rules for modules as static libraries
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
+	$(QUIET) echo "AR\t$@"
 	$(QUIET) $(AR) $(ARFLAGS) $@ $^
 
 # Rules for object files
 $(OUTPUT_DIRECTORY)/%.o: %.c | $$(@D)/.
+	$(QUIET) echo "CC\t$@"
 	$(QUIET) $(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
 
 $(OUTPUT_DIRECTORY)/%.o: %.cpp | $$(@D)/.
+	$(QUIET) echo "CXX\t$@"
 	$(QUIET) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # Platform-specific rules

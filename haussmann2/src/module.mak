@@ -43,6 +43,9 @@ SFLAGS_$1 = -I$$(PATH_$1)/include
 
 $(OUTPUT_DIRECTORY)/$1%a: SFLAGS += $$(PRIVATE_SFLAGS_$1)
 
+$1%a: $(OUTPUT_DIRECTORY)/$1%a
+	@ :
+
 endef
 
 # declare_module, <name>, <path>

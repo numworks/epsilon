@@ -249,8 +249,8 @@ QUIZ_CASE(pcj_sign_methods) {
 
 void assert_sign(const char* input, ComplexSign expectedSign) {
   Tree* expression = TextToTree(input);
-  /* TODO: Factorize this with SimplifyLastTree to have properly projected
-   * variables, random trees, ... */
+  /* TODO_PCJ: Factorize this with Simplification::Simplify to have properly
+   * projected variables, random trees, ... */
   Projection::DeepSystemProject(expression,
                                 {.m_complexFormat = ComplexFormat::Cartesian});
   Simplification::DeepSystematicReduce(expression);

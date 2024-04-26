@@ -66,9 +66,6 @@ class Simplification {
   // Simplify a sorted and sanitized multiplication.
   static bool SimplifySortedMultiplication(Tree* multiplication);
   static void ConvertPowerRealToPower(Tree* u);
-
-  static bool SimplifyLastTree(Tree* node,
-                               ProjectionContext projectionContext = {});
 };
 
 }  // namespace Poincare::Internal

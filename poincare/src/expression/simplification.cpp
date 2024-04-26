@@ -861,12 +861,21 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
   SharedTreeStack->executeAndReplaceTree(
       [](void* context, const void* data) {
-        SimplifyLastTree(static_cast<const Tree*>(data)->clone(),
-                         *static_cast<ProjectionContext*>(context));
+        Tree* e = static_cast<const Tree*>(data)->clone();
+        // Copy ProjectionContext to avoid altering the original
+        ProjectionContext projectionContext =
+            *static_cast<ProjectionContext*>(context);
+        PrepareForProjection(e, projectionContext);
+        ExtractUnits(e, &projectionContext);
+        Projection::DeepSystemProject(e, projectionContext);
+        SimplifyProjectedTree(e);
+        TryApproximationStrategyAgain(e, projectionContext);
+        Beautification::DeepBeautify(e, projectionContext);
       },
       projectionContext, e, RelaxProjectionContext);
-  /* TODO: Due to projection/beautification cycles, SimplifyLastTree will most
-   *       likely return true every time anyway. */
+  /* TODO: Due to projection/beautification cycles and multiple intermediary
+   * steps, keeping track of a changed status is unreliable. We could compare
+   * CRC instead. */
   return true;
 }
 
@@ -921,18 +930,6 @@ bool Simplification::TryApproximationStrategyAgain(
   // NAries could be sorted again, some children may be merged.
   DeepSystematicReduce(e);
   return true;
-}
-
-// TODO_PR: Rename methods
-bool Simplification::SimplifyLastTree(Tree* e,
-                                      ProjectionContext projectionContext) {
-  bool changed = PrepareForProjection(e, projectionContext);
-  changed = ExtractUnits(e, &projectionContext) || changed;
-  changed = Projection::DeepSystemProject(e, projectionContext) || changed;
-  changed = SimplifyProjectedTree(e) || changed;
-  changed = TryApproximationStrategyAgain(e, projectionContext) || changed;
-  changed = Beautification::DeepBeautify(e, projectionContext) || changed;
-  return changed;
 }
 
 }  // namespace Poincare::Internal

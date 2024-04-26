@@ -23,57 +23,58 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
     expr->removeNode();
     return true;
   }
-  TreeRef end = expr->nextTree();
-  int numberOfSets = 0;
+  TreeRef finalSet = Set::PushEmpty();
   int i = 0;
   for (Tree* exprChild : expr->children()) {
     if (exprChild->isDependency()) {
       Tree* exprChildSet = exprChild->child(1);
       if (expr->isParametric() && Parametric::FunctionIndex(expr) == i) {
-        /* diff(dep(x, {ln(x), z}), x, y) ->
-         * dep(diff(x, x, y), {diff(ln(x), x, y), z})
-         * TODO:
-         * - Keeping the dependency in the parametric would be more optimal, but
-         *   we would have to handle them along the simplification process
-         *   (especially difficult in the advanced and systematic reduction).
-         * - In the case of derivatives only, we could simply bubble up
-         *   dependency and replace local variable with symbol value. */
-        int numberOfDependencies = exprChildSet->numberOfChildren();
-        TreeRef set = SharedTreeStack->push<Type::Set>(numberOfDependencies);
-        for (int j = 0; j < numberOfDependencies; j++) {
-          if (Variables::HasVariable(exprChildSet->firstChild(),
-                                     Parametric::k_localVariableId)) {
-            /* Clone the entire parametric tree with detached dependency instead
-             * of exprChild */
-            expr->cloneNode();
-            for (const Tree* exprChild2 : expr->children()) {
-              if (exprChild2 != exprChild) {
-                exprChild2->clone();
-              } else {
-                NAry::DetachChildAtIndex(exprChildSet, 0);
+        if (expr->isDiff() || expr->isNthDiff()) {
+          // diff(dep(x, {ln(x), z}), x, y) -> dep(diff(x, x, y), {ln(y), z})
+          const Tree* symbolValue = expr->child(1);
+          Variables::LeaveScopeWithReplacement(exprChildSet, symbolValue,
+                                               false);
+        } else {
+          /* sum(dep(k, {f(k), z}), k, 1, n) ->
+           *     dep(sum(k, k, 1, n), {sum(f(k), k, 1, n), z})
+           * TODO:
+           * - Keeping the dependency in the parametric would be more optimal,
+           *   but we would have to handle them along the simplification process
+           *   (especially difficult in the advanced and systematic reduction).
+           */
+          int numberOfDependencies = exprChildSet->numberOfChildren();
+          TreeRef set = SharedTreeStack->push<Type::Set>(numberOfDependencies);
+          for (int j = 0; j < numberOfDependencies; j++) {
+            if (Variables::HasVariable(exprChildSet->firstChild(),
+                                       Parametric::k_localVariableId)) {
+              /* Clone the entire parametric tree with detached dependency
+               * instead of exprChild */
+              expr->cloneNode();
+              for (const Tree* exprChild2 : expr->children()) {
+                if (exprChild2 != exprChild) {
+                  exprChild2->clone();
+                } else {
+                  NAry::DetachChildAtIndex(exprChildSet, 0);
+                }
               }
+            } else {
+              // Dependency can be detached out of parametric's scope.
+              Variables::LeaveScope(NAry::DetachChildAtIndex(exprChildSet, 0));
             }
-          } else {
-            // Dependency can be detached out of parametric's scope.
-            Variables::LeaveScope(NAry::DetachChildAtIndex(exprChildSet, 0));
           }
+          exprChildSet->removeTree();
+          exprChildSet = set;
         }
-        exprChildSet->removeTree();
-        exprChildSet = set;
       }
       // Move dependency list at the end
-      MoveTreeBeforeNode(end, exprChildSet);
-      numberOfSets++;
+      Set::Union(finalSet, exprChildSet);
       // Remove Dependency block in child
       exprChild->removeNode();
     }
     i++;
   }
-  if (numberOfSets > 0) {
-    while (numberOfSets > 1) {
-      end = Set::Union(end, end->nextTree());
-      numberOfSets--;
-    }
+  if (finalSet->numberOfChildren() > 0) {
+    expr->nextTree()->moveTreeBeforeNode(finalSet);
     expr->cloneNodeBeforeNode(KDep);
     return true;
   }

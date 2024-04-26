@@ -33,22 +33,13 @@ bool Derivation::ShallowSimplify(Tree* node) {
     derivationOrder = Integer::Handler(order).to<uint8_t>();
     constDerivand = order->nextTree();
   }
-  Tree* setOfDependencies;
-  Tree* derivand;
-  if (constDerivand->isDependency()) {
-    setOfDependencies = constDerivand->child(1)->clone();
-    constDerivand = constDerivand->child(0);
-  } else {
-    setOfDependencies = Set::PushEmpty();
-  }
-  derivand = constDerivand->clone();
+  Tree* derivand = constDerivand->clone();
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
     Tree* derivative = Derivate(derivand, symbolValue, symbol);
     if (!derivative) {
       // TODO is it worth to save the partial derivation if any ?
       derivand->removeTree();
-      setOfDependencies->removeTree();
       return false;
     }
     if (derivative->isDependency()) {
@@ -72,19 +63,13 @@ bool Derivation::ShallowSimplify(Tree* node) {
 
   Variables::LeaveScopeWithReplacement(derivand, symbolValue, true);
 
-  SwapTreesPointers(&derivand, &setOfDependencies);
   // Add a dependency on derivand if anything has been derived.
-  if (currentDerivationOrder < derivationOrder) {
-    TreeRef formula = constDerivand->clone();
-    Set::Add(setOfDependencies, formula);
-    formula->removeTree();
-  }
-  if (setOfDependencies->numberOfChildren() > 0) {
-    Variables::LeaveScopeWithReplacement(setOfDependencies, symbolValue, false);
+  if (currentDerivationOrder < derivationOrder && !derivand->isUndef()) {
+    SharedTreeStack->push<Type::Set>(1);
+    Variables::LeaveScopeWithReplacement(constDerivand->clone(), symbolValue,
+                                         false);
     derivand->cloneNodeAtNode(KDep);
     Dependency::RemoveDefinedDependencies(derivand);
-  } else {
-    setOfDependencies->removeTree();
   }
 
   node->moveTreeOverTree(derivand);

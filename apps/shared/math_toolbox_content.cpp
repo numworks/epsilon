@@ -502,20 +502,19 @@ constexpr ToolboxMessage unitChildren[] = {
 constexpr ToolboxMessage calculChildren[] = {
     ToolboxMessageMath(
         KRackL(KDiffL("x"_l, "a"_l, "f"_l ^ KParenthesisL("x"_l))),
-        I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
+        I18n::Message::DerivateNumber),
     ToolboxMessageMath(
         KRackL(KNthDiffL("x"_l, "a"_l, "f"_l ^ KParenthesisL("x"_l), "n"_l)),
-        I18n::Message::HigherOrderDerivateNumber, false,
-        I18n::Message::HigherOrderDiffCommand),
+        I18n::Message::HigherOrderDerivateNumber),
     ToolboxMessageMath(
         KRackL(KIntegralL("x"_l, "a"_l, "b"_l, "f"_l ^ KParenthesisL("x"_l))),
-        I18n::Message::Integral, false, I18n::Message::IntCommand),
+        I18n::Message::Integral),
     ToolboxMessageMath(
         KRackL(KSumL("k"_l, "m"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
-        I18n::Message::Sum, false, I18n::Message::SumCommand),
+        I18n::Message::Sum),
     ToolboxMessageMath(
         KRackL(KProductL("k"_l, "m"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
-        I18n::Message::Product, false, I18n::Message::ProductCommand)};
+        I18n::Message::Product)};
 
 constexpr ToolboxMessage complexChildren[] = {
     ToolboxMessageLeaf(I18n::Message::AbsCommandWithArg,
@@ -653,8 +652,7 @@ constexpr ToolboxMessage vectorsChildren[] = {
 
 constexpr ToolboxMessage matricesVectorsChildren[] = {
     ToolboxMessageMath(KRackL(KMatrix2x2L("1"_l, "2"_l, "3"_l, "4"_l)),
-                       I18n::Message::NewMatrix, false,
-                       I18n::Message::MatrixCommand),
+                       I18n::Message::NewMatrix),
     ToolboxMessageLeaf(I18n::Message::TransposeCommandWithArg,
                        I18n::Message::Transpose),
     ToolboxMessageLeaf(I18n::Message::DimensionCommandWithArg,
@@ -785,12 +783,11 @@ constexpr ToolboxMessage listsOperationsChildren[] = {
                        I18n::Message::ProductOfElements)};
 
 constexpr ToolboxMessage listsChildren[] = {
-    ToolboxMessageMath(KRackL(KCurlyBracesL("1,2,3"_l)), I18n::Message::NewList,
-                       false, I18n::Message::ListCommand),
+    ToolboxMessageMath(KRackL(KCurlyBracesL("1,2,3"_l)),
+                       I18n::Message::NewList),
     ToolboxMessageMath(
         KRackL(KListSequenceL("k"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
-        I18n::Message::ListSequenceDescription, false,
-        I18n::Message::ListSequenceCommand),
+        I18n::Message::ListSequenceDescription),
     ToolboxMessageNode(I18n::Message::StatsApp, listsStatsFork, true),
     ToolboxMessageNode(I18n::Message::Operations, listsOperationsChildren)};
 

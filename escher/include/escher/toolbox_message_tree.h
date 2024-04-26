@@ -47,27 +47,17 @@ class ToolboxMessageLeaf : public ToolboxMessageTree {
 class ToolboxMessageMath : public ToolboxMessageTree {
  public:
   constexpr ToolboxMessageMath(const Poincare::Internal::Tree *layout,
-                               I18n::Message text,
-                               bool stripInsertedText = true,
-                               I18n::Message insertedText = (I18n::Message)0)
-
-      : ToolboxMessageTree(text),
-        m_layout(layout),
-        m_insertedText(insertedText == (I18n::Message)0 ? I18n::Message(0)
-                                                        : insertedText),
-        m_stripInsertedText(stripInsertedText){};
+                               I18n::Message text)
+      : ToolboxMessageTree(text), m_layout(layout){};
 
  private:
   // text is stored in label since is layout hides label
   constexpr I18n::Message text() const override { return label(); }
   Poincare::Layout layout() const override { return m_layout; }
-  I18n::Message insertedText() const override { return m_insertedText; }
-  bool stripInsertedText() const override { return m_stripInsertedText; }
+  bool stripInsertedText() const override { return true; }
 
  private:
   const Poincare::Internal::Tree *m_layout;
-  I18n::Message m_insertedText;  // ??
-  bool m_stripInsertedText;      // ??
 };
 
 class ToolboxMessageNodeDirect : public ToolboxMessageTree {

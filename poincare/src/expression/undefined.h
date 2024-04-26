@@ -1,16 +1,18 @@
 #ifndef POINCARE_EXPRESSION_UNDEFINED_H
 #define POINCARE_EXPRESSION_UNDEFINED_H
 
-#include <poincare/src/memory/tree.h>
-#include <poincare/src/memory/tree_stack.h>
+#include <stdint.h>
 
 namespace Poincare::Internal {
 
+class Tree;
+
 class Undefined {
  public:
-  // TODO_PR: Order them by importance (NotDefined + Nonreal -> undef)
+  /* When an expression has multiple undefined children, we bubble up the
+   * "biggest" one by default. */
   enum class Type : uint8_t {
-    None,
+    None = 0,
     // Nonreal,          // TODO_PR
     ZeroPowerZero,       // 0^0 -> Should be ZeroDivision ?
     ZeroDivision,        // 1/0, tan(nπ/2)
@@ -20,16 +22,11 @@ class Undefined {
     OutOfDefinition,     // arg(0)
     NotDefined,          // f(x) with f not defined
   };
-  static Type GetType(const Tree* undefined) {
-    return static_cast<Type>(undefined->nodeValue(0));
-  }
+  static Type GetType(const Tree* undefined);
   // Override Tree with Undefined tree.
-  static void Set(Tree* e, Type type) {
-    e->moveTreeOverTree(SharedTreeStack->push<Internal::Type::Undef>(type));
-  }
-  static Tree* Push(Type type) {
-    return SharedTreeStack->push<Internal::Type::Undef>(type);
-  }
+  static void Set(Tree* e, Type type);
+  static Tree* Push(Type type);
+  static bool ShallowBubbleUpUndef(Tree* e);
 };
 
 }  // namespace Poincare::Internal

@@ -262,6 +262,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/solver.cpp \
   expression/symbol.cpp \
   expression/trigonometry.cpp \
+  expression/undefined.cpp \
   expression/unit.cpp \
   expression/unit_representatives.cpp \
   expression/variables.cpp \

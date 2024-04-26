@@ -68,20 +68,46 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     return false;
   }
   bool changed = false;
-  /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
-   * with KA a Float and KB a UserVariable. We need to
-   * ApproximateAndReplaceEveryScalar again on ShallowSystematicReduce. */
-  if (CanApproximateTree(u, &changed)) {
+  /* Before systematic reduction, look for things to bubble-up in children. At
+   * this step, only children have been shallowReduced. By doing this before
+   * shallowReduction, we don't have to handle undef, float and dependency
+   * children in specialized systematic reduction. */
+  bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false;
+  for (const Tree* child : u->children()) {
+    if (child->isFloat()) {
+      bubbleUpFloat = true;
+    } else if (child->isDependency()) {
+      bubbleUpDependency = true;
+    } else if (child->isUndef()) {
+      bubbleUpUndef = true;
+    }
+  }
+
+  if (bubbleUpFloat) {
+    /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
+     * with KA a Float and KB a UserVariable. We need to
+     * ApproximateAndReplaceEveryScalar again. */
+    changed = Approximation::ApproximateAndReplaceEveryScalar(u);
+    if (u->isFloat()) {
+      return true;
+    }
+  }
+  if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(u)) {
     return true;
   }
-  changed |= SimplifySwitch(u);
-  if (Dependency::ShallowBubbleUpDependencies(u)) {
-    ShallowSystematicReduce(u->child(0));
-    // f(dep(a, ...)) -> dep(f(a), ...) -> dep(dep(b, ...), ...) -> dep(b, ...)
-    Dependency::ShallowBubbleUpDependencies(u);
-    changed = true;
+  if (bubbleUpDependency) {
+    changed = Dependency::ShallowBubbleUpDependencies(u);
+    if (changed && u->isDependency()) {
+      // u->child(0) may have new bubbleUp possibilities.
+      ShallowSystematicReduce(u->child(0));
+      if (u->child(0)->isDependency()) {
+        // Merge dependencies.
+        Dependency::ShallowBubbleUpDependencies(u);
+      }
+      return true;
+    }
   }
-  return changed;
+  return SimplifySwitch(u) || changed;
 }
 
 bool Simplification::SimplifySwitch(Tree* u) {

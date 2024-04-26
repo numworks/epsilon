@@ -12,8 +12,6 @@ namespace AppHelpers {
 
 void MakeRightMostParenthesisTemporary(Tree* tree);
 
-void MakeAdditionImplicit(Poincare::JuniorLayout& layout);
-
 // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))
 void DeleteChildrenRacks(Tree* tree);
 

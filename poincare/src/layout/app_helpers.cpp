@@ -21,22 +21,6 @@ void MakeRightMostParenthesisTemporary(Tree* tree) {
   }
 }
 
-void MakeAdditionImplicit(Tree* rack) {
-  for (Tree* child : rack->children()) {
-    if (CodePointLayout::IsCodePoint(child, '+')) {
-      child->cloneTreeOverTree(KOperatorSeparatorL);
-    }
-  }
-}
-
-void MakeAdditionImplicit(Poincare::JuniorLayout& layout) {
-  SharedTreeStack->executeAndStoreLayout(
-      [](void* context, const void* data) {
-        MakeAdditionImplicit(static_cast<const Tree*>(data)->clone());
-      },
-      nullptr, layout.tree(), &layout);
-}
-
 void DeleteChildrenRacks(Tree* tree) {
   for (Tree* child : tree->descendants()) {
     if (child->isRackLayout()) {

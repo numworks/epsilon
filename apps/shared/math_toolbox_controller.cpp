@@ -168,9 +168,7 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
 
   Layout layout = messageTree->layout();
   if (!layout.isUninitialized()) {
-    if (messageTree->stripInsertedText()) {
-      layout = layout.cloneWithoutChildrenRacks();
-    }
+    layout = layout.cloneWithoutChildrenRacks();
     App::app()->modalViewController()->dismissModal();
     sender()->handleEventWithLayout(layout);
     return true;

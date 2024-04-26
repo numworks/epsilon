@@ -21,10 +21,19 @@ void MakeRightMostParenthesisTemporary(Tree* tree) {
   }
 }
 
-void DeleteChildrenRacks(Tree* tree) {
-  for (Tree* child : tree->descendants()) {
-    if (child->isRackLayout()) {
-      child->cloneTreeOverTree(KRackL());
+void DeleteChildrenRacks(Tree* rack) {
+  for (Tree* layout : rack->children()) {
+    if (layout->isParenthesisLayout()) {
+      AutocompletedPair::SetTemporary(layout, Side::Right, true);
+    }
+    for (Tree* subRack : layout->children()) {
+      if (layout->isParametricLayout() && subRack == layout->child(0)) {
+        // Keep the parametric variable
+        continue;
+      }
+      if (subRack->numberOfChildren() > 0) {
+        subRack->cloneTreeOverTree(KRackL());
+      }
     }
   }
 }

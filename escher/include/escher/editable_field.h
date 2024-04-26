@@ -6,6 +6,7 @@
 #include <ion.h>
 #include <ion/events.h>
 #include <ion/unicode/code_point.h>
+#include <poincare/layout.h>
 
 namespace Escher {
 
@@ -20,6 +21,7 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
                                    bool forceCursorRightOfText = false) {
     return false;
   }
+  virtual bool handleEventWithLayout(Poincare::Layout layout) { return false; }
   virtual bool handleStoreEvent() { return false; }
   bool handleXNT(int currentIndex, CodePoint startingXNT);
 

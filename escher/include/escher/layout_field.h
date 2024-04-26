@@ -35,7 +35,7 @@ class LayoutField : public EditableField {
   void setLayout(Poincare::Layout newLayout);
   size_t dumpContent(char* buffer, size_t bufferSize, int* cursorOffset,
                      int* position);
-  void insertLayoutAtCursor(Poincare::JuniorLayout layoutR,
+  void insertLayoutAtCursor(Poincare::Layout layout,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
 
@@ -49,6 +49,7 @@ class LayoutField : public EditableField {
   /* Responder */
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
+  bool handleEventWithLayout(Poincare::Layout layout) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
   void didBecomeFirstResponder() override;

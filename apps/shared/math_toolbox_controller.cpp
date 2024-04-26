@@ -166,6 +166,13 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
     return true;
   }
 
+  Layout layout = messageTree->layout();
+  if (!layout.isUninitialized()) {
+    App::app()->modalViewController()->dismissModal();
+    sender()->handleEventWithLayout(layout);
+    return true;
+  }
+
   // Translate the message
   const char *text = I18n::translate(messageTree->insertedText());
   // Has to be in the same scope as handleEventWithText

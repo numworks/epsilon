@@ -440,6 +440,11 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
                         previousSize);
 }
 
+bool LayoutField::handleEventWithLayout(Layout layout) {
+  insertLayoutAtCursor(layout);
+  return true;
+}
+
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
                                      bool *layoutDidChange,
                                      bool *shouldUpdateCursor) {
@@ -621,7 +626,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect);
 }
 
-void LayoutField::insertLayoutAtCursor(JuniorLayout layout,
+void LayoutField::insertLayoutAtCursor(Layout layout,
                                        bool forceCursorRightOfLayout,
                                        bool forceCursorLeftOfLayout) {
   if (layout.isUninitialized()) {

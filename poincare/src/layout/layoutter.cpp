@@ -509,13 +509,6 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
-    // TODO_PR make them s_specialIdentifiers
-    case Type::Pi:
-      PushCodePoint(layoutParent, u'π');
-      break;
-    case Type::EulerE:
-      PushCodePoint(layoutParent, 'e');
-      break;
     case Type::PhysicalConstant:
       layoutText(layoutParent, PhysicalConstant::GetProperties(expression)
                                    .m_aliasesList.mainAlias());

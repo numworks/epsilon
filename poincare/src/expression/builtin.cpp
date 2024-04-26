@@ -31,6 +31,8 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
     {Type::False, BuiltinsAliases::k_falseAliases},
     {Type::True, BuiltinsAliases::k_trueAliases},
+    {Type::Pi, BuiltinsAliases::k_piAliases},
+    {Type::EulerE, "e"},
 };
 
 constexpr static BuiltinAns s_builtinAns = {/* dummy */ Type::Zero,

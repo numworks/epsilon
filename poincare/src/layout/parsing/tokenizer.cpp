@@ -227,10 +227,6 @@ Token Tokenizer::popToken() {
     return popNumber();
   }
 
-  if (c == UCodePointGreekSmallLetterPi) {
-    return Token(Token::Type::Constant, m_decoder.layoutAt(start));
-  }
-
   if (IsIdentifierMaterial(c)) {
 #if 0
     if (m_parsingContext->parsingMethod() ==
@@ -321,6 +317,7 @@ Token Tokenizer::popToken() {
     case UCodePointRightwardsArrow:
       return Token(Token::Type::RightwardsArrow, layout);
     case UCodePointInfinity:
+    case UCodePointGreekSmallLetterPi:
       return Token(Token::Type::SpecialIdentifier, layout);
     default:
       return Token(Token::Type::Undefined, layout);
@@ -439,9 +436,6 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
     return Token::Type::SpecialIdentifier;
   }
 #endif
-  if (*length == 1 && *string == 'e') {
-    return Token::Type::Constant;
-  }
   if (PhysicalConstant::IsPhysicalConstant(string, *length)) {
     return Token::Type::Constant;
   }
@@ -452,9 +446,6 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
   }
   if (Builtin::HasSpecialIdentifier(&subString)) {
     return Token::Type::SpecialIdentifier;
-  }
-  if (BuiltinsAliases::k_piAliases.contains(&subString)) {
-    return Token::Type::Constant;
   }
   Token::Type logicalOperatorType;
   if (ParsingHelper::IsLogicalOperator(string, *length, &logicalOperatorType)) {

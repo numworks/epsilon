@@ -725,15 +725,8 @@ void RackParser::parseConstant(TreeRef& leftHandSide,
   int index = PhysicalConstant::Index(
       CPL::FromRack(m_root, m_root->indexOfChild(m_currentToken.firstLayout())),
       m_currentToken.length());
-  if (index >= 0) {
-    leftHandSide =
-        SharedTreeStack->push<Type::PhysicalConstant>(uint8_t(index));
-  } else {
-    assert(m_currentToken.length() == 1);
-    leftHandSide = SharedTreeStack->push(
-        m_currentToken.toDecoder(m_root).nextCodePoint() == 'e' ? Type::EulerE
-                                                                : Type::Pi);
-  }
+  assert(index >= 0);
+  leftHandSide = SharedTreeStack->push<Type::PhysicalConstant>(uint8_t(index));
   isThereImplicitOperator();
 }
 

@@ -48,7 +48,7 @@ bool AdvancedSimplification::AdvancedReduce(Tree* origin) {
   std::cout << "Final result (" << ctx.m_bestMetric << ") is : ";
   u->logSerialize();
 #endif
-  if (origin->isDependency()) {
+  if (origin->isDependency() && u->isDependency()) {
     // Bubble-up any other dependency that appeared.
     Dependency::ShallowBubbleUpDependencies(origin);
   }

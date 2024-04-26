@@ -3,6 +3,7 @@ import sys, os, argparse
 from helpers.args_types import *
 from helpers.print_format import *
 from helpers.crc_helper import *
+from helpers.screenshot_helper import *
 
 parser = argparse.ArgumentParser(
     description="This script updates the crc32 of a scenario in the test screenshots dataset."

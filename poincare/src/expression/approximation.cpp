@@ -20,6 +20,7 @@
 #include "matrix.h"
 #include "random.h"
 #include "rational.h"
+#include "undefined.h"
 #include "variables.h"
 #include "vector.h"
 

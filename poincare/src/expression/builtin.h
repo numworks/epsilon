@@ -38,6 +38,9 @@ class Builtin {
   static bool HasSpecialIdentifier(UnicodeDecoder* name) {
     return GetSpecialIdentifier(name) != nullptr;
   }
+  static bool HasSpecialIdentifier(Type type) {
+    return GetSpecialIdentifier(type) != nullptr;
+  }
   static bool HasCustomIdentifier(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(UnicodeDecoder* name);
   static const Builtin* GetReservedFunction(const Tree* tree);

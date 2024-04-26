@@ -509,14 +509,12 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
+    // TODO_PR make them s_specialIdentifiers
     case Type::Pi:
       PushCodePoint(layoutParent, u'π');
       break;
     case Type::EulerE:
       PushCodePoint(layoutParent, 'e');
-      break;
-    case Type::ComplexI:
-      PushCodePoint(layoutParent, 'i');
       break;
     case Type::PhysicalConstant:
       layoutText(layoutParent, PhysicalConstant::GetProperties(expression)
@@ -544,12 +542,6 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       break;
     }
-    case Type::Inf:
-    case Type::NonReal:
-    case Type::Undef:
-      layoutText(layoutParent,
-                 Builtin::SpecialIdentifierName(type).mainAlias());
-      break;
     case Type::Empty:
       break;
     case Type::Matrix:
@@ -600,12 +592,6 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       NAry::AddOrMergeChild(layoutParent, rack);
       break;
     }
-    case Type::True:
-      layoutText(layoutParent, BuiltinsAliases::k_trueAliases.mainAlias());
-      break;
-    case Type::False:
-      layoutText(layoutParent, BuiltinsAliases::k_falseAliases.mainAlias());
-      break;
     case Type::LogicalAnd:
     case Type::LogicalOr:
     case Type::LogicalXor:
@@ -694,6 +680,9 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     default:
       if (Builtin::IsReservedFunction(expression)) {
         layoutBuiltin(layoutParent, expression);
+      } else if (Builtin::HasSpecialIdentifier(type)) {
+        layoutText(layoutParent,
+                   Builtin::SpecialIdentifierName(type).mainAlias());
       } else {
 #if POINCARE_TREE_LOG  // Improves Tree::logSerialize
         layoutFunctionCall(

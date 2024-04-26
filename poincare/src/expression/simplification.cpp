@@ -63,11 +63,6 @@ bool CanApproximateTree(Tree* u, bool* changed) {
 bool Simplification::ShallowSystematicReduce(Tree* u) {
   // This assert is quite costly, should be an assert level 2 ?
   assert(Dimension::DeepCheckDimensions(u));
-  if (!u->isNAry() && u->numberOfChildren() == 0) {
-    // No childless tree have a reduction pattern.
-    return false;
-  }
-  bool changed = false;
   /* Before systematic reduction, look for things to bubble-up in children. At
    * this step, only children have been shallowReduced. By doing this before
    * shallowReduction, we don't have to handle undef, float and dependency
@@ -83,34 +78,30 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     }
   }
 
-  if (bubbleUpFloat) {
-    /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
-     * with KA a Float and KB a UserVariable. We need to
-     * ApproximateAndReplaceEveryScalar again. */
-    changed = Approximation::ApproximateAndReplaceEveryScalar(u);
-    if (u->isFloat()) {
-      return true;
-    }
-  }
-  if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(u)) {
-    return true;
-  }
-  if (bubbleUpDependency) {
-    changed = Dependency::ShallowBubbleUpDependencies(u);
-    if (changed && u->isDependency()) {
-      // u->child(0) may have new bubbleUp possibilities.
-      ShallowSystematicReduce(u->child(0));
-      if (u->child(0)->isDependency()) {
-        // Merge dependencies.
+  bool changed =
+      bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(u);
+
+  /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
+   * with KA a Float and KB a UserVariable. We need to
+   * ApproximateAndReplaceEveryScalar again. */
+  changed = (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(u)) || changed;
+
+  if (bubbleUpDependency && Dependency::ShallowBubbleUpDependencies(u)) {
+    changed = true;
+    assert(u->isDependency());
+    /* u->child(0) may now be reduced again. Another dependency may arise and
+     * needs to be merged with u. */
+    ShallowSystematicReduce(u->child(0)) && u->child(0)->isDependency() &&
         Dependency::ShallowBubbleUpDependencies(u);
-      }
-      return true;
-    }
   }
   return SimplifySwitch(u) || changed;
 }
 
 bool Simplification::SimplifySwitch(Tree* u) {
+  if (!u->isNAry() && u->numberOfChildren() == 0) {
+    // No childless tree have a reduction pattern.
+    return false;
+  }
   switch (u->type()) {
     case Type::Abs:
       return SimplifyAbs(u);

@@ -19,7 +19,7 @@ Tree* Undefined::Push(Type type) {
 }
 
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {
-  if (e->isPoint() || e->isList() || e->isMatrix()) {
+  if (e->isPoint() || e->isList()) {
     // Children can be undef
     return false;
   }

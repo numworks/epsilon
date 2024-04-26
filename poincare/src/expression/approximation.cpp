@@ -135,11 +135,10 @@ Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
   }
   assert(dim.isPoint() || dim.isMatrix());
   Tree* result = dim.isPoint() ? ToPoint<T>(node) : ToMatrix<T>(node);
+  if (Undefined::ShallowBubbleUpUndef(result)) {
+    return result;
+  }
   for (Tree* child : result->children()) {
-    if (child->isUndef()) {
-      result->cloneTreeOverTree(KUndef);
-      break;
-    }
     child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
         ToComplex<T>(child), s_context->m_complexFormat));
   }

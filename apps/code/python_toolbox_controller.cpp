@@ -1003,11 +1003,9 @@ constexpr static bool catalogContainsAllChildren(
   for (int i = 0; i < numberOfChildren; i++) {
     bool isInCatalog = false;
     for (int j = 0; j < nCatalog; j++) {
-      if (catalogChildren[j].leaf.ToolboxMessageTree::text() ==
-              list[i].leaf.ToolboxMessageTree::text() &&
+      if (catalogChildren[j].leaf.text() == list[i].leaf.text() &&
           (sameCaptionIsEnough ||
-           catalogChildren[j].leaf.ToolboxMessageTree::label() ==
-               list[i].leaf.label())) {
+           catalogChildren[j].leaf.label() == list[i].leaf.label())) {
         isInCatalog = true;
         break;
       }

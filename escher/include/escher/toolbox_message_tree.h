@@ -29,7 +29,6 @@ class ToolboxMessageLeaf : public ToolboxMessageTree {
         m_insertedText(insertedText == (I18n::Message)0 ? label : insertedText),
         m_stripInsertedText(stripInsertedText){};
 
- private:
   constexpr I18n::Message text() const override { return m_text; }
   I18n::Message insertedText() const override { return m_insertedText; }
   bool stripInsertedText() const override { return m_stripInsertedText; }

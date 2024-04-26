@@ -60,9 +60,7 @@ bool CanApproximateTree(Tree* u, bool* changed) {
   return false;
 }
 
-bool Simplification::ShallowSystematicReduce(Tree* u) {
-  // This assert is quite costly, should be an assert level 2 ?
-  assert(Dimension::DeepCheckDimensions(u));
+bool Simplification::BubbleUpFromChildren(Tree* u) {
   /* Before systematic reduction, look for things to bubble-up in children. At
    * this step, only children have been shallowReduced. By doing this before
    * shallowReduction, we don't have to handle undef, float and dependency
@@ -94,6 +92,13 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
     ShallowSystematicReduce(u->child(0)) && u->child(0)->isDependency() &&
         Dependency::ShallowBubbleUpDependencies(u);
   }
+  return changed;
+}
+
+bool Simplification::ShallowSystematicReduce(Tree* u) {
+  // This assert is quite costly, should be an assert level 2 ?
+  assert(Dimension::DeepCheckDimensions(u));
+  bool changed = BubbleUpFromChildren(u);
   return SimplifySwitch(u) || changed;
 }
 
@@ -560,9 +565,10 @@ bool Simplification::SimplifyMultiplication(Tree* u) {
   }
   changed = NAry::Sort(u, Comparison::Order::PreserveMatrices) || changed;
   changed = SimplifySortedMultiplication(u) || changed;
-  // TODO_PR: Have this back as an assert
   if (changed && u->isMult()) {
-    ShallowSystematicReduce(u);
+    // Bubble-up may be unlocked after merging identical bases.
+    BubbleUpFromChildren(u);
+    assert(!ShallowSystematicReduce(u));
   }
   return changed;
 }
@@ -700,9 +706,10 @@ bool Simplification::SimplifyAddition(Tree* u) {
    * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
    * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
    * merging again when child merged with nextChild) */
-  // TODO_PR: Have this back as an assert
   if (modified && u->isAdd()) {
-    ShallowSystematicReduce(u);
+    // Bubble-up may be unlocked after merging equal terms.
+    BubbleUpFromChildren(u);
+    assert(!ShallowSystematicReduce(u));
   }
   return modified;
 }

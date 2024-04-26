@@ -49,6 +49,7 @@ class Simplification {
   static bool SimplifyDistribution(Tree* t);
   static bool SimplifyDim(Tree* t);
 
+  static bool BubbleUpFromChildren(Tree* u);
   static bool SimplifySwitch(Tree* u);
   // Return true if child has been merged with next sibling.
   static bool MergeAdditionChildWithNext(Tree* child, Tree* next);

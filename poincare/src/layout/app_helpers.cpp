@@ -37,6 +37,14 @@ void MakeAdditionImplicit(Poincare::JuniorLayout& layout) {
       nullptr, layout.tree(), &layout);
 }
 
+void DeleteChildrenRacks(Tree* tree) {
+  for (Tree* child : tree->descendants()) {
+    if (child->isRackLayout()) {
+      child->cloneTreeOverTree(KRackL());
+    }
+  }
+}
+
 bool ContainsSmallCapitalE(const Tree* rack) {
   return rack->hasChildSatisfying([](const Tree* e) {
     return CodePointLayout::IsCodePoint(e, UCodePointLatinLetterSmallCapitalE);

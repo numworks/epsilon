@@ -83,6 +83,10 @@ class JuniorLayout final : public OLayout {
   }
 
   JuniorLayout cloneWithoutMargins();
+
+  // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))
+  JuniorLayout cloneWithoutChildrenRacks();
+
   JuniorLayout makeEditable() { return cloneWithoutMargins(); }
 
   bool isEmpty() const;

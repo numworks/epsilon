@@ -138,9 +138,15 @@ void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
 
 JuniorLayout JuniorLayout::cloneWithoutMargins() {
   Internal::Tree* clone = tree()->clone();
-  if (clone->isRackLayout()) {
-    Internal::Layoutter::StripSeparators(clone);
-  }
+  assert(clone->isRackLayout());
+  Internal::Layoutter::StripSeparators(clone);
+  return JuniorLayout::Builder(clone);
+}
+
+JuniorLayout JuniorLayout::cloneWithoutChildrenRacks() {
+  Internal::Tree* clone = tree()->clone();
+  assert(clone->isRackLayout());
+  Internal::AppHelpers::DeleteChildrenRacks(clone);
   return JuniorLayout::Builder(clone);
 }
 

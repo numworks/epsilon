@@ -93,6 +93,10 @@ constexpr ToolboxMessageNodeIndirect ToolboxMessageNode(
   return ToolboxMessageNodeIndirect(label, children, fork ? -N : N);
 }
 
+/* For size efficiency ToolboxMessageTrees are constructed in constexpr in
+ * arrays. We need elements of the array to have the same size and some menus
+ * mix leaves and nodes. The union ToolboxMessage gathers the subclasses of
+ * ToolboxMessageTree and is the type of the array elements. */
 union ToolboxMessage {
   constexpr ToolboxMessage(ToolboxMessageLeaf leaf) : leaf(leaf) {}
   constexpr ToolboxMessage(ToolboxMessageNodeDirect node) : nodeDirect(node) {}

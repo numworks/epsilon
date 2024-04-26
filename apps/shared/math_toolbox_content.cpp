@@ -500,20 +500,22 @@ constexpr ToolboxMessage unitChildren[] = {
 };
 
 constexpr ToolboxMessage calculChildren[] = {
-    ToolboxMessageMath(KRackL(KDiffL("x"_l, "a"_l, "f(x)"_l)),
-                       I18n::Message::DerivateNumber, false,
-                       I18n::Message::DiffCommand),
-    ToolboxMessageMath(KRackL(KNthDiffL("x"_l, "a"_l, "f(x)"_l, "n"_l)),
-                       I18n::Message::HigherOrderDerivateNumber, false,
-                       I18n::Message::HigherOrderDiffCommand),
-    ToolboxMessageMath(KRackL(KIntegralL("x"_l, "a"_l, "b"_l, "f(x)"_l)),
-                       I18n::Message::Integral, false,
-                       I18n::Message::IntCommand),
-    ToolboxMessageMath(KRackL(KSumL("k"_l, "m"_l, "n"_l, "f(k)"_l)),
-                       I18n::Message::Sum, false, I18n::Message::SumCommand),
-    ToolboxMessageMath(KRackL(KProductL("k"_l, "m"_l, "n"_l, "f(k)"_l)),
-                       I18n::Message::Product, false,
-                       I18n::Message::ProductCommand)};
+    ToolboxMessageMath(
+        KRackL(KDiffL("x"_l, "a"_l, "f"_l ^ KParenthesisL("x"_l))),
+        I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
+    ToolboxMessageMath(
+        KRackL(KNthDiffL("x"_l, "a"_l, "f"_l ^ KParenthesisL("x"_l), "n"_l)),
+        I18n::Message::HigherOrderDerivateNumber, false,
+        I18n::Message::HigherOrderDiffCommand),
+    ToolboxMessageMath(
+        KRackL(KIntegralL("x"_l, "a"_l, "b"_l, "f"_l ^ KParenthesisL("x"_l))),
+        I18n::Message::Integral, false, I18n::Message::IntCommand),
+    ToolboxMessageMath(
+        KRackL(KSumL("k"_l, "m"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
+        I18n::Message::Sum, false, I18n::Message::SumCommand),
+    ToolboxMessageMath(
+        KRackL(KProductL("k"_l, "m"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
+        I18n::Message::Product, false, I18n::Message::ProductCommand)};
 
 constexpr ToolboxMessage complexChildren[] = {
     ToolboxMessageLeaf(I18n::Message::AbsCommandWithArg,
@@ -785,9 +787,10 @@ constexpr ToolboxMessage listsOperationsChildren[] = {
 constexpr ToolboxMessage listsChildren[] = {
     ToolboxMessageMath(KRackL(KCurlyBracesL("1,2,3"_l)), I18n::Message::NewList,
                        false, I18n::Message::ListCommand),
-    ToolboxMessageMath(KRackL(KListSequenceL("k"_l, "n"_l, "f(k)"_l)),
-                       I18n::Message::ListSequenceDescription, false,
-                       I18n::Message::ListSequenceCommand),
+    ToolboxMessageMath(
+        KRackL(KListSequenceL("k"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
+        I18n::Message::ListSequenceDescription, false,
+        I18n::Message::ListSequenceCommand),
     ToolboxMessageNode(I18n::Message::StatsApp, listsStatsFork, true),
     ToolboxMessageNode(I18n::Message::Operations, listsOperationsChildren)};
 
@@ -814,10 +817,11 @@ constexpr ToolboxMessage logicChildren[] = {
                        false, I18n::Message::NandCommandWithSpaces)};
 
 extern constexpr ToolboxMessage logFork[] = {
-    ToolboxMessageMath("log"_l ^ KSubscriptL("a"_l) ^ "(x)"_l,
+    ToolboxMessageMath("log"_l ^ KSubscriptL("a"_l) ^ KParenthesisL("x"_l),
                        I18n::Message::BasedLogarithm),
-    ToolboxMessageMath(KPrefixSuperscriptL("a"_l) ^ "log"_l ^ "(x)"_l,
-                       I18n::Message::BasedLogarithm)};
+    ToolboxMessageMath(
+        KPrefixSuperscriptL("a"_l) ^ "log"_l ^ KParenthesisL("x"_l),
+        I18n::Message::BasedLogarithm)};
 
 constexpr ToolboxMessage menu[] = {
     ToolboxMessageMath(KRackL(KAbsL("x"_l)), I18n::Message::AbsoluteValue),

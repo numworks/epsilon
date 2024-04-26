@@ -813,7 +813,10 @@ void store(const char* storeExpression, Poincare::Context* ctx) {
 
 QUIZ_CASE(pcj_simplification_variable_replace) {
   Shared::GlobalContext globalContext;
-  assert(Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() == 0);
+  assert(
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+          "sys"));
 
   ProjectionContext projCtx = {
       .m_symbolic = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,

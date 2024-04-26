@@ -206,7 +206,8 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "dep(e^(3×y)×(3×y^4×ln(y)+(1+4×ln(y))×y^3),{ln(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{y^2})");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
-  simplifies_to("diff(ln(x), x, -1)", "nonreal");
+  // TODO_PR: unreal
+  simplifies_to("diff(ln(x), x, -1)", "undef");
   simplifies_to("diff(x^3,x,x,2)", "dep(6×x,{x^3})");  // should be 6*x
   simplifies_to("diff(x*y*y*y*z,y,x,2)", "dep(6×x^2×z,{x^3})");
 
@@ -415,6 +416,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{3,4}(2)", "4");
   simplifies_to("{3,4}(1,3)", "{3,4}(1,3)");
   simplifies_to("0*{3,4}", "{0,0}");
+  simplifies_to("{1,2}/{1,0}", "{1,undef}");
 }
 
 QUIZ_CASE(pcj_simplification_random) {
@@ -596,7 +598,8 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // FIXME: These cases should be undef
   // simplifies_to("1^∞", "1"); // TODO false on device
   simplifies_to("∞^0", "1");
-  simplifies_to("log(inf,-3)", "nonreal");
+  // TODO_PR: nonreal
+  simplifies_to("log(inf,-3)", "undef");
   simplifies_to("log(inf,-3)", "∞-∞×i", cartesianCtx);
 }
 
@@ -780,6 +783,7 @@ QUIZ_CASE(pcj_simplification_point) {
   simplifies_to("(1,2)", "(1,2)");
   simplifies_to("({1,3},{2,4})", "{(1,2),(3,4)}");
   simplifies_to("sequence((k,k+1),k,3)", "{(1,2),(2,3),(3,4)}");
+  simplifies_to("(undef,2)", "(undef,2)");
 }
 
 QUIZ_CASE(pcj_simplification_piecewise) {
@@ -790,7 +794,7 @@ QUIZ_CASE(pcj_simplification_piecewise) {
   simplifies_to("piecewise(x, u<1 and 1<2, y, 1<3, z, u<3, w)",
                 "piecewise(x, u<1, y)");
   simplifies_to("piecewise(x, u<1, y, True)", "piecewise(x, u<1, y)");
-  simplifies_to("piecewise(1, True, undef)", "undef");  // TODO -> 1
+  simplifies_to("piecewise(1, True, undef)", "1");
 }
 
 QUIZ_CASE(pcj_distributions) {

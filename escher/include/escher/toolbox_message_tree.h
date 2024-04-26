@@ -50,22 +50,22 @@ class ToolboxMessageMath : public ToolboxMessageTree {
                                I18n::Message text,
                                bool stripInsertedText = true,
                                I18n::Message insertedText = (I18n::Message)0)
-      : ToolboxMessageTree(I18n::Message(0)),
+
+      : ToolboxMessageTree(text),
         m_layout(layout),
-        m_text(text),
         m_insertedText(insertedText == (I18n::Message)0 ? I18n::Message(0)
                                                         : insertedText),
         m_stripInsertedText(stripInsertedText){};
 
  private:
-  constexpr I18n::Message text() const override { return m_text; }
+  // text is stored in label since is layout hides label
+  constexpr I18n::Message text() const override { return label(); }
   Poincare::Layout layout() const override { return m_layout; }
   I18n::Message insertedText() const override { return m_insertedText; }
   bool stripInsertedText() const override { return m_stripInsertedText; }
 
  private:
   const Poincare::Internal::Tree *m_layout;
-  I18n::Message m_text;          // TODO swap with layout to save space
   I18n::Message m_insertedText;  // ??
   bool m_stripInsertedText;      // ??
 };

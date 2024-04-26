@@ -1,7 +1,7 @@
 #include "arithmetic.h"
 
 #include <limits.h>
-#include <poincare/approximation_helper.h>
+#include <poincare/old/approximation_helper.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/n_ary.h>
 #include <poincare_junior/src/memory/pattern_matching.h>

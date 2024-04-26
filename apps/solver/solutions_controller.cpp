@@ -3,12 +3,12 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <limits.h>
-#include <poincare/k_tree.h>
-#include <poincare/layout.h>
-#include <poincare/preferences.h>
-#include <poincare/print_int.h>
-#include <poincare/symbol.h>
-#include <poincare/symbol_abstract.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/print_int.h>
+#include <poincare/old/symbol.h>
+#include <poincare/old/symbol_abstract.h>
 
 #include <algorithm>
 

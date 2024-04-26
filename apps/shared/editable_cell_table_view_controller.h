@@ -4,7 +4,7 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/regular_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 
 #include "column_helper.h"
 #include "column_parameter_controller.h"

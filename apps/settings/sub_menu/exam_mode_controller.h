@@ -3,7 +3,7 @@
 
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 
 #include "generic_sub_controller.h"
 #include "selectable_view_with_messages.h"

@@ -5,7 +5,7 @@
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/simple_interactive_curve_view_controller.h>
 #include <ion/ring_buffer.h>
-#include <poincare/point_of_interest.h>
+#include <poincare/old/point_of_interest.h>
 
 #include "banner_view.h"
 #include "graph_view.h"

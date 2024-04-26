@@ -8,7 +8,7 @@
 #include <escher/message_text_view.h>
 #include <escher/nested_menu_controller.h>
 #include <escher/selectable_list_view_controller.h>
-#include <poincare/expression.h>
+#include <poincare/old/expression.h>
 
 namespace Shared {
 

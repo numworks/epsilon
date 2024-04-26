@@ -3,9 +3,9 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/sequence.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/sum.h>
+#include <poincare/old/sequence.h>
+#include <poincare/old/serialization_helper.h>
+#include <poincare/old/sum.h>
 
 #include <cmath>
 

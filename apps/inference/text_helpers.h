@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <ion/unicode/code_point.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 #include <stddef.h>
 
 #include "inference/constants.h"

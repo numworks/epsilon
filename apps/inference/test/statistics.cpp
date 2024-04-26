@@ -1,7 +1,7 @@
 #include <apps/apps_container_helper.h>
 #include <math.h>
-#include <poincare/random.h>
-#include <poincare/test/helper.h>
+#include <poincare/old/random.h>
+#include <poincare/test/old/helper.h>
 #include <quiz.h>
 
 #include <array>

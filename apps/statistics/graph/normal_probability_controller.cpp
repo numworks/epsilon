@@ -1,7 +1,7 @@
 #include "normal_probability_controller.h"
 
 #include <assert.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include <algorithm>
 

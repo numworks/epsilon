@@ -3,7 +3,7 @@
 #include <apps/shared/sequence_context.h>
 #include <apps/shared/sequence_store.h>
 #include <assert.h>
-#include <poincare/test/helper.h>
+#include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
 

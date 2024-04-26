@@ -1,13 +1,13 @@
 #include "calculation_store.h"
 
 #include <apps/shared/expression_display_permissions.h>
-#include <poincare/circuit_breaker_checkpoint.h>
-#include <poincare/k_tree.h>
-#include <poincare/rational.h>
-#include <poincare/store.h>
-#include <poincare/symbol.h>
-#include <poincare/trigonometry.h>
-#include <poincare/undefined.h>
+#include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/rational.h>
+#include <poincare/old/store.h>
+#include <poincare/old/symbol.h>
+#include <poincare/old/trigonometry.h>
+#include <poincare/old/undefined.h>
 #include <poincare_junior/src/memory/tree.h>
 
 using namespace Poincare;

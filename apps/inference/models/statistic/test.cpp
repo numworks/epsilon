@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <float.h>
 #include <inference/app.h>
-#include <poincare/layout.h>
-#include <poincare/print.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/print.h>
 
 #include <algorithm>
 #include <new>

@@ -3,9 +3,9 @@
 #include <assert.h>
 #include <ion.h>
 #include <ion/storage/file_system.h>
-#include <poincare/helpers.h>
-#include <poincare/list.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/helpers.h>
+#include <poincare/old/list.h>
+#include <poincare/old/serialization_helper.h>
 #include <stddef.h>
 
 #include <algorithm>

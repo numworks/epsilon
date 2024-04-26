@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <ion/events.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/serialization_helper.h>
 
 #include "app.h"
 

@@ -1,6 +1,6 @@
 #include "statistics_store.h"
 
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 namespace Shared {
 

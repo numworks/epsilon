@@ -1,6 +1,6 @@
 #include "results_goodness_table_cell.h"
 
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 namespace Inference {
 

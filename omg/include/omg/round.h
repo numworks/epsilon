@@ -2,7 +2,7 @@
 #define OMG_ROUND_H
 
 #include <limits.h>
-#include <poincare/float.h>
+#include <poincare/old/float.h>
 
 namespace OMG {
 

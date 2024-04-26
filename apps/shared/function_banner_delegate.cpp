@@ -1,6 +1,6 @@
 #include "function_banner_delegate.h"
 
-#include <poincare/serialization_helper.h>
+#include <poincare/old/serialization_helper.h>
 
 #include "poincare_helpers.h"
 

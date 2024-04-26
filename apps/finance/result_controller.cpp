@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <escher/clipboard.h>
 #include <escher/container.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "app.h"
 

@@ -1,7 +1,7 @@
 #include "continuous_function_store.h"
 
 #include <ion.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/serialization_helper.h>
 
 using namespace Escher;
 

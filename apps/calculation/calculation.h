@@ -3,8 +3,8 @@
 
 #include <apps/calculation/additional_results/additional_results_type.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/context.h>
-#include <poincare/expression.h>
+#include <poincare/old/context.h>
+#include <poincare/old/expression.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>

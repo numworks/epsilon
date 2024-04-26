@@ -7,12 +7,12 @@
 #include <ion/unicode/code_point.h>
 #include <kandinsky/color.h>
 #include <kandinsky/measuring_context.h>
-#include <poincare/coordinate_2D.h>
-#include <poincare/expression.h>
-#include <poincare/k_tree.h>
-#include <poincare/print.h>
-#include <poincare/sequence.h>
-#include <poincare/symbol.h>
+#include <poincare/old/coordinate_2D.h>
+#include <poincare/old/expression.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/print.h>
+#include <poincare/old/sequence.h>
+#include <poincare/old/symbol.h>
 
 #include <cmath>
 

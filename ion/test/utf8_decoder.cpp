@@ -1,6 +1,6 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/serialization_helper.h>
 #include <quiz.h>
 #include <string.h>
 

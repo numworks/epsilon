@@ -1,7 +1,7 @@
 #ifndef SOLVER_CONTEXT_H
 #define SOLVER_CONTEXT_H
 
-#include <poincare/context_with_parent.h>
+#include <poincare/old/context_with_parent.h>
 
 namespace Solver {
 

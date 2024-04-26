@@ -2,7 +2,7 @@
 #define SEQUENCE_TERM_SUM_CONTROLLER_H
 
 #include <apps/shared/sum_graph_controller.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 #include "curve_view_range.h"
 #include "graph_view.h"

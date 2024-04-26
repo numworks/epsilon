@@ -1,6 +1,6 @@
 #include "distribution_curve_view.h"
 
-#include <poincare/coordinate_2D.h>
+#include <poincare/old/coordinate_2D.h>
 
 #include "../models/distribution/normal_distribution.h"
 

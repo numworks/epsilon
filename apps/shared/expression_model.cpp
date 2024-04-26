@@ -3,11 +3,11 @@
 #include <apps/apps_container.h>
 #include <assert.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/function.h>
-#include <poincare/k_tree.h>
-#include <poincare/layout.h>
-#include <poincare/symbol.h>
-#include <poincare/undefined.h>
+#include <poincare/old/function.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/symbol.h>
+#include <poincare/old/undefined.h>
 #include <string.h>
 
 #include <algorithm>

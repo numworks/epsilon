@@ -1,6 +1,6 @@
 #include "scrollable_three_layouts_view.h"
 
-#include <poincare/exception_checkpoint.h>
+#include <poincare/old/exception_checkpoint.h>
 
 #include "../app.h"
 

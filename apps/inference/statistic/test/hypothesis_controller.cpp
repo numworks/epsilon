@@ -5,9 +5,9 @@
 #include <apps/i18n.h>
 #include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
-#include <poincare/k_tree.h>
-#include <poincare/layout.h>
-#include <poincare/print.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/print.h>
 #include <shared/poincare_helpers.h>
 #include <string.h>
 

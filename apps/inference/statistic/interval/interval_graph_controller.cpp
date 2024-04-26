@@ -2,7 +2,7 @@
 
 #include <escher/clipboard.h>
 #include <inference/app.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 namespace Inference {
 

@@ -2,7 +2,7 @@
 
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
-#include <poincare/store.h>
+#include <poincare/old/store.h>
 
 #include "app_with_store_menu.h"
 #include "expression_display_permissions.h"

@@ -2,7 +2,7 @@
 #define CALCULATION_FUNCTION_MODEL_H
 
 #include <apps/shared/memoized_curve_view_range.h>
-#include <poincare/expression.h>
+#include <poincare/old/expression.h>
 
 #include "illustrated_expressions_list_controller.h"
 

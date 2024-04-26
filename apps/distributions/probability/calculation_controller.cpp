@@ -2,8 +2,8 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/preferences.h>
-#include <poincare/print.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/print.h>
 
 #include <algorithm>
 #include <cmath>

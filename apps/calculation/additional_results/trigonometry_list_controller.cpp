@@ -2,8 +2,8 @@
 
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/layout.h>
-#include <poincare/trigonometry.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/trigonometry.h>
 #include <poincare_expressions.h>
 
 #include "../app.h"

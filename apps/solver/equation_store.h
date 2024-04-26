@@ -2,7 +2,7 @@
 #define SOLVER_EQUATION_STORE_H
 
 #include <apps/shared/expression_model_store.h>
-#include <poincare/symbol_abstract.h>
+#include <poincare/old/symbol_abstract.h>
 
 #include "equation.h"
 #include "solution.h"

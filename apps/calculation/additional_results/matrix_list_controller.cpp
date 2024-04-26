@@ -2,12 +2,12 @@
 
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/determinant.h>
-#include <poincare/matrix.h>
-#include <poincare/matrix_inverse.h>
-#include <poincare/matrix_reduced_row_echelon_form.h>
-#include <poincare/matrix_row_echelon_form.h>
-#include <poincare/matrix_trace.h>
+#include <poincare/old/determinant.h>
+#include <poincare/old/matrix.h>
+#include <poincare/old/matrix_inverse.h>
+#include <poincare/old/matrix_reduced_row_echelon_form.h>
+#include <poincare/old/matrix_row_echelon_form.h>
+#include <poincare/old/matrix_trace.h>
 #include <string.h>
 
 #include "../app.h"

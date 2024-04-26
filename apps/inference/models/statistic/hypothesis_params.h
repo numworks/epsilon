@@ -1,7 +1,7 @@
 #ifndef INFERENCE_MODELS_HYPOTHESIS_PARAMS_H
 #define INFERENCE_MODELS_HYPOTHESIS_PARAMS_H
 
-#include <poincare/comparison.h>
+#include <poincare/old/comparison.h>
 
 namespace Inference {
 

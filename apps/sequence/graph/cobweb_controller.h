@@ -3,7 +3,7 @@
 
 #include <apps/shared/sum_graph_controller.h>
 #include <apps/shared/xy_banner_view.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 #include "apps/shared/curve_view_cursor.h"
 #include "apps/shared/function_graph_controller.h"

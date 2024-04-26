@@ -4,10 +4,10 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/matrix.h>
-#include <poincare/polynomial.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/symbol.h>
+#include <poincare/old/matrix.h>
+#include <poincare/old/polynomial.h>
+#include <poincare/old/serialization_helper.h>
+#include <poincare/old/symbol.h>
 
 #include "app.h"
 

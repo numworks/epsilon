@@ -1,4 +1,4 @@
-#include <poincare/approximation_helper.h>
+#include <poincare/old/approximation_helper.h>
 
 #include "approximation.h"
 #include "context.h"

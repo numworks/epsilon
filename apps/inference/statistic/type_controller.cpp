@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "inference/app.h"
 #include "inference/text_helpers.h"

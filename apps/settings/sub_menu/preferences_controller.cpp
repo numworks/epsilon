@@ -3,8 +3,8 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <assert.h>
-#include <poincare/k_tree.h>
-#include <poincare/layout.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/layout.h>
 
 #include <algorithm>
 #include <cmath>

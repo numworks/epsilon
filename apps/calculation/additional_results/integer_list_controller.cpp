@@ -1,9 +1,9 @@
 #include "integer_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/based_integer.h>
-#include <poincare/factor.h>
-#include <poincare/integer.h>
+#include <poincare/old/based_integer.h>
+#include <poincare/old/factor.h>
+#include <poincare/old/integer.h>
 
 #include "../app.h"
 

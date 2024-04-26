@@ -2,7 +2,7 @@
 
 #include <apps/constant.h>
 #include <apps/i18n.h>
-#include <poincare/expression.h>
+#include <poincare/old/expression.h>
 
 #include "continuous_function.h"
 #include "poincare_helpers.h"

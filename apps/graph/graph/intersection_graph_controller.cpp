@@ -1,8 +1,8 @@
 #include "intersection_graph_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/preferences.h>
-#include <poincare/print.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/print.h>
 
 #include "../app.h"
 

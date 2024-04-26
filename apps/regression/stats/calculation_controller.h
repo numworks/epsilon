@@ -6,7 +6,7 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 
 #include "../store.h"
 #include "column_title_cell.h"

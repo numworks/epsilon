@@ -2,8 +2,8 @@
 #define SHARED_FUNCTION_H
 
 #include <escher/i18n.h>
-#include <poincare/function.h>
-#include <poincare/symbol.h>
+#include <poincare/old/function.h>
+#include <poincare/old/symbol.h>
 
 #include "expression_model_handle.h"
 

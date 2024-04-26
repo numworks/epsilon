@@ -2,9 +2,9 @@
 #include <escher/editable_field.h>
 #include <escher/metric.h>
 #include <escher/toolbox.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/symbol.h>
-#include <poincare/xnt_helpers.h>
+#include <poincare/old/serialization_helper.h>
+#include <poincare/old/symbol.h>
+#include <poincare/old/xnt_helpers.h>
 
 using namespace Poincare;
 

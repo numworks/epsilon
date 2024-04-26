@@ -6,7 +6,7 @@
 #include <escher/selectable_table_view.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
-#include <poincare/symbol.h>
+#include <poincare/old/symbol.h>
 
 #include <algorithm>
 

@@ -1,6 +1,6 @@
 #include "expression_display_permissions.h"
 
-#include <poincare/unit.h>
+#include <poincare/old/unit.h>
 
 using namespace Poincare;
 

@@ -3,9 +3,9 @@
 #include <apps/i18n.h>
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
-#include <poincare/point_evaluation.h>
-#include <poincare/print.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/point_evaluation.h>
+#include <poincare/old/print.h>
+#include <poincare/old/serialization_helper.h>
 
 #include "../app.h"
 #include "apps/shared/color_names.h"

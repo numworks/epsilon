@@ -1,6 +1,6 @@
 #include "plot_controller.h"
 
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "../data/store_controller.h"
 

@@ -3,7 +3,7 @@
 
 #include <escher/context_provider.h>
 #include <ion/events.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 namespace Escher {
 

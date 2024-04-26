@@ -2,7 +2,7 @@
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/stack_view_controller.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "inference/app.h"
 #include "inference/constants.h"

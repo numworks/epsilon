@@ -3,11 +3,11 @@
 
 #include <apps/i18n.h>
 #include <omg/bit_helper.h>
-#include <poincare/comparison.h>
-#include <poincare/conic.h>
-#include <poincare/expression.h>
-#include <poincare/helpers.h>
-#include <poincare/symbol.h>
+#include <poincare/old/comparison.h>
+#include <poincare/old/conic.h>
+#include <poincare/old/expression.h>
+#include <poincare/old/helpers.h>
+#include <poincare/old/symbol.h>
 
 /* ContinuousFunctionProperties is an object containing:
  *  - A pointer to a const function type

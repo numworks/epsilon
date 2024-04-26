@@ -2,8 +2,8 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
-#include <poincare/layout.h>
-#include <poincare/preferences.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/preferences.h>
 
 #include "list_controller.h"
 

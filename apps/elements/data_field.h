@@ -2,7 +2,7 @@
 #define ELEMENTS_DATA_FIELD
 
 #include <apps/i18n.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 #include <stddef.h>
 
 #include "palette.h"

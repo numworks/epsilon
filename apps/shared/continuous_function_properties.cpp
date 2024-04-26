@@ -1,12 +1,12 @@
 #include "continuous_function_properties.h"
 
 #include <apps/shared/expression_display_permissions.h>
-#include <poincare/addition.h>
-#include <poincare/constant.h>
-#include <poincare/division.h>
-#include <poincare/matrix.h>
-#include <poincare/multiplication.h>
-#include <poincare/trigonometry.h>
+#include <poincare/old/addition.h>
+#include <poincare/old/constant.h>
+#include <poincare/old/division.h>
+#include <poincare/old/matrix.h>
+#include <poincare/old/multiplication.h>
+#include <poincare/old/trigonometry.h>
 
 #include "continuous_function.h"
 

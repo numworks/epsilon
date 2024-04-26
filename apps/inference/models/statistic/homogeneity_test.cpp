@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 namespace Inference {
 

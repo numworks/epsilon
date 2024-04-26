@@ -7,7 +7,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <limits.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/serialization_helper.h>
 #include <stddef.h>
 
 #include <algorithm>

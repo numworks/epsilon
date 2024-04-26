@@ -3,16 +3,16 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <float.h>
-#include <poincare/addition.h>
-#include <poincare/based_integer.h>
-#include <poincare/integer.h>
-#include <poincare/k_tree.h>
-#include <poincare/layout.h>
-#include <poincare/rational.h>
-#include <poincare/sequence.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/sum.h>
-#include <poincare/zoom.h>
+#include <poincare/old/addition.h>
+#include <poincare/old/based_integer.h>
+#include <poincare/old/integer.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/rational.h>
+#include <poincare/old/sequence.h>
+#include <poincare/old/serialization_helper.h>
+#include <poincare/old/sum.h>
+#include <poincare/old/zoom.h>
 #include <string.h>
 
 #include <cmath>

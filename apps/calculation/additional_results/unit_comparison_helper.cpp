@@ -1,11 +1,11 @@
 #include "unit_comparison_helper.h"
 
 #include <apps/i18n.h>
-#include <poincare/expression.h>
-#include <poincare/multiplication.h>
-#include <poincare/print_float.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/unit.h>
+#include <poincare/old/expression.h>
+#include <poincare/old/multiplication.h>
+#include <poincare/old/print_float.h>
+#include <poincare/old/serialization_helper.h>
+#include <poincare/old/unit.h>
 
 #include <array>
 #include <cmath>

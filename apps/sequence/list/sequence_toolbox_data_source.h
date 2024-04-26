@@ -5,7 +5,7 @@
 #include <apps/shared/sequence_store.h>
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 namespace Sequence {
 

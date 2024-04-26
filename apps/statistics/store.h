@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/statistics_store.h>
-#include <poincare/range.h>
+#include <poincare/old/range.h>
 #include <stddef.h>
 #include <string.h>
 

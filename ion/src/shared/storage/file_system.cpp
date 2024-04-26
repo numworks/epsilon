@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <ion.h>
-#include <poincare/integer.h>
-#include <poincare/print_int.h>
+#include <poincare/old/integer.h>
+#include <poincare/old/print_int.h>
 #include <string.h>
 
 #include <new>

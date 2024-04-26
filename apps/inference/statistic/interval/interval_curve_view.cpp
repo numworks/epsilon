@@ -1,6 +1,6 @@
 #include "interval_curve_view.h"
 
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include <cmath>
 

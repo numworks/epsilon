@@ -4,14 +4,14 @@
 #include <float.h>
 #include <ion/display.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/zoom.h>
+#include <poincare/old/zoom.h>
 #include <string.h>
 
 #include <algorithm>
 #include <cmath>
 
 #include "interactive_curve_view_range.h"
-#include "poincare/src/parsing/parser.h"
+#include "poincare/src/old/parsing/parser.h"
 #include "poincare_helpers.h"
 
 using namespace Poincare;

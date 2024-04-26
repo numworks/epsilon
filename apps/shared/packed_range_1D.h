@@ -2,7 +2,7 @@
 #define SHARED_PACKED_RANGE_1D_H
 
 #include <float.h>
-#include <poincare/range.h>
+#include <poincare/old/range.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>

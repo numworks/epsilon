@@ -1,7 +1,7 @@
 #include "function_name_helper.h"
 
 #include <apps/shared/global_context.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/serialization_helper.h>
 
 using namespace Poincare;
 

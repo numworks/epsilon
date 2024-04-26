@@ -1,6 +1,6 @@
 #include "comparison_operator_popup_data_source.h"
 
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "inference/app.h"
 #include "inference/text_helpers.h"

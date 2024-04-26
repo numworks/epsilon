@@ -2,8 +2,8 @@
 #define GRAPH_POINTS_OF_INTEREST_CACHE
 
 #include <ion/storage/record.h>
-#include <poincare/point_of_interest.h>
-#include <poincare/range.h>
+#include <poincare/old/point_of_interest.h>
+#include <poincare/old/range.h>
 
 namespace Graph {
 

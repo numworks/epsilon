@@ -1,6 +1,6 @@
 #include "graph_view.h"
 
-#include <poincare/trigonometry.h>
+#include <poincare/old/trigonometry.h>
 
 #include "../app.h"
 

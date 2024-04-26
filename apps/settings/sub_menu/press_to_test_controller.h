@@ -5,7 +5,7 @@
 #include <apps/shared/pop_up_controller.h>
 #include <escher/button_cell.h>
 #include <escher/list_with_top_and_bottom_controller.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 
 #include "press_to_test_switch.h"
 

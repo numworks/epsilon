@@ -4,11 +4,11 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
 #include <omg/global_box.h>
-#include <poincare/context.h>
-#include <poincare/decimal.h>
-#include <poincare/float.h>
-#include <poincare/matrix.h>
-#include <poincare/symbol.h>
+#include <poincare/old/context.h>
+#include <poincare/old/decimal.h>
+#include <poincare/old/float.h>
+#include <poincare/old/matrix.h>
+#include <poincare/old/symbol.h>
 
 #include <array>
 

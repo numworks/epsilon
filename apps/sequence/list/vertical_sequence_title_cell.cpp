@@ -1,6 +1,6 @@
 #include "vertical_sequence_title_cell.h"
 
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 #include <algorithm>
 

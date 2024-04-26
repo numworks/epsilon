@@ -1,5 +1,5 @@
 #include <escher/init.h>
-#include <poincare/init.h>
+#include <poincare/old/init.h>
 #include <poincare_junior/include/poincare.h>
 
 #include "apps_container.h"

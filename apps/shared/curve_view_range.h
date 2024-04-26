@@ -1,7 +1,7 @@
 #ifndef SHARED_CURVE_VIEW_RANGE_H
 #define SHARED_CURVE_VIEW_RANGE_H
 
-#include <poincare/zoom.h>
+#include <poincare/old/zoom.h>
 #include <stdint.h>
 
 namespace Shared {

@@ -3,9 +3,9 @@
 #include <apps/shared/global_context.h>
 #include <apps/shared/store_context.h>
 #include <assert.h>
-#include <poincare/helpers.h>
-#include <poincare/test/helper.h>
-#include <poincare/trigonometry.h>
+#include <poincare/old/helpers.h>
+#include <poincare/old/trigonometry.h>
+#include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
 

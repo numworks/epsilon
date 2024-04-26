@@ -2,7 +2,7 @@
 
 #include <apps/constant.h>
 #include <assert.h>
-#include <poincare/exception_checkpoint.h>
+#include <poincare/old/exception_checkpoint.h>
 #include <string.h>
 
 #include <algorithm>

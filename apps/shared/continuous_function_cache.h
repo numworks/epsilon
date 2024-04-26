@@ -3,8 +3,8 @@
 
 #include <float.h>
 #include <ion/display.h>
-#include <poincare/context.h>
-#include <poincare/coordinate_2D.h>
+#include <poincare/old/context.h>
+#include <poincare/old/coordinate_2D.h>
 
 namespace Shared {
 

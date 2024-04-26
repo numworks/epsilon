@@ -2,9 +2,9 @@
 
 #include <assert.h>
 #include <escher/clipboard.h>
-#include <poincare/k_tree.h>
-#include <poincare/layout.h>
-#include <poincare/print.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/print.h>
 #include <stdlib.h>
 
 #include <cmath>

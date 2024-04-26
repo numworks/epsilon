@@ -1,12 +1,12 @@
 SFLAGS += -Ipoincare/include
 
-poincare_src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/old/,\
   junior_layout.cpp \
   layout.cpp \
   layout_node.cpp \
 )
 
-poincare_src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/old/,\
   aliases_list.cpp \
   beta_function.cpp \
   binomial_distribution.cpp \
@@ -40,7 +40,7 @@ poincare_src += $(addprefix poincare/src/,\
   xnt_helpers.cpp \
 )
 
-poincare_src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/old/,\
   absolute_value.cpp \
   addition.cpp \
   approximation_helper.cpp \
@@ -192,13 +192,13 @@ poincare_src += $(addprefix poincare/src/,\
   zoom.cpp \
 )
 
-poincare_src += $(addprefix poincare/src/parsing/,\
+poincare_src += $(addprefix poincare/src/old/parsing/,\
   parser.cpp \
   helper.cpp \
   tokenizer.cpp \
 )
 
-tests_src += $(addprefix poincare/test/,\
+tests_src += $(addprefix poincare/test/old/,\
   helper.cpp \
   approximation.cpp \
   derivative.cpp \
@@ -206,7 +206,7 @@ tests_src += $(addprefix poincare/test/,\
   simplification.cpp \
 )
 
-poincare_bench_src = $(addprefix poincare/src/,\
+poincare_bench_src = $(addprefix poincare/src/old/,\
   checkpoint_dummy.cpp \
   helpers.cpp \
   init.cpp \

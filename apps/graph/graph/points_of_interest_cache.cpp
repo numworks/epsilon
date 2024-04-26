@@ -1,8 +1,8 @@
 #include "points_of_interest_cache.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/circuit_breaker_checkpoint.h>
-#include <poincare/exception_checkpoint.h>
+#include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/old/exception_checkpoint.h>
 
 #include <algorithm>
 

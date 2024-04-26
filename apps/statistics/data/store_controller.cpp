@@ -4,7 +4,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <float.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include <cmath>
 

@@ -3,7 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/home/apps_layout.h>
 #include <ion/keyboard/layout_events.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 
 #include "app.h"
 

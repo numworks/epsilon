@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <ion/exam_bytes.h>
-#include <poincare/print.h>
-#include <poincare/test/helper.h>
+#include <poincare/old/print.h>
+#include <poincare/test/old/helper.h>
 #include <quiz.h>
 
 using namespace Ion;

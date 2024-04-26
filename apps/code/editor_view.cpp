@@ -2,7 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <escher/palette.h>
-#include <poincare/integer.h>
+#include <poincare/old/integer.h>
 
 #include "app.h"
 

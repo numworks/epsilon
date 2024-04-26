@@ -1,7 +1,7 @@
 #ifndef APPS_GRAPH_TEST_HELPER_H
 #define APPS_GRAPH_TEST_HELPER_H
 
-#include <poincare/test/helper.h>
+#include <poincare/test/old/helper.h>
 
 #include "../app.h"
 

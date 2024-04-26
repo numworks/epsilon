@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_GEOMETRIC_DISTRIBUTION_H
 #define PROBABILITE_GEOMETRIC_DISTRIBUTION_H
 
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 #include "one_parameter_distribution.h"
 

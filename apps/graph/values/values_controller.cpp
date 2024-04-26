@@ -5,10 +5,10 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
-#include <poincare/circuit_breaker_checkpoint.h>
-#include <poincare/decimal.h>
-#include <poincare/layout.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/old/decimal.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/serialization_helper.h>
 
 #include "../app.h"
 

@@ -2,7 +2,7 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/integer.h>
+#include <poincare/old/integer.h>
 
 #include <cmath>
 

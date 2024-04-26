@@ -1,7 +1,7 @@
 #include "binomial_distribution.h"
 
 #include <assert.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 #include <poincare_junior/src/probability/binomial_distribution.h>
 
 #include <cmath>

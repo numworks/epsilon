@@ -4,7 +4,7 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <limits.h>
-#include <poincare/store.h>
+#include <poincare/old/store.h>
 #include <quiz.h>
 #include <string.h>
 

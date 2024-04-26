@@ -4,13 +4,13 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/empty_context.h>
-#include <poincare/matrix.h>
-#include <poincare/polynomial.h>
-#include <poincare/print_int.h>
-#include <poincare/symbol.h>
-#include <poincare/variable_context.h>
-#include <poincare/zoom.h>
+#include <poincare/old/empty_context.h>
+#include <poincare/old/matrix.h>
+#include <poincare/old/polynomial.h>
+#include <poincare/old/print_int.h>
+#include <poincare/old/symbol.h>
+#include <poincare/old/variable_context.h>
+#include <poincare/old/zoom.h>
 
 #include "app.h"
 

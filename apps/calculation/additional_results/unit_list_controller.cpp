@@ -1,7 +1,7 @@
 #include "unit_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/unit_convert.h>
+#include <poincare/old/unit_convert.h>
 
 #include "../app.h"
 #include "unit_comparison_helper.h"

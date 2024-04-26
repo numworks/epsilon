@@ -7,7 +7,7 @@
 #include <escher/tab_view_controller.h>
 #include <escher/toggleable_dot_view.h>
 #include <escher/unequal_view.h>
-#include <poincare/coordinate_2D.h>
+#include <poincare/old/coordinate_2D.h>
 
 #include "cursor_view.h"
 #include "curve_selection_controller.h"

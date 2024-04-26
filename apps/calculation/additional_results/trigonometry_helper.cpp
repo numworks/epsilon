@@ -1,9 +1,9 @@
 #include "trigonometry_helper.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/multiplication.h>
-#include <poincare/trigonometry.h>
-#include <poincare/unit.h>
+#include <poincare/old/multiplication.h>
+#include <poincare/old/trigonometry.h>
+#include <poincare/old/unit.h>
 
 using namespace Poincare;
 using namespace Shared;

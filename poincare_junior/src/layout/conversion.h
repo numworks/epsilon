@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_CONVERSION_H
 #define POINCARE_LAYOUT_CONVERSION_H
 
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 #include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {

@@ -5,9 +5,9 @@
 #include <math.h>
 #include <omg/comparison.h>
 #include <omg/ieee754.h>
-#include <poincare/circuit_breaker_checkpoint.h>
-#include <poincare/preferences.h>
-#include <poincare/zoom.h>
+#include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/zoom.h>
 #include <stddef.h>
 
 #include <algorithm>

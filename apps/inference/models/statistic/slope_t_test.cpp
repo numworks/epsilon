@@ -1,6 +1,6 @@
 #include "slope_t_test.h"
 
-#include <poincare/k_tree.h>
+#include <poincare/old/k_tree.h>
 
 namespace Inference {
 

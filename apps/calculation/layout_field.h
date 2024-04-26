@@ -2,7 +2,7 @@
 #define CALCULATION_LAYOUT_FIELD_H
 
 #include <escher/expression_input_bar.h>
-#include <poincare/trinary_boolean.h>
+#include <poincare/old/trinary_boolean.h>
 
 namespace Calculation {
 

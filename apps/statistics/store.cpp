@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <float.h>
 #include <limits.h>
-#include <poincare/helpers.h>
-#include <poincare/normal_distribution.h>
+#include <poincare/old/helpers.h>
+#include <poincare/old/normal_distribution.h>
 #include <string.h>
 
 #include <algorithm>

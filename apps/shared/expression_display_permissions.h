@@ -1,7 +1,7 @@
 #ifndef SHARED_UTILS_H
 #define SHARED_UTILS_H
 
-#include <poincare/expression.h>
+#include <poincare/old/expression.h>
 
 namespace Shared {
 

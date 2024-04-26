@@ -1,7 +1,7 @@
 #ifndef SOLVER_SOLUTION_H
 #define SOLVER_SOLUTION_H
 
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 namespace Solver {
 

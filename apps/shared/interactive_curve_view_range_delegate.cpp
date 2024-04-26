@@ -1,6 +1,6 @@
 #include "interactive_curve_view_range_delegate.h"
 
-#include <poincare/zoom.h>
+#include <poincare/old/zoom.h>
 
 #include "function_store.h"
 #include "interactive_curve_view_range.h"

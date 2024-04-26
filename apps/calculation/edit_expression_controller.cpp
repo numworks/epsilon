@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <ion/display.h>
-#include <poincare/preferences.h>
-#include <poincare/symbol.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/symbol.h>
 
 #include "app.h"
 

@@ -2,11 +2,11 @@
 
 #include <apps/regression/store.h>
 #include <assert.h>
-#include <poincare/expression.h>
-#include <poincare/k_tree.h>
-#include <poincare/preferences.h>
-#include <poincare/statistics_dataset.h>
-#include <poincare/trigonometry.h>
+#include <poincare/old/expression.h>
+#include <poincare/old/k_tree.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/statistics_dataset.h>
+#include <poincare/old/trigonometry.h>
 
 #include <cmath>
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_PARSER_H
 #define POINCARE_LAYOUT_PARSER_H
 
-#include <poincare/context.h>
+#include <poincare/old/context.h>
 #include <poincare_junior/src/memory/tree.h>
 #include <poincare_junior/src/memory/tree_ref.h>
 

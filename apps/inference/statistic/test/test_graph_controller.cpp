@@ -1,6 +1,6 @@
 #include "test_graph_controller.h"
 
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 namespace Inference {
 

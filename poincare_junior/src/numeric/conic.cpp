@@ -1,12 +1,12 @@
-#include <poincare/addition.h>
-#include <poincare/conic.h>
-#include <poincare/division.h>
-#include <poincare/matrix.h>
-#include <poincare/multiplication.h>
-#include <poincare/polynomial.h>
-#include <poincare/power.h>
-#include <poincare/preferences.h>
-#include <poincare/trigonometry.h>
+#include <poincare/old/addition.h>
+#include <poincare/old/conic.h>
+#include <poincare/old/division.h>
+#include <poincare/old/matrix.h>
+#include <poincare/old/multiplication.h>
+#include <poincare/old/polynomial.h>
+#include <poincare/old/power.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/trigonometry.h>
 
 #include <algorithm>
 

@@ -1,7 +1,7 @@
 #include "app.h"
 
 #include <apps/i18n.h>
-#include <poincare/symbol.h>
+#include <poincare/old/symbol.h>
 
 #include "calculation_icon.h"
 

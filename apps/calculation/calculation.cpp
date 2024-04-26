@@ -2,10 +2,10 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/expression_display_permissions.h>
-#include <poincare/exception_checkpoint.h>
-#include <poincare/expression_node.h>
-#include <poincare/nonreal.h>
-#include <poincare/undefined.h>
+#include <poincare/old/exception_checkpoint.h>
+#include <poincare/old/expression_node.h>
+#include <poincare/old/nonreal.h>
+#include <poincare/old/undefined.h>
 #include <string.h>
 
 #include <algorithm>

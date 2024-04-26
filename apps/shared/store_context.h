@@ -1,7 +1,7 @@
 #ifndef SHARED_STORE_CONTEXT_H
 #define SHARED_STORE_CONTEXT_H
 
-#include <poincare/context_with_parent.h>
+#include <poincare/old/context_with_parent.h>
 
 #include "double_pair_store.h"
 

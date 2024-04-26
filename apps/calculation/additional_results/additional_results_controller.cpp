@@ -1,6 +1,6 @@
 #include "additional_results_controller.h"
 
-#include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/old/circuit_breaker_checkpoint.h>
 
 #include "../app.h"
 

@@ -1,6 +1,6 @@
 #include "box_controller.h"
 
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "../app.h"
 

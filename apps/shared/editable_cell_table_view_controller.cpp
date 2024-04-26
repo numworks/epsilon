@@ -5,7 +5,7 @@
 #include <escher/even_odd_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/stack_view_controller.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include <algorithm>
 #include <cmath>

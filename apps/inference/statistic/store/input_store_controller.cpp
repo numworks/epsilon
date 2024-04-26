@@ -1,6 +1,6 @@
 #include "input_store_controller.h"
 
-#include <poincare/serialization_helper.h>
+#include <poincare/old/serialization_helper.h>
 
 #include "inference/text_helpers.h"
 

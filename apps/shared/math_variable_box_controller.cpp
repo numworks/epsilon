@@ -7,11 +7,11 @@
 #include <apps/shared/sequence.h>
 #include <assert.h>
 #include <escher/metric.h>
-#include <poincare/exception_checkpoint.h>
-#include <poincare/expression.h>
-#include <poincare/layout.h>
-#include <poincare/preferences.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/exception_checkpoint.h>
+#include <poincare/old/expression.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/serialization_helper.h>
 
 #include <algorithm>
 

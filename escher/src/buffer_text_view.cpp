@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <escher/buffer_text_view.h>
 #include <escher/i18n.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 #include <string.h>
 
 namespace Escher {

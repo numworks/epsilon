@@ -1,6 +1,6 @@
 #include "results_controller.h"
 
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "inference/app.h"
 #include "inference/text_helpers.h"

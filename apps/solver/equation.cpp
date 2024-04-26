@@ -3,14 +3,14 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/boolean.h>
-#include <poincare/comparison.h>
-#include <poincare/constant.h>
-#include <poincare/empty_context.h>
-#include <poincare/nonreal.h>
-#include <poincare/rational.h>
-#include <poincare/subtraction.h>
-#include <poincare/undefined.h>
+#include <poincare/old/boolean.h>
+#include <poincare/old/comparison.h>
+#include <poincare/old/constant.h>
+#include <poincare/old/empty_context.h>
+#include <poincare/old/nonreal.h>
+#include <poincare/old/rational.h>
+#include <poincare/old/subtraction.h>
+#include <poincare/old/undefined.h>
 
 using namespace Ion;
 using namespace Poincare;

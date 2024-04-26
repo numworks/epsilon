@@ -1,9 +1,9 @@
 #include "formula_template_menu_controller.h"
 
 #include <ion/storage/record.h>
-#include <poincare/addition.h>
-#include <poincare/print.h>
-#include <poincare/symbol.h>
+#include <poincare/old/addition.h>
+#include <poincare/old/print.h>
+#include <poincare/old/symbol.h>
 
 #include "column_helper.h"
 

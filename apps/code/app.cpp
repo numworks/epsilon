@@ -2,7 +2,7 @@
 
 #include <apps/i18n.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/pool.h>
+#include <poincare/old/pool.h>
 
 #include "clipboard.h"
 #include "code_icon.h"

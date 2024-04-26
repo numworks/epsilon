@@ -1,5 +1,5 @@
 #include <float.h>
-#include <poincare/test/helper.h>
+#include <poincare/test/old/helper.h>
 #include <quiz.h>
 
 #include "../data.h"

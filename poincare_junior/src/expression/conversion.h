@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_CONVERSION_H
 #define POINCARE_EXPRESSION_CONVERSION_H
 
-#include <poincare/expression.h>
+#include <poincare/old/expression.h>
 #include <poincare_junior/src/memory/tree.h>
 
 namespace PoincareJ {

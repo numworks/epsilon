@@ -2,8 +2,8 @@
 
 #include <apps/i18n.h>
 #include <kandinsky/font.h>
-#include <poincare/preferences.h>
-#include <poincare/print.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/print.h>
 
 #include "inference/text_helpers.h"
 

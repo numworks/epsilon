@@ -1,9 +1,9 @@
 #ifndef CALCULATION_SCIENTIFIC_NOTATION_HELPER_H
 #define CALCULATION_SCIENTIFIC_NOTATION_HELPER_H
 
-#include <poincare/context.h>
-#include <poincare/expression.h>
-#include <poincare/layout.h>
+#include <poincare/old/context.h>
+#include <poincare/old/expression.h>
+#include <poincare/old/layout.h>
 
 namespace Calculation {
 

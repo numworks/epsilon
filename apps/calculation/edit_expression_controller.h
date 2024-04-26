@@ -2,7 +2,7 @@
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
 #include <apps/shared/math_field_delegate.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 #include "calculation_selectable_list_view.h"
 #include "history_controller.h"

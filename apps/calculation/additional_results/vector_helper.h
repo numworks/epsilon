@@ -1,7 +1,7 @@
 #ifndef CALCULATION_VECTOR_HELPER_H
 #define CALCULATION_VECTOR_HELPER_H
 
-#include <poincare/expression.h>
+#include <poincare/old/expression.h>
 
 namespace Calculation {
 

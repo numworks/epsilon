@@ -1,7 +1,7 @@
 #include "right_integral_calculation.h"
 
 #include <assert.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 
 #include <cmath>
 

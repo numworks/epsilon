@@ -2,7 +2,7 @@
 #define PROBABILITE_EXPONENTIAL_DISTRIBUTION_H
 
 #include <assert.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 #include "one_parameter_distribution.h"
 

@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <math.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 
 #include <cmath>
 

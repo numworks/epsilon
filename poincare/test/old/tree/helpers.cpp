@@ -1,0 +1,25 @@
+#include "helpers.h"
+
+#include <poincare/old/pool.h>
+#include <quiz.h>
+
+int pool_size() { return Poincare::Pool::sharedPool->numberOfNodes(); }
+
+void assert_pool_size(int i) {
+#if POINCARE_TREE_LOG
+  int poolSize = pool_size();
+  if (poolSize != i) {
+    std::cout << "Expected pool of size " << i << " but got " << poolSize
+              << std::endl;
+    log_pool();
+    quiz_assert(false);
+  }
+#else
+  quiz_assert(pool_size() == i);
+#endif
+}
+
+#if POINCARE_TREE_LOG
+void log_pool() { Poincare::Pool::sharedPool->treeLog(std::cout); }
+void log_pool_tree() { Poincare::Pool::sharedPool->treeLog(std::cout); }
+#endif

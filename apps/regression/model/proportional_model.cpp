@@ -1,7 +1,7 @@
 #include "proportional_model.h"
 
-#include <poincare/expression.h>
-#include <poincare/k_tree.h>
+#include <poincare/old/expression.h>
+#include <poincare/old/k_tree.h>
 
 namespace Regression {
 

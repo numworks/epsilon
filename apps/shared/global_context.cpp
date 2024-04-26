@@ -2,11 +2,11 @@
 
 #include <apps/apps_container.h>
 #include <assert.h>
-#include <poincare/function.h>
-#include <poincare/rational.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/symbol.h>
-#include <poincare/undefined.h>
+#include <poincare/old/function.h>
+#include <poincare/old/rational.h>
+#include <poincare/old/serialization_helper.h>
+#include <poincare/old/symbol.h>
+#include <poincare/old/undefined.h>
 
 #include "continuous_function.h"
 #include "continuous_function_store.h"

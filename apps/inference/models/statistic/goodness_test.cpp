@@ -2,7 +2,7 @@
 
 #include <float.h>
 #include <inference/statistic/chi_square/results_goodness_table_cell.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 #include <string.h>
 
 #include "homogeneity_test.h"

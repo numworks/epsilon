@@ -1,6 +1,6 @@
 #include "chi2_test.h"
 
-#include <poincare/k_tree.h>
+#include <poincare/old/k_tree.h>
 
 #include <algorithm>
 #include <cmath>

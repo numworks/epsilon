@@ -2,7 +2,7 @@
 #define ESCHER_CONTEXT_PROVIDER_H
 
 #include <escher/container.h>
-#include <poincare/context.h>
+#include <poincare/old/context.h>
 
 namespace Escher {
 

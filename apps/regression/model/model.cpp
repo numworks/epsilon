@@ -2,10 +2,10 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/comparison.h>
-#include <poincare/float.h>
-#include <poincare/layout.h>
-#include <poincare/multiplication.h>
+#include <poincare/old/comparison.h>
+#include <poincare/old/float.h>
+#include <poincare/old/layout.h>
+#include <poincare/old/multiplication.h>
 
 #include <cmath>
 

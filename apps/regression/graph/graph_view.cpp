@@ -2,7 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <assert.h>
-#include <poincare/context.h>
+#include <poincare/old/context.h>
 
 #include "../app.h"
 #include "../model/model.h"

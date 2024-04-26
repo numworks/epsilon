@@ -6,10 +6,10 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/aliases_list.h>
-#include <poincare/parametered_expression.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/symbol_abstract.h>
+#include <poincare/old/aliases_list.h>
+#include <poincare/old/parametered_expression.h>
+#include <poincare/old/serialization_helper.h>
+#include <poincare/old/symbol_abstract.h>
 #include <poincare_junior/src/layout/xnt.h>
 
 #include <algorithm>

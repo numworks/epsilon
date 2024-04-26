@@ -1,11 +1,11 @@
 #include "illustrated_expressions_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/exception_checkpoint.h>
-#include <poincare/multiplication.h>
-#include <poincare/rational.h>
-#include <poincare/symbol.h>
-#include <poincare/trigonometry.h>
+#include <poincare/old/exception_checkpoint.h>
+#include <poincare/old/multiplication.h>
+#include <poincare/old/rational.h>
+#include <poincare/old/symbol.h>
+#include <poincare/old/trigonometry.h>
 
 #include "../app.h"
 #include "additional_result_cell.h"

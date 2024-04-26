@@ -1,8 +1,8 @@
 #include "vector_helper.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/matrix.h>
-#include <poincare/vector_norm.h>
+#include <poincare/old/matrix.h>
+#include <poincare/old/vector_norm.h>
 
 #include "vector_list_controller.h"
 

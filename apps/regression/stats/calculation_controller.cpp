@@ -4,8 +4,8 @@
 #include <apps/shared/editable_cell_table_view_controller.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/helpers.h>
-#include <poincare/layout.h>
+#include <poincare/old/helpers.h>
+#include <poincare/old/layout.h>
 
 #include <algorithm>
 

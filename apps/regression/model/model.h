@@ -2,9 +2,9 @@
 #define REGRESSION_MODEL_H
 
 #include <apps/i18n.h>
-#include <poincare/context.h>
-#include <poincare/expression.h>
-#include <poincare/matrix.h>
+#include <poincare/old/context.h>
+#include <poincare/old/expression.h>
+#include <poincare/old/matrix.h>
 #include <stdint.h>
 
 namespace Regression {

@@ -1,6 +1,6 @@
 #include "../clipboard.h"
 
-#include <poincare/expression.h>
+#include <poincare/old/expression.h>
 #include <quiz.h>
 #include <string.h>
 

@@ -2,7 +2,7 @@
 #define ESCHER_LAYOUT_VIEW_H
 
 #include <escher/glyphs_view.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
 
 namespace Escher {

@@ -3,7 +3,7 @@
 
 #include <escher/menu_cell.h>
 #include <escher/scrollable_multiple_layouts_view.h>
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 #include "../calculation.h"
 #include "layout_with_equal_sign_view.h"

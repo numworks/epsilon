@@ -2,8 +2,8 @@
 #define SHARED_INTERACTIVE_CURVE_VIEW_DELEGATE_H
 
 #include <assert.h>
-#include <poincare/context.h>
-#include <poincare/range.h>
+#include <poincare/old/context.h>
+#include <poincare/old/range.h>
 
 #include "function_store.h"
 

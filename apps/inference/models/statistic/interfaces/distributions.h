@@ -1,7 +1,7 @@
 #ifndef INFERENCE_MODELS_STATISTIC_INTERFACES_DISTRIBUTIONS_H
 #define INFERENCE_MODELS_STATISTIC_INTERFACES_DISTRIBUTIONS_H
 
-#include <poincare/layout.h>
+#include <poincare/old/layout.h>
 
 namespace Inference {
 

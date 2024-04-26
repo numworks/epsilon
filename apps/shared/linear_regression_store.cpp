@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 #include <string.h>
 
 #include <algorithm>

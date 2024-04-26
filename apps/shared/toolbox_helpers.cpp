@@ -3,7 +3,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/serialization_helper.h>
+#include <poincare/old/serialization_helper.h>
 #include <string.h>
 
 namespace Shared {

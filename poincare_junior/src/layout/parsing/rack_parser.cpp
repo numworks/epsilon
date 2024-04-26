@@ -2,9 +2,9 @@
 
 #include <ion/unicode/utf8_decoder.h>
 #include <omg/unicode_helper.h>
-#include <poincare/empty_context.h>
-#include <poincare/symbol_abstract.h>
-#include <poincare/variable_context.h>
+#include <poincare/old/empty_context.h>
+#include <poincare/old/symbol_abstract.h>
+#include <poincare/old/variable_context.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/binary.h>
 #include <poincare_junior/src/expression/constant.h>

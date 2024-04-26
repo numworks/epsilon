@@ -1,7 +1,7 @@
 #include "store_table_cell.h"
 
 #include <escher/palette.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "inference/app.h"
 #include "inference/statistic/chi_square/input_goodness_controller.h"

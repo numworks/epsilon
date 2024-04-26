@@ -3,7 +3,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/metric.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include <array>
 

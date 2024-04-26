@@ -3,9 +3,9 @@
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/ieee754.h>
-#include <poincare/point_evaluation.h>
-#include <poincare/preferences.h>
-#include <poincare/print.h>
+#include <poincare/old/point_evaluation.h>
+#include <poincare/old/preferences.h>
+#include <poincare/old/print.h>
 
 #include <algorithm>
 

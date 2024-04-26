@@ -5,7 +5,7 @@
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>
-#include <poincare/preferences.h>
+#include <poincare/old/preferences.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>

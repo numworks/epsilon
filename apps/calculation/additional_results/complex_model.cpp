@@ -1,7 +1,7 @@
 #include "complex_model.h"
 
 #include <omg/round.h>
-#include <poincare/range.h>
+#include <poincare/old/range.h>
 
 using namespace Poincare;
 

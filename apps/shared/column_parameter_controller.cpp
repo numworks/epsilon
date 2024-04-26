@@ -1,7 +1,7 @@
 #include "column_parameter_controller.h"
 
 #include <assert.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include "editable_cell_table_view_controller.h"
 

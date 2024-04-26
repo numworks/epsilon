@@ -1,5 +1,5 @@
 #include <math.h>
-#include <poincare/approximation_helper.h>
+#include <poincare/old/approximation_helper.h>
 #include <poincare_junior/src/numeric/float.h>
 
 #include <bit>

@@ -3,8 +3,8 @@
 
 #include <escher/text_field.h>
 #include <omg/directions.h>
-#include <poincare/context.h>
-#include <poincare/junior_layout.h>
+#include <poincare/old/context.h>
+#include <poincare/old/junior_layout.h>
 #include <poincare_junior/src/memory/tree.h>
 #include <poincare_junior/src/memory/tree_ref.h>
 

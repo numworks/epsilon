@@ -1,7 +1,7 @@
 #include "plot_view_axes.h"
 
 #include <limits.h>
-#include <poincare/print.h>
+#include <poincare/old/print.h>
 
 #include <cmath>
 

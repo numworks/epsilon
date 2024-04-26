@@ -241,6 +241,10 @@ ExpressionNode::Type JuniorExpression::type() const {
     return tree()->isInteger() ? ExpressionNode::Type::BasedInteger
                                : ExpressionNode::Type::Rational;
   }
+  if (tree()->isUndefined()) {
+    return tree()->isNonReal() ? ExpressionNode::Type::Nonreal
+                               : ExpressionNode::Type::Undefined;
+  }
   switch (tree()->type()) {
     case Internal::Type::Add:
       return ExpressionNode::Type::Addition;
@@ -280,8 +284,6 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Matrix;
     case Internal::Type::Mult:
       return ExpressionNode::Type::Multiplication;
-    case Internal::Type::NonReal:
-      return ExpressionNode::Type::Nonreal;
     case Internal::Type::Opposite:
       return ExpressionNode::Type::Opposite;
     case Internal::Type::Piecewise:
@@ -306,8 +308,6 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::Store;
     case Internal::Type::Sum:
       return ExpressionNode::Type::Sum;
-    case Internal::Type::Undef:
-      return ExpressionNode::Type::Undefined;
     case Internal::Type::UnitConversion:
       return ExpressionNode::Type::UnitConvert;
     case Internal::Type::UserSymbol:

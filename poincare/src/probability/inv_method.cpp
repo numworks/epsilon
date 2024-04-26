@@ -19,11 +19,11 @@ bool InverseMethod::shallowReduce(const Tree** x,
 
   // Undef if a < 0 or a > 1
   if (Rational::Sign(a).isStrictlyNegative()) {
-    expression->cloneTreeOverTree(KUndef);
+    expression->cloneTreeOverTree(KOutOfDefinition);
     return true;
   }
   if (Rational::IsGreaterThanOne(a)) {
-    expression->cloneTreeOverTree(KUndef);
+    expression->cloneTreeOverTree(KOutOfDefinition);
     return true;
   }
 
@@ -42,7 +42,7 @@ bool InverseMethod::shallowReduce(const Tree** x,
           expression->cloneTreeOverTree(0_e);
           return true;
         }
-        expression->cloneTreeOverTree(KUndef);
+        expression->cloneTreeOverTree(KOutOfDefinition);
         return true;
       }
       // n if a == 1 (TODO: false if p == 0 ?)
@@ -53,7 +53,7 @@ bool InverseMethod::shallowReduce(const Tree** x,
 
     if (distribution->hasType(Distribution::Type::Geometric)) {
       if (is0) {
-        expression->cloneTreeOverTree(KUndef);
+        expression->cloneTreeOverTree(KOutOfDefinition);
         return true;
       }
 

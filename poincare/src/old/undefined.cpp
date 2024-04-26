@@ -1,8 +1,8 @@
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
-#include <poincare/src/expression/undefined.h>
 #include <poincare/src/memory/tree_stack.h>
 
 #include <algorithm>
@@ -40,8 +40,7 @@ Evaluation<T> UndefinedNode::templatedApproximate() const {
 }
 
 JuniorUndefined JuniorUndefined::Builder() {
-  JuniorExpression expr = JuniorExpression::Builder(
-      Internal::Undefined::Push(Internal::Undefined::Type::None));
+  JuniorExpression expr = JuniorExpression::Builder(KUndef->clone());
   return static_cast<JuniorUndefined&>(expr);
 }
 

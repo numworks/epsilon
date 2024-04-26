@@ -18,7 +18,14 @@ constexpr static Aliases s_customIdentifiers[] = {
 };
 
 constexpr static Builtin s_specialIdentifiers[] = {
-    {Type::Undef, "undef"},
+    {Type::Undef, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefZeroPowerZero, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefZeroDivision, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefUnhandled, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefUnhandledDimension, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefBadType, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefOutOfDefinition, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefNotDefined, BuiltinsAliases::k_undefinedAlias},
     {Type::NonReal, "nonreal"},
     {Type::ComplexI, "i"},
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
@@ -88,12 +95,6 @@ Tree* Builtin::pushNode(int numberOfChildren) const {
   } else if (TypeBlock(m_blockType).isRandomNode()) {
     // Add random seeds
     assert(result->nodeSize() == 2);
-    SharedTreeStack->push(Type::Zero);
-  } else if (TypeBlock(m_blockType).isUndef()) {
-    // Add undefined type
-    assert(result->nodeSize() == 2);
-    static_assert(static_cast<uint8_t>(Type::Zero) ==
-                  static_cast<uint8_t>(Undefined::Type::None));
     SharedTreeStack->push(Type::Zero);
   } else {
     assert(result->nodeSize() == 1);

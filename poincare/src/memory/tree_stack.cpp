@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <omg/memory.h>
 #include <poincare/old/junior_layout.h>
-#include <poincare/src/expression/undefined.h>
 
 #include <algorithm>
 
@@ -471,7 +470,6 @@ template Tree* TreeStack::push<Type::RackLayout, int>(int);
 template Tree* TreeStack::push<Type::Set>(int);
 template Tree* TreeStack::push<Type::Set>(uint8_t);
 template Tree* TreeStack::push<Type::SingleFloat, float>(float);
-template Tree* TreeStack::push<Type::Undef, Undefined::Type>(Undefined::Type);
 template Tree* TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
     CodePoint);
 template Tree* TreeStack::push<Type::Unit, uint8_t, uint8_t>(uint8_t, uint8_t);

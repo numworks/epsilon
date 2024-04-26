@@ -31,6 +31,10 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     // This builtin will be displayed as : foobar()
     return MoreLetters;
   }
+  if (expr->isUndefined()) {
+    // should be assert(false) ?
+    return MoreLetters;
+  }
   if (expr->isLogicalOperator()) {
     return Default;
   }
@@ -69,7 +73,6 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::True:
     case Type::False:
     case Type::Inf:
-    case Type::Undef:  // should be assert(false) ?
       return MoreLetters;
 
     case Type::Equal:

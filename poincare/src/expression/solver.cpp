@@ -134,8 +134,9 @@ void Solver::ProjectAndSimplify(Tree* equationsSet,
   Simplification::SimplifyProjectedTree(equationsSet);
   Simplification::TryApproximationStrategyAgain(equationsSet,
                                                 projectionContext);
-  if (equationsSet->isUndef()) {
-    *error = Error::EquationUndefined;
+  if (equationsSet->isUndefined()) {
+    *error = equationsSet->isNonReal() ? Error::EquationNonreal
+                                       : Error::EquationUndefined;
   }
 }
 

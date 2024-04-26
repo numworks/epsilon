@@ -32,7 +32,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
   }
   if (symbolicComputation ==
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
-    Undefined::Set(tree, Undefined::Type::NotDefined);
+    tree->cloneTreeOverTree(KNotDefined);
     return true;
   }
   // Get Definition
@@ -47,7 +47,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
   if (symbolicComputation ==
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
       !definition) {
-    Undefined::Set(tree, Undefined::Type::NotDefined);
+    tree->cloneTreeOverTree(KNotDefined);
     return true;
   } else if (!definition) {
     return false;
@@ -102,7 +102,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       static_cast<ProjectionContext*>(context);
 
   bool changed = false;
-  if (e->isUndef()) {
+  if (e->isUndefined()) {
     return changed;
   }
   if (e->isUserSymbol() &&

@@ -283,13 +283,25 @@ NODE(Piecewise, NARY)
 NODE(Set, NARY)
 NODE(Parenthesis, 1)
 NODE(Empty)  // TODO_PCJ temporary
-// TODO_PR: Remove NonReal and use it as an Undef type
-NODE(NonReal)
-/* - Undef U
- * | U TAG | UNDEF TYPE | */
-NODE(Undef, 0, 1)
 
-// 10 - Operations on expressions
+// 10 - Undefined expressions
+/* When an expression has multiple undefined children, we bubble up the
+ * "biggest" one by default (NonReal < UndefNotDefined).
+ * These could be a single Type with a nodeValue, but it would require a
+ * builtin/parser rework. */
+NODE(NonReal)                  // sqrt(-1) in Real ComplexMode
+NODE(Undef)                    // Default
+NODE(UndefZeroPowerZero)       // 0^0
+NODE(UndefZeroDivision)        // 1/0, tan(nπ/2)
+NODE(UndefUnhandled)           // inf - inf, 0 * inf, unimplemented
+NODE(UndefUnhandledDimension)  // [[1,2]] + [[1],[2]]
+NODE(UndefBadType)             // non-integers in gcd,lcm,...
+NODE(UndefOutOfDefinition)     // arg(0)
+NODE(UndefNotDefined)          // Global variable that has not been defined
+
+RANGE(Undefined, NonReal, UndefNotDefined)
+
+// 11 - Operations on expressions
 
 NODE(Store, 2)
 NODE(UnitConversion, 2)

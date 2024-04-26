@@ -82,7 +82,7 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
   if (!Dimension::DeepCheckDimensions(node) ||
       !Dimension::DeepCheckListLength(node)) {
-    return KUndef->clone();
+    return KUndefUnhandledDimension->clone();
   }
   return RootTreeToTree<T>(node, angleUnit, complexFormat,
                            Dimension::GetDimension(node),
@@ -305,6 +305,11 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
    * faster, simpler and more precise real approximation to be used in every
    * cases where we know for sure there are no complexes. */
   assert(node->isExpression());
+  if (node->isUndefined()) {
+    // Until we make simplification compulsory, undef may be anywhere
+    // TODO: Find a way to pass exact type up to PushBeautifiedComplex
+    return NAN;
+  }
   if (node->isRational()) {
     return Rational::Numerator(node).to<T>() /
            Rational::Denominator(node).to<T>();
@@ -315,9 +320,6 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
                                   s_context ? s_context->m_listElement : -1);
   }
   switch (node->type()) {
-    case Type::Undef:
-      // Until we make simplification compulsory, undef may be anywhere
-      return NAN;
     case Type::Parenthesis:
       return ToComplex<T>(node->child(0));
     case Type::ComplexI:
@@ -844,10 +846,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       }
       // TODO: Implement more Types
       assert(false);
-    case Type::NonReal:
-    case Type::Undef:
       return NAN;
-  };
+  }
 }
 
 template <typename T>
@@ -1169,7 +1169,7 @@ template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   // These types are either already approximated or impossible to approximate.
   if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
-      tree->isComplexI() || tree->isUndef() ||
+      tree->isComplexI() || tree->isUndefined() ||
       tree->isOfType(
           {Type::UserSymbol, Type::Var, Type::Unit, Type::PhysicalConstant}) ||
       !Dimension::GetDimension(tree).isScalar() || Dimension::IsList(tree)) {

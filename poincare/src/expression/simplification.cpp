@@ -78,7 +78,7 @@ bool Simplification::ShallowSystematicReduce(Tree* u) {
       bubbleUpFloat = true;
     } else if (child->isDependency()) {
       bubbleUpDependency = true;
-    } else if (child->isUndef()) {
+    } else if (child->isUndefined()) {
       bubbleUpUndef = true;
     }
   }
@@ -277,7 +277,7 @@ bool Simplification::SimplifyPower(Tree* u) {
     }
     if (!indexSign.realSign().canBeStriclyPositive()) {
       // 0^x cannot be defined
-      Undefined::Set(u, Undefined::Type::OutOfDefinition);
+      u->cloneTreeOverTree(KOutOfDefinition);
       return true;
     }
     // Use a dependency as a fallback.
@@ -397,7 +397,6 @@ bool Simplification::SimplifyPowerReal(Tree* u) {
   assert(xNegative || pIsEven);
 
   if (xNegative && qIsEven) {
-    // TODO_PR: Undefined::Set(u, Undefined::Type::Nonreal);
     u->cloneTreeOverTree(KNonReal);
     return true;
   }
@@ -423,7 +422,6 @@ bool Simplification::SimplifyLnReal(Tree* u) {
   if (childSign.realSign().isStrictlyNegative() ||
       !childSign.imagSign().canBeNull()) {
     // Child can't be real, positive or null
-    // TODO_PR: Undefined::Set(u, Undefined::Type::Nonreal);
     u->cloneTreeOverTree(KNonReal);
     return true;
   }
@@ -732,7 +730,7 @@ bool Simplification::SimplifyComplexArgument(Tree* tree) {
   if (realSign.isZero() && imagSign.isKnown()) {
     if (imagSign.isZero()) {
       // atan2(0, 0) = undef
-      Undefined::Set(tree, Undefined::Type::OutOfDefinition);
+      tree->cloneTreeOverTree(KOutOfDefinition);
       return true;
     }
     // atan2(y, 0) = π/2 if y > 0, -π/2 if y < 0
@@ -821,7 +819,7 @@ bool Simplification::SimplifyDistribution(Tree* expr) {
     return false;
   }
   if (!parametersAreOk) {
-    expr->cloneTreeOverTree(KUndef);
+    expr->cloneTreeOverTree(KOutOfDefinition);
     return true;
   }
   return method->shallowReduce(abscissae, distribution, parameters, expr);
@@ -851,7 +849,7 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
   if (e->isUnitConversion()) {
     if (!Dimension::DeepCheckDimensions(e)) {
       // TODO: Raise appropriate exception in DeepCheckDimensions.
-      Undefined::Set(e, Undefined::Type::UnhandledDimension);
+      e->cloneTreeOverTree(KUndefUnhandledDimension);
       return true;
     }
     Simplify(e->child(0), projectionContext);
@@ -885,7 +883,7 @@ bool Simplification::PrepareForProjection(Tree* e,
   }
   if (!Dimension::DeepCheckDimensions(e) ||
       !Dimension::DeepCheckListLength(e)) {
-    Undefined::Set(e, Undefined::Type::UnhandledDimension);
+    e->cloneTreeOverTree(KUndefUnhandledDimension);
     changed = true;
   }
   return changed;
@@ -928,7 +926,6 @@ bool Simplification::TryApproximationStrategyAgain(
 // TODO_PR: Rename methods
 bool Simplification::SimplifyLastTree(Tree* e,
                                       ProjectionContext projectionContext) {
-  // TODO_PR: Bubble up undef
   bool changed = PrepareForProjection(e, projectionContext);
   changed = ExtractUnits(e, &projectionContext) || changed;
   changed = Projection::DeepSystemProject(e, projectionContext) || changed;

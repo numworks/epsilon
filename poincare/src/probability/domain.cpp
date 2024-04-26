@@ -7,7 +7,7 @@ namespace Poincare::Internal {
 
 OMG::Troolean Domain::ExpressionIsIn(const Tree* expression, Type type,
                                      Context* context) {
-  if (expression->isUndef() || expression->isInf()) {
+  if (expression->isUndefined() || expression->isInf()) {
     return OMG::Troolean::False;
   }
 

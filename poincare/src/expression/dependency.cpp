@@ -9,7 +9,6 @@
 #include "k_tree.h"
 #include "parametric.h"
 #include "set.h"
-#include "undefined.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -110,16 +109,8 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       approximation = Approximation::RootTreeToTree<double>(
           depI, AngleUnit::Radian, ComplexFormat::Real);
     }
-    if (approximation->isUndef()) {
-      Undefined::Type type = Undefined::GetType(approximation);
-      approximation->removeTree();
-      Undefined::Set(dep, type);
-      return true;
-    }
-    // TODO_PR: Delete and handle with undefined type
-    if (approximation->isNonReal()) {
-      approximation->removeTree();
-      dep->cloneTreeOverTree(KNonReal);
+    if (approximation->isUndefined()) {
+      dep->moveTreeOverTree(approximation);
       return true;
     }
     approximation->removeTree();
@@ -133,7 +124,8 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     }
   }
 
-  if (/*expression->isUndef() ||*/ totalNumberOfDependencies == 0) {
+  // expression->isUndefined() ||
+  if (totalNumberOfDependencies == 0) {
     set->removeTree();
     dep->removeNode();
     return true;

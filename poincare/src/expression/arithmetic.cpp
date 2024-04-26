@@ -10,7 +10,6 @@
 #include "k_tree.h"
 #include "parametric.h"
 #include "rational.h"
-#include "undefined.h"
 
 namespace Poincare::Internal {
 
@@ -24,11 +23,11 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   const Tree* denom = num->nextTree();
   if ((num->isRational() && !num->isInteger()) ||
       (denom->isRational() && !denom->isInteger())) {
-    Undefined::Set(expr, Undefined::Type::BadType);
+    expr->cloneTreeOverTree(KBadType);
     return true;
   }
   if (denom->isZero()) {
-    Undefined::Set(expr, Undefined::Type::ZeroDivision);
+    expr->cloneTreeOverTree(KUndefZeroDivision);
     return true;
   }
   if (!num->isRational() || !denom->isRational()) {
@@ -60,7 +59,7 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
     return false;
   }
   if (!parameter->isInteger()) {
-    Undefined::Set(expr, Undefined::Type::BadType);
+    expr->cloneTreeOverTree(KBadType);
     return true;
   }
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
@@ -79,7 +78,7 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
       return changed;
     }
     if (!next->isInteger()) {
-      Undefined::Set(expr, Undefined::Type::BadType);
+      expr->cloneTreeOverTree(KBadType);
       return true;
     }
     if (first != next) {
@@ -104,7 +103,7 @@ bool Arithmetic::SimplifyFactorial(Tree* expr) {
     return false;
   }
   if (!child->isInteger() || Rational::Sign(child).isStrictlyNegative()) {
-    Undefined::Set(expr, Undefined::Type::BadType);
+    expr->cloneTreeOverTree(KBadType);
     return true;
   }
   return ExpandFactorial(expr);
@@ -131,7 +130,7 @@ bool Arithmetic::SimplifyPermute(Tree* expr) {
        (!n->isInteger() || Rational::Sign(n).isStrictlyNegative())) ||
       (k->isRational() &&
        (!k->isInteger() || Rational::Sign(k).isStrictlyNegative()))) {
-    Undefined::Set(expr, Undefined::Type::BadType);
+    expr->cloneTreeOverTree(KBadType);
     return true;
   }
   if (!k->isRational() || !n->isRational()) {
@@ -164,7 +163,7 @@ bool Arithmetic::SimplifyBinomial(Tree* expr) {
     return false;
   }
   if (!k->isInteger()) {
-    Undefined::Set(expr, Undefined::Type::BadType);
+    expr->cloneTreeOverTree(KBadType);
     return true;
   }
   if (!n->isRational()) {
@@ -386,7 +385,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
 Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
   FactorizedInteger result = PrimeFactorization(m);
   if (result.numberOfFactors == 0) {
-    return Undefined::Push(Undefined::Type::Unhandled);
+    return KUndefUnhandled->clone();
   }
   assert(result.numberOfFactors);  // TODO #85
   Tree* mult = KMult()->clone();

@@ -105,6 +105,7 @@ It is expected to:
 ### Effects
 
 For example, in degrees, $cos(x)-y+frac(z)+arccot(x)$ would be projected to
+
 $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+
 \begin{dcases}
         π/2 & x=0 \\
@@ -534,7 +535,7 @@ This step undo the projection by re-introducing nodes unhandled by reduction (Fo
 `Addition`, `Multiplication`, `GCD` and `LCM` are also sorted differently.
 
 Expressions such as PercentAddition are also beautified:
-$A+B\%$ becomes $A*(1+\frac{B}{100})$.
+$A+B\\%$ becomes $A*(1+\frac{B}{100})$.
 
 Rationals are turned into fractions, $0.25$ becoming $\frac{1}{4}$ for example.
 

@@ -97,13 +97,13 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
 }
 
 bool Simplification::ShallowSystematicReduce(Tree* u) {
-  // This assert is quite costly, should be an assert level 2 ?
-  assert(Dimension::DeepCheckDimensions(u));
   bool changed = BubbleUpFromChildren(u);
   return SimplifySwitch(u) || changed;
 }
 
 bool Simplification::SimplifySwitch(Tree* u) {
+  // This assert is quite costly, should be an assert level 2 ?
+  assert(Dimension::DeepCheckDimensions(u));
   if (!u->isNAry() && u->numberOfChildren() == 0) {
     // No childless tree have a reduction pattern.
     return false;

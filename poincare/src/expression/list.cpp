@@ -74,8 +74,11 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
       Simplification::ShallowSystematicReduce(result);
     } else {
       assert(type.isMin() || type.isMax());
+      // Bubble up undefined children.
       // TODO_PCJ: we need a natural order not a comparison
-      if (Comparison::Compare(element, result) == ((type.isMax()) ? 1 : -1)) {
+      if (!result->isUndefined() &&
+          (element->isUndefined() ||
+           Comparison::Compare(element, result) == ((type.isMax()) ? 1 : -1))) {
         result->removeTree();
       } else {
         element->removeTree();

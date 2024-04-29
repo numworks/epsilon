@@ -109,6 +109,7 @@ union ToolboxMessage {
   ToolboxMessageNodeIndirect nodeIndirect;
 };
 
+// This method needs to be after the union's definition to know the union's size
 inline const MessageTree *ToolboxMessageNodeDirect::childAtIndex(
     int index) const {
   return reinterpret_cast<const MessageTree *>(m_directChildren + index);

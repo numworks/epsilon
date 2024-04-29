@@ -174,7 +174,7 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
  *           output 5°C, 41°F should output 41°F). */
 bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
   Units::DimensionVector dimension = projectionContext.m_dimension.unit.vector;
-  if (!projectionContext.m_dimension.isUnit()) {
+  if (!projectionContext.m_dimension.isUnit() || expr->isUndefined()) {
     return false;
   }
   assert(!dimension.isEmpty());

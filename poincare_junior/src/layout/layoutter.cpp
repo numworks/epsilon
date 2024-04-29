@@ -166,6 +166,12 @@ void Layoutter::layoutFunctionCall(EditionReference &layoutParent,
       SharedEditionPool->push<BlockType::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
+    if (j == 1 && expression->isListStatWithCoefficients() &&
+        expression->nextNode()->isOne()) {
+      // Skip coefficient if default mean(L, 1) -> mean(L)
+      expression->nextNode()->removeTree();
+      continue;
+    }
     if (j != 0) {
       PushCodePoint(newParent, ',');
     }

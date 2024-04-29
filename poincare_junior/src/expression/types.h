@@ -215,6 +215,9 @@ NODE(StdDev, 2)
 NODE(Median, 2)
 NODE(Variance, 2)
 NODE(SampleStdDev, 2)
+
+RANGE(ListStatWithCoefficients, Mean, SampleStdDev)
+
 NODE(Minimum, 1)
 NODE(Maximum, 1)
 NODE(ListSum, 1)

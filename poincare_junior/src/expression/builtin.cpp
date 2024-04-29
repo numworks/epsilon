@@ -200,8 +200,7 @@ bool Builtin::Promote(Tree *parameterList, const Builtin *builtin) {
     if (type == BlockType::RandInt) {
       NAry::AddChildAtIndex(parameterList, (1_e)->clone(), 0);
     }
-    if (type.isOfType({BlockType::Mean, BlockType::Variance, BlockType::StdDev,
-                       BlockType::SampleStdDev, BlockType::Median})) {
+    if (type.isListStatWithCoefficients()) {
       NAry::AddChild(parameterList, (1_e)->clone());
     }
   }

@@ -516,9 +516,7 @@ void PushPoincareExpression(Poincare::Expression exp) {
     case OT::ListVariance:
     case OT::ListStandardDeviation:
     case OT::ListSampleStandardDeviation:
-    case OT::ListMedian:
-    case OT::ListSum:
-    case OT::ListProduct: {
+    case OT::ListMedian: {
       switch (exp.type()) {
         case OT::ListMean:
           SharedEditionPool->push(BlockType::Mean);
@@ -550,9 +548,17 @@ void PushPoincareExpression(Poincare::Expression exp) {
       }
       return;
     }
+    case OT::ListSum:
+      SharedEditionPool->push(BlockType::ListSum);
+      return PushPoincareExpression(exp.childAtIndex(0));
+    case OT::ListProduct:
+      SharedEditionPool->push(BlockType::ListProduct);
+      return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ListMinimum:
+      SharedEditionPool->push(BlockType::Minimum);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::ListMaximum:
+      SharedEditionPool->push(BlockType::Maximum);
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::Store:
       SharedEditionPool->push(BlockType::Store);

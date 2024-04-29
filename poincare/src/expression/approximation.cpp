@@ -1171,13 +1171,12 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
   if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
       tree->isComplexI() || tree->isUndefined() ||
       tree->isOfType(
-          {Type::UserSymbol, Type::Var, Type::Unit, Type::PhysicalConstant}) ||
-      !Dimension::GetDimension(tree).isScalar() || Dimension::IsList(tree)) {
+          {Type::UserSymbol, Type::Var, Type::Unit, Type::PhysicalConstant})) {
     return false;
   }
   bool changed = false;
   bool approximateNode =
-      !(tree->isList() || tree->isMatrix() || tree->isPoint());
+      Dimension::GetDimension(tree).isScalar() && !Dimension::IsList(tree);
   int childIndex = 0;
   for (Tree* child : tree->children()) {
     if (interruptApproximation(tree->type(), childIndex++, child->type())) {

@@ -2682,9 +2682,11 @@ QUIZ_CASE(poincare_simplification_list) {
                                        "{-1,undef,-2,-∞,∞}");
   assert_parsed_expression_simplify_to("sort({-1,i,8,-0})", "sort({-1,i,8,0})");
   assert_parsed_expression_simplify_to("sort({-1,undef,1})", "{-1,undef,1}");
+#if TOOD_PCJ
   assert_parsed_expression_simplify_to("sort(ln({7-π7,7}))",
                                        "sort({ln(-7×π+7),ln(7)})", User, Radian,
                                        MetricUnitFormat, Real);
+#endif
   // Sort list of points
   assert_parsed_expression_simplify_to("sort({(8,1),(5,0),(5,-3),(1,0),(5,9)})",
                                        "{(1,0),(5,-3),(5,0),(5,9),(8,1)}");

@@ -3,6 +3,7 @@
 #include "approximation.h"
 #include "beautification.h"
 #include "k_tree.h"
+#include "simplification.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -20,8 +21,15 @@ bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
 void Approximation::PrepareFunctionForApproximation(
     Tree* expr, const char* variable, AngleUnit angleUnit,
     ComplexFormat complexFormat) {
+  ProjectionContext projectionContext = {
+      .m_complexFormat = complexFormat,
+      .m_angleUnit = angleUnit,
+  };
+  // TODO_PCJ: Factorize this with Simplification::Simplify
+  Simplification::PrepareForProjection(expr, projectionContext);
+  assert(!Simplification::ExtractUnits(expr, &projectionContext));
   Variables::ReplaceSymbol(expr, variable, 0, ComplexSign::RealUnknown());
-  Projection::DeepSystemProject(expr, {.m_angleUnit = angleUnit});
+  Projection::DeepSystemProject(expr, projectionContext);
   // TODO: Simplification with NumbersToScalar if preparing function
   Tree::ApplyShallowInDepth(expr, &ShallowPrepareForApproximation);
   // TODO: factor common sub-expressions

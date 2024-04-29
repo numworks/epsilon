@@ -21,6 +21,7 @@
 #include "rational.h"
 #include "undefined.h"
 #include "unit.h"
+#include "variables.h"
 #include "vector.h"
 
 namespace Poincare::Internal {
@@ -883,6 +884,7 @@ bool Simplification::PrepareForProjection(Tree* e,
   int maxRandomSeed = Random::SeedRandomNodes(e, 0);
   bool changed = maxRandomSeed > 0;
   // Replace functions and variable before dimension check
+  changed = Variables::ProjectLocalVariablesToId(e) || changed;
   if (Projection::DeepReplaceUserNamed(e, projectionContext)) {
     // Seed random nodes that may have appeared after replacing.
     maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);

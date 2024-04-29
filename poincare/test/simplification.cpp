@@ -832,5 +832,15 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   // TODO: Properly parse list access and slices on variables
   // simplifies_to("l(2)", "4", projCtx);
 
+  ProjectionContext projCtx2 = {
+      .m_context = &globalContext,
+      .m_symbolic =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
+  simplifies_to("y+2", "6", projCtx2);
+  simplifies_to("y+x", "undef", projCtx2);
+  simplifies_to("diff(y*y, y, y)", "8", projCtx2);
+  simplifies_to("diff(x*x, x, y)", "8", projCtx2);
+  simplifies_to("diff(x*x, x, x)", "undef", projCtx2);
+
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

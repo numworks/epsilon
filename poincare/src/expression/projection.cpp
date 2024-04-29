@@ -9,7 +9,6 @@
 #include "decimal.h"
 #include "physical_constant.h"
 #include "symbol.h"
-#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -99,7 +98,6 @@ bool Projection::DeepSystemProject(Tree* e,
     changed =
         Approximation::ApproximateAndReplaceEveryScalar(e, &projectionContext);
   }
-  changed = Variables::ProjectLocalVariablesToId(e) || changed;
   return Tree::ApplyShallowInDepth(e, ShallowSystemProject,
                                    &projectionContext) ||
          changed;

@@ -124,6 +124,7 @@ void Solver::ProjectAndSimplify(Tree* equationsSet,
                                 ProjectionContext projectionContext,
                                 Error* error) {
   assert(*error == Error::NoError);
+  // TODO_PCJ: Factorize this with Simplification::Simplify
   Simplification::PrepareForProjection(equationsSet, projectionContext);
   Simplification::ExtractUnits(equationsSet, &projectionContext);
   if (projectionContext.m_dimension.isUnit()) {

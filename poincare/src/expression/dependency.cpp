@@ -77,6 +77,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
     expr->cloneNodeBeforeNode(KDep);
     return true;
   }
+  finalSet->removeTree();
   return false;
 };
 

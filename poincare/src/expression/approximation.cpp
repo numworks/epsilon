@@ -200,6 +200,11 @@ static T FloatAddition(T a, T b) {
 
 template <typename T>
 static T FloatPower(T a, T b) {
+  if (a.real() == static_cast<T>(0.0) && b.imag() != 0.0) {
+    /* 0^complex should return undef
+     * std lib returns 0 in some cases, so we enforce the behavior here */
+    return NAN;
+  }
   return std::pow(a, b);
 }
 

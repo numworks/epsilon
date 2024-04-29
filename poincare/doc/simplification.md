@@ -401,8 +401,7 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 
 </details>
 
-<details>
-<summary>Examples</summary>
+#### Examples
 
 `_` represent the node that is being examined.
 
@@ -497,8 +496,6 @@ graph TD;
       CA-->|Contract|CAA["a^2+b^2-(a^2+b^2)+a(2b+(c+d)^2)"]
         CAA-->X28["42 VS 19"]
 ```
-
-</details>
 
 ## Simplify dependencies
 

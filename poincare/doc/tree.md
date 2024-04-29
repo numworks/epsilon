@@ -18,7 +18,7 @@ trees that are its children.
 
 There are two types of `Block`:
 - `TypeBlock`: The `Node` always starts with a special block containing the type (from
-the `Type enum) that indicates what the `Tree` represents.
+the `Type` enum) that indicates what the `Tree` represents.
 - `ValueBlock`: Every other block. If a `Tree` can have a variable number of children,
 it is written in a block just after the type block. Nodes can also contain some more
 blocks to be interpreted according to their types. In particular, numbers are represented
@@ -145,7 +145,7 @@ A `TreeRef` is a smart pointer used to track a `Tree` as it moves inside the
 
 For this purpose, the `TreeStack` owns a table of all the alive `TreeRef` and
 updates each of them after each modification of a `Tree` inside the `TreeStack`. For this
-reason, `TreeRef` are intended to be temporary and used sparingly where
+reason, `TreeRefs` are intended to be temporary and used sparingly where
 performance matters. You will often see function passing `TreeRefs &` to
 avoid `TreeRef` object copy that would uselessly multiply the number of references pointing to a same `Tree`.
 
@@ -260,7 +260,7 @@ Here the up-to-date list for
 [expressions](/poincare/src/expression/k_tree.h) and
 [layouts](/poincare/src/layout/k_tree.h).
 
-Some literals are also available to write numbers is a readable way:
+Some literals are also available to write numbers in a readable way:
  - `23_e` is the integer 23
  - `-4_e/5_e` is the rational -4/5 (a single Tree with no children, unlike
    Opposite(Division(4,5)))

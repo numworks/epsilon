@@ -2,7 +2,7 @@
 
 ## Generalities
 
-Starting from any expression, the simplification algorithm finds an better and reduced mathematically equivalent expression.
+Starting from any expression, the simplification algorithm finds a better and reduced mathematically equivalent expression.
 
 Steps can be summarized to this:
 
@@ -15,7 +15,7 @@ graph TD;
 ```
 
 Steps:
-- Projection projects remove complexMode, angleUnit, ...
+- Projection removes complexMode, angleUnit, ...
 - SystematicReduction applies obvious reductions
 - AdvancedReduction finds the best reduced representation
 - Beautification undoes Projection and apply readability improvements
@@ -157,9 +157,9 @@ $$
 
 ### Projection in advanced reduction
 
-Some projections are too difficult to undo to be applied at projection. But we still want to try them to see it it improves the result. We then try the projection during advanced reduction.
+Some projections are too difficult to undo to be applied at projection. But we still want to try them to see if it improves the result. We then try the projection during advanced reduction.
 
-For example, `tan` should be projected in `sin(x)/cos(x)` because systematic reduction doesn't handle `tan` nodes. But `sin(x)/cos(x)` can be too difficult to convert back to `tan`. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
+For example, `tan(x)` should be projected in `sin(x)/cos(x)` because systematic reduction doesn't handle `tan` nodes. But `sin(x)/cos(x)` can be too difficult to convert back to `tan(x)`. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
 
 Advanced reduction can undo it if it doesn't improve the overall expression, and systematic reduction will just ignore the unprojected node.
 
@@ -177,20 +177,20 @@ We list all global user symbols in the alphabetical order.
 
 All symbols (global and local) are then projected to an id, based on if they are global or local, and how nested they are in the local contexts, using de Bruijn indexes.
 
-For example, under the expression are the projected id of the user symbols.
+Below the example expression are written the projected id of the user symbols.
 
 ```
 a+b+diff(a+c+x+sum(k+a+x, k, 1, b), x, b)+a
 0 1      1 3 0     0 2 1  k  1  2   x  1  0
 ```
 
-Some of the local user symbols are preserved for beautification (since we don't list them with the global user-symbols).
+UserSymbols that are the variable child of parametrics are preserved for beautification (since we don't list them with the global user-symbols).
 
-This step converts the `UserVariable` trees (containing the variable name) into a `Variable` (containing the id only).
+This step converts the `UserSymbol` trees (containing the variable name) into a `Variable` (containing the id only).
 
 When nested inside a parametered expression, all id are incremented. In the parametered expression, `0` is the local parameter.
 
-This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope` (increment/decrement the id).
+This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope` (move the variable out and in the parametric expression and increment/decrement the id).
 
 ## Systematic reduction
 
@@ -207,7 +207,7 @@ Systematic reduction can simplify rational operations, convert non-integer power
 Dependencies are already bubbled-up at each shallow systematic reduce.
 
 <details>
-<summary>List systematic reductions</summary>
+<summary>List of systematic reductions</summary>
 
 | Match | Replace |
 |---|---|
@@ -341,7 +341,7 @@ The following methods directly simplify to their result:
 
 At this step, there are still nested lists in the expression, but we know the expected list length.
 
-Using `ProjectToNthElement` function, we smartly project each of the expected elements to build the output simplified list.
+Using `ProjectToNthElement` function, we project each of the expected elements to build the output simplified list.
 
 For example: Applying `ProjectToNthElement` to the second element of `{4,5,6} + sequence(k,k,3)` will compute `5+2` and simplify it to `7`.
 
@@ -358,7 +358,7 @@ It is expected to:
 Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and call systematic reduction at every steps.
 
 <details>
-<summary>List advanded reductions</summary>
+<summary>List of advanded reductions</summary>
 
 | Match | Replace |
 |---|---|

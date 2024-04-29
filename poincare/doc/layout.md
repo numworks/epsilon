@@ -155,7 +155,7 @@ Racks and matrices computes their children properties instead of each children c
 
 ### Separators
 
-`ThousandSeparator` and `OperatorSeparator` layouts are inserted in `Racks by the layouter.
+`ThousandSeparator` and `OperatorSeparator` layouts are inserted in `Racks` by the layouter.
 
 #### Example
 The expression
@@ -210,9 +210,9 @@ FractionLayout
 
 ### VerticalOffset
 
-A `VerticalOffset` is related to the a layout positionned before or after him in the same rack. Let's call this layout the anchor of the `VerticalOffset`.
+A `VerticalOffset` is related to a layout positionned before or after him in the same rack. Let's call this layout the anchor of the `VerticalOffset`.
 
-When a rack encounters a `VerticalOffset` while iterating over their children, it places it relatively it's anchor height. `VerticalOffset` does nothing by itself.
+When a rack encounters a `VerticalOffset` while iterating over their children, it places it relatively to its anchor height. `VerticalOffset` does nothing by itself.
 
 The vertical offset has two properties (`isSubScript` and `isPrefix`) that respectively determine how to place it (up or down) and what is its anchor (previous or next layout).
 
@@ -232,7 +232,7 @@ Rack
 
 ### Derivative
 
-$$\frac{d^{\textcolor{cyan}{n}}}{d{\textcolor{green}{x}}^{\textcolor{cyan}{n}}} (f(x)) \bigg|_{{\textcolor{green}{x}}=a}$$
+$$\frac{d^{\textcolor{plum}{n}}}{d{\textcolor{skyblue}{x}}^{\textcolor{plum}{n}}} (f(x)) \bigg|_{{\textcolor{skyblue}{x}}=a}$$
 
 The derivative (and nth derivative) layout have a boolean flag to tell whether the cursor is in the right or the left spot of the variable layout.
 

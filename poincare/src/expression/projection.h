@@ -31,7 +31,7 @@ class Projection {
   static bool Expand(Tree* tree);
 
  private:
-  static bool ShallowReplaceUserNamed(Tree* e, void* ctx);
+  static bool ShallowReplaceUserNamed(Tree* e, ProjectionContext ctx);
   static bool ShallowSystemProject(Tree* e, void* ctx);
 };
 

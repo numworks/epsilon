@@ -14,37 +14,50 @@
 namespace Poincare::Internal {
 
 bool Projection::DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
-  return ctx.m_symbolic != SymbolicComputation::DoNotReplaceAnySymbol &&
-         Tree::ApplyShallowInDepth(tree, ShallowReplaceUserNamed, &ctx);
+  if (ctx.m_symbolic == SymbolicComputation::DoNotReplaceAnySymbol) {
+    return false;
+  }
+  bool changed = false;
+  /* ShallowReplaceUserNamed may push and remove, trees at the end of TreeStack.
+   * We push a temporary tree to preserve TreeRef. */
+  TreeRef nextTree = tree->nextTree()->cloneTreeBeforeNode(0_e);
+  while (tree->block() < nextTree->block()) {
+    if (tree->isParametric()) {
+      // Skip Parametric node and its variable, never replaced.
+      static_assert(Parametric::k_variableIndex == 0);
+      tree = tree->nextNode()->nextTree();
+    }
+    changed = ShallowReplaceUserNamed(tree, ctx) || changed;
+    tree = tree->nextNode();
+  }
+  nextTree->removeTree();
+  return changed;
 }
 
-bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
-  ProjectionContext projectionContext = *(static_cast<ProjectionContext*>(ctx));
-  SymbolicComputation symbolicComputation = projectionContext.m_symbolic;
-  assert(symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
+bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
+  SymbolicComputation symbolic = ctx.m_symbolic;
+  assert(symbolic != SymbolicComputation::DoNotReplaceAnySymbol);
   bool treeIsUserFunction = tree->isUserFunction();
   if (!treeIsUserFunction) {
     if (!tree->isUserSymbol() ||
-        symbolicComputation ==
+        symbolic ==
             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
       return false;
     }
   }
-  if (symbolicComputation ==
-      SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+  if (symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     tree->cloneTreeOverTree(KNotDefined);
     return true;
   }
   // Get Definition
   const Tree* definition =
-      projectionContext.m_context
-          ? projectionContext.m_context->treeForSymbolIdentifier(
-                Symbol::GetName(tree), Symbol::Length(tree),
-                treeIsUserFunction
-                    ? Poincare::Context::SymbolAbstractType::Function
-                    : Poincare::Context::SymbolAbstractType::Symbol)
-          : nullptr;
-  if (symbolicComputation ==
+      ctx.m_context ? ctx.m_context->treeForSymbolIdentifier(
+                          Symbol::GetName(tree), Symbol::Length(tree),
+                          treeIsUserFunction
+                              ? Poincare::Context::SymbolAbstractType::Function
+                              : Poincare::Context::SymbolAbstractType::Symbol)
+                    : nullptr;
+  if (symbolic ==
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
       !definition) {
     tree->cloneTreeOverTree(KNotDefined);
@@ -62,7 +75,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, void* ctx) {
     tree->deepReplaceWith(KUnknownSymbol, evaluateAt);
     evaluateAt->removeTree();
   }
-  // Replace node again in cas it has been replaced with another symbol
+  // Replace node again in case it has been replaced with another symbol
   ShallowReplaceUserNamed(tree, ctx);
   return true;
 }

@@ -34,6 +34,7 @@ Tree* Number::Multiplication(const Tree* i, const Tree* j) {
 }
 
 Sign Number::Sign(const Tree* node) {
+  assert(node->isNumber());
   switch (node->type()) {
     case Type::Pi:
     case Type::EulerE:

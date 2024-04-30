@@ -1,6 +1,5 @@
 #include "solver.h"
 
-#include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_ref.h>
 

@@ -1,7 +1,6 @@
 #include "matrix.h"
 
 #include <float.h>
-#include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 

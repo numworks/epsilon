@@ -3,7 +3,6 @@
 #include <limits.h>
 #include <omg/troolean.h>
 #include <poincare/old/approximation_helper.h>
-#include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 

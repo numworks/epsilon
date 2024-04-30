@@ -1,6 +1,5 @@
 #include "rational.h"
 
-#include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/value_block.h>
 
 #include "k_tree.h"

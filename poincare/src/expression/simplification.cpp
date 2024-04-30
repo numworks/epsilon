@@ -1,6 +1,5 @@
 #include "simplification.h"
 
-#include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/probability/distribution_method.h>

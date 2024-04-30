@@ -129,8 +129,8 @@ ComplexSign ArcCosine(ComplexSign s) {
 
 ComplexSign Exponential(ComplexSign s) {
   bool childIsReal = s.isReal();
-  return ComplexSign(Sign(!childIsReal, true, !childIsReal),
-                     Sign(true, !childIsReal, !childIsReal));
+  return childIsReal ? ComplexSign(Sign::Positive(), Sign::Zero())
+                     : ComplexSign(Sign::Unknown(), Sign::Unknown());
 }
 
 ComplexSign Ln(ComplexSign s) {

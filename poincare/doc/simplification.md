@@ -31,18 +31,59 @@ These operations never need to be applied twice.
 
 ## Detailed steps
 
+- [Seed the random nodes](#random-nodes-seeding)
+- [Replace all user symbols with variables](#user-symbols)
+- [Replace User symbols and functions stored in context](#context-user-symbols)
 - [Ensure the expression has a valid dimension](#dimension-check)
 - [Adjust the approximation strategy if the expression's dimension requires it (units)](#approximation-strategy)
-- [Seed the random nodes](#random-nodes-seeding)
-- [Replace User symbols and functions stored in context](#context-user-symbols)
 - [Project the expression, approximate depending on the strategy](#projection)
-- [Replace all user symbols with variables](#user-symbols)
 - [Apply systematic reduction](#systematic-reduction)
 - [Bubble up lists, applying systematic reduction](#list-bubble-up)
 - [Apply advanced reduction](#advanced-Reduction)
 - [Simplify Dependencies](#simplify-dependencies)
 - [Approximate again, depending on the strategy](#final-approximation)
 - [Beautify expression](#beautification)
+
+## Random nodes seeding
+
+Since the next steps may duplicate parts of the expression, we need to seed each random node because a duplicated random node should evaluate to the same random number.
+
+For example, with this projection, both random should always approximate to the same value.
+$$sinh(random())=\frac{e^{random()}-e^{-random()}}{2}$$
+
+Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
+
+## User symbols
+
+We list all global user symbols in the alphabetical order.
+
+All symbols (global and local) are then projected to an id, based on if they are global or local, and how nested they are in the local contexts, using de Bruijn indexes.
+
+Below the example expression are written the projected id of the user symbols.
+
+```
+a+b+diff(a+c+x+sum(k+a+x, k, 1, b), x, b)+a
+0 1      1 3 0     0 2 1  k  1  2   x  1  0
+```
+
+UserSymbols that are the variable child of parametrics are preserved for beautification (since we don't list them with the global user-symbols).
+
+This step converts the `UserSymbol` trees (containing the variable name) into a `Variable` (containing the id only).
+
+When nested inside a parametered expression, all id are incremented. In the parametered expression, `0` is the local parameter.
+
+This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope` (move the variable out and in the parametric expression and increment/decrement the id).
+
+## Context user symbols
+
+User symbols and functions stored in the given context are replaced with their definition (see `SymbolicComputation` enum for replacement rules), even if nested.
+
+If anything has been replaced, reapply previous step to seed new random nodes.
+
+For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
+- Seeded to $f(random_1())*f(0)$
+- Replaced to $(random_1()+random_1()+random())*(0+0+random())$,
+- Seeded again to $(random_1()+random_1()+random_2())*(0+0+random_3())$
 
 ## Dimension check
 
@@ -74,26 +115,6 @@ We apply a first round of approximation here to reduce the expression as much as
 
 For example:
 $$ln(cos(x))^{ln(cos(1))} = ln(cos(x))^{-0.615626}$$
-
-## Random nodes seeding
-
-Since the next steps may duplicate parts of the expression, we need to seed each random node because a duplicated random node should evaluate to the same random number.
-
-For example, with this projection, both random should always approximate to the same value.
-$$sinh(random())=\frac{e^{random()}-e^{-random()}}{2}$$
-
-Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
-
-## Context user symbols
-
-User symbols and functions stored in the given context are replaced with their definition (see `SymbolicComputation` enum for replacement rules), even if nested.
-
-If anything has been replaced, reapply previous step to seed new random nodes.
-
-For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
-- Seeded to $f(random_1())*f(0)$
-- Replaced to $(random_1()+random_1()+random())*(0+0+random())$,
-- Seeded again to $(random_1()+random_1()+random_2())*(0+0+random_3())$
 
 ## Projection
 
@@ -171,27 +192,6 @@ In practice, we replace `tanRad(x)` (projected tree for tan) into `trig(x,1) * t
 This practice tends to slow down advanced reduction so we limit it to the very minimum.
 
 For example, advanced trigonometry functions are projected in projection because we don't really want them to appear in results.
-
-## User symbols
-
-We list all global user symbols in the alphabetical order.
-
-All symbols (global and local) are then projected to an id, based on if they are global or local, and how nested they are in the local contexts, using de Bruijn indexes.
-
-Below the example expression are written the projected id of the user symbols.
-
-```
-a+b+diff(a+c+x+sum(k+a+x, k, 1, b), x, b)+a
-0 1      1 3 0     0 2 1  k  1  2   x  1  0
-```
-
-UserSymbols that are the variable child of parametrics are preserved for beautification (since we don't list them with the global user-symbols).
-
-This step converts the `UserSymbol` trees (containing the variable name) into a `Variable` (containing the id only).
-
-When nested inside a parametered expression, all id are incremented. In the parametered expression, `0` is the local parameter.
-
-This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope` (move the variable out and in the parametric expression and increment/decrement the id).
 
 ## Systematic reduction
 

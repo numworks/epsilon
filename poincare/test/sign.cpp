@@ -22,7 +22,7 @@ static_assert(ComplexSign::RealInteger().isReal() &&
 namespace Poincare::Internal {
 extern Sign RelaxIntegerProperty(Sign s);
 extern Sign DecimalFunction(Sign s, Type type);
-extern Sign Oppose(Sign s);
+extern Sign Opposite(Sign s);
 extern Sign Mult(Sign s1, Sign s2);
 extern Sign Add(Sign s1, Sign s2);
 }  // namespace Poincare::Internal

@@ -51,7 +51,7 @@ Sign DecimalFunction(Sign s, Type type) {
   return Sign(canBeNull, canBePositive, canBeNegative, canBeNonInteger);
 }
 
-Sign Oppose(Sign s) {
+Sign Opposite(Sign s) {
   return Sign(s.canBeNull(), s.canBeNegative(), s.canBePositive(),
               s.canBeNonInteger());
 }
@@ -177,7 +177,7 @@ ComplexSign Trig(ComplexSign s, bool isSin) {
 
 ComplexSign Mult(ComplexSign s1, ComplexSign s2) {
   Sign a = Add(Mult(s1.realSign(), s2.realSign()),
-               Oppose(Mult(s1.imagSign(), s2.imagSign())));
+               Opposite(Mult(s1.imagSign(), s2.imagSign())));
   Sign b = Add(Mult(s1.realSign(), s2.imagSign()),
                Mult(s1.imagSign(), s2.realSign()));
   return ComplexSign(a, b);

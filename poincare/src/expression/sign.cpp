@@ -19,7 +19,7 @@ namespace Poincare::Internal {
  * Handling trig, exp, ln, abs and arg may also greatly help the polar complex
  * mode simplifications. */
 
-Sign NoIntegers(Sign s) {
+Sign RelaxIntegerProperty(Sign s) {
   return Sign(s.canBeNull(), s.canBeNegative(), s.canBePositive());
 }
 
@@ -106,8 +106,9 @@ void Sign::log(bool endOfLine) const {
 }
 #endif
 
-ComplexSign NoIntegers(ComplexSign s) {
-  return ComplexSign(NoIntegers(s.realSign()), NoIntegers(s.imagSign()));
+ComplexSign RelaxIntegerProperty(ComplexSign s) {
+  return ComplexSign(RelaxIntegerProperty(s.realSign()),
+                     RelaxIntegerProperty(s.imagSign()));
 }
 
 ComplexSign Abs(ComplexSign s) {
@@ -276,7 +277,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::ASin:
     case Type::ATan:
       // Both real and imaginary part keep the same sign
-      return NoIntegers(Get(t->firstChild()));
+      return RelaxIntegerProperty(Get(t->firstChild()));
     case Type::ACos:
       return ArcCosine(Get(t->firstChild()));
     case Type::Fact:
@@ -288,7 +289,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::Round:
       return DecimalFunction(Get(t->firstChild()), t->type());
     case Type::PercentSimple:
-      return NoIntegers(Get(t->firstChild()));
+      return RelaxIntegerProperty(Get(t->firstChild()));
     case Type::Distribution:
       return ComplexSign(
           DistributionMethod::Get(t) != DistributionMethod::Type::Inverse

@@ -268,7 +268,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::Arg:
       return ComplexArgument(Get(t->firstChild()));
     case Type::Dependency:
-      return ComplexArgument(Get(t->firstChild()));
+      return Get(t->firstChild());
     case Type::UserSymbol:
       return Symbol::GetComplexSign(t);
     case Type::Ceil:

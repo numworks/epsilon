@@ -209,11 +209,6 @@ PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
 /* Helpers */
 
 template <typename T>
-static T FloatAddition(T a, T b) {
-  return a + b;
-}
-
-template <typename T>
 T Approximation::FloatBinomial(T k, T n) {
   if (k != std::round(k)) {
     return NAN;
@@ -369,11 +364,20 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       return FloatNode::FloatTo(node);
     case Type::DoubleFloat:
       return FloatNode::DoubleTo(node);
-    case Type::Add:
-      return MapAndReduce<T, std::complex<T>>(node,
-                                              FloatAddition<std::complex<T>>);
-    case Type::Mult:
-      return MapAndReduce<T, std::complex<T>>(node, FloatMultiplication<T>);
+    case Type::Add: {
+      std::complex<T> result = 0;
+      for (const Tree* child : node->children()) {
+        result += ToComplex<T>(child);
+      }
+      return result;
+    }
+    case Type::Mult: {
+      std::complex<T> result = 1;
+      for (const Tree* child : node->children()) {
+        result = FloatMultiplication<T>(result, ToComplex<T>(child));
+      }
+      return result;
+    }
     case Type::Div:
       return FloatDivision<T>(ToComplex<T>(node->child(0)),
                               ToComplex<T>(node->child(1)));

@@ -418,6 +418,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{3,4}(1,3)", "{3,4}(1,3)");
   simplifies_to("0*{3,4}", "{0,0}");
   simplifies_to("{1,2}/{1,0}", "{1,undef}");
+  simplifies_to("med(π*{undef,nonreal,x,3})", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_random) {

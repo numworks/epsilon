@@ -176,6 +176,12 @@ bool List::ShallowApplyListOperators(Tree* e) {
           assert(false);
         }
         int n = list->numberOfChildren();
+        // TODO: Better check for undefined children
+        Tree* lastChild = list->child(n - 1);
+        if (lastChild->isUndefined()) {
+          e->moveTreeOverTree(lastChild);
+          return true;
+        }
         if (n % 2) {
           e->moveTreeOverTree(list->child(n / 2));
         } else {

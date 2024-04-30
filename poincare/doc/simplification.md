@@ -442,6 +442,59 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 
 #### Examples
 
+See examples in [annex](advanced-reduction-examples).
+
+## Simplify dependencies
+
+In this step, we remove useless dependencies from a dependency tree:
+- Break up simple dependencies into smaller bits (`dep(..,{x*y})` and `dep(..,{x+y})` become `dep(..,{x ,y})`).
+- Remove dependencies that are identical or contained in others dependencies, or in the main expression.
+- Remove dependencies that can be approximated to a value.
+- Replace the entire dependency with undef or nonreal if one of the dependencies is approximated to undef or nonreal.
+
+## Final approximation
+
+With an approximation strategy, we approximate again here in case previous steps unlocked new possible approximations.
+
+## Beautification
+
+This step basically undo earlier steps in the following order:
+
+### Restore complex format
+
+Unimplemented yet.
+
+### Restore angle unit
+
+All angle-dependant functions have been projected to radians during projection.
+
+They are restored to the initial angle unit.
+
+An advanced reduction may be called again after that because the created angle factors may be advanced reduced again. We can do this because, at this step, the expression is still mostly projected.
+
+### Beautify
+
+This step undo the projection by re-introducing nodes unhandled by reduction (For example, `Division`, `Log`, `Power` with non-integer indexes...).
+
+`Addition`, `Multiplication`, `GCD` and `LCM` are also sorted differently.
+
+Expressions such as PercentAddition are also beautified:
+$A+B\\%$ becomes $A*(1+\frac{B}{100})$.
+
+Rationals are turned into fractions, $0.25$ becoming $\frac{1}{4}$ for example.
+
+### Restore Unit
+
+The unit removed on projection is restored to the best prefix and representative.
+
+### Restore Variable names
+
+User variables, as well as nested local variables are restored to their original names.
+
+## Annex
+
+#### Advanced Reduction Examples
+
 `_` represent the node that is being examined.
 
 - Unsuccessful advanced reduction on simple tree $a+b$.
@@ -535,50 +588,3 @@ graph TD;
       CA-->|Contract|CAA["a^2+b^2-(a^2+b^2)+a(2b+(c+d)^2)"]
         CAA-->X28["42 VS 19"]
 ```
-
-## Simplify dependencies
-
-In this step, we remove useless dependencies from a dependency tree:
-- Break up simple dependencies into smaller bits (`dep(..,{x*y})` and `dep(..,{x+y})` become `dep(..,{x ,y})`).
-- Remove dependencies that are identical or contained in others dependencies, or in the main expression.
-- Remove dependencies that can be approximated to a value.
-- Replace the entire dependency with undef or nonreal if one of the dependencies is approximated to undef or nonreal.
-
-## Final approximation
-
-With an approximation strategy, we approximate again here in case previous steps unlocked new possible approximations.
-
-## Beautification
-
-This step basically undo earlier steps in the following order:
-
-### Restore complex format
-
-Unimplemented yet.
-
-### Restore angle unit
-
-All angle-dependant functions have been projected to radians during projection.
-
-They are restored to the initial angle unit.
-
-An advanced reduction may be called again after that because the created angle factors may be advanced reduced again. We can do this because, at this step, the expression is still mostly projected.
-
-### Beautify
-
-This step undo the projection by re-introducing nodes unhandled by reduction (For example, `Division`, `Log`, `Power` with non-integer indexes...).
-
-`Addition`, `Multiplication`, `GCD` and `LCM` are also sorted differently.
-
-Expressions such as PercentAddition are also beautified:
-$A+B\\%$ becomes $A*(1+\frac{B}{100})$.
-
-Rationals are turned into fractions, $0.25$ becoming $\frac{1}{4}$ for example.
-
-### Restore Unit
-
-The unit removed on projection is restored to the best prefix and representative.
-
-### Restore Variable names
-
-User variables, as well as nested local variables are restored to their original names.

@@ -214,11 +214,6 @@ static T FloatAddition(T a, T b) {
 }
 
 template <typename T>
-static T FloatSubtraction(T a, T b) {
-  return a - b;
-}
-
-template <typename T>
 T Approximation::FloatBinomial(T k, T n) {
   if (k != std::round(k)) {
     return NAN;
@@ -303,13 +298,6 @@ std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
   return c / d;
 }
 
-template <typename T>
-static T FloatLog(T a, T b) {
-  return a == static_cast<T>(0) || b == static_cast<T>(0)
-             ? NAN
-             : FloatDivision(std::log(a), std::log(b));
-}
-
 // Return true if one of the dependencies is undefined
 bool UndefDependencies(const Tree* dep) {
   // Dependency children may have different dimensions.
@@ -387,15 +375,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     case Type::Mult:
       return MapAndReduce<T, std::complex<T>>(node, FloatMultiplication<T>);
     case Type::Div:
-      return MapAndReduce<T, std::complex<T>>(node, FloatDivision<T>);
+      return FloatDivision<T>(ToComplex<T>(node->child(0)),
+                              ToComplex<T>(node->child(1)));
     case Type::Sub:
-      return MapAndReduce<T, std::complex<T>>(
-          node, FloatSubtraction<std::complex<T>>);
+      return ToComplex<T>(node->child(0)) - ToComplex<T>(node->child(1));
     case Type::Pow:
       return ApproximatePower<T>(node, s_context ? s_context->m_complexFormat
                                                  : ComplexFormat::Cartesian);
-    case Type::Logarithm:
-      return MapAndReduce<T, std::complex<T>>(node, FloatLog<std::complex<T>>);
     case Type::GCD:
       return MapAndReduce<T, T>(node, FloatGCD<T>,
                                 PositiveIntegerApproximation<T>);
@@ -438,6 +424,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       return c == std::complex<T>(0) ? NAN
              : node->isLog()         ? std::log10(c)
                                      : std::log(c);
+    }
+    case Type::Logarithm: {
+      std::complex<T> a = ToComplex<T>(node->child(0));
+      std::complex<T> b = ToComplex<T>(node->child(1));
+      return a == static_cast<T>(0) || b == static_cast<T>(0)
+                 ? NAN
+                 : FloatDivision(std::log(a), std::log(b));
     }
     case Type::Abs:
       return std::abs(ToComplex<T>(node->child(0)));

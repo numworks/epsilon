@@ -295,4 +295,16 @@ QUIZ_CASE(pcj_sign) {
               ComplexSign(Sign::Positive(), Sign::Unknown()));
   assert_sign("re(abs(x)-i)+i*arg(2+i)",
               ComplexSign(Sign::PositiveOrNull(), Sign::Positive()));
+
+  // cos
+  assert_sign("cos(3)", Sign::Unknown());
+  assert_sign("cos(2i)", ComplexSign(Sign::Positive(), Sign::Zero()));
+  assert_sign("cos(-2i)", ComplexSign(Sign::Positive(), Sign::Zero()));
+  assert_sign("cos(3+2i)", ComplexSign::Unknown());
+
+  // sin
+  assert_sign("sin(3)", Sign::Unknown());
+  assert_sign("sin(2i)", ComplexSign(Sign::Zero(), Sign::Positive()));
+  assert_sign("sin(-2i)", ComplexSign(Sign::Zero(), Sign::Negative()));
+  assert_sign("sin(3+2i)", ComplexSign::Unknown());
 }

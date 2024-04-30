@@ -19,6 +19,30 @@ static_assert(ComplexSign::RealUnknown().isReal());
 static_assert(ComplexSign::RealInteger().isReal() &&
               !ComplexSign::RealInteger().canBeNonInteger());
 
+namespace Poincare::Internal {
+extern Sign RelaxIntegerProperty(Sign s);
+extern Sign DecimalFunction(Sign s, Type type);
+extern Sign Oppose(Sign s);
+extern Sign Mult(Sign s1, Sign s2);
+extern Sign Add(Sign s1, Sign s2);
+}  // namespace Poincare::Internal
+
+QUIZ_CASE(pcj_sign_methods) {
+  assert(RelaxIntegerProperty(Sign::Zero()) == Sign::Zero());
+  assert(RelaxIntegerProperty(Sign::NonNull()) == Sign::NonNull());
+  assert(RelaxIntegerProperty(Sign::Positive()) == Sign::Positive());
+  assert(RelaxIntegerProperty(Sign::PositiveOrNull()) ==
+         Sign::PositiveOrNull());
+  assert(RelaxIntegerProperty(Sign::Negative()) == Sign::Negative());
+  assert(RelaxIntegerProperty(Sign::NegativeOrNull()) ==
+         Sign::NegativeOrNull());
+  assert(RelaxIntegerProperty(Sign::Unknown()) == Sign::Unknown());
+  assert(RelaxIntegerProperty(Sign::PositiveInteger()) == Sign::Positive());
+  assert(RelaxIntegerProperty(Sign::NegativeInteger()) == Sign::Negative());
+  assert(RelaxIntegerProperty(Sign::NonNullInteger()) == Sign::NonNull());
+  assert(RelaxIntegerProperty(Sign::Integer()) == Sign::Unknown());
+}
+
 void assert_sign(const char* input, ComplexSign expectedSign) {
   Tree* expression = TextToTree(input);
   /* TODO: Factorize this with SimplifyLastTree to have properly projected

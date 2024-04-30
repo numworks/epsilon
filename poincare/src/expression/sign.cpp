@@ -20,7 +20,7 @@ namespace Poincare::Internal {
  * mode simplifications. */
 
 Sign RelaxIntegerProperty(Sign s) {
-  return Sign(s.canBeNull(), s.canBeNegative(), s.canBePositive());
+  return Sign(s.canBeNull(), s.canBePositive(), s.canBeNegative());
 }
 
 Sign DecimalFunction(Sign s, Type type) {

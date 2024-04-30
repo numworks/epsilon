@@ -78,7 +78,6 @@ class Sign {
   constexpr static Sign NonNullInteger() {
     return Sign(false, true, true, false);
   }
-
   constexpr static Sign Integer() { return Sign(true, true, true, false); }
 
   static Sign Get(const Tree* t);

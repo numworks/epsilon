@@ -129,8 +129,7 @@ ComplexSign ArcCosine(ComplexSign s) {
 
 ComplexSign Exponential(ComplexSign s) {
   bool childIsReal = s.isReal();
-  return childIsReal ? ComplexSign(Sign::Positive(), Sign::Zero())
-                     : ComplexSign(Sign::Unknown(), Sign::Unknown());
+  return childIsReal ? ComplexSign::RealPositive() : ComplexSign::Unknown();
 }
 
 ComplexSign Ln(ComplexSign s) {
@@ -171,7 +170,7 @@ ComplexSign DecimalFunction(ComplexSign s, Type type) {
 ComplexSign Trig(ComplexSign s, bool isSin) {
   if (s.realSign().isZero()) {
     return isSin ? ComplexSign(Sign::Zero(), RelaxIntegerProperty(s.imagSign()))
-                 : ComplexSign(Sign::Positive(), Sign::Zero());
+                 : ComplexSign::RealPositive();
   }
   return ComplexSign(Sign::Unknown(),
                      s.isReal() ? Sign::Zero() : Sign::Unknown());

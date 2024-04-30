@@ -1,5 +1,6 @@
 #include "approximation.h"
 
+#include <ion.h>
 #include <math.h>
 #include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
@@ -1137,17 +1138,61 @@ U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
   return res;
 }
 
-bool interruptApproximation(TypeBlock type, int childIndex,
-                            TypeBlock childType) {
-  switch (type) {
+bool CanShallowApproximate(const Tree* tree, bool approxLocalVar) {
+  if (tree->isVar() && Variables::Id(tree) == Parametric::k_localVariableId) {
+    return approxLocalVar;
+  }
+  return !(tree->isRandomNode() || tree->isUserNamed());
+}
+
+bool CanDeepApproximate(const Tree* tree, bool approxLocalVar = false) {
+  if (!CanShallowApproximate(tree, approxLocalVar)) {
+    return false;
+  }
+  int childIndex = 0;
+  for (const Tree* child : tree->children()) {
+    bool approxLocalVarInChild = approxLocalVar;
+    if (tree->isParametric()) {
+      if (childIndex == Parametric::k_variableIndex) {
+        // Parametric's variable cant be approximated, but we never want to.
+        childIndex++;
+        continue;
+      }
+      if (childIndex == Parametric::FunctionIndex(tree)) {
+        // Ignore approxLocalVar since we enter a local context
+        approxLocalVarInChild = true;
+      }
+    }
+    if (!CanDeepApproximate(child, approxLocalVarInChild)) {
+      return false;
+    }
+    childIndex++;
+  }
+  return true;
+}
+
+bool IsNonListScalar(const Tree* tree) {
+  return Dimension::GetDimension(tree).isScalar() && !Dimension::IsList(tree);
+}
+
+bool SkipApproximation(TypeBlock type) {
+  return type.isFloat() || type.isComplexI();
+}
+
+bool SkipApproximation(TypeBlock type, TypeBlock parentType,
+                       int indexInParent) {
+  if (SkipApproximation(type)) {
+    return true;
+  }
+  switch (parentType) {
     case Type::ATrig:
     case Type::Trig:
       // Do not approximate second term in case tree isn't replaced.
-      return (childIndex == 1);
+      return (indexInParent == 1);
     case Type::PowMatrix:
     case Type::Pow:
       // Note: After projection, Power's second term should always be integer.
-      return (childIndex == 1 && childType.isInteger());
+      return (indexInParent == 1 && type.isInteger());
     case Type::Identity:
       return true;
     default:
@@ -1159,49 +1204,46 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
     Tree* tree, const ProjectionContext* ctx) {
   Context context(ctx ? ctx->m_angleUnit : AngleUnit::Radian,
                   ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
+  if (SkipApproximation(tree->type())) {
+    return false;
+  }
   s_context = &context;
-  bool result = ApproximateAndReplaceEveryScalarT<double>(tree);
+  uint32_t hash =
+      Ion::crc32Byte(reinterpret_cast<const uint8_t*>(tree), tree->treeSize());
+  bool result = false;
+  if (CanDeepApproximate(tree) && IsNonListScalar(tree)) {
+    tree->moveTreeOverTree(ToTree<double>(tree, Dimension()));
+    result = true;
+  } else {
+    result = ApproximateAndReplaceEveryScalarT<double>(tree);
+  }
   s_context = nullptr;
-  return result;
+  /* TODO: We compare the CRC32 to prevent expressions such as 1.0+i*1.0 from
+   * returning true at every call. We should detect and skip them in
+   * SkipApproximation instead. */
+  return result &&
+         hash != Ion::crc32Byte(reinterpret_cast<const uint8_t*>(tree),
+                                tree->treeSize());
 }
 
 template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
-  // These types are either already approximated or impossible to approximate.
-  if (tree->isFloat() || tree->isRandomNode() || tree->isBoolean() ||
-      tree->isComplexI() || tree->isUndefined() ||
-      tree->isOfType(
-          {Type::UserSymbol, Type::Var, Type::Unit, Type::PhysicalConstant})) {
-    return false;
-  }
+  assert(!CanDeepApproximate(tree) || !IsNonListScalar(tree));
   bool changed = false;
-  bool approximateNode =
-      Dimension::GetDimension(tree).isScalar() && !Dimension::IsList(tree);
   int childIndex = 0;
   for (Tree* child : tree->children()) {
-    if (interruptApproximation(tree->type(), childIndex++, child->type())) {
-      break;
+    if (SkipApproximation(child->type(), tree->type(), childIndex++)) {
+      continue;
     }
-    changed = ApproximateAndReplaceEveryScalarT<T>(child) || changed;
-    approximateNode = approximateNode && child->type() == FloatType<T>::type;
+    if (CanDeepApproximate(child) && IsNonListScalar(child)) {
+      child->moveTreeOverTree(ToTree<T>(child, Dimension()));
+      changed = true;
+    } else {
+      changed = ApproximateAndReplaceEveryScalarT<T>(child) || changed;
+    }
   }
-  if (!approximateNode) {
-    // TODO: Partially approximate additions and multiplication anyway
-    return changed;
-  }
-  /* RootTreeToTree will override and clear s_context. We need to store it away
-   * in the meantime.
-   * TODO: this could be avoided by reworking how s_context is handled. */
-  Context* previousContext = s_context;
-  s_context = nullptr;
-  /* TODO_PCJ: RootTreeToTree is overkill here, although at this point tree only
-   * has direct float children. */
-  Tree* approximatedTree = RootTreeToTree<T>(tree, previousContext->m_angleUnit,
-                                             previousContext->m_complexFormat);
-  s_context = previousContext;
-  assert(!tree->treeIsIdenticalTo(approximatedTree));
-  tree->moveTreeOverTree(approximatedTree);
-  return true;
+  // TODO: Merge additions and multiplication's children if possible.
+  return changed;
 }
 
 /* TODO: not all this functions are worth templating on float and

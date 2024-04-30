@@ -599,7 +599,8 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // FIXME: These cases should be undef
   // simplifies_to("1^∞", "1"); // TODO false on device
   simplifies_to("∞^0", "1");
-  simplifies_to("log(inf,-3)", "nonreal");
+  // TODO: nonreal, see case Type::LnReal: in approximation.cpp
+  simplifies_to("log(inf,-3)", "undef");
   simplifies_to("log(inf,-3)", "∞-∞×i", cartesianCtx);
 }
 

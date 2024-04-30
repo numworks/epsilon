@@ -171,10 +171,12 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 
   // inf -> Float(inf) to prevent inf-inf from being 0
   if (e->isInf()) {
-    /* TODO: Infinity is only handled as float. Raise to try again with float
-     * numbers, preventing from having to handle float contamination.
-     * Later, handle exact inf (∞-∞, ∞^0, 0+, 0-, ...) and remove this Raise.*/
-    ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
+    /* TODO: Infinity is only handled as float for now. This can introduce float
+     * nodes when strategy is still Default, but should be properly handled by
+     * float contamination. Ideally, handle exact inf (∞-∞, ∞^0, 0+, 0-, ...)
+     * and remove this. */
+    return Approximation::ApproximateAndReplaceEveryScalar(e,
+                                                           projectionContext);
   }
 
   // Under Real complex format, use node alternative to properly handle nonreal.

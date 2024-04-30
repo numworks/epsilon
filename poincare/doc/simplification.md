@@ -93,9 +93,11 @@ Some issues such as NonReal, division by zero or other undefinitions can still a
 
 ## Extract units
 
-If the expression contains non-angular units, [downgrade the approximation strategy](#approximation-strategy).
+This is the only step where the projection context is altered.
 
-This is the only step where the projection context is altered to store the expression's unit. This will be used later when putting the units back during beautification.
+If the expression contains non-angular units, downgrade the [approximation strategy](#approximation-strategy).
+
+If the expression had units, also store them in the projection context. This will be used later when putting the units back during beautification.
 
 If the expression has non-Kelvin temperature units (°C or °F), convert the entire tree to Kelvins here. Such conversion must be done at root level.
 
@@ -107,11 +109,7 @@ The simplification algorithm handles two simplification strategies:
 
 `ApproximateToFloat` strategy is less demanding in term of tree size, but the quality of the simplification will downgrade compared to the `Default` one.
 
-Strategy is a context parameter given to the simplification. We start simplification with the given strategy, and we can downgrade the strategy during the simplification process for example if:
-- we detected units in the expression
-- `TreeStack` is full
-
-To ensure a constant strategy throughout the simplification process, we raise a `RelaxContext` exception that restarts the simplification with a downgraded strategy, unless it is already at the downgraded strategy.
+Strategy is a context parameter given to the simplification. We start simplification with the given strategy, and we can downgrade the strategy during the simplification process if `TreeStack` is full for example.
 
 Most of the time, we use the `Default` strategy and let the simplification handle eventual strategy change.
 

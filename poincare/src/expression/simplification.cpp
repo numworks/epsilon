@@ -847,7 +847,6 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
   }
   if (e->isUnitConversion()) {
     if (!Dimension::DeepCheckDimensions(e)) {
-      // TODO: Raise appropriate exception in DeepCheckDimensions.
       e->cloneTreeOverTree(KUndefUnhandledDimension);
       return true;
     }
@@ -901,9 +900,8 @@ bool Simplification::PrepareForProjection(Tree* e,
 bool Simplification::ExtractUnits(Tree* e,
                                   ProjectionContext* projectionContext) {
   projectionContext->m_dimension = Dimension::GetDimension(e);
-  if (projectionContext->m_strategy != Strategy::ApproximateToFloat &&
-      ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
-    ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
+  if (ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
+    projectionContext->m_strategy = Strategy::ApproximateToFloat;
   }
   if (!projectionContext->m_dimension.hasNonKelvinTemperatureUnit()) {
     return false;

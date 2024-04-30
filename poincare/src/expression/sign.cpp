@@ -30,11 +30,11 @@ Sign DecimalFunction(Sign s, Type type) {
   bool canBeNonInteger = s.canBeNonInteger();
   switch (type) {
     case Type::Ceil:
-      canBeNull |= canBeNegative;
+      canBeNull |= canBeNegative && canBeNonInteger;
       canBeNonInteger = false;
       break;
     case Type::Floor:
-      canBeNull |= canBePositive;
+      canBeNull |= canBePositive && canBeNonInteger;
       canBeNonInteger = false;
       break;
     case Type::Frac:
@@ -272,6 +272,11 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ComplexArgument(Get(t->firstChild()));
     case Type::UserSymbol:
       return Symbol::GetComplexSign(t);
+    case Type::Ceil:
+    case Type::Floor:
+    case Type::Frac:
+    case Type::Round:
+      return DecimalFunction(Get(t->firstChild()), t->type());
 #if 0
     // Activate these cases if necessary
     case Type::ASin:
@@ -283,11 +288,6 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::Fact:
       assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());
       return RealPositiveInteger();
-    case Type::Ceil:
-    case Type::Floor:
-    case Type::Frac:
-    case Type::Round:
-      return DecimalFunction(Get(t->firstChild()), t->type());
     case Type::PercentSimple:
       return RelaxIntegerProperty(Get(t->firstChild()));
     case Type::Distribution:

@@ -72,8 +72,14 @@ class Sign {
   constexpr static Sign PositiveInteger() {
     return Sign(false, true, false, false);
   }
+  constexpr static Sign PositiveOrNullInteger() {
+    return Sign(true, true, false, false);
+  }
   constexpr static Sign NegativeInteger() {
     return Sign(false, false, true, false);
+  }
+  constexpr static Sign NegativeOrNullInteger() {
+    return Sign(true, false, true, false);
   }
   constexpr static Sign NonNullInteger() {
     return Sign(false, true, true, false);

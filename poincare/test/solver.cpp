@@ -45,7 +45,10 @@ bool check_solutions(std::initializer_list<const char*> inputs,
 
 QUIZ_CASE(pcj_solver) {
   Shared::GlobalContext globalContext;
-  assert(Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() == 0);
+  assert(
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+          "sys"));
   ProjectionContext projCtx = {.m_context = &globalContext};
 
   check_solutions({"x-3+y", "y-x+1"}, {"x-2", "y-1"}, projCtx);

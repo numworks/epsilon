@@ -32,10 +32,10 @@ These operations never need to be applied twice.
 ## Detailed steps
 
 - [Seed the random nodes](#random-nodes-seeding)
-- [Replace all user symbols with variables](#user-symbols)
-- [Replace User symbols and functions stored in context](#context-user-symbols)
+- [Replace local symbols with variables](#local-symbols)
+- [Replace symbols and functions stored in context](#global-symbols)
 - [Ensure the expression has a valid dimension](#dimension-check)
-- [Adjust the approximation strategy if the expression's dimension requires it (units)](#approximation-strategy)
+- [Extract units and adjust the approximation strategy](#extract-units)
 - [Project the expression, approximate depending on the strategy](#projection)
 - [Apply systematic reduction](#systematic-reduction)
 - [Bubble up lists, applying systematic reduction](#list-bubble-up)
@@ -53,30 +53,30 @@ $$sinh(random())=\frac{e^{random()}-e^{-random()}}{2}$$
 
 Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
 
-## User symbols
+## Local symbols
 
-We list all global user symbols in the alphabetical order.
+Local symbols are projected to an id, based on how nested they are in the local contexts, using de Bruijn indexes. Global symbols are preserved.
 
-All symbols (global and local) are then projected to an id, based on if they are global or local, and how nested they are in the local contexts, using de Bruijn indexes.
-
-Below the example expression are written the projected id of the user symbols.
+Below the example expression are written the projected id of the local user symbols.
 
 ```
-a+b+diff(a+c+x+sum(k+a+x, k, 1, b), x, b)+a
-0 1      1 3 0     0 2 1  k  1  2   x  1  0
+a + diff(c + x + sum(k + a + x, k, 1, x), x, b) + diff(a, a, a)
+a        c   0       0   a   1  k  1  0   x  b         0  a  a
 ```
 
 UserSymbols that are the variable child of parametrics are preserved for beautification (since we don't list them with the global user-symbols).
 
-This step converts the `UserSymbol` trees (containing the variable name) into a `Variable` (containing the id only).
+This step converts some `UserSymbol` trees (containing the variable name) into a `Variable` (containing the id only).
 
 When nested inside a parametered expression, all id are incremented. In the parametered expression, `0` is the local parameter.
 
 This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope` (move the variable out and in the parametric expression and increment/decrement the id).
 
-## Context user symbols
+## Global symbols
 
 User symbols and functions stored in the given context are replaced with their definition (see `SymbolicComputation` enum for replacement rules), even if nested.
+
+If allowed by `SymbolicComputation`, symbols with no definition are left unchanged.
 
 If anything has been replaced, reapply previous step to seed new random nodes.
 
@@ -89,36 +89,38 @@ For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
 
 Dimension covers scalars, points, booleans, units, matrix size, and list size (handled in a different functions in a similar way).
 
-This is done first here so that all following steps can assume the dimension is correct, removing the need for many checks.
+This is done as early as possible so that all following steps can assume the dimension is correct, removing the need for many checks.
 
-Some issues such as Unreal, division by zero or other undefinitions can still arise later.
+Some issues such as NonReal, division by zero or other undefinitions can still arise later.
+
+## Extract units
+
+If the expression contains non-angular units, [downgrade the approximation strategy](#approximation-strategy).
+
+This is the only step where the projection context is altered to store the expression's unit. This will be used later when putting the units back during beautification.
+
+If the expression has non-Kelvin temperature units (°C or °F), convert the entire tree to Kelvins here. Such conversion must be done at root level.
 
 ## Approximation strategy
 
 The simplification algorithm handles two simplification strategies:
- - `Default`: Default strategy.
- - `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated).
+ - `Default`: Default strategy. $$ln(2)*x+\frac{1}{3}+random()*\pi$$
+ - `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated). $$0.693*x+0.333+random()*3.14$$
 
-`ApproximateToFloat` strategy is less demanding in term of tree size, but the quality of the simplification will downgrade (example of $1-0.3-0.7$). It is a downgraded strategy compared to the `Default` one.
+`ApproximateToFloat` strategy is less demanding in term of tree size, but the quality of the simplification will downgrade compared to the `Default` one.
 
-Strategy is a parameter given to the simplification. We start simplification with the given startegy, and we can downgrade the strategy during the simplification process for example if:
-- we detected units in the expression: most units (except angle ones) enforce an approximation of the expression
+Strategy is a context parameter given to the simplification. We start simplification with the given strategy, and we can downgrade the strategy during the simplification process for example if:
+- we detected units in the expression
 - `TreeStack` is full
 
 To ensure a constant strategy throughout the simplification process, we raise a `RelaxContext` exception that restarts the simplification with a downgraded strategy, unless it is already at the downgraded strategy.
 
 Most of the time, we use the `Default` strategy and let the simplification handle eventual strategy change.
 
-### If strategy is `ApproximateToFloat`
-
-We apply a first round of approximation here to reduce the expression as much as possible. We do it before projection because it can reduce approximation precision, and before random nodes seeding because it is not yet relevant.
-
-For example:
-$$ln(cos(x))^{ln(cos(1))} = ln(cos(x))^{-0.615626}$$
-
 ## Projection
 
 It is expected to:
+- Approximated everything that can be if strategy is `ApproximateToFloat`.
 - Reduce the number of equivalent representations of an expression (Div(A,B) -> Mult(A, Pow(B, -1))). It replace nodes not handled by reduction with other nodes handled by reduction.
 - Un-contextualize the expression (remove unit, complex format and angle units considerations from reduction algorithm)
 - Do nothing if applied a second time

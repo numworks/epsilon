@@ -191,27 +191,25 @@ ComplexSign Add(ComplexSign s1, ComplexSign s2) {
 
 ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   if (!exp.isReal() || exp.canBeNonInteger()) {
-    // PowerReal(x, 0.5)
     return ComplexSign::Unknown();
   }
   if (base.isZero()) {
+    // 0^exp = 0
     return ComplexSign::Zero();
   }
   if (exp.isZero()) {
-    return ComplexSign::RealPositiveInteger();  // 1
+    // base^0 = 1
+    return ComplexSign::RealPositiveInteger();
   }
+  bool canBeNull = base.realSign().canBeNull();
   bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
-  bool baseIsReal = base.isReal();
-  if (baseIsReal && expIsTwo) {
-    return ComplexSign(
-        Sign(base.realSign().canBeNull(), true, false, canBeNonInteger),
-        Sign::Zero());
+  if (base.isReal()) {
+    bool isPositive = expIsTwo || base.realSign().isPositive();
+    return ComplexSign(Sign(canBeNull, true, !isPositive, canBeNonInteger),
+                       Sign::Zero());
   }
-  return ComplexSign(
-      Sign(base.realSign().canBeNull(), true,
-           !(baseIsReal && base.realSign().isPositive()), canBeNonInteger),
-      Sign(base.imagSign().canBeNull(), !baseIsReal, !baseIsReal,
-           canBeNonInteger));
+  Sign sign = Sign(canBeNull, true, true, canBeNonInteger);
+  return ComplexSign(sign, sign);
 }
 
 // Note: A complex function plotter can be used to fill in these methods.

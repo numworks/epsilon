@@ -155,6 +155,8 @@ ComplexSign ArcTangentRad(ComplexSign s) {
 }
 
 ComplexSign ComplexArgument(ComplexSign s) {
+  /* If complex argument returns a value in ]-π,π], the sign of the complex
+   * argument is the sign of the imaginary part. */
   return ComplexSign(
       Sign(s.imagSign().canBeNull() && s.realSign().canBePositive(), true,
            true),

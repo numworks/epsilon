@@ -148,14 +148,6 @@ class Approximation final {
 
   static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
 
-  template <typename T>
-  using Reductor = T (*)(T, T);
-  template <typename T, typename U>
-  using Mapper = U (*)(T);
-  template <typename T, typename U>
-  static U MapAndReduce(const Tree* tree, Reductor<U> reductor,
-                        Mapper<std::complex<T>, U> mapper = nullptr);
-
   static bool PrivateApproximateAndReplaceEveryScalar(Tree* tree);
 
   /* Variables with id >= firstNonApproximableVarId are considered not

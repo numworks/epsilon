@@ -1215,38 +1215,6 @@ int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   return piecewise->indexOfChild(branch);
 }
 
-template <typename T, typename U>
-U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
-                              Mapper<std::complex<T>, U> mapper) {
-  /* TODO: this function, the use of function pointers and the general
-   * recursive design of ToComplex incurs some overhead when approximating. For
-   * instance (a+b)*c, will execute nextNode() on a twice (one for + and one
-   * for *). We should use a non-recursive and more C-like algorithm. */
-  U res;
-  for (auto [child, index] : NodeIterator::Children<NoEditable>(node)) {
-    std::complex<T> app = ToComplex<T>(child);
-    if (std::isnan(app.real()) || std::isnan(app.imag())) {
-      return NAN;
-    }
-    U mapped;
-    if constexpr (std::is_same_v<std::complex<T>, U>) {
-      mapped = app;
-    } else {
-      assert(mapper);
-      mapped = mapper(app);
-      if (std::isnan(mapped)) {
-        return NAN;
-      }
-    }
-    if (index == 0) {
-      res = mapped;
-    } else {
-      res = reductor(res, mapped);
-    }
-  }
-  return res;
-}
-
 bool Approximation::CanApproximate(const Tree* tree,
                                    int firstNonApproximableVarId) {
   if (tree->isRandomNode() || tree->isUserNamed() ||

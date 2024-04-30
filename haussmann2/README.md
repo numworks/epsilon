@@ -1,6 +1,6 @@
 # Haussmann
 
-Shared build system between between C++ projects, using makefiles.
+Shared build system between C++ projects, using makefiles.
 
 ## Using this repository
 
@@ -22,7 +22,7 @@ will be provided by the application.
 
 ## Creating modules
 
-Module are thematically appropriate sections of code. They are characterized by
+Modules are thematically appropriate sections of code. They are characterized by
 the following variables:
 - `SOURCES_<name>`: The list of all sources, in varying formats, that form the module.
 - `PRIVATE_SFLAGS_<name>`: A list of compilation flags that are only provided when building that module's objects.
@@ -44,7 +44,7 @@ _Tastes_ modify the sources that are built depending on the _flavors_ passed to
 the module at compilation.
 e.g.:
 - `a.cpp:+f1:-f2` means a.cpp is only compiled if the flavor `f1` is provided and `f2` is not provided.
-- `b.cpp:+f1:-f2` is compiled if both `f1` and `f2` are provided.
+- `b.cpp:+f1:+f2` is compiled if both `f1` and `f2` are provided.
 - `c.cpp:-f1:-f2` is compiled if neither `f1` and `f2` are provided.
 
 ## Using modules

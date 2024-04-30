@@ -99,8 +99,8 @@ class Sign {
   }
 
   bool m_canBeNull : 1;
-  bool m_canBePositive : 1;
-  bool m_canBeNegative : 1;
+  bool m_canBePositive : 1;  // stricly positive
+  bool m_canBeNegative : 1;  // stricly negative
   bool m_canBeNonInteger : 1;
 };
 

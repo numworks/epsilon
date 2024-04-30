@@ -18,7 +18,7 @@ bool Approximation::IsIntegerRepresentationAccurate(T x) {
 }
 
 template <typename T>
-T Approximation::PositiveIntegerApproximation(std::complex<T> c) {
+T Approximation::PositiveIntegerApproximation(T c) {
   T s = std::abs(c);
   /* Conversion from uint32 to float changes UINT32_MAX from 4294967295 to
    * 4294967296. */
@@ -89,9 +89,8 @@ std::complex<T> Approximation::MakeResultRealIfInputIsReal(
 template bool Approximation::IsIntegerRepresentationAccurate(float);
 template bool Approximation::IsIntegerRepresentationAccurate(double);
 
-template float Approximation::PositiveIntegerApproximation(std::complex<float>);
-template double Approximation::PositiveIntegerApproximation(
-    std::complex<double>);
+template float Approximation::PositiveIntegerApproximation(float);
+template double Approximation::PositiveIntegerApproximation(double);
 
 template std::complex<float>
 Approximation::NeglectRealOrImaginaryPartIfNeglectable(std::complex<float>,

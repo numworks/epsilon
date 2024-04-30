@@ -233,25 +233,6 @@ T Approximation::FloatBinomial(T k, T n) {
 }
 
 template <typename T>
-T Approximation::FloatGCD(T a, T b) {
-  T result = Arithmetic::GCD(a, b);
-  if (!IsIntegerRepresentationAccurate(result)) {
-    return NAN;
-  }
-  return result;
-}
-
-template <typename T>
-T Approximation::FloatLCM(T a, T b) {
-  bool overflow = false;
-  T result = Arithmetic::LCM(a, b, &overflow);
-  if (overflow || !IsIntegerRepresentationAccurate(result)) {
-    return NAN;
-  }
-  return result;
-}
-
-template <typename T>
 std::complex<T> FloatMultiplication(std::complex<T> c, std::complex<T> d) {
   // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
   if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
@@ -387,11 +368,27 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       return ApproximatePower<T>(node, s_context ? s_context->m_complexFormat
                                                  : ComplexFormat::Cartesian);
     case Type::GCD:
-      return MapAndReduce<T, T>(node, FloatGCD<T>,
-                                PositiveIntegerApproximation<T>);
-    case Type::LCM:
-      return MapAndReduce<T, T>(node, FloatLCM<T>,
-                                PositiveIntegerApproximation<T>);
+    case Type::LCM: {
+      const Tree* child = node->child(0);
+      T result = PositiveIntegerApproximation(To<T>(child));
+      if (std::isnan(result)) {
+        return NAN;
+      }
+      for (int n = node->numberOfChildren() - 1; n > 0; n--) {
+        child = child->nextTree();
+        T current = PositiveIntegerApproximation(To<T>(child));
+        if (std::isnan(current)) {
+          return NAN;
+        }
+        bool overflow = false;
+        result = node->isGCD() ? Arithmetic::GCD(result, current)
+                               : Arithmetic::LCM(result, current, &overflow);
+        if (overflow || !IsIntegerRepresentationAccurate(result)) {
+          return NAN;
+        }
+      }
+      return result;
+    }
     case Type::Sqrt: {
       std::complex<T> c = ToComplex<T>(node->child(0));
       return NeglectRealOrImaginaryPartIfNeglectable(std::sqrt(c), c);

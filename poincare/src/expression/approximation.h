@@ -198,7 +198,7 @@ class Approximation final {
   template <typename T>
   static bool IsIntegerRepresentationAccurate(T x);
   template <typename T>
-  static T PositiveIntegerApproximation(std::complex<T> c);
+  static T PositiveIntegerApproximation(T c);
   template <typename T>
   static std::complex<T> NeglectRealOrImaginaryPartIfNeglectable(
       std::complex<T> result, std::complex<T> input1,

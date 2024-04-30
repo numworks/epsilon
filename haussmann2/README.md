@@ -81,6 +81,50 @@ e.g. When building `goal_name.alternate.elf`, `first_module` will be compiled
 with the `alternate` flavor, and `second_module` with the `alternate`, `flavor1`
 and `flavor2` flavors.
 
+## Examples
+
+A reusable library:
+```
+SomeLib
+├── sources
+│   ├── core.c
+│   ├── dangerous.c
+│   └── safe.c
+├── test
+│   ├── haussmann
+│   ├── SomeOtherLib
+│   └── Makefile
+│       └── Define PATH_haussmann, DEBUG, PLATFORM, OUTPUT_ROOT
+│           include haussmann/Makefile
+│           $(eval $(call import_module,some_lib,..))
+│           $(eval $(call import_module,some_other_lib,SomeOtherLib))
+│           $(eval $(call create_goal,test_runner,some_lib some_other_lib))
+└── Makefile
+    └── $(eval $(call create_module,some_lib,\
+          core.c\
+          dangerous.c:+unsafe\
+          safe.c:-unsafe\
+        ))
+```
+
+An application using the previous library and some other private modules:
+```
+SomeApp
+├── haussmann
+├── sources
+│   ├── external
+│   │   └── SomeLib
+│   ├── FirstModule
+│   └── SecondModule
+└── Makefile
+    └── Define PATH_haussmann, DEBUG, PLATFORM, OUTPUT_ROOT
+        include haussmann/Makefile
+        $(eval $(call import_module,some_lib,sources/external/SomeLib))
+        $(eval $(call import_module,first_module,sources/FirstModule))
+        $(eval $(call import_module,second_module,sources/SecondModule))
+        $(eval $(call create_goal,app,some_lib.unsafe first_module second_module))
+```
+
 ## Commits
 
 Commit messages follow the [Angular Guidelines](https://www.conventionalcommits.org/en/v1.0.0/).

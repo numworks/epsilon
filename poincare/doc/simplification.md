@@ -340,6 +340,43 @@ The following methods directly simplify to their result:
 
 </details>
 
+### Shallow bubble up
+
+At each shallow step in systematic reduction, some expressions needs to be bubbled-up.
+
+#### Undefined trees
+
+Most trees are set to undefined if one of their children is undefined.
+
+The exceptions are points, lists and piecewise branches (not conditions) :
+`(undef, x)`
+`{1, undef, 3}`
+`piecewise({x, x>0, undef})`
+
+If multiple undef can be bubbled up, we select the most "important" one.
+
+#### Floats
+
+If a tree has float children, it could be approximated as well.
+
+Indeed, we don't preserve $ln(0.333)$ and systematically reduce it with $-1.099$.
+
+#### Dependencies
+
+Dependencies are always bubble-up to the top.
+
+Most of the time, we just merge and move the dependencies up:
+
+`dep(x, {x, z}) + dep(y, {y, z})` becomes `dep(x + y, {x, y, z})`.
+
+With most parametrics, we account for the local context:
+
+`sum(dep(k, {f(k), z}), k, 1, n)` becomes `dep(sum(k, k, 1, n), {sum(f(k), k, 1, n), z})`
+
+With dependency, we can replace the local variable:
+
+`diff(dep(x, {ln(x), z}), x, y)` becomes `dep(diff(x, x, y), {ln(y), z})`
+
 ## List bubble up
 
 At this step, there are still nested lists in the expression, but we know the expected list length.

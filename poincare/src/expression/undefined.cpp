@@ -5,16 +5,17 @@
 
 namespace Poincare::Internal {
 
+bool Undefined::CanHaveUndefinedChild(Tree* e, int childIndex) {
+  return e->isPoint() || e->isList() ||
+         (e->isPiecewise() && childIndex % 2 == 0);
+}
+
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {
-  if (e->isPoint() || e->isList()) {
-    // Children can be undef
-    return false;
-  }
   uint8_t i = 0;
   Type worstType = Type::Zero;
   for (const Tree* child : e->children()) {
     // Piecewise can have undefined branches, but not conditions
-    if (child->isUndefined() && !(e->isPiecewise() && i % 2 == 0)) {
+    if (child->isUndefined() && !CanHaveUndefinedChild(e, i)) {
       Type childType = child->type();
       worstType = childType > worstType ? childType : worstType;
     }

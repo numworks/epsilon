@@ -8,6 +8,7 @@
 #include "k_tree.h"
 #include "parametric.h"
 #include "set.h"
+#include "undefined.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -24,7 +25,8 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   TreeRef finalSet = Set::PushEmpty();
   int i = 0;
   for (Tree* exprChild : expr->children()) {
-    if (exprChild->isDependency()) {
+    if (exprChild->isDependency() &&
+        !Undefined::CanHaveUndefinedChild(expr, i)) {
       Tree* exprChildSet = exprChild->child(1);
       if (expr->isParametric() && Parametric::FunctionIndex(expr) == i) {
         if (expr->isDiff() || expr->isNthDiff()) {

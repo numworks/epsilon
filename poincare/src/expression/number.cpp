@@ -38,7 +38,7 @@ Sign Number::Sign(const Tree* node) {
   switch (node->type()) {
     case Type::Pi:
     case Type::EulerE:
-      return Sign::Positive();
+      return Sign::StrictlyPositive();
     case Type::DoubleFloat:
     case Type::SingleFloat: {
       double value = FloatNode::To(node);

@@ -58,10 +58,10 @@ class PiInterval {
   }
   static PiInterval Arg(ComplexSign sign) {
     PiInterval result;
-    bool realCanBeNegative = sign.realSign().canBeNegative();
+    bool realCanBeNegative = sign.realSign().canBeStriclyNegative();
     bool realCanBeNull = sign.realSign().canBeNull();
-    bool realCanBePositive = sign.realSign().canBePositive();
-    if (sign.imagSign().canBeNegative()) {
+    bool realCanBePositive = sign.realSign().canBeStriclyPositive();
+    if (sign.imagSign().canBeStriclyNegative()) {
       if (realCanBeNegative) {
         result.unionWith(PiInterval(-2, false, -1, false));
       }
@@ -83,7 +83,7 @@ class PiInterval {
         result.unionWith(PiInterval(0, true, 0, true));
       }
     }
-    if (sign.imagSign().canBePositive()) {
+    if (sign.imagSign().canBeStriclyPositive()) {
       if (realCanBeNegative) {
         result.unionWith(PiInterval(1, false, 2, false));
       }

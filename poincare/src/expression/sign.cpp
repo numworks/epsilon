@@ -20,27 +20,28 @@ namespace Poincare::Internal {
  * mode simplifications. */
 
 Sign RelaxIntegerProperty(Sign s) {
-  return Sign(s.canBeNull(), s.canBePositive(), s.canBeNegative());
+  return Sign(s.canBeNull(), s.canBeStriclyPositive(),
+              s.canBeStriclyNegative());
 }
 
 Sign DecimalFunction(Sign s, Type type) {
   bool canBeNull = s.canBeNull();
-  bool canBePositive = s.canBePositive();
-  bool canBeNegative = s.canBeNegative();
+  bool canBeStriclyPositive = s.canBeStriclyPositive();
+  bool canBeStriclyNegative = s.canBeStriclyNegative();
   bool canBeNonInteger = s.canBeNonInteger();
   switch (type) {
     case Type::Ceil:
-      canBeNull |= canBeNegative && canBeNonInteger;
+      canBeNull |= canBeStriclyNegative && canBeNonInteger;
       canBeNonInteger = false;
       break;
     case Type::Floor:
-      canBeNull |= canBePositive && canBeNonInteger;
+      canBeNull |= canBeStriclyPositive && canBeNonInteger;
       canBeNonInteger = false;
       break;
     case Type::Frac:
       canBeNull = true;
-      canBePositive = canBeNonInteger;
-      canBeNegative = false;
+      canBeStriclyPositive = canBeNonInteger;
+      canBeStriclyNegative = false;
       break;
     case Type::Round:
       canBeNull = true;
@@ -48,29 +49,30 @@ Sign DecimalFunction(Sign s, Type type) {
     default:
       assert(false);
   }
-  return Sign(canBeNull, canBePositive, canBeNegative, canBeNonInteger);
+  return Sign(canBeNull, canBeStriclyPositive, canBeStriclyNegative,
+              canBeNonInteger);
 }
 
 Sign Opposite(Sign s) {
-  return Sign(s.canBeNull(), s.canBeNegative(), s.canBePositive(),
+  return Sign(s.canBeNull(), s.canBeStriclyNegative(), s.canBeStriclyPositive(),
               s.canBeNonInteger());
 }
 
 Sign Mult(Sign s1, Sign s2) {
   return Sign(s1.canBeNull() || s2.canBeNull(),
-              (s1.canBePositive() && s2.canBePositive()) ||
-                  (s1.canBeNegative() && s2.canBeNegative()),
-              (s1.canBePositive() && s2.canBeNegative()) ||
-                  (s1.canBeNegative() && s2.canBePositive()),
+              (s1.canBeStriclyPositive() && s2.canBeStriclyPositive()) ||
+                  (s1.canBeStriclyNegative() && s2.canBeStriclyNegative()),
+              (s1.canBeStriclyPositive() && s2.canBeStriclyNegative()) ||
+                  (s1.canBeStriclyNegative() && s2.canBeStriclyPositive()),
               s1.canBeNonInteger() || s2.canBeNonInteger());
 }
 
 Sign Add(Sign s1, Sign s2) {
   return Sign((s1.canBeNull() && s2.canBeNull()) ||
-                  (s1.canBePositive() && s2.canBeNegative()) ||
-                  (s1.canBeNegative() && s2.canBePositive()),
-              s1.canBePositive() || s2.canBePositive(),
-              s1.canBeNegative() || s2.canBeNegative(),
+                  (s1.canBeStriclyPositive() && s2.canBeStriclyNegative()) ||
+                  (s1.canBeStriclyNegative() && s2.canBeStriclyPositive()),
+              s1.canBeStriclyPositive() || s2.canBeStriclyPositive(),
+              s1.canBeStriclyNegative() || s2.canBeStriclyNegative(),
               s1.canBeNonInteger() || s2.canBeNonInteger());
 }
 
@@ -90,13 +92,13 @@ void Sign::log(bool endOfLine) const {
     if (isUnknown()) {
       std::cout << "Unknown";
     } else {
-      if (m_canBePositive && m_canBeNegative) {
+      if (m_canBeStriclyPositive && m_canBeStriclyNegative) {
         std::cout << "Non Null";
       } else {
-        std::cout << (m_canBeNegative ? "Negative" : "Positive");
-        if (m_canBeNull) {
-          std::cout << " or Null";
+        if (!m_canBeNull) {
+          std::cout << "Strictly ";
         }
+        std::cout << (m_canBeStriclyNegative ? "Negative" : "Positive");
       }
     }
   }
@@ -118,18 +120,20 @@ ComplexSign Abs(ComplexSign s) {
 }
 
 ComplexSign ArcCosine(ComplexSign s) {
-  return ComplexSign(
-      Sign(s.realSign().canBePositive(), true, false),
-      Sign(s.imagSign().canBeNull(),
-           s.imagSign().canBeNegative() ||
-               (s.imagSign().canBeNull() && s.realSign().canBePositive()),
-           s.imagSign().canBePositive() ||
-               (s.imagSign().canBeNull() && s.realSign().canBeNegative())));
+  return ComplexSign(Sign(s.realSign().canBeStriclyPositive(), true, false),
+                     Sign(s.imagSign().canBeNull(),
+                          s.imagSign().canBeStriclyNegative() ||
+                              (s.imagSign().canBeNull() &&
+                               s.realSign().canBeStriclyPositive()),
+                          s.imagSign().canBeStriclyPositive() ||
+                              (s.imagSign().canBeNull() &&
+                               s.realSign().canBeStriclyNegative())));
 }
 
 ComplexSign Exponential(ComplexSign s) {
   bool childIsReal = s.isReal();
-  return childIsReal ? ComplexSign::RealPositive() : ComplexSign::Unknown();
+  return childIsReal ? ComplexSign::RealStrictlyPositive()
+                     : ComplexSign::Unknown();
 }
 
 ComplexSign Ln(ComplexSign s) {
@@ -137,7 +141,7 @@ ComplexSign Ln(ComplexSign s) {
   return ComplexSign(Sign::Unknown(),
                      lnIsReal ? Sign::Zero()
                               : Sign(false, !s.imagSign().isStrictlyNegative(),
-                                     s.imagSign().canBeNegative()));
+                                     s.imagSign().canBeStriclyNegative()));
 }
 
 ComplexSign ArcTangentRad(ComplexSign s) {
@@ -148,8 +152,9 @@ ComplexSign ArcTangentRad(ComplexSign s) {
   // re(atan(i*y) = { -π/2 if y < 1, 0 if y in ]-1, 1[ and π/2 if y > 1 }
   Sign imagSign = s.imagSign();
   return ComplexSign(
-      Sign(true, realSign.canBePositive() || imagSign.canBePositive(),
-           realSign.canBeNegative() || imagSign.canBeNegative()),
+      Sign(true,
+           realSign.canBeStriclyPositive() || imagSign.canBeStriclyPositive(),
+           realSign.canBeStriclyNegative() || imagSign.canBeStriclyNegative()),
       imagSign);
 }
 
@@ -157,8 +162,8 @@ ComplexSign ComplexArgument(ComplexSign s) {
   /* If complex argument returns a value in ]-π,π], the sign of the complex
    * argument is the sign of the imaginary part. */
   return ComplexSign(
-      Sign(s.imagSign().canBeNull() && s.realSign().canBePositive(), true,
-           true),
+      Sign(s.imagSign().canBeNull() && s.realSign().canBeStriclyPositive(),
+           true, true),
       Sign::Zero());
 }
 
@@ -170,7 +175,7 @@ ComplexSign DecimalFunction(ComplexSign s, Type type) {
 ComplexSign Trig(ComplexSign s, bool isSin) {
   if (s.realSign().isZero()) {
     return isSin ? ComplexSign(Sign::Zero(), RelaxIntegerProperty(s.imagSign()))
-                 : ComplexSign::RealPositive();
+                 : ComplexSign::RealStrictlyPositive();
   }
   return ComplexSign(Sign::Unknown(),
                      s.isReal() ? Sign::Zero() : Sign::Unknown());
@@ -199,7 +204,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   }
   if (exp.isZero()) {
     // base^0 = 1
-    return ComplexSign::RealPositiveInteger();
+    return ComplexSign::RealStrictlyPositiveInteger();
   }
   bool canBeNull = base.realSign().canBeNull();
   bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
@@ -220,7 +225,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
   }
   switch (t->type()) {
     case Type::Mult: {
-      ComplexSign s = RealPositiveInteger();  // 1
+      ComplexSign s = RealStrictlyPositiveInteger();  // 1
       for (const Tree* c : t->children()) {
         s = Mult(s, Get(c));
         if (s.isUnknown() || s.isZero()) {
@@ -245,7 +250,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
                    t->child(1)->isTwo());
     case Type::Norm:
       // Child isn't a scalar
-      return ComplexSign(Sign::PositiveOrNull(), Sign::Zero());
+      return ComplexSign(Sign::Positive(), Sign::Zero());
     case Type::Abs:
       return Abs(Get(t->firstChild()));
     case Type::Exp:
@@ -259,7 +264,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::Var:
       return Variables::GetComplexSign(t);
     case Type::ComplexI:
-      return ComplexSign(Sign::Zero(), Sign::PositiveInteger());
+      return ComplexSign(Sign::Zero(), Sign::StrictlyPositiveInteger());
     case Type::Trig:
       assert(t->child(1)->isOne() || t->child(1)->isZero());
       return Trig(Get(t->firstChild()), t->child(1)->isOne());
@@ -286,13 +291,13 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ArcCosine(Get(t->firstChild()));
     case Type::Fact:
       assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());
-      return RealPositiveInteger();
+      return RealStrictlyPositiveInteger();
     case Type::PercentSimple:
       return RelaxIntegerProperty(Get(t->firstChild()));
     case Type::Distribution:
       return ComplexSign(
           DistributionMethod::Get(t) != DistributionMethod::Type::Inverse
-              ? Sign::PositiveOrNull()
+              ? Sign::Positive()
               : Sign::Unknown(),
           Sign::Zero());
     case Type::MixedFraction:

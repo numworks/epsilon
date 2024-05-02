@@ -221,10 +221,10 @@ bool Simplification::SimplifyAbs(Tree* u) {
   }
   bool isReal = complexSign.isReal();
   Sign sign = isReal ? complexSign.realSign() : complexSign.imagSign();
-  if (sign.canBeNegative() && sign.canBePositive()) {
+  if (sign.canBeStriclyNegative() && sign.canBeStriclyPositive()) {
     return false;
   }
-  const Tree* minusOne = (isReal == sign.canBeNegative()) ? -1_e : 1_e;
+  const Tree* minusOne = (isReal == sign.canBeStriclyNegative()) ? -1_e : 1_e;
   const Tree* complexI = isReal ? 1_e : i_e;
   // |3| = |-3| = |3i| = |-3i| = 3
   u->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -249,7 +249,7 @@ bool Simplification::SimplifyPower(Tree* u) {
       u->cloneTreeOverTree(0_e);
       return true;
     }
-    if (!indexSign.realSign().canBePositive()) {
+    if (!indexSign.realSign().canBeStriclyPositive()) {
       // 0^x cannot be defined
       ExceptionCheckpoint::Raise(ExceptionType::Unhandled);
     }
@@ -396,7 +396,8 @@ bool Simplification::SimplifyLnReal(Tree* u) {
     // Child can't be real, positive or null
     ExceptionCheckpoint::Raise(ExceptionType::Nonreal);
   }
-  if (childSign.realSign().canBeNegative() || !childSign.imagSign().isZero()) {
+  if (childSign.realSign().canBeStriclyNegative() ||
+      !childSign.imagSign().isZero()) {
     // Child can be nonreal or negative, add a dependency in case.
     u->moveTreeOverTree(PatternMatching::Create(
         KDep(KLn(KA), KSet(KLnReal(KA))), {.KA = u->child(0)}));

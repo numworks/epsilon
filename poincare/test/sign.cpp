@@ -29,6 +29,16 @@ extern Sign Add(Sign s1, Sign s2);
 }  // namespace Poincare::Internal
 
 QUIZ_CASE(pcj_sign_methods) {
+  // OR operator
+  assert((Sign::Zero() || Sign::NonNull()) == Sign::Unknown());
+  assert((Sign::Zero() || Sign::StrictlyPositive()) == Sign::Positive());
+  assert((Sign::Zero() || Sign::StrictlyNegative()) == Sign::Negative());
+  assert((Sign::StrictlyPositive() || Sign::StrictlyNegative()) ==
+         Sign::NonNull());
+  assert((Sign::Positive() || Sign::StrictlyNegative()) == Sign::Unknown());
+  assert((Sign::StrictlyPositive() || Sign::Negative()) == Sign::Unknown());
+  assert((Sign::Positive() || Sign::Negative()) == Sign::Unknown());
+
   // RelaxIntegerProperty
   assert(RelaxIntegerProperty(Sign::Zero()) == Sign::Zero());
   assert(RelaxIntegerProperty(Sign::NonNull()) == Sign::NonNull());

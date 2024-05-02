@@ -57,6 +57,12 @@ class Sign {
   }
 
   bool operator==(const Sign&) const = default;
+  Sign operator||(const Sign& other) const {
+    return Sign(m_canBeNull || other.canBeNull(),
+                m_canBeStriclyPositive || other.canBeStriclyPositive(),
+                m_canBeStriclyNegative || other.canBeStriclyNegative(),
+                m_canBeNonInteger || other.canBeNonInteger());
+  }
 
   constexpr uint8_t getValue() {
     // Cannot use bit_cast because it doesn't handle bitfields.

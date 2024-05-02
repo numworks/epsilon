@@ -155,7 +155,7 @@ ComplexSign Ln(ComplexSign s) {
     imSign = Sign(false, s.imagSign().canBeStriclyPositive(),
                   s.imagSign().canBeStriclyNegative());
   } else {
-    // Field-wise OR of the 2 previous cases
+    // Field-wise OR of the 2 previous cases (TODO: use || operator)
     imSign = Sign(s.realSign().canBeStriclyPositive(),
                   s.imagSign().canBeStriclyPositive() ||
                       s.realSign().canBeStriclyNegative(),
@@ -171,10 +171,8 @@ ComplexSign ArcTangentRad(ComplexSign s) {
   Sign realSign = RelaxIntegerProperty(s.realSign());
   Sign imagSign = RelaxIntegerProperty(s.imagSign());
   if (realSign.canBeNull() && imagSign.canBeNonNull()) {
-    realSign = Sign(
-        true,
-        realSign.canBeStriclyPositive() || imagSign.canBeStriclyPositive(),
-        realSign.canBeStriclyNegative() || imagSign.canBeStriclyNegative());
+    realSign = realSign || Sign(true, imagSign.canBeStriclyPositive(),
+                                imagSign.canBeStriclyNegative());
   }
   return ComplexSign(realSign, imagSign);
 }

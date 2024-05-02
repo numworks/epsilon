@@ -840,25 +840,15 @@ bool RelaxProjectionContext(void* context) {
 }
 
 bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
-  if (e->isStore()) {
-    // Store is an expression only for convenience
-    return Simplify(e->child(0), projectionContext);
-  }
-  if (e->isUnitConversion()) {
-    if (!Dimension::DeepCheckDimensions(e)) {
-      e->cloneTreeOverTree(KUndefUnhandledDimension);
-      return true;
-    }
-    Simplify(e->child(0), projectionContext);
-    e->moveTreeOverTree(e->child(0));
-    // TODO_PCJ actually select the required unit
-    return e;
-  }
   assert(projectionContext);
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
   SharedTreeStack->executeAndReplaceTree(
       [](void* context, const void* data) {
         Tree* e = static_cast<const Tree*>(data)->clone();
+        if (e->isStore()) {
+          // Store is an expression only for convenience
+          e = e->child(0);
+        }
         // Copy ProjectionContext to avoid altering the original
         ProjectionContext projectionContext =
             *static_cast<ProjectionContext*>(context);
@@ -898,6 +888,10 @@ bool Simplification::PrepareForProjection(Tree* e,
 
 bool Simplification::ExtractUnits(Tree* e,
                                   ProjectionContext* projectionContext) {
+  if (e->isUnitConversion()) {
+    // TODO_PCJ actually extract required unit for later beautification.
+    e->moveTreeOverTree(e->child(0));
+  }
   projectionContext->m_dimension = Dimension::GetDimension(e);
   if (ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
     projectionContext->m_strategy = Strategy::ApproximateToFloat;

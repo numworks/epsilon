@@ -1144,7 +1144,7 @@ U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
   return res;
 }
 
-bool CanApproximate(const Tree* tree, bool approxLocalVar = false) {
+bool Approximation::CanApproximate(const Tree* tree, bool approxLocalVar) {
   if (tree->isRandomNode() || tree->isUserNamed() ||
       (!approxLocalVar && tree->isVar() &&
        Variables::Id(tree) == Parametric::k_localVariableId)) {

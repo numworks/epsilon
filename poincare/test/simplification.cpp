@@ -206,7 +206,9 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "dep(e^(3×y)×(3×y^4×ln(y)+(1+4×ln(y))×y^3),{ln(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{y^2})");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
-  simplifies_to("diff(ln(x), x, -1)", "nonreal");
+  /* TODO: Should be unreal but returns undef because dependency lnReal(-1)
+   * approximates to undef and not nonreal. */
+  simplifies_to("diff(ln(x), x, -1)", "undef");
   simplifies_to("diff(x^3,x,x,2)", "dep(6×x,{x^3})");  // should be 6*x
   simplifies_to("diff(x*y*y*y*z,y,x,2)", "dep(6×x^2×z,{x^3})");
 

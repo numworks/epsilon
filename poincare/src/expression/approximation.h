@@ -101,6 +101,9 @@ class Approximation final {
   template <typename T>
   static Tree* ToMatrix(const Tree* node);
 
+  // Return false if tree could not be approximated to a defined value.
+  static bool CanApproximate(const Tree* tree, bool approxLocalVar = false);
+
   /* If collapse is true, approximate parents if all children have approximated.
    * Also raise if result is undefined. */
   static bool ApproximateAndReplaceEveryScalar(

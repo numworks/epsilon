@@ -94,29 +94,19 @@ bool RemoveDefinedDependencies(Tree* dep) {
   int i = 0;
   const Tree* depI = set->nextNode();
   while (i < totalNumberOfDependencies) {
-    Tree* approximation;
-
-    bool hasSymbolsOrRandom = depI->hasDescendantSatisfying([](const Tree* t) {
-      return t->isUserNamed() || t->isVar() || t->isRandom();
-    });
-    if (hasSymbolsOrRandom) {
-      /* If the dependency involves unresolved symbol/function/sequence, the
-       * approximation of the dependency could be undef while the whole
-       * expression is not. We just approximate everything but the symbol in
-       * case the other parts of the expression make it undef/nonreal. */
-      approximation = depI->clone();
-      Approximation::ApproximateAndReplaceEveryScalar(approximation);
-    } else {
-      // TODO_PCJ
-      approximation = Approximation::RootTreeToTree<double>(
-          depI, AngleUnit::Radian, ComplexFormat::Real);
-    }
+    Tree* approximation = depI->clone();
+    // TODO_PCJ: Ensure the default Radian/Cartesian context is good enough.
+    Approximation::ApproximateAndReplaceEveryScalar(approximation);
     if (approximation->isUndefined()) {
       dep->moveTreeOverTree(approximation);
       return true;
     }
+
+    bool canBeApproximated = Approximation::CanApproximate(approximation);
+    /* TODO: depI could be replaced with approximation anyway, but we need the
+     * exact dependency for ContainsSameDependency, used later one. */
     approximation->removeTree();
-    if (!hasSymbolsOrRandom) {
+    if (canBeApproximated) {
       changed = true;
       NAry::RemoveChildAtIndex(set, i);
       totalNumberOfDependencies--;

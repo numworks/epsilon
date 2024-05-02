@@ -165,17 +165,18 @@ ComplexSign Ln(ComplexSign s) {
 }
 
 ComplexSign ArcTangentRad(ComplexSign s) {
-  Sign realSign = s.realSign();
-  if (!realSign.canBeNull()) {
-    return s;
+  /* - the sign of im(actan(z)) is always the same as im(z)
+   * - the sign of re(actan(z)) is always the same as re(z) except when
+       z=i*y: re(atan(i*y)) = {-π/2 if y<-1, 0 if -1<y<1, and π/2 if y>1} */
+  Sign realSign = RelaxIntegerProperty(s.realSign());
+  Sign imagSign = RelaxIntegerProperty(s.imagSign());
+  if (realSign.canBeNull() && imagSign.canBeNonNull()) {
+    realSign = Sign(
+        true,
+        realSign.canBeStriclyPositive() || imagSign.canBeStriclyPositive(),
+        realSign.canBeStriclyNegative() || imagSign.canBeStriclyNegative());
   }
-  // re(atan(i*y) = { -π/2 if y < 1, 0 if y in ]-1, 1[ and π/2 if y > 1 }
-  Sign imagSign = s.imagSign();
-  return ComplexSign(
-      Sign(true,
-           realSign.canBeStriclyPositive() || imagSign.canBeStriclyPositive(),
-           realSign.canBeStriclyNegative() || imagSign.canBeStriclyNegative()),
-      imagSign);
+  return ComplexSign(realSign, imagSign);
 }
 
 ComplexSign ComplexArgument(ComplexSign s) {

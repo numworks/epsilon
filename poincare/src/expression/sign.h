@@ -35,9 +35,10 @@ class Sign {
   constexpr bool canBeStriclyPositive() const { return m_canBeStriclyPositive; }
   constexpr bool canBeStriclyNegative() const { return m_canBeStriclyNegative; }
   constexpr bool canBeNonInteger() const { return m_canBeNonInteger; }
-  constexpr bool isZero() const {
-    return !(m_canBeStriclyPositive || m_canBeStriclyNegative);
+  constexpr bool canBeNonNull() const {
+    return m_canBeStriclyPositive || m_canBeStriclyNegative;
   }
+  constexpr bool isZero() const { return !canBeNonNull(); }
   constexpr bool isStrictlyPositive() const {
     return !(m_canBeNull || m_canBeStriclyNegative);
   }

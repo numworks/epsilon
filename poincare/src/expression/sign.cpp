@@ -173,7 +173,7 @@ ComplexSign DecimalFunction(ComplexSign s, Type type) {
 }
 
 ComplexSign Trig(ComplexSign s, bool isSin) {
-  if (s.realSign().isZero()) {
+  if (s.isPureIm()) {
     return isSin ? ComplexSign(Sign::Zero(), RelaxIntegerProperty(s.imagSign()))
                  : ComplexSign::RealStrictlyPositive();
   }

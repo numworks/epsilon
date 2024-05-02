@@ -119,14 +119,10 @@ class ComplexSign {
   constexpr Sign imagSign() const { return Sign(m_imagValue); }
 
   constexpr bool isReal() const { return imagSign().isZero(); }
+  constexpr bool isPureIm() const { return realSign().isZero(); }
   constexpr bool isComplex() const { return !imagSign().canBeNull(); }
-  constexpr bool isZero() const {
-    return realSign().isZero() && imagSign().isZero();
-  }
-  // Is either zero, real or imaginary pure.
-  constexpr bool isPure() const {
-    return imagSign().isZero() || realSign().isZero();
-  }
+  constexpr bool isZero() const { return isReal() && isPureIm(); }
+  constexpr bool isPure() const { return isReal() || isPureIm(); }
   // Anything is possible
   constexpr bool isUnknown() const {
     return realSign().isUnknown() && imagSign().isUnknown();

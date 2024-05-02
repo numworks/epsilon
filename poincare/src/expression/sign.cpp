@@ -137,11 +137,31 @@ ComplexSign Exponential(ComplexSign s) {
 }
 
 ComplexSign Ln(ComplexSign s) {
-  bool lnIsReal = s.isReal() && s.realSign().isPositive();
-  return ComplexSign(Sign::Unknown(),
-                     lnIsReal ? Sign::Zero()
-                              : Sign(false, !s.imagSign().isStrictlyNegative(),
-                                     s.imagSign().canBeStriclyNegative()));
+  /* z = re^iθ
+   * re(ln(z)) = ln(r)
+   * im(ln(z)) = θ
+   * Complex sign take cartesian form as input so we can consider
+   * that the conversion to polar gives θ in ]-π,π], which assumes
+   * that sign(θ) = sign(im(z)) */
+  Sign imSign = Sign::Unknown();
+  if (s.isReal()) {
+    /* θ = 0 if z > 0
+     * θ = π if z < 0 */
+    imSign = Sign(s.realSign().canBeStriclyPositive(),
+                  s.realSign().canBeStriclyNegative(), false);
+  } else if (!s.imagSign().canBeNull()) {
+    /* θ ∈ ] 0,π[ if im(z) > 0
+     * θ ∈ ]-π,0[ if im(z) < 0 */
+    imSign = Sign(false, s.imagSign().canBeStriclyPositive(),
+                  s.imagSign().canBeStriclyNegative());
+  } else {
+    // Field-wise OR of the 2 previous cases
+    imSign = Sign(s.realSign().canBeStriclyPositive(),
+                  s.imagSign().canBeStriclyPositive() ||
+                      s.realSign().canBeStriclyNegative(),
+                  s.imagSign().canBeStriclyNegative());
+  }
+  return ComplexSign(Sign::Unknown(), imSign);
 }
 
 ComplexSign ArcTangentRad(ComplexSign s) {

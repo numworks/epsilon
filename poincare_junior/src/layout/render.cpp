@@ -619,6 +619,8 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
         base - subBase);
     ctx->fillRect(KDRect(p.translatedBy(start), size), selectionColor);
   }
+#if 0
+  // TODO_PCJ
   KDSize size = Size(node);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||
@@ -627,6 +629,7 @@ void Render::PrivateDraw(const Tree* node, KDContext* ctx, KDPoint p,
     showEmptyRack = hadShowEmptyRack;
     return;
   }
+#endif
   KDColor childBackground = backgroundColor;
   RenderNode(node, ctx, p, expressionColor, backgroundColor);
   if (node->isRackLayout()) {

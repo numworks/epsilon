@@ -227,12 +227,11 @@ bool RemoveUselessDependencies(Tree* dep) {
 
 bool Dependency::DeepRemoveUselessDependencies(Tree* expr) {
   bool changed = false;
-  if (expr->isDependency()) {
-    RemoveUselessDependencies(expr);
-    return true;
-  }
   for (Tree* child : expr->children()) {
     changed |= DeepRemoveUselessDependencies(child);
+  }
+  if (expr->isDependency()) {
+    changed |= RemoveUselessDependencies(expr);
   }
   return changed;
 }

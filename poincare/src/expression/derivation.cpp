@@ -67,7 +67,6 @@ bool Derivation::ShallowSimplify(Tree* node) {
     Variables::LeaveScopeWithReplacement(constDerivand->clone(), symbolValue,
                                          false);
     derivand->cloneNodeAtNode(KDep);
-    Dependency::RemoveDefinedDependencies(derivand);
   }
 
   node->moveTreeOverTree(derivand);

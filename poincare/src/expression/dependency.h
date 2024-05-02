@@ -6,7 +6,6 @@
 namespace Poincare::Internal {
 
 struct Dependency {
-  static bool RemoveDefinedDependencies(Tree* expr);
   static bool ShallowBubbleUpDependencies(Tree* expr);
   static bool DeepRemoveUselessDependencies(Tree* expr);
 };

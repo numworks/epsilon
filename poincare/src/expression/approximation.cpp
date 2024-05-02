@@ -17,9 +17,11 @@
 #include "float.h"
 #include "list.h"
 #include "matrix.h"
+#include "physical_constant.h"
 #include "random.h"
 #include "rational.h"
 #include "undefined.h"
+#include "unit.h"
 #include "variables.h"
 #include "vector.h"
 
@@ -698,6 +700,12 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       // None of the dependencies are NAN.
       return ToComplex<T>(node->child(0));
     }
+    /* At this point, the overall expression is expected to be Scalar, but it
+     * could be 1_m/1_ft. Approximating to ratios is enough. */
+    case Type::Unit:
+      return Units::Unit::GetRepresentative(node)->ratio();
+    case Type::PhysicalConstant:
+      return PhysicalConstant::GetProperties(node).m_value;
     default:;
   }
   // The remaining operators are defined only on reals
@@ -1136,16 +1144,10 @@ U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
   return res;
 }
 
-bool CanShallowApproximate(const Tree* tree, bool approxLocalVar) {
-  if (tree->isVar() && Variables::Id(tree) == Parametric::k_localVariableId) {
-    return approxLocalVar;
-  }
-  return !(tree->isRandomNode() || tree->isUserNamed() || tree->isUnit() ||
-           tree->isPhysicalConstant());
-}
-
-bool CanDeepApproximate(const Tree* tree, bool approxLocalVar = false) {
-  if (!CanShallowApproximate(tree, approxLocalVar)) {
+bool CanApproximate(const Tree* tree, bool approxLocalVar = false) {
+  if (tree->isRandomNode() || tree->isUserNamed() ||
+      (!approxLocalVar && tree->isVar() &&
+       Variables::Id(tree) == Parametric::k_localVariableId)) {
     return false;
   }
   int childIndex = 0;
@@ -1162,7 +1164,7 @@ bool CanDeepApproximate(const Tree* tree, bool approxLocalVar = false) {
         approxLocalVarInChild = true;
       }
     }
-    if (!CanDeepApproximate(child, approxLocalVarInChild)) {
+    if (!CanApproximate(child, approxLocalVarInChild)) {
       return false;
     }
     childIndex++;
@@ -1209,7 +1211,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
   s_context = &context;
   uint32_t hash = tree->hash();
   bool result = false;
-  if (CanDeepApproximate(tree) && IsNonListScalar(tree)) {
+  if (CanApproximate(tree) && IsNonListScalar(tree)) {
     tree->moveTreeOverTree(ToTree<double>(tree, Dimension()));
     result = true;
   } else {
@@ -1223,14 +1225,14 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
 }
 
 bool Approximation::PrivateApproximateAndReplaceEveryScalar(Tree* tree) {
-  assert(!CanDeepApproximate(tree) || !IsNonListScalar(tree));
+  assert(!CanApproximate(tree) || !IsNonListScalar(tree));
   bool changed = false;
   int childIndex = 0;
   for (Tree* child : tree->children()) {
     if (SkipApproximation(child->type(), tree->type(), childIndex++)) {
       continue;
     }
-    if (CanDeepApproximate(child) && IsNonListScalar(child)) {
+    if (CanApproximate(child) && IsNonListScalar(child)) {
       child->moveTreeOverTree(ToTree<double>(child, Dimension()));
       changed = true;
     } else {

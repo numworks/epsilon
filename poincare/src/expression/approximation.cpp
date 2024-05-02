@@ -1141,7 +1141,8 @@ bool CanShallowApproximate(const Tree* tree, bool approxLocalVar) {
   if (tree->isVar() && Variables::Id(tree) == Parametric::k_localVariableId) {
     return approxLocalVar;
   }
-  return !(tree->isRandomNode() || tree->isUserNamed());
+  return !(tree->isRandomNode() || tree->isUserNamed() || tree->isUnit() ||
+           tree->isPhysicalConstant());
 }
 
 bool CanDeepApproximate(const Tree* tree, bool approxLocalVar = false) {

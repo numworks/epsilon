@@ -120,14 +120,14 @@ ComplexSign Abs(ComplexSign s) {
 }
 
 ComplexSign ArcCosine(ComplexSign s) {
-  return ComplexSign(Sign(s.realSign().canBeStriclyPositive(), true, false),
-                     Sign(s.imagSign().canBeNull(),
-                          s.imagSign().canBeStriclyNegative() ||
-                              (s.imagSign().canBeNull() &&
-                               s.realSign().canBeStriclyPositive()),
-                          s.imagSign().canBeStriclyPositive() ||
-                              (s.imagSign().canBeNull() &&
-                               s.realSign().canBeStriclyNegative())));
+  Sign re = s.realSign();
+  Sign im = s.imagSign();
+  return ComplexSign(Sign(re.canBeStriclyPositive(), true, false),
+                     Sign(im.canBeNull(),
+                          im.canBeStriclyNegative() ||
+                              (im.canBeNull() && re.canBeStriclyPositive()),
+                          im.canBeStriclyPositive() ||
+                              (im.canBeNull() && re.canBeStriclyNegative())));
 }
 
 ComplexSign Exponential(ComplexSign s) {

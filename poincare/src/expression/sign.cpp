@@ -157,9 +157,8 @@ ComplexSign ArcTangent(ComplexSign s) {
 }
 
 ComplexSign Exponential(ComplexSign s) {
-  bool childIsReal = s.isReal();
-  return childIsReal ? ComplexSign::RealStrictlyPositive()
-                     : ComplexSign::Unknown();
+  return s.isReal() ? ComplexSign::RealStrictlyPositive()
+                    : ComplexSign::Unknown();
 }
 
 ComplexSign Ln(ComplexSign s) {

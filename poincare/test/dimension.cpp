@@ -48,6 +48,7 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("sequence(k,k,3)", Scalar));
 
   QUIZ_ASSERT(dim("True and False", Boolean));
+  QUIZ_ASSERT(dim("True or (False xor True)", Boolean));
   QUIZ_ASSERT(!dim("0 and False"));
   QUIZ_ASSERT(dim("0 < 3 and False", Boolean));
 

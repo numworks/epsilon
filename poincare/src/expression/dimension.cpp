@@ -145,7 +145,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       }
       hasUnitChild = true;
     }
-    if (!t->isPiecewise() &&
+    if (!t->isPiecewise() && !t->isParenthesis() &&
         childDim[i].isBoolean() != t->isLogicalOperatorOrBoolean()) {
       /* Only booleans operators can have boolean child yet. */
       return false;

@@ -326,12 +326,6 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return DecimalFunction(Get(t->firstChild()), t->type());
     case Type::PercentSimple:
       return RelaxIntegerProperty(Get(t->firstChild()));
-    case Type::Distribution:
-      return ComplexSign(
-          DistributionMethod::Get(t) != DistributionMethod::Type::Inverse
-              ? Sign::Positive()
-              : Sign::Unknown(),
-          Sign::Zero());
     case Type::MixedFraction:
       return Add(Get(t->firstChild()), Get(t->child(1)));
 #endif

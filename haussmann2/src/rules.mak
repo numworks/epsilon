@@ -21,6 +21,7 @@ $(eval $(call document_extension,$(EXECUTABLE_EXTENSION)))
 
 # Rules for modules as static libraries
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
+	$(QUIET) $(call check_locks,$(call name_for_flavored_target,$*))
 	$(QUIET) echo "AR\t$@"
 	$(QUIET) $(AR) $(ARFLAGS) $@ $^
 

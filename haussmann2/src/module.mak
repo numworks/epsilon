@@ -56,6 +56,7 @@ define import_module
 $(call _assert_valid_module_name,$1)
 PATH_$1 := $2
 -include $2/Makefile
+-include $2/locks.mak
 
 endef
 

@@ -52,8 +52,7 @@ class AdvancedSimplification {
    public:
     constexpr static uint8_t k_numberOfBaseDirections = 3;
     // Return true if direction was applied.
-    bool apply(Tree** u, Tree* root, bool* rootChanged,
-               bool keepDependencies) const;
+    bool apply(Tree** u, Tree* root, bool* rootChanged) const;
     // Return true if can apply direction.
     bool canApply(const Tree* u, const Tree* root) const;
     // Constructor needed for Path::m_stack
@@ -94,7 +93,7 @@ class AdvancedSimplification {
    public:
     Path() : m_length(0) {}
     // Return true if tree has changed. Path is expected to be valid on root.
-    bool apply(Tree* root, bool keepDependencies) const;
+    bool apply(Tree* root) const;
     // Pop NextNode directions one at a time.
     void popBaseDirection();
     // Return if any base direction can be added.

@@ -24,13 +24,14 @@ will be provided by the application.
 
 Modules are thematically appropriate sections of code. They are characterized by
 the following variables:
+- `VERSION_<name>`: The version of the module.
 - `SOURCES_<name>`: The list of all sources, in varying formats, that form the module.
 - `PRIVATE_SFLAGS_<name>`: A list of compilation flags that are only provided when building that module's objects.
 - `SFLAGS_<name>` and `LDFLAGS_<name>`: Compilation and link flags added to all objects built along with that module.
 
-A simple module can be defined with the following syntax:
+A simple module named "example_module" in version 3 can be defined with the following syntax:
 ```
-$(eval $(call create_module,example_module,\
+$(eval $(call create_module,example_module,3,\
   first_source.c\
   directory/second_source.cpp\
   tasteful_source.cpp:+good_taste:-bad_taste\
@@ -100,7 +101,7 @@ SomeLib
 │           $(eval $(call import_module,some_other_lib,SomeOtherLib))
 │           $(eval $(call create_goal,test_runner,some_lib some_other_lib))
 └── Makefile
-    └── $(eval $(call create_module,some_lib,\
+    └── $(eval $(call create_module,some_lib,2,\
           core.c\
           dangerous.c:+unsafe\
           safe.c:-unsafe\

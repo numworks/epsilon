@@ -6,6 +6,7 @@
 # the flavor syntax.
 #
 # A module should define these variables in a Makefile at its root:
+# - VERSION_<module>: the version of the module
 # - SOURCES_<module>: the list of source files for this module, with optional
 #   tastes
 # - SFLAGS_<module>: compilation flags for users of this module; it should at
@@ -20,7 +21,7 @@
 # - PATH_<module>: the location of the module in the user application
 #
 # Inside a module, use:
-#   create_module, <name>, <sources>
+#   create_module, <name>, <version>, <sources>
 # This will create the SOURCES_<...> variable, and a SFLAGS_<...> variable with
 # only the -I flag to the module API.
 # The files in SOURCES_<...> can be suffixed with tastes (e.g. a.cpp:+b) that
@@ -34,11 +35,13 @@
 
 # Public API
 
-# create_module, <name>, <sources>
+# create_module, <name>, <version>, <sources>
 define create_module
 $(call _assert_valid_module_name,$1)
+$(call _assert_valid_version,$2)
 $(call assert_defined,PATH_$1)
-SOURCES_$1 = $(addprefix $$(PATH_$1)/,$(strip $2))
+VERSION_$1 := $2
+SOURCES_$1 = $(addprefix $$(PATH_$1)/,$(strip $3))
 SFLAGS_$1 = -I$$(PATH_$1)/include
 
 $(OUTPUT_DIRECTORY)/$1%a: SFLAGS += $$(PRIVATE_SFLAGS_$1)
@@ -71,4 +74,9 @@ endef
 define _assert_valid_module_name
 $(if $(shell [[ "$1" =~ [^a-z0-9_] ]] && echo error),\
 	$(error "Error: module name should only contain lowercase letters, digits, and underscores"),)
+endef
+
+define _assert_valid_version
+$(if $(shell [[ "$1" =~ ^[0-9]+$$ ]] || echo error),\
+	$(error "Error: version should be an integer"),)
 endef

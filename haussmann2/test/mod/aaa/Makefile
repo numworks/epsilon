@@ -1,4 +1,4 @@
-$(eval $(call create_module,aaa,\
+$(eval $(call create_module,aaa,1,\
 	a1.cpp:-alternate\
 	a2.cpp:+alternate\
 	forbidden.cpp:+forbidden\

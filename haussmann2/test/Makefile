@@ -10,7 +10,7 @@ include $(PATH_haussmann)/Makefile
 $(eval $(call import_module,aaa,mod/aaa))
 
 $(eval $(call import_module,main,mod))
-$(eval $(call create_module,main,\
+$(eval $(call create_module,main,1,\
 	dummy.cpp:-do_something\
 	main.cpp:+do_something\
 ))

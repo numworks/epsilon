@@ -87,10 +87,9 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
   if (bubbleUpDependency && Dependency::ShallowBubbleUpDependencies(u)) {
     changed = true;
     assert(u->isDependency());
-    /* u->child(0) may now be reduced again. Another dependency may arise and
-     * needs to be merged with u. */
-    ShallowSystematicReduce(u->child(0)) && u->child(0)->isDependency() &&
-        Dependency::ShallowBubbleUpDependencies(u);
+    /* u->child(0) may now be reduced again. This could unlock further
+     * simplifications. */
+    ShallowSystematicReduce(u->child(0)) && ShallowSystematicReduce(u);
   }
   return changed;
 }
@@ -906,7 +905,9 @@ bool Simplification::ExtractUnits(Tree* e,
 
 bool Simplification::SimplifyProjectedTree(Tree* e) {
   bool changed = DeepSystematicReduce(e);
+  // assert(!DeepSystematicReduce(e));
   changed = List::BubbleUp(e, ShallowSystematicReduce) || changed;
+  // assert(!DeepSystematicReduce(e));
   changed = AdvancedSimplification::AdvancedReduce(e) || changed;
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }

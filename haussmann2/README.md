@@ -30,15 +30,15 @@ the following variables:
 
 A simple module can be defined with the following syntax:
 ```
-$(eval $(call create_module,module_name,\
+$(eval $(call create_module,example_module,\
   first_source.c\
   directory/second_source.cpp\
   tasteful_source.cpp:+good_taste:-bad_taste\
 ))
 ```
 
-This will take care of initializing `SOURCES_module_name` with the given files,
-and `SFLAGS_module_name` with the `-I` flag for this module's `include` directory.
+This will take care of initializing `SOURCES_example_module` with the given files,
+and `SFLAGS_example_module` with the `-I` flag for this module's `include` directory.
 
 _Tastes_ modify the sources that are built depending on the _flavors_ passed to
 the module at compilation.

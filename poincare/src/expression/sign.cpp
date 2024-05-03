@@ -143,6 +143,19 @@ ComplexSign ArcSine(ComplexSign s) {
   return ComplexSign(realSign, imagSign);
 }
 
+ComplexSign ArcTangent(ComplexSign s) {
+  /* - the sign of im(actan(z)) is always the same as im(z)
+   * - the sign of re(actan(z)) is always the same as re(z) except when im(z)!=0
+       z=i*y: re(atan(i*y)) = {-π/2 if y<-1, 0 if -1<y<1, and π/2 if y>1} */
+  Sign realSign = RelaxIntegerProperty(s.realSign());
+  Sign imagSign = RelaxIntegerProperty(s.imagSign());
+  if (realSign.canBeNull() && imagSign.canBeNonNull()) {
+    realSign = realSign || Sign(true, imagSign.canBeStriclyPositive(),
+                                imagSign.canBeStriclyNegative());
+  }
+  return ComplexSign(realSign, imagSign);
+}
+
 ComplexSign Exponential(ComplexSign s) {
   bool childIsReal = s.isReal();
   return childIsReal ? ComplexSign::RealStrictlyPositive()
@@ -175,19 +188,6 @@ ComplexSign Ln(ComplexSign s) {
                   s.imagSign().canBeStriclyNegative());
   }
   return ComplexSign(Sign::Unknown(), imSign);
-}
-
-ComplexSign ArcTangentRad(ComplexSign s) {
-  /* - the sign of im(actan(z)) is always the same as im(z)
-   * - the sign of re(actan(z)) is always the same as re(z) except when
-       z=i*y: re(atan(i*y)) = {-π/2 if y<-1, 0 if -1<y<1, and π/2 if y>1} */
-  Sign realSign = RelaxIntegerProperty(s.realSign());
-  Sign imagSign = RelaxIntegerProperty(s.imagSign());
-  if (realSign.canBeNull() && imagSign.canBeNonNull()) {
-    realSign = realSign || Sign(true, imagSign.canBeStriclyPositive(),
-                                imagSign.canBeStriclyNegative());
-  }
-  return ComplexSign(realSign, imagSign);
 }
 
 ComplexSign ComplexArgument(ComplexSign s) {
@@ -301,7 +301,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       assert(t->child(1)->isOne() || t->child(1)->isZero());
       return Trig(Get(t->firstChild()), t->child(1)->isOne());
     case Type::ATanRad:
-      return ArcTangentRad(Get(t->firstChild()));
+      return ArcTangent(Get(t->firstChild()));
     case Type::Arg:
       return ComplexArgument(Get(t->firstChild()));
     case Type::Dependency:
@@ -310,13 +310,12 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return Symbol::GetComplexSign(t);
 #if 0
     // Activate these cases if necessary
+    case Type::ACos:
+      return ArcCosine(Get(t->firstChild()));
     case Type::ASin:
       return ArcSine(Get(t->firstChild()));
     case Type::ATan:
-      // Both real and imaginary part keep the same sign
-      return RelaxIntegerProperty(Get(t->firstChild()));
-    case Type::ACos:
-      return ArcCosine(Get(t->firstChild()));
+      return ArcTangent(Get(t->firstChild()));
     case Type::Fact:
       assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());
       return RealStrictlyPositiveInteger();

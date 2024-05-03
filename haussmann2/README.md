@@ -16,7 +16,7 @@ In your makefiles, define the following variables:
 
 Additionally, a `VERBOSE` variable can be set to 1 to make a verbose build.
 
-Repository that are not applications but shared libraries should not include
+Repositories that are not applications but shared libraries should not include
 this repository directly in their primary makefiles, only in their tests, as it
 will be provided by the application.
 
@@ -74,7 +74,7 @@ platforms `goal_name.elf`) composed of objects for the specified modules, along
 with any platform-specific rules.
 
 Goals can be invoked with additional _flavors_ (e.g. `goal_name.alternate.elf`).
-Those are passed to modules, along with any flavors imposed when creating the
+Those are passed to modules, along with any flavor imposed when creating the
 goal, to be compared against the sources' tastes.
 
 e.g. When building `goal_name.alternate.elf`, `first_module` will be compiled

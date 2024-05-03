@@ -33,5 +33,9 @@ $(OUTPUT_DIRECTORY)/%.o: %.cpp | $$(@D)/.
 	$(QUIET) echo "CXX\t$@"
 	$(QUIET) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
+# Lock files, ensure that modules versions match
+%.lock:
+	$(call lockfile_recipe,$*)
+
 # Platform-specific rules
 -include $(PATH_haussmann)/src/rules.$(PLATFORM).mak

@@ -25,6 +25,7 @@ include $(PATH_haussmann)/src/toolchain.mak
 
 include $(PATH_haussmann)/src/helpers.mak
 include $(PATH_haussmann)/src/flavor.mak
+include $(PATH_haussmann)/src/lock.mak
 
 include $(PATH_haussmann)/src/goal.mak
 include $(PATH_haussmann)/src/module.mak

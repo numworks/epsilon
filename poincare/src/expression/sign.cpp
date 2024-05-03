@@ -317,7 +317,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::ATan:
       return ArcTangent(Get(t->firstChild()));
     case Type::Fact:
-      assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());
+      assert(Get(t->firstChild()) == ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
       return RealStrictlyPositiveInteger();
     case Type::Ceil:
     case Type::Floor:
@@ -333,7 +333,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
               : Sign::Unknown(),
           Sign::Zero());
     case Type::MixedFraction:
-      return Get(t->firstChild());
+      return Add(Get(t->firstChild()), Get(t->child(1)));
 #endif
     default:
       return Unknown();

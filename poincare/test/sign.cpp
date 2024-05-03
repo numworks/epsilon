@@ -291,9 +291,6 @@ QUIZ_CASE(pcj_sign) {
               ComplexSign(Sign::StrictlyPositive(), Sign::Zero()));
   assert_sign("(abs(x)+i)*abs(abs(x)-i)",
               ComplexSign(Sign::Positive(), Sign::StrictlyPositive()));
-  assert_sign("(5+i)^3",
-              ComplexSign(Sign::NonNullInteger(), Sign::NonNullInteger()));
-  assert_sign("(5-i)^(-1)", ComplexSign(Sign::NonNull(), Sign::NonNull()));
   assert_sign("e^(0.5*ln(12))+i*re(ln(2+i))",
               ComplexSign(Sign::StrictlyPositive(), Sign::Unknown()));
   assert_sign("re(abs(x)-i)+i*arg(2+i)",
@@ -321,4 +318,9 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("ln(4-i)",
               ComplexSign(Sign::Unknown(), Sign::StrictlyNegative()));
   assert_sign("ln(ln(x)i)", ComplexSign::Unknown());
+
+  // power
+  assert_sign("(1+i)^4", ComplexSign(Sign::Integer(), Sign::Integer()));
+  assert_sign("(5+i)^3", ComplexSign(Sign::Integer(), Sign::Integer()));
+  assert_sign("(5-i)^(-1)", ComplexSign(Sign::Unknown(), Sign::Unknown()));
 }

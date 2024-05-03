@@ -244,7 +244,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
     return ComplexSign(Sign(canBeNull, true, !isPositive, canBeNonInteger),
                        Sign::Zero());
   }
-  Sign sign = Sign(canBeNull, true, true, canBeNonInteger);
+  Sign sign = Sign(true, true, true, canBeNonInteger);
   return ComplexSign(sign, sign);
 }
 

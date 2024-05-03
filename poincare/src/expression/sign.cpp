@@ -295,11 +295,6 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return Get(t->firstChild());
     case Type::UserSymbol:
       return Symbol::GetComplexSign(t);
-    case Type::Ceil:
-    case Type::Floor:
-    case Type::Frac:
-    case Type::Round:
-      return DecimalFunction(Get(t->firstChild()), t->type());
 #if 0
     // Activate these cases if necessary
     case Type::ASin:
@@ -311,6 +306,11 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::Fact:
       assert(Get(t->firstChild()).isReal() && !Get(t->firstChild()).canBeNonInteger());
       return RealStrictlyPositiveInteger();
+    case Type::Ceil:
+    case Type::Floor:
+    case Type::Frac:
+    case Type::Round:
+      return DecimalFunction(Get(t->firstChild()), t->type());
     case Type::PercentSimple:
       return RelaxIntegerProperty(Get(t->firstChild()));
     case Type::Distribution:

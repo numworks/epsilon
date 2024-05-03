@@ -1,7 +1,7 @@
 # Main compilation rules
 
 # Load source-based dependencies.
-# When compiling a source file, the compiler can emit makefile fragements
+# When compiling a source file, the compiler can emit makefile fragments
 # adding prerequisites on headers included. This enables recompilation of a
 # source file when the headers change.
 -include $(shell find $(OUTPUT_DIRECTORY) -name '*.d' 2>/dev/null)

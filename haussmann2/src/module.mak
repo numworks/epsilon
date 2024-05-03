@@ -8,11 +8,11 @@
 # A module should define these variables in a Makefile at its root:
 # - SOURCES_<module>: the list of source files for this module, with optional
 #   tastes
-# - SFLAGS_<module>: compilation flags for users of this module ; it should at
+# - SFLAGS_<module>: compilation flags for users of this module; it should at
 #   least contain the -I flag to the module API
 # - PRIVATE_SFLAGS_<module>: compilation flags used when compiling the sources
 #   this module
-# - LDFLAGS_<module>: linker flags for users of this module ; for instance,
+# - LDFLAGS_<module>: linker flags for users of this module; for instance,
 #   libraries required by the module, or a custom linker script
 #
 # A module will expect the following variables to be defined prior to its

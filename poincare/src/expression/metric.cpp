@@ -3,6 +3,7 @@
 
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "dependency.h"
 #include "k_tree.h"
 
 namespace Poincare::Internal {
@@ -33,6 +34,7 @@ int Metric::GetMetric(const Tree* u) {
       break;
     }
     case Type::Dependency:
+      return result + GetMetric(Dependency::Main(u));
     case Type::Trig:
     case Type::ATrig:
       // Ignore second child

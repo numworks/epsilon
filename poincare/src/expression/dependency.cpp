@@ -15,10 +15,10 @@ namespace Poincare::Internal {
 
 bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   if (expr->isDependency()) {
-    if (!expr->child(0)->isDependency()) {
+    if (!Main(expr)->isDependency()) {
       return false;
     }
-    Set::Union(expr->child(0)->child(1), expr->child(1));
+    Set::Union(Dependencies(Main(expr)), Dependencies(expr));
     expr->removeNode();
     return true;
   }
@@ -27,16 +27,16 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
   for (Tree* exprChild : expr->children()) {
     if (exprChild->isDependency() &&
         !Undefined::CanHaveUndefinedChild(expr, i)) {
-      Tree* exprChildSet = exprChild->child(1);
+      Tree* exprChildSet = Dependencies(exprChild);
       if (expr->isParametric() && Parametric::FunctionIndex(expr) == i) {
         if (expr->isDiff() || expr->isNthDiff()) {
-          // diff(dep(x, {ln(x), z}), x, y) -> dep(diff(x, x, y), {ln(y), z})
+          // diff(dep({ln(x), z}, x), x, y) -> dep({ln(y), z}, diff(x, x, y))
           const Tree* symbolValue = expr->child(1);
           Variables::LeaveScopeWithReplacement(exprChildSet, symbolValue,
                                                false);
         } else {
-          /* sum(dep(k, {f(k), z}), k, 1, n) ->
-           *     dep(sum(k, k, 1, n), {sum(f(k), k, 1, n), z})
+          /* sum(dep({    f(k),           z},     k), k, 1, n) ->
+           *     dep({sum(f(k), k, 1, n), z}, sum(k,  k, 1, n))
            * TODO:
            * - Keeping the dependency in the parametric would be more optimal,
            *   but we would have to handle them along the simplification process
@@ -87,7 +87,7 @@ bool RemoveDefinedDependencies(Tree* dep) {
    * modified the list and it processes all the dependencies. We should rather
    * add an AddDependency method that makes sure the dependency is interesting
    * and not already covered by another one in the list. */
-  Tree* set = dep->child(1);
+  Tree* set = Dependency::Dependencies(dep);
 
   bool changed = false;
   int totalNumberOfDependencies = set->numberOfChildren();
@@ -141,8 +141,8 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
 }
 
 bool RemoveUselessDependencies(Tree* dep) {
-  const Tree* expression = dep->child(0);
-  Tree* set = dep->child(1);
+  const Tree* expression = Dependency::Main(dep);
+  Tree* set = Dependency::Dependencies(dep);
   // TODO: This function uses Set as an Nary which is an implementation detail
   assert(set->isSet());
   bool changed = false;

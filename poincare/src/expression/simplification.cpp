@@ -30,11 +30,11 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
    * here could save multiple ShallowSystematicReduce and flatten calls. */
   bool modified = (u->isMult() || u->isAdd()) && NAry::Flatten(u);
   for (Tree* child : u->children()) {
-    modified |= DeepSystematicReduce(child);
-    if (u->isDependency()) {
+    if (u->isDependency() && Dependency::Dependencies(u) == child) {
       // Skip systematic simplification of Dependencies.
-      break;
+      continue;
     }
+    modified |= DeepSystematicReduce(child);
   }
 #if ASSERTIONS
   TreeRef previousTree = u->clone();

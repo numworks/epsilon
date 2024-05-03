@@ -49,7 +49,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
        * Example: 3x is derivated to 0*x+3*1 because we use the u'v+uv' formula.
        * So a dependency is created on x (because of 0*x), but 3x is already a
        * dependency. */
-      derivative->moveTreeOverTree(derivative->child(0));
+      derivative->moveTreeOverTree(Dependency::Main(derivative));
     }
     if (derivative->isZero()) {
       currentDerivationOrder = 0;

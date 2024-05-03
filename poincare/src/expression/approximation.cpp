@@ -13,6 +13,7 @@
 #include "beautification.h"
 #include "context.h"
 #include "decimal.h"
+#include "dependency.h"
 #include "dimension.h"
 #include "float.h"
 #include "list.h"
@@ -692,13 +693,13 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     }
     case Type::Dependency: {
       std::complex<T> c = MapAndReduce<T, std::complex<T>>(
-          node->child(1), FloatDependency<std::complex<T>>);
+          Dependency::Dependencies(node), FloatDependency<std::complex<T>>);
       if (std::isnan(c.real())) {
         return NAN;
       }
       assert(!std::isnan(c.imag()));
       // None of the dependencies are NAN.
-      return ToComplex<T>(node->child(0));
+      return ToComplex<T>(Dependency::Main(node));
     }
     /* At this point, the overall expression is expected to be Scalar, but it
      * could be 1_m/1_ft. Approximating to ratios is enough. */

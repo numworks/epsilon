@@ -11,6 +11,7 @@
 #include <poincare/src/memory/type_block.h>
 
 #include "builtin.h"
+#include "dependency.h"
 #include "float.h"
 #include "integer.h"
 #include "matrix.h"
@@ -210,14 +211,14 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
             ToPoincareExpression(exp->child(2)));
       }
       case Type::Dependency: {
-        assert(exp->child(1)->isSet());
+        assert(Dependency::Dependencies(exp)->isSet());
         Poincare::OList listOfDependencies = Poincare::OList::Builder();
-        for (const Tree* child : exp->child(1)->children()) {
+        for (const Tree* child : Dependency::Dependencies(exp)->children()) {
           listOfDependencies.addChildAtIndexInPlace(ToPoincareExpression(child),
                                                     0, 0);
         }
         return Poincare::Dependency::Builder(
-            ToPoincareExpression(exp->child(0)), listOfDependencies);
+            ToPoincareExpression(Dependency::Main(exp)), listOfDependencies);
       }
       case Type::Piecewise: {
         Poincare::List arguments = Poincare::List::Builder();

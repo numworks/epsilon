@@ -1,6 +1,7 @@
 #include "dimension.h"
 
 #include "approximation.h"
+#include "dependency.h"
 #include "matrix.h"
 #include "parametric.h"
 #include "physical_constant.h"
@@ -394,6 +395,8 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Diff:
     case Type::NthDiff:
       return GetDimension(t->child(Parametric::FunctionIndex(t)));
+    case Type::Dependency:
+      return GetDimension(Dependency::Main(t));
     case Type::PowMatrix:
     case Type::PowReal:
     case Type::Pow: {
@@ -424,7 +427,6 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Rref:
     case Type::Piecewise:
     case Type::Parenthesis:
-    case Type::Dependency:
     case Type::ListElement:
     case Type::ListSort:
       return GetDimension(t->child(0));

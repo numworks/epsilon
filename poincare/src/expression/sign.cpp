@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "dependency.h"
 #include "dimension.h"
 #include "number.h"
 #include "symbol.h"
@@ -290,7 +291,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     case Type::Arg:
       return ComplexArgument(Get(t->firstChild()));
     case Type::Dependency:
-      return Get(t->firstChild());
+      return Get(Dependency::Main(t));
     case Type::UserSymbol:
       return Symbol::GetComplexSign(t);
 #if 0

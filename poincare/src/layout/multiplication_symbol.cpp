@@ -1,6 +1,7 @@
 #include "multiplication_symbol.h"
 
 #include <poincare/src/expression/builtin.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/unit.h>
 
 #include <algorithm>
@@ -105,7 +106,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
 
     case Type::Dependency:
       // should be assert false ?
-      return LeftLayoutShape(expr->child(0));
+      return LeftLayoutShape(Dependency::Main(expr));
 
     case Type::Diff:
       // why ? should be fraction ?
@@ -185,7 +186,7 @@ LayoutShape RightLayoutShape(const Tree* expr) {
     case Type::Dependency:
       // should be assert false ?
       // was not there
-      return RightLayoutShape(expr->child(0));
+      return RightLayoutShape(Dependency::Main(expr));
 
     case Type::Diff:
       return BoundaryPunctuation;

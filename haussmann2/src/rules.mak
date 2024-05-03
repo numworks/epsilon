@@ -38,5 +38,7 @@ $(OUTPUT_DIRECTORY)/%.o: %.cpp | $$(@D)/.
 %.lock:
 	$(call lockfile_recipe,$*)
 
+$(eval $(call document_extension,lock,Generate $(LOCKFILE_NAME) listing versions of modules used by the goal))
+
 # Platform-specific rules
 -include $(PATH_haussmann)/src/rules.$(PLATFORM).mak

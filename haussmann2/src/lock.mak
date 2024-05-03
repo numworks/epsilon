@@ -1,4 +1,4 @@
-_lockfile_name := locks.mak
+LOCKFILE_NAME := locks.mak
 
 # Private API
 
@@ -17,6 +17,6 @@ endef
 
 # _lockfile_recipe_helper, <flavorless goal>, <flavorless modules>
 define _lockfile_recipe_helper
-$(QUIET) echo 'LOCKS_$1 = $2' > $(_lockfile_name)
-$(QUIET) $(foreach m,$2,echo 'VERSION_$m_FOR_$1 = $(VERSION_$m)' >> $(_lockfile_name);)
+$(QUIET) echo 'LOCKS_$1 = $2' > $(LOCKFILE_NAME)
+$(QUIET) $(foreach m,$2,echo 'VERSION_$m_FOR_$1 = $(VERSION_$m)' >> $(LOCKFILE_NAME);)
 endef

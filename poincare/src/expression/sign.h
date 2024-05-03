@@ -23,7 +23,7 @@ class Sign {
         m_canBeNonInteger(canBeNonInteger &&
                           (canBeStriclyPositive || canBeStriclyNegative)) {
     // By ensuring its members can't be modified, a Sign is always valid.
-    assert(isValid());
+    assert(isValid() || isUndef());
   }
   constexpr Sign(uint8_t value)
       : Sign(OMG::BitHelper::getBitRange(value, 0, 0),
@@ -93,6 +93,7 @@ class Sign {
     return Sign(false, true, true, false);
   }
   constexpr static Sign Integer() { return Sign(true, true, true, false); }
+  constexpr static Sign Undef() { return Sign(false, false, false, false); }
 
   static Sign Get(const Tree* t);
 
@@ -104,6 +105,10 @@ class Sign {
   constexpr bool isValid() const {
     return m_canBeStriclyPositive || m_canBeStriclyNegative ||
            (m_canBeNull && !m_canBeNonInteger);
+  }
+  constexpr bool isUndef() const {
+    return !m_canBeNull && !m_canBeStriclyPositive && !m_canBeStriclyNegative &&
+           !m_canBeNonInteger;
   }
 
   bool m_canBeNull : 1;

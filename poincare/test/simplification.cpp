@@ -556,6 +556,7 @@ QUIZ_CASE(pcj_simplification_unit) {
 
 QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("0^(5+ln(5))", "0");
+  simplifies_to("[[x/x]]", "dep([[1]],{x^0})");
   simplifies_to("lcm(undef, 2+x/x)", "undef");
 
   Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KSet(0_e)), 4_e)->clone();

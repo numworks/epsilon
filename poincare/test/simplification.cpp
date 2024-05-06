@@ -318,7 +318,16 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(π^k, k, 2, 1)", "1");
   simplifies_to("product(cos(k), k, 2, 4)", "cos(2)×cos(3)×cos(4)");
   simplifies_to("product(sin(k), k, a, a)", "sin(a)");
+}
+
+QUIZ_CASE(pcj_simplification_factorial) {
   simplifies_to("0!", "1");
+  simplifies_to("4!", "24");
+  simplifies_to("(-4)!", "undef");
+  simplifies_to("(3/5)!", "undef");
+  simplifies_to("i!", "i!");
+  simplifies_to("n!", "n!");
+  // simplifies_to("(n+1)!/n!", "n+1"); TODO through parametric
 }
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
@@ -391,10 +400,8 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   // simplifies_to("ceil(x)", "ceil(x)"); // pb metric
   simplifies_to("ceil(-x)", "-floor(x)");
   simplifies_to("floor(x)+frac(x)", "x");
-  simplifies_to("4!", "24");
   simplifies_to("permute(4,2)", "12");
   simplifies_to("binomial(4,2)", "6");
-  // simplifies_to("(n+1)!/n!", "n+1");
   simplifies_to("1 2/3", "5/3");
   simplifies_to("-1 2/3", "-5/3");
 }

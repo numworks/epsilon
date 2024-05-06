@@ -62,10 +62,13 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   if (!sign.isReal()) {
     return false;
   }
+
+  // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1
   if (sign.realSign().isStrictlyPositive()) {
     expr->cloneTreeOverTree(isSum ? 0_e : 1_e);
     return true;
   }
+
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
   if (PatternMatching::MatchReplaceSimplify(
           expr, KSum(KA, KB, KC, KVarK),
@@ -73,6 +76,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
                                 KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
     return true;
   }
+
   // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
   if (PatternMatching::MatchReplaceSimplify(
           expr, KSum(KA, KB, KC, KPow(KVarK, 2_e)),
@@ -82,6 +86,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
                            KAdd(KMult(2_e, KB), -1_e)))))) {
     return true;
   }
+
   if (HasLocalRandom(expr)) {
     return false;
   }

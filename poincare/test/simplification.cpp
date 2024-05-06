@@ -214,8 +214,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
 
   simplifies_to("k*x*sum(y*x*k,k,1,2)", "3×x^2×k×y");
   simplifies_to("diff(3×x^2×k×y,x,k,2)", "dep(6×k×y,{k^2})");
-  simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)",
-                "dep(6×k×y,{sum(k^2×y,k,1,2)})");
+  simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "dep(6×k×y,{k^2})");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {
@@ -297,11 +296,14 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(n, k, 1, n)", "n^2");
   simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");
   simplifies_to("sum((2k)^2, k, 2, 5)", "216");
+  simplifies_to("sum((2k)^2, k, 0, n)", "(2×n×(n+1)×(2×n+1))/3");
+  simplifies_to("sum((2k)^4, k, 0, n)", "16×sum(k^4,k,0,n)");
   simplifies_to("sum(k^2, k, 2, 5)", "54");
   simplifies_to("2×sum(k, k, 0, n)+n", "n×(n+2)");
   simplifies_to("2×sum(k, k, 3, n)+n", "n^2+2×n-6");
   simplifies_to("sum(x*k!, k, 1, 2)", "3*x");
-  simplifies_to("sum(sum(x*j, j, 1, n), k, 1, 2)", "2 * sum(j*x, j, 1, n)");
+  simplifies_to("sum(sum(x*j, j, 1, n), k, 1, 2)", "n×(n+1)×x");
+  simplifies_to("sum(sum(a*k, a, 0, m), k, 1, n)", "(m×(m+1)×n×(n+1))/4");
   simplifies_to("sum(π^k, k, 4, 2)", "0");
   simplifies_to("0!", "1");
 }

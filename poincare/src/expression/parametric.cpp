@@ -1,5 +1,6 @@
 #include "parametric.h"
 
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "comparison.h"
@@ -53,10 +54,7 @@ ComplexSign Parametric::VariableSign(const Tree* t) {
 }
 
 bool Parametric::SimplifySumOrProduct(Tree* expr) {
-  /* TODO:
-   * - Distribute multiplicative constant : sum(a*f(k),k,m,n) ->
-   *                                        a*(n-m)*sum(f(k),k,m,n)
-   */
+  assert(expr->isSum() || expr->isProduct());
   bool isSum = expr->isSum();
   Tree* lowerBound = expr->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
@@ -84,13 +82,54 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
                            KAdd(KMult(2_e, KB), -1_e)))))) {
     return true;
   }
-  Tree* function = upperBound->nextTree();
-  if (Variables::HasVariable(function, k_localVariableId) ||
-      HasLocalRandom(expr)) {
+  if (HasLocalRandom(expr)) {
     return false;
   }
+
+  Tree* function = upperBound->nextTree();
+  bool functionDependsOnK = Variables::HasVariable(function, k_localVariableId);
+
+  // sum(a*f(k),k,m,n) = a*sum(f(k),k,m,n)
+  if (isSum && function->isMult() && functionDependsOnK) {
+    TreeRef a(SharedTreeStack->push<Type::Mult>(0));
+    const int nbChildren = function->numberOfChildren();
+    int nbChildrenRemoved = 0;
+    Tree* child = function->firstChild();
+    for (int i = 0; i < nbChildren; i++) {
+      if (!Variables::HasVariable(child, k_localVariableId)) {
+        int realI = i - nbChildrenRemoved;
+        Tree* t = NAry::DetachChildAtIndex(function, realI);
+        NAry::AddChild(a, t);
+        Variables::LeaveScope(t);
+        nbChildrenRemoved++;
+      } else if (i < nbChildren - 1) {
+        child = child->nextTree();
+      }
+    }
+    if (a->numberOfChildren() == 0) {
+      return false;
+    }
+    assert(function->numberOfChildren() > 0);  // Because functionDependsOnK
+    if (function->numberOfChildren() == 1) {
+      // Shallow reduce to remove the Mult
+      Simplification::ShallowSystematicReduce(function);
+    }
+    // Shallow reduce the Sum
+    Simplification::ShallowSystematicReduce(expr);
+    // Add factor a before the Sum
+    expr->moveTreeBeforeNode(a);
+    // a is already a Mult, increase its number of children to include the Sum
+    NAry::SetNumberOfChildren(expr, expr->numberOfChildren() + 1);
+    // Shallow reduce a*Sum
+    Simplification::ShallowSystematicReduce(expr);
+    return true;
+  }
+
   // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
   // TODO: add ceil around bounds
+  if (functionDependsOnK) {
+    return false;
+  }
   constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
   Variables::LeaveScope(function);
   Tree* result = PatternMatching::CreateSimplify(

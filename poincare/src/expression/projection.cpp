@@ -8,6 +8,7 @@
 #include "decimal.h"
 #include "physical_constant.h"
 #include "symbol.h"
+#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -64,6 +65,8 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
   } else if (!definition) {
     return false;
   }
+  // Otherwise, local variable scope should be handled.
+  assert(!Variables::HasVariables(definition));
   // Replace function's symbol with definition
   TreeRef evaluateAt;
   if (treeIsUserFunction) {

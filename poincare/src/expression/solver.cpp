@@ -113,7 +113,7 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
 
   /* Beautify result */
   if (!result.isUninitialized()) {
-    Beautify(result, projectionContext);
+    Beautification::DeepBeautify(result, projectionContext);
   }
 
   return result;
@@ -123,25 +123,18 @@ void Solver::ProjectAndSimplify(Tree* equationsSet,
                                 ProjectionContext projectionContext,
                                 Error* error) {
   assert(*error == Error::NoError);
-  // TODO_PCJ: Factorize this with Simplification::Simplify
-  Simplification::PrepareForProjection(equationsSet, projectionContext);
-  Simplification::ExtractUnits(equationsSet, &projectionContext);
+  Simplification::ToSystem(equationsSet, &projectionContext);
   if (projectionContext.m_dimension.isUnit()) {
     *error = Error::EquationUndefined;
     return;
   }
-  Projection::DeepSystemProject(equationsSet, projectionContext);
-  Simplification::SimplifyProjectedTree(equationsSet);
-  Simplification::TryApproximationStrategyAgain(equationsSet,
-                                                projectionContext);
+  Simplification::SimplifySystem(equationsSet, true);
+  // Need to call Simplification::TryApproximationStrategyAgain otherwise.
+  assert(projectionContext.m_strategy == Strategy::Default);
   if (equationsSet->isUndefined()) {
     *error = equationsSet->isNonReal() ? Error::EquationNonreal
                                        : Error::EquationUndefined;
   }
-}
-
-void Solver::Beautify(Tree* equationsSet, ProjectionContext projectionContext) {
-  Beautification::DeepBeautify(equationsSet, projectionContext);
 }
 
 Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
@@ -289,8 +282,7 @@ Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
   solution->moveTreeBeforeNode(
       SharedTreeStack->push<Type::Var>(variableId, ComplexSign::Unknown()));
   solution->moveNodeBeforeNode(SharedTreeStack->push<Type::Add>(2));
-  Simplification::DeepSystematicReduce(solution);
-  AdvancedSimplification::AdvancedReduce(solution);
+  Simplification::SimplifySystem(solution, true);
   return Error::NoError;
 }
 

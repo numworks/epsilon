@@ -851,10 +851,9 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
         // Copy ProjectionContext to avoid altering the original
         ProjectionContext projectionContext =
             *static_cast<ProjectionContext*>(context);
-        PrepareForProjection(e, projectionContext);
-        ExtractUnits(e, &projectionContext);
-        Projection::DeepSystemProject(e, projectionContext);
-        SimplifyProjectedTree(e);
+        ToSystem(e, &projectionContext);
+        SimplifySystem(e, true);
+        // TODO: Should be in SimplifySystem but projectionContext is needed.
         TryApproximationStrategyAgain(e, projectionContext);
         Beautification::DeepBeautify(e, projectionContext);
       },
@@ -865,14 +864,14 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
   return true;
 }
 
-bool Simplification::PrepareForProjection(Tree* e,
-                                          ProjectionContext projectionContext) {
+bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
+  /* 1 - Prepare for projection */
   // Seed random nodes before anything is merged/duplicated.
   int maxRandomSeed = Random::SeedRandomNodes(e, 0);
   bool changed = maxRandomSeed > 0;
   // Replace functions and variable before dimension check
   changed = Variables::ProjectLocalVariablesToId(e) || changed;
-  if (Projection::DeepReplaceUserNamed(e, projectionContext)) {
+  if (Projection::DeepReplaceUserNamed(e, *projectionContext)) {
     // Seed random nodes that may have appeared after replacing.
     maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
     changed = true;
@@ -882,33 +881,30 @@ bool Simplification::PrepareForProjection(Tree* e,
     e->cloneTreeOverTree(KUndefUnhandledDimension);
     changed = true;
   }
-  return changed;
-}
-
-bool Simplification::ExtractUnits(Tree* e,
-                                  ProjectionContext* projectionContext) {
+  /* 2 - Extract units */
   if (e->isUnitConversion()) {
     // TODO_PCJ actually extract required unit for later beautification.
     e->moveTreeOverTree(e->child(0));
+    changed = true;
   }
   projectionContext->m_dimension = Dimension::GetDimension(e);
   if (ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
     projectionContext->m_strategy = Strategy::ApproximateToFloat;
   }
-  if (!projectionContext->m_dimension.hasNonKelvinTemperatureUnit()) {
-    return false;
+  if (projectionContext->m_dimension.hasNonKelvinTemperatureUnit()) {
+    // Convert the expression to Kelvin at root level.
+    Units::Unit::RemoveTemperatureUnit(e);
+    changed = true;
   }
-  // Convert the expression to Kelvin at root level.
-  Units::Unit::RemoveTemperatureUnit(e);
-  return true;
+  return Projection::DeepSystemProject(e, *projectionContext) || changed;
 }
 
-bool Simplification::SimplifyProjectedTree(Tree* e) {
+bool Simplification::SimplifySystem(Tree* e, bool advanced) {
   bool changed = DeepSystematicReduce(e);
-  // assert(!DeepSystematicReduce(e));
   changed = List::BubbleUp(e, ShallowSystematicReduce) || changed;
-  // assert(!DeepSystematicReduce(e));
-  changed = AdvancedSimplification::AdvancedReduce(e) || changed;
+  if (advanced) {
+    changed = AdvancedSimplification::AdvancedReduce(e) || changed;
+  }
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }
 

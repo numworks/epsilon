@@ -25,11 +25,9 @@ void Approximation::PrepareFunctionForApproximation(
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
   };
-  // TODO_PCJ: Factorize this with Simplification::Simplify
-  Simplification::PrepareForProjection(expr, projectionContext);
-  assert(!Simplification::ExtractUnits(expr, &projectionContext));
   Variables::ReplaceSymbol(expr, variable, 0, ComplexSign::RealUnknown());
-  Projection::DeepSystemProject(expr, projectionContext);
+  Simplification::ToSystem(expr, &projectionContext);
+  assert(!projectionContext.m_dimension.isUnit());
   // TODO: Simplification with NumbersToScalar if preparing function
   Tree::ApplyShallowInDepth(expr, &ShallowPrepareForApproximation);
   // TODO: factor common sub-expressions

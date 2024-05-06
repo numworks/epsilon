@@ -44,7 +44,6 @@ class Solver {
   static void ProjectAndSimplify(Tree* equationsSet,
                                  ProjectionContext projectionContext,
                                  Error* error);
-  static void Beautify(Tree* equationsSet, ProjectionContext projectionContext);
   // Return list of solutions for linear system.
   static Tree* SolveLinearSystem(const Tree* equationsSet,
                                  uint8_t numberOfVariables, Context context,

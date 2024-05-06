@@ -41,7 +41,3 @@ clean:
 	$(QUIET) rmdir -p $(OUTPUT_DIRECTORY) 2> /dev/null || :
 
 include $(PATH_haussmann)/src/docs.mak
-export HELP_STRING
-.PHONY: help
-help:
-	@ echo "$$HELP_STRING"

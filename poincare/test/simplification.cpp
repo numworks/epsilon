@@ -309,6 +309,10 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(x*k!, k, 1, 2)", "3*x");
 
   simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");
+  simplifies_to("product(p^3, k, m, n)", "p^(3×(-m+n+1))");
+  simplifies_to("product(k^3, k, m, n)", "product(k,k,m,n)^3");
+  simplifies_to("product(k^x, k, m, n)", "product(exp(x×ln(k)),k,m,n)");
+  simplifies_to("product(x^k, k, m, n)", "product(exp(k×ln(x)),k,m,n)");
   simplifies_to("product(π^k, k, 2, 1)", "1");
   simplifies_to("product(cos(k), k, 2, 4)", "cos(2)×cos(3)×cos(4)");
   simplifies_to("0!", "1");

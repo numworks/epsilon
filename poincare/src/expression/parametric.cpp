@@ -125,6 +125,21 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     return true;
   }
 
+  // prod(f(k)^a,k,m,n) = prod(f(k),k,m,n)^a
+  if (!isSum && function->isPow()) {
+    Tree* a = function->child(1);
+    assert(a->isInteger());
+    assert(!Variables::HasVariable(a, k_localVariableId));
+    Variables::LeaveScope(a);
+    // Move the node Pow before the Prod
+    expr->moveNodeBeforeNode(function);
+    // Shallow reduce the Prod
+    Simplification::ShallowSystematicReduce(expr->firstChild());
+    // Shallow reduce Prod^a
+    Simplification::ShallowSystematicReduce(expr);
+    return true;
+  }
+
   // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
   // TODO: add ceil around bounds
   if (functionDependsOnK) {

@@ -18,8 +18,8 @@ help:
 
 # Display dependencies tree of modules versions
 define _versions_string
-Goal $* uses modules:$(foreach m,$(MODULES_$(call name_for_flavored_target,$*)),\n$(call name_for_flavored_target,$m)@$(VERSION_$(call name_for_flavored_target,$m)) $(foreach n,$(LOCKS_$(call name_for_flavored_target,$m)),\n\
-$(_null) requires $n@$(VERSION_$n_FOR_$(call name_for_flavored_target,$m))))
+Goal \033[38;5;34m$*\033[0m uses modules:$(foreach m,$(MODULES_$(call name_for_flavored_target,$*)),\n\033[38;5;20m$(call name_for_flavored_target,$m)@$(VERSION_$(call name_for_flavored_target,$m))\033[0m $(foreach n,$(LOCKS_$(call name_for_flavored_target,$m)),\n\
+$(_null) requires \033[38;5;20m$n@$(VERSION_$n_FOR_$(call name_for_flavored_target,$m))\033[0m))
 endef
 
 export _versions_string

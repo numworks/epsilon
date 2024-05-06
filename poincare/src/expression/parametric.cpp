@@ -160,11 +160,11 @@ bool Parametric::ExpandProduct(Tree* expr) {
 }
 
 /* TODO:
- * - Try swapping sigmas
- * - Different children equal bounds
- * - Identical children where leftUpperBound + 1 = rightLowerBound
+ * - Try swapping sums (same with prods)
+ * - int(f(k),k,a,a) = 0
+ * - sum/prod(f(k),k,a,a) = f(a)
  * - Product from/to factorial
- * - Expand and contract distribution with exp/log
+ * - sum(ln(f(k))) = ln(prod(f(k))) and prod(exp(f(k))) = exp(sum(f(k)))
  * - Prod(A, B, C, D) / Prod(A, B, F, G) =
  *              Prod(A, B, C, min(F, D)) * Prod(A, B, max(C, G), D)
  *           / Prod(A, B, F, min(G, C)) * Prod(A, B, max(F, D), G)

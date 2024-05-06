@@ -84,18 +84,18 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
                            KAdd(KMult(2_e, KB), -1_e)))))) {
     return true;
   }
-  Tree* child = upperBound->nextTree();
-  if (Variables::HasVariable(child, k_localVariableId) ||
+  Tree* function = upperBound->nextTree();
+  if (Variables::HasVariable(function, k_localVariableId) ||
       HasLocalRandom(expr)) {
     return false;
   }
   // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
   // TODO: add ceil around bounds
   constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
-  Variables::LeaveScope(child);
+  Variables::LeaveScope(function);
   Tree* result = PatternMatching::CreateSimplify(
       isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
-      {.KA = upperBound, .KB = lowerBound, .KC = child});
+      {.KA = upperBound, .KB = lowerBound, .KC = function});
   expr->moveTreeOverTree(result);
   return true;
 }

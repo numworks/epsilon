@@ -25,3 +25,5 @@ endef
 export _versions_string
 %.versions:
 	@ echo "$$_versions_string"
+
+$(eval $(call document_extension,versions,List the goal's modules dependencies))

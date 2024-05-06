@@ -5,7 +5,7 @@
 
 namespace Poincare::Internal {
 
-bool Undefined::CanHaveUndefinedChild(Tree* e, int childIndex) {
+bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
   return e->isPoint() || e->isList() ||
          (e->isPiecewise() && childIndex % 2 == 0);
 }

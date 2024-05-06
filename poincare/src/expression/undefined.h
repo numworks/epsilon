@@ -10,7 +10,7 @@ class Tree;
 class Undefined {
  public:
   static bool ShallowBubbleUpUndef(Tree* e);
-  static bool CanHaveUndefinedChild(Tree* e, int childIndex);
+  static bool CanHaveUndefinedChild(const Tree* e, int childIndex);
 };
 
 }  // namespace Poincare::Internal

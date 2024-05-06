@@ -1,5 +1,7 @@
 #include "tree.h"
 
+#include <ion.h>
+
 #include "node_iterator.h"
 #include "tree_ref.h"
 
@@ -209,6 +211,10 @@ const Tree* Tree::nextNode() const {
   nextNodeCount++;
 #endif
   return Tree::FromBlocks(this + nodeSize());
+}
+
+uint32_t Tree::hash() const {
+  return Ion::crc32Byte(reinterpret_cast<const uint8_t*>(this), treeSize());
 }
 
 const Tree* Tree::commonAncestor(const Tree* child1, const Tree* child2) const {

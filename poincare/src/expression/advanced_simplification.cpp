@@ -1,6 +1,5 @@
 #include "advanced_simplification.h"
 
-#include <ion.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "dependency.h"
@@ -33,7 +32,7 @@ bool AdvancedSimplification::AdvancedReduce(Tree* origin) {
   Tree* editedExpression = u->clone();
   Context ctx(editedExpression, u, Metric::GetMetric(u));
   // Add initial root
-  ctx.m_crcCollection.add(CrcCollection::Hash(u), 0);
+  ctx.m_crcCollection.add(u->hash(), 0);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   std::cout << "\nAdvancedReduce\nInitial tree (" << ctx.m_bestMetric
             << ") is : ";
@@ -86,10 +85,6 @@ bool AdvancedSimplification::CrcCollection::add(uint32_t crc, uint8_t depth) {
   m_depth[m_length] = depth;
   m_collection[m_length++] = crc;
   return true;
-}
-
-uint32_t AdvancedSimplification::CrcCollection::Hash(const Tree* u) {
-  return Ion::crc32Byte(reinterpret_cast<const uint8_t*>(u), u->treeSize());
 }
 
 bool AdvancedSimplification::Direction::canApply(const Tree* u,
@@ -241,7 +236,7 @@ bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
       uint32_t hash;
       if (rootChanged) {
         // No need to recompute hash if root did not change.
-        hash = CrcCollection::Hash(ctx->m_root);
+        hash = ctx->m_root->hash();
       }
       /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
        * not go further. */

@@ -37,7 +37,6 @@ class AdvancedSimplification {
     // Return false if hash was already explored
     bool add(uint32_t crc, uint8_t depth);
     bool isFull() const { return m_length >= k_size; }
-    static uint32_t Hash(const Tree* tree);
 
    private:
     // Max Expand/Contract combination possibilities

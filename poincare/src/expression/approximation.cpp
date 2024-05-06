@@ -1,6 +1,5 @@
 #include "approximation.h"
 
-#include <ion.h>
 #include <math.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/node_iterator.h>
@@ -1208,8 +1207,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
     return false;
   }
   s_context = &context;
-  uint32_t hash =
-      Ion::crc32Byte(reinterpret_cast<const uint8_t*>(tree), tree->treeSize());
+  uint32_t hash = tree->hash();
   bool result = false;
   if (CanDeepApproximate(tree) && IsNonListScalar(tree)) {
     tree->moveTreeOverTree(ToTree<double>(tree, Dimension()));
@@ -1221,9 +1219,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
   /* TODO: We compare the CRC32 to prevent expressions such as 1.0+i*1.0 from
    * returning true at every call. We should detect and skip them in
    * SkipApproximation instead. */
-  return result &&
-         hash != Ion::crc32Byte(reinterpret_cast<const uint8_t*>(tree),
-                                tree->treeSize());
+  return result && hash != tree->hash();
 }
 
 template <typename T>

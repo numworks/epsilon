@@ -116,6 +116,8 @@ class Tree : public TypeBlock {
 
   // Sizes
   size_t treeSize() const { return nextTree()->block() - block(); }
+  // Return the CRC32 hash of the entire tree
+  uint32_t hash() const;
 
   // Tree Hierarchy
   const Tree* commonAncestor(const Tree* child1, const Tree* child2) const;

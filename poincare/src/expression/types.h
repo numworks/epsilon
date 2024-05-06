@@ -286,12 +286,11 @@ NODE(Empty)  // TODO_PCJ temporary
 
 // 10 - Undefined expressions
 /* When an expression has multiple undefined children, we bubble up the
- * "biggest" one by default (NonReal < UndefNotDefined).
+ * "biggest" one by default (NonReal < Undef).
  * These could be a single Type with a nodeValue, but it would require a
  * builtin/parser rework since undef/nonreal text would require node value
  * information, or a builtin subclass. */
 NODE(NonReal)                  // sqrt(-1) in Real ComplexMode
-NODE(Undef)                    // Default
 NODE(UndefZeroPowerZero)       // 0^0
 NODE(UndefZeroDivision)        // 1/0, tan(nπ/2)
 NODE(UndefUnhandled)           // inf - inf, 0 * inf, unimplemented
@@ -299,8 +298,9 @@ NODE(UndefUnhandledDimension)  // [[1,2]] + [[1],[2]]
 NODE(UndefBadType)             // non-integers in gcd,lcm,...
 NODE(UndefOutOfDefinition)     // arg(0)
 NODE(UndefNotDefined)          // Global variable that has not been defined
+NODE(Undef)                    // Default
 
-RANGE(Undefined, NonReal, UndefNotDefined)
+RANGE(Undefined, NonReal, Undef)
 
 // 11 - Operations on expressions
 

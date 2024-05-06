@@ -10,7 +10,7 @@ endef
 
 # lockfile_recipe, <flavored goal>
 define lockfile_recipe
-$(call _lockfile_recipe_helper,$(call name_for_flavored_target,$1),$(foreach m,$(MODULES_$(call name_for_flavored_target,$1)),$(call name_for_flavored_target,$m)))
+$(call _lockfile_recipe_helper,$(call name_for_flavored_target,$1),$(call flavorless_modules_for_flavored_goal,$1))
 endef
 
 # Helpers

@@ -32,6 +32,11 @@ endef
 
 # Private API
 
+# flavorless_modules_for_flavored_goal, <flavored goal>
+define flavorless_modules_for_flavored_goal
+$(foreach m,$(MODULES_$(call name_for_flavored_target,$1)),$(call name_for_flavored_target,$m))
+endef
+
 # libraries_for_flavored_goal, <flavored goal>
 # Do not use flavors_for_flavored_target to avoid an extraneous subst.
 define libraries_for_flavored_goal

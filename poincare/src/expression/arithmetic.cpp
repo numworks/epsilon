@@ -1,6 +1,7 @@
 #include "arithmetic.h"
 
 #include <limits.h>
+#include <omg/troolean.h>
 #include <poincare/old/approximation_helper.h>
 #include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
@@ -16,13 +17,29 @@ namespace Poincare::Internal {
 /* TODO everything in this file is defined on rationals only, this could be
  * checked earlier. */
 
+OMG::Troolean IsInteger(const Tree* tree) {
+  if (!tree->isRational()) {
+    return OMG::Troolean::Unknown;
+  }
+  return OMG::BinaryToTrinaryBool(tree->isInteger());
+}
+
+OMG::Troolean IsPositiveInteger(const Tree* tree) {
+  OMG::Troolean isInteger = IsInteger(tree);
+  if (isInteger == OMG::Troolean::True) {
+    return OMG::BinaryToTrinaryBool(Rational::Sign(tree).isPositive());
+  }
+  return isInteger;
+}
+
 bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   assert(expr->numberOfChildren() == 2);
   bool isQuo = expr->isQuo();
   const Tree* num = expr->firstChild();
   const Tree* denom = num->nextTree();
-  if ((num->isRational() && !num->isInteger()) ||
-      (denom->isRational() && !denom->isInteger())) {
+  OMG::Troolean childrenAreIntegers =
+      OMG::TrinaryAnd(IsInteger(num), IsInteger(denom));
+  if (childrenAreIntegers == OMG::Troolean::False) {
     expr->cloneTreeOverTree(KBadType);
     return true;
   }
@@ -30,7 +47,7 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
     expr->cloneTreeOverTree(KUndefZeroDivision);
     return true;
   }
-  if (!num->isRational() || !denom->isRational()) {
+  if (childrenAreIntegers == OMG::Troolean::Unknown) {
     return false;
   }
   IntegerHandler n = Integer::Handler(num);
@@ -54,13 +71,13 @@ bool Arithmetic::SimplifyFloor(Tree* expr) {
 
 bool Arithmetic::SimplifyRound(Tree* expr) {
   const Tree* child = expr->firstChild();
-  const Tree* parameter = child->nextTree();
-  if (!child->isRational() || !parameter->isRational()) {
-    return false;
-  }
-  if (!parameter->isInteger()) {
+  OMG::Troolean parameterIsInteger = IsInteger(child->nextTree());
+  if (parameterIsInteger == OMG::Troolean::False) {
     expr->cloneTreeOverTree(KBadType);
     return true;
+  }
+  if (parameterIsInteger == OMG::Troolean::Unknown || !child->isRational()) {
+    return false;
   }
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
   return PatternMatching::MatchReplaceSimplify(
@@ -74,10 +91,11 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   Tree* first = expr->firstChild();
   Tree* next = first;
   while (expr->numberOfChildren() > 1) {
-    if (!next->isRational()) {
+    OMG::Troolean nextIsInteger = IsInteger(next);
+    if (nextIsInteger == OMG::Troolean::Unknown) {
       return changed;
     }
-    if (!next->isInteger()) {
+    if (nextIsInteger == OMG::Troolean::False) {
       expr->cloneTreeOverTree(KBadType);
       return true;
     }
@@ -99,10 +117,11 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
 
 bool Arithmetic::SimplifyFactorial(Tree* expr) {
   const Tree* child = expr->child(0);
-  if (!child->isRational()) {
+  OMG::Troolean childIsPositiveInteger = IsPositiveInteger(child);
+  if (childIsPositiveInteger == OMG::Troolean::Unknown) {
     return false;
   }
-  if (!child->isInteger() || Rational::Sign(child).isStrictlyNegative()) {
+  if (childIsPositiveInteger == OMG::Troolean::False) {
     expr->cloneTreeOverTree(KBadType);
     return true;
   }
@@ -116,8 +135,7 @@ bool Arithmetic::ExpandFactorial(Tree* expr) {
   /* Explicit the product directly to compute the factorial if the argument was
    * a rational */
   if (expr->isProduct() && expr->child(2)->isRational()) {
-    assert(expr->child(2)->isInteger() &&
-           Rational::Sign(expr->child(2)).isPositive());
+    assert(IsPositiveInteger(expr->child(2)) == OMG::Troolean::True);
     Parametric::Explicit(expr);
   }
   return true;
@@ -126,14 +144,13 @@ bool Arithmetic::ExpandFactorial(Tree* expr) {
 bool Arithmetic::SimplifyPermute(Tree* expr) {
   Tree* n = expr->child(0);
   Tree* k = n->nextTree();
-  if ((n->isRational() &&
-       (!n->isInteger() || Rational::Sign(n).isStrictlyNegative())) ||
-      (k->isRational() &&
-       (!k->isInteger() || Rational::Sign(k).isStrictlyNegative()))) {
+  OMG::Troolean childrenArePositiveInteger =
+      OMG::TrinaryAnd(IsPositiveInteger(n), IsPositiveInteger(k));
+  if (childrenArePositiveInteger == OMG::Troolean::False) {
     expr->cloneTreeOverTree(KBadType);
     return true;
   }
-  if (!k->isRational() || !n->isRational()) {
+  if (childrenArePositiveInteger == OMG::Troolean::Unknown) {
     return false;
   }
   // TODO Rational::Compare
@@ -159,14 +176,12 @@ bool Arithmetic::ExpandPermute(Tree* expr) {
 bool Arithmetic::SimplifyBinomial(Tree* expr) {
   Tree* n = expr->child(0);
   Tree* k = n->nextTree();
-  if (!k->isRational()) {
-    return false;
-  }
-  if (!k->isInteger()) {
+  OMG::Troolean kIsInteger = IsInteger(k);
+  if (kIsInteger == OMG::Troolean::False) {
     expr->cloneTreeOverTree(KBadType);
     return true;
   }
-  if (!n->isRational()) {
+  if (kIsInteger == OMG::Troolean::Unknown || !n->isRational()) {
     return false;
   }
   if (k->isZero()) {

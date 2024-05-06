@@ -19,7 +19,7 @@ help:
 # Display dependencies tree of modules versions
 define _versions_string
 Goal \033[38;5;34m$*\033[0m uses modules:$(foreach m,$(call flavorless_modules_for_flavored_goal,$*),\n\033[38;5;20m$m@$(VERSION_$m)\033[0m $(foreach n,$(LOCKS_$m),\n\
-$(_null) requires \033[38;5;20m$n@$(VERSION_$n_FOR_$m)\033[0m))
+$(_null) requires \033[38;5;20m$n@$(VERSION_$n_FOR_$m)\033[0m$(if $(filter $(VERSION_$n),$(VERSION_$n_FOR_$m)),, \033[38;5;9m!= $n@$(VERSION_$n)\033[0m)))
 endef
 
 export _versions_string

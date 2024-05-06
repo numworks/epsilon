@@ -366,7 +366,7 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
   Internal::Tree* e = tree()->clone();
-  Internal::Simplification::Simplify(e, &context);
+  Internal::Simplification::SimplifyWithAdaptiveStrategy(e, &context);
   if (approximateExpression) {
     *approximateExpression =
         Builder(Internal::Approximation::RootTreeToTree<double>(
@@ -394,7 +394,7 @@ JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
   };
   Internal::Tree* e = tree()->clone();
   // TODO_PCJ: Do not beautify !! Decide if a projection is needed.
-  Internal::Simplification::Simplify(e, &context);
+  Internal::Simplification::SimplifyWithAdaptiveStrategy(e, &context);
   *reduceFailure = context.m_strategy != initialStrategy;
   JuniorExpression simplifiedExpression = Builder(e);
 #if 0

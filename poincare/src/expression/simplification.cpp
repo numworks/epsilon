@@ -838,7 +838,8 @@ bool RelaxProjectionContext(void* context) {
   return true;
 }
 
-bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext) {
+bool Simplification::SimplifyWithAdaptiveStrategy(
+    Tree* e, ProjectionContext* projectionContext) {
   assert(projectionContext);
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
   SharedTreeStack->executeAndReplaceTree(

@@ -30,7 +30,8 @@ bool check_solutions(std::initializer_list<const char*> inputs,
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
       Tree* expectedSolution = TextToTree(output);
-      Simplification::Simplify(expectedSolution, &projectionContext);
+      Simplification::SimplifyWithAdaptiveStrategy(expectedSolution,
+                                                   &projectionContext);
       quiz_assert(solution->treeIsIdenticalTo(expectedSolution));
       solution = solution->nextTree();
       expectedSolution->removeTree();

@@ -1213,7 +1213,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
     tree->moveTreeOverTree(ToTree<double>(tree, Dimension()));
     result = true;
   } else {
-    result = ApproximateAndReplaceEveryScalarT<double>(tree);
+    result = PrivateApproximateAndReplaceEveryScalar(tree);
   }
   s_context = nullptr;
   /* TODO: We compare the CRC32 to prevent expressions such as 1.0+i*1.0 from
@@ -1222,8 +1222,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
   return result && hash != tree->hash();
 }
 
-template <typename T>
-bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
+bool Approximation::PrivateApproximateAndReplaceEveryScalar(Tree* tree) {
   assert(!CanDeepApproximate(tree) || !IsNonListScalar(tree));
   bool changed = false;
   int childIndex = 0;
@@ -1232,10 +1231,10 @@ bool Approximation::ApproximateAndReplaceEveryScalarT(Tree* tree) {
       continue;
     }
     if (CanDeepApproximate(child) && IsNonListScalar(child)) {
-      child->moveTreeOverTree(ToTree<T>(child, Dimension()));
+      child->moveTreeOverTree(ToTree<double>(child, Dimension()));
       changed = true;
     } else {
-      changed = ApproximateAndReplaceEveryScalarT<T>(child) || changed;
+      changed = PrivateApproximateAndReplaceEveryScalar(child) || changed;
     }
   }
   // TODO: Merge additions and multiplication's children if possible.
@@ -1265,9 +1264,6 @@ template Tree* Approximation::RootTreeToTree<float>(const Tree*, AngleUnit,
                                                     ComplexFormat);
 template Tree* Approximation::RootTreeToTree<double>(const Tree*, AngleUnit,
                                                      ComplexFormat);
-
-template bool Approximation::ApproximateAndReplaceEveryScalarT<float>(Tree*);
-template bool Approximation::ApproximateAndReplaceEveryScalarT<double>(Tree*);
 
 template int Approximation::IndexOfActivePiecewiseBranchAt<float>(
     const Tree* piecewise, float x);

@@ -123,8 +123,7 @@ class Approximation final {
   template <typename T, typename U>
   static U MapAndReduce(const Tree* node, Reductor<U> reductor,
                         Mapper<std::complex<T>, U> mapper = nullptr);
-  template <typename T>
-  static bool ApproximateAndReplaceEveryScalarT(Tree* tree);
+  static bool PrivateApproximateAndReplaceEveryScalar(Tree* tree);
 
   template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,

@@ -152,6 +152,9 @@ class Tree : public TypeBlock {
   bool hasChild(const Tree* child) const;
   bool hasAncestor(const Tree* node, bool includeSelf) const;
   const Tree* lastChild() const { return child(numberOfChildren() - 1); }
+  Tree* lastChild() {
+    return const_cast<Tree*>(const_cast<const Tree*>(this)->lastChild());
+  }
 
   constexpr TypeBlock type() const { return *this; }
   constexpr LayoutType layoutType() const {

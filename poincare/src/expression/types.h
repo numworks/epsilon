@@ -288,7 +288,8 @@ NODE(Empty)  // TODO_PCJ temporary
 /* When an expression has multiple undefined children, we bubble up the
  * "biggest" one by default (NonReal < UndefNotDefined).
  * These could be a single Type with a nodeValue, but it would require a
- * builtin/parser rework. */
+ * builtin/parser rework since undef/nonreal text would require node value
+ * information, or a builtin subclass. */
 NODE(NonReal)                  // sqrt(-1) in Real ComplexMode
 NODE(Undef)                    // Default
 NODE(UndefZeroPowerZero)       // 0^0

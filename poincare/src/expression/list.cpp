@@ -175,13 +175,13 @@ bool List::ShallowApplyListOperators(Tree* e) {
           // Median with coefficients needs statistics_dataset
           assert(false);
         }
-        int n = list->numberOfChildren();
         // TODO: Better check for undefined children
-        Tree* lastChild = list->child(n - 1);
+        Tree* lastChild = list->lastChild();
         if (lastChild->isUndefined()) {
           e->moveTreeOverTree(lastChild);
           return true;
         }
+        int n = list->numberOfChildren();
         if (n % 2) {
           e->moveTreeOverTree(list->child(n / 2));
         } else {

@@ -64,9 +64,7 @@ a + diff(c + x + sum(k + a + x, k, 1, x), x, b) + diff(a, a, a)
 a        c   0       0   a   1  k  1  0   x  b         0  a  a
 ```
 
-UserSymbols that are the variable child of parametrics are preserved for beautification (since we don't list them with the global user-symbols).
-
-This step converts some `UserSymbol` trees (containing the variable name) into a `Variable` (containing the id only).
+UserSymbols that are the variable child of parametrics are preserved for beautification.
 
 When nested inside a parametered expression, all id are incremented. In the parametered expression, `0` is the local parameter.
 

@@ -371,7 +371,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
                                   IntegerHandler(k_biggestPrimeFactor),
                                   &workingBuffer)) > 0) {
     /* tooManyFactors or factorTooLarge. In the later case, we do not want to
-     * break i in prime factor because it take too much time: the prime factor
+     * break i in prime factor because it takes too much time: the prime factor
      * that should be tested is above k_biggestPrimeFactor. */
     result.numberOfFactors = 0;
     return result;

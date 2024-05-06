@@ -22,7 +22,7 @@ void assert_next_solution_is(const char* expression, Context* context,
 
   Tree* e = parse_expression(expression, context, false);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-      e, "x", angleUnit, ComplexFormat::Cartesian);
+      e, "x", angleUnit, ComplexFormat::Real);
 
   Coordinate2D<double> observed;
   switch (interest) {
@@ -141,7 +141,7 @@ QUIZ_CASE(poincare_solver_roots) {
   assert_roots_are("1/x", -10., 10., {});
   assert_roots_are("e^x", -1000., -800., {});
   assert_roots_are("x", 1e208, 1e208, {});
-  assert_roots_are("(x+1)×ln(x)", 0., -10., {R(-1.)});
+  assert_roots_are("(x+1)×ln(x)", 0., -10., {});
   assert_roots_are("x^(1/x)", -123., 123., {});
   assert_roots_are("x^x", -1e-2, 1e-2, {});
   // TODO_PCJ: fix IsDiscontinuousBetweenValuesForSymbol

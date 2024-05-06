@@ -85,12 +85,11 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     return true;
   }
   Tree* child = upperBound->nextTree();
-  // HasVariable and HasLocalRandom could be factorized.
   if (Variables::HasVariable(child, k_localVariableId) ||
       HasLocalRandom(expr)) {
     return false;
   }
-  // sum(f, k, m, n) = (1+n-m)*f and prod(f, k, m, n) = f^(1 + n - m)
+  // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
   // TODO: add ceil around bounds
   constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
   Variables::LeaveScope(child);
@@ -150,6 +149,7 @@ bool Parametric::ContractProduct(Tree* expr) {
 }
 
 bool Parametric::HasLocalRandom(Tree* expr) {
+  // TODO: could be factorized with HasVariable
   return expr->hasDescendantSatisfying(
       [](const Tree* e) { return e->isRandomNode(); });
 }
@@ -167,7 +167,7 @@ bool Parametric::Explicit(Tree* expr) {
   const Tree* child = upperBound->nextTree();
   Tree* boundsDifference = PatternMatching::CreateSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = upperBound, .KB = lowerBound});
-  // TODO larger type than uint8
+  // TODO: larger type than uint8
   if (!Integer::Is<uint8_t>(boundsDifference)) {
     boundsDifference->removeTree();
     return false;

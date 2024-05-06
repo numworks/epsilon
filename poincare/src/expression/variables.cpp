@@ -170,7 +170,7 @@ bool Variables::BeautifyToName(Tree* expr, uint8_t depth) {
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i++ == Parametric::FunctionIndex(expr)) {
       // beautify variable introduced by this scope
-      // TODO check that name is available here or make new name
+      // TODO: check that name is available here or make new name
       changed = Replace(child, 0, expr->child(Parametric::k_variableIndex)) ||
                 changed;
       // beautify outer variables
@@ -183,14 +183,14 @@ bool Variables::BeautifyToName(Tree* expr, uint8_t depth) {
 }
 
 bool Variables::HasVariables(const Tree* expr) {
-  // TODO we probably want to ignore bound variables
+  // TODO: we probably want to ignore bound variables
   // return HasVariable(expr, 0) ?
   return expr->hasDescendantSatisfying(
       [](const Tree* e) { return e->isVar(); });
 }
 
 bool Variables::HasVariable(const Tree* expr, const Tree* variable) {
-  // TODO variable must have the same scope as expr
+  // TODO: variable must have the same scope as expr
   assert(variable->isVar());
   return HasVariable(expr, Id(variable));
 }

@@ -133,7 +133,7 @@ ComplexSign ArcCosine(ComplexSign s) {
 ComplexSign ArcSine(ComplexSign s) {
   /* - the sign of re(actan(z)) is always the same as re(z)
    * - the sign of im(actan(z)) is always the same as im(z) except when re(z)!=0
-   *   and im(z)=0: re(asin(x)) = {>0 if x<-1, =0 if -1<=x<=1, and <0 if x>1} */
+   *   and im(z)=0: im(asin(x)) = {>0 if x<-1, =0 if -1<=x<=1, and <0 if x>1} */
   Sign realSign = RelaxIntegerProperty(s.realSign());
   Sign imagSign = RelaxIntegerProperty(s.imagSign());
   if (imagSign.canBeNull() && realSign.canBeNonNull()) {

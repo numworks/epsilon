@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "advanced_simplification.h"
 #include "dependency.h"
 #include "dimension.h"
 #include "number.h"
@@ -324,6 +325,11 @@ ComplexSign ComplexSign::SignOfDifference(const Tree* a, const Tree* b) {
   Tree* difference = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
                                                      {.KA = a, .KB = b});
   ComplexSign result = Get(difference);
+  if (AdvancedSimplification::DeepExpand(difference)) {
+    /* We do not use advance reduction here but it might be usefull to expand
+     * Mult since we are creating an Add with Mult */
+    result = result && Get(difference);
+  }
   difference->removeTree();
   return result;
 }

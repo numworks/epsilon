@@ -63,6 +63,12 @@ class Sign {
                 m_canBeStriclyNegative || other.canBeStriclyNegative(),
                 m_canBeNonInteger || other.canBeNonInteger());
   }
+  Sign operator&&(const Sign& other) const {
+    return Sign(m_canBeNull && other.canBeNull(),
+                m_canBeStriclyPositive && other.canBeStriclyPositive(),
+                m_canBeStriclyNegative && other.canBeStriclyNegative(),
+                m_canBeNonInteger && other.canBeNonInteger());
+  }
 
   constexpr uint8_t getValue() {
     // Cannot use bit_cast because it doesn't handle bitfields.
@@ -142,6 +148,10 @@ class ComplexSign {
   }
 
   bool operator==(const ComplexSign&) const = default;
+  ComplexSign operator&&(const ComplexSign& other) const {
+    return ComplexSign(realSign() && other.realSign(),
+                       imagSign() && other.imagSign());
+  }
 
   static constexpr ComplexSign RealInteger() {
     return ComplexSign(Sign::Integer(), Sign::Zero());

@@ -12,8 +12,8 @@ namespace Poincare::Internal {
 bool Binary::IsBinaryLogicalOperator(const CPL* name, int nameLength,
                                      Type* type) {
   for (int i = 0; i < k_numberOfOperators; i++) {
-    if (OMG::CompareCPLWithNullTerminatedString(name, nameLength,
-                                                k_operatorNames[i].name) == 0) {
+    if (name->compareWithNullTerminatedString(nameLength,
+                                              k_operatorNames[i].name) == 0) {
       if (type) {
         *type = k_operatorNames[i].type;
       }
@@ -57,9 +57,8 @@ bool Binary::IsComparisonOperatorString(const CPL* s, int length,
       int operatorLength = UTF8Helper::StringGlyphLength(currentOperatorString);
       if (operatorLength <= maxOperatorLength &&
           operatorLength > lengthOfFoundOperator &&
-          OMG::CompareCPLWithNullTerminatedString(s, operatorLength,
-
-                                                  currentOperatorString) == 0) {
+          s->compareWithNullTerminatedString(operatorLength,
+                                             currentOperatorString) == 0) {
         lengthOfFoundOperator = operatorLength;
         typeOfFoundOperator = k_operatorStrings[i].type;
       }

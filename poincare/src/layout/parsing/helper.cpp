@@ -7,8 +7,8 @@
 namespace Poincare::Internal {
 bool ParsingHelper::IsLogicalOperator(const CPL* name, size_t nameLength,
                                       Token::Type* returnType) {
-  if (OMG::CompareCPLWithNullTerminatedString(
-          name, nameLength, Binary::OperatorName(Type::LogicalNot)) == 0) {
+  if (name->compareWithNullTerminatedString(
+          nameLength, Binary::OperatorName(Type::LogicalNot)) == 0) {
     *returnType = Token::Type::Not;
     return true;
   }

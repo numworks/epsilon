@@ -430,7 +430,7 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
   // If there are two \" around an identifier, it is a forced custom identifier
   const CPL* lastCharOfString = string + *length - 1;
   if (*length > 2 && string[0] == '"' && *lastCharOfString == '"' &&
-      OMG::CodePointLSearch(string + 1, '"', lastCharOfString) ==
+      CPL::CodePointLSearch(string + 1, '"', lastCharOfString) ==
           lastCharOfString) {
     return Token::Type::CustomIdentifier;
   }

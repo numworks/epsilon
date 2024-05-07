@@ -72,6 +72,11 @@ class CPL {
     return reinterpret_cast<const CPL*>(rack->child(start));
   }
 
+  static inline size_t CodePointSearch(const Tree* first, int length,
+                                       CodePoint c);
+  static const CPL* CodePointLSearch(const CPL* s, CodePoint c,
+                                     const CPL* stop);
+
   operator CodePoint() const {
     (void)m_content;
     const Tree* tree = reinterpret_cast<const Tree*>(this);
@@ -84,6 +89,8 @@ class CPL {
   bool operator==(const CodePoint& other) const {
     return static_cast<CodePoint>(*this) == other;
   }
+
+  int compareWithNullTerminatedString(int length, const char* string) const;
 
  private:
   static constexpr int k_codePointLayoutSize =

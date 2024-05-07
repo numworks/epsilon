@@ -18,24 +18,6 @@ inline size_t CodePointSearch(const char* string, CodePoint c) {
   return CodePointSearch(&dec, c);
 }
 
-inline size_t CodePointSearch(const Poincare::Internal::Tree* first, int length,
-                              CodePoint c) {
-  Poincare::Internal::CPLayoutDecoder dec(first, length);
-  return CodePointSearch(&dec, c);
-}
-
-const Poincare::Internal::CPL* CodePointLSearch(
-    const Poincare::Internal::CPL* s, CodePoint c,
-    const Poincare::Internal::CPL* stop) {
-  while (s != stop && *s != 0) {
-    if (*s == c) {
-      return s;
-    }
-    s++;
-  }
-  return s;
-}
-
 int CompareDecoders(UnicodeDecoder* a, UnicodeDecoder* b) {
   while (CodePoint c = a->nextCodePoint()) {
     CodePoint d = b->nextCodePoint();
@@ -54,13 +36,6 @@ int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
   int result = CompareDecoders(decoder, &stringDecoder);
   decoder->unsafeSetPosition(position);
   return result;
-}
-
-int CompareCPLWithNullTerminatedString(const Poincare::Internal::CPL* s,
-                                       int length, const char* string) {
-  Poincare::Internal::CPLayoutDecoder decoder(
-      reinterpret_cast<const Poincare::Internal::Tree*>(s), 0, length);
-  return CompareDecoderWithNullTerminatedString(&decoder, string);
 }
 
 }  // namespace OMG

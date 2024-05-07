@@ -161,41 +161,27 @@ ComplexSign Exponential(ComplexSign s) {
                     : ComplexSign::Unknown();
 }
 
-ComplexSign Ln(ComplexSign s) {
-  /* z = re^iθ
-   * re(ln(z)) = ln(r)
-   * im(ln(z)) = θ
-   * Complex sign take cartesian form as input and computing complex argument
-   * returns a value in ]-π,π], which assumes that sign(θ) = sign(im(z)) when
-   * re(z)!=0 */
-  Sign imSign = Sign::Unknown();
-  if (s.isReal()) {
-    /* θ = 0 if z > 0
-     * θ = π if z < 0 */
-    imSign = Sign(s.realSign().canBeStriclyPositive(),
-                  s.realSign().canBeStriclyNegative(), false);
-  } else if (!s.imagSign().canBeNull()) {
-    /* θ ∈ ] 0,π[ if im(z) > 0
-     * θ ∈ ]-π,0[ if im(z) < 0 */
-    imSign = Sign(false, s.imagSign().canBeStriclyPositive(),
-                  s.imagSign().canBeStriclyNegative());
-  } else {
-    // Field-wise OR of the 2 previous cases (TODO: use || operator)
-    imSign = Sign(s.realSign().canBeStriclyPositive(),
-                  s.imagSign().canBeStriclyPositive() ||
-                      s.realSign().canBeStriclyNegative(),
-                  s.imagSign().canBeStriclyNegative());
-  }
-  return ComplexSign(Sign::Unknown(), imSign);
+ComplexSign ComplexArgument(ComplexSign s) {
+  /* arg(z) ∈ ]-π,π].
+   * arg(z) > 0 if im(z) > 0,
+   * arg(z) < 0 if im(z) < 0,
+   * arg(z) = 0 if im(z) = 0 and re(z) >= 0,
+   * arg(z) = π if im(z) = 0 and re(z) < 0 */
+  Sign re = s.realSign();
+  Sign im = s.imagSign();
+  return ComplexSign(
+      Sign(im.canBeNull() && (re.canBeNull() || re.canBeStriclyPositive()),
+           (im.canBeNull() && re.canBeStriclyNegative()) ||
+               im.canBeStriclyPositive(),
+           im.canBeStriclyNegative()),
+      Sign::Zero());
 }
 
-ComplexSign ComplexArgument(ComplexSign s) {
-  /* If complex argument returns a value in ]-π,π], the sign of the complex
-   * argument is the sign of the imaginary part. */
-  return ComplexSign(
-      Sign(s.imagSign().canBeNull() && s.realSign().canBeStriclyPositive(),
-           true, true),
-      Sign::Zero());
+ComplexSign Ln(ComplexSign s) {
+  /* z = |z|e^(i*arg(z))
+   * re(ln(z)) = ln(|z|)
+   * im(ln(z)) = arg(z) */
+  return ComplexSign(Sign::Unknown(), ComplexArgument(s).realSign());
 }
 
 ComplexSign DecimalFunction(ComplexSign s, Type type) {

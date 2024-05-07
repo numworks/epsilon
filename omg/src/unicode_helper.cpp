@@ -1,5 +1,4 @@
 #include <omg/unicode_helper.h>
-#include <poincare/src/layout/rack_layout_decoder.h>
 
 namespace OMG {
 

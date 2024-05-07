@@ -199,7 +199,7 @@ bool Parametric::ContractProduct(Tree* expr) {
   if (PatternMatching::Match(
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
           expr, &ctx) &&
-      Comparison::Compare(ctx.getNode(KF), ctx.getNode(KC)) < 0) {
+      Comparison::Compare(ctx.getNode(KF), ctx.getNode(KC)) <= 0) {
     expr->moveTreeOverTree(PatternMatching::CreateSimplify(
         KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx));
     return true;

@@ -325,6 +325,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
 
   simplifies_to("product(sin(k),k,a,b+10) / product(sin(u),u,a,b)",
                 "product(sin(k),k,b+1,b+10)");
+  simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b)", "1");
 }
 
 QUIZ_CASE(pcj_simplification_factorial) {

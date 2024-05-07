@@ -293,33 +293,33 @@ QUIZ_CASE(pcj_simplification_parametric) {
   assert_trees_are_equal(e, a);
   e->removeTree();
 
-  simplifies_to("sum(n, k, 1, n)", "n^2");
-  simplifies_to("sum(a*b, k, 1, n)", "a×b×n");
-  simplifies_to("sum(k, k, n, m)", "(m^2-n^2+m+n)/2");
-  simplifies_to("2×sum(k, k, 0, n)+n", "n×(n+2)");
-  simplifies_to("2×sum(k, k, 3, n)+n", "n^2+2×n-6");
-  simplifies_to("sum(k^2, k, n, m)", "(m×(m+1)×(2×m+1)-n×(n-1)×(2×n-1))/6");
-  simplifies_to("sum(k^2, k, 2, 5)", "54");
-  simplifies_to("sum((2k)^2, k, 2, 5)", "216");
-  simplifies_to("sum((2k)^2, k, 0, n)", "(2×n×(n+1)×(2×n+1))/3");
-  simplifies_to("sum((2k)^4, k, 0, n)", "16×sum(k^4,k,0,n)");
-  simplifies_to("sum(sum(x*j, j, 1, n), k, 1, 2)", "n×(n+1)×x");
-  simplifies_to("sum(sum(a*k, a, 0, m), k, 1, n)", "(m×(m+1)×n×(n+1))/4");
-  simplifies_to("sum(π^k, k, 4, 2)", "0");
-  simplifies_to("sum(x*k!, k, 1, 2)", "3*x");
-  simplifies_to("sum(sin(k), k, a, a)", "sin(a)");
-  // TODO_PCJ: "sum(tan(k), k, a, a)" raises an assert
+  simplifies_to("sum(n,k,1,n)", "n^2");
+  simplifies_to("sum(a*b,k,1,n)", "a×b×n");
+  simplifies_to("sum(k,k,n,m)", "(m^2-n^2+m+n)/2");
+  simplifies_to("2×sum(k,k,0,n)+n", "n×(n+2)");
+  simplifies_to("2×sum(k,k,3,n)+n", "n^2+2×n-6");
+  simplifies_to("sum(k^2,k,n,m)", "(m×(m+1)×(2×m+1)-n×(n-1)×(2×n-1))/6");
+  simplifies_to("sum(k^2,k,2,5)", "54");
+  simplifies_to("sum((2k)^2,k,2,5)", "216");
+  simplifies_to("sum((2k)^2,k,0,n)", "(2×n×(n+1)×(2×n+1))/3");
+  simplifies_to("sum((2k)^4,k,0,n)", "16×sum(k^4,k,0,n)");
+  simplifies_to("sum(sum(x*j,j,1,n),k,1,2)", "n×(n+1)×x");
+  simplifies_to("sum(sum(a*k,a,0,m),k,1,n)", "(m×(m+1)×n×(n+1))/4");
+  simplifies_to("sum(π^k,k,4,2)", "0");
+  simplifies_to("sum(x*k!,k,1,2)", "3*x");
+  simplifies_to("sum(sin(k),k,a,a)", "sin(a)");
+  // TODO_PCJ: "sum(tan(k),k,a,a)" raises an assert
 
-  simplifies_to("product(p, k, m, n)", "p^(-m+n+1)");
-  simplifies_to("product(p^3, k, m, n)", "p^(3×(-m+n+1))");
-  simplifies_to("product(k^3, k, m, n)", "product(k,k,m,n)^3");
-  simplifies_to("product(k^x, k, m, n)", "product(exp(x×ln(k)),k,m,n)");
-  simplifies_to("product(x^k, k, m, n)", "product(exp(k×ln(x)),k,m,n)");
-  simplifies_to("product(π^k, k, 2, 1)", "1");
-  simplifies_to("product(cos(k), k, 2, 4)", "cos(2)×cos(3)×cos(4)");
-  simplifies_to("product(sin(k), k, a, a)", "sin(a)");
+  simplifies_to("product(p,k,m,n)", "p^(-m+n+1)");
+  simplifies_to("product(p^3,k,m,n)", "p^(3×(-m+n+1))");
+  simplifies_to("product(k^3,k,m,n)", "product(k,k,m,n)^3");
+  simplifies_to("product(k^x,k,m,n)", "product(exp(x×ln(k)),k,m,n)");
+  simplifies_to("product(x^k,k,m,n)", "product(exp(k×ln(x)),k,m,n)");
+  simplifies_to("product(π^k,k,2,1)", "1");
+  simplifies_to("product(cos(k),k,2,4)", "cos(2)×cos(3)×cos(4)");
+  simplifies_to("product(sin(k),k,a,a)", "sin(a)");
 
-  simplifies_to("exp(2*sum(ln(k), k, a, b) + ln(b))",
+  simplifies_to("exp(2*sum(ln(k),k,a,b) + ln(b))",
                 "dep(b×product(k,k,a,b)^2,{ln(b),sum(ln(k),k,a,b)})");
   simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
 }

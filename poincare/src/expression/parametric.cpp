@@ -216,6 +216,28 @@ bool Parametric::ContractProduct(Tree* expr) {
       return true;
     }
   }
+  /* Prod(u(k), k, a, c) / Prod(u(k), k, b, c)
+   * -> Prod(u(k), k, a, b-1) if a < b
+   * -> 1 if a = b (can be included in previous case and then will be reduced)
+   * -> 1 / Prod(u(k), k, b, a-1) if a > b */
+  if (PatternMatching::Match(
+          KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KF, KC, KD), -1_e)),
+          expr, &ctx)) {
+    ComplexSign sign =
+        ComplexSign::SignOfDifference(ctx.getNode(KB), ctx.getNode(KF));
+    Sign realSign = sign.realSign();
+    if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
+                          realSign.isStrictlyNegative())) {
+      Tree* result =
+          realSign.isZero() || realSign.isStrictlyNegative()
+              ? PatternMatching::CreateSimplify(
+                    KProduct(KA, KB, KAdd(KF, -1_e), KD), ctx)
+              : PatternMatching::CreateSimplify(
+                    KPow(KProduct(KE, KF, KAdd(KB, -1_e), KD), -1_e), ctx);
+      expr->moveTreeOverTree(result);
+      return true;
+    }
+  }
   return false;
 }
 

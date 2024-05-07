@@ -160,23 +160,24 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
 }
 
 bool Parametric::ExpandSum(Tree* expr) {
-  // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
-  // sum(x_k, k, 0, n) = x_0 + ... + x_n
   return expr->isSum() &&
+         // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
          (PatternMatching::MatchReplaceSimplify(
               expr, KSum(KA, KB, KC, KAdd(KD, KE_p)),
               KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KE_p)))) ||
+          // sum(x_k, k, 0, n) = x_0 + ... + x_n
           Explicit(expr));
 }
 
 bool Parametric::ExpandProduct(Tree* expr) {
-  // prod(f*g,k,a,b) = prod(f,k,a,b) * prod(g,k,a,b)
-  // prod(x_k, k, 0, n) = x_0 * ... * x_n
-  return expr->isProduct() && (PatternMatching::MatchReplaceSimplify(
-                                   expr, KProduct(KA, KB, KC, KMult(KD, KE_p)),
-                                   KMult(KProduct(KA, KB, KC, KD),
-                                         KProduct(KA, KB, KC, KMult(KE_p)))) ||
-                               Explicit(expr));
+  return expr->isProduct() &&
+         // prod(f*g,k,a,b) = prod(f,k,a,b) * prod(g,k,a,b)
+         (PatternMatching::MatchReplaceSimplify(
+              expr, KProduct(KA, KB, KC, KMult(KD, KE_p)),
+              KMult(KProduct(KA, KB, KC, KD),
+                    KProduct(KA, KB, KC, KMult(KE_p)))) ||
+          // prod(x_k, k, 0, n) = x_0 * ... * x_n
+          Explicit(expr));
 }
 
 /* TODO:

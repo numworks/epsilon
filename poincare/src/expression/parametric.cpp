@@ -3,7 +3,6 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
-#include "comparison.h"
 #include "integer.h"
 #include "k_tree.h"
 #include "matrix.h"
@@ -202,14 +201,20 @@ bool Parametric::ContractProduct(Tree* expr) {
   if (PatternMatching::Match(
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
           expr, &ctx)) {
-    int comp = Comparison::Compare(ctx.getNode(KC), ctx.getNode(KF));
-    Tree* result =
-        comp >= 0 ? PatternMatching::CreateSimplify(
-                        KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx)
-                  : PatternMatching::CreateSimplify(
-                        KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
-    expr->moveTreeOverTree(result);
-    return true;
+    ComplexSign sign =
+        ComplexSign::SignOfDifference(ctx.getNode(KC), ctx.getNode(KF));
+    Sign realSign = sign.realSign();
+    if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
+                          realSign.isStrictlyNegative())) {
+      Tree* result =
+          realSign.isZero() || realSign.isStrictlyPositive()
+              ? PatternMatching::CreateSimplify(
+                    KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx)
+              : PatternMatching::CreateSimplify(
+                    KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
+      expr->moveTreeOverTree(result);
+      return true;
+    }
   }
   return false;
 }

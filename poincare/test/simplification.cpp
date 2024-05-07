@@ -327,11 +327,19 @@ QUIZ_CASE(pcj_simplification_parametric) {
                 "dep(b×product(k,k,a,b)^2,{ln(b),sum(ln(k),k,a,b)})");
   simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
 
+  simplifies_to("product(sin(k),k,a,b+n) / product(sin(u),u,a,b)",
+                "product(sin(k),k,a,b+n) / product(sin(u),u,a,b)");
   simplifies_to("product(sin(k),k,a,b+10) / product(sin(u),u,a,b)",
                 "product(sin(k),k,b+1,b+10)");
+  simplifies_to("product(sin(k),k,a,100) / product(sin(u),u,a,5)",
+                "product(sin(k),k,6,100)");
   simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b)", "1");
   simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b+n)",
-                "1 / product(sin(u),u,b+1,b+n)");
+                "product(sin(k),k,a,b) / product(sin(u),u,a,b+n)");
+  simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b+10)",
+                "1 / product(sin(u),u,b+1,b+10)");
+  simplifies_to("product(sin(k),k,a,5) / product(sin(u),u,a,100)",
+                "1 / product(sin(u),u,6,100)");
 }
 
 QUIZ_CASE(pcj_simplification_factorial) {

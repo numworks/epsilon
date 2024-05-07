@@ -19,6 +19,8 @@ class Parametric {
   static bool ContractProduct(Tree* t);
   static bool Explicit(Tree* t);
   static bool HasLocalRandom(Tree* t);
+  static bool ExpandExpOfSum(Tree* t);
+  static bool ContractProductOfExp(Tree* t);
 
   // Accepts layout and expressions
   static uint8_t FunctionIndex(const Tree* t);

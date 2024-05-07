@@ -318,6 +318,10 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(π^k, k, 2, 1)", "1");
   simplifies_to("product(cos(k), k, 2, 4)", "cos(2)×cos(3)×cos(4)");
   simplifies_to("product(sin(k), k, a, a)", "sin(a)");
+
+  simplifies_to("exp(2*sum(ln(k), k, a, b) + ln(b))",
+                "dep(b×product(k,k,a,b)^2,{ln(b),sum(ln(k),k,a,b)})");
+  simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
 }
 
 QUIZ_CASE(pcj_simplification_factorial) {

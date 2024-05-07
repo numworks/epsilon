@@ -183,7 +183,8 @@ bool Parametric::ExpandProduct(Tree* expr) {
  * - Try swapping sums (same with prods)
  * - int(f(k),k,a,a) = 0
  * - Product from/to factorial
- * - sum(ln(f(k))) = ln(prod(f(k))) and prod(exp(f(k))) = exp(sum(f(k)))
+ * - sum(ln(f(k))) = ln(prod(f(k))) but not that simple (cf
+ *   Logarithm::ContractLn and Logarithm::ExpandLn)
  * - Prod(A, B, C, D) / Prod(A, B, F, G) =
  *              Prod(A, B, C, min(F, D)) * Prod(A, B, max(C, G), D)
  *           / Prod(A, B, F, min(G, C)) * Prod(A, B, max(F, D), G)
@@ -255,6 +256,21 @@ bool Parametric::Explicit(Tree* expr) {
   }
   expr->moveTreeOverTree(result);
   return true;
+}
+
+bool Parametric::ExpandExpOfSum(Tree* expr) {
+  // TODO: factorise with AdvancedOperation::ExpandExp
+  // exp(a*sum(f(k),k,m,n)) = product(exp(a*f(k)),k,m,n)
+  return PatternMatching::MatchReplaceSimplify(
+      expr, KExp(KMult(KA_s, KSum(KB, KC, KD, KE))),
+      KProduct(KB, KC, KD, KExp(KMult(KA_s, KE))));
+}
+
+bool Parametric::ContractProductOfExp(Tree* expr) {
+  // TODO: factorise with AdvancedOperation::ContractExp
+  // product(exp(f(k)),k,m,n) = exp(sum(f(k),k,m,n))
+  return PatternMatching::MatchReplaceSimplify(
+      expr, KProduct(KA, KB, KC, KExp(KD)), KExp(KSum(KA, KB, KC, KD)));
 }
 
 }  // namespace Poincare::Internal

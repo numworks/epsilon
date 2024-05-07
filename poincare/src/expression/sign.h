@@ -107,8 +107,7 @@ class Sign {
            (m_canBeNull && !m_canBeNonInteger);
   }
   constexpr bool isUndef() const {
-    return !m_canBeNull && !m_canBeStriclyPositive && !m_canBeStriclyNegative &&
-           !m_canBeNonInteger;
+    return !m_canBeNull && !m_canBeStriclyPositive && !m_canBeStriclyNegative;
   }
 
   bool m_canBeNull : 1;

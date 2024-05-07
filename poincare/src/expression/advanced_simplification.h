@@ -4,6 +4,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
+#include "advanced_operation.h"
 #include "arithmetic.h"
 #include "logarithm.h"
 #include "parametric.h"
@@ -147,36 +148,27 @@ class AdvancedSimplification {
   static bool TryOneOperation(Tree* node, const Tree::Operation* operations,
                               int numberOfOperations);
 
-  static bool ExpandImRe(Tree* node);
-  static bool ContractAbs(Tree* node);
-  static bool ExpandAbs(Tree* node);
-  static bool ContractExpMult(Tree* node);
-  static bool ExpandExp(Tree* node);
-  static bool ContractMult(Tree* node);
-  static bool ExpandMult(Tree* node);
-  static bool ExpandPower(Tree* node);
-
   constexpr static Tree::Operation k_contractOperations[] = {
       Logarithm::ContractLn,
-      ContractAbs,
-      ContractExpMult,
+      AdvancedOperation::ContractAbs,
+      AdvancedOperation::ContractExpMult,
       Trigonometry::ContractTrigonometric,
       Parametric::ContractProduct,
-      ContractMult,
+      AdvancedOperation::ContractMult,
   };
   constexpr static Tree::Operation k_expandOperations[] = {
-      ExpandAbs,
+      AdvancedOperation::ExpandAbs,
       Logarithm::ExpandLn,
-      ExpandExp,
+      AdvancedOperation::ExpandExp,
       Trigonometry::ExpandTrigonometric,
       Parametric::ExpandSum,
       Parametric::ExpandProduct,
       Arithmetic::ExpandBinomial,
       Arithmetic::ExpandPermute,
       Projection::Expand,
-      ExpandPower,
-      ExpandMult,
-      ExpandImRe,
+      AdvancedOperation::ExpandPower,
+      AdvancedOperation::ExpandMult,
+      AdvancedOperation::ExpandImRe,
   };
 };
 

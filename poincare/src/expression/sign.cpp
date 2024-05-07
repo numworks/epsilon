@@ -165,9 +165,9 @@ ComplexSign Ln(ComplexSign s) {
   /* z = re^iθ
    * re(ln(z)) = ln(r)
    * im(ln(z)) = θ
-   * Complex sign take cartesian form as input so we can consider
-   * that the conversion to polar gives θ in ]-π,π], which assumes
-   * that sign(θ) = sign(im(z)) */
+   * Complex sign take cartesian form as input and computing complex argument
+   * returns a value in ]-π,π], which assumes that sign(θ) = sign(im(z)) when
+   * re(z)!=0 */
   Sign imSign = Sign::Unknown();
   if (s.isReal()) {
     /* θ = 0 if z > 0

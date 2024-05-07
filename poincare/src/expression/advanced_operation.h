@@ -10,7 +10,7 @@ class AdvancedOperation {
   static bool ExpandImRe(Tree* node);
   static bool ContractAbs(Tree* node);
   static bool ExpandAbs(Tree* node);
-  static bool ContractExpMult(Tree* node);
+  static bool ContractExp(Tree* node);
   static bool ExpandExp(Tree* node);
   static bool ContractMult(Tree* node);
   static bool ExpandMult(Tree* node);

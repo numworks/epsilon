@@ -78,7 +78,7 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
                                             KMult(KExp(KA), KExp(KAdd(KB_p))));
 }
 
-bool AdvancedOperation::ContractExpMult(Tree* e) {
+bool AdvancedOperation::ContractExp(Tree* e) {
   return
       // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
       PatternMatching::MatchReplaceSimplify(

@@ -3,8 +3,8 @@
 #include <apps/apps_container_helper.h>
 #include <assert.h>
 #include <float.h>
+#include <poincare/coordinate_2D.h>
 #include <poincare/layout.h>
-#include <poincare/old/coordinate_2D.h>
 #include <poincare/old/helpers.h>
 
 #include <algorithm>

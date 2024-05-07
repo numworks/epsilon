@@ -1,6 +1,8 @@
 #ifndef SHARED_PLOT_VIEW_PLOTS_H
 #define SHARED_PLOT_VIEW_PLOTS_H
 
+#include <poincare/coordinate_2D.h>
+
 #include <initializer_list>
 
 #include "plot_view.h"

@@ -7,9 +7,9 @@
 #include <kandinsky/color.h>
 #include <kandinsky/measuring_context.h>
 #include <omg/code_point.h>
+#include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/coordinate_2D.h>
 #include <poincare/old/sequence.h>
 #include <poincare/old/symbol.h>
 #include <poincare/print.h>

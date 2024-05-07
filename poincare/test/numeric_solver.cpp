@@ -16,15 +16,16 @@ typedef Solver<double>::Interest Interest;
 
 void assert_next_solution_is(const char* expression, Context* context,
                              Solver<double>* solver,
-                             Coordinate2D<double> expected, Interest interest,
-                             const char* otherExpression, AngleUnit angleUnit) {
+                             Poincare::Coordinate2D<double> expected,
+                             Interest interest, const char* otherExpression,
+                             AngleUnit angleUnit) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
   Tree* e = parse_expression(expression, context, false);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
       e, "x", angleUnit, ComplexFormat::Real);
 
-  Coordinate2D<double> observed;
+  Poincare::Coordinate2D<double> observed;
   switch (interest) {
     case Interest::Root:
       observed = solver->nextRoot(e);
@@ -58,50 +59,56 @@ void assert_next_solution_is(const char* expression, Context* context,
   }
 }
 
-void assert_solutions_are(const char* expression, double start, double end,
-                          std::initializer_list<Coordinate2D<double>> expected,
-                          Interest interest, Preferences::AngleUnit angleUnit,
-                          const char* otherExpression) {
+void assert_solutions_are(
+    const char* expression, double start, double end,
+    std::initializer_list<Poincare::Coordinate2D<double>> expected,
+    Interest interest, Preferences::AngleUnit angleUnit,
+    const char* otherExpression) {
   Shared::GlobalContext context;
   Solver<double> solver(start, end, "x", &context, Real, angleUnit);
-  for (Coordinate2D<double> c : expected) {
+  for (Poincare::Coordinate2D<double> c : expected) {
     assert_next_solution_is(expression, &context, &solver, c, interest,
                             otherExpression, angleUnit);
   }
   assert_next_solution_is(expression, &context, &solver,
-                          Coordinate2D<double>(NAN, NAN), interest,
+                          Poincare::Coordinate2D<double>(NAN, NAN), interest,
                           otherExpression, angleUnit);
 }
 
-void assert_roots_are(const char* expression, double start, double end,
-                      std::initializer_list<Coordinate2D<double>> expected,
-                      Preferences::AngleUnit angleUnit = Degree) {
+void assert_roots_are(
+    const char* expression, double start, double end,
+    std::initializer_list<Poincare::Coordinate2D<double>> expected,
+    Preferences::AngleUnit angleUnit = Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::Root,
                        angleUnit, nullptr);
 }
-void assert_minima_are(const char* expression, double start, double end,
-                       std::initializer_list<Coordinate2D<double>> expected,
-                       Preferences::AngleUnit angleUnit = Degree) {
+void assert_minima_are(
+    const char* expression, double start, double end,
+    std::initializer_list<Poincare::Coordinate2D<double>> expected,
+    Preferences::AngleUnit angleUnit = Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::LocalMinimum,
                        angleUnit, nullptr);
 }
-void assert_maxima_are(const char* expression, double start, double end,
-                       std::initializer_list<Coordinate2D<double>> expected,
-                       Preferences::AngleUnit angleUnit = Degree) {
+void assert_maxima_are(
+    const char* expression, double start, double end,
+    std::initializer_list<Poincare::Coordinate2D<double>> expected,
+    Preferences::AngleUnit angleUnit = Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::LocalMaximum,
                        angleUnit, nullptr);
 }
 void assert_intersections_are(
     const char* expression1, const char* expression2, double start, double end,
-    std::initializer_list<Coordinate2D<double>> expected,
+    std::initializer_list<Poincare::Coordinate2D<double>> expected,
     Preferences::AngleUnit angleUnit = Degree) {
   assert_solutions_are(expression1, start, end, expected,
                        Interest::Intersection, angleUnit, expression2);
 }
 
-Coordinate2D<double> R(double x) { return Coordinate2D<double>(x, 0.); }
-Coordinate2D<double> XY(double x, double y) {
-  return Coordinate2D<double>(x, y);
+Poincare::Coordinate2D<double> R(double x) {
+  return Poincare::Coordinate2D<double>(x, 0.);
+}
+Poincare::Coordinate2D<double> XY(double x, double y) {
+  return Poincare::Coordinate2D<double>(x, y);
 }
 
 QUIZ_CASE(poincare_solver_roots) {

@@ -1,7 +1,8 @@
 #ifndef POINCARE_NUMERIC_SOLVER_ALGORITHMS_H
 #define POINCARE_NUMERIC_SOLVER_ALGORITHMS_H
 
-#include "coordinate_2D.h"
+#include <poincare/coordinate_2D.h>
+
 #include "float.h"
 #include "solver.h"
 

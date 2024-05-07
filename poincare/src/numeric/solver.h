@@ -3,12 +3,12 @@
 
 #include <math.h>
 #include <omg/troolean.h>
+#include <poincare/coordinate_2D.h>
 #include <poincare/src/expression/context.h>
 #include <poincare/src/memory/tree.h>
 
 #include <algorithm>
 
-#include "coordinate_2D.h"
 #include "float.h"
 
 namespace Poincare {

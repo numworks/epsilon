@@ -1,9 +1,9 @@
-#ifndef POINCARE_NUMERIC_COORDINATE_2D_H
-#define POINCARE_NUMERIC_COORDINATE_2D_H
+#ifndef POINCARE_COORDINATE_2D_H
+#define POINCARE_COORDINATE_2D_H
 
 #include <cmath>
 
-namespace Poincare::Internal {
+namespace Poincare {
 
 template <typename T>
 class Coordinate2D final {
@@ -47,6 +47,6 @@ class Coordinate2D final {
   T m_y;
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare
 
 #endif

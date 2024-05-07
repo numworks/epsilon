@@ -2,13 +2,14 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <poincare/old/integer.h>
+#include <poincare/preferences.h>
+#include <poincare/print_float.h>
+#include <poincare/print_int.h>
 
 #include <cmath>
 
 #include "../app.h"
 
-using namespace Poincare;
 using namespace Shared;
 using namespace Escher;
 
@@ -50,8 +51,10 @@ void DisplayModeController::fillCellForRow(HighlightCell *cell, int row) {
     GenericSubController::fillCellForRow(cell, row);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
-    Integer(Preferences::SharedPreferences()->numberOfSignificantDigits())
-        .serialize(buffer, bufferSize);
+    int length = Poincare::PrintInt::Left(
+        Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
+        buffer, bufferSize);
+    buffer[length] = 0;
     m_editableCell.textField()->setText(buffer);
     return;
   }
@@ -73,15 +76,15 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (floatBody < 1.0) {
     floatBody = 1.0;
   }
-  if (Preferences::SharedPreferences()->displayMode() ==
-          Preferences::PrintFloatMode::Engineering &&
+  if (Poincare::Preferences::SharedPreferences()->displayMode() ==
+          Poincare::Preferences::PrintFloatMode::Engineering &&
       floatBody < 3.0) {
     floatBody = 3.0;
   }
-  if (floatBody > PrintFloat::k_maxNumberOfSignificantDigits) {
-    floatBody = PrintFloat::k_maxNumberOfSignificantDigits;
+  if (floatBody > Poincare::PrintFloat::k_maxNumberOfSignificantDigits) {
+    floatBody = Poincare::PrintFloat::k_maxNumberOfSignificantDigits;
   }
-  Preferences::SharedPreferences()->setNumberOfSignificantDigits(
+  Poincare::Preferences::SharedPreferences()->setNumberOfSignificantDigits(
       (char)std::round(floatBody));
   m_selectableListView.reloadSelectedCell();
   if (event == Ion::Events::Up || event == Ion::Events::OK) {

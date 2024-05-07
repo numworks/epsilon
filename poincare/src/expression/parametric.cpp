@@ -197,9 +197,8 @@ bool Parametric::ContractProduct(Tree* expr) {
   // Prod(u(k), k, a, b) / Prod(u(k), k, a, c) -> Prod(u(k), k, c+1, b) if c < b
   PatternMatching::Context ctx;
   if (PatternMatching::Match(
-          expr,
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
-          &ctx) &&
+          expr, &ctx) &&
       Comparison::Compare(ctx.getNode(KF), ctx.getNode(KC)) < 0) {
     expr->moveTreeOverTree(PatternMatching::CreateSimplify(
         KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx));

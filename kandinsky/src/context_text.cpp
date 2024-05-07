@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <ion/display.h>
-#include <ion/unicode/utf8_decoder.h>
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
+#include <omg/utf8_decoder.h>
 
 #include <cmath>
 

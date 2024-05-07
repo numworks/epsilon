@@ -5,7 +5,7 @@
 #include <escher/text_cursor_view.h>
 #include <ion.h>
 #include <ion/events.h>
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 #include <poincare/layout.h>
 
 namespace Escher {

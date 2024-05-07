@@ -1,6 +1,6 @@
 #include "code_point_layout.h"
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/src/memory/tree_stack.h>
 
 namespace Poincare::Internal {

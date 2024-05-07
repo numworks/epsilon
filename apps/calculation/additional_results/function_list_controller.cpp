@@ -2,7 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>

@@ -1,5 +1,5 @@
-#ifndef ION_UNICODE_UTF8_DECODER_H
-#define ION_UNICODE_UTF8_DECODER_H
+#ifndef OMG_UTF8_DECODER_H
+#define OMG_UTF8_DECODER_H
 
 #include <assert.h>
 #include <stddef.h>

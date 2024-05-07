@@ -1,5 +1,5 @@
-#include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_decoder.h>
+#include <omg/utf8_helper.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/complex_cartesian.h>
 #include <poincare/old/constant.h>

@@ -1,7 +1,7 @@
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <ion/clipboard.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/expression.h>
 #include <poincare/src/memory/tree.h>
 

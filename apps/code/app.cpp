@@ -1,7 +1,7 @@
 #include "app.h"
 
 #include <apps/i18n.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/old/pool.h>
 
 #include "clipboard.h"

@@ -2,8 +2,8 @@
 #define ION_STORAGE_H
 
 #include <assert.h>
-#include <ion/unicode/utf8_helper.h>
 #include <omg/global_box.h>
+#include <omg/utf8_helper.h>
 
 #include "record.h"
 #include "record_name_verifier.h"

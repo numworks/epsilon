@@ -2,7 +2,7 @@
 #define SHARED_FUNCTION_MODELS_NAMES_H
 
 #include <apps/shared/continuous_function.h>
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 
 #include <array>
 

@@ -4,9 +4,9 @@
 #include <apps/shared/continuous_function_cache.h>
 #include <apps/shared/poincare_helpers.h>
 #include <escher/palette.h>
-#include <ion/unicode/code_point.h>
 #include <kandinsky/color.h>
 #include <kandinsky/measuring_context.h>
+#include <omg/code_point.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/coordinate_2D.h>

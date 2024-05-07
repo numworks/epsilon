@@ -1,7 +1,7 @@
 #include "binary.h"
 
-#include <ion/unicode/utf8_helper.h>
 #include <omg/unicode_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 

@@ -1,7 +1,7 @@
 #include "helper.h"
 
-#include <ion/unicode/utf8_helper.h>
 #include <omg/unicode_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/src/expression/binary.h>
 
 namespace Poincare::Internal {

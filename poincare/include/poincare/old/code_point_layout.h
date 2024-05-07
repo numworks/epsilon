@@ -1,7 +1,7 @@
 #ifndef POINCARE_CODEPOINT_LAYOUT_NODE_H
 #define POINCARE_CODEPOINT_LAYOUT_NODE_H
 
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 
 #include "layout_cursor.h"
 #include "old_layout.h"

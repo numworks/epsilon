@@ -1,5 +1,5 @@
-#ifndef ION_UNICODE_UTF8_HELPER_H
-#define ION_UNICODE_UTF8_HELPER_H
+#ifndef OMG_UTF8_HELPER_H
+#define OMG_UTF8_HELPER_H
 
 #include <stddef.h>
 

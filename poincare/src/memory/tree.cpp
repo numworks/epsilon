@@ -8,7 +8,7 @@
 #endif
 
 #if POINCARE_TREE_LOG
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/polynomial.h>

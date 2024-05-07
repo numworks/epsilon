@@ -1,7 +1,7 @@
 #include "python_text_area.h"
 
 #include <escher/palette.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_helper.h>
 #include <python/port/port.h>
 
 #include "app.h"

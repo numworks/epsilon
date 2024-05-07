@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_XNT_H
 #define POINCARE_LAYOUT_XNT_H
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/src/memory/tree.h>
 
 namespace Poincare::Internal {

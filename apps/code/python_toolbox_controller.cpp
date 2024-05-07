@@ -3,7 +3,7 @@
 #include <apps/shared/toolbox_helpers.h>
 #include <assert.h>
 #include <ion/keyboard/layout_events.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_helper.h>
 extern "C" {
 #include <ctype.h>
 #include <string.h>

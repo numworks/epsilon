@@ -1,6 +1,6 @@
-#include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
 #include <omg/ieee754.h>
+#include <omg/utf8_decoder.h>
+#include <omg/utf8_helper.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/undefined.h>

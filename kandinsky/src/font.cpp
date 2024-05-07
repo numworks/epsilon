@@ -4,7 +4,7 @@ extern "C" {
 }
 #include <assert.h>
 #include <ion.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 
 #include <algorithm>
 

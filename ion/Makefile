@@ -24,9 +24,6 @@ ion_src += $(addprefix ion/src/shared/, \
   storage/file_system.cpp \
   storage/record_name_verifier.cpp \
   storage/record.cpp \
-  unicode/code_point.cpp\
-  unicode/utf8_decoder.cpp\
-  unicode/utf8_helper.cpp\
 )
 
 # TODO EMILIE: tidy makefiles: these following should go in ion/src/device/Makefile?
@@ -36,9 +33,6 @@ ion_device_bench_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   decompress.cpp \
   layout_events.cpp \
-  unicode/code_point.cpp\
-  unicode/utf8_decoder.cpp \
-  unicode/utf8_helper.cpp \
 )
 ion_device_bench_src += ion/src/external/lz4/lz4.c
 
@@ -52,8 +46,6 @@ ion_device_kernel_src += $(addprefix ion/src/shared/, \
   keyboard.cpp \
   keyboard_queue.cpp \
   layout_events.cpp \
-  unicode/utf8_decoder.cpp:+kernelassert \
-  unicode/utf8_helper.cpp:+kernelassert \
 )
 ion_device_kernel_src += ion/src/external/lz4/lz4.c
 
@@ -71,9 +63,6 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   storage/file_system.cpp \
   storage/record_name_verifier.cpp \
   storage/record.cpp \
-  unicode/code_point.cpp\
-  unicode/utf8_decoder.cpp\
-  unicode/utf8_helper.cpp\
 )
 
 ifeq ($(ESCHER_LOG_EVENTS_NAME),1)

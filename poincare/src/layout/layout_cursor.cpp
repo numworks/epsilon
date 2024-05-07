@@ -1,6 +1,6 @@
 #include "layout_cursor.h"
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_ref.h>
 

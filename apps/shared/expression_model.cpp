@@ -2,7 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <assert.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/function.h>

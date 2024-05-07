@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/layout.h>
 #include <poincare/old/serialization_helper.h>
 #include <string.h>

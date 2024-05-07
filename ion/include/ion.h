@@ -20,9 +20,9 @@
 #include <ion/reset.h>
 #include <ion/storage/file_system.h>
 #include <ion/timing.h>
-#include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
 #include <ion/usb.h>
+#include <omg/utf8_decoder.h>
+#include <omg/utf8_helper.h>
 #include <setjmp.h>
 #include <stdint.h>
 #include <string.h>

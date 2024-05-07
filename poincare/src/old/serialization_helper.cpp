@@ -1,6 +1,6 @@
 #include <assert.h>
-#include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_decoder.h>
+#include <omg/utf8_helper.h>
 #include <poincare/old/expression_node.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>

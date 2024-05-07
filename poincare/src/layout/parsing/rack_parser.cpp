@@ -1,7 +1,7 @@
 #include "rack_parser.h"
 
-#include <ion/unicode/utf8_decoder.h>
 #include <omg/unicode_helper.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/old/variable_context.h>

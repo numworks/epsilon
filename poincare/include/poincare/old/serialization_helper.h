@@ -1,7 +1,7 @@
 #ifndef POINCARE_SERIALIZATION_HELPER_H
 #define POINCARE_SERIALIZATION_HELPER_H
 
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 
 #include "pool_object.h"
 

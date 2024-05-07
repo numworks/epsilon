@@ -12,7 +12,7 @@
 #include "apps/shared/sequence_context.h"
 #include "apps/shared/sequence_store.h"
 #include "ion/events.h"
-#include "ion/unicode/code_point.h"
+#include "omg/code_point.h"
 
 using namespace Shared;
 using namespace Poincare;

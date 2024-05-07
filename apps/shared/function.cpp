@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <float.h>
 #include <ion/display.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/old/zoom.h>
 #include <string.h>
 

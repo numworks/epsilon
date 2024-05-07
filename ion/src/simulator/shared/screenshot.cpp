@@ -2,9 +2,9 @@
 
 #include <ion.h>
 #include <ion/display.h>
-#include <ion/unicode/utf8_decoder.h>
 #include <kandinsky/font.h>
 #include <omg/print.h>
+#include <omg/utf8_decoder.h>
 
 #include <cstdio>
 

@@ -1,13 +1,13 @@
 #ifndef KANDINSKY_FONT_H
 #define KANDINSKY_FONT_H
 
-#include <ion/unicode/code_point.h>
 #include <kandinsky/coordinate.h>
 #include <kandinsky/fonts/LargeFont.h>
 #include <kandinsky/fonts/SmallFont.h>
 #include <kandinsky/fonts/code_points.h>
 #include <kandinsky/fonts/font_constants.h>
 #include <kandinsky/size.h>
+#include <omg/code_point.h>
 #include <stddef.h>
 #include <stdint.h>
 

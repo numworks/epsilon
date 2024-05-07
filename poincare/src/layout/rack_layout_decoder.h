@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_RACK_LAYOUT_DECODER_H
 #define POINCARE_LAYOUT_RACK_LAYOUT_DECODER_H
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 
 #include "code_point_layout.h"
 #include "k_tree.h"

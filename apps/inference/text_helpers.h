@@ -2,7 +2,7 @@
 #define INFERENCE_TEXT_HELPERS_H
 
 #include <apps/i18n.h>
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 #include <poincare/layout.h>
 #include <stddef.h>
 

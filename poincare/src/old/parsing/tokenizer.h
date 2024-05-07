@@ -7,7 +7,7 @@
  * Tokenizer determines a Type and may save other relevant data intended for the
  * Parser. */
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 
 #include "parsing_context.h"
 #include "token.h"

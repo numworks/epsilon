@@ -1,7 +1,7 @@
 #include <assert.h>
-#include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
 #include <omg/ieee754.h>
+#include <omg/utf8_decoder.h>
+#include <omg/utf8_helper.h>
 #include <poincare/layout.h>
 #include <poincare/old/decimal.h>
 #include <poincare/old/infinity.h>

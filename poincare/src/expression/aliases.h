@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_ALIASES_H
 
 #include <assert.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <string.h>
 
 /* This class is used to handle name's aliases for reserved functions, units

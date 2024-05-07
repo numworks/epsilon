@@ -1,6 +1,6 @@
 #include <assert.h>
-#include <ion/unicode/code_point.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/code_point.h>
+#include <omg/utf8_decoder.h>
 
 char CodePoint::getChar() const {
   assert(UTF8Decoder::CharSizeOfCodePoint(*this) == 1);

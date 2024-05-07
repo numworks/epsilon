@@ -1,6 +1,6 @@
 #include "rack_from_text.h"
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/src/memory/n_ary.h>
 
 #include "code_point_layout.h"

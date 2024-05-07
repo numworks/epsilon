@@ -1,5 +1,5 @@
-#ifndef ION_UNICODE_CODE_POINT_H
-#define ION_UNICODE_CODE_POINT_H
+#ifndef OMG_CODE_POINT_H
+#define OMG_CODE_POINT_H
 
 #include <stdint.h>
 

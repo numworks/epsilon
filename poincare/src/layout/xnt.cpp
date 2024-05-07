@@ -1,6 +1,6 @@
 #include "xnt.h"
 
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/parametric.h>
 #include <poincare/src/expression/symbol.h>

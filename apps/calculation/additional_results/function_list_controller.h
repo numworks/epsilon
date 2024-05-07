@@ -2,7 +2,7 @@
 #define CALCULATION_FUNCTION_LIST_CONTROLLER_H
 
 #include <apps/shared/continuous_function_properties.h>
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 
 #include "function_graph_cell.h"
 #include "function_model.h"

@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_CODE_POINT_LAYOUT_H
 #define POINCARE_LAYOUT_CODE_POINT_LAYOUT_H
 
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 #include <poincare/src/memory/tree.h>
 
 namespace Poincare::Internal {

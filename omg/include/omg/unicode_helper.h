@@ -1,7 +1,7 @@
 #ifndef OMG_UNICODE_HELPER_H
 #define OMG_UNICODE_HELPER_H
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 
 namespace Poincare::Internal {
 class CPL;

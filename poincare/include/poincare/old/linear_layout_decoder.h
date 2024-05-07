@@ -1,7 +1,7 @@
 #ifndef POINCARE_LINEAR_LAYOUT_DECODER_H
 #define POINCARE_LINEAR_LAYOUT_DECODER_H
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 
 #include "horizontal_layout.h"
 

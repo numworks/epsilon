@@ -1,5 +1,5 @@
 #include <escher/metric.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/layout.h>
 
 #include <algorithm>

@@ -1,5 +1,5 @@
 #include <escher/text_input_helpers.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <string.h>
 
 namespace Escher {

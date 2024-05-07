@@ -1,7 +1,7 @@
 #ifndef POINCARE_PARAMETERED_EXPRESSION_H
 #define POINCARE_PARAMETERED_EXPRESSION_H
 
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 
 #include "old_expression.h"
 

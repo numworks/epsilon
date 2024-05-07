@@ -1,8 +1,8 @@
 #ifndef POINCARE_LAYOUT_K_TREE_H
 #define POINCARE_LAYOUT_K_TREE_H
 
-#include <ion/unicode/code_point.h>
 #include <omg/bit_helper.h>
+#include <omg/code_point.h>
 #include <poincare/src/memory/k_tree.h>
 
 namespace Poincare::Internal {

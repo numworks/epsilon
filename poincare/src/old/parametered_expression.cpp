@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>

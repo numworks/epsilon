@@ -4,9 +4,9 @@
 #include <escher/text_input_helpers.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
-#include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
 #include <limits.h>
+#include <omg/utf8_decoder.h>
+#include <omg/utf8_helper.h>
 #include <poincare/old/serialization_helper.h>
 #include <stddef.h>
 

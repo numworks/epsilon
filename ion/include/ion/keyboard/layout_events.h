@@ -2,7 +2,7 @@
 #define ION_KEYBOARD_LAYOUT_EVENTS_H
 
 #include <ion/events.h>
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 #include <string.h>
 
 #include "event_data.h"

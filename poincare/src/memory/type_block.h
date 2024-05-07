@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_TYPE_BLOCK_H
 #define POINCARE_MEMORY_TYPE_BLOCK_H
 
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 
 #include "block.h"
 

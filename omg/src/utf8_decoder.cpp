@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <ion/unicode/utf8_decoder.h>
+#include <omg/utf8_decoder.h>
 #include <string.h>
 
 size_t UnicodeDecoder::nextGlyphPosition() {

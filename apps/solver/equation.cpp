@@ -2,7 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/constant.h>

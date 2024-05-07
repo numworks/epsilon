@@ -1,6 +1,6 @@
 #include "tree_ref.h"
 
-#include <ion/unicode/code_point.h>
+#include <omg/code_point.h>
 #include <poincare/src/expression/k_tree.h>
 #include <string.h>
 

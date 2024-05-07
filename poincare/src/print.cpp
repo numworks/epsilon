@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <ion/unicode/utf8_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/print.h>
 #include <poincare/print_float.h>
 #include <poincare/print_int.h>

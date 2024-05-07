@@ -1,4 +1,4 @@
-kernel_src = $(ion_device_kernel_src) $(liba_kernel_src)
+kernel_src = $(ion_device_kernel_src) $(liba_kernel_src) $(omg_kernel_src)
 kernel_test_src = $(kernel_src)
 
 ASSERTIONS = $(DEVELOPMENT)

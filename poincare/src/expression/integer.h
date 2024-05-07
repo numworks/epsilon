@@ -1,9 +1,9 @@
 #ifndef POINCARE_EXPRESSION_INTEGER_H
 #define POINCARE_EXPRESSION_INTEGER_H
 
-#include <ion/unicode/utf8_decoder.h>
 #include <omg/arithmetic.h>
 #include <omg/bit_helper.h>
+#include <omg/utf8_decoder.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <stdlib.h>
 

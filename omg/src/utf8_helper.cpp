@@ -1,7 +1,7 @@
 #include <assert.h>
-#include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
 #include <kandinsky/font.h>
+#include <omg/utf8_decoder.h>
+#include <omg/utf8_helper.h>
 #include <string.h>
 
 #include <algorithm>

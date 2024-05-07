@@ -35,7 +35,8 @@ include $(PATH_haussmann)/src/rules.mak
 
 .PHONY: clean
 clean:
-	$(QUIET) rm -rf $(OUTPUT_DIRECTORY)
+	$(QUIET) rm -rf $(OUTPUT_DIRECTORY)/*
+	$(QUIET) rmdir -p $(OUTPUT_DIRECTORY) 2> /dev/null || :
 
 include $(PATH_haussmann)/src/docs.mak
 export HELP_STRING

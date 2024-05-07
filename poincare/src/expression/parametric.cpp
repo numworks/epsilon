@@ -194,14 +194,21 @@ bool Parametric::ExpandProduct(Tree* expr) {
 
 bool Parametric::ContractProduct(Tree* expr) {
   // Used to simplify simplified and projected permute and binomials.
-  // Prod(u(k), k, a, b) / Prod(u(k), k, a, c) -> Prod(u(k), k, c+1, b) if c < b
+  /* Prod(u(k), k, a, b) / Prod(u(k), k, a, c)
+   * -> Prod(u(k), k, c+1, b) if b > c
+   * -> 1 if b = c (can be included in previous case and then will be reduced)
+   * -> 1 / Prod(u(k), k, b+1, c) if b < c */
   PatternMatching::Context ctx;
   if (PatternMatching::Match(
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
-          expr, &ctx) &&
-      Comparison::Compare(ctx.getNode(KF), ctx.getNode(KC)) <= 0) {
-    expr->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx));
+          expr, &ctx)) {
+    int comp = Comparison::Compare(ctx.getNode(KC), ctx.getNode(KF));
+    Tree* result =
+        comp >= 0 ? PatternMatching::CreateSimplify(
+                        KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx)
+                  : PatternMatching::CreateSimplify(
+                        KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
+    expr->moveTreeOverTree(result);
     return true;
   }
   return false;

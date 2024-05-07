@@ -29,7 +29,7 @@ bool OppositeNode::childAtIndexNeedsUserParentheses(const OExpression& child,
                                                     int childIndex) const {
   assert(childIndex == 0);
   if (child.isNumber() &&
-      static_cast<const Number&>(child).isPositive() == TrinaryBoolean::False) {
+      static_cast<const Number&>(child).isPositive() == OMG::Troolean::False) {
     return true;
   }
   if (child.isOfType({Type::Conjugate, Type::Dependency})) {

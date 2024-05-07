@@ -54,9 +54,9 @@ int Polynomial::QuadraticPolynomialRoots(OExpression a, OExpression b,
   }
 
   bool multipleRoot = false;
-  TrinaryBoolean deltaNull = delta->isNull(context);
-  if (deltaNull == TrinaryBoolean::True ||
-      (deltaNull == TrinaryBoolean::Unknown &&
+  OMG::Troolean deltaNull = delta->isNull(context);
+  if (deltaNull == OMG::Troolean::True ||
+      (deltaNull == OMG::Troolean::Unknown &&
        delta->approximateToScalar<double>(approximationContext) == 0.)) {
     *root1 = Division::Builder(
         Opposite::Builder(b.clone()),
@@ -66,9 +66,9 @@ int Polynomial::QuadraticPolynomialRoots(OExpression a, OExpression b,
   } else {
     // Grapher relies on the order here to properly navigate implicit curves.
     int offset = 0;
-    TrinaryBoolean aPositive = a.isPositive(context);
-    if (aPositive != TrinaryBoolean::True &&
-        (aPositive == TrinaryBoolean::False ||
+    OMG::Troolean aPositive = a.isPositive(context);
+    if (aPositive != OMG::Troolean::True &&
+        (aPositive == OMG::Troolean::False ||
          a.approximateToScalar<double>(approximationContext) < 0.)) {
       // Coefficient a is negative, swap root1 and root 2 to preseverve order.
       offset = 1;
@@ -234,16 +234,16 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
   /* If d is null, the polynom can easily be factored by X. We handle it here
    * (even though in most case it would be caught by the following case) in
    * case c is null. */
-  if (d.isNull(context) == TrinaryBoolean::True ||
+  if (d.isNull(context) == OMG::Troolean::True ||
       d.approximateToScalar<double>(approximationContext) == 0.) {
     *root1 = Rational::Builder(0);
   }
   /* Polynoms of the form "ax^3+d=0" have a simple solutions : x1 = sqrt(-d/a,3)
    * x2 = roots[1] * x1 and x3 = roots[2] * x1. */
   if (root1->isUninitialized() &&
-      (b.isNull(context) == TrinaryBoolean::True ||
+      (b.isNull(context) == OMG::Troolean::True ||
        b.approximateToScalar<double>(approximationContext) == 0.) &&
-      (c.isNull(context) == TrinaryBoolean::True ||
+      (c.isNull(context) == OMG::Troolean::True ||
        c.approximateToScalar<double>(approximationContext) == 0.)) {
     *root1 = NthRoot::Builder(
         Division::Builder(Opposite::Builder(d.clone()), a.clone()),
@@ -301,7 +301,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
             {b.clone(), Multiplication::Builder(a.clone(), root1->clone())})
             .cloneAndSimplify(reductionContext);
     OExpression gamma =
-        root1->isNull(context) == TrinaryBoolean::True
+        root1->isNull(context) == OMG::Troolean::True
             ? c.clone()
             : Opposite::Builder(Division::Builder(d.clone(), root1->clone()))
                   .cloneAndSimplify(reductionContext);
@@ -313,7 +313,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
     /* We did not manage to find any simple root : we resort to using Cardano's
      * formula. */
     int deltaSign;
-    if (delta->isNull(context) == TrinaryBoolean::True) {
+    if (delta->isNull(context) == OMG::Troolean::True) {
       deltaSign = 0;
     } else {
       double deltaValue =
@@ -330,7 +330,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
             Multiplication::Builder(Rational::Builder(3), a.clone(), c.clone()))
             .cloneAndSimplify(reductionContext);
     if (deltaSign == 0) {
-      if (delta0.isNull(context) == TrinaryBoolean::True ||
+      if (delta0.isNull(context) == OMG::Troolean::True ||
           delta0.approximateToScalar<double>(approximationContext) == 0.) {
         // -b / 3a
         *root1 = Division::Builder(
@@ -408,7 +408,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
        *
        * TODO: Enhance delta computation and/or add a formal solve of equations
        * of type (AX+B)^3=0. */
-      if (cardano.isNull(context) == TrinaryBoolean::True) {
+      if (cardano.isNull(context) == OMG::Troolean::True) {
         // -b / 3a
         *root1 = Division::Builder(
             b.clone(),
@@ -671,7 +671,7 @@ OExpression Polynomial::CardanoNumber(
 
   OExpression C;
   ApproximationContext approximationContext(reductionContext);
-  if (delta0.isNull(reductionContext.context()) == TrinaryBoolean::True) {
+  if (delta0.isNull(reductionContext.context()) == OMG::Troolean::True) {
     C = delta1.clone();
   } else {
     OExpression rootDeltaDifference = SquareRoot::Builder(Subtraction::Builder(
@@ -691,7 +691,7 @@ OExpression Polynomial::CardanoNumber(
   C = NthRoot::Builder(C, Rational::Builder(3))
           .cloneAndSimplify(reductionContext);
 
-  if (C.isNull(reductionContext.context()) == TrinaryBoolean::Unknown) {
+  if (C.isNull(reductionContext.context()) == OMG::Troolean::Unknown) {
     C = C.approximate<double>(approximationContext);
     *approximate = true;
   } else {

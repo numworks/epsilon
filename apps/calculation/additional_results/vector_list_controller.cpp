@@ -42,7 +42,7 @@ void VectorListController::computeAdditionalResults(
   Expression approximatedNorm = PoincareHelpers::Approximate<double>(
       norm, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  if (approximatedNorm.isNull(context) != TrinaryBoolean::False ||
+  if (approximatedNorm.isNull(context) != OMG::Troolean::False ||
       Expression::IsInfinity(approximatedNorm)) {
     return;
   }
@@ -69,7 +69,7 @@ void VectorListController::computeAdditionalResults(
   }
   assert(normalized.numberOfChildren() == 2);
   Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
-  if (normalized.childAtIndex(1).isPositive(context) == TrinaryBoolean::False) {
+  if (normalized.childAtIndex(1).isPositive(context) == OMG::Troolean::False) {
     angle = Subtraction::Builder(
         Trigonometry::AnglePeriodInAngleUnit(computationContext.angleUnit()),
         angle);

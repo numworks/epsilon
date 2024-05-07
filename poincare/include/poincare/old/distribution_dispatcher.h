@@ -131,11 +131,11 @@ class DistributionDispatcherNode : public NAryExpressionNode {
   // Properties
   Type otype() const override { return Type::DistributionDispatcher; }
 
-  TrinaryBoolean isPositive(Context* context) const override {
+  OMG::Troolean isPositive(Context* context) const override {
     if (m_methodType != DistributionMethod::Type::Inverse) {
-      return TrinaryBoolean::True;
+      return OMG::Troolean::True;
     }
-    return TrinaryBoolean::Unknown;
+    return OMG::Troolean::Unknown;
   }
 
 #if POINCARE_TREE_LOG

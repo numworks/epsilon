@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_NODE_H
 #define POINCARE_EXPRESSION_NODE_H
 
+#include <omg/troolean.h>
 #include <poincare/layout.h>
 #include <stdint.h>
 
@@ -8,7 +9,6 @@
 #include "context.h"
 #include "evaluation.h"
 #include "pool_object.h"
-#include "trinary_boolean.h"
 
 namespace Poincare {
 
@@ -160,11 +160,11 @@ class ExpressionNode : public PoolObject {
   virtual Type otype() const = 0;
 
   /* Properties */
-  virtual TrinaryBoolean isPositive(Context* context) const {
-    return TrinaryBoolean::Unknown;
+  virtual OMG::Troolean isPositive(Context* context) const {
+    return OMG::Troolean::Unknown;
   }
-  virtual TrinaryBoolean isNull(Context* context) const {
-    return TrinaryBoolean::Unknown;
+  virtual OMG::Troolean isNull(Context* context) const {
+    return OMG::Troolean::Unknown;
   }
   bool isNumber() const;
   bool isRandomNumber() const;
@@ -198,7 +198,7 @@ class ExpressionNode : public PoolObject {
                                    const char** visitedSymbols,
                                    int numberOfVisitedSymbols);
   /*!*/ virtual OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
   typedef bool (*isVariableTest)(const char* c, Poincare::Context* context);
   virtual int getVariables(Context* context, isVariableTest isVariable,

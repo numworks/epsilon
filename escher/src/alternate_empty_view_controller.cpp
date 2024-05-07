@@ -2,8 +2,6 @@
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/container.h>
 
-using namespace Poincare;
-
 namespace Escher {
 
 /* ContentView */
@@ -12,17 +10,17 @@ AlternateEmptyViewController::ContentView::ContentView(
     ViewController* mainViewController, AlternateEmptyViewDelegate* delegate)
     : m_mainViewController(mainViewController),
       m_delegate(delegate),
-      m_isEmpty(TrinaryBoolean::Unknown) {}
+      m_isEmpty(OMG::Troolean::Unknown) {}
 
 bool AlternateEmptyViewController::ContentView::isEmpty() {
-  if (m_isEmpty == TrinaryBoolean::Unknown) {
-    m_isEmpty = BinaryToTrinaryBool(m_delegate->isEmpty());
+  if (m_isEmpty == OMG::Troolean::Unknown) {
+    m_isEmpty = OMG::BinaryToTrinaryBool(m_delegate->isEmpty());
   }
-  return TrinaryToBinaryBool(m_isEmpty);
+  return OMG::TrinaryToBinaryBool(m_isEmpty);
 }
 
 View* AlternateEmptyViewController::ContentView::currentView() {
-  assert(m_isEmpty == BinaryToTrinaryBool(m_delegate->isEmpty()));
+  assert(m_isEmpty == OMG::BinaryToTrinaryBool(m_delegate->isEmpty()));
   return isEmpty() ? m_delegate->emptyView() : m_mainViewController->view();
 }
 

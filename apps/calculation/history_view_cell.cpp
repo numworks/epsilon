@@ -36,7 +36,7 @@ HistoryViewCell::HistoryViewCell(Responder *parentResponder)
       m_inputView(this, k_inputViewHorizontalMargin,
                   k_inputOutputViewsVerticalMargin),
       m_scrollableOutputView(this),
-      m_calculationExpanded(TrinaryBoolean::Unknown),
+      m_calculationExpanded(OMG::Troolean::Unknown),
       m_calculationSingleLine(false) {}
 
 void HistoryViewCell::setEven(bool even) {
@@ -398,7 +398,7 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
 
 bool HistoryViewCell::updateExpanded(bool expanded) {
   assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
-  TrinaryBoolean calculationExpanded = Poincare::BinaryToTrinaryBool(
+  OMG::Troolean calculationExpanded = OMG::BinaryToTrinaryBool(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||
       (expanded && m_calculationDisplayOutput ==

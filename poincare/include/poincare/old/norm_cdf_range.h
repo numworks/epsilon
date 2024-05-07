@@ -21,8 +21,8 @@ class NormCDFRangeNode final : public NormalDistributionFunctionNode {
 
   // Properties
   Type otype() const override { return Type::NormCDFRange; }
-  TrinaryBoolean isPositive(Context* context) const override {
-    return TrinaryBoolean::True;
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::Troolean::True;
   }
   int muIndex() const override { return 2; }
   int varIndex() const override { return 3; }

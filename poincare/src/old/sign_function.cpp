@@ -75,16 +75,16 @@ OExpression SignFunction::shallowReduce(ReductionContext reductionContext) {
   }
   OExpression child = childAtIndex(0);
   OExpression resultSign;
-  TrinaryBoolean childIsPositive = child.isPositive(reductionContext.context());
-  TrinaryBoolean childIsNull = child.isNull(reductionContext.context());
-  if (childIsPositive != TrinaryBoolean::Unknown &&
-      (childIsNull != TrinaryBoolean::Unknown ||
+  OMG::Troolean childIsPositive = child.isPositive(reductionContext.context());
+  OMG::Troolean childIsNull = child.isNull(reductionContext.context());
+  if (childIsPositive != OMG::Troolean::Unknown &&
+      (childIsNull != OMG::Troolean::Unknown ||
        reductionContext.target() == ReductionTarget::User)) {
     // If target == User, we want sign(abs(x)) = 1, even if x can be null.
     resultSign = Rational::Builder(
-        childIsNull == TrinaryBoolean::True
+        childIsNull == OMG::Troolean::True
             ? 0
-            : (childIsPositive == TrinaryBoolean::True ? 1 : -1));
+            : (childIsPositive == OMG::Troolean::True ? 1 : -1));
   } else {
     Evaluation<float> childApproximated = child.node()->approximate(
         1.0f, ApproximationContext(reductionContext, true));

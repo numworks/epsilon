@@ -24,10 +24,10 @@ class ArcCosineNode final : public ExpressionNode {
 #endif
 
   // Properties
-  TrinaryBoolean isPositive(Context* context) const override {
-    return childAtIndex(0)->isPositive(context) == TrinaryBoolean::Unknown
-               ? TrinaryBoolean::Unknown
-               : TrinaryBoolean::True;
+  OMG::Troolean isPositive(Context* context) const override {
+    return childAtIndex(0)->isPositive(context) == OMG::Troolean::Unknown
+               ? OMG::Troolean::Unknown
+               : OMG::Troolean::True;
   }
   Type otype() const override { return Type::ArcCosine; }
 

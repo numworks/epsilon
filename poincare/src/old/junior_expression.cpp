@@ -576,13 +576,13 @@ bool JuniorExpression::recursivelyMatches(
   if (IsIgnoredSymbol(this, ignoredSymbols)) {
     return false;
   }
-  TrinaryBoolean testResult = test(*this, context, auxiliary);
-  if (testResult == TrinaryBoolean::True) {
+  OMG::Troolean testResult = test(*this, context, auxiliary);
+  if (testResult == OMG::Troolean::True) {
     return true;
-  } else if (testResult == TrinaryBoolean::False) {
+  } else if (testResult == OMG::Troolean::False) {
     return false;
   }
-  assert(testResult == TrinaryBoolean::Unknown && !isUninitialized());
+  assert(testResult == OMG::Troolean::Unknown && !isUninitialized());
 
   // Handle dependencies, store, symbols and functions
   ExpressionNode::Type t = type();
@@ -646,8 +646,8 @@ bool JuniorExpression::recursivelyMatches(
   ExpressionTrinaryTest ternary = [](const JuniorExpression e, Context* context,
                                      void* auxiliary) {
     ExpressionTest* trueTest = static_cast<ExpressionTest*>(auxiliary);
-    return (*trueTest)(e, context) ? TrinaryBoolean::True
-                                   : TrinaryBoolean::Unknown;
+    return (*trueTest)(e, context) ? OMG::Troolean::True
+                                   : OMG::Troolean::Unknown;
   };
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
@@ -659,7 +659,7 @@ bool JuniorExpression::recursivelyMatches(
                                      void* auxiliary) {
     SimpleExpressionTest* trueTest =
         static_cast<SimpleExpressionTest*>(auxiliary);
-    return (*trueTest)(e) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+    return (*trueTest)(e) ? OMG::Troolean::True : OMG::Troolean::Unknown;
   };
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
@@ -677,8 +677,8 @@ bool JuniorExpression::recursivelyMatches(ExpressionTestAuxiliary test,
     ExpressionTestAuxiliary* trueTest =
         static_cast<ExpressionTestAuxiliary*>(static_cast<Pack*>(pack)->test);
     return (*trueTest)(e, context, static_cast<Pack*>(pack)->auxiliary)
-               ? TrinaryBoolean::True
-               : TrinaryBoolean::Unknown;
+               ? OMG::Troolean::True
+               : OMG::Troolean::Unknown;
   };
   Pack pack{&test, auxiliary};
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
@@ -691,8 +691,8 @@ bool JuniorExpression::deepIsOfType(
         return e.isOfType(
                    *static_cast<std::initializer_list<ExpressionNode::Type>*>(
                        auxiliary))
-                   ? TrinaryBoolean::True
-                   : TrinaryBoolean::Unknown;
+                   ? OMG::Troolean::True
+                   : OMG::Troolean::Unknown;
       },
       context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       &types);

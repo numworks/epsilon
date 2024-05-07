@@ -18,12 +18,12 @@ class FactorialNode final : public ExpressionNode {
 #endif
 
   // Properties
-  TrinaryBoolean isNull(Context* context) const override {
-    return TrinaryBoolean::False;
+  OMG::Troolean isNull(Context* context) const override {
+    return OMG::Troolean::False;
   }
   Type otype() const override { return Type::Factorial; }
-  TrinaryBoolean isPositive(Context* context) const override {
-    return TrinaryBoolean::True;
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::Troolean::True;
   }
   bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;

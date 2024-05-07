@@ -19,8 +19,8 @@ class VectorNormNode final : public ExpressionNode {
 #endif
 
   // Properties
-  TrinaryBoolean isPositive(Context* context) const override {
-    return TrinaryBoolean::True;
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::Troolean::True;
   }
   Type otype() const override { return Type::VectorNorm; }
 

@@ -124,8 +124,8 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
     }
   }
   OExpression c = childAtIndex(0);
-  if (c.isPositive(reductionContext.context()) == TrinaryBoolean::False ||
-      base.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
+  if (c.isPositive(reductionContext.context()) == OMG::Troolean::False ||
+      base.isPositive(reductionContext.context()) == OMG::Troolean::False) {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       OExpression result = Nonreal::Builder();
       replaceWithInPlace(result);
@@ -151,7 +151,7 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
 
   // log(+inf, a) ?
   if (c.otype() == ExpressionNode::Type::Infinity &&
-      c.isPositive(reductionContext.context()) == TrinaryBoolean::True) {
+      c.isPositive(reductionContext.context()) == OMG::Troolean::True) {
     // log(+inf, a) --> ±inf with a rational and a > 0
     if (base.otype() == ExpressionNode::Type::Rational &&
         !static_cast<Rational&>(base).isNegative() &&
@@ -181,7 +181,7 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
   // log(x^y, b)->y*log(x, b) if x>0
   if (c.otype() == ExpressionNode::Type::Power &&
       c.childAtIndex(0).isPositive(reductionContext.context()) ==
-          TrinaryBoolean::True) {
+          OMG::Troolean::True) {
     Power p = static_cast<Power&>(c);
     OExpression x = p.childAtIndex(0);
     OExpression y = p.childAtIndex(1);
@@ -198,7 +198,7 @@ OExpression Logarithm::shallowReduce(ReductionContext reductionContext) {
     for (int i = 0; i < c.numberOfChildren() - 1; i++) {
       OExpression factor = c.childAtIndex(i);
       if (factor.isPositive(reductionContext.context()) ==
-          TrinaryBoolean::True) {
+          OMG::Troolean::True) {
         OExpression newLog = clone();
         static_cast<Multiplication&>(c).removeChildInPlace(
             factor, factor.numberOfChildren());

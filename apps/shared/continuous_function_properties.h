@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <omg/bit_helper.h>
+#include <omg/troolean.h>
 #include <poincare/expression.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/conic.h>
@@ -237,7 +238,7 @@ class ContinuousFunctionProperties {
       const Poincare::Expression& analyzedExpression,
       Poincare::Context* context,
       Poincare::Preferences::ComplexFormat complexFormat, int xDeg, int yDeg,
-      Poincare::TrinaryBoolean highestCoefficientIsPositive);
+      OMG::Troolean highestCoefficientIsPositive);
   void setPolarFunctionProperties(
       const Poincare::Expression& analyzedExpression,
       Poincare::Context* context,
@@ -252,7 +253,7 @@ class ContinuousFunctionProperties {
       const Poincare::Expression equation, const char* symbolName,
       Poincare::Context* context,
       Poincare::Preferences::ComplexFormat complexFormat,
-      Poincare::TrinaryBoolean* highestDegreeCoefficientIsPositive);
+      OMG::Troolean* highestDegreeCoefficientIsPositive);
   // If equation should be allowed when implicit plots are forbidden.
   static bool IsExplicitEquation(const Poincare::Expression equation,
                                  CodePoint symbol);

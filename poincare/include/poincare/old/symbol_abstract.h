@@ -53,7 +53,7 @@ class SymbolAbstractNode : public ExpressionNode {
                                   bool ignoreParentheses) const override;
 
   // Property
-  TrinaryBoolean isPositive(Context *context) const override;
+  OMG::Troolean isPositive(Context *context) const override;
   OExpression replaceSymbolWithExpression(
       const SymbolAbstract &symbol, const OExpression &expression) override;
   ExpressionNode::LayoutShape leftLayoutShape() const override;
@@ -118,8 +118,7 @@ class SymbolAbstract : public JuniorExpression {
     return nullptr;
     // return static_cast<SymbolAbstractNode *>(JuniorExpression::node());
   }
-  void checkForCircularityIfNeeded(Context *context,
-                                   TrinaryBoolean *isCircular);
+  void checkForCircularityIfNeeded(Context *context, OMG::Troolean *isCircular);
 
  private:
   static JuniorExpression Expand(const SymbolAbstract &symbol, Context *context,

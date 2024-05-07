@@ -31,7 +31,7 @@ class Solver {
   typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>,
                                   Coordinate2D<T>, const void *);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T,
-                                        Interest, T, TrinaryBoolean);
+                                        Interest, T, OMG::Troolean);
   typedef bool (*DiscontinuityEvaluation)(T, T, const void *);
 
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
@@ -135,15 +135,15 @@ class Solver {
   static Coordinate2D<T> SafeBrentMinimum(FunctionEvaluation f, const void *aux,
                                           T xMin, T xMax, Interest interest,
                                           T precision,
-                                          TrinaryBoolean discontinuous);
+                                          OMG::Troolean discontinuous);
   static Coordinate2D<T> SafeBrentMaximum(FunctionEvaluation f, const void *aux,
                                           T xMin, T xMax, Interest interest,
                                           T precision,
-                                          TrinaryBoolean discontinuous);
+                                          OMG::Troolean discontinuous);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f,
                                                const void *aux, T xMin, T xMax,
                                                Interest interest, T precision,
-                                               TrinaryBoolean discontinuous);
+                                               OMG::Troolean discontinuous);
 
   static bool DiscontinuityTestForExpression(T x1, T x2, const void *aux);
   static void ExcludeUndefinedFromBracket(Coordinate2D<T> *p1,

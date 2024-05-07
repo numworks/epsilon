@@ -43,7 +43,7 @@ void TrigonometryListController::computeAdditionalResults(
     approximateAngle = approximateOutput.clone();
     assert(!approximateAngle.isUninitialized() &&
            !approximateAngle.isUndefined());
-    if (approximateAngle.isPositive(context) == TrinaryBoolean::False) {
+    if (approximateAngle.isPositive(context) == OMG::Troolean::False) {
       // If the approximate angle is in [-π, π], set it in [0, 2π]
       approximateAngle = Addition::Builder(period.clone(), approximateAngle);
     }

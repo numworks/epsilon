@@ -38,13 +38,13 @@ OExpression ListMean::shallowReduce(ReductionContext reductionContext) {
   bool allWeightsArePositive = true;
   int childrenNumber = children[1].numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
-    TrinaryBoolean childIsPositive =
+    OMG::Troolean childIsPositive =
         children[1].childAtIndex(i).isPositive(reductionContext.context());
-    if (childIsPositive == TrinaryBoolean::False) {
+    if (childIsPositive == OMG::Troolean::False) {
       // If at least one child is negative, return undef
       return replaceWithUndefinedInPlace();
     }
-    if (childIsPositive == TrinaryBoolean::Unknown) {
+    if (childIsPositive == OMG::Troolean::Unknown) {
       allWeightsArePositive = false;
     }
   }

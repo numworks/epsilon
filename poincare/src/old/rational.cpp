@@ -130,12 +130,12 @@ T RationalNode::templatedApproximate() const {
 // Comparison
 
 int RationalNode::NaturalOrder(const RationalNode *i, const RationalNode *j) {
-  if (Number(i).isPositive() == TrinaryBoolean::False &&
-      Number(j).isPositive() == TrinaryBoolean::True) {
+  if (Number(i).isPositive() == OMG::Troolean::False &&
+      Number(j).isPositive() == OMG::Troolean::True) {
     return -1;
   }
-  if (Number(i).isPositive() == TrinaryBoolean::True &&
-      Number(j).isPositive() == TrinaryBoolean::False) {
+  if (Number(i).isPositive() == OMG::Troolean::True &&
+      Number(j).isPositive() == OMG::Troolean::False) {
     return 1;
   }
   Integer i1 = Integer::Multiplication(i->signedNumerator(), j->denominator());
@@ -275,7 +275,7 @@ OExpression Rational::shallowReduce() {
   // Turn into Infinite if the numerator is too big.
   if (unsignedIntegerNumerator().isOverflow()) {
     assert(false);
-    return Infinity::Builder(sign(&context) == TrinaryBoolean::False);
+    return Infinity::Builder(sign(&context) == OMG::Troolean::False);
   }
   // Turn into 0 if the denominator is too big.
   if (integerDenominator().isOverflow()) {
@@ -288,7 +288,7 @@ OExpression Rational::shallowReduce() {
 }
 
 OExpression Rational::shallowBeautify() {
-  if (isPositive() == TrinaryBoolean::False) {
+  if (isPositive() == OMG::Troolean::False) {
     OExpression abs = setSign(true);
     Opposite o = Opposite::Builder();
     replaceWithInPlace(o);

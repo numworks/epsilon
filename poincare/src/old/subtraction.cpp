@@ -19,7 +19,7 @@ bool SubtractionNode::childAtIndexNeedsUserParentheses(const OExpression& child,
     return false;
   }
   if (child.isNumber() &&
-      static_cast<const Number&>(child).isPositive() == TrinaryBoolean::False) {
+      static_cast<const Number&>(child).isPositive() == OMG::Troolean::False) {
     return true;
   }
   if (child.isOfType({Type::Conjugate, Type::Dependency})) {

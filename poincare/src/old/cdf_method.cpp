@@ -13,7 +13,7 @@ OExpression CDFMethod::shallowReduce(OExpression* abscissae,
   OExpression x = abscissae[0];
 
   if (x.otype() == ExpressionNode::Type::Infinity) {
-    if (x.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
+    if (x.isPositive(reductionContext.context()) == OMG::Troolean::False) {
       OExpression result = Rational::Builder(0);
       expression->replaceWithInPlace(result);
       return result;

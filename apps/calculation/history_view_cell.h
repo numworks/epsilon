@@ -5,6 +5,7 @@
 #include <escher/even_odd_cell_with_ellipsis.h>
 #include <escher/scrollable_layout_view.h>
 #include <escher/scrollable_multiple_layouts_view.h>
+#include <omg/troolean.h>
 
 #include "calculation.h"
 
@@ -97,7 +98,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   Escher::ScrollableTwoLayoutsView m_scrollableOutputView;
   Escher::EvenOddCellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource* m_dataSource;
-  Poincare::TrinaryBoolean m_calculationExpanded;
+  OMG::Troolean m_calculationExpanded;
   bool m_calculationSingleLine;
 };
 

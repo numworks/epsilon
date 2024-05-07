@@ -174,10 +174,10 @@ class OExpression : public PoolHandle {
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const {
     return node()->isOfType(types);
   }
-  TrinaryBoolean isPositive(Context* context) const {
+  OMG::Troolean isPositive(Context* context) const {
     return node()->isPositive(context);
   }
-  TrinaryBoolean isNull(Context* context) const {
+  OMG::Troolean isNull(Context* context) const {
     return node()->isNull(context);
   }
   bool isUndefined() const { return node()->isUndefined(); }
@@ -226,9 +226,9 @@ class OExpression : public PoolHandle {
    * return true. If the result is Unknown, it will continue searching for a
    * True in the children. If an expression is tested as False, its children
    * will not be tested and the result will be false. */
-  typedef TrinaryBoolean (*ExpressionTrinaryTest)(const OExpression e,
-                                                  Context* context,
-                                                  void* auxiliary);
+  typedef OMG::Troolean (*ExpressionTrinaryTest)(const OExpression e,
+                                                 Context* context,
+                                                 void* auxiliary);
   struct IgnoredSymbols {
     Symbol* head;
     void* tail;
@@ -684,13 +684,13 @@ class OExpression : public PoolHandle {
                                        numberOfVisitedSymbols);
   }
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
     return node()->deepReplaceReplaceableSymbols(
         context, isCircular, parameteredAncestorsCount, symbolicComputation);
   }
   OExpression defaultReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 
   /* Simplification */

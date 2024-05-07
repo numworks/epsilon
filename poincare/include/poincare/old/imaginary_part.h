@@ -20,10 +20,10 @@ class ImaginaryPartNode final : public ExpressionNode {
 #endif
 
   // Properties
-  TrinaryBoolean isNull(Context* context) const override {
-    return childAtIndex(0)->isPositive(context) == TrinaryBoolean::Unknown
-               ? TrinaryBoolean::Unknown
-               : TrinaryBoolean::True;
+  OMG::Troolean isNull(Context* context) const override {
+    return childAtIndex(0)->isPositive(context) == OMG::Troolean::Unknown
+               ? OMG::Troolean::Unknown
+               : OMG::Troolean::True;
   }
   Type otype() const override { return Type::ImaginaryPart; }
 

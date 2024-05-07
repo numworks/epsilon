@@ -24,7 +24,7 @@ OExpression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
 }
 
 OExpression StoreNode::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return Store(this).deepReplaceReplaceableSymbols(
       context, isCircular, parameteredAncestorsCount, symbolicComputation);
@@ -58,7 +58,7 @@ bool Store::storeValueForSymbol(Context* context) const {
 }
 
 OExpression Store::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   // Only the value of a symbol should have no free variables
   if (symbol().otype() == ExpressionNode::Type::Symbol) {

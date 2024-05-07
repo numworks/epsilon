@@ -30,8 +30,8 @@ class BasedIntegerNode final : public NumberNode {
 
   // OExpression subclassing
   Type otype() const override { return Type::BasedInteger; }
-  TrinaryBoolean isPositive(Context* context) const override {
-    return TrinaryBoolean::True;
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::Troolean::True;
   }
 
   // NumberNode

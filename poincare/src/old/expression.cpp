@@ -143,13 +143,13 @@ bool OExpression::recursivelyMatches(ExpressionTrinaryTest test,
   if (IsIgnoredSymbol(this, ignoredSymbols)) {
     return false;
   }
-  TrinaryBoolean testResult = test(*this, context, auxiliary);
-  if (testResult == TrinaryBoolean::True) {
+  OMG::Troolean testResult = test(*this, context, auxiliary);
+  if (testResult == OMG::Troolean::True) {
     return true;
-  } else if (testResult == TrinaryBoolean::False) {
+  } else if (testResult == OMG::Troolean::False) {
     return false;
   }
-  assert(testResult == TrinaryBoolean::Unknown && !isUninitialized());
+  assert(testResult == OMG::Troolean::Unknown && !isUninitialized());
 
   // Handle dependencies, store, symbols and functions
   ExpressionNode::Type t = otype();
@@ -221,8 +221,8 @@ bool OExpression::recursivelyMatches(ExpressionTest test, Context *context,
   ExpressionTrinaryTest ternary = [](const OExpression e, Context *context,
                                      void *auxiliary) {
     ExpressionTest *trueTest = static_cast<ExpressionTest *>(auxiliary);
-    return (*trueTest)(e, context) ? TrinaryBoolean::True
-                                   : TrinaryBoolean::Unknown;
+    return (*trueTest)(e, context) ? OMG::Troolean::True
+                                   : OMG::Troolean::Unknown;
   };
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
@@ -234,7 +234,7 @@ bool OExpression::recursivelyMatches(SimpleExpressionTest test,
                                      void *auxiliary) {
     SimpleExpressionTest *trueTest =
         static_cast<SimpleExpressionTest *>(auxiliary);
-    return (*trueTest)(e) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+    return (*trueTest)(e) ? OMG::Troolean::True : OMG::Troolean::Unknown;
   };
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
@@ -252,8 +252,8 @@ bool OExpression::recursivelyMatches(ExpressionTestAuxiliary test,
     ExpressionTestAuxiliary *trueTest =
         static_cast<ExpressionTestAuxiliary *>(static_cast<Pack *>(pack)->test);
     return (*trueTest)(e, context, static_cast<Pack *>(pack)->auxiliary)
-               ? TrinaryBoolean::True
-               : TrinaryBoolean::Unknown;
+               ? OMG::Troolean::True
+               : OMG::Troolean::Unknown;
   };
   Pack pack{&test, auxiliary};
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
@@ -266,8 +266,8 @@ bool OExpression::deepIsOfType(
         return e.isOfType(
                    *static_cast<std::initializer_list<ExpressionNode::Type> *>(
                        auxiliary))
-                   ? TrinaryBoolean::True
-                   : TrinaryBoolean::Unknown;
+                   ? OMG::Troolean::True
+                   : OMG::Troolean::Unknown;
       },
       context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       &types);
@@ -281,7 +281,7 @@ bool OExpression::deepIsMatrix(Context *context, bool canContainMatrices,
   return recursivelyMatches(
       [](const OExpression e, Context *context, void *auxiliary) {
         if (IsMatrix(e, context)) {
-          return TrinaryBoolean::True;
+          return OMG::Troolean::True;
         }
         if (IsNAry(e) && e.numberOfChildren() > 0) {
           bool *isReduced = static_cast<bool *>(auxiliary);
@@ -292,7 +292,7 @@ bool OExpression::deepIsMatrix(Context *context, bool canContainMatrices,
           int lastChildToCheck = *isReduced ? firstChildToCheck : 0;
           for (int i = firstChildToCheck; i >= lastChildToCheck; i--) {
             if (e.childAtIndex(i).deepIsMatrix(context)) {
-              return TrinaryBoolean::True;
+              return OMG::Troolean::True;
             }
           }
         }
@@ -306,10 +306,10 @@ bool OExpression::deepIsMatrix(Context *context, bool canContainMatrices,
                  ExpressionNode::Type::Sum, ExpressionNode::Type::Product,
                  ExpressionNode::Type::Dependency, ExpressionNode::Type::Point,
                  ExpressionNode::Type::PiecewiseOperator})) {
-          return TrinaryBoolean::Unknown;
+          return OMG::Troolean::Unknown;
         }
         // Any other type is not a matrix
-        return TrinaryBoolean::False;
+        return OMG::Troolean::False;
       },
       context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       &isReduced);
@@ -326,7 +326,7 @@ bool OExpression::deepIsList(Context *context) const {
           case ExpressionNode::Type::ListSequence:
           case ExpressionNode::Type::ListSort:
           case ExpressionNode::Type::RandintNoRepeat:
-            return TrinaryBoolean::True;
+            return OMG::Troolean::True;
 
           /* These expressions have a list as argument but are never lists, we
            * must stop the search. */
@@ -340,11 +340,11 @@ bool OExpression::deepIsList(Context *context) const {
           case ExpressionNode::Type::ListStandardDeviation:
           case ExpressionNode::Type::ListSum:
           case ExpressionNode::Type::ListVariance:
-            return TrinaryBoolean::False;
+            return OMG::Troolean::False;
 
           /* Other expressions may be lists if their children are lists. */
           default:
-            return TrinaryBoolean::Unknown;
+            return OMG::Troolean::Unknown;
         }
       },
       context);
@@ -781,13 +781,13 @@ void OExpression::defaultSetChildrenInPlace(OExpression other) {
 }
 
 OExpression OExpression::defaultReplaceReplaceableSymbols(
-    Context *context, TrinaryBoolean *isCircular, int parameteredAncestorsCount,
+    Context *context, OMG::Troolean *isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     childAtIndex(i).deepReplaceReplaceableSymbols(
         context, isCircular, parameteredAncestorsCount, symbolicComputation);
-    if (*isCircular == TrinaryBoolean::True) {
+    if (*isCircular == OMG::Troolean::True) {
       // the expression is circularly defined, escape
       return *this;
     }
@@ -799,14 +799,14 @@ OExpression OExpression::makePositiveAnyNegativeNumeralFactor(
     const ReductionContext &reductionContext) {
   // The expression is a negative number
   if (isNumber() &&
-      isPositive(reductionContext.context()) == TrinaryBoolean::False) {
+      isPositive(reductionContext.context()) == OMG::Troolean::False) {
     return setSign(true, reductionContext);
   }
   // The expression is a multiplication whose numeral factor is negative
   if (otype() == ExpressionNode::Type::Multiplication &&
       numberOfChildren() > 0 && childAtIndex(0).isNumber() &&
       childAtIndex(0).isPositive(reductionContext.context()) ==
-          TrinaryBoolean::False) {
+          OMG::Troolean::False) {
     Multiplication m = convert<Multiplication>();
     if (m.childAtIndex(0).isMinusOne()) {
       // The negative numeral factor is -1, we just remove it
@@ -961,7 +961,7 @@ bool OExpression::hasComplexI(Context *context,
                        static_cast<const Constant &>(e).isComplexI()) ||
                       (e.otype() == ExpressionNode::Type::ComplexCartesian &&
                        static_cast<const ComplexCartesian &>(e).imag().isNull(
-                           context) != TrinaryBoolean::True);
+                           context) != OMG::Troolean::True);
              },
              context, replaceSymbols);
 }
@@ -1027,7 +1027,7 @@ bool OExpression::isReal(Context *context, bool canContainMatrices) const {
                                                     canContainMatrices);
   }
 
-  // We should return TrinaryBoolean::Unknown
+  // We should return OMG::Troolean::Unknown
   return false;
 }
 
@@ -1365,10 +1365,10 @@ OExpression OExpression::ExpressionWithoutSymbols(
   }
 
   // Replace all the symbols in depth.
-  TrinaryBoolean isCircular = TrinaryBoolean::Unknown;
+  OMG::Troolean isCircular = OMG::Troolean::Unknown;
   e = e.deepReplaceReplaceableSymbols(context, &isCircular, 0,
                                       symbolicComputation);
-  if (isCircular != TrinaryBoolean::True) {
+  if (isCircular != OMG::Troolean::True) {
     return e;
   }
   /* Symbols are defined circularly (or likely to be if we made too many
@@ -1535,9 +1535,9 @@ OExpression OExpression::setSign(bool positive,
     Number thisNumber = static_cast<Number &>(*this);
     return thisNumber.setSign(positive);
   }
-  TrinaryBoolean currentSignPositive = isPositive(reductionContext.context());
-  assert(currentSignPositive != TrinaryBoolean::Unknown);
-  if (BinaryToTrinaryBool(positive) == currentSignPositive) {
+  OMG::Troolean currentSignPositive = isPositive(reductionContext.context());
+  assert(currentSignPositive != OMG::Troolean::Unknown);
+  if (OMG::BinaryToTrinaryBool(positive) == currentSignPositive) {
     return *this;
   }
   Multiplication revertedSign = Multiplication::Builder(Rational::Builder(-1));

@@ -37,8 +37,8 @@ class NumberNode : public ExpressionNode {
   virtual bool isInteger() const = 0;
   virtual Integer integerValue() const = 0;
 
-  TrinaryBoolean isNull(Context* context) const override {
-    return BinaryToTrinaryBool(isZero());
+  OMG::Troolean isNull(Context* context) const override {
+    return OMG::BinaryToTrinaryBool(isZero());
   }
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
@@ -70,7 +70,7 @@ class Number : public OExpression {
 
   /* Number::isPositive() does not need a context or an angle unit
    * (a number can be Infinity, Undefined, Float, Decimal, Rational). */
-  TrinaryBoolean isPositive() const { return OExpression::isPositive(nullptr); }
+  OMG::Troolean isPositive() const { return OExpression::isPositive(nullptr); }
   Number setSign(bool positive) {
     node()->setNegative(!positive);
     return *this;

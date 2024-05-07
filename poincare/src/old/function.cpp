@@ -69,7 +69,7 @@ OExpression FunctionNode::shallowReduce(
 }
 
 OExpression FunctionNode::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return Function(this).deepReplaceReplaceableSymbols(
       context, isCircular, parameteredAncestorsCount, symbolicComputation);
@@ -169,7 +169,7 @@ OExpression Function::shallowReduce(ReductionContext reductionContext) {
 }
 
 OExpression Function::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   /* This symbolic computation parameters make no sense in this method.
    * It is therefore not handled. */
@@ -192,19 +192,19 @@ OExpression Function::deepReplaceReplaceableSymbols(
    * called.
    * isCircularFromHere is used so that isCircular is not altered if this is
    * not circular but a sibling of this is circular and was not checked yet. */
-  TrinaryBoolean isCircularFromHere = *isCircular;
+  OMG::Troolean isCircularFromHere = *isCircular;
   checkForCircularityIfNeeded(context, &isCircularFromHere);
-  if (isCircularFromHere == TrinaryBoolean::True) {
+  if (isCircularFromHere == OMG::Troolean::True) {
     *isCircular = isCircularFromHere;
     return *this;
   }
-  assert(isCircularFromHere == TrinaryBoolean::False);
+  assert(isCircularFromHere == OMG::Troolean::False);
 
   // Replace replaceable symbols in child
   defaultReplaceReplaceableSymbols(context, &isCircularFromHere,
                                    parameteredAncestorsCount,
                                    symbolicComputation);
-  assert(isCircularFromHere == TrinaryBoolean::False);
+  assert(isCircularFromHere == OMG::Troolean::False);
 
   OExpression e = context->expressionForSymbolAbstract(*this, true);
   /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent

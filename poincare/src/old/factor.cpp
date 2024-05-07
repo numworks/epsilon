@@ -121,7 +121,7 @@ OExpression Factor::shallowBeautify(const ReductionContext& reductionContext) {
     result = Division::Builder(result,
                                denominatorDecomp.squashUnaryHierarchyInPlace());
   }
-  if (r.isPositive() == TrinaryBoolean::False) {
+  if (r.isPositive() == OMG::Troolean::False) {
     result = Opposite::Builder(result);
   }
   replaceWithInPlace(result);

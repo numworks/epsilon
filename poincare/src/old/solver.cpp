@@ -138,7 +138,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const OExpression &e) {
       return nextRoot(e.childAtIndex(0));
 
     default:
-      if (e.isNull(m_context) == TrinaryBoolean::False) {
+      if (e.isNull(m_context) == OMG::Troolean::False) {
         registerSolution(Coordinate2D<T>(), Interest::None);
         return Coordinate2D<T>();
       }
@@ -227,7 +227,7 @@ template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
                                             const void *aux, T xMin, T xMax,
                                             Interest interest, T precision,
-                                            TrinaryBoolean discontinuous) {
+                                            OMG::Troolean discontinuous) {
   if (xMax < xMin) {
     return SafeBrentMinimum(f, aux, xMax, xMin, interest, precision,
                             discontinuous);
@@ -248,7 +248,7 @@ template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
                                             const void *aux, T xMin, T xMax,
                                             Interest interest, T precision,
-                                            TrinaryBoolean discontinuous) {
+                                            OMG::Troolean discontinuous) {
   const void *pack[] = {&f, aux};
   FunctionEvaluation minusF = [](T x, const void *aux) {
     const void *const *param = reinterpret_cast<const void *const *>(aux);
@@ -266,7 +266,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
                                                  const void *aux, T xMin,
                                                  T xMax, Interest interest,
                                                  T precision,
-                                                 TrinaryBoolean discontinuous) {
+                                                 OMG::Troolean discontinuous) {
   if (interest == Interest::Root) {
     Coordinate2D<T> solution =
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
@@ -276,7 +276,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
      *   > f(x) = floor(x) - 0.5 for x == 1
      *   > f(x) = x / abs(x) for x == 0
      * */
-    if (discontinuous == TrinaryBoolean::True &&
+    if (discontinuous == OMG::Troolean::True &&
         std::fabs(solution.y()) > NullTolerance(solution.x())) {
       return Coordinate2D<T>();
     }
@@ -634,10 +634,10 @@ template <typename T>
 Coordinate2D<T> Solver<T>::honeAndRoundSolution(
     FunctionEvaluation f, const void *aux, T start, T end, Interest interest,
     HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
-  TrinaryBoolean discontinuous = TrinaryBoolean::Unknown;
+  OMG::Troolean discontinuous = OMG::Troolean::Unknown;
   if (discontinuityTest) {
-    discontinuous = discontinuityTest(start, end, aux) ? TrinaryBoolean::True
-                                                       : TrinaryBoolean::False;
+    discontinuous = discontinuityTest(start, end, aux) ? OMG::Troolean::True
+                                                       : OMG::Troolean::False;
   }
   /* WARNING: This is a hack for discontinuous functions. BrentForRoot
    * needs to be very precise to find a root that is on the discontinuity bound.
@@ -647,7 +647,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
    */
   constexpr T precisionForDiscontinuousFunctions =
       k_relativePrecision * k_minimalAbsoluteStep;
-  T precision = discontinuous == TrinaryBoolean::True
+  T precision = discontinuous == OMG::Troolean::True
                     ? precisionForDiscontinuousFunctions
                     : NullTolerance(start);
   Coordinate2D<T> solution =
@@ -720,7 +720,7 @@ template Coordinate2D<double> Solver<double>::nextIntersection(
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
     FunctionEvaluation, const void *, double, double, Interest, double,
-    TrinaryBoolean);
+    OMG::Troolean);
 template double Solver<double>::MaximalStep(double);
 template void Solver<double>::ExcludeUndefinedFromBracket(
     Coordinate2D<double> *p1, Coordinate2D<double> *p2,

@@ -37,7 +37,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     resetInsertionCursor();
   }
   if (event != Ion::Events::Division && event.isKeyPress()) {
-    m_divisionCycleWithAns = TrinaryBoolean::Unknown;
+    m_divisionCycleWithAns = OMG::Troolean::Unknown;
   }
   if (event == Ion::Events::Back) {
     return false;
@@ -55,10 +55,10 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     // The Minus symbol will be addded by Escher::LayoutField::handleEvent
   }
   if (event == Ion::Events::Division && isEditing()) {
-    if (m_divisionCycleWithAns == TrinaryBoolean::Unknown) {
+    if (m_divisionCycleWithAns == OMG::Troolean::Unknown) {
       m_currentStep = DivisionCycleStep::Start;
       m_divisionCycleWithAns =
-          isEmpty() ? TrinaryBoolean::True : TrinaryBoolean::False;
+          isEmpty() ? OMG::Troolean::True : OMG::Troolean::False;
     }
     return handleDivision();
   }
@@ -66,12 +66,12 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 }
 
 bool LayoutField::handleDivision() {
-  assert(m_divisionCycleWithAns != TrinaryBoolean::Unknown);
+  assert(m_divisionCycleWithAns != OMG::Troolean::Unknown);
   bool mixedFractionsEnabled =
       Preferences::SharedPreferences()->mixedFractionsAreEnabled();
   Ion::Events::Event event = Ion::Events::Division;
 
-  if (m_divisionCycleWithAns == TrinaryBoolean::True) {
+  if (m_divisionCycleWithAns == OMG::Troolean::True) {
     /* When we are in the "Ans" case, the cycle is the following :
      * Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction (->
      * MixedFraction) -> DenominatorOfAnsFraction -> etc with the mixed fraction
@@ -99,7 +99,7 @@ bool LayoutField::handleDivision() {
         insertText(Symbol::k_ansAliases.mainAlias());
     }
   } else if (mixedFractionsEnabled) {
-    assert(m_divisionCycleWithAns == TrinaryBoolean::False);
+    assert(m_divisionCycleWithAns == OMG::Troolean::False);
     bool editionIn1D = linearMode();
     bool handled = true;
     /* When we are in NOT the "Ans" case, the cycle is the following :
@@ -126,7 +126,7 @@ bool LayoutField::handleDivision() {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }
         if (!handled) {
-          m_divisionCycleWithAns = TrinaryBoolean::Unknown;
+          m_divisionCycleWithAns = OMG::Troolean::Unknown;
         }
         return handled;
       case DivisionCycleStep::NumeratorOfEmptyFraction:

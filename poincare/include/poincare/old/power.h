@@ -23,8 +23,8 @@ class PowerNode final : public ExpressionNode {
 
   // Properties
   Type otype() const override { return Type::Power; }
-  TrinaryBoolean isPositive(Context* context) const override;
-  TrinaryBoolean isNull(Context* context) const override;
+  OMG::Troolean isPositive(Context* context) const override;
+  OMG::Troolean isNull(Context* context) const override;
   bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
   double degreeForSortingAddition(bool symbolsOnly) const override;

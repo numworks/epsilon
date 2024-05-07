@@ -1,6 +1,7 @@
 #ifndef APPS_SHARED_SEQUENCE_CONTEXT_H
 #define APPS_SHARED_SEQUENCE_CONTEXT_H
 
+#include <omg/troolean.h>
 #include <poincare/expression.h>
 #include <poincare/old/context_with_parent.h>
 #include <poincare/old/symbol.h>
@@ -74,7 +75,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   SequenceStore* m_sequenceStore;
   bool m_isInsideComputation;
   int m_smallestRankBeingComputed[k_numberOfSequences];
-  Poincare::TrinaryBoolean m_sequenceIsNotComputable[k_numberOfSequences];
+  OMG::Troolean m_sequenceIsNotComputable[k_numberOfSequences];
 };
 
 }  // namespace Shared

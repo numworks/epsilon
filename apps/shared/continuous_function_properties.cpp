@@ -254,7 +254,7 @@ void ContinuousFunctionProperties::update(
 
   const char* symbolName =
       willBeAlongX ? k_ordinateName : Function::k_unknownName;
-  TrinaryBoolean highestCoefficientIsPositive = TrinaryBoolean::Unknown;
+  OMG::Troolean highestCoefficientIsPositive = OMG::Troolean::Unknown;
   if (!HasNonNullCoefficients(analyzedExpression, symbolName, context,
                               complexFormat, &highestCoefficientIsPositive)) {
     // The equation must have at least one nonNull coefficient.
@@ -263,7 +263,7 @@ void ContinuousFunctionProperties::update(
   }
 
   if (precomputedOperatorType != ComparisonNode::OperatorType::Equal) {
-    if (highestCoefficientIsPositive == TrinaryBoolean::Unknown ||
+    if (highestCoefficientIsPositive == OMG::Troolean::Unknown ||
         (yDeg == 2 && xDeg == -1)) {
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
@@ -271,7 +271,7 @@ void ContinuousFunctionProperties::update(
       setErrorStatusAndUpdateCaption(Status::Unhandled);
       return;
     }
-    if (highestCoefficientIsPositive == TrinaryBoolean::False) {
+    if (highestCoefficientIsPositive == OMG::Troolean::False) {
       // Oppose the comparison operator
       precomputedOperatorType =
           ComparisonNode::SwitchInferiorSuperior(precomputedOperatorType);
@@ -398,7 +398,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 void ContinuousFunctionProperties::setCartesianEquationProperties(
     const Poincare::Expression& analyzedExpression, Poincare::Context* context,
     Preferences::ComplexFormat complexFormat, int xDeg, int yDeg,
-    TrinaryBoolean highestCoefficientIsPositive) {
+    OMG::Troolean highestCoefficientIsPositive) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
 
@@ -443,7 +443,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
   }
 
   if (yDeg == 1 && xDeg == 1 &&
-      highestCoefficientIsPositive != TrinaryBoolean::Unknown) {
+      highestCoefficientIsPositive != OMG::Troolean::Unknown) {
     // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
     setCaption(I18n::Message::LineType);
     setCurveParameterType(CurveParameterType::Line);
@@ -657,8 +657,8 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
                    static_cast<const CodePoint*>(auxiliary);
                return (!e.isUninitialized() &&
                        e.isIdenticalTo(Symbol::Builder(*symbol)))
-                          ? TrinaryBoolean::True
-                          : TrinaryBoolean::Unknown;
+                          ? OMG::Troolean::True
+                          : OMG::Troolean::Unknown;
              },
              nullptr, SymbolicComputation::DoNotReplaceAnySymbol,
              static_cast<void*>(&symbol));
@@ -667,7 +667,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
 bool ContinuousFunctionProperties::HasNonNullCoefficients(
     const Expression equation, const char* symbolName, Context* context,
     Preferences::ComplexFormat complexFormat,
-    TrinaryBoolean* highestDegreeCoefficientIsPositive) {
+    OMG::Troolean* highestDegreeCoefficientIsPositive) {
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
@@ -680,24 +680,24 @@ bool ContinuousFunctionProperties::HasNonNullCoefficients(
   assert(degree <= Expression::k_maxPolynomialDegree);
   ApproximationContext approximationContext(context, complexFormat, angleUnit);
   if (highestDegreeCoefficientIsPositive != nullptr && degree >= 0) {
-    TrinaryBoolean isPositive = coefficients[degree].isPositive(context);
-    if (isPositive == TrinaryBoolean::Unknown) {
+    OMG::Troolean isPositive = coefficients[degree].isPositive(context);
+    if (isPositive == OMG::Troolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation = coefficients[degree].approximateToScalar<double>(
           approximationContext);
       if (!std::isnan(approximation) && approximation != 0.0) {
-        isPositive = BinaryToTrinaryBool(approximation > 0.0);
+        isPositive = OMG::BinaryToTrinaryBool(approximation > 0.0);
       }
     }
     *highestDegreeCoefficientIsPositive = isPositive;
   }
   // Look for a NonNull coefficient.
   for (int d = 0; d <= degree; d++) {
-    TrinaryBoolean isNull = coefficients[d].isNull(context);
-    if (isNull == TrinaryBoolean::False) {
+    OMG::Troolean isNull = coefficients[d].isNull(context);
+    if (isNull == OMG::Troolean::False) {
       return true;
     }
-    if (isNull == TrinaryBoolean::Unknown) {
+    if (isNull == OMG::Troolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation =
           coefficients[d].approximateToScalar<double>(approximationContext);

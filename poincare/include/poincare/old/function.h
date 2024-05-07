@@ -36,7 +36,7 @@ class FunctionNode final : public SymbolAbstractNode {
   // Simplification
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
   LayoutShape rightLayoutShape() const override {
@@ -66,7 +66,7 @@ class Function final : public SymbolAbstract {
   // Simplification
   OExpression shallowReduce(ReductionContext reductionContext);
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 };
 

@@ -19,10 +19,10 @@ class FactorNode final : public ExpressionNode {
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Factor"; }
 #endif
-  TrinaryBoolean isPositive(Context* context) const override {
+  OMG::Troolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }
-  TrinaryBoolean isNull(Context* context) const override {
+  OMG::Troolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
   Type otype() const override { return Type::Factor; }

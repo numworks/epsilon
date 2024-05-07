@@ -15,10 +15,10 @@ class PercentSimpleNode : public ExpressionNode {
 #endif
   // Properties
   Type otype() const override { return Type::PercentSimple; }
-  TrinaryBoolean isPositive(Context* context) const override {
+  OMG::Troolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }
-  TrinaryBoolean isNull(Context* context) const override {
+  OMG::Troolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
   bool childAtIndexNeedsUserParentheses(const OExpression& child,
@@ -73,8 +73,8 @@ class PercentAdditionNode final : public PercentSimpleNode {
   int numberOfChildren() const override { return 2; }
   // Properties
   Type otype() const override { return Type::PercentAddition; }
-  TrinaryBoolean isPositive(Context* context) const override;
-  TrinaryBoolean isNull(Context* context) const override;
+  OMG::Troolean isPositive(Context* context) const override;
+  OMG::Troolean isNull(Context* context) const override;
   bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
 

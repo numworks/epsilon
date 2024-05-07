@@ -16,21 +16,21 @@
 
 namespace Poincare {
 
-TrinaryBoolean DivisionNode::isPositive(Context *context) const {
-  TrinaryBoolean numeratorPositive = childAtIndex(0)->isPositive(context);
-  TrinaryBoolean denominatorPositive = childAtIndex(1)->isPositive(context);
-  if (numeratorPositive == TrinaryBoolean::Unknown ||
-      denominatorPositive == TrinaryBoolean::Unknown) {
-    return TrinaryBoolean::Unknown;
+OMG::Troolean DivisionNode::isPositive(Context *context) const {
+  OMG::Troolean numeratorPositive = childAtIndex(0)->isPositive(context);
+  OMG::Troolean denominatorPositive = childAtIndex(1)->isPositive(context);
+  if (numeratorPositive == OMG::Troolean::Unknown ||
+      denominatorPositive == OMG::Troolean::Unknown) {
+    return OMG::Troolean::Unknown;
   }
-  return BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
+  return OMG::BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
 }
 
 bool DivisionNode::childNeedsSystemParenthesesAtSerialization(
     const PoolObject *child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() &&
       Number(static_cast<const NumberNode *>(child)).isPositive() ==
-          TrinaryBoolean::False) {
+          OMG::Troolean::False) {
     return true;
   }
   if (static_cast<const ExpressionNode *>(child)->otype() == Type::Rational &&

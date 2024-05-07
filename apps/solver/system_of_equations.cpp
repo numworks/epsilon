@@ -317,12 +317,12 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   }
 
   for (int row = 0; row < m; row++) {
-    if (ab.matrixChild(row, n).isNull(context) == TrinaryBoolean::True) {
+    if (ab.matrixChild(row, n).isNull(context) == OMG::Troolean::True) {
       continue;
     }
     bool allCoefficientsNull = true;
     for (int col = 0; allCoefficientsNull && col < n; col++) {
-      if (ab.matrixChild(row, col).isNull(context) != TrinaryBoolean::True) {
+      if (ab.matrixChild(row, col).isNull(context) != OMG::Troolean::True) {
         allCoefficientsNull = false;
       }
     }
@@ -361,8 +361,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       // Find the first variable with a non-null coefficient in the current row
       if (row >= 0) {
         for (int col = 0; firstVariableInRow < 0 && col < n; col++) {
-          if (ab.matrixChild(row, col).isNull(context) !=
-              TrinaryBoolean::True) {
+          if (ab.matrixChild(row, col).isNull(context) != OMG::Troolean::True) {
             firstVariableInRow = col;
           }
         }

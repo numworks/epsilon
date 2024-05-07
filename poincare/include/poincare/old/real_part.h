@@ -20,13 +20,13 @@ class RealPartNode final : public ExpressionNode {
 #endif
 
   // Properties
-  TrinaryBoolean isPositive(Context* context) const override {
+  OMG::Troolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }
-  TrinaryBoolean isNull(Context* context) const override {
-    return childAtIndex(0)->isNull(context) == TrinaryBoolean::True
-               ? TrinaryBoolean::True
-               : TrinaryBoolean::Unknown;
+  OMG::Troolean isNull(Context* context) const override {
+    return childAtIndex(0)->isNull(context) == OMG::Troolean::True
+               ? OMG::Troolean::True
+               : OMG::Troolean::Unknown;
   }
   Type otype() const override { return Type::RealPart; }
 

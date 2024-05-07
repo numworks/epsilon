@@ -59,11 +59,11 @@ OExpression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   }
   Context* context = reductionContext.context();
   OExpression res;
-  if (c.isNull(context) == TrinaryBoolean::True) {
+  if (c.isNull(context) == OMG::Troolean::True) {
     res = Undefined::Builder();
-  } else if (c.isPositive(context) == TrinaryBoolean::True) {
+  } else if (c.isPositive(context) == OMG::Troolean::True) {
     res = Rational::Builder(0);
-  } else if (c.isPositive(context) == TrinaryBoolean::False) {
+  } else if (c.isPositive(context) == OMG::Troolean::False) {
     res = Constant::PiBuilder();
   } else {
     ApproximationContext approximationContext(reductionContext, true);

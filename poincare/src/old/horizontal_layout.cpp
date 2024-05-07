@@ -16,11 +16,10 @@ OLayout HorizontalLayoutNode::deepChildToPointToWhenInserting() const {
                      layout.node())
                          ->isTemporary(
                              AutocompletedBracketPairLayoutNode::Side::Left)
-                     ? TrinaryBoolean::False
-                     : TrinaryBoolean::True;
+                     ? OMG::Troolean::False
+                     : OMG::Troolean::True;
         }
-        return layout.isEmpty() ? TrinaryBoolean::True
-                                : TrinaryBoolean::Unknown;
+        return layout.isEmpty() ? OMG::Troolean::True : OMG::Troolean::Unknown;
       });
   return layoutToPointTo;
 }

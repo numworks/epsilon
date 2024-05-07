@@ -85,16 +85,16 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
        hLayout
            .recursivelyMatches([](const OLayout l) {
              return l.otype() == Type::ParenthesisLayout
-                        ? TrinaryBoolean::True
-                        : TrinaryBoolean::Unknown;
+                        ? OMG::Troolean::True
+                        : OMG::Troolean::Unknown;
            })
            .isUninitialized()) ||
       (type == Type::CurlyBraceLayout &&
        hLayout
            .recursivelyMatches([](const OLayout l) {
              return l.otype() == Type::CurlyBraceLayout
-                        ? TrinaryBoolean::True
-                        : TrinaryBoolean::Unknown;
+                        ? OMG::Troolean::True
+                        : OMG::Troolean::Unknown;
            })
            .isUninitialized())) {
     // Escape function if there is nothing to balance

@@ -15,10 +15,10 @@ OExpression CDFRangeMethod::shallowReduce(OExpression* abscissae,
   OExpression y = abscissae[1];
 
   if (x.otype() == ExpressionNode::Type::Infinity &&
-      x.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
+      x.isPositive(reductionContext.context()) == OMG::Troolean::False) {
     if (y.otype() == ExpressionNode::Type::Infinity) {
       OExpression result = Rational::Builder(
-          y.isPositive(reductionContext.context()) == TrinaryBoolean::True);
+          y.isPositive(reductionContext.context()) == OMG::Troolean::True);
       expression->replaceWithInPlace(result);
       return result;
     }

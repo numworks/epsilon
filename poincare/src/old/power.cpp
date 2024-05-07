@@ -40,11 +40,11 @@
 namespace Poincare {
 
 // Properties
-TrinaryBoolean PowerNode::isPositive(Context *context) const {
-  TrinaryBoolean baseIsPositive = childAtIndex(0)->isPositive(context);
-  if (baseIsPositive == TrinaryBoolean::True &&
-      childAtIndex(1)->isPositive(context) != TrinaryBoolean::Unknown) {
-    return TrinaryBoolean::True;
+OMG::Troolean PowerNode::isPositive(Context *context) const {
+  OMG::Troolean baseIsPositive = childAtIndex(0)->isPositive(context);
+  if (baseIsPositive == OMG::Troolean::True &&
+      childAtIndex(1)->isPositive(context) != OMG::Troolean::Unknown) {
+    return OMG::Troolean::True;
   }
   if (childAtIndex(1)->otype() == ExpressionNode::Type::Rational &&
       static_cast<RationalNode *>(childAtIndex(1))->isInteger() &&
@@ -54,37 +54,37 @@ TrinaryBoolean PowerNode::isPositive(Context *context) const {
                 .remainder.isOverflow());
     return Integer::Division(r->signedNumerator(), Integer(2))
                    .remainder.isZero()
-               ? TrinaryBoolean::True
+               ? OMG::Troolean::True
                : baseIsPositive;
   }
-  return TrinaryBoolean::Unknown;
+  return OMG::Troolean::Unknown;
 }
 
-TrinaryBoolean PowerNode::isNull(Context *context) const {
+OMG::Troolean PowerNode::isNull(Context *context) const {
   // In practice, calling isNull on a reduced power always returns Unknown.
   ExpressionNode *base = childAtIndex(0);
-  TrinaryBoolean baseIsNull = base->isNull(context);
+  OMG::Troolean baseIsNull = base->isNull(context);
   ExpressionNode *index = childAtIndex(1);
-  TrinaryBoolean indexIsNull = index->isNull(context);
-  if (indexIsNull == TrinaryBoolean::True &&
-      baseIsNull == TrinaryBoolean::False) {
+  OMG::Troolean indexIsNull = index->isNull(context);
+  if (indexIsNull == OMG::Troolean::True &&
+      baseIsNull == OMG::Troolean::False) {
     // x^0 is non null
-    return TrinaryBoolean::False;
+    return OMG::Troolean::False;
   }
-  if (indexIsNull == TrinaryBoolean::False &&
-      baseIsNull == TrinaryBoolean::True &&
-      index->isPositive(context) == TrinaryBoolean::True) {
+  if (indexIsNull == OMG::Troolean::False &&
+      baseIsNull == OMG::Troolean::True &&
+      index->isPositive(context) == OMG::Troolean::True) {
     // 0^+x is null
-    return TrinaryBoolean::True;
+    return OMG::Troolean::True;
   }
   if ((index->isNumber() || index->otype() == Type::ConstantMaths ||
        index->otype() == Type::ConstantPhysics) &&
-      baseIsNull == TrinaryBoolean::False) {
+      baseIsNull == OMG::Troolean::False) {
     // x^y is not null if y is not -inf and x not null.
-    return TrinaryBoolean::False;
+    return OMG::Troolean::False;
   }
   // We don't know if index == -inf or base == 0.
-  return TrinaryBoolean::Unknown;
+  return OMG::Troolean::Unknown;
 }
 
 int PowerNode::polynomialDegree(Context *context,
@@ -100,7 +100,7 @@ int PowerNode::polynomialDegree(Context *context,
     return -1;
   }
   RationalNode *r = static_cast<RationalNode *>(childAtIndex(1));
-  if (!r->isInteger() || Number(r).isPositive() == TrinaryBoolean::False) {
+  if (!r->isInteger() || Number(r).isPositive() == OMG::Troolean::False) {
     return -1;
   }
   Integer numeratorInt = r->signedNumerator();
@@ -130,7 +130,7 @@ bool PowerNode::isReal(Context *context, bool canContainMatrices) const {
    *   - or index is an integer */
   if (base.isReal(context, canContainMatrices) &&
       index.isReal(context, canContainMatrices) &&
-      (base.isPositive(context) == TrinaryBoolean::True ||
+      (base.isPositive(context) == OMG::Troolean::True ||
        (index.otype() == ExpressionNode::Type::Rational &&
         static_cast<Rational &>(index).isInteger()))) {
     return true;
@@ -144,7 +144,7 @@ bool PowerNode::childAtIndexNeedsUserParentheses(const OExpression &child,
     return false;
   }
   if ((child.isNumber() && static_cast<const Number &>(child).isPositive() ==
-                               TrinaryBoolean::False) ||
+                               OMG::Troolean::False) ||
       (child.otype() == Type::Rational &&
        !static_cast<const Rational &>(child).isInteger())) {
     /* ^(-2.3, 4) --> (-2.3)^{4}
@@ -293,7 +293,7 @@ bool PowerNode::childNeedsSystemParenthesesAtSerialization(
   }
   if (childE->isNumber() &&
       Number(static_cast<const NumberNode *>(childE)).isPositive() ==
-          TrinaryBoolean::False) {
+          OMG::Troolean::False) {
     return true;
   }
   if (childE->otype() == Type::Rational &&
@@ -599,25 +599,25 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
   /* Step 3
    * Trivial simplifications when base or index is 0, 1 or infinity. */
   OExpression trivialResult;
-  TrinaryBoolean baseIsPositive = base.isPositive(context);
-  TrinaryBoolean indexIsPositive = index.isPositive(context);
-  TrinaryBoolean indexNull = index.isNull(context);
+  OMG::Troolean baseIsPositive = base.isPositive(context);
+  OMG::Troolean indexIsPositive = index.isPositive(context);
+  OMG::Troolean indexNull = index.isNull(context);
   if (base.otype() == ExpressionNode::Type::Infinity) {
     // Step 3.1: base is infinity
-    if (indexNull == TrinaryBoolean::True) {
+    if (indexNull == OMG::Troolean::True) {
       // inf^0 -> undef
       return replaceWithUndefinedInPlace();
     }
     switch (indexIsPositive) {
-      case TrinaryBoolean::False:
+      case OMG::Troolean::False:
         // inf^-x -> 0
         trivialResult = Rational::Builder(0);
         break;
-      case TrinaryBoolean::True:
+      case OMG::Troolean::True:
         /* +inf^+x -> +inf
          * -inf^+x -> +inf * (-1)^+x */
         trivialResult = Infinity::Builder(false);
-        if (baseIsPositive == TrinaryBoolean::False) {
+        if (baseIsPositive == OMG::Troolean::False) {
           Power p = Power::Builder(Rational::Builder(-1), index);
           trivialResult = Multiplication::Builder(p, trivialResult);
           p.shallowReduce(reductionContext);
@@ -643,28 +643,28 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(base);
     return base;
   } else {
-    TrinaryBoolean baseNull = base.isNull(context);
-    if (baseNull == TrinaryBoolean::True) {
+    OMG::Troolean baseNull = base.isNull(context);
+    if (baseNull == OMG::Troolean::True) {
       // Step 3.5: base is 0
-      if (indexIsPositive == TrinaryBoolean::False ||
-          indexNull == TrinaryBoolean::True) {
+      if (indexIsPositive == OMG::Troolean::False ||
+          indexNull == OMG::Troolean::True) {
         // 0^0 or 0^-x -> undef
         trivialResult = Undefined::Builder();
-      } else if (indexIsPositive == TrinaryBoolean::True &&
-                 indexNull == TrinaryBoolean::False) {
+      } else if (indexIsPositive == OMG::Troolean::True &&
+                 indexNull == OMG::Troolean::False) {
         // 0^+x -> 0
         trivialResult = Rational::Builder(0);
       }
-    } else if (indexNull == TrinaryBoolean::True) {
+    } else if (indexNull == OMG::Troolean::True) {
       /* Step 3.6: index is 0
        * x^0 -> 1 or dep(1, {x^0}) */
-      if (baseNull == TrinaryBoolean::Unknown) {
+      if (baseNull == OMG::Troolean::Unknown) {
         OList depList = OList::Builder();
         depList.addChildAtIndexInPlace(
             Power::Builder(base, Rational::Builder(-1)), 0, 0);
         trivialResult = Dependency::Builder(Rational::Builder(1), depList);
       } else {
-        assert(baseNull == TrinaryBoolean::False);
+        assert(baseNull == OMG::Troolean::False);
         trivialResult = Rational::Builder(1);
       }
     }
@@ -697,20 +697,20 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
      * if x ?= 0 or (complexFormat = real and x ?> 0), e^ln(x) depends on ln(x)
      */
     OExpression newSelf = newIndex.childAtIndex(0);
-    TrinaryBoolean isNull = newSelf.isNull(context);
-    TrinaryBoolean isPositive = newSelf.isPositive(context);
-    if (isNull == TrinaryBoolean::True) {
+    OMG::Troolean isNull = newSelf.isNull(context);
+    OMG::Troolean isPositive = newSelf.isPositive(context);
+    if (isNull == OMG::Troolean::True) {
       return replaceWithUndefinedInPlace();
     }
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real &&
-        isPositive == TrinaryBoolean::False) {
+        isPositive == OMG::Troolean::False) {
       OExpression result = Nonreal::Builder();
       replaceWithInPlace(result);
       return result;
     }
-    if (isNull == TrinaryBoolean::False &&
+    if (isNull == OMG::Troolean::False &&
         (reductionContext.complexFormat() != Preferences::ComplexFormat::Real ||
-         isPositive == TrinaryBoolean::True)) {
+         isPositive == OMG::Troolean::True)) {
       replaceWithInPlace(newSelf);
       return newSelf;
     }
@@ -756,7 +756,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       res = complexBase.powerInteger(
           rationalIndex.unsignedIntegerNumerator().extractedInt(),
           reductionContext);
-      if (indexIsPositive == TrinaryBoolean::False) {
+      if (indexIsPositive == OMG::Troolean::False) {
         res = res.inverse(reductionContext);
       }
     }
@@ -849,7 +849,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
     /* This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
      * This rule is true only if a > 0 OR c is integer */
     if ((index.isNumber() && static_cast<Number &>(index).isInteger()) ||
-        a.isPositive(context) == TrinaryBoolean::True ||
+        a.isPositive(context) == OMG::Troolean::True ||
         a.approximateToScalar<double>(approximationContext) >
             Float<double>::EpsilonLax()) {
       Multiplication m =
@@ -975,14 +975,14 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
         continue;
       }
 
-      TrinaryBoolean childSign = child.isPositive(context);
-      if (childSign != TrinaryBoolean::True &&
-          (childSign != TrinaryBoolean::False || !child.isNumber())) {
+      OMG::Troolean childSign = child.isPositive(context);
+      if (childSign != OMG::Troolean::True &&
+          (childSign != OMG::Troolean::False || !child.isNumber())) {
         i += 1;
         continue;
       }
 
-      if (childSign == TrinaryBoolean::False) {
+      if (childSign == OMG::Troolean::False) {
         multiplicationBase.replaceChildAtIndexInPlace(i, Rational::Builder(-1));
       } else {
         multiplicationBase.removeChildAtIndexInPlace(i);
@@ -1075,7 +1075,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
           result = result.shallowReduce(reductionContext);
         }
       }
-      if (rationalIndex.isPositive() == TrinaryBoolean::False) {
+      if (rationalIndex.isPositive() == OMG::Troolean::False) {
         rationalIndex.replaceWithInPlace(Rational::Builder(-1));
         return shallowReduce(reductionContext);
       } else {
@@ -1327,7 +1327,7 @@ bool Power::derivate(const ReductionContext &reductionContext, Symbol symbol,
       SymbolicComputation::DoNotReplaceAnySymbol);
   derivedFromExponent.deepReduceChildren(childContext);
   if (derivedFromExponent.childAtIndex(0).isNull(reductionContext.context()) !=
-      TrinaryBoolean::True) {
+      OMG::Troolean::True) {
     derivedFromExponent.addChildAtIndexInPlace(
         NaperianLogarithm::Builder(base.clone()), 1, 1);
     derivedFromExponent.addChildAtIndexInPlace(clone(), 2, 2);
@@ -1368,9 +1368,9 @@ Power::DependencyType Power::typeOfDependency(
   DependencyType result = DependencyType::None;
 
   // Case 1.
-  if ((index.isPositive(reductionContext.context()) != TrinaryBoolean::True ||
-       index.isNull(reductionContext.context()) != TrinaryBoolean::False) &&
-      base.isNull(reductionContext.context()) != TrinaryBoolean::False) {
+  if ((index.isPositive(reductionContext.context()) != OMG::Troolean::True ||
+       index.isNull(reductionContext.context()) != OMG::Troolean::False) &&
+      base.isNull(reductionContext.context()) != OMG::Troolean::False) {
     result = DependencyType::NegativeIndex;
   }
 
@@ -1378,7 +1378,7 @@ Power::DependencyType Power::typeOfDependency(
   if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real &&
       (index.otype() != ExpressionNode::Type::Rational ||
        static_cast<Rational &>(index).integerDenominator().isEven()) &&
-      base.isPositive(reductionContext.context()) != TrinaryBoolean::True) {
+      base.isPositive(reductionContext.context()) != OMG::Troolean::True) {
     result = result == DependencyType::None ? DependencyType::RationalIndex
                                             : DependencyType::Both;
   }

@@ -16,7 +16,7 @@ OExpression ParameteredExpressionNode::replaceSymbolWithExpression(
 }
 
 OExpression ParameteredExpressionNode::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return ParameteredExpression(this).deepReplaceReplaceableSymbols(
       context, isCircular, parameteredAncestorsCount, symbolicComputation);
@@ -197,7 +197,7 @@ OExpression ParameteredExpression::replaceSymbolWithExpression(
 }
 
 OExpression ParameteredExpression::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   /* All children replaceable symbols should be replaced apart from symbols that
    * are parameters in parametered expressions.*/
@@ -216,7 +216,7 @@ OExpression ParameteredExpression::deepReplaceReplaceableSymbols(
         parameteredAncestorsCount +
             (shouldIncreaseParameteredAncestorsCount ? 1 : 0),
         symbolicComputation);
-    if (*isCircular == TrinaryBoolean::True) {
+    if (*isCircular == OMG::Troolean::True) {
       // the expression is circularly defined, escape
       return *this;
     }

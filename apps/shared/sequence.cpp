@@ -162,25 +162,25 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
         Pack *pack = static_cast<Pack *>(arg);
 #if 1  // TODO_PCJ
         assert(false);
-        return TrinaryBoolean::Unknown;
+        return OMG::Troolean::Unknown;
 #else
         if (e.isRandom()) {
-          return TrinaryBoolean::True;
+          return OMG::Troolean::True;
         }
         if (!pack->systemSymbol && e.type() == ExpressionNode::Type::Symbol) {
           const Symbol symbol = static_cast<const Symbol &>(e);
-          return symbol.isSystemSymbol() ? TrinaryBoolean::True
-                                         : TrinaryBoolean::Unknown;
+          return symbol.isSystemSymbol() ? OMG::Troolean::True
+                                         : OMG::Troolean::Unknown;
         }
         if (e.type() != ExpressionNode::Type::Sequence) {
-          return TrinaryBoolean::Unknown;
+          return OMG::Troolean::Unknown;
         }
         const Poincare::Sequence seq =
             static_cast<const Poincare::Sequence &>(e);
         char *buffer = pack->name;
         if (strcmp(seq.name(), buffer) != 0) {
-          return !pack->otherSequences ? TrinaryBoolean::True
-                                       : TrinaryBoolean::Unknown;
+          return !pack->otherSequences ? OMG::Troolean::True
+                                       : OMG::Troolean::Unknown;
         }
         Expression rank = seq.childAtIndex(0);
         Type type = pack->type;
@@ -191,9 +191,9 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
           if ((type != Type::Explicit && rankValue == pack->initialRank) ||
               (type == Type::DoubleRecurrence &&
                rankValue == pack->initialRank + 1)) {
-            return TrinaryBoolean::False;
+            return OMG::Troolean::False;
           }
-          return TrinaryBoolean::True;
+          return OMG::Troolean::True;
         }
         Symbol n = Symbol::SystemSymbol();
         if (pack->recursion &&
@@ -201,9 +201,9 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
              (type == Type::DoubleRecurrence &&
               rank.isIdenticalTo(
                   Addition::Builder(n, Expression::Builder(1)))))) {
-          return TrinaryBoolean::False;
+          return OMG::Troolean::False;
         }
-        return TrinaryBoolean::True;
+        return OMG::Troolean::True;
 #endif
       },
       context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,

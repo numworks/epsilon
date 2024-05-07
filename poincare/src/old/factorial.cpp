@@ -18,7 +18,7 @@ namespace Poincare {
 bool FactorialNode::childAtIndexNeedsUserParentheses(const OExpression& child,
                                                      int childIndex) const {
   if (child.isNumber() &&
-      static_cast<const Number&>(child).isPositive() == TrinaryBoolean::False) {
+      static_cast<const Number&>(child).isPositive() == OMG::Troolean::False) {
     return true;
   }
   if (child.isOfType({Type::Conjugate, Type::Dependency})) {
@@ -94,7 +94,7 @@ OExpression Factorial::shallowReduce(ReductionContext reductionContext) {
   OExpression c = childAtIndex(0);
   if (c.otype() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
-    if (!r.isInteger() || r.isPositive() == TrinaryBoolean::False) {
+    if (!r.isInteger() || r.isPositive() == OMG::Troolean::False) {
       return replaceWithUndefinedInPlace();
     }
     if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {

@@ -35,9 +35,9 @@ class ConstantNode final : public ExpressionNode {
     return constantInfo().m_unit == nullptr ? Type::ConstantMaths
                                             : Type::ConstantPhysics;
   }
-  TrinaryBoolean isPositive(Context* context) const override;
-  TrinaryBoolean isNull(Context* context) const override {
-    return TrinaryBoolean::False;
+  OMG::Troolean isPositive(Context* context) const override;
+  OMG::Troolean isNull(Context* context) const override {
+    return OMG::Troolean::False;
   }
 
   /* Layout */

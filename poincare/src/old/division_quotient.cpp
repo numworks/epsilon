@@ -16,14 +16,14 @@ int DivisionQuotientNode::numberOfChildren() const {
   return DivisionQuotient::s_functionHelper.numberOfChildren();
 }
 
-TrinaryBoolean DivisionQuotientNode::isPositive(Context *context) const {
-  TrinaryBoolean numeratorPositive = childAtIndex(0)->isPositive(context);
-  TrinaryBoolean denominatorPositive = childAtIndex(1)->isPositive(context);
-  if (numeratorPositive == TrinaryBoolean::Unknown ||
-      denominatorPositive == TrinaryBoolean::Unknown) {
-    return TrinaryBoolean::Unknown;
+OMG::Troolean DivisionQuotientNode::isPositive(Context *context) const {
+  OMG::Troolean numeratorPositive = childAtIndex(0)->isPositive(context);
+  OMG::Troolean denominatorPositive = childAtIndex(1)->isPositive(context);
+  if (numeratorPositive == OMG::Troolean::Unknown ||
+      denominatorPositive == OMG::Troolean::Unknown) {
+    return OMG::Troolean::Unknown;
   }
-  return BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
+  return OMG::BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
 }
 
 OExpression DivisionQuotientNode::shallowReduce(

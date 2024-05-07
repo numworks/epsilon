@@ -18,7 +18,7 @@ class ParameteredExpressionNode : public ExpressionNode {
   OExpression replaceSymbolWithExpression(
       const SymbolAbstract& symbol, const OExpression& expression) override;
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
 
@@ -69,7 +69,7 @@ class ParameteredExpression : public OExpression {
   OExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
                                           const OExpression& expression);
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
   Symbol parameter();
 

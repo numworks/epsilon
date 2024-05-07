@@ -20,7 +20,7 @@ class DivisionQuotientNode final : public ExpressionNode {
 #endif
 
   // ExpressionNode
-  TrinaryBoolean isPositive(Context* context) const override;
+  OMG::Troolean isPositive(Context* context) const override;
   Type otype() const override { return Type::DivisionQuotient; }
 
   // Simplification

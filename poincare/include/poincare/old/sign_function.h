@@ -21,10 +21,10 @@ class SignFunctionNode final : public ExpressionNode {
 
   // Properties
   Type otype() const override { return Type::SignFunction; }
-  TrinaryBoolean isPositive(Context* context) const override {
+  OMG::Troolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }
-  TrinaryBoolean isNull(Context* context) const override {
+  OMG::Troolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
 

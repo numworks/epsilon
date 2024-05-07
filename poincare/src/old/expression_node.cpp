@@ -53,7 +53,7 @@ bool ExpressionNode::involvesCircularity(Context* context, int maxDepth,
 }
 
 OExpression ExpressionNode::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return OExpression(this).defaultReplaceReplaceableSymbols(
       context, isCircular, parameteredAncestorsCount, symbolicComputation);

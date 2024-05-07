@@ -42,8 +42,8 @@ class DecimalNode final : public NumberNode {
 
   // Properties
   Type otype() const override { return Type::Decimal; }
-  TrinaryBoolean isPositive(Context* context) const override {
-    return BinaryToTrinaryBool(!m_negative);
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::BinaryToTrinaryBool(!m_negative);
   }
 
   bool isNegative() const { return m_negative; }

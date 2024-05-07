@@ -978,11 +978,11 @@ class UnitNode final : public ExpressionNode {
 
   // OExpression Properties
   Type otype() const override { return Type::OUnit; }
-  TrinaryBoolean isPositive(Context* context) const override {
-    return TrinaryBoolean::True;
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::Troolean::True;
   }
-  TrinaryBoolean isNull(Context* context) const override {
-    return TrinaryBoolean::False;
+  OMG::Troolean isNull(Context* context) const override {
+    return OMG::Troolean::False;
   }
   OExpression removeUnit(OExpression* unit) override;
 

@@ -33,8 +33,8 @@ class JuniorExpressionNode final : public ExpressionNode {
   // Properties
   Type otype() const override { return Type::JuniorExpression; }
   // TODO_PCJ: Plug in approximation
-  // TrinaryBoolean isPositive(Context* context) const override;
-  // TrinaryBoolean isNull(Context* context) const override;
+  // OMG::Troolean isPositive(Context* context) const override;
+  // OMG::Troolean isNull(Context* context) const override;
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
 
@@ -179,9 +179,9 @@ class JuniorExpression : public OExpression {
   JuniorExpression replaceSymbolWithExpression(
       const SymbolAbstract& symbol, const JuniorExpression& expression);
 
-  typedef TrinaryBoolean (*ExpressionTrinaryTest)(const JuniorExpression e,
-                                                  Context* context,
-                                                  void* auxiliary);
+  typedef OMG::Troolean (*ExpressionTrinaryTest)(const JuniorExpression e,
+                                                 Context* context,
+                                                 void* auxiliary);
   struct IgnoredSymbols {
     JuniorExpression* head;
     void* tail;

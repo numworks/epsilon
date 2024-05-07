@@ -21,7 +21,7 @@ class StoreNode final : public RightwardsArrowExpressionNode {
   // Simplification
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
   // Evalutation
@@ -62,7 +62,7 @@ class OStore final : public ExpressionTwoChildren<OStore, StoreNode> {
   OExpression shallowReduce(ReductionContext reductionContext);
   bool storeValueForSymbol(Context* context) const;
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 
   bool storeRecursivelyMatches(

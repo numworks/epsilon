@@ -24,7 +24,7 @@ class HyperbolicTrigonometricFunctionNode : public ExpressionNode {
   }
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
   virtual bool isNotableValue(OExpression e, Context* context) const {
-    return e.isNull(context) == TrinaryBoolean::True;
+    return e.isNull(context) == OMG::Troolean::True;
   }
   virtual OExpression imageOfNotableValue() const {
     return Rational::Builder(0);

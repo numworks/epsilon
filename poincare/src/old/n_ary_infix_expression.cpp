@@ -9,7 +9,7 @@ bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(
    * when they are the first operand. (same for -2%) */
   if (childIndex != 0 &&
       ((child.isNumber() && static_cast<const Number &>(child).isPositive() ==
-                                TrinaryBoolean::False) ||
+                                OMG::Troolean::False) ||
        child.otype() == Type::Opposite)) {
     return true;
   }

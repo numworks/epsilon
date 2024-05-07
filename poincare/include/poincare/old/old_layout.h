@@ -7,7 +7,6 @@
 #include "context.h"
 #include "layout_node.h"
 #include "pool_handle.h"
-#include "trinary_boolean.h"
 
 namespace Poincare {
 

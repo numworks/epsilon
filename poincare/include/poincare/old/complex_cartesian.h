@@ -19,12 +19,12 @@ class ComplexCartesianNode : public ExpressionNode {
 #endif
 
   // Properties
-  TrinaryBoolean isPositive(Context* context) const override {
-    return childAtIndex(1)->isNull(context) == TrinaryBoolean::True
+  OMG::Troolean isPositive(Context* context) const override {
+    return childAtIndex(1)->isNull(context) == OMG::Troolean::True
                ? childAtIndex(0)->isPositive(context)
-               : TrinaryBoolean::Unknown;
+               : OMG::Troolean::Unknown;
   }
-  TrinaryBoolean isNull(Context* context) const override;
+  OMG::Troolean isNull(Context* context) const override;
   Type otype() const override { return Type::ComplexCartesian; }
 
  private:

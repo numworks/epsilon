@@ -42,10 +42,10 @@ class FloatNode final : public NumberNode {
   Type otype() const override {
     return (sizeof(T) == sizeof(float)) ? Type::Float : Type::Double;
   }
-  TrinaryBoolean isPositive(Context* context) const override {
+  OMG::Troolean isPositive(Context* context) const override {
     return std::isnan(m_value)
-               ? TrinaryBoolean::Unknown
-               : BinaryToTrinaryBool(m_value >= static_cast<T>(0.0));
+               ? OMG::Troolean::Unknown
+               : OMG::BinaryToTrinaryBool(m_value >= static_cast<T>(0.0));
   }
 
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,

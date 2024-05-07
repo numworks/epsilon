@@ -20,8 +20,8 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
 
   // Properties
   Type otype() const override { return Type::Multiplication; }
-  TrinaryBoolean isPositive(Context* context) const override;
-  TrinaryBoolean isNull(Context* context) const override;
+  OMG::Troolean isPositive(Context* context) const override;
+  OMG::Troolean isNull(Context* context) const override;
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;

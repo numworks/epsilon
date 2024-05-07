@@ -23,9 +23,9 @@
 
 namespace Poincare {
 
-TrinaryBoolean ComplexCartesianNode::isNull(Context* context) const {
-  TrinaryBoolean realIsNull = childAtIndex(0)->isNull(context);
-  TrinaryBoolean imagIsNull = childAtIndex(1)->isNull(context);
+OMG::Troolean ComplexCartesianNode::isNull(Context* context) const {
+  OMG::Troolean realIsNull = childAtIndex(0)->isNull(context);
+  OMG::Troolean imagIsNull = childAtIndex(1)->isNull(context);
   return TrinaryAnd(realIsNull, imagIsNull);
 }
 
@@ -78,7 +78,7 @@ OExpression ComplexCartesian::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  if (imag().isNull(reductionContext.context()) == TrinaryBoolean::True) {
+  if (imag().isNull(reductionContext.context()) == OMG::Troolean::True) {
     OExpression r = real();
     replaceWithInPlace(r);
     return r;
@@ -156,10 +156,9 @@ OExpression ComplexCartesian::squareNorm(
 OExpression ComplexCartesian::norm(const ReductionContext& reductionContext) {
   OExpression a;
   // Special case for pure real or pure imaginary cartesian
-  if (imag().isNull(reductionContext.context()) == TrinaryBoolean::True) {
+  if (imag().isNull(reductionContext.context()) == OMG::Troolean::True) {
     a = real();
-  } else if (real().isNull(reductionContext.context()) ==
-             TrinaryBoolean::True) {
+  } else if (real().isNull(reductionContext.context()) == OMG::Troolean::True) {
     a = imag();
   }
   if (!a.isUninitialized()) {
@@ -179,8 +178,8 @@ OExpression ComplexCartesian::argument(
     const ReductionContext& reductionContext) {
   OExpression a = real();
   OExpression b = imag();
-  if (b.isNull(reductionContext.context()) != TrinaryBoolean::True) {
-    /* TODO: Handle TrinaryBoolean::Unknown
+  if (b.isNull(reductionContext.context()) != OMG::Troolean::True) {
+    /* TODO: Handle OMG::Troolean::Unknown
      * if b != 0, argument = sign(b) * π/2 - atan(a/b)
      * First, compute atan(a/b) or (π/180)*atan(a/b) */
     OExpression divab = Division::Builder(a, b.clone());
@@ -285,11 +284,11 @@ ComplexCartesian ComplexCartesian::powerInteger(
   OExpression a = real();
   OExpression b = imag();
   assert(n > 0);
-  assert(b.isNull(reductionContext.context()) != TrinaryBoolean::True);
+  assert(b.isNull(reductionContext.context()) != OMG::Troolean::True);
 
   /* Special case: a == 0 (otherwise, we are going to introduce undefined
    * expressions - a^0 = NAN) (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1 */
-  if (a.isNull(reductionContext.context()) == TrinaryBoolean::True) {
+  if (a.isNull(reductionContext.context()) == OMG::Troolean::True) {
     ComplexCartesian result;
     OExpression bpow = Power::Builder(b, Rational::Builder(n));
     if (n / 2 % 2 == 1) {

@@ -84,25 +84,24 @@ Evaluation<U> PercentSimpleNode::templateApproximate(
 
 // Properties
 
-TrinaryBoolean PercentAdditionNode::isPositive(Context* context) const {
-  TrinaryBoolean isPositive0 = childAtIndex(0)->isPositive(context);
-  TrinaryBoolean isPositive1 = childAtIndex(1)->isPositive(context);
+OMG::Troolean PercentAdditionNode::isPositive(Context* context) const {
+  OMG::Troolean isPositive0 = childAtIndex(0)->isPositive(context);
+  OMG::Troolean isPositive1 = childAtIndex(1)->isPositive(context);
   if (isPositive0 == isPositive1) {
     return isPositive0;
   }
-  return TrinaryBoolean::Unknown;
+  return OMG::Troolean::Unknown;
 }
 
-TrinaryBoolean PercentAdditionNode::isNull(Context* context) const {
-  TrinaryBoolean isNull0 = childAtIndex(0)->isNull(context);
-  TrinaryBoolean isNull1 = childAtIndex(1)->isNull(context);
-  if (isNull0 != TrinaryBoolean::False || isNull1 == TrinaryBoolean::True) {
+OMG::Troolean PercentAdditionNode::isNull(Context* context) const {
+  OMG::Troolean isNull0 = childAtIndex(0)->isNull(context);
+  OMG::Troolean isNull1 = childAtIndex(1)->isNull(context);
+  if (isNull0 != OMG::Troolean::False || isNull1 == OMG::Troolean::True) {
     return isNull0;
   }
   // At this point if the expression has a defined sign, it is a strict sign
-  return isPositive(context) == TrinaryBoolean::Unknown
-             ? TrinaryBoolean::Unknown
-             : TrinaryBoolean::False;
+  return isPositive(context) == OMG::Troolean::Unknown ? OMG::Troolean::Unknown
+                                                       : OMG::Troolean::False;
 }
 
 bool PercentAdditionNode::childAtIndexNeedsUserParentheses(

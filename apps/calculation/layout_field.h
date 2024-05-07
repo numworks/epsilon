@@ -2,7 +2,7 @@
 #define CALCULATION_LAYOUT_FIELD_H
 
 #include <escher/expression_input_bar.h>
-#include <poincare/old/trinary_boolean.h>
+#include <omg/troolean.h>
 
 namespace Calculation {
 
@@ -13,7 +13,7 @@ class LayoutField : public Escher::LayoutField {
       : Escher::LayoutField(parentResponder, layoutFieldDelegate),
         m_insertionCursor(),
         m_currentStep(DivisionCycleStep::Start),
-        m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {}
+        m_divisionCycleWithAns(OMG::Troolean::Unknown) {}
 
   void updateCursorBeforeInsertion();
 
@@ -36,7 +36,7 @@ class LayoutField : public Escher::LayoutField {
 
   Poincare::Internal::LayoutBufferCursor m_insertionCursor;
   DivisionCycleStep m_currentStep;
-  Poincare::TrinaryBoolean m_divisionCycleWithAns;
+  OMG::Troolean m_divisionCycleWithAns;
 };
 
 using ExpressionInputBar = Escher::TemplatedExpressionInputBar<LayoutField>;

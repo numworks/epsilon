@@ -34,8 +34,8 @@ class RationalNode final : public NumberNode {
 
   // OExpression subclassing
   Type otype() const override { return Type::Rational; }
-  TrinaryBoolean isPositive(Context* context) const override {
-    return BinaryToTrinaryBool(!m_negative);
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::BinaryToTrinaryBool(!m_negative);
   }
 
   // Layout

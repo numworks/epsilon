@@ -155,14 +155,14 @@ class Zoom {
   static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f,
                                        const void *aux, float a, float b,
                                        Solver<float>::Interest, float precision,
-                                       TrinaryBoolean discontinuous);
+                                       OMG::Troolean discontinuous);
   static Coordinate2D<float> HoneRoot(Solver<float>::FunctionEvaluation f,
                                       const void *aux, float a, float b,
                                       Solver<float>::Interest, float precision,
-                                      TrinaryBoolean discontinuous);
+                                      OMG::Troolean discontinuous);
   static Coordinate2D<float> HoneIntersection(
       Solver<float>::FunctionEvaluation f, const void *aux, float a, float b,
-      Solver<float>::Interest, float precision, TrinaryBoolean discontinuous);
+      Solver<float>::Interest, float precision, OMG::Troolean discontinuous);
 
   Range2D<float> sanitize2DHelper(Range2D<float> range) const;
   Range2D<float> sanitizedRange() const {

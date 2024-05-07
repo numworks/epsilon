@@ -20,16 +20,16 @@
 
 namespace Poincare {
 
-TrinaryBoolean AdditionNode::isPositive(Context* context) const {
+OMG::Troolean AdditionNode::isPositive(Context* context) const {
   if (numberOfChildren() < 1) {
-    return TrinaryBoolean::Unknown;
+    return OMG::Troolean::Unknown;
   }
   // If all children have same sign, addition has this sign too.
-  TrinaryBoolean additionIsPositive = childAtIndex(0)->isPositive(context);
+  OMG::Troolean additionIsPositive = childAtIndex(0)->isPositive(context);
   int childrenNumber = numberOfChildren();
   for (int i = 1; i < childrenNumber; i++) {
     if (childAtIndex(i)->isPositive(context) != additionIsPositive) {
-      return TrinaryBoolean::Unknown;
+      return OMG::Troolean::Unknown;
     }
   }
   return additionIsPositive;
@@ -104,7 +104,7 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
         !child.childAtIndex(0).isOfType(
             {Type::BasedInteger, Type::Decimal, Type::Double, Type::Float}) ||
         child.childAtIndex(1).otype() != Type::OUnit ||
-        child.childAtIndex(0).isPositive(nullptr) == TrinaryBoolean::False) {
+        child.childAtIndex(0).isPositive(nullptr) == OMG::Troolean::False) {
       return false;
     }
     OUnit unitOfChild = child.childAtIndex(1).convert<OUnit>();

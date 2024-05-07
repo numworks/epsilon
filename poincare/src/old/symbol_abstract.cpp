@@ -59,14 +59,14 @@ size_t SymbolAbstractNode::size() const {
   return nodeSize() + strlen(name()) + 1;
 }
 
-TrinaryBoolean SymbolAbstractNode::isPositive(Context *context) const {
+OMG::Troolean SymbolAbstractNode::isPositive(Context *context) const {
   SymbolAbstract s(this);
   // No need to preserve undefined symbols here.
   OExpression e = SymbolAbstract::Expand(
       s, context, true,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (e.isUninitialized()) {
-    return TrinaryBoolean::Unknown;
+    return OMG::Troolean::Unknown;
   }
   return e.isPositive(context);
 }
@@ -187,11 +187,11 @@ JuniorExpression SymbolAbstract::replaceSymbolWithExpression(
 #endif
 
 void SymbolAbstract::checkForCircularityIfNeeded(Context *context,
-                                                 TrinaryBoolean *isCircular) {
-  assert(*isCircular != TrinaryBoolean::True);
-  if (*isCircular == TrinaryBoolean::Unknown) {
+                                                 OMG::Troolean *isCircular) {
+  assert(*isCircular != OMG::Troolean::True);
+  if (*isCircular == OMG::Troolean::Unknown) {
     const char *visitedSymbols[OExpression::k_maxSymbolReplacementsCount];
-    *isCircular = BinaryToTrinaryBool(involvesCircularity(
+    *isCircular = OMG::BinaryToTrinaryBool(involvesCircularity(
         context, OExpression::k_maxSymbolReplacementsCount, visitedSymbols, 0));
   }
 }

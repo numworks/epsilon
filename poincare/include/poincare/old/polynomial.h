@@ -39,7 +39,7 @@ class Polynomial {
                      OExpression root,
                      const ReductionContext& reductionContext) {
     return ReducePolynomial(coefficients, degree, root, reductionContext)
-               .isNull(reductionContext.context()) == TrinaryBoolean::True;
+               .isNull(reductionContext.context()) == OMG::Troolean::True;
   }
   static OExpression RationalRootSearch(
       const OExpression* coefficients, int degree,

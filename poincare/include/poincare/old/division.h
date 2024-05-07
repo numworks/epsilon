@@ -22,12 +22,12 @@ class DivisionNode final : public ExpressionNode {
 #endif
 
   // Properties
-  TrinaryBoolean isPositive(Context* context) const override;
-  TrinaryBoolean isNull(Context* context) const override {
+  OMG::Troolean isPositive(Context* context) const override;
+  OMG::Troolean isNull(Context* context) const override {
     // NonNull Status can't be returned because denominator could be infinite.
-    return childAtIndex(0)->isNull(context) == TrinaryBoolean::True
-               ? TrinaryBoolean::True
-               : TrinaryBoolean::Unknown;
+    return childAtIndex(0)->isNull(context) == OMG::Troolean::True
+               ? OMG::Troolean::True
+               : OMG::Troolean::Unknown;
   }
   Type otype() const override { return Type::Division; }
   OExpression removeUnit(OExpression* unit) override {

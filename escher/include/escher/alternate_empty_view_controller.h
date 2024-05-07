@@ -4,7 +4,7 @@
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/i18n.h>
 #include <escher/view_controller.h>
-#include <poincare/old/trinary_boolean.h>
+#include <omg/troolean.h>
 
 namespace Escher {
 
@@ -32,7 +32,7 @@ class AlternateEmptyViewController : public ViewController {
     }
     void layoutSubviews(bool force = false) override;
     bool isEmpty();
-    void resetIsEmpty() { m_isEmpty = Poincare::TrinaryBoolean::Unknown; }
+    void resetIsEmpty() { m_isEmpty = OMG::Troolean::Unknown; }
     View* currentView();
 
    private:
@@ -40,7 +40,7 @@ class AlternateEmptyViewController : public ViewController {
     View* subviewAtIndex(int index) override;
     ViewController* m_mainViewController;
     AlternateEmptyViewDelegate* m_delegate;
-    Poincare::TrinaryBoolean m_isEmpty;
+    OMG::Troolean m_isEmpty;
   };
   ContentView m_contentView;
 };

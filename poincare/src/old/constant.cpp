@@ -23,9 +23,9 @@ ConstantNode::ConstantNode(const char* name, int length)
   assert(Constant::IsConstant(name, length));
 }
 
-TrinaryBoolean ConstantNode::isPositive(Context* context) const {
-  return isPi() || isExponentialE() ? TrinaryBoolean::True
-                                    : TrinaryBoolean::Unknown;
+OMG::Troolean ConstantNode::isPositive(Context* context) const {
+  return isPi() || isExponentialE() ? OMG::Troolean::True
+                                    : OMG::Troolean::Unknown;
 }
 
 bool ConstantNode::isReal() const { return isPi() || isExponentialE(); }

@@ -32,18 +32,18 @@ namespace Poincare {
 
 /* Multiplication Node */
 
-TrinaryBoolean MultiplicationNode::isPositive(Context *context) const {
+OMG::Troolean MultiplicationNode::isPositive(Context *context) const {
   if (numberOfChildren() == 0) {
-    return TrinaryBoolean::Unknown;
+    return OMG::Troolean::Unknown;
   }
   int sign = 1;
   for (ExpressionNode *c : children()) {
     sign *= (int)(c->isPositive(context));
     if (sign == 0) {
-      return TrinaryBoolean::Unknown;
+      return OMG::Troolean::Unknown;
     }
   }
-  return static_cast<TrinaryBoolean>(sign);
+  return static_cast<OMG::Troolean>(sign);
 }
 
 int MultiplicationNode::polynomialDegree(Context *context,
@@ -59,18 +59,18 @@ int MultiplicationNode::polynomialDegree(Context *context,
   return degree;
 }
 
-TrinaryBoolean MultiplicationNode::isNull(Context *context) const {
+OMG::Troolean MultiplicationNode::isNull(Context *context) const {
   if (numberOfChildren() == 0) {
-    return TrinaryBoolean::Unknown;
+    return OMG::Troolean::Unknown;
   }
   /* If multiplying elements with same null-status, multiplication has this
    * status. If the null-status are different, we return Unknown because it
    * could be inf * 0. */
-  TrinaryBoolean isNull = childAtIndex(0)->isNull(context);
+  OMG::Troolean isNull = childAtIndex(0)->isNull(context);
   int childrenNumber = numberOfChildren();
   for (int i = 1; i < childrenNumber; i++) {
     if (childAtIndex(i)->isNull(context) != isNull) {
-      return TrinaryBoolean::Unknown;
+      return OMG::Troolean::Unknown;
     }
   }
   return isNull;
@@ -1403,7 +1403,7 @@ void Multiplication::addMissingFactors(
                                                CreateExponent(factor))
                               .deepReduce(reductionContext);
         if (sub.isPositive(reductionContext.context()) ==
-            TrinaryBoolean::False) {  // index[0] < index[1]
+            OMG::Troolean::False) {  // index[0] < index[1]
           sub = Opposite::Builder(sub);
           if (factor.otype() == ExpressionNode::Type::Power) {
             factor.replaceChildAtIndexInPlace(1, sub);
@@ -1413,7 +1413,7 @@ void Multiplication::addMissingFactors(
           sub.shallowReduce(reductionContext);
           mergeInChildByFactorizingBase(i, factor, reductionContext);
         } else if (sub.isPositive(reductionContext.context()) ==
-                   TrinaryBoolean::Unknown) {
+                   OMG::Troolean::Unknown) {
           mergeInChildByFactorizingBase(i, factor, reductionContext);
         }
         return;
@@ -1438,8 +1438,8 @@ bool Multiplication::factorizeSineAndCosine(
   Number p = CreateExponent(childAtIndex(i)).convert<Number>();
   Number q = CreateExponent(childAtIndex(j)).convert<Number>();
   // If p and q have the same sign, we cannot replace them by a tangent
-  TrinaryBoolean pIsPositive = p.isPositive();
-  if (pIsPositive != TrinaryBoolean::Unknown && pIsPositive == q.isPositive()) {
+  OMG::Troolean pIsPositive = p.isPositive();
+  if (pIsPositive != OMG::Troolean::Unknown && pIsPositive == q.isPositive()) {
     return false;
   }
   Number sumPQ = Number::Addition(p, q);
@@ -1461,7 +1461,7 @@ bool Multiplication::factorizeSineAndCosine(
   /* If the power of tan is negative and tan(x) = undef, we can't transform
    * cos/sin into 1/tan. Indeed, cos(pi/2)/sin(pi/2) is defined, but tan(pi/2)
    * is undef. */
-  if (tanPower.isPositive() == TrinaryBoolean::False &&
+  if (tanPower.isPositive() == OMG::Troolean::False &&
       tan.approximate<float>(ApproximationContext(reductionContext, true))
           .isUndefined()) {
     return false;

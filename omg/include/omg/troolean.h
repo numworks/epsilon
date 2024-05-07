@@ -71,6 +71,11 @@ inline Troolean BinaryToTrinaryBool(bool b) {
   return b ? Troolean::True : Troolean::False;
 }
 
+inline bool TrinaryToBinaryBool(Troolean b) {
+  assert(b != Troolean::Unknown);
+  return b == Troolean::True;
+}
+
 }  // namespace OMG
 
 #endif

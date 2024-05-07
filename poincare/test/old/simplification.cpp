@@ -1,4 +1,5 @@
 #include <ion/storage/file_system.h>
+#include <poincare/old/boolean.h>
 #include <poincare/old/constant.h>
 #include <poincare/old/function.h>
 #include <poincare/old/infinity.h>

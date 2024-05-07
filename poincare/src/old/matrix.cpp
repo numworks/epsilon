@@ -173,9 +173,9 @@ int OMatrix::rank(Context *context, bool forceCanonization) {
   int i = rank - 1;
   while (i >= 0) {
     int j = cannonizedMatrix.numberOfColumns() - 1;
-    // TODO: Handle TrinaryBoolean::Unknown. See rowCanonize comment
+    // TODO: Handle OMG::Troolean::Unknown. See rowCanonize comment
     while (j >= i && cannonizedMatrix.matrixChild(i, j).isNull(context) ==
-                         TrinaryBoolean::True) {
+                         OMG::Troolean::True) {
       j--;
     }
     if (j <= i - 1) {
@@ -295,7 +295,7 @@ OMatrix OMatrix::rowCanonize(const ReductionContext &reductionContext,
       // Handle very low pivots
       if (pivot == 0.0f &&
           matrixChild(iPivot_temp, k).isNull(reductionContext.context()) !=
-              TrinaryBoolean::True) {
+              OMG::Troolean::True) {
         pivot = FLT_MIN;
       }
 
@@ -311,12 +311,12 @@ OMatrix OMatrix::rowCanonize(const ReductionContext &reductionContext,
       }
       iPivot_temp++;
     }
-    /* TODO: Handle isNull == TrinaryBoolean::Unknown : rowCanonize will
+    /* TODO: Handle isNull == OMG::Troolean::Unknown : rowCanonize will
      * output a mathematically wrong result (and divide expressions by a null
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
     if (matrixChild(iPivot, k).isNull(reductionContext.context()) ==
-        TrinaryBoolean::True) {
+        OMG::Troolean::True) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {

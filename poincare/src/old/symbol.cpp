@@ -74,7 +74,7 @@ OExpression SymbolNode::shallowReduce(
 }
 
 OExpression SymbolNode::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   return Symbol(this).deepReplaceReplaceableSymbols(
       context, isCircular, parameteredAncestorsCount, symbolicComputation);
@@ -216,7 +216,7 @@ int Symbol::getPolynomialCoefficients(Context* context, const char* symbolName,
 }
 
 OExpression Symbol::deepReplaceReplaceableSymbols(
-    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   /* This symbolic computation parameters make no sense in this method.
    * It is therefore not handled. */
@@ -256,13 +256,13 @@ OExpression Symbol::deepReplaceReplaceableSymbols(
    * called.
    * isCircularFromHere is used so that isCircular is not altered if this is
    * not circular but a sibling of this is circular and was not checked yet. */
-  TrinaryBoolean isCircularFromHere = *isCircular;
+  OMG::Troolean isCircularFromHere = *isCircular;
   checkForCircularityIfNeeded(context, &isCircularFromHere);
-  if (isCircularFromHere == TrinaryBoolean::True) {
+  if (isCircularFromHere == OMG::Troolean::True) {
     *isCircular = isCircularFromHere;
     return *this;
   }
-  assert(isCircularFromHere == TrinaryBoolean::False);
+  assert(isCircularFromHere == OMG::Troolean::False);
 
   Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {

@@ -22,10 +22,10 @@ class ArcSineNode final : public ExpressionNode {
 #endif
 
   // Properties
-  TrinaryBoolean isPositive(Context* context) const override {
+  OMG::Troolean isPositive(Context* context) const override {
     return childAtIndex(0)->isPositive(context);
   }
-  TrinaryBoolean isNull(Context* context) const override {
+  OMG::Troolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
   Type otype() const override { return Type::ArcSine; }

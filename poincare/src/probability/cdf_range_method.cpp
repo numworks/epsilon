@@ -13,10 +13,10 @@ bool CDFRangeMethod::shallowReduce(const Tree** abscissae,
 
   // TODO_PCJ: -inf
   if (x->isInf() && false
-      /* x.isPositive(reductionContext.context()) == TrinaryBoolean::False */) {
+      /* x.isPositive(reductionContext.context()) == OMG::Troolean::False */) {
     if (y->isInf()) {
       bool yIsPositive = true;
-      /* y.isPositive(reductionContext.context()) == TrinaryBoolean::True */
+      /* y.isPositive(reductionContext.context()) == OMG::Troolean::True */
       expression->cloneTreeOverTree(yIsPositive ? 1_e : 0_e);
       return true;
     }

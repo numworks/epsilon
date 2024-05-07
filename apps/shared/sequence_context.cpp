@@ -225,7 +225,7 @@ void SequenceContext::resetCache() {
   }
   resetComputationStatus();
   for (int i = 0; i < k_numberOfSequences; i++) {
-    m_sequenceIsNotComputable[i] = TrinaryBoolean::Unknown;
+    m_sequenceIsNotComputable[i] = OMG::Troolean::Unknown;
   }
 }
 
@@ -256,10 +256,10 @@ Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
 
 bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
-  if (m_sequenceIsNotComputable[sequenceIndex] == TrinaryBoolean::Unknown) {
+  if (m_sequenceIsNotComputable[sequenceIndex] == OMG::Troolean::Unknown) {
     m_sequenceIsNotComputable[sequenceIndex] =
-        BinaryToTrinaryBool(sequenceAtNameIndex(sequenceIndex)
-                                ->mainExpressionIsNotComputable(this));
+        OMG::BinaryToTrinaryBool(sequenceAtNameIndex(sequenceIndex)
+                                     ->mainExpressionIsNotComputable(this));
   }
   return TrinaryToBinaryBool(m_sequenceIsNotComputable[sequenceIndex]);
 }

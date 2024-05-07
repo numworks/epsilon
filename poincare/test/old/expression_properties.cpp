@@ -66,84 +66,81 @@ QUIZ_CASE(poincare_properties_is_number) {
 QUIZ_CASE(poincare_properties_is_number_zero) {
   Shared::GlobalContext context;
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Binary).isNull(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Decimal).isNull(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(
       BasedInteger::Builder("2", OMG::Base::Hexadecimal).isNull(&context) ==
-      TrinaryBoolean::False);
+      OMG::Troolean::False);
   quiz_assert(BasedInteger::Builder("0", OMG::Base::Binary).isNull(&context) ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(BasedInteger::Builder("0", OMG::Base::Decimal).isNull(&context) ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(
       BasedInteger::Builder("0", OMG::Base::Hexadecimal).isNull(&context) ==
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   quiz_assert(Decimal::Builder("2", 3).isNull(&context) ==
-              TrinaryBoolean::False);
-  quiz_assert(Decimal::Builder("0", 0).isNull(&context) ==
-              TrinaryBoolean::True);
+              OMG::Troolean::False);
+  quiz_assert(Decimal::Builder("0", 0).isNull(&context) == OMG::Troolean::True);
   quiz_assert(Float<float>::Builder(1.0f).isNull(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(Float<float>::Builder(0.0f).isNull(&context) ==
-              TrinaryBoolean::True);
-  quiz_assert(Infinity::Builder(true).isNull(&context) ==
-              TrinaryBoolean::False);
-  quiz_assert(Undefined::Builder().isNull(&context) == TrinaryBoolean::Unknown);
-  quiz_assert(Rational::Builder(2, 3).isNull(&context) ==
-              TrinaryBoolean::False);
-  quiz_assert(Rational::Builder(0, 1).isNull(&context) == TrinaryBoolean::True);
-  quiz_assert(Symbol::Builder('a').isNull(&context) == TrinaryBoolean::Unknown);
+              OMG::Troolean::True);
+  quiz_assert(Infinity::Builder(true).isNull(&context) == OMG::Troolean::False);
+  quiz_assert(Undefined::Builder().isNull(&context) == OMG::Troolean::Unknown);
+  quiz_assert(Rational::Builder(2, 3).isNull(&context) == OMG::Troolean::False);
+  quiz_assert(Rational::Builder(0, 1).isNull(&context) == OMG::Troolean::True);
+  quiz_assert(Symbol::Builder('a').isNull(&context) == OMG::Troolean::Unknown);
   quiz_assert(
       Multiplication::Builder(Rational::Builder(1), Rational::Builder(0))
-          .isNull(&context) == TrinaryBoolean::Unknown);
+          .isNull(&context) == OMG::Troolean::Unknown);
   quiz_assert(Addition::Builder(Rational::Builder(1), Rational::Builder(-1))
-                  .isNull(&context) == TrinaryBoolean::Unknown);
+                  .isNull(&context) == OMG::Troolean::Unknown);
 
   quiz_assert(AbsoluteValue::Builder(Rational::Builder(0)).isNull(&context) ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(ArcSine::Builder(Rational::Builder(1, 7)).isNull(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(
       ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(3, 2))
-          .isNull(&context) == TrinaryBoolean::False);
+          .isNull(&context) == OMG::Troolean::False);
   quiz_assert(
       ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(0))
-          .isNull(&context) == TrinaryBoolean::True);
+          .isNull(&context) == OMG::Troolean::True);
   quiz_assert(
       Conjugate::Builder(ComplexCartesian::Builder(Rational::Builder(2, 3),
                                                    Rational::Builder(3, 2)))
-          .isNull(&context) == TrinaryBoolean::False);
+          .isNull(&context) == OMG::Troolean::False);
   quiz_assert(Factor::Builder(Rational::Builder(0)).isNull(&context) ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(Factorial::Builder(Rational::Builder(0)).isNull(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(ImaginaryPart::Builder(Rational::Builder(14)).isNull(&context) ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(RealPart::Builder(Rational::Builder(0)).isNull(&context) ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(Parenthesis::Builder(Rational::Builder(-7)).isNull(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(SignFunction::Builder(Rational::Builder(0)).isNull(&context) ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(OUnit::Builder(OUnit::k_powerRepresentatives,
                              OUnit::Prefix::EmptyPrefix())
-                  .isNull(&context) == TrinaryBoolean::False);
+                  .isNull(&context) == OMG::Troolean::False);
   quiz_assert(Division::Builder(Rational::Builder(0), Rational::Builder(3, 7))
-                  .isNull(&context) == TrinaryBoolean::True);
+                  .isNull(&context) == OMG::Troolean::True);
   quiz_assert(Power::Builder(Rational::Builder(0), Rational::Builder(3, 7))
-                  .isNull(&context) == TrinaryBoolean::True);
+                  .isNull(&context) == OMG::Troolean::True);
   quiz_assert(SquareRoot::Builder(Rational::Builder(2, 5)).isNull(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(
       PercentAddition::Builder(Rational::Builder(0), Rational::Builder(1))
-          .isNull(&context) == TrinaryBoolean::True);
+          .isNull(&context) == OMG::Troolean::True);
   quiz_assert(
       PercentAddition::Builder(Rational::Builder(1), Rational::Builder(1))
-          .isNull(&context) == TrinaryBoolean::False);
+          .isNull(&context) == OMG::Troolean::False);
   quiz_assert(
       PercentAddition::Builder(Rational::Builder(1), Rational::Builder(-1))
-          .isNull(&context) == TrinaryBoolean::Unknown);
+          .isNull(&context) == OMG::Troolean::Unknown);
 }
 
 QUIZ_CASE(poincare_properties_is_random) {
@@ -315,7 +312,7 @@ QUIZ_CASE(poincare_properties_in_parametric) {
 }
 
 void assert_reduced_expression_sign(
-    const char* expression, Poincare::TrinaryBoolean isPositive,
+    const char* expression, OMG::Troolean isPositive,
     Preferences::ComplexFormat complexFormat = Cartesian,
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat) {
@@ -329,100 +326,100 @@ void assert_reduced_expression_sign(
 }
 
 QUIZ_CASE(poincare_properties_decimal_sign) {
-  quiz_assert(Decimal::Builder(-2, 3).isPositive() == TrinaryBoolean::False);
-  quiz_assert(Decimal::Builder(-2, -3).isPositive() == TrinaryBoolean::False);
-  quiz_assert(Decimal::Builder(2, -3).isPositive() == TrinaryBoolean::True);
-  quiz_assert(Decimal::Builder(2, 3).isPositive() == TrinaryBoolean::True);
-  quiz_assert(Decimal::Builder(0, 1).isPositive() == TrinaryBoolean::True);
+  quiz_assert(Decimal::Builder(-2, 3).isPositive() == OMG::Troolean::False);
+  quiz_assert(Decimal::Builder(-2, -3).isPositive() == OMG::Troolean::False);
+  quiz_assert(Decimal::Builder(2, -3).isPositive() == OMG::Troolean::True);
+  quiz_assert(Decimal::Builder(2, 3).isPositive() == OMG::Troolean::True);
+  quiz_assert(Decimal::Builder(0, 1).isPositive() == OMG::Troolean::True);
 }
 
 QUIZ_CASE(poincare_properties_based_integer_sign) {
   quiz_assert(BasedInteger::Builder(2, OMG::Base::Binary).isPositive() ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(BasedInteger::Builder(2, OMG::Base::Decimal).isPositive() ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
   quiz_assert(BasedInteger::Builder(2, OMG::Base::Hexadecimal).isPositive() ==
-              TrinaryBoolean::True);
+              OMG::Troolean::True);
 }
 
 QUIZ_CASE(poincare_properties_rational_sign) {
-  quiz_assert(Rational::Builder(-2).isPositive() == TrinaryBoolean::False);
-  quiz_assert(Rational::Builder(-2, 3).isPositive() == TrinaryBoolean::False);
-  quiz_assert(Rational::Builder(2, 3).isPositive() == TrinaryBoolean::True);
-  quiz_assert(Rational::Builder(0, 3).isPositive() == TrinaryBoolean::True);
+  quiz_assert(Rational::Builder(-2).isPositive() == OMG::Troolean::False);
+  quiz_assert(Rational::Builder(-2, 3).isPositive() == OMG::Troolean::False);
+  quiz_assert(Rational::Builder(2, 3).isPositive() == OMG::Troolean::True);
+  quiz_assert(Rational::Builder(0, 3).isPositive() == OMG::Troolean::True);
 }
 
 QUIZ_CASE(poincare_properties_expression_sign) {
   Shared::GlobalContext context;
   quiz_assert(
       ArcCosine::Builder(Rational::Builder(-1, 7)).isPositive(&context) ==
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   quiz_assert(ArcCosine::Builder(Symbol::Builder('a')).isPositive(&context) ==
-              TrinaryBoolean::Unknown);
+              OMG::Troolean::Unknown);
   quiz_assert(ArcSine::Builder(Rational::Builder(-1, 7)).isPositive(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(
       ArcTangent::Builder(Rational::Builder(1, 7)).isPositive(&context) ==
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   quiz_assert(Ceiling::Builder(Rational::Builder(7, 3)).isPositive(&context) ==
-              TrinaryBoolean::Unknown);
+              OMG::Troolean::Unknown);
   quiz_assert(Floor::Builder(Rational::Builder(7, 3)).isPositive(&context) ==
-              TrinaryBoolean::Unknown);
+              OMG::Troolean::Unknown);
   quiz_assert(Round::Builder(Rational::Builder(7, 3), Rational::Builder(1))
-                  .isPositive(&context) == TrinaryBoolean::True);
+                  .isPositive(&context) == OMG::Troolean::True);
   quiz_assert(
       Conjugate::Builder(ComplexCartesian::Builder(
                              Rational::Builder(2, 3),
                              BasedInteger::Builder(0, OMG::Base::Binary)))
-          .isPositive(&context) == TrinaryBoolean::True);
+          .isPositive(&context) == OMG::Troolean::True);
   quiz_assert(
       DivisionRemainder::Builder(Decimal::Builder(2.0), Decimal::Builder(3.0))
-          .isPositive(&context) == TrinaryBoolean::True);
+          .isPositive(&context) == OMG::Troolean::True);
   quiz_assert(
       AbsoluteValue::Builder(Rational::Builder(-14)).isPositive(&context) ==
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   quiz_assert(
       FracPart::Builder(Rational::Builder(-7, 3)).isPositive(&context) ==
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   quiz_assert(GreatCommonDivisor::Builder(
                   {Rational::Builder(-7), Rational::Builder(-7)})
-                  .isPositive(&context) == TrinaryBoolean::True);
+                  .isPositive(&context) == OMG::Troolean::True);
   quiz_assert(LeastCommonMultiple::Builder(
                   {Rational::Builder(-7), Rational::Builder(-7)})
-                  .isPositive(&context) == TrinaryBoolean::True);
+                  .isPositive(&context) == OMG::Troolean::True);
   quiz_assert(Opposite::Builder(Rational::Builder(7)).isPositive(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(
       Parenthesis::Builder(Rational::Builder(-7)).isPositive(&context) ==
-      TrinaryBoolean::False);
+      OMG::Troolean::False);
   quiz_assert(
       PermuteCoefficient::Builder(Rational::Builder(7), Rational::Builder(8))
-          .isPositive(&context) == TrinaryBoolean::True);
+          .isPositive(&context) == OMG::Troolean::True);
   quiz_assert(RealPart::Builder(Rational::Builder(-7)).isPositive(&context) ==
-              TrinaryBoolean::False);
+              OMG::Troolean::False);
   quiz_assert(
       SignFunction::Builder(Rational::Builder(-7)).isPositive(&context) ==
-      TrinaryBoolean::False);
+      OMG::Troolean::False);
   quiz_assert(OUnit::Builder(OUnit::k_powerRepresentatives,
                              OUnit::Prefix::EmptyPrefix())
-                  .isPositive(&context) == TrinaryBoolean::True);
+                  .isPositive(&context) == OMG::Troolean::True);
   quiz_assert(
       VectorNorm::Builder(BasedInteger::Builder(1)).isPositive(&context) ==
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   quiz_assert(Division::Builder(Rational::Builder(7, 3), Rational::Builder(-1))
-                  .isPositive(&context) == TrinaryBoolean::False);
+                  .isPositive(&context) == OMG::Troolean::False);
   quiz_assert(
       DivisionQuotient::Builder(Rational::Builder(-7), Rational::Builder(-1))
-          .isPositive(&context) == TrinaryBoolean::True);
+          .isPositive(&context) == OMG::Troolean::True);
   quiz_assert(
       ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(
                            ArcCosine::Builder(Constant::PiBuilder())))))
-          .isPositive(&context) == TrinaryBoolean::False);
+          .isPositive(&context) == OMG::Troolean::False);
 }
 
-constexpr Poincare::TrinaryBoolean Positive = Poincare::TrinaryBoolean::True;
-constexpr Poincare::TrinaryBoolean Negative = Poincare::TrinaryBoolean::False;
-constexpr Poincare::TrinaryBoolean Unknown = Poincare::TrinaryBoolean::Unknown;
+constexpr OMG::Troolean Positive = OMG::Troolean::True;
+constexpr OMG::Troolean Negative = OMG::Troolean::False;
+constexpr OMG::Troolean Unknown = OMG::Troolean::Unknown;
 
 QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("abs(-cos(2)+i)", Positive);
@@ -458,19 +455,19 @@ QUIZ_CASE(poincare_properties_sign) {
 }
 
 void assert_sign_sets_to(
-    OExpression e, Poincare::TrinaryBoolean isPositive,
+    OExpression e, OMG::Troolean isPositive,
     Preferences::ComplexFormat complexFormat = Cartesian,
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext context;
-  TrinaryBoolean eSign = e.isPositive(&context);
-  assert(eSign == TrinaryBoolean::True || eSign == TrinaryBoolean::False);
+  OMG::Troolean eSign = e.isPositive(&context);
+  assert(eSign == OMG::Troolean::True || eSign == OMG::Troolean::False);
   ReductionContext reductionContext(&context, complexFormat, angleUnit,
                                     unitFormat, User);
   ApproximationContext approximationContext(reductionContext);
   double eValue = e.approximateToScalar<double>(approximationContext);
   OExpression f =
-      e.setSign(isPositive == TrinaryBoolean::True, reductionContext);
+      e.setSign(isPositive == OMG::Troolean::True, reductionContext);
   quiz_assert(f.isPositive(&context) == isPositive);
   double fValue = f.approximateToScalar<double>(approximationContext);
   quiz_assert(fValue == (eSign == isPositive ? eValue : -eValue) ||
@@ -479,49 +476,49 @@ void assert_sign_sets_to(
 
 QUIZ_CASE(poincare_properties_set_sign_positive) {
   assert_sign_sets_to(Factorial::Builder(Rational::Builder(3)),
-                      TrinaryBoolean::True);
+                      OMG::Troolean::True);
   assert_sign_sets_to(
       DivisionRemainder::Builder(Rational::Builder(33), Rational::Builder(-5)),
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   assert_sign_sets_to(
       Power::Builder(Rational::Builder(-2), Rational::Builder(5)),
-      TrinaryBoolean::True);
-  assert_sign_sets_to(Float<float>::Builder(-1.234f), TrinaryBoolean::True);
-  assert_sign_sets_to(Float<double>::Builder(-2.468), TrinaryBoolean::True);
-  assert_sign_sets_to(Rational::Builder(2, 7), TrinaryBoolean::True);
+      OMG::Troolean::True);
+  assert_sign_sets_to(Float<float>::Builder(-1.234f), OMG::Troolean::True);
+  assert_sign_sets_to(Float<double>::Builder(-2.468), OMG::Troolean::True);
+  assert_sign_sets_to(Rational::Builder(2, 7), OMG::Troolean::True);
   assert_sign_sets_to(RealPart::Builder(ComplexCartesian::Builder(
                           Rational::Builder(3, 2), Rational::Builder(0))),
-                      TrinaryBoolean::True);
-  assert_sign_sets_to(Constant::PiBuilder(), TrinaryBoolean::True);
+                      OMG::Troolean::True);
+  assert_sign_sets_to(Constant::PiBuilder(), OMG::Troolean::True);
   assert_sign_sets_to(FracPart::Builder(Rational::Builder(-34, 5)),
-                      TrinaryBoolean::True);
+                      OMG::Troolean::True);
   assert_sign_sets_to(
       Round::Builder(Rational::Builder(67, 34), Rational::Builder(1)),
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   assert_sign_sets_to(
       DivisionQuotient::Builder(Rational::Builder(-23), Rational::Builder(12)),
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   assert_sign_sets_to(
       OUnit::Builder(
           &OUnit::k_massRepresentatives[OUnit::k_poundRepresentativeIndex],
           &OUnit::k_prefixes[OUnit::k_emptyPrefixIndex]),
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   assert_sign_sets_to(
       Multiplication::Builder(Rational::Builder(-3, 5), Rational::Builder(2),
                               Rational::Builder(-7, 4)),
-      TrinaryBoolean::True);
+      OMG::Troolean::True);
   assert_sign_sets_to(ArcSine::Builder(Rational::Builder(-1, 3)),
-                      TrinaryBoolean::True);
+                      OMG::Troolean::True);
   assert_sign_sets_to(Factor::Builder(Rational::Builder(120)),
-                      TrinaryBoolean::True);
+                      OMG::Troolean::True);
   assert_sign_sets_to(ArcCosine::Builder(Rational::Builder(1, 4)),
-                      TrinaryBoolean::True);
+                      OMG::Troolean::True);
   assert_sign_sets_to(AbsoluteValue::Builder(Symbol::Builder("p", 1)),
-                      TrinaryBoolean::True);
+                      OMG::Troolean::True);
   assert_sign_sets_to(SignFunction::Builder(Constant::PiBuilder()),
-                      TrinaryBoolean::True);
-  assert_sign_sets_to(Infinity::Builder(true), TrinaryBoolean::True);
-  assert_sign_sets_to(Random::Builder(), TrinaryBoolean::True);
+                      OMG::Troolean::True);
+  assert_sign_sets_to(Infinity::Builder(true), OMG::Troolean::True);
+  assert_sign_sets_to(Random::Builder(), OMG::Troolean::True);
 }
 
 void assert_expression_is_real(const char* expression) {

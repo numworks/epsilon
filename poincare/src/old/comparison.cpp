@@ -133,9 +133,9 @@ bool ComparisonNode::IsBinaryComparisonWithOperator(JuniorExpression e,
          operatorTypeOfE == operatorType;
 }
 
-TrinaryBoolean ComparisonNode::TruthValueOfOperator(
-    OperatorType type, TrinaryBoolean chidlrenAreEqual,
-    TrinaryBoolean leftChildIsGreater) {
+OMG::Troolean ComparisonNode::TruthValueOfOperator(
+    OperatorType type, OMG::Troolean chidlrenAreEqual,
+    OMG::Troolean leftChildIsGreater) {
   if (type == OperatorType::Equal || type == OperatorType::NotEqual) {
     return type == OperatorType::Equal ? chidlrenAreEqual
                                        : TrinaryNot(chidlrenAreEqual);
@@ -272,31 +272,31 @@ Evaluation<T> ComparisonNode::templatedApproximate(
     T epsilon = std::max(std::fabs(firstChildApprox.toScalar()),
                          std::fabs(secondChildApprox.toScalar())) *
                 Float<T>::Epsilon();
-    TrinaryBoolean chidlrenAreEqual;
-    TrinaryBoolean leftChildIsGreater;
+    OMG::Troolean chidlrenAreEqual;
+    OMG::Troolean leftChildIsGreater;
     if (std::isnan(scalarDifference)) {
-      leftChildIsGreater = TrinaryBoolean::Unknown;
+      leftChildIsGreater = OMG::Troolean::Unknown;
       chidlrenAreEqual =
           (firstChildApprox.isUndefined() || secondChildApprox.isUndefined())
-              ? TrinaryBoolean::Unknown
-              : TrinaryBoolean::False;
+              ? OMG::Troolean::Unknown
+              : OMG::Troolean::False;
     } else {
       /* leftChildIsGreater is always used in combination with childrenAreEqual
        * so the fact that it's strictly greater or not is not important. */
-      leftChildIsGreater = BinaryToTrinaryBool(scalarDifference > 0.0);
+      leftChildIsGreater = OMG::BinaryToTrinaryBool(scalarDifference > 0.0);
       chidlrenAreEqual =
-          BinaryToTrinaryBool(std::isfinite(scalarDifference) &&
-                              std::fabs(scalarDifference) <= epsilon);
+          OMG::BinaryToTrinaryBool(std::isfinite(scalarDifference) &&
+                                   std::fabs(scalarDifference) <= epsilon);
     }
-    TrinaryBoolean truthValue = TruthValueOfOperator(
+    OMG::Troolean truthValue = TruthValueOfOperator(
         m_operatorsList[i - 1], chidlrenAreEqual, leftChildIsGreater);
     switch (truthValue) {
-      case TrinaryBoolean::False:
+      case OMG::Troolean::False:
         return BooleanEvaluation<T>::Builder(false);
-      case TrinaryBoolean::Unknown:
+      case OMG::Troolean::Unknown:
         return Complex<T>::Undefined();
       default:
-        assert(truthValue == TrinaryBoolean::True);
+        assert(truthValue == OMG::Troolean::True);
     }
   }
   return BooleanEvaluation<T>::Builder(true);
@@ -357,16 +357,16 @@ OExpression Comparison::shallowReduce(ReductionContext reductionContext) {
     OExpression difference =
         Subtraction::Builder(firstChild.clone(), secondChild.clone());
     difference = difference.shallowReduce(reductionContext);
-    TrinaryBoolean childrenAreEqual =
+    OMG::Troolean childrenAreEqual =
         difference.isNull(reductionContext.context());
-    TrinaryBoolean leftIsGreater =
+    OMG::Troolean leftIsGreater =
         difference.isPositive(reductionContext.context());
-    TrinaryBoolean comparison = ComparisonNode::TruthValueOfOperator(
+    OMG::Troolean comparison = ComparisonNode::TruthValueOfOperator(
         node()->operatorAtIndex(i - 1), childrenAreEqual, leftIsGreater);
-    if (comparison == TrinaryBoolean::Unknown) {
+    if (comparison == OMG::Troolean::Unknown) {
       return *this;  // Let approximation decide
     }
-    if (comparison == TrinaryBoolean::False) {
+    if (comparison == OMG::Troolean::False) {
       OExpression result = OBoolean::Builder(false);
       replaceWithInPlace(result);
       return result;

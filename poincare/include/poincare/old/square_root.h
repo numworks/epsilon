@@ -13,12 +13,12 @@ class SquareRootNode final : public ExpressionNode {
       AliasesLists::k_squareRootAliases;
 
   // ExpressionNode
-  TrinaryBoolean isPositive(Context* context) const override {
-    return childAtIndex(0)->isPositive(context) == TrinaryBoolean::True
-               ? TrinaryBoolean::True
-               : TrinaryBoolean::Unknown;
+  OMG::Troolean isPositive(Context* context) const override {
+    return childAtIndex(0)->isPositive(context) == OMG::Troolean::True
+               ? OMG::Troolean::True
+               : OMG::Troolean::Unknown;
   }
-  TrinaryBoolean isNull(Context* context) const override {
+  OMG::Troolean isNull(Context* context) const override {
     return childAtIndex(0)->isNull(context);
   }
   Type otype() const override { return Type::SquareRoot; }

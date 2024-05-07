@@ -18,8 +18,8 @@ class SymbolNode final : public SymbolAbstractNode {
   // OExpression Properties
   Type otype() const override { return Type::Symbol; }
   // Symbol is not expanded for sign as it may be a local variable.
-  TrinaryBoolean isPositive(Context* context) const override {
-    return TrinaryBoolean::Unknown;
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::Troolean::Unknown;
   }
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
@@ -37,7 +37,7 @@ class SymbolNode final : public SymbolAbstractNode {
   /* Simplification */
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount,
       SymbolicComputation symbolicComputation) override;
 
@@ -99,7 +99,7 @@ class Symbol final : public SymbolAbstract {
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const;
   OExpression deepReplaceReplaceableSymbols(
-      Context* context, TrinaryBoolean* isCircular,
+      Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 
  private:

@@ -49,9 +49,9 @@ class ComparisonNode : public ExpressionNode {
   static bool IsComparisonWithoutNotEqualOperator(
       OExpression e);  // Return false if one of the operator is NotEqual
 
-  static TrinaryBoolean TruthValueOfOperator(OperatorType type,
-                                             TrinaryBoolean chidlrenAreEqual,
-                                             TrinaryBoolean leftChildIsGreater);
+  static OMG::Troolean TruthValueOfOperator(OperatorType type,
+                                            OMG::Troolean chidlrenAreEqual,
+                                            OMG::Troolean leftChildIsGreater);
 
   // Tree
   size_t size() const override;

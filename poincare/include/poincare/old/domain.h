@@ -64,22 +64,21 @@ class Domain {
     return true;
   }
 
-  static TrinaryBoolean ExpressionIsIn(const OExpression &expression,
-                                       Type domain, Context *context);
+  static OMG::Troolean ExpressionIsIn(const OExpression &expression,
+                                      Type domain, Context *context);
 
   static bool ExpressionIsIn(bool *result, const OExpression &expression,
                              Type domain, Context *context) {
     assert(result != nullptr);
-    TrinaryBoolean expressionsIsIn =
-        ExpressionIsIn(expression, domain, context);
+    OMG::Troolean expressionsIsIn = ExpressionIsIn(expression, domain, context);
     switch (expressionsIsIn) {
-      case TrinaryBoolean::Unknown:
+      case OMG::Troolean::Unknown:
         return false;
-      case TrinaryBoolean::True:
+      case OMG::Troolean::True:
         *result = true;
         return true;
       default:
-        assert(expressionsIsIn == TrinaryBoolean::False);
+        assert(expressionsIsIn == OMG::Troolean::False);
         *result = false;
         return true;
     }
@@ -89,17 +88,17 @@ class Domain {
                                Type domain1, const OExpression &expression2,
                                Type domain2, Context *context) {
     assert(result != nullptr);
-    TrinaryBoolean expressionsAreIn =
+    OMG::Troolean expressionsAreIn =
         TrinaryAnd(ExpressionIsIn(expression1, domain1, context),
                    ExpressionIsIn(expression2, domain2, context));
     switch (expressionsAreIn) {
-      case TrinaryBoolean::Unknown:
+      case OMG::Troolean::Unknown:
         return false;
-      case TrinaryBoolean::True:
+      case OMG::Troolean::True:
         *result = true;
         return true;
       default:
-        assert(expressionsAreIn == TrinaryBoolean::False);
+        assert(expressionsAreIn == OMG::Troolean::False);
         *result = false;
         return true;
     }

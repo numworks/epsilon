@@ -21,8 +21,8 @@ class DivisionRemainderNode final : public ExpressionNode {
 #endif
 
   // ExpressionNode
-  TrinaryBoolean isPositive(Context* context) const override {
-    return TrinaryBoolean::True;
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::Troolean::True;
   }
   Type otype() const override { return Type::DivisionRemainder; }
 

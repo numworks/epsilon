@@ -22,10 +22,10 @@ double NumberNode::doubleApproximation() const {
     case Type::Nonreal:
       return NAN;
     case Type::Infinity:
-      assert(Number(this).isPositive() == TrinaryBoolean::False ||
-             Number(this).isPositive() == TrinaryBoolean::True);
-      return Number(this).isPositive() == TrinaryBoolean::False ? -INFINITY
-                                                                : INFINITY;
+      assert(Number(this).isPositive() == OMG::Troolean::False ||
+             Number(this).isPositive() == OMG::Troolean::True);
+      return Number(this).isPositive() == OMG::Troolean::False ? -INFINITY
+                                                               : INFINITY;
     case Type::Float:
       return static_cast<const FloatNode<float> *>(this)->value();
     case Type::Double:

@@ -227,7 +227,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
       }
       iPivot_temp++;
     }
-    /* TODO: Handle isNull == TrinaryBoolean::Unknown : rowCanonize will
+    /* TODO: Handle isNull == OMG::Troolean::Unknown : rowCanonize will
      * output a mathematically wrong result (and divide expressions by a null
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
@@ -336,7 +336,7 @@ int Matrix::RankOfCanonized(const Tree* m) {
   int i = rank - 1;
   while (i >= 0) {
     int j = NumberOfColumns(m) - 1;
-    // TODO: Handle TrinaryBoolean::Unknown. See rowCanonize comment
+    // TODO: Handle OMG::Troolean::Unknown. See rowCanonize comment
     while (j >= i && Child(m, i, j)->isZero()) {
       j--;
     }

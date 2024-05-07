@@ -159,11 +159,11 @@ class UnitNode final : public ExpressionNode {
   constexpr static int k_numberOfBaseUnits = 8;
 
   // Expression Properties
-  TrinaryBoolean isPositive(Context* context) const override {
-    return TrinaryBoolean::True;
+  OMG::Troolean isPositive(Context* context) const override {
+    return OMG::Troolean::True;
   }
-  TrinaryBoolean isNull(Context* context) const override {
-    return TrinaryBoolean::False;
+  OMG::Troolean isNull(Context* context) const override {
+    return OMG::Troolean::False;
   }
   Expression removeUnit(Expression* unit) override;
 

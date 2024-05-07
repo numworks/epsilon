@@ -398,7 +398,7 @@ OExpression Trigonometry::ShallowReduceDirectFunction(
       m.addChildAtIndexInPlace(simplifiedCosine, 1, 1);
       return m.shallowReduce(reductionContext);
     }
-    assert(r.isPositive() == TrinaryBoolean::True);
+    assert(r.isPositive() == OMG::Troolean::True);
   }
   return e;
 }
@@ -607,10 +607,9 @@ OExpression Trigonometry::ShallowReduceInverseAdvancedFunction(
   OExpression result;
   // Step 1. Manage specific cases for Arcotangent
   if (e.otype() == ExpressionNode::Type::ArcCotangent) {
-    TrinaryBoolean isNull =
-        e.childAtIndex(0).isNull(reductionContext.context());
+    OMG::Troolean isNull = e.childAtIndex(0).isNull(reductionContext.context());
     // Step 1.1. Reduce ArcCotangent(0) to π/2
-    if (isNull == TrinaryBoolean::True) {
+    if (isNull == OMG::Troolean::True) {
       result = Multiplication::Builder(
           PiExpressionInAngleUnit(reductionContext.angleUnit()),
           Rational::Builder(1, 2));
@@ -619,7 +618,7 @@ OExpression Trigonometry::ShallowReduceInverseAdvancedFunction(
     }
     /* Step 1.2. Do not reduce ArcCotangent when we do not know if child is null
      * and target is not User. */
-    if (isNull == TrinaryBoolean::Unknown &&
+    if (isNull == OMG::Troolean::Unknown &&
         reductionContext.target() != ReductionTarget::User) {
       return e;
     }
@@ -819,20 +818,20 @@ static OExpression AddAngleUnitToDirectFunctionIfNeeded(
                 static_cast<const Constant&>(e).isPi()) {
               bool* containsPi = static_cast<bool*>(auxiliary);
               *containsPi = true;
-              return TrinaryBoolean::False;
+              return OMG::Troolean::False;
             }
             if (e.isNumber()) {
-              return TrinaryBoolean::False;
+              return OMG::Troolean::False;
             }
             if (e.isOfType({ExpressionNode::Type::Addition,
                             ExpressionNode::Type::Subtraction,
                             ExpressionNode::Type::Multiplication,
                             ExpressionNode::Type::Division,
                             ExpressionNode::Type::Power})) {
-              return TrinaryBoolean::Unknown;
+              return OMG::Troolean::Unknown;
             }
             // Stop search if the expression is not one of the above
-            return TrinaryBoolean::True;
+            return OMG::Troolean::True;
           },
           nullptr, SymbolicComputation::DoNotReplaceAnySymbol,
           static_cast<void*>(&containsPi));

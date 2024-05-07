@@ -35,6 +35,7 @@ include $(PATH_haussmann)/src/rules.mak
 
 .PHONY: clean
 clean:
+	$(call assert_relative_descendant,$(OUTPUT_DIRECTORY))
 	$(QUIET) rm -rf $(OUTPUT_DIRECTORY)/*
 	$(QUIET) rmdir -p $(OUTPUT_DIRECTORY) 2> /dev/null || :
 

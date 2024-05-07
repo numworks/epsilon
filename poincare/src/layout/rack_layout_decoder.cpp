@@ -4,11 +4,6 @@
 
 namespace Poincare::Internal {
 
-inline size_t CPL::CodePointSearch(const Tree* first, int length, CodePoint c) {
-  CPLayoutDecoder dec(first, length);
-  return OMG::CodePointSearch(&dec, c);
-}
-
 const CPL* CPL::CodePointLSearch(const CPL* s, CodePoint c, const CPL* stop) {
   while (s != stop && *s != 0) {
     if (*s == c) {

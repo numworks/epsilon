@@ -72,8 +72,6 @@ class CPL {
     return reinterpret_cast<const CPL*>(rack->child(start));
   }
 
-  static inline size_t CodePointSearch(const Tree* first, int length,
-                                       CodePoint c);
   static const CPL* CodePointLSearch(const CPL* s, CodePoint c,
                                      const CPL* stop);
 

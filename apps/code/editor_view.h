@@ -43,7 +43,7 @@ class EditorView : public Escher::Responder,
 
    private:
     constexpr static KDCoordinate k_margin = 2;
-    constexpr static int k_lineNumberCharLength = 3;
+    constexpr static int k_lineNumberCharLength = 2;
     KDFont::Size m_font;
     KDCoordinate m_offset;
   };

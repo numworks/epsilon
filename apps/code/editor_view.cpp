@@ -2,7 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <escher/palette.h>
-#include <poincare/old/integer.h>
+#include <poincare/print_int.h>
 
 #include "app.h"
 
@@ -76,21 +76,18 @@ void EditorView::GutterView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate firstLine = m_offset / glyphSize.height();
   KDCoordinate firstLinePixelOffset = m_offset - firstLine * glyphSize.height();
 
-  char lineNumber[k_lineNumberCharLength];
+  char buffer[k_lineNumberCharLength + 1];
   int numberOfLines = bounds().height() / glyphSize.height() + 1;
   for (int i = 0; i < numberOfLines; i++) {
     // Only the first two digits are displayed
     int lineNumberValue = (i + firstLine + 1) % 100;
-    Poincare::Integer line(lineNumberValue);
-    if (firstLine < 10 || lineNumberValue >= 10) {
-      line.serialize(lineNumber, k_lineNumberCharLength);
-    } else {
-      // Add a leading "0"
-      lineNumber[0] = '0';
-      line.serialize(lineNumber + 1, k_lineNumberCharLength - 1);
-    }
-    KDCoordinate leftPadding = (2 - strlen(lineNumber)) * glyphSize.width();
-    ctx->drawString(lineNumber,
+    int length =
+        (firstLine < 10 ? Poincare::PrintInt::Left : Poincare::PrintInt::Right)(
+            lineNumberValue, buffer, k_lineNumberCharLength);
+    assert(length <= k_lineNumberCharLength);
+    buffer[length] = 0;
+    KDCoordinate leftPadding = (2 - strlen(buffer)) * glyphSize.width();
+    ctx->drawString(buffer,
                     KDPoint(k_margin + leftPadding,
                             i * glyphSize.height() - firstLinePixelOffset),
                     {.glyphColor = textColor,

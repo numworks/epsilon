@@ -2,7 +2,6 @@
 #include <float.h>
 #include <ion.h>
 #include <omg/float.h>
-#include <omg/utf8_helper.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/based_integer.h>

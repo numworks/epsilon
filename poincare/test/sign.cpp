@@ -309,7 +309,7 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("sin(3+2i)", ComplexSign::Unknown());
 
   // ln
-  assert_sign("ln(0)", ComplexSign(Sign::Unknown(), Sign::Undef()));
+  assert_sign("ln(0)", ComplexSign(Sign::Unknown(), Sign::Zero()));
   assert_sign("ln(3)", ComplexSign(Sign::Unknown(), Sign::Zero()));
   assert_sign("ln(-3)", ComplexSign(Sign::Unknown(), Sign::StrictlyPositive()));
   assert_sign("ln(ln(3))", ComplexSign(Sign::Unknown(), Sign::Positive()));

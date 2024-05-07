@@ -478,9 +478,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(12)-2×√(3)", "0");
   simplifies_to("3^(1/3)×41^(1/3)-123^(1/3)", "0");
   simplifies_to("√(2)*√(7)-√(14)", "0");
-
-  // TODO_PCJ : This should return dep(1,{x^0,y^0})
-  simplifies_to("x^(1-y^0)", "dep(1,{y^0})");
+  simplifies_to("x^(1-y^0)", "dep(1,{x^0,y^0})");
   simplifies_to("i^5+i^10+i^15+i^20", "0");
 }
 

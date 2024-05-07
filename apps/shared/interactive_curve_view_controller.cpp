@@ -49,7 +49,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       return true;
     }
   } else if (event == Ion::Events::Down || event == Ion::Events::Up) {
-    if (moveCursorVertically(OMG::Direction(event))) {
+    if (moveCursorVertically(event.direction())) {
       reloadBannerView();
       panToMakeCursorVisible();
       curveView()->reload();

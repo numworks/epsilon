@@ -594,7 +594,7 @@ bool LayoutField::handleMoveEvent(Ion::Events::Event event,
     return false;
   }
   return cursor()->moveMultipleSteps(
-      OMG::Direction(event), Ion::Events::longPressFactor(), isSelectionEvent,
+      event.direction(), Ion::Events::longPressFactor(), isSelectionEvent,
       layoutDidChange, context());
 }
 

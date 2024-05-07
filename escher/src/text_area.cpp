@@ -192,11 +192,11 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   }
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    selectLeftRight(OMG::Direction(event), false, step);
+    selectLeftRight(event.direction(), false, step);
     return true;
   }
   if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
-    selectUpDown(OMG::Direction(event), step);
+    selectUpDown(event.direction(), step);
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {

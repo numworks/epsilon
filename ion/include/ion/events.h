@@ -2,6 +2,8 @@
 #define ION_EVENTS_H
 
 #include <ion/keyboard.h>
+#include <omg/directions.h>
+
 #if ION_EVENTS_JOURNAL
 #include <string.h>
 #endif
@@ -102,6 +104,8 @@ class Event {
 #if DEBUG
   const char* name() const;
 #endif
+
+  OMG::Direction direction() const;
 
  private:
   const char* defaultText() const;
@@ -334,6 +338,17 @@ inline bool Event::isKeyPress() const {
 inline bool Event::isRepeatable() const {
   return isMoveEvent() || isSelectionEvent() || *this == Events::Back ||
          *this == Events::Backspace;
+}
+
+inline OMG::Direction Event::direction() const {
+  assert(isMoveEvent() || isSelectionEvent());
+  return (*this == Ion::Events::Left || *this == Ion::Events::ShiftLeft)
+             ? OMG::Direction::Left()
+         : (*this == Ion::Events::Up || *this == Ion::Events::ShiftUp)
+             ? OMG::Direction::Up()
+         : (*this == Ion::Events::Down || *this == Ion::Events::ShiftDown)
+             ? OMG::Direction::Down()
+             : OMG::Direction::Right();
 }
 
 }  // namespace Events

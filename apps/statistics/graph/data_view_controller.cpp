@@ -81,8 +81,8 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       (event == Ion::Events::Down || event == Ion::Events::Up);
   if ((isVerticalEvent || event == Ion::Events::Left ||
        event == Ion::Events::Right)) {
-    if (isVerticalEvent ? moveSelectionVertically(OMG::Direction(event))
-                        : moveSelectionHorizontally(OMG::Direction(event))) {
+    if (isVerticalEvent ? moveSelectionVertically(event.direction())
+                        : moveSelectionHorizontally(event.direction())) {
       if (reloadBannerView()) {
         dataView()->reload();
       }

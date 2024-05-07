@@ -180,7 +180,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   int col = selectedColumn();
   int row = selectedRow();
   if (event.isMoveEvent()) {
-    OMG::Direction direction = OMG::Direction(event);
+    OMG::Direction direction = event.direction();
     nextSelectableCellInDirection(&col, &row, direction, delta);
     if (col == selectedColumn() && row == selectedRow()) {
       // Cell was already selected.

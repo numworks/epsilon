@@ -17,11 +17,11 @@ uint32_t crc32Byte(const uint8_t *data, size_t length) {
     for (int j = k_uint32ByteLength - 1; j >= 0; j--) {
       // scan byte by byte to avoid alignment issue when building for emscripten
       // platform
-      crc = crc32EatByte(crc, data[i * k_uint32ByteLength + j]);
+      crc = OMG::Memory::crc32EatByte(crc, data[i * k_uint32ByteLength + j]);
     }
   }
   for (size_t i = lengthInDoubleWords * k_uint32ByteLength; i < length; i++) {
-    crc = crc32EatByte(crc, data[i]);
+    crc = OMG::Memory::crc32EatByte(crc, data[i]);
   }
   return crc;
 }

@@ -1,7 +1,7 @@
 #ifndef OMG_CODE_GUARD_H
 #define OMG_CODE_GUARD_H
 
-#include <ion/crc.h>
+#include <omg/memory.h>
 
 namespace OMG {
 
@@ -14,7 +14,7 @@ namespace OMG {
  * definitions depend on the compilation target or flags (e.g. assert) and would
  * lead to inconsistent CRC across builds. */
 #define CODE_GUARD(id, reference_crc, ...)                                 \
-  static_assert(Ion::crc32String(#__VA_ARGS__) == reference_crc,           \
+  static_assert(OMG::Memory::crc32String(#__VA_ARGS__) == reference_crc,   \
                 #id ": modifying this code might break an external API!"); \
   __VA_ARGS__
 

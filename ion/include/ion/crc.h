@@ -1,7 +1,7 @@
 #ifndef ION_CRC_H
 #define ION_CRC_H
 
-#include <assert.h>
+#include <omg/memory.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -13,23 +13,10 @@ uint32_t crc32DoubleWord(const uint32_t *data, size_t length);
 uint32_t crc32Word(const uint16_t *data, size_t length);
 uint32_t crc32Byte(const uint8_t *data, size_t length);
 
-constexpr uint32_t k_crcPolynomial = 0x04C11DB7;
-
+/* FIXME This function only exists to avoid having to update epsilon-core,
+ * remove it when appropriate. */
 constexpr uint32_t crc32EatByte(uint32_t crc, uint8_t data) {
-  crc ^= data << 24;
-  for (int i = 8; i--;) {
-    crc = crc & 0x80000000 ? ((crc << 1) ^ k_crcPolynomial) : (crc << 1);
-  }
-  return crc;
-}
-
-constexpr uint32_t crc32String(const char *str) {
-  assert(str);
-  uint32_t crc = ~0u;
-  for (size_t i = 0; str[i] != '\0'; i++) {
-    crc = crc32EatByte(crc, str[i]);
-  }
-  return crc;
+  return OMG::Memory::crc32EatByte(crc, data);
 }
 
 }  // namespace Ion

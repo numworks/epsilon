@@ -19,8 +19,7 @@ void assert_parsed_expression_approximates_with_value_for_symbol(
                                             angleUnit);
   T result = expression.approximateToScalarWithValueForSymbol(
       symbol, value, approximationContext);
-  assert_roughly_equal(result, approximation, Poincare::Float<T>::Epsilon(),
-                       true);
+  assert_roughly_equal(result, approximation, OMG::Float::Epsilon<T>(), true);
 }
 
 QUIZ_CASE(poincare_context_user_variable_simple) {

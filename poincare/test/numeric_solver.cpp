@@ -1,8 +1,8 @@
 #include <apps/shared/global_context.h>
+#include <omg/float.h>
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/numeric/float.h>
 #include <poincare/src/numeric/solver.h>
 
 #include "float_helper.h"
@@ -46,7 +46,7 @@ void assert_next_solution_is(const char* expression, Context* context,
   }
 
   constexpr double relativePrecision =
-      2. * Float<double>::SquareRoot(2. * Float<double>::Epsilon());
+      2. * OMG::Float::SquareRoot<double>(2. * OMG::Float::Epsilon<double>());
   quiz_assert_print_if_failure(
       std::isnan(observed.x()) == std::isnan(expected.x()), expression);
   if (std::isfinite(expected.x())) {

@@ -1,9 +1,9 @@
+#include <omg/float.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arithmetic.h>
 #include <poincare/old/complex_argument.h>
 #include <poincare/old/complex_cartesian.h>
 #include <poincare/old/division.h>
-#include <poincare/old/float.h>
 #include <poincare/old/imaginary_part.h>
 #include <poincare/old/least_common_multiple.h>
 #include <poincare/old/nth_root.h>

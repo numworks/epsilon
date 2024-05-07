@@ -1,10 +1,10 @@
 #include <assert.h>
 #include <float.h>
 #include <ion.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/ceiling.h>
 #include <poincare/old/constant.h>
-#include <poincare/old/float.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
@@ -35,7 +35,7 @@ std::complex<T> CeilingNode::computeOnComplex(
   }
   /* Assume low deviation from natural numbers are errors */
   T delta = std::fabs((std::round(c.real()) - c.real()) / c.real());
-  if (delta <= Float<T>::Epsilon()) {
+  if (delta <= OMG::Float::Epsilon<T>()) {
     return std::round(c.real());
   }
   return std::ceil(c.real());

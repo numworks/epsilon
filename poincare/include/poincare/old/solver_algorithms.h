@@ -1,6 +1,8 @@
 #ifndef POINCARE_SOLVER_ALGORITHMS_H
 #define POINCARE_SOLVER_ALGORITHMS_H
 
+#include <omg/float.h>
+
 #include "helpers.h"
 #include "solver.h"
 
@@ -44,7 +46,7 @@ class SolverAlgorithms {
  private:
   constexpr static int k_numberOfIterationsBrent = 100;
   constexpr static double k_sqrtEps =
-      Helpers::SquareRoot(Float<double>::Epsilon());
+      OMG::Float::SquareRoot<double>(OMG::Float::Epsilon<double>());
   static_assert(k_sqrtEps == 1.4901161193847656E-8,
                 "Wrong value for sqrt(DBL_EPSILON");
   constexpr static int k_numberOfIterationsProbability = 1000000;

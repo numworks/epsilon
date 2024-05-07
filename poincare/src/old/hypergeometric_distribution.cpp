@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <float.h>
+#include <omg/float.h>
 #include <poincare/old/binomial_coefficient.h>
 #include <poincare/old/domain.h>
-#include <poincare/old/float.h>
 #include <poincare/old/hypergeometric_distribution.h>
 #include <poincare/old/solver_algorithms.h>
 
@@ -47,7 +47,7 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(
       probability > static_cast<T>(1.0)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = OMG::Float::Epsilon<T>();
   if (probability < precision) {
     // We can have 0 successes only if there are enough failures
     if (n > N - K) {

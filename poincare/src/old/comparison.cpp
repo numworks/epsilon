@@ -1,8 +1,8 @@
 #include <assert.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/comparison.h>
-#include <poincare/old/float.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
@@ -271,7 +271,7 @@ Evaluation<T> ComparisonNode::templatedApproximate(
     T scalarDifference = ComplexNode<T>::ToScalar(difference);
     T epsilon = std::max(std::fabs(firstChildApprox.toScalar()),
                          std::fabs(secondChildApprox.toScalar())) *
-                Float<T>::Epsilon();
+                OMG::Float::Epsilon<T>();
     OMG::Troolean chidlrenAreEqual;
     OMG::Troolean leftChildIsGreater;
     if (std::isnan(scalarDifference)) {

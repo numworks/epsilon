@@ -1,9 +1,9 @@
 #include "unit.h"
 
+#include <omg/float.h>
 #include <omg/round.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
-#include <poincare/src/numeric/float.h>
 
 #include "approximation.h"
 #include "integer.h"
@@ -214,7 +214,7 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
   order = OMG::LaxToZero(order);
   otherOrder = OMG::LaxToZero(otherOrder);
   if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) <=
-          3.0f + Float<float>::EpsilonLax() &&
+          3.0f + OMG::Float::EpsilonLax<float>() &&
       order * otherOrder < 0.0f) {
     /* If the two values are close, and their sign are opposed, the positive
      * order is preferred */
@@ -361,7 +361,7 @@ const Prefix* Representative::findBestPrefix(double value,
   if (!isOutputPrefixable()) {
     return Prefix::EmptyPrefix();
   }
-  if (value < Float<double>::EpsilonLax()) {
+  if (value < OMG::Float::EpsilonLax<double>()) {
     return Prefix::EmptyPrefix();
   }
   const Prefix* res = Prefix::EmptyPrefix();
@@ -586,7 +586,7 @@ Expression Unit::BuildSplit(double value, const Unit* units, int length,
   // WARNING: Maybe this should be compared to 0.0 instead of EpsilonLax ? (see
   // below)
   if (std::isinf(basedValue) ||
-      std::fabs(basedValue) < Float<double>::EpsilonLax()) {
+      std::fabs(basedValue) < OMG::Float::EpsilonLax<double>()) {
     return Multiplication::Builder(Number::FloatNumber(basedValue), units[0]);
   }
   double err =
@@ -610,7 +610,7 @@ Expression Unit::BuildSplit(double value, const Unit* units, int length,
      *  Right now it's not a problem because there is no unit with a ratio
      *  inferior to EpsilonLax but it might be if femto prefix is implemented.
      *  (EpsilonLax = 10^-15 = femto)*/
-    if (std::abs(share) >= Float<double>::EpsilonLax()) {
+    if (std::abs(share) >= OMG::Float::EpsilonLax<double>()) {
       res.addChildAtIndexInPlace(
           Multiplication::Builder(Float<double>::Builder(share), units[i]),
           res.numberOfChildren(), res.numberOfChildren());

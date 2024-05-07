@@ -15,8 +15,7 @@ class VectorModel : public Shared::MemoizedCurveViewRange {
   void setVector(float x, float y);
   void setAngle(float angle) {
     assert(std::isfinite(angle));
-    assert(0 <= angle &&
-           angle < 2 * M_PI + Poincare::Float<float>::EpsilonLax());
+    assert(0 <= angle && angle < 2 * M_PI + OMG::Float::EpsilonLax<float>());
     m_angle = angle;
   }
   float vectorX() const { return m_vector[0]; }

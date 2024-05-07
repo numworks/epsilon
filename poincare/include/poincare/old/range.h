@@ -2,13 +2,12 @@
 #define POINCARE_RANGE_H
 
 #include <assert.h>
+#include <omg/float.h>
 #include <omg/ieee754.h>
 #include <poincare/coordinate_2D.h>
 
 #include <algorithm>
 #include <cmath>
-
-#include "float.h"
 
 namespace Poincare {
 
@@ -24,7 +23,7 @@ class Range1D {
     return std::max(
         std::pow(static_cast<T>(10.),
                  OMG::IEEE754<T>::exponentBase10(t) - static_cast<T>(2.)),
-        k_minLength + Float<T>::EpsilonLax());
+        k_minLength + OMG::Float::EpsilonLax<T>());
   }
 
   /* Given any two numbers, ValidRangeBetween will return a range with bounds no

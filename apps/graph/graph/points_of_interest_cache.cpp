@@ -134,8 +134,8 @@ float PointsOfInterestCache::step() const {
   /* If the bounds are large enough, there might be less than k_numberOfSteps
    * floats between them. */
   float result = (m_end - m_start) / k_numberOfSteps;
-  float minimalStep =
-      std::max(std::fabs(m_end), std::fabs(m_start)) * Float<float>::Epsilon();
+  float minimalStep = std::max(std::fabs(m_end), std::fabs(m_start)) *
+                      OMG::Float::Epsilon<float>();
   return std::max(result, minimalStep);
 }
 

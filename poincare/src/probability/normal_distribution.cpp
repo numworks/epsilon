@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <float.h>
+#include <omg/float.h>
 #include <poincare/src/numeric/erf_inv.h>
-#include <poincare/src/numeric/float.h>
 
 #include <cmath>
 
@@ -88,7 +88,7 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
       std::isnan(probability) || std::isinf(probability)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = OMG::Float::Epsilon<T>();
   if ((static_cast<T>(1.0)) - probability < precision) {
     return INFINITY;
   }

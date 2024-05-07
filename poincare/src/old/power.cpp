@@ -2,6 +2,7 @@
 #include <float.h>
 #include <ion.h>
 #include <math.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arithmetic.h>
@@ -851,7 +852,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
     if ((index.isNumber() && static_cast<Number &>(index).isInteger()) ||
         a.isPositive(context) == OMG::Troolean::True ||
         a.approximateToScalar<double>(approximationContext) >
-            Float<double>::EpsilonLax()) {
+            OMG::Float::EpsilonLax<double>()) {
       Multiplication m =
           Multiplication::Builder(base.childAtIndex(1).clone(), index);
       replaceChildAtIndexInPlace(0, base.childAtIndex(0).clone());

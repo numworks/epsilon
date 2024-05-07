@@ -5,7 +5,6 @@
 
 #include <algorithm>
 
-#include "float.h"
 #include "old_expression.h"
 #include "rational.h"
 

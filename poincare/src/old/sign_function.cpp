@@ -1,10 +1,10 @@
 #include <assert.h>
 #include <ion.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/complex_cartesian.h>
 #include <poincare/old/derivative.h>
-#include <poincare/old/float.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/piecewise_operator.h>
 #include <poincare/old/rational.h>

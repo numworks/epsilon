@@ -1,9 +1,9 @@
 #ifndef POINCARE_NUMERIC_SOLVER_ALGORITHMS_H
 #define POINCARE_NUMERIC_SOLVER_ALGORITHMS_H
 
+#include <omg/float.h>
 #include <poincare/coordinate_2D.h>
 
-#include "float.h"
 #include "solver.h"
 
 namespace Poincare::Internal {
@@ -45,7 +45,7 @@ class SolverAlgorithms {
 
  private:
   constexpr static int k_numberOfIterationsBrent = 100;
-  constexpr static double k_sqrtEps = Float<double>::SqrtEpsilon();
+  constexpr static double k_sqrtEps = OMG::Float::SqrtEpsilon<double>();
   static_assert(k_sqrtEps == 1.4901161193847656E-8,
                 "Wrong value for sqrt(DBL_EPSILON");
   constexpr static int k_numberOfIterationsProbability = 1000000;

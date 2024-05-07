@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <float.h>
+#include <omg/float.h>
 #include <poincare/old/binomial_distribution.h>
 #include <poincare/old/domain.h>
-#include <poincare/old/float.h>
 #include <poincare/old/regularized_incomplete_beta_function.h>
 
 #include <cmath>
@@ -14,7 +14,7 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
   if (std::isnan(x) || std::isinf(x) || !ParametersAreOK(n, p)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = OMG::Float::Epsilon<T>();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - static_cast<T>(1.0)) < precision;
@@ -71,7 +71,7 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(
       probability > static_cast<T>(1.0)) {
     return NAN;
   }
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = OMG::Float::Epsilon<T>();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
   bool pIsOne = !pIsZero && std::abs(p - static_cast<T>(1.0)) < precision;

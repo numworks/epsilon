@@ -12,7 +12,7 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
 
   float angle = m_model->angle();
   assert(std::isfinite(angle));
-  assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());
+  assert(0 <= angle && angle < 2 * M_PI + OMG::Float::EpsilonLax<float>());
   if (!std::isfinite(angle)) {
     /* This is defensive coding to avoid looping infinitely in drawArcOfEllipse
      * when angle is not finite. This should not happen since some asserts

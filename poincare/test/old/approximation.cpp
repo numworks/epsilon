@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/old/constant.h>
+#include <poincare/old/float.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/undefined.h>
 #include <poincare/print.h>
@@ -24,8 +25,8 @@ void assert_expression_approximates_to_scalar(
                                             angleUnit);
   T result = Internal::Approximation::RootTreeToReal<T>(e);
   e->removeTree();
-  bool test = roughly_equal(result, approximation,
-                            Poincare::Float<T>::EpsilonLax(), true);
+  bool test =
+      roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(), true);
   bool crash = false;
   bool bad = !test;
   constexpr int bufferSize = 500;
@@ -86,7 +87,7 @@ QUIZ_CASE(poincare_approximation_rational) {
 }
 
 template <typename T>
-void assert_float_approximates_to(Poincare::Float<T> f, const char *result) {
+void assert_float_approximates_to(Float<T> f, const char *result) {
   Shared::GlobalContext globalContext;
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
@@ -2216,7 +2217,7 @@ void assert_expression_approximates_with_value_for_symbol(
   T result = e.approximateToScalarWithValueForSymbol<T>(symbol, symbolValue,
                                                         approximationContext);
   quiz_assert_print_if_failure(
-      roughly_equal(result, approximation, Poincare::Float<T>::EpsilonLax(),
+      roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(),
                     true),
       expression);
 #endif

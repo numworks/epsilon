@@ -256,13 +256,13 @@ double Store::correlationCoefficient(int series) const {
   }
   /* Compare v0 and v1 to EpsilonLax to check if they are equal to zero (since
    * approximation errors could give them > 0 while they are not.)*/
-  double result = (std::abs(v0) < Float<double>::EpsilonLax() ||
-                   std::abs(v1) < Float<double>::EpsilonLax())
+  double result = (std::abs(v0) < OMG::Float::EpsilonLax<double>() ||
+                   std::abs(v1) < OMG::Float::EpsilonLax<double>())
                       ? 1.0
                       : covariance(series, options) / std::sqrt(v0 * v1);
   /* Due to errors, coefficient could slightly exceed 1.0. It needs to be
    * fixed here to prevent r^2 from being bigger than 1. */
-  if (std::abs(result) <= 1.0 + Float<double>::SqrtEpsilonLax()) {
+  if (std::abs(result) <= 1.0 + OMG::Float::SqrtEpsilonLax<double>()) {
     return std::clamp(result, -1.0, 1.0);
   }
   return NAN;

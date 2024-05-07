@@ -1,8 +1,8 @@
 #ifndef POINCARE_TEST_HELPER_H
 #define POINCARE_TEST_HELPER_H
 
+#include <omg/float.h>
 #include <poincare/old/expression_node.h>
-#include <poincare/old/float.h>
 #include <poincare/old/helpers.h>
 #include <poincare/print_float.h>
 #include <poincare/src/memory/tree.h>

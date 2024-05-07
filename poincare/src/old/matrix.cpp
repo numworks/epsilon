@@ -1,12 +1,12 @@
 #include <assert.h>
 #include <float.h>
 #include <ion/circuit_breaker.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/absolute_value.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/division.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/float.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/power.h>
@@ -226,8 +226,8 @@ int OMatrix::ArrayInverse(T *array, int numberOfRows, int numberOfColumns) {
   // Check inversibility
   for (int i = 0; i < dim; i++) {
     T cell = operands[i * 2 * dim + i];
-    if (!std::isfinite(std::abs(cell)) ||
-        std::abs(cell - static_cast<T>(1.0)) > Float<float>::EpsilonLax()) {
+    if (!std::isfinite(std::abs(cell)) || std::abs(cell - static_cast<T>(1.0)) >
+                                              OMG::Float::EpsilonLax<float>()) {
       return -2;
     }
   }

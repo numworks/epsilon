@@ -57,7 +57,7 @@ Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
 template <typename T>
 T SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
     T* probability, typename Solver<T>::FunctionEvaluation f, const void* aux) {
-  constexpr T precision = Float<T>::Epsilon();
+  constexpr T precision = OMG::Float::Epsilon<T>();
   assert(*probability <= (static_cast<T>(1.f) - precision) &&
          *probability >= precision);
   (void)precision;

@@ -2,8 +2,8 @@
 #define POINCARE_SOLVER_H
 
 #include <math.h>
+#include <omg/float.h>
 
-#include "float.h"
 #include "old_expression.h"
 
 namespace Poincare {
@@ -34,13 +34,13 @@ class Solver {
                                         Interest, T, OMG::Troolean);
   typedef bool (*DiscontinuityEvaluation)(T, T, const void *);
 
-  constexpr static T k_relativePrecision = Float<T>::Epsilon();
+  constexpr static T k_relativePrecision = OMG::Float::Epsilon<T>();
   constexpr static T k_minimalAbsoluteStep =
-      2. * Helpers::SquareRoot(2. * k_relativePrecision);
+      2. * OMG::Float::SquareRoot(2. * k_relativePrecision);
 
   static T NullTolerance(T x) {
     return std::max(k_relativePrecision,
-                    Helpers::SquareRoot(k_relativePrecision) * std::fabs(x));
+                    OMG::Float::SquareRoot(k_relativePrecision) * std::fabs(x));
   }
   static T MaximalStep(T intervalAmplitude);
 

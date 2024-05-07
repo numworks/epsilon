@@ -1,4 +1,4 @@
-#include <poincare/old/float.h>
+#include <omg/float.h>
 #include <poincare/old/trigonometry_cheat_table.h>
 #include <poincare/old/undefined.h>
 
@@ -92,7 +92,7 @@ OExpression TrigonometryCheatTable::simplify(
     float inputValue = floatForTypeAtIndex(inputType, i);
     if (std::isnan(inputValue) ||
         (inputValue != eValue &&  // inputValue == eValue in case of +/-inf
-         std::fabs(inputValue - eValue) > Float<float>::EpsilonLax())) {
+         std::fabs(inputValue - eValue) > OMG::Float::EpsilonLax<float>())) {
       continue;
     }
     /* e's approximation matches a table entry, check that both expressions are

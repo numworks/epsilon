@@ -2,7 +2,6 @@
 #define POINCARE_VARIABLE_CONTEXT_H
 
 #include "context_with_parent.h"
-#include "float.h"
 #include "symbol_abstract.h"
 
 namespace Poincare {

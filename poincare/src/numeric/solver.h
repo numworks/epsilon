@@ -2,14 +2,13 @@
 #define POINCARE_NUMERIC_SOLVER_H
 
 #include <math.h>
+#include <omg/float.h>
 #include <omg/troolean.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/src/expression/context.h>
 #include <poincare/src/memory/tree.h>
 
 #include <algorithm>
-
-#include "float.h"
 
 namespace Poincare {
 class Context;
@@ -43,13 +42,14 @@ class Solver {
                                         Interest, T, OMG::Troolean);
   typedef bool (*DiscontinuityEvaluation)(T, T, const void*);
 
-  constexpr static T k_relativePrecision = Float<T>::Epsilon();
+  constexpr static T k_relativePrecision = OMG::Float::Epsilon<T>();
   constexpr static T k_minimalAbsoluteStep =
-      2. * Float<T>::SquareRoot(2. * k_relativePrecision);
+      2. * OMG::Float::SquareRoot<T>(2. * k_relativePrecision);
 
   static T NullTolerance(T x) {
-    return std::max(k_relativePrecision,
-                    Float<T>::SquareRoot(k_relativePrecision) * std::fabs(x));
+    return std::max(
+        k_relativePrecision,
+        OMG::Float::SquareRoot<T>(k_relativePrecision) * std::fabs(x));
   }
   static T MaximalStep(T intervalAmplitude);
 

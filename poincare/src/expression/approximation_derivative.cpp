@@ -1,5 +1,5 @@
+#include <omg/float.h>
 #include <omg/ieee754.h>
-#include <poincare/src/numeric/float.h>
 
 #include "approximation.h"
 
@@ -44,7 +44,7 @@ T scalarApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order,
   T error = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   T result = 1.0;
   T h = k_minInitialRate;
-  constexpr T tenEpsilon = static_cast<T>(10.0) * Float<T>::Epsilon();
+  constexpr T tenEpsilon = static_cast<T>(10.0) * OMG::Float::Epsilon<T>();
   do {
     T currentError;
     T currentResult = riddersApproximation(order, child, evaluationArgument, h,

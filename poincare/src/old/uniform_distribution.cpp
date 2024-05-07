@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <float.h>
+#include <omg/float.h>
 #include <poincare/old/beta_function.h>
 #include <poincare/old/domain.h>
-#include <poincare/old/float.h>
 #include <poincare/old/regularized_incomplete_beta_function.h>
 #include <poincare/old/uniform_distribution.h>
 

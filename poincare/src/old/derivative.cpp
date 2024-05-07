@@ -1,10 +1,10 @@
 #include <assert.h>
 #include <float.h>
+#include <omg/float.h>
 #include <omg/ieee754.h>
 #include <poincare/layout.h>
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
-#include <poincare/old/float.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/point.h>
 #include <poincare/old/serialization_helper.h>
@@ -149,7 +149,7 @@ T DerivativeNode::scalarApproximateWithValueForArgumentAndOrder(
   T error = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   T result = 1.0;
   T h = k_minInitialRate;
-  constexpr T tenEpsilon = static_cast<T>(10.0) * Float<T>::Epsilon();
+  constexpr T tenEpsilon = static_cast<T>(10.0) * OMG::Float::Epsilon<T>();
   do {
     T currentError;
     T currentResult = riddersApproximation(

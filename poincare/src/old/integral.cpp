@@ -1,4 +1,4 @@
-#include <float.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/complex.h>
@@ -150,7 +150,7 @@ Evaluation<T> IntegralNode::templatedApproximate(
   }
   /* The tolerance sqrt(eps) estimated by the method is an upper bound and the
    * real is error is typically eps */
-  constexpr T precision = Float<T>::SqrtEpsilonLax();
+  constexpr T precision = OMG::Float::SqrtEpsilonLax<T>();
   DetailedResult<T> detailedResult =
       adaptiveQuadrature<T>(start, end, precision, k_maxNumberOfIterations,
                             substitution, approximationContext);
@@ -274,7 +274,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(
          * abs(y * weights) > abs(L1_I0 * tail_tolerance)
          * but L1_IO is abs(pi/2 * f(0)) before the first row and
          * tail_tolerance = tolerance^2 */
-        if (std::abs(weight * leftValue) < Float<T>::EpsilonLax())
+        if (std::abs(weight * leftValue) < OMG::Float::EpsilonLax<T>())
           leftOk = false;
       }
       if (rightOk) {
@@ -287,7 +287,7 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(
           maxWjFj = std::max(maxWjFj, std::abs(weight * rightValue));
           result += weight * rightValue;
         }
-        if (std::abs(weight * rightValue) < Float<T>::EpsilonLax())
+        if (std::abs(weight * rightValue) < OMG::Float::EpsilonLax<T>())
           rightOk = false;
       }
       // computing only odd ticks after the first level
@@ -362,7 +362,7 @@ template <typename T>
 IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(
     T a, T b, Substitution<T> substitution,
     const ApproximationContext& approximationContext) const {
-  constexpr T epsilon = Float<T>::Epsilon();
+  constexpr T epsilon = OMG::Float::Epsilon<T>();
   constexpr T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
    * The abscissa and weights are taken from QUADPACK library. */

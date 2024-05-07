@@ -1,7 +1,7 @@
 #include <float.h>
+#include <omg/float.h>
 #include <poincare/old/approximation_helper.h>
 #include <poincare/old/evaluation.h>
-#include <poincare/old/float.h>
 #include <poincare/old/list_complex.h>
 #include <poincare/old/matrix_complex.h>
 #include <poincare/old/old_expression.h>
@@ -84,7 +84,7 @@ std::complex<T> ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
   }
   T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
   T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
-  T precision = Float<T>::EpsilonLax();
+  T precision = OMG::Float::EpsilonLax<T>();
   if (isNegligeable(result.imag(), precision, magnitude1, magnitude2)) {
     result.imag(0);
   }

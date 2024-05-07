@@ -34,8 +34,7 @@ class TrigonometryModel : public Shared::CurveViewRange {
   float angle() const { return m_angle; }
   void setAngle(float angle) {
     assert(std::isfinite(angle));
-    assert(0 <= angle &&
-           angle < 2 * M_PI + Poincare::Float<float>::EpsilonLax());
+    assert(0 <= angle && angle < 2 * M_PI + OMG::Float::EpsilonLax<float>());
     m_angle = angle;
   }
 

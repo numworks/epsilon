@@ -1,3 +1,4 @@
+#include <omg/float.h>
 #include <poincare/old/absolute_value.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/based_integer.h>
@@ -7,7 +8,6 @@
 #include <poincare/old/derivative.h>
 #include <poincare/old/division.h>
 #include <poincare/old/factorial.h>
-#include <poincare/old/float.h>
 #include <poincare/old/function.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/logical_operator.h>

@@ -1,9 +1,9 @@
+#include <omg/float.h>
 #include <omg/utf8_helper.h>
 #include <poincare/layout.h>
 #include <poincare/old/approximation_helper.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/complex.h>
-#include <poincare/old/float.h>
 #include <poincare/old/logical_operator.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>

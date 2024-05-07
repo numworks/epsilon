@@ -1,5 +1,5 @@
-#include <float.h>
 #include <helpers.h>
+#include <omg/float.h>
 #include <poincare/old/based_integer.h>
 #include <poincare/old/statistics_dataset.h>
 
@@ -111,7 +111,7 @@ T StatisticsDataset<T>::variance() const {
    * E[X]^2 to ensure a positive result and to minimize rounding errors */
   T m = mean();
   T v = offsettedSquaredSum(m) / totalWeight();
-  return std::abs(v / m) < Float<double>::EpsilonLax() ? 0.0 : v;
+  return std::abs(v / m) < OMG::Float::EpsilonLax<double>() ? 0.0 : v;
 }
 
 template <typename T>

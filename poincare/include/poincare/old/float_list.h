@@ -2,7 +2,6 @@
 #define POINCARE_FLOAT_LIST_H
 
 #include "dataset_column.h"
-#include "float.h"
 #include "list.h"
 
 namespace Poincare {

@@ -58,20 +58,6 @@ class Helpers {
   constexpr static inline bool EqualOrBothNan(double a, double b) {
     return a == b || (std::isnan(a) && std::isnan(b));
   }
-
-  template <typename T>
-  constexpr static T SquareRoot(T x) {
-    return x >= 0 ? SquareRootHelper(x, x, static_cast<T>(0.))
-                  : static_cast<T>(NAN);
-  }
-
- private:
-  // Helper for the compile-time square root
-  template <typename T>
-  constexpr static T SquareRootHelper(T x, T a, T b) {
-    return a == b ? a
-                  : SquareRootHelper(x, static_cast<T>(0.5) * (a + x / a), a);
-  }
 };
 
 }  // namespace Poincare

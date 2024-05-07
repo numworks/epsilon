@@ -1,9 +1,9 @@
 #include <assert.h>
 #include <math.h>
+#include <omg/float.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/context.h>
 #include <poincare/old/division.h>
-#include <poincare/old/float.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/power.h>

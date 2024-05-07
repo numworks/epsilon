@@ -2,6 +2,7 @@
 #include <float.h>
 #include <ion.h>
 #include <limits.h>
+#include <omg/float.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arc_cosine.h>
 #include <poincare/old/arc_sine.h>
@@ -14,7 +15,6 @@
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/division.h>
-#include <poincare/old/float.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/opposite.h>
 #include <poincare/old/parenthesis.h>
@@ -462,7 +462,7 @@ OExpression Trigonometry::ShallowReduceInverseFunction(
         double approxResult = result.approximateToScalar<double>(
             ApproximationContext(reductionContext, true));
         double intervalBound =
-            (pi / (isArccos ? 1. : 2.)) + Float<double>::EpsilonLax();
+            (pi / (isArccos ? 1. : 2.)) + OMG::Float::EpsilonLax<double>();
         if (approxResult > intervalBound || approxResult < -intervalBound) {
           /* The approximation of x and k was too imprecise and made the
            * translation fail. Let approximation handle this. */

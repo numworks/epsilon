@@ -1,9 +1,9 @@
 #ifndef POINCARE_PROBABILITY_DOMAIN_H
 #define POINCARE_PROBABILITY_DOMAIN_H
 
+#include <omg/float.h>
 #include <omg/troolean.h>
 #include <poincare/src/memory/tree.h>
-#include <poincare/src/numeric/float.h>
 #include <stdint.h>
 
 #include <algorithm>

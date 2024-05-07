@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <ion.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arithmetic.h>
@@ -8,7 +9,6 @@
 #include <poincare/old/derivative.h>
 #include <poincare/old/division.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/float.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/list.h>
 #include <poincare/old/matrix.h>

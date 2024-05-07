@@ -39,7 +39,7 @@ bool SignificanceTest::ValidThreshold(double p) {
    * Since p will be converted to float later, we need to ensure that
    * it's not too close to 1.0 */
   return p >= 0.0 &&
-         static_cast<float>(p) < 1.0 - Poincare::Float<float>::EpsilonLax();
+         static_cast<float>(p) < 1.0 - OMG::Float::EpsilonLax<float>();
 }
 
 bool SignificanceTest::InitializeDistribution(Statistic* statistic,

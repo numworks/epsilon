@@ -2,9 +2,9 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/poincare_helpers.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/comparison.h>
-#include <poincare/old/float.h>
 #include <poincare/old/multiplication.h>
 
 #include <cmath>
@@ -178,8 +178,8 @@ double Model::alphaPrimeCoefficient(Store* store, int series,
      * as a zero. */
     result = alphaCoefficient(store, series, modelCoefficients, k, l) *
              (1.0 + lambda);
-    if (std::fabs(result) < Float<double>::EpsilonLax()) {
-      result = 2 * Float<double>::EpsilonLax();
+    if (std::fabs(result) < OMG::Float::EpsilonLax<double>()) {
+      result = 2 * OMG::Float::EpsilonLax<double>();
     }
   } else {
     result = alphaCoefficient(store, series, modelCoefficients, l, k);

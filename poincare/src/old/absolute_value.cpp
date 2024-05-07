@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/absolute_value.h>
 #include <poincare/old/complex_argument.h>
@@ -6,7 +7,6 @@
 #include <poincare/old/constant.h>
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
-#include <poincare/old/float.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/power.h>
 #include <poincare/old/serialization_helper.h>
@@ -63,7 +63,8 @@ OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
                                    ApproximationContext(reductionContext, true))
                      .toScalar();
     if (!std::isnan(app)) {
-      if ((c.isNumber() && app >= 0) || app >= Float<double>::EpsilonLax()) {
+      if ((c.isNumber() && app >= 0) ||
+          app >= OMG::Float::EpsilonLax<double>()) {
         /* abs(a) = a with a >= 0
          * To check that a > 0, if a is a number we can use float comparison;
          * in other cases, we are more conservative and rather check that
@@ -72,7 +73,7 @@ OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
         replaceWithInPlace(c);
         return c;
       } else if ((c.isNumber() && app < 0.0f) ||
-                 app <= -Float<double>::EpsilonLax()) {
+                 app <= -OMG::Float::EpsilonLax<double>()) {
         // abs(a) = -a with a < 0 (same comment as above to check that a < 0)
         Multiplication m = Multiplication::Builder(Rational::Builder(-1), c);
         replaceWithInPlace(m);

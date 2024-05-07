@@ -1,3 +1,4 @@
+#include <poincare/old/float.h>
 #include <poincare/old/float_list.h>
 
 namespace Poincare {

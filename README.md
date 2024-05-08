@@ -7,11 +7,11 @@
   <a href="https://discord.gg/hnEqPzAJzn"><img alt="Discord" src="https://img.shields.io/discord/663420259851567114?color=blue&labelColor=292929&label=chat%20-%20discord&logo=discord&style=for-the-badge" /></a>
 </p>
 
-> Vous ne comprenez pas l'anglais ? Vous êtes francophone ? Regardez le [*LISEZ-MOI* français](./README.fr.md) !
+> 🇫🇷 Vous ne comprenez pas l'anglais ? Vous êtes francophone ? Regardez le [*LISEZ-MOI* français](./README.fr.md) ! 🇫🇷
 
 ## About
 
-Upsilon is a fork of Omega, an user-made OS that runs on the Numworks calculator, which brings many features to it, but was discontinued because of a policy change from Numworks. Upsilon is for the people who want to see a future for user-made OSes for Numworks, even after the closure and archiving of Omega.
+Upsilon is a fork of Omega, an user-made OS that runs on the NumWorks calculator, which brings many features to it, but was discontinued because of a policy change from NumWorks. Upsilon is for the people who want to see a future for user-made OSes for NumWorks, even after the closure and archiving of Omega.
 
 ### Some new features
 
@@ -131,16 +131,16 @@ And there you can go to step 2!
 
 <details>
 
-<summary>With Msys2/Mingw (officialized by numworks but with a lot of bugs)</summary>
+<summary>With Msys2/Mingw (officialized by NumWorks but with a lot of bugs)</summary>
 
-[Msys2](https://www.msys2.org/) environment is recommended by Numworks to get most of the required tools on Windows easily. It's where you'll paste all the commands of this tutorial. Once it'sinstalled, paste these commands into the Msys2 terminal.
+[Msys2](https://www.msys2.org/) environment is recommended by NumWorks to get most of the required tools on Windows easily. It's where you'll paste all the commands of this tutorial. Once it's installed, paste these commands into the Msys2 terminal.
 
 ```bash
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-libusb git make python
 echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
 ```
 
-Next, you'll need to install the [GCC toolchain for ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for aninstall location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH. Just enter:
+Next, you'll need to install the [GCC toolchain for ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH. Just enter:
 
 ```bash
 echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc
@@ -154,11 +154,11 @@ Just restart terminal and you can go to step 2!
 
 <summary>With WSL 2</summary>
 
-You need a windows version >= 1903.
+You need a Windows version >= 1903.
 
 #### WSL Installation
 
-1. Use simultaneously win + X keys and then click on "admin powershell".
+1. Use simultaneously Win + X keys and then click on "admin powershell".
 
 ```powershell
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
@@ -185,13 +185,13 @@ wsl --set-default-version 2
 
 WSL is now installed.
 
-6. Then Install GCC cross compiler for ARM.
+6. Then install GCC cross compiler for ARM.
 ```bash
 apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config gcc-arm-none-eabi binutils-arm-none-eabi
 ```
 
 ### Usbipd installation to connect your calculator
-If you want to connect to the calculator, you have to connect to install this [tool](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). This will allow you toconnect WSL to the calculator through internet. Follow the on screen information to install.
+If you want to connect to the calculator, you have to connect to install this [tool](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). This will allow you to connect WSL to the calculator through internet. Follow the on screen information to install.
 #### Ubuntu
 1. In a WSL Ubuntu command prompt, type:
 ```bash
@@ -209,7 +209,7 @@ sudo visudo
 
 #### Debian
 
-1. If you use debian for your WSL distro, use this command instead:
+1. If you use Debian for your WSL distro, use this command instead:
 
 ```bash
 sudo apt install usbip hwdata usbutils
@@ -219,20 +219,20 @@ And that's all for installation and set up.
 
 ### To connect your calculator
 
-1. Open an Admin powershell and type:
+1. Open an admin PowerShell and type:
 
 ```powershell
   usbipd wsl list
 ```
 
-This will list your usb devices connected. Look at the BUSID column and remember the one for your calculator (it should be called "Numworks Calculator").
-2. Now run this command replacing `<BUSID>` by your calculator's usb port id:
+This will list your USB devices connected. Look at the BUSID column and remember the one for your calculator (it should be called "Numworks Calculator").
+2. Now run this command replacing `<BUSID>` by your calculator's USB port id:
 
 ```powershell
 usbipd wsl attach --busid <BUSID>
 ```
 
-It will ask you to type your wsl's password and will connect your calculator to WSL.
+It will ask you to type your WSL's password and will connect your calculator to WSL.
 
 You can now go to step 2!
 
@@ -283,7 +283,7 @@ or:
 make MODEL=n0100 OMEGA_USERNAME="" binpack -j(nproc)
 ```
 
-to make binpack which you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0100/). Binpacks are a great way to share a custom build of Upsilonto friends.
+to make binpack which you can flash to the calculator from [TI-Planet's WebDFU](https://ti-planet.github.io/webdfu_numworks/n0100/). Binpacks are a great way to share a custom build of Upsilon to friends.
 
 </details>
 
@@ -291,7 +291,7 @@ to make binpack which you can flash to the calculator from [Ti-planet's webDFU](
 
 <summary><b>Model n0110</b></summary>
 
-The bootloader allows you to install 2 firmware in separated "slots". If so, external apps won't have all the space but half. Bootloader will allow use of all of the memory if only one slot is flashed. In legacy mode, external apps use all the space available.
+The bootloader allows you to install 2 firmwares in separated "slots". If so, external apps won't have all the space but half. Bootloader will allow use of all of the memory if only one slot is flashed. In legacy mode, external apps use all the space available.
 
 <details>
 <summary>Bootloader</summary>
@@ -301,7 +301,7 @@ Then, build with:
 
 ```bash
 make clean
-make OMEGA_USERNAME="{Your name, max 15 characters}" -j(nproc)
+make OMEGA_USERNAME="{Your name, max 15 characters}" -j$(nproc)
 ```
 
 Now, run either:
@@ -317,10 +317,10 @@ to directly flash the calculator into the current slot, or thought bootloader's 
 or:
 
 ```bash
-make OMEGA_USERNAME="" binpack -j(nproc)
+make OMEGA_USERNAME="" binpack -j$(nproc)
 ```
 
-to make binpack which you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). You'll find them at `output/release/device/bootloader/`. Binpacks are a great way to share a custom build of Upsilon to friends.
+to make binpack which you can flash to the calculator from [TI-Planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). You'll find them at `output/release/device/bootloader/`. Binpacks are a great way to share a custom build of Upsilon to friends.
 </details>
 
 
@@ -330,7 +330,7 @@ to make binpack which you can flash to the calculator from [Ti-planet's webDFU](
 
 ```bash
 make MODEL=n0110 clean
-make MODEL=n0110 OMEGA_USERNAME="{Your name, max 15 characters}" -j(nproc)
+make MODEL=n0110 OMEGA_USERNAME="{Your name, max 15 characters}" -j$(nproc)
 ```
 
 Now, run either:
@@ -346,10 +346,10 @@ to directly flash the calculator after pressing simultaneously `reset` and `6` b
 or:
 
 ```bash
-make MODEL=n0110 OMEGA_USERNAME="" binpack -j(nproc)
+make MODEL=n0110 OMEGA_USERNAME="" binpack -j$(nproc)
 ```
 
-to make binpack which you can flash to the calculator from [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). You'll find them at `output/release/device/bootloader/`. Binpacks are a great way to share a custom build of Upsilon to friends.
+to make binpack which you can flash to the calculator from [Ti-Planet's WebDFU](https://ti-planet.github.io/webdfu_numworks/n0110/). You'll find them at `output/release/device/bootloader/`. Binpacks are a great way to share a custom build of Upsilon to friends.
 </details>
 
 </details>

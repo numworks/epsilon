@@ -7,19 +7,19 @@
   <a href="https://discord.gg/sbGvhWETAd"><img alt="Discord" src="https://img.shields.io/discord/663420259851567114?color=blue&labelColor=292929&label=chat%20-%20discord&logo=discord&style=for-the-badge" /></a>
 </p>
 
-> Don't understand french ? speak english ? here's the [english README](./README.md) !
+> Don't understand French ? Speak English ? here's the [english README](./README.md) !
 
 ## À propos
 
-Upsilon est un fork d'Omega, un fork d'Epsilon, l'OS de Numworks tournant sur les calculatrices du même nom, qui apporte beaucoup de fonctionnalités en plus, mais qui fut archivé et fermé pour des raisons légales après un changement de politique de Numworks. Upsilon est fait pour ceux qui aimeraient voir un futur pour les OS créées par les utilisateurs pour Numworks, même après l'arrèt du projet initial.
+Upsilon est un fork d'Omega, un fork d'Epsilon, l'OS de NumWorks tournant sur les calculatrices du même nom, qui apporte beaucoup de fonctionnalités en plus, mais qui fut archivé et fermé pour des raisons légales après un changement de politique de NumWorks. Upsilon est fait pour ceux qui aimeraient voir un futur pour les OS créés par les utilisateurs pour NumWorks, même après l'arrêt du projet initial.
 
 ### Quelques fonctionnalités supplémentaires
 
-- Un module python kandinsky amélioré
+- Un module Python Kandinsky amélioré
 - Un support pour fonds d'écrans personnalisés
 - Des applications externes
 - Un thème Upsilon
-- La surcharge des opérateurs en python
+- La surcharge des opérateurs en Python
 - Un tableau périodique légèrement amélioré
 - L'utilisation possible du signe "=" dans les calculs
 - *Ainsi que tout ce qui a été ajouté sur Omega, et bien plus...* [Changelogs complets d'Omega](https://github.com/Omega-Numworks/Omega/wiki/Changelog) | [Fonctionnalités principales d'Omega & captures d'écran](https://github.com/Omega-Numworks/Omega/wiki/Main-features).
@@ -34,7 +34,7 @@ Ne débranchez votre calculatrice qu'une fois l'installation terminée.
 
 ### Manuelle
 
- *Vous pouvez vous référer à ce  [site internet](https://www.numworks.com/resources/engineering/software/build/)pour la première étape si vous avez des erreurs*
+ *Vous pouvez vous référer à ce [site internet](https://www.numworks.com/resources/engineering/software/build/) pour la première étape si vous avez des erreurs*
 
 ### 1. Installation du SDK
 
@@ -52,13 +52,13 @@ Ne débranchez votre calculatrice qu'une fois l'installation terminée.
 
 <br>
 
-Il suffit juste d'installer les dépendances en tapant ces commandes dans un Terminal en mode super-utilisateur.
+Il suffit juste d'installer les dépendances en tapant ces commandes dans un terminal en mode super-utilisateur.
 
 ```bash
 apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config gcc-arm-none-eabi binutils-arm-none-eabi
 ```
 
-C'est fait! Vous pouvez aller à l'étape 2.
+C'est fait ! Vous pouvez aller à l'étape 2.
 
 <br>
 
@@ -70,7 +70,7 @@ C'est fait! Vous pouvez aller à l'étape 2.
 
 <br>
 
-Installez toutes les dépendances grâce à cette commande:
+Installez toutes les dépendances grâce à cette commande :
 
 ```bash
 dnf install make automake gcc gcc-c++ kernel-devel git ImageMagick libX11-devel libXext-devel freetype-devel libpng-devel libjpeg-devel pkg-config arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++
@@ -86,7 +86,7 @@ dnf install make automake gcc gcc-c++ kernel-devel git ImageMagick libX11-devel 
 
 <br>
 
-Installez toutes les dépendances grâce à cette commande:
+Installez toutes les dépendances grâce à cette commande :
 ```bash
 nix-env -p gcc libpng libjpeg xorg.libX11 pkg-config freetype xorg.libXext python3 imagemagick python310Packages.lz4 python310Packages.pypng python310Packages.pypng gcc-arm-embedded
 ```
@@ -103,7 +103,7 @@ nix-env -p gcc libpng libjpeg xorg.libX11 pkg-config freetype xorg.libXext pytho
 
 <br>
 
-Il est recommandé d'utiliser [Homebrew](https://brew.sh/). Une fois intsallé, utilisez:
+Il est recommandé d'utiliser [Homebrew](https://brew.sh/). Une fois installé, utilisez :
 
 ```bash
 brew install numworks/tap/epsilon-sdk
@@ -129,16 +129,16 @@ Vous pouvez aller à l'étape 2.
 
 <details>
 
-<summary>Avec Msys2/Mingw (Supportés par Numwoks bien qu'il y ait beaucoup de bugs)</summary>
+<summary>Avec Msys2/Mingw (Supportés par NumWorks bien qu'il y ait beaucoup de bugs)</summary>
 
-L'environnement de compilation [Msys2](https://www.msys2.org/) est recommandé par Numworks pour obtenir la plupart des outils requis facilement. C'est ici que vous allez copier-colletoutes lecommandes de ce tutoriel. Une fois installé, copier-coller ces deux commandes dans le terminal:
+L'environnement de compilation [Msys2](https://www.msys2.org/) est recommandé par NumWorks pour obtenir la plupart des outils requis facilement. C'est ici que vous allez copier-coller toutes les commandes de ce tutoriel. Une fois installé, copiez-collez ces deux commandes dans le terminal:
 
 ```bash
 pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-libusb git make python
 echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
 ```
 
-Ensuite, vous devrez installer [GCC toolchain for ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). Quand il vouest demandde choisir u dossier d'installation, choisissez `C:\msys64\home\User\gcc-arm\`. Il vous faudra ensuite ajouter ce dossier à votre $PATH. Tapez juste:
+Ensuite, vous devrez installer [GCC toolchain for ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). Quand il vous est demandé de choisir un dossier d'installation, choisissez `C:\msys64\home\User\gcc-arm\`. Il vous faudra ensuite ajouter ce dossier à votre $PATH. Tapez juste:
 
 ```bash
 echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc
@@ -154,11 +154,11 @@ Redémarrez votre terminal et vous pouvez aller à l'étape 2!
 
 WSL est un système qui virtualise un environnement GNU/Linux dans Windows.
 
-Votre version de windows doit être >= 1903.
+Votre version de Windows doit être >= 1903.
 
 #### Installation de WSL
 
-1. Apuyez simulatanément sur les touches "windows" et "x" puis cliquez sur "Powershell administrateur". Entrez ensuite ceci dans la nouvelle fenêtre:
+1. Apuyez simultanément sur les touches "Windows" et "X" puis cliquez sur "PowerShell Administrateur". Entrez ensuite ceci dans la nouvelle fenêtre:
 
 ```powershell
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
@@ -176,13 +176,13 @@ Cette commande permet d'autoriser le démarrage des machines signées par Micros
 
 3. Téléchargez [ce fichier](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) et suivez les instructions d'installation.
 
-4. Ouvrez votre fenêtre powershell comme avant et tapez:
+4. Ouvrez votre fenêtre PowerShell comme avant et tapez:
 
 ```powershell
 wsl --set-default-version 2
 ```
 
-5. téléchargez [Ubuntu](https://www.microsoft.com/store/apps/9n6svws3rx71) depuis le Microsoft store. Vous pouvez aussi installer [Debian](https://www.microsoft.com/store/productI9MSVKQC78PK6).
+5. Téléchargez [Ubuntu](https://www.microsoft.com/store/apps/9n6svws3rx71) depuis le Microsoft store. Vous pouvez aussi installer [Debian](https://www.microsoft.com/store/productI9MSVKQC78PK6) à la place.
 
 WSL est maintenant installé.
 
@@ -193,17 +193,17 @@ sudo apt-get install build-essential git imagemagick libx11-dev libxext-dev libf
 
 ### Installation d'usbipd pour connecter la calculatrice à WSL (facultatif)
 
-Pour connecter la calculatrice, il faut installer cet [outil](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). Il permet de connecter des périphériques par internet. Suivez les instructions pour installer.
+Pour connecter la calculatrice, il faut installer cet [outil](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). Il permet de connecter des périphériques par Internet. Suivez les instructions pour l'installer.
 
 #### Ubuntu
 
-1. Dans un terminal WSL Ubuntu, tapez:
+1. Dans un terminal WSL Ubuntu, tapez :
 
 ```bash
 sudo apt install linux-tools-5.4.0-77-generic hwdata
 ```
 
-2. Editez /etc/sudoers pour que l'on puisse utiliser la commande usbip. Sur Ubutu, cele est fait de cette manière:
+2. Editez /etc/sudoers pour que l'on puisse utiliser la commande usbip. Sur Ubuntu, cela est fait de cette manière :
 
 ```bash
 sudo visudo
@@ -214,7 +214,7 @@ sudo visudo
 
 #### Debian
 
-1.Si vous utiliser Debian, utilisez cette commande:
+1.Si vous utilisez Debian, lancez cette commande:
 
 ```bash
 sudo apt install usbip hwdata usbutils
@@ -222,15 +222,15 @@ sudo apt install usbip hwdata usbutils
 
 ### Pour connecter la calculatrice à WSL
 
-1. Ouvrez encore un powershell en mode administrateur et tapez:
+1. Ouvrez à nouveau un PowerShell en mode administrateur et tapez :
 
 ```powershell
   usbipd wsl list
 ```
 
-Ceci va lister les périphériques USB connectés à l'ordinateur. Reagrdez le BUSID de votre "Numworks Calculator".
+Ceci va lister les périphériques USB connectés à l'ordinateur. Regardez le BUSID de votre "Numworks Calculator".
 
-2. Maintenant, lancez cette commande en remplçant <BUSID> par celui de votre caculatrice:
+2. Maintenant, lancez cette commande en remplaçant <BUSID> par celui de votre calculatrice :
 
 ```powershell
 usbipd wsl attach --busid <BUSID>
@@ -248,7 +248,7 @@ Vous pouvez aller à l'étape 2.
 
 ### 2. Récupérer le code source
 
-Le code source est disponible dans une repository git. Récupérez-le de cette manière:
+Le code source est disponible dans une repository git. Récupérez-le de cette manière :
 
 ```bash
 git clone --recursive https://github.com/UpsilonNumworks/Upsilon.git
@@ -287,7 +287,7 @@ soit:
 make MODEL=n0100 OMEGA_USERNAME="" binpack -j4
 ```
 
-pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0100/).
+pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [WebDFU de TI-Planet](https://ti-planet.github.io/webdfu_numworks/n0100/).
 
 </details>
 
@@ -295,7 +295,7 @@ pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [Ti-p
 
 <summary><b>Model n0110</b></summary>
 
-Le bootloader vous permet d'installer firmware dans des "slots" séparés. Dans ce cas les applications externes ne pourront pas utiliser toute la mémoire mais la moitié. Si un seul slot est utilisé, le bootloader permettra d'utiliser toute la mémoire. Sans bootloader, les apps external peuvent utiliser toute la mémoire.
+Le bootloader vous permet d'installer 2 firmwares dans des "slots" séparés. Dans ce cas les applications externes ne pourront pas utiliser toute la mémoire mais la moitié. Si un seul slot est utilisé, le bootloader permettra d'utiliser toute la mémoire. Sans bootloader, les apps externes peuvent utiliser toute la mémoire.
 
 <details>
 <summary>Bootloader</summary>
@@ -324,7 +324,7 @@ soit:
 make OMEGA_USERNAME="{Votre nom, max 15 caractères}" binpack -j4
 ```
 
-pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0100/). Vous les trouverez dans `output/release/device/bootloader/`.
+pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [WebDFU de TI-Planet](https://ti-planet.github.io/webdfu_numworks/n0100/). Vous les trouverez dans `output/release/device/bootloader/`.
 </details>
 
 
@@ -353,7 +353,7 @@ soit:
 make MODEL=n0110 OMEGA_USERNAME="{Votre nom, max 15 caractères}" binpack -j4
 ```
 
-pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [Ti-planet's webDFU](https://ti-planet.github.io/webdfu_numworks/n0100/). Vous les trouverez dans `output/release/device/n0110/`.
+pour compiler les binpacks que vous pouvez distribuer et flasher depuis le [WebDFU de TI-Planet](https://ti-planet.github.io/webdfu_numworks/n0100/). Vous les trouverez dans `output/release/device/n0110/`.
 </details>
 
 </details>
@@ -424,7 +424,7 @@ git checkout --recursive upsilon-dev
 make PLATFORM=simulator TARGET=3ds -j
 ```
 
-Vous pouvez ensuite mettre epsilon.3dsx sur une carte SDpour le lancer depuis le HBC ou utilisez 3dslink pour le lancer via le réseau:
+Vous pouvez ensuite mettre epsilon.3dsx sur une carte SD pour le lancer depuis le HBC ou utilisez 3dslink pour le lancer via le réseau:
 
 ```bash
 3dslink output/release/simulator/3ds/epsilon.3dsx -a <3DS' IP ADDRESS>
@@ -434,19 +434,19 @@ Vous pouvez ensuite mettre epsilon.3dsx sur une carte SDpour le lancer depuis le
 
 <br>
 
-Important: n'oubliez pas l'argument `--recursive` Parce qu'Upsilon dépend de submodules.
+Important: n'oubliez pas l'argument `--recursive` parce qu'Upsilon dépend de submodules.
 Aussi, vous pouvez changer le nombre de processus de compilation en parallèles en changeant le nombre après l'argument `-j`.
-N'oubliez pas de mettre votre nom à la place `{Votre nom, maximum 15 caractères}`.Si vous n'en voulez pas, enlevez l'argument `OMEGA_USERNAME`.
+N'oubliez pas de mettre votre nom à la place `{Votre nom, maximum 15 caractères}`. Si vous n'en voulez pas, enlevez l'argument `OMEGA_USERNAME`.
 
-Si vous avez besoin d'aide, n'hésitez pas à rejoindre notre serveur discord : <https://discord.gg/Q9buEMduXG>
+Si vous avez besoin d'aide, n'hésitez pas à rejoindre notre serveur Discord : <https://discord.gg/Q9buEMduXG>
 
 <a href="https://discord.gg/Q9buEMduXG"><p align="center"><img alt="Omega Banner Discord" src="https://user-images.githubusercontent.com/12123721/86287349-54ef5800-bbe8-11ea-80c1-34eb1f93eebd.png" /></p></a>
 ---
 
 ## Liens utiles
 
-- [Upsilon external (pour installer des applications supplémentaires et des fonds d'écran)](https://upsilonnumworks.github.io/Upsilon-External/)
-- [Documentation d'ulab](https://micropython-ulab.readthedocs.io/en/latest/)
+- [Upsilon-External (pour installer des applications supplémentaires et des fonds d'écran)](https://upsilonnumworks.github.io/Upsilon-External/)
+- [Documentation d'Ulab](https://micropython-ulab.readthedocs.io/en/latest/)
 
 ## Contribution
 
@@ -467,18 +467,18 @@ Les anciens projets d'Omega, avant sa fermeture, qui ont été utilisés pour ce
 
 ## À propos d'Epsilon
 
-Upsilon est un fork d'Omega, visant a continuer le projet des OS utilisateurs pour Numworks
+Upsilon est un fork d'Omega, visant a continuer le projet des OS utilisateurs pour NumWorks.
 
-Omega est un fork d'Epsilon, un système d'exploitation performant pour calculatrices graphiques. Il inclut huit applications pour les mathématiques de lycée et d'études supérieurs
+Omega est un fork d'Epsilon, un système d'exploitation performant pour calculatrices graphiques. Il inclut huit applications pour les mathématiques de lycée et d'études supérieures.
 
 Vous pouvez essayer Epsilon depuis votre navigateur sur le [simulateur en ligne](https://www.numworks.com/simulator/).
 
 ## Licence
 
 NumWorks est une marque déposée de NumWorks SAS, 24 Rue Godot de Mauroy, 75009 Paris, France.
-Nintendo est Nintendo 3DS sont des marques déposées de Nintendo of America Inc, 4600 150th Ave NE, Redmond, WA 98052, Etats-Unis.
+Nintendo et Nintendo 3DS sont des marques déposées de Nintendo of America Inc, 4600 150th Ave NE, Redmond, WA 98052, Etats-Unis.
 NumWorks SAS et Nintendo of America Inc ne sont en aucun cas associés avec ce projet.
 
-- NumWorks Epsilon est disponible sous [Lisense CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
-- Omega est disponible sous [Lisense CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
-- Upsilon est disponible sous [Lisense CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+- NumWorks Epsilon est disponible sous [licence CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr).
+- Omega est disponible sous [licence CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr).
+- Upsilon est disponible sous [licence CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr).

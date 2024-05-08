@@ -177,6 +177,7 @@ uint8_t SlotsExamMode::examFetch19(uint32_t start, uint32_t end) {
       }
     }
   }
+  return 0;
 }
 
 uint32_t SlotsExamMode::getSlotAStartExamAddress(int ExamVersion) {

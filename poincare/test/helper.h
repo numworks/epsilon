@@ -129,7 +129,7 @@ inline void assertionsWarn() {
 #endif
 #endif
 
-Tree* parse(const char* input);
+Tree* parse(const char* input, Poincare::Context* context = nullptr);
 
 // Integer
 

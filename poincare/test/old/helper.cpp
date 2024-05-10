@@ -160,7 +160,7 @@ void assert_parsed_expression_process_to(
 
 Internal::Tree *parse_expression(const char *expression, Context *context,
                                  bool addParentheses, bool parseForAssignment) {
-  Tree *result = parse(expression);
+  Tree *result = parse(expression, context);
   quiz_assert_print_if_failure(result != nullptr, expression);
   return result;
 }

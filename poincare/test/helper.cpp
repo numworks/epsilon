@@ -8,9 +8,9 @@
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
-Tree* parse(const char* input) {
+Tree* parse(const char* input, Poincare::Context* context) {
   Tree* inputLayout = RackFromText(input);
-  bool success = RackParser(inputLayout, nullptr).parse() != nullptr;
+  bool success = RackParser(inputLayout, context).parse() != nullptr;
   // quiz_assert(expression);
   inputLayout->removeTree();
   return success ? inputLayout : nullptr;

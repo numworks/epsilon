@@ -197,28 +197,9 @@ void assert_reduce_and_store(const char *expression,
                              Preferences::UnitFormat unitFormat,
                              Preferences::ComplexFormat complexFormat,
                              ReductionTarget target) {
-#if 0
   Shared::GlobalContext globalContext;
-  Tree *e = parse_expression(expression, &globalContext, false);
-  assert_expression_reduce(e, angleUnit, unitFormat, complexFormat, target,
-  expression);
-  assert(e.otype() == ExpressionNode::Type::Store);
-  static_cast<Store &>(e).storeValueForSymbol(&globalContext);
-#endif
-}
-
-void assert_expression_reduce(Poincare::Expression e,
-                              Preferences::AngleUnit angleUnit,
-                              Preferences::UnitFormat unitFormat,
-                              Preferences::ComplexFormat complexFormat,
-                              ReductionTarget target,
-                              const char *printIfFailure) {
-  Shared::GlobalContext globalContext;
-  ReductionContext context = ReductionContext(&globalContext, complexFormat,
-                                              angleUnit, unitFormat, target);
-  bool reductionFailure = false;
-  e = e.cloneAndDeepReduceWithSystemCheckpoint(&context, &reductionFailure);
-  quiz_assert_print_if_failure(!reductionFailure, printIfFailure);
+  // TODO_PCJ: reduce expression (to check it stays a store expression)
+  store(expression, &globalContext);
 }
 
 void assert_parsed_expression_simplify_to(

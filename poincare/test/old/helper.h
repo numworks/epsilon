@@ -116,14 +116,6 @@ void assert_reduce_and_store(
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     Poincare::ReductionTarget target = User);
 
-void assert_expression_reduce(
-    Poincare::OExpression expression,
-    Poincare::Preferences::AngleUnit angleUnit = Radian,
-    Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
-    Poincare::ReductionTarget target = User,
-    const char* printIfFailure = "Error");
-
 void assert_parsed_expression_simplify_to(
     const char* expression, const char* simplifiedExpression,
     Poincare::ReductionTarget target = User,

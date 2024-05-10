@@ -85,6 +85,7 @@ OExpression DistributionDispatcher::shallowReduce(
     }
   }
 
+#if 0  // TODO_PCJ
   int childIndex = 0;
   OExpression abscissae[DistributionMethod::k_maxNumberOfParameters];
   for (int i = 0; i < DistributionMethod::numberOfParameters(methodType());
@@ -119,6 +120,10 @@ OExpression DistributionDispatcher::shallowReduce(
   if (stopReduction != nullptr) {
     *stopReduction = false;
   }
+#else
+  // Implemented in Internal::Simplification::SimplifyDistribution
+  assert(false);
+#endif
   return *this;
 }
 

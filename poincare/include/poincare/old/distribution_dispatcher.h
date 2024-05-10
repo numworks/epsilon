@@ -1,11 +1,15 @@
 #ifndef POINCARE_DISTRIBUTION_FUNCTION_H
 #define POINCARE_DISTRIBUTION_FUNCTION_H
 
-#include "distribution.h"
-#include "distribution_method.h"
+#include <poincare/src/probability/distribution.h>
+#include <poincare/src/probability/distribution_method.h>
+
 #include "n_ary_expression.h"
 
 namespace Poincare {
+
+using Distribution = Internal::Distribution;
+using DistributionMethod = Internal::DistributionMethod;
 
 template <Distribution::Type T, DistributionMethod::Type U>
 constexpr const char* getName();

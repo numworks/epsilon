@@ -8,34 +8,12 @@ poincare_src += $(addprefix poincare/src/old/,\
 
 poincare_src += $(addprefix poincare/src/old/,\
   aliases_list.cpp \
-  beta_function.cpp \
-  binomial_distribution.cpp \
-  cdf_method.cpp \
-  cdf_range_method.cpp \
   checkpoint.cpp \
-  chi2_distribution.cpp \
   circuit_breaker_checkpoint.cpp \
-  discrete_distribution.cpp \
-  distribution.cpp \
-  distribution_method.cpp \
-  domain.cpp \
-  erf_inv.cpp \
   exception_checkpoint.cpp \
-  exponential_distribution.cpp \
-  fisher_distribution.cpp \
-  geometric_distribution.cpp \
   helpers.cpp \
-  hypergeometric_distribution.cpp \
-  inv_method.cpp \
-  normal_distribution.cpp \
-  pdf_method.cpp \
-  poisson_distribution.cpp \
   range.cpp \
-  regularized_gamma_function.cpp \
-  regularized_incomplete_beta_function.cpp \
   statistics_dataset.cpp\
-  student_distribution.cpp \
-  uniform_distribution.cpp \
   xnt_helpers.cpp \
 )
 

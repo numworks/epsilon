@@ -293,6 +293,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   assert_trees_are_equal(e, a);
   e->removeTree();
 
+  // sum
   simplifies_to("sum(n,k,1,n)", "n^2");
   simplifies_to("sum(a*b,k,1,n)", "a×b×n");
   simplifies_to("sum(k,k,n,m)", "(m^2-n^2+m+n)/2");
@@ -312,6 +313,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(sin(k),k,a,a)", "sin(a)");
   // TODO_PCJ: "sum(tan(k),k,a,a)" raises an assert
 
+  // product
   simplifies_to("product(p,k,m,n)", "p^(-m+n+1)");
   simplifies_to("product(p^3,k,m,n)", "p^(3×(-m+n+1))");
   simplifies_to("product(k^3,k,m,n)", "product(k,k,m,n)^3");
@@ -323,10 +325,18 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(cos(k),k,2,4)", "cos(2)×cos(3)×cos(4)");
   simplifies_to("product(sin(k),k,a,a)", "sin(a)");
 
+  // product(exp) <-> exp(sum)
   simplifies_to("exp(2*sum(ln(k),k,a,b) + ln(b))",
                 "dep(b×product(k,k,a,b)^2,{ln(b),sum(ln(k),k,a,b)})");
   simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
 
+  // expand sum
+  simplifies_to("sum(k^3+4,k,n,n+3)-16", "sum(k^3,k,n,n+3)");
+
+  // expand product
+  simplifies_to("product(4*cos(k),k,n,n+3)/256", "product(cos(k),k,n,n+3)");
+
+  // contract product
   simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b)", "1");
   simplifies_to("product(sin(k),k,a,b+n) / product(sin(u),u,a,b)",
                 "product(sin(k),k,a,b+n) / product(sin(u),u,a,b)");

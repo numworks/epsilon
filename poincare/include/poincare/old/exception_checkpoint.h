@@ -3,18 +3,18 @@
 
 #include <setjmp.h>
 
-#include "checkpoint.h"
+#include "pool_checkpoint.h"
 
 #define ExceptionRun(checkpoint) \
   (CheckpointRun(checkpoint, setjmp(*checkpoint.jumpBuffer())) != 0)
 
 namespace Poincare {
 
-class ExceptionCheckpoint final : public Checkpoint {
+class ExceptionCheckpoint final : public PoolCheckpoint {
  public:
   static void Raise();
 
-  using Checkpoint::Checkpoint;
+  using PoolCheckpoint::PoolCheckpoint;
 
   jmp_buf* jumpBuffer() { return &m_jumpBuffer; }
   bool setActive(bool interruption);

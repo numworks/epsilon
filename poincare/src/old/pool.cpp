@@ -1,7 +1,7 @@
-#include <poincare/old/checkpoint.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/helpers.h>
 #include <poincare/old/pool.h>
+#include <poincare/old/pool_checkpoint.h>
 #include <poincare/old/pool_handle.h>
 #include <stdint.h>
 #include <string.h>

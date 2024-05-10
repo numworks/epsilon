@@ -8,7 +8,7 @@ poincare_src += $(addprefix poincare/src/old/,\
 
 poincare_src += $(addprefix poincare/src/old/,\
   aliases_list.cpp \
-  checkpoint.cpp \
+  pool_checkpoint.cpp \
   circuit_breaker_checkpoint.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
@@ -186,7 +186,7 @@ poincare_bench_src = $(addprefix poincare/src/,\
 )
 
 poincare_bench_src = $(addprefix poincare/src/old/,\
-  checkpoint_dummy.cpp \
+  pool_checkpoint_dummy.cpp \
   helpers.cpp \
   integer.cpp \
   preferences_no_storage.cpp \

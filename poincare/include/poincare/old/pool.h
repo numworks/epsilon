@@ -19,7 +19,7 @@ class PoolHandle;
 class Pool final {
   friend class PoolObject;
   friend class PoolHandle;
-  friend class Checkpoint;
+  friend class PoolCheckpoint;
 
  public:
   static OMG::GlobalBox<Pool> sharedPool

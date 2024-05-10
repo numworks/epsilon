@@ -11,8 +11,8 @@
 #endif
 #include <poincare/preferences.h>
 
-#include "checkpoint.h"
 #include "helpers.h"
+#include "pool_checkpoint.h"
 
 /* What's in a PoolObject, really?
  *  - a vtable pointer
@@ -72,7 +72,7 @@ class PoolObject {
    * WARNING: ref counters have a bugged behaviour in this case:
    *  OExpression a = Cosine::Builder();
    *  OExpression b;
-   *  Checkpoint() {
+   *  PoolCheckpoint() {
    *    ...
    *    b = a;
    *    ...
@@ -86,9 +86,9 @@ class PoolObject {
   void rename(uint16_t identifier, bool unregisterPreviousIdentifier,
               bool skipChildrenUpdate = false);
 
-  // Checkpoint
+  // PoolCheckpoint
   bool isAfterTopmostCheckpoint() const {
-    return this >= Checkpoint::TopmostEndOfPool();
+    return this >= PoolCheckpoint::TopmostEndOfPool();
   }
 
   // Hierarchy

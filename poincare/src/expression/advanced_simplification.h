@@ -149,13 +149,10 @@ class AdvancedSimplification {
                               int numberOfOperations);
 
   constexpr static Tree::Operation k_contractOperations[] = {
-      Logarithm::ContractLn,
-      AdvancedOperation::ContractAbs,
-      AdvancedOperation::ContractExp,
-      Trigonometry::ContractTrigonometric,
-      Parametric::ContractProductOfExp,
-      Parametric::ContractProduct,
-      AdvancedOperation::ContractMult,
+      Logarithm::ContractLn,          AdvancedOperation::ContractAbs,
+      AdvancedOperation::ContractExp, Trigonometry::ContractTrigonometric,
+      Parametric::ContractSum,        Parametric::ContractProductOfExp,
+      Parametric::ContractProduct,    AdvancedOperation::ContractMult,
   };
   constexpr static Tree::Operation k_expandOperations[] = {
       AdvancedOperation::ExpandAbs,   Logarithm::ExpandLn,

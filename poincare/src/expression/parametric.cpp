@@ -191,6 +191,56 @@ bool Parametric::ExpandProduct(Tree* expr) {
  *   Same with Sum(A, B, C, D) - Sum(A, B, F, G)
  */
 
+bool Parametric::ContractSum(Tree* expr) {
+  // Used to simplify simplified and projected permute and binomials.
+  /* Sum(u(k), k, a, b) - Sum(u(k), k, a, c)
+   * -> Sum(u(k), k, c+1, b) if b > c
+   * -> 0 if b = c (can be included in previous case and then will be reduced)
+   * -> - Sum(u(k), k, b+1, c) if b < c */
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(
+          KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KB, KF, KD))), expr,
+          &ctx)) {
+    ComplexSign sign =
+        ComplexSign::SignOfDifference(ctx.getNode(KC), ctx.getNode(KF));
+    Sign realSign = sign.realSign();
+    if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
+                          realSign.isStrictlyNegative())) {
+      Tree* result =
+          realSign.isZero() || realSign.isStrictlyPositive()
+              ? PatternMatching::CreateSimplify(KSum(KA, KAdd(KF, 1_e), KC, KD),
+                                                ctx)
+              : PatternMatching::CreateSimplify(
+                    KMult(KSum(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
+      expr->moveTreeOverTree(result);
+      return true;
+    }
+  }
+  /* Sum(u(k), k, a, c) - Sum(u(k), k, b, c)
+   * -> Sum(u(k), k, a, b-1) if a < b
+   * -> 0 if a = b (can be included in previous case and then will be reduced)
+   * -> - Sum(u(k), k, b, a-1) if a > b */
+  if (PatternMatching::Match(
+          KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KF, KC, KD))), expr,
+          &ctx)) {
+    ComplexSign sign =
+        ComplexSign::SignOfDifference(ctx.getNode(KB), ctx.getNode(KF));
+    Sign realSign = sign.realSign();
+    if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
+                          realSign.isStrictlyNegative())) {
+      Tree* result =
+          realSign.isZero() || realSign.isStrictlyNegative()
+              ? PatternMatching::CreateSimplify(
+                    KSum(KA, KB, KAdd(KF, -1_e), KD), ctx)
+              : PatternMatching::CreateSimplify(
+                    KMult(KSum(KE, KF, KAdd(KB, -1_e), KD), -1_e), ctx);
+      expr->moveTreeOverTree(result);
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Parametric::ContractProduct(Tree* expr) {
   // Used to simplify simplified and projected permute and binomials.
   /* Prod(u(k), k, a, b) / Prod(u(k), k, a, c)

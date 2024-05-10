@@ -340,6 +340,29 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(cos(k),k,2,4)", "cos(2)×cos(3)×cos(4)");
   simplifies_to("product(sin(k),k,a,a)", "sin(a)");
 
+  // contract sum
+  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a,b)", "0");
+  simplifies_to("sum(sin(k),k,a,b+n)-sum(sin(u),u,a,b)",
+                "sum(sin(k),k,a,b+n)-sum(sin(u),u,a,b)");
+  simplifies_to("sum(sin(k),k,a,b+10)-sum(sin(u),u,a,b)",
+                "sum(sin(k),k,b+1,b+10)");
+  simplifies_to("sum(sin(k),k,a,100)-sum(sin(u),u,a,5)", "sum(sin(k),k,6,100)");
+  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a,b+n)",
+                "sum(sin(k),k,a,b)-sum(sin(u),u,a,b+n)");
+  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a,b+10)",
+                "- sum(sin(u),u,b+1,b+10)");
+  simplifies_to("sum(sin(k),k,a,5)-sum(sin(u),u,a,100)",
+                "- sum(sin(u),u,6,100)");
+  simplifies_to("sum(sin(k),k,a+10,b)-sum(sin(u),u,a,b)",
+                "- sum(sin(u),u,a,a+9)");
+  simplifies_to("sum(sin(k),k,100,b)-sum(sin(u),u,5,b)",
+                "- sum(sin(u),u,5,99)");
+  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a+n,b)",
+                "sum(sin(k),k,a,b)-sum(sin(u),u,a+n,b)");
+  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a+10,b)",
+                "sum(sin(k),k,a,a+9)");
+  simplifies_to("sum(sin(k),k,5,b)-sum(sin(u),u,100,b)", "sum(sin(k),k,5,99)");
+
   // contract product
   simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b)", "1");
   simplifies_to("product(sin(k),k,a,b+n) / product(sin(u),u,a,b)",

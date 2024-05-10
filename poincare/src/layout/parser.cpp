@@ -1,7 +1,7 @@
 #include "parser.h"
 
-#include <poincare/src/memory/exception_checkpoint.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "grid.h"
 #include "parsing/rack_parser.h"
@@ -65,7 +65,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
                               ParsingContext::ParsingMethod::CommaSeparatedList)
                        .parse();
       if (!list) {
-        ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
       return list;
     }
@@ -86,7 +86,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
           continue;
         }
         if (!Parse(grid->child(i), context)) {
-          ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
         actualNumberOfChildren++;
       }
@@ -103,7 +103,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
       int n = node->numberOfChildren();
       for (int i = 0; i < n; i++) {
         if (!Parse(node->child(i), context)) {
-          ExceptionCheckpoint::Raise(ExceptionType::ParseFail);
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
       }
       return ref;

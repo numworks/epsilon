@@ -270,7 +270,7 @@ poincare_src += $(addprefix poincare/src/,\
   layout/serialize.cpp \
   layout/xnt.cpp \
   memory/tree_stack.cpp \
-  memory/exception_checkpoint.cpp \
+  memory/tree_stack_checkpoint.cpp \
   memory/n_ary.cpp \
   memory/pattern_matching.cpp \
   memory/tree.cpp \

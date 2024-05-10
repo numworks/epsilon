@@ -1,7 +1,7 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/sign.h>
-#include <poincare/src/memory/exception_checkpoint.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <quiz.h>
 
 #include "helper.h"
@@ -331,7 +331,7 @@ static void assert_might_overflow(Action action, bool overflow) {
     if (type == ExceptionType::IntegerOverflow) {
       quiz_assert(overflow);
     } else {
-      ExceptionCheckpoint::Raise(type);
+      TreeStackCheckpoint::Raise(type);
     }
   }
   SharedTreeStack->flush();

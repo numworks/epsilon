@@ -1,5 +1,5 @@
-#ifndef POINCARE_MEMORY_EXCEPTION_CHECKPOINT_H
-#define POINCARE_MEMORY_EXCEPTION_CHECKPOINT_H
+#ifndef POINCARE_MEMORY_TREE_STACK_CHECKPOINT_H
+#define POINCARE_MEMORY_TREE_STACK_CHECKPOINT_H
 
 #include <assert.h>
 #include <setjmp.h>
@@ -13,21 +13,21 @@
 //   // Default computations.
 //   if (something_goes_wrong) {
 //     // Raising here will be handled in the following ExceptionCatch.
-//     ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
+//     TreeStackCheckpoint::Raise(ExceptionType::PoolIsFull);
 //   }
 // }
 // ExceptionCatch(type) {
 //   // Raising here will be handled by parent ExceptionCatch.
 //   if (type != ExceptionType::PoolIsFull) {
 //     // Unhandled exceptions should be raised to parent.
-//     ExceptionCheckpoint::Raise(type);
+//     TreeStackCheckpoint::Raise(type);
 //   }
 //   // Handle exceptions.
 // }
 
 #define ExceptionTryAfterBlock(rightmostBlock)      \
   {                                                 \
-    ExceptionCheckpoint checkpoint(rightmostBlock); \
+    TreeStackCheckpoint checkpoint(rightmostBlock); \
     checkpoint.setActive();                         \
     if (setjmp(*(checkpoint.jumpBuffer())) == 0)
 
@@ -35,7 +35,7 @@
 
 #define ExceptionCatch(typeVarName)                                   \
   }                                                                   \
-  ExceptionType typeVarName = ExceptionCheckpoint::GetTypeAndClear(); \
+  ExceptionType typeVarName = TreeStackCheckpoint::GetTypeAndClear(); \
   if (typeVarName != ExceptionType::None)
 
 namespace Poincare::Internal {
@@ -52,27 +52,27 @@ enum class ExceptionType : int {
   Other,      // Used internally for Unit tests.
 };
 
-class ExceptionCheckpoint final {
+class TreeStackCheckpoint final {
  public:
   static void Raise(ExceptionType type) __attribute__((__noreturn__));
   static ExceptionType GetTypeAndClear();
 
-  ExceptionCheckpoint(Block* rightmostBlock);
-  ~ExceptionCheckpoint();
+  TreeStackCheckpoint(Block* rightmostBlock);
+  ~TreeStackCheckpoint();
 
-  void setActive() { s_topmostExceptionCheckpoint = this; }
+  void setActive() { s_topmostTreeStackCheckpoint = this; }
   jmp_buf* jumpBuffer() { return &m_jumpBuffer; }
 
  private:
   void rollback();
 
-  static ExceptionCheckpoint* s_topmostExceptionCheckpoint;
+  static TreeStackCheckpoint* s_topmostTreeStackCheckpoint;
   static ExceptionType s_exceptionType;
 
   jmp_buf m_jumpBuffer;
-  ExceptionCheckpoint* m_parent;
+  TreeStackCheckpoint* m_parent;
   /* TODO: Assert no operation are performed on the Edition pool on blocks below
-   * s_topmostExceptionCheckpoint->m_rightmostBlock. */
+   * s_topmostTreeStackCheckpoint->m_rightmostBlock. */
   Block* m_rightmostBlock;
 };
 

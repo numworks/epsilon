@@ -6,7 +6,7 @@
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layoutter.h>
 #include <poincare/src/layout/serialize.h>
-#include <poincare/src/memory/exception_checkpoint.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/src/old/parsing/parser.h>
 #include <poincare/test/helper.h>
 
@@ -65,7 +65,7 @@ void quiz_assert_log_if_failure(bool test, PoolHandle tree) {
     tree.log();
 #endif
 #else
-    ExceptionCheckpoint::Raise(ExceptionType::Other);
+    TreeStackCheckpoint::Raise(ExceptionType::Other);
 #endif
   }
   quiz_assert(test);

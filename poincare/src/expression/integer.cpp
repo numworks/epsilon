@@ -2,7 +2,7 @@
 
 #include <omg/arithmetic.h>
 #include <omg/print.h>
-#include <poincare/src/memory/exception_checkpoint.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/src/memory/value_block.h>
 
 #include <algorithm>
@@ -27,7 +27,7 @@ uint8_t* WorkingBuffer::allocate(size_t size) {
    * Integer with k_maxNumberOfDigits. */
   assert(size <= IntegerHandler::k_maxNumberOfDigits + sizeof(native_uint_t));
   if (size > m_remainingSize) {
-    ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
+    TreeStackCheckpoint::Raise(ExceptionType::PoolIsFull);
   }
   uint8_t* allocatedMemory = m_start;
   m_start += size;
@@ -388,7 +388,7 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler& a,
       sum.setDigit<native_uint_t>(result, i);
     } else {
       if (result != 0) {
-        ExceptionCheckpoint::Raise(ExceptionType::IntegerOverflow);
+        TreeStackCheckpoint::Raise(ExceptionType::IntegerOverflow);
       }
     }
     if (subtract) {
@@ -441,7 +441,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler& a,
         mult.setDigit<native_uint_t>(l[0], i + j);
       } else {
         if (l[0] != 0) {
-          ExceptionCheckpoint::Raise(ExceptionType::IntegerOverflow);
+          TreeStackCheckpoint::Raise(ExceptionType::IntegerOverflow);
         }
       }
       carry = l[1];
@@ -455,7 +455,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler& a,
                                    i + b.numberOfDigits<native_uint_t>());
     } else {
       if (carry != 0) {
-        ExceptionCheckpoint::Raise(ExceptionType::IntegerOverflow);
+        TreeStackCheckpoint::Raise(ExceptionType::IntegerOverflow);
       }
     }
   }

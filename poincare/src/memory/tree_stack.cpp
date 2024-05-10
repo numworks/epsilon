@@ -6,8 +6,8 @@
 
 #include <algorithm>
 
-#include "exception_checkpoint.h"
 #include "node_constructor.h"
+#include "tree_stack_checkpoint.h"
 
 #if POINCARE_POOL_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
@@ -111,7 +111,7 @@ bool TreeStack::insertBlocks(Block* destination, const Block* source,
     return true;
   }
   if (m_size + numberOfBlocks > k_maxNumberOfBlocks) {
-    ExceptionCheckpoint::Raise(ExceptionType::PoolIsFull);
+    TreeStackCheckpoint::Raise(ExceptionType::PoolIsFull);
   }
   size_t insertionSize = numberOfBlocks * sizeof(Block);
   if (at && destination == lastBlock()) {
@@ -291,7 +291,7 @@ void TreeStack::execute(ActionWithContext action, void* context,
       assert(numberOfTrees() <= treesNumber + 1);
       // Ensure the result tree doesn't exceeds the expected size.
       if (size() - previousSize > maxSize) {
-        ExceptionCheckpoint::Raise(ExceptionType::RelaxContext);
+        TreeStackCheckpoint::Raise(ExceptionType::RelaxContext);
       }
       return;
     }
@@ -305,7 +305,7 @@ void TreeStack::execute(ActionWithContext action, void* context,
             continue;
           }
         default:
-          ExceptionCheckpoint::Raise(type);
+          TreeStackCheckpoint::Raise(type);
       }
     }
   }

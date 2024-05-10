@@ -111,7 +111,7 @@ bool TreeStack::insertBlocks(Block* destination, const Block* source,
     return true;
   }
   if (m_size + numberOfBlocks > k_maxNumberOfBlocks) {
-    TreeStackCheckpoint::Raise(ExceptionType::PoolIsFull);
+    TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
   }
   size_t insertionSize = numberOfBlocks * sizeof(Block);
   if (at && destination == lastBlock()) {
@@ -298,7 +298,7 @@ void TreeStack::execute(ActionWithContext action, void* context,
     ExceptionCatch(type) {
       assert(numberOfTrees() == treesNumber);
       switch (type) {
-        case ExceptionType::PoolIsFull:
+        case ExceptionType::TreeStackOverflow:
         case ExceptionType::IntegerOverflow:
         case ExceptionType::RelaxContext:
           if (relax(context)) {

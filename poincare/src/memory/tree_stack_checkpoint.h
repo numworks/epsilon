@@ -13,12 +13,12 @@
 //   // Default computations.
 //   if (something_goes_wrong) {
 //     // Raising here will be handled in the following ExceptionCatch.
-//     TreeStackCheckpoint::Raise(ExceptionType::PoolIsFull);
+//     TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
 //   }
 // }
 // ExceptionCatch(type) {
 //   // Raising here will be handled by parent ExceptionCatch.
-//   if (type != ExceptionType::PoolIsFull) {
+//   if (type != ExceptionType::TreeStackOverflow) {
 //     // Unhandled exceptions should be raised to parent.
 //     TreeStackCheckpoint::Raise(type);
 //   }
@@ -44,7 +44,7 @@ namespace Poincare::Internal {
 enum class ExceptionType : int {
   None = 0,
   // Memory exceptions
-  PoolIsFull,
+  TreeStackOverflow,
   IntegerOverflow,
   RelaxContext,
   // Misc

@@ -27,7 +27,7 @@ uint8_t* WorkingBuffer::allocate(size_t size) {
    * Integer with k_maxNumberOfDigits. */
   assert(size <= IntegerHandler::k_maxNumberOfDigits + sizeof(native_uint_t));
   if (size > m_remainingSize) {
-    TreeStackCheckpoint::Raise(ExceptionType::PoolIsFull);
+    TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
   }
   uint8_t* allocatedMemory = m_start;
   m_start += size;

@@ -1012,9 +1012,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     TreeRef& leftHandSide, const char* name, size_t length,
     Token::Type stoppingType, Poincare::Context::SymbolAbstractType idType,
     bool parseApostropheAsDerivative) {
-#if 0
   int derivativeOrder = 0;
-#endif
   if (parseApostropheAsDerivative) {
 #if 0
     // Case 1: parse f'''(x)
@@ -1039,11 +1037,9 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   // If the identifier is not followed by parentheses, it is a symbol
   TreeRef parameter = tryParseFunctionParameters();
   if (!parameter) {
-#if 0
     if (derivativeOrder > 0) {
       return false;
     }
-#endif
     leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
     return true;
   }
@@ -1054,10 +1050,10 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   int numberOfParameters = parameter->numberOfChildren();
   TreeRef result;
   if (numberOfParameters == 2) {
-#if 0
     if (derivativeOrder > 0) {
       return false;
     }
+#if 0
     /* If you change how list accesses are parsed, change it also in parseList
      * or factorize it. */
     result = ListSlice::Builder(parameter->child(0), parameter->child(1),
@@ -1072,30 +1068,28 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
       // Function and variable must have distinct names.
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     } else if (idType == Poincare::Context::SymbolAbstractType::List) {
-#if 0
       if (derivativeOrder > 0) {
         return false;
       }
+#if 0
       result = ListElement::Builder(parameter, Symbol::Builder(name, length));
 #else
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
 #endif
     } else {
-#if 0
       if (derivativeOrder > 0) {
+#if 0
         TreeRef derivand =
             Function::Builder(name, length, Symbol::SystemSymbol());
         result =
             Derivative::Builder(derivand, Symbol::SystemSymbol(), parameter,
                                 BasedInteger::Builder(derivativeOrder));
+#endif
       } else {
-#endif
-      result = SharedTreeStack->push<Type::UserFunction>(name, length + 1);
-      parameter->moveNodeBeforeNode(result);
-      assert(result->child(0) == parameter);
-#if 0
+        result = SharedTreeStack->push<Type::UserFunction>(name, length + 1);
+        parameter->moveNodeBeforeNode(result);
+        assert(result->child(0) == parameter);
       }
-#endif
     }
   } else {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

@@ -3,7 +3,7 @@
 
 #include <assert.h>
 #include <poincare/old/context.h>
-#include <poincare/old/range.h>
+#include <poincare/range.h>
 
 #include "function_store.h"
 

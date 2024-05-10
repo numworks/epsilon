@@ -2,9 +2,9 @@
 #define POINCARE_ZOOM_H
 
 #include <ion/display.h>
+#include <poincare/range.h>
 
 #include "piecewise_operator.h"
-#include "range.h"
 #include "solver.h"
 
 /* The unit tests need to be able to read the working values of

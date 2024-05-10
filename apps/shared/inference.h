@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
+#include <poincare/range.h>
 
 #include "memoized_curve_view_range.h"
 

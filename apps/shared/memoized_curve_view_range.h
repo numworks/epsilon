@@ -1,7 +1,7 @@
 #ifndef SHARED_MEMOIZED_CURVE_VIEW_RANGE_H
 #define SHARED_MEMOIZED_CURVE_VIEW_RANGE_H
 
-#include <poincare/old/range.h>
+#include <poincare/range.h>
 
 #include "curve_view_range.h"
 

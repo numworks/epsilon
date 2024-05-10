@@ -1,5 +1,5 @@
 #include <poincare/old/helpers.h>
-#include <poincare/old/range.h>
+#include <poincare/range.h>
 
 #include "helper.h"
 

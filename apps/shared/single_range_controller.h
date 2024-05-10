@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/switch_view.h>
-#include <poincare/old/range.h>
+#include <poincare/range.h>
 
 #include "float_parameter_controller.h"
 #include "pop_up_controller.h"

@@ -5,7 +5,7 @@
 #include <escher/palette.h>
 #include <kandinsky/color.h>
 #include <poincare/old/float_list.h>
-#include <poincare/old/range.h>
+#include <poincare/range.h>
 #include <stdint.h>
 
 #include <algorithm>

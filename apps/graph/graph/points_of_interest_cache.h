@@ -3,7 +3,6 @@
 
 #include <ion/storage/record.h>
 #include <poincare/old/point_of_interest.h>
-#include <poincare/old/range.h>
 
 namespace Graph {
 

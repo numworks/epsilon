@@ -2,10 +2,10 @@
 #define POINCARE_NUMERIC_ZOOM_H
 
 #include <ion/display.h>
+#include <poincare/range.h>
 #include <poincare/src/expression/context.h>
 #include <poincare/src/memory/tree.h>
 
-#include "range.h"
 #include "solver.h"
 
 /* The unit tests need to be able to read the working values of

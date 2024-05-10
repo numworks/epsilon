@@ -12,7 +12,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   circuit_breaker_checkpoint.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
-  range.cpp \
   statistics_dataset.cpp\
   xnt_helpers.cpp \
 )
@@ -281,12 +280,12 @@ poincare_src += $(addprefix poincare/src/,\
   print.cpp \
   print_float.cpp \
   print_int.cpp \
+  range.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/numeric/,\
   beta_function.cpp \
   erf_inv.cpp \
-  range.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
   solver.cpp \
@@ -341,6 +340,7 @@ tests_src += $(addprefix poincare/test/,\
   print.cpp \
   print_float.cpp \
   print_int.cpp \
+  range.cpp \
   rational.cpp \
   regularized_function.cpp \
   set.cpp \

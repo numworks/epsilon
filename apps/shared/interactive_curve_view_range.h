@@ -3,11 +3,13 @@
 
 #include <float.h>
 #include <ion/display.h>
+#include <poincare/range.h>
 #include <stdint.h>
 
 #include "grid_type_controller.h"
 #include "interactive_curve_view_range_delegate.h"
 #include "memoized_curve_view_range.h"
+
 namespace Shared {
 
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {

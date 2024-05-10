@@ -309,6 +309,8 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(π^k,k,4,2)", "0");
   simplifies_to("sum(sin(k),k,a+10,a)", "0");
   simplifies_to("sum(sin(k),k,a,a-10)", "0");
+  simplifies_to("sum(random()*k,k,0,n)", "sum(k×random(),k,0,n)");
+  simplifies_to("sum(random(),k,0,10)", "sum(random(),k,0,10)");
 
   // product
   simplifies_to("product(p,k,m,n)", "p^(-m+n+1)");
@@ -319,6 +321,8 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(π^k,k,2,1)", "1");
   simplifies_to("product(sin(k),k,a+10,a)", "1");
   simplifies_to("product(sin(k),k,a,a-10)", "1");
+  simplifies_to("product(random()*k,k,0,n)", "product(k×random(),k,0,n)");
+  simplifies_to("product(random(),k,0,10)", "product(random(),k,0,10)");
 
   // product(exp) <-> exp(sum)
   simplifies_to("exp(2*sum(ln(k),k,a,b) + ln(b))",

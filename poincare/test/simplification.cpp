@@ -309,9 +309,6 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(π^k,k,4,2)", "0");
   simplifies_to("sum(sin(k),k,a+10,a)", "0");
   simplifies_to("sum(sin(k),k,a,a-10)", "0");
-  simplifies_to("sum(x*k!,k,1,2)", "3*x");
-  simplifies_to("sum(sin(k),k,a,a)", "sin(a)");
-  // TODO_PCJ: "sum(tan(k),k,a,a)" raises an assert
 
   // product
   simplifies_to("product(p,k,m,n)", "p^(-m+n+1)");
@@ -322,8 +319,6 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(π^k,k,2,1)", "1");
   simplifies_to("product(sin(k),k,a+10,a)", "1");
   simplifies_to("product(sin(k),k,a,a-10)", "1");
-  simplifies_to("product(cos(k),k,2,4)", "cos(2)×cos(3)×cos(4)");
-  simplifies_to("product(sin(k),k,a,a)", "sin(a)");
 
   // product(exp) <-> exp(sum)
   simplifies_to("exp(2*sum(ln(k),k,a,b) + ln(b))",
@@ -332,9 +327,14 @@ QUIZ_CASE(pcj_simplification_parametric) {
 
   // expand sum
   simplifies_to("sum(k^3+4,k,n,n+3)-16", "sum(k^3,k,n,n+3)");
+  simplifies_to("sum(x*k!,k,1,2)", "3*x");
+  simplifies_to("sum(sin(k),k,a,a)", "sin(a)");
+  // TODO_PCJ: "sum(tan(k),k,a,a)" raises an assert
 
   // expand product
   simplifies_to("product(4*cos(k),k,n,n+3)/256", "product(cos(k),k,n,n+3)");
+  simplifies_to("product(cos(k),k,2,4)", "cos(2)×cos(3)×cos(4)");
+  simplifies_to("product(sin(k),k,a,a)", "sin(a)");
 
   // contract product
   simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b)", "1");

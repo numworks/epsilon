@@ -58,10 +58,9 @@ bool PoissonDistribution::LambdaIsOK(T lambda) {
   return Domain::Contains(lambda, Domain::Type::RPlusStar);
 }
 
-bool PoissonDistribution::ExpressionLambdaIsOK(bool* result, const Tree* lambda,
-                                               Context* context) {
-  return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlusStar,
-                                context);
+bool PoissonDistribution::ExpressionLambdaIsOK(bool* result,
+                                               const Tree* lambda) {
+  return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlusStar);
 }
 
 template float PoissonDistribution::EvaluateAtAbscissa<float>(float, float);

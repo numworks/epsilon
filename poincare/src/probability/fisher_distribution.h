@@ -57,11 +57,10 @@ class FisherDistribution final : public ContinuousDistribution {
   }
 
   static bool ExpressionD1AndD2AreOK(bool* result, const Tree* d1,
-                                     const Tree* d2, Context* context);
-  bool expressionParametersAreOK(bool* result, const Tree** parameters,
-                                 Context* context) const override {
-    return ExpressionD1AndD2AreOK(result, parameters[0], parameters[1],
-                                  context);
+                                     const Tree* d2);
+  bool expressionParametersAreOK(bool* result,
+                                 const Tree** parameters) const override {
+    return ExpressionD1AndD2AreOK(result, parameters[0], parameters[1]);
   }
 
  private:

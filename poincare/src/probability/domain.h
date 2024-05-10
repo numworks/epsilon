@@ -10,8 +10,6 @@
 
 namespace Poincare::Internal {
 
-class Context;
-
 class Domain {
  public:
   enum Type : uint16_t {
@@ -66,13 +64,12 @@ class Domain {
     return true;
   }
 
-  static OMG::Troolean ExpressionIsIn(const Tree* expression, Type domain,
-                                      Context* context);
+  static OMG::Troolean ExpressionIsIn(const Tree* expression, Type domain);
 
-  static bool ExpressionIsIn(bool* result, const Tree* expression, Type domain,
-                             Context* context) {
+  static bool ExpressionIsIn(bool* result, const Tree* expression,
+                             Type domain) {
     assert(result != nullptr);
-    OMG::Troolean expressionsIsIn = ExpressionIsIn(expression, domain, context);
+    OMG::Troolean expressionsIsIn = ExpressionIsIn(expression, domain);
     switch (expressionsIsIn) {
       case OMG::Troolean::Unknown:
         return false;
@@ -88,11 +85,11 @@ class Domain {
 
   static bool ExpressionsAreIn(bool* result, const Tree* expression1,
                                Type domain1, const Tree* expression2,
-                               Type domain2, Context* context) {
+                               Type domain2) {
     assert(result != nullptr);
     OMG::Troolean expressionsAreIn =
-        TrinaryAnd(ExpressionIsIn(expression1, domain1, context),
-                   ExpressionIsIn(expression2, domain2, context));
+        TrinaryAnd(ExpressionIsIn(expression1, domain1),
+                   ExpressionIsIn(expression2, domain2));
     switch (expressionsAreIn) {
       case OMG::Troolean::Unknown:
         return false;

@@ -810,8 +810,8 @@ bool Simplification::SimplifyDistribution(Tree* expr) {
   const DistributionMethod* method = DistributionMethod::Get(methodType);
   const Distribution* distribution = Distribution::Get(distributionType);
   bool parametersAreOk;
-  bool couldCheckParameters = distribution->expressionParametersAreOK(
-      &parametersAreOk, parameters, nullptr);
+  bool couldCheckParameters =
+      distribution->expressionParametersAreOK(&parametersAreOk, parameters);
   if (!couldCheckParameters) {
     return false;
   }

@@ -52,10 +52,10 @@ class Chi2Distribution final : public ContinuousDistribution {
     return KIsOK(parameters[0]);
   }
 
-  static bool ExpressionKIsOK(bool* result, const Tree* k, Context* context);
-  bool expressionParametersAreOK(bool* result, const Tree** parameters,
-                                 Context* context) const override {
-    return ExpressionKIsOK(result, parameters[0], context);
+  static bool ExpressionKIsOK(bool* result, const Tree* k);
+  bool expressionParametersAreOK(bool* result,
+                                 const Tree** parameters) const override {
+    return ExpressionKIsOK(result, parameters[0]);
   }
 
  private:

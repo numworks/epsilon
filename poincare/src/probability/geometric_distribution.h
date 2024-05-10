@@ -44,10 +44,10 @@ class GeometricDistribution final : public DiscreteDistribution {
     return PIsOK(parameters[0]);
   }
 
-  static bool ExpressionPIsOK(bool* result, const Tree* p, Context* context);
-  bool expressionParametersAreOK(bool* result, const Tree** parameters,
-                                 Context* context) const override {
-    return ExpressionPIsOK(result, parameters[0], context);
+  static bool ExpressionPIsOK(bool* result, const Tree* p);
+  bool expressionParametersAreOK(bool* result,
+                                 const Tree** parameters) const override {
+    return ExpressionPIsOK(result, parameters[0]);
   }
 
  private:

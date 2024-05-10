@@ -74,9 +74,8 @@ bool Chi2Distribution::KIsOK(T k) {
   return Domain::Contains(k, Domain::Type::NStar);
 }
 
-bool Chi2Distribution::ExpressionKIsOK(bool* result, const Tree* k,
-                                       Context* context) {
-  return Domain::ExpressionIsIn(result, k, Domain::Type::NStar, context);
+bool Chi2Distribution::ExpressionKIsOK(bool* result, const Tree* k) {
+  return Domain::ExpressionIsIn(result, k, Domain::Type::NStar);
 }
 
 // Specialisations

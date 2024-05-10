@@ -61,11 +61,10 @@ class NormalDistribution final : public ContinuousDistribution {
   }
 
   static bool ExpressionMuAndSigmaAreOK(bool* result, const Tree* mu,
-                                        const Tree* sigma, Context* context);
-  bool expressionParametersAreOK(bool* result, const Tree** parameters,
-                                 Context* context) const override {
-    return ExpressionMuAndSigmaAreOK(result, parameters[0], parameters[1],
-                                     context);
+                                        const Tree* sigma);
+  bool expressionParametersAreOK(bool* result,
+                                 const Tree** parameters) const override {
+    return ExpressionMuAndSigmaAreOK(result, parameters[0], parameters[1]);
   }
 
   double evaluateParameterForProbabilityAndBound(

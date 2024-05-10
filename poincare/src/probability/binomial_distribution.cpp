@@ -110,10 +110,9 @@ bool BinomialDistribution::ParametersAreOK(T n, T p) {
 
 bool BinomialDistribution::expressionParametersAreOK(bool* result,
                                                      const Tree* n,
-                                                     const Tree* p,
-                                                     Context* context) {
+                                                     const Tree* p) {
   return Domain::ExpressionsAreIn(result, n, Domain::Type::N, p,
-                                  Domain::Type::ZeroToOne, context);
+                                  Domain::Type::ZeroToOne);
 }
 
 template float BinomialDistribution::EvaluateAtAbscissa<float>(float, float,

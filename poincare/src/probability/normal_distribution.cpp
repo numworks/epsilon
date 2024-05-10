@@ -54,10 +54,9 @@ bool NormalDistribution::MuAndSigmaAreOK(T mu, T sigma) {
 }
 
 bool NormalDistribution::ExpressionMuAndSigmaAreOK(bool* result, const Tree* mu,
-                                                   const Tree* sigma,
-                                                   Context* context) {
+                                                   const Tree* sigma) {
   return Domain::ExpressionsAreIn(result, mu, Domain::Type::R, sigma,
-                                  Domain::Type::RPlusStar, context);
+                                  Domain::Type::RPlusStar);
 }
 
 template <typename T>

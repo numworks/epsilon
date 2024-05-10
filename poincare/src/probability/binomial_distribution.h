@@ -58,11 +58,10 @@ class BinomialDistribution final : public DiscreteDistribution {
   }
 
   static bool expressionParametersAreOK(bool* result, const Tree* n,
-                                        const Tree* p, Context* context);
-  bool expressionParametersAreOK(bool* result, const Tree** parameters,
-                                 Context* context) const override {
-    return expressionParametersAreOK(result, parameters[0], parameters[1],
-                                     context);
+                                        const Tree* p);
+  bool expressionParametersAreOK(bool* result,
+                                 const Tree** parameters) const override {
+    return expressionParametersAreOK(result, parameters[0], parameters[1]);
   }
 
  private:

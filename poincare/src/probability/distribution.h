@@ -6,8 +6,6 @@
 
 namespace Poincare::Internal {
 
-class Context;
-
 class Distribution {
  public:
   enum class Type : uint8_t {
@@ -87,8 +85,8 @@ class Distribution {
 
   /* expressionParametersAreOK returns true if the expression could be verified.
    * The result of the verification is *result. */
-  virtual bool expressionParametersAreOK(bool* result, const Tree** parameters,
-                                         Context* context) const = 0;
+  virtual bool expressionParametersAreOK(bool* result,
+                                         const Tree** parameters) const = 0;
 
   virtual double evaluateParameterForProbabilityAndBound(
       int parameterIndex, const double* parameters, double probability,

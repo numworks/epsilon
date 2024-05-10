@@ -58,10 +58,9 @@ bool FisherDistribution::D1AndD2AreOK(T d1, T d2) {
 }
 
 bool FisherDistribution::ExpressionD1AndD2AreOK(bool* result, const Tree* d1,
-                                                const Tree* d2,
-                                                Context* context) {
+                                                const Tree* d2) {
   return Domain::ExpressionsAreIn(result, d1, Domain::Type::RPlusStar, d2,
-                                  Domain::Type::RPlusStar, context);
+                                  Domain::Type::RPlusStar);
 }
 
 template float FisherDistribution::EvaluateAtAbscissa<float>(float, float,

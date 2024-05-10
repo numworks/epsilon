@@ -89,19 +89,16 @@ bool HypergeometricDistribution::nIsOK(T n) {
   return Domain::Contains(n, Domain::Type::N);  // && n <= N
 }
 
-bool HypergeometricDistribution::ExpressionNIsOK(bool* result, const Tree* N,
-                                                 Context* context) {
-  return Domain::ExpressionIsIn(result, N, Domain::Type::N, context);
+bool HypergeometricDistribution::ExpressionNIsOK(bool* result, const Tree* N) {
+  return Domain::ExpressionIsIn(result, N, Domain::Type::N);
 }
 
-bool HypergeometricDistribution::ExpressionKIsOK(bool* result, const Tree* K,
-                                                 Context* context) {
-  return Domain::ExpressionIsIn(result, K, Domain::Type::N, context);
+bool HypergeometricDistribution::ExpressionKIsOK(bool* result, const Tree* K) {
+  return Domain::ExpressionIsIn(result, K, Domain::Type::N);
 }
 
-bool HypergeometricDistribution::ExpressionnIsOK(bool* result, const Tree* n,
-                                                 Context* context) {
-  return Domain::ExpressionIsIn(result, n, Domain::Type::N, context);
+bool HypergeometricDistribution::ExpressionnIsOK(bool* result, const Tree* n) {
+  return Domain::ExpressionIsIn(result, n, Domain::Type::N);
 }
 
 template float HypergeometricDistribution::EvaluateAtAbscissa<float>(float,

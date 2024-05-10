@@ -44,14 +44,14 @@ class HypergeometricDistribution final : public DiscreteDistribution {
     return NIsOK(parameters[0]) && KIsOK(parameters[1]) && nIsOK(parameters[2]);
   }
 
-  static bool ExpressionNIsOK(bool* result, const Tree* N, Context* context);
-  static bool ExpressionKIsOK(bool* result, const Tree* K, Context* context);
-  static bool ExpressionnIsOK(bool* result, const Tree* n, Context* context);
-  bool expressionParametersAreOK(bool* result, const Tree** parameters,
-                                 Context* context) const override {
-    return ExpressionNIsOK(result, parameters[0], context) ||
-           ExpressionKIsOK(result, parameters[1], context) ||
-           ExpressionnIsOK(result, parameters[2], context);
+  static bool ExpressionNIsOK(bool* result, const Tree* N);
+  static bool ExpressionKIsOK(bool* result, const Tree* K);
+  static bool ExpressionnIsOK(bool* result, const Tree* n);
+  bool expressionParametersAreOK(bool* result,
+                                 const Tree** parameters) const override {
+    return ExpressionNIsOK(result, parameters[0]) ||
+           ExpressionKIsOK(result, parameters[1]) ||
+           ExpressionnIsOK(result, parameters[2]);
   }
 
  private:

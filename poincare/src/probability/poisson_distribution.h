@@ -41,11 +41,10 @@ class PoissonDistribution final : public DiscreteDistribution {
     return LambdaIsOK(parameters[0]);
   }
 
-  static bool ExpressionLambdaIsOK(bool* result, const Tree* lambda,
-                                   Context* context);
-  bool expressionParametersAreOK(bool* result, const Tree** parameters,
-                                 Context* context) const override {
-    return ExpressionLambdaIsOK(result, parameters[0], context);
+  static bool ExpressionLambdaIsOK(bool* result, const Tree* lambda);
+  bool expressionParametersAreOK(bool* result,
+                                 const Tree** parameters) const override {
+    return ExpressionLambdaIsOK(result, parameters[0]);
   }
 
  private:

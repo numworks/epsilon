@@ -1012,20 +1012,20 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     TreeRef& leftHandSide, const char* name, size_t length,
     Token::Type stoppingType, Poincare::Context::SymbolAbstractType idType,
     bool parseApostropheAsDerivative) {
-  int derivativeOrder = 0;
+  int derivationOrder = 0;
   if (parseApostropheAsDerivative) {
 #if 0
     // Case 1: parse f'''(x)
     while (m_nextToken.length() == 1 &&
            (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
       popToken();
-      derivativeOrder += m_currentToken.text()[0] == '\'' ? 1 : 2;
+      derivationOrder += m_currentToken.text()[0] == '\'' ? 1 : 2;
     }
     // Case 2: parse f^(3)(x)
-    if (derivativeOrder == 0) {
+    if (derivationOrder == 0) {
       TreeRef base =
-          parseIntegerCaretForFunction(true, &derivativeOrder);
-      if (base.isUninitialized() || derivativeOrder < 0) {
+          parseIntegerCaretForFunction(true, &derivationOrder);
+      if (base.isUninitialized() || derivationOrder < 0) {
         return false;
       }
     }
@@ -1037,7 +1037,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   // If the identifier is not followed by parentheses, it is a symbol
   TreeRef parameter = tryParseFunctionParameters();
   if (!parameter) {
-    if (derivativeOrder > 0) {
+    if (derivationOrder > 0) {
       return false;
     }
     leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
@@ -1050,7 +1050,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   int numberOfParameters = parameter->numberOfChildren();
   TreeRef result;
   if (numberOfParameters == 2) {
-    if (derivativeOrder > 0) {
+    if (derivationOrder > 0) {
       return false;
     }
 #if 0
@@ -1068,7 +1068,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
       // Function and variable must have distinct names.
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     } else if (idType == Poincare::Context::SymbolAbstractType::List) {
-      if (derivativeOrder > 0) {
+      if (derivationOrder > 0) {
         return false;
       }
 #if 0
@@ -1077,13 +1077,13 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
 #endif
     } else {
-      if (derivativeOrder > 0) {
+      if (derivationOrder > 0) {
 #if 0
         TreeRef derivand =
             Function::Builder(name, length, Symbol::SystemSymbol());
         result =
             Derivative::Builder(derivand, Symbol::SystemSymbol(), parameter,
-                                BasedInteger::Builder(derivativeOrder));
+                                BasedInteger::Builder(derivationOrder));
 #endif
       } else {
         result = SharedTreeStack->push<Type::UserFunction>(name, length + 1);

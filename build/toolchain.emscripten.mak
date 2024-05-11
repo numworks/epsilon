@@ -26,7 +26,7 @@ EMFLAGS += -Wno-unused-command-line-argument
 
 # Configure LDFLAGS
 EMSCRIPTEN_MODULARIZE ?= 1
-LDFLAGS += -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) -s 'EXPORT_NAME="Epsilon"' --memory-init-file 0
+LDFLAGS += -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) -s 'EXPORT_NAME="Epsilon"'
 
 SFLAGS += $(EMFLAGS)
 LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_RUNTIME_METHODS='["UTF8ToString"]' -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel", "_IonDisplayForceRefresh"]'

@@ -601,7 +601,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       const Tree* values = node->child(0);
       const Tree* index = node->child(1);
       int i = Integer::Handler(index).to<uint8_t>() - 1;
-      if (i < 0 || i > Dimension::GetListLength(values) - 1) {
+      if (i < 0 || i >= Dimension::GetListLength(values)) {
         return NAN;
       }
       int old = s_context->m_listElement;

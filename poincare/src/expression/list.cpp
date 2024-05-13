@@ -195,12 +195,12 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return true;
     }
     case Type::ListElement: {
-      int i = Integer::Handler(e->child(1)).to<uint8_t>();
-      if (i < 1 || i > e->child(0)->numberOfChildren()) {
+      int i = Integer::Handler(e->child(1)).to<uint8_t>() - 1;
+      if (i < 0 || i >= e->child(0)->numberOfChildren()) {
         e->cloneTreeOverTree(KUndef);
         return true;
       }
-      if (!ProjectToNthElement(e->child(0), i - 1,
+      if (!ProjectToNthElement(e->child(0), i,
                                Simplification::ShallowSystematicReduce)) {
         return false;
       }

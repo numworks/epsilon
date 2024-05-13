@@ -227,6 +227,11 @@ class Unit {
   static bool CanParse(ForwardUnicodeDecoder* name,
                        const Representative** representative,
                        const Prefix** prefix);
+  static bool CanParse(LayoutSpan span, const Representative** representative,
+                       const Prefix** prefix) {
+    LayoutSpanDecoder decoder(span);
+    return CanParse(&decoder, representative, prefix);
+  }
   static void ChooseBestRepresentativeAndPrefixForValue(Tree* units,
                                                         double* value,
                                                         UnitFormat unitFormat);

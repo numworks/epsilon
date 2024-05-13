@@ -446,13 +446,12 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   if (Builtin::HasSpecialIdentifier(span)) {
     return Token::Type::SpecialIdentifier;
   }
-  LayoutSpanDecoder subString(span);
   Token::Type logicalOperatorType;
   if (ParsingHelper::IsLogicalOperator(span, &logicalOperatorType)) {
     return logicalOperatorType;
   }
   if (CodePointLayout::IsCodePoint(start, '_')) {
-    if (Units::Unit::CanParse(&subString, nullptr, nullptr)) {
+    if (Units::Unit::CanParse(span, nullptr, nullptr)) {
       return Token::Type::Unit;
     }
     // Only constants and units can be prefixed with a '_'
@@ -474,10 +473,9 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   }
   /* When parsing for unit conversion, the identifier "m" should always
    * be understood as the unit and not the variable. */
-  LayoutSpanDecoder subString2(span);
   if (m_parsingContext->parsingMethod() ==
           ParsingContext::ParsingMethod::UnitConversion &&
-      Units::Unit::CanParse(&subString2, nullptr, nullptr)) {
+      Units::Unit::CanParse(span, nullptr, nullptr)) {
     return Token::Type::Unit;
   }
 

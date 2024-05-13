@@ -112,10 +112,12 @@ int Dimension::GetListLength(const Tree* t) {
       // TODO: Handle undef Approximation.
       return Approximation::To<float>(t->child(1));
     case Type::ListSlice: {
+      assert(Integer::Is<uint8_t>(t->child(1)) &&
+             Integer::Is<uint8_t>(t->child(2)));
       int listLength = GetListLength(t->child(0));
-      int start = Approximation::To<float>(t->child(1));
+      int start = Integer::Handler(t->child(1)).to<uint8_t>();
       start = std::max(start, 1);
-      int end = Approximation::To<float>(t->child(2));
+      int end = Integer::Handler(t->child(2)).to<uint8_t>();
       end = std::min(end, listLength);
       // TODO: Handle undef Approximation.
       return std::max(end - start + 1, 0);
@@ -335,6 +337,9 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       return true;
     case Type::ListElement:
       return Integer::Is<uint8_t>(t->child(1));
+    case Type::ListSlice:
+      return Integer::Is<uint8_t>(t->child(1)) &&
+             Integer::Is<uint8_t>(t->child(2));
     case Type::Abs:
     case Type::Floor:
     case Type::Ceil:

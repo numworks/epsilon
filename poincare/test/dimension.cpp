@@ -14,6 +14,7 @@ bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0)) {
 
 bool len(const char* input, int n) {
   Tree* expression = TextToTree(input);
+  assert(Dimension::DeepCheckDimensions(expression));
   bool result = Dimension::GetListLength(expression) == n;
   expression->removeTree();
   return result;
@@ -77,9 +78,11 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(len("{}", 0));
   QUIZ_ASSERT(len("{True, False}", 2));
   QUIZ_ASSERT(len("{1,2,3,4}(1,3)", 3));
-  QUIZ_ASSERT(len("{1,2,3,4}(-2,5)", 4));
-  QUIZ_ASSERT(len("{1,2,3,4}(-2,-1)", 0));
+  QUIZ_ASSERT(len("{1,2,3,4}(0,5)", 4));
+  QUIZ_ASSERT(len("{1,2,3,4}(0,0)", 0));
   QUIZ_ASSERT(len("{1,2,3,4}(6,4)", 0));
+  QUIZ_ASSERT(!dim("{1,2,3,4}(-2,5)"));
+  QUIZ_ASSERT(!dim("{1,2,3,4}(-2,-1)"));
 
   QUIZ_ASSERT(dim("(2,3)", Point));
   QUIZ_ASSERT(dim("{(2,3)}", Point));

@@ -512,7 +512,8 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("min({})", "undef");
   simplifies_to("sequence(k,k,{1,2})", "undef");
   simplifies_to("{3,4}(2)", "4");
-  simplifies_to("{3,4}(1,3)", "{3,4}(1,3)");
+  simplifies_to("{3,4}(1,2)", "{3,4}");
+  simplifies_to("{3,4}(0,5)", "{3,4}");
   simplifies_to("0*{3,4}", "{0,0}");
   simplifies_to("{1,2}/{1,0}", "{1,undef}");
   simplifies_to("med(π*{undef,nonreal,x,3})", "undef");
@@ -523,6 +524,12 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{3,4}(1/3)", "undef");
   simplifies_to("{3,4}([[2]])", "undef");
   simplifies_to("{3,4}(true)", "undef");
+  simplifies_to("{3,4}(-1,0)", "undef");
+  simplifies_to("{3,4}(5,6)", "{}");
+  simplifies_to("{3,4}(2,1)", "{}");
+  simplifies_to("{3,4}(2,2/3)", "undef");
+  simplifies_to("{3,4}(2,true)", "undef");
+  simplifies_to("{3,4}(2,[[2]])", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_random) {
@@ -947,6 +954,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   store("{5,4,3,2,1}→l", &globalContext);
   simplifies_to("sum(l)", "15", projCtx);
   simplifies_to("l(2)", "4", projCtx);
+  simplifies_to("l(1,3)", "{5,4,3}", projCtx);
   // TODO: Properly parse list slices on variables
   // TODO_PCJ: implement list access and list slice on lists of points
 

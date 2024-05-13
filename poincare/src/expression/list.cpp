@@ -37,6 +37,16 @@ bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
     case Type::ListSort:
     case Type::Median:
       assert(false);  // Must have been removed by simplification
+    case Type::ListSlice: {
+      assert(Integer::Is<uint8_t>(expr->child(1)) &&
+             Integer::Is<uint8_t>(expr->child(2)));
+      int startIndex = Integer::Handler(expr->child(1)).to<uint8_t>() - 1;
+      if (ProjectToNthElement(expr->child(0), startIndex + n, reduction)) {
+        expr->moveTreeOverTree(expr->child(0));
+        return true;
+      }
+      return false;
+    }
     default:
       if (expr->type().isListToScalar()) {
         return false;
@@ -210,9 +220,24 @@ bool List::ShallowApplyListOperators(Tree* e) {
       e->moveTreeOverTree(e->child(0));
       return true;
     }
-    case Type::ListSlice:
-      // TODO_PCJ
-      return false;
+    case Type::ListSlice: {
+      int minIndex = 1;
+      int maxIndex = Dimension::GetListLength(e->child(0));
+      TreeRef startIndex = e->child(1);
+      TreeRef endIndex = e->child(2);
+      assert(Integer::Is<uint8_t>(startIndex) &&
+             Integer::Is<uint8_t>(endIndex));
+      bool changed = false;
+      if (Integer::Handler(startIndex).to<uint8_t>() < minIndex) {
+        startIndex->moveTreeOverTree(Integer::Push(minIndex));
+        changed = true;
+      }
+      if (Integer::Handler(endIndex).to<uint8_t>() > maxIndex) {
+        endIndex->moveTreeOverTree(Integer::Push(maxIndex));
+        changed = true;
+      }
+      return changed;
+    }
     case Type::Dim:
       e->moveTreeOverTree(Integer::Push(Dimension::GetListLength(e->child(0))));
       return true;

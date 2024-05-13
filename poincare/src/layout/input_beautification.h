@@ -78,7 +78,7 @@ class InputBeautification {
       // Comparison operators
       {"<=", 0,
        [](TreeRef* parameters) -> Tree* {
-         // TODO factorise the comparison operators once we have them in PCJ
+         // TODO factorize the comparison operators once we have them in PCJ
          return KCodePointL<u'≤'>()->clone();
        }},
       {">=", 0,

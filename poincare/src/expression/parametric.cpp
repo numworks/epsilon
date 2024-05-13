@@ -350,7 +350,7 @@ bool Parametric::Explicit(Tree* expr) {
 }
 
 bool Parametric::ExpandExpOfSum(Tree* expr) {
-  // TODO: factorise with AdvancedOperation::ExpandExp
+  // TODO: factorize with AdvancedOperation::ExpandExp
   // exp(a*sum(f(k),k,m,n)*b) = product(exp(a*f(k)*b),k,m,n)
   return PatternMatching::MatchReplaceSimplify(
       expr, KExp(KMult(KA_s, KSum(KB, KC, KD, KE), KF_s)),
@@ -358,7 +358,7 @@ bool Parametric::ExpandExpOfSum(Tree* expr) {
 }
 
 bool Parametric::ContractProductOfExp(Tree* expr) {
-  // TODO: factorise with AdvancedOperation::ContractExp
+  // TODO: factorize with AdvancedOperation::ContractExp
   // product(exp(f(k)),k,m,n) = exp(sum(f(k),k,m,n))
   return PatternMatching::MatchReplaceSimplify(
       expr, KProduct(KA, KB, KC, KExp(KD)), KExp(KSum(KA, KB, KC, KD)));

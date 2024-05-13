@@ -51,10 +51,9 @@ class ToolboxMessageMath : public ToolboxMessageTree {
       : ToolboxMessageTree(text), m_layout(layout){};
 
  private:
-  // text is stored in label since is layout hides label
+  // text is stored in label since its layout hides the label
   constexpr I18n::Message text() const override { return label(); }
   Poincare::Layout layout() const override { return m_layout; }
-  bool stripInsertedText() const override { return true; }
 
  private:
   const Poincare::Internal::Tree *m_layout;

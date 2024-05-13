@@ -338,7 +338,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   // expand product
   simplifies_to("product(4*cos(k),k,n,n+3)/256", "product(cos(k),k,n,n+3)");
   simplifies_to("product(cos(k),k,2,4)", "cos(2)×cos(3)×cos(4)");
-  simplifies_to("product(sin(k),k,a,a)", "sin(a)");
+  simplifies_to("product(sin(k),k,a+1,a+1)", "sin(a+1)");
 
   // contract sum
   simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a,b)", "0");

@@ -5,15 +5,15 @@
 #include <poincare/src/expression/binary.h>
 
 namespace Poincare::Internal {
-bool ParsingHelper::IsLogicalOperator(const CPL* name, size_t nameLength,
+bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
                                       Token::Type* returnType) {
-  if (name->compareWithNullTerminatedString(
-          nameLength, Binary::OperatorName(Type::LogicalNot)) == 0) {
+  if (CompareLayoutSpanWithNullTerminatedString(
+          name, Binary::OperatorName(Type::LogicalNot)) == 0) {
     *returnType = Token::Type::Not;
     return true;
   }
   Type operatorType;
-  if (Binary::IsBinaryLogicalOperator(name, nameLength, &operatorType)) {
+  if (Binary::IsBinaryLogicalOperator(name, &operatorType)) {
     switch (operatorType) {
       case Type::LogicalAnd:
         *returnType = Token::Type::And;

@@ -1,19 +1,17 @@
 #ifndef POINCARE_EXPRESSION_BINARY_H
 #define POINCARE_EXPRESSION_BINARY_H
 
-#include <poincare/src/layout/rack_layout_decoder.h>
+#include <poincare/src/layout/layout_span_decoder.h>
 #include <poincare/src/memory/tree_ref.h>
 
 namespace Poincare::Internal {
 
 class Binary {
  public:
-  static bool IsBinaryLogicalOperator(const CPL* name, int nameLength,
-                                      Type* type);
+  static bool IsBinaryLogicalOperator(LayoutSpan name, Type* type);
   static const char* OperatorName(TypeBlock type);
 
-  static bool IsComparisonOperatorString(const CPL* s, int nameLength,
-                                         Type* returnType,
+  static bool IsComparisonOperatorString(LayoutSpan name, Type* returnType,
                                          size_t* returnLength);
 
   static const char* ComparisonOperatorName(TypeBlock type);

@@ -102,15 +102,24 @@ class LayoutSpanDecoder : public UnicodeDecoder {
 
  private:
   void next() {
-    m_layout = static_cast<const Layout*>(m_layout->nextTree());
-    m_position++;
-    assert(m_length > 0);
-    m_length--;
+    // next will be called when m_length is 0 but normally only once
+    if (m_length > 0) {
+      m_layout = static_cast<const Layout*>(m_layout->nextTree());
+      m_position++;
+      m_length--;
+    }
   }
 
   const Layout* m_layout;
   uint16_t m_length;
 };
+
+inline int CompareLayoutSpanWithNullTerminatedString(
+    const Poincare::Internal::LayoutSpan a, const char* b) {
+  LayoutSpanDecoder da(a.start, a.length);
+  UTF8Decoder db(b);
+  return OMG::CompareDecoders(&da, &db);
+}
 
 }  // namespace Poincare::Internal
 

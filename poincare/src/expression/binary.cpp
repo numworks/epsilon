@@ -1,6 +1,5 @@
 #include "binary.h"
 
-#include <omg/unicode_helper.h>
 #include <omg/utf8_helper.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -9,11 +8,10 @@
 
 namespace Poincare::Internal {
 
-bool Binary::IsBinaryLogicalOperator(const CPL* name, int nameLength,
-                                     Type* type) {
+bool Binary::IsBinaryLogicalOperator(LayoutSpan name, Type* type) {
   for (int i = 0; i < k_numberOfOperators; i++) {
-    if (name->compareWithNullTerminatedString(nameLength,
-                                              k_operatorNames[i].name) == 0) {
+    if (CompareLayoutSpanWithNullTerminatedString(
+            name, k_operatorNames[i].name) == 0) {
       if (type) {
         *type = k_operatorNames[i].type;
       }
@@ -44,10 +42,9 @@ const char* Binary::ComparisonOperatorName(TypeBlock type) {
   assert(false);
 }
 
-bool Binary::IsComparisonOperatorString(const CPL* s, int length,
-                                        Type* returnType,
+bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
                                         size_t* returnLength) {
-  int maxOperatorLength = length;
+  int maxOperatorLength = name.length;
   int lengthOfFoundOperator = 0;
   Type typeOfFoundOperator;
   for (int i = 0; i < k_numberOfComparisons; i++) {
@@ -57,8 +54,9 @@ bool Binary::IsComparisonOperatorString(const CPL* s, int length,
       int operatorLength = UTF8Helper::StringGlyphLength(currentOperatorString);
       if (operatorLength <= maxOperatorLength &&
           operatorLength > lengthOfFoundOperator &&
-          s->compareWithNullTerminatedString(operatorLength,
-                                             currentOperatorString) == 0) {
+          CompareLayoutSpanWithNullTerminatedString(
+              LayoutSpan(name.start, operatorLength), currentOperatorString) ==
+              0) {
         lengthOfFoundOperator = operatorLength;
         typeOfFoundOperator = k_operatorStrings[i].type;
       }

@@ -543,8 +543,9 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
   Type operatorType;
   size_t operatorLength;
   bool check = Binary::IsComparisonOperatorString(
-      reinterpret_cast<const CPL*>(m_currentToken.firstLayout()),
-      m_currentToken.length(), &operatorType, &operatorLength);
+      LayoutSpan(Layout::From(m_currentToken.firstLayout()),
+                 m_currentToken.length()),
+      &operatorType, &operatorLength);
   assert(check);
   assert(m_currentToken.length() == operatorLength);
   (void)check;

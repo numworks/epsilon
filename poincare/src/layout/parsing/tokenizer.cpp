@@ -267,7 +267,8 @@ Token Tokenizer::popToken() {
   Type comparisonOperatorType;
   size_t comparisonOperatorLength;
   if (Binary::IsComparisonOperatorString(
-          CPL::FromRack(m_decoder.mainLayout(), start), m_decoder.end() - start,
+          LayoutSpan(static_cast<const Layout*>(m_decoder.layoutAt(start)),
+                     m_decoder.end() - start),
           &comparisonOperatorType, &comparisonOperatorLength)) {
     /* Change precedence of equal when assigning a function.
      * This ensures that "f(x) = x and 1" is parsed as "f(x) = (x and 1)" and
@@ -448,7 +449,9 @@ Token::Type Tokenizer::stringTokenType(const CPL* string,
     return Token::Type::SpecialIdentifier;
   }
   Token::Type logicalOperatorType;
-  if (ParsingHelper::IsLogicalOperator(string, *length, &logicalOperatorType)) {
+  if (ParsingHelper::IsLogicalOperator(
+          LayoutSpan(reinterpret_cast<const Layout*>(string), *length),
+          &logicalOperatorType)) {
     return logicalOperatorType;
   }
   if (string[0] == '_') {

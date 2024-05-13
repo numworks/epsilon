@@ -45,6 +45,9 @@ class RackLayoutDecoder : public UnicodeDecoder {
         m_layout->hasChild(child) ? m_layout->indexOfChild(child) : m_end;
   }
   const Tree* layoutAt(size_t index) {
+    if (index == m_end) {
+      return nullptr;
+    }
     assert(0 <= index && index < m_end);
     return m_layout->child(index);
   }

@@ -115,7 +115,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
         Variables::LeaveScope(child);
         child->detachTree();
         nbChildrenRemoved++;
-      } else if (i < nbChildren - 1) {
+      } else {
         child = child->nextTree();
       }
     }

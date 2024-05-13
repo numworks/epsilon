@@ -58,10 +58,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
 
   const Layout* layout() const { return m_layout; }
   CodePoint codePoint() override {
-    if (m_length == 0) {
-      return UCodePointNull;
-    }
-    return m_layout->isCodePointLayout()
+    return m_length > 0 && m_layout->isCodePointLayout()
                ? CodePointLayout::GetCodePoint(m_layout)
                : UCodePointNull;
   }

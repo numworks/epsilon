@@ -9,6 +9,8 @@
 
 namespace Poincare::Internal {
 
+// TODO: Reduce ListSlice(ListSeq(f(k),k,n),0,m) -> ListSeq(f(k),k,min(n,m))
+
 Tree* List::PushEmpty() { return KList.node<0>->cloneNode(); }
 
 bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {

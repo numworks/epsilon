@@ -597,6 +597,19 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       int n = Dimension::GetListLength(node->child(0));
       return n >= 0 ? n : NAN;
     }
+    case Type::ListElement: {
+      const Tree* values = node->child(0);
+      const Tree* index = node->child(1);
+      int i = Integer::Handler(index).to<uint8_t>() - 1;
+      if (i < 0 || i > Dimension::GetListLength(values) - 1) {
+        return NAN;
+      }
+      int old = s_context->m_listElement;
+      s_context->m_listElement = i;
+      std::complex<T> result = ToComplex<T>(values);
+      s_context->m_listElement = old;
+      return result;
+    }
     case Type::ListSum:
     case Type::ListProduct: {
       const Tree* values = node->child(0);

@@ -68,6 +68,11 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     return true;
   }
 
+  // If a=b, no need to way for advanced reduction to explicit
+  if (sign.realSign().isZero()) {
+    return Explicit(expr);
+  }
+
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
   if (PatternMatching::MatchReplaceSimplify(
           expr, KSum(KA, KB, KC, KVarK),

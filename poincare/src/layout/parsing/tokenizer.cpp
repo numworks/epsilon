@@ -590,7 +590,6 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   }
   if (nextLayoutIsCodePoint) {
     m_decoder = save;
-    // m_decoder.previousCodePoint();
   }
   if (isImplicitAddition) {
     return length;

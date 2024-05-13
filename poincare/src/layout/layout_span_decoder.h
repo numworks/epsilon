@@ -45,6 +45,8 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   }
 
   bool nextLayoutIsCodePoint() {
+    /* Return true if the decoder is empty for functions that are looping on
+     * codepoints until they hit a null codepoints. */
     return m_length == 0 || m_layout->isCodePointLayout();
   }
 

@@ -206,6 +206,9 @@ bool Parametric::ExpandProduct(Tree* expr) {
  */
 
 bool Parametric::ContractSum(Tree* expr) {
+  /* TODO: handle any form:
+   * - KAdd(KA_s, KSum, KB_s, KMult(KSum, -1_e), KC_s)
+   * - KAdd(KA_s, KMult(KSum, -1_e), KB_s, KSum, KC_s) */
   // Used to simplify simplified and projected permute and binomials.
   /* Sum(u(k), k, a, b) - Sum(u(k), k, a, c)
    * -> Sum(u(k), k, c+1, b) if b > c
@@ -256,6 +259,9 @@ bool Parametric::ContractSum(Tree* expr) {
 }
 
 bool Parametric::ContractProduct(Tree* expr) {
+  /* TODO: handle any form:
+   * - KMult(KA_s, KProduct, KB_s, KPow(KProduct, -1_e), KC_s)
+   * - KMult(KA_s, KPow(KProduct, -1_e), KB_s, KProduct, KC_s) */
   // Used to simplify simplified and projected permute and binomials.
   /* Prod(u(k), k, a, b) / Prod(u(k), k, a, c)
    * -> Prod(u(k), k, c+1, b) if b > c

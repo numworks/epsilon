@@ -145,8 +145,8 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   if (!isSum && function->isPow()) {
     Tree* a = function->child(1);
     assert(a->isInteger());
+    // If a wasn't an integer, we would need to add Variables::LeaveScope(a)
     assert(!Variables::HasVariable(a, k_localVariableId));
-    Variables::LeaveScope(a);
     // Move the node Pow before the Prod
     expr->moveNodeBeforeNode(function);
     // Shallow reduce the Prod

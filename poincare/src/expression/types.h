@@ -227,6 +227,7 @@ NODE(ListSort, 1)
 
 // ListElement(List, ElementIndex)
 NODE(ListElement, 2)
+// ListSlice(List, ElementIndexStart, ElementIndexEnd)
 NODE(ListSlice, 3)
 NODE(Mean, 2)
 NODE(StdDev, 2)

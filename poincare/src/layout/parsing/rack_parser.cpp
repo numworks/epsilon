@@ -1053,14 +1053,12 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     if (derivationOrder > 0) {
       return false;
     }
-#if 0
-    /* If you change how list accesses are parsed, change it also in parseList
-     * or factorize it. */
-    result = ListSlice::Builder(parameter->child(0), parameter->child(1),
-                                Symbol::Builder(name, length));
-#else
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
+    // TODO: factorise with parseList
+    TreeRef list = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
+    parameter->moveTreeOverNode(list);
+    result = SharedTreeStack->push(Type::ListSlice);
+    list->moveNodeBeforeNode(result);
+    assert(result->child(0) == list);
   } else if (numberOfParameters == 1) {
     MoveTreeOverTree(parameter, parameter->child(0));
     if (parameter->type() == Type::UserSymbol &&

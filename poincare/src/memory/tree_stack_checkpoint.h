@@ -6,24 +6,27 @@
 
 #include "block.h"
 
-// Usage:
-// ExceptionTry {
-//   /* Warning: Variable initialized before the checkpoint and modified here
-//    *          cannot be trusted after an exception has been raised. */
-//   // Default computations.
-//   if (something_goes_wrong) {
-//     // Raising here will be handled in the following ExceptionCatch.
-//     TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
-//   }
-// }
-// ExceptionCatch(type) {
-//   // Raising here will be handled by parent ExceptionCatch.
-//   if (type != ExceptionType::TreeStackOverflow) {
-//     // Unhandled exceptions should be raised to parent.
-//     TreeStackCheckpoint::Raise(type);
-//   }
-//   // Handle exceptions.
-// }
+/* Usage:
+
+ExceptionTry {
+  // Warning: Variable initialized before the checkpoint and modified here
+  //          cannot be trusted after an exception has been raised.
+  // Default computations.
+  if (something_goes_wrong) {
+    // Raising here will be handled in the following ExceptionCatch.
+    TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
+  }
+}
+ExceptionCatch(type) {
+  // Raising here will be handled by parent ExceptionCatch.
+  if (type != ExceptionType::TreeStackOverflow) {
+    // Unhandled exceptions should be raised to parent.
+    TreeStackCheckpoint::Raise(type);
+  }
+  // Handle exceptions.
+}
+
+*/
 
 #define ExceptionTryAfterBlock(rightmostBlock)      \
   {                                                 \

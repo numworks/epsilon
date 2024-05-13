@@ -4,7 +4,9 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/numeric/solver_algorithms.h>
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 
 class Distribution {
  public:
@@ -109,6 +111,10 @@ class Distribution {
       double p, double ax, double bx, double* parameters) const;
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+using Distribution = Internal::Distribution;
+
+}  // namespace Poincare
 
 #endif

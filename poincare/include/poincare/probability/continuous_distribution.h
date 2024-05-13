@@ -3,7 +3,9 @@
 
 #include "distribution.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 
 class ContinuousDistribution : public Distribution {
  public:
@@ -29,6 +31,10 @@ class ContinuousDistribution : public Distribution {
   }
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+using ContinuousDistribution = Internal::ContinuousDistribution;
+
+}  // namespace Poincare
 
 #endif

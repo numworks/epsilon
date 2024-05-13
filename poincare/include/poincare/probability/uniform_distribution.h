@@ -5,7 +5,9 @@
 
 #include "continuous_distribution.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 
 class UniformDistribution final : public ContinuousDistribution {
  public:
@@ -76,6 +78,10 @@ class UniformDistribution final : public ContinuousDistribution {
   static bool D1AndD2AreOK(T d1, T d2);
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+using UniformDistribution = Internal::UniformDistribution;
+
+}  // namespace Poincare
 
 #endif

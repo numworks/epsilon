@@ -15,21 +15,21 @@ namespace Inference {
 float DistributionT::canonicalDensityFunction(float x,
                                               double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::Internal::StudentDistribution::EvaluateAtAbscissa<float>(
+  return Poincare::StudentDistribution::EvaluateAtAbscissa<float>(
       x, degreesOfFreedom);
 }
 
 double DistributionT::cumulativeNormalizedDistributionFunction(
     double x, double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::Internal::StudentDistribution::
+  return Poincare::StudentDistribution::
       CumulativeDistributiveFunctionAtAbscissa(x, degreesOfFreedom);
 }
 
 double DistributionT::cumulativeNormalizedInverseDistributionFunction(
     double proba, double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::Internal::StudentDistribution::
+  return Poincare::StudentDistribution::
       CumulativeDistributiveInverseForProbability(proba, degreesOfFreedom);
 }
 
@@ -42,19 +42,18 @@ float DistributionT::yMax(double degreesOfFreedom) const {
 
 float DistributionZ::canonicalDensityFunction(float x,
                                               double degreesOfFreedom) const {
-  return Poincare::Internal::NormalDistribution::EvaluateAtAbscissa<float>(x, 0,
-                                                                           1);
+  return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, 0, 1);
 }
 
 double DistributionZ::cumulativeNormalizedDistributionFunction(
     double x, double degreesOfFreedom) const {
-  return Poincare::Internal::NormalDistribution::
-      CumulativeDistributiveFunctionAtAbscissa<double>(x, 0, 1);
+  return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<
+      double>(x, 0, 1);
 }
 
 double DistributionZ::cumulativeNormalizedInverseDistributionFunction(
     double proba, double degreesOfFreedom) const {
-  return Poincare::Internal::NormalDistribution::
+  return Poincare::NormalDistribution::
       CumulativeDistributiveInverseForProbability<double>(proba, 0, 1);
 }
 
@@ -72,21 +71,21 @@ Poincare::Layout DistributionChi2::criticalValueSymbolLayout() const {
 float DistributionChi2::canonicalDensityFunction(
     float x, double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::Internal::Chi2Distribution::EvaluateAtAbscissa(
+  return Poincare::Chi2Distribution::EvaluateAtAbscissa(
       x, static_cast<float>(degreesOfFreedom));
 }
 
 double DistributionChi2::cumulativeNormalizedDistributionFunction(
     double x, double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::Internal::Chi2Distribution::
-      CumulativeDistributiveFunctionAtAbscissa(x, degreesOfFreedom);
+  return Poincare::Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(
+      x, degreesOfFreedom);
 }
 
 double DistributionChi2::cumulativeNormalizedInverseDistributionFunction(
     double proba, double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::Internal::Chi2Distribution::
+  return Poincare::Chi2Distribution::
       CumulativeDistributiveInverseForProbability(proba, degreesOfFreedom);
 }
 

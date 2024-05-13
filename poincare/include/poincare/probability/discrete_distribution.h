@@ -3,7 +3,9 @@
 
 #include "distribution.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 
 // More precisely distributions deriving from this should be defined on N
 class DiscreteDistribution : public Distribution {
@@ -41,6 +43,10 @@ class DiscreteDistribution : public Distribution {
   }
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+using DiscreteDistribution = Internal::DiscreteDistribution;
+
+}  // namespace Poincare
 
 #endif

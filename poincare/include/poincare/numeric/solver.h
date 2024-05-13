@@ -14,6 +14,7 @@ namespace Poincare {
 class Context;
 }
 
+// TODO_PCJ: Expose Solver in Poincare Namespace when the old Solver is removed
 namespace Poincare::Internal {
 
 template <typename T>

@@ -88,8 +88,7 @@ KDCoordinate DistributionController::defaultRowHeight() {
 
 void DistributionController::setDistributionAccordingToIndex(int index) {
   if (Distribution::Initialize(
-          m_distribution,
-          static_cast<Poincare::Internal::Distribution::Type>(index))) {
+          m_distribution, static_cast<Poincare::Distribution::Type>(index))) {
     m_parametersController->reinitCalculation();
   }
 }

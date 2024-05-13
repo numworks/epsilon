@@ -25,7 +25,7 @@ bool BinomialDistribution::authorizedParameterAtIndex(double x,
 
 double BinomialDistribution::cumulativeDistributiveInverseForProbability(
     double p) const {
-  return Poincare::Internal::BinomialDistribution::
+  return Poincare::BinomialDistribution::
       CumulativeDistributiveInverseForProbability(p, m_parameters[0],
                                                   m_parameters[1]);
 }
@@ -43,7 +43,7 @@ double BinomialDistribution::rightIntegralInverseForProbability(
 }
 
 double BinomialDistribution::evaluateAtDiscreteAbscissa(int k) const {
-  return Poincare::Internal::BinomialDistribution::EvaluateAtAbscissa<double>(
+  return Poincare::BinomialDistribution::EvaluateAtAbscissa<double>(
       (double)k, m_parameters[0], m_parameters[1]);
 }
 

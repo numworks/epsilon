@@ -7,8 +7,7 @@
 namespace Distributions {
 
 float ChiSquaredDistribution::evaluateAtAbscissa(float x) const {
-  return Poincare::Internal::Chi2Distribution::EvaluateAtAbscissa<float>(
-      x, m_parameter);
+  return Poincare::Chi2Distribution::EvaluateAtAbscissa<float>(x, m_parameter);
 }
 
 bool ChiSquaredDistribution::authorizedParameterAtIndex(double x,
@@ -22,13 +21,13 @@ bool ChiSquaredDistribution::authorizedParameterAtIndex(double x,
 
 double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(
     double x) const {
-  return Poincare::Internal::Chi2Distribution::
-      CumulativeDistributiveFunctionAtAbscissa(x, m_parameter);
+  return Poincare::Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(
+      x, m_parameter);
 }
 
 double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(
     double p) const {
-  return Poincare::Internal::Chi2Distribution::
+  return Poincare::Chi2Distribution::
       CumulativeDistributiveInverseForProbability(p, m_parameter);
 }
 

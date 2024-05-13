@@ -5,7 +5,9 @@
 
 #include "discrete_distribution.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 
 class PoissonDistribution final : public DiscreteDistribution {
  public:
@@ -56,6 +58,10 @@ class PoissonDistribution final : public DiscreteDistribution {
   static bool LambdaIsOK(T lambda);
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+using PoissonDistribution = Internal::PoissonDistribution;
+
+}  // namespace Poincare
 
 #endif

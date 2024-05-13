@@ -5,7 +5,9 @@
 
 #include "discrete_distribution.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 
 class HypergeometricDistribution final : public DiscreteDistribution {
  public:
@@ -63,6 +65,10 @@ class HypergeometricDistribution final : public DiscreteDistribution {
   static bool nIsOK(T p);
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+using HypergeometricDistribution = Internal::HypergeometricDistribution;
+
+}  // namespace Poincare
 
 #endif

@@ -10,8 +10,8 @@ namespace Distributions {
 class PoissonDistribution final : public OneParameterDistribution {
  public:
   PoissonDistribution()
-      : OneParameterDistribution(
-            Poincare::Internal::Distribution::Type::Poisson, k_defaultLambda) {
+      : OneParameterDistribution(Poincare::Distribution::Type::Poisson,
+                                 k_defaultLambda) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {

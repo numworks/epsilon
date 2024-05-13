@@ -11,7 +11,7 @@ class HypergeometricDistribution final : public ThreeParametersDistribution {
  public:
   HypergeometricDistribution()
       : ThreeParametersDistribution(
-            Poincare::Internal::Distribution::Type::Hypergeometric, k_defaultN,
+            Poincare::Distribution::Type::Hypergeometric, k_defaultN,
             k_defaultK, k_defaultn) {
     computeCurveViewRange();
   }

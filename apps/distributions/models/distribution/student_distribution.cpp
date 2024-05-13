@@ -22,8 +22,8 @@ float StudentDistribution::privateComputeXMin() const {
 float StudentDistribution::privateComputeXMax() const { return 5.0f; }
 
 float StudentDistribution::computeYMax() const {
-  return std::exp(Poincare::Internal::StudentDistribution::lnCoefficient<float>(
-             m_parameter)) *
+  return std::exp(
+             Poincare::StudentDistribution::lnCoefficient<float>(m_parameter)) *
          (1.0f + k_displayTopMarginRatio);
 }
 

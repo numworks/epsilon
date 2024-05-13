@@ -11,9 +11,8 @@ namespace Distributions {
 class ExponentialDistribution final : public OneParameterDistribution {
  public:
   ExponentialDistribution()
-      : OneParameterDistribution(
-            Poincare::Internal::Distribution::Type::Exponential,
-            k_defaultLambda) {
+      : OneParameterDistribution(Poincare::Distribution::Type::Exponential,
+                                 k_defaultLambda) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {

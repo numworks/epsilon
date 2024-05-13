@@ -5,7 +5,9 @@
 
 #include "discrete_distribution.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 
 class BinomialDistribution final : public DiscreteDistribution {
  public:
@@ -75,6 +77,10 @@ class BinomialDistribution final : public DiscreteDistribution {
   }
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+using BinomialDistribution = Internal::BinomialDistribution;
+
+}  // namespace Poincare
 
 #endif

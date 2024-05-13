@@ -35,8 +35,8 @@ QUIZ_CASE(pcj_layout_decoder) {
 
 QUIZ_CASE(pcj_omg_code_point) {
   const LayoutSpan l(Rack::From("123"_l));
-  assert(OMG::CodePointSearch(l, '2') == 1);
-  assert(OMG::CodePointSearch(l, '4') == l.length);
+  assert(CodePointSearch(l, '2') == 1);
+  assert(CodePointSearch(l, '4') == l.length);
 }
 
 #if 0

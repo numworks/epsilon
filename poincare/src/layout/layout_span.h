@@ -1,6 +1,8 @@
 #ifndef POINCARE_LAYOUT_LAYOUT_SPAN_H
 #define POINCARE_LAYOUT_LAYOUT_SPAN_H
 
+#include <omg/code_point.h>
+
 #include "rack.h"
 
 namespace Poincare::Internal {
@@ -18,6 +20,8 @@ struct LayoutSpan {
   const Layout* start;
   uint16_t length;
 };
+
+size_t CodePointSearch(Poincare::Internal::LayoutSpan span, CodePoint c);
 
 }  // namespace Poincare::Internal
 #endif

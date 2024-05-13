@@ -1,5 +1,4 @@
 #include <omg/unicode_helper.h>
-#include <poincare/src/layout/layout_span_decoder.h>
 
 namespace OMG {
 
@@ -20,11 +19,6 @@ size_t CodePointSearch(const char* string, CodePoint c) {
     return strlen(string);
   }
   return result;
-}
-
-size_t CodePointSearch(Poincare::Internal::LayoutSpan span, CodePoint c) {
-  Poincare::Internal::LayoutSpanDecoder decoder(span);
-  return CodePointSearch(&decoder, c);
 }
 
 int CompareDecoders(ForwardUnicodeDecoder* a, ForwardUnicodeDecoder* b) {

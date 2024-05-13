@@ -431,10 +431,9 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   }
   if (*length > 2 && CodePointLayout::IsCodePoint(start, '"') &&
       CodePointLayout::IsCodePoint(lastCharOfString, '"') &&
-      OMG::CodePointSearch(
-          LayoutSpan(static_cast<const Layout*>(start->nextTree()),
-                     *length - 2),
-          '"') == *length - 2) {
+      CodePointSearch(LayoutSpan(static_cast<const Layout*>(start->nextTree()),
+                                 *length - 2),
+                      '"') == *length - 2) {
     return Token::Type::CustomIdentifier;
   }
   if (PhysicalConstant::IsPhysicalConstant(span)) {

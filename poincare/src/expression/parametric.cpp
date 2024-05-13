@@ -58,6 +58,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   Tree* lowerBound = expr->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   ComplexSign sign = ComplexSign::SignOfDifference(lowerBound, upperBound);
+  // TODO: what about when bounds are not integer but diff is integer ?
   if (!sign.isReal()) {
     return false;
   }

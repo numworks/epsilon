@@ -10,35 +10,10 @@
 
 namespace Poincare::Internal {
 
-/* ideas/guidelines :
- *   use span by copy most of the time, especially in signatures, it is easier
- * to reason about
- *
- *   remove the default noSize argument on CPLayoutDecoder and spans since we
- *   always need to know the max there is no \0
- *
- *   either remove the need for previousCodePoint (probably useless) or use a
- * rack based indexing
- *
- *   copy the all decoder to restore the position ?
- *
- *  move end and position up from unicodedecoder to allow child to use the best
- * one
- *
- *  when an helper has to work on racks and str, take a unicodedecoder* and
- *  create wrappers as needed
+/* LayoutSpanDecoder adds state over the LayoutSpan and is a
+ * ForwardUnicodeDecoder (it can move forward but not backward)
+ * It has to be copied to get back to a previous state.
  */
-
-/* the decoder adds state over the span, it can move forward but not backward
- * copy it if you need to get back to a previous state,
- * check the codepoint before going forward if you are not sure you want to go
- * forward
- */
-
-/* Unlike RackLayoutDecoder that iters children of a parent rack, this points to
- * a CodePointLayout and iter its siblings until a non-codepoint layout is
- * reached. Thus the API is more similar to const char *. */
-/* TODO move to cpp */
 class LayoutSpanDecoder : public ForwardUnicodeDecoder {
  public:
   LayoutSpanDecoder(const Layout* start, size_t length)

@@ -6,9 +6,13 @@
 
 namespace Poincare::Internal {
 
-size_t CodePointSearch(Poincare::Internal::LayoutSpan span, CodePoint c) {
-  Poincare::Internal::LayoutSpanDecoder decoder(span);
+size_t CodePointSearch(LayoutSpan span, CodePoint c) {
+  LayoutSpanDecoder decoder(span);
   return OMG::CodePointSearch(&decoder, c);
+}
+
+bool HasCodePoint(LayoutSpan span, CodePoint c) {
+  return CodePointSearch(span, c) != span.length;
 }
 
 }  // namespace Poincare::Internal

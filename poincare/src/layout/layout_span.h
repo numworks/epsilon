@@ -21,7 +21,10 @@ struct LayoutSpan {
   uint16_t length;
 };
 
-size_t CodePointSearch(Poincare::Internal::LayoutSpan span, CodePoint c);
+size_t CodePointSearch(LayoutSpan span, CodePoint c);
+
+// Returns true if the text had the code point
+bool HasCodePoint(LayoutSpan span, CodePoint c);
 
 }  // namespace Poincare::Internal
 #endif

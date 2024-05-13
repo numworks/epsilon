@@ -314,7 +314,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
 
   // product
   simplifies_to("product(p,k,m,n)", "p^(-m+n+1)");
-  simplifies_to("product(p^3,k,m,n)", "p^(3×(-m+n+1))");
+  simplifies_to("product(p^3,k,m,n)", "p^3^(-m+n+1)");
   simplifies_to("product(k^3,k,m,n)", "product(k,k,m,n)^3");
   simplifies_to("product(k^x,k,m,n)", "product(exp(x×ln(k)),k,m,n)");
   simplifies_to("product(x^k,k,m,n)", "product(exp(k×ln(x)),k,m,n)");

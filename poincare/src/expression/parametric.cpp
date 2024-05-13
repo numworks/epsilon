@@ -130,7 +130,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   }
 
   // prod(f(k)^a,k,m,n) = prod(f(k),k,m,n)^a
-  if (!isSum && function->isPow()) {
+  if (!isSum && function->isPow() && functionDependsOnK) {
     Tree* a = function->child(1);
     assert(a->isInteger());
     assert(!Variables::HasVariable(a, k_localVariableId));

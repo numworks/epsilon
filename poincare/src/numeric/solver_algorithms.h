@@ -3,8 +3,7 @@
 
 #include <omg/float.h>
 #include <poincare/coordinate_2D.h>
-
-#include "solver.h"
+#include <poincare/numeric/solver.h>
 
 namespace Poincare::Internal {
 

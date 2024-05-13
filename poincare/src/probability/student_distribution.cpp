@@ -1,6 +1,5 @@
-#include "student_distribution.h"
-
 #include <float.h>
+#include <poincare/probability/student_distribution.h>
 #include <poincare/src/numeric/regularized_incomplete_beta_function.h>
 
 #include <cmath>

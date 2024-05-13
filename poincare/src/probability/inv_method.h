@@ -1,7 +1,8 @@
 #ifndef POINCARE_PROBABILITY_INV_METHOD_H
 #define POINCARE_PROBABILITY_INV_METHOD_H
 
-#include "distribution.h"
+#include <poincare/probability/distribution.h>
+
 #include "distribution_method.h"
 
 namespace Poincare::Internal {

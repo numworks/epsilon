@@ -1,8 +1,7 @@
-#include "normal_distribution.h"
-
 #include <assert.h>
 #include <float.h>
 #include <omg/float.h>
+#include <poincare/probability/normal_distribution.h>
 #include <poincare/src/numeric/erf_inv.h>
 
 #include <cmath>

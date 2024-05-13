@@ -1,6 +1,6 @@
 #include "chi_squared_distribution.h"
 
-#include <poincare/src/probability/chi2_distribution.h>
+#include <poincare/probability/chi2_distribution.h>
 
 #include <cmath>
 

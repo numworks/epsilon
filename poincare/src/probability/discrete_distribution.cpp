@@ -1,4 +1,4 @@
-#include "discrete_distribution.h"
+#include <poincare/probability/discrete_distribution.h>
 
 namespace Poincare::Internal {
 

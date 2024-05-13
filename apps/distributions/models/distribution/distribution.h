@@ -2,7 +2,7 @@
 #define PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 
 #include <apps/shared/inference.h>
-#include <poincare/src/probability/distribution.h>
+#include <poincare/probability/distribution.h>
 
 #include <new>
 

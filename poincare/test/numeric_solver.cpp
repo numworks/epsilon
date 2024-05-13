@@ -1,9 +1,9 @@
 #include <apps/shared/global_context.h>
 #include <omg/float.h>
+#include <poincare/numeric/solver.h>
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/numeric/solver.h>
 
 #include "float_helper.h"
 #include "old/helper.h"

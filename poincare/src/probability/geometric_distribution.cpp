@@ -1,14 +1,13 @@
-#include "geometric_distribution.h"
-
 #include <assert.h>
 #include <float.h>
 #include <omg/float.h>
+#include <poincare/probability/distribution.h>
+#include <poincare/probability/geometric_distribution.h>
 #include <poincare/src/numeric/regularized_incomplete_beta_function.h>
 #include <poincare/src/numeric/solver_algorithms.h>
 
 #include <cmath>
 
-#include "distribution.h"
 #include "domain.h"
 
 namespace Poincare::Internal {

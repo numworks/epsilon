@@ -5,7 +5,7 @@
 #include <float.h>
 #include <limits.h>
 #include <poincare/old/helpers.h>
-#include <poincare/src/probability/normal_distribution.h>
+#include <poincare/probability/normal_distribution.h>
 #include <string.h>
 
 #include <algorithm>

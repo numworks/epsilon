@@ -1,6 +1,6 @@
-#include <poincare/src/probability/chi2_distribution.h>
-#include <poincare/src/probability/normal_distribution.h>
-#include <poincare/src/probability/student_distribution.h>
+#include <poincare/probability/chi2_distribution.h>
+#include <poincare/probability/normal_distribution.h>
+#include <poincare/probability/student_distribution.h>
 
 #include <algorithm>
 #include <cmath>

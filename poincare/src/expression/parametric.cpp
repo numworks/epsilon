@@ -91,10 +91,21 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   }
 
   Tree* function = upperBound->nextTree();
-  bool functionDependsOnK = Variables::HasVariable(function, k_localVariableId);
+
+  // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
+  if (!Variables::HasVariable(function, k_localVariableId)) {
+    // TODO: add ceil around bounds
+    constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
+    Variables::LeaveScope(function);
+    Tree* result = PatternMatching::CreateSimplify(
+        isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
+        {.KA = upperBound, .KB = lowerBound, .KC = function});
+    expr->moveTreeOverTree(result);
+    return true;
+  }
 
   // sum(a*f(k),k,m,n) = a*sum(f(k),k,m,n)
-  if (isSum && function->isMult() && functionDependsOnK) {
+  if (isSum && function->isMult()) {
     TreeRef a(SharedTreeStack->push<Type::Mult>(0));
     const int nbChildren = function->numberOfChildren();
     int nbChildrenRemoved = 0;
@@ -113,7 +124,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     if (a->numberOfChildren() == 0) {
       return false;
     }
-    assert(function->numberOfChildren() > 0);  // Because functionDependsOnK
+    assert(function->numberOfChildren() > 0);  // Because HasVariable
     if (function->numberOfChildren() == 1) {
       // Shallow reduce to remove the Mult
       Simplification::ShallowSystematicReduce(function);
@@ -130,7 +141,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
   }
 
   // prod(f(k)^a,k,m,n) = prod(f(k),k,m,n)^a
-  if (!isSum && function->isPow() && functionDependsOnK) {
+  if (!isSum && function->isPow()) {
     Tree* a = function->child(1);
     assert(a->isInteger());
     assert(!Variables::HasVariable(a, k_localVariableId));
@@ -144,18 +155,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     return true;
   }
 
-  // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
-  // TODO: add ceil around bounds
-  if (functionDependsOnK) {
-    return false;
-  }
-  constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
-  Variables::LeaveScope(function);
-  Tree* result = PatternMatching::CreateSimplify(
-      isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
-      {.KA = upperBound, .KB = lowerBound, .KC = function});
-  expr->moveTreeOverTree(result);
-  return true;
+  return false;
 }
 
 bool Parametric::ExpandSum(Tree* expr) {

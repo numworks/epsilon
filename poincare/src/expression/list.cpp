@@ -197,6 +197,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return true;
     }
     case Type::ListElement: {
+      assert(Integer::Is<uint8_t>(e->child(1)));
       int i = Integer::Handler(e->child(1)).to<uint8_t>() - 1;
       if (i < 0 || i >= e->child(0)->numberOfChildren()) {
         e->cloneTreeOverTree(KUndef);

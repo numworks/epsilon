@@ -333,6 +333,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
         }
       }
       return true;
+    case Type::ListElement:
+      return Integer::Is<uint8_t>(t->child(1));
     case Type::Abs:
     case Type::Floor:
     case Type::Ceil:

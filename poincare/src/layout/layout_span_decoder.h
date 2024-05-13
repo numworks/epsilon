@@ -63,15 +63,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   }
 
  private:
-  void next() {
-    // next will be called when m_length is 0 but normally only once
-    if (m_length > 0) {
-      m_layout = static_cast<const Layout*>(m_layout->nextTree());
-      m_position++;
-      m_length--;
-    }
-  }
-
+  void next();
   const Layout* m_layout;
   uint16_t m_length;
 };

@@ -189,12 +189,6 @@ bool IsIntegerRepresentationAccurate(T x) {
   return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
 }
 
-// Dummy reductor used with Dependency.
-template <typename T>
-static T FloatDependency(T a, T b) {
-  return 0;
-}
-
 template <typename T>
 static T FloatAddition(T a, T b) {
   return a + b;
@@ -298,6 +292,32 @@ std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
     // Other cases are left to the standard library, and might return NaN.
   }
   return c / d;
+}
+
+// Return true if one of the dependencies is undefined
+bool UndefDependencies(const Tree* dep) {
+  // Dependency children may have different dimensions.
+  for (const Tree* child : Dependency::Dependencies(dep)->children()) {
+    Dimension dim = Dimension::GetDimension(child);
+    if (dim.isScalar()) {
+      // Optimize most cases
+      std::complex<float> c = Approximation::ToComplex<float>(child);
+      if (std::isnan(c.real())) {
+        return true;
+      }
+      assert(!std::isnan(c.imag()));
+    } else {
+      Tree* a =
+          Approximation::ToTree<float>(child, Dimension::GetDimension(child));
+      if (a->isUndefined()) {
+        a->removeTree();
+        return true;
+      }
+      a->removeTree();
+    }
+  }
+  // None of the dependencies are NAN.
+  return false;
 }
 
 template <typename T>
@@ -692,14 +712,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
           abscissa, Distribution::Get(distribution), parameters);
     }
     case Type::Dependency: {
-      std::complex<T> c = MapAndReduce<T, std::complex<T>>(
-          Dependency::Dependencies(node), FloatDependency<std::complex<T>>);
-      if (std::isnan(c.real())) {
-        return NAN;
-      }
-      assert(!std::isnan(c.imag()));
-      // None of the dependencies are NAN.
-      return ToComplex<T>(Dependency::Main(node));
+      return UndefDependencies(node) ? NAN
+                                     : ToComplex<T>(Dependency::Main(node));
     }
     /* At this point, the overall expression is expected to be Scalar, but it
      * could be 1_m/1_ft. Approximating to ratios is enough. */
@@ -918,6 +932,10 @@ bool Approximation::ToBoolean(const Tree* node) {
   if (node->isLogicalNot()) {
     return !a;
   }
+  if (node->isDependency()) {
+    // TODO: Undefined boolean return false for now.
+    return !UndefDependencies(node) && a;
+  }
   bool b = ToBoolean<T>(node->child(1));
   switch (node->type()) {
     case Type::LogicalAnd:
@@ -1078,6 +1096,9 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     }
     case Type::Piecewise:
       return ToMatrix<T>(SelectPiecewiseBranch<T>(node));
+    case Type::Dependency:
+      return UndefDependencies(node) ? KUndef->clone()
+                                     : ToMatrix<T>(Dependency::Main(node));
     default:;
   }
   return KUndef->clone();

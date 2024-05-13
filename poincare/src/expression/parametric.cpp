@@ -112,15 +112,15 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     Tree* child = function->firstChild();
     for (int i = 0; i < nbChildren; i++) {
       if (!Variables::HasVariable(child, k_localVariableId)) {
-        int realI = i - nbChildrenRemoved;
-        Tree* t = NAry::DetachChildAtIndex(function, realI);
-        NAry::AddChild(a, t);
-        Variables::LeaveScope(t);
+        Variables::LeaveScope(child);
+        child->detachTree();
         nbChildrenRemoved++;
       } else if (i < nbChildren - 1) {
         child = child->nextTree();
       }
     }
+    NAry::SetNumberOfChildren(function, nbChildren - nbChildrenRemoved);
+    NAry::SetNumberOfChildren(a, nbChildrenRemoved);
     if (a->numberOfChildren() == 0) {
       return false;
     }

@@ -190,6 +190,12 @@ bool Parametric::ExpandProduct(Tree* expr) {
  *              Prod(A, B, C, min(F, D)) * Prod(A, B, max(C, G), D)
  *           / Prod(A, B, F, min(G, C)) * Prod(A, B, max(F, D), G)
  *   Same with Sum(A, B, C, D) - Sum(A, B, F, G)
+ * - sum(u(k), k, a, b) + sum(v(k), k, a, b) =
+ *   sum(u(k), k, min(a,d), min(c,b)) +
+ *   sum(u(k), k, max(a,d), max(c,b)) +
+ *   sum(u(k)+v(k), k, max(a,c), min(b,d)) +
+ *   sum(v(k), k, min(c,b), min(a,d)) +
+ *   sum(v(k), k, min(c,b), max(a,d))
  */
 
 bool Parametric::ContractSum(Tree* expr) {

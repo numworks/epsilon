@@ -111,10 +111,15 @@ int Dimension::GetListLength(const Tree* t) {
     case Type::ListSequence:
       // TODO: Handle undef Approximation.
       return Approximation::To<float>(t->child(1));
-    case Type::ListSlice:
+    case Type::ListSlice: {
+      int listLength = GetListLength(t->child(0));
+      int start = Approximation::To<float>(t->child(1));
+      start = std::max(start, 1);
+      int end = Approximation::To<float>(t->child(2));
+      end = std::min(end, listLength);
       // TODO: Handle undef Approximation.
-      return Approximation::To<float>(t->child(2)) -
-             Approximation::To<float>(t->child(1));
+      return std::max(end - start + 1, 0);
+    }
     case Type::RandIntNoRep:
       assert(Integer::Is<uint8_t>(t->child(2)));
       return Integer::Handler(t->child(2)).to<uint8_t>();

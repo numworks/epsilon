@@ -943,6 +943,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   simplifies_to("l(2)", "4", projCtx);
   simplifies_to("l(6)", "undef", projCtx);
   // TODO: Properly parse list slices on variables
+  // TODO_PCJ: implement list access and list slice on lists of points
 
   ProjectionContext projCtx2 = {
       .m_symbolic =

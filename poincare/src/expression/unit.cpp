@@ -462,6 +462,9 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
                     const Prefix** prefix) {
   if (name->codePoint() == '_') {
     name->nextCodePoint();
+    if (name->isEmpty()) {
+      return false;
+    }
   }
   // TODO: Better use of UnicodeDecoder. Here we assume units cannot be longer.
   constexpr static size_t bufferSize = 10;

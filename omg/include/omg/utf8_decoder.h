@@ -17,6 +17,7 @@ class ForwardUnicodeDecoder {
   size_t position() const { return m_position; }
   size_t start() const { return 0; }
   size_t end() const { return m_end; }
+  bool isEmpty() const { return position() == end(); }
   void unsafeSetPosition(size_t position) { m_position = position; }
   size_t printInBuffer(char* buffer, size_t bufferSize,
                        size_t printLength = k_noSize);

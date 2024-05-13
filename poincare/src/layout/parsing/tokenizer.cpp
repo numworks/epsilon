@@ -479,18 +479,18 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
     return Token::Type::Unit;
   }
 
-  bool hasUnitOnlyCodePoint = false;
-#if 0
-      UTF8Helper::HasCodePoint(string, UCodePointDegreeSign,
-                               string + *length) ||
-      UTF8Helper::HasCodePoint(string, '\'', string + *length) ||
-      UTF8Helper::HasCodePoint(string, '"', string + *length);
+  bool hasUnitOnlyCodePoint = HasCodePoint(span, UCodePointDegreeSign) ||
+                              HasCodePoint(span, '\'') ||
+                              HasCodePoint(span, '"');
   if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "
       && (m_parsingContext->parsingMethod() ==
               ParsingContext::ParsingMethod::Assignment ||
-          m_parsingContext->context() == nullptr ||
-          m_parsingContext->context()->expressionTypeForIdentifier(
-              string, *length) != Context::SymbolAbstractType::None)) {
+          m_parsingContext->context() == nullptr
+#if TODO_PCJ
+          || m_parsingContext->context()->expressionTypeForIdentifier(
+                 string, *length) != Context::SymbolAbstractType::None
+#endif
+          )) {
     return Token::Type::CustomIdentifier;
   }
   /* If not unit conversion and "m" has been or is being assigned by the user
@@ -500,11 +500,10 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
           ParsingContext::ParsingMethod::UnitConversion &&
       m_parsingContext->context() &&
       m_parsingContext->context()->canRemoveUnderscoreToUnits() &&
-      Unit::CanParse(string, *length, nullptr, nullptr)) {
+      Units::Unit::CanParse(span, nullptr, nullptr)) {
     return Token::Type::Unit;
   }
-// "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
-#endif
+  // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
   Token::Type type;
   if (stringIsASpecialIdentifierOrALogFollowedByNumbers(span.start, length,
                                                         &type)) {

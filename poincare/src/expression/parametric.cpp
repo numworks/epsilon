@@ -122,6 +122,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     NAry::SetNumberOfChildren(function, nbChildren - nbChildrenRemoved);
     NAry::SetNumberOfChildren(a, nbChildrenRemoved);
     if (a->numberOfChildren() == 0) {
+      a->removeTree();
       return false;
     }
     assert(function->numberOfChildren() > 0);  // Because HasVariable

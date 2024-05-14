@@ -6,6 +6,7 @@
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/physical_constant.h>
+#include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/unit.h>
 #include <poincare/src/layout/vertical_offset.h>
 
@@ -482,17 +483,18 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   bool hasUnitOnlyCodePoint = HasCodePoint(span, UCodePointDegreeSign) ||
                               HasCodePoint(span, '\'') ||
                               HasCodePoint(span, '"');
+  char string[Symbol::k_maxNameSize];
+  LayoutSpanDecoder decoder(span);
+  decoder.printInBuffer(string, std::size(string));
   if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "
       && (m_parsingContext->parsingMethod() ==
               ParsingContext::ParsingMethod::Assignment ||
-          m_parsingContext->context() == nullptr
-#if TODO_PCJ
-          || m_parsingContext->context()->expressionTypeForIdentifier(
-                 string, *length) != Context::SymbolAbstractType::None
-#endif
-          )) {
+          m_parsingContext->context() == nullptr ||
+          m_parsingContext->context()->expressionTypeForIdentifier(
+              string, *length) != Context::SymbolAbstractType::None)) {
     return Token::Type::CustomIdentifier;
   }
+
   /* If not unit conversion and "m" has been or is being assigned by the user
    * it's understood as a variable before being understood as a unit.
    * That's why the following condition is checked after the previous one. */

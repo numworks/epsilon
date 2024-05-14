@@ -17,6 +17,7 @@
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
+#include <poincare/src/layout/xnt.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -823,19 +824,22 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       powerFunction = true;
     }
   }
+#endif
 
-  if (m_parsingContext.context() &&
-      ParsingHelper::IsParameteredExpression(*functionHelper)) {
+  if (m_parsingContext.context() && builtin->blockType().isParametric()) {
     //  We must make sure that the parameter is parsed as a single variable.
-    const char *parameterText;
+    const Layout* parameterText;
     size_t parameterLength;
-    if (ParameteredExpression::ParameterText(
-            m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
-            &parameterLength)) {
-      Poincare::Context *oldContext = m_parsingContext.context();
-      Poincare::VariableContext parameterContext(
-          Poincare::Symbol::Builder(parameterText, parameterLength),
-          oldContext);
+    int start = m_root->indexOfChild(m_currentToken.firstLayout()) +
+                m_currentToken.length() + 1;
+    LayoutSpanDecoder decoder(Layout::From(m_root->child(start)),
+                              m_root->numberOfChildren() - start);
+    if (ParameterText(&decoder, &parameterText, &parameterLength)) {
+      Poincare::Context* oldContext = m_parsingContext.context();
+      char name[Symbol::k_maxNameLength];
+      LayoutSpanDecoder nameDecoder(LayoutSpan(parameterText, parameterLength));
+      nameDecoder.printInBuffer(name, std::size(name));
+      Poincare::VariableContext parameterContext(name, oldContext);
       m_parsingContext.setContext(&parameterContext);
       leftHandSide = parseFunctionParameters();
       m_parsingContext.setContext(oldContext);
@@ -845,9 +849,6 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   } else {
     leftHandSide = parseFunctionParameters();
   }
-#else
-  leftHandSide = parseFunctionParameters();
-#endif
 
   /* The following lines are there because some functions have the same name
    * but not same number of parameters.

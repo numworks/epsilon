@@ -104,6 +104,10 @@ QUIZ_CASE(pcj_simplification_variables) {
 
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
+  Shared::GlobalContext ctx;
+  if (!projectionContext.m_context) {
+    projectionContext.m_context = &ctx;
+  }
   TreeRef expected = TextToTree(output, projectionContext.m_context);
   TreeRef expression = TextToTree(input, projectionContext.m_context);
   Simplification::SimplifyWithAdaptiveStrategy(expression, &projectionContext);
@@ -296,17 +300,17 @@ QUIZ_CASE(pcj_simplification_parametric) {
   // sum
   simplifies_to("sum(n,k,1,n)", "n^2");
   simplifies_to("sum(a*b,k,1,n)", "a×b×n");
-  simplifies_to("sum(k,k,n,m)", "(m^2-n^2+m+n)/2");
+  simplifies_to("sum(k,k,n,j)", "(j^2-n^2+j+n)/2");
   simplifies_to("2×sum(k,k,0,n)+n", "n×(n+2)");
   simplifies_to("2×sum(k,k,3,n)+n", "n^2+2×n-6");
-  simplifies_to("sum(k^2,k,n,m)", "(m×(m+1)×(2×m+1)-n×(n-1)×(2×n-1))/6");
+  simplifies_to("sum(k^2,k,n,j)", "(j×(j+1)×(2×j+1)-n×(n-1)×(2×n-1))/6");
   simplifies_to("sum(k^2,k,2,5)", "54");
   simplifies_to("sum((2k)^2,k,2,5)", "216");
   simplifies_to("sum((2k)^2,k,0,n)", "(2×n×(n+1)×(2×n+1))/3");
   simplifies_to("sum((2k)^4,k,0,n)", "16×sum(k^4,k,0,n)");
   simplifies_to("sum(k*cos(k),k,1,n)", "sum(k×cos(k),k,1,n)");
   simplifies_to("sum(sum(x*j,j,1,n),k,1,2)", "n×(n+1)×x");
-  simplifies_to("sum(sum(a*k,a,0,m),k,1,n)", "(m×(m+1)×n×(n+1))/4");
+  simplifies_to("sum(sum(a*k,a,0,j),k,1,n)", "(j×(j+1)×n×(n+1))/4");
   simplifies_to("sum(π^k,k,4,2)", "0");
   simplifies_to("sum(sin(k),k,a+10,a)", "0");
   simplifies_to("sum(sin(k),k,a,a-10)", "0");
@@ -314,11 +318,11 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(random(),k,0,10)", "sum(random(),k,0,10)");
 
   // product
-  simplifies_to("product(p,k,m,n)", "p^(-m+n+1)");
-  simplifies_to("product(p^3,k,m,n)", "p^3^(-m+n+1)");
-  simplifies_to("product(k^3,k,m,n)", "product(k,k,m,n)^3");
-  simplifies_to("product(k^x,k,m,n)", "product(exp(x×ln(k)),k,m,n)");
-  simplifies_to("product(x^k,k,m,n)", "product(exp(k×ln(x)),k,m,n)");
+  simplifies_to("product(p,k,j,n)", "p^(-j+n+1)");
+  simplifies_to("product(p^3,k,j,n)", "p^3^(-j+n+1)");
+  simplifies_to("product(k^3,k,j,n)", "product(k,k,j,n)^3");
+  simplifies_to("product(k^x,k,j,n)", "product(exp(x×ln(k)),k,j,n)");
+  simplifies_to("product(x^k,k,j,n)", "product(exp(k×ln(x)),k,j,n)");
   simplifies_to("product(π^k,k,2,1)", "1");
   simplifies_to("product(sin(k),k,a+10,a)", "1");
   simplifies_to("product(sin(k),k,a,a-10)", "1");
@@ -940,6 +944,9 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   simplifies_to("diff(y*y, y, y)", "8", projCtx2);
   simplifies_to("diff(x*x, x, y)", "8", projCtx2);
   simplifies_to("diff(x*x, x, x)", "undef", projCtx2);
+
+  // Local variables may be unit names
+  simplifies_to("sum(t,t,1,3)", "6");
 
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

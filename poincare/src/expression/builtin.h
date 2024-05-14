@@ -17,7 +17,7 @@ class Builtin {
   constexpr Builtin(Type blockType, Aliases aliases)
       : m_blockType(blockType), m_aliases(aliases) {}
 
-  constexpr Type blockType() const { return m_blockType; }
+  constexpr TypeBlock blockType() const { return m_blockType; }
   constexpr const Aliases* aliases() const { return &m_aliases; }
   virtual bool has2DLayout() const { return false; }
   virtual Tree* pushNode(int numberOfChildren) const;

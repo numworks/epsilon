@@ -70,7 +70,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     return true;
   }
 
-  // If a=b, no need to way for advanced reduction to explicit
+  // If a=b, no need to wait for advanced reduction to explicit
   if (sign.realSign().isZero()) {
     return Explicit(expr);
   }

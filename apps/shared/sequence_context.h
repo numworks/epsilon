@@ -53,7 +53,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   void resetRanksAndValuesOfSequence(int sequenceIndex,
                                      bool intermediateComputation);
   void resetComputationStatus();
-  const Poincare::Expression protectedExpressionForSymbolAbstract(
+  const Poincare::UserExpression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
   Sequence* sequenceAtNameIndex(int sequenceIndex) const;

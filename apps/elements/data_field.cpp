@@ -37,18 +37,18 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
     return DataField::UnknownValueLayout();
   }
 
-  Expression value = Expression::Builder<double>(v);
+  UserExpression value = Expression::Builder<double>(v);
   /* Check the global context to know whether units need an underscore. */
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
-  Expression unit = Expression::Parse(rawUnit(), globalContext);
+  UserExpression unit = Expression::Parse(rawUnit(), globalContext);
 
   if (unit.isUninitialized()) {
     return value.createLayout(floatDisplayMode, significantDigits,
                               globalContext);
   }
 
-  Expression result =
+  UserExpression result =
       Expression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
   return result.createLayout(floatDisplayMode, significantDigits,
                              globalContext);

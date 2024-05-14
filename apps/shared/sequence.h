@@ -53,11 +53,11 @@ class Sequence : public Function {
   void firstInitialConditionText(char *buffer, size_t bufferSize) const {
     return m_firstInitialCondition.text(this, buffer, bufferSize);
   }
-  Poincare::Expression firstInitialConditionExpressionReduced(
+  Poincare::SystemFunction firstInitialConditionExpressionReduced(
       Poincare::Context *context) const {
     return m_firstInitialCondition.expressionReduced(this, context);
   }
-  Poincare::Expression firstInitialConditionExpressionClone() const {
+  Poincare::UserExpression firstInitialConditionExpressionClone() const {
     return m_firstInitialCondition.expressionClone(this);
   }
   Poincare::Layout firstInitialConditionLayout() {
@@ -74,11 +74,11 @@ class Sequence : public Function {
   void secondInitialConditionText(char *buffer, size_t bufferSize) const {
     return m_secondInitialCondition.text(this, buffer, bufferSize);
   }
-  Poincare::Expression secondInitialConditionExpressionReduced(
+  Poincare::SystemFunction secondInitialConditionExpressionReduced(
       Poincare::Context *context) const {
     return m_secondInitialCondition.expressionReduced(this, context);
   }
-  Poincare::Expression secondInitialConditionExpressionClone() const {
+  Poincare::UserExpression secondInitialConditionExpressionClone() const {
     return m_secondInitialCondition.expressionClone(this);
   }
   Poincare::Layout secondInitialConditionLayout() {
@@ -136,7 +136,7 @@ class Sequence : public Function {
                                   bool intermediateComputation) const;
   double approximateAtRank(int rank, SequenceContext *sqctx) const;
 
-  Poincare::Expression sumBetweenBounds(
+  Poincare::SystemExpression sumBetweenBounds(
       double start, double end, Poincare::Context *context) const override;
   // m_initialRank is capped by 255
   constexpr static int k_maxInitialRank = 255;
@@ -209,8 +209,9 @@ class Sequence : public Function {
    private:
     void updateNewDataWithExpression(
         Ion::Storage::Record *record,
-        const Poincare::Expression &expressionToStore, void *expressionAddress,
-        size_t newExpressionSize, size_t previousExpressionSize) override;
+        const Poincare::UserExpression &expressionToStore,
+        void *expressionAddress, size_t newExpressionSize,
+        size_t previousExpressionSize) override;
     virtual void updateMetaData(const Ion::Storage::Record *record,
                                 size_t newSize) {}
 

@@ -18,7 +18,7 @@ class TrigonometricModel : public Model {
 
  private:
   constexpr static int k_numberOfCoefficients = 4;
-  Poincare::Expression privateExpression(
+  Poincare::UserExpression privateExpression(
       double* modelCoefficients) const override;
   double partialDerivate(double* modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;

@@ -99,20 +99,21 @@ class SystemOfEquations {
     using Poincare::ContextWithParent::ContextWithParent;
 
    private:
-    const Poincare::Expression protectedExpressionForSymbolAbstract(
+    const Poincare::UserExpression protectedExpressionForSymbolAbstract(
         const Poincare::SymbolAbstract& symbol, bool clone,
         Poincare::ContextWithParent* lastDescendantContext) override;
   };
 
-  Poincare::Expression equationStandardFormForApproximateSolve(
+  Poincare::SystemExpression equationStandardFormForApproximateSolve(
       Poincare::Context* context);
   Error privateExactSolve(Poincare::Context* context);
-  Error simplifyAndFindVariables(Poincare::Context* context,
-                                 Poincare::Expression* simplifiedEquations);
+  Error simplifyAndFindVariables(
+      Poincare::Context* context,
+      Poincare::SystemExpression* simplifiedEquations);
   Error solveLinearSystem(Poincare::Context* context,
-                          Poincare::Expression* simplifiedEquations);
+                          Poincare::SystemExpression* simplifiedEquations);
   Error solvePolynomial(Poincare::Context* context,
-                        Poincare::Expression* simplifiedEquations);
+                        Poincare::SystemExpression* simplifiedEquations);
   uint32_t tagParametersUsedAsVariables() const;
   void tagVariableIfParameter(const char* name, uint32_t* tags) const;
 
@@ -121,7 +122,7 @@ class SystemOfEquations {
     Approximate,
     Formal,
   };
-  Error registerSolution(Poincare::Expression e, Poincare::Context* context,
+  Error registerSolution(Poincare::UserExpression e, Poincare::Context* context,
                          SolutionType type);
   void registerSolution(double f);
 

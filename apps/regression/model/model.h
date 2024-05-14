@@ -45,7 +45,7 @@ class Model {
   Poincare::Layout equationLayout(
       double* modelCoefficients, const char* ySymbol, int significantDigits,
       Poincare::Preferences::PrintFloatMode displayMode) const;
-  Poincare::Expression expression(double* modelCoefficients) const;
+  Poincare::UserExpression expression(double* modelCoefficients) const;
 
   /* Evaluate cannot use the expression and approximate it since it would be
    * too time consuming. */
@@ -56,7 +56,7 @@ class Model {
            Poincare::Context* context);
 
  protected:
-  virtual Poincare::Expression privateExpression(
+  virtual Poincare::UserExpression privateExpression(
       double* modelCoefficients) const = 0;
 
   // Fit

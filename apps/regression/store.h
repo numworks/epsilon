@@ -146,7 +146,7 @@ class Store : public Shared::LinearRegressionStore {
   static int BuildFunctionName(int series, char* buffer, int bufferSize);
   Ion::Storage::Record functionRecord(int series) const;
   void storeRegressionFunction(int series,
-                               Poincare::Expression expression) const;
+                               Poincare::UserExpression expression) const;
   void deleteRegressionFunction(int series) const;
 
   // This is a table of size k_numberOfSeries.

@@ -12,7 +12,7 @@ namespace Solver {
 class EquationStore : public Shared::ExpressionModelStore {
  public:
   constexpr static int k_maxNumberOfEquations =
-      Poincare::Expression::k_maxNumberOfVariables;
+      Poincare::UserExpression::k_maxNumberOfVariables;
   constexpr static const char* k_extension = Ion::Storage::equationExtension;
 
   // ExpressionModelStore

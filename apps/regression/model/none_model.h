@@ -33,9 +33,9 @@ class NoneModel : public Model {
   int numberOfCoefficients() const override { return 0; }
 
  private:
-  Poincare::Expression privateExpression(
+  Poincare::UserExpression privateExpression(
       double* modelCoefficients) const override {
-    return Poincare::Expression();
+    return Poincare::UserExpression();
   }
   void privateFit(Store* store, int series, double* modelCoefficients,
                   Poincare::Context* context) override {}

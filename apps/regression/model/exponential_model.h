@@ -18,7 +18,7 @@ class ExponentialModel : public TransformedModel {
   Poincare::Layout templateLayout() const override;
 
  private:
-  Poincare::Expression privateExpression(
+  Poincare::UserExpression privateExpression(
       double* modelCoefficients) const override;
   bool applyLnOnX() const override { return false; }
   bool applyLnOnY() const override { return true; }

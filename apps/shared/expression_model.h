@@ -27,7 +27,8 @@ class ExpressionModel {
                                                Poincare::Context* context,
                                                CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(
-      Ion::Storage::Record* record, const Poincare::Expression& newExpression);
+      Ion::Storage::Record* record,
+      const Poincare::UserExpression& newExpression);
 
   virtual void tidyDownstreamPoolFrom(
       Poincare::PoolObject* treePoolCursor = nullptr) const;
@@ -37,20 +38,21 @@ class ExpressionModel {
 
  protected:
   // Setters helper
-  virtual Poincare::Expression buildExpressionFromText(
+  virtual Poincare::UserExpression buildExpressionFromText(
       const char* c, CodePoint symbol = 0,
       Poincare::Context* context = nullptr) const;
-  static Poincare::Expression ReplaceSymbolWithUnknown(Poincare::Expression e,
-                                                       CodePoint symbol);
+  static Poincare::UserExpression ReplaceSymbolWithUnknown(
+      Poincare::UserExpression e, CodePoint symbol);
 
   bool isCircularlyDefined(const Ion::Storage::Record* record,
                            Poincare::Context* context) const;
   virtual void updateNewDataWithExpression(
       Ion::Storage::Record* record,
-      const Poincare::Expression& expressionToStore, void* expressionAddress,
-      size_t expressionToStoreSize, size_t previousExpressionSize);
+      const Poincare::UserExpression& expressionToStore,
+      void* expressionAddress, size_t expressionToStoreSize,
+      size_t previousExpressionSize);
 
-  mutable Poincare::Expression m_expression;
+  mutable Poincare::UserExpression m_expression;
   mutable Poincare::Layout m_layout;
 
  private:

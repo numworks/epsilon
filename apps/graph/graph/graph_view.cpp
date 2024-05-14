@@ -62,7 +62,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
 
-  Expression e = f->expressionApproximated(context());
+  SystemFunction e = f->expressionApproximated(context());
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   assert(f->numberOfSubCurves() <= 2);
   if (area == ContinuousFunctionProperties::AreaType::None) {

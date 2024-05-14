@@ -83,7 +83,7 @@ class FormulaTemplateMenuController
 
   int relativeCellIndex(int index, CellType type);
   bool shouldDisplayOtherAppCell() const;
-  Poincare::Expression templateExpressionForCell(Cell cell);
+  Poincare::UserExpression templateExpressionForCell(Cell cell);
   void computeUninitializedLayouts();
   void fillSubLabelBuffer(BufferTemplateCell* cell, int index);
   void fillSumColumnNames(char* buffers[]) const;

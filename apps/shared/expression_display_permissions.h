@@ -8,12 +8,12 @@ namespace Shared {
 namespace ExpressionDisplayPermissions {
 
 // This needs to be exposed for the solver
-bool NeverDisplayReductionOfInput(Poincare::Expression input,
+bool NeverDisplayReductionOfInput(Poincare::UserExpression input,
                                   Poincare::Context* context);
 
-bool ShouldOnlyDisplayApproximation(Poincare::Expression input,
-                                    Poincare::Expression exactOutput,
-                                    Poincare::Expression approximateOutput,
+bool ShouldOnlyDisplayApproximation(Poincare::UserExpression input,
+                                    Poincare::UserExpression exactOutput,
+                                    Poincare::UserExpression approximateOutput,
                                     Poincare::Context* context);
 
 }  // namespace ExpressionDisplayPermissions

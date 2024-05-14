@@ -17,7 +17,7 @@ namespace Graph {
 
 PointsOfInterestCache PointsOfInterestCache::clone() const {
   PointsOfInterestCache result = *this;
-  Expression cloneList = result.list().clone();
+  SystemExpression cloneList = result.list().clone();
   result.m_list.setList(static_cast<Poincare::List &>(cloneList));
   return result;
 }
@@ -213,7 +213,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   ContinuousFunctionStore *store = App::app()->functionStore();
   Context *context = App::app()->localContext();
   ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
-  Expression e = f->expressionApproximated(context);
+  SystemFunction e = f->expressionApproximated(context);
 
   if (start < 0.f && 0.f < end) {
     for (int curveIndex = 0; curveIndex < f->numberOfSubCurves();
@@ -231,7 +231,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   }
 
   typedef Coordinate2D<double> (Solver<double>::*NextSolution)(
-      const Expression &e);
+      const SystemFunction &e);
   NextSolution methodsNext[] = {&Solver<double>::nextRoot,
                                 &Solver<double>::nextMinimum,
                                 &Solver<double>::nextMaximum};
@@ -275,12 +275,12 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     if (!g->shouldDisplayIntersections()) {
       continue;
     }
-    Expression e2 = g->expressionApproximated(context);
+    SystemFunction e2 = g->expressionApproximated(context);
     Solver<double> solver = PoincareHelpers::Solver<double>(
         start, end, ContinuousFunction::k_unknownName, context);
     solver.setSearchStep(searchStep);
     solver.stretch();
-    Expression diff;
+    SystemFunction diff;
     Coordinate2D<double> intersection;
     while (std::isfinite((intersection = solver.nextIntersection(e, e2, &diff))
                              .x())) {  // assignment in condition

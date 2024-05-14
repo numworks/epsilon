@@ -14,7 +14,7 @@ class LogarithmicModel : public TransformedModel {
   I18n::Message name() const override { return I18n::Message::Logarithmic; }
 
  private:
-  Poincare::Expression privateExpression(
+  Poincare::UserExpression privateExpression(
       double* modelCoefficients) const override;
   bool applyLnOnX() const override { return true; }
   bool applyLnOnY() const override { return false; }

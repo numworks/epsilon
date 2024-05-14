@@ -1186,16 +1186,16 @@ int ContinuousFunction::Model::numberOfSubCurves(
   return 1;
 }
 
-Expression ContinuousFunction::Model::parametricForm(
+SystemParametricFunction ContinuousFunction::Model::parametricForm(
     const Ion::Storage::Record *record, Poincare::Context *context,
     bool approximated) const {
   ContinuousFunctionProperties prop = properties(record);
   assert(prop.isPolar() || prop.isInversePolar() || prop.isParametric());
-  Expression e = approximated ? expressionApproximated(record, context)
-                              : expressionReduced(record, context);
+  SystemFunction e = approximated ? expressionApproximated(record, context)
+                                  : expressionReduced(record, context);
   if (prop.isPolar() || prop.isInversePolar()) {
-    Expression x, y;
-    Expression unknown = Symbol::SystemSymbol();
+    ProjectedExpression x, y;
+    ProjectedExpression unknown = Symbol::SystemSymbol();
     if (prop.isPolar()) {
       /* Turn r(θ) into f(θ) = (x(θ), y(θ)) with
        * - x(θ) = r(θ) * cos(θ)

@@ -15,7 +15,7 @@ class LinearModel : public AffineModel {
   I18n::Message name() const override { return I18n::Message::Linear; }
 
  private:
-  Poincare::Expression privateExpression(
+  Poincare::UserExpression privateExpression(
       double* modelCoefficients) const override;
   void privateFit(Store* store, int series, double* modelCoefficients,
                   Poincare::Context* context) override;

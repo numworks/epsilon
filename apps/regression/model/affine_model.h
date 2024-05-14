@@ -23,7 +23,7 @@ class AffineModel : public Model {
                   Poincare::Context* context) override;
 
  protected:
-  Poincare::Expression privateExpression(
+  Poincare::UserExpression privateExpression(
       double* modelCoefficients) const override;
   virtual int slopeCoefficientIndex() const { return 0; }
   virtual int yInterceptCoefficientIndex() const { return 1; }

@@ -71,7 +71,7 @@ class Function : public ExpressionModelHandle {
       float t, Poincare::Context* context, int subCurveIndex = 0) const = 0;
   virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(
       double t, Poincare::Context* context, int subCurveIndex = 0) const = 0;
-  virtual Poincare::Expression sumBetweenBounds(
+  virtual Poincare::SystemExpression sumBetweenBounds(
       double start, double end, Poincare::Context* context) const = 0;
 
   virtual int derivationOrderFromSubCurveIndex(int subCurveIndex) const {

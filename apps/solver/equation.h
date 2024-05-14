@@ -9,7 +9,7 @@ class Equation : public Shared::ExpressionModelHandle {
  public:
   Equation(Ion::Storage::Record record = Record())
       : ExpressionModelHandle(record) {}
-  Poincare::Expression standardForm(
+  Poincare::SystemExpression standardForm(
       Poincare::Context* context, bool replaceFunctionsButNotSymbols,
       Poincare::ReductionTarget reductionTarget) const {
     return m_model.standardForm(this, context, replaceFunctionsButNotSymbols,
@@ -22,7 +22,7 @@ class Equation : public Shared::ExpressionModelHandle {
  private:
   class Model : public Shared::ExpressionModel {
    public:
-    Poincare::Expression standardForm(
+    Poincare::SystemExpression standardForm(
         const Ion::Storage::Record* record, Poincare::Context* context,
         bool replaceFunctionsButNotSymbols,
         Poincare::ReductionTarget reductionTarget) const;

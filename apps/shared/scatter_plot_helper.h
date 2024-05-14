@@ -15,7 +15,7 @@ class ScatterPlotIterable {
   friend class ContinuousFunction;
 
   using ExpressionIterable =
-      Poincare::PoolHandle::Direct<Poincare::Expression,
+      Poincare::PoolHandle::Direct<Poincare::SystemExpression,
                                    Poincare::ExpressionNode>;
 
   class Iterator : public ExpressionIterable::Iterator {
@@ -24,7 +24,7 @@ class ScatterPlotIterable {
         : ExpressionIterable::Iterator(iter) {}
     using ExpressionIterable::Iterator::Iterator;
     Poincare::Point operator*() const {
-      Poincare::Expression e = ExpressionIterable::Iterator::operator*();
+      Poincare::SystemExpression e = ExpressionIterable::Iterator::operator*();
       assert(e.type() == Poincare::ExpressionNode::Type::Point);
       return static_cast<Poincare::Point&>(e);
     }
@@ -46,13 +46,14 @@ class ScatterPlotIterable {
   int length() const { return ListLength(m_expression); }
 
  private:
-  ScatterPlotIterable(Poincare::Expression e) : m_iterable(e), m_expression(e) {
+  ScatterPlotIterable(Poincare::SystemExpression e)
+      : m_iterable(e), m_expression(e) {
     assert(Poincare::Expression::IsPoint(e) ||
            (e.type() == Poincare::ExpressionNode::Type::List &&
             static_cast<Poincare::List&>(e).isListOfPoints(nullptr)));
   }
 
-  static int ListLength(const Poincare::Expression& e) {
+  static int ListLength(const Poincare::SystemExpression& e) {
     return e.type() == Poincare::ExpressionNode::Type::List
                ? e.numberOfChildren()
            : e.isUndefined() ? 0
@@ -60,7 +61,7 @@ class ScatterPlotIterable {
   }
 
   ExpressionIterable m_iterable;
-  Poincare::Expression m_expression;
+  Poincare::SystemExpression m_expression;
 };
 
 }  // namespace Shared

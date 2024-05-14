@@ -34,7 +34,7 @@ class ContinuousFunction : public Function {
   // Create a record with baseName
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus *error,
                                      const char *baseName, KDColor color);
-  static bool IsFunctionAssignment(const Poincare::Expression e);
+  static bool IsFunctionAssignment(const Poincare::UserExpression e);
 
   // Builder
   ContinuousFunction(Ion::Storage::Record record = Record());
@@ -121,7 +121,7 @@ class ContinuousFunction : public Function {
   /* Expression */
 
   // Return the unaltered equation expression, replacing unknown symbols.
-  Poincare::Expression originalEquation() const {
+  Poincare::UserExpression originalEquation() const {
     return m_model.originalEquation(this, symbol());
   }
   // Update plotType as well as tMin and tMax values.
@@ -130,8 +130,8 @@ class ContinuousFunction : public Function {
       Poincare::Context *context, int derivationOrder = 0) const {
     return m_model.expressionApproximated(this, context, derivationOrder);
   }
-  Poincare::Expression parametricForm(Poincare::Context *context,
-                                      bool approximated = false) const {
+  Poincare::SystemParametricFunction parametricForm(
+      Poincare::Context *context, bool approximated = false) const {
     return m_model.parametricForm(this, context, approximated);
   }
 
@@ -234,7 +234,7 @@ class ContinuousFunction : public Function {
   /* Integral */
 
   // Return the expression of the integral between start and end
-  Poincare::Expression sumBetweenBounds(
+  Poincare::SystemExpression sumBetweenBounds(
       double start, double end, Poincare::Context *context) const override;
 
   /* Cache */
@@ -407,14 +407,14 @@ class ContinuousFunction : public Function {
     Poincare::SystemExpression expressionReducedForAnalysis(
         const Ion::Storage::Record *record, Poincare::Context *context) const;
     // Return the expression of the named function (right side of the equal)
-    Poincare::Expression expressionClone(
+    Poincare::UserExpression expressionClone(
         const Ion::Storage::Record *record) const override;
     // Return the entire expression that the user input. Replace symbols.
     Poincare::UserExpression originalEquation(
         const Ion::Storage::Record *record, CodePoint symbol) const;
     /* Return the expression representing the equation
      * (turns "f(x)=xy" into "xy" and "xy=a" into "xy-a") */
-    Poincare::Expression expressionEquation(
+    Poincare::UserExpression expressionEquation(
         const Ion::Storage::Record *record, Poincare::Context *context,
         Poincare::ComparisonNode::OperatorType *computedEquationType = nullptr,
         ContinuousFunctionProperties::SymbolType *computedFunctionSymbol =
@@ -431,7 +431,7 @@ class ContinuousFunction : public Function {
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
         Ion::Storage::Record *record, Poincare::Context *context) const;
     // Build the expression from text, handling f(x)=... cartesian equations
-    Poincare::Expression buildExpressionFromText(
+    Poincare::UserExpression buildExpressionFromText(
         const char *c, CodePoint symbol = 0,
         Poincare::Context *context = nullptr) const override;
     // Tidy the model
@@ -443,9 +443,9 @@ class ContinuousFunction : public Function {
     int numberOfSubCurves(const Ion::Storage::Record *record) const;
     // Reset m_plotType to Uninitialized type
     void resetProperties() const { m_properties.reset(); }
-    Poincare::Expression parametricForm(const Ion::Storage::Record *record,
-                                        Poincare::Context *context,
-                                        bool approximated = false) const;
+    Poincare::SystemParametricFunction parametricForm(
+        const Ion::Storage::Record *record, Poincare::Context *context,
+        bool approximated = false) const;
 
    private:
     // Return address of the record's expression

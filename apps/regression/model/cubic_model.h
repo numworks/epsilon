@@ -19,7 +19,7 @@ class CubicModel : public Model {
   double evaluate(double* modelCoefficients, double x) const override;
 
  private:
-  Poincare::Expression privateExpression(
+  Poincare::UserExpression privateExpression(
       double* modelCoefficients) const override;
   double partialDerivate(double* modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;

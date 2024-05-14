@@ -15,7 +15,7 @@ class AbstractMathFieldDelegate {
   AbstractMathFieldDelegate() : m_currentXNTIndex(-1) {}
 
  protected:
-  virtual bool isAcceptableExpression(const Poincare::Expression expression,
+  virtual bool isAcceptableExpression(const Poincare::UserExpression expression,
                                       Poincare::Context* context);
   bool isAcceptableText(const char* text, Poincare::Context* context);
   virtual CodePoint defaultXNT();

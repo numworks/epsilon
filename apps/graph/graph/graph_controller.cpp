@@ -125,7 +125,7 @@ Range2D<float> GraphController::optimalRange(
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      Expression e = f->parametricForm(context, true);
+      SystemParametricFunction e = f->parametricForm(context, true);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];
       Zoom::Function2DWithContext<float> floatEvaluators[2] = {
@@ -178,11 +178,11 @@ Range2D<float> GraphController::optimalRange(
        * FIXME For simplicity's sake, only the first piecewise operator will
        * have its conditions fitted. It is assumed that expressions containing
        * more than one piecewise will be rare. */
-      Expression p;
+      SystemFunction p;
       Expression::ExpressionTestAuxiliary yieldPiecewise =
-          [](const Expression e, Context *, void *auxiliary) {
+          [](const NewExpression e, Context *, void *auxiliary) {
             if (e.type() == ExpressionNode::Type::PiecewiseOperator) {
-              *static_cast<Expression *>(auxiliary) = e;
+              *static_cast<NewExpression *>(auxiliary) = e;
               return true;
             } else {
               return false;

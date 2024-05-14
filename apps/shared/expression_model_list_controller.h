@@ -97,7 +97,7 @@ class ExpressionModelListController
   virtual int maxNumberOfDisplayableRows() const = 0;
   void finishEdition();
   bool addEmptyModel();
-  virtual bool shouldCompleteEquation(Poincare::Expression expression,
+  virtual bool shouldCompleteEquation(Poincare::UserExpression expression,
                                       CodePoint symbol) {
     return false;
   }
@@ -106,7 +106,7 @@ class ExpressionModelListController
     assert(false);
     return true;
   }
-  virtual bool isValidExpressionModel(Poincare::Expression expression) {
+  virtual bool isValidExpressionModel(Poincare::UserExpression expression) {
     return true;
   }
   virtual int numberOfRowsForRecord(Ion::Storage::Record record) const {

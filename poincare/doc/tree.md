@@ -325,7 +325,7 @@ template <KTreeConcept KT> f(KT ktree) {
 Constexpr trees are the basis of a much-used mechanism to create and rewrite
 trees: pattern-matching.
 
-The pattern is a constexpr tree containing placeholders named `KA`,`KB`…`KG`.
+The pattern is a constexpr tree containing placeholders named `KA`,`KB`…`KH`.
 
 For instance you can match Cosine(Addition(2, 3)) against `KCos(KA)` and will
 obtain a Context where `ctx[KA]` points to the Addition tree inside your

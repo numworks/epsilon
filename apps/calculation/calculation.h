@@ -81,9 +81,9 @@ class Calculation {
   }
 
   // Expressions
-  Poincare::Expression input();
-  Poincare::Expression exactOutput();
-  Poincare::Expression approximateOutput(
+  Poincare::UserExpression input();
+  Poincare::UserExpression exactOutput();
+  Poincare::UserExpression approximateOutput(
       NumberOfSignificantDigits numberOfSignificantDigits);
 
   // Layouts

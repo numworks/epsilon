@@ -1,5 +1,7 @@
 #include "dimension.h"
 
+#include <algorithm>
+
 #include "approximation.h"
 #include "dependency.h"
 #include "integer.h"

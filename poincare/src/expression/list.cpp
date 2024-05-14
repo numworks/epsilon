@@ -40,7 +40,8 @@ bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(expr->child(1)) &&
              Integer::Is<uint8_t>(expr->child(2)));
-      int startIndex = Integer::Handler(expr->child(1)).to<uint8_t>() - 1;
+      int startIndex =
+          std::max(Integer::Handler(expr->child(1)).to<uint8_t>() - 1, 0);
       if (ProjectToNthElement(expr->child(0), startIndex + n, reduction)) {
         expr->moveTreeOverTree(expr->child(0));
         return true;

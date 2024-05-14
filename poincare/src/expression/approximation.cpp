@@ -616,7 +616,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       const Tree* values = node->child(0);
       const Tree* startIndex = node->child(1);
       assert(Integer::Is<uint8_t>(startIndex));
-      int start = Integer::Handler(startIndex).to<uint8_t>() - 1;
+      int start = std::max(Integer::Handler(startIndex).to<uint8_t>() - 1, 0);
       return ToComplex<T>(values->child(start + s_context->m_listElement));
     }
     case Type::ListSum:

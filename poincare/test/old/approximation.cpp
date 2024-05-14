@@ -2104,7 +2104,7 @@ QUIZ_CASE(poincare_approximation_lists_access) {
 
   assert_expression_approximates_to<float>("L(1,3)", "{1,2,3}");
   assert_expression_approximates_to<float>("L(1,9)", "{1,2,3,4,5}");
-  assert_expression_approximates_to<float>("L(-5,3)", "{1,2,3}");
+  assert_expression_approximates_to<float>("L(0,3)", "{1,2,3}");
   assert_expression_approximates_to<float>("L(3,1)", "{}");
   assert_expression_approximates_to<float>("L(8,9)", "{}");
 

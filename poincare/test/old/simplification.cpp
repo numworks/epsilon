@@ -2912,9 +2912,8 @@ QUIZ_CASE(poincare_simplification_comparison_operators) {
   assert_parsed_expression_simplify_to("undef = 2", Undefined::Name());
   assert_parsed_expression_simplify_to("undef != 2", Undefined::Name());
 
-  assert_parsed_expression_simplify_to("3 + i < 1 + 2i",
-                                       "3+i<1+2×i");  // Can't decide
-  assert_parsed_expression_simplify_to("3 + i < 1 + i", "False");
+  assert_parsed_expression_simplify_to("3 + i < 1 + 2i", "undef");
+  assert_parsed_expression_simplify_to("3 + i < 1 + i", "undef");
   assert_parsed_expression_simplify_to("3 + i = 3 + i", "True");
   assert_parsed_expression_simplify_to("[[0, 0]] < [[1, 1]]",
                                        Undefined::Name());

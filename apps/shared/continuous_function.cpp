@@ -410,7 +410,7 @@ double ContinuousFunction::approximateSlope(double t,
     return NAN;
   }
   // Slope is simplified once and for all
-  Expression slope = expressionSlopeReduced(context);
+  SystemExpression slope = expressionSlopeReduced(context);
   ApproximationContext approximationContext(context, complexFormat(context));
   Evaluation<double> result = slope.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
@@ -528,7 +528,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
   int derivationOrder = derivationOrderFromSubCurveIndex(subCurveIndex);
-  Expression e = expressionApproximated(context, derivationOrder);
+  SystemFunction e = expressionApproximated(context, derivationOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
 
   if (properties().isScatterPlot()) {
@@ -767,11 +767,11 @@ Expression ContinuousFunction::Model::expressionReduced(
   return m_expression;
 }
 
-Poincare::Expression ContinuousFunction::Model::expressionApproximated(
+Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
     const Ion::Storage::Record *record, Poincare::Context *context,
     int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
-  Expression *approximated;
+  SystemFunction *approximated;
   switch (derivationOrder) {
     case 0:
       approximated = &m_expressionApproximated;
@@ -785,9 +785,10 @@ Poincare::Expression ContinuousFunction::Model::expressionApproximated(
       break;
   }
   if (approximated->isUninitialized()) {
-    Expression e = derivationOrder == 0 ? expressionReduced(record, context)
-                                        : expressionDerivateReduced(
-                                              record, context, derivationOrder);
+    SystemExpression e =
+        derivationOrder == 0
+            ? expressionReduced(record, context)
+            : expressionDerivateReduced(record, context, derivationOrder);
     PoincareHelpers::CloneAndApproximateKeepingSymbols(
         &e, context,
         {.complexFormat = complexFormat(record, context),
@@ -799,7 +800,8 @@ Poincare::Expression ContinuousFunction::Model::expressionApproximated(
   return *approximated;
 }
 
-Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
+Poincare::SystemExpression
+ContinuousFunction::Model::expressionReducedForAnalysis(
     const Ion::Storage::Record *record, Poincare::Context *context) const {
   ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;

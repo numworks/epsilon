@@ -126,8 +126,8 @@ class ContinuousFunction : public Function {
   }
   // Update plotType as well as tMin and tMax values.
   void updateModel(Poincare::Context *context, bool wasCartesian);
-  Poincare::Expression expressionApproximated(Poincare::Context *context,
-                                              int derivationOrder = 0) const {
+  Poincare::SystemFunction expressionApproximated(
+      Poincare::Context *context, int derivationOrder = 0) const {
     return m_model.expressionApproximated(this, context, derivationOrder);
   }
   Poincare::Expression parametricForm(Poincare::Context *context,
@@ -275,17 +275,17 @@ class ContinuousFunction : public Function {
   /* Expressions */
 
   // Return the expression representing the equation for computations
-  Poincare::Expression expressionReducedForAnalysis(
+  Poincare::SystemExpression expressionReducedForAnalysis(
       Poincare::Context *context) const {
     return m_model.expressionReducedForAnalysis(this, context);
   }
   // Return the reduced expression of the derivative
-  Poincare::Expression expressionDerivateReduced(Poincare::Context *context,
-                                                 int derivationOrder) const {
+  Poincare::SystemExpression expressionDerivateReduced(
+      Poincare::Context *context, int derivationOrder) const {
     return m_model.expressionDerivateReduced(this, context, derivationOrder);
   }
   // Return the reduced expression of the slope (dy/dx)
-  Poincare::Expression expressionSlopeReduced(
+  Poincare::SystemExpression expressionSlopeReduced(
       Poincare::Context *context) const {
     return m_model.expressionSlopeReduced(this, context);
   }
@@ -395,23 +395,23 @@ class ContinuousFunction : public Function {
   class Model : public ExpressionModel {
    public:
     // Return the expression to plot.
-    Poincare::Expression expressionReduced(
+    Poincare::SystemExpression expressionReduced(
         const Ion::Storage::Record *record,
         Poincare::Context *context) const override;
     /* Return the expression reduced with approximated non symbols for faster
      * plot */
-    Poincare::Expression expressionApproximated(
+    Poincare::SystemFunction expressionApproximated(
         const Ion::Storage::Record *record, Poincare::Context *context,
         int derivationOrder = 0) const;
     // Return the expression reduced, and computes plotType
-    Poincare::Expression expressionReducedForAnalysis(
+    Poincare::SystemExpression expressionReducedForAnalysis(
         const Ion::Storage::Record *record, Poincare::Context *context) const;
     // Return the expression of the named function (right side of the equal)
     Poincare::Expression expressionClone(
         const Ion::Storage::Record *record) const override;
     // Return the entire expression that the user input. Replace symbols.
-    Poincare::Expression originalEquation(const Ion::Storage::Record *record,
-                                          CodePoint symbol) const;
+    Poincare::UserExpression originalEquation(
+        const Ion::Storage::Record *record, CodePoint symbol) const;
     /* Return the expression representing the equation
      * (turns "f(x)=xy" into "xy" and "xy=a" into "xy-a") */
     Poincare::Expression expressionEquation(
@@ -421,11 +421,11 @@ class ContinuousFunction : public Function {
             nullptr,
         bool *isCartesianEquation = nullptr) const;
     // Return the derivative of the expression to plot.
-    Poincare::Expression expressionDerivateReduced(
+    Poincare::SystemExpression expressionDerivateReduced(
         const Ion::Storage::Record *record, Poincare::Context *context,
         int derivationOrder) const;
     // Return the slope (dy/dx)
-    Poincare::Expression expressionSlopeReduced(
+    Poincare::SystemExpression expressionSlopeReduced(
         const Ion::Storage::Record *record, Poincare::Context *context) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
@@ -460,12 +460,12 @@ class ContinuousFunction : public Function {
      * m_expressionApproximated is used for plot, autozoom and points of
      * interest.
      */
-    mutable Poincare::Expression m_expressionApproximated;
-    mutable Poincare::Expression m_expressionFirstDerivate;
-    mutable Poincare::Expression m_expressionFirstDerivateApproximated;
-    mutable Poincare::Expression m_expressionSecondDerivate;
-    mutable Poincare::Expression m_expressionSecondDerivateApproximated;
-    mutable Poincare::Expression m_expressionSlope;
+    mutable Poincare::SystemFunction m_expressionApproximated;
+    mutable Poincare::SystemExpression m_expressionFirstDerivate;
+    mutable Poincare::SystemFunction m_expressionFirstDerivateApproximated;
+    mutable Poincare::SystemExpression m_expressionSecondDerivate;
+    mutable Poincare::SystemFunction m_expressionSecondDerivateApproximated;
+    mutable Poincare::SystemExpression m_expressionSlope;
   };
 
   // Return model pointer

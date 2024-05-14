@@ -147,9 +147,10 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       hasUnitChild = true;
     }
     if (!t->isPiecewise() && !t->isParenthesis() && !t->isDependency() &&
+        !t->isList() &&
         childDim[i].isBoolean() != t->isLogicalOperatorOrBoolean()) {
-      /* Only boolean operators, dependencies, parentheses and piecewises can
-       * have boolean child yet. */
+      /* Only piecewises, parenthesis, dependencies, lists and boolean operators
+       * can have boolean child. Boolean operators must have boolean child. */
       return false;
     }
     if (childDim[i].isPoint()) {
@@ -311,7 +312,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     case Type::List:
       // Lists can contain points or scalars but not both
       for (int i = 0; i < t->numberOfChildren(); i++) {
-        if (!(childDim[i].isScalar() || childDim[i].isPoint()) ||
+        if (!(childDim[i].isScalar() || childDim[i].isPoint() ||
+              childDim[i].isBoolean()) ||
             childDim[i] != childDim[0]) {
           return false;
         }

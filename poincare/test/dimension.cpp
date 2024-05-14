@@ -47,10 +47,17 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("{}", Scalar));
   QUIZ_ASSERT(dim("sequence(k,k,3)", Scalar));
 
+  QUIZ_ASSERT(dim("{False, False}", Boolean));
+  QUIZ_ASSERT(!dim("1 + {False, False}"));
+  QUIZ_ASSERT(!dim("1 and {False, False}"));
+  QUIZ_ASSERT(dim("True and {False, False}", Boolean));
   QUIZ_ASSERT(dim("True and False", Boolean));
   QUIZ_ASSERT(dim("True or (False xor True)", Boolean));
   QUIZ_ASSERT(!dim("0 and False"));
   QUIZ_ASSERT(dim("0 < 3 and False", Boolean));
+  QUIZ_ASSERT(!dim("sort({True, False, True}"));
+  QUIZ_ASSERT(!dim("min({True, False, True}"));
+  QUIZ_ASSERT(dim("{True, False, True} or {True, True, False}", Boolean));
 
   QUIZ_ASSERT(len("1", Dimension::k_nonListListLength));
   QUIZ_ASSERT(len("{1,2}", 2));
@@ -59,6 +66,7 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(len("2+mean({1,2})", Dimension::k_nonListListLength));
   QUIZ_ASSERT(len("sort({1,2})", 2));
   QUIZ_ASSERT(len("{}", 0));
+  QUIZ_ASSERT(len("{True, False}", 2));
 
   QUIZ_ASSERT(dim("(2,3)", Point));
   QUIZ_ASSERT(dim("{(2,3)}", Point));

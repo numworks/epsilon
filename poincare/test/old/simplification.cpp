@@ -2076,9 +2076,9 @@ QUIZ_CASE(poincare_simplification_complex_format) {
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("gcd(x,gcd(y,z))", "gcd(x,y,z)", User,
                                        Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("gcd(3, 1, 2, x, x^2)",
-                                       "gcd(x^2,x,3,2,1)", User, Radian,
-                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(3, 1, 2, x, x^2)", "gcd(1,x^2,x)",
+                                       User, Radian, MetricUnitFormat,
+                                       Cartesian);
   assert_parsed_expression_simplify_to("im(1+i)", "1", User, Radian,
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("int(x^2, x, 1, 2)", "int(x^2,x,1,2)",
@@ -2088,9 +2088,9 @@ QUIZ_CASE(poincare_simplification_complex_format) {
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("lcm(x,lcm(y,z))", "lcm(x,y,z)", User,
                                        Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("lcm(3, 1, 2, x, x^2)",
-                                       "lcm(x^2,x,3,2,1)", User, Radian,
-                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("lcm(3, 1, 2, x, x^2)", "lcm(6,x^2,x)",
+                                       User, Radian, MetricUnitFormat,
+                                       Cartesian);
   // TODO: dim is not simplified yet
   // assert_parsed_expression_simplify_to("dim(x)", "dim(x)", User, Radian,
   // MetricUnitFormat, Cartesian);

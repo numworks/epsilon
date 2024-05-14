@@ -3,13 +3,15 @@
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/parsing/tokenizer.h>
 #include <quiz.h>
+#include <shared/global_context.h>
 
 #include "helper.h"
 
 using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_layout_tokenize) {
-  ParsingContext context(nullptr, ParsingContext::ParsingMethod::Classic);
+  Shared::GlobalContext ctx;
+  ParsingContext context(&ctx, ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer(Rack::From("ab*123.45"_l), &context);
   Token token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::CustomIdentifier &&

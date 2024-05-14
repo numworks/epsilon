@@ -822,7 +822,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
 #endif
   simplifies_to("1-cos(x)^2-sin(x)^2", "0");
   simplifies_to("(a+b)^2", "(a+b)^2");
-  simplifies_to("abs(a)*abs(bc)-abs(ab)*abs(c)", "0");
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "0");
   simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^(2)+e^((a+b)×c)");

@@ -76,7 +76,7 @@ static Coordinate2D<T> evaluatorSecondCurve(T t, const void *model,
 template <typename T, int coordinate>
 static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
                                                      Context *context) {
-  const Expression *e = static_cast<const Expression *>(model);
+  const SystemFunction *e = static_cast<const SystemFunction *>(model);
   assert(e->numberOfChildren() == 2);
   assert(coordinate == 0 || coordinate == 1);
   T value = PoincareHelpers::ApproximateWithValueForSymbol<T>(

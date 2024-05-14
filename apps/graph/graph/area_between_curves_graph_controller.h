@@ -23,8 +23,8 @@ class AreaBetweenCurvesGraphController : public IntegralGraphController {
   double cursorNextStep(double position,
                         OMG::HorizontalDirection direction) override;
   Poincare::Layout createFunctionLayout() override;
-  Poincare::Expression createSumExpression(double startSum, double endSum,
-                                           Poincare::Context* context) override;
+  Poincare::SystemExpression createSumExpression(
+      double startSum, double endSum, Poincare::Context* context) override;
   Ion::Storage::Record secondSelectedRecord() const {
     return m_graphView->secondSelectedRecord();
   }

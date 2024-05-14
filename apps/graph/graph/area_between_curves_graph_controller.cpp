@@ -97,19 +97,20 @@ Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   return Layout::Create(KAbsL(KA) ^ "dx"_l, {.KA = Layout::String(buffer)});
 }
 
-Poincare::Expression AreaBetweenCurvesGraphController::createSumExpression(
+Poincare::SystemExpression
+AreaBetweenCurvesGraphController::createSumExpression(
     double startSum, double endSum, Poincare::Context *context) {
   // Get the expression of the first function
   ExpiringPointer<Shared::Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
-  Poincare::Expression expressionF =
+  Poincare::SystemExpression expressionF =
       function->expressionReduced(context).clone();
   // Get the expression of the second function
   function = FunctionApp::app()->functionStore()->modelForRecord(
       secondSelectedRecord());
-  Poincare::Expression expressionG =
+  Poincare::SystemExpression expressionG =
       function->expressionReduced(context).clone();
-  Poincare::Expression result =
+  Poincare::SystemExpression result =
       Poincare::Expression::Create(KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
                                    {.KA = Symbol::SystemSymbol(),
                                     .KB = Expression::Builder<double>(startSum),

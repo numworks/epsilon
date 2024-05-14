@@ -89,6 +89,7 @@ constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
 constexpr int k_indexOfMainExpression1D = 0;
 constexpr int k_indexOfParameter1D = 1;
 
+// TODO: replace with the other variant
 bool ParameterText(UnicodeDecoder& varDecoder, size_t* parameterStart,
                    size_t* parameterLength) {
   static_assert(k_indexOfParameter1D == 1,
@@ -146,6 +147,66 @@ bool ParameterText(UnicodeDecoder& varDecoder, size_t* parameterStart,
   varDecoder.unsafeSetPosition(startOfVariable);
   *parameterLength = lengthOfVariable;
   *parameterStart = startOfVariable;
+  return true;
+}
+
+bool ParameterText(LayoutSpanDecoder* varDecoder, const Layout** parameterStart,
+                   size_t* parameterLength) {
+  static_assert(k_indexOfParameter1D == 1,
+                "ParameteredExpression::ParameterText is outdated");
+  /* Find the beginning of the parameter. Count parentheses to handle the
+   * presence of functions with several parameters in the parametered
+   * expression. */
+  CodePoint c = UCodePointUnknown;
+  bool variableFound = false;
+  int cursorLevel = 0;
+  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
+    c = varDecoder->nextCodePoint();
+    switch (c) {
+      case '(':
+      case '{':
+      case '[':
+        cursorLevel++;
+        break;
+      case ')':
+      case '}':
+      case ']':
+        cursorLevel--;
+        break;
+      case ',':
+        // The parameter is the second argument of parametered expressions
+        variableFound = cursorLevel == 0;
+        break;
+    }
+  }
+  if (!variableFound || c == UCodePointNull) {
+    return false;
+  }
+
+  LayoutSpanDecoder startOfVariable = *varDecoder;
+  // Parameter name can be nested in system parentheses. Skip them
+  c = varDecoder->nextCodePoint();
+  CodePoint previousC = UCodePointUnknown;
+  while (c != UCodePointNull && c != ',' && c != ')') {
+    previousC = c;
+    c = varDecoder->nextCodePoint();
+  }
+  const Tree* endOfVariable = varDecoder->layout();
+  *varDecoder = startOfVariable;
+  // Skip whitespaces
+  while (varDecoder->codePoint() == ' ') {
+    c = varDecoder->nextCodePoint();
+  }
+  startOfVariable = *varDecoder;
+  size_t lengthOfVariable =
+      NumberOfNextTreeTo(startOfVariable.layout(), endOfVariable) - 1;
+
+  // if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
+  // return false;
+  // }
+  *varDecoder = startOfVariable;
+  *parameterLength = lengthOfVariable;
+  *parameterStart = startOfVariable.layout();
   return true;
 }
 

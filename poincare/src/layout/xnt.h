@@ -4,7 +4,12 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/src/memory/tree.h>
 
+#include "layout_span_decoder.h"
+
 namespace Poincare::Internal {
+
+bool ParameterText(LayoutSpanDecoder* varDecoder, const Layout** parameterStart,
+                   size_t* parameterLength);
 
 bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
                      int xntIndex, size_t* cycleSize);

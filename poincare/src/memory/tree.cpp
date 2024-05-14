@@ -514,4 +514,14 @@ void SwapTreesPointers(Tree** u, Tree** v) {
   *v = rv;
 }
 
+int NumberOfNextTreeTo(const Tree* from, const Tree* to) {
+  int i = 0;
+  while (from < to) {
+    from = from->nextTree();
+    i++;
+  }
+  assert(from == to);
+  return i;
+}
+
 }  // namespace Poincare::Internal

@@ -398,6 +398,9 @@ static_assert(sizeof(Tree) == sizeof(Block));
  * pointers. */
 void SwapTreesPointers(Tree** u, Tree** v);
 
+/* Count number of trees between from and to, assuming they are siblings */
+int NumberOfNextTreeTo(const Tree* from, const Tree* to);
+
 }  // namespace Poincare::Internal
 
 #endif

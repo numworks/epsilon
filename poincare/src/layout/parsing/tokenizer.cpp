@@ -343,19 +343,9 @@ void Tokenizer::fillIdentifiersList() {
   m_decoder.skip(rightMostParsedToken.length());
 }
 
-int numberOfNextTreeTo(const Tree* from, const Tree* to) {
-  int i = 0;
-  while (from < to) {
-    from = from->nextTree();
-    i++;
-  }
-  assert(from == to);
-  return i;
-}
-
 Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
                                                const Layout** stringEnd) {
-  int length = numberOfNextTreeTo(stringStart, *stringEnd);
+  int length = NumberOfNextTreeTo(stringStart, *stringEnd);
   LayoutSpanDecoder decoder(stringStart, length);
   Token::Type tokenType = Token::Type::Undefined;
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
@@ -364,7 +354,7 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
   size_t tokenLength;
   while (tokenType == Token::Type::Undefined && nextTokenStart < *stringEnd) {
     stringStart = nextTokenStart;
-    tokenLength = numberOfNextTreeTo(stringStart, *stringEnd);
+    tokenLength = NumberOfNextTreeTo(stringStart, *stringEnd);
     tokenType = stringTokenType(stringStart, &tokenLength);
     decoder.nextCodePoint();
     nextTokenStart = decoder.layout();

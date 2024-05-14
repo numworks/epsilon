@@ -33,6 +33,7 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(!dim("product([[k,2]], k, 1, n)"));
   QUIZ_ASSERT(!dim("(True, False)"));
   QUIZ_ASSERT(!dim("{2,(1,3)}"));
+  QUIZ_ASSERT(!dim("randintnorep(1,10,-1)"));
 
   QUIZ_ASSERT(dim("1", Scalar));
   QUIZ_ASSERT(dim("cos(sin(1+3))*2^3", Scalar));

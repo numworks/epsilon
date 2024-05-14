@@ -27,7 +27,12 @@ uint8_t Random::SeedRandomNodes(Tree* tree, uint8_t maxSeed) {
     if (u->isRandomNode()) {
       if (GetSeed(u) == 0) {
         // RandIntNoRep needs to reserve seed for each of its elements.
-        int size = u->isRandIntNoRep() ? Dimension::GetListLength(u) : 1;
+        /* We specifically know for RandIntNoRep that the dimension check can be
+         * done at this step. */
+        int size = u->isRandIntNoRep() && Dimension::DeepCheckDimensions(u) &&
+                           Dimension::DeepCheckListLength(u)
+                       ? Dimension::GetListLength(u)
+                       : 1;
         assert(static_cast<int>(currentSeed) + size < UINT8_MAX);
         if (currentSeed + size > Context::k_maxNumberOfVariables) {
           assert(GetSeed(u) == 0);
@@ -49,9 +54,11 @@ template <typename T>
 T Random::Approximate(const Tree* randomTree, Context* context,
                       int listElement) {
   uint8_t seed = Random::GetSeed(randomTree);
-  if (randomTree->isRandIntNoRep() && seed > 0) {
+  if (randomTree->isRandIntNoRep()) {
     assert(listElement >= 0);
-    seed += listElement;
+    if (seed > 0) {
+      seed += listElement;
+    }
   }
   assert(seed <= Context::k_maxNumberOfVariables);
   if (seed > 0) {

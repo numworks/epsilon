@@ -2,6 +2,7 @@
 
 #include "approximation.h"
 #include "dependency.h"
+#include "integer.h"
 #include "matrix.h"
 #include "parametric.h"
 #include "physical_constant.h"
@@ -108,8 +109,8 @@ int Dimension::GetListLength(const Tree* t) {
       return Approximation::To<float>(t->child(2)) -
              Approximation::To<float>(t->child(1));
     case Type::RandIntNoRep:
-      // TODO: Handle undef Approximation.
-      return Approximation::To<float>(t->child(2));
+      assert(Integer::Is<uint8_t>(t->child(2)));
+      return Integer::Handler(t->child(2)).to<uint8_t>();
     default: {
       // TODO sort lists first to optimize GetListLength ?
       for (const Tree* child : t->children()) {
@@ -337,6 +338,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       break;
     case Type::Parenthesis:
       return true;
+    case Type::RandIntNoRep:
+      return Integer::Is<uint8_t>(t->child(2));
     default:
       if (t->isLogicalOperatorOrBoolean()) {
         return true;

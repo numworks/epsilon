@@ -8,12 +8,17 @@
 #include <poincare/old/store.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
+#include <poincare/src/expression/dimension.h>
 #include <stdlib.h>
 
 namespace Poincare {
 
 bool Store::storeValueForSymbol(Context* context) const {
   assert(!value().isUninitialized());
+  // TODO_PCJ handle unit store
+  if (Internal::Dimension::GetDimension(tree()->child(0)).isUnit()) {
+    return false;
+  }
   return context->setExpressionForSymbolAbstract(value(), symbol());
 }
 

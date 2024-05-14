@@ -600,6 +600,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::ListElement: {
       const Tree* values = node->child(0);
       const Tree* index = node->child(1);
+      assert(Integer::Is<uint8_t>(index));
       int i = Integer::Handler(index).to<uint8_t>() - 1;
       if (i < 0 || i >= Dimension::GetListLength(values)) {
         return NAN;
@@ -609,6 +610,14 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       std::complex<T> result = ToComplex<T>(values);
       s_context->m_listElement = old;
       return result;
+    }
+    case Type::ListSlice: {
+      assert(s_context->m_listElement != -1);
+      const Tree* values = node->child(0);
+      const Tree* startIndex = node->child(1);
+      assert(Integer::Is<uint8_t>(startIndex));
+      int start = Integer::Handler(startIndex).to<uint8_t>() - 1;
+      return ToComplex<T>(values->child(start + s_context->m_listElement));
     }
     case Type::ListSum:
     case Type::ListProduct: {

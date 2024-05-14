@@ -939,8 +939,10 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
 
   store("{5,4,3,2,1}→l", &globalContext);
   simplifies_to("sum(l)", "15", projCtx);
-  // TODO: Properly parse list access and slices on variables
-  // simplifies_to("l(2)", "4", projCtx);
+  simplifies_to("l(0)", "undef", projCtx);
+  simplifies_to("l(2)", "4", projCtx);
+  simplifies_to("l(6)", "undef", projCtx);
+  // TODO: Properly parse list slices on variables
 
   ProjectionContext projCtx2 = {
       .m_symbolic =

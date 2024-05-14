@@ -1071,11 +1071,13 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
       if (derivationOrder > 0) {
         return false;
       }
-#if 0
-      result = ListElement::Builder(parameter, Symbol::Builder(name, length));
-#else
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
+      // TODO: factorise with parseList
+      TreeRef list = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
+      parameter->moveTreeBeforeNode(list);
+      result = SharedTreeStack->push(Type::ListElement);
+      list->moveNodeBeforeNode(result);
+      assert(result->child(0) == list);
+      assert(result->child(1) == parameter);
     } else {
       if (derivationOrder > 0) {
 #if 0

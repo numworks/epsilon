@@ -225,6 +225,7 @@ RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 NODE(List, NARY)
 NODE(ListSort, 1)
 
+// ListElement(List, ElementIndex)
 NODE(ListElement, 2)
 NODE(ListSlice, 3)
 NODE(Mean, 2)

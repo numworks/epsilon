@@ -1,6 +1,6 @@
 #include "input_homogeneity_table_cell.h"
 
-#include <poincare/print_int.h>
+#include <omg/print.h>
 #include <shared/column_parameter_controller.h>
 
 #include "input_homogeneity_controller.h"
@@ -45,8 +45,7 @@ size_t InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
       Shared::ColumnParameterController::k_titleBufferSize;
   size_t length =
       strlcpy(buffer, I18n::translate(I18n::Message::Group), bufferSize);
-  length +=
-      Poincare::PrintInt::Left(column, buffer + length, bufferSize - length);
+  length += OMG::Print::IntLeft(column, buffer + length, bufferSize - length);
   buffer[length] = 0;
   assert(length < Shared::ColumnParameterController::k_titleBufferSize);
   return length;

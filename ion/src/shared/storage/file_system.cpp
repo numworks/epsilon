@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <ion.h>
-#include <poincare/print_int.h>
+#include <omg/print.h>
 #include <string.h>
 
 #include <new>
@@ -81,8 +81,8 @@ int FileSystem::firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
   /* With '?' being the prefix, fill buffer with the first available name for
    * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */
   for (int i = 1; i <= maxId; i++) {
-    size_t length = Poincare::PrintInt::Left(i, buffer + prefixLength,
-                                             bufferSize - prefixLength);
+    size_t length = OMG::Print::IntLeft(i, buffer + prefixLength,
+                                        bufferSize - prefixLength);
     buffer[prefixLength + length] = 0;
     if (test(buffer, bufferSize, auxiliary)) {
       return prefixLength + length;

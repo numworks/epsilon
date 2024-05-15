@@ -3,7 +3,7 @@
 #include <ion/backlight.h>
 #include <ion/display.h>
 #include <ion/post_and_hardware_tests.h>
-#include <poincare/print_int.h>
+#include <omg/print.h>
 
 using namespace Poincare;
 
@@ -49,7 +49,7 @@ void LCDDataTestController::ContentView::setStatus(bool success,
   m_lcdDataStateView.setText(success ? k_lcdDataPassTest : k_lcdDataFailTest);
   constexpr int bufferSize = 20;
   char buffer[bufferSize] = {0};
-  Poincare::PrintInt::Left(numberOfErrors, buffer, bufferSize);
+  OMG::Print::IntLeft(numberOfErrors, buffer, bufferSize);
   m_lcdNumberPixelFailuresView.setText(buffer);
 }
 

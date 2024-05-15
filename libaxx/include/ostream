@@ -2,7 +2,7 @@
 #define OSTREAM
 
 #include <ion/console.h>
-#include <poincare/print_int.h>
+#include <omg/print.h>
 
 namespace std {
 
@@ -24,7 +24,7 @@ class ostream {
     if (i < 0) {
       Ion::Console::writeChar('-');
     }
-    int p = Poincare::PrintInt::Left(i, buffer, bufferSize);
+    int p = OMG::Print::IntLeft(i, buffer, bufferSize);
     buffer[p] = 0;
     Ion::Console::writeLine(buffer, false);
     return *this;

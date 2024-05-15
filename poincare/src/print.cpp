@@ -1,8 +1,8 @@
 #include <assert.h>
+#include <omg/print.h>
 #include <omg/utf8_helper.h>
 #include <poincare/print.h>
 #include <poincare/print_float.h>
-#include <poincare/print_int.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <string.h>
@@ -55,8 +55,8 @@ int Print::PrivateCustomPrintf(char* buffer, size_t bufferSize,
             return buffer - origin;
           }
         }
-        buffer += Poincare::PrintInt::Left(value, buffer,
-                                           bufferSize - (buffer - origin) - 1);
+        buffer += OMG::Print::IntLeft(value, buffer,
+                                      bufferSize - (buffer - origin) - 1);
       } else if (*(format + 1) == '%') {
         *buffer = '%';
         buffer++;

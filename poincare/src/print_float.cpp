@@ -1,4 +1,5 @@
 #include <omg/ieee754.h>
+#include <omg/print.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
 #include <poincare/old/infinity.h>
@@ -6,7 +7,6 @@
 #include <poincare/old/undefined.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
-#include <poincare/print_int.h>
 extern "C" {
 #include <assert.h>
 #include <float.h>
@@ -78,20 +78,20 @@ size_t PrintFloat::Long::serialize(char* buffer, size_t bufferSize) const {
     numberOfChars += SerializationHelper::CodePoint(buffer, bufferSize, '-');
   }
   if (m_digits[0] != 0) {
-    numberOfChars += PrintInt::Left(m_digits[0], buffer + numberOfChars,
-                                    bufferSize - numberOfChars - 1);
+    numberOfChars += OMG::Print::IntLeft(m_digits[0], buffer + numberOfChars,
+                                         bufferSize - numberOfChars - 1);
     size_t wantedNumberOfChars = numberOfChars + k_maxNumberOfCharsForDigit + 1;
     if (wantedNumberOfChars > bufferSize) {
       /* There is not enough space for serializing the second digit and the null
        * terminating char. */
       return wantedNumberOfChars;
     }
-    numberOfChars += PrintInt::Right(
+    numberOfChars += OMG::Print::IntRight(
         m_digits[1], buffer + numberOfChars,
         std::min(k_maxNumberOfCharsForDigit, bufferSize - numberOfChars - 1));
   } else {
-    numberOfChars += PrintInt::Left(m_digits[1], buffer + numberOfChars,
-                                    bufferSize - numberOfChars - 1);
+    numberOfChars += OMG::Print::IntLeft(m_digits[1], buffer + numberOfChars,
+                                         bufferSize - numberOfChars - 1);
   }
   if (numberOfChars <= bufferSize - 1) {
     buffer[numberOfChars] = 0;

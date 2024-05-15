@@ -1,6 +1,6 @@
 #include "single_element_view.h"
 
-#include <poincare/print_int.h>
+#include <omg/print.h>
 
 #include "app.h"
 
@@ -39,7 +39,7 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
 
   constexpr size_t k_bufferSize = 4;
   char zBuffer[k_bufferSize];
-  int zLength = Poincare::PrintInt::Left(z, zBuffer, k_bufferSize - 1);
+  int zLength = OMG::Print::IntLeft(z, zBuffer, k_bufferSize - 1);
   zBuffer[zLength] = 0;
   KDSize zSize = KDFont::Font(k_numbersFont)->stringSize(zBuffer);
 
@@ -51,7 +51,7 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
     aBuffer[0] = 0;
   } else {
     assert(a < 1000);
-    int aLength = Poincare::PrintInt::Left(a, aBuffer, k_bufferSize - 1);
+    int aLength = OMG::Print::IntLeft(a, aBuffer, k_bufferSize - 1);
     aBuffer[aLength] = 0;
     aSize = KDFont::Font(k_numbersFont)->stringSize(aBuffer);
     assert(aSize.width() >= zSize.width());  // since A >= Z

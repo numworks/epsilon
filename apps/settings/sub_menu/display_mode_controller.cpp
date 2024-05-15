@@ -2,9 +2,9 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
+#include <omg/print.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
-#include <poincare/print_int.h>
 
 #include <cmath>
 
@@ -51,7 +51,7 @@ void DisplayModeController::fillCellForRow(HighlightCell *cell, int row) {
     GenericSubController::fillCellForRow(cell, row);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
-    int length = Poincare::PrintInt::Left(
+    int length = OMG::Print::IntLeft(
         Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
         buffer, bufferSize);
     buffer[length] = 0;

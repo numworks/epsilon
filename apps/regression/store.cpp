@@ -2,9 +2,9 @@
 
 #include <assert.h>
 #include <float.h>
+#include <omg/print.h>
 #include <poincare/old/symbol.h>
 #include <poincare/preferences.h>
-#include <poincare/print_int.h>
 #include <string.h>
 
 #include <algorithm>
@@ -443,7 +443,8 @@ Model *Store::regressionModel(int index) {
 int Store::BuildFunctionName(int series, char *buffer, int bufferSize) {
   assert(bufferSize >= k_functionNameSize);
   size_t length = strlcpy(buffer, k_functionName, bufferSize);
-  length += PrintInt::Left(1 + series, buffer + length, bufferSize - length);
+  length +=
+      OMG::Print::IntLeft(1 + series, buffer + length, bufferSize - length);
   assert(length == k_functionNameSize - 1);
   buffer[length] = 0;
   return length;

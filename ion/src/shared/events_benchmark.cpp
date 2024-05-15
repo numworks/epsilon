@@ -2,10 +2,9 @@
 #include <ion/display.h>
 #include <ion/events.h>
 #include <ion/timing.h>
+#include <omg/print.h>
 
 #include <array>
-
-#include "../../../poincare/include/poincare/print_int.h"
 
 namespace Ion {
 namespace Events {
@@ -94,7 +93,7 @@ Event getEvent(int* timeout) {
     for (int i = 0; i < numberOfScenari; i++) {
       constexpr int bufferLength = 50;
       char buffer[bufferLength];
-      Poincare::PrintInt::Left(timings[i], buffer, bufferLength);
+      OMG::Print::IntLeft(timings[i], buffer, bufferLength);
       // convert from ms to s without generating _udivmoddi4 (long long
       // division) buffer[50-1-3] = 0;
       ctx->drawString(scenarios[i].name(), KDPoint(0, line_y), font);

@@ -9,7 +9,7 @@
 namespace OMG {
 
 /* TODO:
- * - merge Poincare::PrintInt into OMG::UInt32(Base::Decimal),
+ * - merge IntLeft & IntRight into OMG::UInt32(Base::Decimal),
  * - move Poincare::PrintFloat here
  * - move Poincare::Print here
  */
@@ -54,6 +54,8 @@ constexpr size_t LengthOfUInt32(Base base, uint32_t integer) {
 
 int UInt32(Base base, uint32_t integer, LeadingZeros printLeadingZeros,
            char* buffer, int bufferSize);
+int IntLeft(uint32_t integer, char* buffer, int bufferLength);
+int IntRight(uint32_t integer, char* buffer, int bufferLength);
 
 inline constexpr bool IsLowercaseLetter(char c) { return 'a' <= c && c <= 'z'; }
 

@@ -4,13 +4,13 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
+#include <omg/print.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/polynomial.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>
 #include <poincare/old/zoom.h>
-#include <poincare/print_int.h>
 
 #include "app.h"
 
@@ -400,8 +400,8 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       size_t parameterNameLength =
           parameterIndex == 0
               ? 1
-              : 1 + PrintInt::Left(parameterIndex, parameterName + 1,
-                                   parameterNameSize - 2);
+              : 1 + OMG::Print::IntLeft(parameterIndex, parameterName + 1,
+                                        parameterNameSize - 2);
       parameterIndex++;
       assert(parameterNameLength >= 1 &&
              parameterNameLength < parameterNameSize);

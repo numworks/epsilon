@@ -182,7 +182,6 @@ poincare_bench_src = $(addprefix poincare/src/,\
   init.cpp \
   preferences.cpp \
   print_float.cpp \
-  print_int.cpp \
 )
 
 poincare_bench_src = $(addprefix poincare/src/old/,\
@@ -280,7 +279,6 @@ poincare_src += $(addprefix poincare/src/,\
   preferences.cpp \
   print.cpp \
   print_float.cpp \
-  print_int.cpp \
   range.cpp \
 )
 
@@ -340,7 +338,6 @@ tests_src += $(addprefix poincare/test/,\
   projection.cpp \
   print.cpp \
   print_float.cpp \
-  print_int.cpp \
   range.cpp \
   rational.cpp \
   regularized_function.cpp \

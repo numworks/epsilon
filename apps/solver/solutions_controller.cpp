@@ -3,12 +3,12 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <limits.h>
+#include <omg/print.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/preferences.h>
-#include <poincare/print_int.h>
 
 #include <algorithm>
 
@@ -354,8 +354,8 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
         const char *varName = system->variable(0);
         size_t length = SymbolAbstractNode::NameWithoutQuotationMarks(
             bufferSymbol, bufferSize, varName, strlen(varName));
-        length +=
-            PrintInt::Left(row + 1, bufferSymbol + length, bufferSize - length);
+        length += OMG::Print::IntLeft(row + 1, bufferSymbol + length,
+                                      bufferSize - length);
         bufferSymbol[length] = 0;
       }
     } else {

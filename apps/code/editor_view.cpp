@@ -2,7 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <escher/palette.h>
-#include <poincare/print_int.h>
+#include <omg/print.h>
 
 #include "app.h"
 
@@ -81,9 +81,8 @@ void EditorView::GutterView::drawRect(KDContext* ctx, KDRect rect) const {
   for (int i = 0; i < numberOfLines; i++) {
     // Only the first two digits are displayed
     int lineNumberValue = (i + firstLine + 1) % 100;
-    int length =
-        (firstLine < 10 ? Poincare::PrintInt::Left : Poincare::PrintInt::Right)(
-            lineNumberValue, buffer, k_lineNumberCharLength);
+    int length = (firstLine < 10 ? OMG::Print::IntLeft : OMG::Print::IntRight)(
+        lineNumberValue, buffer, k_lineNumberCharLength);
     assert(length <= k_lineNumberCharLength);
     buffer[length] = 0;
     KDCoordinate leftPadding = (2 - strlen(buffer)) * glyphSize.width();

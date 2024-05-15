@@ -481,8 +481,8 @@ void ContinuousFunction::trimResolutionInterval(double *start,
   *end = *end < tmin ? tmin : tmax < *end ? tmax : *end;
 }
 
-Expression ContinuousFunction::sumBetweenBounds(double start, double end,
-                                                Context *context) const {
+UserExpression ContinuousFunction::sumBetweenBounds(double start, double end,
+                                                    Context *context) const {
   assert(properties().isCartesian());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());

@@ -221,7 +221,7 @@ void SumGraphController::reloadBannerView() {
                             sumSymbol());
 }
 
-Poincare::SystemExpression SumGraphController::createSumExpression(
+Poincare::UserExpression SumGraphController::createSumExpression(
     double startSum, double endSum, Poincare::Context *context) {
   ExpiringPointer<Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());

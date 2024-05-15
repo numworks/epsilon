@@ -136,7 +136,7 @@ class Sequence : public Function {
                                   bool intermediateComputation) const;
   double approximateAtRank(int rank, SequenceContext *sqctx) const;
 
-  Poincare::SystemExpression sumBetweenBounds(
+  Poincare::UserExpression sumBetweenBounds(
       double start, double end, Poincare::Context *context) const override;
   // m_initialRank is capped by 255
   constexpr static int k_maxInitialRank = 255;

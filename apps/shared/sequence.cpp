@@ -263,8 +263,8 @@ double Sequence::approximateAtContextRank(SequenceContext *sqctx,
                                                  approximationContext);
 }
 
-Expression Sequence::sumBetweenBounds(double start, double end,
-                                      Context *context) const {
+UserExpression Sequence::sumBetweenBounds(double start, double end,
+                                          Context *context) const {
   /* Here, we cannot just create the expression sum(u(n), start, end) because
    * the approximation of u(n) is not handled by Poincare (but only by
    * Sequence). */

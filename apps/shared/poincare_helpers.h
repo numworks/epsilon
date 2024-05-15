@@ -98,7 +98,7 @@ inline T ApproximateToScalar(
 
 template <class T>
 inline T ApproximateWithValueForSymbol(
-    const Poincare::Expression e, const char* symbol, T x,
+    const Poincare::SystemFunction e, const char* symbol, T x,
     Poincare::Context* context,
     const ApproximationParameters& approximationParameters = {}) {
   return e.approximateToScalarWithValueForSymbol<T>(

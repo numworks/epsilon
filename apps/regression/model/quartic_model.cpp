@@ -12,17 +12,17 @@ Poincare::Layout QuarticModel::templateLayout() const {
          "+c·x"_l ^ KSuperscriptL("2"_l) ^ "+d·x+e"_l;
 }
 
-Poincare::Expression QuarticModel::privateExpression(
+Poincare::UserExpression QuarticModel::privateExpression(
     double* modelCoefficients) const {
   // a*x^4+b*x^3+c*x^2+d*x+e
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 4_e)), KMult(KB, KPow("x"_e, 3_e)),
            KMult(KC, KPow("x"_e, 2_e)), KMult(KD, "x"_e), KE),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::Expression::Builder<double>(modelCoefficients[2]),
-       .KD = Poincare::Expression::Builder<double>(modelCoefficients[3]),
-       .KE = Poincare::Expression::Builder<double>(modelCoefficients[4])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
+       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2]),
+       .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3]),
+       .KE = Poincare::NewExpression::Builder<double>(modelCoefficients[4])});
 }
 
 double QuarticModel::evaluate(double* modelCoefficients, double x) const {

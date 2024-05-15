@@ -370,7 +370,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &derivationOrder);
   Context *context = App::app()->localContext();
-  Expression result;
+  UserExpression result;
   if (derivationOrder >= 1) {
     // Compute derivative approximate result
     assert(derivationOrder == 1 || derivationOrder == 2);
@@ -384,7 +384,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     result = function->expressionReduced(context);
     VariableContext abscissaContext =
         VariableContext(Shared::Function::k_unknownName, context);
-    Expression abscissaExpression = Decimal::Builder<double>(abscissa);
+    UserExpression abscissaExpression = Decimal::Builder<double>(abscissa);
     abscissaContext.setExpressionForSymbolAbstract(
         abscissaExpression,
         Symbol::Builder(Shared::Function::k_unknownName,
@@ -398,7 +398,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         &simplificationFailure);
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
-    Expression approximation =
+    UserExpression approximation =
         PoincareHelpers::Approximate<double>(result, context);
     if (simplificationFailure || !m_exactValuesAreActivated ||
         ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(

@@ -179,7 +179,7 @@ Range2D<float> GraphController::optimalRange(
        * have its conditions fitted. It is assumed that expressions containing
        * more than one piecewise will be rare. */
       SystemFunction p;
-      Expression::ExpressionTestAuxiliary yieldPiecewise =
+      NewExpression::ExpressionTestAuxiliary yieldPiecewise =
           [](const NewExpression e, Context *, void *auxiliary) {
             if (e.type() == ExpressionNode::Type::PiecewiseOperator) {
               *static_cast<NewExpression *>(auxiliary) = e;

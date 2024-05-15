@@ -13,13 +13,13 @@ LogarithmicModel::LogarithmicModel() : TransformedModel() {
   assert(applyLnOnY() == Store::FitsLnY(Model::Type::Logarithmic));
 }
 
-Poincare::Expression LogarithmicModel::privateExpression(
+Poincare::UserExpression LogarithmicModel::privateExpression(
     double* modelCoefficients) const {
   // a+b*ln(x)
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KAdd(KA, KMult(KB, KLn("x"_e))),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
 }  // namespace Regression

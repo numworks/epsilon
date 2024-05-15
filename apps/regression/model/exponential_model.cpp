@@ -24,14 +24,14 @@ Poincare::Layout ExponentialModel::templateLayout() const {
                      : "a·e"_l ^ KSuperscriptL("b·x"_l);
 }
 
-Poincare::Expression ExponentialModel::privateExpression(
+Poincare::UserExpression ExponentialModel::privateExpression(
     double* modelCoefficients) const {
   // if m_isAbxForm -> a*b^x, else a*e^bx
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       m_isAbxForm ? KMult(KA, KPow(KB, "x"_e))
                   : KMult(KA, KExp(KMult(KB, "x"_e))),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
 }  // namespace Regression

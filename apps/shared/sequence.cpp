@@ -271,7 +271,7 @@ UserExpression Sequence::sumBetweenBounds(double start, double end,
   double result = 0.0;
   if (end - start > ExpressionNode::k_maxNumberOfSteps ||
       start + 1.0 == start) {
-    return Expression::Builder<double>(NAN);
+    return NewExpression::Builder<double>(NAN);
   }
   start = std::round(start);
   end = std::round(end);
@@ -279,11 +279,11 @@ UserExpression Sequence::sumBetweenBounds(double start, double end,
     /* When |start| >> 1.0, start + 1.0 = start. In that case, quit the
      * infinite loop. */
     if (i == i - 1.0 || i == i + 1.0) {
-      return Expression::Builder<double>(NAN);
+      return NewExpression::Builder<double>(NAN);
     }
     result += evaluateXYAtParameter(i, context).y();
   }
-  return Expression::Builder<double>(result);
+  return NewExpression::Builder<double>(result);
 }
 
 Sequence::RecordDataBuffer *Sequence::recordData() const {

@@ -123,8 +123,8 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
 }
 
 void ContinuousFunctionProperties::update(
-    const Poincare::Expression reducedEquation,
-    const Poincare::Expression inputEquation, Context* context,
+    const Poincare::SystemFunction reducedEquation,
+    const Poincare::UserExpression inputEquation, Context* context,
     Preferences::ComplexFormat complexFormat,
     ComparisonNode::OperatorType precomputedOperatorType,
     SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
@@ -145,7 +145,7 @@ void ContinuousFunctionProperties::update(
    * only check display permissions for input expression.*/
   bool genericCaptionOnly =
       Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          inputEquation, Expression(), Expression(), context);
+          inputEquation, UserExpression(), UserExpression(), context);
 
   setHideDetails(genericCaptionOnly);
 
@@ -155,7 +155,7 @@ void ContinuousFunctionProperties::update(
     return;
   }
 
-  Expression analyzedExpression = reducedEquation;
+  SystemFunction analyzedExpression = reducedEquation;
   if (reducedEquation.type() == ExpressionNode::Type::Dependency) {
     // Do not handle dependencies for now.
     analyzedExpression = reducedEquation.childAtIndex(0);
@@ -186,7 +186,7 @@ void ContinuousFunctionProperties::update(
          analyzedExpression.deepIsList(context)) ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
          precomputedFunctionSymbol != SymbolType::T &&
-         analyzedExpression.recursivelyMatches([](const Expression e) {
+         analyzedExpression.recursivelyMatches([](const NewExpression e) {
            return e.type() == ExpressionNode::Type::Point;
          }))) {
       setErrorStatusAndUpdateCaption(Status::Undefined);
@@ -295,7 +295,7 @@ void ContinuousFunctionProperties::update(
 }
 
 void ContinuousFunctionProperties::setCartesianFunctionProperties(
-    const Expression& analyzedExpression, Context* context) {
+    const SystemExpression& analyzedExpression, Context* context) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
 

@@ -17,14 +17,14 @@ static double toRadians() {
                     Poincare::Preferences::SharedPreferences()->angleUnit());
 }
 
-Poincare::Expression TrigonometricModel::privateExpression(
+Poincare::UserExpression TrigonometricModel::privateExpression(
     double* modelCoefficients) const {
   // a*sin(bx+c)+d
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KAdd(KMult(KA, KSin(KAdd(KMult(KB, "x"_e), KC))), KD),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::Expression::Builder<double>(modelCoefficients[2])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
+       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
 }
 
 double TrigonometricModel::evaluate(double* modelCoefficients, double x) const {

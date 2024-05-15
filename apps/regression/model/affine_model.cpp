@@ -5,13 +5,13 @@
 
 namespace Regression {
 
-Poincare::Expression AffineModel::privateExpression(
+Poincare::UserExpression AffineModel::privateExpression(
     double* modelCoefficients) const {
   // a*x+b
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KAdd(KMult(KA, "x"_e), KB),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
 double AffineModel::evaluate(double* modelCoefficients, double x) const {

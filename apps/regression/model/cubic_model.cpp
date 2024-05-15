@@ -12,16 +12,16 @@ Poincare::Layout CubicModel::templateLayout() const {
          "+c·x+d"_l;
 }
 
-Poincare::Expression CubicModel::privateExpression(
+Poincare::UserExpression CubicModel::privateExpression(
     double* modelCoefficients) const {
   // a*x^3+b*x^2+c*x+d
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 3_e)), KMult(KB, KPow("x"_e, 2_e)),
            KMult(KC, "x"_e), KD),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::Expression::Builder<double>(modelCoefficients[2]),
-       .KD = Poincare::Expression::Builder<double>(modelCoefficients[3])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
+       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2]),
+       .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3])});
 }
 
 double CubicModel::evaluate(double* modelCoefficients, double x) const {

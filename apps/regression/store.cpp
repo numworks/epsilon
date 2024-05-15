@@ -456,7 +456,8 @@ Ion::Storage::Record Store::functionRecord(int series) const {
       ->recordBaseNamedWithExtension(name, Ion::Storage::regressionExtension);
 }
 
-void Store::storeRegressionFunction(int series, Expression expression) const {
+void Store::storeRegressionFunction(int series,
+                                    UserExpression expression) const {
   if (expression.isUninitialized()) {
     return deleteRegressionFunction(series);
   }

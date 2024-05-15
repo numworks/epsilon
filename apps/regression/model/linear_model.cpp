@@ -7,16 +7,16 @@
 
 namespace Regression {
 
-Poincare::Expression LinearModel::privateExpression(
+Poincare::UserExpression LinearModel::privateExpression(
     double* modelCoefficients) const {
   if (!m_isApbxForm) {
     return AffineModel::privateExpression(modelCoefficients);
   }
   // a+b*x
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KAdd(KA, KMult(KB, "x"_e)),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
 void LinearModel::privateFit(Store* store, int series,

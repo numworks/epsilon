@@ -46,7 +46,7 @@ bool NeverDisplayReductionOfInput(Expression input, Context* context) {
 static bool isPrimeFactorization(Expression expression) {
   /* A prime factorization can only be built with integers, powers of integers,
    * and a multiplication. */
-  return !expression.recursivelyMatches([](const Expression e) {
+  return !expression.recursivelyMatches([](const NewExpression e) {
     return e.isUninitialized() ||
            !(e.type() == ExpressionNode::Type::BasedInteger ||
              e.type() == ExpressionNode::Type::Multiplication ||

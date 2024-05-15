@@ -22,10 +22,10 @@ Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
     double start, double max, Context* context) {
   Solver<double> solver = PoincareHelpers::Solver(
       start, max, ContinuousFunction::k_unknownName, context);
-  Expression f =
+  SystemFunction f =
       functionStore()->modelForRecord(m_record)->expressionApproximated(
           context);
-  return solver.nextIntersection(Expression::Builder<double>(m_image), f);
+  return solver.nextIntersection(NewExpression::Builder<double>(m_image), f);
 }
 
 }  // namespace Graph

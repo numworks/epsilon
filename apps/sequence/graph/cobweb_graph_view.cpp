@@ -50,14 +50,14 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
       KDColor::Blend(sequence->color(), KDColorWhite, k_curveFadeRatio);
   SequenceContext *context =
       reinterpret_cast<SequenceContext *>(App::app()->localContext());
-  Poincare::Expression function = sequence->expressionClone();
+  Poincare::UserExpression function = sequence->expressionClone();
 
   /* Replace initial term by its value, to avoid replacing it by a wrong value
    * at next step */
   Poincare::Sequence initialSymbol = Poincare::Sequence::Builder(
       name, strlen(name),
-      Poincare::Expression::Builder(sequence->initialRank()));
-  Poincare::Expression initialExpression =
+      Poincare::NewExpression::Builder(sequence->initialRank()));
+  Poincare::SystemFunction initialExpression =
       sequence->firstInitialConditionExpressionReduced(context);
   function =
       function.replaceSymbolWithExpression(initialSymbol, initialExpression);
@@ -69,7 +69,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
   function = function.replaceSymbolWithExpression(sequenceSymbol, variable);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void *model,
                                                  void *context) {
-    Poincare::Expression *e = (Poincare::Expression *)model;
+    Poincare::SystemFunction *e = (Poincare::SystemFunction *)model;
     Poincare::Context *c = (Poincare::Context *)context;
     constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
     return Poincare::Coordinate2D<float>(

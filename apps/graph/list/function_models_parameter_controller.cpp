@@ -54,7 +54,7 @@ void FunctionModelsParameterController::viewWillAppear() {
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Model model = Models()[i];
     char buffer[k_maxSizeOfNamedModel];
-    Poincare::Expression e = Expression::Parse(
+    Poincare::UserExpression e = UserExpression::Parse(
         ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel),
         nullptr);  // No context needed
     m_layouts[i] =

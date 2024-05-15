@@ -18,13 +18,13 @@ Poincare::Layout PowerModel::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("b"_l);
 }
 
-Poincare::Expression PowerModel::privateExpression(
+Poincare::UserExpression PowerModel::privateExpression(
     double* modelCoefficients) const {
   // a*x^b
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KMult(KA, KPow("x"_e, KB)),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
 }  // namespace Regression

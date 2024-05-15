@@ -106,8 +106,8 @@ class Calculation {
   EqualSign equalSign(Poincare::Context* context);
 
   void fillExpressionsForAdditionalResults(
-      Poincare::Expression* input, Poincare::Expression* exactOutput,
-      Poincare::Expression* approximateOutput);
+      Poincare::UserExpression* input, Poincare::UserExpression* exactOutput,
+      Poincare::UserExpression* approximateOutput);
   AdditionalResultsType additionalResultsType();
 
  private:

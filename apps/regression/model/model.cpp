@@ -24,11 +24,11 @@ Layout Model::templateLayout() const {
 Layout Model::equationLayout(
     double* modelCoefficients, const char* ySymbol, int significantDigits,
     Poincare::Preferences::PrintFloatMode displayMode) const {
-  Expression formula = expression(modelCoefficients);
+  UserExpression formula = expression(modelCoefficients);
   if (formula.isUninitialized()) {
     return Layout();
   }
-  Expression equation =
+  UserExpression equation =
       Comparison::Builder(Symbol::Builder(ySymbol, strlen(ySymbol)),
                           ComparisonNode::OperatorType::Equal, formula);
   return equation.createLayout(
@@ -36,10 +36,10 @@ Layout Model::equationLayout(
       AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
-Poincare::Expression Model::expression(double* modelCoefficients) const {
+Poincare::UserExpression Model::expression(double* modelCoefficients) const {
   for (int i = 0; i < numberOfCoefficients(); i++) {
     if (std::isnan(modelCoefficients[i])) {
-      return Expression();
+      return UserExpression();
     }
   }
   return privateExpression(modelCoefficients);
@@ -47,7 +47,7 @@ Poincare::Expression Model::expression(double* modelCoefficients) const {
 
 double Model::levelSet(double* modelCoefficients, double xMin, double xMax,
                        double y, Poincare::Context* context) {
-  Expression e = expression(modelCoefficients);
+  UserExpression e = expression(modelCoefficients);
   if (e.isUninitialized()) {
     return NAN;
   }

@@ -487,9 +487,10 @@ UserExpression ContinuousFunction::sumBetweenBounds(double start, double end,
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
   // Integral takes ownership of args
-  return Integral::Builder(
-      expressionReduced(context).clone(), Symbol::SystemSymbol(),
-      Expression::Builder<double>(start), Expression::Builder<double>(end));
+  return Integral::Builder(expressionReduced(context).clone(),
+                           Symbol::SystemSymbol(),
+                           NewExpression::Builder<double>(start),
+                           NewExpression::Builder<double>(end));
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */
@@ -1114,7 +1115,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
     ExpressionModel::ReplaceSymbolWithUnknown(expressionToStore.childAtIndex(1),
                                               symbol);
   } else {
-    if (expressionToStore.recursivelyMatches([](const Expression e) {
+    if (expressionToStore.recursivelyMatches([](const NewExpression e) {
           return e.type() == ExpressionNode::Type::Symbol &&
                  AliasesLists::k_thetaAliases.contains(
                      static_cast<const Symbol &>(e).name());

@@ -5,12 +5,12 @@
 
 namespace Regression {
 
-Poincare::Expression ProportionalModel::privateExpression(
+Poincare::UserExpression ProportionalModel::privateExpression(
     double* modelCoefficients) const {
   // a*x
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KMult(KA, "x"_e),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0])});
 }
 
 double ProportionalModel::evaluate(double* modelCoefficients, double x) const {

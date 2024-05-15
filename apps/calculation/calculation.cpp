@@ -35,23 +35,23 @@ Calculation *Calculation::next() const {
                          sizeof(Calculation) + cumulatedTreeSizes()));
 }
 
-Expression Calculation::input() {
-  Expression e = JuniorExpression::Builder(inputTree());
+UserExpression Calculation::input() {
+  UserExpression e = JuniorExpression::Builder(inputTree());
   assert(!e.isUninitialized());
   return e;
 }
 
-Expression Calculation::exactOutput() {
+UserExpression Calculation::exactOutput() {
   /* Because the angle unit might have changed, we do not simplify again. We
    * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
-  Expression e = JuniorExpression::Builder(exactOutputTree());
+  UserExpression e = UserExpression::Builder(exactOutputTree());
   assert(!e.isUninitialized());
   return e;
 }
 
-Expression Calculation::approximateOutput(
+UserExpression Calculation::approximateOutput(
     NumberOfSignificantDigits numberOfSignificantDigits) {
   // clang-format off
   /* Warning:
@@ -84,7 +84,7 @@ Expression Calculation::approximateOutput(
    *
    */
   // clang-format on
-  Expression e = JuniorExpression::Builder(approximatedOutputTree());
+  UserExpression e = UserExpression::Builder(approximatedOutputTree());
   // TODO_PCJ numberOfSignificantDigits is ignored, I think we can get rid of it
   assert(!e.isUninitialized());
   return e;
@@ -93,7 +93,7 @@ Expression Calculation::approximateOutput(
 Layout Calculation::createInputLayout() {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    Expression e = input();
+    UserExpression e = input();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
@@ -106,7 +106,7 @@ Layout Calculation::createInputLayout() {
 Layout Calculation::createExactOutputLayout(bool *couldNotCreateExactLayout) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    Expression e = exactOutput();
+    UserExpression e = exactOutput();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
@@ -121,7 +121,8 @@ Layout Calculation::createApproximateOutputLayout(
     bool *couldNotCreateApproximateLayout) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    Expression e = approximateOutput(NumberOfSignificantDigits::UserDefined);
+    UserExpression e =
+        approximateOutput(NumberOfSignificantDigits::UserDefined);
     if (!e.isUninitialized()) {
       return e.createLayout(displayMode(), numberOfSignificantDigits(),
                             App::app()->localContext());
@@ -142,7 +143,7 @@ void Calculation::setHeights(KDCoordinate height, KDCoordinate expandedHeight) {
   m_expandedHeight = expandedHeight;
 }
 
-static bool ShouldOnlyDisplayExactOutput(Expression input) {
+static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
   assert(!input.isUninitialized());
@@ -154,8 +155,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
   if (m_displayOutput != DisplayOutput::Unknown) {
     return m_displayOutput;
   }
-  Expression inputExp = input();
-  Expression outputExp = exactOutput();
+  UserExpression inputExp = input();
+  UserExpression outputExp = exactOutput();
   if (inputExp.isUninitialized() || outputExp.isUninitialized() ||
       ShouldOnlyDisplayExactOutput(inputExp)) {
     m_displayOutput = DisplayOutput::ExactOnly;
@@ -173,9 +174,11 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
     // TODO_PCJ: This allow the display of exact pcj results, regulate it.
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||
-             inputExp.recursivelyMatches(Expression::IsApproximate, context) ||
-             outputExp.recursivelyMatches(Expression::IsApproximate, context) ||
-             inputExp.recursivelyMatches(Expression::IsPercent, context)) {
+             inputExp.recursivelyMatches(NewExpression::IsApproximate,
+                                         context) ||
+             outputExp.recursivelyMatches(NewExpression::IsApproximate,
+                                          context) ||
+             inputExp.recursivelyMatches(NewExpression::IsPercent, context)) {
     m_displayOutput = DisplayOutput::ExactAndApproximateToggle;
   } else {
     m_displayOutput = DisplayOutput::ExactAndApproximate;
@@ -262,10 +265,10 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
    * are sure there cannot be a Store in the exactOutput. */
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    Expression exactOutputExpression = exactOutput();
+    UserExpression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(
-            [](const Expression e) {
-              return Expression::IsPercent(e) ||
+            [](const NewExpression e) {
+              return NewExpression::IsPercent(e) ||
                      e.type() == ExpressionNode::Type::Factor;
             },
             context)) {
@@ -279,7 +282,7 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
            .symbolicComputation = SymbolicComputation::
                ReplaceAllSymbolsWithDefinitionsOrUndefined});
     }
-    m_equalSign = Expression::ExactAndApproximateExpressionsAreEqual(
+    m_equalSign = UserExpression::ExactAndApproximateExpressionsAreEqual(
                       exactOutputExpression,
                       approximateOutput(NumberOfSignificantDigits::UserDefined))
                       ? EqualSign::Equal
@@ -293,7 +296,8 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
 }
 
 void Calculation::fillExpressionsForAdditionalResults(
-    Expression *input, Expression *exactOutput, Expression *approximateOutput) {
+    UserExpression *input, UserExpression *exactOutput,
+    UserExpression *approximateOutput) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   *input = this->input();
@@ -306,7 +310,7 @@ void Calculation::fillExpressionsForAdditionalResults(
 
 AdditionalResultsType Calculation::additionalResultsType() {
   if (m_additionalResultsType.isUninitialized()) {
-    Expression i, a, e;
+    UserExpression i, a, e;
     fillExpressionsForAdditionalResults(&i, &e, &a);
     m_additionalResultsType =
         AdditionalResultsType::AdditionalResultsForExpressions(

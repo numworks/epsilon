@@ -152,13 +152,13 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
                                                 int *column,
                                                 Layout *formulaLayout) {
   StoreContext storeContext(store(), m_parentContext);
-  Expression formula = Expression::Parse(text, &storeContext);
+  UserExpression formula = UserExpression::Parse(text, &storeContext);
   if (formula.isUninitialized()) {
     return FillColumnStatus::SyntaxError;
   }
   if (ComparisonNode::IsBinaryEquality(formula)) {
     bool isValidEquality = false;
-    Expression leftOfEqual = formula.childAtIndex(0);
+    UserExpression leftOfEqual = formula.childAtIndex(0);
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
       Symbol symbolLeftOfEqual = static_cast<Symbol &>(leftOfEqual);
       if (store()->isColumnName(symbolLeftOfEqual.name(),
@@ -190,7 +190,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
   }
 
   if (formula.recursivelyMatches(
-          [](const Expression e) { return e.isRandomList(); }) ||
+          [](const NewExpression e) { return e.isRandomList(); }) ||
       formula.type() != ExpressionNode::Type::List) {
     // Sometimes the formula is a list but the reduction failed.
     formula = PoincareHelpers::Approximate<double>(formula, &storeContext);
@@ -230,7 +230,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
 
   // If formula contains a random formula, evaluate it for each pairs.
   bool evaluateForEachPairs = formula.recursivelyMatches(
-      [](const Expression e) { return e.isRandomNumber(); });
+      [](const NewExpression e) { return e.isRandomNumber(); });
   for (int j = 0; j < numberOfPairs; j++) {
     store()->set(evaluation, *series, *column, j, true, true);
     if (evaluateForEachPairs) {

@@ -10,14 +10,14 @@ Poincare::Layout QuadraticModel::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
 }
 
-Poincare::Expression QuadraticModel::privateExpression(
+Poincare::UserExpression QuadraticModel::privateExpression(
     double* modelCoefficients) const {
   // a*x^2+b*x+c
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 2_e)), KMult(KB, "x"_e), KC),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::Expression::Builder<double>(modelCoefficients[2])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
+       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
 }
 
 double QuadraticModel::evaluate(double* modelCoefficients, double x) const {

@@ -15,7 +15,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-static Expression enhancePushedExpression(Expression expression) {
+static UserExpression enhancePushedExpression(UserExpression expression) {
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.
    * Ex: If angleUnit = rad, cos(4)->cos(4rad)
@@ -45,17 +45,17 @@ ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
   return ExpiringPointer(ptr);
 }
 
-Expression CalculationStore::ansExpression(Context *context) const {
-  const Expression defaultAns = Rational::Builder(0);
+UserExpression CalculationStore::ansExpression(Context *context) const {
+  const UserExpression defaultAns = Rational::Builder(0);
   if (numberOfCalculations() == 0) {
     return defaultAns;
   }
   ExpiringPointer<Calculation> mostRecentCalculation = calculationAtIndex(0);
-  Expression input = mostRecentCalculation->input();
-  Expression exactOutput = mostRecentCalculation->exactOutput();
-  Expression approxOutput = mostRecentCalculation->approximateOutput(
+  UserExpression input = mostRecentCalculation->input();
+  UserExpression exactOutput = mostRecentCalculation->exactOutput();
+  UserExpression approxOutput = mostRecentCalculation->approximateOutput(
       Calculation::NumberOfSignificantDigits::Maximal);
-  Expression ansExpr;
+  UserExpression ansExpr;
   if (mostRecentCalculation->displayOutput(context) ==
           Calculation::DisplayOutput::ApproximateOnly &&
       (!mostRecentCalculation->exactAndApproximatedAreEqual() ||
@@ -74,7 +74,7 @@ Expression CalculationStore::ansExpression(Context *context) const {
        * calculation. */
       ansExpr = ansExpr.childAtIndex(0);
     }
-  } else if (input.recursivelyMatches(Expression::IsApproximate, context) &&
+  } else if (input.recursivelyMatches(NewExpression::IsApproximate, context) &&
              mostRecentCalculation->equalSign(context) ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.
@@ -92,10 +92,10 @@ Expression CalculationStore::ansExpression(Context *context) const {
   return ansExpr.isUninitialized() ? defaultAns : ansExpr;
 }
 
-Expression CalculationStore::replaceAnsInExpression(Expression expression,
-                                                    Context *context) const {
+UserExpression CalculationStore::replaceAnsInExpression(
+    UserExpression expression, Context *context) const {
   Symbol ansSymbol = Symbol::Ans();
-  Expression ansExpression = this->ansExpression(context);
+  UserExpression ansExpression = this->ansExpression(context);
   return expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
 }
 
@@ -110,7 +110,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
   m_inUsePreferences = *Preferences::SharedPreferences();
   char *cursor = endOfCalculations();
   Calculation *current;
-  Expression exactOutputExpression, approximateOutputExpression,
+  UserExpression exactOutputExpression, approximateOutputExpression,
       storeExpression;
 
   {
@@ -132,7 +132,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
       assert(cursor != k_pushError);
 
       // Push the input
-      Expression inputExpression = Expression::Parse(inputLayout, &ansContext);
+      UserExpression inputExpression =
+          UserExpression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
       char *nextCursor = pushExpressionTree(
@@ -158,7 +159,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
-        Expression exactStoredExpression =
+        UserExpression exactStoredExpression =
             static_cast<Store &>(storeExpression).value();
         approximateOutputExpression =
             PoincareHelpers::ApproximateKeepingUnits<double>(
@@ -168,7 +169,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
             ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
                 inputExpression, exactStoredExpression,
                 approximateOutputExpression, context)) {
-          storeExpression = Expression::Create(
+          storeExpression = NewExpression::Create(
               KStore(KA, KB), {.KA = approximateOutputExpression,
                                .KB = storeExpression.childAtIndex(1)});
         }
@@ -221,7 +222,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * number of significant digits and displayed number of digits.
    * If one is too big for the store, push undef instead. */
   for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
-    Expression e = i == 0 ? exactOutputExpression : approximateOutputExpression;
+    UserExpression e =
+        i == 0 ? exactOutputExpression : approximateOutputExpression;
     int digits = PrintFloat::k_maxNumberOfSignificantDigits;
 
     char *nextCursor = pushExpressionTree(cursor, e, digits);
@@ -349,7 +351,7 @@ char *CalculationStore::pushEmptyCalculation(
   return location + sizeof(Calculation);
 }
 
-char *CalculationStore::pushExpressionTree(char *location, Expression e,
+char *CalculationStore::pushExpressionTree(char *location, UserExpression e,
                                            int numberOfSignificantDigits) {
   while (true) {
     size_t availableSize = spaceForNewCalculations(location);

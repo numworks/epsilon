@@ -157,12 +157,12 @@ Layout ValuesController::functionTitleLayout(int column) {
   }
   constexpr const char *k_variable = "k";
   constexpr const char *n_variable = "n";
-  Expression sumExpression =
+  UserExpression sumExpression =
       Sum::Builder(Poincare::Sequence::Builder(
                        sequence->fullName(), strlen(sequence->fullName()),
                        Symbol::Builder(k_variable, strlen(k_variable))),
                    Symbol::Builder(k_variable, strlen(k_variable)),
-                   Expression::Builder(sequence->initialRank()),
+                   NewExpression::Builder(sequence->initialRank()),
                    Symbol::Builder(n_variable, strlen(n_variable)));
   return sumExpression.createLayout(preferences->displayMode(),
                                     preferences->numberOfSignificantDigits(),
@@ -177,14 +177,14 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Context *context = App::app()->localContext();
   Shared::ExpiringPointer<Shared::Sequence> sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
-  Expression result;
+  UserExpression result;
   if (isSumColumn) {
     result =
         sequence->sumBetweenBounds(sequence->initialRank(), abscissa, context);
   } else {
     Coordinate2D<double> xy =
         sequence->evaluateXYAtParameter(abscissa, context);
-    result = Expression::Builder<double>(xy.y());
+    result = NewExpression::Builder<double>(xy.y());
   }
   *memoizedLayoutAtIndex(index) =
       result.createLayout(preferences->displayMode(),

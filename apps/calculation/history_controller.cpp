@@ -305,7 +305,7 @@ void HistoryController::handleOK() {
   assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
   ExpiringPointer<Calculation> selectedCalculation =
       calculationAtIndex(focusRow);
-  Expression i, a, e;
+  UserExpression i, a, e;
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
 
   /* Reuse the same complex format and angle unit as when the calculation was

@@ -37,11 +37,11 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
     return DataField::UnknownValueLayout();
   }
 
-  UserExpression value = Expression::Builder<double>(v);
+  UserExpression value = NewExpression::Builder<double>(v);
   /* Check the global context to know whether units need an underscore. */
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
-  UserExpression unit = Expression::Parse(rawUnit(), globalContext);
+  UserExpression unit = UserExpression::Parse(rawUnit(), globalContext);
 
   if (unit.isUninitialized()) {
     return value.createLayout(floatDisplayMode, significantDigits,
@@ -49,7 +49,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   }
 
   UserExpression result =
-      Expression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
+      NewExpression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
   return result.createLayout(floatDisplayMode, significantDigits,
                              globalContext);
 }
@@ -104,7 +104,7 @@ Poincare::Layout ZDataField::getLayout(AtomicNumber z,
       Preferences::SharedPreferences()->displayMode();
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
-  return Expression::Builder(static_cast<int>(z))
+  return NewExpression::Builder(static_cast<int>(z))
       .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
 
@@ -119,7 +119,7 @@ Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
       Preferences::SharedPreferences()->displayMode();
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
-  return Expression::Builder(static_cast<int>(a))
+  return NewExpression::Builder(static_cast<int>(a))
       .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
 
@@ -216,10 +216,10 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
       res = Layout::Create(
           KA ^ KB ^ KC ^ KSuperscriptL(KD),
           {.KA = res,
-           .KB = Expression::Builder(n).createLayout(
+           .KB = NewExpression::Builder(n).createLayout(
                floatDisplayMode, significantDigits, globalContext),
            .KC = Layout::CodePoint(k_lSymbols[l]),
-           .KD = Expression::Builder(conf[index])
+           .KD = NewExpression::Builder(conf[index])
                      .createLayout(floatDisplayMode, significantDigits,
                                    globalContext)});
     }

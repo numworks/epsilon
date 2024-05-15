@@ -169,12 +169,12 @@ void EditExpressionController::layoutFieldDidChangeSize(
 }
 
 bool EditExpressionController::isAcceptableExpression(
-    const Poincare::Expression expression, Context *context) {
+    const Poincare::UserExpression expression, Context *context) {
   if (expression.isUninitialized()) {
     return false;
   }
   // Replace ans with its value and check serialization
-  Expression exp = expression.clone();
+  UserExpression exp = expression.clone();
   exp = m_calculationStore->replaceAnsInExpression(exp, context);
   constexpr int maxSerializationSize = Constant::MaxSerializedExpressionSize;
   char buffer[maxSerializationSize];
@@ -184,7 +184,7 @@ bool EditExpressionController::isAcceptableExpression(
   if (length >= maxSerializationSize - 1) {
     return false;
   }
-  exp = Expression::Parse(buffer, context);
+  exp = UserExpression::Parse(buffer, context);
   // The ans replacement made the expression unparsable
   return !exp.isUninitialized();
 }

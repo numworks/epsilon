@@ -80,7 +80,7 @@ void ListController::fillWithDefaultFunctionEquation(char *buffer,
   SerializationHelper::CodePoint(buffer + length, bufferSize - length, '=');
 }
 
-bool ListController::shouldCompleteEquation(Poincare::Expression expression,
+bool ListController::shouldCompleteEquation(Poincare::UserExpression expression,
                                             CodePoint symbol) {
   /* We do not want to complete equation if expression is already an
    * (in)equation, a point or a list (of points). */
@@ -355,7 +355,7 @@ int ListController::derivationOrderFromRelativeRow(ContinuousFunction *f,
       relativeRow, ContinuousFunction::DerivativeDisplayType::Plot);
 }
 
-bool ListController::isValidExpressionModel(Expression expression) {
+bool ListController::isValidExpressionModel(UserExpression expression) {
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(selectedRecord());
   if (FunctionNameHelper::ParametricComponentsNameError(expression,

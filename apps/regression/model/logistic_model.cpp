@@ -15,14 +15,14 @@ Poincare::Layout LogisticModel::templateLayout() const {
   return KRackL(KFracL("c"_l, "1+a·e"_l ^ KSuperscriptL("-b·x"_l)));
 }
 
-Poincare::Expression LogisticModel::privateExpression(
+Poincare::UserExpression LogisticModel::privateExpression(
     double* modelCoefficients) const {
   // c/(1+a*e^(-b*x))
-  return Poincare::Expression::Create(
+  return Poincare::NewExpression::Create(
       KDiv(KC, KAdd(1_e, KMult(KA, KExp(KMult(-1_e, KB, "x"_e))))),
-      {.KA = Poincare::Expression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::Expression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::Expression::Builder<double>(modelCoefficients[2])});
+      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
+       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
+       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
 }
 
 double LogisticModel::evaluate(double* modelCoefficients, double x) const {

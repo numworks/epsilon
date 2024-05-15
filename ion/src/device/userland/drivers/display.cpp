@@ -1,7 +1,6 @@
 #include <drivers/display.h>
 #include <drivers/svcall.h>
 #include <ion/display.h>
-#include <kandinsky/ion_context.h>
 
 namespace Ion {
 namespace Display {
@@ -43,7 +42,7 @@ static_assert(
 
 void drawString(const char* text, KDPoint point, bool largeFont,
                 KDColor textColor, KDColor backgroundColor) {
-  KDContext* ctx = KDIonContext::SharedContext;
+  KDContext* ctx = Ion::Display::Context::SharedContext;
   ctx->setOrigin(KDPointZero);
   ctx->setClippingRect(Ion::Display::Rect);
   ctx->drawString(text, point,

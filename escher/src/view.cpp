@@ -1,5 +1,5 @@
 #include <escher/view.h>
-#include <kandinsky/ion_context.h>
+#include <ion/display.h>
 
 extern "C" {
 #include <assert.h>
@@ -45,7 +45,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   // This redraws the rectNeedingRedraw calling drawRect.
   if (!rectNeedingRedraw.isEmpty()) {
     KDPoint absOrigin = absoluteOrigin();
-    KDContext *ctx = KDIonContext::SharedContext;
+    KDContext *ctx = Ion::Display::Context::SharedContext;
     ctx->setOrigin(absOrigin);
     ctx->setClippingRect(rectNeedingRedraw);
     drawRect(ctx, rectNeedingRedraw.relativeTo(m_frame.origin()));

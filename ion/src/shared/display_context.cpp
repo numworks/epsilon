@@ -1,25 +1,26 @@
 #include <ion/display.h>
-#include <kandinsky/ion_context.h>
 
-OMG::GlobalBox<KDIonContext> KDIonContext::SharedContext;
+namespace Ion::Display {
 
-KDIonContext::KDIonContext() : KDContext(KDPointZero, Ion::Display::Rect) {}
+OMG::GlobalBox<Context> Context::SharedContext;
 
-void KDIonContext::pushRect(KDRect rect, const KDColor* pixels) {
+Context::Context() : KDContext(KDPointZero, Ion::Display::Rect) {}
+
+void Context::pushRect(KDRect rect, const KDColor* pixels) {
   Ion::Display::pushRect(rect, pixels);
 }
 
-void KDIonContext::pushRectUniform(KDRect rect, KDColor color) {
+void Context::pushRectUniform(KDRect rect, KDColor color) {
   Ion::Display::pushRectUniform(rect, color);
 }
 
-void KDIonContext::pullRect(KDRect rect, KDColor* pixels) {
+void Context::pullRect(KDRect rect, KDColor* pixels) {
   Ion::Display::pullRect(rect, pixels);
 }
 
 static KDPoint s_cursor = KDPointZero;
 
-void KDIonContext::Putchar(char c) {
+void Context::Putchar(char c) {
   constexpr KDFont::Size font = KDFont::Size::Large;
   constexpr KDGlyph::Style style = {.font = font};
   char text[2] = {c, 0};
@@ -32,11 +33,12 @@ void KDIonContext::Putchar(char c) {
   s_cursor = SharedContext->drawString(text, s_cursor, style);
 }
 
-void KDIonContext::Clear(KDPoint newCursorPosition) {
-  KDRect screen(0, 0, Ion::Display::Width, Ion::Display::Height);
-  KDIonContext* ctx = SharedContext;
+void Context::Clear(KDPoint newCursorPosition) {
+  Context* ctx = SharedContext;
   ctx->setOrigin(KDPointZero);
-  ctx->setClippingRect(screen);
-  ctx->pushRectUniform(screen, KDColorWhite);
+  ctx->setClippingRect(Ion::Display::Rect);
+  ctx->pushRectUniform(Ion::Display::Rect, KDColorWhite);
   s_cursor = newCursorPosition;
 }
+
+}  // namespace Ion::Display

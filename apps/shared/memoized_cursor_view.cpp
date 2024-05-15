@@ -1,6 +1,6 @@
 #include "memoized_cursor_view.h"
 
-#include <kandinsky/ion_context.h>
+#include <ion/display.h>
 
 #include "dots.h"
 
@@ -56,7 +56,7 @@ bool MemoizedCursorView::eraseCursorIfPossible(const Escher::View* parent) {
   // Erase the cursor
   assert(parent);
   KDColor cursorWorkingBuffer[size() * size()];
-  KDContext* ctx = KDIonContext::SharedContext;
+  KDContext* ctx = Ion::Display::Context::SharedContext;
   KDPoint previousOrigin = ctx->origin();
   KDRect previousClippingRect = ctx->clippingRect();
   ctx->setOrigin(currentFrame.origin());
@@ -70,7 +70,7 @@ bool MemoizedCursorView::eraseCursorIfPossible(const Escher::View* parent) {
 }
 
 void MemoizedCursorView::redrawCursor(KDRect rect) {
-  KDContext* ctx = KDIonContext::SharedContext;
+  KDContext* ctx = Ion::Display::Context::SharedContext;
   KDPoint previousOrigin = ctx->origin();
   KDRect previousClippingRect = ctx->clippingRect();
   redraw(rect);

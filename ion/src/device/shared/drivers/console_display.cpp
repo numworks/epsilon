@@ -1,15 +1,15 @@
 #include <ion/console.h>
-#include <kandinsky/ion_context.h>
+#include <ion/display.h>
 
 namespace Ion {
 namespace Console {
 
 char readChar() { return 0; }
 
-void writeChar(char c) { KDIonContext::Putchar(c); }
+void writeChar(char c) { Ion::Display::Context::Putchar(c); }
 
 bool clear() {
-  KDIonContext::Clear();
+  Ion::Display::Context::Clear();
   return true;
 }
 

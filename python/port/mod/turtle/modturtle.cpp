@@ -5,7 +5,7 @@ extern "C" {
 #include <py/objtuple.h>
 #include <py/runtime.h>
 }
-#include <kandinsky/ion_context.h>
+#include <ion/display.h>
 
 #include "../../port.h"
 #include "turtle.h"

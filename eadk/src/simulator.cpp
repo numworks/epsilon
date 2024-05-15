@@ -3,7 +3,6 @@ extern "C" {
 }
 #include <ion.h>
 #include <ion/src/shared/events.h>
-#include <kandinsky/ion_context.h>
 
 #include <cstdlib>
 
@@ -72,7 +71,7 @@ void eadk_display_draw_string(const char *text, eadk_point_t point,
                               bool large_font, eadk_color_t text_color,
                               eadk_color_t background_color) {
   // TODO: Duplicated from ion/src/device/userland/drivers/display.cpp
-  KDContext *ctx = KDIonContext::SharedContext;
+  KDContext *ctx = Ion::Display::Context::SharedContext;
   ctx->setOrigin(KDPointZero);
   ctx->setClippingRect(Ion::Display::Rect);
   ctx->drawString(

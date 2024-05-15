@@ -1,4 +1,4 @@
-#include <kandinsky/ion_context.h>
+#include <ion/display.h>
 #include <omg/unicode_helper.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/grid.h>
@@ -41,7 +41,7 @@ QUIZ_CASE(pcj_omg_code_point) {
 
 #if 0
 QUIZ _CASE(pcj_layout_render) {
-  KDContext* ctx = KDIonContext::SharedContext;
+  KDContext* ctx = Ion::Display::Context::SharedContext;
   // TODO layoutCursor is nullptr and expected
   Layout l = Layout(
       KRackL("1+"_l,

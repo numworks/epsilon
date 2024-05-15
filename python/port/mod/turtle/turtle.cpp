@@ -1,7 +1,7 @@
 #include "turtle.h"
 
 #include <escher/palette.h>
-#include <kandinsky/ion_context.h>
+#include <ion/display.h>
 
 #include <cmath>
 extern "C" {
@@ -187,7 +187,7 @@ void Turtle::write(const char* string) {
   erase();
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()
       ->displaySandbox();
-  KDContext* ctx = KDIonContext::SharedContext;
+  KDContext* ctx = Ion::Display::Context::SharedContext;
   constexpr static KDCoordinate headOffsetLength = 6;
   KDCoordinate headOffsetX =
       headOffsetLength * std::cos(m_heading * k_headingScale);
@@ -286,7 +286,7 @@ bool Turtle::draw(bool force) {
 
   if ((m_speed > 0 || force) && m_visible && !m_drawn &&
       hasUnderneathPixelBuffer() && !isOutOfBounds()) {
-    KDContext* ctx = KDIonContext::SharedContext;
+    KDContext* ctx = Ion::Display::Context::SharedContext;
 
     // Get the pixels underneath the turtle
     ctx->getPixels(iconRect(), m_underneathPixelBuffer);
@@ -371,7 +371,7 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
 
   // Draw the dot if the pen is down
   if (m_penDown && hasDotBuffers() && !isOutOfBounds()) {
-    KDContext* ctx = KDIonContext::SharedContext;
+    KDContext* ctx = Ion::Display::Context::SharedContext;
     KDRect rect(
         position(x, y).translatedBy(KDPoint(-m_penSize / 2, -m_penSize / 2)),
         KDSize(m_penSize, m_penSize));
@@ -419,14 +419,14 @@ void Turtle::drawPaw(PawType type, PawPosition pos) {
       position().translatedBy(
           offset),  // The paw is too small to need to offset it from its center
       k_iconPawSize, k_iconPawSize);
-  KDIonContext::SharedContext->fillRect(drawingRect, m_color);
+  Ion::Display::Context::SharedContext->fillRect(drawingRect, m_color);
 }
 
 void Turtle::erase() {
   if (!m_drawn || m_underneathPixelBuffer == nullptr || isOutOfBounds()) {
     return;
   }
-  KDContext* ctx = KDIonContext::SharedContext;
+  KDContext* ctx = Ion::Display::Context::SharedContext;
   ctx->fillRectWithPixels(iconRect(), m_underneathPixelBuffer, nullptr);
   m_drawn = false;
 }

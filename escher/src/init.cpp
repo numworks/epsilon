@@ -1,11 +1,11 @@
 #include <escher/init.h>
 #include <escher/text_cursor_view.h>
-#include <kandinsky/ion_context.h>
+#include <ion/display.h>
 
 namespace Escher {
 
 void Init() {
-  KDIonContext::SharedContext.init();
+  Ion::Display::Context::SharedContext.init();
   TextCursorView::InitSharedCursor();
 }
 

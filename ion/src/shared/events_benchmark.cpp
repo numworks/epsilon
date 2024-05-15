@@ -83,7 +83,7 @@ Event getEvent(int* timeout) {
   if (scenarioIndex >= numberOfScenari) {
     // Display results
     int line_y = 1;
-    KDContext* ctx = KDIonContext::SharedContext;
+    KDContext* ctx = Ion::Display::Context::SharedContext;
     ctx->setOrigin(KDPointZero);
     ctx->setClippingRect(
         KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));

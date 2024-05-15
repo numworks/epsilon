@@ -1,5 +1,5 @@
 #include <ion/console.h>
-#include <kandinsky/ion_context.h>
+#include <ion/display.h>
 #include <stdio.h>
 
 #include "window.h"

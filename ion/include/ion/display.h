@@ -13,7 +13,9 @@
 
 #include <ion/display_constants.h>
 #include <kandinsky/color.h>
+#include <kandinsky/context.h>
 #include <kandinsky/rect.h>
+#include <omg/global_box.h>
 
 namespace Ion {
 namespace Display {
@@ -23,6 +25,21 @@ void pushRectUniform(KDRect r, KDColor c);
 void pullRect(KDRect r, KDColor* pixels);
 
 bool waitForVBlank();
+
+class Context : public KDContext {
+  friend OMG::GlobalBox<Context>;
+
+ public:
+  static OMG::GlobalBox<Context> SharedContext;
+  static void Putchar(char c);
+  static void Clear(KDPoint newCursorPosition = KDPointZero);
+
+ private:
+  Context();
+  void pushRect(KDRect rect, const KDColor* pixels) override;
+  void pushRectUniform(KDRect rect, KDColor color) override;
+  void pullRect(KDRect rect, KDColor* pixels) override;
+};
 
 // For Power On Self tests
 int displayUniformTilingSize10(KDColor c);

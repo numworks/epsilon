@@ -100,7 +100,7 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
   }
 }
 
-const Expression GlobalContext::protectedExpressionForSymbolAbstract(
+const UserExpression GlobalContext::protectedExpressionForSymbolAbstract(
     const Poincare::SymbolAbstract &symbol, bool clone,
     Poincare::ContextWithParent *lastDescendantContext) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
@@ -111,15 +111,15 @@ const Expression GlobalContext::protectedExpressionForSymbolAbstract(
 }
 
 bool GlobalContext::setExpressionForSymbolAbstract(
-    const Expression &expression, const SymbolAbstract &symbol) {
+    const UserExpression &expression, const SymbolAbstract &symbol) {
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
-  Expression e = expressionForSymbolAndRecord(symbol, record, this);
+  UserExpression e = expressionForSymbolAndRecord(symbol, record, this);
   if (e.isUninitialized()) {
     e = JuniorUndefined::Builder();
   }
-  Expression finalExpression =
+  UserExpression finalExpression =
       expression.clone().replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
@@ -129,7 +129,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   }
   assert(symbol.type() == ExpressionNode::Type::Function &&
          symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
-  Expression childSymbol = symbol.childAtIndex(0);
+  UserExpression childSymbol = symbol.childAtIndex(0);
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol &>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
@@ -140,7 +140,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
         childSymbol.isIdenticalTo(
             Symbol::Builder(ContinuousFunction::k_parametricSymbol)))) {
     // Unsupported symbol. Fall back to the default cartesian function symbol
-    Expression symbolInX = Poincare::Function::Builder(
+    UserExpression symbolInX = Poincare::Function::Builder(
         symbolToStore.name(), strlen(symbolToStore.name()),
         Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
     symbolToStore = static_cast<const SymbolAbstract &>(symbolInX);
@@ -149,7 +149,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
          Ion::Storage::Record::ErrorStatus::None;
 }
 
-const Expression GlobalContext::expressionForSymbolAndRecord(
+const UserExpression GlobalContext::expressionForSymbolAndRecord(
     const SymbolAbstract &symbol, Ion::Storage::Record r, Context *ctx) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
@@ -169,17 +169,17 @@ const UserExpression GlobalContext::ExpressionForActualSymbol(
   }
   // An expression record value is the expression itself
   Ion::Storage::Record::Data d = r.value();
-  return Expression::ExpressionFromAddress(d.buffer, d.size);
+  return NewExpression::ExpressionFromAddress(d.buffer, d.size);
 }
 
-const Expression GlobalContext::ExpressionForFunction(
-    const Expression &parameter, Ion::Storage::Record r) {
-  Expression e;
+const UserExpression GlobalContext::ExpressionForFunction(
+    const UserExpression &parameter, Ion::Storage::Record r) {
+  UserExpression e;
   if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
       r.hasExtension(Ion::Storage::regressionExtension)) {
     // A regression record value is the expression itself
     Ion::Storage::Record::Data d = r.value();
-    e = Expression::ExpressionFromAddress(d.buffer, d.size);
+    e = NewExpression::ExpressionFromAddress(d.buffer, d.size);
   } else if (r.hasExtension(Ion::Storage::functionExtension)) {
     /* A function record value has metadata before the expression. To get the
      * expression, use the function record handle. */
@@ -226,7 +226,7 @@ const UserExpression GlobalContext::expressionForSequence(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
-    Expression &expression, const SymbolAbstract &symbol,
+    UserExpression &expression, const SymbolAbstract &symbol,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation =
       ExpressionDisplayPermissions::NeverDisplayReductionOfInput(expression,
@@ -239,10 +239,10 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
    * units, and juste calling "approximate" would return undef*/
 
 #if 0  // TODO_PCJ
-  Expression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(
+  UserExpression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(
       expression, this, params);
 #else
-  Expression approximation =
+  UserExpression approximation =
       PoincareHelpers::Approximate<double>(expression, this);
 #endif
   // Do not store exact derivative, etc.
@@ -268,7 +268,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
-    const Expression &expressionToStore, const SymbolAbstract &symbol,
+    const UserExpression &expressionToStore, const SymbolAbstract &symbol,
     Ion::Storage::Record previousRecord) {
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error =
@@ -284,7 +284,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
     }
     recordToSet = newModel;
   }
-  Poincare::Expression equation = Poincare::Comparison::Builder(
+  Poincare::UserExpression equation = Poincare::Comparison::Builder(
       symbol.clone(), ComparisonNode::OperatorType::Equal, expressionToStore);
   ExpiringPointer<ContinuousFunction> f =
       GlobalContext::continuousFunctionStore->modelForRecord(recordToSet);
@@ -351,11 +351,11 @@ void GlobalContext::DeleteParametricComponentsOfRecord(
 }
 
 static void storeParametricComponent(char *baseName, size_t baseNameLength,
-                                     size_t bufferSize, const Expression &e,
+                                     size_t bufferSize, const UserExpression &e,
                                      bool first) {
   assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point &&
          e.numberOfChildren() == 2);
-  Expression child = e.childAtIndex(first ? 0 : 1).clone();
+  UserExpression child = e.childAtIndex(first ? 0 : 1).clone();
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
                                                       bufferSize, first);
   child.storeWithNameAndExtension(baseName,
@@ -369,7 +369,7 @@ void GlobalContext::StoreParametricComponentsOfRecord(
   if (!f->properties().isEnabledParametric()) {
     return;
   }
-  Expression e = f->expressionClone();
+  UserExpression e = f->expressionClone();
   if (e.type() != ExpressionNode::Type::Point) {
     // For example: g(t)=f'(t) or g(t)=diff(f(t),t,t)
     return;

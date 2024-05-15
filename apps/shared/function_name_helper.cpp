@@ -93,7 +93,7 @@ int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
           &symbol);
 }
 
-bool ParametricComponentsNameError(Expression expression,
+bool ParametricComponentsNameError(UserExpression expression,
                                    ContinuousFunction *f) {
   /* Check that parametric components name are free if we are defining a
    * parametric function. */
@@ -101,9 +101,9 @@ bool ParametricComponentsNameError(Expression expression,
     // The user is not defining a function
     return false;
   }
-  Expression function = expression.childAtIndex(0);
-  Expression functionSymbol = function.childAtIndex(0);
-  Expression point = expression.childAtIndex(1);
+  UserExpression function = expression.childAtIndex(0);
+  UserExpression functionSymbol = function.childAtIndex(0);
+  UserExpression point = expression.childAtIndex(1);
   if (!functionSymbol.isIdenticalTo(
           Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
       point.type() != ExpressionNode::Type::Point) {

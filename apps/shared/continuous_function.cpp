@@ -398,7 +398,8 @@ Evaluation<T> ContinuousFunction::approximateDerivative(T t, Context *context,
     return Complex<T>::RealUndefined();
   }
   // Derivative is simplified once and for all
-  Expression derivate = expressionDerivateReduced(context, derivationOrder);
+  SystemExpression derivate =
+      expressionDerivateReduced(context, derivationOrder);
   ApproximationContext approximationContext(context, complexFormat(context));
   Evaluation<T> result = derivate.approximateWithValueForSymbol(
       k_unknownName, t, approximationContext);
@@ -534,7 +535,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   ApproximationContext approximationContext(context, complexFormat(context));
 
   if (properties().isScatterPlot()) {
-    Expression point;
+    SystemExpression point;
     if (NewExpression::IsPoint(e)) {
       if (t != static_cast<T>(0.)) {
         return Coordinate2D<T>();
@@ -624,7 +625,7 @@ void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
 
 /* ContinuousFunction::Model */
 
-Expression ContinuousFunction::Model::expressionReduced(
+SystemExpression ContinuousFunction::Model::expressionReduced(
     const Ion::Storage::Record *record, Context *context) const {
   // m_expression might already be memmoized.
   if (m_expression.isUninitialized()) {
@@ -647,9 +648,10 @@ Expression ContinuousFunction::Model::expressionReduced(
       if (m_expression.type() == ExpressionNode::Type::List ||
           (m_expression.type() == ExpressionNode::Type::Dependency &&
            m_expression.childAtIndex(0).type() == ExpressionNode::Type::List)) {
-        Expression list = m_expression.type() == ExpressionNode::Type::List
-                              ? m_expression
-                              : m_expression.childAtIndex(0);
+        SystemExpression list =
+            m_expression.type() == ExpressionNode::Type::List
+                ? m_expression
+                : m_expression.childAtIndex(0);
         m_expression =
             static_cast<List &>(list).approximateAndRemoveUndefAndSort<double>(
                 ApproximationContext(context, complexFormat));
@@ -684,7 +686,8 @@ Expression ContinuousFunction::Model::expressionReduced(
       }
       /* Solve the equation in y (or x if not willBeAlongX)
        * Symbols are replaced to simplify roots. */
-      Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+      SystemExpression
+          coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
       int degree = m_expression.getPolynomialReducedCoefficients(
           willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
                        : k_unknownName,
@@ -708,7 +711,7 @@ Expression ContinuousFunction::Model::expressionReduced(
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
         assert(m_properties.isOfDegreeTwo());
-        Expression root1, root2, delta;
+        SystemExpression root1, root2, delta;
         int solutions = Polynomial::QuadraticPolynomialRoots(
             coefficients[2], coefficients[1], coefficients[0], &root1, &root2,
             &delta, reductionContext, nullptr, false);
@@ -835,20 +838,21 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   return result;
 }
 
-Expression ContinuousFunction::Model::expressionClone(
+UserExpression ContinuousFunction::Model::expressionClone(
     const Ion::Storage::Record *record) const {
   assert(record->fullName() != nullptr &&
          record->fullName()[0] != k_unnamedRecordFirstChar);
-  Expression e = ExpressionModel::expressionClone(record);
+  UserExpression e = ExpressionModel::expressionClone(record);
   if (e.isUninitialized()) {
     return e;
   }
   return e.childAtIndex(1);
 }
 
-Expression ContinuousFunction::Model::originalEquation(
+UserExpression ContinuousFunction::Model::originalEquation(
     const Ion::Storage::Record *record, CodePoint symbol) const {
-  Expression unknownSymbolEquation = ExpressionModel::expressionClone(record);
+  UserExpression unknownSymbolEquation =
+      ExpressionModel::expressionClone(record);
   if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
     return unknownSymbolEquation;
   }
@@ -856,26 +860,26 @@ Expression ContinuousFunction::Model::originalEquation(
       Symbol::SystemSymbol(), Symbol::Builder(symbol));
 }
 
-bool ContinuousFunction::IsFunctionAssignment(const Expression e) {
+bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
   if (!ComparisonNode::IsBinaryEquality(e)) {
     return false;
   }
-  Expression leftExpression = e.childAtIndex(0);
+  UserExpression leftExpression = e.childAtIndex(0);
   if (leftExpression.type() != ExpressionNode::Type::Function) {
     return false;
   }
-  Expression functionSymbol = leftExpression.childAtIndex(0);
+  UserExpression functionSymbol = leftExpression.childAtIndex(0);
   return functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)) ||
          functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)) ||
          functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol));
 }
 
-Expression ContinuousFunction::Model::expressionEquation(
+UserExpression ContinuousFunction::Model::expressionEquation(
     const Ion::Storage::Record *record, Context *context,
     ComparisonNode::OperatorType *computedEquationType,
     ContinuousFunctionProperties::SymbolType *computedFunctionSymbol,
     bool *isCartesianEquation) const {
-  Expression result = ExpressionModel::expressionClone(record);
+  UserExpression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     return Undefined::Builder();
   }
@@ -911,7 +915,7 @@ Expression ContinuousFunction::Model::expressionEquation(
     *computedEquationType = equationType;
   }
   bool isUnnamedFunction = true;
-  Expression leftExpression = result.childAtIndex(0);
+  UserExpression leftExpression = result.childAtIndex(0);
 
   if (IsFunctionAssignment(result)) {
     // Ensure that function name is either record's name, or free
@@ -922,7 +926,7 @@ Expression ContinuousFunction::Model::expressionEquation(
     const size_t functionNameLength = strlen(functionName);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
-      Expression functionSymbol = leftExpression.childAtIndex(0);
+      UserExpression functionSymbol = leftExpression.childAtIndex(0);
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
         tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::T;
@@ -981,16 +985,17 @@ Expression ContinuousFunction::Model::expressionEquation(
   return result;
 }
 
-Expression ContinuousFunction::Model::expressionDerivateReduced(
+SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
     const Ion::Storage::Record *record, Context *context,
     int derivationOrder) const {
   // Derivative isn't available on curves with multiple subcurves
   assert(numberOfSubCurves(record) == 1);
   assert(1 <= derivationOrder && derivationOrder <= 2);
-  Expression *derivative = derivationOrder == 1 ? &m_expressionFirstDerivate
-                                                : &m_expressionSecondDerivate;
+  SystemExpression *derivative = derivationOrder == 1
+                                     ? &m_expressionFirstDerivate
+                                     : &m_expressionSecondDerivate;
   if (derivative->isUninitialized()) {
-    Expression expression = expressionReduced(record, context).clone();
+    SystemExpression expression = expressionReduced(record, context).clone();
     *derivative = Derivative::Builder(expression, Symbol::SystemSymbol(),
                                       Symbol::SystemSymbol(),
                                       NewExpression::Builder(derivationOrder));
@@ -1007,7 +1012,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(
   return *derivative;
 }
 
-Expression ContinuousFunction::Model::expressionSlopeReduced(
+SystemExpression ContinuousFunction::Model::expressionSlopeReduced(
     const Ion::Storage::Record *record, Context *context) const {
   /* Slope is only needed for parametric and polar functions.
    * For cartesian function, it is the same as the derivative.
@@ -1020,7 +1025,7 @@ Expression ContinuousFunction::Model::expressionSlopeReduced(
       m_expressionSlope = expressionDerivateReduced(record, context, 1);
     } else {
       assert(prop.isParametric() || prop.isPolar());
-      Expression expression = parametricForm(record, context);
+      SystemExpression expression = parametricForm(record, context);
       assert(expression.type() == ExpressionNode::Type::Point);
       assert(expression.numberOfChildren() == 2);
       m_expressionSlope = Division::Builder(
@@ -1048,7 +1053,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
   /* Use ExpressionModel::expressionClone because it does not alter
    * the left-hand side of "f(x)=" and "f(t)=", which allows the name
    * of the function to be found. */
-  Expression newExpression = ExpressionModel::expressionClone(record);
+  UserExpression newExpression = ExpressionModel::expressionClone(record);
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
   if (newExpression.isUninitialized()) {
@@ -1058,7 +1063,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
   }
   if (record->hasExtension(Ion::Storage::functionExtension)) {
     if (IsFunctionAssignment(newExpression)) {
-      Expression function = newExpression.childAtIndex(0);
+      UserExpression function = newExpression.childAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(
           record, static_cast<SymbolAbstract &>(function).name(),
           Ion::Storage::functionExtension);
@@ -1181,7 +1186,7 @@ int ContinuousFunction::Model::numberOfSubCurves(
     const Ion::Storage::Record *record) const {
   ContinuousFunctionProperties prop = properties(record);
   if (prop.isCartesian()) {
-    Expression e = expressionReduced(
+    SystemExpression e = expressionReduced(
         record, AppsContainerHelper::sharedAppsContainerGlobalContext());
     if (e.type() == ExpressionNode::Type::List) {
       assert(prop.isOfDegreeTwo());

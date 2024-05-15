@@ -29,7 +29,7 @@ ExpressionModel::ExpressionModel()
 void ExpressionModel::text(const Storage::Record* record, char* buffer,
                            size_t bufferSize, CodePoint symbol) const {
   assert(record->fullName() != nullptr);
-  Expression e = ExpressionModel::expressionClone(record);
+  UserExpression e = ExpressionModel::expressionClone(record);
   if (e.isUninitialized()) {
     if (bufferSize > 0) {
       buffer[0] = 0;
@@ -50,9 +50,9 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
 bool ExpressionModel::isCircularlyDefined(const Storage::Record* record,
                                           Poincare::Context* context) const {
   if (m_circular == -1) {
-    Expression e = expressionClone(record);
+    UserExpression e = expressionClone(record);
     m_circular =
-        Expression::ExpressionWithoutSymbols(e, context).isUninitialized();
+        NewExpression::ExpressionWithoutSymbols(e, context).isUninitialized();
   }
   return m_circular;
 }
@@ -60,7 +60,7 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record* record,
 Preferences::ComplexFormat ExpressionModel::complexFormat(
     const Storage::Record* record, Context* context) const {
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
-    Expression e = ExpressionModel::expressionClone(record);
+    UserExpression e = ExpressionModel::expressionClone(record);
     m_expressionComplexFormat = !e.isUninitialized() && e.hasComplexI(context)
                                     ? MemoizedComplexFormat::Complex
                                     : MemoizedComplexFormat::Any;
@@ -75,7 +75,7 @@ Preferences::ComplexFormat ExpressionModel::complexFormat(
   return userComplexFormat;
 }
 
-Expression ExpressionModel::expressionReduced(
+SystemExpression ExpressionModel::expressionReduced(
     const Storage::Record* record, Poincare::Context* context) const {
   /* TODO
    * By calling isCircularlyDefined and then Simplify, the expression tree is
@@ -100,7 +100,7 @@ Expression ExpressionModel::expressionReduced(
     if (isCircularlyDefined(record, context)) {
       m_expression = Undefined::Builder();
     } else {
-      m_expression = Expression::ExpressionFromAddress(
+      m_expression = NewExpression::ExpressionFromAddress(
           expressionAddress(record), expressionSize(record));
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
@@ -115,13 +115,13 @@ Expression ExpressionModel::expressionReduced(
   return m_expression;
 }
 
-Expression ExpressionModel::expressionClone(
+UserExpression ExpressionModel::expressionClone(
     const Storage::Record* record) const {
   assert(record->fullName() != nullptr);
   /* A new Expression has to be created at each call (because it might be
    * tempered with after calling) */
-  return Expression::ExpressionFromAddress(expressionAddress(record),
-                                           expressionSize(record));
+  return NewExpression::ExpressionFromAddress(expressionAddress(record),
+                                              expressionSize(record));
   /* TODO
    * The substitution of UCodePointUnknown back and forth is done in the
    * methods text, setContent (through buildExpressionFromText), layout and
@@ -135,7 +135,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
                                CodePoint symbol) const {
   if (m_layout.isUninitialized()) {
     assert(record->fullName() != nullptr);
-    Expression clone = ExpressionModel::expressionClone(record);
+    UserExpression clone = ExpressionModel::expressionClone(record);
     if (!clone.isUninitialized() && symbol != 0) {
       clone = clone.replaceSymbolWithExpression(Symbol::SystemSymbol(),
                                                 Symbol::Builder(symbol));
@@ -152,12 +152,12 @@ Layout ExpressionModel::layout(const Storage::Record* record,
 Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(
     Ion::Storage::Record* record, const char* c, Context* context,
     CodePoint symbol) {
-  Expression e = buildExpressionFromText(c, symbol, context);
+  UserExpression e = buildExpressionFromText(c, symbol, context);
   return setExpressionContent(record, e);
 }
 
 Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(
-    Ion::Storage::Record* record, const Expression& newExpression) {
+    Ion::Storage::Record* record, const UserExpression& newExpression) {
   assert(record->fullName() != nullptr);
   // Prepare the new data to be stored
   setStorageChangeFlag();
@@ -197,7 +197,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(
 }
 
 void ExpressionModel::updateNewDataWithExpression(
-    Ion::Storage::Record* record, const Expression& expressionToStore,
+    Ion::Storage::Record* record, const UserExpression& expressionToStore,
     void* expressionAddress, size_t expressionToStoreSize,
     size_t previousExpressionSize) {
   if (!expressionToStore.isUninitialized()) {

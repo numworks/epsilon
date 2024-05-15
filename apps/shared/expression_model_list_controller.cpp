@@ -236,7 +236,7 @@ void ExpressionModelListController::finishEdition() {
   selectableListView()->reloadData();
 }
 
-static CodePoint symbolForEquation(Expression expression) {
+static CodePoint symbolForEquation(UserExpression expression) {
   CodePoint symbol = Symbol::k_cartesianSymbol;
   expression.recursivelyMatches(
       [](const NewExpression e, Context *context, void *auxiliary) {

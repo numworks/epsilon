@@ -52,7 +52,7 @@ class ExpressionModel {
       void* expressionAddress, size_t expressionToStoreSize,
       size_t previousExpressionSize);
 
-  mutable Poincare::UserExpression m_expression;
+  mutable Poincare::SystemExpression m_expression;
   mutable Poincare::Layout m_layout;
 
  private:

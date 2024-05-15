@@ -54,7 +54,8 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
 template <typename T>
 static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
   void **modelArray = reinterpret_cast<void **>(const_cast<void *>(model));
-  const Expression *e = reinterpret_cast<const Expression *>(modelArray[0]);
+  const SystemFunction *e =
+      reinterpret_cast<const SystemFunction *>(modelArray[0]);
   const char *variable = reinterpret_cast<const char *>(modelArray[1]);
   return Coordinate2D<T>(
       t, e->approximateToScalarWithValueForSymbol<T>(
@@ -72,7 +73,7 @@ void SystemOfEquations::setApproximateSolvingRange(
 }
 
 void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
-  Expression equationStandardForm =
+  SystemExpression equationStandardForm =
       equationStandardFormForApproximateSolve(context);
   constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
@@ -117,7 +118,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfSolvingVariables == 1);
 
-  Expression undevelopedExpression =
+  SystemExpression undevelopedExpression =
       equationStandardFormForApproximateSolve(context);
   m_numberOfSolutions = 0;
 
@@ -158,7 +159,7 @@ void SystemOfEquations::tidy(PoolObject *treePoolCursor) {
   }
 }
 
-Expression SystemOfEquations::equationStandardFormForApproximateSolve(
+SystemExpression SystemOfEquations::equationStandardFormForApproximateSolve(
     Context *context) {
   return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
       ->standardForm(context, m_overrideUserVariables,
@@ -168,7 +169,7 @@ Expression SystemOfEquations::equationStandardFormForApproximateSolve(
 SystemOfEquations::Error SystemOfEquations::privateExactSolve(
     Context *context) {
   m_numberOfSolutions = 0;
-  Expression simplifiedEquations[EquationStore::k_maxNumberOfEquations];
+  SystemExpression simplifiedEquations[EquationStore::k_maxNumberOfEquations];
   Error error = simplifyAndFindVariables(context, simplifiedEquations);
   if (error != Error::NoError) {
     return error;
@@ -187,7 +188,7 @@ SystemOfEquations::Error SystemOfEquations::privateExactSolve(
 }
 
 SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
-    Context *context, Expression *simplifiedEquations) {
+    Context *context, SystemExpression *simplifiedEquations) {
   m_numberOfSolvingVariables = 0;
   m_numberOfUserVariables = 0;
   m_variables[0][0] = 0;
@@ -206,7 +207,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
   for (int i = 0; i < nEquations; i++) {
     ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
-    Expression equationsWithUserVariables = equation->standardForm(
+    SystemExpression equationsWithUserVariables = equation->standardForm(
         context, true, ReductionTarget::SystemForAnalysis);
 
     // Gather user variables
@@ -266,7 +267,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
 }
 
 SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
-    Context *context, Expression *simplifiedEquations) {
+    Context *context, SystemExpression *simplifiedEquations) {
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat =
@@ -275,9 +276,9 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       m_overrideUserVariables
           ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
           : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-  Expression coefficients[EquationStore::k_maxNumberOfEquations]
-                         [Expression::k_maxNumberOfVariables];
-  Expression constants[EquationStore::k_maxNumberOfEquations];
+  SystemExpression coefficients[EquationStore::k_maxNumberOfEquations]
+                               [Expression::k_maxNumberOfVariables];
+  SystemExpression constants[EquationStore::k_maxNumberOfEquations];
   const int numberOfOriginalEquations = m_store->numberOfDefinedModels();
   int m = numberOfOriginalEquations;
   for (int i = 0; i < m; i++) {
@@ -465,7 +466,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 }
 
 SystemOfEquations::Error SystemOfEquations::solvePolynomial(
-    Context *context, Expression *simplifiedEquations) {
+    Context *context, SystemExpression *simplifiedEquations) {
   assert(m_numberOfSolvingVariables == 1 &&
          m_store->numberOfDefinedModels() == 1);
   Preferences::AngleUnit angleUnit =
@@ -476,7 +477,8 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
       m_overrideUserVariables
           ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
           : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  SystemExpression
+      coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   m_degree = simplifiedEquations[0].getPolynomialReducedCoefficients(
       m_variables[0], coefficients, context, m_complexFormat, angleUnit,
       unitFormat, symbolicComputation);
@@ -487,8 +489,8 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   m_type = Type::PolynomialMonovariable;
   ReductionContext reductionContext(context, m_complexFormat, angleUnit,
                                     unitFormat, ReductionTarget::User);
-  Expression delta;
-  Expression x[3];
+  SystemExpression delta;
+  SystemExpression x[3];
   bool solutionsAreApproximate = false;
   size_t numberOfSolutions = 0;
   if (m_degree == 2) {
@@ -531,7 +533,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
 }
 
 static void simplifyAndApproximateSolution(
-    Expression e, Expression *exact, Expression *approximate,
+    UserExpression e, UserExpression *exact, UserExpression *approximate,
     bool approximateDuringReduction, Context *context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
@@ -555,10 +557,10 @@ static void simplifyAndApproximateSolution(
 }
 
 SystemOfEquations::Error SystemOfEquations::registerSolution(
-    Expression e, Context *context, SolutionType type) {
+    UserExpression e, Context *context, SolutionType type) {
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
-  Expression exact, approximate;
+  UserExpression exact, approximate;
 
   bool forbidExactSolution =
       Preferences::SharedPreferences()->examMode().forbidExactResults();

@@ -181,7 +181,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
           return !pack->otherSequences ? OMG::Troolean::True
                                        : OMG::Troolean::Unknown;
         }
-        Expression rank = seq.childAtIndex(0);
+        UserExpression rank = seq.childAtIndex(0);
         Type type = pack->type;
         if (rank.type() == ExpressionNode::Type::BasedInteger) {
           float rankValue = static_cast<const BasedInteger &>(rank)
@@ -243,7 +243,7 @@ double Sequence::approximateAtContextRank(SequenceContext *sqctx,
     return NAN;
   }
   double x;
-  Expression e;
+  SystemExpression e;
   if (rank >= firstNonInitialRank()) {
     x = static_cast<double>(rank - order());
     e = expressionReduced(sqctx);
@@ -314,7 +314,7 @@ void Sequence::SequenceModel::tidyDownstreamPoolFrom(
 }
 
 void Sequence::SequenceModel::updateNewDataWithExpression(
-    Ion::Storage::Record *record, const Expression &expressionToStore,
+    Ion::Storage::Record *record, const UserExpression &expressionToStore,
     void *expressionAddress, size_t newExpressionSize,
     size_t previousExpressionSize) {
   Ion::Storage::Record::Data newData = record->value();

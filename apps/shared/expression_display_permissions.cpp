@@ -9,7 +9,7 @@ namespace Shared {
 namespace ExpressionDisplayPermissions {
 
 static bool neverDisplayExactExpressionOfApproximation(
-    Expression approximateOutput, Context* context) {
+    UserExpression approximateOutput, Context* context) {
   /* The angle units could display exact output but we want to avoid exact
    * results that are not in radians like "(3/sqrt(2))°" because they are not
    * relevant for the user.
@@ -21,7 +21,7 @@ static bool neverDisplayExactExpressionOfApproximation(
          !approximateOutput.isInRadians(context);
 }
 
-bool NeverDisplayReductionOfInput(Expression input, Context* context) {
+bool NeverDisplayReductionOfInput(UserExpression input, Context* context) {
   if (input.isUninitialized()) {
     return false;
   }
@@ -43,7 +43,7 @@ bool NeverDisplayReductionOfInput(Expression input, Context* context) {
       context);
 }
 
-static bool isPrimeFactorization(Expression expression) {
+static bool isPrimeFactorization(UserExpression expression) {
   /* A prime factorization can only be built with integers, powers of integers,
    * and a multiplication. */
   return !expression.recursivelyMatches([](const NewExpression e) {
@@ -56,7 +56,7 @@ static bool isPrimeFactorization(Expression expression) {
   });
 }
 
-static bool exactExpressionIsForbidden(Expression exactOutput) {
+static bool exactExpressionIsForbidden(UserExpression exactOutput) {
   if (!Preferences::SharedPreferences()->examMode().forbidExactResults()) {
     return false;
   }
@@ -70,7 +70,8 @@ static bool exactExpressionIsForbidden(Expression exactOutput) {
            isPrimeFactorization(exactOutput));
 }
 
-static bool neverDisplayExactOutput(Expression exactOutput, Context* context) {
+static bool neverDisplayExactOutput(UserExpression exactOutput,
+                                    Context* context) {
   if (exactOutput.isUninitialized()) {
     return false;
   }
@@ -96,8 +97,9 @@ static bool neverDisplayExactOutput(Expression exactOutput, Context* context) {
       exactOutput.hasUnit(true);
 }
 
-bool ShouldOnlyDisplayApproximation(Expression input, Expression exactOutput,
-                                    Expression approximateOutput,
+bool ShouldOnlyDisplayApproximation(UserExpression input,
+                                    UserExpression exactOutput,
+                                    UserExpression approximateOutput,
                                     Context* context) {
   return NeverDisplayReductionOfInput(input, context) ||
          neverDisplayExactOutput(exactOutput, context) ||

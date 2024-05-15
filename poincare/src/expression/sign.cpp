@@ -315,6 +315,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return RelaxIntegerProperty(Get(t->firstChild()));
     case Type::MixedFraction:
       return Add(Get(t->firstChild()), Get(t->child(1)));
+    case Type::Parenthesis:
+      return Get(t->firstChild());
 #endif
     default:
       return Unknown();

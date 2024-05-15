@@ -927,6 +927,13 @@ bool Approximation::ToBoolean(const Tree* node) {
   if (node->isPiecewise()) {
     return ToBoolean<T>(SelectPiecewiseBranch<T>(node));
   }
+  if (node->isList()) {
+    assert(s_context->m_listElement != -1);
+    return ToBoolean<T>(node->child(s_context->m_listElement));
+  }
+  if (node->isParenthesis()) {
+    return ToBoolean<T>(node->child(0));
+  }
   assert(node->isLogicalOperator());
   bool a = ToBoolean<T>(node->child(0));
   if (node->isLogicalNot()) {

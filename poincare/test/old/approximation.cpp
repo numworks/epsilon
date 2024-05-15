@@ -271,7 +271,7 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<float>("0^2", "0");
   assert_expression_approximates_to<float>("0^i", Undefined::Name());
   assert_expression_approximates_to<float>("0^(4i)", Undefined::Name());
-  assert_expression_approximates_to<float>("0^(3+4i)", Undefined::Name());
+  assert_expression_approximates_to<float>("0^(3+4i)", "0");
   assert_expression_approximates_to<double>("i^i", "0.20787957635076");
   assert_expression_approximates_to<float>(
       "1.0066666666667^60", "1.48985", Radian, MetricUnitFormat, Cartesian, 6);

@@ -2,6 +2,7 @@
 #include <omg/float.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/projection.h>
 
 #include <cmath>
 
@@ -24,6 +25,15 @@ void approximates_to(const Tree* n, T f) {
   }
 #endif
   quiz_assert(result);
+}
+
+template <typename T>
+void approximates_to(const char* input, T f,
+                     ProjectionContext projectionContext = {}) {
+  TreeRef expression = TextToTree(input, projectionContext.m_context);
+  quiz_assert(!expression.isUninitialized());
+  approximates_to(expression, f);
+  expression->removeTree();
 }
 
 QUIZ_CASE(pcj_approximation) {
@@ -59,4 +69,11 @@ QUIZ_CASE(pcj_approximation_replace) {
       KMult(2.0_de, KDiv("x"_e, KAdd(1_e, 2.0_de)), KAdd(1_e, 2_e, 10.5_de)));
   quiz_assert(Approximation::ApproximateAndReplaceEveryScalar(ref2));
   assert_trees_are_equal(ref2, KMult(2.0_de, KDiv("x"_e, 3.0_de), 13.5_de));
+}
+
+QUIZ_CASE(pcj_approximation_power) {
+  approximates_to<float>("0^(3+4i)", 0);
+  approximates_to<float>("0^(3-4i)", 0);
+  approximates_to<float>("0^(-3+4i)", NAN);
+  approximates_to<float>("0^(-3-4i)", NAN);
 }

@@ -27,8 +27,9 @@ uint8_t Random::SeedRandomNodes(Tree* tree, uint8_t maxSeed) {
     if (u->isRandomNode()) {
       if (GetSeed(u) == 0) {
         // RandIntNoRep needs to reserve seed for each of its elements.
-        /* We specifically know for RandIntNoRep that the dimension check can be
-         * done at this step. */
+        /* RandIntNoRep dimension may have not been checked at this point and we
+         * need its length. The dimension check for RandIntNoRep is
+         * straighforward and can be done at this step. */
         int size = u->isRandIntNoRep() && Dimension::DeepCheckDimensions(u) &&
                            Dimension::DeepCheckListLength(u)
                        ? Dimension::GetListLength(u)

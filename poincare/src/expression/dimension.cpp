@@ -311,7 +311,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
       return true;
     case Type::Set:
     case Type::List:
-      // Lists can contain points or scalars but not both
+      /* Lists can contain scalars, points or booleans but they must all be of
+       * the same type. */
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (!(childDim[i].isScalar() || childDim[i].isPoint() ||
               childDim[i].isBoolean()) ||

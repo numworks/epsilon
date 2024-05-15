@@ -11,18 +11,17 @@ using Expression = JuniorExpression;
 // Can be applied to different types of Expressions
 using NewExpression = Expression;
 // Can be layoutted (Not projected)
-using UserExpression = Expression;
-
+using UserExpression = NewExpression;
 // Must have been projected
-using ProjectedExpression = Expression;
+using ProjectedExpression = NewExpression;
 // Must have been systematic simplified
-using SystemExpression = Expression;
+using SystemExpression = ProjectedExpression;
 // Must have been systematic simplified and can depend on a Variable
-using SystemFunction = Expression;
+using SystemFunction = SystemExpression;
 // Same with Scalar approximation
-using SystemCartesianFunction = Expression;
+using SystemCartesianFunction = SystemFunction;
 // Same with Point approximation
-using SystemParametricFunction = Expression;
+using SystemParametricFunction = SystemFunction;
 }  // namespace Poincare
 
 #endif

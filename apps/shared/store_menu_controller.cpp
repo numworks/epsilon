@@ -120,7 +120,7 @@ void StoreMenuController::openAbortWarning() {
 bool StoreMenuController::parseAndStore(const char* text) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   Context* context = app->localContext();
-  Expression input = Expression::Parse(text, context);
+  UserExpression input = UserExpression::Parse(text, context);
 #if 1  // TODO_PCJ
   assert(false);
   return false;
@@ -129,7 +129,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
     openAbortWarning();
     return false;
   }
-  Expression reducedExp = input;
+  UserExpression reducedExp = input;
   PoincareHelpers::CloneAndSimplify(&reducedExp, context);
   if (reducedExp.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
@@ -137,7 +137,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
   }
   bool isVariable =
       reducedExp.childAtIndex(1).type() == ExpressionNode::Type::Symbol;
-  Expression leftHandSideApproximation =
+  UserExpression leftHandSideApproximation =
       PoincareHelpers::ApproximateKeepingUnits<double>(
           reducedExp.childAtIndex(0), context);
   if (isVariable &&

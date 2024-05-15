@@ -17,8 +17,8 @@ using namespace Shared;
 namespace Calculation {
 
 AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput,
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
     return AdditionalResultsType{.empty = true};
@@ -82,8 +82,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
 }
 
 bool AdditionalResultsType::ForbidAdditionalResults(
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput) {
   /* Special case for Store:
    * Store nodes have to be at the root of the expression, which prevents
    * from creating new expressions with store node as a child. We don't
@@ -105,7 +105,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
 }
 
 bool AdditionalResultsType::HasComplex(
-    const Expression approximateOutput,
+    const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   /* We have 2 edge cases:
    * 1) exact output assessed to scalar complex but not approximate output
@@ -127,7 +127,7 @@ bool AdditionalResultsType::HasComplex(
 }
 
 bool AdditionalResultsType::HasDirectTrigo(
-    const Expression input, const Expression exactOutput,
+    const UserExpression input, const UserExpression exactOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.hasUnit(true));
   Context *globalContext =
@@ -138,7 +138,7 @@ bool AdditionalResultsType::HasDirectTrigo(
 }
 
 bool AdditionalResultsType::HasInverseTrigo(
-    const Expression input, const Expression exactOutput,
+    const UserExpression input, const UserExpression exactOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   // If the result is complex, it is treated as a complex result instead.
   assert(!exactOutput.isScalarComplex(calculationPreferences));
@@ -148,7 +148,7 @@ bool AdditionalResultsType::HasInverseTrigo(
 }
 
 bool AdditionalResultsType::HasUnit(
-    const Expression exactOutput,
+    const UserExpression exactOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(exactOutput.hasUnit());
   Context *globalContext =
@@ -187,7 +187,7 @@ bool AdditionalResultsType::HasUnit(
 }
 
 bool AdditionalResultsType::HasVector(
-    const Expression exactOutput, const Expression approximateOutput,
+    const UserExpression exactOutput, const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   Context *globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
@@ -207,7 +207,7 @@ bool AdditionalResultsType::HasVector(
   return true;
 }
 
-bool AdditionalResultsType::HasMatrix(const Expression approximateOutput) {
+bool AdditionalResultsType::HasMatrix(const UserExpression approximateOutput) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit(true));
   return approximateOutput.type() == ExpressionNode::Type::Matrix &&
@@ -232,8 +232,8 @@ static bool expressionIsInterestingFunction(const Expression e) {
          e.numberOfNumericalValues() == 1;
 }
 
-bool AdditionalResultsType::HasFunction(const Expression input,
-                                        const Expression approximateOutput) {
+bool AdditionalResultsType::HasFunction(
+    const UserExpression input, const UserExpression approximateOutput) {
   // We want a single numerical value and to avoid showing the identity function
   assert(!input.isUninitialized());
   assert(!input.hasUnit());
@@ -246,7 +246,7 @@ bool AdditionalResultsType::HasFunction(const Expression input,
 }
 
 bool AdditionalResultsType::HasScientificNotation(
-    const Expression approximateOutput,
+    const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit());
@@ -266,7 +266,7 @@ bool AdditionalResultsType::HasScientificNotation(
       true);
 }
 
-bool AdditionalResultsType::HasInteger(const Expression exactOutput) {
+bool AdditionalResultsType::HasInteger(const UserExpression exactOutput) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
   constexpr const char *k_maximalIntegerWithAdditionalResults =
@@ -275,7 +275,7 @@ bool AdditionalResultsType::HasInteger(const Expression exactOutput) {
       k_maximalIntegerWithAdditionalResults);
 }
 
-bool AdditionalResultsType::HasRational(const Expression exactOutput) {
+bool AdditionalResultsType::HasRational(const UserExpression exactOutput) {
   // Find forms like [12]/[23] or -[12]/[23]
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());

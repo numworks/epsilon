@@ -225,12 +225,12 @@ Poincare::UserExpression ExpressionModel::buildExpressionFromText(
     return Expression();
   }
   // Compute the expression to store, without replacing symbols
-  UserExpression expressionToStore = Expression::Parse(c, context);
+  UserExpression expressionToStore = UserExpression::Parse(c, context);
   return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 
-Poincare::Expression ExpressionModel::ReplaceSymbolWithUnknown(
-    Poincare::Expression e, CodePoint symbol) {
+Poincare::UserExpression ExpressionModel::ReplaceSymbolWithUnknown(
+    Poincare::UserExpression e, CodePoint symbol) {
   if (!e.isUninitialized() && symbol != 0) {
     return e.replaceSymbolWithExpression(Symbol::Builder(symbol),
                                          Symbol::SystemSymbol());

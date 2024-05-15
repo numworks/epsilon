@@ -35,7 +35,7 @@ CodePoint AbstractMathFieldDelegate::defaultXNT() {
   return ContinuousFunction::k_cartesianSymbol;
 }
 
-bool AbstractMathFieldDelegate::isAcceptableExpression(const Expression exp,
+bool AbstractMathFieldDelegate::isAcceptableExpression(const UserExpression exp,
                                                        Context *context) {
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store;
 }
@@ -47,7 +47,7 @@ bool AbstractMathFieldDelegate::isAcceptableText(const char *text,
    * some errors could be missed.
    * Sometimes the field needs to be parsed for assignment but this is
    * done later, namely by ContinuousFunction::buildExpressionFromText. */
-  Expression exp = Expression::Parse(text, context);
+  UserExpression exp = UserExpression::Parse(text, context);
   if (exp.isUninitialized()) {
     // Unparsable expression
     return false;
@@ -86,7 +86,7 @@ bool MathLayoutFieldDelegate::isAcceptableLayout(Layout layout,
     // Accept empty layouts
     return true;
   }
-  Expression exp = Expression::Parse(layout, context);
+  UserExpression exp = UserExpression::Parse(layout, context);
   return isAcceptableExpression(exp, context);
 }
 

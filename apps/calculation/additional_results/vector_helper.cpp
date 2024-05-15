@@ -14,7 +14,7 @@ namespace Calculation {
 namespace VectorHelper {
 
 Expression BuildVectorNorm(
-    const Expression exactOutput, Context *context,
+    const UserExpression exactOutput, Context *context,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit(true));

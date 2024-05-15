@@ -15,8 +15,8 @@ using namespace Shared;
 namespace Calculation {
 
 void TrigonometryListController::computeAdditionalResults(
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput) {
   assert((m_directTrigonometry &&
           AdditionalResultsType::HasDirectTrigo(input, exactOutput,
                                                 m_calculationPreferences)) ||
@@ -156,9 +156,10 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
   m_exactLayouts[index].serializeForParsing(
       exactBuffer, ::Constant::MaxSerializedExpressionSize);
   assert(strcmp(exactBuffer, approximateBuffer) != 0);
-  m_isStrictlyEqual[index] = Expression::ExactAndApproximateExpressionsAreEqual(
-      Expression::Parse(exactBuffer, context),
-      Expression::Parse(approximateBuffer, context));
+  m_isStrictlyEqual[index] =
+      UserExpression::ExactAndApproximateExpressionsAreEqual(
+          UserExpression::Parse(exactBuffer, context),
+          UserExpression::Parse(approximateBuffer, context));
 }
 
 void TrigonometryListController::fillCellForRow(Escher::HighlightCell* cell,

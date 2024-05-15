@@ -1081,7 +1081,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
   return error;
 }
 
-Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
+Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromText(
     const char *c, CodePoint symbol, Poincare::Context *context) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
@@ -1089,16 +1089,17 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
   assert(symbol == k_unnamedExpressionSymbol);
   // if c = "", we want to reinit the Expression
   if (!c || c[0] == 0) {
-    return Expression();
+    return UserExpression();
   }
   /* Parse the expression to store as possible function assignment. */
-  Expression expressionToStore = Expression::Parse(c, context, true, true);
+  UserExpression expressionToStore =
+      UserExpression::Parse(c, context, true, true);
   if (expressionToStore.isUninitialized()) {
     return expressionToStore;
   }
   // Check if the equation is of the form f(x)=...
   if (IsFunctionAssignment(expressionToStore)) {
-    Expression functionSymbol =
+    UserExpression functionSymbol =
         expressionToStore.childAtIndex(0).childAtIndex(0);
     // Extract the CodePoint function's symbol. We know it is either x, t or θ
     assert(functionSymbol.type() == ExpressionNode::Type::Symbol);

@@ -19,8 +19,8 @@ using namespace Shared;
 namespace Calculation {
 
 void FunctionListController::computeAdditionalResults(
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput) {
   assert(AdditionalResultsType::HasFunction(input, approximateOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,

@@ -31,8 +31,8 @@ Layout StoreApp::Snapshot::memoizedFormula(int index) const {
   if (m_memoizedFormulasBuffer[index][0] == 0) {
     return Layout();
   }
-  Expression e = Expression::Parse(m_memoizedFormulasBuffer[index],
-                                   StoreApp::storeApp()->localContext());
+  UserExpression e = UserExpression::Parse(
+      m_memoizedFormulasBuffer[index], StoreApp::storeApp()->localContext());
   return e.createLayout(
       Preferences::SharedPreferences()->displayMode(),
       Preferences::SharedPreferences()->numberOfSignificantDigits(),

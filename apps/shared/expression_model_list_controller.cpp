@@ -261,7 +261,7 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   char buffer[TextField::MaxBufferSize()];
   layoutField->layout().serializeForParsing(buffer, TextField::MaxBufferSize());
-  Expression parsedExpression = Expression::Parse(buffer, nullptr);
+  UserExpression parsedExpression = UserExpression::Parse(buffer, nullptr);
   if (parsedExpression.isUninitialized()) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;

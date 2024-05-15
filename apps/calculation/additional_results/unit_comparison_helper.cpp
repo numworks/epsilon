@@ -580,17 +580,17 @@ void FillRatioBuffer(double ratio, char *textBuffer, int bufferSize) {
   }
 }
 
-Expression BuildComparisonExpression(double value,
-                                     const ReferenceValue *referenceValue,
-                                     int tableIndex) {
+UserExpression BuildComparisonExpression(double value,
+                                         const ReferenceValue *referenceValue,
+                                         int tableIndex) {
   assert(tableIndex < k_numberOfReferenceTables);
   double ratio = value / static_cast<double>(referenceValue->value);
-  Expression unit = Poincare::Expression::Parse(
+  UserExpression unit = Poincare::UserExpression::Parse(
       k_referenceTables[tableIndex].unit.displayedUnit,
       App::app()->localContext());
   return Multiplication::Builder(
-      Expression::Builder<double>(ratio),
-      Expression::Builder<double>(referenceValue->value), unit);
+      NewExpression::Builder<double>(ratio),
+      NewExpression::Builder<double>(referenceValue->value), unit);
 }
 
 }  // namespace UnitComparison

@@ -10,8 +10,8 @@ using namespace Shared;
 namespace Calculation {
 
 void AdditionalResultsController::openAdditionalResults(
-    AdditionalResultsType type, const Expression input,
-    const Expression exactOutput, const Expression approximateOutput,
+    AdditionalResultsType type, const UserExpression input,
+    const UserExpression exactOutput, const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   // Head controller
   /* TODO: Refactor to avoid writing an if for each parent * child. */
@@ -74,8 +74,8 @@ void AdditionalResultsController::openAdditionalResults(
 
 void AdditionalResultsController::computeResults(
     ExpressionsListController **expressionsListController,
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput,
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput,
     Preferences::CalculationPreferences calculationPreferences) {
   if (*expressionsListController == nullptr) {
     return;

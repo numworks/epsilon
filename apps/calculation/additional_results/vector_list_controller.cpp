@@ -16,8 +16,8 @@ using namespace Shared;
 namespace Calculation {
 
 void VectorListController::computeAdditionalResults(
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput) {
   assert(AdditionalResultsType::HasVector(exactOutput, approximateOutput,
                                           m_calculationPreferences));
   static_assert(

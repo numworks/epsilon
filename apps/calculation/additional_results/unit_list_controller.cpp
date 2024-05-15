@@ -69,8 +69,8 @@ int UnitListController::numberOfRows() const {
 }
 
 void UnitListController::computeAdditionalResults(
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput) {
   assert(AdditionalResultsType::HasUnit(exactOutput, m_calculationPreferences));
   Expression exactClone = exactOutput.clone();
 

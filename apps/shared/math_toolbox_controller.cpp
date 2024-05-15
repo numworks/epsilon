@@ -124,7 +124,7 @@ void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
       if (Poincare::Preferences::SharedPreferences()->editionMode() ==
           Poincare::Preferences::EditionMode::Edition2D) {
         // No context is given so that f(x) is never parsed as f×(x)
-        Expression resultExpression = Expression::Parse(text, nullptr);
+        UserExpression resultExpression = UserExpression::Parse(text, nullptr);
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
           resultLayout = resultExpression.createLayout(

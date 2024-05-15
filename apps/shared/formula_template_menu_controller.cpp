@@ -133,10 +133,12 @@ bool FormulaTemplateMenuController::shouldDisplayOtherAppCell() const {
   return r.value().size;
 }
 
-Expression FormulaTemplateMenuController::templateExpressionForCell(Cell cell) {
+UserExpression FormulaTemplateMenuController::templateExpressionForCell(
+    Cell cell) {
   assert(cell < Cell::MaxNumberOfRows && cell > Cell::EmptyTemplate);
   if (cell <= Cell::Logarithm) {
-    return Expression::Parse(k_templates[static_cast<int>(cell) - 1], nullptr);
+    return UserExpression::Parse(k_templates[static_cast<int>(cell) - 1],
+                                 nullptr);
   }
   // Build the expression "X2+X3"
   if (cell == Cell::OtherColumns) {
@@ -161,7 +163,8 @@ void FormulaTemplateMenuController::computeUninitializedLayouts() {
     if (!m_layouts[i - 1].isUninitialized()) {
       continue;
     }
-    Poincare::Expression e = templateExpressionForCell(static_cast<Cell>(i));
+    Poincare::UserExpression e =
+        templateExpressionForCell(static_cast<Cell>(i));
     m_layouts[i - 1] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits,

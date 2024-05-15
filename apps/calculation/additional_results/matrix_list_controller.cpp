@@ -18,8 +18,8 @@ using namespace Shared;
 namespace Calculation {
 
 void MatrixListController::computeAdditionalResults(
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput) {
   assert(AdditionalResultsType::HasMatrix(approximateOutput));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,

@@ -18,8 +18,8 @@ using namespace Shared;
 namespace Calculation {
 
 void ComplexListController::computeAdditionalResults(
-    const Expression input, const Expression exactOutput,
-    const Expression approximateOutput) {
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput) {
   /* TODO:
    * - save values of re(z), im(z) during setLineAtIndex to directly use them in
    * setComplex ?

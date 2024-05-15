@@ -13,7 +13,8 @@ namespace Calculation {
 namespace TrigonometryHelper {
 
 Expression ExtractExactAngleFromDirectTrigo(
-    const Expression input, const Expression exactOutput, Context* context,
+    const UserExpression input, const UserExpression exactOutput,
+    Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!input.hasUnit(true));
   assert(!exactOutput.hasUnit(true));

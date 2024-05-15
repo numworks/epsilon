@@ -25,8 +25,8 @@ EquationModelsParameterController::EquationModelsParameterController(
   m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Poincare::Expression e =
-        Expression::Parse(k_models[i + 1], nullptr);  // No context needed
+    Poincare::UserExpression e =
+        UserExpression::Parse(k_models[i + 1], nullptr);  // No context needed
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits, nullptr);

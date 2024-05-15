@@ -211,7 +211,9 @@ static T FloatSubtraction(T a, T b) {
 
 template <typename T>
 static T FloatLog(T a, T b) {
-  return a == static_cast<T>(0) ? NAN : std::log(a) / std::log(b);
+  return a == static_cast<T>(0) || b == static_cast<T>(0)
+             ? NAN
+             : std::log(a) / std::log(b);
 }
 template <typename T>
 static T PositiveIntegerApproximation(std::complex<T> c) {

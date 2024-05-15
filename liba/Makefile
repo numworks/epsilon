@@ -1,7 +1,6 @@
 SFLAGS += -Iliba/include
 
 liba_internal_flash_src += $(addprefix liba/src/, \
-  assert.c \
   memcmp.c \
   memcpy.c \
   memmove.c \
@@ -23,7 +22,6 @@ liba_flasher_src += $(addprefix liba/src/, \
 liba_kernel_src += $(addprefix liba/src/, \
   armv7m/setjmp.s \
   armv7m/longjmp.s \
-  assert.c \
   ssp.c \
 )
 
@@ -31,7 +29,6 @@ liba_src += $(addprefix liba/src/, \
   armv7m/setjmp.s \
   armv7m/longjmp.s \
   abs.c \
-  assert.c \
   bzero.c \
   ctype.c \
   errno.c \

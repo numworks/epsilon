@@ -11,6 +11,8 @@
 
 LIBA_BEGIN_DECLS
 
+/* Users of liba should provide the definition for the __assert function. */
+
 void __assert(const char* expression, const char* file, int line);
 
 LIBA_END_DECLS

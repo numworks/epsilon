@@ -1,6 +1,4 @@
-#include <ion/assert.h>
+#include <assert.h>
 #include <stdlib.h>
 
-void assertionAbort(const char* expression, const char* file, int line) {
-  abort();
-}
+void __assert(const char* expression, const char* file, int line) { abort(); }

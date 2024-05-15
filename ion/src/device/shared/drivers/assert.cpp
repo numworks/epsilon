@@ -1,4 +1,4 @@
-#include <ion/assert.h>
+#include <assert.h>
 #include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>
@@ -21,7 +21,7 @@ static int printInt(int x, char* buffer, size_t bufferSize) {
   return n;
 }
 
-void assertionAbort(const char* expression, const char* file, int line) {
+void __assert(const char* expression, const char* file, int line) {
   Ion::Events::setSpinner(false);
   Ion::Display::Context::Clear();
 

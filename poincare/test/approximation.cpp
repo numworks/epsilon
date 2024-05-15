@@ -9,9 +9,10 @@
 
 using namespace Poincare::Internal;
 
-void assert_approximation_is(const Tree* n, float f) {
-  float approx = Approximation::RootTreeToReal<float>(n);
-  bool result = OMG::Float::RoughlyEqual<float>(approx, f, FLT_EPSILON, true);
+template <typename T>
+void approximates_to(const Tree* n, T f) {
+  T approx = Approximation::RootTreeToReal<T>(n);
+  bool result = OMG::Float::RoughlyEqual<T>(approx, f, FLT_EPSILON, true);
 #if POINCARE_TREE_LOG
   if (!result) {
     std::cout << "Approximation test failure with: \n";
@@ -26,27 +27,27 @@ void assert_approximation_is(const Tree* n, float f) {
 }
 
 QUIZ_CASE(pcj_approximation) {
-  assert_approximation_is(123_e, 123.f);
-  assert_approximation_is(-123.21_fe, -123.21f);
-  assert_approximation_is(π_e, M_PI);
-  assert_approximation_is(e_e, M_E);
-  assert_approximation_is(KAdd(KMult(2_e, 4_e), KPow(1.5_fe, 3.0_fe)), 11.375f);
-  assert_approximation_is(KDiv(KSub(2_e, 4_e), 10.0_fe), -0.2f);
-  assert_approximation_is(KTrig(KDiv(π_e, 2_e), 1_e), 1.f);
-  assert_approximation_is(KLogarithm(KMult(13_e, 13_e), 13_e), 2.f);
-  assert_approximation_is(KExp(2_e), M_E * M_E);
-  assert_approximation_is(KLog(100_e), 2.f);
-  assert_approximation_is(KLn(e_e), 1.f);
-  assert_approximation_is(KAbs(100_e), 100.f);
-  assert_approximation_is(KAbs(-2.31_fe), 2.31f);
-  assert_approximation_is(KCos(π_e), -1.f);
-  assert_approximation_is(KSin(π_e), 0.f);
-  assert_approximation_is(KTan(0_e), 0.f);
-  assert_approximation_is(KPowReal(1_e, KDiv(1_e, 3_e)), 1.f);
-  assert_approximation_is(KPowReal(-1_e, KDiv(1_e, 3_e)), NAN);
-  assert_approximation_is(KPowReal(-1_e, 2_e), 1.f);
-  assert_approximation_is(KSum("k"_e, 1_e, 3_e, KVarK), 6.f);
-  assert_approximation_is("x"_e, NAN);
+  approximates_to(123_e, 123.f);
+  approximates_to(-123.21_fe, -123.21f);
+  approximates_to(π_e, M_PI);
+  approximates_to(e_e, M_E);
+  approximates_to(KAdd(KMult(2_e, 4_e), KPow(1.5_fe, 3.0_fe)), 11.375f);
+  approximates_to(KDiv(KSub(2_e, 4_e), 10.0_fe), -0.2f);
+  approximates_to(KTrig(KDiv(π_e, 2_e), 1_e), 1.f);
+  approximates_to(KLogarithm(KMult(13_e, 13_e), 13_e), 2.f);
+  approximates_to(KExp(2_e), M_E * M_E);
+  approximates_to(KLog(100_e), 2.f);
+  approximates_to(KLn(e_e), 1.f);
+  approximates_to(KAbs(100_e), 100.f);
+  approximates_to(KAbs(-2.31_fe), 2.31f);
+  approximates_to(KCos(π_e), -1.f);
+  approximates_to(KSin(π_e), 0.f);
+  approximates_to(KTan(0_e), 0.f);
+  approximates_to(KPowReal(1_e, KDiv(1_e, 3_e)), 1.f);
+  approximates_to(KPowReal(-1_e, KDiv(1_e, 3_e)), NAN);
+  approximates_to(KPowReal(-1_e, 2_e), 1.f);
+  approximates_to(KSum("k"_e, 1_e, 3_e, KVarK), 6.f);
+  approximates_to("x"_e, NAN);
 }
 
 QUIZ_CASE(pcj_approximation_replace) {

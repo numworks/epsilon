@@ -74,7 +74,7 @@ void eadk_display_draw_string(const char *text, eadk_point_t point,
   // TODO: Duplicated from ion/src/device/userland/drivers/display.cpp
   KDContext *ctx = KDIonContext::SharedContext;
   ctx->setOrigin(KDPointZero);
-  ctx->setClippingRect(KDRectScreen);
+  ctx->setClippingRect(Ion::Display::Rect);
   ctx->drawString(
       text, p(point),
       {.glyphColor = c(text_color),

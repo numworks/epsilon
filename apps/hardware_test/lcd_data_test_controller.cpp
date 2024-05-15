@@ -54,7 +54,7 @@ void LCDDataTestController::ContentView::setStatus(bool success,
 }
 
 void LCDDataTestController::ContentView::layoutSubviews(bool force) {
-  setChildFrame(&m_lcdDataStateView, KDRectScreen, force);
+  setChildFrame(&m_lcdDataStateView, Ion::Display::Rect, force);
   setChildFrame(&m_lcdNumberPixelFailuresView,
                 KDRect(10, 10, Ion::Display::Width, 20), force);
 }

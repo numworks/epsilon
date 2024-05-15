@@ -45,7 +45,7 @@ void drawString(const char* text, KDPoint point, bool largeFont,
                 KDColor textColor, KDColor backgroundColor) {
   KDContext* ctx = KDIonContext::SharedContext;
   ctx->setOrigin(KDPointZero);
-  ctx->setClippingRect(KDRectScreen);
+  ctx->setClippingRect(Ion::Display::Rect);
   ctx->drawString(text, point,
                   KDGlyph::Style{.glyphColor = textColor,
                                  .backgroundColor = backgroundColor,

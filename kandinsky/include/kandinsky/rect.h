@@ -1,7 +1,6 @@
 #ifndef KANDINSKY_RECT_H
 #define KANDINSKY_RECT_H
 
-#include <ion/display_constants.h>
 #include <kandinsky/coordinate.h>
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
@@ -83,7 +82,5 @@ class KDRect {
 };
 
 constexpr KDRect KDRectZero = KDRect(0, 0, 0, 0);
-constexpr KDRect KDRectScreen =
-    KDRect(0, 0, Ion::Display::Width, Ion::Display::Height);
 
 #endif

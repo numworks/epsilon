@@ -3,7 +3,7 @@
 
 OMG::GlobalBox<KDIonContext> KDIonContext::SharedContext;
 
-KDIonContext::KDIonContext() : KDContext(KDPointZero, KDRectScreen) {}
+KDIonContext::KDIonContext() : KDContext(KDPointZero, Ion::Display::Rect) {}
 
 void KDIonContext::pushRect(KDRect rect, const KDColor* pixels) {
   Ion::Display::pushRect(rect, pixels);

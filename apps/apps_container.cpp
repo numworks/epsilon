@@ -34,7 +34,7 @@ AppsContainer::AppsContainer()
       m_initialAppSnapshot(nullptr)
 #endif
 {
-  m_emptyBatteryWindow.setAbsoluteFrame(KDRectScreen);
+  m_emptyBatteryWindow.setAbsoluteFrame(Ion::Display::Rect);
   Ion::Storage::FileSystem::sharedFileSystem->setDelegate(this);
   Shared::RecordRestrictiveExtensions::
       registerRestrictiveExtensionsToSharedStorage();
@@ -262,7 +262,7 @@ void AppsContainer::handleRunException() {
 }
 
 void AppsContainer::run() {
-  window()->setAbsoluteFrame(KDRectScreen);
+  window()->setAbsoluteFrame(Ion::Display::Rect);
   Preferences* poincarePreferences = Preferences::SharedPreferences();
   Poincare::ExamMode examMode = poincarePreferences->examMode();
   if (examMode.isActive()) {

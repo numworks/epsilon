@@ -161,11 +161,11 @@ inline void CloneAndSimplifyAndApproximate(
       ReductionContextForParameters(e, context, reductionParameters));
 }
 
-inline void CloneAndReduce(
-    Poincare::Expression* e, Poincare::Context* context,
+inline Poincare::SystemExpression CloneAndReduce(
+    Poincare::UserExpression e, Poincare::Context* context,
     const ReductionParameters& reductionParameters = {}) {
-  *e = e->cloneAndReduce(
-      ReductionContextForParameters(*e, context, reductionParameters));
+  return e.cloneAndReduce(
+      ReductionContextForParameters(e, context, reductionParameters));
 }
 
 inline void CloneAndApproximateKeepingSymbols(

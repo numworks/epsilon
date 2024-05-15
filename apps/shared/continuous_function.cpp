@@ -750,15 +750,16 @@ Expression ContinuousFunction::Model::expressionReduced(
        * We take the one that has the less node. This is not ideal because an
        * expression with less node does not always mean a simpler expression,
        * but it's a good compromise for now.       */
-      Expression resultForApproximation = expressionEquation(record, context);
-      if (!resultForApproximation.isUninitialized()) {
-        PoincareHelpers::CloneAndReduce(
-            &resultForApproximation, context,
-            {.complexFormat = complexFormat,
-             .updateComplexFormatWithExpression = false,
-             .target = ReductionTarget::SystemForApproximation,
-             .symbolicComputation =
-                 SymbolicComputation::DoNotReplaceAnySymbol});
+      UserExpression equation = expressionEquation(record, context);
+      if (!equation.isUninitialized()) {
+        SystemExpression resultForApproximation =
+            PoincareHelpers::CloneAndReduce(
+                equation, context,
+                {.complexFormat = complexFormat,
+                 .updateComplexFormatWithExpression = false,
+                 .target = ReductionTarget::SystemForApproximation,
+                 .symbolicComputation =
+                     SymbolicComputation::DoNotReplaceAnySymbol});
         if (resultForApproximation.numberOfDescendants(true) <
             m_expression.numberOfDescendants(true)) {
           m_expression = resultForApproximation;
@@ -810,14 +811,15 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   ComparisonNode::OperatorType computedEquationType =
       ContinuousFunctionProperties::k_defaultEquationType;
   bool isCartesianEquation = false;
-  Expression result =
+  UserExpression equation =
       expressionEquation(record, context, &computedEquationType,
                          &computedFunctionSymbol, &isCartesianEquation);
+  SystemExpression result;
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
-  if (!result.isUndefined()) {
-    PoincareHelpers::CloneAndReduce(
-        &result, context,
+  if (!equation.isUndefined()) {
+    result = PoincareHelpers::CloneAndReduce(
+        equation, context,
         {.complexFormat = complexFormat,
          .updateComplexFormatWithExpression = false,
          .target = ReductionTarget::SystemForAnalysis,

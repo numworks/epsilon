@@ -154,6 +154,7 @@ class RackParser {
   // Return nullptr if parentheses could not be parsed
   Tree* tryParseFunctionParameters();
   Tree* parseFunctionParameters();
+  void parseListParameters(TreeRef& leftHandSide);
   Tree* parseCommaSeparatedList(bool isFirstToken = false);
   void privateParseTimes(TreeRef& leftHandSide, Token::Type stoppingType);
   void privateParseReservedFunction(TreeRef& leftHandSide,

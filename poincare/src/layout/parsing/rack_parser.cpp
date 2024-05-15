@@ -1012,6 +1012,12 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     TreeRef& leftHandSide, const char* name, size_t length,
     Token::Type stoppingType, Poincare::Context::SymbolAbstractType idType,
     bool parseApostropheAsDerivative) {
+  if (idType == Poincare::Context::SymbolAbstractType::List) {
+    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
+    parseListParameters(leftHandSide);
+    return true;
+  }
+
   int derivationOrder = 0;
   if (parseApostropheAsDerivative) {
 #if 0
@@ -1044,40 +1050,18 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     return true;
   }
 
-  /* The identifier is followed by parentheses. It can be:
-   * - a function call
-   * - an access to a list element   */
-  int numberOfParameters = parameter->numberOfChildren();
+  if (parameter->numberOfChildren() != 1) {
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
   TreeRef result;
-  if (numberOfParameters == 2) {
+
+  MoveTreeOverTree(parameter, parameter->child(0));
+  if (parameter->type() == Type::UserSymbol &&
+      strncmp(Symbol::GetName(parameter), name, length) == 0) {
+    // Function and variable must have distinct names.
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  } else {
     if (derivationOrder > 0) {
-      return false;
-    }
-    // TODO: factorise with parseList
-    TreeRef list = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
-    parameter->moveTreeOverNode(list);
-    result = SharedTreeStack->push(Type::ListSlice);
-    list->moveNodeBeforeNode(result);
-    assert(result->child(0) == list);
-  } else if (numberOfParameters == 1) {
-    MoveTreeOverTree(parameter, parameter->child(0));
-    if (parameter->type() == Type::UserSymbol &&
-        strncmp(Symbol::GetName(parameter), name, length) == 0) {
-      // Function and variable must have distinct names.
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-    } else if (idType == Poincare::Context::SymbolAbstractType::List) {
-      if (derivationOrder > 0) {
-        return false;
-      }
-      // TODO: factorise with parseList
-      TreeRef list = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
-      parameter->moveTreeBeforeNode(list);
-      result = SharedTreeStack->push(Type::ListElement);
-      list->moveNodeBeforeNode(result);
-      assert(result->child(0) == list);
-      assert(result->child(1) == parameter);
-    } else {
-      if (derivationOrder > 0) {
 #if 0
         TreeRef derivand =
             Function::Builder(name, length, Symbol::SystemSymbol());
@@ -1085,14 +1069,11 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
             Derivative::Builder(derivand, Symbol::SystemSymbol(), parameter,
                                 BasedInteger::Builder(derivationOrder));
 #endif
-      } else {
-        result = SharedTreeStack->push<Type::UserFunction>(name, length + 1);
-        parameter->moveNodeBeforeNode(result);
-        assert(result->child(0) == parameter);
-      }
+    } else {
+      result = SharedTreeStack->push<Type::UserFunction>(name, length + 1);
+      parameter->moveNodeBeforeNode(result);
+      assert(result->child(0) == parameter);
     }
-  } else {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
   if (result->type() == Type::UserFunction &&
@@ -1221,7 +1202,7 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
 
 void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    // FIXME
+    // TODO: should assert(leftHandSide.isUninitialized());
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   if (!popTokenIfType(Token::Type::RightBrace)) {
@@ -1233,6 +1214,11 @@ void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
   } else {
     leftHandSide = List::PushEmpty();
   }
+  parseListParameters(leftHandSide);
+  isThereImplicitOperator();
+}
+
+void RackParser::parseListParameters(TreeRef& leftHandSide) {
   TreeRef parameter = tryParseFunctionParameters();
   if (parameter) {
     int numberOfParameters = parameter->numberOfChildren();
@@ -1245,7 +1231,6 @@ void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
     }
     parameter->removeNode();
   }
-  isThereImplicitOperator();
 }
 
 void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {

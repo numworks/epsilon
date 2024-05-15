@@ -34,6 +34,7 @@ void approximates_to(const char* input, T f,
   quiz_assert(!expression.isUninitialized());
   approximates_to(expression, f);
   expression->removeTree();
+  assert(SharedTreeStack->numberOfTrees() == 0);
 }
 
 QUIZ_CASE(pcj_approximation) {

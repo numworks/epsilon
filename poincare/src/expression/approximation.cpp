@@ -617,7 +617,11 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       const Tree* startIndex = node->child(1);
       assert(Integer::Is<uint8_t>(startIndex));
       int start = std::max(Integer::Handler(startIndex).to<uint8_t>() - 1, 0);
-      return ToComplex<T>(values->child(start + s_context->m_listElement));
+      int old = s_context->m_listElement;
+      s_context->m_listElement += start;
+      std::complex<T> result = ToComplex<T>(values);
+      s_context->m_listElement = old;
+      return result;
     }
     case Type::ListSum:
     case Type::ListProduct: {

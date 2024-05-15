@@ -36,7 +36,7 @@ Calculation *Calculation::next() const {
 }
 
 UserExpression Calculation::input() {
-  UserExpression e = JuniorExpression::Builder(inputTree());
+  UserExpression e = NewExpression::Builder(inputTree());
   assert(!e.isUninitialized());
   return e;
 }

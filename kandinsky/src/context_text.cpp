@@ -84,8 +84,8 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
     codePointPointer = decoder.stringPosition();
     if (codePoint == UCodePointLineFeed) {
       assert(position.y() < KDCOORDINATE_MAX - glyphSize.height());
-      position = KDPoint(0, position.y() + glyphSize.height());
-      if (origin().y() + position.y() >= Ion::Display::Height) {
+      position = KDPoint(origin().x(), position.y() + glyphSize.height());
+      if (origin().y() + position.y() > clippingRect().bottom()) {
         break;
       }
       codePoint = decoder.nextCodePoint();
@@ -103,9 +103,9 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
       codePoint = decoder.nextCodePoint();
     } else {
       assert(!codePoint.isCombining());
-      // TODO use clipping rect instead
-      if (origin().x() + position.x() + glyphSize.width() > 0 &&
-          origin().x() + position.x() < Ion::Display::Width) {
+      if (origin().x() + position.x() + glyphSize.width() >
+              clippingRect().left() &&
+          origin().x() + position.x() <= clippingRect().right()) {
         KDFont::Font(style.font)
             ->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
         codePoint = decoder.nextCodePoint();
@@ -130,7 +130,7 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
         }
       }
       position = position.translatedBy(KDPoint(glyphSize.width(), 0));
-      if (origin().x() + position.x() >= Ion::Display::Width) {
+      if (origin().x() + position.x() > clippingRect().right()) {
         // fast forward until line feed
         while (codePoint != UCodePointLineFeed && codePoint != UCodePointNull) {
           codePoint = decoder.nextCodePoint();

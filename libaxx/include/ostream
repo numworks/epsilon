@@ -1,9 +1,6 @@
 #ifndef OSTREAM
 #define OSTREAM
 
-#include <ion/console.h>
-#include <omg/print.h>
-
 namespace std {
 
 class ostream {
@@ -13,22 +10,10 @@ class ostream {
     return *this;
   }
 
-  ostream& operator<<(const char* str) {
-    Ion::Console::writeLine(str, false);
-    return *this;
-  }
+  /* Users of libaxx should provide implementations for operator<<. */
 
-  ostream& operator<<(int i) {
-    constexpr char bufferSize = 32;
-    char buffer[bufferSize];
-    if (i < 0) {
-      Ion::Console::writeChar('-');
-    }
-    int p = OMG::Print::IntLeft(i, buffer, bufferSize);
-    buffer[p] = 0;
-    Ion::Console::writeLine(buffer, false);
-    return *this;
-  }
+  ostream& operator<<(const char* str);
+  ostream& operator<<(int i);
 
   ostream& operator<<(unsigned int i) { return *this << static_cast<int>(i); }
   ostream& operator<<(unsigned short i) { return *this << static_cast<int>(i); }

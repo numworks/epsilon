@@ -1133,7 +1133,7 @@ Tree* RackParser::tryParseFunctionParameters() {
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
     commaSeparatedList->removeTree();
-    return nullptr;
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   return commaSeparatedList;
 }
@@ -1233,12 +1233,8 @@ void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
   } else {
     leftHandSide = List::PushEmpty();
   }
-  if (popTokenIfType(Token::Type::LeftParenthesis)) {
-    TreeRef parameter = parseCommaSeparatedList();
-    if (!popTokenIfType(Token::Type::RightParenthesis)) {
-      // Right parenthesis missing.
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-    }
+  TreeRef parameter = tryParseFunctionParameters();
+  if (parameter) {
     int numberOfParameters = parameter->numberOfChildren();
     if (numberOfParameters == 2) {
       CloneNodeAtNode(leftHandSide, KListSlice);

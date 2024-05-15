@@ -3,10 +3,6 @@
 #include <assert.h>
 #include <private/memconfig.h>
 
-#if LIBA_LOG_DYNAMIC_MEMORY
-#include <ion/log.h>
-#endif
-
 extern char _heap_start;
 extern char _heap_end;
 
@@ -31,11 +27,6 @@ static void configure_heap() {
 }
 
 void free(void *ptr) {
-#if LIBA_LOG_DYNAMIC_MEMORY
-  ion_log_print_string("FREE-");
-  ion_log_print_integer((uint32_t)ptr);
-  ion_log_print_string("\n");
-#endif
   if (ptr != NULL) {
     memsys5FreeUnsafe(ptr);
   }
@@ -49,13 +40,6 @@ void * malloc(size_t size) {
   if (size > 0) {
     p = memsys5MallocUnsafe(memsys5Roundup(size));
   }
-#if LIBA_LOG_DYNAMIC_MEMORY
-  ion_log_print_string("MALLOC-");
-  ion_log_print_integer((uint32_t)p);
-  ion_log_print_string("-");
-  ion_log_print_integer((uint32_t)size);
-  ion_log_print_string("\n");
-#endif
   /* If the process could not find enough space in the memory dedicated to
    * dynamic allocation, p is NULL. The conventional malloc just return NULL
    * without crashing. However, for debuging purposes, we abort the process

@@ -45,8 +45,9 @@ class ExpressionsListController
   int numberOfRows() const override;
 
   virtual void computeAdditionalResults(
-      const Poincare::Expression input, const Poincare::Expression exactOutput,
-      const Poincare::Expression approximateOutput) = 0;
+      const Poincare::UserExpression input,
+      const Poincare::UserExpression exactOutput,
+      const Poincare::UserExpression approximateOutput) = 0;
   virtual Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,
                                          int index);
 
@@ -54,7 +55,7 @@ class ExpressionsListController
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_maxNumberOfRows = 5;
   Poincare::Layout getExactLayoutFromExpression(
-      Poincare::Expression e,
+      Poincare::UserExpression e,
       const Poincare::ComputationContext& computationContext,
       Poincare::Layout* approximatedLayout = nullptr);
   Poincare::Preferences::AngleUnit angleUnit() const {

@@ -7,8 +7,8 @@ namespace Calculation {
 
 namespace VectorHelper {
 
-Poincare::Expression BuildVectorNorm(
-    const Poincare::Expression exactOutput, Poincare::Context* context,
+Poincare::UserExpression BuildVectorNorm(
+    const Poincare::UserExpression exactOutput, Poincare::Context* context,
     const Poincare::Preferences::CalculationPreferences calculationPreferences);
 
 }

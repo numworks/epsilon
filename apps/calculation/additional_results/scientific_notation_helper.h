@@ -10,7 +10,7 @@ namespace Calculation {
 namespace ScientificNotationHelper {
 
 Poincare::Layout ScientificLayout(
-    const Poincare::Expression approximateExpression,
+    const Poincare::UserExpression approximateExpression,
     Poincare::Context* context,
     const Poincare::Preferences::CalculationPreferences calculationPreferences);
 

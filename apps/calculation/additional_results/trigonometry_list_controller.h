@@ -13,8 +13,9 @@ class TrigonometryListController : public IllustratedExpressionsListController {
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
   void computeAdditionalResults(
-      const Poincare::Expression input, const Poincare::Expression exactOutput,
-      const Poincare::Expression approximateOutput) override;
+      const Poincare::UserExpression input,
+      const Poincare::UserExpression exactOutput,
+      const Poincare::UserExpression approximateOutput) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
   void setTrigonometryType(bool directTrigonometry) {

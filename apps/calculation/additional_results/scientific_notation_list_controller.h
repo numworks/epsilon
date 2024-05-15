@@ -13,8 +13,9 @@ class ScientificNotationListController
       : ChainedExpressionsListController(editExpressionController, true) {}
 
   void computeAdditionalResults(
-      const Poincare::Expression input, const Poincare::Expression exactOutput,
-      const Poincare::Expression approximateOutput) override;
+      const Poincare::UserExpression input,
+      const Poincare::UserExpression exactOutput,
+      const Poincare::UserExpression approximateOutput) override;
 
  private:
   I18n::Message messageAtIndex(int index) override;

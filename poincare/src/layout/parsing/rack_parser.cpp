@@ -975,6 +975,12 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     }
   }
 
+  if (idType == Poincare::Context::SymbolAbstractType::List) {
+    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
+    parseListParameters(leftHandSide);
+    return;
+  }
+
 #if 0
   if (idType == Poincare::Context::SymbolAbstractType::Sequence ||
       (idType == Poincare::Context::SymbolAbstractType::None &&
@@ -1005,19 +1011,12 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   setState(previousState);
 #endif
   privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
-                                             stoppingType, idType, false);
+                                             stoppingType, false);
 }
 
 bool RackParser::privateParseCustomIdentifierWithParameters(
     TreeRef& leftHandSide, const char* name, size_t length,
-    Token::Type stoppingType, Poincare::Context::SymbolAbstractType idType,
-    bool parseApostropheAsDerivative) {
-  if (idType == Poincare::Context::SymbolAbstractType::List) {
-    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
-    parseListParameters(leftHandSide);
-    return true;
-  }
-
+    Token::Type stoppingType, bool parseApostropheAsDerivative) {
   int derivationOrder = 0;
   if (parseApostropheAsDerivative) {
 #if 0

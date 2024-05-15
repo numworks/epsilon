@@ -255,6 +255,18 @@ void assert_expression_approximates_to(const char *expression,
       angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) -> Tree * {
+        Internal::ProjectionContext context = {
+            .m_complexFormat = reductionContext.complexFormat(),
+            .m_angleUnit = reductionContext.angleUnit(),
+            .m_unitFormat = reductionContext.unitFormat(),
+            .m_symbolic = reductionContext.symbolicComputation(),
+            .m_context = reductionContext.context()};
+        /* TODO_PCJ: replacing symbols should be done in RootTreeToTree or
+         * RootTreeToTree should be called on simplified trees. */
+        /* TODO_PCJ: use ToSystem instead of PrepareForProjection and see the
+         * tests that fail */
+        // Replace user symbols, seed randoms and check dimensions
+        Simplification::PrepareForProjection(e, &context);
         TreeRef result = Internal::Approximation::RootTreeToTree<T>(
             e, Internal::AngleUnit(reductionContext.angleUnit()),
             Internal::ComplexFormat(reductionContext.complexFormat()));

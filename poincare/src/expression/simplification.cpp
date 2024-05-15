@@ -865,8 +865,8 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
   return true;
 }
 
-bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
-  /* 1 - Prepare for projection */
+bool Simplification::PrepareForProjection(
+    Tree* e, ProjectionContext* projectionContext) {
   // Seed random nodes before anything is merged/duplicated.
   int maxRandomSeed = Random::SeedRandomNodes(e, 0);
   bool changed = maxRandomSeed > 0;
@@ -882,6 +882,12 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
     e->cloneTreeOverTree(KUndefUnhandledDimension);
     changed = true;
   }
+  return changed;
+}
+
+bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
+  /* 1 - Prepare for projection */
+  bool changed = PrepareForProjection(e, projectionContext);
   /* 2 - Extract units */
   if (e->isUnitConversion()) {
     // TODO_PCJ actually extract required unit for later beautification.

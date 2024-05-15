@@ -280,6 +280,8 @@ QUIZ_CASE(poincare_approximation_power) {
                                             MetricUnitFormat, Cartesian, 13);
   assert_expression_approximates_to<double>("1.0092^50", "1.5807460027336");
   assert_expression_approximates_to<float>("1.0092^50", "1.580744");
+
+  // TODO_PCJ: approximation of exp(i×π) != approximation of e^(i×π)
   assert_expression_approximates_to<float>("e^(i×π)", "-1");
   assert_expression_approximates_to<double>("e^(i×π)", "-1");
   assert_expression_approximates_to<float>("e^(i×π+2)", "-7.38906", Radian,

@@ -30,6 +30,8 @@ class Simplification {
   EDITION_REF_WRAP(SimplifyPower);
 
   // Simplification steps
+  static bool PrepareForProjection(Tree* e,
+                                   ProjectionContext* projectionContext);
   static bool ToSystem(Tree* e, ProjectionContext* projectionContext);
   static bool SimplifySystem(Tree* e, bool advanced);
   static bool TryApproximationStrategyAgain(

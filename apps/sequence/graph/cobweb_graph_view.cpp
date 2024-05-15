@@ -57,7 +57,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
   Poincare::Sequence initialSymbol = Poincare::Sequence::Builder(
       name, strlen(name),
       Poincare::NewExpression::Builder(sequence->initialRank()));
-  Poincare::SystemFunction initialExpression =
+  Poincare::SystemExpression initialExpression =
       sequence->firstInitialConditionExpressionReduced(context);
   function =
       function.replaceSymbolWithExpression(initialSymbol, initialExpression);

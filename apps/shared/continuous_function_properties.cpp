@@ -123,7 +123,7 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
 }
 
 void ContinuousFunctionProperties::update(
-    const Poincare::SystemFunction reducedEquation,
+    const Poincare::SystemExpression reducedEquation,
     const Poincare::UserExpression inputEquation, Context* context,
     Preferences::ComplexFormat complexFormat,
     ComparisonNode::OperatorType precomputedOperatorType,
@@ -155,7 +155,7 @@ void ContinuousFunctionProperties::update(
     return;
   }
 
-  SystemFunction analyzedExpression = reducedEquation;
+  SystemExpression analyzedExpression = reducedEquation;
   if (reducedEquation.type() == ExpressionNode::Type::Dependency) {
     // Do not handle dependencies for now.
     analyzedExpression = reducedEquation.childAtIndex(0);
@@ -335,7 +335,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
   // f(x) = a*logk(b*x+c) + d*logM(e*x+f) + ... + z
   if (analyzedExpression.isLinearCombinationOfFunction(
           context,
-          [](const Expression& e, Context* context, const char* symbol) {
+          [](const NewExpression& e, Context* context, const char* symbol) {
             return e.type() == ExpressionNode::Type::Logarithm &&
                    e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
           },
@@ -347,11 +347,11 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
   // f(x) = a*exp(b*x+c) + d
   if (analyzedExpression.isLinearCombinationOfFunction(
           context,
-          [](const Expression& e, Context* context, const char* symbol) {
+          [](const NewExpression& e, Context* context, const char* symbol) {
             if (e.type() != ExpressionNode::Type::Power) {
               return false;
             }
-            Expression base = e.childAtIndex(0);
+            NewExpression base = e.childAtIndex(0);
 #if 0  // TODO_PCJ
             return base.type() == ExpressionNode::Type::ConstantMaths &&
                    static_cast<Constant&>(base).isExponentialE() &&
@@ -379,11 +379,11 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
       ReductionContext::DefaultReductionContextForAnalysis(context);
   // tan(x) is reduced to sin(x)/cos(x) unless the target is User
   reductionContext.setTarget(ReductionTarget::User);
-  Expression userReducedExpression =
+  SystemExpression userReducedExpression =
       analyzedExpression.cloneAndReduce(reductionContext);
   if (userReducedExpression.isLinearCombinationOfFunction(
           context,
-          [](const Expression& e, Context* context, const char* symbol) {
+          [](const NewExpression& e, Context* context, const char* symbol) {
             return Poincare::Trigonometry::IsDirectTrigonometryFunction(e) &&
                    e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
           },
@@ -397,9 +397,9 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 }
 
 void ContinuousFunctionProperties::setCartesianEquationProperties(
-    const Poincare::Expression& analyzedExpression, Poincare::Context* context,
-    Preferences::ComplexFormat complexFormat, int xDeg, int yDeg,
-    OMG::Troolean highestCoefficientIsPositive) {
+    const Poincare::SystemExpression& analyzedExpression,
+    Poincare::Context* context, Preferences::ComplexFormat complexFormat,
+    int xDeg, int yDeg, OMG::Troolean highestCoefficientIsPositive) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
 
@@ -483,7 +483,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
 }
 
 void ContinuousFunctionProperties::setPolarFunctionProperties(
-    const Expression& analyzedExpression, Context* context,
+    const SystemExpression& analyzedExpression, Context* context,
     Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isPolar());
@@ -497,7 +497,7 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
    */
   ReductionContext reductionContext =
       ReductionContext::DefaultReductionContextForAnalysis(context);
-  Expression denominator, numerator;
+  SystemExpression denominator, numerator;
   if (analyzedExpression.type() == ExpressionNode::Type::Multiplication) {
 #if 0  // TODO_PCJ
     static_cast<const Multiplication&>(analyzedExpression)
@@ -557,8 +557,8 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
 }
 
 void ContinuousFunctionProperties::setParametricFunctionProperties(
-    const Poincare::Expression& analyzedExpression, Poincare::Context* context,
-    Preferences::ComplexFormat complexFormat) {
+    const Poincare::SystemExpression& analyzedExpression,
+    Poincare::Context* context, Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isParametric());
   assert(analyzedExpression.type() == ExpressionNode::Type::Point);
@@ -569,8 +569,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   setCaption(I18n::Message::ParametricEquationType);
 
   // Detect lines
-  const Expression xOfT = analyzedExpression.childAtIndex(0);
-  const Expression yOfT = analyzedExpression.childAtIndex(1);
+  const SystemExpression xOfT = analyzedExpression.childAtIndex(0);
+  const SystemExpression yOfT = analyzedExpression.childAtIndex(1);
   int degOfTinX = xOfT.polynomialDegree(context, Function::k_unknownName);
   int degOfTinY = yOfT.polynomialDegree(context, Function::k_unknownName);
   if (degOfTinX == 0) {
@@ -596,7 +596,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
     return;
   }
   assert(degOfTinX != 0 && degOfTinY != 0);
-  Expression variableX = xOfT.clone();
+  SystemExpression variableX = xOfT.clone();
 #if 0  // TODO_PCJ
   if (variableX.type() == ExpressionNode::Type::Addition) {
     static_cast<Addition&>(variableX).removeConstantTerms(
@@ -605,7 +605,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
 #else
   assert(false);
 #endif
-  Expression variableY = yOfT.clone();
+  SystemExpression variableY = yOfT.clone();
 #if 0  // TODO_PCJ
   if (variableY.type() == ExpressionNode::Type::Addition) {
     static_cast<Addition&>(variableY).removeConstantTerms(
@@ -614,7 +614,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
 #else
   assert(false);
 #endif
-  Expression quotient = Division::Builder(variableX, variableY);
+  SystemExpression quotient = Division::Builder(variableX, variableY);
   quotient = quotient.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(context));
   if (quotient.polynomialDegree(context, Function::k_unknownName) == 0) {
@@ -645,8 +645,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   }
 }
 
-bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
-                                                      CodePoint symbol) {
+bool ContinuousFunctionProperties::IsExplicitEquation(
+    const SystemExpression equation, CodePoint symbol) {
   /* An equation is explicit if it is a comparison between the given symbol and
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
@@ -666,12 +666,13 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
 }
 
 bool ContinuousFunctionProperties::HasNonNullCoefficients(
-    const Expression equation, const char* symbolName, Context* context,
+    const SystemExpression equation, const char* symbolName, Context* context,
     Preferences::ComplexFormat complexFormat,
     OMG::Troolean* highestDegreeCoefficientIsPositive) {
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
-  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  SystemExpression
+      coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Symbols will be replaced anyway to compute isNull
   int degree = equation.getPolynomialReducedCoefficients(
       symbolName, coefficients, context, complexFormat, angleUnit,

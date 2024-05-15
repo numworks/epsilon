@@ -184,7 +184,7 @@ bool ContinuousFunction::isNamed() const {
 
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
     float x1, float x2, Poincare::Context *context) const {
-  Expression equation = expressionReduced(context);
+  SystemFunction equation = expressionReduced(context);
   ApproximationContext approximationContext(context, complexFormat(context));
   return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2,
                                                         approximationContext);
@@ -193,9 +193,10 @@ bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
 void ContinuousFunction::getLineParameters(double *slope, double *intercept,
                                            Context *context) const {
   assert(properties().isLine());
-  Expression equation = expressionReduced(context);
+  SystemExpression equation = expressionReduced(context);
   // Compute metrics for details view of Line
-  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  SystemExpression
+      coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
       k_unknownName, coefficients, context, complexFormat(context),
@@ -1193,8 +1194,8 @@ SystemParametricFunction ContinuousFunction::Model::parametricForm(
     bool approximated) const {
   ContinuousFunctionProperties prop = properties(record);
   assert(prop.isPolar() || prop.isInversePolar() || prop.isParametric());
-  SystemFunction e = approximated ? expressionApproximated(record, context)
-                                  : expressionReduced(record, context);
+  SystemExpression e = approximated ? expressionApproximated(record, context)
+                                    : expressionReduced(record, context);
   if (prop.isPolar() || prop.isInversePolar()) {
     ProjectedExpression x, y;
     ProjectedExpression unknown = Symbol::SystemSymbol();

@@ -53,7 +53,7 @@ class Sequence : public Function {
   void firstInitialConditionText(char *buffer, size_t bufferSize) const {
     return m_firstInitialCondition.text(this, buffer, bufferSize);
   }
-  Poincare::SystemFunction firstInitialConditionExpressionReduced(
+  Poincare::SystemExpression firstInitialConditionExpressionReduced(
       Poincare::Context *context) const {
     return m_firstInitialCondition.expressionReduced(this, context);
   }
@@ -74,7 +74,7 @@ class Sequence : public Function {
   void secondInitialConditionText(char *buffer, size_t bufferSize) const {
     return m_secondInitialCondition.text(this, buffer, bufferSize);
   }
-  Poincare::SystemFunction secondInitialConditionExpressionReduced(
+  Poincare::SystemExpression secondInitialConditionExpressionReduced(
       Poincare::Context *context) const {
     return m_secondInitialCondition.expressionReduced(this, context);
   }

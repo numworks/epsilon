@@ -132,7 +132,7 @@ class ContinuousFunctionProperties {
 
   // Update
   void reset();
-  void update(const Poincare::SystemFunction reducedEquation,
+  void update(const Poincare::SystemExpression reducedEquation,
               const Poincare::UserExpression inputEquation,
               Poincare::Context* context,
               Poincare::Preferences::ComplexFormat complexFormat,
@@ -232,30 +232,30 @@ class ContinuousFunctionProperties {
  private:
   // Update
   void setCartesianFunctionProperties(
-      const Poincare::SystemFunction& analyzedExpression,
+      const Poincare::SystemExpression& analyzedExpression,
       Poincare::Context* context);
   void setCartesianEquationProperties(
-      const Poincare::SystemFunction& analyzedExpression,
+      const Poincare::SystemExpression& analyzedExpression,
       Poincare::Context* context,
       Poincare::Preferences::ComplexFormat complexFormat, int xDeg, int yDeg,
       OMG::Troolean highestCoefficientIsPositive);
   void setPolarFunctionProperties(
-      const Poincare::SystemFunction& analyzedExpression,
+      const Poincare::SystemExpression& analyzedExpression,
       Poincare::Context* context,
       Poincare::Preferences::ComplexFormat complexFormat);
   void setParametricFunctionProperties(
-      const Poincare::SystemFunction& analyzedExpression,
+      const Poincare::SystemExpression& analyzedExpression,
       Poincare::Context* context,
       Poincare::Preferences::ComplexFormat complexFormat);
 
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   static bool HasNonNullCoefficients(
-      const Poincare::SystemFunction equation, const char* symbolName,
+      const Poincare::SystemExpression equation, const char* symbolName,
       Poincare::Context* context,
       Poincare::Preferences::ComplexFormat complexFormat,
       OMG::Troolean* highestDegreeCoefficientIsPositive);
   // If equation should be allowed when implicit plots are forbidden.
-  static bool IsExplicitEquation(const Poincare::SystemFunction equation,
+  static bool IsExplicitEquation(const Poincare::SystemExpression equation,
                                  CodePoint symbol);
 
   // Setters

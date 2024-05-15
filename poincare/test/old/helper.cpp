@@ -267,6 +267,11 @@ void assert_expression_approximates_to(const char *expression,
          * tests that fail */
         // Replace user symbols, seed randoms and check dimensions
         Simplification::PrepareForProjection(e, &context);
+        if (Internal::Dimension::GetDimension(e).isUnit()) {
+          // no unit approximation yet
+          e->removeTree();
+          return KUndef->clone();
+        }
         TreeRef result = Internal::Approximation::RootTreeToTree<T>(
             e, Internal::AngleUnit(reductionContext.angleUnit()),
             Internal::ComplexFormat(reductionContext.complexFormat()));

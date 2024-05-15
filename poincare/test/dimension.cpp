@@ -19,6 +19,14 @@ bool len(const char* input, int n) {
   return result;
 }
 
+bool hasInvalidDimOrLen(const char* input) {
+  Tree* expression = TextToTree(input);
+  bool result = !Dimension::DeepCheckDimensions(expression) ||
+                !Dimension::DeepCheckListLength(expression);
+  expression->removeTree();
+  return result;
+}
+
 QUIZ_CASE(pcj_dimension) {
   auto Scalar = Dimension::Scalar();
   auto Matrix = Dimension::Matrix;
@@ -88,6 +96,11 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(!dim("(1,2)+(1,3)"));
   QUIZ_ASSERT(!dim("cos((1,2))"));
   QUIZ_ASSERT(!dim("{(1,3), (2,4)}((2,4))"));
+
+  QUIZ_ASSERT(hasInvalidDimOrLen("{_m}"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("{[[1]]}"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("{2}*[[1]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("{2}*_m"));
 
   QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 0);
 }

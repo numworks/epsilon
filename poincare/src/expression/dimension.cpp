@@ -70,15 +70,20 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
           continue;
         }
         if (thisLength >= 0 && childLength[i] != thisLength) {
-          // Children lists should have the same dimension
+          // Children lists should have the same length
           return false;
         }
         thisLength = childLength[i];
       }
-      if (thisLength >= 0 && (t->isListSequence() || t->isRandIntNoRep() ||
-                              GetDimension(t).isMatrix())) {
+      if (thisLength >= 0) {
         // Lists are forbidden
-        return false;
+        if (t->isListSequence() || t->isRandIntNoRep()) {
+          return false;
+        }
+        Dimension dim = GetDimension(t);
+        if (dim.isMatrix() || dim.isUnit()) {
+          return false;
+        }
       }
     }
   }

@@ -19,13 +19,13 @@ using namespace Shared;
 
 namespace Solver {
 
-const Expression
+const UserExpression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
   if (symbol.type() == ExpressionNode::Type::Symbol &&
       static_cast<const Symbol &>(symbol).name()[0] == 't') {
-    return Expression();
+    return UserExpression();
   }
   return ContextWithParent::protectedExpressionForSymbolAbstract(
       symbol, clone, lastDescendantContext);
@@ -231,7 +231,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     if (simplifiedEquations[i].isUninitialized() ||
         simplifiedEquations[i].type() == ExpressionNode::Type::Undefined ||
         simplifiedEquations[i].recursivelyMatches(
-            Expression::IsMatrix, context,
+            NewExpression::IsMatrix, context,
             m_overrideUserVariables
                 ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
                 : SymbolicComputation::
@@ -308,7 +308,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   }
   ab.setDimensions(m, n + 1);
 
-  assert(!ab.recursivelyMatches(Expression::IsUninitialized, context));
+  assert(!ab.recursivelyMatches(NewExpression::IsUninitialized, context));
 
   // Compute the rank of (A|b)
   int rank = ab.rank(context);
@@ -603,8 +603,8 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     if (!displayApproximateSolution && !displayExactSolution) {
       /* Happens if the formal solution has no permission to be displayed.
        * Re-reduce but force approximating during redution. */
-      exact = Expression();
-      approximate = Expression();
+      exact = UserExpression();
+      approximate = UserExpression();
       simplifyAndApproximateSolution(e, &exact, &approximate, true, context,
                                      m_complexFormat, angleUnit, unitFormat,
                                      symbolicComputation);
@@ -641,7 +641,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         approximateBuffer, ::Constant::MaxSerializedExpressionSize);
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
-    } else if (Expression::ExactAndApproximateExpressionsAreEqual(
+    } else if (UserExpression::ExactAndApproximateExpressionsAreEqual(
                    exact, approximate)) {
       exactAndApproximateAreEqual = true;
     }

@@ -160,12 +160,12 @@ const Expression GlobalContext::expressionForSymbolAndRecord(
   return expressionForSequence(symbol, r, ctx);
 }
 
-const Expression GlobalContext::ExpressionForActualSymbol(
+const UserExpression GlobalContext::ExpressionForActualSymbol(
     Ion::Storage::Record r) {
   if (!r.hasExtension(Ion::Storage::expressionExtension) &&
       !r.hasExtension(Ion::Storage::listExtension) &&
       !r.hasExtension(Ion::Storage::matrixExtension)) {
-    return Expression();
+    return UserExpression();
   }
   // An expression record value is the expression itself
   Ion::Storage::Record::Data d = r.value();
@@ -191,15 +191,15 @@ const Expression GlobalContext::ExpressionForFunction(
   return e;
 }
 
-const Expression GlobalContext::expressionForSequence(
+const UserExpression GlobalContext::expressionForSequence(
     const SymbolAbstract &symbol, Ion::Storage::Record r, Context *ctx) {
   if (!r.hasExtension(Ion::Storage::sequenceExtension)) {
-    return Expression();
+    return UserExpression();
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   Sequence seq(r);
-  Expression rank = symbol.childAtIndex(0).clone();
+  UserExpression rank = symbol.childAtIndex(0).clone();
   bool rankIsInteger = false;
   PoincareHelpers::CloneAndSimplify(
       &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
@@ -219,10 +219,10 @@ const Expression GlobalContext::expressionForSequence(
     rankIsInteger = std::floor(rankValue) == rankValue;
   }
   if (rankIsInteger) {
-    return Expression::Builder<double>(
+    return NewExpression::Builder<double>(
         seq.evaluateXYAtParameter(rankValue, sequenceContext()).y());
   }
-  return Expression::Builder<double>(NAN);
+  return NewExpression::Builder<double>(NAN);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
@@ -248,7 +248,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
   // Do not store exact derivative, etc.
   if (storeApproximation ||
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          Expression(), expression, approximation, this)) {
+          UserExpression(), expression, approximation, this)) {
     expression = approximation;
   }
   ExpressionNode::Type type = expression.type();

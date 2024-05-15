@@ -23,18 +23,18 @@ bool Equation::containsIComplex(Context *context,
   return expressionClone().hasComplexI(context, replaceSymbols);
 }
 
-Expression Equation::Model::standardForm(
+SystemExpression Equation::Model::standardForm(
     const Storage::Record *record, Context *context,
     bool replaceFunctionsButNotSymbols, ReductionTarget reductionTarget) const {
-  Expression returnedExpression = Expression();
+  SystemExpression returnedExpression = SystemExpression();
   // In any case, undefined symbols must be preserved.
   SymbolicComputation symbolicComputation =
       replaceFunctionsButNotSymbols
           ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
           : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-  Expression expressionInputWithoutFunctions =
-      Expression::ExpressionWithoutSymbols(expressionClone(record), context,
-                                           symbolicComputation);
+  UserExpression expressionInputWithoutFunctions =
+      NewExpression::ExpressionWithoutSymbols(expressionClone(record), context,
+                                              symbolicComputation);
   if (expressionInputWithoutFunctions.isUninitialized()) {
     // The expression is circularly-defined
     expressionInputWithoutFunctions = Undefined::Builder();
@@ -44,17 +44,17 @@ Expression Equation::Model::standardForm(
       replaceFunctionsButNotSymbols ? &emptyContext : context;
 
   // Reduce the expression
-  Expression simplifiedInput = expressionInputWithoutFunctions;
+  UserExpression simplifiedInput = expressionInputWithoutFunctions;
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
                                     {.target = reductionTarget});
 
   if (simplifiedInput.type() == ExpressionNode::Type::Nonreal) {
     returnedExpression = Nonreal::Builder();
   } else if (simplifiedInput.recursivelyMatches(
-                 [](const Expression e, Context *context) {
+                 [](const NewExpression e, Context *context) {
                    return e.isOfType({ExpressionNode::Type::Undefined,
                                       ExpressionNode::Type::Infinity}) ||
-                          Expression::IsMatrix(e, context);
+                          NewExpression::IsMatrix(e, context);
                  },
                  contextToUse)) {
     returnedExpression = Undefined::Builder();

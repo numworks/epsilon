@@ -209,7 +209,7 @@ void ExpressionModel::updateNewDataWithExpression(
 void ExpressionModel::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) const {
   if (treePoolCursor == nullptr ||
       m_expression.isDownstreamOf(treePoolCursor)) {
-    m_expression = Expression();
+    m_expression = UserExpression();
     m_circular = -1;
     m_expressionComplexFormat = MemoizedComplexFormat::NotMemoized;
   }
@@ -222,7 +222,7 @@ Poincare::UserExpression ExpressionModel::buildExpressionFromText(
     const char* c, CodePoint symbol, Poincare::Context* context) const {
   // if c = "", we want to reinit the Expression
   if (!c || c[0] == 0) {
-    return Expression();
+    return UserExpression();
   }
   // Compute the expression to store, without replacing symbols
   UserExpression expressionToStore = UserExpression::Parse(c, context);

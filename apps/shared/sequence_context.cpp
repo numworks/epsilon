@@ -189,12 +189,12 @@ const Expression SequenceContext::protectedExpressionForSymbolAbstract(
   int index = SequenceStore::SequenceIndexForName(name);
   Ion::Storage::Record record = sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {
-    return Expression::Builder<double>(result);
+    return NewExpression::Builder<double>(result);
   }
   assert(record.fullName()[0] == symbol.name()[0]);
   Sequence *seq = sequenceStore()->modelForRecord(record);
   if (!seq->fullName()) {
-    return Expression::Builder<double>(result);
+    return NewExpression::Builder<double>(result);
   }
   Expression rankExpression = symbol.childAtIndex(0).clone();
   /* The lastDesendantContext might contain informations on variables
@@ -212,7 +212,7 @@ const Expression SequenceContext::protectedExpressionForSymbolAbstract(
       result = seq->approximateAtRank(rankValue, this);
     }
   }
-  return Expression::Builder<double>(result);
+  return NewExpression::Builder<double>(result);
 }
 
 void SequenceContext::resetCache() {

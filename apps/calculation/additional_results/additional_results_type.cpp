@@ -95,7 +95,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
       input.type() == ExpressionNode::Type::Store ||
       exactOutput.type() == ExpressionNode::Type::List ||
       approximateOutput.type() == ExpressionNode::Type::List ||
-      approximateOutput.recursivelyMatches([](const Expression e) {
+      approximateOutput.recursivelyMatches([](const NewExpression e) {
         return e.isUndefined() || e.type() == ExpressionNode::Type::Infinity;
       })) {
     return true;
@@ -156,8 +156,8 @@ bool AdditionalResultsType::HasUnit(
   Preferences::ComplexFormat complexFormat =
       calculationPreferences.complexFormat;
   Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
-  Expression unit;
-  Expression clone = exactOutput.clone();
+  UserExpression unit;
+  UserExpression clone = exactOutput.clone();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &clone, &unit, globalContext,
       {.complexFormat = complexFormat,
@@ -176,7 +176,7 @@ bool AdditionalResultsType::HasUnit(
     /* Sometimes with angle units, the reduction with UnitConversion::None
      * will be defined but not the reduction with UnitConversion::Default,
      * which will make the unit list controller crash.  */
-    unit = Expression();
+    unit = UserExpression();
     clone = exactOutput.clone();
     PoincareHelpers::CloneAndReduceAndRemoveUnit(
         &clone, &unit, globalContext,
@@ -211,7 +211,7 @@ bool AdditionalResultsType::HasMatrix(const UserExpression approximateOutput) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit(true));
   return approximateOutput.type() == ExpressionNode::Type::Matrix &&
-         !approximateOutput.recursivelyMatches(Expression::IsUndefined);
+         !approximateOutput.recursivelyMatches(NewExpression::IsUndefined);
 }
 
 static bool expressionIsInterestingFunction(const Expression e) {

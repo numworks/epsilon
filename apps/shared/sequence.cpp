@@ -157,7 +157,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
             systemSymbolIsAllowed,
             otherSequencesAreAllowed};
   return expressionClone().recursivelyMatches(
-      [](const Expression e, Context *context, void *arg) {
+      [](const NewExpression e, Context *context, void *arg) {
         Pack *pack = static_cast<Pack *>(arg);
 #if 1  // TODO_PCJ
         assert(false);
@@ -199,7 +199,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
             ((type != Type::Explicit && rank.isIdenticalTo(n)) ||
              (type == Type::DoubleRecurrence &&
               rank.isIdenticalTo(
-                  Addition::Builder(n, Expression::Builder(1)))))) {
+                  Addition::Builder(n, NewExpression::Builder(1)))))) {
           return OMG::Troolean::False;
         }
         return OMG::Troolean::True;

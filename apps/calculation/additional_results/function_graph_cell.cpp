@@ -70,7 +70,7 @@ bool FunctionAxis<N>::labelWillBeDisplayed(int i, KDRect labelRect) const {
 
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
                                    KDContext *ctx, KDRect rect) const {
-  assert(!m_model->function().recursivelyMatches(Expression::IsSequence));
+  assert(!m_model->function().recursivelyMatches(NewExpression::IsSequence));
 
   // Since exp(-2.5) is generalized as exp(-x), x cannot be negative
   float x = m_model->abscissa();

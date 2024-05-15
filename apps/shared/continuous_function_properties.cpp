@@ -368,7 +368,8 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 
   // f(x) = polynomial/polynomial
   if (analyzedExpression.isLinearCombinationOfFunction(
-          context, &Expression::IsRationalFraction, Function::k_unknownName)) {
+          context, &NewExpression::IsRationalFraction,
+          Function::k_unknownName)) {
     setCaption(I18n::Message::RationalType);
     return;
   }
@@ -652,7 +653,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
   return equation.type() == ExpressionNode::Type::Comparison &&
          equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol)) &&
          !equation.childAtIndex(1).recursivelyMatches(
-             [](const Expression e, Context* context, void* auxiliary) {
+             [](const NewExpression e, Context* context, void* auxiliary) {
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);
                return (!e.isUninitialized() &&

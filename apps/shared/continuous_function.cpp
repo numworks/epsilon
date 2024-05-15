@@ -466,7 +466,7 @@ float ContinuousFunction::autoTMin() const {
 bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
     Context *context) const {
   return expressionApproximated(context).recursivelyMatches(
-      [](const Expression e) {
+      [](const NewExpression e) {
         return !e.isUninitialized() &&
                e.isOfType({ExpressionNode::Type::Sequence,
                            ExpressionNode::Type::Integral,
@@ -534,7 +534,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
 
   if (properties().isScatterPlot()) {
     Expression point;
-    if (Expression::IsPoint(e)) {
+    if (NewExpression::IsPoint(e)) {
       if (t != static_cast<T>(0.)) {
         return Coordinate2D<T>();
       }
@@ -548,7 +548,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       }
       point = point = e.childAtIndex(tInt);
     }
-    assert(!point.isUninitialized() && Expression::IsPoint(point));
+    assert(!point.isUninitialized() && NewExpression::IsPoint(point));
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
@@ -889,7 +889,7 @@ Expression ContinuousFunction::Model::expressionEquation(
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;
       }
-      result = Expression::ExpressionWithoutSymbols(result, context);
+      result = NewExpression::ExpressionWithoutSymbols(result, context);
       if (!result.isUninitialized()) {
         // Result is not circularly defined.
         return result;
@@ -964,7 +964,7 @@ Expression ContinuousFunction::Model::expressionEquation(
         Symbol::Builder(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
-  result = Expression::ExpressionWithoutSymbols(result, context);
+  result = NewExpression::ExpressionWithoutSymbols(result, context);
   if (result.isUninitialized()) {
     // result was Circularly defined
     return Undefined::Builder();
@@ -990,7 +990,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(
     Expression expression = expressionReduced(record, context).clone();
     *derivative = Derivative::Builder(expression, Symbol::SystemSymbol(),
                                       Symbol::SystemSymbol(),
-                                      Expression::Builder(derivationOrder));
+                                      NewExpression::Builder(derivationOrder));
     /* On complex functions, this step can take a significant time.
      * A workaround could be to identify big functions to skip simplification
      * at the cost of possible inaccurate evaluations (such as
@@ -1138,27 +1138,27 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
     PoolObject *treePoolCursor) const {
   if (treePoolCursor == nullptr ||
       m_expressionFirstDerivate.isDownstreamOf(treePoolCursor)) {
-    m_expressionFirstDerivate = Expression();
+    m_expressionFirstDerivate = SystemExpression();
   }
   if (treePoolCursor == nullptr ||
       m_expressionFirstDerivateApproximated.isDownstreamOf(treePoolCursor)) {
-    m_expressionFirstDerivateApproximated = Expression();
+    m_expressionFirstDerivateApproximated = SystemFunction();
   }
   if (treePoolCursor == nullptr ||
       m_expressionSecondDerivate.isDownstreamOf(treePoolCursor)) {
-    m_expressionSecondDerivate = Expression();
+    m_expressionSecondDerivate = SystemExpression();
   }
   if (treePoolCursor == nullptr ||
       m_expressionSecondDerivateApproximated.isDownstreamOf(treePoolCursor)) {
-    m_expressionSecondDerivateApproximated = Expression();
+    m_expressionSecondDerivateApproximated = SystemFunction();
   }
   if (treePoolCursor == nullptr ||
       m_expressionSlope.isDownstreamOf(treePoolCursor)) {
-    m_expressionSlope = Expression();
+    m_expressionSlope = SystemExpression();
   }
   if (treePoolCursor == nullptr ||
       m_expressionApproximated.isDownstreamOf(treePoolCursor)) {
-    m_expressionApproximated = Expression();
+    m_expressionApproximated = SystemFunction();
   }
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }

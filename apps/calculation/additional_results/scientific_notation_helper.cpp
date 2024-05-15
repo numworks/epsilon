@@ -20,7 +20,7 @@ Layout ScientificLayout(
        a.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger)) {
     // Based Integer must be approximated to be layouted in scientific mode
     ApproximationContext approximationContext(context);
-    e = Expression::Builder<double>(
+    e = NewExpression::Builder<double>(
         a.approximateToScalar<double>(approximationContext));
   } else {
     e = a;

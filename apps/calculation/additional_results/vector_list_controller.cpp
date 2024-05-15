@@ -43,7 +43,7 @@ void VectorListController::computeAdditionalResults(
       norm, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   if (approximatedNorm.isNull(context) != OMG::Troolean::False ||
-      Expression::IsInfinity(approximatedNorm)) {
+      NewExpression::IsInfinity(approximatedNorm)) {
     return;
   }
   Expression normalized = Division::Builder(exactClone, norm);

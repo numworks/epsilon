@@ -12,7 +12,7 @@ namespace Calculation {
 
 namespace TrigonometryHelper {
 
-Expression ExtractExactAngleFromDirectTrigo(
+UserExpression ExtractExactAngleFromDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
     Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {
@@ -28,7 +28,7 @@ Expression ExtractExactAngleFromDirectTrigo(
    * When both inputs and outputs are direct trigo functions, we take the input
    * because the angle might not be the same modulo 2π. */
   assert(!exactOutput.isScalarComplex(calculationPreferences));
-  Expression directTrigoFunction;
+  UserExpression directTrigoFunction;
   if (Trigonometry::IsDirectTrigonometryFunction(input) &&
       !input.deepIsSymbolic(context,
                             SymbolicComputation::DoNotReplaceAnySymbol)) {
@@ -40,17 +40,17 @@ Expression ExtractExactAngleFromDirectTrigo(
   } else if (Trigonometry::IsDirectTrigonometryFunction(exactOutput)) {
     directTrigoFunction = exactOutput;
   } else {
-    return Expression();
+    return UserExpression();
   }
   assert(!directTrigoFunction.isUninitialized() &&
          !directTrigoFunction.isUndefined());
-  Expression exactAngle = directTrigoFunction.childAtIndex(0);
+  UserExpression exactAngle = directTrigoFunction.childAtIndex(0);
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
   assert(!exactAngle.hasUnit(true));
   Preferences::ComplexFormat complexFormat =
       calculationPreferences.complexFormat;
   Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
-  Expression unit;
+  UserExpression unit;
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &exactAngle, &unit, context,
       {.complexFormat = complexFormat, .angleUnit = angleUnit});
@@ -67,7 +67,7 @@ Expression ExtractExactAngleFromDirectTrigo(
   if (!std::isfinite(PoincareHelpers::ApproximateToScalar<double>(
           exactAngle, context,
           {.complexFormat = complexFormat, .angleUnit = angleUnit}))) {
-    return Expression();
+    return UserExpression();
   }
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
   return exactAngle;

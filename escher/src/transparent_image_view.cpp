@@ -1,4 +1,5 @@
 #include <escher/transparent_image_view.h>
+#include <ion.h>
 #include <omg/memory.h>
 
 namespace Escher {

@@ -2,6 +2,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <ion.h>
 #include <omg/memory.h>
 
 namespace Escher {

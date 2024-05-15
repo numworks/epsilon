@@ -104,7 +104,7 @@ class SystemOfEquations {
         Poincare::ContextWithParent* lastDescendantContext) override;
   };
 
-  Poincare::SystemExpression equationStandardFormForApproximateSolve(
+  Poincare::SystemFunction equationStandardFormForApproximateSolve(
       Poincare::Context* context);
   Error privateExactSolve(Poincare::Context* context);
   Error simplifyAndFindVariables(

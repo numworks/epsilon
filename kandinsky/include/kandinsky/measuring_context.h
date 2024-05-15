@@ -1,7 +1,6 @@
 #ifndef KANDINSKY_MEASURING_CONTEXT_H
 #define KANDINSKY_MEASURING_CONTEXT_H
 
-#include <ion/display.h>
 #include <kandinsky/context.h>
 
 class KDMeasuringContext : public KDContext {

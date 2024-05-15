@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ion/display.h>
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
 #include <omg/utf8_decoder.h>

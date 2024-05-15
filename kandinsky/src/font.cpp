@@ -3,7 +3,7 @@ extern "C" {
 #include <kandinsky/fonts/code_points.h>
 }
 #include <assert.h>
-#include <ion.h>
+#include <omg/memory.h>
 #include <omg/utf8_decoder.h>
 
 #include <algorithm>
@@ -66,7 +66,7 @@ void KDFont::accumulateGlyphGrayscalesForCodePoint(
 
 void KDFont::fetchGrayscaleGlyphAtIndex(KDFont::GlyphIndex index,
                                         uint8_t* grayscaleBuffer) const {
-  Ion::decompress(
+  OMG::Memory::Decompress(
       compressedGlyphData(index), grayscaleBuffer,
       compressedGlyphDataSize(index),
       m_glyphSize.width() * m_glyphSize.height() * k_grayscaleBitsPerPixel / 8);

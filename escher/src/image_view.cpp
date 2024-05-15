@@ -2,7 +2,7 @@
 extern "C" {
 #include <assert.h>
 }
-#include <ion.h>
+#include <omg/memory.h>
 
 namespace Escher {
 
@@ -21,7 +21,7 @@ void ImageView::drawRect(KDContext *ctx, KDRect rect) const {
   // That's a VERY big buffer we're allocating on the stack
   assert(Ion::stackSafe());
 
-  Ion::decompress(
+  OMG::Memory::Decompress(
       m_image->compressedPixelData(), reinterpret_cast<uint8_t *>(pixelBuffer),
       m_image->compressedPixelDataSize(), pixelBufferSize * sizeof(KDColor));
 

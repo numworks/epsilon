@@ -49,7 +49,7 @@ endif
 $(eval $(call rule_for, \
   HOSTCC, \
   kandinsky/fonts/rasterizer, \
-  kandinsky/fonts/rasterizer.c kandinsky/fonts/code_points.h $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
+  kandinsky/fonts/rasterizer.c kandinsky/fonts/code_points.h $(addprefix omg/src/external/lz4/, lz4.c lz4hc.c), \
   $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$(filter-out %.h,$$^) $$(RASTERIZER_LDFLAGS) -o $$@, \
   global \
 ))

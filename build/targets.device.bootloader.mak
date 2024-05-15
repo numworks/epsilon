@@ -5,7 +5,7 @@ ASSERTIONS = $(DEVELOPMENT)
 # stack protector
 SFLAGS += -fstack-protector-strong
 
-bootloader_src = $(ion_device_bootloader_src) $(liba_internal_flash_src) $(kandinsky_minimal_src) $(libaxx_src)
+bootloader_src = $(ion_device_bootloader_src) $(liba_internal_flash_src) $(kandinsky_minimal_src) $(libaxx_src) $(omg_decompress_src)
 
 # Ensure kandinsky fonts are generated first
 $(call object_for,$(bootloader_src)): $(kandinsky_deps)

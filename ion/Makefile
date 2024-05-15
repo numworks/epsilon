@@ -13,7 +13,6 @@ include ion/src/shared/tools/Makefile
 
 ion_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
-  decompress.cpp \
   display_context.cpp \
   events.cpp \
   events_modifier.cpp \
@@ -32,11 +31,9 @@ ion_src += $(addprefix ion/src/shared/, \
 ion_device_bench_src += $(addprefix ion/src/shared/, \
   dummy/assert.cpp \
   console_line.cpp \
-  decompress.cpp \
   display_context.cpp \
   layout_events.cpp \
 )
-ion_device_bench_src += ion/src/external/lz4/lz4.c
 
 ion_device_flasher_src += $(addprefix ion/src/shared/, \
   dummy/assert.cpp \
@@ -45,7 +42,6 @@ ion_device_flasher_src += $(addprefix ion/src/shared/, \
 
 ion_device_kernel_src += $(addprefix ion/src/shared/, \
   console_line.cpp:+kernelassert \
-  decompress.cpp \
   display_context.cpp:+kernelassert \
   events.cpp \
   events_modifier.cpp \
@@ -53,17 +49,13 @@ ion_device_kernel_src += $(addprefix ion/src/shared/, \
   keyboard_queue.cpp \
   layout_events.cpp \
 )
-ion_device_kernel_src += ion/src/external/lz4/lz4.c
 
 ion_device_bootloader_src += $(addprefix ion/src/shared/, \
   dummy/assert.cpp \
-  decompress.cpp \
 )
-ion_device_bootloader_src += ion/src/external/lz4/lz4.c
 
 ion_device_userland_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
-  decompress.cpp:+consoledisplay \
   display_context.cpp \
   exam_mode.cpp \
   stack_position.cpp \
@@ -75,9 +67,6 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
 ifeq ($(ESCHER_LOG_EVENTS_NAME),1)
 ion_device_userland_src += ion/src/shared/layout_events.cpp
 endif
-ion_device_userland_src += ion/src/external/lz4/lz4.c:+consoledisplay
-
-ion_src += ion/src/external/lz4/lz4.c
 
 tests_src += $(addprefix ion/test/,\
   crc32.cpp\

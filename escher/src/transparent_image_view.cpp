@@ -1,5 +1,5 @@
 #include <escher/transparent_image_view.h>
-#include <ion.h>
+#include <omg/memory.h>
 
 namespace Escher {
 
@@ -26,9 +26,9 @@ void TransparentImageView::drawRect(KDContext *ctx, KDRect rect) const {
   // That's a VERY big buffer we're allocating on the stack
   assert(Ion::stackSafe());
 
-  Ion::decompress(m_image->compressedPixelData(),
-                  reinterpret_cast<uint8_t *>(pixelBuffer),
-                  m_image->compressedPixelDataSize(), pixelBufferSize);
+  OMG::Memory::Decompress(m_image->compressedPixelData(),
+                          reinterpret_cast<uint8_t *>(pixelBuffer),
+                          m_image->compressedPixelDataSize(), pixelBufferSize);
 
   uint8_t *mask = reinterpret_cast<uint8_t *>(pixelBuffer) +
                   sizeof(KDColor) * m_image->width() * m_image->height();

@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../ion/src/external/lz4/lz4hc.h"
+#include "../../omg/src/external/lz4/lz4hc.h"
 
 #define ERROR_IF(cond, message) \
   if (cond) {                   \

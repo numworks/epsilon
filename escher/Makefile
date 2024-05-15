@@ -114,7 +114,7 @@ tests_src += $(addprefix escher/test/,\
 $(eval $(call rule_for, \
   HOSTCC, \
   escher/image/inliner, \
-  escher/image/inliner.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
+  escher/image/inliner.c $(addprefix omg/src/external/lz4/, lz4.c lz4hc.c), \
   $$(HOSTCC) -std=c11 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@, \
   global \
 ))

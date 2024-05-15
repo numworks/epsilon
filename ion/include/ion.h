@@ -50,9 +50,6 @@ const char *runningBootloader();
 // Provides a true random number
 uint32_t random();
 
-// Decompress data
-void decompress(const uint8_t *src, uint8_t *dst, int srcSize, int dstSize);
-
 // Sets and returns address to the first object that can be allocated on stack
 void *stackStart();
 void setStackStart(void *);

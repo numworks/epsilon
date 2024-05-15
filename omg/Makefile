@@ -1,5 +1,10 @@
 SFLAGS += -Iomg/include
 
+omg_decompress_src := $(addprefix omg/src/, \
+  external/lz4/lz4.c \
+  memory_decompress.cpp \
+)
+
 omg_src += $(addprefix omg/src/,\
   arithmetic.cpp \
   code_point.cpp\
@@ -11,7 +16,7 @@ omg_src += $(addprefix omg/src/,\
   unicode_helper.cpp \
   utf8_decoder.cpp\
   utf8_helper.cpp\
-)
+) $(omg_decompress_src)
 
 tests_src += $(addprefix omg/test/,\
   bit_helper.cpp\
@@ -24,9 +29,9 @@ omg_bench_src = $(addprefix omg/src/,\
   print.cpp \
   utf8_decoder.cpp \
   utf8_helper.cpp \
-)
+) $(omg_decompress_src)
 
 omg_kernel_src = $(addprefix omg/src/,\
   utf8_decoder.cpp:+kernelassert \
   utf8_helper.cpp:+kernelassert \
-)
+) $(omg_decompress_src)

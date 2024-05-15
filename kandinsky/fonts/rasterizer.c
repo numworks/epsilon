@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../ion/src/external/lz4/lz4hc.h"
+#include "../../omg/src/external/lz4/lz4hc.h"
 
 int main(int argc, char * argv[]) {
   checkInputs(argc, argv);

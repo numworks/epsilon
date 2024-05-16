@@ -342,6 +342,10 @@ bool AdvancedSimplification::UpwardSystematicReduce(Tree* root,
 /* Expand/Contract operations */
 
 bool AdvancedSimplification::DeepContract(Tree* e) {
+  if (e->isSet()) {
+    // Never contract anything in dependency's dependencies set.
+    return false;
+  }
   bool changed = false;
   for (Tree* child : e->children()) {
     changed = DeepContract(child) || changed;
@@ -351,16 +355,31 @@ bool AdvancedSimplification::DeepContract(Tree* e) {
 }
 
 bool AdvancedSimplification::DeepExpand(Tree* e) {
-  if (Tree::ApplyShallowInDepth(
-          e, [](Tree* e, void* context) { return ShallowExpand(e, true); })) {
+  // Tree::ApplyShallowInDepth could be used but we need to skip sets
+  bool changed = false;
+  /* ShallowExpand may push and remove trees at the end of TreeStack.
+   * We push a temporary tree to preserve TreeRef.
+   * TODO: Maybe find a solution for this unintuitive workaround, the same hack
+   * is used in Projection::DeepReplaceUserNamed. */
+  TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
+  Tree* target = e;
+  while (target->block() < nextTree->block()) {
+    if (target->isSet()) {
+      // Never expand anything in dependency's dependencies set.
+      target = target->nextTree();
+    }
+    changed = ShallowExpand(target, true) || changed;
+    target = target->nextNode();
+  }
+  nextTree->removeTree();
+  if (changed) {
     // Bottom-up systematic reduce is necessary.
     Simplification::DeepSystematicReduce(e);
     // TODO_PCJ: Find a solution so we don't have to run this twice.
     bool temp = DeepExpand(e);
     assert(!temp || !DeepExpand(e));
-    return true;
   }
-  return false;
+  return changed;
 }
 
 bool AdvancedSimplification::TryAllOperations(Tree* e,

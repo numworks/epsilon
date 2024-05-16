@@ -286,6 +286,7 @@ NODE(PhysicalConstant, 0, 1)
 
 NODE(Dependency, 2)
 NODE(Piecewise, NARY)
+// Used in dependencies only, shall never be systematic simplified.
 NODE(Set, NARY)
 NODE(Parenthesis, 1)
 NODE(Empty)  // TODO_PCJ temporary

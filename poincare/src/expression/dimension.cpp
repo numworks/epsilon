@@ -106,6 +106,7 @@ int Dimension::GetListLength(const Tree* t) {
       return k_nonListListLength;
     case Type::ListSort:
       return GetListLength(t->child(0));
+    case Type::Set:
     case Type::List:
       return t->numberOfChildren();
     case Type::ListSequence:

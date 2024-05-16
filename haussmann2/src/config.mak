@@ -16,3 +16,6 @@ VERBOSE ?= 0
 ifeq ($(VERBOSE),0)
 QUIET := @
 endif
+
+# Platform specific configuration
+include $(PATH_haussmann)/src/configs/$(PLATFORM).mak

@@ -908,9 +908,16 @@ QUIZ_CASE(pcj_distributions) {
 }
 
 QUIZ_CASE(pcj_simplification_function) {
-  simplifies_to("f(x)", "f(x)");
+  Shared::GlobalContext globalContext;
+  store("x→f(x)", &globalContext);
+  ProjectionContext projCtx = {
+      .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_context = &globalContext,
+  };
+  simplifies_to("f(x)", "f(x)", projCtx);
   simplifies_to("f(2+2)", "f(4)");
   simplifies_to("f(y)+f(x)-f(x)", "f(y)");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(pcj_simplification_variable_replace) {
@@ -936,9 +943,9 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   // simplifies_to("l(2)", "4", projCtx);
 
   ProjectionContext projCtx2 = {
-      .m_context = &globalContext,
       .m_symbolic =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_context = &globalContext};
   simplifies_to("y+2", "6", projCtx2);
   simplifies_to("y+x", "undef", projCtx2);
   simplifies_to("diff(y*y, y, y)", "8", projCtx2);

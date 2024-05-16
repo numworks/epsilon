@@ -124,7 +124,6 @@ bool ParameterText(UnicodeDecoder& varDecoder, size_t* parameterStart,
   }
 
   size_t startOfVariable = varDecoder.position();
-  // Parameter name can be nested in system parentheses. Skip them
   c = varDecoder.nextCodePoint();
   CodePoint previousC = UCodePointUnknown;
   while (c != UCodePointNull && c != ',' && c != ')') {
@@ -184,7 +183,6 @@ bool ParameterText(LayoutSpanDecoder* varDecoder, const Layout** parameterStart,
   }
 
   LayoutSpanDecoder startOfVariable = *varDecoder;
-  // Parameter name can be nested in system parentheses. Skip them
   c = varDecoder->nextCodePoint();
   CodePoint previousC = UCodePointUnknown;
   while (c != UCodePointNull && c != ',' && c != ')') {

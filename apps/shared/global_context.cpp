@@ -292,7 +292,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   bool wasCartesian = f->properties().isCartesian();
   error = f->setExpressionContent(equation);
   if (error == Ion::Storage::Record::ErrorStatus::None) {
-    f->updateModel(this, wasCartesian);
+    // TODO_PCJ: f->updateModel(this, wasCartesian);
   }
   GlobalContext::StoreParametricComponentsOfRecord(recordToSet);
   return error;

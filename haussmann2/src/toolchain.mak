@@ -3,7 +3,7 @@
 AR := ar
 ARFLAGS := rcs
 
-SFLAGS := -MMD -MP -Wall -O0 -g
+SFLAGS := -MMD -MP -Wall
 ifeq ($(DEBUG),0)
 SFLAGS += -Os
 else

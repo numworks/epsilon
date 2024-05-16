@@ -781,10 +781,9 @@ bool Simplification::SimplifyComplexPart(Tree* tree) {
   for (int i = 0; i < nbChildren; i++) {
     ComplexSign elemSign = ComplexSign::Get(elem);
     if (elemSign.isPure()) {
-      TreeRef t(SharedTreeStack->push(isRe ? Type::Re : Type::Im));
+      TreeRef t = tree->cloneNode();
       elem->detachTree();
-      Simplification::ShallowSystematicReduce(
-          t);  // TODO: elemSign already computed
+      ShallowSystematicReduce(t);
       nbChildrenRemoved++;
     } else {
       elem = elem->nextTree();
@@ -809,7 +808,7 @@ bool Simplification::SimplifyComplexPart(Tree* tree) {
   // Increase the number of children of a to include the original re/im
   NAry::SetNumberOfChildren(tree, nbChildrenRemoved + includeOriginalTree);
   // Shallow reduce new tree
-  Simplification::ShallowSystematicReduce(tree);
+  ShallowSystematicReduce(tree);
   return true;
 }
 

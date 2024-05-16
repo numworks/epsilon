@@ -146,8 +146,6 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("e^(ln(1+x^2))", "x^2+1");
   simplifies_to("e^(ln(x))", "x", cartesianCtx);
   simplifies_to("e^(ln(x+x))", "2×x", cartesianCtx);
-  // TODO: Metric: 3×abs(x)
-  simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("x+1+(-1)(x+1)", "0");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");
@@ -170,12 +168,25 @@ QUIZ_CASE(pcj_simplification_basic) {
                 "(x×(x^2+1)^(-1/2))/√(-x^2/(x^2+1)+1)");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
-  simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   // Sort order
   simplifies_to("π*floor(π)/π", "floor(π)");
   simplifies_to("π+floor(π)-π", "floor(π)");
   simplifies_to("π*(-π)/π", "-π");
   simplifies_to("π+1/π-π", "1/π");
+
+  // Abs
+  simplifies_to("abs(0)", "0");
+  simplifies_to("abs(3)", "3");
+  simplifies_to("abs(-3)", "3");
+  simplifies_to("abs(3i)", "3");
+  simplifies_to("abs(-3i)", "3");
+  // TODO: Metric: 3×abs(x)
+  simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
+  simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
+  simplifies_to("abs(x^2)", "abs(x^2)", cartesianCtx);
+  simplifies_to("abs(x^2)", "x^2");
+  simplifies_to("abs(a)*abs(bc)-abs(ab)*abs(c)", "0");
+  simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
@@ -796,10 +807,6 @@ QUIZ_CASE(pcj_simplification_advanced) {
   // TODO SimplifyAddition on matrices
   simplifies_to("sum([[k][n]], k, 1, 4)", "[[10][4×n]]");
 
-
-  // Not working yet
-  simplifies_to("abs(x^2)", "x^2");
-
   simplifies_to("diff(√(4-x^2),x,x)", "-x/√(4-x^2)");
   simplifies_to("1/x + 1/y - (x+y)/(x×y)", "0");
   simplifies_to("(x^2 - 1) / (x - 1)", "x+1");
@@ -814,13 +821,11 @@ QUIZ_CASE(pcj_simplification_advanced) {
       "abs(diff(diff(√(4-x^2),x,x),x,x))/(1+diff(√(4-x^2),x,x)^2)^(3/2)",
       "1/2");
 
-  simplifies_to("((abs(x)^(1/2))^(1/2))^8", "abs(x)^2");
   simplifies_to("((x×y)^(1/2)×z^2)^2", "x×y×z^4");
   simplifies_to("1-cos(x)^2", "sin(x)^2");
 #endif
   simplifies_to("1-cos(x)^2-sin(x)^2", "0");
   simplifies_to("(a+b)^2", "(a+b)^2");
-  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "0");
   simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^(2)+e^((a+b)×c)");

@@ -255,6 +255,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("re(x)+i×im(x)", "x", cartesianCtx);
   simplifies_to("re(x+i×y)+im(y)", "re(x)", cartesianCtx);
   simplifies_to("im(x+i×y)", "im(x)+re(y)", cartesianCtx);
+  simplifies_to("re(x)+i×im(x+y)", "x+im(y)×i", cartesianCtx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should be im(x)+re(y), fail because of Full CRC collection
   simplifies_to("i×(conj(x+i×y)+im(y)-re(x))", "re(y)+(-x+re(x))×i",

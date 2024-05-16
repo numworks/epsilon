@@ -289,6 +289,7 @@ poincare_src += $(addprefix poincare/src/numeric/,\
   solver.cpp \
   solver_algorithms.cpp \
   statistics_dataset.cpp\
+  statistics_dataset_column.cpp\
 )
 
 poincare_src += $(addprefix poincare/src/probability/,\

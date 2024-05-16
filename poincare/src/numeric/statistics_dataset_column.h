@@ -3,6 +3,8 @@
 
 namespace Poincare::Internal {
 
+class Tree;
+
 template <typename T>
 class DatasetColumn {
  public:
@@ -21,6 +23,17 @@ class ConstantDatasetColumn : public DatasetColumn<T> {
  private:
   T m_value;
   int m_length;
+};
+
+template <typename T>
+class TreeDatasetColumn : public DatasetColumn<T> {
+ public:
+  TreeDatasetColumn(const Tree* tree);
+  T valueAtIndex(int index) const override;
+  int length() const override;
+
+ private:
+  const Tree* m_tree;
 };
 
 }  // namespace Poincare::Internal

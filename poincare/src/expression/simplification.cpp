@@ -770,47 +770,47 @@ bool Simplification::SimplifyComplexPart(Tree* tree) {
     }
     return true;
   }
-  // Extract pure real or pure imaginary in addition
-  if (child->isAdd()) {
-    TreeRef a(SharedTreeStack->push<Type::Add>(0));
-    const int nbChildren = child->numberOfChildren();
-    int nbChildrenRemoved = 0;
-    Tree* elem = child->firstChild();
-    for (int i = 0; i < nbChildren; i++) {
-      ComplexSign elemSign = ComplexSign::Get(elem);
-      if (elemSign.isPure()) {
-        TreeRef t(SharedTreeStack->push(isRe ? Type::Re : Type::Im));
-        elem->detachTree();
-        Simplification::ShallowSystematicReduce(
-            t);  // TODO: elemSign already computed
-        nbChildrenRemoved++;
-      } else {
-        elem = elem->nextTree();
-      }
-    }
-    NAry::SetNumberOfChildren(child, nbChildren - nbChildrenRemoved);
-    NAry::SetNumberOfChildren(a, nbChildrenRemoved);
-    if (nbChildrenRemoved == 0) {
-      a->removeTree();
-      return false;
-    }
-    bool includeOriginalTree = true;
-    if (child->numberOfChildren() == 0) {
-      // Remove re/im(add) tree
-      tree->removeTree();
-      includeOriginalTree = false;
-    } else if (child->numberOfChildren() == 1) {
-      // Shallow reduce to remove the Add node
-      Simplification::ShallowSystematicReduce(child);
-    }
-    tree->moveTreeBeforeNode(a);
-    // Increase the number of children of a to include the original re/im
-    NAry::SetNumberOfChildren(tree, nbChildrenRemoved + includeOriginalTree);
-    // Shallow reduce new tree
-    Simplification::ShallowSystematicReduce(tree);
-    return true;
+  if (!child->isAdd()) {
+    return false;
   }
-  return false;
+  // Extract pure real or pure imaginary in addition
+  TreeRef a(SharedTreeStack->push<Type::Add>(0));
+  const int nbChildren = child->numberOfChildren();
+  int nbChildrenRemoved = 0;
+  Tree* elem = child->firstChild();
+  for (int i = 0; i < nbChildren; i++) {
+    ComplexSign elemSign = ComplexSign::Get(elem);
+    if (elemSign.isPure()) {
+      TreeRef t(SharedTreeStack->push(isRe ? Type::Re : Type::Im));
+      elem->detachTree();
+      Simplification::ShallowSystematicReduce(
+          t);  // TODO: elemSign already computed
+      nbChildrenRemoved++;
+    } else {
+      elem = elem->nextTree();
+    }
+  }
+  NAry::SetNumberOfChildren(child, nbChildren - nbChildrenRemoved);
+  NAry::SetNumberOfChildren(a, nbChildrenRemoved);
+  if (nbChildrenRemoved == 0) {
+    a->removeTree();
+    return false;
+  }
+  bool includeOriginalTree = true;
+  if (child->numberOfChildren() == 0) {
+    // Remove re/im(add) tree
+    tree->removeTree();
+    includeOriginalTree = false;
+  } else if (child->numberOfChildren() == 1) {
+    // Shallow reduce to remove the Add node
+    Simplification::ShallowSystematicReduce(child);
+  }
+  tree->moveTreeBeforeNode(a);
+  // Increase the number of children of a to include the original re/im
+  NAry::SetNumberOfChildren(tree, nbChildrenRemoved + includeOriginalTree);
+  // Shallow reduce new tree
+  Simplification::ShallowSystematicReduce(tree);
+  return true;
 }
 
 bool Simplification::SimplifySign(Tree* expr) {

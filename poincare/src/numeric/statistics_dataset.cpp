@@ -1,7 +1,8 @@
+#include "statistics_dataset.h"
+
 #include <helpers.h>
 #include <omg/float.h>
 #include <poincare/old/based_integer.h>
-#include <poincare/old/statistics_dataset.h>
 
 #include <algorithm>
 #include <cmath>
@@ -10,7 +11,7 @@ namespace Poincare {
 
 template <typename T>
 StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(
-    const ExpressionNode *e, const ApproximationContext &approximationContext,
+    const ExpressionNode* e, const ApproximationContext& approximationContext,
     ListComplex<T> evaluationArray[]) {
   int n = e->numberOfChildren();
   if (n == 0) {
@@ -22,7 +23,7 @@ StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(
     if (childEval.otype() != EvaluationNode<T>::Type::ListComplex) {
       return StatisticsDataset<T>();
     }
-    evaluationArray[i] = static_cast<ListComplex<T> &>(childEval);
+    evaluationArray[i] = static_cast<ListComplex<T>&>(childEval);
   }
   if (n > 1 && evaluationArray[0].numberOfChildren() !=
                    evaluationArray[1].numberOfChildren()) {
@@ -144,7 +145,7 @@ T StatisticsDataset<T>::sortedElementAtCumulatedWeight(
 
 template <typename T>
 int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
-                                                 int *upperIndex) const {
+                                                 int* upperIndex) const {
   if (std::isnan(weight)) {
     if (upperIndex) {
       *upperIndex = -1;
@@ -201,22 +202,21 @@ void StatisticsDataset<T>::buildSortedIndex() const {
   for (int i = 0; i < datasetLength(); i++) {
     sortedIndexes.addValueAtIndex(static_cast<float>(i), i);
   }
-  void *pack[] = {&sortedIndexes, const_cast<DatasetColumn<T> *>(m_values)};
+  void* pack[] = {&sortedIndexes, const_cast<DatasetColumn<T>*>(m_values)};
   Helpers::Sort(
-      [](int i, int j, void *ctx, int n) {  // swap
-        void **pack = reinterpret_cast<void **>(ctx);
-        FloatList<float> *sortedIndex =
-            reinterpret_cast<FloatList<float> *>(pack[0]);
+      [](int i, int j, void* ctx, int n) {  // swap
+        void** pack = reinterpret_cast<void**>(ctx);
+        FloatList<float>* sortedIndex =
+            reinterpret_cast<FloatList<float>*>(pack[0]);
         float temp = sortedIndex->valueAtIndex(i);
         sortedIndex->replaceValueAtIndex(sortedIndex->valueAtIndex(j), i);
         sortedIndex->replaceValueAtIndex(temp, j);
       },
-      [](int i, int j, void *ctx, int n) {  // compare
-        void **pack = reinterpret_cast<void **>(ctx);
-        FloatList<float> *sortedIndex =
-            reinterpret_cast<FloatList<float> *>(pack[0]);
-        DatasetColumn<T> *values =
-            reinterpret_cast<DatasetColumn<T> *>(pack[1]);
+      [](int i, int j, void* ctx, int n) {  // compare
+        void** pack = reinterpret_cast<void**>(ctx);
+        FloatList<float>* sortedIndex =
+            reinterpret_cast<FloatList<float>*>(pack[0]);
+        DatasetColumn<T>* values = reinterpret_cast<DatasetColumn<T>*>(pack[1]);
         int sortedIndexI = static_cast<int>(sortedIndex->valueAtIndex(i));
         int sortedIndexJ = static_cast<int>(sortedIndex->valueAtIndex(j));
         return std::isnan(values->valueAtIndex(sortedIndexI)) ||

@@ -472,6 +472,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("min({1,-4/7,2,-2})", "-2");
   simplifies_to("var(sequence(k,k,6))", "35/12");
   simplifies_to("sort({2+1,1,2})", "{1,2,3}");
+  simplifies_to("med(π*{1,2,3},{4,1,1})", "π");
   simplifies_to("med(π*{4,2,1,3})", "(5×π)/2");
   simplifies_to("dim(1+sequence(k,k,3))", "3");
   simplifies_to("mean({1,2}, {2,1})", "4/3");

@@ -42,7 +42,7 @@ class Approximation final {
   template <typename T>
   static Tree* RootTreeToTree(
       const Tree* node, AngleUnit angleUnit = AngleUnit::Radian,
-      ComplexFormat complexFormat = ComplexFormat::Real);
+      ComplexFormat complexFormat = ComplexFormat::Cartesian);
   // Approximate a tree with any dimension, isolated from any outer context.
   template <typename T>
   static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,

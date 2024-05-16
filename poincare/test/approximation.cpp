@@ -34,7 +34,9 @@ void approximates_to(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        tree->moveTreeOverTree(Approximation::RootTreeToTree<T>(tree));
+        tree->moveTreeOverTree(Approximation::RootTreeToTree<T>(
+            tree, projectionContext.m_angleUnit,
+            projectionContext.m_complexFormat));
       },
       projectionContext);
 }

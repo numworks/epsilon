@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/numeric/statistics_dataset.h>
 
 #include "k_tree.h"
 #include "rational.h"
@@ -177,34 +178,52 @@ bool List::ShallowApplyListOperators(Tree* e) {
       e->moveTreeOverTree(Variance(e->child(0), e->child(1), e->type()));
       return true;
     }
-    case Type::ListSort:
     case Type::Median: {
+      // precision used for comparisons
+      using T = double;
+      bool hasWeightList = Dimension::GetListLength(e->child(1)) !=
+                           Dimension::k_nonListListLength;
+      Tree* valuesList = e->child(0);
+      BubbleUp(valuesList, Simplification::ShallowSystematicReduce);
+      Tree* weigthsList = e->child(1);
+      if (hasWeightList) {
+        // weigths are approximated in place
+        BubbleUp(weigthsList, Simplification::ShallowSystematicReduce);
+        weigthsList->moveTreeOverTree(
+            Approximation::RootTreeToTree<T>(weigthsList));
+      }
+      /* values are not approximated in place since we need to keep the exact
+       * values to return the exact median */
+      Tree* approximatedList = Approximation::RootTreeToTree<T>(valuesList);
+      TreeDatasetColumn<T> values(approximatedList);
+      int upperMedianIndex;
+      int lowerMedianIndex;
+      if (!hasWeightList) {
+        lowerMedianIndex =
+            StatisticsDataset<T>(&values).medianIndex(&upperMedianIndex);
+      } else {
+        TreeDatasetColumn<T> weights(weigthsList);
+        lowerMedianIndex = StatisticsDataset<T>(&values, &weights)
+                               .medianIndex(&upperMedianIndex);
+      }
+      approximatedList->removeTree();
+      if (lowerMedianIndex < 0) {
+        e->cloneTreeOverTree(KUndef);
+      } else if (upperMedianIndex == lowerMedianIndex) {
+        e->moveTreeOverTree(valuesList->child(lowerMedianIndex));
+      } else {
+        e->moveTreeOverTree(PatternMatching::CreateSimplify(
+            KMult(1_e / 2_e, KAdd(KA, KB)),
+            {.KA = valuesList->child(lowerMedianIndex),
+             .KB = valuesList->child(upperMedianIndex)}));
+      }
+      return true;
+    }
+    case Type::ListSort: {
       Tree* list = e->child(0);
       BubbleUp(list, Simplification::ShallowSystematicReduce);
       NAry::Sort(list);
-      if (e->isMedian()) {
-        if (!e->child(1)->isOne()) {
-          // TODO_PCJ: not implemeted yet
-          // Median with coefficients needs statistics_dataset
-          assert(false);
-        }
-        // TODO: Better check for undefined children
-        Tree* lastChild = list->lastChild();
-        if (lastChild->isUndefined()) {
-          e->moveTreeOverTree(lastChild);
-          return true;
-        }
-        int n = list->numberOfChildren();
-        if (n % 2) {
-          e->moveTreeOverTree(list->child(n / 2));
-        } else {
-          e->moveTreeOverTree(PatternMatching::CreateSimplify(
-              KMult(1_e / 2_e, KAdd(KA, KB)),
-              {.KA = list->child(n / 2 - 1), .KB = list->child(n / 2)}));
-        }
-      } else {
-        e->removeNode();
-      }
+      e->removeNode();
       return true;
     }
     case Type::ListElement: {

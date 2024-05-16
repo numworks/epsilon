@@ -1249,11 +1249,11 @@ QUIZ_CASE(poincare_simplification_function) {
   /* Test with no symbolic computation to check that n inside a sum expression
    * is not replaced by Undefined */
   assert_parsed_expression_simplify_to(
-      "sum(n,n,1,5)", "sum(n,n,1,5)", User, Radian, MetricUnitFormat, Cartesian,
+      "sum(n,n,1,5)", "15", User, Radian, MetricUnitFormat, Cartesian,
       ReplaceAllSymbolsWithDefinitionsOrUndefined);
   assert_parsed_expression_simplify_to(
-      "sum(1/n,n,1,2)", "sum(1/n,n,1,2)", User, Radian, MetricUnitFormat,
-      Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      "sum(1/n,n,1,2)", "3/2", User, Radian, MetricUnitFormat, Cartesian,
+      ReplaceAllSymbolsWithDefinitionsOrUndefined);
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
   assert_parsed_expression_simplify_to("permute(20,-10)", Undefined::Name());
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");

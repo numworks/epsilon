@@ -358,6 +358,8 @@ bool Tree::ApplyShallowInDepth(Tree* e, ShallowOperation shallowOperation,
 }
 
 bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
+  assert(SharedTreeStack->isAfter(replacement, this) &&
+         SharedTreeStack->isAfter(target, this));
   if (replaceWith(target, replacement)) {
     return true;
   }
@@ -369,6 +371,7 @@ bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
 }
 
 bool Tree::deepReplaceWith(const Tree* target, TreeRef& replacement) {
+  assert(SharedTreeStack->isAfter(target, this));
   if (replaceWith(target, replacement)) {
     return true;
   }

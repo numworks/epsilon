@@ -1,10 +1,11 @@
 #ifndef POINCARE_NUMERIC_STATISTICS_DATASET_H
 #define POINCARE_NUMERIC_STATISTICS_DATASET_H
 
-#include <algorithm>
+#include <stdint.h>
 
-#include "float_list.h"
-#include "list_complex.h"
+#include <algorithm>
+#include <cmath>
+
 #include "statistics_dataset_column.h"
 
 /* This class is used to compute basic statistics functions on a dataset.
@@ -41,31 +42,25 @@ namespace Poincare::Internal {
 template <typename T>
 class StatisticsDataset {
  public:
+#if TODO_PCJ
   static StatisticsDataset<T> BuildFromChildren(
       const ExpressionNode* e, const ApproximationContext& approximationContext,
       ListComplex<T> evaluationArray[]);
+#endif
 
   StatisticsDataset(const DatasetColumn<T>* values,
                     const DatasetColumn<T>* weights, bool lnOfValues = false,
-                    bool oppositeOfValue = false, bool shouldInitPool = true)
+                    bool oppositeOfValue = false)
       : m_values(values),
         m_weights(weights),
         m_recomputeSortedIndex(true),
         m_memoizedTotalWeight(NAN),
         m_lnOfValues(lnOfValues),
-        m_oppositeOfValues(oppositeOfValue) {
-    if (shouldInitPool) {
-      initPool();
-    }
-  }
+        m_oppositeOfValues(oppositeOfValue) {}
   StatisticsDataset(const DatasetColumn<T>* values, bool lnOfValues = false,
                     bool oppositeOfValue = false)
       : StatisticsDataset(values, nullptr, lnOfValues, oppositeOfValue) {}
-  StatisticsDataset()
-      : StatisticsDataset(nullptr, nullptr, false, false, false) {}
-
-  void initPool() { m_sortedIndex = FloatList<float>::Builder(); }
-  void tidyPool() { m_sortedIndex = FloatList<float>(); }
+  StatisticsDataset() : StatisticsDataset(nullptr, nullptr, false, false) {}
 
   bool isUndefined() { return m_values == nullptr; }
 
@@ -115,9 +110,7 @@ class StatisticsDataset {
 
   const DatasetColumn<T>* m_values;
   const DatasetColumn<T>* m_weights;
-  /* This is just a list of int, but FloatList is the most optimized class for
-   * containing numbers in the pool.*/
-  mutable FloatList<float> m_sortedIndex;
+  mutable uint8_t m_sortedIndex[256];
   mutable bool m_recomputeSortedIndex;
   mutable double m_memoizedTotalWeight;
   bool m_lnOfValues;

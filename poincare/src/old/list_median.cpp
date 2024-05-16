@@ -6,7 +6,6 @@
 #include <poincare/old/list_median.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/serialization_helper.h>
-#include <poincare/old/statistics_dataset.h>
 
 namespace Poincare {
 
@@ -18,6 +17,8 @@ OExpression ListMedianNode::shallowReduce(
 template <typename T>
 Evaluation<T> ListMedianNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
+  assert(false);
+#if 0
   ListComplex<T> evaluationArray[2];
   StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(
       this, approximationContext, evaluationArray);
@@ -25,6 +26,7 @@ Evaluation<T> ListMedianNode::templatedApproximate(
     return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(dataset.median());
+#endif
 }
 
 OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
@@ -46,6 +48,8 @@ OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
       }
     }
   }
+  assert(false);
+#if 0
   ListComplex<double> evaluationArray[2];
   StatisticsDataset<double> dataset =
       StatisticsDataset<double>::BuildFromChildren(node(), approximationContext,
@@ -70,6 +74,7 @@ OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
   sum.shallowReduce(reductionContext);
   replaceWithInPlace(div);
   return div.shallowReduce(reductionContext);
+#endif
 }
 
 template Evaluation<float> ListMedianNode::templatedApproximate<float>(

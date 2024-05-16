@@ -59,7 +59,6 @@ void StatisticsStore::initDatasets() {
 
 void StatisticsStore::tidyDatasets() {
   for (int s = 0; s < k_numberOfSeries; s++) {
-    m_datasets[s].tidyPool();
     for (int c = 0; c < k_numberOfColumnsPerSeries; c++) {
       m_dataLists[s][c] = Poincare::FloatList<double>();
     }

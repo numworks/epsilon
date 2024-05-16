@@ -4,7 +4,6 @@
 #include <poincare/old/multiplication.h>
 #include <poincare/old/power.h>
 #include <poincare/old/simplification_helper.h>
-#include <poincare/old/statistics_dataset.h>
 #include <poincare/old/subtraction.h>
 
 namespace Poincare {
@@ -17,6 +16,8 @@ OExpression ListVarianceNode::shallowReduce(
 template <typename T>
 Evaluation<T> ListVarianceNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
+  assert(false);
+#if 0
   ListComplex<T> evaluationArray[2];
   StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(
       this, approximationContext, evaluationArray);
@@ -24,6 +25,7 @@ Evaluation<T> ListVarianceNode::templatedApproximate(
     return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(dataset.variance());
+#endif
 }
 
 OExpression ListVariance::shallowReduce(ReductionContext reductionContext) {

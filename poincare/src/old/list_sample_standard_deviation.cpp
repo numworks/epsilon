@@ -6,7 +6,6 @@
 #include <poincare/old/power.h>
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/square_root.h>
-#include <poincare/old/statistics_dataset.h>
 
 namespace Poincare {
 
@@ -18,6 +17,8 @@ OExpression ListSampleStandardDeviationNode::shallowReduce(
 template <typename T>
 Evaluation<T> ListSampleStandardDeviationNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
+  assert(false);
+#if 0
   ListComplex<T> evaluationArray[2];
   StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(
       this, approximationContext, evaluationArray);
@@ -25,6 +26,7 @@ Evaluation<T> ListSampleStandardDeviationNode::templatedApproximate(
     return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(dataset.sampleStandardDeviation());
+#endif
 }
 
 OExpression ListSampleStandardDeviation::shallowReduce(

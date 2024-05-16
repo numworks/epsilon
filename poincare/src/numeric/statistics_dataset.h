@@ -1,6 +1,7 @@
 #ifndef POINCARE_NUMERIC_STATISTICS_DATASET_H
 #define POINCARE_NUMERIC_STATISTICS_DATASET_H
 
+#include <assert.h>
 #include <stdint.h>
 
 #include <algorithm>

@@ -383,6 +383,8 @@ class List final : public JuniorExpression {
     assert(false);
     return JuniorExpression();
   }
+  int numberOfChildren() const;
+
   void removeChildAtIndexInPlace(int i) {
     assert(false);
     return;

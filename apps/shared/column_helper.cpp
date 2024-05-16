@@ -198,7 +198,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
 
   if (formula.type() == ExpressionNode::Type::List) {
     bool allChildrenAreUndefined = true;
-    int formulaNumberOfChildren = formula.numberOfChildren();
+    int formulaNumberOfChildren =
+        static_cast<List &>(formula).numberOfChildren();
     for (int i = 0; i < formulaNumberOfChildren; i++) {
       if (!formula.childAtIndex(i).isUndefined()) {
         allChildrenAreUndefined = false;

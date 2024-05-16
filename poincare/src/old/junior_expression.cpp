@@ -905,6 +905,8 @@ void List::addChildAtIndexInPlace(JuniorExpression t, int index,
   *this = static_cast<List&>(temp);
 }
 
+int List::numberOfChildren() const { return tree()->numberOfChildren(); }
+
 /* Boolean */
 
 bool Boolean::value() const {

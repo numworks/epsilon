@@ -90,7 +90,6 @@ class Symbol final : public SymbolAbstract {
 
   // Symbol properties
   bool isSystemSymbol() const { return node()->isSystemSymbol(); }
-  const char* name() const { return node()->name(); }
 
   // OExpression
   OExpression shallowReduce(ReductionContext reductionContext);

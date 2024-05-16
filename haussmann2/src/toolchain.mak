@@ -1,8 +1,5 @@
 # Compiler commands and parameters
 
-AR := ar
-ARFLAGS := rcs
-
 SFLAGS := -MMD -MP -Wall
 ifeq ($(DEBUG),0)
 SFLAGS += -Os
@@ -11,7 +8,16 @@ SFLAGS += -O0 -g
 endif
 
 CFLAGS := -std=c11
-CXXFLAGS := -std=c++20
+
+CXXFLAGS := \
+  -ffp-contract=off \
+  -fno-exceptions \
+  -fno-rtti \
+  -fno-threadsafe-statics \
+  -std=c++20
+
+ARFLAGS := rcs
+
 LDFLAGS :=
 
-include $(PATH_haussmann)/src/toolchain.$(PLATFORM).mak
+include $(PATH_haussmann)/src/toolchains/$(TOOLCHAIN).mak

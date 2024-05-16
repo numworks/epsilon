@@ -80,3 +80,8 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("0^(-3+4i)", "undef");
   approximates_to<float>("0^(-3-4i)", "undef");
 }
+
+QUIZ_CASE(pcj_approximation_list) {
+  approximates_to<float>("{1,2,3,4}(-5,1)", "undef");
+  approximates_to<float>("{1,2,3,4}(0,2)", "{1,2}");
+}

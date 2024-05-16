@@ -107,7 +107,7 @@ QUIZ_CASE(pcj_simplification_variables) {
 }
 
 void simplifies_to(const char* input, const char* output,
-                   ProjectionContext projectionContext = {}) {
+                   ProjectionContext projectionContext = realCtx) {
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
@@ -537,8 +537,8 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1/a", "1/a");
   simplifies_to("a×a^(-1)", "dep(1,{a^0})");
   simplifies_to("a×a^(1+1)", "a^3");
-  simplifies_to("a×a^(-1)", "dep(1,{a^0})", realCtx);
-  simplifies_to("a×a^(1+1)", "a^3", realCtx);
+  simplifies_to("a×a^(-1)", "dep(1,{a^0})");
+  simplifies_to("a×a^(1+1)", "a^3");
   simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{a^0})");
   simplifies_to("cos(π×a×a^(-1))^(b×b^(-2)×b)", "dep(-1,{a^0,b^0})");
   simplifies_to("2^(64)", "18446744073709551616");
@@ -551,7 +551,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
 
   // Real powers
-  simplifies_to("√(x)^2", "√(x)^2", realCtx);
+  simplifies_to("√(x)^2", "√(x)^2");
   // - x^y if x is complex or positive
   simplifies_to("41^(1/3)", "41^(1/3)");
   // - PowerReal(x,y) y is not a rational

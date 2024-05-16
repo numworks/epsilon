@@ -3,9 +3,9 @@
 
 #include <algorithm>
 
-#include "dataset_column.h"
 #include "float_list.h"
 #include "list_complex.h"
+#include "statistics_dataset_column.h"
 
 /* This class is used to compute basic statistics functions on a dataset.
  *
@@ -36,7 +36,7 @@
  * More statistics method could be implemented here if factorization is needed.
  * */
 
-namespace Poincare {
+namespace Poincare::Internal {
 
 template <typename T>
 class StatisticsDataset {
@@ -124,6 +124,6 @@ class StatisticsDataset {
   bool m_oppositeOfValues;
 };
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal
 
 #endif

@@ -1,8 +1,9 @@
 #ifndef POINCARE_LIST_COMPLEX_H
 #define POINCARE_LIST_COMPLEX_H
 
+#include <poincare/numeric/statistics.h>
+
 #include "complex.h"
-#include "dataset_column.h"
 #include "evaluation.h"
 #include "list.h"
 

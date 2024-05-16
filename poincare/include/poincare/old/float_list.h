@@ -1,7 +1,8 @@
 #ifndef POINCARE_FLOAT_LIST_H
 #define POINCARE_FLOAT_LIST_H
 
-#include "dataset_column.h"
+#include <poincare/numeric/statistics.h>
+
 #include "list.h"
 
 namespace Poincare {

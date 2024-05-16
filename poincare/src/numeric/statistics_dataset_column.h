@@ -1,7 +1,7 @@
 #ifndef POINCARE_NUMERIC_STATISTICS_DATASET_COLUMN_H
 #define POINCARE_NUMERIC_STATISTICS_DATASET_COLUMN_H
 
-namespace Poincare {
+namespace Poincare::Internal {
 
 template <typename T>
 class DatasetColumn {
@@ -23,6 +23,6 @@ class ConstantDatasetColumn : public DatasetColumn<T> {
   int m_length;
 };
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal
 
 #endif

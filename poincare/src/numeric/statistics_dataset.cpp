@@ -1,13 +1,12 @@
 #include "statistics_dataset.h"
 
-#include <helpers.h>
 #include <omg/float.h>
-#include <poincare/old/based_integer.h>
+#include <poincare/old/helpers.h>
 
 #include <algorithm>
 #include <cmath>
 
-namespace Poincare {
+namespace Poincare::Internal {
 
 template <typename T>
 StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(
@@ -231,4 +230,4 @@ void StatisticsDataset<T>::buildSortedIndex() const {
 template class StatisticsDataset<float>;
 template class StatisticsDataset<double>;
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal

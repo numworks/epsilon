@@ -12,7 +12,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   circuit_breaker_checkpoint.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
-  statistics_dataset.cpp\
   xnt_helpers.cpp \
 )
 
@@ -289,6 +288,7 @@ poincare_src += $(addprefix poincare/src/numeric/,\
   regularized_incomplete_beta_function.cpp \
   solver.cpp \
   solver_algorithms.cpp \
+  statistics_dataset.cpp\
 )
 
 poincare_src += $(addprefix poincare/src/probability/,\

@@ -1146,7 +1146,8 @@ QUIZ_CASE(poincare_simplification_randint) {
 QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("abs(π)", "π");
   assert_parsed_expression_simplify_to("abs(-π)", "π");
-  assert_parsed_expression_simplify_to("abs(1+i)", "√(2)");
+  assert_parsed_expression_simplify_to("abs(1+i)",
+                                       "√(2)");  // Fails because of metric
   assert_parsed_expression_simplify_to("abs(0)", "0");
   assert_parsed_expression_simplify_to("abs(x*y)", "abs(x)×abs(y)");
   assert_parsed_expression_simplify_to("abs(x^π)", "abs(x)^π");

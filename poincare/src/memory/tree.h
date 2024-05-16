@@ -18,6 +18,8 @@ namespace Poincare::Internal {
 void Indent(std::ostream& stream, int indentation);
 #endif
 
+class TreeRef;
+
 /* A block is a byte-long object containing either a type or some value.
  * Several blocks can form a node, like:
  * [INT][LENGTH][DIGIT0][DIGIT1]...[DIGITN][LENGTH][INT]
@@ -171,6 +173,7 @@ class Tree : public TypeBlock {
                                   void* context = nullptr, bool check = true);
 
   bool deepReplaceWith(const Tree* target, const Tree* replacement);
+  bool deepReplaceWith(const Tree* target, TreeRef& replacement);
 
   Tree* clone() const;
   Tree* cloneNode() const;

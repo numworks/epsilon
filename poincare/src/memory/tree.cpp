@@ -368,6 +368,17 @@ bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
   return changed;
 }
 
+bool Tree::deepReplaceWith(const Tree* target, TreeRef& replacement) {
+  if (replaceWith(target, replacement)) {
+    return true;
+  }
+  bool changed = false;
+  for (Tree* child : children()) {
+    changed = child->deepReplaceWith(target, replacement) || changed;
+  }
+  return changed;
+}
+
 bool Tree::replaceWith(const Tree* target, const Tree* replacement) {
   if (treeIsIdenticalTo(target)) {
     cloneTreeOverTree(replacement);

@@ -713,7 +713,16 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::Median: {
       Tree* list = ToList<T>(node->child(0));
       TreeDatasetColumn<T> values(list);
-      T median = OutOfContext(StatisticsDataset<T>(&values).median());
+      T median;
+      if (Dimension::GetListLength(node->child(1)) !=
+          Dimension::k_nonListListLength) {
+        Tree* weightsList = ToList<T>(node->child(1));
+        TreeDatasetColumn<T> weights(weightsList);
+        median = OutOfContext(StatisticsDataset<T>(&values, &weights).median());
+        weightsList->removeTree();
+      } else {
+        median = OutOfContext(StatisticsDataset<T>(&values).median());
+      }
       list->removeTree();
       return median;
     }

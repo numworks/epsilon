@@ -4,6 +4,7 @@
 #include <omg/float.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/node_iterator.h>
+#include <poincare/src/numeric/statistics_dataset.h>
 #include <poincare/src/probability/distribution_method.h>
 
 #include <bit>
@@ -709,9 +710,13 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       list->removeTree();
       return result;
     }
-    case Type::Median:
-      // TODO_PCJ
-      return NAN;
+    case Type::Median: {
+      Tree* list = ToList<T>(node->child(0));
+      TreeDatasetColumn<T> values(list);
+      T median = OutOfContext(StatisticsDataset<T>(&values).median());
+      list->removeTree();
+      return median;
+    }
     case Type::Piecewise:
       return ToComplex<T>(SelectPiecewiseBranch<T>(node));
     case Type::Distribution: {

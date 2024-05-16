@@ -4,6 +4,7 @@
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/comparison.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -14,6 +15,11 @@
 #endif
 
 using namespace Poincare::Internal;
+
+typedef void (*ProcessTree)(Tree*, ProjectionContext projectionContext);
+void process_tree_and_compare(const char* input, const char* output,
+                              ProcessTree process,
+                              ProjectionContext projectionContext);
 
 void quiz_assert_print_if_failure(bool test, const char* information);
 

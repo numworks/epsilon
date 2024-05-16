@@ -4,8 +4,6 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/variables.h>
-#include <poincare/src/layout/layoutter.h>
-#include <poincare/src/layout/serialize.h>
 
 #include "helper.h"
 
@@ -104,37 +102,12 @@ QUIZ_CASE(pcj_simplification_variables) {
 
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = {}) {
-  Shared::GlobalContext ctx;
-  if (!projectionContext.m_context) {
-    projectionContext.m_context = &ctx;
-  }
-  TreeRef expected = TextToTree(output, projectionContext.m_context);
-  TreeRef expression = TextToTree(input, projectionContext.m_context);
-  Simplification::SimplifyWithAdaptiveStrategy(expression, &projectionContext);
-  quiz_assert(!expression.isUninitialized());
-  bool ok = expression->treeIsIdenticalTo(expected);
-  if (!ok) {
-    TreeRef outputLayout =
-        Layoutter::LayoutExpression(expression->clone(), true);
-    quiz_assert(!outputLayout.isUninitialized());
-    constexpr size_t bufferSize = 256;
-    char buffer[bufferSize];
-    *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
-    bool visuallyOk = strcmp(output, buffer) == 0;
-    if (visuallyOk) {
-      ok = true;
-    } else {
-#ifndef PLATFORM_DEVICE
-      std::cout << input << " reduced to " << buffer << " instead of " << output
-                << std::endl;
-#endif
-    }
-    quiz_assert(ok);
-    outputLayout->removeTree();
-  }
-  expression->removeTree();
-  expected->removeTree();
-  assert(SharedTreeStack->numberOfTrees() == 0);
+  process_tree_and_compare(
+      input, output,
+      [](Tree* tree, ProjectionContext projectionContext) {
+        Simplification::SimplifyWithAdaptiveStrategy(tree, &projectionContext);
+      },
+      projectionContext);
 }
 
 QUIZ_CASE(pcj_simplification_basic) {

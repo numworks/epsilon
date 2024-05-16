@@ -40,8 +40,9 @@ class Approximation final {
 
   // Approximate a tree with any dimension, isolated from any outer context.
   template <typename T>
-  static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
-                              ComplexFormat complexFormat);
+  static Tree* RootTreeToTree(
+      const Tree* node, AngleUnit angleUnit = AngleUnit::Radian,
+      ComplexFormat complexFormat = ComplexFormat::Real);
   // Approximate a tree with any dimension, isolated from any outer context.
   template <typename T>
   static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,

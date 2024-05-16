@@ -28,13 +28,15 @@ void approximates_to(const Tree* n, T f) {
 }
 
 template <typename T>
-void approximates_to(const char* input, T f,
+void approximates_to(const char* input, const char* output,
                      ProjectionContext projectionContext = {}) {
-  TreeRef expression = TextToTree(input, projectionContext.m_context);
-  quiz_assert(!expression.isUninitialized());
-  approximates_to(expression, f);
-  expression->removeTree();
-  assert(SharedTreeStack->numberOfTrees() == 0);
+  // TODO: use same test and log as approximates_to?
+  process_tree_and_compare(
+      input, output,
+      [](Tree* tree, ProjectionContext projectionContext) {
+        tree->moveTreeOverTree(Approximation::RootTreeToTree<T>(tree));
+      },
+      projectionContext);
 }
 
 QUIZ_CASE(pcj_approximation) {
@@ -73,8 +75,8 @@ QUIZ_CASE(pcj_approximation_replace) {
 }
 
 QUIZ_CASE(pcj_approximation_power) {
-  approximates_to<float>("0^(3+4i)", 0);
-  approximates_to<float>("0^(3-4i)", 0);
-  approximates_to<float>("0^(-3+4i)", NAN);
-  approximates_to<float>("0^(-3-4i)", NAN);
+  approximates_to<float>("0^(3+4i)", "0");
+  approximates_to<float>("0^(3-4i)", "0");
+  approximates_to<float>("0^(-3+4i)", "undef");
+  approximates_to<float>("0^(-3-4i)", "undef");
 }

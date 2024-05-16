@@ -13,12 +13,12 @@
 namespace Poincare {
 
 int DimensionNode::numberOfChildren() const {
-  return Dimension::s_functionHelper.numberOfChildren();
+  return ODimension::s_functionHelper.numberOfChildren();
 }
 
 OExpression DimensionNode::shallowReduce(
     const ReductionContext& reductionContext) {
-  return Dimension(this).shallowReduce(reductionContext);
+  return ODimension(this).shallowReduce(reductionContext);
 }
 
 size_t DimensionNode::serialize(char* buffer, size_t bufferSize,
@@ -26,7 +26,7 @@ size_t DimensionNode::serialize(char* buffer, size_t bufferSize,
                                 int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
-      Dimension::s_functionHelper.aliasesList().mainAlias());
+      ODimension::s_functionHelper.aliasesList().mainAlias());
 }
 
 template <typename T>
@@ -46,7 +46,7 @@ Evaluation<T> DimensionNode::templatedApproximate(
   return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
-OExpression Dimension::shallowReduce(ReductionContext reductionContext) {
+OExpression ODimension::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,

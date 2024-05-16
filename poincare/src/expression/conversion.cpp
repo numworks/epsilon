@@ -138,7 +138,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
       case Type::Det:
         return Poincare::Determinant::Builder(child);
       case Type::Dim:
-        return Poincare::Dimension::Builder(child);
+        return Poincare::ODimension::Builder(child);
       case Type::Identity:
         return Poincare::MatrixIdentity::Builder(child);
       case Type::Inverse:

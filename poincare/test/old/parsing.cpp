@@ -841,7 +841,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_identifiers) {
       Derivative::Builder(BuildMatrix(1, 2, m0), Symbol::Builder("t", 1),
                           BasedInteger::Builder(4)));
   assert_parsed_expression_is("dim(1)",
-                              Dimension::Builder(BasedInteger::Builder(1)));
+                              ODimension::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("conj(1)",
                               Conjugate::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("cot(1)",

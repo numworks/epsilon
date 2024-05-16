@@ -97,7 +97,7 @@ class ParsingHelper {
       &Determinant::s_functionHelper,                  // det
       &Derivative::s_functionHelperFirstOrder,         // diff
       &Derivative::s_functionHelper,                   // diff
-      &Dimension::s_functionHelper,                    // dim
+      &ODimension::s_functionHelper,                   // dim
       &VectorDot::s_functionHelper,                    // dot
       &Power::s_exponentialFunctionHelper,             // exp
       &Factor::s_functionHelper,                       // fact

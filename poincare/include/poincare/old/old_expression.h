@@ -49,7 +49,7 @@ class OExpression : public PoolHandle {
   friend class Derivative;
   friend class DerivativeNode;
   friend class Determinant;
-  friend class Dimension;
+  friend class ODimension;
   friend class DistributionDispatcher;
   friend class Division;
   friend class DivisionQuotient;

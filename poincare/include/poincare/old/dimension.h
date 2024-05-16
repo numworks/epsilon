@@ -50,7 +50,7 @@ class DimensionNode final : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 };
 
-class Dimension final : public ExpressionOneChild<Dimension, DimensionNode> {
+class ODimension final : public ExpressionOneChild<ODimension, DimensionNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
   OExpression shallowReduce(ReductionContext reductionContext);

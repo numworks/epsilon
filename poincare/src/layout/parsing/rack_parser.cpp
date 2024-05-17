@@ -970,13 +970,13 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     if (idType != Poincare::Context::SymbolAbstractType::Function &&
         idType != Poincare::Context::SymbolAbstractType::Sequence &&
         idType != Poincare::Context::SymbolAbstractType::List) {
-      leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
+      leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name);
       return;
     }
   }
 
   if (idType == Poincare::Context::SymbolAbstractType::List) {
-    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
+    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name);
     parseListParameters(leftHandSide);
     return;
   }
@@ -1045,7 +1045,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     if (derivationOrder > 0) {
       return false;
     }
-    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name, length + 1);
+    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name);
     return true;
   }
 
@@ -1069,7 +1069,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
                                 BasedInteger::Builder(derivationOrder));
 #endif
     } else {
-      result = SharedTreeStack->push<Type::UserFunction>(name, length + 1);
+      result = SharedTreeStack->push<Type::UserFunction>(name);
       parameter->moveNodeBeforeNode(result);
       assert(result->child(0) == parameter);
     }

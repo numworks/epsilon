@@ -829,6 +829,9 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
          // Symbols have already been replaced.
          .symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol});
   }
+  /* TODO_PCJ: equation and result used to be a same Expression at this step.
+   * Ensure this pool usage regression of still having equation in the pool is
+   * acceptable. */
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
     m_properties.update(result, originalEquation(record, UCodePointUnknown),

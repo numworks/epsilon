@@ -289,10 +289,10 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   ExpiringPointer<ContinuousFunction> f =
       GlobalContext::continuousFunctionStore->modelForRecord(recordToSet);
   // TODO: factorise with ContinuousFunction::setContent
-  // TODO_PCJ: bool wasCartesian = f->properties().isCartesian();
+  bool wasCartesian = f->properties().isCartesian();
   error = f->setExpressionContent(equation);
   if (error == Ion::Storage::Record::ErrorStatus::None) {
-    // TODO_PCJ: f->updateModel(this, wasCartesian);
+    f->updateModel(this, wasCartesian);
   }
   GlobalContext::StoreParametricComponentsOfRecord(recordToSet);
   return error;

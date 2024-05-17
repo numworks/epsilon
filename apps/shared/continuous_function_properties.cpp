@@ -130,6 +130,8 @@ void ContinuousFunctionProperties::update(
     SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
   reset();
   m_isInitialized = true;
+  // TODO_PCJ
+  return;
 
   setSymbolType(precomputedFunctionSymbol);
   setEquationType(precomputedOperatorType);

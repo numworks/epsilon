@@ -14,53 +14,46 @@ namespace Poincare::Internal {
 
 Tree* List::PushEmpty() { return KList.node<0>->cloneNode(); }
 
-bool List::ProjectToNthElement(Tree* expr, int n, Tree::Operation reduction) {
+Tree* List::ProjectToNthElement(const Tree* expr, int n,
+                                Tree::Operation reduction) {
   switch (expr->type()) {
     case Type::List:
       assert(n < expr->numberOfChildren());
-      expr->moveTreeOverTree(expr->child(n));
-      return true;
+      return expr->child(n)->clone();
     case Type::ListSequence: {
       if (Parametric::HasLocalRandom(expr)) {
-        return false;
+        return nullptr;
       }
+      Tree* result = expr->child(2)->clone();
       TreeRef value = Integer::Push(n + 1);
-      Variables::Replace(expr->child(2), 0, value);
+      Variables::Replace(result, 0, value);
       value->removeTree();
-      // sequence(k, max, f(k)) -> f(k)
-      expr->removeNode();
-      expr->removeTree();
-      expr->removeTree();
-      return true;
+      return result;
     }
     case Type::RandIntNoRep:
-      return false;  // Should be projected on approximation.
+      return nullptr;  // Should be projected on approximation.
     case Type::ListSort:
-    case Type::Median:
       assert(false);  // Must have been removed by simplification
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(expr->child(1)) &&
              Integer::Is<uint8_t>(expr->child(2)));
       int startIndex =
           std::max(Integer::Handler(expr->child(1)).to<uint8_t>() - 1, 0);
-      if (ProjectToNthElement(expr->child(0), startIndex + n, reduction)) {
-        expr->moveTreeOverTree(expr->child(0));
-        return true;
-      }
-      return false;
+      return ProjectToNthElement(expr->child(0), startIndex + n, reduction);
     }
     default:
       if (expr->type().isListToScalar()) {
-        return false;
+        return nullptr;
       }
-      bool changed = false;
-      for (Tree* child : expr->children()) {
-        changed = ProjectToNthElement(child, n, reduction) || changed;
+      Tree* result = expr->cloneNode();
+      for (const Tree* child : expr->children()) {
+        if (!ProjectToNthElement(child, n, reduction)) {
+          SharedTreeStack->flushFromBlock(result->block());
+          return nullptr;
+        }
       }
-      if (changed) {
-        reduction(expr);
-      }
-      return changed;
+      reduction(result);
+      return result;
   }
 }
 
@@ -74,11 +67,9 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
     (type.isListSum() ? 0_e : 1_e)->clone();
   }
   for (int i = 0; i < size; i++) {
-    Tree* element = list->clone();
-    if (!ProjectToNthElement(element, i,
-                             Simplification::ShallowSystematicReduce)) {
-      assert(false);
-    }
+    Tree* element =
+        ProjectToNthElement(list, i, Simplification::ShallowSystematicReduce);
+    assert(element);
     if (i == 0) {
       continue;
     }
@@ -148,10 +139,9 @@ bool List::BubbleUp(Tree* expr, Tree::Operation reduction) {
   }
   Tree* list = List::PushEmpty();
   for (int i = 0; i < length; i++) {
-    Tree* element = expr->clone();
-    if (!ProjectToNthElement(element, i, reduction)) {
+    Tree* element = ProjectToNthElement(expr, i, reduction);
+    if (!element) {
       assert(i == 0);
-      element->removeTree();
       list->removeTree();
       return false;
     }
@@ -233,11 +223,12 @@ bool List::ShallowApplyListOperators(Tree* e) {
         e->cloneTreeOverTree(KUndef);
         return true;
       }
-      if (!ProjectToNthElement(e->child(0), i,
-                               Simplification::ShallowSystematicReduce)) {
+      Tree* element = ProjectToNthElement(
+          e->child(0), i, Simplification::ShallowSystematicReduce);
+      if (!element) {
         return false;
       }
-      e->moveTreeOverTree(e->child(0));
+      e->moveTreeOverTree(element);
       return true;
     }
     case Type::ListSlice: {

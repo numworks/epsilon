@@ -2,6 +2,7 @@
 
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/store.h>
 
 #include "app_with_store_menu.h"
@@ -121,20 +122,14 @@ bool StoreMenuController::parseAndStore(const char* text) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   Context* context = app->localContext();
   UserExpression input = UserExpression::Parse(text, context);
-#if 1  // TODO_PCJ
-  assert(false);
-  return false;
-#else
-  if (input.isUninitialized()) {
+  if (input.isUninitialized() || input.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
     return false;
   }
-  UserExpression reducedExp = input;
-  PoincareHelpers::CloneAndSimplify(&reducedExp, context);
-  if (reducedExp.type() != ExpressionNode::Type::Store) {
-    openAbortWarning();
-    return false;
-  }
+  UserExpression reducedValue = input.childAtIndex(0);
+  PoincareHelpers::CloneAndSimplify(&reducedValue, context);
+  UserExpression reducedExp = UserExpression::Create(
+      KStore(KA, KB), {.KA = reducedValue, .KB = input.childAtIndex(1)});
   bool isVariable =
       reducedExp.childAtIndex(1).type() == ExpressionNode::Type::Symbol;
   UserExpression leftHandSideApproximation =
@@ -157,7 +152,6 @@ bool StoreMenuController::parseAndStore(const char* text) {
     app->displayWarning(I18n::Message::VariableCantBeEdited);
   }
   return true;
-#endif
 }
 
 bool StoreMenuController::layoutFieldDidFinishEditing(

@@ -132,9 +132,9 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   for (int i = 0; Tree * child : expr->children()) {
     if (isParametric && i == Parametric::k_variableIndex) {
     } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
-      Tree* newSymbol = expr->child(Parametric::k_variableIndex);
       // No need to continue if symbol is hidden by a local definition
-      if (strcmp(Symbol::GetName(newSymbol), symbol) != 0) {
+      if (strcmp(Symbol::GetName(expr->child(Parametric::k_variableIndex)),
+                 symbol) != 0) {
         changed = ReplaceSymbol(child, symbol, id + 1, sign) || changed;
       }
     } else {

@@ -42,7 +42,8 @@ class ExpressionModel {
       const char* c, CodePoint symbol = 0,
       Poincare::Context* context = nullptr) const;
   static Poincare::UserExpression ReplaceSymbolWithUnknown(
-      Poincare::UserExpression e, CodePoint symbol);
+      Poincare::UserExpression e, CodePoint symbol,
+      bool onlySecondTerm = false);
 
   bool isCircularlyDefined(const Ion::Storage::Record* record,
                            Poincare::Context* context) const;

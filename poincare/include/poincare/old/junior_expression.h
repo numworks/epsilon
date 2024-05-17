@@ -173,7 +173,8 @@ class JuniorExpression : public OExpression {
 
 #if 1  // TODO_PCJ
   JuniorExpression replaceSymbolWithExpression(
-      const SymbolAbstract& symbol, const JuniorExpression& expression);
+      const SymbolAbstract& symbol, const JuniorExpression& expression,
+      bool onlySecondTerm = false);
 
   typedef OMG::Troolean (*ExpressionTrinaryTest)(const JuniorExpression e,
                                                  Context* context,

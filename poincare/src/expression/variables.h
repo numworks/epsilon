@@ -56,6 +56,8 @@ class Variables {
                             ComplexSign sign);
   static bool ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
                             ComplexSign sign);
+  static bool ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
+                                    const Tree* replacement);
 
   // Increment variables indexes
   static void EnterScope(Tree* expr) {

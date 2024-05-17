@@ -230,10 +230,10 @@ Poincare::UserExpression ExpressionModel::buildExpressionFromText(
 }
 
 Poincare::UserExpression ExpressionModel::ReplaceSymbolWithUnknown(
-    Poincare::UserExpression e, CodePoint symbol) {
+    Poincare::UserExpression e, CodePoint symbol, bool onlySecondTerm) {
   if (!e.isUninitialized() && symbol != 0) {
-    return e.replaceSymbolWithExpression(Symbol::Builder(symbol),
-                                         Symbol::SystemSymbol());
+    return e.replaceSymbolWithExpression(
+        Symbol::Builder(symbol), Symbol::SystemSymbol(), onlySecondTerm);
   }
   return e;
 }

@@ -530,7 +530,8 @@ int JuniorExpression::getPolynomialReducedCoefficients(
 }
 
 JuniorExpression JuniorExpression::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const JuniorExpression& expression) {
+    const SymbolAbstract& symbol, const JuniorExpression& expression,
+    bool onlySecondTerm) {
   /* TODO_PCJ: Handle functions and sequences as well. See
    * replaceSymbolWithExpression implementations. */
   if (isUninitialized()) {
@@ -538,10 +539,10 @@ JuniorExpression JuniorExpression::replaceSymbolWithExpression(
   }
   assert(symbol.tree()->isUserSymbol());
   Internal::Tree* result = tree()->clone();
-  Internal::Variables::ReplaceSymbol(result, symbol.tree(), 0,
-                                     Internal::ComplexSign::Unknown());
-  if (Internal::Variables::Replace(result, 0, expression.tree(), false,
-                                   false)) {
+  assert(!onlySecondTerm || result->numberOfChildren() >= 2);
+  if (Internal::Variables::ReplaceSymbolWithTree(
+          onlySecondTerm ? result->child(1) : result, symbol.tree(),
+          expression.tree())) {
     JuniorExpression res = Builder(result);
     replaceWithInPlace(res);
     return res;

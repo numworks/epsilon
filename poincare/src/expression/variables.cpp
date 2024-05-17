@@ -145,6 +145,32 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   return changed;
 }
 
+/* TODO_PCJ : This could be factorized with other methods, such as Replace,
+ * ReplaceSymbol or Projection::DeepReplaceUserNamed. */
+bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
+                                      const Tree* replacement) {
+  if (expr->isUserSymbol() &&
+      strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
+    expr->cloneTreeOverTree(replacement);
+    return true;
+  }
+  bool isParametric = expr->isParametric();
+  bool changed = false;
+  for (int i = 0; Tree * child : expr->children()) {
+    /* Do not replace parametric's variable and symbols hidden by a local
+     * definition */
+    if (!(isParametric &&
+          (i == Parametric::k_variableIndex ||
+           (i == Parametric::FunctionIndex(expr) &&
+            strcmp(Symbol::GetName(expr->child(Parametric::k_variableIndex)),
+                   Symbol::GetName(symbol)) == 0)))) {
+      changed = ReplaceSymbolWithTree(child, symbol, replacement) || changed;
+    }
+    i++;
+  }
+  return changed;
+}
+
 bool Variables::ProjectLocalVariablesToId(Tree* expr, uint8_t depth) {
   bool changed = false;
   bool isParametric = expr->isParametric();

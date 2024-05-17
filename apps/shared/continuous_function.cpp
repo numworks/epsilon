@@ -1124,8 +1124,8 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromText(
       symbol = k_parametricSymbol;
     }
     // Do not replace symbol in f(x)=
-    ExpressionModel::ReplaceSymbolWithUnknown(expressionToStore.childAtIndex(1),
-                                              symbol);
+    expressionToStore = ExpressionModel::ReplaceSymbolWithUnknown(
+        expressionToStore, symbol, true);
   } else {
     if (expressionToStore.recursivelyMatches([](const NewExpression e) {
           return e.type() == ExpressionNode::Type::Symbol &&

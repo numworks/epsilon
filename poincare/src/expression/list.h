@@ -14,8 +14,11 @@ struct List {
     return list->numberOfChildren();
   }
 
-  /* Return nth element in descendants, for instance, 2+{3,4}->2+3 or nullptr */
-  static Tree* ProjectToNthElement(const Tree* expr, int n, Tree::Operation reduction);
+  /* Evaluate the list expression and return its k-th value or nullptr.
+   * For instance: 2+{3,4} -> 5
+   * Intermediary results are passed through reduction. */
+  static Tree* GetElement(const Tree* listExpr, int k,
+                          Tree::Operation reduction);
   static bool BubbleUp(Tree* expr, Tree::Operation reduction);
 
   static Tree* Fold(const Tree* list, TypeBlock type);

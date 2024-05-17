@@ -14,18 +14,17 @@ namespace Poincare::Internal {
 
 Tree* List::PushEmpty() { return KList.node<0>->cloneNode(); }
 
-Tree* List::ProjectToNthElement(const Tree* expr, int n,
-                                Tree::Operation reduction) {
+Tree* List::GetElement(const Tree* expr, int k, Tree::Operation reduction) {
   switch (expr->type()) {
     case Type::List:
-      assert(n < expr->numberOfChildren());
-      return expr->child(n)->clone();
+      assert(k < expr->numberOfChildren());
+      return expr->child(k)->clone();
     case Type::ListSequence: {
       if (Parametric::HasLocalRandom(expr)) {
         return nullptr;
       }
       Tree* result = expr->child(2)->clone();
-      TreeRef value = Integer::Push(n + 1);
+      TreeRef value = Integer::Push(k + 1);
       Variables::Replace(result, 0, value);
       value->removeTree();
       return result;
@@ -39,7 +38,7 @@ Tree* List::ProjectToNthElement(const Tree* expr, int n,
              Integer::Is<uint8_t>(expr->child(2)));
       int startIndex =
           std::max(Integer::Handler(expr->child(1)).to<uint8_t>() - 1, 0);
-      return ProjectToNthElement(expr->child(0), startIndex + n, reduction);
+      return GetElement(expr->child(0), startIndex + k, reduction);
     }
     default:
       if (expr->type().isListToScalar()) {
@@ -47,7 +46,7 @@ Tree* List::ProjectToNthElement(const Tree* expr, int n,
       }
       Tree* result = expr->cloneNode();
       for (const Tree* child : expr->children()) {
-        if (!ProjectToNthElement(child, n, reduction)) {
+        if (!GetElement(child, k, reduction)) {
           SharedTreeStack->flushFromBlock(result->block());
           return nullptr;
         }
@@ -68,7 +67,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
   }
   for (int i = 0; i < size; i++) {
     Tree* element =
-        ProjectToNthElement(list, i, Simplification::ShallowSystematicReduce);
+        GetElement(list, i, Simplification::ShallowSystematicReduce);
     assert(element);
     if (i == 0) {
       continue;
@@ -139,7 +138,7 @@ bool List::BubbleUp(Tree* expr, Tree::Operation reduction) {
   }
   Tree* list = List::PushEmpty();
   for (int i = 0; i < length; i++) {
-    Tree* element = ProjectToNthElement(expr, i, reduction);
+    Tree* element = GetElement(expr, i, reduction);
     if (!element) {
       assert(i == 0);
       list->removeTree();
@@ -223,8 +222,8 @@ bool List::ShallowApplyListOperators(Tree* e) {
         e->cloneTreeOverTree(KUndef);
         return true;
       }
-      Tree* element = ProjectToNthElement(
-          e->child(0), i, Simplification::ShallowSystematicReduce);
+      Tree* element =
+          GetElement(e->child(0), i, Simplification::ShallowSystematicReduce);
       if (!element) {
         return false;
       }

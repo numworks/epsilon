@@ -21,6 +21,7 @@ class Arithmetic {
   static bool SimplifyQuotientOrRemainder(Tree* expr);
   static bool SimplifyFloor(Tree* expr);
   static bool SimplifyRound(Tree* expr);
+  static bool SimplifyFactor(Tree* expr);
 
   // Turn binomial and permute into factorials
   static bool SimplifyPermute(Tree* expr);

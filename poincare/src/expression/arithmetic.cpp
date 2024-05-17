@@ -85,6 +85,15 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
             KPow(10_e, KMult(-1_e, KB))));
 }
 
+bool Arithmetic::SimplifyFactor(Tree* expr) {
+  const Tree* child = expr->firstChild();
+  if (!child->isRational()) {
+    expr->cloneTreeOverTree(KBadType);
+    return true;
+  }
+  return false;
+}
+
 bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   bool changed = NAry::Flatten(expr) + NAry::Sort(expr);
   Tree* first = expr->firstChild();

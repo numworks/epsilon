@@ -130,6 +130,8 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return SimplifyExp(u);
     case Type::Fact:
       return Arithmetic::SimplifyFactorial(u);
+    case Type::Factor:
+      return Arithmetic::SimplifyFactor(u);
     case Type::Floor:
       return Arithmetic::SimplifyFloor(u);
     case Type::GCD:

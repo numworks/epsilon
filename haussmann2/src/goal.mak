@@ -22,10 +22,10 @@ ALL_GOALS += $1
 MODULES_$1 := $2
 HELP_GOAL_$1 := $3
 
-$(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): SFLAGS += $$(foreach m,$2,$$(SFLAGS_$$(call name_for_flavored_target,$$m)))
-$(OUTPUT_DIRECTORY)/$1%$(EXECUTABLE_EXTENSION): LDFLAGS += $$(foreach m,$2,$$(LDFLAGS_$$(call name_for_flavored_target,$$m)))
+$(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(SFLAGS_$$(call name_for_flavored_target,$$m)))
+$(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): LDFLAGS += $$(foreach m,$2,$$(LDFLAGS_$$(call name_for_flavored_target,$$m)))
 
-$1%: $(OUTPUT_DIRECTORY)/$1%
+$1%: $(call target_foreach_arch,$1%)
 	@ :
 
 endef
@@ -38,11 +38,12 @@ $(foreach m,$(MODULES_$(call name_for_flavored_target,$1)),$(call name_for_flavo
 endef
 
 # libraries_for_flavored_goal, <flavored goal>
+# $1 might contain an arch, hence the $(dir $1).
 # Do not use flavors_for_flavored_target to avoid an extraneous subst.
 define libraries_for_flavored_goal
-$(addprefix $(OUTPUT_DIRECTORY)/,\
-	$(addsuffix $(subst $( ),,$(filter .%,$(subst ., .,$1))).a,\
-	$(MODULES_$(call name_for_flavored_target,$1))))
+$(addprefix $(OUTPUT_DIRECTORY)/$(dir $1),\
+	$(addsuffix $(subst $( ),,$(filter .%,$(subst ., .,$(notdir $1)))).a,\
+	$(MODULES_$(call name_for_flavored_target,$(notdir $1)))))
 endef
 
 # Helpers

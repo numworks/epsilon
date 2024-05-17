@@ -44,9 +44,9 @@ VERSION_$1 := $2
 SOURCES_$1 = $(addprefix $$(PATH_$1)/,$(strip $3))
 SFLAGS_$1 = -I$$(PATH_$1)/include
 
-$(OUTPUT_DIRECTORY)/$1%a: SFLAGS += $$(PRIVATE_SFLAGS_$1)
+$(call target_foreach_arch,$1%a): SFLAGS += $$(PRIVATE_SFLAGS_$1)
 
-$1%a: $(OUTPUT_DIRECTORY)/$1%a
+$1%a: $(call target_foreach_arch,$1%a)
 	@ :
 
 endef
@@ -63,10 +63,11 @@ endef
 # Private API
 
 # objects_for_flavored_module, <dot-separated flavored module>
+# $1 might be prefixed with an arch's directory.
 define objects_for_flavored_module
-$(call objects_for_sources,$(call flavor_filter,\
-	$(SOURCES_$(call name_for_flavored_target,$1)),\
-	$(call flavors_for_flavored_target,$1)))
+$(call objects_for_sources,$(dir $1),$(call flavor_filter,\
+	$(SOURCES_$(call name_for_flavored_target,$(notdir $1))),\
+	$(call flavors_for_flavored_target,$(notdir $1))))
 endef
 
 # Helpers

@@ -26,11 +26,11 @@ $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(QUIET) $(AR) $(ARFLAGS) $@ $^
 
 # Rules for object files
-$(OUTPUT_DIRECTORY)/%.o: %.c | $$(@D)/.
+$(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).c | $$(@D)/.
 	$(QUIET) echo "CC\t$@"
 	$(QUIET) $(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
 
-$(OUTPUT_DIRECTORY)/%.o: %.cpp | $$(@D)/.
+$(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).cpp | $$(@D)/.
 	$(QUIET) echo "CXX\t$@"
 	$(QUIET) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 

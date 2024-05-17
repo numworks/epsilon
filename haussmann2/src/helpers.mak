@@ -5,6 +5,11 @@ _null :=
 _space := $(_null) $(_null)
 $(_space) := $(_space)
 
+# text_or, <text>, <fallback if empty>
+define text_or
+$(if $1,$1,$2)
+endef
+
 # name_for_flavored_target, <flavored target>
 #   name.flavor1.flavor2 -> name
 define name_for_flavored_target
@@ -17,9 +22,9 @@ define flavors_for_flavored_target
 $(subst .,,$(filter .%,$(subst ., .,$1)))
 endef
 
-# objects_for_sources, <sources list>
+# objects_for_sources, <arch directory>, <sources list>
 define objects_for_sources
-$(addprefix $(OUTPUT_DIRECTORY)/,$(addsuffix .o,$(basename $1)))
+$(addprefix $(OUTPUT_DIRECTORY)/$1,$(addsuffix .o,$(basename $2)))
 endef
 
 # document_extension, <name>, <documentation>
@@ -35,4 +40,18 @@ endef
 # assert_relative_descendant, <path>
 define assert_relative_descendant
 $(if $(filter /% ~/%,$1/.)$(findstring ..,$1/.),$(error "Error: the path cannot contain .. and must be relative"),)
+endef
+
+# target_foreach_arch, <target stem>
+# if no arch is defined: stem -> $(OUTPUT_DIRECTORY)/stem
+# if archs are defined: stem -> $(OUTPUT_DIRECTORY)/arch1/stem $(OUTPUT_DIRECTORY)/arch2/stem
+define target_foreach_arch
+$(strip $(addprefix $(OUTPUT_DIRECTORY)/,\
+	$(if $(ARCHS),$(addsuffix /$1,$(ARCHS)),$1)\
+))
+endef
+
+# strip_arch_dir, <path>
+define strip_arch_dir
+$(call text_or,$(strip $(foreach a,$(ARCHS),$(patsubst $a/%,%,$(filter $a/%,$1)))),$1)
 endef

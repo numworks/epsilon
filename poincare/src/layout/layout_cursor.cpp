@@ -473,6 +473,15 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
         forceCursorLeftOfText = true;
         setCursorToFirstEmptyCodePoint = false;
       }
+      if (nextCodePoint == ')') {
+        // Skip ) to turn cos(\x11) into cos(] with ] temporary
+        codePoint = decoder.nextCodePoint();
+        /* TODO: previously cos(\x11) was parsable into a cos with an empty
+         * expression argument. It is no more parsable but unlike in the
+         * toolbox, we need to keep the textual version as key presses are
+         * low-level. As an alternative we may catch keys events that insert a
+         * function in the layout field and insert a layout directly. */
+      }
       assert(!codePoint.isCombining());
       continue;
     }

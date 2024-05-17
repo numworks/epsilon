@@ -777,21 +777,35 @@ bool Simplification::SimplifyComplexPart(Tree* tree) {
   TreeRef a(SharedTreeStack->push<Type::Add>(0));
   const int nbChildren = child->numberOfChildren();
   int nbChildrenRemoved = 0;
+  int nbChildrenOut = 0;
   Tree* elem = child->firstChild();
   for (int i = 0; i < nbChildren; i++) {
     ComplexSign elemSign = ComplexSign::Get(elem);
     if (elemSign.isPure()) {
-      TreeRef t = tree->cloneNode();
-      elem->detachTree();
-      ShallowSystematicReduce(t);
+      if (isRe != elemSign.isReal()) {
+        // re(x) = 0 or im(x) = 0
+        elem->removeTree();
+      } else if (isRe) {
+        // re(x) = x
+        elem->detachTree();
+        nbChildrenOut++;
+      } else {
+        // im(x) = -i*x
+        TreeRef t(SharedTreeStack->push<Type::Mult>(3));
+        (-1_e)->clone();
+        (i_e)->clone();
+        elem->detachTree();
+        ShallowSystematicReduce(t);
+        nbChildrenOut++;
+      }
       nbChildrenRemoved++;
     } else {
       elem = elem->nextTree();
     }
   }
   NAry::SetNumberOfChildren(child, nbChildren - nbChildrenRemoved);
-  NAry::SetNumberOfChildren(a, nbChildrenRemoved);
-  if (nbChildrenRemoved == 0) {
+  NAry::SetNumberOfChildren(a, nbChildrenOut);
+  if (nbChildrenOut == 0) {
     a->removeTree();
     return false;
   }
@@ -806,7 +820,7 @@ bool Simplification::SimplifyComplexPart(Tree* tree) {
   }
   tree->moveTreeBeforeNode(a);
   // Increase the number of children of a to include the original re/im
-  NAry::SetNumberOfChildren(tree, nbChildrenRemoved + includeOriginalTree);
+  NAry::SetNumberOfChildren(tree, nbChildrenOut + includeOriginalTree);
   // Shallow reduce new tree
   ShallowSystematicReduce(tree);
   return true;

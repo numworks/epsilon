@@ -19,7 +19,7 @@ class Parametric {
   static bool ContractSum(Tree* t);
   static bool ContractProduct(Tree* t);
   static bool Explicit(Tree* t);
-  static bool HasLocalRandom(Tree* t);
+  static bool HasLocalRandom(const Tree* t);
   static bool ExpandExpOfSum(Tree* t);
   static bool ContractProductOfExp(Tree* t);
 

@@ -21,7 +21,6 @@ class SymbolNode final : public SymbolAbstractNode {
   OMG::Troolean isPositive(Context* context) const override {
     return OMG::Troolean::Unknown;
   }
-  int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;
   int getVariables(Context* context, isVariableTest isVariable, char* variables,

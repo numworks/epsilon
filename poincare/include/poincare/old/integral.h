@@ -19,7 +19,6 @@ class IntegralNode final : public ParameteredExpressionNode {
 
   // ExpressionNode
   Type otype() const override { return Type::Integral; }
-  int polynomialDegree(Context* context, const char* symbolName) const override;
 
  private:
   // Layout

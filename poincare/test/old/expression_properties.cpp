@@ -680,59 +680,6 @@ QUIZ_CASE(poincare_properties_is_real) {
   assert_expression_is_not_real("(-2)^0.4");
 }
 
-void assert_reduced_expression_polynomial_degree(
-    const char* expression, int degree, const char* symbolName = "x",
-    Preferences::ComplexFormat complexFormat = Cartesian,
-    Preferences::AngleUnit angleUnit = Radian,
-    Preferences::UnitFormat unitFormat = MetricUnitFormat) {
-  Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext, false);
-  OExpression result = e.cloneAndReduce(
-      ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
-                       SystemForApproximation));
-
-  quiz_assert_print_if_failure(
-      result.polynomialDegree(&globalContext, symbolName) == degree,
-      expression);
-}
-
-QUIZ_CASE(poincare_properties_polynomial_degree) {
-  assert_reduced_expression_polynomial_degree("x+1", 1);
-  assert_reduced_expression_polynomial_degree("cos(2)+1", 0);
-  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,2)", 0);
-  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", 0);
-  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", 0, "a");
-  assert_reduced_expression_polynomial_degree("(3×x+2)/3", 1);
-  assert_reduced_expression_polynomial_degree("(3×x+2)/x", -1);
-  assert_reduced_expression_polynomial_degree("int(2×x,x, 0, 1)", -1);
-  assert_reduced_expression_polynomial_degree("int(2×x,x, 0, 1)", 0, "a");
-  assert_reduced_expression_polynomial_degree("[[1,2][3,4]]", -1);
-  assert_reduced_expression_polynomial_degree("(x^2+2)×(x+1)", 3);
-  assert_reduced_expression_polynomial_degree("-(x+1)", 1);
-  assert_reduced_expression_polynomial_degree("(x^2+2)^(3)", 6);
-  assert_reduced_expression_polynomial_degree("2-x-x^3", 3);
-  assert_reduced_expression_polynomial_degree("π×x", 1);
-  assert_reduced_expression_polynomial_degree("√(-1)×x", 0, "x", Real);
-
-  // f: y→y^2+πy+1
-  assert_reduce_and_store("1+π×y+y^2→f(y)");
-  assert_reduced_expression_polynomial_degree("f(x)", 2);
-  // With y=1
-  assert_reduce_and_store("1→y");
-  assert_reduced_expression_polynomial_degree("f(x)", 2);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
-  // a : undef and f : y→ay+πy+1
-  assert_reduce_and_store("undef→a");
-  assert_reduce_and_store("1+π×y+y×a→f(y)");
-  assert_reduced_expression_polynomial_degree("f(x)", 0);  // a is undefined
-  // With a = 1
-  assert_reduce_and_store("1→a");
-  assert_reduced_expression_polynomial_degree("f(x)", 1);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-}
-
 void assert_expression_has_variables(const char* expression,
                                      const char* variables[],
                                      int trueNumberOfVariables) {

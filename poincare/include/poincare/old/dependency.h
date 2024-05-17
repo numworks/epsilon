@@ -18,10 +18,6 @@ class DependencyNode : public ExpressionNode {
 
   // Properties
   Type otype() const override { return Type::Dependency; }
-  int polynomialDegree(Context* context,
-                       const char* symbolName) const override {
-    return mainExpression()->polynomialDegree(context, symbolName);
-  }
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;
 

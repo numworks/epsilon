@@ -1,5 +1,9 @@
+#include <apps/shared/global_context.h>
+#include <ion/storage/file_system.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/polynomial.h>
+#include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/simplification.h>
 
 #include "helper.h"
 
@@ -131,4 +135,65 @@ QUIZ_CASE(pcj_polynomial_operations) {
       quotient,
       KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1>(), "y"_e, 1_e), -1_e));
   assert_trees_are_equal(remainder, KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e));
+}
+
+void assert_polynomial_degree_is(ProjectionContext projectionContext,
+                                 const char* input, int expectedDegree,
+                                 const char* symbolName = "x") {
+  Tree* expression = TextToTree(input, projectionContext.m_context);
+  Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
+  int degree = Polynomial::Degree(expression, symbol, projectionContext);
+  quiz_assert(degree == expectedDegree);
+  symbol->removeTree();
+  expression->removeTree();
+}
+
+QUIZ_CASE(pcj_polynomial_degree) {
+  Shared::GlobalContext globalContext;
+  assert(
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+          "sys"));
+
+  ProjectionContext projCtx = {
+      .m_complexFormat = ComplexFormat::Cartesian,
+      .m_symbolic = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_context = &globalContext};
+
+  assert_polynomial_degree_is(projCtx, "x+1", 1);
+  assert_polynomial_degree_is(projCtx, "cos(2)+1", 0);
+  assert_polynomial_degree_is(projCtx, "diff(3×x+x,x,2)", 0);
+  assert_polynomial_degree_is(projCtx, "diff(3×x+x,x,x)", 0);
+  assert_polynomial_degree_is(projCtx, "diff(3×x+x,x,x)", 0, "a");
+  assert_polynomial_degree_is(projCtx, "(3×x+2)/3", 1);
+  assert_polynomial_degree_is(projCtx, "(3×x+2)/x", -1);
+  assert_polynomial_degree_is(projCtx, "int(2×x,x, 0, 1)", -1);
+  assert_polynomial_degree_is(projCtx, "int(2×x,x, 0, 1)", 0, "a");
+  assert_polynomial_degree_is(projCtx, "[[1,2][3,4]]", -1);
+  assert_polynomial_degree_is(projCtx, "(x^2+2)×(x+1)", 3);
+  assert_polynomial_degree_is(projCtx, "-(x+1)", 1);
+  assert_polynomial_degree_is(projCtx, "(x^2+2)^(3)", 6);
+  assert_polynomial_degree_is(projCtx, "2-x-x^3", 3);
+  assert_polynomial_degree_is(projCtx, "π×x", 1);
+
+  // f: y→y^2+πy+1
+  store("1+π×y+y^2→f(y)", &globalContext);
+  assert_polynomial_degree_is(projCtx, "f(x)", 2);
+  // With y=1
+  store("1→y", &globalContext);
+  assert_polynomial_degree_is(projCtx, "f(x)", 2);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
+  // a : undef and f : y→ay+πy+1
+  store("undef→a", &globalContext);
+  store("1+π×y+y×a→f(y)", &globalContext);
+  assert_polynomial_degree_is(projCtx, "f(x)", 0);  // a is undefined
+  // With a = 1
+  store("1→a", &globalContext);
+  assert_polynomial_degree_is(projCtx, "f(x)", 1);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+
+  projCtx.m_complexFormat = ComplexFormat::Real;
+  assert_polynomial_degree_is(projCtx, "√(-1)×x", 0, "x");
 }

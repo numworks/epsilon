@@ -11,11 +11,6 @@ class RightwardsArrowExpressionNode : public ExpressionNode {
  public:
   // PoolObject
   int numberOfChildren() const override { return 2; }
-  // ExpressionNode
-  int polynomialDegree(Context* context,
-                       const char* symbolName) const override {
-    return -1;
-  }
 
  private:
   // Simplification

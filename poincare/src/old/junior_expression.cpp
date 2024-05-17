@@ -11,6 +11,7 @@
 #include <poincare/src/expression/comparison.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/conversion.h>
+#include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
@@ -143,6 +144,17 @@ bool JuniorExpressionNode::derivate(const ReductionContext& reductionContext,
 
 const Internal::Tree* JuniorExpressionNode::tree() const {
   return Internal::Tree::FromBlocks(m_blocks);
+}
+
+int JuniorExpressionNode::polynomialDegree(Context* context,
+                                           const char* symbolName) const {
+  Internal::Tree* symbol =
+      Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
+  // TODO_PCJ: Pass at least ComplexFormat and SymbolicComputation
+  Internal::ProjectionContext projectionContext = {.m_context = context};
+  int degree = Internal::Degree::Get(tree(), symbol, projectionContext);
+  symbol->removeTree();
+  return degree;
 }
 
 /* JuniorExpression */
@@ -514,18 +526,6 @@ int JuniorExpression::getPolynomialReducedCoefficients(
       coefficients[i] = coefficients[i].childAtIndex(0);
     }
   }
-  return degree;
-}
-
-int JuniorExpression::polynomialDegree(Context* context,
-                                       const char* symbolName) const {
-  Internal::Tree* symbol =
-      Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
-  Internal::Tree* poly =
-      Internal::PolynomialParser::Parse(tree()->clone(), symbol);
-  int degree = poly->isPolynomial() ? Internal::Polynomial::Degree(poly) : 0;
-  poly->removeTree();
-  symbol->removeTree();
   return degree;
 }
 

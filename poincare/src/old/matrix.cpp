@@ -25,11 +25,6 @@
 
 namespace Poincare {
 
-int MatrixNode::polynomialDegree(Context *context,
-                                 const char *symbolName) const {
-  return -1;
-}
-
 OExpression MatrixNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return OMatrix(this).shallowReduce(reductionContext);

@@ -46,19 +46,6 @@ OMG::Troolean MultiplicationNode::isPositive(Context *context) const {
   return static_cast<OMG::Troolean>(sign);
 }
 
-int MultiplicationNode::polynomialDegree(Context *context,
-                                         const char *symbolName) const {
-  int degree = 0;
-  for (ExpressionNode *c : children()) {
-    int d = c->polynomialDegree(context, symbolName);
-    if (d < 0) {
-      return -1;
-    }
-    degree += d;
-  }
-  return degree;
-}
-
 OMG::Troolean MultiplicationNode::isNull(Context *context) const {
   if (numberOfChildren() == 0) {
     return OMG::Troolean::Unknown;

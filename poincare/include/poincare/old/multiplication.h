@@ -22,7 +22,6 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
   Type otype() const override { return Type::Multiplication; }
   OMG::Troolean isPositive(Context* context) const override;
   OMG::Troolean isNull(Context* context) const override;
-  int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;
   bool childAtIndexNeedsUserParentheses(const OExpression& child,

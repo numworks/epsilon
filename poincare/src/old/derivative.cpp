@@ -22,19 +22,6 @@ int DerivativeNode::numberOfChildren() const {
   return Derivative::s_functionHelper.numberOfChildren();
 }
 
-int DerivativeNode::polynomialDegree(Context* context,
-                                     const char* symbolName) const {
-  if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0 &&
-      childAtIndex(1)->polynomialDegree(context, symbolName) == 0 &&
-      childAtIndex(2)->polynomialDegree(context, symbolName) == 0 &&
-      childAtIndex(3)->polynomialDegree(context, symbolName) == 0) {
-    // If no child depends on the symbol, the polynomial degree is 0.
-    return 0;
-  }
-  // If one of the children depends on the symbol, we do not know the degree.
-  return ExpressionNode::polynomialDegree(context, symbolName);
-}
-
 size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {

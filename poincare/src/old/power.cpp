@@ -88,30 +88,6 @@ OMG::Troolean PowerNode::isNull(Context *context) const {
   return OMG::Troolean::Unknown;
 }
 
-int PowerNode::polynomialDegree(Context *context,
-                                const char *symbolName) const {
-  if (ExpressionNode::polynomialDegree(context, symbolName) == 0) {
-    return 0;
-  }
-  int op0Deg = childAtIndex(0)->polynomialDegree(context, symbolName);
-  if (op0Deg < 0) {
-    return -1;
-  }
-  if (childAtIndex(1)->otype() != ExpressionNode::Type::Rational) {
-    return -1;
-  }
-  RationalNode *r = static_cast<RationalNode *>(childAtIndex(1));
-  if (!r->isInteger() || Number(r).isPositive() == OMG::Troolean::False) {
-    return -1;
-  }
-  Integer numeratorInt = r->signedNumerator();
-  if (!numeratorInt.isExtractable()) {
-    return -1;
-  }
-  op0Deg *= numeratorInt.extractedInt();
-  return op0Deg;
-}
-
 OExpression PowerNode::removeUnit(OExpression *unit) {
   return Power(this).removeUnit(unit);
 }

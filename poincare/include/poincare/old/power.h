@@ -30,7 +30,6 @@ class PowerNode final : public ExpressionNode {
   double degreeForSortingAddition(bool symbolsOnly) const override;
   OExpression removeUnit(OExpression* unit) override;
 
-  int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;
 

@@ -14,19 +14,8 @@ namespace Poincare {
 
 /* Usual behavior for functions is to expand itself (as well as any function it
  * contains), before calling the same method on its definition (or handle it if
- * uninitialized). We do this in polynomialDegree, getPolynomialCoefficients,
- * getVariables, templatedApproximate and shallowReduce. */
-int FunctionNode::polynomialDegree(Context* context,
-                                   const char* symbolName) const {
-  Function f(this);
-  OExpression e = SymbolAbstract::Expand(
-      f, context, true,
-      SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
-  if (e.isUninitialized()) {
-    return -1;
-  }
-  return e.polynomialDegree(context, symbolName);
-}
+ * uninitialized). We do this in getPolynomialCoefficients, getVariables,
+ * templatedApproximate and shallowReduce. */
 
 int FunctionNode::getPolynomialCoefficients(Context* context,
                                             const char* symbolName,

@@ -22,7 +22,6 @@ class DerivativeNode final : public ParameteredExpressionNode {
 
   // Properties
   Type otype() const override { return Type::Derivative; }
-  int polynomialDegree(Context* context, const char* symbolName) const override;
 
   constexpr static CodePoint k_firstDerivativeSymbol = '\'';
   constexpr static CodePoint k_secondDerivativeSymbol = '\"';

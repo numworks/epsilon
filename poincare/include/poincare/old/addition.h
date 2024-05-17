@@ -26,7 +26,6 @@ class AdditionNode final : public NAryInfixExpressionNode {
   // Properties
   Type otype() const override { return Type::Addition; }
   OMG::Troolean isPositive(Context* context) const override;
-  int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;
 

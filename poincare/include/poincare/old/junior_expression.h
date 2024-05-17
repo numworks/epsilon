@@ -37,6 +37,7 @@ class JuniorExpressionNode final : public ExpressionNode {
   // OMG::Troolean isNull(Context* context) const override;
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
+  int polynomialDegree(Context* context, const char* symbolName) const override;
 
   // Approximation
   template <typename T>
@@ -169,11 +170,6 @@ class JuniorExpression : public OExpression {
    * coefficients has up to 3 entries.  */
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 JuniorExpression coefficients[]) const;
-
-  /* polynomialDegree returns:
-   * - (-1) if the expression is not a polynomial
-   * - the degree of the polynomial otherwise */
-  int polynomialDegree(Context* context, const char* symbolName) const;
 
 #if 1  // TODO_PCJ
   JuniorExpression replaceSymbolWithExpression(

@@ -35,19 +35,6 @@ OMG::Troolean AdditionNode::isPositive(Context* context) const {
   return additionIsPositive;
 }
 
-int AdditionNode::polynomialDegree(Context* context,
-                                   const char* symbolName) const {
-  int degree = 0;
-  for (ExpressionNode* e : children()) {
-    int d = e->polynomialDegree(context, symbolName);
-    if (d < 0) {
-      return -1;
-    }
-    degree = d > degree ? d : degree;
-  }
-  return degree;
-}
-
 int AdditionNode::getPolynomialCoefficients(Context* context,
                                             const char* symbolName,
                                             OExpression coefficients[]) const {

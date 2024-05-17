@@ -24,11 +24,7 @@ OExpression ExpressionNode::replaceSymbolWithExpression(
 
 int ExpressionNode::polynomialDegree(Context* context,
                                      const char* symbolName) const {
-  for (ExpressionNode* c : children()) {
-    if (c->polynomialDegree(context, symbolName) != 0) {
-      return -1;
-    }
-  }
+  assert(false);
   return 0;
 }
 

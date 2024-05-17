@@ -16,17 +16,6 @@
 
 namespace Poincare {
 
-int SymbolNode::polynomialDegree(Context* context,
-                                 const char* symbolName) const {
-  if (strcmp(m_name, symbolName) == 0) {
-    // This is the symbol we are looking for.
-    return 1;
-  }
-  /* No variable expansion is expected within this method. Only functions are
-   * expanded and replaced. */
-  return 0;
-}
-
 int SymbolNode::getPolynomialCoefficients(Context* context,
                                           const char* symbolName,
                                           OExpression coefficients[]) const {

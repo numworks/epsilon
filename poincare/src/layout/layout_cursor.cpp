@@ -477,57 +477,7 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
       continue;
     }
 
-    /* TODO: The insertion of subscripts should be replaced with a parser
-     * that creates layout. This is a draft of this. */
-
-    /* - Step 1.1 - Handle subscripts
-     * Subscripts are serialized as "\x14{...\x14}". When the code points
-     * "\x14{" are encountered by the decoder, create a subscript layout
-     * and continue insertion in it. When the code points "\x14}" are
-     * encountered, leave the subscript and continue the insertion in its
-     * parent. */
-#if 0
-    if (codePoint == UCodePointSystem) {
-      // UCodePointSystem should be inserted only for system braces
-      assert(nextCodePoint == '{' || nextCodePoint == '}');
-      if (linearMode) {
-        // Convert u\x14{n\x14} into u(n)
-        codePoint = nextCodePoint == '{' ? '(' : ')';
-        nextCodePoint = decoder.nextCodePoint();
-      } else {
-        if (nextCodePoint == '{') {
-          // Enter a subscript
-          Layout newChild = VerticalOffsetLayout::Builder(
-              HorizontalLayout::Builder(),
-              VerticalOffsetLayoutNode::VerticalPosition::Subscript);
-          currentSubscriptDepth++;
-          Layout horizontalChildOfSubscript = newChild.child(0);
-          assert(horizontalChildOfSubscript.isEmpty());
-          currentLayout =
-              static_cast<HorizontalLayout &>(horizontalChildOfSubscript);
-          codePoint = decoder.nextCodePoint();
-          ;
-          continue;
-        }
-        // UCodePointSystem should be inserted only for system braces
-        assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
-        // Leave the subscript
-        currentSubscriptDepth--;
-        Layout subscript = currentLayout;
-        while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
-          subscript = subscript.parent();
-          assert(!subscript.isUninitialized());
-        }
-        Layout parentOfSubscript = subscript.parent();
-        assert(!parentOfSubscript.isUninitialized() &&
-               parentOfSubscript.isHorizontal());
-        currentLayout = static_cast<HorizontalLayout &>(parentOfSubscript);
-        codePoint = decoder.nextCodePoint();
-        continue;
-      }
-    }
-#endif
-    // - Step 1.2 - Handle code points and brackets
+    // - Step 1 - Handle code points and brackets
     Tree* newChild;
     TypeBlock bracketType(Type{});
     Side bracketSide;

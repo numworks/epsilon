@@ -53,6 +53,7 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
     case Type::ListSlice:
       return childLength[0] >= 0 && childLength[1] == k_nonListListLength &&
              childLength[2] == k_nonListListLength;
+    case Type::Set:
     case Type::List: {
       for (int i = 0; i < t->numberOfChildren(); i++) {
         if (childLength[i++] >= 0) {

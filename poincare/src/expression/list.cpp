@@ -32,7 +32,8 @@ Tree* List::GetElement(const Tree* expr, int k, Tree::Operation reduction) {
     case Type::RandIntNoRep:
       return nullptr;  // Should be projected on approximation.
     case Type::ListSort:
-      assert(false);  // Must have been removed by simplification
+    case Type::Median:
+      return nullptr;  // If their are still there, their bubble-up failed
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(expr->child(1)) &&
              Integer::Is<uint8_t>(expr->child(2)));
@@ -180,10 +181,12 @@ bool List::ShallowApplyListOperators(Tree* e) {
         BubbleUp(weigthsList, Simplification::ShallowSystematicReduce);
         weigthsList->moveTreeOverTree(
             Approximation::RootTreeToTree<T>(weigthsList));
+        assert(weigthsList->isList());
       }
       /* values are not approximated in place since we need to keep the exact
        * values to return the exact median */
       Tree* approximatedList = Approximation::RootTreeToTree<T>(valuesList);
+      assert(approximatedList->isList());
       TreeDatasetColumn<T> values(approximatedList);
       int upperMedianIndex;
       int lowerMedianIndex;
@@ -210,7 +213,10 @@ bool List::ShallowApplyListOperators(Tree* e) {
     }
     case Type::ListSort: {
       Tree* list = e->child(0);
-      BubbleUp(list, Simplification::ShallowSystematicReduce);
+      bool changed = BubbleUp(list, Simplification::ShallowSystematicReduce);
+      if (!list->isList()) {
+        return changed;
+      }
       NAry::Sort(list);
       e->removeNode();
       return true;

@@ -809,7 +809,7 @@ bool Simplification::SimplifyComplexPart(Tree* tree) {
   NAry::SetNumberOfChildren(a, nbChildrenOut);
   if (nbChildrenOut == 0) {
     a->removeTree();
-    return false;
+    return nbChildrenRemoved > 0;
   }
   bool includeOriginalTree = true;
   if (child->numberOfChildren() == 0) {

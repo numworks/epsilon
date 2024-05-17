@@ -404,7 +404,7 @@ double MassDataField::getDouble(AtomicNumber z) const {
 }
 
 const Poincare::Internal::Tree* MassDataField::rawUnit() const {
-  return "_g×_mol^-2"_l;
+  return "_g×_mol^-1"_l;
 }
 
 // ElectronegativityDataField

@@ -42,6 +42,8 @@ class GraphView : public Shared::FunctionGraphView,
 
   void setTangentDisplay(bool display) { m_tangentDisplay = display; }
 
+  void setNormalDisplay(bool display) { m_normalDisplay = display; }
+
  private:
   constexpr static int k_externRectMargin = 2;
   constexpr static Shared::Dots::Size k_dotSize = Shared::Dots::Size::Tiny;
@@ -74,6 +76,7 @@ class GraphView : public Shared::FunctionGraphView,
   Poincare::Solver<double>::Interest m_interest;
   bool m_computePointsOfInterest;
   bool m_tangentDisplay;
+  bool m_normalDisplay;
 };
 
 }  // namespace Graph

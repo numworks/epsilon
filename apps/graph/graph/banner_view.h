@@ -19,7 +19,7 @@ class BannerView : public Shared::XYBannerView {
   void addInterestMessage(I18n::Message message, Shared::CursorView* cursor);
   void emptyInterestMessages(Shared::CursorView* cursor);
   void setDisplayParameters(bool showInterest, bool showDerivative,
-                            bool showTangent);
+                            bool showTangent, bool showNormal);
 
  private:
   constexpr static int k_maxNumberOfInterests = 3;
@@ -27,7 +27,7 @@ class BannerView : public Shared::XYBannerView {
   int numberOfSubviews() const override {
     // there are 3 views for tangent (aView, bView, tangentEquationView)
     return XYBannerView::k_numberOfSubviews + numberOfInterestMessages() +
-           m_showDerivative + 3 * m_showTangent;
+           m_showDerivative + 3 * m_showTangent + 3 * m_showNormal;
   };
   Escher::View* subviewAtIndex(int index) override;
   bool lineBreakBeforeSubview(Escher::View* subview) const override;
@@ -39,11 +39,13 @@ class BannerView : public Shared::XYBannerView {
   Escher::MessageTextView m_interestMessageView[k_maxNumberOfInterests];
   BannerBufferTextView m_derivativeView;
   Escher::MessageTextView m_tangentEquationView;
+  Escher::MessageTextView m_normalEquationView;
   BannerBufferTextView m_aView;
   BannerBufferTextView m_bView;
   bool m_showInterest : 1;
   bool m_showDerivative : 1;
   bool m_showTangent : 1;
+  bool m_showNormal : 1;
 };
 
 }  // namespace Graph

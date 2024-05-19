@@ -21,6 +21,7 @@ CalculationParameterController::CalculationParameterController(
                                     &m_preimageGraphController),
       m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
       m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
+      m_normalGraphController(nullptr, graphView, bannerView, range, cursor),
       m_integralGraphController(nullptr, graphView, range, cursor),
       m_areaParameterController(nullptr, &m_areaGraphController),
       m_areaGraphController(nullptr, graphView, range, cursor),
@@ -34,6 +35,7 @@ CalculationParameterController::CalculationParameterController(
   m_maximumCell.label()->setMessage(I18n::Message::Maximum);
   m_integralCell.label()->setMessage(I18n::Message::Integral);
   m_tangentCell.label()->setMessage(I18n::Message::Tangent);
+  m_normalCell.label()->setMessage(I18n::Message::NormalLine);
   m_rootCell.label()->setMessage(I18n::Message::Zeros);
   m_preimageCell.label()->setMessage(I18n::Message::Preimage);
 }
@@ -41,7 +43,9 @@ CalculationParameterController::CalculationParameterController(
 HighlightCell *CalculationParameterController::cell(int index) {
   HighlightCell *cells[k_numberOfRows] = {
       &m_preimageCell, &m_intersectionCell, &m_maximumCell,  &m_minimumCell,
-      &m_rootCell,     &m_tangentCell,      &m_integralCell, &m_areaCell};
+      &m_rootCell,     &m_tangentCell, &m_normalCell,      &m_integralCell,
+      &m_areaCell
+    };
   return cells[index];
 }
 
@@ -93,6 +97,8 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     push(&m_preimageParameterController, false);
   } else if (cell == &m_tangentCell) {
     push(&m_tangentGraphController, true);
+  } else if (cell == &m_normalCell) {
+    push(&m_normalGraphController, true);
   } else if (cell == &m_integralCell) {
     push(&m_integralGraphController, true);
   } else if (cell == &m_minimumCell) {

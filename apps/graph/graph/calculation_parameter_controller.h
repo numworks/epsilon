@@ -17,6 +17,7 @@
 #include "preimage_parameter_controller.h"
 #include "root_graph_controller.h"
 #include "tangent_graph_controller.h"
+#include "normal_graph_controller.h"
 
 namespace Graph {
 
@@ -43,7 +44,7 @@ class CalculationParameterController
   void setRecord(Ion::Storage::Record record);
 
  private:
-  static constexpr int k_numberOfRows = 8;
+  static constexpr int k_numberOfRows = 9;
   template <class T>
   void push(T* controller, bool pop);
   static bool ShouldDisplayIntersection();
@@ -76,6 +77,7 @@ class CalculationParameterController
   Escher::MenuCell<Escher::MessageTextView> m_maximumCell;
   Escher::MenuCell<Escher::MessageTextView> m_integralCell;
   Escher::MenuCell<Escher::MessageTextView> m_tangentCell;
+  Escher::MenuCell<Escher::MessageTextView> m_normalCell;
   Escher::MenuCell<Escher::MessageTextView> m_rootCell;
   Escher::MenuCell<Escher::OneLineBufferTextView<KDFont::Size::Large>,
                    Escher::EmptyCellWidget, HideableChevron>
@@ -84,6 +86,7 @@ class CalculationParameterController
   PreimageParameterController m_preimageParameterController;
   PreimageGraphController m_preimageGraphController;
   TangentGraphController m_tangentGraphController;
+  NormalGraphController m_normalGraphController;
   IntegralGraphController m_integralGraphController;
   AreaBetweenCurvesParameterController m_areaParameterController;
   AreaBetweenCurvesGraphController m_areaGraphController;

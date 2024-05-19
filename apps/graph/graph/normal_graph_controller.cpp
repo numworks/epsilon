@@ -1,4 +1,4 @@
-#include "tangent_graph_controller.h"
+#include "normal_graph_controller.h"
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/poincare_helpers.h>
@@ -13,7 +13,7 @@ using namespace Escher;
 
 namespace Graph {
 
-TangentGraphController::TangentGraphController(
+NormalGraphController::NormalGraphController(
     Responder *parentResponder, GraphView *graphView, BannerView *bannerView,
     Shared::InteractiveCurveViewRange *curveViewRange, CurveViewCursor *cursor)
     : SimpleInteractiveCurveViewController(parentResponder, cursor),
@@ -21,21 +21,21 @@ TangentGraphController::TangentGraphController(
       m_bannerView(bannerView),
       m_graphRange(curveViewRange) {}
 
-const char *TangentGraphController::title() {
-  return I18n::translate(I18n::Message::Tangent);
+const char *NormalGraphController::title() {
+  return I18n::translate(I18n::Message::NormalLine);
 }
 
-void TangentGraphController::viewWillAppear() {
+void NormalGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
-  m_graphView->setTangentDisplay(true);
+  m_graphView->setNormalDisplay(true);
   m_graphView->setFocus(true);
-  m_bannerView->setDisplayParameters(false, true, true, false);
+  m_bannerView->setDisplayParameters(false, true, false, true);
   reloadBannerView();
   panToMakeCursorVisible();
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
 }
 
-void TangentGraphController::didBecomeFirstResponder() {
+void NormalGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     m_bannerView->abscissaValue()->setParentResponder(this);
     m_bannerView->abscissaValue()->setDelegate(this);
@@ -43,7 +43,7 @@ void TangentGraphController::didBecomeFirstResponder() {
   }
 }
 
-bool TangentGraphController::textFieldDidFinishEditing(
+bool NormalGraphController::textFieldDidFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
@@ -62,12 +62,12 @@ bool TangentGraphController::textFieldDidFinishEditing(
   return true;
 }
 
-void TangentGraphController::setRecord(Ion::Storage::Record record) {
+void NormalGraphController::setRecord(Ion::Storage::Record record) {
   m_graphView->selectRecord(record);
   m_record = record;
 }
 
-void TangentGraphController::reloadBannerView() {
+void NormalGraphController::reloadBannerView() {
   if (m_record.isNull()) {
     return;
   }
@@ -80,7 +80,7 @@ void TangentGraphController::reloadBannerView() {
   int precision = numberOfSignificantDigits();
 
   double coefficientA =
-      GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
+      -1 / GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
           m_cursor, m_record);
   Poincare::Print::CustomPrintf(
       buffer, bufferSize, "a=%*.*ed", coefficientA,
@@ -95,14 +95,14 @@ void TangentGraphController::reloadBannerView() {
   m_bannerView->reload();
 }
 
-bool TangentGraphController::moveCursorHorizontally(
+bool NormalGraphController::moveCursorHorizontally(
     OMG::HorizontalDirection direction, int scrollSpeed) {
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange,
                                        k_numberOfCursorStepsInGradUnit,
                                        m_record, curveView()->pixelWidth());
 }
 
-bool TangentGraphController::handleEnter() {
+bool NormalGraphController::handleEnter() {
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
   stack->pop();

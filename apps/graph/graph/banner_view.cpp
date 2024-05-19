@@ -13,6 +13,7 @@ BannerView::BannerView(Responder* parentResponder,
       m_derivativeView(k_bannerFieldFormat),
       m_tangentEquationView(I18n::Message::LinearRegressionFormula,
                             k_bannerFieldFormat),
+      m_normalEquationView(I18n::Message::LinearRegressionFormula, k_bannerFieldFormat),
       m_aView(k_bannerFieldFormat),
       m_bView(k_bannerFieldFormat) {
   for (int i = 0; i < k_maxNumberOfInterests; i++) {
@@ -39,10 +40,11 @@ void BannerView::emptyInterestMessages(Shared::CursorView* cursor) {
 }
 
 void BannerView::setDisplayParameters(bool showInterest, bool showDerivative,
-                                      bool showTangent) {
+                                      bool showTangent, bool showNormal) {
   m_showInterest = showInterest;
   m_showDerivative = showDerivative;
   m_showTangent = showTangent;
+  m_showNormal = showNormal;
 }
 
 View* BannerView::subviewAtIndex(int index) {
